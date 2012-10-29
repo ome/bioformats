@@ -1,3 +1,6 @@
+.. index:: TillPhotonics TillVision
+.. index:: .vws
+
 TillPhotonics TillVision
 ===============================================================================
 

@@ -1,3 +1,6 @@
+.. index:: Nikon Elements TIFF
+.. index:: .tiff
+
 Nikon Elements TIFF
 ===============================================================================
 

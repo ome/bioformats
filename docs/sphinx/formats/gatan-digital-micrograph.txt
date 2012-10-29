@@ -1,3 +1,6 @@
+.. index:: Gatan Digital Micrograph
+.. index:: .dm3
+
 Gatan Digital Micrograph
 ===============================================================================
 

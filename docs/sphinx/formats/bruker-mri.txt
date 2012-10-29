@@ -1,7 +1,10 @@
+.. index:: Bruker MRI
+.. index:: .ims
+
 Bruker MRI
 ===============================================================================
 
-Extensions: $extensions
+Extensions: .ims
 
 Developer: `Bruker <http://www.bruker.com/>`_
 

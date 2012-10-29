@@ -1,3 +1,6 @@
+.. index:: Leica LAS AF LIF (Leica Image File Format)
+.. index:: .lif
+
 Leica LAS AF LIF (Leica Image File Format)
 ===============================================================================
 

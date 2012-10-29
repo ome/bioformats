@@ -1,3 +1,6 @@
+.. index:: Improvision Openlab Raw
+.. index:: .raw
+
 Improvision Openlab Raw
 ===============================================================================
 

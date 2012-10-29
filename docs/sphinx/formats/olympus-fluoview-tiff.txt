@@ -1,3 +1,6 @@
+.. index:: Olympus FluoView TIFF
+.. index:: .tif
+
 Olympus FluoView TIFF
 ===============================================================================
 

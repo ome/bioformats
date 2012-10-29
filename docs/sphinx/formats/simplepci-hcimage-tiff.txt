@@ -1,3 +1,6 @@
+.. index:: SimplePCI & HCImage TIFF
+.. index:: .tiff
+
 SimplePCI & HCImage TIFF
 ===============================================================================
 

@@ -1,3 +1,6 @@
+.. index:: EPS (Encapsulated PostScript)
+.. index:: .eps, .epsi, .ps
+
 EPS (Encapsulated PostScript)
 ===============================================================================
 

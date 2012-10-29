@@ -1,3 +1,6 @@
+.. index:: MRC (Medical Research Council)
+.. index:: .mrc
+
 MRC (Medical Research Council)
 ===============================================================================
 

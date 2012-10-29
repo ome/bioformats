@@ -1,3 +1,6 @@
+.. index:: Khoros VIFF (Visualization Image File Format) Bitmap
+.. index:: .xv
+
 Khoros VIFF (Visualization Image File Format) Bitmap
 ===============================================================================
 

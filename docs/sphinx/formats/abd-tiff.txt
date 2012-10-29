@@ -1,3 +1,6 @@
+.. index:: Andor Bio-Imaging Division (ABD) TIFF
+.. index:: .tif
+
 Andor Bio-Imaging Division (ABD) TIFF
 ===============================================================================
 

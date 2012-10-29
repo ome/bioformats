@@ -1,3 +1,6 @@
+.. index:: Olympus CellR/APL
+.. index:: .apl, .mtb, .tnb, .tif, .obsep
+
 Olympus CellR/APL
 ===============================================================================
 

@@ -1,3 +1,6 @@
+.. index:: TIFF (Tagged Image File Format)
+.. index:: .tif
+
 TIFF (Tagged Image File Format)
 ===============================================================================
 

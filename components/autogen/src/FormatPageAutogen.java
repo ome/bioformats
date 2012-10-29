@@ -90,7 +90,9 @@ public class FormatPageAutogen {
     for (IniTable table : data) {
       String format = table.get(IniTable.HEADER_KEY);
       context.put("format", format);
-      context.put("extensions", table.get("extensions"));
+      if (table.containsKey("extensions")) {
+        context.put("extensions", table.get("extensions"));
+      }
       context.put("owner", table.get("owner"));
       context.put("developer", table.get("developer"));
       context.put("scifio", table.get("scifio"));

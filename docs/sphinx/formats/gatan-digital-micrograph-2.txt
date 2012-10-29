@@ -1,3 +1,6 @@
+.. index:: Gatan Digital Micrograph 2
+.. index:: .dm2
+
 Gatan Digital Micrograph 2
 ===============================================================================
 

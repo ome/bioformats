@@ -1,3 +1,6 @@
+.. index:: Zeiss AxioVision ZVI (Zeiss Vision Image)
+.. index:: .zvi
+
 Zeiss AxioVision ZVI (Zeiss Vision Image)
 ===============================================================================
 

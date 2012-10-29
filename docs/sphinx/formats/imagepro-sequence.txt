@@ -1,3 +1,6 @@
+.. index:: ImagePro Sequence
+.. index:: .seq
+
 ImagePro Sequence
 ===============================================================================
 

@@ -1,3 +1,6 @@
+.. index:: Oxford Instruments
+.. index:: .top
+
 Oxford Instruments
 ===============================================================================
 

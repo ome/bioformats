@@ -1,3 +1,6 @@
+.. index:: Prairie Technologies TIFF
+.. index:: .tif, .xml, .cfg
+
 Prairie Technologies TIFF
 ===============================================================================
 

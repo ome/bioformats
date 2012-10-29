@@ -1,7 +1,10 @@
+.. index:: SM Camera
+.. index:: .cxd
+
 SM Camera
 ===============================================================================
 
-Extensions: $extensions
+Extensions: .cxd
 
 
 

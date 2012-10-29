@@ -1,3 +1,6 @@
+.. index:: Nikon NIS-Elements ND2
+.. index:: .nd2
+
 Nikon NIS-Elements ND2
 ===============================================================================
 

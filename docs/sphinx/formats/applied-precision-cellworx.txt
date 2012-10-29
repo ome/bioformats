@@ -1,3 +1,6 @@
+.. index:: Applied Precision CellWorX
+.. index:: .htd, .pnl
+
 Applied Precision CellWorX
 ===============================================================================
 
