@@ -1139,18 +1139,17 @@ public abstract class FormatReader extends FormatHandler
       int savedSeries = getSeries();
       int savedResolution = getResolution();
 
-      for (int i = 0; i < series; ++i) {
+      for (int i = 0; i < series; i++) {
         setSeries(i);
+        setResolution(0);
         int index = getCoreIndex();
         int resolutions = getResolutionCount();
 
         CoreMetadata[] savedCore = new CoreMetadata[resolutions];
-        for (int c = 0; c < resolutions; ++c)
-            savedCore[c] = core[index + c];
-        int[] ordered = new int[resolutions];
+        for (int c = 0; c < resolutions; c++)
+          savedCore[c] = core[index + c];
 
         HashMap<Integer,Integer> levels = new HashMap<Integer,Integer>();
-
         for (int res = 0; res<resolutions; res++) {
           setResolution(res);
           levels.put(new Integer(getSizeX()), new Integer(res));
