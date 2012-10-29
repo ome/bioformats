@@ -26,14 +26,14 @@ Installation
 ------------
 
 To use the script, download **bfopen.m** (above) and
-:doc:`**loci\_tools.jar** <bio-formats-downloads>` and place them in your
+:doc:`**loci\_tools.jar** <downloads>` and place them in your
 MATLAB work directory.
 
 Upgrading
 ---------
 
 To use a newer version of Bio-Formats, overwrite **loci\_tools.jar**
-with the :doc:`newer version <bio-formats-downloads>` and restart MATLAB.
+with the :doc:`newer version <downloads>` and restart MATLAB.
 
 More information
 ----------------

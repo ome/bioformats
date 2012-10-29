@@ -18,7 +18,7 @@ Upgrading
 
 It should be possible to use a newer version of Bio-Formats by
 :doc:`downloading the latest
-**bio-formats.jar** <bio-formats-downloads>`
+**bio-formats.jar** <downloads>`
 and putting it into the ``libs`` folder of the EV distribution,
 overwriting the old file.
 

@@ -10,22 +10,23 @@ Installation
     :maxdepth: 1
     :hidden:
 
-    bio-formats-downloads
+    downloads
 
-Installation is usually as simple as downloading one of the files from
-:doc:`the Bio-Formats downloads page <bio-formats-downloads>`:
-
-- either the complete Bio-Formats bundle with supporting libraries is
-  available as `loci\_tools.jar
-  <http://loci.wisc.edu/files/software/loci_tools.jar>`_, or
-
-- the Bio-Formats standalone library is available as `bio-formats.jar
-  <http://loci.wisc.edu/files/software/bio-formats.jar>`_
-
-
-and placing it in an appropriate directory. Specific installation instructions
+Download one of the files from
+:doc:`the Bio-Formats downloads page <downloads>` and place it in an appropriate directory. Specific installation instructions
 depend upon the application you are using - see below.
 
+
+Dataset Importing
+=================
+
+For information about what extensions to choose to import files, see
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    /dataset-structure-table
 
 
 Using Bio-Formats with ImageJ and FIJI
@@ -39,12 +40,23 @@ it within ImageJ and FIJI:
     :maxdepth: 1
     :titlesonly:
 
-    features
+    bf-features-imagej
     installing-bf-imagej
     load-images
     managing-memory
     bug-reporting
 
+
+SCIFIO
+======
+
+SCIFIO provides the core architecture of the Bio-Formats library and also includes reader and writer implementations for open file formats. The more permissive BSD license enables non-GPL third party software to read and write OME-TIFF using SCIFIO alone. For more information see:
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    scifio
 
 
 Other applications
@@ -52,6 +64,17 @@ Other applications
 
 Many software packages can use Bio-Formats to read and write microscopy formats 
 (click on the package for further details):
+
+Image Servers
+-------------
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    bisque
+    ome-server
+    omero
 
 
 Libraries and Scripting
@@ -106,33 +129,4 @@ Visualization and analysis
     v3d
     visbio
     xuvtools
-
-Image Servers
--------------
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    bisque
-    ome-server
-    omero
-
-SCIFIO
-======
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    scifio
-
-For information about what extensions to choose to import files, see
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    /dataset-structure-table
-
 

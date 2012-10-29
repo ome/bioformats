@@ -7,7 +7,7 @@ built in, people who install FIJI can skip this section.)*
 
 Once you `download <http://rsbweb.nih.gov/ij/download.html>`__ and
 install ImageJ, you can install the Bio-Formats plugin by going to the
-Bio-Formats :doc:`download page <bio-formats-downloads>`.  For most
+Bio-Formats :doc:`download page <downloads>`.  For most
 end-users, we recommend downloading the LOCI Tools complete bundle. 
 However, you must decide which version of it you want to install. There
 are three primary versions of Bio-Formats: the trunk build, the daily
@@ -36,7 +36,7 @@ Bio-Formats's behavior won't be changing "out from under them" as they
 continue developing their own programs.
 
 We often **recommend that most people simply use the trunk build** for
-two reasons. First, trunk may contain bugfixes or new features you want
+two reasons. First, trunk may contain bug-fixes or new features you want
 anyway; secondly, you will have to reproduce any bug you encounter in
 Bio-Formats against the latest trunk build before submitting a bug
 report. Rather than using the stable release until you find a bug that
@@ -44,7 +44,7 @@ requires you to upgrade and reproduce it, why not just use the trunk
 build to begin with?
 
 Once you decide which version you need, go to the Bio-Formats :doc:`download
-page <bio-formats-downloads>` and save the
+page <downloads>` and save the
 appropriate loci\_tools.jar to the Plugins directory within ImageJ.
 
 .. figure:: /images/PluginDirectory.png

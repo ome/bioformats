@@ -10,7 +10,7 @@ formats it supports.
 Installation
 ------------
 
-:doc:`Download **loci\_tools.jar** <bio-formats-downloads>` and drop it
+:doc:`Download **loci\_tools.jar** <downloads>` and drop it
 into your **ImageJ/plugins** folder. Next time you run ImageJ, a new
 LOCI submenu with several plugins will appear in the Plugins menu,
 including the Bio-Formats Importer and Bio-Formats Exporter.
@@ -42,11 +42,11 @@ Upgrading
 ---------
 
 To upgrade, just overwrite the old **loci\_tools.jar** with the :doc:`latest
-one <bio-formats-downloads>`.
+one <downloads>`.
 Step-by-step upgrade instructions for Windows are available
 :doc:`here <upgrading-importer-imagej>`.
 You may want to download the latest version of ImageJ first, to take
-advantage of new features and bugfixes.
+advantage of new features and bug-fixes.
 As of the 4.0.0 release, you can also upgrade the Bio-Formats plugin
 directly from ImageJ. Select "Plugins>LOCI>Update LOCI Plugins" from the
 ImageJ menu, then select which release you would like to use. You will

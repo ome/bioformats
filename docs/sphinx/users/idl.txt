@@ -25,5 +25,5 @@ Upgrading
 
 To use a newer version of Bio-Formats, overwrite the requisite JAR files
 with the :doc:`newer
-version <bio-formats-downloads>` and restart
+version <downloads>` and restart
 IDL.
