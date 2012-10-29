@@ -1,4 +1,4 @@
-Zeiss LSM (Laser Scanning Microscope) 510
+Zeiss LSM (Laser Scanning Microscope) 510/710
 ===============================================================================
 
 Extensions: .lsm, .mdb
