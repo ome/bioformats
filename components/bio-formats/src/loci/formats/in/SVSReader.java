@@ -279,6 +279,8 @@ public class SVSReader extends BaseTiffReader {
       core[s].dimensionOrder = "XYCZT";
       core[s].thumbnail = s != 0;
     }
+
+    checkResolutionOrder();
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
