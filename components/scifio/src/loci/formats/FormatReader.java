@@ -1137,11 +1137,12 @@ public abstract class FormatReader extends FormatHandler
     protected void reorderResolutions() {
       int series = getSeriesCount();
       int savedSeries = getSeries();
+      int savedResolution = getResolution();
+
       for (int i = 0; i < series; ++i) {
         setSeries(i);
         int index = getCoreIndex();
         int resolutions = getResolutionCount();
-        int savedResolution = getResolution();
 
         CoreMetadata[] savedCore = new CoreMetadata[resolutions];
         for (int c = 0; c < resolutions; ++c)
@@ -1154,7 +1155,6 @@ public abstract class FormatReader extends FormatHandler
           setResolution(res);
           levels.put(new Integer(getSizeX()), new Integer(res));
         }
-        setResolution(savedResolution);
 
         Integer[] keys = levels.keySet().toArray(new Integer[resolutions]);
         Arrays.sort(keys);
@@ -1167,6 +1167,8 @@ public abstract class FormatReader extends FormatHandler
             core[index + j].resolutionCount = 1;
         }
       }
+      setSeries(savedSeries);
+      setResolution(savedResolution);
     }
 
   /* @see IFormatReader#setResolution(int) */
