@@ -1727,7 +1727,9 @@ public class NativeND2Reader extends FormatReader {
           String channelName = channelNames.get(index);
           store.setChannelName(channelName, i, c);
         }
-        else if (channelNames.size() == getSizeC()) {
+        else if (channelNames.size() > 0 &&
+          (channelNames.size() % getEffectiveSizeC()) == 0)
+        {
           store.setChannelName(channelNames.get(c), i, c);
         }
         if (index < modality.size()) {
