@@ -546,10 +546,13 @@ public class ImageInfo {
         new Object[] {j, seriesName == null ? " " : " -- ",
         seriesName == null ? "" : seriesName});
 
-      LOGGER.info("\tResolutions = {}", resolutions);
-      for (int i = 0; i < resolutions; i++) {
+      if (flat == false) {
+        LOGGER.info("\tResolutions = {}", resolutions);
+        for (int i = 0; i < resolutions; i++) {
           reader.setResolution(i);
           LOGGER.info("\t\tsizeX[{}] = {}", i, reader.getSizeX());
+        }
+        reader.setResolution(0);
       }
       LOGGER.info("\tImage count = {}", imageCount);
       LOGGER.info("\tRGB = {} ({}) {}", new Object[] {rgb, rgbChanCount,
