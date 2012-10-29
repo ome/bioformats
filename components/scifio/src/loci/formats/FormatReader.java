@@ -1130,15 +1130,11 @@ public abstract class FormatReader extends FormatHandler
     return core[index].resolutionCount;
   }
 
-    public int[] getResolutionOrder() {
-        return FormatTools.getResolutionOrder(this);
-    }
-
     /**
      * Validate the order of resolutions for the current series, in
      * decending order of size.  If the order is wrong, reorder it.
      */
-    public void checkResolutionOrder() {
+    protected void reorderResolutions() {
       int series = getSeriesCount();
       int savedSeries = getSeries();
       for (int i = 0; i < series; ++i) {
@@ -1165,7 +1161,6 @@ public abstract class FormatReader extends FormatHandler
 
         for (int j = 0; j < resolutions; j++) {
           core[index + j] = savedCore[levels.get(keys[resolutions - j - 1])];
-          System.err.println("INDEX: " + (index+j));
           if (j == 0)
             core[index + j].resolutionCount = resolutions;
           else
