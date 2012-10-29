@@ -62,6 +62,8 @@ public class DeltavisionReader extends FormatReader {
   public static final int DV_MAGIC_BYTES_1 = 0xa0c0;
   public static final int DV_MAGIC_BYTES_2 = 0xc0a0;
 
+  public static final String FIRST_PLANE_OFFSET = "Offset to first plane";
+
   public static final String DATE_FORMAT = "EEE MMM  d HH:mm:ss yyyy";
 
   private static final short LITTLE_ENDIAN = -16224;
@@ -467,6 +469,8 @@ public class DeltavisionReader extends FormatReader {
     // --- populate original metadata ---
 
     LOGGER.info("Populating original metadata");
+
+    addGlobalMeta(FIRST_PLANE_OFFSET, HEADER_LENGTH + extSize);
 
     addGlobalMeta("ImageWidth", sizeX);
     addGlobalMeta("ImageHeight", sizeY);
