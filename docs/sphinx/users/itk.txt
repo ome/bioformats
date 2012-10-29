@@ -30,7 +30,7 @@ Installation
 There are two main options for installing the BF-ITK plugin:
 
 -  You can download a binary distribution of BF-ITK from the
-   :doc:`Downloads <bio-formats-downloads>` page.
+   :doc:`Downloads <downloads>` page.
 -  To build BF-ITK yourself, see "Compiling from source" below.
 
 Either way, see "Usage" for details on how to run the plugin.

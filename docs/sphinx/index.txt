@@ -7,26 +7,21 @@ sciences image file formats. It is capable of parsing both pixels and
 metadata for a large number of formats, as well as writing to several
 formats. 
 
-Bio-Formats's primary purpose is to convert proprietary microscopy data into
-an open standard called the `OME data model <http://genomebiology.com/2005/6/5/R47>`_, 
-particularly into the OME-TIFF_file format. 
 
 .. toctree::
     :maxdepth: 1
     :titlesonly:
  
     about
-    supported-formats
     users/user-info
     developers/developer-links
+    supported-formats
 
 
-
-Help
-----
+Installation information and download links are available from the :doc:`user information page <users/user-info>`
 
 
-See the
+For help, see the
 `Bio-Formats <http://www.openmicroscopy.org/site/support/faq/bio-formats>`_,
 `File Formats <http://www.openmicroscopy.org/site/support/faq/file-formats>`_
 and `OME-XML and OME-TIFF <http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
@@ -34,15 +29,14 @@ sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ for 
 some common questions. Please `contact us <http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
 you have any questions or problems with Bio-Formats.
 
+For developers, further information is available here:
+
 .. toctree::
     :maxdepth: 1
     :titlesonly:
 
     troubleshooting
 
-
-Version History
----------------
 
 Bio-Formats is updated whenever a significant bug fix is made, or whenever a
 new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the :source:`what's new <components/bio-formats/doc/whats-new.txt>`

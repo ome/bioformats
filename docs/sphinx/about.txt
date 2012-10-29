@@ -5,8 +5,7 @@ The primary goal of Bio-Formats is to facilitate the exchange of
 microscopy data between different software packages and
 organizations. It achieves this by converting proprietary
 microscopy data into an open standard called the `OME data
-model <http://genomebiology.com/2005/6/5/R47>`_, particularly into the
-OME-TIFF_ file format.
+model <http://genomebiology.com/2005/6/5/R47>`_, particularly into the OME-TIFF_ file format.
 
 We believe the standardization of microscopy metadata to a common
 structure is of vital importance to the community. A brief `article on the

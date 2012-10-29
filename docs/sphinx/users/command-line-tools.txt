@@ -8,9 +8,9 @@ Installation
 ------------
 
 :doc:`Download
-**bftools.zip** <bio-formats-downloads>`,
+**bftools.zip** <downloads>`,
 unzip it into a new folder, then :doc:`download
-**loci\_tools.jar** <bio-formats-downloads>`
+**loci\_tools.jar** <downloads>`
 and place it in the same folder.
 
 The zip file contains both Unix scripts and Windows batch files.
