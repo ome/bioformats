@@ -668,11 +668,6 @@ public class ImageReader implements IFormatReader {
     return getReader().getResolutionCount();
   }
 
-  /* @see IFormatReader#getResolutionOrder() */
-  public int[] getResolutionOrder() {
-      return FormatTools.getResolutionOrder(this);
-  }
-
   /* @see IFormatReader#setResolution(int) */
   public void setResolution(int no) {
     getReader().setResolution(no);

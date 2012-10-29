@@ -512,14 +512,6 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    */
   int getResolutionCount();
 
-    /**
-     * Get the order of resolutions for the current series, in
-     * decending order of size.
-     *
-     * @return an array of resolutions.
-     */
-  int[] getResolutionOrder();
-
   /**
    * Set the resolution level.
    *

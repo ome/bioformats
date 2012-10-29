@@ -491,10 +491,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getResolutionCount();
   }
 
-  public int[] getResolutionOrder() {
-      return FormatTools.getResolutionOrder(reader);
-  }
-
   public void setResolution(int no) {
     reader.setResolution(no);
   }

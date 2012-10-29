@@ -37,9 +37,7 @@
 package loci.formats;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Vector;
-import java.util.HashMap;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
@@ -487,37 +485,6 @@ public final class FormatTools {
     return getIndex(origOrder,
       zSize, cSize, tSize, num, zct[0], zct[1], zct[2]);
   }
-
-    /**
-     * Get the order of resolutions for the current series, in
-     * decending order of size.
-     *
-     * @param r the reader to use.
-     * @return an array of resolutions.
-     */
-    public static int[] getResolutionOrder(IFormatReader r) {
-      int[] ordered;
-
-      ordered = new int[r.getResolutionCount()];
-
-      HashMap<Integer,Integer> levels = new HashMap<Integer,Integer>();
-
-      int savedResolution = r.getResolution();
-      for (int res = 0; res<ordered.length; res++) {
-        r.setResolution(res);
-        levels.put(new Integer(r.getSizeX()), new Integer(res));
-      }
-      r.setResolution(savedResolution);
-
-      Integer[] keys = levels.keySet().toArray(new Integer[ordered.length]);
-      Arrays.sort(keys);
-
-      for (int i = 0; i < ordered.length; i++) {
-        ordered[i] = levels.get(keys[ordered.length - i - 1]);
-      }
-
-      return ordered;
-    }
 
   /**
    * Computes a unique 1-D index corresponding
