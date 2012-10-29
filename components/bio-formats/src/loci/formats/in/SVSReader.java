@@ -280,7 +280,7 @@ public class SVSReader extends BaseTiffReader {
       core[s].thumbnail = s != 0;
     }
 
-    checkResolutionOrder();
+    reorderResolutions();
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
