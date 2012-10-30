@@ -1,0 +1,56 @@
+Amersham Biosciences Gel
+===============================================================================
+
+Extensions: .gel
+
+Developer: Molecular Dynamics
+
+Owner: `GE Healthcare Life Sciences <http://www.gelifesciences.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+
+
+We currently have:
+
+- a GEL specification document (Revision 2, from 2001 Mar 15, in PDF) 
+- a few GEL datasets
+
+We would like to have:
+
+- more AL3D datasets (Z series, T series, 16-bit)
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Good|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`GelReader.java <components/bio-formats/src/loci/formats/in/GelReader.java >`
+
+Notes:
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+
+.. seealso:: 
+  `GEL Technical Overview <http://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_

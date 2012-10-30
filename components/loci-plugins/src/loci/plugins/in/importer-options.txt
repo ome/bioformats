@@ -236,8 +236,9 @@ info = <b>View stack with</b> - \
   The type of image viewer to use when displaying the dataset.        \
   <br><br>Possible choices are:<ul>                                   \
   <li><b>Metadata only</b> - Display no pixels, only metadata.</li>   \
-  <li><b>Standard ImageJ</b> - Display the pixels in ImageJ's         \
-  built-in 2D viewer.</li>                                            \
+  <li><b>Standard ImageJ</b> - This option is deprecated (i.e.        \
+  intended for use by old macros only). Please use <i>Hyperstack</i>  \
+  instead.</li>                                                       \
   <li><b>Hyperstack</b> - Display the pixels in ImageJ's              \
   built-in 5D viewer.</li>                                            \
   <li><b>Data Browser</b> - Display the pixels in LOCI's              \

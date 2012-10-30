@@ -1,0 +1,56 @@
+VisiTech XYS
+===============================================================================
+
+Extensions: .xys, .html
+
+Developer: `VisiTech International <http://www.visitech.co.uk/>`_
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
+
+We currently have:
+
+- several VisiTech datasets
+
+We would like to have:
+
+- an official specification document
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`VisitechReader.java <components/bio-formats/src/loci/formats/in/VisitechReader.java >`
+
+Notes:
+
+

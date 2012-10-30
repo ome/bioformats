@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>loci</groupId>
+    <artifactId>pom-scifio</artifactId>
+    <version>4.5-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <artifactId>loci-legacy</artifactId>
+
+  <name>Loci-Legacy</name>
+  <description>The loci-legacy component preserves classic bio-formats
+  package structures as classes and components are moved to SCIFIO. For
+  example, if loci.formats.Sample.java is migrated from the bio-formats
+  component to ome.scifio.Sample.java in the scifio component, then
+  a loci.formats.Sample.java would also be added to loci-legacy. This
+  class would be an empty delegator and would pass all control to the
+  ome.scifio class. (thus loci-legacy depends only the scifio component)
+
+  All delegators should use a "has a" pattern when possible.
+
+  By including this component, all backwards compatibility with downstream
+  code using legacy packages will be preserved, yet functionality can
+  continue to be improved via delegating to the latest SCIFIO code.</description>
+  <url>http://loci.wisc.edu/software</url>
+  <inceptionYear>2005</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>Simplified BSD License</name>
+      <url>${license.server}/scifio/license.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>scifio-devel</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.5.10</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>xalan</groupId>
+      <artifactId>serializer</artifactId>
+      <version>2.7.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.1</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.12.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>test/loci/common/utests/testng-template.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>loci-legacy</licenseName>
+          <projectName>Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.</projectName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <developers>
+    <developer>
+      <id>hinerm</id>
+      <name>Mark Hiner</name>
+      <email>hinerm@gmail.edu</email>
+      <url>http://developer.imagej.net/users/hinerm</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://developer.imagej.net/files/imagej/profile-pictures/Mark.jpg?1305649677</picUrl>
+      </properties>
+    </developer>
+    <developer>
+      <id>melissa</id>
+      <name>Melissa Linkert</name>
+      <email>melissa.linkert@glencoesoftware.com</email>
+      <url>http://openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <organization>Glencoe Software</organization>
+      <organizationUrl>http://glencoesoftware.com/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
+      </properties>
+    </developer>
+    <developer>
+      <id>curtis</id>
+      <name>Curtis Rueden</name>
+      <email>ctrueden@wisc.edu</email>
+      <url>http://loci.wisc.edu/people/curtis-rueden</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
+      </properties>
+    </developer>
+  </developers>
+
+  <!-- NB: for project parent, in case of partial checkout -->
+  <repositories>
+    <repository>
+      <id>loci.releases</id>
+      <url>http://dev.loci.wisc.edu/maven2/releases</url>
+    </repository>
+    <repository>
+      <id>loci.snapshots</id>
+      <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
+    </repository>
+  </repositories>
+</project>

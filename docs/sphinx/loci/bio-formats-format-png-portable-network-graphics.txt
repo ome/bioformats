@@ -1,0 +1,63 @@
+PNG (Portable Network Graphics)
+===============================================================================
+
+Extensions: .png
+
+Developer: `PNG Development Group <http://www.libpng.org/pub/png/pngnews.html>`_
+
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |yes|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `PNG Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/png-writer.html>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- a `PNG specification document <http://www.libpng.org/pub/png/spec/iso/>`_ (W3C/ISO/IEC version, from 2003 November 10, in HTML) 
+- several PNG datasets
+
+We would like to have:
+
+- an official specification document 
+- more sample datasets
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Outstanding|
+
+Presence: |Outstanding|
+
+Utility: |Poor|
+
+Additional Information
+----------------------
+
+Source Code: :source:`APNGReader.java <components/scifio/src/loci/formats/in/APNGReader.java >`
+
+Notes:
+
+
+Bio-Formats uses the `Java Image I/O <http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html>`_  
+API to read and write PNG files. 
+
+.. seealso:: 
+  `PNG technical overview <http://www.libpng.org/pub/png/>`_

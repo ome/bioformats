@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>loci</groupId>
+    <artifactId>pom-scifio</artifactId>
+    <version>4.5-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <artifactId>scifio-devel</artifactId>
+
+  <name>SCIFIO-devel</name>
+  <description>SCIFIO-devel is a necessary intermediate component as legacy classes are converted to SCIFIO components and package structures. As classes are converted from the SCIFIO component (or from loci-common, or other legacy components) they are placed in SCIFIO-devel, removed from their original component, and a delegator with the original package and class name is placed in the loci-legacy component, to preserve the API for backwards-compatibility while passing functional control to SCIFIO-devel. Thus loci-legacy + SCIFIO-devel are used in tandem to preserve backwards compatibility, but for an application that controls its own source the delegation layer can be bypassed by coding directly against SCIFIO-devel. When the SCIFIO component is completely converted and empty, SCIFIO-devel will be eliminated and become the SCIFIO component - so that transition should be considered when adding SCIFIO-devel as a dependency.</description>
+  <url>http://loci.wisc.edu/software</url>
+  <inceptionYear>2005</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>Simplified BSD License</name>
+      <url>${license.server}/scifio/license.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <dependencies>
+    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.5.10</version>
+    </dependency>
+    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.5.10</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>xalan</groupId>
+      <artifactId>serializer</artifactId>
+      <version>2.7.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.12.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>test/ome/scifio/io/utests/testng-template.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>loci.maven.plugins</groupId>
+        <artifactId>cppwrap-maven-plugin</artifactId>
+        <version>1.1.0</version>
+        <configuration>
+          <headerFile>cppwrap/header.txt</headerFile>
+          <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
+          <coreFile>cppwrap/core.txt</coreFile>
+          <sourceDir>cppwrap</sourceDir>
+          <libraries>
+            <library>${project.groupId}:ome-xml:jar:${project.version}</library>
+          </libraries>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>scifio</licenseName>
+          <projectName>OME SCIFIO package for reading and converting scientific file formats.</projectName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <developers>
+    <developer>
+      <id>hinerm</id>
+      <name>Mark Hiner</name>
+      <email>hinerm@gmail.edu</email>
+      <url>http://developer.imagej.net/users/hinerm</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://developer.imagej.net/files/imagej/profile-pictures/Mark.jpg?1305649677</picUrl>
+      </properties>
+    </developer>
+    <developer>
+      <id>melissa</id>
+      <name>Melissa Linkert</name>
+      <email>melissa.linkert@glencoesoftware.com</email>
+      <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <organization>Glencoe Software</organization>
+      <organizationUrl>http://glencoesoftware.com/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
+      </properties>
+    </developer>
+    <developer>
+      <id>curtis</id>
+      <name>Curtis Rueden</name>
+      <email>ctrueden@wisc.edu</email>
+      <url>http://loci.wisc.edu/people/curtis-rueden</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
+      </properties>
+    </developer>
+  </developers>
+
+  <!-- NB: for project parent, in case of partial checkout -->
+  <repositories>
+    <repository>
+      <id>loci.releases</id>
+      <url>http://dev.loci.wisc.edu/maven2/releases</url>
+    </repository>
+    <repository>
+      <id>loci.snapshots</id>
+      <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
+    </repository>
+  </repositories>
+</project>

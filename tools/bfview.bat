@@ -2,14 +2,10 @@
 
 rem bfview.bat: a batch file for displaying an image file in the image viewer
 
-rem Required JARs: loci_tools.jar
+setlocal
+set SCIFIO_DIR=%~dp0
+if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%
 
-rem JAR libraries must be in the same directory as this
-rem command line script for the command to function.
+echo The 'bfview' command is deprecated. Please use 'showinf' instead.
 
-rem If you are a developer working from source and have
-rem the LOCI classes in your CLASSPATH, you can set the
-rem LOCI_DEVEL environment variable to use them instead.
-
-echo The 'bfview' command is now deprecated.  Please use the 'showinf' command instead.
-showinf %*
+"%SCIFIO_DIR%\showinf" %*

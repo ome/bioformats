@@ -1,0 +1,58 @@
+Imacon
+===============================================================================
+
+Extensions: .fff
+
+
+Owner: `Hasselblad <http://www.hasselbladusa.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ 
+- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ 
+- `IrfanView <http://www.irfanview.com/>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- one Imacon file
+
+We would like to have:
+
+- more Imacon files
+
+Ratings
+-------
+
+Pixels: |Poor|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`ImaconReader.java <components/bio-formats/src/loci/formats/in/ImaconReader.java >`
+
+Notes:
+
+

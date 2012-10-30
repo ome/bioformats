@@ -1,0 +1,66 @@
+JPEG
+===============================================================================
+
+Extensions: .jpg
+
+Developer: `Independent JPEG Group <http://www.ijg.org/>`_
+
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |yes|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
+
+Sample Datasets:
+
+- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
+
+We currently have:
+
+- a `JPEG specification document <http://www.w3.org/Graphics/JPEG/jfif3.pdf>`_ (v1.04, from 1992 September 1, in PDF) 
+- numerous JPEG datasets 
+- the ability to produce more datasets
+
+We would like to have:
+
+- an official specification document 
+- more JEOL files
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Fair|
+
+Openness: |Outstanding|
+
+Presence: |Outstanding|
+
+Utility: |Poor|
+
+Additional Information
+----------------------
+
+Source Code: :source:`JPEGReader.java <components/scifio/src/loci/formats/in/JPEGReader.java >`
+Source Code: :source:`JPEGWriter.java <components/scifio/src/loci/formats/out/JPEGWriter.java >`
+
+Notes:
+
+
+Bio-Formats can save individual planes as JPEG. 
+Bio-Formats uses the `Java Image I/O <http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html>`_ API to read and write JPEG files. 
+JPEG stands for "Joint Photographic Experts Group". 
+
+.. seealso:: 
+  `JPEG homepage <http://www.jpeg.org/jpeg/index.html>`_

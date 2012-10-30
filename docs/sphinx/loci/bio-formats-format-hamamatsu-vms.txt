@@ -1,0 +1,58 @@
+Hamamatsu VMS
+===============================================================================
+
+Extensions: .vms
+
+Developer: `Hamamatsu <http://www.hamamatsu.com>`_
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- a few example datasets 
+- `developer documentation from the OpenSlide project <http://openslide.org/Hamamatsu%20format/>`_
+
+We would like to have:
+
+- an official specification document 
+- more example datasets
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`HamamatsuVMSReader.java <components/bio-formats/src/loci/formats/in/HamamatsuVMSReader.java >`
+
+Notes:
+
+

@@ -512,7 +512,9 @@ public class NativeND2Reader extends FormatReader {
             String[] lines = xmlString.split(" ");
             for (int i=0; i<lines.length; i++) {
               String key = lines[i++];
-              while (!key.endsWith(":") && key.indexOf("_") < 0) {
+              while (!key.endsWith(":") && key.indexOf("_") < 0 &&
+                i < lines.length)
+              {
                 key += " " + lines[i++];
                 if (i >= lines.length) {
                   break;

@@ -238,6 +238,7 @@ public class BrukerReader extends FormatReader {
       int ni = 0, nr = 0, ns = 0;
       int bits = 0;
       boolean signed = false;
+      boolean isFloat = false;
 
       for (int i=0; i<lines.length; i++) {
         String line = lines[i];
@@ -322,6 +323,7 @@ public class BrukerReader extends FormatReader {
           else if (key.equals("##$RECO_wordtype")) {
             bits = Integer.parseInt(value.substring(1, value.indexOf("BIT")));
             signed = value.indexOf("_SGN_") >= 0;
+            isFloat = !value.endsWith("_INT");
           }
         }
       }
@@ -355,7 +357,7 @@ public class BrukerReader extends FormatReader {
       core[series].rgb = false;
       core[series].interleaved = false;
       core[series].pixelType =
-        FormatTools.pixelTypeFromBytes(bits / 8, true, signed);
+        FormatTools.pixelTypeFromBytes(bits / 8, signed, isFloat);
     }
 
     MetadataStore store = makeFilterMetadata();

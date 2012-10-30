@@ -1,0 +1,57 @@
+Zeiss AxioVision TIFF
+===============================================================================
+
+Extensions: .xml, .tiff
+
+Developer: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+
+Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `Zeiss ZEN Lite <http://microscopy.zeiss.com/microscopy/en_de/downloads/zen.html>`_
+
+Sample Datasets:
+
+- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
+
+We currently have:
+
+- many example datasets
+
+We would like to have:
+
+- an official specification document
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Good|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`ZeissTIFFReader.java <components/bio-formats/src/loci/formats/in/ZeissTIFFReader.java >`
+
+Notes:
+
+

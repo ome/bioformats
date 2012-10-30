@@ -1,0 +1,68 @@
+PerkinElmer UltraView
+===============================================================================
+
+Extensions: .tif, .2, .3, .4, ...
+
+
+Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `DIMIN <http://www.dimin.net/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- several UltraView datasets 
+- some :source:`Bio-Formats developer notes <components/bio-formats/doc/perkin-elmer.html>` for UltraView
+
+We would like to have:
+
+- an official specification document 
+- more sample datasets
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`PerkinElmerReader.java <components/bio-formats/src/loci/formats/in/PerkinElmerReader.java >`
+
+Notes:
+
+
+Other associated extensions include: .tim, .zpo, .csv, .htm, 
+.cfg, .ano, .rec 
+
+Commercial applications that support this format include: 
+
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
+- `Image-Pro Plus <http://www.mediacy.com/>`_ 
+
+.. seealso:: 
+  `PerkinElmer UltraView system overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_

@@ -1,0 +1,58 @@
+NIfTI
+===============================================================================
+
+Extensions: .img, .hdr
+
+Developer: `National Institutes of Health <http://www.nih.gov/>`_
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
+
+Sample Datasets:
+
+- `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
+
+We currently have:
+
+- `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_ 
+- several NIfTI datasets
+
+We would like to have:
+
+- an official specification document 
+- more Molecular Imaging files
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Very good|
+
+Presence: |Good|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`NiftiReader.java <components/bio-formats/src/loci/formats/in/NiftiReader.java >`
+
+Notes:
+
+

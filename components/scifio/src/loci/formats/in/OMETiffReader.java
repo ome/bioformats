@@ -333,6 +333,9 @@ public class OMETiffReader extends FormatReader {
 
     // parse and populate OME-XML metadata
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
+    if (!new File(fileName).exists()) {
+      fileName = currentId;
+    }
     RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
     String xml;
     IFD firstIFD;
@@ -857,7 +860,7 @@ public class OMETiffReader extends FormatReader {
   private String normalizeFilename(String dir, String name) {
      File file = new File(dir, name);
      if (file.exists()) return file.getAbsolutePath();
-     return new Location(name).getAbsolutePath();
+     return name;
   }
 
   private void setupService() throws FormatException {

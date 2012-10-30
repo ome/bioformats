@@ -42,8 +42,8 @@
 #include "javaTools.h"
 
 // for Bio-Formats C++ bindings
-#include "scifio-4.4-SNAPSHOT.h"
-#include "ome-xml-4.4-SNAPSHOT.h"
+#include "scifio-4.5-SNAPSHOT.h"
+#include "ome-xml-4.5-SNAPSHOT.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Boolean;
