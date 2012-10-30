@@ -276,7 +276,7 @@ public class TillVisionReader extends FormatReader {
           core = new CoreMetadata[nFound];
           embeddedOffset = new long[nFound];
 
-          for (int i=0; i<getSeriesCount(); i++) {
+          for (int i=0; i<core.length; i++) {
             core[i] = new CoreMetadata();
 
             s.seek(cimages[i]);
@@ -443,13 +443,13 @@ public class TillVisionReader extends FormatReader {
 
     Arrays.sort(pixelsFile);
 
-    pixelsFiles = new String[getSeriesCount()];
-    infFiles = new String[getSeriesCount()];
+    pixelsFiles = new String[core.length];
+    infFiles = new String[core.length];
 
     Object[] metadataKeys = tmpSeriesMetadata.keySet().toArray();
     IniParser parser = new IniParser();
 
-    for (int i=0; i<getSeriesCount(); i++) {
+    for (int i=0; i<core.length; i++) {
       if (!embeddedImages) {
         core[i] = new CoreMetadata();
         setSeries(i);

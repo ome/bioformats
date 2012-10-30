@@ -160,6 +160,10 @@ public class CoreMetadata {
     copy(r, seriesNo);
   }
 
+  public CoreMetadata(CoreMetadata c) {
+    copy(c);
+  }
+
   // -- Object methods --
 
   public String toString() {
@@ -194,21 +198,9 @@ public class CoreMetadata {
     return sb.toString();
   }
 
-  public void copy(IFormatReader r, int seriesNo) {
-    int realSeries = 0;
-    int currentSeries = r.getSeries();
-    int currentResolution = r.getResolution();
-
-    for (int i=0; i<r.getSeriesCount(); i++) {
-      r.setSeries(i);
-      if (realSeries + r.getResolutionCount() > seriesNo) {
-        r.setResolution(seriesNo - realSeries);
-        break;
-      }
-      else {
-        realSeries += r.getResolutionCount();
-      }
-    }
+  public void copy(IFormatReader r, int coreIndex) {
+    int currentIndex = r.getCoreIndex();
+    r.setCoreIndex(coreIndex);
 
     sizeX = r.getSizeX();
     sizeY = r.getSizeY();
@@ -234,7 +226,31 @@ public class CoreMetadata {
     thumbnail = r.isThumbnailSeries();
     resolutionCount = r.getResolutionCount();
 
-    r.setSeries(currentSeries);
-    r.setResolution(currentResolution);
+    r.setCoreIndex(currentIndex);
   }
+
+  public void copy(CoreMetadata c) {
+    sizeX = c.sizeX;
+    sizeY = c.sizeY;
+    sizeZ = c.sizeZ;
+    sizeC = c.sizeC;
+    sizeT = c.sizeT;
+    thumbSizeX = c.thumbSizeX;
+    thumbSizeY = c.thumbSizeY;
+    pixelType = c.pixelType;
+    bitsPerPixel = c.citsPerPixel;
+    imageCount = c.imageCount;
+    cLengths = c.cLengths;
+    cTypes = c.cTypes;
+    dimensionOrder = c.dimensionOrder;
+    orderCertain = c.orderCertain;
+    rgb = c.rgb;
+    littleEndian = c.littleEndian;
+    interleaved = c.interleaved;
+    indexed = c.indexed;
+    falseColor = c.falseColor;
+    metadataComplete = c.metadataComplete;
+    seriesMetadata = c.seriesMetadata;
+    thumbnail = c.thumbnail;
+    resolutionCount = c.resolutionCount;
 }

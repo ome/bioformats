@@ -217,7 +217,7 @@ public class JPXReader extends FormatReader {
       CoreMetadata[] newCore = new CoreMetadata[resolutionLevels + 1];
       newCore[0] = core[0];
       for (int i = 1; i < newCore.length; i++) {
-        newCore[i] = new CoreMetadata(this, 0);
+        newCore[i] = new CoreMetadata(core[0]);
         newCore[i].sizeX = newCore[i - 1].sizeX / 2;
         newCore[i].sizeY = newCore[i - 1].sizeY / 2;
         newCore[i].thumbnail = true;
