@@ -17,8 +17,8 @@ Upgrading
 ---------
 
 It should be possible to use a newer version of Bio-Formats by
-:doc:`downloading the latest
-**bio-formats.jar** <downloads>`
+`downloading the latest
+**bio-formats.jar** <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`
 and putting it into the ``libs`` folder of the EV distribution,
 overwriting the old file.
 

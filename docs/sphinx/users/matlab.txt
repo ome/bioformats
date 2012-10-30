@@ -25,15 +25,13 @@ overhead from copying arrays.
 Installation
 ------------
 
-To use the script, download **bfopen.m** (above) and
-:doc:`**loci\_tools.jar** <downloads>` and place them in your
-MATLAB work directory.
+To use the script, download **bfopen.m** (above) and `**loci\_tools.jar** <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_ and place them in your MATLAB work directory.
 
 Upgrading
 ---------
 
 To use a newer version of Bio-Formats, overwrite **loci\_tools.jar**
-with the :doc:`newer version <downloads>` and restart MATLAB.
+with the `newer version <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_ and restart MATLAB.
 
 More information
 ----------------
