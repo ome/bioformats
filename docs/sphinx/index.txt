@@ -18,7 +18,7 @@ formats.
     supported-formats
 
 
-Installation information and download links are available from the :doc:`user information page <users/user-info>`
+Installation information is avilable on the :doc:`user information page <users/user-info>`. Download Bio-Formats from `the Bio-Formats downloads page <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_
 
 
 For help, see the
