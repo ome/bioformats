@@ -114,6 +114,10 @@ public class Updater implements PlugIn {
       for (String file : UpgradeChecker.INDIVIDUAL_JARS) {
         BF.status(false, "Download " + file);
         String foundFile = find(jarPath, file);
+        if (foundFile == null) {
+          foundFile = jarPath + File.separator + "jars" + File.separator + file;
+        }
+
         String url = urlPath + File.separator + file;
         boolean localSuccess = upgrader.install(url, foundFile);
         if (!localSuccess) {
