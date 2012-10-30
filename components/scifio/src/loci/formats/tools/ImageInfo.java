@@ -546,7 +546,7 @@ public class ImageInfo {
         new Object[] {j, seriesName == null ? " " : " -- ",
         seriesName == null ? "" : seriesName});
 
-      if (flat == false) {
+      if (flat == false && resolutions > 1) {
         LOGGER.info("\tResolutions = {}", resolutions);
         for (int i = 0; i < resolutions; i++) {
           reader.setResolution(i);
