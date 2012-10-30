@@ -1,3 +1,6 @@
+.. index:: Evotec/PerkinElmer Opera Flex
+.. index:: .flex, .mea, .res
+
 Evotec/PerkinElmer Opera Flex
 ===============================================================================
 

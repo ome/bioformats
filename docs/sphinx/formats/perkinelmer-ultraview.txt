@@ -1,3 +1,6 @@
+.. index:: PerkinElmer UltraView
+.. index:: .tif, .2, .3, .4, ...
+
 PerkinElmer UltraView
 ===============================================================================
 

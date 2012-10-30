@@ -1,3 +1,6 @@
+.. index:: ImagePro Workspace
+.. index:: .ipw
+
 ImagePro Workspace
 ===============================================================================
 

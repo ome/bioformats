@@ -1,3 +1,6 @@
+.. index:: ICS (Image Cytometry Standard)
+.. index:: .ics, .ids
+
 ICS (Image Cytometry Standard)
 ===============================================================================
 

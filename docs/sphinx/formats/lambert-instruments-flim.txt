@@ -1,3 +1,6 @@
+.. index:: Lambert Instruments FLIM
+.. index:: .fli
+
 Lambert Instruments FLIM
 ===============================================================================
 

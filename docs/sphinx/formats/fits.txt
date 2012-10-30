@@ -1,3 +1,6 @@
+.. index:: FITS (Flexible Image Transport System)
+.. index:: .fits
+
 FITS (Flexible Image Transport System)
 ===============================================================================
 

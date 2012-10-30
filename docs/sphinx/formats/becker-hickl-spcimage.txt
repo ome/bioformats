@@ -1,3 +1,6 @@
+.. index:: Becker & Hickl SPCImage
+.. index:: .sdt
+
 Becker & Hickl SPCImage
 ===============================================================================
 

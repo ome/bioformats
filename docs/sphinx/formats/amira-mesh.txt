@@ -1,3 +1,6 @@
+.. index:: Amira Mesh
+.. index:: .am, .amiramesh, .grey, .hx, .labels
+
 Amira Mesh
 ===============================================================================
 

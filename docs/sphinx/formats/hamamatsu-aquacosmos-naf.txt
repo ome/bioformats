@@ -1,3 +1,6 @@
+.. index:: Hamamatsu Aquacosmos NAF
+.. index:: .naf
+
 Hamamatsu Aquacosmos NAF
 ===============================================================================
 
