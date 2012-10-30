@@ -37,12 +37,10 @@
 package loci.formats;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.Vector;
-import java.util.HashMap;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -1129,46 +1127,6 @@ public abstract class FormatReader extends FormatHandler
 
     return core[index].resolutionCount;
   }
-
-    /**
-     * Validate the order of resolutions for the current series, in
-     * decending order of size.  If the order is wrong, reorder it.
-     */
-    protected void reorderResolutions() {
-      int series = getSeriesCount();
-      int savedSeries = getSeries();
-      int savedResolution = getResolution();
-
-      for (int i = 0; i < series; i++) {
-        setSeries(i);
-        setResolution(0);
-        int index = getCoreIndex();
-        int resolutions = getResolutionCount();
-
-        CoreMetadata[] savedCore = new CoreMetadata[resolutions];
-        for (int c = 0; c < resolutions; c++)
-          savedCore[c] = core[index + c];
-
-        HashMap<Integer,Integer> levels = new HashMap<Integer,Integer>();
-        for (int res = 0; res<resolutions; res++) {
-          setResolution(res);
-          levels.put(new Integer(getSizeX()), new Integer(res));
-        }
-
-        Integer[] keys = levels.keySet().toArray(new Integer[resolutions]);
-        Arrays.sort(keys);
-
-        for (int j = 0; j < resolutions; j++) {
-          core[index + j] = savedCore[levels.get(keys[resolutions - j - 1])];
-          if (j == 0)
-            core[index + j].resolutionCount = resolutions;
-          else
-            core[index + j].resolutionCount = 1;
-        }
-      }
-      setSeries(savedSeries);
-      setResolution(savedResolution);
-    }
 
   /* @see IFormatReader#setResolution(int) */
   public void setResolution(int no) {
