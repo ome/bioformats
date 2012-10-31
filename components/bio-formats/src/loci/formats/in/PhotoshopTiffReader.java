@@ -240,9 +240,13 @@ public class PhotoshopTiffReader extends BaseTiffReader {
           int pad = nameLength % 4;
           if (pad != 0) pad = 4 - pad;
           layerNames[layer] = tag.readString(nameLength + pad);
-          addGlobalMeta("Layer name #" + layer, layerNames[layer]);
+          layerNames[layer] =
+            layerNames[layer].replaceAll("[^\\p{ASCII}]", "").trim();
+          if (layerNames[layer].length() == nameLength + pad) {
+            addGlobalMeta("Layer name #" + layer, layerNames[layer]);
+            layerMetadata.add(layerCore);
+          }
           tag.skipBytes((int) (fp + len - tag.getFilePointer()));
-          layerMetadata.add(layerCore);
         }
 
         core = new CoreMetadata[layerMetadata.size() + 1];
