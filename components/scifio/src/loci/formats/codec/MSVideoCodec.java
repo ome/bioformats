@@ -138,7 +138,7 @@ public class MSVideoCodec extends BaseCodec {
 
           for (int y=0; y<4; y++) {
             for (int x=3; x>=0; x--) {
-              int ndx = options.width*(column + y) + row + x;
+              int ndx = options.width*(column + (3 - y)) + row + x;
               short flag = y < 2 ? b : a;
               int shift = 4 - 4*(y % 2) + x;
               int cmp = 1 << shift;
@@ -163,8 +163,8 @@ public class MSVideoCodec extends BaseCodec {
             short q4b = in.readShort();
 
             for (int y=0; y<4; y++) {
-              for (int x=3; x>= 0; x--) {
-                int ndx = options.width*(column + y) + row + x;
+              for (int x=3; x>=0; x--) {
+                int ndx = options.width*(column + (3 - y)) + row + x;
 
                 short colorA =
                   x < 2 ? (y < 2 ? q3a : q1a) : (y < 2 ? q4a : q2a);
@@ -189,7 +189,7 @@ public class MSVideoCodec extends BaseCodec {
 
             for (int y=0; y<4; y++) {
               for (int x=3; x>=0; x--) {
-                int ndx = options.width*(column + y) + row + x;
+                int ndx = options.width*(column + (3 - y)) + row + x;
                 if (ndx >= shorts.length) break;
                 short flag = y < 2 ? b : a;
                 int shift = 4 - 4*(y % 2) + x;
@@ -213,7 +213,7 @@ public class MSVideoCodec extends BaseCodec {
 
         for (int y=0; y<4; y++) {
           for (int x=3; x>=0; x--) {
-            int ndx = options.width*(column + y) + row + x;
+            int ndx = options.width*(column + (3 - y)) + row + x;
             byte colorA = y < 2 ? (x < 2 ? colors[4] : colors[6]) :
               (x < 2 ? colors[0] : colors[2]);
             byte colorB = y < 2 ? (x < 2 ? colors[5] : colors[7]) :
@@ -236,7 +236,7 @@ public class MSVideoCodec extends BaseCodec {
       else {
         for (int y=0; y<4; y++) {
           for (int x=0; x<4; x++) {
-            int ndx = options.width*(column + y) + row + x;
+            int ndx = options.width*(column + (3 - y)) + row + x;
             if (options.bitsPerSample == 8) {
               if (ndx < bytes.length) {
                 bytes[ndx] = (byte) (a & 0xff);
