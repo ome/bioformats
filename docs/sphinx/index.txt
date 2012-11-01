@@ -8,17 +8,15 @@ metadata for a large number of formats, as well as writing to several
 formats. 
 
 
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
- 
-    about
-    users/user-info
-    developers/developer-links
-    supported-formats
+.. only:: html
+
+    - :doc:`about`
+    - :doc:`users/user-info`
+    - :doc:`developers/developer-links`
+    - :doc:`supported-formats`
 
 
-Installation information is avilable on the :doc:`user information page <users/user-info>`. Download Bio-Formats from `the Bio-Formats downloads page <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_
+Installation information is available on the :doc:`user information page <users/user-info>`. Download Bio-Formats from `the Bio-Formats downloads page <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_
 
 
 For help, see the
@@ -29,13 +27,7 @@ sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ for 
 some common questions. Please `contact us <http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
 you have any questions or problems with Bio-Formats.
 
-For developers, further information is available here:
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    troubleshooting
+For advanced users and developers, further information is available on the :doc:`troubleshooting page <troubleshooting>`.
 
 
 Bio-Formats is updated whenever a significant bug fix is made, or whenever a
@@ -48,4 +40,13 @@ development directions, see the
 and `5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OME-5.0>`_
 roadmaps.
 
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+ 
+    about
+    users/user-info
+    developers/developer-links
+    supported-formats
+    troubleshooting
 
