@@ -4,7 +4,7 @@
 Kodak BIP
 ===============================================================================
 
-Extensions: .bip
+Extensions: .bip 
 
 Developer: `Kodak/Carestream <http://carestream.com>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

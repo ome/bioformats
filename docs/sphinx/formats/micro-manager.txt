@@ -4,7 +4,7 @@
 Micro-Manager
 ===============================================================================
 
-Extensions: .tif, .txt, .xml
+Extensions: .tif, .txt, .xml 
 
 Developer: `Vale Lab <http://valelab.ucsf.edu/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

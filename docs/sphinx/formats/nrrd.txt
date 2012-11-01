@@ -4,7 +4,7 @@
 NRRD (Nearly Raw Raster Data)
 ===============================================================================
 
-Extensions: .nrrd, .nhdr, .raw, .txt
+Extensions: .nrrd, .nhdr, .raw, .txt 
 
 Developer: `Teem developers <http://teem.sourceforge.net/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

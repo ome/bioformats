@@ -4,7 +4,7 @@
 Unisoku
 ===============================================================================
 
-Extensions: .dat, .hdr
+Extensions: .dat, .hdr 
 
 
 Owner: `Unisoku <http://www.unisoku.com>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

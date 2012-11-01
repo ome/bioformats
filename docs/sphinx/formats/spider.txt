@@ -4,7 +4,7 @@
 SPIDER
 ===============================================================================
 
-Extensions: .spi, .stk
+Extensions: .spi, .stk 
 
 Developer: `Wadsworth Center <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

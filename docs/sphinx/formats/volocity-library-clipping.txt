@@ -4,7 +4,7 @@
 Volocity Library Clipping
 ===============================================================================
 
-Extensions: .acff
+Extensions: .acff 
 
 Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

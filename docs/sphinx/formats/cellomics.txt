@@ -4,7 +4,7 @@
 Cellomics
 ===============================================================================
 
-Extensions: .c01
+Extensions: .c01 
 
 Developer: `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

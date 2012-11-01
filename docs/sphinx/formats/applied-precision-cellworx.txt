@@ -4,7 +4,7 @@
 Applied Precision CellWorX
 ===============================================================================
 
-Extensions: .htd, .pnl
+Extensions: .htd, .pnl 
 
 Developer: `Applied Precision <http://www.api.com>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

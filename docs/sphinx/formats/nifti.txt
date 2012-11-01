@@ -4,7 +4,7 @@
 NIfTI
 ===============================================================================
 
-Extensions: .img, .hdr
+Extensions: .img, .hdr 
 
 Developer: `National Institutes of Health <http://www.nih.gov/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

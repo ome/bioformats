@@ -4,7 +4,7 @@
 Olympus FluoView FV1000
 ===============================================================================
 
-Extensions: .oib, .oif
+Extensions: .oib, .oif 
 
 
 Owner: `Olympus <http://www.olympus.com/>`_

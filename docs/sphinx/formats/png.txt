@@ -4,7 +4,7 @@
 PNG (Portable Network Graphics)
 ===============================================================================
 
-Extensions: .png
+Extensions: .png 
 
 Developer: `PNG Development Group <http://www.libpng.org/pub/png/pngnews.html>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |yes|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

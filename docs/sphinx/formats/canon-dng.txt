@@ -4,7 +4,7 @@
 Canon DNG
 ===============================================================================
 
-Extensions: .cr2, .crw
+Extensions: .cr2, .crw 
 
 Developer: `Canon <http://canon.com>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

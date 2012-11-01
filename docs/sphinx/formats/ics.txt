@@ -4,7 +4,7 @@
 ICS (Image Cytometry Standard)
 ===============================================================================
 
-Extensions: .ics, .ids
+Extensions: .ics, .ids 
 
 Developer: P. Dean et al.
 

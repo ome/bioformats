@@ -4,7 +4,7 @@
 AIM
 ===============================================================================
 
-Extensions: .aim
+Extensions: .aim 
 
 Developer: `SCANCO Medical AG <http://www.scanco.ch>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

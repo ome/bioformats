@@ -4,7 +4,7 @@
 PGM (Portable Gray Map)
 ===============================================================================
 
-Extensions: .pgm
+Extensions: .pgm 
 
 Developer: Netpbm developers
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

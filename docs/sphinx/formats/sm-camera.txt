@@ -4,7 +4,7 @@
 SM Camera
 ===============================================================================
 
-Extensions: .cxd
+Extensions: .cxd 
 
 
 
@@ -15,7 +15,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

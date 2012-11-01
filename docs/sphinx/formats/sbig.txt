@@ -4,7 +4,7 @@
 SBIG
 ===============================================================================
 
-Extensions: .sm2, .sm3
+Extensions: .sm2, .sm3 
 
 
 Owner: `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

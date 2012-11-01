@@ -4,7 +4,7 @@
 GIF (Graphics Interchange Format)
 ===============================================================================
 
-Extensions: .gif
+Extensions: .gif 
 
 Developer: `CompuServe <http://www.compuserve.com/>`_
 
@@ -17,7 +17,7 @@ SCIFIO: |yes|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

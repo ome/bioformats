@@ -4,7 +4,7 @@
 Becker & Hickl SPCImage
 ===============================================================================
 
-Extensions: .sdt
+Extensions: .sdt 
 
 
 Owner: `Becker-Hickl <http://www.becker-hickl.de/>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

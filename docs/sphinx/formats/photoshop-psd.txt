@@ -4,7 +4,7 @@
 Adobe Photoshop PSD
 ===============================================================================
 
-Extensions: .psd
+Extensions: .psd 
 
 Developer: `Adobe <http://www.adobe.com/>`_
 

@@ -4,7 +4,7 @@
 Gatan Digital Micrograph 2
 ===============================================================================
 
-Extensions: .dm2
+Extensions: .dm2 
 
 Developer: `Gatan <http://www.gatan.com>`_
 

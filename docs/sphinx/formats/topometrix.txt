@@ -4,7 +4,7 @@
 Topometrix
 ===============================================================================
 
-Extensions: .tfr, .ffr, .zfr, .zfp, .2fl
+Extensions: .tfr, .ffr, .zfr, .zfp, .2fl 
 
 
 Owner: `TopoMetrix (now Veeco) <http://www.veeco.com/>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

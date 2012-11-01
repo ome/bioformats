@@ -4,7 +4,7 @@
 VG SAM
 ===============================================================================
 
-Extensions: .dti
+Extensions: .dti 
 
 
 
@@ -15,7 +15,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

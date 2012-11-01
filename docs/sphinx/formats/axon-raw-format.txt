@@ -4,7 +4,7 @@
 Axon Raw Format
 ===============================================================================
 
-Extensions: .arf
+Extensions: .arf 
 
 
 Owner: `INDEC BioSystems <http://www.indecbiosystems.com/>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

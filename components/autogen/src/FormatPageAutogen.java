@@ -93,11 +93,25 @@ public class FormatPageAutogen {
       if (table.containsKey("extensions")) {
         context.put("extensions", table.get("extensions"));
       }
+      if (table.containsKey("unindexedExtensions")) {
+        context.put("unindexedExtensions",
+          ", " + table.get("unindexedExtensions"));
+      }
+      else {
+        context.put("unindexedExtensions", "");
+      }
       context.put("owner", table.get("owner"));
       context.put("developer", table.get("developer"));
       context.put("scifio", table.get("scifio"));
       context.put("export", table.get("export"));
-      context.put("versions", table.get("versions"));
+
+      if (table.containsKey("versions")) {
+        context.put("versions", table.get("versions"));
+      }
+      else {
+        context.put("versions", "");
+      }
+
       context.put("pixelsRating", table.get("pixelsRating"));
       context.put("metadataRating", table.get("metadataRating"));
       context.put("opennessRating", table.get("opennessRating"));
