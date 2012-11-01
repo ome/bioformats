@@ -4,7 +4,7 @@
 Khoros VIFF (Visualization Image File Format) Bitmap
 ===============================================================================
 
-Extensions: .xv
+Extensions: .xv 
 
 Developer: `Khoral <http://www.khoral.com/company/>`_
 
@@ -17,7 +17,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

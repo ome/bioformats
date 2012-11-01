@@ -4,7 +4,7 @@
 MNG (Multiple-image Network Graphics)
 ===============================================================================
 
-Extensions: .mng
+Extensions: .mng 
 
 Developer: `MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

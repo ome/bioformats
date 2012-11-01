@@ -4,7 +4,7 @@
 DICOM
 ===============================================================================
 
-Extensions: .dcm, .dicom
+Extensions: .dcm, .dicom 
 
 Developer: `National Electrical Manufacturers Association <http://www.nema.org/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

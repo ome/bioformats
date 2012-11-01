@@ -4,7 +4,7 @@
 SimplePCI & HCImage
 ===============================================================================
 
-Extensions: .cxd
+Extensions: .cxd 
 
 Developer: `Compix <http://www.cimaging.net/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

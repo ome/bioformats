@@ -847,7 +847,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/perkinelmer-ultraview`
-     - .tif, .2, .3, .4, ...
+     - .tif, .2, .3, .4
      - |Very good|
      - |Good|
      - |Fair|

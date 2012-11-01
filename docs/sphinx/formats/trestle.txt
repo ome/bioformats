@@ -4,7 +4,7 @@
 Trestle
 ===============================================================================
 
-Extensions: .tif, .sld, .jpg
+Extensions: .tif, .sld, .jpg 
 
 
 
@@ -15,7 +15,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

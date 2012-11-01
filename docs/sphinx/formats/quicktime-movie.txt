@@ -4,7 +4,7 @@
 QuickTime Movie
 ===============================================================================
 
-Extensions: .mov
+Extensions: .mov 
 
 
 Owner: `Apple Computer <http://www.apple.com/>`_
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |yes|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

@@ -4,7 +4,7 @@
 Leica LAS AF LIF (Leica Image File Format)
 ===============================================================================
 
-Extensions: .lif
+Extensions: .lif 
 
 Developer: `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
 

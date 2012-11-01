@@ -4,7 +4,7 @@
 LEO
 ===============================================================================
 
-Extensions: .sxm
+Extensions: .sxm 
 
 
 Owner: `Zeiss <http://www.zeiss.de>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

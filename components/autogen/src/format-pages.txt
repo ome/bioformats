@@ -1677,7 +1677,8 @@ utilityRating = Good
 reader = OperettaReader.java
 
 [PerkinElmer UltraView]
-extensions = .tif, .2, .3, .4, ...
+extensions = .tif, .2, .3, .4
+unindexedExtensions = etc.
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 scifio = no
 export = no

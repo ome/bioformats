@@ -4,7 +4,7 @@
 EPS (Encapsulated PostScript)
 ===============================================================================
 
-Extensions: .eps, .epsi, .ps
+Extensions: .eps, .epsi, .ps 
 
 Developer: `Adobe <http://www.adobe.com/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |yes|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

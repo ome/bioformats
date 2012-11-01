@@ -4,7 +4,7 @@
 Bitplane Imaris
 ===============================================================================
 
-Extensions: .ims
+Extensions: .ims 
 
 
 Owner: `Bitplane <http://www.bitplane.com/>`_

@@ -4,7 +4,7 @@
 Prairie Technologies TIFF
 ===============================================================================
 
-Extensions: .tif, .xml, .cfg
+Extensions: .tif, .xml, .cfg 
 
 Developer: `Prairie Technologies <http://www.prairie-technologies.com/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

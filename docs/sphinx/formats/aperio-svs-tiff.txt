@@ -4,7 +4,7 @@
 Aperio SVS TIFF
 ===============================================================================
 
-Extensions: .svs
+Extensions: .svs 
 
 
 Owner: `Aperio <http://www.aperio.com/>`_

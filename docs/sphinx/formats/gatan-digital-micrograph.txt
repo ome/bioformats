@@ -4,7 +4,7 @@
 Gatan Digital Micrograph
 ===============================================================================
 
-Extensions: .dm3
+Extensions: .dm3 
 
 
 Owner: `Gatan <http://www.gatan.com/>`_

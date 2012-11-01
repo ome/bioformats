@@ -4,7 +4,7 @@
 Olympus FluoView TIFF
 ===============================================================================
 
-Extensions: .tif
+Extensions: .tif 
 
 
 Owner: `Olympus <http://www.olympus.com/>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

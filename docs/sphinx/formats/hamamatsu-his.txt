@@ -4,7 +4,7 @@
 Hamamatsu HIS
 ===============================================================================
 
-Extensions: .his
+Extensions: .his 
 
 
 Owner: `Hamamatsu <http://www.hamamatsu.com>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

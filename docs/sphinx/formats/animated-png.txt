@@ -4,7 +4,7 @@
 Animated PNG
 ===============================================================================
 
-Extensions: .png
+Extensions: .png 
 
 Developer: `The Animated PNG Project <http://www.animatedpng.com/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |yes|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

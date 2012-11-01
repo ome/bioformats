@@ -4,7 +4,7 @@
 Windows Bitmap
 ===============================================================================
 
-Extensions: .bmp
+Extensions: .bmp 
 
 Developer: Microsoft and IBM
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

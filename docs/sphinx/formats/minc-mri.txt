@@ -4,7 +4,7 @@
 MINC MRI
 ===============================================================================
 
-Extensions: .mnc
+Extensions: .mnc 
 
 Developer: `McGill University <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 
