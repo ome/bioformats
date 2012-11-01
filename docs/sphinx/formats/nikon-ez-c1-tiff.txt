@@ -4,7 +4,7 @@
 Nikon EZ-C1 TIFF
 ===============================================================================
 
-Extensions: .tiff
+Extensions: .tiff 
 
 Developer: `Nikon <http://www.nikon.com/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

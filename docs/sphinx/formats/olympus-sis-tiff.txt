@@ -4,7 +4,7 @@
 Olympus SIS TIFF
 ===============================================================================
 
-Extensions: .tiff
+Extensions: .tiff 
 
 Developer: `Olympus <http://www.olympus-sis.com/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

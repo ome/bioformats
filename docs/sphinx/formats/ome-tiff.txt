@@ -4,7 +4,7 @@
 OME-TIFF
 ===============================================================================
 
-Extensions: .ome.tiff
+Extensions: .ome.tiff 
 
 Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 

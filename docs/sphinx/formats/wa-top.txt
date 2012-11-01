@@ -4,7 +4,7 @@
 WA-TOP
 ===============================================================================
 
-Extensions: .wat
+Extensions: .wat 
 
 Developer: WA Technology
 
@@ -17,7 +17,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

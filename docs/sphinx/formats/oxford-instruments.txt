@@ -4,7 +4,7 @@
 Oxford Instruments
 ===============================================================================
 
-Extensions: .top
+Extensions: .top 
 
 
 Owner: `Oxford Instruments <http://www.oxinst.com>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

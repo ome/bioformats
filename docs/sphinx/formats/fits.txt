@@ -4,7 +4,7 @@
 FITS (Flexible Image Transport System)
 ===============================================================================
 
-Extensions: .fits
+Extensions: .fits 
 
 Developer: `National Radio Astronomy Observatory <http://www.nrao.edu/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

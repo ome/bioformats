@@ -4,7 +4,7 @@
 Li-Cor L2D
 ===============================================================================
 
-Extensions: .l2d, .tif, .scn
+Extensions: .l2d, .tif, .scn 
 
 
 Owner: `LiCor Biosciences <http://www.licor.com/>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

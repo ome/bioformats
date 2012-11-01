@@ -4,7 +4,7 @@
 Leica SCN
 ===============================================================================
 
-Extensions: .scn
+Extensions: .scn 
 
 Developer: `Leica Microsystems <http://www.leica-microsystems.com/>`_
 

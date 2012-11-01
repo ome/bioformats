@@ -4,7 +4,7 @@
 Seiko
 ===============================================================================
 
-Extensions: .xqd, .xqf
+Extensions: .xqd, .xqf 
 
 
 Owner: `Seiko <http://www.seiko.co.jp/en/index.php>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

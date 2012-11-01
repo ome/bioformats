@@ -4,7 +4,7 @@
 Bio-Rad PIC
 ===============================================================================
 
-Extensions: .pic, .raw, .xml
+Extensions: .pic, .raw, .xml 
 
 Developer: Bio-Rad
 
@@ -17,7 +17,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

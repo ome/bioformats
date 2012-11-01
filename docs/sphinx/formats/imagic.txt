@@ -4,7 +4,7 @@
 IMAGIC
 ===============================================================================
 
-Extensions: .hed, .img
+Extensions: .hed, .img 
 
 Developer: `Image Science <http://www.imagescience.de>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

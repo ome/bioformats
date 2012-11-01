@@ -4,7 +4,7 @@
 UBM
 ===============================================================================
 
-Extensions: .pr3
+Extensions: .pr3 
 
 
 
@@ -15,7 +15,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

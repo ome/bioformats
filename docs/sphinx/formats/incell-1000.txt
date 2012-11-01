@@ -4,7 +4,7 @@
 InCell 1000
 ===============================================================================
 
-Extensions: .xdce, .tif
+Extensions: .xdce, .tif 
 
 Developer: `GE <http://gelifesciences.com/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

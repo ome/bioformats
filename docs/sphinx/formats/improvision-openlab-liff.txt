@@ -4,7 +4,7 @@
 Improvision Openlab LIFF
 ===============================================================================
 
-Extensions: .liff
+Extensions: .liff 
 
 Developer: `Improvision <http://www.improvision.com/>`_
 

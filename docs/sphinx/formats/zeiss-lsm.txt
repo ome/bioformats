@@ -4,7 +4,7 @@
 Zeiss LSM (Laser Scanning Microscope) 510/710
 ===============================================================================
 
-Extensions: .lsm, .mdb
+Extensions: .lsm, .mdb 
 
 
 Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

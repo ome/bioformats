@@ -4,7 +4,7 @@
 JPEG
 ===============================================================================
 
-Extensions: .jpg
+Extensions: .jpg 
 
 Developer: `Independent JPEG Group <http://www.ijg.org/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |yes|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

@@ -4,7 +4,7 @@
 Text
 ===============================================================================
 
-Extensions: .txt
+Extensions: .txt 
 
 
 
@@ -15,7 +15,7 @@ SCIFIO: |yes|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

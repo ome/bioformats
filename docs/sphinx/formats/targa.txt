@@ -4,7 +4,7 @@
 Targa
 ===============================================================================
 
-Extensions: .tga
+Extensions: .tga 
 
 Developer: `Truevision <http://www.truevision.com>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

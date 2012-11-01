@@ -4,7 +4,7 @@
 PICT (Macintosh Picture)
 ===============================================================================
 
-Extensions: .pict
+Extensions: .pict 
 
 Developer: `Apple Computer <http://www.apple.com>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

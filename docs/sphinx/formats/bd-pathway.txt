@@ -4,7 +4,7 @@
 BD Pathway
 ===============================================================================
 
-Extensions: .exp, .tif
+Extensions: .exp, .tif 
 
 
 Owner: `BD Biosciences <http://www.bdbiosciences.com>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

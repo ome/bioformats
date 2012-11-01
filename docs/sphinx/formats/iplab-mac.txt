@@ -4,7 +4,7 @@
 IPLab-Mac
 ===============================================================================
 
-Extensions: .ipm
+Extensions: .ipm 
 
 
 Owner: `BioVision Technologies <http://biovis.com/>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

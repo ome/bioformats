@@ -4,7 +4,7 @@
 TIFF (Tagged Image File Format)
 ===============================================================================
 
-Extensions: .tif
+Extensions: .tif 
 
 Developer: Aldus and Microsoft
 
@@ -17,7 +17,7 @@ SCIFIO: |yes|
 
 Export: |yes|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

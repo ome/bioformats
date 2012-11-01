@@ -4,7 +4,7 @@
 IMOD
 ===============================================================================
 
-Extensions: .mod
+Extensions: .mod 
 
 Developer: `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <http://bio3d.colorado.edu>`_
 
@@ -17,7 +17,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

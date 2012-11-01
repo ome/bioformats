@@ -4,7 +4,7 @@
 AVI (Audio Video Interleave)
 ===============================================================================
 
-Extensions: .avi
+Extensions: .avi 
 
 Developer: `Microsoft <http://www.microsoft.com/>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |yes|
 
 Export: |yes|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

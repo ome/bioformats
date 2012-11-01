@@ -4,7 +4,7 @@
 Hitachi S-4800
 ===============================================================================
 
-Extensions: .txt, .tif, .bmp, .jpg
+Extensions: .txt, .tif, .bmp, .jpg 
 
 Developer: `Hitachi <http://www.hitachi-hta.com/sites/default/files/technotes/Hitachi_4800_STEM.pdf>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

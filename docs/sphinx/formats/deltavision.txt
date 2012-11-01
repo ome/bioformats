@@ -4,7 +4,7 @@
 DeltaVision
 ===============================================================================
 
-Extensions: .dv, .r3d
+Extensions: .dv, .r3d 
 
 
 Owner: `Applied Precision <http://www.api.com/>`_
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 

@@ -4,7 +4,7 @@
 Analyze 7.5
 ===============================================================================
 
-Extensions: .img, .hdr
+Extensions: .img, .hdr 
 
 Developer: `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir>`_
 
@@ -16,7 +16,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: $versions
+Officially Supported Versions: 
 
 Supported Metadata Fields:
 
