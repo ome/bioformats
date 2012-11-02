@@ -238,7 +238,7 @@ public class CoreMetadata {
     thumbSizeX = c.thumbSizeX;
     thumbSizeY = c.thumbSizeY;
     pixelType = c.pixelType;
-    bitsPerPixel = c.citsPerPixel;
+    bitsPerPixel = c.bitsPerPixel;
     imageCount = c.imageCount;
     cLengths = c.cLengths;
     cTypes = c.cTypes;
@@ -253,4 +253,5 @@ public class CoreMetadata {
     seriesMetadata = c.seriesMetadata;
     thumbnail = c.thumbnail;
     resolutionCount = c.resolutionCount;
+  }
 }
