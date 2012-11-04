@@ -1,0 +1,1215 @@
+Supported Formats
+-----------------
+
+.. tabularcolumns:: |p{3cm}|p{2cm}|c|c|c|c|c|c|c|
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30, 20, 10, 10, 10, 10, 10, 10, 10
+
+   *
+     - Format
+     - Extensions
+     - :term:`Pixels`
+     - :term:`Metadata`
+     - :term:`Openness`
+     - :term:`Presence`
+     - :term:`Utility`
+     - :term:`Export`
+     - :term:`SCIFIO`
+
+   * - :doc:`formats/3i-slidebook`
+     - .sld
+     - |Very good|
+     - |Fair|
+     - |Fair|
+     - |Very good|
+     - |Poor|
+     - |no|
+     - |no|
+   * - :doc:`formats/abd-tiff`
+     - .tif
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/aim`
+     - .aim
+     - |Good|
+     - |Very good|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/alicona-3d`
+     - .al3d
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Poor|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/amersham-biosciences-gel`
+     - .gel
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/amira-mesh`
+     - .am, .amiramesh, .grey, .hx, .labels
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/analyze-75`
+     - .img, .hdr
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/animated-png`
+     - .png
+     - |Very good|
+     - |Outstanding|
+     - |Outstanding|
+     - |Good|
+     - |Poor|
+     - |yes|
+     - |yes|
+   * - :doc:`formats/aperio-svs-tiff`
+     - .svs
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/applied-precision-cellworx`
+     - .htd, .pnl
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/avi`
+     - .avi
+     - |Good|
+     - |Outstanding|
+     - |Fair|
+     - |Outstanding|
+     - |Poor|
+     - |yes|
+     - |yes|
+   * - :doc:`formats/axon-raw-format`
+     - .arf
+     - |Very good|
+     - |Fair|
+     - |Very good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/bd-pathway`
+     - .exp, .tif
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/becker-hickl-spcimage`
+     - .sdt
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/bio-rad-gel`
+     - .1sc
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/bio-rad-pic`
+     - .pic, .raw, .xml
+     - |Outstanding|
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |no|
+     - |no|
+   * - :doc:`formats/bitplane-imaris`
+     - .ims
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/bruker-mri`
+     - .ims
+     - |Good|
+     - |Very good|
+     - |Fair|
+     - |Good|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/burleigh`
+     - .img
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/canon-dng`
+     - .cr2, .crw
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/cellomics`
+     - .c01
+     - |Very good|
+     - |Poor|
+     - |Fair|
+     - |Poor|
+     - |Poor|
+     - |no|
+     - |no|
+   * - :doc:`formats/cellsens-vsi`
+     - .vsi
+     - |Fair|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/deltavision`
+     - .dv, .r3d
+     - |Outstanding|
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/dicom`
+     - .dcm, .dicom
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |no|
+     - |yes|
+   * - :doc:`formats/ecat7`
+     - .v
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/eps`
+     - .eps, .epsi, .ps
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Very good|
+     - |Poor|
+     - |yes|
+     - |yes|
+   * - :doc:`formats/evotecperkinelmer-opera-flex`
+     - .flex, .mea, .res
+     - |Outstanding|
+     - |Very good|
+     - |Poor|
+     - |Poor|
+     - |Poor|
+     - |no|
+     - |no|
+   * - :doc:`formats/fei`
+     - .img
+     - |Fair|
+     - |Poor|
+     - |Poor|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/fei-tiff`
+     - .tiff
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/fits`
+     - .fits
+     - |Very good|
+     - |Fair|
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |no|
+     - |yes|
+   * - :doc:`formats/gatan-digital-micrograph`
+     - .dm3
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/gatan-digital-micrograph-2`
+     - .dm2
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/gif`
+     - .gif
+     - |Very good|
+     - |Very good|
+     - |Fair|
+     - |Outstanding|
+     - |Poor|
+     - |no|
+     - |yes|
+   * - :doc:`formats/hamamatsu-aquacosmos-naf`
+     - .naf
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/hamamatsu-his`
+     - .his
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/hamamatsu-ndpi`
+     - .ndpi
+     - |Fair|
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/hamamatsu-vms`
+     - .vms
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/hitachi-s-4800`
+     - .txt, .tif, .bmp, .jpg
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/ics`
+     - .ics, .ids
+     - |Outstanding|
+     - |Very good|
+     - |Outstanding|
+     - |Very good|
+     - |Very good|
+     - |yes|
+     - |yes|
+   * - :doc:`formats/imacon`
+     - .fff
+     - |Poor|
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/imagepro-sequence`
+     - .seq
+     - |Very good|
+     - |Very good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/imagepro-workspace`
+     - .ipw
+     - |Very good|
+     - |Very good|
+     - |Poor|
+     - |Poor|
+     - |Poor|
+     - |no|
+     - |no|
+   * - :doc:`formats/imagic`
+     - .hed, .img
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/imod`
+     - .mod
+     - |Good|
+     - |Good|
+     - |Outstanding|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/improvision-openlab-liff`
+     - .liff
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/improvision-openlab-raw`
+     - .raw
+     - |Outstanding|
+     - |Very good|
+     - |Very good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/improvision-tiff`
+     - .tif
+     - |Very good|
+     - |Outstanding|
+     - |Very good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/incell-1000`
+     - .xdce, .tif
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/incell-3000`
+     - .frm
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Poor|
+     - |no|
+     - |no|
+   * - :doc:`formats/inr`
+     - .inr
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/iplab`
+     - .ipl
+     - |Outstanding|
+     - |Very good|
+     - |Very good|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/iplab-mac`
+     - .ipm
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/jeol`
+     - .dat, .img, .par
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/jpeg`
+     - .jpg
+     - |Very good|
+     - |Fair|
+     - |Outstanding|
+     - |Outstanding|
+     - |Poor|
+     - |yes|
+     - |yes|
+   * - :doc:`formats/jpeg-2000`
+     - .jp2
+     - |Very good|
+     - |Poor|
+     - |Outstanding|
+     - |Good|
+     - |Poor|
+     - |yes|
+     - |yes|
+   * - :doc:`formats/jpk`
+     - .jpk
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/jpx`
+     - .jpx
+     - |Very good|
+     - |Very good|
+     - |Outstanding|
+     - |Good|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/khoros-viff-bitmap`
+     - .xv
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Poor|
+     - |Poor|
+     - |no|
+     - |no|
+   * - :doc:`formats/kodak-bip`
+     - .bip
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/lambert-instruments-flim`
+     - .fli
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/leica-lcs-lei`
+     - .lei, .tif
+     - |Outstanding|
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |no|
+     - |no|
+   * - :doc:`formats/leica-lif`
+     - .lif
+     - |Outstanding|
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |no|
+     - |no|
+   * - :doc:`formats/leica-scn`
+     - .scn
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/leo`
+     - .sxm
+     - |Good|
+     - |Fair|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/li-cor-l2d`
+     - .l2d, .tif, .scn
+     - |Very good|
+     - |Fair|
+     - |Good|
+     - |Good|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/lim`
+     - .lim
+     - |Good|
+     - |Poor|
+     - |Poor|
+     - |Poor|
+     - |Poor|
+     - |no|
+     - |no|
+   * - :doc:`formats/metamorph-75-tiff`
+     - .tiff
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/metamorph-stack-stk`
+     - .stk, .nd
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/mias-maia-scientific`
+     - .tif
+     - |Very good|
+     - |Poor|
+     - |Fair|
+     - |Poor|
+     - |Poor|
+     - |no|
+     - |no|
+   * - :doc:`formats/micro-manager`
+     - .tif, .txt, .xml
+     - |Outstanding|
+     - |Very good|
+     - |Outstanding|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |yes|
+   * - :doc:`formats/minc-mri`
+     - .mnc
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/minolta-mrw`
+     - .mrw
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/mng`
+     - .mng
+     - |Good|
+     - |Good|
+     - |Outstanding|
+     - |Fair|
+     - |Poor|
+     - |no|
+     - |yes|
+   * - :doc:`formats/molecular-imaging`
+     - .stp
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/mrc`
+     - .mrc
+     - |Outstanding|
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/nef`
+     - .nef, .tif
+     - |Very good|
+     - |Very good|
+     - |Poor|
+     - |Poor|
+     - |Poor|
+     - |no|
+     - |no|
+   * - :doc:`formats/nifti`
+     - .img, .hdr
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/nikon-elements-tiff`
+     - .tiff
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/nikon-ez-c1-tiff`
+     - .tiff
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/nikon-nis-elements-nd2`
+     - .nd2
+     - |Very good|
+     - |Very good|
+     - |Fair|
+     - |Very good|
+     - |Very good|
+     - |no|
+     - |no|
+   * - :doc:`formats/nrrd`
+     - .nrrd, .nhdr, .raw, .txt
+     - |Very good|
+     - |Very good|
+     - |Outstanding|
+     - |Fair|
+     - |Very good|
+     - |no|
+     - |yes|
+   * - :doc:`formats/olympus-cellrapl`
+     - .apl, .mtb, .tnb, .tif, .obsep
+     - |Very good|
+     - |Fair|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/olympus-fluoview-fv1000`
+     - .oib, .oif
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |Very good|
+     - |no|
+     - |no|
+   * - :doc:`formats/olympus-fluoview-tiff`
+     - .tif
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/olympus-scanr`
+     - .xml, .dat, .tif
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/olympus-sis-tiff`
+     - .tiff
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/ome-tiff`
+     - .ome.tiff
+     - |Outstanding|
+     - |Outstanding|
+     - |Outstanding|
+     - |Fair|
+     - |Outstanding|
+     - |yes|
+     - |yes|
+   * - :doc:`formats/ome-xml`
+     - .ome
+     - |Outstanding|
+     - |Outstanding|
+     - |Outstanding|
+     - |Fair|
+     - |Outstanding|
+     - |yes|
+     - |yes|
+   * - :doc:`formats/oxford-instruments`
+     - .top
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/pcx-pc-paintbrush`
+     - .pcx
+     - |Very good|
+     - |Poor|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |yes|
+   * - :doc:`formats/perkin-elmer-densitometer`
+     - .pds
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/perkinelmer-operetta`
+     - .tiff, .xml
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/perkinelmer-ultraview`
+     - .tif, .2, .3, .4
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/pgm`
+     - .pgm
+     - |Very good|
+     - |Good|
+     - |Outstanding|
+     - |Good|
+     - |Poor|
+     - |no|
+     - |yes|
+   * - :doc:`formats/photoshop-psd`
+     - .psd
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/photoshop-tiff`
+     - .tif, .tiff
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/pict-macintosh-picture`
+     - .pict
+     - |Very good|
+     - |Fair|
+     - |Fair|
+     - |Very good|
+     - |Poor|
+     - |no|
+     - |yes|
+   * - :doc:`formats/png`
+     - .png
+     - |Very good|
+     - |Good|
+     - |Outstanding|
+     - |Outstanding|
+     - |Poor|
+     - |yes|
+     - |yes|
+   * - :doc:`formats/prairie-tech-tiff`
+     - .tif, .xml, .cfg
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/quesant`
+     - .afm
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/quicktime-movie`
+     - .mov
+     - |Good|
+     - |Very good|
+     - |Fair|
+     - |Outstanding|
+     - |Poor|
+     - |yes|
+     - |yes|
+   * - :doc:`formats/rhk`
+     - .sm2, .sm3
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/sbig`
+     - .sm2, .sm3
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/seiko`
+     - .xqd, .xqf
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/simplepci-hcimage`
+     - .cxd
+     - |Outstanding|
+     - |Good|
+     - |Very good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/simplepci-hcimage-tiff`
+     - .tiff
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/sm-camera`
+     - .tiff
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/spider`
+     - .spi, .stk
+     - |Very good|
+     - |Very good|
+     - |Outstanding|
+     - |Good|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/targa`
+     - .tga
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Poor|
+     - |no|
+     - |no|
+   * - :doc:`formats/text`
+     - .txt
+     - |Good|
+     - |Poor|
+     - |Fair|
+     - |Fair|
+     - |Poor|
+     - |no|
+     - |yes|
+   * - :doc:`formats/tiff`
+     - .tif
+     - |Very good|
+     - |Very good|
+     - |Outstanding|
+     - |Outstanding|
+     - |Fair|
+     - |yes|
+     - |yes|
+   * - :doc:`formats/tillphotonics-tillvision`
+     - .vws
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/topometrix`
+     - .tfr, .ffr, .zfr, .zfp, .2fl
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/trestle`
+     - .tif, .sld, .jpg
+     - |Good|
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/ubm`
+     - .pr3
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/unisoku`
+     - .dat, .hdr
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/varian-fdf`
+     - .fdf
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/vg-sam`
+     - .dti
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/visitech-xys`
+     - .xys, .html
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/volocity`
+     - .mvd2
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/volocity-library-clipping`
+     - .acff
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Poor|
+     - |no|
+     - |no|
+   * - :doc:`formats/wa-top`
+     - .wat
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/windows-bitmap`
+     - .bmp
+     - |Very good|
+     - |Outstanding|
+     - |Fair|
+     - |Outstanding|
+     - |Poor|
+     - |no|
+     - |yes|
+   * - :doc:`formats/zeiss-axiovision-tiff`
+     - .xml, .tiff
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/zeiss-axiovision-zvi`
+     - .zvi
+     - |Outstanding|
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/zeiss-czi`
+     - .czi
+     - |Outstanding|
+     - |Outstanding|
+     - |Very good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
+   * - :doc:`formats/zeiss-lsm`
+     - .lsm, .mdb
+     - |Outstanding|
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |Good|
+     - |no|
+     - |no|
+
+Bio-Formats currently supports **127** formats
+
+.. glossary::
+    Pixels
+        Our estimation of Bio-Formats' ability to reliably extract complete 
+        and accurate pixel values from files in that format. The better this 
+        score, the more confident we are that Bio-Formats will successfully 
+        read your file without displaying an error message or displaying an 
+        erroneous image.
+
+    Metadata
+        Our certainty in the thoroughness and correctness of Bio-Formats'   
+        metadata extraction and conversion from files of that format into 
+        standard OME-XML. The better this score, the more confident we are 
+        that all meaningful metadata will be parsed and populated as OME-XML.
+
+    Openness
+        This is not a direct expression of Bio-Formats' performance, but 
+        rather indicates the level of cooperation the format's controlling 
+        interest has demonstrated toward the scientific community with respect 
+        to the format. The better this score, the more tools (specification 
+        documents, source code, sample files, etc.) have been made available.
+
+    Presence
+        This is also not directly related to Bio-Formats, but instead 
+        represents our understanding of the format's popularity, and is also 
+        as a measure of compatibility between applications. The better this 
+        score, the more common the format and the more software packages 
+        include support for it.
+
+    Utility
+        Our opinion of the format's suitability for storing metadata-rich   
+        microscopy image data. The better this score, the wider the variety of 
+        information that can be effectively stored in the format.
+
+    Export
+        This indicates whether Bio-Formats is capable of writing the format 
+        (Bio-Formats can read every format on this list).
+
+    SCIFIO 
+        This indicates whether format is supported by the 
+        :doc:`SCIFIO <users/scifio>` core library (See the license section 
+        on the :doc:`Bio-Formats documentation <index>` page for why this 
+        matters).
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+    :hidden:
+
+    formats/*

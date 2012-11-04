@@ -1,0 +1,60 @@
+.. index:: SBIG
+.. index:: .sm2, .sm3
+
+SBIG
+===============================================================================
+
+Extensions: .sm2, .sm3 
+
+
+Owner: `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_ 
+- a few SBIG files
+
+We would like to have:
+
+- more SBIG files
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Very good|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`SBIGReader.java <components/bio-formats/src/loci/formats/in/SBIGReader.java >`
+
+Notes:
+
+
