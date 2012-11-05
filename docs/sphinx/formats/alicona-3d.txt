@@ -1,0 +1,58 @@
+.. index:: Alicona 3D
+.. index:: .al3d
+
+Alicona 3D
+===============================================================================
+
+Extensions: .al3d 
+
+
+Owner: `Alicona Imaging <http://www.alicona.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 1.0
+
+Supported Metadata Fields:
+
+
+
+We currently have:
+
+- an `AL3D specification document <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) 
+- a few AL3D datasets
+
+We would like to have:
+
+- more AL3D datasets (Z series, T series, 16-bit)
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Very good|
+
+Presence: |Poor|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`AliconaReader.java <components/bio-formats/src/loci/formats/in/AliconaReader.java >`
+
+Notes:
+
+
+Known deficiencies: 
+
+- Support for 16-bit AL3D images is present, but has never been tested. 
+- Texture data is currently ignored.

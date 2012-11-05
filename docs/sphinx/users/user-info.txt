@@ -1,0 +1,125 @@
+****************
+User Information
+****************
+
+
+Installation
+============
+
+Download one of the files from `the Bio-Formats downloads page <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_ and place it in an appropriate directory. Specific installation instructions
+depend upon the application you are using - see below.
+
+
+Dataset Importing
+=================
+
+For information about what extensions to choose to import files, see
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    /dataset-structure-table
+
+
+Using Bio-Formats with ImageJ and FIJI
+======================================
+
+The following sections explain the features of Bio-Formats and how to use 
+it within ImageJ and FIJI:
+
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    bf-features-imagej
+    installing-bf-imagej
+    load-images
+    managing-memory
+    bug-reporting
+
+
+SCIFIO
+======
+
+SCIFIO provides the core architecture of the Bio-Formats library and also includes reader and writer implementations for open file formats. The more permissive BSD license enables non-GPL third party software to read and write OME-TIFF using SCIFIO alone. For more information see:
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    scifio
+
+
+Other applications
+==================
+
+Many software packages can use Bio-Formats to read and write microscopy formats 
+(click on the package for further details):
+
+Image Servers
+-------------
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    bisque
+    ome-server
+    omero
+
+
+Libraries and Scripting
+-----------------------
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    command-line-tools
+    farsight
+    i3dcore
+    imglib
+    itk
+    qu-matlab
+    subimager
+
+
+Numerical Data Processing
+-------------------------
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    idl
+    knime
+    matlab
+    visad
+
+Visualization and analysis
+--------------------------
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    bitplane-imaris
+    cellprofiler
+    comstat2
+    endrov
+    fiji
+    focalpoint
+    graphic-converter
+    icy
+    imagej
+    upgrading-importer-imagej
+    iqm
+    jar2lib
+    mipav
+    macnification
+    v3d
+    visbio
+    xuvtools
+
