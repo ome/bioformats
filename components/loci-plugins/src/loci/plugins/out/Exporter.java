@@ -91,6 +91,10 @@ import ome.xml.model.primitives.PositiveInteger;
  */
 public class Exporter {
 
+  // -- Constants --
+
+  private static final String ORDER = "XYCZT";
+
   // -- Fields --
 
   /** Current stack. */
@@ -113,6 +117,7 @@ public class Exporter {
     Boolean splitZ = null;
     Boolean splitC = null;
     Boolean splitT = null;
+    int sizeZ = 0, sizeC = 0, sizeT = 0;
 
     if (plugin.arg != null) {
       outfile = Macro.getValue(plugin.arg, "outfile", null);
@@ -347,7 +352,7 @@ public class Exporter {
       }
       if (store.getPixelsDimensionOrder(0) == null) {
         try {
-          store.setPixelsDimensionOrder(DimensionOrder.fromString("XYCZT"), 0);
+          store.setPixelsDimensionOrder(DimensionOrder.fromString(ORDER), 0);
         }
         catch (EnumerationException e) { }
       }
@@ -423,9 +428,9 @@ public class Exporter {
       String[] outputFiles = new String[] {outfile};
 
       if (splitZ || splitC || splitT) {
-        int sizeZ = store.getPixelsSizeZ(0).getValue();
-        int sizeC = store.getPixelsSizeC(0).getValue();
-        int sizeT = store.getPixelsSizeT(0).getValue();
+        sizeZ = store.getPixelsSizeZ(0).getValue();
+        sizeC = store.getPixelsSizeC(0).getValue();
+        sizeT = store.getPixelsSizeT(0).getValue();
 
         int nFiles = 1;
         if (splitZ) {
@@ -535,17 +540,35 @@ public class Exporter {
           System.arraycopy(pix[2], 0, plane, 2 * x * y, x * y);
         }
 
+        int fileIndex = 0;
+        if (doStack) {
+          int[] coords =
+            FormatTools.getZCTCoords(ORDER, sizeZ, sizeC, sizeT, size, i);
+          int realZ = sizeZ;
+          int realC = sizeC;
+          int realT = sizeT;
+
+          if (!splitZ) {
+            coords[0] = 0;
+            realZ = 1;
+          }
+          if (!splitC) {
+            coords[1] = 0;
+            realC = 1;
+          }
+          if (!splitT) {
+            coords[2] = 0;
+            realT = 1;
+          }
+          fileIndex = FormatTools.getIndex(ORDER, realZ, realC, realT,
+            realZ * realC * realT, coords[0], coords[1], coords[2]);
+        }
+
         if (notSupportedType) {
           IJ.error("Pixel type not supported by this format.");
         }
         else {
-          if (outputFiles.length == 1) {
-            // the user didn't tell us to write to multiple files
-            w.setId(outputFiles[0]);
-          }
-          else {
-            w.setId(outputFiles[no]);
-          }
+          w.changeOutputFile(outputFiles[fileIndex]);
           w.saveBytes(no++, plane);
         }
       }
