@@ -1,0 +1,56 @@
+.. index:: cellSens VSI
+.. index:: .vsi
+
+cellSens VSI
+===============================================================================
+
+Extensions: .vsi 
+
+Developer: `Olympus <http://www.olympus.com/>`_
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `Micro-Manager <http://micro-manager.org/>`_
+
+
+We currently have:
+
+- a few example datasets
+
+We would like to have:
+
+- an official specification document
+
+Ratings
+-------
+
+Pixels: |Fair|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`CellSensReader.java <components/bio-formats/src/loci/formats/in/CellSensReader.java >`
+
+Notes:
+
+

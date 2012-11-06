@@ -1,0 +1,59 @@
+.. index:: MINC MRI
+.. index:: .mnc
+
+MINC MRI
+===============================================================================
+
+Extensions: .mnc 
+
+Developer: `McGill University <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `MINC <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
+
+Sample Datasets:
+
+- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
+
+We currently have:
+
+- a few MINC files
+
+We would like to have:
+
+- an official specification document
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Good|
+
+Presence: |Good|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`MINCReader.java <components/bio-formats/src/loci/formats/in/MINCReader.java >`
+
+Notes:
+
+

@@ -1,0 +1,63 @@
+.. index:: MNG (Multiple-image Network Graphics)
+.. index:: .mng
+
+MNG (Multiple-image Network Graphics)
+===============================================================================
+
+Extensions: .mng 
+
+Developer: `MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
+
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
+
+Sample Datasets:
+
+- `MNG sample files <http://sourceforge.net/projects/libmng/files/libmng-testsuites/MNGsuite-1.0/MNGsuite.zip/download>`_
+
+We currently have:
+
+- the `libmng-testsuites <http://downloads.sourceforge.net/libmng/MNGsuite-20030305.zip>`_ package (from 2003 March 05, in C) 
+- a large number of MNG datasets
+
+We would like to have:
+
+- an official specification document
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Outstanding|
+
+Presence: |Fair|
+
+Utility: |Poor|
+
+Additional Information
+----------------------
+
+Source Code: :source:`MNGReader.java <components/scifio/src/loci/formats/in/MNGReader.java >`
+
+Notes:
+
+
+.. seealso:: 
+  `MNG homepage <http://www.libpng.org/pub/mng/>`_  
+  `MNG specification <http://www.libpng.org/pub/mng/spec>`_

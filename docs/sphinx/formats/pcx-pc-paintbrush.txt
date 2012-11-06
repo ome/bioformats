@@ -1,0 +1,62 @@
+.. index:: PCX (PC Paintbrush)
+.. index:: .pcx
+
+PCX (PC Paintbrush)
+===============================================================================
+
+Extensions: .pcx 
+
+Developer: ZSoft Corporation
+
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `DIMIN <http://www.dimin.net/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- several .pcx files 
+- the ability to generate additional .pcx filse
+
+We would like to have:
+
+- an official specification document 
+- more Oxford Instruments files
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Poor|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`PCXReader.java <components/scifio/src/loci/formats/in/PCXReader.java >`
+
+Notes:
+
+
+Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_.
