@@ -404,7 +404,7 @@ public class CellSensReader extends FormatReader {
     for (int s=0; s<core.length; s++) {
       tileMap[s] = new HashMap<TileCoordinate, Integer>();
 
-      if (s == 0 && !hasFlattenedResolutions()) {
+      if (s == 0) {
         core[s].resolutionCount = ifds.size() + (files.size() == 1 ? 0 : 1);
       }
 

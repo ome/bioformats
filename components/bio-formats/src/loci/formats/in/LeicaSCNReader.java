@@ -224,7 +224,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     int samples = ifd.getSamplesPerPixel();
     int r = s-i.imageNumStart; // subresolution
 
-    if (s == i.imageNumStart && !hasFlattenedResolutions()) {
+    if (s == i.imageNumStart) {
       core[s].resolutionCount = i.pixels.sizeR;
     }
 
