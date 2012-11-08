@@ -1,3 +1,16 @@
+4.4.5 (2012 November 13):
+* Restructured and improved documentation
+* Many bug fixes, including:
+  - File grouping in many multi-file formats
+  - Maven build fixes
+  - ITK plugin fixes
+
+4.4.4 (2012 September 24):
+* Many bug fixes
+
+4.4.2 (2012 August 22):
+* Security fix for OMERO plugins for ImageJ
+
 4.4.1 (2012 July 20):
 * Fix a bug that prevented BigTIFF files from being read
 * Fix a bug that prevented PerkinElmer .flex files from importing into OMERO
