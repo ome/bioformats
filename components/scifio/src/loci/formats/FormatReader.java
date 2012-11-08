@@ -1122,6 +1122,10 @@ public abstract class FormatReader extends FormatHandler
   public int getResolutionCount() {
     FormatTools.assertId(currentId, true, 1);
 
+    if (hasFlattenedResolutions()) {
+      return 1;
+    }
+
     int index = 0;
     for (int i=0; i<getSeries(); i++) {
       index += core[index].resolutionCount;

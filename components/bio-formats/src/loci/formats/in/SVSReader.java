@@ -254,7 +254,7 @@ public class SVSReader extends BaseTiffReader {
     // repopulate core metadata
 
     for (int s=0; s<core.length; s++) {
-      if (s == 0 && !hasFlattenedResolutions() && getSeriesCount() > 2) {
+      if (s == 0 && getSeriesCount() > 2) {
         core[s].resolutionCount = getSeriesCount() - 2;
       }
 
