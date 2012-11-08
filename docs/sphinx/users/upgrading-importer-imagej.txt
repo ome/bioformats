@@ -1,7 +1,8 @@
 Upgrading the Bio-Formats importer for ImageJ to the latest trunk build
 =======================================================================
 
-1) Download the latest trunk build of loci\_tools.jar from `bio-formats downloads <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_
+1) Download the latest trunk build of loci\_tools.jar from 
+:bf_plone:`bio-formats downloads <downloads>`
 
 .. image:: /images/imagej-upgrade_01.png
     :align: center
