@@ -134,7 +134,8 @@ extlinks = {
     'jenkins' : ('http://hudson.openmicroscopy.org.uk/' + '%s', ''),
     'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
     'forum' : ('http://www.openmicroscopy.org/community/' + '%s', ''),
-    'omerodoc': (omerodoc_uri + '%s', '')
+    'omerodoc': (omerodoc_uri + '%s', ''),
+    'bf_plone' : ('http://www.openmicroscopy.org/site/products/bio-formats/%s/', ''),
     }
 
 rst_epilog = """
