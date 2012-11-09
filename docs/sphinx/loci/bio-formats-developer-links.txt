@@ -20,12 +20,6 @@ Some of the more useful pieces of documentation are:
 
 -  :jenkins:`Javadocs <job/BIOFORMATS-trunk/javadoc/>`
 
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    /service
-
 
 Examples
 --------
