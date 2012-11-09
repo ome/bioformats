@@ -62,6 +62,7 @@ public class MetamorphHandler extends BaseHandler {
   private Vector<Double> exposures;
   private String channelName;
   private String stageLabel;
+  private Double gain;
 
   // -- Constructor --
 
@@ -79,6 +80,8 @@ public class MetamorphHandler extends BaseHandler {
   }
 
   // -- MetamorphHandler API methods --
+
+  public Double getGain() { return gain; }
 
   public String getChannelName() { return channelName; }
 
@@ -241,6 +244,12 @@ public class MetamorphHandler extends BaseHandler {
     }
     else if (key.equals("stage-label")) {
       stageLabel = value;
+    }
+    else if (key.endsWith("Gain") && gain == null) {
+      try {
+        gain = new Double(value.replaceAll("[xX]", ""));
+      }
+      catch (NumberFormatException e) { }
     }
   }
 

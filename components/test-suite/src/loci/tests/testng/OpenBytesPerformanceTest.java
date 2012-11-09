@@ -36,6 +36,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import loci.common.Location;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
 import loci.formats.FormatTools;
@@ -88,6 +89,8 @@ public class OpenBytesPerformanceTest
 
   private String filename;
 
+  private boolean memMap;
+
   private void assertSeries(int series) {
     reader.setSeries(series);
     sizeX = reader.getSizeX();
@@ -100,15 +103,17 @@ public class OpenBytesPerformanceTest
     planeSize = sizeX * sizeY * bpp;
   }
 
-  @Parameters({"id"})
+  @Parameters({"id", "inMemory"})
   @BeforeClass
-  public void init(String id) throws Exception {
+  public void init(String id, String inMemory) throws Exception {
     this.id = id;
     filename = new File(id).getName();
+    memMap = Boolean.parseBoolean(inMemory);
   }
 
   @AfterClass
   public void tearDown() throws Exception {
+    Location.mapId(id, null);
     reader.close();
   }
 
@@ -118,6 +123,11 @@ public class OpenBytesPerformanceTest
     reader = new ChannelFiller(reader);
     reader = new ChannelSeparator(reader);
     reader = new MinMaxCalculator(reader);
+
+    if (memMap && reader.isSingleFile(id)) {
+      TestTools.mapFile(id);
+    }
+
     reader.setId(id);
     seriesCount = reader.getSeriesCount();
   }

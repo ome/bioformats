@@ -28,23 +28,18 @@ package loci.tests.testng;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import loci.common.ByteArrayHandle;
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
-import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -258,7 +253,13 @@ public class FormatReaderTest {
         int c = reader.getRGBChannelCount();
         int bytes = FormatTools.getBytesPerPixel(reader.getPixelType());
 
-        int expected = x * y * c * bytes;
+        int expected = -1;
+        try {
+          expected = DataTools.safeMultiply32(x, y, c, bytes);
+        }
+        catch (IllegalArgumentException e) {
+          continue;
+        }
 
         if (!TestTools.canFitInMemory(expected) || expected < 0) {
           continue;
@@ -292,7 +293,11 @@ public class FormatReaderTest {
     boolean success = true;
     String msg = null;
     try {
-      for (int i=0; i<reader.getSeriesCount() && success; i++) {
+      int seriesCount = reader.getSeriesCount();
+      if (DataTools.indexOf(reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0) {
+        seriesCount = 1;
+      }
+      for (int i=0; i<seriesCount && success; i++) {
         reader.setSeries(i);
 
         int x = reader.getThumbSizeX();
@@ -610,6 +615,17 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all fast automated"
    */
+  public void testSeriesCount() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "SeriesCount";
+    if (!initFile()) result(testName, false, "initFile");
+
+    result(testName, reader.getSeriesCount() == config.getSeriesCount());
+  }
+
+  /**
+   * @testng.test groups = "all fast automated"
+   */
   public void testSizeX() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "SizeX";
@@ -899,7 +915,7 @@ public class FormatReaderTest {
       Double size = realSize == null ? null : realSize.getValue();
 
       if (!(expectedSize == null && realSize == null) &&
-        !expectedSize.equals(size))
+        (expectedSize == null || !expectedSize.equals(size)))
       {
         result(testName, false, "Series " + i);
       }
@@ -926,7 +942,7 @@ public class FormatReaderTest {
       Double size = realSize == null ? null : realSize.getValue();
 
       if (!(expectedSize == null && realSize == null) &&
-        !expectedSize.equals(size))
+        (expectedSize == null || !expectedSize.equals(size)))
       {
         result(testName, false, "Series " + i);
       }
@@ -954,7 +970,7 @@ public class FormatReaderTest {
       Double size = realSize == null ? null : realSize.getValue();
 
       if (!(expectedSize == null && realSize == null) &&
-        !expectedSize.equals(size))
+        (expectedSize == null || !expectedSize.equals(size)))
       {
         result(testName, false, "Series " + i);
       }
@@ -1056,13 +1072,17 @@ public class FormatReaderTest {
       reader.setSeries(i);
       config.setSeries(i);
 
+      if (reader.getImageCount() != retrieve.getPlaneCount(i)) {
+        continue;
+      }
+
       for (int c=0; c<config.getChannelCount(); c++) {
         if (config.hasExposureTime(c)) {
           Double exposureTime = config.getExposureTime(c);
 
           for (int p=0; p<reader.getImageCount(); p++) {
             int[] zct = reader.getZCTCoords(p);
-            if (zct[1] == c) {
+            if (zct[1] == c && p < retrieve.getPlaneCount(i)) {
               Double planeExposureTime = retrieve.getPlaneExposureTime(i, p);
 
               if (exposureTime == null && planeExposureTime == null) {
@@ -1072,7 +1092,9 @@ public class FormatReaderTest {
               if (exposureTime == null || planeExposureTime == null ||
                 !exposureTime.equals(planeExposureTime))
               {
-                result(testName, false, "Series " + i + " plane " + p);
+                result(testName, false, "Series " + i + " plane " + p +
+                  " channel " + c + " (got " + planeExposureTime +
+                  ", expected " + exposureTime + ")");
               }
             }
           }
@@ -1366,6 +1388,11 @@ public class FormatReaderTest {
           /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
 
         int maxFiles = (int) Math.min(base.length, 100);
+
+        if (DataTools.indexOf(reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0) {
+          maxFiles = (int) Math.min(maxFiles, 10);
+        }
+
         for (int i=0; i<maxFiles && success; i++) {
           // .xlog files in InCell 1000/2000 files may belong to more
           // than one dataset
@@ -1402,6 +1429,13 @@ public class FormatReaderTest {
 
           // DICOM companion files may not be detected
           if (reader.getFormat().equals("DICOM") && !base[i].equals(file)) {
+            continue;
+          }
+
+          if (reader.getFormat().equals("BD Pathway") &&
+            (base[i].endsWith(".adf") || base[i].endsWith(".txt")) ||
+            base[i].endsWith(".roi"))
+          {
             continue;
           }
 
@@ -1469,6 +1503,11 @@ public class FormatReaderTest {
             continue;
           }
 
+          if (base[i].endsWith(".bmp") && reader.getFormat().equals("BD Pathway"))
+          {
+            continue;
+          }
+
           if (comp.length != base.length) {
             success = false;
             msg = base[i] + " (file list length was " + comp.length +
@@ -1515,26 +1554,91 @@ public class FormatReaderTest {
     String format = config.getReader();
     if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
       result(testName, true);
-      return;
     }
-    boolean success = true;
-    try {
-      MetadataStore store = reader.getMetadataStore();
-      MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
-      String xml = omexmlService.getOMEXML(retrieve);
-      success = xml != null && omexmlService.validateOMEXML(xml);
+    else {
+      boolean success = true;
+      try {
+        MetadataStore store = reader.getMetadataStore();
+        MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
+        String xml = omexmlService.getOMEXML(retrieve);
+        success = xml != null && omexmlService.validateOMEXML(xml);
+      }
+      catch (Throwable t) {
+        LOGGER.info("", t);
+        success = false;
+      }
+      result(testName, success);
     }
-    catch (Throwable t) {
-      LOGGER.info("", t);
-      success = false;
-    }
-    result(testName, success);
     try {
       close();
     }
     catch (IOException e) {
       LOGGER.info("", e);
     }
+  }
+
+  /**
+   * @testng.test groups = "all pixels automated"
+   */
+  public void testUnflattenedPixelsHashes() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "testUnflattenedPixelsHashes";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    try {
+      IFormatReader resolutionReader =
+        new BufferedImageReader(new FileStitcher());
+      resolutionReader.setFlattenedResolutions(false);
+      resolutionReader.setNormalized(true);
+      resolutionReader.setOriginalMetadataPopulated(false);
+      resolutionReader.setMetadataFiltered(true);
+      resolutionReader.setId(id);
+
+      // check the MD5 of the first plane in each resolution
+      for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
+        resolutionReader.setSeries(i);
+
+        for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
+          resolutionReader.setResolution(r);
+          config.setSeries(resolutionReader.getCoreIndex());
+
+          long planeSize = -1;
+          try {
+            planeSize = DataTools.safeMultiply32(resolutionReader.getSizeX(),
+              resolutionReader.getSizeY(),
+              resolutionReader.getRGBChannelCount(),
+              FormatTools.getBytesPerPixel(resolutionReader.getPixelType()));
+          }
+          catch (IllegalArgumentException e) {
+            continue;
+          }
+
+          if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
+            continue;
+          }
+
+          String md5 = TestTools.md5(resolutionReader.openBytes(0));
+          String expected1 = config.getMD5();
+          String expected2 = config.getAlternateMD5();
+
+          if (expected1 == null && expected2 == null) {
+            continue;
+          }
+          if (!md5.equals(expected1) && !md5.equals(expected2)) {
+            success = false;
+            msg = "series " + i + ", resolution " + r;
+          }
+        }
+      }
+      resolutionReader.close();
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success, msg);
   }
 
   /**
@@ -1552,7 +1656,16 @@ public class FormatReaderTest {
         reader.setSeries(i);
         config.setSeries(i);
 
-        long planeSize = FormatTools.getPlaneSize(reader);
+        long planeSize = -1;
+        try {
+          planeSize = DataTools.safeMultiply32(reader.getSizeX(),
+            reader.getSizeY(), reader.getRGBChannelCount(),
+            FormatTools.getBytesPerPixel(reader.getPixelType()));
+        }
+        catch (IllegalArgumentException e) {
+          continue;
+        }
+
         if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
           continue;
         }
@@ -1615,6 +1728,70 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
   */
+
+  /**
+   * @testng.test groups = "all pixels automated"
+   */
+  public void testUnflattenedSubimagePixelsHashes() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "testUnflattenedSubimagePixelsHashes";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    try {
+      IFormatReader resolutionReader =
+        new BufferedImageReader(new FileStitcher());
+      resolutionReader.setFlattenedResolutions(false);
+      resolutionReader.setNormalized(true);
+      resolutionReader.setOriginalMetadataPopulated(false);
+      resolutionReader.setMetadataFiltered(true);
+      resolutionReader.setId(id);
+
+      // check the MD5 of the first plane in each resolution
+      for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
+        resolutionReader.setSeries(i);
+
+        for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
+          resolutionReader.setResolution(r);
+          config.setSeries(resolutionReader.getCoreIndex());
+
+          int w = (int) Math.min(Configuration.TILE_SIZE,
+            resolutionReader.getSizeX());
+          int h = (int) Math.min(Configuration.TILE_SIZE,
+            resolutionReader.getSizeY());
+
+          String expected1 = config.getTileMD5();
+          String expected2 = config.getTileAlternateMD5();
+
+          String md5 = null;
+
+          try {
+            md5 = TestTools.md5(resolutionReader.openBytes(0, 0, 0, w, h));
+          }
+          catch (Exception e) {
+            LOGGER.warn("", e);
+          }
+
+          if (md5 == null && expected1 == null && expected2 == null) {
+            success = true;
+          }
+          else if (!md5.equals(expected1) && !md5.equals(expected2) &&
+            (expected1 != null || expected2 != null))
+          {
+            success = false;
+            msg = "series " + i + ", resolution " + r;
+          }
+        }
+      }
+      resolutionReader.close();
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success, msg);
+  }
 
   /**
    * @testng.test groups = "all pixels automated"
@@ -1773,7 +1950,23 @@ public class FormatReaderTest {
               continue;
             }
 
-            if (result && r instanceof HitachiReader) {
+            if (result && ((r instanceof HitachiReader) ||
+              (readers[j] instanceof HitachiReader &&
+              (r instanceof TiffDelegateReader || r instanceof JPEGReader ||
+              r instanceof BMPReader))))
+            {
+              continue;
+            }
+
+            if (result && r instanceof BDReader && readers[j] instanceof BMPReader)
+            {
+              continue;
+            }
+
+            if (!result && readers[j] instanceof BDReader &&
+              (used[i].endsWith(".bmp") || used[i].endsWith(".adf") ||
+              used[i].endsWith(".txt") || used[i].endsWith(".roi")))
+            {
               continue;
             }
 
@@ -1903,7 +2096,7 @@ public class FormatReaderTest {
   private void setupReader() {
     reader = new BufferedImageReader(new FileStitcher());
     reader.setNormalized(true);
-    reader.setOriginalMetadataPopulated(true);
+    reader.setOriginalMetadataPopulated(false);
     reader.setMetadataFiltered(true);
     MetadataStore store = null;
     try {
@@ -1957,12 +2150,12 @@ public class FormatReaderTest {
     LOGGER.info("Initializing {}: ", id);
     try {
       boolean reallyInMemory = false;
-      if (inMemory) {
+      if (inMemory && reader.isSingleFile(id)) {
         HashMap<String, Object> idMap = Location.getIdMap();
         idMap.clear();
         Location.setIdMap(idMap);
 
-        reallyInMemory = mapFile(id);
+        reallyInMemory = TestTools.mapFile(id);
       }
       reader.setId(id);
       // remove used files
@@ -1975,7 +2168,7 @@ public class FormatReaderTest {
         }
         skipFiles.add(used[i]);
         if (reallyInMemory) {
-          mapFile(used[i]);
+          TestTools.mapFile(used[i]);
         }
       }
       boolean single = used.length == 1;
@@ -2007,25 +2200,6 @@ public class FormatReaderTest {
       success ? "PASSED" : "FAILED", msg == null ? "" : msg});
     if (msg == null) assert success;
     else assert success : msg;
-  }
-
-  private static boolean mapFile(String id) throws IOException {
-    RandomAccessInputStream stream = new RandomAccessInputStream(id);
-    Runtime rt = Runtime.getRuntime();
-    long maxMem = rt.freeMemory();
-    long length = stream.length();
-    if (length < Integer.MAX_VALUE && length < maxMem) {
-      stream.close();
-      FileInputStream fis = new FileInputStream(id);
-      FileChannel channel = fis.getChannel();
-      ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, length);
-      ByteArrayHandle handle = new ByteArrayHandle(buf);
-      Location.mapFile(id, handle);
-      fis.close();
-      return true;
-    }
-    stream.close();
-    return false;
   }
 
 }

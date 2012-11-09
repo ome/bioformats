@@ -148,6 +148,8 @@ public class CoreMetadata {
    */
   public boolean thumbnail;
 
+  public int resolutionCount = 1;
+
   // -- Constructors --
 
   public CoreMetadata() {
@@ -155,31 +157,7 @@ public class CoreMetadata {
   }
 
   public CoreMetadata(IFormatReader r, int seriesNo) {
-    int series = r.getSeries();
-    r.setSeries(seriesNo);
-    sizeX = r.getSizeX();
-    sizeY = r.getSizeY();
-    sizeZ = r.getSizeZ();
-    sizeC = r.getSizeC();
-    sizeT = r.getSizeT();
-    thumbSizeX = r.getThumbSizeX();
-    thumbSizeY = r.getThumbSizeY();
-    pixelType = r.getPixelType();
-    bitsPerPixel = r.getBitsPerPixel();
-    imageCount = r.getImageCount();
-    cLengths = r.getChannelDimLengths();
-    cTypes = r.getChannelDimTypes();
-    dimensionOrder = r.getDimensionOrder();
-    orderCertain = r.isOrderCertain();
-    rgb = r.isRGB();
-    littleEndian = r.isLittleEndian();
-    interleaved = r.isInterleaved();
-    indexed = r.isIndexed();
-    falseColor = r.isFalseColor();
-    metadataComplete = r.isMetadataComplete();
-    seriesMetadata = r.getSeriesMetadata();
-    thumbnail = r.isThumbnailSeries();
-    r.setSeries(series);
+    copy(r, seriesNo);
   }
 
   // -- Object methods --
@@ -216,4 +194,47 @@ public class CoreMetadata {
     return sb.toString();
   }
 
+  public void copy(IFormatReader r, int seriesNo) {
+    int realSeries = 0;
+    int currentSeries = r.getSeries();
+    int currentResolution = r.getResolution();
+
+    for (int i=0; i<r.getSeriesCount(); i++) {
+      r.setSeries(i);
+      if (realSeries + r.getResolutionCount() > seriesNo) {
+        r.setResolution(seriesNo - realSeries);
+        break;
+      }
+      else {
+        realSeries += r.getResolutionCount();
+      }
+    }
+
+    sizeX = r.getSizeX();
+    sizeY = r.getSizeY();
+    sizeZ = r.getSizeZ();
+    sizeC = r.getSizeC();
+    sizeT = r.getSizeT();
+    thumbSizeX = r.getThumbSizeX();
+    thumbSizeY = r.getThumbSizeY();
+    pixelType = r.getPixelType();
+    bitsPerPixel = r.getBitsPerPixel();
+    imageCount = r.getImageCount();
+    cLengths = r.getChannelDimLengths();
+    cTypes = r.getChannelDimTypes();
+    dimensionOrder = r.getDimensionOrder();
+    orderCertain = r.isOrderCertain();
+    rgb = r.isRGB();
+    littleEndian = r.isLittleEndian();
+    interleaved = r.isInterleaved();
+    indexed = r.isIndexed();
+    falseColor = r.isFalseColor();
+    metadataComplete = r.isMetadataComplete();
+    seriesMetadata = r.getSeriesMetadata();
+    thumbnail = r.isThumbnailSeries();
+    resolutionCount = r.getResolutionCount();
+
+    r.setSeries(currentSeries);
+    r.setResolution(currentResolution);
+  }
 }

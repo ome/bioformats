@@ -379,10 +379,9 @@ public class ZeissTIFFReader extends BaseZeissReader {
     if (rawCount == 0)
       rawCount = nplanes;
     else if (rawCount != nplanes)
-      System.out.println("Warning: problem determining correct number of image planes.  Document reported "
-          + rawCount + ", while " + nplanes + " were found");
+      LOGGER.warn("Problem determining correct number of image planes.  Document reported {}, while {} were found", rawCount, nplanes);
     if (rawCount == 0)
-      System.out.println("Warning: no image planes found");
+      LOGGER.warn("No image planes found");
 
     // Determine number of separate timepoints, channels, and z slices.
     for (ZeissTIFFHandler.Plane p : tiffInfo.handler.planes) {
@@ -465,7 +464,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
 
     int total = tileIndices.size() * channelIndices.size() * zIndices.size() * timepointIndices.size();
     if(total != planes.size())
-      System.out.println("Warning: Number of image planes not detected correctly: total="+total+" planes.size="+planes.size());
+      LOGGER.warn("Number of image planes not detected correctly: total={} planes.size={}", total, planes.size());
 
   }
 
@@ -482,7 +481,6 @@ public class ZeissTIFFReader extends BaseZeissReader {
       Plane plane = planes.get(i);
       parseMainTags(i, store, plane.taglist);
     }
-    System.out.flush();
   }
 
   protected void countImages()

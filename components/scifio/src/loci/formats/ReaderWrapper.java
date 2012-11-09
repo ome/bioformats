@@ -37,6 +37,7 @@
 package loci.formats;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
 import java.util.Set;
@@ -428,7 +429,7 @@ public abstract class ReaderWrapper implements IFormatReader {
 
     // NB: Be sure all CoreMetadata values are returned correctly,
     // regardless of any method overrides.
-    return copyCoreMetadata(this);
+    return copyCoreMetadata(CoreMetadata.class, this);
   }
 
   public void setMetadataFiltered(boolean filter) {
@@ -481,6 +482,30 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public int getOptimalTileHeight() {
     return reader.getOptimalTileHeight();
+  }
+
+  public int getCoreIndex() {
+    return reader.getCoreIndex();
+  }
+
+  public int getResolutionCount() {
+    return reader.getResolutionCount();
+  }
+
+  public void setResolution(int no) {
+    reader.setResolution(no);
+  }
+
+  public int getResolution() {
+    return reader.getResolution();
+  }
+
+  public boolean hasFlattenedResolutions() {
+    return reader.hasFlattenedResolutions();
+  }
+
+  public void setFlattenedResolutions(boolean flattened) {
+    reader.setFlattenedResolutions(flattened);
   }
 
   // -- IFormatHandler API methods --
@@ -576,10 +601,36 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   // -- Helper methods --
 
-  /** Creates a copy of the core metadata matching to the given reader state. */
-  protected CoreMetadata[] copyCoreMetadata(IFormatReader r) {
-    CoreMetadata[] core = new CoreMetadata[r.getSeriesCount()];
-    for (int s=0; s<core.length; s++) core[s] = new CoreMetadata(r, s);
+  /** Creates a copy of the core metadata instantiated using the provided CoreMetadata type, 
+   * matching the state of the given reader. */
+  protected <T extends CoreMetadata> T[] copyCoreMetadata(Class<T> c, IFormatReader r) {
+    int count = 0;
+    int currentSeries = r.getSeries();
+
+    for (int i=0; i<r.getSeriesCount(); i++) {
+      r.setSeries(i);
+      count += r.getResolutionCount();
+    }
+
+    r.setSeries(currentSeries);
+
+    @SuppressWarnings("unchecked")
+    T[] core = (T[])Array.newInstance(c, count);
+    
+    for (int s=0; s<core.length; s++) {
+      T meta = null;
+      
+      try {
+        meta = c.newInstance();
+      } catch (InstantiationException e) {
+        throw new IllegalArgumentException("Failed to create metadata:\n" + e);
+      } catch (IllegalAccessException e) {
+        throw new IllegalArgumentException("Failed to create metadata:\n" + e);
+      }
+      
+      meta.copy(r, s);
+      core[s] = meta;
+    }
     return core;
   }
 

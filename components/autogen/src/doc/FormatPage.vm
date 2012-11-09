@@ -1,0 +1,83 @@
+$format
+===============================================================================
+
+Extensions: $extensions
+
+#if ($developer)
+Developer: $developer
+#end
+
+#if ($owner)
+Owner: $owner
+#end
+
+Support
+-------
+
+SCIFIO: |$scifio|
+
+Export: |$export|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+#if ($software)
+Freely Available Software:
+
+#foreach ($item in $software)
+- $item
+#end
+#end
+
+#if ($samples)
+Sample Datasets:
+
+#foreach ($sample in $samples)
+- $sample
+#end
+#end
+
+We currently have:
+
+#foreach ($item in $weHave)
+- $item
+#end
+
+We would like to have:
+
+#foreach ($item in $weWant)
+- $item
+#end
+
+Ratings
+-------
+
+Pixels: |$pixelsRating|
+
+Metadata: |$metadataRating|
+
+Openness: |$opennessRating|
+
+Presence: |$presenceRating|
+
+Utility: |$utilityRating|
+
+Additional Information
+----------------------
+
+Source Code: :source:`$reader <components/$component/src/loci/formats/in/$reader >`
+#if ($writer)
+Source Code: :source:`$writer <components/$component/src/loci/formats/out/$writer >`
+#end
+
+Notes:
+
+#if ($privateSpecification)
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+#end
+
+#foreach ($note in $notes)
+$note
+#end

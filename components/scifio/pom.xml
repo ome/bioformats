@@ -8,7 +8,7 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>pom-scifio</artifactId>
-    <version>4.4-SNAPSHOT</version>
+    <version>4.5-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -37,7 +37,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci-common</artifactId>
+      <artifactId>loci-legacy</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -48,6 +48,11 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>ome-xml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>scifio-devel</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -102,17 +107,26 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>test/loci/formats/utests/testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>loci.maven.plugins</groupId>
         <artifactId>cppwrap-maven-plugin</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
         <configuration>
           <headerFile>cppwrap/header.txt</headerFile>
           <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
           <coreFile>cppwrap/core.txt</coreFile>
           <sourceDir>cppwrap</sourceDir>
           <libraries>
-            <library>${project.groupId}:loci-common:jar:${project.version}</library>
             <library>${project.groupId}:ome-xml:jar:${project.version}</library>
+            <library>${project.groupId}:loci-legacy:jar:${project.version}</library>
+            <library>${project.groupId}:scifio-devel:jar:${project.version}</library>
           </libraries>
         </configuration>
       </plugin>

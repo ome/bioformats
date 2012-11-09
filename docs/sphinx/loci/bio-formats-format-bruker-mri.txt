@@ -1,0 +1,53 @@
+Bruker MRI
+===============================================================================
+
+Extensions: $extensions
+
+Developer: `Bruker <http://www.bruker.com/>`_
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `Bruker plugin for ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_
+
+
+We currently have:
+
+- a few Bruker MRI datasets
+
+We would like to have:
+
+- an official specification document
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Very good|
+
+Openness: |Fair|
+
+Presence: |Good|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`BrukerReader.java <components/bio-formats/src/loci/formats/in/BrukerReader.java >`
+
+Notes:
+
+

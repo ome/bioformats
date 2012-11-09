@@ -84,8 +84,8 @@ public final class LibraryChecker {
         checkLibrary("org.slf4j.Logger", "slf4j-api-1.5.10.jar", missing);
         checkLibrary("org.slf4j.impl.Log4jLoggerFactory",
           "slf4j-log4j12-1.5.10.jar", missing);
-        checkLibrary("loci.common.RandomAccessInputStream",
-          "loci-common.jar", missing);
+        checkLibrary("ome.scifio.io.RandomAccessInputStream",
+          "scifio.jar", missing);
         checkLibrary("loci.formats.FormatHandler", "bio-formats.jar", missing);
         checkLibrary("loci.poi.poifs.filesystem.POIFSDocument",
           "poi-loci.jar", missing);

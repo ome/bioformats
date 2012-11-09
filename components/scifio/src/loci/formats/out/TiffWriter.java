@@ -390,7 +390,7 @@ public class TiffWriter extends FormatWriter {
     else if (codec != null && codec.equals(COMPRESSION_J2K)) {
       return new int[] {FormatTools.INT8, FormatTools.UINT8,
         FormatTools.INT16, FormatTools.UINT16, FormatTools.INT32,
-        FormatTools.UINT32};
+        FormatTools.UINT32, FormatTools.FLOAT};
     }
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,

@@ -130,7 +130,7 @@ public class JPEGReader extends DelegateReader {
       v.write(remainder);
 
       ByteArrayHandle bytes = new ByteArrayHandle(v.toByteArray());
- 
+
       Location.mapFile(currentId + ".fixed", bytes);
       super.setId(currentId + ".fixed");
     }
@@ -141,6 +141,7 @@ public class JPEGReader extends DelegateReader {
       useLegacy = true;
       super.setId(id);
     }
+    currentId = id;
   }
 
   // -- IFormatReader API methods --

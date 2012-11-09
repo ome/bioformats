@@ -95,6 +95,8 @@ public class ImageInfo {
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageInfo.class);
   private static final String NEWLINE = System.getProperty("line.separator");
 
+  private static final String NO_UPGRADE_CHECK = "-no-upgrade";
+
   // -- Fields --
 
   private String id = null;
@@ -120,10 +122,12 @@ public class ImageInfo {
   private boolean usedFiles = true;
   private boolean omexmlOnly = false;
   private boolean validate = true;
+  private boolean flat = true;
   private String omexmlVersion = null;
   private int start = 0;
   private int end = Integer.MAX_VALUE;
   private int series = 0;
+  private int resolution = 0;
   private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
   private String swapOrder = null, shuffleOrder = null;
   private String map = null;
@@ -166,11 +170,13 @@ public class ImageInfo {
     usedFiles = true;
     omexmlOnly = false;
     validate = true;
+    flat = true;
     omexmlVersion = null;
     xmlSpaces = 3;
     start = 0;
     end = Integer.MAX_VALUE;
     series = 0;
+    resolution = 0;
     xCoordinate = 0;
     yCoordinate = 0;
     width = 0;
@@ -199,6 +205,7 @@ public class ImageInfo {
         else if (args[i].equals("-fast")) fastBlit = true;
         else if (args[i].equals("-autoscale")) autoscale = true;
         else if (args[i].equals("-novalid")) validate = false;
+        else if (args[i].equals("-noflat")) flat = false;
         else if (args[i].equals("-debug")) {
           DebugTools.enableLogging("DEBUG");
         }
@@ -234,6 +241,12 @@ public class ImageInfo {
           }
           catch (NumberFormatException exc) { }
         }
+        else if (args[i].equals("-resolution")) {
+          try {
+            resolution = Integer.parseInt(args[++i]);
+          }
+          catch (NumberFormatException exc) { }
+        }
         else if (args[i].equals("-swap")) {
           swapOrder = args[++i].toUpperCase();
         }
@@ -242,7 +255,7 @@ public class ImageInfo {
         }
         else if (args[i].equals("-map")) map = args[++i];
         else if (args[i].equals("-format")) format = args[++i];
-        else {
+        else if (!args[i].equals(NO_UPGRADE_CHECK)) {
           LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
           return false;
         }
@@ -265,9 +278,9 @@ public class ImageInfo {
       "  showinf file [-nopix] [-nocore] [-nometa] [-thumbs] [-minmax] ",
       "    [-merge] [-nogroup] [-stitch] [-separate] [-expand] [-omexml]",
       "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
-      "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
-      "    [-crop x,y,w,h] [-autoscale] [-novalid] [-omexml-only] [-no-sas]",
-      "    [-format Format]",
+      "    [-resolution num] [-swap inputOrder] [-shuffle outputOrder]",
+      "    [-map id] [-preload] [-crop x,y,w,h] [-autoscale] [-novalid]",
+      "    [-omexml-only] [-no-sas] [-no-upgrade] [-noflat] [-format Format]",
       "",
       "    -version: print the library version and exit",
       "        file: the image file to read",
@@ -288,6 +301,9 @@ public class ImageInfo {
       "      -debug: turn on debugging output",
       "      -range: specify range of planes to read (inclusive)",
       "     -series: specify which image series to read",
+      "     -noflat: do not flatten subresolutions",
+      " -resolution: used in combination with -noflat to specify which",
+      "              subresolution to read (for images with subresolutions)",
       "       -swap: override the default input dimension order",
       "    -shuffle: override the default output dimension order",
       "        -map: specify file on disk to which name should be mapped",
@@ -300,6 +316,7 @@ public class ImageInfo {
       "    -novalid: do not perform validation of OME-XML",
       "-omexml-only: only output the generated OME-XML",
       "     -no-sas: do not output OME-XML StructuredAnnotation elements",
+      " -no-upgrade: do not perform the upgrade check",
       "     -format: read file with a particular reader (e.g., ZeissZVI)",
       "",
       "* = may result in loss of precision",
@@ -423,6 +440,7 @@ public class ImageInfo {
     MetadataOptions metaOptions = new DefaultMetadataOptions(doMeta ?
       MetadataLevel.ALL : MetadataLevel.MINIMUM);
     reader.setMetadataOptions(metaOptions);
+    reader.setFlattenedResolutions(flat);
   }
 
   public void configureReaderPostInit() {
@@ -991,6 +1009,8 @@ public class ImageInfo {
     checkWarnings();
     readCoreMetadata();
     reader.setSeries(series);
+    if (flat == false)
+      reader.setResolution(resolution);
     initPreMinMaxValues();
 
     // read pixels
@@ -1015,13 +1035,15 @@ public class ImageInfo {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
-    UpgradeChecker checker = new UpgradeChecker();
-    boolean canUpgrade =
-      checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
-    if (canUpgrade) {
-      LOGGER.info("*** A new stable version is available. ***");
-      LOGGER.info("*** Install the new version using:     ***");
-      LOGGER.info("***   'upgradechecker -install'        ***");
+    if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
+      UpgradeChecker checker = new UpgradeChecker();
+      boolean canUpgrade =
+        checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
+      if (canUpgrade) {
+        LOGGER.info("*** A new stable version is available. ***");
+        LOGGER.info("*** Install the new version using:     ***");
+        LOGGER.info("***   'upgradechecker -install'        ***");
+      }
     }
     if (!new ImageInfo().testRead(args)) System.exit(1);
   }

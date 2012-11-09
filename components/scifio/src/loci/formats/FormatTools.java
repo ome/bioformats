@@ -173,7 +173,7 @@ public final class FormatTools {
   public static final String DATE = "@date@";
 
   /** Version number of this release. */
-  public static final String VERSION = "4.4-DEV";
+  public static final String VERSION = "4.5-DEV";
 
   // -- Constants - domains --
 
@@ -1043,6 +1043,55 @@ public final class FormatTools {
 
     input.close();
     output.close();
+  }
+
+  /**
+   * Get the default range for the specified pixel type.  Note that
+   * this is not necessarily the minimum and maximum value which may
+   * be stored, but the minimum and maximum which should be used for
+   * rendering.
+   *
+   * @param pixelType the pixel type.
+   * @returns an array containing the min and max as elements 0 and 1,
+   * respectively.
+   * @throws IOException if the pixel type is floating point or invalid.
+   */
+  public static long[] defaultMinMax(int pixelType) {
+    long min = 0 , max = 0;
+
+    switch (pixelType) {
+    case INT8:
+      min = Byte.MIN_VALUE;
+      max = Byte.MAX_VALUE;
+      break;
+    case INT16:
+      min = Short.MIN_VALUE;
+      max = Short.MAX_VALUE;
+      break;
+    case INT32:
+    case FLOAT:
+    case DOUBLE:
+      min = Integer.MIN_VALUE;
+      max = Integer.MAX_VALUE;
+      break;
+    case UINT8:
+      min = 0;
+      max=(long) Math.pow(2, 8)-1;
+      break;
+    case UINT16:
+      min = 0;
+      max=(long) Math.pow(2, 16)-1;
+      break;
+    case UINT32:
+      min = 0;
+      max=(long) Math.pow(2, 32)-1;
+      break;
+    default:
+      throw new IllegalArgumentException("Invalid pixel type");
+    }
+
+    long[] values = {min, max};
+    return values;
   }
 
 }

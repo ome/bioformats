@@ -8,12 +8,12 @@
   <parent>
     <groupId>org.scijava</groupId>
     <artifactId>pom-scijava</artifactId>
-    <version>1.15</version>
+    <version>1.19</version>
   </parent>
 
   <groupId>loci</groupId>
   <artifactId>pom-scifio</artifactId>
-  <version>4.4-SNAPSHOT</version>
+  <version>4.5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -27,7 +27,8 @@
     <module>components/forks/poi</module>
     <module>components/autogen</module>
     <module>components/bio-formats</module>
-    <module>components/common</module>
+    <module>components/loci-legacy</module>
+    <module>components/loci-common</module>
     <module>components/loci-plugins</module>
     <module>components/loci-tools</module>
     <module>components/metakit</module>
@@ -36,6 +37,7 @@
     <module>components/ome-tools</module>
     <module>components/ome-xml</module>
     <module>components/scifio</module>
+    <module>components/scifio-devel</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
   </modules>

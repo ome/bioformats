@@ -1,0 +1,57 @@
+Olympus SIS TIFF
+===============================================================================
+
+Extensions: .tiff
+
+Developer: `Olympus <http://www.olympus-sis.com/>`_
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `DIMIN <http://www.dimin.net/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- a few example SIS TIFF files
+
+We would like to have:
+
+- more OIB datasets (especially 2+ GB files) 
+- more FV1000 version 2 datasets
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Good|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`SISReader.java <components/bio-formats/src/loci/formats/in/SISReader.java >`
+
+Notes:
+
+

@@ -70,7 +70,9 @@ public class BDReader extends FormatReader {
 
   // -- Constants --
   private static final String EXPERIMENT_FILE = "Experiment.exp";
-  private static final String[] META_EXT = {"drt", "dye", "exp", "plt", "txt"};
+  private static final String[] META_EXT =
+    {"drt", "dye", "exp", "plt", "txt", "geo", "ltp", "ffc", "afc", "mon",
+    "xyz", "mac", "bmp", "roi", "adf"};
 
   // -- Fields --
   private Vector<String> metadataFiles = new Vector<String>();
@@ -256,6 +258,16 @@ public class BDReader extends FormatReader {
           metadataFiles.add(f.getAbsolutePath());
         }
       }
+      else {
+        for (String well : f.list(true)) {
+          Location wellFile = new Location(f, well);
+          if (!wellFile.isDirectory()) {
+            if (checkSuffix(well, META_EXT)) {
+              metadataFiles.add(wellFile.getAbsolutePath());
+            }
+          }
+        }
+      }
     }
 
     // parse Experiment metadata
@@ -308,7 +320,9 @@ public class BDReader extends FormatReader {
       IniParser parser = new IniParser();
       for (String metadataFile : metadataFiles) {
         String filename = new Location(metadataFile).getName();
-        if (!checkSuffix(metadataFile, "txt")) {
+        if (!checkSuffix(metadataFile,
+          new String[] {"txt", "bmp", "adf", "roi"}))
+        {
           String data = DataTools.readFile(metadataFile);
           IniList ini =
             parser.parseINI(new BufferedReader(new StringReader(data)));
@@ -509,14 +523,25 @@ public class BDReader extends FormatReader {
 
   private IniList readMetaData(String id) throws IOException {
     IniParser parser = new IniParser();
+    FileInputStream idStream = new FileInputStream(id);
     IniList exp = parser.parseINI(new BufferedReader(new InputStreamReader(
-      new FileInputStream(id), Constants.ENCODING)));
+      idStream, Constants.ENCODING)));
     IniList plate = null;
+    IniList xyz = null;
+
     // Read Plate File
     for (String filename : metadataFiles) {
       if (checkSuffix(filename, "plt")) {
+        FileInputStream stream = new FileInputStream(filename);
         plate = parser.parseINI(new BufferedReader(new InputStreamReader(
-          new FileInputStream(filename), Constants.ENCODING)));
+          stream, Constants.ENCODING)));
+        stream.close();
+      }
+      else if (checkSuffix(filename, "xyz")) {
+        FileInputStream stream = new FileInputStream(filename);
+        xyz = parser.parseINI(new BufferedReader(new InputStreamReader(
+          stream, Constants.ENCODING)));
+        stream.close();
       }
       else if (filename.endsWith("RoiSummary.txt")) {
         roiFile = filename;
@@ -584,14 +609,6 @@ public class BDReader extends FormatReader {
 
     core[0] = new CoreMetadata();
 
-
-// Hack for current testing/development purposes
-// Not all channels have the same Z!!! How to handle???
-// FIXME FIXME FIXME
-    core[0].sizeZ=1;
-// FIXME FIXME FIXME
-// END OF HACK
-
     core[0].sizeC = Integer.parseInt(exp.getTable("General").get("Dyes"));
     core[0].bitsPerPixel =
       Integer.parseInt(exp.getTable("Camera").get("BitdepthUsed"));
@@ -601,21 +618,41 @@ public class BDReader extends FormatReader {
       channelNames.add(dyeTable.get(Integer.toString(i)));
     }
 
+    if (xyz != null) {
+      IniTable zTable = xyz.getTable("Z1Axis");
+      boolean zEnabled = "1".equals(zTable.get("Z1AxisEnabled")) &&
+        "1".equals(zTable.get("Z1AxisMode"));
+      if (zEnabled) {
+        core[0].sizeZ = (int) Double.parseDouble(zTable.get("Z1AxisValue")) + 1;
+      }
+      else {
+        core[0].sizeZ = 1;
+      }
+    }
+    else {
+      core[0].sizeZ = 1;
+    }
+
     // Count Images
     core[0].sizeT = 0;
+
     Location well = new Location(dir.getAbsolutePath(),
       "Well " + wellLabels.get(1));
     for (String channelName : channelNames) {
-      int timepoints = 0;
+      int images = 0;
       for (String filename : well.list()) {
         if (filename.startsWith(channelName) && filename.endsWith(".tif")) {
-          timepoints++;
+          images++;
         }
       }
-      if (timepoints > getSizeT()) {
-        core[0].sizeT = timepoints;
+
+      if (images > getImageCount()) {
+        core[0].sizeT = images / getSizeZ();
+        core[0].imageCount = getSizeZ() * getSizeT() * channelNames.size();
       }
     }
+
+    idStream.close();
 
     return exp;
   }
@@ -648,6 +685,8 @@ public class BDReader extends FormatReader {
       exposure[c] = Double.parseDouble(numerator.get("Exposure"));
       gain[c] = Double.parseDouble(numerator.get("Gain"));
       offset[c] = Double.parseDouble(numerator.get("Offset"));
+
+      stream.close();
     }
   }
 
@@ -725,7 +764,9 @@ public class BDReader extends FormatReader {
 
       String index = name.substring(name.lastIndexOf("n") + 1);
 
-      if (name.startsWith(channel) && Integer.parseInt(index) == zct[2]) {
+      int realIndex = getIndex(zct[0], 0, zct[2]);
+
+      if (name.startsWith(channel) && Integer.parseInt(index) == realIndex) {
         return tiffs[well][i];
       }
     }

@@ -1,0 +1,57 @@
+#########################
+Bio-Formats Documentation
+#########################
+
+Bio-Formats is a standalone Java library for reading and writing life
+sciences image file formats. It is capable of parsing both pixels and
+metadata for a large number of formats, as well as writing to several
+formats. 
+
+Bio-Formats's primary purpose is to convert proprietary microscopy data into
+an open standard called the `OME data model <http://genomebiology.com/2005/6/5/R47>`_, 
+particularly into the OME-TIFF_file format. 
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+ 
+    loci/bio-formats-about
+    loci/bio-formats-formats
+    loci/bio-formats-users
+    loci/bio-formats-developer-links
+
+
+
+Help
+----
+
+
+See the
+`Bio-Formats <http://www.openmicroscopy.org/site/support/faq/bio-formats>`_,
+`File Formats <http://www.openmicroscopy.org/site/support/faq/file-formats>`_
+and `OME-XML and OME-TIFF <http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
+sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ for answers to
+some common questions. Please `contact us <http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
+you have any questions or problems with Bio-Formats.
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    troubleshooting
+
+
+Version History
+---------------
+
+Bio-Formats is updated whenever a significant bug fix is made, or whenever a
+new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the :source:`what's new <components/bio-formats/doc/whats-new.txt>`
+list for a history of major changes in each release.
+
+The latest stable version of Bio-Formats is |release|. For future
+development directions, see the
+`4.5 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OMERO-4.5>`_
+and `5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OME-5.0>`_
+roadmaps.
+
+

@@ -1,0 +1,61 @@
+ImagePro Sequence
+===============================================================================
+
+Extensions: .seq
+
+
+Owner: `Media Cybernetics <http://www.mediacy.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ 
+- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ 
+- `IrfanView <http://www.irfanview.com/>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software 
+- a few SEQ datasets 
+- the ability to produce more datasets 
+- some :source:`Bio-Formats developer notes <components/bio-formats/doc/seq.html>` for SEQ
+
+We would like to have:
+
+- an official SEQ specification document
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`SEQReader.java <components/bio-formats/src/loci/formats/in/SEQReader.java >`
+
+Notes:
+
+

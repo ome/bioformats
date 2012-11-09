@@ -37,6 +37,7 @@ import loci.formats.FormatTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 /**
@@ -85,13 +86,29 @@ public class SVSReader extends BaseTiffReader {
       try {
         stream = new RandomAccessInputStream(name);
         TiffParser tiffParser = new TiffParser(stream);
+        tiffParser.setDoCaching(false);
         if (!tiffParser.isValidHeader()) {
           return false;
         }
-        String imageDescription = tiffParser.getComment();
-        if (imageDescription != null
-            && imageDescription.startsWith(APERIO_IMAGE_DESCRIPTION_PREFIX)) {
-          return true;
+        IFD ifd = tiffParser.getFirstIFD();
+        if (ifd == null) {
+          return false;
+        }
+        Object description = ifd.get(IFD.IMAGE_DESCRIPTION);
+        if (description != null) {
+          String imageDescription = null;
+
+          if (description instanceof TiffIFDEntry) {
+            imageDescription =
+              tiffParser.getIFDValue((TiffIFDEntry) description).toString();
+          }
+          else if (description instanceof String) {
+            imageDescription = (String) description;
+          }
+          if (imageDescription != null
+              && imageDescription.startsWith(APERIO_IMAGE_DESCRIPTION_PREFIX)) {
+            return true;
+          }
         }
         return false;
       }
@@ -119,26 +136,32 @@ public class SVSReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (getSeriesCount() == 1) {
+    if (core.length == 1) {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    tiffParser.getSamples(ifds.get(series), buf, x, y, w, h);
+    int ifd = getIFDIndex(getCoreIndex());
+    tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
   }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    if (getSeriesCount() == 1 || getSeries() >= getSeriesCount() - 2) {
+    if (core.length == 1 || getSeries() >= getSeriesCount() - 2) {
       return super.openThumbBytes(no);
     }
 
     int smallestSeries = getSeriesCount() - 3;
     if (smallestSeries >= 0) {
       int thisSeries = getSeries();
+      int resolution = getResolution();
       setSeries(smallestSeries);
+      if (!hasFlattenedResolutions()) {
+        setResolution(1);
+      }
       byte[] thumb = FormatTools.openThumbBytes(this, no);
       setSeries(thisSeries);
+      setResolution(resolution);
       return thumb;
     }
     return super.openThumbBytes(no);
@@ -157,7 +180,8 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(getSeries()).getTileWidth();
+      int ifd = getIFDIndex(getCoreIndex());
+      return (int) ifds.get(ifd).getTileWidth();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -169,7 +193,8 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(getSeries()).getTileLength();
+      int ifd = getIFDIndex(getCoreIndex());
+      return (int) ifds.get(ifd).getTileLength();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -189,13 +214,21 @@ public class SVSReader extends BaseTiffReader {
 
     pixelSize = new float[core.length];
     comments = new String[core.length];
+
+    for (int i=0; i<core.length; i++) {
+      core[i] = new CoreMetadata();
+    }
+
     for (int i=0; i<core.length; i++) {
       setSeries(i);
-      core[i] = new CoreMetadata();
-      tiffParser.fillInIFD(ifds.get(i));
+      int index = getIFDIndex(i);
+      tiffParser.fillInIFD(ifds.get(index));
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        String comment = ifds.get(i).getComment();
+        String comment = ifds.get(index).getComment();
+        if (comment == null) {
+          continue;
+        }
         String[] lines = comment.split("\n");
         String[] tokens;
         String key, value;
@@ -221,7 +254,11 @@ public class SVSReader extends BaseTiffReader {
     // repopulate core metadata
 
     for (int s=0; s<core.length; s++) {
-      IFD ifd = ifds.get(s);
+      if (s == 0 && !hasFlattenedResolutions() && getSeriesCount() > 2) {
+        core[s].resolutionCount = getSeriesCount() - 2;
+      }
+
+      IFD ifd = ifds.get(getIFDIndex(s));
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
       core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
@@ -254,6 +291,14 @@ public class SVSReader extends BaseTiffReader {
       store.setImageName("Series " + (i + 1), i);
       store.setImageDescription(comments[i], i);
     }
+  }
+
+  private int getIFDIndex(int coreIndex) {
+    int index = coreIndex;
+    if (coreIndex > 0 && coreIndex < core.length - 2) {
+      index = core.length - 2 - coreIndex;
+    }
+    return index;
   }
 
 }

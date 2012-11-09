@@ -130,8 +130,9 @@ public class ZipReader extends FormatReader {
     in = new RandomAccessInputStream(rawHandle, id);
 
     ZipInputStream zip = new ZipInputStream(in);
+    ZipEntry ze = null;
     while (true) {
-      ZipEntry ze = zip.getNextEntry();
+      ze = zip.getNextEntry();
       if (ze == null) break;
       ZipHandle handle = new ZipHandle(id, ze);
       Location.mapFile(ze.getName(), handle);

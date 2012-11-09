@@ -37,6 +37,7 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,7 +164,7 @@ public class JPEG2000Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (lastSeries == getSeries() && lastSeriesPlane != null) {
+    if (lastSeries == getCoreIndex() && lastSeriesPlane != null) {
       RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
       readPlane(s, x, y, w, h, buf);
       s.close();
@@ -174,10 +175,10 @@ public class JPEG2000Reader extends FormatReader {
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
     if (resolutionLevels != null) {
-      options.resolution = Math.abs(series - resolutionLevels);
+      options.resolution = Math.abs(getCoreIndex() - resolutionLevels);
     }
-    else if (getSeriesCount() > 1) {
-      options.resolution = series;
+    else if (core.length > 1) {
+      options.resolution = getCoreIndex();
     }
 
     in.seek(pixelsOffset);
@@ -185,7 +186,7 @@ public class JPEG2000Reader extends FormatReader {
     RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
     readPlane(s, x, y, w, h, buf);
     s.close();
-    lastSeries = getSeries();
+    lastSeries = getCoreIndex();
     return buf;
   }
 
@@ -229,6 +230,9 @@ public class JPEG2000Reader extends FormatReader {
     if (resolutionLevels != null) {
       CoreMetadata[] newCore = new CoreMetadata[resolutionLevels + 1];
       newCore[0] = core[0];
+      if (!hasFlattenedResolutions()) {
+        newCore[0].resolutionCount = newCore.length;
+      }
       for (int i = 1; i < newCore.length; i++) {
         newCore[i] = new CoreMetadata(this, 0);
         newCore[i].sizeX = newCore[i - 1].sizeX / 2;
@@ -236,6 +240,21 @@ public class JPEG2000Reader extends FormatReader {
         newCore[i].thumbnail = true;
       }
       core = newCore;
+    }
+
+    ArrayList<String> comments = metadataParser.getComments();
+    for (int i=0; i<comments.size(); i++) {
+      String comment = comments.get(i);
+      int equal = comment.indexOf("=");
+      if (equal >= 0) {
+        String key = comment.substring(0, equal);
+        String value = comment.substring(equal + 1);
+
+        addGlobalMeta(key, value);
+      }
+      else {
+        addGlobalMeta("Comment #" + (i + 1), comment);
+      }
     }
 
     MetadataStore store = makeFilterMetadata();

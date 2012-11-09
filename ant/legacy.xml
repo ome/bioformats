@@ -1,0 +1,58 @@
+<!--
+legacy.xml
+
+Ant build file for logic common to every component.
+All component build files inherit from this build file.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project>
+  <import file="${root.dir}/ant/global.xml"/>
+  <property file="${root.dir}/ant/legacy.properties"/>
+
+  <!-- Main build targets -->
+
+  <target name="clean" description="remove all build files except artifacts">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <!-- Internal build targets -->
+
+  <target name="init-title">
+    <echo>----------=========== ${component.name} ===========----------</echo>
+  </target>
+
+  <target name="init-timestamp">
+    <tstamp>
+      <format property="DATE" pattern="d MMMMM yyyy"/>
+      <format property="YEAR" pattern="yyyy"/>
+    </tstamp>
+  </target>
+
+  <target name="init-version">
+    <!-- check for Git versioning information -->
+    <property name="git.path" value="${root.dir}/.git"/>
+    <available file="${git.path}" property="git.present"/>
+    <if>
+      <isset property="git.present"/>
+      <then>
+        <exec executable="git" outputproperty="git.info"
+          failifexecutionfails="false">
+          <arg value="show"/>
+          <arg value="-s"/>
+          <arg value="--abbrev-commit"/>
+          <arg value="HEAD"/>
+        </exec>
+        <propertyregex property="vcs.revision" input="${git.info}"
+          regexp="commit ([a-f0-9]+)" select="\1"/>
+        <propertyregex property="vcs.date"
+          input="${git.info}" regexp="Date: +([^\n]*)" select="\1"/>
+      </then>
+    </if>
+
+    <!-- set release version from repository URL -->
+    <property name="release.version" value="4.5-DEV"/>
+  </target>
+
+</project>

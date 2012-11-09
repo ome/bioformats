@@ -26,8 +26,11 @@
 package loci.tests.testng;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.FieldPosition;
@@ -37,10 +40,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.common.RandomAccessInputStream;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
@@ -147,7 +152,7 @@ public class TestTools {
   public static boolean canFitInMemory(long bufferSize) {
     Runtime r = Runtime.getRuntime();
     long mem = r.freeMemory() / 2;
-    return bufferSize < mem;
+    return bufferSize < mem && bufferSize <= Integer.MAX_VALUE;
   }
 
   /** Gets the quantity of used memory, in MB. */
@@ -193,9 +198,19 @@ public class TestTools {
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig)
   {
+    getFiles(root, files, config, toplevelConfig, null);
+  }
+
+  /** Recursively generate a list of files to test. */
+  public static void getFiles(String root, List files,
+    final ConfigurationTree config, String toplevelConfig, String[] subdirs)
+  {
     Location f = new Location(root);
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
+    if (subdirs != null) {
+      subs = subdirs;
+    }
 
     boolean isToplevel =
      toplevelConfig != null && new File(toplevelConfig).exists();
@@ -374,4 +389,31 @@ public class TestTools {
     void run(int z, int c, int t, int x, int y, int tileWidth,
              int tileHeight, int tileCount);
   }
+
+  /**
+   * Map the given file into memory.
+   *
+   * @return true if the mapping was successful.
+   */
+  public static boolean mapFile(String id) throws IOException {
+    RandomAccessInputStream stream = new RandomAccessInputStream(id);
+    Runtime rt = Runtime.getRuntime();
+    long maxMem = rt.freeMemory();
+    long length = stream.length();
+    if (length < Integer.MAX_VALUE && length < maxMem) {
+      stream.close();
+      FileInputStream fis = new FileInputStream(id);
+      FileChannel channel = fis.getChannel();
+      ByteBuffer buf =
+        channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+      ByteArrayHandle handle = new ByteArrayHandle(buf);
+      Location.mapFile(id, handle);
+      fis.close();
+      return true;
+    }
+    stream.close();
+    return false;
+  }
+
+
 }

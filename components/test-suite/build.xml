@@ -58,7 +58,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/loci/tests/testng/CompressDecompressTest.class"/>
     </testng>
@@ -74,7 +74,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${writer-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
@@ -94,10 +94,12 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -117,10 +119,12 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -133,17 +137,27 @@ Type "ant -p" for a list of targets.
 
   <target name="test-automated" depends="compile"
     description="run automated tests in group 'automated'">
+
+    <condition property="testng.threadCount" value="1">
+      <not>
+        <isset property="testng.threadCount"/>
+      </not>
+    </condition>
+
     <testng sourcedir="${dest.dir}"
       annotations="Javadoc" groups="automated" testname="Automated tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
+      parallel="tests" threadCount="${testng.threadCount}"
       failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -163,10 +177,12 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -186,10 +202,12 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -209,10 +227,12 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -232,10 +252,12 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -255,10 +277,12 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>

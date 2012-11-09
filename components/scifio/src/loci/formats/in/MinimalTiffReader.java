@@ -94,6 +94,8 @@ public class MinimalTiffReader extends FormatReader {
 
   protected TiffParser tiffParser;
 
+  protected boolean equalStrips = false;
+
   protected boolean use64Bit = false;
 
   private int lastPlane = 0;
@@ -281,8 +283,8 @@ public class MinimalTiffReader extends FormatReader {
     if ((firstIFD.getCompression() == TiffCompression.JPEG_2000
         || firstIFD.getCompression() == TiffCompression.JPEG_2000_LOSSY)
         && resolutionLevels != null) {
-      if (series > 0) {
-        ifd = subResolutionIFDs.get(no).get(series - 1);
+      if (getCoreIndex() > 0) {
+        ifd = subResolutionIFDs.get(no).get(getCoreIndex() - 1);
       }
       setResolutionLevel(ifd);
     }
@@ -344,6 +346,18 @@ public class MinimalTiffReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      if (ifds != null) {
+        for (IFD ifd : ifds) {
+          try {
+            if (ifd.getOnDemandStripOffsets() != null) {
+              ifd.getOnDemandStripOffsets().close();
+            }
+          }
+          catch (FormatException e) {
+            LOGGER.debug("", e);
+          }
+        }
+      }
       ifds = null;
       thumbnailIFDs = null;
       subResolutionIFDs = new ArrayList<IFDList>();
@@ -419,6 +433,7 @@ public class MinimalTiffReader extends FormatReader {
 
     core[0].imageCount = ifds.size();
 
+    tiffParser.setAssumeEqualStrips(equalStrips);
     for (IFD ifd : ifds) {
       tiffParser.fillInIFD(ifd);
       if (ifd.getCompression() == TiffCompression.JPEG_2000
@@ -526,12 +541,22 @@ public class MinimalTiffReader extends FormatReader {
       IFDList ifds = subResolutionIFDs.get(0);
       CoreMetadata[] newCore = new CoreMetadata[ifds.size() + 1];
       newCore[0] = core[0];
+      if (!hasFlattenedResolutions()) {
+        newCore[0].resolutionCount = newCore.length;
+      }
+
+      newCore[0].sizeT = 1;
+      newCore[0].imageCount = 1;
+
       int i = 1;
       for (IFD ifd : ifds) {
         newCore[i] = new CoreMetadata(this, 0);
         newCore[i].sizeX = (int) ifd.getImageWidth();
         newCore[i].sizeY = (int) ifd.getImageLength();
+        newCore[i].sizeT = 1;
+        newCore[i].imageCount = 1;
         newCore[i].thumbnail = true;
+        newCore[i].resolutionCount = 1;
         i++;
       }
       core = newCore;
@@ -548,7 +573,7 @@ public class MinimalTiffReader extends FormatReader {
    * IFD if <code>currentSeries > 0</code>.
    */
   protected void setResolutionLevel(IFD ifd) {
-    j2kCodecOptions.resolution = Math.abs(series - resolutionLevels);
+    j2kCodecOptions.resolution = Math.abs(getCoreIndex() - resolutionLevels);
     LOGGER.debug("Using JPEG 2000 resolution level {}",
         j2kCodecOptions.resolution);
     tiffParser.setCodecOptions(j2kCodecOptions);

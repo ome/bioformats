@@ -173,7 +173,9 @@ public class ImageReader implements IFormatReader {
 
    // NB: Check that we can generate a valid handle for the ID;
    // e.g., for files, this will throw an exception if the file is missing.
-   if (!fake && !omero) Location.getHandle(id).close();
+   if (!fake && !omero) {
+     Location.checkValidId(id);
+   }
 
     if (!id.equals(currentId)) {
       // initialize file
@@ -656,6 +658,38 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     return getReader().getOptimalTileHeight();
+  }
+
+  /* @see IFormatReader#getCoreIndex() */
+  public int getCoreIndex() {
+    return getReader().getCoreIndex();
+  }
+
+  /* @see IFormatReader#getResolutionCount() */
+  public int getResolutionCount() {
+    return getReader().getResolutionCount();
+  }
+
+  /* @see IFormatReader#setResolution(int) */
+  public void setResolution(int no) {
+    getReader().setResolution(no);
+  }
+
+  /* @see IFormatReader#getResolution() */
+  public int getResolution() {
+    return getReader().getResolution();
+  }
+
+  /* @see IFormatReader#hasFlattenedResolutions() */
+  public boolean hasFlattenedResolutions() {
+    return getReader().hasFlattenedResolutions();
+  }
+
+  /* @see IFormatReader#setFlattenedResolutions(boolean) */
+  public void setFlattenedResolutions(boolean flattened) {
+    for (IFormatReader reader : readers) {
+      reader.setFlattenedResolutions(flattened);
+    }
   }
 
   // -- IFormatHandler API methods --

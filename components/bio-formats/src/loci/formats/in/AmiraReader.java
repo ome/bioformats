@@ -475,15 +475,16 @@ public class AmiraReader extends FormatReader {
     public byte[] read(int no, byte[] buf) throws FormatException, IOException {
       if (maxOffsetIndex < no) {
         in.seek(offsets[maxOffsetIndex]);
-        while (maxOffsetIndex < no) {
-          currentNo = no;
-          read(buf, planeSize);
-          offsets[++maxOffsetIndex] = lastCodeOffset;
+        while (maxOffsetIndex <= no) {
+          Arrays.fill(buf, (byte) 0);
+          read(currentNo, buf);
+          currentNo++;
         }
       }
       else {
         in.seek(offsets[no]);
         currentNo = no;
+        Arrays.fill(buf, (byte) 0);
         read(buf, planeSize);
         if (maxOffsetIndex == no) {
           offsets[++maxOffsetIndex] = lastCodeOffset;

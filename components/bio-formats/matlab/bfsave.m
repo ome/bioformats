@@ -20,14 +20,19 @@ function bfsave(I, outputPath, varargin)
 bfCheckJavaPath();
 
 % Not using the inputParser for first argument as it copies data
-assert(isnumeric(I), 'First argument must be numeri');
+assert(isnumeric(I), 'First argument must be numeric');
+
+% List all values of DimensionOrder
+dimensionOrderValues = ome.xml.model.enums.DimensionOrder.values();
+dimensionsOrders = cell(numel(dimensionOrderValues), 1);
+for i = 1 :numel(dimensionOrderValues),
+    dimensionsOrders{i} = char(dimensionOrderValues(i).toString());
+end
 
 % Input check
 ip = inputParser;
 ip.addRequired('outputPath', @ischar);
-allDimensions = ome.xml.model.enums.DimensionOrder.values();
-validator = @(x) ismember(x, arrayfun(@char, allDimensions, 'Unif', false));
-ip.addOptional('dimensionOrder', 'XYZCT', validator);
+ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, dimensionsOrders));
 ip.parse(outputPath, varargin{:});
 
 % Create metadata
@@ -80,6 +85,7 @@ end
 
 % Create ImageWriter
 writer = loci.formats.ImageWriter();
+writer.setWriteSequentially(true);
 writer.setMetadataRetrieve(metadata);
 writer.setId(outputPath);
 

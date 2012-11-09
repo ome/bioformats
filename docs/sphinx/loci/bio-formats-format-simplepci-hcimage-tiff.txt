@@ -1,0 +1,56 @@
+SimplePCI & HCImage TIFF
+===============================================================================
+
+Extensions: .tiff
+
+Developer: `Hamamatsu <http://www.cimaging.net/simplepci.htm>`_
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- a few SimplePCI TIFF datasets
+
+We would like to have:
+
+- more SimplePCI TIFF datasets
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Very good|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`SimplePCITiffReader.java <components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java >`
+
+Notes:
+
+

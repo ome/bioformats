@@ -375,6 +375,14 @@ public class AVIReader extends FormatReader {
 
     if (bmpCompression != 0) core[0].pixelType = FormatTools.UINT8;
 
+    int effectiveWidth = (int) (bmpScanLineSize / (bmpBitsPerPixel / 8));
+    if (effectiveWidth == 0) {
+      effectiveWidth = getSizeX();
+    }
+    if (effectiveWidth < getSizeX()) {
+      core[0].sizeX = effectiveWidth;
+    }
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
   }
@@ -392,6 +400,17 @@ public class AVIReader extends FormatReader {
     options.width = getSizeX();
     options.height = getSizeY();
     options.previousImage = (lastImageNo == no - 1) ? lastImage : null;
+
+    if (options.previousImage == null && bmpCompression != JPEG) {
+      while (lastImageNo < no - 1) {
+        openBytes(lastImageNo + 1, buf);
+      }
+      options.previousImage = lastImage;
+    }
+
+    long fileOff = offsets.get(no).longValue();
+    in.seek(fileOff);
+
     options.bitsPerSample = bmpBitsPerPixel;
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();

@@ -1,0 +1,58 @@
+LEO
+===============================================================================
+
+Extensions: .sxm
+
+
+Owner: `Zeiss <http://www.zeiss.de>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
+
+Sample Datasets:
+
+- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
+
+We currently have:
+
+- Pascal code that can read LEO files (from ImageSXM) 
+- a few LEO files
+
+We would like to have:
+
+- an official specification document 
+- more LEO files
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Fair|
+
+Openness: |Good|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`LEOReader.java <components/bio-formats/src/loci/formats/in/LEOReader.java >`
+
+Notes:
+
+

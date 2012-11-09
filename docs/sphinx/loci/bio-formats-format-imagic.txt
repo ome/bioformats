@@ -1,0 +1,59 @@
+IMAGIC
+===============================================================================
+
+Extensions: .hed, .img
+
+Developer: `Image Science <http://www.imagescience.de>`_
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `em2em <http://www.imagescience.de/em2em.html>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- one example dataset 
+- official file format documentation
+
+We would like to have:
+
+- more example datasets
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Very good|
+
+Presence: |Good|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`ImagicReader.java <components/bio-formats/src/loci/formats/in/ImagicReader.java >`
+
+Notes:
+
+
+.. seealso:: 
+  `IMAGIC specification <http://www.imagescience.de/em2em.html>`_

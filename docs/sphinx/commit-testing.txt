@@ -1,0 +1,93 @@
+Testing individual commits (internal developers)
+================================================
+
+At the bottom of many commit messages in
+`https://github.com/openmicroscopy/bioformats <https://github.com/openmicroscopy/bioformats>`_,
+you will find a few lines similar to this:
+
+::
+
+    To test, please run:
+
+    ant -Dtestng.directory=$DATA/metamorph test-automated
+
+This shows the command(s) necessary to run automated tests against the
+files likely to be affected by that commit. If you want to run these
+tests, you will need to do the following:
+
+Clone bioformats.git and checkout the appropriate branch (by following
+the directions on the :omerodoc:`Git usage <developers/Development/UsingGit.html>`
+page). Run this command to build all of the JAR files:
+
+::
+
+    $ ant clean jars
+
+Switch to the test-suite component:
+
+::
+
+    $ cd components/test-suite
+
+Run the tests, where $DATA is the path to the full data repository:
+
+::
+
+    $ ant -Dtestng.directory=$DATA/metamorph test-automated
+
+By default, 512 MB of memory are allocated to the JVM. You can increase
+this by adding the '-Dtestng.memory=XXXm' option. You should now see
+output similar to this:
+
+::
+
+    Buildfile: build.xml
+
+    init-title:
+         [echo] ----------=========== loci-testing-framework ===========----------
+
+    init-timestamp:
+
+    init-version:
+
+    init-manifest-cp:
+
+    init:
+
+    copy-source:
+
+    compile:
+
+    test-automated:
+       [testng] [Parser] Running:
+       [testng]   LOCI software test suite
+       [testng] 
+       [testng] Scanning for files...
+       [testng] Building list of tests...
+       [testng] Ready to test 490 files
+       [testng] ........................................
+
+and then eventually:
+
+::
+
+       [testng] ===============================================
+       [testng] LOCI software test suite
+       [testng] Total tests run: 19110, Failures: 0, Skips: 0
+       [testng] ===============================================
+       [testng] 
+
+    BUILD SUCCESSFUL
+    Total time: 16 minutes 42 seconds
+
+Each of the dots represents a single passed test; a '-' is a skipped
+test, and an 'F' is a failed test. This is mostly just for your
+amusement if you happen to be staring at the console while the tests
+run, as a more detailed report is logged to
+loci-software-test-$DATE.log (where "$DATE" is the date on which the tests
+started in "yyyy-MM-dd_hh-mm-ss" format).
+
+If Ant reports that the build was successful, then there is nothing that
+you need to do. Otherwise, it is helpful if you can provide the command,
+branch name, number of failures at the bottom of the Ant output, and the
+loci-software-test-\*.log file.

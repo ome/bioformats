@@ -65,6 +65,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
@@ -149,12 +150,23 @@ public class OMETiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
+    tp.setDoCaching(false);
     boolean validHeader = tp.isValidHeader();
     if (!validHeader) return false;
     // look for OME-XML in first IFD's comment
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    String comment = ifd.getComment();
+    Object description = ifd.get(IFD.IMAGE_DESCRIPTION);
+    if (description == null) {
+      return false;
+    }
+    String comment = null;
+    if (description instanceof TiffIFDEntry) {
+      comment = tp.getIFDValue((TiffIFDEntry) description).toString();
+    }
+    else if (description instanceof String) {
+      comment = (String) description;
+    }
     if (comment == null || comment.trim().length() == 0) return false;
 
     comment = comment.trim();
@@ -317,6 +329,9 @@ public class OMETiffReader extends FormatReader {
 
     // parse and populate OME-XML metadata
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
+    if (!new File(fileName).exists()) {
+      fileName = currentId;
+    }
     RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
     String xml;
     IFD firstIFD;
@@ -345,9 +360,8 @@ public class OMETiffReader extends FormatReader {
       service.removeChannels(meta, i, sizeC);
     }
 
-    // TODO
-    //Hashtable originalMetadata = meta.getOriginalMetadata();
-    //if (originalMetadata != null) metadata = originalMetadata;
+    Hashtable originalMetadata = service.getOriginalMetadata(meta);
+    if (originalMetadata != null) metadata = originalMetadata;
 
     LOGGER.trace(xml);
 
@@ -781,6 +795,14 @@ public class OMETiffReader extends FormatReader {
     core = series.toArray(new CoreMetadata[series.size()]);
     info = planeInfo.toArray(new OMETiffPlane[0][0]);
 
+    if (getImageCount() == 1) {
+      core[0].sizeZ = 1;
+      if (!core[0].rgb) {
+        core[0].sizeC = 1;
+      }
+      core[0].sizeT = 1;
+    }
+
     MetadataTools.populatePixels(metadataStore, this, false, false);
     for (int i=0; i<acquiredDates.length; i++) {
       if (acquiredDates[i] != null) {
@@ -834,7 +856,7 @@ public class OMETiffReader extends FormatReader {
   private String normalizeFilename(String dir, String name) {
      File file = new File(dir, name);
      if (file.exists()) return file.getAbsolutePath();
-     return new Location(name).getAbsolutePath();
+     return name;
   }
 
   private void setupService() throws FormatException {

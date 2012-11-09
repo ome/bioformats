@@ -1,0 +1,57 @@
+SM Camera
+===============================================================================
+
+Extensions: $extensions
+
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: $versions
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- Pascal code that can read SM-Camera files (from ImageSXM) 
+- a few SM-Camera files
+
+We would like to have:
+
+- an official specification document 
+- more SM-Camera files
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Fair|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`SMCameraReader.java <components/bio-formats/src/loci/formats/in/SMCameraReader.java >`
+
+Notes:
+
+

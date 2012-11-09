@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -299,19 +300,19 @@ public class MRCReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (level != MetadataLevel.MINIMUM) {
-      if (xSize > 0.0d) {
+      if (xSize - Constants.EPSILON > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(xSize), 0);
       }
       else {
         LOGGER.warn("xSize {} not a positive float skipping", xSize);
       }
-      if (ySize > 0.0d) {
+      if (ySize - Constants.EPSILON > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(ySize), 0);
       }
       else {
         LOGGER.warn("ySize {} not a positive float skipping", ySize);
       }
-      if (zSize > 0.0d) {
+      if (zSize - Constants.EPSILON > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(zSize), 0);
       }
       else {
