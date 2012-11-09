@@ -25,16 +25,7 @@
 
 package loci.tests.testng;
 
-import static org.testng.AssertJUnit.*;
-
 import java.io.File;
-
-import org.perf4j.StopWatch;
-import org.perf4j.log4j.Log4JStopWatch;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
 
 import loci.common.Location;
 import loci.formats.ChannelFiller;
@@ -43,9 +34,16 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
+import loci.formats.ReaderWrapper;
 
+import org.perf4j.StopWatch;
+import org.perf4j.log4j.Log4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
 /**
  * Performs various <code>openBytes()</code> performance tests.
@@ -158,7 +156,8 @@ public class OpenBytesPerformanceTest
 
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
-                "%s[%d:%d]_alloc_tile", filename, series, image));
+                "%s %s[%d:%d]_alloc_tile", ((ReaderWrapper) reader).unwrap().getClass().getName(),
+                filename, series, image));
             reader.openBytes(0, x, y, actualTileWidth, actualTileHeight);
             stopWatch.stop();
           }
@@ -196,7 +195,8 @@ public class OpenBytesPerformanceTest
 
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
-                "%s[%d:%d]_prealloc_tile", filename, series, image));
+                "%s %s[%d:%d]_prealloc_tile", ((ReaderWrapper) reader).unwrap().getClass().getName(),
+                filename, series, image));
             reader.openBytes(image, buf, x, y, actualTileWidth,
                              actualTileHeight);
             stopWatch.stop();
