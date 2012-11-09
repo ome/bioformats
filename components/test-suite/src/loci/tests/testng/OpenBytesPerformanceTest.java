@@ -156,7 +156,8 @@ public class OpenBytesPerformanceTest
 
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
-                "%s %s[%d:%d]_alloc_tile", ((ReaderWrapper) reader).unwrap().getClass().getName(),
+                "%s %s[%d:%d]_alloc_tile",
+                ((ReaderWrapper) reader).unwrap().getClass().getName(),
                 filename, series, image));
             reader.openBytes(0, x, y, actualTileWidth, actualTileHeight);
             stopWatch.stop();
@@ -195,7 +196,8 @@ public class OpenBytesPerformanceTest
 
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
-                "%s %s[%d:%d]_prealloc_tile", ((ReaderWrapper) reader).unwrap().getClass().getName(),
+                "%s %s[%d:%d]_prealloc_tile",
+                ((ReaderWrapper) reader).unwrap().getClass().getName(),
                 filename, series, image));
             reader.openBytes(image, buf, x, y, actualTileWidth,
                              actualTileHeight);
