@@ -48,7 +48,7 @@ public class TimestampedLogFileAppender extends FileAppender {
         final int lastDotIndex = this.fileName.lastIndexOf(".");
         String newFileName = "";
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy:HH-mm-ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss");
         String timestamp = "-" + sdf.format(new Date());
 
         if (lastDotIndex != -1) {
