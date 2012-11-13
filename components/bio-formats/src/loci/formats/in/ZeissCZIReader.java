@@ -523,7 +523,10 @@ public class ZeissCZIReader extends FormatReader {
               store.setPlanePositionY(positionsY[i], i, plane);
             }
 
-            if (positionsZ != null && i < positionsZ.length) {
+            if (p.stageZ != null) {
+              store.setPlanePositionZ(p.stageZ, i, plane);
+            }
+            else if (positionsZ != null && i < positionsZ.length) {
               store.setPlanePositionZ(positionsZ[i], i, plane);
             }
 
@@ -1829,7 +1832,7 @@ public class ZeissCZIReader extends FormatReader {
 
     private long dataOffset;
 
-    private Double stageX, stageY, timestamp, exposureTime;
+    private Double stageX, stageY, timestamp, exposureTime, stageZ;
 
     public int x, y;
 
@@ -1930,6 +1933,9 @@ public class ZeissCZIReader extends FormatReader {
                 }
                 else if (tagNode.getNodeName().equals("StageYPosition")) {
                   stageY = new Double(text);
+                }
+                else if (tagNode.getNodeName().equals("FocusPosition")) {
+                  stageZ = new Double(text);
                 }
                 else if (tagNode.getNodeName().equals("AcquisitionTime")) {
                   timestamp = DateTools.getTime(
