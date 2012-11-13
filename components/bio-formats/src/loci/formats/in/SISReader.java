@@ -163,7 +163,9 @@ public class SISReader extends BaseTiffReader {
     }
     in.seek(pos);
 
-    in.skipBytes(12);
+    in.skipBytes(10);
+
+    int units = in.readShort() & 0xf;
 
     physicalSizeX = in.readDouble();
     physicalSizeY = in.readDouble();
@@ -172,6 +174,9 @@ public class SISReader extends BaseTiffReader {
       physicalSizeX = physicalSizeY;
       physicalSizeY = in.readDouble();
     }
+
+    physicalSizeX *= Math.pow(10, units - 7);
+    physicalSizeY *= Math.pow(10, units - 7);
 
     in.skipBytes(8);
 
