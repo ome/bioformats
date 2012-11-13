@@ -27,7 +27,7 @@ You can use BF-CPP from a pre-compiled binary, or you can generate the
 code and compile it yourself:
 
 -  Binary builds for several common platforms are available on our
-   `Bio-Formats downloads page <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_.
+   :bf_plone:`Bio-Formats downloads page <downloads>`.
 -  See the :source:`build instructions <components/scifio/cppwrap/readme.txt>`
    (:source:`Windows </components/scifio/cppwrap/readme-windows.txt>`,
    :source:`Mac OS X <components/scifio/cppwrap/readme-macosx.txt>`,
