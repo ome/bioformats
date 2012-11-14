@@ -833,8 +833,7 @@ public class TiffParser {
     long nrows = numTileRows;
     if (planarConfig == 2) numTileRows *= samplesPerPixel;
 
-    Region imageBounds = new Region(x, y, (int) width,
-      (int) (height/* * (samplesPerPixel / effectiveChannels)*/));
+    Region imageBounds = new Region(x, y, (int) width, (int) height);
 
     int endX = (int) width + x;
     int endY = (int) height + y;
