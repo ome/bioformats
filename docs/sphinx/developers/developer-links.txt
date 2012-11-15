@@ -29,9 +29,8 @@ Examples
     matlab-dev
     source-code
 
--  `More thorough examples of exporting images and
-   metadata
-   <http://github.com/openmicroscopy/bioformats/tree/develop/components/bio-formats/doc/export>`_
+-  :source:`More thorough examples of exporting images and
+   metadata <components/bio-formats/doc/export>`
 
 
 Interfacing from non-Java code
