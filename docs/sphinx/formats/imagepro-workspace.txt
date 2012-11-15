@@ -1,0 +1,69 @@
+.. index:: ImagePro Workspace
+.. index:: .ipw
+
+ImagePro Workspace
+===============================================================================
+
+Extensions: .ipw 
+
+
+Owner: `Media Cybernetics <http://www.mediacy.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ 
+- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ 
+- `IrfanView <http://www.irfanview.com/>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software 
+- a few IPW datasets 
+- the ability to produce more datasets 
+- some :source:`Bio-Formats developer notes <components/bio-formats/doc/ipw.html>` for IPW
+
+We would like to have:
+
+- an official IPW specification document 
+- more IPW datasets: 
+-   #. multiple datasets in one file 
+-   #. 2+ GB files
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Poor|
+
+Presence: |Poor|
+
+Utility: |Poor|
+
+Additional Information
+----------------------
+
+Source Code: :source:`IPWReader.java <components/bio-formats/src/loci/formats/in/IPWReader.java >`
+
+Notes:
+
+
+Bio-Formats uses a modified version of the `Apache Jakarta 
+POI <http://jakarta.apache.org/poi/>`_ library to read IPW files.
