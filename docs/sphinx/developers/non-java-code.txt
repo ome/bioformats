@@ -154,9 +154,7 @@ C/C++
    native code.
 -  Raw JNI solutions are `time-consuming and
    error-prone <http://codemesh.com/technology.html#jni>`_ to implement.
--  We have coded `a simple
-   example
-   <http://github.com/openmicroscopy/bioformats/tree/develop/components/bio-formats/utils/showinfJNI.cpp>`_
+-  We have coded :source:`a simple example <components/bio-formats/utils/showinfJNI.cpp>`
    for calling Bio-Formats this way.
 -  We recommend a higher level integration solution such as Jace
    instead.
