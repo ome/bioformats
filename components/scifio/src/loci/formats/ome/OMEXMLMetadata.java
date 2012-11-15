@@ -36,8 +36,6 @@
 
 package loci.formats.ome;
 
-import java.util.Hashtable;
-
 import loci.formats.meta.IMetadata;
 
 /**
