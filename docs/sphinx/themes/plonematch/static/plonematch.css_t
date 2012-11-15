@@ -171,5 +171,9 @@ div.related {
 }
 
 @media print{
-	
+
+#portal-top {
+    display:none;
+}
+
 }
