@@ -169,6 +169,10 @@ public class OMETiffWriter extends TiffWriter {
         service = null;
         ifdCounts.clear();
       }
+      else {
+        for(String k : ifdCounts.keySet())
+        ifdCounts.put(k, 0);
+      }
     }
   }
 
@@ -333,11 +337,6 @@ public class OMETiffWriter extends TiffWriter {
 
         Integer ifdIndex = ifdCounts.get(filename);
         int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
-        if (series == 0) {
-          if ((ifd > plane || ifdCounts.size() > 1) && ifd > 0) {
-            ifd--;
-          }
-        }
 
         omeMeta.setUUIDFileName(filename, series, nextPlane);
         String uuid = "urn:uuid:" + getUUID(filename);
