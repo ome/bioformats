@@ -1182,6 +1182,7 @@ public abstract class FormatReader extends FormatHandler
     if (no < 0 || no >= getResolutionCount()) {
       throw new IllegalArgumentException("Invalid resolution: " + no);
     }
+    coreIndex = seriesToCoreIndex(getSeries()) + no;
     resolution = no;
   }
 
