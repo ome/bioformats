@@ -1121,13 +1121,13 @@ public abstract class FormatReader extends FormatHandler
 
     // Use corresponding coreIndex
     if (this.series == series) {
-      return coreIndex;
+      return coreIndex - resolution;
     }
 
     int index = 0;
     for (int i = 0; i < series && index < core.length; i++) {
       if (core[i] != null)
-	index += core[index].resolutionCount;
+        index += core[index].resolutionCount;
       else
 	throw new IllegalArgumentException("Invalid series (null core["+i+"]: " + series);
     }
