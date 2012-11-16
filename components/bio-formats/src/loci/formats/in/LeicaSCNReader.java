@@ -165,37 +165,37 @@ public class LeicaSCNReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    int originalSeries = getSeries();
+    int originalIndex = getCoreIndex();
     LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
 
     int thumbseries = i.imageNumStart + i.imageThumbnail;
     setCoreIndex(thumbseries);
     byte[] thumb = FormatTools.openThumbBytes(this, no);
-    setSeries(originalSeries);
+    setCoreIndex(originalIndex);
 
     return thumb;
   }
 
   public int getThumbSizeX() {
-    int originalSeries = getSeries();
+    int originalIndex = getCoreIndex();
     LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
 
     int thumbseries = i.imageNumStart + i.imageThumbnail;
     setCoreIndex(thumbseries);
     int size = super.getThumbSizeX();
-    setSeries(originalSeries);
+    setCoreIndex(originalIndex);
 
     return size;
   }
 
   public int getThumbSizeY() {
-    int originalSeries = getSeries();
+    int originalIndex = getCoreIndex();
     LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
 
     int thumbseries = i.imageNumStart + i.imageThumbnail;
     setCoreIndex(thumbseries);
     int size = super.getThumbSizeY();
-    setSeries(originalSeries);
+    setCoreIndex(originalIndex);
 
     return size;
   }
