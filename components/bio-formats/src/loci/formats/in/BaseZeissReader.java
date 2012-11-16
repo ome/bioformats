@@ -273,7 +273,7 @@ public abstract class BaseZeissReader extends FormatReader {
     core[0].indexed = !isRGB() && channelColors != null;
 
     for (int i=1; i<core.length; i++) {
-      core[i] = new CoreMetadata(this, 0);
+      core[i] = new CoreMetadata(core[0]);
     }
   }
 

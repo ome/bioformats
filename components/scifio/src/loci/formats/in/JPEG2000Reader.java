@@ -234,7 +234,7 @@ public class JPEG2000Reader extends FormatReader {
         newCore[0].resolutionCount = newCore.length;
       }
       for (int i = 1; i < newCore.length; i++) {
-        newCore[i] = new CoreMetadata(this, 0);
+        newCore[i] = new CoreMetadata(core[0]);
         newCore[i].sizeX = newCore[i - 1].sizeX / 2;
         newCore[i].sizeY = newCore[i - 1].sizeY / 2;
         newCore[i].thumbnail = true;

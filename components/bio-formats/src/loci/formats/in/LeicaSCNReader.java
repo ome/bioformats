@@ -165,16 +165,39 @@ public class LeicaSCNReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    int s = getCoreIndex();
-    LeicaSCNHandler.Image i = handler.imageMap.get(s);
+    int originalSeries = getSeries();
+    LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
 
     int thumbseries = i.imageNumStart + i.imageThumbnail;
-    int thisSeries = getCoreIndex();
-    setSeries(thumbseries);
+    setCoreIndex(thumbseries);
     byte[] thumb = FormatTools.openThumbBytes(this, no);
-    setSeries(thisSeries);
+    setSeries(originalSeries);
 
     return thumb;
+  }
+
+  public int getThumbSizeX() {
+    int originalSeries = getSeries();
+    LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
+
+    int thumbseries = i.imageNumStart + i.imageThumbnail;
+    setCoreIndex(thumbseries);
+    int size = super.getThumbSizeX();
+    setSeries(originalSeries);
+
+    return size;
+  }
+
+  public int getThumbSizeY() {
+    int originalSeries = getSeries();
+    LeicaSCNHandler.Image i = handler.imageMap.get(getCoreIndex());
+
+    int thumbseries = i.imageNumStart + i.imageThumbnail;
+    setCoreIndex(thumbseries);
+    int size = super.getThumbSizeY();
+    setSeries(originalSeries);
+
+    return size;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -219,10 +242,10 @@ public class LeicaSCNReader extends BaseTiffReader {
       throw new FormatException("Error setting core metadata for image number " + s);
 
     // repopulate core metadata
-    IFD ifd = ifds.get(handler.IFDMap.get(s));
+    int r = s-i.imageNumStart; // subresolution
+    IFD ifd = ifds.get(i.pixels.dimIFD[0][0][r]);
     PhotoInterp pi = ifd.getPhotometricInterpretation();
     int samples = ifd.getSamplesPerPixel();
-    int r = s-i.imageNumStart; // subresolution
 
     if (s == i.imageNumStart && !hasFlattenedResolutions()) {
       core[s].resolutionCount = i.pixels.sizeR;
@@ -346,7 +369,7 @@ public class LeicaSCNReader extends BaseTiffReader {
         store.setChannelIlluminationType(IlluminationType.TRANSMITTED, s, 0);
       } else {
         store.setChannelIlluminationType(IlluminationType.OTHER, s, 0);
-        System.out.println("Unknown illumination source " + i.illumSource + "; please report this");
+        LOGGER.info("Unknown illumination source " + i.illumSource + "; please report this");
       }
 
       for (int q=0; q<core[s].imageCount; q++) {
@@ -397,12 +420,18 @@ public class LeicaSCNReader extends BaseTiffReader {
  */
 class LeicaSCNHandler extends DefaultHandler {
 
+  // -- Constants --
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(LeicaSCNReader.class);
+
   // -- Fields --
   boolean valid = false;
 
   public ArrayList<LeicaSCNHandler.ImageCollection> collections;
   public LeicaSCNHandler.ImageCollection currentCollection;
   public LeicaSCNHandler.Image currentImage;
+  public LeicaSCNHandler.Dimension currentDimension;
   public int seriesIndex;
   public ArrayList<Integer> IFDMap = new ArrayList<Integer>();
   public ArrayList<ImageCollection> collectionMap = new ArrayList<ImageCollection>();
@@ -414,9 +443,6 @@ class LeicaSCNHandler extends DefaultHandler {
   // single span between two tags, and CDATA with embedded elements is
   // not supported (and not present in the Zeiss TIFF format).
   public String cdata = new String();
-
-
-  //public ArrayList<Plane> planes = new ArrayList<Plane>();
 
   // -- ZeissTIFFHandler API methods --
 
@@ -456,8 +482,55 @@ class LeicaSCNHandler extends DefaultHandler {
     else if (qName.equals("device")) {
     }
     else if (qName.equals("pixels")) {
+      // Compute size of C, R and Z
+      Pixels p = currentImage.pixels;
+      int sizeC = 0;
+      int sizeR = 0;
+      int sizeZ = 0;
+
+      for (Dimension d : p.dims) {
+        if (d.c > sizeC)
+          sizeC = d.c;
+        if (d.r > sizeR)
+          sizeR = d.r;
+        if (d.z > sizeZ)
+          sizeZ = d.z;
+      }
+      sizeC++;
+      sizeR++;
+      sizeZ++;
+
+      // Set up storage for all dimensions.
+      p.sizeC = sizeC;
+      p.sizeR = sizeR;
+      p.sizeZ = sizeZ;
+      p.dimSizeX = new long[sizeZ][sizeC][sizeR];
+      p.dimSizeY = new long[sizeZ][sizeC][sizeR];
+      p.dimIFD = new int[sizeZ][sizeC][sizeR];
+
+      for (Dimension d : p.dims) {
+        p.dimSizeX[d.z][d.c][d.r] = d.sizeX;
+        p.dimSizeY[d.z][d.c][d.r] = d.sizeY;
+        p.dimIFD[d.z][d.c][d.r] = d.ifd;
+        if (d.r == 0 || currentImage.thumbSizeX > d.sizeX) {
+          currentImage.thumbSizeX = d.sizeX;
+          currentImage.imageThumbnail = d.r;
+        }
+      }
+
+      // Dimension ordering indirection (R=image, then Z, then C)
+      for (int cr = 0; cr < sizeR; cr++) {
+        for (int cc = 0; cc < sizeC; cc++) {
+          for (int cz = 0; cz < sizeZ; cz++) {
+            IFDMap.add(p.dimIFD[cz][cc][cr]);
+            collectionMap.add(currentCollection);
+            imageMap.add(currentImage);
+          }
+        }
+      }
     }
     else if (qName.equals("dimension")) {
+      currentDimension = null;
     }
     else if (qName.equals("view")) {
     }
@@ -477,7 +550,7 @@ class LeicaSCNHandler extends DefaultHandler {
       currentImage.illumSource = cdata;
     } else {
       // Other or unknown tag; will be handled by endElement.
-      System.out.println("Unknown tag: " + qName);
+      LOGGER.info("Unknown tag: " + qName);
     }
     cdata = null;
 
@@ -501,10 +574,14 @@ class LeicaSCNHandler extends DefaultHandler {
 
     if (qName.equals("scn")) {
       String ns = attributes.getValue("xmlns");
-      if (ns == null || !ns.equals("http://www.leica-microsystems.com/scn/2010/03/10"))
-      {
+      if (ns == null) {
         throw new SAXException("Invalid Leica SCN XML");
       }
+      if (!(ns.equals("http://www.leica-microsystems.com/scn/2010/03/10") ||
+          ns.equals("http://www.leica-microsystems.com/scn/2010/10/01"))) {
+        LOGGER.warn("Unknown Leica SCN XML schema: " + ns + "; this file may not be read correctly: please report this");
+      }
+
       valid = true;
       collections = new ArrayList<LeicaSCNHandler.ImageCollection>();
       seriesIndex = 0;
@@ -542,41 +619,9 @@ class LeicaSCNHandler extends DefaultHandler {
       }
     }
     else if (qName.equals("dimension")) {
-      String s;
-      int r = 0;
-      int z = 0;
-      int c = 0;
-      long sizeX = 0;
-      long sizeY = 0;
-      int ifd = 0;
-      s = attributes.getValue("r");
-      if (s != null)
-        r = Integer.parseInt(s);
-      s = attributes.getValue("z");
-      if (s != null)
-        z = Integer.parseInt(s);
-      s = attributes.getValue("c");
-      if (s != null)
-        c = Integer.parseInt(s);
-      s = attributes.getValue("sizeX");
-      if (s != null)
-        sizeX = Long.parseLong(s);
-      s = attributes.getValue("sizeY");
-      if (s != null)
-        sizeY = Long.parseLong(s);
-      s = attributes.getValue("ifd");
-      if (s != null)
-        ifd = Integer.parseInt(s);
-      currentImage.pixels.dimSizeX[z][c][r] = sizeX;
-      currentImage.pixels.dimSizeY[z][c][r] = sizeY;
-      currentImage.pixels.dimIFD[z][c][r] = ifd;
-      if (r == 0 || currentImage.thumbSizeX > sizeX) {
-        currentImage.thumbSizeX = sizeX;
-        currentImage.imageThumbnail = r;
-      }
-      IFDMap.add(ifd);
-      collectionMap.add(currentCollection);
-      imageMap.add(currentImage);
+      Dimension d = new Dimension(attributes);
+      currentImage.pixels.dims.add(d);
+      currentDimension = d;
     }
     else if (qName.equals("view")) {
       currentImage.setView(attributes);
@@ -685,20 +730,20 @@ class LeicaSCNHandler extends DefaultHandler {
   {
     // Set up storage for each resolution and each dimension.  Set main resolution.
 
-
-    // data order (XYCRZ)
-    // sizes for XYRZC
-    // firstIFD (number)
+    // data order (XYCRZ) [unused; force to XYCZT]
+    // sizeX, sizeY
+    // sizeZ, sizeC, sizeR [unused; compute from dimensions]
+    // firstIFD (number) [unused]
     // dimension->IFD mapping (RZC to sizeX, sizeY, IFD)
     //   use 3 arrays of size C*Z*R
 
+    ArrayList<Dimension> dims = new ArrayList<Dimension>();
     String dataOrder; // Strip subresolutions and add T
     long sizeX;
     long sizeY;
     int sizeZ;
     int sizeC;
     int sizeR;
-    int firstIFD;
     int lastIFD;
     long dimSizeX[][][]; // X size for [ZCR]
     long dimSizeY[][][]; // Y size for [ZCR]
@@ -707,9 +752,7 @@ class LeicaSCNHandler extends DefaultHandler {
     Pixels(Attributes attrs) {
       String s;
 
-      dataOrder = attrs.getValue("dataOrder");
-      dataOrder = dataOrder.replace("R", "");
-      dataOrder += "T";
+      dataOrder = "XYCZT"; // Do not get from XML
 
       // Set main resolution.
       s = attrs.getValue("sizeX");
@@ -718,25 +761,39 @@ class LeicaSCNHandler extends DefaultHandler {
       s = attrs.getValue("sizeY");
       if (s != null)
         sizeY = Long.parseLong(s);
+    }
+  }
 
-      // Set dimensions.
-      s = attrs.getValue("sizeZ");
-      if (s != null)
-        sizeZ = Integer.parseInt(s);
-      s = attrs.getValue("sizeC");
-      if (s != null)
-        sizeC = Integer.parseInt(s);
-      s = attrs.getValue("sizeR");
-      if (s != null)
-        sizeR = Integer.parseInt(s);
+  public class Dimension
+  {
+    // Single image plane for given Z, C, R dimensions
+    long sizeX = 0;
+    long sizeY = 0;
+    int z = 0;
+    int c = 0;
+    int r = 0;
+    int ifd = 0;
 
-      s = attrs.getValue("firstIFD");
+    Dimension(Attributes attrs) {
+      String s;
+      s = attrs.getValue("r");
       if (s != null)
-        firstIFD = Integer.parseInt(s);
-      // Set up storage all dimensions.
-      dimSizeX = new long[sizeZ][sizeC][sizeR];
-      dimSizeY = new long[sizeZ][sizeC][sizeR];
-      dimIFD = new int[sizeZ][sizeC][sizeR];
+        r = Integer.parseInt(s);
+      s = attrs.getValue("z");
+      if (s != null)
+        z = Integer.parseInt(s);
+      s = attrs.getValue("c");
+      if (s != null)
+        c = Integer.parseInt(s);
+      s = attrs.getValue("sizeX");
+      if (s != null)
+        sizeX = Long.parseLong(s);
+      s = attrs.getValue("sizeY");
+      if (s != null)
+        sizeY = Long.parseLong(s);
+      s = attrs.getValue("ifd");
+      if (s != null)
+        ifd = Integer.parseInt(s);
     }
   }
 
