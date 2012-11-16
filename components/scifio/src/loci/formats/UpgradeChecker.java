@@ -70,6 +70,9 @@ public class UpgradeChecker {
 
   // -- Constants --
 
+  /** Version number of the latest stable release. */
+  public static final String STABLE_VERSION = "4.4.5";
+
   /** Location of the OME continuous integration server. */
   public static final String CI_SERVER = "http://hudson.openmicroscopy.org.uk";
 
@@ -103,9 +106,6 @@ public class UpgradeChecker {
     "mdbtools-java.jar", "metakit.jar", "ome-io.jar", "ome-xml.jar",
     "poi-loci.jar", "scifio.jar"
   };
-
-  /** Version number of the latest stable release. */
-  public static final String STABLE_VERSION = "4.4.4";
 
   /** Location of the OME registry. */
   public static final String REGISTRY = "http://upgrade.openmicroscopy.org.uk";
