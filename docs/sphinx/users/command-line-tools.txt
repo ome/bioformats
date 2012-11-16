@@ -7,8 +7,8 @@ line.
 Installation
 ------------
 
-:bf_plone:`Download **bftools.zip** <downloads>`, unzip it into a new folder, 
-then :bf_plone:`download **loci\_tools.jar** <downloads>` and place it in the 
+Download :bf_plone:`bftools.zip <downloads>`, unzip it into a new folder, 
+then download :bf_plone:`loci_tools.jar <downloads>` and place it in the 
 same folder.
 
 The zip file contains both Unix scripts and Windows batch files.

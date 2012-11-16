@@ -10,7 +10,7 @@ formats it supports.
 Installation
 ------------
 
-:bf_plone:`Download **loci\_tools.jar** <downloads>` and drop it into your 
+Download :bf_plone:`loci_tools.jar <downloads>` and drop it into your 
 **ImageJ/plugins** folder. Next time you run ImageJ, a new
 LOCI submenu with several plugins will appear in the Plugins menu,
 including the Bio-Formats Importer and Bio-Formats Exporter.
@@ -41,7 +41,7 @@ Fiji wiki.
 Upgrading
 ---------
 
-To upgrade, just overwrite the old **loci\_tools.jar** with the 
+To upgrade, just overwrite the old **loci_tools.jar** with the 
 :bf_plone:`latest one <downloads>`.
 Step-by-step upgrade instructions for Windows are available
 :doc:`here <upgrading-importer-imagej>`.
