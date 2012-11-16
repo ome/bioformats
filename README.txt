@@ -9,35 +9,35 @@ Purpose
 Bio-Formats's primary purpose is to convert proprietary microscopy data into an
 open standard called the OME data model, particularly into the OME-TIFF file
 format. See the statement of purpose for a thorough explanation and rationale:
-   http://loci.wisc.edu/bio-formats/about
+   http://www.openmicroscopy.org/site/support/bio-formats/about.html
 
 
 Supported formats
 -----------------
 
 For a complete list of supported formats, See the list online at:
-   http://loci.wisc.edu/bio-formats/formats
+   http://www.openmicroscopy.org/site/support/bio-formats/supported-formats.html
 
 
 For users
 ---------
 
 Many software packages use Bio-Formats to read and write microscopy formats:
-   http://loci.wisc.edu/bio-formats/applications
+   http://www.openmicroscopy.org/site/support/bio-formats/users/user-info.html
 
 
 For developers
 --------------
 
 You can use Bio-Formats to easily support these formats in your software:
-   http://loci.wisc.edu/bio-formats/bio-formats-java-library
+   http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html
 
 
 More information
 ----------------
 
 For more information, see the Bio-Formats web site:
-   http://loci.wisc.edu/software/bio-formats
+   http://www.openmicroscopy.org/site/products/bio-formats
 
 Pull request testing
 --------------------
@@ -56,7 +56,7 @@ following before submitting a pull request:
  * test at least one file in each affected format, using the ```showinf```
    command
  * internal developers only: run the data tests as described here:
-    http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-CommitTesting
+    http://www.openmicroscopy.org/site/support/bio-formats/developers/commit-testing.html
    against directories corresponding to the affected format(s), as well as
    the test_per_commit directory
  * make sure that your commits contain the correct authorship information and,

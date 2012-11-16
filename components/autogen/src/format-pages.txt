@@ -1445,8 +1445,8 @@ library to read ND2 files compressed with JPEG-2000. \n
 There is also an ND2 reader that uses Nikon's native libraries.  To use \n
 it, you must be using Windows and have `Nikon's ND2 reader plugin for ImageJ \n
 <http://rsb.info.nih.gov/ij/plugins/nd2-reader.html>`_ installed. \n
-Additionally, you will need to download `LegacyND2Reader.dll \n
-<https://github.com/openmicroscopy/bioformats/raw/develop/lib/LegacyND2Reader.dll>`_ \n
+Additionally, you will need to download :source:`LegacyND2Reader.dll \n
+<lib/LegacyND2Reader.dll?raw=true>` \n
 and place it in your ImageJ plugin folder.
 
 [NRRD (Nearly Raw Raster Data)]

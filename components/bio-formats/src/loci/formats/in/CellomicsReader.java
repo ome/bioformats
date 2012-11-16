@@ -132,12 +132,12 @@ public class CellomicsReader extends FormatReader {
     // look for files with similar names
     Location baseFile = new Location(id).getAbsoluteFile();
     Location parent = baseFile.getParentFile();
-    String[] list = parent.list(true);
     ArrayList<String> pixelFiles = new ArrayList<String>();
 
     String plateName = getPlateName(baseFile.getName());
 
     if (plateName != null && isGroupFiles()) {
+      String[] list = parent.list(true);
       for (String f : list) {
         if (plateName.equals(getPlateName(f)) &&
           (checkSuffix(f, "c01") || checkSuffix(f, "dib")))

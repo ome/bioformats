@@ -16,9 +16,9 @@ Upgrading
 ---------
 
 It should be possible to use a newer version of Bio-Formats by putting
-the `latest **loci\_tools.jar** or
-**bio-formats.jar** <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_
-before **visad.jar** in the class path. Alternately, you can create a
-"VisAD Lite" using the ``make lite`` command from VisAD source, and use
-the resultant **visad-lite.jar**, which is a stripped down version of
-VisAD without sample applications or Bio-Formats bundled in.
+the latest :bf_plone:`loci_tools.jar <downloads>` or 
+:bf_plone:`bio-formats.jar <downloads>` before **visad.jar** in the class 
+path. Alternately, you can create a "VisAD Lite" using the ``make lite`` 
+command from VisAD source, and use the resultant **visad-lite.jar**, which is 
+a stripped down version of VisAD without sample applications or Bio-Formats 
+bundled in.

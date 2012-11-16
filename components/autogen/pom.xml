@@ -16,7 +16,7 @@
 
   <name>Bio-Formats code generator</name>
   <description>Package for generating other code, particularly the Bio-Formats metadata documentation.</description>
-  <url>http://loci.wisc.edu/software/bio-formats</url>
+  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2007</inceptionYear>
 
   <licenses>

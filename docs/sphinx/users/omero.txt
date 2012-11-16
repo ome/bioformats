@@ -19,4 +19,5 @@ Upgrading
 The OMERO clients are currently distributed with a static version of
 Bio-Formats bundled within the **jar\_0.jar** or **omero.importer.jar**
 file, and cannot be easily upgraded using the latest **loci\_tools.jar**
-on the `Bio-Formats downloads page <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_. You should upgrade to the latest version of the OMERO.importer client instead.
+on the :bf_plone:`Bio-Formats downloads page <downloads>`. You should upgrade 
+to the latest version of the OMERO.importer client instead.

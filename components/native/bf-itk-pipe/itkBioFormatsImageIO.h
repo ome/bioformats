@@ -66,7 +66,8 @@ namespace itk
  * the Bio-Formats Java library.
  *
  * \warning Note that the Bio-Format Java library is distributed under a GPLv2
- * license. For details, see http://www.loci.wisc.edu/software/bio-formats
+ * license. For details, see   
+ * http://www.openmicroscopy.org/site/products/bio-formats
  */
 class BioFormatsImageIO_EXPORT BioFormatsImageIO : public StreamingImageIOBase
 {
