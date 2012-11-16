@@ -56,7 +56,7 @@ public class LegacyND2Reader extends FormatReader {
   private static final int MULTI_PHOTON = 5;
 
   private static final String URL_NIKON_ND2 =
-    "http://www.loci.wisc.edu/bio-formats-format/nikon-nis-elements-nd2";
+    "http://www.openmicroscopy.org/site/support/bio-formats/formats/nikon-nis-elements-nd2.html";
   private static final String NO_NIKON_MSG = "Nikon ND2 library not found. " +
     "Please see " + URL_NIKON_ND2 + " for details.";
 
