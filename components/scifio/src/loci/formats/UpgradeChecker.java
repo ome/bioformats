@@ -89,7 +89,7 @@ public class UpgradeChecker {
    * Location of the JAR artifacts for the stable releases.
    */
   public static final String STABLE_BUILD =
-    "http://loci.wisc.edu/files/software/";
+    "http://cvs.openmicroscopy.org.uk/snapshots/bioformats/" +  STABLE_VERSION + "/";
 
   /** Name of the LOCI tools JAR. */
   public static final String TOOLS = "loci_tools.jar";
