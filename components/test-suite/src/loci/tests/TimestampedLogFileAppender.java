@@ -63,7 +63,7 @@ public class TimestampedLogFileAppender extends FileAppender {
                         this.bufferedIO, this.bufferSize);
             } catch (IOException e) {
                 this.errorHandler.error(
-                        "Error while adding timestamp to log name", e,
+                        "Error while adding timestamp to log file name", e,
                         ErrorCode.FILE_OPEN_FAILURE);
             }
         }
