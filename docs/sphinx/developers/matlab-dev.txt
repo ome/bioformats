@@ -227,4 +227,4 @@ constructed like so:
 
 There is also a script that can save MATLAB arrays to supported formats:
 
-`bfsave.m <https://github.com/openmicroscopy/bioformats/blob/develop/components/bio-formats/matlab/bfsave.m>`_
+:source:`bfsave.m <components/bio-formats/matlab/bfsave.m>`
