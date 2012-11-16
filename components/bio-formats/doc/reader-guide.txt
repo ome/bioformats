@@ -220,6 +220,6 @@ These variables are:
   straightforward one).  loci.formats.in.LIFReader and InCellReader are also
   good references that show off some of the nicer features of Bio-Formats.
 
-If you have questions about Bio-Formats, please contact the Bio-Formats team:
+If you have questions about Bio-Formats, please contact the OME team:
 
-  http://loci.wisc.edu/bio-formats/contact
+  http://www.openmicroscopy.org/site/community
