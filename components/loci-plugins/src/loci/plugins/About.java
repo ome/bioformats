@@ -51,7 +51,7 @@ public final class About implements PlugIn {
 
   /** URL of Bio-Formats ImageJ web page. */
   public static final String URL_BIO_FORMATS_IMAGEJ =
-    "http://loci.wisc.edu/bio-formats/imagej";
+    "http://www.openmicroscopy.org/site/support/bio-formats/users/bf-features-imagej.html";
 
   /** URL of Data Browser web page. */
   public static final String URL_DATA_BROWSER =
