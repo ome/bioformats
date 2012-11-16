@@ -316,7 +316,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Gets the number of series in this file. */
   int getSeriesCount();
 
-  /** Activates the specified series. */
+  /** Activates the specified series. This also resets the resolution to 0. */
   void setSeries(int no);
 
   /** Gets the currently active series. */

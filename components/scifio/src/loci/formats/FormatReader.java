@@ -822,6 +822,7 @@ public abstract class FormatReader extends FormatHandler
   public void setSeries(int no) {
     coreIndex = seriesToCoreIndex(no);
     series = no;
+    resolution = 0;
   }
 
   /* @see IFormatReader#getSeries() */
