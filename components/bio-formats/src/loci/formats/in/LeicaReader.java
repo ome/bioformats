@@ -212,8 +212,8 @@ public class LeicaReader extends FormatReader {
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int index = (int) Math.min(lastPlane, files[series].size() - 1);
-      tiff.setId((String) files[series].get(index));
+      int index = (int) Math.min(lastPlane, files[getSeries()].size() - 1);
+      tiff.setId((String) files[getSeries()].get(index));
       return tiff.get8BitLookupTable();
     }
     catch (FormatException e) {
@@ -229,8 +229,8 @@ public class LeicaReader extends FormatReader {
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int index = (int) Math.min(lastPlane, files[series].size() - 1);
-      tiff.setId((String) files[series].get(index));
+      int index = (int) Math.min(lastPlane, files[getSeries()].size() - 1);
+      tiff.setId((String) files[getSeries()].get(index));
       return tiff.get16BitLookupTable();
     }
     catch (FormatException e) {
@@ -257,9 +257,9 @@ public class LeicaReader extends FormatReader {
 
     lastPlane = no;
 
-    int fileIndex = no < files[series].size() ? no : 0;
-    int planeIndex = no < files[series].size() ? 0 : no;
-    String filename = (String) files[series].get(fileIndex);
+    int fileIndex = no < files[getSeries()].size() ? no : 0;
+    int planeIndex = no < files[getSeries()].size() ? 0 : no;
+    String filename = (String) files[getSeries()].get(fileIndex);
 
     if (new Location(filename).exists()) {
       if (checkSuffix(filename, TiffReader.TIFF_SUFFIXES)) {

@@ -334,7 +334,7 @@ public class BDReader extends FormatReader {
       }
     }
 
-    for (int i=0; i<getSeriesCount(); i++) {
+    for (int i=0; i<core.length; i++) {
       core[i] = new CoreMetadata();
       core[i].sizeC = nChannels;
       core[i].sizeZ = nSlices;

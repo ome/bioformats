@@ -133,7 +133,7 @@ public class APLReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return parser[series].getSamples(ifds[series].get(no), buf, x, y, w, h);
+    return parser[getSeries()].getSamples(ifds[getSeries()].get(no), buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

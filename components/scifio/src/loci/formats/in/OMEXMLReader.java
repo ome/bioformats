@@ -137,6 +137,7 @@ public class OMEXMLReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int index = no;
+    int series = getSeries();
     for (int i=0; i<series; i++) {
       index += core[i].imageCount;
     }
