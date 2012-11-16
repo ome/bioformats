@@ -6,7 +6,8 @@ User Information
 Installation
 ============
 
-Download one of the files from `the Bio-Formats downloads page <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_ and place it in an appropriate directory. Specific installation instructions
+Download one of the files from :bf_plone:`the Bio-Formats downloads page <downloads>` 
+and place it in an appropriate directory. Specific installation instructions
 depend upon the application you are using - see below.
 
 
