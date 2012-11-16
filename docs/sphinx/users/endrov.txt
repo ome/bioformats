@@ -17,7 +17,7 @@ Upgrading
 ---------
 
 It should be possible to use a newer version of Bio-Formats by
-:bf_plone:`downloading the latest **bio-formats.jar** <downloads>`
+downloading the latest :bf_plone:`bio-formats.jar <downloads>`
 and putting it into the ``libs`` folder of the EV distribution,
 overwriting the old file.
 
