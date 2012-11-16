@@ -206,7 +206,7 @@ public class NativeND2Reader extends FormatReader {
 
     lastChannel = split ? no % getSizeC() : 0;
     int planeIndex = split ? no / getSizeC() : no;
-    in.seek(offsets[series][planeIndex]);
+    in.seek(offsets[getSeries()][planeIndex]);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getRGBChannelCount();
@@ -215,7 +215,7 @@ public class NativeND2Reader extends FormatReader {
     int totalPlanes = split ? getImageCount() / getSizeC() : getImageCount();
 
     long maxFP = planeIndex == totalPlanes - 1 ?
-      in.length() : offsets[series][planeIndex + 1];
+      in.length() : offsets[getSeries()][planeIndex + 1];
 
     CodecOptions options = new CodecOptions();
     options.littleEndian = isLittleEndian();

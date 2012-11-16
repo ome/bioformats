@@ -93,7 +93,7 @@ public class MNGReader extends BIFormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
 
-    SeriesInfo info = seriesInfo.get(series);
+    SeriesInfo info = seriesInfo.get(getSeries());
     long offset = info.offsets.get(no);
     in.seek(offset);
     long end = info.lengths.get(no);

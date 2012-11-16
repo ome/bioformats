@@ -129,7 +129,7 @@ public class TillVisionReader extends FormatReader {
       readPlane(in, x, y, w, h, buf);
     }
     else {
-      pixelsStream = new RandomAccessInputStream(pixelsFiles[series]);
+      pixelsStream = new RandomAccessInputStream(pixelsFiles[getSeries()]);
       if ((no + 1) * plane <= pixelsStream.length()) {
         pixelsStream.seek(no * plane);
         readPlane(pixelsStream, x, y, w, h, buf);
@@ -276,7 +276,7 @@ public class TillVisionReader extends FormatReader {
           core = new CoreMetadata[nFound];
           embeddedOffset = new long[nFound];
 
-          for (int i=0; i<getSeriesCount(); i++) {
+          for (int i=0; i<core.length; i++) {
             core[i] = new CoreMetadata();
 
             s.seek(cimages[i]);
@@ -443,13 +443,13 @@ public class TillVisionReader extends FormatReader {
 
     Arrays.sort(pixelsFile);
 
-    pixelsFiles = new String[getSeriesCount()];
-    infFiles = new String[getSeriesCount()];
+    pixelsFiles = new String[core.length];
+    infFiles = new String[core.length];
 
     Object[] metadataKeys = tmpSeriesMetadata.keySet().toArray();
     IniParser parser = new IniParser();
 
-    for (int i=0; i<getSeriesCount(); i++) {
+    for (int i=0; i<core.length; i++) {
       if (!embeddedImages) {
         core[i] = new CoreMetadata();
         setSeries(i);
