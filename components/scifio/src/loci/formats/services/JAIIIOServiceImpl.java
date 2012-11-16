@@ -78,7 +78,7 @@ public class JAIIIOServiceImpl extends AbstractService
   public static final String NO_J2K_MSG =
     "The JAI Image I/O Tools are required to read JPEG-2000 files. " +
     "Please obtain jai_imageio.jar from " +
-    "http://loci.wisc.edu/bio-formats/bio-formats-java-library";
+    "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html";
 
   // -- JAIIIOService API methods --
 
