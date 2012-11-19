@@ -1,0 +1,72 @@
+.. index:: OME-TIFF
+.. index:: .ome.tiff
+
+OME-TIFF
+===============================================================================
+
+Extensions: .ome.tiff 
+
+Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
+
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |yes|
+
+Officially Supported Versions: 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `DIMIN <http://www.dimin.net/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- an `OME-TIFF specification document <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff/ome-tiff-specification>`_ (from 2006 October 19, in HTML) 
+- many OME-TIFF datasets 
+- the ability to produce additional datasets
+
+We would like to have:
+
+- more OIB datasets (especially 2+ GB files) 
+- more FV1000 version 2 datasets
+
+Ratings
+-------
+
+Pixels: |Outstanding|
+
+Metadata: |Outstanding|
+
+Openness: |Outstanding|
+
+Presence: |Fair|
+
+Utility: |Outstanding|
+
+Additional Information
+----------------------
+
+Source Code: :source:`OMETiffReader.java <components/scifio/src/loci/formats/in/OMETiffReader.java >`
+Source Code: :source:`OMETiffWriter.java <components/scifio/src/loci/formats/out/OMETiffWriter.java >`
+
+Notes:
+
+
+Bio-Formats can save image stacks as OME-TIFF. 
+
+Commercial applications that support OME-TIFF include: 
+
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
+- `SVI Huygens <http://svi.nl/>`_ 
+
+.. seealso:: 
+  `OME-TIFF technical overview <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff>`_

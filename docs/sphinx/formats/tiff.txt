@@ -1,0 +1,71 @@
+.. index:: TIFF (Tagged Image File Format)
+.. index:: .tif
+
+TIFF (Tagged Image File Format)
+===============================================================================
+
+Extensions: .tif 
+
+Developer: Aldus and Microsoft
+
+Owner: `Adobe <http://www.adobe.com>`_
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |yes|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+
+Sample Datasets:
+
+- `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ 
+- `Big TIFF <http://tiffcentral.com/>`_
+
+We currently have:
+
+- a `TIFF specification document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_ (v6.0, from 1992 June 3, in PDF) 
+- many TIFF datasets 
+- a few BigTIFF datasets
+
+We would like to have:
+
+- an official specification document 
+- more SM-Camera files
+
+Ratings
+-------
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Outstanding|
+
+Presence: |Outstanding|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`TiffReader.java <components/scifio/src/loci/formats/in/TiffReader.java >`
+Source Code: :source:`TiffWriter.java <components/scifio/src/loci/formats/out/TiffWriter.java >`
+
+Notes:
+
+
+Bio-Formats can also read BigTIFF files (TIFF files larger than 4 GB). 
+Bio-Formats can save image stacks as TIFF or BigTIFF. 
+
+.. seealso:: 
+  `TIFF technical overview <http://www.awaresystems.be/imaging/tiff/faq.html#q3>`_ 
+  `BigTIFF technical overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_

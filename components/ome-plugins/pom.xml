@@ -8,7 +8,7 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>pom-scifio</artifactId>
-    <version>4.4.4</version>
+    <version>4.4.5</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -134,12 +134,12 @@ including the Download from OME and Upload to OME plugins.</projectName>
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
-      <id>loci.releases</id>
-      <url>http://dev.loci.wisc.edu/maven2/releases</url>
+      <id>imagej.releases</id>
+      <url>http://maven.imagej.net/content/repositories/releases</url>
     </repository>
     <repository>
-      <id>loci.snapshots</id>
-      <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
+      <id>imagej.snapshots</id>
+      <url>http://maven.imagej.net/content/repositories/snapshots</url>
     </repository>
   </repositories>
 

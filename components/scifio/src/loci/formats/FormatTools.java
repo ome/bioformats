@@ -173,7 +173,7 @@ public final class FormatTools {
   public static final String DATE = "@date@";
 
   /** Version number of this release. */
-  public static final String VERSION = "4.4.4";
+  public static final String VERSION = "4.4.5";
 
   // -- Constants - domains --
 
@@ -249,11 +249,11 @@ public final class FormatTools {
 
   /** URL of Bio-Formats web page. */
   public static final String URL_BIO_FORMATS =
-    "http://www.loci.wisc.edu/software/bio-formats";
+    "http://www.openmicroscopy.org/site/products/bio-formats";
 
   /** URL of 'Bio-Formats as a Java Library' web page. */
   public static final String URL_BIO_FORMATS_LIBRARIES =
-    "http://www.loci.wisc.edu/bio-formats/bio-formats-java-library";
+    "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html";
 
   /** URL of OME-TIFF web page. */
   public static final String URL_OME_TIFF =
@@ -1069,6 +1069,8 @@ public final class FormatTools {
       max = Short.MAX_VALUE;
       break;
     case INT32:
+    case FLOAT:
+    case DOUBLE:
       min = Integer.MIN_VALUE;
       max = Integer.MAX_VALUE;
       break;
@@ -1084,9 +1086,6 @@ public final class FormatTools {
       min = 0;
       max=(long) Math.pow(2, 32)-1;
       break;
-    case FLOAT:
-    case DOUBLE:
-      throw new IllegalArgumentException("Float and Double do not have a default min/max");
     default:
       throw new IllegalArgumentException("Invalid pixel type");
     }

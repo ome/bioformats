@@ -2,8 +2,7 @@ Using Bio-Formats in Matlab
 ===========================
 
 This section assumes that you have installed the bfopen.m script and
-loci\_tools.jar, as instructed
-`here <http://loci.wisc.edu/bio-formats/matlab>`_.
+loci\_tools.jar, as instructed :doc:`here </users/matlab>`.
 
 The first thing to do is initialize a file:
 
@@ -227,4 +226,4 @@ constructed like so:
 
 There is also a script that can save MATLAB arrays to supported formats:
 
-`bfsave.m <https://github.com/openmicroscopy/bioformats/blob/develop/components/bio-formats/matlab/bfsave.m>`_
+:source:`bfsave.m <components/bio-formats/matlab/bfsave.m>`

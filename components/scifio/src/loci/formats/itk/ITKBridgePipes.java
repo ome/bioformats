@@ -36,15 +36,16 @@
 
 package loci.formats.itk;
 
+import java.awt.image.ColorModel;
+import java.awt.image.IndexColorModel;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Map;
 import java.util.HashMap;
 
 import loci.formats.FormatException;
@@ -54,8 +55,7 @@ import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
-import loci.formats.in.DefaultMetadataOptions;
-import loci.formats.in.MetadataLevel;
+import loci.formats.gui.Index16ColorModel;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -77,8 +77,6 @@ import ome.xml.model.enums.EnumerationException;
  * @author Curtis Rueden
  */
 public class ITKBridgePipes {
-
-  private static final String HASH_PREFIX = "hash:";
 
   private IFormatReader reader = null;
   private IFormatWriter writer = null;
@@ -160,11 +158,11 @@ public class ITKBridgePipes {
       int dimz = Integer.parseInt( args[6] );
       int dimt = Integer.parseInt( args[7] );
       int dimc = Integer.parseInt( args[8] );
-      double pSizeX = Integer.parseInt( args[9]);
-      double pSizeY = Integer.parseInt( args[10]);
-      double pSizeZ = Integer.parseInt( args[11]);
-      double pSizeT = Integer.parseInt( args[12]);
-      double pSizeC = Integer.parseInt( args[13]);
+      double pSizeX = Double.parseDouble( args[9]);
+      double pSizeY = Double.parseDouble( args[10]);
+      double pSizeZ = Double.parseDouble( args[11]);
+      double pSizeT = Double.parseDouble( args[12]);
+      double pSizeC = Double.parseDouble( args[13]);
       int pixelType = Integer.parseInt( args[14] );
       int rgbCCount = Integer.parseInt( args[15] );
       int xStart = Integer.parseInt( args[16] );
@@ -177,7 +175,13 @@ public class ITKBridgePipes {
       int zCount = Integer.parseInt( args[21] );
       int cCount = Integer.parseInt( args[23] );
       int tCount = Integer.parseInt( args[25] );
-      if(!new ITKBridgePipes().write(args[1], byteOrder, dims, dimx, dimy, dimz, dimt, dimc, pSizeX, pSizeY, pSizeZ, pSizeT, pSizeC, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount)); 
+      
+      ColorModel cm = null;
+      int useCM = Integer.parseInt( args[26] );
+      if(useCM == 1)
+        cm = buildColorModel(args, byteOrder);
+      
+      if(!new ITKBridgePipes().write(args[1], cm, byteOrder, dims, dimx, dimy, dimz, dimt, dimc, pSizeX, pSizeY, pSizeZ, pSizeT, pSizeC, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount)); 
     }
     else {
       System.err.println("Unknown command: " + command);
@@ -202,7 +206,6 @@ public class ITKBridgePipes {
     final MetadataStore store = reader.getMetadataStore();
     IMetadata meta = (IMetadata) store;
     
-    
    // now print the informations
 
     // interleaved?
@@ -215,36 +218,7 @@ public class ITKBridgePipes {
     // component type
     // set ITK component type
     int pixelType = reader.getPixelType();
-    int itkComponentType;
-    switch (pixelType) {
-      case FormatTools.UINT8:
-        itkComponentType = 1;
-        break;
-      case FormatTools.INT8:
-        itkComponentType = 2;
-        break;
-      case FormatTools.UINT16:
-        itkComponentType = 3;
-        break;
-      case FormatTools.INT16:
-        itkComponentType = 4;
-        break;
-      case FormatTools.UINT32:
-        itkComponentType = 5;
-        break;
-      case FormatTools.INT32:
-        itkComponentType = 6;
-        break;
-      case FormatTools.FLOAT:
-        itkComponentType = 9;
-        break;
-      case FormatTools.DOUBLE:
-        itkComponentType = 10;
-        break;
-      default:
-        itkComponentType = 0;
-    }
-    sendData("PixelType", String.valueOf(itkComponentType));
+    sendData("PixelType", String.valueOf(pixelType));
 
     // x, y, z, t, c
     sendData("SizeX", String.valueOf(reader.getSizeX()));
@@ -257,20 +231,20 @@ public class ITKBridgePipes {
     sendData("RGBChannelCount", String.valueOf(reader.getRGBChannelCount()));
 
     // spacing
-    // Note: ITK spacing is mm.  Bio-Formats uses um.
-    sendData("PixelsPhysicalSizeX", String.valueOf((meta.getPixelsPhysicalSizeX(0)==null? 1.0: meta.getPixelsPhysicalSizeX(0).getValue() / 1000f)));
-    sendData("PixelsPhysicalSizeY", String.valueOf((meta.getPixelsPhysicalSizeY(0)==null? 1.0: meta.getPixelsPhysicalSizeY(0).getValue() / 1000f)));
-    sendData("PixelsPhysicalSizeZ", String.valueOf((meta.getPixelsPhysicalSizeZ(0)==null? 1.0: meta.getPixelsPhysicalSizeZ(0).getValue() / 1000f)));
-    sendData("PixelsPhysicalSizeT", String.valueOf((meta.getPixelsTimeIncrement(0)==null? 1.0: meta.getPixelsTimeIncrement(0) / 1000)));
+    // Note: ITK X,Y,Z spacing is mm.  Bio-Formats uses um.
+    sendData("PixelsPhysicalSizeX", String.valueOf(((meta.getPixelsPhysicalSizeX(0)==null? 1.0: meta.getPixelsPhysicalSizeX(0).getValue()) / 1000f)));
+    sendData("PixelsPhysicalSizeY", String.valueOf(((meta.getPixelsPhysicalSizeY(0)==null? 1.0: meta.getPixelsPhysicalSizeY(0).getValue()) / 1000f)));
+    sendData("PixelsPhysicalSizeZ", String.valueOf(((meta.getPixelsPhysicalSizeZ(0)==null? 1.0: meta.getPixelsPhysicalSizeZ(0).getValue()) / 1000f)));
+    sendData("PixelsPhysicalSizeT", String.valueOf((meta.getPixelsTimeIncrement(0)==null? 1.0: meta.getPixelsTimeIncrement(0))));
     sendData("PixelsPhysicalSizeC", String.valueOf(1.0));
 
     HashMap<String, Object> metadata = new HashMap<String, Object>();
     metadata.putAll( reader.getGlobalMetadata() );
     metadata.putAll( reader.getSeriesMetadata() );
-    Set entries = metadata.entrySet();
-    Iterator it = entries.iterator();
+    Set<Entry<String, Object>> entries = metadata.entrySet();
+    Iterator<Entry<String,Object>> it = entries.iterator();
     while (it.hasNext()) {
-      Map.Entry entry = (Map.Entry) it.next();
+      Entry<String, Object> entry = it.next();
 
       String key = (String)entry.getKey();
       String value = entry.getValue().toString();
@@ -280,6 +254,47 @@ public class ITKBridgePipes {
       sendData(key, value);
     }
     System.out.flush();
+    
+    // lookup table
+    //NB: if there are formats that don't preserve the LUT,
+    // put this logic in Read() or open a plane in this method to force
+    // population
+    //reader.openPlane(0, 0, 0, 0, 0);
+    
+    boolean use16 = reader.get16BitLookupTable() != null;
+    boolean use8 = reader.get8BitLookupTable() != null;
+    
+    if(use16 || use8) {
+      System.err.println("Saving color model...");
+      
+      sendData("UseLUT", String.valueOf(true));
+      sendData("LUTBits", String.valueOf(use8 ? 8 : 16));
+      short[][] lut16 = reader.get16BitLookupTable();
+      byte[][] lut8 = reader.get8BitLookupTable();
+      
+      sendData("LUTLength", String.valueOf(use8 ? lut8[0].length : lut16[0].length));
+      
+      for(int i = 0; i < (use8 ? lut8.length : lut16.length); i++) {
+        
+        char channel;
+        
+        switch(i) {
+        case 0: channel = 'R';
+        break;
+        case 1: channel = 'G';
+        break;
+        case 2: channel = 'B';
+        break;
+        default: channel = ' ';
+        }
+        
+        for(int j = 0; j < (use8 ? lut8[0].length : lut16[0].length); j++) {
+          sendData("LUT" + channel + "" + j, String.valueOf(use8 ? lut8[i][j] : lut16[i][j]));
+        }
+      }
+    }
+    else
+      sendData("UseLUT", String.valueOf(false));
 
     return true;
   }
@@ -362,7 +377,7 @@ public class ITKBridgePipes {
   /**
    * 
    */
-  public boolean write ( String fileName, int byteOrder, int dims,
+  public boolean write ( String fileName, ColorModel cm, int byteOrder, int dims,
 		  int dimx, int dimy, int dimz, int dimt, int dimc, double pSizeX,
 		  double pSizeY, double pSizeZ, double pSizeT, double pSizeC,
 		  int pixelType, int rgbCCount, int xStart, int yStart,
@@ -373,7 +388,7 @@ public class ITKBridgePipes {
 	  meta.createRoot();
 	  meta.setImageID("Image:0", 0);
 	  meta.setPixelsID("Pixels:0", 0);
-	  meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
+	  meta.setPixelsDimensionOrder(DimensionOrder.XYZTC, 0);
 
 	  try {
 		  meta.setPixelsType(PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), 0);
@@ -400,12 +415,23 @@ public class ITKBridgePipes {
     meta.setPixelsTimeIncrement(new Double(pSizeT), 0);
 
 
-	  meta.setChannelID("Channel:0:0", 0, 0);
-	  meta.setChannelSamplesPerPixel(new PositiveInteger(new Integer(rgbCCount)), 0, 0);
+    for(int i = 0; i < rgbCCount; i++) {
+      meta.setChannelID("Channel:0:" + i, 0, i);
+      meta.setChannelSamplesPerPixel(new PositiveInteger(new Integer(1)), 0, i);
+    }
 	  
 	  writer = new ImageWriter();
 	  writer.setMetadataRetrieve(meta);
 	  writer.setId(fileName);
+	  
+	  // build color model
+	  if(cm != null) {
+	    System.err.println("Using color model...");
+	    writer.setColorModel(cm);
+	  }
+	  
+	 // maybe this isn't enough... 
+	  System.err.println("Using writer for format: " + writer.getFormat());
 
 	  int bpp = FormatTools.getBytesPerPixel(pixelType);
 	  
@@ -417,16 +443,13 @@ public class ITKBridgePipes {
 	  System.out.print(bytesPerPlane + "\n" + fileName + "\n" + cStart + "\n" + cCount + "\n" + tStart + "\n" + tCount + "\n" + zStart + "\n" + zCount + "\n\n");
 	  System.out.flush();
 
-	  String line;
 	  int no = 0;
 	  for(int c=cStart; c<cStart+cCount; c++) {
 		  for(int t=tStart; t<tStart+tCount; t++) {
 			  for(int z=zStart; z<zStart+zCount; z++) {
 				  
-				  line = "";
 				  int bytesRead = 0;
 
-				  String test = "";
 				  byte[] buf = new byte[bytesPerPlane]; 
 				  BufferedInputStream linein = new BufferedInputStream(System.in);
 				  
@@ -448,8 +471,10 @@ public class ITKBridgePipes {
 		  }
 	  }
 	  
-	  in.close();
-	  writer.close();
+	  if(in != null)
+	    in.close();
+	  if(writer != null)
+	    writer.close();
 	  return true;
   }
 
@@ -569,11 +594,11 @@ public class ITKBridgePipes {
     	int dimz = Integer.parseInt( args[6] );
     	int dimt = Integer.parseInt( args[7] );
     	int dimc = Integer.parseInt( args[8] );
-    	double pSizeX = Integer.parseInt( args[9]);
-    	double pSizeY = Integer.parseInt( args[10]);
-    	double pSizeZ = Integer.parseInt( args[11]);
-    	double pSizeT = Integer.parseInt( args[12]);
-    	double pSizeC = Integer.parseInt( args[13]);
+    	double pSizeX = Double.parseDouble( args[9]);
+    	double pSizeY = Double.parseDouble( args[10]);
+    	double pSizeZ = Double.parseDouble( args[11]);
+    	double pSizeT = Double.parseDouble( args[12]);
+    	double pSizeC = Double.parseDouble( args[13]);
     	int pixelType = Integer.parseInt( args[14] );
     	int rgbCCount = Integer.parseInt( args[15] );
     	int xStart = Integer.parseInt( args[16] );
@@ -586,7 +611,13 @@ public class ITKBridgePipes {
     	int zCount = Integer.parseInt( args[21] );
     	int cCount = Integer.parseInt( args[23] );
     	int tCount = Integer.parseInt( args[25] );
-    	if(!new ITKBridgePipes().write(args[1], byteOrder, dims, dimx, dimy, dimz, dimt, dimc, pSizeX, pSizeY, pSizeZ, pSizeT, pSizeC, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount)) 
+    	
+    	ColorModel cm = null;
+      int useCM = Integer.parseInt( args[26] );
+      if(useCM == 1)
+        cm = buildColorModel(args, byteOrder);
+    	
+    	if(!new ITKBridgePipes().write(args[1], cm, byteOrder, dims, dimx, dimy, dimz, dimt, dimc, pSizeX, pSizeY, pSizeZ, pSizeT, pSizeC, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount)) 
     		System.exit(1);
     }
     else {
@@ -595,4 +626,35 @@ public class ITKBridgePipes {
     }
   }
 
+  private static ColorModel buildColorModel(String[] args, int byteOrder) throws IOException {
+    int lutBits = Integer.parseInt(args[27]);
+    int lutLength = Integer.parseInt(args[28]);
+    
+    ColorModel cm = null;
+    
+    if(lutBits == 8) {
+      byte[] r = new byte[lutLength], g = new byte[lutLength], b = new byte[lutLength];
+      
+      for(int i = 0; i < lutLength; i++) {
+        r[i] = Byte.parseByte(args[29 + (3*i)]);
+        g[i] = Byte.parseByte(args[29 + (3*i) + 1]);
+        b[i] = Byte.parseByte(args[29 + (3*i) + 2]);
+      }
+      
+      cm = new IndexColorModel(lutBits, lutLength, r, g, b);
+    }
+    else if(lutBits == 16) {
+      short[][] lut = new short[3][lutLength];
+      
+      for(int i = 0; i < lutLength; i ++) {
+        lut[0][i] = Short.parseShort(args[29 + (3*i)]);
+        lut[1][i] = Short.parseShort(args[29 + (3*i) + 1]);
+        lut[2][i] = Short.parseShort(args[29 + (3*i) + 2]);
+      }
+      
+      cm = new Index16ColorModel(lutBits, lutLength, lut, byteOrder == 0);
+    }
+    
+    return cm;
+  }
 }

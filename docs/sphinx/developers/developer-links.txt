@@ -1,0 +1,85 @@
+***********************
+Developer Documentation
+***********************
+
+
+Bio-Formats as a Java library
+=============================
+
+
+API documentation
+-----------------
+
+If you wish to make use of Bio-Formats within your own software, you can
+download bio-formats.jar to use it as a library. Just add
+**bio-formats.jar** to your CLASSPATH or build path. You will also need
+**loci-common.jar** for common I/O functions. :doc:`Read more...<java-library>`. 
+
+Also see :Jenkins:`further Bio-Formats Java documentation <job/BIOFORMATS-trunk/javadoc/>`
+
+
+Examples
+--------
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    export
+    matlab-dev
+    source-code
+
+-  :source:`More thorough examples of exporting images and
+   metadata <components/bio-formats/doc/export>`
+
+
+Interfacing from non-Java code
+==============================
+
+
+Bio-Formats is written in Java, and is easiest to use with other Java
+code. However, it is possible to call Bio-Formats from a program written
+in another language. But how to do so depends on your program's needs.
+:doc:`Read more.... <non-java-code>`
+
+
+Bio-Formats C++ bindings
+------------------------
+
+To make the utility of the Bio-Formats Java library accessible to
+software written in C++ (such as the Insight Toolkit) we have used the
+Jace set of libraries to create C++ proxies of the Bio-Formats classes.
+:doc:`Read more.... <c-bindings>`
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+    :hidden:
+
+    java-library
+    developing-bf
+    non-java-code
+    c-bindings
+
+.. _bfapplications:
+
+
+Contributing to Bio-Formats
+===========================
+
+
+If you are interested in working on the Bio-Formats source code itself,
+you can load the source code into your favorite IDE, or develop code
+with your favorite text editor. :doc:`Read
+more.... <developing-bf>`
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    commit-testing
+    testing-notes
+    service
+
+See `open Trac tickets for Bio-Formats <https://trac.openmicroscopy.org.uk/ome/report/44>`_ for information on work currently planned or in progress.
+

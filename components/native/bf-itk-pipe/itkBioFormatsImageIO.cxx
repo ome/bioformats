@@ -550,6 +550,11 @@ void BioFormatsImageIO::ReadImageInformation()
 #endif
 	
     }
+
+  // save the dicitonary
+
+  itkMeta = dict;
+
   // set the values needed by the reader
   std::string s;
   bool b;
@@ -587,8 +592,8 @@ void BioFormatsImageIO::ReadImageInformation()
     {
     itkExceptionMacro("Unknown pixel type: "<< i);
     }
-  itkDebugMacro("Setting PixelType: " << i);
-  SetComponentType( (itk::ImageIOBase::IOComponentType)i );
+  itkDebugMacro("Setting ComponentType: " << i);
+  SetComponentType( bfToTIKComponentType(i) );
 
   // x, y, z, t, c
   i = GetTypedMetaData<long>(dict, "SizeX");
@@ -643,18 +648,20 @@ void BioFormatsImageIO::ReadImageInformation()
 
 void BioFormatsImageIO::Read(void* pData)
 {
-  
   itkDebugMacro("BioFormatsImageIO::Read");
   const ImageIORegion & region = this->GetIORegion();
 
   CreateJavaProcess();
 
-  
+  itkDebugMacro("BioFormatsImageIO::Read region: ");
+
+
   // send the command to the java process
   std::string command = "read\t";
   command += m_FileName;
   for( unsigned int d=0; d<region.GetImageDimension(); d++ )
     {
+    itkDebugMacro("region index: " << region.GetIndex(d) << "; region size: " << region.GetSize(d));
     command += "\t";
     command += toString(region.GetIndex(d));
     command += "\t";
@@ -790,16 +797,23 @@ void BioFormatsImageIO::Write(const void * buffer )
   itkDebugMacro("File name: " << m_FileName);
   command += m_FileName;
   command += "\t";
-  itkDebugMacro("Byte Order: " << GetByteOrderAsString(m_ByteOrder) << " " << m_ByteOrder);
-  command += toString(m_ByteOrder);
+  itkDebugMacro("Byte Order: " << GetByteOrderAsString(GetByteOrder()));
+  switch(GetByteOrder()) {
+    case BigEndian:
+      command += toString(1);
+      break;
+    case LittleEndian:
+    default:
+      command += toString(0);
+  }
   command += "\t";
   itkDebugMacro("Region dimensions: " << regionDim);
   command += toString(regionDim);
   command += "\t";
 
   for(int i = 0; i < regionDim; i++){
-    itkDebugMacro("Dimension " << i << ": " << m_Dimensions[i]);
-    command += toString(m_Dimensions[i]);
+    itkDebugMacro("Dimension " << i << ": " << region.GetSize(i));
+    command += toString(region.GetSize(i));
     command += "\t";
   }
 
@@ -821,11 +835,11 @@ void BioFormatsImageIO::Write(const void * buffer )
     command += "\t";
   }
 
-  itkDebugMacro("Pixel Type: " << m_PixelType);
-  command += toString(m_PixelType);
+  itkDebugMacro("Pixel Type: " << itkToBFPixelType(GetComponentType()));
+  command += toString(itkToBFPixelType(GetComponentType()));
   command += "\t";
 
-  int rgbChannelCount = m_NumberOfComponents;
+  int rgbChannelCount = GetNumberOfComponents();
 
   itkDebugMacro("RGB Channels: " << rgbChannelCount);
   command += toString(rgbChannelCount);
@@ -861,6 +875,65 @@ void BioFormatsImageIO::Write(const void * buffer )
       command += toString(1);
       command += "\t";
     }
+  }
+
+  // build lut if necessary
+
+  MetaDataDictionary & dict = itkMeta;
+
+  bool useLut = GetTypedMetaData<bool>(dict, "UseLUT");
+
+  itkDebugMacro("useLUT = " << useLut);
+
+  if (useLut) {
+    command += toString(1);
+    command += "\t";
+    itkDebugMacro(""<<command);
+    int LUTBits = GetTypedMetaData<int>(dict, "LUTBits");
+    command += toString(LUTBits);
+    command += "\t";
+    itkDebugMacro(""<<command);
+    int LUTLength = GetTypedMetaData<int>(dict, "LUTLength");
+    command += toString(LUTLength);
+    command += "\t";
+    itkDebugMacro(""<<command);
+
+
+    itkDebugMacro("Found a LUT of length: " << LUTLength);
+    itkDebugMacro("Found a LUT of bits: " << LUTBits);
+
+    for(int i = 0; i < LUTLength; i++) {
+      if(LUTBits == 8) {
+        int rValue = GetTypedMetaData<int>(dict, "LUTR" + toString(i));
+        command += toString(rValue);
+        command += "\t";
+        int gValue = GetTypedMetaData<int>(dict, "LUTG" + toString(i));
+        command += toString(gValue);
+        command += "\t";
+        int bValue = GetTypedMetaData<int>(dict, "LUTB" + toString(i));
+        command += toString(bValue);
+        command += "\t";
+        itkDebugMacro("Retrieval " << i << " r,g,b values = " << rValue << "," << gValue << "," << bValue);
+      }
+      else {
+        short rValue = GetTypedMetaData<short>(dict, "LUTR" + toString(i));
+        command += toString(rValue);
+        command += "\t";
+        short gValue = GetTypedMetaData<short>(dict, "LUTG" + toString(i));
+        command += toString(gValue);
+        command += "\t";
+        short bValue = GetTypedMetaData<short>(dict, "LUTB" + toString(i));
+        command += toString(bValue);
+        command += "\t";
+        itkDebugMacro("Retrieval " << i << " r,g,b values = " << rValue << "," << gValue << "," << bValue);
+        command += "\t";
+      }
+    }
+
+  }
+  else {
+    command += toString(0);
+    command += "\t";
   }
 
   command += "\n";

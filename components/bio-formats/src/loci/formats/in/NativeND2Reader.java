@@ -512,7 +512,9 @@ public class NativeND2Reader extends FormatReader {
             String[] lines = xmlString.split(" ");
             for (int i=0; i<lines.length; i++) {
               String key = lines[i++];
-              while (!key.endsWith(":") && key.indexOf("_") < 0) {
+              while (!key.endsWith(":") && key.indexOf("_") < 0 &&
+                i < lines.length)
+              {
                 key += " " + lines[i++];
                 if (i >= lines.length) {
                   break;
@@ -1555,10 +1557,10 @@ public class NativeND2Reader extends FormatReader {
     ArrayList<String> channelNames = null;
     if (handler != null) {
       channelNames = handler.getChannelNames();
-      if (channelNames.size() == 0 && backupHandler != null) {
+      if (channelNames.size() < getEffectiveSizeC() && backupHandler != null) {
         channelNames = backupHandler.getChannelNames();
       }
-      else if (channelNames.size() == 0) {
+      else if (channelNames.size() < getEffectiveSizeC()) {
         channelNames = textChannelNames;
       }
       for (int i=0; i<getSeriesCount(); i++) {
@@ -1725,7 +1727,7 @@ public class NativeND2Reader extends FormatReader {
           String channelName = channelNames.get(index);
           store.setChannelName(channelName, i, c);
         }
-        else if (channelNames.size() == getSizeC()) {
+        else if (channelNames.size() >= getEffectiveSizeC()) {
           store.setChannelName(channelNames.get(c), i, c);
         }
         if (index < modality.size()) {

@@ -411,6 +411,7 @@ public class MetamorphReader extends BaseTiffReader {
       String[] lines = DataTools.readFile(ndFilename).split("\n");
 
       boolean globalDoZ = true;
+      boolean doTimelapse = false;
 
       for (String line : lines) {
         int comma = line.indexOf(",");
@@ -420,6 +421,9 @@ public class MetamorphReader extends BaseTiffReader {
 
         addGlobalMeta(key, value);
         if (key.equals("NZSteps")) z = value;
+        else if (key.equals("DoTimelapse")) {
+          doTimelapse = Boolean.parseBoolean(value);
+        }
         else if (key.equals("NWavelengths")) c = value;
         else if (key.equals("NTimePoints")) t = value;
         else if (key.startsWith("WaveDoZ")) {
@@ -527,7 +531,9 @@ public class MetamorphReader extends BaseTiffReader {
             if ((seriesCount != 1 && !validZ) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
-              if (anyZ && j > 0 && seriesNdx < seriesCount - 1) {
+              if (anyZ && j > 0 && seriesNdx < seriesCount - 1 &&
+                (!validZ || !hasZ.get(0)))
+              {
                 seriesNdx++;
               }
             }
@@ -556,7 +562,7 @@ public class MetamorphReader extends BaseTiffReader {
             if (nstages > 0) {
               stks[seriesNdx][pt[seriesNdx]] += "_s" + (s + 1);
             }
-            if (tc > 1) {
+            if (tc > 1 || doTimelapse) {
               stks[seriesNdx][pt[seriesNdx]] += "_t" + (i + 1) + ".STK";
             }
             else stks[seriesNdx][pt[seriesNdx]] += ".STK";
@@ -873,7 +879,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         if (index == 0 && p > 0 && exposureTimes.size() > 0) {
-          index = p % exposureTimes.size();
+          index = coords[1] % exposureTimes.size();
         }
 
         if (index < exposureTimes.size()) {

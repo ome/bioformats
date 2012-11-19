@@ -101,8 +101,8 @@
       <groups/>
         <classes>
           <class name="loci.formats.utests.LosslessJPEG2000Test"/>
-          <class name="loci.formats.utests.SixteenBitLosslessJPEG2000Test"/>
           <class name="loci.formats.utests.EightBitLosslessJPEG2000Test"/>
+          <class name="loci.formats.utests.SixteenBitLosslessJPEG2000Test"/>
         </classes>
     </test>
     <test name="FormatToolsTest">

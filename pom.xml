@@ -8,12 +8,12 @@
   <parent>
     <groupId>org.scijava</groupId>
     <artifactId>pom-scijava</artifactId>
-    <version>1.15</version>
+    <version>1.19</version>
   </parent>
 
   <groupId>loci</groupId>
   <artifactId>pom-scifio</artifactId>
-  <version>4.4.4</version>
+  <version>4.4.5</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>

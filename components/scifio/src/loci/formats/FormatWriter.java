@@ -337,7 +337,6 @@ public abstract class FormatWriter extends FormatHandler
   /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) return;
-    close();
     currentId = id;
     out = new RandomAccessOutputStream(currentId);
 

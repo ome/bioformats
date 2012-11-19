@@ -113,6 +113,12 @@ if "OMERODOC_URI" in os.environ:
 else:
     omerodoc_uri = 'http://www.openmicroscopy.org/site/support/omero4/'
 
+
+if "SOURCE_BRANCH" in os.environ:
+    source_branch = os.environ.get('SOURCE_BRANCH')
+else:
+    source_branch = 'develop'
+
 extlinks = {
     'wiki' : ('http://trac.openmicroscopy.org.uk/ome/wiki/'+ '%s', ''),
     'ticket' : ('http://trac.openmicroscopy.org.uk/ome/ticket/'+ '%s', '#'),
@@ -120,18 +126,29 @@ extlinks = {
     'plone' : ('http://www.openmicroscopy.org/site/'+ '%s', ''),
     'oo' : ('http://www.openmicroscopy.org/' + '%s', ''),
     'doi' : ('http://dx.doi.org/' + '%s', ''),
-    'source' : ('https://github.com/openmicroscopy/bioformats/blob/develop/' + '%s', ''),
+    'source' : ('https://github.com/openmicroscopy/bioformats/blob/' + source_branch + '/' + '%s', ''),
     'javadoc' : ('http://hudson.openmicroscopy.org.uk/job/OMERO/javadoc/' + '%s', ''),
     'jenkins' : ('http://hudson.openmicroscopy.org.uk/' + '%s', ''),
     'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
     'forum' : ('http://www.openmicroscopy.org/community/' + '%s', ''),
-    'omerodoc': (omerodoc_uri + '%s', '')
+    'omerodoc': (omerodoc_uri + '%s', ''),
+    'bf_plone' : ('http://www.openmicroscopy.org/site/products/bio-formats/%s/', ''),
     }
 
 rst_epilog = """
 .. _Hibernate: http://www.hibernate.org
 .. _ZeroC: http://www.zeroc.com
 .. _Ice: http://www.zeroc.com
+.. _OME-TIFF: https://www.openmicroscopy.org/site/support/file-formats/ome-tiff
+.. _OME-XML: http://www.openmicroscopy.org/site/support/file-formats/the-ome-xml-file
+
+.. |Poor| image:: /images/crystal-1.png
+.. |Fair| image:: /images/crystal-2.png
+.. |Good| image:: /images/crystal-3.png
+.. |Very Good| image:: /images/crystal-4.png
+.. |Outstanding| image:: /images/crystal-5.png
+.. |no| image:: /images/crystal-no.png
+.. |yes| image:: /images/crystal-yes.png
 
 """
 
@@ -179,7 +196,7 @@ html_static_path = []
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+html_sidebars = { '**' : ['globaltoc.html', 'pagetoc.html',  'searchbox.html', 'sourcelink.html'] }
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -241,13 +258,13 @@ latex_documents = [
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-#latex_use_parts = False
+#latex_use_parts = True
 
 # If true, show page references after internal links.
 #latex_show_pagerefs = False
 
 # If true, show URL addresses after external links.
-#latex_show_urls = False
+latex_show_urls = 'footnote'
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
