@@ -10,8 +10,8 @@ possible that the problem has already been addressed. For both FIJI and
 ImageJ users, select Update LOCI Plugins under the LOCI menu. Select
 Trunk Build.
 
-You can also download the `newest version of Bio-Formats <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_. If you
-are not sure which version you need, select the Trunk Build under LOCI
+You can also download the :bf_plone:`newest version of Bio-Formats <downloads>`. 
+If you are not sure which version you need, select the Trunk Build under LOCI 
 Tools complete bundle.
 
 Sending a bug report
