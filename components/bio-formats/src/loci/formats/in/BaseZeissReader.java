@@ -277,6 +277,14 @@ public abstract class BaseZeissReader extends FormatReader {
     if (isJPEG) m.pixelType = FormatTools.UINT8;
 
     m.indexed = !isRGB() && channelColors != null;
+
+    // We shouldn't need to copy the coremetadata here.  This
+    // indicates a need for better ordering of the initialisation, or
+    // rather not using the size of core as the series count until
+    // it's filled.
+    for (int i=1; i<core.size(); i++) {
+      core.set(i, new CoreMetadata(core.get(0)));
+    }
   }
 
   /**
