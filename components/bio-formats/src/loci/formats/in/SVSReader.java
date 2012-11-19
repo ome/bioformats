@@ -26,6 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -279,6 +281,8 @@ public class SVSReader extends BaseTiffReader {
       core[s].dimensionOrder = "XYCZT";
       core[s].thumbnail = s != 0;
     }
+
+    reorderResolutions();
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
@@ -300,5 +304,34 @@ public class SVSReader extends BaseTiffReader {
     }
     return index;
   }
+
+    /**
+     * Validate the order of resolutions for the current series, in
+     * decending order of size.  If the order is wrong, reorder it.
+     */
+    protected void reorderResolutions() {
+      for (int i = 0; i < core.length;) {
+          int resolutions = core[i].resolutionCount;
+
+        CoreMetadata[] savedCore = new CoreMetadata[resolutions];
+        HashMap<Integer,Integer> levels = new HashMap<Integer,Integer>();
+        for (int c = 0; c < resolutions; c++) {
+          savedCore[c] = core[i + c];
+          levels.put(new Integer(savedCore[c].sizeX), new Integer(c));
+        }
+
+        Integer[] keys = levels.keySet().toArray(new Integer[resolutions]);
+        Arrays.sort(keys);
+
+        for (int j = 0; j < resolutions; j++) {
+          core[i + j] = savedCore[levels.get(keys[resolutions - j - 1])];
+          if (j == 0)
+            core[i + j].resolutionCount = resolutions;
+          else
+            core[i + j].resolutionCount = 1;
+        }
+        i += core[i].resolutionCount;
+      }
+    }
 
 }
