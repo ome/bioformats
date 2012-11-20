@@ -37,7 +37,6 @@ import loci.formats.MinMaxCalculator;
 import loci.formats.ReaderWrapper;
 
 import org.perf4j.StopWatch;
-import org.perf4j.commonslog.CommonsLogStopWatch;
 import org.perf4j.log4j.Log4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,7 +126,7 @@ public class OpenBytesPerformanceTest
       TestTools.mapFile(id);
     }
 
-    CommonsLogStopWatch stopWatch = new CommonsLogStopWatch();
+    StopWatch stopWatch = new Log4JStopWatch();
     reader.setId(id);
     stopWatch.stop(String.format("%s.setId.%s",
             ((ReaderWrapper) reader).unwrap().getClass().getName(), filename));
