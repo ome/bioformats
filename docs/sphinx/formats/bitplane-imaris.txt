@@ -55,7 +55,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`ImarisReader, ImarisTiffReader, ImarisHDFReader.java <components/bio-formats/src/loci/formats/in/ImarisReader, ImarisTiffReader, ImarisHDFReader.java >`
+Source Code: :source:`ImarisReader.java <components/bio-formats/src/loci/formats/in/ImarisReader.java >`, `ImarisTiffReader.java <components/bio-formats/src/loci/formats/in/ImarisTiffReader.java >`, `ImarisHDFReader.java <components/bio-formats/src/loci/formats/in/ImarisHDFReader.java >`
 
 Notes:
 
