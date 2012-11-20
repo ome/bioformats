@@ -424,7 +424,6 @@ public class ZeissLSMReader extends FormatReader {
     lsmFilenames = validFiles.toArray(new String[validFiles.size()]);
 
     core.clear();
-    core.ensureCapacity(seriesCount);
     for (int c=0; c<seriesCount; c++) {
       CoreMetadata ms = new CoreMetadata();
         core.add(ms);

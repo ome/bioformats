@@ -629,7 +629,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     r.setSeries(currentSeries);
 
     ArrayList<CoreMetadata> core = new ArrayList<CoreMetadata>();
-    core.ensureCapacity(count);
     for (int s=0; s<count; s++) {
       T meta = null;
       

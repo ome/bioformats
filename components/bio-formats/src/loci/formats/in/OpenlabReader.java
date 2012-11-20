@@ -487,8 +487,6 @@ public class OpenlabReader extends FormatReader {
     Vector<String> names = new Vector<String>();
 
     core.clear();
-    core.ensureCapacity(nSeries);
-
     for (int i=0; i<nSeries; i++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
@@ -827,7 +825,6 @@ public class OpenlabReader extends FormatReader {
         CoreMetadata currentSeries = core.get(s);
         int seriesCount = uniqueF.size();
         core.clear();
-        core.ensureCapacity(seriesCount);
         for (int i=0; i<seriesCount; i++) {
           core.add(currentSeries);
         }

@@ -224,7 +224,6 @@ public class MNGReader extends BIFormatReader {
 
     int seriesCount = keys.length;
     core.clear();
-    core.ensureCapacity(seriesCount);
 
     seriesInfo.clear();
     for (int i=0; i<seriesCount; i++) {

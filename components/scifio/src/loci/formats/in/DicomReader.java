@@ -675,9 +675,6 @@ public class DicomReader extends FormatReader {
     LOGGER.info("Populating metadata");
 
     int seriesCount = fileList.size();
-    if (fileList.size() > 1) {
-      core.ensureCapacity(seriesCount);
-    }
 
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);

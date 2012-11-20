@@ -349,12 +349,11 @@ public class CellWorxReader extends FormatReader {
     }
 
     int seriesCount = fieldCount * wellCount;
-    core.clear();
-    core.ensureCapacity(seriesCount);
 
     String file = getFile(0, 0);
     IFormatReader pnl = getReader(file);
 
+    core.clear();
     for (int i=0; i<seriesCount; i++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);

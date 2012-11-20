@@ -336,7 +336,6 @@ public class FakeReader extends FormatReader {
     // populate core metadata
     int effSizeC = sizeC / rgb;
     core.clear();
-    core.ensureCapacity(seriesCount);
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);

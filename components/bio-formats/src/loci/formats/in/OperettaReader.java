@@ -243,7 +243,6 @@ public class OperettaReader extends FormatReader {
 
     int seriesCount = rows.length * cols.length * fields.length;
     core.clear();
-    core.ensureCapacity(seriesCount);
 
     planes = new Plane[seriesCount][zs.length * cs.length * ts.length];
 

@@ -439,7 +439,6 @@ public class DeltavisionReader extends FormatReader {
       if (nStagePositions > 1) {
         CoreMetadata originalCore = core.get(0);
         core.clear();
-        core.ensureCapacity(nStagePositions);
         for (int i=0; i<nStagePositions; i++) {
           core.add(originalCore);
         }

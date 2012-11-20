@@ -394,7 +394,6 @@ public class InCellReader extends FormatReader {
     int t = oneTimepointPerSeries ? 1 : getSizeT();
 
     core.clear();
-    core.ensureCapacity(seriesCount);
     for (int i=0; i<seriesCount; i++) {
       int c = oneTimepointPerSeries ?
         channelsPerTimepoint.get(i % sizeT).intValue() : sizeC;

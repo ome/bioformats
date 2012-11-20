@@ -216,7 +216,6 @@ public class SVSReader extends BaseTiffReader {
     comments = new String[seriesCount];
 
     core.clear();
-    core.ensureCapacity(seriesCount);
     for (int i=0; i<seriesCount; i++) {
       core.add(new CoreMetadata());
     }

@@ -336,7 +336,6 @@ public class BDReader extends FormatReader {
 
     int coresize = core.size();
     core.clear();
-    core.ensureCapacity(coresize);
     for (int i=0; i<coresize; i++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
@@ -611,7 +610,6 @@ public class BDReader extends FormatReader {
 
     core.clear();
     int coresize = wellLabels.size() * fieldRows * fieldCols;
-    core.ensureCapacity(coresize);
     CoreMetadata ms0 = new CoreMetadata();
     core.add(ms0);
     for (int i=1; i<coresize; i++) {

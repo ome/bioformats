@@ -218,14 +218,13 @@ public class BrukerReader extends FormatReader {
       }
     }
 
-    core.clear();
-    core.ensureCapacity(pixelsFiles.size());
 
     String[] imageNames = new String[pixelsFiles.size()];
     String[] timestamps = new String[pixelsFiles.size()];
     String[] institutions = new String[pixelsFiles.size()];
     String[] users = new String[pixelsFiles.size()];
 
+    core.clear();
     for (int series=0; series<pixelsFiles.size(); series++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);

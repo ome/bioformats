@@ -521,8 +521,6 @@ public class VolocityReader extends FormatReader {
 
     int seriesCount = stacks.size();
     core.clear();
-    core.ensureCapacity(seriesCount);
-
     for (int i=0; i<seriesCount; i++) {
       Stack stack = stacks.get(i);
       CoreMetadata ms = stack.core;

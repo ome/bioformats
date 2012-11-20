@@ -258,8 +258,6 @@ public class MicromanagerReader extends FormatReader {
 
     int seriesCount = positions.size();
     core.clear();
-    core.ensureCapacity(seriesCount);
-
     for (int i=0; i<seriesCount; i++) {
       core.add(new CoreMetadata());
       setSeries(i);
@@ -366,7 +364,6 @@ public class MicromanagerReader extends FormatReader {
     FormatTools.assertId(currentId, false, 1);
     currentId = "in-memory-json";
     core.clear();
-    core.ensureCapacity(jsonData.length);
     positions = new Vector<Position>();
     for (int pos=0; pos<jsonData.length; pos++) {
       core.add(new CoreMetadata());

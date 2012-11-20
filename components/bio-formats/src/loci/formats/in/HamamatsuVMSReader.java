@@ -187,7 +187,6 @@ public class HamamatsuVMSReader extends FormatReader {
     jpeg = new TileJPEGReader[3];
 
     int seriesCount = 3;
-    core.ensureCapacity(seriesCount);
 
     for (int i=0; i<seriesCount; i++) {
       String file = null;

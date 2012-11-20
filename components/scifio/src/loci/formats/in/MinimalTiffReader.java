@@ -542,7 +542,6 @@ public class MinimalTiffReader extends FormatReader {
     if (resolutionLevels != null && subResolutionIFDs.size() > 0) {
       IFDList ifds = subResolutionIFDs.get(0);
       int seriesCount = ifds.size() + 1;
-      core.ensureCapacity(seriesCount);
       if (!hasFlattenedResolutions()) {
         ms0.resolutionCount = seriesCount;
       }

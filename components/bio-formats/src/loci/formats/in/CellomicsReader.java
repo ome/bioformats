@@ -177,8 +177,6 @@ public class CellomicsReader extends FormatReader {
     }
 
     core.clear();
-    core.ensureCapacity(files.length);
-
     for (int i=0; i<files.length; i++) {
       core.add(new CoreMetadata());
     }

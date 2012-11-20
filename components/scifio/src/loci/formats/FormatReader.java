@@ -145,7 +145,7 @@ public abstract class FormatReader extends FormatHandler
   protected int series = 0;
 
   /** Core metadata values. */
-  protected ArrayList<CoreMetadata> core;
+  protected List<CoreMetadata> core;
 
   /** The number of the current resolution. */
   protected int resolution = 0;

@@ -388,7 +388,6 @@ public class OMETiffReader extends FormatReader {
     // determine series count from Image and Pixels elements
     int seriesCount = meta.getImageCount();
     core.clear();
-    core.ensureCapacity(seriesCount);
     for (int i=0; i<seriesCount; i++) {
       core.add(new CoreMetadata());
     }

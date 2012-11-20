@@ -926,7 +926,6 @@ public class FileStitcher extends ReaderWrapper {
 
     // analyze first file; assume each file has the same parameters
     core.clear();
-    core.ensureCapacity(seriesCount);
 
     int oldSeries = getSeries();
     for (int i=0; i<seriesCount; i++) {

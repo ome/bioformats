@@ -279,7 +279,6 @@ public class NDPIReader extends BaseTiffReader {
     }
 
     core.clear();
-    core.ensureCapacity(seriesCount);
     for (int s=0; s<seriesCount; s++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);

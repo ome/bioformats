@@ -217,7 +217,6 @@ public abstract class BaseZeissReader extends FormatReader {
     }
 
     if (totalTiles > 1) {
-      core.ensureCapacity(totalTiles);
       for (int i=1; i<totalTiles; i++) {
         core.add(new CoreMetadata(this, 0));
       }

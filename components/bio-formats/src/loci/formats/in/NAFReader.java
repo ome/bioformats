@@ -120,7 +120,6 @@ public class NAFReader extends FormatReader {
 
     offsets = new long[seriesCount];
     core.clear();
-    core.ensureCapacity(seriesCount);
     for (int i=0; i<seriesCount; i++) {
       in.seek(fp + i*256);
       CoreMetadata ms = new CoreMetadata();

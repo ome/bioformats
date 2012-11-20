@@ -249,8 +249,6 @@ public class L2DReader extends FormatReader {
     tileHeight = new int[scans.length];
 
     core.clear();
-    core.ensureCapacity(scans.length);
-
     for (int i=0; i<scans.length; i++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);

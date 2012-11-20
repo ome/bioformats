@@ -945,7 +945,6 @@ public class FlexReader extends FormatReader {
     int seriesCount = plateCount * wellCount * fieldCount;
     if (seriesCount > 1) {
       core.clear();
-      core.ensureCapacity(seriesCount);
       for (int i = 1; i < seriesCount; i++) {
         core.add(m);
       }

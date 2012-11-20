@@ -386,7 +386,6 @@ public class CellSensReader extends FormatReader {
 
     int seriesCount = files.size() - 1 + ifds.size();
     core.clear();
-    core.ensureCapacity(seriesCount);
 
     tileOffsets = new Long[files.size() - 1][];
     rows = new int[files.size() - 1];

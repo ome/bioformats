@@ -140,8 +140,6 @@ public class LegacyND2Reader extends FormatReader {
       int numSeries = getNumSeries();
 
       core.clear();
-      core.ensureCapacity(numSeries);
-
       for (int i=0; i<numSeries; i++) {
         CoreMetadata ms = new CoreMetadata();
         core.add(ms);

@@ -252,7 +252,6 @@ public class ImarisHDFReader extends FormatReader {
     CoreMetadata ms0 = core.get(0);
 
     if (seriesCount > 1) {
-      core.ensureCapacity(seriesCount);
       for (int i=1; i<seriesCount; i++) {
         core.add(new CoreMetadata());
       }

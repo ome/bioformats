@@ -283,11 +283,8 @@ public class OMEXMLReader extends FormatReader {
 
     int numDatasets = omexmlMeta.getImageCount();
 
-    core.clear();
-    core.ensureCapacity(numDatasets);
-
     int oldSeries = getSeries();
-
+    core.clear();
     for (int i=0; i<numDatasets; i++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);

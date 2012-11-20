@@ -620,7 +620,6 @@ public class MetamorphReader extends BaseTiffReader {
       if (stks != null && stks.length > 1) {
         // Note that core can't be replaced with newCore until the end of this block.
         ArrayList<CoreMetadata> newCore = new ArrayList<CoreMetadata>();
-        newCore.ensureCapacity(stks.length);
         for (int i=0; i<stks.length; i++) {
           CoreMetadata ms = new CoreMetadata();
           newCore.add(ms);

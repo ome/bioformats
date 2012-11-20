@@ -216,7 +216,6 @@ public class JPXReader extends FormatReader {
     // New core metadata now that we know how many sub-resolutions we have.
     if (resolutionLevels != null) {
       int seriesCount = resolutionLevels + 1;
-      core.ensureCapacity(resolutionLevels + 1);
 
       for (int i = 1; i < seriesCount; i++) {
         CoreMetadata ms = new CoreMetadata(this, 0);

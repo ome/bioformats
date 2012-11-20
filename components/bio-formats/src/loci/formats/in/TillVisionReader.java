@@ -274,7 +274,6 @@ public class TillVisionReader extends FormatReader {
 
         if (embeddedImages) {
           core.clear();
-          core.ensureCapacity(nFound);
           embeddedOffset = new long[nFound];
 
           for (int i=0; i<nFound; i++) {
@@ -451,8 +450,6 @@ public class TillVisionReader extends FormatReader {
     IniParser parser = new IniParser();
 
     core.clear();
-    core.ensureCapacity(nImages);
-
     for (int i=0; i<nImages; i++) {
       CoreMetadata ms = new CoreMetadata();
       if (!embeddedImages) {

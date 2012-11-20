@@ -640,8 +640,6 @@ public class MIASReader extends FormatReader {
     if (tileRows == 0) tileRows = 1;
 
     core.clear();
-    core.ensureCapacity(nSeries);
-
     for (int i=0; i<nSeries; i++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);

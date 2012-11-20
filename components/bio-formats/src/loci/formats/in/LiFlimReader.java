@@ -376,7 +376,6 @@ public class LiFlimReader extends FormatReader {
       realSeriesCount = seriesCount;
     }
     core.clear();
-    core.ensureCapacity(realSeriesCount);
     for (int i=0; i<realSeriesCount; i++) {
       core.add(new CoreMetadata());
     }

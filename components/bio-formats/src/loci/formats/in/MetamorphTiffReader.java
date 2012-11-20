@@ -300,7 +300,6 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     if (seriesCount > 1) {
       core.clear();
-      core.ensureCapacity(seriesCount);
       for (int i=0; i<seriesCount; i++) {
         core.add(m);
       }

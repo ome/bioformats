@@ -427,7 +427,6 @@ public class SlidebookReader extends FormatReader {
       }
 
       core.clear();
-      core.ensureCapacity(seriesCount);
       for (int i=0; i<seriesCount; i++) {
         CoreMetadata ms = new CoreMetadata();
         core.add(ms);

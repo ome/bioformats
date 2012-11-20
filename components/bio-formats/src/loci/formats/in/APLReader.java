@@ -321,7 +321,6 @@ public class APLReader extends FormatReader {
     int seriesCount = seriesIndexes.size();
 
     core.clear();
-    core.ensureCapacity(seriesCount);
     for (int i=0; i<seriesCount; i++) {
       core.add(new CoreMetadata());
     }

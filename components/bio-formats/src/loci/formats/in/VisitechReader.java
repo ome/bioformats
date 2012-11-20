@@ -303,7 +303,6 @@ public class VisitechReader extends FormatReader {
       int count = z * c * t;
       int ptype = getPixelType();
       core.clear();
-      core.ensureCapacity(numSeries);
       for (int i=0; i<numSeries; i++) {
         CoreMetadata ms = new CoreMetadata();
         core.add(ms);

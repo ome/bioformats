@@ -133,7 +133,6 @@ public class HISReader extends FormatReader {
     in.seek(0);
 
     core.clear();
-    core.ensureCapacity(nSeries);
     for (int i=0; i<nSeries; i++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);

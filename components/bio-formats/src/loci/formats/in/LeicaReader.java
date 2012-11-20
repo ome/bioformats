@@ -437,7 +437,6 @@ public class LeicaReader extends FormatReader {
     tileHeight = new int[numSeries];
 
     core.clear();
-    core.ensureCapacity(numSeries);
     for (int i=0; i<numSeries; i++) {
       core.add(new CoreMetadata());
     }
@@ -496,8 +495,6 @@ public class LeicaReader extends FormatReader {
     int index = 0;
 
     core.clear();
-    core.ensureCapacity(numSeries);
-
     for (int i=0; i<numSeries; i++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
