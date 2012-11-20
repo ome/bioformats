@@ -1,4 +1,4 @@
-Reporting a Bug
+Reporting a bug
 ===============
 
 Before filing a bug report

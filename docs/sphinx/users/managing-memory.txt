@@ -1,4 +1,4 @@
-Managing Memory Using Bio-Formats
+Managing memory using Bio-Formats
 =================================
 
 When dealing with a large stack of images, you may receive a
@@ -48,7 +48,7 @@ Note that when you use Data Browser, other features like cropping and
 specifying range are not available.  You can, however, adjust the size
 of the image cache in the Data Browser after you open the files.  You
 can read more about it on LOCI’s
-`website <http://www.loci.wisc.edu/software/data-browser>`_.
+`Data Browser page <http://www.loci.wisc.edu/software/data-browser>`_.
 
 Cropping the view area
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -75,8 +75,8 @@ Use Virtual Stack
 necessary. Note that unlike Data Browser, Virtual Stack does not contain
 a buffer and may produce choppy animations.
 
-**Increasing ImageJ /FIJI’s memory**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Increasing ImageJ /FIJI’s memory
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Finally, can also increase the amount of the computer memory devoted to
 ImageJ/ FIJI by selecting Memory & Threads under the Edit menu.
