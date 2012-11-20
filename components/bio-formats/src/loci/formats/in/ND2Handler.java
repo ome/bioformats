@@ -875,6 +875,9 @@ public class ND2Handler extends BaseHandler {
     else if (key.equals("sDate")) {
       date = DateTools.formatDate(value, DATE_FORMAT);
     }
+    else if (key.equals("Name") && channelNames.size() < core[0].sizeC) {
+      channelNames.add(value);
+    }
   }
 
 }

@@ -322,12 +322,6 @@ public class TrestleReader extends BaseTiffReader {
   private void parseROIs(MetadataStore store)
     throws FormatException, IOException
   {
-    if (MetadataTools.isOMEXMLMetadata(store) ||
-      MetadataTools.isOMEXMLRoot(store.getRoot()))
-    {
-      return;
-    }
-
     String roiID = MetadataTools.createLSID("ROI", 0, 0);
     String maskID = MetadataTools.createLSID("Shape", 0, 0);
 
