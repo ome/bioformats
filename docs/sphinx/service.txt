@@ -38,10 +38,8 @@ Writing a service
 
 -  **Interface** -- The basic form of a service is an interface which
    inherits from
-   :source:`loci.common.services.Service <components/loci-legacy/src/loci/common/services/Service.java>`.
-   Here is the very basic
-   :source:`OMENotesService <components/loci-legacy/src/loci/common/services/OMENotesService.java>`
-   from the initial implementation in r5894:
+   :source:`loci.common.services.Service <components/common/build/src/loci/common/services/Service.java>`.
+   Here is a very basic example using the (now removed) ``OMENotesService``
 
    ::
 
@@ -58,9 +56,7 @@ Writing a service
 -  **Implementation** -- This service then has an implementation, which
    is usually located in the Bio-Formats component or package which
    imports classes from an external, dynamic or other dependency. Again
-   looking at the ``OMENotesService``, the implementation is this time
-   in the legacy ome-notes component as
-   :source:`OMENotesServiceImpl <components/legacy/ome-notes/src/loci/ome/notes/services/OMENotesServiceImpl.java>`:
+   looking at the ``OMENotesService``:
 
    ::
 
@@ -105,7 +101,7 @@ Writing a service
    finally be *registered* with the
    :source:`loci.common.services.ServiceFactory <components/loci-legacy/src/loci/common/services/ServiceFactory.java>`
    via the
-   :source:`services.properties <components/loci-legacy/src/loci/common/services/Service.java>`
+   :source:`services.properties <components/common/src/loci/common/services/Service.java>`
    file. Following the ``OMENotesService`` again, here is an example
    registration:
 
