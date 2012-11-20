@@ -126,7 +126,10 @@ public class OpenBytesPerformanceTest
       TestTools.mapFile(id);
     }
 
+    StopWatch stopWatch = new Log4JStopWatch();
     reader.setId(id);
+    stopWatch.stop(String.format("%s.setId.%s",
+            ((ReaderWrapper) reader).unwrap().getClass().getName(), filename));
     seriesCount = reader.getSeriesCount();
   }
 
