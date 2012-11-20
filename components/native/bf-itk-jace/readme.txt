@@ -32,5 +32,5 @@ BUILDING AND TESTING THE PLUGIN ON LINUX AND MAC OS X
    example program on a TIFF file; c) optionally, clear ITK_AUTOLOAD_PATH and
    rerun to compare against the results with ITK's built-in TIFF reader.
 
-Please direct any questions to the Bio-Formats team:
-http://loci.wisc.edu/bio-formats/contact
+Please direct any questions to the OME team:
+http://www.openmicroscopy.org/site/community
