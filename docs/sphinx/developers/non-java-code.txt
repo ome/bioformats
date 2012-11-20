@@ -283,8 +283,6 @@ Several
    communication.
 -  ZeroC_ argues that Ice is `superior to
    CORBA <http://www.zeroc.com/iceVsCorba.html>`_.
--  We provide a set of `Bio-Formats Ice
-   bindings <http://www.loci.wisc.edu/ome/formats-ice.html>`_.
 
 `CORBA <http://java.sun.com/j2ee/corba/>`_
 
