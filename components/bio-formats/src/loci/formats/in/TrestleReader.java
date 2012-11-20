@@ -141,7 +141,7 @@ public class TrestleReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    tiffParser.getSamples(ifds.get(series), buf, x, y, w, h,
+    tiffParser.getSamples(ifds.get(getSeries()), buf, x, y, w, h,
       overlaps[getSeries() * 2], overlaps[getSeries() * 2 + 1]);
     return buf;
   }
@@ -319,12 +319,6 @@ public class TrestleReader extends BaseTiffReader {
   private void parseROIs(MetadataStore store)
     throws FormatException, IOException
   {
-    if (MetadataTools.isOMEXMLMetadata(store) ||
-      MetadataTools.isOMEXMLRoot(store.getRoot()))
-    {
-      return;
-    }
-
     String roiID = MetadataTools.createLSID("ROI", 0, 0);
     String maskID = MetadataTools.createLSID("Shape", 0, 0);
 

@@ -206,7 +206,7 @@ public class NativeND2Reader extends FormatReader {
 
     lastChannel = split ? no % getSizeC() : 0;
     int planeIndex = split ? no / getSizeC() : no;
-    in.seek(offsets[series][planeIndex]);
+    in.seek(offsets[getSeries()][planeIndex]);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getRGBChannelCount();
@@ -215,7 +215,7 @@ public class NativeND2Reader extends FormatReader {
     int totalPlanes = split ? getImageCount() / getSizeC() : getImageCount();
 
     long maxFP = planeIndex == totalPlanes - 1 ?
-      in.length() : offsets[series][planeIndex + 1];
+      in.length() : offsets[getSeries()][planeIndex + 1];
 
     CodecOptions options = new CodecOptions();
     options.littleEndian = isLittleEndian();
@@ -1557,10 +1557,10 @@ public class NativeND2Reader extends FormatReader {
     ArrayList<String> channelNames = null;
     if (handler != null) {
       channelNames = handler.getChannelNames();
-      if (channelNames.size() == 0 && backupHandler != null) {
+      if (channelNames.size() < getEffectiveSizeC() && backupHandler != null) {
         channelNames = backupHandler.getChannelNames();
       }
-      else if (channelNames.size() == 0) {
+      else if (channelNames.size() < getEffectiveSizeC()) {
         channelNames = textChannelNames;
       }
       for (int i=0; i<getSeriesCount(); i++) {
@@ -1727,7 +1727,7 @@ public class NativeND2Reader extends FormatReader {
           String channelName = channelNames.get(index);
           store.setChannelName(channelName, i, c);
         }
-        else if (channelNames.size() == getSizeC()) {
+        else if (channelNames.size() >= getEffectiveSizeC()) {
           store.setChannelName(channelNames.get(c), i, c);
         }
         if (index < modality.size()) {

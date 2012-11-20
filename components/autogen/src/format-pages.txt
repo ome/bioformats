@@ -27,6 +27,7 @@ preserved. \n
 .. _Intelligent Imaging Innovations: http://www.intelligent-imaging.com/
 
 [Adobe Photoshop PSD]
+pagename = photoshop-psd
 extensions = .psd
 developer = `Adobe <http://www.adobe.com/>`_
 scifio = no
@@ -124,6 +125,7 @@ utilityRating = Fair
 reader = AnalyzeReader.java
 
 [Andor Bio-Imaging Division (ABD) TIFF]
+pagename = abd-tiff
 extensions = .tif
 owner = `Andor Technology <http://www.andor.com/>`_
 developer = Andor Bioimaging Department
@@ -193,6 +195,7 @@ utilityRating = Fair
 reader = CellWorxReader.java
 
 [AVI (Audio Video Interleave)]
+pagename = avi
 extensions = .avi
 developer = `Microsoft <http://www.microsoft.com/>`_
 scifio = yes
@@ -486,6 +489,7 @@ utilityRating = Fair
 reader = Ecat7Reader.java
 
 [EPS (Encapsulated PostScript)]
+pagename = eps
 extensions = .eps, .epsi, .ps
 developer = `Adobe <http://www.adobe.com/>`_
 scifio = yes
@@ -551,6 +555,7 @@ utilityRating = Fair
 reader = FEIReader.java
 
 [FITS (Flexible Image Transport System)]
+pagename = fits
 extensions = .fits
 developer = `National Radio Astronomy Observatory <http://www.nrao.edu/>`_
 scifio = yes
@@ -605,6 +610,7 @@ reader = GatanReader.java
 notes = Commercial applications that support .dm3 files include `Datasqueeze <http://www.datasqueezesoftware.com/>`_.
 
 [GIF (Graphics Interchange Format)]
+pagename = gif
 extensions = .gif
 owner = `Unisys <http://www.unisys.com/>`_
 developer = `CompuServe <http://www.compuserve.com/>`_
@@ -700,6 +706,7 @@ utilityRating = Fair
 reader = HitachiReader.java
 
 [ICS (Image Cytometry Standard)]
+pagename = ics
 extensions = .ics, .ids
 developer = P. Dean et al.
 scifio = yes
@@ -1039,6 +1046,7 @@ utilityRating = Fair
 reader = JPXReader.java
 
 [Khoros VIFF (Visualization Image File Format) Bitmap]
+pagename = khoros-viff-bitmap
 extensions = .xv
 owner = `AccuSoft <http://www.accusoft.com/company/>`_
 developer = `Khoral <http://www.khoral.com/company/>`_
@@ -1087,6 +1095,7 @@ privateSpecification = true
 reader = LiFlimReader.java
 
 [Leica LAS AF LIF (Leica Image File Format)]
+pagename = leica-lif
 extensions = .lif
 owner = `Leica <http://www.leica.com/>`_
 developer = `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
@@ -1188,6 +1197,7 @@ notes = L2D datasets cannot be imported into OME using server-side import. \n
 They can, however, be imported from ImageJ, or using the omeul utility.
 
 [LIM (Laboratory Imaging/Nikon)]
+pagename = lim
 extensions = .lim
 owner = `Laboratory Imaging <http://www.lim.cz/>`_
 scifio = no
@@ -1289,6 +1299,7 @@ notes = .. seealso:: \n
   `Description of MRW format <http://www.dalibor.cz/files/MRW%20File%20Format.txt>`_
 
 [MNG (Multiple-image Network Graphics)]
+pagename = mng
 extensions = .mng
 developer = `MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
 scifio = yes
@@ -1324,6 +1335,7 @@ utilityRating = Fair
 reader = MolecularImagingReader.java
 
 [MRC (Medical Research Council)]
+pagename = mrc
 extensions = .mrc
 developer = `MRC Laboratory of Molecular Biology <http://www2.mrc-lmb.cam.ac.uk/>`_
 scifio = no
@@ -1346,6 +1358,7 @@ notes = Commercial applications that support MRC include: \n
   `MRC on Wikipedia <http://en.wikipedia.org/wiki/MRC_%28file_format%29>`_
 
 [NEF (Nikon Electronic Format)]
+pagename = nef
 extensions = .nef, .tif
 developer = `Nikon <http://www.nikon.com/>`_
 scifio = no
@@ -1432,11 +1445,12 @@ library to read ND2 files compressed with JPEG-2000. \n
 There is also an ND2 reader that uses Nikon's native libraries.  To use \n
 it, you must be using Windows and have `Nikon's ND2 reader plugin for ImageJ \n
 <http://rsb.info.nih.gov/ij/plugins/nd2-reader.html>`_ installed. \n
-Additionally, you will need to download `LegacyND2Reader.dll \n
-<https://github.com/openmicroscopy/bioformats/raw/develop/lib/LegacyND2Reader.dll>`_ \n
+Additionally, you will need to download :source:`LegacyND2Reader.dll \n
+<lib/LegacyND2Reader.dll?raw=true>` \n
 and place it in your ImageJ plugin folder.
 
 [NRRD (Nearly Raw Raster Data)]
+pagename = nrrd
 extensions = .nrrd, .nhdr, .raw, .txt
 developer = `Teem developers <http://teem.sourceforge.net/>`_
 scifio = yes
@@ -1663,7 +1677,8 @@ utilityRating = Good
 reader = OperettaReader.java
 
 [PerkinElmer UltraView]
-extensions = .tif, .2, .3, .4, ...
+extensions = .tif, .2, .3, .4
+unindexedExtensions = etc.
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 scifio = no
 export = no
@@ -1687,6 +1702,7 @@ Commercial applications that support this format include: \n
   `PerkinElmer UltraView system overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_
 
 [PGM (Portable Gray Map)]
+pagename = pgm
 extensions = .pgm
 developer = Netpbm developers
 scifio = yes
@@ -1736,6 +1752,7 @@ for reading vector files and some compressed files. \n
   `Another PICT technical overview <http://www.prepressure.com/formats/pict/fileformat.htm>`_
 
 [PNG (Portable Network Graphics)]
+pagename = png
 extensions = .png
 developer = `PNG Development Group <http://www.libpng.org/pub/png/pngnews.html>`_
 scifio = yes
@@ -1756,6 +1773,7 @@ API to read and write PNG files. \n
   `PNG technical overview <http://www.libpng.org/pub/png/>`_
 
 [Prairie Technologies TIFF]
+pagename = prairie-tech-tiff
 extensions = .tif, .xml, .cfg
 developer = `Prairie Technologies <http://www.prairie-technologies.com/>`_
 scifio = no
@@ -1966,6 +1984,7 @@ reader = TextReader.java
 notes = Reads tabular pixel data produced by a variety of software.
 
 [TIFF (Tagged Image File Format)]
+pagename = tiff
 extensions = .tif
 owner = `Adobe <http://www.adobe.com>`_
 developer = Aldus and Microsoft
@@ -2194,6 +2213,7 @@ utilityRating = Fair
 reader = ZeissTIFFReader.java
 
 [Zeiss AxioVision ZVI (Zeiss Vision Image)]
+pagename = zeiss-axiovision-zvi
 extensions = .zvi
 owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 developer = `Carl Zeiss MicroImaging GmbH (AxioVision) <http://www.zeiss.com/axiovision>`_
@@ -2237,7 +2257,8 @@ utilityRating = Good
 privateSpecification = true
 reader = ZeissCZIReader.java
 
-[Zeiss LSM (Laser Scanning Microscope) 510]
+[Zeiss LSM (Laser Scanning Microscope) 510/710]
+pagename = zeiss-lsm
 extensions = .lsm, .mdb
 owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 scifio = no

@@ -183,7 +183,7 @@ public class TCSReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int n = no;
-    for (int i=0; i<series; i++) {
+    for (int i=0; i<getSeries(); i++) {
       n += core[i].imageCount;
     }
 

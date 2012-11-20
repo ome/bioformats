@@ -139,10 +139,10 @@ public class OpenlabReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
     if (luts != null) {
-      if (series < planeOffsets.length &&
-        lastPlane < planeOffsets[series].length)
+      if (getSeries() < planeOffsets.length &&
+        lastPlane < planeOffsets[getSeries()].length)
       {
-        return luts.get(planeOffsets[series][lastPlane]);
+        return luts.get(planeOffsets[getSeries()][lastPlane]);
       }
       else if (lastPlane < luts.size()) {
         return luts.get(lastPlane);
@@ -165,8 +165,8 @@ public class OpenlabReader extends FormatReader {
     if (specialPlateNames) {
       planeInfo = getPlane(getZCTCoords(no));
     }
-    else if (no < planeOffsets[series].length) {
-      int index = planeOffsets[series][no];
+    else if (no < planeOffsets[getSeries()].length) {
+      int index = planeOffsets[getSeries()][no];
       planeInfo = planes[index];
     }
     if (planeInfo == null) return buf;
@@ -241,8 +241,8 @@ public class OpenlabReader extends FormatReader {
 
           if (isIndexed()) {
             int index = no;
-            if (series < planeOffsets.length) {
-              index = planeOffsets[series][lastPlane];
+            if (getSeries() < planeOffsets.length) {
+              index = planeOffsets[getSeries()][lastPlane];
             }
             luts.setElementAt(pict.get8BitLookupTable(), index);
           }

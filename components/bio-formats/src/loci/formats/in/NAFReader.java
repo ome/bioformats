@@ -79,7 +79,7 @@ public class NAFReader extends FormatReader {
         "Sorry, compressed data is not supported.");
     }
 
-    in.seek(offsets[series] + no * FormatTools.getPlaneSize(this));
+    in.seek(offsets[getSeries()] + no * FormatTools.getPlaneSize(this));
     readPlane(in, x, y, w, h, buf);
     return buf;
   }

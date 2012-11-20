@@ -1,0 +1,56 @@
+.. index:: Canon DNG
+.. index:: .cr2, .crw
+
+Canon DNG
+===============================================================================
+
+Extensions: .cr2, .crw 
+
+Developer: `Canon <http://canon.com>`_
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `IrfanView <http://www.irfanview.com/>`_
+
+
+We currently have:
+
+- a few example datasets
+
+We would like to have:
+
+- an official specification document
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`DNGReader.java <components/bio-formats/src/loci/formats/in/DNGReader.java >`
+
+Notes:
+
+

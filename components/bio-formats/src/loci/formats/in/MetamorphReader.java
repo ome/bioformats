@@ -248,27 +248,27 @@ public class MetamorphReader extends BaseTiffReader {
       int[] pos = getZCTCoords(no);
       ndx = getIndex(pos[0], 0, pos[2]) / getSizeZ();
     }
-    if (stks[series].length == 1) ndx = 0;
-    String file = stks[series][ndx];
+    if (stks[getSeries()].length == 1) ndx = 0;
+    String file = stks[getSeries()][ndx];
     if (file == null) return buf;
 
     // the original file is a .nd file, so we need to construct a new reader
     // for the constituent STK files
-    stkReaders[series][ndx].setMetadataOptions(
+    stkReaders[getSeries()][ndx].setMetadataOptions(
         new DefaultMetadataOptions(MetadataLevel.MINIMUM));
-    stkReaders[series][ndx].setId(file);
-    int plane = stks[series].length == 1 ? no : coords[0];
+    stkReaders[getSeries()][ndx].setId(file);
+    int plane = stks[getSeries()].length == 1 ? no : coords[0];
 
     if (bizarreMultichannelAcquisition) {
       int realX = getZCTCoords(no)[1] == 0 ? x : x + getSizeX();
-      stkReaders[series][ndx].openBytes(plane, buf, realX, y, w, h);
+      stkReaders[getSeries()][ndx].openBytes(plane, buf, realX, y, w, h);
     }
     else {
-      stkReaders[series][ndx].openBytes(plane, buf, x, y, w, h);
+      stkReaders[getSeries()][ndx].openBytes(plane, buf, x, y, w, h);
     }
 
-    if (plane == stkReaders[series][ndx].getImageCount() - 1) {
-      stkReaders[series][ndx].close();
+    if (plane == stkReaders[getSeries()][ndx].getImageCount() - 1) {
+      stkReaders[getSeries()][ndx].close();
     }
 
     return buf;

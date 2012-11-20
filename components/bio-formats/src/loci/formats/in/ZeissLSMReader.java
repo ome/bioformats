@@ -623,7 +623,7 @@ public class ZeissLSMReader extends FormatReader {
     if (s == null) {
       LOGGER.warn("Invalid Zeiss LSM file. Tag {} not found.", ZEISS_ID);
       TiffReader reader = new TiffReader();
-      reader.setId(getLSMFileFromSeries(series));
+      reader.setId(getLSMFileFromSeries(getSeries()));
       core[getSeries()] = reader.getCoreMetadata()[0];
       reader.close();
       return null;
