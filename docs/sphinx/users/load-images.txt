@@ -1,4 +1,4 @@
-Using Bio-Formats to Load Images
+Using Bio-Formats to load images
 ================================
 
 This section will explain how to use Bio-Formats to import files into
@@ -10,8 +10,8 @@ screen.  The sections include:
 -  `Group Files with Similar Names <#GroupFiles>`_
 -  `Autoscale <#Autoscale>`_
 
-**Opening files:**
-------------------
+Opening files
+-------------
 
 There are three ways you can open a file using Bio-Formats:
 
@@ -37,7 +37,7 @@ instead. 
 
 .. _load-images#windowlessly:
 
-Opening Files Windowlessly
+Opening files windowlessly
 --------------------------
 
 When you open a file with Bio-Formats, the Import Options Screen
@@ -71,8 +71,8 @@ you enable this windowless option, you will have to go back to the
 open a file using the regular **Bio-Formats Importer**, select your
 settings, and re-select the windowless option. 
 
-**Group files with Similar Names**
-----------------------------------
+Group files with similar names
+------------------------------
 
 One of the most important features of Bio-Formats is to combine multiple
 files from a data set into one coherent, multi-dimensional image.
@@ -161,8 +161,8 @@ expression <http://download.oracle.com/javase/1.5.0/docs/api/java/util/regex/Pat
 
  
 
-**Autoscale**
--------------
+Autoscale
+---------
 
 **Autoscale** helps increase the brightness and contrast of an image by
 adjusting the range of light intensity within an image to match the

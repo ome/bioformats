@@ -24,7 +24,7 @@ daily around midnight. It is not any better tested than the trunk build;
 but if you download it multiple times in a day, you can be sure you'll
 get the same version each time.
 
-The\ **stable release** is thoroughly tested and has documentation to
+The **stable release** is thoroughly tested and has documentation to
 match. The list of supported formats on the Bio-Formats site corresponds
 to the most recent stable release. We do not add new formats to the list
 until a release containing support for that format has been completed.

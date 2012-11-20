@@ -1,4 +1,4 @@
-Interfacing From Non-Java Code
+Interfacing from non-Java code
 ==============================
 
 Bio-Formats is written in Java, and is easiest to use with other Java
@@ -13,7 +13,7 @@ comparison <http://codemesh.com/technology.html>`_.
 
 Recommended **in-process solution**: :doc:`c-bindings`
 
-Recommended **inter-process solution**: `Bio-Formats Ice bindings <http://www.loci.wisc.edu/ome/formats-ice.html>`_
+Recommended **inter-process solution**: :doc:`/users/subimager`
 
 In-process approaches
 ---------------------
@@ -23,6 +23,7 @@ either by spawning its own internal Java Virtual Machine (JVM) and passing data
 across a bridge, or otherwise executing the Java code within a single environment.
 
 Strengths
+
 #. Tight (API-level) integration
 #. Minimal performance overhead
 #. Few security considerations
@@ -92,7 +93,7 @@ Weaknesses
 
 -  *Local communication* – Modern operating systems provide several ways
    to share information between processes, including shared memory, file
-   system access, and passing data back and forth with `standard nput
+   system access, and passing data back and forth with `standard input
    and output streams <http://en.wikipedia.org/wiki/Standard_streams>`_.
    *See below: pipes, files*
 -  *Messaging* – Networking technology allows a process on one computer

@@ -6,12 +6,12 @@ User Information
 Installation
 ============
 
-Download one of the files from :bf_plone:`the Bio-Formats downloads page <downloads>` 
+Download one of the files from the :bf_plone:`Bio-Formats downloads page <downloads>` 
 and place it in an appropriate directory. Specific installation instructions
 depend upon the application you are using - see below.
 
 
-Dataset Importing
+Dataset importing
 =================
 
 For information about what extensions to choose to import files, see
@@ -27,7 +27,7 @@ Using Bio-Formats with ImageJ and FIJI
 ======================================
 
 The following sections explain the features of Bio-Formats and how to use 
-it within ImageJ and FIJI:
+it within :doc:`imagej` and :doc:`fiji`:
 
 
 .. toctree::
@@ -37,6 +37,7 @@ it within ImageJ and FIJI:
     bf-features-imagej
     installing-bf-imagej
     load-images
+    upgrading-importer-imagej
     managing-memory
     bug-reporting
 
@@ -59,7 +60,7 @@ Other applications
 Many software packages can use Bio-Formats to read and write microscopy formats 
 (click on the package for further details):
 
-Image Servers
+Image servers
 -------------
 
 .. toctree::
@@ -71,7 +72,7 @@ Image Servers
     omero
 
 
-Libraries and Scripting
+Libraries and scripting
 -----------------------
 
 .. toctree::
@@ -87,7 +88,7 @@ Libraries and Scripting
     subimager
 
 
-Numerical Data Processing
+Numerical data processing
 -------------------------
 
 .. toctree::
@@ -115,7 +116,6 @@ Visualization and analysis
     graphic-converter
     icy
     imagej
-    upgrading-importer-imagej
     iqm
     jar2lib
     mipav
