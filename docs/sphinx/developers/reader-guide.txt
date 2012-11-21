@@ -1,12 +1,13 @@
-            Bio-Formats File Format Reader Guide by Melissa Linkert
+Bio-Formats file format reader guide
+====================================
 
 This document is a brief guide to writing new Bio-Formats file format readers.
 
 All format readers should extend either loci.formats.FormatReader or a reader
 in loci.formats.in.
 
-                              Methods to Override
-                             ---------------------
+Methods to Override
+---------------------
 
 boolean isSingleFile(String id) throws FormatException, IOException:
   Whether or not the named file is expected to be the only file in the
@@ -89,24 +90,26 @@ Location, you *must* use the file name returned by Location.getMappedId(String),
 not the file name passed to the reader.
 Thus, a stub for initFile(String) might look like this:
 
-  protected void initFile(String id) throws FormatException, IOException {
-    super.initFile(id);
+::
 
-    RandomAccessInputStream in = new RandomAccessInputStream(id);
-    // alternatively,
-    //FileInputStream in = new FileInputStream(Location.getMappedId(id));
+      protected void initFile(String id) throws FormatException, IOException {
+        super.initFile(id);
+      
+        RandomAccessInputStream in = new RandomAccessInputStream(id);
+        // alternatively,
+        //FileInputStream in = new FileInputStream(Location.getMappedId(id));
+      
+        // read basic file structure and metadata from stream
+      }
 
-    // read basic file structure and metadata from stream
-  }
 
 For more details, see the javadoc for Location.mapId(String, String)
 and Location.getMappedId(String).
 
-                             Variables to Populate
-                            -----------------------
+Variables to Populate
+---------------------
 
-There are a number of global variables defined in loci.formats.FormatReader that
-should be populated in the constructor of any implemented reader.
+There are a number of global variables defined in loci.formats.FormatReader that should be populated in the constructor of any implemented reader.
 
 These variables are:
 
@@ -122,8 +125,8 @@ These variables are:
     in datasets of this format; only necessary for multi-file datasets
 
 
-                              Other Useful Things
-                             ---------------------
+Other Useful Things
+-------------------
 
 - loci.common.RandomAccessInputStream is a hybrid RandomAccessFile/InputStream
   class that is generally more efficient than either RandomAccessFile or
@@ -176,39 +179,69 @@ These variables are:
   take a look at the contents of loci.formats.tools.ImageInfo to see exactly
   what each one does.
 
-    Argument            Action
-    --------------------------
-    -version: print the library version and exit
-        file: the image file to read
-      -nopix: read metadata only, not pixels
-     -nocore: do not output core metadata
-     -nometa: do not parse format-specific metadata table
-   -nofilter: do not filter metadata fields
-     -thumbs: read thumbnails instead of normal pixels
-     -minmax: compute min/max statistics
-      -merge: combine separate channels into RGB image
-    -nogroup: force multi-file datasets to be read as individual files
-     -stitch: stitch files with similar names
-   -separate: split RGB image into separate channels
-     -expand: expand indexed color to RGB
-     -omexml: populate OME-XML metadata
-  -normalize: normalize floating point images*
-       -fast: paint RGB images as quickly as possible*
-      -debug: turn on debugging output
-      -range: specify range of planes to read (inclusive)
-     -series: specify which image series to read
-       -swap: override the default input dimension order
-    -shuffle: override the default output dimension order
-        -map: specify file on disk to which name should be mapped
-    -preload: pre-read entire file into a buffer; significantly
-              reduces the time required to read the images, but
-              requires more memory
-       -crop: crop images before displaying; argument is 'x,y,w,h'
-  -autoscale: used in combination with '-fast' to automatically adjust
-              brightness and contrast
-    -novalid: do not perform validation of OME-XML
--omexml-only: only output the generated OME-XML
-     -format: read file with a particular reader (e.g., ZeissZVI)
++--------------+----------------------------------------------------------+
+| Argument     | Action                                                   |
++==============+==========================================================+
+| -version     | print the library version and exit                       |
++--------------+----------------------------------------------------------+
+| file         | the image file to read                                   |
++--------------+----------------------------------------------------------+
+| -nopix       | read metadata only, not pixels                           |
++--------------+----------------------------------------------------------+
+| -nocore      | do not output core metadata                              |
++--------------+----------------------------------------------------------+
+| -nometa      | do not parse format-specific metadata table              |
++--------------+----------------------------------------------------------+
+| -nofilter    | do not filter metadata fields                            |
++--------------+----------------------------------------------------------+
+| -thumbs      | read thumbnails instead of normal pixels                 |
++--------------+----------------------------------------------------------+
+| -minmax      | compute min/max statistics                               |
++--------------+----------------------------------------------------------+
+| -merge       | combine separate channels into RGB image                 |
++--------------+----------------------------------------------------------+
+| -nogroup     | force multi-file datasets to be read as individual files |
++--------------+----------------------------------------------------------+
+| -stitch      | stitch files with similar names                          |
++--------------+----------------------------------------------------------+
+| -separate    | split RGB image into separate channels                   |
++--------------+----------------------------------------------------------+
+| -expand      | expand indexed color to RGB                              |
++--------------+----------------------------------------------------------+
+| -omexml      | populate OME-XML metadata                                |
++--------------+----------------------------------------------------------+
+| -normalize   | normalize floating point images*                         |
++--------------+----------------------------------------------------------+
+| -fast        | paint RGB images as quickly as possible*                 |
++--------------+----------------------------------------------------------+
+| -debug       | turn on debugging output                                 |
++--------------+----------------------------------------------------------+
+| -range       | specify range of planes to read (inclusive)              |
++--------------+----------------------------------------------------------+
+| -series      | specify which image series to read                       |
++--------------+----------------------------------------------------------+
+| -swap        | override the default input dimension order               |
++--------------+----------------------------------------------------------+
+| -shuffle     | override the default output dimension order              |
++--------------+----------------------------------------------------------+
+| -map         | specify file on disk to which name should be mapped      |
++--------------+----------------------------------------------------------+
+| -preload     | pre-read entire file into a buffer; significantly        |
+|              | reduces the time required to read the images, but        |
+|              | requires more memory                                     |
++--------------+----------------------------------------------------------+
+| -crop        | crop images before displaying; argument is 'x,y,w,h'     |
++--------------+----------------------------------------------------------+
+| -autoscale   | used in combination with '-fast' to automatically adjust |
+|              | brightness and contrast                                  |
++--------------+----------------------------------------------------------+
+| -novalid     | do not perform validation of OME-XML                     |
++--------------+----------------------------------------------------------+
+| -omexml-only | only output the generated OME-XML                        |
++--------------+----------------------------------------------------------+
+| -format      | read file with a particular reader (e.g., ZeissZVI)      |
++--------------+----------------------------------------------------------+
+
 
 - If you wish to test using TestNG, loci.tests.testng.FormatReaderTest provides
   several basic tests that work with all Bio-Formats readers.  See the

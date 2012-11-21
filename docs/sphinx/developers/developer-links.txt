@@ -26,12 +26,10 @@ Examples
     :titlesonly:
 
     export
+    conversion
+    export2
     matlab-dev
     source-code
-
--  :source:`More thorough examples of exporting images and
-   metadata <components/bio-formats/doc/export>`
-
 
 Interfacing from non-Java code
 ==============================
@@ -60,8 +58,16 @@ Jace set of libraries to create C++ proxies of the Bio-Formats classes.
     developing-bf
     non-java-code
     c-bindings
+    reader-guide
 
 .. _bfapplications:
+
+
+Writing new Bio-Formats file format readers
+===========================================
+
+A brief guide to writing new Bio-Formats file format readers is available. All format readers should extend either loci.formats.FormatReader or a reader
+in loci.formats.in. :doc:Read more... <reader-guide>`
 
 
 Contributing to Bio-Formats
@@ -71,7 +77,7 @@ Contributing to Bio-Formats
 If you are interested in working on the Bio-Formats source code itself,
 you can load the source code into your favorite IDE, or develop code
 with your favorite text editor. :doc:`Read
-more.... <developing-bf>`
+more... <developing-bf>`
 
 .. toctree::
     :maxdepth: 1
