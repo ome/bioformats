@@ -434,7 +434,7 @@ public abstract class ReaderWrapper implements IFormatReader {
     CoreMetadata[] newcore = new CoreMetadata[oldcore.length];
 
     for (int s=0; s<newcore.length; s++) {
-      newcore[s] = oldcore[s].clone(reader, s);
+      newcore[s] = oldcore[s].clone(this, s);
     }
 
     reader.setCoreIndex(currentIndex);
