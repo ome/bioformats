@@ -28,14 +28,6 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
-  <target name="test-omero-open-bytes" depends="compile"
-    description="run tests for opening planes as in OMERO">
-    <exec executable="${basedir}/target-test-runner">
-      <arg value="loci.tests.testng.OmeroOpenBytesTest"/>
-      <arg value="${filename}"/>
-    </exec>
-  </target>
-
   <target name="test-open-bytes-performance" depends="compile"
     description="run tests for open bytes performance">
     <exec executable="${basedir}/target-test-runner">

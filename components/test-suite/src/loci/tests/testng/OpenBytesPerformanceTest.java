@@ -37,6 +37,8 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
 import loci.formats.ReaderWrapper;
+import nl.javadude.assumeng.Assumption;
+import nl.javadude.assumeng.AssumptionListener;
 
 import org.perf4j.StopWatch;
 import org.perf4j.log4j.Log4JStopWatch;
@@ -44,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -56,6 +59,7 @@ import org.testng.annotations.Test;
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
+@Listeners(value = AssumptionListener.class)
 public class OpenBytesPerformanceTest
 {
   private static final Logger LOGGER =
@@ -102,6 +106,8 @@ public class OpenBytesPerformanceTest
   private String filename;
 
   private boolean memMap;
+
+  private boolean bigImage = false;
 
   private void assertBlock(int blockSize, int posX, int posY, int width,
           int height) throws Exception {
@@ -199,7 +205,13 @@ public class OpenBytesPerformanceTest
     bottomLeftQuarterSize = (sizeY - (sizeY / 2)) * (sizeX / 2) * bpp;
     bottomRightQuarterSize =
       (sizeY - (sizeY / 2)) * (sizeX - (sizeX / 2)) * bpp;
+    if (!bigImage) {
+        bigImage = sizeX > 3000 && sizeY > 3000;
+    }
+  }
 
+  public boolean isNotBigImage() {
+      return !bigImage;
   }
 
   @Parameters({"id", "inMemory"})
@@ -272,6 +284,7 @@ public class OpenBytesPerformanceTest
   }
 
   @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
   public void testOpenBytesAllTilesPreAllocatedBuffer() throws Exception {
     for (int series = 0; series < seriesCount; series++) {
       assertSeries(series);
@@ -312,7 +325,8 @@ public class OpenBytesPerformanceTest
     }
   }
 
-  @Test
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
   public void testOpenBytesPlane() throws Exception {
     for (int series = 0; series < seriesCount; series++) {
       assertSeries(series);
@@ -323,7 +337,8 @@ public class OpenBytesPerformanceTest
     }
   }
 
-  @Test
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
   public void testOpenBytesHalfPlane() throws Exception {
     for (int series = 0; series < seriesCount; series++) {
       assertSeries(series);
@@ -356,7 +371,8 @@ public class OpenBytesPerformanceTest
     }
   }
 
-  @Test
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
   public void testQuartersActualSize() throws Exception {
     for (int series = 0; series < seriesCount; series++) {
       assertSeries(series);
@@ -370,7 +386,8 @@ public class OpenBytesPerformanceTest
     }
   }
 
-  @Test
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
   public void testQuartersTwiceActualSize() throws Exception {
     for (int series = 0; series < seriesCount; series++) {
       assertSeries(series);
@@ -384,17 +401,20 @@ public class OpenBytesPerformanceTest
     }
   }
 
-  @Test
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
   public void testOpenBytesBlocksByRow512KB() throws Exception {
     assertRows(524288);
   }
 
-  @Test
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
   public void testOpenBytesBlocksByRow1MB() throws Exception {
     assertRows(1048576);
   }
 
-  @Test
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
   public void testOpenBytesBlocksByRowPlaneSize() throws Exception {
     assertRows(sizeX * sizeY * bpp);
   }
