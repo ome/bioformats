@@ -63,8 +63,3 @@ metadata, original metadata, and OME metadata.
    bug free, but we are constantly working to improve it. We would
    greatly appreciate any and all input from users concerning missing or
    improperly converted metadata fields.
-
-A draft "Bio-Formats metadata guide" document detailing
-these three kinds of metadata and how the Bio-Formats metadata API
-works is available :source:`here <components/bio-formats/doc/metadata-guide.txt>` 
-and will be updated soon.
