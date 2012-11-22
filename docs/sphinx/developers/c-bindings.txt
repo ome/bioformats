@@ -28,11 +28,22 @@ code and compile it yourself:
 
 -  Binary builds for several common platforms are available on our
    :bf_plone:`Bio-Formats downloads page <downloads>`.
--  See the :source:`build instructions <components/scifio/cppwrap/readme.txt>`
-   (:source:`Windows </components/scifio/cppwrap/readme-windows.txt>`,
-   :source:`Mac OS X <components/scifio/cppwrap/readme-macosx.txt>`,
-   :source:`Linux <components/scifio/cppwrap/readme-linux.txt>`)
+-  See the :doc:`build instructions <buildBF-CPP>`
+   (:doc:`Windows <BF-CPP-windows>`,
+   :doc:`Mac OS X <BF-CPP-macosx>`,
+   :doc:`Linux <BF-CPP-linux>`)
    for details on compiling from source.
 
 Either way, once you have BF-CPP in compiled form, simply include it in
 your project as you would any other external library.
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+    :hidden:
+
+    buildBF-CPP
+    BF-CPP-windows
+    BF-CPP-macosx
+    BF-CPP-linux
+

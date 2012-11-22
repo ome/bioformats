@@ -1,7 +1,8 @@
-See readme.txt for an overview of the Bio-Formats C++ bindings build process.
-
+Building C++ bindings in Windows
+================================
 
 COMPILE-TIME DEPENDENCIES -- WINDOWS
+------------------------------------
 
 Windows users will need to visit the appropriate web sites and download and
 install the relevant binaries for all the dependencies.
@@ -15,6 +16,7 @@ Details follow.
 
 
 COMPILE-TIME DEPENDENCIES -- WINDOWS -- MAVEN
+---------------------------------------------
 
 Download Maven from its web site (http://maven.apache.org/).
 
@@ -27,6 +29,7 @@ Once set, new Command Prompts will recognize "mvn" as a valid command.
 
 
 COMPILE-TIME DEPENDENCIES -- WINDOWS -- CMAKE
+---------------------------------------------
 
 Download and run the CMake installer from its web site (http://cmake.org/).
 
@@ -39,6 +42,7 @@ valid commands.
 
 
 COMPILE-TIME DEPENDENCIES -- WINDOWS -- BOOST
+---------------------------------------------
 
 The easiest way to install the Boost Thread library on Windows is to use the
 free installer from BoostPro:
@@ -53,6 +57,7 @@ When running the installer:
 
 
 COMPILE-TIME DEPENDENCIES -- WINDOWS -- JAVA DEVELOPMENT KIT
+------------------------------------------------------------
 
 Download and install the JDK from its web site:
 
@@ -82,6 +87,7 @@ Once set, new Command Prompts will recognize (e.g.) "javac" as a valid command.
 
 
 COMPILE-TIME DEPENDENCIES -- WINDOWS -- VISUAL C++
+--------------------------------------------------
 
 In addition to the other prerequisites, you will also need a working copy of
 Visual C++. We have tested compilation with Visual C++ 2005 Professional and
@@ -96,18 +102,21 @@ compile the Bio-Formats C++ bindings.
 
 
 HOW TO BUILD - WINDOWS
+----------------------
 
 Run Command Prompt and change to your Bio-Formats working copy. Then run:
 
-  # generate the Bio-Formats C++ bindings
-  cd components\scifio
-  mvn -DskipTests package dependency:copy-dependencies cppwrap:wrap
+::
 
-  # build the Bio-Formats C++ bindings
-  cd target\cppwrap
-  mkdir build
-  cd build
-  cmake-gui ..
+    # generate the Bio-Formats C++ bindings
+    cd components\scifio
+    mvn -DskipTests package dependency:copy-dependencies cppwrap:wrap
+    
+    # build the Bio-Formats C++ bindings
+    cd target\cppwrap
+    mkdir build
+    cd build
+    cmake-gui ..
 
 The CMake GUI will open. Click the Configure button, and a dialog will appear.
 Select your installed version of Visual Studio, and click Finish.
