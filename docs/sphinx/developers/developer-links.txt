@@ -2,10 +2,17 @@
 Developer Documentation
 ***********************
 
+Using Bio-Formats
+=================
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    using-bioformats
 
 Bio-Formats as a Java library
 =============================
-
 
 API documentation
 -----------------
@@ -17,6 +24,13 @@ download bio-formats.jar to use it as a library. Just add
 
 Also see :Jenkins:`further Bio-Formats Java documentation <job/BIOFORMATS-trunk/javadoc/>`
 
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+    :hidden:
+
+    java-library
+
 
 Examples
 --------
@@ -26,8 +40,8 @@ Examples
     :titlesonly:
 
     export
-    conversion
     export2
+    conversion
     matlab-dev
     source-code
 
@@ -40,6 +54,12 @@ code. However, it is possible to call Bio-Formats from a program written
 in another language. But how to do so depends on your program's needs.
 :doc:`Read more.... <non-java-code>`
 
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+    :hidden:
+
+    non-java-code
 
 Bio-Formats C++ bindings
 ------------------------
@@ -54,11 +74,8 @@ Jace set of libraries to create C++ proxies of the Bio-Formats classes.
     :titlesonly:
     :hidden:
 
-    java-library
-    developing-bf
-    non-java-code
     c-bindings
-    reader-guide
+    
 
 .. _bfapplications:
 
@@ -67,8 +84,14 @@ Writing new Bio-Formats file format readers
 ===========================================
 
 A brief guide to writing new Bio-Formats file format readers is available. All format readers should extend either loci.formats.FormatReader or a reader
-in loci.formats.in. :doc:Read more... <reader-guide>`
+in loci.formats.in. :doc:`Read more... <reader-guide>`
 
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+    :hidden:
+
+    reader-guide
 
 Contributing to Bio-Formats
 ===========================
@@ -76,8 +99,14 @@ Contributing to Bio-Formats
 
 If you are interested in working on the Bio-Formats source code itself,
 you can load the source code into your favorite IDE, or develop code
-with your favorite text editor. :doc:`Read
-more... <developing-bf>`
+with your favorite text editor. :doc:`Read more... <developing-bf>`
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+    :hidden:
+
+    developing-bf
 
 .. toctree::
     :maxdepth: 1

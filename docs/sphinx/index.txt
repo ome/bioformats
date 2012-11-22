@@ -31,8 +31,7 @@ For advanced users and developers, further information is available on the :doc:
 
 
 Bio-Formats is updated whenever a significant bug fix is made, or whenever a
-new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the :source:`what's new <components/bio-formats/doc/whats-new.txt>`
-list for a history of major changes in each release.
+new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the :doc:`what's new <whats-new>` list for a history of major changes in each release.
 
 The latest stable version of Bio-Formats is |release|. For future
 development directions, see the
@@ -49,4 +48,5 @@ roadmaps.
     developers/developer-links
     supported-formats
     troubleshooting
+    whats-new
 
