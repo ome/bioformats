@@ -291,7 +291,7 @@ ZZ
 my %assumeng = (
   NAME    => "assumeng",
   TITLE   => "AssumeNG",
-  JAR     => "assumeng-1.2.2.jar",
+  JAR     => "assumeng-1.2.3-jdk15.jar",
   PACKAGE => "nl.javadude.assumeng",
   LICENSE => "Public domain",
   URL     => "https://github.com/hierynomus/assumeng/",
