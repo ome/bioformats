@@ -1,5 +1,5 @@
-Bio-Formats as a Java Library
-=============================
+Using Bio-Formats as a Java library
+===================================
 
 If you wish to make use of Bio-Formats within your own software, you can
 :bf_plone:`download bio-formats.jar <downloads>` to use it as a library. Just 
@@ -57,75 +57,23 @@ for a complete and up-to-date list of all optional libraries, which can
 all be found in our :source:`Git repository <jar>`.
 
 Examples of usage
+-----------------
 
-``ImageConverter``
+``ImageConverter`` A simple command line tool for converting between formats
 
-A simple command line tool for converting between formats
-
-``ImageInfo``
-
-A more involved command line utility for thoroughly reading an input
-file, printing some information about it, and displaying the pixels
+``ImageInfo`` A more involved command line utility for thoroughly reading an input file, printing some information about it, and displaying the pixels
 onscreen using the Bio-Formats viewer
 
-``MinimumWriter``
+``MinimumWriter`` A command line utility demonstrating the minimum amount of metadata needed to write a file
 
-A command line utility demonstrating the minimum amount of metadata
-needed to write a file
+``PrintTimestamps`` A command line example demonstrating how to extract timestamps from a file
 
-``PrintTimestamps``
+``Simple_Read`` A simple ImageJ plugin demonstrating how to use Bio-Formats to read files into ImageJ (see also :doc:`/users/imagej`)
 
-A command line example demonstrating how to extract timestamps from a
-file
+``Read_Image`` An ImageJ plugin that uses Bio-Formats to build up an image stack, reading image planes one by one (see also :doc:`/users/imagej`).
 
-``Simple_Read``
+``Mass_Importer`` A simple plugin for ImageJ that demonstrates how to open all image files in a directory using Bio-Formats, grouping files with similar names to avoiding opening the same dataset more than once (see also :doc:`/users/imagej`)
 
-A simple ImageJ plugin demonstrating how to use Bio-Formats to read
-files into ImageJ (see also :doc:`/users/imagej`)
-
-``Read_Image``
-
-An ImageJ plugin that uses Bio-Formats to build up an image stack,
-reading image planes one by one (see also :doc:`/users/imagej`).
-
-``Mass_Importer``
-
-A simple plugin for ImageJ that demonstrates how to open all image files
-in a directory using Bio-Formats, grouping files with similar names to
-avoiding opening the same dataset more than once (see also :doc:`/users/imagej`)
-
-:source:`Export examples <components/bio-formats/doc/export>`
-
-Very simple source code and narrative documentation for exporting and
-converting files.
-
- 
-
-Other developer links
-
-:doc:`source-code`
-
-How to access the source code from our Git repository
-
-`Javadocs <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/javadoc>`_
-
-Javadocs for Bio-Formats and other LOCI Java software
-
-:source:`Using Bio-Formats Guide <components/bio-formats/doc/using-bioformats.txt>`
-
-How to use Bio-Formats as a library
-
-:source:`File Format Reader Guide <components/bio-formats/doc/reader-guide.txt>`
-
-How to add support for a new file format
-
-`Trac tickets <http://trac.openmicroscopy.org.uk/ome/query?status=assigned&status=new&status=reopened&component=Bio-Formats>`_
-
-A list of outstanding bugs
-
-`GitHub <https://github.com/openmicroscopy/bioformats/>`_
-
-Browse the source code and project history online
 
 A Note on Java Web Start (loci\_tools.jar vs. bio-formats.jar)
 --------------------------------------------------------------

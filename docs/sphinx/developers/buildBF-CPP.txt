@@ -12,7 +12,7 @@ from the :bf_plone:`Bio-Formats downloads page <downloads>`.
 Alternately, if you wish to build the Bio-Formats C++ bindings from source, see the directions below.
 
 
-COMPILE-TIME DEPENDENCIES
+Compile-time dependencies
 -------------------------
 
 To build the Bio-Formats C++ bindings, the following modules are required:
@@ -46,7 +46,7 @@ specific platform:
 :doc:`Mac OS X <BF-CPP-macosx>`,
 :doc:`Linux <BF-CPP-linux>`)
 
-HOW TO BUILD
+How to build
 ------------
 
 The process of building the Bio-Formats C++ bindings is divided into two steps:
@@ -64,7 +64,7 @@ specific platform:
 :doc:`Mac OS X <BF-CPP-macosx>`,
 :doc:`Linux <BF-CPP-linux>`)
 
-BUILD RESULTS
+Build results
 -------------
 
 If all goes well, the build system will:

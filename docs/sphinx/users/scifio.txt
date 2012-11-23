@@ -1,8 +1,5 @@
-SCIFIO
-======
-
 SCientific Imaging Formats Input and Output
--------------------------------------------
+===========================================
 
 Motivation
 ----------
@@ -113,8 +110,8 @@ loci.common library, it made sense to migrate these parts to SCIFIO. As
 this removed some significant functionality from loci.common, the entire
 library was incorporated into sub-packages of SCIFIO.
 
-Multidimensionality
-~~~~~~~~~~~~~~~~~~~
+Multi-dimensionality
+~~~~~~~~~~~~~~~~~~~~
 
 As classic Bio-Formats was bound to the OME-XML schema, any image
 processed by Bio-Formats was forced to a five-dimensional format.

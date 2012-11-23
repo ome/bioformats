@@ -1,5 +1,5 @@
-Using Bio-Formats to load images
-================================
+Using Bio-Formats to load images into ImageJ
+============================================
 
 This section will explain how to use Bio-Formats to import files into
 ImageJ and how to use the settings on the Bio-Formats Import Options
