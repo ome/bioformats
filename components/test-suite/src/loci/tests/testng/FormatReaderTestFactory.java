@@ -33,6 +33,7 @@ import loci.common.DataTools;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.Factory;
 
 /**
  * Factory for scanning a directory structure and generating instances of
@@ -51,9 +52,7 @@ public class FormatReaderTestFactory {
 
   // -- TestNG factory methods --
 
-  /**
-   * @testng.factory
-   */
+  @Factory
   public Object[] createInstances() {
     Vector files = new Vector();
 
