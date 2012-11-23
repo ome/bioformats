@@ -1,5 +1,5 @@
-Managing memory using Bio-Formats
-=================================
+Managing memory in ImageJ/Fiji using Bio-Formats
+================================================
 
 When dealing with a large stack of images, you may receive a
 warning like this:

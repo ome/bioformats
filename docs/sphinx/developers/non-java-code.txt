@@ -1,5 +1,5 @@
-Interfacing from non-Java code
-==============================
+Solutions for interfacing from non-Java code
+============================================
 
 Bio-Formats is written in Java, and is easiest to use with other Java
 code. However, it is possible to call Bio-Formats from a program written
@@ -22,16 +22,14 @@ With an in-process approach, your application directly invokes Java code,
 either by spawning its own internal Java Virtual Machine (JVM) and passing data
 across a bridge, or otherwise executing the Java code within a single environment.
 
-Strengths
+=============================  =================================
+Strengths                      Weaknesses
+=============================  =================================
+Tight (API-level) integration  No shared state between processes
+Minimal performance overhead   Limited portability
+Few security considerations
+=============================  =================================
 
-#. Tight (API-level) integration
-#. Minimal performance overhead
-#. Few security considerations
-
-Weaknesses
-
-#. No shared state between processes
-#. Limited portability
 
 **Paradigms:**
 
@@ -78,16 +76,14 @@ ubiquitous example is web browsers and web servers. Most solutions in
 this category are some form of
 `middleware <http://en.wikipedia.org/wiki/Middleware>`_.
 
-Strengths
+===========================================================  =================
+Strengths                                                    Weaknesses
+===========================================================  =================
+Share state between multiple processes on multiple machines  `Object marshalling`_ incurs significant overhead
+Broad portability and language support                       Potentially vulnerable to security exploits
+===========================================================  =================
 
-#. Share state between multiple processes on multiple machines
-#. Broad portability and language support
-
-Weaknesses
-
-#. `Object marshalling <http://en.wikipedia.org/wiki/Marshalling_%28computer_science%29>`_
-   incurs significant overhead
-#. Potentially vulnerable to security exploits
+.. _Object marshalling: http://en.wikipedia.org/wiki/Marshalling_%28computer_science%29
 
 **Paradigms:**
 
@@ -118,11 +114,7 @@ List of solutions
 It is a significant challenge to access a complex Java API from code
 written in another language, especially in a cross-platform and high
 performance way. The table below provides an overview of viable
-approaches, with links to source code and instructions where
-appropriate. Which approach to use depends on your application's target
-platforms and languages, and the interaction model between your
-application and the Java code—see the discussion of in-process solutions
-versus inter-process communication above for details.
+approaches, further details are provided below it with links to source code and instructions where appropriate. Which approach to use depends on your application's target platforms and languages, and the interaction model between your application and the Java code—see the discussion of in-process solutions versus inter-process communication above for details.
 
 **A note about SWIG.** The `Simplified Wrapper and Interface
 Generator <http://www.swig.org/>`_ (SWIG) is an excellent tool for
@@ -134,20 +126,32 @@ languages (see `SWIG's list of supported
 languages <http://www.swig.org/compat.html#SupportedLanguages>`_ for a
 complete list).
 
-Solution
+Summary table
+~~~~~~~~~~~~~
 
-Type
+===================  =========================  ================ 
+Solution             Type                       Languages
+===================  =========================  ================
+Raw JNI              In-process (JNI)           C/C++
+Jace                 In-process (JNI)           C/C++
+JunC++ion            In-process (JNI)           C/C++
+JuggerNET            In-process (JNI)           .NET
+GCJ                  In-process (compiler)      C/C++ (GCC only)
+IKVM.NET             In-process (runtime)       .NET/Mono
+Pipes                Inter-process (local)      Any
+Files                Inter-process (local)      Any
+Sockets              Inter-process (messaging)  Any
+XML-RPC              Inter-process (messaging)  `Many <http://en.wikipedia.org/wiki/XML-RPC#Implementations>`_
+Ice                  Inter-process (ORB)        Several
+CORBA                Inter-process (ORB)        Many
+Codemesh Shared JVM  Inter-process (ORB)        C++/.NET
+===================  =========================  ================
 
-Languages
-
-Notes
+Further details
+~~~~~~~~~~~~~~~
 
 `Raw
 JNI <http://java.sun.com/javase/6/docs/technotes/guides/jni/spec/invocation.html>`_
-
-In-process (JNI)
-
-C/C++
 
 -  You can code your integration layer using pure JNI calls (but we
    don't recommend it).
@@ -162,10 +166,6 @@ C/C++
 
 `Jace <http://sourceforge.net/projects/jace/>`_
 
-In-process (JNI)
-
-C/C++
-
 -  Jace generates C++ proxy classes, one per Java class, mirroring the
    original functionality as much as possible.
 -  The C++ proxy classes use JNI under the hood but handle most of the
@@ -176,27 +176,15 @@ C/C++
 
 `JunC++ion <http://codemesh.com/products/junction/>`_
 
-In-process (JNI)
-
-C/C++
-
 -  JunC++ion is a commercial in-process integration solution for C/C++
    available from `Codemesh, Inc. <http://www.codemesh.com/>`_
 
 `JuggerNET <http://codemesh.com/products/juggernet/>`_
 
-In-process (JNI)
-
-.NET
-
 -  JuggerNET is a commercial in-process integration solution for .NET
    available from `Codemesh, Inc. <http://www.codemesh.com/>`_
 
 `GCJ <http://gcc.gnu.org/java/>`_
-
-In-process (compiler)
-
-C/C++ (GCC only)
 
 -  GCJ can compile Java code into machine code.
 -  Instead of JNI, GCJ uses its `Compiler Native
@@ -209,10 +197,6 @@ C/C++ (GCC only)
 
 `IKVM.NET <http://www.ikvm.net/>`_
 
-In-process (runtime)
-
-.NET/Mono
-
 -  IKVM.NET interprets Java byte code on the fly into the .NET/Mono
    framework.
 -  Interoperability is limited to applications in the .NET/Mono
@@ -222,10 +206,6 @@ In-process (runtime)
 
 `Pipes <http://en.wikipedia.org/wiki/Pipeline_%28Unix%29>`_
 
-Inter-process (local)
-
-Any
-
 -  Pipes can work well when quantity of data being transferred is
    limited.
 -  Be careful about blocking operations causing deadlock.
@@ -234,10 +214,6 @@ Any
    a combination of pipes and files to interface with Bio-Formats.
 
 `Files <http://en.wikipedia.org/wiki/Computer_file>`_
-
-Inter-process (local)
-
-Any
 
 -  Communication via files is slower than pipes, since messages go
    through disk.
@@ -249,10 +225,6 @@ Any
 
 `Sockets <http://en.wikipedia.org/wiki/Unix_domain_socket>`_
 
-Inter-process (messaging)
-
-Any
-
 -  You can use a sockets API directly to create a custom solution (but
    we don't recommend it).
 -  `JVMLink <http://www.loci.wisc.edu/software/jvmlink>`_ was our first
@@ -261,10 +233,6 @@ Any
 -  We recommend using Ice or CORBA instead.
 
 `XML-RPC <http://en.wikipedia.org/wiki/XML-RPC>`_
-
-Inter-process (messaging)
-
-`Many <http://en.wikipedia.org/wiki/XML-RPC#Implementations>`_
 
 -  XML-RPC is a cross-platform `remote procedure
    call <http://en.wikipedia.org/wiki/Remote_procedure_call>`_ (RPC)
@@ -275,20 +243,12 @@ Inter-process (messaging)
 
 Ice_
 
-Inter-process (ORB)
-
-Several
-
 -  Ice is high-performance middleware for cross-platform client/server
    communication.
 -  ZeroC_ argues that Ice is `superior to
    CORBA <http://www.zeroc.com/iceVsCorba.html>`_.
 
 `CORBA <http://java.sun.com/j2ee/corba/>`_
-
-Inter-process (ORB)
-
-Many
 
 -  `Java RMI over IIOP <http://java.sun.com/products/rmi-iiop/>`_
    enables communication between Java and other CORBA-supported
@@ -299,10 +259,6 @@ Many
 -  Nonetheless, where possible we suggest you use Ice instead.
 
 `Codemesh Shared JVM <http://codemesh.com/shared_jvm.html>`_
-
-Inter-process (ORB)
-
-C++, .NET
 
 -  The Codemesh Shared JVM is a commercial inter-process integration
    solution available from `Codemesh, Inc. <http://www.codemesh.com/>`_

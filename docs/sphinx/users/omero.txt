@@ -1,5 +1,5 @@
-OMERO
-=====
+OME Remote Objects
+==================
 
 OMERO is client-server software for microscope image data
 management, visualization, and analysis. See the `OMERO

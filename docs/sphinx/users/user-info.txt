@@ -2,19 +2,10 @@
 User Information
 ****************
 
-
-Installation
-============
-
-Download one of the files from the :bf_plone:`Bio-Formats downloads page <downloads>` 
-and place it in an appropriate directory. Specific installation instructions
-depend upon the application you are using - see below.
-
-
 Dataset importing
 =================
 
-For information about what extensions to choose to import files, see
+For information about what extensions to choose to import files, see:
 
 .. toctree::
     :maxdepth: 1
@@ -53,12 +44,21 @@ SCIFIO provides the core architecture of the Bio-Formats library and also includ
 
     scifio
 
+OMERO
+=====
+
+OMERO.Importer uses Bio-Formats to read image pixels and propagate metadata into the OMERO.server system. For more informations see:
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    omero
 
 Other applications
 ==================
 
-Many software packages can use Bio-Formats to read and write microscopy formats 
-(click on the package for further details):
+Many software packages can use Bio-Formats to read and write microscopy formats (click on the package for further details):
 
 Image servers
 -------------
@@ -69,7 +69,6 @@ Image servers
 
     bisque
     ome-server
-    omero
 
 
 Libraries and scripting
