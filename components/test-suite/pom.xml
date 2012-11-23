@@ -74,11 +74,6 @@
       <version>6.8</version>
     </dependency>
     <dependency>
-      <groupId>com.beust</groupId>
-      <artifactId>jcommander</artifactId>
-      <version>1.7</version>
-    </dependency>
-    <dependency>
       <groupId>nl.javadude.assumeng</groupId>
       <artifactId>assumeng</artifactId>
       <version>1.2.2</version>
