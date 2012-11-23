@@ -136,8 +136,7 @@ Type "ant -p" for a list of targets.
       </not>
     </condition>
 
-    <testng sourcedir="${dest.dir}"
-      annotations="Javadoc" groups="automated" testname="Automated tests"
+    <testng groups="automated" testname="Automated tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       parallel="tests" threadCount="${testng.threadCount}"
