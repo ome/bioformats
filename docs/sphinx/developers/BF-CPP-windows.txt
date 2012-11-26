@@ -1,7 +1,7 @@
 Building C++ bindings in Windows
 ================================
 
-COMPILE-TIME DEPENDENCIES -- WINDOWS
+Compile-time dependencies -- Windows
 ------------------------------------
 
 Windows users will need to visit the appropriate web sites and download and
@@ -15,7 +15,7 @@ multiple directories in the PATH variable.
 Details follow.
 
 
-COMPILE-TIME DEPENDENCIES -- WINDOWS -- MAVEN
+Compile-time dependencies -- Windows -- Maven
 ---------------------------------------------
 
 Download Maven from its web site (http://maven.apache.org/).
@@ -28,7 +28,7 @@ subdirectory to your PATH environment variable; e.g.:
 Once set, new Command Prompts will recognize "mvn" as a valid command.
 
 
-COMPILE-TIME DEPENDENCIES -- WINDOWS -- CMAKE
+Compile-time dependencies -- Windows -- CMake
 ---------------------------------------------
 
 Download and run the CMake installer from its web site (http://cmake.org/).
@@ -41,7 +41,7 @@ Once installed, new Command Prompts will recognize "cmake" and "cmake-gui" as
 valid commands.
 
 
-COMPILE-TIME DEPENDENCIES -- WINDOWS -- BOOST
+Compile-time dependencies -- Windows -- Boost
 ---------------------------------------------
 
 The easiest way to install the Boost Thread library on Windows is to use the
@@ -56,7 +56,7 @@ When running the installer:
   * When choosing components, check "Boost DateTime" and "Boost Thread."
 
 
-COMPILE-TIME DEPENDENCIES -- WINDOWS -- JAVA DEVELOPMENT KIT
+Compile-time dependencies -- Windows -- Java Development Kit
 ------------------------------------------------------------
 
 Download and install the JDK from its web site:
@@ -86,7 +86,7 @@ Optionally, you can add the bin subdirectory to the PATH; e.g.:
 Once set, new Command Prompts will recognize (e.g.) "javac" as a valid command.
 
 
-COMPILE-TIME DEPENDENCIES -- WINDOWS -- VISUAL C++
+Compile-time dependencies -- Windows -- Visual C++
 --------------------------------------------------
 
 In addition to the other prerequisites, you will also need a working copy of
@@ -101,7 +101,7 @@ You must launch the environment at least once before you will be able to
 compile the Bio-Formats C++ bindings.
 
 
-HOW TO BUILD - WINDOWS
+How to build - Windows
 ----------------------
 
 Run Command Prompt and change to your Bio-Formats working copy. Then run:

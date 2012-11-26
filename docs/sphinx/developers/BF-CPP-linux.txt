@@ -1,7 +1,7 @@
 Building C++ bindings in Linux
 ==============================
 
-COMPILE-TIME DEPENDENCIES -- LINUX
+Compile-time dependencies -- Linux
 ----------------------------------
 
 The following directions are specific to Ubuntu Linux. Other Linux
@@ -28,7 +28,7 @@ sun-java6-jdk package and update-alternatives step), but we have only
 tested the compilation process with Sun's Java compiler.
 
 
-HOW TO BUILD -- LINUX
+How to build -- Linux
 ---------------------
 
 The following commands will generate and build the Bio-Formats C++ bindings:
