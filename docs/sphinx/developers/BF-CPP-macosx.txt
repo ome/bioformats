@@ -1,7 +1,7 @@
 Building C++ bindings in Mac OS X
 =================================
 
-COMPILE-TIME DEPENDENCIES -- MAC OS X
+Compile-time dependencies -- Mac OS X
 -------------------------------------
 
 To install dependencies on Mac OS X, we advise using MacPorts (macports.org):
@@ -13,7 +13,7 @@ To install dependencies on Mac OS X, we advise using MacPorts (macports.org):
 This will install binaries into the MacPorts /opt/local directory structure.
 
 
-HOW TO BUILD -- MAC OS X
+How to build -- Mac OS X
 ------------------------
 
 The following commands will generate and build the Bio-Formats C++ bindings:
