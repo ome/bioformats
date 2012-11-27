@@ -45,7 +45,7 @@ For information on installing these dependencies, refer to the page for your
 specific platform: 
 :doc:`Windows <BF-CPP-windows>`,
 :doc:`Mac OS X <BF-CPP-macosx>`,
-:doc:`Linux <BF-CPP-linux>`
+:doc:`Linux <BF-CPP-linux>`.
 
 How to build
 ------------
@@ -63,7 +63,7 @@ For details on executing these build steps, refer to the page for your
 specific platform: 
 :doc:`Windows <BF-CPP-windows>`,
 :doc:`Mac OS X <BF-CPP-macosx>`,
-:doc:`Linux <BF-CPP-linux>`)
+:doc:`Linux <BF-CPP-linux>`.
 
 Build results
 -------------
