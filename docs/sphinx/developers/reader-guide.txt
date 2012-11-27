@@ -6,8 +6,8 @@ This document is a brief guide to writing new Bio-Formats file format readers.
 All format readers should extend either loci.formats.FormatReader or a reader
 in loci.formats.in.
 
-Methods to Override
----------------------
+Methods to override
+-------------------
 
 boolean isSingleFile(String id) throws FormatException, IOException:
   Whether or not the named file is expected to be the only file in the
@@ -106,7 +106,7 @@ Thus, a stub for initFile(String) might look like this:
 For more details, see the javadoc for Location.mapId(String, String)
 and Location.getMappedId(String).
 
-Variables to Populate
+Variables to populate
 ---------------------
 
 There are a number of global variables defined in loci.formats.FormatReader that should be populated in the constructor of any implemented reader.
@@ -125,7 +125,7 @@ These variables are:
     in datasets of this format; only necessary for multi-file datasets
 
 
-Other Useful Things
+Other useful things
 -------------------
 
 - loci.common.RandomAccessInputStream is a hybrid RandomAccessFile/InputStream
@@ -159,7 +159,7 @@ Other Useful Things
   RLE (PackBits).
 
 - If you wish to convert a file's metadata to OME-XML (strongly encouraged),
-  please see metadata-guide.txt further information.
+  please see :doc:`Bio-Formats metadata processing </about>` for further information.
 
 - Utility methods for reading and writing individual bits from a byte array
   can be found in loci.formats.codec.BitBuffer and loci.formats.codec.BitWriter
@@ -178,9 +178,6 @@ Other Useful Things
   brief listing is provided below for reference, but it is recommended that   
   you take a look at the contents of loci.formats.tools.ImageInfo to see 
   exactly what each one does.
-
-Additional parameters
-~~~~~~~~~~~~~~~~~~~~~
 
 +--------------+----------------------------------------------------------+
 | Argument     | Action                                                   |
