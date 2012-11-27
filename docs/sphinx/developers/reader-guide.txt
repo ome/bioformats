@@ -175,9 +175,12 @@ Other Useful Things
   loci.formats.tools.ImageInfo <file name>".  If all goes well, you should see
   all of the metadata and dimension information, along with a window showing
   the images in the file.  ImageReader can take additional parameters; a
-  brief listing is provided for reference, but it is recommended that you
-  take a look at the contents of loci.formats.tools.ImageInfo to see exactly
-  what each one does.
+  brief listing is provided below for reference, but it is recommended that   
+  you take a look at the contents of loci.formats.tools.ImageInfo to see 
+  exactly what each one does.
+
+Additional parameters
+~~~~~~~~~~~~~~~~~~~~~
 
 +--------------+----------------------------------------------------------+
 | Argument     | Action                                                   |
@@ -243,9 +246,9 @@ Other Useful Things
 +--------------+----------------------------------------------------------+
 
 
-- If you wish to test using TestNG, loci.tests.testng.FormatReaderTest provides
-  several basic tests that work with all Bio-Formats readers.  See the
-  FormatReaderTest source code for additional information.
+- If you wish to test using TestNG, loci.tests.testng.FormatReaderTest 
+  provides several basic tests that work with all Bio-Formats readers.  See 
+  the FormatReaderTest source code for additional information.
 
 - For more details, please look at the source code and javadocs.  Studying
   existing readers is probably the best way to get a feel for the API; I would
