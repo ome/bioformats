@@ -47,5 +47,5 @@ information:
 Once you have gathered all the relevant information, send it as an
 e-mail to the `OME Users mailing list <http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/>`_.
 
-***Please be patient.***\ It may be a few days until you receive a
+**Please be patient** - it may be a few days until you receive a
 response, but we reply to *every* email inquiry we receive.
