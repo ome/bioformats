@@ -52,27 +52,27 @@ same folder.
     - Commercial
     - For additional QuickTime codecs
 
-See the list in the :source:`LOCI Software build file <build.xml>`
+See the list in the :source:`Bio-Formats toplevel build file <build.xml>`
 for a complete and up-to-date list of all optional libraries, which can
 all be found in our :source:`Git repository <jar>`.
 
 Examples of usage
 -----------------
 
-``ImageConverter`` A simple command line tool for converting between formats
+:source:`ImageConverter <components/scifio/src/loci/formats/tools/ImageConverter.java>` - A simple command line tool for converting between formats.
 
-``ImageInfo`` A more involved command line utility for thoroughly reading an input file, printing some information about it, and displaying the pixels
-onscreen using the Bio-Formats viewer
+:source:`ImageInfo <components/scifio/src/loci/formats/tools/ImageInfo.java>` - A more involved command line utility for thoroughly reading an input file, printing some information about it, and displaying the pixels
+onscreen using the Bio-Formats viewer.
 
-``MinimumWriter`` A command line utility demonstrating the minimum amount of metadata needed to write a file
+:source:`MinimumWriter <components/bio-formats/utils/MinimumWriter.java>` - A command line utility demonstrating the minimum amount of metadata needed to write a file.
 
-``PrintTimestamps`` A command line example demonstrating how to extract timestamps from a file
+:source:`PrintTimestamps <components/bio-formats/utils/PrintTimestamps.java>` - A command line example demonstrating how to extract timestamps from a file.
 
-``Simple_Read`` A simple ImageJ plugin demonstrating how to use Bio-Formats to read files into ImageJ (see also :doc:`/users/imagej`)
+:source:`Simple_Read <components/loci-plugins/utils/Simple_Read.java>` - A simple ImageJ plugin demonstrating how to use Bio-Formats to read files into ImageJ (see also :doc:`/users/imagej`).
 
-``Read_Image`` An ImageJ plugin that uses Bio-Formats to build up an image stack, reading image planes one by one (see also :doc:`/users/imagej`).
+:source:`Read_Image <components/loci-plugins/utils/Read_Image.java>` - An ImageJ plugin that uses Bio-Formats to build up an image stack, reading image planes one by one (see also :doc:`/users/imagej`).
 
-``Mass_Importer`` A simple plugin for ImageJ that demonstrates how to open all image files in a directory using Bio-Formats, grouping files with similar names to avoiding opening the same dataset more than once (see also :doc:`/users/imagej`)
+:source:`Mass_Importer <components/loci-plugins/utils/Mass_Importer.java>` - A simple plugin for ImageJ that demonstrates how to open all image files in a directory using Bio-Formats, grouping files with similar names to avoiding opening the same dataset more than once (see also :doc:`/users/imagej`).
 
 
 A Note on Java Web Start (loci\_tools.jar vs. bio-formats.jar)
