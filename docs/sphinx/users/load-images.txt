@@ -3,12 +3,7 @@ Using Bio-Formats to load images into ImageJ
 
 This section will explain how to use Bio-Formats to import files into
 ImageJ and how to use the settings on the Bio-Formats Import Options
-screen.  The sections include:
-
--  `Opening Files <#OpeningFiles>`_
--  `Opening Files Windowlessly <#windowlessly>`_
--  `Group Files with Similar Names <#GroupFiles>`_
--  `Autoscale <#Autoscale>`_
+screen.
 
 Opening files
 -------------

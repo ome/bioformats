@@ -12,23 +12,23 @@ For most end-users, we recommend downloading the LOCI Tools complete bundle. 
 However, you must decide which version of it you want to install. There
 are three primary versions of Bio-Formats: the trunk build, the daily
 builds, and the Stable Release. Which version you should download
-depends on your needs.
+depends on your needs:
 
-The **trunk build** is automatically updated every time any change is
-made to the source code on the main "trunk" branch in Git, LOCI's
-software version control system. This build has the latest bug fixes,
-but it is not well tested and may have also introduced new bugs.
+- The **trunk build** is automatically updated every time any change is
+  made to the source code on the main "trunk" branch in Git, LOCI's
+  software version control system. This build has the latest bug fixes,
+  but it is not well tested and may have also introduced new bugs.
 
-The **daily build** is a compilation of that day's changes that occurs
-daily around midnight. It is not any better tested than the trunk build;
-but if you download it multiple times in a day, you can be sure you'll
-get the same version each time.
+- The **daily build** is a compilation of that day's changes that occurs
+  daily around midnight. It is not any better tested than the trunk build;
+  but if you download it multiple times in a day, you can be sure you'll
+  get the same version each time.
 
-The **stable release** is thoroughly tested and has documentation to
-match. The list of supported formats on the Bio-Formats site corresponds
-to the most recent stable release. We do not add new formats to the list
-until a release containing support for that format has been completed.
-The stable release is less likely to contain bugs.
+- The **stable release** is thoroughly tested and has documentation to
+  match. The list of supported formats on the Bio-Formats site corresponds
+  to the most recent stable release. We do not add new formats to the list
+  until a release containing support for that format has been completed.
+  The stable release is less likely to contain bugs.
 
 The stable release is also more useful to programmers because they can
 link their software to a known, fixed version of Bio-Formats.
