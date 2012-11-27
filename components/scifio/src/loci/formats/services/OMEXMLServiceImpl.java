@@ -542,7 +542,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
     Hashtable<String, Object> metadata)
   {
-    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.resolveReferences();
     OME root = (OME) omexmlMeta.getRoot();
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     if (annotations == null) annotations = new StructuredAnnotations();
@@ -567,7 +567,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
     String key, String value)
   {
-    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.resolveReferences();
     OME root = (OME) omexmlMeta.getRoot();
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     if (annotations == null) annotations = new StructuredAnnotations();
@@ -618,7 +618,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /** @see OMEXMLService#removeBinData(OMEXMLMetadata) */
   public void removeBinData(OMEXMLMetadata omexmlMeta) {
-    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.resolveReferences();
     OME root = (OME) omexmlMeta.getRoot();
     List<Image> images = root.copyImageList();
     for (Image img : images) {
@@ -633,7 +633,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /** @see OMEXMLService#removeChannels(OMEXMLMetadata, int, int) */
   public void removeChannels(OMEXMLMetadata omexmlMeta, int image, int sizeC) {
-    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.resolveReferences();
     OME root = (OME) omexmlMeta.getRoot();
     Pixels img = root.getImage(image).getPixels();
     List<Channel> channels = img.copyChannelList();
@@ -649,7 +649,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /** @see OMEXMLService#addMetadataOnly(OMEXMLMetadata, int) */
   public void addMetadataOnly(OMEXMLMetadata omexmlMeta, int image) {
-    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.resolveReferences();
     MetadataOnly meta = new MetadataOnly();
     OME root = (OME) omexmlMeta.getRoot();
     Pixels pix = root.getImage(image).getPixels();
@@ -659,8 +659,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /** @see OMEXMLService#isEqual(OMEXMLMetadata, OMEXMLMetadata) */
   public boolean isEqual(OMEXMLMetadata src1, OMEXMLMetadata src2) {
-    ((OMEXMLMetadataImpl) src1).resolveReferences();
-    ((OMEXMLMetadataImpl) src2).resolveReferences();
+    src1.resolveReferences();
+    src2.resolveReferences();
 
     OME omeRoot1 = (OME) src1.getRoot();
     OME omeRoot2 = (OME) src2.getRoot();
