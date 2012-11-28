@@ -23,11 +23,11 @@ For information about what extensions to choose to import files, see
     /dataset-structure-table
 
 
-Using Bio-Formats with ImageJ and FIJI
+Using Bio-Formats with ImageJ and Fiji
 ======================================
 
 The following sections explain the features of Bio-Formats and how to use 
-it within ImageJ and FIJI:
+it within ImageJ and Fiji:
 
 
 .. toctree::
