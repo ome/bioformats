@@ -206,7 +206,7 @@ public class OpenBytesPerformanceTest
     bottomRightQuarterSize =
       (sizeY - (sizeY / 2)) * (sizeX - (sizeX / 2)) * bpp;
     if (!bigImage) {
-        bigImage = sizeX > 3000 && sizeY > 3000;
+        bigImage = sizeX * sizeY > 9000000;
     }
   }
 
