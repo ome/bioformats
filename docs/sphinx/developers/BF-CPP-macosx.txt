@@ -4,7 +4,7 @@ Building C++ bindings in Mac OS X
 Compile-time dependencies -- Mac OS X
 -------------------------------------
 
-To install dependencies on Mac OS X, we advise using MacPorts (macports.org):
+To install dependencies on Mac OS X, we advise using `MacPorts <http://www.macports.org>`_:
 
 ::
 
