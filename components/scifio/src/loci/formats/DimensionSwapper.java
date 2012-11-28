@@ -289,7 +289,11 @@ public class DimensionSwapper extends ReaderWrapper {
     {
       // NB: Create our own copy of the CoreMetadata,
       // which we can manipulate safely.
-      core = copyCoreMetadata(SwappableMetadata.class, reader);
+      CoreMetadata[] oldcore = reader.getCoreMetadata();
+      core = new SwappableMetadata[oldcore.length];
+      for (int s=0; s<core.length; s++) {
+        core[s] = new SwappableMetadata(reader, s);
+      }
     }
   }
 

@@ -546,16 +546,26 @@ public class MinimalTiffReader extends FormatReader {
         ms0.resolutionCount = seriesCount;
       }
 
-      ms0.sizeT = 1;
-      ms0.imageCount = 1;
+      if (ifds.size() + 1 < ms0.sizeT) {
+        ms0.sizeT -= (ifds.size() + 1);
+        ms0.imageCount -= (ifds.size() + 1);
+      }
+
+      if (ms0.sizeT <= 0) {
+        ms0.sizeT = 1;
+      }
+      if (ms0.imageCount <= 0) {
+        ms0.imageCount = 1;
+      }
 
       for (IFD ifd : ifds) {
         CoreMetadata ms =  new CoreMetadata(this, 0);
         core.add(ms);
+        ms = new CoreMetadata(core[0]);
         ms.sizeX = (int) ifd.getImageWidth();
         ms.sizeY = (int) ifd.getImageLength();
-        ms.sizeT = 1;
-        ms.imageCount = 1;
+        ms.sizeT = newCore[0].sizeT;
+        ms.imageCount = newCore[0].imageCount;
         ms.thumbnail = true;
         ms.resolutionCount = 1;
       }
