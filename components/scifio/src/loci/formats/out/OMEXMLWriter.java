@@ -251,7 +251,7 @@ public class OMEXMLWriter extends FormatWriter {
 
     public void endElement(String uri, String localName, String qName) {
       currentFragment += "</" + qName + ">";
-      if (qName.equals("Channel")) {
+      if (qName.equals("Pixels")) {
         xmlFragments.add(currentFragment);
         currentFragment = "";
       }
