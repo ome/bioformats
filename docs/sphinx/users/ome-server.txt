@@ -48,15 +48,31 @@ configuration value:
 
 To see the current file format reader list:
 
-   ``ome=# select value from configuration where name='import_formats';  value  --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ['OME::ImportEngine::OMETIFFreader','OME::ImportEngine::MetamorphHTDFormat','OME::ImportEngine::DVreader','OME::ImportEngine::STKreader','OME::ImportEngine::BioradReader','OME::ImportEngine::LSMreader','OME::ImportEngine::TIFFreader','OME::ImportEngine::BMPreader','OME::ImportEngine::DICOMreader','OME::ImportEngine::XMLreader','OME::ImportEngine::BioFormats']  (1 row)``
+::
+
+   ome=# select value from configuration where name='import_formats';
+    value
+   ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   ['OME::ImportEngine::OMETIFFreader','OME::ImportEngine::MetamorphHTDFormat','OME::ImportEngine::DVreader','OME::ImportEngine::STKreader','OME::ImportEngine::BioradReader','OME::ImportEngine::LSMreader','OME::ImportEngine::TIFFreader','OME::ImportEngine::BMPreader','OME::ImportEngine::DICOMreader','OME::ImportEngine::XMLreader','OME::ImportEngine::BioFormats']
+    (1 row)
 
 To remove extraneous readers from the list:
 
-   ``ome=# update configuration set value='[\'OME::ImportEngine::MetamorphHTDFormat\',\'OME::ImportEngine::XMLreader\',\'OME::ImportEngine::BioFormats\']' where name='import_formats'; UPDATE 1 ome=# select value from configuration where name='import_formats';                                                    value  ----------------------------------------------------------------------------------------------------------   ['OME::ImportEngine::MetamorphHTDFormat','OME::ImportEngine::XMLreader','OME::ImportEngine::BioFormats']  (1 row)``
+::
+
+   ome=# update configuration set value='[\'OME::ImportEngine::MetamorphHTDFormat\',\'OME::ImportEngine::XMLreader\',\'OME::ImportEngine::BioFormats\']' where name='import_formats';
+   UPDATE 1
+   ome=# select value from configuration where name='import_formats';
+    value
+   ----------------------------------------------------------------------------------------------------------
+   ['OME::ImportEngine::MetamorphHTDFormat','OME::ImportEngine::XMLreader','OME::ImportEngine::BioFormats']
+    (1 row)
 
 To reset things back to how they were:
 
-   ``ome=# update configuration set value='[\'OME::ImportEngine::OMETIFFreader\',\'OME::ImportEngine::MetamorphHTDFormat\',\'OME::ImportEngine::DVreader\',\'OME::ImportEngine::STKreader\',\'OME::ImportEngine::BioradReader\',\'OME::ImportEngine::LSMreader\',\'OME::ImportEngine::TIFFreader\',\'OME::ImportEngine::BMPreader\',\'OME::ImportEngine::DICOMreader\',\'OME::ImportEngine::XMLreader\',\'OME::ImportEngine::BioFormats\']' where name='import_formats';``
+::
+
+   ome=# update configuration set value='[\'OME::ImportEngine::OMETIFFreader\',\'OME::ImportEngine::MetamorphHTDFormat\',\'OME::ImportEngine::DVreader\',\'OME::ImportEngine::STKreader\',\'OME::ImportEngine::BioradReader\',\'OME::ImportEngine::LSMreader\',\'OME::ImportEngine::TIFFreader\',\'OME::ImportEngine::BMPreader\',\'OME::ImportEngine::DICOMreader\',\'OME::ImportEngine::XMLreader\',\'OME::ImportEngine::BioFormats\']' where name='import_formats';
 
 Lastly, please note that Li-Cor L2D files cannot be imported into an OME
 server (see `this Trac
