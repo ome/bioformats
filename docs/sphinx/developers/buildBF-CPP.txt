@@ -18,28 +18,29 @@ Compile-time dependencies
 To build the Bio-Formats C++ bindings, the following modules are required:
 
 - `Apache Maven <http://maven.apache.org/>`_
-  Maven is a software project management and comprehension tool. Along with
-  Ant, it is one of the supported build systems for the Bio-Formats Java
-  library, and is used to generate the Bio-Formats C++ bindings.
+    Maven is a software project management and comprehension tool. Along with
+    Ant, it is one of the supported build systems for the Bio-Formats Java
+    library, and is used to generate the Bio-Formats C++ bindings.
 
 - `CMake <http://www.cmake.org/>`_
-  CMake is a cross-platform, open source build system generator, commonly used
-  to build C++ projects in a platform-independent manner. CMake supports GNU 
-  make as well as Microsoft Visual Studio, allowing the Bio-Formats C++ 
-  bindings to be compiled on Windows, Mac OS X, Linux and potentially other  
-  platforms.
+    CMake is a cross-platform, open source build system generator, commonly 
+    used to build C++ projects in a platform-independent manner. CMake 
+    supports GNU make as well as Microsoft Visual Studio, allowing the 
+    Bio-Formats C++ bindings to be compiled on Windows, Mac OS X, Linux and  
+    potentially other platforms.
 
 - `Boost Thread <http://www.boost.org/>`_
-  Boost is a project providing open source portable C++ source libraries. It 
-  has become a suite of de facto standard libraries for C++. The Bio-Formats  
-  C++ bindings require the Boost Thread module in order to handle C++ threads 
-  in a platform independent way.
+    Boost is a project providing open source portable C++ source libraries. It 
+    has become a suite of de facto standard libraries for C++. The Bio-Formats  
+    C++ bindings require the Boost Thread module in order to handle C++ 
+    threads in a platform independent way.
 
-- `Java Development Kit <http://java.sun.com/>`_
-  At runtime, only the Java Runtime Environment (JRE) is necessary to execute 
-  the Bio-Formats code. However, the full J2SE development kit is required at  
-  compile time on some platforms (Windows in particular), since it comes     
-  bundled with the JVM shared library (jvm.lib) necessary to link with Java.
+- `Java Development Kit <http://www.oracle.com/technetwork/java/javase/downloads/>`_
+    At runtime, only the Java Runtime Environment (JRE) is necessary to 
+    execute the Bio-Formats code. However, the full J2SE development kit is 
+    required at compile time on some platforms (Windows in particular), since 
+    it comes bundled with the JVM shared library (jvm.lib) necessary to link 
+    with Java.
 
 For information on installing these dependencies, refer to the page for your
 specific platform: 
