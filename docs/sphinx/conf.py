@@ -134,7 +134,8 @@ extlinks = {
     'jenkins' : ('http://hudson.openmicroscopy.org.uk/' + '%s', ''),
     'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
     'forum' : ('http://www.openmicroscopy.org/community/' + '%s', ''),
-    'omerodoc': (omerodoc_uri + '%s', '')
+    'omerodoc': (omerodoc_uri + '%s', ''),
+    'bf_plone' : ('http://www.openmicroscopy.org/site/products/bio-formats/%s/', ''),
     }
 
 rst_epilog = """
@@ -198,7 +199,7 @@ html_static_path = []
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+html_sidebars = { '**' : ['globaltoc.html', 'pagetoc.html',  'searchbox.html', 'sourcelink.html'] }
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -266,7 +267,7 @@ latex_documents = [
 #latex_show_pagerefs = False
 
 # If true, show URL addresses after external links.
-#latex_show_urls = False
+latex_show_urls = 'footnote'
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []

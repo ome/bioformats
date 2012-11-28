@@ -25,26 +25,25 @@
 
 package loci.tests.testng;
 
-import static org.testng.AssertJUnit.*;
-
 import java.io.File;
 
-import org.perf4j.StopWatch;
-import org.perf4j.log4j.Log4JStopWatch;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
-
+import loci.common.Location;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
+import loci.formats.ReaderWrapper;
 
+import org.perf4j.StopWatch;
+import org.perf4j.log4j.Log4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
 /**
  * Performs various <code>openBytes()</code> performance tests.
@@ -88,6 +87,8 @@ public class OpenBytesPerformanceTest
 
   private String filename;
 
+  private boolean memMap;
+
   private void assertSeries(int series) {
     reader.setSeries(series);
     sizeX = reader.getSizeX();
@@ -100,15 +101,17 @@ public class OpenBytesPerformanceTest
     planeSize = sizeX * sizeY * bpp;
   }
 
-  @Parameters({"id"})
+  @Parameters({"id", "inMemory"})
   @BeforeClass
-  public void init(String id) throws Exception {
+  public void init(String id, String inMemory) throws Exception {
     this.id = id;
     filename = new File(id).getName();
+    memMap = Boolean.parseBoolean(inMemory);
   }
 
   @AfterClass
   public void tearDown() throws Exception {
+    Location.mapId(id, null);
     reader.close();
   }
 
@@ -118,7 +121,15 @@ public class OpenBytesPerformanceTest
     reader = new ChannelFiller(reader);
     reader = new ChannelSeparator(reader);
     reader = new MinMaxCalculator(reader);
+
+    if (memMap && reader.isSingleFile(id)) {
+      TestTools.mapFile(id);
+    }
+
+    StopWatch stopWatch = new Log4JStopWatch();
     reader.setId(id);
+    stopWatch.stop(String.format("%s.setId.%s",
+            ((ReaderWrapper) reader).unwrap().getClass().getName(), filename));
     seriesCount = reader.getSeriesCount();
   }
 
@@ -148,7 +159,9 @@ public class OpenBytesPerformanceTest
 
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
-                "%s[%d:%d]_alloc_tile", filename, series, image));
+                "%s.%s.alloc_tile.[%d:%d]",
+                ((ReaderWrapper) reader).unwrap().getClass().getName(),
+                filename, series, image));
             reader.openBytes(0, x, y, actualTileWidth, actualTileHeight);
             stopWatch.stop();
           }
@@ -186,7 +199,9 @@ public class OpenBytesPerformanceTest
 
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
-                "%s[%d:%d]_prealloc_tile", filename, series, image));
+                "%s.%s.prealloc_tile.[%d:%d]",
+                ((ReaderWrapper) reader).unwrap().getClass().getName(),
+                filename, series, image));
             reader.openBytes(image, buf, x, y, actualTileWidth,
                              actualTileHeight);
             stopWatch.stop();

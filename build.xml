@@ -101,18 +101,6 @@ LOCI testing framework
     License:       BSD
 
 ===============================================================================
-The following components are considered "legacy" but still available:
-
-OME Metadata Editor
-    An application for exploration and editing of OME-XML and OME-TIFF metadata
-    -=-
-    JAR file:      ome-editor.jar
-    Path:          components/legacy/ome-editor
-    Project deps:  Bio-Formats, LOCI Common, OME-XML Java library
-    Optional:      (none)
-    License:       LGPL
-
-===============================================================================
 The following components are forks of third party projects:
 
 JAI Image I/O Tools

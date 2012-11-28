@@ -550,7 +550,7 @@ public class ScanrReader extends FormatReader {
     reader.close();
 
     core = new CoreMetadata[nWells * nPos];
-    for (int i=0; i<getSeriesCount(); i++) {
+    for (int i=0; i<core.length; i++) {
       core[i] = new CoreMetadata();
       core[i].sizeC = nChannels;
       core[i].sizeZ = nSlices;

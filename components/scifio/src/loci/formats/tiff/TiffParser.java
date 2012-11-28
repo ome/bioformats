@@ -839,8 +839,7 @@ public class TiffParser {
     long nrows = numTileRows;
     if (planarConfig == 2) numTileRows *= samplesPerPixel;
 
-    Region imageBounds = new Region(x, y, (int) width,
-      (int) (height * (samplesPerPixel / effectiveChannels)));
+    Region imageBounds = new Region(x, y, (int) width, (int) height);
 
     int endX = (int) width + x;
     int endY = (int) height + y;
@@ -884,7 +883,13 @@ public class TiffParser {
         int realY = tileY % (int) (tileLength - overlapY);
 
         int twidth = (int) Math.min(endX - tileX, tileWidth - realX);
+        if (twidth <= 0) {
+          twidth = (int) Math.max(endX - tileX, tileWidth - realX);
+        }
         int theight = (int) Math.min(endY - tileY, tileLength - realY);
+        if (theight <= 0) {
+          theight = (int) Math.max(endY - tileY, tileLength - realY);
+        }
         // copy appropriate portion of the tile to the output buffer
 
         int copy = pixel * twidth;

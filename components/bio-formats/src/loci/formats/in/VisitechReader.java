@@ -115,7 +115,7 @@ public class VisitechReader extends FormatReader {
     int plane = FormatTools.getPlaneSize(this);
 
     int div = getSizeZ() * getSizeT();
-    int fileIndex = (series * getSizeC()) + no / div;
+    int fileIndex = (getSeries() * getSizeC()) + no / div;
     int planeIndex = no % div;
 
     if (fileIndex >= files.size() || fileIndex >= pixelOffsets.length) {

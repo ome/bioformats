@@ -12,6 +12,14 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 
+  <target name="gen-format-pages" depends="compile"
+    description="generate Sphinx pages for each supported format">
+    <java classname="FormatPageAutogen"
+      classpath="${classes.dir}:${component.runtime-cp}" fork="true">
+      <arg value="${filelist}"/>
+    </java>
+  </target>
+
   <target name="gen-original-meta-support" depends="compile"
     description="generate docs for Bio-Formats original metadata support">
     <java classname="OriginalMetadataAutogen"

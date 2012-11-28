@@ -26,6 +26,7 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 import loci.common.ByteArrayHandle;
@@ -142,6 +143,12 @@ public class VolocityReader extends FormatReader {
     int[] zct = getZCTCoords(no);
 
     Stack stack = stacks.get(getSeries());
+
+    if (!new Location(stack.pixelsFiles[zct[1]]).exists()) {
+      Arrays.fill(buf, (byte) 0);
+      return buf;
+    }
+
     RandomAccessInputStream pix =
       new RandomAccessInputStream(stack.pixelsFiles[zct[1]]);
 
@@ -465,6 +472,9 @@ public class VolocityReader extends FormatReader {
       base.close();
 
       for (int q=1; q<stack.pixelsFiles.length; q++) {
+        if (!new Location(stack.pixelsFiles[q]).exists()) {
+          continue;
+        }
         base = new RandomAccessInputStream(stack.pixelsFiles[q]);
         long length = base.length();
         base.close();
@@ -737,7 +747,10 @@ public class VolocityReader extends FormatReader {
         int z = getZCTCoords(img)[0];
         store.setPlanePositionX(stack.xLocation, i, img);
         store.setPlanePositionY(stack.yLocation, i, img);
-        store.setPlanePositionZ(stack.zLocation + z * stack.physicalZ, i, img);
+        if (stack.physicalZ != null) {
+          store.setPlanePositionZ(
+            stack.zLocation + z * stack.physicalZ, i, img);
+        }
       }
     }
     setSeries(0);

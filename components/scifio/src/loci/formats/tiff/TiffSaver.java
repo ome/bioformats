@@ -283,6 +283,7 @@ public class TiffSaver {
     // These operations are synchronized
     TiffCompression compression;
     int tileWidth, tileHeight, nStrips;
+    boolean interleaved;
     ByteArrayOutputStream[] stripBuf;
     synchronized (this) {
       int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
@@ -290,7 +291,7 @@ public class TiffSaver {
       if (nChannels == null) {
         nChannels = buf.length / (w * h * bytesPerPixel);
       }
-      boolean interleaved = ifd.getPlanarConfiguration() == 1;
+      interleaved = ifd.getPlanarConfiguration() == 1;
 
       makeValidIFD(ifd, pixelType, nChannels);
 
@@ -368,6 +369,8 @@ public class TiffSaver {
           ifd, options);
       codecOptions.height = tileHeight;
       codecOptions.width = tileWidth;
+      codecOptions.channels = interleaved ? nChannels : 1;
+
       strips[strip] = compression.compress(strips[strip], codecOptions);
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(String.format("Compressed strip %d/%d length %d",

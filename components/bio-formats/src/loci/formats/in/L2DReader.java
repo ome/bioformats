@@ -126,7 +126,7 @@ public class L2DReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    reader.setId(tiffs[series][no]);
+    reader.setId(tiffs[getSeries()][no]);
     return reader.openBytes(0, buf, x, y, w, h);
   }
 
@@ -144,7 +144,7 @@ public class L2DReader extends FormatReader {
       files.addAll(metadataFiles[getSeries()]);
     }
     if (!noPixels) {
-      for (String tiff : tiffs[series]) {
+      for (String tiff : tiffs[getSeries()]) {
         files.add(tiff);
       }
     }

@@ -32,6 +32,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import loci.common.Location;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
 import loci.formats.FormatTools;
@@ -83,13 +84,18 @@ public class OmeroOpenBytesTest
 
   private int bottomRightQuarterSize;
 
-  @Parameters({"id"})
+  @Parameters({"id", "inMemory"})
   @BeforeClass
-  public void parse(String id) throws Exception {
+  public void parse(String id, String inMemory) throws Exception {
     reader = new ImageReader();
     reader = new ChannelFiller(reader);
     reader = new ChannelSeparator(reader);
     reader = new MinMaxCalculator(reader);
+
+    if (Boolean.parseBoolean(inMemory) && reader.isSingleFile(id)) {
+      TestTools.mapFile(id);
+    }
+
     reader.setId(id);
     seriesCount = reader.getSeriesCount();
   }
@@ -193,6 +199,7 @@ public class OmeroOpenBytesTest
 
   @AfterClass
   public void tearDown() throws Exception {
+    Location.mapFile(reader.getCurrentFile(), null);
     reader.close();
   }
 

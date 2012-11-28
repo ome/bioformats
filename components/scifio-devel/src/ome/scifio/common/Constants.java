@@ -47,4 +47,6 @@ public final class Constants {
 
   public static final String ENCODING = "UTF-8";
 
+  public static final double EPSILON = 0.000001;
+
 }

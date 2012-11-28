@@ -273,23 +273,23 @@ public class LIFReader extends FormatReader {
 
     if (!isRGB()) {
       int[] pos = getZCTCoords(no);
-      lastChannel = realChannel[series][pos[1]];
+      lastChannel = realChannel[getSeries()][pos[1]];
     }
 
-    if (series >= offsets.size()) {
+    if (getSeries() >= offsets.size()) {
       // truncated file; imitate LAS AF and return black planes
       Arrays.fill(buf, (byte) 0);
       return buf;
     }
 
-    long offset = offsets.get(series).longValue();
+    long offset = offsets.get(getSeries()).longValue();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int bpp = bytes * getRGBChannelCount();
 
     long planeSize = (long) getSizeX() * getSizeY() * bpp;
 
-    long nextOffset = series + 1 < offsets.size() ?
-      offsets.get(series + 1).longValue() : in.length();
+    long nextOffset = getSeries() + 1 < offsets.size() ?
+      offsets.get(getSeries() + 1).longValue() : in.length();
     int bytesToSkip = (int) (nextOffset - offset - planeSize * getImageCount());
     bytesToSkip /= getSizeY();
     if ((getSizeX() % 4) == 0) bytesToSkip = 0;
@@ -810,9 +810,6 @@ public class LIFReader extends FormatReader {
               exWaves[i][c]);
           }
         }
-        if (expTimes[i] != null) {
-          store.setPlaneExposureTime(expTimes[i][c], i, c);
-        }
 
         Color channelColor = getChannelColor(realChannel[i][c]);
         store.setChannelColor(channelColor, i, c);
@@ -860,6 +857,11 @@ public class LIFReader extends FormatReader {
             timestamp = timestamps[i][0];
           }
           store.setPlaneDeltaT(timestamp, i, image);
+        }
+
+        if (expTimes[i] != null) {
+          int c = getZCTCoords(image)[1];
+          store.setPlaneExposureTime(expTimes[i][c], i, image);
         }
       }
 

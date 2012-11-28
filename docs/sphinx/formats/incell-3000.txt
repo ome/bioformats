@@ -1,0 +1,59 @@
+.. index:: InCell 3000
+.. index:: .frm
+
+InCell 3000
+===============================================================================
+
+Extensions: .frm 
+
+Developer: `GE <http://gelifesciences.com/>`_
+
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `IMOD <http://bio3d.colorado.edu/imod/>`_
+
+Sample Datasets:
+
+- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
+
+We currently have:
+
+- a few example datasets
+
+We would like to have:
+
+- an official specification document
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Fair|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Poor|
+
+Additional Information
+----------------------
+
+Source Code: :source:`InCell3000Reader.java <components/bio-formats/src/loci/formats/in/InCell3000Reader.java >`
+
+Notes:
+
+

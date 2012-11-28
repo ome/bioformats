@@ -46,5 +46,6 @@ package loci.common;
 public final class Constants {
 
   public static final String ENCODING = ome.scifio.common.Constants.ENCODING;
-  
+ 
+  public static final double EPSILON = ome.scifio.common.Constants.EPSILON;
 }

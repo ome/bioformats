@@ -61,6 +61,7 @@ import java.awt.image.DataBufferDouble;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferUShort;
+import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
@@ -662,7 +663,7 @@ public final class AWTImageTools {
       throw new IllegalArgumentException(
         "Cannot construct image with " + c + " channels");
     }
-    if (colorModel == null) {
+    if (colorModel == null || colorModel instanceof DirectColorModel) {
       colorModel = makeColorModel(c, type);
       if (colorModel == null) return null;
       if (buffer instanceof UnsignedIntBuffer) {

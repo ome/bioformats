@@ -425,11 +425,21 @@ public abstract class ReaderWrapper implements IFormatReader {
   }
 
   public CoreMetadata[] getCoreMetadata() {
-    //return reader.getCoreMetadata();
+    int count = 0;
+    int currentIndex = reader.getCoreIndex();
 
-    // NB: Be sure all CoreMetadata values are returned correctly,
-    // regardless of any method overrides.
-    return copyCoreMetadata(CoreMetadata.class, this);
+    // Only used for determining the object type.
+    CoreMetadata[] oldcore = reader.getCoreMetadata();
+
+    CoreMetadata[] newcore = new CoreMetadata[oldcore.length];
+
+    for (int s=0; s<newcore.length; s++) {
+      newcore[s] = oldcore[s].clone(this, s);
+    }
+
+    reader.setCoreIndex(currentIndex);
+
+    return newcore;
   }
 
   public void setMetadataFiltered(boolean filter) {
@@ -486,6 +496,18 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public int getCoreIndex() {
     return reader.getCoreIndex();
+  }
+
+  public void setCoreIndex(int no) {
+    reader.setCoreIndex(no);
+  }
+
+  public int seriesToCoreIndex(int series) {
+    return reader.seriesToCoreIndex(series);
+  }
+
+  public int coreIndexToSeries(int index) {
+    return reader.coreIndexToSeries(index);
   }
 
   public int getResolutionCount() {
@@ -597,41 +619,6 @@ public abstract class ReaderWrapper implements IFormatReader {
   /** @deprecated */
   public Hashtable<String, Object> getMetadata() {
     return reader.getMetadata();
-  }
-
-  // -- Helper methods --
-
-  /** Creates a copy of the core metadata instantiated using the provided CoreMetadata type, 
-   * matching the state of the given reader. */
-  protected <T extends CoreMetadata> T[] copyCoreMetadata(Class<T> c, IFormatReader r) {
-    int count = 0;
-    int currentSeries = r.getSeries();
-
-    for (int i=0; i<r.getSeriesCount(); i++) {
-      r.setSeries(i);
-      count += r.getResolutionCount();
-    }
-
-    r.setSeries(currentSeries);
-
-    @SuppressWarnings("unchecked")
-    T[] core = (T[])Array.newInstance(c, count);
-    
-    for (int s=0; s<core.length; s++) {
-      T meta = null;
-      
-      try {
-        meta = c.newInstance();
-      } catch (InstantiationException e) {
-        throw new IllegalArgumentException("Failed to create metadata:\n" + e);
-      } catch (IllegalAccessException e) {
-        throw new IllegalArgumentException("Failed to create metadata:\n" + e);
-      }
-      
-      meta.copy(r, s);
-      core[s] = meta;
-    }
-    return core;
   }
 
 }

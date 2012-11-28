@@ -131,7 +131,7 @@ notes = Optional plugin. If you have View5D installed, the Bio-Formats
 type = Java library
 class = loci.formats.IFormatReader
 version = bfVersion
-url = http://www.loci.wisc.edu/software/bio-formats
+url = https://www.openmicroscopy.org/site/products/bio-formats/downloads
 license = GPL
 notes = OME Bio-Formats package for reading and converting
         biological file formats.

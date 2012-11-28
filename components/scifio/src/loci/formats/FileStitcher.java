@@ -92,7 +92,10 @@ public class FileStitcher extends ReaderWrapper {
   /** Core metadata. */
   private CoreMetadata[] core;
 
-  /** Current series number. */
+  /** The number of the current series. */
+  private int coreIndex;
+
+  /** The number of the current series (non flat). */
   private int series;
 
   private boolean noStitch;
@@ -526,6 +529,7 @@ public class FileStitcher extends ReaderWrapper {
       sizeZ = sizeC = sizeT = null;
       lenZ = lenC = lenT = null;
       core = null;
+      coreIndex = 0;
       series = 0;
       store = null;
     }
@@ -542,13 +546,47 @@ public class FileStitcher extends ReaderWrapper {
     FormatTools.assertId(getCurrentFile(), true, 2);
     int n = reader.getSeriesCount();
     if (n > 1 || noStitch) reader.setSeries(no);
-    else series = no;
+    else {
+	coreIndex = no;
+	series = no;
+    }
   }
 
   /* @see IFormatReader#getSeries() */
   public int getSeries() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return reader.getSeries() > 0 ? reader.getSeries() : series;
+  }
+
+  /* @see IFormatReader#seriesToCoreIndex(int) */
+  public int seriesToCoreIndex(int series) {
+    int n = reader.getSeriesCount();
+    if (n > 1 || noStitch) return reader.seriesToCoreIndex(series);
+    return series;
+  }
+
+  /* @see IFormatReader#coreIndexToSeries(int) */
+  public int coreIndexToSeries(int index) {
+    int n = reader.getSeriesCount();
+    if (n > 1 || noStitch) return reader.coreIndexToSeries(index);
+    return index;
+  }
+
+  /* @see IFormatReader#setCoreIndex(int) */
+  public void setCoreIndex(int no) {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    int n = reader.getSeriesCount();
+    if (n > 1 || noStitch) reader.setCoreIndex(no);
+    else {
+      coreIndex = no;
+      series = no;
+    }
+  }
+
+  /* @see IFormatReader#getCoreIndex() */
+  public int getCoreIndex() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return reader.getCoreIndex() > 0 ? reader.getCoreIndex() : coreIndex;
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */

@@ -350,11 +350,11 @@ public class Colorizer {
               }
             }
           }
-
-          if (color == null) {
-            color = options.getDefaultCustomColor(c);
-          }
         }
+        if (color == null) {
+          color = options.getDefaultCustomColor(c);
+        }
+
         luts[c] = makeLUT(color);
       }
     }

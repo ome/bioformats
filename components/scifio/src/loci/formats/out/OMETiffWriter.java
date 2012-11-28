@@ -237,12 +237,10 @@ public class OMETiffWriter extends TiffWriter {
     ServiceFactory factory = new ServiceFactory();
     service = factory.getInstance(OMEXMLService.class);
     OMEXMLMetadata originalOMEMeta = service.getOMEMetadata(retrieve);
-    if (originalOMEMeta instanceof OMEXMLMetadataImpl) {
-      ((OMEXMLMetadataImpl) originalOMEMeta).resolveReferences();
+    originalOMEMeta.resolveReferences();
 
-      String omexml = service.getOMEXML(originalOMEMeta);
-      omeMeta = service.createOMEXMLMetadata(omexml);
-    }
+    String omexml = service.getOMEXML(originalOMEMeta);
+    omeMeta = service.createOMEXMLMetadata(omexml);
   }
 
   private String getOMEXML(String file) throws FormatException, IOException {

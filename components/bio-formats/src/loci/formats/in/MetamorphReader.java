@@ -248,27 +248,27 @@ public class MetamorphReader extends BaseTiffReader {
       int[] pos = getZCTCoords(no);
       ndx = getIndex(pos[0], 0, pos[2]) / getSizeZ();
     }
-    if (stks[series].length == 1) ndx = 0;
-    String file = stks[series][ndx];
+    if (stks[getSeries()].length == 1) ndx = 0;
+    String file = stks[getSeries()][ndx];
     if (file == null) return buf;
 
     // the original file is a .nd file, so we need to construct a new reader
     // for the constituent STK files
-    stkReaders[series][ndx].setMetadataOptions(
+    stkReaders[getSeries()][ndx].setMetadataOptions(
         new DefaultMetadataOptions(MetadataLevel.MINIMUM));
-    stkReaders[series][ndx].setId(file);
-    int plane = stks[series].length == 1 ? no : coords[0];
+    stkReaders[getSeries()][ndx].setId(file);
+    int plane = stks[getSeries()].length == 1 ? no : coords[0];
 
     if (bizarreMultichannelAcquisition) {
       int realX = getZCTCoords(no)[1] == 0 ? x : x + getSizeX();
-      stkReaders[series][ndx].openBytes(plane, buf, realX, y, w, h);
+      stkReaders[getSeries()][ndx].openBytes(plane, buf, realX, y, w, h);
     }
     else {
-      stkReaders[series][ndx].openBytes(plane, buf, x, y, w, h);
+      stkReaders[getSeries()][ndx].openBytes(plane, buf, x, y, w, h);
     }
 
-    if (plane == stkReaders[series][ndx].getImageCount() - 1) {
-      stkReaders[series][ndx].close();
+    if (plane == stkReaders[getSeries()][ndx].getImageCount() - 1) {
+      stkReaders[getSeries()][ndx].close();
     }
 
     return buf;
@@ -411,15 +411,25 @@ public class MetamorphReader extends BaseTiffReader {
       String[] lines = DataTools.readFile(ndFilename).split("\n");
 
       boolean globalDoZ = true;
+      boolean doTimelapse = false;
+
+      StringBuilder currentValue = new StringBuilder();
+      String key = "";
 
       for (String line : lines) {
         int comma = line.indexOf(",");
-        if (comma <= 0) continue;
-        String key = line.substring(1, comma - 1).trim();
-        String value = line.substring(comma + 1).trim();
+        if (comma <= 0) {
+          currentValue.append("\n");
+          currentValue.append(line);
+          continue;
+        }
 
+        String value = currentValue.toString();
         addGlobalMeta(key, value);
         if (key.equals("NZSteps")) z = value;
+        else if (key.equals("DoTimelapse")) {
+          doTimelapse = Boolean.parseBoolean(value);
+        }
         else if (key.equals("NWavelengths")) c = value;
         else if (key.equals("NTimePoints")) t = value;
         else if (key.startsWith("WaveDoZ")) {
@@ -453,6 +463,10 @@ public class MetamorphReader extends BaseTiffReader {
         else if (key.equals("DoZSeries")) {
           globalDoZ = new Boolean(value.toLowerCase());
         }
+
+        key = line.substring(1, comma - 1).trim();
+        currentValue.delete(0, currentValue.length());
+        currentValue.append(line.substring(comma + 1).trim());
       }
 
       // figure out how many files we need
@@ -527,7 +541,9 @@ public class MetamorphReader extends BaseTiffReader {
             if ((seriesCount != 1 && !validZ) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
-              if (anyZ && j > 0 && seriesNdx < seriesCount - 1) {
+              if (anyZ && j > 0 && seriesNdx < seriesCount - 1 &&
+                (!validZ || !hasZ.get(0)))
+              {
                 seriesNdx++;
               }
             }
@@ -556,7 +572,7 @@ public class MetamorphReader extends BaseTiffReader {
             if (nstages > 0) {
               stks[seriesNdx][pt[seriesNdx]] += "_s" + (s + 1);
             }
-            if (tc > 1) {
+            if (tc > 1 || doTimelapse) {
               stks[seriesNdx][pt[seriesNdx]] += "_t" + (i + 1) + ".STK";
             }
             else stks[seriesNdx][pt[seriesNdx]] += ".STK";
@@ -750,6 +766,11 @@ public class MetamorphReader extends BaseTiffReader {
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(handler.getReadOutRate(), i, c);
         }
+
+        if (gain == null) {
+          gain = handler.getGain();
+        }
+
         if (gain != null) {
           store.setDetectorSettingsGain(gain, i, c);
         }
@@ -822,6 +843,8 @@ public class MetamorphReader extends BaseTiffReader {
       long[] lastOffsets = null;
 
       double distance = zStart;
+      TiffParser tp = null;
+      RandomAccessInputStream stream = null;
 
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
@@ -834,26 +857,47 @@ public class MetamorphReader extends BaseTiffReader {
           String file = stks == null ? currentId : stks[i][fileIndex];
           if (file != null) {
             if (fileIndex != lastFile) {
-              RandomAccessInputStream stream =
-                new RandomAccessInputStream(file);
-              TiffParser tp = new TiffParser(stream);
+              if (stream != null) {
+                stream.close();
+              }
+              stream = new RandomAccessInputStream(file);
+              tp = new TiffParser(stream);
+              tp.setDoCaching(false);
               tp.checkHeader();
               lastFile = fileIndex;
               lastIFDs = tp.getIFDs();
-              stream.close();
             }
 
             lastIFD = lastIFDs.get(p % lastIFDs.size());
-            comment = lastIFD.getComment();
-            if (comment != null) comment = comment.trim();
-            handler = new MetamorphHandler(getSeriesMetadata());
-            if (comment != null && comment.startsWith("<MetaData>")) {
-              XMLTools.parseXML(comment, handler);
+            TiffIFDEntry commentEntry =
+              (TiffIFDEntry) lastIFD.get(IFD.IMAGE_DESCRIPTION);
+            if (commentEntry != null) {
+              comment = tp.getIFDValue(commentEntry).toString();
             }
-            timestamps = handler.getTimestamps();
-            Vector<Double> zPositions = handler.getZPositions();
-            if (zPositions != null && zPositions.size() > 0) {
-              xmlZPosition = zPositions.get(0);
+            if (comment != null) comment = comment.trim();
+            if (comment != null && comment.startsWith("<MetaData>")) {
+              String[] lines = comment.split("\n");
+
+              timestamps = new Vector<String>();
+
+              for (String line : lines) {
+                line = line.trim();
+                if (line.startsWith("<prop")) {
+                  int firstQuote = line.indexOf("\"") + 1;
+                  int lastQuote = line.lastIndexOf("\"");
+                  String key =
+                    line.substring(firstQuote, line.indexOf("\"", firstQuote));
+                  String value = line.substring(
+                    line.lastIndexOf("\"", lastQuote - 1) + 1, lastQuote);
+
+                  if (key.equals("z-position")) {
+                    xmlZPosition = new Double(value);
+                  }
+                  else if (key.equals("acquisition-time-local")) {
+                    timestamps.add(value);
+                  }
+                }
+              }
             }
           }
         }
@@ -873,7 +917,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         if (index == 0 && p > 0 && exposureTimes.size() > 0) {
-          index = p % exposureTimes.size();
+          index = coords[1] % exposureTimes.size();
         }
 
         if (index < exposureTimes.size()) {
@@ -886,8 +930,14 @@ public class MetamorphReader extends BaseTiffReader {
         if (stageX != null && p < stageX.length) {
           store.setPlanePositionX(stageX[p], i, p);
         }
+        else if (positionX != null) {
+          store.setPlanePositionX(positionX, i, p);
+        }
         if (stageY != null && p < stageY.length) {
           store.setPlanePositionY(stageY[p], i, p);
+        }
+        else if (positionY != null) {
+          store.setPlanePositionY(positionY, i, p);
         }
         if (zDistances != null && p < zDistances.length) {
           if (p > 0) {
@@ -899,6 +949,10 @@ public class MetamorphReader extends BaseTiffReader {
         else if (xmlZPosition != null) {
           store.setPlanePositionZ(xmlZPosition, i, p);
         }
+      }
+
+      if (stream != null) {
+        stream.close();
       }
     }
     setSeries(0);

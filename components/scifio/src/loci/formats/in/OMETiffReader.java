@@ -203,6 +203,7 @@ public class OMETiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    int series = getSeries();
     if (info[series][lastPlane] == null ||
       info[series][lastPlane].reader == null ||
       info[series][lastPlane].id == null)
@@ -215,6 +216,7 @@ public class OMETiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
+    int series = getSeries();
     if (info[series][lastPlane] == null ||
       info[series][lastPlane].reader == null ||
       info[series][lastPlane].id == null)
@@ -232,6 +234,7 @@ public class OMETiffReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    int series = getSeries();
     lastPlane = no;
     int i = info[series][no].ifd;
     MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
@@ -255,6 +258,7 @@ public class OMETiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
+    int series = getSeries();
     if (noPixels) return null;
     Vector<String> usedFiles = new Vector<String>();
     for (int i=0; i<info[series].length; i++) {
@@ -329,6 +333,9 @@ public class OMETiffReader extends FormatReader {
 
     // parse and populate OME-XML metadata
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
+    if (!new File(fileName).exists()) {
+      fileName = currentId;
+    }
     RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
     String xml;
     IFD firstIFD;
@@ -853,7 +860,7 @@ public class OMETiffReader extends FormatReader {
   private String normalizeFilename(String dir, String name) {
      File file = new File(dir, name);
      if (file.exists()) return file.getAbsolutePath();
-     return new Location(name).getAbsolutePath();
+     return name;
   }
 
   private void setupService() throws FormatException {
