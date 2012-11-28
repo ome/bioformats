@@ -12,13 +12,11 @@ variables on your system. Access them by clicking the "Environment Variables"
 button from Control Panel, System, Advanced tab. Use semicolons to separate
 multiple directories in the PATH variable.
 
-Details follow.
-
 
 Compile-time dependencies -- Windows -- Maven
 ---------------------------------------------
 
-Download Maven from its web site (http://maven.apache.org/).
+Download `Maven <http://maven.apache.org/>`_.
 
 Unpack the Maven archive into your Program Files, then add the folder's bin
 subdirectory to your PATH environment variable; e.g.:
@@ -31,7 +29,7 @@ Once set, new Command Prompts will recognize "mvn" as a valid command.
 Compile-time dependencies -- Windows -- CMake
 ---------------------------------------------
 
-Download and run the CMake installer from its web site (http://cmake.org/).
+Download and run the `CMake installer <http://cmake.org/>`_.
 
 During installation, select the "Add CMake to the system PATH for all
 users" option to ensure that Bio-Formats build system can find your CMake
@@ -45,9 +43,7 @@ Compile-time dependencies -- Windows -- Boost
 ---------------------------------------------
 
 The easiest way to install the Boost Thread library on Windows is to use the
-free installer from BoostPro:
-
-  http://www.boostpro.com/download/
+free installer from `BoostPro <http://www.boostpro.com/download/>`_.
 
 When running the installer:
 
@@ -59,9 +55,7 @@ When running the installer:
 Compile-time dependencies -- Windows -- Java Development Kit
 ------------------------------------------------------------
 
-Download and install the JDK from its web site:
-
-  http://www.oracle.com/technetwork/java/javase/downloads/
+Download and install the `JDK <http://www.oracle.com/technetwork/java/javase/downloads/>`_.
 
 After the installation is complete, create a new environment variable called
 JAVA_HOME pointing to your Java installation; e.g.:
@@ -93,9 +87,7 @@ In addition to the other prerequisites, you will also need a working copy of
 Visual C++. We have tested compilation with Visual C++ 2005 Professional and
 Visual C++ 2008 Express; other versions may or may not work.
 
-You can download Visual C++ Express for free from:
-
-  http://www.microsoft.com/express/
+You can download `Visual C++ Express for free <http://www.microsoft.com/express/>`_.
 
 You must launch the environment at least once before you will be able to
 compile the Bio-Formats C++ bindings.

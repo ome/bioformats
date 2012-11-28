@@ -3,48 +3,53 @@ Bio-Formats file format reader guide
 
 This document is a brief guide to writing new Bio-Formats file format readers.
 
-All format readers should extend either loci.formats.FormatReader or a reader
-in loci.formats.in.
+All format readers should extend either :source:`loci.formats.FormatReader <components/scifio/src/loci/formats/FormatReader.java>` or a reader
+in :source:`loci.formats.in <components/bio-formats/src/loci/formats/in/>`.
 
 Methods to override
 -------------------
 
-boolean isSingleFile(String id) throws FormatException, IOException:
+- ``boolean isSingleFile(String id) throws FormatException, IOException``
+  
   Whether or not the named file is expected to be the only file in the
   dataset.  This only needs to be overridden for formats whose datasets can
   contain more than one file.
 
-boolean isThisType(RandomAccessInputStream) :
+- ``boolean isThisType(RandomAccessInputStream)``
+  
   Check the first few bytes of a file to determine if the file can be read by
   this reader.  You can assume that index 0 in the stream corresponds to
   the index 0 in the file.  Return true if the file can be read; false if
   not (or if there is no way of checking).
 
-int fileGroupOption(String id) throws FormatException, IOException:
+- ``int fileGroupOption(String id) throws FormatException, IOException``
+  
   Returns an indication of whether or not the files in a multi-file dataset
   can be handled individually.  The return value should be one of the
   following:
 
-    * FormatTools.MUST_GROUP: the files cannot be handled separately
-    * FormatTools.CAN_GROUP: the files may be handled separately or as a
+   * FormatTools.MUST_GROUP: the files cannot be handled separately
+   * FormatTools.CAN_GROUP: the files may be handled separately or as a
                              single unit
-    * FormatTools.CANNOT_GROUP: the files must be handled separately
+   * FormatTools.CANNOT_GROUP: the files must be handled separately
 
   This method only needs to be overridden for formats whose datasets can
   contain more than one file.
 
-String[] getSeriesUsedFiles(boolean noPixels) throws FormatException, IOException :
-  You only need to override this if your format uses multiple files in a single
-  dataset.  This method should return a list of all the files associated with
-  the given file name and the current series (i.e. every file needed to display
-  the current series).  If the 'noPixels' flag is set, then none of the files
-  returned should contain pixel data.
+- ``String[] getSeriesUsedFiles(boolean noPixels) throws FormatException, IOException``
+  
+  You only need to override this if your format uses multiple files in a 
+  single dataset.  This method should return a list of all the files 
+  associated with the given file name and the current series (i.e. every file 
+  needed to display the current series).  If the 'noPixels' flag is set, then 
+  none of the files returned should contain pixel data.
   For an example of how this works, see loci.formats.in.PerkinElmerReader.
   It is recommended that the first line of this method be
   "FormatTools.assertId(currentId, true, 1)" - this ensures that the file name
   is non-null.
 
-byte[] openBytes(int, byte[], int, int, int, int) throws FormatException, IOException :
+- ``byte[] openBytes(int, byte[], int, int, int, int) throws FormatException, IOException``
+  
   Returns a byte array containing the pixel data for a subimage specified
   image from the given file.  The dimensions of the subimage (upper left X
   coordinate, upper left Y coordinate, width, and height) are specified in the
@@ -57,7 +62,8 @@ byte[] openBytes(int, byte[], int, int, int, int) throws FormatException, IOExce
   this method be "FormatTools.checkPlaneParameters(this, no, buf.length, x, y,
   w, h)" - this ensures that all of the parameters are valid.
 
-protected void initFile(String) throws FormatException, IOException :
+- ``protected void initFile(String) throws FormatException, IOException``
+  
   The majority of the file parsing logic should be placed in this method.  The
   idea is to call this method once (and only once!) when the file is first
   opened.  Generally, you will want to start by calling
@@ -71,7 +77,8 @@ protected void initFile(String) throws FormatException, IOException :
   Also, super.initFile(String) constructs a Hashtable called "metadata" where
   you should store any relevant metadata.
 
-public void close(boolean fileOnly) throws IOException:
+- ``public void close(boolean fileOnly) throws IOException``
+  
   Cleans up any resources used by the reader.  Global variables should be
   reset to their initial state, and any open files or delegate readers should
   be closed.
@@ -113,16 +120,24 @@ There are a number of global variables defined in loci.formats.FormatReader that
 
 These variables are:
 
-  * 'boolean suffixNecessary': indicates whether or not a file name suffix is
-    required; true by default
-  * 'boolean suffixSufficient': indicates whether or not a specific file name
-    suffix guarantees that this reader can open a particular file; true by
-    default
-  * 'boolean hasCompanionFiles': indicates whether or not there is at least
-    one file in a dataset of this format that contains only metadata (no
-    images); false by default
-  * 'String datasetDescription': a brief description of the layout of files
-    in datasets of this format; only necessary for multi-file datasets
+- ``boolean suffixNecessary`` 
+  
+  Indicates whether or not a file name suffix is required; true by default
+
+- ``boolean suffixSufficient`` 
+  
+  Indicates whether or not a specific file name suffix guarantees that this  
+  reader can open a particular file; true by default
+
+- ``boolean hasCompanionFiles`` 
+
+  Indicates whether or not there is at least one file in a dataset of this 
+  format that contains only metadata (no images); false by default
+
+- ``String datasetDescription`` 
+  
+  A brief description of the layout of files in datasets of this format; only 
+  necessary for multi-file datasets
 
 
 Other useful things
@@ -243,16 +258,14 @@ Other useful things
 +--------------+----------------------------------------------------------+
 
 
-- If you wish to test using TestNG, loci.tests.testng.FormatReaderTest 
-  provides several basic tests that work with all Bio-Formats readers.  See 
+- If you wish to test using TestNG, :source:`loci.tests.testng.FormatReaderTest <components/test-suite/src/loci/tests/testng/FormatReaderTest.java>`
+  provides several basic tests that work with all Bio-Formats readers. See
   the FormatReaderTest source code for additional information.
 
 - For more details, please look at the source code and javadocs.  Studying
-  existing readers is probably the best way to get a feel for the API; I would
-  recommend first looking at loci.formats.in.ImarisReader (this is the most
-  straightforward one).  loci.formats.in.LIFReader and InCellReader are also
+  existing readers is probably the best way to get a feel for the API; we 
+  would recommend first looking at :source:`loci.formats.in.ImarisReader <components/bio-formats/src/loci/formats/in/ImarisReader.java>` (this is the 
+  most straightforward one). :source:`loci.formats.in.LIFReader <components/bio-formats/src/loci/formats/in/LIFReader.java>` and :source:`InCellReader <components/bio-formats/src/loci/formats/in/InCellReader.java>` are also
   good references that show off some of the nicer features of Bio-Formats.
 
-If you have questions about Bio-Formats, please contact the OME team:
-
-  http://www.openmicroscopy.org/site/community
+If you have questions about Bio-Formats, please contact `the OME team <http://www.openmicroscopy.org/site/community>`_.
