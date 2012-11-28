@@ -387,7 +387,6 @@ public class OpenBytesPerformanceTest
   }
 
   @Test(dependsOnMethods={"setId"})
-  @Assumption(methods = "isNotBigImage")
   public void testQuartersTwiceActualSize() throws Exception {
     for (int series = 0; series < seriesCount; series++) {
       assertSeries(series);
@@ -402,13 +401,11 @@ public class OpenBytesPerformanceTest
   }
 
   @Test(dependsOnMethods={"setId"})
-  @Assumption(methods = "isNotBigImage")
   public void testOpenBytesBlocksByRow512KB() throws Exception {
     assertRows(524288);
   }
 
   @Test(dependsOnMethods={"setId"})
-  @Assumption(methods = "isNotBigImage")
   public void testOpenBytesBlocksByRow1MB() throws Exception {
     assertRows(1048576);
   }
