@@ -39,7 +39,7 @@ Methods to override
   associated with the given file name and the current series (i.e. every file 
   needed to display the current series).  If the 'noPixels' flag is set, then 
   none of the files returned should contain pixel data.
-  For an example of how this works, see :source:`loci.formats.in.PerkinElmerReader <components/bio-formats/src/loci/formats/in/PerkinElmerReader.jav>`. It is 
+  For an example of how this works, see :source:`loci.formats.in.PerkinElmerReader <components/bio-formats/src/loci/formats/in/PerkinElmerReader.java>`. It is 
   recommended that the first line of this method be
   "FormatTools.assertId(currentId, true, 1)" - this ensures that the file name
   is non-null.
