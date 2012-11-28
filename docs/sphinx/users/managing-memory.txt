@@ -16,7 +16,7 @@ load all the images.  If you have a very large data set, you may have to
 -  Crop the view area
 -  Open only a subset of images
 -  Use Virtual Stack
--  Increase ImageJ / FIJI’s memory.
+-  Increase ImageJ/Fiji’s memory.
 
  
 
@@ -75,20 +75,20 @@ Use Virtual Stack
 necessary. Note that unlike Data Browser, Virtual Stack does not contain
 a buffer and may produce choppy animations.
 
-**Increasing ImageJ /FIJI’s memory**
+**Increasing ImageJ/Fiji’s memory**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Finally, can also increase the amount of the computer memory devoted to
-ImageJ/ FIJI by selecting Memory & Threads under the Edit menu.
+ImageJ/Fiji by selecting Memory & Threads under the Edit menu.
 
 .. image:: /images/IncreaseMemory.jpg
    :align: center
-   :alt: FIJI's Memory Allocation Menu
+   :alt: Fiji's Memory Allocation Menu
 
 Generally, allocating more than 75% of the computer’s total memory will
-cause ImageJ / FIJI to become slow and unstable.
+cause ImageJ/Fiji to become slow and unstable.
 
-Please note that unlike the other three features, ImageJ / FIJI itself
+Please note that unlike the other three features, ImageJ/Fiji itself
 provides this feature and not Bio-Formats.  You can find out more about
 this feature by looking at ImageJ’s
 `documentation <http://rsbweb.nih.gov/ij/docs/menus/edit.html#options>`_.
