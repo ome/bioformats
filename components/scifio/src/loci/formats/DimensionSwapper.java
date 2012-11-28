@@ -37,9 +37,11 @@
 package loci.formats;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import loci.formats.meta.MetadataStore;
+import loci.formats.CoreMetadata;
 
 /**
  * Handles swapping the dimension order of an image series. This class is
@@ -289,10 +291,10 @@ public class DimensionSwapper extends ReaderWrapper {
     {
       // NB: Create our own copy of the CoreMetadata,
       // which we can manipulate safely.
-      CoreMetadata[] oldcore = reader.getCoreMetadata();
-      core = new SwappableMetadata[oldcore.length];
-      for (int s=0; s<core.length; s++) {
-        core[s] = new SwappableMetadata(reader, s);
+      List<CoreMetadata> oldcore = reader.getCoreMetadata();
+      core = new ArrayList<CoreMetadata>();
+      for (int s=0; s<oldcore.size(); s++) {
+	core.add(new SwappableMetadata(reader, s));
       }
     }
   }

@@ -433,7 +433,7 @@ public abstract class ReaderWrapper implements IFormatReader {
     // Only used for determining the object type.
     List<CoreMetadata> oldcore = reader.getCoreMetadata();
 
-    List<CoreMetadata> newcore = new ArrayList<CoreMetadata>;
+    List<CoreMetadata> newcore = new ArrayList<CoreMetadata>();
 
     for (int s=0; s<oldcore.size(); s++) {
       newcore.add(oldcore.get(s).clone(this, s));
