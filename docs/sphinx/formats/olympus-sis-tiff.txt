@@ -53,7 +53,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`SISReader.java <components/bio-formats/src/loci/formats/in/SISReader.java >`
+Source Code: :bfreader:`SISReader.java`
 
 Notes:
 

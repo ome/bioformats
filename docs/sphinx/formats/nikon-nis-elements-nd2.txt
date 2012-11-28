@@ -53,7 +53,7 @@ Utility: |Very good|
 Additional Information
 ----------------------
 
-Source Code: :source:`NativeND2Reader.java <components/bio-formats/src/loci/formats/in/NativeND2Reader.java >`
+Source Code: :bfreader:`NativeND2Reader.java`
 
 Notes:
 

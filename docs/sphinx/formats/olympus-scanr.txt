@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`ScanrReader.java <components/bio-formats/src/loci/formats/in/ScanrReader.java >`
+Source Code: :bfreader:`ScanrReader.java`
 
 Notes:
 

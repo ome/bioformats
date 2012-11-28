@@ -53,7 +53,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`DeltavisionReader.java <components/bio-formats/src/loci/formats/in/DeltavisionReader.java >`
+Source Code: :bfreader:`DeltavisionReader.java`
 
 Notes:
 

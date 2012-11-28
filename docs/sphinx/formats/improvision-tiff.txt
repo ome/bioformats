@@ -54,7 +54,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`ImprovisionTiffReader.java <components/bio-formats/src/loci/formats/in/ImprovisionTiffReader.java >`
+Source Code: :bfreader:`ImprovisionTiffReader.java`
 
 Notes:
 

@@ -52,7 +52,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`APNGReader.java <components/scifio/src/loci/formats/in/APNGReader.java >`
+Source Code: :scifioreader:`APNGReader.java`
 
 Notes:
 

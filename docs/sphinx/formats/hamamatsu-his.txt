@@ -57,7 +57,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`HISReader.java <components/bio-formats/src/loci/formats/in/HISReader.java >`
+Source Code: :bfreader:`HISReader.java`
 
 Notes:
 

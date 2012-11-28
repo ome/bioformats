@@ -53,7 +53,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`SVSReader.java <components/bio-formats/src/loci/formats/in/SVSReader.java >`
+Source Code: :bfreader:`SVSReader.java`
 
 Notes:
 

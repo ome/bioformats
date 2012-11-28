@@ -53,7 +53,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`LiFlimReader.java <components/bio-formats/src/loci/formats/in/LiFlimReader.java >`
+Source Code: :bfreader:`LiFlimReader.java`
 
 Notes:
 

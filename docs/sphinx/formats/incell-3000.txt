@@ -52,7 +52,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`InCell3000Reader.java <components/bio-formats/src/loci/formats/in/InCell3000Reader.java >`
+Source Code: :bfreader:`InCell3000Reader.java`
 
 Notes:
 
