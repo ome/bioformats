@@ -55,7 +55,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`NikonReader.java <components/bio-formats/src/loci/formats/in/NikonReader.java >`
+Source Code: :bfreader:`NikonReader.java`
 
 Notes:
 

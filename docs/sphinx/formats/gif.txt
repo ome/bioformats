@@ -58,7 +58,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`GIFReader.java <components/scifio/src/loci/formats/in/GIFReader.java >`
+Source Code: :scifioreader:`GIFReader.java`
 
 Notes:
 

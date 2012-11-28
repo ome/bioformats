@@ -51,7 +51,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`BurleighReader.java <components/bio-formats/src/loci/formats/in/BurleighReader.java >`
+Source Code: :bfreader:`BurleighReader.java`
 
 Notes:
 

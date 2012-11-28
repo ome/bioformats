@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`IPLabReader.java <components/bio-formats/src/loci/formats/in/IPLabReader.java >`
+Source Code: :bfreader:`IPLabReader.java`
 
 Notes:
 

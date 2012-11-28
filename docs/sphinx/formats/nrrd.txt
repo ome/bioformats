@@ -53,7 +53,7 @@ Utility: |Very good|
 Additional Information
 ----------------------
 
-Source Code: :source:`NRRDReader.java <components/scifio/src/loci/formats/in/NRRDReader.java >`
+Source Code: :scifioreader:`NRRDReader.java`
 
 Notes:
 

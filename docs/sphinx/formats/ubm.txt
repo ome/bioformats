@@ -53,7 +53,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`UBMReader.java <components/bio-formats/src/loci/formats/in/UBMReader.java >`
+Source Code: :bfreader:`UBMReader.java`
 
 Notes:
 

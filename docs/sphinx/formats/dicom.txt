@@ -57,7 +57,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`DicomReader.java <components/scifio/src/loci/formats/in/DicomReader.java >`
+Source Code: :scifioreader:`DicomReader.java`
 
 Notes:
 

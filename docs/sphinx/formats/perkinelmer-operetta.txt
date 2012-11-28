@@ -53,7 +53,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`OperettaReader.java <components/bio-formats/src/loci/formats/in/OperettaReader.java >`
+Source Code: :bfreader:`OperettaReader.java`
 
 Notes:
 

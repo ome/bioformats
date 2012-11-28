@@ -57,8 +57,8 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`TiffReader.java <components/scifio/src/loci/formats/in/TiffReader.java >`
-Source Code: :source:`TiffWriter.java <components/scifio/src/loci/formats/out/TiffWriter.java >`
+Source Code: :scifioreader:`TiffReader.java`
+Source Code: :scifiowriter:`TiffWriter.java`
 
 Notes:
 

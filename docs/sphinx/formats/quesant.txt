@@ -55,7 +55,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`QuesantReader.java <components/bio-formats/src/loci/formats/in/QuesantReader.java >`
+Source Code: :bfreader:`QuesantReader.java`
 
 Notes:
 

@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`OpenlabRawReader.java <components/bio-formats/src/loci/formats/in/OpenlabRawReader.java >`
+Source Code: :bfreader:`OpenlabRawReader.java`
 
 Notes:
 
