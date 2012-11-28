@@ -21,7 +21,7 @@ Download `Maven <http://maven.apache.org/>`_.
 Unpack the Maven archive into your Program Files, then add the folder's bin
 subdirectory to your PATH environment variable; e.g.:
 
-  C:\Program Files\apache-maven-3.0.4\bin
+``C:\Program Files\apache-maven-3.0.4\bin``
 
 Once set, new Command Prompts will recognize "mvn" as a valid command.
 
@@ -47,9 +47,9 @@ free installer from `BoostPro <http://www.boostpro.com/download/>`_.
 
 When running the installer:
 
-  * Under "Compilers," check the version of Visual C++ matching your system.
-  * Under "Variants," check all eight boxes.
-  * When choosing components, check "Boost DateTime" and "Boost Thread."
+* Under "Compilers," check the version of Visual C++ matching your system.
+* Under "Variants," check all eight boxes.
+* When choosing components, check "Boost DateTime" and "Boost Thread."
 
 
 Compile-time dependencies -- Windows -- Java Development Kit
@@ -60,14 +60,14 @@ Download and install the `JDK <http://www.oracle.com/technetwork/java/javase/dow
 After the installation is complete, create a new environment variable called
 JAVA_HOME pointing to your Java installation; e.g.:
 
-  C:\Program Files\Java\jdk1.6.0_25
+``C:\Program Files\Java\jdk1.6.0_25``
 
 Setting JAVA_HOME is the easiest way to ensure that Maven can locate Java.
 
 You will also need to append your JDK's client or server VM folder to the PATH;
 e.g.:
 
-  %JAVA_HOME%\jre\bin\client
+``%JAVA_HOME%\jre\bin\client``
 
 This step ensures that a directory containing jvm.dll is present in the PATH.
 If you do not perform this step, you will receive a runtime error when
@@ -75,7 +75,7 @@ attempting to initialize a JVM from native code.
 
 Optionally, you can add the bin subdirectory to the PATH; e.g.:
 
-  %JAVA_HOME%\bin
+``%JAVA_HOME%\bin``
 
 Once set, new Command Prompts will recognize (e.g.) "javac" as a valid command.
 
@@ -114,8 +114,7 @@ The CMake GUI will open. Click the Configure button, and a dialog will appear.
 Select your installed version of Visual Studio, and click Finish.
 
 When configuring, you can use the J2L_WIN_BUILD_DEBUG flag to indicate if this
-will be a Debug or Release build. If the flag it checked it will build as Debug,
-unchecked will build as Release.
+will be a Debug or Release build. If the flag is checked it will build as Debug, unchecked will build as Release.
 
 Once configuration is complete, click Configure again, repeating as necessary
 until the Generate button becomes available. Then click Generate. Once
@@ -123,8 +122,6 @@ generation is complete, close the CMake window.
 
 Back at the Command Prompt, type:
 
-  start jace.sln
+``start jace.sln``
 
-The solution will then open in Visual Studio. Select Release or Debug as appriate
-from the drop-down menu.  Press F7 to compile (or select Build Solution from the
-Build menu).
+The solution will then open in Visual Studio. Select Release or Debug as appropriate from the drop-down menu.  Press F7 to compile (or select Build Solution from the Build menu).
