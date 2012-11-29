@@ -56,8 +56,8 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`NativeQTReader.java <components/scifio/src/loci/formats/in/NativeQTReader.java >`
-Source Code: :source:`QTWriter.java <components/scifio/src/loci/formats/out/QTWriter.java >`
+Source Code: :scifioreader:`NativeQTReader.java`
+Source Code: :scifiowriter:`QTWriter.java`
 
 Notes:
 

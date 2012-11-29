@@ -52,7 +52,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`VisitechReader.java <components/bio-formats/src/loci/formats/in/VisitechReader.java >`
+Source Code: :bfreader:`VisitechReader.java`
 
 Notes:
 

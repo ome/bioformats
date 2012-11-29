@@ -49,7 +49,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`BrukerReader.java <components/bio-formats/src/loci/formats/in/BrukerReader.java >`
+Source Code: :bfreader:`BrukerReader.java`
 
 Notes:
 

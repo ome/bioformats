@@ -71,9 +71,12 @@ Utility: |$utilityRating|
 Additional Information
 ----------------------
 
-Source Code: :source:`$reader <components/$component/src/loci/formats/in/$reader >`
+Source Code: #foreach ($item in $reader)
+#if ($velocityHasNext):$readerextlink:`$item`, #else:$readerextlink:`$item`#end
+#end
+
 #if ($writer)
-Source Code: :source:`$writer <components/$component/src/loci/formats/out/$writer >`
+Source Code: :$writerextlink:`$writer`
 #end
 
 Notes:

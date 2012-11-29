@@ -53,7 +53,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`APLReader.java <components/bio-formats/src/loci/formats/in/APLReader.java >`
+Source Code: :bfreader:`APLReader.java`
 
 Notes:
 

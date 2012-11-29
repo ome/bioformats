@@ -52,7 +52,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`SimplePCITiffReader.java <components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java >`
+Source Code: :bfreader:`SimplePCITiffReader.java`
 
 Notes:
 

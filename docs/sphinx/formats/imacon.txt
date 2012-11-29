@@ -54,7 +54,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`ImaconReader.java <components/bio-formats/src/loci/formats/in/ImaconReader.java >`
+Source Code: :bfreader:`ImaconReader.java`
 
 Notes:
 
