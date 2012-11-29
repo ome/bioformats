@@ -22,7 +22,7 @@ The Bio-Formats Importer plugin can display image stacks in several
 ways:
 
 -  In a standard ImageJ window (including as a hyperstack)
--  Using our `Data Browser <http://loci.wisc.edu/software/data-browser>`_ plugin (included)
+-  Using the `LOCI Data Browser <http://loci.wisc.edu/software/data-browser>`_ plugin (included)
 -  With Joachim Walter's
    `Image5D <http://rsb.info.nih.gov/ij/plugins/image5d.html>`_ plugin
    (if installed)
@@ -45,8 +45,10 @@ To upgrade, just overwrite the old **loci_tools.jar** with the
 :bf_plone:`latest one <downloads>`.
 Step-by-step upgrade instructions for Windows are available
 :doc:`here <upgrading-importer-imagej>`.
+
 You may want to download the latest version of ImageJ first, to take
 advantage of new features and bug-fixes.
+
 As of the 4.0.0 release, you can also upgrade the Bio-Formats plugin
 directly from ImageJ. Select "Plugins>LOCI>Update LOCI Plugins" from the
 ImageJ menu, then select which release you would like to use. You will
@@ -60,55 +62,22 @@ To use in a macro, use the Macro Recorder to record a call to the
 Bio-Formats Importer with the desired options. You can also perform more
 targeted metadata queries using the Bio-Formats macro extensions.
 
-Here are some example macros and plugins to get you started:
+Here are some example ImageJ macros and plugins that use Bio-Formats to get you started:
 
-Sample ImageJ macros and plugins that use Bio-Formats
+:source:`basicMetadata.txt <components/loci-plugins/utils/macros/basicMetadata.txt>` - A macro that uses the Bio-Formats macro extensions to print the chosen file's basic dimensional parameters to the Log.
 
-``basicMetadata.txt``
+:source:`planeTimings.txt <components/loci-plugins/utils/macros/planeTimings.txt>` - A macro that uses the Bio-Formats macro extensions to print the chosen file's plane timings to the Log.
 
-A macro that uses the Bio-Formats macro extensions to print the chosen
-file's basic dimensional parameters to the Log
+:source:`recursiveTiffConvert.txt <components/loci-plugins/utils/macros/recursiveTiffConvert.txt>` - A macro for recursively converting files to TIFF using Bio-Formats.
 
-``planeTimings.txt``
+:source:`bfOpenAsHyperstack.txt <components/loci-plugins/utils/macros/bfOpenAsHyperstack.txt>` - This macro from Wayne Rasband opens a file as a hyperstack using only the Bio-Formats macro extensions (without calling the Bio-Formats Importer plugin).
 
-A macro that uses the Bio-Formats macro extensions to print the chosen
-file's plane timings to the Log
+:source:`zvi2HyperStack.txt <components/loci-plugins/utils/macros/zvi2HyperStack.txt>` - This macro from Sebastien Huart reads in a ZVI file using Bio-Formats, synthesizes the LUT using emission wavelength metadata, and displays the result as a hyperstack.
 
-``recursiveTiffConvert.txt``
+:source:`dvSplitTimePoints.txt <components/loci-plugins/utils/macros/dvSplitTimePoints.txt>` - This macro from Sebastien Huart splits timepoints/channels on all DV files in a folder.
 
-A macro for recursively converting files to TIFF using Bio-Formats
+:source:`batchTiffConvert.txt <components/loci-plugins/utils/macros/batchTiffConvert.txt>` - This macro converts all files in a directory to TIFF using the Bio-Formats macro extensions.
 
-``bfOpenAsHyperstack.txt``
+:source:`Read_Image <components/loci-plugins/utils/Read_Image.java>` - A simple plugin that demonstrates how to use Bio-Formats to read files into ImageJ.
 
-This macro from Wayne Rasband opens a file as a hyperstack using only
-the Bio-Formats macro extensions (without calling the Bio-Formats
-Importer plugin)
-
-``zvi2HyperStack.txt``
-
-This macro from Sebastien Huart reads in a ZVI file using Bio-Formats,
-synthesizes the LUT using emission wavelength metadata, and displays the
-result as a hyperstack
-
-``dvSplitTimePoints.txt``
-
-This macro from Sebastien Huart splits timepoints/channels on all DV
-files in a folder
-
-``batchTiffConvert.txt``
-
-This macro converts all files in a directory to TIFF using the
-Bio-Formats macro extensions.
-
-``Read_Image``
-
- 
-
-A simple plugin that demonstrates how to use Bio-Formats to read files
-into ImageJ
-
-``Mass_Importer``
-
-A simple plugin that demonstrates how to open all image files in a
-directory using Bio-Formats, grouping files with similar names to
-avoiding opening the same dataset more than once
+:source:`Mass_Importer <components/loci-plugins/utils/Mass_Importer.java>` - A simple plugin that demonstrates how to open all image files in a directory using Bio-Formats, grouping files with similar names to avoiding opening the same dataset more than once.

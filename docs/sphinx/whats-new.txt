@@ -1,84 +1,105 @@
-4.4.5 (2012 November 13):
+Version history
+===============
+
+4.4.5 (2012 November 13)
+------------------------
+
 * Restructured and improved documentation
 * Many bug fixes, including:
-  - File grouping in many multi-file formats
-  - Maven build fixes
-  - ITK plugin fixes
+   - File grouping in many multi-file formats
+   - Maven build fixes
+   - ITK plugin fixes
 
-4.4.4 (2012 September 24):
+4.4.4 (2012 September 24)
+-------------------------
+
 * Many bug fixes
 
-4.4.2 (2012 August 22):
+4.4.2 (2012 August 22)
+----------------------
+
 * Security fix for OMERO plugins for ImageJ
 
-4.4.1 (2012 July 20):
+4.4.1 (2012 July 20)
+--------------------
+
 * Fix a bug that prevented BigTIFF files from being read
 * Fix a bug that prevented PerkinElmer .flex files from importing into OMERO
 
-4.4.0 (2012 July 13):
+4.4.0 (2012 July 13)
+--------------------
+
 * Many, many bug fixes
 * Added support for:
-  - .nd2 files from Nikon Elements version 4
-  - PerkinElmer Operetta data
-  - MJPEG-compressed AVIs
-  -  MicroManager datasets with multiple positions
-  - Zeiss CZI data
-  - IMOD data
+   - .nd2 files from Nikon Elements version 4
+   - PerkinElmer Operetta data
+   - MJPEG-compressed AVIs
+   -  MicroManager datasets with multiple positions
+   - Zeiss CZI data
+   - IMOD data
 
-4.3.3 (2011 October 18):
-* Many bug fixes, including:
-  - Speed improvements to HCImage/SimplePCI and Zeiss ZVI files
-  - Reduce memory required by Leica LIF reader
-  - More accurately populate metadata for Prairie TIFF datasets
-  - Various fixes to improve the security of the OMERO plugin for ImageJ
-  - Better dimension detection for Bruker MRI datasets
-  - Better thumbnail generation for histology (SVS, NDPI) datasets
-  - Fix stage position parsing for Metamorph TIFF datasets
-  - Correctly populate the channel name for PerkinElmer Flex files
+4.3.3 (2011 October 18)
+-----------------------
 
-4.3.2 (2011 September 15):
 * Many bug fixes, including:
-  - Better support for Volocity datasets that contain compressed data
-  - More accurate parsing of ICS metadata
-  - More accurate parsing of cellSens .vsi files
+   - Speed improvements to HCImage/SimplePCI and Zeiss ZVI files
+   - Reduce memory required by Leica LIF reader
+   - More accurately populate metadata for Prairie TIFF datasets
+   - Various fixes to improve the security of the OMERO plugin for ImageJ
+   - Better dimension detection for Bruker MRI datasets
+   - Better thumbnail generation for histology (SVS, NDPI) datasets
+   - Fix stage position parsing for Metamorph TIFF datasets
+   - Correctly populate the channel name for PerkinElmer Flex files
+
+4.3.2 (2011 September 15)
+-------------------------
+
+* Many bug fixes, including:
+   - Better support for Volocity datasets that contain compressed data
+   - More accurate parsing of ICS metadata
+   - More accurate parsing of cellSens .vsi files
 * Added support for a few new formats
-  - .inr
-  - Canon DNG
-  - Hitachi S-4800
-  - Kodak .bip
-  - JPX
-  - Volocity Library Clipping (.acff)
-  - Bruker MRI
+   - .inr
+   - Canon DNG
+   - Hitachi S-4800
+   - Kodak .bip
+   - JPX
+   - Volocity Library Clipping (.acff)
+   - Bruker MRI
 * Updated Zeiss LSM reader to parse application tags
 * Various performance improvements, particularly for reading/writing TIFFs
 * Updated OMERO ImageJ plugin to work with OMERO 4.3.x
 
-4.3.1 (2011 July 8):
+4.3.1 (2011 July 8)
+-------------------
+
 * Several bug fixes, including:
-  - Fixes for multi-position Deltavision files
-  - Fixes for MicroManager 1.4 data
-  - Fixes for 12 and 14-bit JPEG-2000 data
-  - Various fixes for reading Volocity .mvd2 datasets
+   - Fixes for multi-position Deltavision files
+   - Fixes for MicroManager 1.4 data
+   - Fixes for 12 and 14-bit JPEG-2000 data
+   - Various fixes for reading Volocity .mvd2 datasets
 * Added various options to the 'showinf' and 'bfconvert' command line tools
 * Added better tests for OME-XML backwards compatibility
 * Added the ability to roughly stitch tiles in a multi-position dataset
 
-4.3.0 (2011 June 14):
+4.3.0 (2011 June 14)
+--------------------
+
 * Many bug fixes, including:
-  - Many fixes for reading and writing sub-images
-  - Fixes for stage position parsing in the Zeiss formats
-  - File type detection fixes
+   - Many fixes for reading and writing sub-images
+   - Fixes for stage position parsing in the Zeiss formats
+   - File type detection fixes
 * Updated JPEG-2000 reading and writing support to be more flexible
 * Added support for 9 new formats:
-  - InCell 3000
-  - Trestle
-  - Hamamatsu .ndpi
-  - Hamamatsu VMS
-  - SPIDER
-  - Volocity .mvd2
-  - Olympus SIS TIFF
-  - IMAGIC
-  - cellSens VSI
+   - InCell 3000
+   - Trestle
+   - Hamamatsu .ndpi
+   - Hamamatsu VMS
+   - SPIDER
+   - Volocity .mvd2
+   - Olympus SIS TIFF
+   - IMAGIC
+   - cellSens VSI
 * Updated to 2011-06 OME-XML schema
 * Minor speed improvements in many formats
 * Switched version control system from SVN to Git
@@ -87,31 +108,37 @@
 * Added Maven build system as an alternative to the existing Ant build system
 * Added pre-compiled C++ bindings to the download page
 
-4.2.2 (2010 December 6):
+4.2.2 (2010 December 6)
+-----------------------
+
 * Several bug fixes, notably:
-  - Metadata parsing fixes for Zeiss LSM, Metamorph STK, and FV1000
-  - Prevented leaked file handles when exporting to TIFF/OME-TIFF
-  - Fixed how BufferedImages are converted to byte arrays
+   - Metadata parsing fixes for Zeiss LSM, Metamorph STK, and FV1000
+   - Prevented leaked file handles when exporting to TIFF/OME-TIFF
+   - Fixed how BufferedImages are converted to byte arrays
 * Proper support for OME-XML XML annotations
 * Added support for SCANCO Medical .aim files
 * Minor improvements to ImageJ plugins
 * Added support for reading JPEG-compressed AVI files
 
-4.2.1 (2010 November 12):
+4.2.1 (2010 November 12)
+------------------------
+
 * Many, many bug fixes
 * Added support for 7 new formats:
-  - CellWorX .pnl
-  - ECAT7
-  - Varian FDF
-  - Perkin Elmer Densitometer
-  - FEI TIFF
-  - Compix/SimplePCI TIFF
-  - Nikon Elements TIFF
+   - CellWorX .pnl
+   - ECAT7
+   - Varian FDF
+   - Perkin Elmer Densitometer
+   - FEI TIFF
+   - Compix/SimplePCI TIFF
+   - Nikon Elements TIFF
 * Updated Zeiss LSM metadata parsing, with generous assistance from Zeiss, FMI, and MPI-CBG
 * Lots of work to ensure that converted OME-XML validates
 * Improved file stitching functionality; non-numerical file patterns and limited regular expression-style patterns are now supported
 
-4.2.0 (2010 July 9):
+4.2.0 (2010 July 9)
+-------------------
+
 * Fixed many, many bugs in all aspects of Bio-Formats
 * Reworked ImageJ plugins to be more user- and developer-friendly
 * Added many new unit tests
@@ -122,7 +149,9 @@
 * Improved support for exporting to multiple files
 * Updated logging infrastructure to use slf4j and log4j
 
-4.1.1 (2009 December 3):
+4.1.1 (2009 December 3)
+-----------------------
+
 * Fixed many bugs in popular file format readers
 
 4.1 (2009 October 21):
@@ -142,7 +171,8 @@
 * Added support for Nikon EZ-C1 TIFFs
 * Added support for Maia Scientific MIAS data
 
-4.0.1 (2009 June 1):
+4.0.1 (2009 June 1)
+-------------------
 
 * Lots of bug fixes in most format readers and writers
 * Added support for Analyze 7.1 files
@@ -158,7 +188,8 @@
   dataset
 * Fixed BufferedImage construction for signed data and unsigned int data
 
-4.0.0 (2009 March 3):
+4.0.0 (2009 March 3)
+--------------------
 
 * Improved OME data model population for Olympus FV1000, Nikon ND2, Metamorph
   STK, Leica LEI, Leica LIF, InCell 1000 and MicroManager
@@ -171,7 +202,9 @@
 * Added support for Axon Raw Format (ARF), courtesy of Johannes Schindelin
 * Added preliminary support for IPLab-Mac file format
 
-2008 December 29:
+2008 December 29
+----------------
+
 * Improved metadata support for Deltavision, Zeiss LSM, MicroManager, and Leica
   LEI
 * Restructured code base/build system to be component-driven
@@ -192,7 +225,9 @@
 * Fixed bugs with exporting from an Image5D window
 * Fixed several problems with virtual stacks in ImageJ
 
-2008 August 30:
+2008 August 30
+--------------
+
 * Fixed bugs in many file format readers
 * Fixed several bugs with swapping dimensions
 * Added support for Olympus CellR/APL files
@@ -204,7 +239,9 @@
 * Added drag and drop support to ImageJ shortcut window
 * Re-integrated caching into the data browser plugin
 
-2008 July 1:
+2008 July 1
+-----------
+
 * Fixed bugs in most file format readers
 * Fixed bugs in OME and OMERO download functionality
 * Fixed bugs in OME server-side import
@@ -221,7 +258,9 @@
 * Added several new options to Bio-Formats ImageJ plugin
 * Added support for writing ICS files
 
-2008 April 17:
+2008 April 17
+-------------
+
 * Fixed bugs in Slidebook, ND2, FV1000 OIB/OIF, Perkin Elmer, TIFF, Prairie,
   Openlab, Zeiss LSM, MNG, Molecular Dynamics GEL, and OME-TIFF
 * Fixed bugs in OME and OMERO download functionality
@@ -236,16 +275,22 @@
 * Added support for writing multi-series OME-TIFF files
 * Added support for writing BigTIFF files
 
-2008 Feb 12:
+2008 Feb 12
+-----------
+
 * Fixed bugs in QuickTime, SimplePCI and DICOM
 * Fixed a bug in channel splitting logic
 
-2008 Feb 8:
+2008 Feb 8
+----------
+
 * Many critical bugfixes in format readers and ImageJ plugins
 * Newly reborn Data Browser for 5D image visualization
     + some combinations of import options do not work yet
 
-2008 Feb 1:
+2008 Feb 1
+----------
+
 * Fixed bugs in Zeiss LSM, Metamorph STK, FV1000 OIB/OIF, Leica LEI, TIFF,
   Zeiss ZVI, ICS, Prairie, Openlab LIFF, Gatan, DICOM, QuickTime
 * Fixed bug in OME-TIFF writer
@@ -259,7 +304,9 @@
 * Added support for JPEG2000-compressed DICOM files
 * EXIF data is now parsed from TIFF files
 
-2007 Dec 28:
+2007 Dec 28
+-----------
+
 * Fixed bugs in Leica LEI, Leica TCS, SDT, Leica LIF,
   Visitech, DICOM, Imaris 5.5 (HDF), and Slidebook readers
 * Better parsing of comments in TIFF files exported from ImageJ
@@ -277,7 +324,9 @@
 * Major updates to 4D Data Browser
 * Minor updates to automated testing suite
 
-2007 Dec 1:
+2007 Dec 1
+----------
+
 * Updated OME plugin for ImageJ to support downloading from OMERO
 * Fixed bug with floating point TIFFs
 * Fixed bugs in Visitech, Zeiss LSM, Imaris 5.5 (HDF)
@@ -285,7 +334,9 @@
 * Fixed calibration and series name settings in importer
 * Added basic support for InCell 1000 datasets
 
-2007 Nov 21:
+2007 Nov 21
+-----------
+
 * Fixed bugs in ND2, Leica LIF, DICOM, Zeiss ZVI, Zeiss LSM, FV1000 OIB,
   FV1000 OIF, BMP, Evotec Flex, BioRad PIC, Slidebook, TIFF
 * Added new ImageJ plugins to slice stacks and do "smart" RGB merging
@@ -300,7 +351,9 @@
 * Added API methods for reading subimages
 * Major updates to the 4D Data Browser
 
-2007 Oct 17:
+2007 Oct 17
+-----------
+
 * Critical OME-TIFF bugfixes
 * Fixed bugs in Leica LIF, Zeiss ZVI, TIFF, DICOM, and AVI readers
 * Added support for JPEG-compressed ZVI images
@@ -308,7 +361,9 @@
 * Added importer plugin option to open each plane in a new window
 * Added MS Video 1 codec for AVI
 
-2007 Oct 1:
+2007 Oct 1
+----------
+
 * Added support for compressed DICOM images
 * Added support for uncompressed LIM files
 * Added support for Adobe Photoshop PSD files
@@ -321,7 +376,9 @@
 * Added option to turn off autoscaling in importer plugin
 * Additional metadata convenience methods
 
-2007 Sept 11:
+2007 Sept 11
+------------
+
 * Major improvements to ND2 support; lossless compression now supported
 * Support for indexed color images
 * Added support for Simple-PCI .cxd files
@@ -330,7 +387,9 @@
   Leica LEI
 * Initial version of Bio-Formats macro extensions for ImageJ
 
-2007 Aug 1:
+2007 Aug 1
+----------
+
 * Added support for latest version of Leica LIF
 * Fixed several issues with Leica LIF, Zeiss ZVI
 * Better metadata mapping for Zeiss ZVI
@@ -338,18 +397,24 @@
 * Added MetadataRetrieve API for retrieving data from a MetadataStore
 * Miscellaneous bugfixes
 
-2007 July 16:
+2007 July 16
+------------
+
 * Fixed several issues with ImageJ plugins
 * Better support for Improvision and Leica TCS TIFF files
 * Minor improvements to Leica LIF, ICS, QuickTime and Zeiss ZVI readers
 * Added searchable metadata window to ImageJ importer
 
-2007 July 2:
+2007 July 2
+-----------
+
 * Fixed issues with ND2, Openlab LIFF and Slidebook
 * Added support for Visitech XYS
 * Added composite stack support to ImageJ importer
 
-2007 June 18:
+2007 June 18
+------------
+
 * Fixed issues with ICS, ND2, MicroManager, Leica LEI, and FV1000 OIF
 * Added support for large (> 2 GB) ND2 files
 * Added support for new version of ND2
@@ -358,13 +423,17 @@
 * Updated automated testing framework to use TestNG
 * Added package for caching images produced by Bio-Formats
 
-2007 June 6:
+2007 June 6
+-----------
+
 * Fixed OME upload/download bugs
 * Fixed issues with ND2, EPS, Leica LIF, and OIF
 * Added support for Khoros XV
 * Minor improvements to the importer
 
-2007 May 24:
+2007 May 24
+-----------
+
 * Better Slidebook support
 * Added support for Quicktime RPZA
 * Better Leica LIF metadata parsing
@@ -373,7 +442,9 @@
 * Improved ImageJ plugins
 * Native support for FITS and PGM
 
-2007 May 2:
+2007 May 2
+----------
+
 * Added support for NRRD
 * Added support for Evotec Flex (requires LuraWave Java SDK with license code)
 * Added support for gzip-compressed files
@@ -392,12 +463,16 @@
 * Miscellaneous bugfixes and tweaks in most readers and writers
 * Many other bugfixes and improvements
 
-2007 Mar 16:
+2007 Mar 16
+-----------
+
 * Fixed calibration bugs in importer plugin
 * Enhanced metadata support for additional formats
 * Fixed LSM bug
 
-2007 Mar 7:
+2007 Mar 7
+----------
+
 * Added support for Micro-Manager file format
 * Fixed several bugs -- Leica LIF, Leica LEI, ICS, ND2, and others
 * Enhanced metadata support for several formats
@@ -405,12 +480,16 @@
 * Better implementation of openBytes(String, int, byte[]) for most readers
 * Expanded unit testing framework
 
-2007 Feb 28:
+2007 Feb 28
+-----------
+
 * Better series preview thumbnails
 * Fixed bugs with multi-channel Leica LEI
 * Fixed bugs with "ignore color tables" option in ImageJ plugin
 
-2007 Feb 26:
+2007 Feb 26
+-----------
+
 * Many bugfixes: Leica LEI, ICS, FV1000 OIB, OME-XML and others
 * Better metadata parsing for BioRad PIC files
 * Enhanced API for calculating channel minimum and maximum values
@@ -418,7 +497,9 @@
 * Added thumbnails to series chooser in ImageJ plugin
 * Fixed plugins that upload and download from an OME server
 
-2007 Feb 7:
+2007 Feb 7
+----------
+
 * Added plugin for downloading images from OME server
 * Improved HTTP import functionality
 * Added metadata filtering -- unreadable metadata is no longer shown
@@ -433,7 +514,9 @@
 * Replaced Compression utility class with extensible Compressor interface
 * Improved testing framework to use .bioformats configuration files
 
-2007 Jan 5:
+2007 Jan 5
+----------
+
 * Added support for Prairie TIFF
 * Fixed bugs in Zeiss LSM, OIB, OIF, and ND2
 * Improved API for writing files
@@ -441,14 +524,18 @@
 * Fixed bugs in automated testing framework
 * Miscellaneous bugfixes
 
-2006 Dec 22:
+2006 Dec 22
+-----------
+
 * Expanded ImageJ plugin to optionally use Image5D or View5D
 * Improved support for ND2 and JPEG-2000 files
 * Added automated testing framework
 * Fixed bugs in Zeiss ZVI reader
 * Miscellaneous bugfixes
 
-2006 Nov 30:
+2006 Nov 30
+-----------
+
 * Added support for ND2/JPEG-2000
 * Added support for MRC
 * Added support for MNG
@@ -458,21 +545,29 @@
 * Improved file stitching logic
 * Allow ImageJ plugin to be called from a macro
 
-2006 Nov 2:
+2006 Nov 2
+----------
+
 * Bugfixes and improvements for Leica LIF, Zeiss LSM, OIF and OIB
 * Colorize channels when they are split into separate windows
 * Fixed a bug with 4-channel datasets
 
-2006 Oct 31:
+2006 Oct 31
+-----------
+
 * Added support for Imaris 5 files
 * Added support for RGB ICS images
 
-2006 Oct 30:
+2006 Oct 30
+-----------
+
 * Added support for tiled TIFFs
 * Fixed bugs in ICS reader
 * Fixed importer plugin deadlock on some systems
 
-2006 Oct 27:
+2006 Oct 27
+-----------
+
 * Multi-series support for Slidebook
 * Added support for Alicona AL3D
 * Fixed plane ordering issue with FV1000 OIB
@@ -487,7 +582,9 @@
 * Fixed memory leaks in all readers
 * Better file stitching logic
 
-2006 Oct 6:
+2006 Oct 6
+----------
+
 * Support for 3i SlideBook format (single series only for now)
 * Support for 16-bit RGB palette TIFF
 * Fixed bug preventing import of certain Metamorph STK files
@@ -507,7 +604,9 @@
 * Keep aspect ratio for computed thumbnails
 * Much faster file stitching logic
 
-2006 Sep 27:
+2006 Sep 27
+-----------
+
 * PerkinElmer: support for PE UltraView
 * Openlab LIFF: support for Openlab v5
 * Leica LEI: bugfixes, and support for multiple series
@@ -520,11 +619,15 @@
   when available
 * Better notification when JAR libraries are missing
 
-2006 Sep 6:
+2006 Sep 6
+----------
+
 * Leica LIF: multiple distinct image series within a single file
 * Zeiss ZVI: fixes and improvements contributed by Michel Boudinot
 * Zeiss LSM: fixed bugs preventing the import of certain LSM files
 * TIFF: fixed a bug preventing import of TIFFs created with Bio-Rad software
 
-2006 Mar 31:
+2006 Mar 31
+-----------
+
 * First release
