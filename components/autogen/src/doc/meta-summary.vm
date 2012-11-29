@@ -7,6 +7,7 @@ Format readers
 .. tabularcolumns:: |p{3cm}|c|c|c|c|
 
 .. list-table::
+   :class: sortable
    :header-rows: 1
    :widths: 30, 10, 10, 10, 10
 
@@ -40,6 +41,7 @@ Metadata fields
 .. tabularcolumns:: |p{3cm}|c|c|c|c|
 
 .. list-table::
+   :class: sortable
    :header-rows: 1
    :widths: 30, 10, 10, 10, 10
 

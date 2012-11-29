@@ -13,6 +13,7 @@ to open/import a dataset in a particular format.
 .. tabularcolumns:: |p{4cm}|p{3cm}|p{8cm}|
 
 .. list-table::
+   :class: sortable
    :header-rows: 1
 
    * - Format name
