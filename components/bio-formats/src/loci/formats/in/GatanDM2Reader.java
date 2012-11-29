@@ -124,7 +124,7 @@ public class GatanDM2Reader extends FormatReader {
     int bpp = in.readShort();
     boolean signed = in.readShort() == 1;
 
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, signed, false);
+    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, signed, true);
     core[0].sizeC = 1;
     core[0].sizeT = 1;
     core[0].sizeZ = 1;
