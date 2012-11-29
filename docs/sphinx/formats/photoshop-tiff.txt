@@ -54,7 +54,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`PhotoshopTiffReader.java <components/bio-formats/src/loci/formats/in/PhotoshopTiffReader.java >`
+Source Code: :bfreader:`PhotoshopTiffReader.java`
 
 Notes:
 

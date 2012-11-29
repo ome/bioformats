@@ -52,7 +52,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`KodakReader.java <components/bio-formats/src/loci/formats/in/KodakReader.java >`
+Source Code: :bfreader:`KodakReader.java`
 
 Notes:
 

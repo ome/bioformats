@@ -121,8 +121,10 @@ public class FormatPageAutogen {
       context.put("writer", table.get("writer"));
       context.put("notes", table.get("notes"));
       context.put("privateSpecification", table.get("privateSpecification"));
-      context.put("component",
-        table.get("scifio").equals("no") ? "bio-formats" : "scifio");
+      context.put("readerextlink",
+        table.get("scifio").equals("no") ? "bfreader" : "scifioreader");
+      context.put("writerextlink",
+        table.get("scifio").equals("no") ? "bfwriter" : "scifiowriter");
 
       if (table.containsKey("software")) {
         String[] software = table.get("software").split("\n");
@@ -149,6 +151,10 @@ public class FormatPageAutogen {
         context.put("notes", notes);
       }
 
+      if (table.containsKey("reader")) {
+        String[] reader = table.get("reader").split(", ");
+        context.put("reader", reader);
+      }
       String filename = getPageName(format, table.get("pagename"));
       VelocityTools.processTemplate(engine, context, TEMPLATE,
         "../../docs/sphinx/" + filename + ".txt");

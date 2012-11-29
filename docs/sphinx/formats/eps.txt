@@ -56,8 +56,8 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`EPSReader.java <components/scifio/src/loci/formats/in/EPSReader.java >`
-Source Code: :source:`EPSWriter.java <components/scifio/src/loci/formats/out/EPSWriter.java >`
+Source Code: :scifioreader:`EPSReader.java`
+Source Code: :scifiowriter:`EPSWriter.java`
 
 Notes:
 

@@ -51,7 +51,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`INRReader.java <components/bio-formats/src/loci/formats/in/INRReader.java >`
+Source Code: :bfreader:`INRReader.java`
 
 Notes:
 

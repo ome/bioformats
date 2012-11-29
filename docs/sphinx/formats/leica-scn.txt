@@ -53,7 +53,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`LeicaSCNReader.java <components/bio-formats/src/loci/formats/in/LeicaSCNReader.java >`
+Source Code: :bfreader:`LeicaSCNReader.java`
 
 Notes:
 

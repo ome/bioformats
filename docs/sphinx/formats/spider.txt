@@ -54,7 +54,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`SpiderReader.java <components/bio-formats/src/loci/formats/in/SpiderReader.java >`
+Source Code: :bfreader:`SpiderReader.java`
 
 Notes:
 

@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`RHKReader.java <components/bio-formats/src/loci/formats/in/RHKReader.java >`
+Source Code: :bfreader:`RHKReader.java`
 
 Notes:
 

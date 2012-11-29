@@ -54,7 +54,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`FlexReader.java <components/bio-formats/src/loci/formats/in/FlexReader.java >`
+Source Code: :bfreader:`FlexReader.java`
 
 Notes:
 

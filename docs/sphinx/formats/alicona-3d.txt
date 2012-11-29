@@ -47,7 +47,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`AliconaReader.java <components/bio-formats/src/loci/formats/in/AliconaReader.java >`
+Source Code: :bfreader:`AliconaReader.java`
 
 Notes:
 

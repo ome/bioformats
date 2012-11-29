@@ -51,7 +51,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`ARFReader.java <components/bio-formats/src/loci/formats/in/ARFReader.java >`
+Source Code: :bfreader:`ARFReader.java`
 
 Notes:
 
