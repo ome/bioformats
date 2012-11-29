@@ -169,18 +169,28 @@ public class GatanDM2Reader extends FormatReader {
       if (block == 5) {
         in.skipBytes(33);
         if (in.readShort() == 0) {
-          in.skipBytes(4);
+          if (in.readShort() == 39) {
+            in.skipBytes(1);
+          }
+          else {
+            in.skipBytes(2);
+          }
         }
         else {
           in.seek(in.getFilePointer() - 2);
           continue;
         }
       }
-      else if (block > 0xffff && block < 0x01000000) {
-        in.seek(in.getFilePointer() - 4);
-        value.append(label);
-        label = "Description";
-        addGlobalMeta(label, value.toString());
+      else if (block == 0 || (block > 0xffff && block < 0x01000000)) {
+        if (block != 0 && strlen > 0) {
+          in.seek(in.getFilePointer() - 4);
+          value.append(label);
+          label = "Description";
+          addGlobalMeta(label, value.toString());
+        }
+        else if (block != 0) {
+          in.skipBytes(15);
+        }
         parseExtraTags();
         continue;
       }
@@ -209,7 +219,23 @@ public class GatanDM2Reader extends FormatReader {
       if (type.equals("TEXT")) {
         value.append(in.readString(count));
         if (block == 5) {
-          in.skipBytes(37);
+          in.skipBytes(22);
+
+          if (in.readInt() == 4) {
+            if (in.readString(4).equals("TEXT")) {
+              in.skipBytes(4);
+              count = in.readInt();
+              value.append(", " + in.readString(count));
+
+              in.skipBytes(37);
+            }
+            else {
+              in.skipBytes(7);
+            }
+          }
+          else {
+            in.skipBytes(11);
+          }
         }
       }
       else if (type.equals("long")) {
@@ -338,8 +364,20 @@ public class GatanDM2Reader extends FormatReader {
       String label = "Tag " + Integer.toHexString(tag);
 
       switch (tag) {
+        case 17:
+          label = "BlackContrastLimit";
+          break;
+        case 18:
+          label = "WhiteContrastLimit";
+          break;
         case 22:
           label = "Scale";
+          break;
+        case 27:
+          label = "MaxPixelValue";
+          break;
+        case 28:
+          label = "MinPixelValue";
           break;
         case 31:
           label = "Physical width";
@@ -351,6 +389,9 @@ public class GatanDM2Reader extends FormatReader {
           break;
         case 37:
           label = "Image label";
+          break;
+        case 38:
+          label = "MinimumContrast";
           break;
         case 53:
           label = "Physical size units";
