@@ -3,7 +3,7 @@ Installing Bio-Formats in ImageJ
 
 
 *(Since FIJI is essentially ImageJ with plugins like Bio-Formats already
-built in, people who install FIJI can skip this section.)*
+built in, people who install Fiji can skip this section.)*
 
 Once you `download <http://rsbweb.nih.gov/ij/download.html>`__ and
 install ImageJ, you can install the Bio-Formats plugin by going to the

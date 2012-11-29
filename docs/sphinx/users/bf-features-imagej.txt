@@ -1,4 +1,4 @@
-Bio-Formats features in ImageJ and FIJI
+Bio-Formats features in ImageJ and Fiji
 =======================================
 
 When you select Bio-Formats under the Plugin menu, you will see the
@@ -6,7 +6,7 @@ following features:
 
 - The **Bio-Formats Importer** is a plugin for :doc:`loading
   images <load-images>` into ImageJ or
-  FIJI. It can over 100 of proprietary life sciences formats and
+  Fiji. It can over 100 of proprietary life sciences formats and
   standardizes their acquisition metadata into the common
   :doc:`OME data model </about>`. It will also extract and set basic
   metadata values such as `spatial

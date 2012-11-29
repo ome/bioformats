@@ -4,7 +4,7 @@ SCientific Imaging Formats Input and Output
 Motivation
 ----------
 
-SCIFIO is a refactoring of :doc:`/about`.
+SCIFIO is a refactoring of :doc:`Bio-Formats </about>`.
 Classic Bio-Formats uses OME-XML_ to model the metadata for a given image,
 standardizing all supported formats to this schema. This tight integration,
 along with the naming itself of Bio-Formats, discourages potential users from

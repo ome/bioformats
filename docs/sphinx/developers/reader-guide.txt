@@ -25,10 +25,10 @@ Methods to override
   can be handled individually.  The return value should be one of the
   following:
 
-  * FormatTools.MUST_GROUP: the files cannot be handled separately
-  * FormatTools.CAN_GROUP: the files may be handled separately or as a single 
+  * ``FormatTools.MUST_GROUP``: the files cannot be handled separately
+  * ``FormatTools.CAN_GROUP``: the files may be handled separately or as a single 
     unit
-  * FormatTools.CANNOT_GROUP: the files must be handled separately
+  * ``FormatTools.CANNOT_GROUP``: the files must be handled separately
 
   This method only needs to be overridden for formats whose datasets can
   contain more than one file.
@@ -37,38 +37,38 @@ Methods to override
   You only need to override this if your format uses multiple files in a 
   single dataset.  This method should return a list of all the files 
   associated with the given file name and the current series (i.e. every file 
-  needed to display the current series).  If the 'noPixels' flag is set, then 
+  needed to display the current series).  If the ``noPixels`` flag is set, then 
   none of the files returned should contain pixel data.
   For an example of how this works, see :source:`loci.formats.in.PerkinElmerReader <components/bio-formats/src/loci/formats/in/PerkinElmerReader.java>`. It is 
   recommended that the first line of this method be
-  "FormatTools.assertId(currentId, true, 1)" - this ensures that the file name
+  ``FormatTools.assertId(currentId, true, 1)`` - this ensures that the file name
   is non-null.
 
 - ``byte[] openBytes(int, byte[], int, int, int, int) throws FormatException, IOException``
   Returns a byte array containing the pixel data for a subimage specified
   image from the given file.  The dimensions of the subimage (upper left X
   coordinate, upper left Y coordinate, width, and height) are specified in the
-  final four int parameters.  This should throw a FormatException if the image
+  final four int parameters.  This should throw a ``FormatException`` if the image
   number is invalid (less than 0 or >= the number of images).  The ordering of
   the array returned by openBytes should correspond to the values returned by
-  isLittleEndian() and isInterleaved().  Also, the length of the
+  ``isLittleEndian()`` and ``isInterleaved()``.  Also, the length of the
   byte array should be [image width * image height * bytes per pixel].  Extra
   bytes will generally be truncated. It is recommended that the first line of
-  this method be "FormatTools.checkPlaneParameters(this, no, buf.length, x, y,
-  w, h)" - this ensures that all of the parameters are valid.
+  this method be ``FormatTools.checkPlaneParameters(this, no, buf.length, x, y,
+  w, h)`` - this ensures that all of the parameters are valid.
 
 - ``protected void initFile(String) throws FormatException, IOException``
   The majority of the file parsing logic should be placed in this method.  The
   idea is to call this method once (and only once!) when the file is first
   opened.  Generally, you will want to start by calling
-  super.initFile(String).  You will also need to set up the stream for reading
+  ``super.initFile(String)``.  You will also need to set up the stream for reading
   the file, as well as initializing any dimension information and metadata.
   Most of this logic is up to you; however, you should populate the 'core'
   variable (see :source:`loci.formats.CoreMetadata <components/scifio/src/loci/formats/CoreMetadata.java>`).
 
   Note that each variable is initialized to 0 or null when
-  super.initFile(String) is called.
-  Also, super.initFile(String) constructs a Hashtable called "metadata" where
+  ``super.initFile(String)`` is called.
+  Also, ``super.initFile(String)`` constructs a Hashtable called "metadata" where
   you should store any relevant metadata.
 
 - ``public void close(boolean fileOnly) throws IOException``
@@ -79,7 +79,7 @@ Methods to override
 Note that if the new format is a variant of a format currently supported by
 Bio-Formats, it is more efficient to make the new reader a subclass of the
 existing reader (rather than subclassing :source:`FormatReader <components/scifio/src/loci/formats/FormatReader.java>`).  In this case, it is
-usually sufficient to override initFile(String) and isThisType(byte[]).
+usually sufficient to override ``initFile(String)`` and ``isThisType(byte[])``.
 
 Every reader also has an instance of :source:`loci.formats.CoreMetadata <components/scifio/src/loci/formats/CoreMetadata.java>`.  All readers
 should populate the fields in CoreMetadata, which are essential to reading
@@ -87,7 +87,7 @@ image planes.
 
 If you read from a file using something other than :source:`RandomAccessInputStream <components/common/src/loci/common/RandomAccessInputStream.java>` or :source:`Location <components/common/src/loci/common/Location.java>`, you *must* use the file name returned by Location.getMappedId(String),
 not the file name passed to the reader.
-Thus, a stub for initFile(String) might look like this:
+Thus, a stub for ``initFile(String)`` might look like this:
 
 ::
 
@@ -149,11 +149,8 @@ Other useful things
 
 - If your reader relies on third-party code which may not be available to all
   users, it is strongly suggested that you make a corresponding service class
-  that interfaces with the third-party code.  Please see:
-
-  http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Service
-
-  for a description of the service infrastructure, as well as the :source:`loci.formats.services package <components/bio-formats/src/loci/formats/services/>`.
+  that interfaces with the third-party code.  Please see :doc:`service` for a 
+  description of the service infrastructure, as well as the :source:`loci.formats.services package <components/bio-formats/src/loci/formats/services/>`.
 
 - Several common image compression types are supported through subclasses of 
   :source:`loci.formats.codec.BaseCodec <components/scifio/src/loci/formats/codec/BaseCodec.java>`. These include JPEG, LZW, LZO, Base64, ZIP and RLE (PackBits).
@@ -245,7 +242,7 @@ Other useful things
   provides several basic tests that work with all Bio-Formats readers. See
   the FormatReaderTest source code for additional information.
 
-- For more details, please look at the source code and `Javadocs <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/javadoc>`_.    
+- For more details, please look at the source code and `javadocs <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/javadoc>`_.    
   Studying existing readers is probably the best way to get a feel for the 
   API; we would recommend first looking at :source:`loci.formats.in.ImarisReader <components/bio-formats/src/loci/formats/in/ImarisReader.java>` (this is the 
   most straightforward one). :source:`loci.formats.in.LIFReader <components/bio-formats/src/loci/formats/in/LIFReader.java>` and :source:`InCellReader <components/bio-formats/src/loci/formats/in/InCellReader.java>` are also
