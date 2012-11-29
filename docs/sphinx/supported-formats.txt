@@ -6,6 +6,7 @@ Supported Formats
 .. tabularcolumns:: |p{3cm}|p{2cm}|c|c|c|c|c|c|c|
 
 .. list-table::
+   :class: sortable
    :header-rows: 1
    :widths: 30, 20, 10, 10, 10, 10, 10, 10, 10
 
