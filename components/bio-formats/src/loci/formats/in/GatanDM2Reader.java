@@ -132,7 +132,6 @@ public class GatanDM2Reader extends FormatReader {
     core[0].dimensionOrder = "XYZCT";
     core[0].littleEndian = false;
 
-
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
@@ -202,7 +201,7 @@ public class GatanDM2Reader extends FormatReader {
         }
       }
       int len = in.readInt();
-      if (len + in.getFilePointer() >= in.length()) break;
+      if (len + in.getFilePointer() >= in.length() || len < 0) break;
       String type = in.readString(len);
       int extra = in.readInt() - 2;
       int count = in.readInt();
