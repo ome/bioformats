@@ -1,5 +1,10 @@
-The Goal of Bio-Formats
-=======================
+About Bio-Formats
+=================
+
+Bio-Formats is a standalone Java library for reading and writing life
+sciences image file formats. It is capable of parsing both pixels and
+metadata for a large number of formats, as well as writing to several
+formats.
 
 The primary goal of Bio-Formats is to facilitate the exchange of
 microscopy data between different software packages and
@@ -63,8 +68,3 @@ metadata, original metadata, and OME metadata.
    bug free, but we are constantly working to improve it. We would
    greatly appreciate any and all input from users concerning missing or
    improperly converted metadata fields.
-
-A draft "Bio-Formats metadata guide" document detailing
-these three kinds of metadata and how the Bio-Formats metadata API
-works is available :source:`here <components/bio-formats/doc/metadata-guide.txt>` 
-and will be updated soon.

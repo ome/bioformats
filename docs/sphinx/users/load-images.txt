@@ -1,17 +1,12 @@
-Using Bio-Formats to Load Images
-================================
+Using Bio-Formats to load images into ImageJ
+============================================
 
 This section will explain how to use Bio-Formats to import files into
 ImageJ and how to use the settings on the Bio-Formats Import Options
-screen.  The sections include:
+screen.
 
--  `Opening Files <#OpeningFiles>`_
--  `Opening Files Windowlessly <#windowlessly>`_
--  `Group Files with Similar Names <#GroupFiles>`_
--  `Autoscale <#Autoscale>`_
-
-**Opening files:**
-------------------
+Opening files
+-------------
 
 There are three ways you can open a file using Bio-Formats:
 
@@ -30,14 +25,14 @@ see a screen like this:
     :alt: Bio-Formats' Import Options Screen
 
 If you used the File > Open command and did not see the Bio-Formats
-Import Options screen, ImageJ / FIJI probably used another plugin
+Import Options screen, ImageJ / Fiji probably used another plugin
 instead of Bio-Formats to open the file.   If this happens and you want
 to open a file using Bio-Formats, use one of the other two methods
 instead. 
 
 .. _load-images#windowlessly:
 
-Opening Files Windowlessly
+Opening files windowlessly
 --------------------------
 
 When you open a file with Bio-Formats, the Import Options Screen
@@ -71,8 +66,8 @@ you enable this windowless option, you will have to go back to the
 open a file using the regular **Bio-Formats Importer**, select your
 settings, and re-select the windowless option. 
 
-**Group files with Similar Names**
-----------------------------------
+Group files with similar names
+------------------------------
 
 One of the most important features of Bio-Formats is to combine multiple
 files from a data set into one coherent, multi-dimensional image.
@@ -84,7 +79,7 @@ Data <http://www.loci.wisc.edu/software/sample-data>`_ page.  You will
 notice that it is a large dataset: each of the 85 files shows the
 specimen at 33 optical sections along the z-plane at a specific time. 
 
-If you open just one file in ImageJ / FIJI using the Bio-Formats
+If you open just one file in ImageJ / Fiji using the Bio-Formats
 Importer, you will get an image incorporating three dimensions (x, y,
 z).  However, if you select “Group files with similar names” from the
 Bio-Formats Import Options screen, you will be able to create a 4-D
@@ -161,8 +156,8 @@ expression <http://download.oracle.com/javase/1.5.0/docs/api/java/util/regex/Pat
 
  
 
-**Autoscale**
--------------
+Autoscale
+---------
 
 **Autoscale** helps increase the brightness and contrast of an image by
 adjusting the range of light intensity within an image to match the

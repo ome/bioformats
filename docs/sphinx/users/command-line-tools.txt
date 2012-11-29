@@ -1,4 +1,4 @@
-Command Line Tools
+Command line tools
 ==================
 
 We have created several scripts for using Bio-Formats on the command
