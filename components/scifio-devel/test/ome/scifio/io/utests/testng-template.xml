@@ -176,37 +176,37 @@
         <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamBZip2">
       <parameter name="provider" value="BZip2Handle"/>
       <classes>
         <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamExistingByteArray">
       <parameter name="provider" value="ExistingByteArrayHandle"/>
       <classes>
         <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamGZip">
       <parameter name="provider" value="GZipHandle"/>
       <classes>
         <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamNIOFile">
       <parameter name="provider" value="NIOFileHandle"/>
       <classes>
         <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamURL">
       <parameter name="provider" value="URLHandle"/>
       <classes>
         <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamZip">
       <parameter name="provider" value="ZipHandle"/>
       <classes>
         <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>

@@ -71,7 +71,12 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.12.1</version>
+      <version>6.8</version>
+    </dependency>
+    <dependency>
+      <groupId>nl.javadude.assumeng</groupId>
+      <artifactId>assumeng</artifactId>
+      <version>1.2.2</version>
     </dependency>
   </dependencies>
 

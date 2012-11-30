@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.tests;
+package loci.tests.testng;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
