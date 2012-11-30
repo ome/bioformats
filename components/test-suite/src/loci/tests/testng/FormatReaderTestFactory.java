@@ -37,6 +37,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Factory for scanning a directory structure and generating instances of
  * {@link FormatReaderTest} based on the image files found.
+ * <p>
+ * Note that this approach works due to an implementation detail of TestNG.
+ * Ideally we would use the lazy iterator approach instead, but it does not
+ * execute methods in the correct order. For details, see <a
+ * href="http://code.google.com/p/testng/issues/detail?id=19#c6">this
+ * issue</a>.
+ * </p>
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/FormatReaderTestFactory.java">Trac</a>,
