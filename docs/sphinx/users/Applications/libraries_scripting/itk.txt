@@ -12,7 +12,7 @@ a dependency injection scheme. This allows a program built on ITK to
 load plug-ins for reading and writing different image types without
 actually linking to the ImageIO libraries required for those types. Such
 encapsulation automatically grants two major boons: firstly, programs
-can be easily extended just by virtue of using ITK (developers don't
+can be easily extended just by virtue of using ITK (developers do not
 have to specifically accommodate or anticipate what plug-ins may be
 used). Secondly, the architecture provides a distribution method for
 open source software, like Bio-Formats, which have licenses that might
@@ -64,13 +64,7 @@ Installation
 
 #. Compile BF-ITK:
 
-   On Linux and OSX, simply run::
-
-        make
-
-   On Windows::
-
-        start BioFormatsImageIO.sln
+   On Linux and OSX, simply run ``make``, or on Windows ``start BioFormatsImageIO.sln``.
 
    This will open the solution in Visual Studio. Select ``Debug`` or
    ``Release`` from the drop-down menu, as appropriate. Press ``F7``
@@ -84,21 +78,15 @@ Installation
 
    If desired, everything can be packaged into a single archive by running:
 
-   On Linux and OSX::
-
-        make package
-
-   On Windows:
-
-   Click on the ``PACKAGE`` target in the Visual Studio interface.
+   On Linux and OSX, ``make package`` or on Windows, click on the ``PACKAGE`` target in the Visual Studio interface.
    Then choose ``Build PACKAGE`` from the Build menu.
 
 Usage
 -----
 
 To use BF-ITK, you must set your ``ITK_AUTOLOAD_PATH`` to point to the
-folder containing the BF-ITK binaries (including the ``BioFormatsIO``
-and ``BioFormatsIOPlugin`` shared libraries, and the ``loci_tools.jar``
+folder containing the BF-ITK binaries (including the **BioFormatsIO**
+and **BioFormatsIOPlugin** shared libraries, and the **loci_tools.jar**
 Java library). For example::
 
      export ITK_AUTOLOAD_PATH=~/bf-itk-build/dist/bf-itk
@@ -106,7 +94,7 @@ Java library). For example::
 Once this variable is set, ITK's ImageIO routines will automatically use
 Bio-Formats as needed to read and write supported file formats.
 
-If you built ITK with examples, you can test using various programs::
+If you build ITK with examples, you can test using various programs::
 
      cd ~/itk-build/bin
      ./ImageReadWrite ~/data/inputFile.ics ~/data/outputFile.mha
