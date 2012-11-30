@@ -2,7 +2,6 @@
 #
 
 # You can set these variables from the command line.
-PWD = $(shell pwd)
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
