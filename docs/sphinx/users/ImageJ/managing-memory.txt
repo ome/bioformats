@@ -9,14 +9,14 @@ warning like this:
    :alt: Memory warning
 
 This means the allotted memory is less than what Bio-Formats needs to
-load all the images.  If you have a very large data set, you may have to
+load all the images.  If you have a very large data set, you may have to:
 
  
 -  View your stack with Data Browser
 -  Crop the view area
 -  Open only a subset of images
 -  Use Virtual Stack
--  Increase ImageJ / Fiji’s memory.
+-  Increase ImageJ/Fiji’s memory.
 
  
 
@@ -37,8 +37,8 @@ view large 3, 4, or 5-D datasets by caching a subset of all the images
 available. This enables users to view a stack that is bigger than the
 computer’s memory.
 
-You can select Data Browser as an option for “View stack with,” the
-leftmost, uppermost option in the Bio-Formats Import Options screen.
+You can select Data Browser as an option for **View stack with,** the
+leftmost, uppermost option in the **Bio-Formats Import Options** screen.
 
 .. image:: /images/DataBrowser.jpg
    :align: center
@@ -54,7 +54,7 @@ Cropping the view area
 ~~~~~~~~~~~~~~~~~~~~~~
 
 **Crop on Import** is useful if your images are very large and you are
-only interested in one specific section of the stack you’re importing. 
+only interested in one specific section of the stack you are importing. 
 If you select this feature, you will see a screen where you can enter
 the height and width (in pixels) of the part of image you want to see.
 Note that these measurements are from the top left corner of the image.
@@ -75,20 +75,20 @@ Use Virtual Stack
 necessary. Note that unlike Data Browser, Virtual Stack does not contain
 a buffer and may produce choppy animations.
 
-Increasing ImageJ / Fiji’s memory
+Increasing ImageJ/Fiji’s memory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Finally, can also increase the amount of the computer memory devoted to
-ImageJ / Fiji by selecting Memory & Threads under the Edit menu.
+Finally, you can also increase the amount of the computer memory devoted to
+ImageJ/Fiji by selecting **Memory & Threads** under the **Edit** menu.
 
 .. image:: /images/IncreaseMemory.jpg
    :align: center
    :alt: Fiji's Memory Allocation Menu
 
 Generally, allocating more than 75% of the computer’s total memory will
-cause ImageJ / Fiji to become slow and unstable.
+cause ImageJ/Fiji to become slow and unstable.
 
-**Please note** that unlike the other three features, ImageJ / Fiji itself
+**Please note** that unlike the other three features, ImageJ/Fiji itself
 provides this feature and not Bio-Formats.  You can find out more about
 this feature by looking at ImageJ’s
 `documentation <http://rsbweb.nih.gov/ij/docs/menus/edit.html#options>`_.
