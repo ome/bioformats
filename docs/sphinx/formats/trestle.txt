@@ -53,7 +53,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`TrestleReader.java <components/bio-formats/src/loci/formats/in/TrestleReader.java >`
+Source Code: :bfreader:`TrestleReader.java`
 
 Notes:
 

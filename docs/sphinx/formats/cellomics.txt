@@ -50,7 +50,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`CellomicsReader.java <components/bio-formats/src/loci/formats/in/CellomicsReader.java >`
+Source Code: :bfreader:`CellomicsReader.java`
 
 Notes:
 

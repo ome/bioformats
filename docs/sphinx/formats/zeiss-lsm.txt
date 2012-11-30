@@ -58,7 +58,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`ZeissLSMReader.java <components/bio-formats/src/loci/formats/in/ZeissLSMReader.java >`
+Source Code: :bfreader:`ZeissLSMReader.java`
 
 Notes:
 

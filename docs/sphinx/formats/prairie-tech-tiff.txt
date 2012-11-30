@@ -53,7 +53,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`PrairieReader.java <components/bio-formats/src/loci/formats/in/PrairieReader.java >`
+Source Code: :bfreader:`PrairieReader.java`
 
 Notes:
 

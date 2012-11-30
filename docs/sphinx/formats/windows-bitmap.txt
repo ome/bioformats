@@ -53,7 +53,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`BMPReader.java <components/scifio/src/loci/formats/in/BMPReader.java >`
+Source Code: :scifioreader:`BMPReader.java`
 
 Notes:
 

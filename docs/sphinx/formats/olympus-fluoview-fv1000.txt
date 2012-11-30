@@ -56,7 +56,7 @@ Utility: |Very good|
 Additional Information
 ----------------------
 
-Source Code: :source:`FV1000Reader.java <components/bio-formats/src/loci/formats/in/FV1000Reader.java >`
+Source Code: :bfreader:`FV1000Reader.java`
 
 Notes:
 

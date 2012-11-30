@@ -53,7 +53,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`L2DReader.java <components/bio-formats/src/loci/formats/in/L2DReader.java >`
+Source Code: :bfreader:`L2DReader.java`
 
 Notes:
 

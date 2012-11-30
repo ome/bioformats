@@ -53,7 +53,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`VarianFDFReader.java <components/bio-formats/src/loci/formats/in/VarianFDFReader.java >`
+Source Code: :bfreader:`VarianFDFReader.java`
 
 Notes:
 

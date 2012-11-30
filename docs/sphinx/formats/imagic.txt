@@ -53,7 +53,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`ImagicReader.java <components/bio-formats/src/loci/formats/in/ImagicReader.java >`
+Source Code: :bfreader:`ImagicReader.java`
 
 Notes:
 

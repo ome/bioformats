@@ -53,7 +53,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`PDSReader.java <components/bio-formats/src/loci/formats/in/PDSReader.java >`
+Source Code: :bfreader:`PDSReader.java`
 
 Notes:
 
