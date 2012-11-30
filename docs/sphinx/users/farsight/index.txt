@@ -30,7 +30,11 @@ these projects:
 -  `This
    tutorial <http://www.farsight-toolkit.org/wiki/FARSIGHT_HowToBuild>`_
    will guide you through building FARSIGHT exclusively. Once FARSIGHT
+<<<<<<< HEAD:docs/sphinx/users/farsight/index.txt
    is built, you can follow the instructions on the :doc:`/users/itk/index`
+=======
+   is built, you can follow the instructions on the :doc:`itk`
+>>>>>>> e7845b0... Final format and style fixing - conflict fix:docs/sphinx/users/Applications/libraries_scripting/farsight.txt
    page to download and install a pre-built version of BFTIK.
 -  `The tutorials on this
    page <http://www.farsight-toolkit.org/wiki/FARSIGHT_Tutorials/Building_Software/Bio-Formats>`_
