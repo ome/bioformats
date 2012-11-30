@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`MolecularImagingReader.java <components/bio-formats/src/loci/formats/in/MolecularImagingReader.java >`
+Source Code: :bfreader:`MolecularImagingReader.java`
 
 Notes:
 

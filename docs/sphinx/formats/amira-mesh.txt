@@ -46,7 +46,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`AmiraReader.java <components/bio-formats/src/loci/formats/in/AmiraReader.java >`
+Source Code: :bfreader:`AmiraReader.java`
 
 Notes:
 

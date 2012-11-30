@@ -53,7 +53,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`VolocityClippingReader.java <components/bio-formats/src/loci/formats/in/VolocityClippingReader.java >`
+Source Code: :bfreader:`VolocityClippingReader.java`
 
 Notes:
 

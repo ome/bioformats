@@ -53,7 +53,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`IvisionReader.java <components/bio-formats/src/loci/formats/in/IvisionReader.java >`
+Source Code: :bfreader:`IvisionReader.java`
 
 Notes:
 

@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`JPKReader.java <components/bio-formats/src/loci/formats/in/JPKReader.java >`
+Source Code: :bfreader:`JPKReader.java`
 
 Notes:
 

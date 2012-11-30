@@ -54,7 +54,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`TargaReader.java <components/bio-formats/src/loci/formats/in/TargaReader.java >`
+Source Code: :bfreader:`TargaReader.java`
 
 Notes:
 

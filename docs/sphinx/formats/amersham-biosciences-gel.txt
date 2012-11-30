@@ -48,7 +48,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`GelReader.java <components/bio-formats/src/loci/formats/in/GelReader.java >`
+Source Code: :bfreader:`GelReader.java`
 
 Notes:
 

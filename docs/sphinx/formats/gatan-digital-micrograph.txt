@@ -57,7 +57,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`GatanReader.java <components/bio-formats/src/loci/formats/in/GatanReader.java >`
+Source Code: :bfreader:`GatanReader.java`
 
 Notes:
 

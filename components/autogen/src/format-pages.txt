@@ -328,11 +328,11 @@ metadataRating = Very good
 opennessRating = Good
 presenceRating = Fair
 utilityRating = Fair
-reader = ImarisReader, ImarisTiffReader, ImarisHDFReader.java
+reader = ImarisReader.java, ImarisTiffReader.java, ImarisHDFReader.java
 notes = - There are three distinct Imaris formats: \n
-  #. the old binary format (introduced in Imaris version 2.7) \n
-  #. Imaris 3, a TIFF variant (introduced in Imaris version 3.0) \n
-  #. Imaris 5.5, an HDF variant (introduced in Imaris version 5.5)
+    #. the old binary format (introduced in Imaris version 2.7) \n
+    #. Imaris 3, a TIFF variant (introduced in Imaris version 3.0) \n
+    #. Imaris 5.5, an HDF variant (introduced in Imaris version 5.5)
 
 [Bruker MRI]
 developer = `Bruker <http://www.bruker.com/>`_
@@ -1102,7 +1102,7 @@ developer = `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
 scifio = no
 export = no
 versions = 1.0, 2.0
-software = `Leica LAS AF Lite <ftp://ftp.llt.de/softlib/LAS_AF_Lite/1.7.0_build_1111/setup.exe>`_
+software = `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-software/life-sciences/las-af-advanced-fluorescence/>`_ (links at bottom of page)
 weHave = a LIF specification document (version 2, from no later than 2007 July 26, in PDF) \n
 a LIF specification document (version 1, from no later than 206 April 3, in PDF) \n
 numerous LIF datasets

@@ -54,7 +54,7 @@ Utility: |Very good|
 Additional Information
 ----------------------
 
-Source Code: :source:`LeicaReader.java <components/bio-formats/src/loci/formats/in/LeicaReader.java >`
+Source Code: :bfreader:`LeicaReader.java`
 
 Notes:
 
