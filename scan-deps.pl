@@ -261,6 +261,19 @@ ZZ
   VERSION => "1.0b3"
 );
 
+my %assumeng = (
+  NAME    => "assumeng",
+  TITLE   => "AssumeNG",
+  JAR     => "assumeng-1.2.3-jdk15.jar",
+  PACKAGE => "nl.javadude.assumeng",
+  LICENSE => "Public domain",
+  URL     => "https://github.com/hierynomus/assumeng/",
+  NOTES   => <<ZZ,
+used by test-suite for conditional test exclusions
+ZZ
+  VERSION => "1.0b3"
+);
+
 my %checkstyle = (
   NAME    => "checkstyle",
   TITLE   => "Checkstyle",
@@ -446,7 +459,7 @@ ZZ
 my %testng = (
   NAME    => "testng",
   TITLE   => "TestNG",
-  JAR     => "testng-5.11-jdk15.jar",
+  JAR     => "testng-6.8.jar",
   PACKAGE => "org.testng",
   LICENSE => "Apache",
   URL     => "http://testng.org/",
@@ -545,6 +558,7 @@ my @components = (@active, @forks, @stubs);
 # List of external libraries
 my @libs = (
   \%antContrib,
+  \%assumeng,
   \%checkstyle,
   \%commonsHTTPClient,
   \%commonsLogging,

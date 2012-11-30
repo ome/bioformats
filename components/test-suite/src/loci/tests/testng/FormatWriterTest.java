@@ -40,12 +40,14 @@ import loci.formats.ImageWriter;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
-import loci.formats.services.OMEXMLService;
 import loci.formats.out.JPEG2000Writer;
 import loci.formats.out.JPEGWriter;
+import loci.formats.services.OMEXMLService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * TestNG tester for Bio-Formats file format writers.
@@ -104,9 +106,7 @@ public class FormatWriterTest {
 
   // -- Data provider --
 
-  /**
-   * @testng.data-provider name="getWriterList"
-   */
+  @DataProvider(name = "getWriterList")
   public Object[][] getWriterList() {
     IFormatWriter[] writers = new ImageWriter().getWriters();
     Vector tmp = new Vector();
@@ -145,10 +145,7 @@ public class FormatWriterTest {
 
   // -- Tests --
 
-  /**
-   * @testng.test groups = "all"
-   *              dataProvider = "getWriterList"
-   */
+  @Test(groups = {"all"}, dataProvider = "getWriterList")
   public void testWriterConsistency(IFormatWriter writer) {
     String testName = TestTools.shortClassName(writer) + " " +
       writer.getCompression() + " testWriterConsistency";
