@@ -68,11 +68,11 @@ onscreen using the Bio-Formats viewer.
 
 :source:`PrintTimestamps <components/bio-formats/utils/PrintTimestamps.java>` - A command line example demonstrating how to extract timestamps from a file.
 
-:source:`Simple_Read <components/loci-plugins/utils/Simple_Read.java>` - A simple ImageJ plugin demonstrating how to use Bio-Formats to read files into ImageJ (see also :doc:`/users/imagej`).
+:source:`Simple_Read <components/loci-plugins/utils/Simple_Read.java>` - A simple ImageJ plugin demonstrating how to use Bio-Formats to read files into ImageJ (see also :doc:`/users/Applications/visual_analysis/imagej`).
 
-:source:`Read_Image <components/loci-plugins/utils/Read_Image.java>` - An ImageJ plugin that uses Bio-Formats to build up an image stack, reading image planes one by one (see also :doc:`/users/imagej`).
+:source:`Read_Image <components/loci-plugins/utils/Read_Image.java>` - An ImageJ plugin that uses Bio-Formats to build up an image stack, reading image planes one by one (see also :doc:`/users/Applications/visual_analysis/imagej`).
 
-:source:`Mass_Importer <components/loci-plugins/utils/Mass_Importer.java>` - A simple plugin for ImageJ that demonstrates how to open all image files in a directory using Bio-Formats, grouping files with similar names to avoiding opening the same dataset more than once (see also :doc:`/users/imagej`).
+:source:`Mass_Importer <components/loci-plugins/utils/Mass_Importer.java>` - A simple plugin for ImageJ that demonstrates how to open all image files in a directory using Bio-Formats, grouping files with similar names to avoiding opening the same dataset more than once (see also :doc:`/users/Applications/visual_analysis/imagej`).
 
 
 A Note on Java Web Start (loci\_tools.jar vs. bio-formats.jar)

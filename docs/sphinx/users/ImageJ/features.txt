@@ -51,4 +51,4 @@ following features:
 
 - The **Update LOCI Plugins** command will check for LOCI Plugins updates.
   We recommend you update to the newest Trunk build as soon as you think
-  you may have :doc:`discovered a bug. <bug-reporting>`
+  you may have :doc:`discovered a bug. </bug-reporting>`

@@ -41,8 +41,8 @@ You can select Data Browser as an option for “View stack with,” the
 leftmost, uppermost option in the Bio-Formats Import Options screen.
 
  .. image:: /images/DataBrowser.img_assist_custom-561x300.jpg
-   :align: center
-   :alt: Data Browser
+    :align: center
+    :alt: Data Browser
 
 Note that when you use Data Browser, other features like cropping and
 specifying range are not available.  You can, however, adjust the size
