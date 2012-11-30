@@ -18,7 +18,7 @@ For help, see the
 and `OME-XML and OME-TIFF <http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
 sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ for answers to
 some common questions. Please `contact us <http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
-you have any questions or problems with Bio-Formats.
+you have any questions or problems with Bio-Formats. There is a :doc:`guide for reporting bugs here <bug-reporting>`.
 
 For advanced users and developers, further information is available on the :doc:`troubleshooting page <troubleshooting>`.
 
@@ -40,6 +40,7 @@ roadmaps.
     users/user-info
     developers/developer-links
     supported-formats
+    bug-reporting
     troubleshooting
     whats-new
 

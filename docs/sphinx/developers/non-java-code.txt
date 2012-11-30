@@ -13,7 +13,7 @@ comparison <http://codemesh.com/technology.html>`_.
 
 Recommended **in-process solution**: :doc:`c-bindings`
 
-Recommended **inter-process solution**: :doc:`/users/subimager`
+Recommended **inter-process solution**: :doc:`/users/Applications/libraries_scripting/subimager`
 
 In-process approaches
 ---------------------
