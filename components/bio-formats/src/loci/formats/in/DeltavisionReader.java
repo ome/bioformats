@@ -985,13 +985,15 @@ public class DeltavisionReader extends FormatReader {
           if (value.indexOf(" ") != -1) {
             value = value.substring(value.indexOf(" ") + 1);
           }
-          String objectiveID = "Objective:" + value;
-          store.setObjectiveID(objectiveID, 0, 0);
-          for (int series=0; series<getSeriesCount(); series++) {
-            store.setObjectiveSettingsID(objectiveID, series);
+          if (!value.equals("null")) {
+            String objectiveID = "Objective:" + value;
+            store.setObjectiveID(objectiveID, 0, 0);
+            for (int series=0; series<getSeriesCount(); series++) {
+              store.setObjectiveSettingsID(objectiveID, series);
+            }
+            store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+            store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
           }
-          store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-          store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
         }
         // Image properties
         else if (key.equals("Pixel Size")) {
