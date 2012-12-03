@@ -53,7 +53,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`AVIReader.java <components/scifio/src/loci/formats/in/AVIReader.java >`
+Source Code: :scifioreader:`AVIReader.java`
 
 Notes:
 

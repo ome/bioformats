@@ -53,7 +53,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`TillVisionReader.java <components/bio-formats/src/loci/formats/in/TillVisionReader.java >`
+Source Code: :bfreader:`TillVisionReader.java`
 
 Notes:
 

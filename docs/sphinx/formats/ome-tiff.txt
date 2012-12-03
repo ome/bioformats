@@ -55,8 +55,8 @@ Utility: |Outstanding|
 Additional Information
 ----------------------
 
-Source Code: :source:`OMETiffReader.java <components/scifio/src/loci/formats/in/OMETiffReader.java >`
-Source Code: :source:`OMETiffWriter.java <components/scifio/src/loci/formats/out/OMETiffWriter.java >`
+Source Code: :scifioreader:`OMETiffReader.java`
+Source Code: :scifiowriter:`OMETiffWriter.java`
 
 Notes:
 

@@ -52,7 +52,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`CellWorxReader.java <components/bio-formats/src/loci/formats/in/CellWorxReader.java >`
+Source Code: :bfreader:`CellWorxReader.java`
 
 Notes:
 

@@ -122,6 +122,9 @@ if "SOURCE_BRANCH" in os.environ:
 else:
     source_branch = 'develop'
 
+bf_github_root = 'https://github.com/openmicroscopy/bioformats/'
+bf_github = bf_github_root + 'blob/' + source_branch + '/'
+
 extlinks = {
     'wiki' : ('http://trac.openmicroscopy.org.uk/ome/wiki/'+ '%s', ''),
     'ticket' : ('http://trac.openmicroscopy.org.uk/ome/ticket/'+ '%s', '#'),
@@ -129,7 +132,11 @@ extlinks = {
     'plone' : ('http://www.openmicroscopy.org/site/'+ '%s', ''),
     'oo' : ('http://www.openmicroscopy.org/' + '%s', ''),
     'doi' : ('http://dx.doi.org/' + '%s', ''),
-    'source' : ('https://github.com/openmicroscopy/bioformats/blob/' + source_branch + '/' + '%s', ''),
+    'source' : (bf_github + '%s', ''),
+    'bfreader' : (bf_github + 'components/bio-formats/src/loci/formats/in/' + '%s', ''),
+    'scifioreader' : (bf_github + 'components/scifio/src/loci/formats/in/' + '%s', ''),
+    'bfwriter' : (bf_github + 'components/bio-formats/src/loci/formats/out/' + '%s', ''),
+    'scifiowriter' : (bf_github + 'components/scifio/src/loci/formats/out/' + '%s', ''),
     'javadoc' : ('http://hudson.openmicroscopy.org.uk/job/OMERO/javadoc/' + '%s', ''),
     'jenkins' : ('http://hudson.openmicroscopy.org.uk/' + '%s', ''),
     'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
@@ -199,7 +206,8 @@ html_static_path = []
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-html_sidebars = { '**' : ['globaltoc.html', 'pagetoc.html',  'searchbox.html', 'sourcelink.html'] }
+html_sidebars = { '**' : ['globalbftoc.html', 'pagetoc.html',
+'relations.html', 'searchbox.html', 'sourcelink.html'] }
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.

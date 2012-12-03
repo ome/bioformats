@@ -47,7 +47,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`AnalyzeReader.java <components/bio-formats/src/loci/formats/in/AnalyzeReader.java >`
+Source Code: :bfreader:`AnalyzeReader.java`
 
 Notes:
 

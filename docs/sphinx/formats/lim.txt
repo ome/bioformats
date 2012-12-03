@@ -53,7 +53,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`LIMReader.java <components/bio-formats/src/loci/formats/in/LIMReader.java >`
+Source Code: :bfreader:`LIMReader.java`
 
 Notes:
 

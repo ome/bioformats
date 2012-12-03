@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`LEOReader.java <components/bio-formats/src/loci/formats/in/LEOReader.java >`
+Source Code: :bfreader:`LEOReader.java`
 
 Notes:
 

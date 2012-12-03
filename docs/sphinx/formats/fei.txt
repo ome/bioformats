@@ -55,7 +55,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`FEIReader.java <components/bio-formats/src/loci/formats/in/FEIReader.java >`
+Source Code: :bfreader:`FEIReader.java`
 
 Notes:
 

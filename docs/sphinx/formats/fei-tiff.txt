@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`FEITiffReader.java <components/bio-formats/src/loci/formats/in/FEITiffReader.java >`
+Source Code: :bfreader:`FEITiffReader.java`
 
 Notes:
 

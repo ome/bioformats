@@ -167,43 +167,43 @@
         <class name="loci.legacy.utests.LegacyAdapterTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamByteArray">
       <parameter name="provider" value="ByteArrayHandle"/>
       <classes>
         <class name="loci.common.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamBZip">
       <parameter name="provider" value="BZip2Handle"/>
       <classes>
         <class name="loci.common.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamExistingByteArray">
       <parameter name="provider" value="ExistingByteArrayHandle"/>
       <classes>
         <class name="loci.common.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamGZip">
       <parameter name="provider" value="GZipHandle"/>
       <classes>
         <class name="loci.common.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamNIOFile">
       <parameter name="provider" value="NIOFileHandle"/>
       <classes>
         <class name="loci.common.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamURL">
       <parameter name="provider" value="URLHandle"/>
       <classes>
         <class name="loci.common.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
-    <test name="RandomAccessInputStream">
+    <test name="RandomAccessInputStreamZip">
       <parameter name="provider" value="ZipHandle"/>
       <classes>
         <class name="loci.common.utests.RandomAccessInputStreamTest"/>

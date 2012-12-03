@@ -56,7 +56,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`GatanDM2Reader.java <components/bio-formats/src/loci/formats/in/GatanDM2Reader.java >`
+Source Code: :bfreader:`GatanDM2Reader.java`
 
 Notes:
 

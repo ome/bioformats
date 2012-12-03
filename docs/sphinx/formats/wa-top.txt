@@ -55,7 +55,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`WATOPReader.java <components/bio-formats/src/loci/formats/in/WATOPReader.java >`
+Source Code: :bfreader:`WATOPReader.java`
 
 Notes:
 

@@ -60,7 +60,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`IPWReader.java <components/bio-formats/src/loci/formats/in/IPWReader.java >`
+Source Code: :bfreader:`IPWReader.java`
 
 Notes:
 
