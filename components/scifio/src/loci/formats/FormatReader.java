@@ -1136,10 +1136,6 @@ public abstract class FormatReader extends FormatHandler
       return getCoreIndex() - resolution;
     }
 
-    if (hasFlattenedResolutions()) {
-      return 1;
-    }
-
     int index = 0;
     for (int i = 0; i < series && index < core.length; i++) {
       if (core[i] != null)
@@ -1191,12 +1187,11 @@ public abstract class FormatReader extends FormatHandler
   public int getResolutionCount() {
     FormatTools.assertId(currentId, true, 1);
 
-    int index = 0;
-    for (int i=0; i<getSeries(); i++) {
-      index += core[index].resolutionCount;
+    if (hasFlattenedResolutions()) {
+      return 1;
     }
 
-    return core[index].resolutionCount;
+    return core[seriesToCoreIndex(getSeries())].resolutionCount;
   }
 
   /* @see IFormatReader#setResolution(int) */
