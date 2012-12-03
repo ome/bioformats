@@ -53,7 +53,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`SBIGReader.java <components/bio-formats/src/loci/formats/in/SBIGReader.java >`
+Source Code: :bfreader:`SBIGReader.java`
 
 Notes:
 

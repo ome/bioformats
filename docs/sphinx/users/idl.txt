@@ -13,10 +13,8 @@ Bio-Formats to read in image files to IDL.
 Installation
 ------------
 
-Download the `**ij\_read\_bio\_formats.pro**
-script <http://www.helmholtz-muenchen.de/ibb/homepage/karsten.rodenacker/IDL/_pro/ij_read_bio_formats.pro>`_
-from Karsten Rodenacker's `IDL goodies (?) web
-site <http://www.helmholtz-muenchen.de/ibb/homepage/karsten.rodenacker/IDL/index.php>`_.
+Download the `ij_read_bio_formats.pro <http://www.helmholtz-muenchen.de/ibb/homepage/karsten.rodenacker/IDL/_pro/ij_read_bio_formats.pro>`_ script
+from Karsten Rodenacker's `IDL goodies (?) <http://www.helmholtz-muenchen.de/ibb/homepage/karsten.rodenacker/IDL/index.php>`_ web site.
 See the comments at the top of the script for installation instructions
 and caveats.
 
@@ -24,4 +22,4 @@ Upgrading
 ---------
 
 To use a newer version of Bio-Formats, overwrite the requisite JAR files
-with the `newer version <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_ and restart IDL.
+with the :bf_plone:`newer version <downloads>` and restart IDL.

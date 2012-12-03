@@ -54,7 +54,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`KhorosReader.java <components/bio-formats/src/loci/formats/in/KhorosReader.java >`
+Source Code: :bfreader:`KhorosReader.java`
 
 Notes:
 

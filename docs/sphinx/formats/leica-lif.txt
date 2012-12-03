@@ -23,7 +23,7 @@ Supported Metadata Fields:
 
 Freely Available Software:
 
-- `Leica LAS AF Lite <ftp://ftp.llt.de/softlib/LAS_AF_Lite/1.7.0_build_1111/setup.exe>`_
+- `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-software/life-sciences/las-af-advanced-fluorescence/>`_ (links at bottom of page)
 
 Sample Datasets:
 
@@ -55,7 +55,7 @@ Utility: |Very good|
 Additional Information
 ----------------------
 
-Source Code: :source:`LIFReader.java <components/bio-formats/src/loci/formats/in/LIFReader.java >`
+Source Code: :bfreader:`LIFReader.java`
 
 Notes:
 

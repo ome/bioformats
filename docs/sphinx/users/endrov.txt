@@ -1,7 +1,7 @@
 Endrov
 ======
 
-`Endrov <http://www.endrov.net/>`_ (EV) is a multi-purpose image
+`Endrov <https://github.com/mahogny/Endrov>`_ (or http://www.endrov.net) (EV) is a multi-purpose image
 analysis program developed by the `Thomas Burglin
 group <http://www.biosci.ki.se/groups/tbu>`_ at `Karolinska
 Institute <http://www.ki.se/>`_, Department of Biosciences and
@@ -17,8 +17,7 @@ Upgrading
 ---------
 
 It should be possible to use a newer version of Bio-Formats by
-`downloading the latest
-**bio-formats.jar** <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`
+downloading the latest :bf_plone:`bio-formats.jar <downloads>`
 and putting it into the ``libs`` folder of the EV distribution,
 overwriting the old file.
 

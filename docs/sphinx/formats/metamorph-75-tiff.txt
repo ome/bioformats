@@ -52,7 +52,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`MetamorphTiffReader.java <components/bio-formats/src/loci/formats/in/MetamorphTiffReader.java >`
+Source Code: :bfreader:`MetamorphTiffReader.java`
 
 Notes:
 

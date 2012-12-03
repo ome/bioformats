@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`HamamatsuVMSReader.java <components/bio-formats/src/loci/formats/in/HamamatsuVMSReader.java >`
+Source Code: :bfreader:`HamamatsuVMSReader.java`
 
 Notes:
 

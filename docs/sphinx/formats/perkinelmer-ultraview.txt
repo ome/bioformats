@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`PerkinElmerReader.java <components/bio-formats/src/loci/formats/in/PerkinElmerReader.java >`
+Source Code: :bfreader:`PerkinElmerReader.java`
 
 Notes:
 

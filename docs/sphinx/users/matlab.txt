@@ -7,12 +7,12 @@ of algorithms for performing computationally intensive tasks.
 
 Calling Bio-Formats from MATLAB is fairly straightforward, since MATLAB
 has built-in interoperability with Java. We have created a simple script
-for reading image files:
-
-    :source:`bfopen.m <components/bio-formats/matlab/bfopen.m>`
+for reading image files: |bfopen|.
 
 We are not MATLAB experts—any comments on improving the script are
 welcome.
+
+.. |bfopen| replace:: :source:`bfopen.m <components/bio-formats/matlab/bfopen.m>`
 
 Performance
 -----------
@@ -25,13 +25,13 @@ overhead from copying arrays.
 Installation
 ------------
 
-To use the script, download **bfopen.m** (above) and `**loci\_tools.jar** <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_ and place them in your MATLAB work directory.
+To use the script, download |bfopen| and :bf_plone:`loci_tools.jar <downloads>` and place them in your MATLAB work directory.
 
 Upgrading
 ---------
 
-To use a newer version of Bio-Formats, overwrite **loci\_tools.jar**
-with the `newer version <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>`_ and restart MATLAB.
+To use a newer version of Bio-Formats, overwrite **loci_tools.jar**
+with the :bf_plone:`newer version <downloads>` and restart MATLAB.
 
 More information
 ----------------

@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`IMODReader.java <components/bio-formats/src/loci/formats/in/IMODReader.java >`
+Source Code: :bfreader:`IMODReader.java`
 
 Notes:
 

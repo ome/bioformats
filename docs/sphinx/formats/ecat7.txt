@@ -57,7 +57,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`Ecat7Reader.java <components/bio-formats/src/loci/formats/in/Ecat7Reader.java >`
+Source Code: :bfreader:`Ecat7Reader.java`
 
 Notes:
 

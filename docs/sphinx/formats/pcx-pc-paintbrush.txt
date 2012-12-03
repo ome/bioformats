@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`PCXReader.java <components/scifio/src/loci/formats/in/PCXReader.java >`
+Source Code: :scifioreader:`PCXReader.java`
 
 Notes:
 

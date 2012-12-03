@@ -53,7 +53,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`MNGReader.java <components/scifio/src/loci/formats/in/MNGReader.java >`
+Source Code: :scifioreader:`MNGReader.java`
 
 Notes:
 

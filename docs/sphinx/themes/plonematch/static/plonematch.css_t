@@ -168,8 +168,22 @@ div.related {
 	text-align: left;
 }
 
+pre {
+    /* Override the style applied to pre by ploneCustom.css */
+    max-width: none !important;
+}
+
+a.internal > em {
+    /* Remove italics from hyperlinks to internal content*/
+    font-style: normal;
+}
+
 }
 
 @media print{
-	
+
+#portal-top {
+    display:none;
+}
+
 }

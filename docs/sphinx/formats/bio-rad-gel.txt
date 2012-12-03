@@ -52,7 +52,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`BioRadGelReader.java <components/bio-formats/src/loci/formats/in/BioRadGelReader.java >`
+Source Code: :bfreader:`BioRadGelReader.java`
 
 Notes:
 

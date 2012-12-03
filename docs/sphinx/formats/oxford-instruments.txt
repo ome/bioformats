@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`OxfordInstrumentsReader.java <components/bio-formats/src/loci/formats/in/OxfordInstrumentsReader.java >`
+Source Code: :bfreader:`OxfordInstrumentsReader.java`
 
 Notes:
 

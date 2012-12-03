@@ -55,7 +55,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`TopometrixReader.java <components/bio-formats/src/loci/formats/in/TopometrixReader.java >`
+Source Code: :bfreader:`TopometrixReader.java`
 
 Notes:
 

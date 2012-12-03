@@ -23,7 +23,7 @@
  * #L%
  */
 
-package loci.tests;
+package loci.tests.testng;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -33,6 +33,12 @@ import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.spi.ErrorCode;
 
+/**
+ * A class for appending a timestamp to the log file name produced by the
+ * logging framework.
+ *
+ * @author Blazej Pindelski <bpindelski at dundee dot ac dot uk>
+ */
 public class TimestampedLogFileAppender extends FileAppender {
 
     public TimestampedLogFileAppender() {

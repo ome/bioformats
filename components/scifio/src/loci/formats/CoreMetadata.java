@@ -45,7 +45,7 @@ import java.util.Hashtable;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/CoreMetadata.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/CoreMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class CoreMetadata {
+public class CoreMetadata implements Cloneable {
 
   // -- Fields --
 
@@ -156,12 +156,61 @@ public class CoreMetadata {
     seriesMetadata = new Hashtable<String, Object>();
   }
 
-  public CoreMetadata(IFormatReader r, int seriesNo) {
-    copy(r, seriesNo);
+  public CoreMetadata(IFormatReader r, int coreIndex) {
+    int currentIndex = r.getCoreIndex();
+    r.setCoreIndex(coreIndex);
+
+    sizeX = r.getSizeX();
+    sizeY = r.getSizeY();
+    sizeZ = r.getSizeZ();
+    sizeC = r.getSizeC();
+    sizeT = r.getSizeT();
+    thumbSizeX = r.getThumbSizeX();
+    thumbSizeY = r.getThumbSizeY();
+    pixelType = r.getPixelType();
+    bitsPerPixel = r.getBitsPerPixel();
+    imageCount = r.getImageCount();
+    cLengths = r.getChannelDimLengths();
+    cTypes = r.getChannelDimTypes();
+    dimensionOrder = r.getDimensionOrder();
+    orderCertain = r.isOrderCertain();
+    rgb = r.isRGB();
+    littleEndian = r.isLittleEndian();
+    interleaved = r.isInterleaved();
+    indexed = r.isIndexed();
+    falseColor = r.isFalseColor();
+    metadataComplete = r.isMetadataComplete();
+    seriesMetadata = r.getSeriesMetadata();
+    thumbnail = r.isThumbnailSeries();
+    resolutionCount = r.getResolutionCount();
+
+    r.setCoreIndex(currentIndex);
   }
 
   public CoreMetadata(CoreMetadata c) {
-    copy(c);
+    sizeX = c.sizeX;
+    sizeY = c.sizeY;
+    sizeZ = c.sizeZ;
+    sizeC = c.sizeC;
+    sizeT = c.sizeT;
+    thumbSizeX = c.thumbSizeX;
+    thumbSizeY = c.thumbSizeY;
+    pixelType = c.pixelType;
+    bitsPerPixel = c.bitsPerPixel;
+    imageCount = c.imageCount;
+    cLengths = c.cLengths;
+    cTypes = c.cTypes;
+    dimensionOrder = c.dimensionOrder;
+    orderCertain = c.orderCertain;
+    rgb = c.rgb;
+    littleEndian = c.littleEndian;
+    interleaved = c.interleaved;
+    indexed = c.indexed;
+    falseColor = c.falseColor;
+    metadataComplete = c.metadataComplete;
+    seriesMetadata = c.seriesMetadata;
+    thumbnail = c.thumbnail;
+    resolutionCount = c.resolutionCount;
   }
 
   // -- Object methods --
@@ -198,60 +247,12 @@ public class CoreMetadata {
     return sb.toString();
   }
 
-  public void copy(IFormatReader r, int coreIndex) {
-    int currentIndex = r.getCoreIndex();
-    r.setCoreIndex(coreIndex);
-
-    sizeX = r.getSizeX();
-    sizeY = r.getSizeY();
-    sizeZ = r.getSizeZ();
-    sizeC = r.getSizeC();
-    sizeT = r.getSizeT();
-    thumbSizeX = r.getThumbSizeX();
-    thumbSizeY = r.getThumbSizeY();
-    pixelType = r.getPixelType();
-    bitsPerPixel = r.getBitsPerPixel();
-    imageCount = r.getImageCount();
-    cLengths = r.getChannelDimLengths();
-    cTypes = r.getChannelDimTypes();
-    dimensionOrder = r.getDimensionOrder();
-    orderCertain = r.isOrderCertain();
-    rgb = r.isRGB();
-    littleEndian = r.isLittleEndian();
-    interleaved = r.isInterleaved();
-    indexed = r.isIndexed();
-    falseColor = r.isFalseColor();
-    metadataComplete = r.isMetadataComplete();
-    seriesMetadata = r.getSeriesMetadata();
-    thumbnail = r.isThumbnailSeries();
-    resolutionCount = r.getResolutionCount();
-
-    r.setCoreIndex(currentIndex);
+  public Object clone() {
+      return new CoreMetadata(this);
   }
 
-  public void copy(CoreMetadata c) {
-    sizeX = c.sizeX;
-    sizeY = c.sizeY;
-    sizeZ = c.sizeZ;
-    sizeC = c.sizeC;
-    sizeT = c.sizeT;
-    thumbSizeX = c.thumbSizeX;
-    thumbSizeY = c.thumbSizeY;
-    pixelType = c.pixelType;
-    bitsPerPixel = c.bitsPerPixel;
-    imageCount = c.imageCount;
-    cLengths = c.cLengths;
-    cTypes = c.cTypes;
-    dimensionOrder = c.dimensionOrder;
-    orderCertain = c.orderCertain;
-    rgb = c.rgb;
-    littleEndian = c.littleEndian;
-    interleaved = c.interleaved;
-    indexed = c.indexed;
-    falseColor = c.falseColor;
-    metadataComplete = c.metadataComplete;
-    seriesMetadata = c.seriesMetadata;
-    thumbnail = c.thumbnail;
-    resolutionCount = c.resolutionCount;
+  public CoreMetadata clone(IFormatReader r, int coreIndex) {
+      return new CoreMetadata(r, coreIndex);
   }
+
 }
