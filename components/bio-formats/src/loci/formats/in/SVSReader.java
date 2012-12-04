@@ -66,6 +66,7 @@ public class SVSReader extends BaseTiffReader {
 
   private float[] pixelSize;
   private String[] comments;
+  private int[] ifdmap;
 
   // -- Constructor --
 
@@ -144,7 +145,7 @@ public class SVSReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    int ifd = getIFDIndex(getCoreIndex());
+    int ifd = ifdmap[getCoreIndex()];
     tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
   }
@@ -177,6 +178,7 @@ public class SVSReader extends BaseTiffReader {
     if (!fileOnly) {
       pixelSize = null;
       comments = null;
+      ifdmap = null;
     }
   }
 
@@ -184,7 +186,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = getIFDIndex(getCoreIndex());
+      int ifd = ifdmap[getCoreIndex()];
       return (int) ifds.get(ifd).getTileWidth();
     }
     catch (FormatException e) {
@@ -197,7 +199,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = getIFDIndex(getCoreIndex());
+      int ifd = ifdmap[getCoreIndex()];
       return (int) ifds.get(ifd).getTileLength();
     }
     catch (FormatException e) {
@@ -314,13 +316,17 @@ public class SVSReader extends BaseTiffReader {
      * decending order of size.  If the order is wrong, reorder it.
      */
     protected void reorderResolutions() {
+      ifdmap = new int[core.size()];
+
       for (int i = 0; i < core.size();) {
         int resolutions = core.get(i).resolutionCount;
 
         List<CoreMetadata> savedCore = new ArrayList<CoreMetadata>();
+        int savedIFDs[] = new int[resolutions];
         HashMap<Integer,Integer> levels = new HashMap<Integer,Integer>();
         for (int c = 0; c < resolutions; c++) {
           savedCore.add(core.get(i + c));
+          savedIFDs[c] = getIFDIndex(i+c);
           levels.put(new Integer(savedCore.get(c).sizeX), new Integer(c));
         }
 
@@ -328,7 +334,8 @@ public class SVSReader extends BaseTiffReader {
         Arrays.sort(keys);
 
         for (int j = 0; j < resolutions; j++) {
-            core.set(i + j, savedCore.get(levels.get(keys[resolutions - j - 1])));
+          core.set(i + j, savedCore.get(levels.get(keys[resolutions - j - 1])));
+          ifdmap[i + j] = savedIFDs[levels.get(keys[resolutions - j - 1])];
           if (j == 0)
             core.get(i + j).resolutionCount = resolutions;
           else
