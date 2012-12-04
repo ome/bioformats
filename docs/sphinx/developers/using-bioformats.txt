@@ -9,7 +9,7 @@ This document describes various things that are useful to know when working
 with Bio-Formats.  It is recommended that you obtain the Bio-Formats source
 by following the directions on the `source code page <source-code>`,
 rather than using an official release.  It is also recommended that you have
-a copy of the `JavaDocs <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/javadoc/>`_ nearby -
+a copy of the :javadoc:`javadocs <>` nearby -
 the notes that follow will make more sense when you see the API.
 
 For a complete list of supported formats, see the Bio-Formats :doc:`supported formats table </supported-formats>`.
