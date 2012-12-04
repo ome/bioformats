@@ -2,19 +2,10 @@
 User Information
 ****************
 
-
-Installation
-============
-
-Download one of the files from :bf_plone:`the Bio-Formats downloads page <downloads>` 
-and place it in an appropriate directory. Specific installation instructions
-depend upon the application you are using - see below.
-
-
-Dataset Importing
+Dataset importing
 =================
 
-For information about what extensions to choose to import files, see
+For information about what extensions to choose to import files, see:
 
 .. toctree::
     :maxdepth: 1
@@ -23,11 +14,11 @@ For information about what extensions to choose to import files, see
     /dataset-structure-table
 
 
-Using Bio-Formats with ImageJ and FIJI
+Using Bio-Formats with ImageJ and Fiji
 ======================================
 
 The following sections explain the features of Bio-Formats and how to use 
-it within ImageJ and FIJI:
+it within :doc:`imagej` and :doc:`fiji`:
 
 
 .. toctree::
@@ -37,6 +28,7 @@ it within ImageJ and FIJI:
     bf-features-imagej
     installing-bf-imagej
     load-images
+    upgrading-importer-imagej
     managing-memory
     bug-reporting
 
@@ -52,14 +44,23 @@ SCIFIO provides the core architecture of the Bio-Formats library and also includ
 
     scifio
 
+OMERO
+=====
+
+OMERO.Importer uses Bio-Formats to read image pixels and propagate metadata into the OMERO.server system. For more informations see:
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    omero
 
 Other applications
 ==================
 
-Many software packages can use Bio-Formats to read and write microscopy formats 
-(click on the package for further details):
+Many software packages can use Bio-Formats to read and write microscopy formats (click on the package for further details):
 
-Image Servers
+Image servers
 -------------
 
 .. toctree::
@@ -68,10 +69,9 @@ Image Servers
 
     bisque
     ome-server
-    omero
 
 
-Libraries and Scripting
+Libraries and scripting
 -----------------------
 
 .. toctree::
@@ -87,7 +87,7 @@ Libraries and Scripting
     subimager
 
 
-Numerical Data Processing
+Numerical data processing
 -------------------------
 
 .. toctree::
@@ -115,7 +115,6 @@ Visualization and analysis
     graphic-converter
     icy
     imagej
-    upgrading-importer-imagej
     iqm
     jar2lib
     mipav

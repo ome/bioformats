@@ -2,21 +2,14 @@
 Bio-Formats Documentation
 #########################
 
-Bio-Formats is a standalone Java library for reading and writing life
-sciences image file formats. It is capable of parsing both pixels and
-metadata for a large number of formats, as well as writing to several
-formats. 
-
-
+The following documentation is split into four sections. :doc:`about` explains the goal of the software and discusses how it processes metadata. :doc:`users/user-info` focusses on how to use Bio-Formats as a plugin for ImageJ and Fiji, and also gives details of other software packages which can use Bio-Formats to read and write microscopy formats. :doc:`developers/developer-links` covers more indepth information on using Bio-Formats as a Java library and how to interface from non-Java codes. Finally, :doc:`supported-formats` is a guide to all the file formats currently supported by Bio-Formats.
+ 
 .. only:: html
 
     - :doc:`about`
     - :doc:`users/user-info`
     - :doc:`developers/developer-links`
     - :doc:`supported-formats`
-
-
-Installation information is available on the :doc:`user information page <users/user-info>`. Download Bio-Formats from :bf_plone:`the Bio-Formats downloads page <downloads>`.
 
 
 For help, see the
@@ -31,8 +24,7 @@ For advanced users and developers, further information is available on the :doc:
 
 
 Bio-Formats is updated whenever a significant bug fix is made, or whenever a
-new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the :source:`what's new <components/bio-formats/doc/whats-new.txt>`
-list for a history of major changes in each release.
+new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the :doc:`what's new <whats-new>` list for a history of major changes in each release.
 
 The latest stable version of Bio-Formats is |release|. For future
 development directions, see the
@@ -49,4 +41,5 @@ roadmaps.
     developers/developer-links
     supported-formats
     troubleshooting
+    whats-new
 

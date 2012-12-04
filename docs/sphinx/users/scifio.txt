@@ -1,13 +1,10 @@
-SCIFIO
-======
-
 SCientific Imaging Formats Input and Output
--------------------------------------------
+===========================================
 
 Motivation
 ----------
 
-SCIFIO is a refactoring of :doc:`/about`.
+SCIFIO is a refactoring of :doc:`Bio-Formats </about>`.
 Classic Bio-Formats uses OME-XML_ to model the metadata for a given image,
 standardizing all supported formats to this schema. This tight integration,
 along with the naming itself of Bio-Formats, discourages potential users from
@@ -113,8 +110,8 @@ loci.common library, it made sense to migrate these parts to SCIFIO. As
 this removed some significant functionality from loci.common, the entire
 library was incorporated into sub-packages of SCIFIO.
 
-Multidimensionality
-~~~~~~~~~~~~~~~~~~~
+Multi-dimensionality
+~~~~~~~~~~~~~~~~~~~~
 
 As classic Bio-Formats was bound to the OME-XML schema, any image
 processed by Bio-Formats was forced to a five-dimensional format.

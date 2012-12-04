@@ -4,7 +4,7 @@
 .. loci.formats.tools.MakeDatasetStructureTable, so please
 .. update that instead.
 
-Dataset Structure Table
+Dataset structure table
 =======================
 
 This table shows the extension of the file that you should choose if you want
