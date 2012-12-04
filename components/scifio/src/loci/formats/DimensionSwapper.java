@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import loci.formats.meta.MetadataStore;
+import loci.formats.CoreMetadata;
 
 /**
  * Handles swapping the dimension order of an image series. This class is
