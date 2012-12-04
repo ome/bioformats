@@ -4,7 +4,7 @@ Bio-Formats file format reader guide
 This document is a brief guide to writing new Bio-Formats file format readers.
 
 All format readers should extend either :source:`loci.formats.FormatReader <components/scifio/src/loci/formats/FormatReader.java>` or a reader
-in :source:`loci.formats.in <components/bio-formats/src/loci/formats/in/>`.
+in :bfreader:`loci.formats.in <>`.
 
 Methods to override
 -------------------
@@ -39,8 +39,9 @@ Methods to override
   associated with the given file name and the current series (i.e. every file 
   needed to display the current series).  If the ``noPixels`` flag is set, then 
   none of the files returned should contain pixel data.
-  For an example of how this works, see :source:`loci.formats.in.PerkinElmerReader <components/bio-formats/src/loci/formats/in/PerkinElmerReader.java>`. It is 
-  recommended that the first line of this method be
+  For an example of how this works, see 
+  :bfreader:`loci.formats.in.PerkinElmerReader <PerkinElmerReader.java>`. It 
+  is recommended that the first line of this method be
   ``FormatTools.assertId(currentId, true, 1)`` - this ensures that the file name
   is non-null.
 
@@ -244,8 +245,8 @@ Other useful things
 
 - For more details, please look at the source code and :javadoc:`javadocs <>`.    
   Studying existing readers is probably the best way to get a feel for the 
-  API; we would recommend first looking at :source:`loci.formats.in.ImarisReader <components/bio-formats/src/loci/formats/in/ImarisReader.java>` (this is the 
-  most straightforward one). :source:`loci.formats.in.LIFReader <components/bio-formats/src/loci/formats/in/LIFReader.java>` and :source:`InCellReader <components/bio-formats/src/loci/formats/in/InCellReader.java>` are also
+  API; we would recommend first looking at :bfreader:`loci.formats.in.ImarisReader <ImarisReader.java>` (this is the 
+  most straightforward one). :bfreader:`loci.formats.in.LIFReader <LIFReader.java>` and :bfreader:`InCellReader <InCellReader.java>` are also
   good references that show off some of the nicer features of Bio-Formats.
 
 If you have questions about Bio-Formats, please contact `the OME team <http://www.openmicroscopy.org/site/community>`_.
