@@ -58,13 +58,14 @@ OMERO.Importer uses Bio-Formats to read image pixels and propagate metadata into
 
     omero
 
-Other applications
-==================
 
-Many software packages can use Bio-Formats to read and write microscopy formats (click on the package for further details):
+.. only:: html
+
+    Many software packages can use Bio-Formats to read and write microscopy
+    formats (click on the package for further details):
 
 Image servers
--------------
+=============
 
 .. toctree::
     :glob:
@@ -75,7 +76,7 @@ Image servers
 
 
 Libraries and scripting
------------------------
+=======================
 
 .. toctree::
     :glob:
@@ -86,7 +87,7 @@ Libraries and scripting
 
 
 Numerical data processing
--------------------------
+=========================
 
 .. toctree::
     :glob:
@@ -97,7 +98,7 @@ Numerical data processing
 
 
 Visualization and analysis
---------------------------
+==========================
 
 .. toctree::
     :glob:
