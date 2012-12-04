@@ -517,7 +517,7 @@ public abstract class BaseZeissReader extends FormatReader {
               store.setLineX2(shape.points[(i*2)+2], roiIndex, shapeIndex);
               store.setLineY2(shape.points[(i*2)+3], roiIndex, shapeIndex);
               if (shape.text != null && i == 0 &&
-                  (shape.type == FeatureType.MEAS_ANGLE3 || shape.type == FeatureType.MEAS_ANGLE3))
+                  (shape.type == FeatureType.MEAS_ANGLE3 || shape.type == FeatureType.MEAS_ANGLE4)) // ??
                 store.setLineText(shape.text, roiIndex, shapeIndex);
               shapeIndex++;
             }

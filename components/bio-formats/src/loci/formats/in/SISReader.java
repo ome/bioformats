@@ -29,6 +29,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.IniList;
 import loci.common.IniParser;
@@ -175,7 +176,7 @@ public class SISReader extends BaseTiffReader {
     physicalSizeX = in.readDouble();
     physicalSizeY = in.readDouble();
 
-    if (physicalSizeX != physicalSizeY) {
+    if (Math.abs(physicalSizeX - physicalSizeY) > Constants.EPSILON) { // ??
       physicalSizeX = physicalSizeY;
       physicalSizeY = in.readDouble();
     }
