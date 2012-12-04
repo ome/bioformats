@@ -130,16 +130,16 @@ These variables are:
 Other useful things
 -------------------
 
-- :source:`scifio.io.RandomAccessInputStream <components/scifio-devel/src/ome/scifio/io/RandomAccessInputStream.java>` is a hybrid RandomAccessFile/InputStream
+- :source:`ome.scifio.io.RandomAccessInputStream <components/scifio-devel/src/ome/scifio/io/RandomAccessInputStream.java>` is a hybrid RandomAccessFile/InputStream
   class that is generally more efficient than either RandomAccessFile or
   InputStream, and implements the DataInput interface.  It is recommended that
   you use this for reading files.
 
-- :source:`scifio.io.Location <components/scifio-devel/src/ome/scifio/io/Location.java>` provides an API similar to java.io.File, and supports
+- :source:`ome.scifio.io.Location <components/scifio-devel/src/ome/scifio/io/Location.java>` provides an API similar to java.io.File, and supports
   File-like operations on URLs.  It is highly recommended that you use this
   instead of File.  See the `javadoc <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/javadoc>`_ for additional information.
 
-- :source:`scifio.common.DataTools <components/scifio-devel/src/ome/scifio/common/DataTools.java>` provides a number of methods for converting bytes to
+- :source:`ome.scifio.common.DataTools <components/scifio-devel/src/ome/scifio/common/DataTools.java>` provides a number of methods for converting bytes to
   shorts, ints, longs, etc.  It also supports reading most primitive types
   directly from a RandomAccessInputStream (or other DataInput implementation).
 
