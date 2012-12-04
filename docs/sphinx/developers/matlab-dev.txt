@@ -2,7 +2,7 @@ Using Bio-Formats in Matlab
 ===========================
 
 This section assumes that you have installed the bfopen.m script and
-loci\_tools.jar, as instructed :doc:`here </users/Applications/number_processing/matlab>`.
+loci\_tools.jar, as instructed :doc:`here </users/applications/number_processing/matlab>`.
 
 The first thing to do is initialize a file:
 
