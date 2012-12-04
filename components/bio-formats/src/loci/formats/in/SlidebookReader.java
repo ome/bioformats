@@ -943,9 +943,14 @@ public class SlidebookReader extends FormatReader {
         long p = pixels / (getSizeX() * getSizeY());
         if (pixels == p * getSizeX() * getSizeY()) {
           if (p != getSizeC() * getSizeZ()) {
-            if (p % getSizeC() != 0) {
-              ms.sizeC = 1;
-              ms.sizeZ = (int) p;
+            if (getSizeC() > 1 && core[i].sizeZ >= (p / (getSizeC() - 1)))
+            {
+              core[i].sizeC--;
+              core[i].sizeZ = (int) (p / getSizeC());
+            }
+            else if (p % getSizeC() != 0) {
+              core[i].sizeC = 1;
+              core[i].sizeZ = (int) p;
             }
             else if (ms.sizeZ == p + 1) {
               ms.sizeC = 1;
