@@ -102,7 +102,7 @@ Thus, a stub for ``initFile(String)`` might look like this:
       }
 
 
-For more details, see the `javadoc <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/javadoc>`_ for Location.mapId(String, String) and Location.getMappedId(String).
+For more details, see the :javadoc:`Bio-Formats javadoc <>` for Location.mapId(String, String) and Location.getMappedId(String).
 
 Variables to populate
 ---------------------
@@ -137,7 +137,7 @@ Other useful things
 
 - :source:`loci.formats.Location <components/common/src/loci/common/Location.java>` provides an API similar to java.io.File, and supports
   File-like operations on URLs.  It is highly recommended that you use this
-  instead of File.  See the `javadoc <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/javadoc>`_ for additional information.
+  instead of File.  See the :javadoc:`javadoc <>` for additional information.
 
 - :source:`loci.common.DataTools <components/common/src/loci/common/DataTools.java>` provides a number of methods for converting bytes to
   shorts, ints, longs, etc.  It also supports reading most primitive types
@@ -242,7 +242,7 @@ Other useful things
   provides several basic tests that work with all Bio-Formats readers. See
   the FormatReaderTest source code for additional information.
 
-- For more details, please look at the source code and `javadocs <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/javadoc>`_.    
+- For more details, please look at the source code and :javadoc:`javadocs <>`.    
   Studying existing readers is probably the best way to get a feel for the 
   API; we would recommend first looking at :source:`loci.formats.in.ImarisReader <components/bio-formats/src/loci/formats/in/ImarisReader.java>` (this is the 
   most straightforward one). :source:`loci.formats.in.LIFReader <components/bio-formats/src/loci/formats/in/LIFReader.java>` and :source:`InCellReader <components/bio-formats/src/loci/formats/in/InCellReader.java>` are also
