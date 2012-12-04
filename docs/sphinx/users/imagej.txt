@@ -44,7 +44,7 @@ Upgrading
 To upgrade, just overwrite the old **loci_tools.jar** with the 
 :bf_plone:`latest one <downloads>`.
 Step-by-step upgrade instructions for Windows are available
-:doc:`here </users/ImageJ/upgrading-importer>`.
+:doc:`here <imagej/upgrading-importer>`.
 
 You may want to download the latest version of ImageJ first, to take
 advantage of new features and bug-fixes.

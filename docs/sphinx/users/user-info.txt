@@ -18,7 +18,14 @@ Using Bio-Formats with ImageJ and Fiji
 ======================================
 
 The following sections explain the features of Bio-Formats and how to use 
-it within :doc:`Applications/visual_analysis/imagej` and :doc:`Applications/visual_analysis/fiji`:
+it within :doc:`imagej` and :doc:`fiji`:
+
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    imagej
+    fiji
 
 
 .. toctree::
@@ -26,7 +33,7 @@ it within :doc:`Applications/visual_analysis/imagej` and :doc:`Applications/visu
     :maxdepth: 1
     :titlesonly:
 
-    ImageJ/*
+    imagej/*
 
 
 SCIFIO
@@ -64,7 +71,7 @@ Image servers
     :maxdepth: 1
     :titlesonly:
 
-    Applications/image_servers/*
+    applications/image_servers/*
 
 
 Libraries and scripting
@@ -75,7 +82,7 @@ Libraries and scripting
     :maxdepth: 1
     :titlesonly:
 
-    Applications/libraries_scripting/*
+    applications/libraries_scripting/*
 
 
 Numerical data processing
@@ -86,7 +93,7 @@ Numerical data processing
     :maxdepth: 1
     :titlesonly:
 
-    Applications/number_processing/*
+    applications/number_processing/*
 
 
 Visualization and analysis
@@ -97,6 +104,6 @@ Visualization and analysis
     :maxdepth: 1
     :titlesonly:
 
-    Applications/visual_analysis/*
+    applications/visual_analysis/*
 
 
