@@ -122,8 +122,15 @@ if "SOURCE_BRANCH" in os.environ:
 else:
     source_branch = 'develop'
 
+if "JENKINS_JOB" in os.environ:
+    jenkins_job = os.environ.get('JENKINS_JOB')
+else:
+    jenkins_job = 'BIOFORMATS-trunk'
+
 bf_github_root = 'https://github.com/openmicroscopy/bioformats/'
 bf_github = bf_github_root + 'blob/' + source_branch + '/'
+jenkins_root = 'http://hudson.openmicroscopy.org.uk/'
+jenkins_job = jenkins_root + jenkins_job
 
 extlinks = {
     'wiki' : ('http://trac.openmicroscopy.org.uk/ome/wiki/'+ '%s', ''),
@@ -137,8 +144,8 @@ extlinks = {
     'scifioreader' : (bf_github + 'components/scifio/src/loci/formats/in/' + '%s', ''),
     'bfwriter' : (bf_github + 'components/bio-formats/src/loci/formats/out/' + '%s', ''),
     'scifiowriter' : (bf_github + 'components/scifio/src/loci/formats/out/' + '%s', ''),
-    'javadoc' : ('http://hudson.openmicroscopy.org.uk/job/OMERO/javadoc/' + '%s', ''),
-    'jenkins' : ('http://hudson.openmicroscopy.org.uk/' + '%s', ''),
+    'jenkins' : (jenkins_root + '%s', ''),
+    'javadoc' : (jenkins_job + '/javadoc/' + '%s', ''),
     'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
     'forum' : ('http://www.openmicroscopy.org/community/' + '%s', ''),
     'omerodoc': (omerodoc_uri + '%s', ''),
