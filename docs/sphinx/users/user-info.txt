@@ -20,17 +20,20 @@ Using Bio-Formats with ImageJ and Fiji
 The following sections explain the features of Bio-Formats and how to use 
 it within :doc:`imagej` and :doc:`fiji`:
 
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    imagej
+    fiji
+
 
 .. toctree::
+    :glob:
     :maxdepth: 1
     :titlesonly:
 
-    bf-features-imagej
-    installing-bf-imagej
-    load-images
-    upgrading-importer-imagej
-    managing-memory
-    bug-reporting
+    imagej/*
 
 
 SCIFIO
@@ -64,62 +67,43 @@ Image servers
 -------------
 
 .. toctree::
+    :glob:
     :maxdepth: 1
     :titlesonly:
 
-    bisque
-    ome-server
+    applications/image_servers/*
 
 
 Libraries and scripting
 -----------------------
 
 .. toctree::
+    :glob:
     :maxdepth: 1
     :titlesonly:
 
-    command-line-tools
-    farsight
-    i3dcore
-    imglib
-    itk
-    qu-matlab
-    subimager
+    applications/libraries_scripting/*
 
 
 Numerical data processing
 -------------------------
 
 .. toctree::
+    :glob:
     :maxdepth: 1
     :titlesonly:
 
-    idl
-    knime
-    matlab
-    visad
+    applications/number_processing/*
+
 
 Visualization and analysis
 --------------------------
 
 .. toctree::
+    :glob:
     :maxdepth: 1
     :titlesonly:
 
-    bitplane-imaris
-    cellprofiler
-    comstat2
-    endrov
-    fiji
-    focalpoint
-    graphic-converter
-    icy
-    imagej
-    iqm
-    jar2lib
-    mipav
-    macnification
-    v3d
-    visbio
-    xuvtools
+    applications/visual_analysis/*
+
 
