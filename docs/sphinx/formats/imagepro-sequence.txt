@@ -57,7 +57,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`SEQReader.java <components/bio-formats/src/loci/formats/in/SEQReader.java >`
+Source Code: :bfreader:`SEQReader.java`
 
 Notes:
 

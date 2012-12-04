@@ -54,7 +54,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`SeikoReader.java <components/bio-formats/src/loci/formats/in/SeikoReader.java >`
+Source Code: :bfreader:`SeikoReader.java`
 
 Notes:
 

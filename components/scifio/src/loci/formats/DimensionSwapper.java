@@ -37,6 +37,7 @@
 package loci.formats;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import loci.formats.meta.MetadataStore;
@@ -289,7 +290,11 @@ public class DimensionSwapper extends ReaderWrapper {
     {
       // NB: Create our own copy of the CoreMetadata,
       // which we can manipulate safely.
-      core = copyCoreMetadata(SwappableMetadata.class, reader);
+      List<CoreMetadata> oldcore = reader.getCoreMetadata();
+      core = new ArrayList<CoreMetadata>();
+      for (int s=0; s<oldcore.size(); s++) {
+        core.add(new SwappableMetadata(reader, s));
+      }
     }
   }
 

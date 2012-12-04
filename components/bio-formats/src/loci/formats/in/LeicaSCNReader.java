@@ -249,7 +249,7 @@ public class LeicaSCNReader extends BaseTiffReader {
 
     CoreMetadata ms = core.get(s);
 
-    if (s == i.imageNumStart && !hasFlattenedResolutions()) {
+    if (s == i.imageNumStart) {
       ms.resolutionCount = i.pixels.sizeR;
     }
 

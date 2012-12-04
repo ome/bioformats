@@ -24,7 +24,7 @@ if "%SCIFIO_DEVEL%" == "" (
     echo Required JAR libraries not found. Please download:
     echo   ome_tools.jar
     echo from:
-    echo   http://www.loci.wisc.edu/bio-formats/downloads
+    echo   http://www.openmicroscopy.org/site/products/bio-formats/downloads
     echo.
     goto end
   )

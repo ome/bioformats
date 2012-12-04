@@ -52,7 +52,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`NikonElementsTiffReader.java <components/bio-formats/src/loci/formats/in/NikonElementsTiffReader.java >`
+Source Code: :bfreader:`NikonElementsTiffReader.java`
 
 Notes:
 

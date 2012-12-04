@@ -49,7 +49,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`MicromanagerReader.java <components/scifio/src/loci/formats/in/MicromanagerReader.java >`
+Source Code: :scifioreader:`MicromanagerReader.java`
 
 Notes:
 

@@ -56,7 +56,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`FitsReader.java <components/scifio/src/loci/formats/in/FitsReader.java >`
+Source Code: :scifioreader:`FitsReader.java`
 
 Notes:
 

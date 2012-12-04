@@ -53,7 +53,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`JPXReader.java <components/bio-formats/src/loci/formats/in/JPXReader.java >`
+Source Code: :bfreader:`JPXReader.java`
 
 Notes:
 

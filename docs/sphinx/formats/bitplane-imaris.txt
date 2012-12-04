@@ -55,12 +55,12 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`ImarisReader, ImarisTiffReader, ImarisHDFReader.java <components/bio-formats/src/loci/formats/in/ImarisReader, ImarisTiffReader, ImarisHDFReader.java >`
+Source Code: :bfreader:`ImarisReader.java`, :bfreader:`ImarisTiffReader.java`, :bfreader:`ImarisHDFReader.java`
 
 Notes:
 
 
 - There are three distinct Imaris formats: 
-  #. the old binary format (introduced in Imaris version 2.7) 
-  #. Imaris 3, a TIFF variant (introduced in Imaris version 3.0) 
-  #. Imaris 5.5, an HDF variant (introduced in Imaris version 5.5)
+    #. the old binary format (introduced in Imaris version 2.7) 
+    #. Imaris 3, a TIFF variant (introduced in Imaris version 3.0) 
+    #. Imaris 5.5, an HDF variant (introduced in Imaris version 5.5)

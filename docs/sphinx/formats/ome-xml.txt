@@ -55,8 +55,8 @@ Utility: |Outstanding|
 Additional Information
 ----------------------
 
-Source Code: :source:`OMEXMLReader.java <components/scifio/src/loci/formats/in/OMEXMLReader.java >`
-Source Code: :source:`OMEXMLWriter.java <components/scifio/src/loci/formats/out/OMEXMLWriter.java >`
+Source Code: :scifioreader:`OMEXMLReader.java`
+Source Code: :scifiowriter:`OMEXMLWriter.java`
 
 Notes:
 

@@ -74,7 +74,7 @@ BioFormatsImageIOFactory::GetITKSourceVersion(void) const
 const char*
 BioFormatsImageIOFactory::GetDescription() const
 {
-  return "Bio-Formats ImageIO Factory, allows the loading of Bio-Formats-compatible images into Insight; see http://www.loci.wisc.edu/bio-formats/itk";
+  return "Bio-Formats ImageIO Factory, allows the loading of Bio-Formats-compatible images into Insight; see http://www.openmicroscopy.org/site/support/bio-formats/users/itk.html";
 }
 
 } // end namespace itk

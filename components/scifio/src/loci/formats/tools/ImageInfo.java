@@ -514,6 +514,7 @@ public class ImageInfo {
 
       // read basic metadata for series #i
       int imageCount = reader.getImageCount();
+      int resolutions = reader.getResolutionCount();
       boolean rgb = reader.isRGB();
       int sizeX = reader.getSizeX();
       int sizeY = reader.getSizeY();
@@ -544,6 +545,15 @@ public class ImageInfo {
       LOGGER.info("Series #{}{}{}:",
         new Object[] {j, seriesName == null ? " " : " -- ",
         seriesName == null ? "" : seriesName});
+
+      if (flat == false && resolutions > 1) {
+        LOGGER.info("\tResolutions = {}", resolutions);
+        for (int i = 0; i < resolutions; i++) {
+          reader.setResolution(i);
+          LOGGER.info("\t\tsizeX[{}] = {}", i, reader.getSizeX());
+        }
+        reader.setResolution(0);
+      }
       LOGGER.info("\tImage count = {}", imageCount);
       LOGGER.info("\tRGB = {} ({}) {}", new Object[] {rgb, rgbChanCount,
         merge ? "(merged)" : separate ? "(separated)" : ""});

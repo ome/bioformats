@@ -49,7 +49,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`CellSensReader.java <components/bio-formats/src/loci/formats/in/CellSensReader.java >`
+Source Code: :bfreader:`CellSensReader.java`
 
 Notes:
 

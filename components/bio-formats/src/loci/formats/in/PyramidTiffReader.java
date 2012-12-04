@@ -128,7 +128,7 @@ public class PyramidTiffReader extends BaseTiffReader {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
 
-      if (s == 0 && !hasFlattenedResolutions()) {
+      if (s == 0) {
         ms.resolutionCount = seriesCount;
       }
 

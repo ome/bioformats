@@ -55,7 +55,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`MetamorphReader.java <components/bio-formats/src/loci/formats/in/MetamorphReader.java >`
+Source Code: :bfreader:`MetamorphReader.java`
 
 Notes:
 

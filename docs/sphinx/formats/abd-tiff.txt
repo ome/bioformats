@@ -48,7 +48,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`FluoviewReader.java <components/bio-formats/src/loci/formats/in/FluoviewReader.java >`
+Source Code: :bfreader:`FluoviewReader.java`
 
 Notes:
 

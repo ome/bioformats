@@ -53,7 +53,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`InCellReader.java <components/bio-formats/src/loci/formats/in/InCellReader.java >`
+Source Code: :bfreader:`InCellReader.java`
 
 Notes:
 

@@ -52,7 +52,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`MIASReader.java <components/bio-formats/src/loci/formats/in/MIASReader.java >`
+Source Code: :bfreader:`MIASReader.java`
 
 Notes:
 

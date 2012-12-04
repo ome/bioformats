@@ -52,7 +52,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`NDPIReader.java <components/bio-formats/src/loci/formats/in/NDPIReader.java >`
+Source Code: :bfreader:`NDPIReader.java`
 
 Notes:
 

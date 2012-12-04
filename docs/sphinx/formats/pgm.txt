@@ -54,7 +54,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`PGMReader.java <components/scifio/src/loci/formats/in/PGMReader.java >`
+Source Code: :scifioreader:`PGMReader.java`
 
 Notes:
 

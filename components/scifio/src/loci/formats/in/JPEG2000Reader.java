@@ -230,9 +230,8 @@ public class JPEG2000Reader extends FormatReader {
     // New core metadata now that we know how many sub-resolutions we have.
     if (resolutionLevels != null) {
       int seriesCount = resolutionLevels + 1;
-      if (!hasFlattenedResolutions()) {
-        core.get(0).resolutionCount = seriesCount;
-      }
+      core.get(0).resolutionCount = seriesCount;
+
       for (int i = 1; i < seriesCount; i++) {
         CoreMetadata ms = new CoreMetadata(this, 0);
         core.add(ms);

@@ -49,7 +49,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`DNGReader.java <components/bio-formats/src/loci/formats/in/DNGReader.java >`
+Source Code: :bfreader:`DNGReader.java`
 
 Notes:
 

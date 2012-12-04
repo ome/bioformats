@@ -52,7 +52,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`MRWReader.java <components/bio-formats/src/loci/formats/in/MRWReader.java >`
+Source Code: :bfreader:`MRWReader.java`
 
 Notes:
 

@@ -53,7 +53,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`TextReader.java <components/scifio/src/loci/formats/in/TextReader.java >`
+Source Code: :scifioreader:`TextReader.java`
 
 Notes:
 

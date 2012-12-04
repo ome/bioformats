@@ -50,7 +50,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`BDReader.java <components/bio-formats/src/loci/formats/in/BDReader.java >`
+Source Code: :bfreader:`BDReader.java`
 
 Notes:
 
