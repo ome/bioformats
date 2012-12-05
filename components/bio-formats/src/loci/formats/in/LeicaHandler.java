@@ -142,7 +142,7 @@ public class LeicaHandler extends BaseHandler {
 
   // -- LeicaHandler API methods --
 
-  public List<CoreMetadata> getCoreMetadata() { return core; }
+  public List<CoreMetadata> getCoreMetadataList() { return core; }
 
   public Hashtable getGlobalMetadata() { return globalMetadata; }
 

@@ -426,9 +426,17 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSeriesMetadata();
   }
 
-  public List<CoreMetadata> getCoreMetadata() {
+  /**
+   * @deprecated
+   * @see IFormatReader#getCoreMetadataList()
+   */
+  public CoreMetadata[] getCoreMetadata() {
+    return getCoreMetadataList().toArray(new CoreMetadata[0]);
+  }
+
+  public List<CoreMetadata> getCoreMetadataList() {
     // Only used for determining the object type.
-    List<CoreMetadata> oldcore = reader.getCoreMetadata();
+    List<CoreMetadata> oldcore = reader.getCoreMetadataList();
     List<CoreMetadata> newcore = new ArrayList<CoreMetadata>();
 
     // Note that this only works with flattened resolutions

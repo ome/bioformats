@@ -310,7 +310,7 @@ public class ScreenReader extends FormatReader {
       readers[well] = new ImageReader(validReaders);
       readers[well].setMetadataStore(omexmlMeta);
       readers[well].setId(files[well]);
-      List<CoreMetadata> wcore = readers[well].getCoreMetadata();
+      List<CoreMetadata> wcore = readers[well].getCoreMetadataList();
       for (CoreMetadata cw : wcore) {
         core.add(cw);
       }

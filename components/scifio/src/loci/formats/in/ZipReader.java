@@ -144,7 +144,7 @@ public class ZipReader extends FormatReader {
     reader.setId(base.getEntryName());
 
     metadataStore = reader.getMetadataStore();
-    core = new ArrayList<CoreMetadata>(reader.getCoreMetadata());
+    core = new ArrayList<CoreMetadata>(reader.getCoreMetadataList());
     metadata = reader.getGlobalMetadata();
 
     base.close();

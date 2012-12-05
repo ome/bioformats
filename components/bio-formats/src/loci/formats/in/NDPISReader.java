@@ -151,7 +151,7 @@ public class NDPISReader extends FormatReader {
     readers[0].setMetadataStore(getMetadataStore());
     readers[0].setId(ndpiFiles[0]);
 
-    core = new ArrayList<CoreMetadata>(readers[0].getCoreMetadata());
+    core = new ArrayList<CoreMetadata>(readers[0].getCoreMetadataList());
     for (int i=0; i<getSeriesCount(); i++) {
       CoreMetadata ms = core.get(i);
       ms.sizeC = readers.length;

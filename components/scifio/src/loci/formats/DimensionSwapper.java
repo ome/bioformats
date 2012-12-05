@@ -273,9 +273,19 @@ public class DimensionSwapper extends ReaderWrapper {
     return FormatTools.getIndex(this, z, c, t);
   }
 
-  /* @see IFormatReader#getCoreMetadata() */
+  /**
+   * @deprecated
+   * @see IFormatReader#getCoreMetadataList()
+   */
   @Override
-  public List<CoreMetadata> getCoreMetadata() {
+  public CoreMetadata[] getCoreMetadata() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return core.toArray(new CoreMetadata[0]);
+  }
+
+  /* @see IFormatReader#getCoreMetadataList() */
+  @Override
+  public List<CoreMetadata> getCoreMetadataList() {
     FormatTools.assertId(getCurrentFile(), true, 2);
     return core;
   }
@@ -287,11 +297,11 @@ public class DimensionSwapper extends ReaderWrapper {
     String oldFile = getCurrentFile();
     super.setId(id);
     if (!id.equals(oldFile) || core == null ||
-      core.size() != reader.getCoreMetadata().size())
+      core.size() != reader.getCoreMetadataList().size())
     {
       // NB: Create our own copy of the CoreMetadata,
       // which we can manipulate safely.
-      List<CoreMetadata> oldcore = reader.getCoreMetadata();
+      List<CoreMetadata> oldcore = reader.getCoreMetadataList();
       core = new ArrayList<CoreMetadata>();
       for (int s=0; s<oldcore.size(); s++) {
         core.add(new SwappableMetadata(reader, s));

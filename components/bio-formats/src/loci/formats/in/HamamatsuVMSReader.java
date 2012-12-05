@@ -205,7 +205,7 @@ public class HamamatsuVMSReader extends FormatReader {
 
       jpeg[i] = new TileJPEGReader();
       jpeg[i].setId(file);
-      CoreMetadata m = jpeg[i].getCoreMetadata().get(0);
+      CoreMetadata m = jpeg[i].getCoreMetadataList().get(0);
       m.thumbnail = i > 0;
       core.add(m);
     }

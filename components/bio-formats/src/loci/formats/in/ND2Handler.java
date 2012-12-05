@@ -134,7 +134,7 @@ public class ND2Handler extends BaseHandler {
     return nXFields;
   }
 
-  public List<CoreMetadata> getCoreMetadata() {
+  public List<CoreMetadata> getCoreMetadataList() {
     return core;
   }
 

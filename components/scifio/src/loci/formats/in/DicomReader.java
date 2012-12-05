@@ -694,7 +694,7 @@ public class DicomReader extends FormatReader {
       }
       else {
         helper.setId(fileList.get(keys[i]).get(0));
-        ms = helper.getCoreMetadata().get(0);
+        ms = helper.getCoreMetadataList().get(0);
         core.add(ms);
         ms.sizeZ *= fileList.get(keys[i]).size();
       }

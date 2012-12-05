@@ -440,7 +440,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   Hashtable<String, Object> getSeriesMetadata();
 
   /** Obtains the core metadata values for the current file. */
-  List<CoreMetadata> getCoreMetadata();
+  List<CoreMetadata> getCoreMetadataList();
 
   /**
    * Specifies whether ugly metadata (entries with unprintable characters,
@@ -570,4 +570,8 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    */
   Hashtable<String, Object> getMetadata();
 
+  /** Obtains the core metadata values for the current file.
+   * @deprecated Use #getCoreMetadataList instead.
+   */
+  CoreMetadata[] getCoreMetadata();
 }

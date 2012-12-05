@@ -207,7 +207,7 @@ public class L2DReader extends FormatReader {
       r.setId(id);
       // TODO: Is this assignment redundant?  We unconditionally
       // replace it below.
-      core = new ArrayList<CoreMetadata>(r.getCoreMetadata());
+      core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
       Hashtable globalMetadata = r.getGlobalMetadata();

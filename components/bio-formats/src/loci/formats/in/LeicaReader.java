@@ -358,7 +358,7 @@ public class LeicaReader extends FormatReader {
         r.setMetadataStore(getMetadataStore());
         r.setId(id);
 
-        core = new ArrayList<CoreMetadata>(r.getCoreMetadata());
+        core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
         metadataStore = r.getMetadataStore();
 
         Hashtable globalMetadata = r.getGlobalMetadata();

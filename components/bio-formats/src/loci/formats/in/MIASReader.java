@@ -377,7 +377,7 @@ public class MIASReader extends FormatReader {
       TiffReader r = new TiffReader();
       r.setMetadataStore(getMetadataStore());
       r.setId(tiffs[0][0]);
-      core = new ArrayList<CoreMetadata>(r.getCoreMetadata());
+      core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
       Hashtable globalMetadata = r.getGlobalMetadata();

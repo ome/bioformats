@@ -306,7 +306,7 @@ public class PrairieReader extends FormatReader {
       else {
         files = new String[] {id};
         tiff.setId(files[0]);
-        core = new ArrayList<CoreMetadata>(tiff.getCoreMetadata());
+        core = new ArrayList<CoreMetadata>(tiff.getCoreMetadataList());
         metadataStore = tiff.getMetadataStore();
 
         Hashtable globalMetadata = tiff.getGlobalMetadata();

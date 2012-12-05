@@ -761,10 +761,19 @@ public class FileStitcher extends ReaderWrapper {
       core.get(getCoreIndex()).seriesMetadata;
   }
 
-  /* @see IFormatReader#getCoreMetadata() */
-  public List<CoreMetadata> getCoreMetadata() {
+  /**
+   * @deprecated
+   * @see IFormatReader#getCoreMetadataList()
+   */
+  public CoreMetadata[] getCoreMetadata() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return noStitch ? reader.getCoreMetadata() : core;
+    return getCoreMetadataList().toArray(new CoreMetadata[0]);
+  }
+
+  /* @see IFormatReader#getCoreMetadataList() */
+  public List<CoreMetadata> getCoreMetadataList() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return noStitch ? reader.getCoreMetadataList() : core;
   }
 
   /* @see IFormatReader#setMetadataStore(MetadataStore) */

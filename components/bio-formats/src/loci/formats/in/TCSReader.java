@@ -469,7 +469,7 @@ public class TCSReader extends FormatReader {
       metadata = handler.getGlobalMetadata();
       MetadataTools.merge(handler.getGlobalMetadata(), metadata, "");
 
-      core = handler.getCoreMetadata();
+      core = handler.getCoreMetadataList();
 
       for (int i=0; i<getSeriesCount(); i++) {
         CoreMetadata ms = core.get(i);
