@@ -19,7 +19,7 @@ Performance
 
 In our tests (MATLAB R14 vs. java 1.6.0\_20), the script executes at
 approximately half the speed of our
-:doc:`showinf command line tool </users/applications/libraries_scripting/command-line-tools>`, due to
+:doc:`showinf command line tool </users/libraries_scripting/command-line-tools>`, due to
 overhead from copying arrays.
 
 Installation
