@@ -247,7 +247,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     PhotoInterp pi = ifd.getPhotometricInterpretation();
     int samples = ifd.getSamplesPerPixel();
 
-    if (s == i.imageNumStart && !hasFlattenedResolutions()) {
+    if (s == i.imageNumStart) {
       core[s].resolutionCount = i.pixels.sizeR;
     }
 

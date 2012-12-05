@@ -26,6 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +64,7 @@ public class SVSReader extends BaseTiffReader {
 
   private float[] pixelSize;
   private String[] comments;
+  private int[] ifdmap;
 
   // -- Constructor --
 
@@ -140,7 +143,7 @@ public class SVSReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    int ifd = getIFDIndex(getCoreIndex());
+    int ifd = ifdmap[getCoreIndex()];
     tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
   }
@@ -173,6 +176,7 @@ public class SVSReader extends BaseTiffReader {
     if (!fileOnly) {
       pixelSize = null;
       comments = null;
+      ifdmap = null;
     }
   }
 
@@ -180,7 +184,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = getIFDIndex(getCoreIndex());
+      int ifd = ifdmap[getCoreIndex()];
       return (int) ifds.get(ifd).getTileWidth();
     }
     catch (FormatException e) {
@@ -193,7 +197,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = getIFDIndex(getCoreIndex());
+      int ifd = ifdmap[getCoreIndex()];
       return (int) ifds.get(ifd).getTileLength();
     }
     catch (FormatException e) {
@@ -254,7 +258,7 @@ public class SVSReader extends BaseTiffReader {
     // repopulate core metadata
 
     for (int s=0; s<core.length; s++) {
-      if (s == 0 && !hasFlattenedResolutions() && getSeriesCount() > 2) {
+      if (s == 0 && getSeriesCount() > 2) {
         core[s].resolutionCount = getSeriesCount() - 2;
       }
 
@@ -279,6 +283,8 @@ public class SVSReader extends BaseTiffReader {
       core[s].dimensionOrder = "XYCZT";
       core[s].thumbnail = s != 0;
     }
+
+    reorderResolutions();
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
@@ -300,5 +306,39 @@ public class SVSReader extends BaseTiffReader {
     }
     return index;
   }
+
+    /**
+     * Validate the order of resolutions for the current series, in
+     * decending order of size.  If the order is wrong, reorder it.
+     */
+    protected void reorderResolutions() {
+      ifdmap = new int[core.length];
+
+      for (int i = 0; i < core.length;) {
+          int resolutions = core[i].resolutionCount;
+
+        CoreMetadata[] savedCore = new CoreMetadata[resolutions];
+        int savedIFDs[] = new int[resolutions];
+        HashMap<Integer,Integer> levels = new HashMap<Integer,Integer>();
+        for (int c = 0; c < resolutions; c++) {
+          savedCore[c] = core[i + c];
+          savedIFDs[c] = getIFDIndex(i+c);
+          levels.put(new Integer(savedCore[c].sizeX), new Integer(c));
+        }
+
+        Integer[] keys = levels.keySet().toArray(new Integer[resolutions]);
+        Arrays.sort(keys);
+
+        for (int j = 0; j < resolutions; j++) {
+          core[i + j] = savedCore[levels.get(keys[resolutions - j - 1])];
+          ifdmap[i + j] = savedIFDs[levels.get(keys[resolutions - j - 1])];
+          if (j == 0)
+            core[i + j].resolutionCount = resolutions;
+          else
+            core[i + j].resolutionCount = 1;
+        }
+        i += core[i].resolutionCount;
+      }
+    }
 
 }
