@@ -871,7 +871,7 @@ public class FlexReader extends FormatReader {
   {
     LOGGER.info("Populating core metadata for well row " + wellRow +
       ", column " + wellCol);
-    CoreMetadata m = core.get(0);
+    CoreMetadata ms0 = core.get(0);
     if (getSizeC() == 0 && getSizeT() == 0) {
       if (fieldCount == 0 || (imageNames.size() % fieldCount) != 0) {
         fieldCount = 1;
@@ -891,18 +891,18 @@ public class FlexReader extends FormatReader {
         if (!uniqueChannels.contains(channel)) uniqueChannels.add(channel);
       }
       if (fieldCount == 0) fieldCount = 1;
-      m.sizeC = (int) Math.max(uniqueChannels.size(), 1);
-      if (getSizeZ() == 0) m.sizeZ = 1;
-      m.sizeT =
+      ms0.sizeC = (int) Math.max(uniqueChannels.size(), 1);
+      if (getSizeZ() == 0) ms0.sizeZ = 1;
+      ms0.sizeT =
         imageNames.size() / (fieldCount * getSizeC() * getSizeZ());
     }
 
     if (getSizeC() == 0) {
-      m.sizeC = (int) Math.max(channelNames.length, 1);
+      ms0.sizeC = (int) Math.max(channelNames.length, 1);
     }
 
-    if (getSizeZ() == 0) m.sizeZ = 1;
-    if (getSizeT() == 0) m.sizeT = 1;
+    if (getSizeZ() == 0) ms0.sizeZ = 1;
+    if (getSizeT() == 0) ms0.sizeT = 1;
     if (plateCount == 0) plateCount = 1;
     if (wellCount == 0) wellCount = 1;
     if (fieldCount == 0) fieldCount = 1;
@@ -917,26 +917,26 @@ public class FlexReader extends FormatReader {
       nPlanes = file.offsets.length;
     }
 
-    m.imageCount = getSizeZ() * getSizeC() * getSizeT();
+    ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
     if (getImageCount() * fieldCount != nPlanes) {
-      m.imageCount = nPlanes / fieldCount;
-      m.sizeZ = 1;
-      m.sizeT = nPlanes / fieldCount;
+      ms0.imageCount = nPlanes / fieldCount;
+      ms0.sizeZ = 1;
+      ms0.sizeT = nPlanes / fieldCount;
       if (getSizeT() % getSizeC() == 0) {
-        m.sizeT /= getSizeC();
+        ms0.sizeT /= getSizeC();
       }
       else {
-        m.sizeC = 1;
+        ms0.sizeC = 1;
       }
     }
-    m.sizeX = (int) ifd.getImageWidth();
-    m.sizeY = (int) ifd.getImageLength();
-    m.dimensionOrder = "XYCZT";
-    m.rgb = false;
-    m.interleaved = false;
-    m.indexed = false;
-    m.littleEndian = ifd.isLittleEndian();
-    m.pixelType = ifd.getPixelType();
+    ms0.sizeX = (int) ifd.getImageWidth();
+    ms0.sizeY = (int) ifd.getImageLength();
+    ms0.dimensionOrder = "XYCZT";
+    ms0.rgb = false;
+    ms0.interleaved = false;
+    ms0.indexed = false;
+    ms0.littleEndian = ifd.isLittleEndian();
+    ms0.pixelType = ifd.getPixelType();
 
     if (fieldCount == 1) {
       fieldCount *= nFiles;
@@ -945,8 +945,8 @@ public class FlexReader extends FormatReader {
     int seriesCount = plateCount * wellCount * fieldCount;
     if (seriesCount > 1) {
       core.clear();
-      for (int i = 1; i < seriesCount; i++) {
-        core.add(m);
+      for (int i = 0; i < seriesCount; i++) {
+        core.add(ms0);
       }
     }
   }
