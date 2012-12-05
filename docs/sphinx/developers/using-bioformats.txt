@@ -9,7 +9,7 @@ This document describes various things that are useful to know when working
 with Bio-Formats.  It is recommended that you obtain the Bio-Formats source
 by following the directions on the :doc:`source code page <source-code>`,
 rather than using an official release.  It is also recommended that you have
-a copy of the `javadocs <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/javadoc/>`_ nearby -
+a copy of the :javadoc:`Javadocs <>` nearby -
 the notes that follow will make more sense when you see the API.
 
 For a complete list of supported formats, see the Bio-Formats :doc:`supported formats table </supported-formats>`.
@@ -21,7 +21,7 @@ Basic File Reading
 
 Bio-Formats provides several methods for retrieving data from files in an
 arbitrary (supported) format.  These methods fall into three categories: raw
-pixels, core metadata, and format-specific metadata.  All methods described here are present and documented in :source:`loci.formats.IFormatReader <components/scifio/src/loci/formats/IFormatReader.java>`- it is advised that you take a look at the source and/or the javadocs. In general, it is recommended that you read files using an instance of :source:`ImageReader <components/scifio/src/loci/formats/ImageReader.java>`.  While it is possible to work with readers for a specific format, ImageReader contains additional logic to automatically detect the format of a file and delegate subsequent calls to the appropriate reader.
+pixels, core metadata, and format-specific metadata.  All methods described here are present and documented in :source:`loci.formats.IFormatReader <components/scifio/src/loci/formats/IFormatReader.java>`- it is advised that you take a look at the source and/or the Javadocs. In general, it is recommended that you read files using an instance of :source:`ImageReader <components/scifio/src/loci/formats/ImageReader.java>`.  While it is possible to work with readers for a specific format, ImageReader contains additional logic to automatically detect the format of a file and delegate subsequent calls to the appropriate reader.
 
 Prior to retrieving pixels or metadata, it is necessary to call ``setId(String)``
 on the reader instance, passing in the name of the file to read.  Some formats
