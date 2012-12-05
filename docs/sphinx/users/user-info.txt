@@ -36,21 +36,15 @@ it within :doc:`imagej` and :doc:`fiji`:
     imagej/*
 
 
-SCIFIO
-======
-
-SCIFIO provides the core architecture of the Bio-Formats library and also includes reader and writer implementations for open file formats. The more permissive BSD license enables non-GPL third party software to read and write OME-TIFF using SCIFIO alone. For more information see:
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    scifio
-
 OMERO
 =====
 
-OMERO.Importer uses Bio-Formats to read image pixels and propagate metadata into the OMERO.server system. For more informations see:
+OMERO.importer uses Bio-Formats to read image pixels and propagate metadata 
+into the OMERO.server system.
+
+.. only:: html
+
+    For more information see:
 
 .. toctree::
     :maxdepth: 1
@@ -58,35 +52,14 @@ OMERO.Importer uses Bio-Formats to read image pixels and propagate metadata into
 
     omero
 
+|
 
 .. only:: html
 
-    Many software packages can use Bio-Formats to read and write microscopy
-    formats (click on the package for further details):
+    Many other software packages can use Bio-Formats to read and write 
+    microscopy formats (click on the package for further details):
 
-Image servers
-=============
-
-.. toctree::
-    :glob:
-    :maxdepth: 1
-    :titlesonly:
-
-    applications/image_servers/*
-
-
-Libraries and scripting
-=======================
-
-.. toctree::
-    :glob:
-    :maxdepth: 1
-    :titlesonly:
-
-    applications/libraries_scripting/*
-
-
-Numerical data processing
+Image server applications
 =========================
 
 .. toctree::
@@ -94,17 +67,39 @@ Numerical data processing
     :maxdepth: 1
     :titlesonly:
 
-    applications/number_processing/*
+    image_servers/*
 
 
-Visualization and analysis
-==========================
+Libraries and scripting applications
+====================================
 
 .. toctree::
     :glob:
     :maxdepth: 1
     :titlesonly:
 
-    applications/visual_analysis/*
+    libraries_scripting/*
+
+
+Numerical data processing applications
+======================================
+
+.. toctree::
+    :glob:
+    :maxdepth: 1
+    :titlesonly:
+
+    number_processing/*
+
+
+Visualization and analysis applications
+=======================================
+
+.. toctree::
+    :glob:
+    :maxdepth: 1
+    :titlesonly:
+
+    visual_analysis/*
 
 
