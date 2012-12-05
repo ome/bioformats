@@ -188,6 +188,7 @@ public class HamamatsuVMSReader extends FormatReader {
 
     int seriesCount = 3;
 
+    core.clear();
     for (int i=0; i<seriesCount; i++) {
       String file = null;
       switch (i) {
@@ -204,9 +205,12 @@ public class HamamatsuVMSReader extends FormatReader {
 
       jpeg[i] = new TileJPEGReader();
       jpeg[i].setId(file);
-      core.set(i, jpeg[i].getCoreMetadata().get(0));
-      core.get(i).thumbnail = i > 0;
+      CoreMetadata m = jpeg[i].getCoreMetadata().get(0);
+      m.thumbnail = i > 0;
+      core.add(m);
     }
+
+    CoreMetadata ms0 = core.get(0);
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
@@ -220,19 +224,19 @@ public class HamamatsuVMSReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (physicalWidth > 0) {
         store.setPixelsPhysicalSizeX(
-          new PositiveFloat(physicalWidth / core.get(0).sizeX), 0);
+          new PositiveFloat(physicalWidth / ms0.sizeX), 0);
       }
       else {
         LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalWidth / core.get(0).sizeX);
+          physicalWidth / ms0.sizeX);
       }
       if (physicalHeight > 0) {
         store.setPixelsPhysicalSizeY(
-          new PositiveFloat(physicalHeight / core.get(0).sizeY), 0);
+          new PositiveFloat(physicalHeight / ms0.sizeY), 0);
       }
       else {
         LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalHeight / core.get(0).sizeY);
+          physicalHeight / ms0.sizeY);
       }
       if (macroWidth > 0) {
         store.setPixelsPhysicalSizeX(

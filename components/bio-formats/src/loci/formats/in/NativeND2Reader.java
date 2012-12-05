@@ -828,7 +828,7 @@ public class NativeND2Reader extends FormatReader {
         int seriesCount = imageOffsets.size() / (planeCount / core.size());
         core.clear();
         for (int i=0; i<seriesCount; i++) {
-            core.set(i, handler.getCoreMetadata().get(0));
+            core.add(handler.getCoreMetadata().get(0));
         }
       }
 
