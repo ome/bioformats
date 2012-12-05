@@ -230,9 +230,8 @@ public class JPEG2000Reader extends FormatReader {
     if (resolutionLevels != null) {
       CoreMetadata[] newCore = new CoreMetadata[resolutionLevels + 1];
       newCore[0] = core[0];
-      if (!hasFlattenedResolutions()) {
-        newCore[0].resolutionCount = newCore.length;
-      }
+      newCore[0].resolutionCount = newCore.length;
+
       for (int i = 1; i < newCore.length; i++) {
         newCore[i] = new CoreMetadata(core[0]);
         newCore[i].sizeX = newCore[i - 1].sizeX / 2;

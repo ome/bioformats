@@ -257,9 +257,7 @@ public class ImarisHDFReader extends FormatReader {
         core[i] = new CoreMetadata();
       }
 
-      if (!hasFlattenedResolutions()) {
-        core[0].resolutionCount = seriesCount;
-      }
+      core[0].resolutionCount = seriesCount;
 
       for (int i=1; i<seriesCount; i++) {
         String groupPath =
