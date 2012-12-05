@@ -125,11 +125,11 @@ public class TillVisionReader extends FormatReader {
 
     int plane = FormatTools.getPlaneSize(this);
     if (embeddedImages) {
-      in.seek(embeddedOffset[getSeries()] + no * plane);
+      in.seek(embeddedOffset[getCoreIndex()] + no * plane);
       readPlane(in, x, y, w, h, buf);
     }
     else {
-      pixelsStream = new RandomAccessInputStream(pixelsFiles[getSeries()]);
+      pixelsStream = new RandomAccessInputStream(pixelsFiles[getCoreIndex()]);
       if ((no + 1) * plane <= pixelsStream.length()) {
         pixelsStream.seek(no * plane);
         readPlane(pixelsStream, x, y, w, h, buf);
@@ -169,12 +169,12 @@ public class TillVisionReader extends FormatReader {
     Vector<String> files = new Vector<String>();
     files.add(currentId);
     if (!noPixels) {
-      if (pixelsFiles[getSeries()] != null) {
-        files.add(pixelsFiles[getSeries()]);
+      if (pixelsFiles[getCoreIndex()] != null) {
+        files.add(pixelsFiles[getCoreIndex()]);
       }
     }
-    if (infFiles[getSeries()] != null) {
-      files.add(infFiles[getSeries()]);
+    if (infFiles[getCoreIndex()] != null) {
+      files.add(infFiles[getCoreIndex()]);
     }
     return files.toArray(new String[files.size()]);
   }
@@ -443,16 +443,23 @@ public class TillVisionReader extends FormatReader {
 
     Arrays.sort(pixelsFile);
 
-    pixelsFiles = new String[nImages];
-    infFiles = new String[nImages];
+    int nSeries = core.size();
+    if (!embeddedImages) {
+      core.clear();
+      nSeries = nImages;
+    }
+
+    pixelsFiles = new String[nSeries];
+    infFiles = new String[nSeries];
 
     Object[] metadataKeys = tmpSeriesMetadata.keySet().toArray();
     IniParser parser = new IniParser();
 
-    core.clear();
-    for (int i=0; i<nImages; i++) {
-      CoreMetadata ms = new CoreMetadata();
+    for (int i=0; i<nSeries; i++) {
+      CoreMetadata ms;
+
       if (!embeddedImages) {
+        ms = new CoreMetadata();
         core.add(ms);
         setSeries(i);
 
@@ -501,6 +508,9 @@ public class TillVisionReader extends FormatReader {
           HashMap<String, String> iniMap = data.flattenIntoHashMap();
           ms.seriesMetadata.putAll(iniMap);
         }
+      } else {
+        ms = core.get(i);
+        setSeries(i);
       }
 
       ms.imageCount = ms.sizeZ * ms.sizeC * ms.sizeT;
@@ -517,6 +527,7 @@ public class TillVisionReader extends FormatReader {
         }
       }
     }
+    setSeries(0);
     tmpSeriesMetadata = null;
     populateMetadataStore();
 
