@@ -9,8 +9,8 @@ Extensions: .tiff
 Developer: `Nikon <http://www.nikon.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -36,8 +36,8 @@ We would like to have:
 
 - more Nikon Elements TIFF files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -49,8 +49,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`NikonTiffReader.java`
 

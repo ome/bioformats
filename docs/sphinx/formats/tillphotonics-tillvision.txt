@@ -9,8 +9,8 @@ Extensions: .vws
 Developer: `TILL Photonics <http://www.till-photonics.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,8 +50,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`TillVisionReader.java`
 

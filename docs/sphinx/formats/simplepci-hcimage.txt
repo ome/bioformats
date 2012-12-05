@@ -9,8 +9,8 @@ Extensions: .cxd
 Developer: `Compix <http://www.cimaging.net/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -36,8 +36,8 @@ We would like to have:
 
 - more SimplePCI TIFF datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -49,8 +49,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`PCIReader.java`
 

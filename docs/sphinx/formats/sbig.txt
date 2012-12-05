@@ -9,8 +9,8 @@ Extensions: .sm2, .sm3
 
 Owner: `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 
 - more SBIG files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,8 +50,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`SBIGReader.java`
 

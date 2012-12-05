@@ -9,8 +9,8 @@ Extensions: .lsm, .mdb
 
 Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -42,8 +42,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -55,8 +55,9 @@ Presence: |Very good|
 
 Utility: |Good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`ZeissLSMReader.java`
 
