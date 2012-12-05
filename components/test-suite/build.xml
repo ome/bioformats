@@ -46,7 +46,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-tiff-compress" depends="compile"
     description="run tests for TIFF compression/decompression">
-    <testng sourcedir="${dest.dir}" testname="TIFF compression tests"
+    <testng testname="TIFF compression tests"
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
@@ -59,8 +59,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-convert" depends="compile"
     description="run automated tests on writers">
-    <testng sourcedir="${dest.dir}"
-      annotations="Javadoc" groups="all" testname="Writer tests"
+    <testng groups="all" testname="Writer tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest">
@@ -79,8 +78,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-all" depends="compile"
     description="run all automated tests">
-    <testng sourcedir="${dest.dir}"
-      annotations="Javadoc" groups="all" testname="All tests"
+    <testng groups="all" testname="All tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest" useDefaultListeners="false">
@@ -104,8 +102,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-config" depends="compile"
     description="generate config files for automated test suite">
-    <testng sourcedir="${dest.dir}"
-      annotations="Javadoc" groups="config" testname="Config generation"
+    <testng groups="config" testname="Config generation"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest">
@@ -161,8 +158,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-fast" depends="compile"
     description="run automated tests in group 'fast'">
-    <testng sourcedir="${dest.dir}"
-      annotations="Javadoc" groups="fast" testname="Fast tests"
+    <testng groups="fast" testname="Fast tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest">
@@ -186,8 +182,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-pixels" depends="compile"
     description="run automated tests in group 'pixels'">
-    <testng sourcedir="${dest.dir}"
-      annotations="Javadoc" groups="pixels" testname="Pixels tests"
+    <testng groups="pixels" testname="Pixels tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest">
@@ -211,8 +206,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-xml" depends="compile"
     description="run automated tests in group 'xml'">
-    <testng sourcedir="${dest.dir}"
-      annotations="Javadoc" groups="xml" testname="XML tests"
+    <testng groups="xml" testname="XML tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest">
@@ -236,8 +230,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-type" depends="compile"
     description="run automated tests in group 'type'">
-    <testng sourcedir="${dest.dir}"
-      annotations="Javadoc" groups="type" testname="Type tests"
+    <testng groups="type" testname="Type tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest">
@@ -261,8 +254,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-config-xml" depends="compile"
     description="generate OME-XML files for automated test suite">
-    <testng sourcedir="${dest.dir}"
-      annotations="Javadoc" groups="config-xml" testname="OME-XML generation"
+    <testng groups="config-xml" testname="OME-XML generation"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest">
