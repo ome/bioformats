@@ -103,7 +103,7 @@ Thus, a stub for ``initFile(String)`` might look like this:
       }
 
 
-For more details, see the :javadoc:`Bio-Formats javadoc <>` for Location.mapId(String, String) and Location.getMappedId(String).
+For more details, see the :javadoc:`Bio-Formats Javadocs <>` for Location.mapId(String, String) and Location.getMappedId(String).
 
 Variables to populate
 ---------------------
@@ -138,14 +138,14 @@ Other useful things
 
 - :source:`loci.formats.Location <components/common/src/loci/common/Location.java>` provides an API similar to java.io.File, and supports
   File-like operations on URLs.  It is highly recommended that you use this
-  instead of File.  See the :javadoc:`javadoc <>` for additional information.
+  instead of File.  See the :javadoc:`Javadocs <>` for additional information.
 
 - :source:`loci.common.DataTools <components/common/src/loci/common/DataTools.java>` provides a number of methods for converting bytes to
   shorts, ints, longs, etc.  It also supports reading most primitive types
   directly from a RandomAccessInputStream (or other DataInput implementation).
 
 - :source:`loci.formats.ImageTools <components/scifio/src/loci/formats/ImageTools.java>` provides several methods for manipulating
-  primitive type arrays that represent images. Consult the source or javadoc
+  primitive type arrays that represent images. Consult the source or Javadocs
   for more information.
 
 - If your reader relies on third-party code which may not be available to all
@@ -243,7 +243,7 @@ Other useful things
   provides several basic tests that work with all Bio-Formats readers. See
   the FormatReaderTest source code for additional information.
 
-- For more details, please look at the source code and :javadoc:`javadocs <>`.    
+- For more details, please look at the source code and :javadoc:`Javadocs <>`.
   Studying existing readers is probably the best way to get a feel for the 
   API; we would recommend first looking at :bfreader:`loci.formats.in.ImarisReader <ImarisReader.java>` (this is the 
   most straightforward one). :bfreader:`loci.formats.in.LIFReader <LIFReader.java>` and :bfreader:`InCellReader <InCellReader.java>` are also
