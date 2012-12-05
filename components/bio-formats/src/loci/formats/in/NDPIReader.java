@@ -26,7 +26,6 @@
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Vector;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
