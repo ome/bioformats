@@ -9,8 +9,8 @@ Extensions: .bmp
 Developer: Microsoft and IBM
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -37,8 +37,8 @@ We would like to have:
 - an official specification document 
 - more WA-TOP files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,8 +50,9 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :scifioreader:`BMPReader.java`
 

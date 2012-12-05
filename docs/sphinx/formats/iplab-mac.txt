@@ -9,8 +9,8 @@ Extensions: .ipm
 
 Owner: `BioVision Technologies <http://biovis.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 
 - more IPLab-Mac datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,8 +50,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`IvisionReader.java`
 

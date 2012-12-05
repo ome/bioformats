@@ -9,8 +9,8 @@ Extensions: .tfr, .ffr, .zfr, .zfp, .2fl
 
 Owner: `TopoMetrix (now Veeco) <http://www.veeco.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -39,8 +39,8 @@ We would like to have:
 - an official specification document 
 - more Topometrix files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -52,8 +52,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`TopometrixReader.java`
 
