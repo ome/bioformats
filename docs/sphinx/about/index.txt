@@ -87,14 +87,21 @@ for reporting bugs here <bug-reporting>`.
 For advanced users and developers, further information is available on the 
 :doc:`troubleshooting page <troubleshooting>`.
 
+.. toctree::
+    :maxdepth: 1
+    :hidden:
 
-Version history
----------------
+    bug-reporting
+    troubleshooting
+
+
+Bio-Formats versions
+--------------------
 
 Bio-Formats is updated whenever a significant bug fix is made, or whenever a
 new version of :omerodoc:`OMERO <>` is released. The version number is three 
-numbers separated by dots; e.g., 4.0.0. See the :doc:`what's new <whats-new>` 
-list for a history of major changes in each release.
+numbers separated by dots; e.g., 4.0.0. See the :doc:`version history <whats-new>` 
+for a list of major changes in each release.
 
 The latest stable version of Bio-Formats is |release|. For future
 development directions, see the
@@ -106,6 +113,4 @@ roadmaps.
     :maxdepth: 1
     :hidden:
 
-    bug-reporting
-    troubleshooting
     whats-new
