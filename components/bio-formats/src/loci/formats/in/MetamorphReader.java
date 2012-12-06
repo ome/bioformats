@@ -869,10 +869,14 @@ public class MetamorphReader extends BaseTiffReader {
             }
 
             lastIFD = lastIFDs.get(p % lastIFDs.size());
-            TiffIFDEntry commentEntry =
-              (TiffIFDEntry) lastIFD.get(IFD.IMAGE_DESCRIPTION);
+            Object commentEntry = lastIFD.get(IFD.IMAGE_DESCRIPTION);
             if (commentEntry != null) {
-              comment = tp.getIFDValue(commentEntry).toString();
+              if (commentEntry instanceof String) {
+                comment = (String) commentEntry;
+              }
+              else if (commentEntry instanceof TiffIFDEntry) {
+                comment = tp.getIFDValue((TiffIFDEntry) commentEntry).toString();
+              }
             }
             if (comment != null) comment = comment.trim();
             if (comment != null && comment.startsWith("<MetaData>")) {
