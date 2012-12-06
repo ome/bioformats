@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.Location;
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
@@ -96,7 +97,9 @@ public class NetCDFServiceImpl extends AbstractService
 
     String currentId = Location.getMappedId(currentFile);
     PrintStream outStream = System.out;
-    PrintStream throwaway = new PrintStream(new ByteArrayOutputStream()) {
+    PrintStream throwaway = new PrintStream(
+      new ByteArrayOutputStream(), false /*auto-flush*/,
+        Constants.ENCODING) {
       public void print(String s) { }
     };
     System.setOut(throwaway);
