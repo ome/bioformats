@@ -92,6 +92,9 @@ public class OMEXMLWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
+    if (id.equals(currentId)) {
+      return;
+    }
     super.setId(id);
 
     MetadataRetrieve retrieve = getMetadataRetrieve();
