@@ -9,8 +9,8 @@ Extensions: .vsi
 Developer: `Olympus <http://www.olympus.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -33,8 +33,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Fair|
 
@@ -46,8 +46,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`CellSensReader.java`
 

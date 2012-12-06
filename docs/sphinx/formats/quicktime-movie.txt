@@ -9,8 +9,8 @@ Extensions: .mov
 
 Owner: `Apple Computer <http://www.apple.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -40,8 +40,8 @@ We would like to have:
 -   #. files compressed with a common, unsupported codec 
 -   #. files with audio tracks and/or multiple video tracks
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -53,8 +53,9 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :scifioreader:`NativeQTReader.java`
 Source Code: :scifiowriter:`QTWriter.java`

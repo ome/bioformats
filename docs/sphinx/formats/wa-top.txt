@@ -10,8 +10,8 @@ Developer: WA Technology
 
 Owner: `Oxford Instruments <http://www.oxinst.com>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -39,8 +39,8 @@ We would like to have:
 - an official specification document 
 - more WA-TOP files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -52,8 +52,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`WATOPReader.java`
 

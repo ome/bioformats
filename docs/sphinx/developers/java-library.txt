@@ -24,25 +24,25 @@ same folder.
 
   *
     - `Apache Jakarta POI <http://jakarta.apache.org/poi/>`_ library, LOCI fork
-    - `poi-loci.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/poi-loci.jar>`_
+    - :jenkins:`poi-loci.jar <lastSuccessfulBuild/artifact/artifacts/poi-loci.jar>`
     - Apache
     - For OLE-based formats (zvi, oib, ipw, cxd)
 
   *
     - `MDB Tools project <http://sourceforge.net/projects/mdbtools>`_ Java port, LOCI fork
-    - `mdbtools-java.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`_
+    - :jenkins:`mdbtools-java.jar <lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`
     - LGPL
     - For Olympus CellR and Zeiss LSM metadata (mdb)
 
   *
     - `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ pure Java implementation, LOCI fork
-    - `jai\_imageio.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`_
+    - :jenkins:`jai_imageio.jar <lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`
     - BSD
     - For JPEG2000-based formats (nd2, jp2)
 
   *
     - `NetCDF Java library <http://www.unidata.ucar.edu/software/netcdf-java/>`_
-    - `netcdf-4.0.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/netcdf-4.0.jar>`_
+    - :jenkins:`netcdf-4.0.jar <lastSuccessfulBuild/artifact/artifacts/netcdf-4.0.jar>`
     - LGPL
     - For HDF5-based formats (Imaris 5.5, MINC MRI)
 

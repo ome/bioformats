@@ -9,8 +9,8 @@ Extensions: .1sc
 
 Owner: `Bio-Rad <http://www.bio-rad.com>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -36,8 +36,8 @@ We would like to have:
 - a Bio-Rad Gel specification 
 - more Bio-Rad Gel files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -49,8 +49,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`BioRadGelReader.java`
 

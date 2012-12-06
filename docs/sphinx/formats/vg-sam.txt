@@ -8,8 +8,8 @@ Extensions: .dti
 
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -36,8 +36,8 @@ We would like to have:
 - an official specification document 
 - more VG-SAM files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -49,8 +49,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`VGSAMReader.java`
 

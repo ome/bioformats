@@ -23,7 +23,7 @@ API documentation
 
     java-library
 
-Also see `Bio-Formats Javadocs <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/javadoc>`_
+Also see :javadoc:`Bio-Formats Javadocs <>`
 
 Examples
 --------

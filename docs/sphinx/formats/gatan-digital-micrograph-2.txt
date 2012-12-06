@@ -9,8 +9,8 @@ Extensions: .dm2
 Developer: `Gatan <http://www.gatan.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -40,8 +40,8 @@ We would like to have:
 - an official DM2 specification document 
 - more DM2 files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -53,8 +53,9 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`GatanDM2Reader.java`
 

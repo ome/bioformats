@@ -9,8 +9,8 @@ Extensions: .img
 Developer: `FEI <http://www.fei.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -39,8 +39,8 @@ We would like to have:
 - a specification document 
 - more FEI files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Fair|
 
@@ -52,8 +52,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`FEIReader.java`
 
