@@ -9,7 +9,7 @@ ImageJ and Fiji, and also gives details of other software packages which can
 use Bio-Formats to read and write microscopy formats. 
 :doc:`developers/index` covers more indepth information on using 
 Bio-Formats as a Java library and how to interface from non-Java codes. 
-Finally, :doc:`supported-formats` is a guide to all the file formats currently 
+Finally, :doc:`formats/index` is a guide to all the file formats currently 
 supported by Bio-Formats.
  
 .. only:: html
@@ -17,7 +17,7 @@ supported by Bio-Formats.
     - :doc:`about/index`
     - :doc:`users/index`
     - :doc:`developers/index`
-    - :doc:`supported-formats`
+    - :doc:`formats/index`
 
 
 .. toctree::
@@ -27,5 +27,5 @@ supported by Bio-Formats.
     about/index
     users/index
     developers/index
-    supported-formats
+    formats/index
 

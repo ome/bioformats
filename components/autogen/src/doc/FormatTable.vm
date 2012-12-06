@@ -89,4 +89,6 @@ Bio-Formats currently supports **$count** formats
     :glob:
     :hidden:
 
-    formats/*
+#foreach ($format in $formats)
+    $format.get("pagename")
+#end
