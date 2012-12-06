@@ -4,10 +4,10 @@ Bio-Formats Documentation
 
 The following documentation is split into four sections. :doc:`about` explains 
 the goal of the software and discusses how it processes metadata. 
-:doc:`users/user-info` focusses on how to use Bio-Formats as a plugin for 
+:doc:`users/index` focusses on how to use Bio-Formats as a plugin for 
 ImageJ and Fiji, and also gives details of other software packages which can 
 use Bio-Formats to read and write microscopy formats. 
-:doc:`developers/developer-links` covers more indepth information on using 
+:doc:`developers/index` covers more indepth information on using 
 Bio-Formats as a Java library and how to interface from non-Java codes. 
 Finally, :doc:`supported-formats` is a guide to all the file formats currently 
 supported by Bio-Formats.
@@ -15,8 +15,8 @@ supported by Bio-Formats.
 .. only:: html
 
     - :doc:`about`
-    - :doc:`users/user-info`
-    - :doc:`developers/developer-links`
+    - :doc:`users/index`
+    - :doc:`developers/index`
     - :doc:`supported-formats`
 
 
@@ -51,8 +51,8 @@ roadmaps.
     :hidden:
  
     about
-    users/user-info
-    developers/developer-links
+    users/index
+    developers/index
     supported-formats
     bug-reporting
     troubleshooting

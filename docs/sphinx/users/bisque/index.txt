@@ -12,4 +12,4 @@ supported. Novel semantic analyses are integrated into the system
 allowing high level semantic queries and comparison of image content.
 
 Bisque integrates with Bio-Formats by calling the
-:doc:`showinf command line tool </users/libraries_scripting/command-line-tools>`.
+:doc:`showinf command line tool </users/comlinetools/index>`.

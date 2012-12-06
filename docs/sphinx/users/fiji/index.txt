@@ -2,14 +2,14 @@ Fiji
 ====
 
 `Fiji <http://pacific.mpi-cbg.de/>`_ is an image processing package. It
-can be described as a distribution of :doc:`imagej`
+can be described as a distribution of :doc:`/users/imagej/index`
 together with Java, Java 3D and a lot of plugins organized into a
 `coherent menu
 structure <http://pacific.mpi-cbg.de/wiki/index.php/Plugins_Menu>`_.
 Fiji compares to ImageJ as Ubuntu compares to Linux.
 
 Fiji works with Bio-Formats out of the box, because it comes bundled
-with the :doc:`Bio-Formats ImageJ plugins <imagej>`.
+with the :doc:`Bio-Formats ImageJ plugins </users/imagej/index>`.
 
 Upgrading
 ---------
