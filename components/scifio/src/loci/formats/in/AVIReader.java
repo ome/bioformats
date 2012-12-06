@@ -350,6 +350,10 @@ public class AVIReader extends FormatReader {
       core[0].rgb = bmpBitsPerPixel > 8 || (bmpCompression != 0 && lut == null);
       core[0].sizeC = isRGB() ? 3 : 1;
     }
+    else if (bmpCompression == MS_VIDEO) {
+      core[0].sizeC = 3;
+      core[0].rgb = true;
+    }
     else {
       core[0].sizeC = bytesPerPlane /
         (getSizeX() * getSizeY() * (bmpBitsPerPixel / 8));
