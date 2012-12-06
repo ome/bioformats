@@ -10,8 +10,8 @@ Developer: `Intelligent Imaging Innovations`_
 
 Owner: `Intelligent Imaging Innovations`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -33,8 +33,8 @@ We would like to have:
 - A SlideBook specification document 
 - More SlideBook datasets (preferably acquired with the most recent SlideBook software)
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -46,8 +46,9 @@ Presence: |Very good|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`SlidebookReader.java`
 

@@ -9,8 +9,8 @@ Extensions: .jpg
 Developer: `Independent JPEG Group <http://www.ijg.org/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -39,8 +39,8 @@ We would like to have:
 - an official specification document 
 - more JEOL files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -52,8 +52,9 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :scifioreader:`JPEGReader.java`
 Source Code: :scifiowriter:`JPEGWriter.java`

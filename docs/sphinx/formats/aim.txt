@@ -9,8 +9,8 @@ Extensions: .aim
 Developer: `SCANCO Medical AG <http://www.scanco.ch>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -31,8 +31,8 @@ We would like to have:
 - an .aim specification document 
 - more .aim files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -44,8 +44,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`AIMReader.java`
 

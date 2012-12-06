@@ -9,8 +9,8 @@ Extensions: .l2d, .tif, .scn
 
 Owner: `LiCor Biosciences <http://www.licor.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 - an official specification document 
 - more L2D datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,8 +50,9 @@ Presence: |Good|
 
 Utility: |Good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`L2DReader.java`
 

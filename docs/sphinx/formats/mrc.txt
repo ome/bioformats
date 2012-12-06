@@ -9,8 +9,8 @@ Extensions: .mrc
 Developer: `MRC Laboratory of Molecular Biology <http://www2.mrc-lmb.cam.ac.uk/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -39,8 +39,8 @@ We would like to have:
 - an official specification document 
 - more Molecular Imaging files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -52,8 +52,9 @@ Presence: |Good|
 
 Utility: |Good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`MRCReader.java`
 

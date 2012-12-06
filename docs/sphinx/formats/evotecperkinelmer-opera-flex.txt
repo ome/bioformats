@@ -9,8 +9,8 @@ Extensions: .flex, .mea, .res
 Developer: `Evotec Technologies, now PerkinElmer <http://www.perkinelmer.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 
 - a freely redistributable LuraWave LWF decoder
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -51,8 +51,9 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`FlexReader.java`
 

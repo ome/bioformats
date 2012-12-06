@@ -9,8 +9,8 @@ Extensions: .png
 Developer: `The Animated PNG Project <http://www.animatedpng.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -36,8 +36,8 @@ We would like to have:
 
 - more Amira Mesh datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -49,8 +49,9 @@ Presence: |Good|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :scifioreader:`APNGReader.java`
 

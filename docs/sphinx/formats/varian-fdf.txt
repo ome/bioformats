@@ -9,8 +9,8 @@ Extensions: .fdf
 Developer: `Varian, Inc. <http://www.varianinc.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 - an official specification document 
 - more Varian FDF datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,8 +50,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`VarianFDFReader.java`
 

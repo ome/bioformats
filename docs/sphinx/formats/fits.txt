@@ -9,8 +9,8 @@ Extensions: .fits
 Developer: `National Radio Astronomy Observatory <http://www.nrao.edu/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -40,8 +40,8 @@ We would like to have:
 - a specification document 
 - more FEI files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -53,8 +53,9 @@ Presence: |Good|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :scifioreader:`FitsReader.java`
 
