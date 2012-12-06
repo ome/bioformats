@@ -2,8 +2,8 @@
 Bio-Formats Documentation
 #########################
 
-The following documentation is split into four sections. :doc:`about` explains 
-the goal of the software and discusses how it processes metadata. 
+The following documentation is split into four sections. :doc:`about/index` explains 
+the goal of the software, discusses how it processes metadata, and provides other useful information such as version history and how to report bugs. 
 :doc:`users/index` focusses on how to use Bio-Formats as a plugin for 
 ImageJ and Fiji, and also gives details of other software packages which can 
 use Bio-Formats to read and write microscopy formats. 
@@ -14,37 +14,11 @@ supported by Bio-Formats.
  
 .. only:: html
 
-    - :doc:`about`
+    - :doc:`about/index`
     - :doc:`users/index`
     - :doc:`developers/index`
     - :doc:`supported-formats`
 
-
-For help, see the
-`Bio-Formats <http://www.openmicroscopy.org/site/support/faq/bio-formats>`_,
-`File Formats <http://www.openmicroscopy.org/site/support/faq/file-formats>`_
-and `OME-XML and OME-TIFF 
-<http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
-sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ 
-for answers to some common questions. Please `contact us 
-<http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
-you have any questions or problems with Bio-Formats. There is a :doc:`guide 
-for reporting bugs here <bug-reporting>`.
-
-For advanced users and developers, further information is available on the 
-:doc:`troubleshooting page <troubleshooting>`.
-
-
-Bio-Formats is updated whenever a significant bug fix is made, or whenever a
-new version of :omerodoc:`OMERO <>` is released. The version number is three 
-numbers separated by dots; e.g., 4.0.0. See the :doc:`what's new <whats-new>` 
-list for a history of major changes in each release.
-
-The latest stable version of Bio-Formats is |release|. For future
-development directions, see the
-`4.5 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OMERO-4.5>`_
-and `5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OME-5.0>`_
-roadmaps.
 
 .. toctree::
     :maxdepth: 1
@@ -54,7 +28,4 @@ roadmaps.
     users/index
     developers/index
     supported-formats
-    bug-reporting
-    troubleshooting
-    whats-new
 
