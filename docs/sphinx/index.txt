@@ -24,7 +24,7 @@ supported by Bio-Formats.
     :maxdepth: 1
     :hidden:
  
-    about
+    about/index
     users/index
     developers/index
     supported-formats
