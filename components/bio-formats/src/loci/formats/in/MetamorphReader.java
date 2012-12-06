@@ -828,6 +828,8 @@ public class MetamorphReader extends BaseTiffReader {
       long[] lastOffsets = null;
 
       double distance = zStart;
+      TiffParser tp = null;
+      RandomAccessInputStream stream = null;
 
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
@@ -840,9 +842,8 @@ public class MetamorphReader extends BaseTiffReader {
           String file = stks == null ? currentId : stks[i][fileIndex];
           if (file != null) {
             if (fileIndex != lastFile) {
-              RandomAccessInputStream stream =
-                new RandomAccessInputStream(file);
-              TiffParser tp = new TiffParser(stream);
+              stream = new RandomAccessInputStream(file);
+              tp = new TiffParser(stream);
               tp.checkHeader();
               lastFile = fileIndex;
               lastIFDs = tp.getIFDs();
