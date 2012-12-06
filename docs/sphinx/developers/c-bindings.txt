@@ -19,7 +19,7 @@ Other projects using BF-CPP include:
 
 -  `WiscScan <http://loci.wisc.edu/software/wiscscan>`_ which uses BF-CPP
    to write OME-TIFF_ files.
--  :doc:`/users/visual_analysis/xuvtools` which uses an adapted version of BF-CPP
+-  :doc:`/users/xuvtools/index` which uses an adapted version of BF-CPP
    called
    `BlitzBioFormats <http://www.xuvtools.org/devel:libblitzbioformats>`_.
 

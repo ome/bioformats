@@ -11,29 +11,32 @@ For information about what extensions to choose to import files, see:
     :maxdepth: 1
     :titlesonly:
 
-    /dataset-structure-table
+    /dataset-table
 
 
 Using Bio-Formats with ImageJ and Fiji
 ======================================
 
 The following sections explain the features of Bio-Formats and how to use 
-it within :doc:`imagej` and :doc:`fiji`:
+it within :doc:`imagej/index` and :doc:`fiji/index`:
 
 .. toctree::
     :maxdepth: 1
     :hidden:
 
-    imagej
-    fiji
+    imagej/index
+    fiji/index
 
 
 .. toctree::
-    :glob:
     :maxdepth: 1
     :titlesonly:
 
-    imagej/*
+    imagej/features
+    imagej/installing
+    imagej/load-images
+    imagej/managing-memory
+    imagej/upgrading-importer
 
 
 OMERO
@@ -50,7 +53,7 @@ into the OMERO.server system.
     :maxdepth: 1
     :titlesonly:
 
-    omero
+    omero/index
 
 |
 
@@ -63,43 +66,64 @@ Image server applications
 =========================
 
 .. toctree::
-    :glob:
     :maxdepth: 1
     :titlesonly:
 
-    image_servers/*
+    bisque/index
+    ome-server/index
 
 
 Libraries and scripting applications
 ====================================
 
 .. toctree::
-    :glob:
     :maxdepth: 1
     :titlesonly:
 
-    libraries_scripting/*
+    comlinetools/index
+    farsight/index
+    i3dcore/index
+    imglib/index
+    itk/index
+    qu-matlab/index
+    subimager/index
 
 
 Numerical data processing applications
 ======================================
 
 .. toctree::
-    :glob:
     :maxdepth: 1
     :titlesonly:
 
-    number_processing/*
+    idl/index
+    knime/index
+    matlab/index
+    visad/index
 
 
 Visualization and analysis applications
 =======================================
 
 .. toctree::
-    :glob:
     :maxdepth: 1
     :titlesonly:
 
-    visual_analysis/*
+    imaris/index
+    cellprofiler/index
+    comstat2/index
+    endrov/index
+    focalpoint/index
+    graphic-con/index
+    icy/index
+    imago/index
+    iqm/index
+    macnif/index
+    mipav/index
+    vaa3d/index
+    visbio/index
+    xuvtools/index
+
+
 
 
