@@ -10,8 +10,8 @@ Developer: `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
 
 Owner: `Leica <http://www.leica.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -39,8 +39,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -52,8 +52,9 @@ Presence: |Good|
 
 Utility: |Very good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`LIFReader.java`
 

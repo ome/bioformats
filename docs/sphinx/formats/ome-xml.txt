@@ -9,8 +9,8 @@ Extensions: .ome
 Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -39,8 +39,8 @@ We would like to have:
 - more OIB datasets (especially 2+ GB files) 
 - more FV1000 version 2 datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -52,8 +52,9 @@ Presence: |Fair|
 
 Utility: |Outstanding|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :scifioreader:`OMEXMLReader.java`
 Source Code: :scifiowriter:`OMEXMLWriter.java`
