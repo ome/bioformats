@@ -2,7 +2,7 @@
 Bio-Formats Documentation
 #########################
 
-The following documentation is split into four sections. :doc:`about/index` explains 
+The following documentation is split into four parts. :doc:`about/index` explains 
 the goal of the software, discusses how it processes metadata, and provides other useful information such as version history and how to report bugs. 
 :doc:`users/index` focusses on how to use Bio-Formats as a plugin for 
 ImageJ and Fiji, and also gives details of other software packages which can 
