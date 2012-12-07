@@ -35,6 +35,13 @@ OMERO.importer uses Bio-Formats to read image pixels and propagate metadata
 into the OMERO.server system. Please refer to the 
 :omerodoc:`OMERO documentation <>` for further information.
 
+.. only:: latex
+
+    |
+
+    .. image:: /images/bf_omero.png
+        :align: center
+
 
 |
 
