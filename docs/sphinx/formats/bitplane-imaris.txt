@@ -9,8 +9,8 @@ Extensions: .ims
 
 Owner: `Bitplane <http://www.bitplane.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -39,8 +39,8 @@ We would like to have:
 - an Imaris 3 (TIFF) specification document 
 - more Imaris 3 (TIFF) datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -52,8 +52,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`ImarisReader.java`, :bfreader:`ImarisTiffReader.java`, :bfreader:`ImarisHDFReader.java`
 

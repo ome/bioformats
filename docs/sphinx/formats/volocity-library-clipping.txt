@@ -9,8 +9,8 @@ Extensions: .acff
 Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 - any datasets that do not open correctly 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,8 +50,9 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`VolocityClippingReader.java`
 

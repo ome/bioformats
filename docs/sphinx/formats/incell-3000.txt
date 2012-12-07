@@ -9,8 +9,8 @@ Extensions: .frm
 Developer: `GE <http://gelifesciences.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -36,8 +36,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -49,8 +49,9 @@ Presence: |Fair|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`InCell3000Reader.java`
 

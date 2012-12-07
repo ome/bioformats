@@ -10,8 +10,8 @@ Developer: Bio-Rad
 
 Owner: `Carl Zeiss, Inc. <http://www.zeiss.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - a Bio-Rad Gel specification 
 - more Bio-Rad Gel files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -51,8 +51,9 @@ Presence: |Very good|
 
 Utility: |Very good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`BioRadReader.java`
 

@@ -9,8 +9,8 @@ Extensions: .stk, .nd
 
 Owner: `Molecular Devices <http://www.moleculardevices.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -39,8 +39,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -52,8 +52,9 @@ Presence: |Very good|
 
 Utility: |Good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`MetamorphReader.java`
 

@@ -9,8 +9,8 @@ Extensions: .nrrd, .nhdr, .raw, .txt
 Developer: `Teem developers <http://teem.sourceforge.net/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -37,8 +37,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,8 +50,9 @@ Presence: |Fair|
 
 Utility: |Very good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :scifioreader:`NRRDReader.java`
 
