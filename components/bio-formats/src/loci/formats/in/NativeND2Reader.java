@@ -334,8 +334,6 @@ public class NativeND2Reader extends FormatReader {
 
     in = new RandomAccessInputStream(id);
 
-    CoreMetadata ms0;
-
     channelColors = new Hashtable<String, Integer>();
 
     if (in.read() == -38 && in.read() == -50) {
@@ -855,11 +853,10 @@ public class NativeND2Reader extends FormatReader {
       }
 
       if (extraZDataCount > 1 && getSizeZ() == 1 && getSeriesCount() > 1) {
-        ms0 = core.get(0);
-        ms0.sizeZ = getSeriesCount();
+        CoreMetadata ms = core.get(0);
+        ms.sizeZ = getSeriesCount();
         core.clear();
-        core.add(ms0);
-        ms0 = null;
+        core.add(ms);
       }
 
       // make sure the channel count is reasonable
@@ -903,7 +900,7 @@ public class NativeND2Reader extends FormatReader {
       int planeSize = getSizeX() * getSizeY() * getSizeC() *
         FormatTools.getBytesPerPixel(getPixelType());
 
-      ms0 = core.get(0);
+      CoreMetadata ms0 = core.get(0);
 
       if (availableBytes < planeSize) {
         LOGGER.debug("Correcting SizeC: was {}", getSizeC());
@@ -953,11 +950,10 @@ public class NativeND2Reader extends FormatReader {
       ms0 = null;
 
       if (getSizeT() == imageOffsets.size() && getSeriesCount() > 1) {
-        ms0 = core.get(0);
+        CoreMetadata ms = core.get(0);
         // Set size to 1
         core.clear();
-        core.add(ms0);
-        ms0 = null;
+        core.add(ms);
       }
 
       // calculate the image count
@@ -969,11 +965,10 @@ public class NativeND2Reader extends FormatReader {
         }
         if (ms.imageCount > imageOffsets.size() / getSeriesCount()) {
           if (ms.imageCount == imageOffsets.size()) {
-            ms0 = core.get(0);
+            CoreMetadata msv = core.get(0);
             // Set size to 1
             core.clear();
-            core.add(ms0);
-            ms0 = null;
+            core.add(msv);
             numSeries = 1;
             break;
           }
@@ -1409,7 +1404,7 @@ public class NativeND2Reader extends FormatReader {
 
     if (getDimensionOrder() == null) core.get(0).dimensionOrder = "";
 
-    ms0 = core.get(0);
+    CoreMetadata ms0 = core.get(0);
 
     if (getSizeC() > 1) {
       ms0.dimensionOrder = getDimensionOrder().replaceAll("C", "");
