@@ -32,17 +32,9 @@ OMERO
 =====
 
 OMERO.importer uses Bio-Formats to read image pixels and propagate metadata 
-into the OMERO.server system.
+into the OMERO.server system. Please refer to the 
+:omerodoc:`OMERO documentation <>` for further information.
 
-.. only:: html
-
-    For more information see:
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    omero/index
 
 |
 
