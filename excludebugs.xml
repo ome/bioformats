@@ -6,9 +6,9 @@
 
 <FindBugsFilter>
 
-  <!--
-  <Match> <Package name="loci.example"/> </Match>
-  -->
+  <Match>
+    <Bug code="MS"/>
+  </Match>
 
 </FindBugsFilter>
 
