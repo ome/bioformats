@@ -4,7 +4,7 @@
 .. loci.formats.tools.MakeDatasetStructureTable, so please
 .. update that instead.
 
-Dataset structure table
+Dataset Structure Table
 =======================
 
 This table shows the extension of the file that you should choose if you want
@@ -151,7 +151,7 @@ to open/import a dataset in a particular format.
      - .txt
      - One .txt file plus one similarly-named .tif, .bmp, or .jpg file
    * - IMAGIC
-     - .hed
+     - .hed, .img
      - One .hed file plus one similarly-named .img file
    * - IMOD
      - .mod
@@ -181,7 +181,7 @@ to open/import a dataset in a particular format.
      - .tif, .tiff
      - Single file
    * - InCell 1000/2000
-     - .xdce, .xml, .tiff, .tif, .xlog, .im
+     - .xdce, .xml, .tiff, .tif, .xlog
      - One .xdce file with at least one .tif/.tiff or .im file
    * - InCell 3000
      - .frm
