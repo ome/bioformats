@@ -494,7 +494,7 @@ public class NativeND2Reader extends FormatReader {
             ND2Handler handler = new ND2Handler(core, imageOffsets.size());
             XMLTools.parseXML(xmlString, handler);
             xmlString = null;
-            core = new ArrayList<CoreMetadata>(handler.getCoreMetadataList());
+            core = handler.getCoreMetadataList();
             if (backupHandler == null ||
               backupHandler.getChannelNames().size() == 0)
             {
@@ -630,7 +630,7 @@ public class NativeND2Reader extends FormatReader {
                     new ND2Handler(core, imageOffsets.size());
                   XMLTools.parseXML(xmlString, handler);
                   xmlString = null;
-                  core = new ArrayList<CoreMetadata>(handler.getCoreMetadataList());
+                  core = handler.getCoreMetadataList();
                   if (backupHandler == null) {
                     backupHandler = handler;
                   }
@@ -792,7 +792,7 @@ public class NativeND2Reader extends FormatReader {
         isLossless = handler.isLossless();
       }
       fieldIndex = handler.getFieldIndex();
-      core = new ArrayList<CoreMetadata>(handler.getCoreMetadataList());
+      core = handler.getCoreMetadataList();
       Hashtable<String, Object> globalMetadata = handler.getMetadata();
       nXFields = handler.getXFields();
       if (nXFields > 6) {
@@ -826,7 +826,7 @@ public class NativeND2Reader extends FormatReader {
         int seriesCount = imageOffsets.size() / (planeCount / core.size());
         core.clear();
         for (int i=0; i<seriesCount; i++) {
-            core.add(handler.getCoreMetadataList().get(0));
+          core.add(handler.getCoreMetadataList().get(0));
         }
       }
 
@@ -1373,7 +1373,7 @@ public class NativeND2Reader extends FormatReader {
       zs = handler.getZSections();
       ts = handler.getTimepoints();
       numSeries = handler.getSeriesCount();
-      core = new ArrayList<CoreMetadata>(handler.getCoreMetadataList());
+      core = handler.getCoreMetadataList();
       Hashtable<String, Object> globalMetadata = handler.getMetadata();
       for (String key : globalMetadata.keySet()) {
         addGlobalMeta(key, globalMetadata.get(key));
