@@ -2,17 +2,6 @@
 User Information
 ****************
 
-Dataset importing
-=================
-
-For information about what extensions to choose to import files, see:
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    /dataset-table
-
 
 Using Bio-Formats with ImageJ and Fiji
 ======================================
@@ -43,17 +32,16 @@ OMERO
 =====
 
 OMERO.importer uses Bio-Formats to read image pixels and propagate metadata 
-into the OMERO.server system.
+into the OMERO.server system. Please refer to the 
+:omerodoc:`OMERO documentation <>` for further information.
 
-.. only:: html
+.. only:: latex
 
-    For more information see:
+    |
 
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
+    .. image:: /images/bf_omero.png
+        :align: center
 
-    omero/index
 
 |
 
