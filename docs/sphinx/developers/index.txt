@@ -71,7 +71,7 @@ OME-TIFF using SCIFIO alone.
     :maxdepth: 1
     :titlesonly:
 
-    /users/scifio
+    scifio
 
 
 Writing new Bio-Formats file format readers
