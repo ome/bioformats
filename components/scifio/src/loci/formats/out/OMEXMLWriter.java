@@ -39,6 +39,7 @@ package loci.formats.out;
 import java.io.IOException;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -175,7 +176,7 @@ public class OMEXMLWriter extends FormatWriter {
         plane.append("\"");
       }
       plane.append(">");
-      plane.append(new String(encodedPix));
+      plane.append(new String(encodedPix, Constants.ENCODING));
       plane.append("</BinData>");
       out.writeBytes(plane.toString());
     }

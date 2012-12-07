@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
@@ -497,12 +498,12 @@ public class TiffParser {
       int c = 0, ndx = -1;
       for (int j=0; j<count; j++) {
         if (ascii[j] == 0) {
-          s = new String(ascii, ndx + 1, j - ndx - 1);
+          s = new String(ascii, ndx + 1, j - ndx - 1, Constants.ENCODING);
           ndx = j;
         }
         else if (j == count - 1) {
           // handle non-null-terminated strings
-          s = new String(ascii, ndx + 1, j - ndx);
+          s = new String(ascii, ndx + 1, j - ndx, Constants.ENCODING);
         }
         else s = null;
         if (strings != null && s != null) strings[c++] = s;

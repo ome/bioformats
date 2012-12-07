@@ -42,7 +42,9 @@ import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -53,6 +55,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
@@ -178,8 +181,13 @@ public class EditTiffG extends JFrame implements ActionListener {
 
   public void showError(Throwable t) {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    t.printStackTrace(new PrintWriter(out));
-    String error = new String(out.toByteArray());
+    String error = "";
+    try {
+      t.printStackTrace(
+        new PrintWriter(new OutputStreamWriter(out, Constants.ENCODING)));
+      error = new String(out.toByteArray(), Constants.ENCODING);
+    }
+    catch (UnsupportedEncodingException e) { }
     JOptionPane.showMessageDialog(this, "Sorry, there was an error: " + error,
       TITLE, JOptionPane.ERROR_MESSAGE);
   }

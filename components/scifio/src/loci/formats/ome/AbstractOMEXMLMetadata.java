@@ -37,12 +37,15 @@
 package loci.formats.ome;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
+import loci.common.Constants;
 
 import ome.xml.DOMUtil;
 import ome.xml.model.OME;
@@ -110,9 +113,11 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
       r.setAttribute("xsi:schemaLocation", OME.NAMESPACE + " " + SCHEMA);
       doc.appendChild(r);
       DOMUtil.writeXML(os, doc);
-      return os.toString();
+      return os.toString(Constants.ENCODING);
     }
     catch (TransformerException exc) {
+    }
+    catch (UnsupportedEncodingException exc) {
     }
     return null;
   }
