@@ -149,7 +149,7 @@ public class CodecOptions {
       this.tileHeight = options.tileHeight;
       this.tileGridXOffset = options.tileGridXOffset;
       this.tileGridYOffset = options.tileGridYOffset;
-      this.ycbcr = ycbcr;
+      this.ycbcr = options.ycbcr;
     }
   }
 
