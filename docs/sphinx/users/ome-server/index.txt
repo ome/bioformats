@@ -6,7 +6,7 @@ set of software that interacts with a database to manage images, image
 metadata, image analysis and analysis results. The OME system is capable
 of leveraging Bio-Formats to import files.
 
-**Please note** - the OME server is no longer maintained and has now been superseded by the :doc:`OMERO server </users/omero/index>`.
+**Please note** - the OME server is no longer maintained and has now been superseded by the :omerodoc:`OMERO server <>`.
 
 Installation
 ------------
