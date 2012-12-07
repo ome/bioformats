@@ -1,8 +1,14 @@
 Formats
 =======
 
+Bio-Formats supports over 120 different file formats. The 
+:doc:`/supported-formats` table lists all of these and gives an indication of
+how well they are supported and whether Bio-Formats can write, as well as 
+read, each format. The :doc:`dataset-table` explains the file extension you 
+should choose to open/import a dataset in any of these formats.
 
 .. toctree::
     :maxdepth: 1
     
     /supported-formats
+    dataset-table
