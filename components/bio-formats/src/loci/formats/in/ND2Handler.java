@@ -418,9 +418,10 @@ public class ND2Handler extends BaseHandler {
         ms0.sizeT = v;
       }
       else if (qName.equals("no_name") && v > 0 && core.size() == 1) {
+        CoreMetadata old = core.get(0);
         core.clear();
         for (int q=0; q<v; q++) {
-          core.add(ms0);
+          core.add(old);
         }
         fieldIndex = 2;
       }
@@ -706,9 +707,10 @@ public class ND2Handler extends BaseHandler {
         }
         else if (runtype.endsWith("XYPosLoop") && core.size() == 1) {
           int newCapacity = Integer.parseInt(value);
+          CoreMetadata old = core.get(0);
           core.clear();
           for (int i=0; i<newCapacity; i++) {
-            core.add(ms0);
+            core.add(old);
           }
         }
       }
