@@ -9,8 +9,8 @@ Extensions: .xdce, .tif
 Developer: `GE <http://gelifesciences.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 - an InCell 1000 specification document 
 - more InCell 1000 datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,8 +50,9 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`InCellReader.java`
 

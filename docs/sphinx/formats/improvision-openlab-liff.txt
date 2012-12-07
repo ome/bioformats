@@ -10,8 +10,8 @@ Developer: `Improvision <http://www.improvision.com/>`_
 
 Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -39,8 +39,8 @@ We would like to have:
 
 - more Openlab datasets (preferably with 32-bit integer data)
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -52,8 +52,9 @@ Presence: |Good|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`OpenlabReader.java`
 

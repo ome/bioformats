@@ -9,8 +9,8 @@ Extensions: .bip
 Developer: `Kodak/Carestream <http://carestream.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -36,8 +36,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -49,8 +49,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`KodakReader.java`
 

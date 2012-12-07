@@ -10,8 +10,8 @@ Developer: Aldus and Microsoft
 
 Owner: `Adobe <http://www.adobe.com>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -41,8 +41,8 @@ We would like to have:
 - an official specification document 
 - more SM-Camera files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -54,8 +54,9 @@ Presence: |Outstanding|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :scifioreader:`TiffReader.java`
 Source Code: :scifiowriter:`TiffWriter.java`

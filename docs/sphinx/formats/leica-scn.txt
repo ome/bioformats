@@ -9,8 +9,8 @@ Extensions: .scn
 Developer: `Leica Microsystems <http://www.leica-microsystems.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 - an official specification document 
 - sample datasets that cannot be opened
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,8 +50,9 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`LeicaSCNReader.java`
 

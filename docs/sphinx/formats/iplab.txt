@@ -10,8 +10,8 @@ Developer: Scanalytics
 
 Owner: was `BD Biosystems <http://www.bdbiosciences.com/>`_, now `BioVision Technologies <http://www.biovis.com/iplab.htm>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 
 - more IPLab datasets (preferably with 32-bit integer or floating point data)
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -51,8 +51,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`IPLabReader.java`
 

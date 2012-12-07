@@ -9,8 +9,8 @@ Extensions: .am, .amiramesh, .grey, .hx, .labels
 Developer: `Visage Imaging <http://www.amiravis.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -30,8 +30,8 @@ We would like to have:
 
 - more Amira Mesh datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -43,8 +43,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`AmiraReader.java`
 

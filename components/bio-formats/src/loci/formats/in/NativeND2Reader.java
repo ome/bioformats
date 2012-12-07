@@ -1518,7 +1518,7 @@ public class NativeND2Reader extends FormatReader {
           case (9): // ByteArray
             byte[] data = new byte[(int) in.readLong()];
             in.read(data);
-            value = data.toString(); // todo
+            value = java.util.Arrays.toString(data); // todo
             break;
           case (10): // deprecated
             // Its like LEVEL but offset is pointing absolutely not relatively

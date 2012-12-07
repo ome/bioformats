@@ -9,8 +9,8 @@ Extensions: .pcx
 Developer: ZSoft Corporation
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more Oxford Instruments files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -51,8 +51,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :scifioreader:`PCXReader.java`
 

@@ -8,8 +8,8 @@ Extensions: .inr
 
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -35,8 +35,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -48,8 +48,9 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`INRReader.java`
 
