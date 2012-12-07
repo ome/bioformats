@@ -2,17 +2,6 @@
 User Information
 ****************
 
-Dataset importing
-=================
-
-For information about what extensions to choose to import files, see:
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    /dataset-table
-
 
 Using Bio-Formats with ImageJ and Fiji
 ======================================
