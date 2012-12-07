@@ -8,7 +8,7 @@ following features:
   images <load-images>` into ImageJ or
   Fiji. It can over 100 of proprietary life sciences formats and
   standardizes their acquisition metadata into the common
-  :doc:`OME data model </about>`. It will also extract and set basic
+  :doc:`OME data model </about/index>`. It will also extract and set basic
   metadata values such as `spatial
   calibration <http://pacific.mpi-cbg.de/wiki/index.php/SpatialCalibration>`_
   if they are available in the file.
@@ -51,4 +51,4 @@ following features:
 
 - The **Update LOCI Plugins** command will check for LOCI Plugins updates.
   We recommend you update to the newest Trunk build as soon as you think
-  you may have :doc:`discovered a bug. </bug-reporting>`
+  you may have :doc:`discovered a bug. </about/bug-reporting>`

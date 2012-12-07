@@ -20,10 +20,10 @@ General tips
       issues) <http://fiji.sc/cgi-bin/bugzilla/index.cgi>`_
    -  `ome-devel mailing
       list <http://lists.openmicroscopy.org.uk/pipermail/ome-devel>`_
-      (not searchable)
+      (searchable using google with 'site:lists.openmicroscopy.org.uk')
    -  `ome-users mailing
       list <http://lists.openmicroscopy.org.uk/pipermail/ome-users>`_
-      (not searchable)
+      (searchable using google with 'site:lists.openmicroscopy.org.uk')
    -  `ImageJ mailing list (for ImageJ/Fiji
       issues) <http://imagej.1557.n6.nabble.com/>`_
 

@@ -157,7 +157,7 @@ Other useful things
   :source:`loci.formats.codec.BaseCodec <components/scifio/src/loci/formats/codec/BaseCodec.java>`. These include JPEG, LZW, LZO, Base64, ZIP and RLE (PackBits).
 
 - If you wish to convert a file's metadata to OME-XML (strongly encouraged),
-  please see :doc:`Bio-Formats metadata processing </about>` for further information.
+  please see :doc:`Bio-Formats metadata processing </about/index>` for further information.
 
 - Utility methods for reading and writing individual bits from a byte array
   can be found in :source:`loci.formats.codec.BitBuffer <components/scifio/src/loci/formats/codec/BitBuffer.java>` and :source:`loci.formats.codec.BitWriter <components/scifio/src/loci/formats/codec/BitWriter.java>`.
