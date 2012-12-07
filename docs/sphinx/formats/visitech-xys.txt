@@ -9,8 +9,8 @@ Extensions: .xys, .html
 Developer: `VisiTech International <http://www.visitech.co.uk/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -36,8 +36,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -49,8 +49,9 @@ Presence: |Poor|
 
 Utility: |Good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`VisitechReader.java`
 

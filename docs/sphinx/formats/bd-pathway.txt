@@ -9,8 +9,8 @@ Extensions: .exp, .tif
 
 Owner: `BD Biosciences <http://www.bdbiosciences.com>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -34,8 +34,8 @@ We would like to have:
 
 - more BD Pathway datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -47,8 +47,9 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`BDReader.java`
 

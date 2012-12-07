@@ -9,8 +9,8 @@ Extensions: .jp2
 Developer: `Independent JPEG Group <http://www.ijg.org/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more JEOL files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -51,8 +51,9 @@ Presence: |Good|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :scifioreader:`JPEG2000Reader.java`
 Source Code: :scifiowriter:`JPEG2000Writer.java`
