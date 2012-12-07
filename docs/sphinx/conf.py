@@ -253,6 +253,11 @@ htmlhelp_basename = 'Bio-Formatsdoc'
 # -- Options for LaTeX output --------------------------------------------------
 
 latex_elements = {
+  'classoptions': ',oneside',
+  'babel': '\\usepackage[english]{babel}',
+  'printindex': '\\phantomsection \
+   \\addcontentsline{toc}{part}{\indexname} \
+   \\printindex'
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
@@ -272,7 +277,7 @@ latex_documents = [
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-#latex_logo = None
+latex_logo = "images/bio-formats-logo.pdf"
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
