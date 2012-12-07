@@ -68,3 +68,49 @@ metadata, original metadata, and OME metadata.
    bug free, but we are constantly working to improve it. We would
    greatly appreciate any and all input from users concerning missing or
    improperly converted metadata fields.
+
+
+Help
+----
+
+For help, see the
+`Bio-Formats <http://www.openmicroscopy.org/site/support/faq/bio-formats>`_,
+`File Formats <http://www.openmicroscopy.org/site/support/faq/file-formats>`_
+and `OME-XML and OME-TIFF 
+<http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
+sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ 
+for answers to some common questions. Please `contact us 
+<http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
+you have any questions or problems with Bio-Formats. There is a :doc:`guide 
+for reporting bugs here <bug-reporting>`.
+
+For advanced users and developers, further information is available on the 
+:doc:`troubleshooting page <troubleshooting>`.
+
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    bug-reporting
+    troubleshooting
+
+
+Bio-Formats versions
+--------------------
+
+Bio-Formats is updated whenever a significant bug fix is made, or whenever a
+new version of :omerodoc:`OMERO <>` is released. The version number is three 
+numbers separated by dots; e.g., 4.0.0. See the :doc:`version history <whats-new>` 
+for a list of major changes in each release.
+
+The latest stable version of Bio-Formats is |release|. For future
+development directions, see the
+`4.5 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OMERO-4.5>`_
+and `5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OMERO-5.0>`_
+roadmaps.
+
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    whats-new
