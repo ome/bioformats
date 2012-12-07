@@ -254,7 +254,10 @@ htmlhelp_basename = 'Bio-Formatsdoc'
 
 latex_elements = {
   'classoptions': ',oneside',
-  'babel': '\\usepackage[english]{babel}'
+  'babel': '\\usepackage[english]{babel}',
+  'printindex': '\\phantomsection \
+   \\addcontentsline{toc}{part}{\indexname} \
+   \\printindex'
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
