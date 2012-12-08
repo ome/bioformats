@@ -531,7 +531,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
             NamedNodeMap attrs = node.getAttributes();
             Node value = attrs.getNamedItem("Value");
-            metadata.put(name, value.getNodeValue());
+            if (value != null) {
+              metadata.put(name, value.getNodeValue());
+            }
           }
         }
       }
