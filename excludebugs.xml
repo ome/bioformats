@@ -7,7 +7,7 @@
 <FindBugsFilter>
 
   <Match>
-    <Bug code="MS"/>
+    <Bug pattern="MS_MUTABLE_ARRAY"/>
   </Match>
 
 </FindBugsFilter>
