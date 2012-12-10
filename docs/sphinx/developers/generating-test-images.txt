@@ -1,7 +1,7 @@
 Generating test images
 ======================
 
-Sometimes it's nice to have a file of a specific size or pixel type for
+Sometimes it is nice to have a file of a specific size or pixel type for
 testing. To generate a file (that contains gradient images):
 
 ::
@@ -42,7 +42,7 @@ There are a few other keys that can be added as well:
       * number of entries in the color lookup table
 
 You can often work with the .fake file directly, but in some cases
-support for those files is disabled and so you'll need to convert the
+support for those files is disabled and so you will need to convert the
 file to something else. Make sure that you have Bio-Formats built and
 the JARs in your :envvar:`CLASSPATH` (individual JARs or just loci_tools.jar):
 
@@ -50,5 +50,5 @@ the JARs in your :envvar:`CLASSPATH` (individual JARs or just loci_tools.jar):
 
     bfconvert my-special-test-file&pixelType=uint8&sizeZ=1&sizeC=1&sizeT=1&sizeX=8192&sizeY=8192.fake my-special-test-file.tiff
 
-If you don't have the command line tools installed, substitute
+If you do not have the command line tools installed, substitute
 :source:`loci.formats.tools.ImageConverter <components/scifio/src/loci/formats/tools/ImageConverter.java>` for `bfconvert`.
