@@ -25,32 +25,38 @@
 
 package loci.formats.in;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
 
-import loci.common.DataTools;
-import loci.common.DateTools;
-import loci.common.Location;
+import javax.xml.parsers.ParserConfigurationException;
+
 import loci.common.RandomAccessInputStream;
-import loci.common.xml.BaseHandler;
-import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.in.PrairieMetadata.Frame;
+import loci.formats.in.PrairieMetadata.PFile;
+import loci.formats.in.PrairieMetadata.Sequence;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-
+import ome.scifio.common.Constants;
+import ome.scifio.common.DateTools;
+import ome.scifio.io.Location;
+import ome.scifio.xml.XMLTools;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * PrairieReader is the file format reader for
@@ -76,41 +82,25 @@ public class PrairieReader extends FormatReader {
   private static final int PRAIRIE_TAG_2 = 33629;
   private static final int PRAIRIE_TAG_3 = 33630;
 
+  private static final String DATE_FORMAT = "MM/dd/yyyy h:mm:ss a";
+
   // -- Fields --
 
-  /** List of files in the current dataset */
-  private String[] files;
-
-  /** Helper reader for opening images */
+  /** Helper reader for opening images. */
   private TiffReader tiff;
 
-  /** Names of the associated XML files */
-  private String xmlFile, cfgFile;
+  /** The associated XML files. */
+  private File xmlFile, cfgFile;
 
-  private Vector<String> f, gains, offsets;
-  private double pixelSizeX, pixelSizeY;
-  private String date, laserPower;
+  /** Format-specific metadata. */
+  private PrairieMetadata meta;
 
-  private String microscopeModel;
-  private String objectiveManufacturer;
-  private PositiveInteger magnification;
-  private String immersion;
-  private Double lensNA;
-  private Double waitTime;
-
-  private Vector<Double> positionX = new Vector<Double>();
-  private Vector<Double> positionY = new Vector<Double>();
-  private Vector<Double> positionZ = new Vector<Double>();
-  private Vector<String> channels = new Vector<String>();
-
-  private boolean invertX, invertY;
-
-  private Hashtable<String, Double> relativeTimes =
-    new Hashtable<String, Double>();
-
-  private Double zoom;
-
-  private boolean timeSeries = false;
+  /**
+   * Flag indicating that the reader is operating in a mode where grouping of
+   * files is disallowed. In the case of Prairie, this happens if a TIFF file is
+   * passed to {@link #setId} while {@link #isGroupFiles()} is {@code false}.
+   */
+  private boolean singleTiffMode;
 
   // -- Constructor --
 
@@ -125,12 +115,12 @@ public class PrairieReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isSingleFile(String) */
+  @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (!open) return false; // not allowed to touch the file system
 
@@ -169,7 +159,7 @@ public class PrairieReader extends FormatReader {
     return xml.exists() && super.isThisType(name, false) && validXML;
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  @Override
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = (int) Math.min(1048608, stream.length());
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
@@ -193,483 +183,670 @@ public class PrairieReader extends FormatReader {
       ifd.containsKey(new Integer(PRAIRIE_TAG_3));
   }
 
-  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  @Override
   public int fileGroupOption(String id) throws FormatException, IOException {
     return FormatTools.MUST_GROUP;
   }
 
-  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (noPixels) {
-      return new String[] {xmlFile, cfgFile};
-    }
-    Vector<String> s = new Vector<String>();
-    if (files != null) {
-      for (String file : files) {
-        s.add(file);
+    if (singleTiffMode) return tiff.getSeriesUsedFiles(noPixels);
+
+    // add metadata files to the used files list
+    final ArrayList<String> usedFiles = new ArrayList<String>();
+    if (xmlFile != null) usedFiles.add(xmlFile.getAbsolutePath());
+    if (cfgFile != null) usedFiles.add(cfgFile.getAbsolutePath());
+
+    if (!noPixels) {
+      // add TIFF files to the used files list
+      final int s = getSeries(), seriesCount = getSeriesCount();
+      for (int t = 0; t < getSizeT(); t++) {
+        final int cycle = cycle(t, s, seriesCount);
+        final Sequence sequence = meta.getSequence(cycle);
+        if (sequence == null) {
+          warnSequence(cycle);
+          continue;
+        }
+        for (int z = 0; z < getSizeZ(); z++) {
+          final int index = z + sequence.getIndexMin();
+          final Frame frame = sequence.getFrame(index);
+          if (frame == null) {
+            warnFrame(cycle, index);
+            continue;
+          }
+          for (int c = 0; c < getSizeC(); c++) {
+            final int channel = c + frame.getChannelMin();
+            final PFile file = frame.getFile(channel);
+            if (file == null) {
+              warnFile(cycle, index, channel);
+              continue;
+            }
+            final String filename = file.getFilename();
+            if (filename == null) {
+              warnFilename(cycle, index, channel);
+              continue;
+            }
+            usedFiles.add(getPath(file));
+          }
+        }
       }
     }
-    if (xmlFile != null) s.add(xmlFile);
-    if (cfgFile != null) s.add(cfgFile);
-    return s.toArray(new String[s.size()]);
+
+    return usedFiles.toArray(new String[usedFiles.size()]);
   }
 
-  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  @Override
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     return tiff.getOptimalTileWidth();
   }
 
-  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  @Override
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return tiff.getOptimalTileHeight();
   }
 
-  /**
-   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
-   */
+  @Override
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    tiff.setId(files[no]);
+    if (singleTiffMode) return tiff.openBytes(no, buf, x, y, w, h);
+
+    // convert 1D index to (cycle, index, channel) coordinates.
+    final int[] zct = getZCTCoords(no);
+    final int z = zct[0], c = zct[1], t = zct[2];
+
+    final int cycle = getSeriesCount() * t + getSeries() + meta.getCycleMin();
+    final Sequence sequence = meta.getSequence(cycle);
+    if (sequence == null) {
+      warnSequence(cycle);
+      return blank(buf);
+    }
+
+    final int index = z + sequence.getIndexMin();
+    final Frame frame = sequence.getFrame(index);
+    if (frame == null) {
+      warnFrame(cycle, index);
+      return blank(buf);
+    }
+
+    final int channel = c + frame.getChannelMin();
+    final PFile file = frame.getFile(channel);
+    if (file == null) {
+      warnFile(cycle, index, channel);
+      return blank(buf);
+    }
+
+    tiff.setId(getPath(file));
     return tiff.openBytes(0, buf, x, y, w, h);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
+  @Override
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (tiff != null) tiff.close(fileOnly);
     if (!fileOnly) {
       xmlFile = cfgFile = null;
       tiff = null;
-      files = null;
-      f = gains = offsets = null;
-      pixelSizeX = pixelSizeY = 0;
-      date = laserPower = null;
-      microscopeModel = null;
-      objectiveManufacturer = null;
-      magnification = null;
-      immersion = null;
-      lensNA = null;
-      positionX.clear();
-      positionY.clear();
-      positionZ.clear();
-      channels.clear();
-      zoom = null;
-      waitTime = null;
-      relativeTimes.clear();
-      timeSeries = false;
+      meta = null;
     }
   }
 
   // -- Internal FormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#initFile(String) */
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
     tiff = new TiffReader();
-    f = new Vector<String>();
-    gains = new Vector<String>();
-    offsets = new Vector<String>();
 
     if (checkSuffix(id, XML_SUFFIX)) {
-      xmlFile = id;
-      initXML();
-      findAndParseCFG();
+      xmlFile = new File(id);
+      findCFGFile();
     }
     else if (checkSuffix(id, CFG_SUFFIX)) {
-      cfgFile = id;
-      initCFG();
-      findAndParseXML();
+      cfgFile = new File(id);
+      findXMLFile();
     }
     else {
-      // we have been given a TIFF file - reinitialize with the proper XML file
-
+      // we have been given a TIFF file
       if (isGroupFiles()) {
-        LOGGER.info("Finding XML file");
-
-        Location file = new Location(id).getAbsoluteFile();
-        Location parent = file.getParentFile();
-        String[] listing = parent.list();
-        for (String name : listing) {
-          if (checkSuffix(name, PRAIRIE_SUFFIXES)) {
-            initFile(new Location(parent, name).getAbsolutePath());
-            return;
-          }
-        }
+        findXMLFile();
+        findCFGFile();
       }
       else {
-        files = new String[] {id};
-        tiff.setId(files[0]);
-        core = tiff.getCoreMetadata();
-        metadataStore = tiff.getMetadataStore();
-
-        Hashtable globalMetadata = tiff.getGlobalMetadata();
-        for (Object key : globalMetadata.keySet()) {
-          addGlobalMeta(key.toString(), globalMetadata.get(key));
-        }
+        // NB: File grouping is not allowed, so we enter a special mode,
+        // which delegates to the TIFF reader for everything.
+        singleTiffMode = true;
+        tiff.setId(id);
+        return;
       }
     }
-    currentId = xmlFile;
 
-    populateMetadataStore();
+    currentId = xmlFile.getAbsolutePath();
+
+    parsePrairieMetadata();
+    populateCoreMetadata();
+    populateOriginalMetadata();
+    populateOMEMetadata();
   }
 
   // -- Helper methods --
 
-  private void populateMetadataStore() throws FormatException {
+  private void findXMLFile() {
+    LOGGER.info("Finding XML file");
+    xmlFile = find(XML_SUFFIX);
+  }
+
+  private void findCFGFile() {
+    LOGGER.info("Finding CFG file");
+    cfgFile = find(CFG_SUFFIX);
+  }
+
+  /**
+   * This step parses the Prairie XML and CFG files into the Prairie-specific
+   * metadata structure, {@link #meta}.
+   */
+  private void parsePrairieMetadata() throws FormatException, IOException {
+    LOGGER.info("Parsing Prairie metadata");
+
+    final Document xml, cfg;
+    try {
+      xml = parseDOM(xmlFile);
+      cfg = parseDOM(cfgFile);
+    }
+    catch (ParserConfigurationException exc) {
+      throw new FormatException(exc);
+    }
+    catch (SAXException exc) {
+      throw new FormatException(exc);
+    }
+
+    meta = new PrairieMetadata(xml, cfg);
+  }
+
+  /**
+   * This step populates the {@link CoreMetadata} by extracting relevant values
+   * from the parsed {@link #meta} structure.
+   */
+  private void populateCoreMetadata() throws FormatException, IOException {
+    LOGGER.info("Populating core metadata");
+
+    // NB: Both stage positions and time points are rasterized into the list
+    // of Sequences. So by definition: cycleCount = sizeT * seriesCount.
+    final int cycleCount = meta.getCycleCount();
+    final int sizeT = computeSizeT(cycleCount);
+    final int seriesCount = cycleCount / sizeT;
+
+    final Integer bitDepth = meta.getBitDepth();
+    int bpp = bitDepth == null ? -1 : bitDepth;
+
+    core = new CoreMetadata[seriesCount];
+    for (int s = 0; s < seriesCount; s++) {
+      final Sequence sequence = findSequence(s, seriesCount, sizeT);
+      final Frame frame = sequence == null ? null : sequence.getFirstFrame();
+      final PFile file = frame == null ? null : frame.getFirstFile();
+      if (sequence == null || frame == null || file == null) {
+        throw new FormatException("No metadata for series #" + s);
+      }
+
+      // NB: We initialize the TIFF reader with the first available file of the
+      // series. For performance, we initialize only the first series, and then
+      // assume that subsequent series have the same TIFF properties
+      // (endianness, etc.). In our experience, all Prairie datasets conform to
+      // this assumption, but if not, removing the "if (s == 0)" test here
+      // should remedy any resultant inaccuracies in the metadata.
+      if (s == 0) {
+        tiff.setId(getPath(file));
+        if (bpp <= 0) bpp = tiff.getBitsPerPixel();
+      }
+
+      final int linesPerFrame = frame.getLinesPerFrame();
+      final int pixelsPerLine = frame.getPixelsPerLine();
+      final int indexCount = sequence.getIndexCount();
+      final int channelCount = frame.getChannelCount();
+
+      final boolean invertZT = sequence.isTimeSeries() && sizeT == 1;
+
+      core[s] = new CoreMetadata();
+      core[s].sizeX = pixelsPerLine;
+      core[s].sizeY = linesPerFrame;
+      core[s].sizeZ = invertZT ? sizeT : indexCount;
+      core[s].sizeC = channelCount;
+      core[s].sizeT = invertZT ? indexCount : sizeT;
+      core[s].pixelType = tiff.getPixelType();
+      core[s].bitsPerPixel = bpp;
+      core[s].imageCount = core[s].sizeZ * core[s].sizeC * core[s].sizeT;
+      core[s].dimensionOrder = "XYCZT";
+      core[s].orderCertain = true;
+      core[s].rgb = false;
+      core[s].littleEndian = tiff.isLittleEndian();
+      core[s].interleaved = false;
+      core[s].indexed = tiff.isIndexed();
+      core[s].falseColor = false;
+    }
+  }
+
+  /**
+   * This steps populates the original metadata table (the tables returned by
+   * {@link #getGlobalMetadata()} and {@link #getSeriesMetadata()}).
+   */
+  private void populateOriginalMetadata() {
+    boolean minimumMetadata =
+      getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
+    if (minimumMetadata) return;
+
+    // populate global metadata
+    addGlobalMeta("cycleCount", meta.getCycleCount());
+    addGlobalMeta("date", meta.getDate());
+    addGlobalMeta("waitTime", meta.getWaitTime());
+
+    final Map<String, String> config = meta.getConfig();
+    for (final String key : config.keySet()) {
+      addGlobalMeta(key, config.get(key));
+    }
+
+    addGlobalMeta("meta", meta);
+
+    // populate series metadata
+    final int seriesCount = getSeriesCount();
+    for (int s = 0; s < seriesCount; s++) {
+      setSeries(s);
+      final Sequence sequence = findSequence(s, seriesCount, getSizeT());
+      addSeriesMeta("cycle", sequence.getCycle());
+      addSeriesMeta("indexCount", sequence.getIndexCount());
+      addSeriesMeta("type", sequence.getType());
+    }
+    setSeries(0);
+  }
+
+  /**
+   * This step populates the OME {@link MetadataStore} by extracting relevant
+   * values from the parsed {@link #meta} structure.
+   */
+  private void populateOMEMetadata() throws FormatException {
     LOGGER.info("Populating OME metadata");
 
+    // populate required Pixels metadata
     boolean minimumMetadata =
       getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, !minimumMetadata);
+    if (minimumMetadata) return;
 
-    if (date != null) {
-      date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
+    final String date = DateTools.formatDate(meta.getDate(), DATE_FORMAT);
+
+    // create an Instrument
+    final String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+
+    // populate Laser Power, if available
+    final Double laserPower = meta.getLaserPower();
+    if (laserPower != null) {
+      // create a Laser
+      final String laserID = MetadataTools.createLSID("LightSource", 0, 0);
+      store.setLaserID(laserID, 0, 0);
+
+      store.setLaserPower(laserPower, 0, 0);
     }
-    if (date != null) store.setImageAcquisitionDate(new Timestamp(date), 0);
 
-    if (!minimumMetadata) {
+    String objectiveID = null;
+
+    final int seriesCount = getSeriesCount();
+    for (int s = 0; s < seriesCount; s++) {
+      setSeries(s);
+      final Sequence sequence = findSequence(s, seriesCount, getSizeT());
+      final Frame firstFrame = sequence.getFirstFrame();
+
+      // populate acquisition date
+      if (date != null) store.setImageAcquisitionDate(new Timestamp(date), s);
+
       // link Instrument and Image
-      String instrumentID = MetadataTools.createLSID("Instrument", 0);
-      store.setInstrumentID(instrumentID, 0);
-      store.setImageInstrumentRef(instrumentID, 0);
+      store.setImageInstrumentRef(instrumentID, s);
 
-      if (pixelSizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          pixelSizeX);
-      }
-      if (pixelSizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          pixelSizeY);
-      }
+      // populate PhysicalSizeX
+      final PositiveFloat physicalSizeX =
+        pf(firstFrame.getMicronsPerPixelX(), "PhysicalSizeX");
+      if (physicalSizeX != null) store.setPixelsPhysicalSizeX(physicalSizeX, s);
 
-      store.setPixelsTimeIncrement(waitTime, 0);
+      // populate PhysicalSizeY
+      final PositiveFloat physicalSizeY =
+        pf(firstFrame.getMicronsPerPixelY(), "PhysicalSizeY");
+      if (physicalSizeY != null) store.setPixelsPhysicalSizeY(physicalSizeY, s);
 
-      for (int i=0; i<getSizeC(); i++) {
-        String gain = i < gains.size() ? gains.get(i) : null;
-        String offset = i < offsets.size() ? offsets.get(i) : null;
+      // populate TimeIncrement
+      final Double waitTime = meta.getWaitTime();
+      if (waitTime != null) store.setPixelsTimeIncrement(waitTime, s);
 
-        if (offset != null) {
-          try {
-            store.setDetectorSettingsOffset(new Double(offset), 0, i);
-          }
-          catch (NumberFormatException e) { }
+      final String[] detectorIDs = new String[firstFrame.getChannelCount()];
+
+      for (int c = 0; c < firstFrame.getChannelCount(); c++) {
+        final int channel = c + firstFrame.getChannelMin();
+        final PFile file = firstFrame.getFile(channel);
+
+        // populate channel name
+        final String channelName = file == null ? null : file.getChannelName();
+        if (channelName != null) store.setChannelName(channelName, s, c);
+
+        if (detectorIDs[c] == null) {
+          // create a Detector for this channel
+          detectorIDs[c] = MetadataTools.createLSID("Detector", 0, c);
+          store.setDetectorID(detectorIDs[c], 0, c);
+          store.setDetectorType(getDetectorType("Other"), 0, c);
+
+          // NB: Ideally we would populate the detector zoom differently for
+          // each Image, rather than globally for the Detector, but
+          // unfortunately it is a property of Detector, not DetectorSettings.
+          final Double zoom = firstFrame.getOpticalZoom();
+          if (zoom != null) store.setDetectorZoom(zoom, 0, c);
         }
-        if (gain != null) {
-          try {
-            store.setDetectorSettingsGain(new Double(gain), 0, i);
-          }
-          catch (NumberFormatException e) { }
-        }
 
-        // link DetectorSettings to an actual Detector
-        String detectorID = MetadataTools.createLSID("Detector", 0, i);
-        store.setDetectorID(detectorID, 0, i);
-        store.setDetectorSettingsID(detectorID, 0, i);
-        store.setDetectorType(getDetectorType("Other"), 0, i);
-        store.setDetectorZoom(zoom, 0, i);
+        // link DetectorSettings and Detector
+        store.setDetectorSettingsID(detectorIDs[c], s, c);
 
-        if (i < channels.size()) {
-          store.setChannelName(channels.get(i), 0, i);
-        }
+        // populate Offset
+        final Double offset = firstFrame.getOffset(c);
+        if (offset != null) store.setDetectorSettingsOffset(offset, s, c);
+
+        // populate Gain
+        final Double gain = firstFrame.getGain(c);
+        if (gain != null) store.setDetectorSettingsGain(gain, s, c);
       }
 
-      for (int i=0; i<getImageCount(); i++) {
-        int[] zct = getZCTCoords(i);
-        int index = FormatTools.getIndex(getDimensionOrder(), getSizeZ(),
-          1, getSizeT(), getImageCount() / getSizeC(), zct[0], 0, zct[2]);
+      if (objectiveID == null) {
+        // create an Objective
+        objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+        store.setObjectiveID(objectiveID, 0, 0);
+        store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
 
-        double xPos = positionX.get(index);
-        double yPos = positionY.get(index);
-        double zPos = positionZ.get(index);
-        if (!Double.isNaN(xPos)) store.setPlanePositionX(xPos, 0, i);
-        if (!Double.isNaN(yPos)) store.setPlanePositionY(yPos, 0, i);
-        if (!Double.isNaN(zPos)) store.setPlanePositionZ(zPos, 0, i);
+        // populate Objective NominalMagnification
+        final PositiveInteger magnification =
+          pi(firstFrame.getMagnification(), "NominalMagnification");
+        if (magnification != null) {
+          store.setObjectiveNominalMagnification(magnification, 0, 0);
+        }
 
-        store.setPlaneDeltaT(relativeTimes.get(String.valueOf(i + 1)), 0, i);
-      }
+        // populate Objective Manufacturer
+        final String objectiveManufacturer =
+          firstFrame.getObjectiveManufacturer();
+        store.setObjectiveManufacturer(objectiveManufacturer, 0, 0);
 
-      if (microscopeModel != null) {
+        // populate Objective Immersion
+        final String immersion = firstFrame.getImmersion();
+        store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
+
+        // populate Objective LensNA
+        final Double lensNA = firstFrame.getObjectiveLensNA();
+        if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
+
+        // populate Microscope Model
+        final String microscopeModel = firstFrame.getImagingDevice();
         store.setMicroscopeModel(microscopeModel, 0);
       }
 
-      String objective = MetadataTools.createLSID("Objective", 0, 0);
-      store.setObjectiveID(objective, 0, 0);
-      store.setObjectiveSettingsID(objective, 0);
+      // link ObjectiveSettings and Objective
+      store.setObjectiveSettingsID(objectiveID, s);
 
-      if (magnification != null) {
-        store.setObjectiveNominalMagnification(magnification, 0, 0);
-      }
-      store.setObjectiveManufacturer(objectiveManufacturer, 0, 0);
-      store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
-      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-      store.setObjectiveLensNA(lensNA, 0, 0);
-
-      if (laserPower != null) {
-        String laser = MetadataTools.createLSID("LightSource", 0 ,0);
-        store.setLaserID(laser, 0, 0);
-        try {
-          store.setLaserPower(new Double(laserPower), 0, 0);
+      // populate stage position coordinates
+      for (int t = 0; t < getSizeT(); t++) {
+        final int cycle = cycle(t, s, seriesCount);
+        final Sequence tSequence = meta.getSequence(cycle);
+        if (tSequence == null) {
+          warnSequence(cycle);
+          continue;
         }
-        catch (NumberFormatException e) { }
+        for (int z = 0; z < getSizeZ(); z++) {
+          final int index = z + tSequence.getIndexMin();
+          final Frame zFrame = tSequence.getFrame(index);
+          if (zFrame == null) {
+            warnFrame(cycle, index);
+            continue;
+          }
+          final Double posX = zFrame.getPositionX();
+          final Double posY = zFrame.getPositionY();
+          final Double posZ = zFrame.getPositionZ();
+          final Double deltaT = zFrame.getRelativeTime();
+          for (int c = 0; c < getSizeC(); c++) {
+            final int i = getIndex(z, c, t);
+            if (posX != null) store.setPlanePositionX(posX, s, i);
+            if (posY != null) store.setPlanePositionY(posY, s, i);
+            if (posZ != null) store.setPlanePositionZ(posZ, s, i);
+            if (deltaT != null) store.setPlaneDeltaT(deltaT, s, i);
+          }
+        }
       }
     }
+    setSeries(0);
   }
 
-  private void initXML() throws FormatException, IOException {
-    LOGGER.info("Parsing XML file");
+  /** Parses a {@link Document} from the data in the given {@link File}. */
+  private Document parseDOM(final File file)
+    throws ParserConfigurationException, SAXException, IOException
+  {
+    // NB: The simplest approach here would be to call XMLTools.parseDOM(file)
+    // directly, but we cannot do that because Prairie XML files are technically
+    // invalid and must be preprocessed in order for Java to parse them.
+    //
+    // Specifically, Prairie XML files describe themselves as
+    // <?xml version="1.0" encoding="utf-8"?>
+    //
+    // but some of them contain invalid characters in the XML 1.0 specification.
 
-    String xml = XMLTools.sanitizeXML(DataTools.readFile(xmlFile)).trim();
+    // One way to supposedly hack around this is to manually adjust the XML
+    // version to 1.1, which is a superset of 1.0 with support for an expanded
+    // character set. We tried it, but unfortunately the XML parsing gets
+    // mangled (e.g., XML attributes have invalid values).
+    //
+    // So we hack around it another way: by filtering out all invalid characters
+    // manually, so the data becomes valid XML version 1.0.
+    //
+    // For details, see:
+    // http://stackoverflow.com/questions/2997255
 
-    DefaultHandler handler = new PrairieHandler();
-    XMLTools.parseXML(xml, handler);
+    // read entire XML document into a giant byte array
+    final byte[] buf = new byte[(int) file.length()];
+    final DataInputStream is = new DataInputStream(new FileInputStream(file));
+    is.readFully(buf);
+    is.close();
 
-    core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
+    // filter out invalid characters from the XML
+    final String xml =
+      XMLTools.sanitizeXML(new String(buf, Constants.ENCODING));
 
-    if (timeSeries && getSizeT() == 1 && getSizeZ() > 1) {
-      core[0].sizeT = getSizeZ();
-      core[0].sizeZ = 1;
+    return XMLTools.parseDOM(xml);
+  }
+
+  /** Emits a warning about a missing {@code <Sequence>}. */
+  private void warnSequence(final int cycle) {
+    LOGGER.warn("No Sequence at cycle #{}", cycle);
+  }
+
+  /** Emits a warning about a missing {@code <Frame>}. */
+  private void warnFrame(final int cycle, final int index) {
+    LOGGER.warn("No Frame at cycle #{}, index #{}", cycle, index);
+  }
+
+  /** Emits a warning about a missing {@code <File>}. */
+  private void warnFile(final int cycle, final int index, final int channel) {
+    LOGGER.warn("No File at cycle #" + cycle +
+      ", index #{}, channel #{}", index, channel);
+  }
+
+  /** Emits a warning about a {@code <File>}'s missing {@code filename}. */
+  private void
+    warnFilename(final int cycle, final int index, final int channel)
+  {
+    LOGGER.warn("File at cycle #" + cycle + ", index #" + index +
+      ", channel #{} has null filename", index, channel);
+  }
+
+  /** Gets the absolute path to the filename of the given {@link PFile}. */
+  private String getPath(final PFile file) {
+    final File f = new File(xmlFile.getParent(), file.getFilename());
+    return f.getAbsolutePath();
+  }
+
+  /** Blanks out and returns the given buffer. */
+  private byte[] blank(final byte[] buf) {
+    // missing data; return empty plane
+    Arrays.fill(buf, (byte) 0);
+    return buf;
+  }
+
+  /**
+   * Converts the given {@code Integer} to a {@link PositiveInteger}, or
+   * {@code null} if incompatible.
+   */
+  private PositiveInteger pi(final Integer value, final String name) {
+    if (value == null) return null;
+    try {
+      return new PositiveInteger(value);
     }
-
-    files = new String[f.size()];
-    f.copyInto(files);
-    tiff.setId(files[0]);
-
-    LOGGER.info("Populating metadata");
-
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
-
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = FormatTools.UINT16;
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].littleEndian = tiff.isLittleEndian();
-    core[0].indexed = tiff.isIndexed();
-    core[0].falseColor = false;
+    catch (IllegalArgumentException e) {
+      LOGGER.warn("Expected positive value for {}; got {}", name, value);
+    }
+    return null;
   }
 
-  private void initCFG() throws FormatException, IOException {
-    LOGGER.info("Parsing CFG file");
-
-    String xml = XMLTools.sanitizeXML(DataTools.readFile(cfgFile)).trim();
-
-    DefaultHandler handler = new PrairieHandler();
-    XMLTools.parseXML(xml, handler);
+  /**
+   * Converts the given {@code double} to a {@link PositiveFloat}, or
+   * {@code null} if incompatible.
+   */
+  private PositiveFloat pf(final Double value, final String name) {
+    if (value == null) return null;
+    try {
+      return new PositiveFloat(value);
+    }
+    catch (IllegalArgumentException e) {
+      LOGGER.warn("Expected positive value for {}; got {}", name, value);
+    }
+    return null;
   }
 
-  private String find(String[] suffix) {
-    File file = new File(currentId).getAbsoluteFile();
-    File parent = file.getParentFile();
-    String[] listing = file.exists() ? parent.list() :
+  /** Finds the first file with one of the given suffixes. */
+  private File find(final String[] suffix) {
+    final File file = new File(currentId).getAbsoluteFile();
+    final File parent = file.getParentFile();
+    final String[] listing = file.exists() ? parent.list() :
       Location.getIdMap().keySet().toArray(new String[0]);
-    for (String name : listing) {
+    for (final String name : listing) {
       if (checkSuffix(name, suffix)) {
-        String dir = "";
-        if (file.exists()) {
-          dir = parent.getPath();
-          if (!dir.endsWith(File.separator)) dir += File.separator;
-        }
-        return dir + name;
+        return new File(parent, name);
       }
     }
     return null;
   }
 
-  private void findAndParseCFG() throws FormatException, IOException {
-    cfgFile = find(CFG_SUFFIX);
-    initCFG();
+  /**
+   * Scans the parsed metadata to determine the number of actual time points
+   * versus the number of actual stage positions. The Prairie file format makes
+   * no distinction between the two, referring to both as "Sequences", so we
+   * must compare XYZ stage positions to differentiate them.
+   */
+  private int computeSizeT(final int cycleCount) {
+    // NB: Guess at different possible "spans" for the rasterization.
+    for (int sizeP = 1; sizeP <= cycleCount; sizeP++) {
+      if (cycleCount % sizeP != 0) continue; // not a valid combo
+      final int sizeT = cycleCount / sizeP;
+      if (positionsMatch(sizeT, sizeP)) return sizeT;
+    }
+    return 1;
   }
 
-  private void findAndParseXML() throws FormatException, IOException {
-    xmlFile = find(XML_SUFFIX);
-    initXML();
-  }
-
-
-  // -- Helper classes --
-
-  /** SAX handler for parsing XML. */
-  public class PrairieHandler extends BaseHandler {
-    public void startElement(String uri, String localName, String qName,
-      Attributes attributes)
-    {
-      if (qName.equals("PVScan")) {
-        date = attributes.getValue("date");
+  /** Verifies that stage coordinates match for all (P, Z) across time. */
+  private boolean positionsMatch(int sizeT, int sizeP) {
+    // NB: Rasterization order is XYCZpT, where p is the stage position.
+    for (int p = 0; p < sizeP; p++) {
+      final int initialCycle = cycle(0, p, sizeP);
+      final Sequence initialSequence = meta.getSequence(initialCycle);
+      if (initialSequence == null) {
+        warnSequence(initialCycle);
+        return false;
       }
-      else if (qName.equals("Sequence")) {
-        String type = attributes.getValue("type");
-        timeSeries = "TSeries Timed Element".equals(type);
-      }
-      else if (qName.equals("Frame")) {
-        String index = attributes.getValue("index");
-        if (index != null) {
-          int zIndex = Integer.parseInt(index);
-          if (zIndex > getSizeZ()) core[0].sizeZ++;
+
+      final int indexMin = initialSequence.getIndexMin();
+      final int indexCount = initialSequence.getIndexCount();
+      for (int z = 0; z < indexCount; z++) {
+        final int index = z + indexMin;
+        final Frame initialFrame = initialSequence.getFrame(index);
+        if (initialFrame == null) {
+          warnFrame(initialCycle, index);
+          break;
         }
 
-        relativeTimes.put(index,
-          new Double(attributes.getValue("relativeTime")));
-      }
-      else if (qName.equals("File")) {
-        core[0].imageCount++;
-        File current = new File(currentId).getAbsoluteFile();
-        String dir = "";
-        if (current.exists()) {
-          dir = current.getPath();
-          dir = dir.substring(0, dir.lastIndexOf(File.separator) + 1);
-        }
-        f.add(dir + attributes.getValue("filename"));
+        // obtain the initial XYZ stage coordinates for this position
+        final Double xInitial = initialFrame.getPositionX();
+        final Double yInitial = initialFrame.getPositionY();
+        final Double zInitial = initialFrame.getPositionZ();
 
-        String ch = attributes.getValue("channel");
-        String channelName = attributes.getValue("channelName");
-        if (channelName == null) channelName = ch;
-        if (ch != null) {
-          int cIndex = Integer.parseInt(ch);
-          if (cIndex > getSizeC() && !channels.contains(channelName)) {
-            core[0].sizeC++;
-            channels.add(channelName);
+        // verify that the initial coordinates match all subsequent time points
+        for (int t = 1; t < sizeT; t++) {
+          final int cycle = cycle(t, p, sizeP);
+          final Sequence sequence = meta.getSequence(cycle);
+          if (sequence == null) {
+            warnSequence(cycle);
+            continue;
           }
-        }
-      }
-      else if (qName.equals("Key")) {
-        String key = attributes.getValue("key");
-        String value = attributes.getValue("value");
-        addGlobalMeta(key, value);
+          final Frame frame = sequence.getFrame(index);
+          if (frame == null) {
+            warnFrame(cycle, index);
+            continue;
+          }
 
-        if (key.equals("pixelsPerLine")) {
-          core[0].sizeX = Integer.parseInt(value);
-        }
-        else if (key.equals("linesPerFrame")) {
-          core[0].sizeY = Integer.parseInt(value);
-        }
-        else if (key.equals("micronsPerPixel_XAxis")) {
-          try {
-            pixelSizeX = Double.parseDouble(value);
-          }
-          catch (NumberFormatException e) { }
-        }
-        else if (key.equals("micronsPerPixel_YAxis")) {
-          try {
-            pixelSizeY = Double.parseDouble(value);
-          }
-          catch (NumberFormatException e) { }
-        }
-        else if (key.equals("objectiveLens")) {
-          String[] tokens = value.split(" ");
-          if (tokens.length > 0) {
-            objectiveManufacturer = tokens[0];
-          }
-          if (tokens.length > 1) {
-            String mag = tokens[1].toLowerCase().replaceAll("x", "");
-            try {
-              Integer m = new Integer(mag);
-              if (m > 0) {
-                magnification = new PositiveInteger(m);
-              }
-              else {
-                LOGGER.warn(
-                  "Expected positive value for NominalMagnification; got {}",
-                  m);
-              }
-            }
-            catch (NumberFormatException e) { }
-          }
-          if (tokens.length > 2) {
-            immersion = tokens[2];
+          final Double xPos = frame.getPositionX();
+          final Double yPos = frame.getPositionY();
+          final Double zPos = frame.getPositionZ();
+
+          if (!equal(xPos, xInitial) || !equal(yPos, yInitial) ||
+            !equal(zPos, zInitial))
+          {
+            return false;
           }
         }
-        else if (key.equals("objectiveLensNA")) {
-          try {
-            lensNA = new Double(value);
-          }
-          catch (NumberFormatException e) { }
-        }
-        else if (key.equals("imagingDevice")) {
-          microscopeModel = value;
-        }
-        else if (key.startsWith("pmtGain_")) gains.add(value);
-        else if (key.startsWith("pmtOffset_")) offsets.add(value);
-        else if (key.equals("laserPower_0")) laserPower = value;
-        else if (key.equals("positionCurrent_XAxis")) {
-          try {
-            Double xPos = new Double(value);
-            positionX.add(invertX ? -xPos : xPos);
-            addGlobalMeta("X position for position #" + positionX.size(), xPos);
-          }
-          catch (NumberFormatException e) {
-            positionX.add(Double.NaN);
-          }
-        }
-        else if (key.equals("positionCurrent_YAxis")) {
-          try {
-            Double yPos = new Double(value);
-            positionY.add(invertY ? -yPos : yPos);
-            addGlobalMeta("Y position for position #" + positionY.size(), yPos);
-          }
-          catch (NumberFormatException e) {
-            positionY.add(Double.NaN);
-          }
-        }
-        else if (key.equals("positionCurrent_ZAxis")) {
-          try {
-            Double zPos = new Double(value);
-            positionZ.add(zPos);
-            addGlobalMeta("Z position for position #" + positionZ.size(), zPos);
-          }
-          catch (NumberFormatException e) {
-            positionZ.add(Double.NaN);
-          }
-        }
-        else if (key.equals("opticalZoom")) {
-          try {
-            zoom = new Double(value);
-          }
-          catch (NumberFormatException e) { }
-        }
-        else if (key.equals("bitDepth")) {
-          core[0].bitsPerPixel = Integer.parseInt(value);
-        }
-        else if (key.equals("xYStageXPositionIncreasesLeftToRight")) {
-          invertX = value.equals("True");
-          if (invertX) {
-            // invert already-parsed X positions
-            for (int i=0; i<positionX.size(); i++) {
-              Double xPos = positionX.get(i);
-              if (xPos != null && !xPos.isNaN()) positionX.set(i, -xPos);
-            }
-          }
-        }
-        else if (key.equals("xYStageYPositionIncreasesBottomToTop")) {
-          invertY = value.equals("True");
-          if (invertY) {
-            // invert already-parsed Y positions
-            for (int i=0; i<positionY.size(); i++) {
-              Double yPos = positionY.get(i);
-              if (yPos != null && !yPos.isNaN()) positionY.set(i, -yPos);
-            }
-          }
-        }
-      }
-      else if (qName.equals("PVTSeriesElementWait")) {
-        try {
-          waitTime = new Double(attributes.getValue("waitTime"));
-        }
-        catch (NumberFormatException e) { }
       }
     }
+    return true;
+  }
+
+  /**
+   * Finds the first non-null {@code Sequence} associated with the given stage
+   * position.
+   * 
+   * @param p The stage position.
+   * @param sizeP The number of stage positions.
+   * @param sizeT The number of time points.
+   * @return The first non-null {@code Sequence} at the given stage position, or
+   *         null if none.
+   */
+  private Sequence findSequence(int p, int sizeP, int sizeT) {
+    for (int t = 0; t < sizeT; t++) {
+      final int cycle = cycle(t, p, sizeP);
+      final Sequence sequence = meta.getSequence(cycle);
+      if (sequence != null) return sequence;
+    }
+    return null;
+  }
+
+  /**
+   * Gets the cycle associated with the given time point and stage position.
+   * 
+   * @param t The time point.
+   * @param p The stage position.
+   * @param sizeP The number of stage positions.
+   * @return The cycle, for use with {@link PrairieMetadata#getSequence(int)}.
+   */
+  private int cycle(int t, int p, int sizeP) {
+    return sizeP * t + p + meta.getCycleMin();
+  }
+
+  /** Determines whether the two {@link Double} values are equal. */
+  private boolean equal(Double xPos, Double xInitial) {
+    if (xPos == null && xInitial == null) return true;
+    if (xPos == null) return false;
+    return xPos.equals(xInitial);
   }
 
 }
