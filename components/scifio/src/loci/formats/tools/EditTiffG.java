@@ -62,6 +62,9 @@ import loci.formats.FormatException;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Provides a GUI for editing TIFF file comments.
  *
@@ -76,6 +79,8 @@ public class EditTiffG extends JFrame implements ActionListener {
   // -- Constants --
 
   private static final String TITLE = "EditTiffG";
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(EditTiffG.class);
 
   // -- Fields --
 
@@ -187,7 +192,9 @@ public class EditTiffG extends JFrame implements ActionListener {
         new PrintWriter(new OutputStreamWriter(out, Constants.ENCODING)));
       error = new String(out.toByteArray(), Constants.ENCODING);
     }
-    catch (UnsupportedEncodingException e) { }
+    catch (UnsupportedEncodingException e) {
+      LOGGER.warn("Failed to show error", e);
+    }
     JOptionPane.showMessageDialog(this, "Sorry, there was an error: " + error,
       TITLE, JOptionPane.ERROR_MESSAGE);
   }
