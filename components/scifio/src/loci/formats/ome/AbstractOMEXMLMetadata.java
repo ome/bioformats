@@ -54,6 +54,9 @@ import ome.xml.model.OMEModelObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A utility class for constructing and manipulating OME-XML DOMs.
  * It is the superclass for all versions of OME-XML. It requires the
@@ -77,6 +80,9 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
   /** OME-XML schema location. */
   public static final String SCHEMA =
     "http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd";
+
+  protected static final Logger LOGGER =
+    LoggerFactory.getLogger(AbstractOMEXMLMetadata.class);
 
   // -- Fields --
 
@@ -116,8 +122,10 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
       return os.toString(Constants.ENCODING);
     }
     catch (TransformerException exc) {
+      LOGGER.warn("Failed to create OME-XML", exc);
     }
     catch (UnsupportedEncodingException exc) {
+      LOGGER.warn("Failed to create OME-XML", exc);
     }
     return null;
   }
