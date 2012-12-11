@@ -19,7 +19,7 @@
   <description>Umbrella project for native code software projects.</description>
 
   <modules>
-    <module>bf-itk-pipe</module>
+    <module>bf-itk</module>
   </modules>
 
   <!-- NB: for parent project -->
