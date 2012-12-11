@@ -6,11 +6,7 @@ set of software that interacts with a database to manage images, image
 metadata, image analysis and analysis results. The OME system is capable
 of leveraging Bio-Formats to import files.
 
-<<<<<<< HEAD:docs/sphinx/users/ome-server/index.txt
 **Please note** - the OME server is no longer maintained and has now been superseded by the :omerodoc:`OMERO server <>`.
-=======
-**Please note** - the OME server is no longer maintained and has now been superseded by the :doc:`OMERO server </users/omero>`.
->>>>>>> e7845b0... Final format and style fixing - conflict fix:docs/sphinx/users/Applications/image_servers/ome-server.txt
 
 Installation
 ------------
