@@ -1,0 +1,28 @@
+Fiji
+====
+
+`Fiji <http://pacific.mpi-cbg.de/>`_ is an image processing package. It
+can be described as a distribution of :doc:`/users/imagej/index`
+together with Java, Java 3D and a lot of plugins organized into a
+`coherent menu
+structure <http://pacific.mpi-cbg.de/wiki/index.php/Plugins_Menu>`_.
+Fiji compares to ImageJ as Ubuntu compares to Linux.
+
+Fiji works with Bio-Formats out of the box, because it comes bundled
+with the :doc:`Bio-Formats ImageJ plugins </users/imagej/index>`.
+
+Upgrading
+---------
+
+Upgrading Bio-Formats within Fiji is as simple as invoking the "Update
+Fiji" command from the Help menu. By default, Fiji even automatically
+checks for updates every time it is launched, so you will always be
+notified when new versions of Bio-Formats (or any other bundled plugin)
+are available.
+
+Updates in the Fiji updater are not always Bio-Formats’ most recent
+trunk build or stable release; they are versions that are known to
+remain compatible with other plugins that depend upon Bio-Formats. You
+should use the Fiji updater if you use other plugins that might use
+Bio-Formats.  However, if you encounter a bug within Bio-Formats, use
+Bio-Formats’ own updater to see if the latest trunk build fixes it.
