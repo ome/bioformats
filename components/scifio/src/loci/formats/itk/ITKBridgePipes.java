@@ -48,6 +48,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.HashMap;
 
+import loci.common.Constants;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -85,7 +86,8 @@ public class ITKBridgePipes {
 
   /** Enters an input loop, waiting for commands, until EOF is reached. */
   public void waitForInput() throws FormatException, IOException {
-    in = new BufferedReader(new InputStreamReader(System.in));
+    in =
+      new BufferedReader(new InputStreamReader(System.in, Constants.ENCODING));
     while (true) {
       final String line = in.readLine(); // blocks until a line is read
       if (line == null) break; // eof
@@ -175,13 +177,13 @@ public class ITKBridgePipes {
       int zCount = Integer.parseInt( args[21] );
       int cCount = Integer.parseInt( args[23] );
       int tCount = Integer.parseInt( args[25] );
-      
+
       ColorModel cm = null;
       int useCM = Integer.parseInt( args[26] );
       if(useCM == 1)
         cm = buildColorModel(args, byteOrder);
-      
-      if(!new ITKBridgePipes().write(args[1], cm, byteOrder, dims, dimx, dimy, dimz, dimt, dimc, pSizeX, pSizeY, pSizeZ, pSizeT, pSizeC, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount)); 
+
+      new ITKBridgePipes().write(args[1], cm, byteOrder, dims, dimx, dimy, dimz, dimt, dimc, pSizeX, pSizeY, pSizeZ, pSizeT, pSizeC, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount);
     }
     else {
       System.err.println("Unknown command: " + command);
