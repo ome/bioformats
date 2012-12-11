@@ -19,9 +19,6 @@
   <description>Umbrella project for native code software projects.</description>
 
   <modules>
-    <module>benchmark</module>
-    <module>bf-itk-jace</module>
-    <module>bf-itk-jni</module>
     <module>bf-itk-pipe</module>
   </modules>
 
