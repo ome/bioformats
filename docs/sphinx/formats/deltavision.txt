@@ -9,8 +9,8 @@ Extensions: .dv, .r3d
 
 Owner: `Applied Precision <http://www.api.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -50,8 +50,9 @@ Presence: |Good|
 
 Utility: |Good|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`DeltavisionReader.java`
 

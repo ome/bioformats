@@ -10,6 +10,7 @@ Using Bio-Formats
     :titlesonly:
 
     using-bioformats
+    generating-test-images
 
 Bio-Formats as a Java library
 =============================

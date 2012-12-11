@@ -206,7 +206,7 @@ html_static_path = []
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-#html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = '%b %d, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
@@ -253,6 +253,11 @@ htmlhelp_basename = 'Bio-Formatsdoc'
 # -- Options for LaTeX output --------------------------------------------------
 
 latex_elements = {
+  'classoptions': ',oneside',
+  'babel': '\\usepackage[english]{babel}',
+  'printindex': '\\phantomsection \
+   \\addcontentsline{toc}{part}{\indexname} \
+   \\printindex'
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
@@ -272,7 +277,7 @@ latex_documents = [
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-#latex_logo = None
+latex_logo = "images/bio-formats-logo.pdf"
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
