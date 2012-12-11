@@ -11,7 +11,7 @@
     <version>4.5-SNAPSHOT</version>
   </parent>
 
-  <artifactId>pom-scifio-native-bf-itk-pipe</artifactId>
+  <artifactId>pom-scifio-native-bf-itk</artifactId>
   <packaging>pom</packaging>
 
   <name>BF-ITK Pipes</name>
@@ -37,7 +37,7 @@
           <roots>
             <root>.</root>
           </roots>
-          <licenseName>bf-itk-pipe</licenseName>
+          <licenseName>bf-itk</licenseName>
           <projectName>Bio-Formats plugin for the Insight Toolkit.</projectName>
           <organizationName>Insight Software Consortium, and Open Microscopy
 Environment:
