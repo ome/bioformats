@@ -55,7 +55,7 @@ Installation
 #. Configure your BF-ITK build::
 
         mkdir ../bf-itk-build && cd ../bf-itk-build
-        ccmake ../bioformats/components/native/bf-itk-pipe
+        ccmake ../bioformats/components/native/bf-itk
 
    If you prefer, you can use cmake-gui rather than ccmake to configure
    the project. If you receive a configuration error stating that the
