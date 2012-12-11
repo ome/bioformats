@@ -42,6 +42,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
@@ -105,8 +106,8 @@ public class TiffComment {
         }
         else if (newComment.equals("-")) {
           newComment = null;
-          BufferedReader reader =
-            new BufferedReader(new InputStreamReader(System.in));
+          BufferedReader reader = new BufferedReader(
+            new InputStreamReader(System.in, Constants.ENCODING));
           String line = reader.readLine();
           while (line != null && line.length() > 0) {
             if (newComment == null) newComment = line;
