@@ -26,15 +26,15 @@ by the file format writer to retrieve OME-XML metadata.
 Now that we have somewhere to put metadata, we need to populate as much
 metadata as we can.  The minimum amount of metadata required is:
 
-  - endianness of the pixel data
-  - the order in which dimensions are stored
-  - the bit depth of the pixel data
-  - the number of channels
-  - the number of timepoints
-  - the number of Z sections
-  - the width (in pixels) of an image
-  - the height (in pixels) of an image
-  - the number of samples per channel (3 for RGB images, 1 otherwise)
+- endianness of the pixel data
+- the order in which dimensions are stored
+- the bit depth of the pixel data
+- the number of channels
+- the number of timepoints
+- the number of Z sections
+- the width (in pixels) of an image
+- the height (in pixels) of an image
+- the number of samples per channel (3 for RGB images, 1 otherwise)
 
 We populate that metadata as follows:
 
