@@ -32,7 +32,7 @@ depends on your needs:
 
 The stable release is also more useful to programmers because they can
 link their software to a known, fixed version of Bio-Formats.
-Bio-Formats's behavior won't be changing "out from under them" as they
+Bio-Formats' behavior won't be changing "out from under them" as they
 continue developing their own programs.
 
 We often **recommend that most people simply use the trunk build** for

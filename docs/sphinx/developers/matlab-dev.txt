@@ -1,8 +1,8 @@
 Using Bio-Formats in Matlab
 ===========================
 
-This section assumes that you have installed the bfopen.m script and
-loci\_tools.jar, as instructed :doc:`here </users/matlab/index>`.
+This section assumes that you have installed the **bfopen.m script** and
+**loci_tools.jar**, as instructed :doc:`here </users/matlab/index>`.
 
 The first thing to do is initialize a file:
 
@@ -151,7 +151,7 @@ To print out all of the metadata key/value pairs for the first series:
 Accessing OME metadata
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Conversion of metadata to the OME standard is one of Bio-Formats's
+Conversion of metadata to the OME standard is one of Bio-Formats'
 primary features. The OME metadata is always stored the same way,
 regardless of input file format.
 
@@ -171,7 +171,7 @@ To access physical voxel and stack sizes of the data:
 Saving files
 ------------
 
-First, make sure that you have loci\_tools.jar installed in your MATLAB
+First, make sure that you have **loci_tools.jar** installed in your MATLAB
 work folder.
 
 Now, here is the basic code for saving planes (2 channels x 2
