@@ -14,4 +14,4 @@ As of `version
 Imaris integrates with :doc:`/users/fiji/index`, which includes
 Bio-Formats. See `this
 page <http://www.bitplane.com/index.cfm?objectid=0D8067BB-B4BA-B42D-00D7454EF75DB9A8>`_
-for a detailed list of Imaris's features.
+for a detailed list of Imaris' features.
