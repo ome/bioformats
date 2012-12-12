@@ -6,7 +6,7 @@ large number of formats, as well as writing to several formats.
 Purpose
 -------
 
-Bio-Formats's primary purpose is to convert proprietary microscopy data into 
+Bio-Formats' primary purpose is to convert proprietary microscopy data into 
 an open standard called the OME data model, particularly into the OME-TIFF 
 file format. See the [statement of purpose](http://www.openmicroscopy.org/site/support/bio-formats/about/index.html) 
 for a thorough explanation and rationale.
