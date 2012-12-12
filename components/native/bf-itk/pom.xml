@@ -11,11 +11,11 @@
     <version>4.4.6-SNAPSHOT</version>
   </parent>
 
-  <artifactId>pom-scifio-native-bf-itk-jni</artifactId>
+  <artifactId>pom-scifio-native-bf-itk</artifactId>
   <packaging>pom</packaging>
 
-  <name>BF-ITK JNI</name>
-  <inceptionYear>2011</inceptionYear>
+  <name>BF-ITK Pipes</name>
+  <inceptionYear>2010</inceptionYear>
 
   <build>
     <plugins>
@@ -37,8 +37,13 @@
           <roots>
             <root>.</root>
           </roots>
-          <licenseName>bf-itk-jni</licenseName>
+          <licenseName>bf-itk</licenseName>
           <projectName>Bio-Formats plugin for the Insight Toolkit.</projectName>
+          <organizationName>Insight Software Consortium, and Open Microscopy
+Environment:
+  - Board of Regents of the University of Wisconsin-Madison
+  - Glencoe Software, Inc.
+  - University of Dundee</organizationName>
         </configuration>
       </plugin>
     </plugins>
