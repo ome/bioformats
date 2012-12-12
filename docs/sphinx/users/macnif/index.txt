@@ -10,6 +10,5 @@ Macnification uses Bio-Formats to read files in some formats, including
 Gatan DM3, ICS, ImagePro SEQ, ImagePro IPW, Metamorph STK, OME-TIFF and
 Zeiss LSM.
 
-See Also
-
-`Free trial download <http://www.orbicule.com/macnification/download>`_
+.. seealso::
+    `Free trial download <http://www.orbicule.com/macnification/download>`_
