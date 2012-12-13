@@ -57,9 +57,9 @@ import loci.formats.FormatException;
  * @author Mark Hiner hiner at wisc.edu
  */
 public class ITKBridgeJNI {
-  private static ImageReader reader;
+  private static ImageReader reader = new ImageReader();
+
   public ITKBridgeJNI() {
-    reader = new ImageReader();
   }
 
   public static boolean canReadFile(String id) {

@@ -43,6 +43,7 @@ import java.io.InputStreamReader;
 import javax.swing.JFrame;
 import javax.swing.border.EmptyBorder;
 
+import loci.common.Constants;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -128,7 +129,8 @@ public final class CacheConsole {
       }
     };
     cache.addCacheListener(l);
-    BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+    BufferedReader r =
+      new BufferedReader(new InputStreamReader(System.in, Constants.ENCODING));
     System.out.println("Entering Bio-Formats caching test console");
     while (true) {
       System.out.print("> ");
