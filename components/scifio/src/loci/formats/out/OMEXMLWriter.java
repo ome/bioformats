@@ -56,6 +56,7 @@ import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataRetrieve;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
@@ -91,14 +92,21 @@ public class OMEXMLWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
+    if (id.equals(currentId)) {
+      return;
+    }
     super.setId(id);
 
     MetadataRetrieve retrieve = getMetadataRetrieve();
+
     String xml;
     try {
       ServiceFactory factory = new ServiceFactory();
       service = factory.getInstance(OMEXMLService.class);
       xml = service.getOMEXML(retrieve);
+      OMEXMLMetadata noBin = service.createOMEXMLMetadata(xml);
+      service.removeBinData(noBin);
+      xml = service.getOMEXML(noBin);
     }
     catch (DependencyException de) {
       throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
@@ -250,11 +258,11 @@ public class OMEXMLWriter extends FormatWriter {
     }
 
     public void endElement(String uri, String localName, String qName) {
-      currentFragment += "</" + qName + ">";
-      if (qName.equals("Channel")) {
+      if (qName.equals("Pixels")) {
         xmlFragments.add(currentFragment);
         currentFragment = "";
       }
+      currentFragment += "</" + qName + ">";
     }
 
   }
