@@ -197,7 +197,9 @@ public class APLReader extends FormatReader {
         int separator = id.lastIndexOf(File.separator);
         if (separator < 0) separator = 0;
         int underscore = id.lastIndexOf("_");
-        if (underscore < separator) underscore = id.lastIndexOf(".");
+        if (underscore < separator || checkSuffix(id, "apl")) {
+          underscore = id.lastIndexOf(".");
+        }
         String mtbFile = id.substring(0, underscore) + "_d.mtb";
         if (!new Location(mtbFile).exists()) {
           throw new FormatException(".mtb file not found");

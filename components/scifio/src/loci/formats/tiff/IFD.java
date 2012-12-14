@@ -276,6 +276,11 @@ public class IFD extends HashMap<Integer, Object> {
           if (checkClass.isInstance(value)) return value;
         }
         catch (IllegalArgumentException exc) { }
+        catch (ArrayIndexOutOfBoundsException exc) {
+          // some files misbehave and report an array size of 1
+          // when it is actually 0
+          return null;
+        }
 
         throw new FormatException(getIFDTagName(tag) +
           " directory entry is the wrong type (got " +
