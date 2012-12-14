@@ -9,8 +9,8 @@ Extensions: .sm2, .sm3
 
 Owner: `RHK Technologies <http://www.rhk-tech.com>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more RHK files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,8 +51,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`RHKReader.java`
 

@@ -16,8 +16,8 @@ Developer: $developer
 Owner: $owner
 #end
 
-Support
--------
+**Support**
+
 
 SCIFIO: |$scifio|
 
@@ -55,8 +55,8 @@ We would like to have:
 - $item
 #end
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |$pixelsRating|
 
@@ -68,8 +68,9 @@ Presence: |$presenceRating|
 
 Utility: |$utilityRating|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: #foreach ($item in $reader)
 #if ($velocityHasNext):$readerextlink:`$item`, #else:$readerextlink:`$item`#end

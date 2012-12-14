@@ -10,8 +10,8 @@ Developer: Molecular Dynamics
 
 Owner: `GE Healthcare Life Sciences <http://www.gelifesciences.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -32,8 +32,8 @@ We would like to have:
 
 - more AL3D datasets (Z series, T series, 16-bit)
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -45,8 +45,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`GelReader.java`
 

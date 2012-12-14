@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.zip.CRC32;
 import java.util.zip.DeflaterOutputStream;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -255,7 +256,7 @@ public class APNGWriter extends FormatWriter {
     }
 
     ByteArrayOutputStream s = new ByteArrayOutputStream();
-    s.write(chunk.getBytes());
+    s.write(chunk.getBytes(Constants.ENCODING));
     if (chunk.equals("fdAT")) {
       s.write(DataTools.intToBytes(nextSequenceNumber++, false));
     }
@@ -311,7 +312,7 @@ public class APNGWriter extends FormatWriter {
     // write IEND chunk
     out.writeInt(0);
     out.writeBytes("IEND");
-    out.writeInt(crc("IEND".getBytes()));
+    out.writeInt(crc("IEND".getBytes(Constants.ENCODING)));
 
     // update frame count
     out.seek(numFramesPointer);

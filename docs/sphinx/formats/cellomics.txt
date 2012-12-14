@@ -9,8 +9,8 @@ Extensions: .c01
 Developer: `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -34,8 +34,8 @@ We would like to have:
 - a Cellomics .c01 specification document 
 - more Cellomics .c01 datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -47,8 +47,9 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`CellomicsReader.java`
 

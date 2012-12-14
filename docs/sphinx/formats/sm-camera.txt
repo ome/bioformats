@@ -8,8 +8,8 @@ Extensions: .cxd
 
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 - an official specification document 
 - more SM-Camera files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,8 +50,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`SMCameraReader.java`
 

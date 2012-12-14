@@ -9,8 +9,8 @@ Extensions: .naf
 Developer: `Hamamatsu <http://www.hamamatsu.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -40,8 +40,8 @@ We would like to have:
 - a specification document 
 - more NAF files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -53,8 +53,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`NAFReader.java`
 

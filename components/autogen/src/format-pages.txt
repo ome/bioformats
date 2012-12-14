@@ -1102,7 +1102,7 @@ developer = `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
 scifio = no
 export = no
 versions = 1.0, 2.0
-software = `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-software/life-sciences/las-af-advanced-fluorescence/>`_ (links at bottom of page)
+software = `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-imaging-software/life-sciences/las-af-advanced-fluorescence/>`_ (links at bottom of page)
 weHave = a LIF specification document (version 2, from no later than 2007 July 26, in PDF) \n
 a LIF specification document (version 1, from no later than 206 April 3, in PDF) \n
 numerous LIF datasets
@@ -1699,7 +1699,7 @@ Commercial applications that support this format include: \n
 - `Image-Pro Plus <http://www.mediacy.com/>`_ \n
 \n
 .. seealso:: \n
-  `PerkinElmer UltraView system overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_
+  `PerkinElmer UltraView system overview <http://www.perkinelmer.com/pages/020/cellularimaging/products/ultraviewvoxsystemsoverview.xhtml>`_
 
 [PGM (Portable Gray Map)]
 pagename = pgm

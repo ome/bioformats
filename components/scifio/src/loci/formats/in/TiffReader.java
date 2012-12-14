@@ -43,6 +43,7 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.xml.XMLTools;
@@ -154,7 +155,8 @@ public class TiffReader extends BaseTiffReader {
             for (int i=0; i<b.length; i++) {
               b[i] = (byte) s[i];
             }
-            String metadata = DataTools.stripString(new String(b));
+            String metadata =
+              DataTools.stripString(new String(b, Constants.ENCODING));
             if (metadata.indexOf("xml") != -1) {
               metadata = metadata.substring(metadata.indexOf("<"));
               metadata = "<root>" + XMLTools.sanitizeXML(metadata) + "</root>";

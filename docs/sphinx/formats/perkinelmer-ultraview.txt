@@ -9,8 +9,8 @@ Extensions: .tif, .2, .3, .4 , etc.
 
 Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more sample datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -51,8 +51,9 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
+
+**Additional Information**
+
 
 Source Code: :bfreader:`PerkinElmerReader.java`
 
@@ -68,4 +69,4 @@ Commercial applications that support this format include:
 - `Image-Pro Plus <http://www.mediacy.com/>`_ 
 
 .. seealso:: 
-  `PerkinElmer UltraView system overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_
+  `PerkinElmer UltraView system overview <http://www.perkinelmer.com/pages/020/cellularimaging/products/ultraviewvoxsystemsoverview.xhtml>`_
