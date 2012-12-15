@@ -9,8 +9,8 @@ Extensions: .mng
 Developer: `MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -37,8 +37,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,10 +50,11 @@ Presence: |Fair|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`MNGReader.java <components/scifio/src/loci/formats/in/MNGReader.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`MNGReader.java`
 
 Notes:
 

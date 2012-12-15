@@ -9,8 +9,8 @@ Extensions: .v
 Developer: `Siemens <http://www.siemens.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -41,8 +41,8 @@ We would like to have:
 - an ECAT7 specification document 
 - more ECAT7 files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -54,10 +54,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`Ecat7Reader.java <components/bio-formats/src/loci/formats/in/Ecat7Reader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`Ecat7Reader.java`
 
 Notes:
 

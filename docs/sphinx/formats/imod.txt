@@ -10,8 +10,8 @@ Developer: `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <h
 
 Owner: `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <http://bio3d.colorado.edu>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 
 - more example datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +51,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`IMODReader.java <components/bio-formats/src/loci/formats/in/IMODReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`IMODReader.java`
 
 Notes:
 

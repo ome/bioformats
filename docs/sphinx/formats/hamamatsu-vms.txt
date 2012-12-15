@@ -9,8 +9,8 @@ Extensions: .vms
 Developer: `Hamamatsu <http://www.hamamatsu.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more example datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +51,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`HamamatsuVMSReader.java <components/bio-formats/src/loci/formats/in/HamamatsuVMSReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`HamamatsuVMSReader.java`
 
 Notes:
 

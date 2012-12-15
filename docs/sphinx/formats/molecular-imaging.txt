@@ -9,8 +9,8 @@ Extensions: .stp
 
 Owner: `Molecular Imaging <http://www.molecularimagingcorp.com>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more Molecular Imaging files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +51,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`MolecularImagingReader.java <components/bio-formats/src/loci/formats/in/MolecularImagingReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`MolecularImagingReader.java`
 
 Notes:
 

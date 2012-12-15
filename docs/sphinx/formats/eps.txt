@@ -9,8 +9,8 @@ Extensions: .eps, .epsi, .ps
 Developer: `Adobe <http://www.adobe.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -40,8 +40,8 @@ We would like to have:
 - an ECAT7 specification document 
 - more ECAT7 files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -53,11 +53,12 @@ Presence: |Very good|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`EPSReader.java <components/scifio/src/loci/formats/in/EPSReader.java >`
-Source Code: :source:`EPSWriter.java <components/scifio/src/loci/formats/out/EPSWriter.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`EPSReader.java`
+Source Code: :scifiowriter:`EPSWriter.java`
 
 Notes:
 

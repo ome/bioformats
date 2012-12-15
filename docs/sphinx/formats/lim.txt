@@ -9,8 +9,8 @@ Extensions: .lim
 
 Owner: `Laboratory Imaging <http://www.lim.cz/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,10 +50,11 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`LIMReader.java <components/bio-formats/src/loci/formats/in/LIMReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`LIMReader.java`
 
 Notes:
 

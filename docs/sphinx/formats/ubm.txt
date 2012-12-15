@@ -8,8 +8,8 @@ Extensions: .pr3
 
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 - an official specification document 
 - more UBM files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,10 +50,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`UBMReader.java <components/bio-formats/src/loci/formats/in/UBMReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`UBMReader.java`
 
 Notes:
 

@@ -9,8 +9,8 @@ Extensions: .sxm
 
 Owner: `Zeiss <http://www.zeiss.de>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more LEO files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +51,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`LEOReader.java <components/bio-formats/src/loci/formats/in/LEOReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`LEOReader.java`
 
 Notes:
 

@@ -9,8 +9,8 @@ Extensions: .pict
 Developer: `Apple Computer <http://www.apple.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -37,8 +37,8 @@ We would like to have:
 - an official specification document 
 - more sample datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +50,11 @@ Presence: |Very good|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`PictReader.java <components/scifio/src/loci/formats/in/PictReader.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`PictReader.java`
 
 Notes:
 

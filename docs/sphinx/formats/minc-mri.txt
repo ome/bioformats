@@ -9,8 +9,8 @@ Extensions: .mnc
 Developer: `McGill University <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -36,8 +36,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -49,10 +49,11 @@ Presence: |Good|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`MINCReader.java <components/bio-formats/src/loci/formats/in/MINCReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`MINCReader.java`
 
 Notes:
 

@@ -9,8 +9,8 @@ Extensions: .apl, .mtb, .tnb, .tif, .obsep
 
 Owner: `Olympus <http://www.olympus.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 - more Cellr datasets 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +50,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`APLReader.java <components/bio-formats/src/loci/formats/in/APLReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`APLReader.java`
 
 Notes:
 

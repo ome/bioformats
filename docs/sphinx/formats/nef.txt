@@ -9,8 +9,8 @@ Extensions: .nef, .tif
 Developer: `Nikon <http://www.nikon.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -39,8 +39,8 @@ We would like to have:
 - an official specification document 
 - more Molecular Imaging files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -52,10 +52,11 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`NikonReader.java <components/bio-formats/src/loci/formats/in/NikonReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`NikonReader.java`
 
 Notes:
 

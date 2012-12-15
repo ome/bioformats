@@ -10,8 +10,8 @@ Developer: Quesant Instrument Corporation
 
 Owner: `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -39,8 +39,8 @@ We would like to have:
 - an official specification document 
 - more Quesant files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -52,10 +52,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`QuesantReader.java <components/bio-formats/src/loci/formats/in/QuesantReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`QuesantReader.java`
 
 Notes:
 

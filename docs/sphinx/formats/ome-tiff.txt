@@ -9,8 +9,8 @@ Extensions: .ome.tiff
 Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -39,8 +39,8 @@ We would like to have:
 - more OIB datasets (especially 2+ GB files) 
 - more FV1000 version 2 datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -52,11 +52,12 @@ Presence: |Fair|
 
 Utility: |Outstanding|
 
-Additional Information
-----------------------
 
-Source Code: :source:`OMETiffReader.java <components/scifio/src/loci/formats/in/OMETiffReader.java >`
-Source Code: :source:`OMETiffWriter.java <components/scifio/src/loci/formats/out/OMETiffWriter.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`OMETiffReader.java`
+Source Code: :scifiowriter:`OMETiffWriter.java`
 
 Notes:
 

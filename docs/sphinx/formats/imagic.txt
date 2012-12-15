@@ -9,8 +9,8 @@ Extensions: .hed, .img
 Developer: `Image Science <http://www.imagescience.de>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 
 - more example datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +50,11 @@ Presence: |Good|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`ImagicReader.java <components/bio-formats/src/loci/formats/in/ImagicReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`ImagicReader.java`
 
 Notes:
 

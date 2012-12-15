@@ -9,8 +9,8 @@ Extensions: .tif, .txt, .xml
 Developer: `Vale Lab <http://valelab.ucsf.edu/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -33,8 +33,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -46,10 +46,11 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`MicromanagerReader.java <components/scifio/src/loci/formats/in/MicromanagerReader.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`MicromanagerReader.java`
 
 Notes:
 

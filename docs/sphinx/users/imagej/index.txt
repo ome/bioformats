@@ -1,0 +1,83 @@
+ImageJ
+======
+
+`ImageJ <http://rsb.info.nih.gov/ij/>`_ is an image processing and
+analysis application written in Java, widely used in the life sciences
+fields, with an extensible plugin infrastructure. You can use
+Bio-Formats as a plugin for ImageJ to read and write images in the
+formats it supports.
+
+Installation
+------------
+
+Download :bf_plone:`loci_tools.jar <downloads>` and drop it into your 
+**ImageJ/plugins** folder. Next time you run ImageJ, a new
+LOCI submenu with several plugins will appear in the Plugins menu,
+including the Bio-Formats Importer and Bio-Formats Exporter.
+
+Usage
+-----
+
+The Bio-Formats Importer plugin can display image stacks in several
+ways:
+
+-  In a standard ImageJ window (including as a hyperstack)
+-  Using the `LOCI Data Browser <http://loci.wisc.edu/software/data-browser>`_ plugin (included)
+-  With Joachim Walter's
+   `Image5D <http://rsb.info.nih.gov/ij/plugins/image5d.html>`_ plugin
+   (if installed)
+-  With Rainer Heintzmann's
+   `View5D <http://www.nanoimaging.de/View5D>`_ plugin (if installed)
+
+ImageJ v1.37 and later automatically (via HandleExtraFileTypes) calls
+the Bio-Formats logic, if installed, as needed when a file is opened
+within ImageJ—e.g., when using File/Open instead of explicitly choosing
+"Bio-Formats Importer" from the Plugins/LOCI menu.
+
+For a more detailed description of each plugin, see the `Bio-Formats
+page <http://pacific.mpi-cbg.de/wiki/index.php/Bio-Formats>`_ of the
+Fiji wiki.
+
+Upgrading
+---------
+
+To upgrade, just overwrite the old **loci_tools.jar** with the 
+:bf_plone:`latest one <downloads>`.
+Step-by-step upgrade instructions for Windows are available
+:doc:`here <upgrading-importer>`.
+
+You may want to download the latest version of ImageJ first, to take
+advantage of new features and bug-fixes.
+
+As of the 4.0.0 release, you can also upgrade the Bio-Formats plugin
+directly from ImageJ. Select "Plugins>LOCI>Update LOCI Plugins" from the
+ImageJ menu, then select which release you would like to use. You will
+then need to restart ImageJ to complete the upgrade process.
+
+Macros and Plugins
+------------------
+
+Bio-Formats is fully scriptable in a macro, and callable from a plugin.
+To use in a macro, use the Macro Recorder to record a call to the
+Bio-Formats Importer with the desired options. You can also perform more
+targeted metadata queries using the Bio-Formats macro extensions.
+
+Here are some example ImageJ macros and plugins that use Bio-Formats to get you started:
+
+:source:`basicMetadata.txt <components/loci-plugins/utils/macros/basicMetadata.txt>` - A macro that uses the Bio-Formats macro extensions to print the chosen file's basic dimensional parameters to the Log.
+
+:source:`planeTimings.txt <components/loci-plugins/utils/macros/planeTimings.txt>` - A macro that uses the Bio-Formats macro extensions to print the chosen file's plane timings to the Log.
+
+:source:`recursiveTiffConvert.txt <components/loci-plugins/utils/macros/recursiveTiffConvert.txt>` - A macro for recursively converting files to TIFF using Bio-Formats.
+
+:source:`bfOpenAsHyperstack.txt <components/loci-plugins/utils/macros/bfOpenAsHyperstack.txt>` - This macro from Wayne Rasband opens a file as a hyperstack using only the Bio-Formats macro extensions (without calling the Bio-Formats Importer plugin).
+
+:source:`zvi2HyperStack.txt <components/loci-plugins/utils/macros/zvi2HyperStack.txt>` - This macro from Sebastien Huart reads in a ZVI file using Bio-Formats, synthesizes the LUT using emission wavelength metadata, and displays the result as a hyperstack.
+
+:source:`dvSplitTimePoints.txt <components/loci-plugins/utils/macros/dvSplitTimePoints.txt>` - This macro from Sebastien Huart splits timepoints/channels on all DV files in a folder.
+
+:source:`batchTiffConvert.txt <components/loci-plugins/utils/macros/batchTiffConvert.txt>` - This macro converts all files in a directory to TIFF using the Bio-Formats macro extensions.
+
+:source:`Read_Image <components/loci-plugins/utils/Read_Image.java>` - A simple plugin that demonstrates how to use Bio-Formats to read files into ImageJ.
+
+:source:`Mass_Importer <components/loci-plugins/utils/Mass_Importer.java>` - A simple plugin that demonstrates how to open all image files in a directory using Bio-Formats, grouping files with similar names to avoiding opening the same dataset more than once.

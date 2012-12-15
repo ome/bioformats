@@ -9,8 +9,8 @@ Extensions: .tiff
 Developer: `Olympus <http://www.olympus-sis.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 - more OIB datasets (especially 2+ GB files) 
 - more FV1000 version 2 datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,10 +50,11 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`SISReader.java <components/bio-formats/src/loci/formats/in/SISReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`SISReader.java`
 
 Notes:
 

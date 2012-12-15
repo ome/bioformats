@@ -9,8 +9,8 @@ Extensions: .oib, .oif
 
 Owner: `Olympus <http://www.olympus.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -40,8 +40,8 @@ We would like to have:
 - more OIB datasets (especially 2+ GB files) 
 - more FV1000 version 2 datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -53,10 +53,11 @@ Presence: |Good|
 
 Utility: |Very good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`FV1000Reader.java <components/bio-formats/src/loci/formats/in/FV1000Reader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`FV1000Reader.java`
 
 Notes:
 

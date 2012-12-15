@@ -9,8 +9,8 @@ Extensions: .avi
 Developer: `Microsoft <http://www.microsoft.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -37,8 +37,8 @@ We would like to have:
 -   #. files compressed with a common unsupported codec 
 -   #. 2+ GB files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,10 +50,11 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`AVIReader.java <components/scifio/src/loci/formats/in/AVIReader.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`AVIReader.java`
 
 Notes:
 

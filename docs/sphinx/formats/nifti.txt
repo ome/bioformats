@@ -9,8 +9,8 @@ Extensions: .img, .hdr
 Developer: `National Institutes of Health <http://www.nih.gov/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more Molecular Imaging files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -51,10 +51,11 @@ Presence: |Good|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`NiftiReader.java <components/bio-formats/src/loci/formats/in/NiftiReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`NiftiReader.java`
 
 Notes:
 

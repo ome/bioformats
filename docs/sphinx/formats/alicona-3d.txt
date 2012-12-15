@@ -9,8 +9,8 @@ Extensions: .al3d
 
 Owner: `Alicona Imaging <http://www.alicona.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -31,8 +31,8 @@ We would like to have:
 
 - more AL3D datasets (Z series, T series, 16-bit)
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -44,10 +44,11 @@ Presence: |Poor|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`AliconaReader.java <components/bio-formats/src/loci/formats/in/AliconaReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`AliconaReader.java`
 
 Notes:
 

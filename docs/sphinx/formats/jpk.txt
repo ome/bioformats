@@ -9,8 +9,8 @@ Extensions: .jpk
 Developer: `JPK Instruments <http://www.jpk.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more JPK files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +51,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`JPKReader.java <components/bio-formats/src/loci/formats/in/JPKReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`JPKReader.java`
 
 Notes:
 

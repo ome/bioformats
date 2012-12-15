@@ -10,8 +10,8 @@ Developer: `Khoral <http://www.khoral.com/company/>`_
 
 Owner: `AccuSoft <http://www.accusoft.com/company/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more JPK files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +51,11 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`KhorosReader.java <components/bio-formats/src/loci/formats/in/KhorosReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`KhorosReader.java`
 
 Notes:
 

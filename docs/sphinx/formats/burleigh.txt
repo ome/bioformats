@@ -9,8 +9,8 @@ Extensions: .img
 
 Owner: Burleigh Instruments
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -35,8 +35,8 @@ We would like to have:
 - a Burleigh file format specification 
 - more Burleigh files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -48,10 +48,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`BurleighReader.java <components/bio-formats/src/loci/formats/in/BurleighReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`BurleighReader.java`
 
 Notes:
 

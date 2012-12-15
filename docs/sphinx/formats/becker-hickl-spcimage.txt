@@ -9,8 +9,8 @@ Extensions: .sdt
 
 Owner: `Becker-Hickl <http://www.becker-hickl.de/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 
 - more BD Pathway datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -51,10 +51,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`SDTReader.java <components/bio-formats/src/loci/formats/in/SDTReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`SDTReader.java`
 
 Notes:
 

@@ -9,8 +9,8 @@ Extensions: .psd
 Developer: `Adobe <http://www.adobe.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -31,8 +31,8 @@ We would like to have:
 
 - more PSD files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -44,10 +44,11 @@ Presence: |Good|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`PSDReader.java <components/bio-formats/src/loci/formats/in/PSDReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`PSDReader.java`
 
 Notes:
 

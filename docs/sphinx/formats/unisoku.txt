@@ -9,8 +9,8 @@ Extensions: .dat, .hdr
 
 Owner: `Unisoku <http://www.unisoku.com>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more Unisoku files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +51,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`UnisokuReader.java <components/bio-formats/src/loci/formats/in/UnisokuReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`UnisokuReader.java`
 
 Notes:
 

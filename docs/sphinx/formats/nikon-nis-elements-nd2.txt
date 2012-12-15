@@ -9,8 +9,8 @@ Extensions: .nd2
 Developer: `Nikon USA <http://www.nikonusa.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +50,11 @@ Presence: |Very good|
 
 Utility: |Very good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`NativeND2Reader.java <components/bio-formats/src/loci/formats/in/NativeND2Reader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`NativeND2Reader.java`
 
 Notes:
 

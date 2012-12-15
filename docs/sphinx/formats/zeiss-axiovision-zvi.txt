@@ -10,8 +10,8 @@ Developer: `Carl Zeiss MicroImaging GmbH (AxioVision) <http://www.zeiss.com/axio
 
 Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -42,8 +42,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -55,10 +55,11 @@ Presence: |Good|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`ZeissZVIReader.java <components/bio-formats/src/loci/formats/in/ZeissZVIReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`ZeissZVIReader.java`
 
 Notes:
 

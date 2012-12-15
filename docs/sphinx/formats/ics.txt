@@ -9,8 +9,8 @@ Extensions: .ics, .ids
 Developer: P. Dean et al.
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -39,8 +39,8 @@ We would like to have:
 - an official specification document 
 - more example datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -52,11 +52,12 @@ Presence: |Very good|
 
 Utility: |Very good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`ICSReader.java <components/scifio/src/loci/formats/in/ICSReader.java >`
-Source Code: :source:`ICSWriter.java <components/scifio/src/loci/formats/out/ICSWriter.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`ICSReader.java`
+Source Code: :scifiowriter:`ICSWriter.java`
 
 Notes:
 

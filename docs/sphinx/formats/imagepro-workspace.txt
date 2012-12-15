@@ -9,8 +9,8 @@ Extensions: .ipw
 
 Owner: `Media Cybernetics <http://www.mediacy.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -44,8 +44,8 @@ We would like to have:
 -   #. multiple datasets in one file 
 -   #. 2+ GB files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -57,10 +57,11 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`IPWReader.java <components/bio-formats/src/loci/formats/in/IPWReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`IPWReader.java`
 
 Notes:
 

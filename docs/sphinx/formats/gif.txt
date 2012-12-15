@@ -10,8 +10,8 @@ Developer: `CompuServe <http://www.compuserve.com/>`_
 
 Owner: `Unisys <http://www.unisys.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -42,8 +42,8 @@ We would like to have:
 
 - a DM3 specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -55,10 +55,11 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`GIFReader.java <components/scifio/src/loci/formats/in/GIFReader.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`GIFReader.java`
 
 Notes:
 

@@ -9,8 +9,8 @@ Extensions: .tiff
 Developer: `FEI <http://www.fei.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 
 - a freely redistributable LuraWave LWF decoder
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -51,10 +51,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`FEITiffReader.java <components/bio-formats/src/loci/formats/in/FEITiffReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`FEITiffReader.java`
 
 Notes:
 

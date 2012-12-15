@@ -9,8 +9,8 @@ Extensions: .tif, .xml, .cfg
 Developer: `Prairie Technologies <http://www.prairie-technologies.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 - an official specification document 
 - more sample datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +50,11 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`PrairieReader.java <components/bio-formats/src/loci/formats/in/PrairieReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`PrairieReader.java`
 
 Notes:
 

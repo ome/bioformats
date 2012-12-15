@@ -9,8 +9,8 @@ Extensions: .tif, .tiff
 Developer: `Adobe <http://www.adobe.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more sample datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +51,11 @@ Presence: |Good|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`PhotoshopTiffReader.java <components/bio-formats/src/loci/formats/in/PhotoshopTiffReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`PhotoshopTiffReader.java`
 
 Notes:
 

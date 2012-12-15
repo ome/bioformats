@@ -9,8 +9,8 @@ Extensions: .tiff
 
 Owner: `Molecular Devices <http://www.moleculardevices.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -36,8 +36,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -49,10 +49,11 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`MetamorphTiffReader.java <components/bio-formats/src/loci/formats/in/MetamorphTiffReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`MetamorphTiffReader.java`
 
 Notes:
 

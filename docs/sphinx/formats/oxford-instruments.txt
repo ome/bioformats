@@ -9,8 +9,8 @@ Extensions: .top
 
 Owner: `Oxford Instruments <http://www.oxinst.com>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more Oxford Instruments files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +51,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`OxfordInstrumentsReader.java <components/bio-formats/src/loci/formats/in/OxfordInstrumentsReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`OxfordInstrumentsReader.java`
 
 Notes:
 

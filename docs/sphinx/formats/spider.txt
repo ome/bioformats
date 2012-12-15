@@ -9,8 +9,8 @@ Extensions: .spi, .stk
 Developer: `Wadsworth Center <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more SM-Camera files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -51,10 +51,11 @@ Presence: |Good|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`SpiderReader.java <components/bio-formats/src/loci/formats/in/SpiderReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`SpiderReader.java`
 
 Notes:
 

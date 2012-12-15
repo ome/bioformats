@@ -9,8 +9,8 @@ Extensions: .xqd, .xqf
 
 Owner: `Seiko <http://www.seiko.co.jp/en/index.php>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 - an official specification document 
 - more Seiko files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +51,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`SeikoReader.java <components/bio-formats/src/loci/formats/in/SeikoReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`SeikoReader.java`
 
 Notes:
 

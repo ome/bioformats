@@ -16,8 +16,8 @@ Developer: $developer
 Owner: $owner
 #end
 
-Support
--------
+**Support**
+
 
 SCIFIO: |$scifio|
 
@@ -55,8 +55,8 @@ We would like to have:
 - $item
 #end
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |$pixelsRating|
 
@@ -68,12 +68,16 @@ Presence: |$presenceRating|
 
 Utility: |$utilityRating|
 
-Additional Information
-----------------------
 
-Source Code: :source:`$reader <components/$component/src/loci/formats/in/$reader >`
+**Additional Information**
+
+
+Source Code: #foreach ($item in $reader)
+#if ($velocityHasNext):$readerextlink:`$item`, #else:$readerextlink:`$item`#end
+#end
+
 #if ($writer)
-Source Code: :source:`$writer <components/$component/src/loci/formats/out/$writer >`
+Source Code: :$writerextlink:`$writer`
 #end
 
 Notes:

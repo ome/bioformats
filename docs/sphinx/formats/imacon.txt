@@ -9,8 +9,8 @@ Extensions: .fff
 
 Owner: `Hasselblad <http://www.hasselbladusa.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -38,8 +38,8 @@ We would like to have:
 
 - more Imacon files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Poor|
 
@@ -51,10 +51,11 @@ Presence: |Poor|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`ImaconReader.java <components/bio-formats/src/loci/formats/in/ImaconReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`ImaconReader.java`
 
 Notes:
 

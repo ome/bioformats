@@ -9,8 +9,8 @@ Extensions: .arf
 
 Owner: `INDEC BioSystems <http://www.indecbiosystems.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -35,8 +35,8 @@ We would like to have:
 
 - more ARF datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -48,10 +48,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`ARFReader.java <components/bio-formats/src/loci/formats/in/ARFReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`ARFReader.java`
 
 Notes:
 

@@ -10,8 +10,8 @@ Developer: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 
 Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -37,8 +37,8 @@ We would like to have:
 
 - an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +50,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`ZeissTIFFReader.java <components/bio-formats/src/loci/formats/in/ZeissTIFFReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`ZeissTIFFReader.java`
 
 Notes:
 

@@ -1468,6 +1468,11 @@ public class ICSReader extends FormatReader {
 
         for (int i=0; i<pixelSizes.length; i++) {
           Double pixelSize = pixelSizes[i];
+
+          if (pixelSize == null) {
+            continue;
+          }
+
           String axis = axes != null && axes.length > i ? axes[i] : "";
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {

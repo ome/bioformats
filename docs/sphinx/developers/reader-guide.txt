@@ -1,0 +1,269 @@
+Bio-Formats file format reader guide
+====================================
+
+This document is a brief guide to writing new Bio-Formats file format readers.
+
+All format readers should extend either :source:`loci.formats.FormatReader <components/scifio/src/loci/formats/FormatReader.java>` or a reader
+in :bfreader:`loci.formats.in <>`.
+
+Methods to override
+-------------------
+
+- ``boolean isSingleFile(String id) throws FormatException, IOException``
+  Whether or not the named file is expected to be the only file in the
+  dataset.  This only needs to be overridden for formats whose datasets can
+  contain more than one file.
+
+- ``boolean isThisType(RandomAccessInputStream)``
+  Check the first few bytes of a file to determine if the file can be read by
+  this reader.  You can assume that index 0 in the stream corresponds to
+  the index 0 in the file.  Return true if the file can be read; false if
+  not (or if there is no way of checking).
+
+- ``int fileGroupOption(String id) throws FormatException, IOException``
+  Returns an indication of whether or not the files in a multi-file dataset
+  can be handled individually.  The return value should be one of the
+  following:
+
+  * ``FormatTools.MUST_GROUP``: the files cannot be handled separately
+  * ``FormatTools.CAN_GROUP``: the files may be handled separately or as a single 
+    unit
+  * ``FormatTools.CANNOT_GROUP``: the files must be handled separately
+
+  This method only needs to be overridden for formats whose datasets can
+  contain more than one file.
+
+- ``String[] getSeriesUsedFiles(boolean noPixels) throws FormatException, IOException``
+  You only need to override this if your format uses multiple files in a 
+  single dataset.  This method should return a list of all the files 
+  associated with the given file name and the current series (i.e. every file 
+  needed to display the current series).  If the ``noPixels`` flag is set, then 
+  none of the files returned should contain pixel data.
+  For an example of how this works, see 
+  :bfreader:`loci.formats.in.PerkinElmerReader <PerkinElmerReader.java>`. It 
+  is recommended that the first line of this method be
+  ``FormatTools.assertId(currentId, true, 1)`` - this ensures that the file name
+  is non-null.
+
+- ``byte[] openBytes(int, byte[], int, int, int, int) throws FormatException, IOException``
+  Returns a byte array containing the pixel data for a subimage specified
+  image from the given file.  The dimensions of the subimage (upper left X
+  coordinate, upper left Y coordinate, width, and height) are specified in the
+  final four int parameters.  This should throw a ``FormatException`` if the image
+  number is invalid (less than 0 or >= the number of images).  The ordering of
+  the array returned by openBytes should correspond to the values returned by
+  ``isLittleEndian()`` and ``isInterleaved()``.  Also, the length of the
+  byte array should be [image width * image height * bytes per pixel].  Extra
+  bytes will generally be truncated. It is recommended that the first line of
+  this method be ``FormatTools.checkPlaneParameters(this, no, buf.length, x, y,
+  w, h)`` - this ensures that all of the parameters are valid.
+
+- ``protected void initFile(String) throws FormatException, IOException``
+  The majority of the file parsing logic should be placed in this method.  The
+  idea is to call this method once (and only once!) when the file is first
+  opened.  Generally, you will want to start by calling
+  ``super.initFile(String)``.  You will also need to set up the stream for reading
+  the file, as well as initializing any dimension information and metadata.
+  Most of this logic is up to you; however, you should populate the 'core'
+  variable (see :source:`loci.formats.CoreMetadata <components/scifio/src/loci/formats/CoreMetadata.java>`).
+
+  Note that each variable is initialized to 0 or null when
+  ``super.initFile(String)`` is called.
+  Also, ``super.initFile(String)`` constructs a Hashtable called "metadata" where
+  you should store any relevant metadata.
+
+- ``public void close(boolean fileOnly) throws IOException``
+  Cleans up any resources used by the reader.  Global variables should be
+  reset to their initial state, and any open files or delegate readers should
+  be closed.
+
+Note that if the new format is a variant of a format currently supported by
+Bio-Formats, it is more efficient to make the new reader a subclass of the
+existing reader (rather than subclassing :source:`FormatReader <components/scifio/src/loci/formats/FormatReader.java>`).  In this case, it is
+usually sufficient to override ``initFile(String)`` and ``isThisType(byte[])``.
+
+Every reader also has an instance of :source:`loci.formats.CoreMetadata <components/scifio/src/loci/formats/CoreMetadata.java>`.  All readers
+should populate the fields in CoreMetadata, which are essential to reading
+image planes.
+
+If you read from a file using something other than :source:`RandomAccessInputStream <components/scifio-devel/src/ome/scifio/io/RandomAccessInputStream.java>` or 
+:source:`Location <components/scifio-devel/src/ome/scifio/io/Location.java>`, 
+you *must* use the file name returned by ``Location.getMappedId(String)``, not 
+the file name passed to the reader.
+Thus, a stub for ``initFile(String)`` might look like this:
+
+::
+
+      protected void initFile(String id) throws FormatException, IOException {
+        super.initFile(id);
+      
+        RandomAccessInputStream in = new RandomAccessInputStream(id);
+        // alternatively,
+        //FileInputStream in = new FileInputStream(Location.getMappedId(id));
+      
+        // read basic file structure and metadata from stream
+      }
+
+
+For more details, see the :javadoc:`Bio-Formats Javadocs <>` for 
+Location.mapId(String, String) and Location.getMappedId(String).
+
+Variables to populate
+---------------------
+
+There are a number of global variables defined in 
+:source:`loci.formats.FormatReader <components/scifio/src/loci/formats/FormatReader.java>` that should be 
+populated in the constructor of any implemented reader.
+
+These variables are:
+
+- ``boolean suffixNecessary``
+  Indicates whether or not a file name suffix is required; true by default
+
+- ``boolean suffixSufficient``
+  Indicates whether or not a specific file name suffix guarantees that this  
+  reader can open a particular file; true by default
+
+- ``boolean hasCompanionFiles``
+  Indicates whether or not there is at least one file in a dataset of this 
+  format that contains only metadata (no images); false by default
+
+- ``String datasetDescription``
+  A brief description of the layout of files in datasets of this format; only 
+  necessary for multi-file datasets
+
+
+Other useful things
+-------------------
+
+- :source:`ome.scifio.io.RandomAccessInputStream <components/scifio-devel/src/ome/scifio/io/RandomAccessInputStream.java>` is a 
+  hybrid RandomAccessFile/InputStream
+  class that is generally more efficient than either RandomAccessFile or
+  InputStream, and implements the DataInput interface.  It is recommended that
+  you use this for reading files.
+
+- :source:`ome.scifio.io.Location <components/scifio-devel/src/ome/scifio/io/Location.java>` provides an API 
+  similar to java.io.File, and supports
+  File-like operations on URLs.  It is highly recommended that you use this
+  instead of File.  See the :javadoc:`Javadocs <>` for additional information.
+
+- :source:`ome.scifio.common.DataTools <components/scifio-devel/src/ome/scifio/common/DataTools.java>` provides a 
+  number of methods for converting bytes to
+  shorts, ints, longs, etc.  It also supports reading most primitive types
+  directly from a RandomAccessInputStream (or other DataInput implementation).
+
+- :source:`loci.formats.ImageTools <components/scifio/src/loci/formats/ImageTools.java>` provides several methods 
+  for manipulating
+  primitive type arrays that represent images. Consult the source or Javadocs
+  for more information.
+
+- If your reader relies on third-party code which may not be available to all
+  users, it is strongly suggested that you make a corresponding service class
+  that interfaces with the third-party code.  Please see :doc:`service` for a 
+  description of the service infrastructure, as well as the :source:`loci.formats.services package <components/bio-formats/src/loci/formats/services/>`.
+
+- Several common image compression types are supported through subclasses of 
+  :source:`loci.formats.codec.BaseCodec <components/scifio/src/loci/formats/codec/BaseCodec.java>`. These include JPEG, LZW, LZO, Base64, ZIP and RLE (PackBits).
+
+- If you wish to convert a file's metadata to OME-XML (strongly encouraged),
+  please see :doc:`Bio-Formats metadata processing </about/index>` for further information.
+
+- Utility methods for reading and writing individual bits from a byte array
+  can be found in :source:`loci.formats.codec.BitBuffer <components/scifio/src/loci/formats/codec/BitBuffer.java>` and 
+  :source:`loci.formats.codec.BitWriter <components/scifio/src/loci/formats/codec/BitWriter.java>`.
+
+- Once you have written your file format reader, add a line to the 
+  :source:`readers.txt <components/scifio/src/loci/formats/readers.txt>`
+  file with the fully qualified name of the reader, followed by a '#' and the
+  file extensions associated with the file format. Note that 
+  :source:`ImageReader <components/scifio/src/loci/formats/ImageReader.java>`,
+  the master file format reader, tries to identify which format reader to use
+  according to the order given in :source:`readers.txt <components/scifio/src/loci/formats/readers.txt>`, so be sure to place your 
+  reader in an appropriate position within the list.
+
+- The easiest way to test your new reader is by calling "java
+  loci.formats.tools.ImageInfo <file name>".  If all goes well, you should see
+  all of the metadata and dimension information, along with a window showing
+  the images in the file.  :source:`ImageReader <components/scifio/src/loci/formats/ImageReader.java>` can take additional 
+  parameters; a brief listing is provided below for reference, but it is  
+  recommended that you take a look at the contents of 
+  :source:`loci.formats.tools.ImageInfo <components/scifio/src/loci/formats/tools/ImageInfo.java>` to see 
+  exactly what each one does.
+
++--------------+----------------------------------------------------------+
+| Argument     | Action                                                   |
++==============+==========================================================+
+| -version     | print the library version and exit                       |
++--------------+----------------------------------------------------------+
+| file         | the image file to read                                   |
++--------------+----------------------------------------------------------+
+| -nopix       | read metadata only, not pixels                           |
++--------------+----------------------------------------------------------+
+| -nocore      | do not output core metadata                              |
++--------------+----------------------------------------------------------+
+| -nometa      | do not parse format-specific metadata table              |
++--------------+----------------------------------------------------------+
+| -nofilter    | do not filter metadata fields                            |
++--------------+----------------------------------------------------------+
+| -thumbs      | read thumbnails instead of normal pixels                 |
++--------------+----------------------------------------------------------+
+| -minmax      | compute min/max statistics                               |
++--------------+----------------------------------------------------------+
+| -merge       | combine separate channels into RGB image                 |
++--------------+----------------------------------------------------------+
+| -nogroup     | force multi-file datasets to be read as individual files |
++--------------+----------------------------------------------------------+
+| -stitch      | stitch files with similar names                          |
++--------------+----------------------------------------------------------+
+| -separate    | split RGB image into separate channels                   |
++--------------+----------------------------------------------------------+
+| -expand      | expand indexed color to RGB                              |
++--------------+----------------------------------------------------------+
+| -omexml      | populate OME-XML metadata                                |
++--------------+----------------------------------------------------------+
+| -normalize   | normalize floating point images*                         |
++--------------+----------------------------------------------------------+
+| -fast        | paint RGB images as quickly as possible*                 |
++--------------+----------------------------------------------------------+
+| -debug       | turn on debugging output                                 |
++--------------+----------------------------------------------------------+
+| -range       | specify range of planes to read (inclusive)              |
++--------------+----------------------------------------------------------+
+| -series      | specify which image series to read                       |
++--------------+----------------------------------------------------------+
+| -swap        | override the default input dimension order               |
++--------------+----------------------------------------------------------+
+| -shuffle     | override the default output dimension order              |
++--------------+----------------------------------------------------------+
+| -map         | specify file on disk to which name should be mapped      |
++--------------+----------------------------------------------------------+
+| -preload     | pre-read entire file into a buffer; significantly        |
+|              | reduces the time required to read the images, but        |
+|              | requires more memory                                     |
++--------------+----------------------------------------------------------+
+| -crop        | crop images before displaying; argument is 'x,y,w,h'     |
++--------------+----------------------------------------------------------+
+| -autoscale   | used in combination with '-fast' to automatically adjust |
+|              | brightness and contrast                                  |
++--------------+----------------------------------------------------------+
+| -novalid     | do not perform validation of OME-XML                     |
++--------------+----------------------------------------------------------+
+| -omexml-only | only output the generated OME-XML                        |
++--------------+----------------------------------------------------------+
+| -format      | read file with a particular reader (e.g., ZeissZVI)      |
++--------------+----------------------------------------------------------+
+
+
+- If you wish to test using TestNG, 
+  :source:`loci.tests.testng.FormatReaderTest <components/test-suite/src/loci/tests/testng/FormatReaderTest.java>`
+  provides several basic tests that work with all Bio-Formats readers. See
+  the FormatReaderTest source code for additional information.
+
+- For more details, please look at the source code and :javadoc:`Javadocs <>`.
+  Studying existing readers is probably the best way to get a feel for the 
+  API; we would recommend first looking at 
+  :bfreader:`loci.formats.in.ImarisReader <ImarisReader.java>` (this is the 
+  most straightforward one). :bfreader:`loci.formats.in.LIFReader <LIFReader.java>` and :bfreader:`InCellReader <InCellReader.java>` are also
+  good references that show off some of the nicer features of Bio-Formats.
+
+If you have questions about Bio-Formats, please contact `the OME team <http://www.openmicroscopy.org/site/community>`_.

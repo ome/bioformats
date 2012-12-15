@@ -58,14 +58,15 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
-
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.testng.SkipException;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 /**
  * TestNG tester for Bio-Formats file format readers.
@@ -142,16 +143,12 @@ public class FormatReaderTest {
 
   // -- Setup/teardown methods --
 
-  /**
-   * @testng.before-class
-   */
+  @BeforeClass
   public void setup() throws IOException {
     initFile();
   }
 
-  /**
-   * @testng.after-class
-   */
+  @AfterClass
   public void close() throws IOException {
     reader.close();
     HashMap<String, Object> idMap = Location.getIdMap();
@@ -161,9 +158,7 @@ public class FormatReaderTest {
 
   // -- Tests --
 
-  /**
-   * @testng.test groups = "all pixels automated"
-   */
+  @Test(groups = {"all", "pixels", "automated"})
   public void testBufferedImageDimensions() {
     String testName = "testBufferedImageDimensions";
     if (!initFile()) result(testName, false, "initFile");
@@ -236,9 +231,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all pixels automated"
-   */
+  @Test(groups = {"all", "pixels", "automated"})
   public void testByteArrayDimensions() {
     String testName = "testByteArrayDimensions";
     if (!initFile()) result(testName, false, "initFile");
@@ -284,9 +277,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all pixels automated"
-   */
+  @Test(groups = {"all", "pixels", "automated"})
   public void testThumbnailImageDimensions() {
     String testName = "testThumbnailImageDimensions";
     if (!initFile()) result(testName, false, "initFile");
@@ -365,9 +356,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all pixels automated"
-   */
+  @Test(groups = {"all", "pixels", "automated"})
   public void testThumbnailByteArrayDimensions() {
     String testName = "testThumbnailByteArrayDimensions";
     if (!initFile()) result(testName, false, "initFile");
@@ -413,9 +402,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testImageCount() {
     String testName = "testImageCount";
     if (!initFile()) result(testName, false, "initFile");
@@ -440,9 +427,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all xml fast automated"
-   */
+  @Test(groups = {"all", "xml", "fast", "automated"})
   public void testOMEXML() {
     String testName = "testOMEXML";
     if (!initFile()) result(testName, false, "initFile");
@@ -511,9 +496,7 @@ public class FormatReaderTest {
     result(testName, msg == null, msg);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testConsistentReader() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testConsistentReader";
@@ -538,9 +521,7 @@ public class FormatReaderTest {
     result(testName, realFormat.equals(format), realFormat);
   }
 
-  /**
-   * @testng.test groups = "all xml automated"
-   */
+  @Test(groups = {"all", "xml", "automated"})
   public void testSaneOMEXML() {
     String testName = "testSaneOMEXML";
     if (!initFile()) result(testName, false, "initFile");
@@ -612,9 +593,7 @@ public class FormatReaderTest {
 
   // -- Consistency tests --
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testSeriesCount() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "SeriesCount";
@@ -623,9 +602,7 @@ public class FormatReaderTest {
     result(testName, reader.getSeriesCount() == config.getSeriesCount());
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testSizeX() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "SizeX";
@@ -642,9 +619,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testSizeY() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "SizeY";
@@ -661,9 +636,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testSizeZ() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "SizeZ";
@@ -680,9 +653,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testSizeC() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "SizeC";
@@ -699,9 +670,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testSizeT() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "SizeT";
@@ -718,9 +687,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testDimensionOrder() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "DimensionOrder";
@@ -741,9 +708,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testIsInterleaved() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "Interleaved";
@@ -760,9 +725,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testIndexed() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "Indexed";
@@ -779,9 +742,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testFalseColor() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "FalseColor";
@@ -798,9 +759,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testRGB() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "RGB";
@@ -817,9 +776,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testThumbSizeX() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ThumbSizeX";
@@ -836,9 +793,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testThumbSizeY() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ThumbSizeY";
@@ -855,9 +810,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testPixelType() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "PixelType";
@@ -876,9 +829,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testLittleEndian() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "LittleEndian";
@@ -895,9 +846,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testPhysicalSizeX() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "PhysicalSizeX";
@@ -923,9 +872,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testPhysicalSizeY() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "PhysicalSizeY";
@@ -950,9 +897,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testPhysicalSizeZ() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "PhysicalSizeZ";
@@ -978,9 +923,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testTimeIncrement() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "TimeIncrement";
@@ -1002,9 +945,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testLightSources() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "LightSources";
@@ -1032,9 +973,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testChannelNames() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ChannelNames";
@@ -1059,9 +998,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testExposureTimes() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ExposureTimes";
@@ -1104,9 +1041,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testEmissionWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "EmissionWavelengths";
@@ -1135,9 +1070,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testExcitationWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ExcitationWavelengths";
@@ -1166,9 +1099,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testDetectors() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "Detectors";
@@ -1200,9 +1131,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testImageNames() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ImageNames";
@@ -1225,9 +1154,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testImageDescriptions() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ImageDescriptions";
@@ -1258,9 +1185,7 @@ public class FormatReaderTest {
     result(testName, true);
   }
 
-  /**
-   * @testng.test groups = "all xml automated"
-   */
+  @Test(groups = {"all", "xml", "automated"})
   public void testEqualOMEXML() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testEqualOMEXML";
@@ -1294,9 +1219,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all"
-   */
+  @Test(groups = {"all"})
   public void testPerformance() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testPerformance";
@@ -1368,9 +1291,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all type automated"
-   */
+  @Test(groups = {"all", "type", "automated"})
   public void testSaneUsedFiles() {
     if (!initFile()) return;
     String file = reader.getCurrentFile();
@@ -1551,9 +1472,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all xml fast automated"
-   */
+  @Test(groups = {"all", "xml", "fast", "automated"})
   public void testValidXML() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testValidXML";
@@ -1584,9 +1503,7 @@ public class FormatReaderTest {
     }
   }
 
-  /**
-   * @testng.test groups = "all pixels automated"
-   */
+  @Test(groups = {"all", "pixels", "automated"})
   public void testUnflattenedPixelsHashes() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testUnflattenedPixelsHashes";
@@ -1648,9 +1565,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all pixels automated"
-   */
+  @Test(groups = {"all", "pixels", "automated"})
   public void testPixelsHashes() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testPixelsHashes";
@@ -1697,10 +1612,8 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all pixels"
-   */
   /*
+  @Test(groups = {"all", "pixels"})
   public void testReorderedPixelsHashes() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testReorderedPixelsHashes";
@@ -1736,9 +1649,7 @@ public class FormatReaderTest {
   }
   */
 
-  /**
-   * @testng.test groups = "all pixels automated"
-   */
+  @Test(groups = {"all", "pixels", "automated"})
   public void testUnflattenedSubimagePixelsHashes() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testUnflattenedSubimagePixelsHashes";
@@ -1800,9 +1711,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all pixels automated"
-   */
+  @Test(groups = {"all", "pixels", "automated"})
   public void testSubimagePixelsHashes() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testSubimagePixelsHashes";
@@ -1847,9 +1756,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testIsThisTypeConsistent() {
     String testName = "testIsThisTypeConsistent";
     if (!initFile()) result(testName, false, "initFile");
@@ -1862,9 +1769,7 @@ public class FormatReaderTest {
       "open = " + isThisTypeOpen + ", !open = " + isThisTypeNotOpen);
   }
 
-  /**
-   * @testng.test groups = "all fast automated"
-   */
+  @Test(groups = {"all", "fast", "automated"})
   public void testIsThisType() {
     String testName = "testIsThisType";
     if (!initFile()) result(testName, false, "initFile");
@@ -2058,9 +1963,7 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
-  /**
-   * @testng.test groups = "config"
-   */
+  @Test(groups = {"config"})
   public void writeConfigFile() {
     setupReader();
     if (!initFile(false)) return;
@@ -2078,9 +1981,7 @@ public class FormatReaderTest {
     }
   }
 
-  /**
-   * @testng.test groups = "config-xml"
-   */
+  @Test(groups = {"config-xml"})
   public void writeXML() {
     setupReader();
     if (!initFile(false)) return;

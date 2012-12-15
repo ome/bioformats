@@ -9,8 +9,8 @@ Extensions: .seq
 
 Owner: `Media Cybernetics <http://www.mediacy.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -41,8 +41,8 @@ We would like to have:
 
 - an official SEQ specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -54,10 +54,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`SEQReader.java <components/bio-formats/src/loci/formats/in/SEQReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`SEQReader.java`
 
 Notes:
 

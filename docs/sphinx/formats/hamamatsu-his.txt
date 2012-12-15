@@ -9,8 +9,8 @@ Extensions: .his
 
 Owner: `Hamamatsu <http://www.hamamatsu.com>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -41,8 +41,8 @@ We would like to have:
 - an HIS specification 
 - more HIS files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -54,10 +54,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`HISReader.java <components/bio-formats/src/loci/formats/in/HISReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`HISReader.java`
 
 Notes:
 

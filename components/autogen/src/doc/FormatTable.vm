@@ -79,14 +79,16 @@ Bio-Formats currently supports **$count** formats
         (Bio-Formats can read every format on this list).
 
     SCIFIO 
-        This indicates whether format is supported by the 
-        :doc:`SCIFIO <users/scifio>` core library (See the license section 
-        on the :doc:`Bio-Formats documentation <index>` page for why this 
-        matters).
+        This indicates whether format is supported by the
+        :doc:`SCIFIO <developers/scifio>` core library (See the license
+        section on the :doc:`Bio-Formats documentation <index>` page for why
+        this matters).
 
 .. toctree::
     :maxdepth: 1
     :glob:
     :hidden:
 
-    formats/*
+#foreach ($format in $formats)
+    $format.get("pagename")
+#end

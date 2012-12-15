@@ -122,6 +122,16 @@ if "SOURCE_BRANCH" in os.environ:
 else:
     source_branch = 'develop'
 
+if "JENKINS_JOB" in os.environ:
+    jenkins_job = os.environ.get('JENKINS_JOB')
+else:
+    jenkins_job = 'BIOFORMATS-trunk'
+
+bf_github_root = 'https://github.com/openmicroscopy/bioformats/'
+bf_github = bf_github_root + 'blob/' + source_branch + '/'
+jenkins_root = 'http://hudson.openmicroscopy.org.uk/'
+jenkins_job_root = jenkins_root + 'job/' + jenkins_job + '/'
+
 extlinks = {
     'wiki' : ('http://trac.openmicroscopy.org.uk/ome/wiki/'+ '%s', ''),
     'ticket' : ('http://trac.openmicroscopy.org.uk/ome/ticket/'+ '%s', '#'),
@@ -129,9 +139,13 @@ extlinks = {
     'plone' : ('http://www.openmicroscopy.org/site/'+ '%s', ''),
     'oo' : ('http://www.openmicroscopy.org/' + '%s', ''),
     'doi' : ('http://dx.doi.org/' + '%s', ''),
-    'source' : ('https://github.com/openmicroscopy/bioformats/blob/' + source_branch + '/' + '%s', ''),
-    'javadoc' : ('http://hudson.openmicroscopy.org.uk/job/OMERO/javadoc/' + '%s', ''),
-    'jenkins' : ('http://hudson.openmicroscopy.org.uk/' + '%s', ''),
+    'source' : (bf_github + '%s', ''),
+    'bfreader' : (bf_github + 'components/bio-formats/src/loci/formats/in/' + '%s', ''),
+    'scifioreader' : (bf_github + 'components/scifio/src/loci/formats/in/' + '%s', ''),
+    'bfwriter' : (bf_github + 'components/bio-formats/src/loci/formats/out/' + '%s', ''),
+    'scifiowriter' : (bf_github + 'components/scifio/src/loci/formats/out/' + '%s', ''),
+    'jenkins' : (jenkins_job_root + '%s', ''),
+    'javadoc' : (jenkins_job_root + 'javadoc/' + '%s', ''),
     'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
     'forum' : ('http://www.openmicroscopy.org/community/' + '%s', ''),
     'omerodoc': (omerodoc_uri + '%s', ''),
@@ -192,14 +206,15 @@ html_static_path = []
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-#html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = '%b %d, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-html_sidebars = { '**' : ['globaltoc.html', 'pagetoc.html',  'searchbox.html', 'sourcelink.html'] }
+html_sidebars = { '**' : ['globalbftoc.html', 'pagetoc.html',
+'relations.html', 'searchbox.html', 'sourcelink.html'] }
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -238,6 +253,11 @@ htmlhelp_basename = 'Bio-Formatsdoc'
 # -- Options for LaTeX output --------------------------------------------------
 
 latex_elements = {
+  'classoptions': ',oneside',
+  'babel': '\\usepackage[english]{babel}',
+  'printindex': '\\phantomsection \
+   \\addcontentsline{toc}{part}{\indexname} \
+   \\printindex'
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
@@ -257,11 +277,11 @@ latex_documents = [
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-#latex_logo = None
+latex_logo = "images/bio-formats-logo.pdf"
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-#latex_use_parts = True
+latex_use_parts = True
 
 # If true, show page references after internal links.
 #latex_show_pagerefs = False
@@ -310,4 +330,4 @@ texinfo_documents = [
 # -- Options for the linkcheck builder ----------------------------------------
 
 # Regular expressions that match URIs that should not be checked when doing a linkcheck build
-linkcheck_ignore = ['http://www.openmicroscopy.org/site/support/faq']
+linkcheck_ignore = ['http://www.openmicroscopy.org/site/support/faq', 'http://vaa3d.org']
