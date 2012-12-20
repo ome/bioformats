@@ -8,15 +8,15 @@ function [status, version] = bfCheckJavaPath(varargin)
 % Input 
 %
 %    autoloadBioFormats - Optional. A boolean specifying the action to take
-%    if loci_tools is not in the java path. If true, add loci_tools to the
-%    dynamic java path. Default - true
+%    if loci_tools is not in the Java class path. If true, add loci_tools 
+%    to the dynamic Java path. Default - true
 %
 % Output
 %
-%    status - Boolean. True if loci_tools.jar is part of the Java library.
+%    status - Boolean. True if loci_tools.jar is in the Java class path.
 %
-%    version - String. Current version of Bio-Formats. Empty string if
-%    loci_tools.jar is not part of the Java library
+%    version - String specifying the current version of Bio-Formats if 
+%    loci_tools.jar is in the Java class path. Empty string else.
 
 % Input check
 ip = inputParser;
@@ -29,7 +29,6 @@ isLociTools = cellfun(@(x) ~isempty(regexp(x, '.*loci_tools.jar$', 'once')),...
     jPath);
 status = any(isLociTools);
 
-% Return if loci_tools is in the java path or autoloadBioFormats is off
 if ~status && ip.Results.autoloadBioFormats,
     % Assume the jar is in Matlab path or under the same folder as this file
     path = which('loci_tools.jar');
