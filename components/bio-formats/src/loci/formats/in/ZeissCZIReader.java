@@ -1018,11 +1018,11 @@ public class ZeissCZIReader extends FormatReader {
 
           String magnification =
             getFirstNodeValue(objective, "NominalMagnification");
-          Integer mag = magnification == null ? 0 : new Integer(magnification);
+          Double mag = magnification == null ? 0 : new Double(magnification);
 
           if (mag > 0) {
             store.setObjectiveNominalMagnification(
-              new PositiveInteger(mag), 0, i);
+              new PositiveInteger(mag.intValue()), 0, i);
           }
           else {
             LOGGER.warn(
