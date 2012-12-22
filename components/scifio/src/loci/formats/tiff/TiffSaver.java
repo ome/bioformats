@@ -203,10 +203,15 @@ public class TiffSaver {
 
     // for vanilla TIFFs, 8 is the offset to the first IFD
     // for BigTIFFs, 8 is the number of bytes in an offset
-    out.writeInt(8);
     if (bigTiff) {
+      out.writeShort(8);
+      out.writeShort(0);
+
       // write the offset to the first IFD for BigTIFF files
       out.writeLong(16);
+    }
+    else {
+      out.writeInt(8);
     }
   }
 

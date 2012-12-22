@@ -1202,14 +1202,140 @@ Bio-Formats currently supports **127** formats
         (Bio-Formats can read every format on this list).
 
     SCIFIO 
-        This indicates whether format is supported by the 
-        :doc:`SCIFIO <users/scifio>` core library (See the license section 
-        on the :doc:`Bio-Formats documentation <index>` page for why this 
-        matters).
+        This indicates whether format is supported by the
+        :doc:`SCIFIO <developers/scifio>` core library (See the license
+        section on the :doc:`Bio-Formats documentation <index>` page for why
+        this matters).
 
 .. toctree::
     :maxdepth: 1
     :glob:
     :hidden:
 
-    formats/*
+    formats/3i-slidebook
+    formats/abd-tiff
+    formats/aim
+    formats/alicona-3d
+    formats/amersham-biosciences-gel
+    formats/amira-mesh
+    formats/analyze-75
+    formats/animated-png
+    formats/aperio-svs-tiff
+    formats/applied-precision-cellworx
+    formats/avi
+    formats/axon-raw-format
+    formats/bd-pathway
+    formats/becker-hickl-spcimage
+    formats/bio-rad-gel
+    formats/bio-rad-pic
+    formats/bitplane-imaris
+    formats/bruker-mri
+    formats/burleigh
+    formats/canon-dng
+    formats/cellomics
+    formats/cellsens-vsi
+    formats/deltavision
+    formats/dicom
+    formats/ecat7
+    formats/eps
+    formats/evotecperkinelmer-opera-flex
+    formats/fei
+    formats/fei-tiff
+    formats/fits
+    formats/gatan-digital-micrograph
+    formats/gatan-digital-micrograph-2
+    formats/gif
+    formats/hamamatsu-aquacosmos-naf
+    formats/hamamatsu-his
+    formats/hamamatsu-ndpi
+    formats/hamamatsu-vms
+    formats/hitachi-s-4800
+    formats/ics
+    formats/imacon
+    formats/imagepro-sequence
+    formats/imagepro-workspace
+    formats/imagic
+    formats/imod
+    formats/improvision-openlab-liff
+    formats/improvision-openlab-raw
+    formats/improvision-tiff
+    formats/incell-1000
+    formats/incell-3000
+    formats/inr
+    formats/iplab
+    formats/iplab-mac
+    formats/jeol
+    formats/jpeg
+    formats/jpeg-2000
+    formats/jpk
+    formats/jpx
+    formats/khoros-viff-bitmap
+    formats/kodak-bip
+    formats/lambert-instruments-flim
+    formats/leica-lcs-lei
+    formats/leica-lif
+    formats/leica-scn
+    formats/leo
+    formats/li-cor-l2d
+    formats/lim
+    formats/metamorph-75-tiff
+    formats/metamorph-stack-stk
+    formats/mias-maia-scientific
+    formats/micro-manager
+    formats/minc-mri
+    formats/minolta-mrw
+    formats/mng
+    formats/molecular-imaging
+    formats/mrc
+    formats/nef
+    formats/nifti
+    formats/nikon-elements-tiff
+    formats/nikon-ez-c1-tiff
+    formats/nikon-nis-elements-nd2
+    formats/nrrd
+    formats/olympus-cellrapl
+    formats/olympus-fluoview-fv1000
+    formats/olympus-fluoview-tiff
+    formats/olympus-scanr
+    formats/olympus-sis-tiff
+    formats/ome-tiff
+    formats/ome-xml
+    formats/oxford-instruments
+    formats/pcx-pc-paintbrush
+    formats/perkin-elmer-densitometer
+    formats/perkinelmer-operetta
+    formats/perkinelmer-ultraview
+    formats/pgm
+    formats/photoshop-psd
+    formats/photoshop-tiff
+    formats/pict-macintosh-picture
+    formats/png
+    formats/prairie-tech-tiff
+    formats/quesant
+    formats/quicktime-movie
+    formats/rhk
+    formats/sbig
+    formats/seiko
+    formats/simplepci-hcimage
+    formats/simplepci-hcimage-tiff
+    formats/sm-camera
+    formats/spider
+    formats/targa
+    formats/text
+    formats/tiff
+    formats/tillphotonics-tillvision
+    formats/topometrix
+    formats/trestle
+    formats/ubm
+    formats/unisoku
+    formats/varian-fdf
+    formats/vg-sam
+    formats/visitech-xys
+    formats/volocity
+    formats/volocity-library-clipping
+    formats/wa-top
+    formats/windows-bitmap
+    formats/zeiss-axiovision-tiff
+    formats/zeiss-axiovision-zvi
+    formats/zeiss-czi
+    formats/zeiss-lsm

@@ -39,6 +39,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -437,7 +438,8 @@ public class AVIReader extends FormatReader {
       byte[] plane = new byte[(int) lengths.get(no).longValue()];
       in.read(plane);
 
-      boolean motionJPEG = new String(plane, 6, 4).equals("AVI1");
+      boolean motionJPEG =
+        new String(plane, 6, 4, Constants.ENCODING).equals("AVI1");
 
       if (motionJPEG) {
         // this is Motion JPEG data

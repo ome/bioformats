@@ -48,6 +48,7 @@ import java.util.zip.CRC32;
 
 import javax.imageio.ImageIO;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -156,7 +157,7 @@ public class APNGReader extends BIFormatReader {
       {
         byte[] b = new byte[block.length + 12];
         DataTools.unpackBytes(block.length, b, 0, 4, isLittleEndian());
-        byte[] typeBytes = block.type.getBytes();
+        byte[] typeBytes = block.type.getBytes(Constants.ENCODING);
         System.arraycopy(typeBytes, 0, b, 4, 4);
         in.seek(block.offset);
         in.read(b, 8, b.length - 12);

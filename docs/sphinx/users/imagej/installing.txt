@@ -1,0 +1,64 @@
+Installing Bio-Formats in ImageJ
+================================
+
+
+*(Since FIJI is essentially ImageJ with plugins like Bio-Formats already
+built in, people who install Fiji can skip this section.)*
+
+Once you `download <http://rsbweb.nih.gov/ij/download.html>`__ and
+install ImageJ, you can install the Bio-Formats plugin by going to the
+Bio-Formats :bf_plone:`download page <downloads>`.  
+For most end-users, we recommend downloading the **loci_tools.jar** complete bundle. 
+However, you must decide which version of it you want to install. There
+are three primary versions of Bio-Formats: the trunk build, the daily
+builds, and the Stable Release. Which version you should download
+depends on your needs:
+
+- The **trunk build** is automatically updated every time any change is
+  made to the source code on the main "trunk" branch in Git, LOCI's
+  software version control system. This build has the latest bug fixes,
+  but it is not well tested and may have also introduced new bugs.
+
+- The **daily build** is a compilation of that day's changes that occurs
+  daily around midnight. It is not any better tested than the trunk build;
+  but if you download it multiple times in a day, you can be sure you'll
+  get the same version each time.
+
+- The **stable release** is thoroughly tested and has documentation to
+  match. The list of supported formats on the Bio-Formats site corresponds
+  to the most recent stable release. We do not add new formats to the list
+  until a release containing support for that format has been completed.
+  The stable release is less likely to contain bugs.
+
+The stable release is also more useful to programmers because they can
+link their software to a known, fixed version of Bio-Formats.
+Bio-Formats' behavior won't be changing "out from under them" as they
+continue developing their own programs.
+
+We often **recommend that most people simply use the trunk build** for
+two reasons. First, trunk may contain bug-fixes or new features you want
+anyway; secondly, you will have to reproduce any bug you encounter in
+Bio-Formats against the latest trunk build before submitting a bug
+report. Rather than using the stable release until you find a bug that
+requires you to upgrade and reproduce it, why not just use the trunk
+build to begin with?
+
+Once you decide which version you need, go to the Bio-Formats 
+:bf_plone:`download page <downloads>` and save the appropriate **loci\_tools.jar** 
+to the Plugins directory within ImageJ.
+
+.. figure:: /images/PluginDirectory.png
+    :align: center
+    :alt: Plugin Directory for ImageJ
+
+    Plugin Directory for ImageJ: Where in ImageJ's file structure you
+    should place the file once you downloaded it.
+
+You may have to quit and restart ImageJ.  Once you restart it, you will
+find Bio-Formats in the LOCI option under the Plugins menu:
+
+.. image:: /images/PluginsMenu.jpg
+    :align: center
+    :alt: ImageJ's Plugin Menu.
+
+You are now ready to start using Bio-Formats.

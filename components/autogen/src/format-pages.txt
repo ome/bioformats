@@ -1699,7 +1699,7 @@ Commercial applications that support this format include: \n
 - `Image-Pro Plus <http://www.mediacy.com/>`_ \n
 \n
 .. seealso:: \n
-  `PerkinElmer UltraView system overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_
+  `PerkinElmer UltraView system overview <http://www.perkinelmer.com/pages/020/cellularimaging/products/ultraviewvoxsystemsoverview.xhtml>`_
 
 [PGM (Portable Gray Map)]
 pagename = pgm

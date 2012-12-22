@@ -43,6 +43,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import loci.common.Constants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,11 +111,12 @@ public class ClassList<T> {
     // read classes from file
     BufferedReader in = null;
     if (location == null) {
-      in = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+      in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(file), Constants.ENCODING));
     }
     else {
       in = new BufferedReader(new InputStreamReader(
-        location.getResourceAsStream(file)));
+        location.getResourceAsStream(file), Constants.ENCODING));
     }
     while (true) {
       String line = null;

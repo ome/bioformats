@@ -95,7 +95,7 @@ Type "ant -p" for a list of targets.
   <target name="gen-structure-table" depends="compile"
     description="generate the dataset structure table">
     <java classname="loci.formats.tools.MakeDatasetStructureTable"
-      args="../../docs/sphinx/dataset-structure-table.txt"/>
+      args="../../docs/sphinx/formats/dataset-table.txt"/>
   </target>
 
 </project>
