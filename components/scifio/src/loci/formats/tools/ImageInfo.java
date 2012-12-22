@@ -898,7 +898,7 @@ public class ImageInfo {
     else {
       LOGGER.info("");
       LOGGER.info("Launching image viewer");
-      ImageViewer viewer = new ImageViewer();
+      ImageViewer viewer = new ImageViewer(false);
       viewer.setImages(reader, images);
       viewer.setVisible(true);
     }
