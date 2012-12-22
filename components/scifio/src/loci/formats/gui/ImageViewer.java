@@ -156,6 +156,8 @@ public class ImageViewer extends JFrame implements ActionListener,
   protected boolean anim = false;
   protected int fps = 10;
 
+  protected boolean canCloseReader = true;
+
   // -- Fields - OME-XML --
 
   /** Service for working with OME-XML metadata. */
@@ -311,6 +313,16 @@ public class ImageViewer extends JFrame implements ActionListener,
     zSlider.addKeyListener(this);
     tSlider.addKeyListener(this);
     cSlider.addKeyListener(this);
+  }
+
+  /**
+   * Constructs an image viewer.
+   *
+   * @param whether or not the underlying reader can be closed
+   */
+  public ImageViewer(boolean canCloseReader) {
+    this();
+    this.canCloseReader = canCloseReader;
   }
 
   /** Opens the given data source using the current format reader. */
@@ -706,7 +718,9 @@ public class ImageViewer extends JFrame implements ActionListener,
     try {
       myReader.close();
       myWriter.close();
-      in.close();
+      if (canCloseReader) {
+        in.close();
+      }
     }
     catch (IOException io) { }
   }
