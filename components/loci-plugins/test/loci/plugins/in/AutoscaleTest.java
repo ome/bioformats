@@ -45,6 +45,9 @@ import loci.plugins.BF;
 
 import org.junit.Test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A class for testing the Bio-Formats Importer's
  * autoscaling behavior in various cases.
@@ -58,6 +61,9 @@ import org.junit.Test;
 public class AutoscaleTest {
 
   // -- Constants --
+
+  protected static final Logger LOGGER =
+    LoggerFactory.getLogger(AutoscaleTest.class);
 
   private static final int WIDTH = 51, HEIGHT = 16;
   private static final int CROP_X = 5, CROP_Y = 10;
@@ -253,11 +259,11 @@ public class AutoscaleTest {
     }
     catch (FormatException exc) {
       fail(exc.getMessage());
-      if (ImporterTest.DEBUG) exc.printStackTrace();
+      LOGGER.debug("", exc);
     }
     catch (IOException exc) {
       fail(exc.getMessage());
-      if (ImporterTest.DEBUG) exc.printStackTrace();
+      LOGGER.debug("", exc);
     }
     assertTrue(imps != null && imps.length == 1);
     final ImagePlus imp = imps[0];
@@ -276,7 +282,7 @@ public class AutoscaleTest {
       assertEquals(calib, coeffs[0], 0.0);
     }
 
-    if (ImporterTest.DEBUG) dump(pix, sizeC, autoscale, crop, imp);
+    dump(pix, sizeC, autoscale, crop, imp);
 
     return imp;
   }
@@ -284,6 +290,9 @@ public class AutoscaleTest {
   private void dump(String pix, int sizeC,
     boolean autoscale, boolean crop, ImagePlus imp)
   {
+    if (!LOGGER.isDebugEnabled()) {
+      return;
+    }
     StringBuilder sb = new StringBuilder();
     sb.append("pixelType=");
     for (int s=pix.length(); s<6; s++) sb.append(" "); // fixed width
@@ -325,7 +334,7 @@ public class AutoscaleTest {
       double[] coeffs = cal.getCoefficients();
       sb.append(coeffs[0]);
     }
-    System.out.println(sb.toString());
+    LOGGER.debug(sb.toString());
   }
 
 }
