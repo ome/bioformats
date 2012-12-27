@@ -47,6 +47,7 @@ public class SIFReader extends FormatReader {
   // -- Constants --
 
   private static final String MAGIC_STRING = "Andor Technology";
+  private static final int FOOTER_SIZE = 8;
 
   // -- Fields --
 
@@ -116,7 +117,10 @@ public class SIFReader extends FormatReader {
           m.sizeT = Integer.parseInt(tokens[6]);
           m.imageCount = getSizeZ() * getSizeT() * getSizeC();
           timestamp = new double[getImageCount()];
-          endLine = lineNumber + getImageCount();
+          endLine = lineNumber;
+
+          pixelOffset = in.length() - FOOTER_SIZE -
+            (getImageCount() * getSizeX() * getSizeY() * 4);
         }
       }
       else if (lineNumber < endLine) {
@@ -135,7 +139,6 @@ public class SIFReader extends FormatReader {
       }
       line = in.readLine();
     }
-    pixelOffset = in.getFilePointer();
 
     m.pixelType = FormatTools.FLOAT;
     m.dimensionOrder = "XYCZT";
