@@ -112,10 +112,14 @@ public class InveonReader extends FormatReader {
     int index = getCoreIndex();
 
     RandomAccessInputStream dat = new RandomAccessInputStream(datFile);
-    dat.order(isLittleEndian());
-    dat.seek(dataPointers.get(index) + no * planeSize);
-    readPlane(dat, x, y, w, h, buf);
-    dat.close();
+    try {
+      dat.order(isLittleEndian());
+      dat.seek(dataPointers.get(index) + no * planeSize);
+      readPlane(dat, x, y, w, h, buf);
+    }
+    finally {
+      dat.close();
+    }
 
     return buf;
   }
