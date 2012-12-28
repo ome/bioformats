@@ -15,6 +15,7 @@ classdef TestBfsave < TestCase
         end
         
         function setUp(self)
+            bfCheckJavaPath();
             if isunix,
                 self.path = '/tmp/test.ome.tiff';
             else
