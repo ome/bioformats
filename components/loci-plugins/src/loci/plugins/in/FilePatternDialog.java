@@ -27,8 +27,26 @@
 
 package loci.plugins.in;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import java.awt.Checkbox;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.event.ItemEvent;
 import java.io.File;
 import java.math.BigInteger;
+import java.util.Vector;
+
+import javax.swing.Box;
+import javax.swing.JPanel;
 
 import ij.IJ;
 import ij.gui.GenericDialog;
@@ -90,7 +108,38 @@ public class FilePatternDialog extends ImporterDialog {
     }
 
     // construct dialog
-    GenericDialog gd = new GenericDialog("Bio-Formats File Stitching");
+    GenericDialog gd = new GenericDialog("Bio-Formats File Stitching") {
+      public void itemStateChanged(ItemEvent e) {
+        super.itemStateChanged(e);
+
+        Object source = e.getSource();
+
+        if (!(source instanceof Checkbox)) {
+          return;
+        }
+
+        boolean selected = e.getStateChange() == ItemEvent.SELECTED;
+
+        Vector checkboxes = getCheckboxes();
+
+        for (Object checkbox : checkboxes) {
+          if (!checkbox.equals(source)) {
+            if (selected) {
+              ((Checkbox) checkbox).setState(false);
+            }
+          }
+          else if (!selected && checkbox.equals(source)) {
+            ((Checkbox) checkbox).setState(true);
+          }
+        }
+      }
+    };
+    gd.addMessage(
+      "The list of files to be grouped can be specified in one of three ways:");
+
+    // option one
+
+    gd.addCheckbox("", true);
     int len = id.length() + 1;
     if (len > 80) len = 80;
 
@@ -107,7 +156,6 @@ public class FilePatternDialog extends ImporterDialog {
       gd.addStringField(prefix + "_number_of_images", "" + counts[i]);
       gd.addStringField(prefix + "_axis_first_image", "1");
       gd.addStringField(prefix + "_axis_increment", "1");
-      gd.addMessage("");
 
       try {
         paddingZeros[i] = elements[i][0].length() -
@@ -116,44 +164,48 @@ public class FilePatternDialog extends ImporterDialog {
       catch (NumberFormatException e) { }
     }
 
+    // option two
+
+    gd.addCheckbox("", false);
     gd.addStringField("File name contains:", "");
+
+    // option three
+
+    gd.addCheckbox("", false);
     gd.addStringField("Pattern: ", id, len);
+
+    rebuild(gd);
 
     return gd;
   }
 
   @Override
   protected boolean harvestResults(GenericDialog gd) {
+    boolean useRanges = gd.getNextBoolean();
+    boolean useRegex = gd.getNextBoolean();
+
     String[] counts = new String[fp.getPrefixes().length];
     String[] firsts = new String[counts.length];
     String[] increments = new String[counts.length];
     int[] count = fp.getCount();
 
-    boolean changedAxes = false;
-
     for (int i=0; i<counts.length; i++) {
       counts[i] = gd.getNextString();
       firsts[i] = gd.getNextString();
       increments[i] = gd.getNextString();
-
-      if (!firsts[i].equals("1") || !increments[i].equals("1") ||
-        Integer.parseInt(counts[i]) != count[i])
-      {
-        changedAxes = true;
-      }
     }
 
     String contains = gd.getNextString();
     String id = gd.getNextString();
 
-    if (!changedAxes) {
+    if (useRegex) {
       if (contains.trim().length() > 0) {
         String dir =
           originalID.substring(0, originalID.lastIndexOf(File.separator) + 1);
         id = dir + ".*" + contains + ".*";
       }
     }
-    else {
+    else if (useRanges) {
       String pattern =
         originalID.substring(0, originalID.lastIndexOf(File.separator) + 1);
       for (int i=0; i<counts.length; i++) {
@@ -189,6 +241,69 @@ public class FilePatternDialog extends ImporterDialog {
 
     options.setId(id);
     return true;
+  }
+
+  private void rebuild(GenericDialog gd) {
+    // rebuild dialog to organize things more nicely
+
+    Vector checkboxes = gd.getCheckboxes();
+    Vector fields = gd.getStringFields();
+    Vector labels = new Vector();
+
+    for (Component c : gd.getComponents()) {
+      if (c instanceof Label) {
+        labels.add(c);
+      }
+    }
+
+    final String cols = "pref, 3dlu, pref, 3dlu, pref";
+
+    final StringBuilder sb = new StringBuilder("pref, 3dlu, pref");
+    for (int s=1; s<fields.size(); s++) {
+      sb.append(", 3dlu, pref");
+    }
+    final String rows = sb.toString();
+
+    final PanelBuilder builder = new PanelBuilder(new FormLayout(cols, rows));
+    final CellConstraints cc = new CellConstraints();
+
+    int row = 1;
+
+    builder.add((Component) labels.get(0), cc.xyw(1, row, 5));
+    row += 2;
+    builder.add((Component) checkboxes.get(0), cc.xy(1, row));
+
+    for (int i=0; i<fields.size()-2; i++) {
+      builder.add((Component) labels.get(i + 1), cc.xy(3, row));
+      builder.add((Component) fields.get(i), cc.xy(5, row));
+      row += 2;
+    }
+
+    builder.add((Component) checkboxes.get(1), cc.xy(1, row));
+    builder.add((Component) labels.get(labels.size() - 2), cc.xy(3, row));
+    builder.add((Component) fields.get(fields.size() - 2), cc.xy(5, row));
+    row += 2;
+
+    builder.add((Component) checkboxes.get(2), cc.xy(1, row));
+    builder.add((Component) labels.get(labels.size() - 1), cc.xy(3, row));
+    builder.add((Component) fields.get(fields.size() - 1), cc.xy(5, row));
+    row += 2;
+
+    final JPanel masterPanel = builder.getPanel();
+
+    gd.removeAll();
+
+    GridBagLayout gdl = (GridBagLayout) gd.getLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.gridwidth = 3;
+    gbc.gridheight = fields.size();
+    gdl.setConstraints(masterPanel, gbc);
+
+    gd.add(masterPanel);
+
+    gd.setBackground(Color.white); // HACK: workaround for JPanel in a Dialog
   }
 
 }
