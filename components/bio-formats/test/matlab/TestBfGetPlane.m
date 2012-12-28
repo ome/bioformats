@@ -21,6 +21,7 @@ classdef TestBfGetPlane < TestCase
         end
         
         function setUp(self)
+            bfCheckJavaPath();
             self.reader = loci.formats.in.FakeReader();
             self.sizeX =  self.reader.DEFAULT_SIZE_X;
             self.sizeY =  self.reader.DEFAULT_SIZE_Y;
