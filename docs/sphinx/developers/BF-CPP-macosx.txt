@@ -4,13 +4,13 @@ Building C++ bindings in Mac OS X
 Compile-time dependencies -- Mac OS X
 -------------------------------------
 
-To install dependencies on Mac OS X, we advise using `MacPorts <http://www.macports.org>`_:
+To install dependencies on Mac OS X, we advise using `Homebrew <http://mxcl.github.com/homebrew/>`_:
 
 ::
 
-    sudo port install maven2 cmake boost
+    brew install maven cmake boost
 
-This will install binaries into the MacPorts /opt/local directory structure.
+Unless otherwise configured, this will install binaries into /usr/local/.
 
 
 How to build -- Mac OS X
