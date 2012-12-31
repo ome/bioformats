@@ -9,18 +9,21 @@ in :bfreader:`loci.formats.in <>`.
 Methods to override
 -------------------
 
-- ``boolean isSingleFile(String id) throws FormatException, IOException``
+- :javadoc:``boolean isSingleFile(String id)
+  <loci/formats/IFormatReader.html#isSingleFile(java.lang.String)>``
   Whether or not the named file is expected to be the only file in the
   dataset.  This only needs to be overridden for formats whose datasets can
   contain more than one file.
 
-- ``boolean isThisType(RandomAccessInputStream)``
+- :javadoc:``boolean isThisType(RandomAccessInputStream)
+  <loci/formats/IFormatReader.html#isThisType(loci.common.RandomAccessInputStream)>``
   Check the first few bytes of a file to determine if the file can be read by
   this reader.  You can assume that index 0 in the stream corresponds to
   the index 0 in the file.  Return true if the file can be read; false if
   not (or if there is no way of checking).
 
-- ``int fileGroupOption(String id) throws FormatException, IOException``
+- :javadoc:``int fileGroupOption(String id)
+  <loci/formats/IFormatReader.html#fileGroupOption(java.lang.String)>``
   Returns an indication of whether or not the files in a multi-file dataset
   can be handled individually.  The return value should be one of the
   following:
@@ -33,7 +36,8 @@ Methods to override
   This method only needs to be overridden for formats whose datasets can
   contain more than one file.
 
-- ``String[] getSeriesUsedFiles(boolean noPixels) throws FormatException, IOException``
+- :javadoc:``String[] getSeriesUsedFiles(boolean noPixels)
+  <loci/formats/IFormatReader.html#getSeriesUsedFiles(boolean)``
   You only need to override this if your format uses multiple files in a
   single dataset.  This method should return a list of all files
   associated with the given file name and the current series (i.e. every file
@@ -45,7 +49,8 @@ Methods to override
   ``FormatTools.assertId(currentId, true, 1)`` - this ensures that the file name
   is non-null.
 
-- ``byte[] openBytes(int, byte[], int, int, int, int) throws FormatException, IOException``
+- :javadoc:``byte[] openBytes(int, byte[], int, int, int, int)
+  <loci/formats/IFormatReader.html#openBytes(int, byte[], int, int, int, int)``
   Returns a byte array containing the pixel data for a subimage specified
   image from the given file.  The dimensions of the subimage (upper left X
   coordinate, upper left Y coordinate, width, and height) are specified in the
@@ -58,7 +63,8 @@ Methods to override
   this method be ``FormatTools.checkPlaneParameters(this, no, buf.length, x, y,
   w, h)`` - this ensures that all of the parameters are valid.
 
-- ``protected void initFile(String) throws FormatException, IOException``
+- :javadoc:``protected void initFile(String)
+  <loci/formats/FormatReader.html#initFile(java.lang.String)``
   The majority of the file parsing logic should be placed in this method.  The
   idea is to call this method once (and only once!) when the file is first
   opened.  Generally, you will want to start by calling
@@ -72,7 +78,8 @@ Methods to override
   Also, ``super.initFile(String)`` constructs a Hashtable called "metadata" where
   you should store any relevant metadata.
 
-- ``public void close(boolean fileOnly) throws IOException``
+- :javadoc:``public void close(boolean fileOnly)
+  <loci/formats/IFormatReader.html#close(boolean)>``
   Cleans up any resources used by the reader.  Global variables should be
   reset to their initial state, and any open files or delegate readers should
   be closed.
