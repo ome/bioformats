@@ -26,7 +26,7 @@ Methods to override
   following:
 
   * ``FormatTools.MUST_GROUP``: the files cannot be handled separately
-  * ``FormatTools.CAN_GROUP``: the files may be handled separately or as a single 
+  * ``FormatTools.CAN_GROUP``: the files may be handled separately or as a single
     unit
   * ``FormatTools.CANNOT_GROUP``: the files must be handled separately
 
@@ -34,13 +34,13 @@ Methods to override
   contain more than one file.
 
 - ``String[] getSeriesUsedFiles(boolean noPixels) throws FormatException, IOException``
-  You only need to override this if your format uses multiple files in a 
-  single dataset.  This method should return a list of all the files 
-  associated with the given file name and the current series (i.e. every file 
-  needed to display the current series).  If the ``noPixels`` flag is set, then 
+  You only need to override this if your format uses multiple files in a
+  single dataset.  This method should return a list of all files
+  associated with the given file name and the current series (i.e. every file
+  needed to display the current series).  If the ``noPixels`` flag is set, then
   none of the files returned should contain pixel data.
-  For an example of how this works, see 
-  :bfreader:`loci.formats.in.PerkinElmerReader <PerkinElmerReader.java>`. It 
+  For an example of how this works, see
+  :bfreader:`loci.formats.in.PerkinElmerReader <PerkinElmerReader.java>`. It
   is recommended that the first line of this method be
   ``FormatTools.assertId(currentId, true, 1)`` - this ensures that the file name
   is non-null.
@@ -96,23 +96,23 @@ Thus, a stub for ``initFile(String)`` might look like this:
 
       protected void initFile(String id) throws FormatException, IOException {
         super.initFile(id);
-      
+
         RandomAccessInputStream in = new RandomAccessInputStream(id);
         // alternatively,
         //FileInputStream in = new FileInputStream(Location.getMappedId(id));
-      
+
         // read basic file structure and metadata from stream
       }
 
 
-For more details, see the :javadoc:`Bio-Formats Javadocs <>` for 
+For more details, see the :javadoc:`Bio-Formats Javadocs <>` for
 Location.mapId(String, String) and Location.getMappedId(String).
 
 Variables to populate
 ---------------------
 
-There are a number of global variables defined in 
-:source:`loci.formats.FormatReader <components/scifio/src/loci/formats/FormatReader.java>` that should be 
+There are a number of global variables defined in
+:source:`loci.formats.FormatReader <components/scifio/src/loci/formats/FormatReader.java>` that should be
 populated in the constructor of any implemented reader.
 
 These variables are:
@@ -132,6 +132,10 @@ These variables are:
   A brief description of the layout of files in datasets of this format; only 
   necessary for multi-file datasets
 
+- ``String[] domains``
+  An array of imaging domains for which this format is used.  Domains are
+  defined in :source:`loci.formats.FormatTools
+  <components/scifio/src/loci/formats/FormatTools.java>`.
 
 Other useful things
 -------------------
