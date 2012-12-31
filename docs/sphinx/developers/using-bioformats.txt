@@ -156,7 +156,3 @@ Known oddities:
 - If you are working on a Macintosh, make sure that the data and resource 
   forks of your image files are stored together.  Bio-Formats does not handle
   separated forks (the native QuickTime reader tries, but usually fails).
-
-- RLE-compressed QuickTime movies will look funny if the planes are not read
-  in sequential order, since proper decoding of a particular plane can depend
-  on the previous plane.
