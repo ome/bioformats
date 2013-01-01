@@ -24,18 +24,15 @@ Freely Available Software:
 
 - `em2em <http://www.imagescience.de/em2em.html>`_
 
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have:
 
-- one example dataset 
-- official file format documentation
+* one example dataset 
+* official file format documentation
 
 We would like to have:
 
-- more example datasets
+* more example datasets
 
 **Ratings**
 

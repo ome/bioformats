@@ -21,9 +21,6 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`TIFF (Tagged Image File Format) <tiff-metadata>`
 
-Freely Available Software:
-
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
 Sample Datasets:
 
@@ -32,14 +29,12 @@ Sample Datasets:
 
 We currently have:
 
-- a `TIFF specification document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_ (v6.0, from 1992 June 3, in PDF) 
-- many TIFF datasets 
-- a few BigTIFF datasets
+* a `TIFF specification document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_ (v6.0, from 1992 June 3, in PDF) 
+* many TIFF datasets 
+* a few BigTIFF datasets
 
 We would like to have:
 
-- an official specification document 
-- more SM-Camera files
 
 **Ratings**
 

@@ -20,25 +20,15 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`FITS (Flexible Image Transport System) <fits-metadata>`
 
-Freely Available Software:
 
-- `EPS Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_
-
-Sample Datasets:
-
-- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ 
-- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ 
-- `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
 
 We currently have:
 
-- a `FITS specification document <http://archive.stsci.edu/fits/fits_standard/>`_ (NOST 100-2.0, from 1999 March 29, in HTML) 
-- several FITS datasets
+* a `FITS specification document <http://archive.stsci.edu/fits/fits_standard/>`_ (NOST 100-2.0, from 1999 March 29, in HTML) 
+* several FITS datasets
 
 We would like to have:
 
-- a specification document 
-- more FEI files
 
 **Ratings**
 
@@ -62,6 +52,6 @@ Source Code: :scifioreader:`FitsReader.java`
 Notes:
 
 
-..seealso:: 
+.. seealso:: 
   `MAST:FITS homepage <http://archive.stsci.edu/fits/>`_ 
   `FITS Support Office <http://fits.gsfc.nasa.gov/>`_

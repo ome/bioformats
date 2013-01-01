@@ -19,23 +19,17 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`UBM <ubm-metadata>`
 
-Freely Available Software:
 
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
-
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
 
 We currently have:
 
-- Pascal code that can read UBM files (from ImageSXM) 
-- one UBM file
+* Pascal code that can read UBM files (from ImageSXM) 
+* one UBM file
 
 We would like to have:
 
-- an official specification document 
-- more UBM files
+* an official specification document 
+* more UBM files
 
 **Ratings**
 

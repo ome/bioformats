@@ -29,12 +29,11 @@ Freely Available Software:
 
 We currently have:
 
-- `a specification document <http://wiki.mozilla.org/APNG_Specification>`_ 
-- several APNG files
+* `a specification document <http://wiki.mozilla.org/APNG_Specification>`_ 
+* several APNG files
 
 We would like to have:
 
-- more Amira Mesh datasets
 
 **Ratings**
 

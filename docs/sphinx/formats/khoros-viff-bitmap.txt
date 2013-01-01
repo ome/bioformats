@@ -21,9 +21,6 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Khoros VIFF (Visualization Image File Format) Bitmap <khoros-viff-bitmap-metadata>`
 
-Freely Available Software:
-
-- `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
 
 Sample Datasets:
 
@@ -31,12 +28,10 @@ Sample Datasets:
 
 We currently have:
 
-- several VIFF datasets
+* several VIFF datasets
 
 We would like to have:
 
-- an official specification document 
-- more JPK files
 
 **Ratings**
 

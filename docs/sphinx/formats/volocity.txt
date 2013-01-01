@@ -20,9 +20,6 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Volocity <volocity-metadata>`
 
-Freely Available Software:
-
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
 Sample Datasets:
 
@@ -30,12 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- many example Volocity datasets
+* many example Volocity datasets
 
 We would like to have:
 
-- an official specification document 
-- any Volocity datasets that do not open correctly
+* an official specification document 
+* any Volocity datasets that do not open correctly
 
 **Ratings**
 

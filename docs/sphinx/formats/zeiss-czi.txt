@@ -24,18 +24,14 @@ Freely Available Software:
 
 - `Zeiss ZEN 2011 <http://www.zeiss.de/C12567BE0045ACF1/Contents-Frame/A57B6AE510CE8FF1C12578FE002A725D>`_
 
-Sample Datasets:
-
-- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
 
 We currently have:
 
-- many example datasets 
-- official specification documents
+* many example datasets 
+* official specification documents
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 

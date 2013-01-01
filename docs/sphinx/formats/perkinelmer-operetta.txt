@@ -20,22 +20,16 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`PerkinElmer Operetta <perkinelmer-operetta-metadata>`
 
-Freely Available Software:
 
-- `DIMIN <http://www.dimin.net/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- a few sample datasets
+* a few sample datasets
 
 We would like to have:
 
-- an official specification document 
-- more sample datasets
+* an official specification document 
+* more sample datasets
 
 **Ratings**
 

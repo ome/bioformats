@@ -20,21 +20,15 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`VisiTech XYS <visitech-xys-metadata>`
 
-Freely Available Software:
 
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
-
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
 
 We currently have:
 
-- several VisiTech datasets
+* several VisiTech datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
 **Ratings**
 

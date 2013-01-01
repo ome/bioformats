@@ -20,22 +20,14 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`PICT (Macintosh Picture) <pict-macintosh-picture-metadata>`
 
-Freely Available Software:
 
-- `Netpbm graphics filter <http://netpbm.sourceforge.net/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- many PICT datasets
+* many PICT datasets
 
 We would like to have:
 
-- an official specification document 
-- more sample datasets
 
 **Ratings**
 

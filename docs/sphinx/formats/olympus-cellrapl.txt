@@ -20,22 +20,16 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Olympus CellR/APL <olympus-cellrapl-metadata>`
 
-Freely Available Software:
 
-- `nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- a few CellR datasets
+* a few CellR datasets
 
 We would like to have:
 
-- more Cellr datasets 
-- an official specification document
+* more Cellr datasets 
+* an official specification document
 
 **Ratings**
 

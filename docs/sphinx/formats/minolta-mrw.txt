@@ -24,17 +24,13 @@ Freely Available Software:
 
 - `dcraw <http://www.cybercom.net/%7Edcoffin/dcraw/>`_
 
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- several .mrw files
+* several .mrw files
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 
