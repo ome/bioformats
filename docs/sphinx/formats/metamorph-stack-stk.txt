@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`MetaMorph Stack (STK) <metamorph-stack-stk-metadata>`
 
 Freely Available Software:
 

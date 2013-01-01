@@ -19,7 +19,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Bio-Rad PIC <bio-rad-pic-metadata>`
 
 Freely Available Software:
 

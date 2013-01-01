@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 3
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Gatan Digital Micrograph <gatan-digital-micrograph-metadata>`
 
 Freely Available Software:
 

@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Olympus SIS TIFF <olympus-sis-tiff-metadata>`
 
 Freely Available Software:
 

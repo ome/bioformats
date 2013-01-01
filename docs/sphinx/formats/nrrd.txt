@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`NRRD (Nearly Raw Raster Data) <nrrd-metadata>`
 
 Freely Available Software:
 

@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`ImagePro Sequence <imagepro-sequence-metadata>`
 
 Freely Available Software:
 

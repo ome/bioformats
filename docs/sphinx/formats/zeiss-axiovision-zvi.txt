@@ -19,7 +19,7 @@ Export: |no|
 
 Officially Supported Versions: 1.0, 2.0
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Zeiss AxioVision ZVI (Zeiss Vision Image) <zeiss-axiovision-zvi-metadata>`
 
 Freely Available Software:
 

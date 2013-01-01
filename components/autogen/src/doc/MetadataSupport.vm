@@ -1,12 +1,13 @@
-= $q.handler() =
+*******************************************************************************
+$q.handler()
+*******************************************************************************
 #set ($handler = "Bio-Formats " + $q.format() + " format " + $q.handlerType())
 
-This page lists supported metadata fields for the
-$handler.
+This page lists supported metadata fields for the $handler.
 
-These fields are from the [http://www.ome-xml.org/ OME data model].
+These fields are from the :plone:`OME data model <support/file-formats/schemas>`.
 Bio-Formats standardizes each format's original metadata to and from the OME
-data model so that you can work with a particular piece of metadata (e.g.,
+data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 #set ($yesList = $q.yes())
@@ -27,27 +28,29 @@ Of the $totalCount fields documented below:
   * Of those, Bio-Formats fully or partially converts $bfCount ($bfPercent%).
 #if ($yesCount > 0)
 
-== Supported fields ==
-These fields are fully supported by the
-$handler:
+Supported fields
+===============================================================================
+
+These fields are fully supported by the $handler:
 #foreach ($yes in $yesList)
 #set ($entity = $q.entity($yes))
 #set ($node = $q.node($entity))
 #set ($prop = $q.prop($yes))
 #set ($comment = $q.comment($yes))
 #if ($comment != "")
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop - $comment
+  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop - $comment
 #else
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop
+  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop
 #end##if $comment
 #end##foreach $yes
-=== Total supported: $yesList.size() ===
+**Total supported: $yesList.size()**
 #end##if $yesCount > 0
 #if ($partialCount > 0)
 
-== Partially supported fields ==
-The $handler
-supports these fields in some cases,
+Partially supported fields
+===============================================================================
+
+The $handler supports these fields in some cases,
 but there may be cases where the field is not converted:
 #foreach ($partial in $partialList)
 #set ($entity = $q.entity($partial))
@@ -55,18 +58,19 @@ but there may be cases where the field is not converted:
 #set ($prop = $q.prop($partial))
 #set ($comment = $q.comment($partial))
 #if ($comment != "")
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop - $comment
+  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop - $comment
 #else
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop
+  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop
 #end##if $comment
 #end##foreach $partial
-=== Total partially supported: $partialList.size() ===
+**Total partially supported: $partialList.size()**
 #end##if $partialCount > 0
 #if ($noCount > 0)
 
-== Unsupported fields ==
-For one reason or another, the
-$handler
+Unsupported fields
+===============================================================================
+
+For one reason or another, the $handler
 does not support these fields:
 #foreach ($no in $noList)
 #set ($entity = $q.entity($no))
@@ -74,16 +78,18 @@ does not support these fields:
 #set ($prop = $q.prop($no))
 #set ($comment = $q.comment($no))
 #if ($comment != "")
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop - $comment
+  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop - $comment
 #else
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop
+  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop
 #end##if $comment
 #end##foreach $no
-=== Total unsupported: $noList.size() ===
+**Total unsupported: $noList.size()**
 #end##if $noCount > 0
 #if ($missingCount > 0)
 
-== Unknown or missing fields ==
+Unknown or missing fields
+===============================================================================
+
 As far as we are aware, these fields are not supported by the $q.format()
 format. However, our knowledge of the format may be incomplete due to
 lack of documentation or sample data.
@@ -93,10 +99,10 @@ lack of documentation or sample data.
 #set ($prop = $q.prop($missing))
 #set ($comment = $q.comment($missing))
 #if ($comment != "")
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop - $comment
+  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop - $comment
 #else
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node $entity]: $prop
+  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop
 #end##if $comment
 #end##foreach $missing
-=== Total unknown or missing: $missingList.size() ===
+**Total unknown or missing: $missingList.size()**
 #end##if $missingCount > 0

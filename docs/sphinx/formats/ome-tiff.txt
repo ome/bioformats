@@ -18,7 +18,7 @@ Export: |yes|
 
 Officially Supported Versions: 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`OME-TIFF <ome-tiff-metadata>`
 
 Freely Available Software:
 

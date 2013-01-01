@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`InCell 3000 <incell-3000-metadata>`
 
 Freely Available Software:
 

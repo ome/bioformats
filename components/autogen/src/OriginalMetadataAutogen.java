@@ -49,7 +49,7 @@ public class OriginalMetadataAutogen {
 
   // -- Constants --
 
-  private static final String TEMPLATE = "doc/OriginalMetaSupportWikiPage.vm";
+  private static final String TEMPLATE = "doc/OriginalMetadataSupport.vm";
 
   // -- Fields --
 

@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`PerkinElmer Operetta <perkinelmer-operetta-metadata>`
 
 Freely Available Software:
 

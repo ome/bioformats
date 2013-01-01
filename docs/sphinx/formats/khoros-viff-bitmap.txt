@@ -19,7 +19,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Khoros VIFF (Visualization Image File Format) Bitmap <khoros-viff-bitmap-metadata>`
 
 Freely Available Software:
 

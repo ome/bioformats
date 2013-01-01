@@ -19,7 +19,7 @@ Export: |no|
 
 Officially Supported Versions: 1.0, 2.0
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Leica LAS AF LIF (Leica Image File Format) <leica-lif-metadata>`
 
 Freely Available Software:
 

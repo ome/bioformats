@@ -19,7 +19,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Andor Bio-Imaging Division (ABD) TIFF <abd-tiff-metadata>`
 
 
 

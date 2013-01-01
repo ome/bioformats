@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`PICT (Macintosh Picture) <pict-macintosh-picture-metadata>`
 
 Freely Available Software:
 

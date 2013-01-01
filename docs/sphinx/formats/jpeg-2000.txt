@@ -18,7 +18,7 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`JPEG 2000 <jpeg-2000-metadata>`
 
 Freely Available Software:
 

@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Hitachi S-4800 <hitachi-s-4800-metadata>`
 
 Freely Available Software:
 

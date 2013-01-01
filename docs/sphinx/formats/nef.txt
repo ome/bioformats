@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`NEF (Nikon Electronic Format) <nef-metadata>`
 
 Freely Available Software:
 
