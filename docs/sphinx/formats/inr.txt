@@ -17,7 +17,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`INR <inr-metadata>`
 
 Freely Available Software:
 

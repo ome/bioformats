@@ -19,7 +19,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Amersham Biosciences Gel <amersham-biosciences-gel-metadata>`
 
 
 

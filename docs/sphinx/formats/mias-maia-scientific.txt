@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`MIAS (Maia Scientific) <mias-maia-scientific-metadata>`
 
 Freely Available Software:
 

@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`PGM (Portable Gray Map) <pgm-metadata>`
 
 Freely Available Software:
 

@@ -19,7 +19,7 @@ Export: |no|
 
 Officially Supported Versions: 4.1, 4.2
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`3i SlideBook <3i-slidebook-metadata>`
 
 
 

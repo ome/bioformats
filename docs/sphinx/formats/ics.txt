@@ -18,7 +18,7 @@ Export: |yes|
 
 Officially Supported Versions: 1.0, 2.0
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`ICS (Image Cytometry Standard) <ics-metadata>`
 
 Freely Available Software:
 

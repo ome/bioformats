@@ -19,7 +19,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`WA-TOP <wa-top-metadata>`
 
 Freely Available Software:
 

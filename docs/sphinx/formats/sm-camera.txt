@@ -17,7 +17,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`SM Camera <sm-camera-metadata>`
 
 Freely Available Software:
 

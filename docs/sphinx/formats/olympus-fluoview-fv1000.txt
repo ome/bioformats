@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 1.0, 2.0
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Olympus FluoView FV1000 <olympus-fluoview-fv1000-metadata>`
 
 Freely Available Software:
 

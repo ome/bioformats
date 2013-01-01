@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Applied Precision CellWorX <applied-precision-cellworx-metadata>`
 
 Freely Available Software:
 

@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`ECAT7 <ecat7-metadata>`
 
 Freely Available Software:
 

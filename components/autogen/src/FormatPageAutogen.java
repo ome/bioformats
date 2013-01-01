@@ -156,6 +156,10 @@ public class FormatPageAutogen {
         context.put("reader", reader);
       }
       String filename = getPageName(format, table.get("pagename"));
+
+      context.put("metadataPage",
+        filename.substring(filename.indexOf(File.separator) + 1) + "-metadata");
+
       VelocityTools.processTemplate(engine, context, TEMPLATE,
         "../../docs/sphinx/" + filename + ".txt");
     }
@@ -199,7 +203,7 @@ public class FormatPageAutogen {
 
   // -- Helper methods --
 
-  private String getPageName(String format, String pagename) {
+  protected static String getPageName(String format, String pagename) {
     String realPageName = pagename;
     if (realPageName == null) {
       realPageName = format.replaceAll("/", "");

@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 1.0
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Alicona 3D <alicona-3d-metadata>`
 
 
 
