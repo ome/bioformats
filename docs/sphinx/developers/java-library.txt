@@ -13,8 +13,11 @@ However, there are certain packages that if present will be utilized to
 provide additional functionality. To include one, just place it in the
 same folder.
 
+.. tabularcolumns:: |p{5cm}|c|c|p{5cm}|
+
 .. list-table::
   :header-rows: 1
+  :widths:  30, 10, 20, 30
 
   *
     - Package
