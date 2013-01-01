@@ -35,7 +35,7 @@ within ImageJ—e.g., when using File/Open instead of explicitly choosing
 "Bio-Formats Importer" from the Plugins/LOCI menu.
 
 For a more detailed description of each plugin, see the `Bio-Formats
-page <http://pacific.mpi-cbg.de/wiki/index.php/Bio-Formats>`_ of the
+page <http://fiji.sc/wiki/index.php/Bio-Formats>`_ of the
 Fiji wiki.
 
 Upgrading
