@@ -857,6 +857,9 @@ public class MetamorphReader extends BaseTiffReader {
           String file = stks == null ? currentId : stks[i][fileIndex];
           if (file != null) {
             if (fileIndex != lastFile) {
+              if (stream != null) {
+                stream.close();
+              }
               stream = new RandomAccessInputStream(file);
               tp = new TiffParser(stream);
               tp.checkHeader();
