@@ -6,7 +6,9 @@
 $format
 ===============================================================================
 
+#if ($extensions)
 Extensions: $extensions $unindexedExtensions
+#end
 
 #if ($developer)
 Developer: $developer
@@ -46,13 +48,13 @@ Sample Datasets:
 We currently have:
 
 #foreach ($item in $weHave)
-- $item
+$item
 #end
 
 We would like to have:
 
 #foreach ($item in $weWant)
-- $item
+$item
 #end
 
 **Ratings**

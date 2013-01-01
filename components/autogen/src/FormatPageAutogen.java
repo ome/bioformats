@@ -85,9 +85,10 @@ public class FormatPageAutogen {
     }
 
     VelocityEngine engine = VelocityTools.createEngine();
-    VelocityContext context = VelocityTools.createContext();
 
     for (IniTable table : data) {
+      VelocityContext context = VelocityTools.createContext();
+
       String format = table.get(IniTable.HEADER_KEY);
       context.put("format", format);
       if (table.containsKey("extensions")) {

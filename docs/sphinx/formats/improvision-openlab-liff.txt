@@ -21,23 +21,17 @@ Officially Supported Versions: 2.0, 5.0
 
 Supported Metadata Fields: :doc:`Improvision Openlab LIFF <improvision-openlab-liff-metadata>`
 
-Freely Available Software:
 
-- `IMOD <http://bio3d.colorado.edu/imod/>`_
-
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have:
 
-- an Openlab specification document (from 2000 February 8, in DOC) 
-- Improvision's XLIFFFileImporter code for reading Openlab LIFF v5 files (from 2006, in C++) 
-- several Openlab datasets
+* an Openlab specification document (from 2000 February 8, in DOC) 
+* Improvision's XLIFFFileImporter code for reading Openlab LIFF v5 files (from 2006, in C++) 
+* several Openlab datasets
 
 We would like to have:
 
-- more Openlab datasets (preferably with 32-bit integer data)
+* more Openlab datasets (preferably with 32-bit integer data)
 
 **Ratings**
 

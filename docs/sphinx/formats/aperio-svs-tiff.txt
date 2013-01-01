@@ -20,22 +20,16 @@ Officially Supported Versions: 8.0, 8.2, 9.0
 
 Supported Metadata Fields: :doc:`Aperio SVS TIFF <aperio-svs-tiff-metadata>`
 
-Freely Available Software:
-
-- `Firefox 3+ <http://www.mozilla.com/firefox>`_ 
-- `Opera 9.5+ <http://www.opera.com/download>`_ 
-- `KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
 
 
 We currently have:
 
-- many SVS datasets 
-- an SVS specification document 
-- the ability to generate additional SVS datasets
+* many SVS datasets 
+* an SVS specification document 
+* the ability to generate additional SVS datasets
 
 We would like to have:
 
-- more Amira Mesh datasets
 
 **Ratings**
 

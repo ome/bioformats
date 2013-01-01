@@ -26,18 +26,13 @@ Freely Available Software:
 - `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ 
 - `IrfanView <http://www.irfanview.com/>`_
 
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have:
 
-- numerous ICS datasets
+* numerous ICS datasets
 
 We would like to have:
 
-- an official specification document 
-- more example datasets
 
 **Ratings**
 
@@ -62,13 +57,13 @@ Source Code: :scifiowriter:`ICSWriter.java`
 Notes:
 
 
-- ICS version 1.0 datasets have two files - an .ics file that contains 
+* ICS version 1.0 datasets have two files - an .ics file that contains 
   all of the metadata in plain-text format, and an .ids file that 
   contains all of the pixel data. 
-- ICS version 2.0 datasets are a single .ics file that contains both 
+* ICS version 2.0 datasets are a single .ics file that contains both 
   pixels and metadata. 
 
 Commercial applications that can support ICS include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_ 
-- `SVI Huygens <http://svi.nl/>`_
+* `Bitplane Imaris <http://www.bitplane.com/>`_ 
+* `SVI Huygens <http://svi.nl/>`_

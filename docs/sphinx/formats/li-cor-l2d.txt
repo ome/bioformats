@@ -20,22 +20,16 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Li-Cor L2D <li-cor-l2d-metadata>`
 
-Freely Available Software:
 
-- `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
-
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- a few L2D datasets
+* a few L2D datasets
 
 We would like to have:
 
-- an official specification document 
-- more L2D datasets
+* an official specification document 
+* more L2D datasets
 
 **Ratings**
 

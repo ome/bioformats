@@ -20,22 +20,15 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`TillPhotonics TillVision <tillphotonics-tillvision-metadata>`
 
-Freely Available Software:
 
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
-
-Sample Datasets:
-
-- `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ 
-- `Big TIFF <http://tiffcentral.com/>`_
 
 We currently have:
 
-- several TillVision datasets
+* several TillVision datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
 **Ratings**
 

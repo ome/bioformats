@@ -30,11 +30,11 @@ Sample Datasets:
 
 We currently have:
 
-- many example datasets
+* many example datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
 **Ratings**
 

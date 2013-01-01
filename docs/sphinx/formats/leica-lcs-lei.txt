@@ -25,18 +25,14 @@ Freely Available Software:
 
 - `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
 
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF) 
-- many LEI datasets
+* an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF) 
+* many LEI datasets
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 
@@ -67,6 +63,6 @@ LEI presumably stands for "Leica Experimental Information".
 
 Commercial applications that support LEI include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_ 
-- `SVI Huygens <http://svi.nl/>`_ 
-- `Image-Pro Plus <http://www.mediacy.com/>`_
+* `Bitplane Imaris <http://www.bitplane.com/>`_ 
+* `SVI Huygens <http://svi.nl/>`_ 
+* `Image-Pro Plus <http://www.mediacy.com/>`_

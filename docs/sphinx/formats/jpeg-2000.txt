@@ -24,19 +24,14 @@ Freely Available Software:
 
 - `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
 
-Sample Datasets:
-
-- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
 
 We currently have:
 
-- a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) 
-- a few .jp2 files
+* a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) 
+* a few .jp2 files
 
 We would like to have:
 
-- an official specification document 
-- more JEOL files
 
 **Ratings**
 

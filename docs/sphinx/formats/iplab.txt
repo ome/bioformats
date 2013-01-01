@@ -25,18 +25,15 @@ Freely Available Software:
 
 - `IPLab Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/iplab-reader.html>`_
 
-Sample Datasets:
-
-- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
 
 We currently have:
 
-- an IPLab specification document (v3.6.5, from 2004 December 1, in PDF) 
-- several IPLab datasets
+* an IPLab specification document (v3.6.5, from 2004 December 1, in PDF) 
+* several IPLab datasets
 
 We would like to have:
 
-- more IPLab datasets (preferably with 32-bit integer or floating point data)
+* more IPLab datasets (preferably with 32-bit integer or floating point data)
 
 **Ratings**
 
@@ -64,8 +61,8 @@ format, we are not able to distribute them to third parties.**
 
 Commercial applications that support IPLab include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_ 
-- `SVI Huygens <http://svi.nl/>`_ 
+* `Bitplane Imaris <http://www.bitplane.com/>`_ 
+* `SVI Huygens <http://svi.nl/>`_ 
 
 .. seealso:: 
   `IPLab software review <http://www.biovis.com/iplab.htm>`_

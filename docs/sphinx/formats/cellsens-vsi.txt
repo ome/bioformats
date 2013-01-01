@@ -20,18 +20,15 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`cellSens VSI <cellsens-vsi-metadata>`
 
-Freely Available Software:
-
-- `Micro-Manager <http://micro-manager.org/>`_
 
 
 We currently have:
 
-- a few example datasets
+* a few example datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
 **Ratings**
 

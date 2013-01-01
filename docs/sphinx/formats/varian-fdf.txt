@@ -20,22 +20,16 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Varian FDF <varian-fdf-metadata>`
 
-Freely Available Software:
 
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
-
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
 
 We currently have:
 
-- a few Varian FDF datasets
+* a few Varian FDF datasets
 
 We would like to have:
 
-- an official specification document 
-- more Varian FDF datasets
+* an official specification document 
+* more Varian FDF datasets
 
 **Ratings**
 

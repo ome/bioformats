@@ -20,22 +20,16 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Volocity Library Clipping <volocity-library-clipping-metadata>`
 
-Freely Available Software:
 
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
-
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
 
 We currently have:
 
-- several Volocity library clipping datasets
+* several Volocity library clipping datasets
 
 We would like to have:
 
-- any datasets that do not open correctly 
-- an official specification document
+* any datasets that do not open correctly 
+* an official specification document
 
 **Ratings**
 

@@ -5,10 +5,9 @@ developer = `Intelligent Imaging Innovations`_
 scifio = no
 export = no
 versions = 4.1, 4.2
-weHave = Numerous SlideBook datasets \n
-Some :source:`Bio-Formats developer notes <components/bio-formats/doc/slidebook.html>` for SlideBook
-weWant = A SlideBook specification document \n
-More SlideBook datasets (preferably acquired with the most recent SlideBook software)
+weHave = * Numerous SlideBook datasets
+weWant = * A SlideBook specification document \n
+* More SlideBook datasets (preferably acquired with the most recent SlideBook software)
 pixelsRating = Very good
 metadataRating = Fair
 opennessRating = Fair
@@ -33,9 +32,9 @@ developer = `Adobe <http://www.adobe.com/>`_
 scifio = no
 export = no
 versions = 1.0
-weHave = a PSD specification document (v3.0.4, 16 July 1995) \n
-a few PSD files
-weWant = more PSD files
+weHave = * a PSD specification document (v3.0.4, 16 July 1995) \n
+* a few PSD files
+weWant = * more PSD files
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Good
@@ -48,8 +47,8 @@ extensions = .aim
 developer = `SCANCO Medical AG <http://www.scanco.ch>`_
 scifio = no
 export = no
-weHave = one .aim file
-weWant = an .aim specification document \n
+weHave = * one .aim file
+weWant = * an .aim specification document \n
 more .aim files
 pixelsRating = Good
 metadataRating = Very good
@@ -64,9 +63,9 @@ owner = `Alicona Imaging <http://www.alicona.com/>`_
 scifio = no
 export = no
 versions = 1.0
-weHave = an `AL3D specification document <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) \n
-a few AL3D datasets
-weWant = more AL3D datasets (Z series, T series, 16-bit)
+weHave = * an `AL3D specification document <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) \n
+* a few AL3D datasets
+weWant = * more AL3D datasets (Z series, T series, 16-bit)
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
@@ -84,8 +83,8 @@ owner = `GE Healthcare Life Sciences <http://www.gelifesciences.com/>`_
 developer = Molecular Dynamics
 scifio = no
 export = no
-weHave = a GEL specification document (Revision 2, from 2001 Mar 15, in PDF) \n
-a few GEL datasets
+weHave = * a GEL specification document (Revision 2, from 2001 Mar 15, in PDF) \n
+* a few GEL datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Good
@@ -101,8 +100,8 @@ extensions = .am, .amiramesh, .grey, .hx, .labels
 developer = `Visage Imaging <http://www.amiravis.com/>`_
 scifio = no
 export = no
-weHave = a few Amira Mesh datasets
-weWant = more Amira Mesh datasets
+weHave = * a few Amira Mesh datasets
+weWant = * more Amira Mesh datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Fair
@@ -115,8 +114,8 @@ extensions = .img, .hdr
 developer = `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir>`_
 scifio = no
 export = no
-weHave = `an Analyze 7.5 specification document <http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf>`_ \n
-several Analyze 7.5 datasets
+weHave = * `an Analyze 7.5 specification document <http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf>`_ \n
+* several Analyze 7.5 datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Very good
@@ -131,8 +130,8 @@ owner = `Andor Technology <http://www.andor.com/>`_
 developer = Andor Bioimaging Department
 scifio = no
 export = no
-weHave = an ABD-TIFF specification document (from 2005 November, in PDF) \n
-a few ABD-TIFF datasets
+weHave = * an ABD-TIFF specification document (from 2005 November, in PDF) \n
+* a few ABD-TIFF datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Good
@@ -151,8 +150,8 @@ export = yes
 software = `Firefox 3+ <http://www.mozilla.com/firefox>`_ \n
 `Opera 9.5+ <http://www.opera.com/download>`_ \n
 `KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
-weHave = `a specification document <http://wiki.mozilla.org/APNG_Specification>`_ \n
-several APNG files
+weHave = * `a specification document <http://wiki.mozilla.org/APNG_Specification>`_ \n
+* several APNG files
 pixelsRating = Very good
 metadataRating = Outstanding
 opennessRating = Outstanding
@@ -166,9 +165,9 @@ owner = `Aperio <http://www.aperio.com/>`_
 scifio = no
 export = no
 versions = 8.0, 8.2, 9.0
-weHave = many SVS datasets \n
-an SVS specification document \n
-the ability to generate additional SVS datasets
+weHave = * many SVS datasets \n
+* an SVS specification document \n
+* the ability to generate additional SVS datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
@@ -184,9 +183,9 @@ extensions = .htd, .pnl
 developer = `Applied Precision <http://www.api.com>`_
 scifio = no
 export = no
-weHave = a few CellWorX datasets
-weWant = a CellWorX specification document \n
-more CellWorX datasets
+weHave = * a few CellWorX datasets
+weWant = * a CellWorX specification document \n
+* more CellWorX datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Good
@@ -202,23 +201,25 @@ scifio = yes
 export = yes
 software = `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_ \n
 `AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
-weHave = several AVI datasets
-weWant = more AVI datasets, including: \n
-  #. files with audio tracks and/or multiple video tracks \n
-  #. files compressed with a common unsupported codec \n
-  #. 2+ GB files
+weHave = * several AVI datasets
+weWant = * more AVI datasets, including: \n
+\n
+  * files with audio tracks and/or multiple video tracks \n
+  * files compressed with a common unsupported codec \n
+  * 2+ GB files
 pixelsRating = Good
 metadataRating = Outstanding
 opennessRating = Fair
 presenceRating = Outstanding
 utilityRating = Poor
 reader = AVIReader.java
-notes = - Bio-Formats can save image stacks as AVI (uncompressed). \n
-- The following codecs are supported for reading: \n
-  #. Microsoft Run-Length Encoding (MSRLE) \n
-  #. Microsoft Video (MSV1) \n
-  #. Raw (uncompressed) \n
-  #. JPEG \n
+notes = * Bio-Formats can save image stacks as AVI (uncompressed). \n
+* The following codecs are supported for reading: \n
+\n
+  * Microsoft Run-Length Encoding (MSRLE) \n
+  * Microsoft Video (MSV1) \n
+  * Raw (uncompressed) \n
+  * JPEG \n
 \n
 .. seealso:: \n
   `AVI RIFF File Reference <http://msdn2.microsoft.com/en-us/library/ms779636.aspx>`_ \n
@@ -229,9 +230,9 @@ extensions = .arf
 owner = `INDEC BioSystems <http://www.indecbiosystems.com/>`_
 scifio = no
 export = no
-weHave = one ARF dataset \n
-a `specification document <http://www.indecbiosystems.com/imagingworkbench/ApplicationNotes/IWAppNote11-ARF_File_Format.pdf>`_
-weWant = more ARF datasets
+weHave = * one ARF dataset \n
+* a `specification document <http://www.indecbiosystems.com/imagingworkbench/ApplicationNotes/IWAppNote11-ARF_File_Format.pdf>`_
+weWant = * more ARF datasets
 pixelsRating = Very good
 metadataRating = Fair
 opennessRating = Very good
@@ -244,8 +245,8 @@ extensions = .exp, .tif
 owner = `BD Biosciences <http://www.bdbiosciences.com>`_
 scifio = no
 export = no
-weHave = a few BD Pathway datasets
-weWant = more BD Pathway datasets
+weHave = * a few BD Pathway datasets
+weWant = * more BD Pathway datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Good
@@ -258,11 +259,11 @@ extensions = .sdt
 owner = `Becker-Hickl <http://www.becker-hickl.de/>`_
 scifio = no
 export = no
-weHave = an SDT specification document (from 2008 April, in PDF) \n
-an SDT specification document (from 2006 June, in PDF) \n
-Becker & Hickl's `SPCImage <http://www.becker-hickl.de/software/tcspc/softwaretcspcspecial.htm>`_ software \n
-a large number of SDT datasets \n
-the ability to produce new datasets
+weHave = * an SDT specification document (from 2008 April, in PDF) \n
+* an SDT specification document (from 2006 June, in PDF) \n
+* Becker & Hickl's `SPCImage <http://www.becker-hickl.de/software/tcspc/softwaretcspcspecial.htm>`_ software \n
+* a large number of SDT datasets \n
+* the ability to produce new datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Good
@@ -276,10 +277,10 @@ extensions = .1sc
 owner = `Bio-Rad <http://www.bio-rad.com>`_
 scifio = no
 export = no
-weHave = software that can read Bio-Rad Gel files \n
-several Bio-Rad Gel files
-weWant = a Bio-Rad Gel specification \n
-more Bio-Rad Gel files
+weHave = * software that can read Bio-Rad Gel files \n
+* several Bio-Rad Gel files
+weWant = * a Bio-Rad Gel specification \n
+* more Bio-Rad Gel files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -294,10 +295,10 @@ developer = Bio-Rad
 scifio = no
 export = no
 software = `Bio-Rad PIC reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/biorad.html>`_
-weHave = a PIC specification document (v4.5, in PDF) \n
-an older PIC specification document (v4.2, from 1996 December 16, in DOC) \n
-a large number of PIC datasets \n
-the ability to produce new datasets
+weHave = * a PIC specification document (v4.5, in PDF) \n
+* an older PIC specification document (v4.2, from 1996 December 16, in DOC) \n
+* a large number of PIC datasets \n
+* the ability to produce new datasets
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Very good
@@ -305,9 +306,10 @@ presenceRating = Very good
 utilityRating =  Very good
 privateSpecification = true
 reader = BioRadReader.java
-notes = - Commercial applications that support this format include: \n
-  #. `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-  #. `SVI Huygens <http://svi.nl/>`_
+notes = * Commercial applications that support this format include: \n
+\n
+  * `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+  * `SVI Huygens <http://svi.nl/>`_
 
 [Bitplane Imaris]
 extensions = .ims
@@ -315,14 +317,14 @@ owner = `Bitplane <http://www.bitplane.com/>`_
 scifio = no
 export = no
 versions = 2.7, 3.0, 5.5
-weHave = an `Imaris (RAW) specification document <http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104>`_ (from no later than 1997 November 11, in HTML) \n
-an Imaris 5.5 (HDF) specification document \n
-Bitplane's bfFileReaderImaris3N code (from no later than 2005, in C++) \n
-several older Imaris (RAW) datasets \n
-one Imaris 3 (TIFF) dataset \n
-several Imaris 5.5 (HDF) datasets
-weWant = an Imaris 3 (TIFF) specification document \n
-more Imaris 3 (TIFF) datasets
+weHave = * an `Imaris (RAW) specification document <http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104>`_ (from no later than 1997 November 11, in HTML) \n
+* an Imaris 5.5 (HDF) specification document \n
+* Bitplane's bfFileReaderImaris3N code (from no later than 2005, in C++) \n
+* several older Imaris (RAW) datasets \n
+* one Imaris 3 (TIFF) dataset \n
+* several Imaris 5.5 (HDF) datasets
+weWant = * an Imaris 3 (TIFF) specification document \n
+* more Imaris 3 (TIFF) datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Good
@@ -339,8 +341,8 @@ developer = `Bruker <http://www.bruker.com/>`_
 scifio = no
 export = no
 software = `Bruker plugin for ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_
-weHave = a few Bruker MRI datasets
-weWant = an official specification document
+weHave = * a few Bruker MRI datasets
+weWant = * an official specification document
 pixelsRating = Good
 metadataRating = Very good
 opennessRating = Fair
@@ -353,10 +355,10 @@ extensions = .img
 owner = Burleigh Instruments
 scifio = no
 export = no
-weHave = Pascal code that can read Burleigh files (from ImageSXM) \n
-a few Burleigh files
-weWant = a Burleigh file format specification \n
-more Burleigh files
+weHave = * Pascal code that can read Burleigh files (from ImageSXM) \n
+* a few Burleigh files
+weWant = * a Burleigh file format specification \n
+* more Burleigh files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -370,8 +372,8 @@ developer = `Canon <http://canon.com>`_
 scifio = no
 export = no
 software = `IrfanView <http://www.irfanview.com/>`_
-weHave = a few example datasets
-weWant = an official specification document
+weHave = * a few example datasets
+weWant = * an official specification document
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Fair
@@ -385,7 +387,7 @@ developer = `Vale Lab <http://valelab.ucsf.edu/>`_
 scifio = yes
 export = no
 software = `Micro-Manager <http://micro-manager.org/>`_
-weHave = many Micro-manager datasets
+weHave = * many Micro-manager datasets
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Outstanding
@@ -398,9 +400,9 @@ extensions = .c01
 developer = `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 scifio = no
 export = no
-weHave = a few Cellomics .c01 datasets
-weWant = a Cellomics .c01 specification document \n
-more Cellomics .c01 datasets
+weHave = * a few Cellomics .c01 datasets
+weWant = * a Cellomics .c01 specification document \n
+* more Cellomics .c01 datasets
 pixelsRating = Very good
 metadataRating = Poor
 opennessRating = Fair
@@ -413,8 +415,8 @@ extensions = .vsi
 developer = `Olympus <http://www.olympus.com/>`_
 scifio = no
 export = no
-weHave = a few example datasets
-weWant = an official specification document
+weHave = * a few example datasets
+weWant = * an official specification document
 pixelsRating = Fair
 metadataRating = Good
 opennessRating = Fair
@@ -429,8 +431,8 @@ scifio = no
 export = no
 software = `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
 samples = `Applied Precision Datasets <http://www.api.com/downloads/software/softworxexplorer2.0/SampleImages.zip>`_
-weHave = a DV specification document (v2.10 or newer, in HTML) \n
-numerous DV datasets
+weHave = * a DV specification document (v2.10 or newer, in HTML) \n
+* numerous DV datasets
 pixelsRating = Outstanding
 metadataRating = Good
 opennessRating = Good
@@ -441,9 +443,9 @@ privateSpecification = true
 notes = - The Deltavision format is based on the Medical Research Council (MRC) file format. \n
 - Commercial applications that support DeltaVision include: \n
 \n
-  #. `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-  #. `SVI Huygens <http://svi.nl/>`_ \n
-  #. `Image-Pro Plus <http://www.mediacy.com/>`_ \n
+  * `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+  * `SVI Huygens <http://svi.nl/>`_ \n
+  * `Image-Pro Plus <http://www.mediacy.com/>`_ \n
 \n
 .. seealso:: \n
   `DeltaVision system description <http://api.com/deltavision.asp>`_
@@ -459,16 +461,16 @@ software = `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_ \n
 samples = `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ \n
 `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ \n
 `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
-weHave = `DICOM specification documents <http://medical.nema.org/dicom/2007/>`_ (PS 3 - 2007, from 2006 December 28, in DOC and PDF) \n
-numerous DICOM datasets
+weHave = * `DICOM specification documents <http://medical.nema.org/dicom/2007/>`_ (PS 3 - 2007, from 2006 December 28, in DOC and PDF) \n
+* numerous DICOM datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
 presenceRating = Good
 utilityRating = Fair
 reader = DicomReader.java
-notes = - DICOM stands for "Digital Imaging and Communication in Medicine". \n
-- Bio-Formats supports both compressed and uncompressed DICOM files. \n
+notes = * DICOM stands for "Digital Imaging and Communication in Medicine". \n
+* Bio-Formats supports both compressed and uncompressed DICOM files. \n
 \n
 .. seealso:: \n
   `DICOM homepage <http://medical.nema.org/>`_
@@ -478,9 +480,9 @@ extensions = .v
 developer = `Siemens <http://www.siemens.com>`_
 scifio = no
 export = no
-weHave = a few ECAT7 files
-weWant = an ECAT7 specification document \n
-more ECAT7 files
+weHave = * a few ECAT7 files
+weWant = * an ECAT7 specification document \n
+* more ECAT7 files
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Fair
@@ -495,8 +497,8 @@ developer = `Adobe <http://www.adobe.com/>`_
 scifio = yes
 export = yes
 software = `EPS Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_
-weHave = a few EPS datasets \n
-the ability to produce new datasets
+weHave = * a few EPS datasets \n
+* the ability to produce new datasets
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Good
@@ -504,23 +506,23 @@ presenceRating = Very good
 utilityRating = Poor
 reader = EPSReader.java
 writer = EPSWriter.java
-notes = - Bio-Formats can save individual planes as EPS. \n
-- Certain types of compressed EPS files are not supported.
+notes = * Bio-Formats can save individual planes as EPS. \n
+* Certain types of compressed EPS files are not supported.
 
 [Evotec/PerkinElmer Opera Flex]
 extensions = .flex, .mea, .res
 developer = `Evotec Technologies, now PerkinElmer <http://www.perkinelmer.com/>`_
 scifio = no
 export = no
-weHave = many Flex datasets
-weWant = a freely redistributable LuraWave LWF decoder
+weHave = * many Flex datasets
+weWant = * a freely redistributable LuraWave LWF decoder
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Poor
 presenceRating = Poor
 utilityRating = Poor
 reader = FlexReader.java
-notes = The LuraWave LWF decoder library (i.e. luwf\_jsdk2.6.jar) with \n
+notes = The LuraWave LWF decoder library (i.e. lwf\_jsdk2.6.jar) with \n
 license code is required to decode wavelet-compressed Flex files. \n
 \n
 .. seealso::\n
@@ -531,7 +533,7 @@ extensions = .tiff
 developer = `FEI <http://www.fei.com>`_
 scifio = no
 export = no
-weHave = a few FEI TIFF datasets
+weHave = * a few FEI TIFF datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Good
@@ -544,9 +546,9 @@ extensions = .img
 developer = `FEI <http://www.fei.com/>`_
 scifio = no
 export = no
-weHave = a few FEI files
-weWant = a specification document \n
-more FEI files
+weHave = * a few FEI files
+weWant = * a specification document \n
+* more FEI files
 pixelsRating = Fair
 metadataRating = Poor
 opennessRating = Poor
@@ -560,15 +562,15 @@ extensions = .fits
 developer = `National Radio Astronomy Observatory <http://www.nrao.edu/>`_
 scifio = yes
 export = no
-weHave = a `FITS specification document <http://archive.stsci.edu/fits/fits_standard/>`_ (NOST 100-2.0, from 1999 March 29, in HTML) \n
-several FITS datasets
+weHave = * a `FITS specification document <http://archive.stsci.edu/fits/fits_standard/>`_ (NOST 100-2.0, from 1999 March 29, in HTML) \n
+* several FITS datasets
 pixelsRating = Very good
 metadataRating = Fair
 opennessRating = Very good
 presenceRating = Good
 utilityRating = Fair
 reader = FitsReader.java
-notes = ..seealso:: \n
+notes = .. seealso:: \n
   `MAST:FITS homepage <http://archive.stsci.edu/fits/>`_ \n
   `FITS Support Office <http://fits.gsfc.nasa.gov/>`_
 
@@ -578,10 +580,10 @@ developer = `Gatan <http://www.gatan.com>`_
 scifio = no
 export = no
 versions = 2
-weHave = Pascal code that can read DM2 files (from ImageSXM) \n
-a few DM2 files
-weWant = an official DM2 specification document \n
-more DM2 files
+weHave = * Pascal code that can read DM2 files (from ImageSXM) \n
+* a few DM2 files
+weWant = * an official DM2 specification document \n
+* more DM2 files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -597,10 +599,9 @@ export = no
 versions = 3
 software = `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_ \n
 `EMAN <http://blake.bcm.edu/EMAN/>`_
-weHave = Gatan's ImageReader2003 code (from 2003, in C++) \n
-numerous DM3 datasets \n
-some :source:`Bio-Formats developer notes <components/bio-formats/doc/gatan.html>` for DM3
-weWant = a DM3 specification document
+weHave = * Gatan's ImageReader2003 code (from 2003, in C++) \n
+* numerous DM3 datasets
+weWant = * a DM3 specification document
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Fair
@@ -618,9 +619,9 @@ scifio = yes
 export = no
 software = `Animated GIF Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/agr.html>`_ \n
 `GIF Stack Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/gif-stack-writer.html>`_
-weHave = a `GIF specification document <http://tronche.com/computer-graphics/gif/>`_ (Version 89a, from 1990, in HTML) \n
-numerous GIF datasets \n
-the ability to produce new datasets
+weHave = * a `GIF specification document <http://tronche.com/computer-graphics/gif/>`_ (Version 89a, from 1990, in HTML) \n
+* numerous GIF datasets \n
+* the ability to produce new datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Fair
@@ -633,9 +634,9 @@ extensions = .naf
 developer = `Hamamatsu <http://www.hamamatsu.com/>`_
 scifio = no
 export = no
-weHave = a few NAF files
-weWant = a specification document \n
-more NAF files
+weHave = * a few NAF files
+weWant = * a specification document \n
+* more NAF files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Poor
@@ -648,10 +649,10 @@ extensions = .his
 owner = `Hamamatsu <http://www.hamamatsu.com>`_
 scifio = no
 export = no
-weHave = Pascal code that can read HIS files (from ImageSXM) \n
-several HIS files
-weWant = an HIS specification \n
-more HIS files
+weHave = * Pascal code that can read HIS files (from ImageSXM) \n
+* several HIS files
+weWant = * an HIS specification \n
+* more HIS files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -666,8 +667,8 @@ scifio = no
 export = no
 software = `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
 samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu/>`_
-weHave = many example datasets
-weWant = an official specification document
+weHave = * many example datasets
+weWant = * an official specification document
 pixelsRating = Fair
 metadataRating = Good
 opennessRating = Good
@@ -681,10 +682,10 @@ developer = `Hamamatsu <http://www.hamamatsu.com>`_
 scifio = no
 export = no
 samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
-weHave = a few example datasets \n
-`developer documentation from the OpenSlide project <http://openslide.org/Hamamatsu%20format/>`_
-weWant = an official specification document \n
-more example datasets
+weHave = * a few example datasets \n
+* `developer documentation from the OpenSlide project <http://openslide.org/Hamamatsu%20format/>`_
+weWant = * an official specification document \n
+* more example datasets
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Fair
@@ -697,7 +698,7 @@ extensions = .txt, .tif, .bmp, .jpg
 developer = `Hitachi <http://www.hitachi-hta.com/sites/default/files/technotes/Hitachi_4800_STEM.pdf>`_
 scifio = no
 export = no
-weHave = several Hitachi S-4800 datasets
+weHave = * several Hitachi S-4800 datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
@@ -715,7 +716,7 @@ versions = 1.0, 2.0
 software = `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ \n
 `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ \n
 `IrfanView <http://www.irfanview.com/>`_
-weHave = numerous ICS datasets
+weHave = * numerous ICS datasets
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Outstanding
@@ -723,24 +724,24 @@ presenceRating = Very good
 utilityRating = Very good
 reader = ICSReader.java
 writer = ICSWriter.java
-notes = - ICS version 1.0 datasets have two files - an .ics file that contains \n
+notes = * ICS version 1.0 datasets have two files - an .ics file that contains \n
   all of the metadata in plain-text format, and an .ids file that \n
   contains all of the pixel data. \n
-- ICS version 2.0 datasets are a single .ics file that contains both \n
+* ICS version 2.0 datasets are a single .ics file that contains both \n
   pixels and metadata. \n
 \n
 Commercial applications that can support ICS include: \n
 \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-- `SVI Huygens <http://svi.nl/>`_
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `SVI Huygens <http://svi.nl/>`_
 
 [Imacon]
 extensions = .fff
 owner = `Hasselblad <http://www.hasselbladusa.com/>`_
 scifio = no
 export = no
-weHave = one Imacon file
-weWant = more Imacon files
+weHave = * one Imacon file
+weWant = * more Imacon files
 pixelsRating = Poor
 metadataRating = Good
 opennessRating = Fair
@@ -753,11 +754,10 @@ extensions = .seq
 owner = `Media Cybernetics <http://www.mediacy.com/>`_
 scifio = no
 export = no
-weHave = the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software \n
-a few SEQ datasets \n
-the ability to produce more datasets \n
-some :source:`Bio-Formats developer notes <components/bio-formats/doc/seq.html>` for SEQ
-weWant = an official SEQ specification document
+weHave = * the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software \n
+* a few SEQ datasets \n
+* the ability to produce more datasets
+weWant = * an official SEQ specification document
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Fair
@@ -770,14 +770,14 @@ extensions = .ipw
 owner = `Media Cybernetics <http://www.mediacy.com/>`_
 scifio = no
 export = no
-weHave = the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software \n
-a few IPW datasets \n
-the ability to produce more datasets \n
-some :source:`Bio-Formats developer notes <components/bio-formats/doc/ipw.html>` for IPW
-weWant = an official IPW specification document \n
-more IPW datasets: \n
-  #. multiple datasets in one file \n
-  #. 2+ GB files
+weHave = * the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software \n
+* a few IPW datasets \n
+* the ability to produce more datasets
+weWant = * an official IPW specification document \n
+* more IPW datasets: \n
+\n
+  * multiple datasets in one file \n
+  * 2+ GB files
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Poor
@@ -793,9 +793,9 @@ developer = `Image Science <http://www.imagescience.de>`_
 scifio = no
 export = no
 software = `em2em <http://www.imagescience.de/em2em.html>`_
-weHave = one example dataset \n
-official file format documentation
-weWant = more example datasets
+weHave = * one example dataset \n
+* official file format documentation
+weWant = * more example datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
@@ -812,8 +812,8 @@ developer = `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <
 scifio = no
 export = no
 software = `IMOD <http://bio3d.colorado.edu/imod/>`_
-weHave = a few sample datasets \n
-`official documentation <http://bio3d.colorado.edu/imod/doc/binspec.html>`_
+weHave = * a few sample datasets \n
+* `official documentation <http://bio3d.colorado.edu/imod/doc/binspec.html>`_
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Outstanding
@@ -828,10 +828,10 @@ developer = `Improvision <http://www.improvision.com/>`_
 scifio = no
 export = no
 versions = 2.0, 5.0
-weHave = an Openlab specification document (from 2000 February 8, in DOC) \n
-Improvision's XLIFFFileImporter code for reading Openlab LIFF v5 files (from 2006, in C++) \n
-several Openlab datasets
-weWant = more Openlab datasets (preferably with 32-bit integer data)
+weHave = * an Openlab specification document (from 2000 February 8, in DOC) \n
+* Improvision's XLIFFFileImporter code for reading Openlab LIFF v5 files (from 2006, in C++) \n
+* several Openlab datasets
+weWant = * more Openlab datasets (preferably with 32-bit integer data)
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Very good
@@ -848,8 +848,8 @@ owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 developer = `Improvision <http://www.improvision.com/>`_
 scifio = no
 export = no
-weHave = an `Openlab Raw specification document <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) \n
-a few Openlab Raw datasets
+weHave = * an `Openlab Raw specification document <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) \n
+* a few Openlab Raw datasets
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Very good
@@ -865,8 +865,8 @@ owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 developer = `Improvision <http://www.improvision.com/>`_
 scifio = no
 export = no
-weHave = an Improvision TIFF specification document \n
-a few Improvision TIFF datasets
+weHave = * an Improvision TIFF specification document \n
+* a few Improvision TIFF datasets
 pixelsRating = Very good
 metadataRating = Outstanding
 opennessRating = Very good
@@ -882,9 +882,9 @@ extensions = .xdce, .tif
 developer = `GE <http://gelifesciences.com/>`_
 scifio = no
 export = no
-weHave = a few InCell 1000 datasets
-weWant = an InCell 1000 specification document \n
-more InCell 1000 datasets
+weHave = * a few InCell 1000 datasets
+weWant = * an InCell 1000 specification document \n
+* more InCell 1000 datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Good
@@ -898,8 +898,8 @@ developer = `GE <http://gelifesciences.com/>`_
 scifio = no
 export = no
 samples = `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
-weHave = a few example datasets
-weWant = an official specification document
+weHave = * a few example datasets
+weWant = * an official specification document
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -911,7 +911,7 @@ reader = InCell3000Reader.java
 extensions = .inr
 scifio = no
 export = no
-weHave = several sample .inr datasets
+weHave = * several sample .inr datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Fair
@@ -936,9 +936,9 @@ extensions = .ipm
 owner = `BioVision Technologies <http://biovis.com/>`_
 scifio = no
 export = no
-weHave = a few IPLab-Mac datasets \n
-a specification document
-weWant = more IPLab-Mac datasets
+weHave = * a few IPLab-Mac datasets \n
+* a specification document
+weWant = * more IPLab-Mac datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Very good
@@ -954,9 +954,9 @@ developer = Scanalytics
 scifio = no
 export = no
 software = `IPLab Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/iplab-reader.html>`_
-weHave = an IPLab specification document (v3.6.5, from 2004 December 1, in PDF) \n
-several IPLab datasets
-weWant = more IPLab datasets (preferably with 32-bit integer or floating point data)
+weHave = * an IPLab specification document (v3.6.5, from 2004 December 1, in PDF) \n
+* several IPLab datasets
+weWant = * more IPLab datasets (preferably with 32-bit integer or floating point data)
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Very good
@@ -966,8 +966,8 @@ privateSpecification = true
 reader = IPLabReader.java
 notes = Commercial applications that support IPLab include: \n
 \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-- `SVI Huygens <http://svi.nl/>`_ \n
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `SVI Huygens <http://svi.nl/>`_ \n
 \n
 .. seealso:: \n
   `IPLab software review <http://www.biovis.com/iplab.htm>`_
@@ -977,10 +977,10 @@ extensions = .dat, .img, .par
 owner = `JEOL <http://www.jeol.com>`_
 scifio = no
 export = no
-weHave = Pascal code that reads JEOL files (from ImageSXM) \n
-a few JEOL files
-weWant = an official specification document \n
-more JEOL files
+weHave = * Pascal code that reads JEOL files (from ImageSXM) \n
+* a few JEOL files
+weWant = * an official specification document \n
+* more JEOL files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -994,8 +994,8 @@ developer = `Independent JPEG Group <http://www.ijg.org/>`_
 scifio = yes
 export = yes
 software = `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
-weHave = a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) \n
-a few .jp2 files
+weHave = * a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) \n
+* a few .jp2 files
 pixelsRating = Very good
 metadataRating = Poor
 opennessRating = Outstanding
@@ -1011,9 +1011,9 @@ extensions = .jpg
 developer = `Independent JPEG Group <http://www.ijg.org/>`_
 scifio = yes
 export = yes
-weHave = a `JPEG specification document <http://www.w3.org/Graphics/JPEG/jfif3.pdf>`_ (v1.04, from 1992 September 1, in PDF) \n
-numerous JPEG datasets \n
-the ability to produce more datasets
+weHave = * a `JPEG specification document <http://www.w3.org/Graphics/JPEG/jfif3.pdf>`_ (v1.04, from 1992 September 1, in PDF) \n
+* numerous JPEG datasets \n
+* the ability to produce more datasets
 pixelsRating = Very good
 metadataRating = Fair
 opennessRating = Outstanding
@@ -1033,10 +1033,10 @@ extensions = .jpk
 developer = `JPK Instruments <http://www.jpk.com>`_
 scifio = no
 export = no
-weHave = Pascal code that can read JPK files (from ImageSXM) \n
-a few JPK files
-weWant = an official specification document \n
-more JPK files
+weHave = * Pascal code that can read JPK files (from ImageSXM) \n
+* a few JPK files
+weWant = * an official specification document \n
+* more JPK files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -1049,7 +1049,7 @@ extensions = .jpx
 developer = `JPEG Committee <http://www.jpeg.org/jpeg2000/>`_
 scifio = no
 export = no
-weHave = a few .jpx files
+weHave = * a few .jpx files
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Outstanding
@@ -1065,7 +1065,7 @@ developer = `Khoral <http://www.khoral.com/company/>`_
 scifio = no
 export = no
 samples = `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
-weHave = several VIFF datasets
+weHave = * several VIFF datasets
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Poor
@@ -1080,8 +1080,8 @@ extensions = .bip
 developer = `Kodak/Carestream <http://carestream.com>`_
 scifio = no
 export = no
-weHave = a few .bip datasets
-weWant = an official specification document
+weHave = * a few .bip datasets
+weWant = * an official specification document
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Fair
@@ -1096,8 +1096,8 @@ extensions = .fli
 developer = `Lambert Instruments <http://www.lambert-instruments.com>`_
 scifio = no
 export = no
-weHave = an LI-FLIM specification document \n
-several example LI-FLIM datasets
+weHave = * an LI-FLIM specification document \n
+* several example LI-FLIM datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
@@ -1115,9 +1115,9 @@ scifio = no
 export = no
 versions = 1.0, 2.0
 software = `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-imaging-software/life-sciences/las-af-advanced-fluorescence/>`_ (links at bottom of page)
-weHave = a LIF specification document (version 2, from no later than 2007 July 26, in PDF) \n
-a LIF specification document (version 1, from no later than 206 April 3, in PDF) \n
-numerous LIF datasets
+weHave = * a LIF specification document (version 2, from no later than 2007 July 26, in PDF) \n
+* a LIF specification document (version 1, from no later than 206 April 3, in PDF) \n
+* numerous LIF datasets
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Very good
@@ -1130,9 +1130,9 @@ AF stands for "Advanced Fluorescence". \n
 \n
 Commercial applications that support LIF include: \n
 \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-- `SVI Huygens <http://svi.nl/>`_ \n
-- `Amira <http://www.amira.com/>`_
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `SVI Huygens <http://svi.nl/>`_ \n
+* `Amira <http://www.amira.com/>`_
 
 [Leica LCS LEI]
 extensions = .lei, .tif
@@ -1141,8 +1141,8 @@ developer = `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
 scifio = no
 export = no
 software = `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
-weHave = an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF) \n
-many LEI datasets
+weHave = * an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF) \n
+* many LEI datasets
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Very good
@@ -1155,9 +1155,9 @@ LEI presumably stands for "Leica Experimental Information". \n
 \n
 Commercial applications that support LEI include: \n
 \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-- `SVI Huygens <http://svi.nl/>`_ \n
-- `Image-Pro Plus <http://www.mediacy.com/>`_
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `SVI Huygens <http://svi.nl/>`_ \n
+* `Image-Pro Plus <http://www.mediacy.com/>`_
 
 [Leica SCN]
 extensions = .scn
@@ -1165,9 +1165,9 @@ developer = `Leica Microsystems <http://www.leica-microsystems.com/>`_
 scifio = no
 export = no
 versions = 2012-03-10
-weHave = a few sample datasets
-weWant = an official specification document \n
-sample datasets that cannot be opened
+weHave = * a few sample datasets
+weWant = * an official specification document \n
+* sample datasets that cannot be opened
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Good
@@ -1180,10 +1180,10 @@ extensions = .sxm
 owner = `Zeiss <http://www.zeiss.de>`_
 scifio = no
 export = no
-weHave = Pascal code that can read LEO files (from ImageSXM) \n
-a few LEO files
-weWant = an official specification document \n
-more LEO files
+weHave = * Pascal code that can read LEO files (from ImageSXM) \n
+* a few LEO files
+weWant = * an official specification document \n
+* more LEO files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Good
@@ -1196,9 +1196,9 @@ extensions = .l2d, .tif, .scn
 owner = `LiCor Biosciences <http://www.licor.com/>`_
 scifio = no
 export = no
-weHave = a few L2D datasets
-weWant = an official specification document \n
-more L2D datasets
+weHave = * a few L2D datasets
+weWant = * an official specification document \n
+* more L2D datasets
 pixelsRating = Very good
 metadataRating = Fair
 opennessRating = Good
@@ -1214,9 +1214,9 @@ extensions = .lim
 owner = `Laboratory Imaging <http://www.lim.cz/>`_
 scifio = no
 export = no
-weHave = several LIM files \n
-the ability to produce more LIM files
-weWant = an official specification document
+weHave = * several LIM files \n
+* the ability to produce more LIM files
+weWant = * an official specification document
 pixelsRating = Good
 metadataRating = Poor
 opennessRating = Poor
@@ -1227,14 +1227,14 @@ notes = Bio-Formats only supports uncompressed LIM files. \n
 \n
 Commercial applications that support LIM include: \n
 \n
-- `NIS Elements <http://www.nis-elements.com/>`_
+* `NIS Elements <http://www.nis-elements.com/>`_
 
 [MetaMorph 7.5 TIFF]
 extensions = .tiff
 owner = `Molecular Devices <http://www.moleculardevices.com/>`_
 scifio = no
 export = no
-weHave = a few Metamorph 7.5 TIFF datasets
+weHave = * a few Metamorph 7.5 TIFF datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
@@ -1247,10 +1247,10 @@ extensions = .stk, .nd
 owner = `Molecular Devices <http://www.moleculardevices.com/>`_
 scifio = no
 export = no
-weHave = an STK specification document (from 2006 November 21, in DOC) \n
-an older STK specification document (from 2005 March 25, in DOC) \n
-an ND specification document (from 2002 January 24, in PDF) \n
-a large number of datasets
+weHave = * an STK specification document (from 2006 November 21, in DOC) \n
+* an older STK specification document (from 2005 March 25, in DOC) \n
+* an ND specification document (from 2002 January 24, in PDF) \n
+* a large number of datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
@@ -1260,9 +1260,9 @@ privateSpecification = true
 reader = MetamorphReader.java
 notes = Commercial applications that support STK include: \n
 \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-- `SVI Huygens <http://svi.nl/>`_ \n
-- `DIMIN <http://dimin.net/>`_ \n
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `SVI Huygens <http://svi.nl/>`_ \n
+* `DIMIN <http://dimin.net/>`_ \n
 \n
 .. seealso:: \n
   `Metamorph imaging system overview <http://www.metamorph.com/>`_
@@ -1272,7 +1272,7 @@ extensions = .tif
 developer = `Maia Scientific <http://www.maia-scientific.com/>`_
 scifio = no
 export = no
-weHave = several MIAS datasets
+weHave = * several MIAS datasets
 pixelsRating = Very good
 metadataRating = Poor
 opennessRating = Fair
@@ -1286,7 +1286,7 @@ developer = `McGill University <http://www.bic.mni.mcgill.ca/ServicesSoftware/MI
 scifio = no
 export = no
 software = `MINC <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
-weHave = a few MINC files
+weHave = * a few MINC files
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Good
@@ -1300,7 +1300,7 @@ developer = `Minolta <http://www.konicaminolta.com/>`_
 scifio = no
 export = no
 software = `dcraw <http://www.cybercom.net/%7Edcoffin/dcraw/>`_
-weHave = several .mrw files
+weHave = * several .mrw files
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Fair
@@ -1318,8 +1318,8 @@ scifio = yes
 export = no
 software = `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
 samples = `MNG sample files <http://sourceforge.net/projects/libmng/files/libmng-testsuites/MNGsuite-1.0/MNGsuite.zip/download>`_
-weHave = the `libmng-testsuites <http://downloads.sourceforge.net/libmng/MNGsuite-20030305.zip>`_ package (from 2003 March 05, in C) \n
-a large number of MNG datasets
+weHave = * the `libmng-testsuites <http://downloads.sourceforge.net/libmng/MNGsuite-20030305.zip>`_ package (from 2003 March 05, in C) \n
+* a large number of MNG datasets
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Outstanding
@@ -1335,10 +1335,10 @@ extensions = .stp
 owner = `Molecular Imaging <http://www.molecularimagingcorp.com>`_
 scifio = no
 export = no
-weHave = Pascal code that reads Molecular Imaging files (from ImageSXM) \n
-a few Molecular Imaging files
-weWant = an official specification document \n
-more Molecular Imaging files
+weHave = * Pascal code that reads Molecular Imaging files (from ImageSXM) \n
+* a few Molecular Imaging files
+weWant = * an official specification document \n
+* more Molecular Imaging files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -1353,9 +1353,9 @@ developer = `MRC Laboratory of Molecular Biology <http://www2.mrc-lmb.cam.ac.uk/
 scifio = no
 export = no
 samples = `golgi.mrc <http://bio3d.colorado.edu/imod/files/imod_data.tar.gz>`_
-weHave = an `MRC specification document <http://ami.scripps.edu/software/mrctools/mrc_specification.php>`_ (in HTML) \n
-`another MRC specification document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in TXT) \n
-a few MRC datasets
+weHave = * an `MRC specification document <http://ami.scripps.edu/software/mrctools/mrc_specification.php>`_ (in HTML) \n
+* `another MRC specification document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in TXT) \n
+* a few MRC datasets
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Very good
@@ -1364,7 +1364,7 @@ utilityRating = Good
 reader = MRCReader.java
 notes = Commercial applications that support MRC include: \n
 \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
 \n
 .. seealso:: \n
   `MRC on Wikipedia <http://en.wikipedia.org/wiki/MRC_%28file_format%29>`_
@@ -1377,8 +1377,8 @@ scifio = no
 export = no
 samples = `neffile1.zip <http://www.outbackphoto.com/workshop/NEF_conversion/neffile1.zip>`_ \n
 `Sample NEF images <http://www.nikondigital.org/articles/library/nikon_d2x_first_impressions.htm>`_
-weHave = a NEF specification document (v0.1, from 2003, in PDF) \n
-several NEF datasets
+weHave = * a NEF specification document (v0.1, from 2003, in PDF) \n
+* several NEF datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Poor
@@ -1395,8 +1395,8 @@ developer = `National Institutes of Health <http://www.nih.gov/>`_
 scifio = no
 export = no
 samples = `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
-weHave = `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_ \n
-several NIfTI datasets
+weHave = * `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_ \n
+* several NIfTI datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Very good
@@ -1409,8 +1409,8 @@ extensions = .tiff
 developer = `Nikon <http://www.nikon.com>`_
 scifio = no
 export = no
-weHave = a few Nikon Elements TIFF files
-weWant = more Nikon Elements TIFF files
+weHave = * a few Nikon Elements TIFF files
+weWant = * more Nikon Elements TIFF files
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Fair
@@ -1423,7 +1423,7 @@ extensions = .tiff
 developer = `Nikon <http://www.nikon.com/>`_
 scifio = no
 export = no
-weHave = a few Nikon EZ-C1 TIFF files
+weHave = * a few Nikon EZ-C1 TIFF files
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Good
@@ -1437,9 +1437,8 @@ developer = `Nikon USA <http://www.nikonusa.com/>`_
 scifio = no
 export = no
 software = `NIS-Elements Viewer from Nikon <http://www.nis-elements.com/resources-downloads.html>`_
-weHave = many ND2 datasets \n
-some :source:`Bio-Formats developer notes <components/bio-formats/doc/nd2.html>` for ND2
-weWant = an official specification document
+weHave = * many ND2 datasets
+weWant = * an official specification document
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Fair
@@ -1469,8 +1468,8 @@ scifio = yes
 export = no
 software = `nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
 samples = `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
-weHave = an `nrrd specification document <http://teem.sourceforge.net/nrrd/format.html>`_ (v1.9, from 2005 December 24, in HTML) \n
-a few nrrd datasets
+weHave = * an `nrrd specification document <http://teem.sourceforge.net/nrrd/format.html>`_ (v1.9, from 2005 December 24, in HTML) \n
+* a few nrrd datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Outstanding
@@ -1483,9 +1482,9 @@ extensions = .apl, .mtb, .tnb, .tif, .obsep
 owner = `Olympus <http://www.olympus.com/>`_
 scifio = no
 export = no
-weHave = a few CellR datasets
-weWant = more Cellr datasets \n
-an official specification document
+weHave = * a few CellR datasets
+weWant = * more Cellr datasets \n
+* an official specification document
 pixelsRating = Very good
 metadataRating = Fair
 opennessRating = Fair
@@ -1500,12 +1499,12 @@ scifio = no
 export = no
 versions = 1.0, 2.0
 software = `FV-Viewer from Olympus <http://www.olympus.co.uk/microscopy/22_FluoView_FV1000__Confocal_Microscope.htm>`_
-weHave = an OIF specification document (v2.0.0.0, from 2008, in PDF) \n
-an FV1000 specification document (v1.0.0.0, from 2004 June 22, in PDF) \n
-older FV1000 specification documents (draft, in DOC and XLS) \n
-many FV1000 datasets
-weWant = more OIB datasets (especially 2+ GB files) \n
-more FV1000 version 2 datasets
+weHave = * an OIF specification document (v2.0.0.0, from 2008, in PDF) \n
+* an FV1000 specification document (v1.0.0.0, from 2004 June 22, in PDF) \n
+* older FV1000 specification documents (draft, in DOC and XLS) \n
+* many FV1000 datasets
+weWant = * more OIB datasets (especially 2+ GB files) \n
+* more FV1000 version 2 datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Good
@@ -1523,8 +1522,8 @@ OIB is a single file format. \n
 \n
 Commercial applications that support this format include: \n
 \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-- `SVI Huygens <http://svi.nl/>`_ \n
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `SVI Huygens <http://svi.nl/>`_ \n
 \n
 .. seealso:: \n
   `Olympus FluoView Resource Center <http://www.olympusfluoview.com>`_
@@ -1535,9 +1534,9 @@ owner = `Olympus <http://www.olympus.com/>`_
 scifio = no
 export = no
 software = `DIMIN <http://www.dimin.net/>`_
-weHave = a FluoView specification document (from 2002 November 14, in DOC) \n
-Olympus' FluoView Image File Reference Suite (from 2002 March 1, in DOC) \n
-several FluoView datasets
+weHave = * a FluoView specification document (from 2002 November 14, in DOC) \n
+* Olympus' FluoView Image File Reference Suite (from 2002 March 1, in DOC) \n
+* several FluoView datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
@@ -1547,8 +1546,8 @@ privateSpecification = true
 reader = FluoviewReader.java
 notes = Commercial applications that support this format include: \n
 \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-- `SVI Huygens <http://svi.nl/>`_
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `SVI Huygens <http://svi.nl/>`_
 
 [Olympus ScanR]
 extensions = .xml, .dat, .tif
@@ -1556,7 +1555,7 @@ owner = `Olympus <http://www.olympus.com/>`_
 developer = `Olympus <http://www.olympus.com/>`_
 scifio = no
 export = no
-weHave = several ScanR datasets
+weHave = * several ScanR datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Good
@@ -1569,7 +1568,7 @@ extensions = .tiff
 developer = `Olympus <http://www.olympus-sis.com/>`_
 scifio = no
 export = no
-weHave = a few example SIS TIFF files
+weHave = * a few example SIS TIFF files
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Good
@@ -1583,9 +1582,9 @@ developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 scifio = yes
 export = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06
-weHave = an `OME-TIFF specification document <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff/ome-tiff-specification>`_ (from 2006 October 19, in HTML) \n
-many OME-TIFF datasets \n
-the ability to produce additional datasets
+weHave = * an `OME-TIFF specification document <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff/ome-tiff-specification>`_ (from 2006 October 19, in HTML) \n
+* many OME-TIFF datasets \n
+* the ability to produce additional datasets
 pixelsRating = Outstanding
 metadataRating = Outstanding
 opennessRating = Outstanding
@@ -1597,8 +1596,8 @@ notes = Bio-Formats can save image stacks as OME-TIFF. \n
 \n
 Commercial applications that support OME-TIFF include: \n
 \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-- `SVI Huygens <http://svi.nl/>`_ \n
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `SVI Huygens <http://svi.nl/>`_ \n
 \n
 .. seealso:: \n
   `OME-TIFF technical overview <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff>`_
@@ -1609,9 +1608,9 @@ developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 scifio = yes
 export = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06
-weHave = `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ \n
-many OME-XML datasets \n
-the ability to produce more datasets
+weHave = * `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ \n
+* many OME-XML datasets \n
+* the ability to produce more datasets
 pixelsRating = Outstanding
 metadataRating = Outstanding
 opennessRating = Outstanding
@@ -1624,18 +1623,18 @@ to read OME-XML files. \n
 \n
 Commercial applications that support OME-XML include: \n
 \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-- `SVI Huygens <http://svi.nl/>`_
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `SVI Huygens <http://svi.nl/>`_
 
 [Oxford Instruments]
 extensions = .top
 owner = `Oxford Instruments <http://www.oxinst.com>`_
 scifio = no
 export = no
-weHave = Pascal code that can read Oxford Instruments files (from ImageSXM) \n
-a few Oxford Instruments files
-weWant = an official specification document \n
-more Oxford Instruments files
+weHave = * Pascal code that can read Oxford Instruments files (from ImageSXM) \n
+* a few Oxford Instruments files
+weWant = * an official specification document \n
+* more Oxford Instruments files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -1648,8 +1647,8 @@ extensions = .pcx
 developer = ZSoft Corporation
 scifio = yes
 export = no
-weHave = several .pcx files \n
-the ability to generate additional .pcx filse
+weHave = * several .pcx files \n
+* the ability to generate additional .pcx filse
 pixelsRating = Very good
 metadataRating = Poor
 opennessRating = Fair
@@ -1663,9 +1662,9 @@ extensions = .pds
 developer = `Perkin Elmer <http://www.perkinelmer.com>`_
 scifio = no
 export = no
-weHave = a few PDS datasets
-weWant = an official specification document \n
-more PDS datasets
+weHave = * a few PDS datasets
+weWant = * an official specification document \n
+* more PDS datasets
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Good
@@ -1678,9 +1677,9 @@ extensions = .tiff, .xml
 developer = `PerkinElmer <http://www.perkinelmer.com/>`_
 scifio = no
 export = no
-weHave = a few sample datasets
-weWant = an official specification document \n
-more sample datasets
+weHave = * a few sample datasets
+weWant = * an official specification document \n
+* more sample datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Good
@@ -1694,8 +1693,7 @@ unindexedExtensions = etc.
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 scifio = no
 export = no
-weHave = several UltraView datasets \n
-some :source:`Bio-Formats developer notes <components/bio-formats/doc/perkin-elmer.html>` for UltraView
+weHave = * several UltraView datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Fair
@@ -1707,8 +1705,8 @@ notes = Other associated extensions include: .tim, .zpo, .csv, .htm, \n
 \n
 Commercial applications that support this format include: \n
 \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-- `Image-Pro Plus <http://www.mediacy.com/>`_ \n
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `Image-Pro Plus <http://www.mediacy.com/>`_ \n
 \n
 .. seealso:: \n
   `PerkinElmer UltraView system overview <http://www.perkinelmer.com/pages/020/cellularimaging/products/ultraviewvoxsystemsoverview.xhtml>`_
@@ -1720,8 +1718,8 @@ developer = Netpbm developers
 scifio = yes
 export = no
 software = `Netpbm graphics filter <http://netpbm.sourceforge.net/>`_
-weHave = a `PGM specification document <http://netpbm.sourceforge.net/doc/pgm.html>`_ (from 2003 October 3, in HTML) \n
-a few PGM files
+weHave = * a `PGM specification document <http://netpbm.sourceforge.net/doc/pgm.html>`_ (from 2003 October 3, in HTML) \n
+* a few PGM files
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Outstanding
@@ -1734,8 +1732,8 @@ extensions = .tif, .tiff
 developer = `Adobe <http://www.adobe.com>`_
 scifio = no
 export = no
-weHave = a Photoshop TIFF specification document \n
-a few Photoshop TIFF files
+weHave = * a Photoshop TIFF specification document \n
+* a few Photoshop TIFF files
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Good
@@ -1748,7 +1746,7 @@ extensions = .pict
 developer = `Apple Computer <http://www.apple.com>`_
 scifio = yes
 export = no
-weHave = many PICT datasets
+weHave = * many PICT datasets
 pixelsRating = Very good
 metadataRating = Fair
 opennessRating = Fair
@@ -1770,8 +1768,8 @@ developer = `PNG Development Group <http://www.libpng.org/pub/png/pngnews.html>`
 scifio = yes
 export = yes
 software = `PNG Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/png-writer.html>`_
-weHave = a `PNG specification document <http://www.libpng.org/pub/png/spec/iso/>`_ (W3C/ISO/IEC version, from 2003 November 10, in HTML) \n
-several PNG datasets
+weHave = * a `PNG specification document <http://www.libpng.org/pub/png/spec/iso/>`_ (W3C/ISO/IEC version, from 2003 November 10, in HTML) \n
+* several PNG datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Outstanding
@@ -1790,7 +1788,7 @@ extensions = .tif, .xml, .cfg
 developer = `Prairie Technologies <http://www.prairie-technologies.com/>`_
 scifio = no
 export = no
-weHave = many Prairie datasets
+weHave = * many Prairie datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Good
@@ -1804,10 +1802,10 @@ owner = `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-
 developer = Quesant Instrument Corporation
 scifio = no
 export = no
-weHave = Pascal code that can read Quesant files (from ImageSXM) \n
-several Quesant files
-weWant = an official specification document \n
-more Quesant files
+weHave = * Pascal code that can read Quesant files (from ImageSXM) \n
+* several Quesant files
+weWant = * an official specification document \n
+* more Quesant files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -1821,12 +1819,13 @@ owner = `Apple Computer <http://www.apple.com/>`_
 scifio = yes
 export = yes
 software = `QuickTime Player <http://www.apple.com/quicktime/download/>`_
-weHave = a `QuickTime specification document <http://developer.apple.com/documentation/Quicktime/QTFF/>`_ (from 2001 March 1, in HTML) \n
-several QuickTime datasets \n
-the ability to produce more datasets
-weWant = more QuickTime datasets, including: \n
-  #. files compressed with a common, unsupported codec \n
-  #. files with audio tracks and/or multiple video tracks
+weHave = * a `QuickTime specification document <http://developer.apple.com/documentation/Quicktime/QTFF/>`_ (from 2001 March 1, in HTML) \n
+* several QuickTime datasets \n
+* the ability to produce more datasets
+weWant = * more QuickTime datasets, including: \n
+\n
+  * files compressed with a common, unsupported codec \n
+  * files with audio tracks and/or multiple video tracks
 pixelsRating = Good
 metadataRating = Very good
 opennessRating = Fair
@@ -1836,9 +1835,9 @@ reader = NativeQTReader.java
 writer = QTWriter.java
 notes = Bio-Formats has two modes of operation for QuickTime: \n
 \n
-  #. QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
-  installed. \n
-  #. Native mode works on systems with no QuickTime (e.g. Linux). \n
+  * QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
+    installed. \n
+  * Native mode works on systems with no QuickTime (e.g. Linux). \n
 \n
 Bio-Formats can save image stacks as QuickTime movies. \n
 The following table shows supported codecs: \n
@@ -1867,10 +1866,10 @@ extensions = .sm2, .sm3
 owner = `RHK Technologies <http://www.rhk-tech.com>`_
 scifio = no
 export = no
-weHave = Pascal code that can read RHK files (from ImageSXM) \n
-a few RHK files
-weWant = an official specification document \n
-more RHK files
+weHave = * Pascal code that can read RHK files (from ImageSXM) \n
+* a few RHK files
+weWant = * an official specification document \n
+* more RHK files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -1882,9 +1881,9 @@ reader = RHKReader.java
 owner = `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
 scifio = no
 export = no
-weHave = an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_ \n
-a few SBIG files
-weWant = more SBIG files
+weHave = * an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_ \n
+* a few SBIG files
+weWant = * more SBIG files
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Very good
@@ -1897,10 +1896,10 @@ extensions = .xqd, .xqf
 owner = `Seiko <http://www.seiko.co.jp/en/index.php>`_
 scifio = no
 export = no
-weHave = Pascal code that can read Seiko files (from ImageSXM) \n
-a few Seiko files
-weWant = an official specification document \n
-more Seiko files
+weHave = * Pascal code that can read Seiko files (from ImageSXM) \n
+* a few Seiko files
+weWant = * an official specification document \n
+* more Seiko files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -1913,8 +1912,8 @@ extensions = .tiff
 developer = `Hamamatsu <http://www.cimaging.net/simplepci.htm>`_
 scifio = no
 export = no
-weHave = a few SimplePCI TIFF datasets
-weWant = more SimplePCI TIFF datasets
+weHave = * a few SimplePCI TIFF datasets
+weWant = * more SimplePCI TIFF datasets
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Very good
@@ -1927,7 +1926,7 @@ extensions = .cxd
 developer = `Compix <http://www.cimaging.net/>`_
 scifio = no
 export = no
-weHave = several SimplePCI files
+weHave = * several SimplePCI files
 pixelsRating = Outstanding
 metadataRating = Good
 opennessRating = Very good
@@ -1943,10 +1942,10 @@ POI library <http://jakarta.apache.org/poi/>`_ to read CXD files. \n
 [SM Camera]
 scifio = no
 export = no
-weHave = Pascal code that can read SM-Camera files (from ImageSXM) \n
-a few SM-Camera files
-weWant = an official specification document \n
-more SM-Camera files
+weHave = * Pascal code that can read SM-Camera files (from ImageSXM) \n
+* a few SM-Camera files
+weWant = * an official specification document \n
+* more SM-Camera files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -1960,8 +1959,8 @@ developer = `Wadsworth Center <http://www.wadsworth.org/spider_doc/spider/docs/s
 scifio = no
 export = no
 software = `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
-weHave = a few example datasets \n
-`official file format documentation <http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
+weHave = * a few example datasets \n
+* `official file format documentation <http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Outstanding
@@ -1974,8 +1973,8 @@ extensions = .tga
 developer = `Truevision <http://www.truevision.com>`_
 scifio = no
 export = no
-weHave = a Targa specification document \n
-a few Targa files
+weHave = * a Targa specification document \n
+* a few Targa files
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Very good
@@ -2004,9 +2003,9 @@ scifio = yes
 export = yes
 samples = `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ \n
 `Big TIFF <http://tiffcentral.com/>`_
-weHave = a `TIFF specification document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_ (v6.0, from 1992 June 3, in PDF) \n
-many TIFF datasets \n
-a few BigTIFF datasets
+weHave = * a `TIFF specification document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_ (v6.0, from 1992 June 3, in PDF) \n
+* many TIFF datasets \n
+* a few BigTIFF datasets
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Outstanding
@@ -2026,8 +2025,8 @@ extensions = .vws
 developer = `TILL Photonics <http://www.till-photonics.com/>`_
 scifio = no
 export = no
-weHave = several TillVision datasets
-weWant = an official specification document
+weHave = * several TillVision datasets
+weWant = * an official specification document
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Poor
@@ -2040,10 +2039,10 @@ extensions = .tfr, .ffr, .zfr, .zfp, .2fl
 owner = `TopoMetrix (now Veeco) <http://www.veeco.com/>`_
 scifio = no
 export = no
-weHave = Pascal code that reads Topometrix files (from ImageSXM) \n
-a few Topometrix files
-weWant = an official specification document \n
-more Topometrix files
+weHave = * Pascal code that reads Topometrix files (from ImageSXM) \n
+* a few Topometrix files
+weWant = * an official specification document \n
+* more Topometrix files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -2056,8 +2055,8 @@ extensions = .tif, .sld, .jpg
 scifio = no
 export = no
 samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
-weHave = a few example datasets \n
-`developer documentation from the OpenSlide project <http://openslide.org/Trestle%20format/>`_
+weHave = * a few example datasets \n
+* `developer documentation from the OpenSlide project <http://openslide.org/Trestle%20format/>`_
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Good
@@ -2069,10 +2068,10 @@ reader = TrestleReader.java
 extensions = .pr3
 scifio = no
 export = no
-weHave = Pascal code that can read UBM files (from ImageSXM) \n
-one UBM file
-weWant = an official specification document \n
-more UBM files
+weHave = * Pascal code that can read UBM files (from ImageSXM) \n
+* one UBM file
+weWant = * an official specification document \n
+* more UBM files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -2085,10 +2084,10 @@ extensions = .dat, .hdr
 owner = `Unisoku <http://www.unisoku.com>`_
 scifio = no
 export = no
-weHave = Pascal code that can read Unisoku files (from ImageSXM) \n
-a few Unisoku files
-weWant = an official specification document \n
-more Unisoku files
+weHave = * Pascal code that can read Unisoku files (from ImageSXM) \n
+* a few Unisoku files
+weWant = * an official specification document \n
+* more Unisoku files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -2101,9 +2100,9 @@ extensions = .fdf
 developer = `Varian, Inc. <http://www.varianinc.com>`_
 scifio = no
 export = no
-weHave = a few Varian FDF datasets
-weWant = an official specification document \n
-more Varian FDF datasets
+weHave = * a few Varian FDF datasets
+weWant = * an official specification document \n
+* more Varian FDF datasets
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -2115,9 +2114,9 @@ reader = VarianFDFReader.java
 extensions = .dti
 scifio = no
 export = no
-weHave = a few VG-SAM files
-weWant = an official specification document \n
-more VG-SAM files
+weHave = * a few VG-SAM files
+weWant = * an official specification document \n
+* more VG-SAM files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -2130,8 +2129,8 @@ extensions = .xys, .html
 developer = `VisiTech International <http://www.visitech.co.uk/>`_
 scifio = no
 export = no
-weHave = several VisiTech datasets
-weWant = an official specification document
+weHave = * several VisiTech datasets
+weWant = * an official specification document
 pixelsRating = Very good
 metadataRating = Good
 opennessRating = Fair
@@ -2144,9 +2143,9 @@ extensions = .acff
 developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
 scifio = no
 export = no
-weHave = several Volocity library clipping datasets
-weWant = any datasets that do not open correctly \n
-an official specification document
+weHave = * several Volocity library clipping datasets
+weWant = * any datasets that do not open correctly \n
+* an official specification document
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Fair
@@ -2161,9 +2160,9 @@ developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/p
 scifio = no
 export = no
 samples = `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
-weHave = many example Volocity datasets
-weWant = an official specification document \n
-any Volocity datasets that do not open correctly
+weHave = * many example Volocity datasets
+weWant = * an official specification document \n
+* any Volocity datasets that do not open correctly
 pixelsRating = Good
 metadataRating = Good
 opennessRating = Fair
@@ -2178,10 +2177,10 @@ owner = `Oxford Instruments <http://www.oxinst.com>`_
 developer = WA Technology
 scifio = no
 export = no
-weHave = Pascal code that can read WA-TOP files (from ImageSXM) \n
-a few WA-TOP files
-weWant = an official specification document \n
-more WA-TOP files
+weHave = * Pascal code that can read WA-TOP files (from ImageSXM) \n
+* a few WA-TOP files
+weWant = * an official specification document \n
+* more WA-TOP files
 pixelsRating = Good
 metadataRating = Fair
 opennessRating = Fair
@@ -2195,7 +2194,7 @@ developer = Microsoft and IBM
 scifio = yes
 export = no
 software = `BMP Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html>`_
-weHave = many BMP datasets
+weHave = * many BMP datasets
 pixelsRating = Very good
 metadataRating = Outstanding
 opennessRating = Fair
@@ -2215,8 +2214,8 @@ developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 scifio = no
 export = no
 software = `Zeiss ZEN Lite <http://microscopy.zeiss.com/microscopy/en_de/downloads/zen.html>`_
-weHave = many example datasets
-weWant = an official specification document
+weHave = * many example datasets
+weWant = * an official specification document
 pixelsRating = Very good
 metadataRating = Very good
 opennessRating = Good
@@ -2233,12 +2232,12 @@ scifio = no
 export = no
 versions = 1.0, 2.0
 software = `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
-weHave = a ZVI specification document (v2.0.5, from 2010 August, in PDF) \n
-an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) \n
-an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) \n
-an older ZVI specification document (v1.0.26.01.01, from 2001 January 29, in DOC) \n
-Zeiss' ZvImageReader code (v1.0, from 2001 January 25, in C++) \n
-many ZVI datasets
+weHave = * a ZVI specification document (v2.0.5, from 2010 August, in PDF) \n
+* an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) \n
+* an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) \n
+* an older ZVI specification document (v1.0.26.01.01, from 2001 January 29, in DOC) \n
+* Zeiss' ZvImageReader code (v1.0, from 2001 January 25, in C++) \n
+* many ZVI datasets
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Very good
@@ -2259,8 +2258,8 @@ developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 scifio = no
 export = no
 software = `Zeiss ZEN 2011 <http://www.zeiss.de/C12567BE0045ACF1/Contents-Frame/A57B6AE510CE8FF1C12578FE002A725D>`_
-weHave = many example datasets \n
-official specification documents
+weHave = * many example datasets \n
+* official specification documents
 pixelsRating = Outstanding
 metadataRating = Outstanding
 opennessRating = Very good
@@ -2279,10 +2278,10 @@ software = `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedT
 `LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_ \n
 `LSM Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/lsm-reader.html>`_ \n
 `DIMIN <http://www.dimin.net/>`_
-weHave = LSM specification v3.2, from 2003 March 12, in PDF \n
-LSM specification v5.5, from 2009 November 23, in PDF \n
-LSM specification v6.0, from 2010 September 28, in PDF \n
-many LSM datasets
+weHave = * LSM specification v3.2, from 2003 March 12, in PDF \n
+* LSM specification v5.5, from 2009 November 23, in PDF \n
+* LSM specification v6.0, from 2010 September 28, in PDF \n
+* many LSM datasets
 pixelsRating = Outstanding
 metadataRating = Very good
 opennessRating = Good
@@ -2294,7 +2293,7 @@ notes = Bio-Formats uses the `MDB Tools Java port <http://mdbtools.sourceforge.n
 \n
 Commercial applications that support this format include: \n
 \n
-- `SVI Huygens <http://www2.svi.nl/>`_ \n
-- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
-- `Amira <http://www.amira.com/>`_ \n
-- `Image-Pro Plus <http://www.mediacy.com/>`_
+* `SVI Huygens <http://www2.svi.nl/>`_ \n
+* `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+* `Amira <http://www.amira.com/>`_ \n
+* `Image-Pro Plus <http://www.mediacy.com/>`_

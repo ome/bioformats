@@ -24,18 +24,13 @@ Freely Available Software:
 
 - `BMP Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html>`_
 
-Sample Datasets:
-
-- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
 
 We currently have:
 
-- many BMP datasets
+* many BMP datasets
 
 We would like to have:
 
-- an official specification document 
-- more WA-TOP files
 
 **Ratings**
 

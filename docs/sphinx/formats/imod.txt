@@ -25,18 +25,14 @@ Freely Available Software:
 
 - `IMOD <http://bio3d.colorado.edu/imod/>`_
 
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have:
 
-- a few sample datasets 
-- `official documentation <http://bio3d.colorado.edu/imod/doc/binspec.html>`_
+* a few sample datasets 
+* `official documentation <http://bio3d.colorado.edu/imod/doc/binspec.html>`_
 
 We would like to have:
 
-- more example datasets
 
 **Ratings**
 

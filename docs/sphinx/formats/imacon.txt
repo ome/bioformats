@@ -20,23 +20,15 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Imacon <imacon-metadata>`
 
-Freely Available Software:
 
-- `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ 
-- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ 
-- `IrfanView <http://www.irfanview.com/>`_
-
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have:
 
-- one Imacon file
+* one Imacon file
 
 We would like to have:
 
-- more Imacon files
+* more Imacon files
 
 **Ratings**
 
