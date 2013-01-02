@@ -9,12 +9,11 @@ Summary of supported metadata fields
    :header-rows: 1
    :widths: 30, 10, 10, 10, 10
 
-   *
-    - Format
-    - Supported
-    - Unsupported
-    - Partial
-    - Unknown/Missing
+   * - Format
+     - Supported
+     - Unsupported
+     - Partial
+     - Unknown/Missing
 
 #foreach ($handler in $q.handlers())
 #set ($dummy = $q.setHandler($handler))
@@ -26,11 +25,12 @@ Summary of supported metadata fields
 #set ($partialCount = $partialList.size())
 #set ($noCount = $noList.size())
 #set ($missingCount = $missingList.size())
-  * - $handler
-    - $yesCount
-    - $noCount
-    - $partialCount
-    - $missingCount
+#set ($pagename = $q.getPageName())
+   * - :doc:`$handler <$pagename>`
+     - $yesCount
+     - $noCount
+     - $partialCount
+     - $missingCount
 #end##foreach $handler
 
 **Metadata Fields**
@@ -60,3 +60,10 @@ Summary of supported metadata fields
      - $q.missingHandlerCount($entity, $prop)
 #end##foreach $prop
 #end##foreach $entity
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+    :hidden:
+
+    formats/*-metadata

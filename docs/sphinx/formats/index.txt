@@ -17,4 +17,4 @@ Bio-Formats can write, as well as read, each format.
     
     dataset-table
     /supported-formats
-    
+    /metadata-summary
