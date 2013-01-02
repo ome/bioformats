@@ -1,8 +1,8 @@
 *******************************************************************************
-NikonReader
+APNGReader
 *******************************************************************************
 
-This page lists supported metadata fields for the Bio-Formats Nikon NEF format reader.
+This page lists supported metadata fields for the Bio-Formats Animated PNG format reader.
 
 These fields are from the :plone:`OME data model <support/file-formats/schemas>`.
 Bio-Formats standardizes each format's original metadata to and from the OME
@@ -16,7 +16,7 @@ Of the 433 fields documented below:
 Supported fields
 ===============================================================================
 
-These fields are fully supported by the Bio-Formats Nikon NEF format reader:
+These fields are fully supported by the Bio-Formats Animated PNG format reader:
   * `Channel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel>`_: ID
   * `Channel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel>`_: SamplesPerPixel
   * `Image <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image>`_: ID

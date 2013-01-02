@@ -65,44 +65,5 @@ but there may be cases where the field is not converted:
 #end##foreach $partial
 **Total partially supported: $partialList.size()**
 #end##if $partialCount > 0
-#if ($noCount > 0)
 
-Unsupported fields
-===============================================================================
-
-For one reason or another, the $handler
-does not support these fields:
-#foreach ($no in $noList)
-#set ($entity = $q.entity($no))
-#set ($node = $q.node($entity))
-#set ($prop = $q.prop($no))
-#set ($comment = $q.comment($no))
-#if ($comment != "")
-  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop - $comment
-#else
-  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop
-#end##if $comment
-#end##foreach $no
-**Total unsupported: $noList.size()**
-#end##if $noCount > 0
-#if ($missingCount > 0)
-
-Unknown or missing fields
-===============================================================================
-
-As far as we are aware, these fields are not supported by the $q.format()
-format. However, our knowledge of the format may be incomplete due to
-lack of documentation or sample data.
-#foreach ($missing in $missingList)
-#set ($entity = $q.entity($missing))
-#set ($node = $q.node($entity))
-#set ($prop = $q.prop($missing))
-#set ($comment = $q.comment($missing))
-#if ($comment != "")
-  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop - $comment
-#else
-  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop
-#end##if $comment
-#end##foreach $missing
 **Total unknown or missing: $missingList.size()**
-#end##if $missingCount > 0

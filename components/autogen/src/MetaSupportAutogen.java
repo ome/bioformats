@@ -85,16 +85,11 @@ public class MetaSupportAutogen {
     MetaSupportList supportList = new MetaSupportList(version);
     context.put("q", supportList);
 
-    // generate master table of metadata properties
-    VelocityTools.processTemplate(ve, context, "doc/meta-summary.vm",
-      "../../docs/sphinx/metadata-summary.txt");
-
     // retrieve the table of format page names
     IniParser parser = new IniParser();
     parser.setCommentDelimiter(null);
     IniList data = parser.parseINI(FORMAT_PAGES, MetaSupportAutogen.class);
 
-    // generate metadata property support documentation for each handler
     for (String handler : supportList.handlers()) {
       supportList.setHandler(handler);
 
@@ -103,13 +98,24 @@ public class MetaSupportAutogen {
           String formatPage = FormatPageAutogen.getPageName(
             table.get(IniTable.HEADER_KEY), table.get("pagename"));
 
-          String pagename = formatPage + "-metadata.txt";
-          VelocityTools.processTemplate(ve, context, "doc/MetadataSupport.vm",
-            "../../docs/sphinx/" + pagename);
-          break;
+          supportList.setPageName(formatPage + "-metadata");
         }
       }
+    }
 
+    // generate master table of metadata properties
+    VelocityTools.processTemplate(ve, context, "doc/meta-summary.vm",
+      "../../docs/sphinx/metadata-summary.txt");
+
+    // generate metadata property support documentation for each handler
+    for (String handler : supportList.handlers()) {
+      supportList.setHandler(handler);
+
+      String pagename = supportList.getPageName();
+      if (pagename != null) {
+        VelocityTools.processTemplate(ve, context, "doc/MetadataSupport.vm",
+          "../../docs/sphinx/" + pagename + ".txt");
+      }
     }
   }
 
