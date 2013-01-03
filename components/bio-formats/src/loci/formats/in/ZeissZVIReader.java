@@ -799,6 +799,9 @@ public class ZeissZVIReader extends FormatReader {
         String key = getKey(tagID);
         if (key.equals("Image Channel Index")) {
           cIndex = Integer.parseInt(value);
+          if (effectiveSizeC == 1) {
+            cIndex = 0;
+          }
         }
         else if (key.equals("ImageWidth")) {
           int v = Integer.parseInt(value);
@@ -962,10 +965,14 @@ public class ZeissZVIReader extends FormatReader {
           stageY = Float.parseFloat(value);
         }
         else if (key.startsWith("Orca Analog Gain")) {
-          store.setDetectorSettingsGain(new Float(value), 0, cIndex);
+          if (cIndex < effectiveSizeC) {
+            store.setDetectorSettingsGain(new Float(value), 0, cIndex);
+          }
         }
         else if (key.startsWith("Orca Analog Offset")) {
-          store.setDetectorSettingsOffset(new Float(value), 0, cIndex);
+          if (cIndex < effectiveSizeC) {
+            store.setDetectorSettingsOffset(new Float(value), 0, cIndex);
+          }
         }
         else if (key.startsWith("Comments")) {
           store.setImageDescription(value, 0);
