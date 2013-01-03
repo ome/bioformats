@@ -13,7 +13,7 @@ comparison <http://codemesh.com/technology.html>`_.
 
 Recommended **in-process solution**: :doc:`c-bindings`
 
-Recommended **inter-process solution**: :doc:`/users/subimager`
+Recommended **inter-process solution**: :doc:`/users/subimager/index`
 
 In-process approaches
 ---------------------
@@ -114,7 +114,11 @@ List of solutions
 It is a significant challenge to access a complex Java API from code
 written in another language, especially in a cross-platform and high
 performance way. The table below provides an overview of viable
-approaches, further details are provided below it with links to source code and instructions where appropriate. Which approach to use depends on your application's target platforms and languages, and the interaction model between your application and the Java code—see the discussion of in-process solutions versus inter-process communication above for details.
+approaches, further details are provided below it with links to source code 
+and instructions where appropriate. Which approach to use depends on your 
+application's target platforms and languages, and the interaction model 
+between your application and the Java code—see the discussion of in-process 
+solutions versus inter-process communication above for details.
 
 **A note about SWIG.** The `Simplified Wrapper and Interface
 Generator <http://www.swig.org/>`_ (SWIG) is an excellent tool for

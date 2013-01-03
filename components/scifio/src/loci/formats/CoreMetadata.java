@@ -247,8 +247,8 @@ public class CoreMetadata implements Cloneable {
     return sb.toString();
   }
 
-  public Object clone() {
-      return new CoreMetadata(this);
+  public Object clone() throws CloneNotSupportedException {
+    return super.clone();
   }
 
   public CoreMetadata clone(IFormatReader r, int coreIndex) {

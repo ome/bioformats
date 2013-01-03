@@ -42,6 +42,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.List;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DebugTools;
 import loci.common.Location;
@@ -276,7 +277,8 @@ public final class ImageConverter {
       if (overwrite == null) {
         LOGGER.warn("Output file {} exists.", out);
         LOGGER.warn("Do you want to overwrite it? ([y]/n)");
-        BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader r = new BufferedReader(
+          new InputStreamReader(System.in, Constants.ENCODING));
         String choice = r.readLine().trim().toLowerCase();
         overwrite = !choice.startsWith("n");
       }

@@ -5,10 +5,10 @@ If you wish to make use of Bio-Formats within your own software, you can
 :bf_plone:`download bio-formats.jar <downloads>` to use it as a library. Just 
 add **bio-formats.jar** to your CLASSPATH or build path. You will also need 
 **loci-common.jar** for common I/O functions, **ome-xml.jar** for metadata 
-standardization, and `**SLF4J** <http://slf4j.org/>`_ for logging. 
+standardization, and `SLF4J <http://slf4j.org/>`_ for logging. 
 
 Beyond **bio-formats.jar**, **loci-common.jar**, **ome-xml.jar**, and
-`**SLF4J** <http://slf4j.org/>`_, no additional libraries are required.
+`SLF4J <http://slf4j.org/>`_, no additional libraries are required.
 However, there are certain packages that if present will be utilized to
 provide additional functionality. To include one, just place it in the
 same folder.
@@ -59,20 +59,33 @@ all be found in our :source:`Git repository <jar>`.
 Examples of usage
 -----------------
 
-:source:`ImageConverter <components/scifio/src/loci/formats/tools/ImageConverter.java>` - A simple command line tool for converting between formats.
+:source:`ImageConverter <components/scifio/src/loci/formats/tools/ImageConverter.java>` - 
+A simple command line tool for converting between formats.
 
-:source:`ImageInfo <components/scifio/src/loci/formats/tools/ImageInfo.java>` - A more involved command line utility for thoroughly reading an input file, printing some information about it, and displaying the pixels
+:source:`ImageInfo <components/scifio/src/loci/formats/tools/ImageInfo.java>` - 
+A more involved command line utility for thoroughly reading an input file, 
+printing some information about it, and displaying the pixels
 onscreen using the Bio-Formats viewer.
 
-:source:`MinimumWriter <components/bio-formats/utils/MinimumWriter.java>` - A command line utility demonstrating the minimum amount of metadata needed to write a file.
+:source:`MinimumWriter <components/bio-formats/utils/MinimumWriter.java>` - 
+A command line utility demonstrating the minimum amount of metadata needed to 
+write a file.
 
-:source:`PrintTimestamps <components/bio-formats/utils/PrintTimestamps.java>` - A command line example demonstrating how to extract timestamps from a file.
+:source:`PrintTimestamps <components/bio-formats/utils/PrintTimestamps.java>` - 
+A command line example demonstrating how to extract timestamps from a file.
 
-:source:`Simple_Read <components/loci-plugins/utils/Simple_Read.java>` - A simple ImageJ plugin demonstrating how to use Bio-Formats to read files into ImageJ (see also :doc:`/users/imagej`).
+:source:`Simple_Read <components/loci-plugins/utils/Simple_Read.java>` - 
+A simple ImageJ plugin demonstrating how to use Bio-Formats to read files into 
+ImageJ (see :doc:`/users/imagej/index`).
 
-:source:`Read_Image <components/loci-plugins/utils/Read_Image.java>` - An ImageJ plugin that uses Bio-Formats to build up an image stack, reading image planes one by one (see also :doc:`/users/imagej`).
+:source:`Read_Image <components/loci-plugins/utils/Read_Image.java>` - 
+An ImageJ plugin that uses Bio-Formats to build up an image stack, reading 
+image planes one by one (see :doc:`/users/imagej/index`).
 
-:source:`Mass_Importer <components/loci-plugins/utils/Mass_Importer.java>` - A simple plugin for ImageJ that demonstrates how to open all image files in a directory using Bio-Formats, grouping files with similar names to avoiding opening the same dataset more than once (see also :doc:`/users/imagej`).
+:source:`Mass_Importer <components/loci-plugins/utils/Mass_Importer.java>` - 
+A simple plugin for ImageJ that demonstrates how to open all image files in a 
+directory using Bio-Formats, grouping files with similar names to avoiding 
+opening the same dataset more than once (see :doc:`/users/imagej/index`).
 
 
 A Note on Java Web Start (loci\_tools.jar vs. bio-formats.jar)

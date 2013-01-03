@@ -63,13 +63,13 @@ and Maven, so you can use either one to build the code.
 
 For a list of Ant targets, run:
 
-    ``ant -p``
+``ant -p``
 
 When using Maven, Bio-Formats is configured to run the "install" target
 by default, so all JARs will be copied into your local Maven repository
 in ~/.m2/repository. Simply run:
 
-    ``mvn``
+``mvn``
 
 With either Ant or Maven, you can use similar commands in any subproject
 folder to build just that component.
