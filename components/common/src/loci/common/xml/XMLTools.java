@@ -183,7 +183,7 @@ public final class XMLTools {
   public static String sanitizeXML(String s) {
     final char[] c = s.toCharArray();
     for (int i=0; i<s.length(); i++) {
-      if ((Character.isISOControl(c[i]) && !Character.isWhitespace(c[i])) ||
+      if (Character.isISOControl(c[i]) ||
         !Character.isDefined(c[i]))
       {
         c[i] = ' ';
