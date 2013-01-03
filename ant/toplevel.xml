@@ -892,6 +892,17 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
+  <!-- Matlab -->
+  <target name="test-matlab">
+
+    <exec executable="matlab">
+      <arg value="-no-desktop"/>
+      <arg value="-no-splash"/>
+      <arg value="-r"/>
+      <arg value="runtests ${root.dir}/components/bio-formats/test/matlab"/>
+    </exec>
+  </target>
+
   <!-- Internal targets -->
 
   <target name="init"/>
