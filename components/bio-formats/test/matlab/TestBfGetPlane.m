@@ -30,6 +30,7 @@ classdef TestBfGetPlane < TestCase
         
         function tearDown(self)
             self.reader.close();
+            self.reader = [];
         end
         
         % Pixel type tests
