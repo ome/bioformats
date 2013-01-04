@@ -274,6 +274,7 @@ public class OMETiffWriter extends TiffWriter {
     RandomAccessInputStream in = null;
     try {
       TiffSaver saver = new TiffSaver(out, file);
+      saver.setBigTiff(isBigTiff);
       in = new RandomAccessInputStream(file);
       saver.overwriteLastIFDOffset(in);
       saver.overwriteComment(in, xml);
