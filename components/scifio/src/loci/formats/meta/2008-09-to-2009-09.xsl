@@ -855,6 +855,20 @@
 		</xsl:element>
 	</xsl:template>
 
+ <!-- Transform the CustomAttributes into XMLAnnotation -->
+  <xsl:template match="CA:CustomAttributes">
+    <xsl:if test="count(@*|node()) &gt; 0">
+      <xsl:element name="StructuredAnnotations" namespace="{$newSANS}">
+        <xsl:element name="XMLAnnotation" namespace="{$newSANS}">
+          <xsl:attribute name="ID">Annotation:1</xsl:attribute>
+          <xsl:element name="Value" namespace="{$newSANS}">
+            <xsl:apply-templates select="@*|node()" />
+          </xsl:element>
+        </xsl:element>
+      </xsl:element>
+    </xsl:if>
+  </xsl:template>
+
 	<!--
 	Remove AcquiredPixels and DefaultPixels attributes.
 	Remove elements Thumbnail, DisplayOptions, Region and CustomAttributes
