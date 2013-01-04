@@ -670,7 +670,7 @@ public class ICSReader extends FormatReader {
 
     int sizeC = lifetime ? 1 : getSizeC();
 
-    if (!isRGB() && sizeC > 4 && channelLengths.size() == 1 && storedRGB) {
+    if (!isRGB() && channelLengths.size() == 1 && storedRGB) {
       // channels are stored interleaved, but because there are more than we
       // can display as RGB, we need to separate them
       in.seek(offset +
@@ -687,8 +687,10 @@ public class ICSReader extends FormatReader {
 
       for (int row=y; row<h + y; row++) {
         for (int col=x; col<w + x; col++) {
-          System.arraycopy(data, bpp * ((no % getSizeC()) + sizeC *
-            (row * getSizeX() + col)), buf, bpp * (row * w + col), bpp);
+          int src =
+            bpp * ((no % getSizeC()) + sizeC * (row * getSizeX() + col));
+          int dest = bpp * ((row - y) * w + (col - x));
+          System.arraycopy(data, src, buf, dest, bpp);
         }
       }
     }
@@ -1352,6 +1354,11 @@ public class ICSReader extends FormatReader {
     if (channelLengths.size() == 0) {
       channelLengths.add(new Integer(1));
       channelTypes.add(FormatTools.CHANNEL);
+    }
+
+    if (isRGB() && emWaves.length == getSizeC()) {
+      m.rgb = false;
+      storedRGB = true;
     }
 
     m.dimensionOrder =
