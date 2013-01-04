@@ -199,6 +199,7 @@ public class ZeissLSMReader extends FormatReader {
     super("Zeiss Laser-Scanning Microscopy", new String[] {"lsm", "mdb"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
+    suffixSufficient = false;
     datasetDescription = "One or more .lsm files; if multiple .lsm files " +
       "are present, an .mdb file should also be present";
   }
@@ -272,10 +273,19 @@ public class ZeissLSMReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 4;
+    final int blockLen = 4096;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     TiffParser parser = new TiffParser(stream);
-    return parser.isValidHeader() || stream.readShort() == 0x5374;
+    if (parser.isValidHeader()) {
+      return true;
+    }
+    stream.seek(4);
+    if (stream.readShort() == 0x5374) {
+      String check =
+        stream.readString((int) (blockLen - stream.getFilePointer()));
+      return check.indexOf("ID") > 0;
+    }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
