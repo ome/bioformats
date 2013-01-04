@@ -111,45 +111,79 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
-if "OMERODOC_URI" in os.environ:
-    omerodoc_uri = os.environ.get('OMERODOC_URI')
-else:
-    omerodoc_uri = 'http://www.openmicroscopy.org/site/support/omero4/'
-
-
+# Variables used to define Github extlinks
 if "SOURCE_BRANCH" in os.environ:
     source_branch = os.environ.get('SOURCE_BRANCH')
 else:
     source_branch = 'develop'
 
+if "SOURCE_USER" in os.environ:
+    user = os.environ.get('SOURCE_USER')
+else:
+    user = 'openmicroscopy'
+
+github_root = 'https://github.com/'
+bf_github_root = github_root + user + '/bioformats/'
+bf_github_branch = bf_github_root + 'blob/' + source_branch + '/'
+
+# Variables used to define Jenkins extlinks
 if "JENKINS_JOB" in os.environ:
     jenkins_job = os.environ.get('JENKINS_JOB')
 else:
     jenkins_job = 'BIOFORMATS-trunk'
 
-bf_github_root = 'https://github.com/openmicroscopy/bioformats/'
-bf_github = bf_github_root + 'blob/' + source_branch + '/'
-jenkins_root = 'http://hudson.openmicroscopy.org.uk/'
-jenkins_job_root = jenkins_root + 'job/' + jenkins_job + '/'
+jenkins_root = 'http://hudson.openmicroscopy.org.uk'
+jenkins_job_root = jenkins_root + '/job'
+jenkins_view_root = jenkins_root + '/view'
+bf_job_root = jenkins_job_root + '/' + jenkins_job
+
+# Variables used to define other extlinks
+cvs_root = 'http://cvs.openmicroscopy.org.uk'
+trac_root = 'http://trac.openmicroscopy.org.uk/ome'
+oo_root = 'http://www.openmicroscopy.org'
+oo_site_root = oo_root + '/site'
+lists_root = 'http://lists.openmicroscopy.org.uk'
+if "OMERODOC_URI" in os.environ:
+    omerodoc_uri = os.environ.get('OMERODOC_URI')
+else:
+    omerodoc_uri = oo_site_root + '/support/omero4'
 
 extlinks = {
-    'wiki' : ('http://trac.openmicroscopy.org.uk/ome/wiki/'+ '%s', ''),
-    'ticket' : ('http://trac.openmicroscopy.org.uk/ome/ticket/'+ '%s', '#'),
-    'snapshot' : ('http://cvs.openmicroscopy.org.uk/snapshots/'+ '%s', ''),
-    'plone' : ('http://www.openmicroscopy.org/site/'+ '%s', ''),
-    'oo' : ('http://www.openmicroscopy.org/' + '%s', ''),
-    'doi' : ('http://dx.doi.org/' + '%s', ''),
-    'source' : (bf_github + '%s', ''),
-    'bfreader' : (bf_github + 'components/bio-formats/src/loci/formats/in/' + '%s', ''),
-    'scifioreader' : (bf_github + 'components/scifio/src/loci/formats/in/' + '%s', ''),
-    'bfwriter' : (bf_github + 'components/bio-formats/src/loci/formats/out/' + '%s', ''),
-    'scifiowriter' : (bf_github + 'components/scifio/src/loci/formats/out/' + '%s', ''),
-    'jenkins' : (jenkins_job_root + '%s', ''),
-    'javadoc' : (jenkins_job_root + 'javadoc/' + '%s', ''),
-    'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
-    'forum' : ('http://www.openmicroscopy.org/community/' + '%s', ''),
-    'omerodoc': (omerodoc_uri + '%s', ''),
-    'bf_plone' : ('http://www.openmicroscopy.org/site/products/bio-formats/%s/', ''),
+    # Trac links
+    'ticket' : (trac_root + '/ticket/%s', '#'),
+    'milestone' : (trac_root + '/milestone/%s', ''),
+    'report' : (trac_root + '/report/%s', ''),
+    # Github links
+    'source' : (bf_github_branch + '%s', ''),
+    'bfreader' : (bf_github_branch + 'components/bio-formats/src/loci/formats/in/%s', ''),
+    'scifioreader' : (bf_github_branch + 'components/scifio/src/loci/formats/in/%s', ''),
+    'bfwriter' : (bf_github_branch + 'components/bio-formats/src/loci/formats/out/' + '%s', ''),
+    'scifiowriter' : (bf_github_branch + 'components/scifio/src/loci/formats/out/' + '%s', ''),
+    # Jenkins links
+    'jenkins' : (jenkins_root + '/%s', ''),
+    'jenkinsjob' : (jenkins_job_root + '/%s', ''),
+    'jenkinsview' : (jenkins_view_root + '/%s', ''),
+    'bfjob' : (bf_job_root + '/%s', ''),
+    'javadoc' : (bf_job_root + '/javadoc/%s', ''),
+    # Mailing list/forum links
+    'mailinglist' : (lists_root + '/mailman/listinfo/%s', ''),
+    'forum' : (oo_root + '/community/%s', ''),
+    # Plone links. Separating them out so that we can add prefixes and
+    # suffixes during testing.
+    'community_plone' : (oo_site_root + '/community/%s', ''),
+    'feature_plone' : (oo_site_root + '/products/feature-list/%s', ''),
+    'formats_plone' : (oo_site_root + '/support/file-formats/%s', ''),
+    'legacy_plone' : (oo_site_root + '/support/legacy/%s', ''),
+    'about_plone' : (oo_site_root + '/about/%s', ''),
+    'team_plone' : (oo_site_root + '/team/%s', ''),
+    'faq_plone' : (oo_site_root + '/support/faq/%s', ''),
+    'training_plone' : (oo_site_root + '/support/training/%s', ''),
+    'omero_plone' : (oo_site_root + '/products/omero/%s/', ''),
+    'bf_plone' : (oo_site_root + '/products/bio-formats/%s/', ''),
+    'bf_doc' : (oo_site_root + '/support/bio-formats/%s', ''),
+    'omerodoc': (omerodoc_uri + '/%s', ''),
+    # Miscellaneous links
+    'doi' : ('http://dx.doi.org/%s', ''),
     }
 
 rst_epilog = """
