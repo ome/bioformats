@@ -370,6 +370,16 @@ public final class ImageConverter {
             store.setPixelsType(PixelType.UINT8, 0);
           }
 
+          if (channel >= 0) {
+            meta.setPixelsSizeC(new PositiveInteger(1), 0);
+          }
+          if (zSection >= 0) {
+            meta.setPixelsSizeZ(new PositiveInteger(1), 0);
+          }
+          if (timepoint >= 0) {
+            meta.setPixelsSizeT(new PositiveInteger(1), 0);
+          }
+
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
         catch (ServiceException e) {
@@ -385,6 +395,16 @@ public final class ImageConverter {
 
           if (autoscale) {
             store.setPixelsType(PixelType.UINT8, i);
+          }
+
+          if (channel >= 0) {
+            store.setPixelsSizeC(new PositiveInteger(1), 0);
+          }
+          if (zSection >= 0) {
+            store.setPixelsSizeZ(new PositiveInteger(1), 0);
+          }
+          if (timepoint >= 0) {
+            store.setPixelsSizeT(new PositiveInteger(1), 0);
           }
         }
 
