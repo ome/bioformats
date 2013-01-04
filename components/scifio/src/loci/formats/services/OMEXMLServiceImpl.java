@@ -521,6 +521,21 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
             metadata.put(key.getTextContent(), value.getTextContent());
           }
         }
+
+        if (metadataNodes.getLength() == 0) {
+          metadataNodes = annotationRoot.getDocumentElement().getChildNodes();
+
+          for (int meta=0; meta<metadataNodes.getLength(); meta++) {
+            Element node = (Element) metadataNodes.item(meta);
+            String name = node.getNodeName();
+
+            NamedNodeMap attrs = node.getAttributes();
+            Node value = attrs.getNamedItem("Value");
+            if (value != null) {
+              metadata.put(name, value.getNodeValue());
+            }
+          }
+        }
       }
       catch (ParserConfigurationException e) {
         LOGGER.debug("Failed to parse OriginalMetadata", e);
