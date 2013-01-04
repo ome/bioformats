@@ -802,12 +802,11 @@ public class NativeND2Reader extends FormatReader {
         addGlobalMeta(key, globalMetadata.get(key));
         if (key.equals("ChannelCount")) {
           for (int i=0; i<getSeriesCount(); i++) {
-            CoreMetadata ms = core.get(i);
-            if (ms.sizeC == 0) {
-              ms.sizeC =
+            if (core.get(i).sizeC == 0) {
+              core.get(i).sizeC =
                 Integer.parseInt(globalMetadata.get(key).toString());
-              if (ms.sizeC > 1) {
-                ms.rgb = true;
+              if (core.get(i).sizeC > 1) {
+                core.get(i).rgb = true;
               }
             }
           }
@@ -824,10 +823,10 @@ public class NativeND2Reader extends FormatReader {
         (imageOffsets.size() % (planeCount / core.size())) == 0)
       {
         int seriesCount = imageOffsets.size() / (planeCount / core.size());
-        core = new ArrayList<CoreMetadata>(core);
-        core.clear();
+        core = new ArrayList<CoreMetadata>();
+
         for (int i=0; i<seriesCount; i++) {
-          core.add(handler.getCoreMetadataList().get(0));
+          core.add(handler.getCoreMetadataList().get(i));
         }
       }
 
@@ -854,10 +853,10 @@ public class NativeND2Reader extends FormatReader {
       }
 
       if (extraZDataCount > 1 && getSizeZ() == 1 && getSeriesCount() > 1) {
-        CoreMetadata ms = core.get(0);
-        ms.sizeZ = getSeriesCount();
-        core.clear();
-        core.add(ms);
+        core.get(0).sizeZ = getSeriesCount();
+        CoreMetadata oldCore = core.get(0);
+        core = new ArrayList<CoreMetadata>();
+        core.add(oldCore);
       }
 
       // make sure the channel count is reasonable
@@ -901,8 +900,6 @@ public class NativeND2Reader extends FormatReader {
       int planeSize = getSizeX() * getSizeY() * getSizeC() *
         FormatTools.getBytesPerPixel(getPixelType());
 
-      CoreMetadata ms0 = core.get(0);
-
       if (availableBytes < planeSize) {
         LOGGER.debug("Correcting SizeC: was {}", getSizeC());
         LOGGER.debug("plane size = {}", planeSize);
@@ -910,92 +907,85 @@ public class NativeND2Reader extends FormatReader {
         if (isLossless) {
           planeSize *= 2;
         }
-        ms0.sizeC = (int) (availableBytes / (planeSize / getSizeC()));
+        core.get(0).sizeC = (int) (availableBytes / (planeSize / getSizeC()));
         if (getSizeC() == 0) {
-          ms0.sizeC = 1;
+          core.get(0).sizeC = 1;
         }
       }
       else if (availableBytes > planeSize * 3 && planeSize > 0) {
-        ms0.sizeC = 3;
-        ms0.rgb = true;
+        core.get(0).sizeC = 3;
+        core.get(0).rgb = true;
         if (getPixelType() == FormatTools.INT8) {
-          ms0.pixelType = availableBytes > planeSize * 5 ?
+          core.get(0).pixelType = availableBytes > planeSize * 5 ?
             FormatTools.UINT16 : FormatTools.UINT8;
         }
       }
       else if ((availableBytes >= planeSize * 2 || getSizeC() > 3) &&
         getPixelType() == FormatTools.INT8)
       {
-        ms0.pixelType = FormatTools.UINT16;
+        core.get(0).pixelType = FormatTools.UINT16;
         if (getSizeC() > 3) {
-          ms0.sizeC = 3;
-          ms0.rgb = true;
+          core.get(0).sizeC = 3;
+          core.get(0).rgb = true;
         }
       }
       else if (getSizeC() == 2 && getPixelType() == FormatTools.INT8) {
-        ms0.pixelType = FormatTools.UINT16;
+        core.get(0).pixelType = FormatTools.UINT16;
       }
 
       if (getSizeX() == 0) {
-        ms0.sizeX = (int) Math.sqrt(availableBytes /
+        core.get(0).sizeX = (int) Math.sqrt(availableBytes /
           (getSizeC() * FormatTools.getBytesPerPixel(getPixelType())));
-        ms0.sizeY = getSizeX();
+        core.get(0).sizeY = getSizeX();
       }
 
       int rowSize = getSizeX() * FormatTools.getBytesPerPixel(getPixelType()) *
         getSizeC();
       long sizeY = availableBytes / rowSize;
       if (sizeY < getSizeY()) {
-        ms0.sizeY = (int) sizeY;
+        core.get(0).sizeY = (int) sizeY;
       }
-      ms0 = null;
 
       if (getSizeT() == imageOffsets.size() && getSeriesCount() > 1) {
-        CoreMetadata ms = core.get(0);
-        // Set size to 1
-        core.clear();
-        core.add(ms);
+        CoreMetadata firstCore = core.get(0);
+        core = new ArrayList<CoreMetadata>();
+        core.add(firstCore);
       }
 
       // calculate the image count
       for (int i=0; i<getSeriesCount(); i++) {
-        CoreMetadata ms = core.get(i);
-        ms.imageCount = getSizeZ() * getSizeT() * getSizeC();
-        if (imageOffsets.size() / getSeriesCount() < ms.imageCount) {
-          ms.imageCount /= getSizeC();
+        core.get(i).imageCount = getSizeZ() * getSizeT() * getSizeC();
+        if (imageOffsets.size() / getSeriesCount() < core.get(i).imageCount) {
+          core.get(i).imageCount /= getSizeC();
         }
-        if (ms.imageCount > imageOffsets.size() / getSeriesCount()) {
-          if (ms.imageCount == imageOffsets.size()) {
-            CoreMetadata msv = core.get(0);
-            // Set size to 1
-            core.clear();
-            core.add(msv);
+        if (core.get(i).imageCount > imageOffsets.size() / getSeriesCount()) {
+          if (core.get(i).imageCount == imageOffsets.size()) {
+            CoreMetadata originalCore = core.get(0);
+            core = new ArrayList<CoreMetadata>();
+            core.add(originalCore);
             numSeries = 1;
             break;
           }
-          else if (imageOffsets.size() % ms.sizeT == 0) {
-            ms.imageCount = imageOffsets.size() / getSeriesCount();
-            ms.sizeZ = ms.imageCount / ms.sizeT;
-            ms.dimensionOrder = "CZT";
+          else if (imageOffsets.size() % core.get(i).sizeT == 0) {
+            core.get(i).imageCount = imageOffsets.size() / getSeriesCount();
+            core.get(i).sizeZ = core.get(i).imageCount / core.get(i).sizeT;
+            core.get(i).dimensionOrder = "CZT";
           }
           else {
-            ms.imageCount = imageOffsets.size() / getSeriesCount();
-            ms.sizeZ = 1;
-            ms.sizeT = ms.imageCount;
+            core.get(i).imageCount = imageOffsets.size() / getSeriesCount();
+            core.get(i).sizeZ = 1;
+            core.get(i).sizeT = core.get(i).imageCount;
           }
         }
       }
 
       if (numSeries * getImageCount() == 1 && imageOffsets.size() > 1) {
         for (int i=0; i<getSeriesCount(); i++) {
-          CoreMetadata ms = core.get(i);
-          ms.imageCount = imageOffsets.size() / getSeriesCount();
-          ms.sizeZ = getImageCount();
-          ms.sizeT = 1;
+          core.get(i).imageCount = imageOffsets.size() / getSeriesCount();
+          core.get(i).sizeZ = getImageCount();
+          core.get(i).sizeT = 1;
         }
       }
-
-      ms0 = core.get(0);
 
       if (getSizeZ() * getSizeT() * (split ? 1 : getSizeC()) <
         imageOffsets.size() / getSeriesCount())
@@ -1007,25 +997,25 @@ public class NativeND2Reader extends FormatReader {
 
         int diff = count - getSizeZ() * getSizeT();
         if (diff == getSizeZ()) {
-          ms0.sizeT++;
+          core.get(0).sizeT++;
         }
         else if (getSizeT() > getSizeZ()) {
-          ms0.sizeZ = 1;
-          ms0.sizeT = count;
+          core.get(0).sizeZ = 1;
+          core.get(0).sizeT = count;
         }
         else {
-          ms0.sizeT = 1;
-          ms0.sizeZ = count;
+          core.get(0).sizeT = 1;
+          core.get(0).sizeZ = count;
         }
 
         if (getSizeZ() * getSizeT() * (split ? 1 : getSizeC()) <
           imageOffsets.size() / getSeriesCount() && getSizeC() > 4)
         {
-          ms0.sizeZ = 1;
-          ms0.sizeT = imageOffsets.size() / getSeriesCount();
+          core.get(0).sizeZ = 1;
+          core.get(0).sizeT = imageOffsets.size() / getSeriesCount();
         }
 
-        ms0.imageCount = getSizeZ() * getSizeT() * getSizeC();
+        core.get(0).imageCount = getSizeZ() * getSizeT() * getSizeC();
       }
 
       if (getDimensionOrder().equals("T")) {
@@ -1036,16 +1026,14 @@ public class NativeND2Reader extends FormatReader {
       }
 
       if (getSizeC() > 1 && getDimensionOrder().indexOf("C") == -1) {
-        ms0.dimensionOrder = "C" + getDimensionOrder();
+        core.get(0).dimensionOrder = "C" + getDimensionOrder();
         fieldIndex++;
       }
 
-      ms0.dimensionOrder = "XY" + getDimensionOrder();
-      if (getDimensionOrder().indexOf("Z") == -1) ms0.dimensionOrder += "Z";
-      if (getDimensionOrder().indexOf("C") == -1) ms0.dimensionOrder += "C";
-      if (getDimensionOrder().indexOf("T") == -1) ms0.dimensionOrder += "T";
-
-      ms0 = null;
+      core.get(0).dimensionOrder = "XY" + getDimensionOrder();
+      if (getDimensionOrder().indexOf("Z") == -1) core.get(0).dimensionOrder += "Z";
+      if (getDimensionOrder().indexOf("C") == -1) core.get(0).dimensionOrder += "C";
+      if (getDimensionOrder().indexOf("T") == -1) core.get(0).dimensionOrder += "T";
 
       offsets = new long[numSeries][getImageCount()];
 
@@ -1116,12 +1104,11 @@ public class NativeND2Reader extends FormatReader {
         int bitsPerPixel = getBitsPerPixel();
         boolean rgb = isRGB();
         String order = getDimensionOrder();
-
-        core.clear();
+        core = new ArrayList<CoreMetadata>();
         for (int i=0; i<offsets.length; i++) {
           CoreMetadata ms = new CoreMetadata();
           core.add(ms);
-
+          ms = new CoreMetadata();
           ms.sizeX = x;
           ms.sizeY = y;
           ms.sizeC = c == 0 ? 1 : c;
@@ -1135,36 +1122,34 @@ public class NativeND2Reader extends FormatReader {
           for (int q=0; q<offsets[i].length; q++) {
             if (offsets[i][q] == 0) invalid++;
           }
-          ms.imageCount = offsets[i].length - invalid;
-          ms.sizeT = ms.imageCount / (rgb ? 1 : ms.sizeC);
-          if (ms.sizeT == 0) ms.sizeT = 1;
+          core.get(i).imageCount = offsets[i].length - invalid;
+          core.get(i).sizeT = core.get(i).imageCount / (rgb ? 1 : core.get(i).sizeC);
+          if (core.get(i).sizeT == 0) core.get(i).sizeT = 1;
         }
       }
       else {
         for (int i=0; i<getSeriesCount(); i++) {
-          CoreMetadata ms = core.get(i);
-          ms.sizeX = getSizeX();
-          ms.sizeY = getSizeY();
-          ms.sizeC = getSizeC() == 0 ? 1 : getSizeC();
-          ms.sizeZ = getSizeZ() == 0 ? 1 : getSizeZ();
-          ms.sizeT = getSizeT() == 0 ? 1 : getSizeT();
-          ms.imageCount = getImageCount();
-          ms.pixelType = getPixelType();
-          ms.bitsPerPixel = getBitsPerPixel();
-          ms.dimensionOrder = getDimensionOrder();
+          core.get(i).sizeX = getSizeX();
+          core.get(i).sizeY = getSizeY();
+          core.get(i).sizeC = getSizeC() == 0 ? 1 : getSizeC();
+          core.get(i).sizeZ = getSizeZ() == 0 ? 1 : getSizeZ();
+          core.get(i).sizeT = getSizeT() == 0 ? 1 : getSizeT();
+          core.get(i).imageCount = getImageCount();
+          core.get(i).pixelType = getPixelType();
+          core.get(i).bitsPerPixel = getBitsPerPixel();
+          core.get(i).dimensionOrder = getDimensionOrder();
         }
       }
 
       split = getSizeC() > 1;
       for (int i=0; i<getSeriesCount(); i++) {
-        CoreMetadata ms = core.get(i);
-        ms.rgb = false;
-        ms.littleEndian = true;
-        ms.interleaved = false;
-        ms.indexed = channelColors.size() > 0;
-        ms.falseColor = true;
-        ms.metadataComplete = true;
-        ms.imageCount = ms.sizeZ * ms.sizeT * ms.sizeC;
+        core.get(i).rgb = false;
+        core.get(i).littleEndian = true;
+        core.get(i).interleaved = false;
+        core.get(i).indexed = channelColors.size() > 0;
+        core.get(i).falseColor = true;
+        core.get(i).metadataComplete = true;
+        core.get(i).imageCount = core.get(i).sizeZ * core.get(i).sizeT * core.get(i).sizeC;
       }
 
       // read first CustomData block
@@ -1397,55 +1382,49 @@ public class NativeND2Reader extends FormatReader {
     c = numBands > 1 ? numBands : getSizeC();
     if (numBands == 1 && getImageCount() == 1) c = 1;
     for (int i=0; i<getSeriesCount(); i++) {
-      CoreMetadata ms = core.get(i);
-      ms.sizeC = c;
-      ms.rgb = numBands > 1;
-      ms.pixelType = type;
+      core.get(i).sizeC = c;
+      core.get(i).rgb = numBands > 1;
+      core.get(i).pixelType = type;
     }
 
     if (getDimensionOrder() == null) core.get(0).dimensionOrder = "";
 
-    CoreMetadata ms0 = core.get(0);
-
     if (getSizeC() > 1) {
-      ms0.dimensionOrder = getDimensionOrder().replaceAll("C", "");
-      ms0.dimensionOrder = "C" + getDimensionOrder();
+      core.get(0).dimensionOrder = getDimensionOrder().replaceAll("C", "");
+      core.get(0).dimensionOrder = "C" + getDimensionOrder();
       fieldIndex++;
     }
 
-    if (getDimensionOrder().indexOf("Z") == -1) ms0.dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf("C") == -1) ms0.dimensionOrder += "C";
-    if (getDimensionOrder().indexOf("T") == -1) ms0.dimensionOrder += "T";
-    ms0.dimensionOrder = "XY" + getDimensionOrder();
+    if (getDimensionOrder().indexOf("Z") == -1) core.get(0).dimensionOrder += "Z";
+    if (getDimensionOrder().indexOf("C") == -1) core.get(0).dimensionOrder += "C";
+    if (getDimensionOrder().indexOf("T") == -1) core.get(0).dimensionOrder += "T";
+    core.get(0).dimensionOrder = "XY" + getDimensionOrder();
 
     if (getImageCount() == 0) {
-      ms0.imageCount = vs.size();
-      ms0.sizeZ = (int) Math.max(zs.size(), 1);
-      ms0.sizeT = (int) Math.max(ts.size(), 1);
+      core.get(0).imageCount = vs.size();
+      core.get(0).sizeZ = (int) Math.max(zs.size(), 1);
+      core.get(0).sizeT = (int) Math.max(ts.size(), 1);
       int channels = isRGB() ? 1 : getSizeC();
       if (channels * getSizeZ() * getSizeT() != getImageCount()) {
-        ms0.sizeZ = 1;
-        ms0.sizeT = getImageCount() / channels;
-        ms0.imageCount = getSizeZ() * getSizeT() * channels;
+        core.get(0).sizeZ = 1;
+        core.get(0).sizeT = getImageCount() / channels;
+        core.get(0).imageCount = getSizeZ() * getSizeT() * channels;
       }
     }
 
-    if (getSizeZ() == 0) ms0.sizeZ = 1;
-    if (getSizeT() == 0) ms0.sizeT = 1;
-
-    ms0 = null;
+    if (getSizeZ() == 0) core.get(0).sizeZ = 1;
+    if (getSizeT() == 0) core.get(0).sizeT = 1;
 
     for (int i=0; i<getSeriesCount(); i++) {
-      CoreMetadata ms = core.get(i);
-      ms.sizeZ = getSizeZ();
-      ms.sizeT = getSizeT();
-      ms.imageCount = getSizeZ() * getSizeT() * (isRGB() ? 1 : getSizeC());
-      ms.dimensionOrder = getDimensionOrder();
-      ms.sizeX = x;
-      ms.sizeY = y;
-      ms.interleaved = false;
-      ms.littleEndian = false;
-      ms.metadataComplete = true;
+      core.get(i).sizeZ = getSizeZ();
+      core.get(i).sizeT = getSizeT();
+      core.get(i).imageCount = getSizeZ() * getSizeT() * (isRGB() ? 1 : getSizeC());
+      core.get(i).dimensionOrder = getDimensionOrder();
+      core.get(i).sizeX = x;
+      core.get(i).sizeY = y;
+      core.get(i).interleaved = false;
+      core.get(i).littleEndian = false;
+      core.get(i).metadataComplete = true;
     }
 
     int nplanes = getSizeZ() * getEffectiveSizeC();

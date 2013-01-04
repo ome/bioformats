@@ -122,7 +122,7 @@ public class ND2Handler extends BaseHandler {
     super();
     this.populateXY = populateXY;
     this.nImages = nImages;
-    this.core = new ArrayList<CoreMetadata>(core);
+    this.core = core;
     if (this.core.size() > 1) {
       fieldIndex = 2;
     }
@@ -360,26 +360,25 @@ public class ND2Handler extends BaseHandler {
     }
 
     String value = attributes.getValue("value");
-    CoreMetadata ms0 = core.get(0);
 
     if (qName.equals("uiWidth")) {
       int x = Integer.parseInt(value);
       if (x != 0 && populateXY) {
-        ms0.sizeX = x;
+        core.get(0).sizeX = x;
       }
     }
     else if (qName.equals("uiCamPxlCountX")) {
-      if (ms0.sizeX == 0 && populateXY) {
+      if (core.get(0).sizeX == 0 && populateXY) {
         try {
-          ms0.sizeX = Integer.parseInt(value);
+          core.get(0).sizeX = Integer.parseInt(value);
         }
         catch (NumberFormatException e) { }
       }
     }
     else if (qName.equals("uiCamPxlCountY")) {
-      if (ms0.sizeY == 0 && populateXY) {
+      if (core.get(0).sizeY == 0 && populateXY) {
         try {
-          ms0.sizeY = Integer.parseInt(value);
+          core.get(0).sizeY = Integer.parseInt(value);
         }
         catch (NumberFormatException e) { }
       }
@@ -393,17 +392,17 @@ public class ND2Handler extends BaseHandler {
       nYFields += fields;
     }
     else if ("rectSensorUser".equals(prevElement) && populateXY) {
-      if (qName.equals("left") && ms0.sizeX == 0) {
-        ms0.sizeX = -1 * Integer.parseInt(value);
+      if (qName.equals("left") && core.get(0).sizeX == 0) {
+        core.get(0).sizeX = -1 * Integer.parseInt(value);
       }
-      else if (qName.equals("top") && ms0.sizeY == 0) {
-        ms0.sizeY = -1 * Integer.parseInt(value);
+      else if (qName.equals("top") && core.get(0).sizeY == 0) {
+        core.get(0).sizeY = -1 * Integer.parseInt(value);
       }
-      else if (qName.equals("right") && ms0.sizeX <= 0) {
-        ms0.sizeX += Integer.parseInt(value);
+      else if (qName.equals("right") && core.get(0).sizeX <= 0) {
+        core.get(0).sizeX += Integer.parseInt(value);
       }
-      else if (qName.equals("bottom") && ms0.sizeY <= 0) {
-        ms0.sizeY += Integer.parseInt(value);
+      else if (qName.equals("bottom") && core.get(0).sizeY <= 0) {
+        core.get(0).sizeY += Integer.parseInt(value);
       }
     }
     else if ("LoopState".equals(prevElement) && value != null) {
@@ -414,54 +413,54 @@ public class ND2Handler extends BaseHandler {
     else if ("LoopSize".equals(prevElement) && value != null) {
       int v = Integer.parseInt(value);
 
-      if (ms0.sizeT == 0) {
-        ms0.sizeT = v;
+      if (core.get(0).sizeT == 0) {
+        core.get(0).sizeT = v;
       }
       else if (qName.equals("no_name") && v > 0 && core.size() == 1) {
-        CoreMetadata old = core.get(0);
-        core.clear();
+        CoreMetadata previous = core.get(0);
+        core = new ArrayList<CoreMetadata>();
         for (int q=0; q<v; q++) {
-          core.add(old);
+          core.add(previous);
         }
         fieldIndex = 2;
       }
-      else if (ms0.sizeZ == 0) {
-        ms0.sizeZ = v;
+      else if (core.get(0).sizeZ == 0) {
+        core.get(0).sizeZ = v;
       }
-      ms0.dimensionOrder = "CZT";
+      core.get(0).dimensionOrder = "CZT";
     }
     else if ("pPosName".equals(prevElement) && value != null) {
       posNames.add(value);
     }
     else if (qName.equals("FramesBefore")) {
-      if (ms0.sizeZ == 0) {
-        ms0.sizeZ = 1;
+      if (core.get(0).sizeZ == 0) {
+        core.get(0).sizeZ = 1;
       }
       if (core.size() == 1) {
-        ms0.sizeZ *= Integer.parseInt(value);
+        core.get(0).sizeZ *= Integer.parseInt(value);
       }
     }
     else if (qName.equals("FramesAfter")) {
       if (core.size() == 1) {
-        ms0.sizeZ *= Integer.parseInt(value);
+        core.get(0).sizeZ *= Integer.parseInt(value);
 
-        if (ms0.sizeT * ms0.sizeZ > nImages &&
-          ms0.sizeT <= nImages && validLoopState &&
-          ms0.sizeT != ms0.sizeZ)
+        if (core.get(0).sizeT * core.get(0).sizeZ > nImages &&
+          core.get(0).sizeT <= nImages && validLoopState &&
+          core.get(0).sizeT != core.get(0).sizeZ)
         {
-          ms0.sizeZ = ms0.sizeT;
-          ms0.sizeT = 1;
+          core.get(0).sizeZ = core.get(0).sizeT;
+          core.get(0).sizeT = 1;
         }
       }
     }
     else if (qName.equals("TimeBefore")) {
-      if (ms0.sizeT == 0) {
-        ms0.sizeT = 1;
+      if (core.get(0).sizeT == 0) {
+        core.get(0).sizeT = 1;
       }
-      ms0.sizeT *= Integer.parseInt(value);
+      core.get(0).sizeT *= Integer.parseInt(value);
     }
     else if (qName.equals("TimeAfter")) {
-      ms0.sizeT *= Integer.parseInt(value);
+      core.get(0).sizeT *= Integer.parseInt(value);
     }
     else if (qName.equals("uiMaxDst")) {
       int maxPixelValue = Integer.parseInt(value) + 1;
@@ -471,8 +470,8 @@ public class ND2Handler extends BaseHandler {
         bits++;
       }
       try {
-        if (ms0.pixelType == 0) {
-          ms0.pixelType =
+        if (core.get(0).pixelType == 0) {
+          core.get(0).pixelType =
             FormatTools.pixelTypeFromBytes(bits / 8, false, false);
         }
       }
@@ -481,12 +480,12 @@ public class ND2Handler extends BaseHandler {
       }
     }
     else if (qName.equals("uiWidthBytes") || qName.equals("uiBpcInMemory")) {
-      int div = qName.equals("uiWidthBytes") ? ms0.sizeX : 8;
+      int div = qName.equals("uiWidthBytes") ? core.get(0).sizeX : 8;
       if (div > 0) {
         int bytes = Integer.parseInt(value) / div;
 
         try {
-          ms0.pixelType =
+          core.get(0).pixelType =
             FormatTools.pixelTypeFromBytes(bytes, false, false);
         }
         catch (FormatException e) { }
@@ -509,22 +508,22 @@ public class ND2Handler extends BaseHandler {
       int v = Integer.parseInt(qName.substring(qName.indexOf("_") + 1));
       if (v == numSeries) {
         fieldIndex = 2;
-        //fieldIndex = ms0.dimensionOrder.length();
+        //fieldIndex = core.get(0).dimensionOrder.length();
         numSeries++;
       }
-      else if (v < numSeries && fieldIndex < ms0.dimensionOrder.length()) {
+      else if (v < numSeries && fieldIndex < core.get(0).dimensionOrder.length()) {
         fieldIndex = 2;
-        //fieldIndex = ms0.dimensionOrder.length();
+        //fieldIndex = core.get(0).dimensionOrder.length();
       }
     }
     else if (qName.equals("uiCompCount")) {
       int v = Integer.parseInt(value);
-      ms0.sizeC = (int) Math.max(ms0.sizeC, v);
+      core.get(0).sizeC = (int) Math.max(core.get(0).sizeC, v);
     }
     else if (qName.equals("uiHeight") && populateXY) {
       int y = Integer.parseInt(value);
       if (y != 0) {
-        ms0.sizeY = y;
+        core.get(0).sizeY = y;
       }
     }
     else if (qName.startsWith("TextInfo")) {
@@ -569,23 +568,23 @@ public class ND2Handler extends BaseHandler {
           imageCount = newCount;
         }
       }
-      if (ms0.sizeZ * ms0.sizeT != imageCount &&
-        ms0.sizeZ * ms0.sizeC * ms0.sizeT != imageCount)
+      if (core.get(0).sizeZ * core.get(0).sizeT != imageCount &&
+        core.get(0).sizeZ * core.get(0).sizeC * core.get(0).sizeT != imageCount)
       {
-        if (ms0.sizeZ > 1 && ms0.sizeT <= 1) {
-          ms0.sizeZ = imageCount;
-          ms0.sizeT = 1;
-          ms0.imageCount = imageCount;
+        if (core.get(0).sizeZ > 1 && core.get(0).sizeT <= 1) {
+          core.get(0).sizeZ = imageCount;
+          core.get(0).sizeT = 1;
+          core.get(0).imageCount = imageCount;
         }
-        else if (ms0.sizeT > 1 && ms0.sizeZ <= 1) {
-          ms0.sizeT = imageCount;
-          ms0.sizeZ = 1;
-          ms0.imageCount = imageCount;
+        else if (core.get(0).sizeT > 1 && core.get(0).sizeZ <= 1) {
+          core.get(0).sizeT = imageCount;
+          core.get(0).sizeZ = 1;
+          core.get(0).imageCount = imageCount;
         }
         else if (imageCount == 0) {
-          ms0.sizeT = 0;
-          ms0.sizeZ = 0;
-          ms0.imageCount = 0;
+          core.get(0).sizeT = 0;
+          core.get(0).sizeZ = 0;
+          core.get(0).imageCount = 0;
         }
       }
       metadata.put(qName, value);
@@ -622,7 +621,6 @@ public class ND2Handler extends BaseHandler {
 
   private void parseKeyAndValue(String key, String value, String runtype) {
     if (key == null || value == null) return;
-    CoreMetadata ms0 = core.get(0);
     metadata.put(key, value);
     if (key.endsWith("dCalibration")) {
       pixelSizeX = Double.parseDouble(DataTools.sanitizeDouble(value));
@@ -690,39 +688,39 @@ public class ND2Handler extends BaseHandler {
     else if (key.endsWith("uiCount")) {
       if (runtype != null) {
         if (runtype.endsWith("ZStackLoop")) {
-          if (ms0.sizeZ == 0) {
-            ms0.sizeZ = Integer.parseInt(value);
-            if (ms0.dimensionOrder.indexOf("Z") == -1) {
-              ms0.dimensionOrder = "Z" + ms0.dimensionOrder;
+          if (core.get(0).sizeZ == 0) {
+            core.get(0).sizeZ = Integer.parseInt(value);
+            if (core.get(0).dimensionOrder.indexOf("Z") == -1) {
+              core.get(0).dimensionOrder = "Z" + core.get(0).dimensionOrder;
             }
           }
         }
         else if (runtype.endsWith("TimeLoop")) {
-          if (ms0.sizeT == 0) {
-            ms0.sizeT = Integer.parseInt(value);
-            if (ms0.dimensionOrder.indexOf("T") == -1) {
-              ms0.dimensionOrder = "T" + ms0.dimensionOrder;
+          if (core.get(0).sizeT == 0) {
+            core.get(0).sizeT = Integer.parseInt(value);
+            if (core.get(0).dimensionOrder.indexOf("T") == -1) {
+              core.get(0).dimensionOrder = "T" + core.get(0).dimensionOrder;
             }
           }
         }
         else if (runtype.endsWith("XYPosLoop") && core.size() == 1) {
-          int newCapacity = Integer.parseInt(value);
-          CoreMetadata old = core.get(0);
-          core.clear();
-          for (int i=0; i<newCapacity; i++) {
-            core.add(old);
+          CoreMetadata oldCore = core.get(0);
+          int len = Integer.parseInt(value);
+          core = new ArrayList<CoreMetadata>();
+          for (int i=0; i<len; i++) {
+            core.add(oldCore);
           }
         }
       }
     }
     else if (key.endsWith("uiBpcSignificant")) {
-      ms0.bitsPerPixel = Integer.parseInt(value);
+      core.get(0).bitsPerPixel = Integer.parseInt(value);
     }
     else if (key.equals("VirtualComponents")) {
-      if (ms0.sizeC == 0) {
-        ms0.sizeC = Integer.parseInt(value);
-        if (ms0.dimensionOrder.indexOf("C") == -1) {
-          ms0.dimensionOrder += "C" + ms0.dimensionOrder;
+      if (core.get(0).sizeC == 0) {
+        core.get(0).sizeC = Integer.parseInt(value);
+        if (core.get(0).dimensionOrder.indexOf("C") == -1) {
+          core.get(0).dimensionOrder += "C" + core.get(0).dimensionOrder;
         }
       }
     }
@@ -739,9 +737,9 @@ public class ND2Handler extends BaseHandler {
           t = t.substring(11);
           String[] dims = t.split(" x ");
 
-          if (ms0.sizeZ == 0) ms0.sizeZ = 1;
-          if (ms0.sizeT == 0) ms0.sizeT = 1;
-          if (ms0.sizeC == 0) ms0.sizeC = 1;
+          if (core.get(0).sizeZ == 0) core.get(0).sizeZ = 1;
+          if (core.get(0).sizeT == 0) core.get(0).sizeT = 1;
+          if (core.get(0).sizeC == 0) core.get(0).sizeC = 1;
 
           for (String dim : dims) {
             dim = dim.trim();
@@ -750,14 +748,13 @@ public class ND2Handler extends BaseHandler {
             if (dim.startsWith("XY")) {
               numSeries = v;
               if (numSeries > 1) {
-                int x = ms0.sizeX;
-                int y = ms0.sizeY;
-                int z = ms0.sizeZ;
-                int tSize = ms0.sizeT;
-                int c = ms0.sizeC;
-                String order = ms0.dimensionOrder;
-
-                core.clear();
+                int x = core.get(0).sizeX;
+                int y = core.get(0).sizeY;
+                int z = core.get(0).sizeZ;
+                int tSize = core.get(0).sizeT;
+                int c = core.get(0).sizeC;
+                String order = core.get(0).dimensionOrder;
+                core = new ArrayList<CoreMetadata>();
                 for (int i=0; i<numSeries; i++) {
                   CoreMetadata ms = new CoreMetadata();
                   core.add(ms);
@@ -771,24 +768,24 @@ public class ND2Handler extends BaseHandler {
               }
             }
             else if (dim.startsWith("T")) {
-              if (ms0.sizeT <= 1 || v < ms0.sizeT) {
-                ms0.sizeT = v;
+              if (core.get(0).sizeT <= 1 || v < core.get(0).sizeT) {
+                core.get(0).sizeT = v;
               }
             }
             else if (dim.startsWith("Z")) {
-              if (ms0.sizeZ <= 1) {
-                ms0.sizeZ = v;
+              if (core.get(0).sizeZ <= 1) {
+                core.get(0).sizeZ = v;
               }
             }
-            else if (ms0.sizeC <= 1) {
-              ms0.sizeC = v;
+            else if (core.get(0).sizeC <= 1) {
+              core.get(0).sizeC = v;
             }
           }
 
-          ms0.imageCount = ms0.sizeZ * ms0.sizeC * ms0.sizeT;
+          core.get(0).imageCount = core.get(0).sizeZ * core.get(0).sizeC * core.get(0).sizeT;
         }
         else if (t.startsWith("Number of Picture Planes")) {
-          ms0.sizeC = Integer.parseInt(t.replaceAll("\\D", ""));
+          core.get(0).sizeC = Integer.parseInt(t.replaceAll("\\D", ""));
         }
         else {
           String[] v = t.split(":");
@@ -877,7 +874,7 @@ public class ND2Handler extends BaseHandler {
     else if (key.equals("sDate")) {
       date = DateTools.formatDate(value, DATE_FORMAT);
     }
-    else if (key.equals("Name") && channelNames.size() < ms0.sizeC) {
+    else if (key.equals("Name") && channelNames.size() < core.get(0).sizeC) {
       channelNames.add(value);
     }
   }
