@@ -34,6 +34,9 @@ import loci.common.Region;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * <dl><dt><b>Source code:</b></dt>
@@ -41,6 +44,11 @@ import loci.formats.meta.MetadataStore;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/TileStitcher.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class TileStitcher extends ReaderWrapper {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(TileStitcher.class);
 
   // -- Fields --
 
@@ -187,7 +195,7 @@ public class TileStitcher extends ReaderWrapper {
     //
     // it might be worth improving this in the future so that fields are
     // stitched, but plates/wells are left alone, but for now it is easy
-    // enough to just ignore HCS data
+    // enough to just ignore HCS data with multiple plates and/or wells
     if (meta.getPlateCount() > 1 ||
       (meta.getPlateCount() == 1 && meta.getWellCount(0) > 1))
     {
@@ -266,9 +274,7 @@ public class TileStitcher extends ReaderWrapper {
     tileY = uniqueY.size();
 
     if (!equalZs) {
-      tileX = 1;
-      tileY = 1;
-      return;
+      LOGGER.warn("Z positions not equal");
     }
 
     tileMap = new Integer[tileY][tileX];
