@@ -482,18 +482,20 @@ public class NativeND2Reader extends FormatReader {
           long startFP = in.getFilePointer();
           in.seek(startFP - 1);
 
-          String xmlString = DataTools.stripString(in.readString(lenTwo));
-          xmlString = XMLTools.sanitizeXML(xmlString);
-          int start = xmlString.indexOf("<");
-          int end = xmlString.lastIndexOf(">");
-          if (start >= 0 && end >= 0) {
-            xmlString = xmlString.substring(start, end + 1);
-          }
+          String textString = DataTools.stripString(in.readString(lenTwo));
 
           try {
             ND2Handler handler = new ND2Handler(core, imageOffsets.size());
+            String xmlString = XMLTools.sanitizeXML(textString);
+            int start = xmlString.indexOf("<");
+            int end = xmlString.lastIndexOf(">");
+            if (start >= 0 && end >= 0) {
+              xmlString = xmlString.substring(start, end + 1);
+            }
+
             XMLTools.parseXML(xmlString, handler);
             xmlString = null;
+            textString = null;
             core = handler.getCoreMetadata();
             if (backupHandler == null ||
               backupHandler.getChannelNames().size() == 0)
@@ -509,7 +511,9 @@ public class NativeND2Reader extends FormatReader {
           catch (IOException e) {
             LOGGER.debug("Could not parse XML", e);
 
-            String[] lines = xmlString.split(" ");
+            textString = sanitizeControl(textString);
+
+            String[] lines = textString.split(" ");
             for (int i=0; i<lines.length; i++) {
               String key = lines[i++];
               while (!key.endsWith(":") && key.indexOf("_") < 0 &&
@@ -1844,6 +1848,19 @@ public class NativeND2Reader extends FormatReader {
     RandomAccessInputStream s = new RandomAccessInputStream(pix);
     readPlane(s, x, y, w, h, scanlinePad, buf);
     s.close();
+  }
+
+  /** Remove control and invalid characters from the given string. */
+  public static String sanitizeControl(String s) {
+    final char[] c = s.toCharArray();
+    for (int i=0; i<s.length(); i++) {
+      if (Character.isISOControl(c[i]) ||
+        !Character.isDefined(c[i]))
+      {
+        c[i] = ' ';
+      }
+    }
+    return new String(c);
   }
 
 }
