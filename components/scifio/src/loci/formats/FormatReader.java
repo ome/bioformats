@@ -359,6 +359,74 @@ public abstract class FormatReader extends FormatHandler
     return metadata.get(key);
   }
 
+  protected void addGlobalMetaList(String key, Object value) {
+    Vector list = (Vector) metadata.get(key);
+    addGlobalMeta(key, value);
+    Object newValue = metadata.get(key);
+    if (newValue != null) {
+      if (list == null) {
+        list = new Vector();
+      }
+
+      list.add(newValue);
+      metadata.put(key, list);
+    }
+  }
+
+  protected void addSeriesMetaList(String key, Object value) {
+    Vector list = (Vector) core[getCoreIndex()].seriesMetadata.get(key);
+    addSeriesMeta(key, value);
+    Object newValue = core[getCoreIndex()].seriesMetadata.get(key);
+    if (newValue != null) {
+      if (list == null) {
+        list = new Vector();
+      }
+
+      list.add(newValue);
+      core[getCoreIndex()].seriesMetadata.put(key, list);
+    }
+  }
+
+  protected void flattenHashtables() {
+    String[] keys = metadata.keySet().toArray(new String[0]);
+    for (String key : keys) {
+      Object v = metadata.get(key);
+      if (v instanceof Vector) {
+        Vector list = (Vector) v;
+        int digits = String.valueOf(list.size()).length();
+        for (int i=0; i<list.size(); i++) {
+          String index = String.valueOf(i + 1);
+          while (index.length() < digits) {
+            index = "0" + index;
+          }
+          metadata.put(key + " #" + index, list.get(i));
+        }
+        metadata.remove(key);
+      }
+    }
+
+    for (int s=0; s<core.length; s++) {
+      Hashtable<String, Object> meta = core[s].seriesMetadata;
+      keys = meta.keySet().toArray(new String[0]);
+      for (String key : keys) {
+        Object v = meta.get(key);
+        if (v instanceof Vector) {
+          Vector list = (Vector) v;
+          int digits = String.valueOf(list.size()).length();
+          for (int i=0; i<list.size(); i++) {
+            String index = String.valueOf(i + 1);
+            while (index.length() < digits) {
+              index = "0" + index;
+            }
+            meta.put(key + " #" + index, list.get(i));
+          }
+          meta.remove(key);
+        }
+      }
+      core[s].seriesMetadata = meta;
+    }
+  }
+
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, Object value) {
     addMeta(key, value, core[getCoreIndex()].seriesMetadata);
@@ -980,24 +1048,28 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getMetadataValue(String) */
   public Object getMetadataValue(String field) {
     FormatTools.assertId(currentId, true, 1);
+    flattenHashtables();
     return getGlobalMeta(field);
   }
 
   /* @see IFormatReader#getSeriesMetadataValue(String) */
   public Object getSeriesMetadataValue(String field) {
     FormatTools.assertId(currentId, true, 1);
+    flattenHashtables();
     return getSeriesMeta(field);
   }
 
   /* @see IFormatReader#getGlobalMetadata() */
   public Hashtable<String, Object> getGlobalMetadata() {
     FormatTools.assertId(currentId, true, 1);
+    flattenHashtables();
     return metadata;
   }
 
   /* @see IFormatReader#getSeriesMetadata() */
   public Hashtable<String, Object> getSeriesMetadata() {
     FormatTools.assertId(currentId, true, 1);
+    flattenHashtables();
     return core[getCoreIndex()].seriesMetadata;
   }
 
