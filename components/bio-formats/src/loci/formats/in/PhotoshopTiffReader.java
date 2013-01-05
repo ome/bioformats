@@ -240,7 +240,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
           int pad = nameLength % 4;
           if (pad != 0) pad = 4 - pad;
           layerNames[layer] = tag.readString(nameLength + pad);
-          addGlobalMeta("Layer name #" + layer, layerNames[layer]);
+          addGlobalMetaList("Layer name", layerNames[layer]);
           tag.skipBytes((int) (fp + len - tag.getFilePointer()));
           layerMetadata.add(layerCore);
         }

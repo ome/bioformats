@@ -968,9 +968,9 @@ public class ZeissLSMReader extends FormatReader {
           yCoordinates.add(yPos);
           zCoordinates.add(zPos);
 
-          addGlobalMeta("X position for position #" + (i + 1), xPos);
-          addGlobalMeta("Y position for position #" + (i + 1), yPos);
-          addGlobalMeta("Z position for position #" + (i + 1), zPos);
+          addGlobalMetaList("X position for position", xPos);
+          addGlobalMetaList("Y position for position", yPos);
+          addGlobalMetaList("Z position for position", zPos);
         }
       }
 
@@ -1003,9 +1003,9 @@ public class ZeissLSMReader extends FormatReader {
             zCoordinates.add(zPos);
           }
 
-          addGlobalMeta("X position for position #" + (i + 1), xPos);
-          addGlobalMeta("Y position for position #" + (i + 1), yPos);
-          addGlobalMeta("Z position for position #" + (i + 1), zPos);
+          addGlobalMetaList("X position for position", xPos);
+          addGlobalMetaList("Y position for position", yPos);
+          addGlobalMetaList("Z position for position", zPos);
         }
       }
 
@@ -1047,7 +1047,7 @@ public class ZeissLSMReader extends FormatReader {
             // we want to read until we find a null char
             String name = in.readCString();
             if (name.length() <= 128) {
-              addSeriesMeta("ChannelName" + i, name);
+              addSeriesMetaList("ChannelName", name);
             }
           }
         }
@@ -1058,7 +1058,7 @@ public class ZeissLSMReader extends FormatReader {
         int nStamps = in.readInt();
         for (int i=0; i<nStamps; i++) {
           double stamp = in.readDouble();
-          addSeriesMeta("TimeStamp" + i, stamp);
+          addSeriesMetaList("TimeStamp", stamp);
           timestamps.add(new Double(stamp));
         }
       }

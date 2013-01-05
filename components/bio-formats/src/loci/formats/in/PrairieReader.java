@@ -607,7 +607,7 @@ public class PrairieReader extends FormatReader {
           try {
             Double xPos = new Double(value);
             positionX.add(invertX ? -xPos : xPos);
-            addGlobalMeta("X position for position #" + positionX.size(), xPos);
+            addGlobalMetaList("X position for position", xPos);
           }
           catch (NumberFormatException e) {
             positionX.add(Double.NaN);
@@ -617,7 +617,7 @@ public class PrairieReader extends FormatReader {
           try {
             Double yPos = new Double(value);
             positionY.add(invertY ? -yPos : yPos);
-            addGlobalMeta("Y position for position #" + positionY.size(), yPos);
+            addGlobalMetaList("Y position for position", yPos);
           }
           catch (NumberFormatException e) {
             positionY.add(Double.NaN);
@@ -627,7 +627,7 @@ public class PrairieReader extends FormatReader {
           try {
             Double zPos = new Double(value);
             positionZ.add(zPos);
-            addGlobalMeta("Z position for position #" + positionZ.size(), zPos);
+            addGlobalMetaList("Z position for position", zPos);
           }
           catch (NumberFormatException e) {
             positionZ.add(Double.NaN);

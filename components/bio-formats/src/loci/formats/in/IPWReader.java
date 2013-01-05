@@ -221,7 +221,7 @@ public class IPWReader extends FormatReader {
           RandomAccessInputStream s = poi.getDocumentStream(name);
           s.order(true);
           for (int q=0; q<s.length()/2; q++) {
-            addGlobalMeta("FrameInfo " + q, s.readShort());
+            addGlobalMetaList("FrameInfo", s.readShort());
           }
           s.close();
         }

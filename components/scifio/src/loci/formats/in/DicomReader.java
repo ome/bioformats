@@ -831,15 +831,12 @@ public class DicomReader extends FormatReader {
           // make sure that values are not overwritten
           Object v = getMetadataValue(key);
           metadata.remove(key);
-          addSeriesMeta(key + " #1", v);
-          addSeriesMeta(key + " #2", info);
+          addSeriesMetaList(key, v);
+          addSeriesMetaList(key, info);
         }
-        else if (metadata.containsKey(key + " #1")) {
-          int index = 2;
-          while (metadata.containsKey(key + " #" + index)) index++;
-          addSeriesMeta(key + " #" + index, info);
+        else {
+          addSeriesMetaList(key, info);
         }
-        else addSeriesMeta(key, info);
       }
     }
   }

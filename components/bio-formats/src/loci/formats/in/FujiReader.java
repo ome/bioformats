@@ -164,8 +164,8 @@ public class FujiReader extends FormatReader {
     core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
     core[0].dimensionOrder = "XYCZT";
 
-    for (int i=0; i<lines.length; i++) {
-      addGlobalMeta("Line #" + (i + 1), lines[i]);
+    for (String line : lines) {
+      addGlobalMetaList("Line", line);
     }
 
     MetadataStore store = makeFilterMetadata();

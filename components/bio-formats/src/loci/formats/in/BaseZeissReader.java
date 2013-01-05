@@ -795,11 +795,7 @@ public abstract class BaseZeissReader extends FormatReader {
       try {
         if (key.equals("Image Channel Index")) {
           cIndex = Integer.parseInt(value);
-          int v = 0;
-          while (getGlobalMeta(key + " " + v) != null) v++;
-          if (!getGlobalMetadata().containsValue(cIndex)) {
-            addGlobalMeta(key + " " + v, cIndex);
-          }
+          addGlobalMetaList(key, cIndex);
           continue;
         }
         else if (key.equals("ImageWidth")) {
@@ -981,11 +977,11 @@ public abstract class BaseZeissReader extends FormatReader {
         }
         else if (key.startsWith("Stage Position X")) {
           stageX.put(image, new Double(value));
-          addGlobalMeta("X position for position #" + stageX.size(), value);
+          addGlobalMetaList("X position for position", value);
         }
         else if (key.startsWith("Stage Position Y")) {
           stageY.put(image, new Double(value));
-          addGlobalMeta("Y position for position #" + stageY.size(), value);
+          addGlobalMetaList("Y position for position", value);
         }
         else if (key.startsWith("Orca Analog Gain")) {
           detectorGain.put(cIndex, new Double(value));
@@ -999,7 +995,7 @@ public abstract class BaseZeissReader extends FormatReader {
         else if (key.startsWith("Acquisition Date")) {
           if (timepoint > 0) {
             timestamps.put(new Integer(timepoint - 1), value);
-            addGlobalMeta("Timestamp " + timepoint, value);
+            addGlobalMetaList("Timestamp", value);
           }
           else {
             timestamps.put(new Integer(timepoint), value);

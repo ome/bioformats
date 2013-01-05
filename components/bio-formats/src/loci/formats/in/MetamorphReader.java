@@ -800,7 +800,7 @@ public class MetamorphReader extends BaseTiffReader {
       timestamps = handler.getTimestamps();
 
       for (int t=0; t<timestamps.size(); t++) {
-        addSeriesMeta("timestamp " + t, DateTools.formatDate(timestamps.get(t),
+        addSeriesMetaList("timestamp", DateTools.formatDate(timestamps.get(t),
           MEDIUM_DATE_FORMAT));
       }
 

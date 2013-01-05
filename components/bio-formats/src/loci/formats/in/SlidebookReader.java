@@ -1319,7 +1319,7 @@ public class SlidebookReader extends FormatReader {
         for (int c=0; c<getSizeC(); c++) {
           if (index < channelNames.size() && channelNames.get(index) != null) {
             store.setChannelName(channelNames.get(index), i, c);
-            addSeriesMeta("channel " + c, channelNames.get(index));
+            addSeriesMetaList("channel", channelNames.get(index));
           }
           if (index < ndFilters.size() && ndFilters.get(index) != null) {
             store.setChannelNDFilter(ndFilters.get(index), i, c);

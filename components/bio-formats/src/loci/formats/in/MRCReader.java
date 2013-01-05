@@ -273,7 +273,7 @@ public class MRCReader extends FormatReader {
       addGlobalMeta("VD2", in.readShort());
 
       for (int i=0; i<6; i++) {
-        addGlobalMeta("Angle " + (i + 1), in.readFloat());
+        addGlobalMetaList("Angle", in.readFloat());
       }
 
       in.skipBytes(24);
@@ -281,7 +281,7 @@ public class MRCReader extends FormatReader {
       addGlobalMeta("Number of useful labels", in.readInt());
 
       for (int i=0; i<10; i++) {
-        addGlobalMeta("Label " + (i + 1), in.readString(80));
+        addGlobalMetaList("Label", in.readString(80));
       }
     }
 

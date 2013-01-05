@@ -1093,7 +1093,7 @@ public class LeicaReader extends FormatReader {
     timestamps[seriesIndex] = new String[numStamps];
     for (int j=0; j<numStamps; j++) {
       timestamps[seriesIndex][j] = getString(64);
-      addSeriesMeta("Timestamp " + j, timestamps[seriesIndex][j]);
+      addSeriesMetaList("Timestamp", timestamps[seriesIndex][j]);
     }
 
     if (in.getFilePointer() < in.length()) {
@@ -1112,7 +1112,7 @@ public class LeicaReader extends FormatReader {
           else break;
         }
         if (in.getFilePointer() >= in.length()) break;
-        addSeriesMeta("Time-marker " + j, getString(64));
+        addSeriesMetaList("Time-marker", getString(64));
       }
     }
   }
@@ -1426,7 +1426,7 @@ public class LeicaReader extends FormatReader {
           for (int q=0; q<core[series].imageCount; q++) {
             store.setPlanePositionX(new Double(data), series, q);
             if (q == 0) {
-              addGlobalMeta("X position for position #" + (series + 1), data);
+              addGlobalMetaList("X position for position", data);
             }
           }
         }
@@ -1434,14 +1434,14 @@ public class LeicaReader extends FormatReader {
           for (int q=0; q<core[series].imageCount; q++) {
             store.setPlanePositionY(new Double(data), series, q);
             if (q == 0) {
-              addGlobalMeta("Y position for position #" + (series + 1), data);
+              addGlobalMetaList("Y position for position", data);
             }
           }
         }
         else if (tokens[2].equals("ZPos")) {
           store.setStageLabelName("Position", series);
           store.setStageLabelZ(new Double(data), series);
-          addGlobalMeta("Z position for position #" + (series + 1), data);
+          addGlobalMetaList("Z position for position", data);
         }
       }
       else if (tokens[0].equals("CScanActuator") &&
@@ -1450,7 +1450,7 @@ public class LeicaReader extends FormatReader {
         double pos = Double.parseDouble(data) * 1000000;
         store.setStageLabelName("Position", series);
         store.setStageLabelZ(pos, series);
-        addGlobalMeta("Z position for position #" + (series + 1), pos);
+        addGlobalMetaList("Z position for position", pos);
       }
 
       if (contentID.equals("dblVoxelX")) {

@@ -291,8 +291,8 @@ public class Ecat7Reader extends FormatReader {
     addGlobalMeta("Facility name", facilityName);
     addGlobalMeta("Number of gates", numGates);
     addGlobalMeta("Number of bed positions", numBedPositions);
-    for (int i=0; i<bedPositions.length; i++) {
-      addGlobalMeta("Bed position #" + (i + 1), bedPositions[i]);
+    for (float bedPos : bedPositions) {
+      addGlobalMetaList("Bed position", bedPos);
     }
     addGlobalMeta("Plane separation", planeSeparation);
     addGlobalMeta("Lower threshold", lowerThreshold);
@@ -308,8 +308,8 @@ public class Ecat7Reader extends FormatReader {
       wellCounterCorrectionFactor);
     addGlobalMeta("Data units", dataUnits);
     addGlobalMeta("Septa state", septaState);
-    for (int i=0; i<fillCTI.length; i++) {
-      addGlobalMeta("Fill CTI #" + (i + 1), fillCTI[i]);
+    for (float fill : fillCTI) {
+      addGlobalMetaList("Fill CTI", fill);
     }
 
     addGlobalMeta("Data type", dataType);
@@ -361,11 +361,11 @@ public class Ecat7Reader extends FormatReader {
     addGlobalMeta("Scatter type", scatterType);
     addGlobalMeta("Recon. type", reconType);
     addGlobalMeta("Recon. views", reconViews);
-    for (int i=0; i<ctiFill.length; i++) {
-      addGlobalMeta("CTI fill #" + (i + 1), ctiFill[i]);
+    for (float cti : ctiFill) {
+      addGlobalMeta("CTI fill", cti);
     }
-    for (int i=0; i<userFill.length; i++) {
-      addGlobalMeta("User fill #" + (i + 1), userFill[i]);
+    for (float user : userFill) {
+      addGlobalMeta("User fill", user);
     }
 
     MetadataStore store = makeFilterMetadata();

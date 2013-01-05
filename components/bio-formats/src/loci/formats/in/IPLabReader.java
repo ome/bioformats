@@ -257,7 +257,7 @@ public class IPLabReader extends FormatReader {
 
           String sourceType = (source >= 0 && source < types.length) ?
             types[source] : "user";
-          addGlobalMeta("NormalizationSource" + i, sourceType);
+          addGlobalMetaList("NormalizationSource", sourceType);
 
           double min = in.readDouble();
           double max = in.readDouble();
@@ -265,11 +265,11 @@ public class IPLabReader extends FormatReader {
           double black = in.readDouble();
           double white = in.readDouble();
 
-          addGlobalMeta("NormalizationMin" + i, min);
-          addGlobalMeta("NormalizationMax" + i, max);
-          addGlobalMeta("NormalizationGamma" + i, gamma);
-          addGlobalMeta("NormalizationBlack" + i, black);
-          addGlobalMeta("NormalizationWhite" + i, white);
+          addGlobalMetaList("NormalizationMin", min);
+          addGlobalMetaList("NormalizationMax", max);
+          addGlobalMetaList("NormalizationGamma", gamma);
+          addGlobalMetaList("NormalizationBlack", black);
+          addGlobalMetaList("NormalizationWhite", white);
         }
       }
       else if (tag.equals("head")) {
@@ -318,8 +318,8 @@ public class IPLabReader extends FormatReader {
           float unitsPerPixel = in.readFloat();
           int xUnitName = in.readInt();
 
-          addGlobalMeta("ResolutionStyle" + i, xResStyle);
-          addGlobalMeta("UnitsPerPixel" + i, unitsPerPixel);
+          addGlobalMetaList("ResolutionStyle", xResStyle);
+          addGlobalMetaList("UnitsPerPixel", unitsPerPixel);
 
           switch (xUnitName) {
             case 2: // mm
@@ -341,7 +341,7 @@ public class IPLabReader extends FormatReader {
 
           if (i == 0) pixelSize = new Double(unitsPerPixel);
 
-          addGlobalMeta("UnitName" + i, xUnitName);
+          addGlobalMetaList("UnitName", xUnitName);
         }
       }
       else if (tag.equals("view")) {
@@ -385,7 +385,7 @@ public class IPLabReader extends FormatReader {
               break;
           }
 
-          addGlobalMeta("Timestamp " + i, timepoint);
+          addGlobalMetaList("Timestamp", timepoint);
 
           for (int c=0; c<getSizeC(); c++) {
             for (int z=0; z<getSizeZ(); z++) {

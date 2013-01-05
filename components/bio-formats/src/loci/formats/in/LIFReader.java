@@ -961,16 +961,12 @@ public class LIFReader extends FormatReader {
       translateDetectors(image, i);
 
       Stack<String> nameStack = new Stack<String>();
-      HashMap<String, Integer> indexes = new HashMap<String, Integer>();
-      populateOriginalMetadata(image, nameStack, indexes);
-      indexes.clear();
+      populateOriginalMetadata(image, nameStack);
     }
     setSeries(0);
   }
 
-  private void populateOriginalMetadata(Element root, Stack<String> nameStack,
-    HashMap<String, Integer> indexes)
-  {
+  private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
     String name = root.getNodeName();
     if (root.hasAttributes() && !name.equals("Element") &&
       !name.equals("Attachment") && !name.equals("LMSDataContainerHeader"))
@@ -991,10 +987,7 @@ public class LIFReader extends FormatReader {
         value.length() > 0 && !suffix.equals("HighInteger") &&
         !suffix.equals("LowInteger"))
       {
-        Integer i = indexes.get(key.toString() + suffix);
-        String storedKey = key.toString() + suffix + " " + (i == null ? 0 : i);
-        indexes.put(key.toString() + suffix, i == null ? 1 : i + 1);
-        addSeriesMeta(storedKey, value);
+        addSeriesMetaList(key.toString() + suffix, value);
       }
       else {
         NamedNodeMap attributes = root.getAttributes();
@@ -1003,13 +996,7 @@ public class LIFReader extends FormatReader {
           if (!attr.getName().equals("HighInteger") &&
             !attr.getName().equals("LowInteger"))
           {
-            Integer index = indexes.get(key.toString() + attr.getName());
-            if (index == null) {
-              index = 0;
-            }
-            String storedKey = key.toString() + attr.getName() + " " + index;
-            indexes.put(key.toString() + attr.getName(), index + 1);
-            addSeriesMeta(storedKey, attr.getValue());
+            addSeriesMeta(key.toString() + attr.getName(), attr.getValue());
           }
         }
       }
@@ -1019,7 +1006,7 @@ public class LIFReader extends FormatReader {
     for (int i=0; i<children.getLength(); i++) {
       Object child = children.item(i);
       if (child instanceof Element) {
-        populateOriginalMetadata((Element) child, nameStack, indexes);
+        populateOriginalMetadata((Element) child, nameStack);
       }
     }
 

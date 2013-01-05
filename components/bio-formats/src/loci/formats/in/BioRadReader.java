@@ -615,13 +615,12 @@ public class BioRadReader extends FormatReader {
   private boolean parseNotes(MetadataStore store) throws FormatException {
     boolean multipleFiles = false;
     int nextDetector = 0, nLasers = 0;
-    for (int noteIndex=0; noteIndex<noteStrings.size(); noteIndex++) {
-      Note n = noteStrings.get(noteIndex);
+    for (Note n : noteStrings) {
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         switch (n.type) {
           case NOTE_TYPE_USER:
             // TODO : this should be an overlay
-            addGlobalMeta("Note #" + noteIndex, n.toString());
+            addGlobalMetaList("Note", n.toString());
             break;
           case NOTE_TYPE_SCALEBAR:
             // TODO : this should be an overlay
@@ -629,7 +628,7 @@ public class BioRadReader extends FormatReader {
             // SCALEBAR = <length> <angle>
             // where <length> is the length of the scalebar in microns,
             // and <angle> is the angle in degrees
-            addGlobalMeta("Note #" + noteIndex, n.toString());
+            addGlobalMetaList("Note", n.toString());
             break;
           case NOTE_TYPE_ARROW:
             // TODO : this should be an overlay
@@ -638,7 +637,7 @@ public class BioRadReader extends FormatReader {
             // where <lx> and <ly> define the arrow's bounding box,
             // <angle> is the angle in degrees and <fill> is either "Fill" or
             // "Outline"
-            addGlobalMeta("Note #" + noteIndex, n.toString());
+            addGlobalMetaList("Note", n.toString());
             break;
           case NOTE_TYPE_VARIABLE:
             if (n.p.indexOf("=") >= 0) {
@@ -761,7 +760,7 @@ public class BioRadReader extends FormatReader {
               }
             }
             else {
-              addGlobalMeta("Note #" + noteIndex, n.toString());
+              addGlobalMetaList("Note", n.toString());
             }
             break;
           case NOTE_TYPE_STRUCTURE:
@@ -833,7 +832,7 @@ public class BioRadReader extends FormatReader {
                     for (int j=0; j<STRUCTURE_LABELS_3.length; j++) {
                       String v = j == STRUCTURE_LABELS_3.length - 1 ?
                         values[12 + i] : values[i * 4 + j];
-                      addGlobalMeta(STRUCTURE_LABELS_3[j] + " " + (i + 1), v);
+                      addGlobalMetaList(STRUCTURE_LABELS_3[j], v);
                     }
                   }
                   break;
@@ -844,29 +843,28 @@ public class BioRadReader extends FormatReader {
                   addGlobalMeta("Number of PMTs", values[2]);
                   for (int i=1; i<=3; i++) {
                     int idx = (i + 1) * 3;
-                    addGlobalMeta("Shutter present for laser " + i,
-                      values[i + 2]);
-                    addGlobalMeta("Neutral density filter for laser " + i,
+                    addGlobalMetaList("Shutter present for laser", values[i + 2]);
+                    addGlobalMetaList("Neutral density filter for laser",
                       values[idx]);
-                    addGlobalMeta("Excitation filter for laser " + i,
+                    addGlobalMetaList("Excitation filter for laser",
                       values[idx + 1]);
-                    addGlobalMeta("Use laser " + i, values[idx + 2]);
+                    addGlobalMetaList("Use laser", values[idx + 2]);
                   }
                   for (int i=0; i<nLasers; i++) {
-                    addGlobalMeta("Neutral density filter name - laser " +
-                      (i + 1), values[15 + i]);
+                    addGlobalMetaList("Neutral density filter name - laser",
+                      values[15 + i]);
                   }
                   break;
                 case 5:
-                  String prefix = "Excitation filter name - laser ";
+                  String prefix = "Excitation filter name - laser";
                   for (int i=0; i<nLasers; i++) {
-                    addGlobalMeta(prefix + (i + 1), values[i]);
+                    addGlobalMetaList(prefix, values[i]);
                   }
                   break;
                 case 6:
-                  prefix = "Emission filter name - laser ";
+                  prefix = "Emission filter name - laser";
                   for (int i=0; i<nLasers; i++) {
-                    addGlobalMeta(prefix + (i + 1), values[i]);
+                    addGlobalMeta(prefix, values[i]);
                   }
                   break;
                 case 7:
@@ -904,7 +902,7 @@ public class BioRadReader extends FormatReader {
                   for (int i=0; i<2; i++) {
                     prefix = "Part number for ";
                     for (int j=0; j<STRUCTURE_LABELS_5.length; j++) {
-                      addGlobalMeta(prefix + STRUCTURE_LABELS_5[j] + (i + 1),
+                      addGlobalMetaList(prefix + STRUCTURE_LABELS_5[j],
                         values[i * 4 + j]);
                     }
                   }
@@ -916,17 +914,14 @@ public class BioRadReader extends FormatReader {
                   break;
                 case 14:
                   prefix = "Filter Block Name - filter block ";
-                  addGlobalMeta(prefix + "1", values[0]);
-                  addGlobalMeta(prefix + "2", values[1]);
+                  addGlobalMetaList(prefix, values[0]);
+                  addGlobalMetaList(prefix, values[1]);
                   break;
                 case 15:
                   for (int i=0; i<5; i++) {
-                    addGlobalMeta("Image bands status - band " + (i + 1),
-                      values[i*3]);
-                    addGlobalMeta("Image bands min - band " + (i + 1),
-                      values[i*3 + 1]);
-                    addGlobalMeta("Image bands max - band " + (i + 1),
-                      values[i*3 + 2]);
+                    addGlobalMetaList("Image bands status - band", values[i*3]);
+                    addGlobalMetaList("Image bands min - band", values[i*3 + 1]);
+                    addGlobalMetaList("Image bands max - band", values[i*3 + 2]);
                     if (store instanceof IMinMaxStore) {
                       ((IMinMaxStore) store).setChannelGlobalMinMax(i,
                         Double.parseDouble(values[i*3 + 1]),
@@ -949,11 +944,10 @@ public class BioRadReader extends FormatReader {
                 case 18:
                   addGlobalMeta("Mixer 3 - enhanced", values[0]);
                   for (int i=1; i<=3; i++) {
-                    addGlobalMeta("Mixer 3 - PMT " + i + " percentage",
-                      values[i]);
-                    addGlobalMeta("Mixer 3 - Transmission " + i + " percentage",
+                    addGlobalMetaList("Mixer 3 - PMT percentage", values[i]);
+                    addGlobalMetaList("Mixer 3 - Transmission percentage",
                       values[i + 3]);
-                    addGlobalMeta("Mixer 3 - photon counting " + i,
+                    addGlobalMetaList("Mixer 3 - photon counting",
                       values[i + 7]);
                   }
                   addGlobalMeta("Mixer 3 - low signal on", values[7]);
@@ -963,9 +957,9 @@ public class BioRadReader extends FormatReader {
                   for (int i=1; i<=2; i++) {
                     prefix = "Mixer " + i + " - ";
                     String photon = prefix + "photon counting ";
-                    addGlobalMeta(photon + "1", values[i * 4 - 4]);
-                    addGlobalMeta(photon + "2", values[i * 4 - 3]);
-                    addGlobalMeta(photon + "3", values[i * 4 - 2]);
+                    addGlobalMetaList(photon, values[i * 4 - 4]);
+                    addGlobalMetaList(photon, values[i * 4 - 3]);
+                    addGlobalMetaList(photon, values[i * 4 - 2]);
                     addGlobalMeta(prefix + "mode", values[i * 4 - 1]);
                   }
                   break;
@@ -986,12 +980,10 @@ public class BioRadReader extends FormatReader {
                   addGlobalMeta("PIC file generated on Isoscan (lite)",
                     values[0]);
                   for (int i=1; i<=3; i++) {
-                    addGlobalMeta("Photon counting used (PMT " + i + ")",
-                      values[i]);
-                    addGlobalMeta("Hot spot filter used (PMT " + i + ")",
+                    addGlobalMetaList("Photon counting used - PMT", values[i]);
+                    addGlobalMetaList("Hot spot filter used - PMT",
                       values[i + 3]);
-                    addGlobalMeta("Tx Selector used (TX " + i + ")",
-                      values[i + 6]);
+                    addGlobalMetaList("Tx Selector used - TX", values[i + 6]);
                   }
                   break;
               }
@@ -999,7 +991,7 @@ public class BioRadReader extends FormatReader {
             break;
           default:
             // notes for display only
-            addGlobalMeta("Note #" + noteIndex, n.toString());
+            addGlobalMetaList("Note", n.toString());
         }
       }
 
@@ -1147,9 +1139,7 @@ public class BioRadReader extends FormatReader {
       }
       else if (qName.equals("Z") || qName.equals("C") || qName.equals("T")) {
         String stamp = attributes.getValue("TimeCompleted");
-        int count = 0;
-        while (metadata.containsKey("Timestamp " + count)) count++;
-        addGlobalMeta("Timestamp " + count, stamp);
+        addGlobalMetaList("Timestamp", stamp);
       }
     }
   }

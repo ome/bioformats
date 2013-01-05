@@ -252,7 +252,7 @@ public class JPEG2000Reader extends FormatReader {
         addGlobalMeta(key, value);
       }
       else {
-        addGlobalMeta("Comment #" + (i + 1), comment);
+        addGlobalMetaList("Comment", comment);
       }
     }
 
