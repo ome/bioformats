@@ -230,6 +230,14 @@ public class Colorizer {
         try {
           cMinVal = minMaxCalc.getChannelGlobalMinimum(cIndex);
           cMaxVal = minMaxCalc.getChannelGlobalMaximum(cIndex);
+
+          if (cMinVal == null) {
+            cMinVal = minMaxCalc.getChannelKnownMinimum(cIndex);
+          }
+
+          if (cMaxVal == null) {
+            cMaxVal = minMaxCalc.getChannelKnownMaximum(cIndex);
+          }
         }
         catch (FormatException exc) { }
         catch (IOException exc) { }
