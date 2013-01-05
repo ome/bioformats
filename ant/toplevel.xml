@@ -883,7 +883,8 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- Matlab -->
-  <target name="test-matlab" description="run Matlab tests">
+  <target name="test-matlab" description="run Matlab tests"
+	depends="tools">
 
     <property environment="env"/>
     <exec executable="matlab">
