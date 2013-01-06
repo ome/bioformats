@@ -510,7 +510,10 @@ public class ImportProcess implements StatusReporter {
 
     r = channelSeparator = new ChannelSeparator(r);
     r = dimensionSwapper = new DimensionSwapper(r);
-    r = minMaxCalculator = new MinMaxCalculator(r);
+    if (options.isAutoscale() || FormatTools.isFloatingPoint(r.getPixelType()))
+    {
+      r = minMaxCalculator = new MinMaxCalculator(r);
+    }
     if (options.doStitchTiles()) {
       r = tileStitcher = new TileStitcher(r);
     }

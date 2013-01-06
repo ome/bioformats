@@ -625,8 +625,24 @@ public class FV1000Reader extends FormatReader {
         LOGGER.warn("Could not find .pty file ({}); guessing at the " +
           "corresponding TIFF file.", file);
         String tiff = replaceExtension(file, ".pty", ".tif");
-        tiffs.add(ii, tiff);
-        continue;
+        Location tiffFile = new Location(tiff);
+        if (tiffFile.exists()) {
+          tiffs.add(ii, tiff);
+          continue;
+        }
+        else {
+          if (!tiffFile.getParentFile().exists()) {
+            String realOIFName = new Location(currentId).getName();
+            String basePath = tiffFile.getParentFile().getParent();
+            Location newFile = new Location(basePath, realOIFName + ".files");
+            if (newFile.exists()) {
+              String realDirectory = newFile.getName();
+              ptyFile = new Location(newFile, ptyFile.getName());
+              file = ptyFile.getAbsolutePath();
+              tiffPath = newFile.getAbsolutePath();
+            }
+          }
+        }
       }
 
       IniList pty = getIniFile(file);
