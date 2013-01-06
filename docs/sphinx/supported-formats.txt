@@ -468,6 +468,15 @@ Supported Formats
      - |Fair|
      - |no|
      - |no|
+   * - :doc:`formats/inveon`
+     - .hdr
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
    * - :doc:`formats/iplab`
      - .ipl
      - |Outstanding|
@@ -1162,7 +1171,7 @@ Supported Formats
      - |no|
      - |no|
 
-Bio-Formats currently supports **127** formats
+Bio-Formats currently supports **128** formats
 
 .. glossary::
     Pixels
@@ -1262,6 +1271,7 @@ Bio-Formats currently supports **127** formats
     formats/incell-1000
     formats/incell-3000
     formats/inr
+    formats/inveon
     formats/iplab
     formats/iplab-mac
     formats/jeol
