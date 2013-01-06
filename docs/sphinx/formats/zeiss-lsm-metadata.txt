@@ -101,6 +101,7 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * `Rectangle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle>`_: Y
   * `TransmittanceRange <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange>`_: CutIn
   * `TransmittanceRange <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange>`_: CutOut
+
 **Total supported: 84**
 
 **Total unknown or missing: 349**

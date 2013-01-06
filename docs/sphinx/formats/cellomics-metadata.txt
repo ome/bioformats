@@ -44,6 +44,7 @@ These fields are fully supported by the Bio-Formats Cellomics C01 format reader:
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: ID
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: ImageRef
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: Index
+
 **Total supported: 27**
 
 **Total unknown or missing: 406**

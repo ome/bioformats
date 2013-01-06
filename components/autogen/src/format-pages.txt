@@ -49,7 +49,7 @@ scifio = no
 export = no
 weHave = * one .aim file
 weWant = * an .aim specification document \n
-more .aim files
+* more .aim files
 pixelsRating = Good
 metadataRating = Very good
 opennessRating = Fair
@@ -124,6 +124,7 @@ utilityRating = Fair
 reader = AnalyzeReader.java
 
 [Andor Bio-Imaging Division (ABD) TIFF]
+metadataPage = olympus-fluoview-tiff-metadata
 pagename = abd-tiff
 extensions = .tif
 owner = `Andor Technology <http://www.andor.com/>`_
@@ -143,6 +144,7 @@ notes = With a few minor exceptions, the ABD-TIFF format is identical to the \n
 Fluoview TIFF format.
 
 [Animated PNG]
+metadataPage = png-metadata
 extensions = .png
 developer = `The Animated PNG Project <http://www.animatedpng.com/>`_
 scifio = yes
@@ -312,6 +314,7 @@ notes = * Commercial applications that support this format include: \n
   * `SVI Huygens <http://svi.nl/>`_
 
 [Bitplane Imaris]
+metadataPage = 
 extensions = .ims
 owner = `Bitplane <http://www.bitplane.com/>`_
 scifio = no

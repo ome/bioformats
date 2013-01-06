@@ -160,6 +160,15 @@ public class FormatPageAutogen {
 
       context.put("metadataPage",
         filename.substring(filename.indexOf(File.separator) + 1) + "-metadata");
+      if (table.containsKey("metadataPage")) {
+        String page = table.get("metadataPage");
+        if (page.length() > 0) {
+          context.put("metadataPage", table.get("metadataPage"));
+        }
+        else {
+          context.remove("metadataPage");
+        }
+      }
 
       VelocityTools.processTemplate(engine, context, TEMPLATE,
         "../../docs/sphinx/" + filename + ".txt");

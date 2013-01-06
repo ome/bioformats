@@ -18,7 +18,6 @@ Export: |no|
 
 Officially Supported Versions: 2.7, 3.0, 5.5
 
-Supported Metadata Fields: :doc:`Bitplane Imaris <bitplane-imaris-metadata>`
 
 
 

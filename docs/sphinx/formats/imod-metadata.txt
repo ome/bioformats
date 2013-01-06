@@ -49,6 +49,7 @@ These fields are fully supported by the Bio-Formats IMOD format reader:
   * `Polyline <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline>`_: TheZ
   * `ROI <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ROI>`_: ID
   * `ROI <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ROI>`_: Name
+
 **Total supported: 32**
 
 **Total unknown or missing: 401**
