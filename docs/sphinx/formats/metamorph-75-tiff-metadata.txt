@@ -50,6 +50,7 @@ These fields are fully supported by the Bio-Formats Metamorph TIFF format reader
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: ID
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: ImageRef
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: Index
+
 **Total supported: 33**
 
 **Total unknown or missing: 400**

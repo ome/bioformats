@@ -61,6 +61,7 @@ These fields are fully supported by the Bio-Formats Nikon Elements TIFF format r
   * `Plane <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane>`_: TheC
   * `Plane <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane>`_: TheT
   * `Plane <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane>`_: TheZ
+
 **Total supported: 44**
 
 **Total unknown or missing: 389**

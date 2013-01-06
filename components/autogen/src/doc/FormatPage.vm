@@ -27,7 +27,9 @@ Export: |$export|
 
 Officially Supported Versions: $versions
 
+#if ($metadataPage)
 Supported Metadata Fields: :doc:`$format <$metadataPage>`
+#end
 
 #if ($software)
 Freely Available Software:

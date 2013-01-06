@@ -18,7 +18,7 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields: :doc:`Animated PNG <animated-png-metadata>`
+Supported Metadata Fields: :doc:`Animated PNG <png-metadata>`
 
 Freely Available Software:
 

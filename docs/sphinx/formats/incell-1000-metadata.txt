@@ -75,6 +75,7 @@ These fields are fully supported by the Bio-Formats InCell 1000/2000 format read
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: Index
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: PositionX
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: PositionY
+
 **Total supported: 58**
 
 **Total unknown or missing: 375**

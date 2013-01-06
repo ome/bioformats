@@ -146,6 +146,7 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * `TransmittanceRange <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange>`_: CutOut
   * `TransmittanceRange <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange>`_: CutOutTolerance
   * `TransmittanceRange <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange>`_: Transmittance
+
 **Total supported: 129**
 
 **Total unknown or missing: 304**

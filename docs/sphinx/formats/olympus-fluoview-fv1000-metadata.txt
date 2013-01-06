@@ -114,6 +114,7 @@ These fields are fully supported by the Bio-Formats Olympus FV1000 format reader
   * `Rectangle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle>`_: Y
   * `TransmittanceRange <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange>`_: CutIn
   * `TransmittanceRange <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange>`_: CutOut
+
 **Total supported: 97**
 
 **Total unknown or missing: 336**

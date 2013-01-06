@@ -43,6 +43,7 @@ These fields are fully supported by the $handler:
   * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop
 #end##if $comment
 #end##foreach $yes
+
 **Total supported: $yesList.size()**
 #end##if $yesCount > 0
 #if ($partialCount > 0)
@@ -63,6 +64,7 @@ but there may be cases where the field is not converted:
   * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop
 #end##if $comment
 #end##foreach $partial
+
 **Total partially supported: $partialList.size()**
 #end##if $partialCount > 0
 

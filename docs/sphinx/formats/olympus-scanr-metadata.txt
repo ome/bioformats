@@ -53,6 +53,7 @@ These fields are fully supported by the Bio-Formats Olympus ScanR format reader:
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: Index
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: PositionX
   * `WellSample <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample>`_: PositionY
+
 **Total supported: 36**
 
 **Total unknown or missing: 397**
