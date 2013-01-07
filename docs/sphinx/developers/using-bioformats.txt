@@ -18,7 +18,7 @@ For a complete list of supported formats, see the Bio-Formats
 For a few working examples of how to use Bio-Formats, see 
 `these Github pages <http://github.com/openmicroscopy/bioformats/tree/develop/components/bio-formats/utils>`_
 
-Basic File Reading
+Basic file reading
 ------------------
 
 Bio-Formats provides several methods for retrieving data from files in an
@@ -33,10 +33,11 @@ contains additional logic to automatically detect the format of a file and
 delegate subsequent calls to the appropriate reader.
 
 Prior to retrieving pixels or metadata, it is necessary to call 
-``setId(String)``
+:javadoc:`setId(String)
+<loci/formats/IFormatHandler.html#setId(java.lang.String)>`
 on the reader instance, passing in the name of the file to read.  Some formats
 allow multiple series (5D image stacks) per file; in this case you may wish to
-call ``setSeries(int)`` to change which series is being read.
+call :javadoc:`setSeries(int) <loci/formats/IFormatReader.html#setSeries(int)>` to change which series is being read.
 
 Raw pixels are always retrieved one plane at a time.  Planes are returned
 as raw byte arrays, using one of the openBytes methods.
@@ -45,19 +46,33 @@ Core metadata is the general term for anything that might be needed to work
 with the planes in a file.  A list of core metadata fields is given below, 
 with the appropriate accessor method in parentheses:
 
-- image width (``getSizeX()``)
-- image height (``getSizeY()``)
-- number of series per file (``getSeriesCount()``)
-- total number of images per series (``getImageCount()``)
-- number of slices in the current series (``getSizeZ()``)
-- number of timepoints in the current series (``getSizeT()``)
-- number of actual channels in the current series (``getSizeC()``)
-- number of channels per image (``getRGBChannelCount()``)
-- the ordering of the images within the current series (``getDimensionOrder()``)
-- whether each image is RGB (``isRGB()``)
-- whether the pixel bytes are in little-endian order (``isLittleEndian()``)
-- whether the channels in an image are interleaved (``isInterleaved()``)
-- the type of pixel data in this file (``getPixelType()``)
+- image width (:javadoc:`getSizeX()
+  <loci/formats/IFormatReader.html#getSizeX()>`)
+- image height (:javadoc:`getSizeY()
+  <loci/formats/IFormatReader.html#getSizeY()>`)
+- number of series per file (:javadoc:`getSeriesCount()
+  <loci/formats/IFormatReader.html#getSeriesCount()>`)
+- total number of images per series (:javadoc:`getImageCount()
+  <loci/formats/IFormatReader.html#getImageCount()>`)
+- number of slices in the current series (:javadoc:`getSizeZ()
+  <loci/formats/IFormatReader.html#getSizeZ()>`)
+- number of timepoints in the current series (:javadoc:`getSizeT()
+  <loci/formats/IFormatReader.html#getSizeT()>`)
+- number of actual channels in the current series (:javadoc:`getSizeC()
+  <loci/formats/IFormatReader.html#getSizeC()>`)
+- number of channels per image (:javadoc:`getRGBChannelCount()
+  <loci/formats/IFormatReader.html#getRGBChannelCount()>`)
+- the ordering of the images within the current series
+  (:javadoc:`getDimensionOrder()
+  <loci/formats/IFormatReader.html#getDimensionOrder()>`)
+- whether each image is RGB (:javadoc:`isRGB()
+  <loci/formats/IFormatReader.html#isRGB()>`)
+- whether the pixel bytes are in little-endian order
+  (:javadoc:`isLittleEndian() <loci/formats/IFormatReader.html#isLittleEndian()>`)
+- whether the channels in an image are interleaved (:javadoc:`isInterleaved()
+  <loci/formats/IFormatReader.html#isInterleaved()>`)
+- the type of pixel data in this file (:javadoc:`getPixelType()
+  <loci/formats/IFormatReader.html#getPixelType()>`)
 
 All file formats are guaranteed to accurately report core metadata.
 
@@ -65,8 +80,10 @@ Format-specific metadata refers to any other data specified in the file - this
 includes acquisition and hardware parameters, among other things.  This data
 is stored internally in a **java.util.Hashtable**, and can be accessed in one of
 two ways: individual values can be retrieved by calling
-``getMetadataValue(String)``, which gets the value of the specified key.
-Alternatively, ``getMetadata()`` will return the entire Hashtable.
+:javadoc:`getMetadataValue(String)
+<loci/formats/IFormatReader.html#getMetadataValue(java.lang.String)>`, which gets the value of the specified key.
+Alternatively, :javadoc:`getMetadata()
+<loci/formats/IFormatReader.html#getMetadata()>` will return the entire Hashtable.
 Note that the keys in this Hashtable are different for each format, hence the
 name "format-specific metadata".
 
@@ -156,7 +173,3 @@ Known oddities:
 - If you are working on a Macintosh, make sure that the data and resource 
   forks of your image files are stored together.  Bio-Formats does not handle
   separated forks (the native QuickTime reader tries, but usually fails).
-
-- RLE-compressed QuickTime movies will look funny if the planes are not read
-  in sequential order, since proper decoding of a particular plane can depend
-  on the previous plane.

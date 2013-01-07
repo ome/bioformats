@@ -85,9 +85,10 @@ public class FormatPageAutogen {
     }
 
     VelocityEngine engine = VelocityTools.createEngine();
-    VelocityContext context = VelocityTools.createContext();
 
     for (IniTable table : data) {
+      VelocityContext context = VelocityTools.createContext();
+
       String format = table.get(IniTable.HEADER_KEY);
       context.put("format", format);
       if (table.containsKey("extensions")) {
@@ -156,6 +157,19 @@ public class FormatPageAutogen {
         context.put("reader", reader);
       }
       String filename = getPageName(format, table.get("pagename"));
+
+      context.put("metadataPage",
+        filename.substring(filename.indexOf(File.separator) + 1) + "-metadata");
+      if (table.containsKey("metadataPage")) {
+        String page = table.get("metadataPage");
+        if (page.length() > 0) {
+          context.put("metadataPage", table.get("metadataPage"));
+        }
+        else {
+          context.remove("metadataPage");
+        }
+      }
+
       VelocityTools.processTemplate(engine, context, TEMPLATE,
         "../../docs/sphinx/" + filename + ".txt");
     }
@@ -199,7 +213,7 @@ public class FormatPageAutogen {
 
   // -- Helper methods --
 
-  private String getPageName(String format, String pagename) {
+  protected static String getPageName(String format, String pagename) {
     String realPageName = pagename;
     if (realPageName == null) {
       realPageName = format.replaceAll("/", "");

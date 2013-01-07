@@ -1,10 +1,8 @@
 .. index:: Bruker MRI
-.. index:: .ims
 
 Bruker MRI
 ===============================================================================
 
-Extensions: .ims 
 
 Developer: `Bruker <http://www.bruker.com/>`_
 
@@ -18,7 +16,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Bruker MRI <bruker-mri-metadata>`
 
 Freely Available Software:
 
@@ -27,11 +25,11 @@ Freely Available Software:
 
 We currently have:
 
-- a few Bruker MRI datasets
+* a few Bruker MRI datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
 **Ratings**
 

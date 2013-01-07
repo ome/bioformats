@@ -19,19 +19,18 @@ Export: |no|
 
 Officially Supported Versions: 4.1, 4.2
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`3i SlideBook <3i-slidebook-metadata>`
 
 
 
 We currently have:
 
-- Numerous SlideBook datasets 
-- Some :source:`Bio-Formats developer notes <components/bio-formats/doc/slidebook.html>` for SlideBook
+* Numerous SlideBook datasets
 
 We would like to have:
 
-- A SlideBook specification document 
-- More SlideBook datasets (preferably acquired with the most recent SlideBook software)
+* A SlideBook specification document 
+* More SlideBook datasets (preferably acquired with the most recent SlideBook software)
 
 **Ratings**
 

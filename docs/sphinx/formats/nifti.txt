@@ -18,11 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`NIfTI <nifti-metadata>`
 
-Freely Available Software:
-
-- `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
 
 Sample Datasets:
 
@@ -30,13 +27,11 @@ Sample Datasets:
 
 We currently have:
 
-- `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_ 
-- several NIfTI datasets
+* `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_ 
+* several NIfTI datasets
 
 We would like to have:
 
-- an official specification document 
-- more Molecular Imaging files
 
 **Ratings**
 

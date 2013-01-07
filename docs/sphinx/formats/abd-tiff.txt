@@ -19,18 +19,17 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Andor Bio-Imaging Division (ABD) TIFF <olympus-fluoview-tiff-metadata>`
 
 
 
 We currently have:
 
-- an ABD-TIFF specification document (from 2005 November, in PDF) 
-- a few ABD-TIFF datasets
+* an ABD-TIFF specification document (from 2005 November, in PDF) 
+* a few ABD-TIFF datasets
 
 We would like to have:
 
-- more Amira Mesh datasets
 
 **Ratings**
 

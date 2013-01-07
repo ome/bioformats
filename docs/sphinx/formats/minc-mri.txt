@@ -18,23 +18,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`MINC MRI <minc-mri-metadata>`
 
 Freely Available Software:
 
 - `MINC <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
 
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- a few MINC files
+* a few MINC files
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 

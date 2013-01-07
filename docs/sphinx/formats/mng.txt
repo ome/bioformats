@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`MNG (Multiple-image Network Graphics) <mng-metadata>`
 
 Freely Available Software:
 
@@ -30,12 +30,11 @@ Sample Datasets:
 
 We currently have:
 
-- the `libmng-testsuites <http://downloads.sourceforge.net/libmng/MNGsuite-20030305.zip>`_ package (from 2003 March 05, in C) 
-- a large number of MNG datasets
+* the `libmng-testsuites <http://downloads.sourceforge.net/libmng/MNGsuite-20030305.zip>`_ package (from 2003 March 05, in C) 
+* a large number of MNG datasets
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 

@@ -18,23 +18,17 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Kodak BIP <kodak-bip-metadata>`
 
-Freely Available Software:
 
-- `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
-
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- a few .bip datasets
+* a few .bip datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
 **Ratings**
 

@@ -18,23 +18,17 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Nikon Elements TIFF <nikon-elements-tiff-metadata>`
 
-Freely Available Software:
 
-- `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
-
-Sample Datasets:
-
-- `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
 
 We currently have:
 
-- a few Nikon Elements TIFF files
+* a few Nikon Elements TIFF files
 
 We would like to have:
 
-- more Nikon Elements TIFF files
+* more Nikon Elements TIFF files
 
 **Ratings**
 
