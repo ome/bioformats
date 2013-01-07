@@ -23,7 +23,7 @@ physical width of the image in microns) in a format-independent way.
 #set ($handledPercent = 100 * $handledCount / $totalCount)
 #set ($bfCount = $yesCount + $partialCount)
 #set ($bfPercent = 100 * $bfCount / $handledCount)
-Of the $totalCount fields documented below:
+Of the $totalCount fields documented in the :doc:`metadata summary table </metadata-summary>`:
   * The file format itself supports $handledCount of them ($handledPercent%).
   * Of those, Bio-Formats fully or partially converts $bfCount ($bfPercent%).
 #if ($yesCount > 0)
