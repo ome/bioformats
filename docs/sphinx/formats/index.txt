@@ -5,7 +5,9 @@ Bio-Formats supports over 120 different file formats. The :doc:`dataset-table`
 explains the file extension you should choose to open/import a dataset in any 
 of these formats, while the :doc:`/supported-formats` table lists all of the 
 formats and gives an indication of how well they are supported and whether 
-Bio-Formats can write, as well as read, each format.
+Bio-Formats can write, as well as read, each format.  The
+:doc:`/metadata-summary` table shows an overview of the :doc:`OME data model
+</about/index>` fields populated for each format.
 
 .. only:: html
 
