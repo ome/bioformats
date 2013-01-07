@@ -1,7 +1,8 @@
 Summary of supported metadata fields
 ===============================================================================
 
-**Format readers**
+Format readers
+--------------
 
 .. tabularcolumns:: |p{3cm}|c|c|c|c|
 
@@ -766,7 +767,8 @@ Summary of supported metadata fields
      - 0
      - 418
 
-**Metadata Fields**
+Metadata fields
+---------------
 
 .. tabularcolumns:: |p{3cm}|c|c|c|c|
 

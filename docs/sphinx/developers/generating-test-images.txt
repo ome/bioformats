@@ -8,7 +8,7 @@ testing. To generate a file (that contains gradient images):
 
     touch "my-special-test-file&pixelType=uint8&sizeX=8192&sizeY=8192.fake"
 
-Whatever is before the `&` is the image name; remaining key value pairs
+Whatever is before the ``&`` is the image name; remaining key value pairs
 should be pretty self-explanatory. Just replace the values with whatever
 you need for testing.
 

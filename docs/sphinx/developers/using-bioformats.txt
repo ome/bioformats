@@ -18,7 +18,7 @@ For a complete list of supported formats, see the Bio-Formats
 For a few working examples of how to use Bio-Formats, see 
 `these Github pages <http://github.com/openmicroscopy/bioformats/tree/develop/components/bio-formats/utils>`_
 
-Basic File Reading
+Basic file reading
 ------------------
 
 Bio-Formats provides several methods for retrieving data from files in an

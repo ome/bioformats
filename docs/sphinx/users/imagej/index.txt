@@ -54,7 +54,7 @@ directly from ImageJ. Select "Plugins>LOCI>Update LOCI Plugins" from the
 ImageJ menu, then select which release you would like to use. You will
 then need to restart ImageJ to complete the upgrade process.
 
-Macros and Plugins
+Macros and plugins
 ------------------
 
 Bio-Formats is fully scriptable in a macro, and callable from a plugin.

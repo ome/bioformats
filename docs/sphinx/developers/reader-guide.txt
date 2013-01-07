@@ -263,6 +263,7 @@ Other useful things
 | -format      | read file with a particular reader (e.g., ZeissZVI)      |
 +--------------+----------------------------------------------------------+
 
+* = may result in loss of precision
 
 - If you wish to test using TestNG, 
   :source:`loci.tests.testng.FormatReaderTest <components/test-suite/src/loci/tests/testng/FormatReaderTest.java>`

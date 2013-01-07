@@ -1,7 +1,8 @@
 Summary of supported metadata fields
 ===============================================================================
 
-**Format readers**
+Format readers
+--------------
 
 .. tabularcolumns:: |p{3cm}|c|c|c|c|
 
@@ -33,7 +34,8 @@ Summary of supported metadata fields
      - $missingCount
 #end##foreach $handler
 
-**Metadata Fields**
+Metadata fields
+---------------
 
 .. tabularcolumns:: |p{3cm}|c|c|c|c|
 
