@@ -324,7 +324,6 @@ public class PrairieReader extends FormatReader {
 
   private void populateMetadataStore() throws FormatException {
     LOGGER.info("Populating OME metadata");
-    CoreMetadata m = core.get(0);
 
     boolean minimumMetadata =
       getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;

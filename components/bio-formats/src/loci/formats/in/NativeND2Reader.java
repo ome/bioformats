@@ -1114,7 +1114,6 @@ public class NativeND2Reader extends FormatReader {
         for (int i=0; i<offsets.length; i++) {
           CoreMetadata ms = new CoreMetadata();
           core.add(ms);
-          ms = new CoreMetadata();
           ms.sizeX = x;
           ms.sizeY = y;
           ms.sizeC = c == 0 ? 1 : c;

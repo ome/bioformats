@@ -122,7 +122,7 @@ public class ND2Handler extends BaseHandler {
     super();
     this.populateXY = populateXY;
     this.nImages = nImages;
-    this.core = this.core = new ArrayList<CoreMetadata>(core);
+    this.core = new ArrayList<CoreMetadata>(core);
     if (this.core.size() > 1) {
       fieldIndex = 2;
     }

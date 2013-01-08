@@ -947,11 +947,12 @@ public class LIFReader extends FormatReader {
     imageROIs = new ROI[imageNodes.getLength()][];
     imageNames = new String[imageNodes.getLength()];
 
+    core.clear();
     for (int i=0; i<imageNodes.getLength(); i++) {
       Element image = (Element) imageNodes.item(i);
 
       CoreMetadata ms = new CoreMetadata();
-      core.add(i, ms);
+      core.add(ms);
 
       setSeries(i);
 

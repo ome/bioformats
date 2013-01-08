@@ -205,8 +205,6 @@ public class L2DReader extends FormatReader {
       TiffReader r = new TiffReader();
       r.setMetadataStore(getMetadataStore());
       r.setId(id);
-      // TODO: Is this assignment redundant?  We unconditionally
-      // replace it below.
       core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
