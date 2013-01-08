@@ -19,25 +19,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Quesant <quesant-metadata>`
 
-Freely Available Software:
 
-- `PNG Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/png-writer.html>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- Pascal code that can read Quesant files (from ImageSXM) 
-- several Quesant files
+* Pascal code that can read Quesant files (from ImageSXM) 
+* several Quesant files
 
 We would like to have:
 
-- an official specification document 
-- more Quesant files
+* an official specification document 
+* more Quesant files
 
 **Ratings**
 

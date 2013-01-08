@@ -18,22 +18,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Burleigh <burleigh-metadata>`
 
-Freely Available Software:
-
-- `Bruker plugin for ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_
 
 
 We currently have:
 
-- Pascal code that can read Burleigh files (from ImageSXM) 
-- a few Burleigh files
+* Pascal code that can read Burleigh files (from ImageSXM) 
+* a few Burleigh files
 
 We would like to have:
 
-- a Burleigh file format specification 
-- more Burleigh files
+* a Burleigh file format specification 
+* more Burleigh files
 
 **Ratings**
 

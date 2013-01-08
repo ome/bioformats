@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`DICOM <dicom-metadata>`
 
 Freely Available Software:
 
@@ -34,12 +34,11 @@ Sample Datasets:
 
 We currently have:
 
-- `DICOM specification documents <http://medical.nema.org/dicom/2007/>`_ (PS 3 - 2007, from 2006 December 28, in DOC and PDF) 
-- numerous DICOM datasets
+* `DICOM specification documents <http://medical.nema.org/dicom/2007/>`_ (PS 3 - 2007, from 2006 December 28, in DOC and PDF) 
+* numerous DICOM datasets
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 
@@ -63,8 +62,8 @@ Source Code: :scifioreader:`DicomReader.java`
 Notes:
 
 
-- DICOM stands for "Digital Imaging and Communication in Medicine". 
-- Bio-Formats supports both compressed and uncompressed DICOM files. 
+* DICOM stands for "Digital Imaging and Communication in Medicine". 
+* Bio-Formats supports both compressed and uncompressed DICOM files. 
 
 .. seealso:: 
   `DICOM homepage <http://medical.nema.org/>`_

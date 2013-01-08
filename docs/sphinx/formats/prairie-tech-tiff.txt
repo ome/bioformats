@@ -18,24 +18,16 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Prairie Technologies TIFF <prairie-tech-tiff-metadata>`
 
-Freely Available Software:
 
-- `PNG Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/png-writer.html>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- many Prairie datasets
+* many Prairie datasets
 
 We would like to have:
 
-- an official specification document 
-- more sample datasets
 
 **Ratings**
 

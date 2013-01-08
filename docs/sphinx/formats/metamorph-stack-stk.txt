@@ -18,26 +18,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`MetaMorph Stack (STK) <metamorph-stack-stk-metadata>`
 
-Freely Available Software:
 
-- `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
-
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- an STK specification document (from 2006 November 21, in DOC) 
-- an older STK specification document (from 2005 March 25, in DOC) 
-- an ND specification document (from 2002 January 24, in PDF) 
-- a large number of datasets
+* an STK specification document (from 2006 November 21, in DOC) 
+* an older STK specification document (from 2005 March 25, in DOC) 
+* an ND specification document (from 2002 January 24, in PDF) 
+* a large number of datasets
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 
@@ -65,9 +58,9 @@ format, we are not able to distribute them to third parties.**
 
 Commercial applications that support STK include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_ 
-- `SVI Huygens <http://svi.nl/>`_ 
-- `DIMIN <http://dimin.net/>`_ 
+* `Bitplane Imaris <http://www.bitplane.com/>`_ 
+* `SVI Huygens <http://svi.nl/>`_ 
+* `DIMIN <http://dimin.net/>`_ 
 
 .. seealso:: 
   `Metamorph imaging system overview <http://www.metamorph.com/>`_

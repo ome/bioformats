@@ -18,11 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`InCell 3000 <incell-3000-metadata>`
 
-Freely Available Software:
-
-- `IMOD <http://bio3d.colorado.edu/imod/>`_
 
 Sample Datasets:
 
@@ -30,11 +27,11 @@ Sample Datasets:
 
 We currently have:
 
-- a few example datasets
+* a few example datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
 **Ratings**
 
