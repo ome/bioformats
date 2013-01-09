@@ -8,7 +8,7 @@ text editor.
 The Bio-Formats code is divided into several projects. Core components
 are located in subfolders of the :source:`components <components/>` folder,
 with some components further classified into :source:`components/forks
-<components/forks/>`, :source:`components/legacy <components/legacy/>`,
+<components/forks/>`, :source:`components/loci-legacy <components/loci-legacy/>`,
 :source:`components/native <components/native/>` or :source:`components/stubs
 <components/stubs/>`, depending on the nature of the project.
 
