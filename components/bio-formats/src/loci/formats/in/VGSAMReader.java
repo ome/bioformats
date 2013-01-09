@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -86,23 +87,24 @@ public class VGSAMReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
     in.seek(348);
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
     in.skipBytes(4);
 
     int bpp = in.readInt();
     addGlobalMeta("Bytes per pixel", bpp);
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, false, bpp == 4);
-    core[0].littleEndian = false;
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].dimensionOrder = "XYZCT";
+    m.pixelType = FormatTools.pixelTypeFromBytes(bpp, false, bpp == 4);
+    m.littleEndian = false;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.rgb = false;
+    m.interleaved = false;
+    m.dimensionOrder = "XYZCT";
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

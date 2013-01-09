@@ -40,6 +40,7 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -204,6 +205,8 @@ public class IPWReader extends FormatReader {
 
     String description = null, creationDate = null;
 
+    CoreMetadata m = core.get(0);
+
     for (String name : fileList) {
       String relativePath =
         name.substring(name.lastIndexOf(File.separator) + 1);
@@ -246,12 +249,12 @@ public class IPWReader extends FormatReader {
               data = token.substring(token.indexOf("=") + 1).trim();
             }
             addGlobalMeta(label, data);
-            if (label.equals("frames")) core[0].sizeT = Integer.parseInt(data);
+            if (label.equals("frames")) m.sizeT = Integer.parseInt(data);
             else if (label.equals("slices")) {
-              core[0].sizeZ = Integer.parseInt(data);
+              m.sizeZ = Integer.parseInt(data);
             }
             else if (label.equals("channels")) {
-              core[0].sizeC = Integer.parseInt(data);
+              m.sizeC = Integer.parseInt(data);
             }
             else if (label.equals("Timestamp")) timestamp = data;
           }
@@ -280,25 +283,25 @@ public class IPWReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    core[0].imageCount = imageFiles.size();
+    m.imageCount = imageFiles.size();
 
     RandomAccessInputStream stream = poi.getDocumentStream(imageFiles.get(0));
     TiffParser tp = new TiffParser(stream);
     IFD firstIFD = tp.getFirstIFD();
     stream.close();
 
-    core[0].rgb = firstIFD.getSamplesPerPixel() > 1;
+    m.rgb = firstIFD.getSamplesPerPixel() > 1;
 
     if (!isRGB()) {
-      core[0].indexed =
+      m.indexed =
         firstIFD.getPhotometricInterpretation() == PhotoInterp.RGB_PALETTE;
     }
     if (isIndexed()) {
-      core[0].sizeC = 1;
-      core[0].rgb = false;
+      m.sizeC = 1;
+      m.rgb = false;
     }
 
-    core[0].littleEndian = firstIFD.isLittleEndian();
+    m.littleEndian = firstIFD.isLittleEndian();
 
     // retrieve axis sizes
 
@@ -306,22 +309,22 @@ public class IPWReader extends FormatReader {
     addGlobalMeta("channels", "1");
     addGlobalMeta("frames", getImageCount());
 
-    core[0].sizeX = (int) firstIFD.getImageWidth();
-    core[0].sizeY = (int) firstIFD.getImageLength();
-    core[0].dimensionOrder = isRGB() ? "XYCZT" : "XYZCT";
+    m.sizeX = (int) firstIFD.getImageWidth();
+    m.sizeY = (int) firstIFD.getImageLength();
+    m.dimensionOrder = isRGB() ? "XYCZT" : "XYZCT";
 
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeC() == 0) core[0].sizeC = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    if (getSizeZ() == 0) m.sizeZ = 1;
+    if (getSizeC() == 0) m.sizeC = 1;
+    if (getSizeT() == 0) m.sizeT = 1;
 
     if (getSizeZ() * getSizeC() * getSizeT() == 1 && getImageCount() != 1) {
-      core[0].sizeZ = getImageCount();
+      m.sizeZ = getImageCount();
     }
 
-    if (isRGB()) core[0].sizeC *= 3;
+    if (isRGB()) m.sizeC *= 3;
 
     int bitsPerSample = firstIFD.getBitsPerSample()[0];
-    core[0].pixelType = firstIFD.getPixelType();
+    m.pixelType = firstIFD.getPixelType();
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

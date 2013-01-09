@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -137,6 +138,7 @@ public class AliconaReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
     // check that this is a valid AL3D file
     LOGGER.info("Verifying Alicona format");
@@ -166,10 +168,10 @@ public class AliconaReader extends FormatReader {
       in.skipBytes(2);
 
       if (key.equals("TagCount")) count += Integer.parseInt(value);
-      else if (key.equals("Rows")) core[0].sizeY = Integer.parseInt(value);
-      else if (key.equals("Cols")) core[0].sizeX = Integer.parseInt(value);
+      else if (key.equals("Rows")) m.sizeY = Integer.parseInt(value);
+      else if (key.equals("Cols")) m.sizeX = Integer.parseInt(value);
       else if (key.equals("NumberOfPlanes")) {
-        core[0].imageCount = Integer.parseInt(value);
+        m.imageCount = Integer.parseInt(value);
       }
       else if (key.equals("TextureImageOffset")) {
         textureOffset = Integer.parseInt(value);
@@ -191,29 +193,29 @@ public class AliconaReader extends FormatReader {
       numBytes = (int) (in.length() - textureOffset) /
         (getSizeX() * getSizeY() * getImageCount());
 
-      core[0].sizeC = hasC ? 3 : 1;
-      core[0].sizeZ = 1;
-      core[0].sizeT = getImageCount() / getSizeC();
+      m.sizeC = hasC ? 3 : 1;
+      m.sizeZ = 1;
+      m.sizeT = getImageCount() / getSizeC();
 
-      core[0].pixelType =
+      m.pixelType =
         FormatTools.pixelTypeFromBytes(numBytes, false, false);
     }
     else {
       textureOffset = depthOffset;
-      core[0].pixelType = FormatTools.FLOAT;
-      core[0].sizeC = 1;
-      core[0].sizeZ = 1;
-      core[0].sizeT = 1;
-      core[0].imageCount = 1;
+      m.pixelType = FormatTools.FLOAT;
+      m.sizeC = 1;
+      m.sizeZ = 1;
+      m.sizeT = 1;
+      m.imageCount = 1;
     }
 
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].littleEndian = true;
-    core[0].dimensionOrder = "XYCTZ";
-    core[0].metadataComplete = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
+    m.rgb = false;
+    m.interleaved = false;
+    m.littleEndian = true;
+    m.dimensionOrder = "XYCTZ";
+    m.metadataComplete = true;
+    m.indexed = false;
+    m.falseColor = false;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

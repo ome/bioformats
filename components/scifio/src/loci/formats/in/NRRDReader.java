@@ -42,6 +42,7 @@ import java.io.IOException;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.ClassList;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -228,12 +229,14 @@ public class NRRDReader extends FormatReader {
 
     int numDimensions = 0;
 
-    core[0].sizeX = 1;
-    core[0].sizeY = 1;
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].dimensionOrder = "XYCZT";
+    CoreMetadata m = core.get(0);
+
+    m.sizeX = 1;
+    m.sizeY = 1;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.dimensionOrder = "XYCZT";
 
     String line = in.readLine();
     while (line != null && line.length() > 0) {
@@ -245,20 +248,20 @@ public class NRRDReader extends FormatReader {
 
         if (key.equals("type")) {
           if (v.indexOf("char") != -1 || v.indexOf("8") != -1) {
-            core[0].pixelType = FormatTools.UINT8;
+            m.pixelType = FormatTools.UINT8;
           }
           else if (v.indexOf("short") != -1 || v.indexOf("16") != -1) {
-            core[0].pixelType = FormatTools.UINT16;
+            m.pixelType = FormatTools.UINT16;
           }
           else if (v.equals("int") || v.equals("signed int") ||
             v.equals("int32") || v.equals("int32_t") || v.equals("uint") ||
             v.equals("unsigned int") || v.equals("uint32") ||
             v.equals("uint32_t"))
           {
-            core[0].pixelType = FormatTools.UINT32;
+            m.pixelType = FormatTools.UINT32;
           }
-          else if (v.equals("float")) core[0].pixelType = FormatTools.FLOAT;
-          else if (v.equals("double")) core[0].pixelType = FormatTools.DOUBLE;
+          else if (v.equals("float")) m.pixelType = FormatTools.FLOAT;
+          else if (v.equals("double")) m.pixelType = FormatTools.DOUBLE;
           else throw new FormatException("Unsupported data type: " + v);
         }
         else if (key.equals("dimension")) {
@@ -270,19 +273,19 @@ public class NRRDReader extends FormatReader {
             int size = Integer.parseInt(tokens[i]);
 
             if (numDimensions >= 3 && i == 0 && size > 1 && size <= 16) {
-              core[0].sizeC = size;
+              m.sizeC = size;
             }
             else if (i == 0 || (getSizeC() > 1 && i == 1)) {
-              core[0].sizeX = size;
+              m.sizeX = size;
             }
             else if (i == 1 || (getSizeC() > 1 && i == 2)) {
-              core[0].sizeY = size;
+              m.sizeY = size;
             }
             else if (i == 2 || (getSizeC() > 1 && i == 3)) {
-              core[0].sizeZ = size;
+              m.sizeZ = size;
             }
             else if (i == 3 || (getSizeC() > 1 && i == 4)) {
-              core[0].sizeT = size;
+              m.sizeT = size;
             }
           }
         }
@@ -291,7 +294,7 @@ public class NRRDReader extends FormatReader {
         }
         else if (key.equals("encoding")) encoding = v;
         else if (key.equals("endian")) {
-          core[0].littleEndian = v.equals("little");
+          m.littleEndian = v.equals("little");
         }
         else if (key.equals("spacings")) {
           pixelSizes = v.split(" ");
@@ -322,12 +325,12 @@ public class NRRDReader extends FormatReader {
       }
     }
 
-    core[0].rgb = getSizeC() > 1;
-    core[0].interleaved = true;
-    core[0].imageCount = getSizeZ() * getSizeT();
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
+    m.rgb = getSizeC() > 1;
+    m.interleaved = true;
+    m.imageCount = getSizeZ() * getSizeT();
+    m.indexed = false;
+    m.falseColor = false;
+    m.metadataComplete = true;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

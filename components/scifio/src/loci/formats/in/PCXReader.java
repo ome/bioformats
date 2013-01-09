@@ -39,6 +39,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -155,7 +156,8 @@ public class PCXReader extends FormatReader {
 
     LOGGER.info("Reading file header");
 
-    core[0].littleEndian = true;
+    CoreMetadata m = core.get(0);
+    m.littleEndian = true;
     in.order(isLittleEndian());
     in.seek(1);
     int version = in.read();
@@ -166,8 +168,8 @@ public class PCXReader extends FormatReader {
     int xMax = in.readShort();
     int yMax = in.readShort();
 
-    core[0].sizeX = xMax - xMin;
-    core[0].sizeY = yMax - yMin;
+    m.sizeX = xMax - xMin;
+    m.sizeY = yMax - yMin;
 
     in.skipBytes(version == 5 ? 53 : 51);
 
@@ -185,19 +187,19 @@ public class PCXReader extends FormatReader {
           lut[j][i] = in.readByte();
         }
       }
-      core[0].indexed = true;
+      m.indexed = true;
     }
 
     addGlobalMeta("Palette type", paletteType);
 
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].sizeC = nColorPlanes;
-    core[0].rgb = nColorPlanes > 1;
-    core[0].imageCount = 1;
-    core[0].pixelType = FormatTools.UINT8;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].interleaved = false;
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.sizeC = nColorPlanes;
+    m.rgb = nColorPlanes > 1;
+    m.imageCount = 1;
+    m.pixelType = FormatTools.UINT8;
+    m.dimensionOrder = "XYCZT";
+    m.interleaved = false;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

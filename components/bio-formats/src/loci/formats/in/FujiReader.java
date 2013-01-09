@@ -31,6 +31,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -153,16 +154,17 @@ public class FujiReader extends FormatReader {
 
     int bits = Integer.parseInt(lines[5]);
 
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(bits / 8, false, false);
+    CoreMetadata m = core.get(0);
+    m.pixelType = FormatTools.pixelTypeFromBytes(bits / 8, false, false);
 
-    core[0].sizeX = Integer.parseInt(lines[6]);
-    core[0].sizeY = Integer.parseInt(lines[7]);
+    m.sizeX = Integer.parseInt(lines[6]);
+    m.sizeY = Integer.parseInt(lines[7]);
 
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].sizeZ = 1;
-    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-    core[0].dimensionOrder = "XYCZT";
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.sizeZ = 1;
+    m.imageCount = getSizeZ() * getSizeC() * getSizeT();
+    m.dimensionOrder = "XYCZT";
 
     for (int i=0; i<lines.length; i++) {
       addGlobalMeta("Line #" + (i + 1), lines[i]);

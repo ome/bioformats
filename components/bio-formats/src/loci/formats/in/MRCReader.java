@@ -30,6 +30,7 @@ import java.math.BigInteger;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -130,21 +131,23 @@ public class MRCReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
+    CoreMetadata m = core.get(0);
+
     LOGGER.info("Reading header");
 
     // check endianness
 
     in.seek(ENDIANNESS_OFFSET);
-    core[0].littleEndian = in.read() == 68;
+    m.littleEndian = in.read() == 68;
 
     // read dimension information from 1024 byte header
 
     in.seek(0);
     in.order(isLittleEndian());
 
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
-    core[0].sizeZ = in.readInt();
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
+    m.sizeZ = in.readInt();
 
     // We are using BigInteger here because of the very real possiblity
     // of not just an int overflow but also a long overflow when multiplying
@@ -156,39 +159,39 @@ public class MRCReader extends FormatReader {
       (v.compareTo(BigInteger.valueOf(in.length())) > 0))
     {
       LOGGER.debug("Detected endianness is wrong, swapping");
-      core[0].littleEndian = !isLittleEndian();
+      m.littleEndian = !isLittleEndian();
       in.seek(0);
       in.order(isLittleEndian());
-      core[0].sizeX = in.readInt();
-      core[0].sizeY = in.readInt();
-      core[0].sizeZ = in.readInt();
+      m.sizeX = in.readInt();
+      m.sizeY = in.readInt();
+      m.sizeZ = in.readInt();
     }
 
-    core[0].sizeC = 1;
+    m.sizeC = 1;
 
     int mode = in.readInt();
     switch (mode) {
       case 0:
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
         break;
       case 1:
-        core[0].pixelType = FormatTools.INT16;
+        m.pixelType = FormatTools.INT16;
         break;
       case 6:
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
         break;
       case 2:
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
         break;
       case 3:
-        core[0].pixelType = FormatTools.UINT32;
+        m.pixelType = FormatTools.UINT32;
         break;
       case 4:
-        core[0].pixelType = FormatTools.DOUBLE;
+        m.pixelType = FormatTools.DOUBLE;
         break;
       case 16:
-        core[0].sizeC = 3;
-        core[0].pixelType = FormatTools.UINT16;
+        m.sizeC = 3;
+        m.pixelType = FormatTools.UINT16;
         break;
     }
 
@@ -242,13 +245,13 @@ public class MRCReader extends FormatReader {
       // make the pixel type unsigned
       switch (getPixelType()) {
         case FormatTools.INT8:
-          core[0].pixelType = FormatTools.UINT8;
+          m.pixelType = FormatTools.UINT8;
           break;
         case FormatTools.INT16:
-          core[0].pixelType = FormatTools.UINT16;
+          m.pixelType = FormatTools.UINT16;
           break;
         case FormatTools.INT32:
-          core[0].pixelType = FormatTools.UINT32;
+          m.pixelType = FormatTools.UINT32;
           break;
       }
     }
@@ -287,14 +290,14 @@ public class MRCReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    core[0].sizeT = 1;
-    core[0].dimensionOrder = "XYZTC";
-    core[0].imageCount = getSizeZ();
-    core[0].rgb = false;
-    core[0].interleaved = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
+    m.sizeT = 1;
+    m.dimensionOrder = "XYZTC";
+    m.imageCount = getSizeZ();
+    m.rgb = false;
+    m.interleaved = true;
+    m.indexed = false;
+    m.falseColor = false;
+    m.metadataComplete = true;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

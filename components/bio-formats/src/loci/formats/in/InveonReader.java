@@ -260,8 +260,8 @@ public class InveonReader extends FormatReader {
         }
         else if (key.equals("time_frames")) {
           int sizeT = Integer.parseInt(value);
-          for (int i=0; i<core.length; i++) {
-            core[i].sizeT = sizeT;
+          for (int i=0; i<core.size(); i++) {
+            core.get(i).sizeT = sizeT;
           }
         }
         else if (key.equals("total_frames")) {
@@ -270,10 +270,10 @@ public class InveonReader extends FormatReader {
         else if (key.equals("number_of_bed_positions")) {
           int nPos = (int) Math.min(frames, Integer.parseInt(value));
           if (nPos > 1) {
-            CoreMetadata original = core[0];
-            core = new CoreMetadata[nPos];
+            CoreMetadata original = core.get(0);
+            core.clear();
             for (int i=0; i<nPos; i++) {
-              core[i] = original;
+              core.add(original);
             }
           }
         }
@@ -282,20 +282,20 @@ public class InveonReader extends FormatReader {
         }
         else if (key.equals("x_dimension")) {
           int sizeX = Integer.parseInt(value);
-          for (int i=0; i<core.length; i++) {
-            core[i].sizeX = sizeX;
+          for (int i=0; i<core.size(); i++) {
+            core.get(i).sizeX = sizeX;
           }
         }
         else if (key.equals("y_dimension")) {
           int sizeY = Integer.parseInt(value);
-          for (int i=0; i<core.length; i++) {
-            core[i].sizeY = sizeY;
+          for (int i=0; i<core.size(); i++) {
+            core.get(i).sizeY = sizeY;
           }
         }
         else if (key.equals("z_dimension")) {
           int sizeZ = Integer.parseInt(value);
-          for (int i=0; i<core.length; i++) {
-            core[i].sizeZ = sizeZ;
+          for (int i=0; i<core.size(); i++) {
+            core.get(i).sizeZ = sizeZ;
           }
         }
         else if (key.equals("scan_time")) {
@@ -325,21 +325,22 @@ public class InveonReader extends FormatReader {
       }
     }
 
-    for (int i=0; i<core.length; i++) {
-      if (core[i].sizeZ == 0) {
-        core[i].sizeZ = 1;
+    for (int i=0; i<core.size(); i++) {
+      CoreMetadata ms = core.get(i);
+      if (ms.sizeZ == 0) {
+        ms.sizeZ = 1;
       }
-      if (core[i].sizeT == 0) {
-        core[i].sizeT = 1;
+      if (ms.sizeT == 0) {
+        ms.sizeT = 1;
       }
 
-      core[i].sizeC = 1;
-      core[i].rgb = false;
-      core[i].interleaved = false;
-      core[i].indexed = false;
-      core[i].dimensionOrder = "XYZCT";
+      ms.sizeC = 1;
+      ms.rgb = false;
+      ms.interleaved = false;
+      ms.indexed = false;
+      ms.dimensionOrder = "XYZCT";
 
-      core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;
+      ms.imageCount = ms.sizeZ * ms.sizeC * ms.sizeT;
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -357,7 +358,7 @@ public class InveonReader extends FormatReader {
       store.setMicroscopeModel(model, 0);
     }
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<core.size(); i++) {
       if (date != null) {
         String newDate = DateTools.formatDate(date, "EEE MMM dd HH:mm:ss yyyy");
         if (newDate != null) {
@@ -789,9 +790,10 @@ public class InveonReader extends FormatReader {
         break;
     }
 
-    for (int i=0; i<core.length; i++) {
-      core[i].pixelType = pixelType;
-      core[i].littleEndian = littleEndian;
+    for (int i=0; i<core.size(); i++) {
+      CoreMetadata ms = core.get(i);
+      ms.pixelType = pixelType;
+      ms.littleEndian = littleEndian;
     }
   }
 

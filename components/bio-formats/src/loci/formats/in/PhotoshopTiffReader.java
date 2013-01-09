@@ -101,7 +101,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
 
     int offsetIndex = 0;
     for (int i=1; i<getSeries(); i++) {
-      offsetIndex += core[i].sizeC;
+      offsetIndex += core.get(i).sizeC;
     }
 
     tag.seek(layerOffset[offsetIndex]);
@@ -150,8 +150,6 @@ public class PhotoshopTiffReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    CoreMetadata firstSeries = core[0];
-
     Object sourceData = ifds.get(0).getIFDValue(IMAGE_SOURCE_DATA);
     byte[] b = null;
     if (sourceData instanceof byte[]) {
@@ -184,8 +182,6 @@ public class PhotoshopTiffReader extends BaseTiffReader {
         compression = new int[nLayers];
         layerNames = new String[nLayers];
 
-        ArrayList<CoreMetadata> layerMetadata = new ArrayList<CoreMetadata>();
-
         channelOrder = new int[nLayers][];
 
         int[][] dataSize = new int[nLayers][];
@@ -211,7 +207,10 @@ public class PhotoshopTiffReader extends BaseTiffReader {
           layerCore.dimensionOrder = getDimensionOrder();
 
           if (layerCore.sizeX == 0 || layerCore.sizeY == 0) {
-            layerMetadata.clear();
+            // Set size to 1
+            CoreMetadata ms0 = core.get(0);
+            core.clear();
+            core.add(ms0);
             break;
           }
 
@@ -242,21 +241,16 @@ public class PhotoshopTiffReader extends BaseTiffReader {
           layerNames[layer] = tag.readString(nameLength + pad);
           addGlobalMeta("Layer name #" + layer, layerNames[layer]);
           tag.skipBytes((int) (fp + len - tag.getFilePointer()));
-          layerMetadata.add(layerCore);
+          core.add(layerCore);
         }
 
-        core = new CoreMetadata[layerMetadata.size() + 1];
-        core[0] = firstSeries;
-        for (int i=0; i<layerMetadata.size(); i++) {
-          core[i + 1] = layerMetadata.get(i);
-        }
-        nLayers = layerMetadata.size();
+        nLayers = core.size() - 1;
 
         layerOffset = new long[offsetCount];
 
         int nextOffset = 0;
         for (int layer=0; layer<nLayers; layer++) {
-          for (int c=0; c<core[layer + 1].sizeC; c++) {
+          for (int c=0; c<core.get(layer + 1).sizeC; c++) {
             long startFP = tag.getFilePointer();
             compression[layer] = tag.readShort();
             layerOffset[nextOffset] = tag.getFilePointer();
@@ -271,7 +265,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
               layerOffset[nextOffset] = tag.getFilePointer();
               PackbitsCodec codec = new PackbitsCodec();
               CodecOptions options = new CodecOptions();
-              options.maxBytes = core[layer + 1].sizeX * core[layer + 1].sizeY;
+              options.maxBytes = core.get(layer + 1).sizeX * core.get(layer + 1).sizeY;
               codec.decompress(tag, options);
             }
             tag.seek(startFP + dataSize[layer][c]);

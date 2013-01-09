@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -80,23 +81,25 @@ public class PovrayReader extends FormatReader {
 
     in = new RandomAccessInputStream(id);
 
-    core[0].littleEndian = false;
+    CoreMetadata m = core.get(0);
+
+    m.littleEndian = false;
 
     in.order(isLittleEndian());
 
-    core[0].sizeX = in.readShort();
-    core[0].sizeY = in.readShort();
-    core[0].sizeZ = in.readShort();
+    m.sizeX = in.readShort();
+    m.sizeY = in.readShort();
+    m.sizeZ = in.readShort();
 
     long fileLength = in.length() - HEADER_SIZE;
     int nBytes = (int) (fileLength / (getSizeX() * getSizeY() * getSizeZ()));
 
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(nBytes, false, false);
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].rgb = false;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+    m.pixelType = FormatTools.pixelTypeFromBytes(nBytes, false, false);
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.rgb = false;
+    m.dimensionOrder = "XYZCT";
+    m.imageCount = getSizeZ() * getSizeC() * getSizeT();
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

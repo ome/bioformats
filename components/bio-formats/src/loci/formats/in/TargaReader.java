@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -152,8 +153,8 @@ public class TargaReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-
-    core[0].littleEndian = true;
+    CoreMetadata m = core.get(0);
+    m.littleEndian = true;
     in.order(isLittleEndian());
 
     int nIdentificationChars = in.readUnsignedByte();
@@ -168,10 +169,10 @@ public class TargaReader extends FormatReader {
     int bitsPerEntry = in.readUnsignedByte();
 
     in.skipBytes(4);
-    core[0].sizeX = in.readUnsignedShort();
-    core[0].sizeY = in.readUnsignedShort();
+    m.sizeX = in.readUnsignedShort();
+    m.sizeY = in.readUnsignedShort();
     bits = in.readUnsignedByte();
-    core[0].bitsPerPixel = bits;
+    m.bitsPerPixel = bits;
 
     int imageDescriptor = in.readUnsignedByte();
     orientation = (imageDescriptor & 0x30) >> 4;
@@ -219,18 +220,18 @@ public class TargaReader extends FormatReader {
 
     // populate remainder of core metadata
 
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].rgb = imageType == 2 || imageType == 10;
-    core[0].sizeC = isRGB() ? 3 : 1;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].falseColor = false;
-    core[0].pixelType = FormatTools.UINT8;
-    core[0].bitsPerPixel =
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.rgb = imageType == 2 || imageType == 10;
+    m.sizeC = isRGB() ? 3 : 1;
+    m.dimensionOrder = "XYCZT";
+    m.falseColor = false;
+    m.pixelType = FormatTools.UINT8;
+    m.bitsPerPixel =
       getBitsPerPixel() == 32 ? 8 : getBitsPerPixel() / getSizeC();
-    core[0].imageCount = 1;
-    core[0].interleaved = true;
-    core[0].indexed = colorMap != null && !isRGB();
+    m.imageCount = 1;
+    m.interleaved = true;
+    m.indexed = colorMap != null && !isRGB();
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

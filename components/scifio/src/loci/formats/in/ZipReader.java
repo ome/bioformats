@@ -45,6 +45,7 @@ import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.ZipHandle;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.ImageReader;
@@ -143,7 +144,7 @@ public class ZipReader extends FormatReader {
     reader.setId(base.getEntryName());
 
     metadataStore = reader.getMetadataStore();
-    core = reader.getCoreMetadata();
+    core = new ArrayList<CoreMetadata>(reader.getCoreMetadataList());
     metadata = reader.getGlobalMetadata();
 
     base.close();

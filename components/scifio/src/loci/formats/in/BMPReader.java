@@ -39,6 +39,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -197,6 +198,7 @@ public class BMPReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
     LOGGER.info("Reading bitmap header");
 
@@ -216,16 +218,16 @@ public class BMPReader extends FormatReader {
 
     // get the dimensions
 
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
 
     if (getSizeX() < 1) {
       LOGGER.trace("Invalid width: {}; using the absolute value", getSizeX());
-      core[0].sizeX = Math.abs(getSizeX());
+      m.sizeX = Math.abs(getSizeX());
     }
     if (getSizeY() < 1) {
       LOGGER.trace("Invalid height: {}; using the absolute value", getSizeY());
-      core[0].sizeY = Math.abs(getSizeY());
+      m.sizeY = Math.abs(getSizeY());
       invertY = true;
     }
 
@@ -259,35 +261,35 @@ public class BMPReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    core[0].sizeC = bpp != 24 ? 1 : 3;
-    if (bpp == 32) core[0].sizeC = 4;
+    m.sizeC = bpp != 24 ? 1 : 3;
+    if (bpp == 32) m.sizeC = 4;
     if (bpp > 8) bpp /= getSizeC();
 
     switch (bpp) {
       case 16:
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
         break;
       case 32:
-        core[0].pixelType = FormatTools.UINT32;
+        m.pixelType = FormatTools.UINT32;
         break;
       default:
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
     }
 
-    core[0].rgb = getSizeC() > 1;
-    core[0].littleEndian = true;
-    core[0].interleaved = true;
-    core[0].imageCount = 1;
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].dimensionOrder = "XYCTZ";
-    core[0].metadataComplete = true;
-    core[0].indexed = palette != null;
+    m.rgb = getSizeC() > 1;
+    m.littleEndian = true;
+    m.interleaved = true;
+    m.imageCount = 1;
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.dimensionOrder = "XYCTZ";
+    m.metadataComplete = true;
+    m.indexed = palette != null;
     if (isIndexed()) {
-      core[0].sizeC = 1;
-      core[0].rgb = false;
+      m.sizeC = 1;
+      m.rgb = false;
     }
-    core[0].falseColor = false;
+    m.falseColor = false;
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       addGlobalMeta("Indexed color", palette != null);

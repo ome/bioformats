@@ -39,6 +39,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -101,6 +102,7 @@ public class FitsReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
     String line = in.readString(LINE_LENGTH);
     if (!line.startsWith("SIMPLE")) {
@@ -133,28 +135,28 @@ public class FitsReader extends FormatReader {
         boolean fp = bits < 0;
         boolean signed = bits != 8;
         bits = Math.abs(bits) / 8;
-        core[0].pixelType = FormatTools.pixelTypeFromBytes(bits, signed, fp);
+        m.pixelType = FormatTools.pixelTypeFromBytes(bits, signed, fp);
       }
-      else if (key.equals("NAXIS1")) core[0].sizeX = Integer.parseInt(value);
-      else if (key.equals("NAXIS2")) core[0].sizeY = Integer.parseInt(value);
-      else if (key.equals("NAXIS3")) core[0].sizeZ = Integer.parseInt(value);
+      else if (key.equals("NAXIS1")) m.sizeX = Integer.parseInt(value);
+      else if (key.equals("NAXIS2")) m.sizeY = Integer.parseInt(value);
+      else if (key.equals("NAXIS3")) m.sizeZ = Integer.parseInt(value);
 
       addGlobalMeta(key, value);
     }
     while (in.read() == 0x20);
     pixelOffset = in.getFilePointer() - 1;
 
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    core[0].imageCount = core[0].sizeZ;
-    core[0].rgb = false;
-    core[0].littleEndian = false;
-    core[0].interleaved = false;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    if (getSizeZ() == 0) m.sizeZ = 1;
+    m.imageCount = m.sizeZ;
+    m.rgb = false;
+    m.littleEndian = false;
+    m.interleaved = false;
+    m.dimensionOrder = "XYZCT";
+    m.indexed = false;
+    m.falseColor = false;
+    m.metadataComplete = true;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

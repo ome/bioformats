@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -87,19 +88,21 @@ public class AIMReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    core[0].littleEndian = true;
+    CoreMetadata m = core.get(0);
+
+    m.littleEndian = true;
     in.order(isLittleEndian());
 
     in.seek(56);
 
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
-    core[0].sizeZ = in.readInt();
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = getSizeZ();
-    core[0].pixelType = FormatTools.INT16;
-    core[0].dimensionOrder = "XYZCT";
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
+    m.sizeZ = in.readInt();
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = getSizeZ();
+    m.pixelType = FormatTools.INT16;
+    m.dimensionOrder = "XYZCT";
 
     in.seek(160);
 
