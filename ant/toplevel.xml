@@ -883,11 +883,14 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- Matlab -->
-  <target name="test-matlab">
+  <target name="test-matlab" description="run Matlab tests"
+	depends="tools">
 
+    <property environment="env"/>
     <exec executable="matlab">
-      <arg value="-no-desktop"/>
-      <arg value="-no-splash"/>
+      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/bio-formats/matlab:${artifact.dir}"/>  
+      <arg value="-nodesktop"/>
+      <arg value="-nosplash"/>
       <arg value="-r"/>
       <arg value="runtests ${root.dir}/components/bio-formats/test/matlab"/>
     </exec>
