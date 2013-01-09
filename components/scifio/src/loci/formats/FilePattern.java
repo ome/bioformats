@@ -663,9 +663,7 @@ public class FilePattern {
 
       for (String f : files) {
         Location path = new Location(dir, f);
-        if (regex.matcher(f).matches() ||
-          regex.matcher(path.getAbsolutePath()).matches())
-        {
+        if (regex.matcher(path.getName()).matches()) {
           if (path.exists()) fileList.add(path.getAbsolutePath());
           else fileList.add(f);
         }

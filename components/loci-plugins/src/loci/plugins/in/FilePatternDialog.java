@@ -151,11 +151,14 @@ public class FilePatternDialog extends ImporterDialog {
     paddingZeros = new int[counts.length];
     String[][] elements = fp.getElements();
 
+    BigInteger[] first = fp.getFirst();
+    BigInteger[] step = fp.getStep();
+
     for (int i=0; i<prefixes.length; i++) {
       String prefix = "Axis_" + (i + 1);
       gd.addStringField(prefix + "_number_of_images", "" + counts[i]);
-      gd.addStringField(prefix + "_axis_first_image", "1");
-      gd.addStringField(prefix + "_axis_increment", "1");
+      gd.addStringField(prefix + "_axis_first_image", first[i].toString());
+      gd.addStringField(prefix + "_axis_increment", step[i].toString());
 
       try {
         paddingZeros[i] = elements[i][0].length() -
@@ -215,8 +218,7 @@ public class FilePatternDialog extends ImporterDialog {
 
         FilePatternBlock block = new FilePatternBlock(fp.getBlock(i));
 
-        first = first.add(block.getFirst()).subtract(BigInteger.ONE);
-        fileCount = fileCount.multiply(increment).add(first);
+        fileCount = fileCount.subtract(BigInteger.ONE).multiply(increment);
 
         pattern += fp.getPrefix(i);
         pattern += "<";
@@ -226,7 +228,6 @@ public class FilePatternDialog extends ImporterDialog {
         }
         pattern += first;
         pattern += "-";
-        fileCount = fileCount.subtract(BigInteger.ONE);
         int lastPadding = paddingZeros[i] - fileCount.toString().length() + 1;
         for (int zero=0; zero<lastPadding; zero++) {
           pattern += "0";
