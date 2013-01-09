@@ -19,25 +19,21 @@ Export: |no|
 
 Officially Supported Versions: 1.0, 2.0
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Leica LAS AF LIF (Leica Image File Format) <leica-lif-metadata>`
 
 Freely Available Software:
 
 - `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-imaging-software/life-sciences/las-af-advanced-fluorescence/>`_ (links at bottom of page)
 
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- a LIF specification document (version 2, from no later than 2007 July 26, in PDF) 
-- a LIF specification document (version 1, from no later than 206 April 3, in PDF) 
-- numerous LIF datasets
+* a LIF specification document (version 2, from no later than 2007 July 26, in PDF) 
+* a LIF specification document (version 1, from no later than 206 April 3, in PDF) 
+* numerous LIF datasets
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 
@@ -68,6 +64,6 @@ AF stands for "Advanced Fluorescence".
 
 Commercial applications that support LIF include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_ 
-- `SVI Huygens <http://svi.nl/>`_ 
-- `Amira <http://www.amira.com/>`_
+* `Bitplane Imaris <http://www.bitplane.com/>`_ 
+* `SVI Huygens <http://svi.nl/>`_ 
+* `Amira <http://www.amira.com/>`_

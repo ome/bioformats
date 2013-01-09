@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`NRRD (Nearly Raw Raster Data) <nrrd-metadata>`
 
 Freely Available Software:
 
@@ -30,12 +30,11 @@ Sample Datasets:
 
 We currently have:
 
-- an `nrrd specification document <http://teem.sourceforge.net/nrrd/format.html>`_ (v1.9, from 2005 December 24, in HTML) 
-- a few nrrd datasets
+* an `nrrd specification document <http://teem.sourceforge.net/nrrd/format.html>`_ (v1.9, from 2005 December 24, in HTML) 
+* a few nrrd datasets
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 

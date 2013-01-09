@@ -18,24 +18,17 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Lambert Instruments FLIM <lambert-instruments-flim-metadata>`
 
-Freely Available Software:
 
-- `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
-
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- an LI-FLIM specification document 
-- several example LI-FLIM datasets
+* an LI-FLIM specification document 
+* several example LI-FLIM datasets
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 

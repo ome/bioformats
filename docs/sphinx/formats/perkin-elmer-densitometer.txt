@@ -18,24 +18,18 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Perkin Elmer Densitometer <perkin-elmer-densitometer-metadata>`
 
-Freely Available Software:
 
-- `DIMIN <http://www.dimin.net/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- a few PDS datasets
+* a few PDS datasets
 
 We would like to have:
 
-- an official specification document 
-- more PDS datasets
+* an official specification document 
+* more PDS datasets
 
 **Ratings**
 

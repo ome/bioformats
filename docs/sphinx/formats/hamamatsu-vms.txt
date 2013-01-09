@@ -18,11 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Hamamatsu VMS <hamamatsu-vms-metadata>`
 
-Freely Available Software:
-
-- `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
 
 Sample Datasets:
 
@@ -30,13 +27,13 @@ Sample Datasets:
 
 We currently have:
 
-- a few example datasets 
-- `developer documentation from the OpenSlide project <http://openslide.org/Hamamatsu%20format/>`_
+* a few example datasets 
+* `developer documentation from the OpenSlide project <http://openslide.org/Hamamatsu%20format/>`_
 
 We would like to have:
 
-- an official specification document 
-- more example datasets
+* an official specification document 
+* more example datasets
 
 **Ratings**
 

@@ -18,24 +18,18 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`InCell 1000 <incell-1000-metadata>`
 
-Freely Available Software:
 
-- `IMOD <http://bio3d.colorado.edu/imod/>`_
-
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have:
 
-- a few InCell 1000 datasets
+* a few InCell 1000 datasets
 
 We would like to have:
 
-- an InCell 1000 specification document 
-- more InCell 1000 datasets
+* an InCell 1000 specification document 
+* more InCell 1000 datasets
 
 **Ratings**
 

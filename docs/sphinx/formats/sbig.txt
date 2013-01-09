@@ -1,10 +1,8 @@
 .. index:: SBIG
-.. index:: .sm2, .sm3
 
 SBIG
 ===============================================================================
 
-Extensions: .sm2, .sm3 
 
 
 Owner: `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
@@ -18,24 +16,18 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`SBIG <sbig-metadata>`
 
-Freely Available Software:
 
-- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_ 
-- a few SBIG files
+* an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_ 
+* a few SBIG files
 
 We would like to have:
 
-- more SBIG files
+* more SBIG files
 
 **Ratings**
 

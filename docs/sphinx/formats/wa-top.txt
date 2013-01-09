@@ -19,25 +19,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`WA-TOP <wa-top-metadata>`
 
-Freely Available Software:
 
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
-
-Sample Datasets:
-
-- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
 
 We currently have:
 
-- Pascal code that can read WA-TOP files (from ImageSXM) 
-- a few WA-TOP files
+* Pascal code that can read WA-TOP files (from ImageSXM) 
+* a few WA-TOP files
 
 We would like to have:
 
-- an official specification document 
-- more WA-TOP files
+* an official specification document 
+* more WA-TOP files
 
 **Ratings**
 

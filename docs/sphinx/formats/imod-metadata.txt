@@ -1,0 +1,55 @@
+*******************************************************************************
+IMODReader
+*******************************************************************************
+
+This page lists supported metadata fields for the Bio-Formats IMOD format reader.
+
+These fields are from the :formats_plone:`OME data model <support/file-formats/schemas>`.
+Bio-Formats standardizes each format's original metadata to and from the OME
+data model so that you can work with a particular piece of metadata (e.g.
+physical width of the image in microns) in a format-independent way.
+
+Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 32 of them (7%).
+  * Of those, Bio-Formats fully or partially converts 32 (100%).
+
+Supported fields
+===============================================================================
+
+These fields are fully supported by the Bio-Formats IMOD format reader:
+  * `Channel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel>`_: ID
+  * `Channel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel>`_: SamplesPerPixel
+  * `Image <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image>`_: ID
+  * `Image <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image>`_: Name
+  * `Image <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image>`_: ROIRef
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: DimensionOrder
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: ID
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: PhysicalSizeX
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: PhysicalSizeY
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: PhysicalSizeZ
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: SizeC
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: SizeT
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: SizeX
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: SizeY
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: SizeZ
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: Type
+  * `Plane <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane>`_: TheC
+  * `Plane <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane>`_: TheT
+  * `Plane <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane>`_: TheZ
+  * `Point <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point>`_: ID
+  * `Point <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point>`_: StrokeDashArray
+  * `Point <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point>`_: StrokeWidth
+  * `Point <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point>`_: TheZ
+  * `Point <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point>`_: X
+  * `Point <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point>`_: Y
+  * `Polyline <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline>`_: ID
+  * `Polyline <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline>`_: Points
+  * `Polyline <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline>`_: StrokeDashArray
+  * `Polyline <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline>`_: StrokeWidth
+  * `Polyline <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline>`_: TheZ
+  * `ROI <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ROI>`_: ID
+  * `ROI <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ROI>`_: Name
+
+**Total supported: 32**
+
+**Total unknown or missing: 401**
