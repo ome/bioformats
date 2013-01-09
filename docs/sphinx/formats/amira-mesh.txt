@@ -18,17 +18,17 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Amira Mesh <amira-mesh-metadata>`
 
 
 
 We currently have:
 
-- a few Amira Mesh datasets
+* a few Amira Mesh datasets
 
 We would like to have:
 
-- more Amira Mesh datasets
+* more Amira Mesh datasets
 
 **Ratings**
 

@@ -19,28 +19,24 @@ Export: |no|
 
 Officially Supported Versions: 1.0, 2.0
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Zeiss AxioVision ZVI (Zeiss Vision Image) <zeiss-axiovision-zvi-metadata>`
 
 Freely Available Software:
 
 - `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
 
-Sample Datasets:
-
-- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
 
 We currently have:
 
-- a ZVI specification document (v2.0.5, from 2010 August, in PDF) 
-- an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) 
-- an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) 
-- an older ZVI specification document (v1.0.26.01.01, from 2001 January 29, in DOC) 
-- Zeiss' ZvImageReader code (v1.0, from 2001 January 25, in C++) 
-- many ZVI datasets
+* a ZVI specification document (v2.0.5, from 2010 August, in PDF) 
+* an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) 
+* an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) 
+* an older ZVI specification document (v1.0.26.01.01, from 2001 January 29, in DOC) 
+* Zeiss' ZvImageReader code (v1.0, from 2001 January 25, in C++) 
+* many ZVI datasets
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 

@@ -18,24 +18,16 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Hitachi S-4800 <hitachi-s-4800-metadata>`
 
-Freely Available Software:
 
-- `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
-
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have:
 
-- several Hitachi S-4800 datasets
+* several Hitachi S-4800 datasets
 
 We would like to have:
 
-- an official specification document 
-- more example datasets
 
 **Ratings**
 

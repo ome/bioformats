@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Micro-Manager <micro-manager-metadata>`
 
 Freely Available Software:
 
@@ -27,11 +27,10 @@ Freely Available Software:
 
 We currently have:
 
-- many Micro-manager datasets
+* many Micro-manager datasets
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 

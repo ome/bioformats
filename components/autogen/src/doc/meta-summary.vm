@@ -1,44 +1,21 @@
-<html>
-<head>
-<title>Bio-Formats Metadata Supported Fields Summary</title>
-<style type="text/css">
-  table {
-    border-collapse: collapse;
-  }
-  table thead {
-    cursor: default;
-    vertical-align: bottom;
-  }
-  table th {
-    padding: 2px 8px 2px 8px;
-    border-left: 2px solid black;
-    border-right: 2px solid black;
-  }
-  table td {
-    border-left: 2px solid black;
-    border-right: 2px solid black;
-    border-top: 1px solid gray;
-    padding: 2px 8px 2px 8px;
-  }
-</style>
-</head>
-<body>
+Summary of supported metadata fields
+===============================================================================
 
-<script type="text/javascript" src="sorttable.js"></script>
+Format readers
+--------------
 
-<h2>File Format Readers</h2>
+.. tabularcolumns:: |p{3cm}|c|c|c|c|
 
-<table class="sortable">
-  <thead>
-    <tr>
-      <th title="Name of the format reader module">Format</th>
-      <th title="Fields fully supported by the reader">Supported</th>
-      <th title="Fields unsupported by the reader">Unsupported</th>
-      <th title="Fields partially supported by the reader">Partial</th>
-      <th title="Fields not known to be supported by the format itself">Unknown/Missing</th>
-    </tr>
-  </thead>
-  <tbody>
+.. list-table::
+   :header-rows: 1
+   :widths: 30, 10, 10, 10, 10
+
+   * - Format
+     - Supported
+     - Unsupported
+     - Partial
+     - Unknown/Missing
+
 #foreach ($handler in $q.handlers())
 #set ($dummy = $q.setHandler($handler))
 #set ($yesList = $q.yes())
@@ -49,46 +26,46 @@
 #set ($partialCount = $partialList.size())
 #set ($noCount = $noList.size())
 #set ($missingCount = $missingList.size())
-    <tr>
-      <td><a href="http://dev.loci.wisc.edu/trac/java/wiki/$handler">$handler</a></td>
-      <td>$yesCount</td>
-      <td>$noCount</td>
-      <td>$partialCount</td>
-      <td>$missingCount</td>
-    </tr>
+#set ($pagename = $q.getPageName())
+   * - :doc:`$handler <$pagename>`
+     - $yesCount
+     - $noCount
+     - $partialCount
+     - $missingCount
 #end##foreach $handler
-  </tbody>
-</table>
 
-<h2>Metadata Fields</h2>
+Metadata fields
+---------------
 
-<table class="sortable">
-  <thead>
-    <tr>
-      <th title="Name of the metadata field">Field</th>
-      <th title="Readers fully supporting the metadata field">Supported</th>
-      <th title="Readers not supporting the metadata field">Unsupported</th>
-      <th title="Readers partially supporting the metadata field">Partial</th>
-      <th title="Formats for which the field is not known to be supported">Unknown/Missing</th>
-    </tr>
-  </thead>
-  <tbody>
+.. tabularcolumns:: |p{3cm}|c|c|c|c|
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30, 10, 10, 10, 10
+
+   *
+    - Field
+    - Supported
+    - Unsupported
+    - Partial
+    - Unknown/Missing
+
 #set ($qq = $q.entityList())
 #foreach ($entity in $qq.entities())
 #set ($dummy = $qq.setEntity($entity))
 #set ($node = $q.node($entity))
 #foreach ($prop in $qq.props())
-    <tr>
-      <td><a href="http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-$q.version()/ome.xsd.html#element_$node">$entity</a>: $prop</td>
-      <td>$q.yesHandlerCount($entity, $prop)</td>
-      <td>$q.noHandlerCount($entity, $prop)</td>
-      <td>$q.partialHandlerCount($entity, $prop)</td>
-      <td>$q.missingHandlerCount($entity, $prop)</td>
-    </tr>
+   * - `$entity - $prop <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_
+     - $q.yesHandlerCount($entity, $prop)
+     - $q.noHandlerCount($entity, $prop)
+     - $q.partialHandlerCount($entity, $prop)
+     - $q.missingHandlerCount($entity, $prop)
 #end##foreach $prop
 #end##foreach $entity
-  </tbody>
-</table>
 
-</body>
-</html>
+.. toctree::
+    :maxdepth: 1
+    :glob:
+    :hidden:
+
+    formats/*-metadata

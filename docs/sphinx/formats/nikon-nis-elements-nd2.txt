@@ -18,24 +18,20 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Nikon NIS-Elements ND2 <nikon-nis-elements-nd2-metadata>`
 
 Freely Available Software:
 
 - `NIS-Elements Viewer from Nikon <http://www.nis-elements.com/resources-downloads.html>`_
 
-Sample Datasets:
-
-- `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
 
 We currently have:
 
-- many ND2 datasets 
-- some :source:`Bio-Formats developer notes <components/bio-formats/doc/nd2.html>` for ND2
+* many ND2 datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
 **Ratings**
 

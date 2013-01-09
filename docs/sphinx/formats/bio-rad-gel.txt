@@ -18,23 +18,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Bio-Rad Gel <bio-rad-gel-metadata>`
 
-Freely Available Software:
-
-- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_ 
-- `AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
 
 
 We currently have:
 
-- software that can read Bio-Rad Gel files 
-- several Bio-Rad Gel files
+* software that can read Bio-Rad Gel files 
+* several Bio-Rad Gel files
 
 We would like to have:
 
-- a Bio-Rad Gel specification 
-- more Bio-Rad Gel files
+* a Bio-Rad Gel specification 
+* more Bio-Rad Gel files
 
 **Ratings**
 
