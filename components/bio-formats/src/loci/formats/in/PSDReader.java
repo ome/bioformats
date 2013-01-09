@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -145,7 +146,8 @@ public class PSDReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    core[0].littleEndian = false;
+    CoreMetadata m = core.get(0);
+    m.littleEndian = false;
 
     if (!in.readString(4).equals("8BPS")) {
       throw new FormatException("Not a valid Photoshop file.");
@@ -154,13 +156,13 @@ public class PSDReader extends FormatReader {
     addGlobalMeta("Version", in.readShort());
 
     in.skipBytes(6); // reserved, set to 0
-    core[0].sizeC = in.readShort();
-    core[0].sizeY = in.readInt();
-    core[0].sizeX = in.readInt();
+    m.sizeC = in.readShort();
+    m.sizeY = in.readInt();
+    m.sizeX = in.readInt();
 
     int bits = in.readShort();
     addGlobalMeta("Bits per pixel", bits);
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(bits / 8, false, false);
+    m.pixelType = FormatTools.pixelTypeFromBytes(bits / 8, false, false);
 
     int colorMode = in.readShort();
     String modeString = null;
@@ -308,15 +310,15 @@ public class PSDReader extends FormatReader {
       offset = in.getFilePointer() - 4;
     }
 
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].rgb = modeString.equals("RGB");
-    core[0].imageCount = getSizeC() / (isRGB() ? 3 : 1);
-    core[0].indexed = modeString.equals("palette color");
-    core[0].falseColor = false;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].interleaved = false;
-    core[0].metadataComplete = true;
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.rgb = modeString.equals("RGB");
+    m.imageCount = getSizeC() / (isRGB() ? 3 : 1);
+    m.indexed = modeString.equals("palette color");
+    m.falseColor = false;
+    m.dimensionOrder = "XYCZT";
+    m.interleaved = false;
+    m.metadataComplete = true;
 
     in.seek(offset);
 

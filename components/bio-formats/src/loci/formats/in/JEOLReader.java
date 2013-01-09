@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -146,7 +147,8 @@ public class JEOLReader extends FormatReader {
 
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    core[0].littleEndian = true;
+    CoreMetadata m = core.get(0);
+    m.littleEndian = true;
     in.order(isLittleEndian());
 
     parameterFile = id.substring(0, id.lastIndexOf(".")) + ".PAR";
@@ -157,30 +159,30 @@ public class JEOLReader extends FormatReader {
 
     if (magic.equals("MG")) {
       in.seek(0x63c);
-      core[0].sizeX = in.readInt();
-      core[0].sizeY = in.readInt();
+      m.sizeX = in.readInt();
+      m.sizeY = in.readInt();
       pixelOffset = in.getFilePointer() + 540;
     }
     else if (magic.equals("IM")) {
       int commentLength = in.readShort();
-      core[0].sizeX = 1024;
+      m.sizeX = 1024;
       pixelOffset = in.getFilePointer() + commentLength + 56;
-      core[0].sizeY = (int) ((in.length() - pixelOffset) / getSizeX());
+      m.sizeY = (int) ((in.length() - pixelOffset) / getSizeX());
     }
     else {
-      core[0].sizeX = 1024;
-      core[0].sizeY = 1024;
+      m.sizeX = 1024;
+      m.sizeY = 1024;
       pixelOffset = 0;
     }
 
     addGlobalMeta("Pixel data offset", pixelOffset);
 
-    core[0].pixelType = FormatTools.UINT8;
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].dimensionOrder = "XYZCT";
+    m.pixelType = FormatTools.UINT8;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.dimensionOrder = "XYZCT";
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

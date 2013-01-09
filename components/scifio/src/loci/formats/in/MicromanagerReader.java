@@ -256,10 +256,10 @@ public class MicromanagerReader extends FormatReader {
       }
     }
 
-    core = new CoreMetadata[positions.size()];
-
-    for (int i=0; i<positions.size(); i++) {
-      core[i] = new CoreMetadata();
+    int seriesCount = positions.size();
+    core.clear();
+    for (int i=0; i<seriesCount; i++) {
+      core.add(new CoreMetadata());
       setSeries(i);
       parsePosition(i);
     }
@@ -363,10 +363,10 @@ public class MicromanagerReader extends FormatReader {
   {
     FormatTools.assertId(currentId, false, 1);
     currentId = "in-memory-json";
-    core = new CoreMetadata[jsonData.length];
+    core.clear();
     positions = new Vector<Position>();
     for (int pos=0; pos<jsonData.length; pos++) {
-      core[pos] = new CoreMetadata();
+      core.add(new CoreMetadata());
       Position p = new Position();
       p.metadataFile = "Position #" + (pos + 1);
       positions.add(p);
@@ -389,6 +389,7 @@ public class MicromanagerReader extends FormatReader {
 
   private void buildTIFFList(int posIndex) throws FormatException {
     Position p = positions.get(posIndex);
+    CoreMetadata ms = core.get(posIndex);
     String parent = new Location(p.metadataFile).getParent();
 
     LOGGER.info("Finding image file names");
@@ -420,9 +421,9 @@ public class MicromanagerReader extends FormatReader {
         }
       }
 
-      core[posIndex].sizeZ = uniqueZ.size();
-      core[posIndex].sizeC = uniqueC.size();
-      core[posIndex].sizeT = uniqueT.size();
+      ms.sizeZ = uniqueZ.size();
+      ms.sizeC = uniqueC.size();
+      ms.sizeT = uniqueT.size();
 
       if (p.tiffs.size() == 0) {
         throw new FormatException("Could not find TIFF files.");
@@ -434,6 +435,7 @@ public class MicromanagerReader extends FormatReader {
     throws IOException, FormatException
   {
     Position p = positions.get(posIndex);
+    CoreMetadata ms = core.get(posIndex);
     String parent = new Location(p.metadataFile).getParent();
 
     // now parse the rest of the metadata
@@ -496,7 +498,7 @@ public class MicromanagerReader extends FormatReader {
         if (value.endsWith(",")) value = value.substring(0, value.length() - 1);
         addSeriesMeta(key, value);
         if (key.equals("Channels")) {
-          core[posIndex].sizeC = Integer.parseInt(value);
+          ms.sizeC = Integer.parseInt(value);
         }
         else if (key.equals("ChNames")) {
           p.channels = value.split(",");
@@ -505,10 +507,10 @@ public class MicromanagerReader extends FormatReader {
           }
         }
         else if (key.equals("Frames")) {
-          core[posIndex].sizeT = Integer.parseInt(value);
+          ms.sizeT = Integer.parseInt(value);
         }
         else if (key.equals("Slices")) {
-          core[posIndex].sizeZ = Integer.parseInt(value);
+          ms.sizeZ = Integer.parseInt(value);
         }
         else if (key.equals("PixelSize_um")) {
           p.pixelSize = new Double(value);
@@ -529,20 +531,20 @@ public class MicromanagerReader extends FormatReader {
           }
         }
         else if (key.equals("Width")) {
-          core[posIndex].sizeX = Integer.parseInt(value);
+          ms.sizeX = Integer.parseInt(value);
         }
         else if (key.equals("Height")) {
-          core[posIndex].sizeY = Integer.parseInt(value);
+          ms.sizeY = Integer.parseInt(value);
         }
         else if (key.equals("IJType")) {
           int type = Integer.parseInt(value);
 
           switch (type) {
             case 0:
-              core[posIndex].pixelType = FormatTools.UINT8;
+              ms.pixelType = FormatTools.UINT8;
               break;
             case 1:
-              core[posIndex].pixelType = FormatTools.UINT16;
+              ms.pixelType = FormatTools.UINT16;
               break;
             default:
               throw new FormatException("Unknown type: " + type);
@@ -660,17 +662,17 @@ public class MicromanagerReader extends FormatReader {
       parseXMLFile();
     }
 
-    if (getSizeZ() == 0) core[posIndex].sizeZ = 1;
-    if (getSizeT() == 0) core[posIndex].sizeT = 1;
+    if (getSizeZ() == 0) ms.sizeZ = 1;
+    if (getSizeT() == 0) ms.sizeT = 1;
 
-    core[posIndex].dimensionOrder = "XYZCT";
-    core[posIndex].interleaved = false;
-    core[posIndex].rgb = false;
-    core[posIndex].littleEndian = false;
-    core[posIndex].imageCount = getSizeZ() * getSizeC() * getSizeT();
-    core[posIndex].indexed = false;
-    core[posIndex].falseColor = false;
-    core[posIndex].metadataComplete = true;
+    ms.dimensionOrder = "XYZCT";
+    ms.interleaved = false;
+    ms.rgb = false;
+    ms.littleEndian = false;
+    ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
+    ms.indexed = false;
+    ms.falseColor = false;
+    ms.metadataComplete = true;
   }
 
   /**

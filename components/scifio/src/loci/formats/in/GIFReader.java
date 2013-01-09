@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -204,8 +205,10 @@ public class GIFReader extends FormatReader {
 
     LOGGER.info("Reading dimensions");
 
-    core[0].sizeX = in.readShort();
-    core[0].sizeY = in.readShort();
+    CoreMetadata m = core.get(0);
+
+    m.sizeX = in.readShort();
+    m.sizeY = in.readShort();
 
     int packed = in.read() & 0xff;
     boolean gctFlag = (packed & 0x80) != 0;
@@ -256,17 +259,17 @@ public class GIFReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = getImageCount();
-    core[0].dimensionOrder = "XYCTZ";
-    core[0].rgb = false;
-    core[0].littleEndian = true;
-    core[0].interleaved = true;
-    core[0].metadataComplete = true;
-    core[0].indexed = true;
-    core[0].falseColor = false;
-    core[0].pixelType = FormatTools.UINT8;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = getImageCount();
+    m.dimensionOrder = "XYCTZ";
+    m.rgb = false;
+    m.littleEndian = true;
+    m.interleaved = true;
+    m.metadataComplete = true;
+    m.indexed = true;
+    m.falseColor = false;
+    m.pixelType = FormatTools.UINT8;
 
     // populate metadata store
 
@@ -498,7 +501,7 @@ public class GIFReader extends FormatReader {
     decodeImageData();
     skipBlocks();
 
-    core[0].imageCount++;
+    core.get(0).imageCount++;
 
     if (transparency) act[transIndex] = save;
 

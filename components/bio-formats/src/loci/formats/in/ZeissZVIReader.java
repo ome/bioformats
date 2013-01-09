@@ -249,8 +249,8 @@ public class ZeissZVIReader extends BaseZeissReader {
 
         s.skipBytes(4);
         //if (getSizeX() == 0) {
-          core[0].sizeX = s.readInt();
-          core[0].sizeY = s.readInt();
+        core.get(0).sizeX = s.readInt();
+        core.get(0).sizeY = s.readInt();
         //}
         //else s.skipBytes(8);
         s.skipBytes(4);
@@ -285,7 +285,7 @@ public class ZeissZVIReader extends BaseZeissReader {
       super.fillMetadataPass3(store);
 
     // calculate tile dimensions and number of tiles
-    if (core.length > 1) {
+    if (core.size() > 1) {
       Integer[] t = tiles.keySet().toArray(new Integer[tiles.size()]);
       Arrays.sort(t);
       Vector<Integer> tmpOffsets = new Vector<Integer>();
@@ -333,7 +333,7 @@ public class ZeissZVIReader extends BaseZeissReader {
         return new Integer(n1).compareTo(new Integer(n2));
       }
     });
-    core[0].imageCount = 0;
+    core.get(0).imageCount = 0;
 
     for (String file : files) {
       String uname = file.toUpperCase();
@@ -343,7 +343,7 @@ public class ZeissZVIReader extends BaseZeissReader {
       {
         int imageNumber = getImageNumber(file, 0);
         if (imageNumber >= getImageCount()) {
-          core[0].imageCount++;
+          core.get(0).imageCount++;
         }
       }
     }

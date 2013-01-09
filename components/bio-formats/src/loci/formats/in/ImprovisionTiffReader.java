@@ -32,6 +32,7 @@ import java.util.Arrays;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -180,18 +181,20 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       metadata.remove("Comment");
     }
 
-    core[0].sizeT = 1;
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeC() == 0) core[0].sizeC = 1;
+    CoreMetadata m = core.get(0);
 
-    if (tz != null) core[0].sizeZ *= Integer.parseInt(tz);
-    if (tc != null) core[0].sizeC *= Integer.parseInt(tc);
-    if (tt != null) core[0].sizeT *= Integer.parseInt(tt);
+    m.sizeT = 1;
+    if (getSizeZ() == 0) m.sizeZ = 1;
+    if (getSizeC() == 0) m.sizeC = 1;
+
+    if (tz != null) m.sizeZ *= Integer.parseInt(tz);
+    if (tc != null) m.sizeC *= Integer.parseInt(tc);
+    if (tt != null) m.sizeT *= Integer.parseInt(tt);
 
     if (getSizeZ() * getSizeC() * getSizeT() < getImageCount()) {
-      core[0].sizeC *= getImageCount();
+      m.sizeC *= getImageCount();
     }
-    else core[0].imageCount = getSizeZ() * getSizeT() * Integer.parseInt(tc);
+    else m.imageCount = getSizeZ() * getSizeT() * Integer.parseInt(tc);
 
     // parse each of the comments to determine axis ordering
 
@@ -268,11 +271,11 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
     if (files.length > 1 && files.length * ifds.size() < getImageCount()) {
       files = new String[] {currentId};
-      core[0].imageCount = ifds.size();
-      core[0].sizeZ = ifds.size();
-      core[0].sizeT = 1;
+      m.imageCount = ifds.size();
+      m.sizeZ = ifds.size();
+      m.sizeT = 1;
       if (!isRGB()) {
-        core[0].sizeC = 1;
+        m.sizeC = 1;
       }
     }
 
@@ -295,28 +298,28 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
     // determine dimension order
 
-    core[0].dimensionOrder = "XY";
-    if (isRGB()) core[0].dimensionOrder += "C";
+    m.dimensionOrder = "XY";
+    if (isRGB()) m.dimensionOrder += "C";
     for (int i=1; i<coords.length; i++) {
       int zDiff = coords[i][0] - coords[i - 1][0];
       int cDiff = coords[i][1] - coords[i - 1][1];
       int tDiff = coords[i][2] - coords[i - 1][2];
 
       if (zDiff > 0 && getDimensionOrder().indexOf("Z") < 0) {
-        core[0].dimensionOrder += "Z";
+        m.dimensionOrder += "Z";
       }
       if (cDiff > 0 && getDimensionOrder().indexOf("C") < 0) {
-        core[0].dimensionOrder += "C";
+        m.dimensionOrder += "C";
       }
       if (tDiff > 0 && getDimensionOrder().indexOf("T") < 0) {
-        core[0].dimensionOrder += "T";
+        m.dimensionOrder += "T";
       }
-      if (core[0].dimensionOrder.length() == 5) break;
+      if (m.dimensionOrder.length() == 5) break;
     }
 
-    if (getDimensionOrder().indexOf("Z") < 0) core[0].dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf("C") < 0) core[0].dimensionOrder += "C";
-    if (getDimensionOrder().indexOf("T") < 0) core[0].dimensionOrder += "T";
+    if (getDimensionOrder().indexOf("Z") < 0) m.dimensionOrder += "Z";
+    if (getDimensionOrder().indexOf("C") < 0) m.dimensionOrder += "C";
+    if (getDimensionOrder().indexOf("T") < 0) m.dimensionOrder += "T";
   }
 
   /* @see BaseTiffReader#initMetadataStore() */

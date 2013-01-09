@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -185,30 +186,32 @@ public class BioRadGelReader extends FormatReader {
 
     in.seek(baseFP + skip);
 
-    core[0].sizeX = in.readShort() & 0xffff;
-    core[0].sizeY = in.readShort() & 0xffff;
+    CoreMetadata m = core.get(0);
+
+    m.sizeX = in.readShort() & 0xffff;
+    m.sizeY = in.readShort() & 0xffff;
     if (getSizeX() * getSizeY() > in.length()) {
       in.order(true);
       in.seek(in.getFilePointer() - 4);
-      core[0].sizeX = in.readShort();
-      core[0].sizeY = in.readShort();
+      m.sizeX = in.readShort();
+      m.sizeY = in.readShort();
     }
     in.skipBytes(2);
 
     int bpp = in.readShort();
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, false, false);
+    m.pixelType = FormatTools.pixelTypeFromBytes(bpp, false, false);
 
     offset = in.getFilePointer();
 
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].indexed = false;
-    core[0].littleEndian = in.isLittleEndian();
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.dimensionOrder = "XYCZT";
+    m.rgb = false;
+    m.interleaved = false;
+    m.indexed = false;
+    m.littleEndian = in.isLittleEndian();
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

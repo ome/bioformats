@@ -518,35 +518,36 @@ public class VolocityReader extends FormatReader {
       }
     }
 
-    core = new CoreMetadata[stacks.size()];
+    int seriesCount = stacks.size();
+    core.clear();
+    for (int i=0; i<seriesCount; i++) {
+      Stack stack = stacks.get(i);
+      CoreMetadata ms = stack.core;
+      core.add(ms);
 
-    for (int i=0; i<core.length; i++) {
       setSeries(i);
 
-      Stack stack = stacks.get(i);
-      core[i] = stack.core;
-
-      core[i].littleEndian = true;
+      ms.littleEndian = true;
 
       if (stack.timestampFile != null) {
         RandomAccessInputStream s =
           new RandomAccessInputStream(stack.timestampFile);
         s.seek(0);
         if (s.read() != 'I') {
-          core[i].littleEndian = false;
+          ms.littleEndian = false;
         }
         s.seek(17);
         s.order(isLittleEndian());
-        core[i].sizeT = s.readInt();
+        ms.sizeT = s.readInt();
         s.close();
       }
       else {
-        core[i].sizeT = 1;
+        ms.sizeT = 1;
       }
 
-      core[i].rgb = false;
-      core[i].interleaved = true;
-      core[i].dimensionOrder = "XYCZT";
+      ms.rgb = false;
+      ms.interleaved = true;
+      ms.dimensionOrder = "XYCZT";
 
       RandomAccessInputStream s =
         new RandomAccessInputStream(stack.pixelsFiles[0]);
@@ -563,7 +564,7 @@ public class VolocityReader extends FormatReader {
         int h = s.readInt();
 
         if (w - x < 0 || h - y < 0 || (w - x) * (h - y) < 0) {
-          core[i].littleEndian = !isLittleEndian();
+          ms.littleEndian = !isLittleEndian();
           s.order(isLittleEndian());
           s.seek(s.getFilePointer() - 20);
           x = s.readInt();
@@ -573,11 +574,11 @@ public class VolocityReader extends FormatReader {
           h = s.readInt();
         }
 
-        core[i].sizeX = w - x;
-        core[i].sizeY = h - y;
-        core[i].sizeZ = s.readInt() - zStart;
-        core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
-        core[i].pixelType = FormatTools.INT8;
+        ms.sizeX = w - x;
+        ms.sizeY = h - y;
+        ms.sizeZ = s.readInt() - zStart;
+        ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
+        ms.pixelType = FormatTools.INT8;
 
         int planesPerFile = getSizeZ() * getSizeT();
         int planeSize = FormatTools.getPlaneSize(this);
@@ -591,12 +592,12 @@ public class VolocityReader extends FormatReader {
         }
 
         if ((bytesPerPixel % 3) == 0) {
-          core[i].sizeC *= 3;
-          core[i].rgb = true;
+          ms.sizeC *= 3;
+          ms.rgb = true;
           bytesPerPixel /= 3;
         }
 
-        core[i].pixelType = FormatTools.pixelTypeFromBytes(
+        ms.pixelType = FormatTools.pixelTypeFromBytes(
           bytesPerPixel, false, bytesPerPixel > 2);
 
         // full timepoints are padded to have a multiple of 256 bytes
@@ -611,33 +612,33 @@ public class VolocityReader extends FormatReader {
 
         s.seek(0);
         if (s.read() != 'I') {
-          core[i].littleEndian = false;
+          ms.littleEndian = false;
           s.order(false);
         }
 
         s.seek(22);
-        core[i].sizeX = s.readInt();
-        core[i].sizeY = s.readInt();
-        core[i].sizeZ = s.readInt();
-        core[i].sizeC = embedded ? 1 : 4;
-        core[i].imageCount = getSizeZ() * getSizeT();
-        core[i].rgb = core[i].sizeC > 1;
-        core[i].pixelType = FormatTools.UINT8;
+        ms.sizeX = s.readInt();
+        ms.sizeY = s.readInt();
+        ms.sizeZ = s.readInt();
+        ms.sizeC = embedded ? 1 : 4;
+        ms.imageCount = getSizeZ() * getSizeT();
+        ms.rgb = ms.sizeC > 1;
+        ms.pixelType = FormatTools.UINT8;
         stack.blockSize = embedded ? (int) s.getFilePointer() : 99;
         stack.planePadding = 0;
 
-        if (s.length() > core[i].sizeX * core[i].sizeY * core[i].sizeZ * 6) {
-          core[i].pixelType = FormatTools.UINT16;
-          core[i].sizeC = 3;
-          core[i].rgb = true;
+        if (s.length() > ms.sizeX * ms.sizeY * ms.sizeZ * 6) {
+          ms.pixelType = FormatTools.UINT16;
+          ms.sizeC = 3;
+          ms.rgb = true;
         }
 
         if (s.length() <
-          (core[i].sizeX * core[i].sizeY * core[i].sizeZ * core[i].sizeC))
+          (ms.sizeX * ms.sizeY * ms.sizeZ * ms.sizeC))
         {
-          core[i].rgb = false;
-          core[i].sizeC = 1;
-          long pixels = core[i].sizeX * core[i].sizeY * core[i].sizeZ;
+          ms.rgb = false;
+          ms.sizeC = 1;
+          long pixels = ms.sizeX * ms.sizeY * ms.sizeZ;
           double approximateBytes = (double) s.length() / pixels;
           int bytes = (int) Math.ceil(approximateBytes);
           if (bytes == 0) {
@@ -646,7 +647,7 @@ public class VolocityReader extends FormatReader {
           else if (bytes == 3) {
             bytes = 2;
           }
-          core[i].pixelType =
+          ms.pixelType =
             FormatTools.pixelTypeFromBytes(bytes, false, false);
           s.seek(70);
           stack.blockSize = s.readInt();

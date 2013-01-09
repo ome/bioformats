@@ -144,7 +144,7 @@ public abstract class BaseZeissReader extends FormatReader {
 
   protected void countImages() {
     if (getImageCount() == 0)
-      core[0].imageCount = 1;
+      core.get(0).imageCount = 1;
     offsets = new int[getImageCount()];
     coordinates = new int[getImageCount()][3];
     imageFiles = new String[getImageCount()];
@@ -170,25 +170,27 @@ public abstract class BaseZeissReader extends FormatReader {
     stageX.clear();
     stageY.clear();
 
-    core[0].sizeZ = zIndices.size();
-    core[0].sizeT = timepointIndices.size();
-    core[0].sizeC = channelIndices.size();
+    CoreMetadata m = core.get(0);
 
-    core[0].littleEndian = true;
-    core[0].interleaved = true;
-    core[0].falseColor = true;
-    core[0].metadataComplete = true;
+    m.sizeZ = zIndices.size();
+    m.sizeT = timepointIndices.size();
+    m.sizeC = channelIndices.size();
 
-    core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
+    m.littleEndian = true;
+    m.interleaved = true;
+    m.falseColor = true;
+    m.metadataComplete = true;
+
+    m.imageCount = getSizeZ() * getSizeT() * getSizeC();
 
     if (getImageCount() == 0 || getImageCount() == 1) {
-      core[0].imageCount = 1;
-      core[0].sizeZ = 1;
-      core[0].sizeC = 1;
-      core[0].sizeT = 1;
+      m.imageCount = 1;
+      m.sizeZ = 1;
+      m.sizeC = 1;
+      m.sizeT = 1;
     }
-    core[0].rgb = (bpp % 3) == 0;
-    if (isRGB()) core[0].sizeC *= 3;
+    m.rgb = (bpp % 3) == 0;
+    if (isRGB()) m.sizeC *= 3;
   }
 
   /**
@@ -212,17 +214,18 @@ public abstract class BaseZeissReader extends FormatReader {
 
     if (totalTiles <= 1) {
       totalTiles = 1;
-
     }
 
     if (totalTiles > 1) {
-      CoreMetadata originalCore = core[0];
-      core = new CoreMetadata[totalTiles];
-      core[0] = originalCore;
+      for (int i=1; i<totalTiles; i++) {
+        core.add(new CoreMetadata(this, 0));
+      }
     }
 
-    core[0].dimensionOrder = "XY";
-    if (isRGB()) core[0].dimensionOrder += "C";
+    CoreMetadata m = core.get(0);
+
+    m.dimensionOrder = "XY";
+    if (isRGB()) m.dimensionOrder += "C";
     for (int i=0; i<coordinates.length-1; i++) {
       int[] zct1 = coordinates[i];
       int[] zct2 = coordinates[i + 1];
@@ -230,16 +233,16 @@ public abstract class BaseZeissReader extends FormatReader {
       int deltaC = zct2[1] - zct1[1];
       int deltaT = zct2[2] - zct1[2];
       if (deltaZ > 0 && getDimensionOrder().indexOf("Z") == -1) {
-        core[0].dimensionOrder += "Z";
+        m.dimensionOrder += "Z";
       }
       if (deltaC > 0 && getDimensionOrder().indexOf("C") == -1) {
-        core[0].dimensionOrder += "C";
+        m.dimensionOrder += "C";
       }
       if (deltaT > 0 && getDimensionOrder().indexOf("T") == -1) {
-        core[0].dimensionOrder += "T";
+        m.dimensionOrder += "T";
       }
     }
-    core[0].dimensionOrder =
+    m.dimensionOrder =
         MetadataTools.makeSaneDimensionOrder(getDimensionOrder());
   }
 
@@ -259,21 +262,27 @@ public abstract class BaseZeissReader extends FormatReader {
    * @throws IOException
    */
   protected void fillMetadataPass6(MetadataStore store) throws FormatException, IOException {
+    CoreMetadata m = core.get(0);
+
     if (getSizeX() == 0) {
-      core[0].sizeX = 1;
+      m.sizeX = 1;
     }
     if (getSizeY() == 0) {
-      core[0].sizeY = 1;
+      m.sizeY = 1;
     }
 
-    if (bpp == 1 || bpp == 3) core[0].pixelType = FormatTools.UINT8;
-    else if (bpp == 2 || bpp == 6) core[0].pixelType = FormatTools.UINT16;
-    if (isJPEG) core[0].pixelType = FormatTools.UINT8;
+    if (bpp == 1 || bpp == 3) m.pixelType = FormatTools.UINT8;
+    else if (bpp == 2 || bpp == 6) m.pixelType = FormatTools.UINT16;
+    if (isJPEG) m.pixelType = FormatTools.UINT8;
 
-    core[0].indexed = !isRGB() && channelColors != null;
+    m.indexed = !isRGB() && channelColors != null;
 
-    for (int i=1; i<core.length; i++) {
-      core[i] = new CoreMetadata(core[0]);
+    // We shouldn't need to copy the coremetadata here.  This
+    // indicates a need for better ordering of the initialisation, or
+    // rather not using the size of core as the series count until
+    // it's filled.
+    for (int i=1; i<core.size(); i++) {
+      core.set(i, new CoreMetadata(core.get(0)));
     }
   }
 
@@ -805,13 +814,13 @@ public abstract class BaseZeissReader extends FormatReader {
         else if (key.equals("ImageWidth")) {
           int v = Integer.parseInt(value);
           if (getSizeX() == 0 || v < getSizeX()) {
-            core[0].sizeX = v;
+            core.get(0).sizeX = v;
           }
           if (realWidth == 0 && v > realWidth) realWidth = v;
         }
         else if (key.equals("ImageHeight")) {
           int v = Integer.parseInt(value);
-          if (getSizeY() == 0 || v < getSizeY()) core[0].sizeY = v;
+          if (getSizeY() == 0 || v < getSizeY()) core.get(0).sizeY = v;
           if (realHeight == 0 || v > realHeight) realHeight = v;
         }
 

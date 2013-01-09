@@ -424,6 +424,7 @@ public class DicomReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.order(true);
+    CoreMetadata m = core.get(0);
 
     // look for companion files
     attachCompanionFiles();
@@ -431,7 +432,7 @@ public class DicomReader extends FormatReader {
     helper = new DicomReader();
     helper.setGroupFiles(false);
 
-    core[0].littleEndian = true;
+    m.littleEndian = true;
     location = 0;
     isJPEG = false;
     isRLE = false;
@@ -512,16 +513,16 @@ public class DicomReader extends FormatReader {
           break;
         case PLANAR_CONFIGURATION:
           int config = in.readShort();
-          core[0].interleaved = config == 0;
+          m.interleaved = config == 0;
           addInfo(tag, config);
           break;
         case ROWS:
-          if (getSizeY() == 0) core[0].sizeY = in.readShort();
+          if (getSizeY() == 0) m.sizeY = in.readShort();
           else in.skipBytes(2);
           addInfo(tag, getSizeY());
           break;
         case COLUMNS:
-          if (getSizeX() == 0) core[0].sizeX = in.readShort();
+          if (getSizeX() == 0) m.sizeX = in.readShort();
           else in.skipBytes(2);
           addInfo(tag, getSizeX());
           break;
@@ -590,14 +591,14 @@ public class DicomReader extends FormatReader {
     }
     if (imagesPerFile == 0) imagesPerFile = 1;
 
-    core[0].bitsPerPixel = bitsPerPixel;
+    m.bitsPerPixel = bitsPerPixel;
     while (bitsPerPixel % 8 != 0) bitsPerPixel++;
     if (bitsPerPixel == 24 || bitsPerPixel == 48) {
       bitsPerPixel /= 3;
-      core[0].bitsPerPixel /= 3;
+      m.bitsPerPixel /= 3;
     }
 
-    core[0].pixelType =
+    m.pixelType =
       FormatTools.pixelTypeFromBytes(bitsPerPixel / 8, signed, false);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -673,30 +674,31 @@ public class DicomReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    if (fileList.size() > 1) {
-      core = new CoreMetadata[fileList.size()];
-    }
+    int seriesCount = fileList.size();
 
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
 
-    for (int i=0; i<core.length; i++) {
-      if (core.length == 1) {
-        core[i].sizeZ = imagesPerFile * fileList.get(keys[i]).size();
-        if (core[i].sizeC == 0) core[i].sizeC = 1;
-        core[i].rgb = core[i].sizeC > 1;
-        core[i].sizeT = 1;
-        core[i].dimensionOrder = "XYCZT";
-        core[i].metadataComplete = true;
-        core[i].falseColor = false;
-        if (isRLE) core[i].interleaved = false;
+    for (int i=0; i<seriesCount; i++) {
+      CoreMetadata ms;
+      if (seriesCount == 1) {
+        ms = core.get(i);
+        ms.sizeZ = imagesPerFile * fileList.get(keys[i]).size();
+        if (ms.sizeC == 0) ms.sizeC = 1;
+        ms.rgb = ms.sizeC > 1;
+        ms.sizeT = 1;
+        ms.dimensionOrder = "XYCZT";
+        ms.metadataComplete = true;
+        ms.falseColor = false;
+        if (isRLE) core.get(i).interleaved = false;
       }
       else {
         helper.setId(fileList.get(keys[i]).get(0));
-        core[i] = helper.getCoreMetadata()[0];
-        core[i].sizeZ *= fileList.get(keys[i]).size();
+        ms = helper.getCoreMetadataList().get(0);
+        core.add(ms);
+        ms.sizeZ *= fileList.get(keys[i]).size();
       }
-      core[i].imageCount = core[i].sizeZ;
+      ms.imageCount = core.get(i).sizeZ;
     }
 
     // The metadata store we're working with.
@@ -712,13 +714,13 @@ public class DicomReader extends FormatReader {
 
     if (stamp == null || stamp.trim().equals("")) stamp = null;
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<core.size(); i++) {
       if (stamp != null) store.setImageAcquisitionDate(new Timestamp(stamp), i);
       store.setImageName("Series " + i, i);
     }
 
     if (level != MetadataLevel.MINIMUM) {
-      for (int i=0; i<core.length; i++) {
+        for (int i=0; i<core.size(); i++) {
         store.setImageDescription(imageType, i);
 
         if (pixelSizeX != null) {
@@ -757,6 +759,7 @@ public class DicomReader extends FormatReader {
   private void addInfo(int tag, String value) throws IOException {
     String oldValue = value;
     String info = getHeaderInfo(tag, value);
+    CoreMetadata m = core.get(0);
 
     if (info != null && tag != ITEM) {
       info = info.trim();
@@ -767,14 +770,14 @@ public class DicomReader extends FormatReader {
         key = formatTag(tag);
       }
       if (key.equals("Samples per pixel")) {
-        core[0].sizeC = Integer.parseInt(info);
-        if (getSizeC() > 1) core[0].rgb = true;
+        m.sizeC = Integer.parseInt(info);
+        if (getSizeC() > 1) m.rgb = true;
       }
       else if (key.equals("Photometric Interpretation")) {
         if (info.equals("PALETTE COLOR")) {
-          core[0].indexed = true;
-          core[0].sizeC = 1;
-          core[0].rgb = false;
+          m.indexed = true;
+          m.sizeC = 1;
+          m.rgb = false;
           lut = new byte[3][];
           shortLut = new short[3][];
         }
@@ -1000,7 +1003,7 @@ public class DicomReader extends FormatReader {
     long fp = stream.getFilePointer();
     int groupWord = stream.readShort() & 0xffff;
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
-      core[0].littleEndian = false;
+      core.get(0).littleEndian = false;
       groupWord = 0x0008;
       stream.order(false);
     }
@@ -1015,8 +1018,8 @@ public class DicomReader extends FormatReader {
     elementLength = getLength(stream, tag);
     if (elementLength > stream.length()) {
       stream.seek(fp);
-      core[0].littleEndian = !core[0].littleEndian;
-      stream.order(core[0].littleEndian);
+      core.get(0).littleEndian = !core.get(0).littleEndian;
+      stream.order(core.get(0).littleEndian);
 
       groupWord = stream.readShort() & 0xffff;
       elementWord = stream.readShort();

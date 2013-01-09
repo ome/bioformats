@@ -36,6 +36,7 @@ import java.util.zip.InflaterInputStream;
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -136,38 +137,40 @@ public class AmiraReader extends FormatReader {
       channelIndex++;
     }
 
-    core[0].sizeX = parameters.width;
-    core[0].sizeY = parameters.height;
-    core[0].sizeZ = parameters.depth;
-    core[0].sizeT = 1;
-    core[0].sizeC = channelIndex - 1;
-    core[0].imageCount = getSizeZ() * getSizeC();
-    core[0].littleEndian = parameters.littleEndian;
-    core[0].dimensionOrder = "XYZCT";
+    CoreMetadata m = core.get(0);
+
+    m.sizeX = parameters.width;
+    m.sizeY = parameters.height;
+    m.sizeZ = parameters.depth;
+    m.sizeT = 1;
+    m.sizeC = channelIndex - 1;
+    m.imageCount = getSizeZ() * getSizeC();
+    m.littleEndian = parameters.littleEndian;
+    m.dimensionOrder = "XYZCT";
 
     String streamType = parameters.streamTypes[0].toLowerCase();
     if (streamType.equals("byte")) {
-      core[0].pixelType = FormatTools.UINT8;
+      m.pixelType = FormatTools.UINT8;
     }
     else if (streamType.equals("short")) {
-      core[0].pixelType = FormatTools.INT16;
+      m.pixelType = FormatTools.INT16;
       addGlobalMeta("Bits per pixel", 16);
     }
     else if (streamType.equals("ushort")) {
-      core[0].pixelType = FormatTools.UINT16;
+      m.pixelType = FormatTools.UINT16;
       addGlobalMeta("Bits per pixel", 16);
     }
     else if (streamType.equals("int")) {
-      core[0].pixelType = FormatTools.INT32;
+      m.pixelType = FormatTools.INT32;
       addGlobalMeta("Bits per pixel", 32);
     }
     else if (streamType.equals("float")) {
-      core[0].pixelType = FormatTools.FLOAT;
+      m.pixelType = FormatTools.FLOAT;
       addGlobalMeta("Bits per pixel", 32);
     }
     else {
       LOGGER.warn("Assuming data type is byte");
-      core[0].pixelType = FormatTools.UINT8;
+      m.pixelType = FormatTools.UINT8;
     }
     LOGGER.info("Populating metadata store");
 
@@ -218,7 +221,7 @@ public class AmiraReader extends FormatReader {
     }
 
     if (parameters.ascii) {
-      planeReader = new ASCII(core[0].pixelType,
+      planeReader = new ASCII(m.pixelType,
         parameters.width * parameters.height);
     }
 
@@ -246,7 +249,7 @@ public class AmiraReader extends FormatReader {
       Map materials = (Map) params.get("Materials");
       if (materials != null) {
         lut = getLookupTable(materials);
-        core[0].indexed = true;
+        m.indexed = true;
       }
     }
   }

@@ -39,7 +39,9 @@ package loci.formats;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 import loci.common.RandomAccessInputStream;
@@ -424,20 +426,23 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSeriesMetadata();
   }
 
+  /**
+   * @deprecated
+   * @see IFormatReader#getCoreMetadataList()
+   */
   public CoreMetadata[] getCoreMetadata() {
-    int count = 0;
-    int currentIndex = reader.getCoreIndex();
+    return getCoreMetadataList().toArray(new CoreMetadata[0]);
+  }
 
+  public List<CoreMetadata> getCoreMetadataList() {
     // Only used for determining the object type.
-    CoreMetadata[] oldcore = reader.getCoreMetadata();
+    List<CoreMetadata> oldcore = reader.getCoreMetadataList();
+    List<CoreMetadata> newcore = new ArrayList<CoreMetadata>();
 
-    CoreMetadata[] newcore = new CoreMetadata[oldcore.length];
-
-    for (int s=0; s<newcore.length; s++) {
-      newcore[s] = oldcore[s].clone(this, s);
+    // Note that this only works with flattened resolutions
+    for (int s=0; s<oldcore.size(); s++) {
+      newcore.add(oldcore.get(s).clone(this, s));
     }
-
-    reader.setCoreIndex(currentIndex);
 
     return newcore;
   }

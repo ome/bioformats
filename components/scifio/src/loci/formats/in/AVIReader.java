@@ -41,6 +41,7 @@ import java.util.Vector;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -312,6 +313,7 @@ public class AVIReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.order(true);
+    CoreMetadata ms0 = core.get(0);
 
     LOGGER.info("Verifying AVI format");
 
@@ -324,11 +326,11 @@ public class AVIReader extends FormatReader {
     }
     LOGGER.info("Populating metadata");
 
-    core[0].imageCount = offsets.size();
-    core[0].sizeZ = 1;
-    core[0].sizeT = getImageCount();
-    core[0].littleEndian = true;
-    core[0].interleaved = bmpBitsPerPixel != 16;
+    ms0.imageCount = offsets.size();
+    ms0.sizeZ = 1;
+    ms0.sizeT = getImageCount();
+    ms0.littleEndian = true;
+    ms0.interleaved = bmpBitsPerPixel != 16;
 
     addGlobalMeta("Compression", getCodecName(bmpCompression));
 
@@ -340,52 +342,52 @@ public class AVIReader extends FormatReader {
       if (bmpBitsPerPixel == 16) {
         nBytes /= 2;
       }
-      core[0].sizeC = nBytes;
-      core[0].rgb = getSizeC() > 1;
+      ms0.sizeC = nBytes;
+      ms0.rgb = getSizeC() > 1;
     }
     else if (bmpBitsPerPixel == 32) {
-      core[0].sizeC = 4;
-      core[0].rgb = true;
+      ms0.sizeC = 4;
+      ms0.rgb = true;
     }
     else if (bytesPerPlane == 0 || bmpBitsPerPixel == 24) {
-      core[0].rgb = bmpBitsPerPixel > 8 || (bmpCompression != 0 && lut == null);
-      core[0].sizeC = isRGB() ? 3 : 1;
+      ms0.rgb = bmpBitsPerPixel > 8 || (bmpCompression != 0 && lut == null);
+      ms0.sizeC = isRGB() ? 3 : 1;
     }
     else if (bmpCompression == MS_VIDEO) {
-      core[0].sizeC = 3;
-      core[0].rgb = true;
+      ms0.sizeC = 3;
+      ms0.rgb = true;
     }
     else {
-      core[0].sizeC = bytesPerPlane /
+      ms0.sizeC = bytesPerPlane /
         (getSizeX() * getSizeY() * (bmpBitsPerPixel / 8));
-      core[0].rgb = getSizeC() > 1;
+      ms0.rgb = getSizeC() > 1;
     }
-    core[0].dimensionOrder = isRGB() ? "XYCTZ" : "XYTCZ";
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
-    core[0].indexed = lut != null && !isRGB();
+    ms0.dimensionOrder = isRGB() ? "XYCTZ" : "XYTCZ";
+    ms0.falseColor = false;
+    ms0.metadataComplete = true;
+    ms0.indexed = lut != null && !isRGB();
 
     if (bmpBitsPerPixel <= 8) {
-      core[0].pixelType = FormatTools.UINT8;
-      core[0].bitsPerPixel = bmpBitsPerPixel;
+      ms0.pixelType = FormatTools.UINT8;
+      ms0.bitsPerPixel = bmpBitsPerPixel;
     }
-    else if (bmpBitsPerPixel == 16) core[0].pixelType = FormatTools.UINT16;
+    else if (bmpBitsPerPixel == 16) ms0.pixelType = FormatTools.UINT16;
     else if (bmpBitsPerPixel == 24 || bmpBitsPerPixel == 32) {
-      core[0].pixelType = FormatTools.UINT8;
+      ms0.pixelType = FormatTools.UINT8;
     }
     else {
       throw new FormatException(
           "Unknown matching for pixel bit width of: " + bmpBitsPerPixel);
     }
 
-    if (bmpCompression != 0) core[0].pixelType = FormatTools.UINT8;
+    if (bmpCompression != 0) ms0.pixelType = FormatTools.UINT8;
 
     int effectiveWidth = (int) (bmpScanLineSize / (bmpBitsPerPixel / 8));
     if (effectiveWidth == 0) {
       effectiveWidth = getSizeX();
     }
     if (effectiveWidth < getSizeX()) {
-      core[0].sizeX = effectiveWidth;
+      ms0.sizeX = effectiveWidth;
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -507,7 +509,7 @@ public class AVIReader extends FormatReader {
       CinepakCodec codec = new CinepakCodec();
       buf = codec.decompress(b, options);
       lastImage = buf;
-      if (no == core[0].imageCount - 1) lastImage = null;
+      if (no == m.imageCount - 1) lastImage = null;
       return buf;
     }
     */
@@ -530,6 +532,7 @@ public class AVIReader extends FormatReader {
 
   private void readChunk() throws FormatException, IOException {
     readChunkHeader();
+    CoreMetadata m = core.get(0);
 
     if (type.equals("RIFF")) {
       if (!fcc.startsWith("AVI")) {
@@ -593,7 +596,7 @@ public class AVIReader extends FormatReader {
                 addGlobalMeta("Initial frames", in.readInt());
 
                 in.skipBytes(8);
-                core[0].sizeX = in.readInt();
+                m.sizeX = in.readInt();
 
                 addGlobalMeta("Frame height", in.readInt());
                 addGlobalMeta("Scale factor", in.readInt());
@@ -651,7 +654,7 @@ public class AVIReader extends FormatReader {
 
                 in.skipBytes(4);
                 bmpWidth = in.readInt();
-                core[0].sizeY = in.readInt();
+                m.sizeY = in.readInt();
                 in.skipBytes(2);
                 bmpBitsPerPixel = in.readShort();
                 bmpCompression = in.readInt();

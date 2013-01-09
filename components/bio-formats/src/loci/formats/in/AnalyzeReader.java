@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -276,43 +277,45 @@ public class AnalyzeReader extends FormatReader {
 
     LOGGER.info("Populating core metadata");
 
-    core[0].sizeX = x;
-    core[0].sizeY = y;
-    core[0].sizeZ = z;
-    core[0].sizeT = t;
-    core[0].sizeC = 1;
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    CoreMetadata m = core.get(0);
 
-    core[0].imageCount = getSizeZ() * getSizeT();
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].indexed = false;
-    core[0].dimensionOrder = "XYZTC";
+    m.sizeX = x;
+    m.sizeY = y;
+    m.sizeZ = z;
+    m.sizeT = t;
+    m.sizeC = 1;
+    if (getSizeZ() == 0) m.sizeZ = 1;
+    if (getSizeT() == 0) m.sizeT = 1;
+
+    m.imageCount = getSizeZ() * getSizeT();
+    m.rgb = false;
+    m.interleaved = false;
+    m.indexed = false;
+    m.dimensionOrder = "XYZTC";
 
     switch (dataType) {
       case 1:
       case 2:
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
         break;
       case 4:
-        core[0].pixelType = FormatTools.INT16;
+        m.pixelType = FormatTools.INT16;
         break;
       case 8:
-        core[0].pixelType = FormatTools.INT32;
+        m.pixelType = FormatTools.INT32;
         break;
       case 16:
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
         break;
       case 64:
-        core[0].pixelType = FormatTools.DOUBLE;
+        m.pixelType = FormatTools.DOUBLE;
         break;
       case 128:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC = 3;
-        core[0].rgb = true;
-        core[0].interleaved = true;
-        core[0].dimensionOrder = "XYCZT";
+        m.pixelType = FormatTools.UINT8;
+        m.sizeC = 3;
+        m.rgb = true;
+        m.interleaved = true;
+        m.dimensionOrder = "XYCZT";
       default:
         throw new FormatException("Unsupported data type: " + dataType);
     }

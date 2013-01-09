@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -214,19 +215,21 @@ public class SDTReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    core[0].sizeX = info.width;
-    core[0].sizeY = info.height;
-    core[0].sizeZ = 1;
-    core[0].sizeC = intensity ? channels : timeBins * channels;
-    core[0].sizeT = 1;
-    core[0].dimensionOrder = "XYZTC";
-    core[0].pixelType = FormatTools.UINT16;
-    core[0].rgb = !intensity && getSizeC() > 1;
-    core[0].littleEndian = true;
-    core[0].imageCount = channels;
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
+    CoreMetadata m = core.get(0);
+
+    m.sizeX = info.width;
+    m.sizeY = info.height;
+    m.sizeZ = 1;
+    m.sizeC = intensity ? channels : timeBins * channels;
+    m.sizeT = 1;
+    m.dimensionOrder = "XYZTC";
+    m.pixelType = FormatTools.UINT16;
+    m.rgb = !intensity && getSizeC() > 1;
+    m.littleEndian = true;
+    m.imageCount = channels;
+    m.indexed = false;
+    m.falseColor = false;
+    m.metadataComplete = true;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
