@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -99,7 +100,9 @@ public class MolecularImagingReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    core[0].sizeZ = 0;
+    CoreMetadata m = core.get(0);
+
+    m.sizeZ = 0;
     String date = null;
     double pixelSizeX = 0d, pixelSizeY = 0d;
 
@@ -112,13 +115,13 @@ public class MolecularImagingReader extends FormatReader {
         addGlobalMeta(key, value);
 
         if (key.equals("samples_x")) {
-          core[0].sizeX = Integer.parseInt(value);
+          m.sizeX = Integer.parseInt(value);
         }
         else if (key.equals("samples_y")) {
-          core[0].sizeY = Integer.parseInt(value);
+          m.sizeY = Integer.parseInt(value);
         }
         else if (key.equals("buffer_id")) {
-          core[0].sizeZ++;
+          m.sizeZ++;
         }
         else if (key.equals("Date")) {
           date = value;
@@ -138,13 +141,13 @@ public class MolecularImagingReader extends FormatReader {
     }
     pixelOffset = in.getFilePointer();
 
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = getSizeZ();
-    core[0].rgb = false;
-    core[0].pixelType = FormatTools.UINT16;
-    core[0].littleEndian = true;
-    core[0].dimensionOrder = "XYZCT";
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = getSizeZ();
+    m.rgb = false;
+    m.pixelType = FormatTools.UINT16;
+    m.littleEndian = true;
+    m.dimensionOrder = "XYZCT";
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

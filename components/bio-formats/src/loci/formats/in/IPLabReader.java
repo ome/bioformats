@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -111,7 +112,9 @@ public class IPLabReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    core[0].littleEndian = in.readString(4).equals("iiii");
+    CoreMetadata m = core.get(0);
+
+    m.littleEndian = in.readString(4).equals("iiii");
 
     in.order(isLittleEndian());
 
@@ -120,62 +123,62 @@ public class IPLabReader extends FormatReader {
     // read axis sizes from header
 
     int dataSize = in.readInt() - 28;
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
-    core[0].sizeC = in.readInt();
-    core[0].sizeZ = in.readInt();
-    core[0].sizeT = in.readInt();
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
+    m.sizeC = in.readInt();
+    m.sizeZ = in.readInt();
+    m.sizeT = in.readInt();
     int filePixelType = in.readInt();
 
-    core[0].imageCount = getSizeZ() * getSizeT();
+    m.imageCount = getSizeZ() * getSizeT();
 
     String ptype;
     switch (filePixelType) {
       case 0:
         ptype = "8 bit unsigned";
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
         break;
       case 1:
         ptype = "16 bit signed short";
-        core[0].pixelType = FormatTools.INT16;
+        m.pixelType = FormatTools.INT16;
         break;
       case 2:
         ptype = "16 bit unsigned short";
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
         break;
       case 3:
         ptype = "32 bit signed long";
-        core[0].pixelType = FormatTools.INT32;
+        m.pixelType = FormatTools.INT32;
         break;
       case 4:
         ptype = "32 bit single-precision float";
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
         break;
       case 5:
         ptype = "Color24";
-        core[0].pixelType = FormatTools.UINT32;
+        m.pixelType = FormatTools.UINT32;
         break;
       case 6:
         ptype = "Color48";
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
         break;
       case 10:
         ptype = "64 bit double-precision float";
-        core[0].pixelType = FormatTools.DOUBLE;
+        m.pixelType = FormatTools.DOUBLE;
         break;
       default:
         ptype = "reserved"; // for values 7-9
     }
 
-    core[0].dimensionOrder = "XY";
-    if (getSizeC() > 1) core[0].dimensionOrder += "CZT";
-    else core[0].dimensionOrder += "ZTC";
+    m.dimensionOrder = "XY";
+    if (getSizeC() > 1) m.dimensionOrder += "CZT";
+    else m.dimensionOrder += "ZTC";
 
-    core[0].rgb = getSizeC() > 1;
-    core[0].interleaved = false;
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
+    m.rgb = getSizeC() > 1;
+    m.interleaved = false;
+    m.indexed = false;
+    m.falseColor = false;
+    m.metadataComplete = true;
 
     addGlobalMeta("PixelType", ptype);
     addGlobalMeta("Width", getSizeX());

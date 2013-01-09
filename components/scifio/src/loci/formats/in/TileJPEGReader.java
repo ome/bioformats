@@ -41,6 +41,7 @@ import java.util.Hashtable;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -117,20 +118,22 @@ public class TileJPEGReader extends FormatReader {
     decoder = new JPEGTileDecoder();
     decoder.initialize(in, 0, 1, 0);
 
-    core[0].interleaved = true;
-    core[0].littleEndian = false;
+    CoreMetadata m = core.get(0);
 
-    core[0].sizeX = decoder.getWidth();
-    core[0].sizeY = decoder.getHeight();
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].sizeC = decoder.getScanline(0).length / getSizeX();
-    core[0].rgb = getSizeC() > 1;
-    core[0].imageCount = 1;
-    core[0].pixelType = FormatTools.UINT8;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].metadataComplete = true;
-    core[0].indexed = false;
+    m.interleaved = true;
+    m.littleEndian = false;
+
+    m.sizeX = decoder.getWidth();
+    m.sizeY = decoder.getHeight();
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.sizeC = decoder.getScanline(0).length / getSizeX();
+    m.rgb = getSizeC() > 1;
+    m.imageCount = 1;
+    m.pixelType = FormatTools.UINT8;
+    m.dimensionOrder = "XYCZT";
+    m.metadataComplete = true;
+    m.indexed = false;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

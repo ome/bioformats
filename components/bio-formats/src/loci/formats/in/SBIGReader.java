@@ -30,6 +30,7 @@ import java.io.IOException;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -135,6 +136,7 @@ public class SBIGReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
     Double temperature = null;
     Double sizeX = null, sizeY = null;
@@ -150,10 +152,10 @@ public class SBIGReader extends FormatReader {
         addGlobalMeta(key, value);
 
         if (key.equals("Width")) {
-          core[0].sizeX = Integer.parseInt(value);
+          m.sizeX = Integer.parseInt(value);
         }
         else if (key.equals("Height")) {
-          core[0].sizeY = Integer.parseInt(value);
+          m.sizeY = Integer.parseInt(value);
         }
         else if (key.equals("Note")) {
           description = value;
@@ -177,14 +179,14 @@ public class SBIGReader extends FormatReader {
       else if (line.equals("End")) break;
     }
 
-    core[0].pixelType = FormatTools.UINT16;
-    core[0].littleEndian = true;
-    core[0].rgb = false;
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].dimensionOrder = "XYZCT";
+    m.pixelType = FormatTools.UINT16;
+    m.littleEndian = true;
+    m.rgb = false;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.dimensionOrder = "XYZCT";
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

@@ -366,8 +366,9 @@ public class ZeissCZIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata ms0 = core.get(0);
 
-    core[0].littleEndian = true;
+    ms0.littleEndian = true;
     in.order(isLittleEndian());
 
     ArrayList<Segment> segments = new ArrayList<Segment>();
@@ -398,13 +399,13 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     if (getSizeZ() == 0) {
-      core[0].sizeZ = 1;
+      ms0.sizeZ = 1;
     }
     if (getSizeC() == 0) {
-      core[0].sizeC = 1;
+      ms0.sizeC = 1;
     }
     if (getSizeT() == 0) {
-      core[0].sizeT = 1;
+      ms0.sizeT = 1;
     }
 
     // finish populating the core metadata
@@ -412,28 +413,25 @@ public class ZeissCZIReader extends FormatReader {
     int seriesCount = rotations * positions * illuminations * acquisitions *
       mosaics * phases;
 
-    core[0].imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
+    ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
 
     if (mosaics == seriesCount &&
       seriesCount == (planes.size() / getImageCount()) &&
       prestitched != null && prestitched)
     {
       prestitched = false;
-      core[0].sizeX = planes.get(planes.size() - 1).x;
-      core[0].sizeY = planes.get(planes.size() - 1).y;
+      ms0.sizeX = planes.get(planes.size() - 1).x;
+      ms0.sizeY = planes.get(planes.size() - 1).y;
     }
 
     if (seriesCount > 1) {
-      CoreMetadata firstSeries = core[0];
-
-      core = new CoreMetadata[seriesCount];
-
+      core.clear();
       for (int i=0; i<seriesCount; i++) {
-        core[i] = firstSeries;
+        core.add(ms0);
       }
     }
 
-    core[0].dimensionOrder = "XYCZT";
+    ms0.dimensionOrder = "XYCZT";
 
     assignPlaneIndices();
 
@@ -452,7 +450,7 @@ public class ZeissCZIReader extends FormatReader {
 
     if (channelColors.size() > 0) {
       for (int i=0; i<seriesCount; i++) {
-        core[i].indexed = true;
+        core.get(i).indexed = true;
       }
     }
 
@@ -613,6 +611,7 @@ public class ZeissCZIReader extends FormatReader {
 
   private void calculateDimensions() {
     // calculate the dimensions
+      CoreMetadata ms0 = core.get(0);
 
     for (SubBlock plane : planes) {
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
@@ -625,7 +624,7 @@ public class ZeissCZIReader extends FormatReader {
               prestitched = true;
               continue;
             }
-            core[0].sizeX = dimension.size;
+            ms0.sizeX = dimension.size;
             break;
           case 'Y':
             plane.y = dimension.size;
@@ -635,21 +634,21 @@ public class ZeissCZIReader extends FormatReader {
               prestitched = true;
               continue;
             }
-            core[0].sizeY = dimension.size;
+            ms0.sizeY = dimension.size;
             break;
           case 'C':
             if (dimension.start >= getSizeC()) {
-              core[0].sizeC = dimension.start + 1;
+              ms0.sizeC = dimension.start + 1;
             }
             break;
           case 'Z':
             if (dimension.start >= getSizeZ()) {
-              core[0].sizeZ = dimension.start + 1;
+              ms0.sizeZ = dimension.start + 1;
             }
             break;
           case 'T':
             if (dimension.start >= getSizeT()) {
-              core[0].sizeT = dimension.start + 1;
+              ms0.sizeT = dimension.start + 1;
             }
             break;
           case 'R':
@@ -790,7 +789,7 @@ public class ZeissCZIReader extends FormatReader {
     if (image != null) {
       String bitCount = getFirstNodeValue(image, "ComponentBitCount");
       if (bitCount != null) {
-        core[0].bitsPerPixel = Integer.parseInt(bitCount);
+        core.get(0).bitsPerPixel = Integer.parseInt(bitCount);
       }
 
       acquiredDate = getFirstNodeValue(image, "AcquisitionDateAndTime");
@@ -1564,9 +1563,9 @@ public class ZeissCZIReader extends FormatReader {
     Element tilesSetup = getFirstNode(acquisition, "TilesSetup");
     NodeList groups = getGrandchildren(tilesSetup, "PositionGroup");
 
-    positionsX = new Double[core.length];
-    positionsY = new Double[core.length];
-    positionsZ = new Double[core.length];
+    positionsX = new Double[core.size()];
+    positionsY = new Double[core.size()];
+    positionsZ = new Double[core.size()];
 
     if (groups != null) {
       for (int i=0; i<groups.getLength(); i++) {
@@ -1725,41 +1724,42 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   private void convertPixelType(int pixelType) throws FormatException {
+    CoreMetadata ms0 = core.get(0);
     switch (pixelType) {
       case GRAY8:
-        core[0].pixelType = FormatTools.UINT8;
+        ms0.pixelType = FormatTools.UINT8;
         break;
       case GRAY16:
-        core[0].pixelType = FormatTools.UINT16;
+        ms0.pixelType = FormatTools.UINT16;
         break;
       case GRAY32:
-        core[0].pixelType = FormatTools.UINT32;
+        ms0.pixelType = FormatTools.UINT32;
         break;
       case GRAY_FLOAT:
-        core[0].pixelType = FormatTools.FLOAT;
+        ms0.pixelType = FormatTools.FLOAT;
         break;
       case GRAY_DOUBLE:
-        core[0].pixelType = FormatTools.DOUBLE;
+        ms0.pixelType = FormatTools.DOUBLE;
         break;
       case BGR_24:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC *= 3;
-        core[0].rgb = true;
+        ms0.pixelType = FormatTools.UINT8;
+        ms0.sizeC *= 3;
+        ms0.rgb = true;
         break;
       case BGR_48:
-        core[0].pixelType = FormatTools.UINT16;
-        core[0].sizeC *= 3;
-        core[0].rgb = true;
+        ms0.pixelType = FormatTools.UINT16;
+        ms0.sizeC *= 3;
+        ms0.rgb = true;
         break;
       case BGRA_8:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC *= 4;
-        core[0].rgb = true;
+        ms0.pixelType = FormatTools.UINT8;
+        ms0.sizeC *= 4;
+        ms0.rgb = true;
         break;
       case BGR_FLOAT:
-        core[0].pixelType = FormatTools.FLOAT;
-        core[0].sizeC *= 3;
-        core[0].rgb = true;
+        ms0.pixelType = FormatTools.FLOAT;
+        ms0.sizeC *= 3;
+        ms0.rgb = true;
         break;
       case COMPLEX:
       case COMPLEX_FLOAT:

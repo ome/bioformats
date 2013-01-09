@@ -39,6 +39,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -206,6 +207,7 @@ public class EPSReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
     LOGGER.info("Verifying EPS format");
 
@@ -230,22 +232,22 @@ public class EPSReader extends FormatReader {
 
       IFD firstIFD = ifds.get(0);
 
-      core[0].sizeX = (int) firstIFD.getImageWidth();
-      core[0].sizeY = (int) firstIFD.getImageLength();
-      core[0].sizeZ = 1;
-      core[0].sizeT = 1;
-      core[0].sizeC = firstIFD.getSamplesPerPixel();
-      if (getSizeC() == 2) core[0].sizeC = 4;
-      core[0].littleEndian = firstIFD.isLittleEndian();
-      core[0].interleaved = true;
-      core[0].rgb = getSizeC() > 1;
-      core[0].pixelType = firstIFD.getPixelType();
+      m.sizeX = (int) firstIFD.getImageWidth();
+      m.sizeY = (int) firstIFD.getImageLength();
+      m.sizeZ = 1;
+      m.sizeT = 1;
+      m.sizeC = firstIFD.getSamplesPerPixel();
+      if (getSizeC() == 2) m.sizeC = 4;
+      m.littleEndian = firstIFD.isLittleEndian();
+      m.interleaved = true;
+      m.rgb = getSizeC() > 1;
+      m.pixelType = firstIFD.getPixelType();
 
-      core[0].imageCount = 1;
-      core[0].dimensionOrder = "XYCZT";
-      core[0].metadataComplete = true;
-      core[0].indexed = false;
-      core[0].falseColor = false;
+      m.imageCount = 1;
+      m.dimensionOrder = "XYCZT";
+      m.metadataComplete = true;
+      m.indexed = false;
+      m.falseColor = false;
 
       MetadataStore store = makeFilterMetadata();
       MetadataTools.populatePixels(store, this);
@@ -264,15 +266,15 @@ public class EPSReader extends FormatReader {
     while (line != null && !line.equals("%%EOF")) {
       if (line.endsWith(image)) {
         if (!line.startsWith(image)) {
-          if (line.indexOf("colorimage") != -1) core[0].sizeC = 3;
+          if (line.indexOf("colorimage") != -1) m.sizeC = 3;
           String[] t = line.split(" ");
           try {
-            core[0].sizeX = Integer.parseInt(t[0]);
-            core[0].sizeY = Integer.parseInt(t[1]);
+            m.sizeX = Integer.parseInt(t[0]);
+            m.sizeY = Integer.parseInt(t[1]);
           }
           catch (NumberFormatException exc) {
             LOGGER.debug("Could not parse image dimensions", exc);
-            core[0].sizeC = Integer.parseInt(t[3]);
+            m.sizeC = Integer.parseInt(t[3]);
           }
         }
 
@@ -286,8 +288,8 @@ public class EPSReader extends FormatReader {
           try {
             int originX = Integer.parseInt(t[0].trim());
             int originY = Integer.parseInt(t[1].trim());
-            core[0].sizeX = Integer.parseInt(t[2].trim()) - originX;
-            core[0].sizeY = Integer.parseInt(t[3].trim()) - originY;
+            m.sizeX = Integer.parseInt(t[2].trim()) - originX;
+            m.sizeY = Integer.parseInt(t[3].trim()) - originY;
 
             addGlobalMeta("X-coordinate of origin", originX);
             addGlobalMeta("Y-coordinate of origin", originY);
@@ -314,9 +316,9 @@ public class EPSReader extends FormatReader {
       else if (line.startsWith("%ImageData:")) {
         line = line.substring(11);
         String[] t = line.split(" ");
-        core[0].sizeX = Integer.parseInt(t[0]);
-        core[0].sizeY = Integer.parseInt(t[1]);
-        core[0].sizeC = Integer.parseInt(t[3]);
+        m.sizeX = Integer.parseInt(t[0]);
+        m.sizeY = Integer.parseInt(t[1]);
+        m.sizeC = Integer.parseInt(t[3]);
         for (int i=4; i<t.length; i++) {
           image = t[i].trim();
           if (image.length() > 1) {
@@ -330,16 +332,16 @@ public class EPSReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    if (getSizeC() == 0) core[0].sizeC = 1;
+    if (getSizeC() == 0) m.sizeC = 1;
 
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = FormatTools.UINT8;
-    core[0].rgb = getSizeC() == 3;
-    core[0].interleaved = true;
-    core[0].littleEndian = true;
-    core[0].imageCount = 1;
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.dimensionOrder = "XYCZT";
+    m.pixelType = FormatTools.UINT8;
+    m.rgb = getSizeC() == 3;
+    m.interleaved = true;
+    m.littleEndian = true;
+    m.imageCount = 1;
 
     // Populate metadata store
 

@@ -47,6 +47,7 @@ import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -163,23 +164,25 @@ public class TiffJAIReader extends BIFormatReader {
 
     LOGGER.info("Populating metadata");
 
-    core[0].imageCount = numPages;
+    CoreMetadata m = core.get(0);
 
-    core[0].sizeX = img.getWidth();
-    core[0].sizeY = img.getHeight();
-    core[0].sizeZ = 1;
-    core[0].sizeC = img.getSampleModel().getNumBands();
-    core[0].sizeT = numPages;
+    m.imageCount = numPages;
 
-    core[0].rgb = core[0].sizeC > 1;
+    m.sizeX = img.getWidth();
+    m.sizeY = img.getHeight();
+    m.sizeZ = 1;
+    m.sizeC = img.getSampleModel().getNumBands();
+    m.sizeT = numPages;
 
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = AWTImageTools.getPixelType(img);
-    core[0].interleaved = true;
-    core[0].littleEndian = false;
-    core[0].metadataComplete = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
+    m.rgb = m.sizeC > 1;
+
+    m.dimensionOrder = "XYCZT";
+    m.pixelType = AWTImageTools.getPixelType(img);
+    m.interleaved = true;
+    m.littleEndian = false;
+    m.metadataComplete = true;
+    m.indexed = false;
+    m.falseColor = false;
 
     // populate the metadata store
     MetadataStore store = makeFilterMetadata();

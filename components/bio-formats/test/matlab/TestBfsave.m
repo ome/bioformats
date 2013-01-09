@@ -27,6 +27,7 @@ classdef TestBfsave < TestCase
         
         function tearDown(self)
             self.reader.close();
+            self.reader = [];
             if exist(self.path,'file')==2, delete(self.path); end
         end
             

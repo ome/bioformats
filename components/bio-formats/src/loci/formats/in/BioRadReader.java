@@ -35,6 +35,7 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
+import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -301,16 +302,17 @@ public class BioRadReader extends FormatReader {
     noteStrings = new Vector<Note>();
 
     // read header
+    CoreMetadata m = core.get(0);
 
-    core[0].sizeX = in.readShort();
-    core[0].sizeY = in.readShort();
+    m.sizeX = in.readShort();
+    m.sizeY = in.readShort();
     int npic = in.readShort();
-    core[0].imageCount = npic;
+    m.imageCount = npic;
 
     int ramp1min = in.readShort();
     int ramp1max = in.readShort();
     boolean notes = in.readInt() != 0;
-    core[0].pixelType =
+    m.pixelType =
       in.readShort() == 0 ? FormatTools.UINT16 : FormatTools.UINT8;
     int imageNumber = in.readShort();
     String name = in.readString(32);
@@ -366,16 +368,16 @@ public class BioRadReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     in.skipBytes(bpp * getImageCount() * imageLen + 6);
 
-    core[0].sizeZ = getImageCount();
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
+    m.sizeZ = getImageCount();
+    m.sizeC = 1;
+    m.sizeT = 1;
 
-    core[0].orderCertain = false;
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].littleEndian = LITTLE_ENDIAN;
-    core[0].metadataComplete = true;
-    core[0].falseColor = true;
+    m.orderCertain = false;
+    m.rgb = false;
+    m.interleaved = false;
+    m.littleEndian = LITTLE_ENDIAN;
+    m.metadataComplete = true;
+    m.falseColor = true;
 
     LOGGER.info("Reading notes");
 
@@ -431,7 +433,7 @@ public class BioRadReader extends FormatReader {
 
     // populate Pixels
 
-    core[0].dimensionOrder = "XYCTZ";
+    m.dimensionOrder = "XYCTZ";
 
     boolean multipleFiles = parseNotes(store);
 
@@ -448,23 +450,23 @@ public class BioRadReader extends FormatReader {
           used.add(file);
         }
       }
-      if (pics.size() == 1) core[0].sizeC = 1;
+      if (pics.size() == 1) m.sizeC = 1;
     }
 
     picFiles = pics.toArray(new String[pics.size()]);
     Arrays.sort(picFiles);
     if (picFiles.length > 0) {
-      if (getSizeC() == 0) core[0].sizeC = 1;
-      core[0].imageCount = npic * picFiles.length;
+      if (getSizeC() == 0) m.sizeC = 1;
+      m.imageCount = npic * picFiles.length;
       if (multipleFiles) {
-        core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
+        m.sizeT = getImageCount() / (getSizeZ() * getSizeC());
       }
-      else core[0].sizeC = getImageCount() / (getSizeZ() * getSizeT());
+      else m.sizeC = getImageCount() / (getSizeZ() * getSizeT());
     }
     else picFiles = null;
 
     if (getEffectiveSizeC() != getSizeC() && !isRGB()) {
-      core[0].sizeC = 1;
+      m.sizeC = 1;
     }
 
     LOGGER.info("Reading lookup tables");
@@ -481,7 +483,7 @@ public class BioRadReader extends FormatReader {
       s.close();
       if (lut == null) break;
     }
-    core[0].indexed = lut != null;
+    m.indexed = lut != null;
 
     MetadataTools.populatePixels(store, this);
     store.setImageName(name, 0);
@@ -599,9 +601,10 @@ public class BioRadReader extends FormatReader {
           int noteType = Integer.parseInt(tokens[1]);
 
           if (noteType == 2 && value.indexOf("AXIS_4") != -1) {
-            core[0].sizeZ = 1;
-            core[0].sizeT = getImageCount();
-            core[0].orderCertain = true;
+            CoreMetadata m = core.get(0);
+            m.sizeZ = 1;
+            m.sizeT = getImageCount();
+            m.orderCertain = true;
           }
         }
       }
@@ -1016,15 +1019,16 @@ public class BioRadReader extends FormatReader {
           addGlobalMeta(key + " RGB type (X)", values[2]);
           addGlobalMeta(key + " RGB type (Y)", values[3]);
 
+          CoreMetadata m = core.get(0);
           if (key.equals("AXIS_4")) {
             // this is a single section multi-channel dataset
-            core[0].sizeC = getImageCount();
-            core[0].sizeZ = 1;
-            core[0].sizeT = 1;
+            m.sizeC = getImageCount();
+            m.sizeZ = 1;
+            m.sizeT = 1;
           }
           else if (key.equals("AXIS_9")) {
             multipleFiles = true;
-            core[0].sizeC = (int) Double.parseDouble(values[3]);
+            m.sizeC = (int) Double.parseDouble(values[3]);
           }
         }
 
@@ -1131,11 +1135,12 @@ public class BioRadReader extends FormatReader {
         int c = sizeC == null ? 1 : Integer.parseInt(sizeC);
         int t = sizeT == null ? 1 : Integer.parseInt(sizeT);
         int count = getSizeZ() * getSizeC() * getSizeT();
-        core[0].sizeZ = z;
-        core[0].sizeC = c;
-        core[0].sizeT = t;
-        if (count >= getImageCount()) core[0].imageCount = count;
-        else core[0].sizeC = getImageCount() / count;
+        CoreMetadata m = core.get(0);
+        m.sizeZ = z;
+        m.sizeC = c;
+        m.sizeT = t;
+        if (count >= getImageCount()) m.imageCount = count;
+        else m.sizeC = getImageCount() / count;
       }
       else if (qName.equals("Z") || qName.equals("C") || qName.equals("T")) {
         String stamp = attributes.getValue("TimeCompleted");

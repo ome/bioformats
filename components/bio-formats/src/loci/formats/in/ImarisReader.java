@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -128,13 +129,15 @@ public class ImarisReader extends FormatReader {
 
     String imageName = in.readString(128);
 
-    core[0].sizeX = in.readShort();
-    core[0].sizeY = in.readShort();
-    core[0].sizeZ = in.readShort();
+    CoreMetadata m = core.get(0);
+
+    m.sizeX = in.readShort();
+    m.sizeY = in.readShort();
+    m.sizeZ = in.readShort();
 
     in.skipBytes(2);
 
-    core[0].sizeC = in.readInt();
+    m.sizeC = in.readInt();
     in.skipBytes(2);
 
     String date = in.readString(32);
@@ -149,7 +152,7 @@ public class ImarisReader extends FormatReader {
 
     LOGGER.info("Calculating image offsets");
 
-    core[0].imageCount = getSizeZ() * getSizeC();
+    m.imageCount = getSizeZ() * getSizeC();
     offsets = new int[getImageCount()];
 
     float[] gains = new float[getSizeC()];
@@ -182,15 +185,15 @@ public class ImarisReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    core[0].sizeT = getImageCount() / (getSizeC() * getSizeZ());
-    core[0].dimensionOrder = "XYZCT";
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].littleEndian = IS_LITTLE;
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
-    core[0].pixelType = FormatTools.UINT8;
+    m.sizeT = getImageCount() / (getSizeC() * getSizeZ());
+    m.dimensionOrder = "XYZCT";
+    m.rgb = false;
+    m.interleaved = false;
+    m.littleEndian = IS_LITTLE;
+    m.indexed = false;
+    m.falseColor = false;
+    m.metadataComplete = true;
+    m.pixelType = FormatTools.UINT8;
 
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();

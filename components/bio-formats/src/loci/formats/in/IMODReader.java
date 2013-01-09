@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -136,10 +137,12 @@ public class IMODReader extends FormatReader {
       throw new FormatException("Invalid file ID: " + check);
     }
 
+    CoreMetadata m = core.get(0);
+
     String filename = in.readString(128);
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
-    core[0].sizeZ = in.readInt();
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
+    m.sizeZ = in.readInt();
 
     int nObjects = in.readInt();
     points = new float[nObjects][][][];
@@ -418,14 +421,14 @@ public class IMODReader extends FormatReader {
       }
     }
 
-    core[0].sizeT = 1;
-    core[0].sizeC = 3;
-    core[0].rgb = true;
-    core[0].interleaved = true;
-    core[0].imageCount = getSizeT() * getSizeZ();
-    core[0].littleEndian = false;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = FormatTools.UINT8;
+    m.sizeT = 1;
+    m.sizeC = 3;
+    m.rgb = true;
+    m.interleaved = true;
+    m.imageCount = getSizeT() * getSizeZ();
+    m.littleEndian = false;
+    m.dimensionOrder = "XYCZT";
+    m.pixelType = FormatTools.UINT8;
 
     MetadataTools.populatePixels(store, this);
 

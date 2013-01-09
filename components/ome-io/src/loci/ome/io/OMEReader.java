@@ -31,6 +31,7 @@ import java.util.List;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -128,6 +129,8 @@ public class OMEReader extends FormatReader {
     String user = credentials.username;
     String pass = credentials.password;
 
+    CoreMetadata m = core.get(0);
+
     try {
       r.exec("c = new Criteria()");
       r.setVar("ID", "id");
@@ -190,22 +193,22 @@ public class OMEReader extends FormatReader {
 
       r.exec("thumb = pf.getThumbnail(pixels)");
 
-      core[0].sizeX = ((Integer) r.exec("pixels.getSizeX()")).intValue();
-      core[0].sizeY = ((Integer) r.exec("pixels.getSizeY()")).intValue();
-      core[0].sizeZ = ((Integer) r.exec("pixels.getSizeZ()")).intValue();
-      core[0].sizeC = ((Integer) r.exec("pixels.getSizeC()")).intValue();
-      core[0].sizeT = ((Integer) r.exec("pixels.getSizeT()")).intValue();
+      m.sizeX = ((Integer) r.exec("pixels.getSizeX()")).intValue();
+      m.sizeY = ((Integer) r.exec("pixels.getSizeY()")).intValue();
+      m.sizeZ = ((Integer) r.exec("pixels.getSizeZ()")).intValue();
+      m.sizeC = ((Integer) r.exec("pixels.getSizeC()")).intValue();
+      m.sizeT = ((Integer) r.exec("pixels.getSizeT()")).intValue();
 
       String type = (String) r.exec("pixels.getPixelType()");
 
-      core[0].pixelType = FormatTools.pixelTypeFromString(type);
-      core[0].dimensionOrder = "XYZCT";
+      m.pixelType = FormatTools.pixelTypeFromString(type);
+      m.dimensionOrder = "XYZCT";
 
-      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-      core[0].rgb = false;
+      m.imageCount = getSizeZ() * getSizeC() * getSizeT();
+      m.rgb = false;
 
-      core[0].thumbSizeX = ((Integer) r.exec("thumb.getWidth()")).intValue();
-      core[0].thumbSizeY = ((Integer) r.exec("thumb.getHeight()")).intValue();
+      m.thumbSizeX = ((Integer) r.exec("thumb.getWidth()")).intValue();
+      m.thumbSizeY = ((Integer) r.exec("thumb.getHeight()")).intValue();
 
       // grab original metadata
 
@@ -233,8 +236,8 @@ public class OMEReader extends FormatReader {
       throw new FormatException(e);
     }
 
-    core[0].littleEndian = true;
-    core[0].interleaved = false;
+    m.littleEndian = true;
+    m.interleaved = false;
 
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this);

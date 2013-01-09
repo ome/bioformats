@@ -343,15 +343,17 @@ public class InCellReader extends FormatReader {
     byte[] b = new byte[(int) in.length()];
     in.read(b);
 
-    core[0].dimensionOrder = "XYZCT";
+    CoreMetadata ms0 = core.get(0);
+
+    ms0.dimensionOrder = "XYZCT";
 
     MetadataStore store = makeFilterMetadata();
     DefaultHandler handler = new MinimalInCellHandler();
     XMLTools.parseXML(b, handler);
 
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeC() == 0) core[0].sizeC = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    if (getSizeZ() == 0) ms0.sizeZ = 1;
+    if (getSizeC() == 0) ms0.sizeC = 1;
+    if (getSizeT() == 0) ms0.sizeT = 1;
 
     int seriesCount = 0;
 
@@ -391,17 +393,18 @@ public class InCellReader extends FormatReader {
     int z = getSizeZ();
     int t = oneTimepointPerSeries ? 1 : getSizeT();
 
-    core = new CoreMetadata[seriesCount];
+    core.clear();
     for (int i=0; i<seriesCount; i++) {
       int c = oneTimepointPerSeries ?
         channelsPerTimepoint.get(i % sizeT).intValue() : sizeC;
 
-      core[i] = new CoreMetadata();
-      core[i].sizeZ = z;
-      core[i].sizeC = c;
-      core[i].sizeT = t;
-      core[i].imageCount = z * c * t;
-      core[i].dimensionOrder = "XYZCT";
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
+      ms.sizeZ = z;
+      ms.sizeC = c;
+      ms.sizeT = t;
+      ms.imageCount = z * c * t;
+      ms.dimensionOrder = "XYZCT";
     }
 
     int wellIndex = getWellFromSeries(0);
@@ -415,24 +418,26 @@ public class InCellReader extends FormatReader {
       tiffReader.setId(filename);
       int nextTiming = 0;
       for (int i=0; i<seriesCount; i++) {
-        core[i].sizeX = tiffReader.getSizeX();
-        core[i].sizeY = tiffReader.getSizeY();
-        core[i].interleaved = tiffReader.isInterleaved();
-        core[i].indexed = tiffReader.isIndexed();
-        core[i].rgb = tiffReader.isRGB();
-        core[i].pixelType = tiffReader.getPixelType();
-        core[i].littleEndian = tiffReader.isLittleEndian();
+        CoreMetadata ms = core.get(i);
+        ms.sizeX = tiffReader.getSizeX();
+        ms.sizeY = tiffReader.getSizeY();
+        ms.interleaved = tiffReader.isInterleaved();
+        ms.indexed = tiffReader.isIndexed();
+        ms.rgb = tiffReader.isRGB();
+        ms.pixelType = tiffReader.getPixelType();
+        ms.littleEndian = tiffReader.isLittleEndian();
       }
     }
     else {
       for (int i=0; i<seriesCount; i++) {
-        core[i].sizeX = imageWidth;
-        core[i].sizeY = imageHeight;
-        core[i].interleaved = false;
-        core[i].indexed = false;
-        core[i].rgb = false;
-        core[i].pixelType = FormatTools.UINT16;
-        core[i].littleEndian = true;
+        CoreMetadata ms = core.get(i);
+        ms.sizeX = imageWidth;
+        ms.sizeY = imageHeight;
+        ms.interleaved = false;
+        ms.indexed = false;
+        ms.rgb = false;
+        ms.pixelType = FormatTools.UINT16;
+        ms.littleEndian = true;
       }
     }
 
@@ -647,6 +652,7 @@ public class InCellReader extends FormatReader {
     private int nChannels = 0;
 
     public void endElement(String uri, String localName, String qName) {
+      CoreMetadata ms0 = core.get(0);
       if (qName.equals("PlateMap")) {
         int sizeT = getSizeT();
         if (sizeT == 0) {
@@ -660,7 +666,7 @@ public class InCellReader extends FormatReader {
           // There has been no <TimeSchedule> in the <PlateMap> defined to
           // populate channelsPerTimepoint so we have to assume that all
           // channels are being acquired.
-          channelsPerTimepoint.add(core[0].sizeC);
+          channelsPerTimepoint.add(ms0.sizeC);
         }
         imageFiles = new Image[wellRows * wellCols][fieldCount][sizeT][];
         for (int well=0; well<wellRows*wellCols; well++) {
@@ -692,6 +698,7 @@ public class InCellReader extends FormatReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
+      CoreMetadata ms0 = core.get(0);
       if (qName.equals("Plate")) {
         wellRows = Integer.parseInt(attributes.getValue("rows"));
         wellCols = Integer.parseInt(attributes.getValue("columns"));
@@ -742,11 +749,11 @@ public class InCellReader extends FormatReader {
         fieldCount++;
       }
       else if (qName.equals("TimePoint")) {
-        core[0].sizeT++;
+        ms0.sizeT++;
       }
       else if (qName.equals("Wavelength")) {
         String fusion = attributes.getValue("fusion_wave");
-        if (fusion.equals("false")) core[0].sizeC++;
+        if (fusion.equals("false")) ms0.sizeC++;
       }
       else if (qName.equals("AcqWave")) {
         nChannels++;
@@ -754,9 +761,9 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("ZDimensionParameters")) {
         String nz = attributes.getValue("number_of_slices");
         if (nz != null) {
-          core[0].sizeZ = Integer.parseInt(nz);
+          ms0.sizeZ = Integer.parseInt(nz);
         }
-        else core[0].sizeZ = 1;
+        else ms0.sizeZ = 1;
       }
       else if (qName.equals("Row")) {
         wellRow = Integer.parseInt(attributes.getValue("number")) - 1;

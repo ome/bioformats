@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.tiff.IFD;
@@ -81,8 +82,10 @@ public class SEQReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    core[0].sizeZ = 0;
-    core[0].sizeT = 0;
+    CoreMetadata m = core.get(0);
+
+    m.sizeZ = 0;
+    m.sizeT = 0;
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
     for (IFD ifd : ifds) {
@@ -100,18 +103,18 @@ public class SEQReader extends BaseTiffReader {
 
       if (tag2 != -1) {
         // should be one of these for every image plane
-        core[0].sizeZ++;
+        m.sizeZ++;
         addGlobalMeta("Frame Rate", tag2);
       }
 
       addGlobalMeta("Number of images", getSizeZ());
     }
 
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    if (getSizeZ() == 0) m.sizeZ = 1;
+    if (getSizeT() == 0) m.sizeT = 1;
 
     if (getSizeZ() == 1 && getSizeT() == 1) {
-      core[0].sizeZ = ifds.size();
+      m.sizeZ = ifds.size();
     }
 
     // default values
@@ -132,20 +135,20 @@ public class SEQReader extends BaseTiffReader {
           String label = token.substring(0, eq);
           String data = token.substring(eq + 1);
           addGlobalMeta(label, data);
-          if (label.equals("channels")) core[0].sizeC = Integer.parseInt(data);
+          if (label.equals("channels")) m.sizeC = Integer.parseInt(data);
           else if (label.equals("frames")) {
-            core[0].sizeT = Integer.parseInt(data);
+            m.sizeT = Integer.parseInt(data);
           }
           else if (label.equals("slices")) {
-            core[0].sizeZ = Integer.parseInt(data);
+            m.sizeZ = Integer.parseInt(data);
           }
         }
       }
     }
 
-    if (isRGB() && getSizeC() != 3) core[0].sizeC *= 3;
+    if (isRGB() && getSizeC() != 3) m.sizeC *= 3;
 
-    core[0].dimensionOrder = "XY";
+    m.dimensionOrder = "XY";
 
     int maxNdx = 0, max = 0;
     int[] dims = {getSizeZ(), getSizeC(), getSizeT()};
@@ -158,18 +161,18 @@ public class SEQReader extends BaseTiffReader {
       }
     }
 
-    core[0].dimensionOrder += axes[maxNdx];
+    m.dimensionOrder += axes[maxNdx];
 
     if (maxNdx != 1) {
       if (getSizeC() > 1) {
-        core[0].dimensionOrder += "C";
-        core[0].dimensionOrder += (maxNdx == 0 ? axes[2] : axes[0]);
+        m.dimensionOrder += "C";
+        m.dimensionOrder += (maxNdx == 0 ? axes[2] : axes[0]);
       }
-      else core[0].dimensionOrder += (maxNdx == 0 ? axes[2] : axes[0]) + "C";
+      else m.dimensionOrder += (maxNdx == 0 ? axes[2] : axes[0]) + "C";
     }
     else {
-      if (getSizeZ() > getSizeT()) core[0].dimensionOrder += "ZT";
-      else core[0].dimensionOrder += "TZ";
+      if (getSizeZ() > getSizeT()) m.dimensionOrder += "ZT";
+      else m.dimensionOrder += "TZ";
     }
   }
 

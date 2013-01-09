@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -305,7 +306,7 @@ public class PrairieReader extends FormatReader {
       else {
         files = new String[] {id};
         tiff.setId(files[0]);
-        core = tiff.getCoreMetadata();
+        core = new ArrayList<CoreMetadata>(tiff.getCoreMetadataList());
         metadataStore = tiff.getMetadataStore();
 
         Hashtable globalMetadata = tiff.getGlobalMetadata();
@@ -436,11 +437,13 @@ public class PrairieReader extends FormatReader {
     DefaultHandler handler = new PrairieHandler();
     XMLTools.parseXML(xml, handler);
 
-    core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
+    CoreMetadata m = core.get(0);
+
+    m.sizeT = getImageCount() / (getSizeZ() * getSizeC());
 
     if (timeSeries && getSizeT() == 1 && getSizeZ() > 1) {
-      core[0].sizeT = getSizeZ();
-      core[0].sizeZ = 1;
+      m.sizeT = getSizeZ();
+      m.sizeZ = 1;
     }
 
     files = new String[f.size()];
@@ -449,16 +452,16 @@ public class PrairieReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    if (getSizeZ() == 0) m.sizeZ = 1;
+    if (getSizeT() == 0) m.sizeT = 1;
 
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = FormatTools.UINT16;
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].littleEndian = tiff.isLittleEndian();
-    core[0].indexed = tiff.isIndexed();
-    core[0].falseColor = false;
+    m.dimensionOrder = "XYCZT";
+    m.pixelType = FormatTools.UINT16;
+    m.rgb = false;
+    m.interleaved = false;
+    m.littleEndian = tiff.isLittleEndian();
+    m.indexed = tiff.isIndexed();
+    m.falseColor = false;
   }
 
   private void initCFG() throws FormatException, IOException {
@@ -506,6 +509,8 @@ public class PrairieReader extends FormatReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
+      CoreMetadata m = core.get(0);
+
       if (qName.equals("PVScan")) {
         date = attributes.getValue("date");
       }
@@ -517,14 +522,14 @@ public class PrairieReader extends FormatReader {
         String index = attributes.getValue("index");
         if (index != null) {
           int zIndex = Integer.parseInt(index);
-          if (zIndex > getSizeZ()) core[0].sizeZ++;
+          if (zIndex > getSizeZ()) m.sizeZ++;
         }
 
         relativeTimes.put(index,
           new Double(attributes.getValue("relativeTime")));
       }
       else if (qName.equals("File")) {
-        core[0].imageCount++;
+        m.imageCount++;
         File current = new File(currentId).getAbsoluteFile();
         String dir = "";
         if (current.exists()) {
@@ -539,7 +544,7 @@ public class PrairieReader extends FormatReader {
         if (ch != null) {
           int cIndex = Integer.parseInt(ch);
           if (cIndex > getSizeC() && !channels.contains(channelName)) {
-            core[0].sizeC++;
+            m.sizeC++;
             channels.add(channelName);
           }
         }
@@ -550,10 +555,10 @@ public class PrairieReader extends FormatReader {
         addGlobalMeta(key, value);
 
         if (key.equals("pixelsPerLine")) {
-          core[0].sizeX = Integer.parseInt(value);
+          m.sizeX = Integer.parseInt(value);
         }
         else if (key.equals("linesPerFrame")) {
-          core[0].sizeY = Integer.parseInt(value);
+          m.sizeY = Integer.parseInt(value);
         }
         else if (key.equals("micronsPerPixel_XAxis")) {
           try {
@@ -575,14 +580,14 @@ public class PrairieReader extends FormatReader {
           if (tokens.length > 1) {
             String mag = tokens[1].toLowerCase().replaceAll("x", "");
             try {
-              Integer m = new Integer(mag);
-              if (m > 0) {
-                magnification = new PositiveInteger(m);
+              Integer mi = new Integer(mag);
+              if (mi > 0) {
+                magnification = new PositiveInteger(mi);
               }
               else {
                 LOGGER.warn(
                   "Expected positive value for NominalMagnification; got {}",
-                  m);
+                  mi);
               }
             }
             catch (NumberFormatException e) { }
@@ -640,7 +645,7 @@ public class PrairieReader extends FormatReader {
           catch (NumberFormatException e) { }
         }
         else if (key.equals("bitDepth")) {
-          core[0].bitsPerPixel = Integer.parseInt(value);
+          m.bitsPerPixel = Integer.parseInt(value);
         }
         else if (key.equals("xYStageXPositionIncreasesLeftToRight")) {
           invertX = value.equals("True");

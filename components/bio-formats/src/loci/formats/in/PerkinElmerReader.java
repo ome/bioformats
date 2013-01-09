@@ -36,6 +36,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -420,13 +421,15 @@ public class PerkinElmerReader extends FormatReader {
     extCount = foundExts.size();
     foundExts = null;
 
-    core[0].imageCount = 0;
+    CoreMetadata ms0 = core.get(0);
+
+    ms0.imageCount = 0;
     for (PixelsFile f : files) {
       allFiles.add(f.path);
 
-      core[0].imageCount++;
+      ms0.imageCount++;
       if (f.firstIndex < 0 && files.length > extCount) {
-        core[0].imageCount += ((files.length - 1) / (extCount - 1)) - 1;
+        ms0.imageCount += ((files.length - 1) / (extCount - 1)) - 1;
       }
     }
 
@@ -526,9 +529,9 @@ public class PerkinElmerReader extends FormatReader {
       String[] tokens = details.split("\\s");
       int n = 0;
       for (String token : tokens) {
-        if (token.equals("Wavelengths")) core[0].sizeC = n;
-        else if (token.equals("Frames")) core[0].sizeT = n;
-        else if (token.equals("Slices")) core[0].sizeZ = n;
+        if (token.equals("Wavelengths")) ms0.sizeC = n;
+        else if (token.equals("Frames")) ms0.sizeT = n;
+        else if (token.equals("Slices")) ms0.sizeZ = n;
         try {
           n = Integer.parseInt(token);
         }
@@ -544,40 +547,40 @@ public class PerkinElmerReader extends FormatReader {
 
     if (isTiff) {
       tiff.setId(getFile(0));
-      core[0].pixelType = tiff.getPixelType();
+      ms0.pixelType = tiff.getPixelType();
     }
     else {
       RandomAccessInputStream tmp = new RandomAccessInputStream(getFile(0));
       int bpp = (int) (tmp.length() - 6) / (getSizeX() * getSizeY());
       tmp.close();
       if (bpp % 3 == 0) bpp /= 3;
-      core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, false, false);
+      ms0.pixelType = FormatTools.pixelTypeFromBytes(bpp, false, false);
     }
 
-    if (getSizeZ() <= 0) core[0].sizeZ = 1;
-    if (getSizeC() <= 0) core[0].sizeC = 1;
+    if (getSizeZ() <= 0) ms0.sizeZ = 1;
+    if (getSizeC() <= 0) ms0.sizeC = 1;
 
     if (getSizeT() <= 0 || getImageCount() % (getSizeZ() * getSizeC()) == 0) {
-      core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
+      ms0.sizeT = getImageCount() / (getSizeZ() * getSizeC());
     }
     else {
-      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+      ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
       if (getImageCount() > files.length) {
-        core[0].imageCount = files.length;
-        core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
+        ms0.imageCount = files.length;
+        ms0.sizeT = getImageCount() / (getSizeZ() * getSizeC());
       }
     }
 
-    core[0].dimensionOrder = "XYCTZ";
-    core[0].rgb = isTiff ? tiff.isRGB() : false;
-    core[0].interleaved = false;
-    core[0].littleEndian = isTiff ? tiff.isLittleEndian() : true;
-    core[0].metadataComplete = true;
-    core[0].indexed = isTiff ? tiff.isIndexed() : false;
-    core[0].falseColor = false;
+    ms0.dimensionOrder = "XYCTZ";
+    ms0.rgb = isTiff ? tiff.isRGB() : false;
+    ms0.interleaved = false;
+    ms0.littleEndian = isTiff ? tiff.isLittleEndian() : true;
+    ms0.metadataComplete = true;
+    ms0.indexed = isTiff ? tiff.isIndexed() : false;
+    ms0.falseColor = false;
 
     if (getImageCount() != getSizeZ() * getSizeC() * getSizeT()) {
-      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+      ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
     }
 
     if (!isTiff && extCount > getSizeT()) {
@@ -720,15 +723,18 @@ public class PerkinElmerReader extends FormatReader {
   private void parseKeyValue(String key, String value) {
     if (key == null || value == null) return;
     addGlobalMeta(key, value);
+
+    CoreMetadata m = core.get(0);
+
     try {
       if (key.equals("Image Width")) {
-        core[0].sizeX = Integer.parseInt(value);
+        m.sizeX = Integer.parseInt(value);
       }
       else if (key.equals("Image Length")) {
-        core[0].sizeY = Integer.parseInt(value);
+        m.sizeY = Integer.parseInt(value);
       }
       else if (key.equals("Number of slices")) {
-        core[0].sizeZ = Integer.parseInt(value);
+        m.sizeZ = Integer.parseInt(value);
       }
       else if (key.equals("Experiment details:")) details = value;
       else if (key.equals("Z slice space")) sliceSpace = value;
@@ -750,7 +756,7 @@ public class PerkinElmerReader extends FormatReader {
         originZ = Double.parseDouble(value);
       }
       else if (key.equals("SubfileType X")) {
-        core[0].bitsPerPixel = Integer.parseInt(value);
+        m.bitsPerPixel = Integer.parseInt(value);
       }
     }
     catch (NumberFormatException exc) {

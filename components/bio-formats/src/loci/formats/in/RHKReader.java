@@ -30,6 +30,7 @@ import java.io.IOException;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -122,8 +123,9 @@ public class RHKReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
-    core[0].littleEndian = true;
+    m.littleEndian = true;
     in.order(isLittleEndian());
 
     boolean xpm = in.readShort() == 0xaa;
@@ -137,8 +139,8 @@ public class RHKReader extends FormatReader {
       dataType = in.readInt();
       int lineType = in.readInt();
       in.skipBytes(8);
-      core[0].sizeX = in.readInt();
-      core[0].sizeY = in.readInt();
+      m.sizeX = in.readInt();
+      m.sizeY = in.readInt();
       in.skipBytes(16);
       pixelOffset = in.readInt();
     }
@@ -148,24 +150,24 @@ public class RHKReader extends FormatReader {
       int imageType = Integer.parseInt(typeData[0]);
       dataType = Integer.parseInt(typeData[1]);
       int lineType = Integer.parseInt(typeData[2]);
-      core[0].sizeX = Integer.parseInt(typeData[3]);
-      core[0].sizeY = Integer.parseInt(typeData[4]);
+      m.sizeX = Integer.parseInt(typeData[3]);
+      m.sizeY = Integer.parseInt(typeData[4]);
       int pageType = Integer.parseInt(typeData[6]);
       pixelOffset = HEADER_SIZE;
     }
 
     switch (dataType) {
       case 0:
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
         break;
       case 1:
-        core[0].pixelType = FormatTools.INT16;
+        m.pixelType = FormatTools.INT16;
         break;
       case 2:
-        core[0].pixelType = FormatTools.INT32;
+        m.pixelType = FormatTools.INT32;
         break;
       case 3:
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
         break;
       default:
         throw new FormatException("Unsupported data type: " + dataType);
@@ -192,12 +194,12 @@ public class RHKReader extends FormatReader {
     String description = in.readString(32).trim();
     addGlobalMeta("Description", description);
 
-    core[0].rgb = false;
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].dimensionOrder = "XYZCT";
+    m.rgb = false;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.dimensionOrder = "XYZCT";
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

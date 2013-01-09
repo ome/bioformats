@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -91,7 +92,9 @@ public class OxfordInstrumentsReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    core[0].littleEndian = true;
+    CoreMetadata m = core.get(0);
+
+    m.littleEndian = true;
     in.order(isLittleEndian());
 
     in.seek(48);
@@ -111,27 +114,27 @@ public class OxfordInstrumentsReader extends FormatReader {
 
     in.skipBytes(864);
 
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
     in.skipBytes(28);
     if (getSizeX() == 0 && getSizeY() == 0) {
-      core[0].sizeX = in.readInt();
-      core[0].sizeY = in.readInt();
+      m.sizeX = in.readInt();
+      m.sizeY = in.readInt();
       in.skipBytes(196);
     }
     else in.skipBytes(204);
-    core[0].pixelType = FormatTools.UINT16;
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].rgb = false;
-    core[0].indexed = false;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].interleaved = false;
+    m.pixelType = FormatTools.UINT16;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.rgb = false;
+    m.indexed = false;
+    m.dimensionOrder = "XYZCT";
+    m.interleaved = false;
 
     if (FormatTools.getPlaneSize(this) + in.getFilePointer() > in.length()) {
-      core[0].sizeY = 1;
+      m.sizeY = 1;
     }
 
     int lutSize = in.readInt();

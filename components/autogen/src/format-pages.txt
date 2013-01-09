@@ -919,6 +919,18 @@ presenceRating = Poor
 utilityRating = Fair
 reader = INRReader.java
 
+[Inveon]
+extensions = .hdr
+scifio = no
+export = no
+weHave = a few Inveon datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Good
+presenceRating = Poor
+utilityRating = Fair
+reader = InveonReader.java
+
 [IPLab-Mac]
 extensions = .ipm
 owner = `BioVision Technologies <http://biovis.com/>`_

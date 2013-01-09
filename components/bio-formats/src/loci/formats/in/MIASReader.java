@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -376,7 +377,7 @@ public class MIASReader extends FormatReader {
       TiffReader r = new TiffReader();
       r.setMetadataStore(getMetadataStore());
       r.setId(tiffs[0][0]);
-      core = r.getCoreMetadata();
+      core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
       Hashtable globalMetadata = r.getGlobalMetadata();
@@ -624,7 +625,6 @@ public class MIASReader extends FormatReader {
 
     int nSeries = tiffs.length;
 
-    core = new CoreMetadata[nSeries];
     bpp = new int[nSeries];
 
     if (readers.length == 0) {
@@ -639,43 +639,45 @@ public class MIASReader extends FormatReader {
     if (tileCols == 0) tileCols = 1;
     if (tileRows == 0) tileRows = 1;
 
-    for (int i=0; i<core.length; i++) {
-      core[i] = new CoreMetadata();
+    core.clear();
+    for (int i=0; i<nSeries; i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
 
-      core[i].sizeZ = zCount[i];
-      core[i].sizeC = cCount[i];
-      core[i].sizeT = tCount[i];
+      ms.sizeZ = zCount[i];
+      ms.sizeC = cCount[i];
+      ms.sizeT = tCount[i];
 
-      if (core[i].sizeZ == 0) core[i].sizeZ = 1;
-      if (core[i].sizeC == 0) core[i].sizeC = 1;
-      if (core[i].sizeT == 0) core[i].sizeT = 1;
+      if (ms.sizeZ == 0) ms.sizeZ = 1;
+      if (ms.sizeC == 0) ms.sizeC = 1;
+      if (ms.sizeT == 0) ms.sizeT = 1;
 
-      core[i].sizeX = tileWidth * tileCols;
-      core[i].sizeY = tileHeight * tileRows;
-      core[i].pixelType = readers[0][0].getPixelType();
-      core[i].sizeC *= readers[0][0].getSizeC();
-      core[i].rgb = readers[0][0].isRGB();
-      core[i].littleEndian = readers[0][0].isLittleEndian();
-      core[i].interleaved = readers[0][0].isInterleaved();
-      core[i].indexed = readers[0][0].isIndexed();
-      core[i].falseColor = readers[0][0].isFalseColor();
-      core[i].dimensionOrder = order[i];
+      ms.sizeX = tileWidth * tileCols;
+      ms.sizeY = tileHeight * tileRows;
+      ms.pixelType = readers[0][0].getPixelType();
+      ms.sizeC *= readers[0][0].getSizeC();
+      ms.rgb = readers[0][0].isRGB();
+      ms.littleEndian = readers[0][0].isLittleEndian();
+      ms.interleaved = readers[0][0].isInterleaved();
+      ms.indexed = readers[0][0].isIndexed();
+      ms.falseColor = readers[0][0].isFalseColor();
+      ms.dimensionOrder = order[i];
 
-      if (core[i].dimensionOrder.indexOf("Z") == -1) {
-        core[i].dimensionOrder += "Z";
+      if (ms.dimensionOrder.indexOf("Z") == -1) {
+        ms.dimensionOrder += "Z";
       }
-      if (core[i].dimensionOrder.indexOf("C") == -1) {
-        core[i].dimensionOrder += "C";
+      if (ms.dimensionOrder.indexOf("C") == -1) {
+        ms.dimensionOrder += "C";
       }
-      if (core[i].dimensionOrder.indexOf("T") == -1) {
-        core[i].dimensionOrder += "T";
+      if (ms.dimensionOrder.indexOf("T") == -1) {
+        ms.dimensionOrder += "T";
       }
 
-      core[i].imageCount = core[i].sizeZ * core[i].sizeT * cCount[i];
-      if (core[i].imageCount == 0) {
-        core[i].imageCount = 1;
+      ms.imageCount = ms.sizeZ * ms.sizeT * cCount[i];
+      if (ms.imageCount == 0) {
+        ms.imageCount = 1;
       }
-      bpp[i] = FormatTools.getBytesPerPixel(core[i].pixelType);
+      bpp[i] = FormatTools.getBytesPerPixel(ms.pixelType);
     }
 
     // Populate metadata hashtable

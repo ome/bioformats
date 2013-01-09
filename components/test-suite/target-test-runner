@@ -63,8 +63,8 @@ Options:
   --hudson      Prepares the TestNG XML for use by Hudson
 
 Examples:
-  %s -f ~/regular_test_files loci.tests.testng.OmeroOpenBytesTest ~/testimages/foo.tiff
-  find -name '*.tif' | %s -f - loci.tests.testng.OmeroOpenBytesTest
+  %s -f ~/regular_test_files loci.tests.testng.OpenBytesPerformanceTest ~/testimages/foo.tiff
+  find -name '*.tif' | %s -f - loci.tests.testng.OpenBytesPerformanceTest
 
 Report bugs to ome-devel@lists.openmicroscopy.org.uk""" % (error, cmd, cmd, cmd)
     sys.exit(2)

@@ -47,6 +47,7 @@ import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.xml.XMLTools;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.MetadataStore;
@@ -131,7 +132,9 @@ public class TiffReader extends BaseTiffReader {
 
     LOGGER.info("Checking comment style");
 
-    if (ifds.size() > 1) core[0].orderCertain = false;
+    CoreMetadata m = core.get(0);
+
+    if (ifds.size() > 1) m.orderCertain = false;
 
     description = null;
     calibrationUnit = null;
@@ -253,6 +256,8 @@ public class TiffReader extends BaseTiffReader {
     int z = 1, t = 1;
     int c = getSizeC();
 
+    CoreMetadata m = core.get(0);
+
     if (ifds.get(0).containsKey(IMAGEJ_TAG)) {
       comment += "\n" + ifds.get(0).getIFDTextValue(IMAGEJ_TAG);
     }
@@ -298,17 +303,17 @@ public class TiffReader extends BaseTiffReader {
     if (z * c * t == c && isRGB()) {
       t = getImageCount();
     }
-    core[0].dimensionOrder = "XYCZT";
+    m.dimensionOrder = "XYCZT";
 
     if (z * t * (isRGB() ? 1 : c) == ifds.size()) {
-      core[0].sizeZ = z;
-      core[0].sizeT = t;
-      core[0].sizeC = isRGB() ? getSizeC() : c;
+      m.sizeZ = z;
+      m.sizeT = t;
+      m.sizeC = isRGB() ? getSizeC() : c;
     }
     else if (z * c * t == ifds.size() && isRGB()) {
-      core[0].sizeZ = z;
-      core[0].sizeT = t;
-      core[0].sizeC *= c;
+      m.sizeZ = z;
+      m.sizeT = t;
+      m.sizeC *= c;
     }
     else if (ifds.size() == 1 && z * t > ifds.size() &&
       ifds.get(0).getCompression() == TiffCompression.UNCOMPRESSED)
@@ -354,20 +359,20 @@ public class TiffReader extends BaseTiffReader {
       }
 
       if (z * c * t == ifds.size()) {
-        core[0].sizeZ = z;
-        core[0].sizeT = t;
-        core[0].sizeC = c;
+        m.sizeZ = z;
+        m.sizeT = t;
+        m.sizeC = c;
       }
       else if (z * t == ifds.size()) {
-        core[0].sizeZ = z;
-        core[0].sizeT = t;
+        m.sizeZ = z;
+        m.sizeT = t;
       }
-      else core[0].sizeZ = ifds.size();
-      core[0].imageCount = ifds.size();
+      else m.sizeZ = ifds.size();
+      m.imageCount = ifds.size();
     }
     else {
-      core[0].sizeT = ifds.size();
-      core[0].imageCount = ifds.size();
+      m.sizeT = ifds.size();
+      m.imageCount = ifds.size();
     }
   }
 

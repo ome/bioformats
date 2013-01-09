@@ -30,6 +30,7 @@ import java.nio.ByteOrder;
 
 import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -125,15 +126,17 @@ public class InCell3000Reader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    core[0].littleEndian = true;
+    CoreMetadata m = core.get(0);
+
+    m.littleEndian = true;
     in.order(isLittleEndian());
 
     pixelsOffset = in.readShort();
-    core[0].sizeX = in.readShort();
+    m.sizeX = in.readShort();
 
     int nLines = in.readShort();
     int numPlanes = nLines % 32;
-    core[0].sizeY = (nLines - numPlanes) / numPlanes;
+    m.sizeY = (nLines - numPlanes) / numPlanes;
 
     int componentType = in.read();
     int reserved = in.read();
@@ -144,13 +147,13 @@ public class InCell3000Reader extends FormatReader {
     int componentBytes = in.readInt();
     int zero = in.read();
 
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].pixelType = FormatTools.UINT16;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].rgb = false;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.pixelType = FormatTools.UINT16;
+    m.dimensionOrder = "XYCZT";
+    m.rgb = false;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

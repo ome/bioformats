@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -94,6 +95,8 @@ public class Ecat7Reader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
+    CoreMetadata ms0 = core.get(0);
+
     String check = in.readString(14).trim();
     if (!check.equals(ECAT7_MAGIC)) {
       throw new FormatException("Invalid ECAT 7 file.");
@@ -139,8 +142,8 @@ public class Ecat7Reader extends FormatReader {
     short patientOrientation = in.readShort();
     String facilityName = in.readString(20);
 
-    core[0].sizeZ = in.readShort();
-    core[0].sizeT = in.readShort();
+    ms0.sizeZ = in.readShort();
+    ms0.sizeT = in.readShort();
 
     short numGates = in.readShort();
     short numBedPositions = in.readShort();
@@ -174,8 +177,8 @@ public class Ecat7Reader extends FormatReader {
     short dataType = in.readShort();
     short numDimensions = in.readShort();
 
-    core[0].sizeX = in.readShort();
-    core[0].sizeY = in.readShort();
+    ms0.sizeX = in.readShort();
+    ms0.sizeY = in.readShort();
     in.skipBytes(2);
 
     float xOffset = in.readFloat();
@@ -238,13 +241,13 @@ public class Ecat7Reader extends FormatReader {
       userFill[i] = in.readShort();
     }
 
-    core[0].sizeC = 1;
-    core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
-    core[0].dimensionOrder = "XYZTC";
+    ms0.sizeC = 1;
+    ms0.imageCount = getSizeZ() * getSizeT() * getSizeC();
+    ms0.dimensionOrder = "XYZTC";
 
     switch (dataType) {
       case 6:
-        core[0].pixelType = FormatTools.UINT16;
+        ms0.pixelType = FormatTools.UINT16;
         break;
       default:
         throw new FormatException("Unsupported data type: " + dataType);

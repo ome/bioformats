@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -79,7 +80,8 @@ public class SeikoReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    core[0].littleEndian = true;
+    CoreMetadata m = core.get(0);
+    m.littleEndian = true;
     in.order(isLittleEndian());
 
     String comment = null;
@@ -100,15 +102,15 @@ public class SeikoReader extends FormatReader {
 
     in.seek(1402);
 
-    core[0].sizeX = in.readShort();
-    core[0].sizeY = in.readShort();
+    m.sizeX = in.readShort();
+    m.sizeY = in.readShort();
 
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].pixelType = FormatTools.UINT16;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.dimensionOrder = "XYZCT";
+    m.pixelType = FormatTools.UINT16;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

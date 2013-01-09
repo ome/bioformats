@@ -120,41 +120,42 @@ public class PyramidTiffReader extends BaseTiffReader {
 
   /* @see loci.formats.in.BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
-    core = new CoreMetadata[ifds.size()];
+    int seriesCount = ifds.size();
 
     // repopulate core metadata
-
-    for (int s=0; s<core.length; s++) {
-      core[s] = new CoreMetadata();
+    core.clear();
+    for (int s=0; s<seriesCount; s++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
 
       if (s == 0) {
-        core[s].resolutionCount = core.length;
+        ms.resolutionCount = seriesCount;
       }
 
       IFD ifd = ifds.get(s);
 
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
-      core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
+      ms.rgb = samples > 1 || p == PhotoInterp.RGB;
 
       long numTileRows = ifd.getTilesPerColumn() - 1;
       long numTileCols = ifd.getTilesPerRow() - 1;
 
-      core[s].sizeX = (int) ifd.getImageWidth();
-      core[s].sizeY = (int) ifd.getImageLength();
-      core[s].sizeZ = 1;
-      core[s].sizeT = 1;
-      core[s].sizeC = core[s].rgb ? samples : 1;
-      core[s].littleEndian = ifd.isLittleEndian();
-      core[s].indexed = p == PhotoInterp.RGB_PALETTE &&
+      ms.sizeX = (int) ifd.getImageWidth();
+      ms.sizeY = (int) ifd.getImageLength();
+      ms.sizeZ = 1;
+      ms.sizeT = 1;
+      ms.sizeC = ms.rgb ? samples : 1;
+      ms.littleEndian = ifd.isLittleEndian();
+      ms.indexed = p == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      core[s].imageCount = 1;
-      core[s].pixelType = ifd.getPixelType();
-      core[s].metadataComplete = true;
-      core[s].interleaved = false;
-      core[s].falseColor = false;
-      core[s].dimensionOrder = "XYCZT";
-      core[s].thumbnail = s > 0;
+      ms.imageCount = 1;
+      ms.pixelType = ifd.getPixelType();
+      ms.metadataComplete = true;
+      ms.interleaved = false;
+      ms.falseColor = false;
+      ms.dimensionOrder = "XYCZT";
+      ms.thumbnail = s > 0;
     }
   }
 

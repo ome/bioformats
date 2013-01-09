@@ -31,6 +31,7 @@ import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -135,20 +136,21 @@ public class VarianFDFReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    CoreMetadata m = core.get(0);
 
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
 
     parseFDF(id);
 
-    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-    core[0].dimensionOrder = "XYTZC";
+    m.imageCount = getSizeZ() * getSizeC() * getSizeT();
+    m.dimensionOrder = "XYTZC";
 
     if (files.size() > getImageCount()) {
       int rem = files.size() / getImageCount();
-      core[0].sizeT *= rem;
-      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+      m.sizeT *= rem;
+      m.imageCount = getSizeZ() * getSizeC() * getSizeT();
     }
 
     pixelOffsets = new long[getImageCount()];
@@ -205,6 +207,7 @@ public class VarianFDFReader extends FormatReader {
 
   private void parseFDF(String file) throws FormatException, IOException {
     in = new RandomAccessInputStream(file);
+    CoreMetadata m = core.get(0);
     boolean storedFloats = false;
     boolean multifile = false;
     while (true) {
@@ -222,35 +225,35 @@ public class VarianFDFReader extends FormatReader {
         storedFloats = value.equals("\"float\"");
       }
       if (var.equals("bits")) {
-        core[0].bitsPerPixel = Integer.parseInt(value);
+        m.bitsPerPixel = Integer.parseInt(value);
         if (value.equals("8")) {
-          core[0].pixelType = FormatTools.UINT8;
+          m.pixelType = FormatTools.UINT8;
         }
         else if (value.equals("16")) {
-          core[0].pixelType = FormatTools.UINT16;
+          m.pixelType = FormatTools.UINT16;
         }
         else if (value.equals("32")) {
           if (storedFloats) {
-            core[0].pixelType = FormatTools.FLOAT;
+            m.pixelType = FormatTools.FLOAT;
           }
-          else core[0].pixelType = FormatTools.UINT32;
+          else m.pixelType = FormatTools.UINT32;
         }
         else throw new FormatException("Unsupported bits: " + value);
       }
       else if (var.equals("matrix[]")) {
         String[] values = parseArray(value);
-        core[0].sizeX = (int) Double.parseDouble(values[0]);
-        core[0].sizeY = (int) Double.parseDouble(values[1]);
+        m.sizeX = (int) Double.parseDouble(values[0]);
+        m.sizeY = (int) Double.parseDouble(values[1]);
         if (values.length > 2) {
-          core[0].sizeZ = (int) Double.parseDouble(values[2]);
+          m.sizeZ = (int) Double.parseDouble(values[2]);
         }
       }
       else if (var.equals("slices")) {
-        core[0].sizeZ = Integer.parseInt(value);
+        m.sizeZ = Integer.parseInt(value);
         multifile = true;
       }
       else if (var.equals("echoes")) {
-        core[0].sizeT = Integer.parseInt(value);
+        m.sizeT = Integer.parseInt(value);
         multifile = true;
       }
       else if (var.equals("span[]")) {
@@ -284,7 +287,7 @@ public class VarianFDFReader extends FormatReader {
         units = parseArray(value);
       }
       else if (var.equals("bigendian")) {
-        core[0].littleEndian = value.equals("0");
+        m.littleEndian = value.equals("0");
         in.order(isLittleEndian());
       }
 
