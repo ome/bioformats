@@ -22,7 +22,4 @@ are available.
 
 Updates in the Fiji updater are not always Bio-Formats’ most recent
 trunk build or stable release; they are versions that are known to
-remain compatible with other plugins that depend upon Bio-Formats. You
-should use the Fiji updater if you use other plugins that might use
-Bio-Formats.  However, if you encounter a bug within Bio-Formats, use
-Bio-Formats’ own updater to see if the latest trunk build fixes it.
+remain compatible with other plugins that depend upon Bio-Formats.
