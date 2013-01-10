@@ -1353,7 +1353,7 @@ public class ICSReader extends FormatReader {
       channelTypes.add(FormatTools.CHANNEL);
     }
 
-    if (isRGB() && emWaves.length == getSizeC()) {
+    if (isRGB() && emWaves != null && emWaves.length == getSizeC()) {
       core[0].rgb = false;
       storedRGB = true;
     }
