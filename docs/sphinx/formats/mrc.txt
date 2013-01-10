@@ -18,11 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`MRC (Medical Research Council) <mrc-metadata>`
 
-Freely Available Software:
-
-- `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
 
 Sample Datasets:
 
@@ -30,14 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- an `MRC specification document <http://ami.scripps.edu/software/mrctools/mrc_specification.php>`_ (in HTML) 
-- `another MRC specification document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in TXT) 
-- a few MRC datasets
+* an `MRC specification document <http://ami.scripps.edu/software/mrctools/mrc_specification.php>`_ (in HTML) 
+* `another MRC specification document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in TXT) 
+* a few MRC datasets
 
 We would like to have:
 
-- an official specification document 
-- more Molecular Imaging files
 
 **Ratings**
 
@@ -63,7 +58,7 @@ Notes:
 
 Commercial applications that support MRC include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_ 
+* `Bitplane Imaris <http://www.bitplane.com/>`_ 
 
 .. seealso:: 
   `MRC on Wikipedia <http://en.wikipedia.org/wiki/MRC_%28file_format%29>`_

@@ -18,23 +18,16 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`MetaMorph 7.5 TIFF <metamorph-75-tiff-metadata>`
 
-Freely Available Software:
 
-- `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
-
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- a few Metamorph 7.5 TIFF datasets
+* a few Metamorph 7.5 TIFF datasets
 
 We would like to have:
 
-- an official specification document
 
 **Ratings**
 

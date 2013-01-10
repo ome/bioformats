@@ -1,0 +1,58 @@
+*******************************************************************************
+BioRadReader
+*******************************************************************************
+
+This page lists supported metadata fields for the Bio-Formats Bio-Rad PIC format reader.
+
+These fields are from the :formats_plone:`OME data model <support/file-formats/schemas>`.
+Bio-Formats standardizes each format's original metadata to and from the OME
+data model so that you can work with a particular piece of metadata (e.g.
+physical width of the image in microns) in a format-independent way.
+
+Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 35 of them (8%).
+  * Of those, Bio-Formats fully or partially converts 35 (100%).
+
+Supported fields
+===============================================================================
+
+These fields are fully supported by the Bio-Formats Bio-Rad PIC format reader:
+  * `Channel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel>`_: ID
+  * `Channel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel>`_: SamplesPerPixel
+  * `Detector <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector>`_: Gain
+  * `Detector <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector>`_: ID
+  * `Detector <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector>`_: Offset
+  * `Detector <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector>`_: Type
+  * `DetectorSettings <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings>`_: Gain
+  * `DetectorSettings <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings>`_: ID
+  * `DetectorSettings <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings>`_: Offset
+  * `Experiment <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experiment>`_: ID
+  * `Experiment <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experiment>`_: Type
+  * `Image <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image>`_: ID
+  * `Image <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image>`_: InstrumentRef
+  * `Image <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image>`_: Name
+  * `Instrument <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Instrument>`_: ID
+  * `Objective <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective>`_: Correction
+  * `Objective <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective>`_: ID
+  * `Objective <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective>`_: Immersion
+  * `Objective <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective>`_: LensNA
+  * `Objective <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective>`_: Model
+  * `Objective <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective>`_: NominalMagnification
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: DimensionOrder
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: ID
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: PhysicalSizeX
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: PhysicalSizeY
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: PhysicalSizeZ
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: SizeC
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: SizeT
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: SizeX
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: SizeY
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: SizeZ
+  * `Pixels <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels>`_: Type
+  * `Plane <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane>`_: TheC
+  * `Plane <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane>`_: TheT
+  * `Plane <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane>`_: TheZ
+
+**Total supported: 35**
+
+**Total unknown or missing: 398**

@@ -18,18 +18,18 @@ Export: |no|
 
 Officially Supported Versions: 1.0
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Adobe Photoshop PSD <photoshop-psd-metadata>`
 
 
 
 We currently have:
 
-- a PSD specification document (v3.0.4, 16 July 1995) 
-- a few PSD files
+* a PSD specification document (v3.0.4, 16 July 1995) 
+* a few PSD files
 
 We would like to have:
 
-- more PSD files
+* more PSD files
 
 **Ratings**
 
