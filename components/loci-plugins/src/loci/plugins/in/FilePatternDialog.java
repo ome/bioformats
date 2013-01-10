@@ -184,13 +184,13 @@ public class FilePatternDialog extends ImporterDialog {
 
   @Override
   protected boolean harvestResults(GenericDialog gd) {
-    boolean useRanges = gd.getNextBoolean();
-    boolean useRegex = gd.getNextBoolean();
-
     String[] counts = new String[fp.getPrefixes().length];
     String[] firsts = new String[counts.length];
     String[] increments = new String[counts.length];
     int[] count = fp.getCount();
+
+    boolean useRanges = counts.length > 0 ? gd.getNextBoolean() : false;
+    boolean useRegex = gd.getNextBoolean();
 
     for (int i=0; i<counts.length; i++) {
       counts[i] = gd.getNextString();
