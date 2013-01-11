@@ -99,6 +99,21 @@ public class PrairieReader extends FormatReader {
   private ArrayList<Sequence> sequences;
 
   /**
+   * Whether a series uses {@code Frame}s as time points rather than focal
+   * planes (i.e., sizeZ and sizeT values inverted).
+   * <p>
+   * This situation occurs when the series's first {@code Sequence} is labeled
+   * as a "TSeries" (i.e., {@link Sequence#isTimeSeries()} returns true), but
+   * there is only one {@code Sequence}.
+   * </p>
+   * <p>
+   * The array length equals the number of series; i.e., it is a parallel array
+   * to {@link #core}.
+   * </p>
+   */
+  private boolean[] framesAreTime;
+
+  /**
    * Flag indicating that the reader is operating in a mode where grouping of
    * files is disallowed. In the case of Prairie, this happens if a TIFF file is
    * passed to {@link #setId} while {@link #isGroupFiles()} is {@code false}.
@@ -203,11 +218,11 @@ public class PrairieReader extends FormatReader {
 
     if (!noPixels) {
       // add TIFF files to the used files list
-      final int s = getSeries(), seriesCount = getSeriesCount();
+      final int s = getSeries();
       for (int t = 0; t < getSizeT(); t++) {
-        final Sequence sequence = sequence(t, s, seriesCount);
+        final Sequence sequence = sequence(t, s);
         for (int z = 0; z < getSizeZ(); z++) {
-          final int index = z + sequence.getIndexMin();
+          final int index = frameIndex(sequence, z, t, s);
           final Frame frame = sequence.getFrame(index);
           if (frame == null) {
             warnFrame(sequence, index);
@@ -257,9 +272,9 @@ public class PrairieReader extends FormatReader {
     final int[] zct = getZCTCoords(no);
     final int z = zct[0], c = zct[1], t = zct[2];
 
-    final Sequence sequence = sequence(t, getSeries(), getSeriesCount());
+    final Sequence sequence = sequence(t, getSeries());
 
-    final int index = z + sequence.getIndexMin();
+    final int index = frameIndex(sequence, z, t, getSeries());
     final Frame frame = sequence.getFrame(index);
     if (frame == null) {
       warnFrame(sequence, index);
@@ -286,6 +301,7 @@ public class PrairieReader extends FormatReader {
       tiff = null;
       meta = null;
       sequences = null;
+      framesAreTime = null;
     }
   }
 
@@ -380,8 +396,9 @@ public class PrairieReader extends FormatReader {
     int bpp = bitDepth == null ? -1 : bitDepth;
 
     core = new CoreMetadata[seriesCount];
+    framesAreTime = new boolean[seriesCount];
     for (int s = 0; s < seriesCount; s++) {
-      final Sequence sequence = sequence(0, s, seriesCount);
+      final Sequence sequence = sequence(s);
       final Frame frame = sequence.getFirstFrame();
       final PFile file = frame == null ? null : frame.getFirstFile();
       if (frame == null || file == null) {
@@ -406,14 +423,14 @@ public class PrairieReader extends FormatReader {
 
       final int sizeX = pixelsPerLine == null ? tiff.getSizeX() : pixelsPerLine;
       final int sizeY = linesPerFrame == null ? tiff.getSizeY() : linesPerFrame;
-      final boolean invertZT = sequence.isTimeSeries() && sizeT == 1;
+      framesAreTime[s] = sequence.isTimeSeries() && sizeT == 1;
 
       core[s] = new CoreMetadata();
       core[s].sizeX = sizeX;
       core[s].sizeY = sizeY;
-      core[s].sizeZ = invertZT ? sizeT : indexCount;
+      core[s].sizeZ = framesAreTime[s] ? 1 : indexCount;
       core[s].sizeC = channelCount;
-      core[s].sizeT = invertZT ? indexCount : sizeT;
+      core[s].sizeT = framesAreTime[s] ? indexCount : sizeT;
       core[s].pixelType = tiff.getPixelType();
       core[s].bitsPerPixel = bpp;
       core[s].imageCount = core[s].sizeZ * core[s].sizeC * core[s].sizeT;
@@ -453,7 +470,7 @@ public class PrairieReader extends FormatReader {
     final int seriesCount = getSeriesCount();
     for (int s = 0; s < seriesCount; s++) {
       setSeries(s);
-      final Sequence sequence = sequence(0, s, seriesCount);
+      final Sequence sequence = sequence(s);
       addSeriesMeta("cycle", sequence.getCycle());
       addSeriesMeta("indexCount", sequence.getIndexCount());
       addSeriesMeta("type", sequence.getType());
@@ -496,7 +513,7 @@ public class PrairieReader extends FormatReader {
     final int seriesCount = getSeriesCount();
     for (int s = 0; s < seriesCount; s++) {
       setSeries(s);
-      final Sequence sequence = sequence(0, s, seriesCount);
+      final Sequence sequence = sequence(s);
       final Frame firstFrame = sequence.getFirstFrame();
 
       // populate acquisition date
@@ -590,9 +607,9 @@ public class PrairieReader extends FormatReader {
 
       // populate stage position coordinates
       for (int t = 0; t < getSizeT(); t++) {
-        final Sequence tSequence = sequence(t, s, seriesCount);
+        final Sequence tSequence = sequence(t, s);
         for (int z = 0; z < getSizeZ(); z++) {
-          final int index = z + tSequence.getIndexMin();
+          final int index = frameIndex(tSequence, z, t, s);
           final Frame zFrame = tSequence.getFrame(index);
           if (zFrame == null) {
             warnFrame(sequence, index);
@@ -792,6 +809,28 @@ public class PrairieReader extends FormatReader {
   }
 
   /**
+   * Gets the first sequence associated with the given series.
+   * 
+   * @param s The series (i.e., stage position).
+   * @return The first associated {@code Sequence}.
+   */
+  private Sequence sequence(final int s) {
+    return sequence(0, series);
+  }
+
+  /**
+   * Gets the sequence associated with the given series and time point.
+   * 
+   * @param t The time point.
+   * @param s The series (i.e., stage position).
+   * @return The associated {@code Sequence}.
+   */
+  private Sequence sequence(final int t, final int s) {
+    final int actualT = framesAreTime[s] ? 0 : t;
+    return sequence(actualT, s, getSeriesCount());
+  }
+
+  /**
    * Gets the sequence associated with the given time point and stage position.
    * 
    * @param t The time point.
@@ -799,12 +838,27 @@ public class PrairieReader extends FormatReader {
    * @param sizeP The number of stage positions.
    * @return The associated {@code Sequence}.
    */
-  private Sequence sequence(int t, int p, int sizeP) {
+  private Sequence sequence(final int t, final int p, final int sizeP) {
     return sequences.get(sizeP * t + p);
   }
 
+  /**
+   * Gets the frame index associated with the given (Z, T) position of the
+   * specified series.
+   * 
+   * @param sequence The sequence from which to extract the frame.
+   * @param z The focal plane.
+   * @param t The time point.
+   * @param s The series (i.e., stage position).
+   * @return The frame index which can be passed to {@link Sequence#getFrame}.
+   */
+  private int frameIndex(final Sequence sequence, int z, int t, int s) {
+    return (framesAreTime[s] ? t : z) + sequence.getIndexMin();
+  }
+
+
   /** Determines whether the two {@link Double} values are equal. */
-  private boolean equal(Double xPos, Double xInitial) {
+  private boolean equal(final Double xPos, final Double xInitial) {
     if (xPos == null && xInitial == null) return true;
     if (xPos == null) return false;
     return xPos.equals(xInitial);
