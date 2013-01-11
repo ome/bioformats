@@ -5,7 +5,7 @@
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-04"
 	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ome.xsd">
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd">
 	<Image ID="Image:0" Name="6x6x1x8-swatch.tif">
 		<AcquiredDate>2010-02-23T12:51:30</AcquiredDate>
 		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
