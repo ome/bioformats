@@ -42,6 +42,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.enums.Binning;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -95,6 +96,12 @@ public class InCellReader extends FormatReader {
   private int totalChannels;
 
   private Vector<String> metadataFiles;
+
+  private Binning bin;
+  private PositiveFloat x, y;
+  private Double gain;
+  private Double temperature;
+  private Double refractive;
 
   // -- Constructor --
 
@@ -246,6 +253,12 @@ public class InCellReader extends FormatReader {
       oneTimepointPerSeries = false;
       totalChannels = 0;
       plateMap = null;
+      bin = null;
+      x = null;
+      y = null;
+      gain = null;
+      temperature = null;
+      refractive = null;
     }
   }
 
@@ -491,7 +504,25 @@ public class InCellReader extends FormatReader {
     store.setInstrumentID(instrumentID, 0);
     store.setExperimentID(experimentID, 0);
 
+    String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objectiveID, 0, 0);
+
+    String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+    store.setDetectorID(detectorID, 0, 0);
+
     for (int i=0; i<seriesCount; i++) {
+      store.setObjectiveSettingsID(objectiveID, i);
+
+      if (refractive != null) {
+        store.setObjectiveSettingsRefractiveIndex(refractive, i);
+      }
+      if (x != null) {
+        store.setPixelsPhysicalSizeX(x, i);
+      }
+      if (y != null) {
+        store.setPixelsPhysicalSizeY(y, i);
+      }
+
       int well = getWellFromSeries(i);
       int field = getFieldFromSeries(i) + 1;
       int totalTimepoints =
@@ -554,6 +585,8 @@ public class InCellReader extends FormatReader {
       // populate PlaneTiming data
 
       for (int i=0; i<seriesCount; i++) {
+        setSeries(i);
+
         int well = getWellFromSeries(i);
         int field = getFieldFromSeries(i);
         int timepoint = oneTimepointPerSeries ?
@@ -573,12 +606,8 @@ public class InCellReader extends FormatReader {
             store.setPlanePositionZ(img.zPosition, i, plane);
           }
         }
-      }
 
-      // populate LogicalChannel data
-
-      for (int i=0; i<seriesCount; i++) {
-        setSeries(i);
+        // populate LogicalChannel data
         for (int q=0; q<getEffectiveSizeC(); q++) {
           if (q < channelNames.size()) {
             store.setChannelName(channelNames.get(q), i, q);
@@ -606,6 +635,19 @@ public class InCellReader extends FormatReader {
                 wave);
             }
           }
+
+          if (detectorID != null) {
+            store.setDetectorSettingsID(detectorID, i, q);
+            if (bin != null) {
+              store.setDetectorSettingsBinning(bin, i, q);
+            }
+            if (gain != null) {
+              store.setDetectorSettingsGain(gain, i, q);
+            }
+          }
+        }
+        if (temperature != null) {
+          store.setImagingEnvironmentTemperature(temperature, i);
         }
       }
       setSeries(0);
@@ -652,7 +694,6 @@ public class InCellReader extends FormatReader {
     private int nChannels = 0;
 
     public void endElement(String uri, String localName, String qName) {
-      CoreMetadata ms0 = core.get(0);
       if (qName.equals("PlateMap")) {
         int sizeT = getSizeT();
         if (sizeT == 0) {
@@ -666,6 +707,7 @@ public class InCellReader extends FormatReader {
           // There has been no <TimeSchedule> in the <PlateMap> defined to
           // populate channelsPerTimepoint so we have to assume that all
           // channels are being acquired.
+          CoreMetadata ms0 = core.get(0);
           channelsPerTimepoint.add(ms0.sizeC);
         }
         imageFiles = new Image[wellRows * wellCols][fieldCount][sizeT][];
@@ -738,7 +780,7 @@ public class InCellReader extends FormatReader {
         Location file = new Location(currentImageFile);
         img.filename = file.exists() ? currentImageFile : null;
         if (img.filename == null) {
-          LOGGER.warn("{} does not exist.", currentImageFile);
+          LOGGER.debug("{} does not exist.", currentImageFile);
         }
         currentImageFile = currentImageFile.toLowerCase();
         img.isTiff = currentImageFile.endsWith(".tif") ||
@@ -797,15 +839,14 @@ public class InCellReader extends FormatReader {
     private int currentField = 0;
     private int currentImage, currentPlane;
     private Double timestamp, exposure, zPosition;
-    private String channelName = null;
 
     public InCellHandler(MetadataStore store) {
       this.store = store;
     }
 
     public void characters(char[] ch, int start, int length) {
-      String value = new String(ch, start, length);
       if (currentQName.equals("UserComment")) {
+        String value = new String(ch, start, length);
         store.setImageDescription(value, 0);
       }
     }
@@ -823,9 +864,6 @@ public class InCellReader extends FormatReader {
           img.exposure = exposure;
         }
       }
-      else if (qName.equals("Wavelength")) {
-        channelName = null;
-      }
     }
 
     public void startElement(String uri, String localName, String qName,
@@ -833,8 +871,11 @@ public class InCellReader extends FormatReader {
     {
       currentQName = qName;
       for (int i=0; i<attributes.getLength(); i++) {
-        addGlobalMeta(qName + " - " + attributes.getQName(i),
-          attributes.getValue(i));
+        String key = qName + " - " + attributes.getQName(i);
+        if (getMetadataValue(key) != null) {
+          break;
+        }
+        addGlobalMeta(key, attributes.getValue(i));
       }
 
       if (qName.equals("Microscopy")) {
@@ -907,34 +948,26 @@ public class InCellReader extends FormatReader {
 
         Double pixelSizeX = new Double(attributes.getValue("pixel_width"));
         Double pixelSizeY = new Double(attributes.getValue("pixel_height"));
-        Double refractive = new Double(attributes.getValue("refractive_index"));
+        refractive = new Double(attributes.getValue("refractive_index"));
 
-        // link Objective to Image
-        String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
-        store.setObjectiveID(objectiveID, 0, 0);
-        for (int i=0; i<getSeriesCount(); i++) {
-          store.setObjectiveSettingsID(objectiveID, i);
-          store.setObjectiveSettingsRefractiveIndex(refractive, i);
-          if (pixelSizeX > 0) {
-            store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), i);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-              pixelSizeX);
-          }
-          if (pixelSizeY > 0) {
-            store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), i);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-              pixelSizeY);
-          }
+        if (pixelSizeX > 0) {
+          x = new PositiveFloat(pixelSizeX);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            pixelSizeX);
+        }
+        if (pixelSizeY > 0) {
+          y = new PositiveFloat(pixelSizeY);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            pixelSizeY);
         }
       }
       else if (qName.equals("ExcitationFilter")) {
         String wave = attributes.getValue("wavelength");
         if (wave != null) exWaves.add(new Integer(wave));
-        channelName = attributes.getValue("name");
       }
       else if (qName.equals("EmissionFilter")) {
         String wave = attributes.getValue("wavelength");
@@ -949,28 +982,13 @@ public class InCellReader extends FormatReader {
         catch (FormatException e) {
           LOGGER.warn("", e);
         }
-        String detectorID = MetadataTools.createLSID("Detector", 0, 0);
-        store.setDetectorID(detectorID, 0, 0);
-        for (int i=0; i<getSeriesCount(); i++) {
-          setSeries(i);
-          for (int q=0; q<getSizeC(); q++) {
-            store.setDetectorSettingsID(detectorID, i, q);
-          }
-        }
-        setSeries(0);
       }
       else if (qName.equals("Binning")) {
         String binning = attributes.getValue("value");
-        for (int i=0; i<getSeriesCount(); i++) {
-          setSeries(i);
-          for (int q=0; q<getSizeC(); q++) {
-            try {
-              store.setDetectorSettingsBinning(getBinning(binning), i, q);
-            }
-            catch (FormatException e) { }
-          }
+        try {
+          bin = getBinning(binning);
         }
-        setSeries(0);
+        catch (FormatException e) { }
       }
       else if (qName.equals("Gain")) {
         String value = attributes.getValue("value");
@@ -978,24 +996,14 @@ public class InCellReader extends FormatReader {
           return;
         }
         try {
-          Double gain = new Double(value);
-          for (int i=0; i<getSeriesCount(); i++) {
-            setSeries(i);
-            for (int q=0; q<getSizeC(); q++) {
-              store.setDetectorSettingsGain(gain, i, q);
-            }
-          }
-          setSeries(0);
+          gain = new Double(value);
         }
         catch (NumberFormatException e) {
           LOGGER.debug("Could not parse gain '" + value + "'", e);
         }
       }
       else if (qName.equals("PlateTemperature")) {
-        Double temperature = new Double(attributes.getValue("value"));
-        for (int i=0; i<getSeriesCount(); i++) {
-          store.setImagingEnvironmentTemperature(temperature, i);
-        }
+        temperature = new Double(attributes.getValue("value"));
       }
       else if (qName.equals("Plate")) {
         nextPlate++;
