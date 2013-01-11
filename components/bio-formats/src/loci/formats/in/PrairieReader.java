@@ -95,6 +95,9 @@ public class PrairieReader extends FormatReader {
   /** Format-specific metadata. */
   private PrairieMetadata meta;
 
+  /** List of Prairie metadata {@code Sequence}s, ordered by cycle. */
+  private ArrayList<Sequence> sequences;
+
   /**
    * Flag indicating that the reader is operating in a mode where grouping of
    * files is disallowed. In the case of Prairie, this happens if a TIFF file is
@@ -202,29 +205,24 @@ public class PrairieReader extends FormatReader {
       // add TIFF files to the used files list
       final int s = getSeries(), seriesCount = getSeriesCount();
       for (int t = 0; t < getSizeT(); t++) {
-        final int cycle = cycle(t, s, seriesCount);
-        final Sequence sequence = meta.getSequence(cycle);
-        if (sequence == null) {
-          warnSequence(cycle);
-          continue;
-        }
+        final Sequence sequence = sequence(t, s, seriesCount);
         for (int z = 0; z < getSizeZ(); z++) {
           final int index = z + sequence.getIndexMin();
           final Frame frame = sequence.getFrame(index);
           if (frame == null) {
-            warnFrame(cycle, index);
+            warnFrame(sequence, index);
             continue;
           }
           for (int c = 0; c < getSizeC(); c++) {
             final int channel = c + frame.getChannelMin();
             final PFile file = frame.getFile(channel);
             if (file == null) {
-              warnFile(cycle, index, channel);
+              warnFile(sequence, index, channel);
               continue;
             }
             final String filename = file.getFilename();
             if (filename == null) {
-              warnFilename(cycle, index, channel);
+              warnFilename(sequence, index, channel);
               continue;
             }
             usedFiles.add(getPath(file));
@@ -255,28 +253,23 @@ public class PrairieReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     if (singleTiffMode) return tiff.openBytes(no, buf, x, y, w, h);
 
-    // convert 1D index to (cycle, index, channel) coordinates.
+    // convert 1D index to (sequence, index, channel) coordinates.
     final int[] zct = getZCTCoords(no);
     final int z = zct[0], c = zct[1], t = zct[2];
 
-    final int cycle = getSeriesCount() * t + getSeries() + meta.getCycleMin();
-    final Sequence sequence = meta.getSequence(cycle);
-    if (sequence == null) {
-      warnSequence(cycle);
-      return blank(buf);
-    }
+    final Sequence sequence = sequence(t, getSeries(), getSeriesCount());
 
     final int index = z + sequence.getIndexMin();
     final Frame frame = sequence.getFrame(index);
     if (frame == null) {
-      warnFrame(cycle, index);
+      warnFrame(sequence, index);
       return blank(buf);
     }
 
     final int channel = c + frame.getChannelMin();
     final PFile file = frame.getFile(channel);
     if (file == null) {
-      warnFile(cycle, index, channel);
+      warnFile(sequence, index, channel);
       return blank(buf);
     }
 
@@ -292,6 +285,7 @@ public class PrairieReader extends FormatReader {
       xmlFile = cfgFile = null;
       tiff = null;
       meta = null;
+      sequences = null;
     }
   }
 
@@ -366,6 +360,7 @@ public class PrairieReader extends FormatReader {
     }
 
     meta = new PrairieMetadata(xml, cfg);
+    sequences = meta.getSequences();
   }
 
   /**
@@ -376,20 +371,20 @@ public class PrairieReader extends FormatReader {
     LOGGER.info("Populating core metadata");
 
     // NB: Both stage positions and time points are rasterized into the list
-    // of Sequences. So by definition: cycleCount = sizeT * seriesCount.
-    final int cycleCount = meta.getCycleCount();
-    final int sizeT = computeSizeT(cycleCount);
-    final int seriesCount = cycleCount / sizeT;
+    // of Sequences. So by definition: sequenceCount = sizeT * seriesCount.
+    final int sequenceCount = sequences.size();
+    final int sizeT = computeSizeT(sequenceCount);
+    final int seriesCount = sequenceCount / sizeT;
 
     final Integer bitDepth = meta.getBitDepth();
     int bpp = bitDepth == null ? -1 : bitDepth;
 
     core = new CoreMetadata[seriesCount];
     for (int s = 0; s < seriesCount; s++) {
-      final Sequence sequence = findSequence(s, seriesCount, sizeT);
-      final Frame frame = sequence == null ? null : sequence.getFirstFrame();
+      final Sequence sequence = sequence(0, s, seriesCount);
+      final Frame frame = sequence.getFirstFrame();
       final PFile file = frame == null ? null : frame.getFirstFile();
-      if (sequence == null || frame == null || file == null) {
+      if (frame == null || file == null) {
         throw new FormatException("No metadata for series #" + s);
       }
 
@@ -445,6 +440,7 @@ public class PrairieReader extends FormatReader {
     addGlobalMeta("cycleCount", meta.getCycleCount());
     addGlobalMeta("date", meta.getDate());
     addGlobalMeta("waitTime", meta.getWaitTime());
+    addGlobalMeta("sequenceCount", sequences.size());
 
     final Map<String, String> config = meta.getConfig();
     for (final String key : config.keySet()) {
@@ -457,7 +453,7 @@ public class PrairieReader extends FormatReader {
     final int seriesCount = getSeriesCount();
     for (int s = 0; s < seriesCount; s++) {
       setSeries(s);
-      final Sequence sequence = findSequence(s, seriesCount, getSizeT());
+      final Sequence sequence = sequence(0, s, seriesCount);
       addSeriesMeta("cycle", sequence.getCycle());
       addSeriesMeta("indexCount", sequence.getIndexCount());
       addSeriesMeta("type", sequence.getType());
@@ -500,7 +496,7 @@ public class PrairieReader extends FormatReader {
     final int seriesCount = getSeriesCount();
     for (int s = 0; s < seriesCount; s++) {
       setSeries(s);
-      final Sequence sequence = findSequence(s, seriesCount, getSizeT());
+      final Sequence sequence = sequence(0, s, seriesCount);
       final Frame firstFrame = sequence.getFirstFrame();
 
       // populate acquisition date
@@ -594,17 +590,12 @@ public class PrairieReader extends FormatReader {
 
       // populate stage position coordinates
       for (int t = 0; t < getSizeT(); t++) {
-        final int cycle = cycle(t, s, seriesCount);
-        final Sequence tSequence = meta.getSequence(cycle);
-        if (tSequence == null) {
-          warnSequence(cycle);
-          continue;
-        }
+        final Sequence tSequence = sequence(t, s, seriesCount);
         for (int z = 0; z < getSizeZ(); z++) {
           final int index = z + tSequence.getIndexMin();
           final Frame zFrame = tSequence.getFrame(index);
           if (zFrame == null) {
-            warnFrame(cycle, index);
+            warnFrame(sequence, index);
             continue;
           }
           final Double posX = zFrame.getPositionX();
@@ -661,27 +652,24 @@ public class PrairieReader extends FormatReader {
     return XMLTools.parseDOM(xml);
   }
 
-  /** Emits a warning about a missing {@code <Sequence>}. */
-  private void warnSequence(final int cycle) {
-    LOGGER.warn("No Sequence at cycle #{}", cycle);
-  }
-
   /** Emits a warning about a missing {@code <Frame>}. */
-  private void warnFrame(final int cycle, final int index) {
-    LOGGER.warn("No Frame at cycle #{}, index #{}", cycle, index);
+  private void warnFrame(final Sequence sequence, final int index) {
+    LOGGER.warn("No Frame at cycle #{}, index #{}", sequence.getCycle(), index);
   }
 
   /** Emits a warning about a missing {@code <File>}. */
-  private void warnFile(final int cycle, final int index, final int channel) {
-    LOGGER.warn("No File at cycle #" + cycle +
+  private void warnFile(final Sequence sequence, final int index,
+    final int channel)
+  {
+    LOGGER.warn("No File at cycle #" + sequence.getCycle() +
       ", index #{}, channel #{}", index, channel);
   }
 
   /** Emits a warning about a {@code <File>}'s missing {@code filename}. */
-  private void
-    warnFilename(final int cycle, final int index, final int channel)
+  private void warnFilename(final Sequence sequence, final int index,
+    final int channel)
   {
-    LOGGER.warn("File at cycle #" + cycle +
+    LOGGER.warn("File at cycle #" + sequence.getCycle() +
       ", index #{}, channel #{} has null filename", index, channel);
   }
 
@@ -748,11 +736,11 @@ public class PrairieReader extends FormatReader {
    * no distinction between the two, referring to both as "Sequences", so we
    * must compare XYZ stage positions to differentiate them.
    */
-  private int computeSizeT(final int cycleCount) {
+  private int computeSizeT(final int sequenceCount) {
     // NB: Guess at different possible "spans" for the rasterization.
-    for (int sizeP = 1; sizeP <= cycleCount; sizeP++) {
-      if (cycleCount % sizeP != 0) continue; // not a valid combo
-      final int sizeT = cycleCount / sizeP;
+    for (int sizeP = 1; sizeP <= sequenceCount; sizeP++) {
+      if (sequenceCount % sizeP != 0) continue; // not a valid combo
+      final int sizeT = sequenceCount / sizeP;
       if (positionsMatch(sizeT, sizeP)) return sizeT;
     }
     return 1;
@@ -762,12 +750,7 @@ public class PrairieReader extends FormatReader {
   private boolean positionsMatch(int sizeT, int sizeP) {
     // NB: Rasterization order is XYCZpT, where p is the stage position.
     for (int p = 0; p < sizeP; p++) {
-      final int initialCycle = cycle(0, p, sizeP);
-      final Sequence initialSequence = meta.getSequence(initialCycle);
-      if (initialSequence == null) {
-        warnSequence(initialCycle);
-        return false;
-      }
+      final Sequence initialSequence = sequence(0, p, sizeP);
 
       final int indexMin = initialSequence.getIndexMin();
       final int indexCount = initialSequence.getIndexCount();
@@ -775,7 +758,7 @@ public class PrairieReader extends FormatReader {
         final int index = z + indexMin;
         final Frame initialFrame = initialSequence.getFrame(index);
         if (initialFrame == null) {
-          warnFrame(initialCycle, index);
+          warnFrame(initialSequence, index);
           break;
         }
 
@@ -786,15 +769,10 @@ public class PrairieReader extends FormatReader {
 
         // verify that the initial coordinates match all subsequent time points
         for (int t = 1; t < sizeT; t++) {
-          final int cycle = cycle(t, p, sizeP);
-          final Sequence sequence = meta.getSequence(cycle);
-          if (sequence == null) {
-            warnSequence(cycle);
-            continue;
-          }
+          final Sequence sequence = sequence(t, p, sizeP);
           final Frame frame = sequence.getFrame(index);
           if (frame == null) {
-            warnFrame(cycle, index);
+            warnFrame(sequence, index);
             continue;
           }
 
@@ -814,34 +792,15 @@ public class PrairieReader extends FormatReader {
   }
 
   /**
-   * Finds the first non-null {@code Sequence} associated with the given stage
-   * position.
-   * 
-   * @param p The stage position.
-   * @param sizeP The number of stage positions.
-   * @param sizeT The number of time points.
-   * @return The first non-null {@code Sequence} at the given stage position, or
-   *         null if none.
-   */
-  private Sequence findSequence(int p, int sizeP, int sizeT) {
-    for (int t = 0; t < sizeT; t++) {
-      final int cycle = cycle(t, p, sizeP);
-      final Sequence sequence = meta.getSequence(cycle);
-      if (sequence != null) return sequence;
-    }
-    return null;
-  }
-
-  /**
-   * Gets the cycle associated with the given time point and stage position.
+   * Gets the sequence associated with the given time point and stage position.
    * 
    * @param t The time point.
    * @param p The stage position.
    * @param sizeP The number of stage positions.
-   * @return The cycle, for use with {@link PrairieMetadata#getSequence(int)}.
+   * @return The associated {@code Sequence}.
    */
-  private int cycle(int t, int p, int sizeP) {
-    return sizeP * t + p + meta.getCycleMin();
+  private Sequence sequence(int t, int p, int sizeP) {
+    return sequences.get(sizeP * t + p);
   }
 
   /** Determines whether the two {@link Double} values are equal. */
