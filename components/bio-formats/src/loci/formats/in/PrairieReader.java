@@ -681,8 +681,8 @@ public class PrairieReader extends FormatReader {
   private void
     warnFilename(final int cycle, final int index, final int channel)
   {
-    LOGGER.warn("File at cycle #" + cycle + ", index #" + index +
-      ", channel #{} has null filename", index, channel);
+    LOGGER.warn("File at cycle #" + cycle +
+      ", index #{}, channel #{} has null filename", index, channel);
   }
 
   /** Gets the absolute path to the filename of the given {@link PFile}. */
