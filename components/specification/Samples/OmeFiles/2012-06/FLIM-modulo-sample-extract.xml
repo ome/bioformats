@@ -84,7 +84,7 @@
 		<SA:XMLAnnotation ID="Annotation:3" Namespace="openmicroscopy.org/omero/dimension/modulo">
 			<SA:Value>
 				<Modulo namespace="http://www.openmicroscopy.org/Schemas/Additions/2011-09">
-					<ModuloAlongC Type="lifetime" Start="1" Step="1" End="8"/>
+					<ModuloAlongC Type="lifetime" Start="1" Step="1" End="8" Unit="ps"/>
 				</Modulo>
 			</SA:Value>
 		</SA:XMLAnnotation>
