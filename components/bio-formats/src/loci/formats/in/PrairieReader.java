@@ -404,16 +404,18 @@ public class PrairieReader extends FormatReader {
         if (bpp <= 0) bpp = tiff.getBitsPerPixel();
       }
 
-      final int linesPerFrame = frame.getLinesPerFrame();
-      final int pixelsPerLine = frame.getPixelsPerLine();
+      final Integer linesPerFrame = frame.getLinesPerFrame();
+      final Integer pixelsPerLine = frame.getPixelsPerLine();
       final int indexCount = sequence.getIndexCount();
       final int channelCount = frame.getChannelCount();
 
+      final int sizeX = pixelsPerLine == null ? tiff.getSizeX() : pixelsPerLine;
+      final int sizeY = linesPerFrame == null ? tiff.getSizeY() : linesPerFrame;
       final boolean invertZT = sequence.isTimeSeries() && sizeT == 1;
 
       core[s] = new CoreMetadata();
-      core[s].sizeX = pixelsPerLine;
-      core[s].sizeY = linesPerFrame;
+      core[s].sizeX = sizeX;
+      core[s].sizeY = sizeY;
       core[s].sizeZ = invertZT ? sizeT : indexCount;
       core[s].sizeC = channelCount;
       core[s].sizeT = invertZT ? indexCount : sizeT;
