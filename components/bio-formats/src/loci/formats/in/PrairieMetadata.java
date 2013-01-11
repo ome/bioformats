@@ -25,6 +25,7 @@
 
 package loci.formats.in;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -160,6 +161,11 @@ public class PrairieMetadata {
     return sequences.get(cycle);
   }
 
+  /** Gets all {@code Sequences}, ordered by {@code cycle}. */
+  public ArrayList<Sequence> getSequences() {
+    return valuesByKey(sequences);
+  }
+
   /** Gets the {@code Frame} at the given ({@code cycle} and {@code index}). */
   public Frame getFrame(final int cycle, final int index) {
     final Sequence sequence = getSequence(cycle);
@@ -288,6 +294,20 @@ public class PrairieMetadata {
     if (s == null) return null;
     final String[] tokens = s.split(regex);
     return tokens.length > i ? tokens[i] : null;
+  }
+
+  /** Gets the values of the given map, sorted by key. */
+  private <K extends Comparable<? super K>, V> ArrayList<V> valuesByKey(
+    Map<K, V> map)
+  {
+    final ArrayList<K> keys = new ArrayList<K>(map.size());
+    final ArrayList<V> values = new ArrayList<V>(map.size());
+    keys.addAll(map.keySet());
+    Collections.sort(keys);
+    for (K key : keys) {
+      values.add(map.get(key));
+    }
+    return values;
   }
 
   // -- Helper classes --
