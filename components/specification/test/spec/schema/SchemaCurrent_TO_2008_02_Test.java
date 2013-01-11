@@ -296,12 +296,12 @@ public class SchemaCurrent_TO_2008_02_Test
     	super.setUp();
 
 		/** The target schema file */
-//		SCHEMA_2008_02 = ResourceUtils.getFile("classpath:2008-02/V2/ome.xsd");
-		//components/specification/Released-Schema/2008-02/V2/ome.xsd 
+//		SCHEMA_2008_02 = ResourceUtils.getFile("classpath:2008-02/ome.xsd");
+		//components/specification/Released-Schema/2008-02/ome.xsd
 
 		schemaArray = new StreamSource[1];
 
-		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2008-02/V2/ome.xsd"));
+		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2008-02/ome.xsd"));
 
 		/** The transforms */
 		STYLESHEET_A = this.getClass().getResourceAsStream("/Xslt/2011-06-to-2010-06.xsl");

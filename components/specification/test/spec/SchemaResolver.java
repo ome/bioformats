@@ -40,7 +40,7 @@ public class SchemaResolver implements LSResourceResolver
     private static String LEGACY_ML_PATH = "http://www.openmicroscopy.org/XMLschemas/MLI/IR2/";
     private static String LEGACY_OM_PATH = "http://www.openmicroscopy.org/XMLschemas/OME/FC/";
     private static String LEGACY_ST_PATH = "http://www.openmicroscopy.org/XMLschemas/STD/RC2/";
-    private static String LEGACY_SEARCH_PATH = "/Released-Schema/2003-FC/V2/";
+    private static String LEGACY_SEARCH_PATH = "/Released-Schema/2003-FC/";
 
     public SchemaResolver() throws ClassNotFoundException, InstantiationException, IllegalAccessException
     {
