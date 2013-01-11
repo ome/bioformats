@@ -209,4 +209,8 @@
     <target name="integration" description="No-op"/>
     <target name="findbugs" description="No-op"/>
 
+    <target name="clean" description="Cleans the published schemas">
+        <delete dir="published"/>
+    </target>
+
 </project>
