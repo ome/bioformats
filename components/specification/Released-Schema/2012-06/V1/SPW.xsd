@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="http://cvs.openmicroscopy.org.uk/snapshots/omero/editor/omeXsd/display.xsl" type="text/xsl"?>
+<!-- style sheet OFF -->
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
@@ -33,14 +33,9 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 	version="1" 
 	elementFormDefault="qualified">
-	<!-- Using the svn location for import
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
-	
-	Using the local directory location for import -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="SA.xsd"/>
-	<!-- -->
+
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2012-06/V1/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2012-06/V1/SA.xsd"/>
 
 	<xsd:annotation>
 		<xsd:documentation>
@@ -617,7 +612,7 @@
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:WellSample:\S+)|(WellSample:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	
+
 	<xsd:element name="WellSampleRef"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>

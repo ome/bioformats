@@ -1,5 +1,5 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
-<?xml-stylesheet href="http://cvs.openmicroscopy.org.uk/snapshots/omero/editor/omeXsd/display.xsl" type="text/xsl"?>
+<!-- style sheet OFF -->
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
@@ -36,18 +36,12 @@
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1" 
 	elementFormDefault="qualified">
-	<!-- Using the svn location for import 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ROI.xsd"/>
-	Using the local directory location for import -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" schemaLocation="SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2012-06" schemaLocation="ROI.xsd"/>
-	<!-- -->
-	
+
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2012-06/V1/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2012-06/V1/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2012-06/V1/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2012-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2012-06/V1/ROI.xsd"/>
+
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 
 	<xsd:annotation>
