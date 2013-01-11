@@ -71,8 +71,8 @@ class Test2003FCto200809to200909(XsltBasic):
     STYLESHEET = "../specification/Xslt/2003-FC-to-2008-09.xsl"
     STYLESHEET2 = "../specification/Xslt/2008-09-to-2009-09.xsl"
 
-    OLD_VALIDATION = "../specification/Released-Schema/2003-FC/V2/ome.xsd"
-    NEW_VALIDATION = "../specification/Released-Schema/2009-09/V1/ome.xsd"
+    OLD_VALIDATION = "../specification/Released-Schema/2003-FC/ome.xsd"
+    NEW_VALIDATION = "../specification/Released-Schema/2009-09/ome.xsd"
     
     DOCUMENT = "../specification/InProgress/test-ome-samples/sample-2003-FC.ome"
     
