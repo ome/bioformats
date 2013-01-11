@@ -33,8 +33,8 @@
 	version = "1"
 	elementFormDefault = "qualified">
 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2009-09" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/ome.xsd"/>
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation = "http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2009-09" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation = "http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09/BinaryFile.xsd"/>
 
 	<!-- Annotatable objects
 		Annotation

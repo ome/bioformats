@@ -37,10 +37,10 @@
 	version = "1"
 	elementFormDefault = "qualified">
 
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/OME/2009-09" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/ome.xsd"/>
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation = "http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/BinaryFile.xsd"/>
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/CLI/2009-09" schemaLocation = "http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/CLI.xsd"/>
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/MLI/2009-09" schemaLocation = "http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/MLI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2009-09" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation = "http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09/BinaryFile.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/CLI/2009-09" schemaLocation = "http://www.openmicroscopy.org/Schemas/CLI/2009-09/CLI.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/MLI/2009-09" schemaLocation = "http://www.openmicroscopy.org/Schemas/MLI/2009-09/MLI.xsd"/>
 
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	<xsd:element name = "Entry"> <!-- top level definition -->

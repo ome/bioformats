@@ -31,8 +31,8 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     version="2" 
     elementFormDefault="qualified">
-    <xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2007-06/V2/ome.xsd"/>
-    <xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2007-06/V2/AnalysisModule.xsd"/>
+    <xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2007-06/ome.xsd"/>
+    <xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06/AnalysisModule.xsd"/>
 
     <xsd:annotation>
         <xsd:documentation>

@@ -34,10 +34,10 @@
 	version = "1"
 	elementFormDefault = "qualified">
 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2011-06/V1/ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2011-06/V1/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2011-06/V1/SA.xsd"/>
-	
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2011-06/SA.xsd"/>
+
 	<xsd:element name="ROI"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>

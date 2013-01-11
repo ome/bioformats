@@ -39,13 +39,14 @@
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1" 
 	elementFormDefault="qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/AnalysisModule.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2009-09" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/STD.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2009-09" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/CA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2009-09" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2009-09" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2009-09" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2009-09/V1/ROI.xsd"/>
+
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09/AnalysisModule.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2009-09" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2009-09/STD.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2009-09" schemaLocation="http://www.openmicroscopy.org/Schemas/CA/2009-09/CA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2009-09" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2009-09/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2009-09" schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2009-09/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2009-09" schemaLocation="http://www.openmicroscopy.org/Schemas/ROI/2009-09/ROI.xsd"/>
 
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 

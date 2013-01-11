@@ -37,10 +37,10 @@
 	version="1" 
 	elementFormDefault="qualified">
 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2010-06/V1/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2010-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2010-06/V1/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2010-06/V1/SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2010-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2010-06/V1/ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2010-06" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2010-06/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06" schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2010-06/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2010-06" schemaLocation="http://www.openmicroscopy.org/Schemas/ROI/2010-06/ROI.xsd"/>
 
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 

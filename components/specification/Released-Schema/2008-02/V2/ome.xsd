@@ -35,16 +35,16 @@
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="2" 
 	elementFormDefault="qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2008-02/V2/AnalysisModule.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2008-02/V2/STD.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2008-02/V2/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2008-02/V2/CA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2008-02/V2/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02/AnalysisModule.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2008-02/STD.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/CA/2008-02/CA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2008-02/SPW.xsd"/>
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema February 2008 - Update Version 2 May 2008
+			OME XML Schema February 2008 - Update Version 21 May 2008
 			Author:  Ilya G. Goldberg, Andrew J Patterson
 			Copyright (C) 2002-2011 Open Microscopy Environment
 		</xsd:documentation>
