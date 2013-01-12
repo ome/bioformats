@@ -391,9 +391,17 @@ public abstract class FormatReader extends FormatHandler
   }
 
   protected void flattenHashtables() {
-    String[] keys = metadata.keySet().toArray(new String[0]);
+    updateMetadataLists(metadata);
+
+    for (int s=0; s<core.size(); s++) {
+      updateMetadataLists(core.get(s).seriesMetadata);
+    }
+  }
+
+  private void updateMetadataLists(Hashtable<String, Object> meta) {
+    String[] keys = meta.keySet().toArray(new String[meta.size()]);
     for (String key : keys) {
-      Object v = metadata.get(key);
+      Object v = meta.get(key);
       if (v instanceof Vector) {
         Vector list = (Vector) v;
         int digits = String.valueOf(list.size()).length();
@@ -402,31 +410,10 @@ public abstract class FormatReader extends FormatHandler
           while (index.length() < digits) {
             index = "0" + index;
           }
-          metadata.put(key + " #" + index, list.get(i));
+          meta.put(key + " #" + index, list.get(i));
         }
-        metadata.remove(key);
+        meta.remove(key);
       }
-    }
-
-    for (int s=0; s<core.size(); s++) {
-      Hashtable<String, Object> meta = core.get(s).seriesMetadata;
-      keys = meta.keySet().toArray(new String[0]);
-      for (String key : keys) {
-        Object v = meta.get(key);
-        if (v instanceof Vector) {
-          Vector list = (Vector) v;
-          int digits = String.valueOf(list.size()).length();
-          for (int i=0; i<list.size(); i++) {
-            String index = String.valueOf(i + 1);
-            while (index.length() < digits) {
-              index = "0" + index;
-            }
-            meta.put(key + " #" + index, list.get(i));
-          }
-          meta.remove(key);
-        }
-      }
-      core.get(s).seriesMetadata = meta;
     }
   }
 
