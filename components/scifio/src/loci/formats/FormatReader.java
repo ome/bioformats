@@ -314,7 +314,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, Object value) {
-    addMeta(key, value, getGlobalMetadata());
+    addMeta(key, value, metadata);
   }
 
   /** Adds an entry to the global metadata table. */
@@ -364,8 +364,10 @@ public abstract class FormatReader extends FormatHandler
 
   protected void addGlobalMetaList(String key, Object value) {
     Vector list = (Vector) metadata.get(key);
+    metadata.remove(key);
     addGlobalMeta(key, value);
     Object newValue = metadata.get(key);
+    metadata.remove(key);
     if (newValue != null) {
       if (list == null) {
         list = new Vector();
@@ -374,10 +376,14 @@ public abstract class FormatReader extends FormatHandler
       list.add(newValue);
       metadata.put(key, list);
     }
+    else if (list != null) {
+      metadata.put(key, list);
+    }
   }
 
   protected void addSeriesMetaList(String key, Object value) {
     Vector list = (Vector) core.get(getCoreIndex()).seriesMetadata.get(key);
+    core.get(getCoreIndex()).seriesMetadata.remove(key);
     addSeriesMeta(key, value);
     Object newValue = core.get(getCoreIndex()).seriesMetadata.get(key);
     if (newValue != null) {
@@ -386,6 +392,9 @@ public abstract class FormatReader extends FormatHandler
       }
 
       list.add(newValue);
+      core.get(getCoreIndex()).seriesMetadata.put(key, list);
+    }
+    else if (list != null) {
       core.get(getCoreIndex()).seriesMetadata.put(key, list);
     }
   }
