@@ -83,8 +83,22 @@ public class LociFunctions extends MacroFunctions {
   // -- Constructor --
 
   public LociFunctions() {
-    r = new ImageProcessorReader(new ChannelSeparator(
-      new FileStitcher(LociPrefs.makeImageReader(), true)));
+    boolean groupFiles = true;
+    try {
+      ImporterOptions options = new ImporterOptions();
+      groupFiles = options.isGroupFiles();
+    }
+    catch (IOException exc) {
+      IJ.handleException(exc);
+    }
+    if (groupFiles) {
+      r = new ImageProcessorReader(new ChannelSeparator(
+        new FileStitcher(LociPrefs.makeImageReader(), true)));
+    }
+    else {
+      r = new ImageProcessorReader(new ChannelSeparator(
+        LociPrefs.makeImageReader()));
+    }
     try {
       ServiceFactory factory = new ServiceFactory();
       OMEXMLService service = factory.getInstance(OMEXMLService.class);

@@ -1113,6 +1113,11 @@ public class FileStitcher extends ReaderWrapper {
     int[] axes = s.getAxisGuesser().getAxisTypes();
     int[] count = s.getFilePattern().getCount();
 
+    if (axes.length == 0) {
+      axes = new int[] {AxisGuesser.T_AXIS};
+      count = new int[] {s.getFiles().length};
+    }
+
     // get Z, C and T positions
     int[] zct = getZCTCoords(no);
     int[] posZ = FormatTools.rasterToPosition(lenZ[sno], zct[0]);
