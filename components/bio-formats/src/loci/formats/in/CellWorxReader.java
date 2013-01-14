@@ -554,12 +554,14 @@ public class CellWorxReader extends FormatReader {
       }
       else if (key.equals("Scan Origin")) {
         String[] axes = value.split(",");
+        Double posX = new Double(axes[0]);
+        Double posY = new Double(axes[1]);
         for (int fieldRow=0; fieldRow<fieldMap.length; fieldRow++) {
           for (int fieldCol=0; fieldCol<fieldMap[fieldRow].length; fieldCol++) {
             if (fieldMap[fieldRow][fieldCol] && wellFiles[row][col] != null) {
               int field = fieldRow * fieldMap[fieldRow].length + fieldCol;
-              store.setWellSamplePositionX(new Double(axes[0]), 0, well, field);
-              store.setWellSamplePositionY(new Double(axes[1]), 0, well, field);
+              store.setWellSamplePositionX(posX, 0, well, field);
+              store.setWellSamplePositionY(posY, 0, well, field);
 
               addGlobalMeta("X position for position #" + (field + 1), axes[0]);
               addGlobalMeta("Y position for position #" + (field + 1), axes[1]);
@@ -573,23 +575,32 @@ public class CellWorxReader extends FormatReader {
           int end = value.indexOf(" ", s + 2);
           Double xSize = new Double(value.substring(0, s).trim());
           Double ySize = new Double(value.substring(s + 1, end).trim());
+
+          PositiveFloat x = null;
+          PositiveFloat y = null;
+
+          if (xSize > 0) {
+            x = new PositiveFloat(xSize / getSizeX());
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              xSize / getSizeX());
+          }
+          if (ySize > 0) {
+            y = new PositiveFloat(ySize / getSizeY());
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              ySize / getSizeY());
+          }
+
           for (int field=0; field<fieldCount; field++) {
             int index = seriesIndex + field;
-            if (xSize > 0) {
-              store.setPixelsPhysicalSizeX(
-                new PositiveFloat(xSize / getSizeX()), index);
+            if (x != null) {
+              store.setPixelsPhysicalSizeX(x, index);
             }
-            else {
-              LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-                xSize / getSizeX());
-            }
-            if (ySize > 0) {
-              store.setPixelsPhysicalSizeY(
-                new PositiveFloat(ySize / getSizeY()), index);
-            }
-            else {
-              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-                ySize / getSizeY());
+            if (y != null) {
+              store.setPixelsPhysicalSizeY(y, index);
             }
           }
         }
@@ -634,25 +645,34 @@ public class CellWorxReader extends FormatReader {
 
               Integer emission = new Integer(em);
               Integer excitation = new Integer(ex);
+              PositiveInteger emWave = null;
+              PositiveInteger exWave = null;
+
+              if (excitation > 0) {
+                exWave = new PositiveInteger(excitation);
+              }
+              else {
+                LOGGER.warn(
+                  "Expected positive value for ExcitationWavelength; got {}",
+                  excitation);
+              }
+              if (emission > 0) {
+                emWave = new PositiveInteger(emission);
+              }
+              else {
+                LOGGER.warn(
+                  "Expected positive value for EmissionWavelength; got {}",
+                  emission);
+              }
 
               for (int field=0; field<fieldCount; field++) {
-                if (excitation > 0) {
-                  store.setChannelExcitationWavelength(new PositiveInteger(
-                    excitation), seriesIndex + field, index);
+                if (exWave != null) {
+                  store.setChannelExcitationWavelength(
+                    exWave, seriesIndex + field, index);
                 }
-                else {
-                  LOGGER.warn(
-                    "Expected positive value for ExcitationWavelength; got {}",
-                    excitation);
-                }
-                if (emission > 0) {
+                if (emWave != null) {
                   store.setChannelEmissionWavelength(
-                    new PositiveInteger(emission), seriesIndex + field, index);
-                }
-                else {
-                  LOGGER.warn(
-                    "Expected positive value for EmissionWavelength; got {}",
-                    emission);
+                    emWave, seriesIndex + field, index);
                 }
               }
             }
