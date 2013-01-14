@@ -686,8 +686,7 @@ public class SlidebookReader extends FormatReader {
           in.skipBytes(40);
           if (nextName >= 0 && nextName < getSeriesCount()) {
             setSeries(nextName);
-            addSeriesMeta("channel " + ndFilters.size() + " intensification",
-              in.readShort());
+            addSeriesMetaList("channel intensification", in.readShort());
           }
         }
         else if (n == 'k') {
