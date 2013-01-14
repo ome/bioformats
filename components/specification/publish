@@ -2,6 +2,105 @@
 
 set -e
 
+# Get the most recent version of a schema
+# $1=schema name
+mostrecentversion() {
+    echo "$(basename $(dirname $(find Released-Schema -name "$1" | sort | tail -n1)))"
+}
+
+# Check if the a schema is the most recent version (return true) or legacy (return false)
+# $1=schema name
+# $2=release to check if current
+ismostrecent() {
+    if [ "$2" != "$(mostrecentversion "$1")" ]; then
+	return 1
+    fi
+
+    return 0
+}
+
+# Check if a schema is current (not necessarily the latest version).
+# $1=schema name
+iscurrent() {
+    if [ "${1%.xsd}" = "AnalysisChain" ] || \
+	[ "${1%.xsd}" = "AnalysisModule" ] || \
+	[ "${1%.xsd}" = "CA" ] || \
+	[ "${1%.xsd}" = "CLI" ] || \
+	[ "${1%.xsd}" = "DataHistory" ] || \
+	[ "${1%.xsd}" = "MLI" ] || \
+	[ "${1%.xsd}" = "STD" ]
+    then
+	return 1
+    fi
+
+    return 0
+}
+
+# Check if the a schema is the most recent version (return true) or legacy (return false)
+# $1=schema name
+# $2=release to check if current
+schemastatus() {
+    if iscurrent "$1"; then
+	if ismostrecent "$1" "$2"; then
+	    echo "current (latest)"
+	else
+	    echo "current (superseded)"
+	fi
+    else
+	if ismostrecent "$1" "$2"; then
+	    echo "legacy (latest)"
+	else
+	    echo "legacy (superseded)"
+	fi
+    fi
+}
+
+# Get the version of a schema
+# $1=schema name
+# $2=release to check if current
+schemaversion() {
+	version=$(grep "version=" "Released-Schema/$2/$1" | grep -v 'xml' | head -n1 | sed -e 's;^.*version="\([0-9][0-9]*\)".*$;\1;')
+	if [ -z "$version" ]; then
+	    version="1"
+	fi
+	echo "$version"
+}
+
+# Describe a schema (single sentence)
+schemadesc() {
+    case "${1%.xsd}" in
+	BinaryFile)
+	    echo "The Binary File schema is used to describes a file location, or the location of a fragment within a file." ;;
+	OME|ome)
+	    echo "The main schema which defines the OME ontology for microscopy. This schema makes use of the others." ;;
+
+	OMERO)
+	    echo "The schema extensions used by OMERO. It is not used by the OME schema but provides a structure for data in StructuredAnnotation blocks used by OMERO." ;;
+	ROI)
+	    echo "The Region Of Interest schema." ;;
+	SA)
+	    echo "The Structured Annotation schema." ;;
+	SPW)
+	    echo "The Screen/Plate/Well schema." ;;
+	AnalysisChain)
+	    echo "The Analysis Chain schema. Analysis chains are how module outputs are connected to inputs of other modules." ;;
+	AnalysisModule)
+	    echo "The Analysis Module Library schema. Analysis modules are image analysis algorithms or, more generally, how information is generated in OME. Makes use of CLI and MLI schemas." ;;
+	CA)
+	    echo "The standard custom attribute schema." ;;
+	CLI)
+	    echo "The Command Line Interface sub-schema." ;;
+	DataHistory)
+	    echo "The Data History schema. Data history describes the data dependency in OME." ;;
+	MLI)
+	    echo "The Matlab Interface sub-schema." ;;
+	STD)
+	    echo "The Semantic Type definition schema. Once a Semantic Type is defined, data for the defined type can be imported into the OME server." ;;
+	*)
+	    echo "The ${1%.xsd} schema" ;;
+    esac
+}
+
 root=published
 current=$(ls -1d Released-Schema/20* | sort)
 current=${current/*\//}
@@ -24,8 +123,8 @@ do
 	base=${schema%.xsd}
 	base=${base/*\//}
 	name=${schema/*\//}
-	type="legacy"
-	version=$(grep "version=" "$schema" | grep -v 'xml' | head -n1 | sed -e 's;^.*version="\([0-9][0-9]*\)".*$;\1;')
+	type="$(schemastatus "$name" "$rel")"
+	version="$(schemaversion "$name" "$rel")"
 
 	year=${rel/-*}
 	month=${rel/*-}
@@ -38,10 +137,6 @@ do
 	# For some reason, the OME schema has always been lowercased
 	if [ "$base" = "ome" ]; then
 	    base="OME"
-	fi
-
-	if [ "$rel" = "$current" ]; then
-	    type="current"
 	fi
 
 	if [ -z "$version" ]; then
@@ -111,3 +206,111 @@ path="${root}/Schemas/Styling/2009-09"
 mkdir -p "$path"
 cp -rv Released-Schema/2009-09/display* Released-Schema/2009-09/jquery.js Released-Schema/2009-09/index.html "$path"
 cp -v Released-Schema/2009-09/index.html "${root}/Schemas/Styling"
+
+# Root index
+
+# Create an HTML link for a schema.
+# $1=filter (current or legacy)
+createlink() {
+    if [ $1 = current ]; then
+	filter=
+    else
+	filter=
+    fi
+
+    for schema in $(find published/Schemas -name '*xsd' | xargs basename | sort | uniq); do
+	name=${schema/*\//}
+	release=$(mostrecentversion "$name")
+	reldate=$(date -jnu -f "%Y-%m" "$release" '+%B %Y')
+	relversion=$(schemaversion "$name" "$release")
+	reldesc=$(schemadesc "$name")
+	link=$(find published/Schemas -name "$name" | grep "$release" | head -n1)
+	link=${link/published\/Schemas\//}
+	line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${schema}</a>] ${reldesc}</li>"
+
+	if iscurrent "$name" && [ "$1" = "current" ]; then
+	    echo "$line"
+	elif ! iscurrent "$name" && [ "$1" != "current" ]; then
+	    echo "$line"
+	fi
+    done
+}
+
+# Create main HTML index page
+
+createmainindex() {
+    cat <<EOF
+<?xml version='1.0'?>
+<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN" "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rddl="http://www.rddl.org/" xml:lang="en">
+<head>
+        <title>Open Microscopy Environment Schemas</title>
+</head>
+<body>
+<h1>Open Microscopy Environment Schemas</h1>
+<div class="head">
+<p>13th June 2011</p>
+</div>
+<div id="toc">
+<h2>Table of contents</h2>
+	<ol>
+		<li><a href="#intro">Introduction</a></li>
+		<li><a href="#history">History</a></li>
+		<li><a href="#schema.list">Schemas</a></li>
+	</ol>
+</div>
+<div id="intro">
+<h2>Introduction</h2>
+<p>This document outlines the XML Schemas created by the Open Microscopy Environment Group. Detailed information on the schemas and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/file-formats">http://www.openmicroscopy.org/site/support/file-formats</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
+</p>
+<p>Auto generated documentation for the schemas is is available on the development server: <a href="http://git.openmicroscopy.org/src/develop/components/specification/Documentation/Generated/OME-2011-06/ome.html">http://git.openmicroscopy.org/src/develop/components/specification/Documentation/Generated/OME-2011-06/ome.html</a> and <a  href="http://git.openmicroscopy.org/src/develop/components/specification/Documentation/Generated/OME-2011-06/OMERO.html">http://git.openmicroscopy.org/src/develop/components/specification/Documentation/Generated/OME-2011-06/OMERO.html</a>
+</p>
+</div>
+EOF
+
+    cat <<EOF
+<div id="history">
+<h2>History</h2>
+<p>This lists the most recent version of past schemas. The schemas are in a process of constant development to extend and refine the OME Data Model. 
+</p>
+<ul>
+EOF
+
+    for release in $(ls -1d Released-Schema/20* | grep -v 2003 | xargs basename | sort); do
+	reldate=$(date -jnu -f "%Y-%m" "$release" '+%B %Y')
+	echo "<li>$reldate - namespace /$release/</li>"
+    done
+
+    cat <<EOF
+</ul>
+<p>Information regarding schemas released before June 2007 is available at <a href="http://www.openmicroscopy.org/XMLschemas/">http://www.openmicroscopy.org/XMLschemas/</a>. This includes the schemas used by the original OME server.
+</p>
+</div>
+<div id="schema.list">
+<h2>Schemas</h2>
+<p>This has the schema name, the current version, a link to the XSD file, and a short description</p>
+<p><em>Note: Some browsers will try to render XSD files when you view them. This can result in either a blank screen or unformatted text. Choose to either download the file or view the source.</em></p>
+<h4>Active Schemas</h4>
+<ul>
+EOF
+
+    createlink "current"
+
+    cat <<EOF
+</ul>
+<h4>Legacy Schemas</h4>
+<ul>
+EOF
+
+    createlink "legacy"
+
+    cat <<EOF
+</ul>
+</div>
+<hr/>
+</body>
+</html>
+EOF
+}
+
+createmainindex > "$root/Schemas/index.html"
