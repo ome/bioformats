@@ -387,6 +387,16 @@ public class LeicaReader extends FormatReader {
       new File(leiFile).exists()? new Location(leiFile).getAbsolutePath() : id;
 
     in = new RandomAccessInputStream(leiFile);
+    byte[] data = null;
+    try {
+      data = new byte[(int) in.length()];
+      in.read(data);
+    }
+    finally {
+      in.close();
+    }
+    in = new RandomAccessInputStream(data);
+
     MetadataLevel metadataLevel = metadataOptions.getMetadataLevel();
 
     seriesNames = new Vector<String>();
@@ -573,12 +583,21 @@ public class LeicaReader extends FormatReader {
       String filename = (String) files[i].get(0);
 
       if (checkSuffix(filename, TiffReader.TIFF_SUFFIXES)) {
-        tiff.setId(filename);
+        RandomAccessInputStream s = new RandomAccessInputStream(filename);
+        try {
+          TiffParser parser = new TiffParser(s);
+          parser.setDoCaching(false);
+          IFD firstIFD = parser.getFirstIFD();
 
-        ms.sizeX = tiff.getSizeX();
-        ms.sizeY = tiff.getSizeY();
-        tileWidth[i] = tiff.getOptimalTileWidth();
-        tileHeight[i] = tiff.getOptimalTileHeight();
+          ms.sizeX = (int) firstIFD.getImageWidth();
+          ms.sizeY = (int) firstIFD.getImageLength();
+
+          tileWidth[i] = (int) firstIFD.getTileWidth();
+          tileHeight[i] = (int) firstIFD.getTileLength();
+        }
+        finally {
+          s.close();
+        }
       }
     }
 
@@ -814,6 +833,27 @@ public class LeicaReader extends FormatReader {
     return null;
   }
 
+  private String[] getTIFFList() {
+    File dirFile = new File(currentId).getAbsoluteFile();
+    String[] listing = null;
+    if (dirFile.exists()) {
+      listing = dirFile.getParentFile().list();
+    }
+    else {
+      listing = Location.getIdMap().keySet().toArray(new String[0]);
+    }
+
+    Vector<String> list = new Vector<String>();
+
+    for (int k=0; k<listing.length; k++) {
+      if (checkSuffix(listing[k], TiffReader.TIFF_SUFFIXES)) {
+        list.add(listing[k]);
+      }
+    }
+
+    return list.toArray(new String[list.size()]);
+  }
+
   private void parseFilenames(int seriesIndex) throws IOException {
     int maxPlanes = 0;
     Vector<String> f = new Vector<String>();
@@ -833,27 +873,10 @@ public class LeicaReader extends FormatReader {
     ms.rgb = samplesPerPixel > 1;
     ms.sizeC = samplesPerPixel;
 
-    File dirFile = new File(currentId).getAbsoluteFile();
-    String[] listing = null;
-    String dirPrefix = "";
-    if (dirFile.exists()) {
-      listing = dirFile.getParentFile().list();
-      dirPrefix = dirFile.getParent();
-      if (!dirPrefix.endsWith(File.separator)) dirPrefix += File.separator;
-    }
-    else {
-      listing = Location.getIdMap().keySet().toArray(new String[0]);
-    }
-
-    Vector<String> list = new Vector<String>();
-
-    for (int k=0; k<listing.length; k++) {
-      if (checkSuffix(listing[k], TiffReader.TIFF_SUFFIXES)) {
-        list.add(listing[k]);
-      }
-    }
-
     boolean tiffsExist = false;
+
+    String dirPrefix = new Location(currentId).getAbsoluteFile().getParent();
+    if (!dirPrefix.endsWith(File.separator)) dirPrefix += File.separator;
 
     String prefix = "";
     for (int j=0; j<tempImages; j++) {
@@ -866,7 +889,6 @@ public class LeicaReader extends FormatReader {
       if (!test.exists()) {
         LOGGER.debug("  file does not exist");
       }
-      if (test.exists()) list.remove(prefix);
       if (!tiffsExist) tiffsExist = test.exists();
     }
 
@@ -878,7 +900,7 @@ public class LeicaReader extends FormatReader {
       // 2) Assign each file group to the first series with the correct count.
       LOGGER.info("Handling renamed TIFF files");
 
-      listing = list.toArray(new String[list.size()]);
+      String[] listing = getTIFFList();
 
       // grab the file patterns
       Vector<String> filePatterns = new Vector<String>();
@@ -1205,7 +1227,8 @@ public class LeicaReader extends FormatReader {
     long initialOffset = in.getFilePointer();
     long elementOffset = 0;
 
-    LOGGER.trace("Element LOOP; series {} at offset", series, initialOffset);
+    LOGGER.trace("Element LOOP; series {} at offset {}", series, initialOffset);
+
     for (int j=0; j<nElements; j++) {
       elementOffset = initialOffset + j * cbElements;
       LOGGER.trace("Seeking to: {}", elementOffset);
@@ -1369,8 +1392,7 @@ public class LeicaReader extends FormatReader {
           store.setObjectiveSerialNumber(data, series, objective);
         }
         else if (tokens[2].equals("RefractionIndex")) {
-          store.setObjectiveSettingsRefractiveIndex(
-            new Double(data), series);
+          store.setObjectiveSettingsRefractiveIndex(new Double(data), series);
         }
 
         // link Objective to Image
