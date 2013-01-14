@@ -1,7 +1,7 @@
 Supported Formats
 -----------------
 
-:term:`Legend`
+:term:`Ratings legend`
 
 .. tabularcolumns:: |p{3cm}|p{2cm}|c|c|c|c|c|c|c|
 
@@ -1176,7 +1176,7 @@ Supported Formats
 Bio-Formats currently supports **128** formats
 
 .. glossary::
-    Legend
+    Ratings legend
       +----------------+-----------------------+
       +================+=======================+
       | |Outstanding|  | Outstanding           |
