@@ -11,16 +11,10 @@ current=${current/*\//}
 rm -rf "$root"
 mkdir -p "$root"
 
-# Copy Legacy schemas
-
-cp -rv Legacy/* "${root}"
-
-# Copy New schemas
-
 for dir in Released-Schema/20*
 do
     # Don't copy legacy or other material
-    if [ "$dir" = "Released-Schema/2003-FC" ] || [ "$dir" = "Released-Schema/additions" ]; then
+    if [ "$dir" = "Released-Schema/additions" ]; then
 	continue
     fi
 
@@ -36,8 +30,12 @@ do
 	year=${rel/-*}
 	month=${rel/*-}
 
-	reldate=$(date -jnu -f "%Y-%m" "$rel" '+%B %Y')
+	# Skip files only used internally for legacy schema
+	if [ "$rel" = "2003-FC" ] && [ "$base" != "ome" ]; then
+	    continue;
+	fi
 
+	# For some reason, the OME schema has always been lowercased
 	if [ "$base" = "ome" ]; then
 	    base="OME"
 	fi
@@ -50,10 +48,20 @@ do
 	    version=1
 	fi
 
-	path="${root}/Schemas/${base}/${rel}"
+	# Special case copying of legacy schemas
+	if [ "$year" = "2003" ]; then
+	    path="${root}/XMLschemas/${base}/${month}"
+	    reldate="2003 ($month)"
+	else
+	    path="${root}/Schemas/${base}/${rel}"
+	    reldate=$(date -jnu -f "%Y-%m" "$rel" '+%B %Y')
+	fi
+
+	# Copy schema
 	mkdir -p "$path"
 	cp -v "$schema" "${path}/${name}"
 
+	# Generate companion HTML index.html
 	echo "HTML -> ${path}/index.html"
 	cat <<EOF > "${path}/index.html"
 <?xml version='1.0'?>

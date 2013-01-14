@@ -9,18 +9,6 @@
 	 xmlns:CA = "http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd"
 	 version = "FC-TIFF"
 	 elementFormDefault = "qualified">
-	<xs:import namespace = "http://www.openmicroscopy.org/XMLschemas/AnalysisModule/RC1/AnalysisModule.xsd" schemaLocation = "http://www.openmicroscopy.org/XMLschemas/AnalysisModule/RC1/AnalysisModule.xsd"/>
-	<xs:import namespace = "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd" schemaLocation = "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd"/>
-	<xs:import namespace = "http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd" schemaLocation = "http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd"/>
-	<xs:import namespace = "http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd" schemaLocation = "http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd"/>
-	<xs:annotation>
-		<xs:documentation>
-			Open Microscopy Environment
-			OME XML Schema 1.0 FC-TIFF
-			Author:  Ilya G. Goldberg
-			Copyright (C) 2002-2011 Open Microscopy Environment
-		</xs:documentation>
-	</xs:annotation>
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
@@ -40,6 +28,28 @@
     # For attribution instructions, visit
     #       http://www.openmicroscopy.org/info/attribution
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+	<xs:import namespace = "http://www.openmicroscopy.org/XMLschemas/AnalysisModule/RC1/AnalysisModule.xsd" schemaLocation = "http://www.openmicroscopy.org/XMLschemas/AnalysisModule/RC1/AnalysisModule.xsd"/>
+	<xs:import namespace = "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd" schemaLocation = "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd"/>
+	<xs:import namespace = "http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd" schemaLocation = "http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd"/>
+	<xs:import namespace = "http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd" schemaLocation = "http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd"/>
+	<xs:annotation>
+		<xs:documentation>
+			Open Microscopy Environment
+			OME XML Schema 1.0 FC-TIFF
+			Author:  Ilya G. Goldberg
+			Copyright (C) 2002-2011 Open Microscopy Environment
+		</xs:documentation>
+	</xs:annotation>
+	<!--
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# Copyright (C) 2003 Open Microscopy Environment
+#       Massachusetts Institute of Technology,
+#       National Institutes of Health,
+#       University of Dundee
+#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 	<!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
