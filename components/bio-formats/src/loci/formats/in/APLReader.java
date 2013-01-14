@@ -133,6 +133,7 @@ public class APLReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    parser[getSeries()].fillInIFD(ifds[getSeries()].get(no));
     return parser[getSeries()].getSamples(ifds[getSeries()].get(no), buf, x, y, w, h);
   }
 
@@ -295,15 +296,38 @@ public class APLReader extends FormatReader {
     LOGGER.debug("Searching {} for a directory with TIFFs", parentDirectory);
 
     Location dir = new Location(parentDirectory);
-    String[] list = dir.list();
+
     String topDirectory = null;
-    for (String f : list) {
-      LOGGER.debug("  '{}'", f);
-      Location file = new Location(dir, f);
-      if (file.isDirectory() && f.indexOf("_DocumentFiles") > 0) {
-        topDirectory = file.getAbsolutePath();
-        LOGGER.debug("Found {}", topDirectory);
-        break;
+
+    int index = 2;
+    String pathName = rows.get(index++)[path].trim();
+    while (pathName.equals("") && index < rows.size()) {
+      pathName = rows.get(index++)[path].trim();
+    }
+
+    pathName = pathName.replace('\\', File.separatorChar);
+    pathName = pathName.replaceAll("/", File.separator);
+    String[] dirs = pathName.split(File.separator);
+    for (int i=dirs.length-1; i>=0; i--) {
+      if (dirs[i].indexOf("_DocumentFiles") > 0) {
+        Location file = new Location(dir, dirs[i]);
+        if (file.exists()) {
+          topDirectory = file.getAbsolutePath();
+          break;
+        }
+      }
+    }
+
+    if (topDirectory == null) {
+      String[] list = dir.list();
+      for (String f : list) {
+        LOGGER.debug("  '{}'", f);
+        Location file = new Location(dir, f);
+        if (file.isDirectory() && f.indexOf("_DocumentFiles") > 0) {
+          topDirectory = file.getAbsolutePath();
+          LOGGER.debug("Found {}", topDirectory);
+          break;
+        }
       }
     }
     if (topDirectory == null) {
@@ -323,20 +347,19 @@ public class APLReader extends FormatReader {
     int seriesCount = seriesIndexes.size();
 
     core.clear();
-    for (int i=0; i<seriesCount; i++) {
-      core.add(new CoreMetadata());
-    }
     tiffFiles = new String[seriesCount];
     xmlFiles = new String[seriesCount];
     parser = new TiffParser[seriesCount];
     ifds = new IFDList[seriesCount];
 
     for (int i=0; i<seriesCount; i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
+
       int secondRow = seriesIndexes.get(i);
       int firstRow = secondRow - 1;
       String[] row2 = rows.get(firstRow);
       String[] row3 = rows.get(secondRow);
-      CoreMetadata ms = core.get(i);
 
       ms.sizeT = parseDimension(row3[frames]);
       ms.sizeZ = parseDimension(row3[zLayers]);
@@ -353,9 +376,7 @@ public class APLReader extends FormatReader {
       parser[i] = new TiffParser(tiffFiles[i]);
       parser[i].setDoCaching(false);
       ifds[i] = parser[i].getIFDs();
-      for (IFD ifd : ifds[i]) {
-        parser[i].fillInIFD(ifd);
-      }
+      parser[i].fillInIFD(ifds[i].get(0));
 
       // get core metadata from TIFF file
 
