@@ -34,7 +34,7 @@
 	version = "1"
 	elementFormDefault = "qualified">
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2012-06/V1/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd"/>
 	<xsd:annotation>
 		<xsd:documentation>
 			The elements in this file are not yet represented by classes in the EA diagrams - ajp

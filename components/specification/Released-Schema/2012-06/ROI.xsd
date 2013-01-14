@@ -33,9 +33,9 @@
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2012-06/V1/ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2012-06/V1/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2012-06/V1/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2012-06/SA.xsd"/>
 	
 	<xsd:element name="ROI"> <!-- top level definition -->
 		<xsd:annotation>

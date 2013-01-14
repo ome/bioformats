@@ -5,7 +5,7 @@
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
 	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06     ../../../InProgress/ome.xsd">
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06     http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd">
 
 	<OME:Project ID="Project:1">
 		<OME:ExperimenterGroupRef ID="ExperimenterGroup:1"/>
