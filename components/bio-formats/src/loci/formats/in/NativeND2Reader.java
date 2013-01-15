@@ -1183,7 +1183,7 @@ public class NativeND2Reader extends FormatReader {
               // timestamps are stored in ms; we want them in seconds
               double time = in.readDouble() / 1000;
               tsT.add(new Double(time));
-              addSeriesMeta("timestamp " + plane, time);
+              addSeriesMetaList("timestamp", time);
             }
           }
           setSeries(0);
@@ -1676,7 +1676,7 @@ public class NativeND2Reader extends FormatReader {
         if (posZ == null) posZ = handler.getZPositions();
       }
 
-      String pos = "for position #" + (i + 1);
+      String pos = "for position";
       for (int n=0; n<getImageCount(); n++) {
         int index = i * getImageCount() + n;
         if (posX != null) {
@@ -1684,24 +1684,24 @@ public class NativeND2Reader extends FormatReader {
           if (index < posX.size()) {
             String key = "X position ";
             store.setPlanePositionX(posX.get(index), i, n);
-            addSeriesMeta(key + (i + 1), posX.get(index));
-            addGlobalMeta(key + pos, posX.get(index));
+            addSeriesMetaList(key, posX.get(index));
+            addGlobalMetaList(key + pos, posX.get(index));
           }
         }
         if (posY != null) {
           if (index < posY.size()) {
             String key = "Y position ";
             store.setPlanePositionY(posY.get(index), i, n);
-            addSeriesMeta(key + (i + 1), posY.get(index));
-            addGlobalMeta(key + pos, posY.get(index));
+            addSeriesMetaList(key, posY.get(index));
+            addGlobalMetaList(key + pos, posY.get(index));
           }
         }
         if (posZ != null) {
           if (index < posZ.size()) {
             store.setPlanePositionZ(posZ.get(index), i, n);
-            String key = "Z position " + pos + ", plane #" + (n + 1);
-            addSeriesMeta(key, posZ.get(index));
-            addGlobalMeta(key, posZ.get(index));
+            String key = "Z position " + pos + ", plane";
+            addSeriesMetaList(key, posZ.get(index));
+            addGlobalMetaList(key, posZ.get(index));
           }
         }
       }

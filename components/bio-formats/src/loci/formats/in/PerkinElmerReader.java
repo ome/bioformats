@@ -847,7 +847,7 @@ public class PerkinElmerReader extends FormatReader {
     }
     String[] tokens = DataTools.readFile(zpoFile).split("\\s");
     for (int t=0; t<tokens.length; t++) {
-      addGlobalMeta("Z slice #" + t + " position", tokens[t]);
+      addGlobalMetaList("Z slice position", tokens[t]);
     }
   }
 

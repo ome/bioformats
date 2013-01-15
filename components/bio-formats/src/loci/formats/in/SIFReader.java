@@ -131,7 +131,7 @@ public class SIFReader extends FormatReader {
         }
       }
       else {
-        addGlobalMeta("Line #" + (lineNumber - 1), line.trim());
+        addGlobalMetaList("Line", line.trim());
       }
       line = in.readLine();
     }

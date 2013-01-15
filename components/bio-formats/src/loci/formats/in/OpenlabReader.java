@@ -502,7 +502,7 @@ public class OpenlabReader extends FormatReader {
       planeOffsets[i] = new int[tmpOffsets.size()];
       for (int q=0; q<planeOffsets[i].length; q++) {
         planeOffsets[i][q] = tmpOffsets.get(q);
-        addSeriesMeta("Plane " + q + " Name", names.get(q));
+        addSeriesMetaList("Plane Name", names.get(q));
       }
       tmpOffsets.clear();
       names.clear();

@@ -676,7 +676,7 @@ public class VolocityReader extends FormatReader {
 
       if (stack.channelNames != null) {
         for (int c=0; c<stack.channelNames.length; c++) {
-          addSeriesMeta("Channel #" + (c + 1), stack.channelNames[c]);
+          addSeriesMetaList("Channel", stack.channelNames[c]);
         }
       }
     }

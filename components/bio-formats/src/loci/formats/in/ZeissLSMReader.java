@@ -974,9 +974,9 @@ public class ZeissLSMReader extends FormatReader {
           yCoordinates.add(yPos);
           zCoordinates.add(zPos);
 
-          addGlobalMeta("X position for position #" + (i + 1), xPos);
-          addGlobalMeta("Y position for position #" + (i + 1), yPos);
-          addGlobalMeta("Z position for position #" + (i + 1), zPos);
+          addGlobalMetaList("X position for position", xPos);
+          addGlobalMetaList("Y position for position", yPos);
+          addGlobalMetaList("Z position for position", zPos);
         }
       }
 
@@ -1009,9 +1009,9 @@ public class ZeissLSMReader extends FormatReader {
             zCoordinates.add(zPos);
           }
 
-          addGlobalMeta("X position for position #" + (i + 1), xPos);
-          addGlobalMeta("Y position for position #" + (i + 1), yPos);
-          addGlobalMeta("Z position for position #" + (i + 1), zPos);
+          addGlobalMetaList("X position for position", xPos);
+          addGlobalMetaList("Y position for position", yPos);
+          addGlobalMetaList("Z position for position", zPos);
         }
       }
 
@@ -1053,7 +1053,7 @@ public class ZeissLSMReader extends FormatReader {
             // we want to read until we find a null char
             String name = in.readCString();
             if (name.length() <= 128) {
-              addSeriesMeta("ChannelName" + i, name);
+              addSeriesMetaList("ChannelName", name);
             }
           }
         }
@@ -1064,7 +1064,7 @@ public class ZeissLSMReader extends FormatReader {
         int nStamps = in.readInt();
         for (int i=0; i<nStamps; i++) {
           double stamp = in.readDouble();
-          addSeriesMeta("TimeStamp" + i, stamp);
+          addSeriesMetaList("TimeStamp", stamp);
           timestamps.add(new Double(stamp));
         }
       }
@@ -1086,13 +1086,13 @@ public class ZeissLSMReader extends FormatReader {
             int size = in.readInt();
             double eventTime = in.readDouble();
             int eventType = in.readInt();
-            addSeriesMeta("Event" + i + " Time", eventTime);
-            addSeriesMeta("Event" + i + " Type", eventType);
+            addSeriesMetaList("Event Time", eventTime);
+            addSeriesMetaList("Event Type", eventType);
             long fp = in.getFilePointer();
             int len = size - 16;
             if (len > 65536) len = 65536;
             if (len < 0) len = 0;
-            addSeriesMeta("Event" + i + " Description", in.readString(len));
+            addSeriesMetaList("Event Description", in.readString(len));
             in.seek(fp + size - 16);
             if (in.getFilePointer() < 0) break;
           }
@@ -1889,9 +1889,9 @@ public class ZeissLSMReader extends FormatReader {
       for (int row=1; row<table.size(); row++) {
         String[] tableRow = table.get(row);
         for (int col=0; col<tableRow.length; col++) {
-          String key = tableName + " " + columnNames[col + 1] + " " + row;
+          String key = tableName + " " + columnNames[col + 1];
           if (currentId != null) {
-            addGlobalMeta(key, tableRow[col]);
+            addGlobalMetaList(key, tableRow[col]);
           }
 
           if (tableName.equals("Recordings") && columnNames[col + 1] != null &&
@@ -2258,14 +2258,11 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     public void addToHashtable() {
-      String prefix = this.getClass().getSimpleName() + " #";
-      int index = 1;
-      while (getSeriesMeta(prefix + index + " Acquire") != null) index++;
-      prefix += index;
+      String prefix = this.getClass().getSimpleName();
       Integer[] keys = blockData.keySet().toArray(new Integer[0]);
       for (Integer key : keys) {
         if (METADATA_KEYS.get(key) != null) {
-          addSeriesMeta(prefix + " " + METADATA_KEYS.get(key),
+          addSeriesMetaList(prefix + " " + METADATA_KEYS.get(key),
             blockData.get(key));
 
           if (METADATA_KEYS.get(key).equals("Bits Per Sample")) {
@@ -2277,7 +2274,7 @@ public class ZeissLSMReader extends FormatReader {
           }
         }
       }
-      addGlobalMeta(prefix + " Acquire", new Boolean(acquire));
+      addGlobalMetaList(prefix + " Acquire", new Boolean(acquire));
     }
   }
 

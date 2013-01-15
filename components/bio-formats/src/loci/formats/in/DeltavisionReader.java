@@ -501,10 +501,9 @@ public class DeltavisionReader extends FormatReader {
           "Extended header Z" + coords[0] + " W" + coords[1] + " T" + coords[2];
         addSeriesMeta(prefix, hdr);
 
-        String position = " position for position #" + (series + 1);
-        addGlobalMeta("X" + position, hdr.stageXCoord);
-        addGlobalMeta("Y" + position, hdr.stageYCoord);
-        addGlobalMeta("Z" + position, hdr.stageZCoord);
+        addGlobalMetaList("X position for position", hdr.stageXCoord);
+        addGlobalMetaList("Y position for position", hdr.stageYCoord);
+        addGlobalMetaList("Z position for position", hdr.stageZCoord);
       }
     }
     setSeries(0);
@@ -646,8 +645,8 @@ public class DeltavisionReader extends FormatReader {
     addGlobalMeta("Y origin (in um)", yOrigin);
     addGlobalMeta("Z origin (in um)", zOrigin);
 
-    for (int i=0; i<title.length; i++) {
-      addGlobalMeta("Title " + (i + 1), title[i]);
+    for (String t : title) {
+      addGlobalMetaList("Title", t);
     }
 
     for (int i=0; i<minWave.length; i++) {

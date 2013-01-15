@@ -771,8 +771,7 @@ public class ZeissCZIReader extends FormatReader {
     translateLayers(realRoot);
 
     Stack<String> nameStack = new Stack<String>();
-    HashMap<String, Integer> indexes = new HashMap<String, Integer>();
-    populateOriginalMetadata(realRoot, nameStack, indexes);
+    populateOriginalMetadata(realRoot, nameStack);
   }
 
   private void translateInformation(Element root) throws FormatException {
@@ -1650,9 +1649,7 @@ public class ZeissCZIReader extends FormatReader {
     return null;
   }
 
-  private void populateOriginalMetadata(Element root, Stack<String> nameStack,
-    HashMap<String, Integer> indexes)
-  {
+  private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
     String name = root.getNodeName();
     nameStack.push(name);
 
@@ -1665,10 +1662,7 @@ public class ZeissCZIReader extends FormatReader {
     if (root.getChildNodes().getLength() == 1) {
       String value = root.getTextContent();
       if (value != null && key.length() > 0) {
-        Integer i = indexes.get(key.toString());
-        String storedKey = key.toString() + (i == null ? 0 : i);
-        indexes.put(key.toString(), i == null ? 1 : i + 1);
-        addGlobalMeta(storedKey, value);
+        addGlobalMetaList(key.toString(), value);
       }
     }
     NamedNodeMap attributes = root.getAttributes();
@@ -1686,7 +1680,7 @@ public class ZeissCZIReader extends FormatReader {
       for (int i=0; i<children.getLength(); i++) {
         Object child = children.item(i);
         if (child instanceof Element) {
-          populateOriginalMetadata((Element) child, nameStack, indexes);
+          populateOriginalMetadata((Element) child, nameStack);
         }
       }
     }
