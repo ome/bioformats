@@ -185,7 +185,7 @@ your FindBugs installation's lib directory. E.g.:
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
       classpath="${component.classpath}:${classes.dir}"
       author="true" version="true" use="true"
-      nodeprecated="true" windowtitle="Bio-Formats API">
+      nodeprecated="false" windowtitle="Bio-Formats API">
       <packageset dir="${dest.dir}"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
