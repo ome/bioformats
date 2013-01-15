@@ -1017,8 +1017,8 @@ public class InCellReader extends FormatReader {
         posX.add(new Double(x));
         posY.add(new Double(y));
 
-        addGlobalMeta("X position for position #" + posX.size(), x);
-        addGlobalMeta("Y position for position #" + posY.size(), y);
+        addGlobalMetaList("X position for position", x);
+        addGlobalMetaList("Y position for position", y);
       }
     }
   }

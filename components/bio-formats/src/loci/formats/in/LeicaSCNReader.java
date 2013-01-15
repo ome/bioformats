@@ -398,16 +398,16 @@ public class LeicaSCNReader extends BaseTiffReader {
       addGlobalMeta("collection.ocr", c.ocr);
       addGlobalMeta("creationDate", i.creationDate);
 
-      addGlobalMeta("device.model for image #" + s, i.devModel);
-      addGlobalMeta("device.version for image #" + s, i.devVersion);
-      addGlobalMeta("view.sizeX for image #" + s, i.vSizeX);
-      addGlobalMeta("view.sizeY for image #" + s, i.vSizeY);
-      addGlobalMeta("view.offsetX for image #" + s, i.vOffsetX);
-      addGlobalMeta("view.offsetY for image #" + s, i.vOffsetY);
-      addGlobalMeta("view.spacingZ for image #" + s, i.vSpacingZ);
-      addGlobalMeta("scanSettings.objectiveSettings.objective for image #" + s, i.objMag);
-      addGlobalMeta("scanSettings.illuminationSettings.numericalAperture for image #" + s, i.illumNA);
-      addGlobalMeta("scanSettings.illuminationSettings.illuminationSource for image #" + s, i.illumSource);
+      addGlobalMetaList("device.model for image", i.devModel);
+      addGlobalMetaList("device.version for image", i.devVersion);
+      addGlobalMetaList("view.sizeX for image", i.vSizeX);
+      addGlobalMetaList("view.sizeY for image", i.vSizeY);
+      addGlobalMetaList("view.offsetX for image", i.vOffsetX);
+      addGlobalMetaList("view.offsetY for image", i.vOffsetY);
+      addGlobalMetaList("view.spacingZ for image", i.vSpacingZ);
+      addGlobalMetaList("scanSettings.objectiveSettings.objective for image", i.objMag);
+      addGlobalMetaList( "scanSettings.illuminationSettings.numericalAperture for image", i.illumNA);
+      addGlobalMetaList("scanSettings.illuminationSettings.illuminationSource for image", i.illumSource);
     }
   }
 

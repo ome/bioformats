@@ -255,7 +255,7 @@ public class APLReader extends FormatReader {
       for (int i=1; i<rows.size(); i++) {
         String[] row = rows.get(i);
         for (int q=0; q<row.length; q++) {
-          addGlobalMeta(columnNames[q] + " " + i, row[q]);
+          addGlobalMetaList(columnNames[q], row[q]);
         }
       }
     }

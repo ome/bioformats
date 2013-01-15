@@ -379,10 +379,10 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
         for (int i=0; i<timestamps.size(); i++) {
           long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT);
-          addSeriesMeta("timestamp " + i, timestamp);
+          addSeriesMetaList("timestamp", timestamp);
         }
         for (int i=0; i<exposures.size(); i++) {
-          addSeriesMeta("exposure time " + i + " (ms)",
+          addSeriesMetaList("exposure time (ms)",
             exposures.get(i).floatValue() * 1000);
         }
 

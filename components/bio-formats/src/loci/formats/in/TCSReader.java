@@ -338,7 +338,7 @@ public class TCSReader extends FormatReader {
 
       date = document.substring(space, document.indexOf("FORMAT")).trim();
       stamp[i] = DateTools.getTime(date, DATE_FORMAT);
-      addGlobalMeta("Timestamp for plane #" + i, stamp[i]);
+      addGlobalMetaList("Timestamp for plane", stamp[i]);
     }
 
     ms0.sizeT = 0;

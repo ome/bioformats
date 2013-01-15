@@ -824,8 +824,12 @@ public class FlexReader extends FormatReader {
         "(count={}, names={}, factors={})",
         new Object[] {totalPlanes, nsize, fsize});
     }
-    for (int i=0; i<nsize; i++) addGlobalMeta("Name " + i, n.get(i));
-    for (int i=0; i<fsize; i++) addGlobalMeta("Factor " + i, f.get(i));
+    for (String ns : n) {
+      addGlobalMetaList("Name", ns);
+    }
+    for (String fs : f) {
+      addGlobalMetaList("Factor", fs);
+    }
 
     // parse factor values
     file.factors = new double[totalPlanes];
@@ -1529,17 +1533,17 @@ public class FlexReader extends FormatReader {
         else if (qName.equals("PositionX")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
           planePositionX.add(v);
-          addGlobalMeta("X position for position #" + (currentSeries + 1), v);
+          addGlobalMetaList("X position for position", v);
         }
         else if (qName.equals("PositionY")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
           planePositionY.add(v);
-          addGlobalMeta("Y position for position #" + (currentSeries + 1), v);
+          addGlobalMetaList("Y position for position", v);
         }
         else if (qName.equals("PositionZ")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
           planePositionZ.add(v);
-          addGlobalMeta("Z position for position #" + (currentSeries + 1), v);
+          addGlobalMetaList("Z position for position", v);
         }
         else if (qName.equals("TimepointOffsetUsed")) {
           planeDeltaT.add(new Double(value));

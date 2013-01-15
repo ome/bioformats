@@ -561,8 +561,8 @@ public class CellWorxReader extends FormatReader {
               store.setWellSamplePositionX(new Double(axes[0]), 0, well, field);
               store.setWellSamplePositionY(new Double(axes[1]), 0, well, field);
 
-              addGlobalMeta("X position for position #" + (field + 1), axes[0]);
-              addGlobalMeta("Y position for position #" + (field + 1), axes[1]);
+              addGlobalMetaList("X position for position", axes[0]);
+              addGlobalMetaList("Y position for position", axes[1]);
             }
           }
         }
