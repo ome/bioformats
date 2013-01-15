@@ -1,6 +1,8 @@
 Supported Formats
 -----------------
 
+:term:`Ratings legend`
+
 .. tabularcolumns:: |p{3cm}|p{2cm}|c|c|c|c|c|c|c|
 
 .. list-table::
@@ -1165,6 +1167,20 @@ Supported Formats
 Bio-Formats currently supports **127** formats
 
 .. glossary::
+    Ratings legend
+      +----------------+-----------------------+
+      +================+=======================+
+      | |Outstanding|  | Outstanding           |
+      +----------------+-----------------------+
+      | |Very good|    | Very good             |
+      +----------------+-----------------------+
+      | |Good|         | Good                  |
+      +----------------+-----------------------+
+      | |Fair|         | Fair                  |
+      +----------------+-----------------------+
+      | |Poor|         | Poor                  |
+      +----------------+-----------------------+
+
     Pixels
         Our estimation of Bio-Formats' ability to reliably extract complete 
         and accurate pixel values from files in that format. The better this 
