@@ -37,10 +37,12 @@ These fields are fully supported by the $handler:
 #set ($node = $q.node($entity))
 #set ($prop = $q.prop($yes))
 #set ($comment = $q.comment($yes))
+#set ($anchor = "_$prop")
+#set ($anchor = "$node$anchor")
 #if ($comment != "")
-  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop - $comment
+  * `$entity : $prop <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$anchor>`_ - $comment
 #else
-  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop
+  * `$entity : $prop <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$anchor>`_
 #end##if $comment
 #end##foreach $yes
 
@@ -58,10 +60,12 @@ but there may be cases where the field is not converted:
 #set ($node = $q.node($entity))
 #set ($prop = $q.prop($partial))
 #set ($comment = $q.comment($partial))
+#set ($anchor = "_$prop")
+#set ($anchor = "$node$anchor")
 #if ($comment != "")
-  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop - $comment
+  * `$entity : $prop <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$anchor>`_ - $comment
 #else
-  * `$entity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$node>`_: $prop
+  * `$entity : $prop <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$anchor>`_
 #end##if $comment
 #end##foreach $partial
 
