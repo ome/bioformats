@@ -1500,7 +1500,12 @@ public class NativeND2Reader extends FormatReader {
             value = in.readCString();
             break;
           case (9): // ByteArray
-            byte[] data = new byte[(int) in.readLong()];
+            long length = in.readLong();
+            if (length + in.getFilePointer() > stop) {
+              in.seek(stop);
+              continue;
+            }
+            byte[] data = new byte[(int) length];
             in.read(data);
             value = java.util.Arrays.toString(data); // todo
             break;
