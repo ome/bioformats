@@ -202,11 +202,6 @@ done
 
 # Special cases
 
-path="${root}/Schemas/Styling/2009-09"
-mkdir -p "$path"
-cp -rv Released-Schema/2009-09/display* Released-Schema/2009-09/jquery.js Released-Schema/2009-09/index.html "$path"
-cp -v Released-Schema/2009-09/index.html "${root}/Schemas/Styling"
-
 # Root index
 
 # Create an HTML link for a schema.
