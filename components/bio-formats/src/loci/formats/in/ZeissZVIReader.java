@@ -556,15 +556,15 @@ public class ZeissZVIReader extends FormatReader {
 
     status("Populating metadata");
 
+    core[0].sizeZ = zIndices.size();
+    core[0].sizeT = tIndices.size();
+    core[0].sizeC = cIndices.size();
+
     for (RandomAccessInputStream s : tagsToParse) {
       s.order(true);
       parseTags(-1, s, store);
       s.close();
     }
-
-    core[0].sizeZ = zIndices.size();
-    core[0].sizeT = tIndices.size();
-    core[0].sizeC = cIndices.size();
 
     core[0].littleEndian = true;
     core[0].interleaved = true;
