@@ -524,6 +524,7 @@ public class LIFReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true, false);
 
+    int roiCount = 0;
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
 
@@ -870,7 +871,7 @@ public class LIFReader extends FormatReader {
       if (imageROIs[i] != null) {
         for (int roi=0; roi<imageROIs[i].length; roi++) {
           if (imageROIs[i][roi] != null) {
-            imageROIs[i][roi].storeROI(store, i, roi);
+            imageROIs[i][roi].storeROI(store, i, roiCount++, roi);
           }
         }
       }
@@ -1824,7 +1825,8 @@ public class LIFReader extends FormatReader {
 
     // -- ROI API methods --
 
-    public void storeROI(MetadataStore store, int series, int roi) {
+    public void storeROI(MetadataStore store, int series, int roi, int roiIndex)
+    {
       MetadataLevel level = getMetadataOptions().getMetadataLevel();
       if (level == MetadataLevel.NO_OVERLAYS || level == MetadataLevel.MINIMUM)
       {
@@ -1836,7 +1838,7 @@ public class LIFReader extends FormatReader {
       // the center point of the image
 
       String roiID = MetadataTools.createLSID("ROI", roi);
-      store.setImageROIRef(roiID, series, roi);
+      store.setImageROIRef(roiID, series, roiIndex);
       store.setROIID(roiID, roi);
       store.setLabelID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
       if (text == null) {
@@ -1903,7 +1905,7 @@ public class LIFReader extends FormatReader {
           store.setRectangleWidth(width, roi, 1);
           store.setRectangleHeight(height, roi, 1);
 
-        break;
+          break;
         case SCALE_BAR:
         case ARROW:
         case LINE:
