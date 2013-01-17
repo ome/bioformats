@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09" xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2008-09" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09" xmlns:MLI="http://www.openmicroscopy.org/Schemas/MLI/2009-09" xmlns:CLI="http://www.openmicroscopy.org/Schemas/CLI/2009-09" xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09" xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09"
+	xmlns:MLI="http://www.openmicroscopy.org/Schemas/MLI/2009-09"
+	xmlns:CLI="http://www.openmicroscopy.org/Schemas/CLI/2009-09"
+	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
+	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09"
+	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
 	<SPW:Plate ID="Plate:1">
 		<SPW:Description>Plate 1 description.</SPW:Description>
 		<SPW:ScreenRef ID="Screen:1"/>
@@ -49,25 +59,22 @@
 			<SPW:ReagentRef ID="Reagent:1"/>
 		</SPW:Well>
 	</SPW:Plate>
-	<SPW:Screen ID="Screen:1" 
-		ProtocolDescription="" 
-		ProtocolIdentifier="" 
-		ReagentSetDescription="" 
-		ReagentSetIdentifier="" 
-		Name="" 
-		Type="">
-		<SPW:Description></SPW:Description>
+	<SPW:Screen ID="Screen:1" ProtocolDescription="" ProtocolIdentifier="" ReagentSetDescription=""
+		ReagentSetIdentifier="" Name="" Type="">
+		<SPW:Description/>
 		<SPW:Reagent ID="Reagent:1" Name="" ReagentIdentifier="">
-			<SPW:Description></SPW:Description>
+			<SPW:Description/>
 		</SPW:Reagent>
 		<SPW:PlateRef ID="Plate:1"/>
-		<SPW:ScreenAcquisition ID="ScreenAcquisition:1" StartTime="2010-02-23T12:49:30" EndTime="2010-02-23T12:50:30">
+		<SPW:ScreenAcquisition ID="ScreenAcquisition:1" StartTime="2010-02-23T12:49:30"
+			EndTime="2010-02-23T12:50:30">
 			<SPW:WellSampleRef ID="WellSample:1.1.1.1"/>
 			<SPW:WellSampleRef ID="WellSample:1.2.1.1"/>
 			<SPW:WellSampleRef ID="WellSample:1.1.2.1"/>
 			<SPW:WellSampleRef ID="WellSample:1.2.2.1"/>
 		</SPW:ScreenAcquisition>
-		<SPW:ScreenAcquisition ID="ScreenAcquisition:2"  StartTime="2010-02-23T12:50:30" EndTime="2010-02-23T12:51:29">
+		<SPW:ScreenAcquisition ID="ScreenAcquisition:2" StartTime="2010-02-23T12:50:30"
+			EndTime="2010-02-23T12:51:29">
 			<SPW:WellSampleRef ID="WellSample:1.1.1.2"/>
 			<SPW:WellSampleRef ID="WellSample:1.2.1.2"/>
 			<SPW:WellSampleRef ID="WellSample:1.1.2.2"/>
