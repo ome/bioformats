@@ -11,6 +11,10 @@ parsedate() {
     fi
 }
 
+curdate() {
+    date '+%B %Y'
+}
+
 # Get the most recent version of a schema
 # $1=schema name
 mostrecentversion() {
@@ -79,34 +83,34 @@ schemaversion() {
 schemadesc() {
     case "${1%.xsd}" in
 	BinaryFile)
-	    echo "The Binary File schema is used to describes a file location, or the location of a fragment within a file." ;;
+	    echo "Binary File schema used to describe a file location, or the location of a fragment within a file." ;;
 	OME|ome)
-	    echo "The main schema which defines the OME ontology for microscopy. This schema makes use of the others." ;;
+	    echo "main schema which defines the OME ontology for microscopy. This schema makes use of the others." ;;
 
 	OMERO)
-	    echo "The schema extensions used by OMERO. It is not used by the OME schema but provides a structure for data in StructuredAnnotation blocks used by OMERO." ;;
+	    echo "schema extensions used by OMERO. It is not used by the OME schema but provides a structure for data in StructuredAnnotation blocks used by OMERO." ;;
 	ROI)
-	    echo "The Region Of Interest schema." ;;
+	    echo "Region Of Interest schema." ;;
 	SA)
-	    echo "The Structured Annotation schema." ;;
+	    echo "Structured Annotation schema." ;;
 	SPW)
-	    echo "The Screen/Plate/Well schema." ;;
+	    echo "Screen/Plate/Well schema." ;;
 	AnalysisChain)
-	    echo "The Analysis Chain schema. Analysis chains are how module outputs are connected to inputs of other modules." ;;
+	    echo "Analysis Chain schema. Analysis chains are how module outputs are connected to inputs of other modules." ;;
 	AnalysisModule)
-	    echo "The Analysis Module Library schema. Analysis modules are image analysis algorithms or, more generally, how information is generated in OME. Makes use of CLI and MLI schemas." ;;
+	    echo "Analysis Module Library schema. Analysis modules are image analysis algorithms or, more generally, how information is generated in OME. Makes use of CLI and MLI schemas." ;;
 	CA)
-	    echo "The standard custom attribute schema." ;;
+	    echo "standard custom attribute schema." ;;
 	CLI)
-	    echo "The Command Line Interface sub-schema." ;;
+	    echo "Command Line Interface sub-schema." ;;
 	DataHistory)
-	    echo "The Data History schema. Data history describes the data dependency in OME." ;;
+	    echo "Data History schema. Data history describes the data dependency in OME." ;;
 	MLI)
-	    echo "The Matlab Interface sub-schema." ;;
+	    echo "Matlab Interface sub-schema." ;;
 	STD)
-	    echo "The Semantic Type definition schema. Once a Semantic Type is defined, data for the defined type can be imported into the OME server." ;;
+	    echo "Semantic Type definition schema. Once a Semantic Type is defined, data for the defined type can be imported into the OME server." ;;
 	*)
-	    echo "The ${1%.xsd} schema" ;;
+	    echo "${1%.xsd} schema." ;;
     esac
 }
 
@@ -212,31 +216,44 @@ done
 # Root index
 
 # Create an HTML link for a schema.
-# $1=filter (current or legacy)
+# $1=schema
+# $2=year (may be blank)
+# $2=filter (current or legacy)
+# $3=verbose (true or false)
 createlink() {
-    if [ $1 = current ]; then
-	filter=
-    else
-	filter=
-    fi
-
-    for schema in $(find published/Schemas -name '*xsd' | xargs -n1 basename | sort | uniq); do
-	name=$(basename "$schema")
-	echo "NAME=$name" >&2
+    name=$(basename "$1")
+    release="$2"
+    if [ -z "$2" ]; then
 	release=$(mostrecentversion "$name")
 	reldate=$(parsedate "$release")
-	relversion=$(schemaversion "$name" "$release")
-	reldesc=$(schemadesc "$name")
-	link=$(find published/Schemas -name "$name" | grep "$release" | head -n1)
-	link=$(echo "$link" | sed -e 's;published/Schemas/;;')
-	line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${schema}</a>] ${reldesc}</li>"
-
-	if iscurrent "$name" && [ "$1" = "current" ]; then
+    else
+	reldate=$(parsedate "$2")
+    fi
+    relversion=$(schemaversion "$name" "$release")
+    reldesc=" The $(schemadesc "$name")"
+    if [ "$4" = "false" ]; then
+	reldesc=""
+    fi
+    link=$(find published/Schemas -name "$name" | grep "$release" | head -n1)
+    link=$(echo "$link" | sed -e 's;published/Schemas/;;')
+    if [ -z "$2" ]; then
+	line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>]${reldesc}</li>"
+    else
+	line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${2}</a>]${reldesc}</li>"
+    fi
+    if [ -z "$2" ]; then
+	if iscurrent "$name" && [ "$3" = "current" ]; then
 	    echo "$line"
-	elif ! iscurrent "$name" && [ "$1" != "current" ]; then
+	elif ! iscurrent "$name" && [ "$3" != "current" ]; then
 	    echo "$line"
 	fi
-    done
+    else
+	if ismostrecent "$name" "$2" && [ "$3" = "current" ]; then
+	    echo "$line"
+	elif ! ismostrecent "$name" "$2" && [ "$3" != "current" ]; then
+	    echo "$line"
+	fi
+    fi
 }
 
 # Create main HTML index page
@@ -252,7 +269,7 @@ createmainindex() {
 <body>
 <h1>Open Microscopy Environment Schemas</h1>
 <div class="head">
-<p>13th June 2011</p>
+<p>$(curdate)</p>
 </div>
 <div id="toc">
 <h2>Table of contents</h2>
@@ -297,7 +314,9 @@ EOF
 <ul>
 EOF
 
-    createlink "current"
+    for schema in $(find published/Schemas -name '*xsd' | xargs -n1 basename | sort | uniq); do
+	createlink "$schema" "" "current" "true"
+    done
 
     cat <<EOF
 </ul>
@@ -305,7 +324,89 @@ EOF
 <ul>
 EOF
 
-    createlink "legacy"
+    for schema in $(find published/Schemas -name '*xsd' | xargs -n1 basename | sort | uniq); do
+	createlink "$schema" "" "legacy" "true"
+    done
+    cat <<EOF
+</ul>
+</div>
+<hr/>
+</body>
+</html>
+EOF
+}
+
+createintermediateindex() {
+
+    cat <<EOF
+<?xml version='1.0'?>
+<!DOCTYPE html PUBLIC "-//XML-DEV//DTD XHTML RDDL 1.0//EN" "http://www.w3.org/2001/rddl/rddl-xhtml.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:rddl="http://www.rddl.org/" xml:lang="en">
+<head>
+        <title>Open Microscopy Environment $1 Schemas</title>
+</head>
+<body>
+<h1>Open Microscopy Environment $1 Schemas</h1>
+<div class="head">
+<p>$(curdate)</p>
+</div>
+<div id="toc">
+<h2>Table of contents</h2>
+	<ol>
+		<li><a href="#intro">Introduction</a></li>
+		<li><a href="#history">History</a></li>
+		<li><a href="#schema.list">Schemas</a></li>
+	</ol>
+</div>
+<div id="intro">
+<h2>Introduction</h2>
+<p>This document outlines the XML $1 Schemas created by the Open Microscopy Environment Group. This is the $(schemadesc "$1")  Detailed information on the schemas and future development plans are available at <a href="http://www.openmicroscopy.org/site/support/file-formats">http://www.openmicroscopy.org/site/support/file-formats</a>. Further information on the groups work is available at <a href="http://www.openmicroscopy.org/">http://www.openmicroscopy.org/</a>
+</p>
+</div>
+EOF
+
+    cat <<EOF
+<div id="history">
+<h2>History</h2>
+<p>This lists the current and prior versions of the $1 schema. The schemas are in a process of constant development to extend and refine the OME Data Model. 
+</p>
+<ul>
+EOF
+
+    for release in $(ls -1d "$root"/Schemas/$1/20* | xargs -n1 basename | sort -r); do
+	reldate=$(parsedate "$release")
+	echo "<li>$reldate - namespace /$release/</li>"
+    done
+
+    cat <<EOF
+</ul>
+<p>Information regarding schemas released before June 2007 is available at <a href="http://www.openmicroscopy.org/XMLschemas/">http://www.openmicroscopy.org/XMLschemas/</a>. This includes the schemas used by the original OME server.
+</p>
+</div>
+<div id="schema.list">
+<h2>Schemas</h2>
+<p>This has the schema name, the current version, a link to the XSD file, and a short description</p>
+<p><em>Note: Some browsers will try to render XSD files when you view them. This can result in either a blank screen or unformatted text. Choose to either download the file or view the source.</em></p>
+<h4>Active Schemas</h4>
+<ul>
+EOF
+    schema="$1.xsd"
+    if [ "$1" = "OME" ]; then
+	schema="ome.xsd"
+    fi
+
+    for year in $(find published/Schemas -name "$schema" | xargs -n1 dirname | xargs -n1 basename | sort -r); do
+	createlink "$schema" "$year" "current" "false"
+    done
+    cat <<EOF
+</ul>
+<h4>Legacy Schemas</h4>
+<ul>
+EOF
+
+    for year in $(find published/Schemas -name "$schema" | xargs -n1 dirname | xargs -n1 basename | sort -r); do
+	createlink "$schema" "$year" "legacy" "false"
+    done
 
     cat <<EOF
 </ul>
@@ -316,4 +417,11 @@ EOF
 EOF
 }
 
-createmainindex > "$root/Schemas/index.html"
+for type in $(find "${root}/Schemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/Schemas/;;'); do
+    echo "$type"
+    echo "HTML -> $root/Schemas/${type}/index.html"
+    createintermediateindex "$type" > "$root/Schemas/${type}/index.html"
+done
+
+echo "HTML -> ${root}/Schemas/index.html"
+createmainindex > "${root}/Schemas/index.html"
