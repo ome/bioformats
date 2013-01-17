@@ -111,8 +111,6 @@ schemadesc() {
 }
 
 root=published
-current=$(ls -1d Released-Schema/20* | sort)
-current=${current/*\//}
 
 # Clean up
 
@@ -128,15 +126,15 @@ do
 
     for schema in "$dir"/*.xsd
     do
-	rel=${dir/*\//}
+	rel=$(basename "$dir")
 	base=${schema%.xsd}
-	base=${base/*\//}
-	name=${schema/*\//}
+	base=$(basename "$base")
+	name=$(basename "$schema")
 	type="$(schemastatus "$name" "$rel")"
 	version="$(schemaversion "$name" "$rel")"
 
-	year=${rel/-*}
-	month=${rel/*-}
+	year=$(echo "$rel" | sed -e 's;^\([0-9][0-9]*\)-.*$;\1;')
+	month=$(echo "$rel" | sed -e 's;^.*-\([0-9][0-9]*\)$;\1;')
 
 	# Skip files only used internally for legacy schema
 	if [ "$rel" = "2003-FC" ] && [ "$base" != "ome" ]; then
@@ -222,14 +220,15 @@ createlink() {
 	filter=
     fi
 
-    for schema in $(find published/Schemas -name '*xsd' | xargs basename | sort | uniq); do
-	name=${schema/*\//}
+    for schema in $(find published/Schemas -name '*xsd' | xargs -n1 basename | sort | uniq); do
+	name=$(basename "$schema")
+	echo "NAME=$name" >&2
 	release=$(mostrecentversion "$name")
 	reldate=$(parsedate "$release")
 	relversion=$(schemaversion "$name" "$release")
 	reldesc=$(schemadesc "$name")
 	link=$(find published/Schemas -name "$name" | grep "$release" | head -n1)
-	link=${link/published\/Schemas\//}
+	link=$(echo "$link" | sed -e 's;published/Schemas/;;')
 	line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${schema}</a>] ${reldesc}</li>"
 
 	if iscurrent "$name" && [ "$1" = "current" ]; then
@@ -280,7 +279,7 @@ EOF
 <ul>
 EOF
 
-    for release in $(ls -1d Released-Schema/20* | grep -v 2003 | xargs basename | sort); do
+    for release in $(ls -1d Released-Schema/20* | grep -v 2003 | xargs -n1 basename | sort); do
 	reldate=$(parsedate "$release")
 	echo "<li>$reldate - namespace /$release/</li>"
     done
