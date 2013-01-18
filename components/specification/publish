@@ -236,6 +236,9 @@ createlink() {
     fi
     link=$(find published/Schemas -name "$name" | grep "$release" | head -n1)
     link=$(echo "$link" | sed -e 's;published/Schemas/;;')
+    if [ -n "$2" ]; then
+	link=$(echo "$link" | sed -e "s;^${name%.xsd}/;;")
+    fi
     if [ -z "$2" ]; then
 	line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>]${reldesc}</li>"
     else
@@ -337,6 +340,10 @@ EOF
 }
 
 createintermediateindex() {
+    current="This schema is currently in use."
+    if ! iscurrent "$1"; then
+	current="This schema is no longer in use."
+    fi
 
     cat <<EOF
 <?xml version='1.0'?>
@@ -387,6 +394,7 @@ EOF
 <h2>Schemas</h2>
 <p>This has the schema name, the current version, a link to the XSD file, and a short description</p>
 <p><em>Note: Some browsers will try to render XSD files when you view them. This can result in either a blank screen or unformatted text. Choose to either download the file or view the source.</em></p>
+<p><b>$current</b></p>
 <h4>Active Schemas</h4>
 <ul>
 EOF
@@ -418,7 +426,6 @@ EOF
 }
 
 for type in $(find "${root}/Schemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/Schemas/;;'); do
-    echo "$type"
     echo "HTML -> $root/Schemas/${type}/index.html"
     createintermediateindex "$type" > "$root/Schemas/${type}/index.html"
 done
