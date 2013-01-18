@@ -260,7 +260,9 @@ public class PhotoshopTiffReader extends BaseTiffReader {
               codec.decompress(tag, null);
             }
             else if (compression[layer] == PACKBITS) {
-              if (layer == 0) tag.skipBytes(256);
+              if (layer == 0) {
+                tag.skipBytes(256 * 6 + 36);
+              }
               else tag.skipBytes(192);
               layerOffset[nextOffset] = tag.getFilePointer();
               PackbitsCodec codec = new PackbitsCodec();
