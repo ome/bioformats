@@ -358,6 +358,7 @@ EOF
 }
 
 createintermediateindex() {
+	current="This schema is current."
     if ! iscurrent "$1"; then
 	current="This schema is no longer in use."
     fi
