@@ -492,6 +492,10 @@ public class LeicaReader extends FormatReader {
 
     numSeries -= invalidCount;
 
+    if (numSeries <= 0) {
+      throw new FormatException("TIFF files not found");
+    }
+
     int[] count = new int[getSeriesCount()];
     for (int i=0; i<getSeriesCount(); i++) {
       count[i] = core.get(i).imageCount;
