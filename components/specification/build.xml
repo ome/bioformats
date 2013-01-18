@@ -35,7 +35,7 @@
         <schemavalidate failonerror="true" warn="true">
             <fileset dir="${basedir}" 
                 includes="Samples/**/*.ome"
-                excludes="Samples/compliant-sample.ome, Samples/OmeFiles/**/2008-09/*-metadata.ome, Samples/OmeFiles/Working/*.ome"/>
+                excludes="Samples/**/2008-09/*-metadata.ome, Samples/InProgress/*.ome"/>
             <!-- Standard -->
             <schema namespace="http://www.w3.org/XML/1998/namespace"
                 file="${basedir}/Released-Schema/additions/jar/xml.xsd" />
@@ -207,9 +207,7 @@
                 file="${basedir}/Released-Schema/2012-06/BinaryFile.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06"
                 file="${basedir}/Released-Schema/2012-06/ome.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/OMERO/2012-06"
-                file="${basedir}/Released-Schema/2012-06/OMERO.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" 
+           <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" 
                 file="${basedir}/Released-Schema/2012-06/SA.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" 
                 file="${basedir}/Released-Schema/2012-06/SPW.xsd" />
