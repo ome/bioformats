@@ -213,6 +213,24 @@ done
 
 # Special cases
 
+# Transform folder
+path="${root}/Schemas/Transform/"
+dir="Xslt"
+mkdir -p "$path"
+for transform in "$dir"/*.xsl
+do
+    cp -v "$transform" "$path"
+done
+
+# Samples folder
+path="${root}/Schemas/Samples/"
+dir="Samples"
+mkdir -p "$path"
+for sample in "$dir"/*
+do
+    cp -vRL "$sample" "$path"
+done
+
 # Root index
 
 # Create an HTML link for a schema.
@@ -317,7 +335,7 @@ EOF
 <ul>
 EOF
 
-    for schema in $(find published/Schemas -name '*xsd' | xargs -n1 basename | sort | uniq); do
+    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs -n1 basename | sort | uniq ); do
 	createlink "$schema" "" "current" "true"
     done
 
@@ -327,7 +345,7 @@ EOF
 <ul>
 EOF
 
-    for schema in $(find published/Schemas -name '*xsd' | xargs -n1 basename | sort | uniq); do
+    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs -n1 basename | sort | uniq); do
 	createlink "$schema" "" "legacy" "true"
     done
     cat <<EOF
@@ -340,7 +358,6 @@ EOF
 }
 
 createintermediateindex() {
-    current="This schema is currently in use."
     if ! iscurrent "$1"; then
 	current="This schema is no longer in use."
     fi
@@ -403,7 +420,7 @@ EOF
 	schema="ome.xsd"
     fi
 
-    for year in $(find published/Schemas -name "$schema" | xargs -n1 dirname | xargs -n1 basename | sort -r); do
+    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r); do
 	createlink "$schema" "$year" "current" "false"
     done
     cat <<EOF
@@ -412,7 +429,7 @@ EOF
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | xargs -n1 dirname | xargs -n1 basename | sort -r); do
+    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r); do
 	createlink "$schema" "$year" "legacy" "false"
     done
 
@@ -426,8 +443,10 @@ EOF
 }
 
 for type in $(find "${root}/Schemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/Schemas/;;'); do
-    echo "HTML -> $root/Schemas/${type}/index.html"
-    createintermediateindex "$type" > "$root/Schemas/${type}/index.html"
+    if [ $type != "Samples" ] && [ $type != "Transform" ]; then
+        echo "HTML -> $root/Schemas/${type}/index.html"
+        createintermediateindex "$type" > "$root/Schemas/${type}/index.html"
+    fi
 done
 
 echo "HTML -> ${root}/Schemas/index.html"
