@@ -1655,8 +1655,10 @@ public class ZeissCZIReader extends FormatReader {
 
     StringBuffer key = new StringBuffer();
     for (String k : nameStack) {
-      key.append(k);
-      key.append(" ");
+      if (!k.equals("Metadata") && (!k.endsWith("s") || k.equals(name))) {
+        key.append(k);
+        key.append("|");
+      }
     }
 
     if (root.getChildNodes().getLength() == 1) {
