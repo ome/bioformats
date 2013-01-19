@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -111,7 +112,9 @@ public class IPLabReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    core[0].littleEndian = in.readString(4).equals("iiii");
+    CoreMetadata m = core.get(0);
+
+    m.littleEndian = in.readString(4).equals("iiii");
 
     in.order(isLittleEndian());
 
@@ -120,62 +123,62 @@ public class IPLabReader extends FormatReader {
     // read axis sizes from header
 
     int dataSize = in.readInt() - 28;
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
-    core[0].sizeC = in.readInt();
-    core[0].sizeZ = in.readInt();
-    core[0].sizeT = in.readInt();
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
+    m.sizeC = in.readInt();
+    m.sizeZ = in.readInt();
+    m.sizeT = in.readInt();
     int filePixelType = in.readInt();
 
-    core[0].imageCount = getSizeZ() * getSizeT();
+    m.imageCount = getSizeZ() * getSizeT();
 
     String ptype;
     switch (filePixelType) {
       case 0:
         ptype = "8 bit unsigned";
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
         break;
       case 1:
         ptype = "16 bit signed short";
-        core[0].pixelType = FormatTools.INT16;
+        m.pixelType = FormatTools.INT16;
         break;
       case 2:
         ptype = "16 bit unsigned short";
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
         break;
       case 3:
         ptype = "32 bit signed long";
-        core[0].pixelType = FormatTools.INT32;
+        m.pixelType = FormatTools.INT32;
         break;
       case 4:
         ptype = "32 bit single-precision float";
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
         break;
       case 5:
         ptype = "Color24";
-        core[0].pixelType = FormatTools.UINT32;
+        m.pixelType = FormatTools.UINT32;
         break;
       case 6:
         ptype = "Color48";
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
         break;
       case 10:
         ptype = "64 bit double-precision float";
-        core[0].pixelType = FormatTools.DOUBLE;
+        m.pixelType = FormatTools.DOUBLE;
         break;
       default:
         ptype = "reserved"; // for values 7-9
     }
 
-    core[0].dimensionOrder = "XY";
-    if (getSizeC() > 1) core[0].dimensionOrder += "CZT";
-    else core[0].dimensionOrder += "ZTC";
+    m.dimensionOrder = "XY";
+    if (getSizeC() > 1) m.dimensionOrder += "CZT";
+    else m.dimensionOrder += "ZTC";
 
-    core[0].rgb = getSizeC() > 1;
-    core[0].interleaved = false;
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
+    m.rgb = getSizeC() > 1;
+    m.interleaved = false;
+    m.indexed = false;
+    m.falseColor = false;
+    m.metadataComplete = true;
 
     addGlobalMeta("PixelType", ptype);
     addGlobalMeta("Width", getSizeX());
@@ -257,7 +260,7 @@ public class IPLabReader extends FormatReader {
 
           String sourceType = (source >= 0 && source < types.length) ?
             types[source] : "user";
-          addGlobalMeta("NormalizationSource" + i, sourceType);
+          addGlobalMetaList("NormalizationSource", sourceType);
 
           double min = in.readDouble();
           double max = in.readDouble();
@@ -265,11 +268,11 @@ public class IPLabReader extends FormatReader {
           double black = in.readDouble();
           double white = in.readDouble();
 
-          addGlobalMeta("NormalizationMin" + i, min);
-          addGlobalMeta("NormalizationMax" + i, max);
-          addGlobalMeta("NormalizationGamma" + i, gamma);
-          addGlobalMeta("NormalizationBlack" + i, black);
-          addGlobalMeta("NormalizationWhite" + i, white);
+          addGlobalMetaList("NormalizationMin", min);
+          addGlobalMetaList("NormalizationMax", max);
+          addGlobalMetaList("NormalizationGamma", gamma);
+          addGlobalMetaList("NormalizationBlack", black);
+          addGlobalMetaList("NormalizationWhite", white);
         }
       }
       else if (tag.equals("head")) {
@@ -318,8 +321,8 @@ public class IPLabReader extends FormatReader {
           float unitsPerPixel = in.readFloat();
           int xUnitName = in.readInt();
 
-          addGlobalMeta("ResolutionStyle" + i, xResStyle);
-          addGlobalMeta("UnitsPerPixel" + i, unitsPerPixel);
+          addGlobalMetaList("ResolutionStyle", xResStyle);
+          addGlobalMetaList("UnitsPerPixel", unitsPerPixel);
 
           switch (xUnitName) {
             case 2: // mm
@@ -341,7 +344,7 @@ public class IPLabReader extends FormatReader {
 
           if (i == 0) pixelSize = new Double(unitsPerPixel);
 
-          addGlobalMeta("UnitName" + i, xUnitName);
+          addGlobalMetaList("UnitName", xUnitName);
         }
       }
       else if (tag.equals("view")) {
@@ -385,7 +388,7 @@ public class IPLabReader extends FormatReader {
               break;
           }
 
-          addGlobalMeta("Timestamp " + i, timepoint);
+          addGlobalMetaList("Timestamp", timepoint);
 
           for (int c=0; c<getSizeC(); c++) {
             for (int z=0; z<getSizeZ(); z++) {

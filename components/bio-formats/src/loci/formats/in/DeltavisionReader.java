@@ -313,15 +313,17 @@ public class DeltavisionReader extends FormatReader {
 
     LOGGER.info("Populating core metadata");
 
-    core[0].littleEndian = little;
-    core[0].sizeX = sizeX;
-    core[0].sizeY = sizeY;
-    core[0].imageCount = imageCount;
+    CoreMetadata m = core.get(0);
+
+    m.littleEndian = little;
+    m.sizeX = sizeX;
+    m.sizeY = sizeY;
+    m.imageCount = imageCount;
 
     String pixel = getPixelString(filePixelType);
-    core[0].pixelType = getPixelType(filePixelType);
+    m.pixelType = getPixelType(filePixelType);
 
-    core[0].dimensionOrder = "XY" + imageSequence.replaceAll("W", "C");
+    m.dimensionOrder = "XY" + imageSequence.replaceAll("W", "C");
 
     int planeSize =
       getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
@@ -329,7 +331,7 @@ public class DeltavisionReader extends FormatReader {
       (int) ((in.length() - HEADER_LENGTH - extSize) / planeSize);
     if (realPlaneCount < getImageCount()) {
       LOGGER.debug("Truncated file");
-      core[0].imageCount = realPlaneCount;
+      m.imageCount = realPlaneCount;
       if (sizeZ == 1) {
         sizeT = realPlaneCount / sizeC;
       }
@@ -337,7 +339,7 @@ public class DeltavisionReader extends FormatReader {
         sizeZ = realPlaneCount / sizeC;
         if ((realPlaneCount % sizeC) != 0) {
           sizeZ++;
-          core[0].imageCount = sizeZ * sizeC;
+          m.imageCount = sizeZ * sizeC;
         }
       }
       else if (getDimensionOrder().indexOf("Z") <
@@ -349,11 +351,11 @@ public class DeltavisionReader extends FormatReader {
           sizeZ = realPlaneCount / sizeC;
           if ((realPlaneCount % sizeC) != 0) {
             sizeZ++;
-            core[0].imageCount = sizeZ * sizeC;
+            m.imageCount = sizeZ * sizeC;
           }
         }
         if (getImageCount() > (sizeZ * sizeC * sizeT)) {
-          core[0].imageCount = imageCount;
+          m.imageCount = imageCount;
           sizeC = rawSizeC == 0 ? 1 : rawSizeC;
           sizeT = rawSizeT == 0 ? 1 : rawSizeT;
           sizeZ = getImageCount() / (sizeC * sizeT);
@@ -364,15 +366,15 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
-    core[0].sizeT = sizeT;
-    core[0].sizeC = sizeC;
-    core[0].sizeZ = sizeZ;
+    m.sizeT = sizeT;
+    m.sizeC = sizeC;
+    m.sizeZ = sizeZ;
 
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].metadataComplete = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
+    m.rgb = false;
+    m.interleaved = false;
+    m.metadataComplete = true;
+    m.indexed = false;
+    m.falseColor = false;
 
     // --- parse extended header ---
 
@@ -425,20 +427,20 @@ public class DeltavisionReader extends FormatReader {
     int nStagePositions = xTiles * yTiles;
     if (nStagePositions > 0 && nStagePositions <= getSizeT()) {
       int t = getSizeT();
-      core[0].sizeT /= nStagePositions;
+      m.sizeT /= nStagePositions;
       if (getSizeT() * nStagePositions != t) {
-        core[0].sizeT = t;
+        m.sizeT = t;
         nStagePositions = 1;
       }
       else {
-        core[0].imageCount /= nStagePositions;
+        m.imageCount /= nStagePositions;
       }
 
       if (nStagePositions > 1) {
-        CoreMetadata originalCore = core[0];
-        core = new CoreMetadata[nStagePositions];
-        for (int i=0; i<core.length; i++) {
-          core[i] = originalCore;
+        CoreMetadata originalCore = core.get(0);
+        core.clear();
+        for (int i=0; i<nStagePositions; i++) {
+          core.add(originalCore);
         }
       }
     }
@@ -499,10 +501,9 @@ public class DeltavisionReader extends FormatReader {
           "Extended header Z" + coords[0] + " W" + coords[1] + " T" + coords[2];
         addSeriesMeta(prefix, hdr);
 
-        String position = " position for position #" + (series + 1);
-        addGlobalMeta("X" + position, hdr.stageXCoord);
-        addGlobalMeta("Y" + position, hdr.stageYCoord);
-        addGlobalMeta("Z" + position, hdr.stageZCoord);
+        addGlobalMetaList("X position for position", hdr.stageXCoord);
+        addGlobalMetaList("Y position for position", hdr.stageYCoord);
+        addGlobalMetaList("Z position for position", hdr.stageZCoord);
       }
     }
     setSeries(0);
@@ -644,8 +645,8 @@ public class DeltavisionReader extends FormatReader {
     addGlobalMeta("Y origin (in um)", yOrigin);
     addGlobalMeta("Z origin (in um)", zOrigin);
 
-    for (int i=0; i<title.length; i++) {
-      addGlobalMeta("Title " + (i + 1), title[i]);
+    for (String t : title) {
+      addGlobalMetaList("Title", t);
     }
 
     for (int i=0; i<minWave.length; i++) {

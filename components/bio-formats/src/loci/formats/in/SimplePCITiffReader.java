@@ -36,6 +36,7 @@ import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
@@ -163,11 +164,13 @@ public class SimplePCITiffReader extends BaseTiffReader {
       immersion = objective.substring(space + 1);
     }
 
+    CoreMetadata m = core.get(0);
+
     IniTable cameraTable = ini.getTable(" CAPTURE DEVICE ");
     binning = cameraTable.get("Binning") + "x" + cameraTable.get("Binning");
     cameraType = cameraTable.get("Camera Type");
     cameraName = cameraTable.get("Camera Name");
-    core[0].bitsPerPixel = Integer.parseInt(cameraTable.get("Display Depth"));
+    m.bitsPerPixel = Integer.parseInt(cameraTable.get("Display Depth"));
 
     IniTable captureTable = ini.getTable(" CAPTURE ");
     int index = 1;
@@ -183,11 +186,11 @@ public class SimplePCITiffReader extends BaseTiffReader {
     String units = calibrationTable.get("units");
     scaling = Double.parseDouble(calibrationTable.get("factor"));
 
-    core[0].imageCount *= getSizeC();
-    core[0].rgb = false;
+    m.imageCount *= getSizeC();
+    m.rgb = false;
 
     if (ifds.get(0).containsKey(CUSTOM_BITS)) {
-      core[0].bitsPerPixel = ifds.get(0).getIFDIntValue(CUSTOM_BITS);
+      m.bitsPerPixel = ifds.get(0).getIFDIntValue(CUSTOM_BITS);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

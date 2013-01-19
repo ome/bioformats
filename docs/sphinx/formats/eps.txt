@@ -18,27 +18,20 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`EPS (Encapsulated PostScript) <eps-metadata>`
 
 Freely Available Software:
 
 - `EPS Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_
 
-Sample Datasets:
-
-- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ 
-- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ 
-- `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
 
 We currently have:
 
-- a few EPS datasets 
-- the ability to produce new datasets
+* a few EPS datasets 
+* the ability to produce new datasets
 
 We would like to have:
 
-- an ECAT7 specification document 
-- more ECAT7 files
 
 **Ratings**
 
@@ -63,5 +56,5 @@ Source Code: :scifiowriter:`EPSWriter.java`
 Notes:
 
 
-- Bio-Formats can save individual planes as EPS. 
-- Certain types of compressed EPS files are not supported.
+* Bio-Formats can save individual planes as EPS. 
+* Certain types of compressed EPS files are not supported.

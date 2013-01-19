@@ -132,12 +132,12 @@ public class CellomicsReader extends FormatReader {
     // look for files with similar names
     Location baseFile = new Location(id).getAbsoluteFile();
     Location parent = baseFile.getParentFile();
-    String[] list = parent.list(true);
     ArrayList<String> pixelFiles = new ArrayList<String>();
 
     String plateName = getPlateName(baseFile.getName());
 
     if (plateName != null && isGroupFiles()) {
+      String[] list = parent.list(true);
       for (String f : list) {
         if (plateName.equals(getPlateName(f)) &&
           (checkSuffix(f, "c01") || checkSuffix(f, "dib")))
@@ -176,10 +176,9 @@ public class CellomicsReader extends FormatReader {
       files = new String[] {id};
     }
 
-    core = new CoreMetadata[files.length];
-
-    for (int i=0; i<core.length; i++) {
-      core[i] = new CoreMetadata();
+    core.clear();
+    for (int i=0; i<files.length; i++) {
+      core.add(new CoreMetadata());
     }
 
     in = getDecompressedStream(id);
@@ -226,15 +225,16 @@ public class CellomicsReader extends FormatReader {
     LOGGER.info("Populating core metadata");
 
     for (int i=0; i<getSeriesCount(); i++) {
-      core[i].sizeX = x;
-      core[i].sizeY = y;
-      core[i].sizeZ = nPlanes;
-      core[i].sizeT = 1;
-      core[i].sizeC = 1;
-      core[i].imageCount = getSizeZ();
-      core[i].littleEndian = true;
-      core[i].dimensionOrder = "XYCZT";
-      core[i].pixelType =
+      CoreMetadata ms = core.get(i);
+      ms.sizeX = x;
+      ms.sizeY = y;
+      ms.sizeZ = nPlanes;
+      ms.sizeT = 1;
+      ms.sizeC = 1;
+      ms.imageCount = getSizeZ();
+      ms.littleEndian = true;
+      ms.dimensionOrder = "XYCZT";
+      ms.pixelType =
         FormatTools.pixelTypeFromBytes(nBits / 8, false, false);
     }
 

@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -122,8 +123,9 @@ public class SpiderReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
-    core[0].littleEndian = true;
+    m.littleEndian = true;
     in.order(isLittleEndian());
 
     int nSlice = (int) in.readFloat();
@@ -229,20 +231,20 @@ public class SpiderReader extends FormatReader {
       addGlobalMeta("CTIT", title);
     }
 
-    core[0].imageCount = (int) Math.max(nSlice, 1);
+    m.imageCount = (int) Math.max(nSlice, 1);
     if (maxim > 0) {
-      core[0].imageCount *= maxim;
+      m.imageCount *= maxim;
     }
-    core[0].sizeZ = getImageCount();
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
+    m.sizeZ = getImageCount();
+    m.sizeC = 1;
+    m.sizeT = 1;
 
-    core[0].sizeY = nRow;
-    core[0].sizeX = nsam;
+    m.sizeY = nRow;
+    m.sizeX = nsam;
 
-    core[0].pixelType = FormatTools.FLOAT;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].rgb = false;
+    m.pixelType = FormatTools.FLOAT;
+    m.dimensionOrder = "XYZCT";
+    m.rgb = false;
 
     long planeSize = FormatTools.getPlaneSize(this);
     oneHeaderPerSlice =

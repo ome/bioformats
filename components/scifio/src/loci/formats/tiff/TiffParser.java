@@ -941,7 +941,7 @@ public class TiffParser {
     int[] bitsPerSample = ifd.getBitsPerSample();
     int nChannels = bitsPerSample.length;
 
-    int sampleCount = (8 * bytes.length) / bitsPerSample[0];
+    int sampleCount = (int) (((long) 8 * bytes.length) / bitsPerSample[0]);
     if (photoInterp == PhotoInterp.Y_CB_CR) sampleCount *= 3;
     if (planar) {
       nChannels = 1;

@@ -123,7 +123,6 @@ public class HISReader extends FormatReader {
     in.skipBytes(14);
     int nSeries = in.readShort();
     pixelOffset = new long[nSeries];
-    core = new CoreMetadata[nSeries];
 
     String[] date = new String[nSeries];
     String[] binning = new String[nSeries];
@@ -132,13 +131,16 @@ public class HISReader extends FormatReader {
     boolean adjustedBitDepth = false;
 
     in.seek(0);
+
+    core.clear();
     for (int i=0; i<nSeries; i++) {
-      core[i] = new CoreMetadata();
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
 
       String checkString = in.readString(2);
       if (!checkString.equals("IM") && i > 0) {
         if (getBitsPerPixel() == 12) {
-          core[i - 1].bitsPerPixel = 16;
+          core.get(i - 1).bitsPerPixel = 16;
 
           int prevSkip = (getSizeX() * getSizeY() * getSizeC() * 12) / 8;
           int totalBytes = FormatTools.getPlaneSize(this);
@@ -150,35 +152,35 @@ public class HISReader extends FormatReader {
       setSeries(i);
 
       int commentBytes = in.readShort();
-      core[i].sizeX = in.readShort();
-      core[i].sizeY = in.readShort();
+      ms.sizeX = in.readShort();
+      ms.sizeY = in.readShort();
       in.skipBytes(4);
 
       int dataType = in.readShort();
 
       switch (dataType) {
         case 1:
-          core[i].pixelType = FormatTools.UINT8;
+          ms.pixelType = FormatTools.UINT8;
           break;
         case 2:
-          core[i].pixelType = FormatTools.UINT16;
+          ms.pixelType = FormatTools.UINT16;
           break;
         case 6:
-          core[i].pixelType = FormatTools.UINT16;
-          core[i].bitsPerPixel = adjustedBitDepth ? 16 : 12;
+          ms.pixelType = FormatTools.UINT16;
+          ms.bitsPerPixel = adjustedBitDepth ? 16 : 12;
           break;
         case 11:
-          core[i].pixelType = FormatTools.UINT8;
-          core[i].sizeC = 3;
+          ms.pixelType = FormatTools.UINT8;
+          ms.sizeC = 3;
           break;
         case 12:
-          core[i].pixelType = FormatTools.UINT16;
-          core[i].sizeC = 3;
+          ms.pixelType = FormatTools.UINT16;
+          ms.sizeC = 3;
           break;
         case 14:
-          core[i].pixelType = FormatTools.UINT16;
-          core[i].sizeC = 3;
-          core[i].bitsPerPixel = adjustedBitDepth ? 16 : 12;
+          ms.pixelType = FormatTools.UINT16;
+          ms.sizeC = 3;
+          ms.bitsPerPixel = adjustedBitDepth ? 16 : 12;
           break;
       }
 
@@ -219,14 +221,14 @@ public class HISReader extends FormatReader {
 
       pixelOffset[i] = in.getFilePointer();
 
-      core[i].littleEndian = true;
-      if (core[i].sizeC == 0) core[i].sizeC = 1;
-      core[i].sizeT = 1;
-      core[i].sizeZ = 1;
-      core[i].imageCount = 1;
-      core[i].rgb = core[i].sizeC > 1;
-      core[i].interleaved = isRGB();
-      core[i].dimensionOrder = "XYCZT";
+      ms.littleEndian = true;
+      if (ms.sizeC == 0) ms.sizeC = 1;
+      ms.sizeT = 1;
+      ms.sizeZ = 1;
+      ms.imageCount = 1;
+      ms.rgb = ms.sizeC > 1;
+      ms.interleaved = isRGB();
+      ms.dimensionOrder = "XYCZT";
 
       in.skipBytes(
         (getSizeX() * getSizeY() * getSizeC() * getBitsPerPixel()) / 8);

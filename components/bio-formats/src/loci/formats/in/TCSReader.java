@@ -184,7 +184,7 @@ public class TCSReader extends FormatReader {
 
     int n = no;
     for (int i=0; i<getSeries(); i++) {
-      n += core[i].imageCount;
+      n += core.get(i).imageCount;
     }
 
     if (tiffReaders.length == 1) {
@@ -288,9 +288,11 @@ public class TCSReader extends FormatReader {
 
     int channelCount = 0;
 
-    core[0].sizeZ = 1;
-    core[0].sizeC = tiffReaders[0].getSizeC();
-    core[0].dimensionOrder = isRGB() ? "XYC" : "XY";
+    CoreMetadata ms0 = core.get(0);
+
+    ms0.sizeZ = 1;
+    ms0.sizeC = tiffReaders[0].getSizeC();
+    ms0.dimensionOrder = isRGB() ? "XYC" : "XY";
 
     if (isGroupFiles()) {
       try {
@@ -305,15 +307,15 @@ public class TCSReader extends FormatReader {
         for (int i=axisTypes.length-1; i>=0; i--) {
           if (axisTypes[i] == AxisGuesser.Z_AXIS) {
             if (getDimensionOrder().indexOf("Z") == -1) {
-              core[0].dimensionOrder += "Z";
+              ms0.dimensionOrder += "Z";
             }
-            core[0].sizeZ *= count[i];
+            ms0.sizeZ *= count[i];
           }
           else if (axisTypes[i] == AxisGuesser.C_AXIS) {
             if (getDimensionOrder().indexOf("C") == -1) {
-              core[0].dimensionOrder += "C";
+              ms0.dimensionOrder += "C";
             }
-            core[0].sizeC *= count[i];
+            ms0.sizeC *= count[i];
           }
         }
       }
@@ -336,10 +338,10 @@ public class TCSReader extends FormatReader {
 
       date = document.substring(space, document.indexOf("FORMAT")).trim();
       stamp[i] = DateTools.getTime(date, DATE_FORMAT);
-      addGlobalMeta("Timestamp for plane #" + i, stamp[i]);
+      addGlobalMetaList("Timestamp for plane", stamp[i]);
     }
 
-    core[0].sizeT = 0;
+    ms0.sizeT = 0;
 
     // determine the axis sizes and ordering
     boolean unique = true;
@@ -351,34 +353,34 @@ public class TCSReader extends FormatReader {
         }
       }
       if (unique) {
-        core[0].sizeT++;
+        ms0.sizeT++;
         if (getDimensionOrder().indexOf("T") < 0) {
-          core[0].dimensionOrder += "T";
+          ms0.dimensionOrder += "T";
         }
       }
       else if (i > 0) {
         if ((ch[i] != ch[i - 1]) && getDimensionOrder().indexOf("C") < 0) {
-          core[0].dimensionOrder += "C";
+          ms0.dimensionOrder += "C";
         }
         else if (getDimensionOrder().indexOf("Z") < 0) {
-          core[0].dimensionOrder += "Z";
+          ms0.dimensionOrder += "Z";
         }
       }
       unique = true;
     }
 
-    if (getDimensionOrder().indexOf("Z") < 0) core[0].dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf("C") < 0) core[0].dimensionOrder += "C";
-    if (getDimensionOrder().indexOf("T") < 0) core[0].dimensionOrder += "T";
+    if (getDimensionOrder().indexOf("Z") < 0) ms0.dimensionOrder += "Z";
+    if (getDimensionOrder().indexOf("C") < 0) ms0.dimensionOrder += "C";
+    if (getDimensionOrder().indexOf("T") < 0) ms0.dimensionOrder += "T";
 
-    if (getSizeC() == 0) core[0].sizeC = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    if (getSizeC() == 0) ms0.sizeC = 1;
+    if (getSizeT() == 0) ms0.sizeT = 1;
     if (channelCount == 0) channelCount = 1;
     if (getSizeZ() <= 1) {
-      core[0].sizeZ = ifds.size() / (getSizeT() * channelCount);
+      ms0.sizeZ = ifds.size() / (getSizeT() * channelCount);
     }
-    core[0].sizeC *= channelCount;
-    core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
+    ms0.sizeC *= channelCount;
+    ms0.imageCount = getSizeZ() * getSizeT() * getSizeC();
 
     // cut up comment
 
@@ -418,27 +420,27 @@ public class TCSReader extends FormatReader {
       }
       metadata.remove("Comment");
     }
-    core[0].sizeX = tiffReaders[0].getSizeX();
-    core[0].sizeY = tiffReaders[0].getSizeY();
-    core[0].rgb = tiffReaders[0].isRGB();
-    core[0].pixelType = tiffReaders[0].getPixelType();
-    core[0].littleEndian = tiffReaders[0].isLittleEndian();
-    core[0].interleaved = tiffReaders[0].isInterleaved();
-    core[0].falseColor = true;
-    core[0].indexed = tiffReaders[0].isIndexed();
+    ms0.sizeX = tiffReaders[0].getSizeX();
+    ms0.sizeY = tiffReaders[0].getSizeY();
+    ms0.rgb = tiffReaders[0].isRGB();
+    ms0.pixelType = tiffReaders[0].getPixelType();
+    ms0.littleEndian = tiffReaders[0].isLittleEndian();
+    ms0.interleaved = tiffReaders[0].isInterleaved();
+    ms0.falseColor = true;
+    ms0.indexed = tiffReaders[0].isIndexed();
 
-    if (isRGB()) core[0].imageCount /= (getSizeC() / channelCount);
+    if (isRGB()) ms0.imageCount /= (getSizeC() / channelCount);
 
     if (getSizeZ() * getSizeT() * getEffectiveSizeC() !=
       (ifds.size() * tiffReaders.length))
     {
       int c = getEffectiveSizeC();
       if (c == 0) c = 1;
-      core[0].sizeT = (ifds.size() * tiffReaders.length) / (c * getSizeZ());
-      core[0].imageCount = getSizeT() * c * getSizeZ();
+      ms0.sizeT = (ifds.size() * tiffReaders.length) / (c * getSizeZ());
+      ms0.imageCount = getSizeT() * c * getSizeZ();
       if (getSizeT() == 0) {
-        core[0].sizeT = 1;
-        core[0].imageCount = ifds.size() * tiffReaders.length;
+        ms0.sizeT = 1;
+        ms0.imageCount = ifds.size() * tiffReaders.length;
       }
     }
 
@@ -446,12 +448,12 @@ public class TCSReader extends FormatReader {
       ifds.size() > 1)
     {
       if (getSizeZ() == 1) {
-        core[0].sizeZ = ifds.size();
+        ms0.sizeZ = ifds.size();
       }
       else if (getSizeT() == 1) {
-        core[0].sizeT = ifds.size();
+        ms0.sizeT = ifds.size();
       }
-      else core[0].sizeZ *= ifds.size();
+      else ms0.sizeZ *= ifds.size();
     }
 
     if (xmlFile != null) {
@@ -467,19 +469,20 @@ public class TCSReader extends FormatReader {
       metadata = handler.getGlobalMetadata();
       MetadataTools.merge(handler.getGlobalMetadata(), metadata, "");
 
-      core = handler.getCoreMetadata().toArray(new CoreMetadata[0]);
+      core = handler.getCoreMetadataList();
 
       for (int i=0; i<getSeriesCount(); i++) {
-        if (tiffs.size() < core[i].imageCount) {
-          int div = core[i].imageCount / core[i].sizeC;
-          core[i].imageCount = tiffs.size();
-          if (div >= core[i].sizeZ) core[i].sizeZ /= div;
-          else if (div >= core[i].sizeT) core[i].sizeT /= div;
+        CoreMetadata ms = core.get(i);
+        if (tiffs.size() < ms.imageCount) {
+          int div = ms.imageCount / ms.sizeC;
+          ms.imageCount = tiffs.size();
+          if (div >= ms.sizeZ) ms.sizeZ /= div;
+          else if (div >= ms.sizeT) ms.sizeT /= div;
         }
-        core[i].dimensionOrder = getSizeZ() > getSizeT() ? "XYCZT" : "XYCTZ";
-        core[i].rgb = false;
-        core[i].interleaved = false;
-        core[i].indexed = tiffReaders[0].isIndexed();
+        ms.dimensionOrder = getSizeZ() > getSizeT() ? "XYCZT" : "XYCTZ";
+        ms.rgb = false;
+        ms.interleaved = false;
+        ms.indexed = tiffReaders[0].isIndexed();
       }
     }
 

@@ -565,34 +565,35 @@ public class FV1000Reader extends FormatReader {
       }
       previewNames = v;
       if (previewNames.size() > 0) {
-        core = new CoreMetadata[2];
-        core[0] = new CoreMetadata();
-        core[1] = new CoreMetadata();
+        core.clear();
+        core.add(new CoreMetadata());
+        core.add(new CoreMetadata());
         IFDList ifds = null;
+        CoreMetadata ms1 = core.get(1);
         for (String previewName : previewNames) {
           RandomAccessInputStream preview = getFile(previewName);
           TiffParser tp = new TiffParser(preview);
           ifds = tp.getIFDs();
           preview.close();
           tp = null;
-          core[1].imageCount += ifds.size();
+          ms1.imageCount += ifds.size();
         }
-        core[1].sizeX = (int) ifds.get(0).getImageWidth();
-        core[1].sizeY = (int) ifds.get(0).getImageLength();
-        core[1].sizeZ = 1;
-        core[1].sizeT = 1;
-        core[1].sizeC = core[1].imageCount;
-        core[1].rgb = false;
+        ms1.sizeX = (int) ifds.get(0).getImageWidth();
+        ms1.sizeY = (int) ifds.get(0).getImageLength();
+        ms1.sizeZ = 1;
+        ms1.sizeT = 1;
+        ms1.sizeC = ms1.imageCount;
+        ms1.rgb = false;
         int bits = ifds.get(0).getBitsPerSample()[0];
         while ((bits % 8) != 0) bits++;
         bits /= 8;
-        core[1].pixelType = FormatTools.pixelTypeFromBytes(bits, false, false);
-        core[1].dimensionOrder = "XYCZT";
-        core[1].indexed = false;
+        ms1.pixelType = FormatTools.pixelTypeFromBytes(bits, false, false);
+        ms1.dimensionOrder = "XYCZT";
+        ms1.indexed = false;
       }
     }
-
-    core[0].imageCount = filenames.size();
+    CoreMetadata ms0 = core.get(0);
+    ms0.imageCount = filenames.size();
     tiffs = new Vector<String>(getImageCount());
 
     thumbReader = new BMPReader();
@@ -605,7 +606,7 @@ public class FV1000Reader extends FormatReader {
 
     String tiffPath = null;
 
-    core[0].dimensionOrder = "XY";
+    ms0.dimensionOrder = "XY";
 
     Hashtable<String, String> values = new Hashtable<String, String>();
     Vector<String> baseKeys = new Vector<String>();
@@ -625,8 +626,24 @@ public class FV1000Reader extends FormatReader {
         LOGGER.warn("Could not find .pty file ({}); guessing at the " +
           "corresponding TIFF file.", file);
         String tiff = replaceExtension(file, ".pty", ".tif");
-        tiffs.add(ii, tiff);
-        continue;
+        Location tiffFile = new Location(tiff);
+        if (tiffFile.exists()) {
+          tiffs.add(ii, tiff);
+          continue;
+        }
+        else {
+          if (!tiffFile.getParentFile().exists()) {
+            String realOIFName = new Location(currentId).getName();
+            String basePath = tiffFile.getParentFile().getParent();
+            Location newFile = new Location(basePath, realOIFName + ".files");
+            if (newFile.exists()) {
+              String realDirectory = newFile.getName();
+              ptyFile = new Location(newFile, ptyFile.getName());
+              file = ptyFile.getAbsolutePath();
+              tiffPath = newFile.getAbsolutePath();
+            }
+          }
+        }
       }
 
       IniList pty = getIniFile(file);
@@ -652,21 +669,21 @@ public class FV1000Reader extends FormatReader {
         boolean addAxis = Integer.parseInt(axis.get("Number")) > 1;
         if (dim == 2) {
           if (addAxis && getDimensionOrder().indexOf("C") == -1) {
-            core[0].dimensionOrder += "C";
+            ms0.dimensionOrder += "C";
           }
         }
         else if (dim == 3) {
           if (addAxis && getDimensionOrder().indexOf("Z") == -1) {
-            core[0].dimensionOrder += "Z";
+            ms0.dimensionOrder += "Z";
           }
         }
         else if (dim == 4) {
           if (addAxis && getDimensionOrder().indexOf("T") == -1) {
-            core[0].dimensionOrder += "T";
+            ms0.dimensionOrder += "T";
           }
         }
       }
-      core[0].bitsPerPixel = validBits;
+      ms0.bitsPerPixel = validBits;
 
       IniTable acquisition = pty.getTable("Acquisition Parameters Common");
       if (acquisition != null) {
@@ -677,7 +694,7 @@ public class FV1000Reader extends FormatReader {
         pinholeSize = acquisition.get("PinholeDiameter");
         String validBitCounts = acquisition.get("ValidBitCounts");
         if (validBitCounts != null) {
-          core[0].bitsPerPixel = Integer.parseInt(validBitCounts);
+          ms0.bitsPerPixel = Integer.parseInt(validBitCounts);
         }
       }
 
@@ -714,7 +731,7 @@ public class FV1000Reader extends FormatReader {
     }
 
     if (tiffs.size() != getImageCount()) {
-      core[0].imageCount = tiffs.size();
+      ms0.imageCount = tiffs.size();
     }
 
     usedFiles = new Vector<String>();
@@ -754,14 +771,14 @@ public class FV1000Reader extends FormatReader {
     for (int i=0; i<NUM_DIMENSIONS; i++) {
       int ss = Integer.parseInt(size[i]);
       if (pixelSize[i] == null) pixelSize[i] = 1.0;
-      if (code[i].equals("X")) core[0].sizeX = ss;
-      else if (code[i].equals("Y") && ss > 1) core[0].sizeY = ss;
+      if (code[i].equals("X")) ms0.sizeX = ss;
+      else if (code[i].equals("Y") && ss > 1) ms0.sizeY = ss;
       else if (code[i].equals("Z")) {
         if (getSizeY() == 0) {
-          core[0].sizeY = ss;
+          ms0.sizeY = ss;
         }
         else {
-          core[0].sizeZ = ss;
+          ms0.sizeZ = ss;
           // Z size stored in nm
           pixelSizeZ =
             Math.abs((pixelSize[i].doubleValue() / (getSizeZ() - 1)) / 1000);
@@ -769,52 +786,52 @@ public class FV1000Reader extends FormatReader {
       }
       else if (code[i].equals("T")) {
         if (getSizeY() == 0) {
-          core[0].sizeY = ss;
+          ms0.sizeY = ss;
         }
         else {
-          core[0].sizeT = ss;
+          ms0.sizeT = ss;
           pixelSizeT =
             Math.abs((pixelSize[i].doubleValue() / (getSizeT() - 1)) / 1000);
         }
       }
       else if (ss > 0) {
-        if (getSizeC() == 0) core[0].sizeC = ss;
-        else core[0].sizeC *= ss;
+        if (getSizeC() == 0) ms0.sizeC = ss;
+        else ms0.sizeC *= ss;
         if (code[i].equals("C")) realChannels = ss;
       }
     }
 
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeC() == 0) core[0].sizeC = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    if (getSizeZ() == 0) ms0.sizeZ = 1;
+    if (getSizeC() == 0) ms0.sizeC = 1;
+    if (getSizeT() == 0) ms0.sizeT = 1;
 
     if (getImageCount() == getSizeC() && getSizeY() == 1) {
-      core[0].imageCount *= getSizeZ() * getSizeT();
+      ms0.imageCount *= getSizeZ() * getSizeT();
     }
     else if (getImageCount() == getSizeC()) {
-      core[0].sizeZ = 1;
-      core[0].sizeT = 1;
+      ms0.sizeZ = 1;
+      ms0.sizeT = 1;
     }
 
     if (getSizeZ() * getSizeT() * getSizeC() != getImageCount()) {
       int diff = (getSizeZ() * getSizeC() * getSizeT()) - getImageCount();
       if (diff == previewNames.size() || diff < 0) {
         diff /= getSizeC();
-        if (getSizeT() > 1 && getSizeZ() == 1) core[0].sizeT -= diff;
-        else if (getSizeZ() > 1 && getSizeT() == 1) core[0].sizeZ -= diff;
+        if (getSizeT() > 1 && getSizeZ() == 1) ms0.sizeT -= diff;
+        else if (getSizeZ() > 1 && getSizeT() == 1) ms0.sizeZ -= diff;
       }
-      else core[0].imageCount += diff;
+      else ms0.imageCount += diff;
     }
 
     if (getSizeC() > 1 && getSizeZ() == 1 && getSizeT() == 1) {
-      if (getDimensionOrder().indexOf("C") == -1) core[0].dimensionOrder += "C";
+      if (getDimensionOrder().indexOf("C") == -1) ms0.dimensionOrder += "C";
     }
 
-    if (getDimensionOrder().indexOf("Z") == -1) core[0].dimensionOrder += "Z";
-    if (getDimensionOrder().indexOf("C") == -1) core[0].dimensionOrder += "C";
-    if (getDimensionOrder().indexOf("T") == -1) core[0].dimensionOrder += "T";
+    if (getDimensionOrder().indexOf("Z") == -1) ms0.dimensionOrder += "Z";
+    if (getDimensionOrder().indexOf("C") == -1) ms0.dimensionOrder += "C";
+    if (getDimensionOrder().indexOf("T") == -1) ms0.dimensionOrder += "T";
 
-    core[0].pixelType =
+    ms0.pixelType =
       FormatTools.pixelTypeFromBytes(imageDepth, false, false);
 
     // set up thumbnail file mapping
@@ -827,8 +844,8 @@ public class FV1000Reader extends FormatReader {
       Location.mapFile("thumbnail.bmp", new ByteArrayHandle(b));
       thumbReader.setId("thumbnail.bmp");
       for (int i=0; i<getSeriesCount(); i++) {
-        core[i].thumbSizeX = thumbReader.getSizeX();
-        core[i].thumbSizeY = thumbReader.getSizeY();
+        core.get(i).thumbSizeX = thumbReader.getSizeX();
+        core.get(i).thumbSizeY = thumbReader.getSizeY();
       }
       Location.mapFile("thumbnail.bmp", null);
     }
@@ -867,12 +884,13 @@ public class FV1000Reader extends FormatReader {
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      core[i].rgb = false;
-      core[i].littleEndian = true;
-      core[i].interleaved = false;
-      core[i].metadataComplete = true;
-      core[i].indexed = lut != null;
-      core[i].falseColor = true;
+      CoreMetadata ms = core.get(i);
+      ms.rgb = false;
+      ms.littleEndian = true;
+      ms.interleaved = false;
+      ms.metadataComplete = true;
+      ms.indexed = lut != null;
+      ms.falseColor = true;
     }
 
     // populate MetadataStore
@@ -952,7 +970,7 @@ public class FV1000Reader extends FormatReader {
 
       // populate LogicalChannel data
 
-      for (int c=0; c<core[i].sizeC; c++) {
+      for (int c=0; c<core.get(i).sizeC; c++) {
         if (c < illuminations.size()) {
           store.setChannelIlluminationType(
             getIlluminationType(illuminations.get(c)), i, c);

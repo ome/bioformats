@@ -227,11 +227,11 @@ public class TrestleReader extends BaseTiffReader {
       }
     }
 
-    core = new CoreMetadata[ifds.size()];
-
-    for (int i=0; i<core.length; i++) {
+    int seriesCount = ifds.size();
+    core.clear();
+    for (int i=0; i<seriesCount; i++) {
+      core.add(new CoreMetadata());
       setSeries(i);
-      core[i] = new CoreMetadata();
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       }
@@ -240,11 +240,12 @@ public class TrestleReader extends BaseTiffReader {
 
     // repopulate core metadata
 
-    for (int s=0; s<core.length; s++) {
+    for (int s=0; s<core.size(); s++) {
+      CoreMetadata ms = core.get(s);
       IFD ifd = ifds.get(s);
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
-      core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
+      ms.rgb = samples > 1 || p == PhotoInterp.RGB;
 
       long numTileRows = ifd.getTilesPerColumn() - 1;
       long numTileCols = ifd.getTilesPerRow() - 1;
@@ -252,21 +253,21 @@ public class TrestleReader extends BaseTiffReader {
       int overlapX = overlaps[s * 2];
       int overlapY = overlaps[s * 2 + 1];
 
-      core[s].sizeX = (int) (ifd.getImageWidth() - (numTileCols * overlapX));
-      core[s].sizeY = (int) (ifd.getImageLength() - (numTileRows * overlapY));
-      core[s].sizeZ = 1;
-      core[s].sizeT = 1;
-      core[s].sizeC = core[s].rgb ? samples : 1;
-      core[s].littleEndian = ifd.isLittleEndian();
-      core[s].indexed = p == PhotoInterp.RGB_PALETTE &&
+      ms.sizeX = (int) (ifd.getImageWidth() - (numTileCols * overlapX));
+      ms.sizeY = (int) (ifd.getImageLength() - (numTileRows * overlapY));
+      ms.sizeZ = 1;
+      ms.sizeT = 1;
+      ms.sizeC = ms.rgb ? samples : 1;
+      ms.littleEndian = ifd.isLittleEndian();
+      ms.indexed = p == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      core[s].imageCount = 1;
-      core[s].pixelType = ifd.getPixelType();
-      core[s].metadataComplete = true;
-      core[s].interleaved = false;
-      core[s].falseColor = false;
-      core[s].dimensionOrder = "XYCZT";
-      core[s].thumbnail = s > 0;
+      ms.imageCount = 1;
+      ms.pixelType = ifd.getPixelType();
+      ms.metadataComplete = true;
+      ms.interleaved = false;
+      ms.falseColor = false;
+      ms.dimensionOrder = "XYCZT";
+      ms.thumbnail = s > 0;
     }
 
     // look for all of the other associated metadata files

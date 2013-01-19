@@ -37,8 +37,10 @@
 package loci.formats;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -143,7 +145,7 @@ public abstract class FormatReader extends FormatHandler
   protected int series = 0;
 
   /** Core metadata values. */
-  protected CoreMetadata[] core;
+  protected List<CoreMetadata> core;
 
   /** The number of the current resolution. */
   protected int resolution = 0;
@@ -234,9 +236,10 @@ public abstract class FormatReader extends FormatHandler
     currentId = id;
     metadata = new Hashtable<String, Object>();
 
-    core = new CoreMetadata[1];
-    core[0] = new CoreMetadata();
-    core[0].orderCertain = true;
+    core = new ArrayList<CoreMetadata>();
+    CoreMetadata core0 = new CoreMetadata();
+    core.add(core0);
+    core0.orderCertain = true;
 
     // reinitialize the MetadataStore
     // NB: critical for metadata conversion to work properly!
@@ -311,7 +314,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Adds an entry to the global metadata table. */
   protected void addGlobalMeta(String key, Object value) {
-    addMeta(key, value, getGlobalMetadata());
+    addMeta(key, value, metadata);
   }
 
   /** Adds an entry to the global metadata table. */
@@ -359,9 +362,73 @@ public abstract class FormatReader extends FormatHandler
     return metadata.get(key);
   }
 
+  protected void addGlobalMetaList(String key, Object value) {
+    Vector list = (Vector) metadata.get(key);
+    metadata.remove(key);
+    addGlobalMeta(key, value);
+    Object newValue = metadata.get(key);
+    metadata.remove(key);
+    if (newValue != null) {
+      if (list == null) {
+        list = new Vector();
+      }
+
+      list.add(newValue);
+      metadata.put(key, list);
+    }
+    else if (list != null) {
+      metadata.put(key, list);
+    }
+  }
+
+  protected void addSeriesMetaList(String key, Object value) {
+    Vector list = (Vector) core.get(getCoreIndex()).seriesMetadata.get(key);
+    core.get(getCoreIndex()).seriesMetadata.remove(key);
+    addSeriesMeta(key, value);
+    Object newValue = core.get(getCoreIndex()).seriesMetadata.get(key);
+    if (newValue != null) {
+      if (list == null) {
+        list = new Vector();
+      }
+
+      list.add(newValue);
+      core.get(getCoreIndex()).seriesMetadata.put(key, list);
+    }
+    else if (list != null) {
+      core.get(getCoreIndex()).seriesMetadata.put(key, list);
+    }
+  }
+
+  protected void flattenHashtables() {
+    updateMetadataLists(metadata);
+
+    for (int s=0; s<core.size(); s++) {
+      updateMetadataLists(core.get(s).seriesMetadata);
+    }
+  }
+
+  private void updateMetadataLists(Hashtable<String, Object> meta) {
+    String[] keys = meta.keySet().toArray(new String[meta.size()]);
+    for (String key : keys) {
+      Object v = meta.get(key);
+      if (v instanceof Vector) {
+        Vector list = (Vector) v;
+        int digits = String.valueOf(list.size()).length();
+        for (int i=0; i<list.size(); i++) {
+          String index = String.valueOf(i + 1);
+          while (index.length() < digits) {
+            index = "0" + index;
+          }
+          meta.put(key + " #" + index, list.get(i));
+        }
+        meta.remove(key);
+      }
+    }
+  }
+
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, Object value) {
-    addMeta(key, value, core[getCoreIndex()].seriesMetadata);
+    addMeta(key, value, core.get(getCoreIndex()).seriesMetadata);
   }
 
   /** Adds an entry to the metadata table for the current series. */
@@ -406,7 +473,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Gets an entry from the metadata table for the current series. */
   protected Object getSeriesMeta(String key) {
-    return core[getCoreIndex()].seriesMetadata.get(key);
+    return core.get(getCoreIndex()).seriesMetadata.get(key);
   }
 
   /** Reads a raw plane from disk. */
@@ -573,59 +640,59 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].imageCount;
+    return core.get(getCoreIndex()).imageCount;
   }
 
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].rgb;
+    return core.get(getCoreIndex()).rgb;
   }
 
   /* @see IFormatReader#getSizeX() */
   public int getSizeX() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].sizeX;
+    return core.get(getCoreIndex()).sizeX;
   }
 
   /* @see IFormatReader#getSizeY() */
   public int getSizeY() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].sizeY;
+    return core.get(getCoreIndex()).sizeY;
   }
 
   /* @see IFormatReader#getSizeZ() */
   public int getSizeZ() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].sizeZ;
+    return core.get(getCoreIndex()).sizeZ;
   }
 
   /* @see IFormatReader#getSizeC() */
   public int getSizeC() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].sizeC;
+    return core.get(getCoreIndex()).sizeC;
   }
 
   /* @see IFormatReader#getSizeT() */
   public int getSizeT() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].sizeT;
+    return core.get(getCoreIndex()).sizeT;
   }
 
   /* @see IFormatReader#getPixelType() */
   public int getPixelType() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].pixelType;
+    return core.get(getCoreIndex()).pixelType;
   }
 
   /* @see IFormatReader#getBitsPerPixel() */
   public int getBitsPerPixel() {
     FormatTools.assertId(currentId, true, 1);
-    if (core[getCoreIndex()].bitsPerPixel == 0) {
-      core[getCoreIndex()].bitsPerPixel =
+    if (core.get(getCoreIndex()).bitsPerPixel == 0) {
+      core.get(getCoreIndex()).bitsPerPixel =
         FormatTools.getBytesPerPixel(getPixelType()) * 8;
     }
-    return core[getCoreIndex()].bitsPerPixel;
+    return core.get(getCoreIndex()).bitsPerPixel;
   }
 
   /* @see IFormatReader#getEffectiveSizeC() */
@@ -646,13 +713,13 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isIndexed() */
   public boolean isIndexed() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].indexed;
+    return core.get(getCoreIndex()).indexed;
   }
 
   /* @see IFormatReader#isFalseColor() */
   public boolean isFalseColor() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].falseColor;
+    return core.get(getCoreIndex()).falseColor;
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
@@ -668,25 +735,25 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
     FormatTools.assertId(currentId, true, 1);
-    if (core[getCoreIndex()].cLengths == null) {
-      return new int[] {core[getCoreIndex()].sizeC};
+    if (core.get(getCoreIndex()).cLengths == null) {
+      return new int[] {core.get(getCoreIndex()).sizeC};
      }
-    return core[getCoreIndex()].cLengths;
+    return core.get(getCoreIndex()).cLengths;
   }
 
   /* @see IFormatReader#getChannelDimTypes() */
   public String[] getChannelDimTypes() {
     FormatTools.assertId(currentId, true, 1);
-    if (core[getCoreIndex()].cTypes == null) {
+    if (core.get(getCoreIndex()).cTypes == null) {
       return new String[] {FormatTools.CHANNEL};
     }
-    return core[getCoreIndex()].cTypes;
+    return core.get(getCoreIndex()).cTypes;
   }
 
   /* @see IFormatReader#getThumbSizeX() */
   public int getThumbSizeX() {
     FormatTools.assertId(currentId, true, 1);
-    if (core[getCoreIndex()].thumbSizeX == 0) {
+    if (core.get(getCoreIndex()).thumbSizeX == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
       int thumbSizeX = 0;
@@ -697,13 +764,13 @@ public abstract class FormatReader extends FormatHandler
       if (thumbSizeX == 0) thumbSizeX = 1;
       return thumbSizeX;
     }
-    return core[getCoreIndex()].thumbSizeX;
+    return core.get(getCoreIndex()).thumbSizeX;
   }
 
   /* @see IFormatReader#getThumbSizeY() */
   public int getThumbSizeY() {
     FormatTools.assertId(currentId, true, 1);
-    if (core[getCoreIndex()].thumbSizeY == 0) {
+    if (core.get(getCoreIndex()).thumbSizeY == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
       int thumbSizeY = 1;
@@ -714,31 +781,31 @@ public abstract class FormatReader extends FormatHandler
       if (thumbSizeY == 0) thumbSizeY = 1;
       return thumbSizeY;
     }
-    return core[getCoreIndex()].thumbSizeY;
+    return core.get(getCoreIndex()).thumbSizeY;
   }
 
   /* @see IFormatReader.isLittleEndian() */
   public boolean isLittleEndian() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].littleEndian;
+    return core.get(getCoreIndex()).littleEndian;
   }
 
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].dimensionOrder;
+    return core.get(getCoreIndex()).dimensionOrder;
   }
 
   /* @see IFormatReader#isOrderCertain() */
   public boolean isOrderCertain() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].orderCertain;
+    return core.get(getCoreIndex()).orderCertain;
   }
 
   /* @see IFormatReader#isThumbnailSeries() */
   public boolean isThumbnailSeries() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].thumbnail;
+    return core.get(getCoreIndex()).thumbnail;
   }
 
   /* @see IFormatReader#isInterleaved() */
@@ -749,7 +816,7 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isInterleaved(int) */
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].interleaved;
+    return core.get(getCoreIndex()).interleaved;
   }
 
   /* @see IFormatReader#openBytes(int) */
@@ -817,9 +884,10 @@ public abstract class FormatReader extends FormatHandler
   public int getSeriesCount() {
     FormatTools.assertId(currentId, true, 1);
     if (hasFlattenedResolutions()) {
-      return core.length;
+      return core.size();
     }
-    return coreIndexToSeries(core.length - 1) + 1;
+
+    return coreIndexToSeries(core.size() - 1) + 1;
   }
 
   /* @see IFormatReader#setSeries(int) */
@@ -855,7 +923,7 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isMetadataComplete() */
   public boolean isMetadataComplete() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].metadataComplete;
+    return core.get(getCoreIndex()).metadataComplete;
   }
 
   /* @see IFormatReader#setNormalized(boolean) */
@@ -980,25 +1048,29 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getMetadataValue(String) */
   public Object getMetadataValue(String field) {
     FormatTools.assertId(currentId, true, 1);
+    flattenHashtables();
     return getGlobalMeta(field);
   }
 
   /* @see IFormatReader#getSeriesMetadataValue(String) */
   public Object getSeriesMetadataValue(String field) {
     FormatTools.assertId(currentId, true, 1);
+    flattenHashtables();
     return getSeriesMeta(field);
   }
 
   /* @see IFormatReader#getGlobalMetadata() */
   public Hashtable<String, Object> getGlobalMetadata() {
     FormatTools.assertId(currentId, true, 1);
+    flattenHashtables();
     return metadata;
   }
 
   /* @see IFormatReader#getSeriesMetadata() */
   public Hashtable<String, Object> getSeriesMetadata() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getCoreIndex()].seriesMetadata;
+    flattenHashtables();
+    return core.get(getCoreIndex()).seriesMetadata;
   }
 
   /** @deprecated */
@@ -1026,8 +1098,17 @@ public abstract class FormatReader extends FormatHandler
     return h;
   }
 
-  /* @see IFormatReader#getCoreMetadata() */
+  /**
+   * @deprecated
+   * @see IFormatReader#getCoreMetadataList()
+   */
   public CoreMetadata[] getCoreMetadata() {
+    FormatTools.assertId(currentId, true, 1);
+    return core.toArray(new CoreMetadata[0]);
+  }
+
+  /* @see IFormatReader#getCoreMetadataList() */
+  public List<CoreMetadata> getCoreMetadataList() {
     FormatTools.assertId(currentId, true, 1);
     return core;
   }
@@ -1117,7 +1198,7 @@ public abstract class FormatReader extends FormatHandler
   {
     if (hasFlattenedResolutions()) {
       // coreIndex and series are identical
-      if (series < 0 || series >= core.length) {
+      if (series < 0 || series >= core.size()) {
         throw new IllegalArgumentException("Invalid series: " + series);
       }
       return series;
@@ -1129,14 +1210,15 @@ public abstract class FormatReader extends FormatHandler
     }
 
     int index = 0;
-    for (int i = 0; i < series && index < core.length; i++) {
-      if (core[i] != null)
-        index += core[index].resolutionCount;
+
+    for (int i = 0; i < series && index < core.size(); i++) {
+      if (core.get(i) != null)
+        index += core.get(index).resolutionCount;
       else
-	throw new IllegalArgumentException("Invalid series (null core["+i+"]: " + series);
+        throw new IllegalArgumentException("Invalid series (null core["+i+"]: " + series);
     }
 
-    if (index < 0 || index >= core.length) {
+    if (index < 0 || index >= core.size()) {
       throw new IllegalArgumentException("Invalid series: " + series + "  index="+index);
     }
 
@@ -1145,7 +1227,7 @@ public abstract class FormatReader extends FormatHandler
 
   public int coreIndexToSeries(int index)
   {
-    if (index < 0 || index >= core.length) {
+    if (index < 0 || index >= core.size()) {
       throw new IllegalArgumentException("Invalid index: " + index);
     }
 
@@ -1162,13 +1244,13 @@ public abstract class FormatReader extends FormatHandler
     // Convert from non-flattened coreIndex to flattened series
     int series = 0;
     for (int i=0; i<index;) {
-      if (core[i] != null) {
-	  int nextSeries = i + core[i].resolutionCount;
-	  if (index < nextSeries)
-	      break;
-	  i = nextSeries;
+      if (core.get(i) != null) {
+        int nextSeries = i + core.get(i).resolutionCount;
+      if (index < nextSeries)
+        break;
+      i = nextSeries;
       } else {
-	throw new IllegalArgumentException("Invalid coreIndex (null core["+i+"]: " + index);
+        throw new IllegalArgumentException("Invalid coreIndex (null core["+i+"]: " + index);
       }
       series++;
     }
@@ -1183,7 +1265,7 @@ public abstract class FormatReader extends FormatHandler
       return 1;
     }
 
-    return core[seriesToCoreIndex(getSeries())].resolutionCount;
+    return core.get(seriesToCoreIndex(getSeries())).resolutionCount;
   }
 
   /* @see IFormatReader#setResolution(int) */
@@ -1217,7 +1299,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatHandler#setCoreIndex(int) */
   public void setCoreIndex(int no) {
-    if (no < 0 || no >= core.length) {
+    if (no < 0 || no >= core.size()) {
       throw new IllegalArgumentException("Invalid series: " + no);
     }
     coreIndex = no;

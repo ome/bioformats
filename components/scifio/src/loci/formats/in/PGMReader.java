@@ -43,6 +43,7 @@ import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -150,37 +151,39 @@ public class PGMReader extends FormatReader {
 
     boolean isBlackAndWhite = false;
 
+    CoreMetadata m = core.get(0);
+
     rawBits = magic.equals("P4") || magic.equals("P5") || magic.equals("P6");
-    core[0].sizeC = (magic.equals("P3") || magic.equals("P6")) ? 3 : 1;
+    m.sizeC = (magic.equals("P3") || magic.equals("P6")) ? 3 : 1;
     isBlackAndWhite = magic.equals("P1") || magic.equals("P4");
 
     String line = readNextLine();
 
     line = line.replaceAll("[^0-9]", " ");
     int space = line.indexOf(" ");
-    core[0].sizeX = Integer.parseInt(line.substring(0, space).trim());
-    core[0].sizeY = Integer.parseInt(line.substring(space + 1).trim());
+    m.sizeX = Integer.parseInt(line.substring(0, space).trim());
+    m.sizeY = Integer.parseInt(line.substring(space + 1).trim());
 
     if (!isBlackAndWhite) {
       int max = Integer.parseInt(readNextLine());
-      if (max > 255) core[0].pixelType = FormatTools.UINT16;
-      else core[0].pixelType = FormatTools.UINT8;
+      if (max > 255) m.pixelType = FormatTools.UINT16;
+      else m.pixelType = FormatTools.UINT8;
     }
 
     offset = in.getFilePointer();
 
     addGlobalMeta("Black and white", isBlackAndWhite);
 
-    core[0].rgb = getSizeC() == 3;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].littleEndian = true;
-    core[0].interleaved = false;
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
+    m.rgb = getSizeC() == 3;
+    m.dimensionOrder = "XYCZT";
+    m.littleEndian = true;
+    m.interleaved = false;
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.indexed = false;
+    m.falseColor = false;
+    m.metadataComplete = true;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

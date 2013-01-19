@@ -6,9 +6,9 @@ testing. To generate a file (that contains gradient images):
 
 ::
 
-    touch "my-special-test-file&pixelType=uint8&sizeZ=1&sizeC=1&sizeT=1&sizeX=8192&sizeY=8192.fake"
+    touch "my-special-test-file&pixelType=uint8&sizeX=8192&sizeY=8192.fake"
 
-Whatever is before the `&` is the image name; remaining key value pairs
+Whatever is before the ``&`` is the image name; remaining key value pairs
 should be pretty self-explanatory. Just replace the values with whatever
 you need for testing.
 
@@ -22,6 +22,12 @@ There are a few other keys that can be added as well:
 
     - * Key
       * Value
+    - * sizeZ
+      * number of Z sections
+    - * sizeC
+      * number of channels
+    - * sizeT
+      * number of timepoints
     - * bitsPerPixel
       * number of valid bits (<= number of bits implied by pixel type)
     - * rgb
@@ -48,7 +54,7 @@ the JARs in your :envvar:`CLASSPATH` (individual JARs or just loci_tools.jar):
 
 ::
 
-    bfconvert my-special-test-file&pixelType=uint8&sizeZ=1&sizeC=1&sizeT=1&sizeX=8192&sizeY=8192.fake my-special-test-file.tiff
+    bfconvert test&pixelType=uint8&sizeX=8192&sizeY=8192.fake test.tiff
 
 If you do not have the command line tools installed, substitute
 :source:`loci.formats.tools.ImageConverter <components/scifio/src/loci/formats/tools/ImageConverter.java>` for `bfconvert`.

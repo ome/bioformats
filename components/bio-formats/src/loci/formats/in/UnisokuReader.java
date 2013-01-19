@@ -31,6 +31,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -142,6 +143,8 @@ public class UnisokuReader extends FormatReader {
 
     super.initFile(id);
 
+    CoreMetadata m = core.get(0);
+
     datFile = id.substring(0, id.lastIndexOf(".")) + ".DAT";
 
     String header = DataTools.readFile(id);
@@ -164,8 +167,8 @@ public class UnisokuReader extends FormatReader {
         String[] v = value.split(" ");
 
         if (key.equals(":data volume(x*y)")) {
-          core[0].sizeX = Integer.parseInt(v[0]);
-          core[0].sizeY = Integer.parseInt(v[1]);
+          m.sizeX = Integer.parseInt(v[0]);
+          m.sizeY = Integer.parseInt(v[1]);
         }
         else if (key.equals(":date; time")) {
           date = DateTools.formatDate(value, "MM/dd/yy HH:mm:ss");
@@ -175,7 +178,7 @@ public class UnisokuReader extends FormatReader {
           int type = Integer.parseInt(value);
           boolean signed = type % 2 == 1;
           int bytes = type / 2;
-          core[0].pixelType =
+          m.pixelType =
             FormatTools.pixelTypeFromBytes(bytes, signed, bytes == 4);
         }
         else if (getMetadataOptions().getMetadataLevel() !=
@@ -207,15 +210,15 @@ public class UnisokuReader extends FormatReader {
       }
     }
 
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].indexed = false;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].littleEndian = true;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.rgb = false;
+    m.interleaved = false;
+    m.indexed = false;
+    m.dimensionOrder = "XYZCT";
+    m.littleEndian = true;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

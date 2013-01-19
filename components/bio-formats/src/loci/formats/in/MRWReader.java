@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -176,6 +177,7 @@ public class MRWReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
     in.skipBytes(4); // magic number
     offset = in.readInt() + 8;
@@ -189,8 +191,8 @@ public class MRWReader extends FormatReader {
         in.skipBytes(8);
         sensorHeight = in.readShort();
         sensorWidth = in.readShort();
-        core[0].sizeY = in.readShort();
-        core[0].sizeX = in.readShort();
+        m.sizeY = in.readShort();
+        m.sizeX = in.readShort();
         dataSize = in.read();
         in.skipBytes(1);
         storageMethod = in.read();
@@ -236,16 +238,16 @@ public class MRWReader extends FormatReader {
       in.seek(fp + len);
     }
 
-    core[0].pixelType = FormatTools.UINT16;
-    core[0].rgb = true;
-    core[0].littleEndian = false;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].imageCount = 1;
-    core[0].sizeC = 3;
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].interleaved = true;
-    core[0].bitsPerPixel = dataSize;
+    m.pixelType = FormatTools.UINT16;
+    m.rgb = true;
+    m.littleEndian = false;
+    m.dimensionOrder = "XYCZT";
+    m.imageCount = 1;
+    m.sizeC = 3;
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.interleaved = true;
+    m.bitsPerPixel = dataSize;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

@@ -1,6 +1,8 @@
 Supported Formats
 -----------------
 
+:term:`Ratings legend`
+
 .. tabularcolumns:: |p{3cm}|p{2cm}|c|c|c|c|c|c|c|
 
 .. list-table::
@@ -464,6 +466,15 @@ Supported Formats
      - |Very good|
      - |Good|
      - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/inveon`
+     - .hdr
+     - |Very good|
+     - |Very good|
+     - |Good|
      - |Poor|
      - |Fair|
      - |no|
@@ -1162,9 +1173,23 @@ Supported Formats
      - |no|
      - |no|
 
-Bio-Formats currently supports **127** formats
+Bio-Formats currently supports **128** formats
 
 .. glossary::
+    Ratings legend
+      +----------------+-----------------------+
+      +================+=======================+
+      | |Outstanding|  | Outstanding           |
+      +----------------+-----------------------+
+      | |Very good|    | Very good             |
+      +----------------+-----------------------+
+      | |Good|         | Good                  |
+      +----------------+-----------------------+
+      | |Fair|         | Fair                  |
+      +----------------+-----------------------+
+      | |Poor|         | Poor                  |
+      +----------------+-----------------------+
+
     Pixels
         Our estimation of Bio-Formats' ability to reliably extract complete 
         and accurate pixel values from files in that format. The better this 
@@ -1262,6 +1287,7 @@ Bio-Formats currently supports **127** formats
     formats/incell-1000
     formats/incell-3000
     formats/inr
+    formats/inveon
     formats/iplab
     formats/iplab-mac
     formats/jeol

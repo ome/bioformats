@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -117,33 +118,35 @@ public class KhorosReader extends FormatReader {
 
     in.order(dependency == 4 || dependency == 8);
 
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
+    CoreMetadata m = core.get(0);
+
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
     in.skipBytes(28);
-    core[0].imageCount = in.readInt();
-    if (getImageCount() == 0) core[0].imageCount = 1;
-    core[0].sizeC = in.readInt();
+    m.imageCount = in.readInt();
+    if (getImageCount() == 0) m.imageCount = 1;
+    m.sizeC = in.readInt();
 
     int type = in.readInt();
 
     switch (type) {
       case 0:
-        core[0].pixelType = FormatTools.INT8;
+        m.pixelType = FormatTools.INT8;
         break;
       case 1:
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
         break;
       case 2:
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
         break;
       case 4:
-        core[0].pixelType = FormatTools.INT32;
+        m.pixelType = FormatTools.INT32;
         break;
       case 5:
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
         break;
       case 9:
-        core[0].pixelType = FormatTools.DOUBLE;
+        m.pixelType = FormatTools.DOUBLE;
         break;
       default: throw new FormatException("Unsupported pixel type : " + type);
     }
@@ -153,7 +156,7 @@ public class KhorosReader extends FormatReader {
     in.skipBytes(12);
     int c = in.readInt();
     if (c > 1) {
-      core[0].sizeC = c;
+      m.sizeC = c;
       int n = in.readInt();
       lut = new byte[c][n];
       in.skipBytes(436);
@@ -167,19 +170,19 @@ public class KhorosReader extends FormatReader {
     else in.skipBytes(440);
     offset = in.getFilePointer();
 
-    core[0].sizeZ = getImageCount();
-    core[0].sizeT = 1;
-    core[0].rgb = getSizeC() > 1;
-    core[0].interleaved = false;
-    core[0].littleEndian = dependency == 4 || dependency == 8;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].indexed = lut != null;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
+    m.sizeZ = getImageCount();
+    m.sizeT = 1;
+    m.rgb = getSizeC() > 1;
+    m.interleaved = false;
+    m.littleEndian = dependency == 4 || dependency == 8;
+    m.dimensionOrder = "XYCZT";
+    m.indexed = lut != null;
+    m.falseColor = false;
+    m.metadataComplete = true;
 
     if (isIndexed()) {
-      core[0].sizeC = 1;
-      core[0].rgb = false;
+      m.sizeC = 1;
+      m.rgb = false;
     }
 
     MetadataStore store = makeFilterMetadata();

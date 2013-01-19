@@ -19,24 +19,17 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Improvision TIFF <improvision-tiff-metadata>`
 
-Freely Available Software:
 
-- `IMOD <http://bio3d.colorado.edu/imod/>`_
-
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have:
 
-- an Improvision TIFF specification document 
-- a few Improvision TIFF datasets
+* an Improvision TIFF specification document 
+* a few Improvision TIFF datasets
 
 We would like to have:
 
-- more Openlab datasets (preferably with 32-bit integer data)
 
 **Ratings**
 

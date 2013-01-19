@@ -410,8 +410,8 @@ public class ZeissTIFFReader extends BaseZeissReader {
       zIndices.add(sliceid);
       timepointIndices.add(timepointid);
       if (getSizeX() == 0) {
-        core[0].sizeX = xsize;
-        core[0].sizeY = ysize;
+        core.get(0).sizeX = xsize;
+        core.get(0).sizeY = ysize;
       }
 
       planes.add(np);
@@ -471,7 +471,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   protected void fillMetadataPass2(MetadataStore store) throws FormatException, IOException {
     super.fillMetadataPass2(store);
 
-    core[0].interleaved = false;
+    core.get(0).interleaved = false;
   }
 
   protected void fillMetadataPass5(MetadataStore store) throws FormatException, IOException {
@@ -485,7 +485,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
 
   protected void countImages()
   {
-    core[0].imageCount = planes.size();
+    core.get(0).imageCount = planes.size();
 
     super.countImages();
   }

@@ -29,6 +29,7 @@ import java.io.EOFException;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -110,8 +111,9 @@ public class VolocityClippingReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
-    core[0].littleEndian = in.read() == 'I';
+    m.littleEndian = in.read() == 'I';
     in.order(isLittleEndian());
 
     in.skipBytes(4);
@@ -128,20 +130,20 @@ public class VolocityClippingReader extends FormatReader {
       check = in.readInt();
     }
     if (check == AISF) {
-      core[0].littleEndian = false;
+      m.littleEndian = false;
       in.order(isLittleEndian());
       in.skipBytes(28);
     }
 
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
-    core[0].sizeZ = in.readInt();
-    core[0].sizeC = 1;
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
+    m.sizeZ = in.readInt();
+    m.sizeC = 1;
 
-    core[0].sizeT = 1;
-    core[0].imageCount = getSizeZ() * getSizeT();
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = FormatTools.UINT8;
+    m.sizeT = 1;
+    m.imageCount = getSizeZ() * getSizeT();
+    m.dimensionOrder = "XYCZT";
+    m.pixelType = FormatTools.UINT8;
 
     pixelOffset = in.getFilePointer() + 65;
 
@@ -151,7 +153,7 @@ public class VolocityClippingReader extends FormatReader {
           byte[] b = new LZOCodec().decompress(in, null);
           if (b.length > 0 && (b.length % (getSizeX() * getSizeY())) == 0) {
             int bytes = b.length / (getSizeX() * getSizeY());
-            core[0].pixelType =
+            m.pixelType =
               FormatTools.pixelTypeFromBytes(bytes, false, false);
             break;
           }

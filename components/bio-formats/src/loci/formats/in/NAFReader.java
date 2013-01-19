@@ -119,25 +119,26 @@ public class NAFReader extends FormatReader {
     else fp--;
 
     offsets = new long[seriesCount];
-    core = new CoreMetadata[seriesCount];
+    core.clear();
     for (int i=0; i<seriesCount; i++) {
       in.seek(fp + i*256);
-      core[i] = new CoreMetadata();
-      core[i].littleEndian = little;
-      core[i].sizeX = in.readInt();
-      core[i].sizeY = in.readInt();
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
+      ms.littleEndian = little;
+      ms.sizeX = in.readInt();
+      ms.sizeY = in.readInt();
       int numBits = in.readInt();
-      core[i].sizeC = in.readInt();
-      core[i].sizeZ = in.readInt();
-      core[i].sizeT = in.readInt();
+      ms.sizeC = in.readInt();
+      ms.sizeZ = in.readInt();
+      ms.sizeT = in.readInt();
 
-      core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;
+      ms.imageCount = ms.sizeZ * ms.sizeC * ms.sizeT;
       int nBytes = numBits / 8;
-      core[i].pixelType =
+      ms.pixelType =
         FormatTools.pixelTypeFromBytes(nBytes, false, nBytes == 8);
 
-      core[i].dimensionOrder = "XYCZT";
-      core[i].rgb = false;
+      ms.dimensionOrder = "XYCZT";
+      ms.rgb = false;
 
       in.skipBytes(4);
 
@@ -156,9 +157,10 @@ public class NAFReader extends FormatReader {
         }
       }
       else {
-        offsets[i] = offsets[i - 1] + core[i - 1].sizeX * core[i - 1].sizeY *
-          core[i - 1].imageCount *
-          FormatTools.getBytesPerPixel(core[i - 1].pixelType);
+          CoreMetadata mp = core.get(i - 1);
+          offsets[i] = offsets[i - 1] + mp.sizeX * mp.sizeY *
+            mp.imageCount *
+          FormatTools.getBytesPerPixel(mp.pixelType);
       }
       offsets[i] += 352;
       in.seek(offsets[i]);
@@ -187,7 +189,7 @@ public class NAFReader extends FormatReader {
       if (found) offsets[i] += 16063;
       if (i == offsets.length - 1 && !compressed && i > 0) {
         offsets[i] = (int) (in.length() -
-          (core[i].sizeX * core[i].sizeY * core[i].imageCount * (numBits / 8)));
+          (ms.sizeX * ms.sizeY * ms.imageCount * (numBits / 8)));
       }
     }
 

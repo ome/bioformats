@@ -30,6 +30,7 @@ import java.io.IOException;
 import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -105,22 +106,24 @@ public class KodakReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    core[0].littleEndian = false;
+    CoreMetadata m = core.get(0);
+
+    m.littleEndian = false;
 
     findString(DIMENSIONS_STRING);
     in.skipBytes(DIMENSIONS_STRING.length() + 20);
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
 
     findString(PIXELS_STRING);
     pixelOffset = in.getFilePointer() + PIXELS_STRING.length() + 20;
 
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = FormatTools.FLOAT;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.dimensionOrder = "XYCZT";
+    m.pixelType = FormatTools.FLOAT;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);

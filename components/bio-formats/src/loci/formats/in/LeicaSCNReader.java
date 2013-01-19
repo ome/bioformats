@@ -140,13 +140,13 @@ public class LeicaSCNReader extends BaseTiffReader {
     int s = getCoreIndex();
     LeicaSCNHandler.Image i = handler.imageMap.get(s);
 
-    int[] dims = FormatTools.getZCTCoords(core[s].dimensionOrder, core[s].sizeZ, core[s].imageCount/(core[s].sizeZ * core[s].sizeT), core[s].sizeT, core[s].imageCount, no);
+    CoreMetadata ms = core.get(s);
+    int[] dims = FormatTools.getZCTCoords(ms.dimensionOrder, ms.sizeZ, ms.imageCount/(ms.sizeZ * ms.sizeT), ms.sizeT, ms.imageCount, no);
     int dz = dims[0];
     int dc = dims[1];
     int dr = getCoreIndex() - i.imageNumStart;
-    int ifd = i.pixels.dimIFD[dz][dc][dr];
 
-    return ifd;
+    return i.pixels.dimIFD[dz][dc][dr];
   }
 
 
@@ -247,32 +247,34 @@ public class LeicaSCNReader extends BaseTiffReader {
     PhotoInterp pi = ifd.getPhotometricInterpretation();
     int samples = ifd.getSamplesPerPixel();
 
+    CoreMetadata ms = core.get(s);
+
     if (s == i.imageNumStart) {
-      core[s].resolutionCount = i.pixels.sizeR;
+      ms.resolutionCount = i.pixels.sizeR;
     }
 
-    core[s].rgb = samples > 1 || pi == PhotoInterp.RGB;
-    core[s].sizeX = (int) i.pixels.dimSizeX[0][0][r];
-    core[s].sizeY = (int) i.pixels.dimSizeY[0][0][r];
-    core[s].sizeZ = (int) i.pixels.sizeZ;
-    core[s].sizeT = 1;
-    core[s].sizeC = core[s].rgb ? samples : i.pixels.sizeC;
+    ms.rgb = samples > 1 || pi == PhotoInterp.RGB;
+    ms.sizeX = (int) i.pixels.dimSizeX[0][0][r];
+    ms.sizeY = (int) i.pixels.dimSizeY[0][0][r];
+    ms.sizeZ = (int) i.pixels.sizeZ;
+    ms.sizeT = 1;
+    ms.sizeC = ms.rgb ? samples : i.pixels.sizeC;
 
-    if ((ifd.getImageWidth() != core[s].sizeX) ||
-        (ifd.getImageLength() != core[s].sizeY))
-      throw new FormatException("IFD dimensions do not match XML dimensions for image number " + s + ": x=" + ifd.getImageWidth() + ", " + core[s].sizeX + ", y=" + ifd.getImageLength() + ", " + core[s].sizeY);
+    if ((ifd.getImageWidth() != ms.sizeX) ||
+        (ifd.getImageLength() != ms.sizeY))
+      throw new FormatException("IFD dimensions do not match XML dimensions for image number " + s + ": x=" + ifd.getImageWidth() + ", " + ms.sizeX + ", y=" + ifd.getImageLength() + ", " + ms.sizeY);
 
-    core[s].orderCertain = true;
-    core[s].littleEndian = ifd.isLittleEndian();
-    core[s].indexed = (pi == PhotoInterp.RGB_PALETTE &&
+    ms.orderCertain = true;
+    ms.littleEndian = ifd.isLittleEndian();
+    ms.indexed = (pi == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null));
-    core[s].imageCount = i.pixels.sizeZ * i.pixels.sizeC;
-    core[s].pixelType = ifd.getPixelType();
-    core[s].metadataComplete = true;
-    core[s].interleaved = false;
-    core[s].falseColor = false;
-    core[s].dimensionOrder = i.pixels.dataOrder;
-    core[s].thumbnail = (i.imageThumbnail == r);
+    ms.imageCount = i.pixels.sizeZ * i.pixels.sizeC;
+    ms.pixelType = ifd.getPixelType();
+    ms.metadataComplete = true;
+    ms.interleaved = false;
+    ms.falseColor = false;
+    ms.dimensionOrder = i.pixels.dataOrder;
+    ms.thumbnail = (i.imageThumbnail == r);
   }
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
@@ -295,12 +297,12 @@ public class LeicaSCNReader extends BaseTiffReader {
 
     int count = handler.count();
 
-
-    core = new CoreMetadata[count];
     ifds = tiffParser.getIFDs();
 
-    for (int i=0; i<core.length; i++) {
-      core[i] = new CoreMetadata();
+    core.clear();
+    for (int i=0; i<count; i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
       tiffParser.fillInIFD(ifds.get(handler.IFDMap.get(i)));
       initCoreMetadata(i);
     }
@@ -372,8 +374,10 @@ public class LeicaSCNReader extends BaseTiffReader {
         LOGGER.info("Unknown illumination source " + i.illumSource + "; please report this");
       }
 
-      for (int q=0; q<core[s].imageCount; q++) {
-        int[] dims = FormatTools.getZCTCoords(core[s].dimensionOrder, core[s].sizeZ, core[s].imageCount/(core[s].sizeZ * core[s].sizeT), core[s].sizeT, core[s].imageCount, q);
+      CoreMetadata ms = core.get(s);
+
+      for (int q=0; q<ms.imageCount; q++) {
+        int[] dims = FormatTools.getZCTCoords(ms.dimensionOrder, ms.sizeZ, ms.imageCount/(ms.sizeZ * ms.sizeT), ms.sizeT, ms.imageCount, q);
 
         store.setPlaneTheZ(new NonNegativeInteger(dims[0]), s, q);
         store.setPlaneTheC(new NonNegativeInteger(dims[1]), s, q);
@@ -394,16 +398,16 @@ public class LeicaSCNReader extends BaseTiffReader {
       addGlobalMeta("collection.ocr", c.ocr);
       addGlobalMeta("creationDate", i.creationDate);
 
-      addGlobalMeta("device.model for image #" + s, i.devModel);
-      addGlobalMeta("device.version for image #" + s, i.devVersion);
-      addGlobalMeta("view.sizeX for image #" + s, i.vSizeX);
-      addGlobalMeta("view.sizeY for image #" + s, i.vSizeY);
-      addGlobalMeta("view.offsetX for image #" + s, i.vOffsetX);
-      addGlobalMeta("view.offsetY for image #" + s, i.vOffsetY);
-      addGlobalMeta("view.spacingZ for image #" + s, i.vSpacingZ);
-      addGlobalMeta("scanSettings.objectiveSettings.objective for image #" + s, i.objMag);
-      addGlobalMeta("scanSettings.illuminationSettings.numericalAperture for image #" + s, i.illumNA);
-      addGlobalMeta("scanSettings.illuminationSettings.illuminationSource for image #" + s, i.illumSource);
+      addGlobalMetaList("device.model for image", i.devModel);
+      addGlobalMetaList("device.version for image", i.devVersion);
+      addGlobalMetaList("view.sizeX for image", i.vSizeX);
+      addGlobalMetaList("view.sizeY for image", i.vSizeY);
+      addGlobalMetaList("view.offsetX for image", i.vOffsetX);
+      addGlobalMetaList("view.offsetY for image", i.vOffsetY);
+      addGlobalMetaList("view.spacingZ for image", i.vSpacingZ);
+      addGlobalMetaList("scanSettings.objectiveSettings.objective for image", i.objMag);
+      addGlobalMetaList( "scanSettings.illuminationSettings.numericalAperture for image", i.illumNA);
+      addGlobalMetaList("scanSettings.illuminationSettings.illuminationSource for image", i.illumSource);
     }
   }
 

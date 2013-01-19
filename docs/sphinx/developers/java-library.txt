@@ -13,8 +13,11 @@ However, there are certain packages that if present will be utilized to
 provide additional functionality. To include one, just place it in the
 same folder.
 
+.. tabularcolumns:: |p{5cm}|c|c|p{5cm}|
+
 .. list-table::
   :header-rows: 1
+  :widths:  30, 10, 20, 30
 
   *
     - Package
@@ -24,25 +27,25 @@ same folder.
 
   *
     - `Apache Jakarta POI <http://jakarta.apache.org/poi/>`_ library, LOCI fork
-    - :jenkins:`poi-loci.jar <lastSuccessfulBuild/artifact/artifacts/poi-loci.jar>`
+    - :bfjob:`poi-loci.jar <lastSuccessfulBuild/artifact/artifacts/poi-loci.jar>`
     - Apache
     - For OLE-based formats (zvi, oib, ipw, cxd)
 
   *
     - `MDB Tools project <http://sourceforge.net/projects/mdbtools>`_ Java port, LOCI fork
-    - :jenkins:`mdbtools-java.jar <lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`
+    - :bfjob:`mdbtools-java.jar <lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`
     - LGPL
     - For Olympus CellR and Zeiss LSM metadata (mdb)
 
   *
     - `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ pure Java implementation, LOCI fork
-    - :jenkins:`jai_imageio.jar <lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`
+    - :bfjob:`jai_imageio.jar <lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`
     - BSD
     - For JPEG2000-based formats (nd2, jp2)
 
   *
     - `NetCDF Java library <http://www.unidata.ucar.edu/software/netcdf-java/>`_
-    - :jenkins:`netcdf-4.0.jar <lastSuccessfulBuild/artifact/artifacts/netcdf-4.0.jar>`
+    - :bfjob:`netcdf-4.0.jar <lastSuccessfulBuild/artifact/artifacts/netcdf-4.0.jar>`
     - LGPL
     - For HDF5-based formats (Imaris 5.5, MINC MRI)
 
@@ -102,7 +105,7 @@ solution for developers. We recommend using **bio-formats.jar** as a
 separate entity depending on your needs as a developer.
 
 The bundle is quite large because we have added support for several
-formats that need large helper libraries (e.g. Imaris's HDF-based
+formats that need large helper libraries (e.g. Imaris' HDF-based
 format). However, these additional libraries are optional; Bio-Formats
 has been coded using reflection so that it can both compile and run
 without them.

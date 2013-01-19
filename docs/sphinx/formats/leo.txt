@@ -18,25 +18,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`LEO <leo-metadata>`
 
-Freely Available Software:
 
-- `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
-
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- Pascal code that can read LEO files (from ImageSXM) 
-- a few LEO files
+* Pascal code that can read LEO files (from ImageSXM) 
+* a few LEO files
 
 We would like to have:
 
-- an official specification document 
-- more LEO files
+* an official specification document 
+* more LEO files
 
 **Ratings**
 

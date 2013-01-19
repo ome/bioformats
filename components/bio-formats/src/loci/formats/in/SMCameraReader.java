@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -97,19 +98,20 @@ public class SMCameraReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
     in.seek(524);
 
-    core[0].sizeY = in.readShort();
+    m.sizeY = in.readShort();
     in.skipBytes(6);
-    core[0].sizeX = in.readShort();
-    core[0].pixelType = FormatTools.UINT8;
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].littleEndian = false;
+    m.sizeX = in.readShort();
+    m.pixelType = FormatTools.UINT8;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.dimensionOrder = "XYZCT";
+    m.littleEndian = false;
 
     addGlobalMeta("Image width", getSizeX());
     addGlobalMeta("Image height", getSizeY());

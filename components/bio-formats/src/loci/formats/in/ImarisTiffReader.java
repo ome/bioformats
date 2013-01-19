@@ -32,6 +32,7 @@ import java.util.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -102,18 +103,20 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     LOGGER.info("Populating metadata");
 
-    core[0].sizeC = ifds.size();
-    core[0].sizeZ = tmp.size() / getSizeC();
-    core[0].sizeT = 1;
-    core[0].sizeX = (int) ifds.get(0).getImageWidth();
-    core[0].sizeY = (int) ifds.get(0).getImageLength();
+    CoreMetadata m = core.get(0);
+
+    m.sizeC = ifds.size();
+    m.sizeZ = tmp.size() / getSizeC();
+    m.sizeT = 1;
+    m.sizeX = (int) ifds.get(0).getImageWidth();
+    m.sizeY = (int) ifds.get(0).getImageLength();
 
     ifds = tmp;
-    core[0].imageCount = getSizeC() * getSizeZ();
-    core[0].dimensionOrder = "XYZCT";
-    core[0].interleaved = false;
-    core[0].rgb = getImageCount() != getSizeZ() * getSizeC() * getSizeT();
-    core[0].pixelType = ifds.get(0).getPixelType();
+    m.imageCount = getSizeC() * getSizeZ();
+    m.dimensionOrder = "XYZCT";
+    m.interleaved = false;
+    m.rgb = getImageCount() != getSizeZ() * getSizeC() * getSizeT();
+    m.pixelType = ifds.get(0).getPixelType();
 
     LOGGER.info("Parsing comment");
 

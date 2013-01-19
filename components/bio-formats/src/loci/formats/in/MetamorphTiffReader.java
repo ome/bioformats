@@ -156,6 +156,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
     Vector<Double> stageX = new Vector<Double>();
     Vector<Double> stageY = new Vector<Double>();
 
+    CoreMetadata m = core.get(0);
+
     String filename = id.substring(id.lastIndexOf(File.separator) + 1);
     filename = filename.substring(0, filename.indexOf("."));
     boolean integerFilename = true;
@@ -214,15 +216,15 @@ public class MetamorphTiffReader extends BaseTiffReader {
       wellCount = lastField - field + 1;
       fieldRowCount = lastWellRow - fieldRow + 1;
       fieldColumnCount = lastWellColumn - fieldColumn + 1;
-      core[0].sizeC = uniqueChannels.size();
-      core[0].sizeZ = uniqueZs.size();
+      m.sizeC = uniqueChannels.size();
+      m.sizeZ = uniqueZs.size();
     }
     else {
       files = new String[] {id};
       wellCount = 1;
       fieldRowCount = 1;
       fieldColumnCount = 1;
-      core[0].sizeC = 0;
+      m.sizeC = 0;
     }
 
     // parse XML comment
@@ -270,37 +272,36 @@ public class MetamorphTiffReader extends BaseTiffReader {
     }
     int effectiveC = uniqueC.size();
     if (effectiveC == 0) effectiveC = 1;
-    if (getSizeC() == 0) core[0].sizeC = 1;
+    if (getSizeC() == 0) m.sizeC = 1;
     int samples = ifds.get(0).getSamplesPerPixel();
-    core[0].sizeC *= effectiveC * samples;
+    m.sizeC *= effectiveC * samples;
 
     Vector<Double> uniqueZ = new Vector<Double>();
     for (Double z : zPositions) {
       if (!uniqueZ.contains(z)) uniqueZ.add(z);
     }
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    core[0].sizeZ *= uniqueZ.size();
+    if (getSizeZ() == 0) m.sizeZ = 1;
+    m.sizeZ *= uniqueZ.size();
 
     int totalPlanes = files.length * ifds.size();
     effectiveC = getSizeC() / samples;
-    core[0].sizeT = totalPlanes /
+    m.sizeT = totalPlanes /
       (wellCount * fieldRowCount * fieldColumnCount * getSizeZ() * effectiveC);
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    if (getSizeT() == 0) m.sizeT = 1;
 
     int seriesCount = wellCount * fieldRowCount * fieldColumnCount;
 
     if (seriesCount > 1 && getSizeZ() > totalPlanes / seriesCount) {
-      core[0].sizeZ = 1;
-      core[0].sizeT = totalPlanes / (seriesCount * getSizeT() * effectiveC);
+      m.sizeZ = 1;
+      m.sizeT = totalPlanes / (seriesCount * getSizeT() * effectiveC);
     }
 
-    core[0].imageCount = getSizeZ() * getSizeT() * effectiveC;
+    m.imageCount = getSizeZ() * getSizeT() * effectiveC;
 
     if (seriesCount > 1) {
-      CoreMetadata oldCore = core[0];
-      core = new CoreMetadata[seriesCount];
+      core.clear();
       for (int i=0; i<seriesCount; i++) {
-        core[i] = oldCore;
+        core.add(m);
       }
     }
 
@@ -378,10 +379,10 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
         for (int i=0; i<timestamps.size(); i++) {
           long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT);
-          addSeriesMeta("timestamp " + i, timestamp);
+          addSeriesMetaList("timestamp", timestamp);
         }
         for (int i=0; i<exposures.size(); i++) {
-          addSeriesMeta("exposure time " + i + " (ms)",
+          addSeriesMetaList("exposure time (ms)",
             exposures.get(i).floatValue() * 1000);
         }
 

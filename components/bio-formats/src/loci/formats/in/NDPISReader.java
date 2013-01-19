@@ -26,11 +26,13 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.ChannelSeparator;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -149,12 +151,13 @@ public class NDPISReader extends FormatReader {
     readers[0].setMetadataStore(getMetadataStore());
     readers[0].setId(ndpiFiles[0]);
 
-    core = readers[0].getCoreMetadata();
+    core = new ArrayList<CoreMetadata>(readers[0].getCoreMetadataList());
     for (int i=0; i<getSeriesCount(); i++) {
-      core[i].sizeC = readers.length;
-      core[i].rgb = false;
-      core[i].imageCount = core[i].sizeC * core[i].sizeZ * core[i].sizeT;
-      core[i].cLengths = new int[] {getSizeC()};
+      CoreMetadata ms = core.get(i);
+      ms.sizeC = readers.length;
+      ms.rgb = false;
+      ms.imageCount = ms.sizeC * ms.sizeZ * ms.sizeT;
+      ms.cLengths = new int[] {getSizeC()};
     }
 
     MetadataStore store = makeFilterMetadata();

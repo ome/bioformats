@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -173,17 +174,19 @@ public class HRDGDFReader extends FormatReader {
     addGlobalMeta("Storm center (Latitude)", centerLatitude);
     addGlobalMeta("Storm center (Longitude)", centerLongitude);
 
-    core[0].sizeX = Integer.parseInt(x);
-    core[0].sizeY = Integer.parseInt(y);
-    core[0].sizeC = 2;
-    core[0].rgb = false;
-    core[0].pixelType = FormatTools.DOUBLE;
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = getSizeC() * getSizeZ() * getSizeT();
-    core[0].indexed = false;
-    core[0].littleEndian = false;
-    core[0].dimensionOrder = "XYCTZ";
+    CoreMetadata m = core.get(0);
+
+    m.sizeX = Integer.parseInt(x);
+    m.sizeY = Integer.parseInt(y);
+    m.sizeC = 2;
+    m.rgb = false;
+    m.pixelType = FormatTools.DOUBLE;
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.imageCount = getSizeC() * getSizeZ() * getSizeT();
+    m.indexed = false;
+    m.littleEndian = false;
+    m.dimensionOrder = "XYCTZ";
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

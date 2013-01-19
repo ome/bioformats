@@ -18,21 +18,18 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Cellomics <cellomics-metadata>`
 
-Freely Available Software:
-
-- `Micro-Manager <http://micro-manager.org/>`_
 
 
 We currently have:
 
-- a few Cellomics .c01 datasets
+* a few Cellomics .c01 datasets
 
 We would like to have:
 
-- a Cellomics .c01 specification document 
-- more Cellomics .c01 datasets
+* a Cellomics .c01 specification document 
+* more Cellomics .c01 datasets
 
 **Ratings**
 

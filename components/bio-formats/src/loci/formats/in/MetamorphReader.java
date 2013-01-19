@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -601,49 +602,54 @@ public class MetamorphReader extends BaseTiffReader {
       RandomAccessInputStream s = new RandomAccessInputStream(file);
       TiffParser tp = new TiffParser(s);
       IFD ifd = tp.getFirstIFD();
+      CoreMetadata ms0 = core.get(0);
       s.close();
-      core[0].sizeX = (int) ifd.getImageWidth();
-      core[0].sizeY = (int) ifd.getImageLength();
+      ms0.sizeX = (int) ifd.getImageWidth();
+      ms0.sizeY = (int) ifd.getImageLength();
 
       if (bizarreMultichannelAcquisition) {
-        core[0].sizeX /= 2;
+        ms0.sizeX /= 2;
       }
 
-      core[0].sizeZ = hasZ.size() > 0 && !hasZ.get(0) ? 1 : zc;
-      core[0].sizeC = cc;
-      core[0].sizeT = tc;
-      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-      core[0].dimensionOrder = "XYZCT";
+      ms0.sizeZ = hasZ.size() > 0 && !hasZ.get(0) ? 1 : zc;
+      ms0.sizeC = cc;
+      ms0.sizeT = tc;
+      ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
+      ms0.dimensionOrder = "XYZCT";
 
       if (stks != null && stks.length > 1) {
-        CoreMetadata[] newCore = new CoreMetadata[stks.length];
+        // Note that core can't be replaced with newCore until the end of this block.
+        ArrayList<CoreMetadata> newCore = new ArrayList<CoreMetadata>();
         for (int i=0; i<stks.length; i++) {
-          newCore[i] = new CoreMetadata();
-          newCore[i].sizeX = getSizeX();
-          newCore[i].sizeY = getSizeY();
-          newCore[i].sizeZ = getSizeZ();
-          newCore[i].sizeC = getSizeC();
-          newCore[i].sizeT = getSizeT();
-          newCore[i].pixelType = getPixelType();
-          newCore[i].imageCount = getImageCount();
-          newCore[i].dimensionOrder = getDimensionOrder();
-          newCore[i].rgb = isRGB();
-          newCore[i].littleEndian = isLittleEndian();
-          newCore[i].interleaved = isInterleaved();
-          newCore[i].orderCertain = true;
+          CoreMetadata ms = new CoreMetadata();
+          newCore.add(ms);
+          ms.sizeX = getSizeX();
+          ms.sizeY = getSizeY();
+          ms.sizeZ = getSizeZ();
+          ms.sizeC = getSizeC();
+          ms.sizeT = getSizeT();
+          ms.pixelType = getPixelType();
+          ms.imageCount = getImageCount();
+          ms.dimensionOrder = getDimensionOrder();
+          ms.rgb = isRGB();
+          ms.littleEndian = isLittleEndian();
+          ms.interleaved = isInterleaved();
+          ms.orderCertain = true;
         }
         if (stks.length > nstages) {
           int ns = nstages == 0 ? 1 : nstages;
           for (int j=0; j<ns; j++) {
             int idx = j * 2 + 1;
-            newCore[j * 2].sizeC = stks[j * 2].length / getSizeT();
-            newCore[idx].sizeC = stks[idx].length / newCore[idx].sizeT;
-            newCore[idx].sizeZ =
-              hasZ.size() > 1 && hasZ.get(1) && core[0].sizeZ == 1 ? zc : 1;
-            newCore[j * 2].imageCount = newCore[j * 2].sizeC *
-              newCore[j * 2].sizeT * newCore[j * 2].sizeZ;
-            newCore[idx].imageCount =
-              newCore[idx].sizeC * newCore[idx].sizeT * newCore[idx].sizeZ;
+            CoreMetadata midx = newCore.get(idx);
+            CoreMetadata pmidx = newCore.get(j * 2);
+            pmidx.sizeC = stks[j * 2].length / getSizeT();
+            midx.sizeC = stks[idx].length / midx.sizeT;
+            midx.sizeZ =
+             hasZ.size() > 1 && hasZ.get(1) && core.get(0).sizeZ == 1 ? zc : 1;
+            pmidx.imageCount = pmidx.sizeC *
+              pmidx.sizeT * pmidx.sizeZ;
+            midx.imageCount =
+              midx.sizeC * midx.sizeT * midx.sizeZ;
           }
         }
         core = newCore;
@@ -800,7 +806,7 @@ public class MetamorphReader extends BaseTiffReader {
       timestamps = handler.getTimestamps();
 
       for (int t=0; t<timestamps.size(); t++) {
-        addSeriesMeta("timestamp " + t, DateTools.formatDate(timestamps.get(t),
+        addSeriesMetaList("timestamp", DateTools.formatDate(timestamps.get(t),
           MEDIUM_DATE_FORMAT));
       }
 
@@ -862,17 +868,20 @@ public class MetamorphReader extends BaseTiffReader {
               }
               stream = new RandomAccessInputStream(file);
               tp = new TiffParser(stream);
-              tp.setDoCaching(false);
               tp.checkHeader();
               lastFile = fileIndex;
               lastIFDs = tp.getIFDs();
             }
 
             lastIFD = lastIFDs.get(p % lastIFDs.size());
-            TiffIFDEntry commentEntry =
-              (TiffIFDEntry) lastIFD.get(IFD.IMAGE_DESCRIPTION);
+            Object commentEntry = lastIFD.get(IFD.IMAGE_DESCRIPTION);
             if (commentEntry != null) {
-              comment = tp.getIFDValue(commentEntry).toString();
+              if (commentEntry instanceof String) {
+                comment = (String) commentEntry;
+              }
+              else if (commentEntry instanceof TiffIFDEntry) {
+                comment = tp.getIFDValue((TiffIFDEntry) commentEntry).toString();
+              }
             }
             if (comment != null) comment = comment.trim();
             if (comment != null && comment.startsWith("<MetaData>")) {
@@ -964,8 +973,10 @@ public class MetamorphReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    core[0].sizeZ = 1;
-    core[0].sizeT = 0;
+    CoreMetadata ms0 = core.get(0);
+
+    ms0.sizeZ = 1;
+    ms0.sizeT = 0;
     int rgbChannels = getSizeC();
 
     // Now that the base TIFF standard metadata has been parsed, we need to
@@ -1018,7 +1029,7 @@ public class MetamorphReader extends BaseTiffReader {
         throw new FormatException("Invalid Metamorph file. Tag " + UIC2TAG +
           " not found.");
       }
-      core[0].imageCount = uic2.length;
+      ms0.imageCount = uic2.length;
 
       Object entry = firstIFD.getIFDValue(UIC3TAG);
       TiffRational[] uic3 = entry instanceof TiffRational[] ?
@@ -1034,7 +1045,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
 
       if (getSizeC() == 1) {
-        core[0].sizeC = uniqueWavelengths.size();
+        ms0.sizeC = uniqueWavelengths.size();
       }
 
       IFDList tempIFDs = new IFDList();
@@ -1162,7 +1173,7 @@ public class MetamorphReader extends BaseTiffReader {
               value = value.substring(0, value.indexOf("-"));
             }
             try {
-              core[0].bitsPerPixel = Integer.parseInt(value);
+              ms0.bitsPerPixel = Integer.parseInt(value);
             }
             catch (NumberFormatException e) { }
           }
@@ -1188,12 +1199,12 @@ public class MetamorphReader extends BaseTiffReader {
       else addSeriesMeta("Comment", descr);
     }
 
-    core[0].sizeT = getImageCount() / (getSizeZ() * (getSizeC() / rgbChannels));
+    ms0.sizeT = getImageCount() / (getSizeZ() * (getSizeC() / rgbChannels));
     if (getSizeT() * getSizeZ() * (getSizeC() / rgbChannels) !=
       getImageCount())
     {
-      core[0].sizeT = 1;
-      core[0].sizeZ = getImageCount() / (getSizeC() / rgbChannels);
+      ms0.sizeT = 1;
+      ms0.sizeZ = getImageCount() / (getSizeC() / rgbChannels);
     }
 
     // if '_t' is present in the file name, swap Z and T sizes
@@ -1204,17 +1215,17 @@ public class MetamorphReader extends BaseTiffReader {
       currentId.substring(currentId.lastIndexOf(File.separator) + 1);
     if (filename.indexOf("_t") != -1 && getSizeT() > 1) {
       int z = getSizeZ();
-      core[0].sizeZ = getSizeT();
-      core[0].sizeT = z;
+      ms0.sizeZ = getSizeT();
+      ms0.sizeT = z;
     }
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    if (getSizeZ() == 0) ms0.sizeZ = 1;
+    if (getSizeT() == 0) ms0.sizeT = 1;
 
     if (getSizeZ() * getSizeT() * (isRGB() ? 1 : getSizeC()) != getImageCount())
     {
-      core[0].sizeZ = getImageCount();
-      core[0].sizeT = 1;
-      if (!isRGB()) core[0].sizeC = 1;
+      ms0.sizeZ = getImageCount();
+      ms0.sizeT = 1;
+      if (!isRGB()) ms0.sizeC = 1;
     }
   }
 
@@ -1354,7 +1365,7 @@ public class MetamorphReader extends BaseTiffReader {
       zDistances[i] = readRational(in).doubleValue();
       addSeriesMeta("zDistance[" + iAsString + "]", zDistances[i]);
 
-      if (zDistances[i] != 0.0) core[0].sizeZ++;
+      if (zDistances[i] != 0.0) core.get(0).sizeZ++;
 
       cDate = decodeDate(in.readInt());
       cTime = decodeTime(in.readInt());
@@ -1367,7 +1378,7 @@ public class MetamorphReader extends BaseTiffReader {
       // modification date and time are skipped as they all seem equal to 0...?
       in.skip(8);
     }
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    if (getSizeZ() == 0) core.get(0).sizeZ = 1;
 
     in.seek(saveLoc);
   }

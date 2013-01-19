@@ -274,9 +274,11 @@ public class FluoviewReader extends BaseTiffReader {
 
     // calculate the dimension order and axis sizes
 
+    CoreMetadata m = core.get(0);
+
     dimensionOrder = "XY";
     int seriesCount = 1;
-    core[0].sizeZ = core[0].sizeC = core[0].sizeT = 1;
+    m.sizeZ = m.sizeC = m.sizeT = 1;
 
     for (int i=0; i<10; i++) {
       String name = names[i];
@@ -293,14 +295,14 @@ public class FluoviewReader extends BaseTiffReader {
         voxelY = voxel;
       }
       else if (name.equals("z") || name.equals("event")) {
-        core[0].sizeZ *= size;
+        m.sizeZ *= size;
         if (dimensionOrder.indexOf("Z") == -1) {
           dimensionOrder += "Z";
         }
         voxelZ = voxel;
       }
       else if (name.equals("ch") || name.equals("wavelength")) {
-        core[0].sizeC *= size;
+        m.sizeC *= size;
         if (dimensionOrder.indexOf("C") == -1) {
           dimensionOrder += "C";
         }
@@ -309,7 +311,7 @@ public class FluoviewReader extends BaseTiffReader {
       else if (name.equals("time") || name.equals("t") ||
         name.equals("animation"))
       {
-        core[0].sizeT *= size;
+        m.sizeT *= size;
         if (dimensionOrder.indexOf("T") == -1) {
           dimensionOrder += "T";
         }
@@ -330,15 +332,15 @@ public class FluoviewReader extends BaseTiffReader {
     if (dimensionOrder.indexOf("C") == -1) dimensionOrder += "C";
     if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
 
-    core[0].imageCount = ifds.size() / seriesCount;
-    if (getSizeZ() > getImageCount()) core[0].sizeZ = getImageCount();
-    if (getSizeT() > getImageCount()) core[0].sizeT = getImageCount();
+    m.imageCount = ifds.size() / seriesCount;
+    if (getSizeZ() > getImageCount()) m.sizeZ = getImageCount();
+    if (getSizeT() > getImageCount()) m.sizeT = getImageCount();
     if (getSizeZ() * getSizeC() * getSizeT() > getImageCount()) {
       int diff = getSizeZ() * getSizeC() * getSizeT() - getImageCount();
       if (diff == getSizeC()) {
-        if (getSizeZ() > 1) core[0].sizeZ--;
-        else if (getSizeT() > 1) core[0].sizeT--;
-        else core[0].sizeC /= getSizeC();
+        if (getSizeZ() > 1) m.sizeZ--;
+        else if (getSizeT() > 1) m.sizeT--;
+        else m.sizeC /= getSizeC();
       }
     }
 
@@ -346,20 +348,19 @@ public class FluoviewReader extends BaseTiffReader {
       getSizeZ() == getSizeY()) && (getSizeT() > getImageCount() ||
       getSizeZ() > getImageCount()))
     {
-      core[0].sizeY = 1;
-      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+      m.sizeY = 1;
+      m.imageCount = getSizeZ() * getSizeC() * getSizeT();
     }
-    core[0].dimensionOrder = dimensionOrder.replaceAll("S", "");
+    m.dimensionOrder = dimensionOrder.replaceAll("S", "");
 
     if (getPixelType() == FormatTools.UINT32) {
-      core[0].pixelType = FormatTools.FLOAT;
+      m.pixelType = FormatTools.FLOAT;
     }
 
     if (seriesCount > 1) {
-      CoreMetadata oldCore = core[0];
-      core = new CoreMetadata[seriesCount];
+      core.clear();
       for (int i=0; i<seriesCount; i++) {
-        core[i] = oldCore;
+        core.add(m);
       }
     }
 

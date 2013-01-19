@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -100,6 +101,8 @@ public class INRReader extends FormatReader {
     boolean isSigned = false;
     int nBits = 0;
 
+    CoreMetadata m = core.get(0);
+
     for (String line : lines) {
       int index = line.indexOf("=");
       if (index >= 0) {
@@ -109,16 +112,16 @@ public class INRReader extends FormatReader {
         addGlobalMeta(key, value);
 
         if (key.equals("XDIM")) {
-          core[0].sizeX = Integer.parseInt(value);
+          m.sizeX = Integer.parseInt(value);
         }
         else if (key.equals("YDIM")) {
-          core[0].sizeY = Integer.parseInt(value);
+          m.sizeY = Integer.parseInt(value);
         }
         else if (key.equals("ZDIM")) {
-          core[0].sizeZ = Integer.parseInt(value);
+          m.sizeZ = Integer.parseInt(value);
         }
         else if (key.equals("VDIM")) {
-          core[0].sizeT = Integer.parseInt(value);
+          m.sizeT = Integer.parseInt(value);
         }
         else if (key.equals("TYPE")) {
           isSigned = value.toLowerCase().startsWith("signed");
@@ -144,16 +147,16 @@ public class INRReader extends FormatReader {
     LOGGER.info("Populating metadata");
 
     if (getSizeZ() == 0) {
-      core[0].sizeZ = 1;
+      m.sizeZ = 1;
     }
     if (getSizeT() == 0) {
-      core[0].sizeT = 1;
+      m.sizeT = 1;
     }
-    core[0].sizeC = 1;
-    core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
-    core[0].pixelType =
+    m.sizeC = 1;
+    m.imageCount = getSizeZ() * getSizeT() * getSizeC();
+    m.pixelType =
       FormatTools.pixelTypeFromBytes(nBits / 8, isSigned, false);
-    core[0].dimensionOrder = "XYZTC";
+    m.dimensionOrder = "XYZTC";
 
     // populate the metadata store
 

@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -115,26 +116,27 @@ public class ARFReader extends FormatReader {
     // followed by raw image data with no padding.
 
     // populate core metadata
+    CoreMetadata m = core.get(0);
 
-    core[0].sizeX = width;
-    core[0].sizeY = height;
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = numImages;
+    m.sizeX = width;
+    m.sizeY = height;
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = numImages;
 
     int bpp = bitsPerPixel / 8;
     if ((bitsPerPixel % 8) != 0) bpp++;
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, false, false);
+    m.pixelType = FormatTools.pixelTypeFromBytes(bpp, false, false);
 
-    core[0].bitsPerPixel = bitsPerPixel;
-    core[0].imageCount = numImages;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].orderCertain = true;
-    core[0].littleEndian = little;
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].indexed = false;
-    core[0].metadataComplete = true;
+    m.bitsPerPixel = bitsPerPixel;
+    m.imageCount = numImages;
+    m.dimensionOrder = "XYCZT";
+    m.orderCertain = true;
+    m.littleEndian = little;
+    m.rgb = false;
+    m.interleaved = false;
+    m.indexed = false;
+    m.metadataComplete = true;
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate original metadata
