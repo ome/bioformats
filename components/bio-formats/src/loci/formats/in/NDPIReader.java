@@ -39,6 +39,7 @@ import loci.formats.services.JPEGTurboService;
 import loci.formats.services.JPEGTurboServiceImpl;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
@@ -325,6 +326,19 @@ public class NDPIReader extends BaseTiffReader {
       IFD ifd = ifds.get(i);
       ifd.remove(THUMB_TAG_2);
       ifds.set(i, ifd);
+
+      TiffIFDEntry markerTag = (TiffIFDEntry) ifd.get(MARKER_TAG);
+
+      if (markerTag != null) {
+        if (markerTag.getValueOffset() > in.length()) {
+          markerTag = new TiffIFDEntry(markerTag.getTag(), markerTag.getType(),
+            markerTag.getValueCount(),
+            markerTag.getValueOffset() & 0xffffffffL);
+        }
+        Object value = tiffParser.getIFDValue(markerTag);
+        ifds.get(i).putIFDValue(MARKER_TAG, value);
+      }
+
       tiffParser.fillInIFD(ifds.get(i));
 
       int[] bpp = ifds.get(i).getBitsPerSample();
