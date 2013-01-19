@@ -877,6 +877,7 @@ public abstract class FormatReader extends FormatHandler
       in = null;
       currentId = null;
       resolution = 0;
+      core = null;
     }
   }
 
