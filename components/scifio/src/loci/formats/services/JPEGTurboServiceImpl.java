@@ -69,6 +69,9 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   // -- Constants --
 
+  private static final String NATIVE_LIB_CLASS =
+    "org.scijava.nativelib.NativeLibraryUtil";
+
   private static final int SOF0 = 0xffc0;
 
   private static final int DRI = 0xffdd;
@@ -81,6 +84,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   // -- Fields --
 
+  private Logger logger;
   private int imageWidth;
   private int imageHeight;
   private long offset;
@@ -101,7 +105,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
   // -- Constructor --
 
   public JPEGTurboServiceImpl() {
-    Logger logger = Logger.getLogger("org.scijava.nativelib.NativeLibraryUtil");
+    logger = Logger.getLogger(NATIVE_LIB_CLASS);
     logger.setLevel(Level.SEVERE);
     NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
   }
@@ -310,6 +314,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
   }
 
   public void close() throws IOException {
+    logger = null;
     imageWidth = 0;
     imageHeight = 0;
     in = null;
