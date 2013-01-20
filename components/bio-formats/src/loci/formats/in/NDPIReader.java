@@ -77,7 +77,6 @@ public class NDPIReader extends BaseTiffReader {
   public NDPIReader() {
     super("Hamamatsu NDPI", new String[] {"ndpi"});
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
-    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
@@ -88,7 +87,7 @@ public class NDPIReader extends BaseTiffReader {
   @Override
   public boolean isThisType(String name, boolean open) {
     boolean isThisType = super.isThisType(name, open);
-    if (!isThisType && open) {
+    if (isThisType && open) {
       RandomAccessInputStream stream = null;
       try {
         stream = new RandomAccessInputStream(name);
