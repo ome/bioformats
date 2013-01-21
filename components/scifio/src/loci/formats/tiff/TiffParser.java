@@ -683,12 +683,6 @@ public class TiffParser {
       ifd.getPhotometricInterpretation() == PhotoInterp.Y_CB_CR &&
       ifd.getIFDIntValue(IFD.Y_CB_CR_SUB_SAMPLING) == 1;
 
-    if (ifd.getIFDValue(IFD.Y_CB_CR_SUB_SAMPLING) instanceof int[]) {
-      if (((int[]) ifd.getIFDValue(IFD.Y_CB_CR_SUB_SAMPLING)).length > 1) {
-        codecOptions.ycbcr = false;
-      }
-    }
-
     if (jpegTable != null) {
       byte[] q = new byte[jpegTable.length + tile.length - 4];
       System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
