@@ -309,7 +309,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       return decompressed;
     }
     catch (Exception e) {
-      throw new IOException(e);
+      throw new IOException("", e);
     }
   }
 
