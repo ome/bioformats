@@ -132,10 +132,10 @@ int main(int, char * argv[])
 //     time4.Stop();
     
   std::cout << std::setprecision(3)
-    << time.GetMeanTime() << "\t" 
-    << time2.GetMeanTime() << "\t" 
-//     << time3.GetMeanTime() << "\t" 
-//     << time4.GetMeanTime() << "\t" 
+    << time.GetMean() << "\t" 
+    << time2.GetMean() << "\t" 
+//     << time3.GetMean() << "\t" 
+//     << time4.GetMean() << "\t" 
     << std::endl;  
     }
 
