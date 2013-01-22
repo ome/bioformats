@@ -271,13 +271,21 @@ createlink() {
 	link=$(find published/Schemas -name "$name" | grep "$release" | head -n1)
 	link=$(echo "$link" | sed -e 's;published/Schemas/;;')
 	if [ "$6" = "legacy" ]; then
-	    link="../../Schemas/$link"
+	    if [ -z "$2" ]; then
+		link="../Schemas/$link"
+	    else
+		link="../../Schemas/$link"
+	    fi
 	fi
     else
 	link=$(find published/XMLschemas -name "$name" | grep "$release" | head -n1)
 	link=$(echo "$link" | sed -e 's;published/XMLschemas/;;')
 	if [ "$6" = "current" ]; then
-	    link="../../XMLschemas/$link"
+	    if [ -z "$2" ]; then
+		link="../XMLschemas/$link"
+	    else
+		link="../../XMLschemas/$link"
+	    fi
 	fi
     fi
     if [ -n "$2" ]; then
@@ -366,7 +374,7 @@ EOF
 EOF
 
     for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs -n1 basename | sort | uniq ); do
-	createlink "$schema" "" "current" "true" "current"
+	createlink "$schema" "" "current" "true" "current" "$1"
     done
 
     cat <<EOF
@@ -376,7 +384,7 @@ EOF
 EOF
 
     for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs -n1 basename | sort | uniq); do
-	createlink "$schema" "" "legacy" "true" "current" "current"
+	createlink "$schema" "" "legacy" "true" "current" "$1"
     done
     cat <<EOF
 </ul>
@@ -432,11 +440,11 @@ EOF
 <ul>
 EOF
 
-    for release in $(ls -1d "$root"/Schemas/$1/20* | xargs -n1 basename | sort -r); do
+    for release in $(ls -1d "$root"/Schemas/$1/20* | xargs -n1 basename | grep -v html | sort -r); do
 	reldate=$(parsedate "$release")
 	echo "<li>$reldate - namespace /$release/</li>"
     done
-    for release in $(ls -1d "$root"/XMLschemas/$1/* | xargs -n1 basename | sort -r | grep FC) $(ls -1d "$root"/XMLschemas/$1/* | xargs -n1 basename | sort -r | grep -v FC); do
+    for release in $(ls -1d "$root"/XMLschemas/$1/* | xargs -n1 basename | grep -v html | sort -r | grep FC) $(ls -1d "$root"/XMLschemas/$1/* | xargs -n1 basename | grep -v html | sort -r | grep -v FC); do
 	reldate="2003 ($release)"
 	echo "<li>$reldate - namespace /$release/$schema</li>"
     done
@@ -456,10 +464,10 @@ EOF
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r); do
+    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r); do
 	createlink "$schema" "$year" "current" "false" "current" "$2"
     done
-    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r | grep -v FC); do
+    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r | grep -v FC); do
 	createlink "$schema" "$year" "current" "false" "legacy" "$2"
     done
 
@@ -469,10 +477,10 @@ EOF
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r); do
+    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r); do
 	createlink "$schema" "$year" "legacy" "false" "current" "$2"
     done
-    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r | grep -v FC); do
+    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r | grep -v FC); do
 	createlink "$schema" "$year" "legacy" "false" "legacy" "$2"
     done
 
@@ -500,5 +508,5 @@ for type in $(find "${root}/XMLschemas" -mindepth 1 -maxdepth 1 -type d | sed -e
 done
 
 echo "HTML -> ${root}/Schemas/index.html"
-createmainindex > "${root}/Schemas/index.html"
-createmainindex > "${root}/XMLschemas/index.html"
+createmainindex "current" > "${root}/Schemas/index.html"
+createmainindex "legacy" > "${root}/XMLschemas/index.html"
