@@ -138,6 +138,7 @@ public class NDPIReader extends BaseTiffReader {
       in = new RandomAccessInputStream(currentId);
       tiffParser = new TiffParser(in);
       tiffParser.setUse64BitOffsets(true);
+      tiffParser.setYCbCrCorrection(false);
       return tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
     }
 
