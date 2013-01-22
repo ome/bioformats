@@ -157,6 +157,7 @@ do
 	# Special case copying of legacy schemas
 	if [ "$year" = "2003" ]; then
 	    path="${root}/XMLschemas/${base}/${month}"
+	    path=$(echo "$path" | sed -e 's;/2003-\(.*\);/\1;')
 	    reldate="2003 ($month)"
 	else
 	    path="${root}/Schemas/${base}/${rel}"
@@ -236,26 +237,51 @@ done
 # Create an HTML link for a schema.
 # $1=schema
 # $2=year (may be blank)
-# $2=filter (current or legacy)
-# $3=verbose (true or false)
+# $3=filter (current or legacy)
+# $4=verbose (true or false)
+# $5=schema set (current or legacy)
+# $6=schema location (current=Schemas, legacy=XMLschemas)
 createlink() {
     name=$(basename "$1")
     release="$2"
-    if [ -z "$2" ]; then
-	release=$(mostrecentversion "$name")
-	reldate=$(parsedate "$release")
-    else
-	reldate=$(parsedate "$2")
+    shortname="${name%.xsd}"
+    if [ "$shortname" = "ome" ]; then
+	shortname="OME"
     fi
-    relversion=$(schemaversion "$name" "$release")
+    if [ "$5" = "legacy" ]; then
+	reldate="2003 ($2)"
+    else
+	if [ -z "$2" ]; then
+	    release=$(mostrecentversion "$name")
+	    reldate=$(parsedate "$release")
+	else
+	    reldate=$(parsedate "$2")
+	fi
+    fi
+    if [ "$5" = "current" ]; then
+	relversion=$(schemaversion "$name" "$release")
+    else
+	relversion=$(schemaversion "$name" "2003-$release")
+    fi
     reldesc=" The $(schemadesc "$name")"
     if [ "$4" = "false" ]; then
 	reldesc=""
     fi
-    link=$(find published/Schemas -name "$name" | grep "$release" | head -n1)
-    link=$(echo "$link" | sed -e 's;published/Schemas/;;')
+    if [ "$5" = "current" ]; then
+	link=$(find published/Schemas -name "$name" | grep "$release" | head -n1)
+	link=$(echo "$link" | sed -e 's;published/Schemas/;;')
+	if [ "$6" = "legacy" ]; then
+	    link="../../Schemas/$link"
+	fi
+    else
+	link=$(find published/XMLschemas -name "$name" | grep "$release" | head -n1)
+	link=$(echo "$link" | sed -e 's;published/XMLschemas/;;')
+	if [ "$6" = "current" ]; then
+	    link="../../XMLschemas/$link"
+	fi
+    fi
     if [ -n "$2" ]; then
-	link=$(echo "$link" | sed -e "s;^${name%.xsd}/;;")
+	link=$(echo "$link" | sed -e "s;^${shortname}/;;")
     fi
     if [ -z "$2" ]; then
 	line="<li>${name} - $reldate, version ${relversion} [<a href=\"${link}\">${name}</a>]${reldesc}</li>"
@@ -317,9 +343,13 @@ EOF
 <ul>
 EOF
 
-    for release in $(ls -1d Released-Schema/20* | grep -v 2003 | xargs -n1 basename | sort); do
+    for release in $(ls -1d Released-Schema/20* | grep -v 2003 | xargs -n1 basename | sort -r); do
 	reldate=$(parsedate "$release")
 	echo "<li>$reldate - namespace /$release/</li>"
+    done
+    for release in $(ls -1d Released-Schema/20* | grep 2003 | xargs -n1 basename | sort -r | grep FC | sed -e 's;2003-\(.*\);\1;') $(ls -1d Released-Schema/20* | grep 2003 | xargs -n1 basename | sort -r | grep -v FC | sed -e 's;2003-\(.*\);\1;'); do
+	reldate="2003 ($release)"
+	echo "<li>$reldate - namespace /$release/*.xsd</li>"
     done
 
     cat <<EOF
@@ -336,7 +366,7 @@ EOF
 EOF
 
     for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs -n1 basename | sort | uniq ); do
-	createlink "$schema" "" "current" "true"
+	createlink "$schema" "" "current" "true" "current"
     done
 
     cat <<EOF
@@ -346,7 +376,7 @@ EOF
 EOF
 
     for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs -n1 basename | sort | uniq); do
-	createlink "$schema" "" "legacy" "true"
+	createlink "$schema" "" "legacy" "true" "current" "current"
     done
     cat <<EOF
 </ul>
@@ -358,9 +388,13 @@ EOF
 }
 
 createintermediateindex() {
-	current="This schema is current."
+    current="This schema is currently used."
     if ! iscurrent "$1"; then
 	current="This schema is no longer in use."
+    fi
+    schema="$1.xsd"
+    if [ "$1" = "OME" ]; then
+	schema="ome.xsd"
     fi
 
     cat <<EOF
@@ -402,6 +436,11 @@ EOF
 	reldate=$(parsedate "$release")
 	echo "<li>$reldate - namespace /$release/</li>"
     done
+    for release in $(ls -1d "$root"/XMLschemas/$1/* | xargs -n1 basename | sort -r | grep FC) $(ls -1d "$root"/XMLschemas/$1/* | xargs -n1 basename | sort -r | grep -v FC); do
+	reldate="2003 ($release)"
+	echo "<li>$reldate - namespace /$release/$schema</li>"
+    done
+
 
     cat <<EOF
 </ul>
@@ -413,25 +452,28 @@ EOF
 <p>This has the schema name, the current version, a link to the XSD file, and a short description</p>
 <p><em>Note: Some browsers will try to render XSD files when you view them. This can result in either a blank screen or unformatted text. Choose to either download the file or view the source.</em></p>
 <p><b>$current</b></p>
-<h4>Active Schemas</h4>
+<h4>Most recent schema</h4>
 <ul>
 EOF
-    schema="$1.xsd"
-    if [ "$1" = "OME" ]; then
-	schema="ome.xsd"
-    fi
 
     for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r); do
-	createlink "$schema" "$year" "current" "false"
+	createlink "$schema" "$year" "current" "false" "current" "$2"
     done
+    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r | grep -v FC); do
+	createlink "$schema" "$year" "current" "false" "legacy" "$2"
+    done
+
     cat <<EOF
 </ul>
-<h4>Legacy Schemas</h4>
+<h4>Older schemas</h4>
 <ul>
 EOF
 
     for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r); do
-	createlink "$schema" "$year" "legacy" "false"
+	createlink "$schema" "$year" "legacy" "false" "current" "$2"
+    done
+    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | sort -r | grep -v FC); do
+	createlink "$schema" "$year" "legacy" "false" "legacy" "$2"
     done
 
     cat <<EOF
@@ -446,9 +488,17 @@ EOF
 for type in $(find "${root}/Schemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/Schemas/;;'); do
     if [ $type != "Samples" ] && [ $type != "Transform" ]; then
         echo "HTML -> $root/Schemas/${type}/index.html"
-        createintermediateindex "$type" > "$root/Schemas/${type}/index.html"
+        createintermediateindex "$type" "current" > "$root/Schemas/${type}/index.html"
+    fi
+done
+
+for type in $(find "${root}/XMLschemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/XMLschemas/;;'); do
+    if [ $type != "Samples" ] && [ $type != "Transform" ]; then
+        echo "HTML -> $root/XMLschemas/${type}/index.html"
+        createintermediateindex "$type" "legacy" > "$root/XMLschemas/${type}/index.html"
     fi
 done
 
 echo "HTML -> ${root}/Schemas/index.html"
 createmainindex > "${root}/Schemas/index.html"
+createmainindex > "${root}/XMLschemas/index.html"
