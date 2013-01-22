@@ -217,8 +217,8 @@ done
 
 # Special cases
 
-# Transform folder
-path="${root}/Schemas/Transform/"
+# Transforms folder
+path="${root}/Schemas/Transforms/"
 dir="Xslt"
 mkdir -p "$path"
 for transform in "$dir"/*.xsl
