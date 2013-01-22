@@ -55,15 +55,15 @@ iscurrent() {
 schemastatus() {
     if iscurrent "$1"; then
 	if ismostrecent "$1" "$2"; then
-	    echo "current (latest)"
+	    echo "currently in use (and is the most recent release)"
 	else
-	    echo "current (superseded)"
+	    echo "currently in use (but superseded by a more recent release)"
 	fi
     else
 	if ismostrecent "$1" "$2"; then
-	    echo "legacy (latest)"
+	    echo "no longer in use (final release)"
 	else
-	    echo "legacy (superseded)"
+	    echo "no longer in use (and superseded by a more recent release)"
 	fi
     fi
 }
