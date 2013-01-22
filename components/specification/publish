@@ -2,6 +2,9 @@
 
 set -e
 
+XARGSOPTS=
+xargs -r </dev/null 2>/dev/null >/dev/null && XARGSOPTS="-r"
+
 # Parse date from a YYYY-MM string
 parsedate() {
     if date -j 2>/dev/null >/dev/null; then
@@ -351,11 +354,11 @@ EOF
 <ul>
 EOF
 
-    for release in $(ls -1d Released-Schema/20* | grep -v 2003 | xargs -n1 basename | sort -r); do
+    for release in $(ls -1d Released-Schema/20* | grep -v 2003 | xargs $XARGSOPTS -n1 basename | sort -r); do
 	reldate=$(parsedate "$release")
 	echo "<li>$reldate - namespace /$release/</li>"
     done
-    for release in $(ls -1d Released-Schema/20* | grep 2003 | xargs -n1 basename | sort -r | grep FC | sed -e 's;2003-\(.*\);\1;') $(ls -1d Released-Schema/20* | grep 2003 | xargs -n1 basename | sort -r | grep -v FC | sed -e 's;2003-\(.*\);\1;'); do
+    for release in $(ls -1d Released-Schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep FC | sed -e 's;2003-\(.*\);\1;') $(ls -1d Released-Schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep -v FC | sed -e 's;2003-\(.*\);\1;'); do
 	reldate="2003 ($release)"
 	echo "<li>$reldate - namespace /$release/*.xsd</li>"
     done
@@ -373,7 +376,7 @@ EOF
 <ul>
 EOF
 
-    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs -n1 basename | sort | uniq ); do
+    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq ); do
 	createlink "$schema" "" "current" "true" "current" "$1"
     done
 
@@ -383,7 +386,7 @@ EOF
 <ul>
 EOF
 
-    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs -n1 basename | sort | uniq); do
+    for schema in $(find published/Schemas -name '*xsd' | grep -v "Samples" | xargs $XARGSOPTS -n1 basename | sort | uniq); do
 	createlink "$schema" "" "legacy" "true" "current" "$1"
     done
     cat <<EOF
@@ -440,14 +443,16 @@ EOF
 <ul>
 EOF
 
-    for release in $(ls -1d "$root"/Schemas/$1/20* | xargs -n1 basename | grep -v html | sort -r); do
+    for release in $(ls -1d "$root"/Schemas/$1/20* | xargs $XARGSOPTS -n1 basename | grep -v html | sort -r); do
 	reldate=$(parsedate "$release")
 	echo "<li>$reldate - namespace /$release/</li>"
     done
-    for release in $(ls -1d "$root"/XMLschemas/$1/* | xargs -n1 basename | grep -v html | sort -r | grep FC) $(ls -1d "$root"/XMLschemas/$1/* | xargs -n1 basename | grep -v html | sort -r | grep -v FC); do
-	reldate="2003 ($release)"
-	echo "<li>$reldate - namespace /$release/$schema</li>"
-    done
+    if [ -d "${root}/XMLschemas/$1" ]; then
+	for release in $(ls -1d "$root"/XMLschemas/$1/* | xargs $XARGSOPTS -n1 basename | grep -v html | sort -r | grep FC) $(ls -1d "$root"/XMLschemas/$1/* | xargs $XARGSOPTS -n1 basename | grep -v html | sort -r | grep -v FC); do
+	    reldate="2003 ($release)"
+	    echo "<li>$reldate - namespace /$release/$schema</li>"
+	done
+    fi
 
 
     cat <<EOF
@@ -464,10 +469,10 @@ EOF
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r); do
+    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v html | sort -r); do
 	createlink "$schema" "$year" "current" "false" "current" "$2"
     done
-    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r | grep -v FC); do
+    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v html | sort -r | grep -v FC); do
 	createlink "$schema" "$year" "current" "false" "legacy" "$2"
     done
 
@@ -477,10 +482,10 @@ EOF
 <ul>
 EOF
 
-    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r); do
+    for year in $(find published/Schemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v html | sort -r); do
 	createlink "$schema" "$year" "legacy" "false" "current" "$2"
     done
-    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs -n1 dirname | xargs -n1 basename | grep -v html | sort -r | grep -v FC); do
+    for year in $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v html | sort -r | grep FC) $(find published/XMLschemas -name "$schema" | grep -v "Samples" | xargs $XARGSOPTS -n1 dirname | xargs $XARGSOPTS -n1 basename | grep -v html | sort -r | grep -v FC); do
 	createlink "$schema" "$year" "legacy" "false" "legacy" "$2"
     done
 
@@ -509,4 +514,5 @@ done
 
 echo "HTML -> ${root}/Schemas/index.html"
 createmainindex "current" > "${root}/Schemas/index.html"
+echo "HTML -> ${root}/XMLschemas/index.html"
 createmainindex "legacy" > "${root}/XMLschemas/index.html"
