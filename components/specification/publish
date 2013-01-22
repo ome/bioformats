@@ -103,7 +103,7 @@ schemadesc() {
 	AnalysisModule)
 	    echo "Analysis Module Library schema. Analysis modules are image analysis algorithms or, more generally, how information is generated in OME. Makes use of CLI and MLI schemas." ;;
 	CA)
-	    echo "standard custom attribute schema." ;;
+	    echo "standard Custom Attribute schema." ;;
 	CLI)
 	    echo "Command Line Interface sub-schema." ;;
 	DataHistory)
