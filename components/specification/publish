@@ -499,14 +499,14 @@ EOF
 }
 
 for type in $(find "${root}/Schemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/Schemas/;;'); do
-    if [ $type != "Samples" ] && [ $type != "Transform" ]; then
+    if [ $type != "Samples" ] && [ $type != "Transforms" ]; then
         echo "HTML -> $root/Schemas/${type}/index.html"
         createintermediateindex "$type" "current" > "$root/Schemas/${type}/index.html"
     fi
 done
 
 for type in $(find "${root}/XMLschemas" -mindepth 1 -maxdepth 1 -type d | sed -e 's;^published/XMLschemas/;;'); do
-    if [ $type != "Samples" ] && [ $type != "Transform" ]; then
+    if [ $type != "Samples" ] && [ $type != "Transforms" ]; then
         echo "HTML -> $root/XMLschemas/${type}/index.html"
         createintermediateindex "$type" "legacy" > "$root/XMLschemas/${type}/index.html"
     fi
