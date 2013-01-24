@@ -395,7 +395,7 @@ public class PrairieReader extends FormatReader {
     final Integer bitDepth = meta.getBitDepth();
     int bpp = bitDepth == null ? -1 : bitDepth;
 
-    core = new CoreMetadata[seriesCount];
+    core.clear();
     framesAreTime = new boolean[seriesCount];
     for (int s = 0; s < seriesCount; s++) {
       final Sequence sequence = sequence(s);
@@ -425,22 +425,23 @@ public class PrairieReader extends FormatReader {
       final int sizeY = linesPerFrame == null ? tiff.getSizeY() : linesPerFrame;
       framesAreTime[s] = sequence.isTimeSeries() && sizeT == 1;
 
-      core[s] = new CoreMetadata();
-      core[s].sizeX = sizeX;
-      core[s].sizeY = sizeY;
-      core[s].sizeZ = framesAreTime[s] ? 1 : indexCount;
-      core[s].sizeC = channelCount;
-      core[s].sizeT = framesAreTime[s] ? indexCount : sizeT;
-      core[s].pixelType = tiff.getPixelType();
-      core[s].bitsPerPixel = bpp;
-      core[s].imageCount = core[s].sizeZ * core[s].sizeC * core[s].sizeT;
-      core[s].dimensionOrder = "XYCZT";
-      core[s].orderCertain = true;
-      core[s].rgb = false;
-      core[s].littleEndian = tiff.isLittleEndian();
-      core[s].interleaved = false;
-      core[s].indexed = tiff.isIndexed();
-      core[s].falseColor = false;
+      final CoreMetadata cm = new CoreMetadata();
+      cm.sizeX = sizeX;
+      cm.sizeY = sizeY;
+      cm.sizeZ = framesAreTime[s] ? 1 : indexCount;
+      cm.sizeC = channelCount;
+      cm.sizeT = framesAreTime[s] ? indexCount : sizeT;
+      cm.pixelType = tiff.getPixelType();
+      cm.bitsPerPixel = bpp;
+      cm.imageCount = cm.sizeZ * cm.sizeC * cm.sizeT;
+      cm.dimensionOrder = "XYCZT";
+      cm.orderCertain = true;
+      cm.rgb = false;
+      cm.littleEndian = tiff.isLittleEndian();
+      cm.interleaved = false;
+      cm.indexed = tiff.isIndexed();
+      cm.falseColor = false;
+      core.add(cm);
     }
   }
 
