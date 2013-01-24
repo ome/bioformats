@@ -3,7 +3,7 @@
 # gen.sh - A script for generating the OME-XML Java library source code.
 # See http://www.openmicroscopy.org/site/support/file-formats/ome-xml-java-library for more information.
 
-export PYTHONPATH=Genshi-0.5dev_r765-py2.4-macosx-10.4-fat.egg
+export PYTHONPATH=egg/Genshi-0.5dev_r765-py2.4-macosx-10.4-fat.egg
 
 legacy_ome_path=~/svn/ome/src/xml/schemas/ome.xsd
 modern_schemas="2007-06 2008-02 2008-09"
