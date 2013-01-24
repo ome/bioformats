@@ -1,0 +1,54 @@
+.. index:: Analyze 7.5
+.. index:: .img, .hdr
+
+Analyze 7.5
+===============================================================================
+
+Extensions: .img, .hdr 
+
+Developer: `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Analyze 7.5 <analyze-75-metadata>`
+
+
+
+We currently have:
+
+* `an Analyze 7.5 specification document <http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf>`_ 
+* several Analyze 7.5 datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Very good|
+
+Presence: |Good|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`AnalyzeReader.java`
+
+Notes:
+
+

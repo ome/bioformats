@@ -1,0 +1,56 @@
+.. index:: Lambert Instruments FLIM
+.. index:: .fli
+
+Lambert Instruments FLIM
+===============================================================================
+
+Extensions: .fli 
+
+Developer: `Lambert Instruments <http://www.lambert-instruments.com>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Lambert Instruments FLIM <lambert-instruments-flim-metadata>`
+
+
+
+We currently have:
+
+* an LI-FLIM specification document 
+* several example LI-FLIM datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Very good|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`LiFlimReader.java`
+
+Notes:
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+

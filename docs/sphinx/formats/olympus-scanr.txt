@@ -1,0 +1,54 @@
+.. index:: Olympus ScanR
+.. index:: .xml, .dat, .tif
+
+Olympus ScanR
+===============================================================================
+
+Extensions: .xml, .dat, .tif 
+
+Developer: `Olympus <http://www.olympus.com/>`_
+
+Owner: `Olympus <http://www.olympus.com/>`_
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Olympus ScanR <olympus-scanr-metadata>`
+
+
+
+We currently have:
+
+* several ScanR datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Good|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`ScanrReader.java`
+
+Notes:
+
+

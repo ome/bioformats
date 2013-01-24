@@ -1,0 +1,59 @@
+.. index:: Animated PNG
+.. index:: .png
+
+Animated PNG
+===============================================================================
+
+Extensions: .png 
+
+Developer: `The Animated PNG Project <http://www.animatedpng.com/>`_
+
+
+**Support**
+
+
+SCIFIO: |yes|
+
+Export: |yes|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Animated PNG <png-metadata>`
+
+Freely Available Software:
+
+- `Firefox 3+ <http://www.mozilla.com/firefox>`_ 
+- `Opera 9.5+ <http://www.opera.com/download>`_ 
+- `KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
+
+
+We currently have:
+
+* `a specification document <http://wiki.mozilla.org/APNG_Specification>`_ 
+* several APNG files
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Outstanding|
+
+Openness: |Outstanding|
+
+Presence: |Good|
+
+Utility: |Poor|
+
+
+**Additional Information**
+
+
+Source Code: :scifioreader:`APNGReader.java`
+
+Notes:
+
+

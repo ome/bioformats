@@ -160,10 +160,10 @@ public class JPXReader extends FormatReader {
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
     if (resolutionLevels != null) {
-      options.resolution = Math.abs(series - resolutionLevels);
+      options.resolution = Math.abs(getSeries() - resolutionLevels);
     }
     else if (getSeriesCount() > 1) {
-      options.resolution = series;
+      options.resolution = getSeries();
     }
 
     in.seek(pixelOffsets.get(no));
@@ -183,46 +183,47 @@ public class JPXReader extends FormatReader {
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
+    CoreMetadata ms0 = core.get(0);
 
     JPEG2000MetadataParser metadataParser = new JPEG2000MetadataParser(in);
     if (metadataParser.isRawCodestream()) {
       LOGGER.info("Codestream is raw, using codestream dimensions.");
-      core[0].sizeX = metadataParser.getCodestreamSizeX();
-      core[0].sizeY = metadataParser.getCodestreamSizeY();
-      core[0].sizeC = metadataParser.getCodestreamSizeC();
-      core[0].pixelType = metadataParser.getCodestreamPixelType();
+      ms0.sizeX = metadataParser.getCodestreamSizeX();
+      ms0.sizeY = metadataParser.getCodestreamSizeY();
+      ms0.sizeC = metadataParser.getCodestreamSizeC();
+      ms0.pixelType = metadataParser.getCodestreamPixelType();
     }
     else {
       LOGGER.info("Codestream is JP2 boxed, using header dimensions.");
-      core[0].sizeX = metadataParser.getHeaderSizeX();
-      core[0].sizeY = metadataParser.getHeaderSizeY();
-      core[0].sizeC = metadataParser.getHeaderSizeC();
-      core[0].pixelType = metadataParser.getHeaderPixelType();
+      ms0.sizeX = metadataParser.getHeaderSizeX();
+      ms0.sizeY = metadataParser.getHeaderSizeY();
+      ms0.sizeC = metadataParser.getHeaderSizeC();
+      ms0.pixelType = metadataParser.getHeaderPixelType();
     }
     lut = metadataParser.getLookupTable();
 
     findPixelOffsets();
 
-    core[0].sizeZ = 1;
-    core[0].sizeT = pixelOffsets.size();
-    core[0].imageCount = getSizeZ() * getSizeT();
-    core[0].dimensionOrder = "XYCZT";
-    core[0].rgb = getSizeC() > 1;
-    core[0].interleaved = true;
-    core[0].littleEndian = false;
-    core[0].indexed = !isRGB() && lut != null;
+    ms0.sizeZ = 1;
+    ms0.sizeT = pixelOffsets.size();
+    ms0.imageCount = getSizeZ() * getSizeT();
+    ms0.dimensionOrder = "XYCZT";
+    ms0.rgb = getSizeC() > 1;
+    ms0.interleaved = true;
+    ms0.littleEndian = false;
+    ms0.indexed = !isRGB() && lut != null;
 
     // New core metadata now that we know how many sub-resolutions we have.
     if (resolutionLevels != null) {
-      CoreMetadata[] newCore = new CoreMetadata[resolutionLevels + 1];
-      newCore[0] = core[0];
-      for (int i = 1; i < newCore.length; i++) {
-        newCore[i] = new CoreMetadata(this, 0);
-        newCore[i].sizeX = newCore[i - 1].sizeX / 2;
-        newCore[i].sizeY = newCore[i - 1].sizeY / 2;
-        newCore[i].thumbnail = true;
+      int seriesCount = resolutionLevels + 1;
+
+      for (int i = 1; i < seriesCount; i++) {
+        CoreMetadata ms = new CoreMetadata(this, 0);
+        core.add(ms);
+        ms.sizeX = core.get(i - 1).sizeX / 2;
+        ms.sizeY = core.get(i - 1).sizeY / 2;
+        ms.thumbnail = true;
       }
-      core = newCore;
     }
 
     MetadataStore store = makeFilterMetadata();

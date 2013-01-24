@@ -93,7 +93,7 @@ notes = Optional plugin. If you have Nikon's ND2 plugin installed, you can
 type = ImageJ plugin
 class = loci.plugins.About
 version = bfVersion
-url = http://www.loci.wisc.edu/bio-formats/imagej
+url = http://www.openmicroscopy.org/site/support/bio-formats/users/imagej/index.html
 license = GPL
 notes = LOCI Plugins for ImageJ: a collection of ImageJ plugins including
         the Bio-Formats Importer, Bio-Formats Exporter,
@@ -104,7 +104,7 @@ notes = LOCI Plugins for ImageJ: a collection of ImageJ plugins including
 type = ImageJ plugin
 class = loci.plugins.ome.About
 version = omeVersion
-url = http://ome-xml.org/wiki/OmePlugins
+url = http://www.openmicroscopy.org/site/products/bio-formats/downloads
 license = GPL
 notes = OME Plugins for ImageJ: a collection of ImageJ plugins including
         the Download from OME and Upload to OME plugins.
@@ -131,7 +131,7 @@ notes = Optional plugin. If you have View5D installed, the Bio-Formats
 type = Java library
 class = loci.formats.IFormatReader
 version = bfVersion
-url = http://www.loci.wisc.edu/software/bio-formats
+url = https://www.openmicroscopy.org/site/products/bio-formats/downloads
 license = GPL
 notes = OME Bio-Formats package for reading and converting
         biological file formats.

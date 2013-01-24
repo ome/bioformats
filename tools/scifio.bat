@@ -47,7 +47,7 @@ if exist "%SCIFIO_JAR_DIR%\bio-formats.jar" (
   echo Required JAR libraries not found. Please download:
   echo   loci_tools.jar
   echo from:
-  echo   http://www.loci.wisc.edu/bio-formats/downloads
+  echo   http://www.openmicroscopy.org/site/products/bio-formats/downloads
   echo and place in the same directory as the command line tools.
   goto end
 )

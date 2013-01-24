@@ -49,6 +49,7 @@ import java.util.zip.GZIPInputStream;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -603,7 +604,7 @@ public class ICSReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isInterleaved(int) */
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 1);
-    return subC == 0 && core[0].interleaved;
+    return subC == 0 && core.get(0).interleaved;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
@@ -669,7 +670,7 @@ public class ICSReader extends FormatReader {
 
     int sizeC = lifetime ? 1 : getSizeC();
 
-    if (!isRGB() && sizeC > 4 && channelLengths.size() == 1 && storedRGB) {
+    if (!isRGB() && channelLengths.size() == 1 && storedRGB) {
       // channels are stored interleaved, but because there are more than we
       // can display as RGB, we need to separate them
       in.seek(offset +
@@ -686,8 +687,10 @@ public class ICSReader extends FormatReader {
 
       for (int row=y; row<h + y; row++) {
         for (int col=x; col<w + x; col++) {
-          System.arraycopy(data, bpp * ((no % getSizeC()) + sizeC *
-            (row * getSizeX() + col)), buf, bpp * (row * w + col), bpp);
+          int src =
+            bpp * ((no % getSizeC()) + sizeC * (row * getSizeX() + col));
+          int dest = bpp * ((row - y) * w + (col - x));
+          System.arraycopy(data, src, buf, dest, bpp);
         }
       }
     }
@@ -796,6 +799,8 @@ public class ICSReader extends FormatReader {
 
     LOGGER.info("Reading metadata");
 
+    CoreMetadata m = core.get(0);
+
     Double[] pixelSizes = null;
     Double[] timestamps = null;
     String[] units = null;
@@ -889,7 +894,7 @@ public class ICSReader extends FormatReader {
             }
           }
           else if (key.equalsIgnoreCase("layout significant_bits")) {
-            core[0].bitsPerPixel = Integer.parseInt(value);
+            m.bitsPerPixel = Integer.parseInt(value);
           }
         }
         // representation category
@@ -1288,8 +1293,8 @@ public class ICSReader extends FormatReader {
 
     LOGGER.info("Populating core metadata");
 
-    core[0].rgb = false;
-    core[0].dimensionOrder = "XY";
+    m.rgb = false;
+    m.dimensionOrder = "XY";
 
     // find axis sizes
 
@@ -1305,32 +1310,32 @@ public class ICSReader extends FormatReader {
         if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
       }
       else if (axes[i].equals("x")) {
-        core[0].sizeX = axisLengths[i];
+        m.sizeX = axisLengths[i];
       }
       else if (axes[i].equals("y")) {
-        core[0].sizeY = axisLengths[i];
+        m.sizeY = axisLengths[i];
       }
       else if (axes[i].equals("z")) {
-        core[0].sizeZ = axisLengths[i];
+        m.sizeZ = axisLengths[i];
         if (getDimensionOrder().indexOf("Z") == -1) {
-          core[0].dimensionOrder += "Z";
+          m.dimensionOrder += "Z";
         }
       }
       else if (axes[i].equals("t")) {
-        if (getSizeT() == 0) core[0].sizeT = axisLengths[i];
-        else core[0].sizeT *= axisLengths[i];
+        if (getSizeT() == 0) m.sizeT = axisLengths[i];
+        else m.sizeT *= axisLengths[i];
         if (getDimensionOrder().indexOf("T") == -1) {
-          core[0].dimensionOrder += "T";
+          m.dimensionOrder += "T";
         }
       }
       else {
-        if (core[0].sizeC == 0) core[0].sizeC = axisLengths[i];
-        else core[0].sizeC *= axisLengths[i];
+        if (m.sizeC == 0) m.sizeC = axisLengths[i];
+        else m.sizeC *= axisLengths[i];
         channelLengths.add(new Integer(axisLengths[i]));
         storedRGB = getSizeX() == 0;
-        core[0].rgb = getSizeX() == 0 && getSizeC() <= 4 && getSizeC() > 1;
+        m.rgb = getSizeX() == 0 && getSizeC() <= 4 && getSizeC() > 1;
         if (getDimensionOrder().indexOf("C") == -1) {
-          core[0].dimensionOrder += "C";
+          m.dimensionOrder += "C";
         }
 
         if (axes[i].startsWith("c")) {
@@ -1351,18 +1356,23 @@ public class ICSReader extends FormatReader {
       channelTypes.add(FormatTools.CHANNEL);
     }
 
-    core[0].dimensionOrder =
+    if (isRGB() && emWaves != null && emWaves.length == getSizeC()) {
+      m.rgb = false;
+      storedRGB = true;
+    }
+
+    m.dimensionOrder =
       MetadataTools.makeSaneDimensionOrder(getDimensionOrder());
 
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeC() == 0) core[0].sizeC = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    if (getSizeZ() == 0) m.sizeZ = 1;
+    if (getSizeC() == 0) m.sizeC = 1;
+    if (getSizeT() == 0) m.sizeT = 1;
 
-    core[0].interleaved = isRGB();
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
-    core[0].littleEndian = true;
+    m.interleaved = isRGB();
+    m.indexed = false;
+    m.falseColor = false;
+    m.metadataComplete = true;
+    m.littleEndian = true;
 
     // HACK - support for Gray Institute at Oxford's ICS lifetime data
     if (lifetime && labels != null) {
@@ -1372,38 +1382,38 @@ public class ICSReader extends FormatReader {
       if (labels.equalsIgnoreCase("t x y")) {
         // nominal X Y Z is actually C X Y (which is X Y C interleaved)
         newOrder = "XYCZT";
-        core[0].interleaved = true;
-        binCount = core[0].sizeX;
-        core[0].sizeX = core[0].sizeY;
-        core[0].sizeY = core[0].sizeZ;
-        core[0].sizeZ = 1;
+        m.interleaved = true;
+        binCount = m.sizeX;
+        m.sizeX = m.sizeY;
+        m.sizeY = m.sizeZ;
+        m.sizeZ = 1;
       }
       else if (labels.equalsIgnoreCase("x y t")) {
         // nominal X Y Z is actually X Y C
         newOrder = "XYCZT";
-        binCount = core[0].sizeZ;
-        core[0].sizeZ = 1;
+        binCount = m.sizeZ;
+        m.sizeZ = 1;
       }
       else {
         LOGGER.debug("Lifetime data, unexpected 'history labels' " + labels);
       }
 
       if (newOrder != null) {
-        core[0].dimensionOrder = newOrder;
-        core[0].sizeC = binCount;
-        core[0].cLengths = new int[] {binCount};
-        core[0].cTypes = new String[] {FormatTools.LIFETIME};
+        m.dimensionOrder = newOrder;
+        m.sizeC = binCount;
+        m.cLengths = new int[] {binCount};
+        m.cTypes = new String[] {FormatTools.LIFETIME};
       }
     }
 
     // do not modify the Z, T, or channel counts after this point
-    core[0].imageCount = getSizeZ() * getSizeT();
-    if (!isRGB()) core[0].imageCount *= getSizeC();
+    m.imageCount = getSizeZ() * getSizeT();
+    if (!isRGB()) m.imageCount *= getSizeC();
 
     if (byteOrder != null) {
       String firstByte = byteOrder.split(" ")[0];
       int first = Integer.parseInt(firstByte);
-      core[0].littleEndian = rFormat.equals("real") ? first == 1 : first != 1;
+      m.littleEndian = rFormat.equals("real") ? first == 1 : first != 1;
     }
 
     gzip = (compression == null) ? false : compression.equals("gzip");
@@ -1417,10 +1427,10 @@ public class ICSReader extends FormatReader {
 
     int bytes = bitsPerPixel / 8;
 
-    if (bitsPerPixel < 32) core[0].littleEndian = !isLittleEndian();
+    if (bitsPerPixel < 32) m.littleEndian = !isLittleEndian();
 
     boolean fp = rFormat.equals("real");
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, fp);
+    m.pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, fp);
 
     LOGGER.info("Populating OME metadata");
 
@@ -1468,6 +1478,11 @@ public class ICSReader extends FormatReader {
 
         for (int i=0; i<pixelSizes.length; i++) {
           Double pixelSize = pixelSizes[i];
+
+          if (pixelSize == null) {
+            continue;
+          }
+
           String axis = axes != null && axes.length > i ? axes[i] : "";
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {

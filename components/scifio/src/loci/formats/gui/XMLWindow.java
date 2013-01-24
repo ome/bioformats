@@ -51,6 +51,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import loci.common.Constants;
+
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -90,7 +92,8 @@ public class XMLWindow extends JFrame {
     // parse XML from string into DOM structure
     DocumentBuilderFactory docFact = DocumentBuilderFactory.newInstance();
     DocumentBuilder db = docFact.newDocumentBuilder();
-    ByteArrayInputStream is = new ByteArrayInputStream(xml.getBytes());
+    ByteArrayInputStream is =
+      new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
     Document doc = db.parse(is);
     is.close();
 
@@ -151,7 +154,8 @@ public class XMLWindow extends JFrame {
       xmlWindow.setTitle("XML Window - " + filename);
     }
     else {
-      BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+      BufferedReader in = new BufferedReader(
+        new InputStreamReader(System.in, Constants.ENCODING));
       StringBuffer sb = new StringBuffer();
       while (true) {
         String line = in.readLine();

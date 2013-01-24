@@ -30,6 +30,7 @@ import java.io.IOException;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -194,6 +195,8 @@ public class NiftiReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
+    CoreMetadata m = core.get(0);
+
     in.seek(40);
     short check = in.readShort();
     boolean little = check < 1 || check > 7;
@@ -211,15 +214,15 @@ public class NiftiReader extends FormatReader {
     in.order(little);
     pixelFile.order(little);
 
-    core[0].littleEndian = little;
+    m.littleEndian = little;
 
     LOGGER.info("Reading header");
 
     nDimensions = in.readShort();
-    core[0].sizeX = in.readShort();
-    core[0].sizeY = in.readShort();
-    core[0].sizeZ = in.readShort();
-    core[0].sizeT = in.readShort();
+    m.sizeX = in.readShort();
+    m.sizeY = in.readShort();
+    m.sizeZ = in.readShort();
+    m.sizeT = in.readShort();
 
     in.skipBytes(20);
     short dataType = in.readShort();
@@ -232,17 +235,17 @@ public class NiftiReader extends FormatReader {
 
     LOGGER.info("Populating core metadata");
 
-    core[0].sizeC = 1;
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    m.sizeC = 1;
+    if (getSizeZ() == 0) m.sizeZ = 1;
+    if (getSizeT() == 0) m.sizeT = 1;
 
-    core[0].imageCount = getSizeZ() * getSizeT();
-    core[0].indexed = false;
-    core[0].dimensionOrder = "XYCZT";
+    m.imageCount = getSizeZ() * getSizeT();
+    m.indexed = false;
+    m.dimensionOrder = "XYCZT";
 
     populatePixelType(dataType);
-    core[0].rgb = getSizeC() > 1;
-    core[0].interleaved = isRGB();
+    m.rgb = getSizeC() > 1;
+    m.interleaved = isRGB();
 
     LOGGER.info("Populating MetadataStore");
 
@@ -282,38 +285,40 @@ public class NiftiReader extends FormatReader {
   // -- Helper methods --
 
   private void populatePixelType(int dataType) throws FormatException {
+    CoreMetadata m = core.get(0);
+
     switch (dataType) {
       case 1:
       case 2:
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
         break;
       case 4:
-        core[0].pixelType = FormatTools.INT16;
+        m.pixelType = FormatTools.INT16;
         break;
       case 8:
-        core[0].pixelType = FormatTools.INT32;
+        m.pixelType = FormatTools.INT32;
         break;
       case 16:
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
         break;
       case 64:
-        core[0].pixelType = FormatTools.DOUBLE;
+        m.pixelType = FormatTools.DOUBLE;
         break;
       case 128:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC = 3;
+        m.pixelType = FormatTools.UINT8;
+        m.sizeC = 3;
       case 256:
-        core[0].pixelType = FormatTools.INT8;
+        m.pixelType = FormatTools.INT8;
         break;
       case 512:
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
         break;
       case 768:
-        core[0].pixelType = FormatTools.UINT32;
+        m.pixelType = FormatTools.UINT32;
         break;
       case 2304:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC = 4;
+        m.pixelType = FormatTools.UINT8;
+        m.sizeC = 4;
       default:
         throw new FormatException("Unsupported data type: " + dataType);
     }

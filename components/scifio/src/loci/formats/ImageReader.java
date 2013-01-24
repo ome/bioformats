@@ -508,9 +508,17 @@ public class ImageReader implements IFormatReader {
     return getReader().getMetadata();
   }
 
-  /* @see IFormatReader#getCoreMetadata() */
+  /**
+   * @deprecated
+   * @see IFormatReader#getCoreMetadata()
+   */
   public CoreMetadata[] getCoreMetadata() {
-    return getReader().getCoreMetadata();
+    return getCoreMetadataList().toArray(new CoreMetadata[0]);
+  }
+
+  /* @see IFormatReader#getCoreMetadataList() */
+  public List<CoreMetadata> getCoreMetadataList() {
+    return getReader().getCoreMetadataList();
   }
 
   /* @see IFormatReader#close(boolean) */
@@ -663,6 +671,19 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatReader#getCoreIndex() */
   public int getCoreIndex() {
     return getReader().getCoreIndex();
+  }
+
+  /* @see IFormatReader#setCoreIndex(int) */
+  public void setCoreIndex(int no) {
+    getReader().setCoreIndex(no);
+  }
+
+  public int seriesToCoreIndex(int series) {
+    return getReader().seriesToCoreIndex(series);
+  }
+
+  public int coreIndexToSeries(int index) {
+    return getReader().coreIndexToSeries(index);
   }
 
   /* @see IFormatReader#getResolutionCount() */

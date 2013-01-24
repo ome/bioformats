@@ -37,6 +37,7 @@
 package loci.formats;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Set;
 
 import loci.common.RandomAccessInputStream;
@@ -124,6 +125,13 @@ public abstract class DelegateReader extends FormatReader {
     super.setSeries(no);
     if (nativeReaderInitialized) nativeReader.setSeries(no);
     if (legacyReaderInitialized) legacyReader.setSeries(no);
+  }
+
+  /* @see IFormatReader#setCoreIndex(int) */
+  public void setCoreIndex(int no) {
+    super.setCoreIndex(no);
+    if (nativeReaderInitialized) nativeReader.setCoreIndex(no);
+    if (legacyReaderInitialized) legacyReader.setCoreIndex(no);
   }
 
   /* @see IFormatReader#setResolution(int) */
@@ -272,12 +280,12 @@ public abstract class DelegateReader extends FormatReader {
       }
     }
     if (nativeReaderInitialized) {
-      core = nativeReader.getCoreMetadata();
+      core = new ArrayList<CoreMetadata>(nativeReader.getCoreMetadataList());
       metadata = nativeReader.getGlobalMetadata();
       metadataStore = nativeReader.getMetadataStore();
     }
     if (legacyReaderInitialized) {
-      core = legacyReader.getCoreMetadata();
+      core = new ArrayList<CoreMetadata>(legacyReader.getCoreMetadataList());
       metadata = legacyReader.getGlobalMetadata();
       metadataStore = legacyReader.getMetadataStore();
     }

@@ -67,6 +67,11 @@ public class Updater implements PlugIn {
   // -- PlugIn API methods --
 
   public void run(String arg) {
+    if (IS_FIJI) {
+      IJ.showMessage("Please use 'Help > Update Fiji' to update.");
+      return;
+    }
+
     GenericDialog upgradeDialog = new GenericDialog("Update LOCI Plugins");
     String[] options = new String[] {TRUNK, DAILY, STABLE};
     upgradeDialog.addChoice("Release", options, options[0]);
@@ -88,9 +93,7 @@ public class Updater implements PlugIn {
     else if (release.equals(STABLE)) {
       urlPath = UpgradeChecker.STABLE_BUILD;
     }
-    if (!IS_FIJI) {
-      urlPath += UpgradeChecker.TOOLS;
-    }
+    urlPath += UpgradeChecker.TOOLS;
     install(urlPath);
   }
 
@@ -107,19 +110,7 @@ public class Updater implements PlugIn {
     BF.status(false, "Downloading...");
     boolean success = false;
     if (IS_FIJI) {
-      jarPath = new File(jarPath).getParent();
-
-      success = true;
-      UpgradeChecker upgrader = new UpgradeChecker();
-      for (String file : UpgradeChecker.INDIVIDUAL_JARS) {
-        BF.status(false, "Download " + file);
-        String foundFile = find(jarPath, file);
-        String url = urlPath + File.separator + file;
-        boolean localSuccess = upgrader.install(url, foundFile);
-        if (!localSuccess) {
-          success = false;
-        }
-      }
+      return;
     }
     else {
       success = new UpgradeChecker().install(urlPath, jarPath);

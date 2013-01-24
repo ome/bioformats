@@ -42,6 +42,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.List;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DebugTools;
 import loci.common.Location;
@@ -276,7 +277,8 @@ public final class ImageConverter {
       if (overwrite == null) {
         LOGGER.warn("Output file {} exists.", out);
         LOGGER.warn("Do you want to overwrite it? ([y]/n)");
-        BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader r = new BufferedReader(
+          new InputStreamReader(System.in, Constants.ENCODING));
         String choice = r.readLine().trim().toLowerCase();
         overwrite = !choice.startsWith("n");
       }
@@ -368,6 +370,16 @@ public final class ImageConverter {
             store.setPixelsType(PixelType.UINT8, 0);
           }
 
+          if (channel >= 0) {
+            meta.setPixelsSizeC(new PositiveInteger(1), 0);
+          }
+          if (zSection >= 0) {
+            meta.setPixelsSizeZ(new PositiveInteger(1), 0);
+          }
+          if (timepoint >= 0) {
+            meta.setPixelsSizeT(new PositiveInteger(1), 0);
+          }
+
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
         catch (ServiceException e) {
@@ -383,6 +395,16 @@ public final class ImageConverter {
 
           if (autoscale) {
             store.setPixelsType(PixelType.UINT8, i);
+          }
+
+          if (channel >= 0) {
+            store.setPixelsSizeC(new PositiveInteger(1), 0);
+          }
+          if (zSection >= 0) {
+            store.setPixelsSizeZ(new PositiveInteger(1), 0);
+          }
+          if (timepoint >= 0) {
+            store.setPixelsSizeT(new PositiveInteger(1), 0);
           }
         }
 

@@ -1,0 +1,132 @@
+Using Bio-Formats as a Java library
+===================================
+
+If you wish to make use of Bio-Formats within your own software, you can
+:bf_plone:`download bio-formats.jar <downloads>` to use it as a library. Just 
+add **bio-formats.jar** to your CLASSPATH or build path. You will also need 
+**loci-common.jar** for common I/O functions, **ome-xml.jar** for metadata 
+standardization, and `SLF4J <http://slf4j.org/>`_ for logging. 
+
+Beyond **bio-formats.jar**, **loci-common.jar**, **ome-xml.jar**, and
+`SLF4J <http://slf4j.org/>`_, no additional libraries are required.
+However, there are certain packages that if present will be utilized to
+provide additional functionality. To include one, just place it in the
+same folder.
+
+.. tabularcolumns:: |p{5cm}|c|c|p{5cm}|
+
+.. list-table::
+  :header-rows: 1
+  :widths:  30, 10, 20, 30
+
+  *
+    - Package
+    - Filename
+    - License
+    - Notes
+
+  *
+    - `Apache Jakarta POI <http://jakarta.apache.org/poi/>`_ library, LOCI fork
+    - :bfjob:`poi-loci.jar <lastSuccessfulBuild/artifact/artifacts/poi-loci.jar>`
+    - Apache
+    - For OLE-based formats (zvi, oib, ipw, cxd)
+
+  *
+    - `MDB Tools project <http://sourceforge.net/projects/mdbtools>`_ Java port, LOCI fork
+    - :bfjob:`mdbtools-java.jar <lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`
+    - LGPL
+    - For Olympus CellR and Zeiss LSM metadata (mdb)
+
+  *
+    - `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ pure Java implementation, LOCI fork
+    - :bfjob:`jai_imageio.jar <lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`
+    - BSD
+    - For JPEG2000-based formats (nd2, jp2)
+
+  *
+    - `NetCDF Java library <http://www.unidata.ucar.edu/software/netcdf-java/>`_
+    - :bfjob:`netcdf-4.0.jar <lastSuccessfulBuild/artifact/artifacts/netcdf-4.0.jar>`
+    - LGPL
+    - For HDF5-based formats (Imaris 5.5, MINC MRI)
+
+  *
+    - `QuickTime for Java <http://www.apple.com/quicktime/download/standalone.html>`_
+    - **QTJava.zip**
+    - Commercial
+    - For additional QuickTime codecs
+
+See the list in the :source:`Bio-Formats toplevel build file <build.xml>`
+for a complete and up-to-date list of all optional libraries, which can
+all be found in our :source:`Git repository <jar>`.
+
+Examples of usage
+-----------------
+
+:source:`ImageConverter <components/scifio/src/loci/formats/tools/ImageConverter.java>` - 
+A simple command line tool for converting between formats.
+
+:source:`ImageInfo <components/scifio/src/loci/formats/tools/ImageInfo.java>` - 
+A more involved command line utility for thoroughly reading an input file, 
+printing some information about it, and displaying the pixels
+onscreen using the Bio-Formats viewer.
+
+:source:`MinimumWriter <components/bio-formats/utils/MinimumWriter.java>` - 
+A command line utility demonstrating the minimum amount of metadata needed to 
+write a file.
+
+:source:`PrintTimestamps <components/bio-formats/utils/PrintTimestamps.java>` - 
+A command line example demonstrating how to extract timestamps from a file.
+
+:source:`Simple_Read <components/loci-plugins/utils/Simple_Read.java>` - 
+A simple ImageJ plugin demonstrating how to use Bio-Formats to read files into 
+ImageJ (see :doc:`/users/imagej/index`).
+
+:source:`Read_Image <components/loci-plugins/utils/Read_Image.java>` - 
+An ImageJ plugin that uses Bio-Formats to build up an image stack, reading 
+image planes one by one (see :doc:`/users/imagej/index`).
+
+:source:`Mass_Importer <components/loci-plugins/utils/Mass_Importer.java>` - 
+A simple plugin for ImageJ that demonstrates how to open all image files in a 
+directory using Bio-Formats, grouping files with similar names to avoiding 
+opening the same dataset more than once (see :doc:`/users/imagej/index`).
+
+
+A Note on Java Web Start (loci\_tools.jar vs. bio-formats.jar)
+--------------------------------------------------------------
+
+To use Bio-Formats with your Java Web Start application, we recommend
+using **bio-formats.jar** rather than **loci\_tools.jar**—the latter is
+merely a bundle of **bio-formats.jar** plus all its optional
+dependencies.
+
+The **loci\_tools.jar** bundle is intended as a convenience (e.g. to
+simplify installation as an ImageJ plugin), but is by no means the only
+solution for developers. We recommend using **bio-formats.jar** as a
+separate entity depending on your needs as a developer.
+
+The bundle is quite large because we have added support for several
+formats that need large helper libraries (e.g. Imaris' HDF-based
+format). However, these additional libraries are optional; Bio-Formats
+has been coded using reflection so that it can both compile and run
+without them.
+
+When deploying a JNLP-based application, using **loci\_tools.jar**
+directly is not the best approach, since every time Bio-Formats is
+updated, the server would need to feed another 8+ MB JAR file to the
+client. Rather, Web Start is a case where you should keep the JARs
+separate, since JNLP was designed to make management of JAR dependencies
+trivial for the end user. By keeping **bio-formats.jar** and the
+optional dependencies separate, only a <1 MB JAR needs to be updated
+when **bio-formats.jar** changes.
+
+As a developer, you have the option of packaging **bio-formats.jar**
+with as many or as few optional libraries as you wish, to cut down on
+file size as needed. You are free to make whatever kind of "stripped
+down" version you require. You could even build a custom
+**bio-formats.jar** that excludes certain classes, if you like.
+
+For an explicit enumeration of all the optional libraries included in
+**loci\_tools.jar**, see the ``loci-tools.libraries`` variable of the
+:source:`ant/toplevel.properties <ant/toplevel.properties>`
+file of the distribution. You can also read our notes about each in the
+source distribution's Ant :source:`build.xml <build.xml#L240>` script.

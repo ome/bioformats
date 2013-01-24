@@ -38,6 +38,7 @@ package loci.formats;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.meta.MetadataStore;
@@ -316,7 +317,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Gets the number of series in this file. */
   int getSeriesCount();
 
-  /** Activates the specified series. */
+  /** Activates the specified series. This also resets the resolution to 0. */
   void setSeries(int no);
 
   /** Gets the currently active series. */
@@ -439,7 +440,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   Hashtable<String, Object> getSeriesMetadata();
 
   /** Obtains the core metadata values for the current file. */
-  CoreMetadata[] getCoreMetadata();
+  List<CoreMetadata> getCoreMetadataList();
 
   /**
    * Specifies whether ugly metadata (entries with unprintable characters,
@@ -501,8 +502,22 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   // -- Sub-resolution API methods --
 
+  /** Returns the first core index corresponding to the specified series. */
+  int seriesToCoreIndex(int series);
+
+  /** Returns the series corresponding to the specified core index. */
+  int coreIndexToSeries(int index);
+
   /** Return the index into CoreMetadata of the current resolution/series. */
   int getCoreIndex();
+
+  /**
+   * Set the current resolution/series (ignores subresolutions).
+   *
+   * Equivalent to setSeries, but with flattened resolutions always
+   * set to false.
+   */
+  void setCoreIndex(int no);
 
   /**
    * Return the number of resolutions for the current series.
@@ -555,4 +570,8 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    */
   Hashtable<String, Object> getMetadata();
 
+  /** Obtains the core metadata values for the current file.
+   * @deprecated Use #getCoreMetadataList instead.
+   */
+  CoreMetadata[] getCoreMetadata();
 }

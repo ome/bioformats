@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -113,19 +114,20 @@ public class CanonRawReader extends FormatReader {
       pixBuffer[i + 1] = v;
     }
 
-    core[0].sizeX = 4080;
-    core[0].sizeY = 3048;
-    core[0].sizeC = 3;
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = getSizeZ() * getSizeT();
-    core[0].indexed = false;
-    core[0].littleEndian = true;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = FormatTools.UINT16;
-    core[0].bitsPerPixel = 12;
-    core[0].rgb = true;
-    core[0].interleaved = true;
+    CoreMetadata m = core.get(0);
+    m.sizeX = 4080;
+    m.sizeY = 3048;
+    m.sizeC = 3;
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.imageCount = getSizeZ() * getSizeT();
+    m.indexed = false;
+    m.littleEndian = true;
+    m.dimensionOrder = "XYCZT";
+    m.pixelType = FormatTools.UINT16;
+    m.bitsPerPixel = 12;
+    m.rgb = true;
+    m.interleaved = true;
 
     BitBuffer bb = new BitBuffer(pixBuffer);
     plane = new byte[FormatTools.getPlaneSize(this)];

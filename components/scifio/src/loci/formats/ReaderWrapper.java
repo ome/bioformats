@@ -39,7 +39,9 @@ package loci.formats;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 import loci.common.RandomAccessInputStream;
@@ -424,12 +426,25 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSeriesMetadata();
   }
 
+  /**
+   * @deprecated
+   * @see IFormatReader#getCoreMetadataList()
+   */
   public CoreMetadata[] getCoreMetadata() {
-    //return reader.getCoreMetadata();
+    return getCoreMetadataList().toArray(new CoreMetadata[0]);
+  }
 
-    // NB: Be sure all CoreMetadata values are returned correctly,
-    // regardless of any method overrides.
-    return copyCoreMetadata(CoreMetadata.class, this);
+  public List<CoreMetadata> getCoreMetadataList() {
+    // Only used for determining the object type.
+    List<CoreMetadata> oldcore = reader.getCoreMetadataList();
+    List<CoreMetadata> newcore = new ArrayList<CoreMetadata>();
+
+    // Note that this only works with flattened resolutions
+    for (int s=0; s<oldcore.size(); s++) {
+      newcore.add(oldcore.get(s).clone(this, s));
+    }
+
+    return newcore;
   }
 
   public void setMetadataFiltered(boolean filter) {
@@ -486,6 +501,18 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public int getCoreIndex() {
     return reader.getCoreIndex();
+  }
+
+  public void setCoreIndex(int no) {
+    reader.setCoreIndex(no);
+  }
+
+  public int seriesToCoreIndex(int series) {
+    return reader.seriesToCoreIndex(series);
+  }
+
+  public int coreIndexToSeries(int index) {
+    return reader.coreIndexToSeries(index);
   }
 
   public int getResolutionCount() {
@@ -597,41 +624,6 @@ public abstract class ReaderWrapper implements IFormatReader {
   /** @deprecated */
   public Hashtable<String, Object> getMetadata() {
     return reader.getMetadata();
-  }
-
-  // -- Helper methods --
-
-  /** Creates a copy of the core metadata instantiated using the provided CoreMetadata type, 
-   * matching the state of the given reader. */
-  protected <T extends CoreMetadata> T[] copyCoreMetadata(Class<T> c, IFormatReader r) {
-    int count = 0;
-    int currentSeries = r.getSeries();
-
-    for (int i=0; i<r.getSeriesCount(); i++) {
-      r.setSeries(i);
-      count += r.getResolutionCount();
-    }
-
-    r.setSeries(currentSeries);
-
-    @SuppressWarnings("unchecked")
-    T[] core = (T[])Array.newInstance(c, count);
-    
-    for (int s=0; s<core.length; s++) {
-      T meta = null;
-      
-      try {
-        meta = c.newInstance();
-      } catch (InstantiationException e) {
-        throw new IllegalArgumentException("Failed to create metadata:\n" + e);
-      } catch (IllegalAccessException e) {
-        throw new IllegalArgumentException("Failed to create metadata:\n" + e);
-      }
-      
-      meta.copy(r, s);
-      core[s] = meta;
-    }
-    return core;
   }
 
 }

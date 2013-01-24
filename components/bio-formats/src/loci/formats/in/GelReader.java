@@ -155,13 +155,13 @@ public class GelReader extends BaseTiffReader {
     tiffParser.fillInIFD(firstIFD);
 
     fmt = firstIFD.getIFDLongValue(MD_FILETAG, LINEAR);
-    if (fmt == SQUARE_ROOT) core[0].pixelType = FormatTools.FLOAT;
+    if (fmt == SQUARE_ROOT) core.get(0).pixelType = FormatTools.FLOAT;
 
     TiffRational scale = (TiffRational) firstIFD.getIFDValue(MD_SCALE_PIXEL);
     if (scale == null) scale = new TiffRational(1, 1);
 
-    core[0].imageCount = ifds.size();
-    core[0].sizeT = getImageCount();
+    core.get(0).imageCount = ifds.size();
+    core.get(0).sizeT = getImageCount();
 
     // ignore MD_COLOR_TABLE
 

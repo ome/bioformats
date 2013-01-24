@@ -1,0 +1,57 @@
+.. index:: IPLab-Mac
+.. index:: .ipm
+
+IPLab-Mac
+===============================================================================
+
+Extensions: .ipm 
+
+
+Owner: `BioVision Technologies <http://biovis.com/>`_
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`IPLab-Mac <iplab-mac-metadata>`
+
+
+
+We currently have:
+
+* a few IPLab-Mac datasets 
+* a specification document
+
+We would like to have:
+
+* more IPLab-Mac datasets
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Very good|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`IvisionReader.java`
+
+Notes:
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+

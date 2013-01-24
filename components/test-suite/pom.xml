@@ -71,7 +71,12 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.12.1</version>
+      <version>6.8</version>
+    </dependency>
+    <dependency>
+      <groupId>nl.javadude.assumeng</groupId>
+      <artifactId>assumeng</artifactId>
+      <version>1.2.2</version>
     </dependency>
   </dependencies>
 
@@ -136,12 +141,12 @@
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
-      <id>loci.releases</id>
-      <url>http://dev.loci.wisc.edu/maven2/releases</url>
+      <id>imagej.releases</id>
+      <url>http://maven.imagej.net/content/repositories/releases</url>
     </repository>
     <repository>
-      <id>loci.snapshots</id>
-      <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
+      <id>imagej.snapshots</id>
+      <url>http://maven.imagej.net/content/repositories/snapshots</url>
     </repository>
   </repositories>
 

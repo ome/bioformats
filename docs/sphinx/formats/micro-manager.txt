@@ -1,0 +1,56 @@
+.. index:: Micro-Manager
+.. index:: .tif, .txt, .xml
+
+Micro-Manager
+===============================================================================
+
+Extensions: .tif, .txt, .xml 
+
+Developer: `Vale Lab <http://valelab.ucsf.edu/>`_
+
+
+**Support**
+
+
+SCIFIO: |yes|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Micro-Manager <micro-manager-metadata>`
+
+Freely Available Software:
+
+- `Micro-Manager <http://micro-manager.org/>`_
+
+
+We currently have:
+
+* many Micro-manager datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Outstanding|
+
+Metadata: |Very good|
+
+Openness: |Outstanding|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+
+**Additional Information**
+
+
+Source Code: :scifioreader:`MicromanagerReader.java`
+
+Notes:
+
+

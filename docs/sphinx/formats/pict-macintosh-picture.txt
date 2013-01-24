@@ -1,0 +1,60 @@
+.. index:: PICT (Macintosh Picture)
+.. index:: .pict
+
+PICT (Macintosh Picture)
+===============================================================================
+
+Extensions: .pict 
+
+Developer: `Apple Computer <http://www.apple.com>`_
+
+
+**Support**
+
+
+SCIFIO: |yes|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`PICT (Macintosh Picture) <pict-macintosh-picture-metadata>`
+
+
+
+We currently have:
+
+* many PICT datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Fair|
+
+Openness: |Fair|
+
+Presence: |Very good|
+
+Utility: |Poor|
+
+
+**Additional Information**
+
+
+Source Code: :scifioreader:`PictReader.java`
+
+Notes:
+
+
+`QuickTime for Java 
+<http://www.apple.com/quicktime/download/standalone.html>`_ is required 
+for reading vector files and some compressed files. 
+
+.. seealso:: 
+  `PICT technical overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-107.html>`_ 
+  `Another PICT technical overview <http://www.prepressure.com/formats/pict/fileformat.htm>`_

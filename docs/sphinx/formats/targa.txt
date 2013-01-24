@@ -1,0 +1,54 @@
+.. index:: Targa
+.. index:: .tga
+
+Targa
+===============================================================================
+
+Extensions: .tga 
+
+Developer: `Truevision <http://www.truevision.com>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Targa <targa-metadata>`
+
+
+
+We currently have:
+
+* a Targa specification document 
+* a few Targa files
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Very good|
+
+Presence: |Good|
+
+Utility: |Poor|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`TargaReader.java`
+
+Notes:
+
+

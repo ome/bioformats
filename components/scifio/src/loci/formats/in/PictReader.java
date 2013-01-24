@@ -42,6 +42,7 @@ import java.util.Vector;
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -186,7 +187,7 @@ public class PictReader extends FormatReader {
     if ((getSizeY()*4 < strips.size()) && (((strips.size() / 3) %
       getSizeY()) != 0))
     {
-      core[0].sizeY = strips.size();
+      core.get(0).sizeY = strips.size();
     }
 
     int plane = w * h;
@@ -258,21 +259,23 @@ public class PictReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    core[0].littleEndian = false;
+    CoreMetadata m = core.get(0);
+
+    m.littleEndian = false;
 
     in.seek(518);
 
-    core[0].sizeY = in.readShort();
-    core[0].sizeX = in.readShort();
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].imageCount = 1;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
-    core[0].interleaved = false;
-    core[0].pixelType = FormatTools.UINT8;
+    m.sizeY = in.readShort();
+    m.sizeX = in.readShort();
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.dimensionOrder = "XYCZT";
+    m.imageCount = 1;
+    m.falseColor = false;
+    m.metadataComplete = true;
+    m.interleaved = false;
+    m.pixelType = FormatTools.UINT8;
 
     strips = new Vector();
     rowBytes = 0;
@@ -300,8 +303,8 @@ public class PictReader extends FormatReader {
       in.skipBytes(4);
       int y = in.readShort();
       int x = in.readShort();
-      if (y > 0) core[0].sizeY = y;
-      if (x > 0) core[0].sizeX = x;
+      if (y > 0) m.sizeY = y;
+      if (x > 0) m.sizeX = x;
       in.skipBytes(4);
     }
     else throw new FormatException("Invalid PICT file");
@@ -324,8 +327,8 @@ public class PictReader extends FormatReader {
     }
     while (drivePictDecoder(opcode));
 
-    core[0].rgb = getSizeC() > 1;
-    core[0].indexed = !isRGB() && lookup != null;
+    m.rgb = getSizeC() > 1;
+    m.indexed = !isRGB() && lookup != null;
 
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
@@ -370,8 +373,8 @@ public class PictReader extends FormatReader {
         break;
       case PICT_JPEG:
         jpegOffsets.add(in.getFilePointer() + 2);
-        core[0].sizeC = 3;
-        core[0].rgb = true;
+        core.get(0).sizeC = 3;
+        core.get(0).rgb = true;
         while ((in.readShort() & 0xffff) != 0xffd9 &&
           in.getFilePointer() < in.length());
         while (in.getFilePointer() < in.length()) {
@@ -381,7 +384,7 @@ public class PictReader extends FormatReader {
             jpegOffsets.add(in.getFilePointer() - 2);
           }
         }
-        core[0].interleaved = true;
+        core.get(0).interleaved = true;
         break;
       default:
         if (opcode < 0) {
@@ -402,8 +405,8 @@ public class PictReader extends FormatReader {
     int brY = in.readShort();
     int brX = in.readShort();
 
-    if (brX - tlX > 0) core[0].sizeX = brX - tlX;
-    if (brY - tlY > 0) core[0].sizeY = brY - tlY;
+    if (brX - tlX > 0) core.get(0).sizeX = brX - tlX;
+    if (brY - tlY > 0) core.get(0).sizeY = brY - tlY;
 
     in.skipBytes(18);
   }
@@ -513,7 +516,7 @@ public class PictReader extends FormatReader {
             }
             strips.add(uBufI);
             buf = null;
-            core[0].sizeC = 3;
+            core.get(0).sizeC = 3;
             break;
           case 8:
             strips.add(buf);
@@ -550,7 +553,7 @@ public class PictReader extends FormatReader {
           uBufI = new int[getSizeX()];
           unpackBits(buf, uBufI);
           strips.add(uBufI);
-          core[0].sizeC = 3;
+          core.get(0).sizeC = 3;
         }
         else {
           PackbitsCodec c = new PackbitsCodec();
@@ -578,7 +581,7 @@ public class PictReader extends FormatReader {
             }
             strips.add(newBuf);
           }
-          core[0].sizeC = 3;
+          core.get(0).sizeC = 3;
         }
       }
     }

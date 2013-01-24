@@ -1,0 +1,271 @@
+Solutions for interfacing from non-Java code
+============================================
+
+Bio-Formats is written in Java, and is easiest to use with other Java
+code. However, it is possible to call Bio-Formats from a program written
+in another language. But how to do so depends on your program's needs.
+
+Technologically, there are two broad categories of solutions:
+**in-process** approaches, and **inter-process** communication. See
+below for discussion and examples of each. For further reading, check
+out `Codemesh's technology
+comparison <http://codemesh.com/technology.html>`_.
+
+Recommended **in-process solution**: :doc:`c-bindings`
+
+Recommended **inter-process solution**: :doc:`/users/subimager/index`
+
+In-process approaches
+---------------------
+
+With an in-process approach, your application directly invokes Java code,
+either by spawning its own internal Java Virtual Machine (JVM) and passing data
+across a bridge, or otherwise executing the Java code within a single environment.
+
+=============================  =================================
+Strengths                      Weaknesses
+=============================  =================================
+Tight (API-level) integration  No shared state between processes
+Minimal performance overhead   Limited portability
+Few security considerations
+=============================  =================================
+
+
+**Paradigms:**
+
+-  *JNI* – The most common paradigm is the `Java Native
+   Interface <http://en.wikipedia.org/wiki/Java_Native_Interface>`_, an
+   API for interfacing Java programs with
+   `native <http://en.wikipedia.org/wiki/Native_mode>`_ C/C++ code.
+   Functionality exists to 1) call C/C++ methods from Java, and 2) spawn
+   a Java Virtual Machine and execute Java instructions from C/C++. The
+   latter direction, known as `Java
+   Invocation <http://java.sun.com/javase/6/docs/technotes/guides/jni/spec/invocation.html>`_,
+   is the relevant one for calling Bio-Formats from C++. Because using
+   the JNI directly involves writing a lot of tedious glue code, several
+   projects have emerged for autogenerating such code.
+   *See below: raw JNI, Jace, JunC++ion, JuggerNET*
+-  *Compilers* – The dominant paradigm in Java is to compile Java source
+   to Java bytecode, then execute the bytecode in a Java interpreter.
+   However, an alternative is to compile the Java source directly to
+   native code so that it can link with other native programs. Such an
+   approach requires that the compiler provide correct support for all
+   necessary Java standard library features. It may also exhibit much
+   different performance (for better or for worse) than Sun's Java
+   implementation does.
+   *See below: GCJ*
+-  *Runtimes* – The safest way to guarantee correct program behavior is
+   to execute Java bytecode using the Java interpreter(s) with which it
+   has been tested (which in the case of Bio-Formats is Sun's
+   implementation). However, a Java runtime written using a specific
+   framework (e.g., .NET) could enable seamless integration with other
+   (non-Java) programs within the same framework. Like the
+   compiler-based paradigm above, though, it is reliant on the
+   correctness, completeness and performance of the Java implementation
+   in question.
+   *See below: IKVM.NET*
+
+Inter-process communication
+---------------------------
+
+The other approach is `inter-process
+communication <http://en.wikipedia.org/wiki/Inter-process_communication>`_,
+a broad collection of techniques for exchanging data between multiple
+running programs. Such techniques take many forms in computing; one
+ubiquitous example is web browsers and web servers. Most solutions in
+this category are some form of
+`middleware <http://en.wikipedia.org/wiki/Middleware>`_.
+
+===========================================================  =================
+Strengths                                                    Weaknesses
+===========================================================  =================
+Share state between multiple processes on multiple machines  `Object marshalling`_ incurs significant overhead
+Broad portability and language support                       Potentially vulnerable to security exploits
+===========================================================  =================
+
+.. _Object marshalling: http://en.wikipedia.org/wiki/Marshalling_%28computer_science%29
+
+**Paradigms:**
+
+-  *Local communication* – Modern operating systems provide several ways
+   to share information between processes, including shared memory, file
+   system access, and passing data back and forth with `standard input
+   and output streams <http://en.wikipedia.org/wiki/Standard_streams>`_.
+   *See below: pipes, files*
+-  *Messaging* – Networking technology allows a process on one computer
+   to send and receive messages from another process on a different
+   machine. The
+   `client-server <http://en.wikipedia.org/wiki/Client-server>`_ model
+   is probably most applicable for Java/native integration, with the
+   Java portion acting as a server that can be queried from the native
+   code.
+   *See below: sockets, XML-RPC*
+-  *ORB* – An `object request
+   broker <http://en.wikipedia.org/wiki/Object_request_broker>`_ (ORB)
+   is a high-level form of middleware for transferring objects between
+   multiple running programs. ORBs provide an abstraction that can
+   reduce and simplify code written by providing access to a wealth of
+   higher-level messaging features.
+   *See below: Ice, CORBA, Codemesh Shared JVM*
+
+List of solutions
+-----------------
+
+It is a significant challenge to access a complex Java API from code
+written in another language, especially in a cross-platform and high
+performance way. The table below provides an overview of viable
+approaches, further details are provided below it with links to source code 
+and instructions where appropriate. Which approach to use depends on your 
+application's target platforms and languages, and the interaction model 
+between your application and the Java code—see the discussion of in-process 
+solutions versus inter-process communication above for details.
+
+**A note about SWIG.** The `Simplified Wrapper and Interface
+Generator <http://www.swig.org/>`_ (SWIG) is an excellent tool for
+exposing C++ functionality to higher level languages such as Java.
+Unfortunately, calling native code from Java is the wrong direction for
+our purposes. However, when combined with an integration solution
+specific to C++, SWIG could be used to extend that solution into other
+languages (see `SWIG's list of supported
+languages <http://www.swig.org/compat.html#SupportedLanguages>`_ for a
+complete list).
+
+Summary table
+~~~~~~~~~~~~~
+
+===================  =========================  ================ 
+Solution             Type                       Languages
+===================  =========================  ================
+Raw JNI              In-process (JNI)           C/C++
+Jace                 In-process (JNI)           C/C++
+JunC++ion            In-process (JNI)           C/C++
+JuggerNET            In-process (JNI)           .NET
+GCJ                  In-process (compiler)      C/C++ (GCC only)
+IKVM.NET             In-process (runtime)       .NET/Mono
+Pipes                Inter-process (local)      Any
+Files                Inter-process (local)      Any
+Sockets              Inter-process (messaging)  Any
+XML-RPC              Inter-process (messaging)  `Many <http://en.wikipedia.org/wiki/XML-RPC#Implementations>`_
+Ice                  Inter-process (ORB)        Several
+CORBA                Inter-process (ORB)        Many
+Codemesh Shared JVM  Inter-process (ORB)        C++/.NET
+===================  =========================  ================
+
+Further details
+~~~~~~~~~~~~~~~
+
+`Raw
+JNI <http://java.sun.com/javase/6/docs/technotes/guides/jni/spec/invocation.html>`_
+
+-  You can code your integration layer using pure JNI calls (but we
+   don't recommend it).
+-  Low-level JNI offers full control over the interface between Java and
+   native code.
+-  Raw JNI solutions are `time-consuming and
+   error-prone <http://codemesh.com/technology.html#jni>`_ to implement.
+-  We have coded :source:`a simple example <components/bio-formats/utils/showinfJNI.cpp>`
+   for calling Bio-Formats this way.
+-  We recommend a higher level integration solution such as Jace
+   instead.
+
+`Jace <http://sourceforge.net/projects/jace/>`_
+
+-  Jace generates C++ proxy classes, one per Java class, mirroring the
+   original functionality as much as possible.
+-  The C++ proxy classes use JNI under the hood but handle most of the
+   usual JNI pitfalls.
+-  We provide a set of :doc:`Bio-Formats C++
+   bindings <c-bindings>` using
+   Jace.
+
+`JunC++ion <http://codemesh.com/products/junction/>`_
+
+-  JunC++ion is a commercial in-process integration solution for C/C++
+   available from `Codemesh, Inc. <http://www.codemesh.com/>`_
+
+`JuggerNET <http://codemesh.com/products/juggernet/>`_
+
+-  JuggerNET is a commercial in-process integration solution for .NET
+   available from `Codemesh, Inc. <http://www.codemesh.com/>`_
+
+`GCJ <http://gcc.gnu.org/java/>`_
+
+-  GCJ can compile Java code into machine code.
+-  Instead of JNI, GCJ uses its `Compiler Native
+   Interface <http://gcc.gnu.org/java/papers/cni/t1.html>`_ (CNI) to
+   enable access to Java code from C++.
+-  Works with GCC only (i.e., not with Microsoft Visual C++ or other
+   compilers).
+-  Correctness and performance is dependent on the compiler
+   implementation.
+
+`IKVM.NET <http://www.ikvm.net/>`_
+
+-  IKVM.NET interprets Java byte code on the fly into the .NET/Mono
+   framework.
+-  Interoperability is limited to applications in the .NET/Mono
+   framework.
+-  Correctness and performance is dependent on the runtime
+   implementation.
+
+`Pipes <http://en.wikipedia.org/wiki/Pipeline_%28Unix%29>`_
+
+-  Pipes can work well when quantity of data being transferred is
+   limited.
+-  Be careful about blocking operations causing deadlock.
+-  The `OME Perl
+   server <http://www.openmicroscopy.org/site/products/legacy/ome-server>`_ uses
+   a combination of pipes and files to interface with Bio-Formats.
+
+`Files <http://en.wikipedia.org/wiki/Computer_file>`_
+
+-  Communication via files is slower than pipes, since messages go
+   through disk.
+-  The size of the communication buffer is limited only by available
+   disk space.
+-  The `OME Perl
+   server <http://www.openmicroscopy.org/site/products/legacy/ome-server>`_ uses
+   a combination of pipes and files to interface with Bio-Formats.
+
+`Sockets <http://en.wikipedia.org/wiki/Unix_domain_socket>`_
+
+-  You can use a sockets API directly to create a custom solution (but
+   we don't recommend it).
+-  `JVMLink <http://www.loci.wisc.edu/software/jvmlink>`_ was our first
+   cut at such a solution, before we realized that we were essentially
+   inventing our own middleware.
+-  We recommend using Ice or CORBA instead.
+
+`XML-RPC <http://en.wikipedia.org/wiki/XML-RPC>`_
+
+-  XML-RPC is a cross-platform `remote procedure
+   call <http://en.wikipedia.org/wiki/Remote_procedure_call>`_ (RPC)
+   technology using XML.
+-  XML-RPC is a human readable, but inefficient, means of transporting
+   information.
+-  See also: `SOAP <http://en.wikipedia.org/wiki/SOAP_%28protocol%29>`_
+
+Ice_
+
+-  Ice is high-performance middleware for cross-platform client/server
+   communication.
+-  ZeroC_ argues that Ice is `superior to
+   CORBA <http://www.zeroc.com/iceVsCorba.html>`_.
+
+`CORBA <http://java.sun.com/j2ee/corba/>`_
+
+-  `Java RMI over IIOP <http://java.sun.com/products/rmi-iiop/>`_
+   enables communication between Java and other CORBA-supported
+   languages.
+-  CORBA is a mature technology with widespread use in the enterprise
+   community.
+-  Support for CORBA is built in to the Java 2 platform.
+-  Nonetheless, where possible we suggest you use Ice instead.
+
+`Codemesh Shared JVM <http://codemesh.com/shared_jvm.html>`_
+
+-  The Codemesh Shared JVM is a commercial inter-process integration
+   solution available from `Codemesh, Inc. <http://www.codemesh.com/>`_
+
+Know a great integration solution that we missed? `Let us
+know <http://www.openmicroscopy.org/site/community/mailing-lists>`_!

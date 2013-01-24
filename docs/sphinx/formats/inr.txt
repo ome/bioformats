@@ -1,0 +1,52 @@
+.. index:: INR
+.. index:: .inr
+
+INR
+===============================================================================
+
+Extensions: .inr 
+
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`INR <inr-metadata>`
+
+
+
+We currently have:
+
+* several sample .inr datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`INRReader.java`
+
+Notes:
+
+

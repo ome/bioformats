@@ -34,6 +34,7 @@ import loci.common.DataTools;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -157,16 +158,18 @@ public class MINCReader extends FormatReader {
       }
     }
 
+    CoreMetadata m = core.get(0);
+
     try {
       Object pixels = netcdf.getVariableValue("/image");
 
       if (pixels instanceof byte[][][]) {
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
         pixelData = (byte[][][]) pixels;
       }
       else if (pixels instanceof byte[][][][]) {
         byte[][][][] actualPixels = (byte[][][][]) pixels;
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
 
         pixelData = new byte[actualPixels.length * actualPixels[0].length][][];
         int nextPlane = 0;
@@ -177,7 +180,7 @@ public class MINCReader extends FormatReader {
         }
       }
       else if (pixels instanceof short[][][]) {
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
 
         short[][][] s = (short[][][]) pixels;
         pixelData = new byte[s.length][][];
@@ -190,7 +193,7 @@ public class MINCReader extends FormatReader {
         }
       }
       else if (pixels instanceof int[][][]) {
-        core[0].pixelType = FormatTools.UINT32;
+        m.pixelType = FormatTools.UINT32;
 
         int[][][] s = (int[][][]) pixels;
         pixelData = new byte[s.length][][];
@@ -202,7 +205,7 @@ public class MINCReader extends FormatReader {
         }
       }
       else if (pixels instanceof float[][][]) {
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
 
         float[][][] s = (float[][][]) pixels;
         pixelData = new byte[s.length][][];
@@ -215,7 +218,7 @@ public class MINCReader extends FormatReader {
         }
       }
       else if (pixels instanceof double[][][]) {
-        core[0].pixelType = FormatTools.DOUBLE;
+        m.pixelType = FormatTools.DOUBLE;
 
         double[][][] s = (double[][][]) pixels;
         pixelData = new byte[s.length][][];
@@ -232,21 +235,21 @@ public class MINCReader extends FormatReader {
       throw new FormatException(e);
     }
 
-    core[0].sizeX = netcdf.getDimension("/xspace");
-    core[0].sizeY = netcdf.getDimension("/yspace");
-    core[0].sizeZ = netcdf.getDimension("/zspace");
+    m.sizeX = netcdf.getDimension("/xspace");
+    m.sizeY = netcdf.getDimension("/yspace");
+    m.sizeZ = netcdf.getDimension("/zspace");
 
     try {
-      core[0].sizeT = netcdf.getDimension("/time");
+      m.sizeT = netcdf.getDimension("/time");
     }
     catch (NullPointerException e) {
-      core[0].sizeT = 1;
+      m.sizeT = 1;
     }
-    core[0].sizeC = 1;
-    core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
-    core[0].rgb = false;
-    core[0].indexed = false;
-    core[0].dimensionOrder = "XYZCT";
+    m.sizeC = 1;
+    m.imageCount = getSizeZ() * getSizeT() * getSizeC();
+    m.rgb = false;
+    m.indexed = false;
+    m.dimensionOrder = "XYZCT";
 
     addGlobalMeta("Comment", netcdf.getAttributeValue("/history"));
 

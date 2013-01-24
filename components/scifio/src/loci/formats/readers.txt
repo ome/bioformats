@@ -98,6 +98,7 @@ loci.formats.in.UnisokuReader         # dat, hdr
 loci.formats.in.PDSReader             # hdr, img
 loci.formats.in.FujiReader            # inf, img
 loci.formats.in.OperettaReader        # xml, tif, tiff
+loci.formats.in.InveonReader          # hdr, ct.img, cat, ...
 
 # standard PIC reader must go last (it accepts any PIC)
 loci.formats.in.BioRadReader          # pic

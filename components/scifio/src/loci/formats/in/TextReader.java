@@ -37,16 +37,19 @@
 package loci.formats.in;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -245,7 +248,8 @@ public class TextReader extends FormatReader {
     if (handle == null) {
       // HACK: Read using vanilla BufferedReader, since it's faster.
       String mapId = Location.getMappedId(id);
-      BufferedReader in = new BufferedReader(new FileReader(mapId));
+      BufferedReader in = new BufferedReader(
+        new InputStreamReader(new FileInputStream(mapId), Constants.ENCODING));
       int no = 0;
       while (true) {
         no++;
@@ -365,18 +369,19 @@ public class TextReader extends FormatReader {
   private void populateCoreMetadata(int sizeX, int sizeY,
     int sizeZ, int sizeC, int sizeT)
   {
-    core[0].sizeX = sizeX;
-    core[0].sizeY = sizeY;
-    core[0].sizeZ = sizeZ;
-    core[0].sizeC = sizeC;
-    core[0].sizeT = sizeT;
-    core[0].pixelType = FormatTools.FLOAT;
-    core[0].bitsPerPixel = 32;
-    core[0].imageCount = sizeZ * sizeC * sizeT;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].orderCertain = true;
-    core[0].littleEndian = LITTLE_ENDIAN;
-    core[0].metadataComplete = true;
+    CoreMetadata m = core.get(0);
+    m.sizeX = sizeX;
+    m.sizeY = sizeY;
+    m.sizeZ = sizeZ;
+    m.sizeC = sizeC;
+    m.sizeT = sizeT;
+    m.pixelType = FormatTools.FLOAT;
+    m.bitsPerPixel = 32;
+    m.imageCount = sizeZ * sizeC * sizeT;
+    m.dimensionOrder = "XYZCT";
+    m.orderCertain = true;
+    m.littleEndian = LITTLE_ENDIAN;
+    m.metadataComplete = true;
   }
 
   /**

@@ -72,14 +72,23 @@ public class SwappableMetadata extends CoreMetadata {
   }
   
   public SwappableMetadata(IFormatReader r, int seriesNo) {
-    copy(r, seriesNo);
-  }
-  
-  // -- CoreMetadata methods --
-  
-  @Override
-  public void copy(IFormatReader r, int seriesNo) {
-    super.copy(r, seriesNo);
+    super(r, seriesNo);
     inputOrder = dimensionOrder;
   }
+
+  public SwappableMetadata(SwappableMetadata c) {
+    super(c);
+    inputOrder = dimensionOrder;
+  }
+  
+  public Object clone() throws CloneNotSupportedException {
+      return super.clone();
+  }
+
+  public CoreMetadata clone(IFormatReader r, int coreIndex) {
+      return new SwappableMetadata(r, coreIndex);
+  }
+
+  // -- CoreMetadata methods --
+  
 }

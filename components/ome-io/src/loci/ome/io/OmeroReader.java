@@ -37,6 +37,7 @@ import java.util.List;
 import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -334,16 +335,17 @@ public class OmeroReader extends FormatReader {
 
       LOGGER.info("Populating metadata");
 
-      core[0].sizeX = sizeX;
-      core[0].sizeY = sizeY;
-      core[0].sizeZ = sizeZ;
-      core[0].sizeC = sizeC;
-      core[0].sizeT = sizeT;
-      core[0].rgb = false;
-      core[0].littleEndian = false;
-      core[0].dimensionOrder = "XYZCT";
-      core[0].imageCount = sizeZ * sizeC * sizeT;
-      core[0].pixelType = FormatTools.pixelTypeFromString(pixelType);
+      CoreMetadata m = core.get(0);
+      m.sizeX = sizeX;
+      m.sizeY = sizeY;
+      m.sizeZ = sizeZ;
+      m.sizeC = sizeC;
+      m.sizeT = sizeT;
+      m.rgb = false;
+      m.littleEndian = false;
+      m.dimensionOrder = "XYZCT";
+      m.imageCount = sizeZ * sizeC * sizeT;
+      m.pixelType = FormatTools.pixelTypeFromString(pixelType);
 
       RDouble x = pix.getPhysicalSizeX();
       Double px = x == null ? null : x.getValue();

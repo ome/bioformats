@@ -1,0 +1,86 @@
+Command line tools
+==================
+
+There are several scripts for using Bio-Formats on the command
+line.
+
+Installation
+------------
+
+Download :bf_plone:`bftools.zip <downloads>`, unzip it into a new folder, 
+then download :bf_plone:`loci_tools.jar <downloads>` and place it in the 
+same folder.
+
+The zip file contains both Unix scripts and Windows batch files.
+Currently available tools include:
+
+.. glossary::
+
+    showinf
+        Prints information about a given image file to the console, and
+        displays the image itself in the Bio-Formats image viewer.
+
+    bfview
+        Launches the Bio-Formats image viewer, displaying the given file (if
+        any).
+
+    ijview
+        Displays the given image file in ImageJ using the Bio-Formats Importer
+        plugin (requires **ij.jar**).
+
+    bfconvert
+        Converts an image file from one format to another. Bio-Formats must
+        support writing to the output file (determined by extension; see the
+        :doc:`/supported-formats`).
+
+    formatlist
+        Displays a list of supported file formats in HTML, plaintext or XML.
+
+    xmlindent
+        A simple XML prettifier similar to ``xmllint --format`` but more
+        robust in that it attempts to produce output regardless of syntax
+        errors in the XML.
+
+    xmlvalid
+        A command-line XML validation tool, useful for checking an OME-XML
+        document for compliance with the OME-XML schema.
+
+    omeul
+        A command-line client-side import tool for OME.
+
+    tiffcomment
+        Dumps the comment from the given TIFF file's first IFD entry; useful
+        for examining the OME-XML block in an OME-TIFF file.
+
+All scripts require **loci\_tools.jar** in the same directory as the
+command line tools.
+
+Tutorial
+--------
+
+There is a `Bio-Formats command line tools
+tutorial <http://www.farsight-toolkit.org/wiki/FARSIGHT_Tutorials/Bio-Formats>`_
+on the FARSIGHT web site.
+
+Using the tools directly from source
+------------------------------------
+
+If you have :doc:`checked out the source from the Git
+repository </developers/source-code>`
+you already have the command line tools in the ``tools`` directory. You
+can configure the scripts to use your source tree instead of
+**loci\_tools.jar** in the same directory by following these steps:
+
+#. Point your CLASSPATH to the checked-out directory and the JAR files
+   in the **jar** folder.
+
+   -  E.g. on Windows with Java 1.6 or later, if you have checked out
+      the source at ``C:\code\loci``, set your CLASSPATH environment
+      variable to the value ``C:\code\loci\jar\*;C:\code\loci``. You can
+      access the environment variable configuration area by
+      right-clicking on My Computer, choosing Properties, Advanced tab,
+      Environment Variables button.
+
+#. Compile the source with ``ant compile``.
+#. Set the ``LOCI_DEVEL`` environment variable to any value (the
+   variable just needs to be defined).

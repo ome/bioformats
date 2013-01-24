@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.Location;
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
@@ -60,7 +61,7 @@ public class NetCDFServiceImpl extends AbstractService
   public static final String NO_NETCDF_MSG =
     "NetCDF is required to read NetCDF/HDF variants. " +
     "Please obtain the necessary JAR files from " +
-    "http://loci.wisc.edu/bio-formats/bio-formats-java-library.\n" +
+    "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html.\n" +
     "Required JAR files are netcdf-4.0.jar and slf4j-jdk14.jar.";
 
   // -- Fields --
@@ -96,7 +97,9 @@ public class NetCDFServiceImpl extends AbstractService
 
     String currentId = Location.getMappedId(currentFile);
     PrintStream outStream = System.out;
-    PrintStream throwaway = new PrintStream(new ByteArrayOutputStream()) {
+    PrintStream throwaway = new PrintStream(
+      new ByteArrayOutputStream(), false /*auto-flush*/,
+        Constants.ENCODING) {
       public void print(String s) { }
     };
     System.setOut(throwaway);

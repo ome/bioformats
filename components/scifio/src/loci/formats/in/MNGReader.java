@@ -70,6 +70,8 @@ public class MNGReader extends BIFormatReader {
 
   private Vector<SeriesInfo> seriesInfo;
 
+  private boolean isJNG = false;
+
   // -- Constructor --
 
   /** Constructs a new MNG reader. */
@@ -93,7 +95,7 @@ public class MNGReader extends BIFormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
 
-    SeriesInfo info = seriesInfo.get(series);
+    SeriesInfo info = seriesInfo.get(getSeries());
     long offset = info.offsets.get(no);
     in.seek(offset);
     long end = info.lengths.get(no);
@@ -108,7 +110,10 @@ public class MNGReader extends BIFormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (!fileOnly) seriesInfo = null;
+    if (!fileOnly) {
+      seriesInfo = null;
+      isJNG = false;
+    }
   }
 
   // -- Internal FormatReader API methods --
@@ -150,6 +155,10 @@ public class MNGReader extends BIFormatReader {
 
       if (code.equals("IHDR")) {
         seriesInfo.get(0).offsets.add(fp - 8);
+      }
+      else if (code.equals("JDAT")) {
+        isJNG = true;
+        seriesInfo.get(0).offsets.add(fp);
       }
       else if (code.equals("IEND")) {
         seriesInfo.get(0).lengths.add(fp + len + 4);
@@ -213,32 +222,34 @@ public class MNGReader extends BIFormatReader {
       throw new FormatException("Pixel data not found.");
     }
 
-    core = new CoreMetadata[keys.length];
+    int seriesCount = keys.length;
+    core.clear();
 
     seriesInfo.clear();
-    for (int i=0; i<keys.length; i++) {
-      core[i] = new CoreMetadata();
+    for (int i=0; i<seriesCount; i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
       String[] tokens = keys[i].split("-");
-      core[i].sizeX = Integer.parseInt(tokens[0]);
-      core[i].sizeY = Integer.parseInt(tokens[1]);
-      core[i].sizeC = Integer.parseInt(tokens[2]);
-      core[i].pixelType = Integer.parseInt(tokens[3]);
-      core[i].rgb = core[i].sizeC > 1;
-      core[i].sizeZ = 1;
-      core[i].dimensionOrder = "XYCZT";
-      core[i].interleaved = false;
-      core[i].metadataComplete = true;
-      core[i].indexed = false;
-      core[i].littleEndian = false;
-      core[i].falseColor = false;
+      ms.sizeX = Integer.parseInt(tokens[0]);
+      ms.sizeY = Integer.parseInt(tokens[1]);
+      ms.sizeC = Integer.parseInt(tokens[2]);
+      ms.pixelType = Integer.parseInt(tokens[3]);
+      ms.rgb = ms.sizeC > 1;
+      ms.sizeZ = 1;
+      ms.dimensionOrder = "XYCZT";
+      ms.interleaved = false;
+      ms.metadataComplete = true;
+      ms.indexed = false;
+      ms.littleEndian = false;
+      ms.falseColor = false;
 
       SeriesInfo inf = new SeriesInfo();
       inf.offsets = seriesOffsets.get(keys[i]);
       inf.lengths = seriesLengths.get(keys[i]);
       seriesInfo.add(inf);
 
-      core[i].imageCount = inf.offsets.size();
-      core[i].sizeT = core[i].imageCount;
+      ms.imageCount = inf.offsets.size();
+      ms.sizeT = ms.imageCount;
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -251,16 +262,19 @@ public class MNGReader extends BIFormatReader {
   // -- Helper methods --
 
   private BufferedImage readImage(long end) throws IOException {
-    byte[] b = new byte[(int) (end - in.getFilePointer() + 8)];
-    in.read(b, 8, b.length - 8);
-    b[0] = (byte) 0x89;
-    b[1] = 0x50;
-    b[2] = 0x4e;
-    b[3] = 0x47;
-    b[4] = 0x0d;
-    b[5] = 0x0a;
-    b[6] = 0x1a;
-    b[7] = 0x0a;
+    int headerSize = isJNG ? 0 : 8;
+    byte[] b = new byte[(int) (end - in.getFilePointer() + headerSize)];
+    in.read(b, headerSize, b.length - headerSize);
+    if (!isJNG) {
+      b[0] = (byte) 0x89;
+      b[1] = 0x50;
+      b[2] = 0x4e;
+      b[3] = 0x47;
+      b[4] = 0x0d;
+      b[5] = 0x0a;
+      b[6] = 0x1a;
+      b[7] = 0x0a;
+    }
     return ImageIO.read(new ByteArrayInputStream(b));
   }
 

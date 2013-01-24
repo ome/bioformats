@@ -1,0 +1,54 @@
+.. index:: SimplePCI & HCImage TIFF
+.. index:: .tiff
+
+SimplePCI & HCImage TIFF
+===============================================================================
+
+Extensions: .tiff 
+
+Developer: `Hamamatsu <http://www.cimaging.net/simplepci.htm>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`SimplePCI & HCImage TIFF <simplepci-hcimage-tiff-metadata>`
+
+
+
+We currently have:
+
+* a few SimplePCI TIFF datasets
+
+We would like to have:
+
+* more SimplePCI TIFF datasets
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Very good|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`SimplePCITiffReader.java`
+
+Notes:
+
+

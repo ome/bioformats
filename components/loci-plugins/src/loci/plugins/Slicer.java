@@ -132,7 +132,6 @@ public class Slicer implements PlugInFilter {
     }
 
     ImagePlus[] newImps = new ImagePlus[newStacks.length];
-    double maxValue = Math.pow(2, imp.getBytesPerPixel() * 8) - 1;
     for (int i=0; i<newStacks.length; i++) {
       if (virtualStack != null) {
         ((BFVirtualStack) newStacks[i]).setPlaneIndexes(planeIndexes[i]);
@@ -183,11 +182,15 @@ public class Slicer implements PlugInFilter {
       double max = imp.getDisplayRangeMax();
       double min = imp.getDisplayRangeMin();
 
-      if (min > 0d || max < maxValue) {
-        newImps[i].resetDisplayRange();
-      }
-      else {
-        newImps[i].setDisplayRange(min, max);
+      newImps[i].setDisplayRange(min, max);
+
+      if (imp.isComposite() && newImps[i].isComposite()) {
+        for (int c=1; c<newImps[i].getNChannels(); c++) {
+          LUT originalLut = ((CompositeImage) imp).getChannelLut(c);
+          LUT lut = ((CompositeImage) newImps[i]).getChannelLut(c);
+          lut.min = originalLut.min;
+          lut.max = originalLut.max;
+        }
       }
     }
     return newImps;

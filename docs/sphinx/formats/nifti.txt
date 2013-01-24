@@ -1,0 +1,57 @@
+.. index:: NIfTI
+.. index:: .img, .hdr
+
+NIfTI
+===============================================================================
+
+Extensions: .img, .hdr 
+
+Developer: `National Institutes of Health <http://www.nih.gov/>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`NIfTI <nifti-metadata>`
+
+
+Sample Datasets:
+
+- `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
+
+We currently have:
+
+* `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_ 
+* several NIfTI datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Very good|
+
+Presence: |Good|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`NiftiReader.java`
+
+Notes:
+
+

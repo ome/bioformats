@@ -26,6 +26,10 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +66,7 @@ public class SVSReader extends BaseTiffReader {
 
   private float[] pixelSize;
   private String[] comments;
+  private int[] ifdmap;
 
   // -- Constructor --
 
@@ -136,18 +141,18 @@ public class SVSReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (core.length == 1) {
+    if (core.size() == 1) {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    int ifd = getIFDIndex(getCoreIndex());
+    int ifd = ifdmap[getCoreIndex()];
     tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
   }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    if (core.length == 1 || getSeries() >= getSeriesCount() - 2) {
+    if (core.size() == 1 || getSeries() >= getSeriesCount() - 2) {
       return super.openThumbBytes(no);
     }
 
@@ -173,6 +178,7 @@ public class SVSReader extends BaseTiffReader {
     if (!fileOnly) {
       pixelSize = null;
       comments = null;
+      ifdmap = null;
     }
   }
 
@@ -180,7 +186,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = getIFDIndex(getCoreIndex());
+      int ifd = ifdmap[getCoreIndex()];
       return (int) ifds.get(ifd).getTileWidth();
     }
     catch (FormatException e) {
@@ -193,7 +199,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      int ifd = getIFDIndex(getCoreIndex());
+      int ifd = ifdmap[getCoreIndex()];
       return (int) ifds.get(ifd).getTileLength();
     }
     catch (FormatException e) {
@@ -210,16 +216,17 @@ public class SVSReader extends BaseTiffReader {
 
     ifds = tiffParser.getIFDs();
 
-    core = new CoreMetadata[ifds.size()];
+    int seriesCount = ifds.size();
 
-    pixelSize = new float[core.length];
-    comments = new String[core.length];
+    pixelSize = new float[seriesCount];
+    comments = new String[seriesCount];
 
-    for (int i=0; i<core.length; i++) {
-      core[i] = new CoreMetadata();
+    core.clear();
+    for (int i=0; i<seriesCount; i++) {
+      core.add(new CoreMetadata());
     }
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<seriesCount; i++) {
       setSeries(i);
       int index = getIFDIndex(i);
       tiffParser.fillInIFD(ifds.get(index));
@@ -253,32 +260,35 @@ public class SVSReader extends BaseTiffReader {
 
     // repopulate core metadata
 
-    for (int s=0; s<core.length; s++) {
-      if (s == 0 && !hasFlattenedResolutions() && getSeriesCount() > 2) {
-        core[s].resolutionCount = getSeriesCount() - 2;
+    for (int s=0; s<seriesCount; s++) {
+      CoreMetadata ms = core.get(s);
+      if (s == 0 && getSeriesCount() > 2) {
+        ms.resolutionCount = getSeriesCount() - 2;
       }
 
       IFD ifd = ifds.get(getIFDIndex(s));
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
-      core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
+      ms.rgb = samples > 1 || p == PhotoInterp.RGB;
 
-      core[s].sizeX = (int) ifd.getImageWidth();
-      core[s].sizeY = (int) ifd.getImageLength();
-      core[s].sizeZ = 1;
-      core[s].sizeT = 1;
-      core[s].sizeC = core[s].rgb ? samples : 1;
-      core[s].littleEndian = ifd.isLittleEndian();
-      core[s].indexed = p == PhotoInterp.RGB_PALETTE &&
+      ms.sizeX = (int) ifd.getImageWidth();
+      ms.sizeY = (int) ifd.getImageLength();
+      ms.sizeZ = 1;
+      ms.sizeT = 1;
+      ms.sizeC = ms.rgb ? samples : 1;
+      ms.littleEndian = ifd.isLittleEndian();
+      ms.indexed = p == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      core[s].imageCount = 1;
-      core[s].pixelType = ifd.getPixelType();
-      core[s].metadataComplete = true;
-      core[s].interleaved = false;
-      core[s].falseColor = false;
-      core[s].dimensionOrder = "XYCZT";
-      core[s].thumbnail = s != 0;
+      ms.imageCount = 1;
+      ms.pixelType = ifd.getPixelType();
+      ms.metadataComplete = true;
+      ms.interleaved = false;
+      ms.falseColor = false;
+      ms.dimensionOrder = "XYCZT";
+      ms.thumbnail = s != 0;
     }
+
+    reorderResolutions();
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
@@ -295,10 +305,44 @@ public class SVSReader extends BaseTiffReader {
 
   private int getIFDIndex(int coreIndex) {
     int index = coreIndex;
-    if (coreIndex > 0 && coreIndex < core.length - 2) {
-      index = core.length - 2 - coreIndex;
+    if (coreIndex > 0 && coreIndex < core.size() - 2) {
+      index = core.size() - 2 - coreIndex;
     }
     return index;
   }
+
+    /**
+     * Validate the order of resolutions for the current series, in
+     * decending order of size.  If the order is wrong, reorder it.
+     */
+    protected void reorderResolutions() {
+      ifdmap = new int[core.size()];
+
+      for (int i = 0; i < core.size();) {
+        int resolutions = core.get(i).resolutionCount;
+
+        List<CoreMetadata> savedCore = new ArrayList<CoreMetadata>();
+        int savedIFDs[] = new int[resolutions];
+        HashMap<Integer,Integer> levels = new HashMap<Integer,Integer>();
+        for (int c = 0; c < resolutions; c++) {
+          savedCore.add(core.get(i + c));
+          savedIFDs[c] = getIFDIndex(i+c);
+          levels.put(new Integer(savedCore.get(c).sizeX), new Integer(c));
+        }
+
+        Integer[] keys = levels.keySet().toArray(new Integer[resolutions]);
+        Arrays.sort(keys);
+
+        for (int j = 0; j < resolutions; j++) {
+          core.set(i + j, savedCore.get(levels.get(keys[resolutions - j - 1])));
+          ifdmap[i + j] = savedIFDs[levels.get(keys[resolutions - j - 1])];
+          if (j == 0)
+            core.get(i + j).resolutionCount = resolutions;
+          else
+            core.get(i + j).resolutionCount = 1;
+        }
+        i += core.get(i).resolutionCount;
+      }
+    }
 
 }

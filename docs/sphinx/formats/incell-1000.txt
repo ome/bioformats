@@ -1,0 +1,55 @@
+.. index:: InCell 1000
+.. index:: .xdce, .tif
+
+InCell 1000
+===============================================================================
+
+Extensions: .xdce, .tif 
+
+Developer: `GE <http://gelifesciences.com/>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`InCell 1000 <incell-1000-metadata>`
+
+
+
+We currently have:
+
+* a few InCell 1000 datasets
+
+We would like to have:
+
+* an InCell 1000 specification document 
+* more InCell 1000 datasets
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Good|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`InCellReader.java`
+
+Notes:
+
+

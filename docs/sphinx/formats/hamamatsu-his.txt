@@ -1,0 +1,56 @@
+.. index:: Hamamatsu HIS
+.. index:: .his
+
+Hamamatsu HIS
+===============================================================================
+
+Extensions: .his 
+
+
+Owner: `Hamamatsu <http://www.hamamatsu.com>`_
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Hamamatsu HIS <hamamatsu-his-metadata>`
+
+
+
+We currently have:
+
+* Pascal code that can read HIS files (from ImageSXM) 
+* several HIS files
+
+We would like to have:
+
+* an HIS specification 
+* more HIS files
+
+**Ratings**
+
+
+Pixels: |Good|
+
+Metadata: |Fair|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`HISReader.java`
+
+Notes:
+
+

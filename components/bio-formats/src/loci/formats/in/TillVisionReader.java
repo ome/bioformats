@@ -125,11 +125,11 @@ public class TillVisionReader extends FormatReader {
 
     int plane = FormatTools.getPlaneSize(this);
     if (embeddedImages) {
-      in.seek(embeddedOffset[getSeries()] + no * plane);
+      in.seek(embeddedOffset[getCoreIndex()] + no * plane);
       readPlane(in, x, y, w, h, buf);
     }
     else {
-      pixelsStream = new RandomAccessInputStream(pixelsFiles[series]);
+      pixelsStream = new RandomAccessInputStream(pixelsFiles[getCoreIndex()]);
       if ((no + 1) * plane <= pixelsStream.length()) {
         pixelsStream.seek(no * plane);
         readPlane(pixelsStream, x, y, w, h, buf);
@@ -169,12 +169,12 @@ public class TillVisionReader extends FormatReader {
     Vector<String> files = new Vector<String>();
     files.add(currentId);
     if (!noPixels) {
-      if (pixelsFiles[getSeries()] != null) {
-        files.add(pixelsFiles[getSeries()]);
+      if (pixelsFiles[getCoreIndex()] != null) {
+        files.add(pixelsFiles[getCoreIndex()]);
       }
     }
-    if (infFiles[getSeries()] != null) {
-      files.add(infFiles[getSeries()]);
+    if (infFiles[getCoreIndex()] != null) {
+      files.add(infFiles[getCoreIndex()]);
     }
     return files.toArray(new String[files.size()]);
   }
@@ -273,11 +273,12 @@ public class TillVisionReader extends FormatReader {
         LOGGER.debug("Images are {}embedded", embeddedImages ? "" : "not ");
 
         if (embeddedImages) {
-          core = new CoreMetadata[nFound];
+          core.clear();
           embeddedOffset = new long[nFound];
 
-          for (int i=0; i<getSeriesCount(); i++) {
-            core[i] = new CoreMetadata();
+          for (int i=0; i<nFound; i++) {
+            CoreMetadata ms = new CoreMetadata();
+            core.add(ms);
 
             s.seek(cimages[i]);
 
@@ -299,13 +300,13 @@ public class TillVisionReader extends FormatReader {
 
             s.skipBytes(20);
 
-            core[i].sizeX = s.readInt();
-            core[i].sizeY = s.readInt();
-            core[i].sizeZ = s.readInt();
-            core[i].sizeC = s.readInt();
-            core[i].sizeT = s.readInt();
+            ms.sizeX = s.readInt();
+            ms.sizeY = s.readInt();
+            ms.sizeZ = s.readInt();
+            ms.sizeC = s.readInt();
+            ms.sizeT = s.readInt();
 
-            core[i].pixelType = convertPixelType(s.readInt());
+            ms.pixelType = convertPixelType(s.readInt());
             if (specialCImage) {
               embeddedOffset[i] = s.getFilePointer() + 27;
             }
@@ -406,7 +407,6 @@ public class TillVisionReader extends FormatReader {
       if (nImages == 0) {
         throw new FormatException("No images found.");
       }
-      core = new CoreMetadata[nImages];
 
       // look for appropriate pixels files
 
@@ -443,15 +443,24 @@ public class TillVisionReader extends FormatReader {
 
     Arrays.sort(pixelsFile);
 
-    pixelsFiles = new String[getSeriesCount()];
-    infFiles = new String[getSeriesCount()];
+    int nSeries = core.size();
+    if (!embeddedImages) {
+      core.clear();
+      nSeries = nImages;
+    }
+
+    pixelsFiles = new String[nSeries];
+    infFiles = new String[nSeries];
 
     Object[] metadataKeys = tmpSeriesMetadata.keySet().toArray();
     IniParser parser = new IniParser();
 
-    for (int i=0; i<getSeriesCount(); i++) {
+    for (int i=0; i<nSeries; i++) {
+      CoreMetadata ms;
+
       if (!embeddedImages) {
-        core[i] = new CoreMetadata();
+        ms = new CoreMetadata();
+        core.add(ms);
         setSeries(i);
 
         // make sure that pixels file exists
@@ -487,34 +496,38 @@ public class TillVisionReader extends FormatReader {
         reader.close();
         IniTable infoTable = data.getTable("Info");
 
-        core[i].sizeX = Integer.parseInt(infoTable.get("Width"));
-        core[i].sizeY = Integer.parseInt(infoTable.get("Height"));
-        core[i].sizeC = Integer.parseInt(infoTable.get("Bands"));
-        core[i].sizeZ = Integer.parseInt(infoTable.get("Slices"));
-        core[i].sizeT = Integer.parseInt(infoTable.get("Frames"));
+        ms.sizeX = Integer.parseInt(infoTable.get("Width"));
+        ms.sizeY = Integer.parseInt(infoTable.get("Height"));
+        ms.sizeC = Integer.parseInt(infoTable.get("Bands"));
+        ms.sizeZ = Integer.parseInt(infoTable.get("Slices"));
+        ms.sizeT = Integer.parseInt(infoTable.get("Frames"));
         int dataType = Integer.parseInt(infoTable.get("Datatype"));
-        core[i].pixelType = convertPixelType(dataType);
+        ms.pixelType = convertPixelType(dataType);
 
         if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
           HashMap<String, String> iniMap = data.flattenIntoHashMap();
-          core[i].seriesMetadata.putAll(iniMap);
+          ms.seriesMetadata.putAll(iniMap);
         }
+      } else {
+        ms = core.get(i);
+        setSeries(i);
       }
 
-      core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;
-      core[i].rgb = false;
-      core[i].littleEndian = true;
-      core[i].dimensionOrder = "XYCZT";
+      ms.imageCount = ms.sizeZ * ms.sizeC * ms.sizeT;
+      ms.rgb = false;
+      ms.littleEndian = true;
+      ms.dimensionOrder = "XYCZT";
 
-      core[i].seriesMetadata = new Hashtable();
+      ms.seriesMetadata = new Hashtable();
       for (Object key : metadataKeys) {
         String keyName = key.toString();
         if (keyName.startsWith("Series " + i + " ")) {
           keyName = keyName.replaceAll("Series " + i + " ", "");
-          core[i].seriesMetadata.put(keyName, tmpSeriesMetadata.get(key));
+          ms.seriesMetadata.put(keyName, tmpSeriesMetadata.get(key));
         }
       }
     }
+    setSeries(0);
     tmpSeriesMetadata = null;
     populateMetadataStore();
 
@@ -543,7 +556,7 @@ public class TillVisionReader extends FormatReader {
       for (int i=0; i<getSeriesCount(); i++) {
         // populate PlaneTiming data
 
-        for (int q=0; q<core[i].imageCount; q++) {
+        for (int q=0; q<core.get(i).imageCount; q++) {
           store.setPlaneExposureTime(exposureTimes.get(i), i, q);
         }
 

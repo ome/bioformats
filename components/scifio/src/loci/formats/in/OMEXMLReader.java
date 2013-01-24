@@ -137,8 +137,9 @@ public class OMEXMLReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int index = no;
+    int series = getSeries();
     for (int i=0; i<series; i++) {
-      index += core[i].imageCount;
+      index += core.get(i).imageCount;
     }
     if (index >= binDataOffsets.size()) {
       index = binDataOffsets.size() - 1;
@@ -282,14 +283,13 @@ public class OMEXMLReader extends FormatReader {
 
     int numDatasets = omexmlMeta.getImageCount();
 
-    core = new CoreMetadata[numDatasets];
-
     int oldSeries = getSeries();
-
+    core.clear();
     for (int i=0; i<numDatasets; i++) {
-      setSeries(i);
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
 
-      core[i] = new CoreMetadata();
+      setSeries(i);
 
       Integer w = omexmlMeta.getPixelsSizeX(i).getValue();
       Integer h = omexmlMeta.getPixelsSizeY(i).getValue();
@@ -302,20 +302,20 @@ public class OMEXMLReader extends FormatReader {
 
       Boolean endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
       String pixType = omexmlMeta.getPixelsType(i).toString();
-      core[i].dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();
-      core[i].sizeX = w.intValue();
-      core[i].sizeY = h.intValue();
-      core[i].sizeT = t.intValue();
-      core[i].sizeZ = z.intValue();
-      core[i].sizeC = c.intValue();
-      core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
-      core[i].littleEndian = endian == null ? false : !endian.booleanValue();
-      core[i].rgb = false;
-      core[i].interleaved = false;
-      core[i].indexed = false;
-      core[i].falseColor = true;
-      core[i].pixelType = FormatTools.pixelTypeFromString(pixType);
-      core[i].orderCertain = true;
+      ms.dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();
+      ms.sizeX = w.intValue();
+      ms.sizeY = h.intValue();
+      ms.sizeT = t.intValue();
+      ms.sizeZ = z.intValue();
+      ms.sizeC = c.intValue();
+      ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
+      ms.littleEndian = endian == null ? false : !endian.booleanValue();
+      ms.rgb = false;
+      ms.interleaved = false;
+      ms.indexed = false;
+      ms.falseColor = true;
+      ms.pixelType = FormatTools.pixelTypeFromString(pixType);
+      ms.orderCertain = true;
     }
     setSeries(oldSeries);
 

@@ -158,33 +158,6 @@ ZZ
   LICENSE => "BSD",
 );
 
-# -- COMPONENT DEFINITIONS - LEGACY --
-
-my %omeEditor = (
-  NAME    => "ome-editor",
-  TITLE   => "OME Metadata Editor",
-  PATH    => "components/legacy/ome-editor",
-  JAR     => "ome-editor.jar",
-  PACKAGE => "loci.ome.editor",
-  DESC    => <<ZZ,
-An application for exploration and editing of OME-XML and OME-TIFF metadata
-ZZ
-  LICENSE => "LGPL",
-);
-
-my %omeNotes = (
-  NAME    => "ome-notes",
-  TITLE   => "OME Notes",
-  PATH    => "components/legacy/ome-notes",
-  JAR     => "ome-notes.jar",
-  PACKAGE => "loci.ome.notes",
-  DESC    => <<ZZ,
-A library for flexible organization and presentation of OME-XML metadata within
-a graphical browser and editor interface
-ZZ
-  LICENSE => "LGPL",
-);
-
 # -- COMPONENT DEFINITIONS - FORKS --
 
 my %jai = (
@@ -288,6 +261,19 @@ ZZ
   VERSION => "1.0b3"
 );
 
+my %assumeng = (
+  NAME    => "assumeng",
+  TITLE   => "AssumeNG",
+  JAR     => "assumeng-1.2.3-jdk15.jar",
+  PACKAGE => "nl.javadude.assumeng",
+  LICENSE => "Public domain",
+  URL     => "https://github.com/hierynomus/assumeng/",
+  NOTES   => <<ZZ,
+used by test-suite for conditional test exclusions
+ZZ
+  VERSION => "1.0b3"
+);
+
 my %checkstyle = (
   NAME    => "checkstyle",
   TITLE   => "Checkstyle",
@@ -348,7 +334,7 @@ my %forms = (
   LICENSE => "BSD",
   URL     => "http://www.jgoodies.com/freeware/forms/index.html",
   NOTES   => <<ZZ,
-used for layout by SciFIO, Data Browser and OME Notes
+used for layout by SciFIO and Data Browser
 ZZ
   VERSION => "1.3.0"
 );
@@ -431,19 +417,6 @@ used by OME I/O to connect to OME servers
 ZZ
 );
 
-my %omeJavaDeprecated = (
-  NAME    => "ome-java-deprecated",
-  TITLE   => "OME-Java deprecated classes",
-  JAR     => "ome-java-deprecated.jar",
-  PACKAGE => "org.openmicroscopy.xml",
-  LICENSE => "LGPL",
-  URL     => "http://www.openmicroscopy.org/site/documents/data-management/".
-             "ome-server/developer/java-api",
-  NOTES   => <<ZZ,
-used by OME Notes and OME Metadata Editor to work with OME-XML
-ZZ
-);
-
 my %omeroClient = (
   NAME    => "omero-client",
   TITLE   => "OMERO Client",
@@ -486,7 +459,7 @@ ZZ
 my %testng = (
   NAME    => "testng",
   TITLE   => "TestNG",
-  JAR     => "testng-5.11-jdk15.jar",
+  JAR     => "testng-6.8.jar",
   PACKAGE => "org.testng",
   LICENSE => "Apache",
   URL     => "http://testng.org/",
@@ -567,12 +540,6 @@ my @active = (
   \%testSuite,
 );
 
-# List of legacy components (no longer supported)
-my @legacy = (
-  \%omeEditor,
-#  \%omeNotes,
-);
-
 # List of external project forks
 my @forks = (
   \%jai,
@@ -586,11 +553,12 @@ my @stubs = (
 );
 
 # List of all LOCI software components
-my @components = (@active, @legacy, @forks, @stubs);
+my @components = (@active, @forks, @stubs);
 
 # List of external libraries
 my @libs = (
   \%antContrib,
+  \%assumeng,
   \%checkstyle,
   \%commonsHTTPClient,
   \%commonsLogging,
@@ -603,7 +571,6 @@ my @libs = (
   \%slf4j_api,
   \%slf4j_impl,
   \%omeJava,
-  \%omeJavaDeprecated,
   \%omeroClient,
   \%serializer,
   \%testng,
@@ -901,37 +868,6 @@ foreach my $c (@active) {
   }
   my @libOpt = @{$$c{LIB_OPT}};
   foreach my $q (@libOpt) {
-    push(@prettyOpt, $$q{TITLE});
-  }
-  smartSplit("    Optional:      ", ", ", @prettyOpt);
-
-  print "    License:       $$c{LICENSE}\n";
-  print "\n";
-}
-
-# components - legacy
-print "$div";
-print "The following components are considered \"legacy\" but still " .
-      "available:\n\n";
-foreach my $c (@legacy) {
-  print "$$c{TITLE}\n";
-  smartSplit("    ", " ", split(/[ \n]/, $$c{DESC}));
-  print "    -=-\n";
-  print "    JAR file:      $$c{JAR}\n";
-  print "    Path:          $$c{PATH}\n";
-
-  my $lead = "                   ";
-
-  my @deps = @{$$c{PROJ_DEPS}};
-  my @prettyDeps = ();
-  foreach my $q (@deps) {
-    push(@prettyDeps, $$q{TITLE});
-  }
-  smartSplit("    Project deps:  ", ", ", @prettyDeps);
-
-  my @opt = @{$$c{PROJ_OPT}};
-  my @prettyOpt = ();
-  foreach my $q (@opt) {
     push(@prettyOpt, $$q{TITLE});
   }
   smartSplit("    Optional:      ", ", ", @prettyOpt);

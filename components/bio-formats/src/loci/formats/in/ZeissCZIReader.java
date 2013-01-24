@@ -118,6 +118,9 @@ public class ZeissCZIReader extends FormatReader {
   private String temperature, airPressure, humidity, co2Percent;
   private String correctionCollar, medium, refractiveIndex;
 
+  private String zoom;
+  private String gain;
+
   private ArrayList<String> emissionWavelengths = new ArrayList<String>();
   private ArrayList<String> excitationWavelengths = new ArrayList<String>();
   private ArrayList<String> pinholeSizes = new ArrayList<String>();
@@ -340,6 +343,8 @@ public class ZeissCZIReader extends FormatReader {
       positionsX = null;
       positionsY = null;
       positionsZ = null;
+      zoom = null;
+      gain = null;
 
       emissionWavelengths.clear();
       excitationWavelengths.clear();
@@ -361,8 +366,9 @@ public class ZeissCZIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata ms0 = core.get(0);
 
-    core[0].littleEndian = true;
+    ms0.littleEndian = true;
     in.order(isLittleEndian());
 
     ArrayList<Segment> segments = new ArrayList<Segment>();
@@ -393,13 +399,13 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     if (getSizeZ() == 0) {
-      core[0].sizeZ = 1;
+      ms0.sizeZ = 1;
     }
     if (getSizeC() == 0) {
-      core[0].sizeC = 1;
+      ms0.sizeC = 1;
     }
     if (getSizeT() == 0) {
-      core[0].sizeT = 1;
+      ms0.sizeT = 1;
     }
 
     // finish populating the core metadata
@@ -407,28 +413,25 @@ public class ZeissCZIReader extends FormatReader {
     int seriesCount = rotations * positions * illuminations * acquisitions *
       mosaics * phases;
 
-    core[0].imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
+    ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
 
     if (mosaics == seriesCount &&
       seriesCount == (planes.size() / getImageCount()) &&
       prestitched != null && prestitched)
     {
       prestitched = false;
-      core[0].sizeX = planes.get(planes.size() - 1).x;
-      core[0].sizeY = planes.get(planes.size() - 1).y;
+      ms0.sizeX = planes.get(planes.size() - 1).x;
+      ms0.sizeY = planes.get(planes.size() - 1).y;
     }
 
     if (seriesCount > 1) {
-      CoreMetadata firstSeries = core[0];
-
-      core = new CoreMetadata[seriesCount];
-
+      core.clear();
       for (int i=0; i<seriesCount; i++) {
-        core[i] = firstSeries;
+        core.add(ms0);
       }
     }
 
-    core[0].dimensionOrder = "XYCZT";
+    ms0.dimensionOrder = "XYCZT";
 
     assignPlaneIndices();
 
@@ -447,7 +450,7 @@ public class ZeissCZIReader extends FormatReader {
 
     if (channelColors.size() > 0) {
       for (int i=0; i<seriesCount; i++) {
-        core[i].indexed = true;
+        core.get(i).indexed = true;
       }
     }
 
@@ -486,15 +489,17 @@ public class ZeissCZIReader extends FormatReader {
         store.setImagingEnvironmentTemperature(new Double(temperature), i);
       }
 
-      store.setObjectiveSettingsID(objectiveIDs.get(0), i);
-      if (correctionCollar != null) {
-        store.setObjectiveSettingsCorrectionCollar(
-          new Double(correctionCollar), i);
-      }
-      store.setObjectiveSettingsMedium(getMedium(medium), i);
-      if (refractiveIndex != null) {
-        store.setObjectiveSettingsRefractiveIndex(
-          new Double(refractiveIndex), i);
+      if (objectiveIDs.size() > 0) {
+        store.setObjectiveSettingsID(objectiveIDs.get(0), i);
+        if (correctionCollar != null) {
+          store.setObjectiveSettingsCorrectionCollar(
+            new Double(correctionCollar), i);
+        }
+        store.setObjectiveSettingsMedium(getMedium(medium), i);
+        if (refractiveIndex != null) {
+          store.setObjectiveSettingsRefractiveIndex(
+            new Double(refractiveIndex), i);
+        }
       }
 
       Double startTime = null;
@@ -523,7 +528,10 @@ public class ZeissCZIReader extends FormatReader {
               store.setPlanePositionY(positionsY[i], i, plane);
             }
 
-            if (positionsZ != null && i < positionsZ.length) {
+            if (p.stageZ != null) {
+              store.setPlanePositionZ(p.stageZ, i, plane);
+            }
+            else if (positionsZ != null && i < positionsZ.length) {
               store.setPlanePositionZ(positionsZ[i], i, plane);
             }
 
@@ -603,6 +611,7 @@ public class ZeissCZIReader extends FormatReader {
 
   private void calculateDimensions() {
     // calculate the dimensions
+      CoreMetadata ms0 = core.get(0);
 
     for (SubBlock plane : planes) {
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
@@ -615,7 +624,7 @@ public class ZeissCZIReader extends FormatReader {
               prestitched = true;
               continue;
             }
-            core[0].sizeX = dimension.size;
+            ms0.sizeX = dimension.size;
             break;
           case 'Y':
             plane.y = dimension.size;
@@ -625,21 +634,21 @@ public class ZeissCZIReader extends FormatReader {
               prestitched = true;
               continue;
             }
-            core[0].sizeY = dimension.size;
+            ms0.sizeY = dimension.size;
             break;
           case 'C':
             if (dimension.start >= getSizeC()) {
-              core[0].sizeC = dimension.start + 1;
+              ms0.sizeC = dimension.start + 1;
             }
             break;
           case 'Z':
             if (dimension.start >= getSizeZ()) {
-              core[0].sizeZ = dimension.start + 1;
+              ms0.sizeZ = dimension.start + 1;
             }
             break;
           case 'T':
             if (dimension.start >= getSizeT()) {
-              core[0].sizeT = dimension.start + 1;
+              ms0.sizeT = dimension.start + 1;
             }
             break;
           case 'R':
@@ -755,15 +764,14 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
 
+    translateExperiment(realRoot);
     translateInformation(realRoot);
     translateScaling(realRoot);
     translateDisplaySettings(realRoot);
     translateLayers(realRoot);
-    translateExperiment(realRoot);
 
     Stack<String> nameStack = new Stack<String>();
-    HashMap<String, Integer> indexes = new HashMap<String, Integer>();
-    populateOriginalMetadata(realRoot, nameStack, indexes);
+    populateOriginalMetadata(realRoot, nameStack);
   }
 
   private void translateInformation(Element root) throws FormatException {
@@ -781,7 +789,7 @@ public class ZeissCZIReader extends FormatReader {
     if (image != null) {
       String bitCount = getFirstNodeValue(image, "ComponentBitCount");
       if (bitCount != null) {
-        core[0].bitsPerPixel = Integer.parseInt(bitCount);
+        core.get(0).bitsPerPixel = Integer.parseInt(bitCount);
       }
 
       acquiredDate = getFirstNodeValue(image, "AcquisitionDateAndTime");
@@ -809,6 +817,11 @@ public class ZeissCZIReader extends FormatReader {
 
           Element detectorSettings = getFirstNode(channel, "DetectorSettings");
           binnings.add(getFirstNodeValue(detectorSettings, "Binning"));
+
+          Element scanInfo = getFirstNode(channel, "LaserScanInfo");
+          if (scanInfo != null) {
+            zoom = getFirstNodeValue(scanInfo, "ZoomX");
+          }
 
           Element detector = getFirstNode(detectorSettings, "Detector");
           if (detector != null) {
@@ -946,14 +959,11 @@ public class ZeissCZIReader extends FormatReader {
           store.setDetectorSerialNumber(serialNumber, 0, i);
           store.setDetectorLotNumber(lotNumber, 0, i);
 
-          String gain = getFirstNodeValue(detector, "Gain");
+          if (gain == null) {
+            gain = getFirstNodeValue(detector, "Gain");
+          }
           if (gain != null) {
             store.setDetectorGain(new Double(gain), 0, i);
-          }
-
-          String voltage = getFirstNodeValue(detector, "Voltage");
-          if (voltage != null) {
-            store.setDetectorVoltage(new Double(voltage), 0, i);
           }
 
           String offset = getFirstNodeValue(detector, "Offset");
@@ -961,7 +971,9 @@ public class ZeissCZIReader extends FormatReader {
             store.setDetectorOffset(new Double(offset), 0, i);
           }
 
-          String zoom = getFirstNodeValue(detector, "Zoom");
+          if (zoom == null) {
+            zoom = getFirstNodeValue(detector, "Zoom");
+          }
           if (zoom != null) {
             store.setDetectorZoom(new Double(zoom), 0, i);
           }
@@ -1007,11 +1019,11 @@ public class ZeissCZIReader extends FormatReader {
 
           String magnification =
             getFirstNodeValue(objective, "NominalMagnification");
-          Integer mag = magnification == null ? 0 : new Integer(magnification);
+          Double mag = magnification == null ? 0 : new Double(magnification);
 
           if (mag > 0) {
             store.setObjectiveNominalMagnification(
-              new PositiveInteger(mag), 0, i);
+              new PositiveInteger(mag.intValue()), 0, i);
           }
           else {
             LOGGER.warn(
@@ -1551,39 +1563,52 @@ public class ZeissCZIReader extends FormatReader {
     Element tilesSetup = getFirstNode(acquisition, "TilesSetup");
     NodeList groups = getGrandchildren(tilesSetup, "PositionGroup");
 
-    positionsX = new Double[core.length];
-    positionsY = new Double[core.length];
-    positionsZ = new Double[core.length];
+    positionsX = new Double[core.size()];
+    positionsY = new Double[core.size()];
+    positionsZ = new Double[core.size()];
 
-    if (groups == null) {
-      return;
-    }
+    if (groups != null) {
+      for (int i=0; i<groups.getLength(); i++) {
+        Element group = (Element) groups.item(i);
 
-    for (int i=0; i<groups.getLength(); i++) {
-      Element group = (Element) groups.item(i);
+        int tilesX = Integer.parseInt(getFirstNodeValue(group, "TilesX"));
+        int tilesY = Integer.parseInt(getFirstNodeValue(group, "TilesY"));
 
-      int tilesX = Integer.parseInt(getFirstNodeValue(group, "TilesX"));
-      int tilesY = Integer.parseInt(getFirstNodeValue(group, "TilesY"));
+        Element position = getFirstNode(group, "Position");
 
-      Element position = getFirstNode(group, "Position");
+        String x = position.getAttribute("X");
+        String y = position.getAttribute("Y");
+        String z = position.getAttribute("Z");
 
-      String x = position.getAttribute("X");
-      String y = position.getAttribute("Y");
-      String z = position.getAttribute("Z");
+        Double xPos = x == null ? null : new Double(x);
+        Double yPos = y == null ? null : new Double(y);
+        Double zPos = z == null ? null : new Double(z);
 
-      Double xPos = x == null ? null : new Double(x);
-      Double yPos = y == null ? null : new Double(y);
-      Double zPos = z == null ? null : new Double(z);
-
-      for (int tile=0; tile<tilesX * tilesY; tile++) {
-        int index = i * tilesX * tilesY + tile;
-        if (index < positionsX.length) {
-          positionsX[index] = xPos;
-          positionsY[index] = yPos;
-          positionsZ[index] = zPos;
+        for (int tile=0; tile<tilesX * tilesY; tile++) {
+          int index = i * tilesX * tilesY + tile;
+          if (index < positionsX.length) {
+            positionsX[index] = xPos;
+            positionsY[index] = yPos;
+            positionsZ[index] = zPos;
+          }
         }
       }
     }
+
+    Element multiTrack = getFirstNode(acquisition, "MultiTrackSetup");
+
+    if (multiTrack == null) {
+      return;
+    }
+
+    NodeList detectors = getGrandchildren(multiTrack, "Detector");
+
+    if (detectors == null || detectors.getLength() == 0) {
+      return;
+    }
+
+    Element detector = (Element) detectors.item(0);
+    gain = getFirstNodeValue(detector, "Voltage");
   }
 
   private Element getFirstNode(Element root, String name) {
@@ -1624,9 +1649,7 @@ public class ZeissCZIReader extends FormatReader {
     return null;
   }
 
-  private void populateOriginalMetadata(Element root, Stack<String> nameStack,
-    HashMap<String, Integer> indexes)
-  {
+  private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
     String name = root.getNodeName();
     nameStack.push(name);
 
@@ -1639,10 +1662,7 @@ public class ZeissCZIReader extends FormatReader {
     if (root.getChildNodes().getLength() == 1) {
       String value = root.getTextContent();
       if (value != null && key.length() > 0) {
-        Integer i = indexes.get(key.toString());
-        String storedKey = key.toString() + (i == null ? 0 : i);
-        indexes.put(key.toString(), i == null ? 1 : i + 1);
-        addGlobalMeta(storedKey, value);
+        addGlobalMetaList(key.toString(), value);
       }
     }
     NamedNodeMap attributes = root.getAttributes();
@@ -1660,7 +1680,7 @@ public class ZeissCZIReader extends FormatReader {
       for (int i=0; i<children.getLength(); i++) {
         Object child = children.item(i);
         if (child instanceof Element) {
-          populateOriginalMetadata((Element) child, nameStack, indexes);
+          populateOriginalMetadata((Element) child, nameStack);
         }
       }
     }
@@ -1704,41 +1724,42 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   private void convertPixelType(int pixelType) throws FormatException {
+    CoreMetadata ms0 = core.get(0);
     switch (pixelType) {
       case GRAY8:
-        core[0].pixelType = FormatTools.UINT8;
+        ms0.pixelType = FormatTools.UINT8;
         break;
       case GRAY16:
-        core[0].pixelType = FormatTools.UINT16;
+        ms0.pixelType = FormatTools.UINT16;
         break;
       case GRAY32:
-        core[0].pixelType = FormatTools.UINT32;
+        ms0.pixelType = FormatTools.UINT32;
         break;
       case GRAY_FLOAT:
-        core[0].pixelType = FormatTools.FLOAT;
+        ms0.pixelType = FormatTools.FLOAT;
         break;
       case GRAY_DOUBLE:
-        core[0].pixelType = FormatTools.DOUBLE;
+        ms0.pixelType = FormatTools.DOUBLE;
         break;
       case BGR_24:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC *= 3;
-        core[0].rgb = true;
+        ms0.pixelType = FormatTools.UINT8;
+        ms0.sizeC *= 3;
+        ms0.rgb = true;
         break;
       case BGR_48:
-        core[0].pixelType = FormatTools.UINT16;
-        core[0].sizeC *= 3;
-        core[0].rgb = true;
+        ms0.pixelType = FormatTools.UINT16;
+        ms0.sizeC *= 3;
+        ms0.rgb = true;
         break;
       case BGRA_8:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC *= 4;
-        core[0].rgb = true;
+        ms0.pixelType = FormatTools.UINT8;
+        ms0.sizeC *= 4;
+        ms0.rgb = true;
         break;
       case BGR_FLOAT:
-        core[0].pixelType = FormatTools.FLOAT;
-        core[0].sizeC *= 3;
-        core[0].rgb = true;
+        ms0.pixelType = FormatTools.FLOAT;
+        ms0.sizeC *= 3;
+        ms0.rgb = true;
         break;
       case COMPLEX:
       case COMPLEX_FLOAT:
@@ -1829,7 +1850,7 @@ public class ZeissCZIReader extends FormatReader {
 
     private long dataOffset;
 
-    private Double stageX, stageY, timestamp, exposureTime;
+    private Double stageX, stageY, timestamp, exposureTime, stageZ;
 
     public int x, y;
 
@@ -1930,6 +1951,9 @@ public class ZeissCZIReader extends FormatReader {
                 }
                 else if (tagNode.getNodeName().equals("StageYPosition")) {
                   stageY = new Double(text);
+                }
+                else if (tagNode.getNodeName().equals("FocusPosition")) {
+                  stageZ = new Double(text);
                 }
                 else if (tagNode.getNodeName().equals("AcquisitionTime")) {
                   timestamp = DateTools.getTime(

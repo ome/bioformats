@@ -1,0 +1,54 @@
+.. index:: cellSens VSI
+.. index:: .vsi
+
+cellSens VSI
+===============================================================================
+
+Extensions: .vsi 
+
+Developer: `Olympus <http://www.olympus.com/>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`cellSens VSI <cellsens-vsi-metadata>`
+
+
+
+We currently have:
+
+* a few example datasets
+
+We would like to have:
+
+* an official specification document
+
+**Ratings**
+
+
+Pixels: |Fair|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`CellSensReader.java`
+
+Notes:
+
+

@@ -1,0 +1,55 @@
+.. index:: PCX (PC Paintbrush)
+.. index:: .pcx
+
+PCX (PC Paintbrush)
+===============================================================================
+
+Extensions: .pcx 
+
+Developer: ZSoft Corporation
+
+
+**Support**
+
+
+SCIFIO: |yes|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`PCX (PC Paintbrush) <pcx-pc-paintbrush-metadata>`
+
+
+
+We currently have:
+
+* several .pcx files 
+* the ability to generate additional .pcx filse
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Poor|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :scifioreader:`PCXReader.java`
+
+Notes:
+
+
+Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_.

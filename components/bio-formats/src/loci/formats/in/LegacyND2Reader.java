@@ -56,7 +56,7 @@ public class LegacyND2Reader extends FormatReader {
   private static final int MULTI_PHOTON = 5;
 
   private static final String URL_NIKON_ND2 =
-    "http://www.loci.wisc.edu/bio-formats-format/nikon-nis-elements-nd2";
+    "http://www.openmicroscopy.org/site/support/bio-formats/formats/nikon-nis-elements-nd2.html";
   private static final String NO_NIKON_MSG = "Nikon ND2 library not found. " +
     "Please see " + URL_NIKON_ND2 + " for details.";
 
@@ -138,32 +138,33 @@ public class LegacyND2Reader extends FormatReader {
     try {
       openFile(id);
       int numSeries = getNumSeries();
-      core = new CoreMetadata[numSeries];
 
+      core.clear();
       for (int i=0; i<numSeries; i++) {
-        core[i] = new CoreMetadata();
-        core[i].sizeX = getWidth(i);
-        if (core[i].sizeX % 2 != 0) core[i].sizeX++;
-        core[i].sizeY = getHeight(i);
-        core[i].sizeZ = getZSlices(i);
-        core[i].sizeT = getTFrames(i);
-        core[i].sizeC = getChannels(i);
+        CoreMetadata ms = new CoreMetadata();
+        core.add(ms);
+        ms.sizeX = getWidth(i);
+        if (ms.sizeX % 2 != 0) ms.sizeX++;
+        ms.sizeY = getHeight(i);
+        ms.sizeZ = getZSlices(i);
+        ms.sizeT = getTFrames(i);
+        ms.sizeC = getChannels(i);
         int bytes = getBytesPerPixel(i);
         if (bytes % 3 == 0) {
-          core[i].sizeC *= 3;
+          ms.sizeC *= 3;
           bytes /= 3;
-          core[i].rgb = true;
+          ms.rgb = true;
         }
-        else core[i].rgb = false;
+        else ms.rgb = false;
 
-        core[i].pixelType = FormatTools.pixelTypeFromBytes(bytes, false, true);
-        core[i].imageCount = core[i].sizeZ * core[i].sizeT;
-        if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
-        core[i].interleaved = true;
-        core[i].littleEndian = true;
-        core[i].dimensionOrder = "XYCZT";
-        core[i].indexed = false;
-        core[i].falseColor = false;
+        ms.pixelType = FormatTools.pixelTypeFromBytes(bytes, false, true);
+        ms.imageCount = ms.sizeZ * ms.sizeT;
+        if (!ms.rgb) ms.imageCount *= ms.sizeC;
+        ms.interleaved = true;
+        ms.littleEndian = true;
+        ms.dimensionOrder = "XYCZT";
+        ms.indexed = false;
+        ms.falseColor = false;
       }
     }
     catch (UnsatisfiedLinkError e) {

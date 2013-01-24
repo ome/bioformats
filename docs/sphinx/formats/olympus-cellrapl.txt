@@ -1,0 +1,55 @@
+.. index:: Olympus CellR/APL
+.. index:: .apl, .mtb, .tnb, .tif, .obsep
+
+Olympus CellR/APL
+===============================================================================
+
+Extensions: .apl, .mtb, .tnb, .tif, .obsep 
+
+
+Owner: `Olympus <http://www.olympus.com/>`_
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Olympus CellR/APL <olympus-cellrapl-metadata>`
+
+
+
+We currently have:
+
+* a few CellR datasets
+
+We would like to have:
+
+* more Cellr datasets 
+* an official specification document
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Fair|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`APLReader.java`
+
+Notes:
+
+

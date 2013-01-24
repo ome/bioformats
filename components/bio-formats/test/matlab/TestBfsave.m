@@ -6,7 +6,9 @@
 classdef TestBfsave < TestCase
     
     properties
+        reader
         path
+        I = rand(50, 100, 3, 4, 5)
     end
     
     methods
@@ -15,6 +17,7 @@ classdef TestBfsave < TestCase
         end
         
         function setUp(self)
+            bfCheckJavaPath();
             if isunix,
                 self.path = '/tmp/test.ome.tiff';
             else
@@ -23,110 +26,94 @@ classdef TestBfsave < TestCase
         end
         
         function tearDown(self)
+            self.reader.close();
+            self.reader = [];
             if exist(self.path,'file')==2, delete(self.path); end
         end
             
         % Dimension order tests
         function testDimensionOrderXYZCT(self)            
-            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
-            runDimensionOrderTest(I, self.path, 'XYZCT')
+            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYZCT')
         end
         
         function testDimensionOrderXYZTC(self)            
-            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
-            runDimensionOrderTest(I, self.path, 'XYZTC')
+            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYZTC')
         end
         
         function testDimensionOrderXYCZT(self)            
-            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
-            runDimensionOrderTest(I, self.path, 'XYCZT')
+            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYCZT')
         end
         
         function testDimensionOrderXYCTZ(self)            
-            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
-            runDimensionOrderTest(I, self.path, 'XYCTZ')
+            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYCTZ')
         end
+        
         function testDimensionOrderXYTCZ(self)            
-            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
-            runDimensionOrderTest(I, self.path, 'XYTCZ')
+            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYTCZ')
         end
         
         function testDimensionOrderXYTZC(self)            
-            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
-            runDimensionOrderTest(I, self.path, 'XYTZC')
+            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYTZC')
         end
                 
         % Data type tests
         function testPixelsTypeUINT8(self)
-            I = uint8(rand(50, 100, 1, 1, 1) * (2^8-1));
-            runPixelsTypeTest(I, self.path);
+            self.saveAndLoad(uint8(self.I * (2^8-1)));
         end
         
         function testPixelsTypeINT8(self)
-            I = int8(rand(50, 100, 1, 1, 1) * (2^8-1));
-            runPixelsTypeTest(I, self.path);
+            self.saveAndLoad(int8(self.I * (2^8-1)));
         end
         
         function testPixelsTypeUINT16(self)
-            I = uint16(rand(50, 100, 1, 1, 1) * (2^16-1));
-            runPixelsTypeTest(I, self.path);
+            self.saveAndLoad(uint16(self.I * (2^16-1)));
         end
         
         function testPixelsTypeINT16(self)
-            I = int16(rand(50, 100, 1, 1, 1) * (2^16-1));
-            runPixelsTypeTest(I, self.path);
+            self.saveAndLoad(uint16(self.I * (2^16-1)));
         end
         
         function testPixelsTypeUINT32(self)
-            I = uint32(rand(50, 100, 1, 1, 1) * (2^32-1));
-            runPixelsTypeTest(I, self.path);
+            self.saveAndLoad(uint32(self.I * (2^32-1)));
         end
         
         function testPixelsTypeINT32(self)
-            I = int32(rand(50, 100, 1, 1, 1) * (2^32-1));
-            runPixelsTypeTest(I, self.path);
+            self.saveAndLoad(int32(self.I * (2^32-1)));
         end
         
         function testPixelsTypeFLOAT(self)
-            I = single(rand(50, 100, 1, 1, 1) * (2^16-1));
-            runPixelsTypeTest(I, self.path);
+            self.saveAndLoad(single(self.I * (2^16-1)));
         end
         
         function testPixelsTypeDOUBLE(self)
-            I= double(rand(50, 100, 1, 1, 1) * (2^16-1));
-            runPixelsTypeTest(I, self.path);
+            self.saveAndLoad(double(self.I * (2^16-1)));
         end
+        
+        %%
+        function saveAndLoad(self, I, dimensionOrder)
+            
+            if nargin<3, dimensionOrder = 'XYZCT'; end
+            
+            % Create stack and save it
+            bfsave(I, self.path, dimensionOrder);
+            sizeZ = size(I, find(dimensionOrder=='Z'));
+            sizeC = size(I, find(dimensionOrder=='C'));
+            sizeT = size(I, find(dimensionOrder=='T'));
+            
+            % Check dimensions of saved ome-tiff
+            self.reader = bfGetReader(self.path);
+            assertEqual(self.reader.getSizeZ, sizeZ);
+            assertEqual(self.reader.getSizeC, sizeC);
+            assertEqual(self.reader.getSizeT, sizeT);
+            
+            % Test all planes
+            for iPlane = 1 : sizeZ * sizeC * sizeT
+                [i,j,k] = ind2sub([size(I, 3) size(I, 4) size(I, 5)], iPlane);
+                assertEqual(I(:, :, i, j, k), bfGetPlane(self.reader, iPlane));
+            end
+        end
+        
     end
     
 end
 
-function runDimensionOrderTest(I, path, dimensionOrder)
-
-% Create stack and save it
-bfsave(I, path, dimensionOrder);
-sizeZ = size(I,find(dimensionOrder=='Z'));
-sizeC = size(I,find(dimensionOrder=='C'));
-sizeT = size(I,find(dimensionOrder=='T'));
-
-% Check dimensions of saved ome-tiff
-r = bfGetReader(path);
-assertEqual(r.getSizeZ, sizeZ);
-assertEqual(r.getSizeC, sizeC);
-assertEqual(r.getSizeT, sizeT);
-
-% Test all planes
-for iPlane = 1 : sizeZ * sizeC * sizeT
-    [i,j,k] = ind2sub([size(I, 3) size(I, 4) size(I, 5)], iPlane);
-    assertEqual(I(:, :, i, j, k), bfGetPlane(r, iPlane));
-end
-end
-
-function runPixelsTypeTest(I, path)
-
-% Create stack and save it
-bfsave(I, path);
-
-r = bfGetReader(path);
-assertEqual(I, bfGetPlane(r,1));
-
-end

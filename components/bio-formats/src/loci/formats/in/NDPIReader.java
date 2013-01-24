@@ -98,6 +98,7 @@ public class NDPIReader extends BaseTiffReader {
       in = new RandomAccessInputStream(currentId);
       tiffParser = new TiffParser(in);
       tiffParser.setUse64BitOffsets(true);
+      tiffParser.setYCbCrCorrection(false);
       return tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
     }
 
@@ -257,10 +258,9 @@ public class NDPIReader extends BaseTiffReader {
       }
     }
 
-    int seriesCount = pyramidHeight + (ifds.size() - pyramidHeight * sizeZ);
-    core = new CoreMetadata[seriesCount];
-
     // repopulate core metadata
+
+    int seriesCount = pyramidHeight + (ifds.size() - pyramidHeight * sizeZ);
 
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
@@ -278,35 +278,38 @@ public class NDPIReader extends BaseTiffReader {
       ifds.get(i).putIFDValue(IFD.BITS_PER_SAMPLE, bpp);
     }
 
-    for (int s=0; s<core.length; s++) {
-      core[s] = new CoreMetadata();
-      if (s == 0 && !hasFlattenedResolutions()) {
-        core[s].resolutionCount = pyramidHeight;
+    core.clear();
+    for (int s=0; s<seriesCount; s++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
+      if (s == 0) {
+        ms.resolutionCount = pyramidHeight;
       }
     }
 
-    for (int s=0; s<core.length; s++) {
+    for (int s=0; s<core.size(); s++) {
       IFD ifd = ifds.get(getIFDIndex(s, 0));
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
-      core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
+      CoreMetadata ms = core.get(s);
+      ms.rgb = samples > 1 || p == PhotoInterp.RGB;
 
-      core[s].sizeX = (int) ifd.getImageWidth();
-      core[s].sizeY = (int) ifd.getImageLength();
-      core[s].sizeZ = s < pyramidHeight ? sizeZ : 1;
-      core[s].sizeT = 1;
-      core[s].sizeC = core[s].rgb ? samples : 1;
-      core[s].littleEndian = ifd.isLittleEndian();
-      core[s].indexed = p == PhotoInterp.RGB_PALETTE &&
+      ms.sizeX = (int) ifd.getImageWidth();
+      ms.sizeY = (int) ifd.getImageLength();
+      ms.sizeZ = s < pyramidHeight ? sizeZ : 1;
+      ms.sizeT = 1;
+      ms.sizeC = ms.rgb ? samples : 1;
+      ms.littleEndian = ifd.isLittleEndian();
+      ms.indexed = p == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      core[s].imageCount = core[s].sizeZ * core[s].sizeT;
-      core[s].pixelType = ifd.getPixelType();
-      core[s].metadataComplete = true;
-      core[s].interleaved =
-        core[s].sizeX > MAX_SIZE || core[s].sizeY > MAX_SIZE;
-      core[s].falseColor = false;
-      core[s].dimensionOrder = "XYCZT";
-      core[s].thumbnail = s != 0;
+      ms.imageCount = ms.sizeZ * ms.sizeT;
+      ms.pixelType = ifd.getPixelType();
+      ms.metadataComplete = true;
+      ms.interleaved =
+        ms.sizeX > MAX_SIZE || ms.sizeY > MAX_SIZE;
+      ms.falseColor = false;
+      ms.dimensionOrder = "XYCZT";
+      ms.thumbnail = s != 0;
     }
   }
 

@@ -169,6 +169,10 @@ public class OMETiffWriter extends TiffWriter {
         service = null;
         ifdCounts.clear();
       }
+      else {
+        for(String k : ifdCounts.keySet())
+        ifdCounts.put(k, 0);
+      }
     }
   }
 
@@ -237,12 +241,10 @@ public class OMETiffWriter extends TiffWriter {
     ServiceFactory factory = new ServiceFactory();
     service = factory.getInstance(OMEXMLService.class);
     OMEXMLMetadata originalOMEMeta = service.getOMEMetadata(retrieve);
-    if (originalOMEMeta instanceof OMEXMLMetadataImpl) {
-      ((OMEXMLMetadataImpl) originalOMEMeta).resolveReferences();
+    originalOMEMeta.resolveReferences();
 
-      String omexml = service.getOMEXML(originalOMEMeta);
-      omeMeta = service.createOMEXMLMetadata(omexml);
-    }
+    String omexml = service.getOMEXML(originalOMEMeta);
+    omeMeta = service.createOMEXMLMetadata(omexml);
   }
 
   private String getOMEXML(String file) throws FormatException, IOException {
@@ -270,6 +272,7 @@ public class OMETiffWriter extends TiffWriter {
     RandomAccessInputStream in = null;
     try {
       TiffSaver saver = new TiffSaver(out, file);
+      saver.setBigTiff(isBigTiff);
       in = new RandomAccessInputStream(file);
       saver.overwriteLastIFDOffset(in);
       saver.overwriteComment(in, xml);
@@ -333,11 +336,6 @@ public class OMETiffWriter extends TiffWriter {
 
         Integer ifdIndex = ifdCounts.get(filename);
         int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
-        if (series == 0) {
-          if ((ifd > plane || ifdCounts.size() > 1) && ifd > 0) {
-            ifd--;
-          }
-        }
 
         omeMeta.setUUIDFileName(filename, series, nextPlane);
         String uuid = "urn:uuid:" + getUUID(filename);

@@ -1,7 +1,14 @@
+.. index:: $format
+#if ($extensions)
+.. index:: $extensions
+#end
+
 $format
 ===============================================================================
 
-Extensions: $extensions
+#if ($extensions)
+Extensions: $extensions $unindexedExtensions
+#end
 
 #if ($developer)
 Developer: $developer
@@ -11,8 +18,8 @@ Developer: $developer
 Owner: $owner
 #end
 
-Support
--------
+**Support**
+
 
 SCIFIO: |$scifio|
 
@@ -20,7 +27,9 @@ Export: |$export|
 
 Officially Supported Versions: $versions
 
-Supported Metadata Fields:
+#if ($metadataPage)
+Supported Metadata Fields: :doc:`$format <$metadataPage>`
+#end
 
 #if ($software)
 Freely Available Software:
@@ -41,17 +50,17 @@ Sample Datasets:
 We currently have:
 
 #foreach ($item in $weHave)
-- $item
+$item
 #end
 
 We would like to have:
 
 #foreach ($item in $weWant)
-- $item
+$item
 #end
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |$pixelsRating|
 
@@ -63,12 +72,16 @@ Presence: |$presenceRating|
 
 Utility: |$utilityRating|
 
-Additional Information
-----------------------
 
-Source Code: :source:`$reader <components/$component/src/loci/formats/in/$reader >`
+**Additional Information**
+
+
+Source Code: #foreach ($item in $reader)
+#if ($velocityHasNext):$readerextlink:`$item`, #else:$readerextlink:`$item`#end
+#end
+
 #if ($writer)
-Source Code: :source:`$writer <components/$component/src/loci/formats/out/$writer >`
+Source Code: :$writerextlink:`$writer`
 #end
 
 Notes:

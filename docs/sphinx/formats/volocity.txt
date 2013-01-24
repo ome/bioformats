@@ -1,0 +1,59 @@
+.. index:: Volocity
+.. index:: .mvd2
+
+Volocity
+===============================================================================
+
+Extensions: .mvd2 
+
+Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Volocity <volocity-metadata>`
+
+
+Sample Datasets:
+
+- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
+
+We currently have:
+
+* many example Volocity datasets
+
+We would like to have:
+
+* an official specification document 
+* any Volocity datasets that do not open correctly
+
+**Ratings**
+
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`VolocityReader.java`
+
+Notes:
+
+
+.mvd2 files are `Metakit database files <http://equi4.com/metakit/>`_.

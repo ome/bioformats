@@ -1,0 +1,19 @@
+Source code
+===========
+
+If you are interested in the latest Bio-Formats source code from our
+`Git <http://git-scm.com/>`_ repository, you can access it using the
+repository path:
+
+``git@github.com:openmicroscopy/bioformats.git``
+
+You can also browse the Bio-Formats source on GitHub:
+
+``https://github.com/openmicroscopy/bioformats``
+
+To build the code, you can use our Ant build script—try "``ant -p``\ "
+for a list of targets.  In general, "ant jars" or "ant tools" is the
+correct command.
+
+Lastly, you can browse the :javadoc:`Bio-Formats Javadocs online <>`,
+or generate them yourself using the "docs" Ant target.

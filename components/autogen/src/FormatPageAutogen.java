@@ -76,7 +76,7 @@ public class FormatPageAutogen {
   // -- API Methods --
 
   public void writeFormatPages() throws Exception {
-    File doc = new File("../../docs/sphinx/loci/");
+    File doc = new File("../../docs/sphinx/formats/");
     if (!doc.exists()) {
       boolean success = doc.mkdir();
       if (!success) {
@@ -85,17 +85,34 @@ public class FormatPageAutogen {
     }
 
     VelocityEngine engine = VelocityTools.createEngine();
-    VelocityContext context = VelocityTools.createContext();
 
     for (IniTable table : data) {
+      VelocityContext context = VelocityTools.createContext();
+
       String format = table.get(IniTable.HEADER_KEY);
       context.put("format", format);
-      context.put("extensions", table.get("extensions"));
+      if (table.containsKey("extensions")) {
+        context.put("extensions", table.get("extensions"));
+      }
+      if (table.containsKey("unindexedExtensions")) {
+        context.put("unindexedExtensions",
+          ", " + table.get("unindexedExtensions"));
+      }
+      else {
+        context.put("unindexedExtensions", "");
+      }
       context.put("owner", table.get("owner"));
       context.put("developer", table.get("developer"));
       context.put("scifio", table.get("scifio"));
       context.put("export", table.get("export"));
-      context.put("versions", table.get("versions"));
+
+      if (table.containsKey("versions")) {
+        context.put("versions", table.get("versions"));
+      }
+      else {
+        context.put("versions", "");
+      }
+
       context.put("pixelsRating", table.get("pixelsRating"));
       context.put("metadataRating", table.get("metadataRating"));
       context.put("opennessRating", table.get("opennessRating"));
@@ -105,8 +122,10 @@ public class FormatPageAutogen {
       context.put("writer", table.get("writer"));
       context.put("notes", table.get("notes"));
       context.put("privateSpecification", table.get("privateSpecification"));
-      context.put("component",
-        table.get("scifio").equals("no") ? "bio-formats" : "scifio");
+      context.put("readerextlink",
+        table.get("scifio").equals("no") ? "bfreader" : "scifioreader");
+      context.put("writerextlink",
+        table.get("scifio").equals("no") ? "bfwriter" : "scifiowriter");
 
       if (table.containsKey("software")) {
         String[] software = table.get("software").split("\n");
@@ -133,14 +152,31 @@ public class FormatPageAutogen {
         context.put("notes", notes);
       }
 
-      String filename = getPageName(format);
+      if (table.containsKey("reader")) {
+        String[] reader = table.get("reader").split(", ");
+        context.put("reader", reader);
+      }
+      String filename = getPageName(format, table.get("pagename"));
+
+      context.put("metadataPage",
+        filename.substring(filename.indexOf(File.separator) + 1) + "-metadata");
+      if (table.containsKey("metadataPage")) {
+        String page = table.get("metadataPage");
+        if (page.length() > 0) {
+          context.put("metadataPage", table.get("metadataPage"));
+        }
+        else {
+          context.remove("metadataPage");
+        }
+      }
+
       VelocityTools.processTemplate(engine, context, TEMPLATE,
-        "../../docs/sphinx/loci/" + filename + ".txt");
+        "../../docs/sphinx/" + filename + ".txt");
     }
   }
 
   public void writeFormatTable() throws Exception {
-    File doc = new File("../../docs/sphinx/loci/");
+    File doc = new File("../../docs/sphinx/");
     if (!doc.exists()) {
       boolean success = doc.mkdir();
       if (!success) {
@@ -154,7 +190,8 @@ public class FormatPageAutogen {
     IniTable[] sortedTable = new IniTable[data.size()];
     for (int i=0; i<data.size(); i++) {
       IniTable table = data.get(i);
-      table.put("pagename", getPageName(table.get(IniTable.HEADER_KEY)));
+      table.put("pagename",
+        getPageName(table.get(IniTable.HEADER_KEY), table.get("pagename")));
       sortedTable[i] = table;
     }
 
@@ -171,22 +208,25 @@ public class FormatPageAutogen {
     context.put("count", sortedTable.length);
 
     VelocityTools.processTemplate(engine, context, TABLE_TEMPLATE,
-      "../../docs/sphinx/loci/bio-formats-formats.txt");
+      "../../docs/sphinx/supported-formats.txt");
   }
 
   // -- Helper methods --
 
-  private String getPageName(String format) {
-    String filename = format.replaceAll("/", "");
-    filename = filename.replaceAll("\\(", "");
-    filename = filename.replaceAll("\\)", "");
-    filename = filename.replaceAll("\\.", "");
-    filename = filename.replaceAll("& ", "");
-    filename = filename.replaceAll(" ", "-");
-    filename = "bio-formats-format-" + filename;
-    filename = filename.toLowerCase();
+  protected static String getPageName(String format, String pagename) {
+    String realPageName = pagename;
+    if (realPageName == null) {
+      realPageName = format.replaceAll("/", "");
+      realPageName = realPageName.replaceAll("\\(", "");
+      realPageName = realPageName.replaceAll("\\)", "");
+      realPageName = realPageName.replaceAll("\\.", "");
+      realPageName = realPageName.replaceAll("& ", "");
+      realPageName = realPageName.replaceAll(" ", "-");
+      realPageName = realPageName.toLowerCase();
+    }
+    realPageName = "formats" + File.separator + realPageName;
 
-    return filename;
+    return realPageName;
   }
 
   // -- Main method --

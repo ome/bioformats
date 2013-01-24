@@ -1,0 +1,53 @@
+.. index:: JPX
+.. index:: .jpx
+
+JPX
+===============================================================================
+
+Extensions: .jpx 
+
+Developer: `JPEG Committee <http://www.jpeg.org/jpeg2000/>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`JPX <jpx-metadata>`
+
+
+
+We currently have:
+
+* a few .jpx files
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Outstanding|
+
+Presence: |Good|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`JPXReader.java`
+
+Notes:
+
+

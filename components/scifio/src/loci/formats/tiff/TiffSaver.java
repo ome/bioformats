@@ -203,10 +203,15 @@ public class TiffSaver {
 
     // for vanilla TIFFs, 8 is the offset to the first IFD
     // for BigTIFFs, 8 is the number of bytes in an offset
-    out.writeInt(8);
     if (bigTiff) {
+      out.writeShort(8);
+      out.writeShort(0);
+
       // write the offset to the first IFD for BigTIFF files
       out.writeLong(16);
+    }
+    else {
+      out.writeInt(8);
     }
   }
 
@@ -283,6 +288,7 @@ public class TiffSaver {
     // These operations are synchronized
     TiffCompression compression;
     int tileWidth, tileHeight, nStrips;
+    boolean interleaved;
     ByteArrayOutputStream[] stripBuf;
     synchronized (this) {
       int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
@@ -290,7 +296,7 @@ public class TiffSaver {
       if (nChannels == null) {
         nChannels = buf.length / (w * h * bytesPerPixel);
       }
-      boolean interleaved = ifd.getPlanarConfiguration() == 1;
+      interleaved = ifd.getPlanarConfiguration() == 1;
 
       makeValidIFD(ifd, pixelType, nChannels);
 
@@ -368,6 +374,8 @@ public class TiffSaver {
           ifd, options);
       codecOptions.height = tileHeight;
       codecOptions.width = tileWidth;
+      codecOptions.channels = interleaved ? nChannels : 1;
+
       strips[strip] = compression.compress(strips[strip], codecOptions);
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(String.format("Compressed strip %d/%d length %d",

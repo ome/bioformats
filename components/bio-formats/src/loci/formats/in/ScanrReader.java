@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -302,7 +303,7 @@ public class ScanrReader extends FormatReader {
       TiffReader r = new TiffReader();
       r.setMetadataStore(getMetadataStore());
       r.setId(id);
-      core = r.getCoreMetadata();
+      core = new ArrayList<CoreMetadata>(r.getCoreMetadataList());
       metadataStore = r.getMetadataStore();
 
       Hashtable globalMetadata = r.getGlobalMetadata();
@@ -549,22 +550,24 @@ public class ScanrReader extends FormatReader {
 
     reader.close();
 
-    core = new CoreMetadata[nWells * nPos];
-    for (int i=0; i<getSeriesCount(); i++) {
-      core[i] = new CoreMetadata();
-      core[i].sizeC = nChannels;
-      core[i].sizeZ = nSlices;
-      core[i].sizeT = nTimepoints;
-      core[i].sizeX = sizeX;
-      core[i].sizeY = sizeY;
-      core[i].pixelType = pixelType;
-      core[i].rgb = rgb;
-      core[i].interleaved = interleaved;
-      core[i].indexed = indexed;
-      core[i].littleEndian = littleEndian;
-      core[i].dimensionOrder = "XYCTZ";
-      core[i].imageCount = nSlices * nTimepoints * nChannels;
-      core[i].bitsPerPixel = 12;
+    int seriesCount = nWells * nPos;
+    core.clear();
+    for (int i=0; i<seriesCount; i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
+      ms.sizeC = nChannels;
+      ms.sizeZ = nSlices;
+      ms.sizeT = nTimepoints;
+      ms.sizeX = sizeX;
+      ms.sizeY = sizeY;
+      ms.pixelType = pixelType;
+      ms.rgb = rgb;
+      ms.interleaved = interleaved;
+      ms.indexed = indexed;
+      ms.littleEndian = littleEndian;
+      ms.dimensionOrder = "XYCTZ";
+      ms.imageCount = nSlices * nTimepoints * nChannels;
+      ms.bitsPerPixel = 12;
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -713,6 +716,8 @@ public class ScanrReader extends FormatReader {
         foundPlateLayout = false;
       }
       else if (qName.equals("Val")) {
+        CoreMetadata ms0 = core.get(0);
+
         value = v.trim();
         addGlobalMeta(key, value);
 
@@ -723,13 +728,13 @@ public class ScanrReader extends FormatReader {
           fieldRows = Integer.parseInt(value);
         }
         else if (key.equals("# slices")) {
-          core[0].sizeZ = Integer.parseInt(value);
+          ms0.sizeZ = Integer.parseInt(value);
         }
         else if (key.equals("timeloop real")) {
-          core[0].sizeT = Integer.parseInt(value);
+          ms0.sizeT = Integer.parseInt(value);
         }
         else if (key.equals("timeloop count")) {
-          core[0].sizeT = Integer.parseInt(value) + 1;
+          ms0.sizeT = Integer.parseInt(value) + 1;
         }
         else if (key.equals("timeloop delay [ms]")) {
           deltaT = Integer.parseInt(value) / 1000.0;
@@ -750,7 +755,7 @@ public class ScanrReader extends FormatReader {
           if (value.equals("0") &&
             !channelNames.get(lastIndex).equals("Autofocus"))
           {
-            core[0].sizeC++;
+            ms0.sizeC++;
           }
           else {
             channelNames.remove(lastIndex);

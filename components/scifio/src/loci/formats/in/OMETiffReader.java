@@ -38,6 +38,7 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -187,10 +188,18 @@ public class OMETiffReader extends FormatReader {
       }
       return meta.getImageCount() > 0;
     }
-    catch (ServiceException se) { }
-    catch (NullPointerException e) { }
-    catch (FormatException e) { }
-    catch (IndexOutOfBoundsException e) { }
+    catch (ServiceException se) {
+      LOGGER.debug("OME-XML parsing failed", se);
+    }
+    catch (NullPointerException e) {
+      LOGGER.debug("OME-XML parsing failed", e);
+    }
+    catch (FormatException e) {
+      LOGGER.debug("OME-XML parsing failed", e);
+    }
+    catch (IndexOutOfBoundsException e) {
+      LOGGER.debug("OME-XML parsing failed", e);
+    }
     return false;
   }
 
@@ -203,6 +212,7 @@ public class OMETiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    int series = getSeries();
     if (info[series][lastPlane] == null ||
       info[series][lastPlane].reader == null ||
       info[series][lastPlane].id == null)
@@ -215,6 +225,7 @@ public class OMETiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
+    int series = getSeries();
     if (info[series][lastPlane] == null ||
       info[series][lastPlane].reader == null ||
       info[series][lastPlane].id == null)
@@ -232,6 +243,7 @@ public class OMETiffReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    int series = getSeries();
     lastPlane = no;
     int i = info[series][no].ifd;
     MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
@@ -255,6 +267,7 @@ public class OMETiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
+    int series = getSeries();
     if (noPixels) return null;
     Vector<String> usedFiles = new Vector<String>();
     for (int i=0; i<info[series].length; i++) {
@@ -382,15 +395,14 @@ public class OMETiffReader extends FormatReader {
 
     // determine series count from Image and Pixels elements
     int seriesCount = meta.getImageCount();
-    core = new CoreMetadata[seriesCount];
+    core.clear();
     for (int i=0; i<seriesCount; i++) {
-      core[i] = new CoreMetadata();
+      core.add(new CoreMetadata());
     }
     info = new OMETiffPlane[seriesCount][];
 
     tileWidth = new int[seriesCount];
     tileHeight = new int[seriesCount];
-
     // compile list of file/UUID mappings
     Hashtable<String, String> files = new Hashtable<String, String>();
     boolean needSearch = false;
@@ -584,7 +596,7 @@ public class OMETiffReader extends FormatReader {
           sizeZ, effSizeC, sizeT, num, z, c, t);
         int count = numPlanes == null ? 1 : numPlanes.getValue();
         if (count == 0) {
-          core[s] = null;
+          core.set(s, null);
           break;
         }
 
@@ -648,7 +660,7 @@ public class OMETiffReader extends FormatReader {
         LOGGER.debug("    }");
       }
 
-      if (core[s] == null) continue;
+      if (core.get(s) == null) continue;
 
       // verify that all planes are available
       LOGGER.debug("    --------------------------------");
@@ -679,6 +691,7 @@ public class OMETiffReader extends FormatReader {
       LOGGER.debug("  }");
 
       // populate core metadata
+      CoreMetadata m = core.get(s);
       info[s] = planes;
       try {
         if (!info[s][0].reader.isThisType(info[s][0].id)) {
@@ -694,31 +707,31 @@ public class OMETiffReader extends FormatReader {
         tileWidth[s] = info[s][0].reader.getOptimalTileWidth();
         tileHeight[s] = info[s][0].reader.getOptimalTileHeight();
 
-        core[s].sizeX = meta.getPixelsSizeX(i).getValue().intValue();
+        m.sizeX = meta.getPixelsSizeX(i).getValue().intValue();
         int tiffWidth = (int) firstIFD.getImageWidth();
-        if (core[s].sizeX != tiffWidth && s == 0) {
+        if (m.sizeX != tiffWidth && s == 0) {
           LOGGER.warn("SizeX mismatch: OME={}, TIFF={}",
-            core[s].sizeX, tiffWidth);
+            m.sizeX, tiffWidth);
         }
-        core[s].sizeY = meta.getPixelsSizeY(i).getValue().intValue();
+        m.sizeY = meta.getPixelsSizeY(i).getValue().intValue();
         int tiffHeight = (int) firstIFD.getImageLength();
-        if (core[s].sizeY != tiffHeight && s ==  0) {
+        if (m.sizeY != tiffHeight && s ==  0) {
           LOGGER.warn("SizeY mismatch: OME={}, TIFF={}",
-            core[s].sizeY, tiffHeight);
+            m.sizeY, tiffHeight);
         }
-        core[s].sizeZ = meta.getPixelsSizeZ(i).getValue().intValue();
-        core[s].sizeC = meta.getPixelsSizeC(i).getValue().intValue();
-        core[s].sizeT = meta.getPixelsSizeT(i).getValue().intValue();
-        core[s].pixelType = FormatTools.pixelTypeFromString(
+        m.sizeZ = meta.getPixelsSizeZ(i).getValue().intValue();
+        m.sizeC = meta.getPixelsSizeC(i).getValue().intValue();
+        m.sizeT = meta.getPixelsSizeT(i).getValue().intValue();
+        m.pixelType = FormatTools.pixelTypeFromString(
           meta.getPixelsType(i).toString());
         int tiffPixelType = firstIFD.getPixelType();
-        if (core[s].pixelType != tiffPixelType && (s == 0 || adjustedSamples)) {
+        if (m.pixelType != tiffPixelType && (s == 0 || adjustedSamples)) {
           LOGGER.warn("PixelType mismatch: OME={}, TIFF={}",
-            core[s].pixelType, tiffPixelType);
-          core[s].pixelType = tiffPixelType;
+            m.pixelType, tiffPixelType);
+          m.pixelType = tiffPixelType;
         }
-        core[s].imageCount = num;
-        core[s].dimensionOrder = meta.getPixelsDimensionOrder(i).toString();
+        m.imageCount = num;
+        m.dimensionOrder = meta.getPixelsDimensionOrder(i).toString();
 
         // hackish workaround for files exported by OMERO that have an
         // incorrect dimension order
@@ -733,33 +746,33 @@ public class OMETiffReader extends FormatReader {
           meta.getTiffDataCount(i) > 0 &&
           uuidFileName.indexOf("__omero_export") != -1)
         {
-          core[s].dimensionOrder = "XYZCT";
+          m.dimensionOrder = "XYZCT";
         }
 
-        core[s].orderCertain = true;
+        m.orderCertain = true;
         PhotoInterp photo = firstIFD.getPhotometricInterpretation();
-        core[s].rgb = samples > 1 || photo == PhotoInterp.RGB;
-        if ((samples != core[s].sizeC && (samples % core[s].sizeC) != 0 &&
-          (core[s].sizeC % samples) != 0) || core[s].sizeC == 1 ||
+        m.rgb = samples > 1 || photo == PhotoInterp.RGB;
+        if ((samples != m.sizeC && (samples % m.sizeC) != 0 &&
+          (m.sizeC % samples) != 0) || m.sizeC == 1 ||
           adjustedSamples)
         {
-          core[s].sizeC *= samples;
+          m.sizeC *= samples;
         }
 
-        if (core[s].sizeZ * core[s].sizeT * core[s].sizeC >
-          core[s].imageCount && !core[s].rgb)
+        if (m.sizeZ * m.sizeT * m.sizeC >
+          m.imageCount && !m.rgb)
         {
-          if (core[s].sizeZ == core[s].imageCount) {
-            core[s].sizeT = 1;
-            core[s].sizeC = 1;
+          if (m.sizeZ == m.imageCount) {
+            m.sizeT = 1;
+            m.sizeC = 1;
           }
-          else if (core[s].sizeT == core[s].imageCount) {
-            core[s].sizeZ = 1;
-            core[s].sizeC = 1;
+          else if (m.sizeT == m.imageCount) {
+            m.sizeZ = 1;
+            m.sizeC = 1;
           }
-          else if (core[s].sizeC == core[s].imageCount) {
-            core[s].sizeT = 1;
-            core[s].sizeZ = 1;
+          else if (m.sizeC == m.imageCount) {
+            m.sizeT = 1;
+            m.sizeZ = 1;
           }
         }
 
@@ -767,15 +780,15 @@ public class OMETiffReader extends FormatReader {
           LOGGER.warn("OME-TIFF Pixels element contains BinData elements! " +
                       "Ignoring.");
         }
-        core[s].littleEndian = firstIFD.isLittleEndian();
-        core[s].interleaved = false;
-        core[s].indexed = photo == PhotoInterp.RGB_PALETTE &&
+        m.littleEndian = firstIFD.isLittleEndian();
+        m.interleaved = false;
+        m.indexed = photo == PhotoInterp.RGB_PALETTE &&
           firstIFD.getIFDValue(IFD.COLOR_MAP) != null;
-        if (core[s].indexed) {
-          core[s].rgb = false;
+        if (m.indexed) {
+          m.rgb = false;
         }
-        core[s].falseColor = true;
-        core[s].metadataComplete = true;
+        m.falseColor = true;
+        m.metadataComplete = true;
       }
       catch (NullPointerException exc) {
         throw new FormatException("Incomplete Pixels metadata", exc);
@@ -784,23 +797,24 @@ public class OMETiffReader extends FormatReader {
 
     // remove null CoreMetadata entries
 
-    Vector<CoreMetadata> series = new Vector<CoreMetadata>();
+    ArrayList<CoreMetadata> series = new ArrayList<CoreMetadata>();
     Vector<OMETiffPlane[]> planeInfo = new Vector<OMETiffPlane[]>();
-    for (int i=0; i<core.length; i++) {
-      if (core[i] != null) {
-        series.add(core[i]);
+    for (int i=0; i<core.size(); i++) {
+      if (core.get(i) != null) {
+        series.add(core.get(i));
         planeInfo.add(info[i]);
       }
     }
-    core = series.toArray(new CoreMetadata[series.size()]);
+    core = series;
     info = planeInfo.toArray(new OMETiffPlane[0][0]);
 
     if (getImageCount() == 1) {
-      core[0].sizeZ = 1;
-      if (!core[0].rgb) {
-        core[0].sizeC = 1;
+      CoreMetadata ms0 = core.get(0);
+      ms0.sizeZ = 1;
+      if (!ms0.rgb) {
+        ms0.sizeC = 1;
       }
-      core[0].sizeT = 1;
+      ms0.sizeT = 1;
     }
 
     MetadataTools.populatePixels(metadataStore, this, false, false);

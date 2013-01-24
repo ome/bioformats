@@ -36,6 +36,7 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -185,6 +186,8 @@ public class PCIReader extends FormatReader {
     timestamps = new HashMap<Integer, Double>();
     uniqueZ = new Vector<Double>();
 
+    CoreMetadata m = core.get(0);
+
     try {
       ServiceFactory factory = new ServiceFactory();
       poi = factory.getInstance(POIService.class);
@@ -231,7 +234,7 @@ public class PCIReader extends FormatReader {
       }
 
       if (relativePath.equals("Field Count")) {
-        core[0].imageCount = stream.readInt();
+        m.imageCount = stream.readInt();
       }
       else if (relativePath.equals("File Has Image")) {
         if (stream.readShort() == 0) {
@@ -247,31 +250,31 @@ public class PCIReader extends FormatReader {
           int bpp = FormatTools.getBytesPerPixel(getPixelType());
           int plane = getSizeX() * getSizeY() * bpp;
           if (getSizeC() == 0) {
-            core[0].sizeC = poi.getFileSize(name) / plane;
+            m.sizeC = poi.getFileSize(name) / plane;
           }
         }
       }
       else if (relativePath.indexOf("Image_Depth") != -1) {
-        boolean firstBits = core[0].bitsPerPixel == 0;
+        boolean firstBits = m.bitsPerPixel == 0;
         int bits = (int) stream.readDouble();
-        core[0].bitsPerPixel = bits;
+        m.bitsPerPixel = bits;
         while (bits % 8 != 0 || bits == 0) bits++;
         if (bits % 3 == 0) {
-          core[0].sizeC = 3;
+          m.sizeC = 3;
           bits /= 3;
-          core[0].bitsPerPixel /= 3;
+          m.bitsPerPixel /= 3;
         }
         bits /= 8;
-        core[0].pixelType = FormatTools.pixelTypeFromBytes(bits, false, false);
+        m.pixelType = FormatTools.pixelTypeFromBytes(bits, false, false);
         if (getSizeC() > 1 && firstBits) {
-          core[0].sizeC /= bits;
+          m.sizeC /= bits;
         }
       }
       else if (relativePath.indexOf("Image_Height") != -1 && getSizeY() == 0) {
-        core[0].sizeY = (int) stream.readDouble();
+        m.sizeY = (int) stream.readDouble();
       }
       else if (relativePath.indexOf("Image_Width") != -1 && getSizeX() == 0) {
-        core[0].sizeX = (int) stream.readDouble();
+        m.sizeX = (int) stream.readDouble();
       }
       else if (relativePath.indexOf("Time_From_Start") != -1) {
         timestamps.put(getTimestampIndex(parent), stream.readDouble());
@@ -318,24 +321,24 @@ public class PCIReader extends FormatReader {
 
     boolean zFirst = !new Double(firstZ).equals(new Double(secondZ));
 
-    if (getSizeC() == 0) core[0].sizeC = 1;
+    if (getSizeC() == 0) m.sizeC = 1;
 
-    core[0].sizeZ = uniqueZ.size() == 0 ? 1 : uniqueZ.size();
-    core[0].sizeT = getImageCount() / getSizeZ();
-    core[0].rgb = getSizeC() > 1;
+    m.sizeZ = uniqueZ.size() == 0 ? 1 : uniqueZ.size();
+    m.sizeT = getImageCount() / getSizeZ();
+    m.rgb = getSizeC() > 1;
     if (imageFiles.size() > getImageCount() && getSizeC() == 1) {
-      core[0].sizeC = imageFiles.size() / getImageCount();
-      core[0].imageCount *= getSizeC();
+      m.sizeC = imageFiles.size() / getImageCount();
+      m.imageCount *= getSizeC();
     }
     else {
-      core[0].imageCount = getSizeZ() * getSizeT();
+      m.imageCount = getSizeZ() * getSizeT();
     }
-    core[0].interleaved = false;
-    core[0].dimensionOrder = zFirst ? "XYCZT" : "XYCTZ";
-    core[0].littleEndian = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
+    m.interleaved = false;
+    m.dimensionOrder = zFirst ? "XYCZT" : "XYCTZ";
+    m.littleEndian = true;
+    m.indexed = false;
+    m.falseColor = false;
+    m.metadataComplete = true;
 
     // re-index image files
     String[] files = imageFiles.values().toArray(new String[imageFiles.size()]);

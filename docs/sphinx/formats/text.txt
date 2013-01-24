@@ -1,0 +1,52 @@
+.. index:: Text
+.. index:: .txt
+
+Text
+===============================================================================
+
+Extensions: .txt 
+
+
+
+**Support**
+
+
+SCIFIO: |yes|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Text <text-metadata>`
+
+
+
+We currently have:
+
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Good|
+
+Metadata: |Poor|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Poor|
+
+
+**Additional Information**
+
+
+Source Code: :scifioreader:`TextReader.java`
+
+Notes:
+
+
+Reads tabular pixel data produced by a variety of software.

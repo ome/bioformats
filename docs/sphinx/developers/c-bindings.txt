@@ -1,0 +1,39 @@
+Bio-Formats C++ bindings
+========================
+
+To make Bio-Formats accessible to software written in C++, we have
+created a Bio-Formats C++ interface (BF-CPP for short). It uses our
+`jar2lib <http://loci.wisc.edu/software/jar2lib>`_ program to generate a C++
+proxy class for each equivalent Bio-Formats Java class. The resulting proxies
+are then compiled into a library, which represents the actual interface from
+C++ to Bio-Formats. Using this library in your projects gives you access to
+the image support of Bio-Formats.
+
+BF-CPP comes with some standalone examples which you can use as a
+starting point in your own project:
+
+-  :source:`showinf <components/scifio/cppwrap/showinf.cpp>`
+-  :source:`minimum_writer <components/scifio/cppwrap/minimum_writer.cpp>`
+
+Other projects using BF-CPP include:
+
+-  `WiscScan <http://loci.wisc.edu/software/wiscscan>`_ which uses BF-CPP
+   to write OME-TIFF_ files.
+-  :doc:`/users/xuvtools/index` which uses an adapted version of BF-CPP
+   called
+   `BlitzBioFormats <http://www.xuvtools.org/devel:libblitzbioformats>`_.
+
+You can use BF-CPP from a pre-compiled binary, or you can generate the
+code and compile it yourself:
+
+-  Binary builds for several common platforms are available on our
+   :bf_plone:`Bio-Formats downloads page <downloads>`.
+-  See the :doc:`build instructions <buildBF-CPP>`
+   (:doc:`Windows <BF-CPP-windows>`,
+   :doc:`Mac OS X <BF-CPP-macosx>`,
+   :doc:`Linux <BF-CPP-linux>`)
+   for details on compiling from source.
+
+Either way, once you have BF-CPP in compiled form, simply include it in
+your project as you would any other external library.
+

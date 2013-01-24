@@ -1,0 +1,53 @@
+.. index:: FEI TIFF
+.. index:: .tiff
+
+FEI TIFF
+===============================================================================
+
+Extensions: .tiff 
+
+Developer: `FEI <http://www.fei.com>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`FEI TIFF <fei-tiff-metadata>`
+
+
+
+We currently have:
+
+* a few FEI TIFF datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Good|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`FEITiffReader.java`
+
+Notes:
+
+

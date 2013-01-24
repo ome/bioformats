@@ -21,6 +21,7 @@ classdef TestBfGetPlane < TestCase
         end
         
         function setUp(self)
+            bfCheckJavaPath();
             self.reader = loci.formats.in.FakeReader();
             self.sizeX =  self.reader.DEFAULT_SIZE_X;
             self.sizeY =  self.reader.DEFAULT_SIZE_Y;
@@ -29,6 +30,7 @@ classdef TestBfGetPlane < TestCase
         
         function tearDown(self)
             self.reader.close();
+            self.reader = [];
         end
         
         % Pixel type tests

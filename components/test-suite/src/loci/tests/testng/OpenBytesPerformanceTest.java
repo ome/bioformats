@@ -25,16 +25,9 @@
 
 package loci.tests.testng;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.fail;
 
 import java.io.File;
-
-import org.perf4j.StopWatch;
-import org.perf4j.log4j.Log4JStopWatch;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
 
 import loci.common.Location;
 import loci.formats.ChannelFiller;
@@ -43,9 +36,19 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
+import loci.formats.ReaderWrapper;
+import nl.javadude.assumeng.Assumption;
+import nl.javadude.assumeng.AssumptionListener;
 
+import org.perf4j.StopWatch;
+import org.perf4j.log4j.Log4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
 /**
  * Performs various <code>openBytes()</code> performance tests.
@@ -56,6 +59,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
+@Listeners(value = AssumptionListener.class)
 public class OpenBytesPerformanceTest
 {
   private static final Logger LOGGER =
@@ -81,6 +85,18 @@ public class OpenBytesPerformanceTest
 
   private int bpp;
 
+  private int topHalfSize;
+
+  private int bottomHalfSize;
+
+  private int topLeftQuarterSize;
+
+  private int topRightQuarterSize;
+
+  private int bottomLeftQuarterSize;
+
+  private int bottomRightQuarterSize;
+
   private int optimalTileHeight;
 
   private int optimalTileWidth;
@@ -90,6 +106,87 @@ public class OpenBytesPerformanceTest
   private String filename;
 
   private boolean memMap;
+
+  private boolean bigImage = false;
+
+  private void assertBlock(int blockSize, int posX, int posY, int width,
+          int height) throws Exception {
+    byte[] plane = new byte[planeSize];
+    byte[] buf = new byte[blockSize];
+    String planeDigest, bufDigest;
+    for (int i = 0; i < imageCount; i++) {
+        // Read the data as a full plane
+        reader.openBytes(i, plane);
+        // Read the data as a block
+        try {
+            reader.openBytes(i, buf, posX, posY, width, height);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                String.format(
+                    "openBytes(series:%d i:%d, buf.length:%d, x:%d, y:%d, w:%d, h:%d) "
+                                        + "[sizeX: %d sizeY:%d bpp:%d] threw exception!",
+                            reader.getSeries(), i, buf.length, posX, posY,
+                            width, height, sizeX, sizeY, bpp), e);
+        }
+        // Compare hash digests
+        planeDigest = TestTools.md5(plane, sizeX, sizeY, posX, posY, width,
+                height, bpp);
+        bufDigest = TestTools.md5(buf, 0, width * height * bpp);
+        if (!planeDigest.equals(bufDigest)) {
+            fail(String.format("MD5:%d;%d len:%d %s != %s",
+                    reader.getSeries(), i, blockSize, planeDigest,
+                    bufDigest));
+        }
+    }
+  }
+
+  private void assertRows(int blockSize) throws Exception {
+    for (int series = 0; series < seriesCount; series++) {
+        assertSeries(series);
+        byte[] plane = new byte[planeSize];
+        byte[] buf = new byte[blockSize];
+        int maximumRowCount = buf.length / bpp / sizeX;
+        String planeDigest, bufDigest;
+        int pixelsToRead = sizeX * sizeY;
+        int width = sizeX, height, posX = 0, posY = 0, actualBufSize;
+        for (int i = 0; i < imageCount; i++) {
+          // Read the data as a full plane
+          reader.openBytes(i, plane);
+          int offset = 0;
+          while(pixelsToRead > 0) {
+            // Prepare our read metadata
+            height = maximumRowCount;
+            if ((posY + height) > sizeY)
+            {
+              height = sizeY - posY;
+            }
+            actualBufSize = bpp * height * width;
+            // Read the data as a block
+            try {
+              reader.openBytes(i, buf, posX, posY, width, height);
+            }
+            catch (Exception e) {
+              throw new RuntimeException(String.format(
+                  "openBytes(series:%d i:%d, buf.length:%d, x:%d, y:%d, w:%d, " +
+                  "h:%d) [sizeX: %d sizeY:%d bpp:%d] threw exception!",
+                  series, i, buf.length, posX, posY, width, height, sizeX, sizeY,
+                  bpp), e);
+            }
+            // Compare hash digests
+            planeDigest = TestTools.md5(plane, offset, actualBufSize);
+            bufDigest = TestTools.md5(buf, 0, actualBufSize);
+            if (!planeDigest.equals(bufDigest)) {
+              fail(String.format("MD5:%s;%d offset:%d len:%d %s != %s",
+                  series, i, offset, actualBufSize, planeDigest, bufDigest));
+            }
+            // Update offsets, etc.
+            offset += actualBufSize;
+            posY += height;
+            pixelsToRead -= height * width;
+          }
+        }
+      }
+    }
 
   private void assertSeries(int series) {
     reader.setSeries(series);
@@ -101,6 +198,20 @@ public class OpenBytesPerformanceTest
     imageCount = reader.getImageCount();
     bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
     planeSize = sizeX * sizeY * bpp;
+    topHalfSize = (sizeY / 2) * sizeX * bpp;
+    bottomHalfSize = (sizeY - (sizeY / 2)) * sizeX * bpp;
+    topLeftQuarterSize = (sizeY / 2) * (sizeX / 2) * bpp;
+    topRightQuarterSize = (sizeY / 2) * (sizeX - (sizeX / 2)) * bpp;
+    bottomLeftQuarterSize = (sizeY - (sizeY / 2)) * (sizeX / 2) * bpp;
+    bottomRightQuarterSize =
+      (sizeY - (sizeY / 2)) * (sizeX - (sizeX / 2)) * bpp;
+    if (!bigImage) {
+        bigImage = sizeX * sizeY > 9000000;
+    }
+  }
+
+  public boolean isNotBigImage() {
+      return !bigImage;
   }
 
   @Parameters({"id", "inMemory"})
@@ -128,7 +239,10 @@ public class OpenBytesPerformanceTest
       TestTools.mapFile(id);
     }
 
+    StopWatch stopWatch = new Log4JStopWatch();
     reader.setId(id);
+    stopWatch.stop(String.format("%s.setId.%s",
+            ((ReaderWrapper) reader).unwrap().getClass().getName(), filename));
     seriesCount = reader.getSeriesCount();
   }
 
@@ -158,7 +272,9 @@ public class OpenBytesPerformanceTest
 
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
-                "%s[%d:%d]_alloc_tile", filename, series, image));
+                "%s.alloc_tile.%s.[%d:%d]",
+                ((ReaderWrapper) reader).unwrap().getClass().getName(),
+                filename, series, image));
             reader.openBytes(0, x, y, actualTileWidth, actualTileHeight);
             stopWatch.stop();
           }
@@ -168,6 +284,7 @@ public class OpenBytesPerformanceTest
   }
 
   @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
   public void testOpenBytesAllTilesPreAllocatedBuffer() throws Exception {
     for (int series = 0; series < seriesCount; series++) {
       assertSeries(series);
@@ -196,7 +313,9 @@ public class OpenBytesPerformanceTest
 
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
-                "%s[%d:%d]_prealloc_tile", filename, series, image));
+                "%s.prealloc_tile.%s.[%d:%d]",
+                ((ReaderWrapper) reader).unwrap().getClass().getName(),
+                filename, series, image));
             reader.openBytes(image, buf, x, y, actualTileWidth,
                              actualTileHeight);
             stopWatch.stop();
@@ -204,6 +323,100 @@ public class OpenBytesPerformanceTest
         }
       }
     }
+  }
+
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
+  public void testOpenBytesPlane() throws Exception {
+    for (int series = 0; series < seriesCount; series++) {
+      assertSeries(series);
+      byte[] plane = new byte[planeSize];
+      for (int i = 0; i < reader.getImageCount(); i++) {
+        reader.openBytes(i, plane);
+      }
+    }
+  }
+
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
+  public void testOpenBytesHalfPlane() throws Exception {
+    for (int series = 0; series < seriesCount; series++) {
+      assertSeries(series);
+      byte[] plane = new byte[planeSize];
+      byte[] topHalfPlane = new byte[topHalfSize];
+      byte[] bottomHalfPlane = new byte[bottomHalfSize];
+      String planeDigest, halfPlaneDigest;
+      for (int i = 0; i < imageCount; i++) {
+        // Check the digest for the first half of the plane against a full
+        // plane
+        reader.openBytes(i, plane);
+        reader.openBytes(i, topHalfPlane, 0, 0, sizeX, sizeY / 2);
+        planeDigest = TestTools.md5(plane, 0, topHalfSize);
+        halfPlaneDigest = TestTools.md5(topHalfPlane, 0, topHalfSize);
+        if (!planeDigest.equals(halfPlaneDigest)) {
+          fail(String.format("First half MD5:%d;%d %s != %s",
+              series, i, planeDigest, halfPlaneDigest));
+        }
+        // Check the digest for the second half of the plane against a full
+        // plane
+        reader.openBytes(i, bottomHalfPlane, 0, sizeY / 2, sizeX,
+            sizeY - (sizeY / 2));
+        planeDigest = TestTools.md5(plane, topHalfSize, bottomHalfSize);
+        halfPlaneDigest = TestTools.md5(bottomHalfPlane, 0, bottomHalfSize);
+        if (!planeDigest.equals(halfPlaneDigest)) {
+          fail(String.format("Second half MD5:%d;%d %s != %s",
+              series, i, planeDigest, halfPlaneDigest));
+        }
+      }
+    }
+  }
+
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
+  public void testQuartersActualSize() throws Exception {
+    for (int series = 0; series < seriesCount; series++) {
+      assertSeries(series);
+      assertBlock(topLeftQuarterSize, 0, 0, sizeX / 2, sizeY / 2);
+      assertBlock(topRightQuarterSize, sizeX / 2, 0,
+                  sizeX - (sizeX / 2), sizeY / 2);
+      assertBlock(bottomLeftQuarterSize, 0, sizeY / 2,
+                  sizeX / 2, (sizeY - (sizeY / 2)));
+      assertBlock(bottomRightQuarterSize, sizeX / 2, sizeY / 2,
+                  sizeX - (sizeX / 2), sizeY - (sizeY / 2));
+    }
+  }
+
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
+  public void testQuartersTwiceActualSize() throws Exception {
+    for (int series = 0; series < seriesCount; series++) {
+      assertSeries(series);
+      assertBlock(topLeftQuarterSize * 2, 0, 0, sizeX / 2, sizeY / 2);
+      assertBlock(topRightQuarterSize * 2, sizeX / 2, 0,
+                  sizeX - (sizeX / 2), sizeY / 2);
+      assertBlock(bottomLeftQuarterSize * 2, 0, sizeY / 2,
+                  sizeX / 2, (sizeY - (sizeY / 2)));
+      assertBlock(bottomRightQuarterSize * 2, sizeX / 2, sizeY / 2,
+                  sizeX - (sizeX / 2), sizeY - (sizeY / 2));
+    }
+  }
+
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
+  public void testOpenBytesBlocksByRow512KB() throws Exception {
+    assertRows(524288);
+  }
+
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
+  public void testOpenBytesBlocksByRow1MB() throws Exception {
+    assertRows(1048576);
+  }
+
+  @Test(dependsOnMethods={"setId"})
+  @Assumption(methods = "isNotBigImage")
+  public void testOpenBytesBlocksByRowPlaneSize() throws Exception {
+    assertRows(sizeX * sizeY * bpp);
   }
 
 }

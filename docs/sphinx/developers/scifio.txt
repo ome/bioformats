@@ -1,0 +1,120 @@
+SCientific Imaging Formats Input and Output
+===========================================
+
+Motivation
+----------
+
+SCIFIO is a refactoring of :doc:`Bio-Formats </about/index>`.
+Classic Bio-Formats uses OME-XML_ to model the metadata for a given image,
+standardizing all supported formats to this schema. This tight integration,
+along with the naming itself of Bio-Formats, discourages potential users from
+outside the life sciences (if their imaging requirements include metadata
+outside the OME-XML specification). Furthermore, the steps of processing image
+formats are obfuscated by their consolidation into a single **Reader**
+class; this increases the entry barrier for 3rd party developers to add
+support for additional formats. Finally, the GPL licensing of
+Bio-Formats precludes its inclusion in non-GPL software packages such as
+ImageJ, ITK, VCell and VisAD.
+
+SCIFIO aims to resolve these issues by reversing the OME-XML dependency
+and teasing apart the stages of image format conversion and processing.
+SCIFIO will define the core components of flexible image format support.
+OME-XML will become one type of metadata, which Bio-Formats will still
+use to standardize the metadata of a wide variety of image formats. Thus
+Bio-Formats will become an extension to SCIFIO, but the underlying
+structure will allow any number of such extensions to coexist. Dynamic
+discovery mechanisms will allow these modules to be used as needed, as
+long as the underlying program incorporates the SCIFIO core. Further,
+the SCIFIO core will include support only for the open source formats
+currently supported by Bio-Formats, allowing distribution under the BSD
+license (though individual modules can fall under any licensing
+framework, and Bio-Formats will continue to have a dual GPL + commercial
+license).
+
+For further information, see the `SCIFIOGrant.pdf <http://loci.wisc.edu/files/loci/software/SCIFIOGrant.pdf>`_.
+
+Components
+----------
+
+Metadata
+~~~~~~~~
+
+Metadata is the currency of SCIFIO. Practically every component will
+either create a Metadata object, take one as input, or both. It is the
+tangible representation of how a particular format structures its image
+metadata. One immediate improvement in this representation of the
+metadata is the opportunity for a dramatic speedup in performance: by
+serializing and writing a Metadata object to disk, we can eliminate the
+need to parse an image more than once. Come back after a week or a month
+to reanalyze a dataset and one of the most significant performance
+bottlenecks in Bio-Formats will be gone.
+
+Checker
+~~~~~~~
+
+The Checker series of classes will encapsulate the functionality
+represented in the current Bio-Formats Reader classes by the isThisType
+method.  A Checker for a given image format takes as input a file name
+and tests whether or not it is recognized, and thus supported, returning
+the result of the test.  This separation lightens the process of finding
+an appropriate Parser for the image and helps to elucidate the flow of
+image I/O.
+
+Parser
+~~~~~~
+
+The first step of actually interacting with an image file will be
+determining its metadata. A Parser must be created for each supported
+image format. If its corresponding Checker indicates the current image
+file matches a Parser’s type, the Parser examines the image’s header and
+returns a Metadata object with information specific to its type. This
+Metadata object can then be passed to a Translator for continued
+analysis, written to disk for future use, and/or passed directly to a
+Reader.
+
+Translator
+~~~~~~~~~~
+
+Once the Metadata is isolated, a Translator can be used to convert the
+original Metadata format to a new format. Each Translator encodes a 1:1
+conversion between formats of Metadata objects. In general, the goal of
+each Translator is to convert from a specific Metadata format to
+something more general, allowing format-agnostic components to accept
+the Metadata object even if it originated from a PFF image.
+
+Reader
+~~~~~~
+
+A Reader takes in an appropriate format-specific Metadata object and
+uses it to interpret the raw pixels of the original image. The final
+output is a set of byte arrays, which can be interpreted by a Writer
+and/or the parent software.
+
+Writer
+~~~~~~
+
+Writers will likely be very similar to their current form in
+Bio-Formats. Each Writer will take a Metadata object (often, but not
+necessarily, format-agnostic) and byte array as input, and write to a
+random access output stream (e.g. a file on disk).
+
+Additional Improvements
+-----------------------
+
+LOCI Common
+~~~~~~~~~~~
+
+With a tighter integration of the random access streams from the
+loci.common library, it made sense to migrate these parts to SCIFIO. As
+this removed some significant functionality from loci.common, the entire
+library was incorporated into sub-packages of SCIFIO.
+
+Multi-dimensionality
+~~~~~~~~~~~~~~~~~~~~
+
+As classic Bio-Formats was bound to the OME-XML schema, any image
+processed by Bio-Formats was forced to a five-dimensional format.
+However, there is nothing inherently tied to dimensionality in SCIFIO.
+Thus, SCIFIO will support full N-dimensionality in data and leave any
+restrictions to the dictation of individual modules.
+

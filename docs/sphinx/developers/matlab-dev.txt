@@ -1,0 +1,229 @@
+Using Bio-Formats in Matlab
+===========================
+
+This section assumes that you have installed the **bfopen.m script** and
+**loci_tools.jar**, as instructed :doc:`here </users/matlab/index>`.
+
+The first thing to do is initialize a file:
+
+::
+
+      data = bfopen('/path/to/data/file');
+
+'data' is an array whose structure is a bit complicated. It is an n-by-4
+array, where n is the number of series in the dataset:
+
+-  The {s, 1} element (if s is the series index between 1 and n) is an
+   m-by-2 array, where m is the number of planes in the series:
+
+   -  The {s, 1, t, 1} element (where t is the image index between 1 and
+      m) contains the pixel data for the t-th image in the s-th series.
+   -  The {s, 1, t, 2} element contains the label for said image.
+
+-  The {s, 2} element of 'data' contains original metadata key/value
+   pairs that apply to the s-th series.
+
+-  The {s, 3} element of 'data' contains color lookup tables for each
+   image in the series.
+
+-  The {s, 4} element of 'data' contains a standardized OME metadata
+   structure, which is the same regardless of the input file format, and
+   contains common metadata values such as physical pixel sizes—see
+   "Accessing OME metadata" below for examples.
+
+Accessing planes
+----------------
+
+Here is an example of how to unwrap specific image planes for easy
+access:
+
+::
+
+      data = bfopen('/path/to/data/file');
+      seriesCount = size(data, 1);
+      series1 = data{1, 1};
+      series2 = data{2, 1};
+      series3 = data{3, 1};
+      metadataList = data{1, 2};
+      % ...etc.
+      series1_planeCount = size(series1, 1);
+      series1_plane1 = series1{1, 1};
+      series1_label1 = series1{1, 2};
+      series1_plane2 = series1{2, 1};
+      series1_label2 = series1{2, 2};
+      series1_plane3 = series1{3, 1};
+      series1_label3 = series1{3, 2};
+      % ...etc.
+
+Displaying images
+-----------------
+
+If you want to display one of the images, you can do so as follows:
+
+::
+
+      data = bfopen('/path/to/data/file');
+      % plot the 1st series's 1st image plane in a new figure
+      series1 = data{1, 1};
+      series1_plane1 = series1{1, 1};
+      series1_label1 = series1{1, 2};
+      series1_colorMaps = data{1, 3};
+      figure('Name', series1_label1);
+      if (isempty(series1_colorMaps{1}))
+        colorMap(gray);
+      else
+        colorMap(series1_colorMaps{1});
+      end
+      imagesc(series1_plane1);
+
+This will display the first image of the first series with its
+associated color map (if present). If you would prefer not to apply the
+color maps associated with each image, simply comment out the calls to
+'colorMap'.
+
+Using the image processing toolbox
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you have the image processing toolbox, you could instead use:
+
+::
+
+      imshow(series1_plane1, []);
+
+Displaying an animation
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Here is an example that animates as a movie (assumes 8-bit unsigned
+data):
+
+::
+
+      v = linspace(0, 1, 256)';
+      cmap = [v v v];
+      for p = 1:series1_numPlanes
+        M(p) = im2frame(uint8(series1{p, 1}), cmap);
+      end
+      movie(M);
+
+Retrieving metadata
+-------------------
+
+There are two kinds of metadata:
+
+-  **Original metadata** is a set of key/value pairs specific to the
+   input format of the data. It is stored in the [s, 2] element of the
+   data structure returned by bfopen.
+
+-  **OME metadata** is a standardized metadata structure, which is the
+   same regardless of input file format. It is stored in the [s, 4]
+   element of the data structure returned by bfopen, and contains common
+   metadata values such as physical pixel sizes, instrument settings,
+   and much more. See the `OME Models &
+   Formats <http://www.openmicroscopy.org/site/support/file-formats/downloads>`_
+   pages for full details.
+
+Accessing original metadata
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To retrieve the metadata value for specific keys:
+
+::
+
+      data = bfopen('/path/to/data/file');
+      % Query some metadata fields (keys are format-dependent)
+      metadata = data{1, 2};
+      subject = metadata.get('Subject');
+      title = metadata.get('Title');
+
+To print out all of the metadata key/value pairs for the first series:
+
+::
+
+      data = bfopen('/path/to/data/file');
+      metadata = data{1, 2};
+      metadataKeys = metadata.keySet().iterator();
+      for i=1:metadata.size()
+        key = metadataKeys.nextElement();
+        value = metadata.get(key);
+        fprintf('%s = %s\n', key, value)
+      end
+
+Accessing OME metadata
+~~~~~~~~~~~~~~~~~~~~~~
+
+Conversion of metadata to the OME standard is one of Bio-Formats'
+primary features. The OME metadata is always stored the same way,
+regardless of input file format.
+
+To access physical voxel and stack sizes of the data:
+
+::
+
+      data = bfopen('/path/to/data/file');
+      omeMeta = data{1, 4};
+      stackSizeX = omeMeta.getPixelsSizeX(0).getValue(); % image width, pixels
+      stackSizeY = omeMeta.getPixelsSizeY(0).getValue(); % image height, pixels
+      stackSizeZ = omeMeta.getPixelsSizeZ(0).getValue(); % number of Z slices
+      voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).getValue(); % in µm
+      voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).getValue(); % in µm
+      voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).getValue(); % in µm
+
+Saving files
+------------
+
+First, make sure that you have **loci_tools.jar** installed in your MATLAB
+work folder.
+
+Now, here is the basic code for saving planes (2 channels x 2
+timepoints) to a file:
+
+::
+
+      javaaddpath(fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar'));
+      writer = loci.formats.ImageWriter();
+      metadata = loci.formats.MetadataTools.createOMEXMLMetadata();
+      metadata.createRoot();
+      metadata.setImageID('Image:0', 0);
+      metadata.setPixelsID('Pixels:0', 0);
+      metadata.setPixelsBinDataBigEndian(java.lang.Boolean.TRUE, 0, 0);
+      metadata.setPixelsDimensionOrder(ome.xml.model.enums.DimensionOrder.XYZCT, 0);
+      metadata.setPixelsType(ome.xml.model.enums.PixelType.UINT8, 0);
+
+      imageWidth = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(64))
+      imageHeight = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(64))
+      numZSections = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(1))
+      numChannels = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(2))
+      numTimepoints = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(2))
+      samplesPerPixel = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(1))
+
+      metadata.setPixelsSizeX(imageWidth, 0);
+      metadata.setPixelsSizeY(imageHeight, 0);
+      metadata.setPixelsSizeZ(numZSections, 0);
+      metadata.setPixelsSizeC(numChannels, 0);
+      metadata.setPixelsSizeT(numTimepoints, 0);
+      metadata.setChannelID('Channel:0:0', 0, 0);
+      metadata.setChannelSamplesPerPixel(samplesPerPixel, 0, 0);
+      metadata.setChannelID('Channel:0:1', 0, 1);
+      metadata.setChannelSamplesPerPixel(samplesPerPixel, 0, 1);
+
+      writer.setMetadataRetrieve(metadata);
+      writer.setId("my-file.ome.tiff");
+      writer.saveBytes(0, plane); % channel 0, timepoint 0
+      writer.saveBytes(1, plane); % channel 1, timepoint 0
+      writer.saveBytes(2, plane); % channel 0, timepoint 1
+      writer.saveBytes(3, plane); % channel 1, timepoint 1
+      writer.close();
+
+This example will write a single plane to an OME-TIFF file. It assumes
+that there are 8 unsigned bits per pixel, and that the image is 64
+pixels x 64 pixels. In your own code, you will need to adjust the
+dimensions and pixel type accordingly. Also, 'plane' is an array
+constructed like so:
+
+::
+
+      plane = zeros(1, 64 * 64, 'uint8');
+
+There is also a script that can save MATLAB arrays to supported formats:
+
+:source:`bfsave.m <components/bio-formats/matlab/bfsave.m>`

@@ -334,20 +334,23 @@ public class BDReader extends FormatReader {
       }
     }
 
-    for (int i=0; i<getSeriesCount(); i++) {
-      core[i] = new CoreMetadata();
-      core[i].sizeC = nChannels;
-      core[i].sizeZ = nSlices;
-      core[i].sizeT = nTimepoints;
-      core[i].sizeX = sizeX / fieldCols;
-      core[i].sizeY = sizeY / fieldRows;
-      core[i].pixelType = pixelType;
-      core[i].rgb = rgb;
-      core[i].interleaved = interleaved;
-      core[i].indexed = indexed;
-      core[i].littleEndian = littleEndian;
-      core[i].dimensionOrder = "XYZTC";
-      core[i].imageCount = nSlices * nTimepoints * nChannels;
+    int coresize = core.size();
+    core.clear();
+    for (int i=0; i<coresize; i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
+      ms.sizeC = nChannels;
+      ms.sizeZ = nSlices;
+      ms.sizeT = nTimepoints;
+      ms.sizeX = sizeX / fieldCols;
+      ms.sizeY = sizeY / fieldRows;
+      ms.pixelType = pixelType;
+      ms.rgb = rgb;
+      ms.interleaved = interleaved;
+      ms.indexed = indexed;
+      ms.littleEndian = littleEndian;
+      ms.dimensionOrder = "XYZTC";
+      ms.imageCount = nSlices * nTimepoints * nChannels;
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -605,12 +608,16 @@ public class BDReader extends FormatReader {
       fieldCols = 1;
     }
 
-    core = new CoreMetadata[wellLabels.size() * fieldRows * fieldCols];
+    core.clear();
+    int coresize = wellLabels.size() * fieldRows * fieldCols;
+    CoreMetadata ms0 = new CoreMetadata();
+    core.add(ms0);
+    for (int i=1; i<coresize; i++) {
+      core.add(new CoreMetadata());
+    }
 
-    core[0] = new CoreMetadata();
-
-    core[0].sizeC = Integer.parseInt(exp.getTable("General").get("Dyes"));
-    core[0].bitsPerPixel =
+    ms0.sizeC = Integer.parseInt(exp.getTable("General").get("Dyes"));
+    ms0.bitsPerPixel =
       Integer.parseInt(exp.getTable("Camera").get("BitdepthUsed"));
 
     IniTable dyeTable = exp.getTable("Dyes");
@@ -623,19 +630,18 @@ public class BDReader extends FormatReader {
       boolean zEnabled = "1".equals(zTable.get("Z1AxisEnabled")) &&
         "1".equals(zTable.get("Z1AxisMode"));
       if (zEnabled) {
-        core[0].sizeZ = (int) Double.parseDouble(zTable.get("Z1AxisValue")) + 1;
+        ms0.sizeZ = (int) Double.parseDouble(zTable.get("Z1AxisValue")) + 1;
       }
       else {
-        core[0].sizeZ = 1;
+        ms0.sizeZ = 1;
       }
     }
     else {
-      core[0].sizeZ = 1;
+      ms0.sizeZ = 1;
     }
 
     // Count Images
-    core[0].sizeT = 0;
-
+    ms0.sizeT = 0;
     Location well = new Location(dir.getAbsolutePath(),
       "Well " + wellLabels.get(1));
     for (String channelName : channelNames) {
@@ -645,10 +651,9 @@ public class BDReader extends FormatReader {
           images++;
         }
       }
-
       if (images > getImageCount()) {
-        core[0].sizeT = images / getSizeZ();
-        core[0].imageCount = getSizeZ() * getSizeT() * channelNames.size();
+        ms0.sizeT = images / getSizeZ();
+        ms0.imageCount = getSizeZ() * getSizeT() * channelNames.size();
       }
     }
 

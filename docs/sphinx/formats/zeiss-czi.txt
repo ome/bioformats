@@ -1,0 +1,59 @@
+.. index:: Zeiss CZI
+.. index:: .czi
+
+Zeiss CZI
+===============================================================================
+
+Extensions: .czi 
+
+Developer: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Zeiss CZI <zeiss-czi-metadata>`
+
+Freely Available Software:
+
+- `Zeiss ZEN 2011 <http://www.zeiss.de/C12567BE0045ACF1/Contents-Frame/A57B6AE510CE8FF1C12578FE002A725D>`_
+
+
+We currently have:
+
+* many example datasets 
+* official specification documents
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Outstanding|
+
+Metadata: |Outstanding|
+
+Openness: |Very good|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`ZeissCZIReader.java`
+
+Notes:
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+

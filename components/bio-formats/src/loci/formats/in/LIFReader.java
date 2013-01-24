@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
@@ -273,23 +274,23 @@ public class LIFReader extends FormatReader {
 
     if (!isRGB()) {
       int[] pos = getZCTCoords(no);
-      lastChannel = realChannel[series][pos[1]];
+      lastChannel = realChannel[getSeries()][pos[1]];
     }
 
-    if (series >= offsets.size()) {
+    if (getSeries() >= offsets.size()) {
       // truncated file; imitate LAS AF and return black planes
       Arrays.fill(buf, (byte) 0);
       return buf;
     }
 
-    long offset = offsets.get(series).longValue();
+    long offset = offsets.get(getSeries()).longValue();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int bpp = bytes * getRGBChannelCount();
 
     long planeSize = (long) getSizeX() * getSizeY() * bpp;
 
-    long nextOffset = series + 1 < offsets.size() ?
-      offsets.get(series + 1).longValue() : in.length();
+    long nextOffset = getSeries() + 1 < offsets.size() ?
+      offsets.get(getSeries() + 1).longValue() : in.length();
     int bytesToSkip = (int) (nextOffset - offset - planeSize * getImageCount());
     bytesToSkip /= getSizeY();
     if ((getSizeX() % 4) == 0) bytesToSkip = 0;
@@ -495,21 +496,22 @@ public class LIFReader extends FormatReader {
     realChannel = new int[getSeriesCount()][];
     int nextLut = 0;
     for (int i=0; i<getSeriesCount(); i++) {
-      realChannel[i] = new int[core[i].sizeC];
+      CoreMetadata ms = core.get(i);
+      realChannel[i] = new int[ms.sizeC];
 
-      for (int q=0; q<core[i].sizeC; q++) {
+      for (int q=0; q<ms.sizeC; q++) {
         String lut = lutNames.get(nextLut++).toLowerCase();
         if (!CHANNEL_PRIORITIES.containsKey(lut)) lut = "";
         realChannel[i][q] = CHANNEL_PRIORITIES.get(lut).intValue();
       }
 
-      int[] sorted = new int[core[i].sizeC];
+      int[] sorted = new int[ms.sizeC];
       Arrays.fill(sorted, -1);
 
       for (int q=0; q<sorted.length; q++) {
         int min = Integer.MAX_VALUE;
         int minIndex = -1;
-        for (int n=0; n<core[i].sizeC; n++) {
+        for (int n=0; n<ms.sizeC; n++) {
           if (realChannel[i][n] < min && !DataTools.containsValue(sorted, n)) {
             min = realChannel[i][n];
             minIndex = n;
@@ -522,6 +524,7 @@ public class LIFReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true, false);
 
+    int roiCount = 0;
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
 
@@ -868,7 +871,7 @@ public class LIFReader extends FormatReader {
       if (imageROIs[i] != null) {
         for (int roi=0; roi<imageROIs[i].length; roi++) {
           if (imageROIs[i][roi] != null) {
-            imageROIs[i][roi].storeROI(store, i, roi);
+            imageROIs[i][roi].storeROI(store, i, roiCount++, roi);
           }
         }
       }
@@ -909,7 +912,7 @@ public class LIFReader extends FormatReader {
 
     NodeList imageNodes = getNodes(realRoot, "Image");
 
-    core = new CoreMetadata[imageNodes.getLength()];
+    core = new ArrayList<CoreMetadata>(imageNodes.getLength());
     acquiredDate = new double[imageNodes.getLength()];
     descriptions = new String[imageNodes.getLength()];
     laserWavelength = new Vector[imageNodes.getLength()];
@@ -945,8 +948,13 @@ public class LIFReader extends FormatReader {
     imageROIs = new ROI[imageNodes.getLength()][];
     imageNames = new String[imageNodes.getLength()];
 
+    core.clear();
     for (int i=0; i<imageNodes.getLength(); i++) {
       Element image = (Element) imageNodes.item(i);
+
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
+
       setSeries(i);
 
       translateImageNames(image, i);
@@ -961,16 +969,13 @@ public class LIFReader extends FormatReader {
       translateDetectors(image, i);
 
       Stack<String> nameStack = new Stack<String>();
-      HashMap<String, Integer> indexes = new HashMap<String, Integer>();
-      populateOriginalMetadata(image, nameStack, indexes);
-      indexes.clear();
+      populateOriginalMetadata(image, nameStack);
+      addUserCommentMeta(image);
     }
     setSeries(0);
   }
 
-  private void populateOriginalMetadata(Element root, Stack<String> nameStack,
-    HashMap<String, Integer> indexes)
-  {
+  private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
     String name = root.getNodeName();
     if (root.hasAttributes() && !name.equals("Element") &&
       !name.equals("Attachment") && !name.equals("LMSDataContainerHeader"))
@@ -991,10 +996,7 @@ public class LIFReader extends FormatReader {
         value.length() > 0 && !suffix.equals("HighInteger") &&
         !suffix.equals("LowInteger"))
       {
-        Integer i = indexes.get(key.toString() + suffix);
-        String storedKey = key.toString() + suffix + " " + (i == null ? 0 : i);
-        indexes.put(key.toString() + suffix, i == null ? 1 : i + 1);
-        addSeriesMeta(storedKey, value);
+        addSeriesMetaList(key.toString() + suffix, value);
       }
       else {
         NamedNodeMap attributes = root.getAttributes();
@@ -1003,13 +1005,7 @@ public class LIFReader extends FormatReader {
           if (!attr.getName().equals("HighInteger") &&
             !attr.getName().equals("LowInteger"))
           {
-            Integer index = indexes.get(key.toString() + attr.getName());
-            if (index == null) {
-              index = 0;
-            }
-            String storedKey = key.toString() + attr.getName() + " " + index;
-            indexes.put(key.toString() + attr.getName(), index + 1);
-            addSeriesMeta(storedKey, attr.getValue());
+            addSeriesMeta(key.toString() + attr.getName(), attr.getValue());
           }
         }
       }
@@ -1019,7 +1015,7 @@ public class LIFReader extends FormatReader {
     for (int i=0; i<children.getLength(); i++) {
       Object child = children.item(i);
       if (child instanceof Element) {
-        populateOriginalMetadata((Element) child, nameStack, indexes);
+        populateOriginalMetadata((Element) child, nameStack);
       }
     }
 
@@ -1590,14 +1586,25 @@ public class LIFReader extends FormatReader {
     }
   }
 
+  private void addUserCommentMeta(Element imageNode)
+    throws FormatException
+  {
+    NodeList attachmentNodes = getNodes(imageNode, "User-Comment");
+    if (attachmentNodes == null) return;
+    for (int i=0; i<attachmentNodes.getLength(); i++) {
+      Node attachment = attachmentNodes.item(i);
+      addSeriesMeta("User-Comment[" + i + "]", attachment.getTextContent());
+    }
+  }
+
   private void translateImageNodes(Element imageNode, int i)
     throws FormatException
   {
-    core[i] = new CoreMetadata();
-    core[i].orderCertain = true;
-    core[i].metadataComplete = true;
-    core[i].littleEndian = true;
-    core[i].falseColor = true;
+    CoreMetadata ms = core.get(i);
+    ms.orderCertain = true;
+    ms.metadataComplete = true;
+    ms.littleEndian = true;
+    ms.falseColor = true;
 
     NodeList channels = getChannelDescriptionNodes(imageNode);
     NodeList dimensions = getDimensionDescriptionNodes(imageNode);
@@ -1607,7 +1614,7 @@ public class LIFReader extends FormatReader {
     Double physicalSizeX = null;
     Double physicalSizeY = null;
 
-    core[i].sizeC = channels.getLength();
+    ms.sizeC = channels.getLength();
     for (int ch=0; ch<channels.getLength(); ch++) {
       Element channel = (Element) channels.item(ch);
 
@@ -1640,52 +1647,52 @@ public class LIFReader extends FormatReader {
 
       switch (id) {
         case 1: // X axis
-          core[i].sizeX = len;
-          core[i].rgb = (nBytes % 3) == 0;
-          if (core[i].rgb) nBytes /= 3;
-          core[i].pixelType =
+          ms.sizeX = len;
+          ms.rgb = (nBytes % 3) == 0;
+          if (ms.rgb) nBytes /= 3;
+          ms.pixelType =
             FormatTools.pixelTypeFromBytes((int) nBytes, false, true);
           physicalSizeX = physicalLen;
           break;
         case 2: // Y axis
-          if (core[i].sizeY != 0) {
-            if (core[i].sizeZ == 1) {
-              core[i].sizeZ = len;
+          if (ms.sizeY != 0) {
+            if (ms.sizeZ == 1) {
+              ms.sizeZ = len;
               bytesPerAxis.put(nBytes, "Z");
             }
-            else if (core[i].sizeT == 1) {
-              core[i].sizeT = len;
+            else if (ms.sizeT == 1) {
+              ms.sizeT = len;
               bytesPerAxis.put(nBytes, "T");
             }
           }
           else {
-            core[i].sizeY = len;
+            ms.sizeY = len;
             physicalSizeY = physicalLen;
           }
           break;
         case 3: // Z axis
-          if (core[i].sizeY == 0) {
+          if (ms.sizeY == 0) {
             // XZ scan - swap Y and Z
-            core[i].sizeY = len;
-            core[i].sizeZ = 1;
+            ms.sizeY = len;
+            ms.sizeZ = 1;
             bytesPerAxis.put(nBytes, "Y");
             physicalSizeY = physicalLen;
           }
           else {
-            core[i].sizeZ = len;
+            ms.sizeZ = len;
             bytesPerAxis.put(nBytes, "Z");
           }
           break;
         case 4: // T axis
-          if (core[i].sizeY == 0) {
+          if (ms.sizeY == 0) {
             // XT scan - swap Y and T
-            core[i].sizeY = len;
-            core[i].sizeT = 1;
+            ms.sizeY = len;
+            ms.sizeT = 1;
             bytesPerAxis.put(nBytes, "Y");
             physicalSizeY = physicalLen;
           }
           else {
-            core[i].sizeT = len;
+            ms.sizeT = len;
             bytesPerAxis.put(nBytes, "T");
           }
           break;
@@ -1698,40 +1705,40 @@ public class LIFReader extends FormatReader {
     physicalSizeYs.add(physicalSizeY);
 
     if (extras > 1) {
-      if (core[i].sizeZ == 1) core[i].sizeZ = extras;
+      if (ms.sizeZ == 1) ms.sizeZ = extras;
       else {
-        if (core[i].sizeT == 0) core[i].sizeT = extras;
-        else core[i].sizeT *= extras;
+        if (ms.sizeT == 0) ms.sizeT = extras;
+        else ms.sizeT *= extras;
       }
     }
 
-    if (core[i].sizeC == 0) core[i].sizeC = 1;
-    if (core[i].sizeZ == 0) core[i].sizeZ = 1;
-    if (core[i].sizeT == 0) core[i].sizeT = 1;
+    if (ms.sizeC == 0) ms.sizeC = 1;
+    if (ms.sizeZ == 0) ms.sizeZ = 1;
+    if (ms.sizeT == 0) ms.sizeT = 1;
 
-    core[i].interleaved = core[i].rgb;
-    core[i].indexed = !core[i].rgb;
-    core[i].imageCount = core[i].sizeZ * core[i].sizeT;
-    if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
+    ms.interleaved = ms.rgb;
+    ms.indexed = !ms.rgb;
+    ms.imageCount = ms.sizeZ * ms.sizeT;
+    if (!ms.rgb) ms.imageCount *= ms.sizeC;
 
     Long[] bytes = bytesPerAxis.keySet().toArray(new Long[0]);
     Arrays.sort(bytes);
-    core[i].dimensionOrder = "XY";
+    ms.dimensionOrder = "XY";
     for (Long nBytes : bytes) {
       String axis = bytesPerAxis.get(nBytes);
-      if (core[i].dimensionOrder.indexOf(axis) == -1) {
-        core[i].dimensionOrder += axis;
+      if (ms.dimensionOrder.indexOf(axis) == -1) {
+        ms.dimensionOrder += axis;
       }
     }
 
-    if (core[i].dimensionOrder.indexOf("Z") == -1) {
-      core[i].dimensionOrder += "Z";
+    if (ms.dimensionOrder.indexOf("Z") == -1) {
+      ms.dimensionOrder += "Z";
     }
-    if (core[i].dimensionOrder.indexOf("C") == -1) {
-      core[i].dimensionOrder += "C";
+    if (ms.dimensionOrder.indexOf("C") == -1) {
+      ms.dimensionOrder += "C";
     }
-    if (core[i].dimensionOrder.indexOf("T") == -1) {
-      core[i].dimensionOrder += "T";
+    if (ms.dimensionOrder.indexOf("T") == -1) {
+      ms.dimensionOrder += "T";
     }
   }
 
@@ -1818,7 +1825,8 @@ public class LIFReader extends FormatReader {
 
     // -- ROI API methods --
 
-    public void storeROI(MetadataStore store, int series, int roi) {
+    public void storeROI(MetadataStore store, int series, int roi, int roiIndex)
+    {
       MetadataLevel level = getMetadataOptions().getMetadataLevel();
       if (level == MetadataLevel.NO_OVERLAYS || level == MetadataLevel.MINIMUM)
       {
@@ -1830,7 +1838,7 @@ public class LIFReader extends FormatReader {
       // the center point of the image
 
       String roiID = MetadataTools.createLSID("ROI", roi);
-      store.setImageROIRef(roiID, series, roi);
+      store.setImageROIRef(roiID, series, roiIndex);
       store.setROIID(roiID, roi);
       store.setLabelID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
       if (text == null) {
@@ -1860,8 +1868,8 @@ public class LIFReader extends FormatReader {
       store.setLabelX(cornerX, roi, 0);
       store.setLabelY(cornerY, roi, 0);
 
-      int centerX = (core[series].sizeX / 2) - 1;
-      int centerY = (core[series].sizeY / 2) - 1;
+      int centerX = (core.get(series).sizeX / 2) - 1;
+      int centerY = (core.get(series).sizeY / 2) - 1;
 
       double roiX = centerX + transX;
       double roiY = centerY + transY;
@@ -1897,7 +1905,7 @@ public class LIFReader extends FormatReader {
           store.setRectangleWidth(width, roi, 1);
           store.setRectangleHeight(height, roi, 1);
 
-        break;
+          break;
         case SCALE_BAR:
         case ARROW:
         case LINE:

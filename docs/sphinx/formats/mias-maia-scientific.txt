@@ -1,0 +1,53 @@
+.. index:: MIAS (Maia Scientific)
+.. index:: .tif
+
+MIAS (Maia Scientific)
+===============================================================================
+
+Extensions: .tif 
+
+Developer: `Maia Scientific <http://www.maia-scientific.com/>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`MIAS (Maia Scientific) <mias-maia-scientific-metadata>`
+
+
+
+We currently have:
+
+* several MIAS datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Poor|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Poor|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`MIASReader.java`
+
+Notes:
+
+

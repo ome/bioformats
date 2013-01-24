@@ -1,0 +1,60 @@
+.. index:: Gatan Digital Micrograph
+.. index:: .dm3
+
+Gatan Digital Micrograph
+===============================================================================
+
+Extensions: .dm3 
+
+
+Owner: `Gatan <http://www.gatan.com/>`_
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 3
+
+Supported Metadata Fields: :doc:`Gatan Digital Micrograph <gatan-digital-micrograph-metadata>`
+
+Freely Available Software:
+
+- `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_ 
+- `EMAN <http://blake.bcm.edu/EMAN/>`_
+
+
+We currently have:
+
+* Gatan's ImageReader2003 code (from 2003, in C++) 
+* numerous DM3 datasets
+
+We would like to have:
+
+* a DM3 specification document
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`GatanReader.java`
+
+Notes:
+
+
+Commercial applications that support .dm3 files include `Datasqueeze <http://www.datasqueezesoftware.com/>`_.

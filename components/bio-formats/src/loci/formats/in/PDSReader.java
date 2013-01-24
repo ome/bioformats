@@ -31,6 +31,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -197,6 +198,8 @@ public class PDSReader extends FormatReader {
     Double deltaX = null, deltaY = null;
     String date = null;
 
+    CoreMetadata m = core.get(0);
+
     for (String line : headerData) {
       int eq = line.indexOf("=");
       if (eq < 0) continue;
@@ -207,10 +210,10 @@ public class PDSReader extends FormatReader {
       String value = line.substring(eq + 1, end).trim();
 
       if (key.equals("NXP")) {
-        core[0].sizeX = Integer.parseInt(value);
+        m.sizeX = Integer.parseInt(value);
       }
       else if (key.equals("NYP")) {
-        core[0].sizeY = Integer.parseInt(value);
+        m.sizeY = Integer.parseInt(value);
       }
       else if (key.equals("XPOS")) {
         xPos = new Double(value);
@@ -235,14 +238,14 @@ public class PDSReader extends FormatReader {
       else if (key.equals("COLOR")) {
         int color = Integer.parseInt(value);
         if (color == 4) {
-          core[0].sizeC = 3;
-          core[0].rgb = true;
+          m.sizeC = 3;
+          m.rgb = true;
         }
         else {
-          core[0].sizeC = 1;
-          core[0].rgb = false;
+          m.sizeC = 1;
+          m.rgb = false;
           lutIndex = color - 1;
-          core[0].indexed = lutIndex >= 0;
+          m.indexed = lutIndex >= 0;
         }
       }
       else if (key.equals("SCAN TIME")) {
@@ -258,12 +261,12 @@ public class PDSReader extends FormatReader {
       addGlobalMeta(key, value);
     }
 
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = FormatTools.UINT16;
-    core[0].littleEndian = true;
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.dimensionOrder = "XYCZT";
+    m.pixelType = FormatTools.UINT16;
+    m.littleEndian = true;
 
     String base = currentId.substring(0, currentId.lastIndexOf("."));
     pixelsFile = base + ".IMG";

@@ -1,0 +1,59 @@
+.. index:: Aperio SVS TIFF
+.. index:: .svs
+
+Aperio SVS TIFF
+===============================================================================
+
+Extensions: .svs 
+
+
+Owner: `Aperio <http://www.aperio.com/>`_
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 8.0, 8.2, 9.0
+
+Supported Metadata Fields: :doc:`Aperio SVS TIFF <aperio-svs-tiff-metadata>`
+
+
+
+We currently have:
+
+* many SVS datasets 
+* an SVS specification document 
+* the ability to generate additional SVS datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Very good|
+
+Presence: |Good|
+
+Utility: |Good|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`SVSReader.java`
+
+Notes:
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+
+.. seealso:: 
+  `Aperio ImageScope <http://www.aperio.com/#imagescope-request>`_

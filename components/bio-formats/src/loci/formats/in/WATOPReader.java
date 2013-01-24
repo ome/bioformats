@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -89,7 +90,8 @@ public class WATOPReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-    core[0].littleEndian = true;
+    CoreMetadata m = core.get(0);
+    m.littleEndian = true;
     in.order(isLittleEndian());
 
     String comment = null;
@@ -115,8 +117,8 @@ public class WATOPReader extends FormatReader {
     double ySize = in.readInt() / 100d;
     double zSize = in.readInt() / 100d;
 
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
 
     if (level != MetadataLevel.MINIMUM) {
       double tunnelCurrent = in.readInt() / 1000d;
@@ -138,13 +140,13 @@ public class WATOPReader extends FormatReader {
       addGlobalMeta("Acquisition date", date);
     }
 
-    core[0].pixelType = FormatTools.INT16;
-    core[0].sizeC = 1;
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].rgb = false;
+    m.pixelType = FormatTools.INT16;
+    m.sizeC = 1;
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.dimensionOrder = "XYZCT";
+    m.rgb = false;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

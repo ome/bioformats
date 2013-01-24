@@ -241,10 +241,10 @@ public class OperettaReader extends FormatReader {
     Arrays.sort(ts);
     Arrays.sort(cs);
 
-    int count = rows.length * cols.length * fields.length;
-    core = new CoreMetadata[count];
+    int seriesCount = rows.length * cols.length * fields.length;
+    core.clear();
 
-    planes = new Plane[count][zs.length * cs.length * ts.length];
+    planes = new Plane[seriesCount][zs.length * cs.length * ts.length];
 
     int nextSeries = 0;
     for (int row=0; row<rows.length; row++) {
@@ -272,23 +272,24 @@ public class OperettaReader extends FormatReader {
       }
     }
 
-    for (int i=0; i<getSeriesCount(); i++) {
-      core[i] = new CoreMetadata();
-      core[i].sizeX = planes[i][0].x;
-      core[i].sizeY = planes[i][0].y;
-      core[i].sizeZ = uniqueZs.size();
-      core[i].sizeC = uniqueCs.size();
-      core[i].sizeT = uniqueTs.size();
-      core[i].dimensionOrder = "XYCZT";
+    for (int i=0; i<seriesCount; i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
+      ms.sizeX = planes[i][0].x;
+      ms.sizeY = planes[i][0].y;
+      ms.sizeZ = uniqueZs.size();
+      ms.sizeC = uniqueCs.size();
+      ms.sizeT = uniqueTs.size();
+      ms.dimensionOrder = "XYCZT";
 
       if (reader == null) {
         reader = new MinimalTiffReader();
       }
       reader.setId(planes[i][0].filename);
-      core[i].pixelType = reader.getPixelType();
-      core[i].rgb = false;
-      core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
-      core[i].littleEndian = reader.isLittleEndian();
+      ms.pixelType = reader.getPixelType();
+      ms.rgb = false;
+      ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
+      ms.littleEndian = reader.isLittleEndian();
       reader.close();
     }
 

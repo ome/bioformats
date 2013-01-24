@@ -1,0 +1,56 @@
+.. index:: ImagePro Sequence
+.. index:: .seq
+
+ImagePro Sequence
+===============================================================================
+
+Extensions: .seq 
+
+
+Owner: `Media Cybernetics <http://www.mediacy.com/>`_
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`ImagePro Sequence <imagepro-sequence-metadata>`
+
+
+
+We currently have:
+
+* the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software 
+* a few SEQ datasets 
+* the ability to produce more datasets
+
+We would like to have:
+
+* an official SEQ specification document
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Very good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`SEQReader.java`
+
+Notes:
+
+

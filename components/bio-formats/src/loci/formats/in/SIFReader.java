@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -95,6 +96,7 @@ public class SIFReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
     double[] timestamp = null;
 
@@ -107,12 +109,12 @@ public class SIFReader extends FormatReader {
       if (line.startsWith("Pixel number")) {
         String[] tokens = line.split(" ");
         if (tokens.length > 2) {
-          core[0].sizeC = Integer.parseInt(tokens[2]);
-          core[0].sizeX = Integer.parseInt(tokens[3]);
-          core[0].sizeY = Integer.parseInt(tokens[4]);
-          core[0].sizeZ = Integer.parseInt(tokens[5]);
-          core[0].sizeT = Integer.parseInt(tokens[6]);
-          core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
+          m.sizeC = Integer.parseInt(tokens[2]);
+          m.sizeX = Integer.parseInt(tokens[3]);
+          m.sizeY = Integer.parseInt(tokens[4]);
+          m.sizeZ = Integer.parseInt(tokens[5]);
+          m.sizeT = Integer.parseInt(tokens[6]);
+          m.imageCount = getSizeZ() * getSizeT() * getSizeC();
           timestamp = new double[getImageCount()];
           endLine = lineNumber + getImageCount();
         }
@@ -129,15 +131,15 @@ public class SIFReader extends FormatReader {
         }
       }
       else {
-        addGlobalMeta("Line #" + (lineNumber - 1), line.trim());
+        addGlobalMetaList("Line", line.trim());
       }
       line = in.readLine();
     }
     pixelOffset = in.getFilePointer();
 
-    core[0].pixelType = FormatTools.FLOAT;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].littleEndian = true;
+    m.pixelType = FormatTools.FLOAT;
+    m.dimensionOrder = "XYCZT";
+    m.littleEndian = true;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this,

@@ -30,6 +30,7 @@ import java.io.IOException;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -139,7 +140,9 @@ public class ImagicReader extends FormatReader {
     pixels = id.substring(0, id.lastIndexOf(".")) + ".img";
     pixelsFile = new RandomAccessInputStream(pixels);
 
-    core[0].littleEndian = true;
+    CoreMetadata m = core.get(0);
+
+    m.littleEndian = true;
     in.order(isLittleEndian());
     pixelsFile.order(isLittleEndian());
 
@@ -163,19 +166,19 @@ public class ImagicReader extends FormatReader {
 
       in.skipBytes(8);
 
-      core[0].sizeY = in.readInt();
-      core[0].sizeX = in.readInt();
+      m.sizeY = in.readInt();
+      m.sizeX = in.readInt();
 
       String type = in.readString(4);
 
       if (type.equals("REAL")) {
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
       }
       else if (type.equals("INTG")) {
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
       }
       else if (type.equals("PACK")) {
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
       }
       else if (type.equals("COMP")) {
         throw new FormatException("Unsupported pixel type 'COMP'");
@@ -289,12 +292,12 @@ public class ImagicReader extends FormatReader {
       addGlobalMeta("RESOLZ", physicalZSize);
     }
 
-    core[0].sizeZ = nImages;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = nImages;
+    m.sizeZ = nImages;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = nImages;
 
-    core[0].dimensionOrder = "XYZCT";
+    m.dimensionOrder = "XYZCT";
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

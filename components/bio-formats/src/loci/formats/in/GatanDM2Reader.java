@@ -32,6 +32,7 @@ import ome.xml.model.primitives.Timestamp;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -119,19 +120,20 @@ public class GatanDM2Reader extends FormatReader {
 
     long footerOffset = in.readInt() + 16;
 
-    core[0].sizeX = in.readShort();
-    core[0].sizeY = in.readShort();
+    CoreMetadata m = core.get(0);
+
+    m.sizeX = in.readShort();
+    m.sizeY = in.readShort();
     int bpp = in.readShort();
     boolean signed = in.readShort() == 1;
 
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, signed, false);
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].sizeZ = 1;
-    core[0].imageCount = 1;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].littleEndian = false;
-
+    m.pixelType = FormatTools.pixelTypeFromBytes(bpp, signed, true);
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.sizeZ = 1;
+    m.imageCount = 1;
+    m.dimensionOrder = "XYZCT";
+    m.littleEndian = false;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
@@ -170,18 +172,28 @@ public class GatanDM2Reader extends FormatReader {
       if (block == 5) {
         in.skipBytes(33);
         if (in.readShort() == 0) {
-          in.skipBytes(4);
+          if (in.readShort() == 39) {
+            in.skipBytes(1);
+          }
+          else {
+            in.skipBytes(2);
+          }
         }
         else {
           in.seek(in.getFilePointer() - 2);
           continue;
         }
       }
-      else if (block > 0xffff && block < 0x01000000) {
-        in.seek(in.getFilePointer() - 4);
-        value.append(label);
-        label = "Description";
-        addGlobalMeta(label, value.toString());
+      else if (block == 0 || (block > 0xffff && block < 0x01000000)) {
+        if (block != 0 && strlen > 0) {
+          in.seek(in.getFilePointer() - 4);
+          value.append(label);
+          label = "Description";
+          addGlobalMeta(label, value.toString());
+        }
+        else if (block != 0) {
+          in.skipBytes(15);
+        }
         parseExtraTags();
         continue;
       }
@@ -202,7 +214,7 @@ public class GatanDM2Reader extends FormatReader {
         }
       }
       int len = in.readInt();
-      if (len + in.getFilePointer() >= in.length()) break;
+      if (len + in.getFilePointer() >= in.length() || len < 0) break;
       String type = in.readString(len);
       int extra = in.readInt() - 2;
       int count = in.readInt();
@@ -210,7 +222,23 @@ public class GatanDM2Reader extends FormatReader {
       if (type.equals("TEXT")) {
         value.append(in.readString(count));
         if (block == 5) {
-          in.skipBytes(37);
+          in.skipBytes(22);
+
+          if (in.readInt() == 4) {
+            if (in.readString(4).equals("TEXT")) {
+              in.skipBytes(4);
+              count = in.readInt();
+              value.append(", " + in.readString(count));
+
+              in.skipBytes(37);
+            }
+            else {
+              in.skipBytes(7);
+            }
+          }
+          else {
+            in.skipBytes(11);
+          }
         }
       }
       else if (type.equals("long")) {
@@ -339,8 +367,20 @@ public class GatanDM2Reader extends FormatReader {
       String label = "Tag " + Integer.toHexString(tag);
 
       switch (tag) {
+        case 17:
+          label = "BlackContrastLimit";
+          break;
+        case 18:
+          label = "WhiteContrastLimit";
+          break;
         case 22:
           label = "Scale";
+          break;
+        case 27:
+          label = "MaxPixelValue";
+          break;
+        case 28:
+          label = "MinPixelValue";
           break;
         case 31:
           label = "Physical width";
@@ -352,6 +392,9 @@ public class GatanDM2Reader extends FormatReader {
           break;
         case 37:
           label = "Image label";
+          break;
+        case 38:
+          label = "MinimumContrast";
           break;
         case 53:
           label = "Physical size units";

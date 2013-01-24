@@ -133,7 +133,7 @@ public class APLReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return parser[series].getSamples(ifds[series].get(no), buf, x, y, w, h);
+    return parser[getSeries()].getSamples(ifds[getSeries()].get(no), buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -197,7 +197,9 @@ public class APLReader extends FormatReader {
         int separator = id.lastIndexOf(File.separator);
         if (separator < 0) separator = 0;
         int underscore = id.lastIndexOf("_");
-        if (underscore < separator) underscore = id.lastIndexOf(".");
+        if (underscore < separator || checkSuffix(id, "apl")) {
+          underscore = id.lastIndexOf(".");
+        }
         String mtbFile = id.substring(0, underscore) + "_d.mtb";
         if (!new Location(mtbFile).exists()) {
           throw new FormatException(".mtb file not found");
@@ -253,7 +255,7 @@ public class APLReader extends FormatReader {
       for (int i=1; i<rows.size(); i++) {
         String[] row = rows.get(i);
         for (int q=0; q<row.length; q++) {
-          addGlobalMeta(columnNames[q] + " " + i, row[q]);
+          addGlobalMetaList(columnNames[q], row[q]);
         }
       }
     }
@@ -320,9 +322,9 @@ public class APLReader extends FormatReader {
     }
     int seriesCount = seriesIndexes.size();
 
-    core = new CoreMetadata[seriesCount];
+    core.clear();
     for (int i=0; i<seriesCount; i++) {
-      core[i] = new CoreMetadata();
+      core.add(new CoreMetadata());
     }
     tiffFiles = new String[seriesCount];
     xmlFiles = new String[seriesCount];
@@ -334,15 +336,16 @@ public class APLReader extends FormatReader {
       int firstRow = secondRow - 1;
       String[] row2 = rows.get(firstRow);
       String[] row3 = rows.get(secondRow);
+      CoreMetadata ms = core.get(i);
 
-      core[i].sizeT = parseDimension(row3[frames]);
-      core[i].sizeZ = parseDimension(row3[zLayers]);
-      core[i].sizeC = parseDimension(row3[colorChannels]);
-      core[i].dimensionOrder = "XYCZT";
+      ms.sizeT = parseDimension(row3[frames]);
+      ms.sizeZ = parseDimension(row3[zLayers]);
+      ms.sizeC = parseDimension(row3[colorChannels]);
+      ms.dimensionOrder = "XYCZT";
 
-      if (core[i].sizeZ == 0) core[i].sizeZ = 1;
-      if (core[i].sizeC == 0) core[i].sizeC = 1;
-      if (core[i].sizeT == 0) core[i].sizeT = 1;
+      if (ms.sizeZ == 0) ms.sizeZ = 1;
+      if (ms.sizeC == 0) ms.sizeC = 1;
+      if (ms.sizeT == 0) ms.sizeT = 1;
 
       xmlFiles[i] = topDirectory + File.separator + row2[filename];
       tiffFiles[i] = topDirectory + File.separator + row3[filename];
@@ -360,19 +363,19 @@ public class APLReader extends FormatReader {
       PhotoInterp photo = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
 
-      core[i].sizeX = (int) ifd.getImageWidth();
-      core[i].sizeY = (int) ifd.getImageLength();
-      core[i].rgb = samples > 1 || photo == PhotoInterp.RGB;
-      core[i].pixelType = ifd.getPixelType();
-      core[i].littleEndian = ifd.isLittleEndian();
-      core[i].indexed = photo == PhotoInterp.RGB_PALETTE &&
+      ms.sizeX = (int) ifd.getImageWidth();
+      ms.sizeY = (int) ifd.getImageLength();
+      ms.rgb = samples > 1 || photo == PhotoInterp.RGB;
+      ms.pixelType = ifd.getPixelType();
+      ms.littleEndian = ifd.isLittleEndian();
+      ms.indexed = photo == PhotoInterp.RGB_PALETTE &&
         ifd.containsKey(IFD.COLOR_MAP);
-      core[i].imageCount = ifds[i].size();
-      if (core[i].sizeZ * core[i].sizeT * (core[i].rgb ? 1 : core[i].sizeC) !=
-        core[i].imageCount)
+      ms.imageCount = ifds[i].size();
+      if (ms.sizeZ * ms.sizeT * (ms.rgb ? 1 : ms.sizeC) !=
+        ms.imageCount)
       {
-        core[i].sizeT = core[i].imageCount / (core[i].rgb ? 1 : core[i].sizeC);
-        core[i].sizeZ = 1;
+        ms.sizeT = ms.imageCount / (ms.rgb ? 1 : ms.sizeC);
+        ms.sizeZ = 1;
       }
     }
 
@@ -396,8 +399,9 @@ public class APLReader extends FormatReader {
 
         String units = row[calibrationUnit];
 
-        double px = realWidth / core[i].sizeX;
-        double py = realHeight / core[i].sizeY;
+        CoreMetadata ms = core.get(i);
+        double px = realWidth / ms.sizeX;
+        double py = realHeight / ms.sizeY;
 
         if (units.equals("mm")) {
           px *= 1000;

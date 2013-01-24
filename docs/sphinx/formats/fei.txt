@@ -1,0 +1,55 @@
+.. index:: FEI
+.. index:: .img
+
+FEI
+===============================================================================
+
+Extensions: .img 
+
+Developer: `FEI <http://www.fei.com/>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`FEI <fei-metadata>`
+
+
+
+We currently have:
+
+* a few FEI files
+
+We would like to have:
+
+* a specification document 
+* more FEI files
+
+**Ratings**
+
+
+Pixels: |Fair|
+
+Metadata: |Poor|
+
+Openness: |Poor|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`FEIReader.java`
+
+Notes:
+
+
