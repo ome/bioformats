@@ -22,7 +22,7 @@ for tools in glob.glob("setuptools*.egg"):
        sys.path.insert(0, tools)
 
 from ez_setup import use_setuptools
-use_setuptools(to_dir='egg')
+use_setuptools(to_dir='../../lib/repository')
 from setuptools import setup, find_packages
 
 if os.path.exists("target"):
