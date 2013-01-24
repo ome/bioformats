@@ -49,7 +49,7 @@ Options:
   -d file	Diffs enumeration possible values from an XPath configuration
 		file. This file is expected to have two sections the first
 		containing the "old" and "new" XSD files and the second
-		containing the XPath mappings. (See: example.cfg)
+		containing the XPath mappings. (See: cfg/example.cfg)
   -n namespace	For -t, -x sets the XSD namespace.
 
 Default namespace: "%s"
@@ -57,7 +57,7 @@ Default namespace: "%s"
 Examples:
   %s -t schemas/ome.xsd
   %s -n 'xs:' -x schemas/ome.xsd
-  %s -d example.cfg
+  %s -d cfg/example.cfg
 
 Report bugs to OME-Devel <ome-devel@lists.openmicroscopy.org.uk""" % \
 	(error, cmd, DEFAULT_NAMESPACE, cmd, cmd, cmd)
