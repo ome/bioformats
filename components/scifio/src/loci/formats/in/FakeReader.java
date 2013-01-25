@@ -268,11 +268,13 @@ public class FakeReader extends FormatReader {
       String value = token.substring(equals + 1);
 
       boolean boolValue = value.equals("true");
-      double doubleValue = Double.NaN;
+      double doubleValue;
       try {
         doubleValue = Double.parseDouble(value);
       }
-      catch (NumberFormatException exc) { }
+      catch (NumberFormatException exc) {
+        doubleValue = Double.NaN;
+      }
       int intValue = Double.isNaN(doubleValue) ? -1 : (int) doubleValue;
 
       if (key.equals("sizeX")) sizeX = intValue;
