@@ -1,0 +1,292 @@
+{% def superclass(obj) %}\
+{% choose %}\
+{% when parent_object(o.name) is not None and parent_object(o.name).isAbstractProprietary %}\
+ superclass="${fully_qualified_class_name(parent_object(o.name).name)}"\
+{% end %}\
+{% otherwise %}\
+{% if obj.javaBase != fu.DEFAULT_BASE_CLASS %}\
+ superclass="${fully_qualified_class_name(obj.javaBase)}"\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+\
+{% def type_attributes(obj) %}\
+{% if obj.isAnnotated %} annotated="true"{% end %}\
+{% if obj.isNamed and obj.name not in fu.OMERO_NAMED_OPTIONAL %} named="true"{% end %}\
+{% if obj.isDescribed %} described="true"{% end %}\
+{% end %}\
+\
+{% def fq_class_name(obj_or_prop) %}\
+${fully_qualified_class_name(obj_or_prop)}\
+{% end %}\
+\
+{% def fq_link_class_name(o, prop) %}\
+${fully_qualified_link_class_name(o, prop)}\
+{% end %}\
+\
+{% python
+    def fully_qualified_class_name(obj_or_prop):
+        if obj_or_prop.__class__ in (str, unicode):
+            obj_or_prop = model.getObjectByName(obj_or_prop)
+        if obj_or_prop.javaType == 'Object':
+            return '%s.%s' % (obj_or_prop.omeroPackage,
+                              obj_or_prop.javaMethodName)
+        elif obj_or_prop.isPrimitive:
+            return obj_or_prop.javaType
+        else:
+            return '%s.%s' % (obj_or_prop.omeroPackage, obj_or_prop.javaType)
+
+    def link_class_name(o, prop):
+        if prop.isReference:
+            v = (o.javaMethodName, prop.javaMethodName)
+        else:
+            v = (prop.javaMethodName, o.javaMethodName)
+        return '%s%sLink' % v
+
+    def fully_qualified_link_class_name(o, prop):
+        if prop.isReference:
+            return '%s.%s' % (prop.omeroPackage, link_class_name(o, prop))
+        if prop.key in fu.BACK_REFERENCE_CLASS_NAME_OVERRIDE:
+            return '%s.%s' % \
+                    (o.omeroPackage,
+                     fu.BACK_REFERENCE_CLASS_NAME_OVERRIDE[prop.key])
+        return '%s.%s' % (o.omeroPackage, link_class_name(o, prop))
+
+    def parent_object(name):
+        try:
+            return model.getObjectByName(parents[name].keys()[0])
+        except AttributeError:
+            return None
+
+    def is_abstract(name):
+        o = model.getObjectByName(name)
+        if o is not None and \
+           (o.isAbstract or o.isAbstractProprietary):
+            return True
+        return False
+
+    def is_parent_abstract(name):
+        parent = parent_object(name)
+        if parent is not None and \
+           (parent.isAbstract or parent.isAbstractProprietary):
+            return True
+        return False
+
+    def sorted_objects():
+        return sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name))
+
+    def sorted_and_filtered_objects():
+        objects = sorted_objects()
+        def f(x):
+            if x.isSettings:
+                return True
+            if x.isReference or x.isAnnotation:
+                return False
+            if x.name in ('BinaryOnly', 'Contact', 'Leader', 'MetadataOnly',
+                          'OME', 'TiffData', 'UUID', 'Union', 'FormatType',
+                          'StructuredAnnotations'):
+                return False
+            return True
+        return filter(f, objects)
+
+    def sorted_properties(o):
+        return sorted(o.properties.values(), lambda x, y: cmp(x.name, y.name))
+
+    def sorted_and_filtered_properties(o):
+        properties = sorted_properties(o)
+        def f(x):
+            if x.isUnique:
+                return True
+            if x.isGlobal and (not o.isAnnotation and not o.isGlobal):
+                return False
+            if x.name == 'Name' and o.name not in fu.OMERO_NAMED_OPTIONAL:
+                return False
+            if x.name in ('ID', 'Description', 'AnnotationRef', 'Leader',
+                          'BinData', 'TiffData', 'MetadataOnly', 'Union',
+                          'Union_BackReference', 'Pixels', 'Index',
+                          'EventRef'):
+                return False
+            return True
+        return filter(f, properties)
+
+    def sorted_enumerations():
+        enumerations = dict()
+        for o in model.objects.values():
+            for prop in o.properties.values():
+                if prop.isEnumeration:
+                    enumerations[fully_qualified_class_name(prop)] = prop
+        enumerations = enumerations.values()
+        def comparator(x, y):
+            return cmp(fully_qualified_class_name(x),
+                       fully_qualified_class_name(y))
+        return sorted(enumerations, lambda x, y: comparator(x, y))
+
+    def sorted_and_filtered_enumerations():
+        enumerations = sorted_enumerations()
+        def f(x):
+            return True
+        return filter(f, enumerations)
+
+    def sorted_links():
+        links = list()
+        for o in model.objects.values():
+            for prop in o.properties.values():
+                if prop.isReference and prop.isManyToMany:
+                    link = {'id': fully_qualified_link_class_name(o, prop),
+                            'name': link_class_name(o, prop),
+                            'parent': o, 'child': prop}
+                    links.append(link)
+        return sorted(links, lambda x, y: cmp(x['name'], y['name']))
+
+    def sorted_and_filtered_links():
+        links = sorted_links()
+        def f(x):
+            return True
+        return filter(f, links)
+
+%}\
+\
+\
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# Copyright 2012 University of Dundee. All rights reserved.
+# Use is subject to license terms supplied in LICENSE.txt
+#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<!--
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+# Created by ${fu.user} via xsd-fu on ${fu.date}
+#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+<types>
+{% for o in sorted_and_filtered_objects() %}\
+    <!-- OME model object ${o.name} -->
+{% choose %}\
+{% when o.isAbstractProprietary or o.isAbstract %}\
+    <abstract id="${fq_class_name(o)}"{% if o.isGlobal %} global="true"{% end %}${superclass(o)}${type_attributes(o)}{% if o.isImmutable %} immutable="true"{% end %}>
+{% end %}\
+{% otherwise %}\
+    <type id="${fq_class_name(o)}"{% if o.isGlobal %} global="true"{% end %}${superclass(o)}${type_attributes(o)}{% if o.isImmutable %} immutable="true"{% end %}>
+{% end %}\
+{% end %}\
+        <properties>
+{% if o.name in customContent and 'properties' in customContent[o.name] %}\
+${customContent[o.name]['properties']}\
+{% end %}\
+{% choose %}\
+{% when o.isReference %}\
+{% for prop in sorted_and_filtered_properties(o) %}\
+            <!--
+            // ${prop.minOccurs}:${prop.maxOccurs}
+            // Is multi path? ${is_multi_path[o.name]}
+            // Ignoring ${prop.name} property of reference ${o.name}
+            -->
+{% end %}\
+{% end %}\
+{% otherwise %}\
+\
+{% for prop in sorted_and_filtered_properties(o) %}\
+{% choose %}\
+{% when o.isGlobal and prop.isBackReference and not prop.isGlobal %}\
+            <!--
+            // Ignoring back reference ${prop.name} for global OMERO type.
+            -->
+{% end %}\
+{% when prop.isReference and prop.isManyToMany %}\
+            <!--
+            // Many-to-many reference ${prop.name}
+            -->
+            <child name="${prop.javaInstanceVariableName}" type="${fq_link_class_name(o, prop)}" target="${fq_class_name(prop)}"{% if prop.isOrdered or prop.isParentOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+{% end %}\
+{% when prop.isReference and prop.maxOccurs > 1 %}\
+            <!--
+            // Reference ${prop.name}
+            -->
+            <onemany name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.javaArgumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+{% end %}\
+{% when prop.isBackReference and prop.isManyToMany %}\
+            <!--
+            // Many-to-many back reference ${prop.name}
+            -->
+            <parent name="${prop.javaInstanceVariableName}" type="${fq_link_class_name(o, prop)}" target="${fq_class_name(prop)}"{% if prop.isOrdered or prop.isChildOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+{% end %}\
+{% when prop.isBackReference and prop.maxOccurs > 1 %}\
+            <!--
+            // Back reference ${prop.name} ${prop.minOccurs} ${prop.maxOccurs}
+            -->
+            <{% if prop.isInjected and prop.minOccurs == 0 %}zeromany{% end %}{% if prop.isInjected and prop.minOccurs == 1 %}onemany{% end %}{% if not prop.isInjected and prop.minOccurs == 0 %}manyzero{% end %}{% if not prop.isInjected and prop.minOccurs == 1 %}manyone{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.javaArgumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+{% end %}\
+{% when prop.isBackReference %}\
+            <!--
+            // Back reference ${prop.name} ${prop.minOccurs} ${prop.maxOccurs}
+            -->
+            <{% if prop.minOccurs == 0 %}manyzero{% end %}{% if prop.minOccurs == 1 %}manyone{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+{% end %}\
+{% when prop.maxOccurs == 1 and (not o.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or prop.name in fu.ABSTRACT_PROPRIETARY_OVERRIDE) %}\
+            <!--
+            // Property ${prop.name}
+            -->
+            <{% if prop.minOccurs == 0 and not prop.isUnique %}optional{% end %}{% if prop.minOccurs == 1 or prop.isUnique %}required{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}"{% if prop.isUnique %} unique="true"{% end %}/>
+{% end %}\
+{% when prop.maxOccurs > 1 and not o.isAbstractProprietary %}\
+            <!--
+            // Property which occurs more than once ${prop.name}
+            -->
+            <{% if prop.minOccurs == 0 %}zeromany{% end %}{% if prop.minOccurs == 1 %}onemany{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.javaArgumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+{% end %}\
+{% otherwise %}\
+            <!--
+            // *** WARNING *** Unhandled or skipped property ${prop.name}
+            -->
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+        </properties>
+{% if o.isAbstractProprietary or o.isAbstract %}\
+    </abstract>
+
+{% end %}\
+{% if not o.isAbstractProprietary and not o.isAbstract %}\
+    </type>
+
+{% end %}\
+{% end %}\
+\
+{% for o in sorted_and_filtered_enumerations() %}\
+    <enum id="${fq_class_name(o)}">
+{% for value in o.possibleValues %}\
+        <entry name="${value}"/>
+{% end %}\
+{% if o.javaType in customContent and 'properties' in customContent[o.javaType] %}\
+${customContent[o.javaType]['properties']}\
+{% end %}\
+    </enum>
+
+{% end %}\
+\
+{% for o in sorted_and_filtered_links() %}\
+{% if not o['parent'].isAnnotation and not o['child'].isAnnotation %}\
+    <link id="${o['id']}"{% if o['parent'].isGlobal %} global="true"{% end %}>
+        <properties>
+            <from_parent type="${fully_qualified_class_name(o['parent'])}"{% if o['child'].isParentOrdered or o['parent'].isOrdered or o['parent'].isParentOrdered %} ordered="true"{% end %}/>
+            <to_child type="${fully_qualified_class_name(o['child'])}"{% if o['parent'].isChildOrdered or o['child'].isOrdered or o['child'].isChildOrdered %} ordered="true"{% end %}/>
+{% if o['name'] in customContent and 'properties' in customContent[o['name']] %}\
+${customContent[o['name']]['properties']}\
+{% end %}\
+        </properties>
+    </link>
+
+{% end %}\
+{% end %}\
+</types>
