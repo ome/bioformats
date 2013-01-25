@@ -125,7 +125,7 @@ public class FakeReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    final int series = getSeries();
+    final int s = getSeries();
     final int pixelType = getPixelType();
     final int bpp = FormatTools.getBytesPerPixel(pixelType);
     final boolean signed = FormatTools.isSigned(pixelType);
@@ -158,7 +158,7 @@ public class FakeReader extends FormatReader {
             specialPixel = true;
             switch (grid) {
               case 0:
-                pixel = series;
+                pixel = s;
                 break;
               case 1:
                 pixel = no;
