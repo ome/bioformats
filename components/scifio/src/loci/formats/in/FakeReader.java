@@ -41,12 +41,19 @@ import java.util.Random;
 
 import loci.common.DataTools;
 import loci.common.Location;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLService;
+import ome.xml.model.OME;
+import ome.xml.spec.XMLMockObjects;
 
 /**
  * FakeReader is the file format reader for faking input data.
@@ -61,6 +68,7 @@ import loci.formats.meta.MetadataStore;
  *  <li>showinf '32bit-unsigned&amp;pixelType=uint32&amp;sizeZ=3&amp;sizeC=5&amp;sizeT=7&amp;sizeY=50.fake'</li>
  *  <li>showinf '32bit-floating&amp;pixelType=float&amp;sizeZ=3&amp;sizeC=5&amp;sizeT=7&amp;sizeY=50.fake'</li>
  *  <li>showinf '64bit-floating&amp;pixelType=double&amp;sizeZ=3&amp;sizeC=5&amp;sizeT=7&amp;sizeY=50.fake'</li>
+ *  <li>showinf 'SPW&amp;plates=2&amp;plateRows=3&amp;plateCols=3&amp;fields=8&amp;plateAcqs=5.fake'</li>
  * </ul></p>
  *
  * <dl><dt><b>Source code:</b></dt>
@@ -252,6 +260,12 @@ public class FakeReader extends FormatReader {
     int seriesCount = 1;
     int lutLength = 3;
 
+    int plates = 0;
+    int plateRows = 0;
+    int plateCols = 0;
+    int fields = 0;
+    int plateAcqs = 0;
+
     // parse tokens from filename
     for (String token : tokens) {
       if (name == null) {
@@ -300,6 +314,11 @@ public class FakeReader extends FormatReader {
       else if (key.equals("series")) seriesCount = intValue;
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
+      else if (key.equals("plates")) plates = intValue;
+      else if (key.equals("plateRows")) plateRows = intValue;
+      else if (key.equals("plateCols")) plateCols = intValue;
+      else if (key.equals("fields")) fields = intValue;
+      else if (key.equals("plateAcqs")) plateAcqs = intValue;
     }
 
     // do some sanity checks
@@ -327,6 +346,18 @@ public class FakeReader extends FormatReader {
     }
     if (lutLength < 1) {
       throw new FormatException("Invalid lutLength: " + lutLength);
+    }
+
+    // populate SPW metadata
+    MetadataStore store = makeFilterMetadata();
+    boolean hasSPW = plates > 0 && plateRows > 0 &&
+      plateCols > 0 && fields > 0 && plateAcqs > 0;
+    if (hasSPW) {
+      // generate SPW metadata and override series count to match
+      int imageCount =
+        populateSPW(store, plates, plateRows, plateCols, fields, plateAcqs);
+      if (imageCount > 0) seriesCount = imageCount;
+      else hasSPW = false; // failed to generate SPW metadata
     }
 
     // populate core metadata
@@ -357,7 +388,6 @@ public class FakeReader extends FormatReader {
     }
 
     // populate OME metadata
-    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     for (int s=0; s<seriesCount; s++) {
       String imageName = s > 0 ? name + " " + (s + 1) : name;
@@ -399,6 +429,30 @@ public class FakeReader extends FormatReader {
   }
 
   // -- Helper methods --
+
+  private int populateSPW(MetadataStore store, int plates, int rows, int cols,
+    int fields, int acqs)
+  {
+    try {
+      final XMLMockObjects xml = new XMLMockObjects();
+      final OME ome =
+        xml.createPopulatedScreen(plates, rows, cols, fields, acqs);
+      final OMEXMLService omexmlService =
+        new ServiceFactory().getInstance(OMEXMLService.class);
+      final OMEXMLMetadata omeMeta = omexmlService.createOMEXMLMetadata();
+      omeMeta.setRoot(ome);
+      // copy populated SPW metadata into destination MetadataStore
+      omexmlService.convertMetadata(omeMeta, store);
+      return ome.sizeOfImageList();
+    }
+    catch (DependencyException exc) {
+      LOGGER.error("Could not create OME-XML service", exc);
+    }
+    catch (ServiceException exc) {
+      LOGGER.error("Could not create OME-XML metadata", exc);
+    }
+    return -1;
+  }
 
   /** Creates a mapping between indices and color values. */
   private void createIndexMap(int num) {
