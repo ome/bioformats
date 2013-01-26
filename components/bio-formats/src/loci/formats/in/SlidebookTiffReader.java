@@ -206,6 +206,9 @@ public class SlidebookTiffReader extends BaseTiffReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
+    Location file = new Location(currentId).getAbsoluteFile();
+    store.setImageName(file.getParentFile().getName(), 0);
+
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (c < channelNames.size()) {
