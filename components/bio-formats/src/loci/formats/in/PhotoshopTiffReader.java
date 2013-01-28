@@ -210,7 +210,9 @@ public class PhotoshopTiffReader extends BaseTiffReader {
           layerCore.littleEndian = isLittleEndian();
           layerCore.dimensionOrder = getDimensionOrder();
 
-          if (layerCore.sizeX == 0 || layerCore.sizeY == 0) {
+          if (layerCore.sizeX == 0 || layerCore.sizeY == 0 ||
+            (layerCore.sizeC > 1 && !isRGB()))
+          {
             layerMetadata.clear();
             break;
           }
