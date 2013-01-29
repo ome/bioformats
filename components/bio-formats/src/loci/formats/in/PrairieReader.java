@@ -90,7 +90,7 @@ public class PrairieReader extends FormatReader {
   private TiffReader tiff;
 
   /** The associated XML files. */
-  private File xmlFile, cfgFile;
+  private Location xmlFile, cfgFile;
 
   /** Format-specific metadata. */
   private PrairieMetadata meta;
@@ -314,11 +314,11 @@ public class PrairieReader extends FormatReader {
     tiff = new TiffReader();
 
     if (checkSuffix(id, XML_SUFFIX)) {
-      xmlFile = new File(id);
+      xmlFile = new Location(id);
       findCFGFile();
     }
     else if (checkSuffix(id, CFG_SUFFIX)) {
-      cfgFile = new File(id);
+      cfgFile = new Location(id);
       findXMLFile();
     }
     else {
@@ -633,8 +633,8 @@ public class PrairieReader extends FormatReader {
     setSeries(0);
   }
 
-  /** Parses a {@link Document} from the data in the given {@link File}. */
-  private Document parseDOM(final File file)
+  /** Parses a {@link Document} from the data in the given file. */
+  private Document parseDOM(final Location file)
     throws ParserConfigurationException, SAXException, IOException
   {
     // NB: The simplest approach here would be to call XMLTools.parseDOM(file)
@@ -659,7 +659,8 @@ public class PrairieReader extends FormatReader {
 
     // read entire XML document into a giant byte array
     final byte[] buf = new byte[(int) file.length()];
-    final DataInputStream is = new DataInputStream(new FileInputStream(file));
+    final DataInputStream is =
+      new DataInputStream(new FileInputStream(file.getAbsolutePath()));
     is.readFully(buf);
     is.close();
 
@@ -735,14 +736,14 @@ public class PrairieReader extends FormatReader {
   }
 
   /** Finds the first file with one of the given suffixes. */
-  private File find(final String[] suffix) {
+  private Location find(final String[] suffix) {
     final File file = new File(currentId).getAbsoluteFile();
     final File parent = file.getParentFile();
     final String[] listing = file.exists() ? parent.list() :
       Location.getIdMap().keySet().toArray(new String[0]);
     for (final String name : listing) {
       if (checkSuffix(name, suffix)) {
-        return new File(parent, name);
+        return new Location(new File(parent, name));
       }
     }
     return null;
