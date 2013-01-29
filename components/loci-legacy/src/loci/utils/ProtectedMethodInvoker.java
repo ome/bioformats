@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
+ * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
  * %%
  * Copyright (C) 2005 - 2012 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison

@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-XML Java library for working with OME-XML metadata structures.
+ * OME SCIFIO package for reading and converting scientific file formats.
  * %%
  * Copyright (C) 2006 - 2012 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
