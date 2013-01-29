@@ -17,6 +17,10 @@
   <name>BF-ITK Pipes</name>
   <inceptionYear>2010</inceptionYear>
 
+  <properties>
+    <project.rootdir>${basedir}/../../..</project.rootdir>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
