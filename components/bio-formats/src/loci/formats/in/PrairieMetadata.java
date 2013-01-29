@@ -254,7 +254,7 @@ public class PrairieMetadata {
 
   /** Converts the given string to a {@code boolean}. */
   private boolean b(final String value) {
-    return "True".equals(value);
+    return Boolean.parseBoolean(value);
   }
 
   /**
