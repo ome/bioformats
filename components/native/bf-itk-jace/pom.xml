@@ -17,6 +17,10 @@
   <name>BF-ITK Jace</name>
   <inceptionYear>2009</inceptionYear>
 
+  <properties>
+    <project.rootdir>${basedir}/../../..</project.rootdir>
+  </properties>
+
   <build>
     <plugins>
       <plugin>

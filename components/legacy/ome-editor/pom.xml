@@ -57,6 +57,10 @@
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
   </dependencies>
 
+  <properties>
+    <project.rootdir>${basedir}/../../..</project.rootdir>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
