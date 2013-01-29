@@ -451,8 +451,7 @@ public class PrairieReader extends FormatReader {
    * {@link #getGlobalMetadata()} and {@link #getSeriesMetadata()}).
    */
   private void populateOriginalMetadata() {
-    boolean minimumMetadata =
-      getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
+    final boolean minimumMetadata = isMinimumMetadata();
     if (minimumMetadata) return;
 
     // populate global metadata
@@ -488,13 +487,20 @@ public class PrairieReader extends FormatReader {
     LOGGER.info("Populating OME metadata");
 
     // populate required Pixels metadata
-    boolean minimumMetadata =
-      getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
+    final boolean minimumMetadata = isMinimumMetadata();
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, !minimumMetadata);
-    if (minimumMetadata) return;
 
+    // populate required AcquisitionDate
     final String date = DateTools.formatDate(meta.getDate(), DATE_FORMAT);
+    final Timestamp acquisitionDate = new Timestamp(date);
+    final int seriesCount = getSeriesCount();
+    for (int s = 0; s < seriesCount; s++) {
+      setSeries(s);
+      if (date != null) store.setImageAcquisitionDate(acquisitionDate, s);
+    }
+
+    if (minimumMetadata) return;
 
     // create an Instrument
     final String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -511,15 +517,10 @@ public class PrairieReader extends FormatReader {
     }
 
     String objectiveID = null;
-
-    final int seriesCount = getSeriesCount();
     for (int s = 0; s < seriesCount; s++) {
       setSeries(s);
       final Sequence sequence = sequence(s);
       final Frame firstFrame = sequence.getFirstFrame();
-
-      // populate acquisition date
-      if (date != null) store.setImageAcquisitionDate(new Timestamp(date), s);
 
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, s);
@@ -632,6 +633,11 @@ public class PrairieReader extends FormatReader {
       }
     }
     setSeries(0);
+  }
+
+  /** Gets whether to populate only the minimum required metadata. */
+  private boolean isMinimumMetadata() {
+    return getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
   }
 
   /** Parses a {@link Document} from the data in the given file. */
