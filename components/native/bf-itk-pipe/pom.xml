@@ -37,7 +37,7 @@
           <roots>
             <root>.</root>
           </roots>
-          <licenseName>bf-itk-pipe</licenseName>
+          <licenseName>bf-itk</licenseName>
           <projectName>Bio-Formats plugin for the Insight Toolkit.</projectName>
           <organizationName>Insight Software Consortium, and Open Microscopy
 Environment:
