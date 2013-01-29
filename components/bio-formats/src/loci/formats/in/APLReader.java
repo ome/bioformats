@@ -307,7 +307,8 @@ public class APLReader extends FormatReader {
 
     pathName = pathName.replace('\\', File.separatorChar);
     pathName = pathName.replaceAll("/", File.separator);
-    String[] dirs = pathName.split(File.separator);
+    String[] dirs = pathName.split(
+      File.separatorChar == '\\' ? "\\\\" : File.separator);
     for (int i=dirs.length-1; i>=0; i--) {
       if (dirs[i].indexOf("_DocumentFiles") > 0) {
         Location file = new Location(dir, dirs[i]);
