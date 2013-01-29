@@ -21,7 +21,6 @@
   <licenses>
     <license>
       <name>Simplified BSD License</name>
-      <url>${license.server}/loci-common/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
