@@ -42,6 +42,10 @@ Note that for the time being, a scifio-devel component houses the new ome.scifio
     </dependency>
   </dependencies>
 
+  <properties>
+    <project.rootdir>${basedir}/../..</project.rootdir>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
