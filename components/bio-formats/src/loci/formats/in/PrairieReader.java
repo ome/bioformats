@@ -399,7 +399,7 @@ public class PrairieReader extends FormatReader {
     core.clear();
     framesAreTime = new boolean[seriesCount];
     for (int s = 0; s < seriesCount; s++) {
-      final Sequence sequence = sequence(s);
+      final Sequence sequence = sequence(0, s, seriesCount);
       final Frame frame = sequence.getFirstFrame();
       final PFile file = frame == null ? null : frame.getFirstFile();
       if (frame == null || file == null) {
@@ -818,7 +818,7 @@ public class PrairieReader extends FormatReader {
    * @return The first associated {@code Sequence}.
    */
   private Sequence sequence(final int s) {
-    return sequence(0, series);
+    return sequence(0, s);
   }
 
   /**
