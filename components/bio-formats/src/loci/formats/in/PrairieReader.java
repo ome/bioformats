@@ -302,6 +302,7 @@ public class PrairieReader extends FormatReader {
       meta = null;
       sequences = null;
       framesAreTime = null;
+      singleTiffMode = false;
     }
   }
 
