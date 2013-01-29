@@ -25,7 +25,6 @@ Note that for the time being, a scifio-devel component houses the new ome.scifio
   <licenses>
     <license>
       <name>Simplified BSD License</name>
-      <url>${license.server}/scifio/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>

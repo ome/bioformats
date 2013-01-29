@@ -43,7 +43,6 @@
   </modules>
 
   <properties>
-    <license.server>http://code.imagej.net/licenses</license.server>
   </properties>
 
   <build>
@@ -87,11 +86,12 @@
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
           <licenseName>gpl_v2</licenseName>
-          <licenseResolver>${license.server}</licenseResolver>
+          <licenseResolver>file://${project.rootdir}/license</licenseResolver>
           <organizationName>Open Microscopy Environment:
   - Board of Regents of the University of Wisconsin-Madison
   - Glencoe Software, Inc.
   - University of Dundee</organizationName>
+          <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
           <canUpdateDescription>true</canUpdateDescription>
           <roots>
             <root>src</root>

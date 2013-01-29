@@ -24,7 +24,6 @@
   <licenses>
     <license>
       <name>Simplified BSD License</name>
-      <url>${license.server}/scifio/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
