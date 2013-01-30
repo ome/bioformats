@@ -187,7 +187,11 @@ public class PrairieMetadata {
 
   /** Parses metadata from Prairie XML file. */
   private void parseXML(final Document doc) {
-    checkElement(doc.getDocumentElement(), "PVScan");
+    final Element pvScan = doc.getDocumentElement();
+    checkElement(pvScan, "PVScan");
+
+    // parse acquisition date
+    date = pvScan.getAttribute("date");
 
     // iterate over all Sequence elements
     final NodeList sequenceNodes = doc.getElementsByTagName("Sequence");
