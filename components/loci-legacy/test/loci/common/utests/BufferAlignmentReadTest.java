@@ -2,7 +2,7 @@
  * #%L
  * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
  * %%
- * Copyright (C) 2008 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee

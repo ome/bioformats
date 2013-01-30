@@ -1,6 +1,6 @@
 Bio-Formats plugin for the Insight Toolkit.
 
-Copyright (C) 2010 - 2012 Insight Software Consortium, and Open Microscopy
+Copyright (C) 2010 - 2013 Insight Software Consortium, and Open Microscopy
 Environment:
   - Board of Regents of the University of Wisconsin-Madison
   - Glencoe Software, Inc.
