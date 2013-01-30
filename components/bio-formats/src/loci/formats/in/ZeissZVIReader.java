@@ -467,6 +467,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
 
     Layer nlayer = new Layer();
+    layers.add(nlayer);
 
     for (int shape=0; shape<roiOffsets.size(); shape++) {
       Shape nshape = new Shape();
@@ -531,7 +532,6 @@ public class ZeissZVIReader extends BaseZeissReader {
 
       nlayer.shapes.add(nshape);
     }
-    layers.add(nlayer);
     s.close();
   }
 
