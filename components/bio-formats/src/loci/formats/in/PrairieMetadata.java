@@ -302,13 +302,13 @@ public class PrairieMetadata {
 
   /** Gets the values of the given map, sorted by key. */
   private <K extends Comparable<? super K>, V> ArrayList<V> valuesByKey(
-    Map<K, V> map)
+    final Map<K, V> map)
   {
     final ArrayList<K> keys = new ArrayList<K>(map.size());
     final ArrayList<V> values = new ArrayList<V>(map.size());
     keys.addAll(map.keySet());
     Collections.sort(keys);
-    for (K key : keys) {
+    for (final K key : keys) {
       values.add(map.get(key));
     }
     return values;
