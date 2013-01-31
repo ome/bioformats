@@ -111,7 +111,10 @@ public class PrairieMetadata {
    * left-to-right).
    */
   public boolean isInvertX() {
-    return b(getConfig("xYStageXPositionIncreasesLeftToRight"));
+    //return b(getConfig("xYStageXPositionIncreasesLeftToRight"));
+    // HACK: It appears that this flag is not actually respected
+    // in the tile layout, so we behave as though it is never set!
+    return false;
   }
 
   /**
