@@ -502,12 +502,6 @@ public class PrairieMetadata {
     /** The first actual {@code <File>} element for this {@code <Frame>}. */
     private PFile firstFile;
 
-    /** Minimum channel value. */
-    private int channelMin = Integer.MAX_VALUE;
-
-    /** Maximum channel value. */
-    private int channelMax = Integer.MIN_VALUE;
-
     /** {@code relativeTime} attribute of this {@code <Frame>}. */
     private Double relativeTime;
 
@@ -545,9 +539,6 @@ public class PrairieMetadata {
         if (firstFile == null) firstFile = file;
 
         final int channel = file.getChannel();
-        if (channel < channelMin) channelMin = channel;
-        if (channel > channelMax) channelMax = channel;
-
         files.put(channel, file);
       }
 
@@ -567,32 +558,6 @@ public class PrairieMetadata {
     /** Gets the {@code index} associated with this {@code Frame}. */
     public int getIndex() {
       return index;
-    }
-
-    /**
-     * Gets the minimum channel value. Matches the smallest {@code channel}
-     * attribute found, and hence will not necessarily equal {@code 1} (though
-     * in practice it usually does).
-     */
-    public int getChannelMin() {
-      return channelMin;
-    }
-
-    /**
-     * Gets the maximum channel value. Matches the largest {@code channel}
-     * attribute found, and hence will not necessarily equal
-     * {@code channels#size()} (though in practice it usually does).
-     */
-    public int getChannelMax() {
-      return channelMax;
-    }
-
-    /**
-     * Gets the number of recorded channels at this {@code Frame}. This value is
-     * equal to {@link #getChannelMax()} - {@link #getChannelMin()} + 1.
-     */
-    public int getChannelCount() {
-      return channelMax - channelMin + 1;
     }
 
     /** Gets the first {@code File} of the {@code Sequence}. */
