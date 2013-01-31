@@ -98,6 +98,9 @@ public class PrairieReader extends FormatReader {
   /** List of Prairie metadata {@code Sequence}s, ordered by cycle. */
   private ArrayList<Sequence> sequences;
 
+  /** List of active channels. */
+  private int[] channels;
+
   /**
    * Whether a series uses {@code Frame}s as time points rather than focal
    * planes (i.e., sizeZ and sizeT values inverted).
@@ -229,7 +232,7 @@ public class PrairieReader extends FormatReader {
             continue;
           }
           for (int c = 0; c < getSizeC(); c++) {
-            final int channel = c + frame.getChannelMin();
+            final int channel = channels[c];
             final PFile file = frame.getFile(channel);
             if (file == null) {
               warnFile(sequence, index, channel);
@@ -281,7 +284,7 @@ public class PrairieReader extends FormatReader {
       return blank(buf);
     }
 
-    final int channel = c + frame.getChannelMin();
+    final int channel = channels[c];
     final PFile file = frame.getFile(channel);
     if (file == null) {
       warnFile(sequence, index, channel);
@@ -301,6 +304,7 @@ public class PrairieReader extends FormatReader {
       tiff = null;
       meta = null;
       sequences = null;
+      channels = null;
       framesAreTime = null;
       singleTiffMode = false;
     }
@@ -378,6 +382,7 @@ public class PrairieReader extends FormatReader {
 
     meta = new PrairieMetadata(xml, cfg);
     sequences = meta.getSequences();
+    channels = meta.getActiveChannels();
   }
 
   /**
@@ -420,7 +425,6 @@ public class PrairieReader extends FormatReader {
       final Integer linesPerFrame = frame.getLinesPerFrame();
       final Integer pixelsPerLine = frame.getPixelsPerLine();
       final int indexCount = sequence.getIndexCount();
-      final int channelCount = frame.getChannelCount();
 
       final int sizeX = pixelsPerLine == null ? tiff.getSizeX() : pixelsPerLine;
       final int sizeY = linesPerFrame == null ? tiff.getSizeY() : linesPerFrame;
@@ -430,7 +434,7 @@ public class PrairieReader extends FormatReader {
       cm.sizeX = sizeX;
       cm.sizeY = sizeY;
       cm.sizeZ = framesAreTime[s] ? 1 : indexCount;
-      cm.sizeC = channelCount;
+      cm.sizeC = channels.length;
       cm.sizeT = framesAreTime[s] ? indexCount : sizeT;
       cm.pixelType = tiff.getPixelType();
       cm.bitsPerPixel = bpp;
@@ -539,10 +543,10 @@ public class PrairieReader extends FormatReader {
       final Double waitTime = meta.getWaitTime();
       if (waitTime != null) store.setPixelsTimeIncrement(waitTime, s);
 
-      final String[] detectorIDs = new String[firstFrame.getChannelCount()];
+      final String[] detectorIDs = new String[channels.length];
 
-      for (int c = 0; c < firstFrame.getChannelCount(); c++) {
-        final int channel = c + firstFrame.getChannelMin();
+      for (int c = 0; c < channels.length; c++) {
+        final int channel = channels[c];
         final PFile file = firstFrame.getFile(channel);
 
         // populate channel name
