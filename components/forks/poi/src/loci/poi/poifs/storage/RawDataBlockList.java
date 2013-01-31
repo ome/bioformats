@@ -72,20 +72,22 @@ public class RawDataBlockList
     {
         List blocks = new ArrayList();
         bigBlockSize = size;
+        long pointer = stream.getFilePointer();
         while (true)
         {
-            RawDataBlock block = new RawDataBlock(stream, size);
+            RawDataBlock block = new RawDataBlock(stream, size, pointer);
 
             if (block.eof())
             {
                 break;
             }
             blocks.add(block);
-            if (size + stream.getFilePointer() > stream.length()) {
+            if (size + pointer > stream.length()) {
               break;
             }
-            stream.skipBytes(size);
+            pointer += size;
         }
+        stream.seek(pointer);
         setBlocks(( RawDataBlock [] ) blocks.toArray(new RawDataBlock[ 0 ]));
     }
 
