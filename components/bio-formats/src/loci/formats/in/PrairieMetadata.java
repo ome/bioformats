@@ -26,8 +26,10 @@
 package loci.formats.in;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.w3c.dom.Document;
@@ -63,6 +65,9 @@ public class PrairieMetadata {
   /** The wait time of the acquisition. */
   private Double waitTime;
 
+  /** Set of active channel indices. */
+  private final HashSet<Integer> activeChannels = new HashSet<Integer>();
+
   /** Key/value pairs from CFG file. */
   private final HashMap<String, String> config = new HashMap<String, String>();
 
@@ -82,6 +87,23 @@ public class PrairieMetadata {
   /** Gets the {@code waitTime} recorded in the configuration. */
   public Double getWaitTime() {
     return waitTime;
+  }
+
+  /**
+   * Gets the list of active channel indices, in sorted order.
+   * <p>
+   * These indices correspond to the configuration's {@code channel_*} keys
+   * flagged as {@code True}.
+   * </p>
+   */
+  public int[] getActiveChannels() {
+    final int[] result = new int[activeChannels.size()];
+    int i = 0;
+    for (int channelIndex : activeChannels) {
+      result[i++] = channelIndex;
+    }
+    Arrays.sort(result);
+    return result;
   }
 
   /**
@@ -221,6 +243,7 @@ public class PrairieMetadata {
     }
 
     parseKeys(doc.getDocumentElement(), config);
+    parseChannels();
   }
 
   /**
@@ -235,6 +258,29 @@ public class PrairieMetadata {
       final String key = keyElement.getAttribute("key");
       final String value = keyElement.getAttribute("value");
       map.put(key, value);
+    }
+  }
+
+  /**
+   * Parses details of the activated channels into the {@link #activeChannels}
+   * data structure.
+   */
+  private void parseChannels() {
+    for (final String key : config.keySet()) {
+      if (!key.matches("channel_[0-9]+")) {
+        // key does not denote a channel activation
+        continue;
+      }
+
+      // verify that the channel is active
+      final String value = config.get(key);
+      if (!b(value)) continue; // channel not active
+
+      // parse the channel index (converting to a 1-based index!)
+      final int channelIndex = i(key.substring(8)) + 1;
+
+      // add the channel index to the active channels list
+      activeChannels.add(channelIndex);
     }
   }
 
