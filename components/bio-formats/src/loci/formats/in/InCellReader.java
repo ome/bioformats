@@ -337,16 +337,6 @@ public class InCellReader extends FormatReader {
     channelsPerTimepoint = new Vector<Integer>();
     metadataFiles = new Vector<String>();
 
-    // build list of companion files
-
-    Location directory = new Location(id).getAbsoluteFile().getParentFile();
-    String[] files = directory.list(true);
-    for (String file : files) {
-      if (checkSuffix(file, METADATA_SUFFIXES)) {
-        metadataFiles.add(new Location(directory, file).getAbsolutePath());
-      }
-    }
-
     // parse metadata from the .xdce or .xml file
 
     wellCoordinates = new Hashtable<Integer, int[]>();
