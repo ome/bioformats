@@ -25,6 +25,10 @@
     <module>bf-itk-pipe</module>
   </modules>
 
+  <properties>
+    <project.rootdir>${basedir}/../..</project.rootdir>
+  </properties>
+
   <!-- NB: for parent project -->
   <repositories>
     <repository>

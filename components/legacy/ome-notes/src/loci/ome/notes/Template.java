@@ -3,7 +3,7 @@
  * OME Notes library for flexible organization and presentation of OME-XML
  * metadata.
  * %%
- * Copyright (C) 2007 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2007 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
