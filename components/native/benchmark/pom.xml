@@ -17,6 +17,10 @@
   <name>BF-ITK benchmark scripts</name>
   <inceptionYear>2011</inceptionYear>
 
+  <properties>
+    <project.rootdir>${basedir}/../../..</project.rootdir>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
