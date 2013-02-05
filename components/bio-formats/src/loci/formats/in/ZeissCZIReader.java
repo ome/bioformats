@@ -390,17 +390,17 @@ public class ZeissCZIReader extends FormatReader {
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     for (int i=0; i<planes.size(); i++) {
-      int planeSize = planes.get(i).x * planes.get(i).y * bpp;
+      long planeSize = (long) planes.get(i).x * planes.get(i).y * bpp;
       if (planes.get(i).directoryEntry.compression == UNCOMPRESSED) {
         long size = planes.get(i).dataSize;
-        if (size < planeSize || (int) size < 0) {
+        if (size < planeSize || planeSize >= Integer.MAX_VALUE || size < 0) {
           planes.remove(i);
           i--;
         }
       }
       else {
         byte[] pixels = planes.get(i).readPixelData();
-        if (pixels.length < planeSize || planeSize < 0) {
+        if (pixels.length < planeSize || planeSize >= Integer.MAX_VALUE) {
           planes.remove(i);
           i--;
         }
