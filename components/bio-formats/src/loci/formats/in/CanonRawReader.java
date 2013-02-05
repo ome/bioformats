@@ -148,11 +148,10 @@ public class CanonRawReader extends FormatReader {
       for (int col=0; col<getSizeX(); col++) {
         int v = 0;
         if (even) {
-          v =
-            pixBuffer[nextByte++] << 4 | ((pixBuffer[nextByte] & 0xff00) >> 4);
+          v = pixBuffer[nextByte++] << 4 | ((pixBuffer[nextByte] & 0xf0) >> 4);
         }
         else {
-          v = ((pixBuffer[nextByte++] & 0xff) << 8) | pixBuffer[nextByte++];
+          v = ((pixBuffer[nextByte++] & 0xf) << 8) | pixBuffer[nextByte++];
         }
         short val = (short) (v & 0xffff);
         even = !even;
