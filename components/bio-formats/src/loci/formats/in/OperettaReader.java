@@ -272,6 +272,8 @@ public class OperettaReader extends FormatReader {
       }
     }
 
+    reader = new MinimalTiffReader();
+
     for (int i=0; i<seriesCount; i++) {
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
@@ -281,16 +283,18 @@ public class OperettaReader extends FormatReader {
       ms.sizeC = uniqueCs.size();
       ms.sizeT = uniqueTs.size();
       ms.dimensionOrder = "XYCZT";
-
-      if (reader == null) {
-        reader = new MinimalTiffReader();
-      }
-      reader.setId(planes[i][0].filename);
-      ms.pixelType = reader.getPixelType();
       ms.rgb = false;
       ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
-      ms.littleEndian = reader.isLittleEndian();
-      reader.close();
+
+      RandomAccessInputStream s =
+        new RandomAccessInputStream(planes[i][0].filename);
+      TiffParser parser = new TiffParser(s);
+      parser.setDoCaching(false);
+
+      IFD firstIFD = parser.getFirstIFD();
+      ms.littleEndian = firstIFD.isLittleEndian();
+      ms.pixelType = firstIFD.getPixelType();
+      s.close();
     }
 
     // populate the MetadataStore
