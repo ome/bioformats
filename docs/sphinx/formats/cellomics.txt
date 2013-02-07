@@ -9,8 +9,8 @@ Extensions: .c01
 Developer: `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,24 +18,21 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Cellomics <cellomics-metadata>`
 
-Freely Available Software:
-
-- `Micro-Manager <http://micro-manager.org/>`_
 
 
 We currently have:
 
-- a few Cellomics .c01 datasets
+* a few Cellomics .c01 datasets
 
 We would like to have:
 
-- a Cellomics .c01 specification document 
-- more Cellomics .c01 datasets
+* a Cellomics .c01 specification document 
+* more Cellomics .c01 datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -47,10 +44,11 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`CellomicsReader.java <components/bio-formats/src/loci/formats/in/CellomicsReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`CellomicsReader.java`
 
 Notes:
 

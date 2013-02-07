@@ -9,8 +9,8 @@ Extensions: .psd
 Developer: `Adobe <http://www.adobe.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,21 +18,21 @@ Export: |no|
 
 Officially Supported Versions: 1.0
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Adobe Photoshop PSD <photoshop-psd-metadata>`
 
 
 
 We currently have:
 
-- a PSD specification document (v3.0.4, 16 July 1995) 
-- a few PSD files
+* a PSD specification document (v3.0.4, 16 July 1995) 
+* a few PSD files
 
 We would like to have:
 
-- more PSD files
+* more PSD files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -44,10 +44,11 @@ Presence: |Good|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`PSDReader.java <components/bio-formats/src/loci/formats/in/PSDReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`PSDReader.java`
 
 Notes:
 

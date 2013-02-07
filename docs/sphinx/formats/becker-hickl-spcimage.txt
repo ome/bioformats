@@ -9,8 +9,8 @@ Extensions: .sdt
 
 Owner: `Becker-Hickl <http://www.becker-hickl.de/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,28 +18,23 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Becker & Hickl SPCImage <becker-hickl-spcimage-metadata>`
 
-Freely Available Software:
-
-- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_ 
-- `AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
 
 
 We currently have:
 
-- an SDT specification document (from 2008 April, in PDF) 
-- an SDT specification document (from 2006 June, in PDF) 
-- Becker & Hickl's `SPCImage <http://www.becker-hickl.de/software/tcspc/softwaretcspcspecial.htm>`_ software 
-- a large number of SDT datasets 
-- the ability to produce new datasets
+* an SDT specification document (from 2008 April, in PDF) 
+* an SDT specification document (from 2006 June, in PDF) 
+* Becker & Hickl's `SPCImage <http://www.becker-hickl.de/software/tcspc/softwaretcspcspecial.htm>`_ software 
+* a large number of SDT datasets 
+* the ability to produce new datasets
 
 We would like to have:
 
-- more BD Pathway datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -51,10 +46,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`SDTReader.java <components/bio-formats/src/loci/formats/in/SDTReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`SDTReader.java`
 
 Notes:
 

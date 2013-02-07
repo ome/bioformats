@@ -9,8 +9,8 @@ Extensions: .tif, .txt, .xml
 Developer: `Vale Lab <http://valelab.ucsf.edu/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Micro-Manager <micro-manager-metadata>`
 
 Freely Available Software:
 
@@ -27,14 +27,13 @@ Freely Available Software:
 
 We currently have:
 
-- many Micro-manager datasets
+* many Micro-manager datasets
 
 We would like to have:
 
-- an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -46,10 +45,11 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`MicromanagerReader.java <components/scifio/src/loci/formats/in/MicromanagerReader.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`MicromanagerReader.java`
 
 Notes:
 

@@ -9,8 +9,8 @@ Extensions: .pcx
 Developer: ZSoft Corporation
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -18,28 +18,20 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`PCX (PC Paintbrush) <pcx-pc-paintbrush-metadata>`
 
-Freely Available Software:
 
-- `DIMIN <http://www.dimin.net/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- several .pcx files 
-- the ability to generate additional .pcx filse
+* several .pcx files 
+* the ability to generate additional .pcx filse
 
 We would like to have:
 
-- an official specification document 
-- more Oxford Instruments files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -51,10 +43,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`PCXReader.java <components/scifio/src/loci/formats/in/PCXReader.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`PCXReader.java`
 
 Notes:
 

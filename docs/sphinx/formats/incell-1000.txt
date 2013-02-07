@@ -9,8 +9,8 @@ Extensions: .xdce, .tif
 Developer: `GE <http://gelifesciences.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,27 +18,21 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`InCell 1000 <incell-1000-metadata>`
 
-Freely Available Software:
 
-- `IMOD <http://bio3d.colorado.edu/imod/>`_
-
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have:
 
-- a few InCell 1000 datasets
+* a few InCell 1000 datasets
 
 We would like to have:
 
-- an InCell 1000 specification document 
-- more InCell 1000 datasets
+* an InCell 1000 specification document 
+* more InCell 1000 datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +44,11 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`InCellReader.java <components/bio-formats/src/loci/formats/in/InCellReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`InCellReader.java`
 
 Notes:
 

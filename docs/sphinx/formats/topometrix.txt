@@ -9,8 +9,8 @@ Extensions: .tfr, .ffr, .zfr, .zfp, .2fl
 
 Owner: `TopoMetrix (now Veeco) <http://www.veeco.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,29 +18,22 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Topometrix <topometrix-metadata>`
 
-Freely Available Software:
 
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
-
-Sample Datasets:
-
-- `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ 
-- `Big TIFF <http://tiffcentral.com/>`_
 
 We currently have:
 
-- Pascal code that reads Topometrix files (from ImageSXM) 
-- a few Topometrix files
+* Pascal code that reads Topometrix files (from ImageSXM) 
+* a few Topometrix files
 
 We would like to have:
 
-- an official specification document 
-- more Topometrix files
+* an official specification document 
+* more Topometrix files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -52,10 +45,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`TopometrixReader.java <components/bio-formats/src/loci/formats/in/TopometrixReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`TopometrixReader.java`
 
 Notes:
 

@@ -9,8 +9,8 @@ Extensions: .pgm
 Developer: Netpbm developers
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -18,28 +18,23 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`PGM (Portable Gray Map) <pgm-metadata>`
 
 Freely Available Software:
 
 - `Netpbm graphics filter <http://netpbm.sourceforge.net/>`_
 
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- a `PGM specification document <http://netpbm.sourceforge.net/doc/pgm.html>`_ (from 2003 October 3, in HTML) 
-- a few PGM files
+* a `PGM specification document <http://netpbm.sourceforge.net/doc/pgm.html>`_ (from 2003 October 3, in HTML) 
+* a few PGM files
 
 We would like to have:
 
-- an official specification document 
-- more sample datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -51,10 +46,11 @@ Presence: |Good|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`PGMReader.java <components/scifio/src/loci/formats/in/PGMReader.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`PGMReader.java`
 
 Notes:
 

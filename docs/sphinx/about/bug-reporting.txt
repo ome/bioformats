@@ -1,0 +1,51 @@
+Reporting a bug
+===============
+
+Before filing a bug report
+--------------------------
+
+If you think you have found a bug in Bio-Formats, the first thing to do is
+update your version of Bio-Formats to the latest trunk version. It is
+possible that the problem has already been addressed. For both Fiji and
+ImageJ users, select Update LOCI Plugins under the LOCI menu. Select
+Trunk Build.
+
+You can also download the :bf_plone:`newest version of Bio-Formats <downloads>`. 
+If you are not sure which version you need, select the Trunk Build under LOCI 
+Tools complete bundle.
+
+Sending a bug report
+--------------------
+
+If you can still reproduce the bug after updating to the newest version
+of Bio-Formats, please send us a bug report. To ensure that any
+inquiries you make are resolved promptly, please include the following
+information:
+
+-  **Exact error message**. Copy and paste any error messages into the
+   text of your email. Alternatively, attach a screenshot of the
+   relevant windows.
+-  **Version information**. Indicate which release of Bio-Formats, which
+   operating system, and which version of Java you are using.
+-  **Non-working data**. If possible, please send a non-working file.
+   This helps us ensure that the problem is fixed for next release and
+   will not reappear in later releases. We can provide you with an FTP
+   server for uploading your file(s) if needed. Note that any data
+   provided is used for internal testing only; we do not make images
+   publicly available unless given explicit permission to do so.
+-  **Metadata and screenshots**. If possible, include any additional
+   information about your data. We are especially interested in the
+   expected dimensions (width, height, number of channels, Z slices, and
+   timepoints). Screenshots of the image being successfully opened in
+   other software are also useful.
+-  **Format details**. If you are requesting support for a new format,
+   we ask that you send as much data as you have regarding this format
+   (sample files, specifications, vendor/manufacturer information,
+   etc.). This helps us to better support the format and ensures future
+   versions of the format are also supported.
+
+Once you have gathered all the relevant information, send it as an
+e-mail to the `OME Users mailing list <http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/>`_.
+
+**Please be patient** - it may be a few days until you receive a
+response, but we reply to *every* email inquiry we receive.

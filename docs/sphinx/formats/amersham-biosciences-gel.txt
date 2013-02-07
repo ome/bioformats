@@ -10,8 +10,8 @@ Developer: Molecular Dynamics
 
 Owner: `GE Healthcare Life Sciences <http://www.gelifesciences.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -19,21 +19,20 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Amersham Biosciences Gel <amersham-biosciences-gel-metadata>`
 
 
 
 We currently have:
 
-- a GEL specification document (Revision 2, from 2001 Mar 15, in PDF) 
-- a few GEL datasets
+* a GEL specification document (Revision 2, from 2001 Mar 15, in PDF) 
+* a few GEL datasets
 
 We would like to have:
 
-- more AL3D datasets (Z series, T series, 16-bit)
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -45,10 +44,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`GelReader.java <components/bio-formats/src/loci/formats/in/GelReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`GelReader.java`
 
 Notes:
 

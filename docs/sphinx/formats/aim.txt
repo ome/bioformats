@@ -9,8 +9,8 @@ Extensions: .aim
 Developer: `SCANCO Medical AG <http://www.scanco.ch>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,21 +18,21 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`AIM <aim-metadata>`
 
 
 
 We currently have:
 
-- one .aim file
+* one .aim file
 
 We would like to have:
 
-- an .aim specification document 
-- more .aim files
+* an .aim specification document 
+* more .aim files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -44,10 +44,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`AIMReader.java <components/bio-formats/src/loci/formats/in/AIMReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`AIMReader.java`
 
 Notes:
 

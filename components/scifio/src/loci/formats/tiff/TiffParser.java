@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
@@ -84,6 +85,8 @@ public class TiffParser {
 
   /** Whether or not 64-bit offsets are used for non-BigTIFF files. */
   private boolean fakeBigTiff = false;
+
+  private boolean ycbcrCorrection = true;
 
   private boolean equalStrips = false;
 
@@ -154,6 +157,11 @@ public class TiffParser {
   /** Sets whether or not 64-bit offsets are used for non-BigTIFF files. */
   public void setUse64BitOffsets(boolean use64Bit) {
     fakeBigTiff = use64Bit;
+  }
+
+  /** Sets whether or not YCbCr color correction is allowed. */
+  public void setYCbCrCorrection(boolean correctionAllowed) {
+    ycbcrCorrection = correctionAllowed;
   }
 
   /** Gets the stream from which TIFF data is being parsed. */
@@ -497,12 +505,12 @@ public class TiffParser {
       int c = 0, ndx = -1;
       for (int j=0; j<count; j++) {
         if (ascii[j] == 0) {
-          s = new String(ascii, ndx + 1, j - ndx - 1);
+          s = new String(ascii, ndx + 1, j - ndx - 1, Constants.ENCODING);
           ndx = j;
         }
         else if (j == count - 1) {
           // handle non-null-terminated strings
-          s = new String(ascii, ndx + 1, j - ndx);
+          s = new String(ascii, ndx + 1, j - ndx, Constants.ENCODING);
         }
         else s = null;
         if (strings != null && s != null) strings[c++] = s;
@@ -680,7 +688,7 @@ public class TiffParser {
     codecOptions.maxBytes = (int) Math.max(size, tile.length);
     codecOptions.ycbcr =
       ifd.getPhotometricInterpretation() == PhotoInterp.Y_CB_CR &&
-      ifd.getIFDIntValue(IFD.Y_CB_CR_SUB_SAMPLING) == 1;
+      ifd.getIFDIntValue(IFD.Y_CB_CR_SUB_SAMPLING) == 1 && ycbcrCorrection;
 
     if (jpegTable != null) {
       byte[] q = new byte[jpegTable.length + tile.length - 4];
@@ -934,11 +942,13 @@ public class TiffParser {
     int[] bitsPerSample = ifd.getBitsPerSample();
     int nChannels = bitsPerSample.length;
 
-    int sampleCount = (8 * bytes.length) / (nChannels * bitsPerSample[0]);
+    int sampleCount = (int) (((long) 8 * bytes.length) / bitsPerSample[0]);
     if (photoInterp == PhotoInterp.Y_CB_CR) sampleCount *= 3;
     if (planar) {
-      sampleCount *= nChannels;
       nChannels = 1;
+    }
+    else {
+      sampleCount /= nChannels;
     }
 
     LOGGER.trace(

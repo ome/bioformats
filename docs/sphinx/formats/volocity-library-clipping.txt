@@ -9,8 +9,8 @@ Extensions: .acff
 Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,27 +18,21 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Volocity Library Clipping <volocity-library-clipping-metadata>`
 
-Freely Available Software:
 
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
-
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
 
 We currently have:
 
-- several Volocity library clipping datasets
+* several Volocity library clipping datasets
 
 We would like to have:
 
-- any datasets that do not open correctly 
-- an official specification document
+* any datasets that do not open correctly 
+* an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,10 +44,11 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`VolocityClippingReader.java <components/bio-formats/src/loci/formats/in/VolocityClippingReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`VolocityClippingReader.java`
 
 Notes:
 

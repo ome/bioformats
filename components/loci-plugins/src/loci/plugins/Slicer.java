@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -132,7 +132,6 @@ public class Slicer implements PlugInFilter {
     }
 
     ImagePlus[] newImps = new ImagePlus[newStacks.length];
-    double maxValue = Math.pow(2, imp.getBytesPerPixel() * 8) - 1;
     for (int i=0; i<newStacks.length; i++) {
       if (virtualStack != null) {
         ((BFVirtualStack) newStacks[i]).setPlaneIndexes(planeIndexes[i]);
@@ -183,11 +182,15 @@ public class Slicer implements PlugInFilter {
       double max = imp.getDisplayRangeMax();
       double min = imp.getDisplayRangeMin();
 
-      if (min > 0d || max < maxValue) {
-        newImps[i].resetDisplayRange();
-      }
-      else {
-        newImps[i].setDisplayRange(min, max);
+      newImps[i].setDisplayRange(min, max);
+
+      if (imp.isComposite() && newImps[i].isComposite()) {
+        for (int c=1; c<newImps[i].getNChannels(); c++) {
+          LUT originalLut = ((CompositeImage) imp).getChannelLut(c);
+          LUT lut = ((CompositeImage) newImps[i]).getChannelLut(c);
+          lut.min = originalLut.min;
+          lut.max = originalLut.max;
+        }
       }
     }
     return newImps;

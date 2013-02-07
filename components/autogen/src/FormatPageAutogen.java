@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats autogen package for programmatically generating source code.
  * %%
- * Copyright (C) 2007 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2007 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -85,9 +85,10 @@ public class FormatPageAutogen {
     }
 
     VelocityEngine engine = VelocityTools.createEngine();
-    VelocityContext context = VelocityTools.createContext();
 
     for (IniTable table : data) {
+      VelocityContext context = VelocityTools.createContext();
+
       String format = table.get(IniTable.HEADER_KEY);
       context.put("format", format);
       if (table.containsKey("extensions")) {
@@ -121,8 +122,10 @@ public class FormatPageAutogen {
       context.put("writer", table.get("writer"));
       context.put("notes", table.get("notes"));
       context.put("privateSpecification", table.get("privateSpecification"));
-      context.put("component",
-        table.get("scifio").equals("no") ? "bio-formats" : "scifio");
+      context.put("readerextlink",
+        table.get("scifio").equals("no") ? "bfreader" : "scifioreader");
+      context.put("writerextlink",
+        table.get("scifio").equals("no") ? "bfwriter" : "scifiowriter");
 
       if (table.containsKey("software")) {
         String[] software = table.get("software").split("\n");
@@ -149,7 +152,24 @@ public class FormatPageAutogen {
         context.put("notes", notes);
       }
 
+      if (table.containsKey("reader")) {
+        String[] reader = table.get("reader").split(", ");
+        context.put("reader", reader);
+      }
       String filename = getPageName(format, table.get("pagename"));
+
+      context.put("metadataPage",
+        filename.substring(filename.indexOf(File.separator) + 1) + "-metadata");
+      if (table.containsKey("metadataPage")) {
+        String page = table.get("metadataPage");
+        if (page.length() > 0) {
+          context.put("metadataPage", table.get("metadataPage"));
+        }
+        else {
+          context.remove("metadataPage");
+        }
+      }
+
       VelocityTools.processTemplate(engine, context, TEMPLATE,
         "../../docs/sphinx/" + filename + ".txt");
     }
@@ -193,7 +213,7 @@ public class FormatPageAutogen {
 
   // -- Helper methods --
 
-  private String getPageName(String format, String pagename) {
+  protected static String getPageName(String format, String pagename) {
     String realPageName = pagename;
     if (realPageName == null) {
       realPageName = format.replaceAll("/", "");

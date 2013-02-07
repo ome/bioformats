@@ -9,8 +9,8 @@ Extensions: .oib, .oif
 
 Owner: `Olympus <http://www.olympus.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,30 +18,27 @@ Export: |no|
 
 Officially Supported Versions: 1.0, 2.0
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Olympus FluoView FV1000 <olympus-fluoview-fv1000-metadata>`
 
 Freely Available Software:
 
 - `FV-Viewer from Olympus <http://www.olympus.co.uk/microscopy/22_FluoView_FV1000__Confocal_Microscope.htm>`_
 
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- an OIF specification document (v2.0.0.0, from 2008, in PDF) 
-- an FV1000 specification document (v1.0.0.0, from 2004 June 22, in PDF) 
-- older FV1000 specification documents (draft, in DOC and XLS) 
-- many FV1000 datasets
+* an OIF specification document (v2.0.0.0, from 2008, in PDF) 
+* an FV1000 specification document (v1.0.0.0, from 2004 June 22, in PDF) 
+* older FV1000 specification documents (draft, in DOC and XLS) 
+* many FV1000 datasets
 
 We would like to have:
 
-- more OIB datasets (especially 2+ GB files) 
-- more FV1000 version 2 datasets
+* more OIB datasets (especially 2+ GB files) 
+* more FV1000 version 2 datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -53,10 +50,11 @@ Presence: |Good|
 
 Utility: |Very good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`FV1000Reader.java <components/bio-formats/src/loci/formats/in/FV1000Reader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`FV1000Reader.java`
 
 Notes:
 
@@ -73,8 +71,8 @@ OIB is a single file format.
 
 Commercial applications that support this format include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_ 
-- `SVI Huygens <http://svi.nl/>`_ 
+* `Bitplane Imaris <http://www.bitplane.com/>`_ 
+* `SVI Huygens <http://svi.nl/>`_ 
 
 .. seealso:: 
   `Olympus FluoView Resource Center <http://www.olympusfluoview.com>`_

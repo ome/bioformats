@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,7 +42,9 @@ import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -53,11 +55,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides a GUI for editing TIFF file comments.
@@ -73,6 +79,8 @@ public class EditTiffG extends JFrame implements ActionListener {
   // -- Constants --
 
   private static final String TITLE = "EditTiffG";
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(EditTiffG.class);
 
   // -- Fields --
 
@@ -178,8 +186,15 @@ public class EditTiffG extends JFrame implements ActionListener {
 
   public void showError(Throwable t) {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    t.printStackTrace(new PrintWriter(out));
-    String error = new String(out.toByteArray());
+    String error = "";
+    try {
+      t.printStackTrace(
+        new PrintWriter(new OutputStreamWriter(out, Constants.ENCODING)));
+      error = new String(out.toByteArray(), Constants.ENCODING);
+    }
+    catch (UnsupportedEncodingException e) {
+      LOGGER.warn("Failed to show error", e);
+    }
     JOptionPane.showMessageDialog(this, "Sorry, there was an error: " + error,
       TITLE, JOptionPane.ERROR_MESSAGE);
   }

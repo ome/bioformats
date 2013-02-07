@@ -8,7 +8,7 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>pom-scifio</artifactId>
-    <version>4.4.5</version>
+    <version>4.4.6</version>
     <relativePath>../../..</relativePath>
   </parent>
 
@@ -22,10 +22,13 @@
   <licenses>
     <license>
       <name>Simplified BSD License</name>
-      <url>${license.server}/jai_imageio/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <properties>
+    <project.rootdir>${basedir}/../../..</project.rootdir>
+  </properties>
 
   <build>
     <plugins>

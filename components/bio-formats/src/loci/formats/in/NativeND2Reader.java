@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -1485,9 +1485,14 @@ public class NativeND2Reader extends FormatReader {
             value = in.readCString();
             break;
           case (9): // ByteArray
-            byte[] data = new byte[(int) in.readLong()];
+            long length = in.readLong();
+            if (length + in.getFilePointer() > stop) {
+              in.seek(stop);
+              continue;
+            }
+            byte[] data = new byte[(int) length];
             in.read(data);
-            value = data.toString(); // todo
+            value = java.util.Arrays.toString(data); // todo
             break;
           case (10): // deprecated
             // Its like LEVEL but offset is pointing absolutely not relatively

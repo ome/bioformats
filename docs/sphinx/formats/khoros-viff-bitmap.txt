@@ -10,8 +10,8 @@ Developer: `Khoral <http://www.khoral.com/company/>`_
 
 Owner: `AccuSoft <http://www.accusoft.com/company/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -19,11 +19,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Khoros VIFF (Visualization Image File Format) Bitmap <khoros-viff-bitmap-metadata>`
 
-Freely Available Software:
-
-- `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
 
 Sample Datasets:
 
@@ -31,15 +28,13 @@ Sample Datasets:
 
 We currently have:
 
-- several VIFF datasets
+* several VIFF datasets
 
 We would like to have:
 
-- an official specification document 
-- more JPK files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +46,11 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`KhorosReader.java <components/bio-formats/src/loci/formats/in/KhorosReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`KhorosReader.java`
 
 Notes:
 

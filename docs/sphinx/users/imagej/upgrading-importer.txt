@@ -1,0 +1,58 @@
+Upgrading the Bio-Formats importer for ImageJ to the latest trunk build
+=======================================================================
+
+1) Download the latest trunk build of **loci_tools.jar** from 
+:bf_plone:`Bio-Formats downloads <downloads>`
+
+.. image:: /images/imagej-upgrade_01.png
+    :align: center
+
+2) Internet Explorer will ask you where it should save **loci_tools.jar**.
+Select 'Desktop'.
+
+.. image:: /images/imagej-upgrade_02.png
+    :align: center
+
+3) Start ImageJ.
+
+4) Select "Plugins > Utilities > ImageJ Properties..."
+
+.. image:: /images/imagej-upgrade_03.png
+    :align: center
+
+5) Scroll through the **Properties** window until you find a line that
+starts with "Menus.getPlugInsPath" (highlighted).
+
+.. image:: /images/imagej-upgrade_04.png
+    :align: center
+
+6) Leaving ImageJ and the Properties window open, click the **Start**
+button, then **My Computer**.
+
+.. image:: /images/imagej-upgrade_05.png
+    :align: center
+
+7) Type the path from step 5 into the address bar in the **My Computer**
+window, then hit the **Enter** key. The path should look something like this
+``C:\PROGRA~1\ImageJ\plugins\``
+
+.. image:: /images/imagej-upgrade_06.png
+    :align: center
+
+8) Click "loci\_tools.jar" on your Desktop and drag it to the "plugins"
+window.
+
+.. image:: /images/imagej-upgrade_07.png
+    :align: center
+
+9) If you are asked to replace an existing file, click "Yes".
+
+.. image:: /images/imagej-upgrade_08.png
+    :align: center
+
+10) Close ImageJ.
+
+11) Open ImageJ.
+
+12) ImageJ now recognizes the latest trunk build of the Bio-Formats
+importer.

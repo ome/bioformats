@@ -9,8 +9,8 @@ Extensions: .jpk
 Developer: `JPK Instruments <http://www.jpk.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,28 +18,22 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`JPK <jpk-metadata>`
 
-Freely Available Software:
 
-- `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
-
-Sample Datasets:
-
-- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
 
 We currently have:
 
-- Pascal code that can read JPK files (from ImageSXM) 
-- a few JPK files
+* Pascal code that can read JPK files (from ImageSXM) 
+* a few JPK files
 
 We would like to have:
 
-- an official specification document 
-- more JPK files
+* an official specification document 
+* more JPK files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +45,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`JPKReader.java <components/bio-formats/src/loci/formats/in/JPKReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`JPKReader.java`
 
 Notes:
 

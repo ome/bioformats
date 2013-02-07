@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -72,14 +72,14 @@ public class TiffWriterTest {
 
   /** The big tiff flags. */
   private final static Boolean[] BIG_TIFF;
-  
+
   static {
     COMPRESSION = new String[2];
     COMPRESSION[0] = TiffCompression.UNCOMPRESSED.getCodecName();
     COMPRESSION[1] = TiffCompression.JPEG_2000.getCodecName();
-    BIG_TIFF = new Boolean[1];
+    BIG_TIFF = new Boolean[2];
     BIG_TIFF[0] = Boolean.valueOf(false);
-    //BIG_TIFF[1] = Boolean.valueOf(true);
+    BIG_TIFF[1] = Boolean.valueOf(true);
   }
 
   /**
@@ -155,7 +155,7 @@ public class TiffWriterTest {
     //Now going to read the output.
     TiffReader outputReader = new TiffReader();
     outputReader.setId(output);
-    
+
     //first series.
     String writtenDigest;
     String readDigest;
@@ -266,7 +266,7 @@ public class TiffWriterTest {
     //Now going to read the output.
     TiffReader outputReader = new TiffReader();
     outputReader.setId(output);
-    
+
     //first series.
     String writtenDigest;
     String readDigest;
@@ -340,6 +340,7 @@ public class TiffWriterTest {
       for (int j = 0; j < BIG_TIFF.length; j++) {
         f =  File.createTempFile("testWriteFullImage_"+j+"_"+
             COMPRESSION[i], ".tiff");
+        f.deleteOnExit();
         assertTiles(f.getAbsolutePath(), COMPRESSION[i], 1, 1, BIG_TIFF[j]);
       }
     }
@@ -353,9 +354,12 @@ public class TiffWriterTest {
   public void testWriteImageFourTiles() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteImageFourTiles_"+
+      for (int j=0; j<BIG_TIFF.length; j++) {
+        f =  File.createTempFile("testWriteImageFourTiles_" + j + "_" +
           COMPRESSION[i], ".tiff");
-      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 2, 2, false);
+        f.deleteOnExit();
+        assertTiles(f.getAbsolutePath(), COMPRESSION[i], 2, 2, BIG_TIFF[j]);
+      }
     }
   }
 
@@ -367,9 +371,12 @@ public class TiffWriterTest {
   public void testWriteImageSplitHorizontal() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteImageSplitHorizontal_"+
+      for (int j=0; j<BIG_TIFF.length; j++) {
+        f =  File.createTempFile("testWriteImageSplitHorizontal_" + j + "_" +
           COMPRESSION[i], ".tiff");
-      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 1, 2, false);
+        f.deleteOnExit();
+        assertTiles(f.getAbsolutePath(), COMPRESSION[i], 1, 2, BIG_TIFF[j]);
+      }
     }
   }
 
@@ -381,9 +388,12 @@ public class TiffWriterTest {
   public void testWriteImageSplitVertical() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteImageSplitVertical_"+
+      for (int j=0; j<BIG_TIFF.length; j++) {
+        f =  File.createTempFile("testWriteImageSplitVertical_" + j + "_" +
           COMPRESSION[i], ".tiff");
-      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 2, 1, false);
+        f.deleteOnExit();
+        assertTiles(f.getAbsolutePath(), COMPRESSION[i], 2, 1, BIG_TIFF[j]);
+      }
     }
   }
 
@@ -399,12 +409,13 @@ public class TiffWriterTest {
       for (int j = 0; j < BIG_TIFF.length; j++) {
         f =  File.createTempFile("testWriteUnevenTilesImage128x128Block_"+j+"_"+
             COMPRESSION[i], ".tiff");
+        f.deleteOnExit();
         assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 128, 128, 
             BIG_TIFF[j]);
       }
     }
   }
-  
+
   /**
    * Tests the writing of blocks of 256x256. Tiles should be square and size
    * multiple of 16.
@@ -417,6 +428,7 @@ public class TiffWriterTest {
       for (int j = 0; j < BIG_TIFF.length; j++) {
         f =  File.createTempFile("testWriteUnevenTilesImage256x256Block_"+j+"_"+
             COMPRESSION[i], ".tiff");
+        f.deleteOnExit();
         assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 256, 256, 
             BIG_TIFF[j]);
       }

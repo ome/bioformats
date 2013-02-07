@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats autogen package for programmatically generating source code.
  * %%
- * Copyright (C) 2007 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2007 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -77,6 +77,8 @@ public class MetaSupportList {
    */
   protected HashMap<String, HashMap<String, String>> supported =
     new HashMap<String, HashMap<String, String>>();
+
+  protected HashMap<String, String> pagenames = new HashMap<String, String>();
 
   /** Version of OME-XML (e.g., 2008-02). */
   protected String version;
@@ -186,6 +188,16 @@ public class MetaSupportList {
     }
     catch (ReflectException exc) { }
     return "handler";
+  }
+
+  /** Gets the documentation page name corresponding to this handler. */
+  public String getPageName() {
+    return pagenames.get(handlerName);
+  }
+
+  /** Sets the documentation page name corresponding to this handler. */
+  public void setPageName(String pagename) {
+    pagenames.put(handlerName, pagename);
   }
 
   /** Gets a list of all known groups. */

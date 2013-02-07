@@ -9,8 +9,8 @@ Extensions: .mvd2
 Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,11 +18,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Volocity <volocity-metadata>`
 
-Freely Available Software:
-
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
 Sample Datasets:
 
@@ -30,15 +27,15 @@ Sample Datasets:
 
 We currently have:
 
-- many example Volocity datasets
+* many example Volocity datasets
 
 We would like to have:
 
-- an official specification document 
-- any Volocity datasets that do not open correctly
+* an official specification document 
+* any Volocity datasets that do not open correctly
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,10 +47,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`VolocityReader.java <components/bio-formats/src/loci/formats/in/VolocityReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`VolocityReader.java`
 
 Notes:
 

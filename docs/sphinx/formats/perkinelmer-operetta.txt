@@ -9,8 +9,8 @@ Extensions: .tiff, .xml
 Developer: `PerkinElmer <http://www.perkinelmer.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,27 +18,21 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`PerkinElmer Operetta <perkinelmer-operetta-metadata>`
 
-Freely Available Software:
 
-- `DIMIN <http://www.dimin.net/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- a few sample datasets
+* a few sample datasets
 
 We would like to have:
 
-- an official specification document 
-- more sample datasets
+* an official specification document 
+* more sample datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +44,11 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`OperettaReader.java <components/bio-formats/src/loci/formats/in/OperettaReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`OperettaReader.java`
 
 Notes:
 

@@ -9,8 +9,8 @@ Extensions: .jpx
 Developer: `JPEG Committee <http://www.jpeg.org/jpeg2000/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,27 +18,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`JPX <jpx-metadata>`
 
-Freely Available Software:
 
-- `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
-
-Sample Datasets:
-
-- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
 
 We currently have:
 
-- a few .jpx files
+* a few .jpx files
 
 We would like to have:
 
-- an official specification document 
-- more JPK files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +42,11 @@ Presence: |Good|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`JPXReader.java <components/bio-formats/src/loci/formats/in/JPXReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`JPXReader.java`
 
 Notes:
 

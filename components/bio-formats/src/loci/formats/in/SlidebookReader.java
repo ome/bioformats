@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -940,7 +940,13 @@ public class SlidebookReader extends FormatReader {
         long p = pixels / (getSizeX() * getSizeY());
         if (pixels == p * getSizeX() * getSizeY()) {
           if (p != getSizeC() * getSizeZ()) {
-            if (p % getSizeC() != 0) {
+            if (getSizeC() > 1 && core[i].sizeZ >= (p / (getSizeC() - 1)) &&
+              p >= getSizeC() - 1 && p > 2)
+            {
+              core[i].sizeC--;
+              core[i].sizeZ = (int) (p / getSizeC());
+            }
+            else if (p % getSizeC() != 0) {
               core[i].sizeC = 1;
               core[i].sizeZ = (int) p;
             }

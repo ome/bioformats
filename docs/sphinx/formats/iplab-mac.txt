@@ -9,8 +9,8 @@ Extensions: .ipm
 
 Owner: `BioVision Technologies <http://biovis.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,27 +18,21 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`IPLab-Mac <iplab-mac-metadata>`
 
-Freely Available Software:
 
-- `IMOD <http://bio3d.colorado.edu/imod/>`_
-
-Sample Datasets:
-
-- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
 
 We currently have:
 
-- a few IPLab-Mac datasets 
-- a specification document
+* a few IPLab-Mac datasets 
+* a specification document
 
 We would like to have:
 
-- more IPLab-Mac datasets
+* more IPLab-Mac datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +44,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`IvisionReader.java <components/bio-formats/src/loci/formats/in/IvisionReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`IvisionReader.java`
 
 Notes:
 

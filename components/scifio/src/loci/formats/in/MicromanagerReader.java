@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -564,8 +564,21 @@ public class MicromanagerReader extends FormatReader {
         token = st.nextToken().trim();
         String key = "", value = "";
         boolean valueArray = false;
+	int nestedCount = 0;
 
-        while (!token.startsWith("}")) {
+        while (!token.startsWith("}") || nestedCount > 0) {
+
+	  if (token.trim().endsWith("{")) {
+	      nestedCount++;
+	      token = st.nextToken().trim();
+	      continue;
+	  }
+	  else if (token.trim().startsWith("}")) {
+	      nestedCount--;
+	      token = st.nextToken().trim();
+	      continue;
+	  }
+
           if (valueArray) {
             if (token.trim().equals("],")) {
               valueArray = false;

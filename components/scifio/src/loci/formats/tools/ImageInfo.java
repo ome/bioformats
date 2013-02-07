@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -873,7 +873,7 @@ public class ImageInfo {
     else {
       LOGGER.info("");
       LOGGER.info("Launching image viewer");
-      ImageViewer viewer = new ImageViewer();
+      ImageViewer viewer = new ImageViewer(false);
       viewer.setImages(reader, images);
       viewer.setVisible(true);
     }

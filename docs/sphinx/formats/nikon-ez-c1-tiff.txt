@@ -9,8 +9,8 @@ Extensions: .tiff
 Developer: `Nikon <http://www.nikon.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,26 +18,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Nikon EZ-C1 TIFF <nikon-ez-c1-tiff-metadata>`
 
-Freely Available Software:
 
-- `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
-
-Sample Datasets:
-
-- `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
 
 We currently have:
 
-- a few Nikon EZ-C1 TIFF files
+* a few Nikon EZ-C1 TIFF files
 
 We would like to have:
 
-- more Nikon Elements TIFF files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -49,10 +42,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`NikonTiffReader.java <components/bio-formats/src/loci/formats/in/NikonTiffReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`NikonTiffReader.java`
 
 Notes:
 

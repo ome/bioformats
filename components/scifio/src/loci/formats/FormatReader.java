@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -686,7 +686,9 @@ public abstract class FormatReader extends FormatHandler
       int sx = getSizeX();
       int sy = getSizeY();
       int thumbSizeX = 0;
-      if (sx > sy) thumbSizeX = THUMBNAIL_DIMENSION;
+      if (sx < THUMBNAIL_DIMENSION && sy < THUMBNAIL_DIMENSION)
+        thumbSizeX = sx;
+      else if (sx > sy) thumbSizeX = THUMBNAIL_DIMENSION;
       else if (sy > 0) thumbSizeX = sx * THUMBNAIL_DIMENSION / sy;
       if (thumbSizeX == 0) thumbSizeX = 1;
       return thumbSizeX;
@@ -701,7 +703,9 @@ public abstract class FormatReader extends FormatHandler
       int sx = getSizeX();
       int sy = getSizeY();
       int thumbSizeY = 1;
-      if (sy > sx) thumbSizeY = THUMBNAIL_DIMENSION;
+      if (sx < THUMBNAIL_DIMENSION && sy < THUMBNAIL_DIMENSION)
+        thumbSizeY = sy;
+      else if (sy > sx) thumbSizeY = THUMBNAIL_DIMENSION;
       else if (sx > 0) thumbSizeY = sy * THUMBNAIL_DIMENSION / sx;
       if (thumbSizeY == 0) thumbSizeY = 1;
       return thumbSizeY;

@@ -10,8 +10,8 @@ Developer: `Intelligent Imaging Innovations`_
 
 Owner: `Intelligent Imaging Innovations`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -19,22 +19,21 @@ Export: |no|
 
 Officially Supported Versions: 4.1, 4.2
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`3i SlideBook <3i-slidebook-metadata>`
 
 
 
 We currently have:
 
-- Numerous SlideBook datasets 
-- Some :source:`Bio-Formats developer notes <components/bio-formats/doc/slidebook.html>` for SlideBook
+* Numerous SlideBook datasets
 
 We would like to have:
 
-- A SlideBook specification document 
-- More SlideBook datasets (preferably acquired with the most recent SlideBook software)
+* A SlideBook specification document 
+* More SlideBook datasets (preferably acquired with the most recent SlideBook software)
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -46,10 +45,11 @@ Presence: |Very good|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`SlidebookReader.java <components/bio-formats/src/loci/formats/in/SlidebookReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`SlidebookReader.java`
 
 Notes:
 

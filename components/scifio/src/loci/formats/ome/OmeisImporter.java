@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -47,6 +47,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.Location;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
@@ -398,7 +399,7 @@ public class OmeisImporter {
 
     // output OME-XML to standard output
     xml.close();
-    String xmlString = new String(xml.toByteArray());
+    String xmlString = new String(xml.toByteArray(), Constants.ENCODING);
     if (DEBUG) log(xmlString);
     if (http) printHttpResponseHeader();
     System.out.println(xmlString);
@@ -575,7 +576,7 @@ public class OmeisImporter {
 
     // call OMEIS via HTTP
     BufferedReader in = new BufferedReader(
-      new InputStreamReader(new URL(url).openStream()));
+      new InputStreamReader(new URL(url).openStream(), Constants.ENCODING));
     Vector v = new Vector();
     while (true) {
       String line = in.readLine();

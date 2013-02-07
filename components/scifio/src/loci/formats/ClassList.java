@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import loci.common.Constants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,11 +111,12 @@ public class ClassList<T> {
     // read classes from file
     BufferedReader in = null;
     if (location == null) {
-      in = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+      in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(file), Constants.ENCODING));
     }
     else {
       in = new BufferedReader(new InputStreamReader(
-        location.getResourceAsStream(file)));
+        location.getResourceAsStream(file), Constants.ENCODING));
     }
     while (true) {
       String line = null;

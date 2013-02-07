@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -46,9 +46,12 @@ package loci.formats.tools;
 
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import java.io.FileWriter;
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.IOException;
+
+import loci.common.Constants;
+
 /**
  * This class is used to generate a text file containing all of the
  * image file extensions supported by Bio-Formats.
@@ -68,7 +71,8 @@ public class BioFormatsExtensionPrinter {
 
 		PrintWriter fo = null;
 
-		fo = new PrintWriter(new FileWriter("BioFormatsSuffixes.txt"));
+		fo =
+      new PrintWriter(new File("BioFormatsSuffixes.txt"), Constants.ENCODING);
 
 		for (String s : suffixes) fo.println("*." + s);
 

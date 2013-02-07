@@ -8,8 +8,8 @@ Extensions: .tif, .sld, .jpg
 
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -17,11 +17,8 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Trestle <trestle-metadata>`
 
-Freely Available Software:
-
-- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
 Sample Datasets:
 
@@ -29,16 +26,14 @@ Sample Datasets:
 
 We currently have:
 
-- a few example datasets 
-- `developer documentation from the OpenSlide project <http://openslide.org/Trestle%20format/>`_
+* a few example datasets 
+* `developer documentation from the OpenSlide project <http://openslide.org/Trestle%20format/>`_
 
 We would like to have:
 
-- an official specification document 
-- more Topometrix files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,10 +45,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`TrestleReader.java <components/bio-formats/src/loci/formats/in/TrestleReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`TrestleReader.java`
 
 Notes:
 

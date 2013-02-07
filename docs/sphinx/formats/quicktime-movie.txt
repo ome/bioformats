@@ -9,8 +9,8 @@ Extensions: .mov
 
 Owner: `Apple Computer <http://www.apple.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -18,30 +18,28 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`QuickTime Movie <quicktime-movie-metadata>`
 
 Freely Available Software:
 
 - `QuickTime Player <http://www.apple.com/quicktime/download/>`_
 
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- a `QuickTime specification document <http://developer.apple.com/documentation/Quicktime/QTFF/>`_ (from 2001 March 1, in HTML) 
-- several QuickTime datasets 
-- the ability to produce more datasets
+* a `QuickTime specification document <http://developer.apple.com/documentation/Quicktime/QTFF/>`_ (from 2001 March 1, in HTML) 
+* several QuickTime datasets 
+* the ability to produce more datasets
 
 We would like to have:
 
-- more QuickTime datasets, including: 
--   #. files compressed with a common, unsupported codec 
--   #. files with audio tracks and/or multiple video tracks
+* more QuickTime datasets, including: 
 
-Ratings
--------
+  * files compressed with a common, unsupported codec 
+  * files with audio tracks and/or multiple video tracks
+
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -53,20 +51,21 @@ Presence: |Outstanding|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`NativeQTReader.java <components/scifio/src/loci/formats/in/NativeQTReader.java >`
-Source Code: :source:`QTWriter.java <components/scifio/src/loci/formats/out/QTWriter.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`NativeQTReader.java`
+Source Code: :scifiowriter:`QTWriter.java`
 
 Notes:
 
 
 Bio-Formats has two modes of operation for QuickTime: 
 
-  #. QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be 
-  installed. 
-  #. Native mode works on systems with no QuickTime (e.g. Linux). 
+  * QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be 
+    installed. 
+  * Native mode works on systems with no QuickTime (e.g. Linux). 
 
 Bio-Formats can save image stacks as QuickTime movies. 
 The following table shows supported codecs: 

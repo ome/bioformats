@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -213,7 +213,10 @@ public class ICSWriter extends FormatWriter {
       out.writeBytes("representation\tcompression\tuncompressed\n");
       out.writeBytes("representation\tbyte_order\t");
       for (int i=0; i<sizes[0]/8; i++) {
-        if (littleEndian) {
+        if ((littleEndian &&
+          (sizes[0] < 32 || pixelType == FormatTools.FLOAT)) ||
+          (!littleEndian && sizes[0] >= 32 && pixelType != FormatTools.FLOAT))
+        {
           out.writeBytes((i + 1) + "\t");
         }
         else {

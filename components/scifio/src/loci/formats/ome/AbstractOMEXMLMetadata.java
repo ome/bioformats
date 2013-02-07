@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,6 +37,7 @@
 package loci.formats.ome;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -44,12 +45,17 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import loci.common.Constants;
+
 import ome.xml.DOMUtil;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModelObject;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility class for constructing and manipulating OME-XML DOMs.
@@ -74,6 +80,9 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
   /** OME-XML schema location. */
   public static final String SCHEMA =
     "http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd";
+
+  protected static final Logger LOGGER =
+    LoggerFactory.getLogger(AbstractOMEXMLMetadata.class);
 
   // -- Fields --
 
@@ -110,9 +119,13 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
       r.setAttribute("xsi:schemaLocation", OME.NAMESPACE + " " + SCHEMA);
       doc.appendChild(r);
       DOMUtil.writeXML(os, doc);
-      return os.toString();
+      return os.toString(Constants.ENCODING);
     }
     catch (TransformerException exc) {
+      LOGGER.warn("Failed to create OME-XML", exc);
+    }
+    catch (UnsupportedEncodingException exc) {
+      LOGGER.warn("Failed to create OME-XML", exc);
     }
     return null;
   }

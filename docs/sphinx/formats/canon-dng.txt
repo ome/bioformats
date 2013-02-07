@@ -9,8 +9,8 @@ Extensions: .cr2, .crw
 Developer: `Canon <http://canon.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Canon DNG <canon-dng-metadata>`
 
 Freely Available Software:
 
@@ -27,14 +27,14 @@ Freely Available Software:
 
 We currently have:
 
-- a few example datasets
+* a few example datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -46,10 +46,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`DNGReader.java <components/bio-formats/src/loci/formats/in/DNGReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`DNGReader.java`
 
 Notes:
 

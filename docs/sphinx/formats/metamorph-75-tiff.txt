@@ -9,8 +9,8 @@ Extensions: .tiff
 
 Owner: `Molecular Devices <http://www.moleculardevices.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,26 +18,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`MetaMorph 7.5 TIFF <metamorph-75-tiff-metadata>`
 
-Freely Available Software:
 
-- `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
-
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- a few Metamorph 7.5 TIFF datasets
+* a few Metamorph 7.5 TIFF datasets
 
 We would like to have:
 
-- an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -49,10 +42,11 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`MetamorphTiffReader.java <components/bio-formats/src/loci/formats/in/MetamorphTiffReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`MetamorphTiffReader.java`
 
 Notes:
 

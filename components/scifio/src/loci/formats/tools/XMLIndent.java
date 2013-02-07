@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,10 +37,11 @@
 package loci.formats.tools;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import loci.common.Constants;
 import loci.common.xml.XMLTools;
 
 /**
@@ -82,13 +83,15 @@ public class XMLIndent {
 
     if (numFiles == 0) {
       // read from stdin
-      process(new BufferedReader(new InputStreamReader(System.in)), keepValid);
+      process(new BufferedReader(
+        new InputStreamReader(System.in, Constants.ENCODING)), keepValid);
     }
     else {
       // read from file(s)
       for (int i=0; i<args.length; i++) {
         if (!args[i].startsWith("-")) {
-          process(new BufferedReader(new FileReader(args[i])), keepValid);
+          process(new BufferedReader(new InputStreamReader(
+            new FileInputStream(args[i]), Constants.ENCODING)), keepValid);
         }
       }
     }

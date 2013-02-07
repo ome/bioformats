@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -187,10 +187,18 @@ public class OMETiffReader extends FormatReader {
       }
       return meta.getImageCount() > 0;
     }
-    catch (ServiceException se) { }
-    catch (NullPointerException e) { }
-    catch (FormatException e) { }
-    catch (IndexOutOfBoundsException e) { }
+    catch (ServiceException se) {
+      LOGGER.debug("OME-XML parsing failed", se);
+    }
+    catch (NullPointerException e) {
+      LOGGER.debug("OME-XML parsing failed", e);
+    }
+    catch (FormatException e) {
+      LOGGER.debug("OME-XML parsing failed", e);
+    }
+    catch (IndexOutOfBoundsException e) {
+      LOGGER.debug("OME-XML parsing failed", e);
+    }
     return false;
   }
 

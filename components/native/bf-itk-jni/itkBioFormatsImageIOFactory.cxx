@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats plugin for the Insight Toolkit.
  * %%
- * Copyright (C) 2011 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2011 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -73,7 +73,7 @@ namespace itk
   const char*
   BioFormatsImageIOFactory::GetDescription() const
   {
-    return "Bio-Formats ImageIO Factory, allows the loading of Bio-Formats-compatible images into Insight; see http://www.openmicroscopy.org/site/support/bio-formats/users/itk.html";
+    return "Bio-Formats ImageIO Factory, allows the loading of Bio-Formats-compatible images into Insight; see http://www.openmicroscopy.org/site/support/bio-formats/users/itk/index.html";
   }
 
 } // end namespace itk

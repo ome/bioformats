@@ -9,8 +9,8 @@ Extensions: .dv, .r3d
 
 Owner: `Applied Precision <http://www.api.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`DeltaVision <deltavision-metadata>`
 
 Freely Available Software:
 
@@ -30,15 +30,14 @@ Sample Datasets:
 
 We currently have:
 
-- a DV specification document (v2.10 or newer, in HTML) 
-- numerous DV datasets
+* a DV specification document (v2.10 or newer, in HTML) 
+* numerous DV datasets
 
 We would like to have:
 
-- an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -50,10 +49,11 @@ Presence: |Good|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`DeltavisionReader.java <components/bio-formats/src/loci/formats/in/DeltavisionReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`DeltavisionReader.java`
 
 Notes:
 
@@ -63,9 +63,9 @@ format, we are not able to distribute them to third parties.**
 - The Deltavision format is based on the Medical Research Council (MRC) file format. 
 - Commercial applications that support DeltaVision include: 
 
-  #. `Bitplane Imaris <http://www.bitplane.com/>`_ 
-  #. `SVI Huygens <http://svi.nl/>`_ 
-  #. `Image-Pro Plus <http://www.mediacy.com/>`_ 
+  * `Bitplane Imaris <http://www.bitplane.com/>`_ 
+  * `SVI Huygens <http://svi.nl/>`_ 
+  * `Image-Pro Plus <http://www.mediacy.com/>`_ 
 
 .. seealso:: 
   `DeltaVision system description <http://api.com/deltavision.asp>`_

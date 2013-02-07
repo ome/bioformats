@@ -4,7 +4,7 @@
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
- * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -51,7 +51,7 @@ public final class About implements PlugIn {
 
   /** URL of Bio-Formats ImageJ web page. */
   public static final String URL_BIO_FORMATS_IMAGEJ =
-    "http://www.openmicroscopy.org/site/support/bio-formats/users/bf-features-imagej.html";
+    "http://www.openmicroscopy.org/site/support/bio-formats/users/imagej/features.html";
 
   /** URL of Data Browser web page. */
   public static final String URL_DATA_BROWSER =

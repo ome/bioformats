@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -165,6 +165,33 @@ public enum TiffCompression implements CodedEnum {
     }
   },
   ALT_JPEG(33007, new JPEGCodec(), "JPEG"),
+  OLYMPUS_JPEG2000(34712, new JPEG2000Codec(), "JPEG-2000") {
+    @Override
+    public CodecOptions getCompressionCodecOptions(IFD ifd)
+        throws FormatException
+    {
+      return getCompressionCodecOptions(ifd, null);
+    }
+    
+    @Override
+    public CodecOptions getCompressionCodecOptions(IFD ifd, CodecOptions opt)
+    throws FormatException {
+      CodecOptions options = super.getCompressionCodecOptions(ifd, opt);
+      options.lossless = true;
+      JPEG2000CodecOptions j2k = JPEG2000CodecOptions.getDefaultOptions(options);
+      if (opt instanceof JPEG2000CodecOptions) {
+        JPEG2000CodecOptions o = (JPEG2000CodecOptions) opt;
+        j2k.numDecompositionLevels = o.numDecompositionLevels;
+        j2k.resolution = o.resolution;
+        if (o.codeBlockSize != null)
+          j2k.codeBlockSize = o.codeBlockSize;
+        if (o.quality > 0)
+          j2k.quality = o.quality;
+      }
+      return j2k;
+    }
+ 
+  },
   NIKON(34713, new NikonCodec(), "Nikon"),
   LURAWAVE(65535, new LuraWaveCodec(), "LuraWave");
 
@@ -269,7 +296,7 @@ public enum TiffCompression implements CodedEnum {
       if (planarConfig == 2 || bitsPerSample[len - 1] == 0) len = 1;
       len *= bytes;
 
-      for (int b=0; b<input.length; b+=bytes) {
+      for (int b=0; b<=input.length-bytes; b+=bytes) {
         if (b / len % width == 0) continue;
         int value = DataTools.bytesToInt(input, b, bytes, little);
         value += DataTools.bytesToInt(input, b - len, bytes, little);

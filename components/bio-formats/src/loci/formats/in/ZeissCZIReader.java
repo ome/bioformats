@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -117,6 +117,9 @@ public class ZeissCZIReader extends FormatReader {
   private String userInstitution;
   private String temperature, airPressure, humidity, co2Percent;
   private String correctionCollar, medium, refractiveIndex;
+
+  private String zoom;
+  private String gain;
 
   private ArrayList<String> emissionWavelengths = new ArrayList<String>();
   private ArrayList<String> excitationWavelengths = new ArrayList<String>();
@@ -340,6 +343,8 @@ public class ZeissCZIReader extends FormatReader {
       positionsX = null;
       positionsY = null;
       positionsZ = null;
+      zoom = null;
+      gain = null;
 
       emissionWavelengths.clear();
       excitationWavelengths.clear();
@@ -757,11 +762,11 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
 
+    translateExperiment(realRoot);
     translateInformation(realRoot);
     translateScaling(realRoot);
     translateDisplaySettings(realRoot);
     translateLayers(realRoot);
-    translateExperiment(realRoot);
 
     Stack<String> nameStack = new Stack<String>();
     HashMap<String, Integer> indexes = new HashMap<String, Integer>();
@@ -811,6 +816,11 @@ public class ZeissCZIReader extends FormatReader {
 
           Element detectorSettings = getFirstNode(channel, "DetectorSettings");
           binnings.add(getFirstNodeValue(detectorSettings, "Binning"));
+
+          Element scanInfo = getFirstNode(channel, "LaserScanInfo");
+          if (scanInfo != null) {
+            zoom = getFirstNodeValue(scanInfo, "ZoomX");
+          }
 
           Element detector = getFirstNode(detectorSettings, "Detector");
           if (detector != null) {
@@ -948,14 +958,11 @@ public class ZeissCZIReader extends FormatReader {
           store.setDetectorSerialNumber(serialNumber, 0, i);
           store.setDetectorLotNumber(lotNumber, 0, i);
 
-          String gain = getFirstNodeValue(detector, "Gain");
+          if (gain == null) {
+            gain = getFirstNodeValue(detector, "Gain");
+          }
           if (gain != null) {
             store.setDetectorGain(new Double(gain), 0, i);
-          }
-
-          String voltage = getFirstNodeValue(detector, "Voltage");
-          if (voltage != null) {
-            store.setDetectorVoltage(new Double(voltage), 0, i);
           }
 
           String offset = getFirstNodeValue(detector, "Offset");
@@ -963,7 +970,9 @@ public class ZeissCZIReader extends FormatReader {
             store.setDetectorOffset(new Double(offset), 0, i);
           }
 
-          String zoom = getFirstNodeValue(detector, "Zoom");
+          if (zoom == null) {
+            zoom = getFirstNodeValue(detector, "Zoom");
+          }
           if (zoom != null) {
             store.setDetectorZoom(new Double(zoom), 0, i);
           }
@@ -1009,11 +1018,11 @@ public class ZeissCZIReader extends FormatReader {
 
           String magnification =
             getFirstNodeValue(objective, "NominalMagnification");
-          Integer mag = magnification == null ? 0 : new Integer(magnification);
+          Double mag = magnification == null ? 0 : new Double(magnification);
 
           if (mag > 0) {
             store.setObjectiveNominalMagnification(
-              new PositiveInteger(mag), 0, i);
+              new PositiveInteger(mag.intValue()), 0, i);
           }
           else {
             LOGGER.warn(
@@ -1557,35 +1566,48 @@ public class ZeissCZIReader extends FormatReader {
     positionsY = new Double[core.length];
     positionsZ = new Double[core.length];
 
-    if (groups == null) {
-      return;
-    }
+    if (groups != null) {
+      for (int i=0; i<groups.getLength(); i++) {
+        Element group = (Element) groups.item(i);
 
-    for (int i=0; i<groups.getLength(); i++) {
-      Element group = (Element) groups.item(i);
+        int tilesX = Integer.parseInt(getFirstNodeValue(group, "TilesX"));
+        int tilesY = Integer.parseInt(getFirstNodeValue(group, "TilesY"));
 
-      int tilesX = Integer.parseInt(getFirstNodeValue(group, "TilesX"));
-      int tilesY = Integer.parseInt(getFirstNodeValue(group, "TilesY"));
+        Element position = getFirstNode(group, "Position");
 
-      Element position = getFirstNode(group, "Position");
+        String x = position.getAttribute("X");
+        String y = position.getAttribute("Y");
+        String z = position.getAttribute("Z");
 
-      String x = position.getAttribute("X");
-      String y = position.getAttribute("Y");
-      String z = position.getAttribute("Z");
+        Double xPos = x == null ? null : new Double(x);
+        Double yPos = y == null ? null : new Double(y);
+        Double zPos = z == null ? null : new Double(z);
 
-      Double xPos = x == null ? null : new Double(x);
-      Double yPos = y == null ? null : new Double(y);
-      Double zPos = z == null ? null : new Double(z);
-
-      for (int tile=0; tile<tilesX * tilesY; tile++) {
-        int index = i * tilesX * tilesY + tile;
-        if (index < positionsX.length) {
-          positionsX[index] = xPos;
-          positionsY[index] = yPos;
-          positionsZ[index] = zPos;
+        for (int tile=0; tile<tilesX * tilesY; tile++) {
+          int index = i * tilesX * tilesY + tile;
+          if (index < positionsX.length) {
+            positionsX[index] = xPos;
+            positionsY[index] = yPos;
+            positionsZ[index] = zPos;
+          }
         }
       }
     }
+
+    Element multiTrack = getFirstNode(acquisition, "MultiTrackSetup");
+
+    if (multiTrack == null) {
+      return;
+    }
+
+    NodeList detectors = getGrandchildren(multiTrack, "Detector");
+
+    if (detectors == null || detectors.getLength() == 0) {
+      return;
+    }
+
+    Element detector = (Element) detectors.item(0);
+    gain = getFirstNodeValue(detector, "Voltage");
   }
 
   private Element getFirstNode(Element root, String name) {

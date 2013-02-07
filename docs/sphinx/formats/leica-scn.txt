@@ -9,8 +9,8 @@ Extensions: .scn
 Developer: `Leica Microsystems <http://www.leica-microsystems.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,27 +18,21 @@ Export: |no|
 
 Officially Supported Versions: 2012-03-10
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Leica SCN <leica-scn-metadata>`
 
-Freely Available Software:
 
-- `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
-
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- a few sample datasets
+* a few sample datasets
 
 We would like to have:
 
-- an official specification document 
-- sample datasets that cannot be opened
+* an official specification document 
+* sample datasets that cannot be opened
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -50,10 +44,11 @@ Presence: |Fair|
 
 Utility: |Good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`LeicaSCNReader.java <components/bio-formats/src/loci/formats/in/LeicaSCNReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`LeicaSCNReader.java`
 
 Notes:
 

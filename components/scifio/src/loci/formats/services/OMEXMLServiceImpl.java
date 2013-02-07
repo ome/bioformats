@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -519,6 +519,21 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
             Node value = values.item(q);
 
             metadata.put(key.getTextContent(), value.getTextContent());
+          }
+        }
+
+        if (metadataNodes.getLength() == 0) {
+          metadataNodes = annotationRoot.getDocumentElement().getChildNodes();
+
+          for (int meta=0; meta<metadataNodes.getLength(); meta++) {
+            Element node = (Element) metadataNodes.item(meta);
+            String name = node.getNodeName();
+
+            NamedNodeMap attrs = node.getAttributes();
+            Node value = attrs.getNamedItem("Value");
+            if (value != null) {
+              metadata.put(name, value.getNodeValue());
+            }
           }
         }
       }

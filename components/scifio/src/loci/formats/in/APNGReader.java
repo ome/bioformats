@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -48,6 +48,7 @@ import java.util.zip.CRC32;
 
 import javax.imageio.ImageIO;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -155,7 +156,7 @@ public class APNGReader extends BIFormatReader {
       {
         byte[] b = new byte[block.length + 12];
         DataTools.unpackBytes(block.length, b, 0, 4, isLittleEndian());
-        byte[] typeBytes = block.type.getBytes();
+        byte[] typeBytes = block.type.getBytes(Constants.ENCODING);
         System.arraycopy(typeBytes, 0, b, 4, 4);
         in.seek(block.offset);
         in.read(b, 8, b.length - 12);

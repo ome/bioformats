@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -669,7 +669,7 @@ public class ICSReader extends FormatReader {
 
     int sizeC = lifetime ? 1 : getSizeC();
 
-    if (!isRGB() && sizeC > 4 && channelLengths.size() == 1 && storedRGB) {
+    if (!isRGB() && channelLengths.size() == 1 && storedRGB) {
       // channels are stored interleaved, but because there are more than we
       // can display as RGB, we need to separate them
       in.seek(offset +
@@ -686,8 +686,10 @@ public class ICSReader extends FormatReader {
 
       for (int row=y; row<h + y; row++) {
         for (int col=x; col<w + x; col++) {
-          System.arraycopy(data, bpp * ((no % getSizeC()) + sizeC *
-            (row * getSizeX() + col)), buf, bpp * (row * w + col), bpp);
+          int src =
+            bpp * ((no % getSizeC()) + sizeC * (row * getSizeX() + col));
+          int dest = bpp * ((row - y) * w + (col - x));
+          System.arraycopy(data, src, buf, dest, bpp);
         }
       }
     }
@@ -1351,6 +1353,11 @@ public class ICSReader extends FormatReader {
       channelTypes.add(FormatTools.CHANNEL);
     }
 
+    if (isRGB() && emWaves != null && emWaves.length == getSizeC()) {
+      core[0].rgb = false;
+      storedRGB = true;
+    }
+
     core[0].dimensionOrder =
       MetadataTools.makeSaneDimensionOrder(getDimensionOrder());
 
@@ -1468,6 +1475,11 @@ public class ICSReader extends FormatReader {
 
         for (int i=0; i<pixelSizes.length; i++) {
           Double pixelSize = pixelSizes[i];
+
+          if (pixelSize == null) {
+            continue;
+          }
+
           String axis = axes != null && axes.length > i ? axes[i] : "";
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {

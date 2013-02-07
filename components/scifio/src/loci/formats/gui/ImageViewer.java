@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -155,6 +155,8 @@ public class ImageViewer extends JFrame implements ActionListener,
 
   protected boolean anim = false;
   protected int fps = 10;
+
+  protected boolean canCloseReader = true;
 
   // -- Fields - OME-XML --
 
@@ -311,6 +313,16 @@ public class ImageViewer extends JFrame implements ActionListener,
     zSlider.addKeyListener(this);
     tSlider.addKeyListener(this);
     cSlider.addKeyListener(this);
+  }
+
+  /**
+   * Constructs an image viewer.
+   *
+   * @param whether or not the underlying reader can be closed
+   */
+  public ImageViewer(boolean canCloseReader) {
+    this();
+    this.canCloseReader = canCloseReader;
   }
 
   /** Opens the given data source using the current format reader. */
@@ -597,8 +609,8 @@ public class ImageViewer extends JFrame implements ActionListener,
         "<i>" + FormatTools.URL_BIO_FORMATS + "</i>" +
         "<br>Revision @vcs.revision@, built @date@" +
         "<br><br>See <a href=\"" +
-        "http://www.openmicroscopy.org/site/support/bio-formats/users/user-info.html\">" +
-        "http://www.openmicroscopy.org/site/support/bio-formats/users/user-info.html</a>" +
+        "http://www.openmicroscopy.org/site/support/bio-formats/users/index.html\">" +
+        "http://www.openmicroscopy.org/site/support/bio-formats/users/index.html</a>" +
         "<br>for help with using Bio-Formats.";
       ImageIcon bioFormatsLogo = new ImageIcon(
           IFormatHandler.class.getResource("bio-formats-logo.png"));
@@ -706,7 +718,9 @@ public class ImageViewer extends JFrame implements ActionListener,
     try {
       myReader.close();
       myWriter.close();
-      in.close();
+      if (canCloseReader) {
+        in.close();
+      }
     }
     catch (IOException io) { }
   }

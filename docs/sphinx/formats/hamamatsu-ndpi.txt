@@ -9,8 +9,8 @@ Extensions: .ndpi
 Developer: `Hamamatsu <http://www.hamamatsu.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,7 +18,7 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Hamamatsu ndpi <hamamatsu-ndpi-metadata>`
 
 Freely Available Software:
 
@@ -30,14 +30,14 @@ Sample Datasets:
 
 We currently have:
 
-- many example datasets
+* many example datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Fair|
 
@@ -49,10 +49,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`NDPIReader.java <components/bio-formats/src/loci/formats/in/NDPIReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`NDPIReader.java`
 
 Notes:
 

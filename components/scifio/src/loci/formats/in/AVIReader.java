@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -39,6 +39,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -350,6 +351,10 @@ public class AVIReader extends FormatReader {
       core[0].rgb = bmpBitsPerPixel > 8 || (bmpCompression != 0 && lut == null);
       core[0].sizeC = isRGB() ? 3 : 1;
     }
+    else if (bmpCompression == MS_VIDEO) {
+      core[0].sizeC = 3;
+      core[0].rgb = true;
+    }
     else {
       core[0].sizeC = bytesPerPlane /
         (getSizeX() * getSizeY() * (bmpBitsPerPixel / 8));
@@ -374,6 +379,14 @@ public class AVIReader extends FormatReader {
     }
 
     if (bmpCompression != 0) core[0].pixelType = FormatTools.UINT8;
+
+    int effectiveWidth = (int) (bmpScanLineSize / (bmpBitsPerPixel / 8));
+    if (effectiveWidth == 0) {
+      effectiveWidth = getSizeX();
+    }
+    if (effectiveWidth < getSizeX()) {
+      core[0].sizeX = effectiveWidth;
+    }
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
@@ -427,7 +440,8 @@ public class AVIReader extends FormatReader {
       byte[] plane = new byte[(int) lengths.get(no).longValue()];
       in.read(plane);
 
-      boolean motionJPEG = new String(plane, 6, 4).equals("AVI1");
+      boolean motionJPEG =
+        new String(plane, 6, 4, Constants.ENCODING).equals("AVI1");
 
       if (motionJPEG) {
         // this is Motion JPEG data

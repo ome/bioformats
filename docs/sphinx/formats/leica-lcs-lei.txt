@@ -10,8 +10,8 @@ Developer: `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
 
 Owner: `Leica <http://www.leica.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -19,27 +19,23 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Leica LCS LEI <leica-lcs-lei-metadata>`
 
 Freely Available Software:
 
 - `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
 
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF) 
-- many LEI datasets
+* an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF) 
+* many LEI datasets
 
 We would like to have:
 
-- an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -51,10 +47,11 @@ Presence: |Very good|
 
 Utility: |Very good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`LeicaReader.java <components/bio-formats/src/loci/formats/in/LeicaReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`LeicaReader.java`
 
 Notes:
 
@@ -66,6 +63,6 @@ LEI presumably stands for "Leica Experimental Information".
 
 Commercial applications that support LEI include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_ 
-- `SVI Huygens <http://svi.nl/>`_ 
-- `Image-Pro Plus <http://www.mediacy.com/>`_
+* `Bitplane Imaris <http://www.bitplane.com/>`_ 
+* `SVI Huygens <http://svi.nl/>`_ 
+* `Image-Pro Plus <http://www.mediacy.com/>`_

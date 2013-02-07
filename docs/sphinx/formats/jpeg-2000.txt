@@ -9,8 +9,8 @@ Extensions: .jp2
 Developer: `Independent JPEG Group <http://www.ijg.org/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -18,28 +18,23 @@ Export: |yes|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`JPEG 2000 <jpeg-2000-metadata>`
 
 Freely Available Software:
 
 - `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
 
-Sample Datasets:
-
-- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
 
 We currently have:
 
-- a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) 
-- a few .jp2 files
+* a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) 
+* a few .jp2 files
 
 We would like to have:
 
-- an official specification document 
-- more JEOL files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -51,11 +46,12 @@ Presence: |Good|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`JPEG2000Reader.java <components/scifio/src/loci/formats/in/JPEG2000Reader.java >`
-Source Code: :source:`JPEG2000Writer.java <components/scifio/src/loci/formats/out/JPEG2000Writer.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`JPEG2000Reader.java`
+Source Code: :scifiowriter:`JPEG2000Writer.java`
 
 Notes:
 

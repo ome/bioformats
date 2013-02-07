@@ -9,8 +9,8 @@ Extensions: .nd2
 Developer: `Nikon USA <http://www.nikonusa.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,27 +18,23 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Nikon NIS-Elements ND2 <nikon-nis-elements-nd2-metadata>`
 
 Freely Available Software:
 
 - `NIS-Elements Viewer from Nikon <http://www.nis-elements.com/resources-downloads.html>`_
 
-Sample Datasets:
-
-- `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
 
 We currently have:
 
-- many ND2 datasets 
-- some :source:`Bio-Formats developer notes <components/bio-formats/doc/nd2.html>` for ND2
+* many ND2 datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +46,11 @@ Presence: |Very good|
 
 Utility: |Very good|
 
-Additional Information
-----------------------
 
-Source Code: :source:`NativeND2Reader.java <components/bio-formats/src/loci/formats/in/NativeND2Reader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`NativeND2Reader.java`
 
 Notes:
 

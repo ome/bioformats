@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -42,8 +42,8 @@
 #include "javaTools.h"
 
 // for Bio-Formats C++ bindings
-#include "scifio-4.4.5.h"
-#include "loci-common-4.4.5.h"
+#include "scifio-4.4.6.h"
+#include "loci-common-4.4.6.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Object;

@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -169,6 +169,10 @@ public class OMETiffWriter extends TiffWriter {
         service = null;
         ifdCounts.clear();
       }
+      else {
+        for(String k : ifdCounts.keySet())
+        ifdCounts.put(k, 0);
+      }
     }
   }
 
@@ -270,6 +274,7 @@ public class OMETiffWriter extends TiffWriter {
     RandomAccessInputStream in = null;
     try {
       TiffSaver saver = new TiffSaver(out, file);
+      saver.setBigTiff(isBigTiff);
       in = new RandomAccessInputStream(file);
       saver.overwriteLastIFDOffset(in);
       saver.overwriteComment(in, xml);
@@ -333,11 +338,6 @@ public class OMETiffWriter extends TiffWriter {
 
         Integer ifdIndex = ifdCounts.get(filename);
         int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
-        if (series == 0) {
-          if ((ifd > plane || ifdCounts.size() > 1) && ifd > 0) {
-            ifd--;
-          }
-        }
 
         omeMeta.setUUIDFileName(filename, series, nextPlane);
         String uuid = "urn:uuid:" + getUUID(filename);

@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -1015,8 +1015,8 @@ public class DicomReader extends FormatReader {
     elementLength = getLength(stream, tag);
     if (elementLength > stream.length()) {
       stream.seek(fp);
-      core[0].littleEndian = !stream.isLittleEndian();
-      stream.order(!stream.isLittleEndian());
+      core[0].littleEndian = !core[0].littleEndian;
+      stream.order(core[0].littleEndian);
 
       groupWord = stream.readShort() & 0xffff;
       elementWord = stream.readShort();

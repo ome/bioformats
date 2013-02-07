@@ -9,8 +9,8 @@ Extensions: .top
 
 Owner: `Oxford Instruments <http://www.oxinst.com>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,28 +18,22 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Oxford Instruments <oxford-instruments-metadata>`
 
-Freely Available Software:
 
-- `DIMIN <http://www.dimin.net/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- Pascal code that can read Oxford Instruments files (from ImageSXM) 
-- a few Oxford Instruments files
+* Pascal code that can read Oxford Instruments files (from ImageSXM) 
+* a few Oxford Instruments files
 
 We would like to have:
 
-- an official specification document 
-- more Oxford Instruments files
+* an official specification document 
+* more Oxford Instruments files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +45,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`OxfordInstrumentsReader.java <components/bio-formats/src/loci/formats/in/OxfordInstrumentsReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`OxfordInstrumentsReader.java`
 
 Notes:
 

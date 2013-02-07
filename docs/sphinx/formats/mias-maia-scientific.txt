@@ -9,8 +9,8 @@ Extensions: .tif
 Developer: `Maia Scientific <http://www.maia-scientific.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,26 +18,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`MIAS (Maia Scientific) <mias-maia-scientific-metadata>`
 
-Freely Available Software:
 
-- `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
-
-Sample Datasets:
-
-- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have:
 
-- several MIAS datasets
+* several MIAS datasets
 
 We would like to have:
 
-- an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -49,10 +42,11 @@ Presence: |Poor|
 
 Utility: |Poor|
 
-Additional Information
-----------------------
 
-Source Code: :source:`MIASReader.java <components/bio-formats/src/loci/formats/in/MIASReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`MIASReader.java`
 
 Notes:
 

@@ -9,8 +9,8 @@ Extensions: .v
 Developer: `Siemens <http://www.siemens.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,31 +18,21 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`ECAT7 <ecat7-metadata>`
 
-Freely Available Software:
 
-- `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_ 
-- `ezDICOM <http://www.sph.sc.edu/comd/rorden/ezdicom.html>`_ 
-- `Chris Rorden's list of free DICOM readers <http://www.sph.sc.edu/comd/rorden/dicom.html#links>`_
-
-Sample Datasets:
-
-- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ 
-- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ 
-- `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
 
 We currently have:
 
-- a few ECAT7 files
+* a few ECAT7 files
 
 We would like to have:
 
-- an ECAT7 specification document 
-- more ECAT7 files
+* an ECAT7 specification document 
+* more ECAT7 files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -54,10 +44,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`Ecat7Reader.java <components/bio-formats/src/loci/formats/in/Ecat7Reader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`Ecat7Reader.java`
 
 Notes:
 

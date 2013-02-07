@@ -9,8 +9,8 @@ Extensions: .apl, .mtb, .tnb, .tif, .obsep
 
 Owner: `Olympus <http://www.olympus.com/>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,27 +18,21 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Olympus CellR/APL <olympus-cellrapl-metadata>`
 
-Freely Available Software:
 
-- `nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- a few CellR datasets
+* a few CellR datasets
 
 We would like to have:
 
-- more Cellr datasets 
-- an official specification document
+* more Cellr datasets 
+* an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -50,10 +44,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`APLReader.java <components/bio-formats/src/loci/formats/in/APLReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`APLReader.java`
 
 Notes:
 

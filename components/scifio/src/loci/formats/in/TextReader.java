@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -37,12 +37,14 @@
 package loci.formats.in;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.IRandomAccess;
 import loci.common.Location;
@@ -245,7 +247,8 @@ public class TextReader extends FormatReader {
     if (handle == null) {
       // HACK: Read using vanilla BufferedReader, since it's faster.
       String mapId = Location.getMappedId(id);
-      BufferedReader in = new BufferedReader(new FileReader(mapId));
+      BufferedReader in = new BufferedReader(
+        new InputStreamReader(new FileInputStream(mapId), Constants.ENCODING));
       int no = 0;
       while (true) {
         no++;

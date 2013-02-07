@@ -9,8 +9,8 @@ Extensions: .htd, .pnl
 Developer: `Applied Precision <http://www.api.com>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,26 +18,21 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Applied Precision CellWorX <applied-precision-cellworx-metadata>`
 
-Freely Available Software:
-
-- `Firefox 3+ <http://www.mozilla.com/firefox>`_ 
-- `Opera 9.5+ <http://www.opera.com/download>`_ 
-- `KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
 
 
 We currently have:
 
-- a few CellWorX datasets
+* a few CellWorX datasets
 
 We would like to have:
 
-- a CellWorX specification document 
-- more CellWorX datasets
+* a CellWorX specification document 
+* more CellWorX datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Very good|
 
@@ -49,10 +44,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`CellWorxReader.java <components/bio-formats/src/loci/formats/in/CellWorxReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`CellWorxReader.java`
 
 Notes:
 

@@ -9,8 +9,8 @@ Extensions: .ome
 Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |yes|
 
@@ -18,29 +18,21 @@ Export: |yes|
 
 Officially Supported Versions: 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`OME-XML <ome-xml-metadata>`
 
-Freely Available Software:
 
-- `DIMIN <http://www.dimin.net/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ 
-- many OME-XML datasets 
-- the ability to produce more datasets
+* `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ 
+* many OME-XML datasets 
+* the ability to produce more datasets
 
 We would like to have:
 
-- more OIB datasets (especially 2+ GB files) 
-- more FV1000 version 2 datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -52,11 +44,12 @@ Presence: |Fair|
 
 Utility: |Outstanding|
 
-Additional Information
-----------------------
 
-Source Code: :source:`OMEXMLReader.java <components/scifio/src/loci/formats/in/OMEXMLReader.java >`
-Source Code: :source:`OMEXMLWriter.java <components/scifio/src/loci/formats/out/OMEXMLWriter.java >`
+**Additional Information**
+
+
+Source Code: :scifioreader:`OMEXMLReader.java`
+Source Code: :scifiowriter:`OMEXMLWriter.java`
 
 Notes:
 
@@ -66,5 +59,5 @@ to read OME-XML files.
 
 Commercial applications that support OME-XML include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_ 
-- `SVI Huygens <http://svi.nl/>`_
+* `Bitplane Imaris <http://www.bitplane.com/>`_ 
+* `SVI Huygens <http://svi.nl/>`_

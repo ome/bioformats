@@ -9,8 +9,8 @@ Extensions: .cxd
 Developer: `Compix <http://www.cimaging.net/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,26 +18,19 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`SimplePCI & HCImage <simplepci-hcimage-metadata>`
 
-Freely Available Software:
 
-- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- several SimplePCI files
+* several SimplePCI files
 
 We would like to have:
 
-- more SimplePCI TIFF datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Outstanding|
 
@@ -49,10 +42,11 @@ Presence: |Poor|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`PCIReader.java <components/bio-formats/src/loci/formats/in/PCIReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`PCIReader.java`
 
 Notes:
 

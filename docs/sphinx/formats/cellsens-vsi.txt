@@ -9,8 +9,8 @@ Extensions: .vsi
 Developer: `Olympus <http://www.olympus.com/>`_
 
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,23 +18,20 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`cellSens VSI <cellsens-vsi-metadata>`
 
-Freely Available Software:
-
-- `Micro-Manager <http://micro-manager.org/>`_
 
 
 We currently have:
 
-- a few example datasets
+* a few example datasets
 
 We would like to have:
 
-- an official specification document
+* an official specification document
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Fair|
 
@@ -46,10 +43,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`CellSensReader.java <components/bio-formats/src/loci/formats/in/CellSensReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`CellSensReader.java`
 
 Notes:
 

@@ -10,8 +10,8 @@ Developer: `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <h
 
 Owner: `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <http://bio3d.colorado.edu>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -19,27 +19,23 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`IMOD <imod-metadata>`
 
 Freely Available Software:
 
 - `IMOD <http://bio3d.colorado.edu/imod/>`_
 
-Sample Datasets:
-
-- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have:
 
-- a few sample datasets 
-- `official documentation <http://bio3d.colorado.edu/imod/doc/binspec.html>`_
+* a few sample datasets 
+* `official documentation <http://bio3d.colorado.edu/imod/doc/binspec.html>`_
 
 We would like to have:
 
-- more example datasets
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +47,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`IMODReader.java <components/bio-formats/src/loci/formats/in/IMODReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`IMODReader.java`
 
 Notes:
 

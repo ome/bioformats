@@ -9,8 +9,8 @@ Extensions: .xqd, .xqf
 
 Owner: `Seiko <http://www.seiko.co.jp/en/index.php>`_
 
-Support
--------
+**Support**
+
 
 SCIFIO: |no|
 
@@ -18,28 +18,22 @@ Export: |no|
 
 Officially Supported Versions: 
 
-Supported Metadata Fields:
+Supported Metadata Fields: :doc:`Seiko <seiko-metadata>`
 
-Freely Available Software:
 
-- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
-
-Sample Datasets:
-
-- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have:
 
-- Pascal code that can read Seiko files (from ImageSXM) 
-- a few Seiko files
+* Pascal code that can read Seiko files (from ImageSXM) 
+* a few Seiko files
 
 We would like to have:
 
-- an official specification document 
-- more Seiko files
+* an official specification document 
+* more Seiko files
 
-Ratings
--------
+**Ratings**
+
 
 Pixels: |Good|
 
@@ -51,10 +45,11 @@ Presence: |Fair|
 
 Utility: |Fair|
 
-Additional Information
-----------------------
 
-Source Code: :source:`SeikoReader.java <components/bio-formats/src/loci/formats/in/SeikoReader.java >`
+**Additional Information**
+
+
+Source Code: :bfreader:`SeikoReader.java`
 
 Notes:
 

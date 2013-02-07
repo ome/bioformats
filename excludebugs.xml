@@ -6,9 +6,9 @@
 
 <FindBugsFilter>
 
-  <!--
-  <Match> <Package name="loci.example"/> </Match>
-  -->
+  <Match>
+    <Bug pattern="MS_MUTABLE_ARRAY"/>
+  </Match>
 
 </FindBugsFilter>
 

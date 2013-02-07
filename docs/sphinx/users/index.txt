@@ -1,0 +1,117 @@
+****************
+User Information
+****************
+
+
+Using Bio-Formats with ImageJ and Fiji
+======================================
+
+The following sections explain the features of Bio-Formats and how to use 
+it within :doc:`imagej/index` and :doc:`fiji/index`:
+
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    imagej/index
+    fiji/index
+
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    imagej/features
+    imagej/installing
+    imagej/load-images
+    imagej/managing-memory
+    imagej/upgrading-importer
+
+
+OMERO
+=====
+
+OMERO.importer uses Bio-Formats to read image pixels and propagate metadata 
+into the OMERO.server system. Please refer to the 
+:omerodoc:`OMERO documentation <>` for further information.
+
+.. only:: latex
+
+    |
+
+    .. image:: /images/bf_omero.png
+        :align: center
+
+
+|
+
+.. only:: html
+
+    Many other software packages can use Bio-Formats to read and write 
+    microscopy formats (click on the package for further details):
+
+Image server applications
+=========================
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    bisque/index
+    ome-server/index
+
+
+Libraries and scripting applications
+====================================
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    comlinetools/index
+    farsight/index
+    i3dcore/index
+    imglib/index
+    itk/index
+    qu-matlab/index
+    subimager/index
+
+
+Numerical data processing applications
+======================================
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    idl/index
+    knime/index
+    matlab/index
+    visad/index
+
+
+Visualization and analysis applications
+=======================================
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    imaris/index
+    cellprofiler/index
+    comstat2/index
+    endrov/index
+    focalpoint/index
+    graphic-con/index
+    icy/index
+    imago/index
+    iqm/index
+    macnif/index
+    mipav/index
+    vaa3d/index
+    visbio/index
+    xuvtools/index
+
+
+
+
