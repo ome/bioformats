@@ -385,6 +385,9 @@ public class PCIReader extends FormatReader {
 
       for (int i=0; i<timestamps.size(); i++) {
         Double timestamp = new Double(timestamps.get(i).doubleValue());
+        if (i >= getImageCount()) {
+          break;
+        }
         store.setPlaneDeltaT(timestamp, 0, i);
         if (i == 2) {
           double first = timestamps.get(1).doubleValue();
