@@ -964,6 +964,7 @@ public class LIFReader extends FormatReader {
       Stack<String> nameStack = new Stack<String>();
       HashMap<String, Integer> indexes = new HashMap<String, Integer>();
       populateOriginalMetadata(image, nameStack, indexes);
+      addUserCommentMeta(image);
       indexes.clear();
     }
     setSeries(0);
@@ -1588,6 +1589,17 @@ public class LIFReader extends FormatReader {
       if ("ContextDescription".equals(attachment.getAttribute("Name"))) {
         descriptions[image] = attachment.getAttribute("Content");
       }
+    }
+  }
+
+  private void addUserCommentMeta(Element imageNode)
+    throws FormatException
+  {
+    NodeList attachmentNodes = getNodes(imageNode, "User-Comment");
+    if (attachmentNodes == null) return;
+    for (int i=0; i<attachmentNodes.getLength(); i++) {
+      Node attachment = attachmentNodes.item(i);
+      addSeriesMeta("User-Comment[" + i + "]", attachment.getTextContent());
     }
   }
 
