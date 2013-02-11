@@ -22,10 +22,13 @@
   <licenses>
     <license>
       <name>Simplified BSD License</name>
-      <url>${license.server}/lwf-stubs/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <properties>
+    <project.rootdir>${basedir}/../../..</project.rootdir>
+  </properties>
 
   <build>
     <plugins>
