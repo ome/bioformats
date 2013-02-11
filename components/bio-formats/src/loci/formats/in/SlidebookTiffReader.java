@@ -32,6 +32,7 @@ import java.util.Arrays;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -182,8 +183,10 @@ public class SlidebookTiffReader extends BaseTiffReader {
 
     readers = new MinimalTiffReader[files.length];
 
-    core[0].imageCount = ifds.size() * files.length;
-    core[0].sizeT = ifds.size();
+    CoreMetadata m = core.get(0);
+
+    m.imageCount = ifds.size() * files.length;
+    m.sizeT = ifds.size();
 
     for (int i=0; i<readers.length; i++) {
       readers[i] = new MinimalTiffReader();
@@ -195,9 +198,9 @@ public class SlidebookTiffReader extends BaseTiffReader {
       }
     }
 
-    core[0].sizeC = channelNames.size();
-    core[0].sizeZ = getImageCount() / (getSizeT() * getSizeC());
-    core[0].dimensionOrder = "XYTCZ";
+    m.sizeC = channelNames.size();
+    m.sizeZ = getImageCount() / (getSizeT() * getSizeC());
+    m.dimensionOrder = "XYTCZ";
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
