@@ -114,6 +114,13 @@ public class L2DReader extends FormatReader {
     return check.indexOf(LICOR_MAGIC_STRING) >= 0;
   }
 
+  /* @see loci.formats.IFormatReader#getRequiredDirectories(String[]) */
+  public int getRequiredDirectories(String[] files)
+    throws FormatException, IOException
+  {
+    return 1;
+  }
+
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
