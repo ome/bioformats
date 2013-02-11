@@ -80,6 +80,7 @@ public class MIASReader extends FormatReader {
   private String resultFile = null;
 
   private Vector<AnalysisFile> analysisFiles;
+  private Vector<AnalysisFile> roiFiles;
 
   private int[] wellNumber;
 
@@ -292,6 +293,7 @@ public class MIASReader extends FormatReader {
       templateFile = null;
       overlayFiles.clear();
       overlayPlanes.clear();
+      roiFiles = null;
     }
   }
 
@@ -807,9 +809,24 @@ public class MIASReader extends FormatReader {
         store.setImageInstrumentRef(instrumentID, well);
       }
 
+      roiFiles = new Vector<AnalysisFile>();
+      for (AnalysisFile af : analysisFiles) {
+        String file = af.filename;
+        String name = new Location(file).getName();
+        if (!name.startsWith("Well")) continue;
+
+        if (name.endsWith("AllModesOverlay.tif")) {
+          roiFiles.add(af);
+        }
+        else if (name.endsWith("overlay.tif")) {
+          roiFiles.add(af);
+        }
+      }
+
       if (level != MetadataLevel.NO_OVERLAYS) {
         // populate image-level ROIs
         Color[] colors = new Color[getSizeC()];
+
         int nextROI = 0;
         for (AnalysisFile af : analysisFiles) {
           String file = af.filename;
@@ -1071,6 +1088,21 @@ public class MIASReader extends FormatReader {
   }
 
   /**
+   * Parse masks into a separate overlay-specific MetadataStore.
+   */
+  public void parseMasks(MetadataStore overlayStore)
+    throws FormatException, IOException
+  {
+    boolean originalMaskParsing = parseMasks;
+    int roi = 0;
+    parseMasks = true;
+    for (AnalysisFile roiFile : roiFiles) {
+      roi += parseMasks(overlayStore, roiFile.well, roi, roiFile.filename);
+    }
+    parseMasks = originalMaskParsing;
+  }
+
+  /**
    * Parse Mask ROIs from the given TIFF and place them in the given
    * MetadataStore.
    * @return the number of masks parsed
@@ -1087,7 +1119,7 @@ public class MIASReader extends FormatReader {
       overlayFiles.put(maskId, overlayTiff);
       overlayPlanes.put(maskId, new Integer(i));
 
-      boolean validMask = populateMaskPixels(series, roi + nOverlays, 0);
+      boolean validMask = populateMaskPixels(series, roi + nOverlays, 0, store);
       if (validMask) {
         store.setROIID(roiId, roi + nOverlays);
 
@@ -1116,7 +1148,7 @@ public class MIASReader extends FormatReader {
    * @return true if the mask was populated successfully.
    */
   public boolean populateMaskPixels(int imageIndex, int roiIndex,
-    int shapeIndex)
+    int shapeIndex, MetadataStore store)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
@@ -1179,7 +1211,6 @@ public class MIASReader extends FormatReader {
     }
 
     if (validMask) {
-      MetadataStore store = makeFilterMetadata();
       store.setMaskBinData(bits.toByteArray(), roiIndex, shapeIndex);
     }
     else LOGGER.debug("Did not populate MaskPixels.BinData for {}", id);
