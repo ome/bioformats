@@ -165,3 +165,4 @@ loci.formats.in.HRDGDFReader          # (no extension)
 loci.formats.in.HitachiReader         # txt, tif, jpg, bmp
 loci.formats.in.BrukerReader          # fid, acqp
 loci.formats.in.CanonRawReader        # cr2, crw, jpg, thm, wav
+loci.formats.in.OBFReader             # obf, msr
