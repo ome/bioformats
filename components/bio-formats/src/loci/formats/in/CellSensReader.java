@@ -406,9 +406,6 @@ public class CellSensReader extends FormatReader {
       tileMap[s] = new HashMap<TileCoordinate, Integer>();
 
       CoreMetadata ms = core.get(s);
-      if (s == 0) {
-        ms.resolutionCount = ifds.size() + (files.size() == 1 ? 0 : 1);
-      }
 
       if (s < files.size() - 1) {
         setSeries(s);
