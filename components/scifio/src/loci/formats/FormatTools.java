@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -173,7 +173,7 @@ public final class FormatTools {
   public static final String DATE = "@date@";
 
   /** Version number of this release. */
-  public static final String VERSION = "4.4.6-DEV";
+  public static final String VERSION = "4.4.7-DEV";
 
   // -- Constants - domains --
 

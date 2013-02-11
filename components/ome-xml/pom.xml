@@ -8,7 +8,7 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>pom-scifio</artifactId>
-    <version>4.4.6-SNAPSHOT</version>
+    <version>4.4.7-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -22,7 +22,6 @@
   <licenses>
     <license>
       <name>Simplified BSD License</name>
-      <url>${license.server}/ome-xml/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -41,6 +40,10 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <properties>
+    <project.rootdir>${basedir}/../..</project.rootdir>
+  </properties>
 
   <build>
     <plugins>

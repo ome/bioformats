@@ -2,7 +2,7 @@
  * #%L
  * LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.
  * %%
- * Copyright (C) 2008 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2008 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -183,7 +183,7 @@ public final class XMLTools {
   public static String sanitizeXML(String s) {
     final char[] c = s.toCharArray();
     for (int i=0; i<s.length(); i++) {
-      if (Character.isISOControl(c[i]) ||
+      if ((Character.isISOControl(c[i]) && c[i] != '\n') ||
         !Character.isDefined(c[i]))
       {
         c[i] = ' ';

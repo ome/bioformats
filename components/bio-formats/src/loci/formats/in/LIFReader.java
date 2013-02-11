@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -964,6 +964,7 @@ public class LIFReader extends FormatReader {
       Stack<String> nameStack = new Stack<String>();
       HashMap<String, Integer> indexes = new HashMap<String, Integer>();
       populateOriginalMetadata(image, nameStack, indexes);
+      addUserCommentMeta(image);
       indexes.clear();
     }
     setSeries(0);
@@ -1588,6 +1589,17 @@ public class LIFReader extends FormatReader {
       if ("ContextDescription".equals(attachment.getAttribute("Name"))) {
         descriptions[image] = attachment.getAttribute("Content");
       }
+    }
+  }
+
+  private void addUserCommentMeta(Element imageNode)
+    throws FormatException
+  {
+    NodeList attachmentNodes = getNodes(imageNode, "User-Comment");
+    if (attachmentNodes == null) return;
+    for (int i=0; i<attachmentNodes.getLength(); i++) {
+      Node attachment = attachmentNodes.item(i);
+      addSeriesMeta("User-Comment[" + i + "]", attachment.getTextContent());
     }
   }
 

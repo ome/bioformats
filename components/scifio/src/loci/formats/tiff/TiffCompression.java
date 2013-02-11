@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -296,7 +296,7 @@ public enum TiffCompression implements CodedEnum {
       if (planarConfig == 2 || bitsPerSample[len - 1] == 0) len = 1;
       len *= bytes;
 
-      for (int b=0; b<input.length; b+=bytes) {
+      for (int b=0; b<=input.length-bytes; b+=bytes) {
         if (b / len % width == 0) continue;
         int value = DataTools.bytesToInt(input, b, bytes, little);
         value += DataTools.bytesToInt(input, b - len, bytes, little);
