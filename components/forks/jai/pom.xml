@@ -22,10 +22,13 @@
   <licenses>
     <license>
       <name>Simplified BSD License</name>
-      <url>${license.server}/jai_imageio/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <properties>
+    <project.rootdir>${basedir}/../../..</project.rootdir>
+  </properties>
 
   <build>
     <plugins>

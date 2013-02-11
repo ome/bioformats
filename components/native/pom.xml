@@ -22,6 +22,10 @@
     <module>bf-itk</module>
   </modules>
 
+  <properties>
+    <project.rootdir>${basedir}/../..</project.rootdir>
+  </properties>
+
   <!-- NB: for parent project -->
   <repositories>
     <repository>
