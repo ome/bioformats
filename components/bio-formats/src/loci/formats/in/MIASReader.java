@@ -124,7 +124,7 @@ public class MIASReader extends FormatReader {
 
     int dirCount = 0;
 
-    String[] dirs = files[0].split(File.separatorChar == '/' ? "/" : "\\");
+    String[] dirs = files[0].split(File.separatorChar == '/' ? "/" : "\\\\");
     for (String dir : dirs) {
       boolean canAppend = true;
       for (String f : files) {
@@ -141,10 +141,10 @@ public class MIASReader extends FormatReader {
       }
     }
 
-    int maxDirCount = dirs.length - 1;
+    int maxDirCount = 0;
     for (String f : files) {
       int parentDirCount =
-        f.split(File.separatorChar == '/' ? "/" : "\\").length - 1;
+        f.split(File.separatorChar == '/' ? "/" : "\\\\").length - 1;
       if (parentDirCount > maxDirCount) {
         maxDirCount = parentDirCount;
       }
