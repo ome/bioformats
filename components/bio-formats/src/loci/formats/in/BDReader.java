@@ -239,7 +239,7 @@ public class BDReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return reader.getOptimalTileHeight() / fieldRows;
+    return (int) Math.max(1, reader.getOptimalTileHeight() / fieldRows);
   }
 
   // -- Internal FormatReader API methods --
