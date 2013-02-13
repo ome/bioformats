@@ -438,7 +438,7 @@ public class FormatReaderTest {
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
         int width = reader.getOptimalTileWidth();
-        success = width > 0 && width <= reader.getSizeX();
+        success = width > 0;
         msg = "series #" + i + ": tile width = " + width;
       }
     }
@@ -460,7 +460,7 @@ public class FormatReaderTest {
       for (int i=0; i<reader.getSeriesCount() && success; i++) {
         reader.setSeries(i);
         int height = reader.getOptimalTileHeight();
-        success = height > 0 && height <= reader.getSizeY();
+        success = height > 0;
         msg = "series #" + i + ": tile height = " + height;
       }
     }
