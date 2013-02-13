@@ -1316,6 +1316,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
+    LOGGER.info("{} initializing {}", this.getClass().getSimpleName(), id);
     if (!id.equals(currentId)) {
       initFile(id);
 
