@@ -85,12 +85,6 @@ public class ImarisHDFReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
-  public int getOptimalTileHeight() {
-    FormatTools.assertId(currentId, true, 1);
-    return getSizeY();
-  }
-
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;

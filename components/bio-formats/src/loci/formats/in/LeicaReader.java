@@ -327,7 +327,7 @@ public class LeicaReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    if (tileWidth[getSeries()] != 0) {
+    if (tileWidth != null && tileWidth[getSeries()] != 0) {
       return tileWidth[getSeries()];
     }
     return super.getOptimalTileWidth();
@@ -336,7 +336,7 @@ public class LeicaReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    if (tileHeight[getSeries()] != 0) {
+    if (tileHeight != null && tileHeight[getSeries()] != 0) {
       return tileHeight[getSeries()];
     }
     return super.getOptimalTileHeight();

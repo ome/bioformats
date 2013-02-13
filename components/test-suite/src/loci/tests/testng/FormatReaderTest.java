@@ -427,6 +427,50 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
 
+  @Test(groups = {"all", "fast", "automated"})
+  public void testTileWidth() {
+    String testName = "testTileWidth";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    try {
+      for (int i=0; i<reader.getSeriesCount() && success; i++) {
+        reader.setSeries(i);
+        int width = reader.getOptimalTileWidth();
+        success = width > 0;
+        msg = "series #" + i + ": tile width = " + width;
+      }
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success, msg);
+  }
+
+  @Test(groups = {"all", "fast", "automated"})
+  public void testTileHeight() {
+    String testName = "testTileHeight";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    try {
+      for (int i=0; i<reader.getSeriesCount() && success; i++) {
+        reader.setSeries(i);
+        int height = reader.getOptimalTileHeight();
+        success = height > 0;
+        msg = "series #" + i + ": tile height = " + height;
+      }
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success, msg);
+  }
+
   @Test(groups = {"all", "xml", "fast", "automated"})
   public void testOMEXML() {
     String testName = "testOMEXML";
