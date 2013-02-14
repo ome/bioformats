@@ -53,6 +53,7 @@ Available subcommands:
   java_classes
   omexml_metadata
   omero_metadata
+  omero_model
   metadata_store
   metadata_retrieve
   metadata_aggregate
@@ -365,6 +366,9 @@ def processMetadataTemplate(template, outputFilename, namespace, args):
 	fu.resolve_hierarchy = resolve_hierarchy
 	fu.METADATA_OBJECT_IGNORE = METADATA_OBJECT_IGNORE
 	fu.METADATA_COUNT_IGNORE = METADATA_COUNT_IGNORE
+	fu.BACK_REFERENCE_CLASS_NAME_OVERRIDE = BACK_REFERENCE_CLASS_NAME_OVERRIDE
+	fu.ABSTRACT_PROPRIETARY_OVERRIDE = ABSTRACT_PROPRIETARY_OVERRIDE
+	fu.DEFAULT_BASE_CLASS = DEFAULT_BASE_CLASS
 	base, filename = os.path.split(template)
 	name, extension = os.path.splitext(filename)
 	template = NewTextTemplate(open(template).read())
@@ -428,6 +432,27 @@ def omeroMetadataMain(args):
 			namespace = argument
 
 	processMetadataTemplate(OMERO_METADATA_TEMPLATE, "OmeroMetadata.java",
+	                        namespace, args)
+
+def omeroModelMain(args):
+	"""
+	Default main() that parses command line options and generates a
+	MetadataRetrieve implementation.
+	"""
+	try:
+		options, args = getopt(args, "n:")
+	except GetoptError, (msg, opt):
+		metadataUsage(msg)
+
+	if len(args) < 1:
+		metadataUsage("Expecting at least one ome.xsd file path!")
+
+	namespace = DEFAULT_NAMESPACE
+	for option, argument in options:
+		if option == "-n":
+			namespace = argument
+
+	processMetadataTemplate(OMERO_MODEL_TEMPLATE, "OmeroModel.xml",
 	                        namespace, args)
 
 def metadataStoreMain(args):
@@ -663,6 +688,8 @@ if __name__ == '__main__':
 		omeXmlMetadataMain(sys.argv[2:])
 	elif a == "omero_metadata":
 		omeroMetadataMain(sys.argv[2:])
+	elif a == "omero_model":
+		omeroModelMain(sys.argv[2:])
 	elif a == "metadata_store":
 		metadataStoreMain(sys.argv[2:])
 	elif a == "metadata_retrieve":

@@ -1217,6 +1217,15 @@ class XschemaHandler(handler.ContentHandler):
                 self.stack[-1].setListType(1)
         elif name == AppInfoType:
             self.inAppInfo = True
+        elif self.inAppInfo:
+            appInfoTarget = self.stack[-1]
+            if self.inAttribute:
+                appInfoTarget = self.lastAttribute
+            try:
+                appinfo = appInfoTarget.appinfo
+            except AttributeError:
+                appinfo = ''
+            appInfoTarget.appinfo = appinfo + '<%s>' % name
         logging.debug("Start element stack: %d (%r)" % (len(self.stack), self.stack))
 
     def endElement(self, name):
@@ -1298,10 +1307,26 @@ class XschemaHandler(handler.ContentHandler):
             self.inListType = 0
         elif name == AppInfoType:
             self.inAppInfo = False
+        elif self.inAppInfo:
+            appInfoTarget = self.stack[-1]
+            if self.inAttribute:
+                appInfoTarget = self.lastAttribute
+            try:
+                appinfo = appInfoTarget.appinfo
+            except AttributeError:
+                appinfo = ''
+            appInfoTarget.appinfo = appinfo + '</%s>' % name
 
     def characters(self, chrs):
         if self.inAppInfo:
-            self.stack[-1].appinfo = chrs
+            appInfoTarget = self.stack[-1]
+            if self.inAttribute:
+                appInfoTarget = self.lastAttribute
+            try:
+                appinfo = appInfoTarget.appinfo
+            except AttributeError:
+                appinfo = ''
+            appInfoTarget.appinfo = appinfo + chrs
         if self.inElement:
             pass
         elif self.inComplexType:

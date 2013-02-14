@@ -1,0 +1,4 @@
+            <!--
+            // Property StatsInfo
+            -->
+            <optional name="statsInfo" type="ome.model.meta.StatsInfo"/>

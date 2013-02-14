@@ -106,11 +106,15 @@ public class ${klass.name} extends ${klass.javaBase}
 	// Reference ${prop.name}
 	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
 {% end %}\
-{% when prop.isBackReference %}
+{% when prop.isBackReference and prop.maxOccurs > 1 %}
 	// Back reference ${prop.name}
 	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex()) %}
+{% when prop.isBackReference %}
+	// Back reference ${prop.name}
+	private ${prop.javaType} ${prop.javaInstanceVariableName};
+{% end %}\
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
 	// Property
 	private ${prop.javaType} ${prop.javaInstanceVariableName};
 {% end %}\
@@ -270,7 +274,7 @@ ${customUpdatePropertyContent[prop.name]}
 		for (Element ${prop.name}_element : ${prop.name}_nodeList)
 		{
 {% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
-{% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.isReference %}\
+{% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.isReference and inner_prop.isChoice %}\
 			List<Element> ${inner_prop.name}_nodeList = 
 					getChildrenByTagName(${prop.name}_element, "${inner_prop.name}");
 			for (Element ${inner_prop.name}_element : ${inner_prop.name}_nodeList)
@@ -328,7 +332,12 @@ ${customUpdatePropertyContent[prop.name]}
 		{
 			${prop.javaType} o_casted = (${prop.javaType}) o;
 {% if not fu.link_overridden(prop.name, klass.name) %}\
+{% if not fu.backReference_overridden(prop.name, klass.name) %}\
 			o_casted.link${klass.type}(this);
+{% end %}\
+{% if fu.backReference_overridden(prop.name, klass.name) %}\
+      o_casted.link${klass.name}${prop.javaMethodName}(this);
+{% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
 			if (!${prop.javaInstanceVariableName}.contains(o_casted)) {
@@ -362,7 +371,7 @@ ${customUpdatePropertyContent[prop.name]}
 \
 {% for prop in klass.properties.values() %}\
 {% choose %}\
-{% when (prop.isReference and prop.maxOccurs > 1) or prop.isBackReference %}
+{% when (prop.isReference or prop.isBackReference) and prop.maxOccurs > 1 %}
 	// Reference which occurs more than once
 	public int sizeOfLinked${prop.javaMethodName}List()
 	{
@@ -387,7 +396,13 @@ ${customUpdatePropertyContent[prop.name]}
 	public boolean link${prop.javaMethodName}(${prop.javaType} o)
 	{
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
-		o.link${klass.type}(this);
+
+{% if not fu.backReference_overridden(prop.name, klass.name) %}\
+			o.link${klass.type}(this);
+{% end %}\
+{% if fu.backReference_overridden(prop.name, klass.name) %}\
+      o.link${klass.name}${prop.javaMethodName}(this);
+{% end %}\
 {% end %}\
 		if (!${prop.javaInstanceVariableName}.contains(o)) {
 			return ${prop.javaInstanceVariableName}.add(o);
@@ -398,7 +413,13 @@ ${customUpdatePropertyContent[prop.name]}
 	public boolean unlink${prop.javaMethodName}(${prop.javaType} o)
 	{
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
-		o.unlink${klass.type}(this);
+
+{% if not fu.backReference_overridden(prop.name, klass.name) %}\
+			o.unlink${klass.type}(this);
+{% end %}\
+{% if fu.backReference_overridden(prop.name, klass.name) %}\
+      o.unlink${klass.name}${prop.javaMethodName}(this);
+{% end %}\
 {% end %}\
 		return ${prop.javaInstanceVariableName}.remove(o);
 	}
@@ -423,11 +444,11 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 	}
 {% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex()) %}
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
 	// Property
 	public ${prop.javaType} get${prop.javaMethodName}()
 	{
-		return ${prop.javaArgumentName};
+		return ${prop.javaInstanceVariableName};
 	}
 
 	public void set${prop.javaMethodName}(${prop.javaType} ${prop.javaArgumentName})
@@ -439,7 +460,7 @@ ${customUpdatePropertyContent[prop.name]}
 	// Property which occurs more than once
 	public int sizeOf${prop.javaMethodName}List()
 	{
-		return ${prop.javaArgumentName}List.size();
+		return ${prop.javaInstanceVariableName}.size();
 	}
 
 	public List<${prop.javaType}> copy${prop.javaMethodName}List()
@@ -454,11 +475,17 @@ ${customUpdatePropertyContent[prop.name]}
 
 	public ${prop.javaType} set${prop.javaMethodName}(int index, ${prop.javaType} ${prop.javaArgumentName})
 	{
+{% if klass.type != 'OME' %}\
+        ${prop.javaArgumentName}.set${klass.type}(this);
+{% end %}\
 		return ${prop.javaInstanceVariableName}.set(index, ${prop.javaArgumentName});
 	}
 
 	public void add${prop.javaMethodName}(${prop.javaType} ${prop.javaArgumentName})
 	{
+{% if klass.type != 'OME' %}\
+        ${prop.javaArgumentName}.set${klass.type}(this);
+{% end %}\
 		${prop.javaInstanceVariableName}.add(${prop.javaArgumentName});
 	}
 

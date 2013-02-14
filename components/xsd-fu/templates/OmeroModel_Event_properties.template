@@ -1,0 +1,4 @@
+            <!--
+            // Property EventRef (ContainingEvent)
+            -->
+            <optional name="containingEvent" type="ome.model.meta.Event"/>
