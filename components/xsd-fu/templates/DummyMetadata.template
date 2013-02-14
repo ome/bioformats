@@ -186,6 +186,47 @@ public class DummyMetadata implements IMetadata
 		return -1;
 	}
 
+  public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
+    return -1;
+  }
+
+  public int getCommentAnnotationAnnotationCount(int commentAnnotationIndex) {
+    return -1;
+  }
+
+  public int getDoubleAnnotationAnnotationCount(int doubleAnnotationIndex) {
+    return -1;
+  }
+
+  public int getFileAnnotationAnnotationCount(int fileAnnotationIndex) {
+    return -1;
+  }
+
+  public int getListAnnotationAnnotationCount(int listAnnotationIndex) {
+    return -1;
+  }
+
+  public int getLongAnnotationAnnotationCount(int longAnnotationIndex) {
+    return -1;
+  }
+
+  public int getTagAnnotationAnnotationCount(int tagAnnotationIndex) {
+    return -1;
+  }
+
+  public int getTermAnnotationAnnotationCount(int termAnnotationIndex) {
+    return -1;
+  }
+
+  public int getTimestampAnnotationAnnotationCount(int timestampAnnotationIndex)
+  {
+    return -1;
+  }
+
+  public int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex) {
+    return -1;
+  }
+
 	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
 	{
 		return null;

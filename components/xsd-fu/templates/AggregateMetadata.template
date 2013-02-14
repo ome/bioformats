@@ -316,6 +316,137 @@ public class AggregateMetadata implements IMetadata
 		return -1;
 	}
 
+  public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.getBooleanAnnotationAnnotationCount(booleanAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  public int getCommentAnnotationAnnotationCount(int commentAnnotationIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.getCommentAnnotationAnnotationCount(commentAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  public int getDoubleAnnotationAnnotationCount(int doubleAnnotationIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.getDoubleAnnotationAnnotationCount(doubleAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  public int getFileAnnotationAnnotationCount(int fileAnnotationIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.getFileAnnotationAnnotationCount(fileAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  public int getListAnnotationAnnotationCount(int listAnnotationIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.getListAnnotationAnnotationCount(listAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  public int getLongAnnotationAnnotationCount(int longAnnotationIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.getLongAnnotationAnnotationCount(longAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  public int getTagAnnotationAnnotationCount(int tagAnnotationIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.getTagAnnotationAnnotationCount(tagAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  public int getTermAnnotationAnnotationCount(int termAnnotationIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.getTermAnnotationAnnotationCount(termAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  public int getTimestampAnnotationAnnotationCount(int timestampAnnotationIndex)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result = retrieve.getTimestampAnnotationAnnotationCount(
+          timestampAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
+  public int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.getXMLAnnotationAnnotationCount(xmlAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
 	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
