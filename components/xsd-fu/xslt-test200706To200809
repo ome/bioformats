@@ -71,8 +71,8 @@ class Test200802(XsltBasic):
 
     STYLESHEET = "../specification/Xslt/2007-06-to-2008-09.xsl"
     
-    OLD_VALIDATION = "../specification/Released-Schema/2007-06/V2/ome.xsd"
-    NEW_VALIDATION = "../specification/Released-Schema/2008-09/V1/ome.xsd"
+    OLD_VALIDATION = "../specification/Released-Schema/2007-06/ome.xsd"
+    NEW_VALIDATION = "../specification/Released-Schema/2008-09/ome.xsd"
 
     DOCUMENT = "../specification/InProgress/test-ome-samples/sample-2007-06.ome"
     

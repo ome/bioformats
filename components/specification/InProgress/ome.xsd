@@ -985,8 +985,8 @@
             <xsd:appinfo><xsdfu><plural>ExperimenterGroups</plural><global/></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				The ExperimenterGroupID is required.
-				Contact information should be specified for the leader of the group and a contact person.
-				The Leader and/or Contact are themselves experimenters.
+				Information should ideally be specified for at least one Leader as a contact for the group.
+				The Leaders are themselves Experimenters.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
