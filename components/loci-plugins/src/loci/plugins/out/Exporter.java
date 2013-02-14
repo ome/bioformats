@@ -117,7 +117,6 @@ public class Exporter {
     Boolean splitZ = null;
     Boolean splitC = null;
     Boolean splitT = null;
-    int sizeZ = 0, sizeC = 0, sizeT = 0;
 
     if (plugin.arg != null) {
       outfile = Macro.getValue(plugin.arg, "outfile", null);
@@ -427,11 +426,11 @@ public class Exporter {
 
       String[] outputFiles = new String[] {outfile};
 
-      if (splitZ || splitC || splitT) {
-        sizeZ = store.getPixelsSizeZ(0).getValue();
-        sizeC = store.getPixelsSizeC(0).getValue();
-        sizeT = store.getPixelsSizeT(0).getValue();
+      int sizeZ = store.getPixelsSizeZ(0).getValue();
+      int sizeC = store.getPixelsSizeC(0).getValue();
+      int sizeT = store.getPixelsSizeT(0).getValue();
 
+      if (splitZ || splitC || splitT) {
         int nFiles = 1;
         if (splitZ) {
           nFiles *= sizeZ;
