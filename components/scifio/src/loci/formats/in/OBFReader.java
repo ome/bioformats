@@ -68,7 +68,8 @@ public class OBFReader extends FormatReader
 	private static final String STACK_MAGIC_STRING = "OMAS_BF_STACK\n" ;
 	private static final short MAGIC_NUMBER = (short) 0xFFFF ;
 
-	private static final int VERSION = 1 ;
+	private static final int FILE_VERSION = 1 ;
+	private static final int STACK_VERSION = 2 ;
 
 	private static final int MAXIMAL_NUMBER_OF_DIMENSIONS = 15 ;
 
@@ -110,7 +111,7 @@ public class OBFReader extends FormatReader
 			final short magicNumber = stream.readShort() ;
 			final int version = stream.readInt() ;
 
-			if (magicString.equals(FILE_MAGIC_STRING) && magicNumber == MAGIC_NUMBER && version == VERSION)
+			if (magicString.equals(FILE_MAGIC_STRING) && magicNumber == MAGIC_NUMBER && version == FILE_VERSION)
 			{
 				return true ;
 			}
@@ -194,7 +195,7 @@ public class OBFReader extends FormatReader
 		final short magicNumber = in.readShort() ;
 		final int version = in.readInt() ;
 
-		if (magicString.equals(STACK_MAGIC_STRING) && magicNumber == MAGIC_NUMBER && version == VERSION)
+		if (magicString.equals(STACK_MAGIC_STRING) && magicNumber == MAGIC_NUMBER && version <= STACK_VERSION)
 		{
 		    CoreMetadata obf = new CoreMetadata() ;
 		    core.add(obf) ;
