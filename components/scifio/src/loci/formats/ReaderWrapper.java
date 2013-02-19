@@ -473,6 +473,12 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isSingleFile(id);
   }
 
+  public int getRequiredDirectories(String[] files)
+    throws FormatException, IOException
+  {
+    return reader.getRequiredDirectories(files);
+  }
+
   public String getDatasetStructureDescription() {
     return reader.getDatasetStructureDescription();
   }

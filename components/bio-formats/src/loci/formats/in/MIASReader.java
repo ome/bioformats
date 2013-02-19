@@ -117,6 +117,43 @@ public class MIASReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#getRequiredDirectories(String[]) */
+  public int getRequiredDirectories(String[] files)
+    throws FormatException, IOException
+  {
+    StringBuffer commonParent = new StringBuffer();
+
+    int dirCount = 0;
+
+    String[] dirs = files[0].split(File.separatorChar == '/' ? "/" : "\\\\");
+    for (String dir : dirs) {
+      boolean canAppend = true;
+      for (String f : files) {
+        if (!f.startsWith(commonParent.toString() + dir)) {
+          canAppend = false;
+          break;
+        }
+      }
+
+      if (canAppend) {
+        commonParent.append(dir);
+        commonParent.append(File.separator);
+        dirCount++;
+      }
+    }
+
+    int maxDirCount = 0;
+    for (String f : files) {
+      int parentDirCount =
+        f.split(File.separatorChar == '/' ? "/" : "\\\\").length - 1;
+      if (parentDirCount > maxDirCount) {
+        maxDirCount = parentDirCount;
+      }
+    }
+
+    return (int) Math.max(3 - (maxDirCount - dirCount), 0);
+  }
+
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
