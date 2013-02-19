@@ -208,6 +208,15 @@ sorttable = {
     hasInputs = (typeof node.getElementsByTagName == 'function') &&
                  node.getElementsByTagName('input').length;
 
+    // CTR: Add support for img title and alt attributes
+    if (node.getElementsByTagName("img").length > 0) {
+      img = node.getElementsByTagName("img")[0];
+      imgTitle = img.getAttribute("title");
+      if (imgTitle != null) return imgTitle;
+      imgAlt = img.getAttribute("alt");
+      if (imgAlt != null) return imgAlt;
+    }
+
     if (node.getAttribute("sorttable_customkey") != null) {
       return node.getAttribute("sorttable_customkey");
     }
