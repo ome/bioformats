@@ -8,18 +8,18 @@ Supported Formats
 .. list-table::
    :class: sortable
    :header-rows: 1
-   :widths: 30, 20, 10, 10, 10, 10, 10, 10, 10
+   :widths: 30, 20, 2, 2, 2, 2, 2, 2, 2
 
    *
      - Format
      - Extensions
-     - :term:`Pixels`
-     - :term:`Metadata`
-     - :term:`Openness`
-     - :term:`Presence`
-     - :term:`Utility`
-     - :term:`Export`
-     - :term:`SCIFIO`
+     - .. image:: images/header-pixels.png
+     - .. image:: images/header-metadata.png
+     - .. image:: images/header-openness.png
+     - .. image:: images/header-presence.png
+     - .. image:: images/header-utility.png
+     - .. image:: images/header-export.png
+     - .. image:: images/header-scifio.png
 
    * - :doc:`formats/3i-slidebook`
      - .sld
