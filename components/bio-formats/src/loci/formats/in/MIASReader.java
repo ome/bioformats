@@ -150,7 +150,7 @@ public class MIASReader extends FormatReader {
       }
     }
 
-    return (int) Math.max(4 - (maxDirCount - dirCount), 0);
+    return (int) Math.max(3 - (maxDirCount - dirCount), 0);
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
