@@ -85,6 +85,16 @@ public class ImarisHDFReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    return core.get(core.size() - 1).sizeX;
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    return core.get(core.size() - 1).sizeY;
+  }
+
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
@@ -146,7 +156,7 @@ public class ImarisHDFReader extends FormatReader {
 
     // pixel data is stored in XYZ blocks
 
-    Object image = getImageData(no, y, h);
+    Object image = getImageData(no, x, y, w, h);
 
     boolean big = !isLittleEndian();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -155,27 +165,27 @@ public class ImarisHDFReader extends FormatReader {
       if (image instanceof byte[][]) {
         byte[][] data = (byte[][]) image;
         byte[] rowData = data[row];
-        System.arraycopy(rowData, x, buf, row*w, w);
+        System.arraycopy(rowData, 0, buf, row*w, w);
       }
       else if (image instanceof short[][]) {
         short[][] data = (short[][]) image;
         short[] rowData = data[row];
         for (int i=0; i<w; i++) {
-          DataTools.unpackBytes(rowData[i + x], buf, base + 2*i, 2, big);
+          DataTools.unpackBytes(rowData[i], buf, base + 2*i, 2, big);
         }
       }
       else if (image instanceof int[][]) {
         int[][] data = (int[][]) image;
         int[] rowData = data[row];
         for (int i=0; i<w; i++) {
-          DataTools.unpackBytes(rowData[i + x], buf, base + i*4, 4, big);
+          DataTools.unpackBytes(rowData[i], buf, base + i*4, 4, big);
         }
       }
       else if (image instanceof float[][]) {
         float[][] data = (float[][]) image;
         float[] rowData = data[row];
         for (int i=0; i<w; i++) {
-          int v = Float.floatToIntBits(rowData[i + x]);
+          int v = Float.floatToIntBits(rowData[i]);
           DataTools.unpackBytes(v, buf, base + i*4, 4, big);
         }
       }
@@ -183,7 +193,7 @@ public class ImarisHDFReader extends FormatReader {
         double[][] data = (double[][]) image;
         double[] rowData = data[row];
         for (int i=0; i<w; i++) {
-          long v = Double.doubleToLongBits(rowData[i + x]);
+          long v = Double.doubleToLongBits(rowData[i]);
           DataTools.unpackBytes(v, buf, base + i * 8, 8, big);
         }
       }
@@ -277,7 +287,7 @@ public class ImarisHDFReader extends FormatReader {
 
     int type = -1;
 
-    Object pix = getImageData(0, 0, 1);
+    Object pix = getImageData(0, 0, 0, 1, 1);
     if (pix instanceof byte[][]) type = FormatTools.UINT8;
     else if (pix instanceof short[][]) type = FormatTools.UINT16;
     else if (pix instanceof int[][]) type = FormatTools.UINT32;
@@ -407,7 +417,7 @@ public class ImarisHDFReader extends FormatReader {
 
   // -- Helper methods --
 
-  private Object getImageData(int no, int y, int height)
+  private Object getImageData(int no, int x, int y, int width, int height)
     throws FormatException
   {
     int[] zct = getZCTCoords(no);
@@ -420,9 +430,12 @@ public class ImarisHDFReader extends FormatReader {
     if (height == 1) {
       height++;
     }
+    if (width == 1) {
+      width++;
+    }
 
-    int[] dimensions = new int[] {1, height, getSizeX()};
-    int[] indices = new int[] {zct[0], y, 0};
+    int[] dimensions = new int[] {1, height, width};
+    int[] indices = new int[] {zct[0], y, x};
     try {
       image = netcdf.getArray(path, indices, dimensions);
     }
