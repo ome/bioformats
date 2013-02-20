@@ -105,6 +105,10 @@ public class ICSWriter extends FormatWriter {
     String order = meta.getPixelsDimensionOrder(series).getValue();
     int sizeZ = meta.getPixelsSizeZ(series).getValue().intValue();
     int sizeC = meta.getChannelCount(series);
+    if (rgbChannels <= sizeC) {
+      sizeC /= rgbChannels;
+    }
+
     int sizeT = meta.getPixelsSizeT(series).getValue().intValue();
     int planes = sizeZ * sizeC * sizeT;
 
