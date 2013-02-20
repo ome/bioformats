@@ -161,39 +161,44 @@ public class ImarisHDFReader extends FormatReader {
     boolean big = !isLittleEndian();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     for (int row=0; row<h; row++) {
-      int base = row * w * bpp;
+      int rowlen = w * bpp;
+      int base = row * rowlen;
       if (image instanceof byte[][]) {
         byte[][] data = (byte[][]) image;
-        byte[] rowData = data[row];
-        System.arraycopy(rowData, 0, buf, row*w, w);
+        byte[] rowData = data[row + data.length - h];
+        System.arraycopy(rowData, rowData.length - w, buf, base, w);
       }
       else if (image instanceof short[][]) {
         short[][] data = (short[][]) image;
-        short[] rowData = data[row];
+        short[] rowData = data[row + data.length - h];
+        int index = rowData.length - w;
         for (int i=0; i<w; i++) {
-          DataTools.unpackBytes(rowData[i], buf, base + 2*i, 2, big);
+          DataTools.unpackBytes(rowData[i + index], buf, base + 2*i, 2, big);
         }
       }
       else if (image instanceof int[][]) {
         int[][] data = (int[][]) image;
-        int[] rowData = data[row];
+        int[] rowData = data[row + data.length - h];
+        int index = rowData.length - w;
         for (int i=0; i<w; i++) {
-          DataTools.unpackBytes(rowData[i], buf, base + i*4, 4, big);
+          DataTools.unpackBytes(rowData[i + index], buf, base + i*4, 4, big);
         }
       }
       else if (image instanceof float[][]) {
         float[][] data = (float[][]) image;
-        float[] rowData = data[row];
+        float[] rowData = data[row + data.length - h];
+        int index = rowData.length - w;
         for (int i=0; i<w; i++) {
-          int v = Float.floatToIntBits(rowData[i]);
+          int v = Float.floatToIntBits(rowData[i + index]);
           DataTools.unpackBytes(v, buf, base + i*4, 4, big);
         }
       }
       else if (image instanceof double[][]) {
         double[][] data = (double[][]) image;
-        double[] rowData = data[row];
+        double[] rowData = data[row + data.length - h];
+        int index = rowData.length - w;
         for (int i=0; i<w; i++) {
-          long v = Double.doubleToLongBits(rowData[i]);
+          long v = Double.doubleToLongBits(rowData[i + index]);
           DataTools.unpackBytes(v, buf, base + i * 8, 8, big);
         }
       }
@@ -432,6 +437,10 @@ public class ImarisHDFReader extends FormatReader {
     }
     if (width == 1) {
       width++;
+    }
+    if (x >= getSizeX() / 2 && y >= getSizeY() / 2) {
+      width += x - (getSizeX() / 2) + 1;
+      x = (getSizeX() / 2) - 1;
     }
 
     int[] dimensions = new int[] {1, height, width};
