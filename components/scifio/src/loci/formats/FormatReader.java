@@ -1155,6 +1155,13 @@ public abstract class FormatReader extends FormatHandler
     return true;
   }
 
+  /* @see IFormatReader#getRequiredDirectories(String[]) */
+  public int getRequiredDirectories(String[] files)
+    throws FormatException, IOException
+  {
+    return 0;
+  }
+
   /* @see IFormatReader#getDatasetStructureDescription() */
   public String getDatasetStructureDescription() {
     return datasetDescription;

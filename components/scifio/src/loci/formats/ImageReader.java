@@ -636,6 +636,13 @@ public class ImageReader implements IFormatReader {
     return getReader(id).isSingleFile(id);
   }
 
+  /* @see IFormatReader#getRequiredDirectories(String[]) */
+  public int getRequiredDirectories(String[] files)
+    throws FormatException, IOException
+  {
+    return getReader(files[0]).getRequiredDirectories(files);
+  }
+
   /* @see IFormatReader#getDatasetStructureDescription() */
   public String getDatasetStructureDescription() {
     return getReader().getDatasetStructureDescription();
