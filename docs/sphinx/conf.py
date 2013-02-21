@@ -287,19 +287,19 @@ htmlhelp_basename = 'Bio-Formatsdoc'
 # -- Options for LaTeX output --------------------------------------------------
 
 latex_elements = {
-  'classoptions': ',oneside',
-  'babel': '\\usepackage[english]{babel}',
-  'printindex': '\\phantomsection \
-   \\addcontentsline{toc}{part}{\indexname} \
-   \\printindex'
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
-
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
-
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    'classoptions': ',oneside',
+    'pointsize': '12pt',
+    'inputenc': '%% Unused',
+    'utf8extra': '%% Unused',
+    'fontenc' : '%% Unused',
+    'fontpkg': '%% Unused',
+    'babel': '%% Unused',
+    'printindex': '''\\phantomsection
+\\addcontentsline{toc}{part}{\indexname}
+\\printindex''',
+    'preamble': '''
+\input{../../preamble.tex}
+''',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
