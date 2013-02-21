@@ -434,9 +434,15 @@ public class ImarisHDFReader extends FormatReader {
     // singleton instead of an array
     if (height == 1) {
       height++;
+      if (y == getSizeY() - 1) {
+        y--;
+      }
     }
     if (width == 1) {
       width++;
+      if (x == getSizeX() - 1) {
+        x--;
+      }
     }
     if (x >= getSizeX() / 2 && y >= getSizeY() / 2) {
       width += x - (getSizeX() / 2) + 1;
