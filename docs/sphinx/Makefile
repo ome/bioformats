@@ -104,8 +104,19 @@ latex:
 
 latexpdf:
 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
-	@echo "Running LaTeX files through pdflatex..."
-	$(MAKE) -C $(BUILDDIR)/latex all-pdf
+	@echo "Running LaTeX files through xelatex..."
+
+	for file in "$(BUILDDIR)/latex"/*.tex; do \
+	    file=$$(basename "$$file"); \
+	    cd "$(BUILDDIR)/latex" && \
+	    xelatex $(LATEXOPTS) "$$file" && \
+	    xelatex $(LATEXOPTS) "$$file" && \
+	    xelatex $(LATEXOPTS) "$$file" && \
+	    makeindex -s python.ist "$${file%.tex}.idx" && \
+	    xelatex $(LATEXOPTS) "$$file" && \
+	    xelatex $(LATEXOPTS) "$$file"; \
+	done
+
 	@echo "pdflatex finished; the PDF files are in $(BUILDDIR)/latex."
 
 text:
