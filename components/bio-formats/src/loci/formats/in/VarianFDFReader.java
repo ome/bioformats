@@ -210,8 +210,12 @@ public class VarianFDFReader extends FormatReader {
     CoreMetadata m = core.get(0);
     boolean storedFloats = false;
     boolean multifile = false;
-    while (true) {
-      String line = in.readLine().trim();
+
+    String data = in.readString(Character.toString((char) 0x0c));
+    String[] lines = data.split("\n");
+
+    for (String line : lines) {
+      line = line.trim();
       if (line.length() == 0) break;
       if (line.startsWith("#")) continue;
 

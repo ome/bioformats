@@ -83,6 +83,7 @@ public class NRRDReader extends FormatReader {
   private String[] pixelSizes;
 
   private boolean lookForCompanion = true;
+  private boolean initializeHelper = false;
 
   // -- Constructor --
 
@@ -158,6 +159,10 @@ public class NRRDReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    if (initializeHelper && dataFile != null) {
+      helper.setId(dataFile);
+    }
+
     // TODO : add support for additional encoding types
     if (dataFile == null) {
       if (encoding.equals("raw")) {
@@ -179,6 +184,7 @@ public class NRRDReader extends FormatReader {
       s.close();
       return buf;
     }
+
     return helper.openBytes(no, buf, x, y, w, h);
   }
 
@@ -191,6 +197,7 @@ public class NRRDReader extends FormatReader {
       dataFile = encoding = null;
       offset = 0;
       pixelSizes = null;
+      initializeHelper = false;
     }
   }
 
@@ -224,6 +231,8 @@ public class NRRDReader extends FormatReader {
       }
     }
     helper = new ImageReader(newClasses);
+    helper.setMetadataOptions(
+      new DefaultMetadataOptions(MetadataLevel.MINIMUM));
 
     String key, v;
 
@@ -320,9 +329,7 @@ public class NRRDReader extends FormatReader {
         dataFile = dataFile.substring(dataFile.indexOf(File.separator) + 1);
         dataFile = new Location(parent, dataFile).getAbsolutePath();
       }
-      if (!encoding.equals("raw")) {
-        helper.setId(dataFile);
-      }
+      initializeHelper = !encoding.equals("raw");
     }
 
     m.rgb = getSizeC() > 1;
