@@ -35,7 +35,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -54,6 +53,7 @@ public class CanonRawReader extends FormatReader {
 
   // -- Fields --
 
+  private short[] pix;
   private byte[] plane;
 
   // -- Constructor --
@@ -81,6 +81,12 @@ public class CanonRawReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    if (plane == null) {
+      plane = new byte[FormatTools.getPlaneSize(this)];
+      ImageTools.interpolate(
+        pix, plane, COLOR_MAP, getSizeX(), getSizeY(), isLittleEndian());
+    }
+
     RandomAccessInputStream s = new RandomAccessInputStream(plane);
     readPlane(s, x, y, w, h, buf);
     s.close();
@@ -93,6 +99,7 @@ public class CanonRawReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       plane = null;
+      pix = null;
     }
   }
 
@@ -129,35 +136,43 @@ public class CanonRawReader extends FormatReader {
     m.rgb = true;
     m.interleaved = true;
 
-    BitBuffer bb = new BitBuffer(pixBuffer);
-    plane = new byte[FormatTools.getPlaneSize(this)];
-    short[] pix = new short[getSizeX() * getSizeY() * 3];
+    pix = new short[getSizeX() * getSizeY() * 3];
+
+    int nextByte = 0;
+    boolean even = true;
+
+    int plane = getSizeX() * getSizeY();
 
     for (int row=0; row<getSizeY(); row++) {
+      int rowOffset = row * getSizeX();
       for (int col=0; col<getSizeX(); col++) {
-        short val = (short) (bb.getBits(12) & 0xffff);
-        int mapIndex = (row % 2) * 2 + (col % 2);
+        int v = 0;
+        if (even) {
+          v = (pixBuffer[nextByte++] & 0xff) << 4 |
+            ((pixBuffer[nextByte] & 0xf0) >> 4);
+        }
+        else {
+          v = ((pixBuffer[nextByte++] & 0xf) << 8) |
+            (pixBuffer[nextByte++] & 0xff);
+        }
+        short val = (short) (v & 0xffff);
+        even = !even;
 
-        int redOffset = row * getSizeX() + col;
-        int greenOffset = (getSizeY() + row) * getSizeX() + col;
-        int blueOffset = (2 * getSizeY() + row) * getSizeX() + col;
+        int mapIndex = (row % 2) * 2 + (col % 2);
 
         switch (COLOR_MAP[mapIndex]) {
           case 0:
-            pix[redOffset] = val;
+            pix[rowOffset + col] = val;
             break;
           case 1:
-            pix[greenOffset] = val;
+            pix[plane + rowOffset + col] = val;
             break;
           case 2:
-            pix[blueOffset] = val;
+            pix[2 * plane + rowOffset + col] = val;
             break;
         }
       }
     }
-
-    ImageTools.interpolate(
-      pix, plane, COLOR_MAP, getSizeX(), getSizeY(), isLittleEndian());
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
