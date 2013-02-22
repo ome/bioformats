@@ -87,7 +87,7 @@ public class OBFReader extends FormatReader
 		int series ;
 		int number ;
 	}
-	private Frame currentFrame = new Frame() ;
+	private Frame currentInflatedFrame = new Frame() ;
 	
 	private Inflater inflater = new Inflater() ;
 
@@ -99,7 +99,7 @@ public class OBFReader extends FormatReader
 		datasetDescription = "OBF file" ;
 	}
 
-	public boolean isThisType(RandomAccessInputStream stream) throws IOException 
+	private int getFileVersion(RandomAccessInputStream stream) throws IOException
 	{
 		stream.seek(0) ;
 
@@ -111,83 +111,85 @@ public class OBFReader extends FormatReader
 			final short magicNumber = stream.readShort() ;
 			final int version = stream.readInt() ;
 
-			if (magicString.equals(FILE_MAGIC_STRING) && magicNumber == MAGIC_NUMBER && version == FILE_VERSION)
+			if (magicString.equals(FILE_MAGIC_STRING) && magicNumber == MAGIC_NUMBER)
 			{
-				return true ;
+				return version ;
 			}
 		}
 		catch(IOException exception) { }
 
-		return false ;
+		return - 1 ;
+	}
+	
+	public boolean isThisType(RandomAccessInputStream stream) throws IOException
+	{
+		final int fileVersion = getFileVersion(stream) ;
+		
+		return fileVersion >= 0 && fileVersion <= FILE_VERSION ;
 	}
 
 	protected void initFile(String id) throws FormatException, IOException
 	{
 		super.initFile(id) ;
 		
-		currentFrame.series = - 1 ;
-		currentFrame.number = - 1 ;
+		currentInflatedFrame.series = - 1 ;
+		currentInflatedFrame.number = - 1 ;
 		
 		in = new RandomAccessInputStream(id) ;
 		
-		if (isThisType(in))
+		final int fileVersion = getFileVersion(in) ;
+
+		long stackPosition = in.readLong() ;
+
+		final int lengthOfDescription = in.readInt() ;
+		final String description = in.readString(lengthOfDescription) ;
+		metadata.put("Description", description) ;
+
+		if (stackPosition != 0)
 		{
-			long stackPosition = in.readLong() ;
-
-			final int lengthOfDescription = in.readInt() ;
-			final String description = in.readString(lengthOfDescription) ;
-			metadata.put("Description", description) ;
-
-			if (stackPosition != 0)
+			core.clear() ;
+			do
 			{
-				core.clear() ;
-				do
-				{
-					stackPosition = initStack(stackPosition) ;
-				}
-				while (stackPosition != 0) ;
+				stackPosition = initStack(stackPosition, fileVersion) ;
 			}
-
-			MetadataStore ome = makeFilterMetadata() ;
-			MetadataTools.populatePixels(ome, this) ;
-
-			for (int series = 0 ; series != core.size() ; ++ series)
-			{
-				CoreMetadata obf = core.get(series) ;
-				
-				final String name = obf.seriesMetadata.get("Name").toString() ;
-				ome.setImageName(name, series) ;
-				
-				@SuppressWarnings("unchecked")
-				final List<Double> lengths = (List<Double>) obf.seriesMetadata.get("Lengths") ;
-				
-				final double lengthX = Math.abs(lengths.get(0)) ;
-				if (lengthX > 0)
-				{
-					final PositiveFloat physicalSizeX = new PositiveFloat( lengthX / obf.sizeX ) ;
-					ome.setPixelsPhysicalSizeX(physicalSizeX, series) ;
-				}
-				final double lengthY = Math.abs(lengths.get(1)) ;
-				if (lengthY > 0)
-				{
-					final PositiveFloat physicalSizeY = new PositiveFloat( lengthY / obf.sizeY ) ;
-					ome.setPixelsPhysicalSizeY(physicalSizeY, series) ;
-				}
-				final double lengthZ = Math.abs(lengths.get(2)) ;
-				if (lengthZ > 0)
-				{
-					final PositiveFloat physicalSizeZ = new PositiveFloat( lengthZ / obf.sizeZ ) ;
-					ome.setPixelsPhysicalSizeZ(physicalSizeZ, series) ;
-				}
-			}
+			while (stackPosition != 0) ;
 		}
-		else
+
+		MetadataStore ome = makeFilterMetadata() ;
+		MetadataTools.populatePixels(ome, this) ;
+
+		for (int series = 0 ; series != core.size() ; ++ series)
 		{
-			throw new IOException("File has been corrupted") ;
+			CoreMetadata obf = core.get(series) ;
+
+			final String name = obf.seriesMetadata.get("Name").toString() ;
+			ome.setImageName(name, series) ;
+
+			@SuppressWarnings("unchecked")
+			final List<Double> lengths = (List<Double>) obf.seriesMetadata.get("Lengths") ;
+
+			final double lengthX = Math.abs(lengths.get(0)) ;
+			if (lengthX > 0)
+			{
+				final PositiveFloat physicalSizeX = new PositiveFloat( lengthX / obf.sizeX ) ;
+				ome.setPixelsPhysicalSizeX(physicalSizeX, series) ;
+			}
+			final double lengthY = Math.abs(lengths.get(1)) ;
+			if (lengthY > 0)
+			{
+				final PositiveFloat physicalSizeY = new PositiveFloat( lengthY / obf.sizeY ) ;
+				ome.setPixelsPhysicalSizeY(physicalSizeY, series) ;
+			}
+			final double lengthZ = Math.abs(lengths.get(2)) ;
+			if (lengthZ > 0)
+			{
+				final PositiveFloat physicalSizeZ = new PositiveFloat( lengthZ / obf.sizeZ ) ;
+				ome.setPixelsPhysicalSizeZ(physicalSizeZ, series) ;
+			}
 		}
 	}
 
-	private long initStack(long current) throws FormatException, IOException
+	private long initStack(long current, int fileVersion) throws FormatException, IOException
 	{
 		in.seek(current) ;
 
@@ -197,11 +199,11 @@ public class OBFReader extends FormatReader
 
 		if (magicString.equals(STACK_MAGIC_STRING) && magicNumber == MAGIC_NUMBER && version <= STACK_VERSION)
 		{
-		    CoreMetadata obf = new CoreMetadata() ;
-		    core.add(obf) ;
+			CoreMetadata obf = new CoreMetadata() ;
+			core.add(obf) ;
 
 			obf.littleEndian = LITTLE_ENDIAN ;
-			
+
 			obf.thumbnail = false ;
 
 			final int numberOfDimensions = in.readInt() ;
@@ -225,7 +227,7 @@ public class OBFReader extends FormatReader
 
 			obf.imageCount = sizes[2] * sizes[3] * sizes[4] ;
 			obf.dimensionOrder = "XYZCT" ;
-		    obf.orderCertain = false ;
+			obf.orderCertain = false ;
 
 			List<Double> lengths = new ArrayList<Double>() ;
 			for (int dimension = 0 ; dimension != MAXIMAL_NUMBER_OF_DIMENSIONS ; ++ dimension)
@@ -261,96 +263,98 @@ public class OBFReader extends FormatReader
 
 			final int compression = in.readInt() ;
 			stack.compression = getCompression(compression) ;
-			
+
 			in.skipBytes(4) ;
 
 			final int lengthOfName = in.readInt() ;
 			final int lengthOfDescription = in.readInt() ;
 
 			in.skipBytes(8) ;
-			
+
 			final long lengthOfData = in.readLong() ;
 			stack.length = getLength(lengthOfData) ;
-			
+
 			final long next = in.readLong() ;
 
 			final String name = in.readString(lengthOfName) ;
 			obf.seriesMetadata.put("Name", name) ;
 			final String description = in.readString(lengthOfDescription) ;
 			obf.seriesMetadata.put("Description", description) ;
-			
+
 			stack.position = in.getFilePointer() ;
-			
+
 			stacks.add(stack) ;
-			
-			in.skip(lengthOfData) ;
-			
-			final long footer = in.getFilePointer() ;
-			final int offset = in.readInt() ;
 
-			List<Boolean> stepsPresent = new ArrayList<Boolean>() ;
-			for (int dimension = 0 ; dimension != MAXIMAL_NUMBER_OF_DIMENSIONS ; ++ dimension)
+			if (fileVersion >= 1)
 			{
-				final int present = in.readInt() ;
-				if (dimension < numberOfDimensions)
+				in.skip(lengthOfData) ;
+
+				final long footer = in.getFilePointer() ;
+				final int offset = in.readInt() ;
+
+				List<Boolean> stepsPresent = new ArrayList<Boolean>() ;
+				for (int dimension = 0 ; dimension != MAXIMAL_NUMBER_OF_DIMENSIONS ; ++ dimension)
 				{
-					stepsPresent.add(new Boolean(present != 0)) ;
-				}
-			}
-			List<Boolean> stepLabelsPresent = new ArrayList<Boolean>() ;
-			for (int dimension = 0 ; dimension != MAXIMAL_NUMBER_OF_DIMENSIONS ; ++ dimension)
-			{
-				final int present = in.readInt() ;
-				if (dimension < numberOfDimensions)
-				{
-					stepLabelsPresent.add(new Boolean(present != 0)) ;
-				}
-			}
-
-			in.seek(footer + offset) ;
-
-			List<String> labels = new ArrayList<String>() ;
-			for (int dimension = 0 ; dimension != numberOfDimensions ; ++ dimension)
-			{
-				final int length = in.readInt() ;
-				final String label = in.readString(length) ;
-				labels.add(label) ;
-			}
-			obf.seriesMetadata.put("Labels", labels) ;
-
-			List<List<Double>> steps = new ArrayList<List<Double>>() ;
-			for (int dimension = 0 ; dimension != numberOfDimensions ; ++ dimension)
-			{
-				List<Double> list = new ArrayList<Double>() ;
-				if (stepsPresent.get(dimension))
-				{
-					for (int position = 0 ; position != sizes[dimension] ; ++ position)
+					final int present = in.readInt() ;
+					if (dimension < numberOfDimensions)
 					{
-						final double step = in.readDouble() ;
-						list.add(new Double(step)) ;
+						stepsPresent.add(new Boolean(present != 0)) ;
 					}
 				}
-				steps.add(list) ;
-			}
-			obf.seriesMetadata.put("Steps", steps) ;
-
-			List<List<String>> stepLabels = new ArrayList<List<String>>() ;
-			for (int dimension = 0 ; dimension != numberOfDimensions ; ++ dimension)
-			{
-				List<String> list = new ArrayList<String>() ;
-				if (stepLabelsPresent.get(dimension))
+				List<Boolean> stepLabelsPresent = new ArrayList<Boolean>() ;
+				for (int dimension = 0 ; dimension != MAXIMAL_NUMBER_OF_DIMENSIONS ; ++ dimension)
 				{
-					for (int position = 0 ; position != sizes[dimension] ; ++ position)
+					final int present = in.readInt() ;
+					if (dimension < numberOfDimensions)
 					{
-						final int length = in.readInt() ;
-						final String label = in.readString(length) ;
-						list.add(label) ;
+						stepLabelsPresent.add(new Boolean(present != 0)) ;
 					}
 				}
-				stepLabels.add(list) ;
-			}
-			obf.seriesMetadata.put("StepLabels", stepLabels) ;
 
+				in.seek(footer + offset) ;
+
+				List<String> labels = new ArrayList<String>() ;
+				for (int dimension = 0 ; dimension != numberOfDimensions ; ++ dimension)
+				{
+					final int length = in.readInt() ;
+					final String label = in.readString(length) ;
+					labels.add(label) ;
+				}
+				obf.seriesMetadata.put("Labels", labels) ;
+
+				List<List<Double>> steps = new ArrayList<List<Double>>() ;
+				for (int dimension = 0 ; dimension != numberOfDimensions ; ++ dimension)
+				{
+					List<Double> list = new ArrayList<Double>() ;
+					if (stepsPresent.get(dimension))
+					{
+						for (int position = 0 ; position != sizes[dimension] ; ++ position)
+						{
+							final double step = in.readDouble() ;
+							list.add(new Double(step)) ;
+						}
+					}
+					steps.add(list) ;
+				}
+				obf.seriesMetadata.put("Steps", steps) ;
+
+				List<List<String>> stepLabels = new ArrayList<List<String>>() ;
+				for (int dimension = 0 ; dimension != numberOfDimensions ; ++ dimension)
+				{
+					List<String> list = new ArrayList<String>() ;
+					if (stepLabelsPresent.get(dimension))
+					{
+						for (int position = 0 ; position != sizes[dimension] ; ++ position)
+						{
+							final int length = in.readInt() ;
+							final String label = in.readString(length) ;
+							list.add(label) ;
+						}
+					}
+					stepLabels.add(list) ;
+				}
+				obf.seriesMetadata.put("StepLabels", stepLabels) ;
+			}
 			return next ;
 		}
 		else
@@ -419,36 +423,36 @@ public class OBFReader extends FormatReader
 	{
 		FormatTools.checkPlaneParameters(this, no, buffer.length, x, y, w, h) ;
 
-		final int columns = getSizeX() ;
 		final int rows = getSizeY() ;
+		final int columns = getSizeX() ;
 		final int bytesPerPixel = getBitsPerPixel() / 8 ;
 		
 		final int series = getSeries() ;
-		if (series != currentFrame.series)
+		final Stack stack = stacks.get(series) ;
+		if (stack.compression)
 		{
-			currentFrame.bytes = new byte[rows * columns * bytesPerPixel] ;
-			currentFrame.series = series ;
-			currentFrame.number = - 1 ;
-		}
-
-		byte[] bytes = currentFrame.bytes ;
-		if (no != currentFrame.number)
-		{
-			final Stack stack = stacks.get(series) ;
-			if (stack.compression)
+			if (series != currentInflatedFrame.series)
 			{
-				if (no < currentFrame.number)
+				currentInflatedFrame.bytes = new byte[rows * columns * bytesPerPixel] ;
+				currentInflatedFrame.series = series ;
+				currentInflatedFrame.number = - 1 ;
+			}
+
+			byte[] bytes = currentInflatedFrame.bytes ;
+			if (no != currentInflatedFrame.number)
+			{
+				if (no < currentInflatedFrame.number)
 				{
-					currentFrame.number = - 1 ;
+					currentInflatedFrame.number = - 1 ;
 				}
-				if (currentFrame.number == - 1)
+				if (currentInflatedFrame.number == - 1)
 				{
 					in.seek(stack.position) ;
 					inflater.reset() ;
 				}
 				
 				byte[] input = new byte[8192] ;
-				while (no != currentFrame.number)
+				while (no != currentInflatedFrame.number)
 				{
 					int offset = 0 ;
 					while (offset != bytes.length)
@@ -481,19 +485,21 @@ public class OBFReader extends FormatReader
 							throw new FormatException(exception.getMessage()) ;
 						}
 					}
-					++ currentFrame.number ;
+					++ currentInflatedFrame.number ;
 				}
 			}
-			else
+			for (int row = 0 ; row != h ; ++ row)
 			{
-				in.seek(stack.position + no * rows * columns * bytesPerPixel) ;
-				in.read(bytes, 0, rows * columns * bytesPerPixel) ;
-				currentFrame.number = no ;
+				System.arraycopy(bytes, ((row + y) * columns + x) * bytesPerPixel, buffer, row * w * bytesPerPixel, w * bytesPerPixel) ;
 			}
 		}
-		for (int row = 0 ; row != h ; ++ row)
+		else
 		{
-			System.arraycopy(bytes, ((row + y) * columns + x) * bytesPerPixel, buffer, row * w * bytesPerPixel, w * bytesPerPixel) ;
+			for (int row = 0 ; row != h ; ++ row)
+			{
+				in.seek(stack.position + ((no * rows + row + y) * columns + x) * bytesPerPixel) ;
+				in.read(buffer, row * w * bytesPerPixel, w * bytesPerPixel) ;
+			}
 		}
 		
 		return buffer ;
