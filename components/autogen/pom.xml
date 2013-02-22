@@ -43,6 +43,12 @@
       <artifactId>velocity</artifactId>
       <version>1.6.4</version>
     </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.12.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <properties>

@@ -43,7 +43,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import loci.formats.tools.ImageInfo;
+//import loci.formats.tools.ImageInfo;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -479,6 +479,7 @@ public class OmeroReader extends FormatReader {
     }
     omeroReader.close();
 
+    /*
     // delegate the heavy lifting to Bio-Formats ImageInfo utility
     final ImageInfo imageInfo = new ImageInfo();
     imageInfo.setReader(omeroReader); // override default image reader
@@ -491,6 +492,7 @@ public class OmeroReader extends FormatReader {
       omeroReader.close();
       System.exit(1);
     }
+    */
   }
 
 }
