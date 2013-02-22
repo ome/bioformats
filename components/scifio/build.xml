@@ -25,8 +25,6 @@ Type "ant -p" for a list of targets.
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
-        <pathelement path="${lib.dir}/slf4j-log4j12-1.5.10.jar"/>
-        <pathelement path="${lib.dir}/log4j-1.2.15.jar"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-Dlurawave.license=XXX"/>
@@ -42,8 +40,6 @@ Type "ant -p" for a list of targets.
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.cp.no-lurawave}"/>
-        <pathelement path="${lib.dir}/slf4j-log4j12-1.5.10.jar"/>
-        <pathelement path="${lib.dir}/log4j-1.2.15.jar"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -60,8 +56,6 @@ Type "ant -p" for a list of targets.
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.cp.no-jai}"/>
-        <pathelement path="${lib.dir}/slf4j-log4j12-1.5.10.jar"/>
-        <pathelement path="${lib.dir}/log4j-1.2.15.jar"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
@@ -78,8 +72,6 @@ Type "ant -p" for a list of targets.
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.cp.no-xml}"/>
-        <pathelement path="${lib.dir}/slf4j-log4j12-1.5.10.jar"/>
-        <pathelement path="${lib.dir}/log4j-1.2.15.jar"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
