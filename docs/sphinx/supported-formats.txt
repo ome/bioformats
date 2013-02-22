@@ -3,6 +3,10 @@ Supported Formats
 
 :term:`Ratings legend and definitions`
 
+.. only:: html
+
+    You can sort this table by clicking on any of the headings.
+
 .. tabularcolumns:: |p{3cm}|p{2cm}|c|c|c|c|c|c|c|
 
 .. list-table::
