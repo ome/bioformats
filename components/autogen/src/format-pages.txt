@@ -314,7 +314,6 @@ notes = * Commercial applications that support this format include: \n
   * `SVI Huygens <http://svi.nl/>`_
 
 [Bitplane Imaris]
-metadataPage = 
 extensions = .ims
 owner = `Bitplane <http://www.bitplane.com/>`_
 scifio = no
@@ -333,7 +332,7 @@ metadataRating = Very good
 opennessRating = Good
 presenceRating = Fair
 utilityRating = Fair
-reader = ImarisReader.java, ImarisTiffReader.java, ImarisHDFReader.java
+reader = ImarisHDFReader.java, ImarisTiffReader.java, ImarisReader.java
 notes = - There are three distinct Imaris formats: \n
     #. the old binary format (introduced in Imaris version 2.7) \n
     #. Imaris 3, a TIFF variant (introduced in Imaris version 3.0) \n
