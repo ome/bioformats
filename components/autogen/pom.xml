@@ -57,6 +57,13 @@
       <version>1.5.10</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.12.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <properties>

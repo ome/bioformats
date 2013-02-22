@@ -8,11 +8,11 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>pom-scifio</artifactId>
-    <version>4.5-SNAPSHOT</version>
+    <version>4.4.6-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>scifio</artifactId>
+  <artifactId>scifio-tools</artifactId>
 
   <name>SCIFIO</name>
   <description>SCientific Image Format Input and Output: an open source
@@ -24,6 +24,7 @@
   <licenses>
     <license>
       <name>Simplified BSD License</name>
+      <url>${license.server}/scifio/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -36,7 +37,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci-legacy</artifactId>
+      <artifactId>loci-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -50,8 +51,8 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>scifio-devel</artifactId>
+      <groupId>${project.groupId}</groupid>
+      <artifactId>scifio</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -67,6 +68,19 @@
 
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
 
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.5.10</version>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>xalan</groupId>
@@ -88,49 +102,7 @@
       <version>5.12.1</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
-
-  <properties>
-    <project.rootdir>${basedir}/../..</project.rootdir>
-  </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>test/loci/formats/utests/testng.xml</suiteXmlFile>
-          </suiteXmlFiles>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>loci.maven.plugins</groupId>
-        <artifactId>cppwrap-maven-plugin</artifactId>
-        <version>1.1.1</version>
-        <configuration>
-          <headerFile>cppwrap/header.txt</headerFile>
-          <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
-          <coreFile>cppwrap/core.txt</coreFile>
-          <sourceDir>cppwrap</sourceDir>
-          <libraries>
-            <library>${project.groupId}:ome-xml:jar:${project.version}</library>
-            <library>${project.groupId}:loci-legacy:jar:${project.version}</library>
-            <library>${project.groupId}:scifio-devel:jar:${project.version}</library>
-          </libraries>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <configuration>
-          <licenseName>scifio</licenseName>
-          <projectName>OME SCIFIO package for reading and converting scientific file formats.</projectName>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <developers>
     <developer>

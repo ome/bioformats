@@ -34,13 +34,6 @@
     </dependency>
 
     <dependency>
-      <!-- NB: We want this, despite warning from dependency:analyze. -->
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.14</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <version>5.12.1</version>
