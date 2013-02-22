@@ -507,6 +507,10 @@ public class OBFReader extends FormatReader
 
 	public void close(boolean fileOnly) throws IOException
 	{
+		stacks = new ArrayList<Stack>() ;
+		currentInflatedFrame = new Frame() ;
+		inflater = new Inflater() ;
+		
 		super.close(fileOnly) ;
 	}
 }
