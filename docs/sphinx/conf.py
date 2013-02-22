@@ -288,7 +288,7 @@ htmlhelp_basename = 'Bio-Formatsdoc'
 
 latex_elements = {
     'classoptions': ',oneside',
-    'pointsize': '12pt',
+    'pointsize': '10pt',
     'inputenc': '%% Unused',
     'utf8extra': '%% Unused',
     'fontenc' : '%% Unused',
