@@ -2,7 +2,7 @@
  * #%L
  * Bio-Formats plugin for the Insight Toolkit.
  * %%
- * Copyright (C) 2010 - 2012 Insight Software Consortium, and Open Microscopy
+ * Copyright (C) 2010 - 2013 Insight Software Consortium, and Open Microscopy
  * Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
@@ -132,10 +132,10 @@ int main(int, char * argv[])
 //     time4.Stop();
     
   std::cout << std::setprecision(3)
-    << time.GetMeanTime() << "\t" 
-    << time2.GetMeanTime() << "\t" 
-//     << time3.GetMeanTime() << "\t" 
-//     << time4.GetMeanTime() << "\t" 
+    << time.GetMean() << "\t" 
+    << time2.GetMean() << "\t" 
+//     << time3.GetMean() << "\t" 
+//     << time4.GetMean() << "\t" 
     << std::endl;  
     }
 

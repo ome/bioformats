@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -471,6 +471,12 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return reader.isSingleFile(id);
+  }
+
+  public int getRequiredDirectories(String[] files)
+    throws FormatException, IOException
+  {
+    return reader.getRequiredDirectories(files);
   }
 
   public String getDatasetStructureDescription() {

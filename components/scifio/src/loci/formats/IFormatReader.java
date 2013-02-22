@@ -2,7 +2,7 @@
  * #%L
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -484,6 +484,22 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   /** Returns true if this is a single-file format. */
   boolean isSingleFile(String id) throws FormatException, IOException;
+
+  /**
+   * Returns the number of parent directories that are important when
+   * processing the given list of files.  The number of directories is relative
+   * to the common parent.  For example, given a list with these two files:
+   *
+   * /path/to/file/foo
+   * /path/to/file/that/is/related
+   *
+   * A return value of 0 indicates that "/path/to/file/" is irrelevant.
+   * A return value of 1 indicates that "/path/to/" is irrelevant.
+   * Return values less than 0 are invalid.
+   *
+   * All listed files are assumed to belong to datasets of the same format.
+   */
+  int getRequiredDirectories(String[] files) throws FormatException, IOException;
 
   /** Returns a short description of the dataset structure. */
   String getDatasetStructureDescription();

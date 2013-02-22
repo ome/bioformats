@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -418,6 +418,50 @@ public class FormatReaderTest {
         success = imageCount == z * c * t;
         msg = "series #" + i + ": imageCount=" + imageCount +
           ", z=" + z + ", c=" + c + ", t=" + t;
+      }
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success, msg);
+  }
+
+  @Test(groups = {"all", "fast", "automated"})
+  public void testTileWidth() {
+    String testName = "testTileWidth";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    try {
+      for (int i=0; i<reader.getSeriesCount() && success; i++) {
+        reader.setSeries(i);
+        int width = reader.getOptimalTileWidth();
+        success = width > 0;
+        msg = "series #" + i + ": tile width = " + width;
+      }
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success, msg);
+  }
+
+  @Test(groups = {"all", "fast", "automated"})
+  public void testTileHeight() {
+    String testName = "testTileHeight";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    try {
+      for (int i=0; i<reader.getSeriesCount() && success; i++) {
+        reader.setSeries(i);
+        int height = reader.getOptimalTileHeight();
+        success = height > 0;
+        msg = "series #" + i + ": tile height = " + height;
       }
     }
     catch (Throwable t) {

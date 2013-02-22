@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -406,9 +406,6 @@ public class CellSensReader extends FormatReader {
       tileMap[s] = new HashMap<TileCoordinate, Integer>();
 
       CoreMetadata ms = core.get(s);
-      if (s == 0) {
-        ms.resolutionCount = ifds.size() + (files.size() == 1 ? 0 : 1);
-      }
 
       if (s < files.size() - 1) {
         setSeries(s);

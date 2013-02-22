@@ -34,7 +34,6 @@
   <licenses>
     <license>
       <name>Simplified BSD License</name>
-      <url>${license.server}/scifio/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -83,6 +82,10 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <properties>
+    <project.rootdir>${basedir}/../..</project.rootdir>
+  </properties>
 
   <build>
     <plugins>

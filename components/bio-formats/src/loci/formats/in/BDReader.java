@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2012 Vanderbilt Integrative Cancer Center, and
+ * Copyright (C) 2005 - 2013 Vanderbilt Integrative Cancer Center, and
  * Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
@@ -233,13 +233,13 @@ public class BDReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    return reader.getOptimalTileWidth();
+    return reader.getOptimalTileWidth() / fieldCols;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return reader.getOptimalTileHeight();
+    return (int) Math.max(1, reader.getOptimalTileHeight() / fieldRows);
   }
 
   // -- Internal FormatReader API methods --

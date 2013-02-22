@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -112,6 +112,13 @@ public class L2DReader extends FormatReader {
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     String check = stream.readString(blockLen);
     return check.indexOf(LICOR_MAGIC_STRING) >= 0;
+  }
+
+  /* @see loci.formats.IFormatReader#getRequiredDirectories(String[]) */
+  public int getRequiredDirectories(String[] files)
+    throws FormatException, IOException
+  {
+    return 1;
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
