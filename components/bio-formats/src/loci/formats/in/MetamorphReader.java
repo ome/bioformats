@@ -1763,6 +1763,8 @@ public class MetamorphReader extends BaseTiffReader {
         }
         break;
     }
+
+    core.get(0).sizeC = index + 1;
   }
 
   private String getKey(int id) {

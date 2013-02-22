@@ -102,6 +102,8 @@ public class ICSWriter extends FormatWriter {
 
     MetadataRetrieve meta = getMetadataRetrieve();
 
+    int rgbChannels = getSamplesPerPixel();
+
     String order = meta.getPixelsDimensionOrder(series).getValue();
     int sizeZ = meta.getPixelsSizeZ(series).getValue().intValue();
     int sizeC = meta.getChannelCount(series);
@@ -123,7 +125,6 @@ public class ICSWriter extends FormatWriter {
     int pixelType =
       FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-    int rgbChannels = getSamplesPerPixel();
     int planeSize = sizeX * sizeY * rgbChannels * bytesPerPixel;
 
     if (!initialized[series][realIndex]) {

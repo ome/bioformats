@@ -266,17 +266,17 @@ Format readers
      - 0
      - 0
      - 415
-   * - :doc:`ImarisHDFReader <formats/imagic-metadata>`
+   * - :doc:`ImarisHDFReader <formats/bitplane-imaris-metadata>`
      - 20
      - 0
      - 0
      - 413
-   * - :doc:`ImarisReader <formats/imagic-metadata>`
+   * - :doc:`ImarisReader <formats/bitplane-imaris-metadata>`
      - 28
      - 0
      - 0
      - 405
-   * - :doc:`ImarisTiffReader <formats/imagic-metadata>`
+   * - :doc:`ImarisTiffReader <formats/bitplane-imaris-metadata>`
      - 19
      - 0
      - 0
