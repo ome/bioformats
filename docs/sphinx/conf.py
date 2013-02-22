@@ -194,12 +194,19 @@ rst_epilog = """
 .. _OME-XML: http://www.openmicroscopy.org/site/support/file-formats/the-ome-xml-file
 
 .. |Poor| image:: /images/crystal-1.png
+           :alt: 1 - Poor
 .. |Fair| image:: /images/crystal-2.png
+           :alt: 2 - Fair
 .. |Good| image:: /images/crystal-3.png
+           :alt: 3 - Good
 .. |Very Good| image:: /images/crystal-4.png
+                :alt: 4 - Very Good
 .. |Outstanding| image:: /images/crystal-5.png
+                  :alt: 5 - Outstanding
 .. |no| image:: /images/crystal-no.png
+         :alt: No
 .. |yes| image:: /images/crystal-yes.png
+          :alt: Yes
 
 """
 
