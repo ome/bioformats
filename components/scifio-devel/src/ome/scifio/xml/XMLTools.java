@@ -36,6 +36,7 @@
 
 package ome.scifio.xml;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -156,11 +157,15 @@ public final class XMLTools {
   public static Document parseDOM(InputStream is)
     throws ParserConfigurationException, SAXException, IOException
   {
+    final InputStream in =
+      is.markSupported() ? is : new BufferedInputStream(is);
+    checkUTF8(in);
+
     // Java XML factories are not declared to be thread safe
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder db = factory.newDocumentBuilder();
     db.setErrorHandler(new ParserErrorHandler());
-    return db.parse(is);
+    return db.parse(in);
   }
 
   /** Converts the given DOM back to a string. */
@@ -590,6 +595,26 @@ public final class XMLTools {
     }
     else LOGGER.info("No validation errors found.");
     return errorHandler.ok();
+  }
+
+  // -- Helper methods --
+
+  /**
+   * Checks the given stream for a UTF-8 BOM header, skipping it if present. If
+   * no UTF-8 BOM is present, the position of the stream is unchanged.
+   * <p>
+   * We must discard this character because <a href=
+   * "http://www.rgagnon.com/javadetails/java-handle-utf8-file-with-bom.html"
+   * >Java does not handle it correctly</a>.
+   * </p>
+   */
+  private static void checkUTF8(InputStream is) throws IOException {
+    // check first 3 bytes of the stream
+    is.mark(3);
+    if (is.read() != 0xef || is.read() != 0xbb || is.read() != 0xbf) {
+      // NB: Data stream does not start with the UTF-8 BOM; reset it.
+      is.reset();
+    }
   }
 
   // -- Helper class --
