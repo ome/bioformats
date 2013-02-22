@@ -204,8 +204,19 @@ public class ZeissZVIReader extends FormatReader {
     options.interleaved = isInterleaved();
 
     if (tileRows * tileColumns == 0 || tileWidth * tileHeight == 0) {
-      RandomAccessInputStream s = poi.getDocumentStream(imageFiles[no]);
-      s.seek(offsets[no]);
+      int[] coords = getZCTCoords(no);
+      int realIndex = 0;
+      for (int q=0; q<coordinates.length; q++) {
+        if (coordinates[q][0] == coords[0] && coordinates[q][1] == coords[1] &&
+          coordinates[q][2] == coords[2])
+        {
+          realIndex = q;
+          break;
+        }
+      }
+
+      RandomAccessInputStream s = poi.getDocumentStream(imageFiles[realIndex]);
+      s.seek(offsets[realIndex]);
 
       int len = w * pixel;
       int row = getSizeX() * pixel;
