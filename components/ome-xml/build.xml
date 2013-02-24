@@ -18,6 +18,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/ome/xml/utests/testng.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>

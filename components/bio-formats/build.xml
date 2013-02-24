@@ -27,7 +27,6 @@ Type "ant -p" for a list of targets.
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
-      <jvmarg value="-Dlog4j.configuration=file://${root.dir}/tools/log4j.properties"/>
     </testng>
   </target>
 

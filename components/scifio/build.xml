@@ -20,8 +20,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/formats/utests/testng.xml"/>
     <testng haltonfailure="true" groups="all" testname="${component.name}">
       <classpath>
-        <pathelement location="${test-classes.dir}"/>
-        <pathelement location="${classes.dir}"/>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
@@ -37,6 +36,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/formats/utests/testng-no-lurawave.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.cp.no-lurawave}"/>
@@ -53,6 +53,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/formats/utests/testng-no-jai.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.cp.no-jai}"/>
@@ -69,6 +70,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/formats/utests/testng-no-ome-xml.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.cp.no-xml}"/>
