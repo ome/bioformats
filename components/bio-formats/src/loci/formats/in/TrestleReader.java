@@ -232,7 +232,7 @@ public class TrestleReader extends BaseTiffReader {
     for (int i=0; i<seriesCount; i++) {
       CoreMetadata c = new CoreMetadata();
 
-      if (i == 0) {
+      if (i == 0 && !hasFlattenedResolutions()) {
         c.resolutionCount = seriesCount;
       }
       core.add(c);
