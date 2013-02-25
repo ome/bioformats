@@ -141,8 +141,8 @@ public class TrestleReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    tiffParser.getSamples(ifds.get(series), buf, x, y, w, h,
-      overlaps[getSeries() * 2], overlaps[getSeries() * 2 + 1]);
+    tiffParser.getSamples(ifds.get(getCoreIndex()), buf, x, y, w, h,
+      overlaps[getCoreIndex() * 2], overlaps[getCoreIndex() * 2 + 1]);
     return buf;
   }
 
