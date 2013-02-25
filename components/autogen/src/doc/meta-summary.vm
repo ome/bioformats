@@ -4,9 +4,14 @@ Summary of supported metadata fields
 Format readers
 --------------
 
+.. only:: html
+
+    You can sort this table by clicking on any of the headings.
+
 .. tabularcolumns:: |p{3cm}|c|c|c|c|
 
 .. list-table::
+   :class: sortable
    :header-rows: 1
    :widths: 30, 10, 10, 10, 10
 
@@ -37,9 +42,14 @@ Format readers
 Metadata fields
 ---------------
 
+.. only:: html
+
+    You can sort this table by clicking on any of the headings.
+
 .. tabularcolumns:: |p{3cm}|c|c|c|c|
 
 .. list-table::
+   :class: sortable
    :header-rows: 1
    :widths: 30, 10, 10, 10, 10
 
