@@ -102,7 +102,7 @@
             <suiteXmlFile>test/loci/ome/utests/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
           <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/../../tools/</additionalClasspathElement>
+            <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
       </plugin>

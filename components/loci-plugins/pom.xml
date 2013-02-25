@@ -91,7 +91,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/../../tools/</additionalClasspathElement>
+            <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
       </plugin>

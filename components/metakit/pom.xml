@@ -67,7 +67,7 @@
             <suiteXmlFile>test/ome/metakit/utests/testng-template.xml</suiteXmlFile>
           </suiteXmlFiles>
           <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/../../tools/</additionalClasspathElement>
+            <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
       </plugin>
