@@ -302,7 +302,12 @@ public class TrestleReader extends BaseTiffReader {
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
     if (level != MetadataLevel.MINIMUM) {
-      if (level != MetadataLevel.NO_OVERLAYS) {
+      // do not store the mask data in OME-XML MetadataStores
+      // doing so would guarantee invalid OME-XML, since the required BinData
+      // will not be stored with the mask dimensions
+      if (level != MetadataLevel.NO_OVERLAYS &&
+        !(getMetadataStore() instanceof OMEXMLMetadata))
+      {
         try {
           parseROIs(store);
         }
