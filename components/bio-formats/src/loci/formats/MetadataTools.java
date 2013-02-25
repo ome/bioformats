@@ -67,11 +67,97 @@ public final class MetadataTools {
   private static Templates reorderXSLT =
     XMLTools.getStylesheet("meta/reorder-2008-09.xsl", MetadataTools.class);
 
+  /** Upgrade/downgrade stylesheets. */
+  private static final Templates UPGRADE_2008_02 =
+    XMLTools.getStylesheet("meta/2008-02-to-2008-09.xsl", MetadataTools.class);
+  private static final Templates UPGRADE_2009_09 =
+    XMLTools.getStylesheet("meta/2009-09-to-2010-04.xsl", MetadataTools.class);
+  private static final Templates UPGRADE_2010_04 =
+    XMLTools.getStylesheet("meta/2010-04-to-2010-06.xsl", MetadataTools.class);
+  private static final Templates DOWNGRADE_2010_06 =
+    XMLTools.getStylesheet("meta/2010-06-to-2008-02.xsl", MetadataTools.class);
+  private static final Templates DOWNGRADE_2011_06 =
+    XMLTools.getStylesheet("meta/2011-06-to-2010-06.xsl", MetadataTools.class);
+  private static final Templates DOWNGRADE_2012_06 =
+    XMLTools.getStylesheet("meta/2012-06-to-2011-06.xsl", MetadataTools.class);
+
   // -- Constructor --
 
   private MetadataTools() { }
 
   // -- Utility methods - OME-XML --
+
+  public static String downgradeOMEXML(String xml, String version) {
+    String newXML = xml;
+    if (version.equals("201206")) {
+      try {
+        newXML = XMLTools.transformXML(newXML, DOWNGRADE_2012_06);
+      }
+      catch (IOException exc) {
+        LogTools.traceDebug(exc);
+      }
+      if (newXML != null) {
+        version = "201106";
+      }
+    }
+    if (version.equals("201106")) {
+      try {
+        newXML = XMLTools.transformXML(newXML, DOWNGRADE_2011_06);
+      }
+      catch (IOException exc) {
+        LogTools.traceDebug(exc);
+      }
+      if (newXML != null) {
+        version = "201006";
+      }
+    }
+    if (version.equals("200909")) {
+      try {
+        newXML = XMLTools.transformXML(newXML, UPGRADE_2009_09);
+      }
+      catch (IOException exc) {
+        LogTools.traceDebug(exc);
+      }
+      if (newXML != null) {
+        version = "201004";
+      }
+    }
+    if (version.equals("201004")) {
+      try {
+        newXML = XMLTools.transformXML(newXML, UPGRADE_2010_04);
+      }
+      catch (IOException exc) {
+        LogTools.traceDebug(exc);
+      }
+      if (newXML != null) {
+        version = "201006";
+      }
+    }
+    if (version.equals("201006")) {
+      try {
+        newXML = XMLTools.transformXML(newXML, DOWNGRADE_2010_06);
+      }
+      catch (IOException exc) {
+        LogTools.traceDebug(exc);
+      }
+      if (newXML != null) {
+        version = "200802";
+      }
+    }
+    if (version.equals("200802")) {
+      try {
+        newXML = XMLTools.transformXML(newXML, UPGRADE_2008_02);
+      }
+      catch (IOException exc) {
+        LogTools.traceDebug(exc);
+      }
+      if (newXML != null) {
+        version = "200809";
+      }
+    }
+
+    return newXML;
+  }
 
   /**
    * Creates an OME-XML metadata object using reflection, to avoid
@@ -159,6 +245,25 @@ public final class MetadataTools {
     }
     catch (ReflectException exc) {
       LogTools.traceDebug(exc);
+
+      try {
+        r.exec("import ome.xml.DOMUtil");
+        r.exec("import ome.xml.OMEXMLFactory");
+        r.setVar("xml", xml);
+        r.exec("rootNode = OMEXMLFactory.parseOME(xml)");
+        r.exec("rootElement = rootNode.getDocumentElement()");
+        r.setVar("attribute", "xmlns");
+        r.exec("xmlns = DOMUtil.getAttribute(attribute, rootElement)");
+
+        String version = r.getVar("xmlns").toString();
+        version = version.substring(version.lastIndexOf("/") + 1);
+        version = version.replaceAll("\\W", "");
+
+        return createOMEXMLRoot(downgradeOMEXML(xml, version));
+      }
+      catch (ReflectException e) {
+        LogTools.traceDebug(e);
+      }
     }
     return null;
   }
