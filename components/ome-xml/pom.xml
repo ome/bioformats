@@ -71,6 +71,9 @@
           <suiteXmlFiles>
             <suiteXmlFile>test/ome/xml/utests/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${basedir}/../../tools/</additionalClasspathElement>
+          </additionalClasspathElements>
         </configuration>
       </plugin>
       <plugin>
