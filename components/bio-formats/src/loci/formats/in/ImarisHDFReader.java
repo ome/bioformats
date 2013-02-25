@@ -163,6 +163,10 @@ public class ImarisHDFReader extends FormatReader {
     for (int row=0; row<h; row++) {
       int rowlen = w * bpp;
       int base = row * rowlen;
+
+      // indexes into the source array add (data.length - h) and
+      // (rowData.length - w) to account for cases where the source array
+      // represents a tile that is larger than the desired tile
       if (image instanceof byte[][]) {
         byte[][] data = (byte[][]) image;
         byte[] rowData = data[row + data.length - h];
@@ -422,6 +426,11 @@ public class ImarisHDFReader extends FormatReader {
 
   // -- Helper methods --
 
+  /**
+   * Retrieve an array corresponding to the specified image tile.
+   * In some cases, the returned tile will be larger than the requested tile;
+   * openBytes will correct for this as needed.
+   */
   private Object getImageData(int no, int x, int y, int width, int height)
     throws FormatException
   {
@@ -434,16 +443,26 @@ public class ImarisHDFReader extends FormatReader {
     // singleton instead of an array
     if (height == 1) {
       height++;
+
+      // if we only wanted the last row, the Y coordinate must be adjusted
+      // so that we don't attempt to read past the end of the image
       if (y == getSizeY() - 1) {
         y--;
       }
     }
     if (width == 1) {
       width++;
+
+      // if we only wanted the last column, the X coordinate must be adjusted
+      // so that we don't attempt to read past the end of the image
       if (x == getSizeX() - 1) {
         x--;
       }
     }
+
+    // netCDF sometimes returns incorrect pixel values if the (X, Y) coordinate
+    // is in the lower right quadrant of the image.  We correct for this by
+    // moving the X coordinate to the left and adjusting the width.
     if (x >= getSizeX() / 2 && y >= getSizeY() / 2) {
       width += x - (getSizeX() / 2) + 1;
       x = (getSizeX() / 2) - 1;
