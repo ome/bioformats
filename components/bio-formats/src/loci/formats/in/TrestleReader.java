@@ -41,6 +41,7 @@ import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitWriter;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
