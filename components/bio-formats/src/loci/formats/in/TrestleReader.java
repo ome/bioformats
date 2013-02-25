@@ -41,6 +41,7 @@ import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitWriter;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
@@ -137,12 +138,12 @@ public class TrestleReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (getSeriesCount() == 1) {
+    if (core.length == 1) {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    tiffParser.getSamples(ifds.get(series), buf, x, y, w, h,
-      overlaps[getSeries() * 2], overlaps[getSeries() * 2 + 1]);
+    tiffParser.getSamples(ifds.get(getCoreIndex()), buf, x, y, w, h,
+      overlaps[getCoreIndex() * 2], overlaps[getCoreIndex() * 2 + 1]);
     return buf;
   }
 
@@ -230,13 +231,12 @@ public class TrestleReader extends BaseTiffReader {
     core = new CoreMetadata[ifds.size()];
 
     for (int i=0; i<core.length; i++) {
-      setSeries(i);
       core[i] = new CoreMetadata();
 
-      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+      if (i == 0 && !hasFlattenedResolutions()) {
+        core[i].resolutionCount = core.length;
       }
     }
-    setSeries(0);
 
     // repopulate core metadata
 
@@ -303,7 +303,12 @@ public class TrestleReader extends BaseTiffReader {
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
     if (level != MetadataLevel.MINIMUM) {
-      if (level != MetadataLevel.NO_OVERLAYS) {
+      // do not store the mask data in OME-XML MetadataStores
+      // doing so would guarantee invalid OME-XML, since the required BinData
+      // will not be stored with the mask dimensions
+      if (level != MetadataLevel.NO_OVERLAYS &&
+        !(getMetadataStore() instanceof OMEXMLMetadata))
+      {
         try {
           parseROIs(store);
         }
