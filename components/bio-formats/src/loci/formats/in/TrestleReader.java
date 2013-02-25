@@ -230,13 +230,13 @@ public class TrestleReader extends BaseTiffReader {
     int seriesCount = ifds.size();
     core.clear();
     for (int i=0; i<seriesCount; i++) {
-      core.add(new CoreMetadata());
-      setSeries(i);
+      CoreMetadata c = new CoreMetadata();
 
-      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+      if (i == 0) {
+        c.resolutionCount = seriesCount;
       }
+      core.add(c);
     }
-    setSeries(0);
 
     // repopulate core metadata
 
