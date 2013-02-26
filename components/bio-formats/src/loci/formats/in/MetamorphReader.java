@@ -1046,6 +1046,13 @@ public class MetamorphReader extends BaseTiffReader {
 
       if (getSizeC() == 1) {
         ms0.sizeC = uniqueWavelengths.size();
+
+        if (getSizeC() < getImageCount() &&
+          getSizeC() > (getImageCount() - getSizeC()) &&
+          (getImageCount() % getSizeC()) != 0)
+        {
+          ms0.sizeC = getImageCount();
+        }
       }
 
       IFDList tempIFDs = new IFDList();
@@ -1763,8 +1770,6 @@ public class MetamorphReader extends BaseTiffReader {
         }
         break;
     }
-
-    core.get(0).sizeC = index + 1;
   }
 
   private String getKey(int id) {
