@@ -865,7 +865,17 @@ public class TiffParser {
     Region tileBounds = new Region(0, 0, (int) tileWidth, (int) tileLength);
 
     for (int row=0; row<numTileRows; row++) {
+      // make the first row shorter to account for row overlap
+      if (row == 0) {
+        tileBounds.height = (int) (tileLength - overlapY);
+      }
+
       for (int col=0; col<numTileCols; col++) {
+        // make the first column narrower to account for column overlap
+        if (col == 0) {
+          tileBounds.width = (int) (tileWidth - overlapX);
+        }
+
         tileBounds.x = col * (int) (tileWidth - overlapX);
         tileBounds.y = row * (int) (tileLength - overlapY);
 
@@ -892,6 +902,7 @@ public class TiffParser {
         if (theight <= 0) {
           theight = (int) Math.max(endY - tileY, tileLength - realY);
         }
+
         // copy appropriate portion of the tile to the output buffer
 
         int copy = pixel * twidth;
@@ -905,7 +916,10 @@ public class TiffParser {
             outputRowLen * (tileY - y);
           if (planarConfig == 2) dest += (planeSize * (row / nrows));
 
-          if (rowLen == outputRowLen) {
+          // copying the tile directly will only work if there is no overlap;
+          // otherwise, we may be overwriting a previous tile
+          // (or the current tile may be overwritten by a subsequent tile)
+          if (rowLen == outputRowLen && overlapX == 0 && overlapY == 0) {
             System.arraycopy(cachedTileBuffer, src, buf, dest, copy * theight);
           }
           else {
