@@ -101,9 +101,20 @@ public class ZeissZVIReader extends BaseZeissReader {
     options.littleEndian = isLittleEndian();
     options.interleaved = isInterleaved();
 
-    int index = no;
-    if (getSeriesCount() > 1) {
-      index += getSeries() * getImageCount();
+    int index = 0;
+
+    int[] coords = getZCTCoords(no);
+    int seriesCount = -1;
+    for (int q=0; q<coordinates.length; q++) {
+      if (coordinates[q][0] == coords[0] && coordinates[q][1] == coords[1] &&
+        coordinates[q][2] == coords[2])
+      {
+        index = q;
+        seriesCount++;
+        if (seriesCount == getSeries()) {
+          break;
+        }
+      }
     }
 
     if (index >= imageFiles.length) {
