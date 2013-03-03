@@ -18,6 +18,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/ome/utests/testng.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
@@ -29,13 +30,11 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-no-omeio" depends="compile-tests" description="run missing OME I/O tests" if="doTests">
-    <echo>${test-classes.dir}</echo>
-    <echo>${classes.dir}</echo>
-    <echo>${component.classpath-no-omeio}</echo>
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/ome/utests/testng-no-ome-io.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.classpath-no-omeio}"/>
