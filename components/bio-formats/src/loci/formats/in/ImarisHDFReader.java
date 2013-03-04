@@ -475,7 +475,7 @@ public class ImarisHDFReader extends FormatReader {
         core[0].sizeT = Integer.parseInt(value);
       }
       else if (name.equals("NumberOfChannels")) {
-        ms0.sizeC = Integer.parseInt(value);
+        core[0].sizeC = Integer.parseInt(value);
       }
       else if (name.equals("RecordingEntrySampleSpacing")) {
         pixelSizeX = Double.parseDouble(value);
