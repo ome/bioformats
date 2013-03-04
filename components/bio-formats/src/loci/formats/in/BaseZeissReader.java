@@ -1163,7 +1163,7 @@ public abstract class BaseZeissReader extends FormatReader {
     public String toString()
     {
       String s = new String();
-      s += "  " + keyid + "(" + getKey() + ") = " + getValue();
+      s += keyid + " (" + getKey() + ") = " + getValue();
       switch (context)
       {
         case MAIN:
@@ -1175,7 +1175,6 @@ public abstract class BaseZeissReader extends FormatReader {
         default:
           s+= " [unknown]"; break;
       }
-      s+= "\n";
       return s;
     }
 
@@ -2106,7 +2105,7 @@ public abstract class BaseZeissReader extends FormatReader {
       s += "  name: " + name + "\n";
       s += "  text: " + text + "\n";
       //s += "  Zpos: " + zpos;
-      s += "  tagID:" + tagID.getKey() + "\n";
+      s += "  tagID: " + tagID.getKey() + "\n";
       s += "  handleSize:" + handleSize + "\n";
       s += "  pointCount:" + pointCount + "\n    ";
       for (double point : points)
