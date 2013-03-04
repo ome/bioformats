@@ -36,25 +36,18 @@
 
 package loci.formats.in;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
-import java.awt.image.WritableRaster;
-import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Vector;
-import java.util.zip.CRC32;
+import java.util.zip.InflaterInputStream;
 
-import javax.imageio.ImageIO;
-
-import loci.common.Constants;
-import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.gui.AWTImageTools;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -67,13 +60,23 @@ import loci.formats.meta.MetadataStore;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class APNGReader extends BIFormatReader {
+public class APNGReader extends FormatReader {
 
   // -- Constants --
 
-  private static final byte[] PNG_SIGNATURE = new byte[] {
-    (byte) 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a
-  };
+  /** Color types. */
+  private static final int GRAYSCALE = 0;
+  private static final int TRUE_COLOR = 2;
+  private static final int INDEXED = 3;
+  private static final int GRAY_ALPHA = 4;
+  private static final int TRUE_ALPHA = 6;
+
+  /** Filter types. */
+  private static final int NONE = 0;
+  private static final int SUB = 1;
+  private static final int UP = 2;
+  private static final int AVERAGE = 3;
+  private static final int PAETH = 4;
 
   // -- Fields --
 
@@ -82,8 +85,12 @@ public class APNGReader extends BIFormatReader {
 
   private byte[][] lut;
 
-  private BufferedImage lastImage;
+  private byte[] lastImage;
   private int lastImageIndex = -1;
+
+  private int compression;
+  private int interlace;
+  private int idatCount = 0;
 
   // -- Constructor --
 
@@ -119,97 +126,115 @@ public class APNGReader extends BIFormatReader {
     return lut;
   }
 
-  /* @see loci.formats.IFormatReader#openPlane(int, int, int, int, int int) */
-  public Object openPlane(int no, int x, int y, int w, int h)
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (no == lastImageIndex && lastImage != null) {
-      return AWTImageTools.getSubimage(lastImage, isLittleEndian(), x, y, w, h);
+      RandomAccessInputStream s = new RandomAccessInputStream(lastImage);
+      readPlane(s, x, y, w, h, buf);
+      s.close();
+      return buf;
     }
 
     if (no == 0) {
-      in.seek(0);
-      DataInputStream dis =
-        new DataInputStream(new BufferedInputStream(in, 4096));
-      lastImage = ImageIO.read(dis);
-      lastImageIndex = 0;
-      if (x == 0 && y == 0 && w == getSizeX() && h == getSizeY()) {
-        return lastImage;
+      ByteArrayOutputStream s = new ByteArrayOutputStream();
+      int readIDATs = 0;
+
+      for (PNGBlock block : blocks) {
+        if (block.type.equals("IDAT")) {
+          in.seek(block.offset);
+          byte[] tmp = new byte[block.length];
+          in.read(tmp);
+          s.write(tmp);
+          tmp = null;
+
+          readIDATs++;
+        }
+        if (readIDATs == idatCount) {
+          break;
+        }
       }
-      return AWTImageTools.getSubimage(lastImage, isLittleEndian(), x, y, w, h);
+
+      s.close();
+
+      lastImage = decode(s.toByteArray());
+      lastImageIndex = 0;
+
+      RandomAccessInputStream pix = new RandomAccessInputStream(lastImage);
+      readPlane(pix, x, y, w, h, buf);
+      pix.close();
+      return buf;
     }
 
-    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    stream.write(PNG_SIGNATURE);
+    ByteArrayOutputStream s = new ByteArrayOutputStream();
+    int readIDATs = 0;
+
+    for (PNGBlock block : blocks) {
+      if (block.type.equals("IDAT")) {
+        in.seek(block.offset);
+        byte[] tmp = new byte[block.length];
+        in.read(tmp);
+        s.write(tmp);
+        tmp = null;
+
+        readIDATs++;
+      }
+      if (readIDATs == idatCount) {
+        break;
+      }
+    }
 
     boolean fdatValid = false;
     int fctlCount = 0;
-
     int[] coords = frameCoordinates.get(no);
 
+    s = new ByteArrayOutputStream();
+
     for (PNGBlock block : blocks) {
-      if (!block.type.equals("IDAT") && !block.type.equals("fdAT") &&
-        !block.type.equals("acTL") && !block.type.equals("fcTL") &&
-        block.length > 0)
-      {
-        byte[] b = new byte[block.length + 12];
-        DataTools.unpackBytes(block.length, b, 0, 4, isLittleEndian());
-        byte[] typeBytes = block.type.getBytes(Constants.ENCODING);
-        System.arraycopy(typeBytes, 0, b, 4, 4);
-        in.seek(block.offset);
-        in.read(b, 8, b.length - 12);
-        if (block.type.equals("IHDR")) {
-          DataTools.unpackBytes(coords[2], b, 8, 4, isLittleEndian());
-          DataTools.unpackBytes(coords[3], b, 12, 4, isLittleEndian());
-        }
-        int crc = (int) computeCRC(b, b.length - 4);
-        DataTools.unpackBytes(crc, b, b.length - 4, 4, isLittleEndian());
-        stream.write(b);
-        b = null;
-      }
-      else if (block.type.equals("fcTL")) {
+      if (block.type.equals("fcTL")) {
         fdatValid = fctlCount == no;
         fctlCount++;
       }
       else if (block.type.equals("fdAT")) {
         in.seek(block.offset + 4);
         if (fdatValid) {
-          byte[] b = new byte[block.length + 8];
-          DataTools.unpackBytes(block.length - 4, b, 0, 4, isLittleEndian());
-          b[4] = 'I';
-          b[5] = 'D';
-          b[6] = 'A';
-          b[7] = 'T';
-          in.read(b, 8, b.length - 12);
-          int crc = (int) computeCRC(b, b.length - 4);
-          DataTools.unpackBytes(crc, b, b.length - 4, 4, isLittleEndian());
-          stream.write(b);
-          b = null;
+          byte[] tmp = new byte[block.length - 4];
+          in.read(tmp);
+          s.write(tmp);
+          tmp = null;
         }
       }
     }
 
-    RandomAccessInputStream s =
-      new RandomAccessInputStream(stream.toByteArray());
-    DataInputStream dis = new DataInputStream(new BufferedInputStream(s, 4096));
-    BufferedImage b = ImageIO.read(dis);
-    dis.close();
-
-    lastImage = null;
-    openPlane(0, 0, 0, getSizeX(), getSizeY());
+    s.close();
+    lastImage = openBytes(0);
+    byte[] newImage = decode(s.toByteArray(), coords[2], coords[3]);
 
     // paste current image onto first image
 
-    WritableRaster firstRaster = lastImage.getRaster();
-    WritableRaster currentRaster = b.getRaster();
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int len = coords[2] * bpp;
+    int plane = getSizeX() * getSizeY() * bpp;
+    int newPlane = len * coords[3];
+    for (int c=0; c<getRGBChannelCount(); c++) {
+      for (int row=0; row<coords[3]; row++) {
+        System.arraycopy(newImage, c * newPlane + row * len, lastImage,
+          c * plane + (coords[1] + row) * getSizeX() * bpp + coords[0] * bpp,
+          len);
+      }
+    }
 
-    firstRaster.setDataElements(coords[0], coords[1], currentRaster);
-    lastImage =
-      new BufferedImage(lastImage.getColorModel(), firstRaster, false, null);
     lastImageIndex = no;
-    return lastImage;
+
+    RandomAccessInputStream pix = new RandomAccessInputStream(lastImage);
+    readPlane(pix, x, y, w, h, buf);
+    pix.close();
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -276,7 +301,58 @@ public class APNGReader extends BIFormatReader {
         frameCoordinates.add(new int[] {x, y, w, h});
         in.skipBytes(length - 20);
       }
-      else in.skipBytes(length);
+      else if (type.equals("IDAT")) {
+        idatCount++;
+      }
+      else if (type.equals("PLTE")) {
+        // lookup table
+
+        core[0].indexed = true;
+        lut = new byte[3][256];
+
+        for (int i=0; i<length/3; i++) {
+          for (int c=0; c<3; c++) {
+            lut[c][i] = in.readByte();
+          }
+        }
+      }
+      else if (type.equals("IHDR")) {
+        core[0].sizeX = in.readInt();
+        core[0].sizeY = in.readInt();
+        core[0].bitsPerPixel = in.read();
+        int colorType = in.read();
+        compression = in.read();
+        int filter = in.read();
+        interlace = in.read();
+
+        if (filter != 0) {
+          throw new FormatException("Invalid filter mode: " + filter);
+        }
+
+        switch (colorType) {
+          case GRAYSCALE:
+          case INDEXED:
+            core[0].sizeC = 1;
+            break;
+          case GRAY_ALPHA:
+            core[0].sizeC = 2;
+            break;
+          case TRUE_COLOR:
+            core[0].sizeC = 3;
+            break;
+          case TRUE_ALPHA:
+            core[0].sizeC = 4;
+            break;
+        }
+
+        core[0].pixelType = getBitsPerPixel() <= 8 ?
+          FormatTools.UINT8 : FormatTools.UINT16;
+        core[0].rgb = getSizeC() > 1;
+      }
+      else if (type.equals("IEND")) {
+        break;
+      }
+      in.seek(block.offset + length);
 
       if (in.getFilePointer() < in.length() - 4) {
         in.skipBytes(4); // skip the CRC
@@ -289,38 +365,99 @@ public class APNGReader extends BIFormatReader {
 
     core[0].dimensionOrder = "XYCTZ";
     core[0].interleaved = false;
-
-    RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
-    DataInputStream dis = new DataInputStream(ras);
-    BufferedImage img = ImageIO.read(dis);
-    dis.close();
-
-    core[0].sizeX = img.getWidth();
-    core[0].sizeY = img.getHeight();
-    core[0].rgb = img.getRaster().getNumBands() > 1;
-    core[0].sizeC = img.getRaster().getNumBands();
-    core[0].pixelType = AWTImageTools.getPixelType(img);
-    core[0].indexed = img.getColorModel() instanceof IndexColorModel;
     core[0].falseColor = false;
-
-    if (isIndexed()) {
-      lut = new byte[3][256];
-      IndexColorModel model = (IndexColorModel) img.getColorModel();
-      model.getReds(lut[0]);
-      model.getGreens(lut[1]);
-      model.getBlues(lut[2]);
-    }
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
   }
 
-  // -- Helper methods --
+  private byte[] decode(byte[] bytes) throws FormatException, IOException {
+    return decode(bytes, getSizeX(), getSizeY());
+  }
 
-  private long computeCRC(byte[] buf, int len) {
-    CRC32 crc = new CRC32();
-    crc.update(buf, 0, len);
-    return crc.getValue();
+  private byte[] decode(byte[] bytes, int width, int height)
+    throws FormatException, IOException
+  {
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int rowLen = width * getRGBChannelCount() * bpp;
+
+    byte[] image = null;
+
+    if (compression == 0 && interlace == 0) {
+      // decompress the image
+      byte[] filters = new byte[height];
+      image = new byte[FormatTools.getPlaneSize(this)];
+
+      InflaterInputStream decompressor =
+        new InflaterInputStream(new ByteArrayInputStream(bytes));
+      try {
+        for (int row=0; row<height; row++) {
+          decompressor.read(filters, row, 1);
+          decompressor.read(image, row * rowLen, rowLen);
+        }
+      }
+      finally {
+        decompressor.close();
+      }
+
+      // perform any necessary unfiltering
+
+      bpp *= getRGBChannelCount();
+      for (int row=0; row<height; row++) {
+        int filter = filters[row];
+
+        if (filter == NONE) {
+          continue;
+        }
+
+        for (int col=0; col<rowLen; col++) {
+          int q = row * rowLen + col;
+
+          int xx = image[q] & 0xff;
+          int a = col >= bpp ? image[q - bpp] & 0xff : 0;
+          int b = row > 0 ? image[q - bpp * width] & 0xff : 0;
+          int c = row > 0 && col >= bpp ?
+            image[q - bpp * (width + 1)] & 0xff : 0;
+
+          switch (filter) {
+            case SUB:
+              image[q] = (byte) ((xx + a) & 0xff);
+              break;
+            case UP:
+              image[q] = (byte) ((xx + b) & 0xff);
+              break;
+            case AVERAGE:
+              image[q] = (byte) ((xx + ((int) Math.floor(a + b) / 2)) & 0xff);
+              break;
+            case PAETH:
+              int p = a + b - c;
+              int pa = (int) Math.abs(p - a);
+              int pb = (int) Math.abs(p - b);
+              int pc = (int) Math.abs(p - c);
+
+              if (pa <= pb && pa <= pc) {
+                image[q] = (byte) ((xx + a) & 0xff);
+              }
+              else if (pb <= pc) {
+                image[q] = (byte) ((xx + b) & 0xff);
+              }
+              else {
+                image[q] = (byte) ((xx + c) & 0xff);
+              }
+              break;
+          }
+        }
+      }
+    }
+    else if (compression == 0) {
+      throw new UnsupportedCompressionException("Interlacing not supported");
+    }
+    else {
+      throw new UnsupportedCompressionException(
+        "Compression type " + compression + " not supported");
+    }
+
+    return image;
   }
 
   // -- Helper class --
