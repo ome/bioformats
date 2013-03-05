@@ -510,12 +510,12 @@ public class ZeissZVIReader extends BaseZeissReader {
       nshape.y1 = s.readInt();
       nshape.x2 = s.readInt();
       nshape.y2 = s.readInt();
+      nshape.width = nshape.x2 - nshape.x1;
+      nshape.height = nshape.y2 - nshape.y1;
 
       LOGGER.debug("    Bounding Box");
 
       if (shapeAttrLength >= 72) { // Basic shape styling
-        nshape.width = nshape.x2 - nshape.x1;
-        nshape.height = nshape.y2 - nshape.y1;
         s.skipBytes(16);
         nshape.fillColour = s.readInt();
         nshape.textColour = s.readInt();
@@ -598,8 +598,6 @@ public class ZeissZVIReader extends BaseZeissReader {
 
       ++roiFound;
     }
-
-    LOGGER.debug("ROICT: " + roiCount + " found=" + roiFound);
 
     if (roiCount != roiFound) {
       LOGGER.warn("Found " + roiFound + " ROIs, but " + roiCount + " ROIs expected");
