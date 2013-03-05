@@ -530,7 +530,7 @@ public class NativeND2Reader extends FormatReader {
               }
 
               String value = lines[i++];
-              while (lines[i].trim().length() > 0) {
+              while (i < lines.length && lines[i].trim().length() > 0) {
                 value += " " + lines[i++];
                 if (i >= lines.length) {
                   break;

@@ -786,6 +786,9 @@ public class ND2Handler extends BaseHandler {
         }
         else {
           String[] v = t.split(":");
+          if (v.length == 0) {
+            continue;
+          }
           if (v.length == 2) {
             v[1] = v[1].trim();
             if (v[0].equals("Name")) {
