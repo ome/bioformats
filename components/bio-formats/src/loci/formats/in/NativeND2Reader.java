@@ -1524,6 +1524,9 @@ public class NativeND2Reader extends FormatReader {
 
             // Last 4 bytes in level is some kind of point table
 
+            if (off < 0) {
+              break;
+            }
             in.seek(off + in.getFilePointer());
             in.skipBytes(numberOfItems * 8);
             value = in.readLong();
