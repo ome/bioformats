@@ -615,8 +615,13 @@ public class ZeissZVIReader extends BaseZeissReader {
     int strlen = s.readInt();
     if (strlen + s.getFilePointer() > s.length()) return null;
     // Strip off NUL.
-    String text = s.readString(strlen-2);
-    s.skipBytes(2);
+    String text = null;
+    if (strlen >= 2) { // Don't read NUL
+        text = s.readString(strlen-2);
+        s.skipBytes(2);
+    } else {
+        s.skipBytes(strlen);
+    }
 
     return text;
   }
