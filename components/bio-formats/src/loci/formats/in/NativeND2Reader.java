@@ -225,7 +225,7 @@ public class NativeND2Reader extends FormatReader {
     int scanlinePad = isJPEG ? 0 : getSizeX() % 2;
     if (scanlinePad == 1) {
       if (split && !isLossless && ((nXFields % 2) != 0 ||
-        (nXFields == 0 && (getSizeC() > 4 || getSizeC() == 2))))
+        (nXFields == 0 && (getSizeC() >= 4 || getSizeC() == 2))))
       {
         scanlinePad = 0;
       }
@@ -914,7 +914,9 @@ public class NativeND2Reader extends FormatReader {
           core[0].sizeC = 1;
         }
       }
-      else if (availableBytes > planeSize * 3 && planeSize > 0) {
+      else if (availableBytes > DataTools.safeMultiply64(planeSize, 3) &&
+        planeSize > 0)
+      {
         core[0].sizeC = 3;
         core[0].rgb = true;
         if (getPixelType() == FormatTools.INT8) {
@@ -922,8 +924,8 @@ public class NativeND2Reader extends FormatReader {
             FormatTools.UINT16 : FormatTools.UINT8;
         }
       }
-      else if ((availableBytes >= planeSize * 2 || getSizeC() > 3) &&
-        getPixelType() == FormatTools.INT8)
+      else if ((availableBytes >= DataTools.safeMultiply64(planeSize, 2) ||
+        getSizeC() > 3) && getPixelType() == FormatTools.INT8)
       {
         core[0].pixelType = FormatTools.UINT16;
         if (getSizeC() > 3) {
