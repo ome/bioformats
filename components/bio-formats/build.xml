@@ -20,6 +20,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/formats/utests/testng.xml"/>
     <testng haltonfailure="true" groups="all" testname="${component.name}">
       <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
@@ -35,6 +36,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/formats/utests/testng-no-mdb.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.cp.no-mdb}"/>
@@ -51,6 +53,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/formats/utests/testng-no-netcdf.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.cp.no-netcdf}"/>
@@ -67,6 +70,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/formats/utests/testng-no-poi.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.cp.no-poi}"/>
@@ -81,6 +85,7 @@ Type "ant -p" for a list of targets.
     description="test metadata level support for a single file" if="doTests">
     <testng sourcedir="${test.dir}" testname="Metadata tests" failureProperty="failedTest">
       <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>

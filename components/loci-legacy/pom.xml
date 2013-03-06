@@ -95,6 +95,9 @@
           <suiteXmlFiles>
             <suiteXmlFile>test/loci/common/utests/testng-template.xml</suiteXmlFile>
           </suiteXmlFiles>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
+          </additionalClasspathElements>
         </configuration>
       </plugin>
       <plugin>

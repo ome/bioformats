@@ -8,25 +8,64 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>pom-scifio</artifactId>
-    <version>4.5-SNAPSHOT</version>
+    <version>4.4.6-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>scifio-devel</artifactId>
+  <artifactId>scifio-tools</artifactId>
 
-  <name>SCIFIO-devel</name>
-  <description>SCIFIO-devel is a necessary intermediate component as legacy classes are converted to SCIFIO components and package structures. As classes are converted from the SCIFIO component (or from loci-common, or other legacy components) they are placed in SCIFIO-devel, removed from their original component, and a delegator with the original package and class name is placed in the loci-legacy component, to preserve the API for backwards-compatibility while passing functional control to SCIFIO-devel. Thus loci-legacy + SCIFIO-devel are used in tandem to preserve backwards compatibility, but for an application that controls its own source the delegation layer can be bypassed by coding directly against SCIFIO-devel. When the SCIFIO component is completely converted and empty, SCIFIO-devel will be eliminated and become the SCIFIO component - so that transition should be considered when adding SCIFIO-devel as a dependency.</description>
+  <name>SCIFIO</name>
+  <description>SCientific Image Format Input and Output: an open source
+    framework for reading and writing scientific image file formats, and
+    converting metadata between standards.</description>
   <url>http://loci.wisc.edu/software</url>
   <inceptionYear>2005</inceptionYear>
 
   <licenses>
     <license>
       <name>Simplified BSD License</name>
+      <url>${license.server}/scifio/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
 
   <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jai_imageio</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>loci-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>lwf-stubs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>ome-xml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupid>
+      <artifactId>scifio</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jgoodies</groupId>
+      <artifactId>forms</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.5.10</version>
+    </dependency>
+
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
 
     <dependency>
@@ -34,11 +73,6 @@
       <artifactId>log4j</artifactId>
       <version>1.2.14</version>
       <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.5.10</version>
     </dependency>
     <dependency>
       <!-- NB: We want this, despite warning from dependency:analyze. -->
@@ -61,6 +95,7 @@
       <version>2.7.1</version>
       <scope>runtime</scope>
     </dependency>
+
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -68,48 +103,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <properties>
-    <project.rootdir>${basedir}/../..</project.rootdir>
-  </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>test/ome/scifio/io/utests/testng-template.xml</suiteXmlFile>
-          </suiteXmlFiles>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
-          </additionalClasspathElements>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>loci.maven.plugins</groupId>
-        <artifactId>cppwrap-maven-plugin</artifactId>
-        <version>1.1.0</version>
-        <configuration>
-          <headerFile>cppwrap/header.txt</headerFile>
-          <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
-          <coreFile>cppwrap/core.txt</coreFile>
-          <sourceDir>cppwrap</sourceDir>
-          <libraries>
-            <library>${project.groupId}:ome-xml:jar:${project.version}</library>
-          </libraries>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <configuration>
-          <licenseName>scifio</licenseName>
-          <projectName>OME SCIFIO package for reading and converting scientific file formats.</projectName>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <developers>
     <developer>
