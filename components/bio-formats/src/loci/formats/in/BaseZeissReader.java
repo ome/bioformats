@@ -464,7 +464,7 @@ public abstract class BaseZeissReader extends FormatReader {
               store.setPointID(shapeID, roiIndex, shapeIndex);
               store.setPointX(shape.points[(i*2)], roiIndex, shapeIndex);
               store.setPointY(shape.points[(i*2)+1], roiIndex, shapeIndex);
-              if (shape.text != null && i == 0 && (shape.type == FeatureType.MEAS_POINT || shape.type == FeatureType.MEAS_POINTS))
+              if (shape.text != null && i == 0)
                 store.setPointText(shape.text, roiIndex, shapeIndex);
               shapeIndex++;
             }
@@ -478,7 +478,7 @@ public abstract class BaseZeissReader extends FormatReader {
             store.setLineY1(shape.points[1], roiIndex, shapeIndex);
             store.setLineX2(shape.points[2], roiIndex, shapeIndex);
             store.setLineY2(shape.points[3], roiIndex, shapeIndex);
-            if (shape.text != null && shape.type == FeatureType.MEAS_LINE)
+            if (shape.text != null)
               store.setLineText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             break;
@@ -508,9 +508,7 @@ public abstract class BaseZeissReader extends FormatReader {
               store.setLineY1(shape.points[(i*2)+1], roiIndex, shapeIndex);
               store.setLineX2(shape.points[(i*2)+2], roiIndex, shapeIndex);
               store.setLineY2(shape.points[(i*2)+3], roiIndex, shapeIndex);
-              if (shape.text != null && i == caliperPoints - 2 && // Store label on baseline
-                  shape.type == FeatureType.MEAS_CALIPER || shape.type == FeatureType.MEAS_MULTIPLE_CALIPER ||
-                  shape.type == FeatureType.MEAS_DISTANCE || shape.type == FeatureType.MEAS_MULTIPLE_DISTANCE)
+              if (shape.text != null && i == caliperPoints - 2) // Store label on baseline
                 store.setLineText(shape.text, roiIndex, shapeIndex);
               shapeIndex++;
             }
@@ -527,8 +525,7 @@ public abstract class BaseZeissReader extends FormatReader {
               store.setLineY1(shape.points[(i*2)+1], roiIndex, shapeIndex);
               store.setLineX2(shape.points[(i*2)+2], roiIndex, shapeIndex);
               store.setLineY2(shape.points[(i*2)+3], roiIndex, shapeIndex);
-              if (shape.text != null && i == 0 &&
-                  (shape.type == FeatureType.MEAS_ANGLE3 || shape.type == FeatureType.MEAS_ANGLE4)) // ??
+              if (shape.text != null && i == 0)
                 store.setLineText(shape.text, roiIndex, shapeIndex);
               shapeIndex++;
             }
@@ -545,7 +542,7 @@ public abstract class BaseZeissReader extends FormatReader {
             store.setEllipseY(shape.points[1], roiIndex, shapeIndex);
             store.setEllipseRadiusX(radius, roiIndex, shapeIndex);
             store.setEllipseRadiusY(radius, roiIndex, shapeIndex);
-            if (shape.text != null && shape.type == FeatureType.MEAS_ELLIPSE)
+            if (shape.text != null)
               store.setEllipseText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             shapeID = MetadataTools.createLSID("Shape", roiIndex, shapeIndex);
@@ -607,16 +604,12 @@ public abstract class BaseZeissReader extends FormatReader {
             if (closed) {
               store.setPolygonID(shapeID, roiIndex, shapeIndex);
               store.setPolygonPoints(points.toString(), roiIndex, shapeIndex);
-              if (shape.text != null &&
-                  shape.type == FeatureType.MEAS_POLYLINE_OPEN || shape.type == FeatureType.MEAS_POLYLINE_CLOSED ||
-                  shape.type == FeatureType.MEAS_SPLINE_OPEN || shape.type == FeatureType.MEAS_SPLINE_CLOSED)
+              if (shape.text != null)
                   store.setPolygonText(shape.text, roiIndex, shapeIndex);
             } else {
               store.setPolylineID(shapeID, roiIndex, shapeIndex);
               store.setPolylinePoints(points.toString(), roiIndex, shapeIndex);
-              if (shape.text != null &&
-                  shape.type == FeatureType.MEAS_POLYLINE_OPEN || shape.type == FeatureType.MEAS_POLYLINE_CLOSED ||
-                  shape.type == FeatureType.MEAS_SPLINE_OPEN || shape.type == FeatureType.MEAS_SPLINE_CLOSED)
+              if (shape.text != null)
                   store.setPolylineText(shape.text, roiIndex, shapeIndex);
             }
             shapeIndex++;
@@ -655,9 +648,7 @@ public abstract class BaseZeissReader extends FormatReader {
             shapeID = MetadataTools.createLSID("Shape", roiIndex, shapeIndex);
             store.setPolygonID(shapeID, roiIndex, shapeIndex);
             store.setPolygonPoints(points.toString(), roiIndex, shapeIndex);
-            if (shape.text != null &&
-                shape.type == FeatureType.MEAS_POLYLINE_OPEN || shape.type == FeatureType.MEAS_POLYLINE_CLOSED ||
-                shape.type == FeatureType.MEAS_SPLINE_OPEN || shape.type == FeatureType.MEAS_SPLINE_CLOSED)
+            if (shape.text != null)
               store.setPolygonText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             break;
@@ -669,7 +660,7 @@ public abstract class BaseZeissReader extends FormatReader {
             store.setEllipseY((shape.points[1] + shape.points[5])/2, roiIndex, shapeIndex);
             store.setEllipseRadiusX((shape.points[4] - shape.points[0])/2.0, roiIndex, shapeIndex);
             store.setEllipseRadiusY((shape.points[5] - shape.points[1])/2.0, roiIndex, shapeIndex);
-            if (shape.text != null) // Done for both types since annotations are permitted labels
+            if (shape.text != null)
               store.setEllipseText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             break;
@@ -683,7 +674,7 @@ public abstract class BaseZeissReader extends FormatReader {
               store.setLineY1(shape.points[(i*2)+1], roiIndex, shapeIndex);
               store.setLineX2(shape.points[(i*2)+2], roiIndex, shapeIndex);
               store.setLineY2(shape.points[(i*2)+3], roiIndex, shapeIndex);
-              if (shape.text != null && i == 0 && shape.type == FeatureType.MEAS_LENGTH)
+              if (shape.text != null && i == 0)
                 store.setLineText(shape.text, roiIndex, shapeIndex);
               shapeIndex++;
             }
