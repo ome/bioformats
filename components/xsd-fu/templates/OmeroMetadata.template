@@ -1,0 +1,511 @@
+{% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
+\
+{% def index_name_string(name) %}\
+{% choose %}\
+{% when name[:2].isupper()%}${name}Index{% end %}\
+{% otherwise %}${name[:1].lower()}${name[1:]}Index{% end %}\
+{% end %}\
+{% end %}\
+\
+{% def index_string(name) %}int ${index_name_string(name)}{% end %}\
+\
+{% def counter(parent, obj, indexes) %}\
+    public int get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_string(indexes[:-1])})
+    {
+        // Parents: ${repr(parents[obj.name])}
+{% choose %}
+{% when parent_object(obj.name) is None or parent_object(obj.name).name == "OME" %}\
+        // Top-level object
+        return ${"%s%sList" % (obj.name[:1].lower(), obj.name[1:])}.size();
+{% end %}\
+{% when obj.isReference %}\
+        // ${obj.name} is a reference
+        ${parent} o = get${parent}(${", ".join(accessor(obj.name, parent, obj.name)[:-1])});
+        return o == null? null : o.sizeOf${obj.name.replace('Ref', '')}Links();
+{% end %}\
+{% when not obj.isReference %}\
+        // ${obj.name} is not a reference
+        ${parent} o = get${parent}(${", ".join(accessor(obj.name, parent, obj.name)[:-1])});
+        return o == null? null : o.sizeOf${obj.name.replace('Ref', '')}();
+{% end %}\
+{% end %}\
+    }
+{% end %}\
+\
+{% def getter(parent, obj, prop, indexes) %}\
+{% choose %}\
+{% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
+    public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
+{% end %}\
+{% when len(indexes) > 0 %}\
+    public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
+{% end %}\
+{% otherwise %}\
+    public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
+{% end %}\
+{% end %}\
+    {
+        // Parents: ${repr(parents[obj.name])}
+{% choose %}\
+{% when is_abstract(parent) and prop.isReference %}\
+        // ${parent} is abstract proprietary
+        ${obj.name} o = (${obj.name}) get${parent}(${", ".join(accessor(obj.name, parent, prop))});
+        return o == null? null : o.getID();
+{% end %}\
+{% when is_abstract(parent) %}\
+        // ${parent} is abstract proprietary and not a reference
+        ${obj.name} o = (${obj.name}) get${parent}(${", ".join(accessor(obj.name, parent, prop))});
+        return o == null? null : o.get${prop.javaMethodName}();
+{% end %}\
+{% when prop.isReference and prop.maxOccurs > 1 %}\
+        // ${prop.name} is reference and occurs more than once
+        ${obj.name} o = get${obj.name}(${", ".join(accessor(obj.name, parent, prop))});
+        return o == null? null : null; /* TODO: reference handler o.get${prop.javaMethodName}(); */
+{% end %}\
+{% when prop.isReference %}\
+        // ${prop.name} is reference and occurs only once
+        ${obj.name} o = get${obj.name}(${", ".join(accessor(obj.name, parent, prop))});
+        return o == null? null : null; /* TODO: reference handler o.get${prop.javaMethodName}(); */
+{% end %}\
+{% otherwise %}\
+        // ${prop.name} is not a reference
+        ${obj.name} o = get${obj.name}(${", ".join(accessor(obj.name, parent, prop))});
+        return o == null? null : o.get${prop.javaMethodName}();
+{% end %}\
+{% end %}\
+    }
+{% end %}\
+\
+{% python
+    def parent_object(name):
+        possible_parents = parents[name]
+        if possible_parents is None:
+            return None
+        return model.getObjectByName(possible_parents.keys()[0])
+
+    def is_abstract(name):
+        o = model.getObjectByName(name)
+        if o is not None and \
+           (o.isAbstract or o.isAbstractProprietary):
+            return True
+        return False
+
+    def is_parent_abstract(name):
+        parent = parent_object(name)
+        if parent is not None and \
+           (parent.isAbstract or parent.isAbstractProprietary):
+            return True
+        return False
+
+    def is_parent_abstract_proprietary(name):
+        parent = parent_object(name)
+        if parent is not None and parent.isAbstractProprietary:
+            return True
+        return False
+
+    def sorted_properties(o):
+        return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+
+    def accessor_string(name, max_occurs, level):
+        """Makes a Java method accessor string from an index name."""
+        v = accessor_string_complex(name, max_occurs, level)
+        if v is not None:
+            return v['accessor']
+        return None
+
+    def accessor_string_complex(name, max_occurs, level):
+        """Makes a Java method accessor string from an index name."""
+        to_return = {'level': level, 'name': name, 'max_occurs': max_occurs}
+        if max_occurs == 1:
+            return None
+        if name[:2].isupper():
+            to_return['accessor'] = "%sIndex" % (name)
+            return to_return
+        to_return['accessor'] = "%s%sIndex" % (name[:1].lower(), name[1:])
+        return to_return
+
+    def accessor(name, parent, prop, func=accessor_string):
+        results = dict()
+        fu.resolve_hierarchy(results, model, {name: parents[name]}, func, min_occurs=1)
+        if parent not in results.keys():
+            raise Exception("Invalid KEY No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+        if len(results.keys()) == 0:
+            raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
+        return results[parent]
+%}
+\
+\
+/*
+ * Copyright (C) 2009 University of Dundee & Open Microscopy Environment.
+ * All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+/*-----------------------------------------------------------------------------
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ * Created by ${fu.user} via xsd-fu on ${fu.date}
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+package ome.services.blitz.impl;
+
+import static omero.rtypes.*;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
+import ome.conditions.ApiUsageException;
+import ome.services.db.DatabaseIdentity;
+import ome.services.util.Executor;
+import ome.services.util.Executor.SimpleWork;
+import ome.services.util.Executor.Work;
+import ome.system.Principal;
+import ome.system.ServiceFactory;
+import ome.tools.hibernate.ProxyCleanupFilter;
+import ome.tools.hibernate.QueryBuilder;
+import ome.util.Filterable;
+import ome.xml.model.*;
+import ome.xml.model.enums.*;
+import ome.xml.model.primitives.*;
+import omero.model.*;
+import omero.util.IceMapper;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * An implementation for {@link MetadataStore} and {@link MetadataRetrieve} that
+ * knows how to read and write the OMERO object model.
+ * 
+ * @author Josh Moore josh at glencoesoftware.com
+ * @author Chris Allan callan at blackcat.ca
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
+public class OmeroMetadata implements MetadataRetrieve {
+
+    private final static Log log = LogFactory.getLog(OmeroMetadata.class);
+
+    // -- State --
+
+    private final List<Image> imageList = new ArrayList<Image>();
+    private final List<Dataset> datasetList = new ArrayList<Dataset>();
+    private final List<Project> projectList = new ArrayList<Project>();
+    private final List<Instrument> instrumentList = new ArrayList<Instrument>();
+    private final List<Experiment> experimentList = new ArrayList<Experiment>();
+    private final List<Experimenter> experimenterList = new ArrayList<Experimenter>();
+    private final List<ExperimenterGroup> experimenterGroupList = new ArrayList<ExperimenterGroup>();
+    // SPW
+    private final List<Screen> screenList = new ArrayList<Screen>();
+    private final List<Plate> plateList = new ArrayList<Plate>();
+
+    private final DatabaseIdentity db;
+
+    public OmeroMetadata(DatabaseIdentity db) {
+        this.db = db;
+    }
+    
+
+    public void addImage(Image image) {
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Adding image for retrieval:", image));
+        }
+        imageList.add(image);
+    }
+
+    public Image getImage(int i) {
+        return imageList.get(i);
+    }
+    
+    public int sizeImages() {
+        return imageList.size();
+    }
+
+    public String handleLsid(IObject obj) {
+
+        if (obj == null) {
+            return null;
+        }
+
+        Details d = obj.getDetails();
+        ExternalInfo ei = d.getExternalInfo();
+        Event ue = d.getUpdateEvent();
+
+        // If an LSID has previously been set, always use that.
+        if (ei != null && ei.getLsid() != null) {
+            return ei.getLsid().getValue();
+        }
+
+        // Otherwise if we have an ID use that as the value.
+        if (obj.getId() != null) {
+
+            Class k = obj.getClass();
+            long id = obj.getId().getValue();
+            Long v = (ue == null) ? null : ue.getId().getValue();
+            if (v == null) {
+                return db.lsid(k, id);
+            } else {
+                return db.lsid(k, id, v);
+            }
+        }
+
+        // Finally, we need to create an LSID since this object
+        // doesn't have one. This should not be done in the general
+        // case, since all exported objects should be coming from
+        // the database (i.e. have an id), and only on re-import will they
+        // be given their
+        // LSIDs. However, to simplify any possible
+
+        if (ei == null) {
+            ei = new ExternalInfoI();
+            d.setExternalInfo(ei);
+        }
+
+        String uuid = UUID.randomUUID().toString();
+        String lsid = obj.getClass().getSimpleName() + ":" + uuid;
+        ei.setLsid(rstring(lsid));
+
+        log.warn("Assigned temporary LSID: " + lsid);
+
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Returning LSID for object %s: %s", obj,
+                    lsid));
+        }
+        return ei.getLsid().getValue();
+
+    }
+
+    public void initialize(org.hibernate.Session session) {
+
+        Map<Image, ome.model.core.Image> lookups = new HashMap<Image, ome.model.core.Image>();
+        Map<Image, Image> replacements = new HashMap<Image, Image>();
+        for (Image image : imageList) {
+            if (!image.isLoaded()) {
+
+                final long id = image.getId().getValue(); 
+                QueryBuilder qb = new QueryBuilder();
+                qb.select("i");
+                qb.from("Image", "i");
+                qb.join("i.details.owner",  "i_o",  false, true);
+                qb.join("i.details.group",  "i_g",  false, true);
+                qb.join("i.pixels",         "p",    false, true);
+                qb.join("p.details.owner",  "p_o",  false, true);
+                qb.join("p.details.group",  "p_g",  false, true);
+                qb.join("p.pixelsType",     "pt",   false, true);
+                qb.join("p.dimensionOrder", "do",   false, true);
+                qb.join("p.channels",       "c",    false, true);
+                qb.join("c.logicalChannel", "l",    false, true);
+                qb.where();
+                qb.and("i.id = " + id);
+                ome.model.core.Image _i =(ome.model.core.Image) qb.query(session).uniqueResult();
+                if (_i == null) {
+                    throw new ApiUsageException("Cannot load image: " + id);
+                }
+                lookups.put(image, _i);
+                // Now load instrument if available
+                if (_i.getInstrument() != null) {
+                    qb = new QueryBuilder();
+                    qb.select("i");
+                    qb.from("Image","i");
+                    qb.join("i.instrument",    "n",     true,  true);
+                    qb.join("n.objective",     "o",     true,  true);
+                    qb.join("o.correction",    "o_cor", true,  true);
+                    qb.join("o.immersion",     "o_imm", true,  true);
+                    qb.join("n.details.owner", "n_o",   true,  true);
+                    qb.join("n.details.group", "n_g",   true,  true);
+                    qb.where();
+                    qb.and("i.id = "+ id);
+                    qb.query(session);
+                }
+            }
+        }
+        session.clear();
+        
+        IceMapper mapper = new IceMapper();
+        for (Image image : lookups.keySet()) {
+            Image replacement = (Image) mapper.map(new ProxyCleanupFilter().filter("", lookups.get(image)));
+            replacements.put(image, replacement);
+        }
+        
+        List<Image> newImages = new ArrayList<Image>();
+        for (int i = 0; i < imageList.size(); i++) {
+            Image image = imageList.get(i);
+            Image replacement = replacements.get(image);
+            if (replacement != null) {
+                newImages.add(replacement);
+            } else {
+                newImages.add(image);
+            }
+        }
+        this.imageList.clear();
+        this.imageList.addAll(newImages);
+
+    }
+
+    private Float dbl2float(double value) {
+        return Double.valueOf(value).floatValue();
+    }
+
+    private Integer dbl2int(double value) {
+        return Double.valueOf(value).intValue();
+    }
+
+    private String millis2time(long millis) {
+        return new Timestamp(millis).toString();
+    }
+
+    private String dbl2str(double value) {
+        return Double.toString(value);
+    }
+
+    private String int2str(int value) {
+        return Integer.toString(value);
+    }
+
+    private String flt2str(float value) {
+        return Float.toString(value);
+    }
+
+    public String getUUID() {
+        return null;
+    }
+
+    // -- Entity counting --
+
+{% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
+{% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
+{% if o.javaType != 'Object' %}\
+    // Element's text data
+    // ${repr(indexes[o.name])}
+
+    public ${o.javaType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
+    {
+        // No-op
+    }
+
+{% end %}\
+{% if parents[o.name] is not None and not o.isAbstract %}\
+    // ${o.name} entity counting
+{% for k, v in indexes[o.name].items() %}\
+{% if fu.max_occurs_under_parent(model, k, o.name) > 1 %}\
+${counter(k, o, v)}\
+
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+
+    // -- Entity retrieval (manual definitions) --
+
+    public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
+    {
+        // No-op
+    }
+
+    // -- Entity retrieval (code generated definitions) --
+
+    /** Gets the UUID associated with this collection of metadata. */
+    public String getUUID()
+    {
+        return null;
+    }
+
+{% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
+{% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
+\
+{% if not o.isReference and not is_parent_abstract_proprietary(o.name) %}\
+{% for k, v in indexes[o.name].items() %}\
+    // Private accessor for ${o.name}
+    private ${o.name} get{% if len(indexes[o.name].items()) > 1%}${k}{% end %}${o.name}(${", ".join(v)})
+    {
+        return null;
+    }
+
+{% end %}\
+{% end %}\
+\
+{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+    //
+    // ${o.name} property storage
+    //
+    // Indexes: ${repr(indexes[o.name])}
+    // ${repr(parents[o.name])}
+    // Is multi path? ${is_multi_path[o.name]}
+\
+{% choose %}\
+{% when o.isReference %}\
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+    // ${prop.minOccurs}:${prop.maxOccurs}
+    // Is multi path? ${is_multi_path[o.name]}
+    // Ignoring ${prop.name} property of reference ${o.name}
+
+{% end %}\
+{% end %}\
+{% otherwise %}\
+\
+{% for k, v in indexes[o.name].items() %}\
+{% if is_abstract(k) %}\
+{% for prop in sorted_properties(model.getObjectByName(k)) %}\
+{% choose %}\
+{% when not prop.isPrimitive and prop.isChoice %}\
+    // Ignoring ${prop.name} of parent abstract type
+{% end %}\
+{% otherwise %}\
+{% for parent_k, parent_v in indexes[k].items() %}\
+    // ${prop.name} accessor from parent ${k}
+${getter(k, o, prop, v)}\
+
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+\
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% choose %}\
+{% when prop.isBackReference %}\
+    // Ignoring ${prop.name} back reference
+{% end %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+    // Ignoring ${prop.name} element, complex property
+{% end %}\
+{% otherwise %}\
+{% for k, v in indexes[o.name].items() %}\
+${getter(k, o, prop, v)}\
+
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+\
+{% end %}\
+{% end %}\
+}

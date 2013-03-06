@@ -1,0 +1,4 @@
+            <!--
+            // Property Shapes
+            -->
+            <onemany name="shapes" type="ome.model.roi.Shape" inverse="shape" ordered="true"/>

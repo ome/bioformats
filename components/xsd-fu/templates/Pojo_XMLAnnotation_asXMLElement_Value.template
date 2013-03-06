@@ -1,0 +1,26 @@
+			Document Value_document = null;
+			try
+			{
+				javax.xml.parsers.DocumentBuilderFactory factory =
+					javax.xml.parsers.DocumentBuilderFactory.newInstance();
+				factory.setNamespaceAware(true);
+				javax.xml.parsers.DocumentBuilder parser =
+					factory.newDocumentBuilder();
+				org.xml.sax.InputSource is = new org.xml.sax.InputSource();
+				is.setCharacterStream(new java.io.StringReader(value));
+				Value_document = parser.parse(is);
+			}
+			catch (Exception e)
+			{
+				throw new RuntimeException(e);
+			}
+			Element value_element = 
+					document.createElementNS(NAMESPACE, "Value");
+			NodeList Value_subNodes = Value_document.getChildNodes();
+			for (int i = 0; i < Value_subNodes.getLength(); i++)
+			{
+				Node Value_subNode = Value_subNodes.item(i);
+				Value_subNode = document.importNode(Value_subNode, true);
+				value_element.appendChild(Value_subNode);
+			}
+			XMLAnnotation_element.appendChild(value_element);

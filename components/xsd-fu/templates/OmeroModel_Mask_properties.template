@@ -1,0 +1,4 @@
+            <!--
+            // Property Bytes
+            -->
+            <optional name="bytes" type="byte[]"/>
