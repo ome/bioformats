@@ -21,7 +21,7 @@ curdate() {
 # Get the most recent version of a schema
 # $1=schema name
 mostrecentversion() {
-    echo "$(basename $(dirname $(find Released-Schema -name "$1" | sort | tail -n1)))"
+    echo "$(basename $(dirname $(find released-schema -name "$1" | sort | tail -n1)))"
 }
 
 # Check if the a schema is the most recent version (return true) or legacy (return false)
@@ -75,7 +75,7 @@ schemastatus() {
 # $1=schema name
 # $2=release to check if current
 schemaversion() {
-	version=$(grep "version=" "Released-Schema/$2/$1" | grep -v 'xml' | head -n1 | sed -e 's;^.*version="\([0-9][0-9]*\)".*$;\1;')
+	version=$(grep "version=" "released-schema/$2/$1" | grep -v 'xml' | head -n1 | sed -e 's;^.*version="\([0-9][0-9]*\)".*$;\1;')
 	if [ -z "$version" ]; then
 	    version="1"
 	fi
@@ -124,10 +124,10 @@ root=published
 rm -rf "$root"
 mkdir -p "$root"
 
-for dir in Released-Schema/20*
+for dir in released-schema/20*
 do
     # Don't copy legacy or other material
-    if [ "$dir" = "Released-Schema/additions" ]; then
+    if [ "$dir" = "released-schema/additions" ]; then
 	continue
     fi
 
@@ -219,7 +219,7 @@ done
 
 # Transforms folder
 path="${root}/Schemas/Transforms/"
-dir="Xslt"
+dir="transforms"
 mkdir -p "$path"
 for transform in "$dir"/*.xsl
 do
@@ -228,7 +228,7 @@ done
 
 # Samples folder
 path="${root}/Schemas/Samples/"
-dir="Samples"
+dir="samples"
 mkdir -p "$path"
 for sample in "$dir"/*
 do
@@ -354,11 +354,11 @@ EOF
 <ul>
 EOF
 
-    for release in $(ls -1d Released-Schema/20* | grep -v 2003 | xargs $XARGSOPTS -n1 basename | sort -r); do
+    for release in $(ls -1d released-schema/20* | grep -v 2003 | xargs $XARGSOPTS -n1 basename | sort -r); do
 	reldate=$(parsedate "$release")
 	echo "<li>$reldate - namespace /$release/</li>"
     done
-    for release in $(ls -1d Released-Schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep FC | sed -e 's;2003-\(.*\);\1;') $(ls -1d Released-Schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep -v FC | sed -e 's;2003-\(.*\);\1;'); do
+    for release in $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep FC | sed -e 's;2003-\(.*\);\1;') $(ls -1d released-schema/20* | grep 2003 | xargs $XARGSOPTS -n1 basename | sort -r | grep -v FC | sed -e 's;2003-\(.*\);\1;'); do
 	reldate="2003 ($release)"
 	echo "<li>$reldate - namespace /$release/*.xsd</li>"
     done
