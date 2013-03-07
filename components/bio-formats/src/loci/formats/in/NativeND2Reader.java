@@ -523,6 +523,12 @@ public class NativeND2Reader extends FormatReader {
             }
             core = handler.getCoreMetadata();
 
+            // only accept the Z and T sizes from the text annotations
+            // if both values were set
+            if (core[0].sizeZ == 0) {
+              core[0].sizeT = 0;
+            }
+
             textString = sanitizeControl(textString);
 
             lines = textString.split(" ");
