@@ -218,7 +218,7 @@
         <echo message="Sample OME-XML files validated."/>
     </target>
 
-    <target name="clean" description="Cleans the published schemas">
+    <target name="clean" description="Cleans the published schemas and specification jar">
         <delete dir="published"/>
         <delete dir="${target.dir}"/>
     </target>

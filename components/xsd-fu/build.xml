@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="xsd-fu" default="runall" basedir=".">
 
-    <property name="import.dir" value="${basedir}/../antlib/resources"/>
-    <import file="${import.dir}/global.xml"/>
-    <import file="${import.dir}/lifecycle.xml"/>
+  <!-- Added to get to build after move -->
+  <property name="root.dir" location="../.."/>
+  <import file="${root.dir}/ant/java.xml"/>
 
-    <target name="package" depends="generate"><!-- Skip compile -->
+    <target name="package"><!-- Skip compile -->
         <property name="py.target" value="${basedir}/build/lib"/>
         <mkdir dir="${py.target}"/>
         <setup_py>
@@ -54,4 +54,10 @@
         <exec executable="./xslt/xslt-test2003FCTo200809To200909"/>
     </target>
 
+    <target name="clean" description="Cleans the published schemas and specification jar">
+        <delete>
+            <fileset dir="xslt" includes="**/*.pyc"/>
+        </delete>
+    </target>
+    
 </project>
