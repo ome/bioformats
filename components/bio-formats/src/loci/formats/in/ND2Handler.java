@@ -620,7 +620,7 @@ public class ND2Handler extends BaseHandler {
 
   // -- Helper methods --
 
-  private void parseKeyAndValue(String key, String value, String runtype) {
+  public void parseKeyAndValue(String key, String value, String runtype) {
     if (key == null || value == null) return;
     CoreMetadata ms0 = core.get(0);
     metadata.put(key, value);
@@ -881,6 +881,18 @@ public class ND2Handler extends BaseHandler {
     }
     else if (key.equals("Name") && channelNames.size() < ms0.sizeC) {
       channelNames.add(value);
+    }
+    else if (key.equals("Z Stack Loop")) {
+      int v = Integer.parseInt(value);
+      if (v <= nImages) {
+        core[0].sizeZ = v;
+      }
+    }
+    else if (key.equals("Time Loop")) {
+      int v = Integer.parseInt(value);
+      if (v <= nImages) {
+        core[0].sizeT = v;
+      }
     }
   }
 
