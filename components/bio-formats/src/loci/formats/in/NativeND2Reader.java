@@ -917,8 +917,8 @@ public class NativeND2Reader extends FormatReader {
           core.get(0).sizeC = 1;
         }
       }
-      else if (availableBytes > DataTools.safeMultiply64(planeSize, 3) &&
-        planeSize > 0)
+      else if (planeSize > 0 &&
+        availableBytes > DataTools.safeMultiply64(planeSize, 3))
       {
         core.get(0).sizeC = 3;
         core.get(0).rgb = true;
@@ -927,7 +927,8 @@ public class NativeND2Reader extends FormatReader {
             FormatTools.UINT16 : FormatTools.UINT8;
         }
       }
-      else if ((availableBytes >= DataTools.safeMultiply64(planeSize, 2) ||
+      else if (((planeSize > 0 &&
+        availableBytes >= DataTools.safeMultiply64(planeSize, 2)) ||
         getSizeC() > 3) && getPixelType() == FormatTools.INT8)
       {
         core.get(0).pixelType = FormatTools.UINT16;
