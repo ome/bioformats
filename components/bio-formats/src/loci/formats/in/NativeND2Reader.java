@@ -100,6 +100,7 @@ public class NativeND2Reader extends FormatReader {
   private boolean split = false;
   private int lastChannel = 0;
   private int[] colors;
+  private Boolean useZ = null;
 
   private int nXFields;
 
@@ -323,6 +324,7 @@ public class NativeND2Reader extends FormatReader {
       trueSizeZ = 0;
       textChannelNames.clear();
       textEmissionWavelengths.clear();
+      useZ = null;
     }
   }
 
@@ -1030,6 +1032,15 @@ public class NativeND2Reader extends FormatReader {
           core.get(0).sizeZ = 1;
           core.get(0).sizeT = count;
         }
+        else if (useZ != null && !useZ) {
+          CoreMetadata original = core[0];
+          core =
+            new CoreMetadata[imageOffsets.size() / (getSizeZ() * getSizeT())];
+          for (int i=0; i<core.length; i++) {
+            core[i] = original;
+          }
+          numSeries = core.length;
+        }
         else {
           core.get(0).sizeT = 1;
           core.get(0).sizeZ = count;
@@ -1489,7 +1500,9 @@ public class NativeND2Reader extends FormatReader {
       while (in.getFilePointer() < stop) {
         int type = in.read();        // @See switch
         int letters = in.read();        // Letters in the Attribute name
-        String name = in.readString(letters*2);   // Attribute name
+
+        // Attribute name
+        String name = DataTools.stripString(in.readString(letters*2));
 
         int numberOfItems; // Number of items in level (see level)
         Long off;           // Offset to index (see level)
@@ -1518,7 +1531,12 @@ public class NativeND2Reader extends FormatReader {
             break;
           case (8): // String
             //in.read(); // size of string
+            long start = in.getFilePointer();
             value = in.readCString();
+            long end = in.getFilePointer();
+            if ((end - start) % 2 != 0) {
+              in.skipBytes(1);
+            }
             break;
           case (9): // ByteArray
             long length = in.readLong();
@@ -1570,8 +1588,12 @@ public class NativeND2Reader extends FormatReader {
             continue;
         }
 
+        if (name.trim().equals("bUseZ")) {
+          useZ = new Boolean(value.toString());
+        }
+
         if (type != 11 && type != 10) {    // if not level add global meta
-          addGlobalMeta(DataTools.stripString(name), value);
+          addGlobalMeta(name, value);
         }
       }
     }
