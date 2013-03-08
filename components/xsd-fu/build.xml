@@ -9,7 +9,7 @@
         <property name="py.target" value="${basedir}/build/lib"/>
         <mkdir dir="${py.target}"/>
         <setup_py>
-            <env key="OMERO_VERSION" value="${omero.version}"/>
+            <env key="BF_VERSION" value="${release.version}"/>
             <arg value="build"/>
             <arg value="--build-platlib"/>
             <arg value="${py.target}"/>
@@ -17,7 +17,7 @@
             <arg value="${py.target}"/>
         </setup_py>
         <setup_py>
-            <env key="OMERO_VERSION" value="${omero.version}"/>
+            <env key="BF_VERSION" value="${release.version}"/>
             <arg value="bdist_egg"/>
             <arg value="--dist-dir"/>
             <arg value="${target.dir}"/>
@@ -54,9 +54,14 @@
         <exec executable="./xslt/xslt-test2003FCTo200809To200909"/>
     </target>
 
+    <target name="generate">
+        <exec executable="./xsd-fu-generate"/>
+    </target>
+
     <target name="clean" description="Cleans the published schemas and specification jar">
         <delete>
             <fileset dir="xslt" includes="**/*.pyc"/>
+            <fileset dir="python" includes="**/*.pyc"/>
         </delete>
     </target>
     
