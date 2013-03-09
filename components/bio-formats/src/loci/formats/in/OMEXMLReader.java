@@ -336,6 +336,7 @@ public class OMEXMLReader extends FormatReader {
     // contents of the internal OME-XML metadata object
     MetadataStore store = getMetadataStore();
 
+    MetadataTools.ensureValidOMEXML(omexmlMeta);
     MetadataTools.convertMetadata(omexmlMeta, store);
   }
 

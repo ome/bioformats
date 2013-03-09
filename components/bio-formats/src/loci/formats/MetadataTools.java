@@ -454,6 +454,198 @@ public final class MetadataTools {
   }
 
   /**
+   * Check for various required attributes, and insert default values if they
+   * are missing.
+   *
+   * This is intended to correct for invalidities in the original XML, not
+   * problems with Bio-Formats' parsing or the upgrade/downgrade stylesheets.
+   */
+  public static void ensureValidOMEXML(IMetadata meta) {
+    for (int i=0; i<meta.getExperimenterCount(); i++) {
+      if (meta.getExperimenterID(i) == null) {
+        meta.setExperimenterID("Experimenter:" + i, i);
+      }
+
+      if (meta.getExperimenterFirstName(i) == null &&
+        meta.getExperimenterLastName(i) == null &&
+        meta.getExperimenterEmail(i) == null &&
+        meta.getExperimenterInstitution(i) == null &&
+        meta.getExperimenterOMEName(i) == null)
+      {
+        meta.setExperimenterInstitution("Unknown", i);
+      }
+    }
+
+    for (int i=0; i<meta.getInstrumentCount(); i++) {
+      if (meta.getInstrumentID(i) == null) {
+        meta.setInstrumentID("Instrument:" + i, i);
+      }
+
+      if (meta.getMicroscopeID(i) != null) {
+        meta.setMicroscopeType("Unknown", i);
+      }
+
+      for (int q=0; q<meta.getObjectiveCount(i); q++) {
+        if (meta.getObjectiveID(i, q) == null) {
+          meta.setObjectiveID("Objective:" + i + ":" + q, i, q);
+        }
+
+        if (meta.getObjectiveCorrection(i, q) == null) {
+          meta.setObjectiveCorrection("Other", i, q);
+        }
+
+        if (meta.getObjectiveImmersion(i, q) == null) {
+          meta.setObjectiveImmersion("Other", i, q);
+        }
+      }
+
+      for (int q=0; q<meta.getFilterCount(i); q++) {
+        if (meta.getFilterID(i, q) == null) {
+          meta.setFilterID("Filter:" + i + ":" + q, i, q);
+        }
+      }
+
+      for (int q=0; q<meta.getFilterSetCount(i); q++) {
+        if (meta.getFilterSetID(i, q) == null) {
+          meta.setFilterID("FilterSet:" + i + ":" + q, i, q);
+        }
+      }
+
+      for (int q=0; q<meta.getDetectorCount(i); q++) {
+        if (meta.getDetectorID(i, q) == null) {
+          meta.setDetectorID("Detector:" + i + ":" + q, i, q);
+        }
+
+        if (meta.getDetectorType(i, q) == null) {
+          meta.setDetectorType("Other", i, q);
+        }
+      }
+
+      for (int q=0; q<meta.getOTFCount(i); q++) {
+        if (meta.getOTFID(i, q) == null) {
+          meta.setOTFID("OTF:" + i + ":" + q, i, q);
+        }
+      }
+
+      for (int q=0; q<meta.getDichroicCount(i); q++) {
+        if (meta.getDichroicID(i, q) == null) {
+          meta.setDichroicID("Dichroic:" + i + ":" + q, i, q);
+        }
+      }
+
+      for (int q=0; q<meta.getLightSourceCount(i); q++) {
+        if (meta.getLightSourceID(i, q) == null) {
+          meta.setLightSourceID("LightSource:" + i + ":" + q, i, q);
+        }
+
+        if (meta.getLaserType(i, q) == null &&
+          meta.getFilamentType(i, q) == null && meta.getArcType(i, q) == null)
+        {
+          meta.setLaserType("Unknown", i, q);
+          meta.setLaserLaserMedium("Unknown", i, q);
+        }
+      }
+    }
+
+    for (int i=0; i<meta.getProjectCount(); i++) {
+      if (meta.getProjectID(i) == null) {
+        meta.setProjectID("Project:" + i, i);
+      }
+    }
+
+    for (int i=0; i<meta.getDatasetCount(); i++) {
+      if (meta.getDatasetID(i) == null) {
+        meta.setDatasetID("Dataset:" + i, i);
+      }
+    }
+
+    for (int i=0; i<meta.getImageCount(); i++) {
+      if (meta.getImageID(i) == null) {
+        meta.setImageID("Image:" + i, i);
+      }
+
+      if (meta.getImageDefaultPixels(i) == null) {
+        meta.setImageDefaultPixels(meta.getPixelsID(i, 0), i);
+      }
+
+      if (meta.getStageLabelName(i) == null &&
+        (meta.getStageLabelX(i) != null || meta.getStageLabelY(i) != null ||
+        meta.getStageLabelZ(i) != null))
+      {
+        meta.setStageLabelName("unknown", i);
+      }
+
+      for (int q=0; q<meta.getPixelsCount(i); q++) {
+        if (meta.getPixelsID(i, q) == null) {
+          meta.setPixelsID("Pixels:" + i + ":" + q, i, q);
+        }
+
+        String order = meta.getPixelsDimensionOrder(i, q);
+        int sizeZ = meta.getPixelsSizeZ(i, q);
+        int sizeC = meta.getPixelsSizeC(i, q);
+        int sizeT = meta.getPixelsSizeT(i, q);
+        for (int p=0; p<meta.getPlaneCount(i, q); p++) {
+          if (meta.getPlaneTheZ(i, q, p) == null ||
+            meta.getPlaneTheC(i, q, p) == null ||
+            meta.getPlaneTheT(i, q, p) == null)
+          {
+            int[] zct = FormatTools.getZCTCoords(order, sizeZ, sizeC, sizeT,
+              meta.getPlaneCount(i, q), p);
+            meta.setPlaneTheZ(zct[0], i, q, p);
+            meta.setPlaneTheC(zct[1], i, q, p);
+            meta.setPlaneTheT(zct[2], i, q, p);
+          }
+        }
+      }
+
+      for (int q=0; q<meta.getMicrobeamManipulationCount(i); q++) {
+        if (meta.getMicrobeamManipulationID(i, q) == null) {
+          meta.setMicrobeamManipulationID(
+            "MicrobeamManipulation:" + i + ":" + q, i, q);
+        }
+      }
+
+      for (int q=0; q<meta.getRegionCount(i); q++) {
+        if (meta.getRegionID(i, q) == null) {
+          meta.setRegionID("Region:" + i + ":" + q, i, q);
+        }
+
+        if (meta.getRegionTag(i, q) == null) {
+          meta.setRegionTag("", i, q);
+        }
+      }
+
+      for (int q=0; q<meta.getLogicalChannelCount(i); q++) {
+        if (meta.getLogicalChannelID(i, q) == null) {
+          meta.setLogicalChannelID("LogicalChannel:" + i + ":" + q, i, q);
+        }
+      }
+
+      for (int q=0; q<meta.getROICount(i); q++) {
+        if (meta.getROIID(i, q) == null) {
+          meta.setROIID("ROI:" + i + ":" + q, i, q);
+        }
+      }
+    }
+
+    for (int i=0; i<meta.getExperimentCount(); i++) {
+      if (meta.getExperimentID(i) == null) {
+        meta.setExperimentID("Experiment:" + i, i);
+      }
+
+      if (meta.getExperimentType(i) == null) {
+        meta.setExperimentType("Other", i);
+      }
+    }
+
+    for (int i=0; i<meta.getGroupCount(); i++) {
+      if (meta.getGroupID(i) == null) {
+        meta.setGroupID("Group:" + i, i);
+      }
+    }
+  }
+
+  /**
    * Populates the 'pixels' element of the given metadata store, using core
    * metadata from the given reader.
    */
