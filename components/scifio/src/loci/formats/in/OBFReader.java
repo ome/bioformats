@@ -69,7 +69,7 @@ public class OBFReader extends FormatReader
 	private static final short MAGIC_NUMBER = (short) 0xFFFF ;
 
 	private static final int FILE_VERSION = 1 ;
-	private static final int STACK_VERSION = 2 ;
+	private static final int STACK_VERSION = 3 ;
 
 	private static final int MAXIMAL_NUMBER_OF_DIMENSIONS = 15 ;
 
