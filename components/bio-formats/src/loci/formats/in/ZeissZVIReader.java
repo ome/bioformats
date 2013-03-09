@@ -452,8 +452,25 @@ public class ZeissZVIReader extends BaseZeissReader {
     // scan stream for offsets to each ROI
 
     Vector<Long> roiOffsets = new Vector<Long>();
-    s.seek(0);
-    while (s.getFilePointer() < s.length() - 8) {
+
+
+    // Bytes 0x0-1 == 0x3
+    // Bytes 0x2-5 == Layer version (04100010)
+    // Byte 0x10 == Shape count
+
+    s.seek(16);
+    int roiCount = s.readShort();
+    int roiFound = 0;
+
+    // Add new layer for this set of shapes.
+    Layer nlayer = new Layer();
+    layers.add(nlayer);
+
+    // Following signature (from sig start):
+    // Bytes 0x12-15 == Shape version (0B200010)
+    // Bytes 0x28-nn == Shape attributes (size is first short)
+
+    while (roiFound < roiCount && s.getFilePointer() < s.length() - 8) {
       // find next ROI signature
       long signature = s.readLong() & 0xffffffffffffffffL;
       while (signature != ROI_SIGNATURE) {
@@ -461,24 +478,34 @@ public class ZeissZVIReader extends BaseZeissReader {
         s.seek(s.getFilePointer() - 6);
         signature = s.readLong() & 0xffffffffffffffffL;
       }
-      if (s.getFilePointer() < s.length()) {
-        roiOffsets.add(new Long(s.getFilePointer()));
+      if (s.getFilePointer() >= s.length()) {
+        break;
       }
-    }
 
-    Layer nlayer = new Layer();
+      long roiOffset = s.getFilePointer() - 8;
+      roiOffsets.add(new Long(roiOffset));
 
-    for (int shape=0; shape<roiOffsets.size(); shape++) {
-      Shape nshape = new Shape();
+      LOGGER.debug("ROI@" + roiOffset);
 
-      s.seek(roiOffsets.get(shape).longValue() + 18);
+      // Found ROI; now fill out the shape details and add to the
+      // layer.
 
+      s.seek(roiOffset + 26);
       int length = s.readInt();
-      s.skipBytes(length + 10);
-      nshape.type = FeatureType.get(s.readInt());
-      s.skipBytes(8);
 
+      Shape nshape = new Shape();
+      s.skipBytes(length + 6);
+
+      long shapeAttrOffset = s.getFilePointer();
+      int shapeAttrLength = s.readInt();
+      nshape.type = FeatureType.get(s.readInt());
+
+      LOGGER.debug("  ShapeAttrs@" + shapeAttrOffset + " len="+shapeAttrLength);
+
+      if (shapeAttrLength < 32) // Broken attrs.
+        break;
       // read the bounding box
+      s.skipBytes(8);
       nshape.x1 = s.readInt();
       nshape.y1 = s.readInt();
       nshape.x2 = s.readInt();
@@ -486,53 +513,117 @@ public class ZeissZVIReader extends BaseZeissReader {
       nshape.width = nshape.x2 - nshape.x1;
       nshape.height = nshape.y2 - nshape.y1;
 
-      // read text label and font data
-      long nextOffset =
-          (shape < roiOffsets.size() - 1 ?
-              roiOffsets.get(shape + 1).longValue() : s.length());
+      LOGGER.debug("    Bounding Box");
 
-      long nameBlock = s.getFilePointer();
-      long fontBlock = s.getFilePointer();
-      long lastBlock = s.getFilePointer();
-      while (s.getFilePointer() < nextOffset - 1) {
-        while (s.readShort() != 8) {
-          if (s.getFilePointer() >= nextOffset) break;
-        }
-        if (s.getFilePointer() >= nextOffset) break;
-        if (s.getFilePointer() - lastBlock > 64 && lastBlock != fontBlock) {
-          break;
-        }
-        nameBlock = fontBlock;
-        fontBlock = lastBlock;
-        lastBlock = s.getFilePointer();
+      if (shapeAttrLength >= 72) { // Basic shape styling
+        s.skipBytes(16);
+        nshape.fillColour = s.readInt();
+        nshape.textColour = s.readInt();
+        nshape.drawColour = s.readInt();
+        nshape.lineWidth = s.readInt();
+        nshape.drawStyle = DrawStyle.get(s.readInt());
+        nshape.fillStyle = FillStyle.get(s.readInt());
+        nshape.strikeout = (s.readInt() != 0);
+
+        LOGGER.debug("    Shape styles");
+      }
+      if (shapeAttrLength >= 100) { // Font styles
+        // Windows TrueType font weighting.
+        nshape.fontWeight = s.readInt();
+        nshape.bold = (nshape.fontWeight >= 600);
+        nshape.fontSize = s.readInt();
+        nshape.italic = (s.readInt() != 0);
+        nshape.underline = (s.readInt() != 0);
+        nshape.textAlignment = TextAlignment.get(s.readInt());
+
+        LOGGER.debug("    Font styles");
+      }
+      if (shapeAttrLength >= 148) { // Line styles
+        s.skipBytes(36);
+        nshape.lineEndStyle = BaseZeissReader.LineEndStyle.get(s.readInt());
+        nshape.pointStyle = BaseZeissReader.PointStyle.get(s.readInt());
+        nshape.lineEndSize = s.readInt();
+        nshape.lineEndPositions = BaseZeissReader.LineEndPositions.get(s.readInt());
+
+        LOGGER.debug("    Line styles");
+      }
+      if (shapeAttrLength >= 152) {
+        nshape.displayTag = (s.readInt() != 0);
+        LOGGER.debug("    Tag display");
+      }
+      if (shapeAttrLength >= 152) {
+        nshape.charset = Charset.get(s.readInt());
+        LOGGER.debug("    Charset");
       }
 
-      s.seek(nameBlock);
-      int strlen = s.readInt();
-      if (strlen + s.getFilePointer() > s.length()) continue;
-      nshape.name = DataTools.stripString(s.readString(strlen));
+      // Label (text).
+      nshape.text = parseROIString(s);
+      if (nshape.text == null) break;
+      LOGGER.debug("  Text=" + nshape.text);
 
-      s.seek(fontBlock);
-      int fontLength = s.readInt();
-      nshape.fontName = DataTools.stripString(s.readString(fontLength));
-      s.skipBytes(2);
-      int typeLength = s.readInt(); // This is probably skipping the ShapeAttributes structure, especially if it's 156 bytes long.
-      s.skipBytes(typeLength);
-
-      // read list of points that define this ROI
-      s.skipBytes(10);
-      nshape.pointCount = s.readInt();
-      nshape.points = new double[nshape.pointCount*2];
+      // Tag ID
+      if (s.getFilePointer() + 8 > s.length()) break;
       s.skipBytes(6);
+      nshape.tagID = new Tag(s.readInt(), BaseZeissReader.Context.MAIN);
+      LOGGER.debug("  TagID=" + nshape.tagID);
+
+      // Font name
+      nshape.fontName = parseROIString(s);
+      if (nshape.fontName == null) break;
+      LOGGER.debug("  Font name=" + nshape.fontName);
+
+      // Label (name).
+      nshape.name = parseROIString(s);
+      if (nshape.name == null) break;
+      LOGGER.debug("  Name=" + nshape.name);
+
+      // Handle size and point count.
+      if (s.getFilePointer() + 20 > s.length()) break;
+      s.skipBytes(4);
+      nshape.handleSize = s.readInt();
+      s.skipBytes(2);
+      nshape.pointCount = s.readInt();
+      s.skipBytes(6);
+      LOGGER.debug("  Handle size=" + nshape.handleSize);
+      LOGGER.debug("  Point count=" + nshape.pointCount);
+
+      if (s.getFilePointer() + (8*2*nshape.pointCount) > s.length()) break;
+      nshape.points = new double[nshape.pointCount*2];
       for (int p=0; p<nshape.pointCount; p++) {
         nshape.points[(p*2)] =  s.readDouble();
         nshape.points[(p*2)+1] =  s.readDouble();
       }
 
       nlayer.shapes.add(nshape);
+
+      ++roiFound;
     }
-    layers.add(nlayer);
+
+    if (roiCount != roiFound) {
+      LOGGER.warn("Found " + roiFound + " ROIs, but " + roiCount + " ROIs expected");
+    }
+
     s.close();
+  }
+
+  protected String parseROIString(RandomAccessInputStream s)
+    throws IOException {
+    // String is 0x0008 followed by int length for string+NUL.
+    while (s.getFilePointer() < s.length() - 4 &&
+      s.readShort() != 8);
+    if (s.getFilePointer() >= s.length() - 8) return null;
+    int strlen = s.readInt();
+    if (strlen + s.getFilePointer() > s.length()) return null;
+    // Strip off NUL.
+    String text = null;
+    if (strlen >= 2) { // Don't read NUL
+        text = s.readString(strlen-2);
+        s.skipBytes(2);
+    } else {
+        s.skipBytes(strlen);
+    }
+
+    return text;
   }
 
 }
