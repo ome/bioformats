@@ -1891,9 +1891,9 @@
         </options>
     </meta>
     <projectTree name="omeOxygenProject.xpr">
-        <folder path="../Released-Schema/"/>
-        <folder path="../Samples/"/>
-        <folder path="../Xslt/"/>
+        <folder path="../released-schema/"/>
+        <folder path="../samples/"/>
+        <folder path="../transforms/"/>
         <file name="BinaryFile.xsd"/>
         <file name="ome.xsd"/>
         <file name="OMERO.xsd"/>
