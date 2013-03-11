@@ -79,6 +79,10 @@ public class APNGReader extends FormatReader {
   private static final int AVERAGE = 3;
   private static final int PAETH = 4;
 
+  /** Interlacing pass dimensions. */
+  private static final int[] PASS_WIDTHS = {1, 1, 2, 2, 4, 4, 8};
+  private static final int[] PASS_HEIGHTS = {1, 1, 1, 2, 2, 4, 4};
+
   // -- Fields --
 
   private Vector<PNGBlock> blocks;
@@ -410,55 +414,89 @@ public class APNGReader extends FormatReader {
 
       // perform any necessary unfiltering
 
-      bpp *= getRGBChannelCount();
-      for (int row=0; row<height; row++) {
-        int filter = filters[row];
+      unfilter(filters, image, width, height);
+    }
+    else if (compression == 0) {
+      // see: http://www.w3.org/TR/PNG/#8Interlace
+      int byteCount = 0;
 
-        if (filter == NONE) {
-          continue;
+      byte[][] passImages = new byte[7][];
+
+      int nRowBlocks = height / 8;
+      int nColBlocks = width / 8;
+
+      image = new byte[FormatTools.getPlaneSize(this)];
+
+      InflaterInputStream decompressor =
+        new InflaterInputStream(new ByteArrayInputStream(bytes));
+      try {
+        for (int i=0; i<passImages.length; i++) {
+          int passWidth = PASS_WIDTHS[i] * nColBlocks;
+          int passHeight = PASS_HEIGHTS[i] * nRowBlocks;
+
+          int rowSize = passWidth * bpp * getRGBChannelCount();
+
+          byte[] filters = new byte[passHeight];
+          passImages[i] = new byte[rowSize * passHeight];
+
+          for (int row=0; row<passHeight; row++) {
+            int n = 0;
+            while (n < 1) {
+              n = decompressor.read(filters, row, 1);
+            }
+            n = 0;
+            while (n < rowSize) {
+              n += decompressor.read(passImages[i],
+                row * rowSize + n, rowSize - n);
+            }
+          }
+
+          unfilter(filters, passImages[i], passWidth, passHeight);
         }
+      }
+      finally {
+        decompressor.close();
+      }
 
-        for (int col=0; col<rowLen; col++) {
-          int q = row * rowLen + col;
+      int chunk = bpp * getRGBChannelCount();
+      int[] passOffset = new int[7];
 
-          int xx = image[q] & 0xff;
-          int a = col >= bpp ? image[q - bpp] & 0xff : 0;
-          int b = row > 0 ? image[q - bpp * width] & 0xff : 0;
-          int c = row > 0 && col >= bpp ?
-            image[q - bpp * (width + 1)] & 0xff : 0;
+      for (int row=0; row<height; row++) {
+        int rowOffset = row * width * chunk;
+        for (int col=0; col<width; col++) {
+          int blockRow = row % 8;
+          int blockCol = col % 8;
 
-          switch (filter) {
-            case SUB:
-              image[q] = (byte) ((xx + a) & 0xff);
-              break;
-            case UP:
-              image[q] = (byte) ((xx + b) & 0xff);
-              break;
-            case AVERAGE:
-              image[q] = (byte) ((xx + ((int) Math.floor(a + b) / 2)) & 0xff);
-              break;
-            case PAETH:
-              int p = a + b - c;
-              int pa = (int) Math.abs(p - a);
-              int pb = (int) Math.abs(p - b);
-              int pc = (int) Math.abs(p - c);
+          int pass = -1;
 
-              if (pa <= pb && pa <= pc) {
-                image[q] = (byte) ((xx + a) & 0xff);
-              }
-              else if (pb <= pc) {
-                image[q] = (byte) ((xx + b) & 0xff);
-              }
-              else {
-                image[q] = (byte) ((xx + c) & 0xff);
-              }
-              break;
+          if ((blockRow % 2) == 1) {
+            pass = 6;
+          }
+          else if (blockRow == 0 || blockRow == 4) {
+            if ((blockCol % 2) == 1) {
+              pass = 5;
+            }
+            else if (blockCol == 0) {
+              pass = blockRow == 0 ? 0 : 2;
+            }
+            else if (blockCol == 4) {
+              pass = blockRow == 0 ? 1 : 2;
+            }
+            else {
+              pass = 3;
+            }
+          }
+          else {
+            pass = 4 + (blockCol % 2);
+          }
+
+          int colOffset = col * chunk;
+          for (int c=0; c<chunk; c++) {
+            image[rowOffset + colOffset + c] =
+              passImages[pass][passOffset[pass]++];
           }
         }
       }
-    }
-    else if (compression == 0) {
-      throw new UnsupportedCompressionException("Interlacing not supported");
     }
     else {
       throw new UnsupportedCompressionException(
@@ -467,7 +505,6 @@ public class APNGReader extends FormatReader {
 
     // de-interleave
 
-    bpp /= getRGBChannelCount();
     byte[] deinterleave = new byte[image.length];
 
     for (int c=0; c<getRGBChannelCount(); c++) {
@@ -489,6 +526,58 @@ public class APNGReader extends FormatReader {
     }
 
     return deinterleave;
+  }
+
+  /** See http://www.w3.org/TR/PNG/#9Filters. */
+  private void unfilter(byte[] filters, byte[] image, int width, int height) {
+    int bpp =
+      getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+    int rowLen = width * bpp;
+    for (int row=0; row<height; row++) {
+      int filter = filters[row];
+
+      if (filter == NONE) {
+        continue;
+      }
+
+      for (int col=0; col<rowLen; col++) {
+        int q = row * rowLen + col;
+
+        int xx = image[q] & 0xff;
+        int a = col >= bpp ? image[q - bpp] & 0xff : 0;
+        int b = row > 0 ? image[q - bpp * width] & 0xff : 0;
+        int c = row > 0 && col >= bpp ?
+          image[q - bpp * (width + 1)] & 0xff : 0;
+
+        switch (filter) {
+          case SUB:
+            image[q] = (byte) ((xx + a) & 0xff);
+            break;
+          case UP:
+            image[q] = (byte) ((xx + b) & 0xff);
+            break;
+          case AVERAGE:
+            image[q] = (byte) ((xx + ((int) Math.floor(a + b) / 2)) & 0xff);
+            break;
+          case PAETH:
+            int p = a + b - c;
+            int pa = (int) Math.abs(p - a);
+            int pb = (int) Math.abs(p - b);
+            int pc = (int) Math.abs(p - c);
+
+            if (pa <= pb && pa <= pc) {
+              image[q] = (byte) ((xx + a) & 0xff);
+            }
+            else if (pb <= pc) {
+              image[q] = (byte) ((xx + b) & 0xff);
+            }
+            else {
+              image[q] = (byte) ((xx + c) & 0xff);
+            }
+            break;
+        }
+      }
+    }
   }
 
   // -- Helper class --
