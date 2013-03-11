@@ -16,7 +16,7 @@ Generate Java classes from an OME XML (http://www.ome-xml.org) XSD document.
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#  
+#
 #  You should have received a copy of the GNU General Public License along
 #  with this program; if not, write to the Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -108,7 +108,7 @@ Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
 
 def main(args):
 	"""
-	Default main() that parses command line options and generates Java 
+	Default main() that parses command line options and generates Java
 	classes in the output directory.
 	"""
 	try:
@@ -208,7 +208,7 @@ def enum_value_name(value):
 
 def enumTypesMain(args):
 	"""
-	Default main() that parses command line options and generates Java 
+	Default main() that parses command line options and generates Java
 	classes for enumeration types in an output directory.
 	"""
 	try:
@@ -252,7 +252,7 @@ def enumTypesMain(args):
 
 def enumHandlersMain(args):
 	"""
-	Default main() that parses command line options and generates Java 
+	Default main() that parses command line options and generates Java
 	classes for enumeration handlers in an output directory.
 	"""
 	try:
@@ -605,15 +605,15 @@ def docGenMain(args):
 	"""
 	Documentation main() that does not parse the command line and spits
 	generated wiki formatted docs to STDOUT.
-	Added by Andrew Patterson (July 2008) to generate content for 
+	Added by Andrew Patterson (July 2008) to generate content for
 	the ArityOfSchema page on http://ome-xml.org
 	"""
 	outputDirectory = None
 	package = DEFAULT_PACKAGE
 	namespace = "xsd:"
-	
+
 	for theSchemas in [
-	["OME",           "../specification/InProgress/ome.xsd"], 
+	["OME",           "../specification/InProgress/ome.xsd"],
 	["SPW",           "../specification/InProgress/SPW.xsd"],
 	["BinaryFile",    "../specification/InProgress/BinaryFile.xsd"],
 	["SA",            "../specification/InProgress/SA.xsd"],
@@ -641,13 +641,13 @@ def tabGenMain(args):
 	outputDirectory = None
 	package = DEFAULT_PACKAGE
 	namespace = "xsd:"
-	
+
 	for theSchemas in [
-			["OME",       "../specification/InProgress/ome.xsd", 
-				[["OME", "OME:"]]], 
-			["ROI",       "../specification/InProgress/ROI.xsd", 
-				[["ROI", "OME:ROI:"]]], 
-			["SPW",       "../specification/InProgress/SPW.xsd", 
+			["OME",       "../specification/InProgress/ome.xsd",
+				[["OME", "OME:"]]],
+			["ROI",       "../specification/InProgress/ROI.xsd",
+				[["ROI", "OME:ROI:"]]],
+			["SPW",       "../specification/InProgress/SPW.xsd",
 				[["Plate", "OME:Plate:"],
 				["Screen", "OME:Screen:"]]],
 			["SA",        "../specification/InProgress/SA.xsd",

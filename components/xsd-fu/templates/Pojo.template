@@ -22,13 +22,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,7 +40,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
@@ -136,7 +136,7 @@ public class ${klass.name} extends ${klass.javaBase}
 		super();
 	}
 
-	/** 
+	/**
 	 * Constructs ${klass.name} recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -157,7 +157,7 @@ ${customContent}\
 
 	// -- OMEModelObject API methods --
 
-	/** 
+	/**
 	 * Updates ${klass.name} recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
@@ -275,7 +275,7 @@ ${customUpdatePropertyContent[prop.name]}
 		{
 {% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
 {% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.isReference and inner_prop.isChoice %}\
-			List<Element> ${inner_prop.name}_nodeList = 
+			List<Element> ${inner_prop.name}_nodeList =
 					getChildrenByTagName(${prop.name}_element, "${inner_prop.name}");
 			for (Element ${inner_prop.name}_element : ${inner_prop.name}_nodeList)
 			{
@@ -574,7 +574,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.maxOccurs == 1 %}\
 			// Element property ${prop.name} which is not complex (has no
 			// sub-elements)
-			Element ${prop.javaInstanceVariableName}_element = 
+			Element ${prop.javaInstanceVariableName}_element =
 					document.createElementNS(NAMESPACE, "${prop.name}");
 			${prop.javaInstanceVariableName}_element.setTextContent(${prop.javaInstanceVariableName}.toString());
 			${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_element);

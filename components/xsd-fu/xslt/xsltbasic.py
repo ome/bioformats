@@ -4,7 +4,7 @@
 ...
 """
 
-#  
+#
 #  Copyright (c) 2009 University of Dundee. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -46,8 +46,8 @@ from lxml.etree import XML, XSLT, Element, SubElement, ElementTree, dump, parse
 #        from elementtree.ElementTree import XML, Element, SubElement, ElementTree, dump
 
 class XsltBasic(unittest.TestCase):
-    
-    # Create the XPath for the element in the scope of root or local. 
+
+    # Create the XPath for the element in the scope of root or local.
     # and add attribute if supplied.
     def createXPath(self, scope, NS, elementName, attribute=None):
         if(scope=='local'):
@@ -63,14 +63,14 @@ class XsltBasic(unittest.TestCase):
     # return the name of the element without NameSpace e.g. {NameSpace}elementName.
     def localName(self, elementTag):
         return elementTag[elementTag.find("}") + 1:]
-    
+
     # if var is not none then remove trailing spaces and if '' then return None.
     def stripStr(self, var):
         if(var != None):
             if(var.strip()!=''):
                 return var.strip();
         return None;
-    
+
     # Get all elements from rootElement in elementList in namespace NS.
     def getAllElements(self, rootElement, NS, elementList):
         returnList = [];
@@ -79,19 +79,19 @@ class XsltBasic(unittest.TestCase):
             foundElements = rootElement.findall(elementXPath);
             returnList.extend(foundElements);
         return returnList;
-    
+
     # Check that the elements in the exclusionList are not in the element.
     def checkElementsExcluded(self, element, exclusionList):
         children = element.getchildren();
         for child in children:
             self.assertFalse(child in exclusionList)
-            
+
     # Check that the attributes in element with Namespace NS are not in exclusionList.
     def checkAttributesExcluded(self, root, NS, element, exclusionList):
         for attribute in exclusionList:
             xpath = self.createXPath('all',NS, element, attribute);
             self.assertTrue(len(root.findall(xpath))==0)
-   
+
     # Check the alll the elements in oldRoot with namespace oldNS have been mapped to newRoot with namespace newNS.
     # Rename those elements in renameMap.
     def checkElementsMapped(self, oldRoot, oldNS, newRoot, newNS, renameMap):
@@ -102,7 +102,7 @@ class XsltBasic(unittest.TestCase):
             newElements = newRoot.findall(newXPath);
             self.assertEqual(len(oldElements),len(newElements))
             self.assertTrue(len(newRoot.findall(oldXPath))==0)
-            
+
     # Check the alll the elements in oldRoot with namespace oldNS have been mapped to newRoot with namespace newNS.
     # Rename those elements in renameMap.
     def checkElementsMappedNoCount(self, oldRoot, oldNS, newRoot, newNS, renameMap):
@@ -112,7 +112,7 @@ class XsltBasic(unittest.TestCase):
             oldElements = oldRoot.findall(oldXPath);
             newElements = newRoot.findall(newXPath);
             self.assertTrue(len(newRoot.findall(oldXPath))==0)
-            
+
     # Compare Elements in oldElement with the NameSpace oldElementNS to the attributes with the same name in newElement.
     # Don't compare those elements in the exceptionList.
     # Rename those attributes in the renameMap.
@@ -189,7 +189,7 @@ class XsltBasic(unittest.TestCase):
                     equalsMap[attribute] = True;
         for key in equalsMap:
             self.assertEquals(equalsMap[key], True);
-            
+
     # Get elements in list as a map from element [name:value], removing namespace.
     def getElementsAsMap(self, element):
         childMap = {};
@@ -229,7 +229,7 @@ class XsltBasic(unittest.TestCase):
             self.assertEquals(self.stripStr(newChildElement.text), self.stripStr(oldChildElement.text))
         for key in inclusionMap:
             self.assertEquals(inclusionMap[key], True);
-            
+
     # Compare attributes from oldElement to new element
     # Don't compare those elements in the exceptionList.
     # Rename those elements in the renameMap.
@@ -254,9 +254,9 @@ class XsltBasic(unittest.TestCase):
                 print 'old %s' % oldValue
                 print 'new %s' % newValue
                 print 'END FAILURE'
-            self.assertEquals(newValue, oldValue);    
+            self.assertEquals(newValue, oldValue);
 
-    # Get all the child elements from the element, in namespace. 
+    # Get all the child elements from the element, in namespace.
     # Exclude thoses child elements in the exclusions list.
     def getChildElements(self, element, elementNS, exceptionList):
         childList = [];
@@ -265,7 +265,7 @@ class XsltBasic(unittest.TestCase):
             if(name not in exceptionList):
                 childList.append(name);
         return childList;
-        
+
     # Return true if the attributes in the elements left and right match and the number if children match.
     def elementsEqual(self, left, right, renamedAttributes):
         if(self.localName(tag)!=self.localName(right.tag)):
@@ -280,14 +280,14 @@ class XsltBasic(unittest.TestCase):
             if(left[leftAttribute] != right[renamedAttributes[leftAttribute]]):
                 return false;
         return True;
-        
+
     # Select the element in rightList who's attributes match the element left.
     def getElementFromList(self, left, rightList, renamedAttributes):
         for right in rightList:
             if(elementsEqual(left, right, renamedAttributes, renamedElements)):
                 return right;
         return None;
-        
+
     # Compare graph's are same, the attributes and elements maybe renamed using the renameAttributes
     # and renameElements map, this method assumes that the graphs are in the same element order.
     def compareGraphs(self, left, right, ignoreAttributes = None, renameAttributes = None, renameElements=None):
@@ -301,14 +301,14 @@ class XsltBasic(unittest.TestCase):
             self.compareAttributes(leftChildren[i], rightChildren[i], ignoreAttributes, renameAttributes);
             if(renameElements==None):
                 self.assertEqual(self.localName(leftChildren[i].tag), self.localName(rightChildren[i].tag));
-            else:  
+            else:
                 leftChildTag = self.localName(leftChildren[i].tag);
                 if(leftChildTag in renameElements):
                     leftChildTag = renameElements[leftChildTag];
                 self.assertEqual(leftChildTag, self.localName(rightChildren[i].tag));
             self.assertEqual(self.stripStr(leftChildren[i].text), self.stripStr(rightChildren[i].text));
-            self.compareGraphs(leftChildren[i], rightChildren[i], ignoreAttributes, renameAttributes, renameElements);            
-        
+            self.compareGraphs(leftChildren[i], rightChildren[i], ignoreAttributes, renameAttributes, renameElements);
+
     # Compare graph's are same, the attributes and elements maybe renamed using the renameAttributes
     # and renameElements map, this method assumes that the graphs are in the same element order.
     def compareGraphsWithoutOrder(self, left, right, renameAttributes = None, renameElements=None):
@@ -319,23 +319,23 @@ class XsltBasic(unittest.TestCase):
             return;
         for i in range(len(leftChildren)):
             rightChild = self.getElementFromList(leftChildren[i], rightChildren, renameAttributes);
-            self.assertTrue(rightChild!=None);     
+            self.assertTrue(rightChild!=None);
             if(renameElements==None):
                 self.assertEqual(self.localName(leftChildren[i].tag), self.localName(rightChild.tag));
-            else:  
+            else:
                 self.assertEqual(renameElements[self.localName(leftChildren[i].tag)], self.localName(rightChild.tag));
             self.assertEqual(self.stripStr(leftChildren[i].text), self.stripStr(rightChild.text));
-            self.compareGraphsWithoutOrder(leftChildren[i], rightChild, ignoreAttributes, renameAttributes, renameElements);            
-    
+            self.compareGraphsWithoutOrder(leftChildren[i], rightChild, ignoreAttributes, renameAttributes, renameElements);
+
     # get the name of a reference, by removing the Ref suffix.
     def elementRefName(self, name):
         return name[:len(name)-3];
-    
+
     # return true if the element is a reference, has Ref suffix.
     def isRef(self, element):
         return (element.tag[len(element.tag)-3:]=='Ref');
-         
-    # return the elemenet in the root tree with name element name and id 
+
+    # return the elemenet in the root tree with name element name and id
     # if it does not exist it will return None
     def findElementByID(self, root, NS, elementName, id):
         elements = self.getAllElements(root, NS, [elementName]);
@@ -354,8 +354,8 @@ class XsltBasic(unittest.TestCase):
         return newElement;
 
     # Replace the references in elemenet with the full element from root, this method only works
-    # on the children of the element, to replace all references in element use replaceRefsWithElementRecurse. 
-    # If RefList is not empty it will only replace the References in RefList. 
+    # on the children of the element, to replace all references in element use replaceRefsWithElementRecurse.
+    # If RefList is not empty it will only replace the References in RefList.
     # The elements in RefList should only be the name of the element, ROI not ROIRef.
     def replaceRefsWithElements(self, root, NS, element, RefList=None):
         if(RefList==None):
@@ -374,9 +374,9 @@ class XsltBasic(unittest.TestCase):
                 newElement.append(deepcopy(child));
         return newElement
 
-    # Replace the references in elemenet with the full element from root, this method works to 
-    # replace all references in element. 
-    # If RefList is not empty it will only replace the References in RefList. 
+    # Replace the references in elemenet with the full element from root, this method works to
+    # replace all references in element.
+    # If RefList is not empty it will only replace the References in RefList.
     # The elements in RefList should only be the name of the element, ROI not ROIRef.
     def replaceRefsWithElementsRecurse(self, root, NS, element, RefList=None):
         if(RefList==None):
@@ -393,12 +393,12 @@ class XsltBasic(unittest.TestCase):
             else:
                 newElement.append(self.replaceRefsWithElementsRecurse(root, NS, child, RefList));
         return newElement
- 
-    # Move the child elements from removeElement to removeElements parent element and remove 
+
+    # Move the child elements from removeElement to removeElements parent element and remove
     # it from the element.
     def moveElementsFromChildToParent(self, element, NS, removeElement):
         returnElement = deepcopy(element);
-        
+
         xpath = self.createXPath('root', NS, removeElement);
         elementsToRemove = returnElement.findall(xpath);
         for elementToRemove in elementsToRemove:
@@ -407,8 +407,8 @@ class XsltBasic(unittest.TestCase):
             for child in elementToRemove.getchildren():
                 elementsParent.append(child);
         return returnElement;
-        
-            
+
+
 
 
 

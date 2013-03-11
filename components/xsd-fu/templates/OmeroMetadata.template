@@ -198,7 +198,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * An implementation for {@link MetadataStore} and {@link MetadataRetrieve} that
  * knows how to read and write the OMERO object model.
- * 
+ *
  * @author Josh Moore josh at glencoesoftware.com
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
@@ -225,7 +225,7 @@ public class OmeroMetadata implements MetadataRetrieve {
     public OmeroMetadata(DatabaseIdentity db) {
         this.db = db;
     }
-    
+
 
     public void addImage(Image image) {
         if (log.isDebugEnabled()) {
@@ -237,7 +237,7 @@ public class OmeroMetadata implements MetadataRetrieve {
     public Image getImage(int i) {
         return imageList.get(i);
     }
-    
+
     public int sizeImages() {
         return imageList.size();
     }
@@ -303,7 +303,7 @@ public class OmeroMetadata implements MetadataRetrieve {
         for (Image image : imageList) {
             if (!image.isLoaded()) {
 
-                final long id = image.getId().getValue(); 
+                final long id = image.getId().getValue();
                 QueryBuilder qb = new QueryBuilder();
                 qb.select("i");
                 qb.from("Image", "i");
@@ -341,13 +341,13 @@ public class OmeroMetadata implements MetadataRetrieve {
             }
         }
         session.clear();
-        
+
         IceMapper mapper = new IceMapper();
         for (Image image : lookups.keySet()) {
             Image replacement = (Image) mapper.map(new ProxyCleanupFilter().filter("", lookups.get(image)));
             replacements.put(image, replacement);
         }
-        
+
         List<Image> newImages = new ArrayList<Image>();
         for (int i = 0; i < imageList.size(); i++) {
             Image image = imageList.get(i);

@@ -21,7 +21,7 @@ class ElementAggregator(sax.ContentHandler):
 	"""
 	Aggregates all elements in a SAX run.
 	"""
-	
+
 	def __init__(self):
 		# Setup the DOM tree
 		impl = getDOMImplementation()
@@ -29,7 +29,7 @@ class ElementAggregator(sax.ContentHandler):
 		self.dom.appendChild(self.createRoot())
 		self.stack = [self.dom.documentElement]
 		self.skipped = False
-		
+
 	def createRoot(self):
 		"""
 		Creates an initial DOM tree to work from.
@@ -40,7 +40,7 @@ class ElementAggregator(sax.ContentHandler):
 			ns.value = self.namespace
 			element.setAttributeNode(ns)
 		return element
-	
+
 	def startElement(self, name, attribs):
 		'''
 		Aggregates each element.
@@ -55,7 +55,7 @@ class ElementAggregator(sax.ContentHandler):
 			newAttribute.value = value
 			newElement.setAttributeNode(newAttribute)
 		self.stack.append(newElement)
-			
+
 	def endElement(self, name):
 		"""
 		Populates the DOM tree.
@@ -76,12 +76,12 @@ class ElementAggregator(sax.ContentHandler):
 		if len(content) > 0 and len(self.stack) > 0:
 			textNode = self.dom.createTextNode(content)
 			self.stack[-1].appendChild(textNode)
-			
+
 class DSLElementAggregator(ElementAggregator):
 	skip = ["types"]
 	namespace = None
 	rootElementName = "types"
-	
+
 class STDElementAggregator(ElementAggregator):
 	skip = ["OME", "SemanticTypeDefinitions"]
 	namespace = "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd"
@@ -106,10 +106,10 @@ Examples:
   %s -r -d -o MySTDs.xml cvs/OME/src/xml/Core
   %s -o Experiment.xml cvs/OME/src/xml/Core/Experiment.ome
   %s -o base.xml -t dsl omero/acquisition.ome.xml
-	
+
 Report bugs to <callan@blackcat.ca>.""" % (cmd, cmd, cmd)
 	sys.exit(1)
-	
+
 def parseTree(parser, path, extension):
 	"""
 	Parses a recursive directory tree (only files that match the extension)
@@ -121,7 +121,7 @@ def parseTree(parser, path, extension):
 				fullpath = os.path.join(root, f)
 				logging.debug("Parsing file: %s" % fullpath)
 				parser.parse(fullpath)
-	
+
 if __name__ == '__main__':
 	try:
 		options, args = getopt.getopt(sys.argv[1:], 'rdo:t:')
@@ -129,7 +129,7 @@ if __name__ == '__main__':
 			usage()
 	except getopt.GetoptError, (msg, opt):
 		usage(msg)
-	
+
 	outputFile = sys.stdout
 	recursive = False
 	aggregator = STDElementAggregator()
@@ -152,10 +152,10 @@ if __name__ == '__main__':
 				extension = "ome.xml"
 			elif argument != "std":
 				usage("option -t must be 'dsl' or 'std'")
-	
+
 	parser = sax.make_parser()
 	parser.setContentHandler(aggregator)
-	
+
 	for path in args:
 		if not recursive:
 			if os.path.isdir(path):

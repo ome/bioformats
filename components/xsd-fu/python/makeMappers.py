@@ -34,10 +34,10 @@ Options:
 Examples:
   %s core.xml omero/acquisition.ome.xml
   %s -o OUT -d core.xml omero/all.xml
-	
+
 Report bugs to <callan@blackcat.ca>.""" % (cmd, cmd)
 	sys.exit(1)
-	
+
 class AbstractObjectModel(object):
 	"""
 	An abstract object model atop an ElementTree.
@@ -45,26 +45,26 @@ class AbstractObjectModel(object):
 	def __init__(self, xmlFile):
 		self.tree = et.parse(xmlFile)
 		self.root = self.tree.getroot()
-		
+
 	def types(self):
 		return self.root.findall(self.ns + self.typeElementName)
-		
+
 	def typeNames(self):
 		names = list()
 		for modelType in self.types():
 			names.append(self.getTypeName(modelType))
 		return names
-		
+
 	def getTypeName(self, modelType):
 		return modelType.get(self.idAttribute)
-		
+
 	def getType(self, typeName):
 		types = self.types()
 		for atype in types:
 			if self.getTypeName(atype) == typeName:
 				return atype
 		return None
-		
+
 	def getTypeAttributes(self, atype):
 		if atype == None:
 			raise Exception("Unknown type: %s" % typeName)
@@ -89,12 +89,12 @@ class DSLModel(AbstractObjectModel):
 	idAttribute = "id"
 	propertyNameAttribute = "name"
 	propertyTypeAttribute = "type"
-	
+
 	def getTypeName(self, modelType):
 		name = super(DSLModel, self).getTypeName(modelType)
 		i = name.rfind(".") + 1
 		return name[i:]
-		
+
 	def getTypeProperties(self, atype):
 		a = atype.find(self.ns + "properties")
 		if a is None:
@@ -110,10 +110,10 @@ class STModel(AbstractObjectModel):
 	idAttribute = "Name"
 	propertyNameAttribute = "Name"
 	propertyTypeAttribute = "DataType"
-	
+
 	def getTypeProperties(self, atype):
 		return atype.findall(self.ns + "Element")
-		
+
 def makeMapper(st, stType, dsl, dslType):
 	stAttributes = st.getTypeAttributes(stType)
 	dslAttributes = dsl.getTypeAttributes(dslType)
@@ -147,7 +147,7 @@ def makeMappers(outputDirectory, st, dsl):
 			print "No match for %s" % (stTypeName)
 #	print "ST %s" % repr(st.typeNames())
 #	print "DSL %s" % repr(dsl.typeNames())
-	
+
 if __name__ == '__main__':
 	try:
 		options, args = getopt.getopt(sys.argv[1:], 'do:')
@@ -155,7 +155,7 @@ if __name__ == '__main__':
 			usage()
 	except getopt.GetoptError, (msg, opt):
 		usage(msg)
-	
+
 	outputDirectory = os.getcwd()
 	configFile = None
 	for option, argument in options:
@@ -172,5 +172,5 @@ if __name__ == '__main__':
 
 	st = STModel(args[0])
 	dsl = DSLModel(args[1])
-	
+
 	makeMappers(outputDirectory, st, dsl)

@@ -17,7 +17,7 @@ Toolkit for working with enumerations from one or more OME XML
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#  
+#
 #  You should have received a copy of the GNU General Public License along
 #  with this program; if not, write to the Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -62,7 +62,7 @@ Examples:
 Report bugs to OME-Devel <ome-devel@lists.openmicroscopy.org.uk""" % \
 	(error, cmd, DEFAULT_NAMESPACE, cmd, cmd, cmd)
 	sys.exit(2)
-	
+
 
 def dump(model):
 	"""Dumps enumerations to STDOUT."""
@@ -82,7 +82,7 @@ def dump(model):
 				for value in prop.possibleValues:
 					print "      +-- %s" % value
 	print "\nTotal enumerations: %d" % count
-	
+
 def resolve_xpaths(xpaths, suffix, names):
 	"""
 	Resolves a set of XPath definitions for a given hierarchical tree
@@ -158,7 +158,7 @@ if __name__ == '__main__':
 			config = argument
 		if option == "-n":
 			namespace = argument
-			
+
 	if config is not None:
 		config = ConfigObj(config)
 		old = config['schemas']['old']

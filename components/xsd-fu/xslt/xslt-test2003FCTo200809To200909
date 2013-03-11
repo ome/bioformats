@@ -4,7 +4,7 @@
 ...
 """
 
-#  
+#
 #  Copyright (c) 2009 University of Dundee. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -73,17 +73,17 @@ class Test2003FCto200809to200909(XsltBasic):
 
     OLD_VALIDATION = "../specification/Released-Schema/2003-FC/ome.xsd"
     NEW_VALIDATION = "../specification/Released-Schema/2009-09/ome.xsd"
-    
+
     DOCUMENT = "../specification/InProgress/test-ome-samples/sample-2003-FC.ome"
-    
+
     OLD_OME_NS = "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd"
-    
+
     NEW_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
 
     NEW_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2008-09"
-    
 
- 
+
+
     def setUp(self):
         self.xslt_file = open(self.STYLESHEET)
         self.xslt_file2 = open(self.STYLESHEET2)
@@ -99,7 +99,7 @@ class Test2003FCto200809to200909(XsltBasic):
 
 #    def test_dummy(self):
         """
-        
+
         """
 #        print self.result
 
@@ -154,10 +154,10 @@ class Test2003FCto200809to200909(XsltBasic):
             isXsdValid = False
             print "File: %s Line: (%s, %s) Type: %s (%s) - %s\n" % ("Output", None, None, "XML", None, "Processing the XML data has generated an unspecified error in the XML sub-system. This is usually a result of an incorrect top level block. Please check the OME block is well-formed and that the schemaLocation is specified correctly. This may also be caused by a missing namespace prefix or incorrect xmlns attribute.")
             print "File is invalid"
-            
+
         self.assertTrue(isXsdValid);
-    
-        
+
+
 if __name__ == '__main__':
     unittest.main()
 """

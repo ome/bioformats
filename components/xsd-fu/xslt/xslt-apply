@@ -4,7 +4,7 @@
 ...
 """
 
-#  
+#
 #  Copyright (c) 2009 University of Dundee. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,7 @@ Examples:
 
 Report bugs to ome-devel@lists.openmicroscopy.org.uk""" % (error, cmd, cmd)
     sys.exit(2)
-        
+
 if __name__ == '__main__':
 
     xslt_filename = sys.argv[1]
@@ -73,8 +73,7 @@ if __name__ == '__main__':
         in_doc = parse(in_file)
         transform = XSLT(xslt_doc)
         print transform(in_doc)
-        
+
     finally:
         xslt_file.close()
         in_file.close()
-                           

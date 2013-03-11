@@ -4,7 +4,7 @@
 ...
 """
 
-#  
+#
 #  Copyright (c) 2009 University of Dundee. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -97,7 +97,7 @@ class Test201004to201006(XsltBasic):
 
     def test_dummy(self):
         """
-        
+
         """
         print self.result
 
@@ -152,10 +152,10 @@ class Test201004to201006(XsltBasic):
             isXsdValid = False
             print "File: %s Line: (%s, %s) Type: %s (%s) - %s\n" % ("Output", None, None, "XML", None, "Processing the XML data has generated an unspecified error in the XML sub-system. This is usually a result of an incorrect top level block. Please check the OME block is well-formed and that the schemaLocation is specified correctly. This may also be caused by a missing namespace prefix or incorrect xmlns attribute.")
             print "File is invalid"
-            
+
         self.assertTrue(isXsdValid);
-    
-        
+
+
 if __name__ == '__main__':
     unittest.main()
 """

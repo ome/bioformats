@@ -15,7 +15,7 @@ an OME XML (http://www.ome-xml.org) XSD document.
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#  
+#
 #  You should have received a copy of the GNU General Public License along
 #  with this program; if not, write to the Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -76,7 +76,7 @@ JAVA_BASE_TYPE_MAP = {}
 
 # Types which have not been recognized as explicit defines (XML Schema
 # definitions that warrant a the creation of a first class model object) that
-# we wish to be treated otherwise. As part of the code generation process they 
+# we wish to be treated otherwise. As part of the code generation process they
 # will also be confirmed to be top-level types.
 EXPLICIT_DEFINE_OVERRIDE = ('EmissionFilterRef', 'ExcitationFilterRef')
 
@@ -112,7 +112,7 @@ ABSTRACT_PROPRIETARY_OVERRIDE = ('Transform',)
 
 def updateTypeMaps(namespace):
     """
-    Updates the type maps with a new namespace. **Must** be executed at least 
+    Updates the type maps with a new namespace. **Must** be executed at least
     once, **before** node class file generation.
     """
     global JAVA_PRIMITIVE_TYPE_MAP
@@ -234,7 +234,7 @@ def resolve_parents(model, element_name):
     for parent in my_parents:
         parents[parent] = resolve_parents(model, parent)
     return parents
-    
+
 def resolve_paths(paths, level, names):
     """
     Resolves a set of ASCII art graphics for a given hierarchical tree
@@ -255,7 +255,7 @@ class ModelProcessingError(Exception):
 
 class ReferenceDelegate(object):
     """
-    A "virtual" property delegate to be used with "reference" 
+    A "virtual" property delegate to be used with "reference"
     OMEModelProperty instances. This delegate conforms loosely to the same
     interface as a delegate coming from generateDS (ie. an "attribute" or
     an "element").
@@ -269,10 +269,10 @@ class ReferenceDelegate(object):
         self.values = None
         self.maxOccurs = 9999
         self.minOccurs = 0
-    
+
     def getValues(self):
         return self.values
-    
+
     def getMaxOccurs(self):
         return self.maxOccurs
 
@@ -411,10 +411,10 @@ class OMEModelEntity(object):
 
 class OMEModelProperty(OMEModelEntity):
     """
-    An aggregate type representing either an OME XML Schema element, 
+    An aggregate type representing either an OME XML Schema element,
     attribute or our OME XML Schema "Reference" meta element (handled by the
     ReferenceDelegate class). This class equates conceptually to an object
-    oriented language instance variable which may be of a singular type or a 
+    oriented language instance variable which may be of a singular type or a
     collection.
     """
 
@@ -467,7 +467,7 @@ class OMEModelProperty(OMEModelEntity):
             return self.delegate.getData_type()
         return self.delegate.getType()
     type = property(_get_type, doc="""The property's XML Schema data type.""")
-            
+
     def _get_maxOccurs(self):
         if self.isAttribute:
             return 1
@@ -477,7 +477,7 @@ class OMEModelProperty(OMEModelEntity):
         return max(choiceMaxOccurs, self.delegate.getMaxOccurs())
     maxOccurs = property(_get_maxOccurs,
         doc="""The maximum number of occurances for this property.""")
-        
+
     def _get_minOccurs(self):
         if self.isAttribute:
             if self.delegate.getUse() == "optional":
@@ -538,8 +538,8 @@ class OMEModelProperty(OMEModelEntity):
             if not self.isAttribute and self.delegate.isComplex():
                 return self.type
             if not self.isEnumeration:
-                # We have a property whose type was defined by a top level 
-                # simpleType. 
+                # We have a property whose type was defined by a top level
+                # simpleType.
                 simpleTypeName = self.type
                 return self.resolveJavaTypeFromSimpleType(simpleTypeName)
             logging.debug("%s dump: %s" % (self, self.__dict__))
@@ -563,7 +563,7 @@ class OMEModelProperty(OMEModelEntity):
         return False
     isAnnotation = property(_get_isAnnotation,
         doc="""Whether or not the property is an Annotation.""")
-    
+
     def _get_isPrimitive(self):
         if self.javaType in JAVA_PRIMITIVE_TYPE_MAP.values():
             return True
@@ -591,7 +591,7 @@ class OMEModelProperty(OMEModelEntity):
         return self.delegate.getValues()
     possibleValues = property(_get_possibleValues,
         doc="""If the property is an enumeration, it's possible values.""")
-    
+
     def _get_javaInstanceVariableName(self):
         name = self.javaArgumentName
         if self.isManyToMany:
@@ -627,7 +627,7 @@ class OMEModelProperty(OMEModelEntity):
         if self.name == "Description":
             return False
         return self.delegate.isComplex()
-        
+
     def fromAttribute(klass, attribute, parent, model):
         """
         Instantiates a property from an XML Schema attribute.
@@ -636,7 +636,7 @@ class OMEModelProperty(OMEModelEntity):
         instance.isAttribute = True
         return instance
     fromAttribute = classmethod(fromAttribute)
-    
+
     def fromElement(klass, element, parent, model):
         """
         Instantiates a property from an XML Schema element.
@@ -703,7 +703,7 @@ class OMEModelObject(OMEModelEntity):
             self.plural = root.findtext('plural')
         except AttributeError:
             pass
-    
+
     def addAttribute(self, attribute):
         """
         Adds an OME XML Schema attribute to the object's data model.
@@ -711,7 +711,7 @@ class OMEModelObject(OMEModelEntity):
         name = attribute.getName()
         self.properties[name] = \
             OMEModelProperty.fromAttribute(attribute, self, self.model)
-        
+
     def addElement(self, element):
         """
         Adds an OME XML Schema element to the object's data model.
@@ -777,7 +777,7 @@ class OMEModelObject(OMEModelEntity):
         if base is None:
             return DEFAULT_BASE_CLASS
         return base
-    javaBase = property(_get_javaBase, 
+    javaBase = property(_get_javaBase,
         doc="""The model object's Java base class.""")
 
     def _get_namespace(self):
@@ -838,16 +838,16 @@ class OMEModelObject(OMEModelEntity):
 
     def __str__(self):
         return self.__repr__()
-    
+
     def __repr__(self):
         return '<"%s" OMEModelObject instance at 0x%x>' % (self.name, id(self))
-    
+
 class OMEModel(object):
     def __init__(self):
         self.elementNameObjectMap = dict()
         self.objects = odict()
         self.parents = dict()
-        
+
     def addObject(self, element, obj):
         elementName = element.getName()
         if self.objects.has_key(element):
@@ -860,7 +860,7 @@ class OMEModel(object):
             return
         self.elementNameObjectMap[element.getName()] = obj
         self.objects[element] = obj
-        
+
     def getObject(self, element):
         try:
             return self.objects[element]
@@ -1027,7 +1027,7 @@ class OMEModel(object):
         model.postProcessReferences()
         return model
     process = classmethod(process)
-    
+
     def __str__(self):
         a = str()
         for o in model.objects.values():
@@ -1039,7 +1039,7 @@ class OMEModel(object):
             for name, atype in attributes.items():
                 a += "   + Attribute: %s Type: %s\n" % (name, atype)
         return a
-        
+
 class TemplateInfo(object):
     """
     Basic status information to pass to the template engine.
@@ -1055,11 +1055,11 @@ class TemplateInfo(object):
         self.BACK_REFERENCE_NAME_OVERRIDE = BACK_REFERENCE_NAME_OVERRIDE
         self.REF_REGEX = REF_REGEX
         self.OMERO_NAMED_OPTIONAL = OMERO_NAMED_OPTIONAL
-    
+
     def link_overridden(self, property_name, class_name):
         """Whether or not a back reference link should be overridden."""
         try:
-            return class_name in self.BACK_REFERENCE_LINK_OVERRIDE[property_name] 
+            return class_name in self.BACK_REFERENCE_LINK_OVERRIDE[property_name]
         except KeyError:
             return False
 

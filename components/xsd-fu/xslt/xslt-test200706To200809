@@ -4,7 +4,7 @@
 ...
 """
 
-#  
+#
 #  Copyright (c) 2009 University of Dundee. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -70,20 +70,20 @@ def run_stylesheet(xslt, document):
 class Test200802(XsltBasic):
 
     STYLESHEET = "../specification/Xslt/2007-06-to-2008-09.xsl"
-    
+
     OLD_VALIDATION = "../specification/Released-Schema/2007-06/ome.xsd"
     NEW_VALIDATION = "../specification/Released-Schema/2008-09/ome.xsd"
 
     DOCUMENT = "../specification/InProgress/test-ome-samples/sample-2007-06.ome"
-    
+
     OLD_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2007-06"
 
     OLD_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2007-06"
-    
+
     NEW_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
 
     NEW_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2008-09"
-          
+
     def setUp(self):
         self.xslt_file = open(self.STYLESHEET)
         self.instance_file = open(self.DOCUMENT)
@@ -150,11 +150,11 @@ class Test200802(XsltBasic):
             isXsdValid = False
             print "File: %s Line: (%s, %s) Type: %s (%s) - %s\n" % ("Output", None, None, "XML", None, "Processing the XML data has generated an unspecified error in the XML sub-system. This is usually a result of an incorrect top level block. Please check the OME block is well-formed and that the schemaLocation is specified correctly. This may also be caused by a missing namespace prefix or incorrect xmlns attribute.")
             print "File is invalid"
-            
+
         self.assertTrue(isXsdValid);
 
-    
-        
+
+
 if __name__ == '__main__':
     unittest.main()
 """

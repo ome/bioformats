@@ -4,7 +4,7 @@
 ...
 """
 
-#  
+#
 #  Copyright (c) 2009 University of Dundee. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -70,23 +70,23 @@ def run_stylesheet(xslt, document):
 class Test200809(XsltBasic):
 
     STYLESHEET = "../specification/Xslt/2008-09-to-2009-09.xsl"
-    
+
     OLD_VALIDATION = "../specification/Released-Schema/2008-09/ome.xsd"
     NEW_VALIDATION = "../specification/Released-Schema/2009-09/ome.xsd"
 #    NEW_VALIDATION = "../specification/InProgress/ome.xsd"
 
     DOCUMENT = "../specification/InProgress/test-ome-samples/sample-2008-09.ome"
-    
+
     OLD_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
 
     OLD_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2008-09"
-    
+
     OLD_AM_NS = "http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09"
-    
+
     NEW_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2009-09"
 
     NEW_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2009-09"
-          
+
     def setUp(self):
         self.xslt_file = open(self.STYLESHEET)
         self.instance_file = open(self.DOCUMENT)
@@ -105,17 +105,17 @@ class Test200809(XsltBasic):
 
     def test_objective_settings(self):
         """
-        ObjectiveRef to ObjectiveSettings transformation 
+        ObjectiveRef to ObjectiveSettings transformation
         """
-        
+
         self.checkElementsMappedNoCount( self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS,{'ObjectiveRef':'ObjectiveSettings'})
-        
+
     def test_light_source_settings(self):
         """
-        LightSourceRef to LightSettings transformation 
+        LightSourceRef to LightSettings transformation
         """
         self.checkElementsMappedNoCount(self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS, {'LightSourceRef':'LightSourceSettings'})
-        
+
     def test_detector_settings(self):
         """
         DetectorRef to DetectorSettings transformation
@@ -132,7 +132,7 @@ class Test200809(XsltBasic):
         self.checkAttributesExcluded(self.new_root, self.NEW_SPW_NS, 'WellSample', ['Index'])
         self.checkAttributesExcluded(self.new_root, self.NEW_SPW_NS, 'WellSample', ['PosX'])
         self.checkAttributesExcluded(self.new_root, self.NEW_SPW_NS, 'WellSample', ['PosY'])
-        
+
         # count old PosX and PosY attributes in old WellSample
         xpath = './/{%s}WellSample' % self.OLD_SPW_NS
         old_elements = self.old_root.findall(xpath)
@@ -143,7 +143,7 @@ class Test200809(XsltBasic):
                 reference_count_posx+=1
             if ('PosY' in element.keys()):
                 reference_count_posy+=1
-                
+
         # count old PosX and PosY attributes in new WellSample
         xpath = './/{%s}WellSample' % self.NEW_SPW_NS
         new_wellsample_elements = self.new_root.findall(xpath)
@@ -187,8 +187,8 @@ class Test200809(XsltBasic):
         # find old OME:Description only in AM:Category
         xpath = './/{%s}Category/{%s}Description' % (self.OLD_AM_NS, self.OLD_OME_NS)
         reference_category_descripton_elements = self.old_root.findall(xpath)
-        
-        
+
+
         # find new OME:Description
         xpath = './/{%s}Description' % self.NEW_OME_NS
         new_ome_descripton_elements = self.new_root.findall(xpath)
@@ -207,12 +207,12 @@ class Test200809(XsltBasic):
             self.assertFalse('lang' in element.keys())
         # all old OME - AM must equal new OME + new SPW
         self.assertEquals(
-            reference_count_all 
-                - len(reference_analysismodule_descripton_elements) 
+            reference_count_all
+                - len(reference_analysismodule_descripton_elements)
                 - len(reference_lookuptable_descripton_elements)
                 - len(reference_formaloutput_descripton_elements)
                 - len(reference_category_descripton_elements)
-                - len(reference_formalinput_descripton_elements), 
+                - len(reference_formalinput_descripton_elements),
             len(new_ome_descripton_elements)
                 + len(new_screen_descripton_elements))
         # old OME in screen must equal new OME in screen
@@ -233,7 +233,7 @@ class Test200809(XsltBasic):
         for element in old_elements:
             if ('Description' in element.keys()):
                 reference_count_attribute+=1
-                
+
         # find new SPW:Plate
         xpath = './/{%s}Plate' % self.NEW_SPW_NS
         new_plate_count = len(self.new_root.findall(xpath))
@@ -244,12 +244,12 @@ class Test200809(XsltBasic):
         new_plate_descripton_count = len(self.new_root.findall(xpath))
         # compare old Description attributes to new Description elements in Plate
         self.assertEquals(reference_count_attribute, new_plate_descripton_count)
-        
+
         # old attributes must not be present in new SPW:Plate nodes
         xpath = './/{%s}Plate' % self.NEW_SPW_NS
         new_elements = self.new_root.findall(xpath)
         for element in new_elements:
-            self.assertFalse('Description' in element.keys())   
+            self.assertFalse('Description' in element.keys())
 
     def test_dataset_no_locked(self):
         """
@@ -257,24 +257,24 @@ class Test200809(XsltBasic):
         """
         self.checkElementsMapped(self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS, {'Dataset':'Dataset'})
         self.checkAttributesExcluded(self.new_root, self.NEW_OME_NS, 'Dataset', ['Locked'])
-        
+
     def test_objective_elements_to_attributes(self):
         """
         Objective transformation. See stylesheet for details
         """
         """
         fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ['Objective']);
-        
+
         toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, ['Objective']);
         for i, toAttributeElement in enumerate(toAttributes):
             self.compareElementsWithAttributes(fromElements[i], self.OLD_OME_NS, toAttributeElement);
         """
-        
+
     def test_experimenter_elements_to_attributes(self):
         """
         Experimenter transformation. See stylesheet for details
         """
-        
+
         fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ['Experimenter']);
         toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, ['Experimenter']);
         self.assertEqual(len(fromElements), len(toAttributes));
@@ -287,7 +287,7 @@ class Test200809(XsltBasic):
 
     def test_filter_set_elements_to_attributes(self):
         """
-        FilterSet transformation. See stylesheet for details 
+        FilterSet transformation. See stylesheet for details
         """
         fromAttributes = self.getAllElements(self.old_root, self.OLD_OME_NS, ['FilterSet'])
         toElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ['FilterSet'])
@@ -301,7 +301,7 @@ class Test200809(XsltBasic):
 
     def test_tiffdata_rename_numplanes_to_planecount(self):
         """
-        TiffData transformation. See stylesheet for details 
+        TiffData transformation. See stylesheet for details
         """
         oldElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ['TiffData']);
         newElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ['TiffData']);
@@ -309,10 +309,10 @@ class Test200809(XsltBasic):
         self.assertEqual(len(oldElements), len(newElements));
         for i, oldElement in enumerate(oldElements):
             self.compareAttributes(oldElement, newElements[i], None, {"NumPlanes":"PlaneCount"});
-    
+
     def test_experiment_copy_microbeammanipulation_from_image(self):
         """
-        Experiment transformation. See stylesheet for details 
+        Experiment transformation. See stylesheet for details
         """
         oldElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ["Experiment"]);
         newElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ["Experiment"]);
@@ -326,8 +326,8 @@ class Test200809(XsltBasic):
 #            print 'DUMP(newElement)';
 #            dump(newElement);
             self.compareGraphs(
-                oldElementWithoutMBRef, 
-                newElement, 
+                oldElementWithoutMBRef,
+                newElement,
                 ['{http://www.w3.org/XML/1998/namespace}lang', 'ID'], #ignoreAttributes
                 None, #renameAttributes
                 {"LightSourceRef":"LightSourceSettings"}); #renameElements
@@ -348,7 +348,7 @@ class Test200809(XsltBasic):
     """
     Follow a collection of tests for transformation related to ROI elements.
     """
- 
+
     def test_shape_transformation(self):
         """
         Checks that the shape types have been correctly transformed.
@@ -404,9 +404,9 @@ class Test200809(XsltBasic):
             isXsdValid = False
             print "File: %s Line: (%s, %s) Type: %s (%s) - %s\n" % ("Output", None, None, "XML", None, "Processing the XML data has generated an unspecified error in the XML sub-system. This is usually a result of an incorrect top level block. Please check the OME block is well-formed and that the schemaLocation is specified correctly. This may also be caused by a missing namespace prefix or incorrect xmlns attribute.")
             print "File is invalid"
-            
+
         self.assertTrue(isXsdValid);
-    
+
 
 if __name__ == '__main__':
     unittest.main()

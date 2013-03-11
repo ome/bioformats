@@ -4,7 +4,7 @@
 ...
 """
 
-#  
+#
 #  Copyright (c) 2009 University of Dundee. All rights reserved.
 #
 #  Redistribution and use in source and binary forms, with or without
@@ -73,18 +73,18 @@ def run_stylesheet(xslt, document):
 
 class Test200809(unittest.TestCase):
     STYLESHEET = "../specification/Xslt/2008-09-to-2009-09.xsl"
-    
+
     DOCUMENT = "../specification/InProgress/test-ome-samples/sample-2008-09.ome"
-    
+
     OLD_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
 
     OLD_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2008-09"
-    
+
     NEW_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2009-09"
 
     NEW_SPW_NS = "http://www.openmicroscopy.org/Schemas/SPW/2009-09"
-    
-    # Create the XPath for the element in the scope of root or local. 
+
+    # Create the XPath for the element in the scope of root or local.
     # and add attribute if supplied.
     def createXPath(self, scope, NS, elementName, attribute=None):
         if(scope=='local'):
@@ -100,14 +100,14 @@ class Test200809(unittest.TestCase):
     # return the name of the element without NameSpace e.g. {NameSpace}elementName.
     def localName(self, elementTag):
         return elementTag[elementTag.find("}") + 1:]
-    
+
     # if var is not none then remove trailing spaces and if '' then return None.
     def stripStr(self, var):
         if(var != None):
             if(var.strip()!=''):
                 return var.strip();
         return None;
-    
+
     # Get all elements from rootElement in elementList in namespace NS.
     def getAllElements(self, rootElement, NS, elementList):
         returnList = [];
@@ -116,19 +116,19 @@ class Test200809(unittest.TestCase):
             foundElements = rootElement.findall(elementXPath);
             returnList.extend(foundElements);
         return returnList;
-    
+
     # Check that the elements in the exclusionList are not in the element.
     def checkElementsExcluded(self, element, exclusionList):
         children = element.getchildren();
         for child in children:
             self.assertFalse(child in exclusionList)
-            
+
     # Check that the attributes in element with Namespace NS are not in exclusionList.
     def checkAttributesExcluded(self, root, NS, element, exclusionList):
         for attribute in exclusionList:
             xpath = self.createXPath('all',NS, element, attribute);
             self.assertTrue(len(root.findall(xpath))==0)
-   
+
     # Check the alll the elements in oldRoot with namespace oldNS have been mapped to newRoot with namespace newNS.
     # Rename those elements in renameMap.
     def checkElementsMapped(self, oldRoot, oldNS, newRoot, newNS, renameMap):
@@ -139,7 +139,7 @@ class Test200809(unittest.TestCase):
             newElements = newRoot.findall(newXPath);
             self.assertEqual(len(oldElements),len(newElements))
             self.assertTrue(len(newRoot.findall(oldXPath))==0)
-            
+
     # Check the alll the elements in oldRoot with namespace oldNS have been mapped to newRoot with namespace newNS.
     # Rename those elements in renameMap.
     def checkElementsMappedNoCount(self, oldRoot, oldNS, newRoot, newNS, renameMap):
@@ -149,7 +149,7 @@ class Test200809(unittest.TestCase):
             oldElements = oldRoot.findall(oldXPath);
             newElements = newRoot.findall(newXPath);
             self.assertTrue(len(newRoot.findall(oldXPath))==0)
-            
+
     # Compare Elements in oldElement with the NameSpace oldElementNS to the attributes with the same name in newElement.
     # Don't compare those elements in the exceptionList.
     # Rename those attributes in the renameMap.
@@ -226,7 +226,7 @@ class Test200809(unittest.TestCase):
                     equalsMap[attribute] = True;
         for key in equalsMap:
             self.assertEquals(equalsMap[key], True);
-            
+
     # Get elements in list as a map from element [name:value], removing namespace.
     def getElementsAsMap(self, element):
         childMap = {};
@@ -266,7 +266,7 @@ class Test200809(unittest.TestCase):
             self.assertEquals(self.stripStr(newChildElement.text), self.stripStr(oldChildElement.text))
         for key in inclusionMap:
             self.assertEquals(inclusionMap[key], True);
-            
+
     # Compare attributes from oldElement to new element
     # Don't compare those elements in the exceptionList.
     # Rename those elements in the renameMap.
@@ -291,9 +291,9 @@ class Test200809(unittest.TestCase):
                 print oldValue
                 print newValue
                 print 'END FAILURE'
-            self.assertEquals(newValue, oldValue);    
+            self.assertEquals(newValue, oldValue);
 
-    # Get all the child elements from the element, in namespace. 
+    # Get all the child elements from the element, in namespace.
     # Exclude thoses child elements in the exclusions list.
     def getChildElements(self, element, elementNS, exceptionList):
         childList = [];
@@ -302,7 +302,7 @@ class Test200809(unittest.TestCase):
             if(name not in exceptionList):
                 childList.append(name);
         return childList;
-        
+
     # Return true if the attributes in the elements left and right match and the number if children match.
     def elementsEqual(self, left, right, renamedAttributes):
         if(self.localName(tag)!=self.localName(right.tag)):
@@ -317,14 +317,14 @@ class Test200809(unittest.TestCase):
             if(left[leftAttribute] != right[renamedAttributes[leftAttribute]]):
                 return false;
         return True;
-        
+
     # Select the element in rightList who's attributes match the element left.
     def getElementFromList(self, left, rightList, renamedAttributes):
         for right in rightList:
             if(elementsEqual(left, right, renamedAttributes, renamedElements)):
                 return right;
         return None;
-        
+
     # Compare graph's are same, the attributes and elements maybe renamed using the renameAttributes
     # and renameElements map, this method assumes that the graphs are in the same element order.
     def compareGraphs(self, left, right, ignoreAttributes = None, renameAttributes = None, renameElements=None):
@@ -338,14 +338,14 @@ class Test200809(unittest.TestCase):
             self.compareAttributes(leftChildren[i], rightChildren[i], ignoreAttributes, renameAttributes);
             if(renameElements==None):
                 self.assertEqual(self.localName(leftChildren[i].tag), self.localName(rightChildren[i].tag));
-            else:  
+            else:
                 leftChildTag = self.localName(leftChildren[i].tag);
                 if(leftChildTag in renameElements):
                     leftChildTag = renameElements[leftChildTag];
                 self.assertEqual(leftChildTag, self.localName(rightChildren[i].tag));
             self.assertEqual(self.stripStr(leftChildren[i].text), self.stripStr(rightChildren[i].text));
-            self.compareGraphs(leftChildren[i], rightChildren[i], ignoreAttributes, renameAttributes, renameElements);            
-        
+            self.compareGraphs(leftChildren[i], rightChildren[i], ignoreAttributes, renameAttributes, renameElements);
+
     # Compare graph's are same, the attributes and elements maybe renamed using the renameAttributes
     # and renameElements map, this method assumes that the graphs are in the same element order.
     def compareGraphsWithoutOrder(self, left, right, renameAttributes = None, renameElements=None):
@@ -356,23 +356,23 @@ class Test200809(unittest.TestCase):
             return;
         for i in range(len(leftChildren)):
             rightChild = self.getElementFromList(leftChildren[i], rightChildren, renameAttributes);
-            self.assertTrue(rightChild!=None);     
+            self.assertTrue(rightChild!=None);
             if(renameElements==None):
                 self.assertEqual(self.localName(leftChildren[i].tag), self.localName(rightChild.tag));
-            else:  
+            else:
                 self.assertEqual(renameElements[self.localName(leftChildren[i].tag)], self.localName(rightChild.tag));
             self.assertEqual(self.stripStr(leftChildren[i].text), self.stripStr(rightChild.text));
-            self.compareGraphsWithoutOrder(leftChildren[i], rightChild, ignoreAttributes, renameAttributes, renameElements);            
-    
+            self.compareGraphsWithoutOrder(leftChildren[i], rightChild, ignoreAttributes, renameAttributes, renameElements);
+
     # get the name of a reference, by removing the Ref suffix.
     def elementRefName(self, name):
         return name[:len(name)-3];
-    
+
     # return true if the element is a reference, has Ref suffix.
     def isRef(self, element):
         return (element.tag[len(element.tag)-3:]=='Ref');
-         
-    # return the elemenet in the root tree with name element name and id 
+
+    # return the elemenet in the root tree with name element name and id
     # if it does not exist it will return None
     def findElementByID(self, root, NS, elementName, id):
         elements = self.getAllElements(root, NS, [elementName]);
@@ -391,8 +391,8 @@ class Test200809(unittest.TestCase):
         return newElement;
 
     # Replace the references in elemenet with the full element from root, this method only works
-    # on the children of the element, to replace all references in element use replaceRefsWithElementRecurse. 
-    # If RefList is not empty it will only replace the References in RefList. 
+    # on the children of the element, to replace all references in element use replaceRefsWithElementRecurse.
+    # If RefList is not empty it will only replace the References in RefList.
     # The elements in RefList should only be the name of the element, ROI not ROIRef.
     def replaceRefsWithElements(self, root, NS, element, RefList=None):
         if(RefList==None):
@@ -411,9 +411,9 @@ class Test200809(unittest.TestCase):
                 newElement.append(deepcopy(child));
         return newElement
 
-    # Replace the references in elemenet with the full element from root, this method works to 
-    # replace all references in element. 
-    # If RefList is not empty it will only replace the References in RefList. 
+    # Replace the references in elemenet with the full element from root, this method works to
+    # replace all references in element.
+    # If RefList is not empty it will only replace the References in RefList.
     # The elements in RefList should only be the name of the element, ROI not ROIRef.
     def replaceRefsWithElementsRecurse(self, root, NS, element, RefList=None):
         if(RefList==None):
@@ -430,12 +430,12 @@ class Test200809(unittest.TestCase):
             else:
                 newElement.append(self.replaceRefsWithElementsRecurse(root, NS, child, RefList));
         return newElement
- 
-    # Move the child elements from removeElement to removeElements parent element and remove 
+
+    # Move the child elements from removeElement to removeElements parent element and remove
     # it from the element.
     def moveElementsFromChildToParent(self, element, NS, removeElement):
         returnElement = deepcopy(element);
-        
+
         xpath = self.createXPath('root', NS, removeElement);
         elementsToRemove = returnElement.findall(xpath);
         for elementToRemove in elementsToRemove:
@@ -444,8 +444,8 @@ class Test200809(unittest.TestCase):
             for child in elementToRemove.getchildren():
                 elementsParent.append(child);
         return returnElement;
-        
-            
+
+
     def setUp(self):
         self.xslt_file = open(self.STYLESHEET)
         self.instance_file = open(self.DOCUMENT)
@@ -460,17 +460,17 @@ class Test200809(unittest.TestCase):
 
     def test_objective_settings(self):
         """
-        ObjectiveRef to ObjectiveSettings transformation 
+        ObjectiveRef to ObjectiveSettings transformation
         """
-        
+
         self.checkElementsMappedNoCount( self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS,{'ObjectiveRef':'ObjectiveSettings'})
-        
+
     def test_light_source_settings(self):
         """
-        LightSourceRef to LightSettings transformation 
+        LightSourceRef to LightSettings transformation
         """
         self.checkElementsMappedNoCount(self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS, {'LightSourceRef':'LightSourceSettings'})
-        
+
     def test_detector_settings(self):
         """
         DetectorRef to DetectorSettings transformation
@@ -487,7 +487,7 @@ class Test200809(unittest.TestCase):
         self.checkAttributesExcluded(self.new_root, self.NEW_SPW_NS, 'WellSample', ['Index'])
         self.checkAttributesExcluded(self.new_root, self.NEW_SPW_NS, 'WellSample', ['PosX'])
         self.checkAttributesExcluded(self.new_root, self.NEW_SPW_NS, 'WellSample', ['PosY'])
-        
+
         # count old PosX and PosY attributes in old WellSample
         xpath = './/{%s}WellSample' % self.OLD_SPW_NS
         old_elements = self.old_root.findall(xpath)
@@ -498,7 +498,7 @@ class Test200809(unittest.TestCase):
                 reference_count_posx+=1
             if ('PosY' in element.keys()):
                 reference_count_posy+=1
-                
+
         # count old PosX and PosY attributes in new WellSample
         xpath = './/{%s}WellSample' % self.NEW_SPW_NS
         new_wellsample_elements = self.new_root.findall(xpath)
@@ -564,7 +564,7 @@ class Test200809(unittest.TestCase):
         for element in old_elements:
             if ('Description' in element.keys()):
                 reference_count_attribute+=1
-                
+
         # find new SPW:Plate
         xpath = './/{%s}Plate' % self.NEW_SPW_NS
         new_plate_count = len(self.new_root.findall(xpath))
@@ -575,12 +575,12 @@ class Test200809(unittest.TestCase):
         new_plate_descripton_count = len(self.new_root.findall(xpath))
         # compare old Description attributes to new Description elements in Plate
         self.assertEquals(reference_count_attribute, new_plate_descripton_count)
-        
+
         # old attributes must not be present in new SPW:Plate nodes
         xpath = './/{%s}Plate' % self.NEW_SPW_NS
         new_elements = self.new_root.findall(xpath)
         for element in new_elements:
-            self.assertFalse('Description' in element.keys())   
+            self.assertFalse('Description' in element.keys())
 
     def test_dataset_no_locked(self):
         """
@@ -588,24 +588,24 @@ class Test200809(unittest.TestCase):
         """
         self.checkElementsMapped(self.old_root, self.OLD_OME_NS, self.new_root, self.NEW_OME_NS, {'Dataset':'Dataset'})
         self.checkAttributesExcluded(self.new_root, self.NEW_OME_NS, 'Dataset', ['Locked'])
-        
+
     def test_objective_elements_to_attributes(self):
         """
         Objective transformation. See stylesheet for details
         """
         """
         fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ['Objective']);
-        
+
         toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, ['Objective']);
         for i, toAttributeElement in enumerate(toAttributes):
             self.compareElementsWithAttributes(fromElements[i], self.OLD_OME_NS, toAttributeElement);
         """
-        
+
     def test_experimenter_elements_to_attributes(self):
         """
         Experimenter transformation. See stylesheet for details
         """
-        
+
         fromElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ['Experimenter']);
         toAttributes = self.getAllElements(self.new_root, self.NEW_OME_NS, ['Experimenter']);
         self.assertEqual(len(fromElements), len(toAttributes));
@@ -618,7 +618,7 @@ class Test200809(unittest.TestCase):
 
     def test_filter_set_elements_to_attributes(self):
         """
-        FilterSet transformation. See stylesheet for details 
+        FilterSet transformation. See stylesheet for details
         """
         fromAttributes = self.getAllElements(self.old_root, self.OLD_OME_NS, ['FilterSet'])
         toElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ['FilterSet'])
@@ -632,22 +632,22 @@ class Test200809(unittest.TestCase):
 
     def test_tiffdata_rename_numplanes_to_planecount(self):
         """
-        TiffData transformation. See stylesheet for details 
+        TiffData transformation. See stylesheet for details
         """
         oldElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ['TiffData']);
         newElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ['TiffData']);
 
         for i, oldElement in enumerate(oldElements):
             self.compareAttributes(oldElement, newElements[i], None, {"NumPlanes":"PlaneCount"});
-    
+
     def test_experiment_copy_microbeammanipulation_from_image(self):
         """
-        Experiment transformation. See stylesheet for details 
+        Experiment transformation. See stylesheet for details
         """
         oldElements = self.getAllElements(self.old_root, self.OLD_OME_NS, ["Experiment"]);
         newElements = self.getAllElements(self.new_root, self.NEW_OME_NS, ["Experiment"]);
-        
-        
+
+
         for i, newElement in enumerate(newElements):
             id = newElement.get('ID');
             elementWithRefs = self.findElementByID(self.old_root,self.OLD_OME_NS,'Experiment',id);
@@ -659,8 +659,8 @@ class Test200809(unittest.TestCase):
             print 'DUMP(newElement)';
             dump(newElement);
             self.compareGraphs(oldElementWithoutChannel, newElement, ['{http://www.w3.org/XML/1998/namespace}lang', 'ID'], {'theZ':'TheZ', 'theT':'TheT','theC':'TheC'}, {"LogicalChannelRef":"ChannelRef"});
-                
-                
+
+
     def test_detector_type(self):
         """
         Checks that the Detector types have been correctly transformed.
@@ -677,12 +677,12 @@ class Test200809(unittest.TestCase):
     """
     Follow a collection of tests for transformation related to ROI elements.
     """
- 
+
     def test_shape_transformation(self):
         """
         Checks that the Detector types have been correctly transformed.
         """
-        
+
 if __name__ == '__main__':
     unittest.main()
 """
