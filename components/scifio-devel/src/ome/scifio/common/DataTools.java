@@ -769,7 +769,7 @@ public final class DataTools {
     StringBuffer buf = new StringBuffer(s);
     for (int i=0; i<buf.length(); i++) {
       char c = buf.charAt(i);
-      if (c != '\t' && c != '\n' && (c < ' ' || c > '~')) {
+      if (c != '\t' && c != '\n' && Character.isISOControl(c)) {
         buf = buf.deleteCharAt(i--);
       }
     }
