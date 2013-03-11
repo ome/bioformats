@@ -392,8 +392,14 @@ public class APNGReader extends FormatReader {
         new InflaterInputStream(new ByteArrayInputStream(bytes));
       try {
         for (int row=0; row<height; row++) {
-          decompressor.read(filters, row, 1);
-          decompressor.read(image, row * rowLen, rowLen);
+          int n = 0;
+          while (n < 1) {
+            n = decompressor.read(filters, row, 1);
+          }
+          n = 0;
+          while (n < rowLen) {
+            n += decompressor.read(image, row * rowLen + n, rowLen - n);
+          }
         }
       }
       finally {
@@ -457,7 +463,30 @@ public class APNGReader extends FormatReader {
         "Compression type " + compression + " not supported");
     }
 
-    return image;
+    // de-interleave
+
+    bpp /= getRGBChannelCount();
+    byte[] deinterleave = new byte[image.length];
+
+    for (int c=0; c<getRGBChannelCount(); c++) {
+      int plane = c * width * height * bpp;
+      for (int row=0; row<height; row++) {
+        int srcRow = row * width * getRGBChannelCount() * bpp;
+        int destRow = row * width * bpp;
+
+        for (int col=0; col<width; col++) {
+          int srcCol = col * getRGBChannelCount() * bpp;
+          int destCol = col * bpp;
+
+          for (int b=0; b<bpp; b++) {
+            deinterleave[plane + destRow + destCol + b] =
+              image[srcRow + srcCol + c * bpp + b];
+          }
+        }
+      }
+    }
+
+    return deinterleave;
   }
 
   // -- Helper class --
