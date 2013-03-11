@@ -1,5 +1,5 @@
 /*
- * integration.XMLWriter 
+ * integration.XMLWriter
  *
  *------------------------------------------------------------------------------
  *  Copyright (C) 2006-2010 University of Dundee. All rights reserved.
@@ -13,7 +13,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License along
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -47,7 +47,7 @@ import org.w3c.dom.NodeList;
 //Application-internal dependencies
 import ome.xml.model.OME;
 
-/** 
+/**
  * Methods to write the XML tags to the files.
  *
  * @author Jean-Marie Burel &nbsp;&nbsp;&nbsp;&nbsp;
@@ -62,75 +62,75 @@ import ome.xml.model.OME;
  */
 public class XMLWriter
 {
-	
+
 	/** Identifies the <code>ID</code> attribute. */
 	public static final String ID_ATTRIBUTE = "ID";
-	
+
 	/** Identifies the <code>Name</code> attribute. */
 	public static final String NAME_ATTRIBUTE = "Name";
-	
+
 	/** Identifies the <code>DimensionOrder</code> attribute. */
 	public static final String DIMENSION_ORDER_ATTRIBUTE = "DimensionOrder";
-	
+
 	/** Identifies the <code>PixelType</code> attribute. */
 	public static final String PIXELS_TYPE_ATTRIBUTE = "PixelType";
-	
+
 	/** Identifies the <code>SizeC</code> attribute. */
 	public static final String SIZE_C_ATTRIBUTE = "SizeC";
-	
+
 	/** Identifies the <code>SizeT</code> attribute. */
 	public static final String SIZE_T_ATTRIBUTE = "SizeT";
-	
+
 	/** Identifies the <code>SizeZ</code> attribute. */
 	public static final String SIZE_Z_ATTRIBUTE = "SizeZ";
-	
+
 	/** Identifies the <code>SizeX</code> attribute. */
 	public static final String SIZE_X_ATTRIBUTE = "SizeX";
-	
+
 	/** Identifies the <code>SizeY</code> attribute. */
 	public static final String SIZE_Y_ATTRIBUTE = "SizeY";
-	
+
 	/** Identifies the <code>Compression</code> attribute. */
 	public static final String COMPRESSION_ATTRIBUTE = "Compression";
-	
+
 	/** Identifies the <code>BigEndian</code> attribute. */
 	public static final String BIG_ENDIAN_ATTRIBUTE = "BigEndian";
-	
+
 	/** Identifies the <code>Length</code> attribute. */
 	public static final String LENGTH_ATTRIBUTE = "Length";
-	
+
 	/** Identifies the <code>OME</code> tag. */
 	public static final String OME_TAG = "OME";
-	
+
 	/** Identifies the <code>Image</code> tag. */
 	public static final String IMAGE_TAG = "Image";
-	
+
 	/** Identifies the <code>Pixels</code> tag. */
 	public static final String PIXELS_TAG = "Pixels";
-	
+
 	/** Identifies the <code>BinData</code> tag. */
 	public static final String BIN_DATA_TAG = "BinData";
-	
+
 	/** The schema language. */
 	private static final String JAXP_SCHEMA_LANGUAGE =
 	    "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 
 	/** The schemas. */
 	private static final String[] SCHEMAS = {
-	    "http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"}; 
+	    "http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"};
 
 	/** The XML namespace. */
-	private static final String XML_NS = 
+	private static final String XML_NS =
 		"http://www.openmicroscopy.org/Schemas/OME/2011-06";
-	
+
 	/** The XSI namespace. */
 	private static final String XSI_NS =
 		"http://www.w3.org/2001/XMLSchema-instance";
-	
+
 	/** The schema location. */
 	private static final String SCHEMA_LOCATION =
 		"http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd";
-	
+
 	/** A default plane. */
 	private static final String PLANE =
 	"ZrXEfwslJ9N1nDrbtxxWh4fRHo4w8nZ2N0I74Lgj9oIKN9qrPbBK24z+w+9zYzRQ" +
@@ -157,10 +157,10 @@ public class XMLWriter
 	"BfeaCUzv5c61/asdOR6CJ4ANUX7hQA7hlTk8qllaaLIEWQyGeaDoaw9b5xq0Adhw" +
 	"OZSeCKNIyQVpApdCOnXYuZVoTBNDdW7/7OPZD2uyS9gZ+7JGmuoV9/gRZT72oAQs" +
 	"4++/GpC5h6uOx9Rt5265siOZjfYYX++/qUX8M5Fs9whPwL8NqrJ4qZrUbTYUzQaI";
-	
+
 	/**
 	 * Copies the array to the file.
-	 * 
+	 *
 	 * @param file  The file where to copy the array
 	 * @param values The array to copy.
 	 * @throws Exception Thrown if an error occurred while copy the data.
@@ -172,11 +172,11 @@ public class XMLWriter
 		stream.write(values);
 		stream.close();
 	}
-	
-	/** 
+
+	/**
 	 * Creates the <code>String</code> version of the XML file
-	 * creating using the specified root node. 
-	 * 
+	 * creating using the specified root node.
+	 *
 	 * @param ome The root node.
 	 * @param binaryData Pass <code>true</code> to add the binary data,
 	 *                   <code>false</code> otherwise.
@@ -194,7 +194,7 @@ public class XMLWriter
 		root.setAttribute("xmlns:xsi", XSI_NS);
 		root.setAttribute("xsi:schemaLocation", XML_NS + " " + SCHEMA_LOCATION);
 		document.appendChild(root);
-		
+
 		//Add Planar data
 		if (binaryData) {
 			NodeList nodes = document.getElementsByTagName(BIN_DATA_TAG);
@@ -213,10 +213,10 @@ public class XMLWriter
 		transformer.transform(source, result);
 		return os.toString();
 	}
-	
+
 	/**
 	 * Validates if the file is compatible with the latest model.
-	 * 
+	 *
 	 * @param file The file to validate.
 	 * @throws Exception Thrown if the file cannot be validated.
 	 */
@@ -231,13 +231,13 @@ public class XMLWriter
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		builder.parse(file);
 	}
-	
+
 	/** Creates a new instance. */
 	public XMLWriter() {}
-	
+
 	/**
 	 * Writes the data to the file. Binary data will be added.
-	 * 
+	 *
 	 * @param file The file to handle.
 	 * @param ome  The element to write to the file.
 	 * @throws Exception Thrown if an error occurred while writing the XML file.
@@ -247,10 +247,10 @@ public class XMLWriter
 	{
 		writeFile(file, ome, true);
 	}
-	
+
 	/**
 	 * Writes the data to the file.
-	 * 
+	 *
 	 * @param file The file to handle.
 	 * @param ome  The element to write to the file.
 	 * @param binaryData Pass <code>true</code> to add the binary data,
@@ -264,5 +264,5 @@ public class XMLWriter
 		copyValues(file, values.getBytes());
 		//validate(file);
 	}
-	
+
 }

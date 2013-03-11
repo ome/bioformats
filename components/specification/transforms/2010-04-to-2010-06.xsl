@@ -102,7 +102,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+
 	<!-- Actual schema changes -->
 
 	<xsl:template match="ROI:Mask">
@@ -116,7 +116,7 @@
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:Shape">
 		<xsl:element name="ROI:Shape" namespace="{$newROINS}">
 			<xsl:for-each select="@*">
@@ -140,7 +140,7 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:Channel">
 		<xsl:element name="OME:Channel" namespace="{$newOMENS}">
 			<xsl:for-each select="@*">
@@ -164,7 +164,7 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="SPW:Well">
 		<xsl:element name="SPW:Well" namespace="{$newSPWNS}">
 			<xsl:for-each select="@*">
@@ -195,7 +195,7 @@
 				<xsl:choose>
 					<xsl:when test="name() = 'Timepoint'">
 						<!-- 1970-01-01T00:00:00.0Z -->
-						<!-- 
+						<!--
 							Currently the value Timepoint is stripped as we can see
 							no valid way of transforming it to the new type.
 						-->
@@ -210,14 +210,14 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="SA:StringAnnotation">
 		<xsl:element name="SA:CommentAnnotation" namespace="{$newSANS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
-	
+
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
@@ -227,7 +227,7 @@
 			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-06"
 			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-06"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-06 
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-06
 			http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd">
 			<xsl:apply-templates/>
 		</OME>

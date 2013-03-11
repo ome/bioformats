@@ -42,23 +42,23 @@
 	exclude-result-prefixes="OME Bin SPW SA ROI"
 	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
-	
+
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2012-06</xsl:variable>
 	<xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2012-06</xsl:variable>
 	<xsl:variable name="newBINNS"
 		>http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06</xsl:variable>
 	<xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2012-06</xsl:variable>
 	<xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2012-06</xsl:variable>
-	
+
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:preserve-space elements="*"/>
-	
+
 	<!-- default value for non-numerical value when transforming the attribute of concrete shape -->
 	<xsl:variable name="numberDefault" select="1"/>
-	
-	
+
+
 	<!-- Actual schema changes -->
-	
+
 	<xsl:template match="OME:Dataset">
 		<xsl:element name="OME:Dataset" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
@@ -76,7 +76,7 @@
 			<xsl:apply-templates select="* [local-name(.) = 'AnnotationRef']"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:Project">
 		<xsl:element name="OME:Project" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
@@ -94,7 +94,7 @@
 			<xsl:apply-templates select="* [local-name(.) = 'AnnotationRef']"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:Image">
 		<xsl:element name="OME:Image" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
@@ -128,7 +128,7 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:Group">
 		<xsl:element name="OME:ExperimenterGroup" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*[not(local-name(.)='ID')]"/>
@@ -137,8 +137,8 @@
 			</xsl:for-each>
 			<xsl:apply-templates select="* [(local-name(.) = 'Description')]"/>
 			<xsl:comment>Insert reversed GroupRef nodes</xsl:comment>
-			
-			
+
+
 			<xsl:variable name="groupID" select="@ID"/>
 			<xsl:for-each select="exsl:node-set(//OME:OME/OME:Experimenter/OME:GroupRef[@ID=$groupID])">
 				<xsl:variable name="matchingExperimenterID"><xsl:for-each select=" parent::node()">
@@ -166,17 +166,17 @@
 			<xsl:apply-templates select="* [(local-name(.) = 'AnnotationRef')]"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:GroupRef">
 		<xsl:comment>Remove and reverse GroupRef</xsl:comment>
 	</xsl:template>
-	
+
 	<xsl:template match="SPW:ImageRef">
 		<xsl:element name="OME:ImageRef" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="SPW:Well">
 		<xsl:element name="SPW:Well" namespace="{$newSPWNS}">
 			<xsl:for-each select="@* [not(name() = 'Status')]">
@@ -234,7 +234,7 @@
 			<xsl:apply-templates select="* [local-name(.) = 'AnnotationRef']"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:ROI">
 		<xsl:element name="ROI:ROI" namespace="{$newROINS}">
 			<xsl:apply-templates select="@*"/>
@@ -247,19 +247,19 @@
 			<xsl:apply-templates select="* [local-name(.) = 'Description']"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:Union" mode="replacePaths">
 		<xsl:element name="ROI:Union" namespace="{$newROINS}">
 			<xsl:apply-templates select="@*|node()" mode="replacePaths"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:Union" mode="stripPaths">
 		<xsl:element name="ROI:Union" namespace="{$newROINS}">
 			<xsl:apply-templates select="@*|node()" mode="stripPaths"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:Shape" mode="stripPaths">
 		<xsl:if test="count(child::ROI:Path) = 0">
 			<xsl:element name="ROI:Shape" namespace="{$newROINS}">
@@ -280,7 +280,7 @@
 					</xsl:attribute>
 				</xsl:for-each>
 				<!-- Both these make a new Text attribute. It will contain
-					the value of either attribute Label or element Text, if 
+					the value of either attribute Label or element Text, if
 					both are present element Text takes priority -->
 				<xsl:if test="count(child::ROI:Text) = 1">
 					<xsl:for-each select="* [local-name(.) = 'Text']">
@@ -365,7 +365,7 @@
 			</xsl:element>
 		</xsl:if>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:Shape" mode="replacePaths">
 		<xsl:element name="ROI:Shape" namespace="{$newROINS}">
 			<xsl:for-each select="@* [name() = 'ID']">
@@ -384,7 +384,7 @@
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:Text">
 		<xsl:element name="ROI:Label" namespace="{$newROINS}">
 			<xsl:apply-templates select="@*"/>
@@ -396,7 +396,7 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:Line">
 		<xsl:element name="ROI:Line" namespace="{$newROINS}">
 			<xsl:apply-templates select="@*"/>
@@ -431,18 +431,18 @@
 			</xsl:element>
 		</xsl:if>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:OTF">
 		<xsl:comment>OTF elements cannot be converted to 2012-06 Schema, they are not supported.</xsl:comment>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:OTFRef">
 		<xsl:comment>OTFRef elements cannot be converted to 2012-06 Schema, they are not supported.</xsl:comment>
 	</xsl:template>
-	
-	
+
+
 	<!-- Rewriting all namespaces -->
-	
+
 	<xsl:template match="OME:OME">
 		<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2012-06"
 			xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06"
@@ -451,47 +451,47 @@
 			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
 			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06 
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06
 			http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd">
 			<xsl:apply-templates/>
 		</OME>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:*">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="Bin:*">
 		<xsl:element name="{name()}" namespace="{$newBINNS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="SA:*">
 		<xsl:element name="{name()}" namespace="{$newSANS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="SPW:*">
 		<xsl:element name="{name()}" namespace="{$newSPWNS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:*">
 		<xsl:element name="{name()}" namespace="{$newROINS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- Default processing -->
 	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:copy>
 	</xsl:template>
-	
+
 </xsl:stylesheet>

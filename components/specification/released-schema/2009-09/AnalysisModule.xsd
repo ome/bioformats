@@ -221,7 +221,7 @@ These are given by &lt;RawImageFilePath>, &lt;sizeX>, &lt;sizeY>, &lt;sizeZ>, &l
 			<xsd:attribute name = "isStreamAlgorithm" default = "false" use="optional" type = "xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>This is a stub for future development. The database location doesn't even exist yet.
-If the output of the analysis will be the same when pixel positions are scrambled, the analysis is a stream algorithm. 
+If the output of the analysis will be the same when pixel positions are scrambled, the analysis is a stream algorithm.
 Examples of stream algorithms are:
 	A statistics module that produces mean, geometric mean, standard deviation, etc. for pixel intensities.
 	A module to cross correlate pixel intensities across wavelengths.
@@ -374,7 +374,7 @@ Unclear how this would be used. DB location PROGRAMS.PROGRAM_NAME is populated b
 	</xsd:element>
 	<xsd:element name = "AnalysisModuleLibrary"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:documentation>An analysis module is defined by two things: 
+			<xsd:documentation>An analysis module is defined by two things:
 1) A program
 2) An interface
 A single program may have multiple interfaces. Why do you need multiple interfaces?
@@ -389,7 +389,7 @@ Typing
 will output
 Image | geomean | mean
 image1 12.2 12.4
-The outputs are completely different. You need to specify an interface for each of these behaviors. 
+The outputs are completely different. You need to specify an interface for each of these behaviors.
 Or pretend you have a powerful program that can do 10 unrelated tasks, each of which outputs an image. While the outputs are the same type and format, they represent 10 completely different things. In this case, it might make sense to define 10 corresponding AnalysisModule to represent the 10 logical functions.
 In any case, use AnalysisModule to define an interface and Program to store installation software for a program.
 			</xsd:documentation>
@@ -397,7 +397,7 @@ In any case, use AnalysisModule to define an interface and Program to store inst
 		<!--
 This was commented out by Josiah <siah@nih.gov> on July 3, 2003.
 We don't support Program installation yet, and are using the value of ProgramID
-in <AnalysisModule> to refer to the location of the installed program. 
+in <AnalysisModule> to refer to the location of the installed program.
 A temporary hack to be sure, but that's the way it works for now.
 		<keyref name = "ProgramRef" refer = "AML:Program">
 			<selector xpath = "AML:AnalysisModule"/>
@@ -437,7 +437,7 @@ A temporary hack to be sure, but that's the way it works for now.
 			</xsd:sequence>
 			<xsd:attribute name = "Path" use = "required">
 				<xsd:annotation>
-					<xsd:documentation>Categories are organized into hierarchical structures. This specifies the full path of this category in the following format. 
+					<xsd:documentation>Categories are organized into hierarchical structures. This specifies the full path of this category in the following format.
 Path = "GrandParent name.Parent name.Category name"
 If you defined a sub category, we Strongly encourage you to also define all ancestor categories that are not part of the core OME specification.
 					</xsd:documentation>
@@ -456,7 +456,7 @@ If you defined a sub category, we Strongly encourage you to also define all ance
 				Just some free-form text.
 				The content model is now String.
 				This is no longer the correct place for an XML sub-document
-				Either 
+				Either
 				- use CustomAttributes instead
 				Or
 				- define your own xml tree outside the OME node and link to the OME objects using references to the IDs

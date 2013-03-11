@@ -38,7 +38,7 @@
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-02"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xml="http://www.w3.org/XML/1998/namespace" 
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	exclude-result-prefixes="OME AML CLI MLI STD Bin CA SPW SA"
 	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
@@ -174,7 +174,7 @@
 	<!-- Actual schema changes -->
 
 
-	<!-- 
+	<!--
 	In TransmittanceRange convert Transmittance attribute from int to PercentageFraction.
 	-->
 	<xsl:template match="OME:TransmittanceRange">
@@ -197,7 +197,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert Pixels
 	-->
 	<xsl:template match="OME:Pixels">
@@ -261,7 +261,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In Bin:BinData add Length attribute.
 	-->
 	<xsl:template match="Bin:BinData">
@@ -273,7 +273,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In Bin:BinData add Length attribute.
 	-->
 	<xsl:template match="Bin:BinData" mode="OnlyBinData">
@@ -285,14 +285,14 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Skip BinData
 	-->
 	<xsl:template match="Bin:BinData" mode="OnlyTiffData">
 		<xsl:comment>Skip BinData</xsl:comment>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert TiffData
 	-->
 	<xsl:template match="OME:TiffData" mode="OnlyTiffData">
@@ -301,14 +301,14 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Skip TiffData
 	-->
 	<xsl:template match="OME:TiffData" mode="OnlyBinData">
 		<xsl:comment>Skip TiffData</xsl:comment>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert ROI
 	-->
 	<xsl:template match="OME:ROI">
@@ -357,7 +357,7 @@
 				<xsl:otherwise>
 					<xsl:number value="$X0 - $X1"/>
 				</xsl:otherwise>
-			</xsl:choose>		
+			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable name="startY">
 			<xsl:choose>
@@ -622,7 +622,7 @@
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:copy>
 	</xsl:template>
-	
+
 	<!-- data management -->
 
 
@@ -685,8 +685,8 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<!-- 
-	Controls if a value is greater than or less than depending on the type. 
+	<!--
+	Controls if a value is greater than or less than depending on the type.
 	The types are greater or less.
 	-->
 	<xsl:template name="isValueValid">

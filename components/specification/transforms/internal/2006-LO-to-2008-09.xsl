@@ -33,11 +33,11 @@
 	xmlns:Bin="BinaryFile.xsd"
 	xmlns:AML="AnalysisModule.xsd"
 	xmlns:STD="STD.xsd"
-	xmlns:CA="CA.xsd" 
+	xmlns:CA="CA.xsd"
 	xmlns:CLI="CLI.xsd"
 	xmlns:MLI="MLI.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xml="http://www.w3.org/XML/1998/namespace" 
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	exclude-result-prefixes="LOME AML CLI MLI STD Bin CA"
 	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
@@ -162,12 +162,12 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$value"/>
-				<!-- If the property is optional we don't want to set 
-        "Unknown" if that's our current value. Otherwise use the current value. 
+				<!-- If the property is optional we don't want to set
+        "Unknown" if that's our current value. Otherwise use the current value.
          <xsl:if test="not($isOptional) or $value != 'Unknown'">
         <xsl:value-of select="$value"/>
        </xsl:if>
-        
+
         -->
 				<xsl:value-of select="''"/>
 			</xsl:otherwise>
@@ -176,7 +176,7 @@
 
 	<!-- Actual schema changes -->
 
-	<!-- 
+	<!--
 	Move Plate to new name space and rename ExternRef attribute.
 	-->
 	<xsl:template match="LOME:Plate">
@@ -199,7 +199,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Move Screen to new name space and remove ExternRef attribute.
 	-->
 	<xsl:template match="LOME:Screen">
@@ -213,7 +213,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Renaming possible values of the attribute Type
 	-->
 	<xsl:template match="LOME:Experiment">
@@ -405,7 +405,7 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!--
 	In Filament remove Power
 	-->
@@ -534,7 +534,7 @@
 		</xsl:for-each>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert FilterRef to FilterSetRef
 	-->
 	<xsl:template match="LOME:FilterRef">
@@ -563,7 +563,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In Bin:BinData add Length attribute.
 	-->
 	<xsl:template match="Bin:BinData">
@@ -575,7 +575,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In Bin:BinData add Length attribute.
 	-->
 	<xsl:template match="Bin:BinData" mode="OnlyBinData">
@@ -587,14 +587,14 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Skip BinData
 	-->
 	<xsl:template match="Bin:BinData" mode="OnlyTiffData">
 		<xsl:comment>Skip BinData</xsl:comment>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert namespace of ScreenRef to SPW
 	-->
 	<xsl:template match="LOME:ScreenRef">
@@ -603,7 +603,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert namespace of PlateRef to SPW
 	-->
 	<xsl:template match="LOME:PlateRef">
@@ -614,7 +614,7 @@
 		</xsl:comment>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Projection rename Zstart and Zstop
 	-->
 	<xsl:template match="LOME:Projection">
@@ -637,7 +637,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Time rename Tstart and Tstop
 	-->
 	<xsl:template match="LOME:Time">
@@ -660,7 +660,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Instrument
 	-->
 	<xsl:template match="LOME:Instrument">
@@ -669,8 +669,8 @@
 			<xsl:for-each select="* [not(local-name(.) = 'Filter' or local-name(.) = 'OTF')]">
 				<xsl:apply-templates select="."/>
 			</xsl:for-each>
-			<!-- 
-			Currently ignore Filter only containing a FilterSet as cannot see 
+			<!--
+			Currently ignore Filter only containing a FilterSet as cannot see
 			how to make one with available info.
 			-->
 			<xsl:for-each select="* [local-name(.) = 'Filter']">
@@ -688,7 +688,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert Pixels
 	-->
 	<xsl:template match="LOME:Pixels">
@@ -745,7 +745,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert TiffData
 	-->
 	<xsl:template match="LOME:TiffData" mode="OnlyTiffData">
@@ -754,14 +754,14 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Skip TiffData
 	-->
 	<xsl:template match="LOME:TiffData" mode="OnlyBinData">
 		<xsl:comment>Skip TiffData</xsl:comment>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert Feature
 	-->
 	<xsl:template match="LOME:Feature">
@@ -774,7 +774,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert ROI
 	-->
 	<xsl:template match="LOME:ROI">
@@ -823,7 +823,7 @@
 				<xsl:otherwise>
 					<xsl:number value="$X0 - $X1"/>
 				</xsl:otherwise>
-			</xsl:choose>		
+			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable name="startY">
 			<xsl:choose>
@@ -1063,8 +1063,8 @@
 		</xsl:element>
 	</xsl:template>
 
-	
-	<!-- 
+
+	<!--
 	Move all AML:Description Elements the OME namespace
 	-->
 	<xsl:template match="AML:Description">
@@ -1073,7 +1073,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In AML:AnalysisModule rename FeatureIterator to RegionIterator, NewFeatureName to NewRegionName
 	-->
 	<xsl:template match="AML:AnalysisModule">
@@ -1101,7 +1101,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In CLI:ExecutionInstructions rename MakesNewFeature to MakesNewRegion
 	-->
 	<xsl:template match="CLI:ExecutionInstructions">
@@ -1124,7 +1124,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In AML:FormalOutput update enum IBelongTo
 	-->
 	<xsl:template match="AML:FormalOutput">
@@ -1278,8 +1278,8 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<!-- 
-	Controls if a value is greater than or less than depending on the type. 
+	<!--
+	Controls if a value is greater than or less than depending on the type.
 	The types are greater or less.
 	-->
 	<xsl:template name="isValueValid">

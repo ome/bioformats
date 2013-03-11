@@ -96,9 +96,9 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+
 	<!-- Actual schema changes -->
-	
+
 	<xsl:template match="OME:MicrobeamManipulation">
 		<xsl:element name="OME:MicrobeamManipulation" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
@@ -145,7 +145,7 @@
 			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-06"
 			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-06"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-06 
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-06
 			http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd">
 			<xsl:apply-templates/>
 		</OME>

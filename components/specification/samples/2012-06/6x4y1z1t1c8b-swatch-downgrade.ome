@@ -39,7 +39,7 @@
 	<OME:Experimenter
 		ID="Experimenter:3" FirstName="Mr" MiddleName="Group" LastName="Member">
 	</OME:Experimenter>
-	
+
 	<OME:Experimenter ID="Experimenter:11"/>
 	<OME:Experimenter ID="Experimenter:12" FirstName="John" MiddleName="Andrew" LastName="Smith"
 		Email="john@example.org"/>
@@ -48,7 +48,7 @@
 	<OME:Experimenter ID="Experimenter:15"/>
 	<OME:Experimenter ID="Experimenter:16"/>
 	<OME:Experimenter ID="Experimenter:17"/>
-	
+
 	<OME:ExperimenterGroup
 		Name="MyGroup" ID="ExperimenterGroup:1">
 		<OME:Description>A description for my group.
@@ -57,12 +57,12 @@ Complete with basic formating, like new lines.</OME:Description>
 		<OME:Leader ID="Experimenter:1"/>
 		<OME:Leader ID="Experimenter:2"/>
 	</OME:ExperimenterGroup>
-	
+
 	<OME:ExperimenterGroup Name="MyGroup - Leader+Contact match" ID="ExperimenterGroup:11">
 		<OME:ExperimenterRef ID="Experimenter:16"/>
 		<OME:Leader ID="Experimenter:11"/>
 	</OME:ExperimenterGroup>
-	
+
 	<OME:ExperimenterGroup Name="MyOtherGroup" ID="ExperimenterGroup:12">
 		<OME:ExperimenterRef ID="Experimenter:13"/>
 		<OME:ExperimenterRef ID="Experimenter:14"/>
@@ -70,12 +70,12 @@ Complete with basic formating, like new lines.</OME:Description>
 		<OME:Leader ID="Experimenter:12"/>
 		<OME:Leader ID="Experimenter:17"/>
 	</OME:ExperimenterGroup>
-	
+
 	<OME:ExperimenterGroup Name="NoMatch" ID="ExperimenterGroup:13">
 		<OME:ExperimenterRef ID="Experimenter:15"/>
 		<OME:Leader ID="Experimenter:17"/>
 	</OME:ExperimenterGroup>
-	
+
 	<OME:ExperimenterGroup Name="LeaderMatch" ID="ExperimenterGroup:14">
 		<OME:Leader ID="Experimenter:11"/>
 	</OME:ExperimenterGroup>

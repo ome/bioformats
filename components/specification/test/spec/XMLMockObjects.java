@@ -1,5 +1,5 @@
 /*
- * unit.XMLMockFactory 
+ * unit.XMLMockFactory
  *
  *------------------------------------------------------------------------------
  *  Copyright (C) 2006-2010 University of Dundee. All rights reserved.
@@ -13,7 +13,7 @@
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *  
+ *
  *  You should have received a copy of the GNU General Public License along
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -111,7 +111,7 @@ import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
-/** 
+/**
  * Creates XML objects for the 2010-06 schema.
  *
  * @author Jean-Marie Burel &nbsp;&nbsp;&nbsp;&nbsp;
@@ -124,143 +124,143 @@ import ome.xml.model.primitives.Timestamp;
  * </small>
  * @since 3.0-Beta4
  */
-public class XMLMockObjects 
+public class XMLMockObjects
 {
 
 	/** The default color. */
 	public static final Color	DEFAULT_COLOR = new Color(100, 150, 200, 255);
-	
+
 	/** The default power of a light source. */
 	public static final Double LIGHTSOURCE_POWER = 200.0;
 
 	/** The default model of a component of a microscope. */
 	public static final String COMPONENT_MODEL = "Model";
-	
+
 	/** The default manufacturer of a component of a microscope. */
 	public static final String COMPONENT_MANUFACTURER = "Manufacturer";
-	
+
 	/** The default serial number of a component of a microscope. */
 	public static final String COMPONENT_SERIAL_NUMBER = "0123456789";
-	
+
 	/** The default lot number of a component of a microscope. */
 	public static final String COMPONENT_LOT_NUMBER = "9876543210";
-	
+
 	/** The default type of a laser. */
 	public static final LaserType LASER_TYPE = LaserType.DYE;
-	
+
 	/** The default type of an arc. */
 	public static final ArcType ARC_TYPE = ArcType.HGXE;
-	
+
 	/** The default type of a filament. */
 	public static final FilamentType FILAMENT_TYPE = FilamentType.HALOGEN;
-	
+
 	/** The default type of a detector. */
 	public static final DetectorType DETECTOR_TYPE = DetectorType.CCD;
-	
+
 	/** The default objective's correction. */
 	public static final Correction CORRECTION = Correction.UV;
-	
+
 	/** The default objective's immersion. */
 	public static final Immersion IMMERSION = Immersion.OIL;
-	
+
 	/** The default objective's immersion. */
 	public static final FilterType FILTER_TYPE = FilterType.LONGPASS;
-	
+
 	/** The default type of a microscope. */
 	public static final MicroscopeType MICROSCOPE_TYPE = MicroscopeType.UPRIGHT;
-	
+
 	/** The default type of a microscope. */
 	public static final ExperimentType EXPERIMENT_TYPE = ExperimentType.FISH;
-	
+
 	/** The default type of a microbeam manipulation. */
-	public static final MicrobeamManipulationType 
+	public static final MicrobeamManipulationType
 		MICROBEAM_MANIPULATION_TYPE = MicrobeamManipulationType.FLIP;
-	
+
 	/** The default binning value. */
 	public static final Binning BINNING = Binning.TWOXTWO;
-	
+
 	/** The default medium for the objective. */
 	public static final Medium MEDIUM = Medium.AIR;
-	
+
 	/** The default number of pixels along the X-axis. */
 	public static final Integer SIZE_X = 24;
-	
+
 	/** The default number of pixels along the Y-axis. */
 	public static final Integer SIZE_Y = 24;
-	
+
 	/** The default number of z-sections. */
 	public static final Integer SIZE_Z = 1;
-	
+
 	/** The default number of channels. */
 	public static final Integer SIZE_C = 3;
-	
+
 	/** The default number of time-points. */
 	public static final Integer SIZE_T = 1;
-	
+
 	/** The number of bytes per pixels. */
 	public static final Integer BYTES_PER_PIXEL = 2;
-	
+
 	/** The default number of rows for a plate. */
 	public static final int    ROWS = 16;
-	
+
 	/** The default number of columns for a plate. */
 	public static final int    COLUMNS = 24;
-	
+
 	/** The default number of fields for a well. */
 	public static final int    FIELDS = 3;
-	
+
 	/** The light sources to handle. */
-	public static final String[] LIGHT_SOURCES = {Laser.class.getName(), 
-		Arc.class.getName(), Filament.class.getName(), 
+	public static final String[] LIGHT_SOURCES = {Laser.class.getName(),
+		Arc.class.getName(), Filament.class.getName(),
 		LightEmittingDiode.class.getName(), Laser.class.getName()};
-	
+
 	/** The shapes to handle. */
-	public static final String[] SHAPES = {Line.class.getName(), 
-		Point.class.getName(), Rectangle.class.getName(), 
+	public static final String[] SHAPES = {Line.class.getName(),
+		Point.class.getName(), Rectangle.class.getName(),
 		Ellipse.class.getName(), Polyline.class.getName(),
 		Mask.class.getName()};
-	 
+
 	/** The supported types of annotations. */
 	public static final String[] ANNOTATIONS = {
 		BooleanAnnotation.class.getName(), CommentAnnotation.class.getName(),
 		LongAnnotation.class.getName(), TermAnnotation.class.getName(),
 		TagAnnotation.class.getName() };
-	
+
 	/** The default naming convention for rows. */
-	public static final NamingConvention ROW_NAMING_CONVENTION = 
+	public static final NamingConvention ROW_NAMING_CONVENTION =
 		NamingConvention.LETTER;
-	
+
 	/** The default naming convention for columns. */
-	public static final NamingConvention COLUMN_NAMING_CONVENTION = 
+	public static final NamingConvention COLUMN_NAMING_CONVENTION =
 		NamingConvention.NUMBER;
-	
+
 	/** The default dimension order. */
 	public static final DimensionOrder DIMENSION_ORDER = DimensionOrder.XYZCT;
-	
+
 	/** The default pixels type. */
 	public static final PixelType PIXEL_TYPE = PixelType.UINT16;
 
 	/** The number of detectors created. */
 	public static final int NUMBER_OF_DECTECTORS = 1;
-	
+
 	/** The number of objectives created. */
 	public static final int NUMBER_OF_OBJECTIVES = 1;
-	
+
 	/** The number of filters created. */
 	public static final int NUMBER_OF_FILTERS = 2;
-	
+
 	/** The number of dichroics created. */
 	public static final int NUMBER_OF_DICHROICS = 1;
-	
+
 	/** Points used to create Polyline and Polygon shape. */
 	public static final String POINTS = "0,0 10,10";
-	
+
 	/** The default time. */
 	public static final String TIME = "2006-05-04T18:13:51.0Z";
-	
+
 	/** The default cut-in. */
 	public static final int CUT_IN = 200;
-	
+
 	/** The default cut-out. */
 	public static final int CUT_OUT = 300;
 
@@ -269,7 +269,7 @@ public class XMLMockObjects
 
 	/** The instrument used for the metadata. */
 	protected Instrument instrument;
-	
+
 	/** Creates and populates the instrument. */
 	private void populateInstrument()
 	{
@@ -277,10 +277,10 @@ public class XMLMockObjects
 		instrument = createInstrument(true);
 		ome.addInstrument(instrument);
 	}
-	
+
 	/**
 	 * Creates a detector.
-	 * 
+	 *
 	 * @param index The index of the detector in the file.
 	 * @return See above.
 	 */
@@ -296,10 +296,10 @@ public class XMLMockObjects
     	detector.setGain(1.0);
 		return detector;
 	}
-	
+
 	/**
 	 * Creates a filter set.
-	 * 
+	 *
 	 * @param index The index of the filter set in the file.
 	 * @return See above.
 	 */
@@ -313,10 +313,10 @@ public class XMLMockObjects
 		set.setLotNumber(COMPONENT_LOT_NUMBER);
 		return set;
 	}
-	
+
 	/**
 	 * Creates a microscope.
-	 * 
+	 *
 	 * @return See above.
 	 */
 	public Microscope createMicroscope()
@@ -329,10 +329,10 @@ public class XMLMockObjects
 		microscope.setType(MICROSCOPE_TYPE);
 		return microscope;
 	}
-	
+
 	/**
 	 * Creates a dichroic.
-	 * 
+	 *
 	 * @param index The index of the dichroic in the file.
 	 * @return See above.
 	 */
@@ -346,10 +346,10 @@ public class XMLMockObjects
 		dichroic.setSerialNumber(COMPONENT_SERIAL_NUMBER);
 		return dichroic;
 	}
-	
+
 	/**
 	 * Creates an objective.
-	 * 
+	 *
 	 * @param index The index of the objective in the file.
 	 * @return See above.
 	 */
@@ -370,10 +370,10 @@ public class XMLMockObjects
 		objective.setWorkingDistance(1.0);
 		return objective;
 	}
-	
+
 	/**
 	 * Creates a filter.
-	 * 
+	 *
 	 * @param index The index of the objective in the file.
 	 * @param cutIn The cut in value.
      * @param cutOut The cut out value.
@@ -397,10 +397,10 @@ public class XMLMockObjects
 		filter.setTransmittanceRange(transmittance);
 		return filter;
 	}
-	
+
 	/**
 	 * Creates a light source of the specified type.
-	 * 
+	 *
 	 * @param type The type of light source to create.
 	 * @param index The index of the light source in the file.
 	 * @return See above.
@@ -449,10 +449,10 @@ public class XMLMockObjects
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates a new object.
-	 * 
+	 *
 	 * @param sizeX The number of pixels along the X-axis.
 	 * @param sizeY The number of pixels along the Y-axis.
 	 * @param bpp   The number of bytes per pixels.
@@ -466,16 +466,16 @@ public class XMLMockObjects
 		data.setLength(new NonNegativeLong((long) (sizeX*sizeY*bpp)));
 		return data;
 	}
-	
+
 	/**
 	 * Creates a light path.
-	 * 
+	 *
 	 * @return See above.
 	 */
 	public LightPath createLightPath()
 	{
 		LightPath lp = new LightPath();
-		if (NUMBER_OF_DICHROICS > 0) 
+		if (NUMBER_OF_DICHROICS > 0)
 			lp.linkDichroic(instrument.getDichroic(0));
 		if (NUMBER_OF_FILTERS == 1)
 			lp.linkEmissionFilter(instrument.getFilter(0));
@@ -485,10 +485,10 @@ public class XMLMockObjects
 		}
 		return lp;
 	}
-	
+
 	/**
 	 * Creates a imaging environment.
-	 * 
+	 *
 	 * @return See above.
 	 */
 	public ImagingEnvironment createImageEnvironment()
@@ -500,10 +500,10 @@ public class XMLMockObjects
 		env.setTemperature(1.0);
 		return env;
 	}
-	
+
 	/**
 	 * Creates a imaging environment.
-	 * 
+	 *
 	 * @param index The index of the environment in the file.
 	 * @return See above.
 	 */
@@ -516,10 +516,10 @@ public class XMLMockObjects
 		label.setZ(1.0);
 		return label;
 	}
-	
+
 	/**
 	 * Creates a light source settings.
-	 * 
+	 *
 	 * @param ref Reference to the light source.
 	 * @return See above.
 	 */
@@ -536,7 +536,7 @@ public class XMLMockObjects
 
 	/**
 	 * Creates a microbeam manipulation.
-	 * 
+	 *
 	 * @param index The index in the file.
 	 * @return See above.
 	 */
@@ -584,7 +584,7 @@ public class XMLMockObjects
 
 	/**
 	 * Creates a detector settings.
-	 * 
+	 *
 	 * @param ref Reference to the detector.
 	 * @return See above.
 	 */
@@ -599,10 +599,10 @@ public class XMLMockObjects
     	settings.setVoltage(1.0);
 		return settings;
 	}
-	
+
 	/**
 	 * Creates an objective settings.
-	 * 
+	 *
 	 * @param ref Reference to the objective.
 	 * @return See above.
 	 */
@@ -615,10 +615,10 @@ public class XMLMockObjects
 		settings.setRefractiveIndex(1.0);
 		return settings;
 	}
-	
+
 	/**
 	 * Creates a binary file.
-	 * 
+	 *
 	 * @return See above.
 	 */
 	public BinaryFile createBinaryFile()
@@ -627,10 +627,10 @@ public class XMLMockObjects
 		bf.setBinData(createBinData(SIZE_X, SIZE_Y, BYTES_PER_PIXEL));
 		return bf;
 	}
-	
+
 	/**
 	 * Creates the specified type of shape.
-	 * 
+	 *
 	 * @param index The index of the shape in the file.
 	 * @param type The type of shape to create.
 	 * @param z    The selected z-section.
@@ -690,17 +690,17 @@ public class XMLMockObjects
 		}
 		return shape;
 	}
-	
+
 	private AffineTransform createTransform()
 	{
 		AffineTransform at = new AffineTransform();
-		
+
 		return at;
 	}
-	
-	/** 
+
+	/**
 	 * Creates an ROI.
-	 * 
+	 *
 	 * @param index The index of the ROI in the file.
 	 * @param z The selected z-section.
 	 * @param c The selected channel.
@@ -722,23 +722,23 @@ public class XMLMockObjects
 		roi.setUnion(union);
 		return roi;
 	}
-	
+
 	/** Creates a new instance. */
 	public XMLMockObjects()
 	{
 		ome = new OME();
 	}
-	
-	/** 
+
+	/**
 	 * Returns the root of the XML file.
-	 * 
+	 *
 	 * @return See above.
 	 */
 	public OME getRoot() { return ome; }
-	
+
 	/**
 	 * Creates a project.
-	 * 
+	 *
 	 * @param index The index of the project.
 	 * @return See above.
 	 */
@@ -750,10 +750,10 @@ public class XMLMockObjects
 		project.setDescription("Project Description "+index);
 		return project;
 	}
-	
+
 	/**
 	 * Creates a dataset.
-	 * 
+	 *
 	 * @param index The index of the dataset.
 	 * @return See above.
 	 */
@@ -765,10 +765,10 @@ public class XMLMockObjects
 		dataset.setDescription("Dataset Description "+index);
 		return dataset;
 	}
-	
+
 	/**
 	 * Creates a screen.
-	 * 
+	 *
 	 * @param index The index of the screen.
 	 * @return See above.
 	 */
@@ -780,10 +780,10 @@ public class XMLMockObjects
 		screen.setDescription("Screen Description "+index);
 		return screen;
 	}
-	
+
 	/**
 	 * Creates a basic plate.
-	 * 
+	 *
 	 * @param index The index of the plate.
 	 * @return See above.
 	 */
@@ -795,25 +795,25 @@ public class XMLMockObjects
 		plate.setDescription("Plate Description "+index);
 		return plate;
 	}
-	
+
 	/**
 	 * Creates a default plate
-	 * 
+	 *
 	 * @param numberOfPlates The total number of plates.
 	 * @param index The index of the plate.
 	 * @param numberOfPlateAcquisition  The number of plate acquisition to add.
 	 * @return See above.
 	 */
-	public Plate createPlate(int numberOfPlates, int index, 
+	public Plate createPlate(int numberOfPlates, int index,
 			int numberOfPlateAcquisition)
 	{
-		return createPlate(numberOfPlates, index, ROWS, COLUMNS, FIELDS, 
+		return createPlate(numberOfPlates, index, ROWS, COLUMNS, FIELDS,
 				numberOfPlateAcquisition);
 	}
-	
+
 	/**
 	 * Creates a populated plate with images.
-	 * 
+	 *
 	 * @param numberOfPlates The total number of plates.
 	 * @param index The index of the plate.
 	 * @param rows  The number of rows.
@@ -822,8 +822,8 @@ public class XMLMockObjects
 	 * @param numberOfPlateAcquisition  The number of plate acquisition to add.
 	 * @return See above.
 	 */
-	public Plate createPlate(int numberOfPlates, 
-			int index, int rows, int columns, int fields, 
+	public Plate createPlate(int numberOfPlates,
+			int index, int rows, int columns, int fields,
 			int numberOfPlateAcquisition)
 	{
 	    // ticket:3102
@@ -883,7 +883,7 @@ public class XMLMockObjects
 						sample.setPositionX(0.0);
 						sample.setPositionY(1.0);
 						sample.setTimepoint(new Timestamp(TIME));
-						sample.setID(String.format("WellSample:%d_%d_%d_%d", 
+						sample.setID(String.format("WellSample:%d_%d_%d_%d",
 								index, row, column, field));
 						sample.setIndex(new NonNegativeInteger(i));
 						//create an image. and register it
@@ -905,7 +905,7 @@ public class XMLMockObjects
 							sample.setPositionX(0.0);
 							sample.setPositionY(1.0);
 							sample.setTimepoint(new Timestamp(TIME));
-							sample.setID(String.format("WellSample:%d_%d_%d_%d_%d", 
+							sample.setID(String.format("WellSample:%d_%d_%d_%d_%d",
 									index, row, column, field, v));
 							sample.setIndex(new NonNegativeInteger(i));
 							//create an image. and register it
@@ -920,16 +920,16 @@ public class XMLMockObjects
 						kk++;
 					}
 				}
-				
+
 				plate.addWell(well);
 			}
 		}
 		return plate;
 	}
-	
+
 	/**
 	 * Creates a plane information object.
-	 * 
+	 *
 	 * @param z The z-section.
 	 * @param c The channel.
 	 * @param t The time-point.
@@ -949,10 +949,10 @@ public class XMLMockObjects
 		plane.setHashSHA1("1234567890ABCDEF1234567890ABCDEF12345678");
 		return plane;
 	}
-	
-	/** 
+
+	/**
 	 * Creates a new image.
-	 * 
+	 *
 	 * @param index The identifier of the image.
 	 * @param metadata Pass <code>true</code> to create channel with acquisition
 	 * 	               metadata, <code>false</code> otherwise.
@@ -1008,14 +1008,14 @@ public class XMLMockObjects
 			}
 			pixels.addChannel(channel);
 		}
-		
+
 		image.setPixels(pixels);
 		return image;
 	}
-	
+
 	/**
 	 * Creates a channel.
-	 * 
+	 *
 	 * @param index The index in the file.
 	 * @return See above.
 	 */
@@ -1039,9 +1039,9 @@ public class XMLMockObjects
 		return channel;
 	}
 
-	/** 
+	/**
 	 * Creates a new image.
-	 * 
+	 *
 	 * @param index The identifier of the image.
 	 * @return See above.
 	 */
@@ -1049,11 +1049,11 @@ public class XMLMockObjects
 	{
 		return createImage(index, false);
 	}
-	
+
 	/**
 	 * Creates an instrument with filters, light sources etc.
-	 * 
-	 * @param populate Pass <code>true</code> to populate the instrument, 
+	 *
+	 * @param populate Pass <code>true</code> to populate the instrument,
 	 *                 <code>false</code> otherwise.
 	 * @return See above.
 	 */
@@ -1078,7 +1078,7 @@ public class XMLMockObjects
 				instrument.addDichroic(createDichroic(i));
 			}
 			for (int i = 0; i < LIGHT_SOURCES.length; i++) {
-				instrument.addLightSource(createLightSource(LIGHT_SOURCES[i], 
+				instrument.addLightSource(createLightSource(LIGHT_SOURCES[i],
 						i));
 			}
 		}
@@ -1087,7 +1087,7 @@ public class XMLMockObjects
 
 	/**
 	 * Creates a reagent.
-	 * 
+	 *
 	 * @param index The index in the file.
 	 * @return See above.
 	 */
@@ -1100,11 +1100,11 @@ public class XMLMockObjects
 		reagent.setReagentIdentifier("Reagent Identifier");
 		return reagent;
 	}
-	
+
 	//annotations
 	/**
 	 * Create a comment annotation for the specified object.
-	 * 
+	 *
 	 * @param type The type of annotation to create.
 	 * @param object The object to link the annotation to.
 	 * @param index The index of the annotation.
@@ -1253,12 +1253,12 @@ public class XMLMockObjects
 		}
 		return annotation;
 	}
-	
+
 	//Collection of helper methods.
-	
+
 	/**
 	 * Creates and returns the root element. Creates an image w/o metadata.
-	 * 
+	 *
 	 * @return See above.
 	 */
 	public OME createImage()
@@ -1266,10 +1266,10 @@ public class XMLMockObjects
 		ome.addImage(createImage(0));
 		return ome;
 	}
-	
+
 	/**
-	 * Creates and returns the root element. 
-	 * 
+	 * Creates and returns the root element.
+	 *
 	 * @param metadata Pass <code>true</code> to create an image with metadata,
 	 *                 <code>false</code> w/o/
 	 * @return See above.
@@ -1279,13 +1279,13 @@ public class XMLMockObjects
 		ome.addImage(createImage(0, true));
 		return ome;
 	}
-	
+
 	/**
 	 * Creates and annotates an image.
 	 * The following types of annotations are added:
 	 * TagAnnotation, TermAnnotation, BooleanAnnotation, LongAnnotation,
 	 * CommentAnnotation.
-	 * 
+	 *
 	 * @return See above.
 	 */
 	public OME createAnnotatedImage()
@@ -1338,7 +1338,7 @@ public class XMLMockObjects
      *
      * @return See above.
      */
-    public Image createImageWithExperiment(int index, boolean metadata, 
+    public Image createImageWithExperiment(int index, boolean metadata,
     		Experiment exp)
     {
         Image image = createImage(index, metadata);
@@ -1348,7 +1348,7 @@ public class XMLMockObjects
 
 	/**
 	 * Creates an image with ROI.
-	 * 
+	 *
 	 * @return See above.
 	 */
 	public OME createImageWithROI()
@@ -1364,14 +1364,14 @@ public class XMLMockObjects
 		}
 		return ome;
 	}
-	
+
 	/**
 	 * Creates a plate with <code>1</code> row, <code>1</code> column
-	 * and <code>1</code>field. 
+	 * and <code>1</code>field.
 	 * The plate will have images with acquisition data but no plate acquisition
-	 * data if the passed value is <code>0</code> otherwise will have 
+	 * data if the passed value is <code>0</code> otherwise will have
 	 * <code>n</code> plate acquisitions.
-	 * 
+	 *
 	 * @param n The number of plate acquisition.
 	 * @return See above
 	 */
@@ -1381,14 +1381,14 @@ public class XMLMockObjects
 		ome.addPlate(createPlate(1, 0, 1, 1, 1, n));
 		return ome;
 	}
-	
+
 	/**
 	 * Creates a plate with <code>1</code> row, <code>1</code> column
-	 * and <code>fields</code>field. 
+	 * and <code>fields</code>field.
 	 * The plate will have images with acquisition data but no plate acquisition
-	 * data if the passed value is <code>0</code> otherwise will have 
+	 * data if the passed value is <code>0</code> otherwise will have
 	 * <code>n</code> plate acquisitions.
-	 * 
+	 *
 	 * @param n The number of plate acquisition.
 	 * @param fields The number of fields.
 	 * @return See above
@@ -1403,7 +1403,7 @@ public class XMLMockObjects
 
 	/**
 	 * Creates a screen with several plates.
-	 * 
+	 *
 	 * @param plates The number of plates to create.
 	 * @param rows   The number of rows for plate.
 	 * @param cols   The number of columns for plate.
@@ -1438,7 +1438,7 @@ public class XMLMockObjects
 	 * Creates a plate with <code>1</code> row, <code>1</code> column
 	 * and <code>1</code> field. This plate will be added to a screen
 	 * and the well linked to a reagent.
-	 * 
+	 *
 	 * @return See above
 	 */
 	public OME createBasicPlateWithReagent()
@@ -1454,13 +1454,13 @@ public class XMLMockObjects
         ome.addScreen(screen);
 		return ome;
 	}
-	
+
 	/**
 	 * Creates a plate with {@link #ROWS} rows, {@link #COLUMNS} columns
-	 * and {@link #FIELDS} field. 
+	 * and {@link #FIELDS} field.
 	 * The plate will have images with acquisition data but no plate acquisition
 	 * data.
-	 * 
+	 *
 	 * @param n The number of plate acquisition.
 	 * @return See above
 	 */
@@ -1470,5 +1470,5 @@ public class XMLMockObjects
 		ome.addPlate(createPlate(1, 0, n));
 		return ome;
 	}
-	
+
 }

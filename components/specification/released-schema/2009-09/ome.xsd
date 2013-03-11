@@ -25,19 +25,19 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2009-09" 
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2009-09"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2009-09"
-	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" 
-	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09" 
-	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" 
-	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09" 
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2009-09" 
+	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09"
+	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
+	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2009-09"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
-	version="1" 
+	version="1"
 	elementFormDefault="qualified">
 
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09/AnalysisModule.xsd"/>
@@ -121,7 +121,7 @@
 		<xsd:key name="WellSampleIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ROIIDKey"><xsd:selector xpath="ROI:ROI"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ShapeIDKey"><xsd:selector xpath="ROI:ROI/ROI:Shape"/><xsd:field xpath="@ID"/></xsd:key>
-		
+
 		<xsd:keyref name="DatasetExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Dataset/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="DatasetGroupIDKeyRef" refer="OME:GroupIDKey" ><xsd:selector xpath="OME:Dataset/OME:GroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="DatasetProjectIDKeyRef" refer="OME:ProjectIDKey" ><xsd:selector xpath="OME:Dataset/OME:ProjectRef"/><xsd:field xpath="@ID"/></xsd:keyref>
@@ -168,12 +168,12 @@
 				This element describes the actual image and its meta-data.
 				The elements that are references (ending in Ref or Settings) refer to
 				elements defined outside of the Image element. Ref elements are simple
-				links, while Settings elements are links with additional values. 
-				
-				If any of the required Image attributes or elements are missing, its 
-				guaranteed to be an invalid document. The required attributes and 
+				links, while Settings elements are links with additional values.
+
+				If any of the required Image attributes or elements are missing, its
+				guaranteed to be an invalid document. The required attributes and
 				elements are ID and Pixels.
-				
+
 
 ExperimenterRef is required for all Images with well formed LSIDs.
 				ImageType is a vendor-specific designation of the type of image this is.
@@ -312,7 +312,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="TimeIncrement" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						TimeIncrement is used for time series that have a global 
+						TimeIncrement is used for time series that have a global
 						timing specification instead of per-timepoint timing info.
 						For example in a video stream.  The unit is seconds.
 					</xsd:documentation>
@@ -323,8 +323,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="Plane"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The Plane object holds microscope stage and image timing data 
-				for a given channel/z-section/timepoint. 
+				The Plane object holds microscope stage and image timing data
+				for a given channel/z-section/timepoint.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -332,7 +332,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:choice minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
-							This optional element is a hash of the plane's image data. 
+							This optional element is a hash of the plane's image data.
 							It is a choice between all the support hash types.
 							Currently the only method supported is SHA1.
 						</xsd:documentation>
@@ -361,7 +361,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						The channel this plane is for.
 					</xsd:documentation>
 				</xsd:annotation>
-			</xsd:attribute> 
+			</xsd:attribute>
 			<xsd:attribute name="DeltaT" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -402,7 +402,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="Channel"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				There must be one per channel in the Image, even for a single-plane image.  
+				There must be one per channel in the Image, even for a single-plane image.
 				And information about how each of them was acquired is stored in the various optional *Ref elements.  Each Logical Channel is composed of one or more
 				ChannelComponents.  For example, an entire spectrum in an FTIR experiment may be stored in a single Logical Channel with each discrete wavenumber of the spectrum
 				constituting a ChannelComponent of the FTIR Logical Channel.  An RGB image where the Red, Green and Blue components do not reflect discrete probes but are
@@ -442,27 +442,27 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="SecondaryEmissionFilter" use="optional" type="FilterID">
 				<xsd:annotation>
 					<xsd:documentation>
-						The primary filter in the emission path is defines as part 
-						of the FilterSet. If a second filter is also used then it 
-						is linked here. If there is no primary defined in the 
-						FilterSet then this should also be absent. 
+						The primary filter in the emission path is defines as part
+						of the FilterSet. If a second filter is also used then it
+						is linked here. If there is no primary defined in the
+						FilterSet then this should also be absent.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="SecondaryExcitationFilter" use="optional" type="FilterID">
 				<xsd:annotation>
 					<xsd:documentation>
-						The primary filter in the excitation path is defines as part 
-						of the FilterSet. If a second filter is also used then it 
-						is linked here. If there is no primary defined in the 
-						FilterSet then this should also be absent. 
+						The primary filter in the excitation path is defines as part
+						of the FilterSet. If a second filter is also used then it
+						is linked here. If there is no primary defined in the
+						FilterSet then this should also be absent.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="IlluminationType" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						The method of illumination used to capture the channel. 
+						The method of illumination used to capture the channel.
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -478,7 +478,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="PinholeSize" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The optional PinholeSize attribute allows specifying adjustable 
+						The optional PinholeSize attribute allows specifying adjustable
 						pin hole diameters for confocal microscopes (units microns[um]).
 						TODO - units Airy disks?
 					</xsd:documentation>
@@ -558,7 +558,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						The NDfilter attribute is used to specify (in O.D. units) the combined effect of any neutral density filters used.
 					</xsd:documentation>
 				</xsd:annotation>
-			</xsd:attribute>	
+			</xsd:attribute>
 			<xsd:attribute name="PockelCellSetting" use="optional" type="xsd:integer">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -623,7 +623,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="IFD" type="xsd:integer" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						Gives the IFD(s) for which this element is applicable. Indexed from 0. 
+						Gives the IFD(s) for which this element is applicable. Indexed from 0.
 						Default is 0 (the first IFD).
 					</xsd:documentation>
 				</xsd:annotation>
@@ -631,7 +631,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="FirstZ" type="xsd:integer" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						Gives the Z position of the image plane at the specified IFD. Indexed from 0. 
+						Gives the Z position of the image plane at the specified IFD. Indexed from 0.
 						Default is 0 (the first Z position).
 					</xsd:documentation>
 				</xsd:annotation>
@@ -647,7 +647,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="FirstC" type="xsd:integer" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						Gives the C position of the image plane at the specified IFD. Indexed from 0. 
+						Gives the C position of the image plane at the specified IFD. Indexed from 0.
 						Default is 0 (the first C position).
 					</xsd:documentation>
 				</xsd:annotation>
@@ -657,7 +657,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:documentation>
 						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
 						Pixels element's DimensionOrder attribute. Default is the number of IFDs in the TIFF
-						file, unless an IFD is specified, in which case the default is 1.	
+						file, unless an IFD is specified, in which case the default is 1.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -740,21 +740,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:annotation>
 			<xsd:documentation>
 				This element describes the instrument used to capture the Image.
-				It is primarily a container for manufacturer's model and catalog 
-				numbers for the Microscope, LightSource, Detector, Objective and 
+				It is primarily a container for manufacturer's model and catalog
+				numbers for the Microscope, LightSource, Detector, Objective and
 				Filters components.
-				Additionally, one or more OTF elements may be specified, describing 
+				Additionally, one or more OTF elements may be specified, describing
 				the optical transfer function under different conditions.
 				The Objective element contains the additional elements LensNA and Magnification.
-				The Filters element can be composed either of separate excitation, 
-				emission filters and a dichroic mirror or a single filter set. 
+				The Filters element can be composed either of separate excitation,
+				emission filters and a dichroic mirror or a single filter set.
 				Within the Image itself, a reference is made to this one Filter element.
 				The OTF element contains an optical transfer function.
 				The same OTF can be used for all wavelengths, or there may be one per wavelength.
 				There may be multiple light sources, detectors, objectives and filters on a microscope.
 				Each of these has their own ID attribute, which can be referred to from Channel.
-				It is understood that the light path configuration can be different 
-				for each channel, but cannot be different for each timepoint or 
+				It is understood that the light path configuration can be different
+				for each channel, but cannot be different for each timepoint or
 				each plane of an XYZ stack.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -797,10 +797,10 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="OTF"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The optical transfer function. FilterSetRef refers to the set of 
+				The optical transfer function. FilterSetRef refers to the set of
 				filters used in computing the OTF.
-				This element must contain a BinData element containing the 
-				Base64-encoded OTF. These work the same way as they do for the 
+				This element must contain a BinData element containing the
+				Base64-encoded OTF. These work the same way as they do for the
 				Data element within Image.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -821,7 +821,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="OpticalAxisAveraged" use="required" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>
-						The OpticalAxisAveraged is a boolean specifying whether or not 
+						The OpticalAxisAveraged is a boolean specifying whether or not
 						optical axis averaging was done.
 					</xsd:documentation>
 				</xsd:annotation>
@@ -847,7 +847,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="ImagingEnvironment"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				This describes the environment that the biological sample was in 
+				This describes the environment that the biological sample was in
 				during the experiment.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -947,7 +947,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="Leader"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				Contact information for a Group leader specified using a reference 
+				Contact information for a Group leader specified using a reference
 				to an Experimenter element defined elsewhere in the document.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -962,7 +962,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="Contact"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The Contact element describes the contact person for a group of 
+				The Contact element describes the contact person for a group of
 				experimenters - typically a project leader or lab manager.
 				This person is specified as a reference to an OME experimenter.
 			</xsd:documentation>
@@ -1053,7 +1053,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Type" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						A term to describe the type of experiment. 
+						A term to describe the type of experiment.
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -1130,7 +1130,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						The organizing structure that people belong to other than groups.  A university, or company, etc.
 						We do not specify a department element, and do not mean for Institution to be used in this way.
 						We simply wish to say XXX at YYY.  Where YYY has a better chance of being tied to a geographically fixed location
-						and of being more recognizable than a group of experimenters. 
+						and of being more recognizable than a group of experimenters.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1146,22 +1146,22 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:complexType name="ManufacturerSpec">
 		<xsd:annotation>
 			<xsd:documentation>
-				This is the base from which many microscope components are extended. E.g Objective, Filter etc. 
-				Provides attributes for recording common properties of these components such as Manufacturer name, Model etc, 
-				all of which are optional. 
+				This is the base from which many microscope components are extended. E.g Objective, Filter etc.
+				Provides attributes for recording common properties of these components such as Manufacturer name, Model etc,
+				all of which are optional.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:attribute name="Manufacturer" use="optional" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>
-					The manufacturer of the component. 
+					The manufacturer of the component.
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
 		<xsd:attribute name="Model" use="optional" type="xsd:string">
 			<xsd:annotation>
 				<xsd:documentation>
-					The Model of the component. 
+					The Model of the component.
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
@@ -1243,16 +1243,16 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:annotation>
 			<xsd:documentation>
 				A description of the microscope's objective lens.
-				Required elements include the lens numerical aperture, 
-				and the magnification, both of which a floating 
+				Required elements include the lens numerical aperture,
+				and the magnification, both of which a floating
 				point (real) numbers.
-				The values are those that are fixed for a particular 
-				objective: either because it has been manufactured to 
-				this specification or the value has been measured on 
+				The values are those that are fixed for a particular
+				objective: either because it has been manufactured to
+				this specification or the value has been measured on
 				this particular objective.
 				Correction: This is the type of correction coating applied to this lens.
 				Immersion: This is the types of immersion medium the lens is designed to
-				work with. It is not the same as 'Medium' in ObjectiveRef (a 
+				work with. It is not the same as 'Medium' in ObjectiveRef (a
 				single type) as here Immersion can have compound values like 'Multi'.
 				LensNA: The numerical aperture of the lens (as a float)
 				NominalMagnification: The specified magnification e.g. x10
@@ -1336,7 +1336,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Iris" use="optional" type="xsd:boolean">
 						<xsd:annotation>
 							<xsd:documentation>
-								Records whether or not the objective was fitted with an Iris. 
+								Records whether or not the objective was fitted with an Iris.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1357,7 +1357,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Gain for this detector, as a float. 
+								The Detector Gain for this detector, as a float.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1371,22 +1371,22 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Offset. 
+								The Detector Offset.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. 
+								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="AmplificationGain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								Gain applied to the detector signal. 
-								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. 
+								Gain applied to the detector signal.
+								This is the electronic gain (as apposed to the inherent gain) that is set for the detector.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1394,7 +1394,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Type" use="optional">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Type of detector. E.g. CCD, PMT, EMCCD etc. 
+								The Type of detector. E.g. CCD, PMT, EMCCD etc.
 							</xsd:documentation>
 						</xsd:annotation>
 						<xsd:simpleType>
@@ -1446,7 +1446,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:element name="DichroicRef" minOccurs="0" maxOccurs="1" >
 							<xsd:annotation>
 								<xsd:documentation>
-									The 
+									The
 								</xsd:documentation>
 							</xsd:annotation>
 							<xsd:complexType>
@@ -1481,7 +1481,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:annotation>
 			<xsd:documentation>
 				A filter is either an excitation or emission filters.
-				There should be one filter element specified per wavelength in the image.  
+				There should be one filter element specified per wavelength in the image.
 				The channel number associated with a filter set is specified in Channel.
 				It is based on the FilterSpec type, so has the required attributes Manufacturer, Model, and LotNumber.
 				It may also contain a Type attribute which may be set to
@@ -1601,7 +1601,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="ID" use="required" type="LightSourceID">
 						<xsd:annotation>
 							<xsd:documentation>
-								A LightSource ID must be specified for each light source, and the individual 
+								A LightSource ID must be specified for each light source, and the individual
 								light sources can be referred to by their LightSource IDs (eg from Channel).
 							</xsd:documentation>
 						</xsd:annotation>
@@ -1637,7 +1637,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="Type" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
-						Type is the general category of laser.  
+						Type is the general category of laser.
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
@@ -1739,7 +1739,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:enumeration value="CW"/>
 						<xsd:enumeration value="Single"/>
 						<xsd:enumeration value="QSwitched"/>
-						<xsd:enumeration value="Repetitive"/> 
+						<xsd:enumeration value="Repetitive"/>
 						<xsd:enumeration value="ModeLocked"/>
 						<xsd:enumeration value="Other"/>
 					</xsd:restriction>
@@ -1755,7 +1755,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:attribute name="RepetitionRate" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The is the rate in Hz at which the laser pulses if 
+						The is the rate in Hz at which the laser pulses if
 						the Pulse type is 'Repetitive'
 					</xsd:documentation>
 				</xsd:annotation>
@@ -1844,7 +1844,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="ReferenceWithID">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1856,7 +1856,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
-	
+
 	<xsd:element name="MicrobeamManipulationRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -1865,7 +1865,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
-	</xsd:element>	
+	</xsd:element>
 	<xsd:element name="ExperimentRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -2015,7 +2015,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:annotation>
 			<xsd:documentation>
 				This holds the setting applied to a detector as well as a
-				reference to the detector. 
+				reference to the detector.
 				The ID is the detector used in this case.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -2047,9 +2047,9 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="ReadOutRate" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The speed at which the detector can count pixels. 
-								Units of ReadOutRate is MHz. This is the bytes per second that 
-								can be read from the detector (like a baud rate). 
+								The speed at which the detector can count pixels.
+								Units of ReadOutRate is MHz. This is the bytes per second that
+								can be read from the detector (like a baud rate).
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2072,7 +2072,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 								<xsd:enumeration value="8x8"/>
 								<xsd:enumeration value="Other"/>
 							</xsd:restriction>
-						</xsd:simpleType>	
+						</xsd:simpleType>
 					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
@@ -2080,9 +2080,9 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="ObjectiveSettings"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:documentation> 
+			<xsd:documentation>
 				This holds the setting applied to an objective as well as a
-				reference to the objective. 
+				reference to the objective.
 				The ID is the objective used in this case.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -2093,8 +2093,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="CorrectionCollar" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The CorrectionCollar is it normal an adjustable ring on the 
-								objective. Each has an arbitrary scale on it so the values 
+								The CorrectionCollar is it normal an adjustable ring on the
+								objective. Each has an arbitrary scale on it so the values
 								is unit-less.
 							</xsd:documentation>
 						</xsd:annotation>
@@ -2128,7 +2128,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<!-- ID types -->
 	<xsd:simpleType name="LSID">
 		<xsd:annotation>

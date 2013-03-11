@@ -22,7 +22,7 @@
 -->
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Written by:  Andrew J Patterson 
+	# Written by:  Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/OMERO/2012-06"

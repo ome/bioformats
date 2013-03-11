@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Warning: this comment is an OME-XML metadata block, which contains crucial dimensional parameters and other important metadata. Please edit cautiously (if at all), and back up the original data before doing so. For more information, see the OME-TIFF web site: http://loci.wisc.edu/ome/ome-tiff.html. -->
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-02" 
-    xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02" 
-    xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-02" 
-    xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
-    xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-02" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-02"
+    xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02"
+    xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2008-02"
+    xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02"
+    xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2008-02"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 http://www.openmicroscopy.org/Schemas/OME/2008-02/ome.xsd http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02 http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02/BinaryFile.xsd http://www.openmicroscopy.org/Schemas/CA/2008-02 http://www.openmicroscopy.org/Schemas/CA/2008-02/CA.xsd http://www.openmicroscopy.org/Schemas/SPW/2008-02 http://www.openmicroscopy.org/Schemas/SPW/2008-02/SPW.xsd http://www.openmicroscopy.org/Schemas/STD/2008-02 http://www.openmicroscopy.org/Schemas/STD/2008-02/STD.xsd">
     <Image ID="Image:0" Name="" DefaultPixels="Pixels:0">
         <CreationDate>2006-05-04T18:13:51.0Z</CreationDate>

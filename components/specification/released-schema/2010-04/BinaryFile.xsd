@@ -25,7 +25,7 @@
 	# Written by:  Josiah Johnston <siah@nih.gov>, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema 
+<xsd:schema
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	targetNamespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04"
 	xmlns:Bin = "http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04"
@@ -127,7 +127,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="MIMEType" use="optional" type="xsd:string"/>	
+			<xsd:attribute name="MIMEType" use="optional" type="xsd:string"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:simpleType name = "Hex40">

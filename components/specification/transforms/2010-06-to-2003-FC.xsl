@@ -47,7 +47,7 @@
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd</xsl:variable>
 	<xsl:variable name="newBINNS"
 		>http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd</xsl:variable>
-		
+
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:preserve-space elements="*"/>
 
@@ -57,61 +57,61 @@
 	<!-- The Enumeration terms to be modified. -->
 	<xsl:variable name="enumeration-maps">
 		<mapping name="PixelsPixelType">
-			<map 
-				from="uint8" 
+			<map
+				from="uint8"
 				to="Uint8"
 			/>
-			<map 
-				from="uint16" 
+			<map
+				from="uint16"
 				to="Uint16"
 			/>
-			<map 
-				from="uint32" 
+			<map
+				from="uint32"
 				to="Uint32"
 			/>
 		</mapping>
 		<mapping name="LogicalChannelMode">
-			<map 
-				to="Wide-field" 
+			<map
+				to="Wide-field"
 				from="WideField"
 			/>
-			<map to="Laser Scanning Confocal" 
+			<map to="Laser Scanning Confocal"
 				from="LaserScanningConfocalMicroscopy"
 			/>
-			<map to="Spinning Disk Confocal" 
+			<map to="Spinning Disk Confocal"
 				from="SpinningDiskConfocal"
 			/>
-			<map to="Slit Scan Confocal" 
+			<map to="Slit Scan Confocal"
 				from="SlitScanConfocal"
 			/>
-			<map to="Multi-Photon Microscopy" 
+			<map to="Multi-Photon Microscopy"
 				from="MultiPhotonMicroscopy"
 			/>
-			<map to="Structured Illumination" 
+			<map to="Structured Illumination"
 				from="StructuredIllumination"
 			/>
-			<map to="Single Molecule Imaging" 
+			<map to="Single Molecule Imaging"
 				from="SingleMoleculeImaging"
 			/>
-			<map to="Total Internal Reflection" 
+			<map to="Total Internal Reflection"
 				from="TotalInternalReflection"
 			/>
-			<map to="Fluorescence-Lifetime" 
+			<map to="Fluorescence-Lifetime"
 				from="FluorescenceLifetime"
 			/>
-			<map to="Spectral Imaging" 
+			<map to="Spectral Imaging"
 				from="SpectralImaging"
 			/>
-			<map 
+			<map
 				to="Fluorescence Correlation Spectroscopy"
 				from="FluorescenceCorrelationSpectroscopy"
 			/>
-			<map 
+			<map
 				to="Near Field Scanning Optical Microscopy"
 				from="NearFieldScanningOpticalMicroscopy"
 			/>
-			<map 
-				to="Second Harmonic Generation Imaging" 
+			<map
+				to="Second Harmonic Generation Imaging"
 				from="SecondHarmonicGenerationImaging"
 			/>
 		</mapping>
@@ -161,13 +161,13 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<!-- Actual schema changes -->	
+	<!-- Actual schema changes -->
 	<xsl:template match="OME:AcquiredDate">
 		<xsl:element name="CreationDate" namespace="{$newOMENS}">
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:Image">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:for-each select="@* [not(name(.) = 'ID')]">
@@ -209,7 +209,7 @@
 							</xsl:call-template>
 						</xsl:attribute>
 					</xsl:for-each>
-					
+
 					<xsl:element name="ChannelComponent" namespace="{$newOMENS}">
 						<xsl:attribute name="Pixels">xslt.fix:Pixels:XSLT:<xsl:for-each select=" parent::node()">
 								<xsl:value-of select="@ID"/>
@@ -225,7 +225,7 @@
 				</xsl:element>
 			</xsl:for-each>
 			<xsl:apply-templates select="* [name(.) = 'Pixels']"/>
-			
+
 		</xsl:element>
 	</xsl:template>
 
@@ -266,7 +266,7 @@
 			<xsl:apply-templates select="* [local-name(.) = 'TiffData']"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="Bin:BinData">
 		<xsl:element name="{name()}" namespace="{$newBINNS}">
 			<xsl:for-each select="@* [not(name(.) = 'BigEndian' or name(.) = 'Length')]">
@@ -277,7 +277,7 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:TiffData">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:for-each select="@* [not(name(.) = 'PlaneCount')]">
@@ -292,20 +292,20 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 
 	<xsl:template match="ROI:*"/>
 	<xsl:template match="SA:*"/>
 	<xsl:template match="SPW:*"/>
-	
-	
+
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
 		<OME xmlns="http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd"
 			xmlns:Bin="http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd 
+			xsi:schemaLocation="http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd
 			http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd">
 			<xsl:apply-templates select="* [local-name(.) = 'Image']"/>
 		</OME>

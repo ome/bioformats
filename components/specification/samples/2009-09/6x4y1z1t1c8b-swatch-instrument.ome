@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2009-09" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09" 
-	xmlns:MLI="http://www.openmicroscopy.org/Schemas/MLI/2009-09" 
-	xmlns:CLI="http://www.openmicroscopy.org/Schemas/CLI/2009-09" 
-	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09" 
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" 
-	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09" 
-	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09" 
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2009-09"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09"
+	xmlns:MLI="http://www.openmicroscopy.org/Schemas/MLI/2009-09"
+	xmlns:CLI="http://www.openmicroscopy.org/Schemas/CLI/2009-09"
+	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2009-09"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
+	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2009-09"
+	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2009-09"
 	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2009-09 http://www.openmicroscopy.org/Schemas/OME/2009-09/ome.xsd">
 	<Instrument ID="Instrument:0">
 		<Microscope Type="Inverted" Manufacturer="OME Insturuments" Model="Lab Mk3" SerialNumber="L3-1234"/>

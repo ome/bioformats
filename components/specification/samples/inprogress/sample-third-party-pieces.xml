@@ -41,9 +41,9 @@
 		xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"
 		ID="Objective:1" CalibratedMagnification="0.3" Correction="UV" Immersion="Air"
 		Iris="true" LensNA="1.3" NominalMagnification="2" WorkingDistance="2.3"
-		Manufacturer="OME-Sample" Model="Mk II" SerialNumber="sn-234567"/>	
+		Manufacturer="OME-Sample" Model="Mk II" SerialNumber="sn-234567"/>
 	<EvenMoreOfYourNodes></EvenMoreOfYourNodes>
-	
+
 	<Image xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06"
 		xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"
 		ID="Image:1">
@@ -66,7 +66,7 @@
 			Wavelength="640">
 			<Pump ID="LightSource:4"/>
 		</Laser>
-		
+
 	</LightSource>
 	<LightSource xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06"
 		xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"
@@ -90,11 +90,11 @@
 		xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"
 		ID="Objective:1" CalibratedMagnification="0.3" Correction="UV" Immersion="Air"
 		Iris="true" LensNA="1.3" NominalMagnification="2" WorkingDistance="2.3"
-		Manufacturer="OME-Sample" Model="Mk II" SerialNumber="sn-234567"/>	
-	
+		Manufacturer="OME-Sample" Model="Mk II" SerialNumber="sn-234567"/>
+
 	<Filter xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06"
 		xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"
-		
+
 		ID="Filter:1" Type="BandPass" FilterWheel="" LotNumber="794" Model="Mk II"
 		Manufacturer="OME-Sample" SerialNumber="sn-987654">
 		<TransmittanceRange CutIn="400" CutInTolerance="20" CutOut="600" CutOutTolerance="40" Transmittance="0.25"/>
@@ -102,7 +102,7 @@
 
 	<Plate xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06"
 		xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"
-		
+
 		ID="Plate:1" ColumnNamingConvention="letter" Columns="3" ExternalIdentifier=""
 		Name="" RowNamingConvention="number" Rows="5" Status="" WellOriginX="0.0" WellOriginY="0.0">
 		<Description>A plate description</Description>
@@ -121,7 +121,7 @@
 
 	<Screen xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06"
 		xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"
-		
+
 		ID="Screen:1" ProtocolDescription="" ProtocolIdentifier="" ReagentSetDescription="Core Reagents"
 		ReagentSetIdentifier="" Name="" Type="">
 		<Description>A screen description</Description>
@@ -130,9 +130,9 @@
 		</Reagent>
 		<PlateRef ID="Plate:1"/>
 	</Screen>
-	
+
 	<!-- Possible include objects
-	
+
 	<xsd:complexType name="FilterRef" >
 	<xsd:element name = "BinaryFile">
 	<xsd:element name = "BinData">
@@ -149,7 +149,7 @@
 	<xsd:element name="Detector">
 	<xsd:element name="DetectorSettings">
 	<xsd:element name="Dichroic">
-	<xsd:element name="DichroicRef"> 
+	<xsd:element name="DichroicRef">
 	<xsd:element name="DoubleAnnotation">
 	<xsd:element name="Ellipse">
 	<xsd:element name="Experiment">
@@ -175,7 +175,7 @@
 	<xsd:element name="LightSource">
 	<xsd:element name="LightSourceSettings">
 	<xsd:element name="Line">
-	<xsd:element name="ListAnnotation"> 
+	<xsd:element name="ListAnnotation">
 	<xsd:element name="LongAnnotation">
 	<xsd:element name="Mask">
 	<xsd:element name="MetadataOnly">
@@ -219,7 +219,7 @@
 	<xsd:simpleType name="Marker">
 	<xsd:simpleType name="ROIID">
 	<xsd:simpleType name="ShapeID">
-	
+
 	-->
-	
+
 </CustomTag>

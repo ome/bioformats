@@ -22,7 +22,7 @@
 
     <target name="online-validate-ome-xml" description="Checks that all files used in the documentation are well formed using online schemas (very, very slow)">
         <xmlvalidate failonerror="false" warn="true">
-            <fileset dir="${basedir}" 
+            <fileset dir="${basedir}"
                 includes="samples/**/*.ome"
                 excludes="samples/**/2008-09/*-metadata.ome, samples/inprogress/*.ome, samples/inprogress/**/*.ome"/>
             <attribute name="http://xml.org/sax/features/validation" value="true"/>
@@ -34,13 +34,13 @@
 
     <target name="offline-validate-ome-xml" description="Checks that all files used in the documentation are well formed using local schemas (fast)">
         <schemavalidate failonerror="true" warn="true">
-            <fileset dir="${basedir}" 
+            <fileset dir="${basedir}"
                 includes="samples/**/*.ome"
                 excludes="samples/**/2008-09/*-metadata.ome, samples/inprogress/*.ome"/>
             <!-- Standard -->
             <schema namespace="http://www.w3.org/XML/1998/namespace"
                 file="${basedir}/released-schema/additions/jar/xml.xsd" />
-            <schema namespace="http://www.w3.org/2001/XMLSchema" 
+            <schema namespace="http://www.w3.org/2001/XMLSchema"
                 file="${basedir}/released-schema/additions/jar/XMLSchema.xsd" />
 
             <!-- 2003-FC -->
@@ -49,7 +49,7 @@
                 file="${basedir}/released-schema/2003-FC/AnalysisModule.xsd" />
             <schema namespace="http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd"
                 file="${basedir}/released-schema/2003-FC/BinaryFile.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd" 
+            <schema namespace="http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd"
                 file="${basedir}/released-schema/2003-FC/CA.xsd" />
             <schema namespace="http://www.openmicroscopy.org/XMLschemas/CLI/RC1/CLI.xsd"
                 file="${basedir}/released-schema/2003-FC/CLI.xsd" />
@@ -69,7 +69,7 @@
                 file="${basedir}/released-schema/2007-06/AnalysisModule.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06"
                 file="${basedir}/released-schema/2007-06/BinaryFile.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2007-06" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2007-06"
                 file="${basedir}/released-schema/2007-06/CA.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/CLI/2007-06"
                 file="${basedir}/released-schema/2007-06/CLI.xsd" />
@@ -77,7 +77,7 @@
                 file="${basedir}/released-schema/2007-06/MLI.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2007-06"
                 file="${basedir}/released-schema/2007-06/ome.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2007-06" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2007-06"
                 file="${basedir}/released-schema/2007-06/SPW.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/STD/2007-06"
                 file="${basedir}/released-schema/2007-06/STD.xsd" />
@@ -91,7 +91,7 @@
                 file="${basedir}/released-schema/2008-02/AnalysisModule.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02"
                 file="${basedir}/released-schema/2008-02/BinaryFile.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02"
                 file="${basedir}/released-schema/2008-02/CA.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/CLI/2008-02"
                 file="${basedir}/released-schema/2008-02/CLI.xsd" />
@@ -99,7 +99,7 @@
                 file="${basedir}/released-schema/2008-02/MLI.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2008-02"
                 file="${basedir}/released-schema/2008-02/ome.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02"
                 file="${basedir}/released-schema/2008-02/SPW.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02"
                 file="${basedir}/released-schema/2008-02/STD.xsd" />
@@ -113,7 +113,7 @@
                 file="${basedir}/released-schema/2008-09/AnalysisModule.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09"
                 file="${basedir}/released-schema/2008-09/BinaryFile.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2008-09" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2008-09"
                 file="${basedir}/released-schema/2008-09/CA.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/CLI/2008-09"
                 file="${basedir}/released-schema/2008-09/CLI.xsd" />
@@ -123,9 +123,9 @@
                 file="${basedir}/released-schema/2008-09/ome.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/OMERO/2008-09"
                 file="${basedir}/released-schema/2008-09/OMERO.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2008-09" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2008-09"
                 file="${basedir}/released-schema/2008-09/SA.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-09" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-09"
                 file="${basedir}/released-schema/2008-09/SPW.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/STD/2008-09"
                 file="${basedir}/released-schema/2008-09/STD.xsd" />
@@ -139,7 +139,7 @@
                 file="${basedir}/released-schema/2009-09/AnalysisModule.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
                 file="${basedir}/released-schema/2009-09/BinaryFile.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2009-09" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2009-09"
                 file="${basedir}/released-schema/2009-09/CA.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/CLI/2009-09"
                 file="${basedir}/released-schema/2009-09/CLI.xsd" />
@@ -149,9 +149,9 @@
                 file="${basedir}/released-schema/2009-09/ome.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/OMERO/2009-09"
                 file="${basedir}/released-schema/2009-09/OMERO.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2009-09" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2009-09"
                 file="${basedir}/released-schema/2009-09/SA.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2009-09" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2009-09"
                 file="${basedir}/released-schema/2009-09/SPW.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/STD/2009-09"
                 file="${basedir}/released-schema/2009-09/STD.xsd" />
@@ -167,9 +167,9 @@
                 file="${basedir}/released-schema/2010-04/ome.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/OMERO/2010-04"
                 file="${basedir}/released-schema/2010-04/OMERO.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2010-04" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2010-04"
                 file="${basedir}/released-schema/2010-04/SA.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2010-04" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2010-04"
                 file="${basedir}/released-schema/2010-04/SPW.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
                 file="${basedir}/released-schema/2010-04/ROI.xsd" />
@@ -181,9 +181,9 @@
                 file="${basedir}/released-schema/2010-06/ome.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/OMERO/2010-06"
                 file="${basedir}/released-schema/2010-06/OMERO.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06"
                 file="${basedir}/released-schema/2010-06/SA.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2010-06" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2010-06"
                 file="${basedir}/released-schema/2010-06/SPW.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/ROI/2010-06"
                 file="${basedir}/released-schema/2010-06/ROI.xsd" />
@@ -195,9 +195,9 @@
                 file="${basedir}/released-schema/2011-06/ome.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/OMERO/2011-06"
                 file="${basedir}/released-schema/2011-06/OMERO.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06"
                 file="${basedir}/released-schema/2011-06/SA.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2011-06" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2011-06"
                 file="${basedir}/released-schema/2011-06/SPW.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/ROI/2011-06"
                 file="${basedir}/released-schema/2011-06/ROI.xsd" />
@@ -207,9 +207,9 @@
                 file="${basedir}/released-schema/2012-06/BinaryFile.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06"
                 file="${basedir}/released-schema/2012-06/ome.xsd" />
-           <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" 
+           <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06"
                 file="${basedir}/released-schema/2012-06/SA.xsd" />
-            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" 
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
                 file="${basedir}/released-schema/2012-06/SPW.xsd" />
             <schema namespace="http://www.openmicroscopy.org/Schemas/ROI/2012-06"
                 file="${basedir}/released-schema/2012-06/ROI.xsd" />

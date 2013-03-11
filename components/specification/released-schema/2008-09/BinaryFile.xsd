@@ -24,7 +24,7 @@
 	# Written by:  Josiah Johnston <siah@nih.gov>, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema 
+<xsd:schema
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	targetNamespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09"
 	xmlns:Bin = "http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09"

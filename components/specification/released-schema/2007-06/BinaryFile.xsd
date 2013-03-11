@@ -93,7 +93,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
 						</annotation>
 						<simpleType>
 							<restriction base="nonNegativeInteger">
-								
+
 							</restriction>
 						</simpleType>
 					</attribute>

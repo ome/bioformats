@@ -130,7 +130,7 @@
 			<xs:documentation>
 				The Image will be unreadable if any of the required Pixel attributes are missing (all except DerivedFrom).
 				The Pixels themselves may be stored externally or internally.  Internal storage is encoded in Base64.
-				DimensionOrder is a string enumeration which must be set to 'XYZCT', 'XYZTC', 'XYCTZ', 'XYCZT', 'XYTCZ',  or 'XYTZC'.  
+				DimensionOrder is a string enumeration which must be set to 'XYZCT', 'XYZTC', 'XYCTZ', 'XYCZT', 'XYTCZ',  or 'XYTZC'.
 				PixelType is a string enumeration which must be set to 'bit','int8','int16','int32','Uint8','Uint16','Uint32','float','double','complex','double-complex'.
 				BigEndian is a boolean ('true' or 'false').  True for essentially all modern CPUs other than Intel and Alpha.
 				This element must contain a list of BinData or External elements.  These elements, when read in document order, must produce a 5-D pixel array
@@ -350,7 +350,7 @@
 				These elements have three required attributes:  the ChannelNumber, BlackLevel, and WhiteLevel.
 				The fourth Gamma attribute is optional.
 				The ChannelNumber specifies the channel number in the pixel dump.  Channels are numbered from 0.
-				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, respectively.  
+				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, respectively.
 				Values below BlackLevel or above WhiteLevel will be assigned 0 and 255 respectively.
 				Either the GreyChannel or one or more of RedChannel, GreenChannel, BlueChannel must be specified.
 				The Projection element specifies that the display is a maximum intensity projection.
@@ -608,7 +608,7 @@
 				Filters may be separate excitation dichroic mirror and emission filters specified by the
 				ExFilter, Dichroic and EmFilter tags respectively.
 				Alternatively all three components may be specified by a single filter set.
-				There should be one filter element specified per wavelength in the image.  
+				There should be one filter element specified per wavelength in the image.
 				The channel number associated with a filter set is specified in ChannelInfo's required ChannelComponent element and its Index attribute.
 				All  elements are FilterSpec type, so they have the required attributes Manufacturer, Model, and LotNumber.
 				The ExFilter an EmFilter elements may also contain a Type attribute which may be set to
@@ -966,7 +966,7 @@
 		<xs:restriction base = "GUID">
 			<xs:pattern value = "(\d+\.){2}76(\.\d+){2}"/>
 		</xs:restriction>
-	</xs:simpleType>	
+	</xs:simpleType>
 	<xs:simpleType name = "PixelTypes">
 		<xs:restriction base = "xs:string">
 			<xs:enumeration value = "bit"/>
@@ -1108,7 +1108,7 @@
 				The organizing structure that people belong to other than groups.  A university, or company, etc.
 				We do not specify a department element, and do not mean for Institution to be used in this way.
 				We simply wish to say XXX at YYY.  Where YYY has a better chance of being tied to a geographically fixed location
-				and of being more recognizable than a group of experimenters. 
+				and of being more recognizable than a group of experimenters.
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>

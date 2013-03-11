@@ -31,7 +31,7 @@ import spec.OmeValidator;
 import spec.XMLMockObjects;
 import spec.XMLWriter;
 
-/** 
+/**
  * Collections of tests.
  * Checks if the downgrade from current schema to 2008-02 schema works.
  *
@@ -47,26 +47,26 @@ import spec.XMLWriter;
  * </small>
  * @since 3.0-Beta4
  */
-public class SchemaCurrent_TO_2008_02_Test 
+public class SchemaCurrent_TO_2008_02_Test
 	extends AbstractTest
 {
 
 	/** The collection of files that have to be deleted. */
 	private List<File> files;
-	
+
 	/** The transforms */
 	private InputStream STYLESHEET_A;
 	private InputStream STYLESHEET_B;
-	
+
 	/** The target schema */
 	private StreamSource[] schemaArray;
-	
+
 	/** A validator used to check transformed files */
 	private OmeValidator anOmeValidator = new OmeValidator();
-	
+
 	/**
 	 * Checks if the <code>Image</code> tag was correctly transformed.
-	 * 
+	 *
 	 * @param destNode The node from the transformed file.
 	 * @param srcNode The Image node from the source file
 	 */
@@ -87,7 +87,7 @@ public class SchemaCurrent_TO_2008_02_Test
 			else if (name.equals(XMLWriter.NAME_ATTRIBUTE))
 				nameSrc = n.getNodeValue();
 		}
-		
+
 		// compare the stored values for ID and Name attributes
 		// to those on the output node
 		NamedNodeMap attributes = destNode.getAttributes();
@@ -127,10 +127,10 @@ public class SchemaCurrent_TO_2008_02_Test
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if the <code>Pixels</code> tag was correctly transformed.
-	 * 
+	 *
 	 * @param destNode The node from the transformed file.
 	 * @param srcNode The Image node from the source file
 	 */
@@ -230,11 +230,11 @@ public class SchemaCurrent_TO_2008_02_Test
 		for (int i = 0; i < binDataNodeDest.size(); i++) {
 			checkBinDataNode(binDataNodeDest.get(i), binDataNodeSrc.get(i));
 		}
-		// Compare the Big Endian value from the output stored above 
+		// Compare the Big Endian value from the output stored above
 		// with the value used in the input file
 		n = binDataNodeSrc.get(0);
 		attributesSrc = n.getAttributes();
-		//now check that 
+		//now check that
 		for (int i = 0; i < attributesSrc.getLength(); i++) {
 			n = attributesSrc.item(i);
 			if (n != null) {
@@ -244,10 +244,10 @@ public class SchemaCurrent_TO_2008_02_Test
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if the <code>Image</code> tag was correctly transformed.
-	 * 
+	 *
 	 * @param destNode The node from the transformed file.
 	 * @param srcNode The Image node from the source file
 	 */
@@ -267,7 +267,7 @@ public class SchemaCurrent_TO_2008_02_Test
 			if (name.equals(XMLWriter.COMPRESSION_ATTRIBUTE))
 				compression = n.getNodeValue();
 		}
-		
+
 		// compare the stored value for the Compression attribute
 		// to that on the output node
 		NamedNodeMap attributes = destNode.getAttributes();
@@ -280,17 +280,17 @@ public class SchemaCurrent_TO_2008_02_Test
 				}
 			}
 		}
-		// compare the contents of the BinData node		
+		// compare the contents of the BinData node
 		assertEquals(destNode.getTextContent(), srcNode.getTextContent());
 	}
-	
+
 	/**
 	 * Overridden to initialize the list.
 	 * @see AbstractTest#setUp()
 	 */
     @Override
     @BeforeClass
-    protected void setUp() 
+    protected void setUp()
     	throws Exception
     {
     	super.setUp();
@@ -310,14 +310,14 @@ public class SchemaCurrent_TO_2008_02_Test
 
     	files = new ArrayList<File>();
     }
-    
+
 	/**
 	 * Overridden to delete the files.
 	 * @see AbstractTest#tearDown()
 	 */
     @Override
     @AfterClass
-    public void tearDown() 
+    public void tearDown()
     	throws Exception
     {
     	Iterator<File> i = files.iterator();
@@ -326,7 +326,7 @@ public class SchemaCurrent_TO_2008_02_Test
 		}
     	files.clear();
     }
-	
+
 	/**
      * Tests the XSLT used to downgrade from current schema to 2008-02.
      * An XML file with an image is created and the stylesheet is applied.
@@ -352,10 +352,10 @@ public class SchemaCurrent_TO_2008_02_Test
 
 		transformFileWithStream(inFile, middleFile, STYLESHEET_A);
 		transformFileWithStream(middleFile, outputFile, STYLESHEET_B);
-		
+
 		Document doc = anOmeValidator.parseFileWithStreamArray(outputFile, schemaArray);
 		assertNotNull(doc);
-		
+
 		//Should only have one root node i.e. OME node
 		NodeList list = doc.getChildNodes();
 		assertEquals(list.getLength(), 1);
@@ -377,7 +377,7 @@ public class SchemaCurrent_TO_2008_02_Test
 					imageNode = n;
 			}
 		}
-		
+
 		for (int i = 0; i < list.getLength(); i++) {
 			n = list.item(i);
 			name = n.getNodeName();

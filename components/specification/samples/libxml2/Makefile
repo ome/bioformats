@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = `xml2-config --cflags`
-LDFLAGS = `xml2-config --libs` 
+LDFLAGS = `xml2-config --libs`
 Example = example
 ExampleFiles = example.c
 

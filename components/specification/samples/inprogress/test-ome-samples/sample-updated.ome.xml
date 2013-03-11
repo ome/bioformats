@@ -51,8 +51,8 @@
 		<ExperimenterRef ID = "urn:lsid:foo.bar.com:Experimenter:123456"/>
 		<GroupRef ID = "urn:lsid:foo.bar.com:Group:123456"/>
 		<ProjectRef ID = "urn:lsid:foo.bar.com:Project:123456"/>
-		<CA:CustomAttributes 
-			xmlns = "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd" 
+		<CA:CustomAttributes
+			xmlns = "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd"
 			xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation = "http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd"/>
 	</Dataset>
@@ -63,7 +63,7 @@
 	<SPW:Plate ID = "urn:lsid:foo.bar.com:Plate:123456" Name = "SRP001" ExternalIdentifier = "PID.SRP001">
 		<SPW:ScreenRef ID = "urn:lsid:foo.bar.com:Screen:123456"/>
 	</SPW:Plate>
-	<SPW:Screen ID = "urn:lsid:foo.bar.com:Screen:123456" Name = "Stress Response Pathway Controls" 
+	<SPW:Screen ID = "urn:lsid:foo.bar.com:Screen:123456" Name = "Stress Response Pathway Controls"
 		ProtocolIdentifier="ProtocolIdentifier0" ProtocolDescription="ProtocolDescription0"
 		ReagentSetDescription="ReagentSetDescription0" ReagentSetIdentifier="ReagentSetIdentifier0"
 		Type="cDNA">

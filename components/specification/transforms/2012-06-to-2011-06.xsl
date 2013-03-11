@@ -42,23 +42,23 @@
 	exclude-result-prefixes="OME Bin SPW SA ROI"
 	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
-	
+
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2011-06</xsl:variable>
 	<xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2011-06</xsl:variable>
 	<xsl:variable name="newBINNS"
 		>http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06</xsl:variable>
 	<xsl:variable name="newROINS">http://www.openmicroscopy.org/Schemas/ROI/2011-06</xsl:variable>
 	<xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2011-06</xsl:variable>
-	
+
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:preserve-space elements="*"/>
-	
+
 	<!-- default value for non-numerical value when transforming the attribute of concrete shape -->
 	<xsl:variable name="numberDefault" select="1"/>
-	
-	
+
+
 	<!-- Actual schema changes -->
-	
+
 	<xsl:template match="OME:Dataset">
 		<xsl:element name="OME:Dataset" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
@@ -76,14 +76,14 @@
 			<xsl:apply-templates select="* [local-name(.) = 'AnnotationRef']"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:Project">
 		<xsl:element name="OME:Project" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
 			<xsl:apply-templates select="* [not (local-name(.) = 'DatasetRef')]"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:Image">
 		<xsl:element name="OME:Image" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
@@ -129,10 +129,10 @@
 					</xsl:for-each></xsl:attribute>
 				</xsl:element>
 			</xsl:for-each>
-			
+
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:ExperimenterGroup">
 		<xsl:element name="OME:Group" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*[not(local-name(.)='ID')]"/>
@@ -165,7 +165,7 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:ImageRef">
 		<xsl:element name="SPW:ImageRef" namespace="{$newSPWNS}">
 			<xsl:apply-templates select="@*|node()"/>
@@ -198,7 +198,7 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:Shape">
 		<xsl:element name="ROI:Shape" namespace="{$newROINS}">
 			<xsl:for-each
@@ -235,7 +235,7 @@
 					</xsl:attribute>
 				</xsl:for-each>
 			</xsl:for-each>
-			
+
 			<xsl:for-each select="* [local-name(.) = 'Transform']">
 				<xsl:attribute name="Transform"><xsl:value-of select="@A00"/>, <xsl:value-of
 					select="@A10"/>, <xsl:value-of select="@A01"/>, <xsl:value-of select="@A11"
@@ -247,7 +247,7 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:Label">
 		<xsl:element name="ROI:Text" namespace="{$newROINS}">
 			<xsl:apply-templates select="@*|node()"/>
@@ -270,13 +270,13 @@
 			<xsl:attribute name="Closed">false</xsl:attribute>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:Line">
 		<xsl:element name="ROI:Line" namespace="{$newROINS}">
 			<xsl:apply-templates select="@* [not(name(.) = 'MarkerStart' or name(.) = 'MarkerEnd')]"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="SA:BasicAnnotation">
 		<xsl:comment>BasicAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:comment>
 		<xsl:message terminate="yes">OME-XSLT: 2012-06-to-2011-06.xsl - ERROR - BasicAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
@@ -285,19 +285,19 @@
 		<xsl:comment>NumericAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:comment>
 		<xsl:message terminate="yes">OME-XSLT: 2012-06-to-2011-06.xsl - ERROR - NumericAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
 	</xsl:template>
-	
+
 	<xsl:template match="SA:TextAnnotation">
 		<xsl:comment>TextAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:comment>
 		<xsl:message terminate="yes">OME-XSLT: 2012-06-to-2011-06.xsl - ERROR - TextAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
 	</xsl:template>
-	
+
 	<xsl:template match="SA:TypeAnnotation">
 		<xsl:comment>TypeAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:comment>
 		<xsl:message terminate="yes">OME-XSLT: 2012-06-to-2011-06.xsl - ERROR - TypeAnnotation elements cannot be converted to 2011-06 Schema, they are not supported.</xsl:message>
 	</xsl:template>
-	
+
 	<!-- Rewriting all namespaces -->
-	
+
 	<xsl:template match="OME:OME">
 		<OME:OME xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2011-06"
 			xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06"
@@ -305,47 +305,47 @@
 			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06"
 			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2011-06"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06 
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06
 			http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd">
 			<xsl:apply-templates/>
 		</OME:OME>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:*">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="Bin:*">
 		<xsl:element name="{name()}" namespace="{$newBINNS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="SA:*">
 		<xsl:element name="{name()}" namespace="{$newSANS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="SPW:*">
 		<xsl:element name="{name()}" namespace="{$newSPWNS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="ROI:*">
 		<xsl:element name="{name()}" namespace="{$newROINS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- Default processing -->
 	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:copy>
 	</xsl:template>
-	
+
 </xsl:stylesheet>

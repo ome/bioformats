@@ -21,13 +21,13 @@
 -->
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Written by:  Andrew J Patterson 
+	# Written by:  Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/SA/2008-09"
 	targetNamespace = "http://www.openmicroscopy.org/Schemas/SA/2008-09"
 	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09" 
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09"
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
@@ -54,7 +54,7 @@
 		<xsd:attribute name="ID" use="required" type="AnnotationID"></xsd:attribute>
 		<xsd:attribute name="Namespace" use="required" type="xsd:anyURI"></xsd:attribute>
 	</xsd:complexType>
-	<xsd:element name="Link"> <!-- top level definition --> 
+	<xsd:element name="Link"> <!-- top level definition -->
 		<xsd:simpleType>
 			<xsd:restriction base="OME:LSID"/>
 		</xsd:simpleType>
@@ -70,14 +70,14 @@
 				<xsd:extension base="CommonAnnotation">
 					<xsd:sequence>
 						<xsd:element name="FileName" minOccurs="1" maxOccurs="1"/>
-						<xsd:element name="MimeType" minOccurs="0" maxOccurs="1" type="OME:MIMEtype"/>	
+						<xsd:element name="MimeType" minOccurs="0" maxOccurs="1" type="OME:MIMEtype"/>
 						<xsd:choice minOccurs="1" maxOccurs="1">
 							<xsd:element ref="Bin:BinData" minOccurs="1" maxOccurs="1"/>
 							<xsd:element name="ExternalFile" minOccurs="1" maxOccurs="1" type="xsd:string"/>
 						</xsd:choice>
 					</xsd:sequence>
 				</xsd:extension>
-			</xsd:complexContent> 
+			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="XmlAnnotation"> <!-- top level definition -->
@@ -157,7 +157,7 @@
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
-	</xsd:element>	
+	</xsd:element>
 	<xsd:element name="TimestampAnnotation"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>

@@ -93,7 +93,7 @@ Translates a module input of Semantic Type Pixels (or any psuedo subclass of Pix
 						</attribute>
 						<attribute name = "ID" type = "ID">
 							<annotation>
-								<documentation>An input ID. 
+								<documentation>An input ID.
 In the future, can be used to establish references.
 								</documentation>
 							</annotation>
@@ -149,7 +149,7 @@ In the future, can be used to establish references.
 						</attribute>
 						<attribute name = "ID" type = "ID">
 							<annotation>
-								<documentation>An output ID. 
+								<documentation>An output ID.
 In the future, can be used to stitch together data from different function outputs into a single module output, or establish references.
 								</documentation>
 							</annotation>
@@ -200,7 +200,7 @@ Note to perl developers: This list should stay syncronized with the Matlab Class
 						</attribute>
 						<attribute name = "ID" type = "ID">
 							<annotation>
-								<documentation>An output ID. 
+								<documentation>An output ID.
 In the future, can be used to stitch together data from different function outputs into a single module output, or establish references.
 								</documentation>
 							</annotation>
@@ -257,7 +257,7 @@ The contents of this element should follow CustomAttribute syntax and convention
 						</attribute>
 						<attribute name = "ID" type = "ID">
 							<annotation>
-								<documentation>An output ID. 
+								<documentation>An output ID.
 In the future, can be used to stitch together data from different function outputs into a single module output, or establish references.
 								</documentation>
 							</annotation>

@@ -22,13 +22,13 @@
 -->
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Written by:  Andrew J Patterson 
+	# Written by:  Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/SA/2012-06"
 	targetNamespace = "http://www.openmicroscopy.org/Schemas/SA/2012-06"
 	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2012-06"
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" 
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
@@ -39,7 +39,7 @@
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="ome.xsd"/>
 	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation = "BinaryFile.xsd"/>
 	<!-- -->
-	
+
 	<!-- Annotatable objects
 		Annotation
 		Channel
@@ -60,13 +60,13 @@
 		Session
 		Well
 		WellSample
-		
+
 		Node ?
 		OriginalFile ?
 		Session ?
 		PlaneInfo (as Plane)
 	-->
-	
+
 	<xsd:element name="StructuredAnnotations"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -91,7 +91,7 @@
 	<xsd:element name="AnnotationRef"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The AnnotationRef element is a reference to an element derived 
+				The AnnotationRef element is a reference to an element derived
 				from the SA:CommonAnnotation element.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -103,7 +103,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<!-- the base annotation that all others are ultimately derived from -->
 	<xsd:complexType name="Annotation"> <!-- top level definition -->
 		<xsd:annotation>
@@ -137,8 +137,8 @@
 		<xsd:attribute name="Namespace" use="optional" type="xsd:anyURI">
 			<xsd:annotation>
 				<xsd:documentation>
-					We recommend the inclusion of a namespace for annotations you 
-					define. If it is absent then we assume the annotation is to 
+					We recommend the inclusion of a namespace for annotations you
+					define. If it is absent then we assume the annotation is to
 					use our (OME's) default interpretation for this type.
 				</xsd:documentation>
 			</xsd:annotation>
@@ -160,7 +160,7 @@
 		</xsd:annotation>
 		<xsd:complexContent>
 			<xsd:extension base="Annotation"/>
-		</xsd:complexContent> 
+		</xsd:complexContent>
 	</xsd:complexType>
 	<xsd:complexType name="NumericAnnotation"> <!-- top level definition -->
 		<xsd:annotation>
@@ -171,7 +171,7 @@
 		</xsd:annotation>
 		<xsd:complexContent>
 			<xsd:extension base="Annotation"/>
-		</xsd:complexContent> 
+		</xsd:complexContent>
 	</xsd:complexType>
 	<xsd:complexType name="TextAnnotation"> <!-- top level definition -->
 		<xsd:annotation>
@@ -182,7 +182,7 @@
 		</xsd:annotation>
 		<xsd:complexContent>
 			<xsd:extension base="Annotation"/>
-		</xsd:complexContent> 
+		</xsd:complexContent>
 	</xsd:complexType>
 	<xsd:complexType name="TypeAnnotation"> <!-- top level definition -->
 		<xsd:annotation>
@@ -193,10 +193,10 @@
 		</xsd:annotation>
 		<xsd:complexContent>
 			<xsd:extension base="Annotation"/>
-		</xsd:complexContent> 
+		</xsd:complexContent>
 	</xsd:complexType>
 	<!-- end of abstract annotations -->
-	
+
 	<!-- The annotations used in the instance documents -->
 	<xsd:element name="FileAnnotation"> <!-- top level definition -->
 		<xsd:annotation>
@@ -212,7 +212,7 @@
 						<xsd:element ref="Bin:BinaryFile" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:extension>
-			</xsd:complexContent> 
+			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="XMLAnnotation"> <!-- top level definition -->
@@ -242,7 +242,7 @@
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>ListAnnotations</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				This annotation is a grouping object. It uses the sequence of 
+				This annotation is a grouping object. It uses the sequence of
 				annotation refs from the base Annotation to form the list.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -319,7 +319,7 @@
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
-	</xsd:element>	
+	</xsd:element>
 	<xsd:element name="TimestampAnnotation"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>TimestampAnnotations</plural></xsdfu></xsd:appinfo>

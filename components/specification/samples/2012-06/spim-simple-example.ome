@@ -25,8 +25,8 @@
 		<ObjectiveSettings ID="Objective:1" CorrectionCollar="6" Medium="Oil"/>
 		<StageLabel Name="(1,1) of 1x2" X="1.00" Y="1.00"/>
 		<!--
-			This uses the existing suggestion for storing tiled images 
-			see: http://www.ome-xml.org/wiki/TiledImages 
+			This uses the existing suggestion for storing tiled images
+			see: http://www.ome-xml.org/wiki/TiledImages
 		-->
 		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="2" SizeT="2" SizeX="6" SizeY="4" SizeZ="2">
 			<Channel ID="Channel:0.0" Fluor="Autofluorescence" Color="-1"/>
@@ -146,7 +146,7 @@
 
 	<SA:StructuredAnnotations>
 		<SA:XMLAnnotation ID="Annotation:SpimSet:1" Namespace="ome-xml.org:additions:post2010-06:spim:set">
-			<SA:Description>This structure combines the images into a SPIM set 
+			<SA:Description>This structure combines the images into a SPIM set
 				and defines the angles the images were taken from.</SA:Description>
 			<SA:Value>
 				<OME-Extra:SpimSet xmlns:OME-Extra="http://www.openmicroscopy.org/Schemas/Additions/2010-10">
@@ -250,7 +250,7 @@
 				</OME-Extra:SpimPositions>
 			</SA:Value>
 		</SA:XMLAnnotation>
-		
+
 		<SA:XMLAnnotation ID="Annotation:ObjectiveAdditions:1" Namespace="ome-xml.org:additions:post2010-06:objective">
 			<SA:Description>Extra attribute values for the objective objects.</SA:Description>
 			<SA:Value>
@@ -263,7 +263,7 @@
 
 		<SA:XMLAnnotation ID="Annotation:SystemSpecific:1" Namespace="sample.ome-xml.org:spim-sample-custom-system">
 			<SA:Description>
-				These are the values you want attached to the SPIM images specific 
+				These are the values you want attached to the SPIM images specific
 				to your system that are not covered in our general SPIM additions.
 			</SA:Description>
 			<SA:Value>

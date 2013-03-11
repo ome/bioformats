@@ -22,7 +22,7 @@
 -->
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Written by:  Ilya G. Goldberg, Josiah Johnston, Andrew J Patterson 
+	# Written by:  Ilya G. Goldberg, Josiah Johnston, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/AnalysisChain/2009-09"
@@ -31,7 +31,7 @@
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
-	
+
 	<xsd:element name = "AnalysisChain"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:sequence>

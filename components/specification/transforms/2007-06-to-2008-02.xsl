@@ -88,7 +88,7 @@
 		<mapping name="LaserMedium" unsure="Unknown">
 		</mapping>
 	</xsl:variable>
-	
+
 	<!-- Transform the value coming from an enumeration -->
 	<xsl:template name="transformEnumerationValue">
 		<xsl:param name="mappingName"/>
@@ -118,7 +118,7 @@
 
 	<!-- Actual schema changes -->
 
-	<!-- 
+	<!--
 	Remove ObjectiveSettingsRef from Image as schema broken
 	-->
 	<xsl:template match="OME:ObjectiveSettingsRef">
@@ -178,7 +178,7 @@
 			<xsl:attribute name="Power">
 				<xsl:value-of select="$power"/>
 			</xsl:attribute>
-			
+
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
@@ -205,7 +205,7 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!--
 	In Filament remove Power
 	-->
@@ -217,7 +217,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert Pixels
 	-->
 	<xsl:template match="OME:Pixels">
@@ -281,7 +281,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In Bin:BinData add Length attribute.
 	-->
 	<xsl:template match="Bin:BinData">
@@ -293,7 +293,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In Bin:BinData add Length attribute.
 	-->
 	<xsl:template match="Bin:BinData" mode="OnlyBinData">
@@ -305,14 +305,14 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Skip BinData
 	-->
 	<xsl:template match="Bin:BinData" mode="OnlyTiffData">
 		<xsl:comment>Skip BinData</xsl:comment>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert TiffData
 	-->
 	<xsl:template match="OME:TiffData" mode="OnlyTiffData">
@@ -321,14 +321,14 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Skip TiffData
 	-->
 	<xsl:template match="OME:TiffData" mode="OnlyBinData">
 		<xsl:comment>Skip TiffData</xsl:comment>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Move all AML:Description Elements the OME namespace
 	-->
 	<xsl:template match="AML:Description">
@@ -405,7 +405,7 @@
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:copy>
 	</xsl:template>
-	
+
 	<!-- Follow useful list of functions -->
 	<!-- Replace string -->
 	<xsl:template name="replace-string-id">
@@ -464,8 +464,8 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<!-- 
-	Controls if a value is greater than or less than depending on the type. 
+	<!--
+	Controls if a value is greater than or less than depending on the type.
 	The types are greater or less.
 	-->
 	<xsl:template name="isValueValid">

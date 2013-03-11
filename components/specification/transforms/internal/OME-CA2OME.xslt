@@ -51,7 +51,7 @@
 	<xsl:template match = "*">
 		<xsl:copy-of select="."/>
 	</xsl:template>
-	
+
 	<!--
 		Pass through Custom attributes that we don't deal with explicitly in the stylesheet
 		This utility template copies the contents of a generic CA.
@@ -67,7 +67,7 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- Global CAs -->
 	<xsl:template match = "CA:OME/CA:CustomAttributes" mode = "pass-through-CAs">
 		<xsl:element name = "CustomAttributes">
@@ -95,7 +95,7 @@
 				mode = "pass-through-CAs"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- Dataset CAs -->
 	<xsl:template match = "CA:Dataset/CA:CustomAttributes" mode = "pass-through-CAs">
 		<xsl:element name = "CustomAttributes">
@@ -125,7 +125,7 @@
 				mode = "pass-through-CAs"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- Feature CAs -->
 	<xsl:template match = "CA:Feature/CA:CustomAttributes" mode = "pass-through-CAs">
 		<xsl:element name = "CustomAttributes">
@@ -900,19 +900,19 @@
 	<xsl:template match = "CA:Pixels">
 		<xsl:element name = "{name()}">
 			<xsl:for-each select = "@*">
-				<xsl:choose > 
+				<xsl:choose >
 					<xsl:when test = "starts-with (string(),'uint')">
 						<xsl:attribute name = "{name()}">
 							<xsl:value-of select = "concat('Uint',substring(string(),5))"/>
 						</xsl:attribute>
-					</xsl:when> 
+					</xsl:when>
 					<xsl:when test = "string-length() > 0">
 						<xsl:attribute name = "{name()}">
 							<xsl:value-of select = "."/>
 						</xsl:attribute>
-					</xsl:when> 
-					<xsl:otherwise/> 
-				</xsl:choose > 
+					</xsl:when>
+					<xsl:otherwise/>
+				</xsl:choose >
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>

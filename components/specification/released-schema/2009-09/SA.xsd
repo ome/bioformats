@@ -22,13 +22,13 @@
 -->
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Written by:  Andrew J Patterson 
+	# Written by:  Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/SA/2009-09"
 	targetNamespace = "http://www.openmicroscopy.org/Schemas/SA/2009-09"
 	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2009-09"
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09" 
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
@@ -56,14 +56,14 @@
 		Session
 		Well
 		WellSample
-		
+
 		ExperimenterGroup ?
 		Node ?
 		OriginalFile ?
 		Session ?
 		PlaneInfo (as Plane)
 	-->
-	
+
 	<xsd:element name="StructuredAnnotations"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -86,7 +86,7 @@
 	<xsd:element name="AnnotationRef"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The AnnotationRef element is a reference to an element derived 
+				The AnnotationRef element is a reference to an element derived
 				from the SA:CommonAnnotation element.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -125,7 +125,7 @@
 						<xsd:element ref="Bin:BinaryFile" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:extension>
-			</xsd:complexContent> 
+			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="XMLAnnotation"> <!-- top level definition -->
@@ -229,7 +229,7 @@
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
-	</xsd:element>	
+	</xsd:element>
 	<xsd:element name="TimestampAnnotation"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>

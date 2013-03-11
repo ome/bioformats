@@ -22,18 +22,18 @@
 -->
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Written by:  Andrew J Patterson 
+	# Written by:  Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/ROI/2012-06"
 	targetNamespace = "http://www.openmicroscopy.org/Schemas/ROI/2012-06"
 	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2012-06"
-	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06" 
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
-	<!-- Using the svn location for import 
+	<!-- Using the svn location for import
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ome.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/BinaryFile.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
@@ -42,7 +42,7 @@
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="BinaryFile.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="SA.xsd"/>
 	<!-- -->
-	
+
 	<xsd:element name="ROI"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>ROIs</plural></xsdfu></xsd:appinfo>
@@ -93,13 +93,13 @@
 			<xsd:attribute name="Namespace" use="optional" type="xsd:anyURI"></xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="Shape"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Shapes</plural><abstractproprietary/></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				The shape element contains a single specific ROI shape and links 
-				that to any channels, and a timepoint and a z-section. It also 
+				The shape element contains a single specific ROI shape and links
+				that to any channels, and a timepoint and a z-section. It also
 				records any transform applied to the ROI shape.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -118,8 +118,8 @@
 				<xsd:element name="Transform" type="AffineTransform" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
-							This is a matrix used to transform the shape. 
-							The element has 6 xsd:float attributes. If the element 
+							This is a matrix used to transform the shape.
+							The element has 6 xsd:float attributes. If the element
 							is present then all 6 values must be included.
 						</xsd:documentation>
 					</xsd:annotation>
@@ -191,7 +191,7 @@
 					<xsd:annotation>
 						<xsd:documentation>
 							The font family used to draw the text. [enumeration]
-							Note: these values are all lower case so they match 
+							Note: these values are all lower case so they match
 							the standard HTML/CSS values. "fantasy" has been
 							included for completeness we do not recommended its
 							regular use.
@@ -218,7 +218,7 @@
 					<xsd:annotation>
 						<xsd:documentation>
 							The style and weight applied to the text.  [enumeration]
-							This is a simplified combination of the HTML/CSS 
+							This is a simplified combination of the HTML/CSS
 							attributes font-style AND font-weight.
 						</xsd:documentation>
 					</xsd:annotation>
@@ -238,7 +238,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			
+
 			<xsd:attribute name="Locked" use="optional" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -247,13 +247,13 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			
-			
+
+
 			<xsd:attribute name="ID" use="required" type="ShapeID"/>
 			<xsd:attribute name="TheZ" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
-						The z-section the ROI applies to. If not specified then 
+						The z-section the ROI applies to. If not specified then
 						the ROI applies to all the z-sections of the image. [units:none]
 						This is numbered from 0.
 					</xsd:documentation>
@@ -262,7 +262,7 @@
 			<xsd:attribute name="TheT" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
-						The timepoint the ROI applies to. If not specified then 
+						The timepoint the ROI applies to. If not specified then
 						the ROI applies to all the timepoints of the image. [units:none]
 						This is numbered from 0.
 					</xsd:documentation>
@@ -271,7 +271,7 @@
 			<xsd:attribute name="TheC" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
-						The channel the ROI applies to. If not specified then 
+						The channel the ROI applies to. If not specified then
 						the ROI applies to all the channels of the image. [units:none]
 						This is numbered from 0.
 					</xsd:documentation>
@@ -284,7 +284,7 @@
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Rectangles</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				A simple rectangle object. If rotation is required apply a 
+				A simple rectangle object. If rotation is required apply a
 				transformation at the Shape level.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -319,14 +319,14 @@
 					</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="Mask"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Masks</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				The Mask ROI shape is a link to a BIN:BinData object that is 
-				a BIT mask drawn on top of the image as an ROI. It is applied 
-				at the same scale, pixel to pixel, as the Image the ROI is 
+				The Mask ROI shape is a link to a BIN:BinData object that is
+				a BIT mask drawn on top of the image as an ROI. It is applied
+				at the same scale, pixel to pixel, as the Image the ROI is
 				applied to, unless a transform is applied at the shape level.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -336,7 +336,7 @@
 			</xsd:sequence>
 			<xsd:attribute name="X" use="required" type="xsd:float">
 				<xsd:annotation>
-					<xsd:documentation> 
+					<xsd:documentation>
 						The X coordinate of the left side of the image. [units pixels]
 					</xsd:documentation>
 				</xsd:annotation>
@@ -357,7 +357,7 @@
 			</xsd:attribute>
 			<xsd:attribute name="Height" use="required" type="xsd:float">
 				<xsd:annotation>
-					<xsd:documentation> 
+					<xsd:documentation>
 						The height of the mask. [units pixels]
 					</xsd:documentation>
 				</xsd:annotation>
@@ -386,15 +386,15 @@
 					</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="Ellipse"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Ellipses</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				A simple ellipse object. If rotation is required apply a 
+				A simple ellipse object. If rotation is required apply a
 				transformation at the Shape level.
 			</xsd:documentation>
-		</xsd:annotation>		
+		</xsd:annotation>
 		<xsd:complexType>
 					<xsd:attribute name="X" use="required" type="xsd:float">
 						<xsd:annotation>
@@ -426,7 +426,7 @@
 					</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="Line"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Lines</plural></xsdfu></xsd:appinfo>
@@ -463,16 +463,16 @@
 			<xsd:attribute name="MarkerEnd" use="optional" type="Marker"/>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="Polyline"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Polylines</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				The Polyline defines open shapes formed of straight 
-				lines. Note: Polyline uses counterclockwise winding (this is the 
+				The Polyline defines open shapes formed of straight
+				lines. Note: Polyline uses counterclockwise winding (this is the
 				default OpenGL behavior)
 			</xsd:documentation>
-		</xsd:annotation>		
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:attribute name="Points" use="required" type="xsd:string">
 				<xsd:annotation>
@@ -490,11 +490,11 @@
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Polygons</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				The Polygon defines closed shapes formed of straight 
-				lines. Note: Polygon uses counterclockwise winding (this is the 
+				The Polygon defines closed shapes formed of straight
+				lines. Note: Polygon uses counterclockwise winding (this is the
 				default OpenGL behavior)
 			</xsd:documentation>
-		</xsd:annotation>		
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:attribute name="Points" use="required" type="xsd:string">
 				<xsd:annotation>
@@ -505,12 +505,12 @@
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="Label"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Labels</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				The text label. Any transformation should be applied at the 
+				The text label. Any transformation should be applied at the
 				shape level.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -565,13 +565,13 @@
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ROI:\S+)|(ROI:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	
+
 	<xsd:simpleType name="ShapeID"> <!-- top level definition -->
 		<xsd:restriction base="OME:LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Shape:\S+)|(Shape:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	
+
 	<xsd:simpleType name="Marker"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Markers</plural></xsdfu></xsd:appinfo>
@@ -585,5 +585,5 @@
 			<xsd:enumeration value="Square"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	
+
 </xsd:schema>

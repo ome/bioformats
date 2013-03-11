@@ -37,7 +37,7 @@
 			<SA:Description>This is the description of the sample list</SA:Description>
 			<SA:AnnotationRef ID="Annotation:1"/>
 			<SA:AnnotationRef ID="Annotation:2"/>
-			<SA:AnnotationRef ID="Annotation:3"/>			
+			<SA:AnnotationRef ID="Annotation:3"/>
 		</SA:ListAnnotation>
 	</SA:StructuredAnnotations>
 </OME>

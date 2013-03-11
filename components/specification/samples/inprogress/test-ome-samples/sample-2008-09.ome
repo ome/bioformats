@@ -278,7 +278,7 @@
 			</Plane>
 		</Pixels>
 	</Image>
-	
+
 	<STD:SemanticTypeDefinitions>
 		<STD:SemanticType Name="Name21" Parent="Parent1" AppliesTo="G">
 			<STD:Label xml:lang="en">Label0</STD:Label>

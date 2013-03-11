@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Warning: this comment is an OME-XML metadata block, which contains crucial dimensional parameters and other important metadata. Please edit cautiously (if at all), and back up the original data before doing so. For more information, see the OME-TIFF web site: http://loci.wisc.edu/ome/ome-tiff.html. -->
-<OME xmlns="http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd" 
-    xmlns:CA="http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd" 
-    xmlns:STD="http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<OME xmlns="http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd"
+    xmlns:CA="http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd"
+    xmlns:STD="http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd">
     <Image ID="sample.openmicroscopy.org:Image:0" Name="" DefaultPixels="sample.openmicroscopy.org:Pixels:0" PixelSizeX="1.2691301E-12" PixelSizeY="1.2691301E-12">
         <CreationDate>2006-05-04T18:13:51.0Z</CreationDate>

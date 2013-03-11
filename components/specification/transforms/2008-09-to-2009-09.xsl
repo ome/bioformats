@@ -234,14 +234,14 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert element into Attribute except GroupRef
 	Rename attribute OMEName into UserName
 	-->
 	<xsl:template match="OME:Experimenter">
 		<xsl:element name="Experimenter" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
-			<!-- 
+			<!--
 			determine the value of the attribute
 			Rule: OMEName, Email, LastName+FirstName
 			-->
@@ -495,7 +495,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In Bin:BinData add BigEndian attribute.
 	This template is for BinData inside BinaryFile inside OTF
 	-->
@@ -507,7 +507,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In Bin:BinData add BigEndian attribute.
 	This template is for BinData inside BinaryFile inside AML:InstallationFile
 	-->
@@ -569,8 +569,8 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
-	Convert the attributes EmFilterRef, ExFilterRef and DichroicRef into 
+	<!--
+	Convert the attributes EmFilterRef, ExFilterRef and DichroicRef into
 	elements EmissionFilterRef, ExcitationFilterRef and DichroicRef.
 	Copy all the other attributes.
 	-->
@@ -640,10 +640,10 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert the Pixels element
-	Rename PixelType attribute to Type 
-	Remove BigEndian attribute from Pixels and move it to Bin:BinData 
+	Rename PixelType attribute to Type
+	Remove BigEndian attribute from Pixels and move it to Bin:BinData
 	Add channel elements.
 	Remove WaveStart and WaveIncrement
 	Due to the sequence constraints, we have to transform it that way.
@@ -784,7 +784,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Copy the MicrobeamManipulation node from Image corresponding to the MicrobeamManipulationRef.
 	-->
 	<xsl:template match="OME:Experiment">
@@ -845,7 +845,7 @@
 	MicrobeamManipulation node is moved to Experiment see Experiment template.
 	LogicalChannel and ChannelComponent are merged: new name is Channel
 	If a logical channel has n ChannelComponent nodes, n Channel nodes are created.
-	The Channel nodes are then linked to Pixels and no longer to Image. 
+	The Channel nodes are then linked to Pixels and no longer to Image.
 	-->
 	<xsl:template match="OME:Image">
 		<xsl:element name="Image" namespace="{$newOMENS}">
@@ -1340,7 +1340,7 @@
 	</xsl:template>
 
 	<!-- Screen Plate Well -->
-	
+
 	<!-- Add any SA links to Screen -->
 	<xsl:template match="SA:Screen">
 		<xsl:element name="{name()}" namespace="{$newSANS}">
@@ -1352,7 +1352,7 @@
 			</xsl:call-template>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- Screen Plate Well -->
 	<xsl:template match="SA:ScreenAcquisition">
 		<xsl:element name="{name()}" namespace="{$newSANS}">
@@ -1364,8 +1364,8 @@
 			</xsl:call-template>
 		</xsl:element>
 	</xsl:template>
-	
-	<!-- 
+
+	<!--
 	Remove or rename attributes in WellSample.
 	Remove Index, Rename PosX to PositionX & PosY to PositionY
 	-->
@@ -1436,7 +1436,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert the attribute Description in Plate into a child element.
 	Copy all the other attributes.
 	Copy all child elements.
@@ -1461,7 +1461,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert the attribute Description in Plate into a child element.
 	Copy all the other attributes.
 	Copy all child elements.
@@ -1488,8 +1488,8 @@
 
 	<!-- General -->
 	<!-- Fix the various Description Elements and Attributes -->
-	<!-- 
-	Move all Description Elements into same namespace as their 
+	<!--
+	Move all Description Elements into same namespace as their
 	parent and strip any lang attributes.
 	-->
 	<xsl:template match="OME:Description">
@@ -1642,8 +1642,8 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<!-- 
-	Controls if a value is greater than or less than depending on the type. 
+	<!--
+	Controls if a value is greater than or less than depending on the type.
 	The types are greater or less.
 	-->
 	<xsl:template name="isValueValid">

@@ -11,7 +11,7 @@ Requirements:
 Example usage:
 
 callan@shadowblade ~/code/specification/Documentation/Samples/libxml2 $ make
-gcc -o example `xml2-config --cflags` example.c `xml2-config --libs` 
+gcc -o example `xml2-config --cflags` example.c `xml2-config --libs`
 callan@shadowblade ~/code/specification/Documentation/Samples/libxml2 $ ./example minimum.xml
 callan@shadowblade ~/code/specification/Documentation/Samples/libxml2 $ tidy -xml minimum.xml
 No warnings or errors were found.

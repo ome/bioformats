@@ -13,7 +13,7 @@ import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 
-/** 
+/**
  * A resolver for Schema locations that pulls them from jar resources.
  *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
@@ -24,7 +24,7 @@ import org.w3c.dom.bootstrap.DOMImplementationRegistry;
  * </small>
  * @since 3.0-Beta4
  */
-public class SchemaResolver implements LSResourceResolver 
+public class SchemaResolver implements LSResourceResolver
 {
     private DOMImplementationLS theDOMImplementationLS;
 
@@ -46,18 +46,18 @@ public class SchemaResolver implements LSResourceResolver
     {
         // Create the objects necessary to make the correct LSInput return types
         System.setProperty(
-            DOMImplementationRegistry.PROPERTY, 
+            DOMImplementationRegistry.PROPERTY,
             "org.apache.xerces.dom.DOMImplementationSourceImpl");
-        DOMImplementationRegistry theDOMImplementationRegistry = 
+        DOMImplementationRegistry theDOMImplementationRegistry =
             DOMImplementationRegistry.newInstance();
-        theDOMImplementationLS = 
+        theDOMImplementationLS =
             (DOMImplementationLS) theDOMImplementationRegistry.getDOMImplementation("LS");
     }
 
 
     /**
-     * Resolves known namespace locations to their appropriate jar resource 
-     * 
+     * Resolves known namespace locations to their appropriate jar resource
+     *
      * @param type Not used by function.
      * @param namespaceURI Not used by function.
      * @param publicId Not used by function.
@@ -66,73 +66,73 @@ public class SchemaResolver implements LSResourceResolver
      * @return The requested resource.
      */
      public LSInput  resolveResource(
-        String type, String namespaceURI, String publicId, 
-        String systemId, String baseURI) 
+        String type, String namespaceURI, String publicId,
+        String systemId, String baseURI)
     {
         LSInput theResult = null;
-        
+
         // Match the requested schema locations and create the appropriate LSInput object
-        if (systemId.equals("http://www.w3.org/2001/xml.xsd")) 
+        if (systemId.equals("http://www.w3.org/2001/xml.xsd"))
         {
             theResult = makeSubstutionStream("/Released-Schema/additions/jar/xml.xsd", systemId);
-        } 
-        else if (systemId.startsWith(GIT_MASTER_PATH)) 
+        }
+        else if (systemId.startsWith(GIT_MASTER_PATH))
         {
             theResult = makeSubstutionStream(systemId.substring(GIT_MASTER_PATH.length()), systemId);
-        } 
-        else if (systemId.startsWith(GIT_DEVELOP_PATH)) 
+        }
+        else if (systemId.startsWith(GIT_DEVELOP_PATH))
         {
             theResult = makeSubstutionStream(systemId.substring(GIT_DEVELOP_PATH.length()), systemId);
-        } 
-        else if (systemId.startsWith(LEGACY_AC_PATH)) 
+        }
+        else if (systemId.startsWith(LEGACY_AC_PATH))
         {
             theResult = makeSubstutionStream(LEGACY_SEARCH_PATH + systemId.substring(LEGACY_AC_PATH.length()), systemId);
-        } 
-        else if (systemId.startsWith(LEGACY_AM_PATH)) 
+        }
+        else if (systemId.startsWith(LEGACY_AM_PATH))
         {
             theResult = makeSubstutionStream(LEGACY_SEARCH_PATH + systemId.substring(LEGACY_AM_PATH.length()), systemId);
-        } 
-        else if (systemId.startsWith(LEGACY_BF_PATH)) 
+        }
+        else if (systemId.startsWith(LEGACY_BF_PATH))
         {
             theResult = makeSubstutionStream(LEGACY_SEARCH_PATH + systemId.substring(LEGACY_BF_PATH.length()), systemId);
-        } 
-        else if (systemId.startsWith(LEGACY_CA_PATH)) 
+        }
+        else if (systemId.startsWith(LEGACY_CA_PATH))
         {
             theResult = makeSubstutionStream(LEGACY_SEARCH_PATH + systemId.substring(LEGACY_CA_PATH.length()), systemId);
-        } 
-        else if (systemId.startsWith(LEGACY_CL_PATH)) 
+        }
+        else if (systemId.startsWith(LEGACY_CL_PATH))
         {
             theResult = makeSubstutionStream(LEGACY_SEARCH_PATH + systemId.substring(LEGACY_CL_PATH.length()), systemId);
-        } 
-        else if (systemId.startsWith(LEGACY_DH_PATH)) 
+        }
+        else if (systemId.startsWith(LEGACY_DH_PATH))
         {
             theResult = makeSubstutionStream(LEGACY_SEARCH_PATH + systemId.substring(LEGACY_DH_PATH.length()), systemId);
-        } 
-        else if (systemId.startsWith(LEGACY_ML_PATH)) 
+        }
+        else if (systemId.startsWith(LEGACY_ML_PATH))
         {
             theResult = makeSubstutionStream(LEGACY_SEARCH_PATH + systemId.substring(LEGACY_ML_PATH.length()), systemId);
-        } 
-        else if (systemId.startsWith(LEGACY_OM_PATH)) 
+        }
+        else if (systemId.startsWith(LEGACY_OM_PATH))
         {
             theResult = makeSubstutionStream(LEGACY_SEARCH_PATH + systemId.substring(LEGACY_OM_PATH.length()), systemId);
-        } 
-        else if (systemId.startsWith(LEGACY_ST_PATH)) 
+        }
+        else if (systemId.startsWith(LEGACY_ST_PATH))
         {
             theResult = makeSubstutionStream(LEGACY_SEARCH_PATH + systemId.substring(LEGACY_ST_PATH.length()), systemId);
-        } 
+        }
         else
         {
             throw new RuntimeException("SchemaResolver does not know path to resolve: [" + systemId + "] from OME specification jar.");
         }
-        
+
         return theResult;
     }
-    
+
     /**
-     * Creates the LSInput object from the resource path 
-     * 
+     * Creates the LSInput object from the resource path
+     *
      * @param theResourcePath Path to the schema in the Specification jar.
-     * @param systemId 
+     * @param systemId
      * @return The requested LSInput object.
      */
     private LSInput makeSubstutionStream(

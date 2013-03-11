@@ -24,15 +24,15 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2007-06" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" 
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" 
-	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2007-06" 
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" 
-	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2007-06" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2007-06" 
-	version="2" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2007-06"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2007-06"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:AML="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06"
+	xmlns:STD="http://www.openmicroscopy.org/Schemas/STD/2007-06"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06"
+	xmlns:CA="http://www.openmicroscopy.org/Schemas/CA/2007-06"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2007-06"
+	version="2"
 	elementFormDefault="qualified">
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06/AnalysisModule.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/STD/2007-06" schemaLocation="http://www.openmicroscopy.org/Schemas/STD/2007-06/STD.xsd"/>
@@ -226,7 +226,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="WaveIncrement" type="xsd:positiveInteger"/>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="AcquiredPixelsRef">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -236,7 +236,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-				
+
 	<xsd:element name="TiffData">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -246,7 +246,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="IFD" type="xsd:integer" default="0">
 				<xsd:annotation>
 					<xsd:documentation>
-						Gives the IFD(s) for which this element is applicable. Indexed from 0. 
+						Gives the IFD(s) for which this element is applicable. Indexed from 0.
 						Default is 0 (the first IFD).
 					</xsd:documentation>
 				</xsd:annotation>
@@ -254,7 +254,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="FirstZ" type="xsd:integer" default="0">
 				<xsd:annotation>
 					<xsd:documentation>
-						Gives the Z position of the image plane at the specified IFD. Indexed from 0. 
+						Gives the Z position of the image plane at the specified IFD. Indexed from 0.
 						Default is 0 (the first Z position).
 					</xsd:documentation>
 				</xsd:annotation>
@@ -270,7 +270,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="FirstC" type="xsd:integer" default="0">
 				<xsd:annotation>
 					<xsd:documentation>
-						Gives the C position of the image plane at the specified IFD. Indexed from 0. 
+						Gives the C position of the image plane at the specified IFD. Indexed from 0.
 						Default is 0 (the first C position).
 					</xsd:documentation>
 				</xsd:annotation>
@@ -280,13 +280,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 					<xsd:documentation>
 						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
 						Pixels element's DimensionOrder attribute. Default is the number of IFDs in the TIFF
-						file, unless an IFD is specified, in which case the default is 1.	
+						file, unless an IFD is specified, in which case the default is 1.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="Plane">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -319,7 +319,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:annotation>
 		</xsd:attribute>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="StagePosition">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -330,7 +330,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:attribute name="PositionY" use="required" type="xsd:float"/>
 		<xsd:attribute name="PositionZ" use="required" type="xsd:float"/>
 	</xsd:complexType>
-	
+
 	<xsd:element name="Experiment">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -399,7 +399,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				Defines a microbeam operation type and the region of the image it was applied to.
 				The LightSourceRef element is a reference to a LightSource specified in the Instrument element which was used for a technique other than illumination for
 				the purpose of imaging.  For example, a laser used for photobleaching.
-				
+
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -427,7 +427,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="MicrobeamManipulationRef">
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -436,7 +436,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
-	</xsd:element>	
+	</xsd:element>
 	<xsd:element name="LogicalChannel">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -547,7 +547,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="ExWave" type="xsd:positiveInteger"/>
 			<xsd:attribute name="EmWave" type="xsd:positiveInteger"/>
 			<xsd:attribute name="Fluor" type="xsd:string"/>
-			<xsd:attribute name="NdFilter" type="xsd:float"/>	
+			<xsd:attribute name="NdFilter" type="xsd:float"/>
 			<xsd:attribute name="PockelCellSetting"  type="xsd:integer"/>
 		</xsd:complexType>
 	</xsd:element>
@@ -596,7 +596,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				The wave number, black level, white level and optional gamma for the red channel of an RGB image.
-				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, respectively.  
+				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, respectively.
 				Values below BlackLevel or above WhiteLevel will be assigned 0 and 255 respectively.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -605,7 +605,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				The wave number, black level, white level and optional gamma for the green channel of an RGB image.
-				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, respectively.  
+				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, respectively.
 				Values below BlackLevel or above WhiteLevel will be assigned 0 and 255 respectively.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -614,7 +614,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				The wave number, black level, white level and optional gamma for the blue channel of an RGB image.
-				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, respectively.  
+				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, respectively.
 				Values below BlackLevel or above WhiteLevel will be assigned 0 and 255 respectively.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -624,7 +624,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:documentation>
 				The wave number, black level, white level and optional gamma for a greyscale image.
 				The GreyChannel element may contain an optional ColorMap attribute, which can be set to 'Greyscale', 'Spectrum' or 'Blackbody'
-				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, inclusive.  
+				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, inclusive.
 				Values below BlackLevel or above WhiteLevel will be assigned 0 and 255 respectively.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -834,13 +834,13 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:enumeration value="Water"/>
 			<xsd:enumeration value="Glycerol"/>
 		</xsd:restriction>
-	</xsd:simpleType>	
-	
+	</xsd:simpleType>
+
 	<xsd:element name="Filter">
 		<xsd:annotation>
 			<xsd:documentation>
 				A filter is either an excitation or emission filters.
-				There should be one filter element specified per wavelength in the image.  
+				There should be one filter element specified per wavelength in the image.
 				The channel number associated with a filter set is specified in LogicalChannel's required ChannelComponent element and its Index attribute.
 				It is based on the FilterSpec type, so has the required attributes Manufacturer, Model, and LotNumber.
 				It may also contain a Type attribute which may be set to
@@ -894,7 +894,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:attribute name="Transmittance" use="required" type="xsd:integer" />
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="NominalMagnification" type="xsd:integer">
 			<xsd:annotation>
 			<xsd:documentation>The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens.</xsd:documentation>
@@ -918,7 +918,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:enumeration value="SuperFluor"/>
 			<xsd:enumeration value="VioletCorrected"/>
 		</xsd:restriction>
-	</xsd:simpleType>	
+	</xsd:simpleType>
 	<xsd:element name="Immersion" type="Immersion">
 		<xsd:annotation>
 			<xsd:documentation>The immersion medium the lens is designed for</xsd:documentation>
@@ -934,7 +934,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:enumeration value="Glycerol"/>
 			<xsd:enumeration value="Other"/>
 		</xsd:restriction>
-	</xsd:simpleType>	
+	</xsd:simpleType>
 	<xsd:element name="WorkingDistance" type="xsd:float">
 		<xsd:annotation>
 			<xsd:documentation>The working distance of the lens expressed as a floating point (real) number. Units are um.</xsd:documentation>
@@ -1005,7 +1005,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		<xsd:annotation>
 			<xsd:documentation>
 				Just some free-form text to describe Images, Screens and Projects.
-				The content model is currently ANY, but this is going to change to String in 
+				The content model is currently ANY, but this is going to change to String in
 				the near future. This is no longer the correct place for an XML sub-document
 				- use CustomAttributes instead.
 			</xsd:documentation>
@@ -1393,7 +1393,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 				The organizing structure that people belong to other than groups.  A university, or company, etc.
 				We do not specify a department element, and do not mean for Institution to be used in this way.
 				We simply wish to say XXX at YYY.  Where YYY has a better chance of being tied to a geographically fixed location
-				and of being more recognizable than a group of experimenters. 
+				and of being more recognizable than a group of experimenters.
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
@@ -1440,7 +1440,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:complexType name="FilterSpec">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1644,7 +1644,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 						<xsd:enumeration value="CW"/>
 						<xsd:enumeration value="Single"/>
 						<xsd:enumeration value="QSwitched"/>
-						<xsd:enumeration value="Repetitive"/> 
+						<xsd:enumeration value="Repetitive"/>
 						<xsd:enumeration value="ModeLocked"/>
 					</xsd:restriction>
 				</xsd:simpleType>
@@ -1658,7 +1658,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="Arc">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1763,7 +1763,7 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 			<xsd:enumeration value="4x4"/>
 			<xsd:enumeration value="8x8"/>
 		</xsd:restriction>
-	</xsd:simpleType>	
+	</xsd:simpleType>
 	<xsd:element name="Pump">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1809,8 +1809,8 @@ is not specified, then the FIRST &lt;Pixels> element under &lt;Image> will be as
 		</xsd:attribute>
 		<xsd:attribute name="BlackLevel" use="required" type="xsd:float">
 			<xsd:annotation>
-				<xsd:documentation>The black level is used to scale pixel values to an 8 bit colorspace for display. For example, a 16 bit pixel value must be downscaled to fit an 8 bit display. 
-Any pixel value below the black value will be set to the minimum value of the scale range (0). 
+				<xsd:documentation>The black level is used to scale pixel values to an 8 bit colorspace for display. For example, a 16 bit pixel value must be downscaled to fit an 8 bit display.
+Any pixel value below the black value will be set to the minimum value of the scale range (0).
 Because the file schema offers support for non-integer pixel types, this is stored as a floating point number to offer maximum generality. Specifying a decimal value for an integer pixel type is ill defined.
 Valid range of values for black level is less than the white level and within the data range for the pixel type.
 				</xsd:documentation>
@@ -1818,8 +1818,8 @@ Valid range of values for black level is less than the white level and within th
 		</xsd:attribute>
 		<xsd:attribute name="WhiteLevel" use="required" type="xsd:float">
 			<xsd:annotation>
-				<xsd:documentation>The white level is used  to scale pixel values to an 8 bit colorspace for display. For example, a 16 bit pixel value must be downscaled to fit an 8 bit display. 
-Any pixel value above the white value will be set to the maximum value of the scale range (255). 
+				<xsd:documentation>The white level is used  to scale pixel values to an 8 bit colorspace for display. For example, a 16 bit pixel value must be downscaled to fit an 8 bit display.
+Any pixel value above the white value will be set to the maximum value of the scale range (255).
 Because the file schema offers support for non-integer pixel types, this is stored as a floating point number to offer maximum generality. Specifying a decimal value for an integer pixel type is ill defined.
 The valid range for white level is greater than the black level and within the data range for the pixel type.
 				</xsd:documentation>

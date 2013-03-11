@@ -38,7 +38,7 @@
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-09"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xml="http://www.w3.org/XML/1998/namespace" 
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	exclude-result-prefixes="OME AML CLI MLI STD Bin CA SPW SA"
 	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">

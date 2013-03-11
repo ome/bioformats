@@ -25,13 +25,13 @@
 	# Written by:  Andrew Patterson <ajpatterson@lifesci.dundee.ac.uk>
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2010-06" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2010-06" 
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2010-06" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-06" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2010-06" 
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	version="1" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2010-06"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2010-06"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2010-06"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-06"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2010-06"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	version="1"
 	elementFormDefault="qualified">
 
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2010-06" schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd"/>
@@ -94,15 +94,15 @@
 			<xsd:attribute name="Name" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Name identifies the plate to the user.	It is used much like the 
+						The Name identifies the plate to the user.	It is used much like the
 						ID, and so must be unique within the document.
 					</xsd:documentation>
-				</xsd:annotation>		
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Status" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
-						A textual annotation of the current state of the plate with respect to the 
+						A textual annotation of the current state of the plate with respect to the
 						experiment work-flow; e.g.
 						1. Seed cell: done; 2. Transfection: done;	3. Gel doc: todo.
 					</xsd:documentation>
@@ -113,45 +113,45 @@
 					<xsd:documentation>
 						The ExternalIdentifier attribute may contain a reference to an external database.
 					</xsd:documentation>
-				</xsd:annotation>		
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="ColumnNamingConvention" use="optional" type="NamingConvention">
 				<xsd:annotation>
 					<xsd:documentation>
 						The ColumnNamingConvention
 					</xsd:documentation>
-				</xsd:annotation>		
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="RowNamingConvention" use="optional" type="NamingConvention">
 				<xsd:annotation>
 					<xsd:documentation>
 						The RowNamingConvention
 					</xsd:documentation>
-				</xsd:annotation>		
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="WellOriginX" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
 						This defines the X position to use for the origin of the
-						fields (individual images) taken in a well. It is used 
+						fields (individual images) taken in a well. It is used
 						with the PositionX in the WellSample to display the fields
 						in the correct position relative to each other. Each Well
 						in the plate has the same well origin. [units:none]
-						
+
 						In the OMERO clients by convention we display the WellOrigin
 						in the center of the view.
 					</xsd:documentation>
-				</xsd:annotation>		
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="WellOriginY" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
 						This defines the Y position to use for the origin of the
-						fields (individual images) taken in a well. It is used 
+						fields (individual images) taken in a well. It is used
 						with the PositionY in the WellSample to display the fields
 						in the correct position relative to each other. Each Well
 						in the plate has the same well origin. [units:none]
-						
+
 						In the OMERO clients by convention we display the WellOrigin
 						in the center of the view.
 					</xsd:documentation>
@@ -160,21 +160,21 @@
 			<xsd:attribute name="Rows" use="optional" type="OME:PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
-						The number of rows in the plate 
+						The number of rows in the plate
 					</xsd:documentation>
-				</xsd:annotation>		
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Columns" use="optional" type="OME:PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
-						The number of columns in the plate 
+						The number of columns in the plate
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
 		<!-- Unique Indexes -->
 		<xsd:key name="WellSampleIndex"><xsd:selector xpath="SPW:Well/SPW:WellSample"/><xsd:field xpath="@Index"/></xsd:key>
-		
+
 	</xsd:element>
 
 	<xsd:simpleType name="NamingConvention">
@@ -189,26 +189,26 @@
 					<xsd:documentation>
 						While the label type 'number' has a clear meaning the 'letter'
 						type is more complex.
-						
+
 						If you have less than 26 values use letters A to Z.
 						Once you get more than 26 values there are several different
 						approaches in use.
 						One we have see include:
-						
+
 						Single letter, then double letter each running A to Z, right first
 						e.g. A, B, C, ... X, Y, Z, AA, AB, AC, ... AY, AZ, BA, BB, ...
 						This is the format used by Microsoft Excel so users may be familiar with it.
 						This is the approach we use in the OMERO client applications.
-						
+
 						CAPITALsmall, each running A to Z, small first
 						e.g. Aa, Ab, Ac, ... Ax, Ay, Az, Ba, Bb, Bc, ... By, Bz, Ca, Cb, ...
-						This is in use by some plate manufactures. 
-						
+						This is in use by some plate manufactures.
+
 						Single letter, then double letter, then triple letter, and so on
 						e.g. A, B, C, ... X, Y, Z, AA, BB, CC, ... YY, ZZ, AAA, BBB, ...
 						This has the advantage that the first 26 are the same as the standard
-						but has a problem an the labels get wider and wider leading to user 
-						interface problems. 
+						but has a problem an the labels get wider and wider leading to user
+						interface problems.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:enumeration>
@@ -233,7 +233,7 @@
 			<xsd:documentation>
 				Reagent is used to describe a chemical or some other physical experimental parameter.
 			</xsd:documentation>
-		</xsd:annotation>	   
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
@@ -256,7 +256,7 @@
 					<xsd:documentation>
 						A short name for the reagent
 					</xsd:documentation>
-				</xsd:annotation>				 
+				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="ReagentIdentifier" use="optional" type="xsd:string">
 				<xsd:annotation>
@@ -264,7 +264,7 @@
 						This is a reference to an external (to OME) representation of the Reagent.
 						It serves as a foreign key into an external database. - It is sometimes refereed to as ExternalIdentifier.
 					</xsd:documentation>
-				</xsd:annotation>	   
+				</xsd:annotation>
 			</xsd:attribute>
 	   </xsd:complexType>
 	</xsd:element>
@@ -337,15 +337,15 @@
 							A pointer to an externally defined protocol, usually in a screening database.
 						</xsd:documentation>
 					</xsd:annotation>
-				</xsd:attribute>	
+				</xsd:attribute>
 			<xsd:attribute name="ProtocolDescription" use="optional" type="xsd:string">
 					<xsd:annotation>
 						<xsd:documentation>
-							A description of the screen protocol; may contain very detailed information to 
+							A description of the screen protocol; may contain very detailed information to
 							reproduce some of that found in a screening database.
 						</xsd:documentation>
 					</xsd:annotation>
-				</xsd:attribute>	
+				</xsd:attribute>
 			<xsd:attribute name="ReagentSetDescription" use="optional" type="xsd:string">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -353,15 +353,15 @@
 							reproduce some of that information found in a screening database.
 						</xsd:documentation>
 					</xsd:annotation>
-				</xsd:attribute>	
+				</xsd:attribute>
 			<xsd:attribute name="ReagentSetIdentifier" use="optional" type="xsd:string">
 					<xsd:annotation>
 						<xsd:documentation>
-							A pointer to an externally defined set of reagents, usually in a screening 
+							A pointer to an externally defined set of reagents, usually in a screening
 							database/automation database.
 						</xsd:documentation>
 					</xsd:annotation>
-				</xsd:attribute>	
+				</xsd:attribute>
 			<xsd:attribute name="Type" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -369,25 +369,25 @@
 						This string is likely to become an enumeration in future releases.
 					</xsd:documentation>
 				</xsd:annotation>
-			</xsd:attribute>	
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:simpleType name="ScreenID">
 		<xsd:restriction base="OME:LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Screen:\S+)|(Screen:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	
+
 	<xsd:element name="PlateAcquisition"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
 				PlateAcquisition is used to describe a single acquisition run for a plate.
-				This object is used to record the set of images acquired in a single 
-				acquisition run. The Images for this run are linked to PlateAcquisition 
+				This object is used to record the set of images acquired in a single
+				acquisition run. The Images for this run are linked to PlateAcquisition
 				through WellSample.
 			</xsd:documentation>
-		</xsd:annotation>	  
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
@@ -424,9 +424,9 @@
 			<xsd:attribute name="MaximumFieldCount" use="optional" type="OME:PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
-						The maximum number of fields (well samples) in any well 
+						The maximum number of fields (well samples) in any well
 						in this PlateAcquisition.
-						This is only used to speed up user interaction by stopping 
+						This is only used to speed up user interaction by stopping
 						the reading of every well sample.
 					</xsd:documentation>
 				</xsd:annotation>
@@ -492,7 +492,7 @@
 			<xsd:attribute name="Status" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
-						A human readable identifier for the screening status. 
+						A human readable identifier for the screening status.
 						e.g. empty, positive control, negative control, control, experimental, etc.
 						This string is likely to become an enumeration in future releases.
 					</xsd:documentation>
@@ -520,7 +520,7 @@
 			<xsd:documentation>
 				WellSample is an individual image that has been captured within a Well.
 			</xsd:documentation>
-		</xsd:annotation> 
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="ImageRef" minOccurs="0" maxOccurs="1">
@@ -528,7 +528,7 @@
 						<xsd:documentation>
 							This is the main link to the core Image element
 						</xsd:documentation>
-					</xsd:annotation>	  
+					</xsd:annotation>
 				</xsd:element>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
@@ -559,11 +559,11 @@
 			<xsd:attribute name="Index" use="required" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
-						This records the order of the well samples. Each 
+						This records the order of the well samples. Each
 						index should be unique for a given plate but they do not
-						have to be sequential, there may be gaps if part of the 
-						dataset is missing. In the user interface the displayed 
-						value of the index will be calculated modulo the number 
+						have to be sequential, there may be gaps if part of the
+						dataset is missing. In the user interface the displayed
+						value of the index will be calculated modulo the number
 						of PlateAcquisitions for the plate.
 					</xsd:documentation>
 				</xsd:annotation>
@@ -581,7 +581,7 @@
 		<xsd:annotation>
 			<xsd:documentation>
 				The ImageRef element is a reference to a OME:Image element.
-				Note: at present this is only used from SPW. If it is used more 
+				Note: at present this is only used from SPW. If it is used more
 				widely in the future it will be moved into the main OME schema.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -593,7 +593,7 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="WellSampleRef"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -608,5 +608,5 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 </xsd:schema>

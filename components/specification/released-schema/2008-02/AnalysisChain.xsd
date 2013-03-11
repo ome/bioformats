@@ -21,7 +21,7 @@
 -->
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Written by:  Ilya G. Goldberg, Josiah Johnston, Andrew J Patterson 
+	# Written by:  Ilya G. Goldberg, Josiah Johnston, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <schema xmlns = "http://www.w3.org/2001/XMLSchema"
@@ -30,7 +30,7 @@
 	 version = "1"
 	 xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	 elementFormDefault = "qualified">
-	
+
 	<element name = "AnalysisChain">
 		<complexType>
 			<sequence>

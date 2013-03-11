@@ -371,7 +371,7 @@ Not currently supported.
 	</xsd:element>
 	<xsd:element name = "Start"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:documentation>Specifies a starting point of iteration. 
+			<xsd:documentation>Specifies a starting point of iteration.
 Not currently supported.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -473,10 +473,10 @@ This means a stack statistics record that specifies theC as an index before theT
 	</xsd:element>
 	<xsd:element name = "PixelOutput"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:documentation>Allows SemanticTypes Pixels and PixelsPlane to be outputs. The subelements specify locations for the population of data. 
+			<xsd:documentation>Allows SemanticTypes Pixels and PixelsPlane to be outputs. The subelements specify locations for the population of data.
 This data population is useful for a Plane projection algorithm that has the same X and Y dimensions as the Pixels it is operating on.
 Alternately, these fields may be filled by ouput from STDOUT.
-The FileSHA1 subelement is automatically calculated for the pixel dump file. 
+The FileSHA1 subelement is automatically calculated for the pixel dump file.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>

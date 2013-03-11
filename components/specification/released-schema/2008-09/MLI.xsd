@@ -31,7 +31,7 @@
 	version="1"
 	elementFormDefault = "qualified">
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
-	
+
 	<xsd:element name = "ExecutionInstructions"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>Instructions for executing a matlab function.</xsd:documentation>
@@ -95,7 +95,7 @@ Translates a module input of Semantic Type Pixels (or any psuedo subclass of Pix
 						</xsd:attribute>
 						<xsd:attribute name = "ID" use="optional" type = "xsd:string">
 							<xsd:annotation>
-								<xsd:documentation>An input ID. 
+								<xsd:documentation>An input ID.
 In the future, can be used to establish references.
 								</xsd:documentation>
 							</xsd:annotation>
@@ -181,7 +181,7 @@ In the future, can be used to establish references.
 						</xsd:attribute>
 						<xsd:attribute name = "ID" use="optional" type = "xsd:string">
 							<xsd:annotation>
-								<xsd:documentation>An output ID. 
+								<xsd:documentation>An output ID.
 In the future, can be used to stitch together data from different function outputs into a single module output, or establish references.
 								</xsd:documentation>
 							</xsd:annotation>
@@ -257,7 +257,7 @@ Note to perl developers: This list should stay syncronized with the Matlab Class
 						</xsd:attribute>
 						<xsd:attribute name = "ID" use="optional" type = "xsd:string">
 							<xsd:annotation>
-								<xsd:documentation>An output ID. 
+								<xsd:documentation>An output ID.
 In the future, can be used to stitch together data from different function outputs into a single module output, or establish references.
 								</xsd:documentation>
 							</xsd:annotation>
@@ -314,7 +314,7 @@ The contents of this element should follow CustomAttribute syntax and convention
 						</xsd:attribute>
 						<xsd:attribute name = "ID" use="optional" type = "xsd:string">
 							<xsd:annotation>
-								<xsd:documentation>An output ID. 
+								<xsd:documentation>An output ID.
 In the future, can be used to stitch together data from different function outputs into a single module output, or establish references.
 								</xsd:documentation>
 							</xsd:annotation>
@@ -346,7 +346,7 @@ Note to perl developers: This list should stay syncronized with the Matlab Class
 			</xsd:sequence>
 			<xsd:attribute name = "ID" use = "required" type = "xsd:string">
 				<xsd:annotation>
-					<xsd:documentation>An output ID. 
+					<xsd:documentation>An output ID.
 In the future, can be used to stitch together data from different function outputs into a single module output, or establish references.
 					</xsd:documentation>
 				</xsd:annotation>

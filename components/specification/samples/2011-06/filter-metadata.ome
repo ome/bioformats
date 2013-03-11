@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2011-06" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06" xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2011-06" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd">
-	
+
 	<Instrument ID="Instrument:0">
 		<LightSource ID="LightSource:0:0">
 			<Laser LaserMedium="HeNe" Type="Gas"/>

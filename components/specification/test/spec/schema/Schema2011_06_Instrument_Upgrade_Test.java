@@ -57,7 +57,7 @@ import org.testng.annotations.Test;
  */
 import spec.schema.samples.Instrument2011_06.ref;
 
-/** 
+/**
  * Collections of tests.
  * Checks if the upgrade from 2011-06 schema to 2012-06 schema works for
  * the file 2011-06/6x4y1z1t1c8b-swatch-instrument.ome
@@ -74,7 +74,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
                 Schema2011_06_TO_2012_06_Test.class);
 
     private OME ome;
-    
+
     private Image image0;
     private Instrument instrument0;
     private Pixels pixels0;
@@ -92,7 +92,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
     private Laser laser0;
     private LightSource lightsource1;
     private Arc arc1;
-    
+
     @BeforeClass
     public void setUp() throws Exception {
         InputStream source = this.getClass().getResourceAsStream(ref.FILE_LOCATION);
@@ -160,7 +160,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertNull(laser0.getTuneable());
         Assert.assertNull(laser0.getWavelength());
     }
-    
+
     @Test (groups = {"11-06-i-lightsource"}, dependsOnMethods = {"testInstrument0"})
     public void testLightSource1() {
         Assert.assertNotNull(ome);
@@ -180,7 +180,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertNotNull(laser0);
         Assert.assertEquals(arc1, laser0.getLinkedPump());
     }
-    
+
     @Test (groups = {"11-06-i-filterset"}, dependsOnGroups = {"11-06-i-filter", "11-06-i-dichroic"})
     public void testFilterSet0() {
         Assert.assertNotNull(ome);
@@ -197,7 +197,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(filter1, filterSet0.getLinkedEmissionFilter(0));
     }
 
-    
+
     @Test (groups = {"11-06-i-filter"}, dependsOnMethods = {"testInstrument0"})
     public void testFilter0() {
         Assert.assertNotNull(ome);
@@ -215,7 +215,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Instrument0Filter0TransmittanceRangeCutInTolerance, transmittanceRange.getCutInTolerance());
         Assert.assertEquals(ref.Instrument0Filter0TransmittanceRangeCutOut, transmittanceRange.getCutOut());
         Assert.assertEquals(ref.Instrument0Filter0TransmittanceRangeCutOutTolerance, transmittanceRange.getCutOutTolerance());
-        Assert.assertEquals(ref.Instrument0Filter0TransmittanceRangeTransmittance, transmittanceRange.getTransmittance());   
+        Assert.assertEquals(ref.Instrument0Filter0TransmittanceRangeTransmittance, transmittanceRange.getTransmittance());
     }
 
     @Test (groups = {"11-06-i-filter"}, dependsOnMethods = {"testInstrument0"})
@@ -235,7 +235,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Instrument0Filter1TransmittanceRangeCutInTolerance, transmittanceRange.getCutInTolerance());
         Assert.assertEquals(ref.Instrument0Filter1TransmittanceRangeCutOut, transmittanceRange.getCutOut());
         Assert.assertEquals(ref.Instrument0Filter1TransmittanceRangeCutOutTolerance, transmittanceRange.getCutOutTolerance());
-        Assert.assertEquals(ref.Instrument0Filter1TransmittanceRangeTransmittance, transmittanceRange.getTransmittance());   
+        Assert.assertEquals(ref.Instrument0Filter1TransmittanceRangeTransmittance, transmittanceRange.getTransmittance());
     }
 
     @Test (groups = {"11-06-i-filter"}, dependsOnMethods = {"testInstrument0"})
@@ -255,7 +255,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Instrument0Filter2TransmittanceRangeCutInTolerance, transmittanceRange.getCutInTolerance());
         Assert.assertEquals(ref.Instrument0Filter2TransmittanceRangeCutOut, transmittanceRange.getCutOut());
         Assert.assertEquals(ref.Instrument0Filter2TransmittanceRangeCutOutTolerance, transmittanceRange.getCutOutTolerance());
-        Assert.assertEquals(ref.Instrument0Filter2TransmittanceRangeTransmittance, transmittanceRange.getTransmittance());   
+        Assert.assertEquals(ref.Instrument0Filter2TransmittanceRangeTransmittance, transmittanceRange.getTransmittance());
     }
 
     @Test (groups = {"11-06-i-filter"}, dependsOnMethods = {"testInstrument0"})
@@ -275,7 +275,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Instrument0Filter3TransmittanceRangeCutInTolerance, transmittanceRange.getCutInTolerance());
         Assert.assertEquals(ref.Instrument0Filter3TransmittanceRangeCutOut, transmittanceRange.getCutOut());
         Assert.assertEquals(ref.Instrument0Filter3TransmittanceRangeCutOutTolerance, transmittanceRange.getCutOutTolerance());
-        Assert.assertEquals(ref.Instrument0Filter3TransmittanceRangeTransmittance, transmittanceRange.getTransmittance());   
+        Assert.assertEquals(ref.Instrument0Filter3TransmittanceRangeTransmittance, transmittanceRange.getTransmittance());
     }
 
     @Test (groups = {"11-06-i-dichroic"}, dependsOnMethods = {"testInstrument0"})
@@ -305,7 +305,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertNull(detector0.getVoltage());
         Assert.assertNull(detector0.getZoom());
     }
-    
+
     @Test (groups = {"11-06-i-objective"}, dependsOnMethods = {"testInstrument0"})
     public void testObjective0() {
         Assert.assertNotNull(ome);
@@ -441,7 +441,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Image0DetectorSettings0ReadOutRate, detectorSettings.getReadOutRate());
         Assert.assertEquals(ref.Image0DetectorSettings0Voltage, detectorSettings.getVoltage());
     }
-    
+
     @Test (groups = {"11-06-i-links"}, dependsOnGroups = {"11-06-i-image", "11-06-i-detector"})
     public void testChannel0ToDetectorLinkage() {
         Assert.assertNotNull(channel0);

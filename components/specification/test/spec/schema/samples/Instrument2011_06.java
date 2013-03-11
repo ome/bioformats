@@ -37,7 +37,7 @@ import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * This class represents the sample file 2011-06/6x4y1z1t1c1b-swatch-instrument.ome
- * 
+ *
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
  *

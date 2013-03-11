@@ -22,7 +22,7 @@
 -->
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Written by:  Andrew J Patterson 
+	# Written by:  Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/OMERO/2010-04"
@@ -53,7 +53,7 @@
 									</xsd:restriction>
 								</xsd:simpleType>
 							</xsd:element>
-							<!-- InstrumentRef is used instead of a reference to Microscope as 
+							<!-- InstrumentRef is used instead of a reference to Microscope as
 								there is no ID in Microscope. There is a 1 to 1 mapping as each
 								Instrument can contain only 1 Microscope.
 							-->
@@ -96,7 +96,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:simpleType name="ProfileSource"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -107,6 +107,6 @@
 			<xsd:enumeration value="User"/>
 			<xsd:enumeration value="File"/>
 		</xsd:restriction>
-	</xsd:simpleType>	
-	
+	</xsd:simpleType>
+
 </xsd:schema>

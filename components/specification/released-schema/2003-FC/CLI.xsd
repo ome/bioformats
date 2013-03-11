@@ -380,7 +380,7 @@ Not currently supported.
 	</element>
 	<element name = "Start">
 		<annotation>
-			<documentation>Specifies a starting point of iteration. 
+			<documentation>Specifies a starting point of iteration.
 Not currently supported.
 			</documentation>
 		</annotation>
@@ -482,10 +482,10 @@ This means a stack statistics record that specifies theC as an index before theT
 	</element>
 	<element name = "PixelOutput">
 		<annotation>
-			<documentation>Allows SemanticTypes Pixels and PixelsPlane to be outputs. The subelements specify locations for the population of data. 
+			<documentation>Allows SemanticTypes Pixels and PixelsPlane to be outputs. The subelements specify locations for the population of data.
 This data population is useful for a Plane projection algorithm that has the same X and Y dimensions as the Pixels it is operating on.
 Alternately, these fields may be filled by ouput from STDOUT.
-The FileSHA1 subelement is automatically calculated for the pixel dump file. 
+The FileSHA1 subelement is automatically calculated for the pixel dump file.
 			</documentation>
 		</annotation>
 		<complexType>

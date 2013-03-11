@@ -34,14 +34,14 @@
 		<SPW:PlateRef ID="Plate:0"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
-	
+
 	<SPW:Screen ID="Screen:1" Name="ScreenName1" ProtocolDescription="Protocol Description Test1" ProtocolIdentifier="ProtocolTest1ID" ReagentSetDescription="Reagents Set PQR" ReagentSetIdentifier="ReagentsPQR-ID" Type="ScreenType1">
 		<SPW:Description>Screen 1 Description</SPW:Description>
 		<SPW:Reagent ID="Reagent:1"/>
 		<SPW:PlateRef ID="Plate:1"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
-	
+
 	<SPW:Screen ID="Screen:2" Name="ScreenName2" ProtocolDescription="Protocol Description Test2" ProtocolIdentifier="ProtocolTest2ID" ReagentSetDescription="Reagents Set IJK" ReagentSetIdentifier="ReagentsIJK-ID" Type="ScreenType2">
 		<SPW:Description>Screen 2 Description</SPW:Description>
 		<SPW:Reagent ID="Reagent:2"/>
@@ -53,7 +53,7 @@
 		<SPW:Reagent ID="Reagent:3"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
-	
+
 	<Experimenter ID="Experimenter:0" DisplayName="Joe Bloggs">
 		<GroupRef ID="Group:0"/>
 		<GroupRef ID="Group:3"/>
@@ -61,7 +61,7 @@
 	</Experimenter>
 	<Experimenter ID="Experimenter:1" DisplayName="John Smith" FirstName="John" MiddleName="Andrew" LastName="Smith" Email="john@example.org">
 	</Experimenter>
-	
+
 	<Experimenter ID="Experimenter:2" DisplayName="Jane Bloggs">
 		<GroupRef ID="Group:1"/>
 	</Experimenter>
@@ -76,28 +76,28 @@
 	</Experimenter>
 	<Experimenter ID="Experimenter:6" DisplayName="Jake Bloggs">
 	</Experimenter>
-	
+
 	<Group ID="Group:0" Name="MyGroup - Leader+Contact match">
 		<Description>A description for my group 0.
 			Complete with basic formatting, like new lines.</Description>
 		<Leader ID="Experimenter:0"/>
 		<Contact ID="Experimenter:0"/>
 	</Group>
-	
+
 	<Group ID="Group:1" Name="MyOtherGroup">
 		<Description>A description for my group 1.
 			Complete with basic formatting, like new lines.</Description>
 		<Leader ID="Experimenter:0"/>
 		<Contact ID="Experimenter:1"/>
 	</Group>
-	
+
 	<Group ID="Group:2" Name="NoMatch">
 		<Description>A description for my group 2.
 			Complete with basic formatting, like new lines.</Description>
 		<Leader ID="Experimenter:6"/>
 		<Contact ID="Experimenter:6"/>
 	</Group>
-	
+
 	<Group ID="Group:3" Name="LeaderMatch">
 		<Description>A description for my group 3.
 			Complete with basic formatting, like new lines.</Description>
@@ -108,10 +108,10 @@
 			Complete with basic formatting, like new lines.</Description>
 		<Contact ID="Experimenter:0"/>
 	</Group>
-	
+
 	<Instrument ID="Instrument:0">
 		<Objective ID="Objective:0" LotNumber="123" Manufacturer="OME-Labs" NominalMagnification="20" CalibratedMagnification="20.34"/>
-		
+
 		<OTF ID="OTF:0" Type="bit" OpticalAxisAveraged="true" SizeX="1" SizeY="1">
 			<ObjectiveSettings ID="Objective:0"/>
 			<Bin:BinaryFile FileName="dummy.dat" Size="10">

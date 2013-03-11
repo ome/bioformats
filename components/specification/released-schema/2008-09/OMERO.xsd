@@ -21,7 +21,7 @@
 -->
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	# Written by:  Andrew J Patterson 
+	# Written by:  Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/OMERO/2008-09"
@@ -31,7 +31,7 @@
 	version = "1"
 	elementFormDefault = "qualified">
 	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation = "http://www.openmicroscopy.org/Schemas/OME/2008-09/ome.xsd"/>
-	
+
 	<xsd:element name="RoiDisplay"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:attribute name="fill" use="optional" type="xsd:string"/>
@@ -71,7 +71,7 @@
 			<xsd:attribute name="rotate" use="optional" type="xsd:string"/>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:element name="ProfileSet"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:sequence>
@@ -80,7 +80,7 @@
 						<xsd:sequence>
 							<xsd:element name="Name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
 							<xsd:element name="Description" type="xsd:string" minOccurs="0" maxOccurs="1"/>
-							<!-- InstrumentRef is used instead of a reference to Microscope as 
+							<!-- InstrumentRef is used instead of a reference to Microscope as
 								there is no ID in Microscope. There is a 1 to 1 mapping as each
 								Instrument can contain only 1 Microscope.
 							-->
@@ -106,7 +106,7 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	
+
 	<xsd:simpleType name="ProfileSource"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
@@ -117,7 +117,7 @@
 			<xsd:enumeration value="User"/>
 			<xsd:enumeration value="File"/>
 		</xsd:restriction>
-	</xsd:simpleType>	
-	
-	
+	</xsd:simpleType>
+
+
 </xsd:schema>

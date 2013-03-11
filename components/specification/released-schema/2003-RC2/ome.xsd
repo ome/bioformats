@@ -36,8 +36,8 @@
 		<xs:annotation>
 			<xs:documentation>The OME element must contain one or more Dataset elements.
 All other elements are optional.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -56,8 +56,8 @@ All other elements are optional.
 			<xs:documentation>If any of the required Dataset attributes are missing, its guaranteed to be an invalid document.
 The only required elements are the CreationDate and Data.
 The Dataset may also contain optional elements containing vendor-specific data (#wildCard element in the diagram).
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -100,8 +100,8 @@ The Dataset may also contain optional elements containing vendor-specific data (
 		<xs:annotation>
 			<xs:documentation>One of these per XYZ stack in the dataset (optional).  A single plane dataset is still technically a stack.
 Additional elements may be present as vendor extensions.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -119,8 +119,8 @@ Additional elements may be present as vendor extensions.
 		<xs:annotation>
 			<xs:documentation>One of these per plane in the dataset (optional).
 Additional elements may be present as vendor extensions.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -151,10 +151,10 @@ Additional elements may be present as vendor extensions.
 		<xs:annotation>
 			<xs:documentation>Document will be unreadable if any attributes are missing.
 The Pixels may be external or internal.
-DimensionOrder is a string enumeration which must be set to 'XYZWT', 'XYZTW', 'XYWTZ', 'XYWZT', 'XYTWZ',  or 'XYTZW'.  
+DimensionOrder is a string enumeration which must be set to 'XYZWT', 'XYZTW', 'XYWTZ', 'XYWZT', 'XYTWZ',  or 'XYTZW'.
 BitsPerPixel is an integer enumeration and must be set to 1, 8 or 16.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -194,8 +194,8 @@ The Offset attribute specifies the number of bytes after the start of the file w
 The SHA1 attribute is a digest (openssl sha1) of the file pointed to by href.
 Compression may be set to 'gzip' or 'bzip2'.
 If the external file is compressed, and the Compression attribute is set, the SHA1 and href attribute refer to the compressed file.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -263,7 +263,7 @@ If used, either the fluor or the excitation and emission wavelengths (in nm) or 
 Currently, these are both optional, which is an incorrect schema specification (FIXME?).
 Either WavelengthInfo element or the WaveStart and WaveIncrement Dataset attributes must be used.
 This is also not correctly specified in the schema (FIXME?)
-			
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -283,7 +283,7 @@ This is also not correctly specified in the schema (FIXME?)
 This specifies mapping of pixels to RGB or greyscale colorspace with one byte per pixel per channel.
 Elements of type WaveScaleType specify the scaling of pixel values to colorspace values.
 These elements are empty, and have 3-4 attributes:  WaveNumber, Threshold, Clip and optional Scale.
-The WaveNumber specifies the wavenumber of the color chanel.  Pixel values between Threshold and Clip will be assigned values 0-255, respectively.  
+The WaveNumber specifies the wavenumber of the color chanel.  Pixel values between Threshold and Clip will be assigned values 0-255, respectively.
 Values below Threshold or above Clip will be assigned 0 and 255 respectively.
 Either the GreyWave or one or more of RedWave, GreenWave, BlueWave must be specified.
 The Projection element specifies that the display is a maximum intensity projection.
@@ -291,8 +291,8 @@ The range of Z-sections for the projection is specified with the Zstart and Zsto
 Presence of the Movie element indicates that the display should be a movie.
 The range of timepoints to display in the movie is specified by the Tstart and Tstop attributes.
 The MIME type of the desired video format is specified by the MIMEtype attribute.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -351,8 +351,8 @@ The MIME type of the desired video format is specified by the MIMEtype attribute
 			<xs:documentation>Presence of this element indicates the user wants to view the dataset as a movie.
 The range of timepoints to be displayed are indicated by the Tstart and Tstop attributes.
 The desired movie format (MIME type) is specified by MIMEtype.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -367,8 +367,8 @@ The desired movie format (MIME type) is specified by MIMEtype.
 It is primarily a container for manufacturer's model and catalog numbers for the Microscope, Camera, Objective and Filters components.
 The Objective element contains the additional elements LensNA and Magnification.
 The Filters element is composed either of separate excitation and emission filters or a single filter set.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -385,8 +385,8 @@ The Filters element is composed either of separate excitation and emission filte
 		<xs:annotation>
 			<xs:documentation>The StageLabel is simply a string to describe a particular stage position.
 This is usefull for experiments involving visiting several points on a slide over a timecourse.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>
@@ -395,8 +395,8 @@ This is usefull for experiments involving visiting several points on a slide ove
 			<xs:documentation>The PlateInfo element associates the dataset with a microtiter plate.
 This element must contain Well and Plate elements to further define this relationship.
 When several images are acquired within a single well, they are differentiated by using the optional Sample element.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -426,8 +426,8 @@ When several images are acquired within a single well, they are differentiated b
 The EternRef attribute may contain a reference to an external database.
 If more than one plate is defined in the entire document, the PlateID attribute must be used.
 The Name identifies the plate to the user.  It is used much like the PlateID, and so must be unique.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -468,7 +468,7 @@ The ScreenID is required if there is more than one screen defined in the documen
 The Screen element may contain an ExternalRef attribute that refers to an external database.
 A description of the screen may be specified in the Description element.
 Screens may contain overlapping sets of Plates - Screens and Plates have a many-to-many relationship.
-			
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -497,8 +497,8 @@ Screens may contain overlapping sets of Plates - Screens and Plates have a many-
 		<xs:annotation>
 			<xs:documentation>Filters may be separate excitation and emission filters specified by the ExFilter and EmFilter tags respectively, or
 a filter set specified by FilterSet.  All elements are ManufactSpec type, so they have the required attributes Manufacturer, Model, and CatalogNumber.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -556,8 +556,8 @@ a filter set specified by FilterSet.  All elements are ManufactSpec type, so the
 		<xs:annotation>
 			<xs:documentation>The thumbnail may be an external URI reference specified by the href attribute, or it may contain an SVG sub-document (denoted by the #wildCard 'element').
 The MIMEtype is a required attribute, and must be set to 'SVG' if the tag's contents are an SVG document.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -583,8 +583,8 @@ The MIMEtype is a required attribute, and must be set to 'SVG' if the tag's cont
 			<xs:documentation>The ProjectID attribute is required if there is more than one Project listed under the OME element
 Datasets can be grouped into projects using a many-to-many relationship.
 A Dataset may contain one or more ProjectRef elements that point to Projects defined under the OME element.
-			
-			
+
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -616,7 +616,7 @@ A Dataset may contain one or more ProjectRef elements that point to Projects def
 		<xs:annotation>
 			<xs:documentation>There may be one or more of these in a Dataset.
 This empty element has a required ProjectID attribute that refers to Projects defined within the OME element.
-			
+
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
@@ -637,7 +637,7 @@ This empty element has a required ProjectID attribute that refers to Projects de
 The Name attribute is required.  In addition contact information can be specified for the leader of the group and a contact person.
 The Leader and/or Contact may themselves be experimenters defined in OME,
 in which case they can refer to Experimenters defined within OME using their ExperimenterRef elements.
-			
+
 			</xs:documentation>
 		</xs:annotation>
 	</xs:element>

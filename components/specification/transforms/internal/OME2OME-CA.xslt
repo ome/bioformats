@@ -57,7 +57,7 @@
 			xmlns:Bin = "http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd">
 			<xsl:attribute name = "xsi:schemaLocation">
 				<xsl:value-of select = "@xsi:schemaLocation"/>
-			</xsl:attribute>			
+			</xsl:attribute>
 			<!-- Need to copy STD and AML also -->
 			<!-- Deal with the hierarchy -->
 			<xsl:apply-templates select = "OME:Project"/>
@@ -73,7 +73,7 @@
 				<xsl:apply-templates select = "OME:Screen"/>
 				<xsl:apply-templates select = "OME:CustomAttributes/*"/>
 			</xsl:element>
-			
+
 			<xsl:apply-templates select = "STD:*"/>
 			<xsl:apply-templates select = "STD3:*"/>
 			<xsl:apply-templates select = "AML:*"/>
@@ -168,7 +168,7 @@
 			<xsl:apply-templates select = "OME:Description" mode = "OptionalAttribute"/>
 			<xsl:apply-templates select = "OME:DatasetRef" mode = "CopyRefs"/>
 			<xsl:element name = "CustomAttributes">
-				<xsl:if test="@PixelSizeX">			
+				<xsl:if test="@PixelSizeX">
 					<xsl:element name = "Dimensions">
 						<xsl:attribute name = "ID">
 							<xsl:value-of select = "generate-id()"/>
@@ -185,7 +185,7 @@
 							<xsl:with-param name = "Name">PixelSizeT</xsl:with-param>
 						</xsl:apply-templates>
 					</xsl:element>
-				</xsl:if>				
+				</xsl:if>
 				<xsl:apply-templates select = "OME:ExperimentRef"/>
 				<xsl:apply-templates select = "OME:InstrumentRef"/>
 				<xsl:apply-templates select = "OME:ImagingEnvironment"/>
@@ -201,7 +201,7 @@
 		</xsl:element>
 	</xsl:template>
 	<!-- Image attributes -->
-	
+
 	<!-- ExperimentRef -->
 	<xsl:template match = "OME:Image/OME:ExperimentRef">
 		<xsl:element name = "ImageExperiment">
@@ -525,13 +525,13 @@
 			</xsl:apply-templates-->
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!--
 
 		Global Attributes
 
 	-->
-	
+
 	<!-- Experimenter -->
 	<xsl:template match = "OME:Experimenter">
 		<xsl:element name = "Experimenter">
@@ -878,7 +878,7 @@
 		Utility Templates
 
 	-->
-	
+
 	<!--
 		A utility template to convert child elements and attributes to attributes.
 		Does not deal with grand-child elements correctly
@@ -934,7 +934,7 @@
 	</xsl:template>
 	<!--
 		A utility template to make reference maps for many-to-many relationships.
-		Given a Reference element (i.e. GroupRef), will construct a map element with two 'Ref' elements - 
+		Given a Reference element (i.e. GroupRef), will construct a map element with two 'Ref' elements -
 		one to the parent, and one to the passed-in element.
 	-->
 	<xsl:template match = "*" mode = "MakeMapRefs">

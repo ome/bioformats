@@ -71,10 +71,10 @@
 			<attribute name = "AppliesTo" use = "required">
 				<annotation>
 					<documentation>This specifies what this record is an attribute of. The options are Global, Dataset, Image, or Feature.
-					
-					
-					
-					
+
+
+
+
 					</documentation>
 				</annotation>
 				<simpleType>
@@ -102,12 +102,12 @@
 			<attribute name = "Description" type = "string"/>
 			<attribute name = "FieldID" use = "required" type = "NMTOKEN">
 				<annotation>
-					<documentation>References a Field.					
-					
-					
-					
-					
-					
+					<documentation>References a Field.
+
+
+
+
+
 					</documentation>
 				</annotation>
 			</attribute>

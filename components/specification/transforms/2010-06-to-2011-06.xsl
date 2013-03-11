@@ -95,9 +95,9 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+
 	<!-- Actual schema changes -->
-	
+
 	<xsl:template match="OME:Pixels">
 		<xsl:element name="OME:Pixels" namespace="{$newOMENS}">
 			<xsl:for-each select="@*">
@@ -155,7 +155,7 @@
 			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06"
 			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2011-06"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06 
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06
 			http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd">
 			<xsl:apply-templates/>
 		</OME>

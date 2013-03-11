@@ -2,7 +2,7 @@
 <OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2010-04"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd">
-	
+
 	<Instrument ID="Instrument:0">
 		<LightSource ID="LightSource:0:0">
 			<Laser LaserMedium="HeNe" Type="Gas"/>

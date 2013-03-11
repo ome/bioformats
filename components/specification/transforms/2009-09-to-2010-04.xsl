@@ -122,7 +122,7 @@
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			
+
 			<!-- Copy unchanged children -->
 			<xsl:apply-templates select="* [local-name(.)='Description']"/>
 			<xsl:apply-templates select="* [local-name(.)='ScreenRef']"/>
@@ -143,7 +143,7 @@
 				</xsl:call-template>
 			</xsl:for-each>
 			<!-- end copying Well -->
-			
+
 			<!-- Copy unchanged children -->
 			<xsl:apply-templates select="* [local-name(.)='AnnotationRef']"/>
 
@@ -151,11 +151,11 @@
 			<xsl:variable name="allWellSamplesInCurrentPlate" select="descendant::SPW:WellSample"/>
 			<xsl:for-each select="* [local-name(.)='ScreenRef']">
 				<!--
-					get a list of all the ScreenAcquisitions 
-					in screens referenced by the current plate that 
-					have a WellSampleRef 
-					to a WellSample 
-					in a Well 
+					get a list of all the ScreenAcquisitions
+					in screens referenced by the current plate that
+					have a WellSampleRef
+					to a WellSample
+					in a Well
 					in the current Plate
 				-->
 				<xsl:variable name="theScreenID"><xsl:value-of select="@ID"/></xsl:variable>
@@ -177,15 +177,15 @@
 		<xsl:for-each select="$allAcquisitionsInReferencedScreens">
 
 			<!--
-				if 
+				if
 				the ID WellSampleRef in the ScreenAcquisition
 				matches an ID in the list allWellSamplesInCurrentPlate
-				then 
+				then
 				make a PlateAcquisition
-				else 
+				else
 				do nothing
 			-->
-			
+
 			<xsl:variable name="myFlag">
 				<xsl:for-each select="child::SPW:WellSampleRef">
 					<xsl:variable name="theSearchID">
@@ -197,7 +197,7 @@
 					</xsl:if>
 				</xsl:for-each>
 			</xsl:variable>
-			
+
 			<xsl:if test="contains($myFlag,'hit')">
 				<xsl:element name="PlateAcquisition" namespace="{$newSPWNS}">
 					<xsl:attribute name="ID">PlateAcquisition:<xsl:value-of select="$plateID"
@@ -249,8 +249,8 @@
 	<xsl:template match="SPW:ScreenAcquisition"/>
 	<!-- Remove as converted to PlateAcquisition -->
 
-	<!-- 
-		Althought FilterSet has changed the old content is compatible with the 
+	<!--
+		Althought FilterSet has changed the old content is compatible with the
 		new structure so no processing needed.
 	-->
 
@@ -356,7 +356,7 @@
 			</xsl:if>
 			<!-- Else do not store a TheC value so the ROI applies to all channels of the image-->
 
-			<!-- 
+			<!--
 				TODO: Enhancement
 				If there are multiple ChannelRef make duplicate shapes
 				under Union each with one TheC

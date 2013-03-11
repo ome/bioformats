@@ -185,7 +185,7 @@
 			<xs:documentation>
 				The Image will be unreadable if any attributes are missing.
 				The Pixels may be stored externally or internally.
-				DimensionOrder is a string enumeration which must be set to 'XYZWT', 'XYZTW', 'XYWTZ', 'XYWZT', 'XYTWZ',  or 'XYTZW'.  
+				DimensionOrder is a string enumeration which must be set to 'XYZWT', 'XYZTW', 'XYWTZ', 'XYWZT', 'XYTWZ',  or 'XYTZW'.
 				BitsPerPixel is an integer enumeration and must be set to 1, 8 or 16.
 				BigEndian is a boolean ('true' or 'false').  True for essentially all CPUs other than Intel.
 			</xs:documentation>
@@ -336,7 +336,7 @@
 				These elements have three required attributes:  the WaveNumber, BlackLevel, and WhiteLevel.
 				The fourth Gamma attribute is optional.
 				The WaveNumber specifies the wave number in the pixel dump.  Waves are numbered from 0.
-				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, respectively.  
+				Pixel values between BlackLevel and WhiteLevel will be assigned values 0-255, respectively.
 				Values below BlackLevel or above WhiteLevel will be assigned 0 and 255 respectively.
 				Either the GreyWave or one or more of RedWave, GreenWave, BlueWave must be specified.
 				The Projection element specifies that the display is a maximum intensity projection.
@@ -600,7 +600,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				Standard well designation (A12, B01, etc) goes in the Address attribute.
-				This attribute is checked against the regular expression '^[A-Z]+[0-9]+$'.  
+				This attribute is checked against the regular expression '^[A-Z]+[0-9]+$'.
 				The contents of this element may contain descriptive information.
 			</xs:documentation>
 		</xs:annotation>
@@ -644,7 +644,7 @@
 				Filters may be separate excitation dichroic mirror and emission filters specified by the
 				ExFilter, Dichroic and EmFilter tags respectively.
 				Alternatively all three components may be specified by a single filter set.
-				There should be one filter element specified per wavelength in the image.  
+				There should be one filter element specified per wavelength in the image.
 				The wave number associated with a filter set is specified in WavelengthInfo's required WaveNumber attribute.
 				All  elements are ManufactSpec type, so they have the required attributes Manufacturer, Model, and SerialNumber.
 				The ExFilter an EmFilter elements may also contain a Type attribute which may be set to

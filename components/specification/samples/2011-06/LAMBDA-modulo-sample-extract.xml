@@ -11,9 +11,9 @@
 	Creator="ome-xml.org:sample:handmade-based-on-bioformats-artifical-dataset:v1.0">
 	<Image ID="Image:0" Name="LAMBDA">
 		<AcquiredDate>2011-09-16T10:45:48</AcquiredDate>
-		<!-- Full Range 
+		<!-- Full Range
 			Stored C(1), Z(1-5),                   T    (1-10)
-			Real   C(1), Z(1),  [B]igLambda(1-5), [T]ime(1)   , [L]ambda(1-10)  
+			Real   C(1), Z(1),  [B]igLambda(1-5), [T]ime(1)   , [L]ambda(1-10)
 		-->
 		<Pixels ID="Pixels:0" DimensionOrder="XYCZT" Type="int8"
 			SizeX="200" SizeY="200" SizeC="1" SizeZ="5" SizeT="10" >

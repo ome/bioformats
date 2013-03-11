@@ -6,7 +6,7 @@
 	UUID="urn:uuid:e341890d-3628-43bf-b3b5-36371e1fd740"
 	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06 http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd">
 	<Image ID="Image:0" Name="FLIM">
-		<!-- Full Range 
+		<!-- Full Range
 			Stored C(16),                  Z(1), T(1)
 			Real   C(1-2), Histogram(1-8), Z(1), T(1)
 		-->

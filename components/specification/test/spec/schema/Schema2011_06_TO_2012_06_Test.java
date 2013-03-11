@@ -35,7 +35,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 
-/** 
+/**
  * Collections of tests.
  * Checks if the upgrade from 2011-06 schema to 2012-06 schema works.
  *
@@ -77,7 +77,7 @@ public class Schema2011_06_TO_2012_06_Test {
         Assert.assertNotNull(image);
         Assert.assertEquals(IMAGE_NAME, image.getName());
     }
-    
+
     @Test
     public void testDate() {
         Assert.assertNotNull(ome);

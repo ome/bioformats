@@ -30,7 +30,7 @@ import spec.OmeValidator;
 import spec.XMLMockObjects;
 import spec.XMLWriter;
 
-/** 
+/**
  * Collections of tests.
  * Checks if the downgrade from current schema to 2003-FC schema works.
  *
@@ -44,29 +44,29 @@ import spec.XMLWriter;
  * </small>
  * @since 3.0-Beta4
  */
-public class SchemaCurrent_TO_2003_FC_Test 
-	extends AbstractTest 
+public class SchemaCurrent_TO_2003_FC_Test
+	extends AbstractTest
 {
 
 	/** The collection of files that have to be deleted. */
 	private List<File> files;
-	
+
 	/** The transforms */
 	private InputStream STYLESHEET_A;
 	private InputStream STYLESHEET_B;
-	
+
 	/** The target schema */
 	private StreamSource[] schemaArray;
 
 	/** A validator used to check transformed files */
 	private OmeValidator anOmeValidator = new OmeValidator();
-	
+
 	/** The path in front of ID. */
 	private String XSLT_PATH_ID = "xslt.fix";
-	
+
 	/**
 	 * Checks if the <code>Image</code> tag was correctly transformed.
-	 * 
+	 *
 	 * @param destNode The node from the transformed file.
 	 * @param srcNode The Image node from the source file
 	 */
@@ -88,7 +88,7 @@ public class SchemaCurrent_TO_2003_FC_Test
 			else if (name.equals(XMLWriter.NAME_ATTRIBUTE))
 				nameSrc = n.getNodeValue();
 		}
-		
+
 		NamedNodeMap attributes = destNode.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			n = attributes.item(i);
@@ -120,10 +120,10 @@ public class SchemaCurrent_TO_2003_FC_Test
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if the <code>Pixels</code> tag was correctly transformed.
-	 * 
+	 *
 	 * @param destNode The node from the transformed file.
 	 * @param srcNode The Image node from the source file
 	 */
@@ -221,7 +221,7 @@ public class SchemaCurrent_TO_2003_FC_Test
 		}
 		n = binDataNodeSrc.get(0);
 		attributesSrc = n.getAttributes();
-		//now check that 
+		//now check that
 		for (int i = 0; i < attributesSrc.getLength(); i++) {
 			n = attributesSrc.item(i);
 			if (n != null) {
@@ -231,10 +231,10 @@ public class SchemaCurrent_TO_2003_FC_Test
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if the <code>Image</code> tag was correctly transformed.
-	 * 
+	 *
 	 * @param destNode The node from the transformed file.
 	 * @param srcNode The Image node from the source file
 	 */
@@ -252,7 +252,7 @@ public class SchemaCurrent_TO_2003_FC_Test
 			if (name.equals(XMLWriter.COMPRESSION_ATTRIBUTE))
 				compression = n.getNodeValue();
 		}
-		
+
 		NamedNodeMap attributes = destNode.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			n = attributes.item(i);
@@ -264,14 +264,14 @@ public class SchemaCurrent_TO_2003_FC_Test
 		}
 		assertEquals(destNode.getTextContent(), srcNode.getTextContent());
 	}
-	
+
 	/**
 	 * Overridden to initialize the list.
 	 * @see AbstractTest#setUp()
 	 */
     @Override
     @BeforeClass
-    protected void setUp() 
+    protected void setUp()
     	throws Exception
     {
     	super.setUp();
@@ -288,17 +288,17 @@ public class SchemaCurrent_TO_2003_FC_Test
 		STYLESHEET_A = this.getClass().getResourceAsStream("/Xslt/2011-06-to-2010-06.xsl");
 		STYLESHEET_B = this.getClass().getResourceAsStream("/Xslt/2010-06-to-2003-FC.xsl");
 		//components/specification/Xslt/
-		
+
     	files = new ArrayList<File>();
     }
-    
+
 	/**
 	 * Overridden to delete the files.
 	 * @see AbstractTest#tearDown()
 	 */
     @Override
     @AfterClass
-    public void tearDown() 
+    public void tearDown()
     	throws Exception
     {
     	Iterator<File> i = files.iterator();
@@ -307,7 +307,7 @@ public class SchemaCurrent_TO_2003_FC_Test
 		}
     	files.clear();
     }
-	
+
 	/**
      * Tests the XSLT used to downgrade from current schema to 2003-FC.
      * An XML file with an image is created and the stylesheet is applied.
@@ -336,7 +336,7 @@ public class SchemaCurrent_TO_2003_FC_Test
 
 		Document doc = anOmeValidator.parseFileWithStreamArray(outputFile, schemaArray);
 		assertNotNull(doc);
-		
+
 		//Should only have one root node i.e. OME node
 		NodeList list = doc.getChildNodes();
 		assertEquals(list.getLength(), 1);

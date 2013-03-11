@@ -54,26 +54,26 @@ public class AbstractTest
 {
 
     /** Path the schema language. */
-    public static final String JAXP_SCHEMA_LANGUAGE = 
+    public static final String JAXP_SCHEMA_LANGUAGE =
         "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 
     /** W3C. */
-    public static final String W3C_XML_SCHEMA = 
+    public static final String W3C_XML_SCHEMA =
         "http://www.w3.org/2001/XMLSchema";
 
     /** The source. */
-    public static final String JAXP_SCHEMA_SOURCE = 
+    public static final String JAXP_SCHEMA_SOURCE =
         "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
     /** The OME-XML format. */
     public static final String OME_FORMAT = "ome";
-    
+
     /** The OME-XML format. */
     public static final String OME_XML_FORMAT = "ome.xml";
-    
+
     /** Holds the error, info, warning. */
     protected Log log = LogFactory.getLog(getClass());
-    
+
     protected String rootpass;
 
     /**
@@ -153,7 +153,7 @@ public class AbstractTest
      */
     @Override
     @BeforeClass
-    protected void setUp() 
+    protected void setUp()
         throws Exception
     {
     }
@@ -164,7 +164,7 @@ public class AbstractTest
      */
     @Override
     @AfterClass
-    public void tearDown() 
+    public void tearDown()
         throws Exception
     {
     }
@@ -176,7 +176,7 @@ public class AbstractTest
 
     /**
      * Transforms the input file using the specified stylesheet file.
-     * 
+     *
      * @param input  The file to transform.
      * @param output The destination file.
      * @param xslt   The stylesheet file to use.
@@ -185,11 +185,11 @@ public class AbstractTest
     protected void transformFile(File input, File output, File xslt)
         throws Exception
     {
-        if (input == null) 
+        if (input == null)
             throw new IllegalArgumentException("No file to transform.");
-        if (output == null) 
+        if (output == null)
             throw new IllegalArgumentException("No destination file.");
-        if (xslt == null) 
+        if (xslt == null)
             throw new IllegalArgumentException("No stylesheet provided.");
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer(
@@ -200,7 +200,7 @@ public class AbstractTest
 
     /**
      * Transforms the input file using the specified stylesheet stream.
-     * 
+     *
      * @param input  The file to transform.
      * @param output The destination file.
      * @param xslt   The stylesheet InputStream to use.
@@ -209,11 +209,11 @@ public class AbstractTest
     protected void transformFileWithStream(File input, File output, InputStream xslt)
         throws Exception
     {
-        if (input == null) 
+        if (input == null)
             throw new IllegalArgumentException("No file to transform.");
-        if (output == null) 
+        if (output == null)
             throw new IllegalArgumentException("No destination file.");
-        if (xslt == null) 
+        if (xslt == null)
             throw new IllegalArgumentException("No stylesheet provided.");
 
         TransformerFactory factory = TransformerFactory.newInstance();

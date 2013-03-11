@@ -173,7 +173,7 @@
 
 	<!-- Actual schema changes -->
 
-	<!-- 
+	<!--
 	Move Plate to new name space and rename ExternRef attribute.
 	-->
 	<xsl:template match="OME:Plate">
@@ -196,7 +196,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Move Screen to new name space and remove ExternRef attribute.
 	-->
 	<xsl:template match="OME:Screen">
@@ -210,7 +210,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Renaming possible values of the attribute Type
 	-->
 	<xsl:template match="OME:Experiment">
@@ -404,7 +404,7 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!--
 	In Filament remove Power
 	-->
@@ -457,7 +457,7 @@
 		<xsl:variable name="objectiveID" select="@ID"/>
 		<xsl:comment>Objective removed as it cannot be upgraded to 2007-06 schema - <xsl:value-of select="$objectiveID"/></xsl:comment>
 	</xsl:template>
-	
+
 	<!--
 	Turn old Filter into just FilterSet
 	-->
@@ -520,7 +520,7 @@
 		</xsl:for-each>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert FilterRef to FilterSetRef
 	-->
 	<xsl:template match="OME:FilterRef">
@@ -538,7 +538,7 @@
 		<xsl:comment>OTF removed as it cannot be upgraded to 2007-06 schema - <xsl:value-of select="$otfID"/></xsl:comment>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In Bin:BinData add Length attribute.
 	-->
 	<xsl:template match="Bin:BinData">
@@ -550,7 +550,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In Bin:BinData add Length attribute.
 	-->
 	<xsl:template match="Bin:BinData" mode="OnlyBinData">
@@ -562,14 +562,14 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Skip BinData
 	-->
 	<xsl:template match="Bin:BinData" mode="OnlyTiffData">
 		<xsl:comment>Skip BinData</xsl:comment>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert namespace of ScreenRef to SPW
 	-->
 	<xsl:template match="OME:ScreenRef">
@@ -578,7 +578,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert namespace of PlateRef to SPW
 	-->
 	<xsl:template match="OME:PlateRef">
@@ -589,7 +589,7 @@
 		</xsl:comment>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Projection rename Zstart and Zstop
 	-->
 	<xsl:template match="OME:Projection">
@@ -612,7 +612,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Time rename Tstart and Tstop
 	-->
 	<xsl:template match="OME:Time">
@@ -635,7 +635,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Instrument
 	-->
 	<xsl:template match="OME:Instrument">
@@ -644,8 +644,8 @@
 			<xsl:for-each select="* [not(local-name(.) = 'Filter' or local-name(.) = 'OTF')]">
 				<xsl:apply-templates select="."/>
 			</xsl:for-each>
-			<!-- 
-			Currently ignore Filter only containing a FilterSet as cannot see 
+			<!--
+			Currently ignore Filter only containing a FilterSet as cannot see
 			how to make one with available info.
 			-->
 			<xsl:for-each select="* [local-name(.) = 'Filter']">
@@ -663,7 +663,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert Pixels
 	-->
 	<xsl:template match="OME:Pixels">
@@ -720,7 +720,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert TiffData
 	-->
 	<xsl:template match="OME:TiffData" mode="OnlyTiffData">
@@ -729,14 +729,14 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Skip TiffData
 	-->
 	<xsl:template match="OME:TiffData" mode="OnlyBinData">
 		<xsl:comment>Skip TiffData</xsl:comment>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	Convert Feature
 	-->
 	<xsl:template match="OME:Feature">
@@ -749,13 +749,13 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 		Skip DisplayOptions
-	-->	
-	
+	-->
+
 	<xsl:template match="OME:DisplayOptions"/>
-	
-	<!-- 
+
+	<!--
 	Convert ROI
 	-->
 	<xsl:template match="OME:ROI">
@@ -804,7 +804,7 @@
 				<xsl:otherwise>
 					<xsl:number value="$X0 - $X1"/>
 				</xsl:otherwise>
-			</xsl:choose>		
+			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable name="startY">
 			<xsl:choose>
@@ -1029,7 +1029,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In AML:AnalysisModule rename FeatureIterator to RegionIterator, NewFeatureName to NewRegionName
 	-->
 	<xsl:template match="AML:AnalysisModule">
@@ -1057,7 +1057,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In CLI:ExecutionInstructions rename MakesNewFeature to MakesNewRegion
 	-->
 	<xsl:template match="CLI:ExecutionInstructions">
@@ -1080,7 +1080,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- 
+	<!--
 	In AML:FormalOutput update enum IBelongTo
 	-->
 	<xsl:template match="AML:FormalOutput">
@@ -1234,8 +1234,8 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<!-- 
-	Controls if a value is greater than or less than depending on the type. 
+	<!--
+	Controls if a value is greater than or less than depending on the type.
 	The types are greater or less.
 	-->
 	<xsl:template name="isValueValid">

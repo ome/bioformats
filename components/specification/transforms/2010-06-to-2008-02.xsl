@@ -52,7 +52,7 @@
 		>http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02</xsl:variable>
 	<xsl:variable name="newSANS"
 		>http://www.openmicroscopy.org/Schemas/SA/2008-02</xsl:variable>
-		
+
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:preserve-space elements="*"/>
 
@@ -129,7 +129,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+
 	<!--
 	convert the value of the Color attribute of Channel to a ColorDomain
 	attribute on ChannelComponent.
@@ -152,7 +152,7 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:Image">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:for-each select="@* [not(name(.) = 'ID')]">
@@ -189,7 +189,7 @@
 			<xsl:apply-templates select="* [local-name(.) = 'InstrumentRef']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ObjectiveSettings']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ImagingEnvironment']"/>
-			
+
 			<xsl:for-each select=" descendant::OME:Channel">
 				<xsl:element name="LogicalChannel" namespace="{$newOMENS}">
 					<xsl:for-each select="@* [not(name(.) = 'Color' or name(.) = 'PinholeSize')]">
@@ -345,9 +345,9 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:attribute>
-			
-			<xsl:for-each select="@* [name(.) = 'DimensionOrder' or 
-				name(.) = 'SizeC' or name(.) = 'SizeT' or name(.) = 'SizeX' or 
+
+			<xsl:for-each select="@* [name(.) = 'DimensionOrder' or
+				name(.) = 'SizeC' or name(.) = 'SizeT' or name(.) = 'SizeX' or
 				name(.) = 'SizeY' or name(.) = 'SizeZ']">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
@@ -358,7 +358,7 @@
 			<xsl:apply-templates select="* [local-name(.) = 'MetadataOnly']"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:TiffData">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:for-each select="@* [not(name(.) = 'PlaneCount')]">
@@ -374,7 +374,7 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:MetadataOnly">
 		<xsl:comment>MetadataOnly Files cannot be suported in version 2008-02 schema.</xsl:comment>
 		<xsl:comment>Begin Dummy BinData</xsl:comment>
@@ -383,7 +383,7 @@
 		</xsl:element>
 		<xsl:comment>End Dummy BinData</xsl:comment>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:MicrobeamManipulationRef">
 		<xsl:variable name="theMicrobeamManipulationID">
 			<xsl:value-of select="@ID"/>
@@ -452,7 +452,7 @@
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:Filter">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:for-each select="@* [not(name(.) = 'SerialNumber')]">
@@ -758,7 +758,7 @@
 			<xsl:apply-templates select="* [local-name(.) = 'GroupRef']"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="OME:LogicalChannel">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:for-each select="@*">
@@ -784,8 +784,8 @@
 			<xsl:apply-templates select="*"/>
 		</xsl:element>
 	</xsl:template>
-	
-	<!-- 
+
+	<!--
 		In Bin:BinData remove BigEndian attribute.
 	-->
 	<xsl:template match="Bin:BinData">
@@ -809,7 +809,7 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="SA:*"/>
 	<xsl:template match="SPW:*"/>
 
@@ -854,7 +854,7 @@
 
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- Create PlateAcquisition, Remove DefaultSample -->
 	<xsl:template match="SPW:Plate">
 		<xsl:variable name="plateID">
@@ -870,10 +870,10 @@
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			
-			<xsl:for-each select="@* [not(name(.) = 'DefaultSample' or 
-				name(.) = 'Name' or name(.) = 'ColumnNamingConvention' or 
-				name(.) = 'RowNamingConvention' or name(.) = 'WellOriginX' or 
+
+			<xsl:for-each select="@* [not(name(.) = 'DefaultSample' or
+				name(.) = 'Name' or name(.) = 'ColumnNamingConvention' or
+				name(.) = 'RowNamingConvention' or name(.) = 'WellOriginX' or
 				name(.) = 'WellOriginY' or name(.) = 'Rows' or name(.) = 'Columns')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
@@ -883,7 +883,7 @@
 			<!-- Copy unchanged children -->
 			<xsl:apply-templates select="* [local-name(.)='Description']"/>
 			<xsl:apply-templates select="* [local-name(.)='ScreenRef']"/>
-			
+
 			<!-- begin copying Well (and adding WellSampleIndex) -->
 			<xsl:variable name="wellCount">
 				<xsl:value-of select="count(* [local-name(.)='Well'])"/>
@@ -899,13 +899,13 @@
 				</xsl:call-template>
 			</xsl:for-each>
 			<!-- end copying Well -->
-			
+
 			<!-- Copy unchanged children -->
 			<xsl:apply-templates select="* [local-name(.)='AnnotationRef']"/>
-			
+
 		</xsl:element>
 	</xsl:template>
-	
+
 	<!-- SPW:Well - passing values through to well sample template -->
 	<xsl:template name="convertWell">
 		<xsl:param name="wellNode"/>
@@ -969,7 +969,7 @@
 			xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-02"
 			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-02"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 
+			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02
 			http://www.openmicroscopy.org/Schemas/OME/2008-02/ome.xsd">
 			<xsl:apply-templates select="* [local-name(.) = 'Project']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'Dataset']"/>
@@ -994,7 +994,7 @@
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="SPW:*">
 		<xsl:element name="{name()}" namespace="{$newSPWNS}">
 			<xsl:apply-templates select="@*|node()"/>
