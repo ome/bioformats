@@ -1046,6 +1046,13 @@ public class MetamorphReader extends BaseTiffReader {
 
       if (getSizeC() == 1) {
         ms0.sizeC = uniqueWavelengths.size();
+
+        if (getSizeC() < getImageCount() &&
+          getSizeC() > (getImageCount() - getSizeC()) &&
+          (getImageCount() % getSizeC()) != 0)
+        {
+          ms0.sizeC = getImageCount();
+        }
       }
 
       IFDList tempIFDs = new IFDList();

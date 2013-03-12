@@ -1361,10 +1361,12 @@ public class FormatReaderTest {
         for (int i=0; i<maxFiles && success; i++) {
           // .xlog files in InCell 1000/2000 files may belong to more
           // than one dataset
-          if (file.toLowerCase().endsWith(".xdce") &&
-            !base[i].toLowerCase().endsWith(".xdce"))
-          {
-            continue;
+          if (reader.getFormat().equals("InCell 1000/2000")) {
+            if (!base[i].toLowerCase().endsWith(".xdce") &&
+              !base[i].toLowerCase().endsWith(".xml"))
+            {
+              continue;
+            }
           }
 
           // Volocity datasets can only be detected with the .mvd2 file

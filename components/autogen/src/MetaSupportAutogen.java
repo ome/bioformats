@@ -94,7 +94,7 @@ public class MetaSupportAutogen {
       supportList.setHandler(handler);
 
       for (IniTable table : data) {
-        if (table.get("reader").equals(handler + ".java")) {
+        if (table.get("reader").startsWith(handler + ".java")) {
           String formatPage = FormatPageAutogen.getPageName(
             table.get(IniTable.HEADER_KEY), table.get("pagename"));
 

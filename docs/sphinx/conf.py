@@ -194,12 +194,19 @@ rst_epilog = """
 .. _OME-XML: http://www.openmicroscopy.org/site/support/file-formats/the-ome-xml-file
 
 .. |Poor| image:: /images/crystal-1.png
+           :alt: 1 - Poor
 .. |Fair| image:: /images/crystal-2.png
+           :alt: 2 - Fair
 .. |Good| image:: /images/crystal-3.png
+           :alt: 3 - Good
 .. |Very Good| image:: /images/crystal-4.png
+                :alt: 4 - Very Good
 .. |Outstanding| image:: /images/crystal-5.png
+                  :alt: 5 - Outstanding
 .. |no| image:: /images/crystal-no.png
+         :alt: No
 .. |yes| image:: /images/crystal-yes.png
+          :alt: Yes
 
 """
 
@@ -364,4 +371,8 @@ texinfo_documents = [
 # -- Options for the linkcheck builder ----------------------------------------
 
 # Regular expressions that match URIs that should not be checked when doing a linkcheck build
-linkcheck_ignore = ['http://www.openmicroscopy.org/site/support/faq', 'http://vaa3d.org']
+linkcheck_ignore = ['http://www.openmicroscopy.org/site/support/faq',]
+
+import urllib
+brokenfiles_url = 'https://raw.github.com/openmicroscopy/sphinx-ignore-links/master/broken_links.txt'
+linkcheck_ignore.extend(urllib.urlopen(brokenfiles_url).read().splitlines())

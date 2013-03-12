@@ -106,8 +106,11 @@ public class MolecularImagingReader extends FormatReader {
     String date = null;
     double pixelSizeX = 0d, pixelSizeY = 0d;
 
-    String line = in.readLine().trim();
-    while (!line.endsWith("Data_section")) {
+    String data = in.findString("Data_section  \r\n");
+    String[] lines = data.split("\n");
+    for (String line : lines) {
+      line = line.trim();
+
       int space = line.indexOf(" ");
       if (space != -1) {
         String key = line.substring(0, space).trim();
@@ -136,8 +139,6 @@ public class MolecularImagingReader extends FormatReader {
           pixelSizeY = Double.parseDouble(value) / getSizeY();
         }
       }
-
-      line = in.readLine().trim();
     }
     pixelOffset = in.getFilePointer();
 

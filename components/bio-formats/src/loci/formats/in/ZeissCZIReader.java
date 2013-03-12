@@ -390,11 +390,20 @@ public class ZeissCZIReader extends FormatReader {
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     for (int i=0; i<planes.size(); i++) {
-      int planeSize = planes.get(i).x * planes.get(i).y * bpp;
-      byte[] pixels = planes.get(i).readPixelData();
-      if (pixels.length < planeSize || planeSize < 0) {
-        planes.remove(i);
-        i--;
+      long planeSize = (long) planes.get(i).x * planes.get(i).y * bpp;
+      if (planes.get(i).directoryEntry.compression == UNCOMPRESSED) {
+        long size = planes.get(i).dataSize;
+        if (size < planeSize || planeSize >= Integer.MAX_VALUE || size < 0) {
+          planes.remove(i);
+          i--;
+        }
+      }
+      else {
+        byte[] pixels = planes.get(i).readPixelData();
+        if (pixels.length < planeSize || planeSize >= Integer.MAX_VALUE) {
+          planes.remove(i);
+          i--;
+        }
       }
     }
 
@@ -1655,8 +1664,10 @@ public class ZeissCZIReader extends FormatReader {
 
     StringBuffer key = new StringBuffer();
     for (String k : nameStack) {
-      key.append(k);
-      key.append(" ");
+      if (!k.equals("Metadata") && (!k.endsWith("s") || k.equals(name))) {
+        key.append(k);
+        key.append("|");
+      }
     }
 
     if (root.getChildNodes().getLength() == 1) {
@@ -1899,7 +1910,7 @@ public class ZeissCZIReader extends FormatReader {
     // -- Helper methods --
 
     private void parseMetadata() throws IOException {
-      if (metadata.length() == 0) {
+      if (metadata.length() <= 16) {
         return;
       }
 
