@@ -491,7 +491,7 @@ public class NativeND2Reader extends FormatReader {
             String xmlString = XMLTools.sanitizeXML(textString);
             int start = xmlString.indexOf("<");
             int end = xmlString.lastIndexOf(">");
-            if (start >= 0 && end >= 0) {
+            if (start >= 0 && end >= 0 && end >= start) {
               xmlString = xmlString.substring(start, end + 1);
             }
 
