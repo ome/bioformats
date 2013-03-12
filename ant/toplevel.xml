@@ -918,7 +918,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- HACK - limit OS to *nix due to file permission issues -->
-  <target name="dist-bftools" if="isUnix">
+  <target name="dist-bftools" if="isUnix" description="zip the command line tools bundle">
     <echo>----------=========== bftools ===========----------</echo>
     <!--
     <zip destfile="${artifact.dir}/bftools.zip"
