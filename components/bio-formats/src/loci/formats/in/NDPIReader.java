@@ -93,6 +93,7 @@ public class NDPIReader extends BaseTiffReader {
         stream = new RandomAccessInputStream(name);
         TiffParser tiffParser = new TiffParser(stream);
         tiffParser.setDoCaching(false);
+        tiffParser.setUse64BitOffsets(stream.length() >= Math.pow(2, 32));
         if (!tiffParser.isValidHeader()) {
           return false;
         }
@@ -322,6 +323,7 @@ public class NDPIReader extends BaseTiffReader {
 
     int seriesCount = pyramidHeight + (ifds.size() - pyramidHeight * sizeZ);
 
+    long prevMarkerOffset = 0;
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
       ifd.remove(THUMB_TAG_2);
@@ -331,9 +333,15 @@ public class NDPIReader extends BaseTiffReader {
 
       if (markerTag != null) {
         if (markerTag.getValueOffset() > in.length()) {
+          long markerOffset = markerTag.getValueOffset() & 0xffffffffL;
+          if (markerOffset < prevMarkerOffset || (use64Bit && i == 0 &&
+            markerOffset < in.length() / 2))
+          {
+            markerOffset += 0x100000000L;
+          }
           markerTag = new TiffIFDEntry(markerTag.getTag(), markerTag.getType(),
-            markerTag.getValueCount(),
-            markerTag.getValueOffset() & 0xffffffffL);
+            markerTag.getValueCount(), markerOffset);
+          prevMarkerOffset = markerOffset;
         }
         Object value = tiffParser.getIFDValue(markerTag);
         ifds.get(i).putIFDValue(MARKER_TAG, value);
