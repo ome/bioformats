@@ -102,12 +102,17 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   private byte[] header;
 
+  private static boolean libraryLoaded = false;
+
   // -- Constructor --
 
   public JPEGTurboServiceImpl() {
     logger = Logger.getLogger(NATIVE_LIB_CLASS);
     logger.setLevel(Level.SEVERE);
-    NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
+    if (!libraryLoaded) {
+      NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
+      libraryLoaded = true;
+    }
   }
 
   // -- JPEGTurboService API methods --
