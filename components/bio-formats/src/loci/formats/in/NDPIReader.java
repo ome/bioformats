@@ -89,15 +89,16 @@ public class NDPIReader extends BaseTiffReader {
     boolean isThisType = super.isThisType(name, open);
     if (isThisType && open) {
       RandomAccessInputStream stream = null;
+      TiffParser parser = null;
       try {
         stream = new RandomAccessInputStream(name);
-        TiffParser tiffParser = new TiffParser(stream);
-        tiffParser.setDoCaching(false);
-        tiffParser.setUse64BitOffsets(stream.length() >= Math.pow(2, 32));
-        if (!tiffParser.isValidHeader()) {
+        parser = new TiffParser(stream);
+        parser.setDoCaching(false);
+        parser.setUse64BitOffsets(stream.length() >= Math.pow(2, 32));
+        if (!parser.isValidHeader()) {
           return false;
         }
-        IFD ifd = tiffParser.getFirstIFD();
+        IFD ifd = parser.getFirstIFD();
         return ifd.containsKey(MARKER_TAG);
       }
       catch (IOException e) {
@@ -108,6 +109,9 @@ public class NDPIReader extends BaseTiffReader {
         try {
           if (stream != null) {
             stream.close();
+          }
+          if (parser != null) {
+            parser.getStream().close();
           }
         }
         catch (IOException e) {
