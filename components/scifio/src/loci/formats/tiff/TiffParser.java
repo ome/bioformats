@@ -845,7 +845,10 @@ public class TiffParser {
               in.skipBytes(x * bpp);
               in.read(buf, offset, len);
               offset += len;
-              in.skipBytes((int) (bpp * (tileWidth - x - width)));
+              int skip = (int) (bpp * (tileWidth - x - width));
+              if (skip + in.getFilePointer() < in.length()) {
+                in.skipBytes(skip);
+              }
             }
           }
         }
