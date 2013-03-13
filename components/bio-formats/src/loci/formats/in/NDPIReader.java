@@ -144,7 +144,10 @@ public class NDPIReader extends BaseTiffReader {
       tiffParser = new TiffParser(in);
       tiffParser.setUse64BitOffsets(true);
       tiffParser.setYCbCrCorrection(false);
-      return tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
+      byte[] b = tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
+      in.close();
+      tiffParser.getStream().close();
+      return b;
     }
 
     if (initializedSeries != getCoreIndex() || initializedPlane != no) {
@@ -228,14 +231,17 @@ public class NDPIReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    super.close(fileOnly);
     if (!fileOnly) {
       service.close();
       initializedSeries = -1;
       initializedPlane = -1;
       sizeZ = 1;
       pyramidHeight = 1;
+      if (tiffParser != null) {
+        tiffParser.getStream().close();
+      }
     }
+    super.close(fileOnly);
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
