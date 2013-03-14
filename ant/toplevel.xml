@@ -113,7 +113,9 @@ Type "ant -p" for a list of targets.
       clean-scifio,
       clean-scifio-devel,
       clean-scifio-tools,
-      clean-tests"
+      clean-specification,
+      clean-tests,
+      clean-xsd-fu"
     description="remove all build files">
     <delete dir="${artifact.dir}"/>
     <delete dir="build"/>
@@ -915,6 +917,18 @@ Type "ant -p" for a list of targets.
       </manifest>
     </jar>
     <delete dir="${ome-tools.dir}"/>
+  </target>
+
+  <!-- Xsd-Fu -->
+  <target name="clean-xsd-fu"
+    description="remove build files for Xsd-Fu">
+    <ant dir="components/xsd-fu" target="xsd-fu.clean"/>
+  </target>
+
+  <!-- Specification -->
+  <target name="clean-specification"
+    description="remove build files for Specification">
+    <ant dir="components/specification" target="specification.clean"/>
   </target>
 
   <!-- HACK - limit OS to *nix due to file permission issues -->

@@ -1,0 +1,3 @@
+        <required name="bitsize" type="Integer"/>
+        <required name="issigned" type="Boolean"/>
+        <required name="isfloat" type="Boolean"/>
