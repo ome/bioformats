@@ -828,7 +828,12 @@ public class TiffParser {
             byteCount *= pixel;
           }
 
-          in.seek(stripOffsets[tile]);
+          if (stripOffsets[tile] < in.length()) {
+            in.seek(stripOffsets[tile]);
+          }
+          else {
+            continue;
+          }
 
           if (width == tileWidth && height == imageLength) {
             // we want to entire tile, so just read the whole thing directly
@@ -840,14 +845,19 @@ public class TiffParser {
             // we only want a piece of the tile, so read each row separately
             // this is especially necessary for large single-tile images
             int bpp = ifd.getBitsPerSample()[0] / 8;
-            int len = (int) Math.min(buf.length - offset, width * bpp);
             for (int row=0; row<height; row++) {
               in.skipBytes(x * bpp);
-              in.read(buf, offset, len);
-              offset += len;
-              int skip = (int) (bpp * (tileWidth - x - width));
-              if (skip + in.getFilePointer() < in.length()) {
-                in.skipBytes(skip);
+              int len = (int) Math.min(buf.length - offset, width * bpp);
+              if (len > 0) {
+                in.read(buf, offset, len);
+                offset += len;
+                int skip = (int) (bpp * (tileWidth - x - width));
+                if (skip + in.getFilePointer() < in.length()) {
+                  in.skipBytes(skip);
+                }
+              }
+              else {
+                break;
               }
             }
           }
