@@ -1,6 +1,7 @@
 .classpath
 .project
 .settings
+.DS_Store
 BioFormats Unit Tests
 IO_Tests
 Missing JAI ImageIO Service Tests
