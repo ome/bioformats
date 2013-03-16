@@ -116,8 +116,10 @@ Type "ant -p" for a list of targets.
       clean-scifio,
       clean-scifio-devel,
       clean-scifio-tools,
+      clean-specification,
       clean-tests,
-      clean-turbojpeg"
+      clean-turbojpeg,
+      clean-xsd-fu"
     description="remove all build files">
     <delete dir="${artifact.dir}"/>
     <delete dir="build"/>
@@ -956,8 +958,20 @@ Type "ant -p" for a list of targets.
     <delete dir="${ome-tools.dir}"/>
   </target>
 
+  <!-- Xsd-Fu -->
+  <target name="clean-xsd-fu"
+    description="remove build files for Xsd-Fu">
+    <ant dir="components/xsd-fu" target="xsd-fu.clean"/>
+  </target>
+
+  <!-- Specification -->
+  <target name="clean-specification"
+    description="remove build files for Specification">
+    <ant dir="components/specification" target="specification.clean"/>
+  </target>
+
   <!-- HACK - limit OS to *nix due to file permission issues -->
-  <target name="dist-bftools" if="isUnix">
+  <target name="dist-bftools" if="isUnix" description="zip the command line tools bundle">
     <echo>----------=========== bftools ===========----------</echo>
     <!--
     <zip destfile="${artifact.dir}/bftools.zip"
@@ -975,6 +989,13 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- Matlab -->
+  <target name="dist-matlab" if="isUnix" description="zip the Matlab functions bundle">
+    <echo>----------=========== bfmatlab ===========----------</echo>
+    <zip destfile="${artifact.dir}/bfmatlab.zip">
+      <zipfileset dir="${root.dir}/components/bio-formats/matlab" includes="**/*"/>
+    </zip>
+  </target>
+
   <target name="test-matlab" description="run Matlab tests"
 	depends="tools">
 
