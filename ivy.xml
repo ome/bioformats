@@ -14,6 +14,7 @@
     <artifact name="ome-xml"/>
     <artifact name="poi-loci"/>
     <artifact name="scifio"/>
+    <artifact name="turbojpeg"/>
   </publications>
   <dependencies defaultconfmapping="build,runtime->default">
     <!-- Internal -->
@@ -25,7 +26,6 @@
     <dependency org="bf-deps" name="grib" rev="5.1.03"/>
     <dependency org="bf-deps" name="netcdf" rev="4.0"/>
     <dependency org="bf-deps" name="native-lib-loader" rev="2.0-SNAPSHOT"/>
-    <dependency org="bf-deps" name="turbojpeg" rev="1.2.1"/>
     <dependency org="bf-deps" name="assumeng" rev="1.2.3"/>
   </dependencies>
 </ivy-module>
