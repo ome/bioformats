@@ -1406,6 +1406,13 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Hamamatsu VMS datasets cannot be detected with non-.vms files
+          if (reader.getFormat().equals("Hamamatsu VMS") &&
+            !base[i].toLowerCase().endsWith(".vms"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -1916,7 +1923,8 @@ public class FormatReaderTest {
               continue;
             }
 
-            if (result && r instanceof BDReader && readers[j] instanceof BMPReader)
+            if (result && r instanceof BDReader &&
+              readers[j] instanceof BMPReader)
             {
               continue;
             }
@@ -1977,6 +1985,22 @@ public class FormatReaderTest {
             if ((readers[j] instanceof NDPISReader ||
               r instanceof NDPISReader) &&
               used[i].toLowerCase().endsWith(".ndpi"))
+            {
+              continue;
+            }
+
+            // the JPEG reader can pick up JPEG files associated with a
+            // Hamamatsu VMS dataset
+            if (readers[j] instanceof JPEGReader &&
+              r instanceof HamamatsuVMSReader &&
+              used[i].toLowerCase().endsWith(".jpg"))
+            {
+              continue;
+            }
+
+            // the Hamamatsu VMS reader only picks up its .vms file
+            if (!result && !used[i].toLowerCase().endsWith(".vms") &&
+              r instanceof HamamatsuVMSReader)
             {
               continue;
             }
