@@ -95,13 +95,13 @@ public class HamamatsuVMSReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    return 2048;
+    return 256;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return 2048;
+    return 256;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
