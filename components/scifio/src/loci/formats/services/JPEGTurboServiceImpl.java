@@ -146,7 +146,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     int marker = in.readShort() & 0xffff;
 
     boolean inImage = false;
-    while (marker != EOI && in.getFilePointer() + 2 < in.length()) {
+    while (!inImage && in.getFilePointer() + 2 < in.length()) {
       int length = in.readShort() & 0xffff;
       long end = in.getFilePointer() + length - 2;
 
@@ -172,18 +172,36 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
           break;
         }
       }
-      else if (marker >= RST0 && marker <= RST7) {
-        restartMarkers.add(in.getFilePointer() - 2);
-        in.skipBytes(restartInterval * 2);
-      }
 
       if (end < in.length() && !inImage) {
         in.seek(end);
+        marker = in.readShort() & 0xffff;
       }
-      else if (inImage) {
-        in.seek(in.getFilePointer() - 3);
+    }
+
+    if (restartMarkers.size() == 1) {
+      in.seek(restartMarkers.get(0));
+
+      byte[] buf = new byte[10 * 1024 * 1024];
+      in.read(buf, 0, 4);
+
+      while (in.getFilePointer() < in.length()) {
+        int n = in.read(buf, 4,
+          (int) Math.min(buf.length - 4, in.length() - in.getFilePointer()));
+        n += 4;
+
+        for (int i=0; i<n-1; i++) {
+          marker = DataTools.bytesToShort(buf, i, 2, false) & 0xffff;
+          if (marker >= RST0 && marker <= RST7) {
+            restartMarkers.add(in.getFilePointer() - n + i + 2);
+            i += restartInterval;
+          }
+        }
+
+        // refill buffer
+
+        System.arraycopy(buf, n - 4, buf, 0, 4);
       }
-      marker = in.readShort() & 0xffff;
     }
 
     tileDim = restartInterval * 8;
