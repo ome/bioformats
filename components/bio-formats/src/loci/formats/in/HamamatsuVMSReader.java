@@ -137,7 +137,6 @@ public class HamamatsuVMSReader extends FormatReader {
       return buf;
     }
 
-    RandomAccessInputStream s = new RandomAccessInputStream(file);
     try {
       if (initializedSeries != getCoreIndex() || initializedPlane != no) {
         service.close();
@@ -147,6 +146,8 @@ public class HamamatsuVMSReader extends FormatReader {
         else {
           service.setRestartMarkers(null);
         }
+        // closing the service will close this file
+        RandomAccessInputStream s = new RandomAccessInputStream(file);
         service.initialize(s, getSizeX(), getSizeY());
         restartMarkers.put(file, service.getRestartMarkers());
 
@@ -158,9 +159,6 @@ public class HamamatsuVMSReader extends FormatReader {
     }
     catch (ServiceException e) {
       throw new FormatException(e);
-    }
-    finally {
-      s.close();
     }
 
     return buf;

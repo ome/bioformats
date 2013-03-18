@@ -342,6 +342,9 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     logger = null;
     imageWidth = 0;
     imageHeight = 0;
+    if (in != null) {
+      in.close();
+    }
     in = null;
     offset = 0;
     restartMarkers.clear();
