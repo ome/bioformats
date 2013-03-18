@@ -24,27 +24,27 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2012-06"
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2012-06"
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2013-06"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06"
-	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1"
 	elementFormDefault="qualified">
 	<!-- Using the svn location for import
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ROI.xsd"/>
 	Using the local directory location for import -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" schemaLocation="SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2012-06" schemaLocation="ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06" schemaLocation="BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2013-06" schemaLocation="SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-06" schemaLocation="SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2013-06" schemaLocation="ROI.xsd"/>
 	<!-- -->
 
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
