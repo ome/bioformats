@@ -51,6 +51,7 @@ import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.Memoizer;
 import loci.formats.MinMaxCalculator;
 
 import org.testng.annotations.DataProvider;
@@ -76,7 +77,8 @@ public class WrapperTest {
       {new DimensionSwapper()},
       {new FileStitcher()},
       {new ImageReader()},
-      {new MinMaxCalculator()}
+      {new MinMaxCalculator()},
+      {new Memoizer()}
     };
     for (int i=0; i<wrappers.length; i++) {
       IFormatReader reader = (IFormatReader) wrappers[i][0];
