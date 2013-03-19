@@ -55,6 +55,18 @@
 
 	<!-- Actual schema changes -->
 
+	<!-- strip Integration -->
+	<xsl:template match="OME:DetectorSettings">
+		<xsl:element name="OME:DetectorSettings" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name() = 'Integration')]">
+				<xsl:attribute name="{local-name(.)}">
+				<xsl:value-of select="."/>
+			</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>	
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">

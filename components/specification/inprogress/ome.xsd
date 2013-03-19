@@ -2261,6 +2261,14 @@
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>
+					<xsd:attribute name="Integration" use="optional" type="PositiveInt">
+						<xsd:annotation>
+							<xsd:documentation>
+								This is the number of sequential frames that get averaged,
+								to improve the signal-to-noise ratio. [units:none] {used:CCD,EMCCD}
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
