@@ -78,54 +78,52 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:choice>
-				<!-- Either: standard expected elements -->
-				<xsd:sequence>
-					<xsd:element ref="Project" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="Dataset" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="Experiment" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="SPW:Plate" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="SPW:Screen" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="Experimenter" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="ExperimenterGroup" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
-					<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
-				</xsd:sequence>
-				<!-- Or: Single BinaryOnly element -->
-				<xsd:element name="BinaryOnly" minOccurs="1" maxOccurs="1">
-					<xsd:annotation>
-						<xsd:documentation>
-							Pointer to an external metadata file. If this element is
-							present, then no other metadata may be present in this file,
-							i.e. this file is a place-holder.
-						</xsd:documentation>
-					</xsd:annotation>
-					<xsd:complexType>
-						<xsd:attribute name="MetadataFile" type="xsd:string" use="required">
-							<xsd:annotation>
-								<xsd:documentation>
-									Filename of the OME-XML metadata file for this
-									binary data. If the file cannot be found, a search can be
-									performed based on the UUID.
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:attribute>
-						<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="required">
-							<xsd:annotation>
-								<xsd:documentation>
-									The unique identifier of another OME-XML block
-									whose metadata describes the binary data in this file. This UUID
-									is considered authoritative regardless of mismatches in the
-									filename.
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:attribute>
-					</xsd:complexType>
-				</xsd:element>
-				<!-- End of MetadataOnly Element -->
-			</xsd:choice>
+			<xsd:sequence>
+				<xsd:element ref="Rights" minOccurs="0" maxOccurs="1"/>
+				<xsd:choice>
+					<!-- Either: standard expected elements -->
+					<xsd:sequence>
+						<xsd:element ref="Project" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="Dataset" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="Experiment" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="SPW:Plate" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="SPW:Screen" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="Experimenter" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="ExperimenterGroup" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
+						<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+					<!-- Or: Single BinaryOnly element -->
+					<xsd:element name="BinaryOnly" minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation> Pointer to an external metadata file. If this
+								element is present, then no other metadata may be present in this
+								file, i.e. this file is a place-holder. </xsd:documentation>
+						</xsd:annotation>
+						<xsd:complexType>
+							<xsd:attribute name="MetadataFile" type="xsd:string" use="required">
+								<xsd:annotation>
+									<xsd:documentation> Filename of the OME-XML metadata file for
+										this binary data. If the file cannot be found, a search can
+										be performed based on the UUID. </xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+							<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier"
+								use="required">
+								<xsd:annotation>
+									<xsd:documentation> The unique identifier of another OME-XML
+										block whose metadata describes the binary data in this file.
+										This UUID is considered authoritative regardless of
+										mismatches in the filename. </xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+						</xsd:complexType>
+					</xsd:element>
+					<!-- End of MetadataOnly Element -->
+				</xsd:choice>
+			</xsd:sequence>
 			<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -2023,6 +2021,44 @@
 					<xsd:attribute name="ID" use="required" type="LightSourceID"/>
 				</xsd:extension>
 			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="Rights"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Rights</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				The rights holder of this data and the rights held.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="RightsHolder" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> The rights holder for this data. [plane text multi-line string]
+							e.g. "Copyright (C) 2002-2013 Open Microscopy Environment"
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="RightsHeld" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> 
+							The rights held by the rights holder. [plane text multi-line string] 
+							e.g. "All rights reserved" or "Creative Commons Attribution 3.0 Unported License"
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
 

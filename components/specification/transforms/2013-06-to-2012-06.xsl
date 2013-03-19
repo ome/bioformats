@@ -79,6 +79,23 @@
 		</xsl:element>
 	</xsl:template>	
 	
+	<!-- strip Rights and turn into comments -->
+	<xsl:template match="OME:Rights">
+		<xsl:for-each select="* [name() = 'RightsHolder']">
+			<xsl:comment>
+Rights Holder: 
+<xsl:value-of select="."/>
+			</xsl:comment>
+		</xsl:for-each>	
+		<xsl:for-each select="* [name() = 'RightsHeld']">
+			<xsl:comment>
+Rights Held: 
+<xsl:value-of select="."/>
+			</xsl:comment>
+		</xsl:for-each>	
+	</xsl:template>	
+	
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
