@@ -297,7 +297,7 @@
 			<xsd:documentation>
 				NOTE: Pixels is DEPRECATED, but it is still required.
 				This is just notice that the contents of Pixels will be
-				moved up to Image in the next release. This is because there
+				moved up to Image in a future release. This is because there
 				has only been 1 Pixels object in each Image for some time.
 				The concept of multiple Pixels sets for one Image failed to
 				take off. It is therefore redundant.
@@ -350,6 +350,16 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The variable type used to represent each pixel in the image.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="SignificantBits" use="optional" type="PositiveInt">
+				<xsd:annotation>
+					<xsd:documentation>
+						The number of bits within the type storing each pixel that are significant.
+						e.g. you can store 12 bit data within a 16 bit type.
+						This does not reduce the storage requirements but can be a useful indicator
+						when processing or viewing the image data.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>

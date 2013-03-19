@@ -60,13 +60,25 @@
 		<xsl:element name="OME:DetectorSettings" namespace="{$newOMENS}">
 			<xsl:for-each select="@* [not(name() = 'Integration' or name() = 'Zoom')]">
 				<xsl:attribute name="{local-name(.)}">
-				<xsl:value-of select="."/>
-			</xsl:attribute>
+					<xsl:value-of select="."/>
+				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>	
-
+	
+	<!-- strip Integration and Zoom -->
+	<xsl:template match="OME:Pixels">
+		<xsl:element name="OME:Pixels" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name() = 'SignificantBits')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>	
+	
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
