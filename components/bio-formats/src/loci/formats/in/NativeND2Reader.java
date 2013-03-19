@@ -1640,6 +1640,15 @@ public class NativeND2Reader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
+
+      // set the channel color
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        int red = colors[c] & 0xff;
+        int green = (colors[c] & 0xff00) >> 8;
+        int blue = (colors[c] & 0xff0000) >> 16;
+        int alpha = (colors[c] & 0xff000000) >> 24;
+        store.setChannelColor(new Color(red, green, blue, alpha), i, c);
+      }
     }
 
     // populate Dimensions data
