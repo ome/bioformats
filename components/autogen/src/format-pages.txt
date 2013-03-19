@@ -879,6 +879,21 @@ reader = ImprovisionTiffReader.java
 notes = .. seealso:: \n
   `Openlab software overview <http://www.improvision.com/products/openlab/>`_
 
+[Imspector OBF]
+extensions = .obf, .msr
+owner = `MPI-BPC <http://www.mpibpc.mpg.de/>`
+developer = `Department of NanoBiophotonics, MPI-BPC <https://imspector.mpibpc.mpg.de/index.html>`
+scifio = yes
+export = no
+weHave = * a few .msr datasets \n
+* `a specification document <https://imspector.mpibpc.mpg.de/documentation/fileformat.html>`
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Very good
+presenceRating = Poor
+utilityRating = Fair
+reader = OBFReader.java
+
 [InCell 1000]
 extensions = .xdce, .tif
 developer = `GE <http://gelifesciences.com/>`_

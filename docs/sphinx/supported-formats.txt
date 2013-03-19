@@ -448,6 +448,15 @@ Supported Formats
      - |Good|
      - |no|
      - |no|
+   * - :doc:`formats/imspector-obf`
+     - .obf, .msr
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |yes|
    * - :doc:`formats/incell-1000`
      - .xdce, .tif
      - |Very good|
@@ -1178,7 +1187,7 @@ Supported Formats
      - |no|
      - |no|
 
-Bio-Formats currently supports **128** formats
+Bio-Formats currently supports **129** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1289,6 +1298,7 @@ Bio-Formats currently supports **128** formats
     formats/improvision-openlab-liff
     formats/improvision-openlab-raw
     formats/improvision-tiff
+    formats/imspector-obf
     formats/incell-1000
     formats/incell-3000
     formats/inr

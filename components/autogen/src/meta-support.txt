@@ -1405,6 +1405,36 @@ Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
 
+[InveonReader]
+Channel.ID = Yes
+Channel.SamplesPerPixel = Yes
+Experiment.erID = Yes
+Experiment.erInstitution = Yes
+Experiment.erUserName = Yes
+Image.AcquisitionDate = Yes
+Image.Description = Yes
+Image.ExperimenterRef = Yes
+Image.ID = Yes
+Image.InstrumentRef = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+Microscope.Model = Yes
+Pixels.BinDataBigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
+Pixels.PhysicalSizeX = Yes
+Pixels.PhysicalSizeY = Yes
+Pixels.PhysicalSizeZ = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
 [IPLabReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
@@ -3027,6 +3057,36 @@ Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
 
+[SlidebookTiffReader]
+Channel.ID = Yes
+Channel.Name = Yes
+Channel.SamplesPerPixel = Yes
+Image.AcquisitionDate = Yes
+Image.ID = Yes
+Image.Name = Yes
+Instrument.ID = Yes
+Objective.Correction = Yes
+Objective.ID = Yes
+Objective.Immersion = Yes
+Objective.NominalMagnification = Yes
+Pixels.BinDataBigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
+Pixels.PhysicalSizeX = Yes
+Pixels.PhysicalSizeY = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
+Plane.PositionX = Yes
+Plane.PositionY = Yes
+Plane.PositionZ = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
 [SMCameraReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
@@ -4129,6 +4189,25 @@ Pixels.ID = Yes
 Pixels.PhysicalSizeX = Yes
 Pixels.PhysicalSizeY = Yes
 Pixels.PhysicalSizeZ = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[OBFReader]
+Channel.ID = Yes
+Channel.SamplesPerPixel = Yes
+Image.AcquisitionDate = Yes
+Image.ID = Yes
+Image.Name = Yes
+Pixels.BinDataBigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
 Pixels.SizeC = Yes
 Pixels.SizeT = Yes
 Pixels.SizeX = Yes
