@@ -527,7 +527,7 @@ public class NativeND2Reader extends FormatReader {
 
             // only accept the Z and T sizes from the text annotations
             // if both values were set
-            if (core[0].sizeZ == 0) {
+            if (core[0].sizeZ == 0 && getSizeT() != imageOffsets.size()) {
               core[0].sizeT = 0;
             }
 
