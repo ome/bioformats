@@ -55,10 +55,10 @@
 
 	<!-- Actual schema changes -->
 
-	<!-- strip Integration -->
+	<!-- strip Integration and Zoom -->
 	<xsl:template match="OME:DetectorSettings">
 		<xsl:element name="OME:DetectorSettings" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'Integration')]">
+			<xsl:for-each select="@* [not(name() = 'Integration' or name() = 'Zoom')]">
 				<xsl:attribute name="{local-name(.)}">
 				<xsl:value-of select="."/>
 			</xsl:attribute>

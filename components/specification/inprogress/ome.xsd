@@ -1475,6 +1475,8 @@
 			<xsd:documentation>
 				The type of detector used to capture the image.
 				The Detector ID can be used as a reference within the Channel element in the Image element.
+				The values stored in Detector represent the fixed values,
+				variable values modified during the acquisition go in DetectorSettings
 
 				Each attribute now has an indication of what type of detector
 				it applies to. This is preparatory work for cleaning up and
@@ -1508,7 +1510,7 @@
 					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units:none] {used:PMT}
+								The fixed Zoom for a detector. [units:none] {used:PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2205,6 +2207,8 @@
 				This holds the setting applied to a detector as well as a
 				reference to the detector.
 				The ID is the detector used in this case.
+				The values stored in DetectorSettings represent the variable values,
+				fixed values not modified during the acquisition go in Detector.
 
 				Each attribute now has an indication of what type of detector
 				it applies to. This is preparatory work for cleaning up and
@@ -2233,6 +2237,13 @@
 						<xsd:annotation>
 							<xsd:documentation>
 								The Voltage of the detector. volts[V] {used:PMT}
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
+						<xsd:annotation>
+							<xsd:documentation>
+								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units:none] {used:PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>

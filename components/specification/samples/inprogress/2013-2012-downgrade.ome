@@ -60,9 +60,7 @@
 					ReadOutRate="3200" Voltage="120" Integration="4"/>
 				<LightPath>
 					<ExcitationFilterRef ID="Filter:3"/>
-					<!-- Was SecondaryExcitationFilter-->
 					<EmissionFilterRef ID="Filter:2"/>
-					<!-- Was SecondaryEmissionFilter-->
 				</LightPath>
 			</Channel>
 			<Bin:BinData BigEndian="false" Length="32"
