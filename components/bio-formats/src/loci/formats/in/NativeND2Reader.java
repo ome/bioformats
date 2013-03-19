@@ -511,6 +511,24 @@ public class NativeND2Reader extends FormatReader {
           catch (IOException e) {
             LOGGER.debug("Could not parse XML", e);
 
+            String[] lines = textString.split("\n");
+            ND2Handler handler = new ND2Handler(core, imageOffsets.size());
+            for (String line : lines) {
+              int separator = line.indexOf(":");
+              if (separator >= 0) {
+                String key = line.substring(0, separator).trim();
+                String value = line.substring(separator + 1).trim();
+                handler.parseKeyAndValue(key, value, null);
+              }
+            }
+            core = handler.getCoreMetadata();
+
+            // only accept the Z and T sizes from the text annotations
+            // if both values were set
+            if (core[0].sizeZ == 0 && getSizeT() != imageOffsets.size()) {
+              core[0].sizeT = 0;
+            }
+
             textString = sanitizeControl(textString);
 
             String[] lines = textString.split(" ");
