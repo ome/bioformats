@@ -1446,7 +1446,7 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-					<xsd:attribute name="NominalMagnification" use="optional" type="PositiveInt">
+					<xsd:attribute name="NominalMagnification" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
 								The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens. [units:none]

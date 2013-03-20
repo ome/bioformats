@@ -78,7 +78,28 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>	
+
+	<!-- strip NominalMagnification ONLY if it is not an integer -->
+	<xsl:template match="OME:Objective">
+		<xsl:element name="OME:Objective" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name() = 'NominalMagnification')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:variable name="theValue" select="@NominalMagnification"/>
+			<xsl:for-each select="@* [name() = 'NominalMagnification']">
+				<xsl:if test="$theValue=round($theValue)">
+					<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="."/>
+					</xsl:attribute>
+				</xsl:if>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>	
 	
+
 	<!-- strip Rights and turn into comments -->
 	<xsl:template match="OME:Rights">
 		<xsl:for-each select="* [name() = 'RightsHolder']">
