@@ -61,7 +61,7 @@
 			<TransmittanceRange CutIn="560" CutOut="630" CutInTolerance="25" CutOutTolerance="30"
 				Transmittance="0.8"/>
 		</Filter>
-		<Filter ID="Filter:2" Manufacturer="OME Filters" Model="Delux Mk5" Type="BandPass">
+		<Filter ID="Filter:2" Manufacturer="OME Filters" Model="Delux Mk5" Type="Tuneable">
 			<TransmittanceRange CutIn="562" CutOut="633" CutInTolerance="11" CutOutTolerance="23"
 				Transmittance="0.5"/>
 		</Filter>

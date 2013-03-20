@@ -1605,7 +1605,7 @@
 				It is based on the FilterSpec type, so has the required attributes Manufacturer, Model, and LotNumber.
 				It may also contain a Type attribute which may be set to
 				'LongPass', 'ShortPass', 'BandPass', 'MultiPass',
-				'Dichroic', 'NeutralDensity', or 'Other'.
+				'Dichroic', 'NeutralDensity', 'Tuneable' or 'Other'.
 				It can be associated with an optional FilterWheel - Note: this is not the same as a FilterSet
 			</xsd:documentation>
 		</xsd:annotation>
@@ -1624,6 +1624,7 @@
 								<xsd:enumeration value="BandPass"/>
 								<xsd:enumeration value="MultiPass"/>
 								<xsd:enumeration value="NeutralDensity"/>
+								<xsd:enumeration value="Tuneable"/>
 								<xsd:enumeration value="Other"/>
 							</xsd:restriction>
 						</xsd:simpleType>
