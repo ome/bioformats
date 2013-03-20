@@ -27,6 +27,7 @@
 			      http://www.openmicroscopy.org/info/attribution
 		</RightsHeld>
 	</Rights>
+	<Experimenter ID="Experimenter:1" FirstName="Joe" LastName="Bloggs"/>
 	<Instrument ID="Instrument:0">
 		<Microscope Type="Inverted" Manufacturer="OME Insturuments" Model="Lab Mk3"
 			SerialNumber="L3-1234"/>
@@ -89,5 +90,39 @@
 			<Bin:BinData BigEndian="false" Length="32"
 				>/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
 		</Pixels>
+		<SA:AnnotationRef ID="Annotation:1"/>
+		<SA:AnnotationRef ID="Annotation:2"/>
 	</Image>
+	<SA:StructuredAnnotations>
+		<SA:BooleanAnnotation ID="Annotation:1" Annotator="Experimenter:1">
+			<SA:Value>true</SA:Value>
+		</SA:BooleanAnnotation>
+		<SA:DoubleAnnotation ID="Annotation:2" Annotator="Experimenter:1">
+			<SA:Value>1.3</SA:Value>
+		</SA:DoubleAnnotation>
+		<SA:FileAnnotation ID="Annotation:3" Annotator="Experimenter:1">
+			<Bin:BinaryFile FileName="dummy.file" Size="123">
+				<Bin:External href="dummy.file" SHA1="4E436351486B6F7A416A6E4446464B6D56726263"/>
+			</Bin:BinaryFile>
+		</SA:FileAnnotation>
+		<SA:ListAnnotation ID="Annotation:4" Annotator="Experimenter:1">
+			<SA:AnnotationRef ID="Annotation:6"/>
+			<SA:AnnotationRef ID="Annotation:7"/>
+		</SA:ListAnnotation>
+		<SA:LongAnnotation ID="Annotation:5" Annotator="Experimenter:1">
+			<SA:Value>12345</SA:Value>
+		</SA:LongAnnotation>
+		<SA:TermAnnotation ID="Annotation:6" Annotator="Experimenter:1">
+			<SA:Value>Term1</SA:Value>
+		</SA:TermAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:7" Annotator="Experimenter:1">
+			<SA:Value>2010-02-23T12:51:30</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TagAnnotation ID="Annotation:8" Annotator="Experimenter:1">
+			<SA:Value>Tag8</SA:Value>
+		</SA:TagAnnotation>
+		<SA:XMLAnnotation ID="Annotation:9" Annotator="Experimenter:1">
+			<SA:Value></SA:Value>
+		</SA:XMLAnnotation>
+	</SA:StructuredAnnotations>
 </OME>

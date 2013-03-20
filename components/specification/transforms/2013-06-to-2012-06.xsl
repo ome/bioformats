@@ -124,10 +124,22 @@
 		</xsl:element>
 	</xsl:template>	
 	
-	<!-- strip Integration and Zoom -->
+	<!-- strip SignificantBits -->
 	<xsl:template match="OME:Pixels">
 		<xsl:element name="OME:Pixels" namespace="{$newOMENS}">
 			<xsl:for-each select="@* [not(name() = 'SignificantBits')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>	
+
+	<!-- strip Annotator from all child nodes of StructuredAnnotations -->
+	<xsl:template match="SA:*[@Annotator]">
+		<xsl:element name="{name()}" namespace="{$newSANS}">
+			<xsl:for-each select="@* [not(name() = 'Annotator')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>

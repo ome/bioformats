@@ -173,7 +173,8 @@
 		<xsd:key name="WellSampleIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ROIIDKey"><xsd:selector xpath="ROI:ROI"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ShapeIDKey"><xsd:selector xpath="ROI:ROI/ROI:Union/ROI:Shape"/><xsd:field xpath="@ID"/></xsd:key>
-
+		<xsd:key name="AnnotationIDKey"><xsd:selector xpath="SA:StructuredAnnotations/*"/><xsd:field xpath="@ID"/></xsd:key>
+		
 		<!-- Unique references -->
 		<xsd:key name="WellSampleImageRefIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample/OME:ImageRef"/><xsd:field xpath="@ID"/></xsd:key>
 
@@ -215,6 +216,9 @@
 		<xsd:keyref name="ScreenScreenAcquisitionWellSampleIDKeyRef" refer="OME:WellSampleIDKey" ><xsd:selector xpath="SPW:Screen/SPW:ScreenAcquisition/SPW:WellSampleRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ExperimentMicrobeamManipulationROIIDKeyRef" refer="OME:ROIIDKey" ><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation/ROI:ROIRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImageROIIDKeyRef" refer="OME:ROIIDKey" ><xsd:selector xpath="OME:Image/ROI:ROIRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="AnnotationRefAnnotationIDKeyRef" refer="OME:AnnotationIDKey"><xsd:selector xpath=".//SA:AnnotationRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="AnnotationAnnotatorExperimenterIDKeyRef" refer="OME:ExperimenterIDKey"><xsd:selector xpath="SA:StructuredAnnotations/*"/><xsd:field xpath="@Annotator"/></xsd:keyref>
+
 	</xsd:element>
 
 	<!-- Key pixel storage elements -->

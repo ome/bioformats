@@ -142,6 +142,15 @@
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
+		<xsd:attribute name="Annotator" use="optional" type="OME:ExperimenterID">
+			<xsd:annotation>
+				<xsd:documentation>
+					The Annotator is the person who attached this annotation.
+					e.g. If UserA attached a tag annotation to the TagB owned
+						 by UserB, UserA is still the Annotator.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 	<xsd:simpleType name="AnnotationID">
 		<xsd:restriction base="OME:LSID">
