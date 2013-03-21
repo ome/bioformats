@@ -42,7 +42,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
@@ -51,6 +50,8 @@ import org.slf4j.LoggerFactory;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.JavaSerializer;
+import com.esotericsoftware.shaded.org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  * {@link ReaderWrapper} implementation which caches the state of the
@@ -66,7 +67,7 @@ public class Memoizer extends ReaderWrapper {
    * cached items. This should happen when the order and type of objects stored
    * in the memo file changes.
    */
-  public static Integer VERSION = 1; 
+  public static Integer VERSION = 1;
 
   private static final Logger LOGGER =
     LoggerFactory.getLogger(Memoizer.class);
@@ -100,7 +101,7 @@ public class Memoizer extends ReaderWrapper {
 
       if (memo == null) {
         super.setId(id);
-        saveMemo();        
+        saveMemo();
       } else {
         reader = memo;
       }
@@ -118,14 +119,19 @@ public class Memoizer extends ReaderWrapper {
    * @return a non-null {@link Kryo} instance.
    */
   protected Kryo getKryo() {
-    Kryo kryo = new Kryo();
+    Kryo kryo = new Kryo() {
+        public void writeClassAndObject(Output o, Object obj) {
+            LOGGER.warn("writeClassAndObject: {}", obj);
+            super.writeClassAndObject(o, obj);
+        }
+    };
     kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
     return kryo;
   }
 
   protected Slf4JStopWatch stopWatch() {
       return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
-  }      
+  }
 
   /**
    * Constructs a {@link File} object from setId string. This method can be
@@ -191,6 +197,7 @@ public class Memoizer extends ReaderWrapper {
       // Check flags
       // Check wrappers
       // DataV1 class?
+      // Handle exceptions on read/write. possibly deleting.
       LOGGER.debug("loaded memo file: {} ({} bytes)",
         memoFile, memoFile.length());
       return copy;

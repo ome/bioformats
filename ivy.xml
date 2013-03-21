@@ -27,5 +27,6 @@
     <dependency org="bf-deps" name="native-lib-loader" rev="2.0-SNAPSHOT"/>
     <dependency org="bf-deps" name="assumeng" rev="1.2.4"/>
     <dependency org="bf-deps" name="perf4j" rev="0.9.13"/>
+    <dependency org="bf-deps" name="kryo" rev="2.21-shaded"/>
   </dependencies>
 </ivy-module>
