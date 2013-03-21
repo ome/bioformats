@@ -114,7 +114,7 @@
 					<xsd:element ref="Polygon" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Label" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
-				<xsd:element name="Transform" type="AffineTransform" minOccurs="0" maxOccurs="1">
+				<xsd:element name="Transform" type="OME:AffineTransform" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
 							This is a matrix used to transform the shape.
@@ -538,26 +538,6 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-
-
-	<xsd:complexType name="AffineTransform">
-		<xsd:annotation>
-			<xsd:documentation>
-				This is a matrix used to transform the shape.
-				--             --
-				| A00, A01, A02 |
-				| A10, A11, A12 |
-				| 0,   0,   1   |
-				--             --
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:attribute name="A00" use="required" type="xsd:float"/>
-		<xsd:attribute name="A10" use="required" type="xsd:float"/>
-		<xsd:attribute name="A01" use="required" type="xsd:float"/>
-		<xsd:attribute name="A11" use="required" type="xsd:float"/>
-		<xsd:attribute name="A02" use="required" type="xsd:float"/>
-		<xsd:attribute name="A12" use="required" type="xsd:float"/>
-	</xsd:complexType>
 
 	<xsd:simpleType name="ROIID"> <!-- top level definition -->
 		<xsd:restriction base="OME:LSID">

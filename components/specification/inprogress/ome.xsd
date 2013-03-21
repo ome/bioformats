@@ -272,6 +272,18 @@
 				<xsd:element ref="ObjectiveSettings" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ImagingEnvironment" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="StageLabel" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="Transform" type="AffineTransform" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							This is a matrix used to transform the image. It can
+							be used by stitching, tracking or visualization tools.
+							The element has 6 xsd:float attributes. If the element
+							is present then all 6 values must be included.
+							e.g. this could record a field rotation, or a flip 
+							in the axes of an image.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="Pixels" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="ROI:ROIRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
@@ -1266,6 +1278,24 @@
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
+	</xsd:complexType>
+	<xsd:complexType name="AffineTransform">
+		<xsd:annotation>
+			<xsd:documentation>
+				This is a matrix used to transform a shape or image.
+				--             --
+				| A00, A01, A02 |
+				| A10, A11, A12 |
+				| 0,   0,   1   |
+				--             --
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="A00" use="required" type="xsd:float"/>
+		<xsd:attribute name="A10" use="required" type="xsd:float"/>
+		<xsd:attribute name="A01" use="required" type="xsd:float"/>
+		<xsd:attribute name="A11" use="required" type="xsd:float"/>
+		<xsd:attribute name="A02" use="required" type="xsd:float"/>
+		<xsd:attribute name="A12" use="required" type="xsd:float"/>
 	</xsd:complexType>
 	<xsd:simpleType name="Hex40">
 		<xsd:annotation>

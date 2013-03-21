@@ -76,6 +76,7 @@
 		<AcquisitionDate>2010-02-23T12:51:30</AcquisitionDate>
 		<Description>This image is linked to the Control Set</Description>
 		<InstrumentRef ID="Instrument:0"/>
+		<Transform A00="1" A10="0" A01="0" A11="1" A02="0" A12="0"/>
 		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
 			PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1" SignificantBits="6">
 			<Channel Color="-2147483648" ID="Channel:0:1">
@@ -90,6 +91,7 @@
 			<Bin:BinData BigEndian="false" Length="32"
 				>/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
 		</Pixels>
+		<ROI:ROIRef ID="ROI:1"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 		<SA:AnnotationRef ID="Annotation:2"/>
 	</Image>
@@ -125,4 +127,12 @@
 			<SA:Value></SA:Value>
 		</SA:XMLAnnotation>
 	</SA:StructuredAnnotations>
+	<ROI:ROI ID="ROI:1">
+		<ROI:Union>
+			<ROI:Shape ID="Shape:1">
+				<ROI:Line X1="0" Y1="0" X2="1" Y2="1"/>
+				<ROI:Transform A00="2" A10="0" A01="0" A11="2" A02="0" A12="0"/>
+			</ROI:Shape>
+		</ROI:Union>
+	</ROI:ROI>
 </OME>

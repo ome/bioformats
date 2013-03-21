@@ -136,6 +136,16 @@
 		</xsl:element>
 	</xsl:template>	
 
+	<!-- strip Transform from Image -->
+	<xsl:template match="OME:Image">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [not(name() = 'Transform')]">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
 	<!-- strip Annotator from all child nodes of StructuredAnnotations -->
 	<xsl:template match="SA:*[@Annotator]">
 		<xsl:element name="{name()}" namespace="{$newSANS}">
