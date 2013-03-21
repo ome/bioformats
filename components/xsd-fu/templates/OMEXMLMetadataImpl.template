@@ -254,7 +254,6 @@ ${customContent[obj.name][prop.name]}
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by ${fu.user} via xsd-fu on ${fu.date}
  *
  *-----------------------------------------------------------------------------
  */
