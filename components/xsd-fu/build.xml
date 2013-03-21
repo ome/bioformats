@@ -54,7 +54,133 @@
   </target>
 
   <target name="generate">
-    <exec executable="./xsd-fu-generate"/>
+    <property name="xsdfu.schemaver" value="2012-06"/>
+    <property name="xsdfu.schemapath" value="../specification/released-schema/${xsdfu.schemaver}"/>
+    <property name="xsdfu.ome" value="${xsdfu.schemapath}/ome.xsd"/>
+    <property name="xsdfu.binaryfile" value="${xsdfu.schemapath}/BinaryFile.xsd"/>
+    <property name="xsdfu.roi" value="${xsdfu.schemapath}/ROI.xsd"/>
+    <property name="xsdfu.sa" value="${xsdfu.schemapath}/SA.xsd"/>
+    <property name="xsdfu.spw" value="${xsdfu.schemapath}/SPW.xsd"/>
+
+    <property name="xsdfu.modelpath=" value="../components/ome-xml/target/ome/xml/model"/>
+    <property name="xsdfu.enumpath=" value="../components/ome-xml/target/ome/xml/model/enums"/>
+    <property name="xsdfu.handlerpath=" value="../components/ome-xml/target/ome/xml/model/enums/handlers"/>
+    <property name="xsdfu.metadatapath=" value="../scifio/target/loci/formats/meta"/>
+    <property name="xsdfu.scifiopath=" value="../scifio/target/loci/formats/ome"/>
+
+    <mkdir dir="${xsdfu.modelpath}"/>
+    <mkdir dir="${xsdfu.enumpath}"/>
+    <mkdir dir="${xsdfu.handlerpath}"/>
+    <mkdir dir="${xsdfu.metadatapath}"/>
+    <mkdir dir="${xsdfu.scifiopath}"/>
+
+    <!-- Generate the OME model object classes -->
+    <exec executable="./xsd-fu" failonerror="true">
+      <arg value="java_classes"/>
+      <arg value="-p"/>
+      <arg value="ome.xml.model"/>
+      <arg value="-o"/>
+      <arg value="${xsdfu.modelpath}/"/>
+      <arg value="${xsdfu.ome}"/>
+      <arg value="${xsdfu.binaryfile}"/>
+      <arg value="${xsdfu.roi}"/>
+      <arg value="${xsdfu.sa}"/>
+      <arg value="${xsdfu.spw}"/>
+    </exec>
+
+
+    <!-- Generate the OME model enumeration classes -->
+    <exec executable="./xsd-fu" failonerror="true">
+      <arg value="enum_types"/>
+      <arg value="-p"/>
+      <arg value="ome.xml.model.enums"/>
+      <arg value="-o"/>
+      <arg value="${xsdfu.enumpath}/"/>
+      <arg value="${xsdfu.ome}"/>
+      <arg value="${xsdfu.binaryfile}"/>
+      <arg value="${xsdfu.roi}"/>
+      <arg value="${xsdfu.sa}"/>
+      <arg value="${xsdfu.spw}"/>
+    </exec>
+
+    <!-- Generate the handlers for the OME model enumeration classes -->
+    <exec executable="./xsd-fu" failonerror="true">
+      <arg value="enum_handlers"/>
+      <arg value="-p"/>
+      <arg value="ome.xml.model.enums.handlers"/>
+      <arg value="-o"/>
+      <arg value="${xsdfu.handlerpath}/"/>
+      <arg value="${xsdfu.ome}"/>
+      <arg value="${xsdfu.binaryfile}"/>
+      <arg value="${xsdfu.roi}"/>
+      <arg value="${xsdfu.sa}"/>
+      <arg value="${xsdfu.spw}"/>
+    </exec>
+
+    <!-- Generate the metadata interfaces -->
+    <exec executable="./xsd-fu" failonerror="true">
+      <arg value="metadata_store"/>
+      <arg value="-o"/>
+      <arg value="${xsdfu.metadatapath}/"/>
+      <arg value="${xsdfu.ome}"/>
+      <arg value="${xsdfu.binaryfile}"/>
+      <arg value="${xsdfu.roi}"/>
+      <arg value="${xsdfu.sa}"/>
+      <arg value="${xsdfu.spw}"/>
+    </exec>
+
+    <exec executable="./xsd-fu" failonerror="true">
+      <arg value="metadata_retrieve"/>
+      <arg value="-o"/>
+      <arg value="${xsdfu.metadatapath}/"/>
+      <arg value="${xsdfu.ome}"/>
+      <arg value="${xsdfu.binaryfile}"/>
+      <arg value="${xsdfu.roi}"/>
+      <arg value="${xsdfu.sa}"/>
+      <arg value="${xsdfu.spw}"/>
+    </exec>
+
+    <!-- Generate the metadata implementations -->
+    <exec executable="./xsd-fu" failonerror="true">
+      <arg value="metadata_aggregate"/>
+      <arg value="-o"/>
+      <arg value="${xsdfu.metadatapath}/"/>
+      <arg value="${xsdfu.ome}"/>
+      <arg value="${xsdfu.binaryfile}"/>
+      <arg value="${xsdfu.roi}"/>
+      <arg value="${xsdfu.sa}"/>
+      <arg value="${xsdfu.spw}"/>
+    </exec>
+    <exec executable="./xsd-fu" failonerror="true">
+      <arg value="dummy_metadata"/>
+      <arg value="-o"/>
+      <arg value="${xsdfu.metadatapath}/"/>
+      <arg value="${xsdfu.ome}"/>
+      <arg value="${xsdfu.binaryfile}"/>
+      <arg value="${xsdfu.roi}"/>
+      <arg value="${xsdfu.sa}"/>
+      <arg value="${xsdfu.spw}"/>
+    </exec>
+    <exec executable="./xsd-fu" failonerror="true">
+      <arg value="filter_metadata"/>
+      <arg value="-o"/>
+      <arg value="${xsdfu.metadatapath}/"/>
+      <arg value="${xsdfu.ome}"/>
+      <arg value="${xsdfu.binaryfile}"/>
+      <arg value="${xsdfu.roi}"/>
+      <arg value="${xsdfu.sa}"/>
+      <arg value="${xsdfu.spw}"/>
+    </exec>
+    <exec executable="./xsd-fu" failonerror="true">
+      <arg value="omexml_metadata"/>
+      <arg value="-o"/>
+      <arg value="${xsdfu.scifiopath}/"/>
+      <arg value="${xsdfu.ome}"/>
+      <arg value="${xsdfu.binaryfile}"/>
+      <arg value="${xsdfu.roi}"/>
+      <arg value="${xsdfu.sa}"/>
+      <arg value="${xsdfu.spw}"/>
+    </exec>
   </target>
 
   <target name="clean" description="Cleans the published schemas and specification jar">
