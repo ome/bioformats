@@ -398,19 +398,30 @@ def omeXmlMetadataMain(args):
 	MetadataStore and MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "n:")
+		options, args = getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
+	outputDirectory = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
+		if option == "-o":
+			outputDirectory = argument
 		if option == "-n":
 			namespace = argument
 
-	processMetadataTemplate(OMEXML_METADATA_TEMPLATE, "OMEXMLMetadataImpl.java",
+	if outputDirectory is None:
+		usage("Output directory must be specified!")
+	if not os.path.exists(outputDirectory):
+		print "Output directory '%s' does not exist!" % outputDirectory
+		sys.exit(1)
+
+	filename = os.path.join(outputDirectory, "OMEXMLMetadataImpl.java")
+
+	processMetadataTemplate(OMEXML_METADATA_TEMPLATE, filename,
 	                        namespace, args)
 
 def omeroMetadataMain(args):
@@ -461,19 +472,29 @@ def metadataStoreMain(args):
 	MetadataStore implementation.
 	"""
 	try:
-		options, args = getopt(args, "n:")
+		options, args = getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
+	outputDirectory = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
+		if option == "-o":
+			outputDirectory = argument
 		if option == "-n":
 			namespace = argument
+	if outputDirectory is None:
+		usage("Output directory must be specified!")
+	if not os.path.exists(outputDirectory):
+		print "Output directory '%s' does not exist!" % outputDirectory
+		sys.exit(1)
 
-	processMetadataTemplate(METADATA_STORE_TEMPLATE, "MetadataStore.java",
+	filename = os.path.join(outputDirectory, "MetadataStore.java")
+
+	processMetadataTemplate(METADATA_STORE_TEMPLATE, filename,
 	                        namespace, args)
 
 def metadataRetrieveMain(args):
@@ -482,20 +503,30 @@ def metadataRetrieveMain(args):
 	MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "n:")
+		options, args = getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
+	outputDirectory = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
+		if option == "-o":
+			outputDirectory = argument
 		if option == "-n":
 			namespace = argument
+	if outputDirectory is None:
+		usage("Output directory must be specified!")
+	if not os.path.exists(outputDirectory):
+		print "Output directory '%s' does not exist!" % outputDirectory
+		sys.exit(1)
 
-	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE,
-	                        "MetadataRetrieve.java", namespace, args)
+	filename = os.path.join(outputDirectory, "MetadataRetrieve.java")
+
+	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE, filename,
+	                        namespace, args)
 
 def metadataAggregateMain(args):
 	"""
@@ -503,20 +534,30 @@ def metadataAggregateMain(args):
 	MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "n:")
+		options, args = getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
+	outputDirectory = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
+		if option == "-o":
+			outputDirectory = argument
 		if option == "-n":
 			namespace = argument
+	if outputDirectory is None:
+		usage("Output directory must be specified!")
+	if not os.path.exists(outputDirectory):
+		print "Output directory '%s' does not exist!" % outputDirectory
+		sys.exit(1)
 
-	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE,
-	                        "AggregateMetadata.java", namespace, args)
+	filename = os.path.join(outputDirectory, "AggregateMetadata.java")
+
+	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE, filename,
+	                        namespace, args)
 
 def dummyMetadataMain(args):
 	"""
@@ -524,20 +565,30 @@ def dummyMetadataMain(args):
 	MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "n:")
+		options, args = getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
+	outputDirectory = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
+		if option == "-o":
+			outputDirectory = argument
 		if option == "-n":
 			namespace = argument
+	if outputDirectory is None:
+		usage("Output directory must be specified!")
+	if not os.path.exists(outputDirectory):
+		print "Output directory '%s' does not exist!" % outputDirectory
+		sys.exit(1)
 
-	processMetadataTemplate(DUMMY_METADATA_TEMPLATE,
-	                        "DummyMetadata.java", namespace, args)
+	filename = os.path.join(outputDirectory, "DummyMetadata.java")
+
+	processMetadataTemplate(DUMMY_METADATA_TEMPLATE, filename,
+	                        namespace, args)
 
 def filterMetadataMain(args):
 	"""
@@ -545,20 +596,31 @@ def filterMetadataMain(args):
 	MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "n:")
+		options, args = getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
+	outputDirectory = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
+		if option == "-o":
+			outputDirectory = argument
 		if option == "-n":
 			namespace = argument
 
-	processMetadataTemplate(FILTER_METADATA_TEMPLATE,
-	                        "FilterMetadata.java", namespace, args)
+	if outputDirectory is None:
+		usage("Output directory must be specified!")
+	if not os.path.exists(outputDirectory):
+		print "Output directory '%s' does not exist!" % outputDirectory
+		sys.exit(1)
+
+	filename = os.path.join(outputDirectory, "FilterMetadata.java")
+
+	processMetadataTemplate(FILTER_METADATA_TEMPLATE, filename,
+	                        namespace, args)
 
 def debugMain(args):
 	"""
