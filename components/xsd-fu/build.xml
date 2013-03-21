@@ -2,6 +2,13 @@
 <project name="xsd-fu" default="runall" basedir=".">
   <description>Build file for xsd-fu</description>
   <property name="root.dir" location="../.."/>
+  <property name="xsdfu.schemaver" value="2012-06"/>
+  <property name="xsdfu.schemapath" value="../specification/released-schema/${xsdfu.schemaver}"/>
+  <property name="xsdfu.ome" value="${xsdfu.schemapath}/ome.xsd"/>
+  <property name="xsdfu.binaryfile" value="${xsdfu.schemapath}/BinaryFile.xsd"/>
+  <property name="xsdfu.roi" value="${xsdfu.schemapath}/ROI.xsd"/>
+  <property name="xsdfu.sa" value="${xsdfu.schemapath}/SA.xsd"/>
+  <property name="xsdfu.spw" value="${xsdfu.schemapath}/SPW.xsd"/>
   <import file="${root.dir}/ant/java.xml"/>
 
   <target name="package"><!-- Skip compile -->
@@ -53,26 +60,14 @@
     <exec executable="./xslt/xslt-test2003FCTo200809To200909"/>
   </target>
 
-  <target name="generate">
-    <property name="xsdfu.schemaver" value="2012-06"/>
-    <property name="xsdfu.schemapath" value="../specification/released-schema/${xsdfu.schemaver}"/>
-    <property name="xsdfu.ome" value="${xsdfu.schemapath}/ome.xsd"/>
-    <property name="xsdfu.binaryfile" value="${xsdfu.schemapath}/BinaryFile.xsd"/>
-    <property name="xsdfu.roi" value="${xsdfu.schemapath}/ROI.xsd"/>
-    <property name="xsdfu.sa" value="${xsdfu.schemapath}/SA.xsd"/>
-    <property name="xsdfu.spw" value="${xsdfu.schemapath}/SPW.xsd"/>
-
-    <property name="xsdfu.modelpath=" value="../components/ome-xml/target/ome/xml/model"/>
-    <property name="xsdfu.enumpath=" value="../components/ome-xml/target/ome/xml/model/enums"/>
-    <property name="xsdfu.handlerpath=" value="../components/ome-xml/target/ome/xml/model/enums/handlers"/>
-    <property name="xsdfu.metadatapath=" value="../scifio/target/loci/formats/meta"/>
-    <property name="xsdfu.scifiopath=" value="../scifio/target/loci/formats/ome"/>
+  <target name="generate-ome-xml">
+    <property name="xsdfu.modelpath" value="../ome-xml/build/src/ome/xml/model"/>
+    <property name="xsdfu.enumpath" value="../ome-xml/build/src/ome/xml/model/enums"/>
+    <property name="xsdfu.handlerpath" value="../ome-xml/build/src/ome/xml/model/enums/handlers"/>
 
     <mkdir dir="${xsdfu.modelpath}"/>
     <mkdir dir="${xsdfu.enumpath}"/>
     <mkdir dir="${xsdfu.handlerpath}"/>
-    <mkdir dir="${xsdfu.metadatapath}"/>
-    <mkdir dir="${xsdfu.scifiopath}"/>
 
     <!-- Generate the OME model object classes -->
     <exec executable="./xsd-fu" failonerror="true">
@@ -87,8 +82,6 @@
       <arg value="${xsdfu.sa}"/>
       <arg value="${xsdfu.spw}"/>
     </exec>
-
-
     <!-- Generate the OME model enumeration classes -->
     <exec executable="./xsd-fu" failonerror="true">
       <arg value="enum_types"/>
@@ -102,7 +95,6 @@
       <arg value="${xsdfu.sa}"/>
       <arg value="${xsdfu.spw}"/>
     </exec>
-
     <!-- Generate the handlers for the OME model enumeration classes -->
     <exec executable="./xsd-fu" failonerror="true">
       <arg value="enum_handlers"/>
@@ -116,6 +108,12 @@
       <arg value="${xsdfu.sa}"/>
       <arg value="${xsdfu.spw}"/>
     </exec>
+  </target>
+
+  <target name="generate-metadata">
+    <property name="xsdfu.metadatapath" value="../scifio/build/src/loci/formats/meta"/>
+
+    <mkdir dir="${xsdfu.metadatapath}"/>
 
     <!-- Generate the metadata interfaces -->
     <exec executable="./xsd-fu" failonerror="true">
@@ -128,7 +126,6 @@
       <arg value="${xsdfu.sa}"/>
       <arg value="${xsdfu.spw}"/>
     </exec>
-
     <exec executable="./xsd-fu" failonerror="true">
       <arg value="metadata_retrieve"/>
       <arg value="-o"/>
@@ -139,7 +136,6 @@
       <arg value="${xsdfu.sa}"/>
       <arg value="${xsdfu.spw}"/>
     </exec>
-
     <!-- Generate the metadata implementations -->
     <exec executable="./xsd-fu" failonerror="true">
       <arg value="metadata_aggregate"/>
@@ -171,6 +167,13 @@
       <arg value="${xsdfu.sa}"/>
       <arg value="${xsdfu.spw}"/>
     </exec>
+  </target>
+
+  <target name="generate-ome-xml-metadata">
+    <property name="xsdfu.scifiopath" value="../scifio/build/src/loci/formats/ome"/>
+
+    <mkdir dir="${xsdfu.scifiopath}"/>
+
     <exec executable="./xsd-fu" failonerror="true">
       <arg value="omexml_metadata"/>
       <arg value="-o"/>

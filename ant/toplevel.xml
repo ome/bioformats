@@ -338,7 +338,7 @@ Type "ant -p" for a list of targets.
 
   <!-- OME-XML Java library -->
 
-  <target name="deps-ome-xml" depends="generate-xsd-fu"/>
+  <target name="deps-ome-xml" depends="ome-xml-src"/>
 
   <target name="compile-ome-xml" depends="deps-ome-xml"
     description="compile classes for OME-XML Java library">
@@ -410,7 +410,9 @@ Type "ant -p" for a list of targets.
     depends="jar-jai,
       jar-loci-legacy,
       jar-lwf-stubs,
-      jar-ome-xml"/>
+      jar-ome-xml,
+      metadata-src,
+      ome-xml-metadata-src"/>
 
   <target name="compile-scifio" depends="deps-scifio"
     description="compile classes for SCIFIO">
@@ -925,9 +927,19 @@ Type "ant -p" for a list of targets.
     <ant dir="components/xsd-fu" target="xsd-fu.clean"/>
   </target>
 
-  <target name="generate-xsd-fu"
+  <target name="ome-xml-src"
     description="Generate sources using Xsd-Fu">
-    <ant dir="components/xsd-fu" target="generate"/>
+    <ant dir="components/xsd-fu" target="generate-ome-xml"/>
+  </target>
+
+  <target name="metadata-src"
+    description="Generate sources using Xsd-Fu">
+    <ant dir="components/xsd-fu" target="generate-metadata"/>
+  </target>
+
+  <target name="ome-xml-metadata-src"
+    description="Generate sources using Xsd-Fu">
+    <ant dir="components/xsd-fu" target="generate-ome-xml-metadata"/>
   </target>
 
   <!-- Specification -->
