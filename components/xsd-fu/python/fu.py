@@ -31,7 +31,6 @@ import os
 from generateDS.generateDS import *
 from xml import sax
 
-from posix import getuid
 from pwd import getpwuid
 
 from util import odict
@@ -1048,7 +1047,6 @@ class TemplateInfo(object):
         self.outputDirectory = outputDirectory
         self.package = package
         self.date = now()
-        self.user = getpwuid(getuid())[0]
         self.DO_NOT_PROCESS = DO_NOT_PROCESS
         self.BACK_REFERENCE_OVERRIDE = BACK_REFERENCE_OVERRIDE
         self.BACK_REFERENCE_LINK_OVERRIDE = BACK_REFERENCE_LINK_OVERRIDE
