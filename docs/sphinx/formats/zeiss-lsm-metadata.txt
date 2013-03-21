@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 84 of them (19%).
-  * Of those, Bio-Formats fully or partially converts 84 (100%).
+  * The file format itself supports 86 of them (19%).
+  * Of those, Bio-Formats fully or partially converts 86 (100%).
 
 Supported fields
 ===============================================================================
@@ -39,6 +39,8 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * `Ellipse : Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_Transform>`_
   * `Ellipse : X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_X>`_
   * `Ellipse : Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_Y>`_
+  * `Experimenter : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_ID>`_
+  * `Experimenter : UserName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_UserName>`_
   * `Filter : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_ID>`_
   * `Filter : Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_Model>`_
   * `Filter : Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_Type>`_
@@ -102,6 +104,6 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * `TransmittanceRange : CutIn <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_CutIn>`_
   * `TransmittanceRange : CutOut <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_CutOut>`_
 
-**Total supported: 84**
+**Total supported: 86**
 
-**Total unknown or missing: 349**
+**Total unknown or missing: 347**

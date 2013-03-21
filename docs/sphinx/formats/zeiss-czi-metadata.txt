@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 129 of them (29%).
-  * Of those, Bio-Formats fully or partially converts 129 (100%).
+  * The file format itself supports 136 of them (31%).
+  * Of those, Bio-Formats fully or partially converts 136 (100%).
 
 Supported fields
 ===============================================================================
@@ -51,6 +51,13 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * `Ellipse : RadiusY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_RadiusY>`_
   * `Ellipse : X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_X>`_
   * `Ellipse : Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_Y>`_
+  * `Experimenter : Email <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_Email>`_
+  * `Experimenter : FirstName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_FirstName>`_
+  * `Experimenter : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_ID>`_
+  * `Experimenter : Institution <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_Institution>`_
+  * `Experimenter : LastName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_LastName>`_
+  * `Experimenter : MiddleName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_MiddleName>`_
+  * `Experimenter : UserName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_UserName>`_
   * `Filament : LotNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filament_LotNumber>`_
   * `Filament : Manufacturer <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filament_Manufacturer>`_
   * `Filament : Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filament_Model>`_
@@ -147,6 +154,6 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * `TransmittanceRange : CutOutTolerance <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_CutOutTolerance>`_
   * `TransmittanceRange : Transmittance <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_Transmittance>`_
 
-**Total supported: 129**
+**Total supported: 136**
 
-**Total unknown or missing: 304**
+**Total unknown or missing: 297**

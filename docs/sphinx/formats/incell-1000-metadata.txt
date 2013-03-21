@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 58 of them (13%).
-  * Of those, Bio-Formats fully or partially converts 58 (100%).
+  * The file format itself supports 61 of them (14%).
+  * Of those, Bio-Formats fully or partially converts 61 (100%).
 
 Supported fields
 ===============================================================================
@@ -67,6 +67,9 @@ These fields are fully supported by the Bio-Formats InCell 1000/2000 format read
   * `Plate : RowNamingConvention <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_RowNamingConvention>`_
   * `Plate : WellOriginX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_WellOriginX>`_
   * `Plate : WellOriginY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_WellOriginY>`_
+  * `PlateAcquisition : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#PlateAcquisition_ID>`_
+  * `PlateAcquisition : MaximumFieldCount <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#PlateAcquisition_MaximumFieldCount>`_
+  * `PlateAcquisition : WellSampleRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#PlateAcquisition_WellSampleRef>`_
   * `Well : Column <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_Column>`_
   * `Well : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_ID>`_
   * `Well : Row <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_Row>`_
@@ -76,6 +79,6 @@ These fields are fully supported by the Bio-Formats InCell 1000/2000 format read
   * `WellSample : PositionX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_PositionX>`_
   * `WellSample : PositionY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_PositionY>`_
 
-**Total supported: 58**
+**Total supported: 61**
 
-**Total unknown or missing: 375**
+**Total unknown or missing: 372**

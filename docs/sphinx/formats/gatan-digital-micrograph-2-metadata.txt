@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 23 of them (5%).
-  * Of those, Bio-Formats fully or partially converts 23 (100%).
+  * The file format itself supports 26 of them (6%).
+  * Of those, Bio-Formats fully or partially converts 26 (100%).
 
 Supported fields
 ===============================================================================
@@ -22,6 +22,9 @@ These fields are fully supported by the Bio-Formats Gatan DM2 format reader:
   * `Detector : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_ID>`_
   * `DetectorSettings : Binning <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings_Binning>`_
   * `DetectorSettings : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings_ID>`_
+  * `Experimenter : FirstName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_FirstName>`_
+  * `Experimenter : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_ID>`_
+  * `Experimenter : LastName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_LastName>`_
   * `Image : ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ExperimenterRef>`_
   * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
   * `Image : InstrumentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_InstrumentRef>`_
@@ -41,6 +44,6 @@ These fields are fully supported by the Bio-Formats Gatan DM2 format reader:
   * `Plane : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheT>`_
   * `Plane : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheZ>`_
 
-**Total supported: 23**
+**Total supported: 26**
 
-**Total unknown or missing: 410**
+**Total unknown or missing: 407**
