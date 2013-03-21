@@ -338,7 +338,7 @@ Type "ant -p" for a list of targets.
 
   <!-- OME-XML Java library -->
 
-  <target name="deps-ome-xml"/>
+  <target name="deps-ome-xml" depends="generate-xsd-fu"/>
 
   <target name="compile-ome-xml" depends="deps-ome-xml"
     description="compile classes for OME-XML Java library">
