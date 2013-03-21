@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 65 of them (15%).
-  * Of those, Bio-Formats fully or partially converts 65 (100%).
+  * The file format itself supports 67 of them (15%).
+  * Of those, Bio-Formats fully or partially converts 67 (100%).
 
 Supported fields
 ===============================================================================
@@ -33,6 +33,8 @@ These fields are fully supported by the Bio-Formats Image Cytometry Standard for
   * `Dichroic : Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dichroic_Model>`_
   * `Experiment : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experiment_ID>`_
   * `Experiment : Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experiment_Type>`_
+  * `Experimenter : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_ID>`_
+  * `Experimenter : LastName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_LastName>`_
   * `Filter : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_ID>`_
   * `Filter : Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_Model>`_
   * `FilterSet : DichroicRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FilterSet_DichroicRef>`_
@@ -83,6 +85,6 @@ These fields are fully supported by the Bio-Formats Image Cytometry Standard for
   * `Plane : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheT>`_
   * `Plane : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheZ>`_
 
-**Total supported: 65**
+**Total supported: 67**
 
-**Total unknown or missing: 368**
+**Total unknown or missing: 366**
