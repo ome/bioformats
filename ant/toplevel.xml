@@ -925,6 +925,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/xsd-fu" target="xsd-fu.clean"/>
   </target>
 
+  <target name="generate-xsd-fu"
+    description="Generate sources using Xsd-Fu">
+    <ant dir="components/xsd-fu" target="generate"/>
+  </target>
+
   <!-- Specification -->
   <target name="clean-specification"
     description="remove build files for Specification">
