@@ -51,9 +51,9 @@
   <properties>
     <project.rootdir>${basedir}/../..</project.rootdir>
     <xsdfu.basepath>../xsd-fu</xsdfu.basepath>
-    <xsdfu.modelpath>target/generated-sources/ome/xml/model</xsdfu.modelpath>
-    <xsdfu.enumpath>target/generated-sources/ome/xml/model/enums</xsdfu.enumpath>
-    <xsdfu.handlerpath>target/generated-sources/ome/xml/model/enums/handlers</xsdfu.handlerpath>
+    <xsdfu.modelpath>${basedir}/target/generated-sources/ome/xml/model</xsdfu.modelpath>
+    <xsdfu.enumpath>${basedir}/target/generated-sources/ome/xml/model/enums</xsdfu.enumpath>
+    <xsdfu.handlerpath>${basedir}/target/generated-sources/ome/xml/model/enums/handlers</xsdfu.handlerpath>
   </properties>
 
   <build>

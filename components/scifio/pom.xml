@@ -94,8 +94,8 @@
   <properties>
     <project.rootdir>${basedir}/../..</project.rootdir>
     <xsdfu.basepath>../xsd-fu</xsdfu.basepath>
-    <xsdfu.metadatapath>target/generated-sources/loci/formats/meta</xsdfu.metadatapath>
-    <xsdfu.omepath>target/generated-sources/loci/formats/ome</xsdfu.omepath>
+    <xsdfu.metadatapath>${basedir}/target/generated-sources/loci/formats/meta</xsdfu.metadatapath>
+    <xsdfu.omepath>${basedir}/target/generated-sources/loci/formats/ome</xsdfu.omepath>
   </properties>
 
   <build>
