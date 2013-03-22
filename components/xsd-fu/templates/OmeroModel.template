@@ -162,7 +162,6 @@ ${fully_qualified_link_class_name(o, prop)}\
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 # THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
-# Created by ${fu.user} via xsd-fu on ${fu.date}
 #
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
