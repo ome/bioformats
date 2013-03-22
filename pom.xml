@@ -40,6 +40,7 @@
     <module>components/scifio-devel</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
+    <module>components/xsd-fu</module>
   </modules>
 
   <properties>
