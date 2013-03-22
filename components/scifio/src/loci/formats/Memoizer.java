@@ -123,6 +123,7 @@ public class Memoizer extends ReaderWrapper {
 
       if (memo == null) {
         super.setId(id);
+        loadedFromMemo = false;
         savedToMemo = saveMemo(); // Should never throw.
       } else {
         loadedFromMemo = true;
