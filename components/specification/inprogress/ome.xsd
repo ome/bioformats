@@ -398,6 +398,18 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
+			<xsd:attribute name="BigEndian" use="optional" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>
+						This is true if the pixels data was written in BigEndian order.
+
+						If this value is present it should match the value used in BinData
+						or TiffData. If it does not a reader should honour the value used
+						in the BinData or TiffData. This values is useful for MetadataOnly
+						files and is to allow for future storage solutions.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="SizeX" use="required" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>

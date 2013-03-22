@@ -79,7 +79,7 @@
 		<Transform A00="1" A10="0" A01="0" A11="1" A02="0" A12="0"/>
 		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
 			PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1"
-			SignificantBits="6" Interleaved="false">
+			SignificantBits="6" Interleaved="false" BigEndian="true">
 			<Channel Color="-2147483648" ID="Channel:0:1">
 				<LightSourceSettings ID="LightSource:0" Attenuation="0.8" Wavelength="510"/>
 				<DetectorSettings ID="Detector:0" Binning="2x2" Gain="1.2" Offset="0.7"
