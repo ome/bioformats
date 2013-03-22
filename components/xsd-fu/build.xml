@@ -65,10 +65,6 @@
     <property name="xsdfu.enumpath" value="../ome-xml/build/src/ome/xml/model/enums"/>
     <property name="xsdfu.handlerpath" value="../ome-xml/build/src/ome/xml/model/enums/handlers"/>
 
-    <mkdir dir="${xsdfu.modelpath}"/>
-    <mkdir dir="${xsdfu.enumpath}"/>
-    <mkdir dir="${xsdfu.handlerpath}"/>
-
     <!-- Generate the OME model object classes -->
     <exec executable="python" failonerror="true">
       <arg value="xsd-fu"/>
@@ -115,8 +111,6 @@
 
   <target name="generate-metadata">
     <property name="xsdfu.metadatapath" value="../scifio/build/src/loci/formats/meta"/>
-
-    <mkdir dir="${xsdfu.metadatapath}"/>
 
     <!-- Generate the metadata interfaces -->
     <exec executable="python" failonerror="true">
@@ -179,8 +173,6 @@
 
   <target name="generate-ome-xml-metadata">
     <property name="xsdfu.scifiopath" value="../scifio/build/src/loci/formats/ome"/>
-
-    <mkdir dir="${xsdfu.scifiopath}"/>
 
     <exec executable="python" failonerror="true">
       <arg value="xsd-fu"/>
