@@ -31,8 +31,6 @@ import os
 from generateDS.generateDS import *
 from xml import sax
 
-from pwd import getpwuid
-
 from util import odict
 from xml.etree import ElementTree
 
