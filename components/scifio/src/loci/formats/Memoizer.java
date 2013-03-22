@@ -78,6 +78,8 @@ public class Memoizer extends ReaderWrapper {
 
   private File memoFile;
 
+  private File tempFile;
+
   private boolean skipLoad = false;
 
   private boolean skipSave = false;
@@ -117,12 +119,11 @@ public class Memoizer extends ReaderWrapper {
     try {
       realFile = new File(id); // TODO: Can likely fail.
       memoFile = getMemoFile(id);
-      IFormatReader memo = loadMemo();
+      IFormatReader memo = loadMemo(); // Should never throw.
 
       if (memo == null) {
         super.setId(id);
-        saveMemo();
-        savedToMemo = true;
+        savedToMemo = saveMemo(); // Should never throw.
       } else {
         loadedFromMemo = true;
         reader = memo;
@@ -141,12 +142,7 @@ public class Memoizer extends ReaderWrapper {
    * @return a non-null {@link Kryo} instance.
    */
   protected Kryo getKryo() {
-    Kryo kryo = new Kryo() {
-      public void writeClassAndObject(Output o, Object obj) {
-        LOGGER.warn("writeClassAndObject: {}", obj);
-        super.writeClassAndObject(o, obj);
-      }
-    };
+    Kryo kryo = new Kryo();
     kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
     return kryo;
   }
@@ -191,10 +187,11 @@ public class Memoizer extends ReaderWrapper {
       return null;
     }
 
-    if (memoFile.lastModified() < realFile.lastModified()) {
+    long memoLast = memoFile.lastModified();
+    long realLast = realFile.lastModified();
+    if (memoLast < realLast) {
       LOGGER.debug("memo(lastModified={}) older than real(lastModified={})",
-        memoFile.lastModified(),
-        realFile.lastModified());
+        memoLast, realLast);
       return null;
     }
 
@@ -256,25 +253,64 @@ public class Memoizer extends ReaderWrapper {
     return true;
   }
 
-public void saveMemo() throws FileNotFoundException {
+public boolean saveMemo() {
 
     if (skipSave) {
       LOGGER.trace("skip memo");
-      return;
+      return false;
     }
 
+    Output output = null;
     StopWatch sw = stopWatch();
-    Output output = new Output(new FileOutputStream(memoFile));
     try {
+
+      // Create temporary location for output
+      tempFile = File.createTempFile(
+        memoFile.getName(), "", memoFile.getParentFile());
+      output = new Output(new FileOutputStream(tempFile));
+
+      // Save to temporary location.
       Kryo kryo = getKryo();
       kryo.writeObject(output, VERSION);
       kryo.writeObject(output, reader.getClass());
       kryo.writeObject(output, reader);
+      LOGGER.debug("saved to temp file: {}", tempFile);
+
+      // Rename temporary file. Any failures will have to be ignored.
+      if (!tempFile.renameTo(memoFile)) {
+        LOGGER.debug("temp file rename returned false: {}", tempFile);
+      }
+      return true;
+
+    } catch (Throwable t) {
+
+      // Any exception should be ignored, and false returned.
+      LOGGER.debug(String.format("failed to save memo file: %s", memoFile), t);
+      return false;
+
     } finally {
-      output.close();
-      sw.stop("loci.formats.Memoizer.saveMemo");
-      LOGGER.debug("saved memo file: {} ({} bytes)",
-        memoFile, memoFile.length());
+
+      // Close the output stream quietly.
+      try {
+        if (output != null) {
+          output.close();
+        }
+        sw.stop("loci.formats.Memoizer.saveMemo");
+        LOGGER.debug("saved memo file: {} ({} bytes)",
+          memoFile, memoFile.length());
+      } catch (Throwable t) {
+        LOGGER.debug("output close failed", t);
+      }
+
+      // Delete the tempFile quietly.
+      try {
+        if (tempFile != null) {
+          tempFile.delete();
+          tempFile = null;
+        }
+      } catch (Throwable t) {
+        LOGGER.debug("temp file deletion faled", t);   
+      }
     }
   }
 }
