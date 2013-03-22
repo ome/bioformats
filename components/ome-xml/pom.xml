@@ -50,10 +50,129 @@
 
   <properties>
     <project.rootdir>${basedir}/../..</project.rootdir>
+    <xsdfu.basepath>../xsd-fu</xsdfu.basepath>
+    <xsdfu.modelpath>target/generated-sources/ome/xml/model</xsdfu.modelpath>
+    <xsdfu.enumpath>target/generated-sources/ome/xml/model/enums</xsdfu.enumpath>
+    <xsdfu.handlerpath>target/generated-sources/ome/xml/model/enums/handlers</xsdfu.handlerpath>
   </properties>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+	<executions>
+	  <!-- Generate the OME model object classes -->
+	  <execution>
+	    <id>xsd-fu-java-classes</id>
+	    <phase>generate-sources</phase>
+	    <goals>
+	      <goal>exec</goal>
+	    </goals>
+	    <configuration>
+	      <executable>python</executable>
+	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
+	      <arguments>
+		<argument>xsd-fu</argument>
+		<argument>java_classes</argument>
+		<argument>-p</argument>
+		<argument>ome.xml.model</argument>
+		<argument>-o</argument>
+		<argument>${xsdfu.modelpath}/</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
+	      </arguments>
+	    </configuration>
+	  </execution>
+	  <!-- Generate the OME model enumeration classes -->
+	  <execution>
+	    <id>xsd-fu-enum-types</id>
+	    <phase>generate-sources</phase>
+	    <goals>
+	      <goal>exec</goal>
+	    </goals>
+	    <configuration>
+	      <executable>python</executable>
+	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
+	      <arguments>
+		<argument>xsd-fu</argument>
+		<argument>enum_types</argument>
+		<argument>-p</argument>
+		<argument>ome.xml.model.enums</argument>
+		<argument>-o</argument>
+		<argument>${xsdfu.enumpath}/</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
+	      </arguments>
+	    </configuration>
+	  </execution>
+	  <!-- Generate the handlers for the OME model enumeration classes -->
+	  <execution>
+	    <id>xsd-fu-enum-handlers</id>
+	    <phase>generate-sources</phase>
+	    <goals>
+	      <goal>exec</goal>
+	    </goals>
+	    <configuration>
+	      <executable>python</executable>
+	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
+	      <arguments>
+		<argument>xsd-fu</argument>
+		<argument>enum_handlers</argument>
+		<argument>-p</argument>
+		<argument>ome.xml.model.enums.handlers</argument>
+		<argument>-o</argument>
+		<argument>${xsdfu.handlerpath}/</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
+	      </arguments>
+	    </configuration>
+	  </execution>
+	</executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>target/generated-sources</source>
+              </sources>
+            </configuration>
+          </execution>
+	  <execution>
+	    <id>add-wsdl-resource</id>
+	    <phase>generate-resources</phase>
+	    <goals>
+	      <goal>add-resource</goal>
+	    </goals>
+	    <configuration>
+	      <resources>
+		<resource>
+		  <directory>target/generated-sources</directory>
+		  <targetPath>target/classes</targetPath>
+		</resource>
+	      </resources>
+	    </configuration>
+	  </execution>
+        </executions>
+      </plugin>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
