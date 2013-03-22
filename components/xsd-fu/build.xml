@@ -70,7 +70,8 @@
     <mkdir dir="${xsdfu.handlerpath}"/>
 
     <!-- Generate the OME model object classes -->
-    <exec executable="./xsd-fu" failonerror="true">
+    <exec executable="python" failonerror="true">
+      <arg value="xsd-fu"/>
       <arg value="java_classes"/>
       <arg value="-p"/>
       <arg value="ome.xml.model"/>
@@ -83,7 +84,8 @@
       <arg value="${xsdfu.spw}"/>
     </exec>
     <!-- Generate the OME model enumeration classes -->
-    <exec executable="./xsd-fu" failonerror="true">
+    <exec executable="python" failonerror="true">
+      <arg value="xsd-fu"/>
       <arg value="enum_types"/>
       <arg value="-p"/>
       <arg value="ome.xml.model.enums"/>
@@ -96,7 +98,8 @@
       <arg value="${xsdfu.spw}"/>
     </exec>
     <!-- Generate the handlers for the OME model enumeration classes -->
-    <exec executable="./xsd-fu" failonerror="true">
+    <exec executable="python" failonerror="true">
+      <arg value="xsd-fu"/>
       <arg value="enum_handlers"/>
       <arg value="-p"/>
       <arg value="ome.xml.model.enums.handlers"/>
@@ -116,7 +119,8 @@
     <mkdir dir="${xsdfu.metadatapath}"/>
 
     <!-- Generate the metadata interfaces -->
-    <exec executable="./xsd-fu" failonerror="true">
+    <exec executable="python" failonerror="true">
+      <arg value="xsd-fu"/>
       <arg value="metadata_store"/>
       <arg value="-o"/>
       <arg value="${xsdfu.metadatapath}/"/>
@@ -126,7 +130,8 @@
       <arg value="${xsdfu.sa}"/>
       <arg value="${xsdfu.spw}"/>
     </exec>
-    <exec executable="./xsd-fu" failonerror="true">
+    <exec executable="python" failonerror="true">
+      <arg value="xsd-fu"/>
       <arg value="metadata_retrieve"/>
       <arg value="-o"/>
       <arg value="${xsdfu.metadatapath}/"/>
@@ -137,7 +142,8 @@
       <arg value="${xsdfu.spw}"/>
     </exec>
     <!-- Generate the metadata implementations -->
-    <exec executable="./xsd-fu" failonerror="true">
+    <exec executable="python" failonerror="true">
+      <arg value="xsd-fu"/>
       <arg value="metadata_aggregate"/>
       <arg value="-o"/>
       <arg value="${xsdfu.metadatapath}/"/>
@@ -147,7 +153,8 @@
       <arg value="${xsdfu.sa}"/>
       <arg value="${xsdfu.spw}"/>
     </exec>
-    <exec executable="./xsd-fu" failonerror="true">
+    <exec executable="python" failonerror="true">
+      <arg value="xsd-fu"/>
       <arg value="dummy_metadata"/>
       <arg value="-o"/>
       <arg value="${xsdfu.metadatapath}/"/>
@@ -157,7 +164,8 @@
       <arg value="${xsdfu.sa}"/>
       <arg value="${xsdfu.spw}"/>
     </exec>
-    <exec executable="./xsd-fu" failonerror="true">
+    <exec executable="python" failonerror="true">
+      <arg value="xsd-fu"/>
       <arg value="filter_metadata"/>
       <arg value="-o"/>
       <arg value="${xsdfu.metadatapath}/"/>
@@ -174,7 +182,8 @@
 
     <mkdir dir="${xsdfu.scifiopath}"/>
 
-    <exec executable="./xsd-fu" failonerror="true">
+    <exec executable="python" failonerror="true">
+      <arg value="xsd-fu"/>
       <arg value="omexml_metadata"/>
       <arg value="-o"/>
       <arg value="${xsdfu.scifiopath}/"/>
