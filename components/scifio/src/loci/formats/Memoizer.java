@@ -82,6 +82,18 @@ public class Memoizer extends ReaderWrapper {
 
   private boolean skipSave = false;
 
+  /**
+   * Whether the {@link #reader} instance currently active was loaded from
+   * the memo file during {@link #setId(String)}.
+   */
+  private boolean loadedFromMemo = false;
+
+  /**
+   * Whether the {@link #reader} instance was saved to a memo file on
+   * {@link #setId(String)}.
+   */
+  private boolean savedToMemo = false;
+
   // -- Constructors --
 
   /** Constructs a memoizer around a new image reader. */
@@ -89,6 +101,14 @@ public class Memoizer extends ReaderWrapper {
 
   /** Constructs a memoizer around the given reader. */
   public Memoizer(IFormatReader r) { super(r); }
+
+  public boolean isLoadedFromMemo() {
+    return loadedFromMemo;
+  }
+
+  public boolean isSavedToMemo() {
+    return savedToMemo;
+  }
 
   // -- ReaderWrapper API methods --
 
@@ -102,7 +122,9 @@ public class Memoizer extends ReaderWrapper {
       if (memo == null) {
         super.setId(id);
         saveMemo();
+        savedToMemo = true;
       } else {
+        loadedFromMemo = true;
         reader = memo;
       }
     } finally {
@@ -120,10 +142,10 @@ public class Memoizer extends ReaderWrapper {
    */
   protected Kryo getKryo() {
     Kryo kryo = new Kryo() {
-        public void writeClassAndObject(Output o, Object obj) {
-            LOGGER.warn("writeClassAndObject: {}", obj);
-            super.writeClassAndObject(o, obj);
-        }
+      public void writeClassAndObject(Output o, Object obj) {
+        LOGGER.warn("writeClassAndObject: {}", obj);
+        super.writeClassAndObject(o, obj);
+      }
     };
     kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
     return kryo;
@@ -141,10 +163,10 @@ public class Memoizer extends ReaderWrapper {
    * @return a filename with
    */
   public File getMemoFile(String id) {
-      File f = new File(id);
-      String p = f.getParent();
-      String n = f.getName();
-      return new File(p, "." + n + ".bfmemo");
+    File f = new File(id);
+    String p = f.getParent();
+    String n = f.getName();
+    return new File(p, "." + n + ".bfmemo");
   }
 
   public IFormatReader loadMemo() throws FileNotFoundException {
@@ -193,9 +215,12 @@ public class Memoizer extends ReaderWrapper {
       Class<?> c = kryo.readObject(input, Class.class);
       copy = (IFormatReader) getKryo().readObject(input, c);
 
+      if (!checkWrapperStack(reader, copy)) {
+          return null;
+      }
+      
       // TODO:
       // Check flags
-      // Check wrappers
       // DataV1 class?
       // Handle exceptions on read/write. possibly deleting.
       LOGGER.debug("loaded memo file: {} ({} bytes)",
@@ -207,7 +232,31 @@ public class Memoizer extends ReaderWrapper {
     }
   }
 
-  public void saveMemo() throws FileNotFoundException {
+  @SuppressWarnings("resource")
+  private boolean checkWrapperStack(IFormatReader reader, IFormatReader copy) {
+    IFormatReader copyWrapper = copy;
+    IFormatReader realWrapper = reader;
+      
+    int i = 0;
+    while (copyWrapper != null) {
+      if (!copyWrapper.getClass().equals(realWrapper.getClass())) {
+        i++;
+        LOGGER.debug("Class("+i+") mismatch! {} != {}",
+          copyWrapper.getClass(), realWrapper.getClass());
+        return false;
+      }
+      if (copyWrapper instanceof ReaderWrapper) {
+        copyWrapper = ((ReaderWrapper) copyWrapper).getReader();
+        realWrapper = ((ReaderWrapper) realWrapper).getReader();
+      } else {
+        copyWrapper = null;
+        realWrapper = null;
+      }
+    }
+    return true;
+  }
+
+public void saveMemo() throws FileNotFoundException {
 
     if (skipSave) {
       LOGGER.trace("skip memo");
