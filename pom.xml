@@ -45,6 +45,13 @@
 
   <properties>
     <project.rootdir>${basedir}</project.rootdir>
+    <xsdfu.schemaver>2012-06</xsdfu.schemaver>
+    <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
+    <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
+    <xsdfu.binaryfile>${xsdfu.schemapath}/BinaryFile.xsd</xsdfu.binaryfile>
+    <xsdfu.roi>${xsdfu.schemapath}/ROI.xsd</xsdfu.roi>
+    <xsdfu.sa>${xsdfu.schemapath}/SA.xsd</xsdfu.sa>
+    <xsdfu.spw>${xsdfu.schemapath}/SPW.xsd</xsdfu.spw>
   </properties>
 
   <build>

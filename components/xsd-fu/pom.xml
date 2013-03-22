@@ -33,13 +33,6 @@
 
   <properties>
     <project.rootdir>${basedir}/../..</project.rootdir>
-    <xsdfu.schemaver>2012-06</xsdfu.schemaver>
-    <xsdfu.schemapath>../specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
-    <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
-    <xsdfu.binaryfile>${xsdfu.schemapath}/BinaryFile.xsd</xsdfu.binaryfile>
-    <xsdfu.roi>${xsdfu.schemapath}/ROI.xsd</xsdfu.roi>
-    <xsdfu.sa>${xsdfu.schemapath}/SA.xsd</xsdfu.sa>
-    <xsdfu.spw>${xsdfu.schemapath}/SPW.xsd</xsdfu.spw>
     <xsdfu.modelpath>../ome-xml/target/generated-sources/ome/xml/model</xsdfu.modelpath>
     <xsdfu.enumpath>../ome-xml/target/generated-sources/ome/xml/model/enums</xsdfu.enumpath>
     <xsdfu.handlerpath>../ome-xml/target/generated-sources/ome/xml/model/enums/handlers</xsdfu.handlerpath>
@@ -69,11 +62,11 @@
 		<argument>ome.xml.model</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.modelpath}/</argument>
-		<argument>${xsdfu.ome}</argument>
-		<argument>${xsdfu.binaryfile}</argument>
-		<argument>${xsdfu.roi}</argument>
-		<argument>${xsdfu.sa}</argument>
-		<argument>${xsdfu.spw}</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
 	      </arguments>
 	    </configuration>
 	  </execution>
@@ -93,11 +86,11 @@
 		<argument>ome.xml.model.enums</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.enumpath}/</argument>
-		<argument>${xsdfu.ome}</argument>
-		<argument>${xsdfu.binaryfile}</argument>
-		<argument>${xsdfu.roi}</argument>
-		<argument>${xsdfu.sa}</argument>
-		<argument>${xsdfu.spw}</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
 	      </arguments>
 	    </configuration>
 	  </execution>
@@ -117,11 +110,11 @@
 		<argument>ome.xml.model.enums.handlers</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.handlerpath}/</argument>
-		<argument>${xsdfu.ome}</argument>
-		<argument>${xsdfu.binaryfile}</argument>
-		<argument>${xsdfu.roi}</argument>
-		<argument>${xsdfu.sa}</argument>
-		<argument>${xsdfu.spw}</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
 	      </arguments>
 	    </configuration>
 	  </execution>
@@ -140,11 +133,11 @@
 		<argument>metadata_store</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.metadatapath}/</argument>
-		<argument>${xsdfu.ome}</argument>
-		<argument>${xsdfu.binaryfile}</argument>
-		<argument>${xsdfu.roi}</argument>
-		<argument>${xsdfu.sa}</argument>
-		<argument>${xsdfu.spw}</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
 	      </arguments>
 	    </configuration>
 	  </execution>
@@ -161,11 +154,11 @@
 		<argument>metadata_retrieve</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.metadatapath}/</argument>
-		<argument>${xsdfu.ome}</argument>
-		<argument>${xsdfu.binaryfile}</argument>
-		<argument>${xsdfu.roi}</argument>
-		<argument>${xsdfu.sa}</argument>
-		<argument>${xsdfu.spw}</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
 	      </arguments>
 	    </configuration>
 	  </execution>
@@ -183,11 +176,11 @@
 		<argument>metadata_aggregate</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.metadatapath}/</argument>
-		<argument>${xsdfu.ome}</argument>
-		<argument>${xsdfu.binaryfile}</argument>
-		<argument>${xsdfu.roi}</argument>
-		<argument>${xsdfu.sa}</argument>
-		<argument>${xsdfu.spw}</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
 	      </arguments>
 	    </configuration>
 	  </execution>
@@ -204,11 +197,11 @@
 		<argument>dummy_metadata</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.metadatapath}/</argument>
-		<argument>${xsdfu.ome}</argument>
-		<argument>${xsdfu.binaryfile}</argument>
-		<argument>${xsdfu.roi}</argument>
-		<argument>${xsdfu.sa}</argument>
-		<argument>${xsdfu.spw}</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
 	      </arguments>
 	    </configuration>
 	  </execution>
@@ -225,11 +218,11 @@
 		<argument>filter_metadata</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.metadatapath}/</argument>
-		<argument>${xsdfu.ome}</argument>
-		<argument>${xsdfu.binaryfile}</argument>
-		<argument>${xsdfu.roi}</argument>
-		<argument>${xsdfu.sa}</argument>
-		<argument>${xsdfu.spw}</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
 	      </arguments>
 	    </configuration>
 	  </execution>
@@ -247,11 +240,11 @@
 		<argument>omexml_metadata</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.scifiopath}/</argument>
-		<argument>${xsdfu.ome}</argument>
-		<argument>${xsdfu.binaryfile}</argument>
-		<argument>${xsdfu.roi}</argument>
-		<argument>${xsdfu.sa}</argument>
-		<argument>${xsdfu.spw}</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
 	      </arguments>
 	    </configuration>
 	  </execution>
