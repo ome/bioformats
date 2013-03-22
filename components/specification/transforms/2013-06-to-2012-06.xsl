@@ -124,10 +124,10 @@
 		</xsl:element>
 	</xsl:template>	
 	
-	<!-- strip SignificantBits -->
+	<!-- strip SignificantBits and Interleaved-->
 	<xsl:template match="OME:Pixels">
 		<xsl:element name="OME:Pixels" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'SignificantBits')]">
+			<xsl:for-each select="@* [not(name() = 'SignificantBits' or name() = 'Interleaved')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>

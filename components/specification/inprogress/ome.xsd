@@ -309,7 +309,8 @@
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Pixels</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				NOTE: Pixels is DEPRECATED, but it is still required.
+				Pixels is going to be removed in the future, but it is still required.
+
 				This is just notice that the contents of Pixels will be
 				moved up to Image in a future release. This is because there
 				has only been 1 Pixels object in each Image for some time.
@@ -317,10 +318,21 @@
 				take off. It is therefore redundant.
 
 				The Image will be unreadable if any of the required Pixel attributes are missing.
-				The Pixels themselves are stored within the file compressed by plane, and encoded in Base64.
-				The Pixels element must contain a list of BinData, each containing a single plane of pixels.
-				These Pixels elements, when read in document order, must produce a 5-D pixel array
-				of the size specified in this element, and in the dimension order specified by 'DimensionOrder'.
+
+				The Pixels themselves can be stored within the OME-XML compressed by plane, and encoded
+				in Base64.
+				Or the Pixels may be stored in TIFF format.
+
+				The Pixels element should contain a list of BinData or TiffData, each containing a
+				single plane of pixels. These Pixels elements, when read in document order,
+				must produce a 5-D pixel array of the size specified in this element, and in the
+				dimension order specified by 'DimensionOrder'.
+
+				All of the values in the Pixels object when present should match the same value
+				stored in any associated TIFF format (e.g. SizeX should be the same). Where there
+				is a mismatch our readers will take the value from the TIFF structure as overriding
+				the value in the OME-XML. This is simply a pragmatic decision as it increases the
+				likelihood of reading data from a slightly incorrect file.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -374,6 +386,15 @@
 						e.g. you can store 12 bit data within a 16 bit type.
 						This does not reduce the storage requirements but can be a useful indicator
 						when processing or viewing the image data.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Interleaved" use="optional" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>
+						How the channels are arranged withing the data block:
+						true if channels are stored RGBRGBRGB...;
+						false if channels are stored RRR...GGG...BBB...
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
