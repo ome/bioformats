@@ -40,11 +40,11 @@
     <xsdfu.roi>${xsdfu.schemapath}/ROI.xsd</xsdfu.roi>
     <xsdfu.sa>${xsdfu.schemapath}/SA.xsd</xsdfu.sa>
     <xsdfu.spw>${xsdfu.schemapath}/SPW.xsd</xsdfu.spw>
-    <xsdfu.modelpath>../ome-xml/build/src/ome/xml/model</xsdfu.modelpath>
-    <xsdfu.enumpath>../ome-xml/build/src/ome/xml/model/enums</xsdfu.enumpath>
-    <xsdfu.handlerpath>../ome-xml/build/src/ome/xml/model/enums/handlers</xsdfu.handlerpath>
-    <xsdfu.metadatapath>../scifio/build/src/loci/formats/meta</xsdfu.metadatapath>
-    <xsdfu.scifiopath>../scifio/build/src/loci/formats/ome</xsdfu.scifiopath>
+    <xsdfu.modelpath>../ome-xml/target/generated-sources/ome/xml/model</xsdfu.modelpath>
+    <xsdfu.enumpath>../ome-xml/target/generated-sources/ome/xml/model/enums</xsdfu.enumpath>
+    <xsdfu.handlerpath>../ome-xml/target/generated-sources/ome/xml/model/enums/handlers</xsdfu.handlerpath>
+    <xsdfu.metadatapath>../scifio/target/generated-sources/loci/formats/meta</xsdfu.metadatapath>
+    <xsdfu.scifiopath>../scifio/target/generated-sources/loci/formats/ome</xsdfu.scifiopath>
   </properties>
 
   <build>
@@ -92,7 +92,7 @@
 		<argument>-p</argument>
 		<argument>ome.xml.model.enums</argument>
 		<argument>-o</argument>
-		<argument>${xsdfu.modelpath}/</argument>
+		<argument>${xsdfu.enumpath}/</argument>
 		<argument>${xsdfu.ome}</argument>
 		<argument>${xsdfu.binaryfile}</argument>
 		<argument>${xsdfu.roi}</argument>
@@ -116,7 +116,7 @@
 		<argument>-p</argument>
 		<argument>ome.xml.model.enums.handlers</argument>
 		<argument>-o</argument>
-		<argument>${xsdfu.modelpath}/</argument>
+		<argument>${xsdfu.handlerpath}/</argument>
 		<argument>${xsdfu.ome}</argument>
 		<argument>${xsdfu.binaryfile}</argument>
 		<argument>${xsdfu.roi}</argument>
