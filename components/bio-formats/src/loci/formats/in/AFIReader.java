@@ -42,6 +42,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 
@@ -217,7 +219,9 @@ public class AFIReader extends FormatReader {
     }
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    boolean minimalMetadata =
+      getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
+    MetadataTools.populatePixels(store, this, !minimalMetadata);
 
     String fileID = currentId.substring(
       currentId.lastIndexOf(File.separator) + 1, currentId.lastIndexOf("."));
@@ -225,10 +229,39 @@ public class AFIReader extends FormatReader {
       store.setImageName(fileID + " - image #" + (i + 1), i);
     }
 
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+    if (!minimalMetadata) {
+      PositiveInteger[] emission = new PositiveInteger[pixels.size()];
+      PositiveInteger[] excitation = new PositiveInteger[pixels.size()];
+      Double[] exposure = new Double[pixels.size()];
+      Timestamp[] datestamp = new Timestamp[pixels.size()];
+
+      for (int c=0; c<pixels.size(); c++) {
+        reader.setId(pixels.get(c));
+        SVSReader baseReader = (SVSReader) reader.getReader();
+        emission[c] = baseReader.getEmission();
+        excitation[c] = baseReader.getExcitation();
+        exposure[c] = baseReader.getExposureTime();
+        datestamp[c] = baseReader.getDatestamp();
+      }
+
       for (int i=0; i<getSeriesCount() - 2; i++) {
+        if (datestamp[0] != null) {
+          store.setImageAcquisitionDate(datestamp[0], i);
+        }
+
         for (int c=0; c<channelNames.length; c++) {
           store.setChannelName(channelNames[c], i, c);
+
+          if (emission[c] != null) {
+            store.setChannelEmissionWavelength(emission[c], i, c);
+          }
+          if (excitation[c] != null) {
+            store.setChannelExcitationWavelength(excitation[c], i, c);
+          }
+
+          if (exposure[c] != null) {
+            store.setPlaneExposureTime(exposure[c], i, c);
+          }
         }
       }
     }

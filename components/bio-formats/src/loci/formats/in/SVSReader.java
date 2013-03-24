@@ -34,6 +34,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -43,6 +44,9 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
@@ -62,11 +66,17 @@ public class SVSReader extends BaseTiffReader {
   /** TIFF image description prefix for Aperio SVS files. */
   public static final String APERIO_IMAGE_DESCRIPTION_PREFIX = "Aperio Image";
 
+  private static final String DATE_FORMAT = "MM/dd/yy HH:mm:ss";
+
   // -- Fields --
 
   private float[] pixelSize;
   private String[] comments;
   private int[] ifdmap;
+
+  private double emissionWavelength, excitationWavelength;
+  private double exposureTime, exposureScale;
+  private String date, time;
 
   // -- Constructor --
 
@@ -250,7 +260,27 @@ public class SVSReader extends BaseTiffReader {
               key = t.substring(0, t.indexOf("=")).trim();
               value = t.substring(t.indexOf("=") + 1).trim();
               addSeriesMeta(key, value);
-              if (key.equals("MPP")) pixelSize[i] = Float.parseFloat(value);
+              if (key.equals("MPP")) {
+                pixelSize[i] = Float.parseFloat(value);
+              }
+              else if (key.equals("Date")) {
+                date = value;
+              }
+              else if (key.equals("Time")) {
+                time = value;
+              }
+              else if (key.equals("Emission Wavelength")) {
+                emissionWavelength = Double.parseDouble(value);
+              }
+              else if (key.equals("Excitation Wavelength")) {
+                excitationWavelength = Double.parseDouble(value);
+              }
+              else if (key.equals("Exposure Time")) {
+                exposureTime = Double.parseDouble(value);
+              }
+              else if (key.equals("Exposure Scale")) {
+                exposureScale = Double.parseDouble(value);
+              }
             }
           }
         }
@@ -300,6 +330,21 @@ public class SVSReader extends BaseTiffReader {
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName("Series " + (i + 1), i);
       store.setImageDescription(comments[i], i);
+
+      if (getDatestamp() != null) {
+        store.setImageAcquisitionDate(getDatestamp(), i);
+      }
+
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        if (getEmission() != null) {
+          store.setChannelEmissionWavelength(getEmission(), i, c);
+        }
+
+        if (getExcitation() != null) {
+          store.setChannelExcitationWavelength(getExcitation(), i, c);
+        }
+      }
+
     }
   }
 
@@ -311,38 +356,60 @@ public class SVSReader extends BaseTiffReader {
     return index;
   }
 
-    /**
-     * Validate the order of resolutions for the current series, in
-     * decending order of size.  If the order is wrong, reorder it.
-     */
-    protected void reorderResolutions() {
-      ifdmap = new int[core.size()];
+  /**
+   * Validate the order of resolutions for the current series, in
+   * decending order of size.  If the order is wrong, reorder it.
+   */
+  protected void reorderResolutions() {
+    ifdmap = new int[core.size()];
 
-      for (int i = 0; i < core.size();) {
-        int resolutions = core.get(i).resolutionCount;
+    for (int i = 0; i < core.size();) {
+      int resolutions = core.get(i).resolutionCount;
 
-        List<CoreMetadata> savedCore = new ArrayList<CoreMetadata>();
-        int savedIFDs[] = new int[resolutions];
-        HashMap<Integer,Integer> levels = new HashMap<Integer,Integer>();
-        for (int c = 0; c < resolutions; c++) {
-          savedCore.add(core.get(i + c));
-          savedIFDs[c] = getIFDIndex(i+c);
-          levels.put(new Integer(savedCore.get(c).sizeX), new Integer(c));
-        }
-
-        Integer[] keys = levels.keySet().toArray(new Integer[resolutions]);
-        Arrays.sort(keys);
-
-        for (int j = 0; j < resolutions; j++) {
-          core.set(i + j, savedCore.get(levels.get(keys[resolutions - j - 1])));
-          ifdmap[i + j] = savedIFDs[levels.get(keys[resolutions - j - 1])];
-          if (j == 0)
-            core.get(i + j).resolutionCount = resolutions;
-          else
-            core.get(i + j).resolutionCount = 1;
-        }
-        i += core.get(i).resolutionCount;
+      List<CoreMetadata> savedCore = new ArrayList<CoreMetadata>();
+      int savedIFDs[] = new int[resolutions];
+      HashMap<Integer,Integer> levels = new HashMap<Integer,Integer>();
+      for (int c = 0; c < resolutions; c++) {
+        savedCore.add(core.get(i + c));
+        savedIFDs[c] = getIFDIndex(i+c);
+        levels.put(new Integer(savedCore.get(c).sizeX), new Integer(c));
       }
+
+      Integer[] keys = levels.keySet().toArray(new Integer[resolutions]);
+      Arrays.sort(keys);
+
+      for (int j = 0; j < resolutions; j++) {
+        core.set(i + j, savedCore.get(levels.get(keys[resolutions - j - 1])));
+        ifdmap[i + j] = savedIFDs[levels.get(keys[resolutions - j - 1])];
+        if (j == 0)
+          core.get(i + j).resolutionCount = resolutions;
+        else
+          core.get(i + j).resolutionCount = 1;
+      }
+      i += core.get(i).resolutionCount;
     }
+  }
+
+  protected PositiveInteger getEmission() {
+    if ((int) emissionWavelength > 0) {
+      return new PositiveInteger((int) emissionWavelength);
+    }
+    return null;
+  }
+
+  protected PositiveInteger getExcitation() {
+    if ((int) excitationWavelength > 0) {
+      return new PositiveInteger((int) excitationWavelength);
+    }
+    return null;
+  }
+
+  protected Double getExposureTime() {
+    return exposureTime;
+  }
+
+  protected Timestamp getDatestamp() {
+    return new Timestamp(DateTools.formatDate(date + " " + time, DATE_FORMAT));
+  }
 
 }
