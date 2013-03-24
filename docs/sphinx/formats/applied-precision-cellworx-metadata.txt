@@ -9,9 +9,9 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 39 of them (9%).
-  * Of those, Bio-Formats fully or partially converts 39 (100%).
+Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 40 of them (8%).
+  * Of those, Bio-Formats fully or partially converts 40 (100%).
 
 Supported fields
 ===============================================================================
@@ -25,6 +25,7 @@ These fields are fully supported by the Bio-Formats CellWorx format reader:
   * `Detector : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_ID>`_
   * `DetectorSettings : Gain <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings_Gain>`_
   * `DetectorSettings : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings_ID>`_
+  * `Image : AcquisitionDate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`_
   * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
   * `Image : InstrumentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_InstrumentRef>`_
   * `Image : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Name>`_
@@ -57,6 +58,6 @@ These fields are fully supported by the Bio-Formats CellWorx format reader:
   * `WellSample : PositionX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_PositionX>`_
   * `WellSample : PositionY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_PositionY>`_
 
-**Total supported: 39**
+**Total supported: 40**
 
-**Total unknown or missing: 394**
+**Total unknown or missing: 433**

@@ -22,760 +22,760 @@ Format readers
      - Unknown/Missing
 
    * - :doc:`AIMReader <formats/aim-metadata>`
-     - 18
+     - 19
      - 0
      - 0
-     - 415
+     - 454
    * - :doc:`APLReader <formats/olympus-cellrapl-metadata>`
-     - 17
+     - 18
      - 0
      - 0
-     - 416
+     - 455
    * - :doc:`APNGReader <formats/png-metadata>`
-     - 15
+     - 16
      - 0
      - 0
-     - 418
+     - 457
    * - :doc:`ARFReader <formats/axon-raw-format-metadata>`
-     - 15
+     - 16
      - 0
      - 0
-     - 418
+     - 457
    * - :doc:`AVIReader <formats/avi-metadata>`
-     - 15
+     - 16
      - 0
      - 0
-     - 418
+     - 457
    * - :doc:`AliconaReader <formats/alicona-3d-metadata>`
-     - 28
-     - 0
-     - 0
-     - 405
-   * - :doc:`AmiraReader <formats/amira-mesh-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`AnalyzeReader <formats/analyze-75-metadata>`
-     - 20
-     - 0
-     - 0
-     - 413
-   * - :doc:`BDReader <formats/bd-pathway-metadata>`
-     - 52
-     - 0
-     - 0
-     - 381
-   * - :doc:`BIFormatReader <formats/bd-pathway-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`BMPReader <formats/windows-bitmap-metadata>`
-     - 17
-     - 0
-     - 0
-     - 416
-   * - :doc:`BaseTiffReader <formats/windows-bitmap-metadata>`
-     - 23
-     - 0
-     - 0
-     - 410
-   * - :doc:`BaseZeissReader <formats/windows-bitmap-metadata>`
-     - 66
-     - 0
-     - 0
-     - 367
-   * - :doc:`BioRadGelReader <formats/bio-rad-gel-metadata>`
-     - 17
-     - 0
-     - 0
-     - 416
-   * - :doc:`BioRadReader <formats/bio-rad-pic-metadata>`
-     - 35
-     - 0
-     - 0
-     - 398
-   * - :doc:`BrukerReader <formats/bruker-mri-metadata>`
-     - 19
-     - 0
-     - 0
-     - 414
-   * - :doc:`BurleighReader <formats/burleigh-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`CanonRawReader <formats/burleigh-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`CellSensReader <formats/cellsens-vsi-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`CellWorxReader <formats/applied-precision-cellworx-metadata>`
-     - 39
-     - 0
-     - 0
-     - 394
-   * - :doc:`CellomicsReader <formats/cellomics-metadata>`
-     - 27
-     - 0
-     - 0
-     - 406
-   * - :doc:`DNGReader <formats/canon-dng-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`DeltavisionReader <formats/deltavision-metadata>`
-     - 47
-     - 0
-     - 0
-     - 386
-   * - :doc:`DicomReader <formats/dicom-metadata>`
-     - 19
-     - 0
-     - 0
-     - 414
-   * - :doc:`EPSReader <formats/eps-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`Ecat7Reader <formats/ecat7-metadata>`
-     - 19
-     - 0
-     - 0
-     - 414
-   * - :doc:`FEIReader <formats/fei-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`FEITiffReader <formats/fei-tiff-metadata>`
-     - 35
-     - 0
-     - 0
-     - 398
-   * - :doc:`FV1000Reader <formats/olympus-fluoview-fv1000-metadata>`
-     - 97
-     - 0
-     - 0
-     - 336
-   * - :doc:`FakeReader <formats/olympus-fluoview-fv1000-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`FitsReader <formats/fits-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`FlexReader <formats/evotecperkinelmer-opera-flex-metadata>`
-     - 64
-     - 0
-     - 0
-     - 369
-   * - :doc:`FluoviewReader <formats/olympus-fluoview-tiff-metadata>`
-     - 44
-     - 0
-     - 0
-     - 389
-   * - :doc:`FujiReader <formats/olympus-fluoview-tiff-metadata>`
-     - 19
-     - 0
-     - 0
-     - 414
-   * - :doc:`GIFReader <formats/gif-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`GatanDM2Reader <formats/gatan-digital-micrograph-2-metadata>`
-     - 26
-     - 0
-     - 0
-     - 407
-   * - :doc:`GatanReader <formats/gatan-digital-micrograph-metadata>`
-     - 31
-     - 0
-     - 0
-     - 402
-   * - :doc:`GelReader <formats/amersham-biosciences-gel-metadata>`
-     - 17
-     - 0
-     - 0
-     - 416
-   * - :doc:`HISReader <formats/hamamatsu-his-metadata>`
-     - 23
-     - 0
-     - 0
-     - 410
-   * - :doc:`HRDGDFReader <formats/hamamatsu-his-metadata>`
-     - 17
-     - 0
-     - 0
-     - 416
-   * - :doc:`HamamatsuVMSReader <formats/hamamatsu-vms-metadata>`
-     - 21
-     - 0
-     - 0
-     - 412
-   * - :doc:`HitachiReader <formats/hitachi-s-4800-metadata>`
-     - 26
-     - 0
-     - 0
-     - 407
-   * - :doc:`ICSReader <formats/ics-metadata>`
-     - 67
-     - 0
-     - 0
-     - 366
-   * - :doc:`IMODReader <formats/imod-metadata>`
-     - 32
-     - 0
-     - 0
-     - 401
-   * - :doc:`INRReader <formats/inr-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`IPLabReader <formats/iplab-metadata>`
-     - 27
-     - 0
-     - 0
-     - 406
-   * - :doc:`IPWReader <formats/imagepro-workspace-metadata>`
-     - 16
-     - 0
-     - 0
-     - 417
-   * - :doc:`ImaconReader <formats/imacon-metadata>`
-     - 19
-     - 0
-     - 0
-     - 414
-   * - :doc:`ImageIOReader <formats/imacon-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`ImagicReader <formats/imagic-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`ImarisHDFReader <formats/bitplane-imaris-metadata>`
-     - 20
-     - 0
-     - 0
-     - 413
-   * - :doc:`ImarisReader <formats/bitplane-imaris-metadata>`
-     - 28
-     - 0
-     - 0
-     - 405
-   * - :doc:`ImarisTiffReader <formats/bitplane-imaris-metadata>`
-     - 19
-     - 0
-     - 0
-     - 414
-   * - :doc:`ImprovisionTiffReader <formats/improvision-tiff-metadata>`
-     - 21
-     - 0
-     - 0
-     - 412
-   * - :doc:`InCell3000Reader <formats/incell-3000-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`InCellReader <formats/incell-1000-metadata>`
-     - 61
-     - 0
-     - 0
-     - 372
-   * - :doc:`IvisionReader <formats/iplab-mac-metadata>`
-     - 28
-     - 0
-     - 0
-     - 405
-   * - :doc:`JEOLReader <formats/jeol-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`JPEG2000Reader <formats/jpeg-2000-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`JPEGReader <formats/jpeg-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`JPKReader <formats/jpk-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`JPXReader <formats/jpx-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`KhorosReader <formats/khoros-viff-bitmap-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`KodakReader <formats/kodak-bip-metadata>`
-     - 22
-     - 0
-     - 0
-     - 411
-   * - :doc:`L2DReader <formats/li-cor-l2d-metadata>`
-     - 25
-     - 0
-     - 0
-     - 408
-   * - :doc:`LEOReader <formats/leo-metadata>`
-     - 23
-     - 0
-     - 0
-     - 410
-   * - :doc:`LIFReader <formats/leica-lif-metadata>`
-     - 71
-     - 0
-     - 0
-     - 362
-   * - :doc:`LIMReader <formats/lim-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`LegacyND2Reader <formats/lim-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`LegacyQTReader <formats/lim-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`LeicaReader <formats/leica-lcs-lei-metadata>`
-     - 50
-     - 0
-     - 0
-     - 383
-   * - :doc:`LeicaSCNReader <formats/leica-scn-metadata>`
-     - 28
-     - 0
-     - 0
-     - 405
-   * - :doc:`LiFlimReader <formats/lambert-instruments-flim-metadata>`
-     - 19
-     - 0
-     - 0
-     - 414
-   * - :doc:`MIASReader <formats/mias-maia-scientific-metadata>`
-     - 55
-     - 0
-     - 0
-     - 378
-   * - :doc:`MINCReader <formats/minc-mri-metadata>`
-     - 19
-     - 0
-     - 0
-     - 414
-   * - :doc:`MNGReader <formats/mng-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`MRCReader <formats/mrc-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`MRWReader <formats/minolta-mrw-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`MetamorphReader <formats/metamorph-stack-stk-metadata>`
-     - 39
-     - 0
-     - 0
-     - 394
-   * - :doc:`MetamorphTiffReader <formats/metamorph-75-tiff-metadata>`
-     - 33
-     - 0
-     - 0
-     - 400
-   * - :doc:`MicromanagerReader <formats/micro-manager-metadata>`
-     - 34
-     - 0
-     - 0
-     - 399
-   * - :doc:`MinimalTiffReader <formats/micro-manager-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`MolecularImagingReader <formats/molecular-imaging-metadata>`
-     - 17
-     - 0
-     - 0
-     - 416
-   * - :doc:`NAFReader <formats/hamamatsu-aquacosmos-naf-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`ND2Reader <formats/hamamatsu-aquacosmos-naf-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`NDPIReader <formats/hamamatsu-ndpi-metadata>`
-     - 17
-     - 0
-     - 0
-     - 416
-   * - :doc:`NDPISReader <formats/hamamatsu-ndpi-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`NRRDReader <formats/nrrd-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`NativeND2Reader <formats/nikon-nis-elements-nd2-metadata>`
-     - 46
-     - 0
-     - 0
-     - 387
-   * - :doc:`NativeQTReader <formats/quicktime-movie-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`NiftiReader <formats/nifti-metadata>`
-     - 20
-     - 0
-     - 0
-     - 413
-   * - :doc:`NikonElementsTiffReader <formats/nikon-elements-tiff-metadata>`
-     - 44
-     - 0
-     - 0
-     - 389
-   * - :doc:`NikonReader <formats/nef-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`NikonTiffReader <formats/nikon-ez-c1-tiff-metadata>`
-     - 42
-     - 0
-     - 0
-     - 391
-   * - :doc:`OMETiffReader <formats/ome-tiff-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`OMEXMLReader <formats/ome-xml-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`OpenlabRawReader <formats/improvision-openlab-raw-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`OpenlabReader <formats/improvision-openlab-liff-metadata>`
-     - 28
-     - 0
-     - 0
-     - 405
-   * - :doc:`OperettaReader <formats/perkinelmer-operetta-metadata>`
-     - 39
-     - 0
-     - 0
-     - 394
-   * - :doc:`OxfordInstrumentsReader <formats/oxford-instruments-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`PCIReader <formats/simplepci-hcimage-metadata>`
-     - 25
-     - 0
-     - 0
-     - 408
-   * - :doc:`PCXReader <formats/pcx-pc-paintbrush-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`PDSReader <formats/perkin-elmer-densitometer-metadata>`
-     - 19
-     - 0
-     - 0
-     - 414
-   * - :doc:`PGMReader <formats/pgm-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`PSDReader <formats/photoshop-psd-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`PerkinElmerReader <formats/perkinelmer-ultraview-metadata>`
-     - 26
-     - 0
-     - 0
-     - 407
-   * - :doc:`PhotoshopTiffReader <formats/photoshop-tiff-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`PictReader <formats/pict-macintosh-picture-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`PovrayReader <formats/pict-macintosh-picture-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`PrairieReader <formats/prairie-tech-tiff-metadata>`
-     - 40
-     - 0
-     - 0
-     - 393
-   * - :doc:`PyramidTiffReader <formats/prairie-tech-tiff-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`QTReader <formats/prairie-tech-tiff-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`QuesantReader <formats/quesant-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`RHKReader <formats/rhk-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`SBIGReader <formats/sbig-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`SDTReader <formats/becker-hickl-spcimage-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`SEQReader <formats/imagepro-sequence-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`SIFReader <formats/imagepro-sequence-metadata>`
-     - 16
-     - 0
-     - 0
-     - 417
-   * - :doc:`SISReader <formats/olympus-sis-tiff-metadata>`
-     - 28
-     - 0
-     - 0
-     - 405
-   * - :doc:`SMCameraReader <formats/sm-camera-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`SVSReader <formats/aperio-svs-tiff-metadata>`
-     - 16
-     - 0
-     - 0
-     - 417
-   * - :doc:`ScanrReader <formats/olympus-scanr-metadata>`
-     - 39
-     - 0
-     - 0
-     - 394
-   * - :doc:`ScreenReader <formats/olympus-scanr-metadata>`
      - 30
      - 0
      - 0
-     - 403
-   * - :doc:`SeikoReader <formats/seiko-metadata>`
-     - 18
+     - 443
+   * - :doc:`AmiraReader <formats/amira-mesh-metadata>`
+     - 19
      - 0
      - 0
-     - 415
-   * - :doc:`SimplePCITiffReader <formats/simplepci-hcimage-tiff-metadata>`
-     - 29
-     - 0
-     - 0
-     - 404
-   * - :doc:`SlidebookReader <formats/3i-slidebook-metadata>`
-     - 29
-     - 0
-     - 0
-     - 404
-   * - :doc:`SlidebookTiffReader <formats/3i-slidebook-metadata>`
-     - 26
-     - 0
-     - 0
-     - 407
-   * - :doc:`SpiderReader <formats/spider-metadata>`
-     - 17
-     - 0
-     - 0
-     - 416
-   * - :doc:`TCSReader <formats/spider-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`TargaReader <formats/targa-metadata>`
-     - 16
-     - 0
-     - 0
-     - 417
-   * - :doc:`TextReader <formats/text-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`TiffDelegateReader <formats/text-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`TiffJAIReader <formats/text-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`TiffReader <formats/tiff-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`TileJPEGReader <formats/tiff-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`TillVisionReader <formats/tillphotonics-tillvision-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`TopometrixReader <formats/topometrix-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`TrestleReader <formats/trestle-metadata>`
-     - 20
-     - 0
-     - 0
-     - 413
-   * - :doc:`UBMReader <formats/ubm-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`UnisokuReader <formats/unisoku-metadata>`
-     - 18
-     - 0
-     - 0
-     - 415
-   * - :doc:`VGSAMReader <formats/vg-sam-metadata>`
-     - 15
-     - 0
-     - 0
-     - 418
-   * - :doc:`VarianFDFReader <formats/varian-fdf-metadata>`
+     - 454
+   * - :doc:`AnalyzeReader <formats/analyze-75-metadata>`
      - 21
      - 0
      - 0
-     - 412
-   * - :doc:`VisitechReader <formats/visitech-xys-metadata>`
-     - 15
+     - 452
+   * - :doc:`BDReader <formats/bd-pathway-metadata>`
+     - 54
      - 0
      - 0
-     - 418
-   * - :doc:`VolocityClippingReader <formats/volocity-library-clipping-metadata>`
-     - 15
+     - 419
+   * - :doc:`BIFormatReader <formats/bd-pathway-metadata>`
+     - 16
      - 0
      - 0
-     - 418
-   * - :doc:`VolocityReader <formats/volocity-metadata>`
-     - 32
-     - 0
-     - 0
-     - 401
-   * - :doc:`WATOPReader <formats/wa-top-metadata>`
+     - 457
+   * - :doc:`BMPReader <formats/windows-bitmap-metadata>`
      - 18
      - 0
      - 0
-     - 415
+     - 455
+   * - :doc:`BaseTiffReader <formats/windows-bitmap-metadata>`
+     - 24
+     - 0
+     - 0
+     - 449
+   * - :doc:`BaseZeissReader <formats/windows-bitmap-metadata>`
+     - 80
+     - 0
+     - 0
+     - 393
+   * - :doc:`BioRadGelReader <formats/bio-rad-gel-metadata>`
+     - 18
+     - 0
+     - 0
+     - 455
+   * - :doc:`BioRadReader <formats/bio-rad-pic-metadata>`
+     - 37
+     - 0
+     - 0
+     - 436
+   * - :doc:`BrukerReader <formats/bruker-mri-metadata>`
+     - 20
+     - 0
+     - 0
+     - 453
+   * - :doc:`BurleighReader <formats/burleigh-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`CanonRawReader <formats/burleigh-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`CellSensReader <formats/cellsens-vsi-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`CellWorxReader <formats/applied-precision-cellworx-metadata>`
+     - 40
+     - 0
+     - 0
+     - 433
+   * - :doc:`CellomicsReader <formats/cellomics-metadata>`
+     - 28
+     - 0
+     - 0
+     - 445
+   * - :doc:`DNGReader <formats/canon-dng-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`DeltavisionReader <formats/deltavision-metadata>`
+     - 49
+     - 0
+     - 0
+     - 424
+   * - :doc:`DicomReader <formats/dicom-metadata>`
+     - 20
+     - 0
+     - 0
+     - 453
+   * - :doc:`EPSReader <formats/eps-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`Ecat7Reader <formats/ecat7-metadata>`
+     - 20
+     - 0
+     - 0
+     - 453
+   * - :doc:`FEIReader <formats/fei-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`FEITiffReader <formats/fei-tiff-metadata>`
+     - 36
+     - 0
+     - 0
+     - 437
+   * - :doc:`FV1000Reader <formats/olympus-fluoview-fv1000-metadata>`
+     - 106
+     - 0
+     - 0
+     - 367
+   * - :doc:`FakeReader <formats/olympus-fluoview-fv1000-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`FitsReader <formats/fits-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`FlexReader <formats/evotecperkinelmer-opera-flex-metadata>`
+     - 66
+     - 0
+     - 0
+     - 407
+   * - :doc:`FluoviewReader <formats/olympus-fluoview-tiff-metadata>`
+     - 46
+     - 0
+     - 0
+     - 427
+   * - :doc:`FujiReader <formats/olympus-fluoview-tiff-metadata>`
+     - 20
+     - 0
+     - 0
+     - 453
+   * - :doc:`GIFReader <formats/gif-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`GatanDM2Reader <formats/gatan-digital-micrograph-2-metadata>`
+     - 27
+     - 0
+     - 0
+     - 446
+   * - :doc:`GatanReader <formats/gatan-digital-micrograph-metadata>`
+     - 33
+     - 0
+     - 0
+     - 440
+   * - :doc:`GelReader <formats/amersham-biosciences-gel-metadata>`
+     - 18
+     - 0
+     - 0
+     - 455
+   * - :doc:`HISReader <formats/hamamatsu-his-metadata>`
+     - 24
+     - 0
+     - 0
+     - 449
+   * - :doc:`HRDGDFReader <formats/hamamatsu-his-metadata>`
+     - 18
+     - 0
+     - 0
+     - 455
+   * - :doc:`HamamatsuVMSReader <formats/hamamatsu-vms-metadata>`
+     - 23
+     - 0
+     - 0
+     - 450
+   * - :doc:`HitachiReader <formats/hitachi-s-4800-metadata>`
+     - 28
+     - 0
+     - 0
+     - 445
+   * - :doc:`ICSReader <formats/ics-metadata>`
+     - 69
+     - 0
+     - 0
+     - 404
+   * - :doc:`IMODReader <formats/imod-metadata>`
+     - 41
+     - 0
+     - 0
+     - 432
+   * - :doc:`INRReader <formats/inr-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`IPLabReader <formats/iplab-metadata>`
+     - 28
+     - 0
+     - 0
+     - 445
+   * - :doc:`IPWReader <formats/imagepro-workspace-metadata>`
+     - 17
+     - 0
+     - 0
+     - 456
+   * - :doc:`ImaconReader <formats/imacon-metadata>`
+     - 20
+     - 0
+     - 0
+     - 453
+   * - :doc:`ImageIOReader <formats/imacon-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`ImagicReader <formats/imagic-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`ImarisHDFReader <formats/bitplane-imaris-metadata>`
+     - 21
+     - 0
+     - 0
+     - 452
+   * - :doc:`ImarisReader <formats/bitplane-imaris-metadata>`
+     - 29
+     - 0
+     - 0
+     - 444
+   * - :doc:`ImarisTiffReader <formats/bitplane-imaris-metadata>`
+     - 20
+     - 0
+     - 0
+     - 453
+   * - :doc:`ImprovisionTiffReader <formats/improvision-tiff-metadata>`
+     - 22
+     - 0
+     - 0
+     - 451
+   * - :doc:`InCell3000Reader <formats/incell-3000-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`InCellReader <formats/incell-1000-metadata>`
+     - 64
+     - 0
+     - 0
+     - 409
+   * - :doc:`IvisionReader <formats/iplab-mac-metadata>`
+     - 31
+     - 0
+     - 0
+     - 442
+   * - :doc:`JEOLReader <formats/jeol-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`JPEG2000Reader <formats/jpeg-2000-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`JPEGReader <formats/jpeg-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`JPKReader <formats/jpk-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`JPXReader <formats/jpx-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`KhorosReader <formats/khoros-viff-bitmap-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`KodakReader <formats/kodak-bip-metadata>`
+     - 23
+     - 0
+     - 0
+     - 450
+   * - :doc:`L2DReader <formats/li-cor-l2d-metadata>`
+     - 26
+     - 0
+     - 0
+     - 447
+   * - :doc:`LEOReader <formats/leo-metadata>`
+     - 24
+     - 0
+     - 0
+     - 449
+   * - :doc:`LIFReader <formats/leica-lif-metadata>`
+     - 82
+     - 0
+     - 0
+     - 391
+   * - :doc:`LIMReader <formats/lim-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`LegacyND2Reader <formats/lim-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`LegacyQTReader <formats/lim-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`LeicaReader <formats/leica-lcs-lei-metadata>`
+     - 53
+     - 0
+     - 0
+     - 420
+   * - :doc:`LeicaSCNReader <formats/leica-scn-metadata>`
+     - 30
+     - 0
+     - 0
+     - 443
+   * - :doc:`LiFlimReader <formats/lambert-instruments-flim-metadata>`
+     - 22
+     - 0
+     - 0
+     - 451
+   * - :doc:`MIASReader <formats/mias-maia-scientific-metadata>`
+     - 61
+     - 0
+     - 0
+     - 412
+   * - :doc:`MINCReader <formats/minc-mri-metadata>`
+     - 20
+     - 0
+     - 0
+     - 453
+   * - :doc:`MNGReader <formats/mng-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`MRCReader <formats/mrc-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`MRWReader <formats/minolta-mrw-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`MetamorphReader <formats/metamorph-stack-stk-metadata>`
+     - 40
+     - 0
+     - 0
+     - 433
+   * - :doc:`MetamorphTiffReader <formats/metamorph-75-tiff-metadata>`
+     - 34
+     - 0
+     - 0
+     - 439
+   * - :doc:`MicromanagerReader <formats/micro-manager-metadata>`
+     - 35
+     - 0
+     - 0
+     - 438
+   * - :doc:`MinimalTiffReader <formats/micro-manager-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`MolecularImagingReader <formats/molecular-imaging-metadata>`
+     - 18
+     - 0
+     - 0
+     - 455
+   * - :doc:`NAFReader <formats/hamamatsu-aquacosmos-naf-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`ND2Reader <formats/hamamatsu-aquacosmos-naf-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`NDPIReader <formats/hamamatsu-ndpi-metadata>`
+     - 18
+     - 0
+     - 0
+     - 455
+   * - :doc:`NDPISReader <formats/hamamatsu-ndpi-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`NRRDReader <formats/nrrd-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`NativeND2Reader <formats/nikon-nis-elements-nd2-metadata>`
+     - 49
+     - 0
+     - 0
+     - 424
+   * - :doc:`NativeQTReader <formats/quicktime-movie-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`NiftiReader <formats/nifti-metadata>`
+     - 21
+     - 0
+     - 0
+     - 452
+   * - :doc:`NikonElementsTiffReader <formats/nikon-elements-tiff-metadata>`
+     - 47
+     - 0
+     - 0
+     - 426
+   * - :doc:`NikonReader <formats/nef-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`NikonTiffReader <formats/nikon-ez-c1-tiff-metadata>`
+     - 44
+     - 0
+     - 0
+     - 429
+   * - :doc:`OMETiffReader <formats/ome-tiff-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`OMEXMLReader <formats/ome-xml-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`OpenlabRawReader <formats/improvision-openlab-raw-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`OpenlabReader <formats/improvision-openlab-liff-metadata>`
+     - 29
+     - 0
+     - 0
+     - 444
+   * - :doc:`OperettaReader <formats/perkinelmer-operetta-metadata>`
+     - 40
+     - 0
+     - 0
+     - 433
+   * - :doc:`OxfordInstrumentsReader <formats/oxford-instruments-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`PCIReader <formats/simplepci-hcimage-metadata>`
+     - 26
+     - 0
+     - 0
+     - 447
+   * - :doc:`PCXReader <formats/pcx-pc-paintbrush-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`PDSReader <formats/perkin-elmer-densitometer-metadata>`
+     - 20
+     - 0
+     - 0
+     - 453
+   * - :doc:`PGMReader <formats/pgm-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`PSDReader <formats/photoshop-psd-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`PerkinElmerReader <formats/perkinelmer-ultraview-metadata>`
+     - 27
+     - 0
+     - 0
+     - 446
+   * - :doc:`PhotoshopTiffReader <formats/photoshop-tiff-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`PictReader <formats/pict-macintosh-picture-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`PovrayReader <formats/pict-macintosh-picture-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`PrairieReader <formats/prairie-tech-tiff-metadata>`
+     - 42
+     - 0
+     - 0
+     - 431
+   * - :doc:`PyramidTiffReader <formats/prairie-tech-tiff-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`QTReader <formats/prairie-tech-tiff-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`QuesantReader <formats/quesant-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`RHKReader <formats/rhk-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`SBIGReader <formats/sbig-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`SDTReader <formats/becker-hickl-spcimage-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`SEQReader <formats/imagepro-sequence-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`SIFReader <formats/imagepro-sequence-metadata>`
+     - 17
+     - 0
+     - 0
+     - 456
+   * - :doc:`SISReader <formats/olympus-sis-tiff-metadata>`
+     - 30
+     - 0
+     - 0
+     - 443
+   * - :doc:`SMCameraReader <formats/sm-camera-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`SVSReader <formats/aperio-svs-tiff-metadata>`
+     - 17
+     - 0
+     - 0
+     - 456
+   * - :doc:`ScanrReader <formats/olympus-scanr-metadata>`
+     - 40
+     - 0
+     - 0
+     - 433
+   * - :doc:`ScreenReader <formats/olympus-scanr-metadata>`
+     - 31
+     - 0
+     - 0
+     - 442
+   * - :doc:`SeikoReader <formats/seiko-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`SimplePCITiffReader <formats/simplepci-hcimage-tiff-metadata>`
+     - 30
+     - 0
+     - 0
+     - 443
+   * - :doc:`SlidebookReader <formats/3i-slidebook-metadata>`
+     - 31
+     - 0
+     - 0
+     - 442
+   * - :doc:`SlidebookTiffReader <formats/3i-slidebook-metadata>`
+     - 27
+     - 0
+     - 0
+     - 446
+   * - :doc:`SpiderReader <formats/spider-metadata>`
+     - 18
+     - 0
+     - 0
+     - 455
+   * - :doc:`TCSReader <formats/spider-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`TargaReader <formats/targa-metadata>`
+     - 17
+     - 0
+     - 0
+     - 456
+   * - :doc:`TextReader <formats/text-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`TiffDelegateReader <formats/text-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`TiffJAIReader <formats/text-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`TiffReader <formats/tiff-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`TileJPEGReader <formats/tiff-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`TillVisionReader <formats/tillphotonics-tillvision-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`TopometrixReader <formats/topometrix-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`TrestleReader <formats/trestle-metadata>`
+     - 23
+     - 0
+     - 0
+     - 450
+   * - :doc:`UBMReader <formats/ubm-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`UnisokuReader <formats/unisoku-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
+   * - :doc:`VGSAMReader <formats/vg-sam-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`VarianFDFReader <formats/varian-fdf-metadata>`
+     - 22
+     - 0
+     - 0
+     - 451
+   * - :doc:`VisitechReader <formats/visitech-xys-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`VolocityClippingReader <formats/volocity-library-clipping-metadata>`
+     - 16
+     - 0
+     - 0
+     - 457
+   * - :doc:`VolocityReader <formats/volocity-metadata>`
+     - 34
+     - 0
+     - 0
+     - 439
+   * - :doc:`WATOPReader <formats/wa-top-metadata>`
+     - 19
+     - 0
+     - 0
+     - 454
    * - :doc:`ZeissCZIReader <formats/zeiss-czi-metadata>`
-     - 136
+     - 148
      - 0
      - 0
-     - 297
+     - 325
    * - :doc:`ZeissLSMReader <formats/zeiss-lsm-metadata>`
-     - 86
+     - 96
      - 0
      - 0
-     - 347
+     - 377
    * - :doc:`ZeissTIFFReader <formats/zeiss-axiovision-tiff-metadata>`
-     - 15
+     - 16
      - 0
      - 0
-     - 418
+     - 457
    * - :doc:`ZeissZVIReader <formats/zeiss-axiovision-zvi-metadata>`
-     - 15
+     - 16
      - 0
      - 0
-     - 418
+     - 457
    * - :doc:`ZipReader <formats/zeiss-axiovision-zvi-metadata>`
-     - 15
+     - 16
      - 0
      - 0
-     - 418
+     - 457
 
 Metadata fields
 ---------------
@@ -829,6 +829,16 @@ Metadata fields
      - 0
      - 150
    * - `Arc - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Arc_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `BooleanAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `BooleanAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`_
      - 0
      - 0
      - 0
@@ -923,11 +933,6 @@ Metadata fields
      - 0
      - 0
      - 122
-   * - `Channel - OTFRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
    * - `Channel - PinholeSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
      - 9
      - 0
@@ -943,6 +948,31 @@ Metadata fields
      - 0
      - 0
      - 0
+   * - `CommentAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `CommentAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `CommentAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `CommentAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `CommentAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Dataset - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
      - 0
      - 0
@@ -953,12 +983,12 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - `Dataset - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
+   * - `Dataset - ExperimenterGroupRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Dataset - GroupRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
+   * - `Dataset - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
      - 0
      - 0
      - 0
@@ -968,12 +998,12 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - `Dataset - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
+   * - `Dataset - ImageRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Dataset - ProjectRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
+   * - `Dataset - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
      - 0
      - 0
      - 0
@@ -1088,6 +1118,16 @@ Metadata fields
      - 0
      - 0
      - 150
+   * - `DoubleAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `DoubleAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `DoubleAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`_
      - 0
      - 0
@@ -1103,12 +1143,17 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - `Ellipse - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
+   * - `Ellipse - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Ellipse - Fill <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
+   * - `Ellipse - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Ellipse - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
      - 0
      - 0
      - 0
@@ -1118,17 +1163,22 @@ Metadata fields
      - 0
      - 0
      - 149
+   * - `Ellipse - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Ellipse - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
      - 5
      - 0
      - 0
      - 146
-   * - `Ellipse - Label <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
+   * - `Ellipse - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Ellipse - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
+   * - `Ellipse - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
      - 0
      - 0
      - 0
@@ -1143,7 +1193,7 @@ Metadata fields
      - 0
      - 0
      - 146
-   * - `Ellipse - Stroke <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
+   * - `Ellipse - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
      - 0
      - 0
      - 0
@@ -1158,6 +1208,11 @@ Metadata fields
      - 0
      - 0
      - 149
+   * - `Ellipse - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
+     - 3
+     - 0
+     - 0
+     - 148
    * - `Ellipse - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
      - 0
      - 0
@@ -1178,6 +1233,11 @@ Metadata fields
      - 0
      - 0
      - 149
+   * - `Ellipse - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Ellipse - X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
      - 5
      - 0
@@ -1213,11 +1273,6 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - `Experimenter - DisplayName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
    * - `Experimenter - Email <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
      - 2
      - 0
@@ -1228,11 +1283,6 @@ Metadata fields
      - 0
      - 0
      - 146
-   * - `Experimenter - GroupRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
    * - `Experimenter - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
      - 10
      - 0
@@ -1258,6 +1308,36 @@ Metadata fields
      - 0
      - 0
      - 149
+   * - `ExperimenterGroup - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `ExperimenterGroup - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `ExperimenterGroup - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `ExperimenterGroup - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `ExperimenterGroup - Leader <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `ExperimenterGroup - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Filament - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filament_$prop>`_
      - 0
      - 0
@@ -1293,17 +1373,12 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - `FileAnnotation - BinaryFileFileName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`_
+   * - `FileAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `FileAnnotation - BinaryFileMIMEType <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `FileAnnotation - BinaryFileSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`_
+   * - `FileAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`_
      - 0
      - 0
      - 0
@@ -1393,42 +1468,12 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - `Group - Contact <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Group_$prop>`_
-     - 0
-     - 0
-     - 0
+   * - `Image - AcquisitionDate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
      - 151
-   * - `Group - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Group_$prop>`_
      - 0
      - 0
      - 0
-     - 151
-   * - `Group - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Group_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Group - Leader <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Group_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Group - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Group_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Image - AcquiredDate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
    * - `Image - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Image - DatasetRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
      - 0
      - 0
      - 0
@@ -1443,16 +1488,16 @@ Metadata fields
      - 0
      - 0
      - 149
+   * - `Image - ExperimenterGroupRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Image - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
      - 5
      - 0
      - 0
      - 146
-   * - `Image - GroupRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
    * - `Image - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
      - 151
      - 0
@@ -1473,26 +1518,6 @@ Metadata fields
      - 0
      - 0
      - 0
-   * - `Image - ObjectiveSettingsCorrectionCollar <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Image - ObjectiveSettingsID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Image - ObjectiveSettingsMedium <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Image - ObjectiveSettingsRefractiveIndex <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
    * - `Image - ROIRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
      - 11
      - 0
@@ -1523,6 +1548,101 @@ Metadata fields
      - 0
      - 0
      - 108
+   * - `Label - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
+   * - `Label - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 3
+     - 0
+     - 0
+     - 148
+   * - `Label - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
+   * - `Label - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 3
+     - 0
+     - 0
+     - 148
+   * - `Label - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Label - X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
+   * - `Label - Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
    * - `Laser - FrequencyMultiplication <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
      - 0
      - 0
@@ -1643,12 +1763,17 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - `Line - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
+   * - `Line - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Line - Fill <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
+   * - `Line - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Line - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
      - 0
      - 0
      - 0
@@ -1658,22 +1783,37 @@ Metadata fields
      - 0
      - 0
      - 149
+   * - `Line - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Line - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
      - 5
      - 0
      - 0
      - 146
-   * - `Line - Label <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
+   * - `Line - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Line - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
+   * - `Line - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Line - Stroke <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
+   * - `Line - MarkerEnd <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Line - MarkerStart <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Line - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
      - 0
      - 0
      - 0
@@ -1684,6 +1824,11 @@ Metadata fields
      - 0
      - 151
    * - `Line - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
+   * - `Line - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
      - 2
      - 0
      - 0
@@ -1708,6 +1853,11 @@ Metadata fields
      - 0
      - 0
      - 150
+   * - `Line - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Line - X1 <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
      - 5
      - 0
@@ -1733,12 +1883,27 @@ Metadata fields
      - 0
      - 0
      - 151
+   * - `ListAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `ListAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`_
      - 0
      - 0
      - 0
      - 151
    * - `ListAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `LongAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `LongAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`_
      - 0
      - 0
      - 0
@@ -1758,12 +1923,17 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - `Mask - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
+   * - `Mask - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
+     - 1
+     - 0
+     - 0
+     - 150
+   * - `Mask - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Mask - Fill <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
+   * - `Mask - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
      - 0
      - 0
      - 0
@@ -1773,32 +1943,42 @@ Metadata fields
      - 0
      - 0
      - 151
+   * - `Mask - Height <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
    * - `Mask - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
      - 2
      - 0
      - 0
      - 149
-   * - `Mask - Label <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
+   * - `Mask - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Mask - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
+   * - `Mask - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Mask - Stroke <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
+   * - `Mask - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
+     - 1
      - 0
      - 0
-     - 0
-     - 151
+     - 150
    * - `Mask - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
      - 0
      - 0
      - 0
      - 151
    * - `Mask - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Mask - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
      - 0
      - 0
      - 0
@@ -1823,6 +2003,16 @@ Metadata fields
      - 0
      - 0
      - 151
+   * - `Mask - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Mask - Width <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
    * - `Mask - X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
      - 2
      - 0
@@ -1893,71 +2083,6 @@ Metadata fields
      - 0
      - 0
      - 148
-   * - `OTF - BinaryFileFileName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - BinaryFileMIMEType <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - BinaryFileSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - FilterSetRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - ObjectiveSettingsCorrectionCollar <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - ObjectiveSettingsID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - ObjectiveSettingsMedium <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - ObjectiveSettingsRefractiveIndex <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - OpticalAxisAveraged <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - SizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - SizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `OTF - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#OTF_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
    * - `Objective - CalibratedMagnification <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
      - 9
      - 0
@@ -2018,76 +2143,26 @@ Metadata fields
      - 0
      - 0
      - 142
-   * - `Path - Definition <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
+   * - `ObjectiveSettings - CorrectionCollar <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`_
+     - 1
      - 0
      - 0
-     - 0
-     - 151
-   * - `Path - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Path - Fill <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
+     - 150
+   * - `ObjectiveSettings - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`_
+     - 26
      - 0
      - 0
-     - 0
-     - 151
-   * - `Path - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Path - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
+     - 125
+   * - `ObjectiveSettings - Medium <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`_
+     - 1
      - 0
      - 0
-     - 0
-     - 151
-   * - `Path - Label <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Path - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
+     - 150
+   * - `ObjectiveSettings - RefractiveIndex <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`_
+     - 7
      - 0
      - 0
-     - 0
-     - 151
-   * - `Path - Stroke <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Path - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Path - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Path - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Path - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Path - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Path - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Path_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
+     - 144
    * - `Pixels - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
      - 0
      - 0
@@ -2253,11 +2328,6 @@ Metadata fields
      - 0
      - 0
      - 148
-   * - `Plate - ScreenRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
    * - `Plate - Status <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
      - 0
      - 0
@@ -2313,12 +2383,17 @@ Metadata fields
      - 0
      - 0
      - 144
-   * - `Point - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
+   * - `Point - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Point - Fill <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
+   * - `Point - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Point - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
      - 0
      - 0
      - 0
@@ -2328,26 +2403,31 @@ Metadata fields
      - 0
      - 0
      - 150
+   * - `Point - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Point - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
      - 3
      - 0
      - 0
      - 148
-   * - `Point - Label <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
+   * - `Point - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Point - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
+   * - `Point - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Point - Stroke <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
+   * - `Point - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
+     - 1
      - 0
      - 0
-     - 0
-     - 151
+     - 150
    * - `Point - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
      - 1
      - 0
@@ -2358,6 +2438,11 @@ Metadata fields
      - 0
      - 0
      - 149
+   * - `Point - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
+     - 1
+     - 0
+     - 0
+     - 150
    * - `Point - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
      - 0
      - 0
@@ -2378,6 +2463,11 @@ Metadata fields
      - 0
      - 0
      - 151
+   * - `Point - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Point - X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
      - 3
      - 0
@@ -2388,17 +2478,107 @@ Metadata fields
      - 0
      - 0
      - 148
-   * - `Polyline - Closed <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+   * - `Polygon - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Polyline - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+   * - `Polygon - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Polyline - Fill <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+   * - `Polygon - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Polygon - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
+   * - `Polygon - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Polygon - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 7
+     - 0
+     - 0
+     - 144
+   * - `Polygon - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Polygon - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Polygon - Points <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 7
+     - 0
+     - 0
+     - 144
+   * - `Polygon - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 1
+     - 0
+     - 0
+     - 150
+   * - `Polygon - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 1
+     - 0
+     - 0
+     - 150
+   * - `Polygon - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 3
+     - 0
+     - 0
+     - 148
+   * - `Polygon - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
+   * - `Polygon - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Polygon - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 1
+     - 0
+     - 0
+     - 150
+   * - `Polygon - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
+   * - `Polygon - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 1
+     - 0
+     - 0
+     - 150
+   * - `Polygon - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Polyline - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Polyline - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Polyline - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
      - 0
      - 0
      - 0
@@ -2408,17 +2588,32 @@ Metadata fields
      - 0
      - 0
      - 149
+   * - `Polyline - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Polyline - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
      - 5
      - 0
      - 0
      - 146
-   * - `Polyline - Label <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+   * - `Polyline - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Polyline - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+   * - `Polyline - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Polyline - MarkerEnd <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Polyline - MarkerStart <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
      - 0
      - 0
      - 0
@@ -2428,11 +2623,11 @@ Metadata fields
      - 0
      - 0
      - 146
-   * - `Polyline - Stroke <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+   * - `Polyline - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+     - 1
      - 0
      - 0
-     - 0
-     - 151
+     - 150
    * - `Polyline - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
      - 1
      - 0
@@ -2443,6 +2638,11 @@ Metadata fields
      - 0
      - 0
      - 148
+   * - `Polyline - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
    * - `Polyline - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
      - 0
      - 0
@@ -2463,7 +2663,17 @@ Metadata fields
      - 0
      - 0
      - 150
+   * - `Polyline - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Project - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Project - DatasetRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
      - 0
      - 0
      - 0
@@ -2473,12 +2683,12 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - `Project - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
+   * - `Project - ExperimenterGroupRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Project - GroupRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
+   * - `Project - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
      - 0
      - 0
      - 0
@@ -2543,12 +2753,17 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - `Rectangle - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
+   * - `Rectangle - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Rectangle - Fill <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
+   * - `Rectangle - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `Rectangle - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
      - 0
      - 0
      - 0
@@ -2558,6 +2773,11 @@ Metadata fields
      - 0
      - 0
      - 149
+   * - `Rectangle - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Rectangle - Height <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
      - 7
      - 0
@@ -2568,17 +2788,17 @@ Metadata fields
      - 0
      - 0
      - 144
-   * - `Rectangle - Label <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
+   * - `Rectangle - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Rectangle - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
+   * - `Rectangle - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Rectangle - Stroke <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
+   * - `Rectangle - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
      - 0
      - 0
      - 0
@@ -2589,6 +2809,11 @@ Metadata fields
      - 0
      - 151
    * - `Rectangle - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
+     - 2
+     - 0
+     - 0
+     - 149
+   * - `Rectangle - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
      - 2
      - 0
      - 0
@@ -2613,6 +2838,11 @@ Metadata fields
      - 0
      - 0
      - 150
+   * - `Rectangle - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
    * - `Rectangle - Width <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
      - 7
      - 0
@@ -2698,97 +2928,52 @@ Metadata fields
      - 0
      - 0
      - 149
-   * - `StringAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#StringAnnotation_$prop>`_
+   * - `TagAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `StringAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#StringAnnotation_$prop>`_
+   * - `TagAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `StringAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#StringAnnotation_$prop>`_
+   * - `TagAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Text - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
+   * - `TagAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Text - Fill <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
+   * - `TagAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Text - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
+   * - `TermAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Text - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
+   * - `TermAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Text - Label <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
+   * - `TermAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Text - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
+   * - `TermAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`_
      - 0
      - 0
      - 0
      - 151
-   * - `Text - Stroke <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Text - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Text - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Text - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Text - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Text - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Text - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Text - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Text - X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Text - Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Text_$prop>`_
+   * - `TermAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`_
      - 0
      - 0
      - 0
@@ -2814,6 +2999,16 @@ Metadata fields
      - 0
      - 151
    * - `TiffData - PlaneCount <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TiffData_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `TimestampAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `TimestampAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`_
      - 0
      - 0
      - 0
@@ -2908,7 +3103,7 @@ Metadata fields
      - 0
      - 0
      - 141
-   * - `Well - Status <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_$prop>`_
+   * - `Well - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_$prop>`_
      - 0
      - 0
      - 0
@@ -2944,6 +3139,11 @@ Metadata fields
      - 0
      - 147
    * - `WellSample - Timepoint <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_$prop>`_
+     - 0
+     - 0
+     - 0
+     - 151
+   * - `XMLAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`_
      - 0
      - 0
      - 0
