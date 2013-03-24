@@ -9,9 +9,9 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 19 of them (4%).
-  * Of those, Bio-Formats fully or partially converts 19 (100%).
+Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 20 of them (4%).
+  * Of those, Bio-Formats fully or partially converts 20 (100%).
 
 Supported fields
 ===============================================================================
@@ -22,6 +22,7 @@ These fields are fully supported by the Bio-Formats Imacon format reader:
   * `Experimenter : FirstName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_FirstName>`_
   * `Experimenter : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_ID>`_
   * `Experimenter : LastName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_LastName>`_
+  * `Image : AcquisitionDate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`_
   * `Image : ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ExperimenterRef>`_
   * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
   * `Image : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Name>`_
@@ -37,6 +38,6 @@ These fields are fully supported by the Bio-Formats Imacon format reader:
   * `Plane : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheT>`_
   * `Plane : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheZ>`_
 
-**Total supported: 19**
+**Total supported: 20**
 
-**Total unknown or missing: 414**
+**Total unknown or missing: 453**
