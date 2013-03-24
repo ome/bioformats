@@ -25,6 +25,7 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -86,6 +87,16 @@ public class AFIReader extends FormatReader {
     return false;
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    return reader.getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    return reader.getOptimalTileHeight();
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -96,8 +107,7 @@ public class AFIReader extends FormatReader {
 
     if (getCoreIndex() >= core.size() - 2) {
       reader.setId(pixels.get(0));
-      reader.setSeries(getSeries());
-      reader.setResolution(getResolution());
+      reader.setCoreIndex(getCoreIndex());
       return reader.openBytes(no, buf, x, y, w, h);
     }
 
@@ -106,8 +116,7 @@ public class AFIReader extends FormatReader {
     int index = getIndex(coords[0], 0, coords[2]);
 
     reader.setId(pixels.get(channel));
-    reader.setSeries(getSeries());
-    reader.setResolution(getResolution());
+    reader.setCoreIndex(getCoreIndex());
     return reader.openBytes(index, buf, x, y, w, h);
   }
 
@@ -173,7 +182,7 @@ public class AFIReader extends FormatReader {
       pixels.set(i, new Location(parent, file).getAbsolutePath());
     }
 
-    reader.setMetadataStore(getMetadataStore());
+    reader.setFlattenedResolutions(hasFlattenedResolutions());
     reader.setId(pixels.get(0));
 
     core = reader.getCoreMetadataList();
@@ -184,13 +193,22 @@ public class AFIReader extends FormatReader {
       c.imageCount = c.sizeC * c.sizeZ * c.sizeT;
       c.rgb = false;
       c.cLengths = new int[] {c.sizeC};
+      if (i == 0) {
+        c.resolutionCount = core.size() - 2;
+      }
     }
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this, false, false);
+    MetadataTools.populatePixels(store, this);
+
+    String fileID = currentId.substring(
+      currentId.lastIndexOf(File.separator) + 1, currentId.lastIndexOf("."));
+    for (int i=0; i<getSeriesCount(); i++) {
+      store.setImageName(fileID + " - image #" + (i + 1), i);
+    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      for (int i=0; i<core.size() - 2; i++) {
+      for (int i=0; i<getSeriesCount() - 2; i++) {
         for (int c=0; c<channelNames.length; c++) {
           store.setChannelName(channelNames[c], i, c);
         }
