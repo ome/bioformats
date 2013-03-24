@@ -97,6 +97,24 @@ public class AFIReader extends FormatReader {
     return reader.getOptimalTileHeight();
   }
 
+  /* @see loci.formats.IFormatReader#openThumbBytes(int) */
+  public byte[] openThumbBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    if (getCoreIndex() >= core.size() - 2) {
+      reader.setId(pixels.get(0));
+      reader.setCoreIndex(getCoreIndex());
+      return reader.openThumbBytes(no);
+    }
+
+    int coreIndex = getCoreIndex();
+    setCoreIndex(core.size() - 3);
+    byte[] thumb = FormatTools.openThumbBytes(this, no);
+    setCoreIndex(coreIndex);
+
+    return thumb;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
