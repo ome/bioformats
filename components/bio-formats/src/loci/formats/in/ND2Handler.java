@@ -620,7 +620,7 @@ public class ND2Handler extends BaseHandler {
 
   // -- Helper methods --
 
-  private void parseKeyAndValue(String key, String value, String runtype) {
+  protected void parseKeyAndValue(String key, String value, String runtype) {
     if (key == null || value == null) return;
     CoreMetadata ms0 = core.get(0);
     metadata.put(key, value);

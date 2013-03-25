@@ -521,17 +521,17 @@ public class NativeND2Reader extends FormatReader {
                 handler.parseKeyAndValue(key, value, null);
               }
             }
-            core = handler.getCoreMetadata();
+            core = handler.getCoreMetadataList();
 
             // only accept the Z and T sizes from the text annotations
             // if both values were set
-            if (core[0].sizeZ == 0 && getSizeT() != imageOffsets.size()) {
-              core[0].sizeT = 0;
+            if (core.get(0).sizeZ == 0 && getSizeT() != imageOffsets.size()) {
+              core.get(0).sizeT = 0;
             }
 
             textString = sanitizeControl(textString);
 
-            String[] lines = textString.split(" ");
+            lines = textString.split(" ");
             for (int i=0; i<lines.length; i++) {
               String key = lines[i++];
               while (!key.endsWith(":") && key.indexOf("_") < 0 &&
