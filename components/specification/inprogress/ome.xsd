@@ -586,8 +586,7 @@
 			<xsd:attribute name="SamplesPerPixel" use="optional" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
-						The number of samples the detector takes to form each pixel value.
-						The SamplesPerPixel attribute is the number of channel components in the logical channel. [units:none]
+						The number of samples the detector takes to form each pixel value. [units:none]
 						Note: This is not the same as "Frame Averaging" - see Integration in DetectorSettings
 					</xsd:documentation>
 				</xsd:annotation>
