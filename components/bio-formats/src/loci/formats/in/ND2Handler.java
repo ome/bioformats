@@ -885,13 +885,13 @@ public class ND2Handler extends BaseHandler {
     else if (key.equals("Z Stack Loop")) {
       int v = Integer.parseInt(value);
       if (v <= nImages) {
-        core[0].sizeZ = v;
+        core.get(0).sizeZ = v;
       }
     }
     else if (key.equals("Time Loop")) {
       int v = Integer.parseInt(value);
       if (v <= nImages) {
-        core[0].sizeT = v;
+        core.get(0).sizeT = v;
       }
     }
   }

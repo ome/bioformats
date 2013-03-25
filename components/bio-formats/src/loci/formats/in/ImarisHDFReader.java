@@ -517,7 +517,7 @@ public class ImarisHDFReader extends FormatReader {
         ms0.sizeT = Integer.parseInt(value);
       }
       else if (name.equals("NumberOfChannels") && getSizeC() == 0) {
-        core[0].sizeC = Integer.parseInt(value);
+        ms0.sizeC = Integer.parseInt(value);
       }
       else if (name.equals("RecordingEntrySampleSpacing")) {
         pixelSizeX = Double.parseDouble(value);
@@ -553,7 +553,7 @@ public class ImarisHDFReader extends FormatReader {
         int underscore = attr.indexOf("_") + 1;
         int cIndex = Integer.parseInt(attr.substring(underscore,
           attr.indexOf("/", underscore)));
-        if (cIndex == getSizeC()) core[0].sizeC++;
+        if (cIndex == getSizeC()) ms0.sizeC++;
 
         if (name.equals("Gain")) gain.add(value);
         else if (name.equals("LSMEmissionWavelength")) emWave.add(value);

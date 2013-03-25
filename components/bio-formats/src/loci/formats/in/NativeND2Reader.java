@@ -523,12 +523,12 @@ public class NativeND2Reader extends FormatReader {
                 handler.parseKeyAndValue(key, value, null);
               }
             }
-            core = handler.getCoreMetadata();
+            core = handler.getCoreMetadataList();
 
             // only accept the Z and T sizes from the text annotations
             // if both values were set
-            if (core[0].sizeZ == 0) {
-              core[0].sizeT = 0;
+            if (core.get(0).sizeZ == 0) {
+              core.get(0).sizeT = 0;
             }
 
             textString = sanitizeControl(textString);
@@ -1033,13 +1033,12 @@ public class NativeND2Reader extends FormatReader {
           core.get(0).sizeT = count;
         }
         else if (useZ != null && !useZ) {
-          CoreMetadata original = core[0];
-          core =
-            new CoreMetadata[imageOffsets.size() / (getSizeZ() * getSizeT())];
-          for (int i=0; i<core.length; i++) {
-            core[i] = original;
+          CoreMetadata original = core.get(0);
+          int nSeries = imageOffsets.size() / (getSizeZ() * getSizeT());
+          for (int i=1; i<nSeries; i++) {
+            core.add(original);
           }
-          numSeries = core.length;
+          numSeries = core.size();
         }
         else {
           core.get(0).sizeT = 1;
