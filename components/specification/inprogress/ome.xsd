@@ -1516,6 +1516,8 @@
 						<xsd:annotation>
 							<xsd:documentation>
 								The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens. [units:none]
+								Note: The type of this has been changed from int to float to allow
+								the specification of additional lenses e.g. 0.5X lens
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
