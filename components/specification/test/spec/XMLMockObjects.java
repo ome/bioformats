@@ -361,12 +361,12 @@ public class XMLMockObjects
 		objective.setManufacturer(COMPONENT_MANUFACTURER);
 		objective.setSerialNumber(COMPONENT_SERIAL_NUMBER);
 		objective.setLotNumber(COMPONENT_LOT_NUMBER);
-		objective.setCalibratedMagnification(1.0);
+		objective.setCalibratedMagnification(0.51);
 		objective.setCorrection(CORRECTION);
 		objective.setImmersion(IMMERSION);
 		objective.setIris(true);
 		objective.setLensNA(0.5);
-		objective.setNominalMagnification(new PositiveInteger(1));
+		objective.setNominalMagnification(0.5);
 		objective.setWorkingDistance(1.0);
 		return objective;
 	}
