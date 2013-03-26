@@ -409,7 +409,16 @@ public class SVSReader extends BaseTiffReader {
   }
 
   protected Timestamp getDatestamp() {
-    return new Timestamp(DateTools.formatDate(date + " " + time, DATE_FORMAT));
+    if (date != null && time != null) {
+      try {
+        return new Timestamp(
+          DateTools.formatDate(date + " " + time, DATE_FORMAT));
+      }
+      catch (Exception e) {
+        LOGGER.debug("Failed to parse '" + date + " " + time + "'", e);
+      }
+    }
+    return null;
   }
 
 }
