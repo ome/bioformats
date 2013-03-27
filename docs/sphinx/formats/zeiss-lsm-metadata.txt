@@ -9,9 +9,9 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 84 of them (19%).
-  * Of those, Bio-Formats fully or partially converts 84 (100%).
+Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 97 of them (20%).
+  * Of those, Bio-Formats fully or partially converts 97 (100%).
 
 Supported fields
 ===============================================================================
@@ -39,15 +39,22 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * `Ellipse : Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_Transform>`_
   * `Ellipse : X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_X>`_
   * `Ellipse : Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_Y>`_
+  * `Experimenter : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_ID>`_
+  * `Experimenter : UserName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_UserName>`_
   * `Filter : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_ID>`_
   * `Filter : Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_Model>`_
   * `Filter : Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_Type>`_
+  * `Image : AcquisitionDate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`_
   * `Image : Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Description>`_
   * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
   * `Image : InstrumentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_InstrumentRef>`_
   * `Image : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Name>`_
   * `Image : ROIRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ROIRef>`_
   * `Instrument : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Instrument_ID>`_
+  * `Label : FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_FontSize>`_
+  * `Label : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_ID>`_
+  * `Label : StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_StrokeWidth>`_
+  * `Label : Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_Text>`_
   * `Laser : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_ID>`_
   * `Laser : LaserMedium <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_LaserMedium>`_
   * `Laser : Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_Model>`_
@@ -68,6 +75,8 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * `Objective : Iris <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_Iris>`_
   * `Objective : LensNA <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_LensNA>`_
   * `Objective : NominalMagnification <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`_
+  * `ObjectiveSettings : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`_
+  * `Pixels : BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`_
   * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
   * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
   * `Pixels : PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`_
@@ -87,6 +96,10 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * `Plane : TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheC>`_
   * `Plane : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheT>`_
   * `Plane : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheZ>`_
+  * `Polygon : FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_FontSize>`_
+  * `Polygon : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_ID>`_
+  * `Polygon : Points <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_Points>`_
+  * `Polygon : StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_StrokeWidth>`_
   * `Polyline : FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_FontSize>`_
   * `Polyline : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_ID>`_
   * `Polyline : Points <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_Points>`_
@@ -102,6 +115,6 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * `TransmittanceRange : CutIn <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_CutIn>`_
   * `TransmittanceRange : CutOut <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_CutOut>`_
 
-**Total supported: 84**
+**Total supported: 97**
 
-**Total unknown or missing: 349**
+**Total unknown or missing: 376**

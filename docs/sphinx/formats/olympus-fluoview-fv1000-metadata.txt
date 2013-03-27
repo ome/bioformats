@@ -9,9 +9,9 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 97 of them (22%).
-  * Of those, Bio-Formats fully or partially converts 97 (100%).
+Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 107 of them (22%).
+  * Of those, Bio-Formats fully or partially converts 107 (100%).
 
 Supported fields
 ===============================================================================
@@ -44,6 +44,7 @@ These fields are fully supported by the Bio-Formats Olympus FV1000 format reader
   * `Ellipse : Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_Y>`_
   * `Filter : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_ID>`_
   * `Filter : Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_Model>`_
+  * `Image : AcquisitionDate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`_
   * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
   * `Image : InstrumentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_InstrumentRef>`_
   * `Image : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Name>`_
@@ -72,6 +73,8 @@ These fields are fully supported by the Bio-Formats Olympus FV1000 format reader
   * `Objective : Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_Model>`_
   * `Objective : NominalMagnification <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`_
   * `Objective : WorkingDistance <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_WorkingDistance>`_
+  * `ObjectiveSettings : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`_
+  * `Pixels : BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`_
   * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
   * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
   * `Pixels : PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`_
@@ -94,6 +97,13 @@ These fields are fully supported by the Bio-Formats Olympus FV1000 format reader
   * `Point : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_TheZ>`_
   * `Point : X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_X>`_
   * `Point : Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_Y>`_
+  * `Polygon : FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_FontSize>`_
+  * `Polygon : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_ID>`_
+  * `Polygon : Points <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_Points>`_
+  * `Polygon : StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_StrokeWidth>`_
+  * `Polygon : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_TheT>`_
+  * `Polygon : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_TheZ>`_
+  * `Polygon : Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_Transform>`_
   * `Polyline : FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_FontSize>`_
   * `Polyline : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_ID>`_
   * `Polyline : Points <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_Points>`_
@@ -115,6 +125,6 @@ These fields are fully supported by the Bio-Formats Olympus FV1000 format reader
   * `TransmittanceRange : CutIn <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_CutIn>`_
   * `TransmittanceRange : CutOut <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_CutOut>`_
 
-**Total supported: 97**
+**Total supported: 107**
 
-**Total unknown or missing: 336**
+**Total unknown or missing: 366**
