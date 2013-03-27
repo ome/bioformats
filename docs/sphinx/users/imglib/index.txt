@@ -9,6 +9,7 @@ logic for `bit depth <http://en.wikipedia.org/wiki/Color_depth>`_, or
 worrying about the source of the pixel data (arrays in memory, files on
 disk, etc.).
 
-ImgLib provides an
-`ImgOpener <http://fiji.sc/cgi-bin/gitweb.cgi?p=imglib.git;a=blob;f=imglib2/io/src/main/java/net/imglib2/io/ImgOpener.java;hb=HEAD>`_
-utility class for reading data using Bio-Formats.
+ImgLib provides an ImgOpener_ utility class for reading data using
+Bio-Formats.
+
+.. _ImgOpener: https://github.com/imagej/imglib/blob/master/imglib2/io/src/main/java/net/imglib2/io/ImgOpener.java
