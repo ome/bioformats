@@ -60,6 +60,8 @@ public class AFIReader extends FormatReader {
 
   // -- Constants --
 
+  private static final int EXTRA_IMAGES = 3;
+
   // -- Fields --
 
   private ArrayList<String> pixels = new ArrayList<String>();
@@ -103,7 +105,7 @@ public class AFIReader extends FormatReader {
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
 
-    if (getCoreIndex() >= core.size() - 2) {
+    if (getCoreIndex() >= core.size() - EXTRA_IMAGES) {
       reader.setId(pixels.get(0));
       reader.setCoreIndex(getCoreIndex());
       return reader.openThumbBytes(no);
@@ -125,7 +127,7 @@ public class AFIReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (getCoreIndex() >= core.size() - 2) {
+    if (getCoreIndex() >= core.size() - EXTRA_IMAGES) {
       reader.setId(pixels.get(0));
       reader.setCoreIndex(getCoreIndex());
       return reader.openBytes(no, buf, x, y, w, h);
@@ -207,14 +209,14 @@ public class AFIReader extends FormatReader {
 
     core = reader.getCoreMetadataList();
 
-    for (int i=0; i<core.size() - 2; i++) {
+    for (int i=0; i<core.size() - EXTRA_IMAGES; i++) {
       CoreMetadata c = core.get(i);
       c.sizeC = pixels.size();
       c.imageCount = c.sizeC * c.sizeZ * c.sizeT;
       c.rgb = false;
       c.cLengths = new int[] {c.sizeC};
       if (i == 0) {
-        c.resolutionCount = core.size() - 2;
+        c.resolutionCount = core.size() - EXTRA_IMAGES;
       }
     }
 
@@ -244,7 +246,7 @@ public class AFIReader extends FormatReader {
         datestamp[c] = baseReader.getDatestamp();
       }
 
-      for (int i=0; i<getSeriesCount() - 2; i++) {
+      for (int i=0; i<getSeriesCount() - EXTRA_IMAGES; i++) {
         if (datestamp[0] != null) {
           store.setImageAcquisitionDate(datestamp[0], i);
         }
