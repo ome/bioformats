@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 64 of them (13%).
-  * Of those, Bio-Formats fully or partially converts 64 (100%).
+  * The file format itself supports 65 of them (13%).
+  * Of those, Bio-Formats fully or partially converts 65 (100%).
 
 Supported fields
 ===============================================================================
@@ -46,6 +46,7 @@ These fields are fully supported by the Bio-Formats InCell 1000/2000 format read
   * `Objective : NominalMagnification <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`_
   * `ObjectiveSettings : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`_
   * `ObjectiveSettings : RefractiveIndex <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_RefractiveIndex>`_
+  * `Pixels : BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`_
   * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
   * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
   * `Pixels : PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`_
@@ -82,6 +83,6 @@ These fields are fully supported by the Bio-Formats InCell 1000/2000 format read
   * `WellSample : PositionX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_PositionX>`_
   * `WellSample : PositionY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_PositionY>`_
 
-**Total supported: 64**
+**Total supported: 65**
 
-**Total unknown or missing: 409**
+**Total unknown or missing: 408**

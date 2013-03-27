@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 36 of them (7%).
-  * Of those, Bio-Formats fully or partially converts 36 (100%).
+  * The file format itself supports 37 of them (7%).
+  * Of those, Bio-Formats fully or partially converts 37 (100%).
 
 Supported fields
 ===============================================================================
@@ -35,6 +35,7 @@ These fields are fully supported by the Bio-Formats FEI TIFF format reader:
   * `Objective : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_ID>`_
   * `Objective : Immersion <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_Immersion>`_
   * `Objective : NominalMagnification <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`_
+  * `Pixels : BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`_
   * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
   * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
   * `Pixels : PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`_
@@ -54,6 +55,6 @@ These fields are fully supported by the Bio-Formats FEI TIFF format reader:
   * `StageLabel : Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#StageLabel_Y>`_
   * `StageLabel : Z <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#StageLabel_Z>`_
 
-**Total supported: 36**
+**Total supported: 37**
 
-**Total unknown or missing: 437**
+**Total unknown or missing: 436**

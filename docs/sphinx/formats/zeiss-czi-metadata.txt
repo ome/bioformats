@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 148 of them (31%).
-  * Of those, Bio-Formats fully or partially converts 148 (100%).
+  * The file format itself supports 149 of them (31%).
+  * Of those, Bio-Formats fully or partially converts 149 (100%).
 
 Supported fields
 ===============================================================================
@@ -126,6 +126,7 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * `ObjectiveSettings : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`_
   * `ObjectiveSettings : Medium <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_Medium>`_
   * `ObjectiveSettings : RefractiveIndex <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_RefractiveIndex>`_
+  * `Pixels : BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`_
   * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
   * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
   * `Pixels : PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`_
@@ -166,6 +167,6 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * `TransmittanceRange : CutOutTolerance <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_CutOutTolerance>`_
   * `TransmittanceRange : Transmittance <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_Transmittance>`_
 
-**Total supported: 148**
+**Total supported: 149**
 
-**Total unknown or missing: 325**
+**Total unknown or missing: 324**
