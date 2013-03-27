@@ -1042,11 +1042,9 @@ type = Double
 [Pixels Type]
 type = PixelType
 
-[PixelsBinData]
+[Pixels BinDataBigEndian]
 countable = true
 path = Image+/Pixels/BinData+
-
-[PixelsBinData BigEndian]
 type = Boolean
 
 [Plane]

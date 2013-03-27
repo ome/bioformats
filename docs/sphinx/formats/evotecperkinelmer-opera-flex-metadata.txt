@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 66 of them (13%).
-  * Of those, Bio-Formats fully or partially converts 66 (100%).
+  * The file format itself supports 67 of them (14%).
+  * Of those, Bio-Formats fully or partially converts 67 (100%).
 
 Supported fields
 ===============================================================================
@@ -48,6 +48,7 @@ These fields are fully supported by the Bio-Formats Evotec Flex format reader:
   * `Objective : Immersion <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_Immersion>`_
   * `Objective : LensNA <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_LensNA>`_
   * `ObjectiveSettings : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`_
+  * `Pixels : BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`_
   * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
   * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
   * `Pixels : PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`_
@@ -84,6 +85,6 @@ These fields are fully supported by the Bio-Formats Evotec Flex format reader:
   * `WellSample : PositionX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_PositionX>`_
   * `WellSample : PositionY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_PositionY>`_
 
-**Total supported: 66**
+**Total supported: 67**
 
-**Total unknown or missing: 407**
+**Total unknown or missing: 406**

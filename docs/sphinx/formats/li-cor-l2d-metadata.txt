@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 26 of them (5%).
-  * Of those, Bio-Formats fully or partially converts 26 (100%).
+  * The file format itself supports 27 of them (5%).
+  * Of those, Bio-Formats fully or partially converts 27 (100%).
 
 Supported fields
 ===============================================================================
@@ -32,6 +32,7 @@ These fields are fully supported by the Bio-Formats Li-Cor L2D format reader:
   * `Laser : Wavelength <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_Wavelength>`_
   * `Microscope : Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Microscope_Model>`_
   * `Microscope : Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Microscope_Type>`_
+  * `Pixels : BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`_
   * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
   * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
   * `Pixels : SizeC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeC>`_
@@ -44,6 +45,6 @@ These fields are fully supported by the Bio-Formats Li-Cor L2D format reader:
   * `Plane : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheT>`_
   * `Plane : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheZ>`_
 
-**Total supported: 26**
+**Total supported: 27**
 
-**Total unknown or missing: 447**
+**Total unknown or missing: 446**

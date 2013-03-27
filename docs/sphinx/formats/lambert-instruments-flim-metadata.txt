@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 22 of them (4%).
-  * Of those, Bio-Formats fully or partially converts 22 (100%).
+  * The file format itself supports 23 of them (4%).
+  * Of those, Bio-Formats fully or partially converts 23 (100%).
 
 Supported fields
 ===============================================================================
@@ -23,6 +23,7 @@ These fields are fully supported by the Bio-Formats LI-FLIM format reader:
   * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
   * `Image : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Name>`_
   * `Image : ROIRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ROIRef>`_
+  * `Pixels : BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`_
   * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
   * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
   * `Pixels : SizeC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeC>`_
@@ -40,6 +41,6 @@ These fields are fully supported by the Bio-Formats LI-FLIM format reader:
   * `Polygon : Points <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_Points>`_
   * `ROI : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ROI_ID>`_
 
-**Total supported: 22**
+**Total supported: 23**
 
-**Total unknown or missing: 451**
+**Total unknown or missing: 450**
