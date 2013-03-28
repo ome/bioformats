@@ -42,6 +42,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
+import loci.formats.services.OMEXMLServiceImpl;
+
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
@@ -50,7 +57,6 @@ import org.slf4j.LoggerFactory;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.serializers.JavaSerializer;
 import com.esotericsoftware.shaded.org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
@@ -74,6 +80,10 @@ public class Memoizer extends ReaderWrapper {
 
   // -- Fields --
 
+  private transient Kryo kryo;
+
+  private transient OMEXMLService service;
+  
   private File realFile;
 
   private File memoFile;
@@ -95,6 +105,24 @@ public class Memoizer extends ReaderWrapper {
    * {@link #setId(String)}.
    */
   private boolean savedToMemo = false;
+
+  /**
+   * {@link MetadataStore} set by the caller. This value will be held locally
+   * and <em>not</em> set on the {@link #reader} delegate until the execution
+   * of {@link #setId(String)}. If no value has been set by the caller, then
+   * no special actions are taken during {@link #setId(String)}. If a value
+   * is set, however, we must be careful with attempting to serialize it
+   *
+   * @see {@link #handleMetadataStore()}
+   */
+  private MetadataStore userMetadataStore = null;
+
+  /**
+   * {@link MetadataStore} created internally.
+   *
+   * @see {@link #handleMetadataStore()}
+   */
+  private MetadataStore replacementMetadataStore = null;
 
   // -- Constructors --
 
@@ -123,15 +151,30 @@ public class Memoizer extends ReaderWrapper {
 
       if (memo == null) {
         super.setId(id);
+        handleMetadataStore(null); // Between setId and saveMemo
         loadedFromMemo = false;
         savedToMemo = saveMemo(); // Should never throw.
       } else {
+        // loadMemo has already called handleMetadataStore with non-null
         loadedFromMemo = true;
         reader = memo;
       }
     } finally {
         sw.stop("loci.formats.Memoizer.setId");
     }
+  }
+
+  @Override
+  public void setMetadataStore(MetadataStore store) {
+    this.userMetadataStore = store;
+  }
+
+  @Override
+  public MetadataStore getMetadataStore() {
+    if (this.userMetadataStore != null) {
+      return this.userMetadataStore;
+    }
+    return reader.getMetadataStore();
   }
 
   //-- Helper methods --
@@ -143,11 +186,25 @@ public class Memoizer extends ReaderWrapper {
    * @return a non-null {@link Kryo} instance.
    */
   protected Kryo getKryo() {
-    Kryo kryo = new Kryo();
-    kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
+    if (kryo == null) {
+        kryo = new Kryo();
+        kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
+    }
     return kryo;
   }
 
+  // Copied from OMETiffReader.
+  protected OMEXMLService getService() throws MissingLibraryException {
+    if (service == null) {
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        service = factory.getInstance(OMEXMLService.class);
+      } catch (DependencyException de) {
+        throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
+      }
+    }
+    return service;
+  }
   protected Slf4JStopWatch stopWatch() {
       return new Slf4JStopWatch(LOGGER, Slf4JStopWatch.DEBUG_LEVEL);
   }
@@ -166,7 +223,7 @@ public class Memoizer extends ReaderWrapper {
     return new File(p, "." + n + ".bfmemo");
   }
 
-  public IFormatReader loadMemo() throws FileNotFoundException {
+  public IFormatReader loadMemo() throws FileNotFoundException, MissingLibraryException {
 
     if (skipLoad) {
       LOGGER.trace("skip load");
@@ -216,6 +273,11 @@ public class Memoizer extends ReaderWrapper {
       if (!checkWrapperStack(reader, copy)) {
           return null;
       }
+
+      copy = handleMetadataStore(copy);
+      if (copy == null) {
+          LOGGER.debug("metadata store invalidated cache: {}", memoFile);
+      }
       
       // TODO:
       // Check flags
@@ -254,7 +316,7 @@ public class Memoizer extends ReaderWrapper {
     return true;
   }
 
-public boolean saveMemo() {
+  public boolean saveMemo() {
 
     if (skipSave) {
       LOGGER.trace("skip memo");
@@ -281,6 +343,9 @@ public boolean saveMemo() {
       if (!tempFile.renameTo(memoFile)) {
         LOGGER.debug("temp file rename returned false: {}", tempFile);
       }
+
+      LOGGER.debug("saved memo file: {} ({} bytes)",
+        memoFile, memoFile.length());
       return true;
 
     } catch (Throwable t) {
@@ -297,8 +362,6 @@ public boolean saveMemo() {
           output.close();
         }
         sw.stop("loci.formats.Memoizer.saveMemo");
-        LOGGER.debug("saved memo file: {} ({} bytes)",
-          memoFile, memoFile.length());
       } catch (Throwable t) {
         LOGGER.debug("output close failed", t);
       }
@@ -314,4 +377,67 @@ public boolean saveMemo() {
       }
     }
   }
+
+
+  /**
+:
+   *
+   * <ul>
+   *  <li><em>Serialization:</em> If an unknown {@link MetadataStore}
+   *  implementation is passed in when no memo file exists, then a replacement
+   *  {@link MetadataStore} will be created and set on the {@link #reader}
+   *  delegate before calling {@link ReaderWrapper#setId(String)}. This stack
+   *  will then be serialized, before any values are copied into
+   *  {@link #userMetadataStore}.
+   *  </li>
+   *  <li><em>Deserialization<em>: If an unknown {@link MetadataStore}
+   *  implementation is set before calling {@link #setId(String)} then ...
+   *  </li>
+   * </ul>
+   */
+  protected IFormatReader handleMetadataStore(IFormatReader memo) throws MissingLibraryException {
+
+    // Then nothing has been requested of us
+    // and we can exit safely.
+    if (userMetadataStore == null) {
+      return memo; // EARLY EXIT. Possibly null.
+    }
+
+    // If we've been passed a memo object, then it's just been loaded.
+    final boolean onLoad = (memo != null);
+
+    // TODO: What to do if the contained store is a Dummy?
+    // TODO: Which stores should we handle regularly?
+
+    if (onLoad) {
+      MetadataStore filledStore = memo.getMetadataStore();
+      // Return value is important.
+      if (filledStore == null) {
+          // TODO: what now?
+      } else if (!(filledStore instanceof MetadataRetrieve)) {
+          LOGGER.error("Found non-MetadataRetrieve: {}" + filledStore.getClass());
+      } else {
+        OMEXMLService service = getService();
+        service.convertMetadata((MetadataRetrieve) filledStore, userMetadataStore);
+      }
+    } else {
+      // on save; we've just called super.setId()
+      // Then pull out the reader and replace it.
+      // Return value is unimportant.
+      MetadataStore filledStore = reader.getMetadataStore();
+      if (reader.getMetadataStore() == null) {
+        // TODO: what now?
+        LOGGER.error("Found null-MetadataRetrieve: {}" + filledStore.getClass());
+      } else if (!(filledStore instanceof MetadataRetrieve)) {
+        LOGGER.error("Found non-MetadataRetrieve: {}" + filledStore.getClass());
+      } else {
+        OMEXMLService service = getService();
+        service.convertMetadata((MetadataRetrieve) filledStore, userMetadataStore);
+      }
+      
+    }
+    return memo;
+  }
+
+
 }
