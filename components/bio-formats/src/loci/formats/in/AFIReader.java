@@ -112,7 +112,7 @@ public class AFIReader extends FormatReader {
     }
 
     int coreIndex = getCoreIndex();
-    setCoreIndex(core.size() - 3);
+    setCoreIndex(core.size() - EXTRA_IMAGES - 1);
     byte[] thumb = FormatTools.openThumbBytes(this, no);
     setCoreIndex(coreIndex);
 
