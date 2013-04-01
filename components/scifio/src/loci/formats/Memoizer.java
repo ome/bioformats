@@ -44,6 +44,7 @@ import java.io.IOException;
 
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
+import loci.formats.FormatTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -83,7 +84,7 @@ public class Memoizer extends ReaderWrapper {
   private transient Kryo kryo;
 
   private transient OMEXMLService service;
-  
+
   private File realFile;
 
   private File memoFile;
@@ -270,7 +271,7 @@ public class Memoizer extends ReaderWrapper {
       Class<?> c = kryo.readObject(input, Class.class);
       copy = (IFormatReader) getKryo().readObject(input, c);
 
-      if (!checkWrapperStack(reader, copy)) {
+      if (!FormatTools.equalReaders(reader, copy)) {
           return null;
       }
 
@@ -290,30 +291,6 @@ public class Memoizer extends ReaderWrapper {
       input.close();
       sw.stop("loci.formats.Memoizer.loadMemo");
     }
-  }
-
-  @SuppressWarnings("resource")
-  private boolean checkWrapperStack(IFormatReader reader, IFormatReader copy) {
-    IFormatReader copyWrapper = copy;
-    IFormatReader realWrapper = reader;
-      
-    int i = 0;
-    while (copyWrapper != null) {
-      if (!copyWrapper.getClass().equals(realWrapper.getClass())) {
-        i++;
-        LOGGER.debug("Class("+i+") mismatch! {} != {}",
-          copyWrapper.getClass(), realWrapper.getClass());
-        return false;
-      }
-      if (copyWrapper instanceof ReaderWrapper) {
-        copyWrapper = ((ReaderWrapper) copyWrapper).getReader();
-        realWrapper = ((ReaderWrapper) realWrapper).getReader();
-      } else {
-        copyWrapper = null;
-        realWrapper = null;
-      }
-    }
-    return true;
   }
 
   public boolean saveMemo() {
