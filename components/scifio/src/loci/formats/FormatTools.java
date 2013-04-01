@@ -905,35 +905,21 @@ public final class FormatTools {
   public static boolean equalReaders(IFormatReader a, IFormatReader b) {
     // check that the reader stacks are equivalent
 
-    IFormatReader[] readersA = a.getUnderlyingReaders();
-    IFormatReader[] readersB = b.getUnderlyingReaders();
+    IFormatReader copyWrapper = a;
+    IFormatReader realWrapper = b;
 
-    while (readersA != null && readersB != null) {
-      if (readersA.length != readersB.length) {
+    while (copyWrapper != null) {
+      if (!copyWrapper.getClass().equals(realWrapper.getClass())) {
         return false;
       }
-
-      for (int i=0; i<readersA.length; i++) {
-        if (!readersA[i].getClass().equals(readersB[i].getClass())) {
-          return false;
-        }
-
-        if (readersA[i].getClass().equals(DimensionSwapper.class)) {
-          DimensionSwapper swapperA = (DimensionSwapper) readersA[i];
-          DimensionSwapper swapperB = (DimensionSwapper) readersB[i];
-
-          if (!swapperA.getInputOrder().equals(swapperB.getInputOrder())) {
-            return false;
-          }
-        }
+      if (copyWrapper instanceof ReaderWrapper) {
+        copyWrapper = ((ReaderWrapper) copyWrapper).getReader();
+        realWrapper = ((ReaderWrapper) realWrapper).getReader();
       }
-
-      readersA = readersA[0].getUnderlyingReaders();
-      readersB = readersB[0].getUnderlyingReaders();
-    }
-
-    if (readersA == null || readersB == null) {
-      return false;
+      else {
+        copyWrapper = null;
+        realWrapper = null;
+      }
     }
 
     // check the state that is set pre-initialization
@@ -950,10 +936,6 @@ public final class FormatTools {
       return false;
     }
 
-    if (a.isMetadataComplete() != b.isMetadataComplete()) {
-      return false;
-    }
-
     if (a.isMetadataFiltered() != b.isMetadataFiltered()) {
       return false;
     }
@@ -962,177 +944,12 @@ public final class FormatTools {
       return false;
     }
 
-    if (!a.getMetadataOptions().equals(b.getMetadataOptions())) {
+    if (!a.getMetadataOptions().getMetadataLevel().equals(
+      b.getMetadataOptions().getMetadataLevel()))
+    {
       return false;
     }
 
-    // check that the initialization state is the same
-    String currentFileA = a.getCurrentFile();
-    String currentFileB = b.getCurrentFile();
-
-    if (currentFileA == null && currentFileB == null) {
-      return true;
-    }
-    else if (currentFileA == null || currentFileB == null) {
-      return false;
-    }
-    else if (!currentFileA.equals(currentFileB)) {
-      return false;
-    }
-
-    // if both readers are initialized, check that the metadata is the same
-
-    String[] usedFilesA = a.getUsedFiles();
-    String[] usedFilesB = b.getUsedFiles();
-
-    if (usedFilesA.length != usedFilesB.length) {
-      return false;
-    }
-
-    for (int i=0; i<usedFilesA.length; i++) {
-      if (!usedFilesA[i].equals(usedFilesB[i])) {
-        return false;
-      }
-    }
-
-    if (a.getSeriesCount() != b.getSeriesCount()) {
-      return false;
-    }
-
-    for (int series=0; series<a.getSeriesCount(); series++) {
-      a.setSeries(series);
-      b.setSeries(series);
-
-      if (a.getResolutionCount() != b.getResolutionCount()) {
-        return false;
-      }
-
-      for (int res=0; res<a.getResolutionCount(); res++) {
-        a.setResolution(res);
-        b.setResolution(res);
-
-        if (a.getSizeX() != b.getSizeX()) {
-          return false;
-        }
-
-        if (a.getSizeY() != b.getSizeY()) {
-          return false;
-        }
-
-        if (a.getSizeZ() != b.getSizeZ()) {
-          return false;
-        }
-
-        if (a.getSizeC() != b.getSizeC()) {
-          return false;
-        }
-
-        if (a.getSizeT() != b.getSizeT()) {
-          return false;
-        }
-
-        if (a.getImageCount() != b.getImageCount()) {
-          return false;
-        }
-
-        if (a.isRGB() != b.isRGB()) {
-          return false;
-        }
-
-        if (a.getPixelType() != b.getPixelType()) {
-          return false;
-        }
-
-        if (a.getBitsPerPixel() != b.getBitsPerPixel()) {
-          return false;
-        }
-
-        if (a.getEffectiveSizeC() != b.getEffectiveSizeC()) {
-          return false;
-        }
-
-        if (a.getRGBChannelCount() != b.getRGBChannelCount()) {
-          return false;
-        }
-
-        if (a.isIndexed() != b.isIndexed()) {
-          return false;
-        }
-
-        if (a.isFalseColor() != b.isFalseColor()) {
-          return false;
-        }
-
-        if (a.getThumbSizeX() != b.getThumbSizeX()) {
-          return false;
-        }
-
-        if (a.getThumbSizeY() != b.getThumbSizeY()) {
-          return false;
-        }
-
-        if (a.isLittleEndian() != b.isLittleEndian()) {
-          return false;
-        }
-
-        if (!a.getDimensionOrder().equals(b.getDimensionOrder())) {
-          return false;
-        }
-
-        if (a.isOrderCertain() != b.isOrderCertain()) {
-          return false;
-        }
-
-        if (a.isThumbnailSeries() != b.isThumbnailSeries()) {
-          return false;
-        }
-
-        if (a.isInterleaved() != b.isInterleaved()) {
-          return false;
-        }
-
-        if (a.getOptimalTileWidth() != b.getOptimalTileWidth()) {
-          return false;
-        }
-
-        if (a.getOptimalTileHeight() != b.getOptimalTileHeight()) {
-          return false;
-        }
-
-        int[] dimLengthsA = a.getChannelDimLengths();
-        int[] dimLengthsB = b.getChannelDimLengths();
-
-        if (dimLengthsA.length != dimLengthsB.length) {
-          return false;
-        }
-
-        for (int c=0; c<dimLengthsA.length; c++) {
-          if (dimLengthsA[c] != dimLengthsB[c]) {
-            return false;
-          }
-
-          if (a.isInterleaved(c) != b.isInterleaved(c)) {
-            return false;
-          }
-        }
-
-        String[] dimTypesA = a.getChannelDimTypes();
-        String[] dimTypesB = b.getChannelDimTypes();
-
-        if (dimTypesA.length != dimTypesB.length) {
-          return false;
-        }
-
-        for (int c=0; c<dimTypesA.length; c++) {
-          if (!dimTypesA[c].equals(dimTypesB[c])) {
-            return false;
-          }
-        }
-      }
-    }
-
-    a.setCoreIndex(0);
-    b.setCoreIndex(0);
     return true;
   }
 
