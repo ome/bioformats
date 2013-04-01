@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatTools;
 import loci.formats.meta.MetadataRetrieve;
@@ -151,6 +152,8 @@ public class Memoizer extends ReaderWrapper {
       IFormatReader memo = loadMemo(); // Should never throw.
 
       if (memo == null) {
+        OMEXMLService service = getService();
+        super.setMetadataStore(service.createOMEXMLMetadata());
         super.setId(id);
         handleMetadataStore(null); // Between setId and saveMemo
         loadedFromMemo = false;
@@ -160,6 +163,8 @@ public class Memoizer extends ReaderWrapper {
         loadedFromMemo = true;
         reader = memo;
       }
+    } catch (ServiceException e) {
+      LOGGER.debug("Could not create OMEXMLMetadata", e);
     } finally {
         sw.stop("loci.formats.Memoizer.setId");
     }
