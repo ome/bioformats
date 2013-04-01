@@ -535,7 +535,8 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#isGroupFiles() */
   public boolean isGroupFiles() {
-    return getReader().isGroupFiles();
+    // all readers should have same file grouping setting
+    return readers[0].isGroupFiles();
   }
 
   /* @see IFormatReader#fileGroupOption(String) */
@@ -710,7 +711,8 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#hasFlattenedResolutions() */
   public boolean hasFlattenedResolutions() {
-    return getReader().hasFlattenedResolutions();
+    // all readers should have the same flattened setting
+    return readers[0].hasFlattenedResolutions();
   }
 
   /* @see IFormatReader#setFlattenedResolutions(boolean) */
