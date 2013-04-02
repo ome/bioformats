@@ -36,6 +36,7 @@
 
 package loci.formats.codec;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -407,6 +408,7 @@ public class LZWCodec extends BaseCodec {
     catch (ArrayIndexOutOfBoundsException e) {
       throw new FormatException("Invalid LZW data", e);
     }
+    catch (EOFException e) { }
     return output;
   }
 }
