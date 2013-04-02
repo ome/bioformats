@@ -763,109 +763,114 @@ public class CellSensReader extends FormatReader {
     }
   }
 
-  private void readTags(RandomAccessInputStream vsi) throws IOException {
-    // read the VSI header
-    long fp = vsi.getFilePointer();
-    if (fp + 24 >= vsi.length()) {
-      return;
-    }
-    int headerSize = vsi.readShort(); // should always be 24
-    int version = vsi.readShort(); // always 21321
-    int volumeVersion = vsi.readInt();
-    long dataFieldOffset = vsi.readLong();
-    int flags = vsi.readInt();
-    vsi.skipBytes(4);
-
-    int tagCount = flags & 0xfffffff;
-
-    if (fp + dataFieldOffset < 0) {
-      return;
-    }
-
-    vsi.seek(fp + dataFieldOffset);
-    if (vsi.getFilePointer() >= vsi.length()) {
-      return;
-    }
-
-    for (int i=0; i<tagCount; i++) {
-      if (vsi.getFilePointer() + 16 >= vsi.length()) {
-        break;
+  private void readTags(RandomAccessInputStream vsi) {
+    try {
+      // read the VSI header
+      long fp = vsi.getFilePointer();
+      if (fp + 24 >= vsi.length()) {
+        return;
       }
+      int headerSize = vsi.readShort(); // should always be 24
+      int version = vsi.readShort(); // always 21321
+      int volumeVersion = vsi.readInt();
+      long dataFieldOffset = vsi.readLong();
+      int flags = vsi.readInt();
+      vsi.skipBytes(4);
 
-      // read the data field
+      int tagCount = flags & 0xfffffff;
 
-      int fieldType = vsi.readInt();
-      int tag = vsi.readInt();
-      long nextField = vsi.readInt() & 0xffffffffL;
-      int dataSize = vsi.readInt();
-
-      boolean extraTag = ((fieldType & 0x8000000) >> 27) == 1;
-      boolean extendedField = ((fieldType & 0x10000000) >> 28) == 1;
-      boolean inlineData = ((fieldType & 0x40000000) >> 30) == 1;
-      boolean array = (!inlineData && !extendedField) &&
-        ((fieldType & 0x20000000) >> 29) == 1;
-      boolean newVolume = ((fieldType & 0x80000000) >> 31) == 1;
-
-      int realType = fieldType & 0xffffff;
-      int secondTag = -1;
-
-      if (extraTag) {
-        secondTag = vsi.readInt();
-      }
-
-      if (extendedField && realType == NEW_VOLUME_HEADER) {
-        if (tag == 2007) {
-          dimensionTag = secondTag;
-          inDimensionProperties = true;
-        }
-        long endPointer = vsi.getFilePointer() + dataSize;
-        while (vsi.getFilePointer() < endPointer &&
-          vsi.getFilePointer() < vsi.length())
-        {
-          long start = vsi.getFilePointer();
-          readTags(vsi);
-          long end = vsi.getFilePointer();
-          if (start == end) {
-            break;
-          }
-        }
-        if (tag == 2007) {
-          inDimensionProperties = false;
-          foundChannelTag = false;
-        }
-      }
-
-      if (inDimensionProperties) {
-        if (tag == 2012 && !dimensionOrdering.containsValue(dimensionTag)) {
-          dimensionOrdering.put("Z", dimensionTag);
-        }
-        else if ((tag == 2100 || tag == 2027) &&
-          !dimensionOrdering.containsValue(dimensionTag))
-        {
-          dimensionOrdering.put("T", dimensionTag);
-        }
-        else if (tag == 2039 && !dimensionOrdering.containsValue(dimensionTag))
-        {
-          dimensionOrdering.put("L", dimensionTag);
-        }
-        else if (tag == 2008 && foundChannelTag &&
-          !dimensionOrdering.containsValue(dimensionTag))
-        {
-          dimensionOrdering.put("C", dimensionTag);
-        }
-        else if (tag == 2008) {
-          foundChannelTag = true;
-        }
-      }
-
-      if (nextField == 0) {
+      if (fp + dataFieldOffset < 0) {
         return;
       }
 
-      if (fp + nextField < vsi.length() && fp + nextField >= 0) {
-        vsi.seek(fp + nextField);
+      vsi.seek(fp + dataFieldOffset);
+      if (vsi.getFilePointer() >= vsi.length()) {
+        return;
       }
-      else break;
+
+      for (int i=0; i<tagCount; i++) {
+        if (vsi.getFilePointer() + 16 >= vsi.length()) {
+          break;
+        }
+
+        // read the data field
+
+        int fieldType = vsi.readInt();
+        int tag = vsi.readInt();
+        long nextField = vsi.readInt() & 0xffffffffL;
+        int dataSize = vsi.readInt();
+
+        boolean extraTag = ((fieldType & 0x8000000) >> 27) == 1;
+        boolean extendedField = ((fieldType & 0x10000000) >> 28) == 1;
+        boolean inlineData = ((fieldType & 0x40000000) >> 30) == 1;
+        boolean array = (!inlineData && !extendedField) &&
+          ((fieldType & 0x20000000) >> 29) == 1;
+        boolean newVolume = ((fieldType & 0x80000000) >> 31) == 1;
+
+        int realType = fieldType & 0xffffff;
+        int secondTag = -1;
+
+        if (extraTag) {
+          secondTag = vsi.readInt();
+        }
+
+        if (extendedField && realType == NEW_VOLUME_HEADER) {
+          if (tag == 2007) {
+            dimensionTag = secondTag;
+            inDimensionProperties = true;
+          }
+          long endPointer = vsi.getFilePointer() + dataSize;
+          while (vsi.getFilePointer() < endPointer &&
+            vsi.getFilePointer() < vsi.length())
+          {
+            long start = vsi.getFilePointer();
+            readTags(vsi);
+            long end = vsi.getFilePointer();
+            if (start == end) {
+              break;
+            }
+          }
+          if (tag == 2007) {
+            inDimensionProperties = false;
+            foundChannelTag = false;
+          }
+        }
+
+        if (inDimensionProperties) {
+          if (tag == 2012 && !dimensionOrdering.containsValue(dimensionTag)) {
+            dimensionOrdering.put("Z", dimensionTag);
+          }
+          else if ((tag == 2100 || tag == 2027) &&
+            !dimensionOrdering.containsValue(dimensionTag))
+          {
+            dimensionOrdering.put("T", dimensionTag);
+          }
+          else if (tag == 2039 && !dimensionOrdering.containsValue(dimensionTag))
+          {
+            dimensionOrdering.put("L", dimensionTag);
+          }
+          else if (tag == 2008 && foundChannelTag &&
+            !dimensionOrdering.containsValue(dimensionTag))
+          {
+            dimensionOrdering.put("C", dimensionTag);
+          }
+          else if (tag == 2008) {
+            foundChannelTag = true;
+          }
+        }
+
+        if (nextField == 0) {
+          return;
+        }
+
+        if (fp + nextField < vsi.length() && fp + nextField >= 0) {
+          vsi.seek(fp + nextField);
+        }
+        else break;
+      }
+    }
+    catch (Exception e) {
+      LOGGER.debug("Failed to read all tags", e);
     }
   }
 
