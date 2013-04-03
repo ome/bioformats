@@ -1399,6 +1399,13 @@ public class FormatReaderTest {
             continue;
           }
 
+          // SVS files in AFI datasets are detected as SVS
+          if (reader.getFormat().equals("Aperio AFI") &&
+            base[i].toLowerCase().endsWith(".svs"))
+          {
+            continue;
+          }
+
           if (reader.getFormat().equals("BD Pathway") &&
             (base[i].endsWith(".adf") || base[i].endsWith(".txt")) ||
             base[i].endsWith(".roi"))
@@ -1959,6 +1966,13 @@ public class FormatReaderTest {
             // DICOM reader is not expected to pick up companion files
             if (!result && r instanceof DicomReader &&
               readers[j] instanceof DicomReader)
+            {
+              continue;
+            }
+
+            // AFI reader is not expected to pick up .svs files
+            if (r instanceof AFIReader && (readers[j] instanceof AFIReader ||
+              readers[j] instanceof SVSReader))
             {
               continue;
             }
