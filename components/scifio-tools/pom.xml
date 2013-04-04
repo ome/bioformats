@@ -8,7 +8,7 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>pom-scifio</artifactId>
-    <version>4.4.6-SNAPSHOT</version>
+    <version>4.5-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -37,7 +37,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci-common</artifactId>
+      <artifactId>loci-legacy</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -51,7 +51,7 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupid>
+      <groupId>${project.groupId}</groupId>
       <artifactId>scifio</artifactId>
       <version>${project.version}</version>
     </dependency>

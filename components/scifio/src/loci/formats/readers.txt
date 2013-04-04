@@ -82,6 +82,7 @@ loci.formats.in.NDPISReader           # ndpis
 loci.formats.in.PovrayReader          # df3
 loci.formats.in.IMODReader            # mod
 loci.formats.in.FakeReader            # fake
+loci.formats.in.AFIReader             # afi
 
 # multi-extension messes
 loci.formats.in.JEOLReader            # dat, img, par
