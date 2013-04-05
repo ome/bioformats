@@ -68,10 +68,11 @@ import spec.schema.samples.Instrument2011_06.ref;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
  */
 
+@Test(groups = { "all" })
 public class Schema2011_06_Instrument_Upgrade_Test {
     private static final Templates UPDATE_201106 =
-        XMLTools.getStylesheet("/Xslt/2011-06-to-2012-06.xsl",
-                Schema2011_06_TO_2012_06_Test.class);
+        XMLTools.getStylesheet("/transforms/2011-06-to-2012-06.xsl",
+                Schema2011_06_Instrument_Upgrade_Test.class);
 
     private OME ome;
 

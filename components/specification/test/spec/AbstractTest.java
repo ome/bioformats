@@ -48,7 +48,7 @@ import spec.SchemaResolver;
  *
  * @since Beta4.2
  */
-@Test(groups = { "unit" })
+@Test(groups = { "all" })
 public class AbstractTest
     extends TestCase
 {

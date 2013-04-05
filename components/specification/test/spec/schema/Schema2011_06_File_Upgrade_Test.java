@@ -76,10 +76,11 @@ import spec.schema.samples.Upgrade2011_06.ref;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
  */
 
+@Test(groups = { "all" })
 public class Schema2011_06_File_Upgrade_Test {
     private static final Templates UPDATE_201106 =
-        XMLTools.getStylesheet("/Xslt/2011-06-to-2012-06.xsl",
-                Schema2011_06_TO_2012_06_Test.class);
+        XMLTools.getStylesheet("/transforms/2011-06-to-2012-06.xsl",
+                Schema2011_06_File_Upgrade_Test.class);
 
     private static final String MESSAGE_REMOVED_PATH = "Removed Path";
     private OME ome;

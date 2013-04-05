@@ -275,21 +275,18 @@ public class Schema2011_06_TO_2010_06_Test
     	super.setUp();
 
 		/** The target schema file */
-//		SCHEMA_2010_06 = this.getClass().getResourceAsStream("/2010-06/ome.xsd");
-		//components/specification/Released-Schema/2003-FC/
-
 		schemaArray = new StreamSource[6];
-
-		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/ome.xsd"));
-		schemaArray[1] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/SPW.xsd"));
-		schemaArray[2] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/SA.xsd"));
-		schemaArray[3] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/ROI.xsd"));
-		schemaArray[4] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/BinaryFile.xsd"));
-		schemaArray[5] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/OMERO.xsd"));
+		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/released-schema/2010-06/ome.xsd"));
+		schemaArray[1] = new StreamSource(this.getClass().getResourceAsStream("/released-schema/2010-06/SPW.xsd"));
+		schemaArray[2] = new StreamSource(this.getClass().getResourceAsStream("/released-schema/2010-06/SA.xsd"));
+		schemaArray[3] = new StreamSource(this.getClass().getResourceAsStream("/released-schema/2010-06/ROI.xsd"));
+		schemaArray[4] = new StreamSource(this.getClass().getResourceAsStream("/released-schema/2010-06/BinaryFile.xsd"));
+		schemaArray[5] = new StreamSource(this.getClass().getResourceAsStream("/released-schema/2010-06/OMERO.xsd"));
+		//components/specification/released-schema/2010-06/
 
 		/** The transform file */
-		STYLESHEET = this.getClass().getResourceAsStream("/Xslt/2011-06-to-2010-06.xsl");
-		//components/specification/Xslt/
+		STYLESHEET = this.getClass().getResourceAsStream("/transforms/2011-06-to-2010-06.xsl");
+		//components/specification/transforms/
 
     	files = new ArrayList<File>();
     }

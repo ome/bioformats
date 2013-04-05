@@ -295,17 +295,14 @@ public class SchemaCurrent_TO_2008_02_Test
     	super.setUp();
 
 		/** The target schema file */
-//		SCHEMA_2008_02 = ResourceUtils.getFile("classpath:2008-02/ome.xsd");
-		//components/specification/Released-Schema/2008-02/ome.xsd
-
 		schemaArray = new StreamSource[1];
-
-		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2008-02/ome.xsd"));
+		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/released-schema/2008-02/ome.xsd"));
+		//components/specification/released-schema/2008-02/
 
 		/** The transforms */
-		STYLESHEET_A = this.getClass().getResourceAsStream("/Xslt/2011-06-to-2010-06.xsl");
-		STYLESHEET_B = this.getClass().getResourceAsStream("/Xslt/2010-06-to-2008-02.xsl");
-		//components/specification/Xslt/
+		STYLESHEET_A = this.getClass().getResourceAsStream("/transforms/2011-06-to-2010-06.xsl");
+		STYLESHEET_B = this.getClass().getResourceAsStream("/transforms/2010-06-to-2008-02.xsl");
+		//components/specification/transforms/
 
     	files = new ArrayList<File>();
     }

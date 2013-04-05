@@ -45,7 +45,7 @@ public class Upgrade2011_06
      * It is imported into the associated test class
      */
     public static class ref {
-        public static final String FILE_LOCATION = "/OmeFiles/2011-06/6x4y1z1t3c8b-swatch-upgrade.ome";
+        public static final String FILE_LOCATION = "/samples/2011-06/6x4y1z1t3c8b-swatch-upgrade.ome";
         public static final String Plate0Description = "Plate 0 Description";
         public static final NonNegativeInteger Plate0Well0Column = NonNegativeInteger.valueOf("1");
         public static final NonNegativeInteger Plate0Well0Row = NonNegativeInteger.valueOf("1");
