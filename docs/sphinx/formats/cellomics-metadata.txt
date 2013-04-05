@@ -17,35 +17,35 @@ Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats Cellomics C01 format reader:
-  * `Channel : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_ID>`_
-  * `Channel : SamplesPerPixel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`_
-  * `Image : AcquisitionDate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`_
-  * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
-  * `Image : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Name>`_
-  * `Pixels : BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`_
-  * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
-  * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
-  * `Pixels : PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`_
-  * `Pixels : PhysicalSizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeY>`_
-  * `Pixels : SizeC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeC>`_
-  * `Pixels : SizeT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeT>`_
-  * `Pixels : SizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeX>`_
-  * `Pixels : SizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeY>`_
-  * `Pixels : SizeZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeZ>`_
-  * `Pixels : Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_Type>`_
-  * `Plane : TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheC>`_
-  * `Plane : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheT>`_
-  * `Plane : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheZ>`_
-  * `Plate : ColumnNamingConvention <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_ColumnNamingConvention>`_
-  * `Plate : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_ID>`_
-  * `Plate : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_Name>`_
-  * `Plate : RowNamingConvention <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_RowNamingConvention>`_
-  * `Well : Column <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_Column>`_
-  * `Well : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_ID>`_
-  * `Well : Row <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_Row>`_
-  * `WellSample : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_ID>`_
-  * `WellSample : ImageRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_ImageRef>`_
-  * `WellSample : Index <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_Index>`_
+  * :schema:`Channel : ID  <Channel_ID>`
+  * :schema:`Channel : SamplesPerPixel  <Channel_SamplesPerPixel>`
+  * :schema:`Image : AcquisitionDate  <Image_AcquisitionDate>`
+  * :schema:`Image : ID  <Image_ID>`
+  * :schema:`Image : Name  <Image_Name>`
+  * :schema:`Pixels : BinDataBigEndian  <Pixels_BinDataBigEndian>`
+  * :schema:`Pixels : DimensionOrder  <Pixels_DimensionOrder>`
+  * :schema:`Pixels : ID  <Pixels_ID>`
+  * :schema:`Pixels : PhysicalSizeX  <Pixels_PhysicalSizeX>`
+  * :schema:`Pixels : PhysicalSizeY  <Pixels_PhysicalSizeY>`
+  * :schema:`Pixels : SizeC  <Pixels_SizeC>`
+  * :schema:`Pixels : SizeT  <Pixels_SizeT>`
+  * :schema:`Pixels : SizeX  <Pixels_SizeX>`
+  * :schema:`Pixels : SizeY  <Pixels_SizeY>`
+  * :schema:`Pixels : SizeZ  <Pixels_SizeZ>`
+  * :schema:`Pixels : Type  <Pixels_Type>`
+  * :schema:`Plane : TheC  <Plane_TheC>`
+  * :schema:`Plane : TheT  <Plane_TheT>`
+  * :schema:`Plane : TheZ  <Plane_TheZ>`
+  * :schema:`Plate : ColumnNamingConvention  <Plate_ColumnNamingConvention>`
+  * :schema:`Plate : ID  <Plate_ID>`
+  * :schema:`Plate : Name  <Plate_Name>`
+  * :schema:`Plate : RowNamingConvention  <Plate_RowNamingConvention>`
+  * :schema:`Well : Column  <Well_Column>`
+  * :schema:`Well : ID  <Well_ID>`
+  * :schema:`Well : Row  <Well_Row>`
+  * :schema:`WellSample : ID  <WellSample_ID>`
+  * :schema:`WellSample : ImageRef  <WellSample_ImageRef>`
+  * :schema:`WellSample : Index  <WellSample_Index>`
 
 **Total supported: 29**
 

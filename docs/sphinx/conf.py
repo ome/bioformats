@@ -184,6 +184,7 @@ extlinks = {
     'omerodoc': (omerodoc_uri + '/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
+    'schema' : ('http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#%s', '')
     }
 
 rst_epilog = """

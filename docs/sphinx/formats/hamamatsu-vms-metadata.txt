@@ -17,30 +17,30 @@ Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats Hamamatsu VMS format reader:
-  * `Channel : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_ID>`_
-  * `Channel : SamplesPerPixel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`_
-  * `Image : AcquisitionDate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`_
-  * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
-  * `Image : InstrumentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_InstrumentRef>`_
-  * `Image : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Name>`_
-  * `Instrument : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Instrument_ID>`_
-  * `Objective : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_ID>`_
-  * `Objective : NominalMagnification <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`_
-  * `ObjectiveSettings : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`_
-  * `Pixels : BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`_
-  * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
-  * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
-  * `Pixels : PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`_
-  * `Pixels : PhysicalSizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeY>`_
-  * `Pixels : SizeC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeC>`_
-  * `Pixels : SizeT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeT>`_
-  * `Pixels : SizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeX>`_
-  * `Pixels : SizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeY>`_
-  * `Pixels : SizeZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeZ>`_
-  * `Pixels : Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_Type>`_
-  * `Plane : TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheC>`_
-  * `Plane : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheT>`_
-  * `Plane : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheZ>`_
+  * :schema:`Channel : ID  <Channel_ID>`
+  * :schema:`Channel : SamplesPerPixel  <Channel_SamplesPerPixel>`
+  * :schema:`Image : AcquisitionDate  <Image_AcquisitionDate>`
+  * :schema:`Image : ID  <Image_ID>`
+  * :schema:`Image : InstrumentRef  <Image_InstrumentRef>`
+  * :schema:`Image : Name  <Image_Name>`
+  * :schema:`Instrument : ID  <Instrument_ID>`
+  * :schema:`Objective : ID  <Objective_ID>`
+  * :schema:`Objective : NominalMagnification  <Objective_NominalMagnification>`
+  * :schema:`ObjectiveSettings : ID  <ObjectiveSettings_ID>`
+  * :schema:`Pixels : BinDataBigEndian  <Pixels_BinDataBigEndian>`
+  * :schema:`Pixels : DimensionOrder  <Pixels_DimensionOrder>`
+  * :schema:`Pixels : ID  <Pixels_ID>`
+  * :schema:`Pixels : PhysicalSizeX  <Pixels_PhysicalSizeX>`
+  * :schema:`Pixels : PhysicalSizeY  <Pixels_PhysicalSizeY>`
+  * :schema:`Pixels : SizeC  <Pixels_SizeC>`
+  * :schema:`Pixels : SizeT  <Pixels_SizeT>`
+  * :schema:`Pixels : SizeX  <Pixels_SizeX>`
+  * :schema:`Pixels : SizeY  <Pixels_SizeY>`
+  * :schema:`Pixels : SizeZ  <Pixels_SizeZ>`
+  * :schema:`Pixels : Type  <Pixels_Type>`
+  * :schema:`Plane : TheC  <Plane_TheC>`
+  * :schema:`Plane : TheT  <Plane_TheT>`
+  * :schema:`Plane : TheZ  <Plane_TheZ>`
 
 **Total supported: 24**
 
