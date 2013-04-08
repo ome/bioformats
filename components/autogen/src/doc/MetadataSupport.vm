@@ -40,9 +40,9 @@ These fields are fully supported by the $handler:
 #set ($anchor = "_$prop")
 #set ($anchor = "$node$anchor")
 #if ($comment != "")
-  * `$entity : $prop <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$anchor>`_ - $comment
+  * :schema:`$entity : $prop <OME-$q.version()/ome_xsd.html#$anchor>` - $comment
 #else
-  * `$entity : $prop <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$anchor>`_
+  * :schema:`$entity : $prop <OME-$q.version()/ome_xsd.html#$anchor>`
 #end##if $comment
 #end##foreach $yes
 
@@ -63,9 +63,9 @@ but there may be cases where the field is not converted:
 #set ($anchor = "_$prop")
 #set ($anchor = "$node$anchor")
 #if ($comment != "")
-  * `$entity : $prop <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$anchor>`_ - $comment
+  * :schema:`$entity : $prop <OME-$q.version()/ome_xsd.html#$anchor>` - $comment
 #else
-  * `$entity : $prop <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$anchor>`_
+  * :schema:`$entity : $prop <OME-$q.version()/ome_xsd.html#$anchor>`
 #end##if $comment
 #end##foreach $partial
 
