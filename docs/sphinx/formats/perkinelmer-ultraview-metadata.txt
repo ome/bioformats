@@ -17,34 +17,34 @@ Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats PerkinElmer format reader:
-  * `Channel : EmissionWavelength <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_EmissionWavelength>`_
-  * `Channel : ExcitationWavelength <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_ExcitationWavelength>`_
-  * `Channel : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_ID>`_
-  * `Channel : SamplesPerPixel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`_
-  * `Image : AcquisitionDate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`_
-  * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
-  * `Image : InstrumentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_InstrumentRef>`_
-  * `Image : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Name>`_
-  * `Instrument : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Instrument_ID>`_
-  * `Pixels : BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`_
-  * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
-  * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
-  * `Pixels : PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`_
-  * `Pixels : PhysicalSizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeY>`_
-  * `Pixels : SizeC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeC>`_
-  * `Pixels : SizeT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeT>`_
-  * `Pixels : SizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeX>`_
-  * `Pixels : SizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeY>`_
-  * `Pixels : SizeZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeZ>`_
-  * `Pixels : Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_Type>`_
-  * `Plane : DeltaT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_DeltaT>`_
-  * `Plane : ExposureTime <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_ExposureTime>`_
-  * `Plane : PositionX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_PositionX>`_
-  * `Plane : PositionY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_PositionY>`_
-  * `Plane : PositionZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_PositionZ>`_
-  * `Plane : TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheC>`_
-  * `Plane : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheT>`_
-  * `Plane : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheZ>`_
+  * :schema:`Channel : EmissionWavelength <OME-2012-06/ome_xsd.html#Channel_EmissionWavelength>`
+  * :schema:`Channel : ExcitationWavelength <OME-2012-06/ome_xsd.html#Channel_ExcitationWavelength>`
+  * :schema:`Channel : ID <OME-2012-06/ome_xsd.html#Channel_ID>`
+  * :schema:`Channel : SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
+  * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
+  * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
+  * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#Image_InstrumentRef>`
+  * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
+  * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
+  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
+  * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
+  * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
+  * :schema:`Pixels : PhysicalSizeX <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`
+  * :schema:`Pixels : PhysicalSizeY <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeY>`
+  * :schema:`Pixels : SizeC <OME-2012-06/ome_xsd.html#Pixels_SizeC>`
+  * :schema:`Pixels : SizeT <OME-2012-06/ome_xsd.html#Pixels_SizeT>`
+  * :schema:`Pixels : SizeX <OME-2012-06/ome_xsd.html#Pixels_SizeX>`
+  * :schema:`Pixels : SizeY <OME-2012-06/ome_xsd.html#Pixels_SizeY>`
+  * :schema:`Pixels : SizeZ <OME-2012-06/ome_xsd.html#Pixels_SizeZ>`
+  * :schema:`Pixels : Type <OME-2012-06/ome_xsd.html#Pixels_Type>`
+  * :schema:`Plane : DeltaT <OME-2012-06/ome_xsd.html#Plane_DeltaT>`
+  * :schema:`Plane : ExposureTime <OME-2012-06/ome_xsd.html#Plane_ExposureTime>`
+  * :schema:`Plane : PositionX <OME-2012-06/ome_xsd.html#Plane_PositionX>`
+  * :schema:`Plane : PositionY <OME-2012-06/ome_xsd.html#Plane_PositionY>`
+  * :schema:`Plane : PositionZ <OME-2012-06/ome_xsd.html#Plane_PositionZ>`
+  * :schema:`Plane : TheC <OME-2012-06/ome_xsd.html#Plane_TheC>`
+  * :schema:`Plane : TheT <OME-2012-06/ome_xsd.html#Plane_TheT>`
+  * :schema:`Plane : TheZ <OME-2012-06/ome_xsd.html#Plane_TheZ>`
 
 **Total supported: 28**
 
