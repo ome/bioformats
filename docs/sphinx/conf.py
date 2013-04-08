@@ -184,6 +184,7 @@ extlinks = {
     'omerodoc': (omerodoc_uri + '/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
+    'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')
     }
 
 rst_epilog = """
