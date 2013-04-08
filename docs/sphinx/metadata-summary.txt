@@ -202,10 +202,10 @@ Format readers
      - 0
      - 445
    * - :doc:`GatanReader <formats/gatan-digital-micrograph-metadata>`
-     - 34
+     - 21
      - 0
      - 0
-     - 439
+     - 452
    * - :doc:`GelReader <formats/amersham-biosciences-gel-metadata>`
      - 19
      - 0
@@ -301,6 +301,11 @@ Format readers
      - 0
      - 0
      - 408
+   * - :doc:`InveonReader <formats/inveon-metadata>`
+     - 28
+     - 0
+     - 0
+     - 445
    * - :doc:`IvisionReader <formats/iplab-mac-metadata>`
      - 32
      - 0
@@ -491,6 +496,11 @@ Format readers
      - 0
      - 0
      - 428
+   * - :doc:`OBFReader <formats/nikon-ez-c1-tiff-metadata>`
+     - 17
+     - 0
+     - 0
+     - 456
    * - :doc:`OMETiffReader <formats/ome-tiff-metadata>`
      - 17
      - 0
@@ -798,2371 +808,2371 @@ Metadata fields
     - Partial
     - Unknown/Missing
 
-   * - `Arc - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Arc_$prop>`_
+   * - :schema:`Arc - ID <OME-2012-06/ome_xsd.html#Arc_$prop>`
      - 0
      - 0
      - 0
-     - 151
-   * - `Arc - LotNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Arc_$prop>`_
+     - 153
+   * - :schema:`Arc - LotNumber <OME-2012-06/ome_xsd.html#Arc_$prop>`
      - 1
      - 0
      - 0
-     - 150
-   * - `Arc - Manufacturer <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Arc_$prop>`_
+     - 152
+   * - :schema:`Arc - Manufacturer <OME-2012-06/ome_xsd.html#Arc_$prop>`
      - 1
      - 0
      - 0
-     - 150
-   * - `Arc - Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Arc_$prop>`_
+     - 152
+   * - :schema:`Arc - Model <OME-2012-06/ome_xsd.html#Arc_$prop>`
      - 1
      - 0
      - 0
-     - 150
-   * - `Arc - Power <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Arc_$prop>`_
+     - 152
+   * - :schema:`Arc - Power <OME-2012-06/ome_xsd.html#Arc_$prop>`
      - 1
      - 0
      - 0
-     - 150
-   * - `Arc - SerialNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Arc_$prop>`_
+     - 152
+   * - :schema:`Arc - SerialNumber <OME-2012-06/ome_xsd.html#Arc_$prop>`
      - 1
      - 0
      - 0
-     - 150
-   * - `Arc - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Arc_$prop>`_
+     - 152
+   * - :schema:`Arc - Type <OME-2012-06/ome_xsd.html#Arc_$prop>`
      - 0
      - 0
      - 0
-     - 151
-   * - `BooleanAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`_
+     - 153
+   * - :schema:`BooleanAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`
      - 0
      - 0
      - 0
-     - 151
-   * - `BooleanAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`_
+     - 153
+   * - :schema:`BooleanAnnotation - Description <OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`
      - 0
      - 0
      - 0
-     - 151
-   * - `BooleanAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`_
+     - 153
+   * - :schema:`BooleanAnnotation - ID <OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`
      - 0
      - 0
      - 0
-     - 151
-   * - `BooleanAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`_
+     - 153
+   * - :schema:`BooleanAnnotation - Namespace <OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`
      - 0
      - 0
      - 0
-     - 151
-   * - `BooleanAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`_
+     - 153
+   * - :schema:`BooleanAnnotation - Value <OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`
      - 0
      - 0
      - 0
-     - 151
-   * - `Channel - AcquisitionMode <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
+     - 153
+   * - :schema:`Channel - AcquisitionMode <OME-2012-06/ome_xsd.html#Channel_$prop>`
      - 3
      - 0
      - 0
-     - 148
-   * - `Channel - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
+     - 150
+   * - :schema:`Channel - AnnotationRef <OME-2012-06/ome_xsd.html#Channel_$prop>`
      - 0
      - 0
      - 0
-     - 151
-   * - `Channel - Color <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
+     - 153
+   * - :schema:`Channel - Color <OME-2012-06/ome_xsd.html#Channel_$prop>`
      - 7
      - 0
      - 0
-     - 144
-   * - `Channel - ContrastMethod <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
+     - 146
+   * - :schema:`Channel - ContrastMethod <OME-2012-06/ome_xsd.html#Channel_$prop>`
      - 0
      - 0
      - 0
-     - 151
-   * - `Channel - EmissionWavelength <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
+     - 153
+   * - :schema:`Channel - EmissionWavelength <OME-2012-06/ome_xsd.html#Channel_$prop>`
      - 14
      - 0
      - 0
-     - 137
-   * - `Channel - ExcitationWavelength <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
+     - 139
+   * - :schema:`Channel - ExcitationWavelength <OME-2012-06/ome_xsd.html#Channel_$prop>`
      - 15
-     - 0
-     - 0
-     - 136
-   * - `Channel - FilterSetRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Channel - Fluor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Channel - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Channel - IlluminationType <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Channel - LightSourceSettingsAttenuation <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Channel - LightSourceSettingsID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Channel - LightSourceSettingsWavelength <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Channel - NDFilter <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Channel - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 29
-     - 0
-     - 0
-     - 122
-   * - `Channel - PinholeSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 9
-     - 0
-     - 0
-     - 142
-   * - `Channel - PockelCellSetting <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Channel - SamplesPerPixel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `CommentAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `CommentAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `CommentAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `CommentAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `CommentAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Dataset - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Dataset - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Dataset - ExperimenterGroupRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Dataset - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Dataset - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Dataset - ImageRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Dataset - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dataset_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Detector - AmplificationGain <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Detector - Gain <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Detector - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_$prop>`_
-     - 32
-     - 0
-     - 0
-     - 119
-   * - `Detector - LotNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Detector - Manufacturer <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_$prop>`_
-     - 4
-     - 0
-     - 0
-     - 147
-   * - `Detector - Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_$prop>`_
-     - 13
      - 0
      - 0
      - 138
-   * - `Detector - Offset <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_$prop>`_
-     - 5
+   * - :schema:`Channel - FilterSetRef <OME-2012-06/ome_xsd.html#Channel_$prop>`
      - 0
      - 0
-     - 146
-   * - `Detector - SerialNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_$prop>`_
+     - 0
+     - 153
+   * - :schema:`Channel - Fluor <OME-2012-06/ome_xsd.html#Channel_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Channel - ID <OME-2012-06/ome_xsd.html#Channel_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Channel - IlluminationType <OME-2012-06/ome_xsd.html#Channel_$prop>`
      - 2
      - 0
      - 0
-     - 149
-   * - `Detector - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_$prop>`_
-     - 27
+     - 151
+   * - :schema:`Channel - LightSourceSettingsAttenuation <OME-2012-06/ome_xsd.html#Channel_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Channel - LightSourceSettingsID <OME-2012-06/ome_xsd.html#Channel_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Channel - LightSourceSettingsWavelength <OME-2012-06/ome_xsd.html#Channel_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Channel - NDFilter <OME-2012-06/ome_xsd.html#Channel_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Channel - Name <OME-2012-06/ome_xsd.html#Channel_$prop>`
+     - 29
      - 0
      - 0
      - 124
-   * - `Detector - Voltage <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Detector - Zoom <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Detector_$prop>`_
-     - 4
-     - 0
-     - 0
-     - 147
-   * - `DetectorSettings - Binning <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`_
-     - 15
-     - 0
-     - 0
-     - 136
-   * - `DetectorSettings - Gain <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`_
-     - 18
-     - 0
-     - 0
-     - 133
-   * - `DetectorSettings - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`_
-     - 30
-     - 0
-     - 0
-     - 121
-   * - `DetectorSettings - Offset <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`_
-     - 8
-     - 0
-     - 0
-     - 143
-   * - `DetectorSettings - ReadOutRate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `DetectorSettings - Voltage <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`_
-     - 6
-     - 0
-     - 0
-     - 145
-   * - `Dichroic - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dichroic_$prop>`_
-     - 6
-     - 0
-     - 0
-     - 145
-   * - `Dichroic - LotNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dichroic_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Dichroic - Manufacturer <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dichroic_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Dichroic - Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dichroic_$prop>`_
-     - 6
-     - 0
-     - 0
-     - 145
-   * - `Dichroic - SerialNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Dichroic_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `DoubleAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `DoubleAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `DoubleAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `DoubleAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `DoubleAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Ellipse - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Ellipse - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Ellipse - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Ellipse - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Ellipse - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Ellipse - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Ellipse - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Ellipse - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Ellipse - RadiusX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Ellipse - RadiusY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Ellipse - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Ellipse - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Ellipse - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Ellipse - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Ellipse - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Ellipse - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Ellipse - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Ellipse - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Ellipse - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Ellipse - X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Ellipse - Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Experiment - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experiment_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Experiment - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experiment_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Experiment - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experiment_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Experiment - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experiment_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Experimenter - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Experimenter - Email <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Experimenter - FirstName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Experimenter - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
-     - 10
-     - 0
-     - 0
-     - 141
-   * - `Experimenter - Institution <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Experimenter - LastName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
+   * - :schema:`Channel - PinholeSize <OME-2012-06/ome_xsd.html#Channel_$prop>`
      - 9
-     - 0
-     - 0
-     - 142
-   * - `Experimenter - MiddleName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Experimenter - UserName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experimenter_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `ExperimenterGroup - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `ExperimenterGroup - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `ExperimenterGroup - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `ExperimenterGroup - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `ExperimenterGroup - Leader <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `ExperimenterGroup - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Filament - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filament_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Filament - LotNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filament_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Filament - Manufacturer <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filament_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Filament - Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filament_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Filament - Power <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filament_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Filament - SerialNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filament_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Filament - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filament_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `FileAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `FileAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `FileAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `FileAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Filter - FilterWheel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Filter - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_$prop>`_
-     - 8
-     - 0
-     - 0
-     - 143
-   * - `Filter - LotNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Filter - Manufacturer <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Filter - Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_$prop>`_
-     - 8
-     - 0
-     - 0
-     - 143
-   * - `Filter - SerialNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Filter - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Filter_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `FilterSet - DichroicRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FilterSet_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `FilterSet - EmissionFilterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FilterSet_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `FilterSet - ExcitationFilterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FilterSet_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `FilterSet - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FilterSet_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `FilterSet - LotNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FilterSet_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `FilterSet - Manufacturer <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FilterSet_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `FilterSet - Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FilterSet_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `FilterSet - SerialNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#FilterSet_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Image - AcquisitionDate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Image - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Image - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 40
-     - 0
-     - 0
-     - 111
-   * - `Image - ExperimentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Image - ExperimenterGroupRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Image - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Image - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Image - InstrumentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 39
-     - 0
-     - 0
-     - 112
-   * - `Image - MicrobeamManipulationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Image - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Image - ROIRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_$prop>`_
-     - 11
-     - 0
-     - 0
-     - 140
-   * - `ImagingEnvironment - AirPressure <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `ImagingEnvironment - CO2Percent <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `ImagingEnvironment - Humidity <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `ImagingEnvironment - Temperature <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`_
-     - 10
-     - 0
-     - 0
-     - 141
-   * - `Instrument - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Instrument_$prop>`_
-     - 43
-     - 0
-     - 0
-     - 108
-   * - `Label - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Label - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Label - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Label - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Label - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Label - X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Label - Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Label_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Laser - FrequencyMultiplication <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Laser - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 9
-     - 0
-     - 0
-     - 142
-   * - `Laser - LaserMedium <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 8
-     - 0
-     - 0
-     - 143
-   * - `Laser - LotNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Laser - Manufacturer <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Laser - Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 4
-     - 0
-     - 0
-     - 147
-   * - `Laser - PockelCell <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Laser - Power <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Laser - Pulse <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Laser - Pump <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Laser - RepetitionRate <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Laser - SerialNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Laser - Tuneable <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Laser - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 8
-     - 0
-     - 0
-     - 143
-   * - `Laser - Wavelength <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Laser_$prop>`_
-     - 7
      - 0
      - 0
      - 144
-   * - `LightEmittingDiode - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`_
+   * - :schema:`Channel - PockelCellSetting <OME-2012-06/ome_xsd.html#Channel_$prop>`
      - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Channel - SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`CommentAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`CommentAnnotation - Description <OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`CommentAnnotation - ID <OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`CommentAnnotation - Namespace <OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`CommentAnnotation - Value <OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Dataset - AnnotationRef <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Dataset - Description <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Dataset - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Dataset - ExperimenterRef <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Dataset - ID <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Dataset - ImageRef <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Dataset - Name <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Detector - AmplificationGain <OME-2012-06/ome_xsd.html#Detector_$prop>`
+     - 2
      - 0
      - 0
      - 151
-   * - `LightEmittingDiode - LotNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `LightEmittingDiode - Manufacturer <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `LightEmittingDiode - Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `LightEmittingDiode - Power <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `LightEmittingDiode - SerialNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `LightPath - DichroicRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightPath_$prop>`_
-     - 3
+   * - :schema:`Detector - Gain <OME-2012-06/ome_xsd.html#Detector_$prop>`
+     - 5
      - 0
      - 0
      - 148
-   * - `LightPath - EmissionFilterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightPath_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `LightPath - ExcitationFilterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightPath_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Line - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Line - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Line - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - MarkerEnd <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - MarkerStart <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Line - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Line - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Line - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Line - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Line - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Line - X1 <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Line - X2 <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Line - Y1 <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Line - Y2 <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Line_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `ListAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `ListAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `ListAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `ListAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `LongAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `LongAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `LongAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `LongAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `LongAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Mask - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - Height <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Mask - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Mask - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Mask - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Mask - Width <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Mask - X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Mask - Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `MicrobeamManipulation - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `MicrobeamManipulation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `MicrobeamManipulation - ROIRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `MicrobeamManipulation - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `MicrobeamManipulationLightSourceSettings - Attenuation <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightSourceSettings_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `MicrobeamManipulationLightSourceSettings - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightSourceSettings_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `MicrobeamManipulationLightSourceSettings - Wavelength <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#LightSourceSettings_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Microscope - LotNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Microscope_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Microscope - Manufacturer <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Microscope_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Microscope - Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Microscope_$prop>`_
-     - 9
-     - 0
-     - 0
-     - 142
-   * - `Microscope - SerialNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Microscope_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Microscope - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Microscope_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Objective - CalibratedMagnification <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
-     - 9
-     - 0
-     - 0
-     - 142
-   * - `Objective - Correction <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
-     - 25
-     - 0
-     - 0
-     - 126
-   * - `Objective - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
+   * - :schema:`Detector - ID <OME-2012-06/ome_xsd.html#Detector_$prop>`
      - 31
      - 0
      - 0
-     - 120
-   * - `Objective - Immersion <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
-     - 26
+     - 122
+   * - :schema:`Detector - LotNumber <OME-2012-06/ome_xsd.html#Detector_$prop>`
+     - 1
      - 0
      - 0
-     - 125
-   * - `Objective - Iris <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
-     - 2
+     - 152
+   * - :schema:`Detector - Manufacturer <OME-2012-06/ome_xsd.html#Detector_$prop>`
+     - 4
      - 0
      - 0
      - 149
-   * - `Objective - LensNA <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
-     - 19
-     - 0
-     - 0
-     - 132
-   * - `Objective - LotNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Objective - Manufacturer <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Objective - Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
-     - 12
-     - 0
-     - 0
-     - 139
-   * - `Objective - NominalMagnification <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
-     - 23
-     - 0
-     - 0
-     - 128
-   * - `Objective - SerialNumber <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Objective - WorkingDistance <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_$prop>`_
-     - 9
-     - 0
-     - 0
-     - 142
-   * - `ObjectiveSettings - CorrectionCollar <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `ObjectiveSettings - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`_
-     - 26
-     - 0
-     - 0
-     - 125
-   * - `ObjectiveSettings - Medium <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `ObjectiveSettings - RefractiveIndex <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`_
-     - 7
-     - 0
-     - 0
-     - 144
-   * - `Pixels - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Pixels - BinDataBigEndian <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Pixels - DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Pixels - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Pixels - PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 79
-     - 0
-     - 0
-     - 72
-   * - `Pixels - PhysicalSizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 79
-     - 0
-     - 0
-     - 72
-   * - `Pixels - PhysicalSizeZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 39
-     - 0
-     - 0
-     - 112
-   * - `Pixels - SizeC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Pixels - SizeT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Pixels - SizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Pixels - SizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Pixels - SizeZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Pixels - TimeIncrement <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 16
-     - 0
-     - 0
-     - 135
-   * - `Pixels - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Plane - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Plane - DeltaT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_$prop>`_
-     - 22
-     - 0
-     - 0
-     - 129
-   * - `Plane - ExposureTime <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_$prop>`_
-     - 25
-     - 0
-     - 0
-     - 126
-   * - `Plane - HashSHA1 <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Plane - PositionX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_$prop>`_
-     - 26
-     - 0
-     - 0
-     - 125
-   * - `Plane - PositionY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_$prop>`_
-     - 26
-     - 0
-     - 0
-     - 125
-   * - `Plane - PositionZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_$prop>`_
-     - 20
-     - 0
-     - 0
-     - 131
-   * - `Plane - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Plane - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Plane - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_$prop>`_
-     - 151
-     - 0
-     - 0
-     - 0
-   * - `Plate - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Plate - ColumnNamingConvention <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 8
-     - 0
-     - 0
-     - 143
-   * - `Plate - Columns <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Plate - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Plate - ExternalIdentifier <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Plate - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 10
-     - 0
-     - 0
-     - 141
-   * - `Plate - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 9
-     - 0
-     - 0
-     - 142
-   * - `Plate - RowNamingConvention <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 8
-     - 0
-     - 0
-     - 143
-   * - `Plate - Rows <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Plate - Status <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Plate - WellOriginX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Plate - WellOriginY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `PlateAcquisition - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `PlateAcquisition - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `PlateAcquisition - EndTime <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `PlateAcquisition - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`_
-     - 7
-     - 0
-     - 0
-     - 144
-   * - `PlateAcquisition - MaximumFieldCount <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`_
-     - 7
-     - 0
-     - 0
-     - 144
-   * - `PlateAcquisition - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `PlateAcquisition - StartTime <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `PlateAcquisition - WellSampleRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`_
-     - 7
-     - 0
-     - 0
-     - 144
-   * - `Point - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Point - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Point - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Point - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Point - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Point - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Point - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Point - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Point - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Point - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Point - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Point - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Point - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Point - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Point - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Point - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Point - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Point - X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Point - Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Point_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Polygon - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polygon - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polygon - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polygon - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Polygon - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polygon - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 7
-     - 0
-     - 0
-     - 144
-   * - `Polygon - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polygon - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polygon - Points <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 7
-     - 0
-     - 0
-     - 144
-   * - `Polygon - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Polygon - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Polygon - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Polygon - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Polygon - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polygon - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Polygon - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Polygon - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Polygon - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polygon_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polyline - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polyline - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polyline - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polyline - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Polyline - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polyline - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Polyline - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polyline - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polyline - MarkerEnd <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polyline - MarkerStart <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polyline - Points <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `Polyline - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Polyline - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Polyline - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 3
-     - 0
-     - 0
-     - 148
-   * - `Polyline - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Polyline - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Polyline - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Polyline - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Polyline - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Polyline - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Polyline_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Project - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Project - DatasetRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Project - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Project - ExperimenterGroupRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Project - ExperimenterRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Project - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Project - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Project_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `ROI - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ROI_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `ROI - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ROI_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `ROI - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ROI_$prop>`_
-     - 11
+   * - :schema:`Detector - Model <OME-2012-06/ome_xsd.html#Detector_$prop>`
+     - 13
      - 0
      - 0
      - 140
-   * - `ROI - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ROI_$prop>`_
-     - 3
+   * - :schema:`Detector - Offset <OME-2012-06/ome_xsd.html#Detector_$prop>`
+     - 5
      - 0
      - 0
      - 148
-   * - `ROI - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ROI_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Reagent - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Reagent_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Reagent - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Reagent_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Reagent - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Reagent_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Reagent - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Reagent_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Reagent - ReagentIdentifier <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Reagent_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Rectangle - FillColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Rectangle - FillRule <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Rectangle - FontFamily <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Rectangle - FontSize <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
+   * - :schema:`Detector - SerialNumber <OME-2012-06/ome_xsd.html#Detector_$prop>`
      - 2
      - 0
      - 0
-     - 149
-   * - `Rectangle - FontStyle <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 0
-     - 0
-     - 0
      - 151
-   * - `Rectangle - Height <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 7
+   * - :schema:`Detector - Type <OME-2012-06/ome_xsd.html#Detector_$prop>`
+     - 27
      - 0
      - 0
-     - 144
-   * - `Rectangle - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 7
-     - 0
-     - 0
-     - 144
-   * - `Rectangle - LineCap <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Rectangle - Locked <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Rectangle - StrokeColor <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Rectangle - StrokeDashArray <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Rectangle - StrokeWidth <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
+     - 126
+   * - :schema:`Detector - Voltage <OME-2012-06/ome_xsd.html#Detector_$prop>`
      - 2
      - 0
      - 0
-     - 149
-   * - `Rectangle - Text <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `Rectangle - TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 0
-     - 0
-     - 0
      - 151
-   * - `Rectangle - TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Rectangle - TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Rectangle - Transform <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Rectangle - Visible <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Rectangle - Width <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 7
-     - 0
-     - 0
-     - 144
-   * - `Rectangle - X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 7
-     - 0
-     - 0
-     - 144
-   * - `Rectangle - Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Rectangle_$prop>`_
-     - 7
-     - 0
-     - 0
-     - 144
-   * - `Screen - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Screen_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Screen - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Screen_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Screen - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Screen_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Screen - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Screen_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Screen - PlateRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Screen_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `Screen - ProtocolDescription <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Screen_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Screen - ProtocolIdentifier <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Screen_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Screen - ReagentSetDescription <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Screen_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Screen - ReagentSetIdentifier <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Screen_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Screen - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Screen_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `StageLabel - Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#StageLabel_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `StageLabel - X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#StageLabel_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `StageLabel - Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#StageLabel_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `StageLabel - Z <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#StageLabel_$prop>`_
-     - 2
-     - 0
-     - 0
-     - 149
-   * - `TagAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TagAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TagAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TagAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TagAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TermAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TermAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TermAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TermAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TermAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TiffData - FirstC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TiffData_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TiffData - FirstT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TiffData_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TiffData - FirstZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TiffData_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TiffData - IFD <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TiffData_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TiffData - PlaneCount <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TiffData_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TimestampAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TimestampAnnotation - Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TimestampAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TimestampAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TimestampAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `TransmittanceRange - CutIn <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `TransmittanceRange - CutInTolerance <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `TransmittanceRange - CutOut <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`_
-     - 5
-     - 0
-     - 0
-     - 146
-   * - `TransmittanceRange - CutOutTolerance <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `TransmittanceRange - Transmittance <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`_
-     - 1
-     - 0
-     - 0
-     - 150
-   * - `UUID - FileName <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#UUID_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `UUID - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#UUID_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Well - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Well - Color <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Well - Column <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_$prop>`_
-     - 10
-     - 0
-     - 0
-     - 141
-   * - `Well - ExternalDescription <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Well - ExternalIdentifier <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Well - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_$prop>`_
-     - 10
-     - 0
-     - 0
-     - 141
-   * - `Well - ReagentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `Well - Row <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_$prop>`_
-     - 10
-     - 0
-     - 0
-     - 141
-   * - `Well - Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `WellSample - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `WellSample - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_$prop>`_
-     - 10
-     - 0
-     - 0
-     - 141
-   * - `WellSample - ImageRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_$prop>`_
-     - 10
-     - 0
-     - 0
-     - 141
-   * - `WellSample - Index <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_$prop>`_
-     - 10
-     - 0
-     - 0
-     - 141
-   * - `WellSample - PositionX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_$prop>`_
+   * - :schema:`Detector - Zoom <OME-2012-06/ome_xsd.html#Detector_$prop>`
      - 4
      - 0
      - 0
+     - 149
+   * - :schema:`DetectorSettings - Binning <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+     - 15
+     - 0
+     - 0
+     - 138
+   * - :schema:`DetectorSettings - Gain <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+     - 18
+     - 0
+     - 0
+     - 135
+   * - :schema:`DetectorSettings - ID <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+     - 29
+     - 0
+     - 0
+     - 124
+   * - :schema:`DetectorSettings - Offset <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+     - 8
+     - 0
+     - 0
+     - 145
+   * - :schema:`DetectorSettings - ReadOutRate <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`DetectorSettings - Voltage <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Dichroic - ID <OME-2012-06/ome_xsd.html#Dichroic_$prop>`
+     - 6
+     - 0
+     - 0
      - 147
-   * - `WellSample - PositionY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_$prop>`_
+   * - :schema:`Dichroic - LotNumber <OME-2012-06/ome_xsd.html#Dichroic_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Dichroic - Manufacturer <OME-2012-06/ome_xsd.html#Dichroic_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Dichroic - Model <OME-2012-06/ome_xsd.html#Dichroic_$prop>`
+     - 6
+     - 0
+     - 0
+     - 147
+   * - :schema:`Dichroic - SerialNumber <OME-2012-06/ome_xsd.html#Dichroic_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`DoubleAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`DoubleAnnotation - Description <OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`DoubleAnnotation - ID <OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`DoubleAnnotation - Namespace <OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`DoubleAnnotation - Value <OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Ellipse - FillColor <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Ellipse - FillRule <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Ellipse - FontFamily <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Ellipse - FontSize <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Ellipse - FontStyle <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Ellipse - ID <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Ellipse - LineCap <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Ellipse - Locked <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Ellipse - RadiusX <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Ellipse - RadiusY <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Ellipse - StrokeColor <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Ellipse - StrokeDashArray <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Ellipse - StrokeWidth <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Ellipse - Text <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Ellipse - TheC <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Ellipse - TheT <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Ellipse - TheZ <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Ellipse - Transform <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Ellipse - Visible <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Ellipse - X <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Ellipse - Y <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Experiment - Description <OME-2012-06/ome_xsd.html#Experiment_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Experiment - ExperimenterRef <OME-2012-06/ome_xsd.html#Experiment_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Experiment - ID <OME-2012-06/ome_xsd.html#Experiment_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Experiment - Type <OME-2012-06/ome_xsd.html#Experiment_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Experimenter - AnnotationRef <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Experimenter - Email <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Experimenter - FirstName <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Experimenter - ID <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+     - 11
+     - 0
+     - 0
+     - 142
+   * - :schema:`Experimenter - Institution <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
      - 4
      - 0
      - 0
+     - 149
+   * - :schema:`Experimenter - LastName <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+     - 9
+     - 0
+     - 0
+     - 144
+   * - :schema:`Experimenter - MiddleName <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Experimenter - UserName <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`ExperimenterGroup - AnnotationRef <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`ExperimenterGroup - Description <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`ExperimenterGroup - ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`ExperimenterGroup - ID <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`ExperimenterGroup - Leader <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`ExperimenterGroup - Name <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Filament - ID <OME-2012-06/ome_xsd.html#Filament_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Filament - LotNumber <OME-2012-06/ome_xsd.html#Filament_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Filament - Manufacturer <OME-2012-06/ome_xsd.html#Filament_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Filament - Model <OME-2012-06/ome_xsd.html#Filament_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Filament - Power <OME-2012-06/ome_xsd.html#Filament_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Filament - SerialNumber <OME-2012-06/ome_xsd.html#Filament_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Filament - Type <OME-2012-06/ome_xsd.html#Filament_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`FileAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`FileAnnotation - Description <OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`FileAnnotation - ID <OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`FileAnnotation - Namespace <OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Filter - FilterWheel <OME-2012-06/ome_xsd.html#Filter_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Filter - ID <OME-2012-06/ome_xsd.html#Filter_$prop>`
+     - 8
+     - 0
+     - 0
+     - 145
+   * - :schema:`Filter - LotNumber <OME-2012-06/ome_xsd.html#Filter_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Filter - Manufacturer <OME-2012-06/ome_xsd.html#Filter_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Filter - Model <OME-2012-06/ome_xsd.html#Filter_$prop>`
+     - 8
+     - 0
+     - 0
+     - 145
+   * - :schema:`Filter - SerialNumber <OME-2012-06/ome_xsd.html#Filter_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Filter - Type <OME-2012-06/ome_xsd.html#Filter_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`FilterSet - DichroicRef <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`FilterSet - EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`FilterSet - ExcitationFilterRef <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`FilterSet - ID <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`FilterSet - LotNumber <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`FilterSet - Manufacturer <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`FilterSet - Model <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`FilterSet - SerialNumber <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Image - AcquisitionDate <OME-2012-06/ome_xsd.html#Image_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Image - AnnotationRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Image - Description <OME-2012-06/ome_xsd.html#Image_$prop>`
+     - 41
+     - 0
+     - 0
+     - 112
+   * - :schema:`Image - ExperimentRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Image - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Image - ExperimenterRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+     - 6
+     - 0
+     - 0
      - 147
-   * - `WellSample - Timepoint <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_$prop>`_
+   * - :schema:`Image - ID <OME-2012-06/ome_xsd.html#Image_$prop>`
+     - 153
      - 0
+     - 0
+     - 0
+   * - :schema:`Image - InstrumentRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+     - 40
+     - 0
+     - 0
+     - 113
+   * - :schema:`Image - MicrobeamManipulationRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Image - Name <OME-2012-06/ome_xsd.html#Image_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Image - ROIRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+     - 11
+     - 0
+     - 0
+     - 142
+   * - :schema:`ImagingEnvironment - AirPressure <OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`ImagingEnvironment - CO2Percent <OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`ImagingEnvironment - Humidity <OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`ImagingEnvironment - Temperature <OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`
+     - 10
+     - 0
+     - 0
+     - 143
+   * - :schema:`Instrument - ID <OME-2012-06/ome_xsd.html#Instrument_$prop>`
+     - 43
+     - 0
+     - 0
+     - 110
+   * - :schema:`Label - FillColor <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - FillRule <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - FontFamily <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - FontSize <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 2
      - 0
      - 0
      - 151
-   * - `XMLAnnotation - AnnotationRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`_
+   * - :schema:`Label - FontStyle <OME-2012-06/ome_xsd.html#Label_$prop>`
      - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - ID <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Label - LineCap <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - Locked <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - StrokeColor <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - StrokeDashArray <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - StrokeWidth <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 2
      - 0
      - 0
      - 151
-   * - `XMLAnnotation - ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`_
+   * - :schema:`Label - Text <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 3
      - 0
+     - 0
+     - 150
+   * - :schema:`Label - TheC <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - TheT <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - TheZ <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - Transform <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - Visible <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Label - X <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 2
      - 0
      - 0
      - 151
-   * - `XMLAnnotation - Namespace <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`_
-     - 0
-     - 0
-     - 0
-     - 151
-   * - `XMLAnnotation - Value <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`_
-     - 0
+   * - :schema:`Label - Y <OME-2012-06/ome_xsd.html#Label_$prop>`
+     - 2
      - 0
      - 0
      - 151
+   * - :schema:`Laser - FrequencyMultiplication <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Laser - ID <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 9
+     - 0
+     - 0
+     - 144
+   * - :schema:`Laser - LaserMedium <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 8
+     - 0
+     - 0
+     - 145
+   * - :schema:`Laser - LotNumber <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Laser - Manufacturer <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Laser - Model <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 4
+     - 0
+     - 0
+     - 149
+   * - :schema:`Laser - PockelCell <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Laser - Power <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Laser - Pulse <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Laser - Pump <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Laser - RepetitionRate <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Laser - SerialNumber <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Laser - Tuneable <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Laser - Type <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 8
+     - 0
+     - 0
+     - 145
+   * - :schema:`Laser - Wavelength <OME-2012-06/ome_xsd.html#Laser_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`LightEmittingDiode - ID <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`LightEmittingDiode - LotNumber <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`LightEmittingDiode - Manufacturer <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`LightEmittingDiode - Model <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`LightEmittingDiode - Power <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`LightEmittingDiode - SerialNumber <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`LightPath - DichroicRef <OME-2012-06/ome_xsd.html#LightPath_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`LightPath - EmissionFilterRef <OME-2012-06/ome_xsd.html#LightPath_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`LightPath - ExcitationFilterRef <OME-2012-06/ome_xsd.html#LightPath_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Line - FillColor <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - FillRule <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - FontFamily <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - FontSize <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Line - FontStyle <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - ID <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Line - LineCap <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - Locked <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - MarkerEnd <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - MarkerStart <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - StrokeColor <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - StrokeDashArray <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - StrokeWidth <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Line - Text <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Line - TheC <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - TheT <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Line - TheZ <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Line - Transform <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Line - Visible <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Line - X1 <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Line - X2 <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Line - Y1 <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Line - Y2 <OME-2012-06/ome_xsd.html#Line_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`ListAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`ListAnnotation - Description <OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`ListAnnotation - ID <OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`ListAnnotation - Namespace <OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`LongAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`LongAnnotation - Description <OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`LongAnnotation - ID <OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`LongAnnotation - Namespace <OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`LongAnnotation - Value <OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - FillColor <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Mask - FillRule <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - FontFamily <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - FontSize <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - Height <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Mask - ID <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Mask - LineCap <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - Locked <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - StrokeColor <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Mask - StrokeDashArray <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - StrokeWidth <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - Text <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - TheC <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - TheT <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - TheZ <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - Transform <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - Visible <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Mask - Width <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Mask - X <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Mask - Y <OME-2012-06/ome_xsd.html#Mask_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`MicrobeamManipulation - ExperimenterRef <OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`MicrobeamManipulation - ID <OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`MicrobeamManipulation - ROIRef <OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`MicrobeamManipulation - Type <OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`MicrobeamManipulationLightSourceSettings - Attenuation <OME-2012-06/ome_xsd.html#LightSourceSettings_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`MicrobeamManipulationLightSourceSettings - ID <OME-2012-06/ome_xsd.html#LightSourceSettings_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`MicrobeamManipulationLightSourceSettings - Wavelength <OME-2012-06/ome_xsd.html#LightSourceSettings_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Microscope - LotNumber <OME-2012-06/ome_xsd.html#Microscope_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Microscope - Manufacturer <OME-2012-06/ome_xsd.html#Microscope_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Microscope - Model <OME-2012-06/ome_xsd.html#Microscope_$prop>`
+     - 10
+     - 0
+     - 0
+     - 143
+   * - :schema:`Microscope - SerialNumber <OME-2012-06/ome_xsd.html#Microscope_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Microscope - Type <OME-2012-06/ome_xsd.html#Microscope_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Objective - CalibratedMagnification <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 9
+     - 0
+     - 0
+     - 144
+   * - :schema:`Objective - Correction <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 24
+     - 0
+     - 0
+     - 129
+   * - :schema:`Objective - ID <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 30
+     - 0
+     - 0
+     - 123
+   * - :schema:`Objective - Immersion <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 25
+     - 0
+     - 0
+     - 128
+   * - :schema:`Objective - Iris <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Objective - LensNA <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 19
+     - 0
+     - 0
+     - 134
+   * - :schema:`Objective - LotNumber <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Objective - Manufacturer <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Objective - Model <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 12
+     - 0
+     - 0
+     - 141
+   * - :schema:`Objective - NominalMagnification <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 22
+     - 0
+     - 0
+     - 131
+   * - :schema:`Objective - SerialNumber <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Objective - WorkingDistance <OME-2012-06/ome_xsd.html#Objective_$prop>`
+     - 9
+     - 0
+     - 0
+     - 144
+   * - :schema:`ObjectiveSettings - CorrectionCollar <OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`ObjectiveSettings - ID <OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`
+     - 25
+     - 0
+     - 0
+     - 128
+   * - :schema:`ObjectiveSettings - Medium <OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`ObjectiveSettings - RefractiveIndex <OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`Pixels - AnnotationRef <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Pixels - BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Pixels - DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Pixels - ID <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Pixels - PhysicalSizeX <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 80
+     - 0
+     - 0
+     - 73
+   * - :schema:`Pixels - PhysicalSizeY <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 80
+     - 0
+     - 0
+     - 73
+   * - :schema:`Pixels - PhysicalSizeZ <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 40
+     - 0
+     - 0
+     - 113
+   * - :schema:`Pixels - SizeC <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Pixels - SizeT <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Pixels - SizeX <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Pixels - SizeY <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Pixels - SizeZ <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Pixels - TimeIncrement <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 16
+     - 0
+     - 0
+     - 137
+   * - :schema:`Pixels - Type <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Plane - AnnotationRef <OME-2012-06/ome_xsd.html#Plane_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Plane - DeltaT <OME-2012-06/ome_xsd.html#Plane_$prop>`
+     - 22
+     - 0
+     - 0
+     - 131
+   * - :schema:`Plane - ExposureTime <OME-2012-06/ome_xsd.html#Plane_$prop>`
+     - 24
+     - 0
+     - 0
+     - 129
+   * - :schema:`Plane - HashSHA1 <OME-2012-06/ome_xsd.html#Plane_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Plane - PositionX <OME-2012-06/ome_xsd.html#Plane_$prop>`
+     - 25
+     - 0
+     - 0
+     - 128
+   * - :schema:`Plane - PositionY <OME-2012-06/ome_xsd.html#Plane_$prop>`
+     - 25
+     - 0
+     - 0
+     - 128
+   * - :schema:`Plane - PositionZ <OME-2012-06/ome_xsd.html#Plane_$prop>`
+     - 19
+     - 0
+     - 0
+     - 134
+   * - :schema:`Plane - TheC <OME-2012-06/ome_xsd.html#Plane_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Plane - TheT <OME-2012-06/ome_xsd.html#Plane_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Plane - TheZ <OME-2012-06/ome_xsd.html#Plane_$prop>`
+     - 153
+     - 0
+     - 0
+     - 0
+   * - :schema:`Plate - AnnotationRef <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Plate - ColumnNamingConvention <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 8
+     - 0
+     - 0
+     - 145
+   * - :schema:`Plate - Columns <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Plate - Description <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Plate - ExternalIdentifier <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Plate - ID <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 10
+     - 0
+     - 0
+     - 143
+   * - :schema:`Plate - Name <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 9
+     - 0
+     - 0
+     - 144
+   * - :schema:`Plate - RowNamingConvention <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 8
+     - 0
+     - 0
+     - 145
+   * - :schema:`Plate - Rows <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Plate - Status <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Plate - WellOriginX <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Plate - WellOriginY <OME-2012-06/ome_xsd.html#Plate_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`PlateAcquisition - AnnotationRef <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`PlateAcquisition - Description <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`PlateAcquisition - EndTime <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`PlateAcquisition - ID <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`PlateAcquisition - MaximumFieldCount <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`PlateAcquisition - Name <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`PlateAcquisition - StartTime <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`PlateAcquisition - WellSampleRef <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`Point - FillColor <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Point - FillRule <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Point - FontFamily <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Point - FontSize <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Point - FontStyle <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Point - ID <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Point - LineCap <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Point - Locked <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Point - StrokeColor <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Point - StrokeDashArray <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Point - StrokeWidth <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Point - Text <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Point - TheC <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Point - TheT <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Point - TheZ <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Point - Transform <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Point - Visible <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Point - X <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Point - Y <OME-2012-06/ome_xsd.html#Point_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Polygon - FillColor <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polygon - FillRule <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polygon - FontFamily <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polygon - FontSize <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Polygon - FontStyle <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polygon - ID <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`Polygon - LineCap <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polygon - Locked <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polygon - Points <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`Polygon - StrokeColor <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Polygon - StrokeDashArray <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Polygon - StrokeWidth <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Polygon - Text <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Polygon - TheC <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polygon - TheT <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Polygon - TheZ <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Polygon - Transform <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Polygon - Visible <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polyline - FillColor <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polyline - FillRule <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polyline - FontFamily <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polyline - FontSize <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Polyline - FontStyle <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polyline - ID <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Polyline - LineCap <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polyline - Locked <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polyline - MarkerEnd <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polyline - MarkerStart <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polyline - Points <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`Polyline - StrokeColor <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Polyline - StrokeDashArray <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Polyline - StrokeWidth <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`Polyline - Text <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Polyline - TheC <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Polyline - TheT <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Polyline - TheZ <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Polyline - Transform <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Polyline - Visible <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Project - AnnotationRef <OME-2012-06/ome_xsd.html#Project_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Project - DatasetRef <OME-2012-06/ome_xsd.html#Project_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Project - Description <OME-2012-06/ome_xsd.html#Project_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Project - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Project_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Project - ExperimenterRef <OME-2012-06/ome_xsd.html#Project_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Project - ID <OME-2012-06/ome_xsd.html#Project_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Project - Name <OME-2012-06/ome_xsd.html#Project_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`ROI - AnnotationRef <OME-2012-06/ome_xsd.html#ROI_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`ROI - Description <OME-2012-06/ome_xsd.html#ROI_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`ROI - ID <OME-2012-06/ome_xsd.html#ROI_$prop>`
+     - 11
+     - 0
+     - 0
+     - 142
+   * - :schema:`ROI - Name <OME-2012-06/ome_xsd.html#ROI_$prop>`
+     - 3
+     - 0
+     - 0
+     - 150
+   * - :schema:`ROI - Namespace <OME-2012-06/ome_xsd.html#ROI_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Reagent - AnnotationRef <OME-2012-06/ome_xsd.html#Reagent_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Reagent - Description <OME-2012-06/ome_xsd.html#Reagent_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Reagent - ID <OME-2012-06/ome_xsd.html#Reagent_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Reagent - Name <OME-2012-06/ome_xsd.html#Reagent_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Reagent - ReagentIdentifier <OME-2012-06/ome_xsd.html#Reagent_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Rectangle - FillColor <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Rectangle - FillRule <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Rectangle - FontFamily <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Rectangle - FontSize <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Rectangle - FontStyle <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Rectangle - Height <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`Rectangle - ID <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`Rectangle - LineCap <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Rectangle - Locked <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Rectangle - StrokeColor <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Rectangle - StrokeDashArray <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Rectangle - StrokeWidth <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Rectangle - Text <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`Rectangle - TheC <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Rectangle - TheT <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Rectangle - TheZ <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Rectangle - Transform <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Rectangle - Visible <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Rectangle - Width <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`Rectangle - X <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`Rectangle - Y <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+     - 7
+     - 0
+     - 0
+     - 146
+   * - :schema:`Screen - AnnotationRef <OME-2012-06/ome_xsd.html#Screen_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Screen - Description <OME-2012-06/ome_xsd.html#Screen_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Screen - ID <OME-2012-06/ome_xsd.html#Screen_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Screen - Name <OME-2012-06/ome_xsd.html#Screen_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Screen - PlateRef <OME-2012-06/ome_xsd.html#Screen_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`Screen - ProtocolDescription <OME-2012-06/ome_xsd.html#Screen_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Screen - ProtocolIdentifier <OME-2012-06/ome_xsd.html#Screen_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Screen - ReagentSetDescription <OME-2012-06/ome_xsd.html#Screen_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Screen - ReagentSetIdentifier <OME-2012-06/ome_xsd.html#Screen_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Screen - Type <OME-2012-06/ome_xsd.html#Screen_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`StageLabel - Name <OME-2012-06/ome_xsd.html#StageLabel_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`StageLabel - X <OME-2012-06/ome_xsd.html#StageLabel_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`StageLabel - Y <OME-2012-06/ome_xsd.html#StageLabel_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`StageLabel - Z <OME-2012-06/ome_xsd.html#StageLabel_$prop>`
+     - 2
+     - 0
+     - 0
+     - 151
+   * - :schema:`TagAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TagAnnotation - Description <OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TagAnnotation - ID <OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TagAnnotation - Namespace <OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TagAnnotation - Value <OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TermAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TermAnnotation - Description <OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TermAnnotation - ID <OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TermAnnotation - Namespace <OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TermAnnotation - Value <OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TiffData - FirstC <OME-2012-06/ome_xsd.html#TiffData_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TiffData - FirstT <OME-2012-06/ome_xsd.html#TiffData_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TiffData - FirstZ <OME-2012-06/ome_xsd.html#TiffData_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TiffData - IFD <OME-2012-06/ome_xsd.html#TiffData_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TiffData - PlaneCount <OME-2012-06/ome_xsd.html#TiffData_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TimestampAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TimestampAnnotation - Description <OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TimestampAnnotation - ID <OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TimestampAnnotation - Namespace <OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TimestampAnnotation - Value <OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`TransmittanceRange - CutIn <OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`TransmittanceRange - CutInTolerance <OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`TransmittanceRange - CutOut <OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`
+     - 5
+     - 0
+     - 0
+     - 148
+   * - :schema:`TransmittanceRange - CutOutTolerance <OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`TransmittanceRange - Transmittance <OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`
+     - 1
+     - 0
+     - 0
+     - 152
+   * - :schema:`UUID - FileName <OME-2012-06/ome_xsd.html#UUID_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`UUID - Value <OME-2012-06/ome_xsd.html#UUID_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Well - AnnotationRef <OME-2012-06/ome_xsd.html#Well_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Well - Color <OME-2012-06/ome_xsd.html#Well_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Well - Column <OME-2012-06/ome_xsd.html#Well_$prop>`
+     - 10
+     - 0
+     - 0
+     - 143
+   * - :schema:`Well - ExternalDescription <OME-2012-06/ome_xsd.html#Well_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Well - ExternalIdentifier <OME-2012-06/ome_xsd.html#Well_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Well - ID <OME-2012-06/ome_xsd.html#Well_$prop>`
+     - 10
+     - 0
+     - 0
+     - 143
+   * - :schema:`Well - ReagentRef <OME-2012-06/ome_xsd.html#Well_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`Well - Row <OME-2012-06/ome_xsd.html#Well_$prop>`
+     - 10
+     - 0
+     - 0
+     - 143
+   * - :schema:`Well - Type <OME-2012-06/ome_xsd.html#Well_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`WellSample - AnnotationRef <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`WellSample - ID <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+     - 10
+     - 0
+     - 0
+     - 143
+   * - :schema:`WellSample - ImageRef <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+     - 10
+     - 0
+     - 0
+     - 143
+   * - :schema:`WellSample - Index <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+     - 10
+     - 0
+     - 0
+     - 143
+   * - :schema:`WellSample - PositionX <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+     - 4
+     - 0
+     - 0
+     - 149
+   * - :schema:`WellSample - PositionY <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+     - 4
+     - 0
+     - 0
+     - 149
+   * - :schema:`WellSample - Timepoint <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`XMLAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`XMLAnnotation - ID <OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`XMLAnnotation - Namespace <OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
+   * - :schema:`XMLAnnotation - Value <OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`
+     - 0
+     - 0
+     - 0
+     - 153
 
 .. toctree::
     :maxdepth: 1
