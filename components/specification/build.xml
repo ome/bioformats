@@ -6,8 +6,14 @@
   <property name="target.dir" location="target"/>
 
   <property name="tests.dir" location="${basedir}/test"/>
-  <import file="${root.dir}/ant/java.xml"/>
+  <import file="${root.dir}/ant/java.xml" as="java"/>
   <property file="build.properties"/>
+
+  <target name="copy-test-source" depends="java.copy-test-source">
+   <copy todir="${test-classes.dir}" preservelastmodified="true">
+     <fileset dir="${basedir}" includes="(none) ${samples.dir}"/>
+   </copy>
+  </target>
 
   <target name="copy-source">
     <copy todir="${dest.dir}" preservelastmodified="true">
