@@ -388,6 +388,7 @@ public class MinimalTiffReader extends FormatReader {
       if (height <= 0) {
         height = getSizeY();
       }
+
       // Some TIFF files only store a single tile, even if the image is
       // very, very large.  In those cases, we don't want to open the whole
       // tile if we can avoid it.
@@ -396,6 +397,7 @@ public class MinimalTiffReader extends FormatReader {
       {
         return super.getOptimalTileHeight();
       }
+      return height;
     }
     catch (FormatException e) {
       LOGGER.debug("Could not retrieve tile height", e);
