@@ -25,12 +25,7 @@
     </copy>
   </target>
   
-  <target name="package" depends="offline-validate-ome-xml">
-    <!-- Skip compile -->
-    <jar destfile="${target.dir}/specification.jar" update="true">
-      <fileset dir="${basedir}" includes="transforms/,released-schema/"
-        excludes="transforms/internal, transforms/internal/*"/>
-    </jar>
+  <target name="package" depends="offline-validate-ome-xml, jar">
   </target>
 
   <target name="online-validate-ome-xml"
