@@ -102,7 +102,19 @@ public class ZeissZVIReader extends BaseZeissReader {
     options.interleaved = isInterleaved();
 
     int index = no;
-    if (getSeriesCount() > 1) {
+
+    if (getSeriesCount() == 1) {
+      int[] coords = getZCTCoords(no);
+      for (int q=0; q<coordinates.length; q++) {
+        if (coordinates[q][0] == coords[0] && coordinates[q][1] == coords[1] &&
+          coordinates[q][2] == coords[2])
+        {
+          index = q;
+          break;
+        }
+      }
+    }
+    else {
       index += getSeries() * getImageCount();
     }
 

@@ -329,28 +329,34 @@ public class MetamorphTiffReader extends BaseTiffReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
-    store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
-    store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
+    // Only populate Plate/Well metadata if there are multiple wells.
+    // The presence of just one well suggests that we don't actually have
+    // an HCS dataset (and even if we did, the Plate/Well metadata would be
+    // effectively useless).
+    if (wellCount > 1) {
+      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+      store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
+      store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
 
-    for (int well=0; well<wellCount; well++) {
-      store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
-      store.setWellRow(new NonNegativeInteger(0), 0, well);
-      store.setWellColumn(new NonNegativeInteger(well), 0, well);
+      for (int well=0; well<wellCount; well++) {
+        store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
+        store.setWellRow(new NonNegativeInteger(0), 0, well);
+        store.setWellColumn(new NonNegativeInteger(well), 0, well);
 
-      for (int row=0; row<fieldRowCount; row++) {
-        for (int col=0; col<fieldColumnCount; col++) {
-          int field = row * fieldColumnCount + col;
-          String wellSampleID =
-            MetadataTools.createLSID("WellSample", 0, well, field);
-          store.setWellSampleID(wellSampleID, 0, well, field);
+        for (int row=0; row<fieldRowCount; row++) {
+          for (int col=0; col<fieldColumnCount; col++) {
+            int field = row * fieldColumnCount + col;
+            String wellSampleID =
+              MetadataTools.createLSID("WellSample", 0, well, field);
+            store.setWellSampleID(wellSampleID, 0, well, field);
 
-          int seriesIndex = getSeriesIndex(row, col, well);
-          String imageID = MetadataTools.createLSID("Image", seriesIndex);
-          store.setImageID(imageID, seriesIndex);
-          store.setWellSampleImageRef(imageID, 0, well, field);
-          store.setWellSampleIndex(
-            new NonNegativeInteger(seriesIndex), 0, well, field);
+            int seriesIndex = getSeriesIndex(row, col, well);
+            String imageID = MetadataTools.createLSID("Image", seriesIndex);
+            store.setImageID(imageID, seriesIndex);
+            store.setWellSampleImageRef(imageID, 0, well, field);
+            store.setWellSampleIndex(
+              new NonNegativeInteger(seriesIndex), 0, well, field);
+          }
         }
       }
     }
