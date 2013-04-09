@@ -114,6 +114,8 @@ public class DeltavisionReader extends FormatReader {
   private String logFile;
   private String deconvolutionLogFile;
 
+  private boolean truncatedFileFlag = false;
+
   // -- Constructor --
 
   /** Constructs a new Deltavision reader. */
@@ -237,6 +239,10 @@ public class DeltavisionReader extends FormatReader {
     }
   }
 
+  public void setTruncatedFileFlag(boolean truncatedFileFlag) {
+      this.truncatedFileFlag = truncatedFileFlag;
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
@@ -329,7 +335,7 @@ public class DeltavisionReader extends FormatReader {
       getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
     int realPlaneCount =
       (int) ((in.length() - HEADER_LENGTH - extSize) / planeSize);
-    if (realPlaneCount < getImageCount()) {
+    if (realPlaneCount < getImageCount() && !truncatedFileFlag) {
       LOGGER.debug("Truncated file");
       core[0].imageCount = realPlaneCount;
       if (sizeZ == 1) {
@@ -867,6 +873,37 @@ public class DeltavisionReader extends FormatReader {
    */
   private int getTotalOffset(int currentZ, int currentW, int currentT) {
     return (zSize * currentZ) + (wSize * currentW) + (tSize * currentT);
+  }
+
+  public long getPlaneByteOffset(int currentZ, int currentW, int currentT) {
+      int[] newCoords = new int[4];
+      int coordIndex = 0;
+      int dimIndex = 2;
+
+      while (coordIndex < newCoords.length) {
+        char dim = getDimensionOrder().charAt(dimIndex++);
+
+        switch (dim) {
+          case 'Z':
+            newCoords[coordIndex++] = currentZ;
+            break;
+          case 'C':
+            newCoords[coordIndex++] = currentW;
+            break;
+          case 'T':
+            newCoords[coordIndex++] = getSeries();
+            newCoords[coordIndex++] = currentT;
+            break;
+        }
+      }
+
+      int planeIndex = FormatTools.positionToRaster(lengths, newCoords);
+
+      // read the image plane's pixel data
+      long planeSize = (long) FormatTools.getPlaneSize(this);
+      long planeOffset = planeSize * planeIndex;
+      long offset = planeOffset + HEADER_LENGTH + extSize;
+      return offset;
   }
 
   /** Find the log files. */
