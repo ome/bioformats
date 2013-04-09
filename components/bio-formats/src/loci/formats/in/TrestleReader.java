@@ -159,7 +159,7 @@ public class TrestleReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(getSeries()).getTileWidth();
+      return (int) ifds.get(getCoreIndex()).getTileWidth();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -171,7 +171,7 @@ public class TrestleReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(getSeries()).getTileLength();
+      return (int) ifds.get(getCoreIndex()).getTileLength();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
