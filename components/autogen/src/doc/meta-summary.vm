@@ -67,7 +67,7 @@ Metadata fields
 #set ($anchor = "_$prop")
 #set ($anchor = "$node$anchor")
 #foreach ($prop in $qq.props())
-   * - `$entity - $prop <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-$q.version()/ome_xsd.html#$anchor>`_
+   * - :schema:`$entity - $prop <OME-$q.version()/ome_xsd.html#$anchor>`
      - $q.yesHandlerCount($entity, $prop)
      - $q.noHandlerCount($entity, $prop)
      - $q.partialHandlerCount($entity, $prop)
