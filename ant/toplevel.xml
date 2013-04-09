@@ -928,7 +928,7 @@ Type "ant -p" for a list of targets.
   <!-- Specification -->
   <target name="clean-specification"
     description="remove build files for Specification">
-    <ant dir="components/specification" target="specification.clean"/>
+    <ant dir="components/specification" target="clean"/>
   </target>
 
   <!-- HACK - limit OS to *nix due to file permission issues -->

@@ -235,8 +235,9 @@
   </target>
 
   <target name="clean" description="Cleans the published schemas and specification jar">
-    <delete dir="published"/>
-    <delete dir="build"/>
+    <delete dir="${basedir}/published"/>
+    <delete dir="${basedir}/build"/>
+    <delete dir="${basedir}/test-output"/>
     <delete dir="${target.dir}"/>
   </target>
 
