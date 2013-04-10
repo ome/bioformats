@@ -39,9 +39,9 @@ OME-TIFF is also compatible with the dozens of formats listed on the
 Bio-Formats page, because Bio-Formats can convert your files
 to OME-TIFF format.
 
-To facilitate support of OME-XML, we have created a `library in
-Java <http://www.openmicroscopy.org/site/support/file-formats/ome-xml-java-library>`_ for reading and writing
-OME-XML_ metadata.
+To facilitate support of OME-XML, we have created a
+:model_doc:`library in Java <ome-xml/java-library.html>` for reading and
+writing OME-XML_ metadata.
 
 There are three types of metadata in Bio-Formats, which we call core
 metadata, original metadata, and OME metadata.
