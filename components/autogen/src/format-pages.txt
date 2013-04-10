@@ -1615,7 +1615,7 @@ developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 scifio = yes
 export = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06
-weHave = * an `OME-TIFF specification document <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff/ome-tiff-specification>`_ (from 2006 October 19, in HTML) \n
+weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>` (from 2006 October 19, in HTML) \n
 * many OME-TIFF datasets \n
 * the ability to produce additional datasets
 pixelsRating = Outstanding
@@ -1633,7 +1633,7 @@ Commercial applications that support OME-TIFF include: \n
 * `SVI Huygens <http://svi.nl/>`_ \n
 \n
 .. seealso:: \n
-  `OME-TIFF technical overview <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff>`_
+  :model_doc:`OME-TIFF technical overview <ome-tiff/index.html>`
 
 [OME-XML]
 extensions = .ome
@@ -1651,7 +1651,7 @@ presenceRating = Fair
 utilityRating = Outstanding
 reader = OMEXMLReader.java
 writer = OMEXMLWriter.java
-notes = Bio-Formats uses the `OME-XML Java library <http://www.openmicroscopy.org/site/support/file-formats/ome-xml-java-library>`_ \n
+notes = Bio-Formats uses the :model_doc:`OME-XML Java library <ome-xml/java-library.html>` \n
 to read OME-XML files. \n
 \n
 Commercial applications that support OME-XML include: \n

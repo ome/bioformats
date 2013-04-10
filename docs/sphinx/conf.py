@@ -172,7 +172,7 @@ extlinks = {
     # suffixes during testing.
     'community_plone' : (oo_site_root + '/community/%s', ''),
     'feature_plone' : (oo_site_root + '/products/feature-list/%s', ''),
-    'formats_plone' : (oo_site_root + '/support/file-formats/%s', ''),
+    'model_doc' : (oo_site_root + '/support/ome-model/%s', ''),
     'legacy_plone' : (oo_site_root + '/support/legacy/%s', ''),
     'about_plone' : (oo_site_root + '/about/%s', ''),
     'team_plone' : (oo_site_root + '/team/%s', ''),
@@ -191,8 +191,8 @@ rst_epilog = """
 .. _Hibernate: http://www.hibernate.org
 .. _ZeroC: http://www.zeroc.com
 .. _Ice: http://www.zeroc.com
-.. _OME-TIFF: https://www.openmicroscopy.org/site/support/file-formats/ome-tiff
-.. _OME-XML: http://www.openmicroscopy.org/site/support/file-formats/the-ome-xml-file
+.. _OME-TIFF: https://www.openmicroscopy.org/site/support/ome-model/ome-tiff
+.. _OME-XML: http://www.openmicroscopy.org/site/support/ome-model/ome-xml
 
 .. |Poor| image:: /images/crystal-1.png
            :alt: 1 - Poor
