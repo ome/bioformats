@@ -4,7 +4,7 @@ TrestleReader
 
 This page lists supported metadata fields for the Bio-Formats Trestle format reader.
 
-These fields are from the :formats_plone:`OME data model <support/file-formats/schemas>`.
+These fields are from the :model_doc:`OME data model <>`.
 Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.

@@ -24,7 +24,7 @@ Supported Metadata Fields: :doc:`OME-TIFF <ome-tiff-metadata>`
 
 We currently have:
 
-* an `OME-TIFF specification document <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff/ome-tiff-specification>`_ (from 2006 October 19, in HTML) 
+* an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>` (from 2006 October 19, in HTML) 
 * many OME-TIFF datasets 
 * the ability to produce additional datasets
 
@@ -62,4 +62,4 @@ Commercial applications that support OME-TIFF include:
 * `SVI Huygens <http://svi.nl/>`_ 
 
 .. seealso:: 
-  `OME-TIFF technical overview <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff>`_
+  :model_doc:`OME-TIFF technical overview <ome-tiff/index.html>`
