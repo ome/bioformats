@@ -4,14 +4,14 @@ GatanReader
 
 This page lists supported metadata fields for the Bio-Formats Gatan Digital Micrograph format reader.
 
-These fields are from the :formats_plone:`OME data model <support/file-formats/schemas>`.
+These fields are from the :model_doc:`OME data model <>`.
 Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 21 of them (4%).
-  * Of those, Bio-Formats fully or partially converts 21 (100%).
+  * The file format itself supports 34 of them (7%).
+  * Of those, Bio-Formats fully or partially converts 34 (100%).
 
 Supported fields
 ===============================================================================
@@ -20,9 +20,18 @@ These fields are fully supported by the Bio-Formats Gatan Digital Micrograph for
   * :schema:`Channel : AcquisitionMode <OME-2012-06/ome_xsd.html#Channel_AcquisitionMode>`
   * :schema:`Channel : ID <OME-2012-06/ome_xsd.html#Channel_ID>`
   * :schema:`Channel : SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
+  * :schema:`Detector : ID <OME-2012-06/ome_xsd.html#Detector_ID>`
+  * :schema:`DetectorSettings : ID <OME-2012-06/ome_xsd.html#DetectorSettings_ID>`
+  * :schema:`DetectorSettings : Voltage <OME-2012-06/ome_xsd.html#DetectorSettings_Voltage>`
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
+  * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
+  * :schema:`Objective : Correction <OME-2012-06/ome_xsd.html#Objective_Correction>`
+  * :schema:`Objective : ID <OME-2012-06/ome_xsd.html#Objective_ID>`
+  * :schema:`Objective : Immersion <OME-2012-06/ome_xsd.html#Objective_Immersion>`
+  * :schema:`Objective : NominalMagnification <OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`
+  * :schema:`ObjectiveSettings : ID <OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`
   * :schema:`Pixels : BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
@@ -35,10 +44,14 @@ These fields are fully supported by the Bio-Formats Gatan Digital Micrograph for
   * :schema:`Pixels : SizeY <OME-2012-06/ome_xsd.html#Pixels_SizeY>`
   * :schema:`Pixels : SizeZ <OME-2012-06/ome_xsd.html#Pixels_SizeZ>`
   * :schema:`Pixels : Type <OME-2012-06/ome_xsd.html#Pixels_Type>`
+  * :schema:`Plane : ExposureTime <OME-2012-06/ome_xsd.html#Plane_ExposureTime>`
+  * :schema:`Plane : PositionX <OME-2012-06/ome_xsd.html#Plane_PositionX>`
+  * :schema:`Plane : PositionY <OME-2012-06/ome_xsd.html#Plane_PositionY>`
+  * :schema:`Plane : PositionZ <OME-2012-06/ome_xsd.html#Plane_PositionZ>`
   * :schema:`Plane : TheC <OME-2012-06/ome_xsd.html#Plane_TheC>`
   * :schema:`Plane : TheT <OME-2012-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2012-06/ome_xsd.html#Plane_TheZ>`
 
-**Total supported: 21**
+**Total supported: 34**
 
-**Total unknown or missing: 452**
+**Total unknown or missing: 439**
