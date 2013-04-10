@@ -223,6 +223,7 @@ public class DeltavisionReader extends FormatReader {
    * Default is false.
    */
   public void setTruncatedFileFlag(boolean truncatedFileFlag) {
+      FormatTools.assertId(currentId, false, 1);
       this.truncatedFileFlag = truncatedFileFlag;
   }
 
@@ -867,6 +868,7 @@ public class DeltavisionReader extends FormatReader {
    * @param currentT
    */
   public long getPlaneByteOffset(int currentZ, int currentW, int currentT) {
+      FormatTools.assertId(currentId, true, 1);
       int[] newCoords = new int[4];
       int coordIndex = 0;
       int dimIndex = 2;
