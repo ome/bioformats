@@ -21,7 +21,7 @@ Format readers
      - Partial
      - Unknown/Missing
 
-   * - :doc:`AFIReader <$pagename>`
+   * - :doc:`AFIReader <formats/aperio-afi-metadata>`
      - 21
      - 0
      - 0

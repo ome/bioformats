@@ -97,6 +97,15 @@ Supported Formats
      - |Poor|
      - |yes|
      - |yes|
+   * - :doc:`formats/aperio-afi`
+     - .afi, .svs
+     - |Very good|
+     - |Very good|
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |no|
+     - |no|
    * - :doc:`formats/aperio-svs-tiff`
      - .svs
      - |Very good|
@@ -1187,7 +1196,7 @@ Supported Formats
      - |no|
      - |no|
 
-Bio-Formats currently supports **129** formats
+Bio-Formats currently supports **130** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1259,6 +1268,7 @@ Bio-Formats currently supports **129** formats
     formats/amira-mesh
     formats/analyze-75
     formats/animated-png
+    formats/aperio-afi
     formats/aperio-svs-tiff
     formats/applied-precision-cellworx
     formats/avi

@@ -161,6 +161,22 @@ presenceRating = Good
 utilityRating = Poor
 reader = APNGReader.java
 
+[Aperio AFI]
+extensions = .afi, .svs
+owner = `Aperio <http://www.aperio.com/>`_
+scifio = no
+export = no
+versions =
+weHave = * several AFI datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Good
+reader = AFIReader.java
+notes = .. seealso:: \n
+  `Aperio ImageScope <http://www.aperio.com/#imagescope-request>`_
+
 [Aperio SVS TIFF]
 extensions = .svs
 owner = `Aperio <http://www.aperio.com/>`_
