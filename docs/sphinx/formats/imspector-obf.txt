@@ -1,0 +1,55 @@
+.. index:: Imspector OBF
+.. index:: .obf, .msr
+
+Imspector OBF
+===============================================================================
+
+Extensions: .obf, .msr 
+
+Developer: `Department of NanoBiophotonics, MPI-BPC <https://imspector.mpibpc.mpg.de/index.html>`_
+
+Owner: `MPI-BPC <http://www.mpibpc.mpg.de/>`_
+
+**Support**
+
+
+SCIFIO: |yes|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Imspector OBF <imspector-obf-metadata>`
+
+
+
+We currently have:
+
+* a few .msr datasets 
+* `a specification document <https://imspector.mpibpc.mpg.de/documentation/fileformat.html>`_
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Very good|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :scifioreader:`OBFReader.java`
+
+Notes:
+
+
