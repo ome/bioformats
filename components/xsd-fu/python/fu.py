@@ -182,8 +182,8 @@ OMERO_NAMED_OPTIONAL = (
 LANG_JAVA = "Java"
 LANG_CXX = "C++"
 
-JAVA_TEMPLATE = "templates-java"
-CXX_TEMPLATE = "templates-c++"
+JAVA_TEMPLATE_DIR = "templates-java"
+CXX_TEMPLATE_DIR = "templates-c++"
 
 # The default template for enum class processing.
 ENUM_TEMPLATE = 'Enum.template'
@@ -224,6 +224,15 @@ BACKREF_REGEX = re.compile(r'_BackReference')
 
 PREFIX_CASE_REGEX = re.compile(
         r'^([A-Z]{1})[a-z0-9]+|([A-Z0-9]+)[A-Z]{1}[a-z]+|([A-Z]+)[0-9]*|([a-z]+$)')
+
+def template_path(name, opts):
+    if (opts.lang == LANG_JAVA):
+        return JAVA_TEMPLATE_DIR + '/' + name
+    elif (opts.lang == LANG_CXX):
+        return CXX_TEMPLATE_DIR + '/' + name
+    else:
+        raise ModelProcessingError(
+            "Invalid language: %s" % opts.lang)
 
 def resolve_parents(model, element_name):
     """

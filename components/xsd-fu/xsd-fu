@@ -114,8 +114,8 @@ def main(opts):
 
 	model = parseXmlSchema(opts)
 	fu = TemplateInfo(opts.outdir, opts.package)
-	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
-	base, filename = os.path.split(CLASS_TEMPLATE)
+	template = NewTextTemplate(open(template_path(CLASS_TEMPLATE, opts)).read())
+	base, filename = os.path.split(template_path(CLASS_TEMPLATE, opts))
 	name, extension = os.path.splitext(filename)
 	for obj in model.objects.values():
 		CUSTOM_CLASS_TEMPLATE = os.path.join(
@@ -191,7 +191,7 @@ def enumTypesMain(opts):
 
 	model = parseXmlSchema(opts)
 	fu = TemplateInfo(opts.outdir, opts.package)
-	template = NewTextTemplate(open(ENUM_TEMPLATE).read())
+	template = NewTextTemplate(open(template_path(ENUM_TEMPLATE, opts)).read())
 	for obj in model.objects.values():
 		for prop in obj.properties.values():
 			if not prop.isEnumeration:
@@ -214,7 +214,7 @@ def enumHandlersMain(opts):
 	fu = TemplateInfo(opts.outdir, opts.package)
 	base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
 	config = ConfigObj(os.path.join(base, "enum_handler.cfg"))
-	template = NewTextTemplate(open(ENUM_HANDLER_TEMPLATE).read())
+	template = NewTextTemplate(open(template_path(ENUM_HANDLER_TEMPLATE, opts)).read())
 	for obj in model.objects.values():
 		for prop in obj.properties.values():
 			if not prop.isEnumeration:
@@ -281,6 +281,8 @@ def processMetadataTemplate(template, outputFilename, opts):
 	generation.
 	"""
 	args = opts.args
+	template = template_path(template, opts)
+
 	model = parseXmlSchema(opts)
 	indexes = dict()
 	parents = dict()
@@ -404,8 +406,8 @@ def debugMain(opts):
 
 	model = parseXmlSchema(opts)
 	fu = TemplateInfo(opts.outdir, opts.package)
-	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
-	base, filename = os.path.split(CLASS_TEMPLATE)
+	template = NewTextTemplate(open(template_path(CLASS_TEMPLATE, opts)).read())
+	base, filename = os.path.split(template_path(CLASS_TEMPLATE, opts))
 	name, extension = os.path.splitext(filename)
 	for obj in model.objects.values():
 		parents = resolve_parents(model, obj.name)
@@ -448,7 +450,7 @@ def docGenMain(opts):
 		opts.args = [theSchemas[1]]
 		model = parseXmlSchema(opts)
 		fu = TemplateInfo(opts.outdir, opts.package)
-		template = NewTextTemplate(open(CLASS_TEMPLATE).read())
+		template = NewTextTemplate(open(template_path(CLASS_TEMPLATE, opts)).read())
 		print " == `%s` ==" % (prefix)
 		for obj in model.objects.values():
 			print " === %s%s ===" % (prefix, obj.name)
@@ -482,7 +484,7 @@ def tabGenMain(opts):
 		opts.args = [theSchemas[1]]
 		model = parseXmlSchema(opts)
 		fu = TemplateInfo(opts.outdir, opts.package)
-		template = NewTextTemplate(open(CLASS_TEMPLATE).read())
+		template = NewTextTemplate(open(template_path(CLASS_TEMPLATE, opts)).read())
 		for theToplevelNode in theSchemas[2]:
 			parentlist(model, theToplevelNode[0], theToplevelNode[1])
 
@@ -550,30 +552,30 @@ if __name__ == '__main__':
 	if a == "java_classes":
 		main(opts)
 	elif a == "omexml_metadata":
-		omeXmlMetadataMain(sys.argv[2:])
+		omeXmlMetadataMain(opts)
 	elif a == "omero_metadata":
-		omeroMetadataMain(sys.argv[2:])
+		omeroMetadataMain(opts)
 	elif a == "omero_model":
-		omeroModelMain(sys.argv[2:])
+		omeroModelMain(opts)
 	elif a == "metadata_store":
-		metadataStoreMain(sys.argv[2:])
+		metadataStoreMain(opts)
 	elif a == "metadata_retrieve":
-		metadataRetrieveMain(sys.argv[2:])
+		metadataRetrieveMain(opts)
 	elif a == "metadata_aggregate":
-		metadataAggregateMain(sys.argv[2:])
+		metadataAggregateMain(opts)
 	elif a == "filter_metadata":
-		filterMetadataMain(sys.argv[2:])
+		filterMetadataMain(opts)
 	elif a == "dummy_metadata":
-		dummyMetadataMain(sys.argv[2:])
+		dummyMetadataMain(opts)
 	elif a == "enum_types":
-		enumTypesMain(sys.argv[2:])
+		enumTypesMain(opts)
 	elif a == "enum_handlers":
-		enumHandlersMain(sys.argv[2:])
+		enumHandlersMain(opts)
 	elif a == "doc_gen":
-		docGenMain(sys.argv[2:])
+		docGenMain(opts)
 	elif a == "tab_gen":
-		tabGenMain(sys.argv[2:])
+		tabGenMain(opts)
 	elif a == "debug":
-		debugMain(sys.argv[2:])
+		debugMain(opts)
 	else:
 		baseUsage('Unrecognized subcommand: %s' % a)
