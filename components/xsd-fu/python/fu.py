@@ -179,38 +179,44 @@ OMERO_NAMED_OPTIONAL = (
         "RenderingDef",
 )
 
+LANG_JAVA = "Java"
+LANG_CXX = "C++"
+
+JAVA_TEMPLATE = "templates-java"
+CXX_TEMPLATE = "templates-c++"
+
 # The default template for enum class processing.
-ENUM_TEMPLATE = os.path.join("templates", "Enum.template")
+ENUM_TEMPLATE = 'Enum.template'
 
 # The default template for enum handler class processing.
-ENUM_HANDLER_TEMPLATE = os.path.join("templates", "EnumHandler.template")
+ENUM_HANDLER_TEMPLATE = 'EnumHandler.template'
 
 # The default template for class processing.
-CLASS_TEMPLATE = os.path.join("templates", "Pojo.template")
+CLASS_TEMPLATE = 'Pojo.template'
 
 # The default template for MetadataStore processing.
-METADATA_STORE_TEMPLATE = os.path.join("templates", "MetadataStore.template")
+METADATA_STORE_TEMPLATE = 'MetadataStore.template'
 
 # The default template for MetadataRetrieve processing.
-METADATA_RETRIEVE_TEMPLATE = os.path.join("templates", "MetadataRetrieve.template")
+METADATA_RETRIEVE_TEMPLATE = 'MetadataRetrieve.template'
 
 # The default template for AggregateMetadata processing.
-METADATA_AGGREGATE_TEMPLATE = os.path.join("templates", "AggregateMetadata.template")
+METADATA_AGGREGATE_TEMPLATE = 'AggregateMetadata.template'
 
 # The default template for OME XML metadata processing.
-OMEXML_METADATA_TEMPLATE = os.path.join("templates", "OMEXMLMetadataImpl.template")
+OMEXML_METADATA_TEMPLATE = 'OMEXMLMetadataImpl.template'
 
 # The default template for DummyMetadata processing.
-DUMMY_METADATA_TEMPLATE = os.path.join("templates", "DummyMetadata.template")
+DUMMY_METADATA_TEMPLATE = 'DummyMetadata.template'
 
 # The default template for FilterMetadata processing.
-FILTER_METADATA_TEMPLATE = os.path.join("templates", "FilterMetadata.template")
+FILTER_METADATA_TEMPLATE = 'FilterMetadata.template'
 
 # The default template for OMERO metadata processing.
-OMERO_METADATA_TEMPLATE = os.path.join("templates", "OmeroMetadata.template")
+OMERO_METADATA_TEMPLATE = 'OmeroMetadata.template'
 
 # The default template for OMERO metadata processing.
-OMERO_MODEL_TEMPLATE = os.path.join("templates", "OmeroModel.template")
+OMERO_MODEL_TEMPLATE = 'OmeroModel.template'
 
 REF_REGEX = re.compile(r'Ref$|RefNode$')
 

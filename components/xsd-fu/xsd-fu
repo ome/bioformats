@@ -36,7 +36,7 @@ from util import odict
 
 from genshi.template import NewTextTemplate
 from configobj import ConfigObj
-from getopt import getopt, GetoptError
+from getopt import gnu_getopt, GetoptError
 from glob import glob
 from xml import sax
 
@@ -75,7 +75,7 @@ def mainUsage(error):
 	"""
 	cmd = sys.argv[0]
 	print """%s
-Usage: %s [-n xsd_namespace] [-p package] -o <output_dir> <path/to/ome.xsd...>
+Usage: %s [-n xsd_namespace] [-p package] -o <output_dir> -l <lang> <path/to/ome.xsd...>
 Generates Java classes from an OME XML Schema definition.
 
 Default package: "%s"
@@ -106,36 +106,22 @@ Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
 	(error, cmd, DEFAULT_NAMESPACE, cmd)
 	sys.exit(2)
 
-def main(args):
+def main(opts):
 	"""
 	Default main() that parses command line options and generates Java
 	classes in the output directory.
 	"""
-	try:
-		options, args = getopt(args, "o:p:n:")
-	except GetoptError, (msg, opt):
-		mainUsage(msg)
 
-	if len(args) < 1:
+	if len(opts) < 1:
 		mainUsage("Expecting at least one XSD file path!")
 
-	outputDirectory = None
-	package = DEFAULT_PACKAGE
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-o":
-			outputDirectory = argument
-		if option == "-p":
-			package = argument
-		if option == "-n":
-			namespace = argument
-	if outputDirectory is None:
-		usage("Output directory must be specified!")
-	if not os.path.exists(outputDirectory):
-		os.makedirs(outputDirectory)
+	namespace = opts.namespace
+	outdir = opts.outdir
+	lang = opts.lang
+	package = opts.package
 
-	model = parseXmlSchema(args, namespace)
-	fu = TemplateInfo(outputDirectory, package)
+	model = parseXmlSchema(opts.args, namespace)
+	fu = TemplateInfo(outdir, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	base, filename = os.path.split(CLASS_TEMPLATE)
 	name, extension = os.path.splitext(filename)
@@ -177,7 +163,7 @@ def main(args):
 			customAsXMLElementPropertyContent[propertyName] = content
 		# END Custom templates for asXMLElment()
 		parents = resolve_parents(model, obj.name)
-		f = open(os.path.join(outputDirectory, "%s.java" % obj.name), "w")
+		f = open(os.path.join(outdir, "%s.java" % obj.name), "w")
 		classContent = template.generate(
 				fu=fu, klass=obj, parents=parents, model=model,
 				customContent=customContent,
@@ -211,37 +197,37 @@ def enumTypesMain(args):
 	classes for enumeration types in an output directory.
 	"""
 	try:
-		options, args = getopt(args, "o:p:n:")
+		options, args = gnu_getopt(args, "o:p:n:")
 	except GetoptError, (msg, opt):
 		mainUsage(msg)
 
 	if len(args) < 1:
 		mainUsage("Expecting at least one XSD file path!")
 
-	outputDirectory = None
+	outdir = None
 	package = DEFAULT_PACKAGE
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
 		if option == "-o":
-			outputDirectory = argument
+			outdir = argument
 		if option == "-p":
 			package = argument
 		if option == "-n":
 			namespace = argument
-	if outputDirectory is None:
+	if outdir is None:
 		usage("Output directory must be specified!")
-	if not os.path.exists(outputDirectory):
-		os.makedirs(outputDirectory)
+	if not os.path.exists(outdir):
+		os.makedirs(outdir)
 
 	model = parseXmlSchema(args, namespace)
-	fu = TemplateInfo(outputDirectory, package)
+	fu = TemplateInfo(outdir, package)
 	template = NewTextTemplate(open(ENUM_TEMPLATE).read())
 	for obj in model.objects.values():
 		for prop in obj.properties.values():
 			if not prop.isEnumeration:
 				continue
 			print "%s: %s" % (prop.name, prop.javaType)
-			path = os.path.join(outputDirectory, "%s.java" % prop.javaType)
+			path = os.path.join(outdir, "%s.java" % prop.javaType)
 			f = open(path, "w")
 			classContent = template.generate(fu=fu, klass=prop,
 				enum_value_name=enum_value_name).render()
@@ -254,30 +240,30 @@ def enumHandlersMain(args):
 	classes for enumeration handlers in an output directory.
 	"""
 	try:
-		options, args = getopt(args, "o:p:n:")
+		options, args = gnu_getopt(args, "o:p:n:")
 	except GetoptError, (msg, opt):
 		mainUsage(msg)
 
 	if len(args) < 1:
 		mainUsage("Expecting at least one XSD file path!")
 
-	outputDirectory = None
+	outdir = None
 	package = DEFAULT_PACKAGE
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
 		if option == "-o":
-			outputDirectory = argument
+			outdir = argument
 		if option == "-p":
 			package = argument
 		if option == "-n":
 			namespace = argument
-	if outputDirectory is None:
+	if outdir is None:
 		usage("Output directory must be specified!")
-	if not os.path.exists(outputDirectory):
-		os.makedirs(outputDirectory)
+	if not os.path.exists(outdir):
+		os.makedirs(outdir)
 
 	model = parseXmlSchema(args, namespace)
-	fu = TemplateInfo(outputDirectory, package)
+	fu = TemplateInfo(outdir, package)
 	base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
 	config = ConfigObj(os.path.join(base, "enum_handler.cfg"))
 	template = NewTextTemplate(open(ENUM_HANDLER_TEMPLATE).read())
@@ -286,7 +272,7 @@ def enumHandlersMain(args):
 			if not prop.isEnumeration:
 				continue
 			print "%s: %s" % (prop.name, prop.javaType)
-			path = os.path.join(outputDirectory,
+			path = os.path.join(outdir,
 			                    "%sEnumHandler.java" % prop.javaType)
 			f = open(path, "w")
 			classContent = template.generate(fu=fu, klass=prop,
@@ -395,27 +381,27 @@ def omeXmlMetadataMain(args):
 	MetadataStore and MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "o:n:")
+		options, args = gnu_getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outputDirectory = None
+	outdir = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
 		if option == "-o":
-			outputDirectory = argument
+			outdir = argument
 		if option == "-n":
 			namespace = argument
 
-	if outputDirectory is None:
+	if outdir is None:
 		usage("Output directory must be specified!")
-	if not os.path.exists(outputDirectory):
-		os.makedirs(outputDirectory)
+	if not os.path.exists(outdir):
+		os.makedirs(outdir)
 
-	filename = os.path.join(outputDirectory, "OMEXMLMetadataImpl.java")
+	filename = os.path.join(outdir, "OMEXMLMetadataImpl.java")
 
 	processMetadataTemplate(OMEXML_METADATA_TEMPLATE, filename,
 	                        namespace, args)
@@ -426,7 +412,7 @@ def omeroMetadataMain(args):
 	MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "n:")
+		options, args = gnu_getopt(args, "n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
@@ -447,7 +433,7 @@ def omeroModelMain(args):
 	MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "n:")
+		options, args = gnu_getopt(args, "n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
@@ -468,26 +454,26 @@ def metadataStoreMain(args):
 	MetadataStore implementation.
 	"""
 	try:
-		options, args = getopt(args, "o:n:")
+		options, args = gnu_getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outputDirectory = None
+	outdir = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
 		if option == "-o":
-			outputDirectory = argument
+			outdir = argument
 		if option == "-n":
 			namespace = argument
-	if outputDirectory is None:
+	if outdir is None:
 		usage("Output directory must be specified!")
-	if not os.path.exists(outputDirectory):
-		os.makedirs(outputDirectory)
+	if not os.path.exists(outdir):
+		os.makedirs(outdir)
 
-	filename = os.path.join(outputDirectory, "MetadataStore.java")
+	filename = os.path.join(outdir, "MetadataStore.java")
 
 	processMetadataTemplate(METADATA_STORE_TEMPLATE, filename,
 	                        namespace, args)
@@ -498,26 +484,26 @@ def metadataRetrieveMain(args):
 	MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "o:n:")
+		options, args = gnu_getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outputDirectory = None
+	outdir = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
 		if option == "-o":
-			outputDirectory = argument
+			outdir = argument
 		if option == "-n":
 			namespace = argument
-	if outputDirectory is None:
+	if outdir is None:
 		usage("Output directory must be specified!")
-	if not os.path.exists(outputDirectory):
-		os.makedirs(outputDirectory)
+	if not os.path.exists(outdir):
+		os.makedirs(outdir)
 
-	filename = os.path.join(outputDirectory, "MetadataRetrieve.java")
+	filename = os.path.join(outdir, "MetadataRetrieve.java")
 
 	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE, filename,
 	                        namespace, args)
@@ -528,26 +514,26 @@ def metadataAggregateMain(args):
 	MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "o:n:")
+		options, args = gnu_getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outputDirectory = None
+	outdir = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
 		if option == "-o":
-			outputDirectory = argument
+			outdir = argument
 		if option == "-n":
 			namespace = argument
-	if outputDirectory is None:
+	if outdir is None:
 		usage("Output directory must be specified!")
-	if not os.path.exists(outputDirectory):
-		os.makedirs(outputDirectory)
+	if not os.path.exists(outdir):
+		os.makedirs(outdir)
 
-	filename = os.path.join(outputDirectory, "AggregateMetadata.java")
+	filename = os.path.join(outdir, "AggregateMetadata.java")
 
 	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE, filename,
 	                        namespace, args)
@@ -558,26 +544,26 @@ def dummyMetadataMain(args):
 	MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "o:n:")
+		options, args = gnu_getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outputDirectory = None
+	outdir = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
 		if option == "-o":
-			outputDirectory = argument
+			outdir = argument
 		if option == "-n":
 			namespace = argument
-	if outputDirectory is None:
+	if outdir is None:
 		usage("Output directory must be specified!")
-	if not os.path.exists(outputDirectory):
-		os.makedirs(outputDirectory)
+	if not os.path.exists(outdir):
+		os.makedirs(outdir)
 
-	filename = os.path.join(outputDirectory, "DummyMetadata.java")
+	filename = os.path.join(outdir, "DummyMetadata.java")
 
 	processMetadataTemplate(DUMMY_METADATA_TEMPLATE, filename,
 	                        namespace, args)
@@ -588,27 +574,27 @@ def filterMetadataMain(args):
 	MetadataRetrieve implementation.
 	"""
 	try:
-		options, args = getopt(args, "o:n:")
+		options, args = gnu_getopt(args, "o:n:")
 	except GetoptError, (msg, opt):
 		metadataUsage(msg)
 
 	if len(args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outputDirectory = None
+	outdir = None
 	namespace = DEFAULT_NAMESPACE
 	for option, argument in options:
 		if option == "-o":
-			outputDirectory = argument
+			outdir = argument
 		if option == "-n":
 			namespace = argument
 
-	if outputDirectory is None:
+	if outdir is None:
 		usage("Output directory must be specified!")
-	if not os.path.exists(outputDirectory):
-		os.makedirs(outputDirectory)
+	if not os.path.exists(outdir):
+		os.makedirs(outdir)
 
-	filename = os.path.join(outputDirectory, "FilterMetadata.java")
+	filename = os.path.join(outdir, "FilterMetadata.java")
 
 	processMetadataTemplate(FILTER_METADATA_TEMPLATE, filename,
 	                        namespace, args)
@@ -618,17 +604,17 @@ def debugMain(args):
 	Debugging main() that does not parse the command line and spits
 	generated data to STDOUT.
 	"""
-	outputDirectory = None
+	outdir = None
 	package = DEFAULT_PACKAGE
 	namespace = "xsd:"
 
 	try:
-		options, args = getopt(args, "o:p:n:")
+		options, args = gnu_getopt(args, "o:p:n:")
 	except GetoptError, (msg, opt):
 		mainUsage(msg)
 
 	model = parseXmlSchema(args, namespace)
-	fu = TemplateInfo(outputDirectory, package)
+	fu = TemplateInfo(outdir, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	base, filename = os.path.split(CLASS_TEMPLATE)
 	name, extension = os.path.splitext(filename)
@@ -661,7 +647,7 @@ def docGenMain(args):
 	Added by Andrew Patterson (July 2008) to generate content for
 	the ArityOfSchema page on http://ome-xml.org
 	"""
-	outputDirectory = None
+	outdir = None
 	package = DEFAULT_PACKAGE
 	namespace = "xsd:"
 
@@ -674,7 +660,7 @@ def docGenMain(args):
 	]:
 		prefix = theSchemas[0] + ":"
 		model = parseXmlSchema([theSchemas[1]], namespace)
-		fu = TemplateInfo(outputDirectory, package)
+		fu = TemplateInfo(outdir, package)
 		template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 		print " == `%s` ==" % (prefix)
 		for obj in model.objects.values():
@@ -691,7 +677,7 @@ def tabGenMain(args):
 	tab sperated format to STDOUT.
 	Added by Andrew Patterson (October 2008) to generate content for arity spreadsheet
 	"""
-	outputDirectory = None
+	outdir = None
 	package = DEFAULT_PACKAGE
 	namespace = "xsd:"
 
@@ -710,7 +696,7 @@ def tabGenMain(args):
 		]:
 		prefix = theSchemas[0] + ":"
 		model = parseXmlSchema([theSchemas[1]], namespace)
-		fu = TemplateInfo(outputDirectory, package)
+		fu = TemplateInfo(outdir, package)
 		template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 		for theToplevelNode in theSchemas[2]:
 			parentlist(model, theToplevelNode[0], theToplevelNode[1])
@@ -730,13 +716,50 @@ def parentlist(model, name, pre):
 						print "%s\t%s" % (prop.minOccurs, prop.maxOccurs ) + "\t" + prop.name + "\t" + prop.type + "\t\t" + pre + prop.name;
 						parentlist(model, prop.type, pre + prop.name + ":")
 
+
+class options:
+	def __init__(self, args):
+		try:
+			self.options, self.args = gnu_getopt(args[1:], "l:o:p:n:")
+		except GetoptError, (msg, opt):
+			mainUsage(msg)
+
+		self.outdir = None
+		self.package = DEFAULT_PACKAGE
+		self.namespace = DEFAULT_NAMESPACE
+		self.lang = LANG_JAVA
+		for option, argument in self.options:
+			if option == "-l":
+				if argument == LANG_JAVA:
+					self.lang = LANG_JAVA
+				elif argument == LANG_CXX:
+					self.lang = LANG_CXX
+				else:
+					mainUsage("Invalid language; Java and C++ are the only valid options")
+					sys.exit(1)
+			if option == "-o":
+				self.outdir = argument
+			if option == "-p":
+				self.package = argument
+			if option == "-n":
+				self.namespace = argument
+		if self.outdir is None:
+			mainUsage("Output directory must be specified!")
+			sys.exit(1)
+		if not os.path.exists(self.outdir):
+			os.makedirs(self.outdir)
+
+
 if __name__ == '__main__':
-	if len(sys.argv) == 1:
+	opts = options(sys.argv)
+
+	if len(opts.args) < 1:
 		baseUsage('Missing subcommand!')
 
-	a = sys.argv[1]
+	a = opts.args[0]
+	opts.args = opts.args[1:]
 	if a == "java_classes":
-		main(sys.argv[2:])
+		main(opts)
 	elif a == "omexml_metadata":
 		omeXmlMetadataMain(sys.argv[2:])
 	elif a == "omero_metadata":
