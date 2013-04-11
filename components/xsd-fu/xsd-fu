@@ -155,15 +155,22 @@ def main(opts):
 			customAsXMLElementPropertyContent[propertyName] = content
 		# END Custom templates for asXMLElment()
 		parents = resolve_parents(model, obj.name)
-		f = open(os.path.join(opts.outdir, "%s.java" % obj.name), "w")
-		classContent = template.generate(
+
+		for filetype in [TYPE_SOURCE, TYPE_HEADER]:
+			try:
+				fullname = generated_filename(obj.name, filetype, opts)
+			except ModelProcessingError:
+				continue
+
+			f = open(os.path.join(opts.outdir, fullname), "w")
+			classContent = template.generate(
 				fu=fu, klass=obj, parents=parents, model=model,
 				customContent=customContent,
 				customUpdatePropertyContent=customUpdatePropertyContent,
 				customAsXMLElementPropertyContent=customAsXMLElementPropertyContent)
-		classContent = classContent.render()
-		f.write(classContent)
-		f.close()
+			classContent = classContent.render()
+			f.write(classContent)
+			f.close()
 
 def enum_value_name(value):
 	"""
@@ -197,12 +204,19 @@ def enumTypesMain(opts):
 			if not prop.isEnumeration:
 				continue
 			print "%s: %s" % (prop.name, prop.javaType)
-			path = os.path.join(opts.outdir, "%s.java" % prop.javaType)
-			f = open(path, "w")
-			classContent = template.generate(fu=fu, klass=prop,
-				enum_value_name=enum_value_name).render()
-			f.write(classContent)
-			f.close()
+
+			for filetype in [TYPE_SOURCE, TYPE_HEADER]:
+				try:
+					fullname = generated_filename(prop.javaType, filetype, opts)
+				except ModelProcessingError:
+					continue
+
+				path = os.path.join(opts.outdir, fullname)
+				f = open(path, "w")
+				classContent = template.generate(fu=fu, klass=prop,
+								 enum_value_name=enum_value_name).render()
+				f.write(classContent)
+				f.close()
 
 def enumHandlersMain(opts):
 	"""
@@ -220,13 +234,19 @@ def enumHandlersMain(opts):
 			if not prop.isEnumeration:
 				continue
 			print "%s: %s" % (prop.name, prop.javaType)
-			path = os.path.join(opts.outdir,
-			                    "%sEnumHandler.java" % prop.javaType)
-			f = open(path, "w")
-			classContent = template.generate(fu=fu, klass=prop,
-				enum_value_name=enum_value_name, config=config).render()
-			f.write(classContent)
-			f.close()
+
+			for filetype in [TYPE_SOURCE, TYPE_HEADER]:
+				try:
+					fullname = generated_filename(prop.javaType + "EnumHandler", filetype, opts)
+				except ModelProcessingError:
+					continue
+
+				path = os.path.join(opts.outdir, fullname)
+				f = open(path, "w")
+				classContent = template.generate(fu=fu, klass=prop,
+								 enum_value_name=enum_value_name, config=config).render()
+				f.write(classContent)
+				f.close()
 
 def index_string(name, max_occurs, level):
 	"""Makes a Java method signature string from an index name."""
