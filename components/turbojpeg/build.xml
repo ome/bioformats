@@ -1,0 +1,28 @@
+<!--
+build.xml
+
+Ant build file for libjpeg-turbo Java bindings.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="turbojpeg" default="jar" basedir=".">
+  <description>Build file for libjpeg-turbo Java bindings</description>
+  <property name="root.dir" location="../.."/>
+  <import file="${root.dir}/ant/java.xml"/>
+  <property file="build.properties"/>
+
+  <target name="jar" depends="compile" description="generate JAR file">
+    <!-- NOTE: Overrides default "jar" target from java.xml -->
+
+    <mkdir dir="${artifact.dir}"/>
+    <jar jarfile="${artifact.dir}/${component.jar}" basedir="${classes.dir}">
+      <metainf dir="${basedir}" includes="lib/**/*"/>
+      <manifest>
+        <attribute name="Main-Class" value="${component.main-class}"/>
+        <attribute name="Class-Path" value="${component.manifest=cp}"/>
+      </manifest>
+    </jar>
+  </target>
+
+</project>

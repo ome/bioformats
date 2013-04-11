@@ -38,8 +38,10 @@
     <module>components/ome-xml</module>
     <module>components/scifio</module>
     <module>components/scifio-devel</module>
+    <module>components/scifio-tools</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
+    <module>components/turbojpeg</module>
     <module>components/xsd-fu</module>
   </modules>
 
@@ -64,6 +66,10 @@
           <exclude>**/*.java</exclude>
           <exclude>**/package.html</exclude>
         </excludes>
+      </resource>
+      <resource>
+        <targetPath>META-INF/lib</targetPath>
+        <directory>${project.basedir}/lib</directory>
       </resource>
     </resources>
     <testResources>

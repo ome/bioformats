@@ -9,33 +9,35 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 18 of them (4%).
-  * Of those, Bio-Formats fully or partially converts 18 (100%).
+Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 20 of them (4%).
+  * Of those, Bio-Formats fully or partially converts 20 (100%).
 
 Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats Tagged Image File Format format reader:
-  * `Channel : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_ID>`_
-  * `Channel : SamplesPerPixel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`_
-  * `Image : Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Description>`_
-  * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
-  * `Image : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Name>`_
-  * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
-  * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
-  * `Pixels : PhysicalSizeZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeZ>`_
-  * `Pixels : SizeC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeC>`_
-  * `Pixels : SizeT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeT>`_
-  * `Pixels : SizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeX>`_
-  * `Pixels : SizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeY>`_
-  * `Pixels : SizeZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeZ>`_
-  * `Pixels : TimeIncrement <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_TimeIncrement>`_
-  * `Pixels : Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_Type>`_
-  * `Plane : TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheC>`_
-  * `Plane : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheT>`_
-  * `Plane : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheZ>`_
+  * :schema:`Channel : ID <OME-2012-06/ome_xsd.html#Channel_ID>`
+  * :schema:`Channel : SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
+  * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
+  * :schema:`Image : Description <OME-2012-06/ome_xsd.html#Image_Description>`
+  * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
+  * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
+  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
+  * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
+  * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
+  * :schema:`Pixels : PhysicalSizeZ <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeZ>`
+  * :schema:`Pixels : SizeC <OME-2012-06/ome_xsd.html#Pixels_SizeC>`
+  * :schema:`Pixels : SizeT <OME-2012-06/ome_xsd.html#Pixels_SizeT>`
+  * :schema:`Pixels : SizeX <OME-2012-06/ome_xsd.html#Pixels_SizeX>`
+  * :schema:`Pixels : SizeY <OME-2012-06/ome_xsd.html#Pixels_SizeY>`
+  * :schema:`Pixels : SizeZ <OME-2012-06/ome_xsd.html#Pixels_SizeZ>`
+  * :schema:`Pixels : TimeIncrement <OME-2012-06/ome_xsd.html#Pixels_TimeIncrement>`
+  * :schema:`Pixels : Type <OME-2012-06/ome_xsd.html#Pixels_Type>`
+  * :schema:`Plane : TheC <OME-2012-06/ome_xsd.html#Plane_TheC>`
+  * :schema:`Plane : TheT <OME-2012-06/ome_xsd.html#Plane_TheT>`
+  * :schema:`Plane : TheZ <OME-2012-06/ome_xsd.html#Plane_TheZ>`
 
-**Total supported: 18**
+**Total supported: 20**
 
-**Total unknown or missing: 415**
+**Total unknown or missing: 453**

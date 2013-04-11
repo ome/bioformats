@@ -1399,9 +1399,23 @@ public class FormatReaderTest {
             continue;
           }
 
+          // SVS files in AFI datasets are detected as SVS
+          if (reader.getFormat().equals("Aperio AFI") &&
+            base[i].toLowerCase().endsWith(".svs"))
+          {
+            continue;
+          }
+
           if (reader.getFormat().equals("BD Pathway") &&
             (base[i].endsWith(".adf") || base[i].endsWith(".txt")) ||
             base[i].endsWith(".roi"))
+          {
+            continue;
+          }
+
+          // Hamamatsu VMS datasets cannot be detected with non-.vms files
+          if (reader.getFormat().equals("Hamamatsu VMS") &&
+            !base[i].toLowerCase().endsWith(".vms"))
           {
             continue;
           }
@@ -1465,6 +1479,13 @@ public class FormatReaderTest {
           if (reader.getFormat().equals("Prairie TIFF") &&
             base[i].toLowerCase().endsWith(".tif") &&
             r.getFormat().equals("OME-TIFF"))
+          {
+            r.close();
+            continue;
+          }
+
+          if (reader.getFormat().equals("Hamamatsu NDPIS") &&
+            r.getFormat().equals("Hamamatsu NDPI"))
           {
             r.close();
             continue;
@@ -1909,7 +1930,8 @@ public class FormatReaderTest {
               continue;
             }
 
-            if (result && r instanceof BDReader && readers[j] instanceof BMPReader)
+            if (result && r instanceof BDReader &&
+              readers[j] instanceof BMPReader)
             {
               continue;
             }
@@ -1963,7 +1985,37 @@ public class FormatReaderTest {
               continue;
             }
 
+            // AFI reader is not expected to pick up .svs files
+            if (r instanceof AFIReader && (readers[j] instanceof AFIReader ||
+              readers[j] instanceof SVSReader))
+            {
+              continue;
+            }
+
             if (!result && readers[j] instanceof MIASReader) {
+              continue;
+            }
+
+            if ((readers[j] instanceof NDPISReader ||
+              r instanceof NDPISReader) &&
+              used[i].toLowerCase().endsWith(".ndpi"))
+            {
+              continue;
+            }
+
+            // the JPEG reader can pick up JPEG files associated with a
+            // Hamamatsu VMS dataset
+            if (readers[j] instanceof JPEGReader &&
+              r instanceof HamamatsuVMSReader &&
+              used[i].toLowerCase().endsWith(".jpg"))
+            {
+              continue;
+            }
+
+            // the Hamamatsu VMS reader only picks up its .vms file
+            if (!result && !used[i].toLowerCase().endsWith(".vms") &&
+              r instanceof HamamatsuVMSReader)
+            {
               continue;
             }
 
