@@ -182,8 +182,15 @@ OMERO_NAMED_OPTIONAL = (
 LANG_JAVA = "Java"
 LANG_CXX = "C++"
 
+TYPE_SOURCE = "Source"
+TYPE_HEADER = "Header"
+
 JAVA_TEMPLATE_DIR = "templates-java"
 CXX_TEMPLATE_DIR = "templates-c++"
+
+JAVA_SOURCE_SUFFIX = ".java"
+CXX_SOURCE_SUFFIX = ".cpp"
+CXX_HEADER_SUFFIX = ".h"
 
 # The default template for enum class processing.
 ENUM_TEMPLATE = 'Enum.template'
@@ -233,6 +240,17 @@ def template_path(name, opts):
     else:
         raise ModelProcessingError(
             "Invalid language: %s" % opts.lang)
+
+def generated_filename(name, type, opts):
+    if (opts.lang == LANG_JAVA and type == TYPE_SOURCE):
+        return name + JAVA_SOURCE_SUFFIX
+    elif (opts.lang == LANG_CXX and type == TYPE_SOURCE):
+        return name + CXX_SOURCE_SUFFIX
+    elif (opts.lang == LANG_JAVA and type == TYPE_HEADER):
+        return name + CXX_HEADER_SUFFIX
+    else:
+        raise ModelProcessingError(
+            "Invalid language/filetype combination: %s/%s" % opts.lang/type)
 
 def resolve_parents(model, element_name):
     """

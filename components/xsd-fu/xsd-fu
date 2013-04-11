@@ -282,6 +282,7 @@ def processMetadataTemplate(template, outputFilename, opts):
 	"""
 	args = opts.args
 	template = template_path(template, opts)
+	outputFilename = generated_filename(outputFilename, TYPE_SOURCE, opts)
 	outputFilename = os.path.join(opts.outdir, outputFilename)
 
 	model = parseXmlSchema(opts)
@@ -333,8 +334,8 @@ def omeXmlMetadataMain(opts):
 	MetadataStore and MetadataRetrieve implementation.
 	"""
 
-	processMetadataTemplate(OMEXML_METADATA_TEMPLATE, "OMEXMLMetadataImpl.java",
-	                        namespace, opts)
+	processMetadataTemplate(OMEXML_METADATA_TEMPLATE, "OMEXMLMetadataImpl",
+	                        opts)
 
 def omeroMetadataMain(opts):
 	"""
@@ -342,8 +343,8 @@ def omeroMetadataMain(opts):
 	MetadataRetrieve implementation.
 	"""
 
-	processMetadataTemplate(OMERO_METADATA_TEMPLATE, "OmeroMetadata.java",
-	                        namespace, opts)
+	processMetadataTemplate(OMERO_METADATA_TEMPLATE, "OmeroMetadata",
+	                        opts)
 
 def omeroModelMain(opts):
 	"""
@@ -352,7 +353,7 @@ def omeroModelMain(opts):
 	"""
 
 	processMetadataTemplate(OMERO_MODEL_TEMPLATE, "OmeroModel.xml",
-	                        namespace, opts)
+	                        opts)
 
 def metadataStoreMain(opts):
 	"""
@@ -360,8 +361,8 @@ def metadataStoreMain(opts):
 	MetadataStore implementation.
 	"""
 
-	processMetadataTemplate(METADATA_STORE_TEMPLATE, "MetadataStore.java",
-	                        namespace, opts)
+	processMetadataTemplate(METADATA_STORE_TEMPLATE, "MetadataStore",
+	                        opts)
 
 def metadataRetrieveMain(opts):
 	"""
@@ -369,8 +370,8 @@ def metadataRetrieveMain(opts):
 	MetadataRetrieve implementation.
 	"""
 
-	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE, "MetadataRetrieve.java",
-	                        namespace, opts)
+	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE, "MetadataRetrieve",
+	                        opts)
 
 def metadataAggregateMain(opts):
 	"""
@@ -378,8 +379,8 @@ def metadataAggregateMain(opts):
 	MetadataRetrieve implementation.
 	"""
 
-	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE, "AggregateMetadata.java",
-	                        namespace, opts)
+	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE, "AggregateMetadata",
+	                        opts)
 
 def dummyMetadataMain(opts):
 	"""
@@ -387,8 +388,8 @@ def dummyMetadataMain(opts):
 	MetadataRetrieve implementation.
 	"""
 
-	processMetadataTemplate(DUMMY_METADATA_TEMPLATE, "DummyMetadata.java",
-	                        namespace, opts)
+	processMetadataTemplate(DUMMY_METADATA_TEMPLATE, "DummyMetadata",
+	                        opts)
 
 def filterMetadataMain(opts):
 	"""
@@ -396,8 +397,8 @@ def filterMetadataMain(opts):
 	MetadataRetrieve implementation.
 	"""
 
-	processMetadataTemplate(FILTER_METADATA_TEMPLATE, "FilterMetadata.java",
-	                        namespace, opts)
+	processMetadataTemplate(FILTER_METADATA_TEMPLATE, "FilterMetadata",
+	                        opts)
 
 def debugMain(opts):
 	"""
