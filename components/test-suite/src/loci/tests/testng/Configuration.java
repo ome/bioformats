@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
@@ -421,8 +422,15 @@ public class Configuration {
       seriesTable.put(CHANNEL_COUNT,
         String.valueOf(retrieve.getChannelCount(series)));
 
-      planeSize = (long) FormatTools.getPlaneSize(reader);
-      canOpenImages = planeSize > 0 && TestTools.canFitInMemory(planeSize);
+      try {
+        planeSize = DataTools.safeMultiply32(reader.getSizeX(),
+          reader.getSizeY(), reader.getEffectiveSizeC(),
+          FormatTools.getBytesPerPixel(reader.getPixelType()));
+        canOpenImages = planeSize > 0 && TestTools.canFitInMemory(planeSize);
+      }
+      catch (IllegalArgumentException e) {
+        canOpenImages = false;
+      }
 
       if (canOpenImages) {
         try {

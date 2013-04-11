@@ -29,13 +29,17 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.JPEGTurboService;
+import loci.formats.services.JPEGTurboServiceImpl;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
@@ -52,19 +56,20 @@ public class NDPIReader extends BaseTiffReader {
 
   // -- Constants --
 
-  private static final int MAX_SIZE = 8192;
-  private static final int THUMB_TAG_1 = 65426;
+  private static final int MAX_SIZE = 2048;
+  private static final int MARKER_TAG = 65426;
   private static final int THUMB_TAG_2 = 65439;
   private static final int METADATA_TAG = 65449;
 
   // -- Fields --
 
-  private JPEGTileDecoder decoder;
   private int initializedSeries = -1;
   private int initializedPlane = -1;
 
   private int sizeZ = 1;
   private int pyramidHeight = 1;
+
+  private JPEGTurboService service = new JPEGTurboServiceImpl();
 
   // -- Constructor --
 
@@ -72,10 +77,50 @@ public class NDPIReader extends BaseTiffReader {
   public NDPIReader() {
     super("Hamamatsu NDPI", new String[] {"ndpi"});
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
-    suffixNecessary = true;
   }
 
   // -- IFormatReader API methods --
+
+  /* (non-Javadoc)
+   * @see loci.formats.FormatReader#isThisType(java.lang.String, boolean)
+   */
+  @Override
+  public boolean isThisType(String name, boolean open) {
+    boolean isThisType = super.isThisType(name, open);
+    if (isThisType && open) {
+      RandomAccessInputStream stream = null;
+      TiffParser parser = null;
+      try {
+        stream = new RandomAccessInputStream(name);
+        parser = new TiffParser(stream);
+        parser.setDoCaching(false);
+        parser.setUse64BitOffsets(stream.length() >= Math.pow(2, 32));
+        if (!parser.isValidHeader()) {
+          return false;
+        }
+        IFD ifd = parser.getFirstIFD();
+        return ifd.containsKey(MARKER_TAG);
+      }
+      catch (IOException e) {
+        LOGGER.debug("I/O exception during isThisType() evaluation.", e);
+        return false;
+      }
+      finally {
+        try {
+          if (stream != null) {
+            stream.close();
+          }
+          if (parser != null) {
+            parser.getStream().close();
+          }
+        }
+        catch (IOException e) {
+          LOGGER.debug("I/O exception during stream closure.", e);
+        }
+      }
+    }
+    return isThisType;
+  }
 
   /** @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
@@ -93,46 +138,46 @@ public class NDPIReader extends BaseTiffReader {
     if (x == 0 && y == 0 && w == 1 && h == 1) {
       return buf;
     }
-    else if (getSizeX() <= MAX_SIZE && getSizeY() <= MAX_SIZE) {
+    else if (getSizeX() <= MAX_SIZE || getSizeY() <= MAX_SIZE) {
       int ifdIndex = getIFDIndex(getCoreIndex(), no);
       in = new RandomAccessInputStream(currentId);
       tiffParser = new TiffParser(in);
       tiffParser.setUse64BitOffsets(true);
       tiffParser.setYCbCrCorrection(false);
-      return tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
+      byte[] b = tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
+      in.close();
+      tiffParser.getStream().close();
+      return b;
     }
 
     if (initializedSeries != getCoreIndex() || initializedPlane != no) {
-      if (x == 0 && y == 0 && w == getOptimalTileWidth() &&
-        h == getOptimalTileHeight())
-      {
-        // it looks like we'll be reading lots of tiles
-        setupService(0, 0, no);
+      IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), no));
+
+      long offset = ifd.getStripOffsets()[0];
+      long byteCount = ifd.getStripByteCounts()[0];
+      if (in != null) {
+        in.close();
       }
-      else {
-        // it looks like we'll only read one tile
-        setupService(y, h, no);
+      in = new RandomAccessInputStream(currentId);
+      in.seek(offset);
+      in.setLength(offset + byteCount);
+
+      try {
+        service.close();
+        long[] markers = ifd.getIFDLongArray(MARKER_TAG);
+        if (markers != null) {
+          service.setRestartMarkers(markers);
+        }
+        service.initialize(in, getSizeX(), getSizeY());
       }
+      catch (ServiceException e) {
+        throw new FormatException(e);
+      }
+
       initializedSeries = getCoreIndex();
       initializedPlane = no;
     }
-    else if (decoder.getScanline(y) == null) {
-      setupService(y, h, no);
-    }
-
-    int c = getRGBChannelCount();
-    int bytes = FormatTools.getBytesPerPixel(getPixelType());
-    int row = w * c * bytes;
-
-    for (int yy=y; yy<y + h; yy++) {
-      byte[] scanline = decoder.getScanline(yy);
-      if (scanline != null) {
-        int copy = (int) Math.min(row, buf.length - (yy - y) * row - 1);
-        if (copy < 0) break;
-        System.arraycopy(scanline, x * c * bytes, buf, (yy - y) * row, copy);
-      }
-    }
-
+    service.getTile(buf, x, y, w, h);
     return buf;
   }
 
@@ -186,25 +231,29 @@ public class NDPIReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    super.close(fileOnly);
     if (!fileOnly) {
-      if (decoder != null) {
-        decoder.close();
-      }
-      decoder = null;
+      service.close();
       initializedSeries = -1;
       initializedPlane = -1;
       sizeZ = 1;
       pyramidHeight = 1;
+      if (tiffParser != null) {
+        tiffParser.getStream().close();
+      }
     }
+    super.close(fileOnly);
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return 1024;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int maxHeight = (1024 * 1024) / (getSizeX() * getRGBChannelCount() * bpp);
-    return (int) Math.min(maxHeight, getSizeY());
+    return 1024;
   }
 
   // -- Internal FormatReader API methods --
@@ -223,8 +272,6 @@ public class NDPIReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    decoder = new JPEGTileDecoder();
-
     ifds = tiffParser.getIFDs();
 
     // fix the offsets for > 4 GB files
@@ -234,14 +281,38 @@ public class NDPIReader extends BaseTiffReader {
 
       boolean neededAdjustment = false;
       for (int j=0; j<stripOffsets.length; j++) {
+        long prevOffset = i == 0 ? 0 : ifds.get(i - 1).getStripOffsets()[0];
+        long prevByteCount =
+          i == 0 ? 0 : ifds.get(i - 1).getStripByteCounts()[0];
+
         long newOffset = stripOffsets[j] + 0x100000000L;
-        if (newOffset < stream.length()) {
+        if (newOffset < stream.length() && ((j > 0 &&
+          (stripOffsets[j] < stripOffsets[j - 1])) ||
+          (i > 0 && stripOffsets[j] < prevOffset + prevByteCount)))
+        {
           stripOffsets[j] = newOffset;
           neededAdjustment = true;
         }
       }
       if (neededAdjustment) {
         ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
+      }
+
+      neededAdjustment = false;
+
+      long[] stripByteCounts = ifds.get(i).getStripByteCounts();
+      for (int j=0; j<stripByteCounts.length; j++) {
+        long newByteCount = stripByteCounts[j] + 0x100000000L;
+        if (stripByteCounts[j] < 0 || neededAdjustment ||
+          newByteCount + ifds.get(i).getStripOffsets()[0] < in.length())
+        {
+          stripByteCounts[j] = newByteCount;
+          neededAdjustment = true;
+        }
+      }
+
+      if (neededAdjustment) {
+        ifds.get(i).putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
       }
     }
     stream.close();
@@ -253,7 +324,7 @@ public class NDPIReader extends BaseTiffReader {
       {
         sizeZ++;
       }
-      else if (sizeZ == 1) {
+      else if (sizeZ == 1 && i < ifds.size() - 1) {
         pyramidHeight++;
       }
     }
@@ -262,11 +333,30 @@ public class NDPIReader extends BaseTiffReader {
 
     int seriesCount = pyramidHeight + (ifds.size() - pyramidHeight * sizeZ);
 
+    long prevMarkerOffset = 0;
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
-      ifd.remove(THUMB_TAG_1);
       ifd.remove(THUMB_TAG_2);
       ifds.set(i, ifd);
+
+      TiffIFDEntry markerTag = (TiffIFDEntry) ifd.get(MARKER_TAG);
+
+      if (markerTag != null) {
+        if (markerTag.getValueOffset() > in.length()) {
+          long markerOffset = markerTag.getValueOffset() & 0xffffffffL;
+          if (markerOffset < prevMarkerOffset || (use64Bit && i == 0 &&
+            markerOffset < in.length() / 2))
+          {
+            markerOffset += 0x100000000L;
+          }
+          markerTag = new TiffIFDEntry(markerTag.getTag(), markerTag.getType(),
+            markerTag.getValueCount(), markerOffset);
+          prevMarkerOffset = markerOffset;
+        }
+        Object value = tiffParser.getIFDValue(markerTag);
+        ifds.get(i).putIFDValue(MARKER_TAG, value);
+      }
+
       tiffParser.fillInIFD(ifds.get(i));
 
       int[] bpp = ifds.get(i).getBitsPerSample();
@@ -306,7 +396,7 @@ public class NDPIReader extends BaseTiffReader {
       ms.pixelType = ifd.getPixelType();
       ms.metadataComplete = true;
       ms.interleaved =
-        ms.sizeX > MAX_SIZE || ms.sizeY > MAX_SIZE;
+        ms.sizeX > MAX_SIZE && ms.sizeY > MAX_SIZE;
       ms.falseColor = false;
       ms.dimensionOrder = "XYCZT";
       ms.thumbnail = s != 0;
@@ -352,25 +442,6 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   // -- Helper methods --
-
-  private void setupService(int y, int h, int z)
-    throws FormatException, IOException
-  {
-    decoder.close();
-
-    IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), z));
-
-    long offset = ifd.getStripOffsets()[0];
-    int byteCount = (int) ifd.getStripByteCounts()[0];
-    if (in != null) {
-      in.close();
-    }
-    in = new RandomAccessInputStream(currentId);
-    in.seek(offset);
-    in.setLength(offset + byteCount);
-
-    decoder.initialize(in, y, h, getSizeX());
-  }
 
   private int getIFDIndex(int seriesIndex, int zIndex) {
     if (seriesIndex < pyramidHeight) {

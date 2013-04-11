@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import loci.common.Constants;
 import loci.common.IniList;
@@ -37,12 +38,16 @@ import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.JPEGTurboService;
+import loci.formats.services.JPEGTurboServiceImpl;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -60,13 +65,21 @@ public class HamamatsuVMSReader extends FormatReader {
 
   // -- Constants --
 
+  private static final int MAX_SIZE = 2048;
+
   // -- Fields --
+
+  private int initializedSeries = -1;
+  private int initializedPlane = -1;
 
   private ArrayList<String> files = new ArrayList<String>();
 
   private String[][][] tileFiles;
+  private String[] jpeg;
 
-  private TileJPEGReader[] jpeg;
+  private JPEGTurboService service = new JPEGTurboServiceImpl();
+  private HashMap<String, long[]> restartMarkers =
+    new HashMap<String, long[]>();
 
   // -- Constructor --
 
@@ -79,6 +92,18 @@ public class HamamatsuVMSReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return 1024;
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return 1024;
+  }
+
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
@@ -88,7 +113,8 @@ public class HamamatsuVMSReader extends FormatReader {
     }
 
     ArrayList<String> f = new ArrayList<String>();
-    f.add(jpeg[getSeries()].getCurrentFile());
+    f.add(currentId);
+    f.add(jpeg[getSeries()]);
     f.addAll(files);
     return f.toArray(new String[f.size()]);
   }
@@ -101,7 +127,40 @@ public class HamamatsuVMSReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    jpeg[getSeries()].openBytes(no, buf, x, y, w, h);
+    String file = jpeg[getCoreIndex()];
+
+    if (getSizeX() <= MAX_SIZE || getSizeY() <= MAX_SIZE) {
+      JPEGReader reader = new JPEGReader();
+      reader.setId(file);
+      reader.openBytes(0, buf, x, y, w, h);
+      reader.close();
+      return buf;
+    }
+
+    try {
+      if (initializedSeries != getCoreIndex() || initializedPlane != no) {
+        service.close();
+        if (restartMarkers.containsKey(file)) {
+          service.setRestartMarkers(restartMarkers.get(file));
+        }
+        else {
+          service.setRestartMarkers(null);
+        }
+        // closing the service will close this file
+        RandomAccessInputStream s = new RandomAccessInputStream(file);
+        service.initialize(s, getSizeX(), getSizeY());
+        restartMarkers.put(file, service.getRestartMarkers());
+
+        initializedSeries = getCoreIndex();
+        initializedPlane = no;
+      }
+
+      service.getTile(buf, x, y, w, h);
+    }
+    catch (ServiceException e) {
+      throw new FormatException(e);
+    }
+
     return buf;
   }
 
@@ -111,14 +170,11 @@ public class HamamatsuVMSReader extends FormatReader {
     if (!fileOnly) {
       tileFiles = null;
       files.clear();
-      if (jpeg != null) {
-        for (TileJPEGReader j : jpeg) {
-          if (j != null) {
-            j.close();
-          }
-        }
-        jpeg = null;
-      }
+      service.close();
+      jpeg = null;
+      restartMarkers.clear();
+      initializedSeries = -1;
+      initializedPlane = -1;
     }
   }
 
@@ -184,7 +240,7 @@ public class HamamatsuVMSReader extends FormatReader {
       macroFile = new Location(dir, macroFile).getAbsolutePath();
     }
 
-    jpeg = new TileJPEGReader[3];
+    jpeg = new String[3];
 
     int seriesCount = 3;
 
@@ -203,9 +259,23 @@ public class HamamatsuVMSReader extends FormatReader {
           break;
       }
 
-      jpeg[i] = new TileJPEGReader();
-      jpeg[i].setId(file);
-      CoreMetadata m = jpeg[i].getCoreMetadataList().get(0);
+      jpeg[i] = file;
+      JPEGTileDecoder decoder = new JPEGTileDecoder();
+      RandomAccessInputStream s = new RandomAccessInputStream(file);
+      int[] dims = decoder.preprocess(s);
+      s.close();
+
+      CoreMetadata m = new CoreMetadata();
+      m.sizeX = dims[0];
+      m.sizeY = dims[1];
+      m.sizeZ = 1;
+      m.sizeC = 3;
+      m.sizeT = 1;
+      m.rgb = true;
+      m.imageCount = 1;
+      m.dimensionOrder = "XYCZT";
+      m.pixelType = FormatTools.UINT8;
+      m.interleaved = m.sizeX > MAX_SIZE && m.sizeY > MAX_SIZE;
       m.thumbnail = i > 0;
       core.add(m);
     }

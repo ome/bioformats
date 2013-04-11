@@ -41,6 +41,7 @@
     <module>components/scifio-tools</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
+    <module>components/turbojpeg</module>
   </modules>
 
   <properties>
@@ -57,6 +58,10 @@
           <exclude>**/*.java</exclude>
           <exclude>**/package.html</exclude>
         </excludes>
+      </resource>
+      <resource>
+        <targetPath>META-INF/lib</targetPath>
+        <directory>${project.basedir}/lib</directory>
       </resource>
     </resources>
     <testResources>
