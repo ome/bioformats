@@ -191,8 +191,6 @@ rst_epilog = """
 .. _Hibernate: http://www.hibernate.org
 .. _ZeroC: http://www.zeroc.com
 .. _Ice: http://www.zeroc.com
-.. _OME-TIFF: https://www.openmicroscopy.org/site/support/ome-model/ome-tiff
-.. _OME-XML: http://www.openmicroscopy.org/site/support/ome-model/ome-xml
 
 .. |Poor| image:: /images/crystal-1.png
            :alt: 1 - Poor

@@ -14,8 +14,9 @@ following features:
   if they are available in the file.
 
 - The **Bio-Formats Exporter** is a plugin for exporting data to disk. It
-  can save to the open OME-TIFF_ file format, as well as several movie formats
-  (e.g. QuickTime, AVI) and graphics formats (e.g. PNG, JPEG).
+  can save to the open :model_doc:`OME-TIFF <ome-tiff>` file format, as well
+  as several movie formats (e.g. QuickTime, AVI) and graphics formats (e.g.
+  PNG, JPEG).
 
 - The **Bio-Formats Remote Importer** is a plugin for importing data from
   a remote URL. It is likely to be less robust than working with files on
