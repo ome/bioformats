@@ -5,16 +5,16 @@ Motivation
 ----------
 
 SCIFIO is a refactoring of :doc:`Bio-Formats </about/index>`.
-Classic Bio-Formats uses OME-XML_ to model the metadata for a given image,
-standardizing all supported formats to this schema. This tight integration,
-along with the naming itself of Bio-Formats, discourages potential users from
-outside the life sciences (if their imaging requirements include metadata
-outside the OME-XML specification). Furthermore, the steps of processing image
-formats are obfuscated by their consolidation into a single **Reader**
-class; this increases the entry barrier for 3rd party developers to add
-support for additional formats. Finally, the GPL licensing of
-Bio-Formats precludes its inclusion in non-GPL software packages such as
-ImageJ, ITK, VCell and VisAD.
+Classic Bio-Formats uses :model_doc:`OME-XML <ome-xml>` to model the metadata
+for a given image, standardizing all supported formats to this schema. This
+tight integration, along with the naming itself of Bio-Formats, discourages
+potential users from outside the life sciences (if their imaging requirements
+include metadata outside the OME-XML specification). Furthermore, the steps of
+processing image formats are obfuscated by their consolidation into a single
+**Reader** class; this increases the entry barrier for 3rd party developers to
+add support for additional formats. Finally, the GPL licensing of Bio-Formats
+precludes its inclusion in non-GPL software packages such as ImageJ, ITK,
+VCell and VisAD.
 
 SCIFIO aims to resolve these issues by reversing the OME-XML dependency
 and teasing apart the stages of image format conversion and processing.
