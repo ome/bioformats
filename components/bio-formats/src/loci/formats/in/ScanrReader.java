@@ -601,14 +601,15 @@ public class ScanrReader extends FormatReader {
       }
       int wellIndex =
         wellNumbers.get(index) == null ? index : wellNumbers.get(index) - 1;
-      wellNumbers.remove(index);
 
       int wellRow = wellIndex / wellColumns;
       int wellCol = wellIndex % wellColumns;
 
-      store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
-      store.setWellColumn(new NonNegativeInteger(wellCol), 0, well);
-      store.setWellRow(new NonNegativeInteger(wellRow), 0, well);
+      if (field == 0) {
+        store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
+        store.setWellColumn(new NonNegativeInteger(wellCol), 0, well);
+        store.setWellRow(new NonNegativeInteger(wellRow), 0, well);
+      }
 
       String wellSample =
         MetadataTools.createLSID("WellSample", 0, well, field);
