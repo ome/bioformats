@@ -227,9 +227,9 @@ PREFIX_CASE_REGEX = re.compile(
 
 def template_path(name, opts):
     if (opts.lang == LANG_JAVA):
-        return JAVA_TEMPLATE_DIR + '/' + name
+        return os.path.join(JAVA_TEMPLATE_DIR, name)
     elif (opts.lang == LANG_CXX):
-        return CXX_TEMPLATE_DIR + '/' + name
+        return os.path.join(CXX_TEMPLATE_DIR, name)
     else:
         raise ModelProcessingError(
             "Invalid language: %s" % opts.lang)

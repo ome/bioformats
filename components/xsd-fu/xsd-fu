@@ -282,6 +282,7 @@ def processMetadataTemplate(template, outputFilename, opts):
 	"""
 	args = opts.args
 	template = template_path(template, opts)
+	outputFilename = os.path.join(opts.outdir, outputFilename)
 
 	model = parseXmlSchema(opts)
 	indexes = dict()
