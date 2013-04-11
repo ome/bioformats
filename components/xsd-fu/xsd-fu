@@ -191,35 +191,21 @@ def enum_value_name(value):
 	value = value.replace("-", "")
 	return value.upper()
 
-def enumTypesMain(args):
+def enumTypesMain(opts):
 	"""
 	Default main() that parses command line options and generates Java
 	classes for enumeration types in an output directory.
 	"""
-	try:
-		options, args = gnu_getopt(args, "o:p:n:")
-	except GetoptError, (msg, opt):
-		mainUsage(msg)
 
-	if len(args) < 1:
+	if len(opts.args) < 1:
 		mainUsage("Expecting at least one XSD file path!")
 
-	outdir = None
-	package = DEFAULT_PACKAGE
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-o":
-			outdir = argument
-		if option == "-p":
-			package = argument
-		if option == "-n":
-			namespace = argument
-	if outdir is None:
-		usage("Output directory must be specified!")
-	if not os.path.exists(outdir):
-		os.makedirs(outdir)
+	namespace = opts.namespace
+	outdir = opts.outdir
+	lang = opts.lang
+	package = opts.package
 
-	model = parseXmlSchema(args, namespace)
+	model = parseXmlSchema(opts.args, namespace)
 	fu = TemplateInfo(outdir, package)
 	template = NewTextTemplate(open(ENUM_TEMPLATE).read())
 	for obj in model.objects.values():
@@ -234,35 +220,21 @@ def enumTypesMain(args):
 			f.write(classContent)
 			f.close()
 
-def enumHandlersMain(args):
+def enumHandlersMain(opts):
 	"""
 	Default main() that parses command line options and generates Java
 	classes for enumeration handlers in an output directory.
 	"""
-	try:
-		options, args = gnu_getopt(args, "o:p:n:")
-	except GetoptError, (msg, opt):
-		mainUsage(msg)
 
-	if len(args) < 1:
+	if len(opts.args) < 1:
 		mainUsage("Expecting at least one XSD file path!")
 
-	outdir = None
-	package = DEFAULT_PACKAGE
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-o":
-			outdir = argument
-		if option == "-p":
-			package = argument
-		if option == "-n":
-			namespace = argument
-	if outdir is None:
-		usage("Output directory must be specified!")
-	if not os.path.exists(outdir):
-		os.makedirs(outdir)
+	namespace = opts.namespace
+	outdir = opts.outdir
+	lang = opts.lang
+	package = opts.package
 
-	model = parseXmlSchema(args, namespace)
+	model = parseXmlSchema(opts.args, namespace)
 	fu = TemplateInfo(outdir, package)
 	base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
 	config = ConfigObj(os.path.join(base, "enum_handler.cfg"))
@@ -375,245 +347,129 @@ def processMetadataTemplate(template, outputFilename, namespace, args):
 	f.write(content)
 	f.close()
 
-def omeXmlMetadataMain(args):
+def omeXmlMetadataMain(opts):
 	"""
 	OME-XML main() that parses command line options and generates a
 	MetadataStore and MetadataRetrieve implementation.
 	"""
-	try:
-		options, args = gnu_getopt(args, "o:n:")
-	except GetoptError, (msg, opt):
-		metadataUsage(msg)
 
-	if len(args) < 1:
+	if len(opts.args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outdir = None
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-o":
-			outdir = argument
-		if option == "-n":
-			namespace = argument
+	namespace = opts.namespace
+	outdir = opts.outdir
+	lang = opts.lang
+	package = opts.package
 
-	if outdir is None:
-		usage("Output directory must be specified!")
-	if not os.path.exists(outdir):
-		os.makedirs(outdir)
+	processMetadataTemplate(OMEXML_METADATA_TEMPLATE, "OMEXMLMetadataImpl.java",
+	                        namespace, opts.args)
 
-	filename = os.path.join(outdir, "OMEXMLMetadataImpl.java")
-
-	processMetadataTemplate(OMEXML_METADATA_TEMPLATE, filename,
-	                        namespace, args)
-
-def omeroMetadataMain(args):
+def omeroMetadataMain(opts):
 	"""
 	Default main() that parses command line options and generates a
 	MetadataRetrieve implementation.
 	"""
-	try:
-		options, args = gnu_getopt(args, "n:")
-	except GetoptError, (msg, opt):
-		metadataUsage(msg)
 
-	if len(args) < 1:
+	if len(opts.args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-n":
-			namespace = argument
+	namespace = opts.namespace
+	outdir = opts.outdir
+	lang = opts.lang
+	package = opts.package
 
 	processMetadataTemplate(OMERO_METADATA_TEMPLATE, "OmeroMetadata.java",
-	                        namespace, args)
+	                        namespace, opts.args)
 
-def omeroModelMain(args):
+def omeroModelMain(opts):
 	"""
 	Default main() that parses command line options and generates a
 	MetadataRetrieve implementation.
 	"""
-	try:
-		options, args = gnu_getopt(args, "n:")
-	except GetoptError, (msg, opt):
-		metadataUsage(msg)
 
-	if len(args) < 1:
+	if len(opts.args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-n":
-			namespace = argument
+	namespace = opts.namespace
+	outdir = opts.outdir
+	lang = opts.lang
+	package = opts.package
 
 	processMetadataTemplate(OMERO_MODEL_TEMPLATE, "OmeroModel.xml",
-	                        namespace, args)
+	                        namespace, opts.args)
 
-def metadataStoreMain(args):
+def metadataStoreMain(opts):
 	"""
 	Default main() that parses command line options and generates a
 	MetadataStore implementation.
 	"""
-	try:
-		options, args = gnu_getopt(args, "o:n:")
-	except GetoptError, (msg, opt):
-		metadataUsage(msg)
 
-	if len(args) < 1:
+	if len(opts.args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outdir = None
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-o":
-			outdir = argument
-		if option == "-n":
-			namespace = argument
-	if outdir is None:
-		usage("Output directory must be specified!")
-	if not os.path.exists(outdir):
-		os.makedirs(outdir)
+	processMetadataTemplate(METADATA_STORE_TEMPLATE, "MetadataStore.java",
+	                        namespace, opts.args)
 
-	filename = os.path.join(outdir, "MetadataStore.java")
-
-	processMetadataTemplate(METADATA_STORE_TEMPLATE, filename,
-	                        namespace, args)
-
-def metadataRetrieveMain(args):
+def metadataRetrieveMain(opts):
 	"""
 	Default main() that parses command line options and generates a
 	MetadataRetrieve implementation.
 	"""
-	try:
-		options, args = gnu_getopt(args, "o:n:")
-	except GetoptError, (msg, opt):
-		metadataUsage(msg)
 
-	if len(args) < 1:
+	if len(opts.args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outdir = None
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-o":
-			outdir = argument
-		if option == "-n":
-			namespace = argument
-	if outdir is None:
-		usage("Output directory must be specified!")
-	if not os.path.exists(outdir):
-		os.makedirs(outdir)
+	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE, "MetadataRetrieve.java",
+	                        namespace, opts.args)
 
-	filename = os.path.join(outdir, "MetadataRetrieve.java")
-
-	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE, filename,
-	                        namespace, args)
-
-def metadataAggregateMain(args):
+def metadataAggregateMain(opts):
 	"""
 	Default main() that parses command line options and generates a
 	MetadataRetrieve implementation.
 	"""
-	try:
-		options, args = gnu_getopt(args, "o:n:")
-	except GetoptError, (msg, opt):
-		metadataUsage(msg)
 
-	if len(args) < 1:
+	if len(opts.args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outdir = None
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-o":
-			outdir = argument
-		if option == "-n":
-			namespace = argument
-	if outdir is None:
-		usage("Output directory must be specified!")
-	if not os.path.exists(outdir):
-		os.makedirs(outdir)
+	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE, "AggregateMetadata.java",
+	                        namespace, opts.args)
 
-	filename = os.path.join(outdir, "AggregateMetadata.java")
-
-	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE, filename,
-	                        namespace, args)
-
-def dummyMetadataMain(args):
+def dummyMetadataMain(opts):
 	"""
 	Default main() that parses command line options and generates a
 	MetadataRetrieve implementation.
 	"""
-	try:
-		options, args = gnu_getopt(args, "o:n:")
-	except GetoptError, (msg, opt):
-		metadataUsage(msg)
 
-	if len(args) < 1:
+	if len(opts.args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outdir = None
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-o":
-			outdir = argument
-		if option == "-n":
-			namespace = argument
-	if outdir is None:
-		usage("Output directory must be specified!")
-	if not os.path.exists(outdir):
-		os.makedirs(outdir)
+	processMetadataTemplate(DUMMY_METADATA_TEMPLATE, "DummyMetadata.java",
+	                        namespace, opts.args)
 
-	filename = os.path.join(outdir, "DummyMetadata.java")
-
-	processMetadataTemplate(DUMMY_METADATA_TEMPLATE, filename,
-	                        namespace, args)
-
-def filterMetadataMain(args):
+def filterMetadataMain(opts):
 	"""
 	Default main() that parses command line options and generates a
 	MetadataRetrieve implementation.
 	"""
-	try:
-		options, args = gnu_getopt(args, "o:n:")
-	except GetoptError, (msg, opt):
-		metadataUsage(msg)
 
-	if len(args) < 1:
+	if len(opts.args) < 1:
 		metadataUsage("Expecting at least one ome.xsd file path!")
 
-	outdir = None
-	namespace = DEFAULT_NAMESPACE
-	for option, argument in options:
-		if option == "-o":
-			outdir = argument
-		if option == "-n":
-			namespace = argument
+	processMetadataTemplate(FILTER_METADATA_TEMPLATE, "FilterMetadata.java",
+	                        namespace, opts.args)
 
-	if outdir is None:
-		usage("Output directory must be specified!")
-	if not os.path.exists(outdir):
-		os.makedirs(outdir)
-
-	filename = os.path.join(outdir, "FilterMetadata.java")
-
-	processMetadataTemplate(FILTER_METADATA_TEMPLATE, filename,
-	                        namespace, args)
-
-def debugMain(args):
+def debugMain(opts):
 	"""
 	Debugging main() that does not parse the command line and spits
 	generated data to STDOUT.
 	"""
-	outdir = None
-	package = DEFAULT_PACKAGE
-	namespace = "xsd:"
 
-	try:
-		options, args = gnu_getopt(args, "o:p:n:")
-	except GetoptError, (msg, opt):
-		mainUsage(msg)
+	namespace = opts.namespace
+	outdir = opts.outdir
+	lang = opts.lang
+	package = opts.package
 
-	model = parseXmlSchema(args, namespace)
+	model = parseXmlSchema(opts.args, namespace)
 	fu = TemplateInfo(outdir, package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	base, filename = os.path.split(CLASS_TEMPLATE)
@@ -640,16 +496,18 @@ def debugMain(args):
 			print template.generate(
 					fu=fu, klass=obj, parents=parents, model=model, customContent=customContent).render()
 
-def docGenMain(args):
+def docGenMain(opts):
 	"""
 	Documentation main() that does not parse the command line and spits
 	generated wiki formatted docs to STDOUT.
 	Added by Andrew Patterson (July 2008) to generate content for
 	the ArityOfSchema page on http://ome-xml.org
 	"""
-	outdir = None
-	package = DEFAULT_PACKAGE
-	namespace = "xsd:"
+
+	namespace = opts.namespace
+	outdir = opts.outdir
+	lang = opts.lang
+	package = opts.package
 
 	for theSchemas in [
 	["OME",           "../specification/InProgress/ome.xsd"],
@@ -671,15 +529,17 @@ def docGenMain(args):
 				    (prefix, obj.name, prop.name, prop.type, prop.minOccurs, prop.maxOccurs)
 			print "\n"
 
-def tabGenMain(args):
+def tabGenMain(opts):
 	"""
 	Documentation main() that does not parse the command line and puts
 	tab sperated format to STDOUT.
 	Added by Andrew Patterson (October 2008) to generate content for arity spreadsheet
 	"""
-	outdir = None
-	package = DEFAULT_PACKAGE
-	namespace = "xsd:"
+
+	namespace = opts.namespace
+	outdir = opts.outdir
+	lang = opts.lang
+	package = opts.package
 
 	for theSchemas in [
 			["OME",       "../specification/InProgress/ome.xsd",
