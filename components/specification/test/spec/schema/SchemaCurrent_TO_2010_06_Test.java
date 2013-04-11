@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- *   Copyright 2006-2011 University of Dundee. All rights reserved.
+ *   Copyright 2006-2013 University of Dundee. All rights reserved.
  *   Use is subject to license terms supplied in LICENSE.txt
  */
 package spec.schema;
@@ -30,9 +30,11 @@ import spec.OmeValidator;
 import spec.XMLMockObjects;
 import spec.XMLWriter;
 
+import org.testng.Assert;
+
 /**
  * Collections of tests.
- * Checks if the downgrade from 2011-06 schema to 2010-06 schema works.
+ * Checks if the downgrade from current schema to 2010-06 schema works.
  *
  * @author Jean-Marie Burel &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:j.burel@dundee.ac.uk">j.burel@dundee.ac.uk</a>
@@ -46,7 +48,7 @@ import spec.XMLWriter;
  * </small>
  * @since 3.0-Beta4
  */
-public class Schema2011_06_TO_2010_06_Test
+public class SchemaCurrent_TO_2010_06_Test
 	extends AbstractTest
 {
 
@@ -54,7 +56,8 @@ public class Schema2011_06_TO_2010_06_Test
 	private List<File> files;
 
 	/** The transform */
-	private InputStream STYLESHEET;
+	private InputStream STYLESHEET_A;
+	private InputStream STYLESHEET_B;
 
 	/** The target schema */
 	private StreamSource[] schemaArray;
@@ -70,8 +73,8 @@ public class Schema2011_06_TO_2010_06_Test
 	 */
 	private void checkImageNode(Node destNode, Node srcNode)
 	{
-		assertNotNull(destNode);
-		assertNotNull(srcNode);
+		Assert.assertNotNull(destNode);
+		Assert.assertNotNull(srcNode);
 		NamedNodeMap attributesSrc = srcNode.getAttributes();
 		String nameSrc = "";
 		String idSrc = "";
@@ -86,17 +89,22 @@ public class Schema2011_06_TO_2010_06_Test
 				nameSrc = n.getNodeValue();
 		}
 
+		// compare the stored values for ID and Name attributes
+		// to those on the output node
 		NamedNodeMap attributes = destNode.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			n = attributes.item(i);
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.equals(XMLWriter.ID_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), idSrc);
+					Assert.assertEquals(n.getNodeValue(), idSrc);
 				else if (name.equals(XMLWriter.NAME_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), nameSrc);
+					Assert.assertEquals(n.getNodeValue(), nameSrc);
 			}
 		}
+
+		// Find the pixels node in the input image node
+		// (if more than one last will be found)
 		Node pixelsNode = null;
 		NodeList list = srcNode.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -107,12 +115,15 @@ public class Schema2011_06_TO_2010_06_Test
 					pixelsNode = n;
 			}
 		}
+		// Find the pixels node in the output image node
+		// (if more than one this will be incorrect)
 		list = destNode.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			n = list.item(i);
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.contains(XMLWriter.PIXELS_TAG))
+					//  - compare the found node to the input node stored above
 					checkPixelsNode(n, pixelsNode);
 			}
 		}
@@ -126,6 +137,7 @@ public class Schema2011_06_TO_2010_06_Test
 	 */
 	private void checkPixelsNode(Node destNode, Node srcNode)
 	{
+		// store the values for ID and Name attribute on the input node
 		NamedNodeMap attributesSrc = srcNode.getAttributes();
 		String nameSrc = "";
 		String idSrc = "";
@@ -169,26 +181,26 @@ public class Schema2011_06_TO_2010_06_Test
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.equals(XMLWriter.ID_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), idSrc);
+					Assert.assertEquals(n.getNodeValue(), idSrc);
 				else if (name.equals(XMLWriter.NAME_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), nameSrc);
+					Assert.assertEquals(n.getNodeValue(), nameSrc);
 				else if (name.equals(XMLWriter.SIZE_X_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), sizeX);
+					Assert.assertEquals(n.getNodeValue(), sizeX);
 				else if (name.equals(XMLWriter.SIZE_Y_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), sizeY);
+					Assert.assertEquals(n.getNodeValue(), sizeY);
 				else if (name.equals(XMLWriter.SIZE_Z_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), sizeZ);
+					Assert.assertEquals(n.getNodeValue(), sizeZ);
 				else if (name.equals(XMLWriter.SIZE_C_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), sizeC);
+					Assert.assertEquals(n.getNodeValue(), sizeC);
 				else if (name.equals(XMLWriter.SIZE_T_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), sizeT);
+					Assert.assertEquals(n.getNodeValue(), sizeT);
 // TODO - Review
 //				else if (name.equals(XMLWriter.PIXELS_TYPE_ATTRIBUTE))
-//					assertEquals(n.getNodeValue(), pixelsType);
+//					Assert.assertEquals(n.getNodeValue(), pixelsType);
 				else if (name.equals(XMLWriter.DIMENSION_ORDER_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), dimensionOrder);
+					Assert.assertEquals(n.getNodeValue(), dimensionOrder);
 				else if (name.equals(XMLWriter.BIG_ENDIAN_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), bigEndian);
+					Assert.assertEquals(n.getNodeValue(), bigEndian);
 			}
 		}
 		//check the tag now.
@@ -199,6 +211,7 @@ public class Schema2011_06_TO_2010_06_Test
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.contains(XMLWriter.BIN_DATA_TAG))
+					//  - Add node to the input list
 					binDataNodeSrc.add(n);
 			}
 		}
@@ -209,14 +222,21 @@ public class Schema2011_06_TO_2010_06_Test
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.contains(XMLWriter.BIN_DATA_TAG))
+					//  - Add node to the output list
 					binDataNodeDest.add(n);
 			}
 		}
-		assertTrue(binDataNodeSrc.size() > 0);
-		assertEquals(binDataNodeSrc.size(), binDataNodeDest.size());
+        // Compare the lengths of the lists
+		Assert.assertNotNull(binDataNodeSrc);
+		Assert.assertNotEquals(binDataNodeSrc.size(), 0);
+		Assert.assertTrue(binDataNodeSrc.size() > 0);
+		Assert.assertEquals(binDataNodeSrc.size(), binDataNodeDest.size());
+		// Compare the contents of the lists
 		for (int i = 0; i < binDataNodeDest.size(); i++) {
 			checkBinDataNode(binDataNodeDest.get(i), binDataNodeSrc.get(i));
 		}
+		// Compare the Big Endian value from the output stored above
+		// with the value used in the input file
 		n = binDataNodeSrc.get(0);
 		attributesSrc = n.getAttributes();
 		//now check that
@@ -225,7 +245,7 @@ public class Schema2011_06_TO_2010_06_Test
 			if (n != null) {
 				name = n.getNodeName();
 //				if (name.contains(XMLWriter.BIG_ENDIAN_ATTRIBUTE))
-//					assertEquals(n.getNodeValue(), bigEndianDst);
+//					Assert.assertEquals(n.getNodeValue(), bigEndianDst);
 			}
 		}
 	}
@@ -238,12 +258,17 @@ public class Schema2011_06_TO_2010_06_Test
 	 */
 	private void checkBinDataNode(Node destNode, Node srcNode)
 	{
-		assertNotNull(destNode);
-		assertNotNull(srcNode);
-		NamedNodeMap attributesSrc = srcNode.getAttributes();
+		Assert.assertNotNull(destNode);
+		Assert.assertNotNull(srcNode);
+
 		String compression = "";
 		Node n;
 		String name;
+
+		// store the values for Compression attribute on the input node
+		NamedNodeMap attributesSrc = srcNode.getAttributes();
+		Assert.assertNotNull(attributesSrc);
+
 		for (int i = 0; i < attributesSrc.getLength(); i++) {
 			n = attributesSrc.item(i);
 			name = n.getNodeName();
@@ -251,16 +276,22 @@ public class Schema2011_06_TO_2010_06_Test
 				compression = n.getNodeValue();
 		}
 
+		// compare the stored value for the Compression attribute
+		// to that on the output node
 		NamedNodeMap attributes = destNode.getAttributes();
+		Assert.assertNotNull(attributes);
+
 		for (int i = 0; i < attributes.getLength(); i++) {
 			n = attributes.item(i);
 			if (n != null) {
 				name = n.getNodeName();
-				if (name.equals(XMLWriter.COMPRESSION_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), compression);
+				if (name.equals(XMLWriter.COMPRESSION_ATTRIBUTE)) {
+					Assert.assertEquals(n.getNodeValue(), compression);
+				}
 			}
 		}
-		assertEquals(destNode.getTextContent(), srcNode.getTextContent());
+		// compare the contents of the BinData node
+		Assert.assertEquals(destNode.getTextContent(), srcNode.getTextContent());
 	}
 
 	/**
@@ -285,7 +316,8 @@ public class Schema2011_06_TO_2010_06_Test
 		//components/specification/released-schema/2010-06/
 
 		/** The transform file */
-		STYLESHEET = this.getClass().getResourceAsStream("/transforms/2011-06-to-2010-06.xsl");
+		STYLESHEET_A = this.getClass().getResourceAsStream("/transforms/2012-06-to-2011-06.xsl");
+		STYLESHEET_B = this.getClass().getResourceAsStream("/transforms/2011-06-to-2010-06.xsl");
 		//components/specification/transforms/
 
     	files = new ArrayList<File>();
@@ -308,7 +340,7 @@ public class Schema2011_06_TO_2010_06_Test
     }
 
 	/**
-     * Tests the XSLT used to downgrade from schema 2011-06 to 2010-06.
+     * Tests the XSLT used to downgrade from current schema to 2010-06.
      * An XML file with an image is created and the stylesheet is applied.
      * @throws Exception Thrown if an error occurred.
      */
@@ -316,35 +348,39 @@ public class Schema2011_06_TO_2010_06_Test
 	public void testDowngradeTo201006ImageNoMetadata()
 		throws Exception
 	{
-		File f = File.createTempFile("testDowngradeTo201006ImageNoMetadata",
+		File inFile = File.createTempFile("testDowngradeTo201006ImageNoMetadata",
 				"."+OME_XML_FORMAT);
-		files.add(f);
-		File output = File.createTempFile(
+		files.add(inFile);
+		File middleFileA = File.createTempFile("testDowngradeTo201006ImageNoMetadataMiddleA",
+				"."+OME_XML_FORMAT);
+		files.add(middleFileA);
+		File outputFile = File.createTempFile(
 				"testDowngradeTo201006ImageNoMetadataOutput",
 				"."+OME_XML_FORMAT);
-		files.add(output);
+		files.add(outputFile);
 		XMLMockObjects xml = new  XMLMockObjects();
 		XMLWriter writer = new XMLWriter();
-		writer.writeFile(f, xml.createImage(), true);
+		writer.writeFile(inFile, xml.createImage(), true);
 
 // Dump out file for debuging
 //		File fCheckIn  = new File("/Users/andrew/Desktop/wibble1.xml");
 //		writer.writeFile(fCheckIn , xml.getRoot(), true);
+		transformFileWithStream(inFile, middleFileA, STYLESHEET_A);
+		transformFileWithStream(middleFileA, outputFile, STYLESHEET_B);
 
-		transformFileWithStream(f, output, STYLESHEET);
-		Document doc = anOmeValidator.parseFileWithStreamArray(output, schemaArray);
-		assertNotNull(doc);
+		Document doc = anOmeValidator.parseFileWithStreamArray(outputFile, schemaArray);
+		Assert.assertNotNull(doc);
 
 		//Should only have one root node i.e. OME node
 		NodeList list = doc.getChildNodes();
-		assertEquals(list.getLength(), 1);
+		Assert.assertEquals(list.getLength(), 1);
 		Node root = list.item(0);
-		assertEquals(root.getNodeName(), XMLWriter.OME_TAG);
+		Assert.assertEquals(root.getNodeName(), XMLWriter.OME_TAG);
 		//now analyse the root node
 		list = root.getChildNodes();
 		String name;
 		Node n;
-		Document docSrc = anOmeValidator.parseFile(f, null);
+		Document docSrc = anOmeValidator.parseFile(inFile, null);
 		Node rootSrc = docSrc.getChildNodes().item(0);
 		Node imageNode = null;
 		NodeList listSrc = rootSrc.getChildNodes();

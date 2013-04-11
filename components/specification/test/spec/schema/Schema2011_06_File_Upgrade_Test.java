@@ -748,7 +748,7 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(ref.ROI1Shape1Label, point1.getText());
     }
 
-    @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
+    @Test (enabled=false, groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape2() {
         Assert.assertNotNull(union2);
         shape2 = union2.getShape(0);

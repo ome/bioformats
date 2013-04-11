@@ -410,7 +410,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertNull(lightsourceSettings.getMicrobeamManipulation());
     }
 
-    @Test (groups = {"11-06-i-links"}, dependsOnGroups = {"11-06-i-image", "11-06-i-lightsource"})
+    @Test (enabled=false, groups = {"11-06-i-links"}, dependsOnGroups = {"11-06-i-image", "11-06-i-lightsource"})
     public void testChannel0ToLightsourceLinkage() {
         Assert.assertNotNull(channel0);
         LightSourceSettings lightsourceSettings = channel0.getLightSourceSettings();
@@ -443,7 +443,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Image0DetectorSettings0Voltage, detectorSettings.getVoltage());
     }
 
-    @Test (groups = {"11-06-i-links"}, dependsOnGroups = {"11-06-i-image", "11-06-i-detector"})
+    @Test (enabled=false, groups = {"11-06-i-links"}, dependsOnGroups = {"11-06-i-image", "11-06-i-detector"})
     public void testChannel0ToDetectorLinkage() {
         Assert.assertNotNull(channel0);
         DetectorSettings detectorSettings = channel0.getDetectorSettings();
