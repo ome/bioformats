@@ -282,8 +282,6 @@ def processMetadataTemplate(template, outputFilename, opts):
 	"""
 	args = opts.args
 	template = template_path(template, opts)
-	outputFilename = generated_filename(outputFilename, TYPE_SOURCE, opts)
-	outputFilename = os.path.join(opts.outdir, outputFilename)
 
 	model = parseXmlSchema(opts)
 	indexes = dict()
@@ -321,12 +319,21 @@ def processMetadataTemplate(template, outputFilename, opts):
 		if objectName not in customContent:
 			customContent[objectName] = dict()
 		customContent[objectName][propertyName] = customTemplate.render()
-	content = template.generate(fu=fu, model=model, parents=parents,
-	                            is_multi_path=is_multi_path, indexes=indexes,
-	                            customContent=customContent).render()
-	f = open(outputFilename, "w")
-	f.write(content)
-	f.close()
+
+	for filetype in [TYPE_SOURCE, TYPE_HEADER]:
+		try:
+			fullname = generated_filename(outputFilename, filetype, opts)
+		except ModelProcessingError:
+			continue
+
+		fullname = os.path.join(opts.outdir, fullname)
+
+		content = template.generate(fu=fu, model=model, parents=parents,
+					    is_multi_path=is_multi_path, indexes=indexes,
+					    customContent=customContent).render()
+		f = open(fullname, "w")
+		f.write(content)
+		f.close()
 
 def omeXmlMetadataMain(opts):
 	"""

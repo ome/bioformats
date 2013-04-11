@@ -246,11 +246,11 @@ def generated_filename(name, type, opts):
         return name + JAVA_SOURCE_SUFFIX
     elif (opts.lang == LANG_CXX and type == TYPE_SOURCE):
         return name + CXX_SOURCE_SUFFIX
-    elif (opts.lang == LANG_JAVA and type == TYPE_HEADER):
+    elif (opts.lang == LANG_CXX and type == TYPE_HEADER):
         return name + CXX_HEADER_SUFFIX
     else:
         raise ModelProcessingError(
-            "Invalid language/filetype combination: %s/%s" % opts.lang/type)
+            "Invalid language/filetype combination: %s/%s" % (opts.lang, type))
 
 def resolve_parents(model, element_name):
     """
