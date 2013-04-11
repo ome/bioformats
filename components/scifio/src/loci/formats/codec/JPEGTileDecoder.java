@@ -93,9 +93,29 @@ public class JPEGTileDecoder {
     this.in = in;
     tiles = new TileCache(y, h);
 
-    // pre-process the stream to make sure that the
-    // image width and height are non-zero
+    preprocess(this.in);
 
+    try {
+      Toolkit toolkit = Toolkit.getDefaultToolkit();
+      byte[] data = new byte[this.in.available()];
+      this.in.readFully(data);
+      Image image = toolkit.createImage(data);
+      ImageProducer producer = image.getSource();
+
+      consumer = new TileConsumer(producer, y, h);
+      producer.startProduction(consumer);
+      while (producer.isConsumer(consumer));
+    }
+    catch (IOException e) { }
+  }
+
+  /**
+    * Pre-process the stream to make sure that the
+    * image width and height are non-zero.  Returns an array containing
+    * the image width and height.
+    */
+  public int[] preprocess(RandomAccessInputStream in) {
+    int[] dims = new int[2];
     try {
       long fp = in.getFilePointer();
       boolean littleEndian = in.isLittleEndian();
@@ -113,10 +133,15 @@ public class JPEGTileDecoder {
           in.skipBytes(1);
           int height = in.readShort() & 0xffff;
           int width = in.readShort() & 0xffff;
+
           if (height == 0 || width == 0) {
             throw new RuntimeException(
               "Width or height > 65500 is not supported.");
           }
+
+          dims[0] = width;
+          dims[1] = height;
+
           break;
         }
         else if (pointer + length - 2 < in.length()) {
@@ -131,19 +156,7 @@ public class JPEGTileDecoder {
       in.order(littleEndian);
     }
     catch (IOException e) { }
-
-    try {
-      Toolkit toolkit = Toolkit.getDefaultToolkit();
-      byte[] data = new byte[this.in.available()];
-      this.in.readFully(data);
-      Image image = toolkit.createImage(data);
-      ImageProducer producer = image.getSource();
-
-      consumer = new TileConsumer(producer, y, h);
-      producer.startProduction(consumer);
-      while (producer.isConsumer(consumer));
-    }
-    catch (IOException e) { }
+    return dims;
   }
 
   public byte[] getScanline(int y) {
