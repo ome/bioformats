@@ -1073,12 +1073,15 @@ class TemplateInfo(object):
         except KeyError:
             return False
 
-def parseXmlSchema(filenames, namespace=DEFAULT_NAMESPACE):
+def parseXmlSchema(opts):
     """
     Entry point for XML Schema parsing into an OME Model.
     """
     # The following two statements are required to "prime" the generateDS
     # code and ensure we have reasonable namespace support.
+    filenames = opts.args
+    namespace = opts.namespace
+
     logging.debug("Namespace: %s" % namespace)
     set_type_constants(namespace)
     updateTypeMaps(namespace)

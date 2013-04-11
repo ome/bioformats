@@ -112,13 +112,8 @@ def main(opts):
 	classes in the output directory.
 	"""
 
-	namespace = opts.namespace
-	outdir = opts.outdir
-	lang = opts.lang
-	package = opts.package
-
-	model = parseXmlSchema(opts.args, namespace)
-	fu = TemplateInfo(outdir, package)
+	model = parseXmlSchema(opts)
+	fu = TemplateInfo(opts.outdir, opts.package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	base, filename = os.path.split(CLASS_TEMPLATE)
 	name, extension = os.path.splitext(filename)
@@ -160,7 +155,7 @@ def main(opts):
 			customAsXMLElementPropertyContent[propertyName] = content
 		# END Custom templates for asXMLElment()
 		parents = resolve_parents(model, obj.name)
-		f = open(os.path.join(outdir, "%s.java" % obj.name), "w")
+		f = open(os.path.join(opts.outdir, "%s.java" % obj.name), "w")
 		classContent = template.generate(
 				fu=fu, klass=obj, parents=parents, model=model,
 				customContent=customContent,
@@ -194,20 +189,15 @@ def enumTypesMain(opts):
 	classes for enumeration types in an output directory.
 	"""
 
-	namespace = opts.namespace
-	outdir = opts.outdir
-	lang = opts.lang
-	package = opts.package
-
-	model = parseXmlSchema(opts.args, namespace)
-	fu = TemplateInfo(outdir, package)
+	model = parseXmlSchema(opts)
+	fu = TemplateInfo(opts.outdir, opts.package)
 	template = NewTextTemplate(open(ENUM_TEMPLATE).read())
 	for obj in model.objects.values():
 		for prop in obj.properties.values():
 			if not prop.isEnumeration:
 				continue
 			print "%s: %s" % (prop.name, prop.javaType)
-			path = os.path.join(outdir, "%s.java" % prop.javaType)
+			path = os.path.join(opts.outdir, "%s.java" % prop.javaType)
 			f = open(path, "w")
 			classContent = template.generate(fu=fu, klass=prop,
 				enum_value_name=enum_value_name).render()
@@ -220,13 +210,8 @@ def enumHandlersMain(opts):
 	classes for enumeration handlers in an output directory.
 	"""
 
-	namespace = opts.namespace
-	outdir = opts.outdir
-	lang = opts.lang
-	package = opts.package
-
-	model = parseXmlSchema(opts.args, namespace)
-	fu = TemplateInfo(outdir, package)
+	model = parseXmlSchema(opts)
+	fu = TemplateInfo(opts.outdir, opts.package)
 	base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
 	config = ConfigObj(os.path.join(base, "enum_handler.cfg"))
 	template = NewTextTemplate(open(ENUM_HANDLER_TEMPLATE).read())
@@ -235,7 +220,7 @@ def enumHandlersMain(opts):
 			if not prop.isEnumeration:
 				continue
 			print "%s: %s" % (prop.name, prop.javaType)
-			path = os.path.join(outdir,
+			path = os.path.join(opts.outdir,
 			                    "%sEnumHandler.java" % prop.javaType)
 			f = open(path, "w")
 			classContent = template.generate(fu=fu, klass=prop,
@@ -289,13 +274,14 @@ def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0
 				results[key].append(to_append)
 	return is_multi_path
 
-def processMetadataTemplate(template, outputFilename, namespace, args):
+def processMetadataTemplate(template, outputFilename, opts):
 	"""
 	Actually does the work of processing the model and providing the model
 	to a given "Metadata" template for interface or concrete class code
 	generation.
 	"""
-	model = parseXmlSchema(args, namespace)
+	args = opts.args
+	model = parseXmlSchema(opts)
 	indexes = dict()
 	parents = dict()
 	is_multi_path = dict()
@@ -344,13 +330,8 @@ def omeXmlMetadataMain(opts):
 	MetadataStore and MetadataRetrieve implementation.
 	"""
 
-	namespace = opts.namespace
-	outdir = opts.outdir
-	lang = opts.lang
-	package = opts.package
-
 	processMetadataTemplate(OMEXML_METADATA_TEMPLATE, "OMEXMLMetadataImpl.java",
-	                        namespace, opts.args)
+	                        namespace, opts)
 
 def omeroMetadataMain(opts):
 	"""
@@ -358,13 +339,8 @@ def omeroMetadataMain(opts):
 	MetadataRetrieve implementation.
 	"""
 
-	namespace = opts.namespace
-	outdir = opts.outdir
-	lang = opts.lang
-	package = opts.package
-
 	processMetadataTemplate(OMERO_METADATA_TEMPLATE, "OmeroMetadata.java",
-	                        namespace, opts.args)
+	                        namespace, opts)
 
 def omeroModelMain(opts):
 	"""
@@ -372,13 +348,8 @@ def omeroModelMain(opts):
 	MetadataRetrieve implementation.
 	"""
 
-	namespace = opts.namespace
-	outdir = opts.outdir
-	lang = opts.lang
-	package = opts.package
-
 	processMetadataTemplate(OMERO_MODEL_TEMPLATE, "OmeroModel.xml",
-	                        namespace, opts.args)
+	                        namespace, opts)
 
 def metadataStoreMain(opts):
 	"""
@@ -387,7 +358,7 @@ def metadataStoreMain(opts):
 	"""
 
 	processMetadataTemplate(METADATA_STORE_TEMPLATE, "MetadataStore.java",
-	                        namespace, opts.args)
+	                        namespace, opts)
 
 def metadataRetrieveMain(opts):
 	"""
@@ -396,7 +367,7 @@ def metadataRetrieveMain(opts):
 	"""
 
 	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE, "MetadataRetrieve.java",
-	                        namespace, opts.args)
+	                        namespace, opts)
 
 def metadataAggregateMain(opts):
 	"""
@@ -405,7 +376,7 @@ def metadataAggregateMain(opts):
 	"""
 
 	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE, "AggregateMetadata.java",
-	                        namespace, opts.args)
+	                        namespace, opts)
 
 def dummyMetadataMain(opts):
 	"""
@@ -414,7 +385,7 @@ def dummyMetadataMain(opts):
 	"""
 
 	processMetadataTemplate(DUMMY_METADATA_TEMPLATE, "DummyMetadata.java",
-	                        namespace, opts.args)
+	                        namespace, opts)
 
 def filterMetadataMain(opts):
 	"""
@@ -423,7 +394,7 @@ def filterMetadataMain(opts):
 	"""
 
 	processMetadataTemplate(FILTER_METADATA_TEMPLATE, "FilterMetadata.java",
-	                        namespace, opts.args)
+	                        namespace, opts)
 
 def debugMain(opts):
 	"""
@@ -431,13 +402,8 @@ def debugMain(opts):
 	generated data to STDOUT.
 	"""
 
-	namespace = opts.namespace
-	outdir = opts.outdir
-	lang = opts.lang
-	package = opts.package
-
-	model = parseXmlSchema(opts.args, namespace)
-	fu = TemplateInfo(outdir, package)
+	model = parseXmlSchema(opts)
+	fu = TemplateInfo(opts.outdir, opts.package)
 	template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 	base, filename = os.path.split(CLASS_TEMPLATE)
 	name, extension = os.path.splitext(filename)
@@ -471,11 +437,6 @@ def docGenMain(opts):
 	the ArityOfSchema page on http://ome-xml.org
 	"""
 
-	namespace = opts.namespace
-	outdir = opts.outdir
-	lang = opts.lang
-	package = opts.package
-
 	for theSchemas in [
 	["OME",           "../specification/InProgress/ome.xsd"],
 	["SPW",           "../specification/InProgress/SPW.xsd"],
@@ -484,8 +445,9 @@ def docGenMain(opts):
 	["ROI",            "../specification/InProgress/ROI.xsd"]
 	]:
 		prefix = theSchemas[0] + ":"
-		model = parseXmlSchema([theSchemas[1]], namespace)
-		fu = TemplateInfo(outdir, package)
+		opts.args = [theSchemas[1]]
+		model = parseXmlSchema(opts)
+		fu = TemplateInfo(opts.outdir, opts.package)
 		template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 		print " == `%s` ==" % (prefix)
 		for obj in model.objects.values():
@@ -503,11 +465,6 @@ def tabGenMain(opts):
 	Added by Andrew Patterson (October 2008) to generate content for arity spreadsheet
 	"""
 
-	namespace = opts.namespace
-	outdir = opts.outdir
-	lang = opts.lang
-	package = opts.package
-
 	for theSchemas in [
 			["OME",       "../specification/InProgress/ome.xsd",
 				[["OME", "OME:"]]],
@@ -522,8 +479,9 @@ def tabGenMain(opts):
 				[["BinaryFile", "OME:Instrument:OTF:BinaryFile:"]]]
 		]:
 		prefix = theSchemas[0] + ":"
-		model = parseXmlSchema([theSchemas[1]], namespace)
-		fu = TemplateInfo(outdir, package)
+		opts.args = [theSchemas[1]]
+		model = parseXmlSchema(opts)
+		fu = TemplateInfo(opts.outdir, opts.package)
 		template = NewTextTemplate(open(CLASS_TEMPLATE).read())
 		for theToplevelNode in theSchemas[2]:
 			parentlist(model, theToplevelNode[0], theToplevelNode[1])
@@ -586,7 +544,7 @@ if __name__ == '__main__':
 	a = opts.args[0]
 	opts.args = opts.args[1:]
 
-	if len(opts.args) < 1:
+	if (a != "doc_gen" and a != "tab_gen") and len(opts.args) < 1:
 		mainUsage("Expecting at least one XSD file path!")
 
 	if a == "java_classes":
