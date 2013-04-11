@@ -112,6 +112,8 @@ public class DeltavisionReader extends FormatReader {
   private String logFile;
   private String deconvolutionLogFile;
 
+  private boolean truncatedFileFlag = false;
+
   // -- Constructor --
 
   /** Constructs a new Deltavision reader. */
@@ -172,36 +174,9 @@ public class DeltavisionReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int[] coords = getZCTCoords(no);
-
-    int[] newCoords = new int[4];
-    int coordIndex = 0;
-    int dimIndex = 2;
-
-    while (coordIndex < newCoords.length) {
-      char dim = getDimensionOrder().charAt(dimIndex++);
-
-      switch (dim) {
-        case 'Z':
-          newCoords[coordIndex++] = coords[0];
-          break;
-        case 'C':
-          newCoords[coordIndex++] = coords[1];
-          break;
-        case 'T':
-          newCoords[coordIndex++] = getSeries();
-          newCoords[coordIndex++] = coords[2];
-          break;
-      }
-    }
-
-    int planeIndex = FormatTools.positionToRaster(lengths, newCoords);
-
-    // read the image plane's pixel data
-    long planeSize = (long) FormatTools.getPlaneSize(this);
-    long planeOffset = planeSize * planeIndex;
-    long offset = planeOffset + HEADER_LENGTH + extSize;
+    long offset = getPlaneByteOffset(coords[0], coords[1], coords[2]);
     if (offset < in.length()) {
-      in.seek(HEADER_LENGTH + extSize + planeOffset);
+      in.seek(offset);
       readPlane(in, x, getSizeY() - h - y, w, h, buf);
 
       // reverse the order of the rows
@@ -233,6 +208,21 @@ public class DeltavisionReader extends FormatReader {
       xTiles = 0;
       yTiles = 0;
     }
+  }
+
+  /**
+   * This flag indicates if the file is known to be truncated.
+   * If true, the dimension size information is kept
+   * as it is specified in the file header, otherwise the length
+   * of the file is used to override size information.
+   *
+   * This flag must be set before {@link #setId(String)} is called.
+   *
+   * Default is false.
+   */
+  public void setTruncatedFileFlag(boolean truncatedFileFlag) {
+      FormatTools.assertId(currentId, false, 1);
+      this.truncatedFileFlag = truncatedFileFlag;
   }
 
   // -- Internal FormatReader API methods --
@@ -329,7 +319,7 @@ public class DeltavisionReader extends FormatReader {
       getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
     int realPlaneCount =
       (int) ((in.length() - HEADER_LENGTH - extSize) / planeSize);
-    if (realPlaneCount < getImageCount()) {
+    if (realPlaneCount < getImageCount() && !truncatedFileFlag) {
       LOGGER.debug("Truncated file");
       m.imageCount = realPlaneCount;
       if (sizeZ == 1) {
@@ -864,6 +854,44 @@ public class DeltavisionReader extends FormatReader {
    */
   private int getTotalOffset(int currentZ, int currentW, int currentT) {
     return (zSize * currentZ) + (wSize * currentW) + (tSize * currentT);
+  }
+
+
+  /**
+   * Given any specific Z, W, and T of a plane, determine the absolute
+   * byte offset of the plane in the file.
+   * @param currentZ
+   * @param currentW
+   * @param currentT
+   */
+  public long getPlaneByteOffset(int currentZ, int currentW, int currentT) {
+      FormatTools.assertId(currentId, true, 1);
+      int[] newCoords = new int[4];
+      int coordIndex = 0;
+      int dimIndex = 2;
+
+      while (coordIndex < newCoords.length) {
+        char dim = getDimensionOrder().charAt(dimIndex++);
+
+        switch (dim) {
+          case 'Z':
+            newCoords[coordIndex++] = currentZ;
+            break;
+          case 'C':
+            newCoords[coordIndex++] = currentW;
+            break;
+          case 'T':
+            newCoords[coordIndex++] = getSeries();
+            newCoords[coordIndex++] = currentT;
+            break;
+        }
+      }
+
+      int planeIndex = FormatTools.positionToRaster(lengths, newCoords);
+      long planeSize = (long) FormatTools.getPlaneSize(this);
+      long planeOffset = planeSize * planeIndex;
+      long offset = planeOffset + HEADER_LENGTH + extSize;
+      return offset;
   }
 
   /** Find the log files. */
