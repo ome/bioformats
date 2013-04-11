@@ -60,131 +60,80 @@
     <exec executable="./xslt/xslt-test2003FCTo200809To200909"/>
   </target>
 
+  <macrodef name="xsd_fu" description="Run xsd_fu">
+    <attribute name="package" default="ome.xml.model"/>
+    <attribute name="lang" default="Java"/>
+    <attribute name="output"/>
+    <element name="args" implicit="yes"/>
+    <sequential>
+      <exec executable="python" failonerror="true">
+	<arg value="xsd-fu"/>
+	<args/>
+	<arg value="-p"/>
+	<arg value="@{package}"/>
+	<arg value="-l"/>
+	<arg value="@{lang}"/>
+	<arg value="-o"/>
+	<arg value="@{output}/"/>
+	<arg value="${xsdfu.ome}"/>
+	<arg value="${xsdfu.binaryfile}"/>
+	<arg value="${xsdfu.roi}"/>
+	<arg value="${xsdfu.sa}"/>
+	<arg value="${xsdfu.spw}"/>
+      </exec>
+    </sequential>
+  </macrodef>
+
   <target name="generate-ome-xml">
     <property name="xsdfu.modelpath" value="../ome-xml/build/src/ome/xml/model"/>
     <property name="xsdfu.enumpath" value="../ome-xml/build/src/ome/xml/model/enums"/>
     <property name="xsdfu.handlerpath" value="../ome-xml/build/src/ome/xml/model/enums/handlers"/>
 
     <!-- Generate the OME model object classes -->
-    <exec executable="python" failonerror="true">
-      <arg value="xsd-fu"/>
+    <xsd_fu package="ome.xml.model" lang="Java" output="${xsdfu.modelpath}">
       <arg value="java_classes"/>
-      <arg value="-p"/>
-      <arg value="ome.xml.model"/>
-      <arg value="-o"/>
-      <arg value="${xsdfu.modelpath}/"/>
-      <arg value="${xsdfu.ome}"/>
-      <arg value="${xsdfu.binaryfile}"/>
-      <arg value="${xsdfu.roi}"/>
-      <arg value="${xsdfu.sa}"/>
-      <arg value="${xsdfu.spw}"/>
-    </exec>
+    </xsd_fu>
+
     <!-- Generate the OME model enumeration classes -->
-    <exec executable="python" failonerror="true">
-      <arg value="xsd-fu"/>
+    <xsd_fu package="ome.xml.model.enums" lang="Java" output="${xsdfu.enumpath}">
       <arg value="enum_types"/>
-      <arg value="-p"/>
-      <arg value="ome.xml.model.enums"/>
-      <arg value="-o"/>
-      <arg value="${xsdfu.enumpath}/"/>
-      <arg value="${xsdfu.ome}"/>
-      <arg value="${xsdfu.binaryfile}"/>
-      <arg value="${xsdfu.roi}"/>
-      <arg value="${xsdfu.sa}"/>
-      <arg value="${xsdfu.spw}"/>
-    </exec>
+    </xsd_fu>
+
     <!-- Generate the handlers for the OME model enumeration classes -->
-    <exec executable="python" failonerror="true">
-      <arg value="xsd-fu"/>
+    <xsd_fu package="ome.xml.model.enums.handlers" lang="Java" output="${xsdfu.handlerpath}">
       <arg value="enum_handlers"/>
-      <arg value="-p"/>
-      <arg value="ome.xml.model.enums.handlers"/>
-      <arg value="-o"/>
-      <arg value="${xsdfu.handlerpath}/"/>
-      <arg value="${xsdfu.ome}"/>
-      <arg value="${xsdfu.binaryfile}"/>
-      <arg value="${xsdfu.roi}"/>
-      <arg value="${xsdfu.sa}"/>
-      <arg value="${xsdfu.spw}"/>
-    </exec>
+    </xsd_fu>
   </target>
 
   <target name="generate-metadata">
     <property name="xsdfu.metadatapath" value="../scifio/build/src/loci/formats/meta"/>
 
     <!-- Generate the metadata interfaces -->
-    <exec executable="python" failonerror="true">
-      <arg value="xsd-fu"/>
+    <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
       <arg value="metadata_store"/>
-      <arg value="-o"/>
-      <arg value="${xsdfu.metadatapath}/"/>
-      <arg value="${xsdfu.ome}"/>
-      <arg value="${xsdfu.binaryfile}"/>
-      <arg value="${xsdfu.roi}"/>
-      <arg value="${xsdfu.sa}"/>
-      <arg value="${xsdfu.spw}"/>
-    </exec>
-    <exec executable="python" failonerror="true">
-      <arg value="xsd-fu"/>
+    </xsd_fu>
+    <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
       <arg value="metadata_retrieve"/>
-      <arg value="-o"/>
-      <arg value="${xsdfu.metadatapath}/"/>
-      <arg value="${xsdfu.ome}"/>
-      <arg value="${xsdfu.binaryfile}"/>
-      <arg value="${xsdfu.roi}"/>
-      <arg value="${xsdfu.sa}"/>
-      <arg value="${xsdfu.spw}"/>
-    </exec>
+    </xsd_fu>
     <!-- Generate the metadata implementations -->
-    <exec executable="python" failonerror="true">
-      <arg value="xsd-fu"/>
+    <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
       <arg value="metadata_aggregate"/>
-      <arg value="-o"/>
-      <arg value="${xsdfu.metadatapath}/"/>
-      <arg value="${xsdfu.ome}"/>
-      <arg value="${xsdfu.binaryfile}"/>
-      <arg value="${xsdfu.roi}"/>
-      <arg value="${xsdfu.sa}"/>
-      <arg value="${xsdfu.spw}"/>
-    </exec>
-    <exec executable="python" failonerror="true">
-      <arg value="xsd-fu"/>
+    </xsd_fu>
+    <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
       <arg value="dummy_metadata"/>
-      <arg value="-o"/>
-      <arg value="${xsdfu.metadatapath}/"/>
-      <arg value="${xsdfu.ome}"/>
-      <arg value="${xsdfu.binaryfile}"/>
-      <arg value="${xsdfu.roi}"/>
-      <arg value="${xsdfu.sa}"/>
-      <arg value="${xsdfu.spw}"/>
-    </exec>
-    <exec executable="python" failonerror="true">
-      <arg value="xsd-fu"/>
+    </xsd_fu>
+    <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
       <arg value="filter_metadata"/>
-      <arg value="-o"/>
-      <arg value="${xsdfu.metadatapath}/"/>
-      <arg value="${xsdfu.ome}"/>
-      <arg value="${xsdfu.binaryfile}"/>
-      <arg value="${xsdfu.roi}"/>
-      <arg value="${xsdfu.sa}"/>
-      <arg value="${xsdfu.spw}"/>
-    </exec>
+    </xsd_fu>
+
   </target>
 
   <target name="generate-ome-xml-metadata">
     <property name="xsdfu.scifiopath" value="../scifio/build/src/loci/formats/ome"/>
 
-    <exec executable="python" failonerror="true">
-      <arg value="xsd-fu"/>
+    <xsd_fu lang="Java" output="${xsdfu.scifiopath}">
       <arg value="omexml_metadata"/>
-      <arg value="-o"/>
-      <arg value="${xsdfu.scifiopath}/"/>
-      <arg value="${xsdfu.ome}"/>
-      <arg value="${xsdfu.binaryfile}"/>
-      <arg value="${xsdfu.roi}"/>
-      <arg value="${xsdfu.sa}"/>
-      <arg value="${xsdfu.spw}"/>
-    </exec>
+    </xsd_fu>
   </target>
 
   <target name="clean" description="Cleans the published schemas and specification jar">
