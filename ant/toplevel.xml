@@ -913,7 +913,8 @@ Type "ant -p" for a list of targets.
       jar-ome-xml,
       jar-poi-loci,
       jar-scifio,
-      jar-scifio-tools"
+      jar-scifio-tools,
+      jar-specification"
     description="create JAR file encompassing several LOCI tools">
     <echo>----------=========== loci_tools ===========----------</echo>
     <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
