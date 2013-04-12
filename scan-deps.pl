@@ -264,7 +264,7 @@ ZZ
 my %assumeng = (
   NAME    => "assumeng",
   TITLE   => "AssumeNG",
-  JAR     => "assumeng-1.2.3.jar",
+  JAR     => "assumeng-1.2.4.jar",
   PACKAGE => "nl.javadude.assumeng",
   LICENSE => "Public domain",
   URL     => "https://github.com/hierynomus/assumeng/",
@@ -467,6 +467,16 @@ my %testng = (
 testing framework used for LOCI software automated test suite
 ZZ
   VERSION => "5.7"
+);
+
+my %turbojpeg = (
+  NAME    => "libjpeg-turbo",
+  TITLE   => "libjpeg-turbo",
+  JAR     => "turbojpeg.jar",
+  PACKAGE => "org.libjpegturbo.turbojpeg",
+  URL     => "http://sourceforge.net/projects/libjpeg-turbo",
+  NOTES   => "used to read large JPEG and .ndpi images",
+  VERSION => "1.2.1"
 );
 
 my %velocity = (

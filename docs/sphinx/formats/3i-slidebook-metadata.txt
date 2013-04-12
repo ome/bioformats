@@ -9,44 +9,47 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 29 of them (6%).
-  * Of those, Bio-Formats fully or partially converts 29 (100%).
+Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 32 of them (6%).
+  * Of those, Bio-Formats fully or partially converts 32 (100%).
 
 Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats Olympus Slidebook format reader:
-  * `Channel : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_ID>`_
-  * `Channel : NDFilter <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_NDFilter>`_
-  * `Channel : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_Name>`_
-  * `Channel : SamplesPerPixel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`_
-  * `Image : Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Description>`_
-  * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
-  * `Image : InstrumentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_InstrumentRef>`_
-  * `Image : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Name>`_
-  * `Instrument : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Instrument_ID>`_
-  * `Objective : Correction <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_Correction>`_
-  * `Objective : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_ID>`_
-  * `Objective : Immersion <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_Immersion>`_
-  * `Objective : Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_Model>`_
-  * `Objective : NominalMagnification <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`_
-  * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
-  * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
-  * `Pixels : PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`_
-  * `Pixels : PhysicalSizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeY>`_
-  * `Pixels : PhysicalSizeZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeZ>`_
-  * `Pixels : SizeC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeC>`_
-  * `Pixels : SizeT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeT>`_
-  * `Pixels : SizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeX>`_
-  * `Pixels : SizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeY>`_
-  * `Pixels : SizeZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeZ>`_
-  * `Pixels : Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_Type>`_
-  * `Plane : ExposureTime <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_ExposureTime>`_
-  * `Plane : TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheC>`_
-  * `Plane : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheT>`_
-  * `Plane : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheZ>`_
+  * :schema:`Channel : ID <OME-2012-06/ome_xsd.html#Channel_ID>`
+  * :schema:`Channel : NDFilter <OME-2012-06/ome_xsd.html#Channel_NDFilter>`
+  * :schema:`Channel : Name <OME-2012-06/ome_xsd.html#Channel_Name>`
+  * :schema:`Channel : SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
+  * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
+  * :schema:`Image : Description <OME-2012-06/ome_xsd.html#Image_Description>`
+  * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
+  * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#Image_InstrumentRef>`
+  * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
+  * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
+  * :schema:`Objective : Correction <OME-2012-06/ome_xsd.html#Objective_Correction>`
+  * :schema:`Objective : ID <OME-2012-06/ome_xsd.html#Objective_ID>`
+  * :schema:`Objective : Immersion <OME-2012-06/ome_xsd.html#Objective_Immersion>`
+  * :schema:`Objective : Model <OME-2012-06/ome_xsd.html#Objective_Model>`
+  * :schema:`Objective : NominalMagnification <OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`
+  * :schema:`ObjectiveSettings : ID <OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`
+  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
+  * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
+  * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
+  * :schema:`Pixels : PhysicalSizeX <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`
+  * :schema:`Pixels : PhysicalSizeY <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeY>`
+  * :schema:`Pixels : PhysicalSizeZ <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeZ>`
+  * :schema:`Pixels : SizeC <OME-2012-06/ome_xsd.html#Pixels_SizeC>`
+  * :schema:`Pixels : SizeT <OME-2012-06/ome_xsd.html#Pixels_SizeT>`
+  * :schema:`Pixels : SizeX <OME-2012-06/ome_xsd.html#Pixels_SizeX>`
+  * :schema:`Pixels : SizeY <OME-2012-06/ome_xsd.html#Pixels_SizeY>`
+  * :schema:`Pixels : SizeZ <OME-2012-06/ome_xsd.html#Pixels_SizeZ>`
+  * :schema:`Pixels : Type <OME-2012-06/ome_xsd.html#Pixels_Type>`
+  * :schema:`Plane : ExposureTime <OME-2012-06/ome_xsd.html#Plane_ExposureTime>`
+  * :schema:`Plane : TheC <OME-2012-06/ome_xsd.html#Plane_TheC>`
+  * :schema:`Plane : TheT <OME-2012-06/ome_xsd.html#Plane_TheT>`
+  * :schema:`Plane : TheZ <OME-2012-06/ome_xsd.html#Plane_TheZ>`
 
-**Total supported: 29**
+**Total supported: 32**
 
-**Total unknown or missing: 404**
+**Total unknown or missing: 441**

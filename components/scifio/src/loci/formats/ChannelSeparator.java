@@ -170,7 +170,7 @@ public class ChannelSeparator extends ReaderWrapper {
       int c = getSizeC() / reader.getEffectiveSizeC();
       int source = getOriginalIndex(no);
       int channel = no % c;
-      int series = getSeries();
+      int series = getCoreIndex();
       int bpp = FormatTools.getBytesPerPixel(getPixelType());
 
       if (source != lastImageIndex || series != lastImageSeries ||

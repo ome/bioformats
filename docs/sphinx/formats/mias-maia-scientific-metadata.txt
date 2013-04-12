@@ -9,67 +9,77 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 433 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 52 of them (12%).
-  * Of those, Bio-Formats fully or partially converts 52 (100%).
+Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 62 of them (13%).
+  * Of those, Bio-Formats fully or partially converts 62 (100%).
 
 Supported fields
 ===============================================================================
 
 These fields are fully supported by the Bio-Formats MIAS format reader:
-  * `Channel : Color <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_Color>`_
-  * `Channel : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_ID>`_
-  * `Channel : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_Name>`_
-  * `Channel : SamplesPerPixel <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`_
-  * `Ellipse : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_ID>`_
-  * `Ellipse : RadiusX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_RadiusX>`_
-  * `Ellipse : RadiusY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_RadiusY>`_
-  * `Ellipse : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_TheT>`_
-  * `Ellipse : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_TheZ>`_
-  * `Ellipse : X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_X>`_
-  * `Ellipse : Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Ellipse_Y>`_
-  * `Experiment : Description <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experiment_Description>`_
-  * `Experiment : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experiment_ID>`_
-  * `Experiment : Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Experiment_Type>`_
-  * `Image : ExperimentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ExperimentRef>`_
-  * `Image : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ID>`_
-  * `Image : InstrumentRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_InstrumentRef>`_
-  * `Image : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_Name>`_
-  * `Image : ROIRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Image_ROIRef>`_
-  * `Instrument : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Instrument_ID>`_
-  * `Mask : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_ID>`_
-  * `Mask : X <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_X>`_
-  * `Mask : Y <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Mask_Y>`_
-  * `Objective : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_ID>`_
-  * `Objective : Model <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_Model>`_
-  * `Objective : NominalMagnification <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`_
-  * `Pixels : DimensionOrder <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`_
-  * `Pixels : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_ID>`_
-  * `Pixels : PhysicalSizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`_
-  * `Pixels : PhysicalSizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeY>`_
-  * `Pixels : SizeC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeC>`_
-  * `Pixels : SizeT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeT>`_
-  * `Pixels : SizeX <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeX>`_
-  * `Pixels : SizeY <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeY>`_
-  * `Pixels : SizeZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_SizeZ>`_
-  * `Pixels : Type <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Pixels_Type>`_
-  * `Plane : ExposureTime <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_ExposureTime>`_
-  * `Plane : TheC <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheC>`_
-  * `Plane : TheT <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheT>`_
-  * `Plane : TheZ <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plane_TheZ>`_
-  * `Plate : ColumnNamingConvention <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_ColumnNamingConvention>`_
-  * `Plate : ExternalIdentifier <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_ExternalIdentifier>`_
-  * `Plate : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_ID>`_
-  * `Plate : Name <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_Name>`_
-  * `Plate : RowNamingConvention <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Plate_RowNamingConvention>`_
-  * `ROI : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#ROI_ID>`_
-  * `Well : Column <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_Column>`_
-  * `Well : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_ID>`_
-  * `Well : Row <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#Well_Row>`_
-  * `WellSample : ID <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_ID>`_
-  * `WellSample : ImageRef <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_ImageRef>`_
-  * `WellSample : Index <http://www.openmicroscopy.org/Schemas/Documentation/Generated/OME-2012-06/ome_xsd.html#WellSample_Index>`_
+  * :schema:`Channel : Color <OME-2012-06/ome_xsd.html#Channel_Color>`
+  * :schema:`Channel : ID <OME-2012-06/ome_xsd.html#Channel_ID>`
+  * :schema:`Channel : Name <OME-2012-06/ome_xsd.html#Channel_Name>`
+  * :schema:`Channel : SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
+  * :schema:`Ellipse : ID <OME-2012-06/ome_xsd.html#Ellipse_ID>`
+  * :schema:`Ellipse : RadiusX <OME-2012-06/ome_xsd.html#Ellipse_RadiusX>`
+  * :schema:`Ellipse : RadiusY <OME-2012-06/ome_xsd.html#Ellipse_RadiusY>`
+  * :schema:`Ellipse : Text <OME-2012-06/ome_xsd.html#Ellipse_Text>`
+  * :schema:`Ellipse : TheT <OME-2012-06/ome_xsd.html#Ellipse_TheT>`
+  * :schema:`Ellipse : TheZ <OME-2012-06/ome_xsd.html#Ellipse_TheZ>`
+  * :schema:`Ellipse : X <OME-2012-06/ome_xsd.html#Ellipse_X>`
+  * :schema:`Ellipse : Y <OME-2012-06/ome_xsd.html#Ellipse_Y>`
+  * :schema:`Experiment : Description <OME-2012-06/ome_xsd.html#Experiment_Description>`
+  * :schema:`Experiment : ID <OME-2012-06/ome_xsd.html#Experiment_ID>`
+  * :schema:`Experiment : Type <OME-2012-06/ome_xsd.html#Experiment_Type>`
+  * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
+  * :schema:`Image : ExperimentRef <OME-2012-06/ome_xsd.html#Image_ExperimentRef>`
+  * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
+  * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#Image_InstrumentRef>`
+  * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
+  * :schema:`Image : ROIRef <OME-2012-06/ome_xsd.html#Image_ROIRef>`
+  * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
+  * :schema:`Mask : FillColor <OME-2012-06/ome_xsd.html#Mask_FillColor>`
+  * :schema:`Mask : Height <OME-2012-06/ome_xsd.html#Mask_Height>`
+  * :schema:`Mask : ID <OME-2012-06/ome_xsd.html#Mask_ID>`
+  * :schema:`Mask : StrokeColor <OME-2012-06/ome_xsd.html#Mask_StrokeColor>`
+  * :schema:`Mask : Width <OME-2012-06/ome_xsd.html#Mask_Width>`
+  * :schema:`Mask : X <OME-2012-06/ome_xsd.html#Mask_X>`
+  * :schema:`Mask : Y <OME-2012-06/ome_xsd.html#Mask_Y>`
+  * :schema:`Objective : ID <OME-2012-06/ome_xsd.html#Objective_ID>`
+  * :schema:`Objective : Model <OME-2012-06/ome_xsd.html#Objective_Model>`
+  * :schema:`Objective : NominalMagnification <OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`
+  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
+  * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
+  * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
+  * :schema:`Pixels : PhysicalSizeX <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`
+  * :schema:`Pixels : PhysicalSizeY <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeY>`
+  * :schema:`Pixels : SizeC <OME-2012-06/ome_xsd.html#Pixels_SizeC>`
+  * :schema:`Pixels : SizeT <OME-2012-06/ome_xsd.html#Pixels_SizeT>`
+  * :schema:`Pixels : SizeX <OME-2012-06/ome_xsd.html#Pixels_SizeX>`
+  * :schema:`Pixels : SizeY <OME-2012-06/ome_xsd.html#Pixels_SizeY>`
+  * :schema:`Pixels : SizeZ <OME-2012-06/ome_xsd.html#Pixels_SizeZ>`
+  * :schema:`Pixels : Type <OME-2012-06/ome_xsd.html#Pixels_Type>`
+  * :schema:`Plane : ExposureTime <OME-2012-06/ome_xsd.html#Plane_ExposureTime>`
+  * :schema:`Plane : TheC <OME-2012-06/ome_xsd.html#Plane_TheC>`
+  * :schema:`Plane : TheT <OME-2012-06/ome_xsd.html#Plane_TheT>`
+  * :schema:`Plane : TheZ <OME-2012-06/ome_xsd.html#Plane_TheZ>`
+  * :schema:`Plate : ColumnNamingConvention <OME-2012-06/ome_xsd.html#Plate_ColumnNamingConvention>`
+  * :schema:`Plate : ExternalIdentifier <OME-2012-06/ome_xsd.html#Plate_ExternalIdentifier>`
+  * :schema:`Plate : ID <OME-2012-06/ome_xsd.html#Plate_ID>`
+  * :schema:`Plate : Name <OME-2012-06/ome_xsd.html#Plate_Name>`
+  * :schema:`Plate : RowNamingConvention <OME-2012-06/ome_xsd.html#Plate_RowNamingConvention>`
+  * :schema:`PlateAcquisition : ID <OME-2012-06/ome_xsd.html#PlateAcquisition_ID>`
+  * :schema:`PlateAcquisition : MaximumFieldCount <OME-2012-06/ome_xsd.html#PlateAcquisition_MaximumFieldCount>`
+  * :schema:`PlateAcquisition : WellSampleRef <OME-2012-06/ome_xsd.html#PlateAcquisition_WellSampleRef>`
+  * :schema:`ROI : ID <OME-2012-06/ome_xsd.html#ROI_ID>`
+  * :schema:`Well : Column <OME-2012-06/ome_xsd.html#Well_Column>`
+  * :schema:`Well : ID <OME-2012-06/ome_xsd.html#Well_ID>`
+  * :schema:`Well : Row <OME-2012-06/ome_xsd.html#Well_Row>`
+  * :schema:`WellSample : ID <OME-2012-06/ome_xsd.html#WellSample_ID>`
+  * :schema:`WellSample : ImageRef <OME-2012-06/ome_xsd.html#WellSample_ImageRef>`
+  * :schema:`WellSample : Index <OME-2012-06/ome_xsd.html#WellSample_Index>`
 
-**Total supported: 52**
+**Total supported: 62**
 
-**Total unknown or missing: 381**
+**Total unknown or missing: 411**
