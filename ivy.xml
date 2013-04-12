@@ -26,6 +26,6 @@
     <dependency org="bf-deps" name="grib" rev="5.1.03"/>
     <dependency org="bf-deps" name="netcdf" rev="4.0"/>
     <dependency org="bf-deps" name="native-lib-loader" rev="2.0-SNAPSHOT"/>
-    <dependency org="bf-deps" name="assumeng" rev="1.2.3"/>
+    <dependency org="bf-deps" name="assumeng" rev="1.2.4"/>
   </dependencies>
 </ivy-module>
