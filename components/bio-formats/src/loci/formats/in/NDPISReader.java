@@ -76,6 +76,18 @@ public class NDPISReader extends FormatReader {
     return false;
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return readers[0].getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return readers[0].getOptimalTileHeight();
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -87,6 +99,8 @@ public class NDPISReader extends FormatReader {
     int[] zct = getZCTCoords(no);
     int channel = zct[1];
     readers[channel].setId(ndpiFiles[channel]);
+    readers[channel].setSeries(getSeries());
+    readers[channel].setResolution(getResolution());
     int cIndex = channel < readers[channel].getSizeC() ? channel : 0;
     int plane = readers[channel].getIndex(zct[0], cIndex, zct[2]);
 
@@ -116,6 +130,13 @@ public class NDPISReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       ndpiFiles = null;
+      if (readers != null) {
+        for (ChannelSeparator reader : readers) {
+          if (reader != null) {
+            reader.close();
+          }
+        }
+      }
     }
   }
 
@@ -145,6 +166,7 @@ public class NDPISReader extends FormatReader {
         int index = Integer.parseInt(key.replaceAll("Image", ""));
         ndpiFiles[index] = new Location(parent, value).getAbsolutePath();
         readers[index] = new ChannelSeparator(new NDPIReader());
+        readers[index].setFlattenedResolutions(hasFlattenedResolutions());
       }
     }
 
@@ -152,7 +174,7 @@ public class NDPISReader extends FormatReader {
     readers[0].setId(ndpiFiles[0]);
 
     core = new ArrayList<CoreMetadata>(readers[0].getCoreMetadataList());
-    for (int i=0; i<getSeriesCount(); i++) {
+    for (int i=0; i<core.size(); i++) {
       CoreMetadata ms = core.get(i);
       ms.sizeC = readers.length;
       ms.rgb = false;
