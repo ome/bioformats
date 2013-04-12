@@ -37,6 +37,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * GatanReader is the file format reader for Gatan files.
@@ -90,6 +91,9 @@ public class GatanReader extends FormatReader {
   private double gamma, mag, voltage;
   private String info;
 
+  private double posX, posY, posZ;
+  private double sampleTime;
+
   private boolean adjustEndianness = true;
   private int version;
 
@@ -138,6 +142,8 @@ public class GatanReader extends FormatReader {
       info = null;
       adjustEndianness = true;
       version = 0;
+      posX = posY = posZ = 0;
+      sampleTime = 0;
     }
   }
 
@@ -207,7 +213,7 @@ public class GatanReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (pixelSizes.size() >= 3) {
@@ -236,6 +242,25 @@ public class GatanReader extends FormatReader {
         }
       }
 
+      store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
+
+      if ((int) mag > 0) {
+        String objective = MetadataTools.createLSID("Objective", 0, 0);
+        store.setObjectiveID(objective, 0, 0);
+        store.setObjectiveCorrection(getCorrection("Unknown"), 0, 0);
+        store.setObjectiveImmersion(getImmersion("Unknown"), 0, 0);
+        store.setObjectiveNominalMagnification(
+          new PositiveInteger((int) mag), 0, 0);
+
+        store.setObjectiveSettingsID(objective, 0);
+      }
+
+      String detector = MetadataTools.createLSID("Detector", 0, 0);
+      store.setDetectorID(detector, 0, 0);
+
+      store.setDetectorSettingsID(detector, 0, 0);
+      store.setDetectorSettingsVoltage(voltage, 0, 0);
+
       if (info == null) info = "";
       String[] scopeInfo = info.split("\\(");
       for (String token : scopeInfo) {
@@ -247,6 +272,11 @@ public class GatanReader extends FormatReader {
           store.setChannelAcquisitionMode(getAcquisitionMode(mode), 0, 0);
         }
       }
+
+      store.setPlanePositionX(posX, 0, 0);
+      store.setPlanePositionY(posY, 0, 0);
+      store.setPlanePositionZ(posZ, 0, 0);
+      store.setPlaneExposureTime(sampleTime, 0, 0);
     }
   }
 
@@ -281,7 +311,7 @@ public class GatanReader extends FormatReader {
       String value = null;
 
       if (type == VALUE) {
-        labelString = in.readString(length);
+        labelString = readString(length);
         skipPadding();
         skipPadding();
         int skip = in.readInt(); // equal to '%%%%' / 623191333
@@ -404,7 +434,7 @@ public class GatanReader extends FormatReader {
         }
       }
       else if (type == GROUP) {
-        labelString = in.readString(length);
+        labelString = readString(length);
         in.skipBytes(2);
         skipPadding();
         skipPadding();
@@ -439,7 +469,21 @@ public class GatanReader extends FormatReader {
         else if (labelString.equals("Indicated Magnification")) {
           mag = Double.parseDouble(value);
         }
-        else if (labelString.equals("Gamma")) gamma = Double.parseDouble(value);
+        else if (labelString.equals("Gamma")) {
+          gamma = Double.parseDouble(value);
+        }
+        else if (labelString.startsWith("xPos")) {
+          posX = Double.parseDouble(value);
+        }
+        else if (labelString.startsWith("yPos")) {
+          posY = Double.parseDouble(value);
+        }
+        else if (labelString.startsWith("Specimen position")) {
+          posZ = Double.parseDouble(value);
+        }
+        else if (labelString.equals("Sample Time")) {
+          sampleTime = Double.parseDouble(value);
+        }
 
         value = null;
       }
@@ -498,6 +542,23 @@ public class GatanReader extends FormatReader {
     if (version == 4) {
       in.skipBytes(4);
     }
+  }
+
+  private String readString(int length) throws IOException {
+    byte[] bytes = new byte[(int) Math.min(in.available(), length)];
+    in.readFully(bytes);
+
+    StringBuffer newString = new StringBuffer();
+    for (byte b : bytes) {
+      int v = b & 0xff;
+      if (v > 0x7f) {
+        newString.append(Character.toChars(v));
+      }
+      else {
+        newString.append((char) b);
+      }
+    }
+    return newString.toString();
   }
 
 }
