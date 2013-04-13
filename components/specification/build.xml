@@ -18,11 +18,11 @@
 
   <target name="copy-source">
     <copy todir="${dest.dir}" preservelastmodified="true">
-      <fileset dir="${basedir}" includes="transforms/,released-schema/"
-        excludes="transforms/internal, transforms/internal/*"/>
+      <fileset dir="${basedir}" includes="transforms/,released-schema/,src/"
+        excludes="transforms/internal, transforms/internal/*, src/unit.testng.xml"/>
     </copy>
     <copy todir="${classes.dir}" preservelastmodified="true">
-      <fileset dir="${dest.dir}" excludes="${component.source}"/>
+      <fileset dir="${dest.dir}" excludes="src/**"/>
     </copy>
   </target>
   
