@@ -52,7 +52,7 @@ public final class About {
   /** URL for OME-XML Java library web page. */
   public static final String URL_OME_XML_LIBRARY =
     "http://www.openmicroscopy.org/" +
-    "site/support/file-formats/ome-xml-java-library";
+    "site/support/ome-model/ome-xml/java-library.html";
 
   // -- Static utility methods --
 
