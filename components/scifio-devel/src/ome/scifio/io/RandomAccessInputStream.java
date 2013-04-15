@@ -36,6 +36,7 @@
 
 package ome.scifio.io;
 
+import java.io.Closeable;
 import java.io.DataInput;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class RandomAccessInputStream extends InputStream implements DataInput {
+public class RandomAccessInputStream extends InputStream implements DataInput, Closeable {
 
   // -- Constants --
 
