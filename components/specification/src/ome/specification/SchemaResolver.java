@@ -1,11 +1,11 @@
 /*
  * $Id$
  *
- *   Copyright 2006-2011 University of Dundee. All rights reserved.
+ *   Copyright 2006-2013 University of Dundee. All rights reserved.
  *   Use is subject to license terms supplied in LICENSE.txt
  */
 
-package spec;
+package ome.specification;
 
 import java.io.InputStream;
 import org.w3c.dom.ls.LSResourceResolver;

@@ -20,7 +20,7 @@
  *
  *------------------------------------------------------------------------------
  */
-package spec;
+package ome.specification;
 
 //Java imports
 import java.io.ByteArrayOutputStream;

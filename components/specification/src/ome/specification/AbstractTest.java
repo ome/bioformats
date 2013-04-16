@@ -1,10 +1,10 @@
 /*
  * $Id$
  *
- *   Copyright 2010 Glencoe Software, Inc. All rights reserved.
+ *   Copyright 2010-2013 Glencoe Software, Inc. All rights reserved.
  *   Use is subject to license terms supplied in LICENSE.txt
  */
-package spec;
+package ome.specification;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,7 +41,7 @@ import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 
 //Application-internal dependencies
-import spec.SchemaResolver;
+import ome.specification.SchemaResolver;
 
 /**
  * Base test for unit tests.
