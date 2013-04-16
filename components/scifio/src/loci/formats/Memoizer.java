@@ -70,21 +70,21 @@ public class Memoizer extends ReaderWrapper {
 
   public interface Deser {
 
-    void loadStart(File memoFile) throws FileNotFoundException;
+    void loadStart(File memoFile) throws IOException;
 
-    Integer loadVersion();
+    Integer loadVersion() throws IOException;
 
-    IFormatReader loadReader();
+    IFormatReader loadReader() throws IOException, ClassNotFoundException;
 
-    void loadStop();
+    void loadStop() throws IOException;
 
-    void saveStart(File tempFile) throws FileNotFoundException;
+    void saveStart(File tempFile) throws IOException;
 
-    void saveVersion(Integer version);
+    void saveVersion(Integer version) throws IOException;
 
-    void saveReader(IFormatReader reader);
+    void saveReader(IFormatReader reader) throws IOException;
 
-    void saveStop();
+    void saveStop() throws IOException;
 
   }
 
@@ -300,7 +300,7 @@ public class Memoizer extends ReaderWrapper {
     return new File(p, "." + n + ".bfmemo");
   }
 
-  public IFormatReader loadMemo() throws FileNotFoundException, MissingLibraryException {
+  public IFormatReader loadMemo() throws IOException, MissingLibraryException {
 
     if (skipLoad) {
       LOGGER.trace("skip load");
@@ -344,7 +344,12 @@ public class Memoizer extends ReaderWrapper {
       }
 
       // CLASS & COPY
-      copy = ser.loadReader();
+      try {
+        copy = ser.loadReader();
+      } catch (ClassNotFoundException e) {
+        LOGGER.debug("unknown reader type: {}", e);
+        return null;
+      }
 
       if (!FormatTools.equalReaders(reader, copy)) {
           return null;
