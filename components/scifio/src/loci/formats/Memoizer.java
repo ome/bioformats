@@ -41,6 +41,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
@@ -91,6 +93,52 @@ public class Memoizer extends ReaderWrapper {
     void saveReader(IFormatReader reader) throws IOException;
 
     void saveStop() throws IOException;
+
+  }
+
+  private static class JDKDeser implements Deser {
+
+    FileOutputStream fos;
+    ObjectOutputStream oos;
+    FileInputStream fis;
+    ObjectInputStream ois;
+
+    public void loadStart(File memoFile) throws IOException {
+      fis = new FileInputStream(memoFile);
+      ois = new ObjectInputStream(fis);
+    }
+
+    public Integer loadVersion() throws IOException {
+      return ois.readInt();
+    }
+
+    public IFormatReader loadReader() throws IOException,
+            ClassNotFoundException {
+      return (IFormatReader) ois.readObject();
+    }
+
+    public void loadStop() throws IOException {
+      ois.close();        
+      fis.close();
+    }
+
+    public void saveStart(File tempFile) throws IOException {
+      fos = new FileOutputStream(tempFile);
+      oos = new ObjectOutputStream(fos);
+    }
+
+    public void saveVersion(Integer version) throws IOException {
+      oos.writeInt(version);
+    }
+
+    public void saveReader(IFormatReader reader) throws IOException {
+      oos.writeObject(reader);        
+    }
+
+    public void saveStop() throws IOException {
+      oos.close();
+      fos.close();
+    }
 
   }
 
