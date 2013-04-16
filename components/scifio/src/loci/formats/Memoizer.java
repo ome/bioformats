@@ -57,6 +57,10 @@ import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dyuproject.protostuff.GraphIOUtil;
+import com.dyuproject.protostuff.LinkedBuffer;
+import com.dyuproject.protostuff.Schema;
+import com.dyuproject.protostuff.runtime.RuntimeSchema;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -138,6 +142,38 @@ public class Memoizer extends ReaderWrapper {
         output.close();
         output = null;
       }
+    }
+
+  }
+
+  private static class ProtostuffDeser extends RandomAccessDeser {
+
+    final LinkedBuffer buffer = LinkedBuffer.allocate(1024); // TODO: config
+
+    protected Schema<IFormatReader> schema(Class<IFormatReader> type) {
+      Schema<IFormatReader> schema = RuntimeSchema.getSchema(type);
+      return schema;
+    }
+
+    @Override
+    protected IFormatReader readerFromBytes(Class<IFormatReader> type, byte[] rArr)
+      throws IOException, ClassNotFoundException {
+      IFormatReader reader;
+
+      try {
+        reader = type.newInstance();
+      } catch (Exception e) {
+        throw new IOException(e);
+      }
+      GraphIOUtil.mergeFrom(rArr, reader, schema(type));
+      return reader;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected byte[] bytesFromReader(IFormatReader reader) throws IOException {
+      Class<IFormatReader> type = (Class<IFormatReader>) reader.getClass();  
+      return GraphIOUtil.toByteArray(reader, schema(type), buffer);
     }
 
   }
@@ -349,7 +385,7 @@ public class Memoizer extends ReaderWrapper {
    */
   protected Deser getDeser() {
     if (ser == null) {
-      ser = new QuickserDeser();
+      ser = new ProtostuffDeser();
     }
     return ser;
   }
