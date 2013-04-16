@@ -13,9 +13,12 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/xsd-fu.xml"/>
   <property file="build.properties"/>
 
-  <target name="generate-metadata">
-    <property name="xsdfu.metadatapath" value="build/src/loci/formats/meta"/>
-    <property name="xsdfu.omepath" value="../scifio/build/src/loci/formats/ome"/>
+  <target name="generate-source">
+    <property name="xsdfu.metadatapath" value="${gensrc.dir}/loci/formats/meta"/>
+    <property name="xsdfu.omepath" value="${gensrc.dir}/loci/formats/ome"/>
+
+    <delete dir="${xsdfu.metadatapath}"/>
+    <delete dir="${xsdfu.omepath}"/>
 
     <!-- Generate the metadata interfaces -->
     <xsd_fu lang="Java" output="${xsdfu.metadatapath}">

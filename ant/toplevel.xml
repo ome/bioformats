@@ -967,12 +967,12 @@ Type "ant -p" for a list of targets.
 
   <target name="ome-xml-src"
     description="Generate sources using Xsd-Fu">
-    <ant dir="components/ome-xml" target="generate-ome-xml"/>
+    <ant dir="components/ome-xml" target="generate-source"/>
   </target>
 
   <target name="metadata-src"
     description="Generate sources using Xsd-Fu">
-    <ant dir="components/scifio" target="generate-metadata"/>
+    <ant dir="components/scifio" target="generate-source"/>
   </target>
 
   <!-- Specification -->

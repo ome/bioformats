@@ -15,6 +15,7 @@ Type "ant -p" for a list of targets.
 
   <target name="clean" description="remove all build files except artifacts">
     <delete dir="${build.dir}"/>
+    <delete dir="${basedir}/target"/>
   </target>
 
   <!-- Internal build targets -->

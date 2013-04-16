@@ -25,7 +25,7 @@ Type "ant -p" for a list of targets.
 
   <!-- Main build targets -->
 
-  <target name="compile" depends="copy-source" description="compile classes">
+  <target name="compile" depends="copy-source,copy-generated-source" description="compile classes">
     <javac debug="true" includeantruntime="false" fork="true"
       deprecation="${component.deprecation}"
       source="${component.java-version}"
@@ -268,6 +268,40 @@ your FindBugs installation's lib directory. E.g.:
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${dest.dir}" excludes="${component.source}"/>
     </copy>
+  </target>
+
+  <target name="generate-source" />
+
+  <target name="copy-generated-source" depends="init,generate-source">
+    <if>
+      <available file="${gensrc.dir}" type="dir"/>
+      <then>
+	<!-- copy binary resources -->
+	<copy todir="${dest.dir}" preservelastmodified="true">
+	  <!--
+	      include (none) to prevent problems if component.resources-bin is empty
+	  -->
+	  <fileset dir="${gensrc.dir}" includes="(none) ${component.resources-bin}"/>
+	</copy>
+	<!-- copy source files and text resources with filtering -->
+	<copy todir="${dest.dir}" preservelastmodified="true">
+	  <fileset dir="${gensrc.dir}"
+		   includes="${component.source} ${component.resources-text}"/>
+	  <filterset>
+	    <filter token="date" value="${DATE}"/>
+	    <filter token="year" value="${YEAR}"/>
+	    <filter token="vcs.revision" value="${vcs.revision}"/>
+	    <filter token="vcs.date" value="${vcs.date}"/>
+	    <filter token="release.version" value="${release.version}"/>
+	    <filter token="visbio.version" value="${visbio.version}"/>
+	  </filterset>
+	</copy>
+	<!-- copy resources to classes folder -->
+	<copy todir="${classes.dir}" preservelastmodified="true">
+	  <fileset dir="${dest.dir}" excludes="${component.source}"/>
+	</copy>
+      </then>
+    </if>
   </target>
 
   <target name="copy-test-source" depends="init" if="doTests">

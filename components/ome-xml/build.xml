@@ -13,10 +13,14 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/xsd-fu.xml"/>
   <property file="build.properties"/>
 
-  <target name="generate-ome-xml">
-    <property name="xsdfu.modelpath" value="build/src/ome/xml/model"/>
-    <property name="xsdfu.enumpath" value="build/src/ome/xml/model/enums"/>
-    <property name="xsdfu.handlerpath" value="build/src/ome/xml/model/enums/handlers"/>
+  <target name="generate-source">
+    <property name="xsdfu.modelpath" value="${gensrc.dir}/ome/xml/model"/>
+    <property name="xsdfu.enumpath" value="${gensrc.dir}/ome/xml/model/enums"/>
+    <property name="xsdfu.handlerpath" value="${gensrc.dir}/ome/xml/model/enums/handlers"/>
+
+    <delete dir="${xsdfu.modelpath}"/>
+    <delete dir="${xsdfu.enumpath}"/>
+    <delete dir="${xsdfu.handlerpath}"/>
 
     <!-- Generate the OME model object classes -->
     <xsd_fu package="ome.xml.model" lang="Java" output="${xsdfu.modelpath}">
