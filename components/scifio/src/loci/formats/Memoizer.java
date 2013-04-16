@@ -147,7 +147,8 @@ public class Memoizer extends ReaderWrapper {
     final Serialization serialization = new Serialization();
 
     @Override
-    protected IFormatReader readerFromBytes(byte[] rArr) throws IOException, ClassNotFoundException {
+    protected IFormatReader readerFromBytes(Class<IFormatReader> reader,
+      byte[] rArr) throws IOException, ClassNotFoundException {
       return (IFormatReader) serialization.deserialize(rArr);
     }
 
@@ -173,13 +174,20 @@ public class Memoizer extends ReaderWrapper {
     }
 
     public IFormatReader loadReader() throws IOException, ClassNotFoundException {
-        int rSize = loadStream.readInt();
-        byte[] rArr = new byte[rSize];
-        loadStream.readFully(rArr);
-        return readerFromBytes(rArr);
+      int cSize = loadStream.readInt();
+      byte[] cArr = new byte[cSize];
+      loadStream.readFully(cArr);
+      // Assuming proper encoding.
+      @SuppressWarnings("unchecked")
+      Class<IFormatReader> c = (Class<IFormatReader>) Class.forName(new String(cArr));
+      int rSize = loadStream.readInt();
+      byte[] rArr = new byte[rSize];
+      loadStream.readFully(rArr);
+      return readerFromBytes(c, rArr);
     }
 
-    protected abstract IFormatReader readerFromBytes(byte[] rArr) throws IOException, ClassNotFoundException;
+    protected abstract IFormatReader readerFromBytes(Class<IFormatReader> c,
+      byte[] rArr) throws IOException, ClassNotFoundException;
 
     public void loadStop() throws IOException {
         if (loadStream != null) {
@@ -197,6 +205,9 @@ public class Memoizer extends ReaderWrapper {
     }
 
     public void saveReader(IFormatReader reader) throws IOException {
+      byte[] cArr = reader.getClass().getName().getBytes();
+      saveStream.write(cArr.length);
+      saveStream.write(cArr);
       byte[] rArr = bytesFromReader(reader);
       saveStream.write(rArr.length);
       saveStream.write(rArr);
