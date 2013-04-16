@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- *   Copyright 2006-2011 University of Dundee. All rights reserved.
+ *   Copyright 2006-2013 University of Dundee. All rights reserved.
  *   Use is subject to license terms supplied in LICENSE.txt
  */
 package spec.schema;
@@ -25,10 +25,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 //Application-internal dependencies
-import spec.AbstractTest;
-import spec.OmeValidator;
-import spec.XMLMockObjects;
-import spec.XMLWriter;
+import ome.specification.AbstractTest;
+import ome.specification.OmeValidator;
+import ome.specification.XMLMockObjects;
+import ome.specification.XMLWriter;
+
+import org.testng.Assert;
 
 /**
  * Collections of tests.
@@ -54,6 +56,7 @@ public class SchemaCurrent_TO_2003_FC_Test
 	/** The transforms */
 	private InputStream STYLESHEET_A;
 	private InputStream STYLESHEET_B;
+	private InputStream STYLESHEET_C;
 
 	/** The target schema */
 	private StreamSource[] schemaArray;
@@ -73,8 +76,8 @@ public class SchemaCurrent_TO_2003_FC_Test
 	private void checkImageNode(Node destNode, Node srcNode)
 	{
 		String IMAGE_ID_PATH = XSLT_PATH_ID+":Image:XSLT:";
-		assertNotNull(destNode);
-		assertNotNull(srcNode);
+	Assert.assertNotNull(destNode);
+	Assert.assertNotNull(srcNode);
 		NamedNodeMap attributesSrc = srcNode.getAttributes();
 		String nameSrc = "";
 		String idSrc = "";
@@ -95,9 +98,9 @@ public class SchemaCurrent_TO_2003_FC_Test
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.equals(XMLWriter.ID_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), IMAGE_ID_PATH+idSrc);
+				Assert.assertEquals(n.getNodeValue(), IMAGE_ID_PATH+idSrc);
 				else if (name.equals(XMLWriter.NAME_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), nameSrc);
+				Assert.assertEquals(n.getNodeValue(), nameSrc);
 			}
 		}
 		Node pixelsNode = null;
@@ -171,24 +174,24 @@ public class SchemaCurrent_TO_2003_FC_Test
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.equals(XMLWriter.ID_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), PIXELS_ID_PATH+idSrc);
+				Assert.assertEquals(n.getNodeValue(), PIXELS_ID_PATH+idSrc);
 				else if (name.equals(XMLWriter.NAME_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), nameSrc);
+				Assert.assertEquals(n.getNodeValue(), nameSrc);
 				else if (name.equals(XMLWriter.SIZE_X_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), sizeX);
+				Assert.assertEquals(n.getNodeValue(), sizeX);
 				else if (name.equals(XMLWriter.SIZE_Y_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), sizeY);
+				Assert.assertEquals(n.getNodeValue(), sizeY);
 				else if (name.equals(XMLWriter.SIZE_Z_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), sizeZ);
+				Assert.assertEquals(n.getNodeValue(), sizeZ);
 				else if (name.equals(XMLWriter.SIZE_C_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), sizeC);
+				Assert.assertEquals(n.getNodeValue(), sizeC);
 				else if (name.equals(XMLWriter.SIZE_T_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), sizeT);
+				Assert.assertEquals(n.getNodeValue(), sizeT);
 // TODO - Review
 //				else if (name.equals(XMLWriter.PIXELS_TYPE_ATTRIBUTE))
-//					assertEquals(n.getNodeValue(), pixelsType);
+//				Assert.assertEquals(n.getNodeValue(), pixelsType);
 				else if (name.equals(XMLWriter.DIMENSION_ORDER_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), dimensionOrder);
+				Assert.assertEquals(n.getNodeValue(), dimensionOrder);
 				else if (name.equals(XMLWriter.BIG_ENDIAN_ATTRIBUTE))
 					bigEndianDst = n.getNodeValue();
 			}
@@ -214,8 +217,8 @@ public class SchemaCurrent_TO_2003_FC_Test
 					binDataNodeDest.add(n);
 			}
 		}
-		assertTrue(binDataNodeSrc.size() > 0);
-		assertEquals(binDataNodeSrc.size(), binDataNodeDest.size());
+	Assert.assertTrue(binDataNodeSrc.size() > 0);
+	Assert.assertEquals(binDataNodeSrc.size(), binDataNodeDest.size());
 		for (int i = 0; i < binDataNodeDest.size(); i++) {
 			checkBinDataNode(binDataNodeDest.get(i), binDataNodeSrc.get(i));
 		}
@@ -227,7 +230,7 @@ public class SchemaCurrent_TO_2003_FC_Test
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.contains(XMLWriter.BIG_ENDIAN_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), bigEndianDst);
+				Assert.assertEquals(n.getNodeValue(), bigEndianDst);
 			}
 		}
 	}
@@ -240,8 +243,8 @@ public class SchemaCurrent_TO_2003_FC_Test
 	 */
 	private void checkBinDataNode(Node destNode, Node srcNode)
 	{
-		assertNotNull(destNode);
-		assertNotNull(srcNode);
+	Assert.assertNotNull(destNode);
+	Assert.assertNotNull(srcNode);
 		NamedNodeMap attributesSrc = srcNode.getAttributes();
 		String compression = "";
 		Node n;
@@ -259,10 +262,10 @@ public class SchemaCurrent_TO_2003_FC_Test
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.equals(XMLWriter.COMPRESSION_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), compression);
+				Assert.assertEquals(n.getNodeValue(), compression);
 			}
 		}
-		assertEquals(destNode.getTextContent(), srcNode.getTextContent());
+	Assert.assertEquals(destNode.getTextContent(), srcNode.getTextContent());
 	}
 
 	/**
@@ -277,17 +280,15 @@ public class SchemaCurrent_TO_2003_FC_Test
     	super.setUp();
 
 		/** The target schema file */
-//		SCHEMA_2003_FC = this.getClass().getResourceAsStream("/2003-FC/ome.xsd");
-		//components/specification/Released-Schema/2003-FC/
-
 		schemaArray = new StreamSource[1];
-
-		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2003-FC/ome.xsd"));
+		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/released-schema/2003-FC/ome.xsd"));
+		//components/specification/released-schema/2003-FC/
 
 		/** The transforms */
-		STYLESHEET_A = this.getClass().getResourceAsStream("/Xslt/2011-06-to-2010-06.xsl");
-		STYLESHEET_B = this.getClass().getResourceAsStream("/Xslt/2010-06-to-2003-FC.xsl");
-		//components/specification/Xslt/
+		STYLESHEET_A = this.getClass().getResourceAsStream("/transforms/2012-06-to-2011-06.xsl");
+		STYLESHEET_B = this.getClass().getResourceAsStream("/transforms/2011-06-to-2010-06.xsl");
+		STYLESHEET_C = this.getClass().getResourceAsStream("/transforms/2010-06-to-2003-FC.xsl");
+		//components/specification/transforms/
 
     	files = new ArrayList<File>();
     }
@@ -320,9 +321,12 @@ public class SchemaCurrent_TO_2003_FC_Test
 		File inFile = File.createTempFile("testDowngradeTo2003FCImageNoMetadata",
 				"."+OME_XML_FORMAT);
 		files.add(inFile);
-		File middleFile = File.createTempFile("testDowngradeTo2003FCImageNoMetadataMiddle",
+		File middleFileA = File.createTempFile("testDowngradeTo2003FCImageNoMetadataMiddleA",
 				"."+OME_XML_FORMAT);
-		files.add(middleFile);
+		files.add(middleFileA);
+		File middleFileB = File.createTempFile("testDowngradeTo2003FCImageNoMetadataMiddleB",
+				"."+OME_XML_FORMAT);
+		files.add(middleFileB);
 		File outputFile = File.createTempFile(
 				"testDowngradeTo2003FCImageNoMetadataOutput",
 				"."+OME_XML_FORMAT);
@@ -331,17 +335,18 @@ public class SchemaCurrent_TO_2003_FC_Test
 		XMLWriter writer = new XMLWriter();
 		writer.writeFile(inFile, xml.createImage(), true);
 
-		transformFileWithStream(inFile, middleFile, STYLESHEET_A);
-		transformFileWithStream(middleFile, outputFile, STYLESHEET_B);
+		transformFileWithStream(inFile, middleFileA, STYLESHEET_A);
+		transformFileWithStream(middleFileA, middleFileB, STYLESHEET_B);
+		transformFileWithStream(middleFileB, outputFile, STYLESHEET_C);
 
 		Document doc = anOmeValidator.parseFileWithStreamArray(outputFile, schemaArray);
-		assertNotNull(doc);
+	Assert.assertNotNull(doc);
 
 		//Should only have one root node i.e. OME node
 		NodeList list = doc.getChildNodes();
-		assertEquals(list.getLength(), 1);
+	Assert.assertEquals(list.getLength(), 1);
 		Node root = list.item(0);
-		assertEquals(root.getNodeName(), XMLWriter.OME_TAG);
+	Assert.assertEquals(root.getNodeName(), XMLWriter.OME_TAG);
 		//now analyse the root node
 		list = root.getChildNodes();
 		String name;

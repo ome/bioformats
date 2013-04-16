@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 University of Dundee & Open Microscopy Environment.
+ * Copyright (C) 2012-2013 University of Dundee & Open Microscopy Environment.
  * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,13 +46,14 @@ import org.testng.annotations.Test;
  * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
  */
+@Test(groups = { "all" })
 public class Schema2011_06_TO_2012_06_Test {
     private static final Templates UPDATE_201106 =
-            XMLTools.getStylesheet("/Xslt/2011-06-to-2012-06.xsl",
+            XMLTools.getStylesheet("/transforms/2011-06-to-2012-06.xsl",
             Schema2011_06_TO_2012_06_Test.class);
 
     private static final String RESOURCE =
-            "/OmeFiles/2011-06/6x4y1z1t1c8b-swatch.ome";
+            "/samples/2011-06/6x4y1z1t1c8b-swatch.ome";
 
     private static final String IMAGE_NAME = "6x6x1x8-swatch.tif";
     private static final String IMAGE_DATE = "2010-02-23T12:51:30";

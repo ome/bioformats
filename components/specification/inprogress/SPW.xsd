@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="http://cvs.openmicroscopy.org.uk/snapshots/omero/editor/omeXsd/display.xsl" type="text/xsl"?>
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
-    # Copyright (C) 2003-2012 Open Microscopy Environment
+    # Copyright (C) 2003-2013 Open Microscopy Environment
     #       Massachusetts Institute of Technology,
     #       National Institutes of Health,
     #       University of Dundee,
@@ -25,21 +24,21 @@
 	# Written by:  Andrew Patterson <ajpatterson@lifesci.dundee.ac.uk>
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
-	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	version="1"
 	elementFormDefault="qualified">
 	<!-- Using the svn location for import
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
 
 	Using the local directory location for import -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-06" schemaLocation="ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-06" schemaLocation="SA.xsd"/>
 	<!-- -->
 
 	<xsd:annotation>
