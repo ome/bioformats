@@ -42,10 +42,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.formats.FormatTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -60,6 +61,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.shaded.org.objenesis.strategy.StdInstantiatorStrategy;
+import com.romix.quickser.Serialization;
 
 /**
  * {@link ReaderWrapper} implementation which caches the state of the
@@ -138,6 +140,59 @@ public class Memoizer extends ReaderWrapper {
       }
     }
 
+  }
+
+  private static class QuickserDeser implements Deser {
+
+    final Serialization serialization = new Serialization();
+
+    RandomAccessInputStream loadStream;
+
+    RandomAccessOutputStream saveStream;
+
+    public void loadStart(File memoFile) throws IOException {
+        this.loadStream = new RandomAccessInputStream(memoFile.getAbsolutePath());
+    }
+
+    public Integer loadVersion() throws IOException {
+        return loadStream.readInt();
+    }
+
+    public IFormatReader loadReader() throws IOException, ClassNotFoundException {
+        int rSize = loadStream.readInt();
+        byte[] rArr = new byte[rSize];
+        loadStream.readFully(rArr);
+        return (IFormatReader) serialization.deserialize(rArr);
+    }
+
+    public void loadStop() throws IOException {
+        if (loadStream != null) {
+          loadStream.close();
+          loadStream = null;
+        }
+    }
+
+    public void saveStart(File tempFile) throws IOException {
+      this.saveStream = new RandomAccessOutputStream(tempFile.getAbsolutePath());
+    }
+
+    public void saveVersion(Integer version) throws IOException {
+      saveStream.writeInt(version);
+    }
+
+    public void saveReader(IFormatReader reader) throws IOException {
+      byte[] rArr = serialization.serialize(reader);
+      saveStream.write(rArr.length);
+      saveStream.write(rArr);
+    }
+
+    public void saveStop() throws IOException {
+      if (saveStream != null) {
+        saveStream.close();
+        saveStream = null;
+      }
+    }
+        
   }
 
   // -- Constants --
@@ -265,7 +320,7 @@ public class Memoizer extends ReaderWrapper {
    */
   protected Deser getDeser() {
     if (ser == null) {
-      ser = new KryoDeser();
+      ser = new QuickserDeser();
     }
     return ser;
   }
