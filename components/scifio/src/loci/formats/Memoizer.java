@@ -142,9 +142,9 @@ public class Memoizer extends ReaderWrapper {
 
   }
 
-  private static class KryoDeser implements Deser {
+  public static class KryoDeser implements Deser {
 
-    final Kryo kryo = new Kryo();
+    final public Kryo kryo = new Kryo();
     {
       kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
     }
