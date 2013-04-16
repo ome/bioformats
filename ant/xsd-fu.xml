@@ -1,0 +1,46 @@
+<!--
+xsd-fu.xml
+
+Ant build file for xsd-fu source code generation logic.
+Include this in components generating sources using xsd-fu.
+-->
+
+<project>
+
+  <property name="xsdfu.schemaver" value="2012-06"/>
+  <property name="xsdfu.schemapath" value="${root.dir}/components/specification/released-schema/${xsdfu.schemaver}"/>
+  <property name="xsdfu.templatepath" value="${root.dir}/components/xsd-fu"/>
+  <property name="xsdfu.schema.ome" value="${xsdfu.schemapath}/ome.xsd"/>
+  <property name="xsdfu.schema.binaryfile" value="${xsdfu.schemapath}/BinaryFile.xsd"/>
+  <property name="xsdfu.schema.roi" value="${xsdfu.schemapath}/ROI.xsd"/>
+  <property name="xsdfu.schema.sa" value="${xsdfu.schemapath}/SA.xsd"/>
+  <property name="xsdfu.schema.spw" value="${xsdfu.schemapath}/SPW.xsd"/>
+
+  <macrodef name="xsd_fu" description="Run xsd_fu">
+    <attribute name="package" default="ome.xml.model"/>
+    <attribute name="lang" default="Java"/>
+    <attribute name="output"/>
+    <element name="args" implicit="yes"/>
+    <sequential>
+      <exec executable="python" failonerror="true">
+	<env key="PYTHONPATH" path="${env.PYTHONPATH}:${root.dir}/components/xsd-fu/python" />
+	<arg value="${root.dir}/components/xsd-fu/xsd-fu"/>
+	<args/>
+	<arg value="-p"/>
+	<arg value="@{package}"/>
+	<arg value="-l"/>
+	<arg value="@{lang}"/>
+	<arg value="-t"/>
+	<arg value="${xsdfu.templatepath}"/>
+	<arg value="-o"/>
+	<arg value="@{output}/"/>
+	<arg value="${xsdfu.schema.ome}"/>
+	<arg value="${xsdfu.schema.binaryfile}"/>
+	<arg value="${xsdfu.schema.roi}"/>
+	<arg value="${xsdfu.schema.sa}"/>
+	<arg value="${xsdfu.schema.spw}"/>
+      </exec>
+    </sequential>
+  </macrodef>
+
+</project>

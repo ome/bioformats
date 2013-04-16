@@ -417,8 +417,7 @@ Type "ant -p" for a list of targets.
       jar-lwf-stubs,
       jar-ome-xml,
       jar-turbojpeg,
-      metadata-src,
-      ome-xml-metadata-src"/>
+      metadata-src"/>
 
   <target name="compile-scifio" depends="deps-scifio"
     description="compile classes for SCIFIO">
@@ -968,17 +967,12 @@ Type "ant -p" for a list of targets.
 
   <target name="ome-xml-src"
     description="Generate sources using Xsd-Fu">
-    <ant dir="components/xsd-fu" target="generate-ome-xml"/>
+    <ant dir="components/ome-xml" target="generate-ome-xml"/>
   </target>
 
   <target name="metadata-src"
     description="Generate sources using Xsd-Fu">
-    <ant dir="components/xsd-fu" target="generate-metadata"/>
-  </target>
-
-  <target name="ome-xml-metadata-src"
-    description="Generate sources using Xsd-Fu">
-    <ant dir="components/xsd-fu" target="generate-ome-xml-metadata"/>
+    <ant dir="components/scifio" target="generate-metadata"/>
   </target>
 
   <!-- Specification -->

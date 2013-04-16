@@ -536,7 +536,7 @@ def parentlist(model, name, pre):
 class options:
 	def __init__(self, args):
 		try:
-			self.options, self.args = gnu_getopt(args[1:], "l:o:p:n:")
+			self.options, self.args = gnu_getopt(args[1:], "l:o:p:n:t:")
 		except GetoptError, (msg, opt):
 			mainUsage(msg)
 
@@ -544,6 +544,7 @@ class options:
 		self.package = DEFAULT_PACKAGE
 		self.namespace = DEFAULT_NAMESPACE
 		self.lang = LANG_JAVA
+		self.templatepath = "."
 		for option, argument in self.options:
 			if option == "-l":
 				if argument == LANG_JAVA:
@@ -559,6 +560,8 @@ class options:
 				self.package = argument
 			if option == "-n":
 				self.namespace = argument
+			if option == "-t":
+				self.templatepath = argument
 		if self.outdir is None:
 			mainUsage("Output directory must be specified!")
 			sys.exit(1)
