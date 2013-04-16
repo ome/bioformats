@@ -68,6 +68,78 @@ import com.esotericsoftware.shaded.org.objenesis.strategy.StdInstantiatorStrateg
  */
 public class Memoizer extends ReaderWrapper {
 
+  public interface Deser {
+
+    void loadStart(File memoFile) throws FileNotFoundException;
+
+    Integer loadVersion();
+
+    IFormatReader loadReader();
+
+    void loadStop();
+
+    void saveStart(File tempFile) throws FileNotFoundException;
+
+    void saveVersion(Integer version);
+
+    void saveReader(IFormatReader reader);
+
+    void saveStop();
+
+  }
+
+  private static class KryoDeser implements Deser {
+
+    final Kryo kryo = new Kryo();
+    {
+      kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
+    }
+
+    Input input;
+    Output output;
+
+    public void loadStart(File memoFile) throws FileNotFoundException {
+        input = new Input(new FileInputStream(memoFile));
+    }
+
+    public Integer loadVersion() {
+        return kryo.readObject(input, Integer.class);
+    }
+
+    public IFormatReader loadReader() {
+        Class<?> c = kryo.readObject(input, Class.class);
+        return (IFormatReader) kryo.readObject(input, c);
+    }
+
+    public void loadStop() {
+      if (input != null) {
+        input.close();
+        input = null;
+      }
+    }
+
+    public void saveStart(File tempFile) throws FileNotFoundException {
+      output = new Output(new FileOutputStream(tempFile));
+    }
+
+    public void saveVersion(Integer vERSION) {
+      kryo.writeObject(output, VERSION);
+    }
+
+   public void saveReader(IFormatReader reader) {
+     kryo.writeObject(output, reader.getClass());
+     kryo.writeObject(output, reader);
+   }
+
+    public void saveStop() {
+      if (output != null) {
+        output.close();
+        output = null;
+      }
+    }
+
+  }
+
   // -- Constants --
 
   /**
@@ -82,7 +154,7 @@ public class Memoizer extends ReaderWrapper {
 
   // -- Fields --
 
-  private transient Kryo kryo;
+  private transient Deser ser;
 
   private transient OMEXMLService service;
 
@@ -191,12 +263,11 @@ public class Memoizer extends ReaderWrapper {
    *
    * @return a non-null {@link Kryo} instance.
    */
-  protected Kryo getKryo() {
-    if (kryo == null) {
-        kryo = new Kryo();
-        kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
+  protected Deser getDeser() {
+    if (ser == null) {
+      ser = new KryoDeser();
     }
-    return kryo;
+    return ser;
   }
 
   // Copied from OMETiffReader.
@@ -259,22 +330,21 @@ public class Memoizer extends ReaderWrapper {
       return null;
     }
 
-    StopWatch sw = stopWatch();
+    final Deser ser = getDeser();
+    final StopWatch sw = stopWatch();
     IFormatReader copy = null;
-    Input input = new Input(new FileInputStream(memoFile));
+    ser.loadStart(memoFile);
     try {
-      Kryo kryo = getKryo();
 
       // VERSION
-      Integer version = kryo.readObject(input, Integer.class);
+      Integer version = ser.loadVersion();
       if (!VERSION.equals(version)) {
         LOGGER.info("Old version of memo file: {} not {}", version, VERSION);
         return null;
       }
 
       // CLASS & COPY
-      Class<?> c = kryo.readObject(input, Class.class);
-      copy = (IFormatReader) getKryo().readObject(input, c);
+      copy = ser.loadReader();
 
       if (!FormatTools.equalReaders(reader, copy)) {
           return null;
@@ -293,7 +363,7 @@ public class Memoizer extends ReaderWrapper {
         memoFile, memoFile.length());
       return copy;
     } finally {
-      input.close();
+      ser.loadStop();
       sw.stop("loci.formats.Memoizer.loadMemo");
     }
   }
@@ -305,20 +375,20 @@ public class Memoizer extends ReaderWrapper {
       return false;
     }
 
-    Output output = null;
-    StopWatch sw = stopWatch();
+    final Deser ser = getDeser();
+    final StopWatch sw = stopWatch();
     try {
 
       // Create temporary location for output
       tempFile = File.createTempFile(
         memoFile.getName(), "", memoFile.getParentFile());
-      output = new Output(new FileOutputStream(tempFile));
+
+      ser.saveStart(tempFile);
 
       // Save to temporary location.
-      Kryo kryo = getKryo();
-      kryo.writeObject(output, VERSION);
-      kryo.writeObject(output, reader.getClass());
-      kryo.writeObject(output, reader);
+      ser.saveVersion(VERSION);
+      ser.saveReader(reader);
+      ser.saveStop();
       LOGGER.debug("saved to temp file: {}", tempFile);
 
       // Rename temporary file. Any failures will have to be ignored.
@@ -340,9 +410,7 @@ public class Memoizer extends ReaderWrapper {
 
       // Close the output stream quietly.
       try {
-        if (output != null) {
-          output.close();
-        }
+        ser.saveStop();
         sw.stop("loci.formats.Memoizer.saveMemo");
       } catch (Throwable t) {
         LOGGER.debug("output close failed", t);
