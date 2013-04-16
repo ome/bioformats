@@ -118,7 +118,7 @@ public class Memoizer extends ReaderWrapper {
     }
 
     public void loadStop() throws IOException {
-      ois.close();        
+      ois.close();
       fis.close();
     }
 
@@ -132,7 +132,7 @@ public class Memoizer extends ReaderWrapper {
     }
 
     public void saveReader(IFormatReader reader) throws IOException {
-      oos.writeObject(reader);        
+      oos.writeObject(reader);
     }
 
     public void saveStop() throws IOException {
@@ -220,7 +220,7 @@ public class Memoizer extends ReaderWrapper {
     @Override
     @SuppressWarnings("unchecked")
     protected byte[] bytesFromReader(IFormatReader reader) throws IOException {
-      Class<IFormatReader> type = (Class<IFormatReader>) reader.getClass();  
+      Class<IFormatReader> type = (Class<IFormatReader>) reader.getClass();
       return GraphIOUtil.toByteArray(reader, schema(type), buffer);
     }
 
@@ -305,7 +305,7 @@ public class Memoizer extends ReaderWrapper {
         saveStream = null;
       }
     }
-        
+
   }
 
   // -- Constants --
@@ -433,7 +433,7 @@ public class Memoizer extends ReaderWrapper {
    */
   protected Deser getDeser() {
     if (ser == null) {
-      ser = new ProtostuffDeser();
+      ser = new KryoDeser();
     }
     return ser;
   }
@@ -527,7 +527,7 @@ public class Memoizer extends ReaderWrapper {
       if (copy == null) {
           LOGGER.debug("metadata store invalidated cache: {}", memoFile);
       }
-      
+
       // TODO:
       // Check flags
       // DataV1 class?
@@ -550,9 +550,11 @@ public class Memoizer extends ReaderWrapper {
 
     final Deser ser = getDeser();
     final StopWatch sw = stopWatch();
+    boolean rv = true;
     try {
 
       // Create temporary location for output
+      // Note: can't rename tempfile until resources are closed.
       tempFile = File.createTempFile(
         memoFile.getName(), "", memoFile.getParentFile());
 
@@ -564,24 +566,15 @@ public class Memoizer extends ReaderWrapper {
       ser.saveStop();
       LOGGER.debug("saved to temp file: {}", tempFile);
 
-      // Rename temporary file. Any failures will have to be ignored.
-      if (!tempFile.renameTo(memoFile)) {
-        LOGGER.debug("temp file rename returned false: {}", tempFile);
-      }
-
-      LOGGER.debug("saved memo file: {} ({} bytes)",
-        memoFile, memoFile.length());
-      return true;
-
     } catch (Throwable t) {
 
       // Any exception should be ignored, and false returned.
       LOGGER.debug(String.format("failed to save memo file: %s", memoFile), t);
-      return false;
+      rv = false;
 
     } finally {
 
-      // Close the output stream quietly.
+      // Close the output stream quietly regardless.
       try {
         ser.saveStop();
         sw.stop("loci.formats.Memoizer.saveMemo");
@@ -589,16 +582,30 @@ public class Memoizer extends ReaderWrapper {
         LOGGER.debug("output close failed", t);
       }
 
+      // Rename temporary file if successful.
+      // Any failures will have to be ignored.
+      // Note: renaming the tempfile with open
+      // resources can lead to segfaults
+      if (rv) {
+        if (!tempFile.renameTo(memoFile)) {
+          LOGGER.debug("temp file rename returned false: {}", tempFile);
+        }
+
+        LOGGER.debug("saved memo file: {} ({} bytes)",
+                memoFile, memoFile.length());
+      }
+
       // Delete the tempFile quietly.
       try {
-        if (tempFile != null) {
+        if (tempFile != null && tempFile.exists()) {
           tempFile.delete();
           tempFile = null;
         }
       } catch (Throwable t) {
-        LOGGER.debug("temp file deletion faled", t);   
+        LOGGER.debug("temp file deletion faled", t);
       }
     }
+    return rv;
   }
 
 
@@ -657,7 +664,7 @@ public class Memoizer extends ReaderWrapper {
         OMEXMLService service = getService();
         service.convertMetadata((MetadataRetrieve) filledStore, userMetadataStore);
       }
-      
+
     }
     return memo;
   }
