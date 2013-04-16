@@ -142,9 +142,23 @@ public class Memoizer extends ReaderWrapper {
 
   }
 
-  private static class QuickserDeser implements Deser {
+  private static class QuickserDeser extends RandomAccessDeser {
 
     final Serialization serialization = new Serialization();
+
+    @Override
+    protected IFormatReader readerFromBytes(byte[] rArr) throws IOException, ClassNotFoundException {
+      return (IFormatReader) serialization.deserialize(rArr);
+    }
+
+    @Override
+    protected byte[] bytesFromReader(IFormatReader reader) throws IOException {
+        return serialization.serialize(reader);
+    }
+
+  }
+
+  private static abstract class RandomAccessDeser implements Deser {
 
     RandomAccessInputStream loadStream;
 
@@ -162,8 +176,10 @@ public class Memoizer extends ReaderWrapper {
         int rSize = loadStream.readInt();
         byte[] rArr = new byte[rSize];
         loadStream.readFully(rArr);
-        return (IFormatReader) serialization.deserialize(rArr);
+        return readerFromBytes(rArr);
     }
+
+    protected abstract IFormatReader readerFromBytes(byte[] rArr) throws IOException, ClassNotFoundException;
 
     public void loadStop() throws IOException {
         if (loadStream != null) {
@@ -181,10 +197,12 @@ public class Memoizer extends ReaderWrapper {
     }
 
     public void saveReader(IFormatReader reader) throws IOException {
-      byte[] rArr = serialization.serialize(reader);
+      byte[] rArr = bytesFromReader(reader);
       saveStream.write(rArr.length);
       saveStream.write(rArr);
     }
+
+    protected abstract byte[] bytesFromReader(IFormatReader reader) throws IOException;
 
     public void saveStop() throws IOException {
       if (saveStream != null) {
