@@ -263,6 +263,13 @@ public class Memoizer extends ReaderWrapper {
    */
   private final long minimumElapsed;
 
+  /**
+   * Directory where all memoization files should be created. If this value is
+   * non-null, then all files will be created under it rather than sitting
+   * beside the setId file.
+   */
+  private final File directory;
+
   private transient Deser ser;
 
   private transient OMEXMLService service;
@@ -316,8 +323,13 @@ public class Memoizer extends ReaderWrapper {
 
   /** Constructs a memoizer around a new image reader. */
   public Memoizer(long minimumElapsed) {
+    this(minimumElapsed, null);
+  }
+
+  public Memoizer(long minimumElapsed, File directory) {
     super();
     this.minimumElapsed = minimumElapsed;
+    this.directory = directory;
   }
 
   /** Constructs a memoizer around the given reader. */
@@ -327,8 +339,13 @@ public class Memoizer extends ReaderWrapper {
 
   /** Constructs a memoizer around the given reader. */
   public Memoizer(IFormatReader r, long minimumElapsed) {
+    this(r, minimumElapsed, null);
+  }
+
+  public Memoizer(IFormatReader r, long minimumElapsed, File directory) {
     super(r);
     this.minimumElapsed = minimumElapsed;
+    this.directory = directory;
   }
 
   public boolean isLoadedFromMemo() {
@@ -369,6 +386,13 @@ public class Memoizer extends ReaderWrapper {
     try {
       realFile = new File(id); // TODO: Can likely fail.
       memoFile = getMemoFile(id);
+
+      if (memoFile == null) {
+        // Memoization disabled.
+        super.setId(id); // EARLY EXIT
+        return;
+      }
+
       IFormatReader memo = loadMemo(); // Should never throw.
 
       loadedFromMemo = false;
@@ -394,7 +418,7 @@ public class Memoizer extends ReaderWrapper {
     } catch (ServiceException e) {
       LOGGER.debug("Could not create OMEXMLMetadata", e);
     } finally {
-        sw.stop("loci.formats.Memoizer.setId");
+      sw.stop("loci.formats.Memoizer.setId");
     }
   }
 
@@ -450,21 +474,26 @@ public class Memoizer extends ReaderWrapper {
    * @return a filename with
    */
   public File getMemoFile(String id) {
-    File f = new File(id);
+    File f = null;
+    if (directory == null) {
+      f = new File(id);
+    } else {
+      if (!directory.exists() || !directory.canWrite()) {
+        LOGGER.debug("skipping memo: directory not writeable - {}", directory);
+        return null;
+      }
+      f = new File(directory, id);
+      f.getParentFile().mkdirs();
+    }
     String p = f.getParent();
     String n = f.getName();
     return new File(p, "." + n + ".bfmemo");
   }
 
-  public IFormatReader loadMemo() throws IOException, MissingLibraryException {
+  public IFormatReader loadMemo() throws IOException, FormatException {
 
     if (skipLoad) {
       LOGGER.trace("skip load");
-      return null;
-    }
-
-    if (memoFile == null) {
-      LOGGER.warn("No memo file set: {}", memoFile);
       return null;
     }
 
