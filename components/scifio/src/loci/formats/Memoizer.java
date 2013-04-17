@@ -219,10 +219,22 @@ public class Memoizer extends ReaderWrapper {
    */
   public static Integer VERSION = 1;
 
+  /**
+   * Default value for {@link #minimumElapsed} if none is provided in the
+   * constructor.
+   */
+  public static long DEFAULT_MINIMUM_ELAPSED = 100;
+
   private static final Logger LOGGER =
     LoggerFactory.getLogger(Memoizer.class);
 
   // -- Fields --
+
+  /**
+   * Minimum number of milliseconds which must elapse during the call to
+   * super.setId() before a memo file will be created.
+   */
+  private final long minimumElapsed;
 
   private transient Deser ser;
 
@@ -271,10 +283,26 @@ public class Memoizer extends ReaderWrapper {
   // -- Constructors --
 
   /** Constructs a memoizer around a new image reader. */
-  public Memoizer() { super(); }
+  public Memoizer() {
+    this(DEFAULT_MINIMUM_ELAPSED);
+  }
+
+  /** Constructs a memoizer around a new image reader. */
+  public Memoizer(long minimumElapsed) {
+    super();
+    this.minimumElapsed = minimumElapsed;
+  }
 
   /** Constructs a memoizer around the given reader. */
-  public Memoizer(IFormatReader r) { super(r); }
+  public Memoizer(IFormatReader r) {
+    this(r, DEFAULT_MINIMUM_ELAPSED);
+  }
+
+  /** Constructs a memoizer around the given reader. */
+  public Memoizer(IFormatReader r, long minimumElapsed) {
+    super(r);
+    this.minimumElapsed = minimumElapsed;
+  }
 
   public boolean isLoadedFromMemo() {
     return loadedFromMemo;
@@ -293,12 +321,20 @@ public class Memoizer extends ReaderWrapper {
       memoFile = getMemoFile(id);
       IFormatReader memo = loadMemo(); // Should never throw.
 
+      loadedFromMemo = false;
+      savedToMemo = false;
+
       if (memo == null) {
         OMEXMLService service = getService();
         super.setMetadataStore(service.createOMEXMLMetadata());
+        long start = System.currentTimeMillis();
         super.setId(id);
+        long elapsed = System.currentTimeMillis() - start;
+        if (elapsed < minimumElapsed) {
+          LOGGER.debug("skipping save memo. elapsed millis: {}", elapsed);
+          return; // EARLY EXIT!
+        }
         handleMetadataStore(null); // Between setId and saveMemo
-        loadedFromMemo = false;
         savedToMemo = saveMemo(); // Should never throw.
       } else {
         // loadMemo has already called handleMetadataStore with non-null
