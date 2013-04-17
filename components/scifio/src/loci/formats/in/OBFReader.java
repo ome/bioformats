@@ -89,7 +89,7 @@ public class OBFReader extends FormatReader
 	}
 	private Frame currentInflatedFrame = new Frame() ;
 	
-	private Inflater inflater = new Inflater() ;
+	private transient Inflater inflater = new Inflater() ;
 
 	public OBFReader()
 	{
