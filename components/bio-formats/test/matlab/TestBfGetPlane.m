@@ -28,12 +28,6 @@ classdef TestBfGetPlane < TestCase
     
     properties
         reader
-        sizeX
-        sizeY
-        x
-        y
-        w
-        h
     end
     
     methods
@@ -43,10 +37,7 @@ classdef TestBfGetPlane < TestCase
         
         function setUp(self)
             bfCheckJavaPath();
-            self.reader = loci.formats.in.FakeReader();
-            self.sizeX =  self.reader.DEFAULT_SIZE_X;
-            self.sizeY =  self.reader.DEFAULT_SIZE_Y;
-            self.reader = loci.formats.ChannelSeparator(self.reader);
+            self.reader = loci.formats.ChannelSeparator(loci.formats.in.FakeReader());
         end
         
         function tearDown(self)
@@ -55,96 +46,82 @@ classdef TestBfGetPlane < TestCase
         end
         
         % Pixel type tests
-        function testInt8(self)
-            self.reader.setId('int8-test&pixelType=int8.fake')
+        function checkPixelsType(self, pixelsType)
+            self.reader.setId([pixelsType '-test&pixelType=' pixelsType '.fake']);
             I = bfGetPlane(self.reader, 1);
-            assertEqual(class(I), 'int8');
-            assertEqual(size(I), [self.sizeY, self.sizeX]);
+            if strcmp(pixelsType, 'float')
+                assertEqual(class(I), 'single');
+            else
+                assertEqual(class(I), pixelsType);
+            end
         end
         
-        function testUInt8(self)
-            self.reader.setId('uint8-test&pixelType=uint8.fake')
-            I = bfGetPlane(self.reader, 1);
-            assertEqual(class(I),'uint8');
-            assertEqual(size(I), [self.sizeY, self.sizeX]);
+        function testINT8(self)
+            self.checkPixelsType('int8');
+        end
+        function testUINT8(self)
+            self.checkPixelsType('uint8');
+        end
+        function testINT16(self)
+            self.checkPixelsType('int16');
+        end
+        function testUINT16(self)
+            self.checkPixelsType('uint16');
+        end
+        function testINT32(self)
+            self.checkPixelsType('int32');
+        end
+        function testUINT32(self)
+            self.checkPixelsType('uint32');
+        end
+        function testSINGLE(self)
+            self.checkPixelsType('float');
+        end
+        function testDOUBLE(self)
+            self.checkPixelsType('double');
         end
         
-        function testInt16(self)
-            self.reader.setId('int16-test&pixelType=int16.fake')
+        % Dimension size tests
+        function testSizeX(self)
+            sizeX = 200;
+            self.reader = bfGetReader(['sizeX-test&sizeX=' num2str(sizeX) '.fake']);
             I = bfGetPlane(self.reader, 1);
-            assertEqual(class(I),'int16');
-            assertEqual(size(I), [self.sizeY, self.sizeX]);
+            assertEqual(size(I, 2), sizeX);
         end
         
-        function testUInt16(self)
-            self.reader.setId('uint16-test&pixelType=uint16.fake')
+        function testSizeY(self)
+            sizeY = 200;
+            self.reader = bfGetReader(['sizeY-test&sizeY=' num2str(sizeY) '.fake']);
             I = bfGetPlane(self.reader, 1);
-            assertEqual(class(I),'uint16');
-            assertEqual(size(I), [self.sizeY, self.sizeX]);
-        end
-        
-        function testInt32(self)
-            self.reader.setId('int32-test&pixelType=int32.fake')
-            I = bfGetPlane(self.reader, 1);
-            assertEqual(class(I),'int32');
-            assertEqual(size(I), [self.sizeY, self.sizeX]);
-        end
-        
-        function testUInt32(self)
-            self.reader.setId('uint32-test&pixelType=uint32.fake')
-            I = bfGetPlane(self.reader, 1);
-            assertEqual(class(I),'uint32');
-        end
-        
-        function testSingle(self)
-            self.reader.setId('float-test&pixelType=float.fake')
-            I = bfGetPlane(self.reader, 1);
-            assertEqual(class(I),'single');
-            assertEqual(size(I), [self.sizeY, self.sizeX]);
-        end
-        
-        function testDouble(self)
-            self.reader.setId('double-test&pixelType=double.fake')
-            I = bfGetPlane(self.reader, 1);
-            assertEqual(class(I),'double');
-            assertEqual(size(I), [self.sizeY, self.sizeX]);
+            assertEqual(size(I, 1), sizeY);
         end
         
         % Tile tests
+        function checkTile(self, x, y, w, h)
+            I = bfGetPlane(self.reader, 1);
+            I2 = bfGetPlane(self.reader, 1, x, y, w, h);
+            
+            assertEqual(I2, I(y : y + h - 1, x : x + w - 1));
+        end
+        
         function testFullTile(self)
-            self.reader.setId('sqtile-test&pixelType=int8.fake')
-            self.x = 1;
-            self.y = 1;
-            self.w = self.reader.getSizeX();
-            self.h = self.reader.getSizeY();
-            self.checkTile()
+            self.reader.setId('fulltile-test.fake')
+            self.checkTile(1, 1, self.reader.getSizeX(), self.reader.getSizeY())
         end
         
         function testSquareTile(self)
-            self.reader.setId('sqtile-test&pixelType=int8.fake')
-            self.x = 10;
-            self.y = 10;
-            self.w = 20;
-            self.h = 20;
-            self.checkTile()
+            self.reader.setId('sqtile-test.fake')
+            self.checkTile(10, 10, 20, 20)
         end
         
         function testRectangularTile(self)
-            self.reader.setId('recttile-test&pixelType=int8.fake')
-            self.x = 20;
-            self.y = 10;
-            self.w = 40;
-            self.h = 20;
-            self.checkTile();
+            self.reader.setId('recttile-test.fake')
+            self.checkTile(20, 10, 40, 20);
         end
         
-        function checkTile(self)
-            I = bfGetPlane(self.reader, 1);
-            I2 = bfGetPlane(self.reader, 1, self.x, self.y, self.w, self.h);
-
-            assertEqual(I2, I(self.y : self.y + self.h - 1,...
-                self.x : self.x + self.w - 1));
+        function testSingleTile(self)
+            self.reader.setId('fulltile-test.fake')
+            self.checkTile(50, 50, 1, 1);
         end
     end
-    
 end
