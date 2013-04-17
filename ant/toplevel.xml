@@ -51,6 +51,7 @@ Type "ant -p" for a list of targets.
       jar-scifio,
       jar-scifio-devel,
       jar-scifio-tools,
+      jar-specification,
       jar-tests,
       jar-turbojpeg"
     description="generate JAR files for LOCI software packages"/>
@@ -141,6 +142,7 @@ Type "ant -p" for a list of targets.
       test-scifio,
       test-scifio-devel,
       test-scifio-tools,
+      test-specification,
       test-tests,
       test-turbojpeg"
     description="test all components">
@@ -911,7 +913,8 @@ Type "ant -p" for a list of targets.
       jar-ome-xml,
       jar-poi-loci,
       jar-scifio,
-      jar-scifio-tools"
+      jar-scifio-tools,
+      jar-specification"
     description="create JAR file encompassing several LOCI tools">
     <echo>----------=========== loci_tools ===========----------</echo>
     <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
@@ -965,9 +968,17 @@ Type "ant -p" for a list of targets.
   </target>
 
   <!-- Specification -->
+  <target name="jar-specification"
+    description="create jar for Specification">
+    <ant dir="components/specification" target="jar"/>
+  </target>
+  <target name="test-specification"
+    description="run tests for Specification">
+    <ant dir="components/specification" target="test"/>
+  </target>
   <target name="clean-specification"
     description="remove build files for Specification">
-    <ant dir="components/specification" target="specification.clean"/>
+    <ant dir="components/specification" target="clean"/>
   </target>
 
   <!-- HACK - limit OS to *nix due to file permission issues -->

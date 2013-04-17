@@ -1891,6 +1891,7 @@
         </options>
     </meta>
     <projectTree name="omeOxygenProject.xpr">
+        <folder name="Bio-Formats Version"/>
         <folder path="../released-schema/"/>
         <folder path="../samples/"/>
         <folder path="../transforms/"/>

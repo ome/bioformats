@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 University of Dundee & Open Microscopy Environment.
+ * Copyright (C) 2012-2013 University of Dundee & Open Microscopy Environment.
  * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,10 +68,11 @@ import spec.schema.samples.Instrument2011_06.ref;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
  */
 
+@Test(groups = { "all" })
 public class Schema2011_06_Instrument_Upgrade_Test {
     private static final Templates UPDATE_201106 =
-        XMLTools.getStylesheet("/Xslt/2011-06-to-2012-06.xsl",
-                Schema2011_06_TO_2012_06_Test.class);
+        XMLTools.getStylesheet("/transforms/2011-06-to-2012-06.xsl",
+                Schema2011_06_Instrument_Upgrade_Test.class);
 
     private OME ome;
 
@@ -409,7 +410,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertNull(lightsourceSettings.getMicrobeamManipulation());
     }
 
-    @Test (groups = {"11-06-i-links"}, dependsOnGroups = {"11-06-i-image", "11-06-i-lightsource"})
+    @Test (enabled=false, groups = {"11-06-i-links"}, dependsOnGroups = {"11-06-i-image", "11-06-i-lightsource"})
     public void testChannel0ToLightsourceLinkage() {
         Assert.assertNotNull(channel0);
         LightSourceSettings lightsourceSettings = channel0.getLightSourceSettings();
@@ -442,7 +443,7 @@ public class Schema2011_06_Instrument_Upgrade_Test {
         Assert.assertEquals(ref.Image0DetectorSettings0Voltage, detectorSettings.getVoltage());
     }
 
-    @Test (groups = {"11-06-i-links"}, dependsOnGroups = {"11-06-i-image", "11-06-i-detector"})
+    @Test (enabled=false, groups = {"11-06-i-links"}, dependsOnGroups = {"11-06-i-image", "11-06-i-detector"})
     public void testChannel0ToDetectorLinkage() {
         Assert.assertNotNull(channel0);
         DetectorSettings detectorSettings = channel0.getDetectorSettings();

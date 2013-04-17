@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 University of Dundee & Open Microscopy Environment.
+ * Copyright (C) 2012-2013 University of Dundee & Open Microscopy Environment.
  * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,10 +76,11 @@ import spec.schema.samples.Upgrade2011_06.ref;
  * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
  */
 
+@Test(groups = { "all" })
 public class Schema2011_06_File_Upgrade_Test {
     private static final Templates UPDATE_201106 =
-        XMLTools.getStylesheet("/Xslt/2011-06-to-2012-06.xsl",
-                Schema2011_06_TO_2012_06_Test.class);
+        XMLTools.getStylesheet("/transforms/2011-06-to-2012-06.xsl",
+                Schema2011_06_File_Upgrade_Test.class);
 
     private static final String MESSAGE_REMOVED_PATH = "Removed Path";
     private OME ome;
@@ -747,7 +748,7 @@ public class Schema2011_06_File_Upgrade_Test {
         Assert.assertEquals(ref.ROI1Shape1Label, point1.getText());
     }
 
-    @Test (groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
+    @Test (enabled=false, groups = {"11-06-u-roi"}, dependsOnMethods = {"testROI2AndUnion"})
     public void testShape2() {
         Assert.assertNotNull(union2);
         shape2 = union2.getShape(0);

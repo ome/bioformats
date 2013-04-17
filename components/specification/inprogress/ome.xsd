@@ -1,9 +1,8 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
-<?xml-stylesheet href="http://cvs.openmicroscopy.org.uk/snapshots/omero/editor/omeXsd/display.xsl" type="text/xsl"?>
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
-    # Copyright (C) 2002-2012 Open Microscopy Environment
+    # Copyright (C) 2002-2013 Open Microscopy Environment
     #       Massachusetts Institute of Technology,
     #       National Institutes of Health,
     #       University of Dundee,
@@ -25,27 +24,27 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2012-06"
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2012-06"
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2013-06"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06"
-	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1"
 	elementFormDefault="qualified">
 	<!-- Using the svn location for import
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ROI.xsd"/>
 	Using the local directory location for import -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" schemaLocation="SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2012-06" schemaLocation="ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06" schemaLocation="BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2013-06" schemaLocation="SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-06" schemaLocation="SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2013-06" schemaLocation="ROI.xsd"/>
 	<!-- -->
 
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
@@ -79,54 +78,52 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:choice>
-				<!-- Either: standard expected elements -->
-				<xsd:sequence>
-					<xsd:element ref="Project" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="Dataset" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="Experiment" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="SPW:Plate" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="SPW:Screen" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="Experimenter" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="ExperimenterGroup" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
-					<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
-				</xsd:sequence>
-				<!-- Or: Single BinaryOnly element -->
-				<xsd:element name="BinaryOnly" minOccurs="1" maxOccurs="1">
-					<xsd:annotation>
-						<xsd:documentation>
-							Pointer to an external metadata file. If this element is
-							present, then no other metadata may be present in this file,
-							i.e. this file is a place-holder.
-						</xsd:documentation>
-					</xsd:annotation>
-					<xsd:complexType>
-						<xsd:attribute name="MetadataFile" type="xsd:string" use="required">
-							<xsd:annotation>
-								<xsd:documentation>
-									Filename of the OME-XML metadata file for this
-									binary data. If the file cannot be found, a search can be
-									performed based on the UUID.
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:attribute>
-						<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="required">
-							<xsd:annotation>
-								<xsd:documentation>
-									The unique identifier of another OME-XML block
-									whose metadata describes the binary data in this file. This UUID
-									is considered authoritative regardless of mismatches in the
-									filename.
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:attribute>
-					</xsd:complexType>
-				</xsd:element>
-				<!-- End of MetadataOnly Element -->
-			</xsd:choice>
+			<xsd:sequence>
+				<xsd:element ref="Rights" minOccurs="0" maxOccurs="1"/>
+				<xsd:choice>
+					<!-- Either: standard expected elements -->
+					<xsd:sequence>
+						<xsd:element ref="Project" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="Dataset" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="Experiment" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="SPW:Plate" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="SPW:Screen" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="Experimenter" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="ExperimenterGroup" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
+						<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
+						<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+					<!-- Or: Single BinaryOnly element -->
+					<xsd:element name="BinaryOnly" minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation> Pointer to an external metadata file. If this
+								element is present, then no other metadata may be present in this
+								file, i.e. this file is a place-holder. </xsd:documentation>
+						</xsd:annotation>
+						<xsd:complexType>
+							<xsd:attribute name="MetadataFile" type="xsd:string" use="required">
+								<xsd:annotation>
+									<xsd:documentation> Filename of the OME-XML metadata file for
+										this binary data. If the file cannot be found, a search can
+										be performed based on the UUID. </xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+							<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier"
+								use="required">
+								<xsd:annotation>
+									<xsd:documentation> The unique identifier of another OME-XML
+										block whose metadata describes the binary data in this file.
+										This UUID is considered authoritative regardless of
+										mismatches in the filename. </xsd:documentation>
+								</xsd:annotation>
+							</xsd:attribute>
+						</xsd:complexType>
+					</xsd:element>
+					<!-- End of MetadataOnly Element -->
+				</xsd:choice>
+			</xsd:sequence>
 			<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -176,7 +173,8 @@
 		<xsd:key name="WellSampleIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ROIIDKey"><xsd:selector xpath="ROI:ROI"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ShapeIDKey"><xsd:selector xpath="ROI:ROI/ROI:Union/ROI:Shape"/><xsd:field xpath="@ID"/></xsd:key>
-
+		<xsd:key name="AnnotationIDKey"><xsd:selector xpath="SA:StructuredAnnotations/*"/><xsd:field xpath="@ID"/></xsd:key>
+		
 		<!-- Unique references -->
 		<xsd:key name="WellSampleImageRefIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample/OME:ImageRef"/><xsd:field xpath="@ID"/></xsd:key>
 
@@ -218,6 +216,9 @@
 		<xsd:keyref name="ScreenScreenAcquisitionWellSampleIDKeyRef" refer="OME:WellSampleIDKey" ><xsd:selector xpath="SPW:Screen/SPW:ScreenAcquisition/SPW:WellSampleRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ExperimentMicrobeamManipulationROIIDKeyRef" refer="OME:ROIIDKey" ><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation/ROI:ROIRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImageROIIDKeyRef" refer="OME:ROIIDKey" ><xsd:selector xpath="OME:Image/ROI:ROIRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="AnnotationRefAnnotationIDKeyRef" refer="OME:AnnotationIDKey"><xsd:selector xpath=".//SA:AnnotationRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="AnnotationAnnotatorExperimenterIDKeyRef" refer="OME:ExperimenterIDKey"><xsd:selector xpath="SA:StructuredAnnotations/*"/><xsd:field xpath="@Annotator"/></xsd:keyref>
+
 	</xsd:element>
 
 	<!-- Key pixel storage elements -->
@@ -271,6 +272,18 @@
 				<xsd:element ref="ObjectiveSettings" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ImagingEnvironment" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="StageLabel" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="Transform" type="AffineTransform" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							This is a matrix used to transform the image. It can
+							be used by stitching, tracking or visualization tools.
+							The element has 6 xsd:float attributes. If the element
+							is present then all 6 values must be included.
+							e.g. this could record a field rotation, or a flip 
+							in the axes of an image.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="Pixels" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="ROI:ROIRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
@@ -296,18 +309,30 @@
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Pixels</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				NOTE: Pixels is DEPRECATED, but it is still required.
+				Pixels is going to be removed in the future, but it is still required.
+
 				This is just notice that the contents of Pixels will be
-				moved up to Image in the next release. This is because there
+				moved up to Image in a future release. This is because there
 				has only been 1 Pixels object in each Image for some time.
 				The concept of multiple Pixels sets for one Image failed to
 				take off. It is therefore redundant.
 
 				The Image will be unreadable if any of the required Pixel attributes are missing.
-				The Pixels themselves are stored within the file compressed by plane, and encoded in Base64.
-				The Pixels element must contain a list of BinData, each containing a single plane of pixels.
-				These Pixels elements, when read in document order, must produce a 5-D pixel array
-				of the size specified in this element, and in the dimension order specified by 'DimensionOrder'.
+
+				The Pixels themselves can be stored within the OME-XML compressed by plane, and encoded
+				in Base64.
+				Or the Pixels may be stored in TIFF format.
+
+				The Pixels element should contain a list of BinData or TiffData, each containing a
+				single plane of pixels. These Pixels elements, when read in document order,
+				must produce a 5-D pixel array of the size specified in this element, and in the
+				dimension order specified by 'DimensionOrder'.
+
+				All of the values in the Pixels object when present should match the same value
+				stored in any associated TIFF format (e.g. SizeX should be the same). Where there
+				is a mismatch our readers will take the value from the TIFF structure as overriding
+				the value in the OME-XML. This is simply a pragmatic decision as it increases the
+				likelihood of reading data from a slightly incorrect file.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -351,6 +376,37 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The variable type used to represent each pixel in the image.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="SignificantBits" use="optional" type="PositiveInt">
+				<xsd:annotation>
+					<xsd:documentation>
+						The number of bits within the type storing each pixel that are significant.
+						e.g. you can store 12 bit data within a 16 bit type.
+						This does not reduce the storage requirements but can be a useful indicator
+						when processing or viewing the image data.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Interleaved" use="optional" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>
+						How the channels are arranged withing the data block:
+						true if channels are stored RGBRGBRGB...;
+						false if channels are stored RRR...GGG...BBB...
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="BigEndian" use="optional" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>
+						This is true if the pixels data was written in BigEndian order.
+
+						If this value is present it should match the value used in BinData
+						or TiffData. If it does not a reader should honour the value used
+						in the BinData or TiffData. This values is useful for MetadataOnly
+						files and is to allow for future storage solutions.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -530,8 +586,8 @@
 			<xsd:attribute name="SamplesPerPixel" use="optional" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
-						The number of samples the detector takes to form each pixel value.
-						The SamplesPerPixel attribute is the number of channel components in the logical channel. [units:none]
+						The number of samples the detector takes to form each pixel value. [units:none]
+						Note: This is not the same as "Frame Averaging" - see Integration in DetectorSettings
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1255,6 +1311,24 @@
 			</xsd:annotation>
 		</xsd:attribute>
 	</xsd:complexType>
+	<xsd:complexType name="AffineTransform">
+		<xsd:annotation>
+			<xsd:documentation>
+				This is a matrix used to transform a shape or image.
+				--             --
+				| A00, A01, A02 |
+				| A10, A11, A12 |
+				| 0,   0,   1   |
+				--             --
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="A00" use="required" type="xsd:float"/>
+		<xsd:attribute name="A10" use="required" type="xsd:float"/>
+		<xsd:attribute name="A01" use="required" type="xsd:float"/>
+		<xsd:attribute name="A11" use="required" type="xsd:float"/>
+		<xsd:attribute name="A02" use="required" type="xsd:float"/>
+		<xsd:attribute name="A12" use="required" type="xsd:float"/>
+	</xsd:complexType>
 	<xsd:simpleType name="Hex40">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1438,10 +1512,12 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-					<xsd:attribute name="NominalMagnification" use="optional" type="PositiveInt">
+					<xsd:attribute name="NominalMagnification" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
 								The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens. [units:none]
+								Note: The type of this has been changed from int to float to allow
+								the specification of additional lenses e.g. 0.5X lens
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1476,6 +1552,8 @@
 			<xsd:documentation>
 				The type of detector used to capture the image.
 				The Detector ID can be used as a reference within the Channel element in the Image element.
+				The values stored in Detector represent the fixed values,
+				variable values modified during the acquisition go in DetectorSettings
 
 				Each attribute now has an indication of what type of detector
 				it applies to. This is preparatory work for cleaning up and
@@ -1509,7 +1587,7 @@
 					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units:none] {used:PMT}
+								The fixed Zoom for a detector. [units:none] {used:PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1595,7 +1673,7 @@
 				It is based on the FilterSpec type, so has the required attributes Manufacturer, Model, and LotNumber.
 				It may also contain a Type attribute which may be set to
 				'LongPass', 'ShortPass', 'BandPass', 'MultiPass',
-				'Dichroic', 'NeutralDensity', or 'Other'.
+				'Dichroic', 'NeutralDensity', 'Tuneable' or 'Other'.
 				It can be associated with an optional FilterWheel - Note: this is not the same as a FilterSet
 			</xsd:documentation>
 		</xsd:annotation>
@@ -1614,6 +1692,7 @@
 								<xsd:enumeration value="BandPass"/>
 								<xsd:enumeration value="MultiPass"/>
 								<xsd:enumeration value="NeutralDensity"/>
+								<xsd:enumeration value="Tuneable"/>
 								<xsd:enumeration value="Other"/>
 							</xsd:restriction>
 						</xsd:simpleType>
@@ -2014,6 +2093,44 @@
 		</xsd:complexType>
 	</xsd:element>
 
+	<xsd:element name="Rights"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Rights</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				The rights holder of this data and the rights held.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="RightsHolder" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> The rights holder for this data. [plane text multi-line string]
+							e.g. "Copyright (C) 2002-2013 Open Microscopy Environment"
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="RightsHeld" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation> 
+							The rights held by the rights holder. [plane text multi-line string] 
+							e.g. "All rights reserved" or "Creative Commons Attribution 3.0 Unported License"
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
 	<!-- References -->
 	<xsd:complexType name="Reference">
 		<xsd:annotation>
@@ -2206,6 +2323,8 @@
 				This holds the setting applied to a detector as well as a
 				reference to the detector.
 				The ID is the detector used in this case.
+				The values stored in DetectorSettings represent the variable values,
+				fixed values not modified during the acquisition go in Detector.
 
 				Each attribute now has an indication of what type of detector
 				it applies to. This is preparatory work for cleaning up and
@@ -2237,6 +2356,13 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
+					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
+						<xsd:annotation>
+							<xsd:documentation>
+								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units:none] {used:PMT}
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
 					<xsd:attribute name="ReadOutRate" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
@@ -2261,6 +2387,14 @@
 								<xsd:enumeration value="Other"/>
 							</xsd:restriction>
 						</xsd:simpleType>
+					</xsd:attribute>
+					<xsd:attribute name="Integration" use="optional" type="PositiveInt">
+						<xsd:annotation>
+							<xsd:documentation>
+								This is the number of sequential frames that get averaged,
+								to improve the signal-to-noise ratio. [units:none] {used:CCD,EMCCD}
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:attribute>
 				</xsd:extension>
 			</xsd:complexContent>

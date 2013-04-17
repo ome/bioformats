@@ -14,11 +14,10 @@
     <artifact name="ome-xml"/>
     <artifact name="poi-loci"/>
     <artifact name="scifio"/>
+    <artifact name="specification"/>
     <artifact name="turbojpeg"/>
   </publications>
   <dependencies defaultconfmapping="build,runtime->default">
-    <!-- Internal -->
-    <dependency name="specification" rev="${omero.version}" changing="true" conf="build,runtime->build"/>
     <!-- Deps -->
     <dependency org="bf-deps" name="xalan" rev="2.7.1"/>
     <dependency org="bf-deps" name="serializer" rev="2.7.1"/>
