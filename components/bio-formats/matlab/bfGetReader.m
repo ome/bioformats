@@ -52,11 +52,13 @@ assert(status, ['Missing Bio-Formats library. Either add loci_tools.jar '...
     'to the static Java path or add it to the Matlab path.']);
 
 % Prompt for a file if not input
-if nargin == 0 || exist(id, 'file') == 0
+isFile = exist(id, 'file') == 2;
+isFake = ischar(id) && strcmp(id(end-3:end), 'fake');
+if nargin == 0 || (~isFile && ~isFake)
     [file, path] = uigetfile(bfGetFileExtensions, 'Choose a file to open');
     id = [path file];
     if isequal(path, 0) || isequal(file, 0), return; end
-else
+elseif isFile
     [~, f] = fileattrib(id);
     id = f.Name;
 end
