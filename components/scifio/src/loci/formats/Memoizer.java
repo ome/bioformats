@@ -96,11 +96,14 @@ public class Memoizer extends ReaderWrapper {
       kryo.setInstantiatorStrategy(new StdInstantiatorStrategy());
     }
 
+    FileInputStream fis;
+    FileOutputStream fos;
     Input input;
     Output output;
 
     public void loadStart(File memoFile) throws FileNotFoundException {
-        input = new Input(new FileInputStream(memoFile));
+        fis = new FileInputStream(memoFile);
+        input = new Input(fis);
     }
 
     public Integer loadVersion() {
@@ -117,10 +120,19 @@ public class Memoizer extends ReaderWrapper {
         input.close();
         input = null;
       }
+      if (fis != null) {
+        try {
+          fis.close();
+        } catch (IOException e) {
+          LOGGER.debug("failed to close KryoDeser.fis");
+        }
+        fis = null;
+      }
     }
 
     public void saveStart(File tempFile) throws FileNotFoundException {
-      output = new Output(new FileOutputStream(tempFile));
+      fos = new FileOutputStream(tempFile);
+      output = new Output(fos);
     }
 
     public void saveVersion(Integer vERSION) {
@@ -136,6 +148,14 @@ public class Memoizer extends ReaderWrapper {
       if (output != null) {
         output.close();
         output = null;
+      }
+      if (fos != null) {
+        try {
+          fos.close();
+          fos = null;
+        } catch (IOException e) {
+          LOGGER.debug("failed to close KryoDeser.fis");
+        }
       }
     }
 
