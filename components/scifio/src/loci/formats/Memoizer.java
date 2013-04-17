@@ -41,8 +41,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
@@ -63,7 +61,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.shaded.org.objenesis.strategy.StdInstantiatorStrategy;
-import com.romix.quickser.Serialization;
 
 /**
  * {@link ReaderWrapper} implementation which caches the state of the
@@ -89,52 +86,6 @@ public class Memoizer extends ReaderWrapper {
     void saveReader(IFormatReader reader) throws IOException;
 
     void saveStop() throws IOException;
-
-  }
-
-  private static class JDKDeser implements Deser {
-
-    FileOutputStream fos;
-    ObjectOutputStream oos;
-    FileInputStream fis;
-    ObjectInputStream ois;
-
-    public void loadStart(File memoFile) throws IOException {
-      fis = new FileInputStream(memoFile);
-      ois = new ObjectInputStream(fis);
-    }
-
-    public Integer loadVersion() throws IOException {
-      return ois.readInt();
-    }
-
-    public IFormatReader loadReader() throws IOException,
-            ClassNotFoundException {
-      return (IFormatReader) ois.readObject();
-    }
-
-    public void loadStop() throws IOException {
-      ois.close();
-      fis.close();
-    }
-
-    public void saveStart(File tempFile) throws IOException {
-      fos = new FileOutputStream(tempFile);
-      oos = new ObjectOutputStream(fos);
-    }
-
-    public void saveVersion(Integer version) throws IOException {
-      oos.writeInt(version);
-    }
-
-    public void saveReader(IFormatReader reader) throws IOException {
-      oos.writeObject(reader);
-    }
-
-    public void saveStop() throws IOException {
-      oos.close();
-      fos.close();
-    }
 
   }
 
@@ -190,23 +141,10 @@ public class Memoizer extends ReaderWrapper {
 
   }
 
-  private static class QuickserDeser extends RandomAccessDeser {
-
-    final Serialization serialization = new Serialization();
-
-    @Override
-    protected IFormatReader readerFromBytes(Class<IFormatReader> reader,
-      byte[] rArr) throws IOException, ClassNotFoundException {
-      return (IFormatReader) serialization.deserialize(rArr);
-    }
-
-    @Override
-    protected byte[] bytesFromReader(IFormatReader reader) throws IOException {
-        return serialization.serialize(reader);
-    }
-
-  }
-
+  /**
+   * Helper implementation that can be used to implement {@link Deser}
+   * classes for libraries working solely with byte arrays.
+   */
   private static abstract class RandomAccessDeser implements Deser {
 
     RandomAccessInputStream loadStream;
