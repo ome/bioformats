@@ -1502,6 +1502,11 @@ public class ZeissLSMReader extends FormatReader {
           double x = in.readDouble();
           double y = in.readDouble();
           String text = DataTools.stripString(in.readCString());
+
+          store.setROIID(roiID, i);
+          store.setLabelID(shapeID, i, 0);
+          store.setLabelX(x, i, 0);
+          store.setLabelY(y, i, 0);
           store.setLabelText(text, i, 0);
           if (fontHeight >= 0) {
             store.setLabelFontSize(new NonNegativeInteger(fontHeight), i, 0);
@@ -1511,9 +1516,8 @@ public class ZeissLSMReader extends FormatReader {
               fontHeight);
           }
           store.setLabelStrokeWidth(lineWidth, i, 0);
-          store.setROIID(roiID, i);
-          store.setLabelID(shapeID, i, 0);
           store.setImageROIRef(roiID, series, i);
+
           break;
         case LINE:
           in.skipBytes(4);
@@ -1522,6 +1526,8 @@ public class ZeissLSMReader extends FormatReader {
           double endX = in.readDouble();
           double endY = in.readDouble();
 
+          store.setROIID(roiID, i);
+          store.setLineID(shapeID, i, 0);
           store.setLineX1(startX, i, 0);
           store.setLineY1(startY, i, 0);
           store.setLineX2(endX, i, 0);
@@ -1534,15 +1540,16 @@ public class ZeissLSMReader extends FormatReader {
               fontHeight);
           }
           store.setLineStrokeWidth(lineWidth, i, 0);
-          store.setROIID(roiID, i);
           store.setImageROIRef(roiID, series, i);
-          store.setLineID(shapeID, i, 0);
+
           break;
         case SCALE_BAR:
         case OPEN_ARROW:
         case CLOSED_ARROW:
         case PALETTE:
           in.skipBytes(36);
+          i--;
+          numberOfShapes--;
           break;
         case RECTANGLE:
           in.skipBytes(4);
@@ -1556,6 +1563,8 @@ public class ZeissLSMReader extends FormatReader {
           topX = Math.min(topX, bottomX);
           topY = Math.min(topY, bottomY);
 
+          store.setROIID(roiID, i);
+          store.setRectangleID(shapeID, i, 0);
           store.setRectangleX(topX, i, 0);
           store.setRectangleY(topY, i, 0);
           store.setRectangleWidth(width, i, 0);
@@ -1569,8 +1578,6 @@ public class ZeissLSMReader extends FormatReader {
               fontHeight);
           }
           store.setRectangleStrokeWidth(lineWidth, i, 0);
-          store.setROIID(roiID, i);
-          store.setRectangleID(shapeID, i, 0);
           store.setImageROIRef(roiID, series, i);
 
           break;
@@ -1582,8 +1589,10 @@ public class ZeissLSMReader extends FormatReader {
             xs[j] = in.readDouble();
             ys[j] = in.readDouble();
           }
-
           double rx = 0, ry = 0, centerX = 0, centerY = 0;
+
+          store.setROIID(roiID, i);
+          store.setEllipseID(shapeID, i, 0);
 
           if (knots == 4) {
             double r1x = Math.abs(xs[2] - xs[0]) / 2;
@@ -1633,9 +1642,7 @@ public class ZeissLSMReader extends FormatReader {
               fontHeight);
           }
           store.setEllipseStrokeWidth(lineWidth, i, 0);
-          store.setROIID(roiID, i);
           store.setImageROIRef(roiID, series, i);
-          store.setEllipseID(shapeID, i, 0);
 
           break;
         case CIRCLE:
@@ -1648,6 +1655,8 @@ public class ZeissLSMReader extends FormatReader {
           double radius = Math.sqrt(Math.pow(curveX - centerX, 2) +
             Math.pow(curveY - centerY, 2));
 
+          store.setROIID(roiID, i);
+          store.setEllipseID(shapeID, i, 0);
           store.setEllipseX(centerX, i, 0);
           store.setEllipseY(centerY, i, 0);
           store.setEllipseRadiusX(radius, i, 0);
@@ -1660,9 +1669,7 @@ public class ZeissLSMReader extends FormatReader {
               fontHeight);
           }
           store.setEllipseStrokeWidth(lineWidth, i, 0);
-          store.setROIID(roiID, i);
           store.setImageROIRef(roiID, series, i);
-          store.setEllipseID(shapeID, i, 0);
 
           break;
         case CIRCLE_3POINT:
@@ -1692,6 +1699,8 @@ public class ZeissLSMReader extends FormatReader {
           double r = Math.sqrt(Math.pow(points[0][0] - cx, 2) +
             Math.pow(points[0][1] - cy, 2));
 
+          store.setROIID(roiID, i);
+          store.setEllipseID(shapeID, i, 0);
           store.setEllipseX(cx, i, 0);
           store.setEllipseY(cy, i, 0);
           store.setEllipseRadiusX(r, i, 0);
@@ -1704,9 +1713,7 @@ public class ZeissLSMReader extends FormatReader {
               fontHeight);
           }
           store.setEllipseStrokeWidth(lineWidth, i, 0);
-          store.setROIID(roiID, i);
           store.setImageROIRef(roiID, series, i);
-          store.setEllipseID(shapeID, i, 0);
 
           break;
         case ANGLE:
@@ -1726,6 +1733,8 @@ public class ZeissLSMReader extends FormatReader {
             if (j < points.length - 1) p.append(" ");
           }
 
+          store.setROIID(roiID, i);
+          store.setPolylineID(shapeID, i, 0);
           store.setPolylinePoints(p.toString(), i, 0);
           if (fontHeight >= 0) {
             store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
@@ -1735,9 +1744,7 @@ public class ZeissLSMReader extends FormatReader {
               fontHeight);
           }
           store.setPolylineStrokeWidth(lineWidth, i, 0);
-          store.setROIID(roiID, i);
           store.setImageROIRef(roiID, series, i);
-          store.setPolylineID(shapeID, i, 0);
 
           break;
         case CLOSED_POLYLINE:
@@ -1760,7 +1767,6 @@ public class ZeissLSMReader extends FormatReader {
           }
 
           store.setROIID(roiID, i);
-          store.setImageROIRef(roiID, series, i);
 
           if (type != CLOSED_POLYLINE) {
             store.setPolylinePoints(p.toString(), i, 0);
@@ -1786,6 +1792,7 @@ public class ZeissLSMReader extends FormatReader {
             store.setPolygonStrokeWidth(lineWidth, i, 0);
             store.setPolygonID(shapeID, i, 0);
           }
+          store.setImageROIRef(roiID, series, i);
 
           break;
         case CLOSED_BEZIER:
@@ -1808,9 +1815,9 @@ public class ZeissLSMReader extends FormatReader {
           }
 
           store.setROIID(roiID, i);
-          store.setImageROIRef(roiID, series, i);
 
           if (type == OPEN_BEZIER) {
+            store.setPolylineID(shapeID, i, 0);
             store.setPolylinePoints(p.toString(), i, 0);
             if (fontHeight >= 0) {
               store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
@@ -1820,9 +1827,9 @@ public class ZeissLSMReader extends FormatReader {
                 fontHeight);
             }
             store.setPolylineStrokeWidth(lineWidth, i, 0);
-            store.setPolylineID(shapeID, i, 0);
           }
           else {
+            store.setPolygonID(shapeID, i, 0);
             store.setPolygonPoints(p.toString(), i, 0);
             if (fontHeight >= 0) {
               store.setPolygonFontSize(new NonNegativeInteger(fontHeight), i, 0);
@@ -1832,8 +1839,8 @@ public class ZeissLSMReader extends FormatReader {
                 fontHeight);
             }
             store.setPolygonStrokeWidth(lineWidth, i, 0);
-            store.setPolygonID(shapeID, i, 0);
           }
+          store.setImageROIRef(roiID, series, i);
 
           break;
         default:
