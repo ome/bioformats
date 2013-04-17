@@ -87,6 +87,7 @@ public class Memoizer extends ReaderWrapper {
 
     void saveStop() throws IOException;
 
+    void close();
   }
 
   public static class KryoDeser implements Deser {
@@ -100,6 +101,12 @@ public class Memoizer extends ReaderWrapper {
     FileOutputStream fos;
     Input input;
     Output output;
+
+    public void close() {
+      loadStop();
+      saveStop();
+      kryo.reset();    
+    }
 
     public void loadStart(File memoFile) throws FileNotFoundException {
         fis = new FileInputStream(memoFile);
@@ -330,6 +337,29 @@ public class Memoizer extends ReaderWrapper {
 
   public boolean isSavedToMemo() {
     return savedToMemo;
+  }
+
+  protected void cleanup() {
+    if (ser != null) {
+      ser.close();
+      ser = null;
+    }
+  }
+
+  public void close() throws IOException {
+    try {
+      cleanup();
+    } finally {
+      super.close();
+    }
+  }
+
+  public void close(boolean fileOnly) throws IOException {
+    try {
+      cleanup();
+    } finally {
+      super.close(fileOnly);
+    }
   }
 
   // -- ReaderWrapper API methods --
