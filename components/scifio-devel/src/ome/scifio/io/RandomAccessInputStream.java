@@ -41,6 +41,8 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -49,6 +51,11 @@ import ome.scifio.common.Constants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 /**
  *
@@ -59,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class RandomAccessInputStream extends InputStream implements DataInput, Closeable {
+public class RandomAccessInputStream extends InputStream implements DataInput, Closeable, KryoSerializable {
 
   // -- Constants --
 
@@ -83,7 +90,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   protected IRandomAccess raf;
 
   /** The file name. */
-  protected final String file;
+  protected String file;
 
   protected long length = -1;
 
@@ -498,6 +505,32 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   public void reset() throws IOException {
     if (markedPos < 0) throw new IOException("No mark set");
     seek(markedPos);
+  }
+
+  // -- Externalizable API methods --
+
+  public void read(Kryo kryo, Input in) {
+    raf = (IRandomAccess) kryo.readClassAndObject(in);
+    file = kryo.readObjectOrNull(in, String.class);
+    if (file != null) {
+      try {
+        raf = Location.getHandle(file);
+      }
+      catch (IOException e) {
+        LOGGER.warn("Failed to reopen file", e);
+      }
+    }
+    length = kryo.readObject(in, Long.class);
+    markedPos = kryo.readObject(in, Long.class);
+    encoding = kryo.readObject(in, String.class);
+  }
+
+  public void write(Kryo kryo, Output out) {
+    kryo.writeClassAndObject(out, raf);
+    kryo.writeObjectOrNull(out, file, String.class);
+    kryo.writeObject(out, length);
+    kryo.writeObject(out, markedPos);
+    kryo.writeObject(out, encoding);
   }
 
 }
