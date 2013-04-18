@@ -28,6 +28,5 @@
     <dependency org="bf-deps" name="assumeng" rev="1.2.4"/>
     <dependency org="bf-deps" name="perf4j" rev="0.9.13"/>
     <dependency org="bf-deps" name="kryo" rev="2.21-shaded"/>
-    <dependency org="bf-deps" name="quickser" rev="1.0-SNAPSHOT"/>
   </dependencies>
 </ivy-module>
