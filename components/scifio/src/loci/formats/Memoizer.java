@@ -105,7 +105,7 @@ public class Memoizer extends ReaderWrapper {
     public void close() {
       loadStop();
       saveStop();
-      kryo.reset();    
+      kryo.reset();
     }
 
     public void loadStart(File memoFile) throws FileNotFoundException {
@@ -142,8 +142,8 @@ public class Memoizer extends ReaderWrapper {
       output = new Output(fos);
     }
 
-    public void saveVersion(Integer vERSION) {
-      kryo.writeObject(output, VERSION);
+    public void saveVersion(Integer version) {
+      kryo.writeObject(output, version);
     }
 
    public void saveReader(IFormatReader reader) {
