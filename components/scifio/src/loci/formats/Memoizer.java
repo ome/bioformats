@@ -42,6 +42,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
@@ -192,7 +193,8 @@ public class Memoizer extends ReaderWrapper {
       loadStream.readFully(cArr);
       // Assuming proper encoding.
       @SuppressWarnings("unchecked")
-      Class<IFormatReader> c = (Class<IFormatReader>) Class.forName(new String(cArr));
+      Class<IFormatReader> c = (Class<IFormatReader>) Class.forName(
+              new String(cArr, Constants.ENCODING));
       int rSize = loadStream.readInt();
       byte[] rArr = new byte[rSize];
       loadStream.readFully(rArr);
@@ -218,7 +220,7 @@ public class Memoizer extends ReaderWrapper {
     }
 
     public void saveReader(IFormatReader reader) throws IOException {
-      byte[] cArr = reader.getClass().getName().getBytes();
+      byte[] cArr = reader.getClass().getName().getBytes(Constants.ENCODING);
       saveStream.write(cArr.length);
       saveStream.write(cArr);
       byte[] rArr = bytesFromReader(reader);
@@ -244,13 +246,13 @@ public class Memoizer extends ReaderWrapper {
    * cached items. This should happen when the order and type of objects stored
    * in the memo file changes.
    */
-  public static Integer VERSION = 1;
+  public static final Integer VERSION = 1;
 
   /**
    * Default value for {@link #minimumElapsed} if none is provided in the
    * constructor.
    */
-  public static long DEFAULT_MINIMUM_ELAPSED = 100;
+  public static final long DEFAULT_MINIMUM_ELAPSED = 100;
 
   private static final Logger LOGGER =
     LoggerFactory.getLogger(Memoizer.class);
