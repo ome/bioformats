@@ -1,11 +1,11 @@
-% Tests for the bfGetPlane utility function
+% Tests for the bfGetReader utility function
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2013 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -24,20 +24,19 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfGetPlane < TestCase
+classdef TestBfGetReader < TestCase
     
     properties
         reader
     end
     
     methods
-        function self = TestBfGetPlane(name)
+        function self = TestBfGetReader(name)
             self = self@TestCase(name);
         end
         
         function setUp(self)
             bfCheckJavaPath();
-            self.reader = loci.formats.ChannelSeparator(loci.formats.in.FakeReader());
         end
         
         function tearDown(self)
@@ -46,14 +45,11 @@ classdef TestBfGetPlane < TestCase
         end
         
         % Pixel type tests
-        function checkPixelsType(self, pixelsType)
-            self.reader.setId([pixelsType '-test&pixelType=' pixelsType '.fake']);
-            I = bfGetPlane(self.reader, 1);
-            if strcmp(pixelsType, 'float')
-                assertEqual(class(I), 'single');
-            else
-                assertEqual(class(I), pixelsType);
-            end
+        function checkPixelsType(self, type)
+            self.reader = bfGetReader([type '-test&pixelType=' type '.fake']);
+            pixelType = self.reader.getPixelType();
+            class = char(loci.formats.FormatTools.getPixelTypeString(pixelType));
+            assertEqual(class, type);
         end
         
         function testINT8(self)
@@ -85,43 +81,65 @@ classdef TestBfGetPlane < TestCase
         function testSizeX(self)
             sizeX = 200;
             self.reader = bfGetReader(['sizeX-test&sizeX=' num2str(sizeX) '.fake']);
-            I = bfGetPlane(self.reader, 1);
-            assertEqual(size(I, 2), sizeX);
+            assertEqual(self.reader.getSizeX(), sizeX);
         end
         
         function testSizeY(self)
             sizeY = 200;
             self.reader = bfGetReader(['sizeY-test&sizeY=' num2str(sizeY) '.fake']);
-            I = bfGetPlane(self.reader, 1);
-            assertEqual(size(I, 1), sizeY);
+            assertEqual(self.reader.getSizeY(), sizeY);
         end
         
-        % Tile tests
-        function checkTile(self, x, y, w, h)
-            I = bfGetPlane(self.reader, 1);
-            I2 = bfGetPlane(self.reader, 1, x, y, w, h);
-            
-            assertEqual(I2, I(y : y + h - 1, x : x + w - 1));
+        function testSizeZ(self)
+            sizeZ = 200;
+            self.reader = bfGetReader(['sizeZ-test&sizeZ=' num2str(sizeZ) '.fake']);
+            assertEqual(self.reader.getSizeZ(), sizeZ);
         end
         
-        function testFullTile(self)
-            self.reader.setId('fulltile-test.fake')
-            self.checkTile(1, 1, self.reader.getSizeX(), self.reader.getSizeY())
+        function testSizeC(self)
+            sizeC = 200;
+            self.reader = bfGetReader(['sizeC-test&sizeC=' num2str(sizeC) '.fake']);
+            assertEqual(self.reader.getSizeC(), sizeC);
         end
         
-        function testSquareTile(self)
-            self.reader.setId('sqtile-test.fake')
-            self.checkTile(10, 10, 20, 20)
+        function testSizeT(self)
+            sizeT = 200;
+            self.reader = bfGetReader(['sizeT-test&sizeT=' num2str(sizeT) '.fake']);
+            assertEqual(self.reader.getSizeT(), sizeT);
         end
         
-        function testRectangularTile(self)
-            self.reader.setId('recttile-test.fake')
-            self.checkTile(20, 10, 40, 20);
+        % Endianness tests
+        function testLittleEndian(self)
+            self.reader = bfGetReader('little-test&little=true.fake');
+            assertTrue(self.reader.isLittleEndian());
         end
         
-        function testSingleTile(self)
-            self.reader.setId('fulltile-test.fake')
-            self.checkTile(50, 50, 1, 1);
+        function testBigEndian(self)
+            self.reader = bfGetReader('bigendian-test&little=false.fake');
+            assertFalse(self.reader.isLittleEndian());
+        end
+        
+        % Series tests
+        function testMonoSeries(self)
+            nSeries = 1;
+            self.reader = bfGetReader(['series-test&series=' num2str(nSeries) '.fake']);
+            assertEqual(self.reader.getSeriesCount(), nSeries);
+        end
+        
+        function testMultiSeries(self)
+            nSeries = 10;
+            self.reader = bfGetReader(['series-test&series=' num2str(nSeries) '.fake']);
+            assertEqual(self.reader.getSeriesCount(), nSeries);
+        end
+        
+        function testInterleaved(self)
+            self.reader = bfGetReader('interleaved-test&interleaved=true.fake');
+            assertTrue(self.reader.isInterleaved());
+        end
+        
+        function testNoInterleaved(self)
+            self.reader = bfGetReader('interleaved-test&interleaved=false.fake');
+            assertFalse(self.reader.isInterleaved());
         end
     end
 end
