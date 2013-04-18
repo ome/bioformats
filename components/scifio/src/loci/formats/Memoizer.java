@@ -391,6 +391,9 @@ public class Memoizer extends ReaderWrapper {
 
       if (memoFile == null) {
         // Memoization disabled.
+        if (userMetadataStore != null) {
+          reader.setMetadataStore(userMetadataStore);
+        }
         super.setId(id); // EARLY EXIT
         return;
       }
@@ -406,11 +409,11 @@ public class Memoizer extends ReaderWrapper {
         long start = System.currentTimeMillis();
         super.setId(id);
         long elapsed = System.currentTimeMillis() - start;
+        handleMetadataStore(null); // Between setId and saveMemo
         if (elapsed < minimumElapsed) {
           LOGGER.debug("skipping save memo. elapsed millis: {}", elapsed);
           return; // EARLY EXIT!
         }
-        handleMetadataStore(null); // Between setId and saveMemo
         savedToMemo = saveMemo(); // Should never throw.
       } else {
         // loadMemo has already called handleMetadataStore with non-null
