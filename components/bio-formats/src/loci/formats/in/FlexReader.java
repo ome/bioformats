@@ -123,7 +123,6 @@ public class FlexReader extends FormatReader {
 
   private String plateName, plateBarcode;
   private int nRows = 0, nCols = 0;
-  private RandomAccessInputStream firstStream;
 
   private String plateAcqStartTime;
 
@@ -239,7 +238,7 @@ public class FlexReader extends FormatReader {
       file.ifds.get(imageNumber) : firstFile.ifds.get(0);
 
     boolean useFirstStream = wellRow == 0 && wellCol == 0 && file.field == 0;
-    RandomAccessInputStream s = useFirstStream ? firstStream :
+    RandomAccessInputStream s = 
       new RandomAccessInputStream(getFileHandle(file.file));
 
     int nBytes = ifd.getBitsPerSample()[0] / 8;
@@ -310,8 +309,6 @@ public class FlexReader extends FormatReader {
       nRows = nCols = 0;
       flexFiles = null;
       wellNumber = null;
-      if (firstStream != null) firstStream.close();
-      firstStream = null;
       planePositionX.clear();
       planePositionY.clear();
       planePositionZ.clear();
@@ -1246,7 +1243,6 @@ public class FlexReader extends FormatReader {
           wellNumber[currentWell][1] = col;
 
           s = new RandomAccessInputStream(getFileHandle(file.file));
-          if (currentWell == 0 && field == 0) firstStream = s;
           TiffParser tp = new TiffParser(s);
 
           if (compressed || firstFile) {
