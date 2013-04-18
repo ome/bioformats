@@ -261,7 +261,6 @@ your FindBugs installation's lib directory. E.g.:
         <filter token="vcs.revision" value="${vcs.revision}"/>
         <filter token="vcs.date" value="${vcs.date}"/>
         <filter token="release.version" value="${release.version}"/>
-        <filter token="visbio.version" value="${visbio.version}"/>
       </filterset>
     </copy>
     <!-- copy resources to classes folder -->
@@ -293,7 +292,6 @@ your FindBugs installation's lib directory. E.g.:
 	    <filter token="vcs.revision" value="${vcs.revision}"/>
 	    <filter token="vcs.date" value="${vcs.date}"/>
 	    <filter token="release.version" value="${release.version}"/>
-	    <filter token="visbio.version" value="${visbio.version}"/>
 	  </filterset>
 	</copy>
 	<!-- copy resources to classes folder -->
