@@ -59,7 +59,7 @@ public class Timestamp extends PrimitiveType<String> {
   private final Date asDate;
 
   /** ISO 8601 date format parser / printer. */
-  private final SimpleDateFormat dateFormat =
+  private transient final SimpleDateFormat dateFormat =
       new SimpleDateFormat(ISO8601_FORMAT);
 
   public Timestamp(String value) {
