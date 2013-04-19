@@ -59,6 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.shaded.org.objenesis.strategy.StdInstantiatorStrategy;
@@ -557,6 +558,10 @@ public class Memoizer extends ReaderWrapper {
       LOGGER.debug("loaded memo file: {} ({} bytes)",
         memoFile, memoFile.length());
       return copy;
+    } catch (KryoException e) {
+      memoFile.delete();
+      LOGGER.trace("deleted invalid memo file: {}", memoFile);
+      return null;
     } finally {
       ser.loadStop();
       sw.stop("loci.formats.Memoizer.loadMemo");
