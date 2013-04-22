@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>loci</groupId>
+    <artifactId>pom-scifio</artifactId>
+    <version>4.5-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <artifactId>xsd-fu</artifactId>
+
+  <name>XSD-FU</name>
+  <description>Model code generation from XML schema</description>
+  <url>http://loci.wisc.edu/software</url>
+  <inceptionYear>2005</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>GPL 2 or later</name>
+      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <dependencies>
+    <!-- None at present; maybe specification once it also has a pom.xml? -->
+  </dependencies>
+
+  <properties>
+    <project.rootdir>${basedir}/../..</project.rootdir>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+	<artifactId>maven-clean-plugin</artifactId>
+	<version>2.5</version>
+	<configuration>
+	  <filesets>
+	    <fileset>
+	      <directory>.</directory>
+	      <includes>
+		<include>**/*.pyc</include>
+	      </includes>
+	    </fileset>
+	  </filesets>
+	</configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
