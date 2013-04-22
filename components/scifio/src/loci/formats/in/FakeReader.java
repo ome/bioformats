@@ -53,7 +53,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import ome.xml.model.OME;
-import ome.xml.spec.XMLMockObjects;
+import ome.specification.XMLMockObjects;
 
 /**
  * FakeReader is the file format reader for faking input data.
