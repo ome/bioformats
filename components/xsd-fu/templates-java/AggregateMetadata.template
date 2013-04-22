@@ -246,7 +246,7 @@ public class AggregateMetadata implements IMetadata
 	// -- Fields --
 
 	/** The active metadata store delegates. */
-	private List delegates;
+	private List<BaseMetadata> delegates;
 
 	// -- Constructor --
 
@@ -255,7 +255,7 @@ public class AggregateMetadata implements IMetadata
 	 * @param delegates of type {@link MetadataRetrieve}
 	 *   and/or {@link MetadataStore}.
 	 */
-	public AggregateMetadata(List delegates)
+	public AggregateMetadata(List<BaseMetadata> delegates)
 	{
 		this.delegates = delegates;
 	}
