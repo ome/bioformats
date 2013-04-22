@@ -482,7 +482,10 @@ public class Memoizer extends ReaderWrapper {
   public File getMemoFile(String id) {
     File f = null;
     if (directory == null) {
-      f = new File(id);
+        // Disabling memoization unless specific directory is provided.
+        // This prevents random cache files from being unknowingly written.
+        LOGGER.debug("skipping memo: no directory given");
+        return null;
     } else {
       if (!directory.exists() || !directory.canWrite()) {
         LOGGER.debug("skipping memo: directory not writeable - {}", directory);
