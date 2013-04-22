@@ -569,16 +569,28 @@ public class ZeissZVIReader extends BaseZeissReader {
         LOGGER.debug("    Charset");
       }
 
-      // Label (text).
-      nshape.text = parseROIString(s);
-      if (nshape.text == null) break;
-      LOGGER.debug("  Text=" + nshape.text);
+      // Label (text).  This label can be NULL in some files, so we
+      // need to explicitly check whether it's a string prior to
+      // parsing it.
+      {
+          long tmp = s.getFilePointer();
+          s.skipBytes(2);
+          if (s.readShort() == 8) {
+              s.seek(tmp);
+              nshape.text = parseROIString(s);
+              if (nshape.text == null) break;
+              LOGGER.debug("  Text=" + nshape.text);
+          } else {
+              LOGGER.debug("  Text=NULL");
+          }
+      }
 
       // Tag ID
       if (s.getFilePointer() + 8 > s.length()) break;
-      s.skipBytes(6);
+      s.skipBytes(4);
+      LOGGER.debug("  Tag@" + s.getFilePointer());
       nshape.tagID = new Tag(s.readInt(), BaseZeissReader.Context.MAIN);
-      LOGGER.debug("  TagID=" + nshape.tagID);
+      LOGGER.debug("    TagID=" + nshape.tagID);
 
       // Font name
       nshape.fontName = parseROIString(s);
@@ -630,6 +642,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     // Strip off NUL.
     String text = null;
     if (strlen >= 2) { // Don't read NUL
+        LOGGER.debug("  String@" + s.getFilePointer() + ", length="+strlen);
         text = s.readString(strlen-2);
         s.skipBytes(2);
     } else {
