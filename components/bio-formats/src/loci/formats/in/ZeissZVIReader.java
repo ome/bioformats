@@ -596,18 +596,22 @@ public class ZeissZVIReader extends BaseZeissReader {
 
       // Label (text).  This label can be NULL in some files, so we
       // need to explicitly check whether it's a string prior to
-      // parsing it.
+      // parsing it.  It can also be present 0 or 2 bytes after the
+      // ShapeAttrs block, so check for both eventualities.
       {
-          long tmp = s.getFilePointer();
-          s.skipBytes(2);
+        long tmp = s.getFilePointer();
+        for (int i=0; i<2; ++i) {
           if (s.readShort() == 8) {
-              s.seek(tmp);
-              nshape.text = parseROIString(s);
-              if (nshape.text == null) break;
-              LOGGER.debug("  Text=" + nshape.text);
-          } else {
-              LOGGER.debug("  Text=NULL");
+            s.seek(tmp);
+            nshape.text = parseROIString(s);
+            break;
           }
+        }
+
+        if (nshape.text != null)
+          LOGGER.debug("  Text=" + nshape.text);
+        else
+          LOGGER.debug("  Text=NULL");
       }
 
       // Tag ID
