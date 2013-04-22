@@ -36,7 +36,9 @@ echo -e $HEADER >> $outputFile
 
 for reader in $baseDir/**/src/loci/formats/in/*Reader.java
 do
-  echo [`echo $reader | sed -e 's/.*\///' -e 's/\.java//'`] >> $outputFile
+  readername=$(echo $reader | sed -e 's/.*\///' -e 's/\.java//')
+  echo "Parsing $readername"
+  echo [$readername] >> $outputFile
   for line in `grep store.set $reader $commonClasses | sed -e 's/.*store\.set//' -e 's/(.*//' | sort | uniq`
   do
     matchingElement=''
