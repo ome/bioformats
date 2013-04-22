@@ -459,6 +459,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
 
     RandomAccessInputStream s = poi.getDocumentStream(name);
+    s.setEncoding("UTF-16LE");
     s.order(true);
 
     // scan stream for offsets to each ROI
