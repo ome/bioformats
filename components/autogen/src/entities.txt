@@ -43,6 +43,7 @@ schema = SA_xsd.html
 countable = true
 path = BooleanAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
 [BooleanAnnotation Description]
 type = String
@@ -67,6 +68,8 @@ type = AcquisitionMode
 countable = true
 path = Image+/Channel+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Channel Color]
 type = Color
@@ -82,6 +85,7 @@ type = PositiveInteger
 
 [Channel FilterSetRef]
 type = String
+anchor = FilterSetRef_ID
 
 [Channel Fluor]
 type = String
@@ -125,6 +129,7 @@ schema = SA_xsd.html
 countable = true
 path = CommentAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
 [CommentAnnotation Description]
 type = String
@@ -146,15 +151,19 @@ path = Dataset+
 countable = true
 path = Dataset+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Dataset Description]
 type = String
 
 [Dataset ExperimenterRef]
 type = String
+anchor = ExperimenterRef_ID
 
 [Dataset ExperimenterGroupRef]
 type = String
+anchor = ExperimenterGroupRef_ID
 
 [Dataset ID]
 type = String
@@ -163,6 +172,7 @@ type = String
 countable = true
 path = Dataset+/ImageRef+
 type = String
+anchor = ImageRef_ID
 
 [Dataset Name]
 type = String
@@ -262,6 +272,7 @@ schema = SA_xsd.html
 countable = true
 path = DoubleAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
 [DoubleAnnotation Description]
 type = String
@@ -369,6 +380,7 @@ type = String
 
 [Experiment ExperimenterRef]
 type = String
+anchor = ExperimenterRef_ID
 
 [Experiment ID]
 type = String
@@ -384,6 +396,8 @@ path = Experimenter+
 countable = true
 path = Experimenter+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Experimenter Email]
 type = String
@@ -414,6 +428,8 @@ path = ExperimenterGroup+
 countable = true
 path = ExperimenterGroup+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [ExperimenterGroup Description]
 type = String
@@ -422,6 +438,7 @@ type = String
 countable = true
 path = ExperimenterGroup+/ExperimenterRef+
 type = String
+anchor = ExperimenterRef_ID
 
 [ExperimenterGroup ID]
 type = String
@@ -471,6 +488,7 @@ schema = SA_xsd.html
 countable = true
 path = FileAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
 [FileAnnotation Description]
 type = String
@@ -516,16 +534,19 @@ path = Instrument+/FilterSet+
 
 [FilterSet DichroicRef]
 type = String
+anchor = DichroicRef_ID
 
 [FilterSet EmissionFilterRef]
 countable = true
 path = Instrument+/FilterSet+/EmissionFilterRef+
 type = String
+anchor = EmissionFilterRef_ID
 
 [FilterSet ExcitationFilterRef]
 countable = true
 path = Instrument+/FilterSet+/ExcitationFilterRef+
 type = String
+anchor = ExcitationFilterRef_ID
 
 [FilterSet ID]
 type = String
@@ -557,18 +578,23 @@ type = Timestamp
 countable = true
 path = Image+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Image Description]
 type = String
 
 [Image ExperimentRef]
 type = String
+anchor = ExperimentRef_ID
 
 [Image ExperimenterGroupRef]
 type = String
+anchor = ExperimenterGroupRef_ID
 
 [Image ExperimenterRef]
 type = String
+anchor = ExperimenterRef_ID
 
 [Image ID]
 type = String
@@ -581,6 +607,7 @@ anchor = InstrumentRef_ID
 countable = true
 path = Image+/MicrobeamManipulationRef+
 type = String
+anchor = MicrobeamManipulationRef_ID
 
 [Image Name]
 type = String
@@ -589,6 +616,8 @@ type = String
 countable = true
 path = Image+/ROIRef+
 type = String
+schema = ROI_xsd.html
+anchor = ROIRef_ID
 
 [ImagingEnvironment]
 countable = false
@@ -777,16 +806,19 @@ path = Image+/Channel+/LightPath
 
 [LightPath DichroicRef]
 type = String
+anchor = DichroicRef_ID
 
 [LightPath EmissionFilterRef]
 countable = true
 path = Image+/Channel+/LightPath/EmissionFilterRef+
 type = String
+anchor = EmissionFilterRef_ID
 
 [LightPath ExcitationFilterRef]
 countable = true
 path = Image+/Channel+/LightPath/ExcitationFilterRef+
 type = String
+anchor = ExcitationFilterRef_ID
 
 [Line]
 countable = false
@@ -888,6 +920,7 @@ schema = SA_xsd.html
 countable = true
 path = ListAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
 [ListAnnotation Description]
 type = String
@@ -901,11 +934,13 @@ type = String
 [LongAnnotation]
 countable = true
 path = LongAnnotation+
+schema = SA_xsd.html
 
 [LongAnnotation AnnotationRef]
 countable = true
 path = LongAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
 [LongAnnotation Description]
 type = String
@@ -1005,6 +1040,7 @@ path = Experiment+/MicrobeamManipulation+
 
 [MicrobeamManipulation ExperimenterRef]
 type = String
+anchor = ExperimenterRef_ID
 
 [MicrobeamManipulation ID]
 type = String
@@ -1013,6 +1049,8 @@ type = String
 countable = true
 path = Experiment+/MicrobeamManipulation+/ROIRef+
 type = String
+schema = ROI_xsd.html
+anchor = ROIRef_ID
 
 [MicrobeamManipulation Type]
 type = MicrobeamManipulationType
@@ -1121,6 +1159,8 @@ path = Image+/Pixels
 countable = true
 path = Image+/Pixels/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Pixels DimensionOrder]
 type = DimensionOrder
@@ -1173,6 +1213,8 @@ path = Image+/Pixels/Plane+
 countable = true
 path = Image+/Pixels/Plane+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Plane DeltaT]
 type = Double
@@ -1210,6 +1252,8 @@ schema = SPW_xsd.html
 countable = true
 path = Plate+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Plate ColumnNamingConvention]
 type = NamingConvention
@@ -1253,6 +1297,8 @@ schema = SPW_xsd.html
 countable = true
 path = Plate+/PlateAcquisition+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [PlateAcquisition Description]
 type = String
@@ -1276,6 +1322,7 @@ type = Timestamp
 countable = true
 path = Plate+/PlateAcquisition+/WellSampleRef+
 type = String
+anchor = WellSampleRef_ID
 
 [Point]
 countable = false
@@ -1522,20 +1569,25 @@ path = Project+
 countable = true
 path = Project+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Project DatasetRef]
 countable = true
 path = Project+/DatasetRef+
 type = String
+anchor = DatasetRef_ID
 
 [Project Description]
 type = String
 
 [Project ExperimenterRef]
 type = String
+anchor = ExperimenterRef_ID
 
 [Project ExperimenterGroupRef]
 type = String
+anchor = ExperimenterGroupRef_ID
 
 [Project ID]
 type = String
@@ -1552,6 +1604,8 @@ schema = ROI_xsd.html
 countable = true
 path = ROI+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [ROI Description]
 type = String
@@ -1574,6 +1628,8 @@ schema = SPW_xsd.html
 countable = true
 path = Screen+/Reagent+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Reagent Description]
 type = String
@@ -1681,6 +1737,8 @@ schema = SPW_xsd.html
 countable = true
 path = Screen+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Screen Description]
 type = String
@@ -1695,6 +1753,7 @@ type = String
 countable = true
 path = Screen+/PlateRef+
 type = String
+anchor = PlateRef_ID
 
 [Screen ProtocolDescription]
 type = String
@@ -1736,6 +1795,7 @@ schema = SA_xsd.html
 countable = true
 path = TagAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
 [TagAnnotation Description]
 type = String
@@ -1758,6 +1818,7 @@ schema = SA_xsd.html
 countable = true
 path = TermAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
 [TermAnnotation Description]
 type = String
@@ -1799,6 +1860,7 @@ schema = SA_xsd.html
 countable = true
 path = TimestampAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
 [TimestampAnnotation Description]
 type = String
@@ -1850,6 +1912,8 @@ schema = SPW_xsd.html
 countable = true
 path = Plate+/Well+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Well Color]
 type = Color
@@ -1868,6 +1932,7 @@ type = String
 
 [Well ReagentRef]
 type = String
+anchor = ReagentRef_ID
 
 [Well Row]
 type = NonNegativeInteger
@@ -1884,12 +1949,16 @@ schema = SPW_xsd.html
 countable = true
 path = Plate+/Well+/WellSample+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [WellSample ID]
 type = String
 
 [WellSample ImageRef]
 type = String
+schema = ome_xsd.html
+anchor = ImageRef_ID
 
 [WellSample Index]
 type = NonNegativeInteger
@@ -1912,6 +1981,7 @@ schema = SA_xsd.html
 countable = true
 path = XMLAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
 [XMLAnnotation ID]
 type = String

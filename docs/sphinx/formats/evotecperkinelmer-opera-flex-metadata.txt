@@ -39,9 +39,9 @@ These fields are fully supported by the Bio-Formats Evotec Flex format reader:
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Laser : Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`
-  * :schema:`LightPath : DichroicRef <OME-2012-06/ome_xsd.html#LightPath_DichroicRef>`
-  * :schema:`LightPath : EmissionFilterRef <OME-2012-06/ome_xsd.html#LightPath_EmissionFilterRef>`
-  * :schema:`LightPath : ExcitationFilterRef <OME-2012-06/ome_xsd.html#LightPath_ExcitationFilterRef>`
+  * :schema:`LightPath : DichroicRef <OME-2012-06/ome_xsd.html#DichroicRef_ID>`
+  * :schema:`LightPath : EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
+  * :schema:`LightPath : ExcitationFilterRef <OME-2012-06/ome_xsd.html#ExcitationFilterRef_ID>`
   * :schema:`Objective : CalibratedMagnification <OME-2012-06/ome_xsd.html#Objective_CalibratedMagnification>`
   * :schema:`Objective : Correction <OME-2012-06/ome_xsd.html#Objective_Correction>`
   * :schema:`Objective : ID <OME-2012-06/ome_xsd.html#Objective_ID>`
@@ -75,12 +75,12 @@ These fields are fully supported by the Bio-Formats Evotec Flex format reader:
   * :schema:`PlateAcquisition : ID <OME-2012-06/SPW_xsd.html#PlateAcquisition_ID>`
   * :schema:`PlateAcquisition : MaximumFieldCount <OME-2012-06/SPW_xsd.html#PlateAcquisition_MaximumFieldCount>`
   * :schema:`PlateAcquisition : StartTime <OME-2012-06/SPW_xsd.html#PlateAcquisition_StartTime>`
-  * :schema:`PlateAcquisition : WellSampleRef <OME-2012-06/SPW_xsd.html#PlateAcquisition_WellSampleRef>`
+  * :schema:`PlateAcquisition : WellSampleRef <OME-2012-06/SPW_xsd.html#WellSampleRef_ID>`
   * :schema:`Well : Column <OME-2012-06/SPW_xsd.html#Well_Column>`
   * :schema:`Well : ID <OME-2012-06/SPW_xsd.html#Well_ID>`
   * :schema:`Well : Row <OME-2012-06/SPW_xsd.html#Well_Row>`
   * :schema:`WellSample : ID <OME-2012-06/SPW_xsd.html#WellSample_ID>`
-  * :schema:`WellSample : ImageRef <OME-2012-06/SPW_xsd.html#WellSample_ImageRef>`
+  * :schema:`WellSample : ImageRef <OME-2012-06/ome_xsd.html#ImageRef_ID>`
   * :schema:`WellSample : Index <OME-2012-06/SPW_xsd.html#WellSample_Index>`
   * :schema:`WellSample : PositionX <OME-2012-06/SPW_xsd.html#WellSample_PositionX>`
   * :schema:`WellSample : PositionY <OME-2012-06/SPW_xsd.html#WellSample_PositionY>`

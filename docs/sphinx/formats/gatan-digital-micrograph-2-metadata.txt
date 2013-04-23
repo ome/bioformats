@@ -26,7 +26,7 @@ These fields are fully supported by the Bio-Formats Gatan DM2 format reader:
   * :schema:`Experimenter : ID <OME-2012-06/ome_xsd.html#Experimenter_ID>`
   * :schema:`Experimenter : LastName <OME-2012-06/ome_xsd.html#Experimenter_LastName>`
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
-  * :schema:`Image : ExperimenterRef <OME-2012-06/ome_xsd.html#Image_ExperimenterRef>`
+  * :schema:`Image : ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterRef_ID>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`

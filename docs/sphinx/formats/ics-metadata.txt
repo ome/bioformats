@@ -37,9 +37,9 @@ These fields are fully supported by the Bio-Formats Image Cytometry Standard for
   * :schema:`Experimenter : LastName <OME-2012-06/ome_xsd.html#Experimenter_LastName>`
   * :schema:`Filter : ID <OME-2012-06/ome_xsd.html#Filter_ID>`
   * :schema:`Filter : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
-  * :schema:`FilterSet : DichroicRef <OME-2012-06/ome_xsd.html#FilterSet_DichroicRef>`
-  * :schema:`FilterSet : EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterSet_EmissionFilterRef>`
-  * :schema:`FilterSet : ExcitationFilterRef <OME-2012-06/ome_xsd.html#FilterSet_ExcitationFilterRef>`
+  * :schema:`FilterSet : DichroicRef <OME-2012-06/ome_xsd.html#DichroicRef_ID>`
+  * :schema:`FilterSet : EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
+  * :schema:`FilterSet : ExcitationFilterRef <OME-2012-06/ome_xsd.html#ExcitationFilterRef_ID>`
   * :schema:`FilterSet : ID <OME-2012-06/ome_xsd.html#FilterSet_ID>`
   * :schema:`FilterSet : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`

@@ -50,7 +50,7 @@ These fields are fully supported by the Bio-Formats Metamorph TIFF format reader
   * :schema:`Well : ID <OME-2012-06/SPW_xsd.html#Well_ID>`
   * :schema:`Well : Row <OME-2012-06/SPW_xsd.html#Well_Row>`
   * :schema:`WellSample : ID <OME-2012-06/SPW_xsd.html#WellSample_ID>`
-  * :schema:`WellSample : ImageRef <OME-2012-06/SPW_xsd.html#WellSample_ImageRef>`
+  * :schema:`WellSample : ImageRef <OME-2012-06/ome_xsd.html#ImageRef_ID>`
   * :schema:`WellSample : Index <OME-2012-06/SPW_xsd.html#WellSample_Index>`
 
 **Total supported: 35**

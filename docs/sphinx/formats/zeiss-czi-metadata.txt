@@ -71,19 +71,19 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`Filter : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Filter : SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
   * :schema:`Filter : Type <OME-2012-06/ome_xsd.html#Filter_Type>`
-  * :schema:`FilterSet : DichroicRef <OME-2012-06/ome_xsd.html#FilterSet_DichroicRef>`
-  * :schema:`FilterSet : EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterSet_EmissionFilterRef>`
-  * :schema:`FilterSet : ExcitationFilterRef <OME-2012-06/ome_xsd.html#FilterSet_ExcitationFilterRef>`
+  * :schema:`FilterSet : DichroicRef <OME-2012-06/ome_xsd.html#DichroicRef_ID>`
+  * :schema:`FilterSet : EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
+  * :schema:`FilterSet : ExcitationFilterRef <OME-2012-06/ome_xsd.html#ExcitationFilterRef_ID>`
   * :schema:`FilterSet : ID <OME-2012-06/ome_xsd.html#FilterSet_ID>`
   * :schema:`FilterSet : LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
   * :schema:`FilterSet : Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
   * :schema:`FilterSet : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`FilterSet : SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
-  * :schema:`Image : ExperimenterRef <OME-2012-06/ome_xsd.html#Image_ExperimenterRef>`
+  * :schema:`Image : ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterRef_ID>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
-  * :schema:`Image : ROIRef <OME-2012-06/ome_xsd.html#Image_ROIRef>`
+  * :schema:`Image : ROIRef <OME-2012-06/ROI_xsd.html#ROIRef_ID>`
   * :schema:`ImagingEnvironment : AirPressure <OME-2012-06/ome_xsd.html#ImagingEnvironment_AirPressure>`
   * :schema:`ImagingEnvironment : CO2Percent <OME-2012-06/ome_xsd.html#ImagingEnvironment_CO2Percent>`
   * :schema:`ImagingEnvironment : Humidity <OME-2012-06/ome_xsd.html#ImagingEnvironment_Humidity>`

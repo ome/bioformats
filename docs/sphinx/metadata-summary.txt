@@ -848,7 +848,7 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`BooleanAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#BooleanAnnotation_AnnotationRef>`
+   * - :schema:`BooleanAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -877,8 +877,8 @@ Metadata fields
      - 3
      - 0
      - 0
-     - 151
-   * - :schema:`Channel - AnnotationRef <OME-2012-06/ome_xsd.html#Channel_AnnotationRef>`
+     - 148
+   * - :schema:`Channel - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -902,8 +902,8 @@ Metadata fields
      - 17
      - 0
      - 0
-     - 137
-   * - :schema:`Channel - FilterSetRef <OME-2012-06/ome_xsd.html#Channel_FilterSetRef>`
+     - 136
+   * - :schema:`Channel - FilterSetRef <OME-2012-06/ome_xsd.html#FilterSetRef_ID>`
      - 0
      - 0
      - 0
@@ -963,7 +963,7 @@ Metadata fields
      - 0
      - 0
      - 0
-   * - :schema:`CommentAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#CommentAnnotation_AnnotationRef>`
+   * - :schema:`CommentAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -987,8 +987,8 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Dataset - AnnotationRef <OME-2012-06/ome_xsd.html#Dataset_AnnotationRef>`
+     - 151
+   * - :schema:`Dataset - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -997,13 +997,13 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Dataset - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Dataset_ExperimenterGroupRef>`
+     - 151
+   * - :schema:`Dataset - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#ExperimenterGroupRef_ID>`
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Dataset - ExperimenterRef <OME-2012-06/ome_xsd.html#Dataset_ExperimenterRef>`
+     - 151
+   * - :schema:`Dataset - ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterRef_ID>`
      - 0
      - 0
      - 0
@@ -1012,8 +1012,8 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Dataset - ImageRef <OME-2012-06/ome_xsd.html#Dataset_ImageRef>`
+     - 151
+   * - :schema:`Dataset - ImageRef <OME-2012-06/ome_xsd.html#ImageRef_ID>`
      - 0
      - 0
      - 0
@@ -1133,7 +1133,7 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - :schema:`DoubleAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#DoubleAnnotation_AnnotationRef>`
+   * - :schema:`DoubleAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -1267,8 +1267,8 @@ Metadata fields
      - 1
      - 0
      - 0
-     - 153
-   * - :schema:`Experiment - ExperimenterRef <OME-2012-06/ome_xsd.html#Experiment_ExperimenterRef>`
+     - 150
+   * - :schema:`Experiment - ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterRef_ID>`
      - 0
      - 0
      - 0
@@ -1282,8 +1282,8 @@ Metadata fields
      - 5
      - 0
      - 0
-     - 149
-   * - :schema:`Experimenter - AnnotationRef <OME-2012-06/ome_xsd.html#Experimenter_AnnotationRef>`
+     - 146
+   * - :schema:`Experimenter - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -1322,8 +1322,8 @@ Metadata fields
      - 3
      - 0
      - 0
-     - 151
-   * - :schema:`ExperimenterGroup - AnnotationRef <OME-2012-06/ome_xsd.html#ExperimenterGroup_AnnotationRef>`
+     - 149
+   * - :schema:`ExperimenterGroup - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -1332,8 +1332,8 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`ExperimenterGroup - ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterGroup_ExperimenterRef>`
+     - 151
+   * - :schema:`ExperimenterGroup - ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterRef_ID>`
      - 0
      - 0
      - 0
@@ -1388,7 +1388,7 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`FileAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#FileAnnotation_AnnotationRef>`
+   * - :schema:`FileAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -1442,18 +1442,18 @@ Metadata fields
      - 2
      - 0
      - 0
-     - 152
-   * - :schema:`FilterSet - DichroicRef <OME-2012-06/ome_xsd.html#FilterSet_DichroicRef>`
+     - 149
+   * - :schema:`FilterSet - DichroicRef <OME-2012-06/ome_xsd.html#DichroicRef_ID>`
      - 2
      - 0
      - 0
-     - 152
-   * - :schema:`FilterSet - EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterSet_EmissionFilterRef>`
+     - 149
+   * - :schema:`FilterSet - EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
      - 2
      - 0
      - 0
-     - 152
-   * - :schema:`FilterSet - ExcitationFilterRef <OME-2012-06/ome_xsd.html#FilterSet_ExcitationFilterRef>`
+     - 149
+   * - :schema:`FilterSet - ExcitationFilterRef <OME-2012-06/ome_xsd.html#ExcitationFilterRef_ID>`
      - 2
      - 0
      - 0
@@ -1488,7 +1488,7 @@ Metadata fields
      - 0
      - 0
      - 0
-   * - :schema:`Image - AnnotationRef <OME-2012-06/ome_xsd.html#Image_AnnotationRef>`
+   * - :schema:`Image - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -1497,19 +1497,19 @@ Metadata fields
      - 41
      - 0
      - 0
-     - 113
-   * - :schema:`Image - ExperimentRef <OME-2012-06/ome_xsd.html#Image_ExperimentRef>`
+     - 111
+   * - :schema:`Image - ExperimentRef <OME-2012-06/ome_xsd.html#ExperimentRef_ID>`
      - 2
      - 0
      - 0
-     - 152
-   * - :schema:`Image - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Image_ExperimenterGroupRef>`
+     - 149
+   * - :schema:`Image - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#ExperimenterGroupRef_ID>`
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Image - ExperimenterRef <OME-2012-06/ome_xsd.html#Image_ExperimenterRef>`
-     - 6
+     - 151
+   * - :schema:`Image - ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterRef_ID>`
+     - 5
      - 0
      - 0
      - 148
@@ -1522,8 +1522,8 @@ Metadata fields
      - 39
      - 0
      - 0
-     - 114
-   * - :schema:`Image - MicrobeamManipulationRef <OME-2012-06/ome_xsd.html#Image_MicrobeamManipulationRef>`
+     - 112
+   * - :schema:`Image - MicrobeamManipulationRef <OME-2012-06/ome_xsd.html#MicrobeamManipulationRef_ID>`
      - 0
      - 0
      - 0
@@ -1533,7 +1533,7 @@ Metadata fields
      - 0
      - 0
      - 0
-   * - :schema:`Image - ROIRef <OME-2012-06/ome_xsd.html#Image_ROIRef>`
+   * - :schema:`Image - ROIRef <OME-2012-06/ROI_xsd.html#ROIRef_ID>`
      - 11
      - 0
      - 0
@@ -1762,18 +1762,18 @@ Metadata fields
      - 1
      - 0
      - 0
-     - 153
-   * - :schema:`LightPath - DichroicRef <OME-2012-06/ome_xsd.html#LightPath_DichroicRef>`
+     - 150
+   * - :schema:`LightPath - DichroicRef <OME-2012-06/ome_xsd.html#DichroicRef_ID>`
      - 3
      - 0
      - 0
-     - 151
-   * - :schema:`LightPath - EmissionFilterRef <OME-2012-06/ome_xsd.html#LightPath_EmissionFilterRef>`
+     - 148
+   * - :schema:`LightPath - EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
      - 5
      - 0
      - 0
-     - 149
-   * - :schema:`LightPath - ExcitationFilterRef <OME-2012-06/ome_xsd.html#LightPath_ExcitationFilterRef>`
+     - 146
+   * - :schema:`LightPath - ExcitationFilterRef <OME-2012-06/ome_xsd.html#ExcitationFilterRef_ID>`
      - 1
      - 0
      - 0
@@ -1893,7 +1893,7 @@ Metadata fields
      - 0
      - 0
      - 146
-   * - :schema:`ListAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#ListAnnotation_AnnotationRef>`
+   * - :schema:`ListAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -1912,28 +1912,28 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`LongAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#LongAnnotation_AnnotationRef>`
+     - 151
+   * - :schema:`LongAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`LongAnnotation - Description <OME-2012-06/ome_xsd.html#LongAnnotation_Description>`
+     - 151
+   * - :schema:`LongAnnotation - Description <OME-2012-06/SA_xsd.html#LongAnnotation_Description>`
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`LongAnnotation - ID <OME-2012-06/ome_xsd.html#LongAnnotation_ID>`
+     - 151
+   * - :schema:`LongAnnotation - ID <OME-2012-06/SA_xsd.html#LongAnnotation_ID>`
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`LongAnnotation - Namespace <OME-2012-06/ome_xsd.html#LongAnnotation_Namespace>`
+     - 151
+   * - :schema:`LongAnnotation - Namespace <OME-2012-06/SA_xsd.html#LongAnnotation_Namespace>`
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`LongAnnotation - Value <OME-2012-06/ome_xsd.html#LongAnnotation_Value>`
+     - 151
+   * - :schema:`LongAnnotation - Value <OME-2012-06/SA_xsd.html#LongAnnotation_Value>`
      - 0
      - 0
      - 0
@@ -2037,8 +2037,8 @@ Metadata fields
      - 2
      - 0
      - 0
-     - 152
-   * - :schema:`MicrobeamManipulation - ExperimenterRef <OME-2012-06/ome_xsd.html#MicrobeamManipulation_ExperimenterRef>`
+     - 149
+   * - :schema:`MicrobeamManipulation - ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterRef_ID>`
      - 0
      - 0
      - 0
@@ -2047,8 +2047,8 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`MicrobeamManipulation - ROIRef <OME-2012-06/ome_xsd.html#MicrobeamManipulation_ROIRef>`
+     - 151
+   * - :schema:`MicrobeamManipulation - ROIRef <OME-2012-06/ROI_xsd.html#ROIRef_ID>`
      - 0
      - 0
      - 0
@@ -2177,8 +2177,8 @@ Metadata fields
      - 7
      - 0
      - 0
-     - 147
-   * - :schema:`Pixels - AnnotationRef <OME-2012-06/ome_xsd.html#Pixels_AnnotationRef>`
+     - 144
+   * - :schema:`Pixels - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -2248,7 +2248,7 @@ Metadata fields
      - 0
      - 0
      - 0
-   * - :schema:`Plane - AnnotationRef <OME-2012-06/ome_xsd.html#Plane_AnnotationRef>`
+   * - :schema:`Plane - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -2298,7 +2298,7 @@ Metadata fields
      - 0
      - 0
      - 0
-   * - :schema:`Plate - AnnotationRef <OME-2012-06/SPW_xsd.html#Plate_AnnotationRef>`
+   * - :schema:`Plate - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -2358,7 +2358,7 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - :schema:`PlateAcquisition - AnnotationRef <OME-2012-06/SPW_xsd.html#PlateAcquisition_AnnotationRef>`
+   * - :schema:`PlateAcquisition - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -2393,7 +2393,7 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - :schema:`PlateAcquisition - WellSampleRef <OME-2012-06/SPW_xsd.html#PlateAcquisition_WellSampleRef>`
+   * - :schema:`PlateAcquisition - WellSampleRef <OME-2012-06/SPW_xsd.html#WellSampleRef_ID>`
      - 7
      - 0
      - 0
@@ -2682,13 +2682,13 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Project - AnnotationRef <OME-2012-06/ome_xsd.html#Project_AnnotationRef>`
+     - 151
+   * - :schema:`Project - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Project - DatasetRef <OME-2012-06/ome_xsd.html#Project_DatasetRef>`
+     - 151
+   * - :schema:`Project - DatasetRef <OME-2012-06/ome_xsd.html#DatasetRef_ID>`
      - 0
      - 0
      - 0
@@ -2697,13 +2697,13 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Project - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Project_ExperimenterGroupRef>`
+     - 151
+   * - :schema:`Project - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#ExperimenterGroupRef_ID>`
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Project - ExperimenterRef <OME-2012-06/ome_xsd.html#Project_ExperimenterRef>`
+     - 151
+   * - :schema:`Project - ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterRef_ID>`
      - 0
      - 0
      - 0
@@ -2717,8 +2717,8 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`ROI - AnnotationRef <OME-2012-06/ome_xsd.html#ROI_AnnotationRef>`
+     - 151
+   * - :schema:`ROI - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -2743,7 +2743,7 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Reagent - AnnotationRef <OME-2012-06/SPW_xsd.html#Reagent_AnnotationRef>`
+   * - :schema:`Reagent - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -2873,7 +2873,7 @@ Metadata fields
      - 0
      - 0
      - 144
-   * - :schema:`Screen - AnnotationRef <OME-2012-06/SPW_xsd.html#Screen_AnnotationRef>`
+   * - :schema:`Screen - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -2893,7 +2893,7 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - :schema:`Screen - PlateRef <OME-2012-06/SPW_xsd.html#Screen_PlateRef>`
+   * - :schema:`Screen - PlateRef <OME-2012-06/SPW_xsd.html#PlateRef_ID>`
      - 1
      - 0
      - 0
@@ -2943,7 +2943,7 @@ Metadata fields
      - 0
      - 0
      - 149
-   * - :schema:`TagAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#TagAnnotation_AnnotationRef>`
+   * - :schema:`TagAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -2968,7 +2968,7 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`TermAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#TermAnnotation_AnnotationRef>`
+   * - :schema:`TermAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -3018,7 +3018,7 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`TimestampAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#TimestampAnnotation_AnnotationRef>`
+   * - :schema:`TimestampAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -3078,7 +3078,7 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Well - AnnotationRef <OME-2012-06/SPW_xsd.html#Well_AnnotationRef>`
+   * - :schema:`Well - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -3108,7 +3108,7 @@ Metadata fields
      - 0
      - 0
      - 141
-   * - :schema:`Well - ReagentRef <OME-2012-06/SPW_xsd.html#Well_ReagentRef>`
+   * - :schema:`Well - ReagentRef <OME-2012-06/SPW_xsd.html#ReagentRef_ID>`
      - 0
      - 0
      - 0
@@ -3123,7 +3123,7 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`WellSample - AnnotationRef <OME-2012-06/SPW_xsd.html#WellSample_AnnotationRef>`
+   * - :schema:`WellSample - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0
@@ -3133,7 +3133,7 @@ Metadata fields
      - 0
      - 0
      - 141
-   * - :schema:`WellSample - ImageRef <OME-2012-06/SPW_xsd.html#WellSample_ImageRef>`
+   * - :schema:`WellSample - ImageRef <OME-2012-06/ome_xsd.html#ImageRef_ID>`
      - 10
      - 0
      - 0
@@ -3158,7 +3158,7 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`XMLAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#XMLAnnotation_AnnotationRef>`
+   * - :schema:`XMLAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#AnnotationRef_ID>`
      - 0
      - 0
      - 0

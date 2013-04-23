@@ -23,7 +23,7 @@ These fields are fully supported by the Bio-Formats Bruker format reader:
   * :schema:`Experimenter : Institution <OME-2012-06/ome_xsd.html#Experimenter_Institution>`
   * :schema:`Experimenter : LastName <OME-2012-06/ome_xsd.html#Experimenter_LastName>`
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
-  * :schema:`Image : ExperimenterRef <OME-2012-06/ome_xsd.html#Image_ExperimenterRef>`
+  * :schema:`Image : ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterRef_ID>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
   * :schema:`Pixels : BinDataBigEndian <OME-2012-06/BinaryFile_xsd.html#BinData_BigEndian>`
