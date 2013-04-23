@@ -471,12 +471,37 @@ public class ZeissZVIReader extends BaseZeissReader {
     // Bytes 0x2-5 == Layer version (04100010)
     // Byte 0x10 == Shape count
 
-    s.seek(16);
+    s.seek(2);
+    int layerversion = s.readInt();
+    LOGGER.debug("LAYER@" + (s.getFilePointer()-4) + ", version="+layerversion);
+
+    // Layer name (assumed).  This is usually NULL in most files, so
+    // we need to explicitly check whether it's a string prior to
+    // parsing it.  The only file seen with a non-null string here did
+    // not contain any shapes in the layer (purpose of the empty layer
+    // unknown).
+    String layername = null;
+    {
+      long tmp = s.getFilePointer();
+      if (s.readShort() == 8) {
+        s.seek(tmp);
+        layername = parseROIString(s);
+      }
+      if (layername != null)
+        LOGGER.debug("  Name=" + layername);
+      else
+        LOGGER.debug("  Name=NULL");
+    }
+
+    s.skipBytes(8);
+
     int roiCount = s.readShort();
     int roiFound = 0;
+    LOGGER.debug("  ShapeCount@" + (s.getFilePointer()-2) + " count=" +roiCount);
 
     // Add new layer for this set of shapes.
     Layer nlayer = new Layer();
+    nlayer.name = layername;
     layers.add(nlayer);
 
     // Following signature (from sig start):
