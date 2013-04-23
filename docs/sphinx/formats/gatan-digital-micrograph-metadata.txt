@@ -23,7 +23,13 @@ These fields are fully supported by the Bio-Formats Gatan Digital Micrograph for
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
-  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
+  * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
+  * :schema:`Objective : Correction <OME-2012-06/ome_xsd.html#Objective_Correction>`
+  * :schema:`Objective : ID <OME-2012-06/ome_xsd.html#Objective_ID>`
+  * :schema:`Objective : Immersion <OME-2012-06/ome_xsd.html#Objective_Immersion>`
+  * :schema:`Objective : NominalMagnification <OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`
+  * :schema:`ObjectiveSettings : ID <OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`
+  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/BinaryFile_xsd.html#BinData_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
   * :schema:`Pixels : PhysicalSizeX <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`

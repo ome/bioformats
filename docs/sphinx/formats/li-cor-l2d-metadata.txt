@@ -23,16 +23,16 @@ These fields are fully supported by the Bio-Formats Li-Cor L2D format reader:
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : Description <OME-2012-06/ome_xsd.html#Image_Description>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
-  * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#Image_InstrumentRef>`
+  * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
   * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
   * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#Laser_ID>`
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Laser : Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`
-  * :schema:`Microscope : Model <OME-2012-06/ome_xsd.html#Microscope_Model>`
+  * :schema:`Microscope : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Microscope : Type <OME-2012-06/ome_xsd.html#Microscope_Type>`
-  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
+  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/BinaryFile_xsd.html#BinData_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
   * :schema:`Pixels : SizeC <OME-2012-06/ome_xsd.html#Pixels_SizeC>`

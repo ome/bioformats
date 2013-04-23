@@ -22,7 +22,7 @@ These fields are fully supported by the Bio-Formats Minolta MRW format reader:
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
-  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
+  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/BinaryFile_xsd.html#BinData_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
   * :schema:`Pixels : SizeC <OME-2012-06/ome_xsd.html#Pixels_SizeC>`
