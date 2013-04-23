@@ -813,7 +813,7 @@ Metadata fields
     - Partial
     - Unknown/Missing
 
-   * - :schema:`Arc - ID <OME-2012-06/ome_xsd.html#Arc_ID>`
+   * - :schema:`Arc - ID <OME-2012-06/ome_xsd.html#LightSource_ID>`
      - 0
      - 0
      - 0
@@ -832,8 +832,8 @@ Metadata fields
      - 1
      - 0
      - 0
-     - 153
-   * - :schema:`Arc - Power <OME-2012-06/ome_xsd.html#Arc_Power>`
+     - 150
+   * - :schema:`Arc - Power <OME-2012-06/ome_xsd.html#LightSource_Power>`
      - 1
      - 0
      - 0
@@ -922,18 +922,18 @@ Metadata fields
      - 2
      - 0
      - 0
-     - 152
-   * - :schema:`Channel - LightSourceSettingsAttenuation <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsAttenuation>`
+     - 149
+   * - :schema:`Channel - LightSourceSettingsAttenuation <OME-2012-06/ome_xsd.html#LightSourceSettings_Attenuation>`
      - 1
      - 0
      - 0
-     - 153
-   * - :schema:`Channel - LightSourceSettingsID <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsID>`
+     - 150
+   * - :schema:`Channel - LightSourceSettingsID <OME-2012-06/ome_xsd.html#LightSourceSettings_ID>`
      - 5
      - 0
      - 0
-     - 149
-   * - :schema:`Channel - LightSourceSettingsWavelength <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsWavelength>`
+     - 146
+   * - :schema:`Channel - LightSourceSettingsWavelength <OME-2012-06/ome_xsd.html#LightSourceSettings_Wavelength>`
      - 2
      - 0
      - 0
@@ -1352,8 +1352,8 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Filament - ID <OME-2012-06/ome_xsd.html#Filament_ID>`
+     - 151
+   * - :schema:`Filament - ID <OME-2012-06/ome_xsd.html#LightSource_ID>`
      - 0
      - 0
      - 0
@@ -1372,8 +1372,8 @@ Metadata fields
      - 1
      - 0
      - 0
-     - 153
-   * - :schema:`Filament - Power <OME-2012-06/ome_xsd.html#Filament_Power>`
+     - 150
+   * - :schema:`Filament - Power <OME-2012-06/ome_xsd.html#LightSource_Power>`
      - 1
      - 0
      - 0
@@ -1448,12 +1448,12 @@ Metadata fields
      - 0
      - 0
      - 149
-   * - :schema:`FilterSet - EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
+   * - :schema:`FilterSet - EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterRef_ID>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`FilterSet - ExcitationFilterRef <OME-2012-06/ome_xsd.html#ExcitationFilterRef_ID>`
+   * - :schema:`FilterSet - ExcitationFilterRef <OME-2012-06/ome_xsd.html#FilterRef_ID>`
      - 2
      - 0
      - 0
@@ -1662,8 +1662,8 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Laser - ID <OME-2012-06/ome_xsd.html#Laser_ID>`
+     - 151
+   * - :schema:`Laser - ID <OME-2012-06/ome_xsd.html#LightSource_ID>`
      - 9
      - 0
      - 0
@@ -1692,8 +1692,8 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
-   * - :schema:`Laser - Power <OME-2012-06/ome_xsd.html#Laser_Power>`
+     - 151
+   * - :schema:`Laser - Power <OME-2012-06/ome_xsd.html#LightSource_Power>`
      - 3
      - 0
      - 0
@@ -1732,8 +1732,8 @@ Metadata fields
      - 7
      - 0
      - 0
-     - 147
-   * - :schema:`LightEmittingDiode - ID <OME-2012-06/ome_xsd.html#LightEmittingDiode_ID>`
+     - 144
+   * - :schema:`LightEmittingDiode - ID <OME-2012-06/ome_xsd.html#LightSource_ID>`
      - 0
      - 0
      - 0
@@ -1752,8 +1752,8 @@ Metadata fields
      - 1
      - 0
      - 0
-     - 153
-   * - :schema:`LightEmittingDiode - Power <OME-2012-06/ome_xsd.html#LightEmittingDiode_Power>`
+     - 150
+   * - :schema:`LightEmittingDiode - Power <OME-2012-06/ome_xsd.html#LightSource_Power>`
      - 1
      - 0
      - 0
@@ -2057,17 +2057,17 @@ Metadata fields
      - 0
      - 0
      - 0
-     - 154
+     - 151
    * - :schema:`MicrobeamManipulationLightSourceSettings - Attenuation <OME-2012-06/ome_xsd.html#LightSourceSettings_Attenuation>`
      - 0
      - 0
      - 0
-     - 154
+     - 151
    * - :schema:`MicrobeamManipulationLightSourceSettings - ID <OME-2012-06/ome_xsd.html#LightSourceSettings_ID>`
      - 0
      - 0
      - 0
-     - 154
+     - 151
    * - :schema:`MicrobeamManipulationLightSourceSettings - Wavelength <OME-2012-06/ome_xsd.html#LightSourceSettings_Wavelength>`
      - 0
      - 0

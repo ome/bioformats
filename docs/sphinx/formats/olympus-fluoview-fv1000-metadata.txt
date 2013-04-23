@@ -21,8 +21,8 @@ These fields are fully supported by the Bio-Formats Olympus FV1000 format reader
   * :schema:`Channel : ExcitationWavelength <OME-2012-06/ome_xsd.html#Channel_ExcitationWavelength>`
   * :schema:`Channel : ID <OME-2012-06/ome_xsd.html#Channel_ID>`
   * :schema:`Channel : IlluminationType <OME-2012-06/ome_xsd.html#Channel_IlluminationType>`
-  * :schema:`Channel : LightSourceSettingsID <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsID>`
-  * :schema:`Channel : LightSourceSettingsWavelength <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsWavelength>`
+  * :schema:`Channel : LightSourceSettingsID <OME-2012-06/ome_xsd.html#LightSourceSettings_ID>`
+  * :schema:`Channel : LightSourceSettingsWavelength <OME-2012-06/ome_xsd.html#LightSourceSettings_Wavelength>`
   * :schema:`Channel : Name <OME-2012-06/ome_xsd.html#Channel_Name>`
   * :schema:`Channel : SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
   * :schema:`Detector : Gain <OME-2012-06/ome_xsd.html#Detector_Gain>`
@@ -50,7 +50,7 @@ These fields are fully supported by the Bio-Formats Olympus FV1000 format reader
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
   * :schema:`Image : ROIRef <OME-2012-06/ROI_xsd.html#ROIRef_ID>`
   * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
-  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#Laser_ID>`
+  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#LightSource_ID>`
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Laser : Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`

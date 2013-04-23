@@ -18,8 +18,8 @@ Supported fields
 
 These fields are fully supported by the Bio-Formats Metamorph STK format reader:
   * :schema:`Channel : ID <OME-2012-06/ome_xsd.html#Channel_ID>`
-  * :schema:`Channel : LightSourceSettingsID <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsID>`
-  * :schema:`Channel : LightSourceSettingsWavelength <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsWavelength>`
+  * :schema:`Channel : LightSourceSettingsID <OME-2012-06/ome_xsd.html#LightSourceSettings_ID>`
+  * :schema:`Channel : LightSourceSettingsWavelength <OME-2012-06/ome_xsd.html#LightSourceSettings_Wavelength>`
   * :schema:`Channel : Name <OME-2012-06/ome_xsd.html#Channel_Name>`
   * :schema:`Channel : SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
   * :schema:`Detector : ID <OME-2012-06/ome_xsd.html#Detector_ID>`
@@ -35,7 +35,7 @@ These fields are fully supported by the Bio-Formats Metamorph STK format reader:
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
   * :schema:`ImagingEnvironment : Temperature <OME-2012-06/ome_xsd.html#ImagingEnvironment_Temperature>`
   * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
-  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#Laser_ID>`
+  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#LightSource_ID>`
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Pixels : BinDataBigEndian <OME-2012-06/BinaryFile_xsd.html#BinData_BigEndian>`
