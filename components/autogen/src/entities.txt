@@ -37,6 +37,7 @@ type = ArcType
 [BooleanAnnotation]
 countable = true
 path = BooleanAnnotation+
+schema = SA_xsd.html
 
 [BooleanAnnotation AnnotationRef]
 countable = true
@@ -118,6 +119,7 @@ type = PositiveInteger
 [CommentAnnotation]
 countable = true
 path = CommentAnnotation+
+schema = SA_xsd.html
 
 [CommentAnnotation AnnotationRef]
 countable = true
@@ -254,6 +256,7 @@ anchor = ManufacturerSpec_SerialNumber
 [DoubleAnnotation]
 countable = true
 path = DoubleAnnotation+
+schema = SA_xsd.html
 
 [DoubleAnnotation AnnotationRef]
 countable = true
@@ -462,6 +465,7 @@ type = FilamentType
 [FileAnnotation]
 countable = true
 path = FileAnnotation+
+schema = SA_xsd.html
 
 [FileAnnotation AnnotationRef]
 countable = true
@@ -878,6 +882,7 @@ type = Double
 [ListAnnotation]
 countable = true
 path = ListAnnotation+
+schema = SA_xsd.html
 
 [ListAnnotation AnnotationRef]
 countable = true
@@ -1725,6 +1730,7 @@ type = Double
 [TagAnnotation]
 countable = true
 path = TagAnnotation+
+schema = SA_xsd.html
 
 [TagAnnotation AnnotationRef]
 countable = true
@@ -1746,6 +1752,7 @@ type = String
 [TermAnnotation]
 countable = true
 path = TermAnnotation+
+schema = SA_xsd.html
 
 [TermAnnotation AnnotationRef]
 countable = true
@@ -1786,6 +1793,7 @@ type = NonNegativeInteger
 [TimestampAnnotation]
 countable = true
 path = TimestampAnnotation+
+schema = SA_xsd.html
 
 [TimestampAnnotation AnnotationRef]
 countable = true
@@ -1898,6 +1906,7 @@ type = Timestamp
 [XMLAnnotation]
 countable = true
 path = XMLAnnotation+
+schema = SA_xsd.html
 
 [XMLAnnotation AnnotationRef]
 countable = true

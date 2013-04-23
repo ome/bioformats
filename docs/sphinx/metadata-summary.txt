@@ -833,27 +833,27 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`BooleanAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#BooleanAnnotation_AnnotationRef>`
+   * - :schema:`BooleanAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#BooleanAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`BooleanAnnotation - Description <OME-2012-06/ome_xsd.html#BooleanAnnotation_Description>`
+   * - :schema:`BooleanAnnotation - Description <OME-2012-06/SA_xsd.html#BooleanAnnotation_Description>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`BooleanAnnotation - ID <OME-2012-06/ome_xsd.html#BooleanAnnotation_ID>`
+   * - :schema:`BooleanAnnotation - ID <OME-2012-06/SA_xsd.html#BooleanAnnotation_ID>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`BooleanAnnotation - Namespace <OME-2012-06/ome_xsd.html#BooleanAnnotation_Namespace>`
+   * - :schema:`BooleanAnnotation - Namespace <OME-2012-06/SA_xsd.html#BooleanAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`BooleanAnnotation - Value <OME-2012-06/ome_xsd.html#BooleanAnnotation_Value>`
+   * - :schema:`BooleanAnnotation - Value <OME-2012-06/SA_xsd.html#BooleanAnnotation_Value>`
      - 0
      - 0
      - 0
@@ -948,27 +948,27 @@ Metadata fields
      - 0
      - 0
      - 0
-   * - :schema:`CommentAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#CommentAnnotation_AnnotationRef>`
+   * - :schema:`CommentAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#CommentAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`CommentAnnotation - Description <OME-2012-06/ome_xsd.html#CommentAnnotation_Description>`
+   * - :schema:`CommentAnnotation - Description <OME-2012-06/SA_xsd.html#CommentAnnotation_Description>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`CommentAnnotation - ID <OME-2012-06/ome_xsd.html#CommentAnnotation_ID>`
+   * - :schema:`CommentAnnotation - ID <OME-2012-06/SA_xsd.html#CommentAnnotation_ID>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`CommentAnnotation - Namespace <OME-2012-06/ome_xsd.html#CommentAnnotation_Namespace>`
+   * - :schema:`CommentAnnotation - Namespace <OME-2012-06/SA_xsd.html#CommentAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`CommentAnnotation - Value <OME-2012-06/ome_xsd.html#CommentAnnotation_Value>`
+   * - :schema:`CommentAnnotation - Value <OME-2012-06/SA_xsd.html#CommentAnnotation_Value>`
      - 0
      - 0
      - 0
@@ -1118,27 +1118,27 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - :schema:`DoubleAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#DoubleAnnotation_AnnotationRef>`
+   * - :schema:`DoubleAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#DoubleAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`DoubleAnnotation - Description <OME-2012-06/ome_xsd.html#DoubleAnnotation_Description>`
+   * - :schema:`DoubleAnnotation - Description <OME-2012-06/SA_xsd.html#DoubleAnnotation_Description>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`DoubleAnnotation - ID <OME-2012-06/ome_xsd.html#DoubleAnnotation_ID>`
+   * - :schema:`DoubleAnnotation - ID <OME-2012-06/SA_xsd.html#DoubleAnnotation_ID>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`DoubleAnnotation - Namespace <OME-2012-06/ome_xsd.html#DoubleAnnotation_Namespace>`
+   * - :schema:`DoubleAnnotation - Namespace <OME-2012-06/SA_xsd.html#DoubleAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`DoubleAnnotation - Value <OME-2012-06/ome_xsd.html#DoubleAnnotation_Value>`
+   * - :schema:`DoubleAnnotation - Value <OME-2012-06/SA_xsd.html#DoubleAnnotation_Value>`
      - 0
      - 0
      - 0
@@ -1373,22 +1373,22 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`FileAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#FileAnnotation_AnnotationRef>`
+   * - :schema:`FileAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#FileAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`FileAnnotation - Description <OME-2012-06/ome_xsd.html#FileAnnotation_Description>`
+   * - :schema:`FileAnnotation - Description <OME-2012-06/SA_xsd.html#FileAnnotation_Description>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`FileAnnotation - ID <OME-2012-06/ome_xsd.html#FileAnnotation_ID>`
+   * - :schema:`FileAnnotation - ID <OME-2012-06/SA_xsd.html#FileAnnotation_ID>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`FileAnnotation - Namespace <OME-2012-06/ome_xsd.html#FileAnnotation_Namespace>`
+   * - :schema:`FileAnnotation - Namespace <OME-2012-06/SA_xsd.html#FileAnnotation_Namespace>`
      - 0
      - 0
      - 0
@@ -1878,22 +1878,22 @@ Metadata fields
      - 0
      - 0
      - 146
-   * - :schema:`ListAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#ListAnnotation_AnnotationRef>`
+   * - :schema:`ListAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#ListAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`ListAnnotation - Description <OME-2012-06/ome_xsd.html#ListAnnotation_Description>`
+   * - :schema:`ListAnnotation - Description <OME-2012-06/SA_xsd.html#ListAnnotation_Description>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`ListAnnotation - ID <OME-2012-06/ome_xsd.html#ListAnnotation_ID>`
+   * - :schema:`ListAnnotation - ID <OME-2012-06/SA_xsd.html#ListAnnotation_ID>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`ListAnnotation - Namespace <OME-2012-06/ome_xsd.html#ListAnnotation_Namespace>`
+   * - :schema:`ListAnnotation - Namespace <OME-2012-06/SA_xsd.html#ListAnnotation_Namespace>`
      - 0
      - 0
      - 0
@@ -2928,52 +2928,52 @@ Metadata fields
      - 0
      - 0
      - 149
-   * - :schema:`TagAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TagAnnotation_AnnotationRef>`
+   * - :schema:`TagAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#TagAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TagAnnotation - Description <OME-2012-06/ome_xsd.html#TagAnnotation_Description>`
+   * - :schema:`TagAnnotation - Description <OME-2012-06/SA_xsd.html#TagAnnotation_Description>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TagAnnotation - ID <OME-2012-06/ome_xsd.html#TagAnnotation_ID>`
+   * - :schema:`TagAnnotation - ID <OME-2012-06/SA_xsd.html#TagAnnotation_ID>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TagAnnotation - Namespace <OME-2012-06/ome_xsd.html#TagAnnotation_Namespace>`
+   * - :schema:`TagAnnotation - Namespace <OME-2012-06/SA_xsd.html#TagAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TagAnnotation - Value <OME-2012-06/ome_xsd.html#TagAnnotation_Value>`
+   * - :schema:`TagAnnotation - Value <OME-2012-06/SA_xsd.html#TagAnnotation_Value>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TermAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TermAnnotation_AnnotationRef>`
+   * - :schema:`TermAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#TermAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TermAnnotation - Description <OME-2012-06/ome_xsd.html#TermAnnotation_Description>`
+   * - :schema:`TermAnnotation - Description <OME-2012-06/SA_xsd.html#TermAnnotation_Description>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TermAnnotation - ID <OME-2012-06/ome_xsd.html#TermAnnotation_ID>`
+   * - :schema:`TermAnnotation - ID <OME-2012-06/SA_xsd.html#TermAnnotation_ID>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TermAnnotation - Namespace <OME-2012-06/ome_xsd.html#TermAnnotation_Namespace>`
+   * - :schema:`TermAnnotation - Namespace <OME-2012-06/SA_xsd.html#TermAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TermAnnotation - Value <OME-2012-06/ome_xsd.html#TermAnnotation_Value>`
+   * - :schema:`TermAnnotation - Value <OME-2012-06/SA_xsd.html#TermAnnotation_Value>`
      - 0
      - 0
      - 0
@@ -3003,27 +3003,27 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`TimestampAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TimestampAnnotation_AnnotationRef>`
+   * - :schema:`TimestampAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#TimestampAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TimestampAnnotation - Description <OME-2012-06/ome_xsd.html#TimestampAnnotation_Description>`
+   * - :schema:`TimestampAnnotation - Description <OME-2012-06/SA_xsd.html#TimestampAnnotation_Description>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TimestampAnnotation - ID <OME-2012-06/ome_xsd.html#TimestampAnnotation_ID>`
+   * - :schema:`TimestampAnnotation - ID <OME-2012-06/SA_xsd.html#TimestampAnnotation_ID>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TimestampAnnotation - Namespace <OME-2012-06/ome_xsd.html#TimestampAnnotation_Namespace>`
+   * - :schema:`TimestampAnnotation - Namespace <OME-2012-06/SA_xsd.html#TimestampAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`TimestampAnnotation - Value <OME-2012-06/ome_xsd.html#TimestampAnnotation_Value>`
+   * - :schema:`TimestampAnnotation - Value <OME-2012-06/SA_xsd.html#TimestampAnnotation_Value>`
      - 0
      - 0
      - 0
@@ -3143,22 +3143,22 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`XMLAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#XMLAnnotation_AnnotationRef>`
+   * - :schema:`XMLAnnotation - AnnotationRef <OME-2012-06/SA_xsd.html#XMLAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`XMLAnnotation - ID <OME-2012-06/ome_xsd.html#XMLAnnotation_ID>`
+   * - :schema:`XMLAnnotation - ID <OME-2012-06/SA_xsd.html#XMLAnnotation_ID>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`XMLAnnotation - Namespace <OME-2012-06/ome_xsd.html#XMLAnnotation_Namespace>`
+   * - :schema:`XMLAnnotation - Namespace <OME-2012-06/SA_xsd.html#XMLAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`XMLAnnotation - Value <OME-2012-06/ome_xsd.html#XMLAnnotation_Value>`
+   * - :schema:`XMLAnnotation - Value <OME-2012-06/SA_xsd.html#XMLAnnotation_Value>`
      - 0
      - 0
      - 0
