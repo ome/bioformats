@@ -142,6 +142,8 @@ public class LIFReader extends FormatReader {
   private String[] imageNames;
   private double[] acquiredDate;
 
+  private int[] tileCount;
+
   // -- Constructor --
 
   /** Constructs a new Leica LIF reader. */
@@ -274,23 +276,23 @@ public class LIFReader extends FormatReader {
 
     if (!isRGB()) {
       int[] pos = getZCTCoords(no);
-      lastChannel = realChannel[getSeries()][pos[1]];
+      lastChannel = realChannel[getTileIndex(series)][pos[1]];
     }
 
-    if (getSeries() >= offsets.size()) {
+    int index = getTileIndex(series);
+    if (index >= offsets.size()) {
       // truncated file; imitate LAS AF and return black planes
       Arrays.fill(buf, (byte) 0);
       return buf;
     }
 
-    long offset = offsets.get(getSeries()).longValue();
+    long offset = offsets.get(index).longValue();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int bpp = bytes * getRGBChannelCount();
 
     long planeSize = (long) getSizeX() * getSizeY() * bpp;
-
-    long nextOffset = getSeries() + 1 < offsets.size() ?
-      offsets.get(getSeries() + 1).longValue() : in.length();
+    long nextOffset = index + 1 < offsets.size() ?
+      offsets.get(index + 1).longValue() : in.length();
     int bytesToSkip = (int) (nextOffset - offset - planeSize * getImageCount());
     bytesToSkip /= getSizeY();
     if ((getSizeX() % 4) == 0) bytesToSkip = 0;
@@ -302,6 +304,13 @@ public class LIFReader extends FormatReader {
     }
 
     in.seek(offset + planeSize * no);
+
+    int tile = series;
+    for (int i=0; i<index; i++) {
+      tile -= tileCount[i];
+    }
+
+    in.skipBytes((int) (tile * planeSize * getImageCount()));
     in.skipBytes(bytesToSkip * getSizeY() * no);
 
     if (bytesToSkip == 0) {
@@ -356,6 +365,7 @@ public class LIFReader extends FormatReader {
       imageNames = null;
       acquiredDate = null;
       detectorIndexes = null;
+      tileCount = null;
     }
   }
 
@@ -493,9 +503,9 @@ public class LIFReader extends FormatReader {
 
     // set up mapping to rearrange channels
     // for instance, the green channel may be #0, and the red channel may be #1
-    realChannel = new int[getSeriesCount()][];
+    realChannel = new int[tileCount.length][];
     int nextLut = 0;
-    for (int i=0; i<getSeriesCount(); i++) {
+    for (int i=0; i<tileCount.length; i++) {
       CoreMetadata ms = core.get(i);
       realChannel[i] = new int[ms.sizeC];
 
@@ -531,49 +541,53 @@ public class LIFReader extends FormatReader {
       String instrumentID = MetadataTools.createLSID("Instrument", i);
       store.setInstrumentID(instrumentID, i);
 
-      store.setMicroscopeModel(microscopeModels[i], i);
+      int index = getTileIndex(i);
+
+      store.setMicroscopeModel(microscopeModels[index], i);
       store.setMicroscopeType(getMicroscopeType("Other"), i);
 
       String objectiveID = MetadataTools.createLSID("Objective", i, 0);
       store.setObjectiveID(objectiveID, i, 0);
-      store.setObjectiveLensNA(lensNA[i], i, 0);
-      store.setObjectiveSerialNumber(serialNumber[i], i, 0);
-      if (magnification[i] != null && magnification[i] > 0) {
+      store.setObjectiveLensNA(lensNA[index], i, 0);
+      store.setObjectiveSerialNumber(serialNumber[index], i, 0);
+      if (magnification[index] != null && magnification[index] > 0) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(magnification[i]), i, 0);
+          new PositiveInteger(magnification[index]), i, 0);
       }
       else {
         LOGGER.warn("Expected positive value for NominalMagnification; got {}",
-          magnification[i]);
+          magnification[index]);
       }
-      store.setObjectiveImmersion(getImmersion(immersions[i]), i, 0);
-      store.setObjectiveCorrection(getCorrection(corrections[i]), i, 0);
-      store.setObjectiveModel(objectiveModels[i], i, 0);
+      store.setObjectiveImmersion(getImmersion(immersions[index]), i, 0);
+      store.setObjectiveCorrection(getCorrection(corrections[index]), i, 0);
+      store.setObjectiveModel(objectiveModels[index], i, 0);
 
-      if (cutIns[i] != null && filterModels[i] != null) {
+      if (cutIns[index] != null && filterModels[index] != null) {
         int channel = 0;
-        if (cutIns[i].size() >= filterModels[i].size() * 2) {
-          int diff = cutIns[i].size() - filterModels[i].size();
+        if (cutIns[index].size() >= filterModels[index].size() * 2) {
+          int diff = cutIns[index].size() - filterModels[index].size();
           for (int q=0; q<diff; q++) {
-            cutIns[i].remove(filterModels[i].size());
+            cutIns[index].remove(filterModels[index].size());
           }
         }
-        for (int filter=0; filter<cutIns[i].size(); filter++) {
+        for (int filter=0; filter<cutIns[index].size(); filter++) {
           String filterID = MetadataTools.createLSID("Filter", i, filter);
           store.setFilterID(filterID, i, filter);
-          if (filterModels[i] != null && filter < filterModels[i].size()) {
+          if (filterModels[index] != null &&
+            filter < filterModels[index].size())
+          {
             store.setFilterModel(
-              (String) filterModels[i].get(filter), i, filter);
+              (String) filterModels[index].get(filter), i, filter);
           }
           store.setTransmittanceRangeCutIn(
-            (PositiveInteger) cutIns[i].get(filter), i, filter);
+            (PositiveInteger) cutIns[index].get(filter), i, filter);
           store.setTransmittanceRangeCutOut(
-            (PositiveInteger) cutOuts[i].get(filter), i, filter);
+            (PositiveInteger) cutOuts[index].get(filter), i, filter);
         }
       }
 
-      Vector lasers = laserWavelength[i];
-      Vector laserIntensities = laserIntensity[i];
+      Vector lasers = laserWavelength[index];
+      Vector laserIntensities = laserIntensity[index];
       int nextChannel = 0;
 
       if (lasers != null) {
@@ -620,8 +634,8 @@ public class LIFReader extends FormatReader {
         }
 
         boolean noNames = true;
-        if (channelNames[i] != null) {
-          for (String name : channelNames[i]) {
+        if (channelNames[index] != null) {
+          for (String name : channelNames[index]) {
             if (name != null && !name.equals("")) {
               noNames = false;
               break;
@@ -632,15 +646,15 @@ public class LIFReader extends FormatReader {
         int nextFilter = 0;
         //int nextFilter = cutIns[i].size() - getEffectiveSizeC();
         for (int k=start; k<validIntensities.size(); k++, nextChannel++) {
-          int index = validIntensities.get(k);
-          double intensity = (Double) laserIntensities.get(index);
-          int laser = index % lasers.size();
+          int laserArrayIndex = validIntensities.get(k);
+          double intensity = (Double) laserIntensities.get(laserArrayIndex);
+          int laser = laserArrayIndex % lasers.size();
           Integer wavelength = (Integer) lasers.get(laser);
           if (wavelength != 0) {
             while (channelNames != null && nextChannel < getEffectiveSizeC() &&
-              channelNames[i] != null &&
-              ((channelNames[i][nextChannel] == null ||
-              channelNames[i][nextChannel].equals("")) && !noNames))
+              channelNames[index] != null &&
+              ((channelNames[index][nextChannel] == null ||
+              channelNames[index][nextChannel].equals("")) && !noNames))
             {
               nextChannel++;
             }
@@ -653,22 +667,23 @@ public class LIFReader extends FormatReader {
                 store.setChannelExcitationWavelength(
                   new PositiveInteger(wavelength), i, nextChannel);
 
-                if (cutIns[i] == null || nextFilter >= cutIns[i].size()) {
+                if (cutIns[index] == null || nextFilter >= cutIns[index].size())
+                {
                   continue;
                 }
                 Integer cutIn =
-                  ((PositiveInteger) cutIns[i].get(nextFilter)).getValue();
+                  ((PositiveInteger) cutIns[index].get(nextFilter)).getValue();
                 while (cutIn - wavelength > 20) {
                   nextFilter++;
-                  if (nextFilter < cutIns[i].size()) {
-                    cutIn =
-                      ((PositiveInteger) cutIns[i].get(nextFilter)).getValue();
+                  if (nextFilter < cutIns[index].size()) {
+                    cutIn = ((PositiveInteger)
+                      cutIns[index].get(nextFilter)).getValue();
                   }
                   else {
                     break;
                   }
                 }
-                if (nextFilter < cutIns[i].size()) {
+                if (nextFilter < cutIns[index].size()) {
                   String fid =
                     MetadataTools.createLSID("Filter", i, nextFilter);
                   //store.setLightPathEmissionFilterRef(fid, i, nextChannel, 0);
@@ -687,42 +702,42 @@ public class LIFReader extends FormatReader {
 
       store.setImageInstrumentRef(instrumentID, i);
       store.setObjectiveSettingsID(objectiveID, i);
-      store.setObjectiveSettingsRefractiveIndex(refractiveIndex[i], i);
+      store.setObjectiveSettingsRefractiveIndex(refractiveIndex[index], i);
 
-      store.setImageDescription(descriptions[i], i);
-      if (acquiredDate[i] > 0) {
+      store.setImageDescription(descriptions[index], i);
+      if (acquiredDate[index] > 0) {
         store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
-          (long) (acquiredDate[i] * 1000), DateTools.COBOL,
+          (long) (acquiredDate[index] * 1000), DateTools.COBOL,
           DateTools.ISO8601_FORMAT, true)), i);
       }
-      store.setImageName(imageNames[i].trim(), i);
+      store.setImageName(imageNames[index].trim(), i);
 
-      if (physicalSizeXs.get(i) > 0) {
+      if (physicalSizeXs.get(index) > 0) {
         store.setPixelsPhysicalSizeX(
-          new PositiveFloat(physicalSizeXs.get(i)), i);
+          new PositiveFloat(physicalSizeXs.get(index)), i);
       }
       else {
         LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalSizeXs.get(i));
+          physicalSizeXs.get(index));
       }
-      if (physicalSizeYs.get(i) > 0) {
+      if (physicalSizeYs.get(index) > 0) {
         store.setPixelsPhysicalSizeY(
-          new PositiveFloat(physicalSizeYs.get(i)), i);
+          new PositiveFloat(physicalSizeYs.get(index)), i);
       }
       else {
         LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalSizeYs.get(i));
+          physicalSizeYs.get(index));
       }
-      if (zSteps[i] != null && zSteps[i] > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(zSteps[i]), i);
+      if (zSteps[index] != null && zSteps[index] > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(zSteps[index]), i);
       }
       else {
         LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          zSteps[i]);
+          zSteps[index]);
       }
-      store.setPixelsTimeIncrement(tSteps[i], i);
+      store.setPixelsTimeIncrement(tSteps[index], i);
 
-      Vector detectors = detectorModels[i];
+      Vector detectors = detectorModels[index];
       if (detectors != null) {
         nextChannel = 0;
         int start = detectors.size() - getEffectiveSizeC();
@@ -735,24 +750,26 @@ public class LIFReader extends FormatReader {
           store.setDetectorID(detectorID, i, dIndex);
           store.setDetectorModel((String) detectors.get(detector), i, dIndex);
 
-          store.setDetectorZoom(zooms[i], i, dIndex);
+          store.setDetectorZoom(zooms[index], i, dIndex);
           store.setDetectorType(DetectorType.PMT, i, dIndex);
 
-          if (activeDetector[i] != null) {
-            int index = activeDetector[i].size() - getEffectiveSizeC() + dIndex;
-            if (index >= 0 && index < activeDetector[i].size() &&
-              (Boolean) activeDetector[i].get(index) &&
-              detectorOffsets[i] != null &&
-              nextChannel < detectorOffsets[i].length)
+          if (activeDetector[index] != null) {
+            int detectorIndex =
+              activeDetector[index].size() - getEffectiveSizeC() + dIndex;
+            if (detectorIndex >= 0 &&
+              detectorIndex < activeDetector[index].size() &&
+              (Boolean) activeDetector[index].get(detectorIndex) &&
+              detectorOffsets[index] != null &&
+              nextChannel < detectorOffsets[index].length)
             {
               store.setDetectorOffset(
-                detectorOffsets[i][nextChannel++], i, dIndex);
+                detectorOffsets[index][nextChannel++], i, dIndex);
             }
           }
         }
       }
 
-      Vector activeDetectors = activeDetector[i];
+      Vector activeDetectors = activeDetector[index];
       int firstDetector = activeDetectors == null ? 0 :
         activeDetectors.size() - getEffectiveSizeC();
       int nextDetector = firstDetector;
@@ -761,15 +778,15 @@ public class LIFReader extends FormatReader {
       int nextFilterDetector = 0;
 
       if (activeDetectors != null &&
-        activeDetectors.size() > cutIns[i].size() &&
+        activeDetectors.size() > cutIns[index].size() &&
         (Boolean) activeDetectors.get(activeDetectors.size() - 1) &&
         (Boolean) activeDetectors.get(activeDetectors.size() - 2))
       {
-        nextFilterDetector = activeDetectors.size() - cutIns[i].size();
+        nextFilterDetector = activeDetectors.size() - cutIns[index].size();
 
-        if (cutIns[i].size() > filterModels[i].size()) {
-          nextFilterDetector += filterModels[i].size();
-          nextFilter += filterModels[i].size();
+        if (cutIns[index].size() > filterModels[index].size()) {
+          nextFilterDetector += filterModels[index].size();
+          nextFilter += filterModels[index].size();
         }
       }
 
@@ -788,38 +805,40 @@ public class LIFReader extends FormatReader {
             store.setDetectorSettingsID(detectorID, i, c);
             nextDetector++;
 
-            if (detectorOffsets[i] != null && c < detectorOffsets[i].length) {
-              store.setDetectorSettingsOffset(detectorOffsets[i][c], i, c);
+            if (detectorOffsets[index] != null &&
+              c < detectorOffsets[index].length)
+            {
+              store.setDetectorSettingsOffset(detectorOffsets[index][c], i, c);
             }
 
-            if (gains[i] != null) {
-              store.setDetectorSettingsGain(gains[i][c], i, c);
+            if (gains[index] != null) {
+              store.setDetectorSettingsGain(gains[index][c], i, c);
             }
           }
         }
 
-        if (channelNames[i] != null) {
-          store.setChannelName(channelNames[i][c], i, c);
+        if (channelNames[index] != null) {
+          store.setChannelName(channelNames[index][c], i, c);
         }
-        store.setChannelPinholeSize(pinholes[i], i, c);
-        if (exWaves[i] != null) {
-          if (exWaves[i][c] != null && exWaves[i][c] > 1) {
+        store.setChannelPinholeSize(pinholes[index], i, c);
+        if (exWaves[index] != null) {
+          if (exWaves[index][c] != null && exWaves[index][c] > 1) {
             store.setChannelExcitationWavelength(
-              new PositiveInteger(exWaves[i][c]), i, c);
+              new PositiveInteger(exWaves[index][c]), i, c);
           }
           else {
             LOGGER.warn(
               "Expected positive value for ExcitationWavelength; got {}",
-              exWaves[i][c]);
+              exWaves[index][c]);
           }
         }
 
-        Color channelColor = getChannelColor(realChannel[i][c]);
+        Color channelColor = getChannelColor(realChannel[index][c]);
         store.setChannelColor(channelColor, i, c);
 
         if (channelColor.getValue() != -1 && nextFilter >= 0) {
           if (nextDetector - firstDetector != getSizeC() &&
-            cutIns[i] != null && nextDetector >= cutIns[i].size())
+            cutIns[index] != null && nextDetector >= cutIns[index].size())
           {
             while (nextFilterDetector < firstDetector) {
               String filterID =
@@ -848,30 +867,30 @@ public class LIFReader extends FormatReader {
       }
 
       for (int image=0; image<getImageCount(); image++) {
-        store.setPlanePositionX(posX[i], i, image);
-        store.setPlanePositionY(posY[i], i, image);
-        store.setPlanePositionZ(posZ[i], i, image);
-        if (timestamps[i] != null) {
-          double timestamp = timestamps[i][image];
-          if (timestamps[i][0] == acquiredDate[i]) {
-            timestamp -= acquiredDate[i];
+        store.setPlanePositionX(posX[index], i, image);
+        store.setPlanePositionY(posY[index], i, image);
+        store.setPlanePositionZ(posZ[index], i, image);
+        if (timestamps[index] != null) {
+          double timestamp = timestamps[index][image];
+          if (timestamps[index][0] == acquiredDate[index]) {
+            timestamp -= acquiredDate[index];
           }
-          else if (timestamp == acquiredDate[i] && image > 0) {
-            timestamp = timestamps[i][0];
+          else if (timestamp == acquiredDate[index] && image > 0) {
+            timestamp = timestamps[index][0];
           }
           store.setPlaneDeltaT(timestamp, i, image);
         }
 
-        if (expTimes[i] != null) {
+        if (expTimes[index] != null) {
           int c = getZCTCoords(image)[1];
-          store.setPlaneExposureTime(expTimes[i][c], i, image);
+          store.setPlaneExposureTime(expTimes[index][c], i, image);
         }
       }
 
-      if (imageROIs[i] != null) {
-        for (int roi=0; roi<imageROIs[i].length; roi++) {
-          if (imageROIs[i][roi] != null) {
-            imageROIs[i][roi].storeROI(store, i, roiCount++, roi);
+      if (imageROIs[index] != null) {
+        for (int roi=0; roi<imageROIs[index].length; roi++) {
+          if (imageROIs[index][roi] != null) {
+            imageROIs[index][roi].storeROI(store, i, roiCount++, roi);
           }
         }
       }
@@ -912,6 +931,8 @@ public class LIFReader extends FormatReader {
 
     NodeList imageNodes = getNodes(realRoot, "Image");
 
+    tileCount = new int[imageNodes.getLength()];
+    Arrays.fill(tileCount, 1);
     core = new ArrayList<CoreMetadata>(imageNodes.getLength());
     acquiredDate = new double[imageNodes.getLength()];
     descriptions = new String[imageNodes.getLength()];
@@ -973,6 +994,19 @@ public class LIFReader extends FormatReader {
       addUserCommentMeta(image);
     }
     setSeries(0);
+
+    int totalSeries = 0;
+    for (int count : tileCount) {
+      totalSeries += count;
+    }
+    CoreMetadata[] newCore = new CoreMetadata[totalSeries];
+    int nextCore = 0;
+    for (int i=0; i<core.length; i++) {
+      for (int tile=0; tile<tileCount[i]; tile++, nextCore++) {
+        newCore[nextCore] = core[i];
+      }
+    }
+    core = newCore;
   }
 
   private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
@@ -1696,6 +1730,9 @@ public class LIFReader extends FormatReader {
             bytesPerAxis.put(nBytes, "T");
           }
           break;
+        case 10: // tile axis
+          tileCount[i] *= len;
+          break;
         default:
           extras *= len;
       }
@@ -1978,6 +2015,17 @@ public class LIFReader extends FormatReader {
         return new Color(255, 255, 0, 255);
     }
     return new Color(255, 255, 255, 255);
+  }
+
+  private int getTileIndex(int coreIndex) {
+    int count = 0;
+    for (int tile=0; tile<tileCount.length; tile++) {
+      if (coreIndex < count + tileCount[tile]) {
+        return tile;
+      }
+      count += tileCount[tile];
+    }
+    return -1;
   }
 
 }
