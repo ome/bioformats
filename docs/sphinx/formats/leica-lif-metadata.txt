@@ -20,8 +20,8 @@ These fields are fully supported by the Bio-Formats Leica Image File Format form
   * :schema:`Channel : Color <OME-2012-06/ome_xsd.html#Channel_Color>`
   * :schema:`Channel : ExcitationWavelength <OME-2012-06/ome_xsd.html#Channel_ExcitationWavelength>`
   * :schema:`Channel : ID <OME-2012-06/ome_xsd.html#Channel_ID>`
-  * :schema:`Channel : LightSourceSettingsAttenuation <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsAttenuation>`
-  * :schema:`Channel : LightSourceSettingsID <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsID>`
+  * :schema:`Channel : LightSourceSettingsAttenuation <OME-2012-06/ome_xsd.html#LightSourceSettings_Attenuation>`
+  * :schema:`Channel : LightSourceSettingsID <OME-2012-06/ome_xsd.html#LightSourceSettings_ID>`
   * :schema:`Channel : Name <OME-2012-06/ome_xsd.html#Channel_Name>`
   * :schema:`Channel : PinholeSize <OME-2012-06/ome_xsd.html#Channel_PinholeSize>`
   * :schema:`Channel : SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
@@ -48,7 +48,7 @@ These fields are fully supported by the Bio-Formats Leica Image File Format form
   * :schema:`Label : Text <OME-2012-06/ROI_xsd.html#Shape_Text>`
   * :schema:`Label : X <OME-2012-06/ROI_xsd.html#Label_X>`
   * :schema:`Label : Y <OME-2012-06/ROI_xsd.html#Label_Y>`
-  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#Laser_ID>`
+  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#LightSource_ID>`
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Laser : Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`

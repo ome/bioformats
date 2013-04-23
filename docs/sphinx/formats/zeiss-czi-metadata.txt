@@ -20,7 +20,7 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`Arc : LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
   * :schema:`Arc : Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
   * :schema:`Arc : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
-  * :schema:`Arc : Power <OME-2012-06/ome_xsd.html#Arc_Power>`
+  * :schema:`Arc : Power <OME-2012-06/ome_xsd.html#LightSource_Power>`
   * :schema:`Arc : SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
   * :schema:`Channel : Color <OME-2012-06/ome_xsd.html#Channel_Color>`
   * :schema:`Channel : EmissionWavelength <OME-2012-06/ome_xsd.html#Channel_EmissionWavelength>`
@@ -62,7 +62,7 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`Filament : LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
   * :schema:`Filament : Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
   * :schema:`Filament : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
-  * :schema:`Filament : Power <OME-2012-06/ome_xsd.html#Filament_Power>`
+  * :schema:`Filament : Power <OME-2012-06/ome_xsd.html#LightSource_Power>`
   * :schema:`Filament : SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
   * :schema:`Filter : FilterWheel <OME-2012-06/ome_xsd.html#Filter_FilterWheel>`
   * :schema:`Filter : ID <OME-2012-06/ome_xsd.html#Filter_ID>`
@@ -72,8 +72,8 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`Filter : SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
   * :schema:`Filter : Type <OME-2012-06/ome_xsd.html#Filter_Type>`
   * :schema:`FilterSet : DichroicRef <OME-2012-06/ome_xsd.html#DichroicRef_ID>`
-  * :schema:`FilterSet : EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
-  * :schema:`FilterSet : ExcitationFilterRef <OME-2012-06/ome_xsd.html#ExcitationFilterRef_ID>`
+  * :schema:`FilterSet : EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterRef_ID>`
+  * :schema:`FilterSet : ExcitationFilterRef <OME-2012-06/ome_xsd.html#FilterRef_ID>`
   * :schema:`FilterSet : ID <OME-2012-06/ome_xsd.html#FilterSet_ID>`
   * :schema:`FilterSet : LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
   * :schema:`FilterSet : Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
@@ -92,12 +92,12 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`Laser : LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
   * :schema:`Laser : Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
   * :schema:`Laser : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
-  * :schema:`Laser : Power <OME-2012-06/ome_xsd.html#Laser_Power>`
+  * :schema:`Laser : Power <OME-2012-06/ome_xsd.html#LightSource_Power>`
   * :schema:`Laser : SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
   * :schema:`LightEmittingDiode : LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
   * :schema:`LightEmittingDiode : Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
   * :schema:`LightEmittingDiode : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
-  * :schema:`LightEmittingDiode : Power <OME-2012-06/ome_xsd.html#LightEmittingDiode_Power>`
+  * :schema:`LightEmittingDiode : Power <OME-2012-06/ome_xsd.html#LightSource_Power>`
   * :schema:`LightEmittingDiode : SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
   * :schema:`Line : ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
   * :schema:`Line : Text <OME-2012-06/ROI_xsd.html#Shape_Text>`

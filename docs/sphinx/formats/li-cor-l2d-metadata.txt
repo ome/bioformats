@@ -18,7 +18,7 @@ Supported fields
 
 These fields are fully supported by the Bio-Formats Li-Cor L2D format reader:
   * :schema:`Channel : ID <OME-2012-06/ome_xsd.html#Channel_ID>`
-  * :schema:`Channel : LightSourceSettingsID <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsID>`
+  * :schema:`Channel : LightSourceSettingsID <OME-2012-06/ome_xsd.html#LightSourceSettings_ID>`
   * :schema:`Channel : SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : Description <OME-2012-06/ome_xsd.html#Image_Description>`
@@ -26,7 +26,7 @@ These fields are fully supported by the Bio-Formats Li-Cor L2D format reader:
   * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
   * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
-  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#Laser_ID>`
+  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#LightSource_ID>`
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Laser : Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`

@@ -57,7 +57,7 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * :schema:`Label : Text <OME-2012-06/ROI_xsd.html#Shape_Text>`
   * :schema:`Label : X <OME-2012-06/ROI_xsd.html#Label_X>`
   * :schema:`Label : Y <OME-2012-06/ROI_xsd.html#Label_Y>`
-  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#Laser_ID>`
+  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#LightSource_ID>`
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
   * :schema:`Laser : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`

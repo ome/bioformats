@@ -11,6 +11,7 @@ path = Instrument+/Arc+
 
 [Arc ID]
 type = String
+anchor = LightSource_ID
 
 [Arc LotNumber]
 type = String
@@ -26,6 +27,7 @@ anchor = ManufacturerSpec_Model
 
 [Arc Power]
 type = Double
+anchor = LightSource_Power
 
 [Arc SerialNumber]
 type = String
@@ -113,12 +115,15 @@ type = PositiveInteger
 
 [Channel LightSourceSettingsID]
 type = String
+anchor = LightSourceSettings_ID
 
 [Channel LightSourceSettingsAttenuation]
 type = PercentFraction
+anchor = LightSourceSettings_Attenuation
 
 [Channel LightSourceSettingsWavelength]
 type = PositiveInteger
+anchor = LightSourceSettings_Wavelength
 
 [CommentAnnotation]
 countable = true
@@ -456,6 +461,7 @@ path = Instrument+/Filament+
 
 [Filament ID]
 type = String
+anchor = LightSource_ID
 
 [Filament LotNumber]
 type = String
@@ -471,6 +477,7 @@ anchor = ManufacturerSpec_Model
 
 [Filament Power]
 type = Double
+anchor = LightSource_Power
 
 [Filament SerialNumber]
 type = String
@@ -540,13 +547,13 @@ anchor = DichroicRef_ID
 countable = true
 path = Instrument+/FilterSet+/EmissionFilterRef+
 type = String
-anchor = EmissionFilterRef_ID
+anchor = FilterRef_ID
 
 [FilterSet ExcitationFilterRef]
 countable = true
 path = Instrument+/FilterSet+/ExcitationFilterRef+
 type = String
-anchor = ExcitationFilterRef_ID
+anchor = FilterRef_ID
 
 [FilterSet ID]
 type = String
@@ -727,6 +734,7 @@ path = Instrument+/Laser+
 
 [Laser ID]
 type = String
+anchor = LightSource_ID
 
 [Laser LotNumber]
 type = String
@@ -742,6 +750,7 @@ anchor = ManufacturerSpec_Model
 
 [Laser Power]
 type = Double
+anchor = LightSource_Power
 
 [Laser SerialNumber]
 type = String
@@ -780,6 +789,7 @@ path = Instrument+/LightEmittingDiode+
 
 [LightEmittingDiode ID]
 type = String
+anchor = LightSource_ID
 
 [LightEmittingDiode LotNumber]
 type = String
@@ -795,6 +805,7 @@ anchor = ManufacturerSpec_Model
 
 [LightEmittingDiode Power]
 type = Double
+anchor = LightSource_Power
 
 [LightEmittingDiode SerialNumber]
 type = String
@@ -1061,12 +1072,15 @@ path = Experiment+/MicrobeamManipulation+/LightSourceSettings+
 
 [MicrobeamManipulationLightSourceSettings Attenuation]
 type = PercentFraction
+anchor = LightSourceSettings_Attenuation
 
 [MicrobeamManipulationLightSourceSettings ID]
 type = String
+anchor = LightSourceSettings_ID
 
 [MicrobeamManipulationLightSourceSettings Wavelength]
 type = PositiveInteger
+anchor = LightSourceSettings_Wavelength
 
 [Microscope]
 countable = false

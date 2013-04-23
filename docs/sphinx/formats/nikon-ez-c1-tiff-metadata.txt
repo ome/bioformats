@@ -35,7 +35,7 @@ These fields are fully supported by the Bio-Formats Nikon TIFF format reader:
   * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
   * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
-  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#Laser_ID>`
+  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#LightSource_ID>`
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
   * :schema:`Laser : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`

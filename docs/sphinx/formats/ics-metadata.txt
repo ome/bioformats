@@ -38,8 +38,8 @@ These fields are fully supported by the Bio-Formats Image Cytometry Standard for
   * :schema:`Filter : ID <OME-2012-06/ome_xsd.html#Filter_ID>`
   * :schema:`Filter : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`FilterSet : DichroicRef <OME-2012-06/ome_xsd.html#DichroicRef_ID>`
-  * :schema:`FilterSet : EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
-  * :schema:`FilterSet : ExcitationFilterRef <OME-2012-06/ome_xsd.html#ExcitationFilterRef_ID>`
+  * :schema:`FilterSet : EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterRef_ID>`
+  * :schema:`FilterSet : ExcitationFilterRef <OME-2012-06/ome_xsd.html#FilterRef_ID>`
   * :schema:`FilterSet : ID <OME-2012-06/ome_xsd.html#FilterSet_ID>`
   * :schema:`FilterSet : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
@@ -48,11 +48,11 @@ These fields are fully supported by the Bio-Formats Image Cytometry Standard for
   * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
   * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
-  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#Laser_ID>`
+  * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#LightSource_ID>`
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
   * :schema:`Laser : Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
   * :schema:`Laser : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
-  * :schema:`Laser : Power <OME-2012-06/ome_xsd.html#Laser_Power>`
+  * :schema:`Laser : Power <OME-2012-06/ome_xsd.html#LightSource_Power>`
   * :schema:`Laser : RepetitionRate <OME-2012-06/ome_xsd.html#Laser_RepetitionRate>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Laser : Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`
