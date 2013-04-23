@@ -48,14 +48,14 @@ These fields are fully supported by the Bio-Formats Olympus FV1000 format reader
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
-  * :schema:`Image : ROIRef <OME-2012-06/ome_xsd.html#Image_ROIRef>`
+  * :schema:`Image : ROIRef <OME-2012-06/ROI_xsd.html#ROIRef_ID>`
   * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
   * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#Laser_ID>`
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Laser : Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`
-  * :schema:`LightPath : DichroicRef <OME-2012-06/ome_xsd.html#LightPath_DichroicRef>`
-  * :schema:`LightPath : EmissionFilterRef <OME-2012-06/ome_xsd.html#LightPath_EmissionFilterRef>`
+  * :schema:`LightPath : DichroicRef <OME-2012-06/ome_xsd.html#DichroicRef_ID>`
+  * :schema:`LightPath : EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
   * :schema:`Line : FontSize <OME-2012-06/ROI_xsd.html#Shape_FontSize>`
   * :schema:`Line : ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
   * :schema:`Line : StrokeWidth <OME-2012-06/ROI_xsd.html#Shape_StrokeWidth>`

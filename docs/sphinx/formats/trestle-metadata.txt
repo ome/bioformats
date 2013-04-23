@@ -22,7 +22,7 @@ These fields are fully supported by the Bio-Formats Trestle format reader:
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
-  * :schema:`Image : ROIRef <OME-2012-06/ome_xsd.html#Image_ROIRef>`
+  * :schema:`Image : ROIRef <OME-2012-06/ROI_xsd.html#ROIRef_ID>`
   * :schema:`Mask : Height <OME-2012-06/ROI_xsd.html#Mask_Height>`
   * :schema:`Mask : ID <OME-2012-06/ROI_xsd.html#Mask_ID>`
   * :schema:`Mask : Width <OME-2012-06/ROI_xsd.html#Mask_Width>`

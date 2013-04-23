@@ -22,7 +22,7 @@ These fields are fully supported by the Bio-Formats IMOD format reader:
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
-  * :schema:`Image : ROIRef <OME-2012-06/ome_xsd.html#Image_ROIRef>`
+  * :schema:`Image : ROIRef <OME-2012-06/ROI_xsd.html#ROIRef_ID>`
   * :schema:`Pixels : BinDataBigEndian <OME-2012-06/BinaryFile_xsd.html#BinData_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`

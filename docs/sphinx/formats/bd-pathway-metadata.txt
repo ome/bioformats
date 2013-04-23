@@ -31,7 +31,7 @@ These fields are fully supported by the Bio-Formats BD Pathway format reader:
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
-  * :schema:`Image : ROIRef <OME-2012-06/ome_xsd.html#Image_ROIRef>`
+  * :schema:`Image : ROIRef <OME-2012-06/ROI_xsd.html#ROIRef_ID>`
   * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
   * :schema:`Objective : ID <OME-2012-06/ome_xsd.html#Objective_ID>`
   * :schema:`Objective : LensNA <OME-2012-06/ome_xsd.html#Objective_LensNA>`
@@ -59,7 +59,7 @@ These fields are fully supported by the Bio-Formats BD Pathway format reader:
   * :schema:`Plate : RowNamingConvention <OME-2012-06/SPW_xsd.html#Plate_RowNamingConvention>`
   * :schema:`PlateAcquisition : ID <OME-2012-06/SPW_xsd.html#PlateAcquisition_ID>`
   * :schema:`PlateAcquisition : MaximumFieldCount <OME-2012-06/SPW_xsd.html#PlateAcquisition_MaximumFieldCount>`
-  * :schema:`PlateAcquisition : WellSampleRef <OME-2012-06/SPW_xsd.html#PlateAcquisition_WellSampleRef>`
+  * :schema:`PlateAcquisition : WellSampleRef <OME-2012-06/SPW_xsd.html#WellSampleRef_ID>`
   * :schema:`ROI : ID <OME-2012-06/ROI_xsd.html#ROI_ID>`
   * :schema:`Rectangle : Height <OME-2012-06/ROI_xsd.html#Rectangle_Height>`
   * :schema:`Rectangle : ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
@@ -70,7 +70,7 @@ These fields are fully supported by the Bio-Formats BD Pathway format reader:
   * :schema:`Well : ID <OME-2012-06/SPW_xsd.html#Well_ID>`
   * :schema:`Well : Row <OME-2012-06/SPW_xsd.html#Well_Row>`
   * :schema:`WellSample : ID <OME-2012-06/SPW_xsd.html#WellSample_ID>`
-  * :schema:`WellSample : ImageRef <OME-2012-06/SPW_xsd.html#WellSample_ImageRef>`
+  * :schema:`WellSample : ImageRef <OME-2012-06/ome_xsd.html#ImageRef_ID>`
   * :schema:`WellSample : Index <OME-2012-06/SPW_xsd.html#WellSample_Index>`
 
 **Total supported: 55**
