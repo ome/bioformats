@@ -2031,6 +2031,7 @@ anchor = AnnotationRef_ID
 
 [XMLAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [XMLAnnotation Namespace]
 type = String
