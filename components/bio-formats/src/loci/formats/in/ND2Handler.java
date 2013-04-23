@@ -634,7 +634,10 @@ public class ND2Handler extends BaseHandler {
     else if (key.endsWith("Gain")) {
       value = DataTools.sanitizeDouble(value);
       if (!value.equals("")) {
-        gain.add(new Double(value));
+        try {
+          gain.add(new Double(value));
+        }
+        catch (NumberFormatException e) { }
       }
     }
     else if (key.endsWith("dLampVoltage")) {
