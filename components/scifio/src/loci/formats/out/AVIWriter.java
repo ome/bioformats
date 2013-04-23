@@ -266,6 +266,9 @@ public class AVIWriter extends FormatWriter {
       in.close();
       out.seek(idx1Pos);
     }
+    else {
+      planesWritten = 0;
+    }
 
     out.order(true);
 

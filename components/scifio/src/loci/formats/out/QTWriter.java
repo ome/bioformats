@@ -266,6 +266,7 @@ public class QTWriter extends FormatWriter {
       }
     }
     numWritten++;
+    writeFooter();
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -305,6 +306,7 @@ public class QTWriter extends FormatWriter {
 
       writeAtom(8, "wide");
       writeAtom(numBytes + 8, "mdat");
+      numWritten = 0;
     }
     else {
       out.seek(BYTE_COUNT_OFFSET);
@@ -312,6 +314,7 @@ public class QTWriter extends FormatWriter {
       RandomAccessInputStream in = new RandomAccessInputStream(currentId);
       in.seek(BYTE_COUNT_OFFSET);
       numBytes = in.readInt() - 8;
+      numWritten = numBytes / (planeSize + pad * height);
       in.close();
     }
 
