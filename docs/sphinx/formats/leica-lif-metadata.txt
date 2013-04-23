@@ -52,7 +52,7 @@ These fields are fully supported by the Bio-Formats Leica Image File Format form
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Laser : Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`
-  * :schema:`LightPath : EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
+  * :schema:`LightPath : EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterRef_ID>`
   * :schema:`Line : ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
   * :schema:`Line : X1 <OME-2012-06/ROI_xsd.html#Line_X1>`
   * :schema:`Line : X2 <OME-2012-06/ROI_xsd.html#Line_X2>`
