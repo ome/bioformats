@@ -3163,7 +3163,7 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`XMLAnnotation - ID <OME-2012-06/SA_xsd.html#XMLAnnotation_ID>`
+   * - :schema:`XMLAnnotation - ID <OME-2012-06/SA_xsd.html#Annotation_ID>`
      - 0
      - 0
      - 0
