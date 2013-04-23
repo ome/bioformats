@@ -803,17 +803,17 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Arc - LotNumber <OME-2012-06/ome_xsd.html#Arc_LotNumber>`
+   * - :schema:`Arc - LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Arc - Manufacturer <OME-2012-06/ome_xsd.html#Arc_Manufacturer>`
+   * - :schema:`Arc - Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Arc - Model <OME-2012-06/ome_xsd.html#Arc_Model>`
+   * - :schema:`Arc - Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
      - 1
      - 0
      - 0
@@ -823,7 +823,7 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - :schema:`Arc - SerialNumber <OME-2012-06/ome_xsd.html#Arc_SerialNumber>`
+   * - :schema:`Arc - SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
      - 1
      - 0
      - 0
@@ -1023,17 +1023,17 @@ Metadata fields
      - 0
      - 0
      - 119
-   * - :schema:`Detector - LotNumber <OME-2012-06/ome_xsd.html#Detector_LotNumber>`
+   * - :schema:`Detector - LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Detector - Manufacturer <OME-2012-06/ome_xsd.html#Detector_Manufacturer>`
+   * - :schema:`Detector - Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
      - 4
      - 0
      - 0
      - 147
-   * - :schema:`Detector - Model <OME-2012-06/ome_xsd.html#Detector_Model>`
+   * - :schema:`Detector - Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
      - 13
      - 0
      - 0
@@ -1043,7 +1043,7 @@ Metadata fields
      - 0
      - 0
      - 146
-   * - :schema:`Detector - SerialNumber <OME-2012-06/ome_xsd.html#Detector_SerialNumber>`
+   * - :schema:`Detector - SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
      - 2
      - 0
      - 0
@@ -1098,22 +1098,22 @@ Metadata fields
      - 0
      - 0
      - 145
-   * - :schema:`Dichroic - LotNumber <OME-2012-06/ome_xsd.html#Dichroic_LotNumber>`
+   * - :schema:`Dichroic - LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Dichroic - Manufacturer <OME-2012-06/ome_xsd.html#Dichroic_Manufacturer>`
+   * - :schema:`Dichroic - Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Dichroic - Model <OME-2012-06/ome_xsd.html#Dichroic_Model>`
+   * - :schema:`Dichroic - Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
      - 6
      - 0
      - 0
      - 145
-   * - :schema:`Dichroic - SerialNumber <OME-2012-06/ome_xsd.html#Dichroic_SerialNumber>`
+   * - :schema:`Dichroic - SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
      - 1
      - 0
      - 0
@@ -1148,37 +1148,37 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Ellipse - FillRule <OME-2012-06/ROI_xsd.html#Ellipse_FillRule>`
+   * - :schema:`Ellipse - FillRule <OME-2012-06/ROI_xsd.html#Shape_FillRule>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Ellipse - FontFamily <OME-2012-06/ROI_xsd.html#Ellipse_FontFamily>`
+   * - :schema:`Ellipse - FontFamily <OME-2012-06/ROI_xsd.html#Shape_FontFamily>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Ellipse - FontSize <OME-2012-06/ROI_xsd.html#Ellipse_FontSize>`
+   * - :schema:`Ellipse - FontSize <OME-2012-06/ROI_xsd.html#Shape_FontSize>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Ellipse - FontStyle <OME-2012-06/ROI_xsd.html#Ellipse_FontStyle>`
+   * - :schema:`Ellipse - FontStyle <OME-2012-06/ROI_xsd.html#Shape_FontStyle>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Ellipse - ID <OME-2012-06/ROI_xsd.html#Ellipse_ID>`
+   * - :schema:`Ellipse - ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
      - 5
      - 0
      - 0
      - 146
-   * - :schema:`Ellipse - LineCap <OME-2012-06/ROI_xsd.html#Ellipse_LineCap>`
+   * - :schema:`Ellipse - LineCap <OME-2012-06/ROI_xsd.html#Shape_LineCap>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Ellipse - Locked <OME-2012-06/ROI_xsd.html#Ellipse_Locked>`
+   * - :schema:`Ellipse - Locked <OME-2012-06/ROI_xsd.html#Shape_Locked>`
      - 0
      - 0
      - 0
@@ -1193,47 +1193,47 @@ Metadata fields
      - 0
      - 0
      - 146
-   * - :schema:`Ellipse - StrokeColor <OME-2012-06/ROI_xsd.html#Ellipse_StrokeColor>`
+   * - :schema:`Ellipse - StrokeColor <OME-2012-06/ROI_xsd.html#Shape_StrokeColor>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Ellipse - StrokeDashArray <OME-2012-06/ROI_xsd.html#Ellipse_StrokeDashArray>`
+   * - :schema:`Ellipse - StrokeDashArray <OME-2012-06/ROI_xsd.html#Shape_StrokeDashArray>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Ellipse - StrokeWidth <OME-2012-06/ROI_xsd.html#Ellipse_StrokeWidth>`
+   * - :schema:`Ellipse - StrokeWidth <OME-2012-06/ROI_xsd.html#Shape_StrokeWidth>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Ellipse - Text <OME-2012-06/ROI_xsd.html#Ellipse_Text>`
+   * - :schema:`Ellipse - Text <OME-2012-06/ROI_xsd.html#Shape_Text>`
      - 3
      - 0
      - 0
      - 148
-   * - :schema:`Ellipse - TheC <OME-2012-06/ROI_xsd.html#Ellipse_TheC>`
+   * - :schema:`Ellipse - TheC <OME-2012-06/ROI_xsd.html#Shape_TheC>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Ellipse - TheT <OME-2012-06/ROI_xsd.html#Ellipse_TheT>`
+   * - :schema:`Ellipse - TheT <OME-2012-06/ROI_xsd.html#Shape_TheT>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Ellipse - TheZ <OME-2012-06/ROI_xsd.html#Ellipse_TheZ>`
+   * - :schema:`Ellipse - TheZ <OME-2012-06/ROI_xsd.html#Shape_TheZ>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Ellipse - Transform <OME-2012-06/ROI_xsd.html#Ellipse_Transform>`
+   * - :schema:`Ellipse - Transform <OME-2012-06/ROI_xsd.html#Shape_Transform>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Ellipse - Visible <OME-2012-06/ROI_xsd.html#Ellipse_Visible>`
+   * - :schema:`Ellipse - Visible <OME-2012-06/ROI_xsd.html#Shape_Visible>`
      - 0
      - 0
      - 0
@@ -1343,17 +1343,17 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Filament - LotNumber <OME-2012-06/ome_xsd.html#Filament_LotNumber>`
+   * - :schema:`Filament - LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Filament - Manufacturer <OME-2012-06/ome_xsd.html#Filament_Manufacturer>`
+   * - :schema:`Filament - Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Filament - Model <OME-2012-06/ome_xsd.html#Filament_Model>`
+   * - :schema:`Filament - Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
      - 1
      - 0
      - 0
@@ -1363,7 +1363,7 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - :schema:`Filament - SerialNumber <OME-2012-06/ome_xsd.html#Filament_SerialNumber>`
+   * - :schema:`Filament - SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
      - 1
      - 0
      - 0
@@ -1403,22 +1403,22 @@ Metadata fields
      - 0
      - 0
      - 143
-   * - :schema:`Filter - LotNumber <OME-2012-06/ome_xsd.html#Filter_LotNumber>`
+   * - :schema:`Filter - LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Filter - Manufacturer <OME-2012-06/ome_xsd.html#Filter_Manufacturer>`
+   * - :schema:`Filter - Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Filter - Model <OME-2012-06/ome_xsd.html#Filter_Model>`
+   * - :schema:`Filter - Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
      - 8
      - 0
      - 0
      - 143
-   * - :schema:`Filter - SerialNumber <OME-2012-06/ome_xsd.html#Filter_SerialNumber>`
+   * - :schema:`Filter - SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
      - 1
      - 0
      - 0
@@ -1448,22 +1448,22 @@ Metadata fields
      - 0
      - 0
      - 149
-   * - :schema:`FilterSet - LotNumber <OME-2012-06/ome_xsd.html#FilterSet_LotNumber>`
+   * - :schema:`FilterSet - LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`FilterSet - Manufacturer <OME-2012-06/ome_xsd.html#FilterSet_Manufacturer>`
+   * - :schema:`FilterSet - Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`FilterSet - Model <OME-2012-06/ome_xsd.html#FilterSet_Model>`
+   * - :schema:`FilterSet - Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`FilterSet - SerialNumber <OME-2012-06/ome_xsd.html#FilterSet_SerialNumber>`
+   * - :schema:`FilterSet - SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
      - 1
      - 0
      - 0
@@ -1503,7 +1503,7 @@ Metadata fields
      - 0
      - 0
      - 0
-   * - :schema:`Image - InstrumentRef <OME-2012-06/ome_xsd.html#Image_InstrumentRef>`
+   * - :schema:`Image - InstrumentRef <OME-2012-06/ome_xsd.html#InstrumentRef_ID>`
      - 39
      - 0
      - 0
@@ -1553,82 +1553,82 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Label - FillRule <OME-2012-06/ROI_xsd.html#Label_FillRule>`
+   * - :schema:`Label - FillRule <OME-2012-06/ROI_xsd.html#Shape_FillRule>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Label - FontFamily <OME-2012-06/ROI_xsd.html#Label_FontFamily>`
+   * - :schema:`Label - FontFamily <OME-2012-06/ROI_xsd.html#Shape_FontFamily>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Label - FontSize <OME-2012-06/ROI_xsd.html#Label_FontSize>`
+   * - :schema:`Label - FontSize <OME-2012-06/ROI_xsd.html#Shape_FontSize>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Label - FontStyle <OME-2012-06/ROI_xsd.html#Label_FontStyle>`
+   * - :schema:`Label - FontStyle <OME-2012-06/ROI_xsd.html#Shape_FontStyle>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Label - ID <OME-2012-06/ROI_xsd.html#Label_ID>`
+   * - :schema:`Label - ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
      - 3
      - 0
      - 0
      - 148
-   * - :schema:`Label - LineCap <OME-2012-06/ROI_xsd.html#Label_LineCap>`
+   * - :schema:`Label - LineCap <OME-2012-06/ROI_xsd.html#Shape_LineCap>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Label - Locked <OME-2012-06/ROI_xsd.html#Label_Locked>`
+   * - :schema:`Label - Locked <OME-2012-06/ROI_xsd.html#Shape_Locked>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Label - StrokeColor <OME-2012-06/ROI_xsd.html#Label_StrokeColor>`
+   * - :schema:`Label - StrokeColor <OME-2012-06/ROI_xsd.html#Shape_StrokeColor>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Label - StrokeDashArray <OME-2012-06/ROI_xsd.html#Label_StrokeDashArray>`
+   * - :schema:`Label - StrokeDashArray <OME-2012-06/ROI_xsd.html#Shape_StrokeDashArray>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Label - StrokeWidth <OME-2012-06/ROI_xsd.html#Label_StrokeWidth>`
+   * - :schema:`Label - StrokeWidth <OME-2012-06/ROI_xsd.html#Shape_StrokeWidth>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Label - Text <OME-2012-06/ROI_xsd.html#Label_Text>`
+   * - :schema:`Label - Text <OME-2012-06/ROI_xsd.html#Shape_Text>`
      - 3
      - 0
      - 0
      - 148
-   * - :schema:`Label - TheC <OME-2012-06/ROI_xsd.html#Label_TheC>`
+   * - :schema:`Label - TheC <OME-2012-06/ROI_xsd.html#Shape_TheC>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Label - TheT <OME-2012-06/ROI_xsd.html#Label_TheT>`
+   * - :schema:`Label - TheT <OME-2012-06/ROI_xsd.html#Shape_TheT>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Label - TheZ <OME-2012-06/ROI_xsd.html#Label_TheZ>`
+   * - :schema:`Label - TheZ <OME-2012-06/ROI_xsd.html#Shape_TheZ>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Label - Transform <OME-2012-06/ROI_xsd.html#Label_Transform>`
+   * - :schema:`Label - Transform <OME-2012-06/ROI_xsd.html#Shape_Transform>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Label - Visible <OME-2012-06/ROI_xsd.html#Label_Visible>`
+   * - :schema:`Label - Visible <OME-2012-06/ROI_xsd.html#Shape_Visible>`
      - 0
      - 0
      - 0
@@ -1658,17 +1658,17 @@ Metadata fields
      - 0
      - 0
      - 143
-   * - :schema:`Laser - LotNumber <OME-2012-06/ome_xsd.html#Laser_LotNumber>`
+   * - :schema:`Laser - LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Laser - Manufacturer <OME-2012-06/ome_xsd.html#Laser_Manufacturer>`
+   * - :schema:`Laser - Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Laser - Model <OME-2012-06/ome_xsd.html#Laser_Model>`
+   * - :schema:`Laser - Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
      - 4
      - 0
      - 0
@@ -1698,7 +1698,7 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - :schema:`Laser - SerialNumber <OME-2012-06/ome_xsd.html#Laser_SerialNumber>`
+   * - :schema:`Laser - SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
      - 1
      - 0
      - 0
@@ -1723,17 +1723,17 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`LightEmittingDiode - LotNumber <OME-2012-06/ome_xsd.html#LightEmittingDiode_LotNumber>`
+   * - :schema:`LightEmittingDiode - LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`LightEmittingDiode - Manufacturer <OME-2012-06/ome_xsd.html#LightEmittingDiode_Manufacturer>`
+   * - :schema:`LightEmittingDiode - Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`LightEmittingDiode - Model <OME-2012-06/ome_xsd.html#LightEmittingDiode_Model>`
+   * - :schema:`LightEmittingDiode - Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
      - 1
      - 0
      - 0
@@ -1743,7 +1743,7 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - :schema:`LightEmittingDiode - SerialNumber <OME-2012-06/ome_xsd.html#LightEmittingDiode_SerialNumber>`
+   * - :schema:`LightEmittingDiode - SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
      - 1
      - 0
      - 0
@@ -1768,37 +1768,37 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Line - FillRule <OME-2012-06/ROI_xsd.html#Line_FillRule>`
+   * - :schema:`Line - FillRule <OME-2012-06/ROI_xsd.html#Shape_FillRule>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Line - FontFamily <OME-2012-06/ROI_xsd.html#Line_FontFamily>`
+   * - :schema:`Line - FontFamily <OME-2012-06/ROI_xsd.html#Shape_FontFamily>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Line - FontSize <OME-2012-06/ROI_xsd.html#Line_FontSize>`
+   * - :schema:`Line - FontSize <OME-2012-06/ROI_xsd.html#Shape_FontSize>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Line - FontStyle <OME-2012-06/ROI_xsd.html#Line_FontStyle>`
+   * - :schema:`Line - FontStyle <OME-2012-06/ROI_xsd.html#Shape_FontStyle>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Line - ID <OME-2012-06/ROI_xsd.html#Line_ID>`
+   * - :schema:`Line - ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
      - 5
      - 0
      - 0
      - 146
-   * - :schema:`Line - LineCap <OME-2012-06/ROI_xsd.html#Line_LineCap>`
+   * - :schema:`Line - LineCap <OME-2012-06/ROI_xsd.html#Shape_LineCap>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Line - Locked <OME-2012-06/ROI_xsd.html#Line_Locked>`
+   * - :schema:`Line - Locked <OME-2012-06/ROI_xsd.html#Shape_Locked>`
      - 0
      - 0
      - 0
@@ -1813,47 +1813,47 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Line - StrokeColor <OME-2012-06/ROI_xsd.html#Line_StrokeColor>`
+   * - :schema:`Line - StrokeColor <OME-2012-06/ROI_xsd.html#Shape_StrokeColor>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Line - StrokeDashArray <OME-2012-06/ROI_xsd.html#Line_StrokeDashArray>`
+   * - :schema:`Line - StrokeDashArray <OME-2012-06/ROI_xsd.html#Shape_StrokeDashArray>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Line - StrokeWidth <OME-2012-06/ROI_xsd.html#Line_StrokeWidth>`
+   * - :schema:`Line - StrokeWidth <OME-2012-06/ROI_xsd.html#Shape_StrokeWidth>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Line - Text <OME-2012-06/ROI_xsd.html#Line_Text>`
+   * - :schema:`Line - Text <OME-2012-06/ROI_xsd.html#Shape_Text>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Line - TheC <OME-2012-06/ROI_xsd.html#Line_TheC>`
+   * - :schema:`Line - TheC <OME-2012-06/ROI_xsd.html#Shape_TheC>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Line - TheT <OME-2012-06/ROI_xsd.html#Line_TheT>`
+   * - :schema:`Line - TheT <OME-2012-06/ROI_xsd.html#Shape_TheT>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Line - TheZ <OME-2012-06/ROI_xsd.html#Line_TheZ>`
+   * - :schema:`Line - TheZ <OME-2012-06/ROI_xsd.html#Shape_TheZ>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Line - Transform <OME-2012-06/ROI_xsd.html#Line_Transform>`
+   * - :schema:`Line - Transform <OME-2012-06/ROI_xsd.html#Shape_Transform>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Line - Visible <OME-2012-06/ROI_xsd.html#Line_Visible>`
+   * - :schema:`Line - Visible <OME-2012-06/ROI_xsd.html#Shape_Visible>`
      - 0
      - 0
      - 0
@@ -1928,17 +1928,17 @@ Metadata fields
      - 0
      - 0
      - 150
-   * - :schema:`Mask - FillRule <OME-2012-06/ROI_xsd.html#Mask_FillRule>`
+   * - :schema:`Mask - FillRule <OME-2012-06/ROI_xsd.html#Shape_FillRule>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Mask - FontFamily <OME-2012-06/ROI_xsd.html#Mask_FontFamily>`
+   * - :schema:`Mask - FontFamily <OME-2012-06/ROI_xsd.html#Shape_FontFamily>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Mask - FontSize <OME-2012-06/ROI_xsd.html#Mask_FontSize>`
+   * - :schema:`Mask - FontSize <OME-2012-06/ROI_xsd.html#Shape_FontSize>`
      - 0
      - 0
      - 0
@@ -1953,57 +1953,57 @@ Metadata fields
      - 0
      - 0
      - 149
-   * - :schema:`Mask - LineCap <OME-2012-06/ROI_xsd.html#Mask_LineCap>`
+   * - :schema:`Mask - LineCap <OME-2012-06/ROI_xsd.html#Shape_LineCap>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Mask - Locked <OME-2012-06/ROI_xsd.html#Mask_Locked>`
+   * - :schema:`Mask - Locked <OME-2012-06/ROI_xsd.html#Shape_Locked>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Mask - StrokeColor <OME-2012-06/ROI_xsd.html#Mask_StrokeColor>`
+   * - :schema:`Mask - StrokeColor <OME-2012-06/ROI_xsd.html#Shape_StrokeColor>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Mask - StrokeDashArray <OME-2012-06/ROI_xsd.html#Mask_StrokeDashArray>`
+   * - :schema:`Mask - StrokeDashArray <OME-2012-06/ROI_xsd.html#Shape_StrokeDashArray>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Mask - StrokeWidth <OME-2012-06/ROI_xsd.html#Mask_StrokeWidth>`
+   * - :schema:`Mask - StrokeWidth <OME-2012-06/ROI_xsd.html#Shape_StrokeWidth>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Mask - Text <OME-2012-06/ROI_xsd.html#Mask_Text>`
+   * - :schema:`Mask - Text <OME-2012-06/ROI_xsd.html#Shape_Text>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Mask - TheC <OME-2012-06/ROI_xsd.html#Mask_TheC>`
+   * - :schema:`Mask - TheC <OME-2012-06/ROI_xsd.html#Shape_TheC>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Mask - TheT <OME-2012-06/ROI_xsd.html#Mask_TheT>`
+   * - :schema:`Mask - TheT <OME-2012-06/ROI_xsd.html#Shape_TheT>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Mask - TheZ <OME-2012-06/ROI_xsd.html#Mask_TheZ>`
+   * - :schema:`Mask - TheZ <OME-2012-06/ROI_xsd.html#Shape_TheZ>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Mask - Transform <OME-2012-06/ROI_xsd.html#Mask_Transform>`
+   * - :schema:`Mask - Transform <OME-2012-06/ROI_xsd.html#Shape_Transform>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Mask - Visible <OME-2012-06/ROI_xsd.html#Mask_Visible>`
+   * - :schema:`Mask - Visible <OME-2012-06/ROI_xsd.html#Shape_Visible>`
      - 0
      - 0
      - 0
@@ -2058,22 +2058,22 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Microscope - LotNumber <OME-2012-06/ome_xsd.html#Microscope_LotNumber>`
+   * - :schema:`Microscope - LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Microscope - Manufacturer <OME-2012-06/ome_xsd.html#Microscope_Manufacturer>`
+   * - :schema:`Microscope - Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Microscope - Model <OME-2012-06/ome_xsd.html#Microscope_Model>`
+   * - :schema:`Microscope - Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
      - 9
      - 0
      - 0
      - 142
-   * - :schema:`Microscope - SerialNumber <OME-2012-06/ome_xsd.html#Microscope_SerialNumber>`
+   * - :schema:`Microscope - SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
      - 3
      - 0
      - 0
@@ -2113,17 +2113,17 @@ Metadata fields
      - 0
      - 0
      - 132
-   * - :schema:`Objective - LotNumber <OME-2012-06/ome_xsd.html#Objective_LotNumber>`
+   * - :schema:`Objective - LotNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Objective - Manufacturer <OME-2012-06/ome_xsd.html#Objective_Manufacturer>`
+   * - :schema:`Objective - Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
      - 5
      - 0
      - 0
      - 146
-   * - :schema:`Objective - Model <OME-2012-06/ome_xsd.html#Objective_Model>`
+   * - :schema:`Objective - Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
      - 12
      - 0
      - 0
@@ -2133,7 +2133,7 @@ Metadata fields
      - 0
      - 0
      - 128
-   * - :schema:`Objective - SerialNumber <OME-2012-06/ome_xsd.html#Objective_SerialNumber>`
+   * - :schema:`Objective - SerialNumber <OME-2012-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
      - 3
      - 0
      - 0
@@ -2168,7 +2168,7 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Pixels - BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
+   * - :schema:`Pixels - BinDataBigEndian <OME-2012-06/BinaryFile_xsd.html#BinData_BigEndian>`
      - 151
      - 0
      - 0
@@ -2283,102 +2283,102 @@ Metadata fields
      - 0
      - 0
      - 0
-   * - :schema:`Plate - AnnotationRef <OME-2012-06/ome_xsd.html#Plate_AnnotationRef>`
+   * - :schema:`Plate - AnnotationRef <OME-2012-06/SPW_xsd.html#Plate_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Plate - ColumnNamingConvention <OME-2012-06/ome_xsd.html#Plate_ColumnNamingConvention>`
+   * - :schema:`Plate - ColumnNamingConvention <OME-2012-06/SPW_xsd.html#Plate_ColumnNamingConvention>`
      - 8
      - 0
      - 0
      - 143
-   * - :schema:`Plate - Columns <OME-2012-06/ome_xsd.html#Plate_Columns>`
+   * - :schema:`Plate - Columns <OME-2012-06/SPW_xsd.html#Plate_Columns>`
      - 3
      - 0
      - 0
      - 148
-   * - :schema:`Plate - Description <OME-2012-06/ome_xsd.html#Plate_Description>`
+   * - :schema:`Plate - Description <OME-2012-06/SPW_xsd.html#Plate_Description>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Plate - ExternalIdentifier <OME-2012-06/ome_xsd.html#Plate_ExternalIdentifier>`
+   * - :schema:`Plate - ExternalIdentifier <OME-2012-06/SPW_xsd.html#Plate_ExternalIdentifier>`
      - 3
      - 0
      - 0
      - 148
-   * - :schema:`Plate - ID <OME-2012-06/ome_xsd.html#Plate_ID>`
+   * - :schema:`Plate - ID <OME-2012-06/SPW_xsd.html#Plate_ID>`
      - 10
      - 0
      - 0
      - 141
-   * - :schema:`Plate - Name <OME-2012-06/ome_xsd.html#Plate_Name>`
+   * - :schema:`Plate - Name <OME-2012-06/SPW_xsd.html#Plate_Name>`
      - 9
      - 0
      - 0
      - 142
-   * - :schema:`Plate - RowNamingConvention <OME-2012-06/ome_xsd.html#Plate_RowNamingConvention>`
+   * - :schema:`Plate - RowNamingConvention <OME-2012-06/SPW_xsd.html#Plate_RowNamingConvention>`
      - 8
      - 0
      - 0
      - 143
-   * - :schema:`Plate - Rows <OME-2012-06/ome_xsd.html#Plate_Rows>`
+   * - :schema:`Plate - Rows <OME-2012-06/SPW_xsd.html#Plate_Rows>`
      - 3
      - 0
      - 0
      - 148
-   * - :schema:`Plate - Status <OME-2012-06/ome_xsd.html#Plate_Status>`
+   * - :schema:`Plate - Status <OME-2012-06/SPW_xsd.html#Plate_Status>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Plate - WellOriginX <OME-2012-06/ome_xsd.html#Plate_WellOriginX>`
+   * - :schema:`Plate - WellOriginX <OME-2012-06/SPW_xsd.html#Plate_WellOriginX>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Plate - WellOriginY <OME-2012-06/ome_xsd.html#Plate_WellOriginY>`
+   * - :schema:`Plate - WellOriginY <OME-2012-06/SPW_xsd.html#Plate_WellOriginY>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`PlateAcquisition - AnnotationRef <OME-2012-06/ome_xsd.html#PlateAcquisition_AnnotationRef>`
+   * - :schema:`PlateAcquisition - AnnotationRef <OME-2012-06/SPW_xsd.html#PlateAcquisition_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`PlateAcquisition - Description <OME-2012-06/ome_xsd.html#PlateAcquisition_Description>`
+   * - :schema:`PlateAcquisition - Description <OME-2012-06/SPW_xsd.html#PlateAcquisition_Description>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`PlateAcquisition - EndTime <OME-2012-06/ome_xsd.html#PlateAcquisition_EndTime>`
+   * - :schema:`PlateAcquisition - EndTime <OME-2012-06/SPW_xsd.html#PlateAcquisition_EndTime>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`PlateAcquisition - ID <OME-2012-06/ome_xsd.html#PlateAcquisition_ID>`
+   * - :schema:`PlateAcquisition - ID <OME-2012-06/SPW_xsd.html#PlateAcquisition_ID>`
      - 7
      - 0
      - 0
      - 144
-   * - :schema:`PlateAcquisition - MaximumFieldCount <OME-2012-06/ome_xsd.html#PlateAcquisition_MaximumFieldCount>`
+   * - :schema:`PlateAcquisition - MaximumFieldCount <OME-2012-06/SPW_xsd.html#PlateAcquisition_MaximumFieldCount>`
      - 7
      - 0
      - 0
      - 144
-   * - :schema:`PlateAcquisition - Name <OME-2012-06/ome_xsd.html#PlateAcquisition_Name>`
+   * - :schema:`PlateAcquisition - Name <OME-2012-06/SPW_xsd.html#PlateAcquisition_Name>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`PlateAcquisition - StartTime <OME-2012-06/ome_xsd.html#PlateAcquisition_StartTime>`
+   * - :schema:`PlateAcquisition - StartTime <OME-2012-06/SPW_xsd.html#PlateAcquisition_StartTime>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`PlateAcquisition - WellSampleRef <OME-2012-06/ome_xsd.html#PlateAcquisition_WellSampleRef>`
+   * - :schema:`PlateAcquisition - WellSampleRef <OME-2012-06/SPW_xsd.html#PlateAcquisition_WellSampleRef>`
      - 7
      - 0
      - 0
@@ -2388,82 +2388,82 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Point - FillRule <OME-2012-06/ROI_xsd.html#Point_FillRule>`
+   * - :schema:`Point - FillRule <OME-2012-06/ROI_xsd.html#Shape_FillRule>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Point - FontFamily <OME-2012-06/ROI_xsd.html#Point_FontFamily>`
+   * - :schema:`Point - FontFamily <OME-2012-06/ROI_xsd.html#Shape_FontFamily>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Point - FontSize <OME-2012-06/ROI_xsd.html#Point_FontSize>`
+   * - :schema:`Point - FontSize <OME-2012-06/ROI_xsd.html#Shape_FontSize>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Point - FontStyle <OME-2012-06/ROI_xsd.html#Point_FontStyle>`
+   * - :schema:`Point - FontStyle <OME-2012-06/ROI_xsd.html#Shape_FontStyle>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Point - ID <OME-2012-06/ROI_xsd.html#Point_ID>`
+   * - :schema:`Point - ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
      - 3
      - 0
      - 0
      - 148
-   * - :schema:`Point - LineCap <OME-2012-06/ROI_xsd.html#Point_LineCap>`
+   * - :schema:`Point - LineCap <OME-2012-06/ROI_xsd.html#Shape_LineCap>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Point - Locked <OME-2012-06/ROI_xsd.html#Point_Locked>`
+   * - :schema:`Point - Locked <OME-2012-06/ROI_xsd.html#Shape_Locked>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Point - StrokeColor <OME-2012-06/ROI_xsd.html#Point_StrokeColor>`
+   * - :schema:`Point - StrokeColor <OME-2012-06/ROI_xsd.html#Shape_StrokeColor>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Point - StrokeDashArray <OME-2012-06/ROI_xsd.html#Point_StrokeDashArray>`
+   * - :schema:`Point - StrokeDashArray <OME-2012-06/ROI_xsd.html#Shape_StrokeDashArray>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Point - StrokeWidth <OME-2012-06/ROI_xsd.html#Point_StrokeWidth>`
+   * - :schema:`Point - StrokeWidth <OME-2012-06/ROI_xsd.html#Shape_StrokeWidth>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Point - Text <OME-2012-06/ROI_xsd.html#Point_Text>`
+   * - :schema:`Point - Text <OME-2012-06/ROI_xsd.html#Shape_Text>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Point - TheC <OME-2012-06/ROI_xsd.html#Point_TheC>`
+   * - :schema:`Point - TheC <OME-2012-06/ROI_xsd.html#Shape_TheC>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Point - TheT <OME-2012-06/ROI_xsd.html#Point_TheT>`
+   * - :schema:`Point - TheT <OME-2012-06/ROI_xsd.html#Shape_TheT>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Point - TheZ <OME-2012-06/ROI_xsd.html#Point_TheZ>`
+   * - :schema:`Point - TheZ <OME-2012-06/ROI_xsd.html#Shape_TheZ>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Point - Transform <OME-2012-06/ROI_xsd.html#Point_Transform>`
+   * - :schema:`Point - Transform <OME-2012-06/ROI_xsd.html#Shape_Transform>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Point - Visible <OME-2012-06/ROI_xsd.html#Point_Visible>`
+   * - :schema:`Point - Visible <OME-2012-06/ROI_xsd.html#Shape_Visible>`
      - 0
      - 0
      - 0
@@ -2483,37 +2483,37 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Polygon - FillRule <OME-2012-06/ROI_xsd.html#Polygon_FillRule>`
+   * - :schema:`Polygon - FillRule <OME-2012-06/ROI_xsd.html#Shape_FillRule>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Polygon - FontFamily <OME-2012-06/ROI_xsd.html#Polygon_FontFamily>`
+   * - :schema:`Polygon - FontFamily <OME-2012-06/ROI_xsd.html#Shape_FontFamily>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Polygon - FontSize <OME-2012-06/ROI_xsd.html#Polygon_FontSize>`
+   * - :schema:`Polygon - FontSize <OME-2012-06/ROI_xsd.html#Shape_FontSize>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Polygon - FontStyle <OME-2012-06/ROI_xsd.html#Polygon_FontStyle>`
+   * - :schema:`Polygon - FontStyle <OME-2012-06/ROI_xsd.html#Shape_FontStyle>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Polygon - ID <OME-2012-06/ROI_xsd.html#Polygon_ID>`
+   * - :schema:`Polygon - ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
      - 7
      - 0
      - 0
      - 144
-   * - :schema:`Polygon - LineCap <OME-2012-06/ROI_xsd.html#Polygon_LineCap>`
+   * - :schema:`Polygon - LineCap <OME-2012-06/ROI_xsd.html#Shape_LineCap>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Polygon - Locked <OME-2012-06/ROI_xsd.html#Polygon_Locked>`
+   * - :schema:`Polygon - Locked <OME-2012-06/ROI_xsd.html#Shape_Locked>`
      - 0
      - 0
      - 0
@@ -2523,47 +2523,47 @@ Metadata fields
      - 0
      - 0
      - 144
-   * - :schema:`Polygon - StrokeColor <OME-2012-06/ROI_xsd.html#Polygon_StrokeColor>`
+   * - :schema:`Polygon - StrokeColor <OME-2012-06/ROI_xsd.html#Shape_StrokeColor>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Polygon - StrokeDashArray <OME-2012-06/ROI_xsd.html#Polygon_StrokeDashArray>`
+   * - :schema:`Polygon - StrokeDashArray <OME-2012-06/ROI_xsd.html#Shape_StrokeDashArray>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Polygon - StrokeWidth <OME-2012-06/ROI_xsd.html#Polygon_StrokeWidth>`
+   * - :schema:`Polygon - StrokeWidth <OME-2012-06/ROI_xsd.html#Shape_StrokeWidth>`
      - 3
      - 0
      - 0
      - 148
-   * - :schema:`Polygon - Text <OME-2012-06/ROI_xsd.html#Polygon_Text>`
+   * - :schema:`Polygon - Text <OME-2012-06/ROI_xsd.html#Shape_Text>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Polygon - TheC <OME-2012-06/ROI_xsd.html#Polygon_TheC>`
+   * - :schema:`Polygon - TheC <OME-2012-06/ROI_xsd.html#Shape_TheC>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Polygon - TheT <OME-2012-06/ROI_xsd.html#Polygon_TheT>`
+   * - :schema:`Polygon - TheT <OME-2012-06/ROI_xsd.html#Shape_TheT>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Polygon - TheZ <OME-2012-06/ROI_xsd.html#Polygon_TheZ>`
+   * - :schema:`Polygon - TheZ <OME-2012-06/ROI_xsd.html#Shape_TheZ>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Polygon - Transform <OME-2012-06/ROI_xsd.html#Polygon_Transform>`
+   * - :schema:`Polygon - Transform <OME-2012-06/ROI_xsd.html#Shape_Transform>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Polygon - Visible <OME-2012-06/ROI_xsd.html#Polygon_Visible>`
+   * - :schema:`Polygon - Visible <OME-2012-06/ROI_xsd.html#Shape_Visible>`
      - 0
      - 0
      - 0
@@ -2573,37 +2573,37 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Polyline - FillRule <OME-2012-06/ROI_xsd.html#Polyline_FillRule>`
+   * - :schema:`Polyline - FillRule <OME-2012-06/ROI_xsd.html#Shape_FillRule>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Polyline - FontFamily <OME-2012-06/ROI_xsd.html#Polyline_FontFamily>`
+   * - :schema:`Polyline - FontFamily <OME-2012-06/ROI_xsd.html#Shape_FontFamily>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Polyline - FontSize <OME-2012-06/ROI_xsd.html#Polyline_FontSize>`
+   * - :schema:`Polyline - FontSize <OME-2012-06/ROI_xsd.html#Shape_FontSize>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Polyline - FontStyle <OME-2012-06/ROI_xsd.html#Polyline_FontStyle>`
+   * - :schema:`Polyline - FontStyle <OME-2012-06/ROI_xsd.html#Shape_FontStyle>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Polyline - ID <OME-2012-06/ROI_xsd.html#Polyline_ID>`
+   * - :schema:`Polyline - ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
      - 5
      - 0
      - 0
      - 146
-   * - :schema:`Polyline - LineCap <OME-2012-06/ROI_xsd.html#Polyline_LineCap>`
+   * - :schema:`Polyline - LineCap <OME-2012-06/ROI_xsd.html#Shape_LineCap>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Polyline - Locked <OME-2012-06/ROI_xsd.html#Polyline_Locked>`
+   * - :schema:`Polyline - Locked <OME-2012-06/ROI_xsd.html#Shape_Locked>`
      - 0
      - 0
      - 0
@@ -2623,47 +2623,47 @@ Metadata fields
      - 0
      - 0
      - 146
-   * - :schema:`Polyline - StrokeColor <OME-2012-06/ROI_xsd.html#Polyline_StrokeColor>`
+   * - :schema:`Polyline - StrokeColor <OME-2012-06/ROI_xsd.html#Shape_StrokeColor>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Polyline - StrokeDashArray <OME-2012-06/ROI_xsd.html#Polyline_StrokeDashArray>`
+   * - :schema:`Polyline - StrokeDashArray <OME-2012-06/ROI_xsd.html#Shape_StrokeDashArray>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Polyline - StrokeWidth <OME-2012-06/ROI_xsd.html#Polyline_StrokeWidth>`
+   * - :schema:`Polyline - StrokeWidth <OME-2012-06/ROI_xsd.html#Shape_StrokeWidth>`
      - 3
      - 0
      - 0
      - 148
-   * - :schema:`Polyline - Text <OME-2012-06/ROI_xsd.html#Polyline_Text>`
+   * - :schema:`Polyline - Text <OME-2012-06/ROI_xsd.html#Shape_Text>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Polyline - TheC <OME-2012-06/ROI_xsd.html#Polyline_TheC>`
+   * - :schema:`Polyline - TheC <OME-2012-06/ROI_xsd.html#Shape_TheC>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Polyline - TheT <OME-2012-06/ROI_xsd.html#Polyline_TheT>`
+   * - :schema:`Polyline - TheT <OME-2012-06/ROI_xsd.html#Shape_TheT>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Polyline - TheZ <OME-2012-06/ROI_xsd.html#Polyline_TheZ>`
+   * - :schema:`Polyline - TheZ <OME-2012-06/ROI_xsd.html#Shape_TheZ>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Polyline - Transform <OME-2012-06/ROI_xsd.html#Polyline_Transform>`
+   * - :schema:`Polyline - Transform <OME-2012-06/ROI_xsd.html#Shape_Transform>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Polyline - Visible <OME-2012-06/ROI_xsd.html#Polyline_Visible>`
+   * - :schema:`Polyline - Visible <OME-2012-06/ROI_xsd.html#Shape_Visible>`
      - 0
      - 0
      - 0
@@ -2728,27 +2728,27 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Reagent - AnnotationRef <OME-2012-06/ome_xsd.html#Reagent_AnnotationRef>`
+   * - :schema:`Reagent - AnnotationRef <OME-2012-06/SPW_xsd.html#Reagent_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Reagent - Description <OME-2012-06/ome_xsd.html#Reagent_Description>`
+   * - :schema:`Reagent - Description <OME-2012-06/SPW_xsd.html#Reagent_Description>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Reagent - ID <OME-2012-06/ome_xsd.html#Reagent_ID>`
+   * - :schema:`Reagent - ID <OME-2012-06/SPW_xsd.html#Reagent_ID>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Reagent - Name <OME-2012-06/ome_xsd.html#Reagent_Name>`
+   * - :schema:`Reagent - Name <OME-2012-06/SPW_xsd.html#Reagent_Name>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Reagent - ReagentIdentifier <OME-2012-06/ome_xsd.html#Reagent_ReagentIdentifier>`
+   * - :schema:`Reagent - ReagentIdentifier <OME-2012-06/SPW_xsd.html#Reagent_ReagentIdentifier>`
      - 0
      - 0
      - 0
@@ -2758,22 +2758,22 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Rectangle - FillRule <OME-2012-06/ROI_xsd.html#Rectangle_FillRule>`
+   * - :schema:`Rectangle - FillRule <OME-2012-06/ROI_xsd.html#Shape_FillRule>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Rectangle - FontFamily <OME-2012-06/ROI_xsd.html#Rectangle_FontFamily>`
+   * - :schema:`Rectangle - FontFamily <OME-2012-06/ROI_xsd.html#Shape_FontFamily>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Rectangle - FontSize <OME-2012-06/ROI_xsd.html#Rectangle_FontSize>`
+   * - :schema:`Rectangle - FontSize <OME-2012-06/ROI_xsd.html#Shape_FontSize>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Rectangle - FontStyle <OME-2012-06/ROI_xsd.html#Rectangle_FontStyle>`
+   * - :schema:`Rectangle - FontStyle <OME-2012-06/ROI_xsd.html#Shape_FontStyle>`
      - 0
      - 0
      - 0
@@ -2783,62 +2783,62 @@ Metadata fields
      - 0
      - 0
      - 144
-   * - :schema:`Rectangle - ID <OME-2012-06/ROI_xsd.html#Rectangle_ID>`
+   * - :schema:`Rectangle - ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
      - 7
      - 0
      - 0
      - 144
-   * - :schema:`Rectangle - LineCap <OME-2012-06/ROI_xsd.html#Rectangle_LineCap>`
+   * - :schema:`Rectangle - LineCap <OME-2012-06/ROI_xsd.html#Shape_LineCap>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Rectangle - Locked <OME-2012-06/ROI_xsd.html#Rectangle_Locked>`
+   * - :schema:`Rectangle - Locked <OME-2012-06/ROI_xsd.html#Shape_Locked>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Rectangle - StrokeColor <OME-2012-06/ROI_xsd.html#Rectangle_StrokeColor>`
+   * - :schema:`Rectangle - StrokeColor <OME-2012-06/ROI_xsd.html#Shape_StrokeColor>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Rectangle - StrokeDashArray <OME-2012-06/ROI_xsd.html#Rectangle_StrokeDashArray>`
+   * - :schema:`Rectangle - StrokeDashArray <OME-2012-06/ROI_xsd.html#Shape_StrokeDashArray>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Rectangle - StrokeWidth <OME-2012-06/ROI_xsd.html#Rectangle_StrokeWidth>`
+   * - :schema:`Rectangle - StrokeWidth <OME-2012-06/ROI_xsd.html#Shape_StrokeWidth>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Rectangle - Text <OME-2012-06/ROI_xsd.html#Rectangle_Text>`
+   * - :schema:`Rectangle - Text <OME-2012-06/ROI_xsd.html#Shape_Text>`
      - 2
      - 0
      - 0
      - 149
-   * - :schema:`Rectangle - TheC <OME-2012-06/ROI_xsd.html#Rectangle_TheC>`
+   * - :schema:`Rectangle - TheC <OME-2012-06/ROI_xsd.html#Shape_TheC>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Rectangle - TheT <OME-2012-06/ROI_xsd.html#Rectangle_TheT>`
+   * - :schema:`Rectangle - TheT <OME-2012-06/ROI_xsd.html#Shape_TheT>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Rectangle - TheZ <OME-2012-06/ROI_xsd.html#Rectangle_TheZ>`
+   * - :schema:`Rectangle - TheZ <OME-2012-06/ROI_xsd.html#Shape_TheZ>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Rectangle - Transform <OME-2012-06/ROI_xsd.html#Rectangle_Transform>`
+   * - :schema:`Rectangle - Transform <OME-2012-06/ROI_xsd.html#Shape_Transform>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Rectangle - Visible <OME-2012-06/ROI_xsd.html#Rectangle_Visible>`
+   * - :schema:`Rectangle - Visible <OME-2012-06/ROI_xsd.html#Shape_Visible>`
      - 0
      - 0
      - 0
@@ -2858,52 +2858,52 @@ Metadata fields
      - 0
      - 0
      - 144
-   * - :schema:`Screen - AnnotationRef <OME-2012-06/ome_xsd.html#Screen_AnnotationRef>`
+   * - :schema:`Screen - AnnotationRef <OME-2012-06/SPW_xsd.html#Screen_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Screen - Description <OME-2012-06/ome_xsd.html#Screen_Description>`
+   * - :schema:`Screen - Description <OME-2012-06/SPW_xsd.html#Screen_Description>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Screen - ID <OME-2012-06/ome_xsd.html#Screen_ID>`
+   * - :schema:`Screen - ID <OME-2012-06/SPW_xsd.html#Screen_ID>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Screen - Name <OME-2012-06/ome_xsd.html#Screen_Name>`
+   * - :schema:`Screen - Name <OME-2012-06/SPW_xsd.html#Screen_Name>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Screen - PlateRef <OME-2012-06/ome_xsd.html#Screen_PlateRef>`
+   * - :schema:`Screen - PlateRef <OME-2012-06/SPW_xsd.html#Screen_PlateRef>`
      - 1
      - 0
      - 0
      - 150
-   * - :schema:`Screen - ProtocolDescription <OME-2012-06/ome_xsd.html#Screen_ProtocolDescription>`
+   * - :schema:`Screen - ProtocolDescription <OME-2012-06/SPW_xsd.html#Screen_ProtocolDescription>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Screen - ProtocolIdentifier <OME-2012-06/ome_xsd.html#Screen_ProtocolIdentifier>`
+   * - :schema:`Screen - ProtocolIdentifier <OME-2012-06/SPW_xsd.html#Screen_ProtocolIdentifier>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Screen - ReagentSetDescription <OME-2012-06/ome_xsd.html#Screen_ReagentSetDescription>`
+   * - :schema:`Screen - ReagentSetDescription <OME-2012-06/SPW_xsd.html#Screen_ReagentSetDescription>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Screen - ReagentSetIdentifier <OME-2012-06/ome_xsd.html#Screen_ReagentSetIdentifier>`
+   * - :schema:`Screen - ReagentSetIdentifier <OME-2012-06/SPW_xsd.html#Screen_ReagentSetIdentifier>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Screen - Type <OME-2012-06/ome_xsd.html#Screen_Type>`
+   * - :schema:`Screen - Type <OME-2012-06/SPW_xsd.html#Screen_Type>`
      - 0
      - 0
      - 0
@@ -3063,82 +3063,82 @@ Metadata fields
      - 0
      - 0
      - 151
-   * - :schema:`Well - AnnotationRef <OME-2012-06/ome_xsd.html#Well_AnnotationRef>`
+   * - :schema:`Well - AnnotationRef <OME-2012-06/SPW_xsd.html#Well_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Well - Color <OME-2012-06/ome_xsd.html#Well_Color>`
+   * - :schema:`Well - Color <OME-2012-06/SPW_xsd.html#Well_Color>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Well - Column <OME-2012-06/ome_xsd.html#Well_Column>`
+   * - :schema:`Well - Column <OME-2012-06/SPW_xsd.html#Well_Column>`
      - 10
      - 0
      - 0
      - 141
-   * - :schema:`Well - ExternalDescription <OME-2012-06/ome_xsd.html#Well_ExternalDescription>`
+   * - :schema:`Well - ExternalDescription <OME-2012-06/SPW_xsd.html#Well_ExternalDescription>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Well - ExternalIdentifier <OME-2012-06/ome_xsd.html#Well_ExternalIdentifier>`
+   * - :schema:`Well - ExternalIdentifier <OME-2012-06/SPW_xsd.html#Well_ExternalIdentifier>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Well - ID <OME-2012-06/ome_xsd.html#Well_ID>`
+   * - :schema:`Well - ID <OME-2012-06/SPW_xsd.html#Well_ID>`
      - 10
      - 0
      - 0
      - 141
-   * - :schema:`Well - ReagentRef <OME-2012-06/ome_xsd.html#Well_ReagentRef>`
+   * - :schema:`Well - ReagentRef <OME-2012-06/SPW_xsd.html#Well_ReagentRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`Well - Row <OME-2012-06/ome_xsd.html#Well_Row>`
+   * - :schema:`Well - Row <OME-2012-06/SPW_xsd.html#Well_Row>`
      - 10
      - 0
      - 0
      - 141
-   * - :schema:`Well - Type <OME-2012-06/ome_xsd.html#Well_Type>`
+   * - :schema:`Well - Type <OME-2012-06/SPW_xsd.html#Well_Type>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`WellSample - AnnotationRef <OME-2012-06/ome_xsd.html#WellSample_AnnotationRef>`
+   * - :schema:`WellSample - AnnotationRef <OME-2012-06/SPW_xsd.html#WellSample_AnnotationRef>`
      - 0
      - 0
      - 0
      - 151
-   * - :schema:`WellSample - ID <OME-2012-06/ome_xsd.html#WellSample_ID>`
+   * - :schema:`WellSample - ID <OME-2012-06/SPW_xsd.html#WellSample_ID>`
      - 10
      - 0
      - 0
      - 141
-   * - :schema:`WellSample - ImageRef <OME-2012-06/ome_xsd.html#WellSample_ImageRef>`
+   * - :schema:`WellSample - ImageRef <OME-2012-06/SPW_xsd.html#WellSample_ImageRef>`
      - 10
      - 0
      - 0
      - 141
-   * - :schema:`WellSample - Index <OME-2012-06/ome_xsd.html#WellSample_Index>`
+   * - :schema:`WellSample - Index <OME-2012-06/SPW_xsd.html#WellSample_Index>`
      - 10
      - 0
      - 0
      - 141
-   * - :schema:`WellSample - PositionX <OME-2012-06/ome_xsd.html#WellSample_PositionX>`
+   * - :schema:`WellSample - PositionX <OME-2012-06/SPW_xsd.html#WellSample_PositionX>`
      - 4
      - 0
      - 0
      - 147
-   * - :schema:`WellSample - PositionY <OME-2012-06/ome_xsd.html#WellSample_PositionY>`
+   * - :schema:`WellSample - PositionY <OME-2012-06/SPW_xsd.html#WellSample_PositionY>`
      - 4
      - 0
      - 0
      - 147
-   * - :schema:`WellSample - Timepoint <OME-2012-06/ome_xsd.html#WellSample_Timepoint>`
+   * - :schema:`WellSample - Timepoint <OME-2012-06/SPW_xsd.html#WellSample_Timepoint>`
      - 0
      - 0
      - 0

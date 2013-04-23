@@ -24,49 +24,49 @@ These fields are fully supported by the Bio-Formats Image Cytometry Standard for
   * :schema:`Channel : PinholeSize <OME-2012-06/ome_xsd.html#Channel_PinholeSize>`
   * :schema:`Channel : SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
   * :schema:`Detector : ID <OME-2012-06/ome_xsd.html#Detector_ID>`
-  * :schema:`Detector : Manufacturer <OME-2012-06/ome_xsd.html#Detector_Manufacturer>`
-  * :schema:`Detector : Model <OME-2012-06/ome_xsd.html#Detector_Model>`
+  * :schema:`Detector : Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
+  * :schema:`Detector : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Detector : Type <OME-2012-06/ome_xsd.html#Detector_Type>`
   * :schema:`DetectorSettings : Gain <OME-2012-06/ome_xsd.html#DetectorSettings_Gain>`
   * :schema:`DetectorSettings : ID <OME-2012-06/ome_xsd.html#DetectorSettings_ID>`
   * :schema:`Dichroic : ID <OME-2012-06/ome_xsd.html#Dichroic_ID>`
-  * :schema:`Dichroic : Model <OME-2012-06/ome_xsd.html#Dichroic_Model>`
+  * :schema:`Dichroic : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Experiment : ID <OME-2012-06/ome_xsd.html#Experiment_ID>`
   * :schema:`Experiment : Type <OME-2012-06/ome_xsd.html#Experiment_Type>`
   * :schema:`Experimenter : ID <OME-2012-06/ome_xsd.html#Experimenter_ID>`
   * :schema:`Experimenter : LastName <OME-2012-06/ome_xsd.html#Experimenter_LastName>`
   * :schema:`Filter : ID <OME-2012-06/ome_xsd.html#Filter_ID>`
-  * :schema:`Filter : Model <OME-2012-06/ome_xsd.html#Filter_Model>`
+  * :schema:`Filter : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`FilterSet : DichroicRef <OME-2012-06/ome_xsd.html#FilterSet_DichroicRef>`
   * :schema:`FilterSet : EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterSet_EmissionFilterRef>`
   * :schema:`FilterSet : ExcitationFilterRef <OME-2012-06/ome_xsd.html#FilterSet_ExcitationFilterRef>`
   * :schema:`FilterSet : ID <OME-2012-06/ome_xsd.html#FilterSet_ID>`
-  * :schema:`FilterSet : Model <OME-2012-06/ome_xsd.html#FilterSet_Model>`
+  * :schema:`FilterSet : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : Description <OME-2012-06/ome_xsd.html#Image_Description>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
-  * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#Image_InstrumentRef>`
+  * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
   * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
   * :schema:`Laser : ID <OME-2012-06/ome_xsd.html#Laser_ID>`
   * :schema:`Laser : LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
-  * :schema:`Laser : Manufacturer <OME-2012-06/ome_xsd.html#Laser_Manufacturer>`
-  * :schema:`Laser : Model <OME-2012-06/ome_xsd.html#Laser_Model>`
+  * :schema:`Laser : Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
+  * :schema:`Laser : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Laser : Power <OME-2012-06/ome_xsd.html#Laser_Power>`
   * :schema:`Laser : RepetitionRate <OME-2012-06/ome_xsd.html#Laser_RepetitionRate>`
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Laser : Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`
-  * :schema:`Microscope : Manufacturer <OME-2012-06/ome_xsd.html#Microscope_Manufacturer>`
-  * :schema:`Microscope : Model <OME-2012-06/ome_xsd.html#Microscope_Model>`
+  * :schema:`Microscope : Manufacturer <OME-2012-06/ome_xsd.html#ManufacturerSpec_Manufacturer>`
+  * :schema:`Microscope : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Objective : CalibratedMagnification <OME-2012-06/ome_xsd.html#Objective_CalibratedMagnification>`
   * :schema:`Objective : Correction <OME-2012-06/ome_xsd.html#Objective_Correction>`
   * :schema:`Objective : ID <OME-2012-06/ome_xsd.html#Objective_ID>`
   * :schema:`Objective : Immersion <OME-2012-06/ome_xsd.html#Objective_Immersion>`
   * :schema:`Objective : LensNA <OME-2012-06/ome_xsd.html#Objective_LensNA>`
-  * :schema:`Objective : Model <OME-2012-06/ome_xsd.html#Objective_Model>`
+  * :schema:`Objective : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Objective : WorkingDistance <OME-2012-06/ome_xsd.html#Objective_WorkingDistance>`
   * :schema:`ObjectiveSettings : ID <OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`
-  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
+  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/BinaryFile_xsd.html#BinData_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
   * :schema:`Pixels : PhysicalSizeX <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`

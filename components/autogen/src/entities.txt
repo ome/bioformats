@@ -14,18 +14,22 @@ type = String
 
 [Arc LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Arc Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Arc Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Arc Power]
 type = Double
 
 [Arc SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Arc Type]
 type = ArcType
@@ -176,18 +180,22 @@ type = String
 
 [Detector LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Detector Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Detector Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Detector Offset]
 type = Double
 
 [Detector SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Detector Type]
 type = DetectorType
@@ -229,15 +237,19 @@ type = String
 
 [Dichroic LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Dichroic Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Dichroic Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Dichroic SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [DoubleAnnotation]
 countable = true
@@ -271,51 +283,67 @@ anchor = Shape_FillColor
 
 [Ellipse FillRule]
 type = FillRule
+anchor = Shape_FillRule
 
 [Ellipse FontFamily]
 type = FontFamily
+anchor = Shape_FontFamily
 
 [Ellipse FontSize]
 type = NonNegativeInteger
+anchor = Shape_FontSize
 
 [Ellipse FontStyle]
 type = FontStyle
+anchor = Shape_FontStyle
 
 [Ellipse ID]
 type = String
+anchor = Shape_ID
 
 [Ellipse LineCap]
 type = LineCap
+anchor = Shape_LineCap
 
 [Ellipse Locked]
 type = Boolean
+anchor = Shape_Locked
 
 [Ellipse StrokeColor]
 type = Color
+anchor = Shape_StrokeColor
 
 [Ellipse StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Ellipse StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
 
 [Ellipse Text]
 type = String
+anchor = Shape_Text
 
 [Ellipse TheC]
 type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Ellipse TheT]
 type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Ellipse TheZ]
 type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Ellipse Transform]
 type = AffineTransform
+anchor = Shape_Transform
 
 [Ellipse Visible]
 type = Boolean
+anchor = Shape_Visible
 
 [Ellipse RadiusX]
 type = Double
@@ -411,18 +439,22 @@ type = String
 
 [Filament LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Filament Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Filament Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Filament Power]
 type = Double
 
 [Filament SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Filament Type]
 type = FilamentType
@@ -457,15 +489,19 @@ type = String
 
 [Filter LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Filter Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Filter Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Filter SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Filter Type]
 type = FilterType
@@ -492,15 +528,19 @@ type = String
 
 [FilterSet LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [FilterSet Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [FilterSet Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [FilterSet SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Image]
 countable = true
@@ -531,6 +571,7 @@ type = String
 
 [Image InstrumentRef]
 type = String
+anchor = InstrumentRef_ID
 
 [Image MicrobeamManipulationRef]
 countable = true
@@ -579,51 +620,67 @@ anchor = Shape_FillColor
 
 [Label FillRule]
 type = FillRule
+anchor = Shape_FillRule
 
 [Label FontFamily]
 type = FontFamily
+anchor = Shape_FontFamily
 
 [Label FontSize]
 type = NonNegativeInteger
+anchor = Shape_FontSize
 
 [Label FontStyle]
 type = FontStyle
+anchor = Shape_FontStyle
 
 [Label ID]
+anchor = Shape_ID
 type = String
 
 [Label LineCap]
 type = LineCap
+anchor = Shape_LineCap
 
 [Label Locked]
 type = Boolean
+anchor = Shape_Locked
 
 [Label StrokeColor]
 type = Color
+anchor = Shape_StrokeColor
 
 [Label StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Label StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
 
 [Label Text]
 type = String
+anchor = Shape_Text
 
 [Label TheC]
 type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Label TheT]
 type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Label TheZ]
 type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Label Transform]
 type = AffineTransform
+anchor = Shape_Transform
 
 [Label Visible]
 type = Boolean
+anchor = Shape_Visible
 
 [Label X]
 type = Double
@@ -640,18 +697,22 @@ type = String
 
 [Laser LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Laser Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Laser Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Laser Power]
 type = Double
 
 [Laser SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Laser FrequencyMultiplication]
 type = PositiveInteger
@@ -689,18 +750,22 @@ type = String
 
 [LightEmittingDiode LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [LightEmittingDiode Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [LightEmittingDiode Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [LightEmittingDiode Power]
 type = Double
 
 [LightEmittingDiode SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [LightPath]
 countable = false
@@ -730,51 +795,67 @@ anchor = Shape_FillColor
 
 [Line FillRule]
 type = FillRule
+anchor = Shape_FillRule
 
 [Line FontFamily]
 type = FontFamily
+anchor = Shape_FontFamily
 
 [Line FontSize]
 type = NonNegativeInteger
+anchor = Shape_FontSize
 
 [Line FontStyle]
 type = FontStyle
+anchor = Shape_FontStyle
 
 [Line ID]
 type = String
+anchor = Shape_ID
 
 [Line LineCap]
 type = LineCap
+anchor = Shape_LineCap
 
 [Line Locked]
 type = Boolean
+anchor = Shape_Locked
 
 [Line StrokeColor]
 type = Color
+anchor = Shape_StrokeColor
 
 [Line StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Line StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
 
 [Line Text]
 type = String
+anchor = Shape_Text
 
 [Line TheC]
 type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Line TheT]
 type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Line TheZ]
 type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Line Transform]
 type = AffineTransform
+anchor = Shape_Transform
 
 [Line Visible]
 type = Boolean
+anchor = Shape_Visible
 
 [Line MarkerEnd]
 type = Marker
@@ -844,48 +925,62 @@ anchor = Shape_FillColor
 
 [Mask FillRule]
 type = FillRule
+anchor = Shape_FillRule
 
 [Mask FontFamily]
 type = FontFamily
+anchor = Shape_FontFamily
 
 [Mask FontSize]
 type = NonNegativeInteger
+anchor = Shape_FontSize
 
 [Mask ID]
 type = String
 
 [Mask LineCap]
 type = LineCap
+anchor = Shape_LineCap
 
 [Mask Locked]
 type = Boolean
+anchor = Shape_Locked
 
 [Mask StrokeColor]
 type = Color
+anchor = Shape_StrokeColor
 
 [Mask StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Mask StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
 
 [Mask Text]
 type = String
+anchor = Shape_Text
 
 [Mask TheC]
 type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Mask TheT]
 type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Mask TheZ]
 type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Mask Transform]
 type = AffineTransform
+anchor = Shape_Transform
 
 [Mask Visible]
 type = Boolean
+anchor = Shape_Visible
 
 [Mask Height]
 type = Double
@@ -936,15 +1031,19 @@ path = Instrument+/Microscope
 
 [Microscope LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Microscope Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Microscope Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Microscope SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Microscope Type]
 type = MicroscopeType
@@ -973,18 +1072,22 @@ type = Double
 
 [Objective LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Objective Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Objective Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Objective NominalMagnification]
 type = PositiveInteger
 
 [Objective SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Objective WorkingDistance]
 type = Double
@@ -1054,6 +1157,8 @@ type = PixelType
 countable = true
 path = Image+/Pixels/BinData+
 type = Boolean
+schema = BinaryFile_xsd.html
+anchor = BinData_BigEndian
 
 [Plane]
 countable = true
@@ -1094,6 +1199,7 @@ type = NonNegativeInteger
 [Plate]
 countable = true
 path = Plate+
+schema = SPW_xsd.html
 
 [Plate AnnotationRef]
 countable = true
@@ -1136,6 +1242,7 @@ type = Double
 [PlateAcquisition]
 countable = true
 path = Plate+/PlateAcquisition+
+schema = SPW_xsd.html
 
 [PlateAcquisition AnnotationRef]
 countable = true
@@ -1176,51 +1283,67 @@ anchor = Shape_FillColor
 
 [Point FillRule]
 type = FillRule
+anchor = Shape_FillRule
 
 [Point FontFamily]
 type = FontFamily
+anchor = Shape_FontFamily
 
 [Point FontSize]
 type = NonNegativeInteger
+anchor = Shape_FontSize
 
 [Point FontStyle]
 type = FontStyle
+anchor = Shape_FontStyle
 
 [Point ID]
 type = String
+anchor = Shape_ID
 
 [Point LineCap]
 type = LineCap
+anchor = Shape_LineCap
 
 [Point Locked]
 type = Boolean
+anchor = Shape_Locked
 
 [Point StrokeColor]
 type = Color
+anchor = Shape_StrokeColor
 
 [Point StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Point StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
 
 [Point Text]
 type = String
+anchor = Shape_Text
 
 [Point TheC]
 type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Point TheT]
 type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Point TheZ]
 type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Point Transform]
 type = AffineTransform
+anchor = Shape_Transform
 
 [Point Visible]
 type = Boolean
+anchor = Shape_Visible
 
 [Point X]
 type = Double
@@ -1239,51 +1362,67 @@ anchor = Shape_FillColor
 
 [Polygon FillRule]
 type = FillRule
+anchor = Shape_FillRule
 
 [Polygon FontFamily]
 type = FontFamily
+anchor = Shape_FontFamily
 
 [Polygon FontSize]
 type = NonNegativeInteger
+anchor = Shape_FontSize
 
 [Polygon FontStyle]
 type = FontStyle
+anchor = Shape_FontStyle
 
 [Polygon ID]
 type = String
+anchor = Shape_ID
 
 [Polygon LineCap]
 type = LineCap
+anchor = Shape_LineCap
 
 [Polygon Locked]
 type = Boolean
+anchor = Shape_Locked
 
 [Polygon StrokeColor]
 type = Color
+anchor = Shape_StrokeColor
 
 [Polygon StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Polygon StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
 
 [Polygon Text]
 type = String
+anchor = Shape_Text
 
 [Polygon TheC]
 type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Polygon TheT]
 type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Polygon TheZ]
 type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Polygon Transform]
 type = AffineTransform
+anchor = Shape_Transform
 
 [Polygon Visible]
 type = Boolean
+anchor = Shape_Visible
 
 [Polygon Points]
 type = String
@@ -1299,51 +1438,67 @@ anchor = Shape_FillColor
 
 [Polyline FillRule]
 type = FillRule
+anchor = Shape_FillRule
 
 [Polyline FontFamily]
 type = FontFamily
+anchor = Shape_FontFamily
 
 [Polyline FontSize]
 type = NonNegativeInteger
+anchor = Shape_FontSize
 
 [Polyline FontStyle]
 type = FontStyle
+anchor = Shape_FontStyle
 
 [Polyline ID]
 type = String
+anchor = Shape_ID
 
 [Polyline LineCap]
 type = LineCap
+anchor = Shape_LineCap
 
 [Polyline Locked]
 type = Boolean
+anchor = Shape_Locked
 
 [Polyline StrokeColor]
 type = Color
+anchor = Shape_StrokeColor
 
 [Polyline StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Polyline StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
 
 [Polyline Text]
 type = String
+anchor = Shape_Text
 
 [Polyline TheC]
 type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Polyline TheT]
 type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Polyline TheZ]
 type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Polyline Transform]
 type = AffineTransform
+anchor = Shape_Transform
 
 [Polyline Visible]
 type = Boolean
+anchor = Shape_Visible
 
 [Polyline MarkerEnd]
 type = Marker
@@ -1408,6 +1563,7 @@ type = String
 [Reagent]
 countable = true
 path = Screen+/Reagent+
+schema = SPW_xsd.html
 
 [Reagent AnnotationRef]
 countable = true
@@ -1437,51 +1593,67 @@ anchor = Shape_FillColor
 
 [Rectangle FillRule]
 type = FillRule
+anchor = Shape_FillRule
 
 [Rectangle FontFamily]
 type = FontFamily
+anchor = Shape_FontFamily
 
 [Rectangle FontSize]
 type = NonNegativeInteger
+anchor = Shape_FontSize
 
 [Rectangle FontStyle]
 type = FontStyle
+anchor = Shape_FontStyle
 
 [Rectangle ID]
 type = String
+anchor = Shape_ID
 
 [Rectangle LineCap]
 type = LineCap
+anchor = Shape_LineCap
 
 [Rectangle Locked]
 type = Boolean
+anchor = Shape_Locked
 
 [Rectangle StrokeColor]
 type = Color
+anchor = Shape_StrokeColor
 
 [Rectangle StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Rectangle StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
 
-[Rectangle Text
+[Rectangle Text]
 type = String
+anchor = Shape_Text
 
 [Rectangle TheC]
 type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Rectangle TheT]
 type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Rectangle TheZ]
 type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Rectangle Transform]
 type = AffineTransform
+anchor = Shape_Transform
 
 [Rectangle Visible]
 type = Boolean
+anchor = Shape_Visible
 
 [Rectangle Height]
 type = Double
@@ -1498,6 +1670,7 @@ type = Double
 [Screen]
 countable = true
 path = Screen+
+schema = SPW_xsd.html
 
 [Screen AnnotationRef]
 countable = true
@@ -1663,6 +1836,7 @@ type = String
 [Well]
 countable = true
 path = Plate+/Well+
+schema = SPW_xsd.html
 
 [Well AnnotationRef]
 countable = true
@@ -1696,6 +1870,7 @@ type = String
 [WellSample]
 countable = true
 path = Plate+/Well+/WellSample+
+schema = SPW_xsd.html
 
 [WellSample AnnotationRef]
 countable = true
