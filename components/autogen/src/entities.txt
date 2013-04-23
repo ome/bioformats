@@ -263,9 +263,11 @@ type = Double
 [Ellipse]
 countable = false
 path = ROI+/Shape+/Ellipse
+schema = ROI_xsd.html
 
 [Ellipse FillColor]
 type = Color
+anchor = Shape_FillColor
 
 [Ellipse FillRule]
 type = FillRule
@@ -569,9 +571,11 @@ type = String
 [Label]
 countable = true
 path = ROI+/Shape+/Label
+schema = ROI_xsd.html
 
 [Label FillColor]
 type = Color
+anchor = Shape_FillColor
 
 [Label FillRule]
 type = FillRule
@@ -718,9 +722,11 @@ type = String
 [Line]
 countable = false
 path = ROI+/Shape+/Line
+schema = ROI_xsd.html
 
 [Line FillColor]
 type = Color
+anchor = Shape_FillColor
 
 [Line FillRule]
 type = FillRule
@@ -830,9 +836,11 @@ type = Long
 [Mask]
 countable = false
 path = ROI+/Shape+/Mask
+schema = ROI_xsd.html
 
 [Mask FillColor]
 type = Color
+anchor = Shape_FillColor
 
 [Mask FillRule]
 type = FillRule
@@ -1160,9 +1168,11 @@ type = String
 [Point]
 countable = false
 path = ROI+/Shape+/Point
+schema = ROI_xsd.html
 
 [Point FillColor]
 type = Color
+anchor = Shape_FillColor
 
 [Point FillRule]
 type = FillRule
@@ -1221,9 +1231,11 @@ type = Double
 [Polygon]
 countable = false
 path = ROI+/Shape+/Polygon
+schema = ROI_xsd.html
 
 [Polygon FillColor]
 type = FillColor
+anchor = Shape_FillColor
 
 [Polygon FillRule]
 type = FillRule
@@ -1279,9 +1291,11 @@ type = String
 [Polyline]
 countable = false
 path = ROI+/Shape+/Polyline
+schema = ROI_xsd.html
 
 [Polyline FillColor]
 type = Color
+anchor = Shape_FillColor
 
 [Polyline FillRule]
 type = FillRule
@@ -1372,6 +1386,7 @@ type = String
 [ROI]
 countable = true
 path = ROI+
+schema = ROI_xsd.html
 
 [ROI AnnotationRef]
 countable = true
@@ -1414,9 +1429,11 @@ type = String
 [Rectangle]
 countable = false
 path = ROI+/Shape+/Rectangle
+schema = ROI_xsd.html
 
 [Rectangle FillColor]
 type = Color
+anchor = Shape_FillColor
 
 [Rectangle FillRule]
 type = FillRule
