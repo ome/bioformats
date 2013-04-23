@@ -2,6 +2,7 @@
 $q.handler()
 *******************************************************************************
 #set ($handler = "Bio-Formats " + $q.format() + " format " + $q.handlerType())
+#set ($entities = $q.entityList())
 
 This page lists supported metadata fields for the $handler.
 
@@ -37,12 +38,14 @@ These fields are fully supported by the $handler:
 #set ($node = $q.node($entity))
 #set ($prop = $q.prop($yes))
 #set ($comment = $q.comment($yes))
-#set ($anchor = "_$prop")
-#set ($anchor = "$node$anchor")
+#set ($dummy = $entities.setEntity($entity))
+#set ($dummyProp = $entities.setProperty($prop))
+#set ($schema = $entities.schema())
+#set ($anchor = $entities.anchor())
 #if ($comment != "")
-  * :schema:`$entity : $prop <OME-$q.version()/ome_xsd.html#$anchor>` - $comment
+  * :schema:`$entity : $prop <OME-$q.version()/$schema#$anchor>` - $comment
 #else
-  * :schema:`$entity : $prop <OME-$q.version()/ome_xsd.html#$anchor>`
+  * :schema:`$entity : $prop <OME-$q.version()/$schema#$anchor>`
 #end##if $comment
 #end##foreach $yes
 
@@ -60,12 +63,14 @@ but there may be cases where the field is not converted:
 #set ($node = $q.node($entity))
 #set ($prop = $q.prop($partial))
 #set ($comment = $q.comment($partial))
-#set ($anchor = "_$prop")
-#set ($anchor = "$node$anchor")
+#set ($dummy = $entities.setEntity($entity))
+#set ($dummyProp = $entities.setProperty($prop))
+#set ($schema = $entities.schema())
+#set ($anchor = $entities.anchor())
 #if ($comment != "")
-  * :schema:`$entity : $prop <OME-$q.version()/ome_xsd.html#$anchor>` - $comment
+  * :schema:`$entity : $prop <OME-$q.version()/$schema#$anchor>` - $comment
 #else
-  * :schema:`$entity : $prop <OME-$q.version()/ome_xsd.html#$anchor>`
+  * :schema:`$entity : $prop <OME-$q.version()/$schema#$anchor>`
 #end##if $comment
 #end##foreach $partial
 
