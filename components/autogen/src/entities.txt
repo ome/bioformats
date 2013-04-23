@@ -49,12 +49,15 @@ anchor = AnnotationRef_ID
 
 [BooleanAnnotation Description]
 type = String
+anchor = Annotation_Description
 
 [BooleanAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [BooleanAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [BooleanAnnotation Value]
 type = Boolean
@@ -138,12 +141,15 @@ anchor = AnnotationRef_ID
 
 [CommentAnnotation Description]
 type = String
+anchor = Annotation_Description
 
 [CommentAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [CommentAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [CommentAnnotation Value]
 type = String
@@ -281,12 +287,15 @@ anchor = AnnotationRef_ID
 
 [DoubleAnnotation Description]
 type = String
+anchor = Annotation_Description
 
 [DoubleAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [DoubleAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [DoubleAnnotation Value]
 type = Double
@@ -452,6 +461,7 @@ type = String
 countable = true
 path = ExperimenterGroup+/Leader+
 type = String
+anchor = Leader_ID
 
 [ExperimenterGroup Name]
 type = String
@@ -499,12 +509,15 @@ anchor = AnnotationRef_ID
 
 [FileAnnotation Description]
 type = String
+anchor = Annotation_Description
 
 [FileAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [FileAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [Filter]
 countable = true
@@ -770,6 +783,7 @@ type = Pulse
 
 [Laser Pump]
 type = String
+anchor = Pump_ID
 
 [Laser RepetitionRate]
 type = Double
@@ -823,13 +837,13 @@ anchor = DichroicRef_ID
 countable = true
 path = Image+/Channel+/LightPath/EmissionFilterRef+
 type = String
-anchor = EmissionFilterRef_ID
+anchor = FilterRef_ID
 
 [LightPath ExcitationFilterRef]
 countable = true
 path = Image+/Channel+/LightPath/ExcitationFilterRef+
 type = String
-anchor = ExcitationFilterRef_ID
+anchor = FilterRef_ID
 
 [Line]
 countable = false
@@ -935,12 +949,15 @@ anchor = AnnotationRef_ID
 
 [ListAnnotation Description]
 type = String
+anchor = Annotation_Description
 
 [ListAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [ListAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [LongAnnotation]
 countable = true
@@ -955,12 +972,15 @@ anchor = AnnotationRef_ID
 
 [LongAnnotation Description]
 type = String
+anchor = Annotation_Description
 
 [LongAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [LongAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [LongAnnotation Value]
 type = Long
@@ -988,6 +1008,7 @@ anchor = Shape_FontSize
 
 [Mask ID]
 type = String
+anchor = Shape_ID
 
 [Mask LineCap]
 type = LineCap
@@ -1767,7 +1788,7 @@ type = String
 countable = true
 path = Screen+/PlateRef+
 type = String
-anchor = PlateRef_ID
+anchor = Screen_Screen_PlateRef_ID
 
 [Screen ProtocolDescription]
 type = String
@@ -1813,12 +1834,15 @@ anchor = AnnotationRef_ID
 
 [TagAnnotation Description]
 type = String
+anchor = Annotation_Description
 
 [TagAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [TagAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [TagAnnotation Value]
 type = String
@@ -1836,12 +1860,15 @@ anchor = AnnotationRef_ID
 
 [TermAnnotation Description]
 type = String
+anchor = Annotation_Description
 
 [TermAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [TermAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [TermAnnotation Value]
 type = String
@@ -1878,12 +1905,15 @@ anchor = AnnotationRef_ID
 
 [TimestampAnnotation Description]
 type = String
+anchor = Annotation_Description
 
 [TimestampAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [TimestampAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [TimestampAnnotation Value]
 type = Timestamp
@@ -1913,9 +1943,11 @@ path = Image+/TiffData+/UUID
 
 [UUID FileName]
 type = String
+anchor = TiffData_TiffData_UUID_FileName
 
 [UUID Value]
 type = String
+anchor = UniversallyUniqueIdentifier
 
 [Well]
 countable = true
@@ -2002,6 +2034,7 @@ type = String
 
 [XMLAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [XMLAnnotation Value]
 type = String

@@ -40,8 +40,8 @@ These fields are fully supported by the Bio-Formats Evotec Flex format reader:
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Laser : Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`
   * :schema:`LightPath : DichroicRef <OME-2012-06/ome_xsd.html#DichroicRef_ID>`
-  * :schema:`LightPath : EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
-  * :schema:`LightPath : ExcitationFilterRef <OME-2012-06/ome_xsd.html#ExcitationFilterRef_ID>`
+  * :schema:`LightPath : EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterRef_ID>`
+  * :schema:`LightPath : ExcitationFilterRef <OME-2012-06/ome_xsd.html#FilterRef_ID>`
   * :schema:`Objective : CalibratedMagnification <OME-2012-06/ome_xsd.html#Objective_CalibratedMagnification>`
   * :schema:`Objective : Correction <OME-2012-06/ome_xsd.html#Objective_Correction>`
   * :schema:`Objective : ID <OME-2012-06/ome_xsd.html#Objective_ID>`

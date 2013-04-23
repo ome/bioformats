@@ -63,7 +63,7 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * :schema:`Laser : Type <OME-2012-06/ome_xsd.html#Laser_Type>`
   * :schema:`Laser : Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`
   * :schema:`LightPath : DichroicRef <OME-2012-06/ome_xsd.html#DichroicRef_ID>`
-  * :schema:`LightPath : EmissionFilterRef <OME-2012-06/ome_xsd.html#EmissionFilterRef_ID>`
+  * :schema:`LightPath : EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterRef_ID>`
   * :schema:`Line : FontSize <OME-2012-06/ROI_xsd.html#Shape_FontSize>`
   * :schema:`Line : ID <OME-2012-06/ROI_xsd.html#Shape_ID>`
   * :schema:`Line : StrokeWidth <OME-2012-06/ROI_xsd.html#Shape_StrokeWidth>`
