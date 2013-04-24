@@ -125,7 +125,13 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
       r.setAttribute("xmlns:xsi", XSI_NS);
       r.setAttribute("xsi:schemaLocation", OME.NAMESPACE + " " + SCHEMA);
       doc.appendChild(r);
-      writeXML(os, doc);
+
+      TransformerFactory transformFactory = TransformerFactory.newInstance();
+      Transformer idTransform = transformFactory.newTransformer();
+      Source input = new DOMSource(doc);
+      Result output = new StreamResult(os);
+      idTransform.transform(input, output);
+
       return os.toString(Constants.ENCODING);
     }
     catch (TransformerException exc) {
@@ -147,15 +153,6 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
       catch (ParserConfigurationException e) { }
     }
     return builder.newDocument();
-  }
-
-  public static void writeXML(OutputStream os, Document doc)
-    throws TransformerException {
-    TransformerFactory transformFactory = TransformerFactory.newInstance();
-    Transformer idTransform = transformFactory.newTransformer();
-    Source input = new DOMSource(doc);
-    Result output = new StreamResult(os);
-    idTransform.transform(input, output);
   }
 
 }
