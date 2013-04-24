@@ -18,7 +18,7 @@ Type "ant -p" for a list of targets.
     <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng.xml"/>
-    <testng haltonfailure="true" groups="all" testname="${component.name}">
+    <testng haltonfailure="true" testname="${component.name}">
       <classpath>
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>

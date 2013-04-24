@@ -708,11 +708,13 @@ public class MicromanagerReader extends FormatReader {
           filename.append(t);
           filename.append("_");
 
-          String channel = p.channels[c];
-          if (channel.indexOf("-") != -1) {
-            channel = channel.substring(0, channel.indexOf("-"));
+          if (blocks[2].length() > 0) {
+            String channel = p.channels[c];
+            if (channel.indexOf("-") != -1) {
+              channel = channel.substring(0, channel.indexOf("-"));
+            }
+            filename.append(channel);
           }
-          filename.append(channel);
           filename.append("_");
 
           zeros = blocks[3].length() - String.valueOf(z).length() - 4;
