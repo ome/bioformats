@@ -57,4 +57,4 @@ the JARs in your :envvar:`CLASSPATH` (individual JARs or just loci_tools.jar):
     bfconvert test&pixelType=uint8&sizeX=8192&sizeY=8192.fake test.tiff
 
 If you do not have the command line tools installed, substitute
-:source:`loci.formats.tools.ImageConverter <components/scifio/src/loci/formats/tools/ImageConverter.java>` for `bfconvert`.
+:source:`loci.formats.tools.ImageConverter <components/scifio-tools/src/loci/formats/tools/ImageConverter.java>` for `bfconvert`.
