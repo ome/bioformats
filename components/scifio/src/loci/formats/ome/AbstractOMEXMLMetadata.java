@@ -36,6 +36,7 @@
 
 package loci.formats.ome;
 
+import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
@@ -43,11 +44,17 @@ import java.util.Hashtable;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import loci.common.Constants;
 
-import ome.xml.DOMUtil;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModelObject;
 
@@ -118,7 +125,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
       r.setAttribute("xmlns:xsi", XSI_NS);
       r.setAttribute("xsi:schemaLocation", OME.NAMESPACE + " " + SCHEMA);
       doc.appendChild(r);
-      DOMUtil.writeXML(os, doc);
+      writeXML(os, doc);
       return os.toString(Constants.ENCODING);
     }
     catch (TransformerException exc) {
@@ -128,69 +135,6 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
       LOGGER.warn("Failed to create OME-XML", exc);
     }
     return null;
-  }
-
-  // -- MetadataRetrieve API methods --
-
-  /* @see loci.formats.meta.MetadataRetrieve#getUUID() */
-  public String getUUID() {
-    Element ome = getRootElement();
-    return DOMUtil.getAttribute("UUID", ome);
-  }
-
-  // -- MetadataStore API methods --
-
-  /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
-  public void setRoot(Object root) {
-  }
-
-  /* @see loci.formats.meta.MetadataStore#getRoot() */
-  public Object getRoot() {
-    return root;
-  }
-
-  /* @see loci.formats.meta.MetadataRetrieve#setUUID(String) */
-  public void setUUID(String uuid) {
-    Element ome = getRootElement();
-    DOMUtil.setAttribute("UUID", uuid, ome);
-  }
-
-  // -- Type conversion methods --
-
-  /**
-   * Converts Boolean value to Integer. Used to convert
-   * from 2003-FC Laser FrequencyDoubled Boolean value
-   * to Laser FrequencyMultiplication Integer value.
-   */
-  protected Integer booleanToInteger(Boolean value) {
-    return value == null ? null : new Integer(value.booleanValue() ? 2 : 1);
-  }
-
-  /**
-   * Converts Integer value to Boolean. Used to convert
-   * from Laser FrequencyMultiplication Integer value
-   * to 2003-FC Laser FrequencyDoubled Boolean value.
-   */
-  protected Boolean integerToBoolean(Integer value) {
-    return value == null ? null : new Boolean(value.intValue() == 2);
-  }
-
-  /**
-   * Converts Double value to Integer. Used to convert
-   * from 2008-02 LogicalChannel PinholeSize Integer value
-   * to LogicalChannel PinholeSize Double value.
-   */
-  protected Integer doubleToInteger(Double value) {
-    return value == null ? null : new Integer(value.intValue());
-  }
-
-  /**
-   * Converts Integer value to Double. Used to convert
-   * from LogicalChannel PinholeSize Double value
-   * to 2008-02 LogicalChannel PinholeSize Integer value.
-   */
-  protected Double integerToDouble(Integer value) {
-    return value == null ? null : new Double(value.doubleValue());
   }
 
   // -- Helper methods --
@@ -205,8 +149,13 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
     return builder.newDocument();
   }
 
-  private Element getRootElement() {
-    return root.asXMLElement(createNewDocument());
+  public static void writeXML(OutputStream os, Document doc)
+    throws TransformerException {
+    TransformerFactory transformFactory = TransformerFactory.newInstance();
+    Transformer idTransform = transformFactory.newTransformer();
+    Source input = new DOMSource(doc);
+    Result output = new StreamResult(os);
+    idTransform.transform(input, output);
   }
 
 }
