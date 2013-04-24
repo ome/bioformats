@@ -338,6 +338,9 @@ public abstract class FormatWriter extends FormatHandler
   public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) return;
     currentId = id;
+    if (out != null) {
+      out.close();
+    }
     out = new RandomAccessOutputStream(currentId);
 
     MetadataRetrieve r = getMetadataRetrieve();
