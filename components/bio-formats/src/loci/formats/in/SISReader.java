@@ -77,6 +77,7 @@ public class SISReader extends BaseTiffReader {
   public SISReader() {
     super("Olympus SIS TIFF", new String[] {"tif", "tiff"});
     suffixSufficient = false;
+    suffixNecessary = true;
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
