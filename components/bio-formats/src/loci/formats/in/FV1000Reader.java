@@ -596,8 +596,10 @@ public class FV1000Reader extends FormatReader {
     tiffs = new Vector<String>(getImageCount());
 
     thumbReader = new BMPReader();
-    thumbId = replaceExtension(thumbId, "pty", "bmp");
-    thumbId = sanitizeFile(thumbId, path);
+    if (thumbId != null) {
+      thumbId = replaceExtension(thumbId, "pty", "bmp");
+      thumbId = sanitizeFile(thumbId, path);
+    }
 
     LOGGER.info("Reading additional metadata");
 

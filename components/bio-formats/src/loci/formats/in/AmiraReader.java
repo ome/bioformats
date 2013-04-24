@@ -105,7 +105,7 @@ public class AmiraReader extends FormatReader {
       }
     }
     else {
-      in.seek(offsetOfFirstStream + no * planeSize);
+      in.seek(offsetOfFirstStream + (long) no * planeSize);
       readPlane(in, x, y, w, h, buf);
     }
 
