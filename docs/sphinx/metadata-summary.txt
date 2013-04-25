@@ -813,2367 +813,2367 @@ Metadata fields
     - Partial
     - Unknown/Missing
 
-   * - :schema:`Arc - ID <OME-2012-06/ome_xsd.html#Arc_$prop>`
+   * - :schema:`Arc - ID <OME-2012-06/ome_xsd.html#Arc_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Arc - LotNumber <OME-2012-06/ome_xsd.html#Arc_$prop>`
+   * - :schema:`Arc - LotNumber <OME-2012-06/ome_xsd.html#Arc_LotNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Arc - Manufacturer <OME-2012-06/ome_xsd.html#Arc_$prop>`
+   * - :schema:`Arc - Manufacturer <OME-2012-06/ome_xsd.html#Arc_Manufacturer>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Arc - Model <OME-2012-06/ome_xsd.html#Arc_$prop>`
+   * - :schema:`Arc - Model <OME-2012-06/ome_xsd.html#Arc_Model>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Arc - Power <OME-2012-06/ome_xsd.html#Arc_$prop>`
+   * - :schema:`Arc - Power <OME-2012-06/ome_xsd.html#Arc_Power>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Arc - SerialNumber <OME-2012-06/ome_xsd.html#Arc_$prop>`
+   * - :schema:`Arc - SerialNumber <OME-2012-06/ome_xsd.html#Arc_SerialNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Arc - Type <OME-2012-06/ome_xsd.html#Arc_$prop>`
+   * - :schema:`Arc - Type <OME-2012-06/ome_xsd.html#Arc_Type>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`BooleanAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`
+   * - :schema:`BooleanAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#BooleanAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`BooleanAnnotation - Description <OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`
+   * - :schema:`BooleanAnnotation - Description <OME-2012-06/ome_xsd.html#BooleanAnnotation_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`BooleanAnnotation - ID <OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`
+   * - :schema:`BooleanAnnotation - ID <OME-2012-06/ome_xsd.html#BooleanAnnotation_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`BooleanAnnotation - Namespace <OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`
+   * - :schema:`BooleanAnnotation - Namespace <OME-2012-06/ome_xsd.html#BooleanAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`BooleanAnnotation - Value <OME-2012-06/ome_xsd.html#BooleanAnnotation_$prop>`
+   * - :schema:`BooleanAnnotation - Value <OME-2012-06/ome_xsd.html#BooleanAnnotation_Value>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Channel - AcquisitionMode <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - AcquisitionMode <OME-2012-06/ome_xsd.html#Channel_AcquisitionMode>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Channel - AnnotationRef <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - AnnotationRef <OME-2012-06/ome_xsd.html#Channel_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Channel - Color <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - Color <OME-2012-06/ome_xsd.html#Channel_Color>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`Channel - ContrastMethod <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - ContrastMethod <OME-2012-06/ome_xsd.html#Channel_ContrastMethod>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Channel - EmissionWavelength <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - EmissionWavelength <OME-2012-06/ome_xsd.html#Channel_EmissionWavelength>`
      - 16
      - 0
      - 0
      - 138
-   * - :schema:`Channel - ExcitationWavelength <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - ExcitationWavelength <OME-2012-06/ome_xsd.html#Channel_ExcitationWavelength>`
      - 17
      - 0
      - 0
      - 137
-   * - :schema:`Channel - FilterSetRef <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - FilterSetRef <OME-2012-06/ome_xsd.html#Channel_FilterSetRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Channel - Fluor <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - Fluor <OME-2012-06/ome_xsd.html#Channel_Fluor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Channel - ID <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - ID <OME-2012-06/ome_xsd.html#Channel_ID>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Channel - IlluminationType <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - IlluminationType <OME-2012-06/ome_xsd.html#Channel_IlluminationType>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Channel - LightSourceSettingsAttenuation <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - LightSourceSettingsAttenuation <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsAttenuation>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Channel - LightSourceSettingsID <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - LightSourceSettingsID <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsID>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Channel - LightSourceSettingsWavelength <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - LightSourceSettingsWavelength <OME-2012-06/ome_xsd.html#Channel_LightSourceSettingsWavelength>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Channel - NDFilter <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - NDFilter <OME-2012-06/ome_xsd.html#Channel_NDFilter>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Channel - Name <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - Name <OME-2012-06/ome_xsd.html#Channel_Name>`
      - 30
      - 0
      - 0
      - 124
-   * - :schema:`Channel - PinholeSize <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - PinholeSize <OME-2012-06/ome_xsd.html#Channel_PinholeSize>`
      - 9
      - 0
      - 0
      - 145
-   * - :schema:`Channel - PockelCellSetting <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - PockelCellSetting <OME-2012-06/ome_xsd.html#Channel_PockelCellSetting>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Channel - SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_$prop>`
+   * - :schema:`Channel - SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`CommentAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`
+   * - :schema:`CommentAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#CommentAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`CommentAnnotation - Description <OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`
+   * - :schema:`CommentAnnotation - Description <OME-2012-06/ome_xsd.html#CommentAnnotation_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`CommentAnnotation - ID <OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`
+   * - :schema:`CommentAnnotation - ID <OME-2012-06/ome_xsd.html#CommentAnnotation_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`CommentAnnotation - Namespace <OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`
+   * - :schema:`CommentAnnotation - Namespace <OME-2012-06/ome_xsd.html#CommentAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`CommentAnnotation - Value <OME-2012-06/ome_xsd.html#CommentAnnotation_$prop>`
+   * - :schema:`CommentAnnotation - Value <OME-2012-06/ome_xsd.html#CommentAnnotation_Value>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Dataset - AnnotationRef <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+   * - :schema:`Dataset - AnnotationRef <OME-2012-06/ome_xsd.html#Dataset_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Dataset - Description <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+   * - :schema:`Dataset - Description <OME-2012-06/ome_xsd.html#Dataset_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Dataset - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+   * - :schema:`Dataset - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Dataset_ExperimenterGroupRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Dataset - ExperimenterRef <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+   * - :schema:`Dataset - ExperimenterRef <OME-2012-06/ome_xsd.html#Dataset_ExperimenterRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Dataset - ID <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+   * - :schema:`Dataset - ID <OME-2012-06/ome_xsd.html#Dataset_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Dataset - ImageRef <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+   * - :schema:`Dataset - ImageRef <OME-2012-06/ome_xsd.html#Dataset_ImageRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Dataset - Name <OME-2012-06/ome_xsd.html#Dataset_$prop>`
+   * - :schema:`Dataset - Name <OME-2012-06/ome_xsd.html#Dataset_Name>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Detector - AmplificationGain <OME-2012-06/ome_xsd.html#Detector_$prop>`
+   * - :schema:`Detector - AmplificationGain <OME-2012-06/ome_xsd.html#Detector_AmplificationGain>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Detector - Gain <OME-2012-06/ome_xsd.html#Detector_$prop>`
+   * - :schema:`Detector - Gain <OME-2012-06/ome_xsd.html#Detector_Gain>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Detector - ID <OME-2012-06/ome_xsd.html#Detector_$prop>`
+   * - :schema:`Detector - ID <OME-2012-06/ome_xsd.html#Detector_ID>`
      - 31
      - 0
      - 0
      - 123
-   * - :schema:`Detector - LotNumber <OME-2012-06/ome_xsd.html#Detector_$prop>`
+   * - :schema:`Detector - LotNumber <OME-2012-06/ome_xsd.html#Detector_LotNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Detector - Manufacturer <OME-2012-06/ome_xsd.html#Detector_$prop>`
+   * - :schema:`Detector - Manufacturer <OME-2012-06/ome_xsd.html#Detector_Manufacturer>`
      - 4
      - 0
      - 0
      - 150
-   * - :schema:`Detector - Model <OME-2012-06/ome_xsd.html#Detector_$prop>`
+   * - :schema:`Detector - Model <OME-2012-06/ome_xsd.html#Detector_Model>`
      - 13
      - 0
      - 0
      - 141
-   * - :schema:`Detector - Offset <OME-2012-06/ome_xsd.html#Detector_$prop>`
+   * - :schema:`Detector - Offset <OME-2012-06/ome_xsd.html#Detector_Offset>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Detector - SerialNumber <OME-2012-06/ome_xsd.html#Detector_$prop>`
+   * - :schema:`Detector - SerialNumber <OME-2012-06/ome_xsd.html#Detector_SerialNumber>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Detector - Type <OME-2012-06/ome_xsd.html#Detector_$prop>`
+   * - :schema:`Detector - Type <OME-2012-06/ome_xsd.html#Detector_Type>`
      - 27
      - 0
      - 0
      - 127
-   * - :schema:`Detector - Voltage <OME-2012-06/ome_xsd.html#Detector_$prop>`
+   * - :schema:`Detector - Voltage <OME-2012-06/ome_xsd.html#Detector_Voltage>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Detector - Zoom <OME-2012-06/ome_xsd.html#Detector_$prop>`
+   * - :schema:`Detector - Zoom <OME-2012-06/ome_xsd.html#Detector_Zoom>`
      - 4
      - 0
      - 0
      - 150
-   * - :schema:`DetectorSettings - Binning <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+   * - :schema:`DetectorSettings - Binning <OME-2012-06/ome_xsd.html#DetectorSettings_Binning>`
      - 15
      - 0
      - 0
      - 139
-   * - :schema:`DetectorSettings - Gain <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+   * - :schema:`DetectorSettings - Gain <OME-2012-06/ome_xsd.html#DetectorSettings_Gain>`
      - 18
      - 0
      - 0
      - 136
-   * - :schema:`DetectorSettings - ID <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+   * - :schema:`DetectorSettings - ID <OME-2012-06/ome_xsd.html#DetectorSettings_ID>`
      - 29
      - 0
      - 0
      - 125
-   * - :schema:`DetectorSettings - Offset <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+   * - :schema:`DetectorSettings - Offset <OME-2012-06/ome_xsd.html#DetectorSettings_Offset>`
      - 8
      - 0
      - 0
      - 146
-   * - :schema:`DetectorSettings - ReadOutRate <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+   * - :schema:`DetectorSettings - ReadOutRate <OME-2012-06/ome_xsd.html#DetectorSettings_ReadOutRate>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`DetectorSettings - Voltage <OME-2012-06/ome_xsd.html#DetectorSettings_$prop>`
+   * - :schema:`DetectorSettings - Voltage <OME-2012-06/ome_xsd.html#DetectorSettings_Voltage>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Dichroic - ID <OME-2012-06/ome_xsd.html#Dichroic_$prop>`
+   * - :schema:`Dichroic - ID <OME-2012-06/ome_xsd.html#Dichroic_ID>`
      - 6
      - 0
      - 0
      - 148
-   * - :schema:`Dichroic - LotNumber <OME-2012-06/ome_xsd.html#Dichroic_$prop>`
+   * - :schema:`Dichroic - LotNumber <OME-2012-06/ome_xsd.html#Dichroic_LotNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Dichroic - Manufacturer <OME-2012-06/ome_xsd.html#Dichroic_$prop>`
+   * - :schema:`Dichroic - Manufacturer <OME-2012-06/ome_xsd.html#Dichroic_Manufacturer>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Dichroic - Model <OME-2012-06/ome_xsd.html#Dichroic_$prop>`
+   * - :schema:`Dichroic - Model <OME-2012-06/ome_xsd.html#Dichroic_Model>`
      - 6
      - 0
      - 0
      - 148
-   * - :schema:`Dichroic - SerialNumber <OME-2012-06/ome_xsd.html#Dichroic_$prop>`
+   * - :schema:`Dichroic - SerialNumber <OME-2012-06/ome_xsd.html#Dichroic_SerialNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`DoubleAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`
+   * - :schema:`DoubleAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#DoubleAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`DoubleAnnotation - Description <OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`
+   * - :schema:`DoubleAnnotation - Description <OME-2012-06/ome_xsd.html#DoubleAnnotation_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`DoubleAnnotation - ID <OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`
+   * - :schema:`DoubleAnnotation - ID <OME-2012-06/ome_xsd.html#DoubleAnnotation_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`DoubleAnnotation - Namespace <OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`
+   * - :schema:`DoubleAnnotation - Namespace <OME-2012-06/ome_xsd.html#DoubleAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`DoubleAnnotation - Value <OME-2012-06/ome_xsd.html#DoubleAnnotation_$prop>`
+   * - :schema:`DoubleAnnotation - Value <OME-2012-06/ome_xsd.html#DoubleAnnotation_Value>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Ellipse - FillColor <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - FillColor <OME-2012-06/ome_xsd.html#Ellipse_FillColor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Ellipse - FillRule <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - FillRule <OME-2012-06/ome_xsd.html#Ellipse_FillRule>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Ellipse - FontFamily <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - FontFamily <OME-2012-06/ome_xsd.html#Ellipse_FontFamily>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Ellipse - FontSize <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - FontSize <OME-2012-06/ome_xsd.html#Ellipse_FontSize>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Ellipse - FontStyle <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - FontStyle <OME-2012-06/ome_xsd.html#Ellipse_FontStyle>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Ellipse - ID <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - ID <OME-2012-06/ome_xsd.html#Ellipse_ID>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Ellipse - LineCap <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - LineCap <OME-2012-06/ome_xsd.html#Ellipse_LineCap>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Ellipse - Locked <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - Locked <OME-2012-06/ome_xsd.html#Ellipse_Locked>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Ellipse - RadiusX <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - RadiusX <OME-2012-06/ome_xsd.html#Ellipse_RadiusX>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Ellipse - RadiusY <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - RadiusY <OME-2012-06/ome_xsd.html#Ellipse_RadiusY>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Ellipse - StrokeColor <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - StrokeColor <OME-2012-06/ome_xsd.html#Ellipse_StrokeColor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Ellipse - StrokeDashArray <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - StrokeDashArray <OME-2012-06/ome_xsd.html#Ellipse_StrokeDashArray>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Ellipse - StrokeWidth <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - StrokeWidth <OME-2012-06/ome_xsd.html#Ellipse_StrokeWidth>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Ellipse - Text <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - Text <OME-2012-06/ome_xsd.html#Ellipse_Text>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Ellipse - TheC <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - TheC <OME-2012-06/ome_xsd.html#Ellipse_TheC>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Ellipse - TheT <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - TheT <OME-2012-06/ome_xsd.html#Ellipse_TheT>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Ellipse - TheZ <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - TheZ <OME-2012-06/ome_xsd.html#Ellipse_TheZ>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Ellipse - Transform <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - Transform <OME-2012-06/ome_xsd.html#Ellipse_Transform>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Ellipse - Visible <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - Visible <OME-2012-06/ome_xsd.html#Ellipse_Visible>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Ellipse - X <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - X <OME-2012-06/ome_xsd.html#Ellipse_X>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Ellipse - Y <OME-2012-06/ome_xsd.html#Ellipse_$prop>`
+   * - :schema:`Ellipse - Y <OME-2012-06/ome_xsd.html#Ellipse_Y>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Experiment - Description <OME-2012-06/ome_xsd.html#Experiment_$prop>`
+   * - :schema:`Experiment - Description <OME-2012-06/ome_xsd.html#Experiment_Description>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Experiment - ExperimenterRef <OME-2012-06/ome_xsd.html#Experiment_$prop>`
+   * - :schema:`Experiment - ExperimenterRef <OME-2012-06/ome_xsd.html#Experiment_ExperimenterRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Experiment - ID <OME-2012-06/ome_xsd.html#Experiment_$prop>`
+   * - :schema:`Experiment - ID <OME-2012-06/ome_xsd.html#Experiment_ID>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Experiment - Type <OME-2012-06/ome_xsd.html#Experiment_$prop>`
+   * - :schema:`Experiment - Type <OME-2012-06/ome_xsd.html#Experiment_Type>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Experimenter - AnnotationRef <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+   * - :schema:`Experimenter - AnnotationRef <OME-2012-06/ome_xsd.html#Experimenter_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Experimenter - Email <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+   * - :schema:`Experimenter - Email <OME-2012-06/ome_xsd.html#Experimenter_Email>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Experimenter - FirstName <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+   * - :schema:`Experimenter - FirstName <OME-2012-06/ome_xsd.html#Experimenter_FirstName>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Experimenter - ID <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+   * - :schema:`Experimenter - ID <OME-2012-06/ome_xsd.html#Experimenter_ID>`
      - 11
      - 0
      - 0
      - 143
-   * - :schema:`Experimenter - Institution <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+   * - :schema:`Experimenter - Institution <OME-2012-06/ome_xsd.html#Experimenter_Institution>`
      - 4
      - 0
      - 0
      - 150
-   * - :schema:`Experimenter - LastName <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+   * - :schema:`Experimenter - LastName <OME-2012-06/ome_xsd.html#Experimenter_LastName>`
      - 9
      - 0
      - 0
      - 145
-   * - :schema:`Experimenter - MiddleName <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+   * - :schema:`Experimenter - MiddleName <OME-2012-06/ome_xsd.html#Experimenter_MiddleName>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Experimenter - UserName <OME-2012-06/ome_xsd.html#Experimenter_$prop>`
+   * - :schema:`Experimenter - UserName <OME-2012-06/ome_xsd.html#Experimenter_UserName>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`ExperimenterGroup - AnnotationRef <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+   * - :schema:`ExperimenterGroup - AnnotationRef <OME-2012-06/ome_xsd.html#ExperimenterGroup_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`ExperimenterGroup - Description <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+   * - :schema:`ExperimenterGroup - Description <OME-2012-06/ome_xsd.html#ExperimenterGroup_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`ExperimenterGroup - ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+   * - :schema:`ExperimenterGroup - ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterGroup_ExperimenterRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`ExperimenterGroup - ID <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+   * - :schema:`ExperimenterGroup - ID <OME-2012-06/ome_xsd.html#ExperimenterGroup_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`ExperimenterGroup - Leader <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+   * - :schema:`ExperimenterGroup - Leader <OME-2012-06/ome_xsd.html#ExperimenterGroup_Leader>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`ExperimenterGroup - Name <OME-2012-06/ome_xsd.html#ExperimenterGroup_$prop>`
+   * - :schema:`ExperimenterGroup - Name <OME-2012-06/ome_xsd.html#ExperimenterGroup_Name>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Filament - ID <OME-2012-06/ome_xsd.html#Filament_$prop>`
+   * - :schema:`Filament - ID <OME-2012-06/ome_xsd.html#Filament_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Filament - LotNumber <OME-2012-06/ome_xsd.html#Filament_$prop>`
+   * - :schema:`Filament - LotNumber <OME-2012-06/ome_xsd.html#Filament_LotNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Filament - Manufacturer <OME-2012-06/ome_xsd.html#Filament_$prop>`
+   * - :schema:`Filament - Manufacturer <OME-2012-06/ome_xsd.html#Filament_Manufacturer>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Filament - Model <OME-2012-06/ome_xsd.html#Filament_$prop>`
+   * - :schema:`Filament - Model <OME-2012-06/ome_xsd.html#Filament_Model>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Filament - Power <OME-2012-06/ome_xsd.html#Filament_$prop>`
+   * - :schema:`Filament - Power <OME-2012-06/ome_xsd.html#Filament_Power>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Filament - SerialNumber <OME-2012-06/ome_xsd.html#Filament_$prop>`
+   * - :schema:`Filament - SerialNumber <OME-2012-06/ome_xsd.html#Filament_SerialNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Filament - Type <OME-2012-06/ome_xsd.html#Filament_$prop>`
+   * - :schema:`Filament - Type <OME-2012-06/ome_xsd.html#Filament_Type>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`FileAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`
+   * - :schema:`FileAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#FileAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`FileAnnotation - Description <OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`
+   * - :schema:`FileAnnotation - Description <OME-2012-06/ome_xsd.html#FileAnnotation_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`FileAnnotation - ID <OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`
+   * - :schema:`FileAnnotation - ID <OME-2012-06/ome_xsd.html#FileAnnotation_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`FileAnnotation - Namespace <OME-2012-06/ome_xsd.html#FileAnnotation_$prop>`
+   * - :schema:`FileAnnotation - Namespace <OME-2012-06/ome_xsd.html#FileAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Filter - FilterWheel <OME-2012-06/ome_xsd.html#Filter_$prop>`
+   * - :schema:`Filter - FilterWheel <OME-2012-06/ome_xsd.html#Filter_FilterWheel>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Filter - ID <OME-2012-06/ome_xsd.html#Filter_$prop>`
+   * - :schema:`Filter - ID <OME-2012-06/ome_xsd.html#Filter_ID>`
      - 8
      - 0
      - 0
      - 146
-   * - :schema:`Filter - LotNumber <OME-2012-06/ome_xsd.html#Filter_$prop>`
+   * - :schema:`Filter - LotNumber <OME-2012-06/ome_xsd.html#Filter_LotNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Filter - Manufacturer <OME-2012-06/ome_xsd.html#Filter_$prop>`
+   * - :schema:`Filter - Manufacturer <OME-2012-06/ome_xsd.html#Filter_Manufacturer>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Filter - Model <OME-2012-06/ome_xsd.html#Filter_$prop>`
+   * - :schema:`Filter - Model <OME-2012-06/ome_xsd.html#Filter_Model>`
      - 8
      - 0
      - 0
      - 146
-   * - :schema:`Filter - SerialNumber <OME-2012-06/ome_xsd.html#Filter_$prop>`
+   * - :schema:`Filter - SerialNumber <OME-2012-06/ome_xsd.html#Filter_SerialNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Filter - Type <OME-2012-06/ome_xsd.html#Filter_$prop>`
+   * - :schema:`Filter - Type <OME-2012-06/ome_xsd.html#Filter_Type>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`FilterSet - DichroicRef <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+   * - :schema:`FilterSet - DichroicRef <OME-2012-06/ome_xsd.html#FilterSet_DichroicRef>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`FilterSet - EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+   * - :schema:`FilterSet - EmissionFilterRef <OME-2012-06/ome_xsd.html#FilterSet_EmissionFilterRef>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`FilterSet - ExcitationFilterRef <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+   * - :schema:`FilterSet - ExcitationFilterRef <OME-2012-06/ome_xsd.html#FilterSet_ExcitationFilterRef>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`FilterSet - ID <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+   * - :schema:`FilterSet - ID <OME-2012-06/ome_xsd.html#FilterSet_ID>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`FilterSet - LotNumber <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+   * - :schema:`FilterSet - LotNumber <OME-2012-06/ome_xsd.html#FilterSet_LotNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`FilterSet - Manufacturer <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+   * - :schema:`FilterSet - Manufacturer <OME-2012-06/ome_xsd.html#FilterSet_Manufacturer>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`FilterSet - Model <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+   * - :schema:`FilterSet - Model <OME-2012-06/ome_xsd.html#FilterSet_Model>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`FilterSet - SerialNumber <OME-2012-06/ome_xsd.html#FilterSet_$prop>`
+   * - :schema:`FilterSet - SerialNumber <OME-2012-06/ome_xsd.html#FilterSet_SerialNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Image - AcquisitionDate <OME-2012-06/ome_xsd.html#Image_$prop>`
+   * - :schema:`Image - AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Image - AnnotationRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+   * - :schema:`Image - AnnotationRef <OME-2012-06/ome_xsd.html#Image_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Image - Description <OME-2012-06/ome_xsd.html#Image_$prop>`
+   * - :schema:`Image - Description <OME-2012-06/ome_xsd.html#Image_Description>`
      - 41
      - 0
      - 0
      - 113
-   * - :schema:`Image - ExperimentRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+   * - :schema:`Image - ExperimentRef <OME-2012-06/ome_xsd.html#Image_ExperimentRef>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Image - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+   * - :schema:`Image - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Image_ExperimenterGroupRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Image - ExperimenterRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+   * - :schema:`Image - ExperimenterRef <OME-2012-06/ome_xsd.html#Image_ExperimenterRef>`
      - 6
      - 0
      - 0
      - 148
-   * - :schema:`Image - ID <OME-2012-06/ome_xsd.html#Image_$prop>`
+   * - :schema:`Image - ID <OME-2012-06/ome_xsd.html#Image_ID>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Image - InstrumentRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+   * - :schema:`Image - InstrumentRef <OME-2012-06/ome_xsd.html#Image_InstrumentRef>`
      - 40
      - 0
      - 0
      - 114
-   * - :schema:`Image - MicrobeamManipulationRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+   * - :schema:`Image - MicrobeamManipulationRef <OME-2012-06/ome_xsd.html#Image_MicrobeamManipulationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Image - Name <OME-2012-06/ome_xsd.html#Image_$prop>`
+   * - :schema:`Image - Name <OME-2012-06/ome_xsd.html#Image_Name>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Image - ROIRef <OME-2012-06/ome_xsd.html#Image_$prop>`
+   * - :schema:`Image - ROIRef <OME-2012-06/ome_xsd.html#Image_ROIRef>`
      - 11
      - 0
      - 0
      - 143
-   * - :schema:`ImagingEnvironment - AirPressure <OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`
+   * - :schema:`ImagingEnvironment - AirPressure <OME-2012-06/ome_xsd.html#ImagingEnvironment_AirPressure>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`ImagingEnvironment - CO2Percent <OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`
+   * - :schema:`ImagingEnvironment - CO2Percent <OME-2012-06/ome_xsd.html#ImagingEnvironment_CO2Percent>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`ImagingEnvironment - Humidity <OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`
+   * - :schema:`ImagingEnvironment - Humidity <OME-2012-06/ome_xsd.html#ImagingEnvironment_Humidity>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`ImagingEnvironment - Temperature <OME-2012-06/ome_xsd.html#ImagingEnvironment_$prop>`
+   * - :schema:`ImagingEnvironment - Temperature <OME-2012-06/ome_xsd.html#ImagingEnvironment_Temperature>`
      - 10
      - 0
      - 0
      - 144
-   * - :schema:`Instrument - ID <OME-2012-06/ome_xsd.html#Instrument_$prop>`
+   * - :schema:`Instrument - ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
      - 43
      - 0
      - 0
      - 111
-   * - :schema:`Label - FillColor <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - FillColor <OME-2012-06/ome_xsd.html#Label_FillColor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - FillRule <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - FillRule <OME-2012-06/ome_xsd.html#Label_FillRule>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - FontFamily <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - FontFamily <OME-2012-06/ome_xsd.html#Label_FontFamily>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - FontSize <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - FontSize <OME-2012-06/ome_xsd.html#Label_FontSize>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Label - FontStyle <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - FontStyle <OME-2012-06/ome_xsd.html#Label_FontStyle>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - ID <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - ID <OME-2012-06/ome_xsd.html#Label_ID>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Label - LineCap <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - LineCap <OME-2012-06/ome_xsd.html#Label_LineCap>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - Locked <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - Locked <OME-2012-06/ome_xsd.html#Label_Locked>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - StrokeColor <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - StrokeColor <OME-2012-06/ome_xsd.html#Label_StrokeColor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - StrokeDashArray <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - StrokeDashArray <OME-2012-06/ome_xsd.html#Label_StrokeDashArray>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - StrokeWidth <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - StrokeWidth <OME-2012-06/ome_xsd.html#Label_StrokeWidth>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Label - Text <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - Text <OME-2012-06/ome_xsd.html#Label_Text>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Label - TheC <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - TheC <OME-2012-06/ome_xsd.html#Label_TheC>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - TheT <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - TheT <OME-2012-06/ome_xsd.html#Label_TheT>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - TheZ <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - TheZ <OME-2012-06/ome_xsd.html#Label_TheZ>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - Transform <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - Transform <OME-2012-06/ome_xsd.html#Label_Transform>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - Visible <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - Visible <OME-2012-06/ome_xsd.html#Label_Visible>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Label - X <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - X <OME-2012-06/ome_xsd.html#Label_X>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Label - Y <OME-2012-06/ome_xsd.html#Label_$prop>`
+   * - :schema:`Label - Y <OME-2012-06/ome_xsd.html#Label_Y>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Laser - FrequencyMultiplication <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - FrequencyMultiplication <OME-2012-06/ome_xsd.html#Laser_FrequencyMultiplication>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Laser - ID <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - ID <OME-2012-06/ome_xsd.html#Laser_ID>`
      - 9
      - 0
      - 0
      - 145
-   * - :schema:`Laser - LaserMedium <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - LaserMedium <OME-2012-06/ome_xsd.html#Laser_LaserMedium>`
      - 8
      - 0
      - 0
      - 146
-   * - :schema:`Laser - LotNumber <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - LotNumber <OME-2012-06/ome_xsd.html#Laser_LotNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Laser - Manufacturer <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - Manufacturer <OME-2012-06/ome_xsd.html#Laser_Manufacturer>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Laser - Model <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - Model <OME-2012-06/ome_xsd.html#Laser_Model>`
      - 4
      - 0
      - 0
      - 150
-   * - :schema:`Laser - PockelCell <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - PockelCell <OME-2012-06/ome_xsd.html#Laser_PockelCell>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Laser - Power <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - Power <OME-2012-06/ome_xsd.html#Laser_Power>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Laser - Pulse <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - Pulse <OME-2012-06/ome_xsd.html#Laser_Pulse>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Laser - Pump <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - Pump <OME-2012-06/ome_xsd.html#Laser_Pump>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Laser - RepetitionRate <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - RepetitionRate <OME-2012-06/ome_xsd.html#Laser_RepetitionRate>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Laser - SerialNumber <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - SerialNumber <OME-2012-06/ome_xsd.html#Laser_SerialNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Laser - Tuneable <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - Tuneable <OME-2012-06/ome_xsd.html#Laser_Tuneable>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Laser - Type <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - Type <OME-2012-06/ome_xsd.html#Laser_Type>`
      - 8
      - 0
      - 0
      - 146
-   * - :schema:`Laser - Wavelength <OME-2012-06/ome_xsd.html#Laser_$prop>`
+   * - :schema:`Laser - Wavelength <OME-2012-06/ome_xsd.html#Laser_Wavelength>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`LightEmittingDiode - ID <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+   * - :schema:`LightEmittingDiode - ID <OME-2012-06/ome_xsd.html#LightEmittingDiode_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`LightEmittingDiode - LotNumber <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+   * - :schema:`LightEmittingDiode - LotNumber <OME-2012-06/ome_xsd.html#LightEmittingDiode_LotNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`LightEmittingDiode - Manufacturer <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+   * - :schema:`LightEmittingDiode - Manufacturer <OME-2012-06/ome_xsd.html#LightEmittingDiode_Manufacturer>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`LightEmittingDiode - Model <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+   * - :schema:`LightEmittingDiode - Model <OME-2012-06/ome_xsd.html#LightEmittingDiode_Model>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`LightEmittingDiode - Power <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+   * - :schema:`LightEmittingDiode - Power <OME-2012-06/ome_xsd.html#LightEmittingDiode_Power>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`LightEmittingDiode - SerialNumber <OME-2012-06/ome_xsd.html#LightEmittingDiode_$prop>`
+   * - :schema:`LightEmittingDiode - SerialNumber <OME-2012-06/ome_xsd.html#LightEmittingDiode_SerialNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`LightPath - DichroicRef <OME-2012-06/ome_xsd.html#LightPath_$prop>`
+   * - :schema:`LightPath - DichroicRef <OME-2012-06/ome_xsd.html#LightPath_DichroicRef>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`LightPath - EmissionFilterRef <OME-2012-06/ome_xsd.html#LightPath_$prop>`
+   * - :schema:`LightPath - EmissionFilterRef <OME-2012-06/ome_xsd.html#LightPath_EmissionFilterRef>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`LightPath - ExcitationFilterRef <OME-2012-06/ome_xsd.html#LightPath_$prop>`
+   * - :schema:`LightPath - ExcitationFilterRef <OME-2012-06/ome_xsd.html#LightPath_ExcitationFilterRef>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Line - FillColor <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - FillColor <OME-2012-06/ome_xsd.html#Line_FillColor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - FillRule <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - FillRule <OME-2012-06/ome_xsd.html#Line_FillRule>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - FontFamily <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - FontFamily <OME-2012-06/ome_xsd.html#Line_FontFamily>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - FontSize <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - FontSize <OME-2012-06/ome_xsd.html#Line_FontSize>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Line - FontStyle <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - FontStyle <OME-2012-06/ome_xsd.html#Line_FontStyle>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - ID <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - ID <OME-2012-06/ome_xsd.html#Line_ID>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Line - LineCap <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - LineCap <OME-2012-06/ome_xsd.html#Line_LineCap>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - Locked <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - Locked <OME-2012-06/ome_xsd.html#Line_Locked>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - MarkerEnd <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - MarkerEnd <OME-2012-06/ome_xsd.html#Line_MarkerEnd>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - MarkerStart <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - MarkerStart <OME-2012-06/ome_xsd.html#Line_MarkerStart>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - StrokeColor <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - StrokeColor <OME-2012-06/ome_xsd.html#Line_StrokeColor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - StrokeDashArray <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - StrokeDashArray <OME-2012-06/ome_xsd.html#Line_StrokeDashArray>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - StrokeWidth <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - StrokeWidth <OME-2012-06/ome_xsd.html#Line_StrokeWidth>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Line - Text <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - Text <OME-2012-06/ome_xsd.html#Line_Text>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Line - TheC <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - TheC <OME-2012-06/ome_xsd.html#Line_TheC>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - TheT <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - TheT <OME-2012-06/ome_xsd.html#Line_TheT>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Line - TheZ <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - TheZ <OME-2012-06/ome_xsd.html#Line_TheZ>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Line - Transform <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - Transform <OME-2012-06/ome_xsd.html#Line_Transform>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Line - Visible <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - Visible <OME-2012-06/ome_xsd.html#Line_Visible>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Line - X1 <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - X1 <OME-2012-06/ome_xsd.html#Line_X1>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Line - X2 <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - X2 <OME-2012-06/ome_xsd.html#Line_X2>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Line - Y1 <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - Y1 <OME-2012-06/ome_xsd.html#Line_Y1>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Line - Y2 <OME-2012-06/ome_xsd.html#Line_$prop>`
+   * - :schema:`Line - Y2 <OME-2012-06/ome_xsd.html#Line_Y2>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`ListAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`
+   * - :schema:`ListAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#ListAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`ListAnnotation - Description <OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`
+   * - :schema:`ListAnnotation - Description <OME-2012-06/ome_xsd.html#ListAnnotation_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`ListAnnotation - ID <OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`
+   * - :schema:`ListAnnotation - ID <OME-2012-06/ome_xsd.html#ListAnnotation_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`ListAnnotation - Namespace <OME-2012-06/ome_xsd.html#ListAnnotation_$prop>`
+   * - :schema:`ListAnnotation - Namespace <OME-2012-06/ome_xsd.html#ListAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`LongAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`
+   * - :schema:`LongAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#LongAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`LongAnnotation - Description <OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`
+   * - :schema:`LongAnnotation - Description <OME-2012-06/ome_xsd.html#LongAnnotation_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`LongAnnotation - ID <OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`
+   * - :schema:`LongAnnotation - ID <OME-2012-06/ome_xsd.html#LongAnnotation_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`LongAnnotation - Namespace <OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`
+   * - :schema:`LongAnnotation - Namespace <OME-2012-06/ome_xsd.html#LongAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`LongAnnotation - Value <OME-2012-06/ome_xsd.html#LongAnnotation_$prop>`
+   * - :schema:`LongAnnotation - Value <OME-2012-06/ome_xsd.html#LongAnnotation_Value>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - FillColor <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - FillColor <OME-2012-06/ome_xsd.html#Mask_FillColor>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Mask - FillRule <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - FillRule <OME-2012-06/ome_xsd.html#Mask_FillRule>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - FontFamily <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - FontFamily <OME-2012-06/ome_xsd.html#Mask_FontFamily>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - FontSize <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - FontSize <OME-2012-06/ome_xsd.html#Mask_FontSize>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - Height <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - Height <OME-2012-06/ome_xsd.html#Mask_Height>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Mask - ID <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - ID <OME-2012-06/ome_xsd.html#Mask_ID>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Mask - LineCap <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - LineCap <OME-2012-06/ome_xsd.html#Mask_LineCap>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - Locked <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - Locked <OME-2012-06/ome_xsd.html#Mask_Locked>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - StrokeColor <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - StrokeColor <OME-2012-06/ome_xsd.html#Mask_StrokeColor>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Mask - StrokeDashArray <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - StrokeDashArray <OME-2012-06/ome_xsd.html#Mask_StrokeDashArray>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - StrokeWidth <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - StrokeWidth <OME-2012-06/ome_xsd.html#Mask_StrokeWidth>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - Text <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - Text <OME-2012-06/ome_xsd.html#Mask_Text>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - TheC <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - TheC <OME-2012-06/ome_xsd.html#Mask_TheC>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - TheT <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - TheT <OME-2012-06/ome_xsd.html#Mask_TheT>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - TheZ <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - TheZ <OME-2012-06/ome_xsd.html#Mask_TheZ>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - Transform <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - Transform <OME-2012-06/ome_xsd.html#Mask_Transform>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - Visible <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - Visible <OME-2012-06/ome_xsd.html#Mask_Visible>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Mask - Width <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - Width <OME-2012-06/ome_xsd.html#Mask_Width>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Mask - X <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - X <OME-2012-06/ome_xsd.html#Mask_X>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Mask - Y <OME-2012-06/ome_xsd.html#Mask_$prop>`
+   * - :schema:`Mask - Y <OME-2012-06/ome_xsd.html#Mask_Y>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`MicrobeamManipulation - ExperimenterRef <OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`
+   * - :schema:`MicrobeamManipulation - ExperimenterRef <OME-2012-06/ome_xsd.html#MicrobeamManipulation_ExperimenterRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`MicrobeamManipulation - ID <OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`
+   * - :schema:`MicrobeamManipulation - ID <OME-2012-06/ome_xsd.html#MicrobeamManipulation_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`MicrobeamManipulation - ROIRef <OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`
+   * - :schema:`MicrobeamManipulation - ROIRef <OME-2012-06/ome_xsd.html#MicrobeamManipulation_ROIRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`MicrobeamManipulation - Type <OME-2012-06/ome_xsd.html#MicrobeamManipulation_$prop>`
+   * - :schema:`MicrobeamManipulation - Type <OME-2012-06/ome_xsd.html#MicrobeamManipulation_Type>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`MicrobeamManipulationLightSourceSettings - Attenuation <OME-2012-06/ome_xsd.html#LightSourceSettings_$prop>`
+   * - :schema:`MicrobeamManipulationLightSourceSettings - Attenuation <OME-2012-06/ome_xsd.html#LightSourceSettings_Attenuation>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`MicrobeamManipulationLightSourceSettings - ID <OME-2012-06/ome_xsd.html#LightSourceSettings_$prop>`
+   * - :schema:`MicrobeamManipulationLightSourceSettings - ID <OME-2012-06/ome_xsd.html#LightSourceSettings_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`MicrobeamManipulationLightSourceSettings - Wavelength <OME-2012-06/ome_xsd.html#LightSourceSettings_$prop>`
+   * - :schema:`MicrobeamManipulationLightSourceSettings - Wavelength <OME-2012-06/ome_xsd.html#LightSourceSettings_Wavelength>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Microscope - LotNumber <OME-2012-06/ome_xsd.html#Microscope_$prop>`
+   * - :schema:`Microscope - LotNumber <OME-2012-06/ome_xsd.html#Microscope_LotNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Microscope - Manufacturer <OME-2012-06/ome_xsd.html#Microscope_$prop>`
+   * - :schema:`Microscope - Manufacturer <OME-2012-06/ome_xsd.html#Microscope_Manufacturer>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Microscope - Model <OME-2012-06/ome_xsd.html#Microscope_$prop>`
+   * - :schema:`Microscope - Model <OME-2012-06/ome_xsd.html#Microscope_Model>`
      - 10
      - 0
      - 0
      - 144
-   * - :schema:`Microscope - SerialNumber <OME-2012-06/ome_xsd.html#Microscope_$prop>`
+   * - :schema:`Microscope - SerialNumber <OME-2012-06/ome_xsd.html#Microscope_SerialNumber>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Microscope - Type <OME-2012-06/ome_xsd.html#Microscope_$prop>`
+   * - :schema:`Microscope - Type <OME-2012-06/ome_xsd.html#Microscope_Type>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Objective - CalibratedMagnification <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - CalibratedMagnification <OME-2012-06/ome_xsd.html#Objective_CalibratedMagnification>`
      - 9
      - 0
      - 0
      - 145
-   * - :schema:`Objective - Correction <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - Correction <OME-2012-06/ome_xsd.html#Objective_Correction>`
      - 24
      - 0
      - 0
      - 130
-   * - :schema:`Objective - ID <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - ID <OME-2012-06/ome_xsd.html#Objective_ID>`
      - 30
      - 0
      - 0
      - 124
-   * - :schema:`Objective - Immersion <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - Immersion <OME-2012-06/ome_xsd.html#Objective_Immersion>`
      - 25
      - 0
      - 0
      - 129
-   * - :schema:`Objective - Iris <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - Iris <OME-2012-06/ome_xsd.html#Objective_Iris>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Objective - LensNA <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - LensNA <OME-2012-06/ome_xsd.html#Objective_LensNA>`
      - 19
      - 0
      - 0
      - 135
-   * - :schema:`Objective - LotNumber <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - LotNumber <OME-2012-06/ome_xsd.html#Objective_LotNumber>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Objective - Manufacturer <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - Manufacturer <OME-2012-06/ome_xsd.html#Objective_Manufacturer>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Objective - Model <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - Model <OME-2012-06/ome_xsd.html#Objective_Model>`
      - 12
      - 0
      - 0
      - 142
-   * - :schema:`Objective - NominalMagnification <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - NominalMagnification <OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`
      - 22
      - 0
      - 0
      - 132
-   * - :schema:`Objective - SerialNumber <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - SerialNumber <OME-2012-06/ome_xsd.html#Objective_SerialNumber>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Objective - WorkingDistance <OME-2012-06/ome_xsd.html#Objective_$prop>`
+   * - :schema:`Objective - WorkingDistance <OME-2012-06/ome_xsd.html#Objective_WorkingDistance>`
      - 9
      - 0
      - 0
      - 145
-   * - :schema:`ObjectiveSettings - CorrectionCollar <OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`
+   * - :schema:`ObjectiveSettings - CorrectionCollar <OME-2012-06/ome_xsd.html#ObjectiveSettings_CorrectionCollar>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`ObjectiveSettings - ID <OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`
+   * - :schema:`ObjectiveSettings - ID <OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`
      - 25
      - 0
      - 0
      - 129
-   * - :schema:`ObjectiveSettings - Medium <OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`
+   * - :schema:`ObjectiveSettings - Medium <OME-2012-06/ome_xsd.html#ObjectiveSettings_Medium>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`ObjectiveSettings - RefractiveIndex <OME-2012-06/ome_xsd.html#ObjectiveSettings_$prop>`
+   * - :schema:`ObjectiveSettings - RefractiveIndex <OME-2012-06/ome_xsd.html#ObjectiveSettings_RefractiveIndex>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`Pixels - AnnotationRef <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - AnnotationRef <OME-2012-06/ome_xsd.html#Pixels_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Pixels - BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Pixels - DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Pixels - ID <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Pixels - PhysicalSizeX <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - PhysicalSizeX <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`
      - 80
      - 0
      - 0
      - 74
-   * - :schema:`Pixels - PhysicalSizeY <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - PhysicalSizeY <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeY>`
      - 80
      - 0
      - 0
      - 74
-   * - :schema:`Pixels - PhysicalSizeZ <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - PhysicalSizeZ <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeZ>`
      - 40
      - 0
      - 0
      - 114
-   * - :schema:`Pixels - SizeC <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - SizeC <OME-2012-06/ome_xsd.html#Pixels_SizeC>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Pixels - SizeT <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - SizeT <OME-2012-06/ome_xsd.html#Pixels_SizeT>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Pixels - SizeX <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - SizeX <OME-2012-06/ome_xsd.html#Pixels_SizeX>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Pixels - SizeY <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - SizeY <OME-2012-06/ome_xsd.html#Pixels_SizeY>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Pixels - SizeZ <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - SizeZ <OME-2012-06/ome_xsd.html#Pixels_SizeZ>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Pixels - TimeIncrement <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - TimeIncrement <OME-2012-06/ome_xsd.html#Pixels_TimeIncrement>`
      - 16
      - 0
      - 0
      - 138
-   * - :schema:`Pixels - Type <OME-2012-06/ome_xsd.html#Pixels_$prop>`
+   * - :schema:`Pixels - Type <OME-2012-06/ome_xsd.html#Pixels_Type>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Plane - AnnotationRef <OME-2012-06/ome_xsd.html#Plane_$prop>`
+   * - :schema:`Plane - AnnotationRef <OME-2012-06/ome_xsd.html#Plane_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Plane - DeltaT <OME-2012-06/ome_xsd.html#Plane_$prop>`
+   * - :schema:`Plane - DeltaT <OME-2012-06/ome_xsd.html#Plane_DeltaT>`
      - 22
      - 0
      - 0
      - 132
-   * - :schema:`Plane - ExposureTime <OME-2012-06/ome_xsd.html#Plane_$prop>`
+   * - :schema:`Plane - ExposureTime <OME-2012-06/ome_xsd.html#Plane_ExposureTime>`
      - 25
      - 0
      - 0
      - 129
-   * - :schema:`Plane - HashSHA1 <OME-2012-06/ome_xsd.html#Plane_$prop>`
+   * - :schema:`Plane - HashSHA1 <OME-2012-06/ome_xsd.html#Plane_HashSHA1>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Plane - PositionX <OME-2012-06/ome_xsd.html#Plane_$prop>`
+   * - :schema:`Plane - PositionX <OME-2012-06/ome_xsd.html#Plane_PositionX>`
      - 25
      - 0
      - 0
      - 129
-   * - :schema:`Plane - PositionY <OME-2012-06/ome_xsd.html#Plane_$prop>`
+   * - :schema:`Plane - PositionY <OME-2012-06/ome_xsd.html#Plane_PositionY>`
      - 25
      - 0
      - 0
      - 129
-   * - :schema:`Plane - PositionZ <OME-2012-06/ome_xsd.html#Plane_$prop>`
+   * - :schema:`Plane - PositionZ <OME-2012-06/ome_xsd.html#Plane_PositionZ>`
      - 19
      - 0
      - 0
      - 135
-   * - :schema:`Plane - TheC <OME-2012-06/ome_xsd.html#Plane_$prop>`
+   * - :schema:`Plane - TheC <OME-2012-06/ome_xsd.html#Plane_TheC>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Plane - TheT <OME-2012-06/ome_xsd.html#Plane_$prop>`
+   * - :schema:`Plane - TheT <OME-2012-06/ome_xsd.html#Plane_TheT>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Plane - TheZ <OME-2012-06/ome_xsd.html#Plane_$prop>`
+   * - :schema:`Plane - TheZ <OME-2012-06/ome_xsd.html#Plane_TheZ>`
      - 154
      - 0
      - 0
      - 0
-   * - :schema:`Plate - AnnotationRef <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - AnnotationRef <OME-2012-06/ome_xsd.html#Plate_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Plate - ColumnNamingConvention <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - ColumnNamingConvention <OME-2012-06/ome_xsd.html#Plate_ColumnNamingConvention>`
      - 8
      - 0
      - 0
      - 146
-   * - :schema:`Plate - Columns <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - Columns <OME-2012-06/ome_xsd.html#Plate_Columns>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Plate - Description <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - Description <OME-2012-06/ome_xsd.html#Plate_Description>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Plate - ExternalIdentifier <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - ExternalIdentifier <OME-2012-06/ome_xsd.html#Plate_ExternalIdentifier>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Plate - ID <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - ID <OME-2012-06/ome_xsd.html#Plate_ID>`
      - 10
      - 0
      - 0
      - 144
-   * - :schema:`Plate - Name <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - Name <OME-2012-06/ome_xsd.html#Plate_Name>`
      - 9
      - 0
      - 0
      - 145
-   * - :schema:`Plate - RowNamingConvention <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - RowNamingConvention <OME-2012-06/ome_xsd.html#Plate_RowNamingConvention>`
      - 8
      - 0
      - 0
      - 146
-   * - :schema:`Plate - Rows <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - Rows <OME-2012-06/ome_xsd.html#Plate_Rows>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Plate - Status <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - Status <OME-2012-06/ome_xsd.html#Plate_Status>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Plate - WellOriginX <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - WellOriginX <OME-2012-06/ome_xsd.html#Plate_WellOriginX>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Plate - WellOriginY <OME-2012-06/ome_xsd.html#Plate_$prop>`
+   * - :schema:`Plate - WellOriginY <OME-2012-06/ome_xsd.html#Plate_WellOriginY>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`PlateAcquisition - AnnotationRef <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+   * - :schema:`PlateAcquisition - AnnotationRef <OME-2012-06/ome_xsd.html#PlateAcquisition_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`PlateAcquisition - Description <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+   * - :schema:`PlateAcquisition - Description <OME-2012-06/ome_xsd.html#PlateAcquisition_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`PlateAcquisition - EndTime <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+   * - :schema:`PlateAcquisition - EndTime <OME-2012-06/ome_xsd.html#PlateAcquisition_EndTime>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`PlateAcquisition - ID <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+   * - :schema:`PlateAcquisition - ID <OME-2012-06/ome_xsd.html#PlateAcquisition_ID>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`PlateAcquisition - MaximumFieldCount <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+   * - :schema:`PlateAcquisition - MaximumFieldCount <OME-2012-06/ome_xsd.html#PlateAcquisition_MaximumFieldCount>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`PlateAcquisition - Name <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+   * - :schema:`PlateAcquisition - Name <OME-2012-06/ome_xsd.html#PlateAcquisition_Name>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`PlateAcquisition - StartTime <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+   * - :schema:`PlateAcquisition - StartTime <OME-2012-06/ome_xsd.html#PlateAcquisition_StartTime>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`PlateAcquisition - WellSampleRef <OME-2012-06/ome_xsd.html#PlateAcquisition_$prop>`
+   * - :schema:`PlateAcquisition - WellSampleRef <OME-2012-06/ome_xsd.html#PlateAcquisition_WellSampleRef>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`Point - FillColor <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - FillColor <OME-2012-06/ome_xsd.html#Point_FillColor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Point - FillRule <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - FillRule <OME-2012-06/ome_xsd.html#Point_FillRule>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Point - FontFamily <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - FontFamily <OME-2012-06/ome_xsd.html#Point_FontFamily>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Point - FontSize <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - FontSize <OME-2012-06/ome_xsd.html#Point_FontSize>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Point - FontStyle <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - FontStyle <OME-2012-06/ome_xsd.html#Point_FontStyle>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Point - ID <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - ID <OME-2012-06/ome_xsd.html#Point_ID>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Point - LineCap <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - LineCap <OME-2012-06/ome_xsd.html#Point_LineCap>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Point - Locked <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - Locked <OME-2012-06/ome_xsd.html#Point_Locked>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Point - StrokeColor <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - StrokeColor <OME-2012-06/ome_xsd.html#Point_StrokeColor>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Point - StrokeDashArray <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - StrokeDashArray <OME-2012-06/ome_xsd.html#Point_StrokeDashArray>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Point - StrokeWidth <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - StrokeWidth <OME-2012-06/ome_xsd.html#Point_StrokeWidth>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Point - Text <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - Text <OME-2012-06/ome_xsd.html#Point_Text>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Point - TheC <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - TheC <OME-2012-06/ome_xsd.html#Point_TheC>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Point - TheT <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - TheT <OME-2012-06/ome_xsd.html#Point_TheT>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Point - TheZ <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - TheZ <OME-2012-06/ome_xsd.html#Point_TheZ>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Point - Transform <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - Transform <OME-2012-06/ome_xsd.html#Point_Transform>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Point - Visible <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - Visible <OME-2012-06/ome_xsd.html#Point_Visible>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Point - X <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - X <OME-2012-06/ome_xsd.html#Point_X>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Point - Y <OME-2012-06/ome_xsd.html#Point_$prop>`
+   * - :schema:`Point - Y <OME-2012-06/ome_xsd.html#Point_Y>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Polygon - FillColor <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - FillColor <OME-2012-06/ome_xsd.html#Polygon_FillColor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polygon - FillRule <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - FillRule <OME-2012-06/ome_xsd.html#Polygon_FillRule>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polygon - FontFamily <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - FontFamily <OME-2012-06/ome_xsd.html#Polygon_FontFamily>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polygon - FontSize <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - FontSize <OME-2012-06/ome_xsd.html#Polygon_FontSize>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Polygon - FontStyle <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - FontStyle <OME-2012-06/ome_xsd.html#Polygon_FontStyle>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polygon - ID <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - ID <OME-2012-06/ome_xsd.html#Polygon_ID>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`Polygon - LineCap <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - LineCap <OME-2012-06/ome_xsd.html#Polygon_LineCap>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polygon - Locked <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - Locked <OME-2012-06/ome_xsd.html#Polygon_Locked>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polygon - Points <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - Points <OME-2012-06/ome_xsd.html#Polygon_Points>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`Polygon - StrokeColor <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - StrokeColor <OME-2012-06/ome_xsd.html#Polygon_StrokeColor>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Polygon - StrokeDashArray <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - StrokeDashArray <OME-2012-06/ome_xsd.html#Polygon_StrokeDashArray>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Polygon - StrokeWidth <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - StrokeWidth <OME-2012-06/ome_xsd.html#Polygon_StrokeWidth>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Polygon - Text <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - Text <OME-2012-06/ome_xsd.html#Polygon_Text>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Polygon - TheC <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - TheC <OME-2012-06/ome_xsd.html#Polygon_TheC>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polygon - TheT <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - TheT <OME-2012-06/ome_xsd.html#Polygon_TheT>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Polygon - TheZ <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - TheZ <OME-2012-06/ome_xsd.html#Polygon_TheZ>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Polygon - Transform <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - Transform <OME-2012-06/ome_xsd.html#Polygon_Transform>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Polygon - Visible <OME-2012-06/ome_xsd.html#Polygon_$prop>`
+   * - :schema:`Polygon - Visible <OME-2012-06/ome_xsd.html#Polygon_Visible>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polyline - FillColor <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - FillColor <OME-2012-06/ome_xsd.html#Polyline_FillColor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polyline - FillRule <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - FillRule <OME-2012-06/ome_xsd.html#Polyline_FillRule>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polyline - FontFamily <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - FontFamily <OME-2012-06/ome_xsd.html#Polyline_FontFamily>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polyline - FontSize <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - FontSize <OME-2012-06/ome_xsd.html#Polyline_FontSize>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Polyline - FontStyle <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - FontStyle <OME-2012-06/ome_xsd.html#Polyline_FontStyle>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polyline - ID <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - ID <OME-2012-06/ome_xsd.html#Polyline_ID>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Polyline - LineCap <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - LineCap <OME-2012-06/ome_xsd.html#Polyline_LineCap>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polyline - Locked <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - Locked <OME-2012-06/ome_xsd.html#Polyline_Locked>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polyline - MarkerEnd <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - MarkerEnd <OME-2012-06/ome_xsd.html#Polyline_MarkerEnd>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polyline - MarkerStart <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - MarkerStart <OME-2012-06/ome_xsd.html#Polyline_MarkerStart>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polyline - Points <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - Points <OME-2012-06/ome_xsd.html#Polyline_Points>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`Polyline - StrokeColor <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - StrokeColor <OME-2012-06/ome_xsd.html#Polyline_StrokeColor>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Polyline - StrokeDashArray <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - StrokeDashArray <OME-2012-06/ome_xsd.html#Polyline_StrokeDashArray>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Polyline - StrokeWidth <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - StrokeWidth <OME-2012-06/ome_xsd.html#Polyline_StrokeWidth>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`Polyline - Text <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - Text <OME-2012-06/ome_xsd.html#Polyline_Text>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Polyline - TheC <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - TheC <OME-2012-06/ome_xsd.html#Polyline_TheC>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Polyline - TheT <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - TheT <OME-2012-06/ome_xsd.html#Polyline_TheT>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Polyline - TheZ <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - TheZ <OME-2012-06/ome_xsd.html#Polyline_TheZ>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Polyline - Transform <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - Transform <OME-2012-06/ome_xsd.html#Polyline_Transform>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Polyline - Visible <OME-2012-06/ome_xsd.html#Polyline_$prop>`
+   * - :schema:`Polyline - Visible <OME-2012-06/ome_xsd.html#Polyline_Visible>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Project - AnnotationRef <OME-2012-06/ome_xsd.html#Project_$prop>`
+   * - :schema:`Project - AnnotationRef <OME-2012-06/ome_xsd.html#Project_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Project - DatasetRef <OME-2012-06/ome_xsd.html#Project_$prop>`
+   * - :schema:`Project - DatasetRef <OME-2012-06/ome_xsd.html#Project_DatasetRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Project - Description <OME-2012-06/ome_xsd.html#Project_$prop>`
+   * - :schema:`Project - Description <OME-2012-06/ome_xsd.html#Project_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Project - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Project_$prop>`
+   * - :schema:`Project - ExperimenterGroupRef <OME-2012-06/ome_xsd.html#Project_ExperimenterGroupRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Project - ExperimenterRef <OME-2012-06/ome_xsd.html#Project_$prop>`
+   * - :schema:`Project - ExperimenterRef <OME-2012-06/ome_xsd.html#Project_ExperimenterRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Project - ID <OME-2012-06/ome_xsd.html#Project_$prop>`
+   * - :schema:`Project - ID <OME-2012-06/ome_xsd.html#Project_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Project - Name <OME-2012-06/ome_xsd.html#Project_$prop>`
+   * - :schema:`Project - Name <OME-2012-06/ome_xsd.html#Project_Name>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`ROI - AnnotationRef <OME-2012-06/ome_xsd.html#ROI_$prop>`
+   * - :schema:`ROI - AnnotationRef <OME-2012-06/ome_xsd.html#ROI_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`ROI - Description <OME-2012-06/ome_xsd.html#ROI_$prop>`
+   * - :schema:`ROI - Description <OME-2012-06/ome_xsd.html#ROI_Description>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`ROI - ID <OME-2012-06/ome_xsd.html#ROI_$prop>`
+   * - :schema:`ROI - ID <OME-2012-06/ome_xsd.html#ROI_ID>`
      - 11
      - 0
      - 0
      - 143
-   * - :schema:`ROI - Name <OME-2012-06/ome_xsd.html#ROI_$prop>`
+   * - :schema:`ROI - Name <OME-2012-06/ome_xsd.html#ROI_Name>`
      - 3
      - 0
      - 0
      - 151
-   * - :schema:`ROI - Namespace <OME-2012-06/ome_xsd.html#ROI_$prop>`
+   * - :schema:`ROI - Namespace <OME-2012-06/ome_xsd.html#ROI_Namespace>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Reagent - AnnotationRef <OME-2012-06/ome_xsd.html#Reagent_$prop>`
+   * - :schema:`Reagent - AnnotationRef <OME-2012-06/ome_xsd.html#Reagent_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Reagent - Description <OME-2012-06/ome_xsd.html#Reagent_$prop>`
+   * - :schema:`Reagent - Description <OME-2012-06/ome_xsd.html#Reagent_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Reagent - ID <OME-2012-06/ome_xsd.html#Reagent_$prop>`
+   * - :schema:`Reagent - ID <OME-2012-06/ome_xsd.html#Reagent_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Reagent - Name <OME-2012-06/ome_xsd.html#Reagent_$prop>`
+   * - :schema:`Reagent - Name <OME-2012-06/ome_xsd.html#Reagent_Name>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Reagent - ReagentIdentifier <OME-2012-06/ome_xsd.html#Reagent_$prop>`
+   * - :schema:`Reagent - ReagentIdentifier <OME-2012-06/ome_xsd.html#Reagent_ReagentIdentifier>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Rectangle - FillColor <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - FillColor <OME-2012-06/ome_xsd.html#Rectangle_FillColor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Rectangle - FillRule <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - FillRule <OME-2012-06/ome_xsd.html#Rectangle_FillRule>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Rectangle - FontFamily <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - FontFamily <OME-2012-06/ome_xsd.html#Rectangle_FontFamily>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Rectangle - FontSize <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - FontSize <OME-2012-06/ome_xsd.html#Rectangle_FontSize>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Rectangle - FontStyle <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - FontStyle <OME-2012-06/ome_xsd.html#Rectangle_FontStyle>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Rectangle - Height <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - Height <OME-2012-06/ome_xsd.html#Rectangle_Height>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`Rectangle - ID <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - ID <OME-2012-06/ome_xsd.html#Rectangle_ID>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`Rectangle - LineCap <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - LineCap <OME-2012-06/ome_xsd.html#Rectangle_LineCap>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Rectangle - Locked <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - Locked <OME-2012-06/ome_xsd.html#Rectangle_Locked>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Rectangle - StrokeColor <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - StrokeColor <OME-2012-06/ome_xsd.html#Rectangle_StrokeColor>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Rectangle - StrokeDashArray <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - StrokeDashArray <OME-2012-06/ome_xsd.html#Rectangle_StrokeDashArray>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Rectangle - StrokeWidth <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - StrokeWidth <OME-2012-06/ome_xsd.html#Rectangle_StrokeWidth>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Rectangle - Text <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - Text <OME-2012-06/ome_xsd.html#Rectangle_Text>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`Rectangle - TheC <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - TheC <OME-2012-06/ome_xsd.html#Rectangle_TheC>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Rectangle - TheT <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - TheT <OME-2012-06/ome_xsd.html#Rectangle_TheT>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Rectangle - TheZ <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - TheZ <OME-2012-06/ome_xsd.html#Rectangle_TheZ>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Rectangle - Transform <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - Transform <OME-2012-06/ome_xsd.html#Rectangle_Transform>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Rectangle - Visible <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - Visible <OME-2012-06/ome_xsd.html#Rectangle_Visible>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Rectangle - Width <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - Width <OME-2012-06/ome_xsd.html#Rectangle_Width>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`Rectangle - X <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - X <OME-2012-06/ome_xsd.html#Rectangle_X>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`Rectangle - Y <OME-2012-06/ome_xsd.html#Rectangle_$prop>`
+   * - :schema:`Rectangle - Y <OME-2012-06/ome_xsd.html#Rectangle_Y>`
      - 7
      - 0
      - 0
      - 147
-   * - :schema:`Screen - AnnotationRef <OME-2012-06/ome_xsd.html#Screen_$prop>`
+   * - :schema:`Screen - AnnotationRef <OME-2012-06/ome_xsd.html#Screen_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Screen - Description <OME-2012-06/ome_xsd.html#Screen_$prop>`
+   * - :schema:`Screen - Description <OME-2012-06/ome_xsd.html#Screen_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Screen - ID <OME-2012-06/ome_xsd.html#Screen_$prop>`
+   * - :schema:`Screen - ID <OME-2012-06/ome_xsd.html#Screen_ID>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Screen - Name <OME-2012-06/ome_xsd.html#Screen_$prop>`
+   * - :schema:`Screen - Name <OME-2012-06/ome_xsd.html#Screen_Name>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Screen - PlateRef <OME-2012-06/ome_xsd.html#Screen_$prop>`
+   * - :schema:`Screen - PlateRef <OME-2012-06/ome_xsd.html#Screen_PlateRef>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`Screen - ProtocolDescription <OME-2012-06/ome_xsd.html#Screen_$prop>`
+   * - :schema:`Screen - ProtocolDescription <OME-2012-06/ome_xsd.html#Screen_ProtocolDescription>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Screen - ProtocolIdentifier <OME-2012-06/ome_xsd.html#Screen_$prop>`
+   * - :schema:`Screen - ProtocolIdentifier <OME-2012-06/ome_xsd.html#Screen_ProtocolIdentifier>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Screen - ReagentSetDescription <OME-2012-06/ome_xsd.html#Screen_$prop>`
+   * - :schema:`Screen - ReagentSetDescription <OME-2012-06/ome_xsd.html#Screen_ReagentSetDescription>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Screen - ReagentSetIdentifier <OME-2012-06/ome_xsd.html#Screen_$prop>`
+   * - :schema:`Screen - ReagentSetIdentifier <OME-2012-06/ome_xsd.html#Screen_ReagentSetIdentifier>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Screen - Type <OME-2012-06/ome_xsd.html#Screen_$prop>`
+   * - :schema:`Screen - Type <OME-2012-06/ome_xsd.html#Screen_Type>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`StageLabel - Name <OME-2012-06/ome_xsd.html#StageLabel_$prop>`
+   * - :schema:`StageLabel - Name <OME-2012-06/ome_xsd.html#StageLabel_Name>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`StageLabel - X <OME-2012-06/ome_xsd.html#StageLabel_$prop>`
+   * - :schema:`StageLabel - X <OME-2012-06/ome_xsd.html#StageLabel_X>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`StageLabel - Y <OME-2012-06/ome_xsd.html#StageLabel_$prop>`
+   * - :schema:`StageLabel - Y <OME-2012-06/ome_xsd.html#StageLabel_Y>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`StageLabel - Z <OME-2012-06/ome_xsd.html#StageLabel_$prop>`
+   * - :schema:`StageLabel - Z <OME-2012-06/ome_xsd.html#StageLabel_Z>`
      - 2
      - 0
      - 0
      - 152
-   * - :schema:`TagAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`
+   * - :schema:`TagAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TagAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TagAnnotation - Description <OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`
+   * - :schema:`TagAnnotation - Description <OME-2012-06/ome_xsd.html#TagAnnotation_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TagAnnotation - ID <OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`
+   * - :schema:`TagAnnotation - ID <OME-2012-06/ome_xsd.html#TagAnnotation_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TagAnnotation - Namespace <OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`
+   * - :schema:`TagAnnotation - Namespace <OME-2012-06/ome_xsd.html#TagAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TagAnnotation - Value <OME-2012-06/ome_xsd.html#TagAnnotation_$prop>`
+   * - :schema:`TagAnnotation - Value <OME-2012-06/ome_xsd.html#TagAnnotation_Value>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TermAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`
+   * - :schema:`TermAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TermAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TermAnnotation - Description <OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`
+   * - :schema:`TermAnnotation - Description <OME-2012-06/ome_xsd.html#TermAnnotation_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TermAnnotation - ID <OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`
+   * - :schema:`TermAnnotation - ID <OME-2012-06/ome_xsd.html#TermAnnotation_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TermAnnotation - Namespace <OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`
+   * - :schema:`TermAnnotation - Namespace <OME-2012-06/ome_xsd.html#TermAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TermAnnotation - Value <OME-2012-06/ome_xsd.html#TermAnnotation_$prop>`
+   * - :schema:`TermAnnotation - Value <OME-2012-06/ome_xsd.html#TermAnnotation_Value>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TiffData - FirstC <OME-2012-06/ome_xsd.html#TiffData_$prop>`
+   * - :schema:`TiffData - FirstC <OME-2012-06/ome_xsd.html#TiffData_FirstC>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TiffData - FirstT <OME-2012-06/ome_xsd.html#TiffData_$prop>`
+   * - :schema:`TiffData - FirstT <OME-2012-06/ome_xsd.html#TiffData_FirstT>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TiffData - FirstZ <OME-2012-06/ome_xsd.html#TiffData_$prop>`
+   * - :schema:`TiffData - FirstZ <OME-2012-06/ome_xsd.html#TiffData_FirstZ>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TiffData - IFD <OME-2012-06/ome_xsd.html#TiffData_$prop>`
+   * - :schema:`TiffData - IFD <OME-2012-06/ome_xsd.html#TiffData_IFD>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TiffData - PlaneCount <OME-2012-06/ome_xsd.html#TiffData_$prop>`
+   * - :schema:`TiffData - PlaneCount <OME-2012-06/ome_xsd.html#TiffData_PlaneCount>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TimestampAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`
+   * - :schema:`TimestampAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#TimestampAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TimestampAnnotation - Description <OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`
+   * - :schema:`TimestampAnnotation - Description <OME-2012-06/ome_xsd.html#TimestampAnnotation_Description>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TimestampAnnotation - ID <OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`
+   * - :schema:`TimestampAnnotation - ID <OME-2012-06/ome_xsd.html#TimestampAnnotation_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TimestampAnnotation - Namespace <OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`
+   * - :schema:`TimestampAnnotation - Namespace <OME-2012-06/ome_xsd.html#TimestampAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TimestampAnnotation - Value <OME-2012-06/ome_xsd.html#TimestampAnnotation_$prop>`
+   * - :schema:`TimestampAnnotation - Value <OME-2012-06/ome_xsd.html#TimestampAnnotation_Value>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`TransmittanceRange - CutIn <OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`
+   * - :schema:`TransmittanceRange - CutIn <OME-2012-06/ome_xsd.html#TransmittanceRange_CutIn>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`TransmittanceRange - CutInTolerance <OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`
+   * - :schema:`TransmittanceRange - CutInTolerance <OME-2012-06/ome_xsd.html#TransmittanceRange_CutInTolerance>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`TransmittanceRange - CutOut <OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`
+   * - :schema:`TransmittanceRange - CutOut <OME-2012-06/ome_xsd.html#TransmittanceRange_CutOut>`
      - 5
      - 0
      - 0
      - 149
-   * - :schema:`TransmittanceRange - CutOutTolerance <OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`
+   * - :schema:`TransmittanceRange - CutOutTolerance <OME-2012-06/ome_xsd.html#TransmittanceRange_CutOutTolerance>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`TransmittanceRange - Transmittance <OME-2012-06/ome_xsd.html#TransmittanceRange_$prop>`
+   * - :schema:`TransmittanceRange - Transmittance <OME-2012-06/ome_xsd.html#TransmittanceRange_Transmittance>`
      - 1
      - 0
      - 0
      - 153
-   * - :schema:`UUID - FileName <OME-2012-06/ome_xsd.html#UUID_$prop>`
+   * - :schema:`UUID - FileName <OME-2012-06/ome_xsd.html#UUID_FileName>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`UUID - Value <OME-2012-06/ome_xsd.html#UUID_$prop>`
+   * - :schema:`UUID - Value <OME-2012-06/ome_xsd.html#UUID_Value>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Well - AnnotationRef <OME-2012-06/ome_xsd.html#Well_$prop>`
+   * - :schema:`Well - AnnotationRef <OME-2012-06/ome_xsd.html#Well_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Well - Color <OME-2012-06/ome_xsd.html#Well_$prop>`
+   * - :schema:`Well - Color <OME-2012-06/ome_xsd.html#Well_Color>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Well - Column <OME-2012-06/ome_xsd.html#Well_$prop>`
+   * - :schema:`Well - Column <OME-2012-06/ome_xsd.html#Well_Column>`
      - 10
      - 0
      - 0
      - 144
-   * - :schema:`Well - ExternalDescription <OME-2012-06/ome_xsd.html#Well_$prop>`
+   * - :schema:`Well - ExternalDescription <OME-2012-06/ome_xsd.html#Well_ExternalDescription>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Well - ExternalIdentifier <OME-2012-06/ome_xsd.html#Well_$prop>`
+   * - :schema:`Well - ExternalIdentifier <OME-2012-06/ome_xsd.html#Well_ExternalIdentifier>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Well - ID <OME-2012-06/ome_xsd.html#Well_$prop>`
+   * - :schema:`Well - ID <OME-2012-06/ome_xsd.html#Well_ID>`
      - 10
      - 0
      - 0
      - 144
-   * - :schema:`Well - ReagentRef <OME-2012-06/ome_xsd.html#Well_$prop>`
+   * - :schema:`Well - ReagentRef <OME-2012-06/ome_xsd.html#Well_ReagentRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`Well - Row <OME-2012-06/ome_xsd.html#Well_$prop>`
+   * - :schema:`Well - Row <OME-2012-06/ome_xsd.html#Well_Row>`
      - 10
      - 0
      - 0
      - 144
-   * - :schema:`Well - Type <OME-2012-06/ome_xsd.html#Well_$prop>`
+   * - :schema:`Well - Type <OME-2012-06/ome_xsd.html#Well_Type>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`WellSample - AnnotationRef <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+   * - :schema:`WellSample - AnnotationRef <OME-2012-06/ome_xsd.html#WellSample_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`WellSample - ID <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+   * - :schema:`WellSample - ID <OME-2012-06/ome_xsd.html#WellSample_ID>`
      - 10
      - 0
      - 0
      - 144
-   * - :schema:`WellSample - ImageRef <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+   * - :schema:`WellSample - ImageRef <OME-2012-06/ome_xsd.html#WellSample_ImageRef>`
      - 10
      - 0
      - 0
      - 144
-   * - :schema:`WellSample - Index <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+   * - :schema:`WellSample - Index <OME-2012-06/ome_xsd.html#WellSample_Index>`
      - 10
      - 0
      - 0
      - 144
-   * - :schema:`WellSample - PositionX <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+   * - :schema:`WellSample - PositionX <OME-2012-06/ome_xsd.html#WellSample_PositionX>`
      - 4
      - 0
      - 0
      - 150
-   * - :schema:`WellSample - PositionY <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+   * - :schema:`WellSample - PositionY <OME-2012-06/ome_xsd.html#WellSample_PositionY>`
      - 4
      - 0
      - 0
      - 150
-   * - :schema:`WellSample - Timepoint <OME-2012-06/ome_xsd.html#WellSample_$prop>`
+   * - :schema:`WellSample - Timepoint <OME-2012-06/ome_xsd.html#WellSample_Timepoint>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`XMLAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`
+   * - :schema:`XMLAnnotation - AnnotationRef <OME-2012-06/ome_xsd.html#XMLAnnotation_AnnotationRef>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`XMLAnnotation - ID <OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`
+   * - :schema:`XMLAnnotation - ID <OME-2012-06/ome_xsd.html#XMLAnnotation_ID>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`XMLAnnotation - Namespace <OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`
+   * - :schema:`XMLAnnotation - Namespace <OME-2012-06/ome_xsd.html#XMLAnnotation_Namespace>`
      - 0
      - 0
      - 0
      - 154
-   * - :schema:`XMLAnnotation - Value <OME-2012-06/ome_xsd.html#XMLAnnotation_$prop>`
+   * - :schema:`XMLAnnotation - Value <OME-2012-06/ome_xsd.html#XMLAnnotation_Value>`
      - 0
      - 0
      - 0
