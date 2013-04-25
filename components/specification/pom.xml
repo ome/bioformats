@@ -42,7 +42,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci-legacy</artifactId>
+      <artifactId>scifio</artifactId>
       <version>${project.version}</version>
     </dependency>
 
