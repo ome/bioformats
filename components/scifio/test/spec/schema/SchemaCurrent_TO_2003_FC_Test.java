@@ -25,7 +25,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 //Application-internal dependencies
-import ome.specification.AbstractTest;
+import spec.AbstractTest;
 import ome.specification.OmeValidator;
 import ome.specification.XMLMockObjects;
 import ome.specification.XMLWriter;

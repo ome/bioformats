@@ -142,7 +142,6 @@ Type "ant -p" for a list of targets.
       test-scifio,
       test-scifio-devel,
       test-scifio-tools,
-      test-specification,
       test-tests,
       test-turbojpeg"
     description="test all components">
@@ -418,6 +417,7 @@ Type "ant -p" for a list of targets.
       jar-loci-legacy,
       jar-lwf-stubs,
       jar-ome-xml,
+      jar-specification,
       jar-turbojpeg,
       metadata-src"/>
 
@@ -980,7 +980,8 @@ Type "ant -p" for a list of targets.
 
   <!-- Specification -->
   <target name="jar-specification"
-    description="create jar for Specification">
+    description="create jar for Specification"
+    depends="jar-ome-xml">
     <ant dir="components/specification" target="jar"/>
   </target>
   <target name="test-specification"
