@@ -473,7 +473,7 @@ public class ZeissZVIReader extends BaseZeissReader {
 
     s.seek(2);
     int layerversion = s.readInt();
-    LOGGER.debug("LAYER@" + (s.getFilePointer()-4) + ", version="+layerversion);
+    LOGGER.debug("LAYER@{} version={}", s.getFilePointer()-4, layerversion);
 
     // Layer name (assumed).  This is usually NULL in most files, so
     // we need to explicitly check whether it's a string prior to
@@ -488,7 +488,7 @@ public class ZeissZVIReader extends BaseZeissReader {
         layername = parseROIString(s);
       }
       if (layername != null)
-        LOGGER.debug("  Name=" + layername);
+        LOGGER.debug("  Name={}", layername);
       else
         LOGGER.debug("  Name=NULL");
     }
@@ -497,7 +497,7 @@ public class ZeissZVIReader extends BaseZeissReader {
 
     int roiCount = s.readShort();
     int roiFound = 0;
-    LOGGER.debug("  ShapeCount@" + (s.getFilePointer()-2) + " count=" +roiCount);
+    LOGGER.debug("  ShapeCount@{} count={}", s.getFilePointer()-2, roiCount);
 
     // Add new layer for this set of shapes.
     Layer nlayer = new Layer();
@@ -523,7 +523,7 @@ public class ZeissZVIReader extends BaseZeissReader {
       long roiOffset = s.getFilePointer() - 8;
       roiOffsets.add(new Long(roiOffset));
 
-      LOGGER.debug("ROI@" + roiOffset);
+      LOGGER.debug("ROI@{}", roiOffset);
 
       // Found ROI; now fill out the shape details and add to the
       // layer.
@@ -538,7 +538,7 @@ public class ZeissZVIReader extends BaseZeissReader {
       int shapeAttrLength = s.readInt();
       nshape.type = FeatureType.get(s.readInt());
 
-      LOGGER.debug("  ShapeAttrs@" + shapeAttrOffset + " len="+shapeAttrLength);
+      LOGGER.debug("  ShapeAttrs@{} len={}", shapeAttrOffset, shapeAttrLength);
 
       if (shapeAttrLength < 32) // Broken attrs.
         break;
@@ -609,7 +609,7 @@ public class ZeissZVIReader extends BaseZeissReader {
         }
 
         if (nshape.text != null)
-          LOGGER.debug("  Text=" + nshape.text);
+          LOGGER.debug("  Text={}", nshape.text);
         else
           LOGGER.debug("  Text=NULL");
       }
@@ -617,19 +617,19 @@ public class ZeissZVIReader extends BaseZeissReader {
       // Tag ID
       if (s.getFilePointer() + 8 > s.length()) break;
       s.skipBytes(4);
-      LOGGER.debug("  Tag@" + s.getFilePointer());
+      LOGGER.debug("  Tag@{}", s.getFilePointer());
       nshape.tagID = new Tag(s.readInt(), BaseZeissReader.Context.MAIN);
-      LOGGER.debug("    TagID=" + nshape.tagID);
+      LOGGER.debug("    TagID={}", nshape.tagID);
 
       // Font name
       nshape.fontName = parseROIString(s);
       if (nshape.fontName == null) break;
-      LOGGER.debug("  Font name=" + nshape.fontName);
+      LOGGER.debug("  Font name={}", nshape.fontName);
 
       // Label (name).
       nshape.name = parseROIString(s);
       if (nshape.name == null) break;
-      LOGGER.debug("  Name=" + nshape.name);
+      LOGGER.debug("  Name={}", nshape.name);
 
       // Handle size and point count.
       if (s.getFilePointer() + 20 > s.length()) break;
@@ -638,8 +638,8 @@ public class ZeissZVIReader extends BaseZeissReader {
       s.skipBytes(2);
       nshape.pointCount = s.readInt();
       s.skipBytes(6);
-      LOGGER.debug("  Handle size=" + nshape.handleSize);
-      LOGGER.debug("  Point count=" + nshape.pointCount);
+      LOGGER.debug("  Handle size={}", nshape.handleSize);
+      LOGGER.debug("  Point count={}", nshape.pointCount);
 
       if (s.getFilePointer() + (8*2*nshape.pointCount) > s.length()) break;
       nshape.points = new double[nshape.pointCount*2];
@@ -654,7 +654,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
 
     if (roiCount != roiFound) {
-      LOGGER.warn("Found " + roiFound + " ROIs, but " + roiCount + " ROIs expected");
+        LOGGER.warn("Found {} ROIs, but {} ROIs expected", roiFound, roiCount);
     }
 
     s.close();
@@ -671,7 +671,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     // Strip off NUL.
     String text = null;
     if (strlen >= 2) { // Don't read NUL
-        LOGGER.debug("  String@" + s.getFilePointer() + ", length="+strlen);
+        LOGGER.debug("  String@{} length={}", s.getFilePointer(), strlen);
         text = s.readString(strlen-2);
         s.skipBytes(2);
     } else {
