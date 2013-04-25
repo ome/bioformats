@@ -95,7 +95,7 @@
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-resources</id>
+            <id>copy-transforms</id>
             <phase>compile</phase>
             <goals>
                 <goal>copy-resources</goal>
@@ -112,13 +112,8 @@
             </resources>
           </configuration>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
           <execution>
-            <id>copy-resources</id>
+            <id>copy-schemas</id>
             <phase>compile</phase>
             <goals>
                 <goal>copy-resources</goal>
