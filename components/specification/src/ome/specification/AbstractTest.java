@@ -33,8 +33,8 @@ import javax.xml.XMLConstants;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -72,7 +72,7 @@ public class AbstractTest
     public static final String OME_XML_FORMAT = "ome.xml";
 
     /** Holds the error, info, warning. */
-    protected Log log = LogFactory.getLog(getClass());
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     protected String rootpass;
 
