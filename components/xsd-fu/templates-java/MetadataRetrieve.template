@@ -123,7 +123,7 @@ import ome.xml.model.primitives.*;
  * @author Melissa Linkert linkert at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public interface MetadataRetrieve {
+public interface MetadataRetrieve extends BaseMetadata {
 
 	// -- Entity counting (manual definitions) --
 

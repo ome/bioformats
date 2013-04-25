@@ -135,7 +135,7 @@ import ome.xml.model.primitives.*;
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public interface MetadataStore
+public interface MetadataStore extends BaseMetadata
 {
 	void createRoot();
 
