@@ -91,6 +91,52 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>compile</phase>
+            <goals>
+                <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/classes/transforms</outputDirectory>
+              <resources>
+              <resource>
+                <directory>${basedir}/transforms</directory>
+                <includes>
+                  <include>**/*.xsl</include>
+                </includes>
+              </resource>
+            </resources>
+          </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>compile</phase>
+            <goals>
+                <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/classes/released-schema</outputDirectory>
+              <resources>
+              <resource>
+                <directory>${basedir}/released-schema</directory>
+                <includes>
+                  <include>**/*</include>
+                </includes>
+              </resource>
+            </resources>
+          </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
