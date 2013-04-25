@@ -47,11 +47,6 @@ import loci.formats.ImageTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-
 /**
  * Uploads images to an OME server.
  *
@@ -435,10 +430,6 @@ public class OMEWriter extends FormatWriter {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
-    Logger root = Logger.getRootLogger();
-    root.setLevel(Level.INFO);
-    root.addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
-
     String server = null, user = null, pass = null;
     String id = null;
     int series = -1;

@@ -121,7 +121,7 @@ public class ChannelMerger extends ReaderWrapper {
   /* @see IFormatReader#isInterleaved() */
   public boolean isInterleaved() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return false;
+    return canMerge() ? false : reader.isInterleaved();
   }
 
   /* @see IFormatReader#isRGB() */

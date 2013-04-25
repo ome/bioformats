@@ -100,11 +100,21 @@ public class ICSWriter extends FormatWriter {
   {
     checkParams(no, buf, x, y, w, h);
 
+    if (pixels == null) {
+      pixels = new RandomAccessOutputStream(currentId);
+    }
+
     MetadataRetrieve meta = getMetadataRetrieve();
+
+    int rgbChannels = getSamplesPerPixel();
 
     String order = meta.getPixelsDimensionOrder(series).getValue();
     int sizeZ = meta.getPixelsSizeZ(series).getValue().intValue();
     int sizeC = meta.getChannelCount(series);
+    if (rgbChannels <= sizeC) {
+      sizeC /= rgbChannels;
+    }
+
     int sizeT = meta.getPixelsSizeT(series).getValue().intValue();
     int planes = sizeZ * sizeC * sizeT;
 
@@ -119,7 +129,6 @@ public class ICSWriter extends FormatWriter {
     int pixelType =
       FormatTools.pixelTypeFromString(meta.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-    int rgbChannels = getSamplesPerPixel();
     int planeSize = sizeX * sizeY * rgbChannels * bytesPerPixel;
 
     if (!initialized[series][realIndex]) {
@@ -152,6 +161,9 @@ public class ICSWriter extends FormatWriter {
       }
     }
     lastPlane = realIndex;
+
+    pixels.close();
+    pixels = null;
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -268,10 +280,6 @@ public class ICSWriter extends FormatWriter {
 
     if (checkSuffix(currentId, "ids")) {
       pixelOffset = 0;
-    }
-
-    if (pixels == null) {
-      pixels = new RandomAccessOutputStream(currentId);
     }
   }
 

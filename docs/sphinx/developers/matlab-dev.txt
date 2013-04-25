@@ -118,9 +118,8 @@ There are two kinds of metadata:
    same regardless of input file format. It is stored in the [s, 4]
    element of the data structure returned by bfopen, and contains common
    metadata values such as physical pixel sizes, instrument settings,
-   and much more. See the `OME Models &
-   Formats <http://www.openmicroscopy.org/site/support/file-formats/downloads>`_
-   pages for full details.
+   and much more. See the :model_doc:`OME Model and Formats <>` pages for full
+   details.
 
 Accessing original metadata
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

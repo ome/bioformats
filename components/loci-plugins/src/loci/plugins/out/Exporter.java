@@ -117,7 +117,6 @@ public class Exporter {
     Boolean splitZ = null;
     Boolean splitC = null;
     Boolean splitT = null;
-    int sizeZ = 0, sizeC = 0, sizeT = 0;
 
     if (plugin.arg != null) {
       outfile = Macro.getValue(plugin.arg, "outfile", null);
@@ -388,8 +387,6 @@ public class Exporter {
         store.setPixelsSizeT(new PositiveInteger(1), 0);
       }
 
-      w.setMetadataRetrieve(store);
-
       Object info = imp.getProperty("Info");
       if (info != null) {
         String imageInfo = info.toString();
@@ -427,11 +424,11 @@ public class Exporter {
 
       String[] outputFiles = new String[] {outfile};
 
-      if (splitZ || splitC || splitT) {
-        sizeZ = store.getPixelsSizeZ(0).getValue();
-        sizeC = store.getPixelsSizeC(0).getValue();
-        sizeT = store.getPixelsSizeT(0).getValue();
+      int sizeZ = store.getPixelsSizeZ(0).getValue();
+      int sizeC = store.getPixelsSizeC(0).getValue();
+      int sizeT = store.getPixelsSizeT(0).getValue();
 
+      if (splitZ || splitC || splitT) {
         int nFiles = 1;
         if (splitZ) {
           nFiles *= sizeZ;
@@ -459,6 +456,20 @@ public class Exporter {
           }
         }
       }
+
+      if (!w.getFormat().startsWith("OME")) {
+        if (splitZ) {
+          store.setPixelsSizeZ(new PositiveInteger(1), 0);
+        }
+        if (splitC) {
+          store.setPixelsSizeC(new PositiveInteger(1), 0);
+        }
+        if (splitT) {
+          store.setPixelsSizeT(new PositiveInteger(1), 0);
+        }
+      }
+
+      w.setMetadataRetrieve(store);
 
       // prompt for options
 
@@ -504,7 +515,7 @@ public class Exporter {
       byte[] plane = null;
       w.setInterleaved(false);
 
-      int no = 0;
+      int[] no = new int[outputFiles.length];
       for (int i=start; i<end; i++) {
         if (doStack) {
           BF.status(false, "Saving plane " + (i + 1) + "/" + size);
@@ -569,7 +580,7 @@ public class Exporter {
         }
         else {
           w.changeOutputFile(outputFiles[fileIndex]);
-          w.saveBytes(no++, plane);
+          w.saveBytes(no[fileIndex]++, plane);
         }
       }
       w.close();

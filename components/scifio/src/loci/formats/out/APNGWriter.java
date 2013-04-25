@@ -103,6 +103,9 @@ public class APNGWriter extends FormatWriter {
 
     writePixels(numFrames == 0 ? "IDAT" : "fdAT", buf, x, y, w, h);
     numFrames++;
+    if (numFrames == getPlaneCount()) {
+      writeFooter();
+    }
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -121,6 +124,8 @@ public class APNGWriter extends FormatWriter {
     super.setId(id);
 
     if (out.length() == 0) {
+      numFrames = 0;
+
       MetadataRetrieve r = getMetadataRetrieve();
       int width = r.getPixelsSizeX(series).getValue().intValue();
       int height = r.getPixelsSizeY(series).getValue().intValue();
@@ -172,9 +177,6 @@ public class APNGWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
-    if (out != null) {
-      writeFooter();
-    }
     super.close();
     numFrames = 0;
     numFramesPointer = 0;

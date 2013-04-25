@@ -178,6 +178,10 @@ a.internal > em {
     font-style: normal;
 }
 
+/* Options for sortable tables */
+table.sortable thead {
+}
+
 }
 
 @media print{

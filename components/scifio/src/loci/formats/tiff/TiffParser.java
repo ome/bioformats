@@ -804,8 +804,7 @@ public class TiffParser {
 
     // special case: if we only need one tile, and that tile doesn't need
     // any special handling, then we can just read it directly and return
-    if ((x % tileWidth) == 0 && (y % tileLength) == 0 && width == tileWidth &&
-      height == imageLength && samplesPerPixel == 1 &&
+    if ((x % tileWidth) == 0 && (y % tileLength) == 0 && samplesPerPixel == 1 &&
       (ifd.getBitsPerSample()[0] % 8) == 0 &&
       photoInterp != PhotoInterp.WHITE_IS_ZERO &&
       photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
@@ -829,10 +828,39 @@ public class TiffParser {
             byteCount *= pixel;
           }
 
-          in.seek(stripOffsets[tile]);
-          int len = (int) Math.min(buf.length - offset, byteCount);
-          in.read(buf, offset, len);
-          offset += len;
+          if (stripOffsets[tile] < in.length()) {
+            in.seek(stripOffsets[tile]);
+          }
+          else {
+            continue;
+          }
+
+          if (width == tileWidth && height == imageLength) {
+            // we want to entire tile, so just read the whole thing directly
+            int len = (int) Math.min(buf.length - offset, byteCount);
+            in.read(buf, offset, len);
+            offset += len;
+          }
+          else {
+            // we only want a piece of the tile, so read each row separately
+            // this is especially necessary for large single-tile images
+            int bpp = ifd.getBitsPerSample()[0] / 8;
+            for (int row=0; row<height; row++) {
+              in.skipBytes(x * bpp);
+              int len = (int) Math.min(buf.length - offset, width * bpp);
+              if (len > 0) {
+                in.read(buf, offset, len);
+                offset += len;
+                int skip = (int) (bpp * (tileWidth - x - width));
+                if (skip + in.getFilePointer() < in.length()) {
+                  in.skipBytes(skip);
+                }
+              }
+              else {
+                break;
+              }
+            }
+          }
         }
       }
       return buf;
@@ -865,7 +893,17 @@ public class TiffParser {
     Region tileBounds = new Region(0, 0, (int) tileWidth, (int) tileLength);
 
     for (int row=0; row<numTileRows; row++) {
+      // make the first row shorter to account for row overlap
+      if (row == 0) {
+        tileBounds.height = (int) (tileLength - overlapY);
+      }
+
       for (int col=0; col<numTileCols; col++) {
+        // make the first column narrower to account for column overlap
+        if (col == 0) {
+          tileBounds.width = (int) (tileWidth - overlapX);
+        }
+
         tileBounds.x = col * (int) (tileWidth - overlapX);
         tileBounds.y = row * (int) (tileLength - overlapY);
 
@@ -892,6 +930,7 @@ public class TiffParser {
         if (theight <= 0) {
           theight = (int) Math.max(endY - tileY, tileLength - realY);
         }
+
         // copy appropriate portion of the tile to the output buffer
 
         int copy = pixel * twidth;
@@ -905,7 +944,10 @@ public class TiffParser {
             outputRowLen * (tileY - y);
           if (planarConfig == 2) dest += (planeSize * (row / nrows));
 
-          if (rowLen == outputRowLen) {
+          // copying the tile directly will only work if there is no overlap;
+          // otherwise, we may be overwriting a previous tile
+          // (or the current tile may be overwritten by a subsequent tile)
+          if (rowLen == outputRowLen && overlapX == 0 && overlapY == 0) {
             System.arraycopy(cachedTileBuffer, src, buf, dest, copy * theight);
           }
           else {

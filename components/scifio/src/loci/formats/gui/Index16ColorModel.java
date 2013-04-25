@@ -59,7 +59,6 @@ public class Index16ColorModel extends ColorModel {
   private short[] redShort, greenShort, blueShort, alphaShort;
 
   private int pixelBits;
-  private boolean littleEndian;
 
   // -- Constructors --
 
@@ -67,8 +66,6 @@ public class Index16ColorModel extends ColorModel {
     boolean littleEndian) throws IOException
   {
     super(bits);
-
-    this.littleEndian = littleEndian;
 
     if (table == null) throw new IOException("LUT cannot be null");
     for (int i=0; i<table.length; i++) {
@@ -135,29 +132,31 @@ public class Index16ColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#getAlpha(int) */
   public int getAlpha(int pixel) {
-    if (alphaShort != null) return alphaShort[pixel] & 0xffff;
-    return 0xffff;
+    if (alphaShort != null) {
+      return (int) (((alphaShort[pixel] & 0xffff) / 65535.0) * 255.0);
+    }
+    return 0xff;
   }
 
   /* @see java.awt.image.ColorModel#getBlue(int) */
   public int getBlue(int pixel) {
     if (blueShort == null) return 0;
     int blue = blueShort[pixel] & 0xffff;
-    return littleEndian ? DataTools.swap(blue) : blue;
+    return (int) ((blue / 65535.0) * 255.0);
   }
 
   /* @see java.awt.image.ColorModel#getGreen(int) */
   public int getGreen(int pixel) {
     if (greenShort == null) return 0;
     int green = greenShort[pixel] & 0xffff;
-    return littleEndian ? DataTools.swap(green) : green;
+    return (int) ((green / 65535.0) * 255.0);
   }
 
   /* @see java.awt.image.ColorModel#getRed(int) */
   public int getRed(int pixel) {
     if (redShort == null) return 0;
     int red = redShort[pixel] & 0xffff;
-    return littleEndian ? DataTools.swap(red) : red;
+    return (int) ((red / 65535.0) * 255.0);
   }
 
 }

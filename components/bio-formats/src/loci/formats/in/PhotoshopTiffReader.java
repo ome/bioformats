@@ -244,7 +244,9 @@ public class PhotoshopTiffReader extends BaseTiffReader {
           layerNames[layer] = tag.readString(nameLength + pad);
           layerNames[layer] =
             layerNames[layer].replaceAll("[^\\p{ASCII}]", "").trim();
-          if (layerNames[layer].length() == nameLength + pad) {
+          if (layerNames[layer].length() == nameLength + pad &&
+            !layerNames[layer].equalsIgnoreCase("Layer " + layer + "M"))
+          {
             addGlobalMeta("Layer name #" + layer, layerNames[layer]);
             layerMetadata.add(layerCore);
           }

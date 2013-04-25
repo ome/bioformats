@@ -11,21 +11,27 @@ path = Instrument+/Arc+
 
 [Arc ID]
 type = String
+anchor = LightSource_ID
 
 [Arc LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Arc Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Arc Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Arc Power]
 type = Double
+anchor = LightSource_Power
 
 [Arc SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Arc Type]
 type = ArcType
@@ -33,12 +39,25 @@ type = ArcType
 [BooleanAnnotation]
 countable = true
 path = BooleanAnnotation+
+schema = SA_xsd.html
+
+[BooleanAnnotation AnnotationRef]
+countable = true
+path = BooleanAnnotation+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
+
+[BooleanAnnotation Description]
+type = String
+anchor = Annotation_Description
 
 [BooleanAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [BooleanAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [BooleanAnnotation Value]
 type = Boolean
@@ -54,9 +73,11 @@ type = AcquisitionMode
 countable = true
 path = Image+/Channel+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Channel Color]
-type = Integer
+type = Color
 
 [Channel ContrastMethod]
 type = ContrastMethod
@@ -69,6 +90,7 @@ type = PositiveInteger
 
 [Channel FilterSetRef]
 type = String
+anchor = FilterSetRef_ID
 
 [Channel Fluor]
 type = String
@@ -85,9 +107,6 @@ type = Double
 [Channel Name]
 type = String
 
-[Channel OTFRef]
-type = String
-
 [Channel PinholeSize]
 type = Double
 
@@ -95,16 +114,45 @@ type = Double
 type = Integer
 
 [Channel SamplesPerPixel]
-type = Integer
-
-[Channel LightSourceSettingsAttenuation]
-type = PercentFraction
+type = PositiveInteger
 
 [Channel LightSourceSettingsID]
 type = String
+anchor = LightSourceSettings_ID
+
+[Channel LightSourceSettingsAttenuation]
+type = PercentFraction
+anchor = LightSourceSettings_Attenuation
 
 [Channel LightSourceSettingsWavelength]
 type = PositiveInteger
+anchor = LightSourceSettings_Wavelength
+
+[CommentAnnotation]
+countable = true
+path = CommentAnnotation+
+schema = SA_xsd.html
+
+[CommentAnnotation AnnotationRef]
+countable = true
+path = CommentAnnotation+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
+
+[CommentAnnotation Description]
+type = String
+anchor = Annotation_Description
+
+[CommentAnnotation ID]
+type = String
+anchor = Annotation_ID
+
+[CommentAnnotation Namespace]
+type = String
+anchor = Annotation_Namespace
+
+[CommentAnnotation Value]
+type = String
 
 [Dataset]
 countable = true
@@ -114,25 +162,30 @@ path = Dataset+
 countable = true
 path = Dataset+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Dataset Description]
 type = String
 
 [Dataset ExperimenterRef]
 type = String
+anchor = ExperimenterRef_ID
 
-[Dataset GroupRef]
+[Dataset ExperimenterGroupRef]
 type = String
+anchor = ExperimenterGroupRef_ID
 
 [Dataset ID]
 type = String
 
-[Dataset Name]
-type = String
-
-[Dataset ProjectRef]
+[Dataset ImageRef]
 countable = true
-path = Dataset+/ProjectRef+
+path = Dataset+/ImageRef+
+type = String
+anchor = ImageRef_ID
+
+[Dataset Name]
 type = String
 
 [Detector]
@@ -150,18 +203,22 @@ type = String
 
 [Detector LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Detector Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Detector Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Detector Offset]
 type = Double
 
 [Detector SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Detector Type]
 type = DetectorType
@@ -203,25 +260,42 @@ type = String
 
 [Dichroic LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Dichroic Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Dichroic Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Dichroic SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [DoubleAnnotation]
 countable = true
 path = DoubleAnnotation+
+schema = SA_xsd.html
+
+[DoubleAnnotation AnnotationRef]
+countable = true
+path = DoubleAnnotation+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
+
+[DoubleAnnotation Description]
+type = String
+anchor = Annotation_Description
 
 [DoubleAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [DoubleAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [DoubleAnnotation Value]
 type = Double
@@ -229,45 +303,75 @@ type = Double
 [Ellipse]
 countable = false
 path = ROI+/Shape+/Ellipse
+schema = ROI_xsd.html
 
-[Ellipse Description]
-type = String
+[Ellipse FillColor]
+type = Color
+anchor = Shape_FillColor
 
-[Ellipse Fill]
-type = Integer
+[Ellipse FillRule]
+type = FillRule
+anchor = Shape_FillRule
+
+[Ellipse FontFamily]
+type = FontFamily
+anchor = Shape_FontFamily
 
 [Ellipse FontSize]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_FontSize
+
+[Ellipse FontStyle]
+type = FontStyle
+anchor = Shape_FontStyle
 
 [Ellipse ID]
 type = String
+anchor = Shape_ID
 
-[Ellipse Label]
-type = String
+[Ellipse LineCap]
+type = LineCap
+anchor = Shape_LineCap
 
-[Ellipse Name]
-type = String
+[Ellipse Locked]
+type = Boolean
+anchor = Shape_Locked
 
-[Ellipse Stroke]
-type = Integer
+[Ellipse StrokeColor]
+type = Color
+anchor = Shape_StrokeColor
 
 [Ellipse StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Ellipse StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
+
+[Ellipse Text]
+type = String
+anchor = Shape_Text
 
 [Ellipse TheC]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Ellipse TheT]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Ellipse TheZ]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Ellipse Transform]
-type = String
+type = AffineTransform
+anchor = Shape_Transform
+
+[Ellipse Visible]
+type = Boolean
+anchor = Shape_Visible
 
 [Ellipse RadiusX]
 type = Double
@@ -290,6 +394,7 @@ type = String
 
 [Experiment ExperimenterRef]
 type = String
+anchor = ExperimenterRef_ID
 
 [Experiment ID]
 type = String
@@ -305,19 +410,13 @@ path = Experimenter+
 countable = true
 path = Experimenter+/AnnotationRef+
 type = String
-
-[Experimenter DisplayName]
-type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Experimenter Email]
 type = String
 
 [Experimenter FirstName]
-type = String
-
-[Experimenter GroupRef]
-countable = true
-path = Experimenter+/GroupRef+
 type = String
 
 [Experimenter ID]
@@ -335,26 +434,64 @@ type = String
 [Experimenter UserName]
 type = String
 
+[ExperimenterGroup]
+countable = true
+path = ExperimenterGroup+
+
+[ExperimenterGroup AnnotationRef]
+countable = true
+path = ExperimenterGroup+/AnnotationRef+
+type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
+
+[ExperimenterGroup Description]
+type = String
+
+[ExperimenterGroup ExperimenterRef]
+countable = true
+path = ExperimenterGroup+/ExperimenterRef+
+type = String
+anchor = ExperimenterRef_ID
+
+[ExperimenterGroup ID]
+type = String
+
+[ExperimenterGroup Leader]
+countable = true
+path = ExperimenterGroup+/Leader+
+type = String
+anchor = Leader_ID
+
+[ExperimenterGroup Name]
+type = String
+
 [Filament]
 path = Instrument+/Filament+
 
 [Filament ID]
 type = String
+anchor = LightSource_ID
 
 [Filament LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Filament Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Filament Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Filament Power]
 type = Double
+anchor = LightSource_Power
 
 [Filament SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Filament Type]
 type = FilamentType
@@ -362,21 +499,25 @@ type = FilamentType
 [FileAnnotation]
 countable = true
 path = FileAnnotation+
+schema = SA_xsd.html
 
-[FileAnnotation BinaryFileFileName]
+[FileAnnotation AnnotationRef]
+countable = true
+path = FileAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
-[FileAnnotation BinaryFileMIMEType]
+[FileAnnotation Description]
 type = String
-
-[FileAnnotation BinaryFileSize]
-type = Integer
+anchor = Annotation_Description
 
 [FileAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [FileAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [Filter]
 countable = true
@@ -390,15 +531,19 @@ type = String
 
 [Filter LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Filter Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Filter Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Filter SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Filter Type]
 type = FilterType
@@ -409,90 +554,80 @@ path = Instrument+/FilterSet+
 
 [FilterSet DichroicRef]
 type = String
+anchor = DichroicRef_ID
 
 [FilterSet EmissionFilterRef]
 countable = true
 path = Instrument+/FilterSet+/EmissionFilterRef+
 type = String
+anchor = FilterRef_ID
 
 [FilterSet ExcitationFilterRef]
 countable = true
 path = Instrument+/FilterSet+/ExcitationFilterRef+
 type = String
+anchor = FilterRef_ID
 
 [FilterSet ID]
 type = String
 
 [FilterSet LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [FilterSet Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [FilterSet Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [FilterSet SerialNumber]
 type = String
-
-[Group]
-countable = true
-path = Group+
-
-[Group Contact]
-type = String
-
-[Group Description]
-type = String
-
-[Group ID]
-type = String
-
-[Group Leader]
-type = String
-
-[Group Name]
-type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Image]
 countable = true
 path = Image+
 
-[Image AcquiredDate]
-type = String
+[Image AcquisitionDate]
+type = Timestamp
 
 [Image AnnotationRef]
 countable = true
 path = Image+/AnnotationRef+
 type = String
-
-[Image DatasetRef]
-countable = true
-path = Image+/DatasetRef+
-type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Image Description]
 type = String
 
 [Image ExperimentRef]
 type = String
+anchor = ExperimentRef_ID
+
+[Image ExperimenterGroupRef]
+type = String
+anchor = ExperimenterGroupRef_ID
 
 [Image ExperimenterRef]
 type = String
-
-[Image GroupRef]
-type = String
+anchor = ExperimenterRef_ID
 
 [Image ID]
 type = String
 
 [Image InstrumentRef]
 type = String
+anchor = InstrumentRef_ID
 
 [Image MicrobeamManipulationRef]
 countable = true
 path = Image+/MicrobeamManipulationRef+
 type = String
+anchor = MicrobeamManipulationRef_ID
 
 [Image Name]
 type = String
@@ -501,18 +636,8 @@ type = String
 countable = true
 path = Image+/ROIRef+
 type = String
-
-[Image ObjectiveSettingsCorrectionCollar]
-type = Double
-
-[Image ObjectiveSettingsID]
-type = String
-
-[Image ObjectiveSettingsMedium]
-type = Medium
-
-[Image ObjectiveSettingsRefractiveIndex]
-type = Double
+schema = ROI_xsd.html
+anchor = ROIRef_ID
 
 [ImagingEnvironment]
 countable = false
@@ -537,26 +662,112 @@ path = Instrument+
 [Instrument ID]
 type = String
 
+[Label]
+countable = true
+path = ROI+/Shape+/Label
+schema = ROI_xsd.html
+
+[Label FillColor]
+type = Color
+anchor = Shape_FillColor
+
+[Label FillRule]
+type = FillRule
+anchor = Shape_FillRule
+
+[Label FontFamily]
+type = FontFamily
+anchor = Shape_FontFamily
+
+[Label FontSize]
+type = NonNegativeInteger
+anchor = Shape_FontSize
+
+[Label FontStyle]
+type = FontStyle
+anchor = Shape_FontStyle
+
+[Label ID]
+anchor = Shape_ID
+type = String
+
+[Label LineCap]
+type = LineCap
+anchor = Shape_LineCap
+
+[Label Locked]
+type = Boolean
+anchor = Shape_Locked
+
+[Label StrokeColor]
+type = Color
+anchor = Shape_StrokeColor
+
+[Label StrokeDashArray]
+type = String
+anchor = Shape_StrokeDashArray
+
+[Label StrokeWidth]
+type = Double
+anchor = Shape_StrokeWidth
+
+[Label Text]
+type = String
+anchor = Shape_Text
+
+[Label TheC]
+type = NonNegativeInteger
+anchor = Shape_TheC
+
+[Label TheT]
+type = NonNegativeInteger
+anchor = Shape_TheT
+
+[Label TheZ]
+type = NonNegativeInteger
+anchor = Shape_TheZ
+
+[Label Transform]
+type = AffineTransform
+anchor = Shape_Transform
+
+[Label Visible]
+type = Boolean
+anchor = Shape_Visible
+
+[Label X]
+type = Double
+
+[Label Y]
+type = Double
+
 [Laser]
+countable = true
 path = Instrument+/Laser+
 
 [Laser ID]
 type = String
+anchor = LightSource_ID
 
 [Laser LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Laser Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Laser Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Laser Power]
 type = Double
+anchor = LightSource_Power
 
 [Laser SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Laser FrequencyMultiplication]
 type = PositiveInteger
@@ -572,6 +783,7 @@ type = Pulse
 
 [Laser Pump]
 type = String
+anchor = Pump_ID
 
 [Laser RepetitionRate]
 type = Double
@@ -586,25 +798,32 @@ type = LaserType
 type = PositiveInteger
 
 [LightEmittingDiode]
+countable = true
 path = Instrument+/LightEmittingDiode+
 
 [LightEmittingDiode ID]
 type = String
+anchor = LightSource_ID
 
 [LightEmittingDiode LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [LightEmittingDiode Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [LightEmittingDiode Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [LightEmittingDiode Power]
 type = Double
+anchor = LightSource_Power
 
 [LightEmittingDiode SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [LightPath]
 countable = false
@@ -612,59 +831,98 @@ path = Image+/Channel+/LightPath
 
 [LightPath DichroicRef]
 type = String
+anchor = DichroicRef_ID
 
 [LightPath EmissionFilterRef]
 countable = true
 path = Image+/Channel+/LightPath/EmissionFilterRef+
 type = String
+anchor = FilterRef_ID
 
 [LightPath ExcitationFilterRef]
 countable = true
 path = Image+/Channel+/LightPath/ExcitationFilterRef+
 type = String
+anchor = FilterRef_ID
 
 [Line]
 countable = false
 path = ROI+/Shape+/Line
+schema = ROI_xsd.html
 
-[Line Description]
-type = String
+[Line FillColor]
+type = Color
+anchor = Shape_FillColor
 
-[Line Fill]
-type = Integer
+[Line FillRule]
+type = FillRule
+anchor = Shape_FillRule
+
+[Line FontFamily]
+type = FontFamily
+anchor = Shape_FontFamily
 
 [Line FontSize]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_FontSize
+
+[Line FontStyle]
+type = FontStyle
+anchor = Shape_FontStyle
 
 [Line ID]
 type = String
+anchor = Shape_ID
 
-[Line Label]
-type = String
+[Line LineCap]
+type = LineCap
+anchor = Shape_LineCap
 
-[Line Name]
-type = String
+[Line Locked]
+type = Boolean
+anchor = Shape_Locked
 
-[Line Stroke]
-type = Integer
+[Line StrokeColor]
+type = Color
+anchor = Shape_StrokeColor
 
 [Line StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Line StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
+
+[Line Text]
+type = String
+anchor = Shape_Text
 
 [Line TheC]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Line TheT]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Line TheZ]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Line Transform]
-type = String
+type = AffineTransform
+anchor = Shape_Transform
+
+[Line Visible]
+type = Boolean
+anchor = Shape_Visible
+
+[Line MarkerEnd]
+type = Marker
+
+[Line MarkerStart]
+type = Marker
 
 [Line X1]
 type = Double
@@ -681,27 +939,48 @@ type = Double
 [ListAnnotation]
 countable = true
 path = ListAnnotation+
+schema = SA_xsd.html
 
 [ListAnnotation AnnotationRef]
 countable = true
 path = ListAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
+
+[ListAnnotation Description]
+type = String
+anchor = Annotation_Description
 
 [ListAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [ListAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [LongAnnotation]
 countable = true
 path = LongAnnotation+
+schema = SA_xsd.html
+
+[LongAnnotation AnnotationRef]
+countable = true
+path = LongAnnotation+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
+
+[LongAnnotation Description]
+type = String
+anchor = Annotation_Description
 
 [LongAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [LongAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [LongAnnotation Value]
 type = Long
@@ -709,45 +988,77 @@ type = Long
 [Mask]
 countable = false
 path = ROI+/Shape+/Mask
+schema = ROI_xsd.html
 
-[Mask Description]
-type = String
+[Mask FillColor]
+type = Color
+anchor = Shape_FillColor
 
-[Mask Fill]
-type = Integer
+[Mask FillRule]
+type = FillRule
+anchor = Shape_FillRule
+
+[Mask FontFamily]
+type = FontFamily
+anchor = Shape_FontFamily
 
 [Mask FontSize]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_FontSize
 
 [Mask ID]
 type = String
+anchor = Shape_ID
 
-[Mask Label]
-type = String
+[Mask LineCap]
+type = LineCap
+anchor = Shape_LineCap
 
-[Mask Name]
-type = String
+[Mask Locked]
+type = Boolean
+anchor = Shape_Locked
 
-[Mask Stroke]
-type = Integer
+[Mask StrokeColor]
+type = Color
+anchor = Shape_StrokeColor
 
 [Mask StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Mask StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
+
+[Mask Text]
+type = String
+anchor = Shape_Text
 
 [Mask TheC]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Mask TheT]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Mask TheZ]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Mask Transform]
-type = String
+type = AffineTransform
+anchor = Shape_Transform
+
+[Mask Visible]
+type = Boolean
+anchor = Shape_Visible
+
+[Mask Height]
+type = Double
+
+[Mask Width]
+type = Double
 
 [Mask X]
 type = Double
@@ -761,6 +1072,7 @@ path = Experiment+/MicrobeamManipulation+
 
 [MicrobeamManipulation ExperimenterRef]
 type = String
+anchor = ExperimenterRef_ID
 
 [MicrobeamManipulation ID]
 type = String
@@ -769,6 +1081,8 @@ type = String
 countable = true
 path = Experiment+/MicrobeamManipulation+/ROIRef+
 type = String
+schema = ROI_xsd.html
+anchor = ROIRef_ID
 
 [MicrobeamManipulation Type]
 type = MicrobeamManipulationType
@@ -779,12 +1093,15 @@ path = Experiment+/MicrobeamManipulation+/LightSourceSettings+
 
 [MicrobeamManipulationLightSourceSettings Attenuation]
 type = PercentFraction
+anchor = LightSourceSettings_Attenuation
 
 [MicrobeamManipulationLightSourceSettings ID]
 type = String
+anchor = LightSourceSettings_ID
 
 [MicrobeamManipulationLightSourceSettings Wavelength]
 type = PositiveInteger
+anchor = LightSourceSettings_Wavelength
 
 [Microscope]
 countable = false
@@ -792,61 +1109,22 @@ path = Instrument+/Microscope
 
 [Microscope LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Microscope Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Microscope Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Microscope SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Microscope Type]
 type = MicroscopeType
-
-[OTF]
-countable = true
-path = Instrument+/OTF+
-
-[OTF BinaryFileFileName]
-type = String
-
-[OTF BinaryFileMIMEType]
-type = String
-
-[OTF BinaryFileSize]
-type = Integer
-
-[OTF FilterSetRef]
-type = String
-
-[OTF ID]
-type = String
-
-[OTF OpticalAxisAveraged]
-type = Boolean
-
-[OTF SizeX]
-type = PositiveInteger
-
-[OTF SizeY]
-type = PositiveInteger
-
-[OTF Type]
-type = PixelType
-
-[OTF ObjectiveSettingsCorrectionCollar]
-type = Double
-
-[OTF ObjectiveSettingsID]
-type = String
-
-[OTF ObjectiveSettingsMedium]
-type = Medium
-
-[OTF ObjectiveSettingsRefractiveIndex]
-type = Double
 
 [Objective]
 countable = true
@@ -872,67 +1150,41 @@ type = Double
 
 [Objective LotNumber]
 type = String
+anchor = ManufacturerSpec_LotNumber
 
 [Objective Manufacturer]
 type = String
+anchor = ManufacturerSpec_Manufacturer
 
 [Objective Model]
 type = String
+anchor = ManufacturerSpec_Model
 
 [Objective NominalMagnification]
-type = Integer
+type = PositiveInteger
 
 [Objective SerialNumber]
 type = String
+anchor = ManufacturerSpec_SerialNumber
 
 [Objective WorkingDistance]
 type = Double
 
-[Path]
+[ObjectiveSettings]
 countable = false
-path = ROI+/Shape+/Path
+path = Image+/ObjectiveSettings
 
-[Path Description]
-type = String
-
-[Path Fill]
-type = Integer
-
-[Path FontSize]
-type = Integer
-
-[Path ID]
-type = String
-
-[Path Label]
-type = String
-
-[Path Name]
-type = String
-
-[Path Stroke]
-type = Integer
-
-[Path StrokeDashArray]
-type = String
-
-[Path StrokeWidth]
+[ObjectiveSettings CorrectionCollar]
 type = Double
 
-[Path TheC]
-type = Integer
-
-[Path TheT]
-type = Integer
-
-[Path TheZ]
-type = Integer
-
-[Path Transform]
+[ObjectiveSettings ID]
 type = String
 
-[Path Definition]
-type = String
+[ObjectiveSettings Medium]
+type = Medium
+
+[ObjectiveSettings RefractiveIndex]
+type = Double
 
 [Pixels]
 countable = false
@@ -942,6 +1194,8 @@ path = Image+/Pixels
 countable = true
 path = Image+/Pixels/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Pixels DimensionOrder]
 type = DimensionOrder
@@ -950,13 +1204,13 @@ type = DimensionOrder
 type = String
 
 [Pixels PhysicalSizeX]
-type = Double
+type = PositiveFloat
 
 [Pixels PhysicalSizeY]
-type = Double
+type = PositiveFloat
 
 [Pixels PhysicalSizeZ]
-type = Double
+type = PositiveFloat
 
 [Pixels SizeC]
 type = PositiveInteger
@@ -979,12 +1233,12 @@ type = Double
 [Pixels Type]
 type = PixelType
 
-[PixelsBinData]
+[Pixels BinDataBigEndian]
 countable = true
 path = Image+/Pixels/BinData+
-
-[PixelsBinData BigEndian]
 type = Boolean
+schema = BinaryFile_xsd.html
+anchor = BinData_BigEndian
 
 [Plane]
 countable = true
@@ -994,6 +1248,8 @@ path = Image+/Pixels/Plane+
 countable = true
 path = Image+/Pixels/Plane+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Plane DeltaT]
 type = Double
@@ -1014,28 +1270,31 @@ type = Double
 type = Double
 
 [Plane TheC]
-type = Integer
+type = NonNegativeInteger
 
 [Plane TheT]
-type = Integer
+type = NonNegativeInteger
 
 [Plane TheZ]
-type = Integer
+type = NonNegativeInteger
 
 [Plate]
 countable = true
 path = Plate+
+schema = SPW_xsd.html
 
 [Plate AnnotationRef]
 countable = true
 path = Plate+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Plate ColumnNamingConvention]
 type = NamingConvention
 
 [Plate Columns]
-type = Integer
+type = PositiveInteger
 
 [Plate Description]
 type = String
@@ -1053,12 +1312,7 @@ type = String
 type = NamingConvention
 
 [Plate Rows]
-type = Integer
-
-[Plate ScreenRef]
-countable = true
-path = Plate+/ScreenRef+
-type = String
+type = PositiveInteger
 
 [Plate Status]
 type = String
@@ -1072,77 +1326,111 @@ type = Double
 [PlateAcquisition]
 countable = true
 path = Plate+/PlateAcquisition+
+schema = SPW_xsd.html
 
 [PlateAcquisition AnnotationRef]
 countable = true
 path = Plate+/PlateAcquisition+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [PlateAcquisition Description]
 type = String
 
 [PlateAcquisition EndTime]
-type = String
+type = Timestamp
 
 [PlateAcquisition ID]
 type = String
 
 [PlateAcquisition MaximumFieldCount]
-type = Integer
+type = PositiveInteger
 
 [PlateAcquisition Name]
 type = String
 
 [PlateAcquisition StartTime]
-type = String
+type = Timestamp
 
 [PlateAcquisition WellSampleRef]
 countable = true
 path = Plate+/PlateAcquisition+/WellSampleRef+
 type = String
+anchor = WellSampleRef_ID
 
 [Point]
 countable = false
 path = ROI+/Shape+/Point
+schema = ROI_xsd.html
 
-[Point Description]
-type = String
+[Point FillColor]
+type = Color
+anchor = Shape_FillColor
 
-[Point Fill]
-type = Integer
+[Point FillRule]
+type = FillRule
+anchor = Shape_FillRule
+
+[Point FontFamily]
+type = FontFamily
+anchor = Shape_FontFamily
 
 [Point FontSize]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_FontSize
+
+[Point FontStyle]
+type = FontStyle
+anchor = Shape_FontStyle
 
 [Point ID]
 type = String
+anchor = Shape_ID
 
-[Point Label]
-type = String
+[Point LineCap]
+type = LineCap
+anchor = Shape_LineCap
 
-[Point Name]
-type = String
+[Point Locked]
+type = Boolean
+anchor = Shape_Locked
 
-[Point Stroke]
-type = Integer
+[Point StrokeColor]
+type = Color
+anchor = Shape_StrokeColor
 
 [Point StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Point StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
+
+[Point Text]
+type = String
+anchor = Shape_Text
 
 [Point TheC]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Point TheT]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Point TheZ]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Point Transform]
-type = String
+type = AffineTransform
+anchor = Shape_Transform
+
+[Point Visible]
+type = Boolean
+anchor = Shape_Visible
 
 [Point X]
 type = Double
@@ -1150,51 +1438,160 @@ type = Double
 [Point Y]
 type = Double
 
+[Polygon]
+countable = false
+path = ROI+/Shape+/Polygon
+schema = ROI_xsd.html
+
+[Polygon FillColor]
+type = FillColor
+anchor = Shape_FillColor
+
+[Polygon FillRule]
+type = FillRule
+anchor = Shape_FillRule
+
+[Polygon FontFamily]
+type = FontFamily
+anchor = Shape_FontFamily
+
+[Polygon FontSize]
+type = NonNegativeInteger
+anchor = Shape_FontSize
+
+[Polygon FontStyle]
+type = FontStyle
+anchor = Shape_FontStyle
+
+[Polygon ID]
+type = String
+anchor = Shape_ID
+
+[Polygon LineCap]
+type = LineCap
+anchor = Shape_LineCap
+
+[Polygon Locked]
+type = Boolean
+anchor = Shape_Locked
+
+[Polygon StrokeColor]
+type = Color
+anchor = Shape_StrokeColor
+
+[Polygon StrokeDashArray]
+type = String
+anchor = Shape_StrokeDashArray
+
+[Polygon StrokeWidth]
+type = Double
+anchor = Shape_StrokeWidth
+
+[Polygon Text]
+type = String
+anchor = Shape_Text
+
+[Polygon TheC]
+type = NonNegativeInteger
+anchor = Shape_TheC
+
+[Polygon TheT]
+type = NonNegativeInteger
+anchor = Shape_TheT
+
+[Polygon TheZ]
+type = NonNegativeInteger
+anchor = Shape_TheZ
+
+[Polygon Transform]
+type = AffineTransform
+anchor = Shape_Transform
+
+[Polygon Visible]
+type = Boolean
+anchor = Shape_Visible
+
+[Polygon Points]
+type = String
+
 [Polyline]
 countable = false
 path = ROI+/Shape+/Polyline
+schema = ROI_xsd.html
 
-[Polyline Description]
-type = String
+[Polyline FillColor]
+type = Color
+anchor = Shape_FillColor
 
-[Polyline Fill]
-type = Integer
+[Polyline FillRule]
+type = FillRule
+anchor = Shape_FillRule
+
+[Polyline FontFamily]
+type = FontFamily
+anchor = Shape_FontFamily
 
 [Polyline FontSize]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_FontSize
+
+[Polyline FontStyle]
+type = FontStyle
+anchor = Shape_FontStyle
 
 [Polyline ID]
 type = String
+anchor = Shape_ID
 
-[Polyline Label]
-type = String
+[Polyline LineCap]
+type = LineCap
+anchor = Shape_LineCap
 
-[Polyline Name]
-type = String
+[Polyline Locked]
+type = Boolean
+anchor = Shape_Locked
 
-[Polyline Stroke]
-type = Integer
+[Polyline StrokeColor]
+type = Color
+anchor = Shape_StrokeColor
 
 [Polyline StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Polyline StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
+
+[Polyline Text]
+type = String
+anchor = Shape_Text
 
 [Polyline TheC]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Polyline TheT]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Polyline TheZ]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Polyline Transform]
-type = String
+type = AffineTransform
+anchor = Shape_Transform
 
-[Polyline Closed]
+[Polyline Visible]
 type = Boolean
+anchor = Shape_Visible
+
+[Polyline MarkerEnd]
+type = Marker
+
+[Polyline MarkerStart]
+type = Marker
 
 [Polyline Points]
 type = String
@@ -1207,15 +1604,25 @@ path = Project+
 countable = true
 path = Project+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
+
+[Project DatasetRef]
+countable = true
+path = Project+/DatasetRef+
+type = String
+anchor = DatasetRef_ID
 
 [Project Description]
 type = String
 
 [Project ExperimenterRef]
 type = String
+anchor = ExperimenterRef_ID
 
-[Project GroupRef]
+[Project ExperimenterGroupRef]
 type = String
+anchor = ExperimenterGroupRef_ID
 
 [Project ID]
 type = String
@@ -1226,11 +1633,14 @@ type = String
 [ROI]
 countable = true
 path = ROI+
+schema = ROI_xsd.html
 
 [ROI AnnotationRef]
 countable = true
 path = ROI+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [ROI Description]
 type = String
@@ -1247,11 +1657,14 @@ type = String
 [Reagent]
 countable = true
 path = Screen+/Reagent+
+schema = SPW_xsd.html
 
 [Reagent AnnotationRef]
 countable = true
 path = Screen+/Reagent+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Reagent Description]
 type = String
@@ -1268,45 +1681,75 @@ type = String
 [Rectangle]
 countable = false
 path = ROI+/Shape+/Rectangle
+schema = ROI_xsd.html
 
-[Rectangle Description]
-type = String
+[Rectangle FillColor]
+type = Color
+anchor = Shape_FillColor
 
-[Rectangle Fill]
-type = Integer
+[Rectangle FillRule]
+type = FillRule
+anchor = Shape_FillRule
+
+[Rectangle FontFamily]
+type = FontFamily
+anchor = Shape_FontFamily
 
 [Rectangle FontSize]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_FontSize
+
+[Rectangle FontStyle]
+type = FontStyle
+anchor = Shape_FontStyle
 
 [Rectangle ID]
 type = String
+anchor = Shape_ID
 
-[Rectangle Label]
-type = String
+[Rectangle LineCap]
+type = LineCap
+anchor = Shape_LineCap
 
-[Rectangle Name]
-type = String
+[Rectangle Locked]
+type = Boolean
+anchor = Shape_Locked
 
-[Rectangle Stroke]
-type = Integer
+[Rectangle StrokeColor]
+type = Color
+anchor = Shape_StrokeColor
 
 [Rectangle StrokeDashArray]
 type = String
+anchor = Shape_StrokeDashArray
 
 [Rectangle StrokeWidth]
 type = Double
+anchor = Shape_StrokeWidth
+
+[Rectangle Text]
+type = String
+anchor = Shape_Text
 
 [Rectangle TheC]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheC
 
 [Rectangle TheT]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheT
 
 [Rectangle TheZ]
-type = Integer
+type = NonNegativeInteger
+anchor = Shape_TheZ
 
 [Rectangle Transform]
-type = String
+type = AffineTransform
+anchor = Shape_Transform
+
+[Rectangle Visible]
+type = Boolean
+anchor = Shape_Visible
 
 [Rectangle Height]
 type = Double
@@ -1323,11 +1766,14 @@ type = Double
 [Screen]
 countable = true
 path = Screen+
+schema = SPW_xsd.html
 
 [Screen AnnotationRef]
 countable = true
 path = Screen+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Screen Description]
 type = String
@@ -1342,6 +1788,7 @@ type = String
 countable = true
 path = Screen+/PlateRef+
 type = String
+anchor = Screen_Screen_PlateRef_ID
 
 [Screen ProtocolDescription]
 type = String
@@ -1374,118 +1821,118 @@ type = Double
 [StageLabel Z]
 type = Double
 
-[StringAnnotation]
+[TagAnnotation]
 countable = true
-path = StringAnnotation+
+path = TagAnnotation+
+schema = SA_xsd.html
 
-[StringAnnotation ID]
+[TagAnnotation AnnotationRef]
+countable = true
+path = TagAnnotation+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
+
+[TagAnnotation Description]
+type = String
+anchor = Annotation_Description
+
+[TagAnnotation ID]
+type = String
+anchor = Annotation_ID
+
+[TagAnnotation Namespace]
+type = String
+anchor = Annotation_Namespace
+
+[TagAnnotation Value]
 type = String
 
-[StringAnnotation Namespace]
+[TermAnnotation]
+countable = true
+path = TermAnnotation+
+schema = SA_xsd.html
+
+[TermAnnotation AnnotationRef]
+countable = true
+path = TermAnnotation+/AnnotationRef+
 type = String
+anchor = AnnotationRef_ID
 
-[StringAnnotation Value]
+[TermAnnotation Description]
 type = String
+anchor = Annotation_Description
 
-[Text]
-countable = false
-path = ROI+/Shape+/Text
-
-[Text Description]
+[TermAnnotation ID]
 type = String
+anchor = Annotation_ID
 
-[Text Fill]
-type = Integer
-
-[Text FontSize]
-type = Integer
-
-[Text ID]
+[TermAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
-[Text Label]
+[TermAnnotation Value]
 type = String
-
-[Text Name]
-type = String
-
-[Text Stroke]
-type = Integer
-
-[Text StrokeDashArray]
-type = String
-
-[Text StrokeWidth]
-type = Double
-
-[Text TheC]
-type = Integer
-
-[Text TheT]
-type = Integer
-
-[Text TheZ]
-type = Integer
-
-[Text Transform]
-type = String
-
-[Text Value]
-type = String
-
-[Text X]
-type = Double
-
-[Text Y]
-type = Double
 
 [TiffData]
 countable = true
 path = Image+/TiffData+
 
 [TiffData FirstC]
-type = Integer
+type = NonNegativeInteger
 
 [TiffData FirstT]
-type = Integer
+type = NonNegativeInteger
 
 [TiffData FirstZ]
-type = Integer
+type = NonNegativeInteger
 
 [TiffData IFD]
-type = Integer
+type = NonNegativeInteger
 
 [TiffData PlaneCount]
-type = Integer
+type = NonNegativeInteger
 
 [TimestampAnnotation]
 countable = true
 path = TimestampAnnotation+
+schema = SA_xsd.html
+
+[TimestampAnnotation AnnotationRef]
+countable = true
+path = TimestampAnnotation+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
+
+[TimestampAnnotation Description]
+type = String
+anchor = Annotation_Description
 
 [TimestampAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [TimestampAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [TimestampAnnotation Value]
-type = String
+type = Timestamp
 
 [TransmittanceRange]
 countable = false
 path = Instrument+/Filter+/TransmittanceRange
 
 [TransmittanceRange CutIn]
-type = Integer
+type = PositiveInteger
 
 [TransmittanceRange CutInTolerance]
-type = Integer
+type = NonNegativeInteger
 
 [TransmittanceRange CutOut]
-type = Integer
+type = PositiveInteger
 
 [TransmittanceRange CutOutTolerance]
-type = Integer
+type = NonNegativeInteger
 
 [TransmittanceRange Transmittance]
 type = PercentFraction
@@ -1496,21 +1943,26 @@ path = Image+/TiffData+/UUID
 
 [UUID FileName]
 type = String
+anchor = TiffData_TiffData_UUID_FileName
 
 [UUID Value]
 type = String
+anchor = UniversallyUniqueIdentifier
 
 [Well]
 countable = true
 path = Plate+/Well+
+schema = SPW_xsd.html
 
 [Well AnnotationRef]
 countable = true
 path = Plate+/Well+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [Well Color]
-type = Integer
+type = Color
 
 [Well Column]
 type = NonNegativeInteger
@@ -1526,27 +1978,33 @@ type = String
 
 [Well ReagentRef]
 type = String
+anchor = ReagentRef_ID
 
 [Well Row]
 type = NonNegativeInteger
 
-[Well Status]
+[Well Type]
 type = String
 
 [WellSample]
 countable = true
 path = Plate+/Well+/WellSample+
+schema = SPW_xsd.html
 
 [WellSample AnnotationRef]
 countable = true
 path = Plate+/Well+/WellSample+/AnnotationRef+
 type = String
+schema = SA_xsd.html
+anchor = AnnotationRef_ID
 
 [WellSample ID]
 type = String
 
 [WellSample ImageRef]
 type = String
+schema = ome_xsd.html
+anchor = ImageRef_ID
 
 [WellSample Index]
 type = NonNegativeInteger
@@ -1558,134 +2016,26 @@ type = Double
 type = Double
 
 [WellSample Timepoint]
-type = Integer
-
-[WellSampleRef]
-countable = true
-path = Plate+/PlateAcquisition+/WellSampleRef+
+type = Timestamp
 
 [XMLAnnotation]
 countable = true
 path = XMLAnnotation+
+schema = SA_xsd.html
+
+[XMLAnnotation AnnotationRef]
+countable = true
+path = XMLAnnotation+/AnnotationRef+
+type = String
+anchor = AnnotationRef_ID
 
 [XMLAnnotation ID]
 type = String
+anchor = Annotation_ID
 
 [XMLAnnotation Namespace]
 type = String
+anchor = Annotation_Namespace
 
 [XMLAnnotation Value]
 type = String
-
-[ScreenRef]
-countable = true
-path = Plate+/ScreenRef+
-type = String
-
-[MicrobeamManipulationROIRef]
-countable = true
-path = Experiment+/MicrobeamManipulation+/ROIRef+
-
-[ImageROIRef]
-countable = true
-path = Image+/ROIRef+
-
-[ProjectRef]
-countable = true
-path = Dataset+/ProjectRef+
-
-[PlateRef]
-countable = true
-path = Screen+/PlateRef+
-
-[MicrobeamManipulationRef]
-countable = true
-path = Image+/MicrobeamManipulationRef+
-
-[ExperimenterGroupRef]
-countable = true
-path = Experimenter+/GroupRef+
-
-[FilterSetExcitationFilterRef]
-countable = true
-path = Instrument+/FilterSet+/ExcitationFilterRef+
-
-[FilterSetEmissionFilterRef]
-countable = true
-path = Instrument+/FilterSet+/EmissionFilterRef+
-
-[LightPathExcitationFilterRef]
-countable = true
-path = Image+/Channel+/LightPath/ExcitationFilterRef+
-
-[LightPathEmissionFilterRef]
-countable = true
-path = Image+/Channel+/LightPath/EmissionFilterRef+
-
-[DatasetRef]
-countable = true
-path = Image+/DatasetRef+
-
-[ChannelAnnotationRef]
-countable = true
-path = Image+/Channel+/AnnotationRef+
-
-[DatasetAnnotationRef]
-countable = true
-path = Dataset+/AnnotationRef+
-
-[ExperimenterAnnotationRef]
-countable = true
-path = Experimenter+/AnnotationRef+
-
-[ImageAnnotationRef]
-countable = true
-path = Image+/AnnotationRef+
-
-[ListAnnotationAnnotationRef]
-countable = true
-path = ListAnnotation+/AnnotationRef+
-
-[PixelsAnnotationRef]
-countable = true
-path = Image+/Pixels/AnnotationRef+
-
-[PlaneAnnotationRef]
-countable = true
-path = Image+/Pixels/Plane+/AnnotationRef+
-
-[PlateAnnotationRef]
-countable = true
-path = Plate+/AnnotationRef+
-
-[PlateAcquisitionAnnotationRef]
-countable = true
-path = Plate+/PlateAcquisition+/AnnotationRef+
-
-[ProjectAnnotationRef]
-countable = true
-path = Project+/AnnotationRef+
-
-[ROIAnnotationRef]
-countable = true
-path = ROI+/AnnotationRef+
-
-[ReagentAnnotationRef]
-countable = true
-path = Screen+/Reagent+/AnnotationRef+
-
-[ScreenAnnotationRef]
-countable = true
-path = Screen+/AnnotationRef+
-
-[WellAnnotationRef]
-countable = true
-path = Plate+/Well+/AnnotationRef+
-
-[WellSampleAnnotationRef]
-countable = true
-path = Plate+/Well+/WellSample+/AnnotationRef+
-
-[ShapeAnnotationRef]
-countable = true
-path = ROI+/Shape+/AnnotationRef+

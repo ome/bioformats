@@ -200,7 +200,11 @@ public class OMETiffWriter extends TiffWriter {
 
     super.saveBytes(no, buf, ifd, x, y, w, h);
 
-    imageLocations[series][no] = currentId;
+    int index = no;
+    while (imageLocations[series][index] != null) {
+      index++;
+    }
+    imageLocations[series][index] = currentId;
   }
 
   // -- IFormatHandler API methods --

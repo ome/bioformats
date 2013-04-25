@@ -256,7 +256,8 @@ public class ZeissCZIReader extends FormatReader {
     int pixel =
       getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
     int outputRowLen = w * pixel;
-    int outputRow = h, outputCol = 0;
+
+    int outputRow = 0, outputCol = 0;
 
     for (SubBlock plane : planes) {
       if (plane.seriesIndex == currentSeries && plane.planeIndex == no) {
@@ -278,8 +279,7 @@ public class ZeissCZIReader extends FormatReader {
             }
 
             int rowLen = pixel * (int) Math.min(intersection.width, realX);
-            int outputOffset =
-              (outputRow - intersection.height) * outputRowLen + outputCol;
+            int outputOffset = outputRow * outputRowLen + outputCol;
             for (int trow=0; trow<intersection.height; trow++) {
               int realRow = trow + intersection.y - tile.y;
               int inputOffset = pixel * (realRow * realX + intersectionX);
@@ -291,7 +291,7 @@ public class ZeissCZIReader extends FormatReader {
             outputCol += rowLen;
             if (outputCol >= w * pixel) {
               outputCol = 0;
-              outputRow -= intersection.height;
+              outputRow += intersection.height;
             }
           }
 
@@ -530,7 +530,10 @@ public class ZeissCZIReader extends FormatReader {
               store.setPlanePositionY(positionsY[i], i, plane);
             }
 
-            if (positionsZ != null && i < positionsZ.length) {
+            if (p.stageZ != null) {
+              store.setPlanePositionZ(p.stageZ, i, plane);
+            }
+            else if (positionsZ != null && i < positionsZ.length) {
               store.setPlanePositionZ(positionsZ[i], i, plane);
             }
 
@@ -647,6 +650,9 @@ public class ZeissCZIReader extends FormatReader {
           case 'T':
             if (dimension.start >= getSizeT()) {
               core[0].sizeT = dimension.start + 1;
+            }
+            if (dimension.size > getSizeT()) {
+              core[0].sizeT = dimension.size;
             }
             break;
           case 'R':
@@ -1656,8 +1662,10 @@ public class ZeissCZIReader extends FormatReader {
 
     StringBuffer key = new StringBuffer();
     for (String k : nameStack) {
-      key.append(k);
-      key.append(" ");
+      if (!k.equals("Metadata") && (!k.endsWith("s") || k.equals(name))) {
+        key.append(k);
+        key.append("|");
+      }
     }
 
     if (root.getChildNodes().getLength() == 1) {
@@ -1853,7 +1861,7 @@ public class ZeissCZIReader extends FormatReader {
 
     private long dataOffset;
 
-    private Double stageX, stageY, timestamp, exposureTime;
+    private Double stageX, stageY, timestamp, exposureTime, stageZ;
 
     public int x, y;
 
@@ -1954,6 +1962,9 @@ public class ZeissCZIReader extends FormatReader {
                 }
                 else if (tagNode.getNodeName().equals("StageYPosition")) {
                   stageY = new Double(text);
+                }
+                else if (tagNode.getNodeName().equals("FocusPosition")) {
+                  stageZ = new Double(text);
                 }
                 else if (tagNode.getNodeName().equals("AcquisitionTime")) {
                   timestamp = DateTools.getTime(

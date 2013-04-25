@@ -54,7 +54,7 @@ Source Code: :scifiowriter:`OMEXMLWriter.java`
 Notes:
 
 
-Bio-Formats uses the `OME-XML Java library <http://www.openmicroscopy.org/site/support/file-formats/ome-xml-java-library>`_ 
+Bio-Formats uses the :model_doc:`OME-XML Java library <ome-xml/java-library.html>` 
 to read OME-XML files. 
 
 Commercial applications that support OME-XML include: 

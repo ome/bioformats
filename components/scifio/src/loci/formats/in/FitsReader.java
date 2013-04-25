@@ -38,6 +38,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -147,6 +148,16 @@ public class FitsReader extends FormatReader {
     core[0].sizeC = 1;
     core[0].sizeT = 1;
     if (getSizeZ() == 0) core[0].sizeZ = 1;
+
+    // correct for truncated files
+    int planeSize =
+      getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
+    if (DataTools.safeMultiply64(planeSize, getSizeZ()) >
+      (in.length() - pixelOffset))
+    {
+      core[0].sizeZ = (int) ((in.length() - pixelOffset) / planeSize);
+    }
+
     core[0].imageCount = core[0].sizeZ;
     core[0].rgb = false;
     core[0].littleEndian = false;

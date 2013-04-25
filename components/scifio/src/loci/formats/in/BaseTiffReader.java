@@ -126,6 +126,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       IFDList exifIFDs = tiffParser.getExifIFDs();
       if (exifIFDs.size() > 0) {
         IFD exif = exifIFDs.get(0);
+        tiffParser.fillInIFD(exif);
         for (Integer key : exif.keySet()) {
           int k = key.intValue();
           addGlobalMeta(getExifTagName(k), exif.get(key));
@@ -404,9 +405,24 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
     // the metadata store we're working with
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
 
     IFD firstIFD = ifds.get(0);
+    IFD exif = null;
+
+    if (ifds.get(0).containsKey(IFD.EXIF)) {
+      try {
+        IFDList exifIFDs = tiffParser.getExifIFDs();
+        if (exifIFDs.size() > 0) {
+          exif = exifIFDs.get(0);
+        }
+        tiffParser.fillInIFD(exif);
+      }
+      catch (IOException e) {
+        LOGGER.debug("Could not read EXIF IFDs", e);
+      }
+    }
+
+    MetadataTools.populatePixels(store, this, exif != null);
 
     // format the creation date to ISO 8601
 
@@ -462,6 +478,18 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", pixY);
       }
       store.setPixelsPhysicalSizeZ(null, 0);
+
+      if (exif != null) {
+        if (exif.containsKey(IFD.EXPOSURE_TIME)) {
+          Object exp = exif.get(IFD.EXPOSURE_TIME);
+          if (exp instanceof TiffRational) {
+            Double exposure = ((TiffRational) exp).doubleValue();
+            for (int i=0; i<getImageCount(); i++) {
+              store.setPlaneExposureTime(exposure, 0, i);
+            }
+          }
+        }
+      }
     }
   }
 

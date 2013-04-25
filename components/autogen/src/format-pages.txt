@@ -314,7 +314,6 @@ notes = * Commercial applications that support this format include: \n
   * `SVI Huygens <http://svi.nl/>`_
 
 [Bitplane Imaris]
-metadataPage = 
 extensions = .ims
 owner = `Bitplane <http://www.bitplane.com/>`_
 scifio = no
@@ -333,7 +332,7 @@ metadataRating = Very good
 opennessRating = Good
 presenceRating = Fair
 utilityRating = Fair
-reader = ImarisReader.java, ImarisTiffReader.java, ImarisHDFReader.java
+reader = ImarisHDFReader.java, ImarisTiffReader.java, ImarisReader.java
 notes = - There are three distinct Imaris formats: \n
     #. the old binary format (introduced in Imaris version 2.7) \n
     #. Imaris 3, a TIFF variant (introduced in Imaris version 3.0) \n
@@ -460,7 +459,7 @@ scifio = yes
 export = no
 software = `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_ \n
 `ezDICOM <http://www.sph.sc.edu/comd/rorden/ezdicom.html>`_ \n
-`Chris Rorden's list of free DICOM readers <http://www.sph.sc.edu/comd/rorden/dicom.html#links>`_
+`Wikipedia's list of freeware health software <http://en.wikipedia.org/wiki/List_of_freeware_health_software#Imaging.2FVisualization>`_
 samples = `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ \n
 `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ \n
 `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
@@ -1573,7 +1572,7 @@ developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 scifio = yes
 export = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06
-weHave = * an `OME-TIFF specification document <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff/ome-tiff-specification>`_ (from 2006 October 19, in HTML) \n
+weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>` (from 2006 October 19, in HTML) \n
 * many OME-TIFF datasets \n
 * the ability to produce additional datasets
 pixelsRating = Outstanding
@@ -1591,7 +1590,7 @@ Commercial applications that support OME-TIFF include: \n
 * `SVI Huygens <http://svi.nl/>`_ \n
 \n
 .. seealso:: \n
-  `OME-TIFF technical overview <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff>`_
+  :model_doc:`OME-TIFF technical overview <ome-tiff/index.html>`
 
 [OME-XML]
 extensions = .ome
@@ -1609,7 +1608,7 @@ presenceRating = Fair
 utilityRating = Outstanding
 reader = OMEXMLReader.java
 writer = OMEXMLWriter.java
-notes = Bio-Formats uses the `OME-XML Java library <http://www.openmicroscopy.org/site/support/file-formats/ome-xml-java-library>`_ \n
+notes = Bio-Formats uses the :model_doc:`OME-XML Java library <ome-xml/java-library.html>` \n
 to read OME-XML files. \n
 \n
 Commercial applications that support OME-XML include: \n
