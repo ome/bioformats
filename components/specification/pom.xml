@@ -36,7 +36,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>bio-formats</artifactId>
+      <artifactId>ome-xml</artifactId>
       <version>${project.version}</version>
     </dependency>
 
