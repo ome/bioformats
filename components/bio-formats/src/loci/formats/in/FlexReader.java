@@ -237,7 +237,6 @@ public class FlexReader extends FormatReader {
     IFD ifd = file.offsets == null ?
       file.ifds.get(imageNumber) : firstFile.ifds.get(0);
 
-    boolean useFirstStream = wellRow == 0 && wellCol == 0 && file.field == 0;
     RandomAccessInputStream s = 
       new RandomAccessInputStream(getFileHandle(file.file));
 
@@ -253,9 +252,7 @@ public class FlexReader extends FormatReader {
       TiffParser tp = new TiffParser(s);
       tp.getSamples(ifd, buf, x, y, w, h);
       factor = file.factors[imageNumber];
-      if (!useFirstStream) {
-        tp.getStream().close();
-      }
+      tp.getStream().close();
     }
     else {
       int index = getImageCount() * pos[0] + no;
@@ -281,9 +278,7 @@ public class FlexReader extends FormatReader {
       }
     }
 
-    if (!useFirstStream) {
-      s.close();
-    }
+    s.close();
 
     return buf;
   }
@@ -1294,7 +1289,7 @@ public class FlexReader extends FormatReader {
             flexFiles.add(file);
             parseFlexFile(currentWell, row, col, field, firstFile, store);
           }
-          if (currentWell != 0 || field != 0) s.close();
+          s.close();
           if (firstFile) firstFile = false;
         }
         currentWell++;
