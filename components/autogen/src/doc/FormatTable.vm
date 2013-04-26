@@ -101,7 +101,7 @@ Bio-Formats currently supports **$count** formats
 
     SCIFIO 
         This indicates whether format is supported by the
-        :doc:`SCIFIO <developers/scifio>` core library (See the SCIFIO
+        :doc:`SCIFIO <developers/scifio>` core library (see the SCIFIO
         section of the :about_plone:`licensing page <licensing-attribution>`).
 
 .. toctree::
