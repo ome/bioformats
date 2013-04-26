@@ -898,6 +898,62 @@ public final class FormatTools {
   }
 
   /**
+   * Check if the two given readers are equal.
+   * To be equal, readers must contain the same stack of wrappers and the
+   * same state.
+   */
+  public static boolean equalReaders(IFormatReader a, IFormatReader b) {
+    // check that the reader stacks are equivalent
+
+    IFormatReader copyWrapper = a;
+    IFormatReader realWrapper = b;
+
+    while (copyWrapper != null) {
+      if (!copyWrapper.getClass().equals(realWrapper.getClass())) {
+        return false;
+      }
+      if (copyWrapper instanceof ReaderWrapper) {
+        copyWrapper = ((ReaderWrapper) copyWrapper).getReader();
+        realWrapper = ((ReaderWrapper) realWrapper).getReader();
+      }
+      else {
+        copyWrapper = null;
+        realWrapper = null;
+      }
+    }
+
+    // check the state that is set pre-initialization
+
+    if (a.isNormalized() != b.isNormalized()) {
+      return false;
+    }
+
+    if (a.isOriginalMetadataPopulated() != b.isOriginalMetadataPopulated()) {
+      return false;
+    }
+
+    if (a.isGroupFiles() != b.isGroupFiles()) {
+      return false;
+    }
+
+    if (a.isMetadataFiltered() != b.isMetadataFiltered()) {
+      return false;
+    }
+
+    if (a.hasFlattenedResolutions() != b.hasFlattenedResolutions()) {
+      return false;
+    }
+
+    if (!a.getMetadataOptions().getMetadataLevel().equals(
+      b.getMetadataOptions().getMetadataLevel()))
+    {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Default implementation for {@link IFormatReader#openThumbBytes}.
    *
    * At the moment, it uses {@link java.awt.image.BufferedImage} objects
