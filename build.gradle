@@ -1,1 +1,3 @@
 ant.importBuild 'build.xml'
+
+defaultTasks 'jars'
