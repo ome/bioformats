@@ -84,7 +84,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   // -- Fields --
 
-  private Logger logger;
+  private transient Logger logger;
   private int imageWidth;
   private int imageHeight;
   private long offset;

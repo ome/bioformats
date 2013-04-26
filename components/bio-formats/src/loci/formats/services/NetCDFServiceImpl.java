@@ -45,6 +45,11 @@ import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 /**
  * Utility class for working with NetCDF/HDF files.  Uses reflection to
  * call the NetCDF Java library.
@@ -54,7 +59,7 @@ import ucar.nc2.Variable;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/NetCDFServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class NetCDFServiceImpl extends AbstractService
-  implements NetCDFService {
+  implements NetCDFService, KryoSerializable {
 
   // -- Constants --
 
@@ -95,18 +100,7 @@ public class NetCDFServiceImpl extends AbstractService
   public void setFile(String file) throws IOException {
     this.currentFile = file;
 
-    String currentId = Location.getMappedId(currentFile);
-    PrintStream outStream = System.out;
-    PrintStream throwaway = new PrintStream(
-      new ByteArrayOutputStream(), false /*auto-flush*/,
-        Constants.ENCODING) {
-      public void print(String s) { }
-    };
-    System.setOut(throwaway);
-    throwaway.close();
-    netCDFFile = NetcdfFile.open(currentId);
-    System.setOut(outStream);
-    root = netCDFFile.getRootGroup();
+    init();
 
     attributeList = new Vector<String>();
     variableList = new Vector<String>();
@@ -281,6 +275,41 @@ public class NetCDFServiceImpl extends AbstractService
       return sb.toString().trim();
     }
     return values.toString().trim();
+  }
+
+  private void init() throws IOException {
+    String currentId = Location.getMappedId(currentFile);
+    PrintStream outStream = System.out;
+    PrintStream throwaway = new PrintStream(
+      new ByteArrayOutputStream(), false /*auto-flush*/,
+        Constants.ENCODING) {
+      public void print(String s) { }
+    };
+    System.setOut(throwaway);
+    throwaway.close();
+    netCDFFile = NetcdfFile.open(currentId);
+    System.setOut(outStream);
+    root = netCDFFile.getRootGroup();
+  }
+
+  // -- KryoSerializable methods --
+
+  public void read(Kryo kryo, Input in) {
+    currentFile = kryo.readObjectOrNull(in, String.class);
+    attributeList = kryo.readObjectOrNull(in, Vector.class);
+    variableList = kryo.readObjectOrNull(in, Vector.class);
+
+    try {
+      init();
+    }
+    catch (IOException e) {
+    }
+  }
+
+  public void write(Kryo kryo, Output out) {
+    kryo.writeObjectOrNull(out, currentFile, String.class);
+    kryo.writeObjectOrNull(out, attributeList, Vector.class);
+    kryo.writeObjectOrNull(out, variableList, Vector.class);
   }
 
 }

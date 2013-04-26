@@ -123,7 +123,6 @@ public class FlexReader extends FormatReader {
 
   private String plateName, plateBarcode;
   private int nRows = 0, nCols = 0;
-  private RandomAccessInputStream firstStream;
 
   private String plateAcqStartTime;
 
@@ -238,8 +237,7 @@ public class FlexReader extends FormatReader {
     IFD ifd = file.offsets == null ?
       file.ifds.get(imageNumber) : firstFile.ifds.get(0);
 
-    boolean useFirstStream = wellRow == 0 && wellCol == 0 && file.field == 0;
-    RandomAccessInputStream s = useFirstStream ? firstStream :
+    RandomAccessInputStream s = 
       new RandomAccessInputStream(getFileHandle(file.file));
 
     int nBytes = ifd.getBitsPerSample()[0] / 8;
@@ -254,9 +252,7 @@ public class FlexReader extends FormatReader {
       TiffParser tp = new TiffParser(s);
       tp.getSamples(ifd, buf, x, y, w, h);
       factor = file.factors[imageNumber];
-      if (!useFirstStream) {
-        tp.getStream().close();
-      }
+      tp.getStream().close();
     }
     else {
       int index = getImageCount() * pos[0] + no;
@@ -282,9 +278,7 @@ public class FlexReader extends FormatReader {
       }
     }
 
-    if (!useFirstStream) {
-      s.close();
-    }
+    s.close();
 
     return buf;
   }
@@ -310,8 +304,6 @@ public class FlexReader extends FormatReader {
       nRows = nCols = 0;
       flexFiles = null;
       wellNumber = null;
-      if (firstStream != null) firstStream.close();
-      firstStream = null;
       planePositionX.clear();
       planePositionY.clear();
       planePositionZ.clear();
@@ -1246,7 +1238,6 @@ public class FlexReader extends FormatReader {
           wellNumber[currentWell][1] = col;
 
           s = new RandomAccessInputStream(getFileHandle(file.file));
-          if (currentWell == 0 && field == 0) firstStream = s;
           TiffParser tp = new TiffParser(s);
 
           if (compressed || firstFile) {
@@ -1298,7 +1289,7 @@ public class FlexReader extends FormatReader {
             flexFiles.add(file);
             parseFlexFile(currentWell, row, col, field, firstFile, store);
           }
-          if (currentWell != 0 || field != 0) s.close();
+          s.close();
           if (firstFile) firstFile = false;
         }
         currentWell++;

@@ -36,6 +36,7 @@
 
 package loci.common;
 
+import java.io.Closeable;
 import java.io.DataInput;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +55,7 @@ import loci.legacy.adapter.AdapterTools;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class RandomAccessInputStream extends InputStream implements DataInput {
+public class RandomAccessInputStream extends InputStream implements DataInput, Closeable {
 
   // -- Constants --
 
