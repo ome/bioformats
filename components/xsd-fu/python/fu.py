@@ -31,9 +31,6 @@ import os
 from generateDS.generateDS import *
 from xml import sax
 
-from posix import getuid
-from pwd import getpwuid
-
 from util import odict
 from xml.etree import ElementTree
 
@@ -182,38 +179,51 @@ OMERO_NAMED_OPTIONAL = (
         "RenderingDef",
 )
 
+LANG_JAVA = "Java"
+LANG_CXX = "C++"
+
+TYPE_SOURCE = "Source"
+TYPE_HEADER = "Header"
+
+JAVA_TEMPLATE_DIR = "templates-java"
+CXX_TEMPLATE_DIR = "templates-c++"
+
+JAVA_SOURCE_SUFFIX = ".java"
+CXX_SOURCE_SUFFIX = ".cpp"
+CXX_HEADER_SUFFIX = ".h"
+
 # The default template for enum class processing.
-ENUM_TEMPLATE = "templates/Enum.template"
+ENUM_TEMPLATE = 'Enum.template'
 
 # The default template for enum handler class processing.
-ENUM_HANDLER_TEMPLATE = "templates/EnumHandler.template"
+ENUM_HANDLER_TEMPLATE = 'EnumHandler.template'
 
 # The default template for class processing.
-CLASS_TEMPLATE = "templates/Pojo.template"
+CLASS_TEMPLATE = 'Pojo.template'
 
 # The default template for MetadataStore processing.
-METADATA_STORE_TEMPLATE = "templates/MetadataStore.template"
+METADATA_STORE_TEMPLATE = 'MetadataStore.template'
 
 # The default template for MetadataRetrieve processing.
-METADATA_RETRIEVE_TEMPLATE = "templates/MetadataRetrieve.template"
+METADATA_RETRIEVE_TEMPLATE = 'MetadataRetrieve.template'
 
 # The default template for AggregateMetadata processing.
-METADATA_AGGREGATE_TEMPLATE = "templates/AggregateMetadata.template"
+METADATA_AGGREGATE_TEMPLATE = 'AggregateMetadata.template'
 
 # The default template for OME XML metadata processing.
-OMEXML_METADATA_TEMPLATE = "templates/OMEXMLMetadataImpl.template"
+OMEXML_METADATA_TEMPLATE = 'OMEXMLMetadataImpl.template'
 
 # The default template for DummyMetadata processing.
-DUMMY_METADATA_TEMPLATE = "templates/DummyMetadata.template"
+DUMMY_METADATA_TEMPLATE = 'DummyMetadata.template'
 
 # The default template for FilterMetadata processing.
-FILTER_METADATA_TEMPLATE = "templates/FilterMetadata.template"
+FILTER_METADATA_TEMPLATE = 'FilterMetadata.template'
 
 # The default template for OMERO metadata processing.
-OMERO_METADATA_TEMPLATE = "templates/OmeroMetadata.template"
+OMERO_METADATA_TEMPLATE = 'OmeroMetadata.template'
 
 # The default template for OMERO metadata processing.
-OMERO_MODEL_TEMPLATE = "templates/OmeroModel.template"
+OMERO_MODEL_TEMPLATE = 'OmeroModel.template'
 
 REF_REGEX = re.compile(r'Ref$|RefNode$')
 
@@ -221,6 +231,26 @@ BACKREF_REGEX = re.compile(r'_BackReference')
 
 PREFIX_CASE_REGEX = re.compile(
         r'^([A-Z]{1})[a-z0-9]+|([A-Z0-9]+)[A-Z]{1}[a-z]+|([A-Z]+)[0-9]*|([a-z]+$)')
+
+def template_path(name, opts):
+    if (opts.lang == LANG_JAVA):
+        return os.path.join(opts.templatepath, JAVA_TEMPLATE_DIR, name)
+    elif (opts.lang == LANG_CXX):
+        return os.path.join(opts.templatepath, CXX_TEMPLATE_DIR, name)
+    else:
+        raise ModelProcessingError(
+            "Invalid language: %s" % opts.lang)
+
+def generated_filename(name, type, opts):
+    if (opts.lang == LANG_JAVA and type == TYPE_SOURCE):
+        return name + JAVA_SOURCE_SUFFIX
+    elif (opts.lang == LANG_CXX and type == TYPE_SOURCE):
+        return name + CXX_SOURCE_SUFFIX
+    elif (opts.lang == LANG_CXX and type == TYPE_HEADER):
+        return name + CXX_HEADER_SUFFIX
+    else:
+        raise ModelProcessingError(
+            "Invalid language/filetype combination: %s/%s" % (opts.lang, type))
 
 def resolve_parents(model, element_name):
     """
@@ -1048,7 +1078,6 @@ class TemplateInfo(object):
         self.outputDirectory = outputDirectory
         self.package = package
         self.date = now()
-        self.user = getpwuid(getuid())[0]
         self.DO_NOT_PROCESS = DO_NOT_PROCESS
         self.BACK_REFERENCE_OVERRIDE = BACK_REFERENCE_OVERRIDE
         self.BACK_REFERENCE_LINK_OVERRIDE = BACK_REFERENCE_LINK_OVERRIDE
@@ -1071,12 +1100,15 @@ class TemplateInfo(object):
         except KeyError:
             return False
 
-def parseXmlSchema(filenames, namespace=DEFAULT_NAMESPACE):
+def parseXmlSchema(opts):
     """
     Entry point for XML Schema parsing into an OME Model.
     """
     # The following two statements are required to "prime" the generateDS
     # code and ensure we have reasonable namespace support.
+    filenames = opts.args
+    namespace = opts.namespace
+
     logging.debug("Namespace: %s" % namespace)
     set_type_constants(namespace)
     updateTypeMaps(namespace)

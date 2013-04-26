@@ -99,6 +99,9 @@ public class NDPIReader extends BaseTiffReader {
           return false;
         }
         IFD ifd = parser.getFirstIFD();
+        if (ifd == null) {
+          return false;
+        }
         return ifd.containsKey(MARKER_TAG);
       }
       catch (IOException e) {
