@@ -76,7 +76,10 @@ import org.w3c.dom.Element;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Ilya Goldberg igg at nih.gov
+ *
+ * @deprecated The r2003fc classes are replaced by the ome.xml.model classes
  */
+@Deprecated
 public class OmeisImporter {
 
   // -- Constants --
