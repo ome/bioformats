@@ -247,10 +247,9 @@ public class PhotoshopTiffReader extends BaseTiffReader {
             !layerNames[layer].equalsIgnoreCase("Layer " + layer + "M"))
           {
             addGlobalMetaList("Layer name", layerNames[layer]);
-            layerMetadata.add(layerCore);
+            core.add(layerCore);
           }
           tag.skipBytes((int) (fp + len - tag.getFilePointer()));
-          core.add(layerCore);
         }
 
         nLayers = core.size() - 1;

@@ -999,11 +999,10 @@ public class LIFReader extends FormatReader {
     for (int count : tileCount) {
       totalSeries += count;
     }
-    CoreMetadata[] newCore = new CoreMetadata[totalSeries];
-    int nextCore = 0;
-    for (int i=0; i<core.length; i++) {
-      for (int tile=0; tile<tileCount[i]; tile++, nextCore++) {
-        newCore[nextCore] = core[i];
+    ArrayList<CoreMetadata> newCore = new ArrayList<CoreMetadata>();
+    for (int i=0; i<core.size(); i++) {
+      for (int tile=0; tile<tileCount[i]; tile++) {
+        newCore.add(core.get(i));
       }
     }
     core = newCore;
