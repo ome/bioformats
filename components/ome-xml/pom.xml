@@ -178,7 +178,6 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>ome.xml.About</mainClass>
               <packageName>ome.xml</packageName>
             </manifest>
           </archive>
