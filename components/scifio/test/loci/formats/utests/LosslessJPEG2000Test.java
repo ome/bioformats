@@ -71,10 +71,12 @@ public class LosslessJPEG2000Test {
 
   @BeforeMethod
   public void setUp() throws Exception {
-    Location.mapId(FILE_8,
-      File.createTempFile("test", ".jp2").getAbsolutePath());
-    Location.mapId(FILE_16,
-      File.createTempFile("test", ".jp2").getAbsolutePath());
+    File temp8 = File.createTempFile("test", ".jp2");
+    File temp16 = File.createTempFile("test", ".jp2");
+    temp8.deleteOnExit();
+    temp16.deleteOnExit();
+    Location.mapId(FILE_8, temp8.getAbsolutePath());
+    Location.mapId(FILE_16, temp16.getAbsolutePath());
 
     IMetadata metadata8 = MetadataTools.createOMEXMLMetadata();
     MetadataTools.populateMetadata(metadata8, 0, "foo", false, "XYCZT",

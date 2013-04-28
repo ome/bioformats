@@ -79,8 +79,9 @@ public class EightBitLosslessJPEG2000Test {
       pixels[index][0] = v;
 
       String file = index + ".jp2";
-      Location.mapId(
-        file, File.createTempFile("test", ".jp2").getAbsolutePath());
+      File tempFile = File.createTempFile("test", ".jp2");
+      tempFile.deleteOnExit();
+      Location.mapId(file, tempFile.getAbsolutePath());
       files.add(file);
 
       IMetadata metadata = MetadataTools.createOMEXMLMetadata();
