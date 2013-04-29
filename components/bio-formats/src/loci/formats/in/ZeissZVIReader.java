@@ -459,6 +459,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
 
     RandomAccessInputStream s = poi.getDocumentStream(name);
+    s.setEncoding("UTF-16LE");
     s.order(true);
 
     // scan stream for offsets to each ROI
@@ -470,12 +471,37 @@ public class ZeissZVIReader extends BaseZeissReader {
     // Bytes 0x2-5 == Layer version (04100010)
     // Byte 0x10 == Shape count
 
-    s.seek(16);
+    s.seek(2);
+    int layerversion = s.readInt();
+    LOGGER.debug("LAYER@{} version={}", s.getFilePointer()-4, layerversion);
+
+    // Layer name (assumed).  This is usually NULL in most files, so
+    // we need to explicitly check whether it's a string prior to
+    // parsing it.  The only file seen with a non-null string here did
+    // not contain any shapes in the layer (purpose of the empty layer
+    // unknown).
+    String layername = null;
+    {
+      long tmp = s.getFilePointer();
+      if (s.readShort() == 8) {
+        s.seek(tmp);
+        layername = parseROIString(s);
+      }
+      if (layername != null)
+        LOGGER.debug("  Name={}", layername);
+      else
+        LOGGER.debug("  Name=NULL");
+    }
+
+    s.skipBytes(8);
+
     int roiCount = s.readShort();
     int roiFound = 0;
+    LOGGER.debug("  ShapeCount@{} count={}", s.getFilePointer()-2, roiCount);
 
     // Add new layer for this set of shapes.
     Layer nlayer = new Layer();
+    nlayer.name = layername;
     layers.add(nlayer);
 
     // Following signature (from sig start):
@@ -497,7 +523,7 @@ public class ZeissZVIReader extends BaseZeissReader {
       long roiOffset = s.getFilePointer() - 8;
       roiOffsets.add(new Long(roiOffset));
 
-      LOGGER.debug("ROI@" + roiOffset);
+      LOGGER.debug("ROI@{}", roiOffset);
 
       // Found ROI; now fill out the shape details and add to the
       // layer.
@@ -512,7 +538,7 @@ public class ZeissZVIReader extends BaseZeissReader {
       int shapeAttrLength = s.readInt();
       nshape.type = FeatureType.get(s.readInt());
 
-      LOGGER.debug("  ShapeAttrs@" + shapeAttrOffset + " len="+shapeAttrLength);
+      LOGGER.debug("  ShapeAttrs@{} len={}", shapeAttrOffset, shapeAttrLength);
 
       if (shapeAttrLength < 32) // Broken attrs.
         break;
@@ -568,26 +594,42 @@ public class ZeissZVIReader extends BaseZeissReader {
         LOGGER.debug("    Charset");
       }
 
-      // Label (text).
-      nshape.text = parseROIString(s);
-      if (nshape.text == null) break;
-      LOGGER.debug("  Text=" + nshape.text);
+      // Label (text).  This label can be NULL in some files, so we
+      // need to explicitly check whether it's a string prior to
+      // parsing it.  It can also be present 0 or 2 bytes after the
+      // ShapeAttrs block, so check for both eventualities.
+      {
+        long tmp = s.getFilePointer();
+        for (int i=0; i<2; ++i) {
+          if (s.readShort() == 8) {
+            s.seek(tmp);
+            nshape.text = parseROIString(s);
+            break;
+          }
+        }
+
+        if (nshape.text != null)
+          LOGGER.debug("  Text={}", nshape.text);
+        else
+          LOGGER.debug("  Text=NULL");
+      }
 
       // Tag ID
       if (s.getFilePointer() + 8 > s.length()) break;
-      s.skipBytes(6);
+      s.skipBytes(4);
+      LOGGER.debug("  Tag@{}", s.getFilePointer());
       nshape.tagID = new Tag(s.readInt(), BaseZeissReader.Context.MAIN);
-      LOGGER.debug("  TagID=" + nshape.tagID);
+      LOGGER.debug("    TagID={}", nshape.tagID);
 
       // Font name
       nshape.fontName = parseROIString(s);
       if (nshape.fontName == null) break;
-      LOGGER.debug("  Font name=" + nshape.fontName);
+      LOGGER.debug("  Font name={}", nshape.fontName);
 
       // Label (name).
       nshape.name = parseROIString(s);
       if (nshape.name == null) break;
-      LOGGER.debug("  Name=" + nshape.name);
+      LOGGER.debug("  Name={}", nshape.name);
 
       // Handle size and point count.
       if (s.getFilePointer() + 20 > s.length()) break;
@@ -596,8 +638,8 @@ public class ZeissZVIReader extends BaseZeissReader {
       s.skipBytes(2);
       nshape.pointCount = s.readInt();
       s.skipBytes(6);
-      LOGGER.debug("  Handle size=" + nshape.handleSize);
-      LOGGER.debug("  Point count=" + nshape.pointCount);
+      LOGGER.debug("  Handle size={}", nshape.handleSize);
+      LOGGER.debug("  Point count={}", nshape.pointCount);
 
       if (s.getFilePointer() + (8*2*nshape.pointCount) > s.length()) break;
       nshape.points = new double[nshape.pointCount*2];
@@ -612,7 +654,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
 
     if (roiCount != roiFound) {
-      LOGGER.warn("Found " + roiFound + " ROIs, but " + roiCount + " ROIs expected");
+        LOGGER.warn("Found {} ROIs, but {} ROIs expected", roiFound, roiCount);
     }
 
     s.close();
@@ -629,6 +671,7 @@ public class ZeissZVIReader extends BaseZeissReader {
     // Strip off NUL.
     String text = null;
     if (strlen >= 2) { // Don't read NUL
+        LOGGER.debug("  String@{} length={}", s.getFilePointer(), strlen);
         text = s.readString(strlen-2);
         s.skipBytes(2);
     } else {
