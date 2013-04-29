@@ -34,6 +34,9 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -44,6 +47,7 @@ import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.Image;
 import ome.xml.model.Instrument;
@@ -383,7 +387,20 @@ public class CellWorxReader extends FormatReader {
         convertRoot.addImage(img);
       }
     }
-    IMetadata convertMetadata = MetadataTools.createOMEXMLMetadata();
+    OMEXMLMetadata convertMetadata;
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      convertMetadata = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+
     convertMetadata.setRoot(convertRoot);
 
     pnl.close();
@@ -691,7 +708,21 @@ public class CellWorxReader extends FormatReader {
     if (checkSuffix(file, "tif")) {
       pnl = new MetamorphReader();
     }
-    IMetadata metadata = MetadataTools.createOMEXMLMetadata();
+
+    IMetadata metadata;
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      metadata = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+
     pnl.setMetadataStore(metadata);
     pnl.setId(file);
     return pnl;

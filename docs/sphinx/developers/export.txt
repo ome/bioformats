@@ -13,7 +13,21 @@ The first thing we need to do is set up a reader:
       // create a reader that will automatically handle any supported format
       IFormatReader reader = new ImageReader();
       // tell the reader where to store the metadata from the dataset
-      reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+      MetadataStore metadata;
+
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+        metadata = service.createOMEXMLMetadata();
+      }
+      catch (DependencyException exc) {
+        throw new FormatException("Could not create OME-XML store.", exc);
+      }
+      catch (ServiceException exc) {
+        throw new FormatException("Could not create OME-XML store.", exc);
+      }
+
+      reader.setMetadataStore(metadata);
       // initialize the dataset
       reader.setId("/path/to/file");
 

@@ -25,9 +25,14 @@
 
 import java.util.ArrayList;
 
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.formats.FormatException;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.Ellipse;
 import ome.xml.model.Label;
@@ -164,7 +169,20 @@ public class PrintROIs {
 
   public static void main(String[] args) throws Exception {
     ImageReader reader = new ImageReader();
-    IMetadata omexml = MetadataTools.createOMEXMLMetadata();
+    IMetadata omexml;
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      omexml = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+
     reader.setMetadataStore(omexml);
     reader.setId(args[0]);
 

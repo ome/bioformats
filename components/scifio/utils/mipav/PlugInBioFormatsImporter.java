@@ -47,9 +47,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import loci.common.DataTools;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.*;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * A plugin for opening life sciences files in MIPAV using Bio-Formats.
@@ -128,8 +132,20 @@ public class PlugInBioFormatsImporter implements PlugInFile {
         String id = file.getPath();
         try {
           long tic = System.currentTimeMillis();
+          IMetadata store;
 
-          IMetadata store = MetadataTools.createOMEXMLMetadata();
+          try {
+            ServiceFactory factory = new ServiceFactory();
+            OMEXMLService service = factory.getInstance(OMEXMLService.class);
+            store = service.createOMEXMLMetadata();
+          }
+          catch (DependencyException exc) {
+            throw new FormatException("Could not create OME-XML store.", exc);
+          }
+          catch (ServiceException exc) {
+            throw new FormatException("Could not create OME-XML store.", exc);
+          }
+
           reader.setMetadataStore(store);
           reader.setId(id);
 
