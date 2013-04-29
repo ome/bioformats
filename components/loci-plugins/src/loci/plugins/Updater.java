@@ -54,7 +54,7 @@ public class Updater implements PlugIn {
     "Stable build (" + UpgradeChecker.STABLE_VERSION + ")";
 
   private static final boolean IS_FIJI =
-    IJ.getInstance().getTitle().equalsIgnoreCase("Fiji");
+    IJ.getInstance().getTitle().indexOf("Fiji") >= 0;
 
   // -- Fields --
 

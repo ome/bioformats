@@ -61,6 +61,7 @@ public class SISReader extends BaseTiffReader {
 
   private static final int SIS_TAG = 33560;
   private static final int SIS_INI_TAG = 33471;
+  private static final int SIS_TAG_2 = 34853;
 
   // -- Fields --
 
@@ -76,6 +77,7 @@ public class SISReader extends BaseTiffReader {
   public SISReader() {
     super("Olympus SIS TIFF", new String[] {"tif", "tiff"});
     suffixSufficient = false;
+    suffixNecessary = true;
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
@@ -87,8 +89,11 @@ public class SISReader extends BaseTiffReader {
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
     String software = ifd.getIFDTextValue(IFD.SOFTWARE);
-    return ifd.get(SIS_TAG) != null &&
-      (software == null || software.startsWith("analySIS"));
+    String make = ifd.getIFDTextValue(IFD.MAKE);
+    return (ifd.get(SIS_TAG) != null &&
+      (software == null || software.startsWith("analySIS"))) ||
+      (ifd.get(SIS_TAG_2) != null &&
+      (make != null && make.startsWith("Olympus")));
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -130,6 +135,22 @@ public class SISReader extends BaseTiffReader {
       }
 
       // TODO : parse more metadata from the INI tables
+    }
+
+    if (!ifd.containsKey(SIS_TAG)) {
+      // TODO: parse this metadata more thoroughly
+      in.seek(ifd.getIFDLongValue(SIS_TAG_2, 0));
+
+      while (!in.readString(2).equals("IS")) {
+        in.seek(in.getFilePointer() - 1);
+      }
+
+      in.skipBytes(28);
+      in.seek(in.readLong() - 84);
+      physicalSizeX = in.readDouble() * 1000;
+      physicalSizeY = in.readDouble() * 1000;
+
+      return;
     }
 
     long metadataPointer = ifd.getIFDLongValue(SIS_TAG, 0);
