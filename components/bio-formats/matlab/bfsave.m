@@ -58,7 +58,8 @@ ip.parse(outputPath, varargin{:});
 
 % Create metadata
 toInt = @(x) ome.xml.model.primitives.PositiveInteger(java.lang.Integer(x));
-metadata = loci.formats.MetadataTools.createOMEXMLMetadata();
+OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
+metadata = OMEXMLService.createOMEXMLMetadata();
 metadata.createRoot();
 metadata.setImageID('Image:0', 0);
 metadata.setPixelsID('Pixels:0', 0);
