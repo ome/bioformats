@@ -36,7 +36,6 @@
 
 package loci.formats.ome;
 
-import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
@@ -44,17 +43,11 @@ import java.util.Hashtable;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import loci.common.Constants;
 
+import ome.scifio.xml.XMLTools;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModelObject;
 
@@ -125,12 +118,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
       r.setAttribute("xmlns:xsi", XSI_NS);
       r.setAttribute("xsi:schemaLocation", OME.NAMESPACE + " " + SCHEMA);
       doc.appendChild(r);
-
-      TransformerFactory transformFactory = TransformerFactory.newInstance();
-      Transformer idTransform = transformFactory.newTransformer();
-      Source input = new DOMSource(doc);
-      Result output = new StreamResult(os);
-      idTransform.transform(input, output);
+      XMLTools.writeXML(os, doc);
 
       return os.toString(Constants.ENCODING);
     }
