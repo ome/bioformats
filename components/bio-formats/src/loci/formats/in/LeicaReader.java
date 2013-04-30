@@ -1381,10 +1381,10 @@ public class LeicaReader extends FormatReader {
           store.setObjectiveModel(model.toString().trim(), series, objective);
           store.setObjectiveLensNA(new Double(na), series, objective);
 
-          int magnification = (int) Double.parseDouble(mag);
+          Double magnification = Double.parseDouble(mag);
           if (magnification > 0) {
             store.setObjectiveNominalMagnification(
-              new PositiveInteger(magnification), series, objective);
+              new Double(magnification), series, objective);
           }
           else {
             LOGGER.warn(

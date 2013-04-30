@@ -1032,7 +1032,7 @@ public class ZeissCZIReader extends FormatReader {
 
           if (mag > 0) {
             store.setObjectiveNominalMagnification(
-              new PositiveInteger(mag.intValue()), 0, i);
+              new Double(mag.doubleValue()), 0, i);
           }
           else {
             LOGGER.warn(

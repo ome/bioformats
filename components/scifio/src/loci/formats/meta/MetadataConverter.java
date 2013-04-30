@@ -1516,7 +1516,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          PositiveInteger nominalMag = src.getObjectiveNominalMagnification(i, q);
+          Double nominalMag = src.getObjectiveNominalMagnification(i, q);
           dest.setObjectiveNominalMagnification(nominalMag, i, q);
         }
         catch (NullPointerException e) { }

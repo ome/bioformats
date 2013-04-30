@@ -726,7 +726,7 @@ public class VolocityReader extends FormatReader {
       store.setObjectiveID(objective, 0, i);
       if (stack.magnification != null && stack.magnification > 0) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(stack.magnification.intValue()), 0, i);
+          new Double(stack.magnification.doubleValue()), 0, i);
       }
       else {
         LOGGER.warn("Expected positive value for NominalMagnification; got {}",

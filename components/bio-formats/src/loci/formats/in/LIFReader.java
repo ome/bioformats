@@ -540,7 +540,7 @@ public class LIFReader extends FormatReader {
       store.setObjectiveSerialNumber(serialNumber[i], i, 0);
       if (magnification[i] != null && magnification[i] > 0) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(magnification[i]), i, 0);
+          new Double(magnification[i]), i, 0);
       }
       else {
         LOGGER.warn("Expected positive value for NominalMagnification; got {}",

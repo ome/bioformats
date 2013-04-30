@@ -109,7 +109,7 @@ public class Upgrade2011_06
         "\t\t\tComplete with basic formatting, like new lines.";
         public static final String Instrument0Objective0LotNumber = "123";
         public static final String Instrument0Objective0Manufacturer = "OME-Labs";
-        public static final PositiveInteger Instrument0Objective0NominalMagnification = PositiveInteger.valueOf("20");
+        public static final PositiveInteger Instrument0Objective0NominalMagnification = Double.valueOf("20.1");
         public static final Double Instrument0Objective0CalibratedMagnification = Double.valueOf("20.34");
         public static final String Instrument0Objective0OTF1Type = "bit";
         public static final String Instrument0Objective0OTF1OpticalAxisAveraged = "true";

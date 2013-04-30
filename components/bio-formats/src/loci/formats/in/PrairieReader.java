@@ -585,8 +585,7 @@ public class PrairieReader extends FormatReader {
         store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
 
         // populate Objective NominalMagnification
-        final PositiveInteger magnification =
-          pi(firstFrame.getMagnification(), "NominalMagnification");
+        final Double magnification = new Double(firstFrame.getMagnification());
         if (magnification != null) {
           store.setObjectiveNominalMagnification(magnification, 0, 0);
         }

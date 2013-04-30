@@ -919,10 +919,10 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setExperimenterInstitution(value, 0);
         }
         else if (key.startsWith("Objective Magnification")) {
-          int magnification = (int) Double.parseDouble(value);
+          Double magnification = Double.parseDouble(value);
           if (magnification > 0) {
             store.setObjectiveNominalMagnification(
-                new PositiveInteger(magnification), 0, 0);
+                new Double(magnification), 0, 0);
           }
           else {
             LOGGER.warn(
@@ -943,12 +943,12 @@ public abstract class BaseZeissReader extends FormatReader {
           for (int q=0; q<tokens.length; q++) {
             int slash = tokens[q].indexOf("/");
             if (slash != -1 && slash - q > 0) {
-              int mag = (int)
+              Double mag = 
                   Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
               if (mag > 0) {
                 store.setObjectiveNominalMagnification(
-                    new PositiveInteger(mag), 0, 0);
+                    new Double(mag), 0, 0);
               }
               else {
                 LOGGER.warn(

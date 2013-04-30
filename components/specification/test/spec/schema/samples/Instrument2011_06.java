@@ -71,7 +71,7 @@ public class Instrument2011_06
         public static final Correction Instrument0Objective0Correction = Correction.UV;
         public static final Immersion Instrument0Objective0Immersion = Immersion.AIR;
         public static final Double Instrument0Objective0LensNA = Double.valueOf("1.2");
-        public static final PositiveInteger Instrument0Objective0NominalMagnification = PositiveInteger.valueOf("60");
+        public static final PositiveInteger Instrument0Objective0NominalMagnification = Double.valueOf("60.1");
         public static final Double Instrument0Objective0CalibratedMagnification = Double.valueOf("60.12");
         public static final Double Instrument0Objective0WorkingDistance = Double.valueOf("20");
         public static final String Instrument0Objective0Manufacturer = "OME Objectives";

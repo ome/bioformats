@@ -502,7 +502,7 @@ public class BioRadReader extends FormatReader {
       store.setObjectiveLensNA(new Double(lens), 0, 0);
       if ((int) magFactor > 0) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger((int) magFactor), 0, 0);
+          new Double(magFactor), 0, 0);
       }
       else {
         LOGGER.warn("Expected positive value for NominalMagnification; got {}",
@@ -652,10 +652,10 @@ public class BioRadReader extends FormatReader {
                 store.setObjectiveModel(value, 0, 0);
               }
               else if (key.equals("INFO_OBJECTIVE_MAGNIFICATION")) {
-                int mag = (int) Float.parseFloat(value);
+                Double mag = Double.parseDouble(value);
                 if (mag > 0) {
                   store.setObjectiveNominalMagnification(
-                    new PositiveInteger(mag), 0, 0);
+                    new Double(mag), 0, 0);
                 }
                 else {
                   LOGGER.warn(
@@ -664,10 +664,10 @@ public class BioRadReader extends FormatReader {
                 }
               }
               else if (key.equals("LENS_MAGNIFICATION")) {
-                int magnification = (int) Float.parseFloat(value);
+                Double magnification = Double.parseDouble(value);
                 if (magnification > 0) {
                   store.setObjectiveNominalMagnification(
-                    new PositiveInteger(magnification), 0, 0);
+                    new Double(magnification), 0, 0);
                 }
                 else {
                   LOGGER.warn(
@@ -777,10 +777,10 @@ public class BioRadReader extends FormatReader {
                     addGlobalMeta(STRUCTURE_LABELS_1[i], values[i]);
                   }
 
-                  int mag = (int) Float.parseFloat(values[11]);
+                  Double mag = Double.parseDouble(values[11]);
                   if (mag > 0) {
                     store.setObjectiveNominalMagnification(
-                      new PositiveInteger(mag), 0, 0);
+                      new Double(mag), 0, 0);
                   }
                   else {
                     LOGGER.warn("Expected positive value for " +

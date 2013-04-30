@@ -1259,7 +1259,7 @@ public class SlidebookReader extends FormatReader {
           store.setObjectiveImmersion(getImmersion("Other"), 0, objectiveIndex);
           if (magnifications != null && magnifications.get(i) > 0) {
             store.setObjectiveNominalMagnification(
-              new PositiveInteger(magnifications.get(i)), 0, objectiveIndex);
+              new Double(magnifications.get(i)), 0, objectiveIndex);
           }
 
           // link Objective to Image
