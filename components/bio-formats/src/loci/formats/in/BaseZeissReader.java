@@ -2111,15 +2111,23 @@ public abstract class BaseZeissReader extends FormatReader {
     }
   }
 
+  /**
+   * Layer class representing an AxioVision layer; used to contain a
+   * collection of shapes.
+   */
   class Layer
   {
     int key; // Layer number
     String flags; // Unknown.
+    public String name; // Layer name. (Assumed.)
     public ArrayList<Shape> shapes = new ArrayList<Shape>(); // List of shape objects, displayed deepest first, topmost last.
 
     public String toString() {
       String s = new String();
-      s += "LAYER: " + key + "\n";
+      s += "LAYER: " + key;
+      if (name != null)
+        s += " (" + name + ")";
+      s+= "\n";
       for (Shape shape : shapes) {
         s += shape;
       }

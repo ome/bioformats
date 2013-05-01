@@ -60,6 +60,7 @@ class BZip2HandleProvider implements IRandomAccessProvider {
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     File pageFile = File.createTempFile("page", ".dat");
+    pageFile.deleteOnExit();
     FileOutputStream out = new FileOutputStream(pageFile);
     out.write(page);
     out.close();
@@ -73,6 +74,7 @@ class BZip2HandleProvider implements IRandomAccessProvider {
     }
 
     pageFile = new File(pageFile.getAbsolutePath() + ".bz2");
+    pageFile.deleteOnExit();
     return new BZip2Handle(pageFile.getAbsolutePath());
   }
 

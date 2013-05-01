@@ -89,12 +89,24 @@ public class BioRadGelReader extends FormatReader {
     int planeSize = FormatTools.getPlaneSize(this);
 
     if (PIXEL_OFFSET + planeSize < in.length()) {
+      // offsets were determined by trial and error, and may not be 100% correct
       if (diff < 0) {
         in.seek(0x379d1);
       }
-      else if (diff == 0) in.seek(PIXEL_OFFSET);
+      else if (diff == 0) {
+        in.seek(PIXEL_OFFSET);
+      }
       else if (in.length() - planeSize > 61000) {
-        in.seek(PIXEL_OFFSET - 33);
+        in.seek(PIXEL_OFFSET - 196);
+
+        while (!in.readString(3).equals("scn")) {
+          in.seek(in.getFilePointer() - 2);
+        }
+
+        in.skipBytes(91);
+        int len = in.readShort();
+        in.skipBytes(len);
+        in.skipBytes(32);
       }
       else in.seek(in.length() - planeSize);
     }

@@ -38,7 +38,7 @@ Type "ant -p" for a list of targets.
     </xsd_fu>
   </target>
 
-  <target name="test" depends="jar" description="run tests">
+  <target name="test" depends="jar,compile-tests" description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/ome/xml/utests/testng.xml"/>
@@ -48,6 +48,8 @@ Type "ant -p" for a list of targets.
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
+        <pathelement path="${lib.dir}/slf4j-log4j12-1.5.10.jar"/>
+        <pathelement path="${lib.dir}/log4j-1.2.15.jar"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>

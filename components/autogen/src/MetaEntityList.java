@@ -69,6 +69,22 @@ public class MetaEntityList extends EntityList {
 
   // -- MetaEntityList API methods - entities --
 
+  public String schema() {
+    String schema = value("schema");
+    if (schema == null) {
+      schema = "ome_xsd.html";
+    }
+    return schema;
+  }
+
+  public String anchor() {
+    String anchor = value("anchor");
+    if (anchor == null) {
+      anchor = ent + "_" + prop;
+    }
+    return anchor;
+  }
+
   /** Whether the entity can appear multiple times. */
   public boolean countable() { return "true".equals(value("countable")); }
 

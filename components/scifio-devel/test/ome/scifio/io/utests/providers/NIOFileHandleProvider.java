@@ -61,6 +61,7 @@ class NIOFileHandleProvider implements IRandomAccessProvider {
   public IRandomAccess createMock(
       byte[] page, String mode, int bufferSize) throws IOException {
     File pageFile = File.createTempFile("page", ".dat");
+    pageFile.deleteOnExit();
     OutputStream stream = new FileOutputStream(pageFile);
     try {
       stream.write(page);
