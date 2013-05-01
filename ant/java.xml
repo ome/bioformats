@@ -269,7 +269,7 @@ your FindBugs installation's lib directory. E.g.:
     </copy>
   </target>
 
-  <target name="generate-source" />
+  <target name="generate-source" depends="init-title"/>
 
   <target name="copy-generated-source" depends="init,generate-source">
     <if>
