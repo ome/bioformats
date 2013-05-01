@@ -24,13 +24,13 @@ These fields are fully supported by the Bio-Formats Inveon format reader:
   * :schema:`Experimenter : UserName <OME-2012-06/ome_xsd.html#Experimenter_UserName>`
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : Description <OME-2012-06/ome_xsd.html#Image_Description>`
-  * :schema:`Image : ExperimenterRef <OME-2012-06/ome_xsd.html#Image_ExperimenterRef>`
+  * :schema:`Image : ExperimenterRef <OME-2012-06/ome_xsd.html#ExperimenterRef_ID>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
-  * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#Image_InstrumentRef>`
+  * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
   * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
-  * :schema:`Microscope : Model <OME-2012-06/ome_xsd.html#Microscope_Model>`
-  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
+  * :schema:`Microscope : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
+  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/BinaryFile_xsd.html#BinData_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
   * :schema:`Pixels : PhysicalSizeX <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`

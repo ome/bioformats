@@ -21,12 +21,12 @@ These fields are fully supported by the Bio-Formats Olympus SIS TIFF format read
   * :schema:`Channel : Name <OME-2012-06/ome_xsd.html#Channel_Name>`
   * :schema:`Channel : SamplesPerPixel <OME-2012-06/ome_xsd.html#Channel_SamplesPerPixel>`
   * :schema:`Detector : ID <OME-2012-06/ome_xsd.html#Detector_ID>`
-  * :schema:`Detector : Model <OME-2012-06/ome_xsd.html#Detector_Model>`
+  * :schema:`Detector : Model <OME-2012-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Detector : Type <OME-2012-06/ome_xsd.html#Detector_Type>`
   * :schema:`DetectorSettings : ID <OME-2012-06/ome_xsd.html#DetectorSettings_ID>`
   * :schema:`Image : AcquisitionDate <OME-2012-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : ID <OME-2012-06/ome_xsd.html#Image_ID>`
-  * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#Image_InstrumentRef>`
+  * :schema:`Image : InstrumentRef <OME-2012-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2012-06/ome_xsd.html#Image_Name>`
   * :schema:`Instrument : ID <OME-2012-06/ome_xsd.html#Instrument_ID>`
   * :schema:`Objective : Correction <OME-2012-06/ome_xsd.html#Objective_Correction>`
@@ -34,7 +34,7 @@ These fields are fully supported by the Bio-Formats Olympus SIS TIFF format read
   * :schema:`Objective : Immersion <OME-2012-06/ome_xsd.html#Objective_Immersion>`
   * :schema:`Objective : NominalMagnification <OME-2012-06/ome_xsd.html#Objective_NominalMagnification>`
   * :schema:`ObjectiveSettings : ID <OME-2012-06/ome_xsd.html#ObjectiveSettings_ID>`
-  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/ome_xsd.html#Pixels_BinDataBigEndian>`
+  * :schema:`Pixels : BinDataBigEndian <OME-2012-06/BinaryFile_xsd.html#BinData_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2012-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
   * :schema:`Pixels : PhysicalSizeX <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`
