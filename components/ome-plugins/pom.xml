@@ -56,7 +56,7 @@
     <dependency>
       <groupId>net.imagej</groupId>
       <artifactId>ij</artifactId>
-      <version>[1.45s,)</version>
+      <version>[1.45s,1.47o)</version>
     </dependency>
   </dependencies>
 
