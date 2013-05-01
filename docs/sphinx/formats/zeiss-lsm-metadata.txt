@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 97 of them (20%).
-  * Of those, Bio-Formats fully or partially converts 97 (100%).
+  * The file format itself supports 99 of them (20%).
+  * Of those, Bio-Formats fully or partially converts 99 (100%).
 
 Supported fields
 ===============================================================================
@@ -117,6 +117,6 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * :schema:`TransmittanceRange : CutIn <OME-2012-06/ome_xsd.html#TransmittanceRange_CutIn>`
   * :schema:`TransmittanceRange : CutOut <OME-2012-06/ome_xsd.html#TransmittanceRange_CutOut>`
 
-**Total supported: 97**
+**Total supported: 99**
 
-**Total unknown or missing: 376**
+**Total unknown or missing: 374**

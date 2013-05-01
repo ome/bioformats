@@ -1419,20 +1419,12 @@ WellSample.Index = Yes
 WellSample.PositionX = Yes
 WellSample.PositionY = Yes
 
-[InveonReader]
+[INRReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
-Experimenter.ID = Yes
-Experimenter.Institution = Yes
-Experimenter.UserName = Yes
 Image.AcquisitionDate = Yes
-Image.Description = Yes
-Image.ExperimenterRef = Yes
 Image.ID = Yes
-Image.InstrumentRef = Yes
 Image.Name = Yes
-Instrument.ID = Yes
-Microscope.Model = Yes
 Pixels.BinDataBigEndian = Yes
 Pixels.DimensionOrder = Yes
 Pixels.ID = Yes
@@ -1449,12 +1441,20 @@ Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
 
-[IvisionReader]
+[InveonReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
+Experimenter.ID = Yes
+Experimenter.Institution = Yes
+Experimenter.UserName = Yes
 Image.AcquisitionDate = Yes
+Image.Description = Yes
+Image.ExperimenterRef = Yes
 Image.ID = Yes
+Image.InstrumentRef = Yes
 Image.Name = Yes
+Instrument.ID = Yes
+Microscope.Model = Yes
 Pixels.BinDataBigEndian = Yes
 Pixels.DimensionOrder = Yes
 Pixels.ID = Yes
@@ -2814,9 +2814,7 @@ Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
 
-[SVSReader]
-Channel.EmissionWavelength = Yes
-Channel.ExcitationWavelength = Yes
+[SBIGReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
 Image.AcquisitionDate = Yes
@@ -3166,6 +3164,8 @@ Plane.TheT = Yes
 Plane.TheZ = Yes
 
 [SVSReader]
+Channel.EmissionWavelength = Yes
+Channel.ExcitationWavelength = Yes
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
 Image.AcquisitionDate = Yes
@@ -3831,6 +3831,7 @@ Pixels.SizeX = Yes
 Pixels.SizeY = Yes
 Pixels.SizeZ = Yes
 Pixels.Type = Yes
+Plane.ExposureTime = Yes
 Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
@@ -4217,7 +4218,7 @@ Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
 
-[OBFReader]
+[NRRDReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
 Image.AcquisitionDate = Yes
@@ -4229,6 +4230,25 @@ Pixels.ID = Yes
 Pixels.PhysicalSizeX = Yes
 Pixels.PhysicalSizeY = Yes
 Pixels.PhysicalSizeZ = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
+[OBFReader]
+Channel.ID = Yes
+Channel.SamplesPerPixel = Yes
+Image.AcquisitionDate = Yes
+Image.ID = Yes
+Image.Name = Yes
+Pixels.BinDataBigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
 Pixels.SizeC = Yes
 Pixels.SizeT = Yes
 Pixels.SizeX = Yes
