@@ -12,4 +12,4 @@ disk, etc.).
 ImgLib provides an ImgOpener_ utility class for reading data using
 Bio-Formats.
 
-.. _ImgOpener: https://github.com/imagej/imglib/blob/master/imglib2/io/src/main/java/net/imglib2/io/ImgOpener.java
+.. _ImgOpener: https://github.com/imagej/imglib/blob/master/io/src/main/java/net/imglib2/io/ImgOpener.java
