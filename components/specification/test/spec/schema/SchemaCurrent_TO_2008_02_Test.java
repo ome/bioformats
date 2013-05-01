@@ -332,7 +332,7 @@ public class SchemaCurrent_TO_2008_02_Test
      * An XML file with an image is created and the stylesheet is applied.
      * @throws Exception Thrown if an error occurred.
      */
-    @Test(enabled = true)
+    @Test(enabled = false)
 	public void testDowngradeTo200802ImageNoMetadata()
 		throws Exception
 	{
