@@ -65,9 +65,10 @@ Metadata fields
 #set ($dummy = $qq.setEntity($entity))
 #set ($node = $q.node($entity))
 #foreach ($prop in $qq.props())
-#set ($anchor = "_$prop")
-#set ($anchor = "$node$anchor")
-   * - :schema:`$entity - $prop <OME-$q.version()/ome_xsd.html#$anchor>`
+#set ($dummyProp = $qq.setProperty($prop))
+#set ($schema = $qq.schema())
+#set ($anchor = $qq.anchor())
+   * - :schema:`$entity - $prop <OME-$q.version()/$schema#$anchor>`
      - $q.yesHandlerCount($entity, $prop)
      - $q.noHandlerCount($entity, $prop)
      - $q.partialHandlerCount($entity, $prop)
