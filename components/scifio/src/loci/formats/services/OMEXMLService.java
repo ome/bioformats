@@ -115,7 +115,7 @@ public interface OMEXMLService extends Service {
   /**
    * Checks whether the given object is an OME-XML metadata object.
    * @return True if the object is an instance of
-   *   {@link loci.formats.ome.AbstractOMEXMLMetadata}.
+   *   {@link loci.formats.ome.OMEXMLMetadata}.
    */
   public boolean isOMEXMLMetadata(Object o);
 

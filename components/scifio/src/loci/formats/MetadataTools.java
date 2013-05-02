@@ -48,9 +48,8 @@ import loci.common.services.ServiceFactory;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
-import loci.formats.ome.OMEXMLMetadataImpl;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
-
 import ome.xml.model.BinData;
 import ome.xml.model.OME;
 import ome.xml.model.enums.DimensionOrder;
@@ -145,7 +144,14 @@ public final class MetadataTools {
         if (service.isOMEXMLRoot(store.getRoot())) {
           MetadataStore baseStore = r.getMetadataStore();
           if (service.isOMEXMLMetadata(baseStore)) {
-            ((OMEXMLMetadataImpl) baseStore).resolveReferences();
+            OMEXMLMetadata omeMeta;
+            try {
+              omeMeta = service.getOMEMetadata(service.asRetrieve(baseStore));
+              omeMeta.resolveReferences();
+            }
+            catch (ServiceException e) {
+              LOGGER.warn("Failed to resolve references", e);
+            }
           }
 
           OME root = (OME) store.getRoot();
