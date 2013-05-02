@@ -191,6 +191,13 @@ public class FilterMetadata implements MetadataStore
 		store.setRoot(root);
 	}
 
+	/* @see MetadataStore#setRoot(Object) */
+	@Deprecated
+	public void setRoot(Object root)
+	{
+		store.setRoot(root);
+	}
+
 	/* @see MetadataStore#setUUID(String) */
 	public void setUUID(String uuid)
 	{

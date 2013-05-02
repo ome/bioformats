@@ -145,6 +145,9 @@ public interface MetadataStore extends BaseMetadata
 
 	void setRoot(MetadataRoot root);
 
+	@Deprecated
+	void setRoot(Object root);
+
 	// -- Entity storage (manual definitions) --
 
 	void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
