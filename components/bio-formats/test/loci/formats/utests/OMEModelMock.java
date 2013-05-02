@@ -25,6 +25,8 @@
 
 package loci.formats.utests;
 
+import loci.formats.meta.MetadataRoot;
+
 import ome.xml.model.OME;
 
 /**
@@ -34,6 +36,6 @@ import ome.xml.model.OME;
  */
 public interface OMEModelMock {
 
-  OME getRoot();
+  MetadataRoot getRoot();
 
 }

@@ -180,13 +180,13 @@ public class FilterMetadata implements MetadataStore
 	}
 
 	/* @see MetadataStore#getRoot() */
-	public Object getRoot()
+	public MetadataRoot getRoot()
 	{
 		return store.getRoot();
 	}
 
-	/* @see MetadataStore#setRoot(Object) */
-	public void setRoot(Object root)
+	/* @see MetadataStore#setRoot(MetadataRoot) */
+	public void setRoot(MetadataRoot root)
 	{
 		store.setRoot(root);
 	}

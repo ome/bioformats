@@ -260,6 +260,9 @@ ${customContent[obj.name][prop.name]}
 
 package loci.formats.ome;
 
+import loci.formats.meta.MetadataRoot;
+import loci.formats.ome.OMEXMLMetadataRoot;
+
 import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
@@ -278,7 +281,7 @@ import ome.xml.model.primitives.*;
  */
 public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 {
-	private OME root;
+	private OMEXMLMetadataRoot root; // OME
 
 	private OMEModel model;
 
@@ -289,23 +292,21 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	public void createRoot()
 	{
-		root = new OME();
+		root = new OMEXMLMetadataRoot();
 		model = new OMEModelImpl();
 	}
 
-	public Object getRoot()
+	public MetadataRoot getRoot()
 	{
 		return root;
 	}
 
-	public void setRoot(Object root)
+	public void setRoot(MetadataRoot root)
 	{
-		if (!(root instanceof OME))
-		{
-			throw new IllegalArgumentException(
-					"Expecting OME class or subclass.");
-		}
-		this.root = (OME) root;
+		if (root instanceof OMEXMLMetadataRoot)
+			this.root = (OMEXMLMetadataRoot) root;
+		else
+			throw new IllegalArgumentException("Expecting OME class or subclass.");
 		model = new OMEModelImpl();
 	}
 

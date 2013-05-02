@@ -71,6 +71,7 @@ import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.out.TiffWriter;
+import loci.formats.ome.OMEXMLMetadataRoot;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 import loci.formats.tiff.IFD;
@@ -351,11 +352,11 @@ public final class ImageConverter {
       if (series >= 0) {
         try {
           String xml = service.getOMEXML(service.asRetrieve(store));
-          OME root = (OME) store.getRoot();
+          OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
           Image exportImage = root.getImage(series);
 
           IMetadata meta = service.createOMEXMLMetadata(xml);
-          OME newRoot = (OME) meta.getRoot();
+          OMEXMLMetadataRoot newRoot = (OMEXMLMetadataRoot) meta.getRoot();
           while (newRoot.sizeOfImageList() > 0) {
             newRoot.removeImage(newRoot.getImage(0));
           }

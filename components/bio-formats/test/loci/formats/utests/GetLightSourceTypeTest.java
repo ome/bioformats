@@ -29,6 +29,7 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import loci.formats.meta.IMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
+import loci.formats.ome.OMEXMLMetadataRoot;
 
 import ome.xml.model.Arc;
 import ome.xml.model.Filament;
@@ -54,7 +55,7 @@ public class GetLightSourceTypeTest {
   @BeforeClass
   public void setUp() throws Exception {
     metadata = new OMEXMLMetadataImpl();
-    OME ome = new OME();
+    OMEXMLMetadataRoot ome = new OMEXMLMetadataRoot();
     Instrument instrument = new Instrument();
     instrument.addLightSource(new Arc());
     instrument.addLightSource(new Filament());

@@ -48,7 +48,9 @@ import loci.common.services.ServiceFactory;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.meta.MetadataRoot;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.ome.OMEXMLMetadataRoot;
 import loci.formats.services.OMEXMLService;
 import ome.xml.model.BinData;
 import ome.xml.model.OME;
@@ -141,9 +143,9 @@ public final class MetadataTools {
       try {
         OMEXMLService service =
           new ServiceFactory().getInstance(OMEXMLService.class);
-        if (service.isOMEXMLRoot(store.getRoot())) {
+        if (store instanceof OMEXMLMetadata) {
           MetadataStore baseStore = r.getMetadataStore();
-          if (service.isOMEXMLMetadata(baseStore)) {
+          if (baseStore instanceof OMEXMLMetadata) {
             OMEXMLMetadata omeMeta;
             try {
               omeMeta = service.getOMEMetadata(service.asRetrieve(baseStore));
@@ -154,7 +156,7 @@ public final class MetadataTools {
             }
           }
 
-          OME root = (OME) store.getRoot();
+          OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
           BinData bin = root.getImage(i).getPixels().getBinData(0);
           bin.setLength(new NonNegativeLong(0L));
           store.setRoot(root);

@@ -47,6 +47,7 @@ import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.ome.OMEXMLMetadataRoot;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.Image;
@@ -376,11 +377,11 @@ public class CellWorxReader extends FormatReader {
     }
 
     OMEXMLMetadata readerMetadata = (OMEXMLMetadata) pnl.getMetadataStore();
-    OME root = (OME) readerMetadata.getRoot();
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) readerMetadata.getRoot();
     Instrument instrument = root.getInstrument(0);
     List<Image> images = root.copyImageList();
 
-    OME convertRoot = new OME();
+    OMEXMLMetadataRoot convertRoot = new OMEXMLMetadataRoot();
     convertRoot.addInstrument(instrument);
     for (int i=0; i<core.size()/images.size(); i++) {
       for (Image img : images) {
