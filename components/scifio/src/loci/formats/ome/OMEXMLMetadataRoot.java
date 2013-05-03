@@ -75,4 +75,14 @@ public class OMEXMLMetadataRoot extends OME implements MetadataRoot {
     super(element, model);
   }
 
+  /**
+   * Construct from existing OME instance.
+   *
+   * @param ome the OME instance to copy.
+   */
+  public OMEXMLMetadataRoot(OME ome)
+  {
+    super(ome);
+  }
+
 }

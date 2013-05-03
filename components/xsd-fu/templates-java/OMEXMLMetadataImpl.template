@@ -313,7 +313,13 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	@Deprecated
 	public void setRoot(Object root)
 	{
-		throw new IllegalArgumentException("Expecting OMEXMLMetadataRoot class or subclass.");
+		if (root instanceof OMEXMLMetadataRoot)
+			this.root = (OMEXMLMetadataRoot) root;
+		else if (root instanceof OME)
+			this.root = new OMEXMLMetadataRoot((OME) root);
+		else
+			throw new IllegalArgumentException("Expecting OMEXMLMetadataRoot class or subclass.");
+		model = new OMEModelImpl();
 	}
 
 	public String dumpXML()
