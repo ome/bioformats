@@ -143,9 +143,9 @@ public final class MetadataTools {
       try {
         OMEXMLService service =
           new ServiceFactory().getInstance(OMEXMLService.class);
-        if (store instanceof OMEXMLMetadata) {
+        if (service.isOMEXMLRoot(store.getRoot())) {
           MetadataStore baseStore = r.getMetadataStore();
-          if (baseStore instanceof OMEXMLMetadata) {
+          if (service.isOMEXMLMetadata(baseStore)) {
             OMEXMLMetadata omeMeta;
             try {
               omeMeta = service.getOMEMetadata(service.asRetrieve(baseStore));
