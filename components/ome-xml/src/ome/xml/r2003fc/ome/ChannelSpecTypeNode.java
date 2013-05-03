@@ -52,6 +52,10 @@ import ome.xml.r2003fc.ome.*;
 
 import org.w3c.dom.Element;
 
+/**
+ * @deprecated The r2003fc classes are replaced by the ome.xml.model classes
+ */
+@Deprecated
 public class ChannelSpecTypeNode extends OMEXMLNode
 {
 
