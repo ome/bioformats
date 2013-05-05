@@ -13,7 +13,7 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/xsd-fu.xml"/>
   <property file="build.properties"/>
 
-  <target name="generate-source">
+  <target name="generate-source" depends="init-title">
     <property name="xsdfu.metadatapath" value="${gensrc.dir}/loci/formats/meta"/>
     <property name="xsdfu.omepath" value="${gensrc.dir}/loci/formats/ome"/>
 
