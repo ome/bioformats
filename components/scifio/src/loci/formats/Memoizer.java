@@ -388,7 +388,7 @@ public class Memoizer extends ReaderWrapper {
   public void setId(String id) throws FormatException, IOException {
     StopWatch sw = stopWatch();
     try {
-      realFile = new Location(id); // TODO: Can likely fail.
+      realFile = new Location(id);
       memoFile = getMemoFile(id);
 
       if (memoFile == null) {
