@@ -79,7 +79,9 @@ import org.xml.sax.SAXException;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Ilya Goldberg igg at nih.gov
+ * @deprecated The OME server is no longer supported.
  */
+@Deprecated
 public class OmeisImporter {
 
   // -- Constants --
