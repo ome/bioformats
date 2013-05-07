@@ -206,7 +206,7 @@ notes = Used by the NetCDF Java library.
 
 [OME-XML Java library]
 type = Java library
-class = ome.xml.OMEXMLNode
+class = ome.xml.model.OMEModelObject
 url = http://ome-xml.org/wiki/OmeXmlJava
 license = LGPL
 notes = Used by Bio-Formats to work with OME-XML.

@@ -92,7 +92,7 @@ public final class LibraryChecker {
         checkLibrary("mdbtools.libmdb.MdbFile", "mdbtools-java.jar", missing);
         break;
       case OME_JAVA_XML:
-        checkLibrary("ome.xml.OMEXMLNode", "ome-xml.jar", missing);
+        checkLibrary("ome.xml.model.OMEModelObject", "ome-xml.jar", missing);
         break;
       case OME_JAVA_DS:
         checkLibrary("org.openmicroscopy.ds.DataServer",
