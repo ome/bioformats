@@ -133,6 +133,11 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
   // -- MetadataRetrieve API methods --
 
   /* @see loci.formats.meta.MetadataRetrieve#getUUID() */
+  /**
+   * @deprecated This method will be removed in 5.0, but the
+   * abstract method is still present.
+   */
+  @Deprecated
   public String getUUID() {
     Element ome = getRootElement();
     return DOMUtil.getAttribute("UUID", ome);
@@ -141,15 +146,32 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
   // -- MetadataStore API methods --
 
   /* @see loci.formats.meta.MetadataStore#setRoot(Object) */
+  /**
+   * @deprecated This method will be removed in 5.0, but the
+   * abstract method is still present, but requiring
+   * loci.formats.meta.MetadataRoot rather than Object.
+   */
+  @Deprecated
   public void setRoot(Object root) {
   }
 
   /* @see loci.formats.meta.MetadataStore#getRoot() */
+  /**
+   * @deprecated This method will be removed in 5.0, but the
+   * abstract method is still present, but returning
+   * loci.formats.meta.MetadataRoot rather than Object.
+   */
+  @Deprecated
   public Object getRoot() {
     return root;
   }
 
   /* @see loci.formats.meta.MetadataRetrieve#setUUID(String) */
+  /**
+   * @deprecated This method will be removed in 5.0, but the
+   * abstract method is still present.
+   */
+  @Deprecated
   public void setUUID(String uuid) {
     Element ome = getRootElement();
     DOMUtil.setAttribute("UUID", uuid, ome);
@@ -161,7 +183,10 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
    * Converts Boolean value to Integer. Used to convert
    * from 2003-FC Laser FrequencyDoubled Boolean value
    * to Laser FrequencyMultiplication Integer value.
+   *
+   * @deprecated This method will be removed in 5.0.
    */
+  @Deprecated
   protected Integer booleanToInteger(Boolean value) {
     return value == null ? null : new Integer(value.booleanValue() ? 2 : 1);
   }
@@ -170,7 +195,10 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
    * Converts Integer value to Boolean. Used to convert
    * from Laser FrequencyMultiplication Integer value
    * to 2003-FC Laser FrequencyDoubled Boolean value.
+   *
+   * @deprecated This method will be removed in 5.0.
    */
+  @Deprecated
   protected Boolean integerToBoolean(Integer value) {
     return value == null ? null : new Boolean(value.intValue() == 2);
   }
@@ -179,7 +207,10 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
    * Converts Double value to Integer. Used to convert
    * from 2008-02 LogicalChannel PinholeSize Integer value
    * to LogicalChannel PinholeSize Double value.
+   *
+   * @deprecated This method will be removed in 5.0.
    */
+  @Deprecated
   protected Integer doubleToInteger(Double value) {
     return value == null ? null : new Integer(value.intValue());
   }
@@ -188,7 +219,10 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
    * Converts Integer value to Double. Used to convert
    * from LogicalChannel PinholeSize Double value
    * to 2008-02 LogicalChannel PinholeSize Integer value.
+   *
+   * @deprecated This method will be removed in 5.0.
    */
+  @Deprecated
   protected Double integerToDouble(Integer value) {
     return value == null ? null : new Double(value.doubleValue());
   }
@@ -205,6 +239,10 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
     return builder.newDocument();
   }
 
+  /**
+   * @deprecated This method will be removed in 5.0.
+   */
+  @Deprecated
   private Element getRootElement() {
     return root.asXMLElement(createNewDocument());
   }
