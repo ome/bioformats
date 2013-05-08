@@ -43,7 +43,10 @@ package loci.formats.ome;
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ome/OmeisException.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/ome/OmeisException.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @deprecated The OME server is no longer supported.
  */
+@Deprecated
 public class OmeisException extends Exception {
 
   public OmeisException() { super(); }
