@@ -79,20 +79,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class OMEXMLReader extends FormatReader {
 
-  // -- Static fields --
-
-  private static boolean noOME = false;
-
-  static {
-    try {
-      Class.forName("ome.xml.OMEXMLNode");
-    }
-    catch (Throwable t) {
-      noOME = true;
-      LOGGER.debug(OMEXMLServiceImpl.NO_OME_XML_MSG, t);
-    }
-  }
-
   // -- Fields --
 
   // compression value and offset for each BinData element
@@ -221,9 +207,6 @@ public class OMEXMLReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (noOME) {
-      throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG);
-    }
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);

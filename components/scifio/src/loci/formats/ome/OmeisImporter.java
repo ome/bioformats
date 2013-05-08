@@ -46,6 +46,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.Constants;
 import loci.common.Location;
@@ -60,11 +61,13 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.services.OMEXMLService;
-import ome.xml.DOMUtil;
-import ome.xml.r2003fc.ome.OMENode;
+import ome.scifio.xml.XMLTools;
+import ome.xml.model.OME;
+import ome.xml.model.Pixels;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * A command line utility used by the OME Image Server (OMEIS)
@@ -76,7 +79,9 @@ import org.w3c.dom.Element;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Ilya Goldberg igg at nih.gov
+ * @deprecated The OME server is no longer supported.
  */
+@Deprecated
 public class OmeisImporter {
 
   // -- Constants --
@@ -249,12 +254,21 @@ public class OmeisImporter {
     int seriesCount = reader.getSeriesCount();
 
     // get DOM and Pixels elements for the file's OME-XML metadata
-    OMENode ome = (OMENode) omexmlMeta.getRoot();
-    Document omeDoc = ome.getDOMElement().getOwnerDocument();
-    Vector pix = DOMUtil.findElementList("Pixels", omeDoc);
-    if (pix.size() != seriesCount) {
+    OME ome = (OME) omexmlMeta.getRoot();
+    Document omeDoc = null;
+    try {
+      omeDoc = XMLTools.parseDOM(omexmlMeta.dumpXML());
+    }
+    catch (ParserConfigurationException e) {
+      throw new OmeisException("Could not parse OME-XML", e);
+    }
+    catch (SAXException e) {
+      throw new OmeisException("Could not parse OME-XML", e);
+    }
+    if (ome.sizeOfImageList() != seriesCount) {
       throw new FormatException("Pixels element count (" +
-        pix.size() + ") does not match series count (" +
+        ome.sizeOfImageList() + ") does not match series count (" +
+        ") does not match series count (" +
         seriesCount + ") for '" + id + "'");
     }
     if (DEBUG) log(seriesCount + " series detected.");
@@ -375,7 +389,8 @@ public class OmeisImporter {
       if (DEBUG) log("SHA1=" + sha1);
 
       // inject important extra attributes into proper Pixels element
-      Element pixels = (Element) pix.elementAt(s);
+      Pixels pix = ome.getImage(s).getPixels();
+      Element pixels = pix.asXMLElement(omeDoc);
       pixels.setAttribute("FileSHA1", sha1);
       pixels.setAttribute("ImageServerID", "" + pixelsId);
       pixels.setAttribute("DimensionOrder", "XYZCT"); // ignored anyway
@@ -383,23 +398,14 @@ public class OmeisImporter {
       if (pType.startsWith("u")) {
         pixels.setAttribute("PixelType", pType.replace('u', 'U'));
       }
+      ome.getImage(s).setPixels(pix);
       if (DEBUG) log("Pixel attributes injected.");
     }
 
     reader.close();
 
-    // accumulate XML into buffer
-    ByteArrayOutputStream xml = new ByteArrayOutputStream();
-    try {
-      DOMUtil.writeXML(xml, omeDoc);
-    }
-    catch (javax.xml.transform.TransformerException exc) {
-      throw new FormatException(exc);
-    }
-
     // output OME-XML to standard output
-    xml.close();
-    String xmlString = new String(xml.toByteArray(), Constants.ENCODING);
+    String xmlString = omexmlMeta.dumpXML();
     if (DEBUG) log(xmlString);
     if (http) printHttpResponseHeader();
     System.out.println(xmlString);

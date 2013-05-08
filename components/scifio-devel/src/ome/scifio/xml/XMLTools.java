@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
@@ -375,6 +376,19 @@ public final class XMLTools {
       e.initCause(exc);
       throw e;
     }
+  }
+
+  // -- I/O --
+
+  /** Writes the specified DOM to the given output stream. */
+  public static void writeXML(OutputStream os, Document doc)
+    throws TransformerException
+  {
+    TransformerFactory transformFactory = TransformerFactory.newInstance();
+    Transformer idTransform = transformFactory.newTransformer();
+    Source input = new DOMSource(doc);
+    Result output = new StreamResult(os);
+    idTransform.transform(input, output);
   }
 
   // -- XSLT --

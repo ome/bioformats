@@ -43,6 +43,7 @@ import loci.common.services.ServiceException;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
+import ome.xml.model.OMEModelObject;
 
 /**
  * 
@@ -106,11 +107,11 @@ public interface OMEXMLService extends Service {
   /**
    * Constructs an OME root node.
    * @param xml String of XML to create the root node from.
-   * @return An ome.xml.OMEXMLNode subclass root node.
+   * @return An ome.xml.model.OMEModelObject subclass root node.
    * @throws ServiceException If there is an error creating the OME-XML
    * metadata object.
    */
-  public Object createOMEXMLRoot(String xml) throws ServiceException;
+  public OMEModelObject createOMEXMLRoot(String xml) throws ServiceException;
 
   /**
    * Checks whether the given object is an OME-XML metadata object.
@@ -121,7 +122,7 @@ public interface OMEXMLService extends Service {
 
   /**
    * Checks whether the given object is an OME-XML root object.
-   * @return True if the object is an instance of {@link ome.xml.OMEXMLNode}.
+   * @return True if the object is an instance of {@link ome.xml.model.OME}.
    */
   public boolean isOMEXMLRoot(Object o);
 
@@ -129,7 +130,7 @@ public interface OMEXMLService extends Service {
    * Gets the schema version for the given OME-XML metadata or root object
    * (e.g., "2007-06" or "2003-FC").
    * @return OME-XML schema version, or null if the object is not an instance
-   *   of {@link loci.formats.ome.OMEXMLMetadata} or ome.xml.OMEXMLNode.
+   *   of {@link loci.formats.ome.OMEXMLMetadata}.
    */
   public String getOMEXMLVersion(Object o);
 
