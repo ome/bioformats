@@ -387,8 +387,6 @@ public class Exporter {
         store.setPixelsSizeT(new PositiveInteger(1), 0);
       }
 
-      w.setMetadataRetrieve(store);
-
       Object info = imp.getProperty("Info");
       if (info != null) {
         String imageInfo = info.toString();
@@ -459,6 +457,20 @@ public class Exporter {
         }
       }
 
+      if (!w.getFormat().startsWith("OME")) {
+        if (splitZ) {
+          store.setPixelsSizeZ(new PositiveInteger(1), 0);
+        }
+        if (splitC) {
+          store.setPixelsSizeC(new PositiveInteger(1), 0);
+        }
+        if (splitT) {
+          store.setPixelsSizeT(new PositiveInteger(1), 0);
+        }
+      }
+
+      w.setMetadataRetrieve(store);
+
       // prompt for options
 
       String[] codecs = w.getCompressionTypes();
@@ -503,7 +515,7 @@ public class Exporter {
       byte[] plane = null;
       w.setInterleaved(false);
 
-      int no = 0;
+      int[] no = new int[outputFiles.length];
       for (int i=start; i<end; i++) {
         if (doStack) {
           BF.status(false, "Saving plane " + (i + 1) + "/" + size);
@@ -568,7 +580,7 @@ public class Exporter {
         }
         else {
           w.changeOutputFile(outputFiles[fileIndex]);
-          w.saveBytes(no++, plane);
+          w.saveBytes(no[fileIndex]++, plane);
         }
       }
       w.close();
