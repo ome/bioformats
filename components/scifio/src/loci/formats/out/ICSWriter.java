@@ -100,6 +100,10 @@ public class ICSWriter extends FormatWriter {
   {
     checkParams(no, buf, x, y, w, h);
 
+    if (pixels == null) {
+      pixels = new RandomAccessOutputStream(currentId);
+    }
+
     MetadataRetrieve meta = getMetadataRetrieve();
 
     int rgbChannels = getSamplesPerPixel();
@@ -157,6 +161,9 @@ public class ICSWriter extends FormatWriter {
       }
     }
     lastPlane = realIndex;
+
+    pixels.close();
+    pixels = null;
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -273,10 +280,6 @@ public class ICSWriter extends FormatWriter {
 
     if (checkSuffix(currentId, "ids")) {
       pixelOffset = 0;
-    }
-
-    if (pixels == null) {
-      pixels = new RandomAccessOutputStream(currentId);
     }
   }
 
