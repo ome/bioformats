@@ -31,8 +31,6 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import javax.xml.XMLConstants;
 
-import junit.framework.TestCase;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
@@ -50,7 +48,6 @@ import ome.specification.SchemaResolver;
  */
 @Test(groups = { "all" })
 public class AbstractTest
-    extends TestCase
 {
 
     /** Path the schema language. */
@@ -151,7 +148,6 @@ public class AbstractTest
      * Initializes the various services.
      * @throws Exception Thrown if an error occurred.
      */
-    @Override
     @BeforeClass
     protected void setUp()
         throws Exception
@@ -162,7 +158,6 @@ public class AbstractTest
      * Closes the session.
      * @throws Exception Thrown if an error occurred.
      */
-    @Override
     @AfterClass
     public void tearDown()
         throws Exception
