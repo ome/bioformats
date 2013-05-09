@@ -14,28 +14,15 @@ Type "ant -p" for a list of targets.
   <property file="build.properties"/>
 
   <target name="generate-source" depends="init-title">
-    <property name="xsdfu.metadatapath" value="${gensrc.dir}/loci/formats/meta"/>
-    <property name="xsdfu.omepath" value="${gensrc.dir}/loci/formats/ome"/>
+    <property name="xsdfu.metadatapath" value="${gensrc.dir}"/>
+    <property name="xsdfu.omepath" value="${gensrc.dir}"/>
 
     <delete dir="${xsdfu.metadatapath}"/>
     <delete dir="${xsdfu.omepath}"/>
 
     <!-- Generate the metadata interfaces -->
     <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
-      <arg value="metadata_store"/>
-    </xsd_fu>
-    <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
-      <arg value="metadata_retrieve"/>
-    </xsd_fu>
-    <!-- Generate the metadata implementations -->
-    <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
-      <arg value="metadata_aggregate"/>
-    </xsd_fu>
-    <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
-      <arg value="dummy_metadata"/>
-    </xsd_fu>
-    <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
-      <arg value="filter_metadata"/>
+      <arg value="metadata"/>
     </xsd_fu>
     <!-- Generate the OME XML metadata interface -->
     <xsd_fu lang="Java" output="${xsdfu.omepath}">
