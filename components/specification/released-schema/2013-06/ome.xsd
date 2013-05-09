@@ -386,7 +386,7 @@
 			<xsd:attribute name="Interleaved" use="optional" type="xsd:boolean">
 				<xsd:annotation>
 					<xsd:documentation>
-						How the channels are arranged withing the data block:
+						How the channels are arranged within the data block:
 						true if channels are stored RGBRGBRGB...;
 						false if channels are stored RRR...GGG...BBB...
 					</xsd:documentation>
