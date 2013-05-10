@@ -216,34 +216,40 @@ public class SlidebookTiffReader extends BaseTiffReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (c < channelNames.size()) {
           String name = channelNames.get(c);
-          if (name.indexOf(":") > 0) {
-            name = name.substring(name.indexOf(":") + 1);
-          }
-          if (name.indexOf(";") > 0) {
-            name = name.substring(0, name.indexOf(";"));
-          }
+	  if (name != null) {
+            if (name.indexOf(":") > 0) {
+              name = name.substring(name.indexOf(":") + 1);
+            }
+            if (name.indexOf(";") > 0) {
+              name = name.substring(0, name.indexOf(";"));
+            }
 
-          store.setChannelName(name.trim(), 0, c);
+            store.setChannelName(name.trim(), 0, c);
+	  }
         }
       }
 
       IFD ifd = ifds.get(0);
       String physicalSize = ifd.getIFDTextValue(PHYSICAL_SIZE_TAG);
-      Double size = new Double(physicalSize);
-      if (size > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+      if (physicalSize != null) {
+      	Double size = new Double(physicalSize);
+      	if (size > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+          store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+	}
       }
 
       String mag = ifd.getIFDTextValue(MAGNIFICATION_TAG);
-      Integer magnification = (int) Double.parseDouble(mag);
+      if (mag != null) {
+        Integer magnification = (int) Double.parseDouble(mag);
 
-      store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
-      store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
-      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
-      store.setObjectiveNominalMagnification(
-        new PositiveInteger(magnification), 0, 0);
+        store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
+        store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
+        store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+        store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+        store.setObjectiveNominalMagnification(
+          new PositiveInteger(magnification), 0, 0);
+      }
 
       Double x = new Double(ifd.getIFDTextValue(X_POS_TAG));
       Double y = new Double(ifd.getIFDTextValue(Y_POS_TAG));
