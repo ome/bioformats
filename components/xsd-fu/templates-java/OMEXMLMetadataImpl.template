@@ -269,10 +269,6 @@ import ome.xml.model.primitives.*;
  * DOMs for the current version of OME-XML. It requires the
  * ome.xml.model package to compile (part of ome-xml.jar).
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ome/OMEXMLMetadataImpl.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/ome/OMEXMLMetadataImpl.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
