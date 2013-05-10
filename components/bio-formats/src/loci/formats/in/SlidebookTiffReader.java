@@ -283,6 +283,7 @@ public class SlidebookTiffReader extends BaseTiffReader {
     IFD ifd = parser.getFirstIFD();
     Object channel = ifd.getIFDValue(CHANNEL_TAG);
     s.close();
+    parser.getStream().close();
 
     return channel == null ? null : channel.toString();
   }
