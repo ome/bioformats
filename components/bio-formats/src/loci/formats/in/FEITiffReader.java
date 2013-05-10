@@ -269,7 +269,7 @@ public class FEITiffReader extends BaseTiffReader {
       if (magnification > 0) {
         store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(magnification), 0, 0);
+          new Double(magnification), 0, 0);
         store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
         store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
       }

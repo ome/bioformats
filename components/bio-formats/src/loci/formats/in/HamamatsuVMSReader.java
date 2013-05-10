@@ -333,7 +333,7 @@ public class HamamatsuVMSReader extends FormatReader {
       store.setObjectiveID(objectiveID, 0, 0);
       if (magnification > 0) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(magnification.intValue()), 0, 0);
+          new Double(magnification.doubleValue()), 0, 0);
       }
       else {
         LOGGER.warn("Expected positive value for NominalMagnification; got {}",

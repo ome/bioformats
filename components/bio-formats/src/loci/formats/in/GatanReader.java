@@ -250,7 +250,7 @@ public class GatanReader extends FormatReader {
         store.setObjectiveCorrection(getCorrection("Unknown"), 0, 0);
         store.setObjectiveImmersion(getImmersion("Unknown"), 0, 0);
         store.setObjectiveNominalMagnification(
-          new PositiveInteger((int) mag), 0, 0);
+          new Double(mag), 0, 0);
 
         store.setObjectiveSettingsID(objective, 0);
       }

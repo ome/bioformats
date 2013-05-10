@@ -424,10 +424,10 @@ public class BDReader extends FormatReader {
           }
         }
 
-        Integer magnification = new Integer(mag);
+        Double magnification = new Double(mag);
         if (magnification > 0) {
           store.setObjectiveNominalMagnification(
-            new PositiveInteger(magnification), 0, 0);
+            new Double(magnification), 0, 0);
         }
         else {
           LOGGER.warn(

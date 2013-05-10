@@ -252,7 +252,7 @@ public class SISReader extends BaseTiffReader {
       store.setObjectiveID(objective, 0, 0);
       if ((int) magnification > 0) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger((int) magnification), 0, 0);
+          new Double(magnification), 0, 0);
       }
       else {
         LOGGER.warn("Expected positive value for NominalMagnification; got {}",

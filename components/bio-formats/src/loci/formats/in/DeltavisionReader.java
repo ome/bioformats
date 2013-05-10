@@ -976,10 +976,10 @@ public class DeltavisionReader extends FormatReader {
             }
 
             try {
-              Integer mag = new Integer(magnification);
+              Double mag = new Double(magnification);
               if (mag > 0) {
                 store.setObjectiveNominalMagnification(
-                  new PositiveInteger(mag), 0, 0);
+                  new Double(mag), 0, 0);
               }
               else {
                 LOGGER.warn(
@@ -2228,7 +2228,7 @@ public class DeltavisionReader extends FormatReader {
     store.setObjectiveModel(model, 0, 0);
     if (magnification > 0) {
       store.setObjectiveNominalMagnification(
-        new PositiveInteger(magnification), 0, 0);
+        new Double(magnification), 0, 0);
     }
     else {
       LOGGER.warn("Expected positive value for NominalMagnification; got {}",

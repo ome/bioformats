@@ -635,12 +635,12 @@ public class LeicaHandler extends BaseHandler {
           if (x != -1) {
             foundMag = true;
 
-            int mag = (int) Double.parseDouble(token.substring(0, x));
+            Double mag = Double.parseDouble(token.substring(0, x));
             String na = token.substring(x + 1);
 
             if (mag > 0) {
               store.setObjectiveNominalMagnification(
-                new PositiveInteger(mag), numDatasets, 0);
+                new Double(mag), numDatasets, 0);
             }
             else {
               LOGGER.warn(
