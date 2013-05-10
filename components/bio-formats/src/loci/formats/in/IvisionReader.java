@@ -304,7 +304,7 @@ public class IvisionReader extends FormatReader {
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (magnification != null && magnification > 0) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(magnification), 0, 0);
+          new Double(magnification), 0, 0);
       }
       else {
         LOGGER.warn("Expected positive value for NominalMagnification; got {}",

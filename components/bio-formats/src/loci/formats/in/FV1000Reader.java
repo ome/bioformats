@@ -1094,9 +1094,9 @@ public class FV1000Reader extends FormatReader {
     if (lensNA != null) store.setObjectiveLensNA(new Double(lensNA), 0, 0);
     store.setObjectiveModel(objectiveName, 0, 0);
     if (magnification != null) {
-      int mag = (int) Float.parseFloat(magnification);
+      Double mag = Double.parseDouble(magnification);
       if (mag > 0) {
-        store.setObjectiveNominalMagnification(new PositiveInteger(mag), 0, 0);
+        store.setObjectiveNominalMagnification(new Double(mag), 0, 0);
       }
       else {
         LOGGER.warn("Expected positive value for NominalMagnification; got {}",

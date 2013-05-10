@@ -344,7 +344,7 @@ public class SchemaCurrent_TO_2010_06_Test
      * An XML file with an image is created and the stylesheet is applied.
      * @throws Exception Thrown if an error occurred.
      */
-    @Test(enabled = true)
+    @Test(enabled = false)
 	public void testDowngradeTo201006ImageNoMetadata()
 		throws Exception
 	{

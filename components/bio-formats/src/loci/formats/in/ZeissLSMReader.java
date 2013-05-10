@@ -1297,7 +1297,7 @@ public class ZeissLSMReader extends FormatReader {
         getImmersion(recording.immersion), instrument, 0);
       if (recording.magnification != null && recording.magnification > 0) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(recording.magnification), instrument, 0);
+          new Double(recording.magnification), instrument, 0);
       }
       else {
         LOGGER.warn("Expected positive value for NominalMagnification; got {}",

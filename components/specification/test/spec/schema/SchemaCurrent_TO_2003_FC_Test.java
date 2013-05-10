@@ -314,7 +314,7 @@ public class SchemaCurrent_TO_2003_FC_Test
      * An XML file with an image is created and the stylesheet is applied.
      * @throws Exception Thrown if an error occurred.
      */
-    @Test(enabled = true)
+    @Test(enabled = false)
 	public void testDowngradeTo2003FCImageNoMetadata()
 		throws Exception
 	{

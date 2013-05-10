@@ -584,8 +584,8 @@ public class PrairieMetadata {
     }
 
     /** Extracts the magnification from the objective lens string. */
-    public Integer getMagnification() {
-      return i(token(getObjectiveLens(), " ", 1));
+    public Double getMagnification() {
+      return d(token(getObjectiveLens(), " ", 1));
     }
 
     /** Extracts the immersion from the objective lens string. */

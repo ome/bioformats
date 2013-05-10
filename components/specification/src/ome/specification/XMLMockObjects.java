@@ -366,7 +366,7 @@ public class XMLMockObjects
 		objective.setImmersion(IMMERSION);
 		objective.setIris(true);
 		objective.setLensNA(0.5);
-		objective.setNominalMagnification(new PositiveInteger(1));
+		objective.setNominalMagnification(1.5);
 		objective.setWorkingDistance(1.0);
 		return objective;
 	}

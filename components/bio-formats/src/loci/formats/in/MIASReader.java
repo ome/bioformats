@@ -1068,10 +1068,10 @@ public class MIASReader extends FormatReader {
           store.setObjectiveModel(value, 0, 0);
         }
         else if (key.equals("Magnification")) {
-          int mag = (int) Double.parseDouble(value);
+          Double mag = Double.parseDouble(value);
           if (mag > 0) {
             store.setObjectiveNominalMagnification(
-              new PositiveInteger(mag), 0, 0);
+              new Double(mag), 0, 0);
           }
           else {
             LOGGER.warn(

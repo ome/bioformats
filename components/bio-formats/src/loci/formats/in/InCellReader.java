@@ -905,11 +905,11 @@ public class InCellReader extends FormatReader {
         creationDate = date + "T" + time;
       }
       else if (qName.equals("ObjectiveCalibration")) {
-        int mag =
-          (int) Double.parseDouble(attributes.getValue("magnification"));
+        Double mag =
+          Double.parseDouble(attributes.getValue("magnification"));
         if (mag > 0) {
           store.setObjectiveNominalMagnification(
-            new PositiveInteger(mag), 0, 0);
+            new Double(mag), 0, 0);
         }
         else {
           LOGGER.warn(
