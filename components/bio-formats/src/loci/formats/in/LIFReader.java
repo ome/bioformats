@@ -1654,6 +1654,7 @@ public class LIFReader extends FormatReader {
 
     Double physicalSizeX = null;
     Double physicalSizeY = null;
+    Double physicalSizeZ = null;
 
     core[i].sizeC = channels.getLength();
     for (int ch=0; ch<channels.getLength(); ch++) {
@@ -1700,6 +1701,7 @@ public class LIFReader extends FormatReader {
             if (core[i].sizeZ == 1) {
               core[i].sizeZ = len;
               bytesPerAxis.put(nBytes, "Z");
+              physicalSizeZ = (physicalLen * len) / (len - 1);
             }
             else if (core[i].sizeT == 1) {
               core[i].sizeT = len;
@@ -1722,6 +1724,7 @@ public class LIFReader extends FormatReader {
           else {
             core[i].sizeZ = len;
             bytesPerAxis.put(nBytes, "Z");
+            physicalSizeZ = (physicalLen * len) / (len - 1);
           }
           break;
         case 4: // T axis
@@ -1747,6 +1750,10 @@ public class LIFReader extends FormatReader {
 
     physicalSizeXs.add(physicalSizeX);
     physicalSizeYs.add(physicalSizeY);
+
+    if (zSteps[i] == null) {
+      zSteps[i] = Math.abs(physicalSizeZ);
+    }
 
     if (extras > 1) {
       if (core[i].sizeZ == 1) core[i].sizeZ = extras;
