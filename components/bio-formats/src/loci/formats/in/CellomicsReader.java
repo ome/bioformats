@@ -137,12 +137,14 @@ public class CellomicsReader extends FormatReader {
     String plateName = getPlateName(baseFile.getName());
 
     if (plateName != null && isGroupFiles()) {
-      String[] list = parent.list(true);
+      String[] list = parent.list();
       for (String f : list) {
         if (plateName.equals(getPlateName(f)) &&
           (checkSuffix(f, "c01") || checkSuffix(f, "dib")))
         {
-          pixelFiles.add(new Location(parent, f).getAbsolutePath());
+          Location loc = new Location(parent, f);
+          if (!f.startsWith(".") || !loc.isHidden())
+            pixelFiles.add(loc.getAbsolutePath());
         }
       }
     }
