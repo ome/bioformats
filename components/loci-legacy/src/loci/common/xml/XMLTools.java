@@ -39,6 +39,7 @@ package loci.common.xml;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Hashtable;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -191,6 +192,15 @@ public final class XMLTools {
     throws IOException
   {
     ome.scifio.xml.XMLTools.parseXML(xml, handler);
+  }
+
+  // -- I/O --
+
+  /** Writes the specified DOM to the given output stream. */
+  public static void writeXML(OutputStream os, Document doc)
+    throws TransformerException
+  {
+    ome.scifio.xml.XMLTools.writeXML(os, doc);
   }
 
   // -- XSLT --
