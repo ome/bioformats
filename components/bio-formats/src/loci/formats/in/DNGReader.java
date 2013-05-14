@@ -107,8 +107,10 @@ public class DNGReader extends BaseTiffReader {
     }
     String make = ifd.getIFDTextValue(IFD.MAKE);
     String model = ifd.getIFDTextValue(IFD.MODEL);
+    String software = ifd.getIFDTextValue(IFD.SOFTWARE);
     return make != null && make.indexOf("Canon") != -1 && hasEPSTag &&
-      (model == null || !model.endsWith("S1 IS"));
+      (model == null || !model.endsWith("S1 IS")) && (software == null ||
+      software.indexOf("Canon") != -1);
   }
 
   /**
