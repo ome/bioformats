@@ -58,7 +58,6 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
-import ome.xml.OMEXMLFactory;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
 import ome.xml.model.Image;
@@ -89,6 +88,9 @@ import org.xml.sax.SAXException;
  */
 public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 {
+
+  /** Latest OME-XML version namespace. */
+  public static final String LATEST_VERSION = "2012-06";
 
   public static final String NO_OME_XML_MSG =
     "ome-xml.jar is required to read OME-TIFF files.  " +
@@ -152,7 +154,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /** @see OMEXMLService#getLatestVersion() */
   public String getLatestVersion() {
-    return OMEXMLFactory.LATEST_VERSION;
+    return LATEST_VERSION;
   }
 
   /** @see OMEXMLService#transformToLatestVersion(String) */
@@ -353,7 +355,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public String getOMEXMLVersion(Object o) {
     if (o == null) return null;
     if (o instanceof OMEXMLMetadata || o instanceof OMEModelObject) {
-      return OMEXMLFactory.LATEST_VERSION;
+      return LATEST_VERSION;
     }
     else if (o instanceof String) {
       String xml = (String) o;
