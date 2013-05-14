@@ -256,6 +256,11 @@ public class GIFReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
+    addGlobalMeta("Use transparency", transparency);
+    addGlobalMeta("Transparency index", transIndex);
+    addGlobalMeta("Interlace", interlace);
+    addGlobalMeta("Block size", blockSize);
+
     core[0].sizeZ = 1;
     core[0].sizeC = 1;
     core[0].sizeT = getImageCount();
