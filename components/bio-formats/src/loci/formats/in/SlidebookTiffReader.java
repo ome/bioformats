@@ -85,7 +85,11 @@ public class SlidebookTiffReader extends BaseTiffReader {
     if (ifd == null) return false;
     String software = ifd.getIFDTextValue(IFD.SOFTWARE);
     if (software == null) return false;
-    return software.equals(SLIDEBOOK_MAGIC_STRING);
+    return software.equals(SLIDEBOOK_MAGIC_STRING) &&
+      ifd.getComment().length() == 0 && (ifd.containsKey(X_POS_TAG) ||
+      ifd.containsKey(Y_POS_TAG) || ifd.containsKey(Z_POS_TAG) ||
+      ifd.containsKey(CHANNEL_TAG) || ifd.containsKey(PHYSICAL_SIZE_TAG) ||
+      ifd.containsKey(MAGNIFICATION_TAG));
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -216,7 +220,7 @@ public class SlidebookTiffReader extends BaseTiffReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (c < channelNames.size()) {
           String name = channelNames.get(c);
-	  if (name != null) {
+          if (name != null) {
             if (name.indexOf(":") > 0) {
               name = name.substring(name.indexOf(":") + 1);
             }
@@ -225,18 +229,18 @@ public class SlidebookTiffReader extends BaseTiffReader {
             }
 
             store.setChannelName(name.trim(), 0, c);
-	  }
+          }
         }
       }
 
       IFD ifd = ifds.get(0);
       String physicalSize = ifd.getIFDTextValue(PHYSICAL_SIZE_TAG);
       if (physicalSize != null) {
-      	Double size = new Double(physicalSize);
-      	if (size > 0) {
+        Double size = new Double(physicalSize);
+        if (size > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
           store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
-	}
+        }
       }
 
       String mag = ifd.getIFDTextValue(MAGNIFICATION_TAG);
