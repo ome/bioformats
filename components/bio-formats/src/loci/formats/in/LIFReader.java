@@ -120,6 +120,8 @@ public class LIFReader extends FormatReader {
   private Vector<String> lutNames = new Vector<String>();
   private Vector<Double> physicalSizeXs = new Vector<Double>();
   private Vector<Double> physicalSizeYs = new Vector<Double>();
+  private Vector<Double> fieldPosX = new Vector<Double>();
+  private Vector<Double> fieldPosY = new Vector<Double>();
 
   private String[] descriptions, microscopeModels, serialNumber;
   private Double[] pinholes, zooms, zSteps, tSteps, lensNA;
@@ -366,6 +368,8 @@ public class LIFReader extends FormatReader {
       acquiredDate = null;
       detectorIndexes = null;
       tileCount = null;
+      fieldPosX.clear();
+      fieldPosY.clear();
     }
   }
 
@@ -867,8 +871,10 @@ public class LIFReader extends FormatReader {
       }
 
       for (int image=0; image<getImageCount(); image++) {
-        store.setPlanePositionX(posX[index], i, image);
-        store.setPlanePositionY(posY[index], i, image);
+        Double xPos = i < fieldPosX.size() ? fieldPosX.get(i) : posX[index];
+        Double yPos = i < fieldPosY.size() ? fieldPosY.get(i) : posY[index];
+        store.setPlanePositionX(xPos, i, image);
+        store.setPlanePositionY(yPos, i, image);
         store.setPlanePositionZ(posZ[index], i, image);
         if (timestamps[index] != null) {
           double timestamp = timestamps[index][image];
@@ -1613,8 +1619,37 @@ public class LIFReader extends FormatReader {
     if (attachmentNodes == null) return;
     for (int i=0; i<attachmentNodes.getLength(); i++) {
       Element attachment = (Element) attachmentNodes.item(i);
-      if ("ContextDescription".equals(attachment.getAttribute("Name"))) {
+
+      String attachmentName = attachment.getAttribute("Name");
+
+      if ("ContextDescription".equals(attachmentName)) {
         descriptions[image] = attachment.getAttribute("Content");
+      }
+      else if ("TileScanInfo".equals(attachmentName)) {
+        NodeList tiles = getNodes(attachment, "Tile");
+
+        for (int tile=0; tile<tiles.getLength(); tile++) {
+          Element tileNode = (Element) tiles.item(tile);
+          String posX = tileNode.getAttribute("PosX");
+          String posY = tileNode.getAttribute("PosY");
+
+          if (posX != null) {
+            try {
+              fieldPosX.add(new Double(posX));
+            }
+            catch (NumberFormatException e) {
+              LOGGER.debug("", e);
+            }
+          }
+          if (posY != null) {
+            try {
+              fieldPosY.add(new Double(posY));
+            }
+            catch (NumberFormatException e) {
+              LOGGER.debug("", e);
+            }
+          }
+        }
       }
     }
   }
@@ -1743,7 +1778,7 @@ public class LIFReader extends FormatReader {
     physicalSizeXs.add(physicalSizeX);
     physicalSizeYs.add(physicalSizeY);
 
-    if (zSteps[i] == null) {
+    if (zSteps[i] == null && physicalSizeZ != null) {
       zSteps[i] = Math.abs(physicalSizeZ);
     }
 
