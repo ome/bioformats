@@ -182,8 +182,8 @@ OMERO_NAMED_OPTIONAL = (
 LANG_JAVA = "Java"
 LANG_CXX = "C++"
 
-TYPE_SOURCE = "Source"
-TYPE_HEADER = "Header"
+TYPE_SOURCE = "source"
+TYPE_HEADER = "header"
 
 JAVA_TEMPLATE_DIR = "templates-java"
 CXX_TEMPLATE_DIR = "templates-c++"
@@ -251,6 +251,12 @@ def generated_filename(name, type, opts):
     else:
         raise ModelProcessingError(
             "Invalid language/filetype combination: %s/%s" % (opts.lang, type))
+
+def guard(filename):
+    filename = "_".join(filename.split(os.path.sep))
+    filename = filename.upper()
+    filename = re.sub("[^A-Z0-9]", "_", filename)
+    return filename
 
 def resolve_parents(model, element_name):
     """

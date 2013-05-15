@@ -159,10 +159,20 @@ def main(opts):
 		for filetype in [TYPE_SOURCE, TYPE_HEADER]:
 			try:
 				fullname = generated_filename(obj.name, filetype, opts)
+				fullname = os.path.join("ome", "xml", "model", fullname)
 			except ModelProcessingError:
 				continue
 
-			f = open(os.path.join(opts.outdir, fullname), "w")
+			fu.GUARD = guard(fullname)
+			fu.SOURCE_TYPE = filetype;
+
+			fullname = os.path.join(opts.outdir, fullname)
+
+			outputDirectory = os.path.dirname(fullname)
+			if not os.path.exists(outputDirectory):
+				os.makedirs(outputDirectory)
+
+			f = open(fullname, "w")
 			classContent = template.generate(
 				fu=fu, klass=obj, parents=parents, model=model,
 				customContent=customContent,
@@ -208,11 +218,20 @@ def enumTypesMain(opts):
 			for filetype in [TYPE_SOURCE, TYPE_HEADER]:
 				try:
 					fullname = generated_filename(prop.javaType, filetype, opts)
+					fullname = os.path.join("ome", "xml", "model", "enums", fullname)
 				except ModelProcessingError:
 					continue
 
-				path = os.path.join(opts.outdir, fullname)
-				f = open(path, "w")
+				fu.GUARD = guard(fullname)
+				fu.SOURCE_TYPE = filetype;
+
+				fullname = os.path.join(opts.outdir, fullname)
+
+				outputDirectory = os.path.dirname(fullname)
+				if not os.path.exists(outputDirectory):
+					os.makedirs(outputDirectory)
+
+				f = open(fullname, "w")
 				classContent = template.generate(fu=fu, klass=prop,
 								 enum_value_name=enum_value_name).render()
 				f.write(classContent)
@@ -238,11 +257,20 @@ def enumHandlersMain(opts):
 			for filetype in [TYPE_SOURCE, TYPE_HEADER]:
 				try:
 					fullname = generated_filename(prop.javaType + "EnumHandler", filetype, opts)
+					fullname = os.path.join("ome", "xml", "model", "enums", "handlers", fullname)
 				except ModelProcessingError:
 					continue
 
-				path = os.path.join(opts.outdir, fullname)
-				f = open(path, "w")
+				fu.GUARD = guard(fullname)
+				fu.SOURCE_TYPE = filetype;
+
+				fullname = os.path.join(opts.outdir, fullname)
+
+				outputDirectory = os.path.dirname(fullname)
+				if not os.path.exists(outputDirectory):
+					os.makedirs(outputDirectory)
+
+				f = open(fullname, "w")
 				classContent = template.generate(fu=fu, klass=prop,
 								 enum_value_name=enum_value_name, config=config).render()
 				f.write(classContent)
@@ -346,7 +374,14 @@ def processMetadataTemplate(template, outputFilename, opts):
 		except ModelProcessingError:
 			continue
 
+		fu.GUARD = guard(fullname)
+		fu.SOURCE_TYPE = filetype;
+
 		fullname = os.path.join(opts.outdir, fullname)
+
+		outputDirectory = os.path.dirname(fullname)
+		if not os.path.exists(outputDirectory):
+			os.makedirs(outputDirectory)
 
 		content = template.generate(fu=fu, model=model, parents=parents,
 					    is_multi_path=is_multi_path, indexes=indexes,
@@ -361,7 +396,14 @@ def omeXmlMetadataMain(opts):
 	MetadataStore and MetadataRetrieve implementation.
 	"""
 
-	processMetadataTemplate(OMEXML_METADATA_TEMPLATE, "OMEXMLMetadataImpl",
+	relpath = None
+	if opts.lang == LANG_JAVA:
+		relpath = os.path.join("loci", "formats", "ome")
+	elif opts.lang == LANG_CXX:
+		relpath = os.path.join("ome", "bioformats", "ome")
+
+	processMetadataTemplate(OMEXML_METADATA_TEMPLATE,
+				os.path.join(relpath, "OMEXMLMetadataImpl"),
 	                        opts)
 
 def omeroMetadataMain(opts):
@@ -382,49 +424,36 @@ def omeroModelMain(opts):
 	processMetadataTemplate(OMERO_MODEL_TEMPLATE, "OmeroModel.xml",
 	                        opts)
 
-def metadataStoreMain(opts):
+def metadataMain(opts):
 	"""
 	Default main() that parses command line options and generates a
 	MetadataStore implementation.
 	"""
 
-	processMetadataTemplate(METADATA_STORE_TEMPLATE, "MetadataStore",
+	relpath = None
+	if opts.lang == LANG_JAVA:
+		relpath = os.path.join("loci", "formats", "meta")
+	elif opts.lang == LANG_CXX:
+		relpath = os.path.join("ome", "bioformats", "meta")
+
+	processMetadataTemplate(METADATA_STORE_TEMPLATE,
+				os.path.join(relpath, "MetadataStore"),
 	                        opts)
 
-def metadataRetrieveMain(opts):
-	"""
-	Default main() that parses command line options and generates a
-	MetadataRetrieve implementation.
-	"""
-
-	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE, "MetadataRetrieve",
+	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE,
+				os.path.join(relpath, "MetadataRetrieve"),
 	                        opts)
 
-def metadataAggregateMain(opts):
-	"""
-	Default main() that parses command line options and generates a
-	MetadataRetrieve implementation.
-	"""
-
-	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE, "AggregateMetadata",
+	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE,
+				os.path.join(relpath, "AggregateMetadata"),
 	                        opts)
 
-def dummyMetadataMain(opts):
-	"""
-	Default main() that parses command line options and generates a
-	MetadataRetrieve implementation.
-	"""
-
-	processMetadataTemplate(DUMMY_METADATA_TEMPLATE, "DummyMetadata",
+	processMetadataTemplate(FILTER_METADATA_TEMPLATE,
+				os.path.join(relpath, "FilterMetadata"),
 	                        opts)
 
-def filterMetadataMain(opts):
-	"""
-	Default main() that parses command line options and generates a
-	MetadataRetrieve implementation.
-	"""
-
-	processMetadataTemplate(FILTER_METADATA_TEMPLATE, "FilterMetadata",
+	processMetadataTemplate(DUMMY_METADATA_TEMPLATE,
+				os.path.join(relpath, "DummyMetadata"),
 	                        opts)
 
 def debugMain(opts):
@@ -457,6 +486,10 @@ def debugMain(opts):
 				print " +---- %s(%s) [%d:%d]" % \
 				    (prop.name, prop.type, prop.minOccurs, prop.maxOccurs)
 			print "\n"
+
+			fu.GUARD = guard(fullname)
+			fu.SOURCE_TYPE = filetype;
+
 			print template.generate(
 					fu=fu, klass=obj, parents=parents, model=model, customContent=customContent).render()
 
@@ -589,16 +622,8 @@ if __name__ == '__main__':
 		omeroMetadataMain(opts)
 	elif a == "omero_model":
 		omeroModelMain(opts)
-	elif a == "metadata_store":
-		metadataStoreMain(opts)
-	elif a == "metadata_retrieve":
-		metadataRetrieveMain(opts)
-	elif a == "metadata_aggregate":
-		metadataAggregateMain(opts)
-	elif a == "filter_metadata":
-		filterMetadataMain(opts)
-	elif a == "dummy_metadata":
-		dummyMetadataMain(opts)
+	elif a == "metadata":
+		metadataMain(opts)
 	elif a == "enum_types":
 		enumTypesMain(opts)
 	elif a == "enum_handlers":
