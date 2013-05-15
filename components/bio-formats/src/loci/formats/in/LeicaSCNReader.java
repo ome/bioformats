@@ -356,7 +356,7 @@ public class LeicaSCNReader extends BaseTiffReader {
 
         // TODO: Current OME model only allows nominal magnification to be specified as an integer.
         Double mag = Double.parseDouble(i.objMag);
-        store.setObjectiveNominalMagnification(new PositiveInteger((int) Math.round(mag)), inst, objectiveidno);
+        store.setObjectiveNominalMagnification(new Double(mag), inst, objectiveidno);
         store.setObjectiveCalibratedMagnification(mag, inst, objectiveidno);
         store.setObjectiveLensNA(new Double(i.illumNA), inst, objectiveidno);
         objectiveidno++;

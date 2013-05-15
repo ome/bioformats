@@ -234,10 +234,6 @@ import ome.xml.model.primitives.*;
  * A metadata store which delegates the actual storage to one or more <i>sub</i>
  * metadata stores.
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/AggregateMetadata.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/meta/AggregateMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
- *
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
  */

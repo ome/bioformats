@@ -47,7 +47,7 @@
 
   <properties>
     <project.rootdir>${basedir}</project.rootdir>
-    <xsdfu.schemaver>2012-06</xsdfu.schemaver>
+    <xsdfu.schemaver>2013-06</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
     <xsdfu.binaryfile>${xsdfu.schemapath}/BinaryFile.xsd</xsdfu.binaryfile>

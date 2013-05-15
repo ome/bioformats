@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 University of Dundee & Open Microscopy Environment.
+ * Copyright (C) 2012-2013 University of Dundee & Open Microscopy Environment.
  * All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -109,7 +109,7 @@ public class Upgrade2011_06
         "\t\t\tComplete with basic formatting, like new lines.";
         public static final String Instrument0Objective0LotNumber = "123";
         public static final String Instrument0Objective0Manufacturer = "OME-Labs";
-        public static final PositiveInteger Instrument0Objective0NominalMagnification = PositiveInteger.valueOf("20");
+        public static final Double Instrument0Objective0NominalMagnification = Double.valueOf("20.0");
         public static final Double Instrument0Objective0CalibratedMagnification = Double.valueOf("20.34");
         public static final String Instrument0Objective0OTF1Type = "bit";
         public static final String Instrument0Objective0OTF1OpticalAxisAveraged = "true";

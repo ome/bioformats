@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import loci.common.Constants;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
@@ -277,7 +278,7 @@ public class Memoizer extends ReaderWrapper {
 
   private transient OMEXMLService service;
 
-  private File realFile;
+  private Location realFile;
 
   private File memoFile;
 
@@ -387,7 +388,7 @@ public class Memoizer extends ReaderWrapper {
   public void setId(String id) throws FormatException, IOException {
     StopWatch sw = stopWatch();
     try {
-      realFile = new File(id); // TODO: Can likely fail.
+      realFile = new Location(id);
       memoFile = getMemoFile(id);
 
       if (memoFile == null) {

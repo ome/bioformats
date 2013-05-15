@@ -230,7 +230,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
       if (magnification > 0) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(magnification), 0, 0);
+          new Double(magnification), 0, 0);
       }
       else {
         LOGGER.warn("Expected positive value for NominalMagnification; got {}",

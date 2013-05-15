@@ -252,7 +252,7 @@ public class SlidebookTiffReader extends BaseTiffReader {
         store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
         store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(magnification), 0, 0);
+          new Double(magnification), 0, 0);
       }
 
       Double x = new Double(ifd.getIFDTextValue(X_POS_TAG));
