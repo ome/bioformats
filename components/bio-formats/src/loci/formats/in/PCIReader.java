@@ -207,6 +207,7 @@ public class PCIReader extends FormatReader {
     }
 
     double firstZ = 0d, secondZ = 0d;
+    int mode = 0;
 
     for (String name : allFiles) {
       int separator = name.lastIndexOf(File.separator);
@@ -249,7 +250,7 @@ public class PCIReader extends FormatReader {
         if (getSizeX() != 0 && getSizeY() != 0) {
           int bpp = FormatTools.getBytesPerPixel(getPixelType());
           int plane = getSizeX() * getSizeY() * bpp;
-          if (getSizeC() == 0) {
+          if (getSizeC() == 0 || getSizeC() * plane > poi.getFileSize(name)) {
             m.sizeC = poi.getFileSize(name) / plane;
           }
         }
@@ -281,13 +282,22 @@ public class PCIReader extends FormatReader {
       }
       else if (relativePath.indexOf("Position_Z") != -1) {
         double zPos = stream.readDouble();
-        if (!uniqueZ.contains(zPos)) uniqueZ.add(zPos);
+        if (!uniqueZ.contains(zPos) && (getImageCount() == 0 || getSizeZ() == 1))
+        {
+          uniqueZ.add(zPos);
+        }
         if (name.indexOf("Field 1/") != -1) firstZ = zPos;
         else if (name.indexOf("Field 2/") != -1) secondZ = zPos;
       }
       else if (relativePath.equals("First Field Date & Time")) {
         long date = (long) stream.readDouble() * 1000;
         creationDate = DateTools.convertDate(date, DateTools.COBOL);
+      }
+      else if (relativePath.equals("GroupMode")) {
+        mode = stream.readInt();
+      }
+      else if (relativePath.equals("GroupSelectedFields")) {
+        m.sizeZ = (int) (stream.length() / 8);
       }
       else if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
       {
@@ -322,9 +332,20 @@ public class PCIReader extends FormatReader {
     boolean zFirst = !new Double(firstZ).equals(new Double(secondZ));
 
     if (getSizeC() == 0) m.sizeC = 1;
+    if (mode == 0) {
+      m.sizeZ = 0;
+    }
 
-    m.sizeZ = uniqueZ.size() == 0 ? 1 : uniqueZ.size();
+    if (getSizeZ() <= 1 || (getImageCount() % getSizeZ()) != 0) {
+      m.sizeZ = uniqueZ.size() == 0 ? 1 : uniqueZ.size();
+    }
     m.sizeT = getImageCount() / getSizeZ();
+
+    while (getSizeZ() * getSizeT() < getImageCount()) {
+      m.sizeZ++;
+      m.sizeT = getImageCount() / getSizeZ();
+    }
+
     m.rgb = getSizeC() > 1;
     if (imageFiles.size() > getImageCount() && getSizeC() == 1) {
       m.sizeC = imageFiles.size() / getImageCount();
@@ -367,6 +388,9 @@ public class PCIReader extends FormatReader {
 
       for (int i=0; i<timestamps.size(); i++) {
         Double timestamp = new Double(timestamps.get(i).doubleValue());
+        if (i >= getImageCount()) {
+          break;
+        }
         store.setPlaneDeltaT(timestamp, 0, i);
         if (i == 2) {
           double first = timestamps.get(1).doubleValue();
