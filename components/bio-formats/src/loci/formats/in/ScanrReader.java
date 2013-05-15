@@ -236,6 +236,7 @@ public class ScanrReader extends FormatReader {
       }
       catch (FormatException e) {
         reader.close();
+        Arrays.fill(buf, (byte) 0);
         return buf;
       }
 
