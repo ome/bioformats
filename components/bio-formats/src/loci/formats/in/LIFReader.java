@@ -871,10 +871,20 @@ public class LIFReader extends FormatReader {
       }
 
       for (int image=0; image<getImageCount(); image++) {
-        Double xPos = i < fieldPosX.size() ? fieldPosX.get(i) : posX[index];
-        Double yPos = i < fieldPosY.size() ? fieldPosY.get(i) : posY[index];
-        store.setPlanePositionX(xPos, i, image);
-        store.setPlanePositionY(yPos, i, image);
+        Double xPos = posX[index];
+        Double yPos = posY[index];
+        if (i < fieldPosX.size() && fieldPosX.get(i) != null) {
+          xPos = fieldPosX.get(i);
+        }
+        if (i < fieldPosY.size() && fieldPosY.get(i) != null) {
+          yPos = fieldPosY.get(i);
+        }
+        if (xPos != null) {
+          store.setPlanePositionX(xPos, i, image);
+        }
+        if (yPos != null) {
+          store.setPlanePositionY(yPos, i, image);
+        }
         store.setPlanePositionZ(posZ[index], i, image);
         if (timestamps[index] != null) {
           double timestamp = timestamps[index][image];
@@ -1639,6 +1649,7 @@ public class LIFReader extends FormatReader {
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);
+              fieldPosX.add(null);
             }
           }
           if (posY != null) {
@@ -1647,6 +1658,7 @@ public class LIFReader extends FormatReader {
             }
             catch (NumberFormatException e) {
               LOGGER.debug("", e);
+              fieldPosY.add(null);
             }
           }
         }
