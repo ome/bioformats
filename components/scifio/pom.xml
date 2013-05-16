@@ -129,8 +129,8 @@
   <properties>
     <project.rootdir>${basedir}/../..</project.rootdir>
     <xsdfu.basepath>../xsd-fu</xsdfu.basepath>
-    <xsdfu.metadatapath>${basedir}/target/generated-sources/loci/formats/meta</xsdfu.metadatapath>
-    <xsdfu.omepath>${basedir}/target/generated-sources/loci/formats/ome</xsdfu.omepath>
+    <xsdfu.metadatapath>${basedir}/target/generated-sources</xsdfu.metadatapath>
+    <xsdfu.omepath>${basedir}/target/generated-sources</xsdfu.omepath>
   </properties>
 
   <build>
@@ -152,96 +152,7 @@
 	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
 	      <arguments>
 		<argument>xsd-fu</argument>
-		<argument>metadata_store</argument>
-		<argument>-o</argument>
-		<argument>${xsdfu.metadatapath}/</argument>
-		<argument>${project.rootdir}/${xsdfu.ome}</argument>
-		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
-		<argument>${project.rootdir}/${xsdfu.roi}</argument>
-		<argument>${project.rootdir}/${xsdfu.sa}</argument>
-		<argument>${project.rootdir}/${xsdfu.spw}</argument>
-	      </arguments>
-	    </configuration>
-	  </execution>
-	  <execution>
-	    <id>xsd-fu-metadata-retrieve</id>
-	    <phase>generate-sources</phase>
-	    <goals>
-	      <goal>exec</goal>
-	    </goals>
-	    <configuration>
-	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
-	      <arguments>
-		<argument>xsd-fu</argument>
-		<argument>metadata_retrieve</argument>
-		<argument>-o</argument>
-		<argument>${xsdfu.metadatapath}/</argument>
-		<argument>${project.rootdir}/${xsdfu.ome}</argument>
-		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
-		<argument>${project.rootdir}/${xsdfu.roi}</argument>
-		<argument>${project.rootdir}/${xsdfu.sa}</argument>
-		<argument>${project.rootdir}/${xsdfu.spw}</argument>
-	      </arguments>
-	    </configuration>
-	  </execution>
-	  <!-- Generate the metadata implementations -->
-	  <execution>
-	    <id>xsd-fu-metadata-aggregate</id>
-	    <phase>generate-sources</phase>
-	    <goals>
-	      <goal>exec</goal>
-	    </goals>
-	    <configuration>
-	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
-	      <arguments>
-		<argument>xsd-fu</argument>
-		<argument>metadata_aggregate</argument>
-		<argument>-o</argument>
-		<argument>${xsdfu.metadatapath}/</argument>
-		<argument>${project.rootdir}/${xsdfu.ome}</argument>
-		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
-		<argument>${project.rootdir}/${xsdfu.roi}</argument>
-		<argument>${project.rootdir}/${xsdfu.sa}</argument>
-		<argument>${project.rootdir}/${xsdfu.spw}</argument>
-	      </arguments>
-	    </configuration>
-	  </execution>
-	  <execution>
-	    <id>xsd-fu-dummy-metadata</id>
-	    <phase>generate-sources</phase>
-	    <goals>
-	      <goal>exec</goal>
-	    </goals>
-	    <configuration>
-	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
-	      <arguments>
-		<argument>xsd-fu</argument>
-		<argument>dummy_metadata</argument>
-		<argument>-o</argument>
-		<argument>${xsdfu.metadatapath}/</argument>
-		<argument>${project.rootdir}/${xsdfu.ome}</argument>
-		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
-		<argument>${project.rootdir}/${xsdfu.roi}</argument>
-		<argument>${project.rootdir}/${xsdfu.sa}</argument>
-		<argument>${project.rootdir}/${xsdfu.spw}</argument>
-	      </arguments>
-	    </configuration>
-	  </execution>
-	  <execution>
-	    <id>xsd-fu-filter-metadata</id>
-	    <phase>generate-sources</phase>
-	    <goals>
-	      <goal>exec</goal>
-	    </goals>
-	    <configuration>
-	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
-	      <arguments>
-		<argument>xsd-fu</argument>
-		<argument>filter_metadata</argument>
+		<argument>metadata</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.metadatapath}/</argument>
 		<argument>${project.rootdir}/${xsdfu.ome}</argument>

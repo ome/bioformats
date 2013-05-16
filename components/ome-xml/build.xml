@@ -14,13 +14,9 @@ Type "ant -p" for a list of targets.
   <property file="build.properties"/>
 
   <target name="generate-source" depends="init-title">
-    <property name="xsdfu.modelpath" value="${gensrc.dir}/ome/xml/model"/>
-    <property name="xsdfu.enumpath" value="${gensrc.dir}/ome/xml/model/enums"/>
-    <property name="xsdfu.handlerpath" value="${gensrc.dir}/ome/xml/model/enums/handlers"/>
+    <property name="xsdfu.modelpath" value="${gensrc.dir}"/>
 
     <delete dir="${xsdfu.modelpath}"/>
-    <delete dir="${xsdfu.enumpath}"/>
-    <delete dir="${xsdfu.handlerpath}"/>
 
     <!-- Generate the OME model object classes -->
     <xsd_fu package="ome.xml.model" lang="Java" output="${xsdfu.modelpath}">
@@ -28,12 +24,12 @@ Type "ant -p" for a list of targets.
     </xsd_fu>
 
     <!-- Generate the OME model enumeration classes -->
-    <xsd_fu package="ome.xml.model.enums" lang="Java" output="${xsdfu.enumpath}">
+    <xsd_fu package="ome.xml.model.enums" lang="Java" output="${xsdfu.modelpath}">
       <arg value="enum_types"/>
     </xsd_fu>
 
     <!-- Generate the handlers for the OME model enumeration classes -->
-    <xsd_fu package="ome.xml.model.enums.handlers" lang="Java" output="${xsdfu.handlerpath}">
+    <xsd_fu package="ome.xml.model.enums.handlers" lang="Java" output="${xsdfu.modelpath}">
       <arg value="enum_handlers"/>
     </xsd_fu>
   </target>
