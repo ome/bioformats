@@ -73,7 +73,7 @@
 	</element>
 	<element name = "ModuleExecution">
 		<annotation>
-			<documentation>Describes the data dependency of a module run. ModuleRun is meant to describe the relationships a module run creates, not the specifics of its execution. A Module may in fact have been executed more than once. Isolating execution specifics from the relationship allows us to acknowledge that multiple executions occured without storing two copies of their identical output.
+			<documentation>Describes the data dependency of a module run. ModuleRun is meant to describe the relationships a module run creates, not the specifics of its execution. A Module may in fact have been executed more than once. Isolating execution specifics from the relationship allows us to acknowledge that multiple executions occurred without storing two copies of their identical output.
 Non-deterministic modules may have only one ExecutionHistory per ModuleRun because their results are not guaranteed to be the same for identical inputs.
 			</documentation>
 		</annotation>
