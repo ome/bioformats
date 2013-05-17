@@ -27,9 +27,8 @@
 classdef TestBfsave < TestCase
     
     properties
-        reader
         path
-        I = rand(50, 100, 3, 4, 5)
+        I
     end
     
     methods
@@ -47,94 +46,100 @@ classdef TestBfsave < TestCase
         end
         
         function tearDown(self)
-            self.reader.close();
-            self.reader = [];
             if exist(self.path,'file')==2, delete(self.path); end
         end
-            
+        
         % Dimension order tests
-        function testDimensionOrderXYZCT(self)            
-            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYZCT')
+        function checkDimensionOrder(self, dimensionOrder)
+            self.I = zeros(2, 3, 4, 5, 6);
+            d = size(self.I);
+            bfsave(self.I, self.path, dimensionOrder);
+            
+            % Check dimensions of saved ome-tiff
+            reader = bfGetReader(self.path);
+            assertEqual(reader.getSizeX, d(2));
+            assertEqual(reader.getSizeY, d(1));
+            assertEqual(reader.getSizeZ, d(dimensionOrder=='Z'));
+            assertEqual(reader.getSizeC, d(dimensionOrder=='C'));
+            assertEqual(reader.getSizeT, d(dimensionOrder=='T'));
+            reader.close();
         end
         
-        function testDimensionOrderXYZTC(self)            
-            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYZTC')
+        function testDimensionOrderXYZCT(self)
+            self.checkDimensionOrder('XYZCT')
         end
         
-        function testDimensionOrderXYCZT(self)            
-            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYCZT')
+        function testDimensionOrderXYZTC(self)
+            self.checkDimensionOrder('XYZTC')
         end
         
-        function testDimensionOrderXYCTZ(self)            
-            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYCTZ')
+        function testDimensionOrderXYCZT(self)
+            self.checkDimensionOrder('XYCZT')
         end
         
-        function testDimensionOrderXYTCZ(self)            
-            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYTCZ')
+        function testDimensionOrderXYCTZ(self)
+            self.checkDimensionOrder('XYCTZ')
         end
         
-        function testDimensionOrderXYTZC(self)            
-            self.saveAndLoad(uint8(self.I * (2^8-1)), 'XYTZC')
+        function testDimensionOrderXYTCZ(self)
+            self.checkDimensionOrder('XYTCZ')
         end
-                
+        
+        function testDimensionOrderXYTZC(self)
+            self.checkDimensionOrder('XYTZC')
+        end
+        
         % Data type tests
+        function checkPixelType(self, type)
+            self.I = zeros(100, 100, type);
+            bfsave(self.I, self.path);
+            assertEqual(imread(self.path), self.I);
+        end
+        
         function testPixelsTypeUINT8(self)
-            self.saveAndLoad(uint8(self.I * (2^8-1)));
+            self.checkPixelType('uint8');
         end
         
         function testPixelsTypeINT8(self)
-            self.saveAndLoad(int8(self.I * (2^8-1)));
+            self.checkPixelType('int8');
         end
         
         function testPixelsTypeUINT16(self)
-            self.saveAndLoad(uint16(self.I * (2^16-1)));
+            self.checkPixelType('uint16');
         end
         
         function testPixelsTypeINT16(self)
-            self.saveAndLoad(uint16(self.I * (2^16-1)));
+            self.checkPixelType('int16');
         end
         
         function testPixelsTypeUINT32(self)
-            self.saveAndLoad(uint32(self.I * (2^32-1)));
+            self.checkPixelType('uint32');
         end
         
         function testPixelsTypeINT32(self)
-            self.saveAndLoad(int32(self.I * (2^32-1)));
+            self.checkPixelType('int32');
         end
         
         function testPixelsTypeFLOAT(self)
-            self.saveAndLoad(single(self.I * (2^16-1)));
+            self.checkPixelType('single');
         end
         
         function testPixelsTypeDOUBLE(self)
-            self.saveAndLoad(double(self.I * (2^16-1)));
+            self.checkPixelType('double');
         end
         
-        %%
-        function saveAndLoad(self, I, dimensionOrder)
-            
-            if nargin<3, dimensionOrder = 'XYZCT'; end
-            
-            % Create stack and save it
-            bfsave(I, self.path, dimensionOrder);
-            sizeZ = size(I, find(dimensionOrder=='Z'));
-            sizeC = size(I, find(dimensionOrder=='C'));
-            sizeT = size(I, find(dimensionOrder=='T'));
-            
-            % Check dimensions of saved ome-tiff
-            self.reader = bfGetReader(self.path);
-            assertEqual(self.reader.getSizeZ, sizeZ);
-            assertEqual(self.reader.getSizeC, sizeC);
-            assertEqual(self.reader.getSizeT, sizeT);
-            
-            % Test all planes
-            for iPlane = 1 : sizeZ * sizeC * sizeT
-                [i,j,k] = ind2sub([size(I, 3) size(I, 4) size(I, 5)], iPlane);
-                assertEqual(I(:, :, i, j, k), bfGetPlane(self.reader, iPlane));
-            end
+        % Bytes reading tests
+        function testSinglePoint(self)
+            self.I = 1;
+            bfsave(self.I, self.path);
+            assertEqual(imread(self.path), self.I);
         end
         
+        function testSinglePlane(self)
+            r = bfGetReader('plane.fake');
+            self.I = bfGetPlane(r, 1);
+            bfsave(self.I, self.path);
+            assertEqual(imread(self.path), self.I);
+        end
     end
-    
 end
-
