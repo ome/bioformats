@@ -43,17 +43,10 @@ bfCheckJavaPath();
 % Not using the inputParser for first argument as it copies data
 assert(isnumeric(I), 'First argument must be numeric');
 
-% List all values of DimensionOrder
-dimensionOrderValues = ome.xml.model.enums.DimensionOrder.values();
-dimensionsOrders = cell(numel(dimensionOrderValues), 1);
-for i = 1 :numel(dimensionOrderValues),
-    dimensionsOrders{i} = char(dimensionOrderValues(i).toString());
-end
-
 % Input check
 ip = inputParser;
 ip.addRequired('outputPath', @ischar);
-ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, dimensionsOrders));
+ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, getDimensionOrders()));
 ip.parse(outputPath, varargin{:});
 
 % Create metadata
@@ -134,4 +127,14 @@ for index = 1 : nPlanes
 end
 writer.close();
 
+end
+
+function dimensionOrders = getDimensionOrders()
+
+% List all values of DimensionOrder
+dimensionOrderValues = ome.xml.model.enums.DimensionOrder.values();
+dimensionOrders = cell(numel(dimensionOrderValues), 1);
+for i = 1 :numel(dimensionOrderValues),
+    dimensionOrders{i} = char(dimensionOrderValues(i).toString());
+end
 end
