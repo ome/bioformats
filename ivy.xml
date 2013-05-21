@@ -14,6 +14,7 @@
     <artifact name="ome-xml"/>
     <artifact name="poi-loci"/>
     <artifact name="scifio"/>
+    <artifact name="scifio-test"/>
     <artifact name="specification"/>
     <artifact name="turbojpeg"/>
   </publications>
