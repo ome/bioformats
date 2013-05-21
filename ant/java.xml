@@ -46,6 +46,13 @@ Type "ant -p" for a list of targets.
       srcdir="${test.dir}" destdir="${test-classes.dir}"
       classpath="${classes.dir}:${component.classpath}"
       includes="${component.source}"/>
+    <if>
+      <isset property="test-component.jar"/>
+      <then>
+        <mkdir dir="${artifact.dir}"/>
+        <jar jarfile="${artifact.dir}/${test-component.jar}" basedir="${test-classes.dir}"/>
+      </then>
+    </if>
   </target>
 
   <target name="exec" depends="compile" description="execute package">
