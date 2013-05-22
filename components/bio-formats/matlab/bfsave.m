@@ -48,6 +48,7 @@ ip = inputParser;
 ip.addRequired('outputPath', @ischar);
 ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, getDimensionOrders()));
 ip.addParamValue('Compression', '',  @(x) ismember(x, getCompressionTypes()));
+ip.addOptional('BigTiff', false , @islogical);
 ip.parse(outputPath, varargin{:});
 
 % Create metadata
@@ -105,6 +106,9 @@ writer.setWriteSequentially(true);
 writer.setMetadataRetrieve(metadata);
 if ~isempty(ip.Results.Compression)
     writer.setCompression(ip.Results.Compression)
+end
+if ip.Results.BigTiff
+    writer.getWriter(outputPath).setBigTiff(ip.Results.BigTiff)
 end
 writer.setId(outputPath);
 
