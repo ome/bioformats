@@ -47,6 +47,7 @@ assert(isnumeric(I), 'First argument must be numeric');
 ip = inputParser;
 ip.addRequired('outputPath', @ischar);
 ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, getDimensionOrders()));
+ip.addParamValue('Compression', '',  @(x) ismember(x, getCompressionTypes()));
 ip.parse(outputPath, varargin{:});
 
 % Create metadata
@@ -102,6 +103,9 @@ end
 writer = loci.formats.ImageWriter();
 writer.setWriteSequentially(true);
 writer.setMetadataRetrieve(metadata);
+if ~isempty(ip.Results.Compression)
+    writer.setCompression(ip.Results.Compression)
+end
 writer.setId(outputPath);
 
 % Load conversion tools for saving planes
@@ -137,4 +141,12 @@ dimensionOrders = cell(numel(dimensionOrderValues), 1);
 for i = 1 :numel(dimensionOrderValues),
     dimensionOrders{i} = char(dimensionOrderValues(i).toString());
 end
+end
+
+function compressionTypes = getCompressionTypes()
+
+% List all values of DimensionOrder
+compressionTypes = loci.formats.ImageWriter().getCompressionTypes;
+compressionTypes = arrayfun(@char, compressionTypes,...
+    'UniformOutput', false);
 end
