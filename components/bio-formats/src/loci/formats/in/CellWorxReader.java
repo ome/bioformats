@@ -85,6 +85,8 @@ public class CellWorxReader extends FormatReader {
   private String lastFile;
   private IFormatReader lastReader;
 
+  private OMEXMLService service;
+
   // -- Constructor --
 
   /** Constructs a new CellWorx reader. */
@@ -215,6 +217,7 @@ public class CellWorxReader extends FormatReader {
       }
       lastReader = null;
       doChannels = false;
+      service = null;
     }
   }
 
@@ -244,6 +247,14 @@ public class CellWorxReader extends FormatReader {
     }
 
     super.initFile(id);
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(OMEXMLService.class);
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
 
     String plateData = DataTools.readFile(id);
     String[] lines = plateData.split("\n");
@@ -389,14 +400,8 @@ public class CellWorxReader extends FormatReader {
       }
     }
     OMEXMLMetadata convertMetadata;
-
     try {
-      ServiceFactory factory = new ServiceFactory();
-      OMEXMLService service = factory.getInstance(OMEXMLService.class);
       convertMetadata = service.createOMEXMLMetadata();
-    }
-    catch (DependencyException exc) {
-      throw new FormatException("Could not create OME-XML store.", exc);
     }
     catch (ServiceException exc) {
       throw new FormatException("Could not create OME-XML store.", exc);
@@ -711,19 +716,12 @@ public class CellWorxReader extends FormatReader {
     }
 
     IMetadata metadata;
-
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+    try{
       metadata = service.createOMEXMLMetadata();
-    }
-    catch (DependencyException exc) {
-      throw new FormatException("Could not create OME-XML store.", exc);
     }
     catch (ServiceException exc) {
       throw new FormatException("Could not create OME-XML store.", exc);
     }
-
     pnl.setMetadataStore(metadata);
     pnl.setId(file);
     return pnl;
