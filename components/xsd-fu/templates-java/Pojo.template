@@ -150,6 +150,38 @@ public class ${klass.name} extends ${klass.javaBase}
 		update(element, model);
 	}
 
+	/** Copy constructor. */
+	public ${klass.name}(${klass.name} orig)
+	{
+		super(orig);
+{% if klass.javaType != 'Object' %}\
+		${klass.name}_value = orig.${klass.name}_value;
+{% end %}\
+\
+{% for prop in klass.properties.values() %}\
+{% choose %}\
+{% when prop.isReference and prop.maxOccurs > 1%}
+		${prop.javaInstanceVariableName} = orig.${prop.javaInstanceVariableName};
+{% end %}\
+{% when prop.isBackReference and prop.maxOccurs > 1 %}
+		${prop.javaInstanceVariableName} = orig.${prop.javaInstanceVariableName};
+{% end %}\
+{% when prop.isBackReference %}
+		${prop.javaInstanceVariableName} = orig.${prop.javaInstanceVariableName};
+{% end %}\
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+		${prop.javaInstanceVariableName} = orig.${prop.javaInstanceVariableName};
+{% end %}\
+{% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
+		${prop.javaInstanceVariableName} = orig.${prop.javaInstanceVariableName};
+{% end %}\
+{% otherwise %}
+		// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end %}\
+{% end %}\
+{% end %}\
+	}
+
 	// -- Custom content from ${klass.name} specific template --
 
 ${customContent}\

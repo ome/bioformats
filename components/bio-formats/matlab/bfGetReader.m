@@ -76,5 +76,6 @@ if ip.Results.stitchFiles
     r = loci.formats.FileStitcher(r);
 end
 
-r.setMetadataStore(loci.formats.MetadataTools.createOMEXMLMetadata());
+OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
+r.setMetadataStore(OMEXMLService.createOMEXMLMetadata());
 r.setId(id);

@@ -180,7 +180,19 @@ timepoints) to a file:
 
       javaaddpath(fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar'));
       writer = loci.formats.ImageWriter();
-      metadata = loci.formats.MetadataTools.createOMEXMLMetadata();
+
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+        metadata = service.createOMEXMLMetadata();
+      }
+      catch (DependencyException exc) {
+        throw new FormatException("Could not create OME-XML store.", exc);
+      }
+      catch (ServiceException exc) {
+        throw new FormatException("Could not create OME-XML store.", exc);
+      }
+
       metadata.createRoot();
       metadata.setImageID('Image:0', 0);
       metadata.setPixelsID('Pixels:0', 0);

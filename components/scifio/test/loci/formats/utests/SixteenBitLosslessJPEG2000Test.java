@@ -43,11 +43,16 @@ import java.util.ArrayList;
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.Location;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.JPEG2000Writer;
+import loci.formats.services.OMEXMLService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +85,20 @@ public class SixteenBitLosslessJPEG2000Test {
       ByteArrayHandle tmpFile = new ByteArrayHandle(1);
       Location.mapFile(file, tmpFile);
 
-      IMetadata metadata16 = MetadataTools.createOMEXMLMetadata();
+      IMetadata metadata16;
+
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+        metadata16 = service.createOMEXMLMetadata();
+      }
+      catch (DependencyException exc) {
+        throw new FormatException("Could not create OME-XML store.", exc);
+      }
+      catch (ServiceException exc) {
+        throw new FormatException("Could not create OME-XML store.", exc);
+      }
+
       MetadataTools.populateMetadata(metadata16, 0, "foo", false, "XYCZT",
         "uint16", 1, 1, 1, 1, 1, 1);
       IFormatWriter writer16 = new JPEG2000Writer();

@@ -25,8 +25,8 @@
 
 package loci.formats.utests;
 
+import loci.formats.meta.MetadataRoot;
 import loci.formats.ome.OMEXMLMetadataImpl;
-import ome.xml.model.OME;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -50,8 +50,8 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.resolveReferences();
   }
 
-  public OME getRoot() {
-    return (OME) store.getRoot();
+  public MetadataRoot getRoot() {
+    return store.getRoot();
   }
 
   private void makeImage() {

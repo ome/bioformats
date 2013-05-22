@@ -25,6 +25,8 @@
 
 package loci.formats.utests;
 
+import loci.formats.ome.OMEXMLMetadataRoot;
+
 import ome.xml.model.Arc;
 import ome.xml.model.BinaryFile;
 import ome.xml.model.BooleanAnnotation;
@@ -43,7 +45,6 @@ import ome.xml.model.Laser;
 import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.ListAnnotation;
 import ome.xml.model.LongAnnotation;
-import ome.xml.model.OME;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
@@ -69,12 +70,12 @@ import ome.xml.model.primitives.Timestamp;
  */
 public class ObjectBasedOMEModelMock implements OMEModelMock {
 
-  private OME ome;
+  private OMEXMLMetadataRoot ome;
 
   private StructuredAnnotations annotations;
 
   public ObjectBasedOMEModelMock() {
-    ome = new OME();
+    ome = new OMEXMLMetadataRoot();
     annotations = new StructuredAnnotations();
     ome.addImage(makeImage());
     ome.addPlate(makePlate());
@@ -83,7 +84,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     ome.setStructuredAnnotations(annotations);
   }
 
-  public OME getRoot() {
+  public OMEXMLMetadataRoot getRoot() {
     return ome;
   }
 

@@ -91,6 +91,8 @@
 
 package loci.formats.meta;
 
+import loci.formats.meta.MetadataRoot;
+
 import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
@@ -135,8 +137,11 @@ public interface MetadataStore extends BaseMetadata
 {
 	void createRoot();
 
-	Object getRoot();
+	MetadataRoot getRoot();
 
+	void setRoot(MetadataRoot root);
+
+	@Deprecated
 	void setRoot(Object root);
 
 	// -- Entity storage (manual definitions) --

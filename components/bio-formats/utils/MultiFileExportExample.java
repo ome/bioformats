@@ -25,12 +25,16 @@
 
 import java.io.IOException;
 
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Writes each Z section in a dataset to a separate file.
@@ -48,7 +52,20 @@ public class MultiFileExportExample {
     }
 
     ImageReader reader = new ImageReader();
-    IMetadata metadata = MetadataTools.createOMEXMLMetadata();
+    IMetadata metadata;
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      metadata = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+
     reader.setMetadataStore(metadata);
     reader.setId(args[0]);
 

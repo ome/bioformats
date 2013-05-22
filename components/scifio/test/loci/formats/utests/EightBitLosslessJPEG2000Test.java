@@ -43,11 +43,16 @@ import java.util.ArrayList;
 
 import loci.common.DataTools;
 import loci.common.Location;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.JPEG2000Writer;
+import loci.formats.services.OMEXMLService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +89,20 @@ public class EightBitLosslessJPEG2000Test {
       Location.mapId(file, tempFile.getAbsolutePath());
       files.add(file);
 
-      IMetadata metadata = MetadataTools.createOMEXMLMetadata();
+      IMetadata metadata;
+
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+        metadata = service.createOMEXMLMetadata();
+      }
+      catch (DependencyException exc) {
+        throw new FormatException("Could not create OME-XML store.", exc);
+      }
+      catch (ServiceException exc) {
+        throw new FormatException("Could not create OME-XML store.", exc);
+      }
+
       MetadataTools.populateMetadata(metadata, 0, "foo", false, "XYCZT",
         "uint8", 1, 1, 1, 1, 1, 1);
       IFormatWriter writer = new JPEG2000Writer();

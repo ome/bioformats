@@ -166,11 +166,16 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
-	public Object getRoot()
+	public MetadataRoot getRoot()
 	{
 		return null;
 	}
 
+	public void setRoot(MetadataRoot root)
+	{
+	}
+
+	@Deprecated
 	public void setRoot(Object root)
 	{
 	}
