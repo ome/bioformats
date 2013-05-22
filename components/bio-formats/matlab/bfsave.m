@@ -1,20 +1,27 @@
 function bfsave(I, outputPath, varargin)
-% Save a 5D matrix into an OME-TIFF using Bio-Formats library
+% BFSAVE Save a 5D matrix into an OME-TIFF using Bio-Formats library
 %
-% SYNOPSIS bfsave(I, outputPath)
-%          bfsave(I, outputPath, dimensionsOrder)
+%    bfsave(I, outputPath) writes the input 5D matrix into a new file
+%    specified by outputPath.
 %
-% INPUT:
-%       I - a 5D matrix containing the pixels data
+%    bfsave(I, outputPath, dimensionOrder) specifies the dimension order of
+%    the input matrix. Default valuse is XYZCT.
 %
-%       outputPath - a string containing the location of the path where to
-%       save the resulting OME-TIFF
+%    bfsave(I, outputPath, 'Compression', compression) specifies the
+%    compression to use when writing the OME-TIFF file.
 %
-%       dimensionOrder - optional. A string representing the dimension
-%       order, Default: XYZCT.
+%    bfsave(I, outputPath, 'BigTiff', true) allows to save the file using
+%    64-bit offsets
 %
-% OUTPUT
+%    Examples:
 %
+%        bfsave(zeros(100, 100), outputPath)
+%        bfsave(zeros(100, 100, 2, 3, 4), outputPath)
+%        bfsave(zeros(100, 100, 20), outputPath, 'dimensionOrder', 'XYTZC')
+%        bfsave(zeros(100, 100), outputPath, 'Compression', 'LZW')
+%        bfsave(zeros(100, 100), outputPath, 'BigTiff', true)
+%
+% See also: BFGETREADER
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
