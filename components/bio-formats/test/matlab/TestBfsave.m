@@ -141,5 +141,36 @@ classdef TestBfsave < TestCase
             bfsave(self.I, self.path);
             assertEqual(imread(self.path), self.I);
         end
+        
+        % Compression type tests
+        function checkCompression(self, type, nonlossy)
+            r = bfGetReader('plane.fake');
+            self.I = bfGetPlane(r, 1);
+            bfsave(self.I, self.path, 'Compression', type);
+            if nonlossy
+                assertEqual(imread(self.path), self.I);
+            end
+        end
+        
+        function testJPEG(self)
+            self.checkCompression('JPEG', false);
+        end
+        
+        function testJPEG2000(self)
+            self.checkCompression('JPEG-2000', false);
+        end
+        
+        function testJPEG2000Lossy(self)
+            self.checkCompression('JPEG-2000 Lossy', false);
+        end
+        
+        function testUncompressed(self)
+            self.checkCompression('Uncompressed', true);
+        end
+        
+        function testLZW(self)
+            self.checkCompression('LZW', true);
+        end
+        
     end
 end
