@@ -90,6 +90,11 @@ public class SVSReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
+  }
+
   /* (non-Javadoc)
    * @see loci.formats.FormatReader#isThisType(java.lang.String, boolean)
    */
