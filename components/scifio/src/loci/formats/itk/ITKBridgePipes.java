@@ -49,6 +49,9 @@ import java.util.Set;
 import java.util.HashMap;
 
 import loci.common.Constants;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -59,6 +62,7 @@ import loci.formats.MetadataTools;
 import loci.formats.gui.Index16ColorModel;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.PixelType;
@@ -386,7 +390,18 @@ public class ITKBridgePipes {
 		  int zStart, int cStart, int tStart, int xCount, int yCount,
 		  int zCount, int cCount, int tCount) throws IOException, FormatException
   {
-	  IMetadata meta = MetadataTools.createOMEXMLMetadata();
+	  IMetadata meta;
+
+	  try {
+	    final OMEXMLService service =
+	      new ServiceFactory().getInstance(OMEXMLService.class);
+	    meta = service.createOMEXMLMetadata();
+	  } catch (DependencyException e) {
+		throw new IOException(e.getMessage());
+	  } catch (ServiceException e) {
+		throw new IOException(e.getMessage());
+	  }
+
 	  meta.createRoot();
 	  meta.setImageID("Image:0", 0);
 	  meta.setPixelsID("Pixels:0", 0);
@@ -527,7 +542,18 @@ public class ITKBridgePipes {
 
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(true);
-    final MetadataStore store = MetadataTools.createOMEXMLMetadata();
+
+    MetadataStore store;
+    try {
+      final OMEXMLService service =
+        new ServiceFactory().getInstance(OMEXMLService.class);
+      store = service.createOMEXMLMetadata();
+    } catch (DependencyException e) {
+      throw new IOException(e.getMessage());
+    } catch (ServiceException e) {
+      throw new IOException(e.getMessage());
+    }
+
     if (store == null) System.err.println("OME-Java library not found.");
     else reader.setMetadataStore(store);
 

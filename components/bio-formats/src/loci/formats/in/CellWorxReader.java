@@ -34,6 +34,9 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -44,10 +47,11 @@ import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.ome.OMEXMLMetadataRoot;
+import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.Image;
 import ome.xml.model.Instrument;
-import ome.xml.model.OME;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -79,6 +83,8 @@ public class CellWorxReader extends FormatReader {
 
   private String lastFile;
   private IFormatReader lastReader;
+
+  private OMEXMLService service;
 
   // -- Constructor --
 
@@ -210,6 +216,7 @@ public class CellWorxReader extends FormatReader {
       }
       lastReader = null;
       doChannels = false;
+      service = null;
     }
   }
 
@@ -239,6 +246,14 @@ public class CellWorxReader extends FormatReader {
     }
 
     super.initFile(id);
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(OMEXMLService.class);
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
 
     String plateData = DataTools.readFile(id);
     String[] lines = plateData.split("\n");
@@ -372,18 +387,25 @@ public class CellWorxReader extends FormatReader {
     }
 
     OMEXMLMetadata readerMetadata = (OMEXMLMetadata) pnl.getMetadataStore();
-    OME root = (OME) readerMetadata.getRoot();
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) readerMetadata.getRoot();
     Instrument instrument = root.getInstrument(0);
     List<Image> images = root.copyImageList();
 
-    OME convertRoot = new OME();
+    OMEXMLMetadataRoot convertRoot = new OMEXMLMetadataRoot();
     convertRoot.addInstrument(instrument);
     for (int i=0; i<core.size()/images.size(); i++) {
       for (Image img : images) {
         convertRoot.addImage(img);
       }
     }
-    IMetadata convertMetadata = MetadataTools.createOMEXMLMetadata();
+    OMEXMLMetadata convertMetadata;
+    try {
+      convertMetadata = service.createOMEXMLMetadata();
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+
     convertMetadata.setRoot(convertRoot);
 
     pnl.close();
@@ -691,7 +713,14 @@ public class CellWorxReader extends FormatReader {
     if (checkSuffix(file, "tif")) {
       pnl = new MetamorphReader();
     }
-    IMetadata metadata = MetadataTools.createOMEXMLMetadata();
+
+    IMetadata metadata;
+    try{
+      metadata = service.createOMEXMLMetadata();
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
     pnl.setMetadataStore(metadata);
     pnl.setId(file);
     return pnl;

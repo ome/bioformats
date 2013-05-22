@@ -23,10 +23,15 @@
  * #L%
  */
 
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.formats.FormatException;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 /**
  * <dl><dt><b>Source code:</b></dt>
@@ -42,8 +47,20 @@ public class TiledExportExample {
 
     ImageReader reader = new ImageReader();
     ImageWriter writer = new ImageWriter();
+    IMetadata meta;
 
-    IMetadata meta = MetadataTools.createOMEXMLMetadata();
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      meta = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+
     reader.setMetadataStore(meta);
 
     reader.setId(args[0]);

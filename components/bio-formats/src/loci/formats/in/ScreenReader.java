@@ -49,11 +49,11 @@ import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
+import loci.formats.ome.OMEXMLMetadataRoot;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.xml.model.Image;
-import ome.xml.model.OME;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
@@ -325,7 +325,7 @@ public class ScreenReader extends FormatReader {
       plateMaps[rowIndex][colIndex] = true;
     }
 
-    OME root = (OME) omexmlMeta.getRoot();
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
     Image img = root.getImage(0);
     for (int i=lastCount; i<core.size(); i++) {
       root.addImage(img);

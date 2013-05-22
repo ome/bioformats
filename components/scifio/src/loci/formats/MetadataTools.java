@@ -48,10 +48,11 @@ import loci.common.services.ServiceFactory;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.meta.MetadataRoot;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.ome.OMEXMLMetadataRoot;
 import loci.formats.services.OMEXMLService;
 import ome.xml.model.BinData;
-import ome.xml.model.OME;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
@@ -154,7 +155,7 @@ public final class MetadataTools {
             }
           }
 
-          OME root = (OME) store.getRoot();
+          OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
           BinData bin = root.getImage(i).getPixels().getBinData(0);
           bin.setLength(new NonNegativeLong(0L));
           store.setRoot(root);
@@ -444,182 +445,5 @@ public final class MetadataTools {
   }
 
   // -- Deprecated methods --
-
-  private static OMEXMLService omexmlService = createOMEXMLService();
-  private static OMEXMLService createOMEXMLService() {
-    try {
-      return new ServiceFactory().getInstance(OMEXMLService.class);
-    }
-    catch (DependencyException exc) {
-      return null;
-    }
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#asRetrieve(MetadataStore)}
-   * instead.
-   */
-  public static MetadataRetrieve asRetrieve(MetadataStore meta) {
-    if (omexmlService == null) return null;
-    return omexmlService.asRetrieve(meta);
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#getLatestVersion()}
-   * instead.
-   */
-  public static String getLatestVersion() {
-    if (omexmlService == null) return null;
-    return omexmlService.getLatestVersion();
-  }
-
-  /**
-   * Creates an OME-XML metadata object using reflection, to avoid
-   * direct dependencies on the optional {@link loci.formats.ome} package.
-   * @return A new instance of {@link loci.formats.ome.AbstractOMEXMLMetadata},
-   *   or null if one cannot be created.
-   */
-  public static IMetadata createOMEXMLMetadata() {
-    try {
-      final OMEXMLService service =
-        new ServiceFactory().getInstance(OMEXMLService.class);
-      if (service == null) return null;
-      return service.createOMEXMLMetadata();
-    }
-    catch (DependencyException exc) {
-      return null;
-    }
-    catch (ServiceException exc) {
-      return null;
-    }
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#createOMEXMLMetadata(String)}
-   * instead.
-   */
-  public static IMetadata createOMEXMLMetadata(String xml) {
-    if (omexmlService == null) return null;
-    try {
-      return omexmlService.createOMEXMLMetadata(xml);
-    }
-    catch (ServiceException exc) {
-      return null;
-    }
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#createOMEXMLMetadata(String,
-   *   String)}
-   * instead.
-   */
-  public static IMetadata createOMEXMLMetadata(String xml, String version) {
-    if (omexmlService == null) return null;
-    try {
-      return omexmlService.createOMEXMLMetadata(xml);
-    }
-    catch (ServiceException exc) {
-      return null;
-    }
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#createOMEXMLRoot(String)}
-   * instead.
-   */
-  public static Object createOMEXMLRoot(String xml) {
-    if (omexmlService == null) return null;
-    try {
-      return omexmlService.createOMEXMLMetadata(xml);
-    }
-    catch (ServiceException exc) {
-      return null;
-    }
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#isOMEXMLMetadata(Object)}
-   * instead.
-   */
-  public static boolean isOMEXMLMetadata(Object o) {
-    if (omexmlService == null) return false;
-    return omexmlService.isOMEXMLMetadata(o);
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#isOMEXMLRoot(Object)}
-   * instead.
-   */
-  public static boolean isOMEXMLRoot(Object o) {
-    if (omexmlService == null) return false;
-    return omexmlService.isOMEXMLRoot(o);
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#getOMEXMLVersion(Object)}
-   * instead.
-   */
-  public static String getOMEXMLVersion(Object o) {
-    if (omexmlService == null) return null;
-    return omexmlService.getOMEXMLVersion(o);
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#getOMEMetadata(MetadataRetrieve)}
-   * instead.
-   */
-  public static IMetadata getOMEMetadata(MetadataRetrieve src) {
-    if (omexmlService == null) return null;
-    try {
-      return omexmlService.getOMEMetadata(src);
-    }
-    catch (ServiceException exc) {
-      return null;
-    }
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#getOMEXML(MetadataRetrieve)}
-   * instead.
-   */
-  public static String getOMEXML(MetadataRetrieve src) {
-    if (omexmlService == null) return null;
-    try {
-      return omexmlService.getOMEXML(src);
-    }
-    catch (ServiceException exc) {
-      return null;
-    }
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#validateOMEXML(String)}
-   * instead.
-   */
-  public static boolean validateOMEXML(String xml) {
-    if (omexmlService == null) return false;
-    return omexmlService.validateOMEXML(xml);
-  }
-
-  /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#validateOMEXML(String, boolean)}
-   * instead.
-   */
-  public static boolean validateOMEXML(String xml, boolean pixelsHack) {
-    if (omexmlService == null) return false;
-    return omexmlService.validateOMEXML(xml, pixelsHack);
-  }
 
 }

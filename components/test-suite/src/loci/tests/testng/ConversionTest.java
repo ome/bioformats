@@ -34,12 +34,17 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import loci.common.Constants;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CompressionType;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 import org.testng.annotations.Test;
 
@@ -66,7 +71,19 @@ public class ConversionTest {
   private IMetadata createMetadata(String pixelType, int rgbChannels,
     int seriesCount, boolean littleEndian) throws Exception
   {
-    IMetadata metadata = MetadataTools.createOMEXMLMetadata();
+    IMetadata metadata;
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      metadata = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
 
     for (int i=0; i<seriesCount; i++) {
       MetadataTools.populateMetadata(metadata, i, "image #" + i, littleEndian,

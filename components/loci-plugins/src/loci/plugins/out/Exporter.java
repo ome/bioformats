@@ -67,13 +67,13 @@ import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.IMetadata;
+import loci.formats.ome.OMEXMLMetadataRoot;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
 import loci.plugins.LociExporter;
 import loci.plugins.util.RecordedImageProcessor;
 import loci.plugins.util.WindowTools;
 
-import ome.xml.model.OME;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
@@ -312,7 +312,7 @@ public class Exporter {
         }
         else if (matchingSeries.size() == 1) series = matchingSeries.get(0);
 
-        OME root = (OME) store.getRoot();
+        OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
         ome.xml.model.Image exportImage = root.getImage(series);
         List<ome.xml.model.Image> allImages = root.copyImageList();
         for (ome.xml.model.Image img : allImages) {

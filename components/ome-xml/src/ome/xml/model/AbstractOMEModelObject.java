@@ -66,6 +66,10 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
     update(element);
   }
 
+  public AbstractOMEModelObject(AbstractOMEModelObject orig) {
+    super();
+  }
+
   /* (non-Javadoc)
    * @see ome.xml.r201004.OMEModelObject#update(org.w3c.dom.Element)
    */

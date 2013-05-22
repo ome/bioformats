@@ -42,12 +42,16 @@ import java.io.File;
 import java.io.IOException;
 
 import loci.common.Location;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.JPEG2000Writer;
+import loci.formats.services.OMEXMLService;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -78,7 +82,20 @@ public class LosslessJPEG2000Test {
     Location.mapId(FILE_8, temp8.getAbsolutePath());
     Location.mapId(FILE_16, temp16.getAbsolutePath());
 
-    IMetadata metadata8 = MetadataTools.createOMEXMLMetadata();
+    IMetadata metadata8;
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      metadata8 = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+
     MetadataTools.populateMetadata(metadata8, 0, "foo", false, "XYCZT",
       "uint8", 1, 1, 1, 1, 1, 1);
     IFormatWriter writer8 = new JPEG2000Writer();
@@ -87,7 +104,20 @@ public class LosslessJPEG2000Test {
     writer8.saveBytes(0, PIXELS_8);
     writer8.close();
 
-    IMetadata metadata16 = MetadataTools.createOMEXMLMetadata();
+    IMetadata metadata16;
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      metadata16 = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+
     MetadataTools.populateMetadata(metadata16, 0, "foo", false, "XYCZT",
       "uint16", 1, 1, 1, 1, 1, 1);
     IFormatWriter writer16 = new JPEG2000Writer();

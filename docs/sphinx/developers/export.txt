@@ -13,7 +13,13 @@ The first thing we need to do is set up a reader:
       // create a reader that will automatically handle any supported format
       IFormatReader reader = new ImageReader();
       // tell the reader where to store the metadata from the dataset
-      reader.setMetadataStore(MetadataTools.createOMEXMLMetadata());
+      MetadataStore metadata;
+
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      metadata = service.createOMEXMLMetadata();
+
+      reader.setMetadataStore(metadata);
       // initialize the dataset
       reader.setId("/path/to/file");
 
@@ -25,7 +31,7 @@ Now, we set up our writer:
       IFormatWriter writer = new ImageWriter();
       // give the writer a MetadataRetrieve object, which encapsulates all of the
       // dimension information for the dataset (among many other things)
-      writer.setMetadataRetrieve(MetadataTools.asRetrieve(reader.getMetadataStore()));
+      writer.setMetadataRetrieve(service.asRetrieve(reader.getMetadataStore()));
       // initialize the writer
       writer.setId("/path/to/output/file");
 
@@ -128,7 +134,7 @@ single IFormatWriter, like so:
 
       // you should have set up a reader as in the first example
       ImageWriter writer = new ImageWriter();
-      writer.setMetadataRetrieve(MetadataTools.asRetrieve(reader.getMetadataStore()));
+      writer.setMetadataRetrieve(service.asRetrieve(reader.getMetadataStore()));
       // replace this with your own filename definitions
       // in this example, we're going to write half of the planes to one file
       // and half of the planes to another file
@@ -161,7 +167,7 @@ IFormatWriter for each file, like this:
       int planesPerFile = reader.getImageCount() / outputFiles.length;
       for (int file=0; file<outputFiles.length; file++) {
         ImageWriter writer = new ImageWriter();
-        writer.setMetadataRetrieve(MetadataTools.asRetrieve(reader.getMetadataStore()));
+        writer.setMetadataRetrieve(service.asRetrieve(reader.getMetadataStore()));
         writer.setId(outputFiles[file]);
         for (int image=0; image<planesPerFile; image++) {
           int index = file * planesPerFile + image;

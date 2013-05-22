@@ -45,6 +45,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import loci.formats.ome.OMEXMLMetadataImpl;
+import loci.formats.ome.OMEXMLMetadataRoot;
 
 import static org.testng.AssertJUnit.*;
 
@@ -77,7 +78,6 @@ import ome.xml.model.FilterSet;
 import ome.xml.model.Image;
 import ome.xml.model.Instrument;
 import ome.xml.model.Laser;
-import ome.xml.model.OME;
 import ome.xml.model.Pixels;
 import ome.xml.model.Plate;
 import ome.xml.model.Rectangle;
@@ -263,7 +263,7 @@ public class InOut201004Test {
 
   public OMEModelMock mock;
 
-  public OME ome;
+  public OMEXMLMetadataRoot ome;
 
   public OMEModel model;
 
@@ -281,7 +281,7 @@ public class InOut201004Test {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
     document = parser.newDocument();
-    ome = mock.getRoot();
+    ome = (OMEXMLMetadataRoot) mock.getRoot();
     // Produce a valid OME DOM element hierarchy
     Element root = ome.asXMLElement(document);
     root.setAttribute("xmlns", XML_NS);
@@ -296,7 +296,7 @@ public class InOut201004Test {
   public void testValidOMENode() throws EnumerationException {
     model = new OMEModelImpl();
     // Read string XML in as a DOM tree and parse into the object hierarchy
-    ome = new OME(document.getDocumentElement(), model);
+    ome = new OMEXMLMetadataRoot(document.getDocumentElement(), model);
     model.resolveReferences();
     assertNotNull(ome);
     assertEquals(1, ome.sizeOfImageList());
