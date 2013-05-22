@@ -52,7 +52,6 @@ import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.Image;
 import ome.xml.model.Instrument;
-import ome.xml.model.OME;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;

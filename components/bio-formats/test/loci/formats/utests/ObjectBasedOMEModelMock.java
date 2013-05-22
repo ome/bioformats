@@ -45,7 +45,6 @@ import ome.xml.model.Laser;
 import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.ListAnnotation;
 import ome.xml.model.LongAnnotation;
-import ome.xml.model.OME;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;

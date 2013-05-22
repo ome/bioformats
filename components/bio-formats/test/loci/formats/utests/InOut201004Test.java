@@ -78,7 +78,6 @@ import ome.xml.model.FilterSet;
 import ome.xml.model.Image;
 import ome.xml.model.Instrument;
 import ome.xml.model.Laser;
-import ome.xml.model.OME;
 import ome.xml.model.Pixels;
 import ome.xml.model.Plate;
 import ome.xml.model.Rectangle;

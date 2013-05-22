@@ -36,7 +36,6 @@ import ome.xml.model.Filament;
 import ome.xml.model.Instrument;
 import ome.xml.model.Laser;
 import ome.xml.model.LightEmittingDiode;
-import ome.xml.model.OME;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

@@ -63,7 +63,6 @@ import ome.xml.model.BinData;
 import ome.xml.model.Channel;
 import ome.xml.model.Image;
 import ome.xml.model.MetadataOnly;
-import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;

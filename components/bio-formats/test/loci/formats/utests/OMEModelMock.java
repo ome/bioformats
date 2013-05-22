@@ -27,8 +27,6 @@ package loci.formats.utests;
 
 import loci.formats.meta.MetadataRoot;
 
-import ome.xml.model.OME;
-
 /**
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/OMEModelMock.java">Trac</a>,

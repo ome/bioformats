@@ -77,7 +77,6 @@ import loci.formats.services.OMEXMLServiceImpl;
 import loci.formats.tiff.IFD;
 
 import ome.xml.model.Image;
-import ome.xml.model.OME;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 
