@@ -51,8 +51,8 @@ using jace::proxy::java::lang::Integer;
 using jace::proxy::loci::formats::FormatException;
 using jace::proxy::loci::formats::FormatTools;
 using jace::proxy::loci::formats::ImageWriter;
-using jace::proxy::loci::formats::MetadataTools;
 using jace::proxy::loci::formats::meta::IMetadata;
+using jace::proxy::loci::formats::services::OMEXMLServiceImpl;
 using jace::proxy::ome::xml::model::enums::DimensionOrder;
 using jace::proxy::ome::xml::model::enums::PixelType;
 using jace::proxy::ome::xml::model::primitives::PositiveInteger;
@@ -98,7 +98,10 @@ bool minWrite(int argc, const char *argv[]) {
 
   // create metadata object with minimum required metadata fields
   cout << "Populating metadata..." << endl;
-  IMetadata meta = MetadataTools::createOMEXMLMetadata();
+
+  OMEXMLServiceImpl service;
+  IMetadata meta = service.createOMEXMLMetadata();
+
   meta.createRoot();
   meta.setImageID("Image:0", 0);
   meta.setPixelsID("Pixels:0", 0);

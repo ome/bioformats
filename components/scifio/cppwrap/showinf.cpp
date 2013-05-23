@@ -65,6 +65,7 @@ using jace::proxy::loci::formats::ImageReader;
 using jace::proxy::loci::formats::MetadataTools;
 using jace::proxy::loci::formats::meta::MetadataRetrieve;
 using jace::proxy::loci::formats::meta::MetadataStore;
+using jace::proxy::loci::formats::services::OMEXMLServiceImpl;
 
 #include <iostream>
 using std::cout;
@@ -115,6 +116,8 @@ ChannelFiller* channelFiller = NULL;
 ChannelSeparator* channelSeparator = NULL;
 ChannelMerger* channelMerger = NULL;
 DimensionSwapper* dimSwapper = NULL;
+
+OMEXMLServiceImpl service;
 
 // -- Methods --
 
@@ -204,8 +207,8 @@ void configureReaderPreInit() {
     jobject null = NULL;
     String xml(null);
     if (omexmlVersion == NULL) omexmlVersion = new String(null);
-    MetadataStore store =
-      MetadataTools::createOMEXMLMetadata(xml, *omexmlVersion);
+
+    MetadataStore store = service.createOMEXMLMetadata(xml, *omexmlVersion);
 
     reader->setOriginalMetadataPopulated(true);
     if (!store.isNull()) reader->setMetadataStore(store);
@@ -297,7 +300,7 @@ void readCoreMetadata() {
   int seriesCount = reader->getSeriesCount();
   cout << "Series count = " << seriesCount << endl;
   MetadataStore ms = reader->getMetadataStore();
-  MetadataRetrieve mr = MetadataTools::asRetrieve(ms);
+  MetadataRetrieve mr = service.asRetrieve(ms);
   for (int j=0; j<seriesCount; j++) {
     reader->setSeries(j);
 
@@ -472,14 +475,14 @@ void printOriginalMetadata() {
 void printOMEXML() {
   cout << endl;
   MetadataStore ms = reader->getMetadataStore();
-  String version = MetadataTools::getOMEXMLVersion(ms);
+  String version = service.getOMEXMLVersion(ms);
   if (!version.isNull()) cout << "Generating OME-XML" << endl;
   else cout << "Generating OME-XML (schema version " << version << ")" << endl;
-  MetadataRetrieve mr = MetadataTools::asRetrieve(ms);
+  MetadataRetrieve mr = service.asRetrieve(ms);
   if (!mr.isNull()) {
-    String xml = MetadataTools::getOMEXML(mr);
+    String xml = service.getOMEXML(mr);
     cout << XMLTools::indentXML(xml) << endl;
-    MetadataTools::validateOMEXML(xml);
+    service.validateOMEXML(xml);
   }
   else {
     cout << "The metadata could not be converted to OME-XML." << endl;
