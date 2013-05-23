@@ -34,7 +34,16 @@ sys.path.insert(0, os.path.abspath('python'))
 from fu import *
 from util import odict
 
-from genshi.template import NewTextTemplate
+try:
+	from genshi.template import NewTextTemplate
+except ImportError:
+	print """The genshi module was not found, but is required by xsd-fu.
+If this is provided by your distribution, install the
+"python-genshi" package or its equivalent.  Otherwise, run
+"pip install genshi" (you may need to install pip first)."""
+
+	sys.exit(1)
+
 from configobj import ConfigObj
 from getopt import gnu_getopt, GetoptError
 from glob import glob
