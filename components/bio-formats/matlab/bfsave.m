@@ -55,7 +55,7 @@ ip = inputParser;
 ip.addRequired('outputPath', @ischar);
 ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, getDimensionOrders()));
 ip.addParamValue('Compression', '',  @(x) ismember(x, getCompressionTypes()));
-ip.addOptional('BigTiff', false , @islogical);
+ip.addParamValue('BigTiff', false , @islogical);
 ip.parse(outputPath, varargin{:});
 
 % Create metadata

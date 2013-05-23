@@ -173,7 +173,7 @@ classdef TestBfsave < TestCase
         end
         
         % Big-tiff test
-        function checkBigTiff(self)
+        function testBigTiff(self)
             self.I = zeros(100, 100);
             bfsave(self.I, self.path, 'BigTiff', true);
             assertEqual(imread(self.path), self.I);
