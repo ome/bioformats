@@ -509,14 +509,22 @@ public class LIFReader extends FormatReader {
     // for instance, the green channel may be #0, and the red channel may be #1
     realChannel = new int[tileCount.length][];
     int nextLut = 0;
-    for (int i=0; i<tileCount.length; i++) {
+
+    for (int i=0; i<core.size(); i++) {
+      int index = getTileIndex(i);
+      if (realChannel[index] != null) {
+        continue;
+      }
       CoreMetadata ms = core.get(i);
-      realChannel[i] = new int[ms.sizeC];
+      realChannel[index] = new int[ms.sizeC];
 
       for (int q=0; q<ms.sizeC; q++) {
-        String lut = lutNames.get(nextLut++).toLowerCase();
+        String lut = "";
+        if (nextLut < lutNames.size()) {
+          lut = lutNames.get(nextLut++).toLowerCase();
+        }
         if (!CHANNEL_PRIORITIES.containsKey(lut)) lut = "";
-        realChannel[i][q] = CHANNEL_PRIORITIES.get(lut).intValue();
+        realChannel[index][q] = CHANNEL_PRIORITIES.get(lut).intValue();
       }
 
       int[] sorted = new int[ms.sizeC];
@@ -526,8 +534,10 @@ public class LIFReader extends FormatReader {
         int min = Integer.MAX_VALUE;
         int minIndex = -1;
         for (int n=0; n<ms.sizeC; n++) {
-          if (realChannel[i][n] < min && !DataTools.containsValue(sorted, n)) {
-            min = realChannel[i][n];
+          if (realChannel[index][n] < min &&
+            !DataTools.containsValue(sorted, n))
+          {
+            min = realChannel[index][n];
             minIndex = n;
           }
         }
