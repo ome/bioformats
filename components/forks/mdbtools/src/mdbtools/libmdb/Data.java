@@ -772,6 +772,7 @@ public class Data
         if(file.mdb_read_pg(mdb, lval_pg) != fmt.pg_size)
         {
           /* Failed to read */
+      file.mdb_swap_pgbuf(mdb);
           return text;
         }
         if (memo_row != 0)
