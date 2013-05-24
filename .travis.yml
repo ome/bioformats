@@ -7,4 +7,7 @@ jdk:
 
 before_install:
     - sudo apt-get -qq update
-    - sudo apt-get install -qq python-genshi
+    - sudo apt-get install -qq build-essential cmake libboost-all-dev python-genshi
+
+script:
+  - ./tools/test-build
