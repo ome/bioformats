@@ -156,8 +156,8 @@ end
 
 function compressionTypes = getCompressionTypes()
 
-% List all values of DimensionOrder
-compressionTypes = loci.formats.ImageWriter().getCompressionTypes;
-compressionTypes = arrayfun(@char, compressionTypes,...
+% List all values of Compression
+writer = loci.formats.ImageWriter();
+compressionTypes = arrayfun(@char, writer.getCompressionTypes(),...
     'UniformOutput', false);
 end
