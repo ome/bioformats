@@ -1,0 +1,23 @@
+#!/bin/sh
+# This script is used for testing the build, primarily for use
+# with travis, but may be used by hand as well.
+
+set -e
+
+# Test mvn build
+mvn
+
+# Test cppwrap
+(cd components/scifio
+mvn -DskipTests clean package cppwrap:wrap dependency:copy-dependencies
+cd target/cppwrap
+mkdir build
+cd build
+cmake ..
+make)
+
+# Clean up
+mvn clean
+
+
+exit 0
