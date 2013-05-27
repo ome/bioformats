@@ -114,4 +114,13 @@ Type "ant -p" for a list of targets.
     </testng>
   </target>
 
+  <target name="jar-scifio-tests" depends="compile, compile-tests, copy-test-source"
+    description="generate jar of scifio spec test classes" if="doTests">
+    <echo>About to compile tests</echo>
+    <mkdir dir="${artifact.dir}"/>
+    <jar jarfile="${artifact.dir}/${test-component.jar}" basedir="${test-classes.dir}"/>
+    <echo>After test to build *-test.jar</echo>
+  </target>
+
+
 </project>

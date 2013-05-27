@@ -67,7 +67,7 @@ public class Instrument2011_06
      * It is imported into the associated test class
      */
     public static class ref {
-        public static final String FILE_LOCATION = "/samples/2011-06/6x4y1z1t1c8b-swatch-instrument.ome";
+        public static final String FILE_LOCATION = "/test/spec/schema/samples/2011-06/6x4y1z1t1c8b-swatch-instrument.ome";
         public static final MicroscopeType Instrument0MicroscopeType = MicroscopeType.INVERTED;
         public static final String Instrument0MicroscopeManufacturer ="OME Instruments";
         public static final String Instrument0MicroscopeModel = "Lab Mk3";

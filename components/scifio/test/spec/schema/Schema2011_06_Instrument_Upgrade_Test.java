@@ -71,6 +71,12 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
+ * import the schema resolver so I can use it to locate
+ * transforms in the specification jar
+ */
+import ome.specification.SchemaResolver;
+
+/**
  * import the reference strings for the associated sample file
  */
 import spec.schema.samples.Instrument2011_06.ref;
@@ -90,7 +96,7 @@ import spec.schema.samples.Instrument2011_06.ref;
 public class Schema2011_06_Instrument_Upgrade_Test {
     private static final Templates UPDATE_201106 =
         XMLTools.getStylesheet("/transforms/2011-06-to-2012-06.xsl",
-                Schema2011_06_Instrument_Upgrade_Test.class);
+                SchemaResolver.class);
 
     private OME ome;
 

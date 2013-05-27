@@ -312,7 +312,9 @@ Apache XML-RPC
     <ant target="eclipse" antfile="ome.xml" inheritRefs="false" inheritAll="false"/>
   </target>
 
-  <target name="test-compile" depends="compile-tests" description="OME hook: compile all tests"/>
+  <target name="test-compile" depends="compile-tests" description="OME hook: compile all tests and make scifio test jar">
+    <ant target="jar-scifio-tests" antfile="components/scifio/build.xml" inheritRefs="false" inheritAll="false"/>
+  </target>
   <target name="integration" description="No-op"/>
 
 </project>
