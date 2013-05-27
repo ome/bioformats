@@ -50,6 +50,7 @@ Type "ant -p" for a list of targets.
       jar-poi-loci,
       jar-scifio,
       jar-scifio-devel,
+      jar-scifio-tests,
       jar-scifio-tools,
       jar-specification,
       jar-tests,
@@ -545,6 +546,11 @@ Type "ant -p" for a list of targets.
   <target name="test-scifio-tools" depends="jar-scifio-tools, testing-deps"
     description="compile and run tests for SCIFIO tools">
     <ant dir="components/scifio-tools" target="test"/>
+  </target>
+
+  <target name="jar-scifio-tests"
+    description="generate jar of scifio spec tests">
+      <ant dir="components/scifio" target="jar-scifio-tests"/>
   </target>
 
   <!-- Bio-Formats -->
