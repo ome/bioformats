@@ -78,6 +78,13 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+
+/**
+ * import the schema resolver so I can use it to locate
+ * transforms in the specification jar
+ */
+import ome.specification.SchemaResolver;
+
 /**
  * import the reference strings for the associated sample file
  */
@@ -98,7 +105,7 @@ import spec.schema.samples.Upgrade2011_06.ref;
 public class Schema2011_06_File_Upgrade_Test {
     private static final Templates UPDATE_201106 =
         XMLTools.getStylesheet("/transforms/2011-06-to-2012-06.xsl",
-                Schema2011_06_File_Upgrade_Test.class);
+                SchemaResolver.class);
 
     private static final String MESSAGE_REMOVED_PATH = "Removed Path";
     private OME ome;
