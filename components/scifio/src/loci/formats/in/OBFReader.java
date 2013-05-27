@@ -168,23 +168,32 @@ public class OBFReader extends FormatReader
 			@SuppressWarnings("unchecked")
 			final List<Double> lengths = (List<Double>) obf.seriesMetadata.get("Lengths") ;
 
-			final double lengthX = Math.abs(lengths.get(0)) ;
-			if (lengthX > 0)
+			if (lengths.size() > 0)
 			{
-				final PositiveFloat physicalSizeX = new PositiveFloat( lengthX / obf.sizeX ) ;
-				ome.setPixelsPhysicalSizeX(physicalSizeX, series) ;
+				final double lengthX = Math.abs(lengths.get(0)) ;
+				if (lengthX > 0)
+				{
+					final PositiveFloat physicalSizeX = new PositiveFloat( lengthX / obf.sizeX ) ;
+					ome.setPixelsPhysicalSizeX(physicalSizeX, series) ;
+				}
 			}
-			final double lengthY = Math.abs(lengths.get(1)) ;
-			if (lengthY > 0)
+			if (lengths.size() > 1)
 			{
-				final PositiveFloat physicalSizeY = new PositiveFloat( lengthY / obf.sizeY ) ;
-				ome.setPixelsPhysicalSizeY(physicalSizeY, series) ;
+				final double lengthY = Math.abs(lengths.get(1)) ;
+				if (lengthY > 0)
+				{
+					final PositiveFloat physicalSizeY = new PositiveFloat( lengthY / obf.sizeY ) ;
+					ome.setPixelsPhysicalSizeY(physicalSizeY, series) ;
+				}
 			}
-			final double lengthZ = Math.abs(lengths.get(2)) ;
-			if (lengthZ > 0)
+			if (lengths.size() > 2)
 			{
-				final PositiveFloat physicalSizeZ = new PositiveFloat( lengthZ / obf.sizeZ ) ;
-				ome.setPixelsPhysicalSizeZ(physicalSizeZ, series) ;
+				final double lengthZ = Math.abs(lengths.get(2)) ;
+				if (lengthZ > 0)
+				{
+					final PositiveFloat physicalSizeZ = new PositiveFloat( lengthZ / obf.sizeZ ) ;
+					ome.setPixelsPhysicalSizeZ(physicalSizeZ, series) ;
+				}
 			}
 		}
 	}
