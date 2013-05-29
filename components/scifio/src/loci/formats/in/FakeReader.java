@@ -239,7 +239,10 @@ public class FakeReader extends FormatReader {
 
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
-    return false;
+    if (checkSuffix(id, "fake.properties")) {
+      return ! new Location(id).exists();
+    }
+    return ! new Location(id + ".properties").exists();
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
