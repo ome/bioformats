@@ -46,7 +46,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -857,11 +856,7 @@ public abstract class BaseZeissReader extends FormatReader {
           if (cIndex != -1) {
             Integer wave = new Integer(value);
             if (wave.intValue() > 0) {
-              emWavelength.put(cIndex, new PositiveInteger(wave));
-            }
-            else {
-              LOGGER.warn(
-                  "Expected positive value for EmissionWavelength; got {}", wave);
+              emWavelength.put(cIndex, FormatTools.getEmissionWavelength(wave));
             }
           }
         }
@@ -869,12 +864,8 @@ public abstract class BaseZeissReader extends FormatReader {
           if (cIndex != -1) {
             Integer wave = new Integer((int) Double.parseDouble(value));
             if (wave.intValue() > 0) {
-              exWavelength.put(cIndex, new PositiveInteger(wave));
-            }
-            else {
-              LOGGER.warn(
-                  "Expected positive value for ExcitationWavelength; got {}",
-                  wave);
+              exWavelength.put(cIndex,
+                FormatTools.getExcitationWavelength(wave));
             }
           }
         }
