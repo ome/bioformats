@@ -47,7 +47,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files and their

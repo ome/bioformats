@@ -122,7 +122,6 @@ import loci.formats.FormatTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
-import loci.formats.in.MinimalTiffReader;
 
 /**
  * ZeissTIFFReader is the file format reader for Zeiss AxioVision TIFF

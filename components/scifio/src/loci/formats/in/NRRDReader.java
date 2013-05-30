@@ -50,7 +50,6 @@ import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * File format reader for NRRD files; see http://teem.sourceforge.net/nrrd.

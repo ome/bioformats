@@ -46,8 +46,6 @@ import loci.formats.MissingLibraryException;
 import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.MetakitService;
-
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**

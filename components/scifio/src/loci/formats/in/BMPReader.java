@@ -47,7 +47,6 @@ import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * BMPReader is the file format reader for Microsoft Bitmap (BMP) files.
