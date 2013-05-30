@@ -338,20 +338,14 @@ public class NRRDReader extends FormatReader {
           if (pixelSizes[i] == null) continue;
           try {
             Double d = new Double(pixelSizes[i].trim());
-            if (d > 0) {
-              if (i == 0) {
-                store.setPixelsPhysicalSizeX(new PositiveFloat(d), 0);
-              }
-              else if (i == 1) {
-                store.setPixelsPhysicalSizeY(new PositiveFloat(d), 0);
-              }
-              else if (i == 2) {
-                store.setPixelsPhysicalSizeZ(new PositiveFloat(d), 0);
-              }
+            if (i == 0) {
+              store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(d), 0);
             }
-            else {
-              LOGGER.warn(
-                "Expected positive value for PhysicalSize; got {}", d);
+            else if (i == 1) {
+              store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(d), 0);
+            }
+            else if (i == 2) {
+              store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(d), 0);
             }
           }
           catch (NumberFormatException e) { }

@@ -668,27 +668,12 @@ public class DeltavisionReader extends FormatReader {
         }
       }
 
-      if (pixX > 0) {
-        Double x = new Double(pixX);
-        store.setPixelsPhysicalSizeX(new PositiveFloat(x), series);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", pixX);
-      }
-      if (pixY > 0) {
-        Double y = new Double(pixY);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(y), series);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", pixY);
-      }
-      if (pixZ > 0) {
-        Double z = new Double(pixZ);
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(z), series);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", pixZ);
-      }
+      Double x = new Double(pixX);
+      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(x), series);
+      Double y = new Double(pixY);
+      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(y), series);
+      Double z = new Double(pixZ);
+      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(z), series);
 
       store.setImageDescription(imageDesc, series);
     }
@@ -734,22 +719,10 @@ public class DeltavisionReader extends FormatReader {
 
       for (int w=0; w<getSizeC(); w++) {
         DVExtHdrFields hdrC = extHdrFields[0][w][series];
-        if ((int) waves[w] > 0) {
-          store.setChannelEmissionWavelength(
-            new PositiveInteger((int) waves[w]), series, w);
-        }
-        else {
-          LOGGER.warn("Expected positive value for EmissionWavelength; got {}",
-            waves[w]);
-        }
-        if ((int) hdrC.exWavelen > 0) {
-          store.setChannelExcitationWavelength(
-            new PositiveInteger((int) hdrC.exWavelen), series, w);
-        }
-        else {
-          LOGGER.warn("Expected positive alue for ExcitationWavelength; got {}",
-            hdrC.exWavelen);
-        }
+        store.setChannelEmissionWavelength(
+          FormatTools.getEmissionWavelength((int) waves[w]), series, w);
+        store.setChannelExcitationWavelength(
+          FormatTools.getExcitationWavelength((int) hdrC.exWavelen), series, w);
         if (ndFilters[w] == null) ndFilters[w] = new Double(hdrC.ndFilter);
         store.setChannelNDFilter(ndFilters[w], series, w);
       }
@@ -1036,24 +1009,22 @@ public class DeltavisionReader extends FormatReader {
               LOGGER.warn("Could not parse pixel size '{}'",
                 pixelSizes[q].trim());
             }
-            if (size == null || size <= 0) {
-              LOGGER.warn("Expected positive value for PhysicalSize; got {}",
-                size);
-              continue;
-            }
             if (q == 0) {
               for (int series=0; series<getSeriesCount(); series++) {
-                store.setPixelsPhysicalSizeX(new PositiveFloat(size), series);
+                store.setPixelsPhysicalSizeX(
+                  FormatTools.getPhysicalSizeX(size), series);
               }
             }
             if (q == 1) {
               for (int series=0; series<getSeriesCount(); series++) {
-                store.setPixelsPhysicalSizeY(new PositiveFloat(size), series);
+                store.setPixelsPhysicalSizeY(
+                  FormatTools.getPhysicalSizeY(size), series);
               }
             }
             if (q == 2) {
               for (int series=0; series<getSeriesCount(); series++) {
-                store.setPixelsPhysicalSizeZ(new PositiveFloat(size), series);
+                store.setPixelsPhysicalSizeZ(
+                  FormatTools.getPhysicalSizeZ(size), series);
               }
             }
           }

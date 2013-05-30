@@ -211,14 +211,8 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(MAGIC_STRING, 0);
-      if (scaling > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(scaling), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(scaling), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
-          scaling);
-      }
+      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(scaling), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(scaling), 0);
 
       String instrument = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrument, 0);

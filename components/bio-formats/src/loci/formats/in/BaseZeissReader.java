@@ -346,27 +346,12 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setImageName("Tile #" + (i + 1), i);
         }
 
-        if (physicalSizeX != null && physicalSizeX > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-              physicalSizeX);
-        }
-        if (physicalSizeY != null && physicalSizeY > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-              physicalSizeY);
-        }
-        if (physicalSizeZ != null && physicalSizeZ > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-              physicalSizeZ);
-        }
+        store.setPixelsPhysicalSizeX(
+          FormatTools.getPhysicalSizeX(physicalSizeX), i);
+        store.setPixelsPhysicalSizeY(
+          FormatTools.getPhysicalSizeY(physicalSizeY), i);
+        store.setPixelsPhysicalSizeZ(
+          FormatTools.getPhysicalSizeZ(physicalSizeZ), i);
 
         long firstStamp = parseTimestamp(timestamps.get(new Integer(0)));
 

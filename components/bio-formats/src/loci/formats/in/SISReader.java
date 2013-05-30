@@ -269,20 +269,10 @@ public class SISReader extends BaseTiffReader {
       physicalSizeX /= 1000;
       physicalSizeY /= 1000;
 
-      if (physicalSizeX > 0.000001) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
-      }
-      else {
-        LOGGER.warn("Expected a positive value for PhysicalSizeX; got {}",
-          physicalSizeX);
-      }
-      if (physicalSizeY > 0.000001) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
-      }
-      else {
-        LOGGER.warn("Expected a positive value for PhysicalSizeY; got {}",
-          physicalSizeY);
-      }
+      store.setPixelsPhysicalSizeX(
+        FormatTools.getPhysicalSizeX(physicalSizeX), 0);
+      store.setPixelsPhysicalSizeY(
+        FormatTools.getPhysicalSizeY(physicalSizeY), 0);
       store.setChannelName(channelName, 0, 0);
     }
   }

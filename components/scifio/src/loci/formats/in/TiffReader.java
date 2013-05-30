@@ -382,13 +382,7 @@ public class TiffReader extends BaseTiffReader {
     if (physicalSizeZ != null) {
       double zDepth = physicalSizeZ.doubleValue();
       if (zDepth < 0) zDepth = -zDepth;
-      if (zDepth > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(zDepth), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          zDepth);
-      }
+      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(zDepth), 0);
     }
     if (timeIncrement != null) {
       store.setPixelsTimeIncrement(timeIncrement, 0);

@@ -299,21 +299,12 @@ public class MicromanagerReader extends FormatReader {
           store.setChannelName(p.channels[c], i, c);
         }
 
-        if (p.pixelSize != null && p.pixelSize > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(p.pixelSize), i);
-          store.setPixelsPhysicalSizeY(new PositiveFloat(p.pixelSize), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            p.pixelSize);
-        }
-        if (p.sliceThickness != null && p.sliceThickness > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(p.sliceThickness), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-            p.sliceThickness);
-        }
+        store.setPixelsPhysicalSizeX(
+          FormatTools.getPhysicalSizeX(p.pixelSize), i);
+        store.setPixelsPhysicalSizeY(
+          FormatTools.getPhysicalSizeY(p.pixelSize), i);
+        store.setPixelsPhysicalSizeZ(
+          FormatTools.getPhysicalSizeZ(p.sliceThickness), i);
 
         int nextStamp = 0;
         for (int q=0; q<getImageCount(); q++) {

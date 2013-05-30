@@ -568,29 +568,16 @@ public class ZeissCZIReader extends FormatReader {
           String emWave = emissionWavelengths.get(c);
           if (emWave != null) {
             Double wave = new Double(emWave);
-            if (wave.intValue() > 0) {
-              store.setChannelEmissionWavelength(
-                new PositiveInteger(wave.intValue()), i, c);
-            }
-            else {
-              LOGGER.warn(
-                "Expected positive value for EmissionWavelength; got {}", wave);
-            }
+            store.setChannelEmissionWavelength(
+              FormatTools.getEmissionWavelength(wave.intValue()), i, c);
           }
         }
         if (c < excitationWavelengths.size()) {
           String exWave = excitationWavelengths.get(c);
           if (exWave != null) {
             Double wave = new Double(exWave);
-            if (wave.intValue() > 0) {
-              store.setChannelExcitationWavelength(
-                new PositiveInteger(wave.intValue()), i, c);
-            }
-            else {
-              LOGGER.warn(
-                "Expected positive value for ExcitationWavelength; got {}",
-                wave);
-            }
+            store.setChannelExcitationWavelength(
+              FormatTools.getExcitationWavelength(wave.intValue()), i, c);
           }
         }
         if (c < pinholeSizes.size() && pinholeSizes.get(c) != null) {
@@ -1130,19 +1117,9 @@ public class ZeissCZIReader extends FormatReader {
           Integer inWave = cutIn == null ? 0 : new Integer(cutIn);
           Integer outWave = cutOut == null ? 0 : new Integer(cutOut);
 
-          if (inWave > 0) {
-            store.setTransmittanceRangeCutIn(new PositiveInteger(inWave), 0, i);
-          }
-          else {
-            LOGGER.warn("Expected positive value for CutIn; got {}", inWave);
-          }
-          if (outWave > 0) {
-            store.setTransmittanceRangeCutOut(
-              new PositiveInteger(outWave), 0, i);
-          }
-          else {
-            LOGGER.warn("Expected positive value for CutOut; got {}", outWave);
-          }
+          store.setTransmittanceRangeCutIn(FormatTools.getCutIn(inWave), 0, i);
+          store.setTransmittanceRangeCutOut(
+            FormatTools.getCutOut(outWave), 0, i);
 
           String inTolerance =
             getFirstNodeValue(transmittance, "CutInTolerance");
@@ -1231,7 +1208,7 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
         else {
-          LOGGER.warn(
+          LOGGER.debug(
             "Expected positive value for PhysicalSize; got {}", value);
         }
       }

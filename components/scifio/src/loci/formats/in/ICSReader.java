@@ -1483,36 +1483,21 @@ public class ICSReader extends FormatReader {
           String axis = axes != null && axes.length > i ? axes[i] : "";
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {
-            if (pixelSize > 0 &&
-              checkUnit(unit, "um", "microns", "micrometers"))
-            {
-              store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
-            }
-            else {
-              LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-                pixelSize);
+            if (checkUnit(unit, "um", "microns", "micrometers")) {
+              store.setPixelsPhysicalSizeX(
+                FormatTools.getPhysicalSizeX(pixelSize), 0);
             }
           }
           else if (axis.equals("y")) {
-            if (pixelSize > 0 &&
-              checkUnit(unit, "um", "microns", "micrometers"))
-            {
-              store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
-            }
-            else {
-              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-                pixelSize);
+            if (checkUnit(unit, "um", "microns", "micrometers")) {
+              store.setPixelsPhysicalSizeY(
+                FormatTools.getPhysicalSizeY(pixelSize), 0);
             }
           }
           else if (axis.equals("z")) {
-            if (pixelSize > 0 &&
-              checkUnit(unit, "um", "microns", "micrometers"))
-            {
-              store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSize), 0);
-            }
-            else {
-              LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-                pixelSize);
+            if (checkUnit(unit, "um", "microns", "micrometers")) {
+              store.setPixelsPhysicalSizeZ(
+                FormatTools.getPhysicalSizeZ(pixelSize), 0);
             }
           }
           else if (axis.equals("t")) {
@@ -1526,22 +1511,14 @@ public class ICSReader extends FormatReader {
         }
       }
       else if (sizes != null) {
-        if (sizes.length > 0 && sizes[0] > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(sizes[0]), 0);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            sizes[0]);
+        if (sizes.length > 0) {
+          store.setPixelsPhysicalSizeX(
+            FormatTools.getPhysicalSizeX(sizes[0]), 0);
         }
         if (sizes.length > 1) {
           sizes[1] /= getSizeY();
-          if (sizes[1] > 0) {
-            store.setPixelsPhysicalSizeY(new PositiveFloat(sizes[1]), 0);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-              sizes[1]);
-          }
+          store.setPixelsPhysicalSizeY(
+            FormatTools.getPhysicalSizeY(sizes[1]), 0);
         }
       }
 
@@ -1573,26 +1550,12 @@ public class ICSReader extends FormatReader {
           store.setChannelPinholeSize(pinholes.get(i), 0, i);
         }
         if (emWaves != null && i < emWaves.length) {
-          if (emWaves[i].intValue() > 0) {
-            store.setChannelEmissionWavelength(
-              new PositiveInteger(emWaves[i]), 0, i);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for EmissionWavelength; got {}",
-              emWaves[i]);
-          }
+          store.setChannelEmissionWavelength(
+            FormatTools.getEmissionWavelength(emWaves[i]), 0, i);
         }
         if (exWaves != null && i < exWaves.length) {
-          if (exWaves[i].intValue() > 0) {
-            store.setChannelExcitationWavelength(
-              new PositiveInteger(exWaves[i]), 0, i);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for ExcitationWavelength; got {}",
-              exWaves[i]);
-          }
+          store.setChannelExcitationWavelength(
+            FormatTools.getExcitationWavelength(exWaves[i]), 0, i);
         }
       }
 
@@ -1602,14 +1565,8 @@ public class ICSReader extends FormatReader {
       Arrays.sort(lasers);
       for (int i=0; i<lasers.length; i++) {
         store.setLaserID(MetadataTools.createLSID("LightSource", 0, i), 0, i);
-        if (wavelengths.get(lasers[i]) > 0) {
-          store.setLaserWavelength(
-            new PositiveInteger(wavelengths.get(lasers[i])), 0, i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for wavelength; got {}",
-            wavelengths.get(lasers[i]));
-        }
+        store.setLaserWavelength(
+          FormatTools.getWavelength(wavelengths.get(lasers[i])), 0, i);
         store.setLaserType(getLaserType("Other"), 0, i);
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
 
