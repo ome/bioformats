@@ -54,7 +54,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * TiffReader is the file format reader for regular TIFF files,

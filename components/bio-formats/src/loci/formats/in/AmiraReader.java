@@ -43,7 +43,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tools.AmiraParameters;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * This is a file format reader for AmiraMesh data.

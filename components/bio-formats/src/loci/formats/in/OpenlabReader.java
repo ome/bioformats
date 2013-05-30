@@ -41,7 +41,6 @@ import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.

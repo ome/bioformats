@@ -49,9 +49,6 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.JPEGTurboService;
 import loci.formats.services.JPEGTurboServiceImpl;
 
-import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
-
 /**
  * HamamatsuVMSReader is the file format reader for Hamamatsu VMS datasets.
  *

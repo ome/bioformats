@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import loci.common.RandomAccessInputStream;

@@ -55,7 +55,6 @@ import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * BDReader is the file format reader for BD Pathway datasets.

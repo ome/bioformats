@@ -49,7 +49,6 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * NativeND2Reader is the file format reader for Nikon ND2 files.

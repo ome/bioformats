@@ -38,7 +38,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.TiffParser;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * ImprovisionTiffReader is the file format reader for
