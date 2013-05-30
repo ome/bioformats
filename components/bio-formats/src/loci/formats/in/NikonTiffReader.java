@@ -218,27 +218,12 @@ public class NikonTiffReader extends BaseTiffReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription("", 0);
 
-      if (physicalSizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalSizeX);
-      }
-      if (physicalSizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalSizeY);
-      }
-      if (physicalSizeZ > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          physicalSizeZ);
-      }
+      store.setPixelsPhysicalSizeX(
+        FormatTools.getPhysicalSizeX(physicalSizeX), 0);
+      store.setPixelsPhysicalSizeY(
+        FormatTools.getPhysicalSizeY(physicalSizeY), 0);
+      store.setPixelsPhysicalSizeZ(
+        FormatTools.getPhysicalSizeZ(physicalSizeZ), 0);
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
@@ -247,14 +232,8 @@ public class NikonTiffReader extends BaseTiffReader {
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
       store.setObjectiveSettingsID(objectiveID, 0);
-      if (magnification > 0) {
-        store.setObjectiveNominalMagnification(
-          new Double(magnification), 0, 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
-          magnification);
-      }
+      store.setObjectiveNominalMagnification(
+        new Double(magnification), 0, 0);
 
       if (correction == null) correction = "Other";
       store.setObjectiveCorrection(getCorrection(correction), 0, 0);
@@ -267,14 +246,8 @@ public class NikonTiffReader extends BaseTiffReader {
         String laser = MetadataTools.createLSID("LightSource", 0, i);
         store.setLaserID(laser, 0, i);
         store.setLaserModel(laserIDs.get(i), 0, i);
-        if (wavelength.get(i) > 0) {
-          store.setLaserWavelength(
-            new PositiveInteger(wavelength.get(i)), 0, i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for Wavelength; got {}",
-            wavelength.get(i));
-        }
+        store.setLaserWavelength(
+          FormatTools.getWavelength(wavelength.get(i)), 0, i);
         store.setLaserType(getLaserType("Other"), 0, i);
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
       }
@@ -288,26 +261,12 @@ public class NikonTiffReader extends BaseTiffReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         store.setChannelPinholeSize(pinholeSize, 0, c);
         if (c < exWave.size()) {
-          if (exWave.get(c) > 0) {
-            store.setChannelExcitationWavelength(
-              new PositiveInteger(exWave.get(c)), 0, c);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for ExcitationWavelength; got {}",
-              exWave.get(c));
-          }
+          store.setChannelExcitationWavelength(
+            FormatTools.getExcitationWavelength(exWave.get(c)), 0, c);
         }
         if (c < emWave.size()) {
-          if (emWave.get(c) > 0) {
-            store.setChannelEmissionWavelength(
-              new PositiveInteger(emWave.get(c)), 0, c);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for EmissionWavelength; got {}",
-              emWave.get(c));
-          }
+          store.setChannelEmissionWavelength(
+            FormatTools.getEmissionWavelength(emWave.get(c)), 0, c);
         }
       }
 

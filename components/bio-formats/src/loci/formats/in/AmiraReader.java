@@ -194,30 +194,9 @@ public class AmiraReader extends FormatReader {
       addGlobalMeta("Pixels per meter (Y)", 1e6 / pixelHeight);
       addGlobalMeta("Pixels per meter (Z)", 1e6 / pixelDepth);
 
-      if (pixelWidth > 0) {
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat(new Double(pixelWidth)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          pixelWidth);
-      }
-      if (pixelHeight > 0) {
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat(new Double(pixelHeight)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          pixelHeight);
-      }
-      if (pixelDepth > 0) {
-        store.setPixelsPhysicalSizeZ(
-          new PositiveFloat(new Double(pixelDepth)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          pixelDepth);
-      }
+      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixelWidth), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixelHeight), 0);
+      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(pixelDepth), 0);
     }
 
     if (parameters.ascii) {

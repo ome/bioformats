@@ -1285,14 +1285,8 @@ public class SlidebookReader extends FormatReader {
         setSeries(i);
         if (pixelSize.get(i) != null) {
           Double size = new Double(pixelSize.get(i));
-          if (size > 0) {
-            store.setPixelsPhysicalSizeX(new PositiveFloat(size), i);
-            store.setPixelsPhysicalSizeY(new PositiveFloat(size), i);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSize; got {}",
-              size);
-          }
+          store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(size), i);
+          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(size), i);
         }
         int idx = 0;
         for (int q=0; q<i; q++) {
@@ -1300,14 +1294,8 @@ public class SlidebookReader extends FormatReader {
         }
 
         if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
-          if (isGreaterThanEpsilon(pixelSizeZ.get(idx))) {
-            store.setPixelsPhysicalSizeZ(
-              new PositiveFloat(pixelSizeZ.get(idx)), i);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-              pixelSizeZ.get(idx));
-          }
+          store.setPixelsPhysicalSizeZ(
+            FormatTools.getPhysicalSizeZ(pixelSizeZ.get(idx)), i);
         }
 
         for (int plane=0; plane<getImageCount(); plane++) {

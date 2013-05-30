@@ -426,20 +426,10 @@ public class NDPIReader extends BaseTiffReader {
         double xResolution = ifds.get(ifdIndex).getXResolution();
         double yResolution = ifds.get(ifdIndex).getYResolution();
 
-        if (xResolution > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(xResolution), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            xResolution);
-        }
-        if (yResolution > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(yResolution), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-            yResolution);
-        }
+        store.setPixelsPhysicalSizeX(
+          FormatTools.getPhysicalSizeX(xResolution), i);
+        store.setPixelsPhysicalSizeY(
+          FormatTools.getPhysicalSizeY(yResolution), i);
       }
     }
   }

@@ -173,27 +173,9 @@ public class VarianFDFReader extends FormatReader {
     MetadataTools.populatePixels(store, this, !minMetadata);
 
     if (!minMetadata) {
-      if (pixelSizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          pixelSizeX);
-      }
-      if (pixelSizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          pixelSizeY);
-      }
-      if (pixelSizeZ > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          pixelSizeZ);
-      }
+      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixelSizeX), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixelSizeY), 0);
+      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(pixelSizeZ), 0);
 
       for (int i=0; i<getImageCount(); i++) {
         store.setPlanePositionX(originX, 0, i);

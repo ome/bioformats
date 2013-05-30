@@ -478,14 +478,8 @@ public class InCellReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    if (fieldCount > 0) {
-      store.setPlateAcquisitionMaximumFieldCount(
-        new PositiveInteger(fieldCount), 0, 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
-        fieldCount);
-    }
+    store.setPlateAcquisitionMaximumFieldCount(
+      FormatTools.getMaxFieldCount(fieldCount), 0, 0);
 
     // populate Image data
 
@@ -604,26 +598,13 @@ public class InCellReader extends FormatReader {
           }
           if (q < emWaves.size()) {
             int wave = emWaves.get(q).intValue();
-            if (wave > 0) {
-              store.setChannelEmissionWavelength(
-                new PositiveInteger(wave), i, q);
-            }
-            else {
-              LOGGER.warn(
-                "Expected positive value for EmissionWavelength; got {}", wave);
-            }
+            store.setChannelEmissionWavelength(
+              FormatTools.getEmissionWavelength(wave), i, q);
           }
           if (q < exWaves.size()) {
             int wave = exWaves.get(q).intValue();
-            if (wave > 0) {
-              store.setChannelExcitationWavelength(
-                new PositiveInteger(wave), i, q);
-            }
-            else {
-              LOGGER.warn(
-                "Expected positive value for ExcitationWavelength; got {}",
-                wave);
-            }
+            store.setChannelExcitationWavelength(
+              FormatTools.getExcitationWavelength(wave), i, q);
           }
 
           if (detectorID != null) {
@@ -907,14 +888,7 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("ObjectiveCalibration")) {
         Double mag =
           Double.parseDouble(attributes.getValue("magnification"));
-        if (mag > 0) {
-          store.setObjectiveNominalMagnification(
-            new Double(mag), 0, 0);
-        }
-        else {
-          LOGGER.warn(
-            "Expected positive value for NominalMagnification; got {}", mag);
-        }
+        store.setObjectiveNominalMagnification(mag, 0, 0);
         store.setObjectiveLensNA(new Double(
           attributes.getValue("numerical_aperture")), 0, 0);
         try {
@@ -940,20 +914,8 @@ public class InCellReader extends FormatReader {
         Double pixelSizeY = new Double(attributes.getValue("pixel_height"));
         refractive = new Double(attributes.getValue("refractive_index"));
 
-        if (pixelSizeX > 0) {
-          x = new PositiveFloat(pixelSizeX);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            pixelSizeX);
-        }
-        if (pixelSizeY > 0) {
-          y = new PositiveFloat(pixelSizeY);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-            pixelSizeY);
-        }
+        x = FormatTools.getPhysicalSizeX(pixelSizeX);
+        y = FormatTools.getPhysicalSizeY(pixelSizeY);
       }
       else if (qName.equals("ExcitationFilter")) {
         String wave = attributes.getValue("wavelength");

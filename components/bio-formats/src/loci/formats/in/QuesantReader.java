@@ -129,15 +129,10 @@ public class QuesantReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
-      if (xSize > 0) {
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat((double) xSize / getSizeX()), 0);
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat((double) xSize / getSizeY()), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSize; got {}", xSize);
-      }
+      store.setPixelsPhysicalSizeX(
+        FormatTools.getPhysicalSizeX((double) xSize / getSizeX()), 0);
+      store.setPixelsPhysicalSizeY(
+        FormatTools.getPhysicalSizeY((double) xSize / getSizeY()), 0);
     }
   }
 

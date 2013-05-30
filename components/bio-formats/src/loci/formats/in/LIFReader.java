@@ -554,13 +554,9 @@ public class LIFReader extends FormatReader {
       store.setObjectiveID(objectiveID, i, 0);
       store.setObjectiveLensNA(lensNA[index], i, 0);
       store.setObjectiveSerialNumber(serialNumber[index], i, 0);
-      if (magnification[index] != null && magnification[index] > 0) {
+      if (magnification[index] != null) {
         store.setObjectiveNominalMagnification(
           new Double(magnification[index]), i, 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
-          magnification[index]);
       }
       store.setObjectiveImmersion(getImmersion(immersions[index]), i, 0);
       store.setObjectiveCorrection(getCorrection(corrections[index]), i, 0);
@@ -611,13 +607,8 @@ public class LIFReader extends FormatReader {
           store.setLaserType(LaserType.OTHER, i, laser);
           store.setLaserLaserMedium(LaserMedium.OTHER, i, laser);
           Integer wavelength = (Integer) lasers.get(laser);
-          if (wavelength > 0) {
-            store.setLaserWavelength(new PositiveInteger(wavelength), i, laser);
-          }
-          else {
-            LOGGER.warn("Expected positive value for Wavelength; got {}",
-              wavelength);
-          }
+          store.setLaserWavelength(
+            FormatTools.getWavelength(wavelength), i, laser);
         }
 
         Vector<Integer> validIntensities = new Vector<Integer>();
@@ -667,10 +658,11 @@ public class LIFReader extends FormatReader {
               store.setChannelLightSourceSettingsID(id, i, nextChannel);
               store.setChannelLightSourceSettingsAttenuation(
                 new PercentFraction((float) intensity / 100f), i, nextChannel);
-              if (wavelength > 0) {
-                store.setChannelExcitationWavelength(
-                  new PositiveInteger(wavelength), i, nextChannel);
+              store.setChannelExcitationWavelength(
+                FormatTools.getExcitationWavelength(wavelength),
+                i, nextChannel);
 
+              if (wavelength > 0) {
                 if (cutIns[index] == null || nextFilter >= cutIns[index].size())
                 {
                   continue;
@@ -694,11 +686,6 @@ public class LIFReader extends FormatReader {
                   nextFilter++;
                 }
               }
-              else {
-                LOGGER.warn(
-                  "Expected positive value for ExcitationWavelength; got {}",
-                  wavelength);
-              }
             }
           }
         }
@@ -716,29 +703,12 @@ public class LIFReader extends FormatReader {
       }
       store.setImageName(imageNames[index].trim(), i);
 
-      if (physicalSizeXs.get(index) > 0) {
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat(physicalSizeXs.get(index)), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalSizeXs.get(index));
-      }
-      if (physicalSizeYs.get(index) > 0) {
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat(physicalSizeYs.get(index)), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalSizeYs.get(index));
-      }
-      if (zSteps[index] != null && zSteps[index] > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(zSteps[index]), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          zSteps[index]);
-      }
+      store.setPixelsPhysicalSizeX(
+        FormatTools.getPhysicalSizeX(physicalSizeXs.get(index)), i);
+      store.setPixelsPhysicalSizeY(
+        FormatTools.getPhysicalSizeY(physicalSizeYs.get(index)), i);
+      store.setPixelsPhysicalSizeZ(
+        FormatTools.getPhysicalSizeZ(zSteps[index]), i);
       store.setPixelsTimeIncrement(tSteps[index], i);
 
       Vector detectors = detectorModels[index];
@@ -828,12 +798,7 @@ public class LIFReader extends FormatReader {
         if (exWaves[index] != null) {
           if (exWaves[index][c] != null && exWaves[index][c] > 1) {
             store.setChannelExcitationWavelength(
-              new PositiveInteger(exWaves[index][c]), i, c);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for ExcitationWavelength; got {}",
-              exWaves[index][c]);
+              FormatTools.getExcitationWavelength(exWaves[index][c]), i, c);
           }
         }
 
@@ -1154,19 +1119,14 @@ public class LIFReader extends FormatReader {
               if (cutIns[image] == null) {
                 cutIns[image] = new Vector<PositiveInteger>();
               }
-              cutIns[image].add(new PositiveInteger((int) Math.round(cutIn)));
-            }
-            else {
-              LOGGER.warn("Expected positive value for CutIn; got {}", cutIn);
+              cutIns[image].add(FormatTools.getCutIn((int) Math.round(cutIn)));
             }
             if ((int) cutOut > 0) {
               if (cutOuts[image] == null) {
                 cutOuts[image] = new Vector<PositiveInteger>();
               }
-              cutOuts[image].add(new PositiveInteger((int) Math.round(cutOut)));
-            }
-            else {
-              LOGGER.warn("Expected positive value for CutOut; got {}", cutOut);
+              cutOuts[image].add(
+                FormatTools.getCutOut((int) Math.round(cutOut)));
             }
           }
           else {
@@ -1530,18 +1490,12 @@ public class LIFReader extends FormatReader {
         if (description.endsWith("(left)")) {
           filterModels[image].add(object);
           if (v != null && v > 0) {
-            cutIns[image].add(new PositiveInteger(v));
-          }
-          else {
-            LOGGER.warn("Expected positive value for CutIn; got {}", v);
+            cutIns[image].add(FormatTools.getCutIn(v));
           }
         }
         else if (description.endsWith("(right)")) {
           if (v != null && v > 0) {
-            cutOuts[image].add(new PositiveInteger(v));
-          }
-          else {
-            LOGGER.warn("Expected positive value for CutOut; got {}", v);
+            cutOuts[image].add(FormatTools.getCutOut(v));
           }
         }
       }
@@ -1938,13 +1892,7 @@ public class LIFReader extends FormatReader {
       if (fontSize != null) {
         try {
           int size = (int) Double.parseDouble(fontSize);
-          if (size > 0) {
-            store.setLabelFontSize(new NonNegativeInteger(size), roi, 0);
-          }
-          else {
-            LOGGER.warn("Expected non-negative value for FontSize; got {}",
-              size);
-          }
+          store.setLabelFontSize(FormatTools.getFontSize(size), roi, 0);
         }
         catch (NumberFormatException e) { }
       }

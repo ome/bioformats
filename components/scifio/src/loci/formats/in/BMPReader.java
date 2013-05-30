@@ -330,20 +330,8 @@ public class BMPReader extends FormatReader {
       double correctedX = pixelSizeX == 0 ? 0.0 : 1000000.0 / pixelSizeX;
       double correctedY = pixelSizeY == 0 ? 0.0 : 1000000.0 / pixelSizeY;
 
-      if (correctedX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(correctedX), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          correctedX);
-      }
-      if (correctedY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(correctedY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          correctedY);
-      }
+      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(correctedX), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(correctedY), 0);
     }
   }
 

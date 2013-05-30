@@ -587,14 +587,8 @@ public class ScanrReader extends FormatReader {
     else
         nFields = fieldRows * fieldColumns;
 
-    if (nFields > 0) {
-      store.setPlateAcquisitionMaximumFieldCount(
-        new PositiveInteger(nFields), 0, 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
-        nFields);
-    }
+    store.setPlateAcquisitionMaximumFieldCount(
+      FormatTools.getMaxFieldCount(nFields), 0, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
       int field = i % nFields;
@@ -637,14 +631,8 @@ public class ScanrReader extends FormatReader {
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
         }
-        if (pixelSize != null && pixelSize > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), i);
-          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSize; got {}",
-            pixelSize);
-        }
+        store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixelSize), i);
+        store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixelSize), i);
 
         if (fieldPositionX != null && fieldPositionY != null) {
           int field = i % nFields;

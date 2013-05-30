@@ -596,18 +596,10 @@ public class OpenlabReader extends FormatReader {
     if (level != MetadataLevel.MINIMUM) {
       // populate MetadataStore
 
-      if (xcal > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(xcal)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", xcal);
-      }
-      if (ycal > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(ycal)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", ycal);
-      }
+      store.setPixelsPhysicalSizeX(
+        FormatTools.getPhysicalSizeX(new Double(xcal)), 0);
+      store.setPixelsPhysicalSizeY(
+        FormatTools.getPhysicalSizeY(new Double(ycal)), 0);
 
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);

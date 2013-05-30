@@ -488,24 +488,9 @@ public class TCSReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true);
 
-    if (voxelX > 0) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(voxelX), 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", voxelX);
-    }
-    if (voxelY > 0) {
-      store.setPixelsPhysicalSizeY(new PositiveFloat(voxelY), 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", voxelY);
-    }
-    if (voxelZ > 0) {
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(voxelZ), 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", voxelZ);
-    }
+    store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(voxelX), 0);
+    store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(voxelY), 0);
+    store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(voxelZ), 0);
   }
 
   // -- Helper methods --

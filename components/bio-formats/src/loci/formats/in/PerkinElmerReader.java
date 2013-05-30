@@ -603,20 +603,8 @@ public class PerkinElmerReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Dimensions element
-      if (pixelSizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          pixelSizeX);
-      }
-      if (pixelSizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          pixelSizeY);
-      }
+      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixelSizeX), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixelSizeY), 0);
 
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -626,26 +614,12 @@ public class PerkinElmerReader extends FormatReader {
       // populate LogicalChannel element
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (i < emWaves.size()) {
-          if (emWaves.get(i) > 0) {
-            store.setChannelEmissionWavelength(
-              new PositiveInteger(emWaves.get(i)), 0, i);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for EmissionWavelength; got {}",
-              emWaves.get(i));
-          }
+          store.setChannelEmissionWavelength(
+            FormatTools.getEmissionWavelength(emWaves.get(i)), 0, i);
         }
         if (i < exWaves.size()) {
-          if (exWaves.get(i) > 0) {
-            store.setChannelExcitationWavelength(
-              new PositiveInteger(exWaves.get(i)), 0, i);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for ExcitationWavelength; got {}",
-              exWaves.get(i));
-          }
+          store.setChannelExcitationWavelength(
+            FormatTools.getExcitationWavelength(exWaves.get(i)), 0, i);
         }
       }
 

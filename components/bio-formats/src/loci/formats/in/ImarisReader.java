@@ -213,24 +213,12 @@ public class ImarisReader extends FormatReader {
 
       // populate Dimensions data
 
-      if (dx > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(dx)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", dx);
-      }
-      if (dy > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(dy)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", dy);
-      }
-      if (dz > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(dz)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", dz);
-      }
+      store.setPixelsPhysicalSizeX(
+        FormatTools.getPhysicalSizeX(new Double(dx)), 0);
+      store.setPixelsPhysicalSizeY(
+        FormatTools.getPhysicalSizeY(new Double(dy)), 0);
+      store.setPixelsPhysicalSizeZ(
+        FormatTools.getPhysicalSizeZ(new Double(dz)), 0);
       store.setPixelsTimeIncrement(1.0, 0);
 
       // populate LogicalChannel data

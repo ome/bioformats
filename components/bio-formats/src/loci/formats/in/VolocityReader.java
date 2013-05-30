@@ -700,38 +700,16 @@ public class VolocityReader extends FormatReader {
           store.setChannelName(stack.channelNames[c], i, c);
         }
       }
-      if (stack.physicalX != null && stack.physicalX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(stack.physicalX), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          stack.physicalX);
-      }
-      if (stack.physicalY != null && stack.physicalY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(stack.physicalY), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          stack.physicalY);
-      }
-      if (stack.physicalZ != null && stack.physicalZ > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(stack.physicalZ), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          stack.physicalZ);
-      }
+      store.setPixelsPhysicalSizeX(
+        FormatTools.getPhysicalSizeX(stack.physicalX), i);
+      store.setPixelsPhysicalSizeY(
+        FormatTools.getPhysicalSizeY(stack.physicalY), i);
+      store.setPixelsPhysicalSizeZ(
+        FormatTools.getPhysicalSizeZ(stack.physicalZ), i);
 
       String objective = MetadataTools.createLSID("Objective", 0, i);
       store.setObjectiveID(objective, 0, i);
-      if (stack.magnification != null && stack.magnification > 0) {
-        store.setObjectiveNominalMagnification(
-          new Double(stack.magnification.doubleValue()), 0, i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
-          stack.magnification);
-      }
+      store.setObjectiveNominalMagnification(stack.magnification, 0, i);
       store.setObjectiveCorrection(getCorrection("Other"), 0, i);
       store.setObjectiveImmersion(getImmersion("Other"), 0, i);
       store.setObjectiveSettingsID(objective, i);

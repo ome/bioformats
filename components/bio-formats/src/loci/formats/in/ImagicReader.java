@@ -305,30 +305,12 @@ public class ImagicReader extends FormatReader {
     store.setImageName(imageName.trim(), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (physicalXSize > 0) {
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat(physicalXSize * 0.0001), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalXSize * 0.0001);
-      }
-      if (physicalYSize > 0) {
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat(physicalYSize * 0.0001), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalYSize * 0.0001);
-      }
-      if (physicalZSize > 0) {
-        store.setPixelsPhysicalSizeZ(
-          new PositiveFloat(physicalZSize * 0.0001), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          physicalZSize * 0.0001);
-      }
+      store.setPixelsPhysicalSizeX(
+        FormatTools.getPhysicalSizeX(physicalXSize * 0.0001), 0);
+      store.setPixelsPhysicalSizeY(
+        FormatTools.getPhysicalSizeY(physicalYSize * 0.0001), 0);
+      store.setPixelsPhysicalSizeZ(
+        FormatTools.getPhysicalSizeZ(physicalZSize * 0.0001), 0);
     }
   }
 

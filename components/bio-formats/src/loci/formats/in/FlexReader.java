@@ -505,14 +505,8 @@ public class FlexReader extends FormatReader {
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    if (fieldCount > 0) {
-      store.setPlateAcquisitionMaximumFieldCount(
-        new PositiveInteger(fieldCount), 0, 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
-        fieldCount);
-    }
+    store.setPlateAcquisitionMaximumFieldCount(
+      FormatTools.getMaxFieldCount(fieldCount), 0, 0);
 
     plateAcqStartTime =
       DateTools.formatDate(plateAcqStartTime, "dd.MM.yyyy  HH:mm:ss");
@@ -632,24 +626,12 @@ public class FlexReader extends FormatReader {
         }
 
         if (seriesIndex < xSizes.size()) {
-          if (xSizes.get(seriesIndex) > 0) {
-            store.setPixelsPhysicalSizeX(
-              new PositiveFloat(xSizes.get(seriesIndex)), i);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-              xSizes.get(seriesIndex));
-          }
+          store.setPixelsPhysicalSizeX(
+            FormatTools.getPhysicalSizeX(xSizes.get(seriesIndex)), i);
         }
         if (seriesIndex < ySizes.size()) {
-          if (ySizes.get(seriesIndex) > 0) {
-            store.setPixelsPhysicalSizeY(
-              new PositiveFloat(ySizes.get(seriesIndex)), i);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-              ySizes.get(seriesIndex));
-          }
+          store.setPixelsPhysicalSizeY(
+            FormatTools.getPhysicalSizeY(ySizes.get(seriesIndex)), i);
         }
 
         int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
@@ -1439,14 +1421,8 @@ public class FlexReader extends FormatReader {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
         store.setLaserID(lsid, 0, nextLaser);
         Integer wavelength = new Integer(value);
-        if (wavelength > 0) {
-          store.setLaserWavelength(
-            new PositiveInteger(wavelength), 0, nextLaser);
-        }
-        else {
-          LOGGER.warn("Expected positive value for Wavelength; got {}",
-            wavelength);
-        }
+        store.setLaserWavelength(
+          FormatTools.getWavelength(wavelength), 0, nextLaser);
         try {
           store.setLaserType(getLaserType("Other"), 0, nextLaser);
           store.setLaserLaserMedium(getLaserMedium("Other"), 0, nextLaser);

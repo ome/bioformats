@@ -324,20 +324,8 @@ public class CellomicsReader extends FormatReader {
       double height = pixelHeight == 0 ? 0.0 : 1000000.0 / pixelHeight;
 
       for (int i=0; i<getSeriesCount(); i++) {
-        if (width > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            width);
-        }
-        if (height > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-            height);
-        }
+        store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(width), 0);
+        store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(height), 0);
       }
     }
   }

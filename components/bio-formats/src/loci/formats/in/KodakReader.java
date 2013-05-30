@@ -204,14 +204,8 @@ public class KodakReader extends FormatReader {
           value = value.substring(0, value.indexOf(" "));
         }
         Double size = new Double(value);
-        if (size > 0) {
-          size = 1.0 / (size * (1.0 / 25400));
-          store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-            size);
-        }
+        size = 1.0 / (size * (1.0 / 25400));
+        store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(size), 0);
       }
       else if (key.equals("Horizontal Resolution")) {
         // resolution stored in pixels per inch
@@ -219,14 +213,8 @@ public class KodakReader extends FormatReader {
           value = value.substring(0, value.indexOf(" "));
         }
         Double size = new Double(value);
-        if (size > 0) {
-          size = 1.0 / (size * (1.0 / 25400));
-          store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            size);
-        }
+        size = 1.0 / (size * (1.0 / 25400));
+        store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(size), 0);
       }
       else if (key.equals("CCD Temperature")) {
         Double temp = new Double(value.substring(0, value.indexOf(" ")));

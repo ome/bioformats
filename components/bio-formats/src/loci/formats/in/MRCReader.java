@@ -303,24 +303,9 @@ public class MRCReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (level != MetadataLevel.MINIMUM) {
-      if (xSize - Constants.EPSILON > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(xSize), 0);
-      }
-      else {
-        LOGGER.warn("xSize {} not a positive float skipping", xSize);
-      }
-      if (ySize - Constants.EPSILON > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(ySize), 0);
-      }
-      else {
-        LOGGER.warn("ySize {} not a positive float skipping", ySize);
-      }
-      if (zSize - Constants.EPSILON > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(zSize), 0);
-      }
-      else {
-        LOGGER.warn("zSize {} not a positive float skipping", zSize);
-      }
+      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(xSize), 0);
+      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(ySize), 0);
+      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(zSize), 0);
     }
   }
 

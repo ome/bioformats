@@ -376,27 +376,12 @@ public class InveonReader extends FormatReader {
 
         store.setImageDescription(description, i);
 
-        if (pixelSizeX > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            pixelSizeX);
-        }
-        if (pixelSizeY > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-            pixelSizeY);
-        }
-        if (pixelSizeZ > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-           pixelSizeZ);
-        }
+        store.setPixelsPhysicalSizeX(
+          FormatTools.getPhysicalSizeX(pixelSizeX), i);
+        store.setPixelsPhysicalSizeY(
+          FormatTools.getPhysicalSizeY(pixelSizeY), i);
+        store.setPixelsPhysicalSizeZ(
+          FormatTools.getPhysicalSizeZ(pixelSizeZ), i);
       }
     }
 

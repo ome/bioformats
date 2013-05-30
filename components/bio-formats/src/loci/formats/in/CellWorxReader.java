@@ -426,14 +426,8 @@ public class CellWorxReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    if (fieldMap.length * fieldMap[0].length > 0) {
-      store.setPlateAcquisitionMaximumFieldCount(
-        new PositiveInteger(fieldMap.length * fieldMap[0].length), 0, 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
-        fieldMap.length * fieldMap[0].length);
-    }
+    store.setPlateAcquisitionMaximumFieldCount(
+      FormatTools.getMaxFieldCount(fieldMap.length * fieldMap[0].length), 0, 0);
 
     int nextImage = 0;
     for (int row=0; row<wellFiles.length; row++) {
@@ -598,23 +592,8 @@ public class CellWorxReader extends FormatReader {
           Double xSize = new Double(value.substring(0, s).trim());
           Double ySize = new Double(value.substring(s + 1, end).trim());
 
-          PositiveFloat x = null;
-          PositiveFloat y = null;
-
-          if (xSize > 0) {
-            x = new PositiveFloat(xSize / getSizeX());
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-              xSize / getSizeX());
-          }
-          if (ySize > 0) {
-            y = new PositiveFloat(ySize / getSizeY());
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-              ySize / getSizeY());
-          }
+          PositiveFloat x = FormatTools.getPhysicalSizeX(xSize / getSizeX());
+          PositiveFloat y = FormatTools.getPhysicalSizeY(ySize / getSizeY());
 
           for (int field=0; field<fieldCount; field++) {
             int index = seriesIndex + field;
@@ -667,25 +646,11 @@ public class CellWorxReader extends FormatReader {
 
               Integer emission = new Integer(em);
               Integer excitation = new Integer(ex);
-              PositiveInteger emWave = null;
-              PositiveInteger exWave = null;
 
-              if (excitation > 0) {
-                exWave = new PositiveInteger(excitation);
-              }
-              else {
-                LOGGER.warn(
-                  "Expected positive value for ExcitationWavelength; got {}",
-                  excitation);
-              }
-              if (emission > 0) {
-                emWave = new PositiveInteger(emission);
-              }
-              else {
-                LOGGER.warn(
-                  "Expected positive value for EmissionWavelength; got {}",
-                  emission);
-              }
+              PositiveInteger exWave =
+                FormatTools.getExcitationWavelength(excitation);
+              PositiveInteger emWave =
+                FormatTools.getEmissionWavelength(emission);
 
               for (int field=0; field<fieldCount; field++) {
                 if (exWave != null) {

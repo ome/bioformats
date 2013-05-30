@@ -500,14 +500,7 @@ public class BioRadReader extends FormatReader {
       store.setObjectiveSettingsID(objectiveID, 0);
 
       store.setObjectiveLensNA(new Double(lens), 0, 0);
-      if ((int) magFactor > 0) {
-        store.setObjectiveNominalMagnification(
-          new Double(magFactor), 0, 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
-          magFactor);
-      }
+      store.setObjectiveNominalMagnification(new Double(magFactor), 0, 0);
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
@@ -653,27 +646,11 @@ public class BioRadReader extends FormatReader {
               }
               else if (key.equals("INFO_OBJECTIVE_MAGNIFICATION")) {
                 Double mag = Double.parseDouble(value);
-                if (mag > 0) {
-                  store.setObjectiveNominalMagnification(
-                    new Double(mag), 0, 0);
-                }
-                else {
-                  LOGGER.warn(
-                    "Expected positive value for NominalMagnification; got {}",
-                    mag);
-                }
+                store.setObjectiveNominalMagnification(mag, 0, 0);
               }
               else if (key.equals("LENS_MAGNIFICATION")) {
                 Double magnification = Double.parseDouble(value);
-                if (magnification > 0) {
-                  store.setObjectiveNominalMagnification(
-                    new Double(magnification), 0, 0);
-                }
-                else {
-                  LOGGER.warn(
-                    "Expected positive value for NominalMagnification; got {}",
-                    magnification);
-                }
+                store.setObjectiveNominalMagnification(magnification, 0, 0);
               }
               else if (key.startsWith("SETTING")) {
                 if (key.indexOf("_DET_") != -1) {
@@ -719,20 +696,13 @@ public class BioRadReader extends FormatReader {
                     if (type == 257 && values.length >= 3) {
                       // found length of axis in um
                       Double pixelSize = new Double(values[2]);
-                      if (pixelSize > 0) {
-                        if (key.equals("AXIS_2")) {
-                          store.setPixelsPhysicalSizeX(
-                            new PositiveFloat(pixelSize), 0);
-                        }
-                        else if (key.equals("AXIS_3")) {
-                          store.setPixelsPhysicalSizeY(
-                            new PositiveFloat(pixelSize), 0);
-                        }
+                      if (key.equals("AXIS_2")) {
+                        store.setPixelsPhysicalSizeX(
+                          FormatTools.getPhysicalSizeX(pixelSize), 0);
                       }
-                      else {
-                        LOGGER.warn(
-                          "Expected positive value for PhysicalSize; got {}",
-                          pixelSize);
+                      else if (key.equals("AXIS_3")) {
+                        store.setPixelsPhysicalSizeY(
+                          FormatTools.getPhysicalSizeY(pixelSize), 0);
                       }
                     }
                   }
@@ -743,24 +713,14 @@ public class BioRadReader extends FormatReader {
             else if (n.p.startsWith("AXIS_2")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              if (pixelSize > 0) {
-                store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
-              }
-              else {
-                LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-                  pixelSize);
-              }
+              store.setPixelsPhysicalSizeX(
+                FormatTools.getPhysicalSizeX(pixelSize), 0);
             }
             else if (n.p.startsWith("AXIS_3")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              if (pixelSize > 0) {
-                store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
-              }
-              else {
-                LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-                  pixelSize);
-              }
+              store.setPixelsPhysicalSizeY(
+                FormatTools.getPhysicalSizeY(pixelSize), 0);
             }
             else {
               addGlobalMetaList("Note", n.toString());
@@ -778,24 +738,11 @@ public class BioRadReader extends FormatReader {
                   }
 
                   Double mag = Double.parseDouble(values[11]);
-                  if (mag > 0) {
-                    store.setObjectiveNominalMagnification(
-                      new Double(mag), 0, 0);
-                  }
-                  else {
-                    LOGGER.warn("Expected positive value for " +
-                      "NominalMagnification; got {}", mag);
-                  }
+                  store.setObjectiveNominalMagnification(mag, 0, 0);
 
                   Double sizeZ = new Double(values[14]);
-                  if (sizeZ > 0) {
-                    store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), 0);
-                  }
-                  else {
-                    LOGGER.warn(
-                      "Expected positive value for PhysicalSizeZ; got {}",
-                      sizeZ);
-                  }
+                  store.setPixelsPhysicalSizeZ(
+                    FormatTools.getPhysicalSizeZ(sizeZ), 0);
                   break;
                 case 2:
                   for (int i=0; i<STRUCTURE_LABELS_2.length; i++) {
@@ -812,22 +759,10 @@ public class BioRadReader extends FormatReader {
                   double height = y2 - y1;
                   height /= getSizeY();
 
-                  if (width > 0) {
-                    store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
-                  }
-                  else {
-                    LOGGER.warn(
-                      "Expected positive value for PhysicalSizeX; got {}",
-                      width);
-                  }
-                  if (height > 0) {
-                    store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
-                  }
-                  else {
-                    LOGGER.warn(
-                      "Expected positive value for PhysicalSizeY; got {}",
-                      height);
-                  }
+                  store.setPixelsPhysicalSizeX(
+                    FormatTools.getPhysicalSizeX(width), 0);
+                  store.setPixelsPhysicalSizeY(
+                    FormatTools.getPhysicalSizeY(height), 0);
 
                   break;
                 case 3:

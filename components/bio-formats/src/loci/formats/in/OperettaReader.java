@@ -315,14 +315,8 @@ public class OperettaReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    if (fields.length > 0) {
-      store.setPlateAcquisitionMaximumFieldCount(
-        new PositiveInteger(fields.length), 0, 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
-        fields.length);
-    }
+    store.setPlateAcquisitionMaximumFieldCount(
+      FormatTools.getMaxFieldCount(fields.length), 0, 0);
 
     for (int row=0; row<rows.length; row++) {
       for (int col=0; col<cols.length; col++) {

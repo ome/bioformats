@@ -1069,14 +1069,7 @@ public class MIASReader extends FormatReader {
         }
         else if (key.equals("Magnification")) {
           Double mag = Double.parseDouble(value);
-          if (mag > 0) {
-            store.setObjectiveNominalMagnification(
-              new Double(mag), 0, 0);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for NominalMagnification; got {}", mag);
-          }
+          store.setObjectiveNominalMagnification(mag, 0, 0);
         }
         else if (key.startsWith("Mode_")) {
           channelNames.add(value);
@@ -1094,20 +1087,10 @@ public class MIASReader extends FormatReader {
     }
 
     for (int well=0; well<tiffs.length; well++) {
-      if (physicalSizeX != null && physicalSizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), well);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalSizeX);
-      }
-      if (physicalSizeY != null && physicalSizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), well);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalSizeY);
-      }
+      store.setPixelsPhysicalSizeX(
+        FormatTools.getPhysicalSizeX(physicalSizeX), well);
+      store.setPixelsPhysicalSizeY(
+        FormatTools.getPhysicalSizeY(physicalSizeY), well);
       for (int c=0; c<channelNames.size(); c++) {
         if (c < getEffectiveSizeC()) {
           store.setChannelName(channelNames.get(c), well, c);

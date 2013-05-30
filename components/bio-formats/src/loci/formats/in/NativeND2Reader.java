@@ -1671,32 +1671,20 @@ public class NativeND2Reader extends FormatReader {
         if (trueSizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(trueSizeX), i);
         }
-        else if (sizeX > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
-        }
         else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            sizeX);
+          store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(sizeX), i);
         }
         if (trueSizeY > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(trueSizeY), i);
         }
-        else if (sizeY > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
-        }
         else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-            sizeY);
+          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(sizeY), i);
         }
         if (trueSizeZ > 0) {
           store.setPixelsPhysicalSizeZ(new PositiveFloat(trueSizeZ), i);
         }
-        else if (sizeZ > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), i);
-        }
         else {
-          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-            sizeZ);
+          store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeY(sizeZ), i);
         }
       }
     }
@@ -1811,28 +1799,15 @@ public class NativeND2Reader extends FormatReader {
         if (index < emWave.size() || index < textEmissionWavelengths.size()) {
           Integer value = index < emWave.size() ? emWave.get(index) :
             textEmissionWavelengths.get(index);
-          if (value > 0) {
-            store.setChannelEmissionWavelength(new PositiveInteger(value), i, c);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for EmissionWavelength; got {}",
-              emWave.get(index));
-          }
+          store.setChannelEmissionWavelength(
+            FormatTools.getEmissionWavelength(value), i, c);
         }
         else if (emWave.size() > 0 || textEmissionWavelengths.size() > 0) {
           store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
         if (index < exWave.size()) {
-          if (exWave.get(index) > 0) {
-            store.setChannelExcitationWavelength(
-              new PositiveInteger(exWave.get(index)), i, c);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for ExcitationWavelength; got {}",
-              exWave.get(index));
-          }
+          store.setChannelExcitationWavelength(
+            FormatTools.getExcitationWavelength(exWave.get(index)), i, c);
         }
         if (index < binning.size()) {
           store.setDetectorSettingsBinning(
