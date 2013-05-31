@@ -462,7 +462,7 @@ public class LeicaHandler extends BaseHandler {
             coreMeta.sizeZ = 1;
             physicalSizeY = physicalSize.doubleValue();
             store.setPixelsPhysicalSizeY(
-              FormatTools.getPhysicalSizeZ(physicalSize), numDatasets);
+              FormatTools.getPhysicalSizeY(physicalSize), numDatasets);
             bytesPerAxis.put(new Integer(nBytes), "Y");
           }
           else {
