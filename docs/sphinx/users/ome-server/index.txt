@@ -100,7 +100,7 @@ Upgrading
 ---------
 
 You can upgrade your OME server installation to take advantage of a
-:bf_plone:`new Bio-Formats release <downloads>` by overwriting the old 
+:downloads:`new Bio-Formats release <>` by overwriting the old 
 **loci\_tools.jar** with the new one.
 
 Source Code
