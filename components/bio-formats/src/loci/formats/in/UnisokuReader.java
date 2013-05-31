@@ -36,6 +36,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -226,8 +227,15 @@ public class UnisokuReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(remark, 0);
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixelSizeX), 0);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixelSizeY), 0);
+
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
     }
   }
 

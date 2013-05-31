@@ -33,6 +33,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -172,8 +173,15 @@ public class OxfordInstrumentsReader extends FormatReader {
     double physicalSizeX = xSize / getSizeX();
     double physicalSizeY = ySize / getSizeY();
 
-    store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(physicalSizeX), 0);
-    store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(physicalSizeY), 0);
+    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+
+    if (sizeX != null) {
+      store.setPixelsPhysicalSizeX(sizeX, 0);
+    }
+    if (sizeY != null) {
+      store.setPixelsPhysicalSizeY(sizeY, 0);
+    }
   }
 
   // -- Helper methods --

@@ -51,6 +51,8 @@ import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * File format reader for NRRD files; see http://teem.sourceforge.net/nrrd.
  *
@@ -338,13 +340,22 @@ public class NRRDReader extends FormatReader {
           try {
             Double d = new Double(pixelSizes[i].trim());
             if (i == 0) {
-              store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(d), 0);
+              PositiveFloat x = FormatTools.getPhysicalSizeX(d);
+              if (x != null) {
+                store.setPixelsPhysicalSizeX(x, 0);
+              }
             }
             else if (i == 1) {
-              store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(d), 0);
+              PositiveFloat y = FormatTools.getPhysicalSizeY(d);
+              if (y != null) {
+                store.setPixelsPhysicalSizeY(y, 0);
+              }
             }
             else if (i == 2) {
-              store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(d), 0);
+              PositiveFloat z = FormatTools.getPhysicalSizeZ(d);
+              if (z != null) {
+                store.setPixelsPhysicalSizeZ(z, 0);
+              }
             }
           }
           catch (NumberFormatException e) { }

@@ -38,6 +38,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -197,8 +198,14 @@ public class GelReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Double pixelSize = new Double(scale.doubleValue());
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixelSize), 0);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixelSize), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSize);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSize);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
     }
   }
 

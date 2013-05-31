@@ -39,6 +39,8 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -130,12 +132,18 @@ public class NikonElementsTiffReader extends BaseTiffReader {
       return;
     }
 
-    Double pixelSizeX = handler.getPixelSizeX();
-    Double pixelSizeY = handler.getPixelSizeY();
-    Double pixelSizeZ = handler.getPixelSizeZ();
-    store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixelSizeX), 0);
-    store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixelSizeY), 0);
-    store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(pixelSizeZ), 0);
+    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
+    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
+    PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(handler.getPixelSizeZ());
+    if (sizeX != null) {
+      store.setPixelsPhysicalSizeX(sizeX, 0);
+    }
+    if (sizeY != null) {
+      store.setPixelsPhysicalSizeY(sizeY, 0);
+    }
+    if (sizeZ != null) {
+      store.setPixelsPhysicalSizeZ(sizeZ, 0);
+    }
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrument, 0);
@@ -192,12 +200,16 @@ public class NikonElementsTiffReader extends BaseTiffReader {
           getAcquisitionMode(modality.get(c)), 0, c);
       }
       if (c < emWave.size()) {
-        store.setChannelEmissionWavelength(
-          FormatTools.getEmissionWavelength(emWave.get(c)), 0, c);
+        PositiveInteger em = FormatTools.getEmissionWavelength(emWave.get(c));
+        if (em != null) {
+          store.setChannelEmissionWavelength(em, 0, c);
+        }
       }
       if (c < exWave.size()) {
-        store.setChannelExcitationWavelength(
-          FormatTools.getExcitationWavelength(exWave.get(c)), 0, c);
+        PositiveInteger ex = FormatTools.getExcitationWavelength(exWave.get(c));
+        if (ex != null) {
+          store.setChannelExcitationWavelength(ex, 0, c);
+        }
       }
       if (c < binning.size()) {
         store.setDetectorSettingsBinning(getBinning(binning.get(c)), 0, c);

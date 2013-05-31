@@ -45,6 +45,8 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * HamamatsuVMSReader is the file format reader for Hamamatsu VMS datasets.
  *
@@ -215,14 +217,27 @@ public class HamamatsuVMSReader extends FormatReader {
     store.setImageName(path + " map", 2);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX(physicalWidth / core[0].sizeX), 0);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY(physicalHeight / core[0].sizeY), 0);
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX(macroWidth / core[1].sizeX), 1);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY(macroHeight / core[1].sizeY), 1);
+      PositiveFloat sizeX =
+        FormatTools.getPhysicalSizeX(physicalWidth / core[0].sizeX);
+      PositiveFloat sizeY =
+        FormatTools.getPhysicalSizeY(physicalHeight / core[0].sizeY);
+      PositiveFloat macroSizeX =
+        FormatTools.getPhysicalSizeX(macroWidth / core[1].sizeX);
+      PositiveFloat macroSizeY =
+        FormatTools.getPhysicalSizeY(macroHeight / core[1].sizeY);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
+      if (macroSizeX != null) {
+        store.setPixelsPhysicalSizeX(macroSizeX, 1);
+      }
+      if (macroSizeY != null) {
+        store.setPixelsPhysicalSizeY(macroSizeY, 1);
+      }
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);

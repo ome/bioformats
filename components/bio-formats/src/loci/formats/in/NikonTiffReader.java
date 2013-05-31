@@ -37,6 +37,9 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.PositiveInteger;
 
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
+
 /**
  * NikonTiffReader is the file format reader for Nikon TIFF files.
  *
@@ -216,12 +219,19 @@ public class NikonTiffReader extends BaseTiffReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription("", 0);
 
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX(physicalSizeX), 0);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY(physicalSizeY), 0);
-      store.setPixelsPhysicalSizeZ(
-        FormatTools.getPhysicalSizeZ(physicalSizeZ), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, 0);
+      }
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
@@ -250,8 +260,11 @@ public class NikonTiffReader extends BaseTiffReader {
         String laser = MetadataTools.createLSID("LightSource", 0, i);
         store.setLaserID(laser, 0, i);
         store.setLaserModel(laserIDs.get(i), 0, i);
-        store.setLaserWavelength(
-          FormatTools.getWavelength(wavelength.get(i)), 0, i);
+
+        PositiveInteger wave = FormatTools.getWavelength(wavelength.get(i));
+        if (wave != null) {
+          store.setLaserWavelength(wave, 0, i);
+        }
         store.setLaserType(getLaserType("Other"), 0, i);
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
       }
@@ -265,12 +278,18 @@ public class NikonTiffReader extends BaseTiffReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         store.setChannelPinholeSize(pinholeSize, 0, c);
         if (c < exWave.size()) {
-          store.setChannelExcitationWavelength(
-            FormatTools.getExcitationWavelength(exWave.get(c)), 0, c);
+          PositiveInteger wave =
+            FormatTools.getExcitationWavelength(exWave.get(c));
+          if (wave != null) {
+            store.setChannelExcitationWavelength(wave, 0, c);
+          }
         }
         if (c < emWave.size()) {
-          store.setChannelEmissionWavelength(
-            FormatTools.getEmissionWavelength(emWave.get(c)), 0, c);
+          PositiveInteger wave =
+            FormatTools.getEmissionWavelength(emWave.get(c));
+          if (wave != null) {
+            store.setChannelEmissionWavelength(wave, 0, c);
+          }
         }
       }
 
