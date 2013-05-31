@@ -36,6 +36,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * AnalyzeReader is the file format reader for Analyze 7.5 files.
  *
@@ -328,12 +330,22 @@ public class AnalyzeReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX(voxelWidth * 0.001), 0);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY(voxelHeight * 0.001), 0);
-      store.setPixelsPhysicalSizeZ(
-        FormatTools.getPhysicalSizeZ(sliceThickness * 0.001), 0);
+
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(voxelWidth * 0.001);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(voxelHeight * 0.001);
+      PositiveFloat sizeZ =
+        FormatTools.getPhysicalSizeZ(sliceThickness * 0.001);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, 0);
+      }
+
       store.setPixelsTimeIncrement(new Double(deltaT * 1000), 0);
     }
   }

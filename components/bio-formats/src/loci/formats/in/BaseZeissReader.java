@@ -46,6 +46,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -354,12 +355,19 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setImageName("Tile #" + (i + 1), i);
         }
 
-        store.setPixelsPhysicalSizeX(
-          FormatTools.getPhysicalSizeX(physicalSizeX), i);
-        store.setPixelsPhysicalSizeY(
-          FormatTools.getPhysicalSizeY(physicalSizeY), i);
-        store.setPixelsPhysicalSizeZ(
-          FormatTools.getPhysicalSizeZ(physicalSizeZ), i);
+        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+
+        if (sizeX != null) {
+          store.setPixelsPhysicalSizeX(sizeX, i);
+        }
+        if (sizeY != null) {
+          store.setPixelsPhysicalSizeY(sizeY, i);
+        }
+        if (sizeZ != null) {
+          store.setPixelsPhysicalSizeZ(sizeZ, i);
+        }
 
         long firstStamp = parseTimestamp(timestamps.get(new Integer(0)));
 
@@ -855,17 +863,19 @@ public abstract class BaseZeissReader extends FormatReader {
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1) {
             Integer wave = new Integer(value);
-            if (wave.intValue() > 0) {
-              emWavelength.put(cIndex, FormatTools.getEmissionWavelength(wave));
+            PositiveInteger emission = FormatTools.getEmissionWavelength(wave);
+            if (emission != null) {
+              emWavelength.put(cIndex, emission);
             }
           }
         }
         else if (key.startsWith("Excitation Wavelength")) {
           if (cIndex != -1) {
             Integer wave = new Integer((int) Double.parseDouble(value));
-            if (wave.intValue() > 0) {
-              exWavelength.put(cIndex,
-                FormatTools.getExcitationWavelength(wave));
+            PositiveInteger excitation =
+              FormatTools.getExcitationWavelength(wave);
+            if (excitation != null) {
+              exWavelength.put(cIndex, excitation);
             }
           }
         }

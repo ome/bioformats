@@ -52,6 +52,7 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffRational;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -465,8 +466,15 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       double pixX = firstIFD.getXResolution();
       double pixY = firstIFD.getYResolution();
 
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixX), 0);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixY), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixY);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
       store.setPixelsPhysicalSizeZ(null, 0);
 
       if (exif != null) {

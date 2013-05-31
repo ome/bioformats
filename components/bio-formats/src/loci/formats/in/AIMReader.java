@@ -35,6 +35,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -173,15 +174,24 @@ public class AIMReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (xSize != null && xLength != null) {
         Double size = xLength / xSize;
-        store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(size), 0);
+        PositiveFloat physicalSize = FormatTools.getPhysicalSizeX(size);
+        if (physicalSize != null) {
+          store.setPixelsPhysicalSizeX(physicalSize, 0);
+        }
       }
       if (ySize != null && yLength != null) {
         Double size = yLength / ySize;
-        store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(size), 0);
+        PositiveFloat physicalSize = FormatTools.getPhysicalSizeY(size);
+        if (physicalSize != null) {
+          store.setPixelsPhysicalSizeY(physicalSize, 0);
+        }
       }
       if (zSize != null && zLength != null) {
         Double size = zLength / zSize;
-        store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(size), 0);
+        PositiveFloat physicalSize = FormatTools.getPhysicalSizeZ(size);
+        if (physicalSize != null) {
+          store.setPixelsPhysicalSizeZ(physicalSize, 0);
+        }
       }
     }
   }

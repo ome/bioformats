@@ -49,6 +49,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * NativeND2Reader is the file format reader for Nikon ND2 files.
@@ -1671,19 +1672,28 @@ public class NativeND2Reader extends FormatReader {
           store.setPixelsPhysicalSizeX(new PositiveFloat(trueSizeX), i);
         }
         else {
-          store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(sizeX), i);
+          PositiveFloat size = FormatTools.getPhysicalSizeX(sizeX);
+          if (size != null) {
+            store.setPixelsPhysicalSizeX(size, i);
+          }
         }
         if (trueSizeY > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(trueSizeY), i);
         }
         else {
-          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(sizeY), i);
+          PositiveFloat size = FormatTools.getPhysicalSizeY(sizeY);
+          if (size != null) {
+            store.setPixelsPhysicalSizeY(size, i);
+          }
         }
         if (trueSizeZ > 0) {
           store.setPixelsPhysicalSizeZ(new PositiveFloat(trueSizeZ), i);
         }
         else {
-          store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeY(sizeZ), i);
+          PositiveFloat size = FormatTools.getPhysicalSizeZ(sizeZ);
+          if (size != null) {
+            store.setPixelsPhysicalSizeZ(size, i);
+          }
         }
       }
     }
@@ -1798,15 +1808,20 @@ public class NativeND2Reader extends FormatReader {
         if (index < emWave.size() || index < textEmissionWavelengths.size()) {
           Integer value = index < emWave.size() ? emWave.get(index) :
             textEmissionWavelengths.get(index);
-          store.setChannelEmissionWavelength(
-            FormatTools.getEmissionWavelength(value), i, c);
+          PositiveInteger emission = FormatTools.getEmissionWavelength(value);
+          if (emission != null) {
+            store.setChannelEmissionWavelength(emission, i, c);
+          }
         }
         else if (emWave.size() > 0 || textEmissionWavelengths.size() > 0) {
           store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
         if (index < exWave.size()) {
-          store.setChannelExcitationWavelength(
-            FormatTools.getExcitationWavelength(exWave.get(index)), i, c);
+          PositiveInteger excitation =
+            FormatTools.getExcitationWavelength(exWave.get(index));
+          if (excitation != null) {
+            store.setChannelExcitationWavelength(excitation, i, c);
+          }
         }
         if (index < binning.size()) {
           store.setDetectorSettingsBinning(

@@ -40,6 +40,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -170,10 +171,17 @@ public class ImarisTiffReader extends BaseTiffReader {
 
       // populate LogicalChannel data
       for (int i=0; i<emWave.size(); i++) {
-        store.setChannelEmissionWavelength(
-          FormatTools.getEmissionWavelength(emWave.get(i)), 0, i);
-        store.setChannelExcitationWavelength(
-          FormatTools.getExcitationWavelength(exWave.get(i)), 0, i);
+        PositiveInteger emission =
+          FormatTools.getEmissionWavelength(emWave.get(i));
+        PositiveInteger excitation =
+          FormatTools.getExcitationWavelength(exWave.get(i));
+
+        if (emission != null) {
+          store.setChannelEmissionWavelength(emission, 0, i);
+        }
+        if (excitation != null) {
+          store.setChannelExcitationWavelength(excitation, 0, i);
+        }
         store.setChannelName(channelNames.get(i), 0, i);
       }
     }

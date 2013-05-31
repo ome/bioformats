@@ -53,6 +53,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -1086,10 +1087,15 @@ public class MIASReader extends FormatReader {
     }
 
     for (int well=0; well<tiffs.length; well++) {
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX(physicalSizeX), well);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY(physicalSizeY), well);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, well);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, well);
+      }
       for (int c=0; c<channelNames.size(); c++) {
         if (c < getEffectiveSizeC()) {
           store.setChannelName(channelNames.get(c), well, c);

@@ -54,6 +54,8 @@ import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
@@ -503,8 +505,11 @@ public class FlexReader extends FormatReader {
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      FormatTools.getMaxFieldCount(fieldCount), 0, 0);
+
+    PositiveInteger maxFieldCount = FormatTools.getMaxFieldCount(fieldCount);
+    if (maxFieldCount != null) {
+      store.setPlateAcquisitionMaximumFieldCount(maxFieldCount, 0, 0);
+    }
 
     plateAcqStartTime =
       DateTools.formatDate(plateAcqStartTime, "dd.MM.yyyy  HH:mm:ss");
@@ -624,12 +629,18 @@ public class FlexReader extends FormatReader {
         }
 
         if (seriesIndex < xSizes.size()) {
-          store.setPixelsPhysicalSizeX(
-            FormatTools.getPhysicalSizeX(xSizes.get(seriesIndex)), i);
+          PositiveFloat size =
+            FormatTools.getPhysicalSizeX(xSizes.get(seriesIndex));
+          if (size != null) {
+            store.setPixelsPhysicalSizeX(size, i);
+          }
         }
         if (seriesIndex < ySizes.size()) {
-          store.setPixelsPhysicalSizeY(
-            FormatTools.getPhysicalSizeY(ySizes.get(seriesIndex)), i);
+          PositiveFloat size =
+            FormatTools.getPhysicalSizeY(ySizes.get(seriesIndex));
+          if (size != null) {
+            store.setPixelsPhysicalSizeY(size, i);
+          }
         }
 
         int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
@@ -1419,8 +1430,10 @@ public class FlexReader extends FormatReader {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
         store.setLaserID(lsid, 0, nextLaser);
         Integer wavelength = new Integer(value);
-        store.setLaserWavelength(
-          FormatTools.getWavelength(wavelength), 0, nextLaser);
+        PositiveInteger wave = FormatTools.getWavelength(wavelength);
+        if (wave != null) {
+          store.setLaserWavelength(wave, 0, nextLaser);
+        }
         try {
           store.setLaserType(getLaserType("Other"), 0, nextLaser);
           store.setLaserLaserMedium(getLaserMedium("Other"), 0, nextLaser);

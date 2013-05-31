@@ -35,6 +35,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -128,10 +129,18 @@ public class QuesantReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX((double) xSize / getSizeX()), 0);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY((double) xSize / getSizeY()), 0);
+
+      PositiveFloat sizeX =
+        FormatTools.getPhysicalSizeX((double) xSize / getSizeX());
+      PositiveFloat sizeY =
+        FormatTools.getPhysicalSizeY((double) xSize / getSizeY());
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
     }
   }
 

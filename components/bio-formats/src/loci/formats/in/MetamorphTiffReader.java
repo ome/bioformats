@@ -47,6 +47,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -431,12 +432,22 @@ public class MetamorphTiffReader extends BaseTiffReader {
         }
 
         store.setImagingEnvironmentTemperature(handler.getTemperature(), s);
-        store.setPixelsPhysicalSizeX(
-          FormatTools.getPhysicalSizeX(handler.getPixelSizeX()), s);
-        store.setPixelsPhysicalSizeY(
-          FormatTools.getPhysicalSizeY(handler.getPixelSizeY()), s);
-        store.setPixelsPhysicalSizeZ(
-          FormatTools.getPhysicalSizeZ(physicalSizeZ), s);
+
+        PositiveFloat sizeX =
+          FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
+        PositiveFloat sizeY =
+          FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
+        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+
+        if (sizeX != null) {
+          store.setPixelsPhysicalSizeX(sizeX, s);
+        }
+        if (sizeY != null) {
+          store.setPixelsPhysicalSizeY(sizeY, s);
+        }
+        if (sizeZ != null) {
+          store.setPixelsPhysicalSizeZ(sizeZ, s);
+        }
 
         for (int c=0; c<getEffectiveSizeC(); c++) {
           if (uniqueChannels.size() > c) {

@@ -54,6 +54,7 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.SAXException;
@@ -574,16 +575,22 @@ public class ZeissCZIReader extends FormatReader {
           String emWave = emissionWavelengths.get(c);
           if (emWave != null) {
             Double wave = new Double(emWave);
-            store.setChannelEmissionWavelength(
-              FormatTools.getEmissionWavelength(wave.intValue()), i, c);
+            PositiveInteger em =
+              FormatTools.getEmissionWavelength(wave.intValue());
+            if (em != null) {
+              store.setChannelEmissionWavelength(em, i, c);
+            }
           }
         }
         if (c < excitationWavelengths.size()) {
           String exWave = excitationWavelengths.get(c);
           if (exWave != null) {
             Double wave = new Double(exWave);
-            store.setChannelExcitationWavelength(
-              FormatTools.getExcitationWavelength(wave.intValue()), i, c);
+            PositiveInteger ex =
+              FormatTools.getExcitationWavelength(wave.intValue());
+            if (ex != null) {
+              store.setChannelExcitationWavelength(ex, i, c);
+            }
           }
         }
         if (c < pinholeSizes.size() && pinholeSizes.get(c) != null) {
@@ -1116,9 +1123,14 @@ public class ZeissCZIReader extends FormatReader {
           Integer inWave = cutIn == null ? 0 : new Integer(cutIn);
           Integer outWave = cutOut == null ? 0 : new Integer(cutOut);
 
-          store.setTransmittanceRangeCutIn(FormatTools.getCutIn(inWave), 0, i);
-          store.setTransmittanceRangeCutOut(
-            FormatTools.getCutOut(outWave), 0, i);
+          PositiveInteger in = FormatTools.getCutIn(inWave);
+          PositiveInteger out = FormatTools.getCutOut(outWave);
+          if (in != null) {
+            store.setTransmittanceRangeCutIn(in, 0, i);
+          }
+          if (out != null) {
+            store.setTransmittanceRangeCutOut(out, 0, i);
+          }
 
           String inTolerance =
             getFirstNodeValue(transmittance, "CutInTolerance");

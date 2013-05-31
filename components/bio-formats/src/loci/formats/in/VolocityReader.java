@@ -47,6 +47,9 @@ import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.MetakitService;
 
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
+
 /**
  * VolocityReader is the file format reader for Volocity library files.
  *
@@ -697,12 +700,19 @@ public class VolocityReader extends FormatReader {
           store.setChannelName(stack.channelNames[c], i, c);
         }
       }
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX(stack.physicalX), i);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY(stack.physicalY), i);
-      store.setPixelsPhysicalSizeZ(
-        FormatTools.getPhysicalSizeZ(stack.physicalZ), i);
+
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(stack.physicalX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(stack.physicalY);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(stack.physicalZ);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, i);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, i);
+      }
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, i);
+      }
 
       String objective = MetadataTools.createLSID("Objective", 0, i);
       store.setObjectiveID(objective, 0, i);

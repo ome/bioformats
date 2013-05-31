@@ -42,6 +42,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * SlidebookReader is the file format reader for 3I Slidebook files.
  * The strategies employed by this reader are highly suboptimal, as we
@@ -1283,8 +1285,14 @@ public class SlidebookReader extends FormatReader {
         setSeries(i);
         if (pixelSize.get(i) != null) {
           Double size = new Double(pixelSize.get(i));
-          store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(size), i);
-          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(size), i);
+          PositiveFloat x = FormatTools.getPhysicalSizeX(size);
+          PositiveFloat y = FormatTools.getPhysicalSizeY(size);
+          if (x != null) {
+            store.setPixelsPhysicalSizeX(x, i);
+          }
+          if (y != null) {
+            store.setPixelsPhysicalSizeY(y, i);
+          }
         }
         int idx = 0;
         for (int q=0; q<i; q++) {
@@ -1292,8 +1300,10 @@ public class SlidebookReader extends FormatReader {
         }
 
         if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
-          store.setPixelsPhysicalSizeZ(
-            FormatTools.getPhysicalSizeZ(pixelSizeZ.get(idx)), i);
+          PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSizeZ.get(idx));
+          if (z != null) {
+            store.setPixelsPhysicalSizeZ(z, i);
+          }
         }
 
         for (int plane=0; plane<getImageCount(); plane++) {

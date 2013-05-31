@@ -42,6 +42,7 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -425,10 +426,15 @@ public class NDPIReader extends BaseTiffReader {
         double xResolution = ifds.get(ifdIndex).getXResolution();
         double yResolution = ifds.get(ifdIndex).getYResolution();
 
-        store.setPixelsPhysicalSizeX(
-          FormatTools.getPhysicalSizeX(xResolution), i);
-        store.setPixelsPhysicalSizeY(
-          FormatTools.getPhysicalSizeY(yResolution), i);
+        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xResolution);
+        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(yResolution);
+
+        if (sizeX != null) {
+          store.setPixelsPhysicalSizeX(sizeX, i);
+        }
+        if (sizeY != null) {
+          store.setPixelsPhysicalSizeY(sizeY, i);
+        }
       }
     }
   }

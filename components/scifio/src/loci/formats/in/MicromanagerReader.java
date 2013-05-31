@@ -55,6 +55,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
@@ -298,12 +299,18 @@ public class MicromanagerReader extends FormatReader {
           store.setChannelName(p.channels[c], i, c);
         }
 
-        store.setPixelsPhysicalSizeX(
-          FormatTools.getPhysicalSizeX(p.pixelSize), i);
-        store.setPixelsPhysicalSizeY(
-          FormatTools.getPhysicalSizeY(p.pixelSize), i);
-        store.setPixelsPhysicalSizeZ(
-          FormatTools.getPhysicalSizeZ(p.sliceThickness), i);
+        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(p.pixelSize);
+        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(p.pixelSize);
+        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(p.sliceThickness);
+        if (sizeX != null) {
+          store.setPixelsPhysicalSizeX(sizeX, i);
+        }
+        if (sizeY != null) {
+          store.setPixelsPhysicalSizeY(sizeY, i);
+        }
+        if (sizeZ != null) {
+          store.setPixelsPhysicalSizeZ(sizeZ, i);
+        }
 
         int nextStamp = 0;
         for (int q=0; q<getImageCount(); q++) {

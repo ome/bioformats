@@ -36,6 +36,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -198,8 +199,14 @@ public class SBIGReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(sizeX), 0);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(sizeY), 0);
+      PositiveFloat x = FormatTools.getPhysicalSizeX(sizeX);
+      PositiveFloat y = FormatTools.getPhysicalSizeY(sizeY);
+      if (x != null) {
+        store.setPixelsPhysicalSizeX(x, 0);
+      }
+      if (y != null) {
+        store.setPixelsPhysicalSizeY(y, 0);
+      }
       store.setImageDescription(description, 0);
     }
   }

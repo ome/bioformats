@@ -36,6 +36,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -204,7 +205,11 @@ public class KodakReader extends FormatReader {
         }
         Double size = new Double(value);
         size = 1.0 / (size * (1.0 / 25400));
-        store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(size), 0);
+
+        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(size);
+        if (sizeY != null) {
+          store.setPixelsPhysicalSizeY(sizeY, 0);
+        }
       }
       else if (key.equals("Horizontal Resolution")) {
         // resolution stored in pixels per inch
@@ -213,7 +218,11 @@ public class KodakReader extends FormatReader {
         }
         Double size = new Double(value);
         size = 1.0 / (size * (1.0 / 25400));
-        store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(size), 0);
+
+        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(size);
+        if (sizeX != null) {
+          store.setPixelsPhysicalSizeX(sizeX, 0);
+        }
       }
       else if (key.equals("CCD Temperature")) {
         Double temp = new Double(value.substring(0, value.indexOf(" ")));

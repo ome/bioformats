@@ -37,6 +37,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -184,9 +185,15 @@ public class FujiReader extends FormatReader {
     double physicalWidth = Double.parseDouble(lines[3]);
     double physicalHeight = Double.parseDouble(lines[4]);
 
-    store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(physicalWidth), 0);
-    store.setPixelsPhysicalSizeY(
-      FormatTools.getPhysicalSizeY(physicalHeight), 0);
+    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalWidth);
+    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalHeight);
+
+    if (sizeX != null) {
+      store.setPixelsPhysicalSizeX(sizeX, 0);
+    }
+    if (sizeY != null) {
+      store.setPixelsPhysicalSizeY(sizeY, 0);
+    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrument = lines[13];

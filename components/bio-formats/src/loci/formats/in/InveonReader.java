@@ -38,6 +38,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -375,12 +376,19 @@ public class InveonReader extends FormatReader {
 
         store.setImageDescription(description, i);
 
-        store.setPixelsPhysicalSizeX(
-          FormatTools.getPhysicalSizeX(pixelSizeX), i);
-        store.setPixelsPhysicalSizeY(
-          FormatTools.getPhysicalSizeY(pixelSizeY), i);
-        store.setPixelsPhysicalSizeZ(
-          FormatTools.getPhysicalSizeZ(pixelSizeZ), i);
+        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+
+        if (sizeX != null) {
+          store.setPixelsPhysicalSizeX(sizeX, i);
+        }
+        if (sizeY != null) {
+          store.setPixelsPhysicalSizeY(sizeY, i);
+        }
+        if (sizeZ != null) {
+          store.setPixelsPhysicalSizeZ(sizeZ, i);
+        }
       }
     }
 

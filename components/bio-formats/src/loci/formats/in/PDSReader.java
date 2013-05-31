@@ -37,6 +37,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -286,8 +287,15 @@ public class PDSReader extends FormatReader {
     if (!minimumMetadata) {
       store.setPlanePositionX(xPos, 0, 0);
       store.setPlanePositionY(yPos, 0, 0);
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(deltaX), 0);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(deltaY), 0);
+
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(deltaX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(deltaY);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
     }
   }
 

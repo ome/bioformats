@@ -50,6 +50,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
@@ -581,13 +582,17 @@ public class ScanrReader extends FormatReader {
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
 
     int nFields = 0;
-    if (foundPositions)
-        nFields = fieldPositionX.length;
-    else
-        nFields = fieldRows * fieldColumns;
+    if (foundPositions) {
+      nFields = fieldPositionX.length;
+    }
+    else {
+      nFields = fieldRows * fieldColumns;
+    }
 
-    store.setPlateAcquisitionMaximumFieldCount(
-      FormatTools.getMaxFieldCount(nFields), 0, 0);
+    PositiveInteger fieldCount = FormatTools.getMaxFieldCount(nFields);
+    if (fieldCount != null) {
+      store.setPlateAcquisitionMaximumFieldCount(fieldCount, 0, 0);
+    }
 
     for (int i=0; i<getSeriesCount(); i++) {
       int field = i % nFields;
@@ -630,8 +635,15 @@ public class ScanrReader extends FormatReader {
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
         }
-        store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixelSize), i);
-        store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixelSize), i);
+
+        PositiveFloat x = FormatTools.getPhysicalSizeX(pixelSize);
+        PositiveFloat y = FormatTools.getPhysicalSizeY(pixelSize);
+        if (x != null) {
+          store.setPixelsPhysicalSizeX(x, i);
+        }
+        if (y != null) {
+          store.setPixelsPhysicalSizeY(y, i);
+        }
 
         if (fieldPositionX != null && fieldPositionY != null) {
           int field = i % nFields;

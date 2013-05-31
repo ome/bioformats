@@ -42,6 +42,8 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -664,11 +666,20 @@ public class DeltavisionReader extends FormatReader {
       }
 
       Double x = new Double(pixX);
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(x), series);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(x);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, series);
+      }
       Double y = new Double(pixY);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(y), series);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(y);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, series);
+      }
       Double z = new Double(pixZ);
-      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(z), series);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(z);
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, series);
+      }
 
       store.setImageDescription(imageDesc, series);
     }
@@ -714,10 +725,18 @@ public class DeltavisionReader extends FormatReader {
 
       for (int w=0; w<getSizeC(); w++) {
         DVExtHdrFields hdrC = extHdrFields[0][w][series];
-        store.setChannelEmissionWavelength(
-          FormatTools.getEmissionWavelength((int) waves[w]), series, w);
-        store.setChannelExcitationWavelength(
-          FormatTools.getExcitationWavelength((int) hdrC.exWavelen), series, w);
+
+        PositiveInteger emission =
+          FormatTools.getEmissionWavelength((int) waves[w]);
+        PositiveInteger excitation =
+          FormatTools.getExcitationWavelength((int) hdrC.exWavelen);
+
+        if (emission != null) {
+          store.setChannelEmissionWavelength(emission, series, w);
+        }
+        if (excitation != null) {
+          store.setChannelExcitationWavelength(excitation, series, w);
+        }
         if (ndFilters[w] == null) ndFilters[w] = new Double(hdrC.ndFilter);
         store.setChannelNDFilter(ndFilters[w], series, w);
       }
@@ -997,21 +1016,27 @@ public class DeltavisionReader extends FormatReader {
                 pixelSizes[q].trim());
             }
             if (q == 0) {
-              for (int series=0; series<getSeriesCount(); series++) {
-                store.setPixelsPhysicalSizeX(
-                  FormatTools.getPhysicalSizeX(size), series);
+              PositiveFloat sizeX = FormatTools.getPhysicalSizeX(size);
+              if (sizeX != null) {
+                for (int series=0; series<getSeriesCount(); series++) {
+                  store.setPixelsPhysicalSizeX(sizeX, series);
+                }
               }
             }
             if (q == 1) {
-              for (int series=0; series<getSeriesCount(); series++) {
-                store.setPixelsPhysicalSizeY(
-                  FormatTools.getPhysicalSizeY(size), series);
+              PositiveFloat sizeY = FormatTools.getPhysicalSizeY(size);
+              if (sizeY != null) {
+                for (int series=0; series<getSeriesCount(); series++) {
+                  store.setPixelsPhysicalSizeY(sizeY, series);
+                }
               }
             }
             if (q == 2) {
-              for (int series=0; series<getSeriesCount(); series++) {
-                store.setPixelsPhysicalSizeZ(
-                  FormatTools.getPhysicalSizeZ(size), series);
+              PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(size);
+              if (sizeZ != null) {
+                for (int series=0; series<getSeriesCount(); series++) {
+                  store.setPixelsPhysicalSizeZ(sizeZ, series);
+                }
               }
             }
           }

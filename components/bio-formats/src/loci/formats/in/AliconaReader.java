@@ -35,6 +35,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * AliconaReader is the file format reader for Alicona AL3D files.
  *
@@ -268,10 +270,15 @@ public class AliconaReader extends FormatReader {
         double pixelSizeX = Double.parseDouble(pntX) * 1000000;
         double pixelSizeY = Double.parseDouble(pntY) * 1000000;
 
-        store.setPixelsPhysicalSizeX(
-          FormatTools.getPhysicalSizeX(pixelSizeX), 0);
-        store.setPixelsPhysicalSizeY(
-          FormatTools.getPhysicalSizeY(pixelSizeY), 0);
+        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+
+        if (sizeX != null) {
+          store.setPixelsPhysicalSizeX(sizeX, 0);
+        }
+        if (sizeY != null) {
+          store.setPixelsPhysicalSizeY(sizeY, 0);
+        }
       }
     }
   }

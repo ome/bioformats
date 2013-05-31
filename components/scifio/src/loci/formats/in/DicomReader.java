@@ -58,6 +58,7 @@ import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -719,19 +720,27 @@ public class DicomReader extends FormatReader {
     }
 
     if (level != MetadataLevel.MINIMUM) {
-        for (int i=0; i<core.size(); i++) {
+      for (int i=0; i<core.size(); i++) {
         store.setImageDescription(imageType, i);
 
         if (pixelSizeX != null) {
           Double sizeX = new Double(pixelSizeX);
-          store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(sizeX), i);
+          PositiveFloat x = FormatTools.getPhysicalSizeX(sizeX);
+          if (x != null) {
+            store.setPixelsPhysicalSizeX(x, i);
+          }
         }
         if (pixelSizeY != null) {
           Double sizeY = new Double(pixelSizeY);
-          store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(sizeY), i);
+          PositiveFloat y = FormatTools.getPhysicalSizeY(sizeY);
+          if (y != null) {
+            store.setPixelsPhysicalSizeY(y, i);
+          }
         }
-        store.setPixelsPhysicalSizeZ(
-          FormatTools.getPhysicalSizeZ(pixelSizeZ), i);
+        PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+        if (z != null) {
+          store.setPixelsPhysicalSizeZ(z, i);
+        }
       }
     }
   }

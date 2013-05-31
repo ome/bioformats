@@ -426,8 +426,13 @@ public class CellWorxReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      FormatTools.getMaxFieldCount(fieldMap.length * fieldMap[0].length), 0, 0);
+
+    PositiveInteger fieldCount =
+      FormatTools.getMaxFieldCount(fieldMap.length * fieldMap[0].length);
+
+    if (fieldCount != null) {
+      store.setPlateAcquisitionMaximumFieldCount(fieldCount, 0, 0);
+    }
 
     int nextImage = 0;
     for (int row=0; row<wellFiles.length; row++) {

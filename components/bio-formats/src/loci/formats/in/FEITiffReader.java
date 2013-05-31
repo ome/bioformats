@@ -44,6 +44,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
@@ -276,8 +277,16 @@ public class FEITiffReader extends BaseTiffReader {
       store.setStageLabelY(stageY, 0);
       store.setStageLabelZ(stageZ, 0);
       store.setStageLabelName("", 0);
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(sizeX), 0);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(sizeY), 0);
+
+      PositiveFloat physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
+      PositiveFloat physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
+
+      if (physicalSizeX != null) {
+        store.setPixelsPhysicalSizeX(physicalSizeX, 0);
+      }
+      if (physicalSizeY != null) {
+        store.setPixelsPhysicalSizeY(physicalSizeY, 0);
+      }
       store.setPixelsTimeIncrement(timeIncrement, 0);
     }
   }

@@ -60,7 +60,9 @@ import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -605,8 +607,10 @@ public class LIFReader extends FormatReader {
           store.setLaserType(LaserType.OTHER, i, laser);
           store.setLaserLaserMedium(LaserMedium.OTHER, i, laser);
           Integer wavelength = (Integer) lasers.get(laser);
-          store.setLaserWavelength(
-            FormatTools.getWavelength(wavelength), i, laser);
+          PositiveInteger wave = FormatTools.getWavelength(wavelength);
+          if (wave != null) {
+            store.setLaserWavelength(wave, i, laser);
+          }
         }
 
         Vector<Integer> validIntensities = new Vector<Integer>();
@@ -656,9 +660,12 @@ public class LIFReader extends FormatReader {
               store.setChannelLightSourceSettingsID(id, i, nextChannel);
               store.setChannelLightSourceSettingsAttenuation(
                 new PercentFraction((float) intensity / 100f), i, nextChannel);
-              store.setChannelExcitationWavelength(
-                FormatTools.getExcitationWavelength(wavelength),
-                i, nextChannel);
+
+              PositiveInteger ex =
+                FormatTools.getExcitationWavelength(wavelength);
+              if (ex != null) {
+                store.setChannelExcitationWavelength(ex, i, nextChannel);
+              }
 
               if (wavelength > 0) {
                 if (cutIns[index] == null || nextFilter >= cutIns[index].size())
@@ -701,12 +708,21 @@ public class LIFReader extends FormatReader {
       }
       store.setImageName(imageNames[index].trim(), i);
 
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX(physicalSizeXs.get(index)), i);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY(physicalSizeYs.get(index)), i);
-      store.setPixelsPhysicalSizeZ(
-        FormatTools.getPhysicalSizeZ(zSteps[index]), i);
+      PositiveFloat sizeX =
+        FormatTools.getPhysicalSizeX(physicalSizeXs.get(index));
+      PositiveFloat sizeY =
+        FormatTools.getPhysicalSizeY(physicalSizeYs.get(index));
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(zSteps[index]);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, i);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, i);
+      }
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, i);
+      }
       store.setPixelsTimeIncrement(tSteps[index], i);
 
       Vector detectors = detectorModels[index];
@@ -795,8 +811,11 @@ public class LIFReader extends FormatReader {
         store.setChannelPinholeSize(pinholes[index], i, c);
         if (exWaves[index] != null) {
           if (exWaves[index][c] != null && exWaves[index][c] > 1) {
-            store.setChannelExcitationWavelength(
-              FormatTools.getExcitationWavelength(exWaves[index][c]), i, c);
+            PositiveInteger ex =
+              FormatTools.getExcitationWavelength(exWaves[index][c]);
+            if (ex != null) {
+              store.setChannelExcitationWavelength(ex, i, c);
+            }
           }
         }
 
@@ -1117,14 +1136,21 @@ public class LIFReader extends FormatReader {
               if (cutIns[image] == null) {
                 cutIns[image] = new Vector<PositiveInteger>();
               }
-              cutIns[image].add(FormatTools.getCutIn((int) Math.round(cutIn)));
+              PositiveInteger in =
+                FormatTools.getCutIn((int) Math.round(cutIn));
+              if (in != null) {
+                cutIns[image].add(in);
+              }
             }
             if ((int) cutOut > 0) {
               if (cutOuts[image] == null) {
                 cutOuts[image] = new Vector<PositiveInteger>();
               }
-              cutOuts[image].add(
-                FormatTools.getCutOut((int) Math.round(cutOut)));
+              PositiveInteger out =
+                FormatTools.getCutOut((int) Math.round(cutOut));
+              if (out != null) {
+                cutOuts[image].add(out);
+              }
             }
           }
           else {
@@ -1488,12 +1514,18 @@ public class LIFReader extends FormatReader {
         if (description.endsWith("(left)")) {
           filterModels[image].add(object);
           if (v != null && v > 0) {
-            cutIns[image].add(FormatTools.getCutIn(v));
+            PositiveInteger in = FormatTools.getCutIn(v);
+            if (in != null) {
+              cutIns[image].add(in);
+            }
           }
         }
         else if (description.endsWith("(right)")) {
           if (v != null && v > 0) {
-            cutOuts[image].add(FormatTools.getCutOut(v));
+            PositiveInteger out = FormatTools.getCutOut(v);
+            if (out != null) {
+              cutOuts[image].add(out);
+            }
           }
         }
       }
@@ -1890,7 +1922,10 @@ public class LIFReader extends FormatReader {
       if (fontSize != null) {
         try {
           int size = (int) Double.parseDouble(fontSize);
-          store.setLabelFontSize(FormatTools.getFontSize(size), roi, 0);
+          NonNegativeInteger fontSize = FormatTools.getFontSize(size);
+          if (fontSize != null) {
+            store.setLabelFontSize(fontSize, roi, 0);
+          }
         }
         catch (NumberFormatException e) { }
       }

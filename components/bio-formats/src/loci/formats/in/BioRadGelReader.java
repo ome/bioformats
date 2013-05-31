@@ -35,6 +35,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -231,10 +232,17 @@ public class BioRadGelReader extends FormatReader {
       store.setImageAcquisitionDate(new Timestamp(date), 0);
     }
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX(physicalWidth / getSizeX()), 0);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY(physicalHeight / getSizeY()), 0);
+      PositiveFloat sizeX =
+        FormatTools.getPhysicalSizeX(physicalWidth / getSizeX());
+      PositiveFloat sizeY =
+        FormatTools.getPhysicalSizeY(physicalHeight / getSizeY());
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
     }
   }
 

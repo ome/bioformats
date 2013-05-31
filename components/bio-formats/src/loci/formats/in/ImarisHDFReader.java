@@ -44,6 +44,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
 import loci.formats.services.NetCDFServiceImpl;
 import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * Reader for Bitplane Imaris 5.5 (HDF) files.
@@ -338,9 +339,19 @@ public class ImarisHDFReader extends FormatReader {
       if (py == 1) py = (maxY - minY) / getSizeY();
       if (pz == 1) pz = (maxZ - minZ) / getSizeZ();
 
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(px), s);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(py), s);
-      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(pz), s);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(px);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(py);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pz);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, s);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, s);
+      }
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, s);
+      }
 
       for (int i=0; i<getSizeC(); i++, cIndex++) {
         Float gainValue = null;

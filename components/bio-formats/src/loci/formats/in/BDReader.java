@@ -55,6 +55,7 @@ import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * BDReader is the file format reader for BD Pathway datasets.
@@ -359,8 +360,12 @@ public class BDReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      FormatTools.getMaxFieldCount(fieldRows * fieldCols), 0, 0);
+
+    PositiveInteger fieldCount =
+      FormatTools.getMaxFieldCount(fieldRows * fieldCols);
+    if (fieldCount != null) {
+      store.setPlateAcquisitionMaximumFieldCount(fieldCount, 0, 0);
+    }
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellCols; col++) {
@@ -435,10 +440,18 @@ public class BDReader extends FormatReader {
 
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
-          store.setChannelEmissionWavelength(
-            FormatTools.getEmissionWavelength(emWave[c]), i, c);
-          store.setChannelExcitationWavelength(
-            FormatTools.getExcitationWavelength(exWave[c]), i, c);
+
+          PositiveInteger emission =
+            FormatTools.getEmissionWavelength(emWave[c]);
+          PositiveInteger excitation =
+            FormatTools.getExcitationWavelength(exWave[c]);
+
+          if (emission != null) {
+            store.setChannelEmissionWavelength(emission, i, c);
+          }
+          if (excitation != null) {
+            store.setChannelExcitationWavelength(excitation, i, c);
+          }
 
           String detectorID = MetadataTools.createLSID("Detector", 0, c);
           store.setDetectorID(detectorID, 0, c);

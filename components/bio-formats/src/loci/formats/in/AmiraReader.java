@@ -44,6 +44,8 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tools.AmiraParameters;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * This is a file format reader for AmiraMesh data.
  *
@@ -193,9 +195,19 @@ public class AmiraReader extends FormatReader {
       addGlobalMeta("Pixels per meter (Y)", 1e6 / pixelHeight);
       addGlobalMeta("Pixels per meter (Z)", 1e6 / pixelDepth);
 
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixelWidth), 0);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixelHeight), 0);
-      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(pixelDepth), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelWidth);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelHeight);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelDepth);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, 0);
+      }
     }
 
     if (parameters.ascii) {

@@ -45,6 +45,7 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
@@ -477,8 +478,11 @@ public class InCellReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      FormatTools.getMaxFieldCount(fieldCount), 0, 0);
+
+    PositiveInteger maxFieldCount = FormatTools.getMaxFieldCount(fieldCount);
+    if (maxFieldCount != null) {
+      store.setPlateAcquisitionMaximumFieldCount(maxFieldCount, 0, 0);
+    }
 
     // populate Image data
 
@@ -597,13 +601,18 @@ public class InCellReader extends FormatReader {
           }
           if (q < emWaves.size()) {
             int wave = emWaves.get(q).intValue();
-            store.setChannelEmissionWavelength(
-              FormatTools.getEmissionWavelength(wave), i, q);
+            PositiveInteger emission = FormatTools.getEmissionWavelength(wave);
+            if (emission != null) {
+              store.setChannelEmissionWavelength(emission, i, q);
+            }
           }
           if (q < exWaves.size()) {
             int wave = exWaves.get(q).intValue();
-            store.setChannelExcitationWavelength(
-              FormatTools.getExcitationWavelength(wave), i, q);
+            PositiveInteger excitation =
+              FormatTools.getExcitationWavelength(wave);
+            if (excitation != null) {
+              store.setChannelExcitationWavelength(excitation, i, q);
+            }
           }
 
           if (detectorID != null) {

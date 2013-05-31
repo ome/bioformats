@@ -35,6 +35,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * ImarisReader is the file format reader for Bitplane Imaris files.
  * Specifications available at
@@ -212,12 +214,19 @@ public class ImarisReader extends FormatReader {
 
       // populate Dimensions data
 
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX(new Double(dx)), 0);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY(new Double(dy)), 0);
-      store.setPixelsPhysicalSizeZ(
-        FormatTools.getPhysicalSizeZ(new Double(dz)), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(new Double(dx));
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(new Double(dy));
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(new Double(dz));
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, 0);
+      }
       store.setPixelsTimeIncrement(1.0, 0);
 
       // populate LogicalChannel data

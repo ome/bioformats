@@ -53,6 +53,8 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import org.slf4j.Logger;
@@ -698,12 +700,19 @@ public class LeicaReader extends FormatReader {
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
 
-      store.setPixelsPhysicalSizeX(
-        FormatTools.getPhysicalSizeX(physicalSizes[i][0]), i);
-      store.setPixelsPhysicalSizeY(
-        FormatTools.getPhysicalSizeY(physicalSizes[i][1]), i);
-      store.setPixelsPhysicalSizeZ(
-        FormatTools.getPhysicalSizeZ(physicalSizes[i][2]), i);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizes[i][0]);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizes[i][1]);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizes[i][2]);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, i);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, i);
+      }
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, i);
+      }
       if ((int) physicalSizes[i][4] > 0) {
         store.setPixelsTimeIncrement(physicalSizes[i][4], i);
       }
@@ -1403,14 +1412,18 @@ public class LeicaReader extends FormatReader {
             }
 
             if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
-              store.setTransmittanceRangeCutIn(
-                FormatTools.getCutIn(wavelength), series, channel);
+              PositiveInteger cutIn = FormatTools.getCutIn(wavelength);
+              if (cutIn != null) {
+                store.setTransmittanceRangeCutIn(cutIn, series, channel);
+              }
               cutInPopulated[series][index] = true;
             }
             else if (tokens[3].equals("1") && !cutOutPopulated[series][index])
             {
-              store.setTransmittanceRangeCutOut(
-                FormatTools.getCutOut(wavelength), series, channel);
+              PositiveInteger cutOut = FormatTools.getCutOut(wavelength);
+              if (cutOut != null) {
+                store.setTransmittanceRangeCutOut(cutOut, series, channel);
+              }
               cutOutPopulated[series][index] = true;
             }
           }
@@ -1541,13 +1554,17 @@ public class LeicaReader extends FormatReader {
         }
         if (channel < emWaves[i].size()) {
           Integer wave = new Integer(emWaves[i].get(channel).toString());
-          store.setChannelEmissionWavelength(
-            FormatTools.getEmissionWavelength(wave), i, channel);
+          PositiveInteger emission = FormatTools.getEmissionWavelength(wave);
+          if (emission != null) {
+            store.setChannelEmissionWavelength(emission, i, channel);
+          }
         }
         if (channel < exWaves[i].size()) {
           Integer wave = new Integer(exWaves[i].get(channel).toString());
-          store.setChannelExcitationWavelength(
-            FormatTools.getExcitationWavelength(wave), i, channel);
+          PositiveInteger ex = FormatTools.getExcitationWavelength(wave);
+          if (ex != null) {
+            store.setChannelExcitationWavelength(ex, i, channel);
+          }
         }
         if (i < pinhole.length) {
           store.setChannelPinholeSize(new Double(pinhole[i]), i, channel);

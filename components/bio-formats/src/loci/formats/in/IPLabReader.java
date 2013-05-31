@@ -36,6 +36,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * IPLabReader is the file format reader for IPLab (.IPL) files.
  *
@@ -194,8 +196,14 @@ public class IPLabReader extends FormatReader {
       in.skipBytes(dataSize);
       parseTags(store);
 
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixelSize), 0);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixelSize), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSize);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSize);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
       if (timeIncrement != null) {
         store.setPixelsTimeIncrement(timeIncrement, 0);
       }

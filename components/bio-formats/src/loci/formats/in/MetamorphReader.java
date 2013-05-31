@@ -54,6 +54,8 @@ import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -721,12 +723,21 @@ public class MetamorphReader extends BaseTiffReader {
       if (sizeX == null) sizeX = handler.getPixelSizeX();
       if (sizeY == null) sizeY = handler.getPixelSizeY();
 
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(sizeX), i);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(sizeY), i);
+      PositiveFloat physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
+      PositiveFloat physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
+      if (physicalSizeX != null) {
+        store.setPixelsPhysicalSizeX(physicalSizeX, i);
+      }
+      if (physicalSizeY != null) {
+        store.setPixelsPhysicalSizeY(physicalSizeY, i);
+      }
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
-      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(stepSize), i);
+      PositiveFloat physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
+      if (physicalSizeZ != null) {
+        store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
+      }
 
       int waveIndex = 0;
       for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -765,8 +776,11 @@ public class MetamorphReader extends BaseTiffReader {
         store.setDetectorSettingsID(detectorID, i, c);
 
         if (wave != null && waveIndex < wave.length) {
-          store.setChannelLightSourceSettingsWavelength(
-            FormatTools.getWavelength((int) wave[waveIndex]), i, c);
+          PositiveInteger wavelength =
+            FormatTools.getWavelength((int) wave[waveIndex]);
+          if (wavelength != null) {
+            store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+          }
 
           if ((int) wave[waveIndex] >= 1) {
             // link LightSource to Image

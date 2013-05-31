@@ -39,6 +39,8 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * ImprovisionTiffReader is the file format reader for
  * Improvision TIFF files.
@@ -328,9 +330,19 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(pixelSizeX), 0);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(pixelSizeY), 0);
-      store.setPixelsPhysicalSizeZ(FormatTools.getPhysicalSizeZ(pixelSizeZ), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, 0);
+      }
       store.setPixelsTimeIncrement(pixelSizeT / 1000000.0, 0);
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (cNames != null && i < cNames.length) {

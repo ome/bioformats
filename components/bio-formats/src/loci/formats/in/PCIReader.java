@@ -45,6 +45,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -376,8 +377,15 @@ public class PCIReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(FormatTools.getPhysicalSizeX(scaleFactor), 0);
-      store.setPixelsPhysicalSizeY(FormatTools.getPhysicalSizeY(scaleFactor), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(scaleFactor);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(scaleFactor);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
+      }
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
+      }
 
       for (int i=0; i<timestamps.size(); i++) {
         Double timestamp = new Double(timestamps.get(i).doubleValue());

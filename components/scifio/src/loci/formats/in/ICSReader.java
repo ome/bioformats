@@ -56,6 +56,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -1485,20 +1487,26 @@ public class ICSReader extends FormatReader {
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              store.setPixelsPhysicalSizeX(
-                FormatTools.getPhysicalSizeX(pixelSize), 0);
+              PositiveFloat x = FormatTools.getPhysicalSizeX(pixelSize);
+              if (x != null) {
+                store.setPixelsPhysicalSizeX(x, 0);
+              }
             }
           }
           else if (axis.equals("y")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              store.setPixelsPhysicalSizeY(
-                FormatTools.getPhysicalSizeY(pixelSize), 0);
+              PositiveFloat y = FormatTools.getPhysicalSizeY(pixelSize);
+              if (y != null) {
+                store.setPixelsPhysicalSizeY(y, 0);
+              }
             }
           }
           else if (axis.equals("z")) {
             if (checkUnit(unit, "um", "microns", "micrometers")) {
-              store.setPixelsPhysicalSizeZ(
-                FormatTools.getPhysicalSizeZ(pixelSize), 0);
+              PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSize);
+              if (z != null) {
+                store.setPixelsPhysicalSizeZ(z, 0);
+              }
             }
           }
           else if (axis.equals("t")) {
@@ -1513,13 +1521,17 @@ public class ICSReader extends FormatReader {
       }
       else if (sizes != null) {
         if (sizes.length > 0) {
-          store.setPixelsPhysicalSizeX(
-            FormatTools.getPhysicalSizeX(sizes[0]), 0);
+          PositiveFloat x = FormatTools.getPhysicalSizeX(sizes[0]);
+          if (x != null) {
+            store.setPixelsPhysicalSizeX(x, 0);
+          }
         }
         if (sizes.length > 1) {
           sizes[1] /= getSizeY();
-          store.setPixelsPhysicalSizeY(
-            FormatTools.getPhysicalSizeY(sizes[1]), 0);
+          PositiveFloat y = FormatTools.getPhysicalSizeY(sizes[1]);
+          if (y != null) {
+            store.setPixelsPhysicalSizeY(y, 0);
+          }
         }
       }
 
@@ -1551,12 +1563,16 @@ public class ICSReader extends FormatReader {
           store.setChannelPinholeSize(pinholes.get(i), 0, i);
         }
         if (emWaves != null && i < emWaves.length) {
-          store.setChannelEmissionWavelength(
-            FormatTools.getEmissionWavelength(emWaves[i]), 0, i);
+          PositiveInteger em = FormatTools.getEmissionWavelength(emWaves[i]);
+          if (em != null) {
+            store.setChannelEmissionWavelength(em, 0, i);
+          }
         }
         if (exWaves != null && i < exWaves.length) {
-          store.setChannelExcitationWavelength(
-            FormatTools.getExcitationWavelength(exWaves[i]), 0, i);
+          PositiveInteger ex = FormatTools.getExcitationWavelength(exWaves[i]);
+          if (ex != null) {
+            store.setChannelExcitationWavelength(ex, 0, i);
+          }
         }
       }
 
@@ -1566,8 +1582,12 @@ public class ICSReader extends FormatReader {
       Arrays.sort(lasers);
       for (int i=0; i<lasers.length; i++) {
         store.setLaserID(MetadataTools.createLSID("LightSource", 0, i), 0, i);
-        store.setLaserWavelength(
-          FormatTools.getWavelength(wavelengths.get(lasers[i])), 0, i);
+
+        PositiveInteger wave =
+          FormatTools.getWavelength(wavelengths.get(lasers[i]));
+        if (wave != null) {
+          store.setLaserWavelength(wave, 0, i);
+        }
         store.setLaserType(getLaserType("Other"), 0, i);
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
 
