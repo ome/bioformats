@@ -25,13 +25,13 @@ overhead from copying arrays.
 Installation
 ------------
 
-To use the script, download |bfopen| and :bf_plone:`loci_tools.jar <downloads>` and place them in your MATLAB work directory.
+To use the script, download |bfopen| and :downloads:`loci_tools.jar <>` and place them in your MATLAB work directory.
 
 Upgrading
 ---------
 
 To use a newer version of Bio-Formats, overwrite **loci_tools.jar**
-with the :bf_plone:`newer version <downloads>` and restart MATLAB.
+with the :downloads:`newer version <>` and restart MATLAB.
 
 More information
 ----------------
