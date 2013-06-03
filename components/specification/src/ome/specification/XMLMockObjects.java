@@ -45,6 +45,7 @@ import ome.xml.model.DetectorSettings;
 import ome.xml.model.Dichroic;
 import ome.xml.model.Ellipse;
 import ome.xml.model.Experiment;
+import ome.xml.model.Experimenter;
 import ome.xml.model.Filament;
 import ome.xml.model.FileAnnotation;
 import ome.xml.model.Filter;
@@ -214,11 +215,14 @@ public class XMLMockObjects
 		Arc.class.getName(), Filament.class.getName(),
 		LightEmittingDiode.class.getName(), Laser.class.getName()};
 
-	/** The shapes to handle. */
+	/**
+   * The shapes to handle.
+   * Do not use Masks, as BinData is not appropriately supported.
+   **/
 	public static final String[] SHAPES = {Line.class.getName(),
 		Point.class.getName(), Rectangle.class.getName(),
 		Ellipse.class.getName(), Polyline.class.getName(),
-		Mask.class.getName()};
+		/*Mask.class.getName()*/};
 
 	/** The supported types of annotations. */
 	public static final String[] ANNOTATIONS = {
@@ -546,9 +550,34 @@ public class XMLMockObjects
 		MicrobeamManipulation mm = new MicrobeamManipulation();
 		mm.setID("MicrobeamManipulation:"+index);
 		mm.setType(MICROBEAM_MANIPULATION_TYPE);
+    mm.setDescription("Manipulation #" + index);
+
+    ROI roi = createROI(index, 0, 0, 0);
+    ome.addROI(roi);
+    mm.linkROI(roi);
+
+    Experimenter experimenter = createExperimenter(index);
+    ome.addExperimenter(experimenter);
+    mm.linkExperimenter(experimenter);
+
+    lss.setMicrobeamManipulation(mm);
 		mm.addLightSourceSettings(lss);
 		return mm;
 	}
+
+  /**
+   * Creates an experimenter.
+   *
+   * @param index The index of the Experimenter.
+   * @return See above.
+   */
+  public Experimenter createExperimenter(int index)
+  {
+    Experimenter experimenter = new Experimenter();
+    experimenter.setID("Experimenter:" + index);
+
+    return experimenter;
+  }
 
     /**
      * Creates an experiment.
@@ -577,7 +606,7 @@ public class XMLMockObjects
         exp.setDescription("Experiment");
         exp.setType(ExperimentType.PHOTOBLEACHING);
         exp.setID("Experiment:"+index);
-        MicrobeamManipulation mm = createMicrobeamManipulation(0);
+        MicrobeamManipulation mm = createMicrobeamManipulation(index);
         exp.addMicrobeamManipulation(mm);
         return exp;
     }
@@ -717,7 +746,9 @@ public class XMLMockObjects
 		Union union = new Union();
 		for (int i = 0; i < n; i++) {
 			j += i;
-			union.addShape(createShape(j, SHAPES[i], z, c, t));
+      Shape shape = createShape(j, SHAPES[i], z, c, t);
+      shape.setID("Shape:" + index + ":" + j);
+      union.addShape(shape);
 		}
 		roi.setUnion(union);
 		return roi;
@@ -826,9 +857,9 @@ public class XMLMockObjects
 			int index, int rows, int columns, int fields,
 			int numberOfPlateAcquisition)
 	{
-	    // ticket:3102
-	    Experiment exp = createExperimentWithMicrobeam(0);
-	    ome.addExperiment(exp);
+	  // ticket:3102
+	  Experiment exp = createExperimentWithMicrobeam(index);
+	  ome.addExperiment(exp);
 
 		if (numberOfPlateAcquisition < 0)
 			numberOfPlateAcquisition = 0;
@@ -997,6 +1028,7 @@ public class XMLMockObjects
 		DetectorSettings ds = createDetectorSettings(0);
 		for (int i = 0; i < SIZE_C; i++) {
 			channel = createChannel(i);
+      channel.setID("Channel:" + index + ":" + i);
 			if (metadata) {
 				if (j == n) j = 0;
 				channel.setLightSourceSettings(createLightSourceSettings(j));
