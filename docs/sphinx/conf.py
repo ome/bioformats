@@ -143,7 +143,7 @@ trac_root = 'http://trac.openmicroscopy.org.uk/ome'
 oo_root = 'http://www.openmicroscopy.org'
 oo_site_root = oo_root + '/site'
 lists_root = 'http://lists.openmicroscopy.org.uk'
-downloads_root = 'http://downloads.openmicroscopy.org.uk'
+downloads_root = 'http://downloads.openmicroscopy.org'
 if "OMERODOC_URI" in os.environ:
     omerodoc_uri = os.environ.get('OMERODOC_URI')
 else:
