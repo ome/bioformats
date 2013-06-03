@@ -3,8 +3,9 @@
   <configurations>
     <conf name="build"/>
     <conf name="runtime"/>
+    <conf name="test"/>
   </configurations>
-  <publications>
+  <publications defaultconf="build,runtime">
     <artifact name="bio-formats"/>
     <artifact name="jai_imageio"/>
     <artifact name="loci-common"/>
@@ -14,6 +15,7 @@
     <artifact name="ome-xml"/>
     <artifact name="poi-loci"/>
     <artifact name="scifio"/>
+    <artifact name="scifio-test" conf="test"/>
     <artifact name="specification"/>
     <artifact name="turbojpeg"/>
   </publications>

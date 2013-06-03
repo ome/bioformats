@@ -56,6 +56,11 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>specification</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>turbojpeg</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -120,7 +125,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.12.1</version>
+      <version>6.8</version>
       <scope>test</scope>
     </dependency>
 

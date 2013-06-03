@@ -31,7 +31,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test" depends="jar,compile-tests,test-no-ome-xml,
-    test-no-lurawave, test-no-jai"
+    test-no-lurawave, test-no-jai, test-spec"
     description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
@@ -98,4 +98,29 @@ Type "ant -p" for a list of targets.
     </testng>
     <fail if="failedTest"/>
   </target>
+  
+    <target name="test-spec" depends="jar,compile-tests"
+    description="run specification tests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/spec/testng.xml"/>
+    <testng haltonfailure="true" testname="${component.name}">
+      <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.runtime-cp}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+    </testng>
+  </target>
+
+  <target name="jar-scifio-tests" depends="compile, compile-tests, copy-test-source"
+    description="generate jar of scifio spec test classes" if="doTests">
+    <echo>About to compile tests</echo>
+    <mkdir dir="${artifact.dir}"/>
+    <jar jarfile="${artifact.dir}/${test-component.jar}" basedir="${test-classes.dir}"/>
+    <echo>After test to build *-test.jar</echo>
+  </target>
+
+
 </project>

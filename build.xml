@@ -305,6 +305,7 @@ Apache XML-RPC
   <target name="dist" description="OME hook: build and publish Bio-Formats dist">
     <ant target="tools"/>
     <ant target="tools-ome"/>
+    <ant target="jar-scifio-tests"/>
     <ant antfile="ome.xml" inheritRefs="false" inheritAll="false"/>
   </target>
 
@@ -313,6 +314,7 @@ Apache XML-RPC
   </target>
 
   <target name="test-compile" depends="compile-tests" description="OME hook: compile all tests"/>
+
   <target name="integration" description="No-op"/>
 
 </project>
