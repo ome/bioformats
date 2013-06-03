@@ -756,7 +756,10 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
-    getReader(id).setId(id);
+    IFormatReader currentReader = getReader(id);
+    LOGGER.info("{} initializing {}",
+      currentReader.getClass().getSimpleName(), id);
+    currentReader.setId(id);
   }
 
   /* @see IFormatHandler#close() */
