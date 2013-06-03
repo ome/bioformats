@@ -71,7 +71,7 @@ public class Schema2011_06_TO_2012_06_Test {
             Schema2011_06_TO_2012_06_Test.class);
 
     private static final String RESOURCE =
-            "/test/spec/schema/samples/2011-06/6x4y1z1t1c8b-swatch.ome";
+            "/spec/schema/samples/2011-06/6x4y1z1t1c8b-swatch.ome";
 
     private static final String IMAGE_NAME = "6x6x1x8-swatch.tif";
     private static final String IMAGE_DATE = "2010-02-23T12:51:30";

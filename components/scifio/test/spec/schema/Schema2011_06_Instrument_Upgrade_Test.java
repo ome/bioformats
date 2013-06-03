@@ -121,7 +121,6 @@ public class Schema2011_06_Instrument_Upgrade_Test {
     @BeforeClass
     public void setUp() throws Exception {
         InputStream source = this.getClass().getResourceAsStream(ref.FILE_LOCATION);
-        System.err.println(source);
         ServiceFactory sf = new ServiceFactory();
         OMEXMLService service = sf.getInstance(OMEXMLService.class);
         String xml = XMLTools.transformXML(
