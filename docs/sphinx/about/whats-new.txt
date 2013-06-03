@@ -1,6 +1,26 @@
 Version history
 ===============
 
+4.4.8 (2013 May 2)
+------------------
+
+* No changes - release to keep version numbers in sync with OMERO
+
+4.4.7 (2013 April 25)
+---------------------
+
+* Many bug fixes to improve support for more than 20 formats
+* Improved export to multi-file datasets
+* Now uses slf4j for logging rather than using log4j directly, enabling other 
+  logging implementations to be used, for example when Bio-Formats is used as 
+  a component in other software using a different logging system.
+
+4.4.6 (2013 February 11)
+------------------------
+
+* Many bug fixes
+* Further documentation improvements
+
 4.4.5 (2012 November 13)
 ------------------------
 
