@@ -113,6 +113,7 @@ public class ZeissCZIReader extends FormatReader {
   private int acquisitions = 1;
   private int mosaics = 1;
   private int phases = 1;
+  private int angles = 1;
 
   private String acquiredDate;
   private String userDisplayName, userName;
@@ -350,6 +351,7 @@ public class ZeissCZIReader extends FormatReader {
       acquisitions = 1;
       mosaics = 1;
       phases = 1;
+      angles = 1;
       store = null;
 
       acquiredDate = null;
@@ -471,7 +473,7 @@ public class ZeissCZIReader extends FormatReader {
     // finish populating the core metadata
 
     int seriesCount = rotations * positions * illuminations * acquisitions *
-      mosaics * phases;
+      mosaics * phases * angles;
 
     ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
 
@@ -750,6 +752,13 @@ public class ZeissCZIReader extends FormatReader {
               phases = dimension.start + 1;
             }
             break;
+          case 'V':
+            if (dimension.start >= angles) {
+              angles = dimension.start + 1;
+            }
+            break;
+          default:
+            LOGGER.warn("Unknown dimension '{}'", dimension.dimension);
         }
       }
     }
