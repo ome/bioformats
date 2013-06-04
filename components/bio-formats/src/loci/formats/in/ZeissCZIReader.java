@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Stack;
 import javax.xml.parsers.DocumentBuilder;
@@ -102,6 +103,9 @@ public class ZeissCZIReader extends FormatReader {
 
   private MetadataStore store;
 
+  private HashMap<Integer, String> pixels;
+
+  private ArrayList<Segment> segments;
   private ArrayList<SubBlock> planes;
   private int rotations = 1;
   private int positions = 1;
@@ -158,6 +162,27 @@ public class ZeissCZIReader extends FormatReader {
     if (!FormatTools.validStream(stream, blockLen, true)) return false;
     String check = stream.readString(blockLen);
     return check.equals(CZI_MAGIC_STRING);
+  }
+
+  /**
+   * @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean)
+   */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (pixels.size() == 0 && noPixels) {
+      return null;
+    }
+    else if (noPixels) {
+      return new String[] {currentId};
+    }
+    String[] files = new String[pixels.size() + 1];
+    files[0] = currentId;
+    Integer[] keys = pixels.keySet().toArray(new Integer[pixels.size()]);
+    Arrays.sort(keys);
+    for (int i=0; i<keys.length; i++) {
+      files[i + 1] = pixels.get(keys[i]);
+    }
+    return files;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -316,6 +341,8 @@ public class ZeissCZIReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      pixels = null;
+      segments = null;
       planes = null;
       rotations = 1;
       positions = 1;
@@ -365,22 +392,46 @@ public class ZeissCZIReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessInputStream(id);
     CoreMetadata ms0 = core.get(0);
 
     ms0.littleEndian = true;
-    in.order(isLittleEndian());
 
-    ArrayList<Segment> segments = new ArrayList<Segment>();
+    pixels = new HashMap<Integer, String>();
+    segments = new ArrayList<Segment>();
     planes = new ArrayList<SubBlock>();
 
-    while (in.getFilePointer() < in.length()) {
-      Segment segment = readSegment();
-      segments.add(segment);
+    readSegments(id);
 
-      if (segment instanceof SubBlock) {
-        planes.add((SubBlock) segment);
+    // check if we have the master file in a multi-file dataset
+    // file names are not stored in the files; we have to rely on a
+    // specific naming convention:
+    //
+    //  master_file.czi
+    //  master_file (1).czi
+    //  master_file (2).czi
+    //  ...
+    //
+    // the number of files is also not stored, so we have to manually check
+    // for all files with a matching name
+
+    Location file = new Location(id).getAbsoluteFile();
+    String base = file.getName();
+    base = base.substring(0, base.lastIndexOf("."));
+
+    Location parent = file.getParentFile();
+    String[] list = parent.list(true);
+    for (String f : list) {
+      if (f.startsWith(base + "(") || f.startsWith(base + " (")) {
+        String part = f.substring(f.lastIndexOf("(") + 1, f.lastIndexOf(")"));
+        pixels.put(Integer.parseInt(part),
+          new Location(parent, f).getAbsolutePath());
       }
+    }
+
+    Integer[] keys = pixels.keySet().toArray(new Integer[pixels.size()]);
+    Arrays.sort(keys);
+    for (Integer key : keys) {
+      readSegments(pixels.get(key));
     }
 
     calculateDimensions();
@@ -611,9 +662,22 @@ public class ZeissCZIReader extends FormatReader {
 
   // -- Helper methods --
 
+  private void readSegments(String id) throws IOException {
+    in = new RandomAccessInputStream(id);
+    in.order(isLittleEndian());
+    while (in.getFilePointer() < in.length()) {
+      Segment segment = readSegment(id);
+      segments.add(segment);
+
+      if (segment instanceof SubBlock) {
+        planes.add((SubBlock) segment);
+      }
+    }
+  }
+
   private void calculateDimensions() {
     // calculate the dimensions
-      CoreMetadata ms0 = core.get(0);
+    CoreMetadata ms0 = core.get(0);
 
     for (SubBlock plane : planes) {
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
@@ -1683,7 +1747,7 @@ public class ZeissCZIReader extends FormatReader {
     nameStack.pop();
   }
 
-  private Segment readSegment() throws IOException {
+  private Segment readSegment(String filename) throws IOException {
     // align the stream to a multiple of 32 bytes
     int skip =
       (ALIGNMENT - (int) (in.getFilePointer() % ALIGNMENT)) % ALIGNMENT;
@@ -1706,12 +1770,16 @@ public class ZeissCZIReader extends FormatReader {
     else if (segmentID.equals("ZISRAWATTACH")) {
       segment = new Attachment();
     }
+    else if (segmentID.equals("DELETED")) {
+      segment = new Segment();
+    }
     else {
       LOGGER.info("Unknown segment type: " + segmentID);
       segment = new Segment();
     }
     segment.startingPosition = startingPosition;
     segment.id = segmentID;
+    segment.filename = filename;
 
     segment.fillInData();
     in.seek(segment.startingPosition + segment.allocatedSize + HEADER_SIZE);
@@ -1768,19 +1836,24 @@ public class ZeissCZIReader extends FormatReader {
 
   /** Top-level class that implements logic common to all types of Segment. */
   class Segment {
+    public String filename;
     public long startingPosition;
     public String id;
     public long allocatedSize;
     public long usedSize;
 
     public void fillInData() throws IOException {
+      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      s.order(isLittleEndian());
+      s.seek(startingPosition + 16);
       // read the segment header
-      allocatedSize = in.readLong();
-      usedSize = in.readLong();
+      allocatedSize = s.readLong();
+      usedSize = s.readLong();
 
       if (usedSize == 0) {
         usedSize = allocatedSize;
       }
+      s.close();
     }
   }
 
@@ -1799,17 +1872,22 @@ public class ZeissCZIReader extends FormatReader {
     public void fillInData() throws IOException {
       super.fillInData();
 
-      majorVersion = in.readInt();
-      minorVersion = in.readInt();
-      in.skipBytes(4); // reserved 1
-      in.skipBytes(4); // reserved 2
-      primaryFileGUID = in.readLong();
-      fileGUID = in.readLong();
-      filePart = in.readInt();
-      directoryPosition = in.readLong();
-      metadataPosition = in.readLong();
-      updatePending = in.readInt() != 0;
-      attachmentDirectoryPosition = in.readLong();
+      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      s.order(isLittleEndian());
+      s.seek(startingPosition + HEADER_SIZE);
+      majorVersion = s.readInt();
+      minorVersion = s.readInt();
+      s.skipBytes(4); // reserved 1
+      s.skipBytes(4); // reserved 2
+      primaryFileGUID = s.readLong(); // 16
+      fileGUID = s.readLong(); // 16
+      filePart = s.readInt();
+
+      directoryPosition = s.readLong();
+      metadataPosition = s.readLong();
+      updatePending = s.readInt() != 0;
+      attachmentDirectoryPosition = s.readLong();
+      s.close();
     }
   }
 
@@ -1821,14 +1899,18 @@ public class ZeissCZIReader extends FormatReader {
     public void fillInData() throws IOException {
       super.fillInData();
 
-      int xmlSize = in.readInt();
-      int attachmentSize = in.readInt();
+      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      s.order(isLittleEndian());
+      s.seek(startingPosition + HEADER_SIZE);
+      int xmlSize = s.readInt();
+      int attachmentSize = s.readInt();
 
-      in.skipBytes(248);
+      s.skipBytes(248);
 
-      xml = in.readString(xmlSize);
+      xml = s.readString(xmlSize);
       attachment = new byte[attachmentSize];
-      in.read(attachment);
+      s.read(attachment);
+      s.close();
     }
   }
 
@@ -1852,26 +1934,32 @@ public class ZeissCZIReader extends FormatReader {
     public void fillInData() throws IOException {
       super.fillInData();
 
-      long fp = in.getFilePointer();
-      metadataSize = in.readInt();
-      attachmentSize = in.readInt();
-      dataSize = in.readLong();
-      directoryEntry = new DirectoryEntry();
-      in.skipBytes((int) Math.max(256 - (in.getFilePointer() - fp), 0));
+      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      s.order(isLittleEndian());
+      s.seek(startingPosition + HEADER_SIZE);
+      long fp = s.getFilePointer();
+      metadataSize = s.readInt();
+      attachmentSize = s.readInt();
+      dataSize = s.readLong();
+      directoryEntry = new DirectoryEntry(s);
+      s.skipBytes((int) Math.max(256 - (s.getFilePointer() - fp), 0));
 
-      metadata = in.readString(metadataSize).trim();
-      dataOffset = in.getFilePointer();
-      in.seek(in.getFilePointer() + dataSize + attachmentSize);
+      metadata = s.readString(metadataSize).trim();
+      dataOffset = s.getFilePointer();
+      s.seek(s.getFilePointer() + dataSize + attachmentSize);
 
       parseMetadata();
+      s.close();
     }
 
     // -- SubBlock API methods --
 
     public byte[] readPixelData() throws FormatException, IOException {
-      in.seek(dataOffset);
+      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      s.order(isLittleEndian());
+      s.seek(dataOffset);
       byte[] data = new byte[(int) dataSize];
-      in.read(data);
+      s.read(data);
 
       CodecOptions options = new CodecOptions();
       options.interleaved = isInterleaved();
@@ -1887,6 +1975,7 @@ public class ZeissCZIReader extends FormatReader {
           data = new LZWCodec().decompress(data, options);
           break;
       }
+      s.close();
 
       return data;
     }
@@ -1974,12 +2063,16 @@ public class ZeissCZIReader extends FormatReader {
     public void fillInData() throws IOException {
       super.fillInData();
 
-      dataSize = in.readInt();
-      in.skipBytes(12); // reserved
-      attachment = new AttachmentEntry();
-      in.skipBytes(112); // reserved
+      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      s.order(isLittleEndian());
+      s.seek(startingPosition + HEADER_SIZE);
+      dataSize = s.readInt();
+      s.skipBytes(12); // reserved
+      attachment = new AttachmentEntry(s);
+      s.skipBytes(112); // reserved
       attachmentData = new byte[dataSize];
-      in.read(attachmentData);
+      s.read(attachmentData);
+      s.close();
     }
   }
 
@@ -1993,23 +2086,23 @@ public class ZeissCZIReader extends FormatReader {
     public int dimensionCount;
     public DimensionEntry[] dimensionEntries;
 
-    public DirectoryEntry() throws IOException {
-      schemaType = in.readString(2);
-      pixelType = in.readInt();
-      filePosition = in.readLong();
-      filePart = in.readInt();
-      compression = in.readInt();
-      pyramidType = in.readByte();
+    public DirectoryEntry(RandomAccessInputStream s) throws IOException {
+      schemaType = s.readString(2);
+      pixelType = s.readInt();
+      filePosition = s.readLong();
+      filePart = s.readInt();
+      compression = s.readInt();
+      pyramidType = s.readByte();
       if (pyramidType == 1) {
         prestitched = false;
       }
-      in.skipBytes(1); // reserved
-      in.skipBytes(4); // reserved
-      dimensionCount = in.readInt();
+      s.skipBytes(1); // reserved
+      s.skipBytes(4); // reserved
+      dimensionCount = s.readInt();
 
       dimensionEntries = new DimensionEntry[dimensionCount];
       for (int i=0; i<dimensionEntries.length; i++) {
-        dimensionEntries[i] = new DimensionEntry();
+        dimensionEntries[i] = new DimensionEntry(s);
       }
     }
   }
@@ -2021,12 +2114,12 @@ public class ZeissCZIReader extends FormatReader {
     public float startCoordinate;
     public int storedSize;
 
-    public DimensionEntry() throws IOException {
-      dimension = in.readString(4).trim();
-      start = in.readInt();
-      size = in.readInt();
-      startCoordinate = in.readFloat();
-      storedSize = in.readInt();
+    public DimensionEntry(RandomAccessInputStream s) throws IOException {
+      dimension = s.readString(4).trim();
+      start = s.readInt();
+      size = s.readInt();
+      startCoordinate = s.readFloat();
+      storedSize = s.readInt();
     }
   }
 
@@ -2038,14 +2131,14 @@ public class ZeissCZIReader extends FormatReader {
     public String contentFileType;
     public String name;
 
-    public AttachmentEntry() throws IOException {
-      schemaType = in.readString(2);
-      in.skipBytes(10); // reserved
-      filePosition = in.readLong();
-      filePart = in.readInt();
-      contentGUID = in.readString(16);
-      contentFileType = in.readString(8);
-      name = in.readString(80);
+    public AttachmentEntry(RandomAccessInputStream s) throws IOException {
+      schemaType = s.readString(2);
+      s.skipBytes(10); // reserved
+      filePosition = s.readLong();
+      filePart = s.readInt();
+      contentGUID = s.readString(16);
+      contentFileType = s.readString(8);
+      name = s.readString(80);
     }
   }
 
