@@ -1787,6 +1787,12 @@ public class ZeissCZIReader extends FormatReader {
     else if (segmentID.equals("ZISRAWATTACH")) {
       segment = new Attachment();
     }
+    else if (segmentID.equals("ZISRAWDIRECTORY")) {
+      segment = new Directory();
+    }
+    else if (segmentID.equals("ZISRAWATTDIR")) {
+      segment = new AttachmentDirectory();
+    }
     else if (segmentID.equals("DELETED")) {
       segment = new Segment();
     }
@@ -2067,6 +2073,49 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
+    }
+  }
+
+  /** Segment with ID "ZISRAWDIRECTORY". */
+  class Directory extends Segment {
+    public DirectoryEntry[] entries;
+
+    public void fillInData() throws IOException {
+      super.fillInData();
+
+      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      s.order(isLittleEndian());
+      s.seek(startingPosition + HEADER_SIZE);
+
+      int entryCount = s.readInt();
+      s.skipBytes(124);
+      entries = new DirectoryEntry[entryCount];
+      for (int i=0; i<entryCount; i++) {
+        entries[i] = new DirectoryEntry(s);
+      }
+
+      s.close();
+    }
+  }
+
+  /** Segment with ID "ZISRAWATTDIR". */
+  class AttachmentDirectory extends Segment {
+    public AttachmentEntry[] entries;
+
+    public void fillInData() throws IOException {
+      super.fillInData();
+
+      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      s.order(isLittleEndian());
+      s.seek(startingPosition + HEADER_SIZE);
+
+      int entryCount = s.readInt();
+      s.skipBytes(252);
+      entries = new AttachmentEntry[entryCount];
+      for (int i=0; i<entryCount; i++) {
+        entries[i] = new AttachmentEntry(s);
+      }
+      s.close();
     }
   }
 
