@@ -955,8 +955,11 @@ public class ZeissCZIReader extends FormatReader {
           getFirstNodeValue(manufacturerNode, "SerialNumber"), 0);
         store.setMicroscopeLotNumber(
           getFirstNodeValue(manufacturerNode, "LotNumber"), 0);
-        store.setMicroscopeType(
-          getMicroscopeType(getFirstNodeValue(microscope, "Type")), 0);
+
+        String microscopeType = getFirstNodeValue(microscope, "Type");
+        if (microscopeType != null) {
+          store.setMicroscopeType(getMicroscopeType(microscopeType), 0);
+        }
       }
 
       NodeList lightSources = getGrandchildren(instrument, "LightSource");
@@ -1064,8 +1067,10 @@ public class ZeissCZIReader extends FormatReader {
             store.setDetectorAmplificationGain(new Double(ampGain), 0, i);
           }
 
-          store.setDetectorType(
-            getDetectorType(getFirstNodeValue(detector, "Type")), 0, i);
+          String detectorType = getFirstNodeValue(detector, "Type");
+          if (detectorType != null) {
+            store.setDetectorType(getDetectorType(detectorType), 0, i);
+          }
         }
       }
 
@@ -1088,8 +1093,11 @@ public class ZeissCZIReader extends FormatReader {
           store.setObjectiveModel(model, 0, i);
           store.setObjectiveSerialNumber(serialNumber, 0, i);
           store.setObjectiveLotNumber(lotNumber, 0, i);
-          store.setObjectiveCorrection(
-            getCorrection(getFirstNodeValue(objective, "Correction")), 0, i);
+
+          String correction = getFirstNodeValue(objective, "Correction");
+          if (correction != null) {
+            store.setObjectiveCorrection(getCorrection(correction), 0, i);
+          }
           store.setObjectiveImmersion(
             getImmersion(getFirstNodeValue(objective, "Immersion")), 0, i);
 
@@ -1187,8 +1195,10 @@ public class ZeissCZIReader extends FormatReader {
           store.setFilterSerialNumber(serialNumber, 0, i);
           store.setFilterLotNumber(lotNumber, 0, i);
 
-          store.setFilterType(
-            getFilterType(getFirstNodeValue(filter, "Type")), 0, i);
+          String filterType = getFirstNodeValue(filter, "Type");
+          if (filterType != null) {
+            store.setFilterType(getFilterType(filterType), 0, i);
+          }
           store.setFilterFilterWheel(
             getFirstNodeValue(filter, "FilterWheel"), 0, i);
 
