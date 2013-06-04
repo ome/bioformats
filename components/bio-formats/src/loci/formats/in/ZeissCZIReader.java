@@ -894,7 +894,10 @@ public class ZeissCZIReader extends FormatReader {
           channelNames.add(channel.getAttribute("Name"));
 
           Element detectorSettings = getFirstNode(channel, "DetectorSettings");
-          binnings.add(getFirstNodeValue(detectorSettings, "Binning"));
+
+          String binning = getFirstNodeValue(detectorSettings, "Binning");
+          binning = binning.replaceAll(",", "x");
+          binnings.add(binning);
 
           Element scanInfo = getFirstNode(channel, "LaserScanInfo");
           if (scanInfo != null) {
