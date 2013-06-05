@@ -116,6 +116,7 @@ public class ZeissCZIReader extends FormatReader {
   private int angles = 1;
 
   private String acquiredDate;
+  private String description;
   private String userDisplayName, userName;
   private String userFirstName, userLastName, userMiddleName;
   private String userEmail;
@@ -467,6 +468,10 @@ public class ZeissCZIReader extends FormatReader {
 
     core[0].imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
 
+    if (seriesCount * core[0].imageCount != planes.size()) {
+      throw new FormatException("Dimension detection failed");
+    }
+
     if (mosaics == seriesCount &&
       seriesCount == (planes.size() / getImageCount()) &&
       prestitched != null && prestitched)
@@ -524,10 +529,17 @@ public class ZeissCZIReader extends FormatReader {
       if (acquiredDate != null) {
         store.setImageAcquisitionDate(new Timestamp(acquiredDate), i);
       }
+      else {
+        long timestamp = (long) (planes.get(0).timestamp * 1000);
+        String date =
+          DateTools.convertDate(timestamp, DateTools.UNIX);
+        store.setImageAcquisitionDate(new Timestamp(date), i);
+      }
       if (experimenterID != null) {
         store.setImageExperimenterRef(experimenterID, i);
       }
       store.setImageName(name + " #" + (i + 1), i);
+      store.setImageDescription(description, i);
 
       if (airPressure != null) {
         store.setImagingEnvironmentAirPressure(new Double(airPressure), i);
@@ -856,6 +868,7 @@ public class ZeissCZIReader extends FormatReader {
     Element user = getFirstNode(information, "User");
     Element environment = getFirstNode(information, "Environment");
     Element instrument = getFirstNode(information, "Instrument");
+    Element document = getFirstNode(information, "Document");
 
     if (image != null) {
       String bitCount = getFirstNodeValue(image, "ComponentBitCount");
@@ -889,8 +902,10 @@ public class ZeissCZIReader extends FormatReader {
           Element detectorSettings = getFirstNode(channel, "DetectorSettings");
 
           String binning = getFirstNodeValue(detectorSettings, "Binning");
-          binning = binning.replaceAll(",", "x");
-          binnings.add(binning);
+          if (binning != null) {
+            binning = binning.replaceAll(",", "x");
+            binnings.add(binning);
+          }
 
           Element scanInfo = getFirstNode(channel, "LaserScanInfo");
           if (scanInfo != null) {
@@ -1068,65 +1083,7 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       NodeList objectives = getGrandchildren(instrument, "Objective");
-      if (objectives != null) {
-        for (int i=0; i<objectives.getLength(); i++) {
-          Element objective = (Element) objectives.item(i);
-          manufacturerNode = getFirstNode(objective, "Manufacturer");
-
-          String manufacturer =
-            getFirstNodeValue(manufacturerNode, "Manufacturer");
-          String model = getFirstNodeValue(manufacturerNode, "Model");
-          String serialNumber =
-            getFirstNodeValue(manufacturerNode, "SerialNumber");
-          String lotNumber = getFirstNodeValue(manufacturerNode, "LotNumber");
-
-          objectiveIDs.add(objective.getAttribute("Id"));
-          store.setObjectiveID(objective.getAttribute("Id"), 0, i);
-          store.setObjectiveManufacturer(manufacturer, 0, i);
-          store.setObjectiveModel(model, 0, i);
-          store.setObjectiveSerialNumber(serialNumber, 0, i);
-          store.setObjectiveLotNumber(lotNumber, 0, i);
-
-          String correction = getFirstNodeValue(objective, "Correction");
-          if (correction != null) {
-            store.setObjectiveCorrection(getCorrection(correction), 0, i);
-          }
-          store.setObjectiveImmersion(
-            getImmersion(getFirstNodeValue(objective, "Immersion")), 0, i);
-
-          String lensNA = getFirstNodeValue(objective, "LensNA");
-          if (lensNA != null) {
-            store.setObjectiveLensNA(new Double(lensNA), 0, i);
-          }
-
-          String magnification =
-            getFirstNodeValue(objective, "NominalMagnification");
-          Double mag = magnification == null ? 0 : new Double(magnification);
-
-          if (mag > 0) {
-            store.setObjectiveNominalMagnification(
-              new PositiveInteger(mag.intValue()), 0, i);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for NominalMagnification; got {}", mag);
-          }
-          String calibratedMag =
-            getFirstNodeValue(objective, "CalibratedMagnification");
-          if (calibratedMag != null) {
-            store.setObjectiveCalibratedMagnification(
-              new Double(calibratedMag), 0, i);
-          }
-          String wd = getFirstNodeValue(objective, "WorkingDistance");
-          if (wd != null) {
-            store.setObjectiveWorkingDistance(new Double(wd), 0, i);
-          }
-          String iris = getFirstNodeValue(objective, "Iris");
-          if (iris != null) {
-            store.setObjectiveIris(new Boolean(iris), 0, i);
-          }
-        }
-      }
+      parseObjectives(objectives);
 
       NodeList filterSets = getGrandchildren(instrument, "FilterSet");
       if (filterSets != null) {
@@ -1265,6 +1222,14 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     }
+
+    if (document != null) {
+      description = getFirstNodeValue(document, "Description");
+
+      if (userName == null) {
+        userName = getFirstNodeValue(document, "UserName");
+      }
+    }
   }
 
   private void translateScaling(Element root) {
@@ -1327,6 +1292,29 @@ public class ZeissCZIReader extends FormatReader {
         String color = getFirstNodeValue(channel, "Color");
         if (color != null) {
           channelColors.add(color);
+        }
+
+        String name = getFirstNodeValue(channel, "DyeName");
+        if (i < channelNames.size()) {
+          channelNames.set(i, name);
+        }
+        else {
+          channelNames.add(name);
+        }
+
+        String emission = getFirstNodeValue(channel, "DyeMaxEmission");
+        if (i < emissionWavelengths.size()) {
+          emissionWavelengths.set(i, emission);
+        }
+        else {
+          emissionWavelengths.add(emission);
+        }
+        String excitation = getFirstNodeValue(channel, "DyeMaxExcitation");
+        if (i < excitationWavelengths.size()) {
+          excitationWavelengths.set(i, excitation);
+        }
+        else {
+          excitationWavelengths.add(excitation);
         }
       }
     }
@@ -1861,6 +1849,71 @@ public class ZeissCZIReader extends FormatReader {
         throw new FormatException("Sorry, complex pixel data not supported.");
       default:
         throw new FormatException("Unknown pixel type: " + pixelType);
+    }
+  }
+
+  private void parseObjectives(NodeList objectives) throws FormatException {
+    if (objectives != null) {
+      for (int i=0; i<objectives.getLength(); i++) {
+        Element objective = (Element) objectives.item(i);
+        Element manufacturerNode = getFirstNode(objective, "Manufacturer");
+
+        String manufacturer =
+          getFirstNodeValue(manufacturerNode, "Manufacturer");
+        String model = getFirstNodeValue(manufacturerNode, "Model");
+        String serialNumber =
+          getFirstNodeValue(manufacturerNode, "SerialNumber");
+        String lotNumber = getFirstNodeValue(manufacturerNode, "LotNumber");
+
+        objectiveIDs.add(objective.getAttribute("Id"));
+        store.setObjectiveID(objective.getAttribute("Id"), 0, i);
+        store.setObjectiveManufacturer(manufacturer, 0, i);
+        store.setObjectiveModel(model, 0, i);
+        store.setObjectiveSerialNumber(serialNumber, 0, i);
+        store.setObjectiveLotNumber(lotNumber, 0, i);
+
+        String correction = getFirstNodeValue(objective, "Correction");
+        if (correction != null) {
+          store.setObjectiveCorrection(getCorrection(correction), 0, i);
+        }
+        store.setObjectiveImmersion(
+          getImmersion(getFirstNodeValue(objective, "Immersion")), 0, i);
+
+        String lensNA = getFirstNodeValue(objective, "LensNA");
+        if (lensNA != null) {
+          store.setObjectiveLensNA(new Double(lensNA), 0, i);
+        }
+
+        String magnification =
+          getFirstNodeValue(objective, "NominalMagnification");
+        if (magnification == null) {
+          magnification = getFirstNodeValue(objective, "Magnification");
+        }
+        Double mag = magnification == null ? 0 : new Double(magnification);
+
+        if (mag > 0) {
+          store.setObjectiveNominalMagnification(
+            new PositiveInteger((int) mag.doubleValue()), 0, i);
+        }
+        else {
+          LOGGER.warn(
+            "Expected positive value for NominalMagnification; got {}", mag);
+        }
+        String calibratedMag =
+          getFirstNodeValue(objective, "CalibratedMagnification");
+        if (calibratedMag != null) {
+          store.setObjectiveCalibratedMagnification(
+            new Double(calibratedMag), 0, i);
+        }
+        String wd = getFirstNodeValue(objective, "WorkingDistance");
+        if (wd != null) {
+          store.setObjectiveWorkingDistance(new Double(wd), 0, i);
+        }
+        String iris = getFirstNodeValue(objective, "Iris");
+        if (iris != null) {
+          store.setObjectiveIris(new Boolean(iris), 0, i);
+        }
+      }
     }
   }
 
