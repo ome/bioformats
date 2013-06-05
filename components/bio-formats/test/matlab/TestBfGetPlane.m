@@ -28,18 +28,21 @@ classdef TestBfGetPlane < TestBfMatlab
     
     properties
         reader
+        sizeX
+        sizeY
     end
     
     methods
         function self = TestBfGetPlane(name)
             self = self@TestBfMatlab(name);
-            
         end
         
         function setUp(self)
             setUp@TestBfMatlab(self)
             bfCheckJavaPath();
             self.reader = loci.formats.in.FakeReader();
+            self.sizeX = self.reader.DEFAULT_SIZE_X;
+            self.sizeY = self.reader.DEFAULT_SIZE_Y;
         end
         
         function tearDown(self)
@@ -86,17 +89,19 @@ classdef TestBfGetPlane < TestBfMatlab
         
         % Dimension size tests
         function testSizeX(self)
-            sizeX = 200;
-            self.reader.setId(['sizeX-test&sizeX=' num2str(sizeX) '.fake']);
+            self.sizeX = 200;
+            self.reader.setId(['sizeX-test&sizeX=' num2str(self.sizeX) '.fake']);
             I = bfGetPlane(self.reader, 1);
-            assertEqual(size(I, 2), sizeX);
+            assertEqual(size(I, 2), self.sizeX);
+            assertEqual(size(I, 1), self.sizeY);
         end
         
         function testSizeY(self)
-            sizeY = 200;
-            self.reader.setId(['sizeY-test&sizeY=' num2str(sizeY) '.fake']);
+            self.sizeY = 200;
+            self.reader.setId(['sizeY-test&sizeY=' num2str(self.sizeY) '.fake']);
             I = bfGetPlane(self.reader, 1);
-            assertEqual(size(I, 1), sizeY);
+            assertEqual(size(I, 2), self.sizeX);
+            assertEqual(size(I, 1), self.sizeY);
         end
         
         % Tile tests
@@ -109,19 +114,21 @@ classdef TestBfGetPlane < TestBfMatlab
         end
         
         function testFullTile(self)
-            self.checkTile(1, 1, 512, 512)
+            self.checkTile(1, 1, self.sizeX, self.sizeY)
         end
         
         function testSquareTile(self)
-            self.checkTile(10, 10, 20, 20)
+            self.checkTile(self.sizeX/4, self.sizeY/4,...
+                self.sizeX/2, self.sizeY/2)
         end
         
         function testRectangularTile(self)
-            self.checkTile(20, 10, 40, 20);
+            self.checkTile(1, self.sizeY/4,...
+                self.sizeX, self.sizeY/2);
         end
         
         function testSingleTile(self)
-            self.checkTile(50, 50, 1, 1);
+            self.checkTile(self.sizeX/2, self.sizeY/2, 1, 1);
         end
     end
 end
