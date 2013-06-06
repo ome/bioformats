@@ -24,7 +24,7 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfsave < TestCase
+classdef TestBfsave < TestBfMatlab
     
     properties
         path
@@ -33,10 +33,11 @@ classdef TestBfsave < TestCase
     
     methods
         function self = TestBfsave(name)
-            self = self@TestCase(name);
+            self = self@TestBfMatlab(name);
         end
         
         function setUp(self)
+            setUp@TestBfMatlab(self);
             bfCheckJavaPath();
             if isunix,
                 self.path = '/tmp/test.ome.tiff';
@@ -47,6 +48,7 @@ classdef TestBfsave < TestCase
         
         function tearDown(self)
             if exist(self.path,'file')==2, delete(self.path); end
+            tearDown@TestBfMatlab(self);
         end
         
         % Dimension order tests

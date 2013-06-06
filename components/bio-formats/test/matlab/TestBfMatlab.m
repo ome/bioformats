@@ -1,11 +1,11 @@
-% TestCheckJavaPath define test cases for bfCheckJavaPath utility function
+% Abstract class for the Bio-Formats Matlab unit tests
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2013 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -24,45 +24,33 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-
-classdef TestCheckJavaPath < TestBfMatlab
+classdef TestBfMatlab < TestCase
     
     properties
-        status
+        lociToolsPath
     end
     
     methods
-        function self = TestCheckJavaPath(name)
-            self = self@TestBfMatlab(name);
+        function self = TestBfMatlab(name)
+            self = self@TestCase(name);
         end
         
-        function testDefault(self)
-            self.status = bfCheckJavaPath();
-            assertTrue(self.status);
-        end
-        
-        function testAutoloadBioformats(self)
-            self.status = bfCheckJavaPath(true);
-            assertTrue(self.status);
-        end
-        
-        function testNoAutoloadBioformats(self)
-            isStatic = ismember(self.lociToolsPath,...
-                javaclasspath('-static'));
-            self.status = bfCheckJavaPath(false);
-            if isStatic
-                assertTrue(self.status);
-            else
-                assertFalse(self.status);
+        function setUp(self)
+            % Get path to loci_tools (assuming it is in Matlab path)
+            self.lociToolsPath = which('loci_tools.jar');
+            assert(~isempty(self.lociToolsPath));
+            
+            % Remove loci_tools from dynamic class path
+            if ismember(self.lociToolsPath,javaclasspath('-dynamic'))
+                javarmpath(self.lociToolsPath);
             end
         end
         
-        function testPerformance(self)
-            maxTime = .5;
-            tic;
-            self.status = bfCheckJavaPath();
-            totalCheckTime=toc;
-            assert(totalCheckTime<maxTime);
+        function tearDown(self)
+            % Remove loci_tools from dynamic class path
+            if ismember(self.lociToolsPath,javaclasspath('-dynamic'))
+                javarmpath(self.lociToolsPath);
+            end
         end
     end
 end
