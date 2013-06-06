@@ -49,7 +49,7 @@ function I = bfGetPlane(r, iPlane, varargin)
 
 % Input check
 ip = inputParser;
-ip.addRequired('r', @(x) isa(x, 'loci.formats.ReaderWrapper'));
+ip.addRequired('r', @(x) isa(x, 'loci.formats.IFormatReader'));
 ip.addRequired('iPlane', @isscalar);
 
 % Define optional arguments to retrieve tile.

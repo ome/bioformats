@@ -24,7 +24,7 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfGetReader < TestCase
+classdef TestBfGetReader < TestBfMatlab
     
     properties
         reader
@@ -32,16 +32,14 @@ classdef TestBfGetReader < TestCase
     
     methods
         function self = TestBfGetReader(name)
-            self = self@TestCase(name);
-        end
-        
-        function setUp(self)
-            bfCheckJavaPath();
+            self = self@TestBfMatlab(name);
         end
         
         function tearDown(self)
             self.reader.close();
             self.reader = [];
+            
+            tearDown@TestBfMatlab(self);
         end
         
         % Pixel type tests
