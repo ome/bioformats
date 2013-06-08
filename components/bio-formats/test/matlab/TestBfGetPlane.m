@@ -24,25 +24,31 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfGetPlane < TestCase
+classdef TestBfGetPlane < TestBfMatlab
     
     properties
         reader
+        sizeX
+        sizeY
     end
     
     methods
         function self = TestBfGetPlane(name)
-            self = self@TestCase(name);
+            self = self@TestBfMatlab(name);
         end
         
         function setUp(self)
+            setUp@TestBfMatlab(self)
             bfCheckJavaPath();
-            self.reader = loci.formats.ChannelSeparator(loci.formats.in.FakeReader());
+            self.reader = loci.formats.in.FakeReader();
+            self.sizeX = self.reader.DEFAULT_SIZE_X;
+            self.sizeY = self.reader.DEFAULT_SIZE_Y;
         end
         
         function tearDown(self)
-            self.reader.close();
+            self.reader.close()
             self.reader = [];
+            tearDown@TestBfMatlab(self)
         end
         
         % Pixel type tests
@@ -83,21 +89,24 @@ classdef TestBfGetPlane < TestCase
         
         % Dimension size tests
         function testSizeX(self)
-            sizeX = 200;
-            self.reader = bfGetReader(['sizeX-test&sizeX=' num2str(sizeX) '.fake']);
+            self.sizeX = 200;
+            self.reader.setId(['sizeX-test&sizeX=' num2str(self.sizeX) '.fake']);
             I = bfGetPlane(self.reader, 1);
-            assertEqual(size(I, 2), sizeX);
+            assertEqual(size(I, 2), self.sizeX);
+            assertEqual(size(I, 1), self.sizeY);
         end
         
         function testSizeY(self)
-            sizeY = 200;
-            self.reader = bfGetReader(['sizeY-test&sizeY=' num2str(sizeY) '.fake']);
+            self.sizeY = 200;
+            self.reader.setId(['sizeY-test&sizeY=' num2str(self.sizeY) '.fake']);
             I = bfGetPlane(self.reader, 1);
-            assertEqual(size(I, 1), sizeY);
+            assertEqual(size(I, 2), self.sizeX);
+            assertEqual(size(I, 1), self.sizeY);
         end
         
         % Tile tests
         function checkTile(self, x, y, w, h)
+            self.reader.setId('test.fake')
             I = bfGetPlane(self.reader, 1);
             I2 = bfGetPlane(self.reader, 1, x, y, w, h);
             
@@ -105,23 +114,21 @@ classdef TestBfGetPlane < TestCase
         end
         
         function testFullTile(self)
-            self.reader.setId('fulltile-test.fake')
-            self.checkTile(1, 1, self.reader.getSizeX(), self.reader.getSizeY())
+            self.checkTile(1, 1, self.sizeX, self.sizeY)
         end
         
         function testSquareTile(self)
-            self.reader.setId('sqtile-test.fake')
-            self.checkTile(10, 10, 20, 20)
+            self.checkTile(self.sizeX/4, self.sizeY/4,...
+                self.sizeX/2, self.sizeY/2)
         end
         
         function testRectangularTile(self)
-            self.reader.setId('recttile-test.fake')
-            self.checkTile(20, 10, 40, 20);
+            self.checkTile(1, self.sizeY/4,...
+                self.sizeX, self.sizeY/2);
         end
         
         function testSingleTile(self)
-            self.reader.setId('fulltile-test.fake')
-            self.checkTile(50, 50, 1, 1);
+            self.checkTile(self.sizeX/2, self.sizeY/2, 1, 1);
         end
     end
 end
