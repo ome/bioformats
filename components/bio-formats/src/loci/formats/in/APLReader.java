@@ -114,10 +114,12 @@ public class APLReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
     files.addAll(used);
-    if (getSeries() < xmlFiles.length &&
-      new Location(xmlFiles[getSeries()]).exists())
-    {
-      files.add(xmlFiles[getSeries()]);
+
+    if (getSeries() < xmlFiles.length) {
+      Location xmlFile = new Location(xmlFiles[getSeries()]);
+      if (xmlFile.exists() && !xmlFile.isDirectory()) {
+        files.add(xmlFiles[getSeries()]);
+      }
     }
     if (!noPixels && getSeries() < tiffFiles.length &&
       new Location(tiffFiles[getSeries()]).exists())
