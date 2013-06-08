@@ -393,7 +393,7 @@ public class APLReader extends FormatReader {
 
       // populate Image data
       MetadataTools.setDefaultCreationDate(store, mtb, i);
-      store.setImageName(row[imageName], i);
+      store.setImageName(row[imageName].trim(), i);
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         // populate Dimensions data
