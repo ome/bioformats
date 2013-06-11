@@ -36,6 +36,11 @@
 
 package loci.formats.tools;
 
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import loci.common.Location;
 
 /**
@@ -47,6 +52,10 @@ import loci.common.Location;
  */
 public class FakeScreenGenerator {
 
+    public static String PLATE = "Plate";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+            FakeScreenGenerator.class);
     private Location directoryRoot;
 
     public FakeScreenGenerator(String directoryRoot) {
@@ -55,10 +64,13 @@ public class FakeScreenGenerator {
             throw new IllegalArgumentException("Cannot write to "
                     + this.directoryRoot.getAbsolutePath());
         }
+        if (!this.directoryRoot.isDirectory()) {
+            throw new IllegalArgumentException("Existing file name supplied.");
+        }
     }
 
-    public static void isValidValue(int arg) {
-        if (arg < 1) {
+    public static void isValidRange(int arg, int min, int max) {
+        if (arg < min || arg > max) {
             throw new IllegalArgumentException("Method argument value " +
                     "outside valid range.");
         }
@@ -69,24 +81,27 @@ public class FakeScreenGenerator {
      * plate or well element count must be at least <code>1</code> and cannot be
      * <code>null</code>.
      * @param baseDir Directory, where structure will be generated.
-     * @param plates Number of plates in a screen.
-     * @param plateAcquisitions Number of plate acquisitions (runs) in a plate.
-     * @param rows Number of rows in a plate.
-     * @param columns Number of columns in a plate.
-     * @param fields Number of fields for a plate acquisition.
+     * @param plates Number of plates in a screen (max 255).
+     * @param plateAcquisitions Number of plate acquisitions (runs) in a plate
+     * (max 255).
+     * @param rows Number of rows in a plate (max 16).
+     * @param columns Number of columns in a plate (max 24).
+     * @param fields Number of fields for a plate acquisition (max 255).
      * @throws IllegalArgumentException when any of the arguments fail
      * validation.
      * @throws NullPointerException when null specified as argument value.
      */
     public void generateScreen(int plates, int plateAcquisitions, int rows,
             int columns, int fields) {
-        isValidValue(plateAcquisitions);
-        isValidValue(rows);
-        isValidValue(columns);
-        isValidValue(fields);
-        //for ()
+        isValidRange(plates, 1, 255);
+        isValidRange(plateAcquisitions, 1, 255);
+        isValidRange(rows, 1, 16);
+        isValidRange(columns, 1, 24);
+        isValidRange(fields, 1, 255);
         // For each plate:
-        //   create plate acquisitions
+        for (int i = 0; i < plates; ++i) {
+            // create plate acquisitions
+        }
         // for each plate acquisition:
         //   create wells (rows * columns)
         //   create fields
