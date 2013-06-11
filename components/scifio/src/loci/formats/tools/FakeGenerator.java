@@ -50,15 +50,15 @@ import loci.common.Location;
  * @author Blazej Pindelski, bpindelski at dundee.ac.uk
  * @since 5.0
  */
-public class FakeScreenGenerator {
+public class FakeGenerator {
 
     public static String PLATE = "Plate";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(
-            FakeScreenGenerator.class);
+            FakeGenerator.class);
     private Location directoryRoot;
 
-    public FakeScreenGenerator(String directoryRoot) {
+    public FakeGenerator(String directoryRoot) {
         this.directoryRoot = new Location(directoryRoot);
         if (!this.directoryRoot.canWrite()) {
             throw new IllegalArgumentException("Cannot write to "
