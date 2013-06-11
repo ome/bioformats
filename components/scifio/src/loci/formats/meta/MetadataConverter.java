@@ -1874,6 +1874,12 @@ public final class MetadataConverter {
           }
 
           try {
+            NonNegativeInteger index = src.getWellSampleIndex(i, q, w);
+            dest.setWellSampleIndex(index, i, q, w);
+          }
+          catch (NullPointerException e) { }
+
+          try {
             String imageRef = src.getWellSampleImageRef(i, q, w);
             dest.setWellSampleImageRef(imageRef, i, q, w);
           }
