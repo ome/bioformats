@@ -39,31 +39,57 @@ package loci.formats.tools;
 import loci.common.Location;
 
 /**
- * Generates fake screnn/plate/well structures. Maximum supported size is
- * a 384 well plate with multiple runs and fields.
+ * Generates fake screen/plate/well structures. Maximum supported size is
+ * a 384 well plate with multiple runs and fields. Methods defensively check
+ * caller-supplied arguments and throw relevant exceptions where needed.
  * @author Blazej Pindelski, bpindelski at dundee.ac.uk
  * @since 5.0
  */
 public class FakeScreenGenerator {
 
+    private Location directoryRoot;
+
+    public FakeScreenGenerator(String directoryRoot) {
+        this.directoryRoot = new Location(directoryRoot);
+        if (!this.directoryRoot.canWrite()) {
+            throw new IllegalArgumentException("Cannot write to "
+                    + this.directoryRoot.getAbsolutePath());
+        }
+    }
+
+    public static void isValidValue(int arg) {
+        if (arg < 1) {
+            throw new IllegalArgumentException("Method argument value " +
+                    "outside valid range.");
+        }
+    }
+
     /**
-     * Creates a fake SPW structure. The number of plate acuqisitions
-     * can not be 0.
-     * @param baseDir Directory, where file/folder structure will be generated.
+     * Creates a fake SPW file/directory structure. All arguments indicating
+     * plate or well element count must be at least <code>1</code> and cannot be
+     * <code>null</code>.
+     * @param baseDir Directory, where structure will be generated.
+     * @param plates Number of plates in a screen.
+     * @param plateAcquisitions Number of plate acquisitions (runs) in a plate.
      * @param rows Number of rows in a plate.
      * @param columns Number of columns in a plate.
      * @param fields Number of fields for a plate acquisition.
-     * @param plateAcquisitions Number of plate acuisitions (runs).
+     * @throws IllegalArgumentException when any of the arguments fail
+     * validation.
+     * @throws NullPointerException when null specified as argument value.
      */
-    public void generateScreen(String baseDir, int rows, int columns,
-            int fields, int plateAcquisitions /* runs */) {
-        if (plateAcquisitions == 0) {
-            throw new IllegalArgumentException("Expected more than 0 plate " +
-            		"acuqisitions.");
-        }
-        Location root = new Location(baseDir);
-        // For each plateAcquisition:
-        //   create well structure * 
+    public void generateScreen(int plates, int plateAcquisitions, int rows,
+            int columns, int fields) {
+        isValidValue(plateAcquisitions);
+        isValidValue(rows);
+        isValidValue(columns);
+        isValidValue(fields);
+        //for ()
+        // For each plate:
+        //   create plate acquisitions
+        // for each plate acquisition:
+        //   create wells (rows * columns)
+        //   create fields
         
     }
 
