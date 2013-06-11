@@ -1,9 +1,39 @@
 /*
- * $Id$
- *
- *   Copyright 2006-2013 University of Dundee. All rights reserved.
- *   Use is subject to license terms supplied in LICENSE.txt
+ * #%L
+ * OME SCIFIO package for reading and converting scientific file formats.
+ * %%
+ * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
+
 package spec.schema;
 
 //Java imports
@@ -25,7 +55,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 //Application-internal dependencies
-import ome.specification.AbstractTest;
+import spec.AbstractTest;
 import ome.specification.OmeValidator;
 import ome.specification.XMLMockObjects;
 import ome.specification.XMLWriter;
@@ -34,19 +64,21 @@ import org.testng.Assert;
 
 /**
  * Collections of tests.
- * Checks if the downgrade from current schema to 2003-FC schema works.
+ * Checks if the downgrade from current schema to 2008-02 schema works.
  *
  * @author Jean-Marie Burel &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:j.burel@dundee.ac.uk">j.burel@dundee.ac.uk</a>
  * @author Donald MacDonald &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:donald@lifesci.dundee.ac.uk">donald@lifesci.dundee.ac.uk</a>
+ * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
+ * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
  * @version 3.0
  * <small>
  * (<b>Internal version:</b> $Revision: $Date: $)
  * </small>
  * @since 3.0-Beta4
  */
-public class SchemaCurrent_TO_2003_FC_Test
+public class SchemaCurrent_TO_2008_02_Test
 	extends AbstractTest
 {
 
@@ -64,9 +96,6 @@ public class SchemaCurrent_TO_2003_FC_Test
 	/** A validator used to check transformed files */
 	private OmeValidator anOmeValidator = new OmeValidator();
 
-	/** The path in front of ID. */
-	private String XSLT_PATH_ID = "xslt.fix";
-
 	/**
 	 * Checks if the <code>Image</code> tag was correctly transformed.
 	 *
@@ -75,7 +104,6 @@ public class SchemaCurrent_TO_2003_FC_Test
 	 */
 	private void checkImageNode(Node destNode, Node srcNode)
 	{
-		String IMAGE_ID_PATH = XSLT_PATH_ID+":Image:XSLT:";
 	Assert.assertNotNull(destNode);
 	Assert.assertNotNull(srcNode);
 		NamedNodeMap attributesSrc = srcNode.getAttributes();
@@ -92,17 +120,22 @@ public class SchemaCurrent_TO_2003_FC_Test
 				nameSrc = n.getNodeValue();
 		}
 
+		// compare the stored values for ID and Name attributes
+		// to those on the output node
 		NamedNodeMap attributes = destNode.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			n = attributes.item(i);
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.equals(XMLWriter.ID_ATTRIBUTE))
-				Assert.assertEquals(n.getNodeValue(), IMAGE_ID_PATH+idSrc);
+				Assert.assertEquals(n.getNodeValue(), idSrc);
 				else if (name.equals(XMLWriter.NAME_ATTRIBUTE))
 				Assert.assertEquals(n.getNodeValue(), nameSrc);
 			}
 		}
+
+		// Find the pixels node in the input image node
+		// (if more than one last will be found)
 		Node pixelsNode = null;
 		NodeList list = srcNode.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -113,12 +146,15 @@ public class SchemaCurrent_TO_2003_FC_Test
 					pixelsNode = n;
 			}
 		}
+		// Find the pixels node in the output image node
+		// (if more than one this will be incorrect)
 		list = destNode.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			n = list.item(i);
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.contains(XMLWriter.PIXELS_TAG))
+					//  - compare the found node to the input node stored above
 					checkPixelsNode(n, pixelsNode);
 			}
 		}
@@ -132,7 +168,7 @@ public class SchemaCurrent_TO_2003_FC_Test
 	 */
 	private void checkPixelsNode(Node destNode, Node srcNode)
 	{
-		String PIXELS_ID_PATH = XSLT_PATH_ID+":Pixels:XSLT:";
+		// store the values for ID and Name attribute on the input node
 		NamedNodeMap attributesSrc = srcNode.getAttributes();
 		String nameSrc = "";
 		String idSrc = "";
@@ -174,7 +210,7 @@ public class SchemaCurrent_TO_2003_FC_Test
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.equals(XMLWriter.ID_ATTRIBUTE))
-				Assert.assertEquals(n.getNodeValue(), PIXELS_ID_PATH+idSrc);
+				Assert.assertEquals(n.getNodeValue(), idSrc);
 				else if (name.equals(XMLWriter.NAME_ATTRIBUTE))
 				Assert.assertEquals(n.getNodeValue(), nameSrc);
 				else if (name.equals(XMLWriter.SIZE_X_ATTRIBUTE))
@@ -187,16 +223,16 @@ public class SchemaCurrent_TO_2003_FC_Test
 				Assert.assertEquals(n.getNodeValue(), sizeC);
 				else if (name.equals(XMLWriter.SIZE_T_ATTRIBUTE))
 				Assert.assertEquals(n.getNodeValue(), sizeT);
-// TODO - Review
 //				else if (name.equals(XMLWriter.PIXELS_TYPE_ATTRIBUTE))
 //				Assert.assertEquals(n.getNodeValue(), pixelsType);
 				else if (name.equals(XMLWriter.DIMENSION_ORDER_ATTRIBUTE))
 				Assert.assertEquals(n.getNodeValue(), dimensionOrder);
 				else if (name.equals(XMLWriter.BIG_ENDIAN_ATTRIBUTE))
+				    //  - also store the Big Endian value used in the output
 					bigEndianDst = n.getNodeValue();
 			}
 		}
-		//check the tag now.
+		// Create two arrays of BinData nodes
 		NodeList list = srcNode.getChildNodes();
 		List<Node> binDataNodeSrc = new ArrayList<Node>();
 		for (int i = 0; i < list.getLength(); i++) {
@@ -204,6 +240,7 @@ public class SchemaCurrent_TO_2003_FC_Test
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.contains(XMLWriter.BIN_DATA_TAG))
+					//  - Add node to the input list
 					binDataNodeSrc.add(n);
 			}
 		}
@@ -214,14 +251,19 @@ public class SchemaCurrent_TO_2003_FC_Test
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.contains(XMLWriter.BIN_DATA_TAG))
+					//  - Add node to the output list
 					binDataNodeDest.add(n);
 			}
 		}
+        // Compare the lengths of the lists
 	Assert.assertTrue(binDataNodeSrc.size() > 0);
 	Assert.assertEquals(binDataNodeSrc.size(), binDataNodeDest.size());
+		// Compare the contents of the lists
 		for (int i = 0; i < binDataNodeDest.size(); i++) {
 			checkBinDataNode(binDataNodeDest.get(i), binDataNodeSrc.get(i));
 		}
+		// Compare the Big Endian value from the output stored above
+		// with the value used in the input file
 		n = binDataNodeSrc.get(0);
 		attributesSrc = n.getAttributes();
 		//now check that
@@ -245,6 +287,8 @@ public class SchemaCurrent_TO_2003_FC_Test
 	{
 	Assert.assertNotNull(destNode);
 	Assert.assertNotNull(srcNode);
+
+		// store the values for Compression attribute on the input node
 		NamedNodeMap attributesSrc = srcNode.getAttributes();
 		String compression = "";
 		Node n;
@@ -256,15 +300,19 @@ public class SchemaCurrent_TO_2003_FC_Test
 				compression = n.getNodeValue();
 		}
 
+		// compare the stored value for the Compression attribute
+		// to that on the output node
 		NamedNodeMap attributes = destNode.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			n = attributes.item(i);
 			if (n != null) {
 				name = n.getNodeName();
-				if (name.equals(XMLWriter.COMPRESSION_ATTRIBUTE))
+				if (name.equals(XMLWriter.COMPRESSION_ATTRIBUTE)) {
 				Assert.assertEquals(n.getNodeValue(), compression);
+				}
 			}
 		}
+		// compare the contents of the BinData node
 	Assert.assertEquals(destNode.getTextContent(), srcNode.getTextContent());
 	}
 
@@ -281,13 +329,13 @@ public class SchemaCurrent_TO_2003_FC_Test
 
 		/** The target schema file */
 		schemaArray = new StreamSource[1];
-		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/released-schema/2003-FC/ome.xsd"));
-		//components/specification/released-schema/2003-FC/
+		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/released-schema/2008-02/ome.xsd"));
+		//components/specification/released-schema/2008-02/
 
 		/** The transforms */
 		STYLESHEET_A = this.getClass().getResourceAsStream("/transforms/2012-06-to-2011-06.xsl");
 		STYLESHEET_B = this.getClass().getResourceAsStream("/transforms/2011-06-to-2010-06.xsl");
-		STYLESHEET_C = this.getClass().getResourceAsStream("/transforms/2010-06-to-2003-FC.xsl");
+		STYLESHEET_C = this.getClass().getResourceAsStream("/transforms/2010-06-to-2008-02.xsl");
 		//components/specification/transforms/
 
     	files = new ArrayList<File>();
@@ -310,25 +358,25 @@ public class SchemaCurrent_TO_2003_FC_Test
     }
 
 	/**
-     * Tests the XSLT used to downgrade from current schema to 2003-FC.
+     * Tests the XSLT used to downgrade from current schema to 2008-02.
      * An XML file with an image is created and the stylesheet is applied.
      * @throws Exception Thrown if an error occurred.
      */
     @Test(enabled = false)
-	public void testDowngradeTo2003FCImageNoMetadata()
+	public void testDowngradeTo200802ImageNoMetadata()
 		throws Exception
 	{
-		File inFile = File.createTempFile("testDowngradeTo2003FCImageNoMetadata",
+		File inFile = File.createTempFile("testDowngradeTo200802ImageNoMetadata",
 				"."+OME_XML_FORMAT);
 		files.add(inFile);
-		File middleFileA = File.createTempFile("testDowngradeTo2003FCImageNoMetadataMiddleA",
+		File middleFileA = File.createTempFile("testDowngradeTo200802ImageNoMetadataMiddleA",
 				"."+OME_XML_FORMAT);
 		files.add(middleFileA);
-		File middleFileB = File.createTempFile("testDowngradeTo2003FCImageNoMetadataMiddleB",
+		File middleFileB = File.createTempFile("testDowngradeTo200802ImageNoMetadataMiddleB",
 				"."+OME_XML_FORMAT);
 		files.add(middleFileB);
 		File outputFile = File.createTempFile(
-				"testDowngradeTo2003FCImageNoMetadataOutput",
+				"testDowngradeTo200802ImageNoMetadataOutput",
 				"."+OME_XML_FORMAT);
 		files.add(outputFile);
 		XMLMockObjects xml = new  XMLMockObjects();
