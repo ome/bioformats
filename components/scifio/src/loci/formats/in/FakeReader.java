@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -260,7 +259,7 @@ public class FakeReader extends FormatReader {
   @Override
   public String[] getSeriesUsedFiles(boolean noPixels) {
       FormatTools.assertId(currentId, true, 1);
-      Vector<String> files = new Vector<String>();
+      List<String> files = new ArrayList<String>();
       if (!noPixels) files.add(currentId);
       if (iniFile != null) files.add(iniFile);
       return files.toArray(new String[files.size()]);
