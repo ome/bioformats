@@ -247,7 +247,7 @@ public class FakeReader extends FormatReader {
     return ! new Location(id + ".ini").exists();
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  @Override
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "fake.ini"))
     {
@@ -271,6 +271,12 @@ public class FakeReader extends FormatReader {
     if (loc.exists()) {
       iniFile = loc.getAbsolutePath();
     }
+  }
+
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    iniFile = null;
+    super.close(fileOnly);
   }
 
   @Override
