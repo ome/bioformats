@@ -478,10 +478,6 @@ public class ZeissCZIReader extends FormatReader {
 
     ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
 
-    if (seriesCount * ms0.imageCount != planes.size()) {
-      throw new FormatException("Dimension detection failed");
-    }
-
     if (mosaics == seriesCount &&
       seriesCount == (planes.size() / getImageCount()) &&
       prestitched != null && prestitched)
@@ -536,7 +532,7 @@ public class ZeissCZIReader extends FormatReader {
       if (acquiredDate != null) {
         store.setImageAcquisitionDate(new Timestamp(acquiredDate), i);
       }
-      else {
+      else if (planes.get(0).timestamp != null) {
         long timestamp = (long) (planes.get(0).timestamp * 1000);
         String date =
           DateTools.convertDate(timestamp, DateTools.UNIX);
@@ -546,7 +542,9 @@ public class ZeissCZIReader extends FormatReader {
         store.setImageExperimenterRef(experimenterID, i);
       }
       store.setImageName(name + " #" + (i + 1), i);
-      store.setImageDescription(description, i);
+      if (description != null && description.length() > 0) {
+        store.setImageDescription(description, i);
+      }
 
       if (airPressure != null) {
         store.setImagingEnvironmentAirPressure(new Double(airPressure), i);
@@ -569,7 +567,9 @@ public class ZeissCZIReader extends FormatReader {
           store.setObjectiveSettingsCorrectionCollar(
             new Double(correctionCollar), i);
         }
-        store.setObjectiveSettingsMedium(getMedium(medium), i);
+        if (medium != null) {
+          store.setObjectiveSettingsMedium(getMedium(medium), i);
+        }
         if (refractiveIndex != null) {
           store.setObjectiveSettingsRefractiveIndex(
             new Double(refractiveIndex), i);
@@ -1302,7 +1302,7 @@ public class ZeissCZIReader extends FormatReader {
         }
 
         String name = getFirstNodeValue(channel, "DyeName");
-        if (i < channelNames.size()) {
+        if (i < channelNames.size() && name != null) {
           channelNames.set(i, name);
         }
         else {
@@ -1310,14 +1310,14 @@ public class ZeissCZIReader extends FormatReader {
         }
 
         String emission = getFirstNodeValue(channel, "DyeMaxEmission");
-        if (i < emissionWavelengths.size()) {
+        if (i < emissionWavelengths.size() && emission != null) {
           emissionWavelengths.set(i, emission);
         }
         else {
           emissionWavelengths.add(emission);
         }
         String excitation = getFirstNodeValue(channel, "DyeMaxExcitation");
-        if (i < excitationWavelengths.size()) {
+        if (i < excitationWavelengths.size() && excitation != null) {
           excitationWavelengths.set(i, excitation);
         }
         else {
