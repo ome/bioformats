@@ -36,11 +36,11 @@
 
 package loci.formats.in;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 
@@ -58,6 +58,9 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import ome.xml.model.OME;
+import ome.scifio.common.IniList;
+import ome.scifio.common.IniParser;
+import ome.scifio.common.IniTable;
 import ome.specification.XMLMockObjects;
 
 /**
@@ -116,7 +119,7 @@ public class FakeReader extends FormatReader {
   private int ac = 0;
 
   /** Properties companion file which can be associated with this fake file */
-  private String propertiesFile;
+  private String iniFile;
 
   // -- Constructor --
 
@@ -239,15 +242,15 @@ public class FakeReader extends FormatReader {
 
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
-    if (checkSuffix(id, "fake.properties")) {
+    if (checkSuffix(id, "fake" + ".ini")) {
       return ! new Location(id).exists();
     }
-    return ! new Location(id + ".properties").exists();
+    return ! new Location(id + ".ini").exists();
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (checkSuffix(name, "fake.properties"))
+    if (checkSuffix(name, "fake.ini"))
     {
       return true;
     }
@@ -259,21 +262,22 @@ public class FakeReader extends FormatReader {
       FormatTools.assertId(currentId, true, 1);
       Vector<String> files = new Vector<String>();
       if (!noPixels) files.add(currentId);
-      if (propertiesFile != null) files.add(propertiesFile);
+      if (iniFile != null) files.add(iniFile);
       return files.toArray(new String[files.size()]);
   }
 
   private void findLogFiles() {
-    propertiesFile = getCurrentFile() + ".properties";
-    if (!(new Location(propertiesFile).exists())) {
-        propertiesFile = null;
+    iniFile = null;
+    Location loc = new Location(getCurrentFile() + ".ini");
+    if (loc.exists()) {
+      iniFile = loc.getAbsolutePath();
     }
   }
 
   @Override
   protected void initFile(String id) throws FormatException, IOException {
     if (!checkSuffix(id, "fake")) {
-      if (checkSuffix(id, "fake.properties")) {
+      if (checkSuffix(id, "fake.ini")) {
         id = id.substring(0, id.lastIndexOf("."));
       }
       Location file = new Location(id).getAbsoluteFile();
@@ -333,23 +337,19 @@ public class FakeReader extends FormatReader {
     int plateAcqs = 0;
 
     // add properties file values to list of tokens.
-    if (propertiesFile != null) {
-      Properties props = new Properties();
-      FileInputStream fis = new FileInputStream(propertiesFile);
-      try {
-        props.load(fis);
-      } finally {
-        fis.close();
-      }
+    if (iniFile != null) {
+      IniParser parser = new IniParser();
+      IniList list = parser.parseINI(new File(iniFile));
+
       List<String> newTokens = new ArrayList<String>();
-      for (Object obj : props.keySet()) {
-        String key = obj.toString();
-        if (key.trim().length() == 0) {
-            continue;
+      // Unclear what to do with other headers...
+      IniTable table = list.getTable(IniTable.DEFAULT_HEADER);
+      if (table != null) {
+        for (Map.Entry<String, String> entry : table.entrySet()) {
+          newTokens.add(entry.getKey() + "=" + entry.getValue());
         }
-        String value = props.getProperty(key);
-        newTokens.add(key + "=" + value);
       }
+
       String[] newTokArr = newTokens.toArray(new String[0]);
       String[] oldTokArr = tokens;
       tokens = new String[newTokArr.length + oldTokArr.length];

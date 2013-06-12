@@ -51,7 +51,7 @@ import org.testng.annotations.Test;
 
 public class FakeReaderTest {
 
-  private File fake, fakeProperties;
+  private File fake, fakeIni;
 
   private FakeReader reader;
 
@@ -59,14 +59,14 @@ public class FakeReaderTest {
   public void setUp() throws Exception {
     fake = File.createTempFile(this.getClass().getName(), ".fake");
     fake.deleteOnExit();
-    fakeProperties = new File(fake.getAbsolutePath() + ".properties");
-    RandomAccessFile raf = new RandomAccessFile(fakeProperties, "rw");
+    fakeIni = new File(fake.getAbsolutePath() + ".ini");
+    RandomAccessFile raf = new RandomAccessFile(fakeIni, "rw");
     try {
         raf.write(new byte[0]);
     } finally {
         raf.close();
     }
-    fakeProperties.deleteOnExit();
+    fakeIni.deleteOnExit();
     reader = new FakeReader();
   }
 
@@ -75,8 +75,8 @@ public class FakeReaderTest {
     if (fake.exists()) {
         fake.delete();
     }
-    if (fakeProperties.exists()) {
-      fakeProperties.delete();
+    if (fakeIni.exists()) {
+      fakeIni.delete();
     }
     reader.close();
   }
@@ -94,7 +94,7 @@ public class FakeReaderTest {
 
   @Test
   public void testNoCompanionFile() throws Exception {
-    fakeProperties.delete();
+    fakeIni.delete();
     reader.setId(fake.getAbsolutePath());
     assertEquals(1, reader.getUsedFiles().length);
     assertEquals(1, reader.getSeriesUsedFiles().length);
@@ -118,8 +118,8 @@ public class FakeReaderTest {
   }
 
   @Test
-  public void testValuesFromProperties() throws Exception {
-    addToPropertiesFile("sizeX", "256");
+  public void testValuesFromIni() throws Exception {
+    addToIniFile("sizeX", "256");
     reader.setId(fake.getAbsolutePath());
     assertEquals(256, reader.getSizeX());
   }
@@ -163,14 +163,14 @@ public class FakeReaderTest {
     fake = newFake;
     fake.deleteOnExit();
 
-    File newProp = new File(fakePrefix + sb.toString() + ".fake.properties");
-    assertEquals(true, fakeProperties.renameTo(newProp));
-    fakeProperties = newProp;
-    fakeProperties.deleteOnExit();
+    File newProp = new File(fakePrefix + sb.toString() + ".fake.ini");
+    assertEquals(true, fakeIni.renameTo(newProp));
+    fakeIni = newProp;
+    fakeIni.deleteOnExit();
   }
 
-  void addToPropertiesFile(String... args) throws Exception {
-    FileOutputStream fos = new FileOutputStream(fakeProperties);
+  void addToIniFile(String... args) throws Exception {
+    FileOutputStream fos = new FileOutputStream(fakeIni);
     PrintWriter pw = new PrintWriter(fos, true);
     try {
       for (int i = 0; i < args.length / 2; i++) {

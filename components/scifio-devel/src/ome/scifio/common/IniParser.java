@@ -37,6 +37,8 @@
 package ome.scifio.common;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -99,6 +101,33 @@ public class IniParser {
     return parseINI(openTextResource(path, c));
   }
 
+  /**
+   * Parses the INI-style wrapping the given file in a {@link BufferedReader}
+   */
+  public IniList parseINI(File file)
+    throws IOException
+  {
+    FileInputStream fis = null;
+    InputStreamReader isr = null;
+    BufferedReader br = null;
+    try {
+      fis = new FileInputStream(file);
+      isr = new InputStreamReader(fis);
+      br = new BufferedReader(isr);
+      return parseINI(br);
+    } finally {
+      if (br != null) {
+        br.close();
+      }
+      if (isr != null) {
+        isr.close();
+      }
+      if (fis != null) {
+        fis.close();
+      }
+    }
+  }
+
   /** Parses the INI-style configuration data from the given input stream. */
   public IniList parseINI(BufferedReader in)
     throws IOException
@@ -143,6 +172,14 @@ public class IniParser {
         attrs.put(IniTable.HEADER_KEY, header);
         no += num;
         continue;
+      }
+
+      // if we still haven't found a header, then this is the default
+      // section (more similar to a properties file)
+      if (attrs == null) {
+          attrs = new IniTable();
+          attrs.put(IniTable.HEADER_KEY, IniTable.DEFAULT_HEADER);
+          list.add(attrs);
       }
 
       // parse key/value pair
