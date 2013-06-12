@@ -65,9 +65,7 @@ public class ImageFaker {
         }
         for (int i = 0; i < args.length; i++) {
           if (args[i].startsWith("-")) {
-            if (args[i].equals("-dir")) {
-                directoryRoot = args[++i];
-            } else if (args[i].equals("-plates")) {
+            if (args[i].equals("-plates")) {
                 plates = Integer.parseInt(args[++i]);
             } else if (args[i].equals("-runs")) {
                 plateAcquisitions = Integer.parseInt(args[++i]);
@@ -78,11 +76,15 @@ public class ImageFaker {
             } else if (args[i].equals("-fields")) {
                 fields = Integer.parseInt(args[++i]);
             } else if (args[i].equals("-debug")) {
-              DebugTools.enableLogging("DEBUG");
+                DebugTools.enableLogging("DEBUG");
             }
           } else {
-              LOGGER.error("Found unknown argument: {}; exiting.", args[i]);
-              return false;
+              if (directoryRoot == null) {
+                  directoryRoot = args[i];
+              } else {
+                  LOGGER.error("Found unknown argument: {}; exiting.", args[i]);
+                  return false;
+              }
           }
         }
         return true;
