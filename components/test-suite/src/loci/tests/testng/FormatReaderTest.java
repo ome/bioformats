@@ -1501,6 +1501,14 @@ public class FormatReaderTest {
 
           if (base[i].endsWith(".bmp") && reader.getFormat().equals("BD Pathway"))
           {
+            r.close();
+            continue;
+          }
+
+          // multi-file Zeiss CZI datasets are only detected when the
+          // "master" file is chosen
+          if (reader.getFormat().equals("Zeiss CZI") && comp.length > 1) {
+            r.close();
             continue;
           }
 
