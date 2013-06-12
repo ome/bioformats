@@ -36,8 +36,6 @@
 
 package loci.formats.tools;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,12 +58,9 @@ public class FakeGenerator {
 
     public FakeGenerator(String directoryRoot) {
         this.directoryRoot = new Location(directoryRoot);
-        if (!this.directoryRoot.canWrite()) {
-            throw new IllegalArgumentException("Cannot write to "
-                    + this.directoryRoot.getAbsolutePath());
-        }
         if (!this.directoryRoot.isDirectory()) {
-            throw new IllegalArgumentException("Existing file name supplied.");
+            throw new IllegalArgumentException("File name instead of " +
+                    "directory supplied.");
         }
     }
 
@@ -79,7 +74,28 @@ public class FakeGenerator {
     /**
      * Creates a fake SPW file/directory structure. All arguments indicating
      * plate or well element count must be at least <code>1</code> and cannot be
-     * <code>null</code>.
+     * <code>null</code>. The structure appears on the file system as:
+     * <br/>
+     * <pre>
+     * Plate001
+     * |_
+     *   Run001
+     *   |_
+     *     WellA01
+     *     |_
+     *       Field001.fake
+     *       Field002.fake
+     *       ...
+     *     WellA02
+     *     |_
+     *       ...
+     *   Run002
+     *   |_
+     *     ...
+     * Plate002
+     * |_
+     *   ...
+     * </pre>
      * @param baseDir Directory, where structure will be generated.
      * @param plates Number of plates in a screen (max 255).
      * @param plateAcquisitions Number of plate acquisitions (runs) in a plate
@@ -95,8 +111,8 @@ public class FakeGenerator {
             int columns, int fields) {
         isValidRange(plates, 1, 255);
         isValidRange(plateAcquisitions, 1, 255);
-        isValidRange(rows, 1, 16);
-        isValidRange(columns, 1, 24);
+        isValidRange(rows, 1, 255);
+        isValidRange(columns, 1, 255);
         isValidRange(fields, 1, 255);
         // For each plate:
         for (int i = 0; i < plates; ++i) {
