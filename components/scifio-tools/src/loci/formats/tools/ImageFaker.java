@@ -42,97 +42,97 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ImageFaker is a wrapper class for invoking methods in
- * {@link FakeGenerator}.
+ * ImageFaker is a wrapper class for invoking methods in {@link FakeGenerator}.
  *
  * @author Blazej Pindelski, bpindelski at dundee.ac.uk
  * @since 5.0
  */
 public class ImageFaker {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImageFaker.class);
+  private static final Logger LOGGER = LoggerFactory
+      .getLogger(ImageFaker.class);
 
-    private String directoryRoot;
-    private int plates = 1;
-    private int plateAcquisitions = 1;
-    private int rows = 1;
-    private int columns = 1;
-    private int fields = 1;
+  private String directoryRoot;
 
-    public boolean parseArgs(String[] args) {
-        if (args == null) {
-            return false;
-        }
-        for (int i = 0; i < args.length; i++) {
-          if (args[i].startsWith("-")) {
-            if (args[i].equals("-plates")) {
-                plates = Integer.parseInt(args[++i]);
-            } else if (args[i].equals("-runs")) {
-                plateAcquisitions = Integer.parseInt(args[++i]);
-            } else if (args[i].equals("-rows")) {
-                rows = Integer.parseInt(args[++i]);
-            } else if (args[i].equals("-columns")) {
-                columns = Integer.parseInt(args[++i]);
-            } else if (args[i].equals("-fields")) {
-                fields = Integer.parseInt(args[++i]);
-            } else if (args[i].equals("-debug")) {
-                DebugTools.enableLogging("DEBUG");
-            }
-          } else {
-              if (directoryRoot == null) {
-                  directoryRoot = args[i];
-              } else {
-                  LOGGER.error("Found unknown argument: {}; exiting.", args[i]);
-                  return false;
-              }
-          }
-        }
-        return true;
+  private int plates = 1;
+
+  private int plateAcquisitions = 1;
+
+  private int rows = 1;
+
+  private int columns = 1;
+
+  private int fields = 1;
+
+  public boolean parseArgs(String[] args) {
+    if (args == null) {
+      return false;
     }
-
-    public void printUsage() {
-        String[] s = {
-          "To generate a fake SPW file / dir structure, run:",
-          "  fakespw path [-plates] [-runs] [-rows] [-columns] ",
-          "    [-fields] [-debug]",
-          "",
-          "        path: the top-level directory for the SPW structure",
-          "     -plates: number of plates (default: 1)",
-          "       -runs: number of plate runs (acquisitions) (default: 1)",
-          "       -rows: number of rows in a plate (default: 1)",
-          "    -columns: number of columns in a plate (default: 1)",
-          "     -fields: number of fields in a plate (default: 1)",
-          "      -debug: turn on debugging output",
-          ""
-        };
-        for (int i=0; i<s.length; i++) LOGGER.info(s[i]);
-    }
-
-    /**
-     * A utility method for reading a file from the command line,
-     * and displaying the results in a simple display.
-     */
-    public boolean fakeScreen(String[] args) {
-        DebugTools.enableLogging("INFO");
-        if (args.length == 0) {
-            printUsage();
-            return false;
+    for (int i = 0; i < args.length; i++) {
+      if (args[i].startsWith("-")) {
+        if (args[i].equals("-plates")) {
+          plates = Integer.parseInt(args[++i]);
+        } else if (args[i].equals("-runs")) {
+          plateAcquisitions = Integer.parseInt(args[++i]);
+        } else if (args[i].equals("-rows")) {
+          rows = Integer.parseInt(args[++i]);
+        } else if (args[i].equals("-columns")) {
+          columns = Integer.parseInt(args[++i]);
+        } else if (args[i].equals("-fields")) {
+          fields = Integer.parseInt(args[++i]);
+        } else if (args[i].equals("-debug")) {
+          DebugTools.enableLogging("DEBUG");
         }
-
-        boolean validArgs = parseArgs(args);
-        if (!validArgs) {
-            return false;
+      } else {
+        if (directoryRoot == null) {
+          directoryRoot = args[i];
+        } else {
+          LOGGER.error("Found unknown argument: {}; exiting.", args[i]);
+          return false;
         }
-
-        FakeGenerator fg = new FakeGenerator(directoryRoot);
-        fg.generateScreen(plates, plateAcquisitions, rows, columns, fields);
-
-        return true;
       }
-
-    public static void main(String[] args) throws Exception {
-        if (!new ImageFaker().fakeScreen(args)) {
-            System.exit(1);
-        }
     }
+    return true;
+  }
+
+  public void printUsage() {
+    String[] s = { "To generate a fake SPW file / dir structure, run:",
+        "  fakespw path [-plates] [-runs] [-rows] [-columns] ",
+        "    [-fields] [-debug]", "",
+        "        path: the top-level directory for the SPW structure",
+        "     -plates: number of plates (default: 1)",
+        "       -runs: number of plate runs (acquisitions) (default: 1)",
+        "       -rows: number of rows in a plate (default: 1)",
+        "    -columns: number of columns in a plate (default: 1)",
+        "     -fields: number of fields in a plate (default: 1)",
+        "      -debug: turn on debugging output", "" };
+    for (int i = 0; i < s.length; i++) {
+      LOGGER.info(s[i]);
+    }
+  }
+
+  public boolean fakeScreen(String[] args) {
+    DebugTools.enableLogging("INFO");
+    if (args.length == 0) {
+      printUsage();
+      return false;
+    }
+
+    boolean validArgs = parseArgs(args);
+    if (!validArgs) {
+      return false;
+    }
+
+    FakeGenerator fg = new FakeGenerator(directoryRoot);
+    fg.generateScreen(plates, plateAcquisitions, rows, columns, fields);
+
+    return true;
+  }
+
+  public static void main(String[] args) throws Exception {
+    if (!new ImageFaker().fakeScreen(args)) {
+      System.exit(1);
+    }
+  }
+
 }

@@ -42,86 +42,95 @@ import org.slf4j.LoggerFactory;
 import loci.common.Location;
 
 /**
- * Generates fake screen/plate/well structures. Maximum supported size is
- * a 384 well plate with multiple runs and fields. Methods defensively check
+ * Generates fake screen/plate/well structures. Maximum supported size is a 384
+ * well plate with multiple runs and fields. Methods defensively check
  * caller-supplied arguments and throw relevant exceptions where needed.
+ *
  * @author Blazej Pindelski, bpindelski at dundee.ac.uk
  * @since 5.0
  */
 public class FakeGenerator {
 
-    public static String PLATE = "Plate";
+  public static String PLATE = "Plate";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(
-            FakeGenerator.class);
-    private Location directoryRoot;
+  private static final Logger LOGGER = LoggerFactory
+      .getLogger(FakeGenerator.class);
 
-    public FakeGenerator(String directoryRoot) {
-        this.directoryRoot = new Location(directoryRoot);
-        if (!this.directoryRoot.isDirectory()) {
-            throw new IllegalArgumentException("File name instead of " +
-                    "directory supplied.");
-        }
+  private Location directoryRoot;
+
+  public FakeGenerator(String directoryRoot) {
+    this.directoryRoot = new Location(directoryRoot);
+    if (!this.directoryRoot.isDirectory()) {
+      throw new IllegalArgumentException("File name instead of directory " +
+          "supplied.");
     }
+  }
 
-    public static void isValidRange(int arg, int min, int max) {
-        if (arg < min || arg > max) {
-            throw new IllegalArgumentException("Method argument value " +
-                    "outside valid range.");
-        }
+  public static void isValidRange(int arg, int min, int max) {
+    if (arg < min || arg > max) {
+      throw new IllegalArgumentException("Method argument value outside " +
+          "valid range.");
     }
+  }
 
-    /**
-     * Creates a fake SPW file/directory structure. All arguments indicating
-     * plate or well element count must be at least <code>1</code> and cannot be
-     * <code>null</code>. The structure appears on the file system as:
-     * <br/>
-     * <pre>
-     * Plate001
-     * |_
-     *   Run001
-     *   |_
-     *     WellA01
-     *     |_
-     *       Field001.fake
-     *       Field002.fake
-     *       ...
-     *     WellA02
-     *     |_
-     *       ...
-     *   Run002
-     *   |_
-     *     ...
-     * Plate002
-     * |_
-     *   ...
-     * </pre>
-     * @param baseDir Directory, where structure will be generated.
-     * @param plates Number of plates in a screen (max 255).
-     * @param plateAcquisitions Number of plate acquisitions (runs) in a plate
-     * (max 255).
-     * @param rows Number of rows in a plate (max 16).
-     * @param columns Number of columns in a plate (max 24).
-     * @param fields Number of fields for a plate acquisition (max 255).
-     * @throws IllegalArgumentException when any of the arguments fail
-     * validation.
-     * @throws NullPointerException when null specified as argument value.
-     */
-    public void generateScreen(int plates, int plateAcquisitions, int rows,
-            int columns, int fields) {
-        isValidRange(plates, 1, 255);
-        isValidRange(plateAcquisitions, 1, 255);
-        isValidRange(rows, 1, 255);
-        isValidRange(columns, 1, 255);
-        isValidRange(fields, 1, 255);
-        // For each plate:
-        for (int i = 0; i < plates; ++i) {
-            // create plate acquisitions
-        }
-        // for each plate acquisition:
-        //   create wells (rows * columns)
-        //   create fields
-        
+  /**
+   * Creates a fake SPW file/directory structure. All arguments indicating plate
+   * or well element count must be at least <code>1</code> and cannot be
+   * <code>null</code>. The structure appears on the file system as: <br/>
+   *
+   * <pre>
+   * Plate001
+   * |_
+   *   Run001
+   *   |_
+   *     WellA01
+   *     |_
+   *       Field001.fake
+   *       Field002.fake
+   *       ...
+   *     WellA02
+   *     |_
+   *       ...
+   *   Run002
+   *   |_
+   *     ...
+   * Plate002
+   * |_
+   *   ...
+   * </pre>
+   *
+   * @param baseDir
+   *          Directory, where structure will be generated.
+   * @param plates
+   *          Number of plates in a screen (max 255).
+   * @param plateAcquisitions
+   *          Number of plate acquisitions (runs) in a plate (max 255).
+   * @param rows
+   *          Number of rows in a plate (max 16).
+   * @param columns
+   *          Number of columns in a plate (max 24).
+   * @param fields
+   *          Number of fields for a plate acquisition (max 255).
+   * @throws IllegalArgumentException
+   *           when any of the arguments fail validation.
+   * @throws NullPointerException
+   *           when null specified as argument value.
+   */
+  public void generateScreen(int plates, int plateAcquisitions, int rows,
+      int columns, int fields) {
+    isValidRange(plates, 1, 255);
+    isValidRange(plateAcquisitions, 1, 255);
+    isValidRange(rows, 1, 255);
+    isValidRange(columns, 1, 255);
+    isValidRange(fields, 1, 255);
+    // For each plate:
+    for (int i = 0; i < plates; ++i) {
+      // create plate acquisitions
     }
+    // for each plate acquisition:
+    // create wells (rows * columns)
+    // create fields
+
+  }
 
 }
