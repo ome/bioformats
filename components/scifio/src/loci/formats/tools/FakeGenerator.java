@@ -158,8 +158,8 @@ public class FakeGenerator {
           Location fieldLocation = getNewLocationFromResourceName(path,
               FIELD, i, FAKE_EXT);
           try {
-            System.out.println(fieldLocation.getCanonicalPath());
             fieldLocation.createNewFile();
+            LOGGER.debug("Created: " + fieldLocation.getCanonicalPath());
           } catch (IOException ioe) {
             throw new RuntimeException(ioe);
           }
