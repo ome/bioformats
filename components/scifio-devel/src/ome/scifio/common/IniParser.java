@@ -112,7 +112,7 @@ public class IniParser {
     BufferedReader br = null;
     try {
       fis = new FileInputStream(file);
-      isr = new InputStreamReader(fis);
+      isr = new InputStreamReader(fis, Constants.ENCODING);
       br = new BufferedReader(isr);
       return parseINI(br);
     } finally {

@@ -119,9 +119,9 @@ public class FakeReaderTest {
 
   @Test
   public void testValuesFromIni() throws Exception {
-    addToIniFile("sizeX", "256");
+    addToIniFile("sizeX", "128");
     reader.setId(fake.getAbsolutePath());
-    assertEquals(256, reader.getSizeX());
+    assertEquals(128, reader.getSizeX());
   }
 
 
@@ -170,6 +170,7 @@ public class FakeReaderTest {
   }
 
   void addToIniFile(String... args) throws Exception {
+    checkArgs(args);
     FileOutputStream fos = new FileOutputStream(fakeIni);
     PrintWriter pw = new PrintWriter(fos, true);
     try {
