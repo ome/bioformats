@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# fakespw: a script for creating a fake SPW file / directory structure
-#          on the file system
+# mkfake: a script for creating a fake file / directory structures
+#         on the file system
 
 # Required JARs: loci_tools.jar
 
