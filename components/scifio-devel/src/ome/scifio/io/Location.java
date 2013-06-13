@@ -451,7 +451,11 @@ public class Location {
    * @see File#mkdirs()
    */
   public boolean mkdirs() {
-      return file.mkdirs();
+      if (file == null) {
+          return false;
+      } else {
+          return file.mkdirs();
+      }
   }
 
   /**
