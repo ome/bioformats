@@ -65,7 +65,7 @@ public class ImageFaker {
   private int fields = 1;
 
   public boolean parseArgs(String[] args) {
-    if (args == null) {
+    if (args == null || args.length == 0) {
       return false;
     }
     for (int i = 0; i < args.length; i++) {
@@ -113,13 +113,11 @@ public class ImageFaker {
 
   public boolean fakeScreen(String[] args) {
     DebugTools.enableLogging("INFO");
-    if (args.length == 0) {
-      printUsage();
-      return false;
-    }
 
     boolean validArgs = parseArgs(args);
-    if (!validArgs) {
+
+    if (!validArgs || directoryRoot == null) {
+      printUsage();
       return false;
     }
 
