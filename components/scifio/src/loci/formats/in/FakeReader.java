@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,7 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
@@ -36,7 +36,11 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import loci.common.DataTools;
@@ -53,6 +57,9 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import ome.xml.model.OME;
+import ome.scifio.common.IniList;
+import ome.scifio.common.IniParser;
+import ome.scifio.common.IniTable;
 import ome.specification.XMLMockObjects;
 
 /**
@@ -110,10 +117,16 @@ public class FakeReader extends FormatReader {
   /** Channel of last opened image plane. */
   private int ac = 0;
 
+  /** Properties companion file which can be associated with this fake file */
+  private String iniFile;
+
   // -- Constructor --
 
   /** Constructs a new fake reader. */
-  public FakeReader() { super("Simulated data", "fake"); }
+  public FakeReader() {
+    super("Simulated data", "fake");
+    hasCompanionFiles = true;
+  }
 
   // -- IFormatReader API methods --
 
@@ -227,8 +240,70 @@ public class FakeReader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   @Override
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    if (checkSuffix(id, "fake" + ".ini")) {
+      return ! new Location(id).exists();
+    }
+    return ! new Location(id + ".ini").exists();
+  }
+
+  @Override
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "fake.ini"))
+    {
+      return true;
+    }
+    return super.isThisType(name, open);
+  }
+
+  @Override
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+      FormatTools.assertId(currentId, true, 1);
+      List<String> files = new ArrayList<String>();
+      if (!noPixels) files.add(currentId);
+      if (iniFile != null) files.add(iniFile);
+      return files.toArray(new String[files.size()]);
+  }
+
+  private void findLogFiles() {
+    iniFile = null;
+    Location loc = new Location(getCurrentFile() + ".ini");
+    if (loc.exists()) {
+      iniFile = loc.getAbsolutePath();
+    }
+  }
+
+  @Override
+  public void close(boolean fileOnly) throws IOException {
+    iniFile = null;
+    super.close(fileOnly);
+  }
+
+  @Override
   protected void initFile(String id) throws FormatException, IOException {
+    if (!checkSuffix(id, "fake")) {
+      if (checkSuffix(id, "fake.ini")) {
+        id = id.substring(0, id.lastIndexOf("."));
+      }
+      Location file = new Location(id).getAbsoluteFile();
+      if (!file.exists()) {
+        Location dir = file.getParentFile();
+        String[] list = dir.list(true);
+        String name = file.getName();
+        name = name.substring(0, name.lastIndexOf("."));
+        for (String f : list) {
+          if (checkSuffix(f, "fake") && f.startsWith(name)) {
+            id = new Location(dir, f).getAbsolutePath();
+            break;
+          }
+        }
+      }
+    }
+    // Logic copied from deltavision. This should probably be refactored into
+    // a helper method "replaceBySuffix" or something.
+
     super.initFile(id);
+    findLogFiles();
 
     String path = id;
     if (new Location(id).exists()) {
@@ -265,6 +340,28 @@ public class FakeReader extends FormatReader {
     int plateCols = 0;
     int fields = 0;
     int plateAcqs = 0;
+
+    // add properties file values to list of tokens.
+    if (iniFile != null) {
+      IniParser parser = new IniParser();
+      IniList list = parser.parseINI(new File(iniFile));
+
+      List<String> newTokens = new ArrayList<String>();
+      // Unclear what to do with other headers...
+      IniTable table = list.getTable(IniTable.DEFAULT_HEADER);
+      if (table != null) {
+        for (Map.Entry<String, String> entry : table.entrySet()) {
+          newTokens.add(entry.getKey() + "=" + entry.getValue());
+        }
+      }
+
+      String[] newTokArr = newTokens.toArray(new String[0]);
+      String[] oldTokArr = tokens;
+      tokens = new String[newTokArr.length + oldTokArr.length];
+      System.arraycopy(oldTokArr, 0, tokens, 0, oldTokArr.length);
+      System.arraycopy(newTokArr, 0, tokens, oldTokArr.length, newTokArr.length);
+      // Properties overrides file name values
+    }
 
     // parse tokens from filename
     for (String token : tokens) {
