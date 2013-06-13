@@ -109,9 +109,9 @@ public class FakeGenerator {
    * @param plateAcquisitions
    *          Number of plate acquisitions (runs) in a plate (max 255).
    * @param rows
-   *          Number of rows in a plate (max 16).
+   *          Number of rows in a plate (max 255).
    * @param columns
-   *          Number of columns in a plate (max 24).
+   *          Number of columns in a plate (max 255).
    * @param fields
    *          Number of fields for a plate acquisition (max 255).
    * @throws IllegalArgumentException
