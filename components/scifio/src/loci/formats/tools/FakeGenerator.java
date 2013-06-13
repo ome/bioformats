@@ -36,10 +36,15 @@
 
 package loci.formats.tools;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.Location;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generates fake screen/plate/well structures. Maximum supported size is a 384
@@ -51,7 +56,15 @@ import loci.common.Location;
  */
 public class FakeGenerator {
 
-  public static String PLATE = "Plate";
+  private static final String PLATE = "Plate";
+
+  private static final String RUN = "Run";
+
+  private static final String WELL = "Well";
+
+  private static final String FIELD = "Field";
+
+  private static final String FAKE_EXT = ".fake";
 
   private static final Logger LOGGER = LoggerFactory
       .getLogger(FakeGenerator.class);
@@ -60,16 +73,12 @@ public class FakeGenerator {
 
   public FakeGenerator(String directoryRoot) {
     this.directoryRoot = new Location(directoryRoot);
-    if (!this.directoryRoot.isDirectory()) {
-      throw new IllegalArgumentException("File name instead of directory " +
-          "supplied.");
-    }
   }
 
   public static void isValidRange(int arg, int min, int max) {
     if (arg < min || arg > max) {
-      throw new IllegalArgumentException("Method argument value outside " +
-          "valid range.");
+      throw new IllegalArgumentException("Method argument value outside "
+          + "valid range.");
     }
   }
 
@@ -79,24 +88,18 @@ public class FakeGenerator {
    * <code>null</code>. The structure appears on the file system as: <br/>
    *
    * <pre>
-   * Plate001
-   * |_
-   *   Run001
-   *   |_
-   *     WellA01
-   *     |_
-   *       Field001.fake
-   *       Field002.fake
-   *       ...
-   *     WellA02
-   *     |_
-   *       ...
-   *   Run002
-   *   |_
+   * foo/
+   * └── Plate000/
+   *     └── Run000/
+   *         └── WellAA000/
+   *             └── Field000.fake
+   *                 ...
+   *             WellAA001/
+   *             ...
+   *         Run001/
+   *         ...
+   *     Plate001/
    *     ...
-   * Plate002
-   * |_
-   *   ...
    * </pre>
    *
    * @param baseDir
@@ -123,14 +126,77 @@ public class FakeGenerator {
     isValidRange(rows, 1, 255);
     isValidRange(columns, 1, 255);
     isValidRange(fields, 1, 255);
-    // For each plate:
-    for (int i = 0; i < plates; ++i) {
-      // create plate acquisitions
-    }
-    // for each plate acquisition:
-    // create wells (rows * columns)
-    // create fields
 
+    List<Location> paths = new ArrayList<Location>();
+    char wellChar = 'A';
+
+    long start = System.currentTimeMillis();
+    for (int i = 0; i < plates; ++i) {
+      Location plateLocation = getNewLocationFromResourceName(directoryRoot,
+          PLATE, i, File.separator);
+      for (int j = 0; j < plateAcquisitions; ++j) {
+        Location plateAcquisitionLocation = getNewLocationFromResourceName(
+            plateLocation, RUN, j, File.separator);
+        for (int k = 0, tmpChar = 'A'; k < rows; ++k, tmpChar++) {
+          if (tmpChar > 'Z') {
+            wellChar++;
+            tmpChar = 'A';
+          }
+          for (int l = 0; l < columns; ++l) {
+            Location wellLocation = getNewLocationFromResourceName(
+                plateAcquisitionLocation, WELL + wellChar + (char) tmpChar, l,
+                File.separator);
+            paths.add(wellLocation);
+          }
+        }
+      }
+    }
+
+    for (Location path : paths) {
+      if (path.mkdirs()) {
+        for (int i = 0; i < fields; ++i) {
+          Location fieldLocation = getNewLocationFromResourceName(path,
+              FIELD, i, FAKE_EXT);
+          try {
+            System.out.println(fieldLocation.getCanonicalPath());
+            fieldLocation.createNewFile();
+          } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+          }
+        }
+      }
+    }
+
+    long end = System.currentTimeMillis();
+    LOGGER.debug(String.format("Fake SPW structure generation took %s ms.", end
+        - start));
+  }
+
+  /**
+   * Creates a new {@link Location} instance using the provided parent path and
+   * child node name. Concatenates the child name with a numerical index that
+   * acts as an incrementing counter of node elements.
+   *
+   * @param resourceParentPath
+   *          Path to the parent element.
+   * @param resourceName
+   *          Template string used for naming the child resource.
+   * @param nameIndex
+   *          Numerical value used for naming the child resource.
+   * @param resourceExtension
+   *          Optional extension (if the child resource is a file) or path
+   *          separator (if folder).
+   * @return {@link Location} New instance representing the parent and child
+   *         resources.
+   */
+  private Location getNewLocationFromResourceName(Location resourceParentPath,
+      String resourceName, int nameIndex, String resourceExtension) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(resourceName + String.format("%03d", nameIndex));
+    if (resourceExtension != null) {
+      sb.append(resourceExtension);
+    }
+    return new Location(resourceParentPath, sb.toString());
   }
 
 }
