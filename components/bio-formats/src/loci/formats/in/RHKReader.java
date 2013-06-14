@@ -36,6 +36,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -204,19 +205,14 @@ public class RHKReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (xScale > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(xScale), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xScale);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(yScale);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          xScale);
-      }
-      if (yScale > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(yScale), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          yScale);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
       store.setImageDescription(description, 0);
     }

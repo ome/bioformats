@@ -43,6 +43,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tools.AmiraParameters;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -194,29 +195,18 @@ public class AmiraReader extends FormatReader {
       addGlobalMeta("Pixels per meter (Y)", 1e6 / pixelHeight);
       addGlobalMeta("Pixels per meter (Z)", 1e6 / pixelDepth);
 
-      if (pixelWidth > 0) {
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat(new Double(pixelWidth)), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelWidth);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelHeight);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelDepth);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          pixelWidth);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
-      if (pixelHeight > 0) {
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat(new Double(pixelHeight)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          pixelHeight);
-      }
-      if (pixelDepth > 0) {
-        store.setPixelsPhysicalSizeZ(
-          new PositiveFloat(new Double(pixelDepth)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          pixelDepth);
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
     }
 

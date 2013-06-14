@@ -603,19 +603,14 @@ public class PerkinElmerReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Dimensions element
-      if (pixelSizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          pixelSizeX);
-      }
-      if (pixelSizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          pixelSizeY);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
 
       // link Instrument and Image
@@ -626,25 +621,16 @@ public class PerkinElmerReader extends FormatReader {
       // populate LogicalChannel element
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (i < emWaves.size()) {
-          if (emWaves.get(i) > 0) {
-            store.setChannelEmissionWavelength(
-              new PositiveInteger(emWaves.get(i)), 0, i);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for EmissionWavelength; got {}",
-              emWaves.get(i));
+          PositiveInteger em = FormatTools.getEmissionWavelength(emWaves.get(i));
+          if (em != null) {
+            store.setChannelEmissionWavelength(em, 0, i);
           }
         }
         if (i < exWaves.size()) {
-          if (exWaves.get(i) > 0) {
-            store.setChannelExcitationWavelength(
-              new PositiveInteger(exWaves.get(i)), 0, i);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for ExcitationWavelength; got {}",
-              exWaves.get(i));
+          PositiveInteger ex =
+            FormatTools.getExcitationWavelength(exWaves.get(i));
+          if (ex != null) {
+            store.setChannelExcitationWavelength(ex, 0, i);
           }
         }
       }

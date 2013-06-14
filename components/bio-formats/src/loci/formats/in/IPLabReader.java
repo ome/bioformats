@@ -35,6 +35,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -195,13 +196,13 @@ public class IPLabReader extends FormatReader {
       in.skipBytes(dataSize);
       parseTags(store);
 
-      if (pixelSize != null && pixelSize > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSize);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSize);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
-          pixelSize);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
       if (timeIncrement != null) {
         store.setPixelsTimeIncrement(timeIncrement, 0);

@@ -432,24 +432,21 @@ public class MetamorphTiffReader extends BaseTiffReader {
         }
 
         store.setImagingEnvironmentTemperature(handler.getTemperature(), s);
-        if (handler.getPixelSizeX() > 0) {
-          store.setPixelsPhysicalSizeX(
-            new PositiveFloat(handler.getPixelSizeX()), s);
+
+        PositiveFloat sizeX =
+          FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
+        PositiveFloat sizeY =
+          FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
+        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+
+        if (sizeX != null) {
+          store.setPixelsPhysicalSizeX(sizeX, s);
         }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            handler.getPixelSizeX());
+        if (sizeY != null) {
+          store.setPixelsPhysicalSizeY(sizeY, s);
         }
-        if (handler.getPixelSizeY() > 0) {
-          store.setPixelsPhysicalSizeY(
-            new PositiveFloat(handler.getPixelSizeY()), s);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-            handler.getPixelSizeY());
-        }
-        if (physicalSizeZ > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), s);
+        if (sizeZ != null) {
+          store.setPixelsPhysicalSizeZ(sizeZ, s);
         }
 
         for (int c=0; c<getEffectiveSizeC(); c++) {

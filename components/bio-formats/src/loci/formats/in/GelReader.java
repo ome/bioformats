@@ -198,13 +198,13 @@ public class GelReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Double pixelSize = new Double(scale.doubleValue());
-      if (pixelSize > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSize);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSize);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
-          pixelSize);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
     }
   }

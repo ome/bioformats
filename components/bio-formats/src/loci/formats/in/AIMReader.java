@@ -174,32 +174,23 @@ public class AIMReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (xSize != null && xLength != null) {
         Double size = xLength / xSize;
-        if (size > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
-        }
-        else {
-          LOGGER.warn(
-            "Expected positive value for PhysicalSizeX; got {}", size);
+        PositiveFloat physicalSize = FormatTools.getPhysicalSizeX(size);
+        if (physicalSize != null) {
+          store.setPixelsPhysicalSizeX(physicalSize, 0);
         }
       }
       if (ySize != null && yLength != null) {
         Double size = yLength / ySize;
-        if (size > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
-        }
-        else {
-          LOGGER.warn(
-            "Expected positive value for PhysicalSizeY; got {}", size);
+        PositiveFloat physicalSize = FormatTools.getPhysicalSizeY(size);
+        if (physicalSize != null) {
+          store.setPixelsPhysicalSizeY(physicalSize, 0);
         }
       }
       if (zSize != null && zLength != null) {
         Double size = zLength / zSize;
-        if (size > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(size), 0);
-        }
-        else {
-          LOGGER.warn(
-            "Expected positive value for PhysicalSizeZ; got {}", size);
+        PositiveFloat physicalSize = FormatTools.getPhysicalSizeZ(size);
+        if (physicalSize != null) {
+          store.setPixelsPhysicalSizeZ(physicalSize, 0);
         }
       }
     }

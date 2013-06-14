@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import loci.common.DateTools;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
@@ -465,17 +466,14 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       double pixX = firstIFD.getXResolution();
       double pixY = firstIFD.getYResolution();
 
-      if (pixX > 0 && pixX < Double.POSITIVE_INFINITY) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixX), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixY);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", pixX);
-      }
-      if (pixY > 0 && pixX < Double.POSITIVE_INFINITY) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", pixY);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
       store.setPixelsPhysicalSizeZ(null, 0);
 

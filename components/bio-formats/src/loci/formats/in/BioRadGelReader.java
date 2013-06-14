@@ -232,21 +232,16 @@ public class BioRadGelReader extends FormatReader {
       store.setImageAcquisitionDate(new Timestamp(date), 0);
     }
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (physicalWidth > 0d) {
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat(physicalWidth / getSizeX()), 0);
+      PositiveFloat sizeX =
+        FormatTools.getPhysicalSizeX(physicalWidth / getSizeX());
+      PositiveFloat sizeY =
+        FormatTools.getPhysicalSizeY(physicalHeight / getSizeY());
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalWidth);
-      }
-      if (physicalHeight > 0d) {
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat(physicalHeight / getSizeY()), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalHeight);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
     }
   }

@@ -41,6 +41,7 @@ import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -596,17 +597,14 @@ public class OpenlabReader extends FormatReader {
     if (level != MetadataLevel.MINIMUM) {
       // populate MetadataStore
 
-      if (xcal > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(xcal)), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(new Double(xcal));
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(new Double(ycal));
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", xcal);
-      }
-      if (ycal > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(ycal)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", ycal);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
 
       // link Instrument and Image

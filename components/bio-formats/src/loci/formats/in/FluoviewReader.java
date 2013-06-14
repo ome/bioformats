@@ -420,26 +420,17 @@ public class FluoviewReader extends BaseTiffReader {
 
     // populate Dimensions
     for (int i=0; i<getSeriesCount(); i++) {
-      if (voxelX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(voxelX), i);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(voxelX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(voxelY);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(voxelZ);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, i);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          voxelX);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, i);
       }
-      if (voxelY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(voxelY), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          voxelY);
-      }
-      if (voxelZ > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(voxelZ), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          voxelZ);
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
       store.setPixelsTimeIncrement(voxelT, i);
 

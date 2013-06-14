@@ -725,7 +725,7 @@ public class PrairieReader extends FormatReader {
       return new PositiveInteger(value);
     }
     catch (IllegalArgumentException e) {
-      LOGGER.warn("Expected positive value for {}; got {}", name, value);
+      LOGGER.debug("Expected positive value for {}; got {}", name, value);
     }
     return null;
   }
@@ -740,7 +740,7 @@ public class PrairieReader extends FormatReader {
       return new PositiveFloat(value);
     }
     catch (IllegalArgumentException e) {
-      LOGGER.warn("Expected positive value for {}; got {}", name, value);
+      LOGGER.debug("Expected positive value for {}; got {}", name, value);
     }
     return null;
   }

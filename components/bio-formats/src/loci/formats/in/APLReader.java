@@ -45,6 +45,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -430,17 +431,14 @@ public class APLReader extends FormatReader {
         }
         // TODO : add cases for other units
 
-        if (px > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(px), i);
+        PositiveFloat physicalSizeX = FormatTools.getPhysicalSizeX(px);
+        PositiveFloat physicalSizeY = FormatTools.getPhysicalSizeY(py);
+
+        if (physicalSizeX != null) {
+          store.setPixelsPhysicalSizeX(physicalSizeX, i);
         }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", px);
-        }
-        if (py > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(py), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", py);
+        if (physicalSizeY != null) {
+          store.setPixelsPhysicalSizeY(physicalSizeY, i);
         }
       }
     }
