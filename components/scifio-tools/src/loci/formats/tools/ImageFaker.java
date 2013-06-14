@@ -69,7 +69,7 @@ public class ImageFaker {
       return false;
     }
     for (int i = 0; i < args.length; i++) {
-      if (args[i].startsWith("-")) {
+      if (args[i].charAt(0) == '-') {
         if (args[i].equals("-plates")) {
           plates = Integer.parseInt(args[++i]);
         } else if (args[i].equals("-runs")) {
