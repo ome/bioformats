@@ -42,6 +42,7 @@ classdef TestBfopen < TestBfMatlab
         
         function tearDown(self)
             if exist(self.filepath,'file') == 2, delete(self.filepath); end
+            self.data = [];
             tearDown@TestBfMatlab(self);
         end
         
