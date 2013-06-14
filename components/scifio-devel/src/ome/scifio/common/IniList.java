@@ -38,6 +38,7 @@ package ome.scifio.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A data structure containing a parsed list of INI key/value tables.
@@ -51,6 +52,16 @@ import java.util.HashMap;
 public class IniList extends ArrayList<IniTable> {
 
   // -- IniList methods --
+
+  /** Gets the table names (headers) in the list. */
+  public List<String> getHeaders() {
+    List<String> headers = new ArrayList<String>();
+    for (IniTable table : this) {
+      String header = table.get(IniTable.HEADER_KEY);
+      headers.add(header);
+    }
+    return headers;
+  }
 
   /** Gets the table with the given name (header). */
   public IniTable getTable(String tableName) {

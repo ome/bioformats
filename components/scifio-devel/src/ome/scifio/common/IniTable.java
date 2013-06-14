@@ -54,4 +54,7 @@ public class IniTable extends HashMap<String, String> {
   /** Key to use for storing header value (in brackets). */
   public static final String HEADER_KEY = "header";
 
+  /** Default header name when no header is available. */
+  public static final String DEFAULT_HEADER = "DEFAULT_HEADER";
+
 }
