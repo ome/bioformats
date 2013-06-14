@@ -56,20 +56,12 @@ import org.slf4j.LoggerFactory;
  */
 public class FakeGenerator {
 
-  private static final String PLATE = "Plate";
-
-  private static final String RUN = "Run";
-
-  private static final String WELL = "Well";
-
-  private static final String FIELD = "Field";
-
-  private static final String FAKE_EXT = ".fake";
-
   private static final Logger LOGGER = LoggerFactory
       .getLogger(FakeGenerator.class);
 
   private Location directoryRoot;
+
+  private ResourceNamer resourceNamer;
 
   public FakeGenerator(String directoryRoot) {
     this.directoryRoot = new Location(directoryRoot);
@@ -128,26 +120,25 @@ public class FakeGenerator {
     isValidRange(fields, 1, 255);
 
     List<Location> paths = new ArrayList<Location>();
-    char wellChar = 'A';
+    this.resourceNamer = new ResourceNamer(rows);
 
     long start = System.currentTimeMillis();
     for (int i = 0; i < plates; ++i) {
-      Location plateLocation = getNewLocationFromResourceName(directoryRoot,
-          PLATE, i, File.separator);
+      Location plateLocation = resourceNamer.getLocationFromResourceName(
+          directoryRoot, ResourceNamer.PLATE, i, File.separator);
       for (int j = 0; j < plateAcquisitions; ++j) {
-        Location plateAcquisitionLocation = getNewLocationFromResourceName(
-            plateLocation, RUN, j, File.separator);
-        for (int k = 0, tmpChar = 'A'; k < rows; ++k, tmpChar++) {
-          if (tmpChar > 'Z') {
-            wellChar++;
-            tmpChar = 'A';
-          }
-          for (int l = 0; l < columns; ++l) {
-            Location wellLocation = getNewLocationFromResourceName(
-                plateAcquisitionLocation, WELL + wellChar + (char) tmpChar, l,
+        Location plateAcquisitionLocation = resourceNamer.
+            getLocationFromResourceName(plateLocation, ResourceNamer.RUN, j,
                 File.separator);
+        resourceNamer.restartAlphabet();
+        for (int k = 0; k < rows; ++k) {
+          for (int l = 0; l < columns; ++l) {
+            Location wellLocation = resourceNamer.getLocationFromResourceName(
+                plateAcquisitionLocation, ResourceNamer.WELL +
+                resourceNamer.getLetter(), l, File.separator);
             paths.add(wellLocation);
           }
+          resourceNamer.nextLetter();
         }
       }
     }
@@ -155,8 +146,9 @@ public class FakeGenerator {
     for (Location path : paths) {
       if (path.mkdirs()) {
         for (int i = 0; i < fields; ++i) {
-          Location fieldLocation = getNewLocationFromResourceName(path,
-              FIELD, i, FAKE_EXT);
+          Location fieldLocation = resourceNamer.
+              getLocationFromResourceName(path, ResourceNamer.FIELD, i,
+                  ResourceNamer.FAKE_EXT);
           try {
             fieldLocation.createNewFile();
             LOGGER.debug("Created: " + fieldLocation.getCanonicalPath());
@@ -166,37 +158,10 @@ public class FakeGenerator {
         }
       }
     }
-
     long end = System.currentTimeMillis();
+
     LOGGER.debug(String.format("Fake SPW structure generation took %s ms.", end
         - start));
-  }
-
-  /**
-   * Creates a new {@link Location} instance using the provided parent path and
-   * child node name. Concatenates the child name with a numerical index that
-   * acts as an incrementing counter of node elements.
-   *
-   * @param resourceParentPath
-   *          Path to the parent element.
-   * @param resourceName
-   *          Template string used for naming the child resource.
-   * @param nameIndex
-   *          Numerical value used for naming the child resource.
-   * @param resourceExtension
-   *          Optional extension (if the child resource is a file) or path
-   *          separator (if folder).
-   * @return {@link Location} New instance representing the parent and child
-   *         resources.
-   */
-  private Location getNewLocationFromResourceName(Location resourceParentPath,
-      String resourceName, int nameIndex, String resourceExtension) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(resourceName + String.format("%03d", nameIndex));
-    if (resourceExtension != null) {
-      sb.append(resourceExtension);
-    }
-    return new Location(resourceParentPath, sb.toString());
   }
 
 }
