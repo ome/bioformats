@@ -355,26 +355,18 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setImageName("Tile #" + (i + 1), i);
         }
 
-        if (physicalSizeX != null && physicalSizeX > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), i);
+        PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+        PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+
+        if (sizeX != null) {
+          store.setPixelsPhysicalSizeX(sizeX, i);
         }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-              physicalSizeX);
+        if (sizeY != null) {
+          store.setPixelsPhysicalSizeY(sizeY, i);
         }
-        if (physicalSizeY != null && physicalSizeY > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-              physicalSizeY);
-        }
-        if (physicalSizeZ != null && physicalSizeZ > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-              physicalSizeZ);
+        if (sizeZ != null) {
+          store.setPixelsPhysicalSizeZ(sizeZ, i);
         }
 
         long firstStamp = parseTimestamp(timestamps.get(new Integer(0)));
@@ -871,25 +863,19 @@ public abstract class BaseZeissReader extends FormatReader {
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1) {
             Integer wave = new Integer(value);
-            if (wave.intValue() > 0) {
-              emWavelength.put(cIndex, new PositiveInteger(wave));
-            }
-            else {
-              LOGGER.warn(
-                  "Expected positive value for EmissionWavelength; got {}", wave);
+            PositiveInteger emission = FormatTools.getEmissionWavelength(wave);
+            if (emission != null) {
+              emWavelength.put(cIndex, emission);
             }
           }
         }
         else if (key.startsWith("Excitation Wavelength")) {
           if (cIndex != -1) {
             Integer wave = new Integer((int) Double.parseDouble(value));
-            if (wave.intValue() > 0) {
-              exWavelength.put(cIndex, new PositiveInteger(wave));
-            }
-            else {
-              LOGGER.warn(
-                  "Expected positive value for ExcitationWavelength; got {}",
-                  wave);
+            PositiveInteger excitation =
+              FormatTools.getExcitationWavelength(wave);
+            if (excitation != null) {
+              exWavelength.put(cIndex, excitation);
             }
           }
         }
@@ -920,15 +906,7 @@ public abstract class BaseZeissReader extends FormatReader {
         }
         else if (key.startsWith("Objective Magnification")) {
           Double magnification = Double.parseDouble(value);
-          if (magnification > 0) {
-            store.setObjectiveNominalMagnification(
-                new Double(magnification), 0, 0);
-          }
-          else {
-            LOGGER.warn(
-                "Expected positive value for NominalMagnification; got {}",
-                magnification);
-          }
+          store.setObjectiveNominalMagnification(magnification, 0, 0);
         }
         else if (key.startsWith("Objective ID")) {
           store.setObjectiveID("Objective:" + value, 0, 0);
@@ -946,15 +924,7 @@ public abstract class BaseZeissReader extends FormatReader {
               Double mag = 
                   Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
-              if (mag > 0) {
-                store.setObjectiveNominalMagnification(
-                    new Double(mag), 0, 0);
-              }
-              else {
-                LOGGER.warn(
-                    "Expected positive value for NominalMagnification; got {}",
-                    mag);
-              }
+              store.setObjectiveNominalMagnification(mag, 0, 0);
               store.setObjectiveLensNA(new Double(na), 0, 0);
               store.setObjectiveCorrection(getCorrection(tokens[q - 1]), 0, 0);
               break;

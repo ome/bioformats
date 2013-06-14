@@ -575,13 +575,10 @@ public class ZeissCZIReader extends FormatReader {
           String emWave = emissionWavelengths.get(c);
           if (emWave != null) {
             Double wave = new Double(emWave);
-            if (wave.intValue() > 0) {
-              store.setChannelEmissionWavelength(
-                new PositiveInteger(wave.intValue()), i, c);
-            }
-            else {
-              LOGGER.warn(
-                "Expected positive value for EmissionWavelength; got {}", wave);
+            PositiveInteger em =
+              FormatTools.getEmissionWavelength(wave.intValue());
+            if (em != null) {
+              store.setChannelEmissionWavelength(em, i, c);
             }
           }
         }
@@ -589,14 +586,10 @@ public class ZeissCZIReader extends FormatReader {
           String exWave = excitationWavelengths.get(c);
           if (exWave != null) {
             Double wave = new Double(exWave);
-            if (wave.intValue() > 0) {
-              store.setChannelExcitationWavelength(
-                new PositiveInteger(wave.intValue()), i, c);
-            }
-            else {
-              LOGGER.warn(
-                "Expected positive value for ExcitationWavelength; got {}",
-                wave);
+            PositiveInteger ex =
+              FormatTools.getExcitationWavelength(wave.intValue());
+            if (ex != null) {
+              store.setChannelExcitationWavelength(ex, i, c);
             }
           }
         }
@@ -1033,14 +1026,7 @@ public class ZeissCZIReader extends FormatReader {
             getFirstNodeValue(objective, "NominalMagnification");
           Double mag = magnification == null ? 0 : new Double(magnification);
 
-          if (mag > 0) {
-            store.setObjectiveNominalMagnification(
-              new Double(mag.doubleValue()), 0, i);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for NominalMagnification; got {}", mag);
-          }
+          store.setObjectiveNominalMagnification(mag, 0, i);
           String calibratedMag =
             getFirstNodeValue(objective, "CalibratedMagnification");
           if (calibratedMag != null) {
@@ -1137,18 +1123,13 @@ public class ZeissCZIReader extends FormatReader {
           Integer inWave = cutIn == null ? 0 : new Integer(cutIn);
           Integer outWave = cutOut == null ? 0 : new Integer(cutOut);
 
-          if (inWave > 0) {
-            store.setTransmittanceRangeCutIn(new PositiveInteger(inWave), 0, i);
+          PositiveInteger in = FormatTools.getCutIn(inWave);
+          PositiveInteger out = FormatTools.getCutOut(outWave);
+          if (in != null) {
+            store.setTransmittanceRangeCutIn(in, 0, i);
           }
-          else {
-            LOGGER.warn("Expected positive value for CutIn; got {}", inWave);
-          }
-          if (outWave > 0) {
-            store.setTransmittanceRangeCutOut(
-              new PositiveInteger(outWave), 0, i);
-          }
-          else {
-            LOGGER.warn("Expected positive value for CutOut; got {}", outWave);
+          if (out != null) {
+            store.setTransmittanceRangeCutOut(out, 0, i);
           }
 
           String inTolerance =
@@ -1238,7 +1219,7 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
         else {
-          LOGGER.warn(
+          LOGGER.debug(
             "Expected positive value for PhysicalSize; got {}", value);
         }
       }

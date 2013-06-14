@@ -50,7 +50,6 @@ import loci.formats.services.JPEGTurboService;
 import loci.formats.services.JPEGTurboServiceImpl;
 
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * HamamatsuVMSReader is the file format reader for Hamamatsu VMS datasets.
@@ -292,37 +291,26 @@ public class HamamatsuVMSReader extends FormatReader {
     store.setImageName(path + " map", 2);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (physicalWidth > 0) {
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat(physicalWidth / ms0.sizeX), 0);
+      PositiveFloat sizeX =
+        FormatTools.getPhysicalSizeX(physicalWidth / ms0.sizeX);
+      PositiveFloat sizeY =
+        FormatTools.getPhysicalSizeY(physicalHeight / ms0.sizeY);
+      PositiveFloat macroSizeX =
+        FormatTools.getPhysicalSizeX(macroWidth / core.get(1).sizeX);
+      PositiveFloat macroSizeY =
+        FormatTools.getPhysicalSizeY(macroHeight / core.get(1).sizeY);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalWidth / ms0.sizeX);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
-      if (physicalHeight > 0) {
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat(physicalHeight / ms0.sizeY), 0);
+      if (macroSizeX != null) {
+        store.setPixelsPhysicalSizeX(macroSizeX, 1);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalHeight / ms0.sizeY);
-      }
-      if (macroWidth > 0) {
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat(macroWidth / core.get(1).sizeX), 1);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          macroWidth / core.get(1).sizeX);
-      }
-      if (macroHeight > 0) {
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat(macroHeight / core.get(1).sizeY), 1);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          macroHeight / core.get(1).sizeY);
+      if (macroSizeY != null) {
+        store.setPixelsPhysicalSizeY(macroSizeY, 1);
       }
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -331,14 +319,7 @@ public class HamamatsuVMSReader extends FormatReader {
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      if (magnification > 0) {
-        store.setObjectiveNominalMagnification(
-          new Double(magnification.doubleValue()), 0, 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
-          magnification);
-      }
+      store.setObjectiveNominalMagnification(magnification, 0, 0);
       store.setObjectiveSettingsID(objectiveID, 0);
     }
   }

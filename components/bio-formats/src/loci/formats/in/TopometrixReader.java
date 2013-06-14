@@ -189,21 +189,16 @@ public class TopometrixReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (xSize > 0) {
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat((double) xSize / getSizeX()), 0);
+      PositiveFloat sizeX =
+        FormatTools.getPhysicalSizeX((double) xSize / getSizeX());
+      PositiveFloat sizeY =
+        FormatTools.getPhysicalSizeY((double) ySize / getSizeY());
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          (double) xSize / getSizeX());
-      }
-      if (ySize > 0) {
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat((double) ySize / getSizeY()), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          (double) ySize / getSizeY());
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
       store.setImageDescription(comment, 0);
     }

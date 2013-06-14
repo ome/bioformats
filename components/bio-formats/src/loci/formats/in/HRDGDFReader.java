@@ -192,13 +192,13 @@ public class HRDGDFReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (physicalSize > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSize), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSize), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSize);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSize);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
-          physicalSize);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
     }
   }

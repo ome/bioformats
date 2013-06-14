@@ -37,6 +37,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -173,26 +174,17 @@ public class VarianFDFReader extends FormatReader {
     MetadataTools.populatePixels(store, this, !minMetadata);
 
     if (!minMetadata) {
-      if (pixelSizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pixelSizeZ);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          pixelSizeX);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
-      if (pixelSizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          pixelSizeY);
-      }
-      if (pixelSizeZ > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          pixelSizeZ);
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
 
       for (int i=0; i<getImageCount(); i++) {

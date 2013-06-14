@@ -356,12 +356,9 @@ public class L2DReader extends FormatReader {
             String laser = MetadataTools.createLSID("LightSource", 0, q);
             store.setLaserID(laser, 0, q);
             Integer wave = new Integer(waves[q].trim());
-            if (wave > 0) {
-              store.setLaserWavelength(new PositiveInteger(wave), 0, q);
-            }
-            else {
-              LOGGER.warn("Expected positive value for Wavelength; got {}",
-                wave);
+            PositiveInteger wavelength = FormatTools.getWavelength(wave);
+            if (wavelength != null) {
+              store.setLaserWavelength(wavelength, 0, q);
             }
             store.setLaserType(getLaserType("Other"), 0, q);
             store.setLaserLaserMedium(getLaserMedium("Other"), 0, q);

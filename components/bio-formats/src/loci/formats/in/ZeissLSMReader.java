@@ -1214,27 +1214,17 @@ public class ZeissLSMReader extends FormatReader {
         store.setExperimenterUserName(userName, 0);
       }
 
-      Double pixX = new Double(pixelSizeX);
-      Double pixY = new Double(pixelSizeY);
-      Double pixZ = new Double(pixelSizeZ);
-
-      if (pixX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixX), series);
+      PositiveFloat pixX = FormatTools.getPhysicalSizeX(new Double(pixelSizeX));
+      PositiveFloat pixY = FormatTools.getPhysicalSizeY(new Double(pixelSizeY));
+      PositiveFloat pixZ = FormatTools.getPhysicalSizeZ(new Double(pixelSizeZ));
+      if (pixX != null) {
+        store.setPixelsPhysicalSizeX(pixX, series);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", pixX);
+      if (pixY != null) {
+        store.setPixelsPhysicalSizeY(pixY, series);
       }
-      if (pixY >= 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixY), series);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", pixY);
-      }
-      if (pixZ >= 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(pixZ), series);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", pixZ);
+      if (pixZ != null) {
+        store.setPixelsPhysicalSizeZ(pixZ, series);
       }
 
       for (int i=0; i<getSizeC(); i++) {
@@ -1295,13 +1285,9 @@ public class ZeissLSMReader extends FormatReader {
         getCorrection(recording.correction), instrument, 0);
       store.setObjectiveImmersion(
         getImmersion(recording.immersion), instrument, 0);
-      if (recording.magnification != null && recording.magnification > 0) {
+      if (recording.magnification != null) {
         store.setObjectiveNominalMagnification(
           new Double(recording.magnification), instrument, 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
-          recording.magnification);
       }
       store.setObjectiveLensNA(recording.lensNA, instrument, 0);
       store.setObjectiveIris(recording.iris, instrument, 0);
@@ -1366,25 +1352,18 @@ public class ZeissLSMReader extends FormatReader {
           String[] v = transmittance.split("-");
           try {
             Integer cutIn = new Integer(v[0].trim());
-            if (cutIn > 0) {
-              store.setTransmittanceRangeCutIn(
-                new PositiveInteger(cutIn), instrument, nextFilter);
-            }
-            else {
-              LOGGER.warn("Expected positive value for CutIn; got {}", cutIn);
+            PositiveInteger in = FormatTools.getCutIn(cutIn);
+            if (in != null) {
+              store.setTransmittanceRangeCutIn(in, instrument, nextFilter);
             }
           }
           catch (NumberFormatException e) { }
           if (v.length > 1) {
             try {
               Integer cutOut = new Integer(v[1].trim());
-              if (cutOut > 0) {
-                store.setTransmittanceRangeCutOut(
-                  new PositiveInteger(cutOut), instrument, nextFilter);
-              }
-              else {
-                LOGGER.warn("Expected positive value for CutOut; got {}",
-                  cutOut);
+              PositiveInteger out = FormatTools.getCutOut(cutOut);
+              if (out != null) {
+                store.setTransmittanceRangeCutOut(out, instrument, nextFilter);
               }
             }
             catch (NumberFormatException e) { }
@@ -1436,18 +1415,16 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.acquire && channel.wavelength != null &&
         channel.wavelength > 0)
       {
-        store.setLaserWavelength(new PositiveInteger(channel.wavelength),
-          instrument, nextIllumChannel);
+        PositiveInteger wave = FormatTools.getWavelength(channel.wavelength);
+        if (wave != null) {
+          store.setLaserWavelength(wave, instrument, nextIllumChannel);
+        }
         if (nextIllumChannel >= nextLaser) {
           String lightSourceID = MetadataTools.createLSID(
             "LightSource", instrument, nextIllumChannel);
           store.setLaserID(lightSourceID, instrument, nextIllumChannel);
         }
         nextIllumChannel++;
-      }
-      else if (channel.acquire) {
-        LOGGER.warn("Expected positive value for Wavelength; got {}",
-          channel.wavelength);
       }
     }
   }
@@ -1503,6 +1480,8 @@ public class ZeissLSMReader extends FormatReader {
       String roiID = MetadataTools.createLSID("ROI", i);
       String shapeID = MetadataTools.createLSID("Shape", i, 0);
 
+      NonNegativeInteger fontSize = FormatTools.getFontSize(fontHeight);
+
       switch (type) {
         case TEXT:
           double x = in.readDouble();
@@ -1514,12 +1493,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setLabelX(x, i, 0);
           store.setLabelY(y, i, 0);
           store.setLabelText(text, i, 0);
-          if (fontHeight >= 0) {
-            store.setLabelFontSize(new NonNegativeInteger(fontHeight), i, 0);
-          }
-          else {
-            LOGGER.warn("Expected non-negative value for FontSize; got {}",
-              fontHeight);
+          if (fontSize != null) {
+            store.setLabelFontSize(fontSize, i, 0);
           }
           store.setLabelStrokeWidth(lineWidth, i, 0);
           store.setImageROIRef(roiID, series, i);
@@ -1538,12 +1513,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setLineY1(startY, i, 0);
           store.setLineX2(endX, i, 0);
           store.setLineY2(endY, i, 0);
-          if (fontHeight >= 0) {
-            store.setLineFontSize(new NonNegativeInteger(fontHeight), i, 0);
-          }
-          else {
-            LOGGER.warn("Expected non-negative value for FontSize; got {}",
-              fontHeight);
+          if (fontSize != null) {
+            store.setLineFontSize(fontSize, i, 0);
           }
           store.setLineStrokeWidth(lineWidth, i, 0);
           store.setImageROIRef(roiID, series, i);
@@ -1575,13 +1546,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setRectangleY(topY, i, 0);
           store.setRectangleWidth(width, i, 0);
           store.setRectangleHeight(height, i, 0);
-          if (fontHeight >= 0) {
-            store.setRectangleFontSize(
-              new NonNegativeInteger(fontHeight), i, 0);
-          }
-          else {
-            LOGGER.warn("Expected non-negative value for FontSize; got {}",
-              fontHeight);
+          if (fontSize != null) {
+            store.setRectangleFontSize(fontSize, i, 0);
           }
           store.setRectangleStrokeWidth(lineWidth, i, 0);
           store.setImageROIRef(roiID, series, i);
@@ -1640,12 +1606,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseY(centerY, i, 0);
           store.setEllipseRadiusX(rx, i, 0);
           store.setEllipseRadiusY(ry, i, 0);
-          if (fontHeight >= 0) {
-            store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
-          }
-          else {
-            LOGGER.warn("Expected non-negative value for FontSize; got {}",
-              fontHeight);
+          if (fontSize != null) {
+            store.setEllipseFontSize(fontSize, i, 0);
           }
           store.setEllipseStrokeWidth(lineWidth, i, 0);
           store.setImageROIRef(roiID, series, i);
@@ -1667,12 +1629,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseY(centerY, i, 0);
           store.setEllipseRadiusX(radius, i, 0);
           store.setEllipseRadiusY(radius, i, 0);
-          if (fontHeight >= 0) {
-            store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
-          }
-          else {
-            LOGGER.warn("Expected non-negative value for FontSize; got {}",
-              fontHeight);
+          if (fontSize != null) {
+            store.setEllipseFontSize(fontSize, i, 0);
           }
           store.setEllipseStrokeWidth(lineWidth, i, 0);
           store.setImageROIRef(roiID, series, i);
@@ -1711,12 +1669,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseY(cy, i, 0);
           store.setEllipseRadiusX(r, i, 0);
           store.setEllipseRadiusY(r, i, 0);
-          if (fontHeight >= 0) {
-            store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
-          }
-          else {
-            LOGGER.warn("Expected non-negative value for FontSize; got {}",
-              fontHeight);
+          if (fontSize != null) {
+            store.setEllipseFontSize(fontSize, i, 0);
           }
           store.setEllipseStrokeWidth(lineWidth, i, 0);
           store.setImageROIRef(roiID, series, i);
@@ -1742,12 +1696,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setROIID(roiID, i);
           store.setPolylineID(shapeID, i, 0);
           store.setPolylinePoints(p.toString(), i, 0);
-          if (fontHeight >= 0) {
-            store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
-          }
-          else {
-            LOGGER.warn("Expected non-negative value for FontSize; got {}",
-              fontHeight);
+          if (fontSize != null) {
+            store.setPolylineFontSize(fontSize, i, 0);
           }
           store.setPolylineStrokeWidth(lineWidth, i, 0);
           store.setImageROIRef(roiID, series, i);
@@ -1776,24 +1726,16 @@ public class ZeissLSMReader extends FormatReader {
 
           if (type != CLOSED_POLYLINE) {
             store.setPolylinePoints(p.toString(), i, 0);
-            if (fontHeight >= 0) {
-              store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
-            }
-            else {
-              LOGGER.warn("Expected non-negative value for FontSize; got {}",
-                fontHeight);
+            if (fontSize != null) {
+              store.setPolylineFontSize(fontSize, i, 0);
             }
             store.setPolylineStrokeWidth(lineWidth, i, 0);
             store.setPolylineID(shapeID, i, 0);
           }
           else {
             store.setPolygonPoints(p.toString(), i, 0);
-            if (fontHeight >= 0) {
-              store.setPolygonFontSize(new NonNegativeInteger(fontHeight), i, 0);
-            }
-            else {
-              LOGGER.warn("Expected non-negative value for FontSize; got {}",
-                fontHeight);
+            if (fontSize != null) {
+              store.setPolygonFontSize(fontSize, i, 0);
             }
             store.setPolygonStrokeWidth(lineWidth, i, 0);
             store.setPolygonID(shapeID, i, 0);
@@ -1825,24 +1767,16 @@ public class ZeissLSMReader extends FormatReader {
           if (type == OPEN_BEZIER) {
             store.setPolylineID(shapeID, i, 0);
             store.setPolylinePoints(p.toString(), i, 0);
-            if (fontHeight >= 0) {
-              store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
-            }
-            else {
-              LOGGER.warn("Expected non-negative value for FontSize; got {}",
-                fontHeight);
+            if (fontSize != null) {
+              store.setPolylineFontSize(fontSize, i, 0);
             }
             store.setPolylineStrokeWidth(lineWidth, i, 0);
           }
           else {
             store.setPolygonID(shapeID, i, 0);
             store.setPolygonPoints(p.toString(), i, 0);
-            if (fontHeight >= 0) {
-              store.setPolygonFontSize(new NonNegativeInteger(fontHeight), i, 0);
-            }
-            else {
-              LOGGER.warn("Expected non-negative value for FontSize; got {}",
-                fontHeight);
+            if (fontSize != null) {
+              store.setPolygonFontSize(fontSize, i, 0);
             }
             store.setPolygonStrokeWidth(lineWidth, i, 0);
           }

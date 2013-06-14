@@ -34,6 +34,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -117,17 +118,14 @@ public class SeikoReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
-      if (xSize > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(xSize), 0);
+
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xSize);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(ySize);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", xSize);
-      }
-      if (ySize > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(ySize), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", ySize);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
     }
   }

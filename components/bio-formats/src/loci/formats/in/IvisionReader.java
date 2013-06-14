@@ -38,7 +38,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
@@ -302,13 +301,9 @@ public class IvisionReader extends FormatReader {
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
-      if (magnification != null && magnification > 0) {
+      if (magnification != null) {
         store.setObjectiveNominalMagnification(
           new Double(magnification), 0, 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
-          magnification);
       }
       if (refractiveIndex != null) {
         store.setObjectiveSettingsRefractiveIndex(refractiveIndex, 0);

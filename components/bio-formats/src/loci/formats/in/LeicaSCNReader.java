@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 import loci.common.RandomAccessInputStream;
@@ -354,9 +353,8 @@ public class LeicaSCNReader extends BaseTiffReader {
         objectiveIDs.put(i.devModel+":"+i.objMag, new Integer(objectiveidno));
         store.setObjectiveID(objectiveID, inst, objectiveidno);
 
-        // TODO: Current OME model only allows nominal magnification to be specified as an integer.
         Double mag = Double.parseDouble(i.objMag);
-        store.setObjectiveNominalMagnification(new Double(mag), inst, objectiveidno);
+        store.setObjectiveNominalMagnification(mag, inst, objectiveidno);
         store.setObjectiveCalibratedMagnification(mag, inst, objectiveidno);
         store.setObjectiveLensNA(new Double(i.illumNA), inst, objectiveidno);
         objectiveidno++;
@@ -371,7 +369,7 @@ public class LeicaSCNReader extends BaseTiffReader {
         store.setChannelIlluminationType(IlluminationType.TRANSMITTED, s, 0);
       } else {
         store.setChannelIlluminationType(IlluminationType.OTHER, s, 0);
-        LOGGER.info("Unknown illumination source " + i.illumSource + "; please report this");
+        LOGGER.debug("Unknown illumination source {}; please report this", i.illumSource);
       }
 
       CoreMetadata ms = core.get(s);

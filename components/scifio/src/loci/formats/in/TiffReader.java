@@ -54,6 +54,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -387,12 +388,9 @@ public class TiffReader extends BaseTiffReader {
     if (physicalSizeZ != null) {
       double zDepth = physicalSizeZ.doubleValue();
       if (zDepth < 0) zDepth = -zDepth;
-      if (zDepth > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(zDepth), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          zDepth);
+      PositiveFloat z = FormatTools.getPhysicalSizeZ(zDepth);
+      if (z != null) {
+        store.setPixelsPhysicalSizeZ(z, 0);
       }
     }
     if (timeIncrement != null) {

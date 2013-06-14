@@ -34,6 +34,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -166,26 +167,17 @@ public class INRReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (physicalSizeX != null && physicalSizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalSizeX);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
-      if (physicalSizeY != null && physicalSizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalSizeY);
-      }
-      if (physicalSizeZ != null && physicalSizeZ > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          physicalSizeZ);
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
     }
   }

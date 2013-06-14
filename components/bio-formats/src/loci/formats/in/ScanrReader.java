@@ -582,18 +582,16 @@ public class ScanrReader extends FormatReader {
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
 
     int nFields = 0;
-    if (foundPositions)
-        nFields = fieldPositionX.length;
-    else
-        nFields = fieldRows * fieldColumns;
-
-    if (nFields > 0) {
-      store.setPlateAcquisitionMaximumFieldCount(
-        new PositiveInteger(nFields), 0, 0);
+    if (foundPositions) {
+      nFields = fieldPositionX.length;
     }
     else {
-      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
-        nFields);
+      nFields = fieldRows * fieldColumns;
+    }
+
+    PositiveInteger fieldCount = FormatTools.getMaxFieldCount(nFields);
+    if (fieldCount != null) {
+      store.setPlateAcquisitionMaximumFieldCount(fieldCount, 0, 0);
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -637,13 +635,14 @@ public class ScanrReader extends FormatReader {
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
         }
-        if (pixelSize != null && pixelSize > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), i);
-          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), i);
+
+        PositiveFloat x = FormatTools.getPhysicalSizeX(pixelSize);
+        PositiveFloat y = FormatTools.getPhysicalSizeY(pixelSize);
+        if (x != null) {
+          store.setPixelsPhysicalSizeX(x, i);
         }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSize; got {}",
-            pixelSize);
+        if (y != null) {
+          store.setPixelsPhysicalSizeY(y, i);
         }
 
         if (fieldPositionX != null && fieldPositionY != null) {

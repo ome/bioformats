@@ -377,13 +377,14 @@ public class PCIReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (scaleFactor > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(scaleFactor), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(scaleFactor), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(scaleFactor);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(scaleFactor);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
-          scaleFactor);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
 
       for (int i=0; i<timestamps.size(); i++) {

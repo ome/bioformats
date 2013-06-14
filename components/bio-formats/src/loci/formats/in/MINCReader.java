@@ -42,6 +42,7 @@ import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -259,26 +260,17 @@ public class MINCReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(netcdf.getAttributeValue("/history"), 0);
 
-      if (physicalX != null && physicalX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalY);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalZ);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalX);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
-      if (physicalY != null && physicalY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalY);
-      }
-      if (physicalZ != null && physicalZ > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          physicalZ);
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
     }
   }

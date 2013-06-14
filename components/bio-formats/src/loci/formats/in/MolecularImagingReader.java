@@ -160,19 +160,13 @@ public class MolecularImagingReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (pixelSizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(pixelSizeX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(pixelSizeY);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          pixelSizeX);
-      }
-      if (pixelSizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          pixelSizeY);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
     }
   }

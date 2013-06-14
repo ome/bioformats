@@ -41,8 +41,8 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * SlidebookReader is the file format reader for 3I Slidebook files.
@@ -1285,13 +1285,13 @@ public class SlidebookReader extends FormatReader {
         setSeries(i);
         if (pixelSize.get(i) != null) {
           Double size = new Double(pixelSize.get(i));
-          if (size > 0) {
-            store.setPixelsPhysicalSizeX(new PositiveFloat(size), i);
-            store.setPixelsPhysicalSizeY(new PositiveFloat(size), i);
+          PositiveFloat x = FormatTools.getPhysicalSizeX(size);
+          PositiveFloat y = FormatTools.getPhysicalSizeY(size);
+          if (x != null) {
+            store.setPixelsPhysicalSizeX(x, i);
           }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSize; got {}",
-              size);
+          if (y != null) {
+            store.setPixelsPhysicalSizeY(y, i);
           }
         }
         int idx = 0;
@@ -1300,13 +1300,9 @@ public class SlidebookReader extends FormatReader {
         }
 
         if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
-          if (isGreaterThanEpsilon(pixelSizeZ.get(idx))) {
-            store.setPixelsPhysicalSizeZ(
-              new PositiveFloat(pixelSizeZ.get(idx)), i);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-              pixelSizeZ.get(idx));
+          PositiveFloat z = FormatTools.getPhysicalSizeZ(pixelSizeZ.get(idx));
+          if (z != null) {
+            store.setPixelsPhysicalSizeZ(z, i);
           }
         }
 

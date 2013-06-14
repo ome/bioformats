@@ -47,6 +47,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -488,23 +489,17 @@ public class TCSReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true);
 
-    if (voxelX > 0) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(voxelX), 0);
+    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(voxelX);
+    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(voxelY);
+    PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(voxelZ);
+    if (sizeX != null) {
+      store.setPixelsPhysicalSizeX(sizeX, 0);
     }
-    else {
-      LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", voxelX);
+    if (sizeY != null) {
+      store.setPixelsPhysicalSizeY(sizeY, 0);
     }
-    if (voxelY > 0) {
-      store.setPixelsPhysicalSizeY(new PositiveFloat(voxelY), 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", voxelY);
-    }
-    if (voxelZ > 0) {
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(voxelZ), 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", voxelZ);
+    if (sizeZ != null) {
+      store.setPixelsPhysicalSizeZ(sizeZ, 0);
     }
   }
 

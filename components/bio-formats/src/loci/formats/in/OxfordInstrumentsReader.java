@@ -176,19 +176,14 @@ public class OxfordInstrumentsReader extends FormatReader {
     double physicalSizeX = xSize / getSizeX();
     double physicalSizeY = ySize / getSizeY();
 
-    if (physicalSizeX > 0) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
+    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+
+    if (sizeX != null) {
+      store.setPixelsPhysicalSizeX(sizeX, 0);
     }
-    else {
-      LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-        physicalSizeX);
-    }
-    if (physicalSizeY > 0) {
-      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-        physicalSizeY);
+    if (sizeY != null) {
+      store.setPixelsPhysicalSizeY(sizeY, 0);
     }
   }
 

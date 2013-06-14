@@ -132,29 +132,17 @@ public class NikonElementsTiffReader extends BaseTiffReader {
       return;
     }
 
-    Double pixelSizeX = handler.getPixelSizeX();
-    Double pixelSizeY = handler.getPixelSizeY();
-    Double pixelSizeZ = handler.getPixelSizeZ();
-    if (pixelSizeX > 0) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+    PositiveFloat sizeX = FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
+    PositiveFloat sizeY = FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
+    PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(handler.getPixelSizeZ());
+    if (sizeX != null) {
+      store.setPixelsPhysicalSizeX(sizeX, 0);
     }
-    else {
-      LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-        pixelSizeX);
+    if (sizeY != null) {
+      store.setPixelsPhysicalSizeY(sizeY, 0);
     }
-    if (pixelSizeY > 0) {
-      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-        pixelSizeY);
-    }
-    if (pixelSizeZ > 0) {
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-        pixelSizeZ);
+    if (sizeZ != null) {
+      store.setPixelsPhysicalSizeZ(sizeZ, 0);
     }
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
@@ -212,24 +200,15 @@ public class NikonElementsTiffReader extends BaseTiffReader {
           getAcquisitionMode(modality.get(c)), 0, c);
       }
       if (c < emWave.size()) {
-        if (emWave.get(c) > 0) {
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(emWave.get(c)), 0, c);
-        }
-        else {
-          LOGGER.warn("Expected positive value for EmissionWavelength; got {}",
-            emWave.get(c));
+        PositiveInteger em = FormatTools.getEmissionWavelength(emWave.get(c));
+        if (em != null) {
+          store.setChannelEmissionWavelength(em, 0, c);
         }
       }
       if (c < exWave.size()) {
-        if (exWave.get(c) > 0) {
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(exWave.get(c)), 0, c);
-        }
-        else {
-          LOGGER.warn(
-            "Expected positive value for ExcitationWavelength; got {}",
-            exWave.get(c));
+        PositiveInteger ex = FormatTools.getExcitationWavelength(exWave.get(c));
+        if (ex != null) {
+          store.setChannelExcitationWavelength(ex, 0, c);
         }
       }
       if (c < binning.size()) {

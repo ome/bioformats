@@ -723,27 +723,20 @@ public class MetamorphReader extends BaseTiffReader {
       if (sizeX == null) sizeX = handler.getPixelSizeX();
       if (sizeY == null) sizeY = handler.getPixelSizeY();
 
-      if (sizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
+      PositiveFloat physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
+      PositiveFloat physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
+      if (physicalSizeX != null) {
+        store.setPixelsPhysicalSizeX(physicalSizeX, i);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", sizeX);
-      }
-      if (sizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", sizeY);
+      if (physicalSizeY != null) {
+        store.setPixelsPhysicalSizeY(physicalSizeY, i);
       }
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
-      if (stepSize > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(stepSize), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          stepSize);
+      PositiveFloat physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
+      if (physicalSizeZ != null) {
+        store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
       }
 
       int waveIndex = 0;
@@ -783,10 +776,13 @@ public class MetamorphReader extends BaseTiffReader {
         store.setDetectorSettingsID(detectorID, i, c);
 
         if (wave != null && waveIndex < wave.length) {
-          if ((int) wave[waveIndex] >= 1) {
-            store.setChannelLightSourceSettingsWavelength(
-              new PositiveInteger((int) wave[waveIndex]), i, c);
+          PositiveInteger wavelength =
+            FormatTools.getWavelength((int) wave[waveIndex]);
+          if (wavelength != null) {
+            store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+          }
 
+          if ((int) wave[waveIndex] >= 1) {
             // link LightSource to Image
             String lightSourceID =
               MetadataTools.createLSID("LightSource", i, c);
@@ -794,10 +790,6 @@ public class MetamorphReader extends BaseTiffReader {
             store.setChannelLightSourceSettingsID(lightSourceID, i, c);
             store.setLaserType(getLaserType("Other"), i, c);
             store.setLaserLaserMedium(getLaserMedium("Other"), i, c);
-          }
-          else {
-            LOGGER.warn("Expected positive value for Wavelength; got {}",
-              wave[waveIndex]);
           }
         }
         waveIndex++;

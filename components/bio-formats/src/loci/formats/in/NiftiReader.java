@@ -36,6 +36,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -254,29 +255,22 @@ public class NiftiReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
-      if (voxelWidth > 0) {
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat(new Double(voxelWidth)), 0);
+
+      PositiveFloat sizeX =
+        FormatTools.getPhysicalSizeX(new Double(voxelWidth));
+      PositiveFloat sizeY =
+        FormatTools.getPhysicalSizeY(new Double(voxelHeight));
+      PositiveFloat sizeZ =
+        FormatTools.getPhysicalSizeZ(new Double(sliceThickness));
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          voxelWidth);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
-      if (voxelHeight > 0) {
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat(new Double(voxelHeight)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          voxelHeight);
-      }
-      if (sliceThickness > 0) {
-        store.setPixelsPhysicalSizeZ(
-          new PositiveFloat(new Double(sliceThickness)), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          sliceThickness);
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
       store.setPixelsTimeIncrement(new Double(deltaT), 0);
     }
