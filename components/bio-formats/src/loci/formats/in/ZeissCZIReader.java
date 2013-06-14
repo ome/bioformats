@@ -51,6 +51,8 @@ import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.LZWCodec;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.enums.Binning;
+import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
@@ -127,14 +129,9 @@ public class ZeissCZIReader extends FormatReader {
   private String zoom;
   private String gain;
 
-  private ArrayList<String> emissionWavelengths = new ArrayList<String>();
-  private ArrayList<String> excitationWavelengths = new ArrayList<String>();
-  private ArrayList<String> pinholeSizes = new ArrayList<String>();
-  private ArrayList<String> channelNames = new ArrayList<String>();
-  private ArrayList<String> channelColors = new ArrayList<String>();
+  private ArrayList<Channel> channels = new ArrayList<Channel>();
   private ArrayList<String> binnings = new ArrayList<String>();
   private ArrayList<String> detectorRefs = new ArrayList<String>();
-  private ArrayList<String> objectiveIDs = new ArrayList<String>();
 
   private Double[] positionsX;
   private Double[] positionsY;
@@ -143,6 +140,7 @@ public class ZeissCZIReader extends FormatReader {
   private int previousChannel = 0;
 
   private Boolean prestitched = null;
+  private String objectiveSettingsID;
 
   // -- Constructor --
 
@@ -191,14 +189,14 @@ public class ZeissCZIReader extends FormatReader {
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     if ((getPixelType() != FormatTools.INT8 &&
       getPixelType() != FormatTools.UINT8) || previousChannel == -1 ||
-      previousChannel >= channelColors.size())
+      previousChannel >= channels.size())
     {
       return null;
     }
 
     byte[][] lut = new byte[3][256];
 
-    String color = channelColors.get(previousChannel);
+    String color = channels.get(previousChannel).color;
     if (color != null) {
       color = color.replaceAll("#", "");
       try {
@@ -227,14 +225,14 @@ public class ZeissCZIReader extends FormatReader {
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     if ((getPixelType() != FormatTools.INT16 &&
       getPixelType() != FormatTools.UINT16) || previousChannel == -1 ||
-      previousChannel >= channelColors.size())
+      previousChannel >= channels.size())
     {
       return null;
     }
 
     short[][] lut = new short[3][65536];
 
-    String color = channelColors.get(previousChannel);
+    String color = channels.get(previousChannel).color;
     if (color != null) {
       color = color.replaceAll("#", "");
       try {
@@ -376,17 +374,13 @@ public class ZeissCZIReader extends FormatReader {
       zoom = null;
       gain = null;
 
-      emissionWavelengths.clear();
-      excitationWavelengths.clear();
-      pinholeSizes.clear();
-      channelNames.clear();
-      channelColors.clear();
+      channels.clear();
       binnings.clear();
       detectorRefs.clear();
-      objectiveIDs.clear();
 
       previousChannel = 0;
       prestitched = null;
+      objectiveSettingsID = null;
     }
   }
 
@@ -511,7 +505,7 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
 
-    if (channelColors.size() > 0) {
+    if (channels.size() > 0 && channels.get(0).color != null) {
       for (int i=0; i<seriesCount; i++) {
         core.get(i).indexed = true;
       }
@@ -529,6 +523,7 @@ public class ZeissCZIReader extends FormatReader {
     String name = new Location(getCurrentFile()).getName();
 
     for (int i=0; i<getSeriesCount(); i++) {
+      store.setImageInstrumentRef(MetadataTools.createLSID("Instrument", 0), i);
       if (acquiredDate != null) {
         store.setImageAcquisitionDate(new Timestamp(acquiredDate), i);
       }
@@ -561,8 +556,8 @@ public class ZeissCZIReader extends FormatReader {
         store.setImagingEnvironmentTemperature(new Double(temperature), i);
       }
 
-      if (objectiveIDs.size() > 0) {
-        store.setObjectiveSettingsID(objectiveIDs.get(0), i);
+      if (objectiveSettingsID != null) {
+        store.setObjectiveSettingsID(objectiveSettingsID, i);
         if (correctionCollar != null) {
           store.setObjectiveSettingsCorrectionCollar(
             new Double(correctionCollar), i);
@@ -615,29 +610,35 @@ public class ZeissCZIReader extends FormatReader {
             if (p.exposureTime != null) {
               store.setPlaneExposureTime(p.exposureTime, i, plane);
             }
+            else {
+              int channel = getZCTCoords(plane)[1];
+              if (channels.get(channel).exposure != null) {
+                store.setPlaneExposureTime(
+                  channels.get(channel).exposure, i, plane);
+              }
+            }
           }
         }
       }
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
-        if (c < channelNames.size()) {
-          store.setChannelName(channelNames.get(c), i, c);
-        }
+        if (c < channels.size()) {
+          store.setChannelName(channels.get(c).name, i, c);
 
-        if (c < channelColors.size()) {
-          String color = channelColors.get(c);
+          String color = channels.get(c).color;
           if (color != null) {
             color = color.replaceAll("#", "");
+            color = color.substring(2, color.length());
             try {
               store.setChannelColor(
-                new Color((Integer.parseInt(color, 16) << 8) | 0xff), i, c);
+                new Color(Integer.parseInt(color, 16) | 0xff), i, c);
             }
-            catch (NumberFormatException e) { }
+            catch (NumberFormatException e) {
+              LOGGER.warn("", e);
+            }
           }
-        }
 
-        if (c < emissionWavelengths.size()) {
-          String emWave = emissionWavelengths.get(c);
+          String emWave = channels.get(c).emission;
           if (emWave != null) {
             Double wave = new Double(emWave);
             PositiveInteger em =
@@ -646,9 +647,7 @@ public class ZeissCZIReader extends FormatReader {
               store.setChannelEmissionWavelength(em, i, c);
             }
           }
-        }
-        if (c < excitationWavelengths.size()) {
-          String exWave = excitationWavelengths.get(c);
+          String exWave = channels.get(c).excitation;
           if (exWave != null) {
             Double wave = new Double(exWave);
             PositiveInteger ex =
@@ -657,9 +656,16 @@ public class ZeissCZIReader extends FormatReader {
               store.setChannelExcitationWavelength(ex, i, c);
             }
           }
-        }
-        if (c < pinholeSizes.size() && pinholeSizes.get(c) != null) {
-          store.setChannelPinholeSize(new Double(pinholeSizes.get(c)), i, c);
+
+          if (channels.get(c).illumination != null) {
+            store.setChannelIlluminationType(
+              channels.get(c).illumination, i, c);
+          }
+
+          if (channels.get(c).pinhole != null) {
+            store.setChannelPinholeSize(
+              new Double(channels.get(c).pinhole), i, c);
+          }
         }
 
         if (c < detectorRefs.size()) {
@@ -859,6 +865,7 @@ public class ZeissCZIReader extends FormatReader {
     translateScaling(realRoot);
     translateDisplaySettings(realRoot);
     translateLayers(realRoot);
+    translateHardwareSettings(realRoot);
 
     Stack<String> nameStack = new Stack<String>();
     populateOriginalMetadata(realRoot, nameStack);
@@ -893,18 +900,23 @@ public class ZeissCZIReader extends FormatReader {
 
       Element dimensions = getFirstNode(image, "Dimensions");
 
-      NodeList channels = getGrandchildren(dimensions, "Channel");
+      NodeList channelNodes = getGrandchildren(dimensions, "Channel");
 
-      if (channels != null) {
-        for (int i=0; i<channels.getLength(); i++) {
-          Element channel = (Element) channels.item(i);
+      if (channelNodes != null) {
+        for (int i=0; i<channelNodes.getLength(); i++) {
+          Element channel = (Element) channelNodes.item(i);
 
-          emissionWavelengths.add(
-            getFirstNodeValue(channel, "EmissionWavelength"));
-          excitationWavelengths.add(
-            getFirstNodeValue(channel, "ExcitationWavelength"));
-          pinholeSizes.add(getFirstNodeValue(channel, "PinholeSize"));
-          channelNames.add(channel.getAttribute("Name"));
+          while (channels.size() <= i) {
+            channels.add(new Channel());
+          }
+
+          channels.get(i).emission =
+            getFirstNodeValue(channel, "EmissionWavelength");
+          channels.get(i).excitation =
+            getFirstNodeValue(channel, "ExcitationWavelength");
+          channels.get(i).pinhole = getFirstNodeValue(channel, "PinholeSize");
+
+          channels.get(i).name = channel.getAttribute("Name");
 
           Element detectorSettings = getFirstNode(channel, "DetectorSettings");
 
@@ -1284,44 +1296,46 @@ public class ZeissCZIReader extends FormatReader {
     }
   }
 
-  private void translateDisplaySettings(Element root) {
+  private void translateDisplaySettings(Element root) throws FormatException {
     NodeList displaySettings = root.getElementsByTagName("DisplaySetting");
     if (displaySettings == null || displaySettings.getLength() == 0) {
       return;
     }
 
     Element displaySetting = (Element) displaySettings.item(0);
-    NodeList channels = getGrandchildren(displaySetting, "Channel");
+    NodeList channelNodes = getGrandchildren(displaySetting, "Channel");
 
-    if (channels != null) {
-      for (int i=0; i<channels.getLength(); i++) {
-        Element channel = (Element) channels.item(i);
+    if (channelNodes != null) {
+      for (int i=0; i<channelNodes.getLength(); i++) {
+        Element channel = (Element) channelNodes.item(i);
         String color = getFirstNodeValue(channel, "Color");
-        if (color != null) {
-          channelColors.add(color);
+        if (color == null) {
+          color = getFirstNodeValue(channel, "OriginalColor");
         }
+
+        while (channels.size() <= i) {
+          channels.add(new Channel());
+        }
+        channels.get(i).color = color;
 
         String name = getFirstNodeValue(channel, "DyeName");
-        if (i < channelNames.size() && name != null) {
-          channelNames.set(i, name);
-        }
-        else {
-          channelNames.add(name);
+        if (name != null) {
+          channels.get(i).name = name;
         }
 
         String emission = getFirstNodeValue(channel, "DyeMaxEmission");
-        if (i < emissionWavelengths.size() && emission != null) {
-          emissionWavelengths.set(i, emission);
-        }
-        else {
-          emissionWavelengths.add(emission);
+        if (emission != null) {
+          channels.get(i).emission = emission;
         }
         String excitation = getFirstNodeValue(channel, "DyeMaxExcitation");
-        if (i < excitationWavelengths.size() && excitation != null) {
-          excitationWavelengths.set(i, excitation);
+        if (excitation != null) {
+          channels.get(i).excitation = excitation;
         }
-        else {
-          excitationWavelengths.add(excitation);
+
+        String illumination = getFirstNodeValue(channel, "IlluminationType");
+
+        if (illumination != null) {
+          channels.get(i).illumination = getIlluminationType(illumination);
         }
       }
     }
@@ -1390,115 +1404,197 @@ public class ZeissCZIReader extends FormatReader {
           }
           store.setLineText(getFirstNodeValue(textElements, "Text"), i, shape);
           store.setLineText(getFirstNodeValue(textElements, "Text"), i, shape + 1);
-      }
-
-      NodeList rectangles = getGrandchildren(layer, "Elements", "Rectangle");
-      if (rectangles != null) {
-        shape = populateRectangles(rectangles, i, shape);
-      }
-
-      NodeList ellipses = getGrandchildren(layer, "Elements", "Ellipse");
-      if (ellipses != null) {
-        for (int s=0; s<ellipses.getLength(); s++, shape++) {
-          Element ellipse = (Element) ellipses.item(s);
-
-          Element geometry = getFirstNode(ellipse, "Geometry");
-          Element textElements = getFirstNode(ellipse, "TextElements");
-          Element attributes = getFirstNode(ellipse, "Attributes");
-
-          store.setEllipseID(
-            MetadataTools.createLSID("Shape", i, shape), i, shape);
-
-          String radiusX = getFirstNodeValue(geometry, "RadiusX");
-          String radiusY = getFirstNodeValue(geometry, "RadiusY");
-          String centerX = getFirstNodeValue(geometry, "CenterX");
-          String centerY = getFirstNodeValue(geometry, "CenterY");
-
-          if (radiusX != null) {
-            store.setEllipseRadiusX(new Double(radiusX), i, shape);
-          }
-          if (radiusY != null) {
-            store.setEllipseRadiusY(new Double(radiusY), i, shape);
-          }
-          if (centerX != null) {
-            store.setEllipseX(new Double(centerX), i, shape);
-          }
-          if (centerY != null) {
-            store.setEllipseY(new Double(centerY), i, shape);
-          }
-          store.setEllipseText(
-            getFirstNodeValue(textElements, "Text"), i, shape);
         }
-      }
 
-      // translate all of the circle ROIs
-      NodeList circles = getGrandchildren(layer, "Elements", "Circle");
-      if (circles != null) {
-        shape = populateCircles(circles, i, shape);
-      }
-      NodeList inOutCircles =
-        getGrandchildren(layer, "Elements", "InOutCircle");
-      if (inOutCircles != null) {
-        shape = populateCircles(inOutCircles, i, shape);
-      }
-      NodeList outInCircles =
-        getGrandchildren(layer, "Elements", "OutInCircle");
-      if (outInCircles != null) {
-        shape = populateCircles(outInCircles, i, shape);
-      }
-      NodeList pointsCircles =
-        getGrandchildren(layer, "Elements", "PointsCircle");
-      if (pointsCircles != null) {
-        shape = populateCircles(pointsCircles, i, shape);
-      }
+        NodeList rectangles = getGrandchildren(layer, "Elements", "Rectangle");
+        if (rectangles != null) {
+          shape = populateRectangles(rectangles, i, shape);
+        }
 
-      NodeList polygons = getGrandchildren(layer, "Elements", "Polygon");
-      if (polygons != null) {
-        shape = populatePolylines(polygons, i, shape, true);
-      }
+        NodeList ellipses = getGrandchildren(layer, "Elements", "Ellipse");
+        if (ellipses != null) {
+          for (int s=0; s<ellipses.getLength(); s++, shape++) {
+            Element ellipse = (Element) ellipses.item(s);
 
-      NodeList polylines = getGrandchildren(layer, "Elements", "Polyline");
-      if (polylines != null) {
-        shape = populatePolylines(polylines, i, shape, false);
-      }
+            Element geometry = getFirstNode(ellipse, "Geometry");
+            Element textElements = getFirstNode(ellipse, "TextElements");
+            Element attributes = getFirstNode(ellipse, "Attributes");
 
-      NodeList openPolylines =
-        getGrandchildren(layer, "Elements", "OpenPolyline");
-      if (openPolylines != null) {
-        shape = populatePolylines(openPolylines, i, shape, false);
-      }
+            store.setEllipseID(
+              MetadataTools.createLSID("Shape", i, shape), i, shape);
 
-      NodeList closedPolylines =
-        getGrandchildren(layer, "Elements", "ClosedPolyline");
-      if (closedPolylines != null) {
-        shape = populatePolylines(closedPolylines, i, shape, true);
-      }
+            String radiusX = getFirstNodeValue(geometry, "RadiusX");
+            String radiusY = getFirstNodeValue(geometry, "RadiusY");
+            String centerX = getFirstNodeValue(geometry, "CenterX");
+            String centerY = getFirstNodeValue(geometry, "CenterY");
 
-      NodeList rectRoi = getGrandchildren(layer, "Elements", "RectRoi");
-      if (rectRoi != null) {
-        shape = populateRectangles(rectRoi, i, shape);
-      }
-      NodeList textBoxes = getGrandchildren(layer, "Elements", "TextBox");
-      if (textBoxes != null) {
-        shape = populateRectangles(textBoxes, i, shape);
-      }
-      NodeList text = getGrandchildren(layer, "Elements", "Text");
-      if (text != null) {
-        shape = populateRectangles(text, i, shape);
-      }
+            if (radiusX != null) {
+              store.setEllipseRadiusX(new Double(radiusX), i, shape);
+            }
+            if (radiusY != null) {
+              store.setEllipseRadiusY(new Double(radiusY), i, shape);
+            }
+            if (centerX != null) {
+              store.setEllipseX(new Double(centerX), i, shape);
+            }
+            if (centerY != null) {
+              store.setEllipseY(new Double(centerY), i, shape);
+            }
+            store.setEllipseText(
+              getFirstNodeValue(textElements, "Text"), i, shape);
+          }
+        }
 
-      if (shape > 0) {
-        String roiID = MetadataTools.createLSID("ROI", i);
-        store.setROIID(roiID, i);
-        store.setROIName(layer.getAttribute("Name"), i);
-        store.setROIDescription(getFirstNodeValue(layer, "Usage"), i);
+        // translate all of the circle ROIs
+        NodeList circles = getGrandchildren(layer, "Elements", "Circle");
+        if (circles != null) {
+          shape = populateCircles(circles, i, shape);
+        }
+        NodeList inOutCircles =
+          getGrandchildren(layer, "Elements", "InOutCircle");
+        if (inOutCircles != null) {
+          shape = populateCircles(inOutCircles, i, shape);
+        }
+        NodeList outInCircles =
+          getGrandchildren(layer, "Elements", "OutInCircle");
+        if (outInCircles != null) {
+          shape = populateCircles(outInCircles, i, shape);
+        }
+        NodeList pointsCircles =
+          getGrandchildren(layer, "Elements", "PointsCircle");
+        if (pointsCircles != null) {
+          shape = populateCircles(pointsCircles, i, shape);
+        }
 
-        for (int series=0; series<getSeriesCount(); series++) {
-          store.setImageROIRef(roiID, series, i);
+        NodeList polygons = getGrandchildren(layer, "Elements", "Polygon");
+        if (polygons != null) {
+          shape = populatePolylines(polygons, i, shape, true);
+        }
+
+        NodeList polylines = getGrandchildren(layer, "Elements", "Polyline");
+        if (polylines != null) {
+          shape = populatePolylines(polylines, i, shape, false);
+        }
+
+        NodeList openPolylines =
+          getGrandchildren(layer, "Elements", "OpenPolyline");
+        if (openPolylines != null) {
+          shape = populatePolylines(openPolylines, i, shape, false);
+        }
+
+        NodeList closedPolylines =
+          getGrandchildren(layer, "Elements", "ClosedPolyline");
+        if (closedPolylines != null) {
+          shape = populatePolylines(closedPolylines, i, shape, true);
+        }
+
+        NodeList rectRoi = getGrandchildren(layer, "Elements", "RectRoi");
+        if (rectRoi != null) {
+          shape = populateRectangles(rectRoi, i, shape);
+        }
+        NodeList textBoxes = getGrandchildren(layer, "Elements", "TextBox");
+        if (textBoxes != null) {
+          shape = populateRectangles(textBoxes, i, shape);
+        }
+        NodeList text = getGrandchildren(layer, "Elements", "Text");
+        if (text != null) {
+          shape = populateRectangles(text, i, shape);
+        }
+
+        if (shape > 0) {
+          String roiID = MetadataTools.createLSID("ROI", i);
+          store.setROIID(roiID, i);
+          store.setROIName(layer.getAttribute("Name"), i);
+          store.setROIDescription(getFirstNodeValue(layer, "Usage"), i);
+
+          for (int series=0; series<getSeriesCount(); series++) {
+            store.setImageROIRef(roiID, series, i);
+          }
         }
       }
     }
+  }
+
+  private void translateHardwareSettings(Element root) throws FormatException {
+    NodeList hardwareSettings = root.getElementsByTagName("HardwareSetting");
+    if (hardwareSettings == null || hardwareSettings.getLength() == 0) {
+      return;
     }
+
+    Element hardware = (Element) hardwareSettings.item(0);
+
+    Element microscope = getFirstNode(hardware, "Microscope");
+    if (microscope != null) {
+      String model = microscope.getAttribute("Name");
+      store.setMicroscopeModel(model, 0);
+    }
+
+    Element objectiveChanger = getFirstNode(hardware, "ObjectiveChanger");
+    if (objectiveChanger != null) {
+      String position = getFirstNodeValue(objectiveChanger, "Position");
+      int positionIndex = -1;
+      if (position != null) {
+        try {
+          positionIndex = Integer.parseInt(position) - 1;
+        }
+        catch (NumberFormatException e) {
+          LOGGER.debug("Could not parse ObjectiveSettings", e);
+        }
+      }
+
+      NodeList objectives = objectiveChanger.getElementsByTagName("Objective");
+
+      if (objectives != null) {
+        for (int i=0; i<objectives.getLength(); i++) {
+          Element objective = (Element) objectives.item(i);
+
+          String objectiveID = MetadataTools.createLSID("Objective", 0, i);
+          if (i == positionIndex) {
+            objectiveSettingsID = objectiveID;
+          }
+
+          store.setObjectiveID(objectiveID, 0, i);
+          store.setObjectiveModel(objective.getAttribute("Model"), 0, i);
+          store.setObjectiveSerialNumber(
+            objective.getAttribute("UniqueName"), 0, i);
+
+          String immersion = getFirstNodeValue(objective, "Immersions");
+          store.setObjectiveImmersion(getImmersion(immersion), 0, i);
+          store.setObjectiveCorrection(getCorrection("Other"), 0, i);
+
+          String magnification = getFirstNodeValue(objective, "Magnification");
+          String na = getFirstNodeValue(objective, "NumericalAperture");
+          String wd = getFirstNodeValue(objective, "WorkingDistance");
+
+          if (magnification != null) {
+            try {
+              store.setObjectiveNominalMagnification(
+                new Double(magnification), 0, i);
+            }
+            catch (NumberFormatException e) {
+              LOGGER.debug("Could not parse magnification", e);
+            }
+          }
+          if (na != null) {
+            try {
+              store.setObjectiveLensNA(new Double(na), 0, i);
+            }
+            catch (NumberFormatException e) {
+              LOGGER.debug("Could not parse numerical aperture", e);
+            }
+          }
+          if (wd != null) {
+            try {
+              store.setObjectiveWorkingDistance(new Double(wd), 0, i);
+            }
+            catch (NumberFormatException e) {
+              LOGGER.debug("Could not parse working distance", e);
+            }
+          }
+        }
+      }
+    }
+
   }
 
   private int populateRectangles(NodeList rectangles, int roi, int shape) {
@@ -1625,7 +1721,7 @@ public class ZeissCZIReader extends FormatReader {
     return shape;
   }
 
-  private void translateExperiment(Element root) {
+  private void translateExperiment(Element root) throws FormatException {
     NodeList experiments = root.getElementsByTagName("Experiment");
     if (experiments == null || experiments.getLength() == 0) {
       return;
@@ -1669,20 +1765,68 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
 
+    NodeList detectors = getGrandchildren(acquisition, "Detector");
+
+    Element setup = getFirstNode(acquisition, "AcquisitionModeSetup");
+    String cameraModel = getFirstNodeValue(setup, "SelectedCamera");
+
+    if (detectors != null) {
+      for (int i=0; i<detectors.getLength(); i++) {
+        Element detector = (Element) detectors.item(i);
+        String id = MetadataTools.createLSID("Detector", 0, i);
+
+        store.setDetectorID(id, 0, i);
+        String model = detector.getAttribute("Id");
+        store.setDetectorModel(model, 0, i);
+
+        String bin = getFirstNodeValue(detector, "Binning");
+        bin = bin.replaceAll(",", "x");
+        Binning binning = getBinning(bin);
+
+        if (model != null && model.equals(cameraModel)) {
+          for (int image=0; image<getSeriesCount(); image++) {
+            for (int c=0; c<getEffectiveSizeC(); c++) {
+              store.setDetectorSettingsID(id, image, c);
+              store.setDetectorSettingsBinning(binning, image, c);
+            }
+          }
+        }
+      }
+    }
+
     Element multiTrack = getFirstNode(acquisition, "MultiTrackSetup");
 
     if (multiTrack == null) {
       return;
     }
 
-    NodeList detectors = getGrandchildren(multiTrack, "Detector");
+    detectors = getGrandchildren(multiTrack, "Detector");
 
-    if (detectors == null || detectors.getLength() == 0) {
-      return;
+    if (detectors != null && detectors.getLength() > 0) {
+      Element detector = (Element) detectors.item(0);
+      gain = getFirstNodeValue(detector, "Voltage");
     }
 
-    Element detector = (Element) detectors.item(0);
-    gain = getFirstNodeValue(detector, "Voltage");
+    NodeList tracks = multiTrack.getElementsByTagName("Track");
+
+    if (tracks != null && tracks.getLength() > 0) {
+      for (int i=0; i<tracks.getLength(); i++) {
+        Element track = (Element) tracks.item(i);
+        Element channel = getFirstNode(track, "Channel");
+        String exposure = getFirstNodeValue(channel, "ExposureTime");
+
+        while (channels.size() <= i) {
+          channels.add(new Channel());
+        }
+
+        try {
+          channels.get(i).exposure = new Double(exposure);
+        }
+        catch (NumberFormatException e) {
+          LOGGER.debug("Could not parse exposure time", e);
+        }
+      }
+    }
   }
 
   private Element getFirstNode(Element root, String name) {
@@ -1868,7 +2012,9 @@ public class ZeissCZIReader extends FormatReader {
           getFirstNodeValue(manufacturerNode, "SerialNumber");
         String lotNumber = getFirstNodeValue(manufacturerNode, "LotNumber");
 
-        objectiveIDs.add(objective.getAttribute("Id"));
+        if (objectiveSettingsID == null) {
+          objectiveSettingsID = objective.getAttribute("Id");
+        }
         store.setObjectiveID(objective.getAttribute("Id"), 0, i);
         store.setObjectiveManufacturer(manufacturer, 0, i);
         store.setObjectiveModel(model, 0, i);
@@ -2271,6 +2417,16 @@ public class ZeissCZIReader extends FormatReader {
       contentFileType = s.readString(8);
       name = s.readString(80);
     }
+  }
+
+  class Channel {
+    public String name;
+    public String color;
+    public IlluminationType illumination;
+    public String emission;
+    public String excitation;
+    public String pinhole;
+    public Double exposure;
   }
 
 }
