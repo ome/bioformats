@@ -162,8 +162,13 @@ for s = 1:numSeries
         % build an informative title for our figure
         label = id;
         if numSeries > 1
-            qs = int2str(s);
-            label = [label, '; series ', qs, '/', int2str(numSeries)];
+            seriesName = char(r.getMetadataStore().getImageName(s - 1));
+            if ~isempty(seriesName)
+                label = [label, '; ', seriesName];
+            else
+                qs = int2str(s);
+                label = [label, '; series ', qs, '/', int2str(numSeries)];
+            end
         end
         if numImages > 1
             qi = int2str(i);
