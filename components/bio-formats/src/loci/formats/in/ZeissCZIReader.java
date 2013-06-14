@@ -51,6 +51,7 @@ import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.LZWCodec;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.Binning;
 import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.Color;
@@ -117,6 +118,7 @@ public class ZeissCZIReader extends FormatReader {
   private int phases = 1;
   private int angles = 1;
 
+  private String imageName;
   private String acquiredDate;
   private String description;
   private String userDisplayName, userName;
@@ -141,6 +143,7 @@ public class ZeissCZIReader extends FormatReader {
 
   private Boolean prestitched = null;
   private String objectiveSettingsID;
+  private boolean hasDetectorSettings = false;
 
   // -- Constructor --
 
@@ -381,6 +384,8 @@ public class ZeissCZIReader extends FormatReader {
       previousChannel = 0;
       prestitched = null;
       objectiveSettingsID = null;
+      imageName = null;
+      hasDetectorSettings = false;
     }
   }
 
@@ -521,6 +526,9 @@ public class ZeissCZIReader extends FormatReader {
     store.setExperimenterUserName(userName, 0);
 
     String name = new Location(getCurrentFile()).getName();
+    if (imageName != null) {
+      name = imageName;
+    }
 
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageInstrumentRef(MetadataTools.createLSID("Instrument", 0), i);
@@ -624,6 +632,7 @@ public class ZeissCZIReader extends FormatReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (c < channels.size()) {
           store.setChannelName(channels.get(c).name, i, c);
+          store.setChannelFluor(channels.get(c).fluor, i, c);
 
           String color = channels.get(c).color;
           if (color != null) {
@@ -631,7 +640,7 @@ public class ZeissCZIReader extends FormatReader {
             color = color.substring(2, color.length());
             try {
               store.setChannelColor(
-                new Color(Integer.parseInt(color, 16) | 0xff), i, c);
+                new Color((Integer.parseInt(color, 16) << 8) | 0xff), i, c);
             }
             catch (NumberFormatException e) {
               LOGGER.warn("", e);
@@ -666,6 +675,11 @@ public class ZeissCZIReader extends FormatReader {
             store.setChannelPinholeSize(
               new Double(channels.get(c).pinhole), i, c);
           }
+
+          if (channels.get(c).acquisitionMode != null) {
+            store.setChannelAcquisitionMode(
+              channels.get(c).acquisitionMode, i, c);
+          }
         }
 
         if (c < detectorRefs.size()) {
@@ -674,6 +688,13 @@ public class ZeissCZIReader extends FormatReader {
 
           if (c < binnings.size()) {
             store.setDetectorSettingsBinning(getBinning(binnings.get(c)), i, c);
+          }
+          hasDetectorSettings = true;
+        }
+
+        if (c < channels.size()) {
+          if (hasDetectorSettings) {
+            store.setDetectorSettingsGain(channels.get(c).gain, i, c);
           }
         }
       }
@@ -917,6 +938,10 @@ public class ZeissCZIReader extends FormatReader {
           channels.get(i).pinhole = getFirstNodeValue(channel, "PinholeSize");
 
           channels.get(i).name = channel.getAttribute("Name");
+          channels.get(i).illumination =
+            getIlluminationType(getFirstNodeValue(channel, "IlluminationType"));
+          channels.get(i).acquisitionMode =
+            getAcquisitionMode(getFirstNodeValue(channel, "AcquisitionMode"));
 
           Element detectorSettings = getFirstNode(channel, "DetectorSettings");
 
@@ -1248,6 +1273,8 @@ public class ZeissCZIReader extends FormatReader {
       if (userName == null) {
         userName = getFirstNodeValue(document, "UserName");
       }
+
+      imageName = getFirstNodeValue(document, "Name");
     }
   }
 
@@ -1318,7 +1345,11 @@ public class ZeissCZIReader extends FormatReader {
         }
         channels.get(i).color = color;
 
-        String name = getFirstNodeValue(channel, "DyeName");
+        String fluor = getFirstNodeValue(channel, "DyeName");
+        if (fluor != null) {
+          channels.get(i).fluor = fluor;
+        }
+        String name = channel.getAttribute("Name");
         if (name != null) {
           channels.get(i).name = name;
         }
@@ -1790,6 +1821,7 @@ public class ZeissCZIReader extends FormatReader {
               store.setDetectorSettingsBinning(binning, image, c);
             }
           }
+          hasDetectorSettings = true;
         }
       }
     }
@@ -1814,6 +1846,7 @@ public class ZeissCZIReader extends FormatReader {
         Element track = (Element) tracks.item(i);
         Element channel = getFirstNode(track, "Channel");
         String exposure = getFirstNodeValue(channel, "ExposureTime");
+        String gain = getFirstNodeValue(channel, "EMGain");
 
         while (channels.size() <= i) {
           channels.add(new Channel());
@@ -1824,6 +1857,12 @@ public class ZeissCZIReader extends FormatReader {
         }
         catch (NumberFormatException e) {
           LOGGER.debug("Could not parse exposure time", e);
+        }
+        try {
+          channels.get(i).gain = new Double(gain);
+        }
+        catch (NumberFormatException e) {
+          LOGGER.debug("Could not parse gain", e);
         }
       }
     }
@@ -2423,10 +2462,13 @@ public class ZeissCZIReader extends FormatReader {
     public String name;
     public String color;
     public IlluminationType illumination;
+    public AcquisitionMode acquisitionMode;
     public String emission;
     public String excitation;
     public String pinhole;
     public Double exposure;
+    public Double gain;
+    public String fluor;
   }
 
 }
