@@ -2077,8 +2077,8 @@ public class FormatReaderTest {
       OutputStreamWriter writer =
         new OutputStreamWriter(new FileOutputStream(f), Constants.ENCODING);
       MetadataStore store = reader.getMetadataStore();
-      MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
-      String xml = omexmlService.getOMEXML(retrieve);
+      MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
+      String xml = MetadataTools.getOMEXML(retrieve);
       writer.write(xml);
       writer.close();
       reader.close();
