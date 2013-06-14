@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -176,6 +177,27 @@ public class ZeissZVIReader extends BaseZeissReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     super.initFileMain(id);
+
+    // double-check that the coordinates are valid
+    // all of the image numbers must be accounted for
+
+    HashMap<Integer, Boolean> valid = new HashMap<Integer, Boolean>();
+    for (int i=0; i<coordinates.length; i++) {
+      valid.put(i, false);
+    }
+    for (int i=0; i<coordinates.length; i++) {
+      try {
+        int index =
+          getIndex(coordinates[i][0], coordinates[i][1], coordinates[i][2]);
+        valid.put(index, true);
+      }
+      catch (IllegalArgumentException e) {
+        LOGGER.trace("Found invalid coordinates", e);
+      }
+    }
+    if (valid.containsValue(false)) {
+      coordinates = new int[0][0];
+    }
   }
 
   protected void initVars(String id) throws FormatException, IOException {
