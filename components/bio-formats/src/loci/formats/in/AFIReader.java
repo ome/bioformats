@@ -64,7 +64,7 @@ public class AFIReader extends FormatReader {
   // -- Fields --
 
   private ArrayList<String> pixels = new ArrayList<String>();
-  private ChannelSeparator reader = new ChannelSeparator(new SVSReader());
+  private ChannelSeparator[] reader;
 
   // -- Constructor --
 
@@ -92,12 +92,12 @@ public class AFIReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
-    return reader.getOptimalTileWidth();
+    return reader[0].getOptimalTileWidth();
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
-    return reader.getOptimalTileHeight();
+    return reader[0].getOptimalTileHeight();
   }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
@@ -105,9 +105,8 @@ public class AFIReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     if (getCoreIndex() >= core.size() - EXTRA_IMAGES) {
-      reader.setId(pixels.get(0));
-      reader.setCoreIndex(getCoreIndex());
-      return reader.openThumbBytes(no);
+      reader[0].setCoreIndex(getCoreIndex());
+      return reader[0].openThumbBytes(no);
     }
 
     int coreIndex = getCoreIndex();
@@ -127,18 +126,16 @@ public class AFIReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (getCoreIndex() >= core.size() - EXTRA_IMAGES) {
-      reader.setId(pixels.get(0));
-      reader.setCoreIndex(getCoreIndex());
-      return reader.openBytes(no, buf, x, y, w, h);
+      reader[0].setCoreIndex(getCoreIndex());
+      return reader[0].openBytes(no, buf, x, y, w, h);
     }
 
     int[] coords = getZCTCoords(no);
     int channel = coords[1];
     int index = getIndex(coords[0], 0, coords[2]);
 
-    reader.setId(pixels.get(channel));
-    reader.setCoreIndex(getCoreIndex());
-    return reader.openBytes(index, buf, x, y, w, h);
+    reader[channel].setCoreIndex(getCoreIndex());
+    return reader[channel].openBytes(index, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -166,7 +163,14 @@ public class AFIReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      reader.close();
+      if (reader != null) {
+        for (ChannelSeparator r : reader) {
+          if (r != null) {
+            r.close();
+          }
+        }
+      }
+      reader = null;
       pixels.clear();
     }
   }
@@ -190,6 +194,7 @@ public class AFIReader extends FormatReader {
 
     String parent = new Location(id).getAbsoluteFile().getParent();
     String[] channelNames = new String[pixels.size()];
+    reader = new ChannelSeparator[pixels.size()];
 
     for (int i=0; i<pixels.size(); i++) {
       String file = pixels.get(i);
@@ -201,12 +206,13 @@ public class AFIReader extends FormatReader {
       }
 
       pixels.set(i, new Location(parent, file).getAbsolutePath());
+
+      reader[i] = new ChannelSeparator(new SVSReader());
+      reader[i].setFlattenedResolutions(hasFlattenedResolutions());
+      reader[i].setId(pixels.get(i));
     }
 
-    reader.setFlattenedResolutions(hasFlattenedResolutions());
-    reader.setId(pixels.get(0));
-
-    core = reader.getCoreMetadataList();
+    core = reader[0].getCoreMetadataList();
 
     for (int i=0; i<core.size() - EXTRA_IMAGES; i++) {
       CoreMetadata c = core.get(i);
@@ -237,8 +243,7 @@ public class AFIReader extends FormatReader {
       Timestamp[] datestamp = new Timestamp[pixels.size()];
 
       for (int c=0; c<pixels.size(); c++) {
-        reader.setId(pixels.get(c));
-        SVSReader baseReader = (SVSReader) reader.getReader();
+        SVSReader baseReader = (SVSReader) reader[c].getReader();
         emission[c] = baseReader.getEmission();
         excitation[c] = baseReader.getExcitation();
         exposure[c] = baseReader.getExposureTime();
