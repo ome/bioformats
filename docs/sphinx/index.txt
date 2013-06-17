@@ -29,3 +29,4 @@ supported by Bio-Formats.
     developers/index
     formats/index
 
+The version *4* releases use the *June 2012* release of the :model_doc:`OME-Model <>`
