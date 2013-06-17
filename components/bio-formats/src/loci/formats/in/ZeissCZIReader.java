@@ -46,6 +46,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.LZWCodec;
@@ -88,6 +89,7 @@ public class ZeissCZIReader extends FormatReader {
   private static final int UNCOMPRESSED = 0;
   private static final int JPEG = 1;
   private static final int LZW = 2;
+  private static final int JPEGXR = 4;
 
   /** Pixel type constants. */
   private static final int GRAY8 = 0;
@@ -2253,6 +2255,9 @@ public class ZeissCZIReader extends FormatReader {
         case LZW:
           data = new LZWCodec().decompress(data, options);
           break;
+        case JPEGXR:
+          throw new UnsupportedCompressionException(
+            "JPEG-XR not yet supported");
       }
       s.close();
 
