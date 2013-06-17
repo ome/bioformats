@@ -478,7 +478,7 @@ public class ZeissCZIReader extends FormatReader {
       core[0].sizeY = planes.get(planes.size() - 1).y;
     }
 
-    if (ms0.imageCount * seriesCount > planes.size()) {
+    if (ms0.imageCount * seriesCount > planes.size() && planes.size() > 0) {
       if ((planes.size() % (seriesCount * getSizeZ())) == 0) {
         ms0.sizeT = 1;
       }
