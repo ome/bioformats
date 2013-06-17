@@ -1811,17 +1811,19 @@ public class ZeissCZIReader extends FormatReader {
         store.setDetectorModel(model, 0, i);
 
         String bin = getFirstNodeValue(detector, "Binning");
-        bin = bin.replaceAll(",", "x");
-        Binning binning = getBinning(bin);
+        if (bin != null) {
+          bin = bin.replaceAll(",", "x");
+          Binning binning = getBinning(bin);
 
-        if (model != null && model.equals(cameraModel)) {
-          for (int image=0; image<getSeriesCount(); image++) {
-            for (int c=0; c<getEffectiveSizeC(); c++) {
-              store.setDetectorSettingsID(id, image, c);
-              store.setDetectorSettingsBinning(binning, image, c);
+          if (model != null && model.equals(cameraModel)) {
+            for (int image=0; image<getSeriesCount(); image++) {
+              for (int c=0; c<getEffectiveSizeC(); c++) {
+                store.setDetectorSettingsID(id, image, c);
+                store.setDetectorSettingsBinning(binning, image, c);
+              }
             }
+            hasDetectorSettings = true;
           }
-          hasDetectorSettings = true;
         }
       }
     }
@@ -1853,13 +1855,17 @@ public class ZeissCZIReader extends FormatReader {
         }
 
         try {
-          channels.get(i).exposure = new Double(exposure);
+          if (exposure != null) {
+            channels.get(i).exposure = new Double(exposure);
+          }
         }
         catch (NumberFormatException e) {
           LOGGER.debug("Could not parse exposure time", e);
         }
         try {
-          channels.get(i).gain = new Double(gain);
+          if (gain != null) {
+            channels.get(i).gain = new Double(gain);
+          }
         }
         catch (NumberFormatException e) {
           LOGGER.debug("Could not parse gain", e);
