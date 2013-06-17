@@ -474,15 +474,6 @@ public class ZeissCZIReader extends FormatReader {
 
     // finish populating the core metadata
 
-    store = makeFilterMetadata();
-    for (Segment segment : segments) {
-      if (segment instanceof Metadata) {
-        String xml = ((Metadata) segment).xml;
-        xml = XMLTools.sanitizeXML(xml);
-        translateMetadata(xml);
-      }
-    }
-
     int seriesCount = rotations * positions * illuminations * acquisitions *
       mosaics * phases * angles;
 
@@ -498,13 +489,14 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     if (ms0.imageCount * seriesCount > planes.size()) {
-      if (seriesCount * getSizeZ() == planes.size()) {
+      if ((planes.size() % (seriesCount * getSizeZ())) == 0) {
         ms0.sizeT = 1;
       }
-      else if (seriesCount * getSizeT() == planes.size()) {
+      else if ((planes.size() % (seriesCount * getSizeT())) == 0) {
         ms0.sizeZ = 1;
       }
       ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
+      seriesCount = planes.size() / ms0.imageCount;
     }
 
     if (seriesCount > 1) {
@@ -520,7 +512,15 @@ public class ZeissCZIReader extends FormatReader {
 
     // populate the OME metadata
 
+    store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
+    for (Segment segment : segments) {
+      if (segment instanceof Metadata) {
+        String xml = ((Metadata) segment).xml;
+        xml = XMLTools.sanitizeXML(xml);
+        translateMetadata(xml);
+      }
+    }
 
     if (channels.size() > 0 && channels.get(0).color != null) {
       for (int i=0; i<seriesCount; i++) {
