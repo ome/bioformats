@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package loci.formats.tools;
+package loci.formats;
 
 import loci.common.Location;
 

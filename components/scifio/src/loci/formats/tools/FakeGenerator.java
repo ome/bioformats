@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import loci.common.Location;
+import loci.formats.ResourceNamer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
