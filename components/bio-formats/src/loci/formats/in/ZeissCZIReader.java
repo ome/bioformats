@@ -474,6 +474,15 @@ public class ZeissCZIReader extends FormatReader {
 
     // finish populating the core metadata
 
+    store = makeFilterMetadata();
+    for (Segment segment : segments) {
+      if (segment instanceof Metadata) {
+        String xml = ((Metadata) segment).xml;
+        xml = XMLTools.sanitizeXML(xml);
+        translateMetadata(xml);
+      }
+    }
+
     int seriesCount = rotations * positions * illuminations * acquisitions *
       mosaics * phases * angles;
 
@@ -486,6 +495,16 @@ public class ZeissCZIReader extends FormatReader {
       prestitched = false;
       ms0.sizeX = planes.get(planes.size() - 1).x;
       ms0.sizeY = planes.get(planes.size() - 1).y;
+    }
+
+    if (ms0.imageCount * seriesCount > planes.size()) {
+      if (seriesCount * getSizeZ() == planes.size()) {
+        ms0.sizeT = 1;
+      }
+      else if (seriesCount * getSizeT() == planes.size()) {
+        ms0.sizeZ = 1;
+      }
+      ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
     }
 
     if (seriesCount > 1) {
@@ -501,16 +520,7 @@ public class ZeissCZIReader extends FormatReader {
 
     // populate the OME metadata
 
-    store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
-
-    for (Segment segment : segments) {
-      if (segment instanceof Metadata) {
-        String xml = ((Metadata) segment).xml;
-        xml = XMLTools.sanitizeXML(xml);
-        translateMetadata(xml);
-      }
-    }
 
     if (channels.size() > 0 && channels.get(0).color != null) {
       for (int i=0; i<seriesCount; i++) {
@@ -724,6 +734,9 @@ public class ZeissCZIReader extends FormatReader {
 
     for (SubBlock plane : planes) {
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
+        if (dimension == null) {
+          continue;
+        }
         switch (dimension.dimension.charAt(0)) {
           case 'X':
             plane.x = dimension.size;
@@ -807,24 +820,36 @@ public class ZeissCZIReader extends FormatReader {
 
   private void assignPlaneIndices() {
     // assign plane and series indices to each SubBlock
-    int[] extraLengths =
-      {rotations, positions, illuminations, acquisitions, mosaics, phases};
-    for (SubBlock plane : planes) {
+    int[] extraLengths = {rotations, positions, illuminations, acquisitions,
+      mosaics, phases, angles};
+    int angle = -1;
+    for (int p=0; p<planes.size(); p++) {
+      SubBlock plane = planes.get(p);
       int z = 0;
       int c = 0;
       int t = 0;
-      int[] extra = new int[6];
+      int[] extra = new int[7];
 
+      boolean noAngle = true;
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
+        if (dimension == null) {
+          continue;
+        }
         switch (dimension.dimension.charAt(0)) {
           case 'C':
             c = dimension.start;
             break;
           case 'Z':
             z = dimension.start;
+            if (z >= getSizeZ()) {
+              z = getSizeZ() - 1;
+            }
             break;
           case 'T':
             t = dimension.start;
+            if (t > getSizeT()) {
+              t = getSizeT() - 1;
+            }
             break;
           case 'R':
             extra[0] = dimension.start;
@@ -844,7 +869,15 @@ public class ZeissCZIReader extends FormatReader {
           case 'H':
             extra[5] = dimension.start;
             break;
+          case 'V':
+            extra[6] = dimension.start;
+            noAngle = false;
+            break;
         }
+      }
+
+      if (angles > 1 && noAngle) {
+        extra[6] = p / (getImageCount() * (getSeriesCount() / angles));
       }
 
       plane.planeIndex = getIndex(z, c, t);
@@ -920,6 +953,11 @@ public class ZeissCZIReader extends FormatReader {
         getFirstNodeValue(objectiveSettings, "CorrectionCollar");
       medium = getFirstNodeValue(objectiveSettings, "Medium");
       refractiveIndex = getFirstNodeValue(objectiveSettings, "RefractiveIndex");
+
+      String sizeV = getFirstNodeValue(image, "SizeV");
+      if (sizeV != null && angles == 1) {
+        angles = Integer.parseInt(sizeV);
+      }
 
       Element dimensions = getFirstNode(image, "Dimensions");
 
@@ -1996,7 +2034,14 @@ public class ZeissCZIReader extends FormatReader {
     segment.filename = filename;
 
     segment.fillInData();
-    in.seek(segment.startingPosition + segment.allocatedSize + HEADER_SIZE);
+
+    long pos = segment.startingPosition + segment.allocatedSize + HEADER_SIZE;
+    if (pos < in.length()) {
+      in.seek(pos);
+    }
+    else {
+      in.seek(in.length());
+    }
     return segment;
   }
 
@@ -2227,9 +2272,11 @@ public class ZeissCZIReader extends FormatReader {
 
       metadata = s.readString(metadataSize).trim();
       dataOffset = s.getFilePointer();
-      s.seek(s.getFilePointer() + dataSize + attachmentSize);
 
-      parseMetadata();
+      if (s.getFilePointer() + dataSize + attachmentSize < s.length()) {
+        s.seek(s.getFilePointer() + dataSize + attachmentSize);
+        parseMetadata();
+      }
       s.close();
     }
 
@@ -2430,6 +2477,14 @@ public class ZeissCZIReader extends FormatReader {
       dimensionEntries = new DimensionEntry[dimensionCount];
       for (int i=0; i<dimensionEntries.length; i++) {
         dimensionEntries[i] = new DimensionEntry(s);
+
+        // invalid dimension found; ignore it and the previous one
+        if (dimensionEntries[i].dimension.length() > 1) {
+          dimensionEntries[i] = null;
+          if (i > 0) {
+            dimensionEntries[i - 1] = null;
+          }
+        }
       }
     }
   }
