@@ -1587,6 +1587,8 @@ public class ZeissCZIReader extends FormatReader {
 
     Element hardware = (Element) hardwareSettings.item(0);
 
+    store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
+
     Element microscope = getFirstNode(hardware, "Microscope");
     if (microscope != null) {
       String model = microscope.getAttribute("Name");
