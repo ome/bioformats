@@ -538,7 +538,7 @@ public class ZeissCZIReader extends FormatReader {
     store.setExperimenterUserName(userName, 0);
 
     String name = new Location(getCurrentFile()).getName();
-    if (imageName != null) {
+    if (imageName != null && imageName.trim().length() > 0) {
       name = imageName;
     }
 
@@ -701,7 +701,9 @@ public class ZeissCZIReader extends FormatReader {
           if (c < binnings.size()) {
             store.setDetectorSettingsBinning(getBinning(binnings.get(c)), i, c);
           }
-          hasDetectorSettings = true;
+          if (c < channels.size()) {
+            store.setDetectorSettingsGain(channels.get(c).gain, i, c);
+          }
         }
 
         if (c < channels.size()) {
@@ -978,10 +980,15 @@ public class ZeissCZIReader extends FormatReader {
           channels.get(i).pinhole = getFirstNodeValue(channel, "PinholeSize");
 
           channels.get(i).name = channel.getAttribute("Name");
-          channels.get(i).illumination =
-            getIlluminationType(getFirstNodeValue(channel, "IlluminationType"));
-          channels.get(i).acquisitionMode =
-            getAcquisitionMode(getFirstNodeValue(channel, "AcquisitionMode"));
+
+          String illumination = getFirstNodeValue(channel, "IlluminationType");
+          if (illumination != null) {
+            channels.get(i).illumination = getIlluminationType(illumination);
+          }
+          String acquisition = getFirstNodeValue(channel, "AcquisitionMode");
+          if (acquisition != null) {
+            channels.get(i).acquisitionMode = getAcquisitionMode(acquisition);
+          }
 
           Element detectorSettings = getFirstNode(channel, "DetectorSettings");
 
@@ -1622,7 +1629,9 @@ public class ZeissCZIReader extends FormatReader {
           Element objective = (Element) objectives.item(i);
 
           String objectiveID = MetadataTools.createLSID("Objective", 0, i);
-          if (i == positionIndex) {
+          if (i == positionIndex ||
+            (objectives.getLength() == 1 && objectiveSettingsID != null))
+          {
             objectiveSettingsID = objectiveID;
           }
 
