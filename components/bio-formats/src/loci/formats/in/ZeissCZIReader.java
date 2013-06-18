@@ -146,6 +146,7 @@ public class ZeissCZIReader extends FormatReader {
   private Boolean prestitched = null;
   private String objectiveSettingsID;
   private boolean hasDetectorSettings = false;
+  private int scanDim = 1;
 
   // -- Constructor --
 
@@ -290,7 +291,9 @@ public class ZeissCZIReader extends FormatReader {
     int outputRow = 0, outputCol = 0;
 
     for (SubBlock plane : planes) {
-      if (plane.seriesIndex == currentSeries && plane.planeIndex == no) {
+      if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
+        (scanDim == getImageCount() && scanDim > 1))
+      {
         byte[] rawData = plane.readPixelData();
 
         if (prestitched != null && prestitched) {
@@ -299,6 +302,9 @@ public class ZeissCZIReader extends FormatReader {
 
           Region tile =
             new Region(currentX, getSizeY() - currentY - realY, realX, realY);
+          if (scanDim > 1) {
+            tile.y += no;
+          }
 
           if (tile.intersects(image)) {
             Region intersection = tile.intersection(image);
@@ -392,6 +398,7 @@ public class ZeissCZIReader extends FormatReader {
       objectiveSettingsID = null;
       imageName = null;
       hasDetectorSettings = false;
+      scanDim = 1;
     }
   }
 
@@ -456,12 +463,18 @@ public class ZeissCZIReader extends FormatReader {
           planes.remove(i);
           i--;
         }
+        else {
+          scanDim = (int) (size / planeSize);
+        }
       }
       else {
         byte[] pixels = planes.get(i).readPixelData();
         if (pixels.length < planeSize || planeSize >= Integer.MAX_VALUE) {
           planes.remove(i);
           i--;
+        }
+        else {
+          scanDim = (int) (pixels.length / planeSize);
         }
       }
     }
@@ -492,7 +505,9 @@ public class ZeissCZIReader extends FormatReader {
       ms0.sizeY = planes.get(planes.size() - 1).y;
     }
 
-    if (ms0.imageCount * seriesCount > planes.size() && planes.size() > 0) {
+    if (ms0.imageCount * seriesCount > planes.size() * scanDim &&
+      planes.size() > 0)
+    {
       if ((planes.size() % (seriesCount * getSizeZ())) == 0) {
         ms0.sizeT = 1;
       }
