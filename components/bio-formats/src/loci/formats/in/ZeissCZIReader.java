@@ -136,6 +136,7 @@ public class ZeissCZIReader extends FormatReader {
   private ArrayList<Channel> channels = new ArrayList<Channel>();
   private ArrayList<String> binnings = new ArrayList<String>();
   private ArrayList<String> detectorRefs = new ArrayList<String>();
+  private ArrayList<Double> timestamps = new ArrayList<Double>();
 
   private Double[] positionsX;
   private Double[] positionsY;
@@ -392,6 +393,7 @@ public class ZeissCZIReader extends FormatReader {
       channels.clear();
       binnings.clear();
       detectorRefs.clear();
+      timestamps.clear();
 
       previousChannel = 0;
       prestitched = null;
@@ -537,6 +539,24 @@ public class ZeissCZIReader extends FormatReader {
         xml = XMLTools.sanitizeXML(xml);
         translateMetadata(xml);
       }
+      else if (segment instanceof Attachment) {
+        AttachmentEntry entry = ((Attachment) segment).attachment;
+
+        if (entry.name.trim().equals("TimeStamps")) {
+          RandomAccessInputStream s =
+            new RandomAccessInputStream(((Attachment) segment).attachmentData);
+          try {
+            s.order(isLittleEndian());
+            s.seek(8);
+            while (s.getFilePointer() + 8 <= s.length()) {
+              timestamps.add(s.readDouble());
+            }
+          }
+          finally {
+            s.close();
+          }
+        }
+      }
     }
 
     assignPlaneIndices();
@@ -645,6 +665,9 @@ public class ZeissCZIReader extends FormatReader {
 
             if (p.timestamp != null) {
               store.setPlaneDeltaT(p.timestamp - startTime, i, plane);
+            }
+            else if (plane < timestamps.size()) {
+              store.setPlaneDeltaT(timestamps.get(plane), i, plane);
             }
             if (p.exposureTime != null) {
               store.setPlaneExposureTime(p.exposureTime, i, plane);
