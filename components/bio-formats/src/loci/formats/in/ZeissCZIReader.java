@@ -529,8 +529,6 @@ public class ZeissCZIReader extends FormatReader {
 
     core[0].dimensionOrder = "XYCZT";
 
-    assignPlaneIndices();
-
     // populate the OME metadata
 
     store = makeFilterMetadata();
@@ -542,6 +540,8 @@ public class ZeissCZIReader extends FormatReader {
         translateMetadata(xml);
       }
     }
+
+    assignPlaneIndices();
 
     if (channels.size() > 0 && channels.get(0).color != null) {
       for (int i=0; i<seriesCount; i++) {
@@ -847,7 +847,6 @@ public class ZeissCZIReader extends FormatReader {
     // assign plane and series indices to each SubBlock
     int[] extraLengths = {rotations, positions, illuminations, acquisitions,
       mosaics, phases, angles};
-    int angle = -1;
     for (int p=0; p<planes.size(); p++) {
       SubBlock plane = planes.get(p);
       int z = 0;
