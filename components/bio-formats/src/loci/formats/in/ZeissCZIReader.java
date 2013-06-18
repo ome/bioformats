@@ -146,6 +146,7 @@ public class ZeissCZIReader extends FormatReader {
   private Boolean prestitched = null;
   private String objectiveSettingsID;
   private boolean hasDetectorSettings = false;
+  private int scanDim = 1;
 
   // -- Constructor --
 
@@ -290,7 +291,9 @@ public class ZeissCZIReader extends FormatReader {
     int outputRow = 0, outputCol = 0;
 
     for (SubBlock plane : planes) {
-      if (plane.seriesIndex == currentSeries && plane.planeIndex == no) {
+      if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
+        (scanDim == getImageCount() && scanDim > 1))
+      {
         byte[] rawData = plane.readPixelData();
 
         if (prestitched != null && prestitched) {
@@ -299,6 +302,9 @@ public class ZeissCZIReader extends FormatReader {
 
           Region tile =
             new Region(currentX, getSizeY() - currentY - realY, realX, realY);
+          if (scanDim > 1) {
+            tile.y += no;
+          }
 
           if (tile.intersects(image)) {
             Region intersection = tile.intersection(image);
@@ -392,6 +398,7 @@ public class ZeissCZIReader extends FormatReader {
       objectiveSettingsID = null;
       imageName = null;
       hasDetectorSettings = false;
+      scanDim = 1;
     }
   }
 
@@ -448,11 +455,26 @@ public class ZeissCZIReader extends FormatReader {
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     for (int i=0; i<planes.size(); i++) {
-      int planeSize = planes.get(i).x * planes.get(i).y * bpp;
-      byte[] pixels = planes.get(i).readPixelData();
-      if (pixels.length < planeSize || planeSize < 0) {
-        planes.remove(i);
-        i--;
+      long planeSize = (long) planes.get(i).x * planes.get(i).y * bpp;
+      if (planes.get(i).directoryEntry.compression == UNCOMPRESSED) {
+        long size = planes.get(i).dataSize;
+        if (size < planeSize || planeSize >= Integer.MAX_VALUE || size < 0) {
+          planes.remove(i);
+          i--;
+        }
+        else {
+          scanDim = (int) (size / planeSize);
+        }
+      }
+      else {
+        byte[] pixels = planes.get(i).readPixelData();
+        if (pixels.length < planeSize || planeSize >= Integer.MAX_VALUE) {
+          planes.remove(i);
+          i--;
+        }
+        else {
+          scanDim = (int) (pixels.length / planeSize);
+        }
       }
     }
 
@@ -482,15 +504,17 @@ public class ZeissCZIReader extends FormatReader {
       core[0].sizeY = planes.get(planes.size() - 1).y;
     }
 
-    if (ms0.imageCount * seriesCount > planes.size() && planes.size() > 0) {
+    if (core[0].imageCount * seriesCount > planes.size() * scanDim &&
+      planes.size() > 0)
+    {
       if ((planes.size() % (seriesCount * getSizeZ())) == 0) {
-        ms0.sizeT = 1;
+        core[0].sizeT = 1;
       }
       else if ((planes.size() % (seriesCount * getSizeT())) == 0) {
-        ms0.sizeZ = 1;
+        core[0].sizeZ = 1;
       }
-      ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
-      seriesCount = planes.size() / ms0.imageCount;
+      core[0].imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
+      seriesCount = planes.size() / core[0].imageCount;
     }
 
     if (seriesCount > 1) {
@@ -1651,7 +1675,7 @@ public class ZeissCZIReader extends FormatReader {
           if (magnification != null) {
             try {
               store.setObjectiveNominalMagnification(
-                new Double(magnification), 0, i);
+                new PositiveInteger(Integer.parseInt(magnification)), 0, i);
             }
             catch (NumberFormatException e) {
               LOGGER.debug("Could not parse magnification", e);
