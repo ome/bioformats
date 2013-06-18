@@ -56,12 +56,15 @@ public class SEQReader extends BaseTiffReader {
   /** Frame rate. */
   private static final int IMAGE_PRO_TAG_2 = 40105;
 
+  private static final int IMAGE_PRO_TAG_3 = 40100;
+
   // -- Constructor --
 
   /** Constructs a new Image-Pro SEQ reader. */
   public SEQReader() {
     super("Image-Pro Sequence", "seq");
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
@@ -72,8 +75,11 @@ public class SEQReader extends BaseTiffReader {
     parser.setDoCaching(false);
     IFD ifd = parser.getFirstIFD();
     if (ifd == null) return false;
-    Object tag = ifd.get(IMAGE_PRO_TAG_1);
-    return tag != null && (tag instanceof short[]);
+    parser.fillInIFD(ifd);
+    Object tag1 = ifd.get(IMAGE_PRO_TAG_1);
+    Object tag3 = ifd.get(IMAGE_PRO_TAG_3);
+    return (tag1 != null && (tag1 instanceof short[])) || (tag3 != null &&
+      (tag3 instanceof int[]));
   }
 
   // -- Internal BaseTiffReader API methods --
