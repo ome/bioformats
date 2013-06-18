@@ -333,8 +333,12 @@ public class ZeissCZIReader extends FormatReader {
         }
         else {
           RandomAccessInputStream s = new RandomAccessInputStream(rawData);
-          readPlane(s, x, y, w, h, buf);
-          s.close();
+          try {
+            readPlane(s, x, y, w, h, buf);
+          }
+          finally {
+            s.close();
+          }
           break;
         }
       }
@@ -718,6 +722,9 @@ public class ZeissCZIReader extends FormatReader {
   // -- Helper methods --
 
   private void readSegments(String id) throws IOException {
+    if (in != null) {
+      in.close();
+    }
     in = new RandomAccessInputStream(id);
     in.order(isLittleEndian());
     while (in.getFilePointer() < in.length()) {
@@ -2181,16 +2188,20 @@ public class ZeissCZIReader extends FormatReader {
 
     public void fillInData() throws IOException {
       RandomAccessInputStream s = new RandomAccessInputStream(filename);
-      s.order(isLittleEndian());
-      s.seek(startingPosition + 16);
-      // read the segment header
-      allocatedSize = s.readLong();
-      usedSize = s.readLong();
+      try {
+        s.order(isLittleEndian());
+        s.seek(startingPosition + 16);
+        // read the segment header
+        allocatedSize = s.readLong();
+        usedSize = s.readLong();
 
-      if (usedSize == 0) {
-        usedSize = allocatedSize;
+        if (usedSize == 0) {
+          usedSize = allocatedSize;
+        }
       }
-      s.close();
+      finally {
+        s.close();
+      }
     }
   }
 
@@ -2210,21 +2221,25 @@ public class ZeissCZIReader extends FormatReader {
       super.fillInData();
 
       RandomAccessInputStream s = new RandomAccessInputStream(filename);
-      s.order(isLittleEndian());
-      s.seek(startingPosition + HEADER_SIZE);
-      majorVersion = s.readInt();
-      minorVersion = s.readInt();
-      s.skipBytes(4); // reserved 1
-      s.skipBytes(4); // reserved 2
-      primaryFileGUID = s.readLong(); // 16
-      fileGUID = s.readLong(); // 16
-      filePart = s.readInt();
+      try {
+        s.order(isLittleEndian());
+        s.seek(startingPosition + HEADER_SIZE);
+        majorVersion = s.readInt();
+        minorVersion = s.readInt();
+        s.skipBytes(4); // reserved 1
+        s.skipBytes(4); // reserved 2
+        primaryFileGUID = s.readLong(); // 16
+        fileGUID = s.readLong(); // 16
+        filePart = s.readInt();
 
-      directoryPosition = s.readLong();
-      metadataPosition = s.readLong();
-      updatePending = s.readInt() != 0;
-      attachmentDirectoryPosition = s.readLong();
-      s.close();
+        directoryPosition = s.readLong();
+        metadataPosition = s.readLong();
+        updatePending = s.readInt() != 0;
+        attachmentDirectoryPosition = s.readLong();
+      }
+      finally {
+        s.close();
+      }
     }
   }
 
@@ -2237,17 +2252,21 @@ public class ZeissCZIReader extends FormatReader {
       super.fillInData();
 
       RandomAccessInputStream s = new RandomAccessInputStream(filename);
-      s.order(isLittleEndian());
-      s.seek(startingPosition + HEADER_SIZE);
-      int xmlSize = s.readInt();
-      int attachmentSize = s.readInt();
+      try {
+        s.order(isLittleEndian());
+        s.seek(startingPosition + HEADER_SIZE);
+        int xmlSize = s.readInt();
+        int attachmentSize = s.readInt();
 
-      s.skipBytes(248);
+        s.skipBytes(248);
 
-      xml = s.readString(xmlSize);
-      attachment = new byte[attachmentSize];
-      s.read(attachment);
-      s.close();
+        xml = s.readString(xmlSize);
+        attachment = new byte[attachmentSize];
+        s.read(attachment);
+      }
+      finally {
+        s.close();
+      }
     }
   }
 
@@ -2272,52 +2291,60 @@ public class ZeissCZIReader extends FormatReader {
       super.fillInData();
 
       RandomAccessInputStream s = new RandomAccessInputStream(filename);
-      s.order(isLittleEndian());
-      s.seek(startingPosition + HEADER_SIZE);
-      long fp = s.getFilePointer();
-      metadataSize = s.readInt();
-      attachmentSize = s.readInt();
-      dataSize = s.readLong();
-      directoryEntry = new DirectoryEntry(s);
-      s.skipBytes((int) Math.max(256 - (s.getFilePointer() - fp), 0));
+      try {
+        s.order(isLittleEndian());
+        s.seek(startingPosition + HEADER_SIZE);
+        long fp = s.getFilePointer();
+        metadataSize = s.readInt();
+        attachmentSize = s.readInt();
+        dataSize = s.readLong();
+        directoryEntry = new DirectoryEntry(s);
+        s.skipBytes((int) Math.max(256 - (s.getFilePointer() - fp), 0));
 
-      metadata = s.readString(metadataSize).trim();
-      dataOffset = s.getFilePointer();
+        metadata = s.readString(metadataSize).trim();
+        dataOffset = s.getFilePointer();
 
-      if (s.getFilePointer() + dataSize + attachmentSize < s.length()) {
-        s.seek(s.getFilePointer() + dataSize + attachmentSize);
-        parseMetadata();
+        if (s.getFilePointer() + dataSize + attachmentSize < s.length()) {
+          s.seek(s.getFilePointer() + dataSize + attachmentSize);
+          parseMetadata();
+        }
       }
-      s.close();
+      finally {
+        s.close();
+      }
     }
 
     // -- SubBlock API methods --
 
     public byte[] readPixelData() throws FormatException, IOException {
-      RandomAccessInputStream s = new RandomAccessInputStream(filename);
-      s.order(isLittleEndian());
-      s.seek(dataOffset);
       byte[] data = new byte[(int) dataSize];
-      s.read(data);
+      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      try {
+        s.order(isLittleEndian());
+        s.seek(dataOffset);
+        s.read(data);
 
-      CodecOptions options = new CodecOptions();
-      options.interleaved = isInterleaved();
-      options.littleEndian = isLittleEndian();
-      options.maxBytes = getSizeX() * getSizeY() * getRGBChannelCount() *
-        FormatTools.getBytesPerPixel(getPixelType());
+        CodecOptions options = new CodecOptions();
+        options.interleaved = isInterleaved();
+        options.littleEndian = isLittleEndian();
+        options.maxBytes = getSizeX() * getSizeY() * getRGBChannelCount() *
+          FormatTools.getBytesPerPixel(getPixelType());
 
-      switch (directoryEntry.compression) {
-        case JPEG:
-          data = new JPEGCodec().decompress(data, options);
-          break;
-        case LZW:
-          data = new LZWCodec().decompress(data, options);
-          break;
-        case JPEGXR:
-          throw new UnsupportedCompressionException(
-            "JPEG-XR not yet supported");
+        switch (directoryEntry.compression) {
+          case JPEG:
+            data = new JPEGCodec().decompress(data, options);
+            break;
+          case LZW:
+            data = new LZWCodec().decompress(data, options);
+            break;
+          case JPEGXR:
+            throw new UnsupportedCompressionException(
+              "JPEG-XR not yet supported");
+        }
       }
-      s.close();
+      finally {
+        s.close();
+      }
 
       return data;
     }
@@ -2404,17 +2431,20 @@ public class ZeissCZIReader extends FormatReader {
       super.fillInData();
 
       RandomAccessInputStream s = new RandomAccessInputStream(filename);
-      s.order(isLittleEndian());
-      s.seek(startingPosition + HEADER_SIZE);
+      try {
+        s.order(isLittleEndian());
+        s.seek(startingPosition + HEADER_SIZE);
 
-      int entryCount = s.readInt();
-      s.skipBytes(124);
-      entries = new DirectoryEntry[entryCount];
-      for (int i=0; i<entryCount; i++) {
-        entries[i] = new DirectoryEntry(s);
+        int entryCount = s.readInt();
+        s.skipBytes(124);
+        entries = new DirectoryEntry[entryCount];
+        for (int i=0; i<entryCount; i++) {
+          entries[i] = new DirectoryEntry(s);
+        }
       }
-
-      s.close();
+      finally {
+        s.close();
+      }
     }
   }
 
@@ -2426,16 +2456,20 @@ public class ZeissCZIReader extends FormatReader {
       super.fillInData();
 
       RandomAccessInputStream s = new RandomAccessInputStream(filename);
-      s.order(isLittleEndian());
-      s.seek(startingPosition + HEADER_SIZE);
+      try {
+        s.order(isLittleEndian());
+        s.seek(startingPosition + HEADER_SIZE);
 
-      int entryCount = s.readInt();
-      s.skipBytes(252);
-      entries = new AttachmentEntry[entryCount];
-      for (int i=0; i<entryCount; i++) {
-        entries[i] = new AttachmentEntry(s);
+        int entryCount = s.readInt();
+        s.skipBytes(252);
+        entries = new AttachmentEntry[entryCount];
+        for (int i=0; i<entryCount; i++) {
+          entries[i] = new AttachmentEntry(s);
+        }
       }
-      s.close();
+      finally {
+        s.close();
+      }
     }
   }
 
@@ -2449,15 +2483,19 @@ public class ZeissCZIReader extends FormatReader {
       super.fillInData();
 
       RandomAccessInputStream s = new RandomAccessInputStream(filename);
-      s.order(isLittleEndian());
-      s.seek(startingPosition + HEADER_SIZE);
-      dataSize = s.readInt();
-      s.skipBytes(12); // reserved
-      attachment = new AttachmentEntry(s);
-      s.skipBytes(112); // reserved
-      attachmentData = new byte[dataSize];
-      s.read(attachmentData);
-      s.close();
+      try {
+        s.order(isLittleEndian());
+        s.seek(startingPosition + HEADER_SIZE);
+        dataSize = s.readInt();
+        s.skipBytes(12); // reserved
+        attachment = new AttachmentEntry(s);
+        s.skipBytes(112); // reserved
+        attachmentData = new byte[dataSize];
+        s.read(attachmentData);
+      }
+      finally {
+        s.close();
+      }
     }
   }
 
