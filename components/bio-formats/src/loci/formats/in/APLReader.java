@@ -138,7 +138,6 @@ public class APLReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     IFD ifd = ifds[getSeries()].get(no);
-    parser[getSeries()].fillInIFD(ifd);
     return parser[getSeries()].getSamples(ifd, buf, x, y, w, h);
   }
 
@@ -383,6 +382,10 @@ public class APLReader extends FormatReader {
       parser[i] = new TiffParser(tiffFiles[i]);
       parser[i].setDoCaching(false);
       ifds[i] = parser[i].getIFDs();
+
+      for (IFD ifd : ifds[i]) {
+        parser[i].fillInIFD(ifd);
+      }
 
       // get core metadata from TIFF file
 
