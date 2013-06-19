@@ -1942,7 +1942,7 @@ reader = SeikoReader.java
 
 [SimplePCI & HCImage TIFF]
 extensions = .tiff
-developer = `Hamamatsu <http://www.cimaging.net/simplepci.htm>`_
+developer = `Hamamatsu <http://hcimage.com/simplepci.htm>`_
 scifio = no
 export = no
 weHave = * a few SimplePCI TIFF datasets
@@ -1956,7 +1956,7 @@ reader = SimplePCITiffReader.java
 
 [SimplePCI & HCImage]
 extensions = .cxd
-developer = `Compix <http://www.cimaging.net/>`_
+developer = `Compix <http://hcimage.com>`_
 scifio = no
 export = no
 weHave = * several SimplePCI files
@@ -1970,7 +1970,7 @@ notes = Bio-Formats uses a modified version of the `Apache Jakarta \n
 POI library <http://jakarta.apache.org/poi/>`_ to read CXD files. \n
 \n
 .. seealso:: \n
-  `SimplePCI software overview <http://www.cimaging.net/simplepci.htm>`_
+  `SimplePCI software overview <http://hcimage.com/simplepci.htm>`_
 
 [SM Camera]
 scifio = no

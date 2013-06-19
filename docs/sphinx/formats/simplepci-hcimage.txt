@@ -6,7 +6,7 @@ SimplePCI & HCImage
 
 Extensions: .cxd 
 
-Developer: `Compix <http://www.cimaging.net/>`_
+Developer: `Compix <http://hcimage.com>`_
 
 
 **Support**
@@ -55,4 +55,4 @@ Bio-Formats uses a modified version of the `Apache Jakarta
 POI library <http://jakarta.apache.org/poi/>`_ to read CXD files. 
 
 .. seealso:: 
-  `SimplePCI software overview <http://www.cimaging.net/simplepci.htm>`_
+  `SimplePCI software overview <http://hcimage.com/simplepci.htm>`_
