@@ -825,7 +825,7 @@ public class AVIReader extends FormatReader {
           if (size + 8 >= 0) in.skipBytes(8 + size);
         }
       }
-      else {
+      else if (in.getFilePointer() + 8 < in.length()) {
         // skipping unknown block
         readTypeAndSize();
         if (in.getFilePointer() + 8 < in.length() && !type.equals("idx1")) {
@@ -836,6 +836,9 @@ public class AVIReader extends FormatReader {
           in.skipBytes(size);
         }
         if (type.equals("idx1")) break;
+      }
+      else {
+        break;
       }
       pos = in.getFilePointer();
     }
