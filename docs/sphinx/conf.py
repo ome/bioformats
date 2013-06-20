@@ -172,6 +172,7 @@ extlinks = {
     # Plone links. Separating them out so that we can add prefixes and
     # suffixes during testing.
     'community_plone' : (oo_site_root + '/community/%s', ''),
+    'products_plone' : (oo_site_root + '/products/%s', ''),
     'feature_plone' : (oo_site_root + '/products/feature-list/%s', ''),
     'model_doc' : (oo_site_root + '/support/ome-model/%s', ''),
     'legacy_plone' : (oo_site_root + '/support/legacy/%s', ''),
@@ -187,6 +188,10 @@ extlinks = {
     'doi' : ('http://dx.doi.org/%s', ''),
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')
     }
+
+rst_prolog = """
+This documentation is in transition. Please refer to the :products_plone:`OME5 <ome5>` products page for more information.
+"""
 
 rst_epilog = """
 .. _Hibernate: http://www.hibernate.org
