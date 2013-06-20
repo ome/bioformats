@@ -104,11 +104,10 @@ new version of :omerodoc:`OMERO <>` is released. The version number is three
 numbers separated by dots; e.g., 4.0.0. See the :doc:`version history <whats-new>` 
 for a list of major changes in each release.
 
-The latest stable version of Bio-Formats is |release|. For future
+The stable version of Bio-Formats is 4.4. For future
 development directions, see the
-`4.5 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OMERO-4.5>`_
-and `5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OMERO-5.0>`_
-roadmaps.
+`5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OMERO-5>`_
+roadmap.
 
 .. toctree::
     :maxdepth: 1
