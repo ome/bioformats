@@ -1,6 +1,17 @@
 Version history
 ===============
 
+5.0.0-beta1 (2013 June 20)
+--------------------------
+
+* Updated to 2013-06 OME-XML schema
+* Improved the performance in tiled formats
+* Added caching of Reader metadata using http://code.google.com/p/kryo/
+* Added support for:
+   - Aperio AFI
+* Many bug fixes, including:
+   - Zeiss CZI reader fixes
+
 4.4.8 (2013 May 2)
 ------------------
 
