@@ -65,7 +65,7 @@ public class FakeGenerator {
   private ResourceNamer resourceNamer;
 
   public FakeGenerator(String directoryRoot) {
-    this.directoryRoot = new Location(directoryRoot);
+    this.directoryRoot = new Location(directoryRoot + ResourceNamer.FAKE_EXT);
   }
 
   public static void isValidRange(int arg, int min, int max) {
@@ -81,7 +81,7 @@ public class FakeGenerator {
    * <code>null</code>. The structure appears on the file system as: <br/>
    *
    * <pre>
-   * foo/
+   * foo.fake/
    * └── Plate000/
    *     └── Run000/
    *         └── WellAA000/
