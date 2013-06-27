@@ -48,23 +48,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Generates fake screen/plate/well structures. Maximum supported size is a 384
- * well plate with multiple runs and fields. Methods defensively check
+ * Generates fake image structures. Methods defensively check
  * caller-supplied arguments and throw relevant exceptions where needed.
  *
  * @author Blazej Pindelski, bpindelski at dundee.ac.uk
  * @since 5.0
  */
-public class FakeGenerator {
+public class FakeImage {
 
   private static final Logger LOGGER = LoggerFactory
-      .getLogger(FakeGenerator.class);
+      .getLogger(FakeImage.class);
 
   private Location directoryRoot;
 
   private ResourceNamer resourceNamer;
 
-  public FakeGenerator(String directoryRoot) {
+  public FakeImage(String directoryRoot) {
     this.directoryRoot = new Location(directoryRoot + ResourceNamer.FAKE_EXT);
   }
 
@@ -76,8 +75,9 @@ public class FakeGenerator {
   }
 
   /**
-   * Creates a fake SPW file/directory structure. All arguments indicating plate
-   * or well element count must be at least <code>1</code> and cannot be
+   * Creates a fake SPW file/directory structure. Maximum supported size is a
+   * 384-well plate with multiple runs and fields. All arguments indicating
+   * plate or well element count must be at least <code>1</code> and cannot be
    * <code>null</code>. The structure appears on the file system as: <br/>
    *
    * <pre>

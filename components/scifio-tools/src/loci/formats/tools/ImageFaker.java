@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ImageFaker is a wrapper class for invoking methods in {@link FakeGenerator}.
+ * ImageFaker is a wrapper class for invoking methods in {@link FakeImage}.
  *
  * @author Blazej Pindelski, bpindelski at dundee.ac.uk
  * @since 5.0
@@ -121,8 +121,8 @@ public class ImageFaker {
       return false;
     }
 
-    FakeGenerator fg = new FakeGenerator(directoryRoot);
-    fg.generateScreen(plates, plateAcquisitions, rows, columns, fields);
+    FakeImage fake = new FakeImage(directoryRoot);
+    fake.generateScreen(plates, plateAcquisitions, rows, columns, fields);
 
     return true;
   }
