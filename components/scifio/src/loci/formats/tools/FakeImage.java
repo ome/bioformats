@@ -84,10 +84,14 @@ public class FakeImage {
    * foo.fake/
    * └── Plate000/
    *     └── Run000/
-   *         └── WellAA000/
+   *         └── WellA000/
    *             └── Field000.fake
    *                 ...
-   *             WellAA001/
+   *             ...
+   *             WellA254/
+   *             WellB000/
+   *             ...
+   *             WellAA000/
    *             ...
    *         Run001/
    *         ...
@@ -111,8 +115,10 @@ public class FakeImage {
    *           when any of the arguments fail validation.
    * @throws NullPointerException
    *           when null specified as argument value.
+   * @return {@link File} New instance representing the root directory
+   *           of the created structure.
    */
-  public void generateScreen(int plates, int plateAcquisitions, int rows,
+  public File generateScreen(int plates, int plateAcquisitions, int rows,
       int columns, int fields) {
     isValidRange(plates, 1, 255);
     isValidRange(plateAcquisitions, 1, 255);
@@ -159,10 +165,12 @@ public class FakeImage {
         }
       }
     }
-    long end = System.currentTimeMillis();
 
+    long end = System.currentTimeMillis();
     LOGGER.debug(String.format("Fake SPW structure generation took %s ms.", end
         - start));
+
+    return new File(directoryRoot.getAbsolutePath());
   }
 
 }
