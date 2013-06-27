@@ -206,7 +206,7 @@ for s = 1:numSeries
     end
 
     % extract metadata table for this series
-    metadataList = r.getMetadata();
+    metadataList = r.getSeriesMetadata();
 
     % save images and metadata into our master series list
     result{s, 1} = imageList;
