@@ -543,12 +543,10 @@
 	<xsd:complexType name="AffineTransform">
 		<xsd:annotation>
 			<xsd:documentation>
-				This is a matrix used to transform the shape.
-				--             --
-				| A00, A01, A02 |
-				| A10, A11, A12 |
-				| 0,   0,   1   |
-				--             --
+				A matrix used to transform the shape.
+				⎡ A00, A01, A02 ⎤
+				⎢ A10, A11, A12 ⎥
+				⎣ 0,   0,   1   ⎦
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:attribute name="A00" use="required" type="xsd:float"/>

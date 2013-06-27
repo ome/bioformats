@@ -234,7 +234,7 @@
 				Examples of ImageType include 'STK', 'SoftWorx', etc.
 				The Name attributes are in all cases the name of the element
 				instance. In this case, the name of the image, not necessarily the filename.
-				PixelSize* is in microns[um].
+				Physical size of pixels are microns[µm].
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -419,17 +419,17 @@
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeX" use="optional" type="PositiveFloat">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel in microns[µm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeY" use="optional" type="PositiveFloat">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel in microns[µm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeZ" use="optional" type="PositiveFloat">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel in microns[µm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="TimeIncrement" use="optional" type="xsd:float">
@@ -593,7 +593,7 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The optional PinholeSize attribute allows specifying adjustable
-						pin hole diameters for confocal microscopes (units microns[um]).
+						pin hole diameters for confocal microscopes (units microns[µm]).
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -946,7 +946,7 @@
 			<xsd:attribute name="Temperature" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Temperature is in Celsius[C].
+						The Temperature is in Celsius[°C].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1134,7 +1134,7 @@
 				This element describes the type of experiment.  The required Type attribute must contain one or more entries from the following list:
 				FP FRET Time-lapse 4-D+ Screen Immunocytochemistry FISH Electrophysiology  Ion-Imaging Colocalization PGI/Documentation
 				FRAP Photoablation Optical-Trapping Photoactivation Fluorescence-Lifetime Spectral-Imaging Other
-				FP refers to fluorescent proteins, PGI/Docuemntation is not a 'data' image.
+				FP refers to fluorescent proteins, PGI/Documentation is not a 'data' image.
 				The optional Description element may contain free text to further describe the experiment.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -1421,7 +1421,7 @@
 				LensNA: The numerical aperture of the lens (as a float)
 				NominalMagnification: The specified magnification e.g. x10
 				CalibratedMagnification: The measured magnification e.g. x10.3
-				WorkingDistance: WorkingDistance of the lens. The Units are microns[um].
+				WorkingDistance: WorkingDistance of the lens. The Units are microns[µm].
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1495,7 +1495,7 @@
 					<xsd:attribute name="WorkingDistance" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The working distance of the lens expressed as a floating point (real) number. Units are microns[um].
+								The working distance of the lens expressed as a floating point (real) number. Units are microns[µm].
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
