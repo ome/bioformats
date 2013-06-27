@@ -37,6 +37,7 @@
 package loci.formats.utests;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,6 +45,7 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 
 import loci.formats.in.FakeReader;
+import loci.formats.tools.FakeImage;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -51,7 +53,7 @@ import org.testng.annotations.Test;
 
 public class FakeReaderTest {
 
-  private File fake, fakeIni;
+  private File fake, fakeIni, fakeSpw;
 
   private FakeReader reader;
 
@@ -67,6 +69,9 @@ public class FakeReaderTest {
         raf.close();
     }
     fakeIni.deleteOnExit();
+    fakeSpw = new FakeImage(File.createTempFile(this.getClass().getName(), null)
+        .getAbsolutePath()).generateScreen(1, 1, 1, 1, 1);
+    fakeSpw.deleteOnExit();
     reader = new FakeReader();
   }
 
@@ -124,6 +129,11 @@ public class FakeReaderTest {
     assertEquals(128, reader.getSizeX());
   }
 
+  @Test
+  public void testFakeSpw() throws Exception {
+    reader.setId(fakeSpw.getAbsolutePath());
+    assertFalse(reader.isSingleFile(fakeSpw.getAbsolutePath()));
+  }
 
   //
   // HELPERS

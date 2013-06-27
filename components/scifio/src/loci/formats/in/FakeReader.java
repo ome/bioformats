@@ -120,6 +120,8 @@ public class FakeReader extends FormatReader {
   /** Properties companion file which can be associated with this fake file */
   private String iniFile;
 
+  private boolean isSPW;
+
   // -- Constructor --
 
   /** Constructs a new fake reader. */
@@ -241,6 +243,9 @@ public class FakeReader extends FormatReader {
 
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
+    if (new Location(id).isDirectory() && checkSuffix(id, "fake")) {
+      return false;
+    }
     if (checkSuffix(id, "fake" + ".ini")) {
       return ! new Location(id).exists();
     }
@@ -298,6 +303,10 @@ public class FakeReader extends FormatReader {
           }
         }
       }
+    }
+
+    if (new Location(id).isDirectory()) {
+      isSPW = true;
     }
     // Logic copied from deltavision. This should probably be refactored into
     // a helper method "replaceBySuffix" or something.
