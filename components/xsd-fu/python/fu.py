@@ -57,11 +57,11 @@ METADATA_OBJECT_IGNORE = ('BinData', 'External')
 # to these interfaces and implementations.
 METADATA_COUNT_IGNORE = {'Annotation': ['AnnotationRef']}
 
-# A global mapping from XSD Schema types and Java types that is used to
+# A global mapping from XSD Schema types and language types that is used to
 # inform and override type mappings for OME Model properties which are
 # comprised of XML Schema attributes, elements and OME XML reference virtual
 # types. It is a superset of JAVA_PRIMITIVE_BASE_TYPE_MAP.
-JAVA_TYPE_MAP = None
+TYPE_MAP = None
 
 # A global type mapping from XSD Schema types to Java primitive base classes.
 JAVA_PRIMITIVE_TYPE_MAP = None
@@ -134,12 +134,12 @@ def updateTypeMaps(namespace):
         'AffineTransform': 'AffineTransform',
         'Text': 'Text',
     }
-    global JAVA_TYPE_MAP
-    JAVA_TYPE_MAP = copy.deepcopy(JAVA_PRIMITIVE_TYPE_MAP)
-    JAVA_TYPE_MAP['MIMEtype'] = 'String'
-    JAVA_TYPE_MAP['Leader'] = 'Experimenter'
-    JAVA_TYPE_MAP['Contact'] = 'Experimenter'
-    JAVA_TYPE_MAP['Pump'] = 'LightSource'
+    global TYPE_MAP
+    TYPE_MAP = copy.deepcopy(JAVA_PRIMITIVE_TYPE_MAP)
+    TYPE_MAP['MIMEtype'] = 'String'
+    TYPE_MAP['Leader'] = 'Experimenter'
+    TYPE_MAP['Contact'] = 'Experimenter'
+    TYPE_MAP['Pump'] = 'LightSource'
 
     global JAVA_BASE_TYPE_MAP
     JAVA_BASE_TYPE_MAP = {
@@ -353,11 +353,11 @@ class OMEModelEntity(object):
             if simpleType.unionOf:
                 union = getSimpleType(simpleType.unionOf[0])
                 try:
-                    return JAVA_TYPE_MAP[union.getBase()]
+                    return TYPE_MAP[union.getBase()]
                 except KeyError:
                     simpleTypeName = union.getBase()
             try:
-                return JAVA_TYPE_MAP[simpleType.getBase()]
+                return TYPE_MAP[simpleType.getBase()]
             except KeyError:
                 simpleTypeName = simpleType.getBase()
 
@@ -563,7 +563,7 @@ class OMEModelProperty(OMEModelEntity):
             # Handle XML Schema types that directly map to Java types and
             # handle cases where the type is prefixed by a namespace definition.
             # (ex. OME:NonNegativeInt).
-            return JAVA_TYPE_MAP[self.type.replace('OME:', '')]
+            return TYPE_MAP[self.type.replace('OME:', '')]
         except KeyError:
             # Hand back the type of references or complex types with the
             # useless OME XML 'Ref' suffix removed.
@@ -842,7 +842,7 @@ class OMEModelObject(OMEModelEntity):
 
     def _get_javaType(self):
         try:
-            return JAVA_TYPE_MAP[self.base]
+            return TYPE_MAP[self.base]
         except KeyError:
             if self.base is not None:
                 simpleType = self.model.getTopLevelSimpleType(self.base)
@@ -1119,7 +1119,7 @@ def parseXmlSchema(opts):
     set_type_constants(namespace)
     updateTypeMaps(namespace)
     generateDS.generateDS.XsdNameSpace = namespace
-    logging.debug("Java type map: %s" % JAVA_TYPE_MAP)
+    logging.debug("Type map: %s" % TYPE_MAP)
 
     parser = sax.make_parser()
     ch = XschemaHandler()
