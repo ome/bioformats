@@ -68,13 +68,13 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
 {% end %}\
 {% end %}\
 	{
@@ -83,7 +83,7 @@
 {% when is_abstract(parent) and prop.isReference %}\
 		// ${prop.name} is abstract proprietary and is a reference
 		${prop.name} ${prop.javaInstanceVariableName}_reference = new ${prop.name}();
-		${prop.javaInstanceVariableName}_reference.setID(${prop.javaArgumentName});
+		${prop.javaInstanceVariableName}_reference.setID(${prop.argumentName});
 		model.addReference(
 				root.${".".join(accessor(obj.name, parent, prop)[:-1])},
 				${prop.javaInstanceVariableName}_reference);
@@ -116,16 +116,16 @@
 		${v['name']} o${i + 1} = o${i}.${v['accessor']};
 {% if v['level'] == 2 %}\
 {% if "ID" == prop.name %}\
-		model.addModelObject(${prop.javaArgumentName}, o${i + 1});
+		model.addModelObject(${prop.argumentName}, o${i + 1});
 {% end %}\
-		((${obj.name})o${i + 1}).set${prop.methodName}(${prop.javaArgumentName});
+		((${obj.name})o${i + 1}).set${prop.methodName}(${prop.argumentName});
 {% end %}\
 {% end %}\
 {% end %}\
 {% when prop.isReference %}\
 		// ${prop.name} is reference and occurs more than once
 		${prop.name} ${prop.javaInstanceVariableName}_reference = new ${prop.name}();
-		${prop.javaInstanceVariableName}_reference.setID(${prop.javaArgumentName});
+		${prop.javaInstanceVariableName}_reference.setID(${prop.argumentName});
 		model.addReference(
 				root.${".".join(accessor(obj.name, parent, prop))},
 				${prop.javaInstanceVariableName}_reference);
@@ -151,9 +151,9 @@
 		${v['name']} o${i + 1} = o${i}.${v['accessor']};
 {% if v['level'] == 1 %}\
 {% if "ID" == prop.name %}\
-		model.addModelObject(${prop.javaArgumentName}, o${i + 1});
+		model.addModelObject(${prop.argumentName}, o${i + 1});
 {% end %}\
-		o${i + 1}.set${prop.methodName}(${prop.javaArgumentName});
+		o${i + 1}.set${prop.methodName}(${prop.argumentName});
 {% end %}\
 {% end %}\
 {% end %}\

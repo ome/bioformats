@@ -482,9 +482,9 @@ ${customUpdatePropertyContent[prop.name]}
 		return ${prop.javaInstanceVariableName};
 	}
 
-	public void set${prop.methodName}(${prop.javaType} ${prop.javaArgumentName})
+	public void set${prop.methodName}(${prop.javaType} ${prop.argumentName})
 	{
-		this.${prop.javaInstanceVariableName} = ${prop.javaArgumentName};
+		this.${prop.javaInstanceVariableName} = ${prop.argumentName};
 	}
 {% end %}\
 {% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
@@ -504,25 +504,25 @@ ${customUpdatePropertyContent[prop.name]}
 		return ${prop.javaInstanceVariableName}.get(index);
 	}
 
-	public ${prop.javaType} set${prop.methodName}(int index, ${prop.javaType} ${prop.javaArgumentName})
+	public ${prop.javaType} set${prop.methodName}(int index, ${prop.javaType} ${prop.argumentName})
 	{
 {% if klass.type != 'OME' %}\
-        ${prop.javaArgumentName}.set${klass.type}(this);
+        ${prop.argumentName}.set${klass.type}(this);
 {% end %}\
-		return ${prop.javaInstanceVariableName}.set(index, ${prop.javaArgumentName});
+		return ${prop.javaInstanceVariableName}.set(index, ${prop.argumentName});
 	}
 
-	public void add${prop.methodName}(${prop.javaType} ${prop.javaArgumentName})
+	public void add${prop.methodName}(${prop.javaType} ${prop.argumentName})
 	{
 {% if klass.type != 'OME' %}\
-        ${prop.javaArgumentName}.set${klass.type}(this);
+        ${prop.argumentName}.set${klass.type}(this);
 {% end %}\
-		${prop.javaInstanceVariableName}.add(${prop.javaArgumentName});
+		${prop.javaInstanceVariableName}.add(${prop.argumentName});
 	}
 
-	public void remove${prop.methodName}(${prop.javaType} ${prop.javaArgumentName})
+	public void remove${prop.methodName}(${prop.javaType} ${prop.argumentName})
 	{
-		${prop.javaInstanceVariableName}.remove(${prop.javaArgumentName});
+		${prop.javaInstanceVariableName}.remove(${prop.argumentName});
 	}
 {% end %}\
 {% otherwise %}

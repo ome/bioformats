@@ -414,10 +414,10 @@ class OMEModelEntity(object):
     omeroPackage = property(_get_omeroPackage,
         doc="""The OMERO package of the entity.""")
 
-    def _get_javaArgumentName(self):
+    def _get_argumentName(self):
         argumentName = REF_REGEX.sub('', self.name)
         return self.lowerCasePrefix(argumentName)
-    javaArgumentName = property(_get_javaArgumentName,
+    argumentName = property(_get_argumentName,
         doc="""The property's Java argument name (camelCase).""")
 
     def _get_methodName(self):
@@ -651,7 +651,7 @@ class OMEModelProperty(OMEModelEntity):
         doc="""If the property is an enumeration, it's possible values.""")
 
     def _get_javaInstanceVariableName(self):
-        name = self.javaArgumentName
+        name = self.argumentName
         if self.isManyToMany:
             if self.isBackReference:
                 name = self.model.getObjectByName(self.type)
@@ -878,13 +878,13 @@ class OMEModelObject(OMEModelEntity):
 
     def _get_javaInstanceVariableName(self):
         if self.isManyToMany:
-            return self.javaArgumentName + 'Links'
+            return self.argumentName + 'Links'
         try:
             if self.maxOccurs > 1:
                 return self.lowerCasePrefix(self.plural)
         except AttributeError:
             pass
-        return self.javaArgumentName
+        return self.argumentName
     javaInstanceVariableName = property(_get_javaInstanceVariableName,
         doc="""The property's Java instance variable name.""")
 

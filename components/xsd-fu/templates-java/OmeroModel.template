@@ -210,7 +210,7 @@ ${customContent[o.name]['properties']}\
             <!--
             // Reference ${prop.name}
             -->
-            <onemany name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.javaArgumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+            <onemany name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.argumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
 {% when prop.isBackReference and prop.isManyToMany %}\
             <!--
@@ -222,7 +222,7 @@ ${customContent[o.name]['properties']}\
             <!--
             // Back reference ${prop.name} ${prop.minOccurs} ${prop.maxOccurs}
             -->
-            <{% if prop.isInjected and prop.minOccurs == 0 %}zeromany{% end %}{% if prop.isInjected and prop.minOccurs == 1 %}onemany{% end %}{% if not prop.isInjected and prop.minOccurs == 0 %}manyzero{% end %}{% if not prop.isInjected and prop.minOccurs == 1 %}manyone{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.javaArgumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+            <{% if prop.isInjected and prop.minOccurs == 0 %}zeromany{% end %}{% if prop.isInjected and prop.minOccurs == 1 %}onemany{% end %}{% if not prop.isInjected and prop.minOccurs == 0 %}manyzero{% end %}{% if not prop.isInjected and prop.minOccurs == 1 %}manyone{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.argumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
 {% when prop.isBackReference %}\
             <!--
@@ -240,7 +240,7 @@ ${customContent[o.name]['properties']}\
             <!--
             // Property which occurs more than once ${prop.name}
             -->
-            <{% if prop.minOccurs == 0 %}zeromany{% end %}{% if prop.minOccurs == 1 %}onemany{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.javaArgumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+            <{% if prop.minOccurs == 0 %}zeromany{% end %}{% if prop.minOccurs == 1 %}onemany{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.argumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
 {% otherwise %}\
             <!--
