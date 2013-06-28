@@ -352,7 +352,7 @@ class OMEModelEntity(object):
     common type resolution and text processing functionality.
     """
 
-    def resolveJavaTypeFromSimpleType(self, simpleTypeName):
+    def resolveLangTypeFromSimpleType(self, simpleTypeName):
         getSimpleType = self.model.getTopLevelSimpleType
         while True:
             simpleType = getSimpleType(simpleTypeName)
@@ -599,7 +599,7 @@ class OMEModelProperty(OMEModelEntity):
                 # We have a property whose type was defined by a top level
                 # simpleType.
                 simpleTypeName = self.type
-                return self.resolveJavaTypeFromSimpleType(simpleTypeName)
+                return self.resolveLangTypeFromSimpleType(simpleTypeName)
             logging.debug("%s dump: %s" % (self, self.__dict__))
             logging.debug("%s delegate dump: %s" % (self, self.delegate.__dict__))
             raise ModelProcessingError, \
@@ -870,7 +870,7 @@ class OMEModelObject(OMEModelEntity):
                 simpleType = self.model.getTopLevelSimpleType(self.base)
                 parent = self.model.getObjectByName(self.base)
                 if simpleType is not None:
-                    return self.resolveJavaTypeFromSimpleType(self.base)
+                    return self.resolveLangTypeFromSimpleType(self.base)
                 if parent is not None:
                     return parent.javaType
             return "Object"
