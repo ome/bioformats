@@ -82,11 +82,11 @@
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
 		// ${prop.name} is abstract proprietary and is a reference
-		${prop.name} ${prop.javaInstanceVariableName}_reference = new ${prop.name}();
-		${prop.javaInstanceVariableName}_reference.setID(${prop.argumentName});
+		${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
+		${prop.instanceVariableName}_reference.setID(${prop.argumentName});
 		model.addReference(
 				root.${".".join(accessor(obj.name, parent, prop)[:-1])},
-				${prop.javaInstanceVariableName}_reference);
+				${prop.instanceVariableName}_reference);
 		// ${parent} is abstract proprietary
 {% end %}\
 {% when is_abstract(parent) %}\
@@ -124,11 +124,11 @@
 {% end %}\
 {% when prop.isReference %}\
 		// ${prop.name} is reference and occurs more than once
-		${prop.name} ${prop.javaInstanceVariableName}_reference = new ${prop.name}();
-		${prop.javaInstanceVariableName}_reference.setID(${prop.argumentName});
+		${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
+		${prop.instanceVariableName}_reference.setID(${prop.argumentName});
 		model.addReference(
 				root.${".".join(accessor(obj.name, parent, prop))},
-				${prop.javaInstanceVariableName}_reference);
+				${prop.instanceVariableName}_reference);
 {% end %}\
 {% otherwise %}\
 		// ${prop.name} is not a reference

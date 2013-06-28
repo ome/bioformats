@@ -650,12 +650,12 @@ class OMEModelProperty(OMEModelEntity):
     possibleValues = property(_get_possibleValues,
         doc="""If the property is an enumeration, it's possible values.""")
 
-    def _get_javaInstanceVariableName(self):
+    def _get_instanceVariableName(self):
         name = self.argumentName
         if self.isManyToMany:
             if self.isBackReference:
                 name = self.model.getObjectByName(self.type)
-                name = name.javaInstanceVariableName
+                name = name.instanceVariableName
                 name = BACK_REFERENCE_NAME_OVERRIDE.get(self.key, name)
             return name + 'Links'
         try:
@@ -669,7 +669,7 @@ class OMEModelProperty(OMEModelEntity):
         if self.isBackReference:
             name = BACKREF_REGEX.sub('', name)
         return name
-    javaInstanceVariableName = property(_get_javaInstanceVariableName,
+    instanceVariableName = property(_get_instanceVariableName,
         doc="""The property's Java instance variable name.""")
 
     def isComplex(self):
@@ -876,7 +876,7 @@ class OMEModelObject(OMEModelEntity):
             return "Object"
     langType = property(_get_langType, doc="""The property's Java type.""")
 
-    def _get_javaInstanceVariableName(self):
+    def _get_instanceVariableName(self):
         if self.isManyToMany:
             return self.argumentName + 'Links'
         try:
@@ -885,7 +885,7 @@ class OMEModelObject(OMEModelEntity):
         except AttributeError:
             pass
         return self.argumentName
-    javaInstanceVariableName = property(_get_javaInstanceVariableName,
+    instanceVariableName = property(_get_instanceVariableName,
         doc="""The property's Java instance variable name.""")
 
     def isComplex(self):
