@@ -63,8 +63,8 @@ METADATA_COUNT_IGNORE = {'Annotation': ['AnnotationRef']}
 # types. It is a superset of JAVA_PRIMITIVE_BASE_TYPE_MAP.
 TYPE_MAP = None
 
-# A global type mapping from XSD Schema types to Java primitive base classes.
-JAVA_PRIMITIVE_TYPE_MAP = None
+# A global type mapping from XSD Schema types to language primitive base classes.
+PRIMITIVE_TYPE_MAP = None
 
 # A global type mapping from XSD Schema types to Java base classes that is
 # used to override places in the model where we do not wish subclassing to
@@ -112,8 +112,8 @@ def updateTypeMaps(namespace):
     Updates the type maps with a new namespace. **Must** be executed at least
     once, **before** node class file generation.
     """
-    global JAVA_PRIMITIVE_TYPE_MAP
-    JAVA_PRIMITIVE_TYPE_MAP = {
+    global PRIMITIVE_TYPE_MAP
+    PRIMITIVE_TYPE_MAP = {
         namespace + 'boolean': 'Boolean',
         namespace + 'dateTime': 'Timestamp',
         namespace + 'string': 'String',
@@ -135,7 +135,7 @@ def updateTypeMaps(namespace):
         'Text': 'Text',
     }
     global TYPE_MAP
-    TYPE_MAP = copy.deepcopy(JAVA_PRIMITIVE_TYPE_MAP)
+    TYPE_MAP = copy.deepcopy(PRIMITIVE_TYPE_MAP)
     TYPE_MAP['MIMEtype'] = 'String'
     TYPE_MAP['Leader'] = 'Experimenter'
     TYPE_MAP['Contact'] = 'Experimenter'
@@ -601,11 +601,11 @@ class OMEModelProperty(OMEModelEntity):
         doc="""Whether or not the property is an Annotation.""")
 
     def _get_isPrimitive(self):
-        if self.javaType in JAVA_PRIMITIVE_TYPE_MAP.values():
+        if self.javaType in PRIMITIVE_TYPE_MAP.values():
             return True
         return False
     isPrimitive = property(_get_isPrimitive,
-        doc="""Whether or not the property's Java type is a primitive.""")
+        doc="""Whether or not the property's language type is a primitive.""")
 
     def _get_isEnumeration(self):
         v = self.delegate.getValues()
