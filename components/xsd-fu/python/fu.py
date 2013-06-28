@@ -420,14 +420,14 @@ class OMEModelEntity(object):
     javaArgumentName = property(_get_javaArgumentName,
         doc="""The property's Java argument name (camelCase).""")
 
-    def _get_javaMethodName(self):
+    def _get_methodName(self):
         try:
             name = BACK_REFERENCE_NAME_OVERRIDE[self.key]
             return name[0].upper() + name[1:]
         except (KeyError, AttributeError):
             pass
         return BACKREF_REGEX.sub('', REF_REGEX.sub('', self.name))
-    javaMethodName = property(_get_javaMethodName,
+    methodName = property(_get_methodName,
         doc="""The property's Java method name.""")
 
     def _get_isGlobal(self):
@@ -662,7 +662,7 @@ class OMEModelProperty(OMEModelEntity):
             if self.maxOccurs > 1:
                 plural = self.plural
                 if plural is None:
-                    plural = self.model.getObjectByName(self.javaMethodName).plural
+                    plural = self.model.getObjectByName(self.methodName).plural
                 return self.lowerCasePrefix(plural)
         except AttributeError:
             pass
@@ -1044,7 +1044,7 @@ class OMEModel(object):
                     pass
                 if shortName not in references:
                     references[shortName] = list()
-                v = {'data_type': o.name, 'property_name': prop.javaMethodName,
+                v = {'data_type': o.name, 'property_name': prop.methodName,
                      'plural': prop.plural,
                      'maxOccurs': self.calculateMaxOccurs(o, prop),
                      'minOccurs': self.calculateMinOccurs(o, prop),

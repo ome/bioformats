@@ -55,22 +55,22 @@
 {% when is_abstract(parent) %}\
         // ${parent} is abstract proprietary and not a reference
         ${obj.name} o = (${obj.name}) get${parent}(${", ".join(accessor(obj.name, parent, prop))});
-        return o == null? null : o.get${prop.javaMethodName}();
+        return o == null? null : o.get${prop.methodName}();
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
         // ${prop.name} is reference and occurs more than once
         ${obj.name} o = get${obj.name}(${", ".join(accessor(obj.name, parent, prop))});
-        return o == null? null : null; /* TODO: reference handler o.get${prop.javaMethodName}(); */
+        return o == null? null : null; /* TODO: reference handler o.get${prop.methodName}(); */
 {% end %}\
 {% when prop.isReference %}\
         // ${prop.name} is reference and occurs only once
         ${obj.name} o = get${obj.name}(${", ".join(accessor(obj.name, parent, prop))});
-        return o == null? null : null; /* TODO: reference handler o.get${prop.javaMethodName}(); */
+        return o == null? null : null; /* TODO: reference handler o.get${prop.methodName}(); */
 {% end %}\
 {% otherwise %}\
         // ${prop.name} is not a reference
         ${obj.name} o = get${obj.name}(${", ".join(accessor(obj.name, parent, prop))});
-        return o == null? null : o.get${prop.javaMethodName}();
+        return o == null? null : o.get${prop.methodName}();
 {% end %}\
 {% end %}\
     }

@@ -42,24 +42,24 @@
 {% when is_abstract(parent) and prop.isReference %}\
 		// ${parent} is abstract proprietary
 		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
-		return o.getLinked${prop.javaMethodName}().getID();
+		return o.getLinked${prop.methodName}().getID();
 {% end %}\
 {% when is_abstract(parent) %}\
 		// ${parent} is abstract proprietary and not a reference
 		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
-		return o.get${prop.javaMethodName}();
+		return o.get${prop.methodName}();
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
 		// ${prop.name} is reference and occurs more than once
-		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}(${index_name_string(prop.name)}).getID();
+		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
 {% end %}\
 {% when prop.isReference %}\
 		// ${prop.name} is reference and occurs only once
-		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}().getID();
+		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.methodName}().getID();
 {% end %}\
 {% otherwise %}\
 		// ${prop.name} is not a reference
-		return root.${".".join(accessor(obj.name, parent, prop))}.get${prop.javaMethodName}();
+		return root.${".".join(accessor(obj.name, parent, prop))}.get${prop.methodName}();
 {% end %}\
 {% end %}\
 	}
@@ -118,7 +118,7 @@
 {% if "ID" == prop.name %}\
 		model.addModelObject(${prop.javaArgumentName}, o${i + 1});
 {% end %}\
-		((${obj.name})o${i + 1}).set${prop.javaMethodName}(${prop.javaArgumentName});
+		((${obj.name})o${i + 1}).set${prop.methodName}(${prop.javaArgumentName});
 {% end %}\
 {% end %}\
 {% end %}\
@@ -153,7 +153,7 @@
 {% if "ID" == prop.name %}\
 		model.addModelObject(${prop.javaArgumentName}, o${i + 1});
 {% end %}\
-		o${i + 1}.set${prop.javaMethodName}(${prop.javaArgumentName});
+		o${i + 1}.set${prop.methodName}(${prop.javaArgumentName});
 {% end %}\
 {% end %}\
 {% end %}\

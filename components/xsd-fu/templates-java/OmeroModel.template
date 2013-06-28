@@ -31,7 +31,7 @@ ${fully_qualified_link_class_name(o, prop)}\
             obj_or_prop = model.getObjectByName(obj_or_prop)
         if obj_or_prop.javaType == 'Object':
             return '%s.%s' % (obj_or_prop.omeroPackage,
-                              obj_or_prop.javaMethodName)
+                              obj_or_prop.methodName)
         elif obj_or_prop.isPrimitive:
             return obj_or_prop.javaType
         else:
@@ -39,9 +39,9 @@ ${fully_qualified_link_class_name(o, prop)}\
 
     def link_class_name(o, prop):
         if prop.isReference:
-            v = (o.javaMethodName, prop.javaMethodName)
+            v = (o.methodName, prop.methodName)
         else:
-            v = (prop.javaMethodName, o.javaMethodName)
+            v = (prop.methodName, o.methodName)
         return '%s%sLink' % v
 
     def fully_qualified_link_class_name(o, prop):
