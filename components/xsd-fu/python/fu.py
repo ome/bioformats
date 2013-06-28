@@ -120,32 +120,49 @@ def updateTypeMaps(opts):
     global BASE_TYPE_MAP
 
     PRIMITIVE_TYPE_MAP = {
-        namespace + 'boolean': 'Boolean',
-        namespace + 'dateTime': 'Timestamp',
-        namespace + 'string': 'String',
-        namespace + 'integer': 'Integer',
-        namespace + 'int': 'Integer',
-        namespace + 'long': 'Long',
         'PositiveInt': 'PositiveInteger',
         'NonNegativeInt': 'NonNegativeInteger',
         'PositiveLong': 'PositiveLong',
         'NonNegativeLong': 'NonNegativeLong',
         'PositiveFloat': 'PositiveFloat',
-        namespace + 'float': 'Double',
-        namespace + 'double': 'Double',
-        namespace + 'anyURI': 'String',
-        namespace + 'hexBinary': 'String',
         'PercentFraction': 'PercentFraction',
         'Color': 'Color',
         'AffineTransform': 'AffineTransform',
         'Text': 'Text',
     }
 
+    if (opts.lang == LANG_JAVA):
+        PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'Boolean'
+        PRIMITIVE_TYPE_MAP[namespace + 'dateTime'] = 'Timestamp'
+        PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'String'
+        PRIMITIVE_TYPE_MAP[namespace + 'integer'] = 'Integer'
+        PRIMITIVE_TYPE_MAP[namespace + 'int'] = 'Integer'
+        PRIMITIVE_TYPE_MAP[namespace + 'long'] = 'Long'
+        PRIMITIVE_TYPE_MAP[namespace + 'float'] = 'Double'
+        PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'Double'
+        PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'String'
+        PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'String'
+    elif (opts.lang == LANG_CXX):
+        PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'bool'
+        PRIMITIVE_TYPE_MAP[namespace + 'dateTime'] = 'Timestamp'
+        PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'std::string'
+        PRIMITIVE_TYPE_MAP[namespace + 'integer'] = 'int32_t'
+        PRIMITIVE_TYPE_MAP[namespace + 'int'] = 'int32_t'
+        PRIMITIVE_TYPE_MAP[namespace + 'long'] = 'int64_t'
+        PRIMITIVE_TYPE_MAP[namespace + 'float'] = 'double'
+        PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'double'
+        PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'std::string'
+        PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'std::string'
+
     TYPE_MAP = copy.deepcopy(PRIMITIVE_TYPE_MAP)
-    TYPE_MAP['MIMEtype'] = 'String'
     TYPE_MAP['Leader'] = 'Experimenter'
     TYPE_MAP['Contact'] = 'Experimenter'
     TYPE_MAP['Pump'] = 'LightSource'
+
+    if (opts.lang == LANG_JAVA):
+        TYPE_MAP['MIMEtype'] = 'String'
+    elif (opts.lang == LANG_CXX):
+        TYPE_MAP['MIMEtype'] = 'std::string'
 
     BASE_TYPE_MAP = {
         'UniversallyUniqueIdentifier': DEFAULT_BASE_CLASS
@@ -157,7 +174,7 @@ DO_NOT_PROCESS = [] #["ID"]
 # Default root XML Schema namespace
 DEFAULT_NAMESPACE = "xsd:"
 
-# The default Java base class for OME XML model objects.
+# The default base class for OME XML model objects.
 DEFAULT_BASE_CLASS = "AbstractOMEModelObject"
 
 # The default Java package for OME XML model objects.
