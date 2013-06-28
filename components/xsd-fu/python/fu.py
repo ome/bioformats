@@ -826,7 +826,7 @@ class OMEModelObject(OMEModelEntity):
     isDescribed = property(_get_isDescribed,
         doc="""Whether or not the model object is described.""")
 
-    def _get_javaBase(self):
+    def _get_langBaseType(self):
         base = self.element.getBase()
         if base in BASE_TYPE_MAP:
             return BASE_TYPE_MAP[base]
@@ -835,7 +835,7 @@ class OMEModelObject(OMEModelEntity):
         if base is None:
             return DEFAULT_BASE_CLASS
         return base
-    javaBase = property(_get_javaBase,
+    langBaseType = property(_get_langBaseType,
         doc="""The model object's Java base class.""")
 
     def _get_namespace(self):

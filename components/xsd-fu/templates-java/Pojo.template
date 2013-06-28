@@ -75,14 +75,14 @@ import ${fu.package}.primitives.*;
 public class ${klass.name} extends ${parent_object().name}
 {% end %}\
 {% when klass.isAbstractProprietary or klass.isAbstract %}\
-public abstract class ${klass.name} extends ${klass.javaBase}
+public abstract class ${klass.name} extends ${klass.langBaseType}
 {% end %}\
 {% when parent_object() is None or not parent_object().isAbstractProprietary %}\
-public class ${klass.name} extends ${klass.javaBase}
+public class ${klass.name} extends ${klass.langBaseType}
 {% end %}\
 {% end %}\
 {
-	// Base: ${klass.base} -- Name: ${klass.name} -- Type: ${klass.type} -- javaBase: ${klass.javaBase} -- langType: ${klass.langType}
+	// Base: ${klass.base} -- Name: ${klass.name} -- Type: ${klass.type} -- langBaseType: ${klass.langBaseType} -- langType: ${klass.langType}
 
 	// -- Constants --
 

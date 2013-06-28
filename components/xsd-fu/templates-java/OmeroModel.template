@@ -4,8 +4,8 @@
  superclass="${fully_qualified_class_name(parent_object(o.name).name)}"\
 {% end %}\
 {% otherwise %}\
-{% if obj.javaBase != fu.DEFAULT_BASE_CLASS %}\
- superclass="${fully_qualified_class_name(obj.javaBase)}"\
+{% if obj.langBaseType != fu.DEFAULT_BASE_CLASS %}\
+ superclass="${fully_qualified_class_name(obj.langBaseType)}"\
 {% end %}\
 {% end %}\
 {% end %}\
