@@ -69,7 +69,7 @@ PRIMITIVE_TYPE_MAP = None
 # A global type mapping from XSD Schema types to Java base classes that is
 # used to override places in the model where we do not wish subclassing to
 # take place.
-JAVA_BASE_TYPE_MAP = {}
+BASE_TYPE_MAP = {}
 
 # Types which have not been recognized as explicit defines (XML Schema
 # definitions that warrant a the creation of a first class model object) that
@@ -141,8 +141,8 @@ def updateTypeMaps(namespace):
     TYPE_MAP['Contact'] = 'Experimenter'
     TYPE_MAP['Pump'] = 'LightSource'
 
-    global JAVA_BASE_TYPE_MAP
-    JAVA_BASE_TYPE_MAP = {
+    global BASE_TYPE_MAP
+    BASE_TYPE_MAP = {
         'UniversallyUniqueIdentifier': DEFAULT_BASE_CLASS
     }
 
@@ -806,8 +806,8 @@ class OMEModelObject(OMEModelEntity):
 
     def _get_javaBase(self):
         base = self.element.getBase()
-        if base in JAVA_BASE_TYPE_MAP:
-            return JAVA_BASE_TYPE_MAP[base]
+        if base in BASE_TYPE_MAP:
+            return BASE_TYPE_MAP[base]
         if base is None and self.element.attrs['type'] != self.name:
             base = self.element.attrs['type']
         if base is None:
