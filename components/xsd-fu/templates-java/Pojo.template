@@ -82,7 +82,7 @@ public class ${klass.name} extends ${klass.javaBase}
 {% end %}\
 {% end %}\
 {
-	// Base: ${klass.base} -- Name: ${klass.name} -- Type: ${klass.type} -- javaBase: ${klass.javaBase} -- javaType: ${klass.javaType}
+	// Base: ${klass.base} -- Name: ${klass.name} -- Type: ${klass.type} -- javaBase: ${klass.javaBase} -- langType: ${klass.langType}
 
 	// -- Constants --
 
@@ -94,32 +94,32 @@ public class ${klass.name} extends ${klass.javaBase}
 
 	// -- Instance variables --
 
-{% if klass.javaType != 'Object' %}\
+{% if klass.langType != 'Object' %}\
 	// Element's text data
-	private ${klass.javaType} ${klass.name}_value;
+	private ${klass.langType} ${klass.name}_value;
 {% end %}\
 \
 {% for prop in klass.properties.values() %}\
 {% choose %}\
 {% when prop.isReference and prop.maxOccurs > 1%}
 	// Reference ${prop.name}
-	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
+	private List<${prop.langType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.langType}>();
 {% end %}\
 {% when prop.isBackReference and prop.maxOccurs > 1 %}
 	// Back reference ${prop.name}
-	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
+	private List<${prop.langType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.langType}>();
 {% end %}\
 {% when prop.isBackReference %}
 	// Back reference ${prop.name}
-	private ${prop.javaType} ${prop.javaInstanceVariableName};
+	private ${prop.langType} ${prop.javaInstanceVariableName};
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
 	// Property
-	private ${prop.javaType} ${prop.javaInstanceVariableName};
+	private ${prop.langType} ${prop.javaInstanceVariableName};
 {% end %}\
 {% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
 	// Property which occurs more than once
-	private List<${prop.javaType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.javaType}>();
+	private List<${prop.langType}> ${prop.javaInstanceVariableName} = new ArrayList<${prop.langType}>();
 {% end %}\
 {% otherwise %}
 	// *** WARNING *** Unhandled or skipped property ${prop.name}
@@ -154,7 +154,7 @@ public class ${klass.name} extends ${klass.javaBase}
 	public ${klass.name}(${klass.name} orig)
 	{
 		super(orig);
-{% if klass.javaType != 'Object' %}\
+{% if klass.langType != 'Object' %}\
 		${klass.name}_value = orig.${klass.name}_value;
 {% end %}\
 \
@@ -202,11 +202,11 @@ ${customContent}\
 	    throws EnumerationException
 	{
 		super.update(element, model);
-{% if klass.javaType != 'Object' %}\
+{% if klass.langType != 'Object' %}\
 		// Element's text data
 		String ${klass.name}_value_textContent = element.getTextContent();
 		if (${klass.name}_value_textContent.trim().length() > 0) {
-			${klass.name}_value = ${klass.javaType}.valueOf(${klass.name}_value_textContent);
+			${klass.name}_value = ${klass.langType}.valueOf(${klass.name}_value_textContent);
 		}
 {% end %}\
 {% if not klass.isAbstractProprietary %}\
@@ -247,7 +247,7 @@ ${customUpdatePropertyContent[prop.name]}
 		if (element.hasAttribute("ID"))
 		{
 			// ID property
-			set${prop.methodName}(${prop.javaType}.valueOf(
+			set${prop.methodName}(${prop.langType}.valueOf(
 						element.getAttribute("${prop.name}")));
 			// Adding this model object to the model handler
 			model.addModelObject(getID(), this);
@@ -258,12 +258,12 @@ ${customUpdatePropertyContent[prop.name]}
 		{
 {% if prop.isEnumeration %}\
 			// Attribute property which is an enumeration ${prop.name}
-			set${prop.methodName}(${prop.javaType}.fromString(
+			set${prop.methodName}(${prop.langType}.fromString(
 					element.getAttribute("${prop.name}")));
 {% end %}\
 {% if not prop.isEnumeration %}\
 			// Attribute property ${prop.name}
-			set${prop.methodName}(${prop.javaType}.valueOf(
+			set${prop.methodName}(${prop.langType}.valueOf(
 					element.getAttribute("${prop.name}")));
 {% end %}\
 		}
@@ -283,14 +283,14 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
-			set${prop.methodName}(new ${prop.javaType}(
+			set${prop.methodName}(new ${prop.langType}(
 					(Element) ${prop.name}_nodeList.get(0), model));
 {% end %}\
 {% if not prop.isComplex() %}\
 			// Element property ${prop.name} which is not complex (has no
 			// sub-elements)
 			set${prop.methodName}(
-					${prop.javaType}.valueOf(${prop.name}_nodeList.get(0).getTextContent()));
+					${prop.langType}.valueOf(${prop.name}_nodeList.get(0).getTextContent()));
 {% end %}\
 		}
 {% end %}\
@@ -310,7 +310,7 @@ ${customUpdatePropertyContent[prop.name]}
 					getChildrenByTagName(${prop.name}_element, "${inner_prop.name}");
 			for (Element ${inner_prop.name}_element : ${inner_prop.name}_nodeList)
 			{
-				${inner_prop.javaType} o = new ${inner_prop.javaType}(${prop.name}_element, model);
+				${inner_prop.langType} o = new ${inner_prop.langType}(${prop.name}_element, model);
 				o.update(${inner_prop.name}_element, model);
 				add${prop.methodName}(o);
 			}
@@ -326,7 +326,7 @@ ${customUpdatePropertyContent[prop.name]}
 		for (Element ${prop.name}_element : ${prop.name}_nodeList)
 		{
 			add${prop.methodName}(
-					new ${prop.javaType}(${prop.name}_element, model));
+					new ${prop.langType}(${prop.name}_element, model));
 		}
 {% end %}\
 {% end %}\
@@ -337,7 +337,7 @@ ${customUpdatePropertyContent[prop.name]}
 				getChildrenByTagName("${prop.name}");
 		for (Element ${prop.name}_element : ${prop.name}_nodeList)
 		{
-			add${prop.methodName}(new ${prop.javaType}(
+			add${prop.methodName}(new ${prop.langType}(
 					${prop.name}_element.getTextContent(), model));
 		}
 {% end %}\
@@ -361,7 +361,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isReference %}\
 		if (reference instanceof ${prop.name})
 		{
-			${prop.javaType} o_casted = (${prop.javaType}) o;
+			${prop.langType} o_casted = (${prop.langType}) o;
 {% if not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
 			o_casted.link${klass.type}(this);
@@ -386,15 +386,15 @@ ${customUpdatePropertyContent[prop.name]}
 		return false;
 	}
 
-{% if klass.javaType != 'Object' %}\
+{% if klass.langType != 'Object' %}\
 	// Element's text data getter
-	public ${klass.javaType} getValue()
+	public ${klass.langType} getValue()
 	{
 		return ${klass.name}_value;
 	}
 
 	// Element's text data setter
-	public void setValue(${klass.javaType} ${klass.name}_value)
+	public void setValue(${klass.langType} ${klass.name}_value)
 	{
 		this.${klass.name}_value = ${klass.name}_value;
 	}
@@ -409,22 +409,22 @@ ${customUpdatePropertyContent[prop.name]}
 		return ${prop.javaInstanceVariableName}.size();
 	}
 
-	public List<${prop.javaType}> copyLinked${prop.methodName}List()
+	public List<${prop.langType}> copyLinked${prop.methodName}List()
 	{
-		return new ArrayList<${prop.javaType}>(${prop.javaInstanceVariableName});
+		return new ArrayList<${prop.langType}>(${prop.javaInstanceVariableName});
 	}
 
-	public ${prop.javaType} getLinked${prop.methodName}(int index)
+	public ${prop.langType} getLinked${prop.methodName}(int index)
 	{
 		return ${prop.javaInstanceVariableName}.get(index);
 	}
 
-	public ${prop.javaType} setLinked${prop.methodName}(int index, ${prop.javaType} o)
+	public ${prop.langType} setLinked${prop.methodName}(int index, ${prop.langType} o)
 	{
 		return ${prop.javaInstanceVariableName}.set(index, o);
 	}
 
-	public boolean link${prop.methodName}(${prop.javaType} o)
+	public boolean link${prop.methodName}(${prop.langType} o)
 	{
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 
@@ -441,7 +441,7 @@ ${customUpdatePropertyContent[prop.name]}
 		return false;
 	}
 
-	public boolean unlink${prop.methodName}(${prop.javaType} o)
+	public boolean unlink${prop.methodName}(${prop.langType} o)
 	{
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 
@@ -457,17 +457,17 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% when prop.isReference %}
 	// Reference
-	public ${prop.javaType} getLinked${prop.methodName}()
+	public ${prop.langType} getLinked${prop.methodName}()
 	{
 		return ${prop.javaInstanceVariableName};
 	}
 
-	public void link${prop.methodName}(${prop.javaType} o)
+	public void link${prop.methodName}(${prop.langType} o)
 	{
 		${prop.javaInstanceVariableName} = o;
 	}
 
-	public void unlink${prop.methodName}(${prop.javaType} o)
+	public void unlink${prop.methodName}(${prop.langType} o)
 	{
 		if (${prop.javaInstanceVariableName} == o)
 		{
@@ -477,12 +477,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
 	// Property
-	public ${prop.javaType} get${prop.methodName}()
+	public ${prop.langType} get${prop.methodName}()
 	{
 		return ${prop.javaInstanceVariableName};
 	}
 
-	public void set${prop.methodName}(${prop.javaType} ${prop.argumentName})
+	public void set${prop.methodName}(${prop.langType} ${prop.argumentName})
 	{
 		this.${prop.javaInstanceVariableName} = ${prop.argumentName};
 	}
@@ -494,17 +494,17 @@ ${customUpdatePropertyContent[prop.name]}
 		return ${prop.javaInstanceVariableName}.size();
 	}
 
-	public List<${prop.javaType}> copy${prop.methodName}List()
+	public List<${prop.langType}> copy${prop.methodName}List()
 	{
-		return new ArrayList<${prop.javaType}>(${prop.javaInstanceVariableName});
+		return new ArrayList<${prop.langType}>(${prop.javaInstanceVariableName});
 	}
 
-	public ${prop.javaType} get${prop.methodName}(int index)
+	public ${prop.langType} get${prop.methodName}(int index)
 	{
 		return ${prop.javaInstanceVariableName}.get(index);
 	}
 
-	public ${prop.javaType} set${prop.methodName}(int index, ${prop.javaType} ${prop.argumentName})
+	public ${prop.langType} set${prop.methodName}(int index, ${prop.langType} ${prop.argumentName})
 	{
 {% if klass.type != 'OME' %}\
         ${prop.argumentName}.set${klass.type}(this);
@@ -512,7 +512,7 @@ ${customUpdatePropertyContent[prop.name]}
 		return ${prop.javaInstanceVariableName}.set(index, ${prop.argumentName});
 	}
 
-	public void add${prop.methodName}(${prop.javaType} ${prop.argumentName})
+	public void add${prop.methodName}(${prop.langType} ${prop.argumentName})
 	{
 {% if klass.type != 'OME' %}\
         ${prop.argumentName}.set${klass.type}(this);
@@ -520,7 +520,7 @@ ${customUpdatePropertyContent[prop.name]}
 		${prop.javaInstanceVariableName}.add(${prop.argumentName});
 	}
 
-	public void remove${prop.methodName}(${prop.javaType} ${prop.argumentName})
+	public void remove${prop.methodName}(${prop.langType} ${prop.argumentName})
 	{
 		${prop.javaInstanceVariableName}.remove(${prop.argumentName});
 	}
@@ -558,7 +558,7 @@ ${customUpdatePropertyContent[prop.name]}
 					document.createElementNS(NAMESPACE, "${klass.name}");
 		}
 
-{% if klass.javaType != 'Object' %}\
+{% if klass.langType != 'Object' %}\
 		// Element's text data
 		if (${klass.name}_value != null) {
 			${klass.name}_element.setTextContent(${klass.name}_value.toString());
@@ -577,7 +577,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
 			// Reference property ${prop.name} which occurs more than once
-			for (${prop.javaType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
+			for (${prop.langType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
 			{
 				${prop.name} o = new ${prop.name}();
 				o.setID(${prop.javaInstanceVariableName}_value.getID());
@@ -613,7 +613,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.maxOccurs > 1 and prop.isComplex() %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements) and occurs more than once
-			for (${prop.javaType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
+			for (${prop.langType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
 			{
 				${klass.name}_element.appendChild(${prop.javaInstanceVariableName}_value.asXMLElement(document));
 			}
@@ -621,7 +621,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.maxOccurs > 1 %}\
 			// Element property ${prop.name} which is not complex (has no
 			// sub-elements) which occurs more than once
-			for (${prop.javaType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
+			for (${prop.langType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
 			{
 				Element ${prop.javaInstanceVariableName}_element =
 						document.createElementNS(NAMESPACE, "${prop.name}");

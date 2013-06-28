@@ -485,10 +485,10 @@ public class AggregateMetadata implements IMetadata
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.javaType != 'Object' %}\
+{% if o.langType != 'Object' %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	public void set${o.name}Value(${o.javaType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+	public void set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -500,14 +500,14 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public ${o.javaType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
+	public ${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
 			Object o = iter.next();
 			if (o instanceof MetadataRetrieve)
 			{
-				${o.javaType} result = ((MetadataRetrieve) o).get${o.name}Value(${indexes_name_string(indexes[o.name].items()[0][1])});
+				${o.langType} result = ((MetadataRetrieve) o).get${o.name}Value(${indexes_name_string(indexes[o.name].items()[0][1])});
 				if (result != null)
 				{
 					return result;

@@ -394,11 +394,11 @@ public class OmeroMetadata implements MetadataRetrieve {
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.javaType != 'Object' %}\
+{% if o.langType != 'Object' %}\
     // Element's text data
     // ${repr(indexes[o.name])}
 
-    public ${o.javaType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
+    public ${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
     {
         // No-op
     }

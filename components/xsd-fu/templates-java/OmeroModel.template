@@ -29,13 +29,13 @@ ${fully_qualified_link_class_name(o, prop)}\
     def fully_qualified_class_name(obj_or_prop):
         if obj_or_prop.__class__ in (str, unicode):
             obj_or_prop = model.getObjectByName(obj_or_prop)
-        if obj_or_prop.javaType == 'Object':
+        if obj_or_prop.langType == 'Object':
             return '%s.%s' % (obj_or_prop.omeroPackage,
                               obj_or_prop.methodName)
         elif obj_or_prop.isPrimitive:
-            return obj_or_prop.javaType
+            return obj_or_prop.langType
         else:
-            return '%s.%s' % (obj_or_prop.omeroPackage, obj_or_prop.javaType)
+            return '%s.%s' % (obj_or_prop.omeroPackage, obj_or_prop.langType)
 
     def link_class_name(o, prop):
         if prop.isReference:
@@ -267,8 +267,8 @@ ${customContent[o.name]['properties']}\
 {% for value in o.possibleValues %}\
         <entry name="${value}"/>
 {% end %}\
-{% if o.javaType in customContent and 'properties' in customContent[o.javaType] %}\
-${customContent[o.javaType]['properties']}\
+{% if o.langType in customContent and 'properties' in customContent[o.langType] %}\
+${customContent[o.langType]['properties']}\
 {% end %}\
     </enum>
 

@@ -562,26 +562,26 @@ class OMEModelProperty(OMEModelEntity):
     namespace = property(_get_namespace,
         doc="""The root namespace of the property.""")
 
-    def _get_javaType(self):
+    def _get_langType(self):
         try:
             # Hand back the type of enumerations
             if self.isEnumeration:
-                javaType = self.name
+                langType = self.name
                 if len(self.delegate.values) == 0:
                     # As we have no directly defined possible values we have
                     # no reason to qualify our type explicitly.
                     return self.type
-                if javaType == "Type":
+                if langType == "Type":
                     # One of the OME XML unspecific "Type" properties which
                     # can only be qualified by the parent.
                     if self.type.endswith("string"):
                         # We've been defined entirely inline, prefix our Java
                         # type name with the parent type's name.
-                        return "%s%s" % (self.parent.name, javaType)
+                        return "%s%s" % (self.parent.name, langType)
                     # There's another type which describes us, use its name
                     # as our Java type name.
                     return self.type
-                return javaType
+                return langType
             # Handle XML Schema types that directly map to Java types and
             # handle cases where the type is prefixed by a namespace definition.
             # (ex. OME:NonNegativeInt).
@@ -604,12 +604,12 @@ class OMEModelProperty(OMEModelEntity):
             logging.debug("%s delegate dump: %s" % (self, self.delegate.__dict__))
             raise ModelProcessingError, \
                 "Unable to find %s Java type for %s" % (self.name, self.type)
-    javaType = property(_get_javaType, doc="""The property's Java type.""")
+    langType = property(_get_langType, doc="""The property's Java type.""")
 
     def _get_metadataStoreType(self):
         if not self.isPrimitive and not self.isEnumeration:
             return "String"
-        return self.javaType
+        return self.langType
     metadataStoreType = property(_get_metadataStoreType,
         doc="""The property's MetadataStore type.""")
 
@@ -623,7 +623,7 @@ class OMEModelProperty(OMEModelEntity):
         doc="""Whether or not the property is an Annotation.""")
 
     def _get_isPrimitive(self):
-        if self.javaType in PRIMITIVE_TYPE_MAP.values():
+        if self.langType in PRIMITIVE_TYPE_MAP.values():
             return True
         return False
     isPrimitive = property(_get_isPrimitive,
@@ -857,12 +857,12 @@ class OMEModelObject(OMEModelEntity):
 
     def _get_refNodeName(self):
         if self.base == "Reference":
-            return self.properties["ID"].javaType
+            return self.properties["ID"].langType
         return None
     refNodeName = property(_get_refNodeName,
         doc="""The name of this node's reference node; None otherwise.""")
 
-    def _get_javaType(self):
+    def _get_langType(self):
         try:
             return TYPE_MAP[self.base]
         except KeyError:
@@ -872,9 +872,9 @@ class OMEModelObject(OMEModelEntity):
                 if simpleType is not None:
                     return self.resolveLangTypeFromSimpleType(self.base)
                 if parent is not None:
-                    return parent.javaType
+                    return parent.langType
             return "Object"
-    javaType = property(_get_javaType, doc="""The property's Java type.""")
+    langType = property(_get_langType, doc="""The property's Java type.""")
 
     def _get_javaInstanceVariableName(self):
         if self.isManyToMany:

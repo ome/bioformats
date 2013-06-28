@@ -53,22 +53,22 @@ import org.slf4j.LoggerFactory;
 
 import ${'.'.join(fu.package.split('.')[:-1])}.Enumeration;
 import ${'.'.join(fu.package.split('.')[:-1])}.EnumerationException;
-import ${'.'.join(fu.package.split('.')[:-1])}.${klass.javaType};
+import ${'.'.join(fu.package.split('.')[:-1])}.${klass.langType};
 
 /**
- * Enumeration handler for ${klass.javaType}.
+ * Enumeration handler for ${klass.langType}.
  */
-public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
+public class ${klass.langType}EnumHandler implements IEnumerationHandler {
 
   // -- Constants --
 
   /** Logger for this class. */
   private static final Logger LOGGER =
-    LoggerFactory.getLogger(${klass.javaType}EnumHandler.class);
+    LoggerFactory.getLogger(${klass.langType}EnumHandler.class);
 
   // -- Fields --
 
-  /** Every ${klass.javaType} value must match one of these patterns. */
+  /** Every ${klass.langType} value must match one of these patterns. */
   private static final Hashtable<String, String> patterns = makePatterns();
 
   private static Hashtable<String, String> makePatterns() {
@@ -77,9 +77,9 @@ public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
 {% for value in klass.possibleValues %}\
     p.put("^\\\s*${value}\\\s*", "${value}");
 {% end %}\
-{% if klass.javaType in config %}\
+{% if klass.langType in config %}\
     // BEGIN custom enumeration mappings
-{% for k, v in config[klass.javaType].items() %}\
+{% for k, v in config[klass.langType].items() %}\
     p.put("${k}", "${v}");
 {% end %}\
 {% end %}\
@@ -95,14 +95,14 @@ public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
       for (String pattern : patterns.keySet()) {
         if (value.toLowerCase().matches(pattern.toLowerCase())) {
           String v = patterns.get(pattern);
-          return ${klass.javaType}.fromString(v);
+          return ${klass.langType}.fromString(v);
         }
       }
     }
     LOGGER.warn("Unknown {} value '{}' will be stored as \"Other\"",
-      "${klass.javaType}", value);
+      "${klass.langType}", value);
 {% if 'Other' in klass.possibleValues %}\
-    return ${klass.javaType}.OTHER;
+    return ${klass.langType}.OTHER;
 {% end %}\
 {% if 'Other' not in klass.possibleValues %}\
     throw new EnumerationException(this.getClass().getName() +
@@ -112,7 +112,7 @@ public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
 
   /* @see IEnumerationHandler#getEntity() */
   public Class<? extends Enumeration> getEntity() {
-    return ${klass.javaType}.class;
+    return ${klass.langType}.class;
   }
 
 }
