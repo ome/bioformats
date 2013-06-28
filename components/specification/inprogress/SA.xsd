@@ -147,7 +147,7 @@
 				<xsd:documentation>
 					The Annotator is the person who attached this annotation.
 					e.g. If UserA annotates something with TagB, owned by UserB,
-						UserA is still the Annotator..
+						UserA is still the Annotator.
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
