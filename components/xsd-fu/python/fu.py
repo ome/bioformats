@@ -107,12 +107,18 @@ BACK_REFERENCE_CLASS_NAME_OVERRIDE = {
 # for.
 ABSTRACT_PROPRIETARY_OVERRIDE = ('Transform',)
 
-def updateTypeMaps(namespace):
+def updateTypeMaps(opts):
     """
     Updates the type maps with a new namespace. **Must** be executed at least
     once, **before** node class file generation.
     """
+
+    namespace = opts.namespace
+
     global PRIMITIVE_TYPE_MAP
+    global TYPE_MAP
+    global BASE_TYPE_MAP
+
     PRIMITIVE_TYPE_MAP = {
         namespace + 'boolean': 'Boolean',
         namespace + 'dateTime': 'Timestamp',
@@ -134,14 +140,13 @@ def updateTypeMaps(namespace):
         'AffineTransform': 'AffineTransform',
         'Text': 'Text',
     }
-    global TYPE_MAP
+
     TYPE_MAP = copy.deepcopy(PRIMITIVE_TYPE_MAP)
     TYPE_MAP['MIMEtype'] = 'String'
     TYPE_MAP['Leader'] = 'Experimenter'
     TYPE_MAP['Contact'] = 'Experimenter'
     TYPE_MAP['Pump'] = 'LightSource'
 
-    global BASE_TYPE_MAP
     BASE_TYPE_MAP = {
         'UniversallyUniqueIdentifier': DEFAULT_BASE_CLASS
     }
@@ -1117,7 +1122,7 @@ def parseXmlSchema(opts):
 
     logging.debug("Namespace: %s" % namespace)
     set_type_constants(namespace)
-    updateTypeMaps(namespace)
+    updateTypeMaps(opts)
     generateDS.generateDS.XsdNameSpace = namespace
     logging.debug("Type map: %s" % TYPE_MAP)
 
