@@ -60,7 +60,7 @@ METADATA_COUNT_IGNORE = {'Annotation': ['AnnotationRef']}
 # A global mapping from XSD Schema types and language types that is used to
 # inform and override type mappings for OME Model properties which are
 # comprised of XML Schema attributes, elements and OME XML reference virtual
-# types. It is a superset of JAVA_PRIMITIVE_BASE_TYPE_MAP.
+# types. It is a superset of PRIMITIVE_TYPE_MAP.
 TYPE_MAP = None
 
 # A global type mapping from XSD Schema types to language primitive base classes.
