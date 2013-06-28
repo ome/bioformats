@@ -38,7 +38,7 @@ public class ResourceNamer {
 
   public static final String FIELD = "Field";
 
-  public static final String FAKE_EXT = ".fake";
+  public static final String FAKE_EXT = "fake";
 
   private static final int ALPHABET_LENGTH = 26;
 
@@ -69,13 +69,14 @@ public class ResourceNamer {
    *          Optional extension (if the child resource is a file) or path
    *          separator (if folder).
    * @return {@link Location} New instance representing the parent and child
-   *         resources.
+   *          resources.
    */
   public Location getLocationFromResourceName(Location resourceParentPath,
       String resourceName, int nameIndex, String resourceExtension) {
     StringBuilder sb = new StringBuilder();
     sb.append(resourceName + String.format("%03d", nameIndex));
     if (resourceExtension != null) {
+      sb.append(".");
       sb.append(resourceExtension);
     }
     return new Location(resourceParentPath, sb.toString());
