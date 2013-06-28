@@ -1,5 +1,5 @@
 """
-Object model and helper classes used in the generation of Java classes from
+Object model and helper classes used in the generation of classes from
 an OME XML (http://www.ome-xml.org) XSD document.
 """
 
@@ -66,9 +66,9 @@ TYPE_MAP = None
 # A global type mapping from XSD Schema types to language primitive base classes.
 PRIMITIVE_TYPE_MAP = None
 
-# A global type mapping from XSD Schema types to Java base classes that is
-# used to override places in the model where we do not wish subclassing to
-# take place.
+# A global type mapping from XSD Schema types to base classes that is used
+# to override places in the model where we do not wish subclassing to take
+# place.
 BASE_TYPE_MAP = {}
 
 # Types which have not been recognized as explicit defines (XML Schema
@@ -418,7 +418,7 @@ class OMEModelEntity(object):
         argumentName = REF_REGEX.sub('', self.name)
         return self.lowerCasePrefix(argumentName)
     argumentName = property(_get_argumentName,
-        doc="""The property's Java argument name (camelCase).""")
+        doc="""The property's argument name (camelCase).""")
 
     def _get_methodName(self):
         try:
@@ -428,7 +428,7 @@ class OMEModelEntity(object):
             pass
         return BACKREF_REGEX.sub('', REF_REGEX.sub('', self.name))
     methodName = property(_get_methodName,
-        doc="""The property's Java method name.""")
+        doc="""The property's method name.""")
 
     def _get_isGlobal(self):
         isGlobal = self._isGlobal
@@ -575,14 +575,14 @@ class OMEModelProperty(OMEModelEntity):
                     # One of the OME XML unspecific "Type" properties which
                     # can only be qualified by the parent.
                     if self.type.endswith("string"):
-                        # We've been defined entirely inline, prefix our Java
+                        # We've been defined entirely inline, prefix our
                         # type name with the parent type's name.
                         return "%s%s" % (self.parent.name, langType)
                     # There's another type which describes us, use its name
-                    # as our Java type name.
+                    # as our type name.
                     return self.type
                 return langType
-            # Handle XML Schema types that directly map to Java types and
+            # Handle XML Schema types that directly map to language types and
             # handle cases where the type is prefixed by a namespace definition.
             # (ex. OME:NonNegativeInt).
             return TYPE_MAP[self.type.replace('OME:', '')]
@@ -603,8 +603,8 @@ class OMEModelProperty(OMEModelEntity):
             logging.debug("%s dump: %s" % (self, self.__dict__))
             logging.debug("%s delegate dump: %s" % (self, self.delegate.__dict__))
             raise ModelProcessingError, \
-                "Unable to find %s Java type for %s" % (self.name, self.type)
-    langType = property(_get_langType, doc="""The property's Java type.""")
+                "Unable to find %s type for %s" % (self.name, self.type)
+    langType = property(_get_langType, doc="""The property's type.""")
 
     def _get_metadataStoreType(self):
         if not self.isPrimitive and not self.isEnumeration:
@@ -670,7 +670,7 @@ class OMEModelProperty(OMEModelEntity):
             name = BACKREF_REGEX.sub('', name)
         return name
     instanceVariableName = property(_get_instanceVariableName,
-        doc="""The property's Java instance variable name.""")
+        doc="""The property's instance variable name.""")
 
     def isComplex(self):
         """
@@ -836,7 +836,7 @@ class OMEModelObject(OMEModelEntity):
             return DEFAULT_BASE_CLASS
         return base
     langBaseType = property(_get_langBaseType,
-        doc="""The model object's Java base class.""")
+        doc="""The model object's base class.""")
 
     def _get_namespace(self):
         return self.element.namespace
@@ -874,7 +874,7 @@ class OMEModelObject(OMEModelEntity):
                 if parent is not None:
                     return parent.langType
             return "Object"
-    langType = property(_get_langType, doc="""The property's Java type.""")
+    langType = property(_get_langType, doc="""The property's type.""")
 
     def _get_instanceVariableName(self):
         if self.isManyToMany:
@@ -886,7 +886,7 @@ class OMEModelObject(OMEModelEntity):
             pass
         return self.argumentName
     instanceVariableName = property(_get_instanceVariableName,
-        doc="""The property's Java instance variable name.""")
+        doc="""The property's instance variable name.""")
 
     def isComplex(self):
         """
