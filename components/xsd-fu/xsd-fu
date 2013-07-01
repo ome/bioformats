@@ -127,45 +127,47 @@ def main(opts):
 	base, filename = os.path.split(template_path(CLASS_TEMPLATE, opts))
 	name, extension = os.path.splitext(filename)
 	for obj in model.objects.values():
-		CUSTOM_CLASS_TEMPLATE = os.path.join(
-				base, '%s_%s%s' % (name, obj.name, extension))
-		customContent = ''
-		if os.path.exists(CUSTOM_CLASS_TEMPLATE):
-			customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
-			customContent = customTemplate.generate(
-				fu=fu, klass=obj, parents=parents, model=model)
-			customContent = customContent.render()
-		customTemplates = glob(os.path.join(
-				base, "%s_%s_update_*%s" % (name, obj.name, extension)))
-		# BEGIN Custom templates for update()
-		customUpdatePropertyContent = dict()
-		for customTemplate in customTemplates:
-			start = customTemplate.rfind("_") + 1
-			end = customTemplate.rfind(".")
-			propertyName = customTemplate[start:end]
-			customTemplate = NewTextTemplate(open(customTemplate))
-			content = customTemplate.generate(
-				fu=fu, klass=obj, parents=parents, model=model)
-			content = content.render()
-			customUpdatePropertyContent[propertyName] = content
-		# END Custom templates for update()
-		# BEGIN Custom templates for asXMLElement()
-		customTemplates = glob(os.path.join(
-				base, "%s_%s_asXMLElement_*%s" % (name, obj.name, extension)))
-		customAsXMLElementPropertyContent = dict()
-		for customTemplate in customTemplates:
-			start = customTemplate.rfind("_") + 1
-			end = customTemplate.rfind(".")
-			propertyName = customTemplate[start:end]
-			customTemplate = NewTextTemplate(open(customTemplate))
-			content = customTemplate.generate(
-				fu=fu, klass=obj, parents=parents, model=model)
-			content = content.render()
-			customAsXMLElementPropertyContent[propertyName] = content
-		# END Custom templates for asXMLElment()
-		parents = resolve_parents(model, obj.name)
-
 		for filetype in [TYPE_SOURCE, TYPE_HEADER]:
+			fu.SOURCE_TYPE = filetype;
+
+                        CUSTOM_CLASS_TEMPLATE = os.path.join(
+				base, '%s_%s%s' % (name, obj.name, extension))
+                        customContent = ''
+                        if os.path.exists(CUSTOM_CLASS_TEMPLATE):
+                                customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
+                                customContent = customTemplate.generate(
+                                        fu=fu, klass=obj, parents=parents, model=model)
+                                customContent = customContent.render()
+                        customTemplates = glob(os.path.join(
+                                        base, "%s_%s_update_*%s" % (name, obj.name, extension)))
+		        # BEGIN Custom templates for update()
+                        customUpdatePropertyContent = dict()
+                        for customTemplate in customTemplates:
+                                start = customTemplate.rfind("_") + 1
+                                end = customTemplate.rfind(".")
+                                propertyName = customTemplate[start:end]
+                                customTemplate = NewTextTemplate(open(customTemplate))
+                                content = customTemplate.generate(
+                                        fu=fu, klass=obj, parents=parents, model=model)
+                                content = content.render()
+                                customUpdatePropertyContent[propertyName] = content
+		        # END Custom templates for update()
+		        # BEGIN Custom templates for asXMLElement()
+                        customTemplates = glob(os.path.join(
+                                        base, "%s_%s_asXMLElement_*%s" % (name, obj.name, extension)))
+                        customAsXMLElementPropertyContent = dict()
+                        for customTemplate in customTemplates:
+                                start = customTemplate.rfind("_") + 1
+                                end = customTemplate.rfind(".")
+                                propertyName = customTemplate[start:end]
+                                customTemplate = NewTextTemplate(open(customTemplate))
+                                content = customTemplate.generate(
+                                        fu=fu, klass=obj, parents=parents, model=model)
+                                content = content.render()
+                                customAsXMLElementPropertyContent[propertyName] = content
+		        # END Custom templates for asXMLElment()
+                        parents = resolve_parents(model, obj.name)
+
 			try:
 				fullname = generated_filename(obj.name, filetype, opts)
 				fullname = os.path.join("ome", "xml", "model", fullname)
@@ -173,7 +175,6 @@ def main(opts):
 				continue
 
 			fu.GUARD = guard(fullname)
-			fu.SOURCE_TYPE = filetype;
 
 			fullname = os.path.join(opts.outdir, fullname)
 

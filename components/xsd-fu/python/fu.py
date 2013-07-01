@@ -212,7 +212,7 @@ TYPE_SOURCE = "source"
 TYPE_HEADER = "header"
 
 JAVA_TEMPLATE_DIR = "templates-java"
-CXX_TEMPLATE_DIR = "templates-c++"
+CXX_TEMPLATE_DIR = "templates-cpp"
 
 JAVA_SOURCE_SUFFIX = ".java"
 CXX_SOURCE_SUFFIX = ".cpp"
