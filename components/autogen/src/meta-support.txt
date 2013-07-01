@@ -3776,6 +3776,7 @@ Pixels.SizeX = Yes
 Pixels.SizeY = Yes
 Pixels.SizeZ = Yes
 Pixels.Type = Yes
+Plane.ExposureTime = Yes
 Plane.TheC = Yes
 Plane.TheT = Yes
 Plane.TheZ = Yes
