@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import loci.common.Location;
-import loci.formats.FormatHandler;
 import loci.formats.ResourceNamer;
 
 import org.slf4j.Logger;
@@ -64,13 +63,8 @@ public class FakeImage {
 
   private ResourceNamer resourceNamer;
 
-  public FakeImage(String directoryRoot) {
-    if (!new Location(directoryRoot).exists() ||
-        !FormatHandler.checkSuffix(directoryRoot, ResourceNamer.FAKE_EXT)) {
-      this.directoryRoot = new Location(directoryRoot + ResourceNamer.FAKE_EXT);
-    } else {
-      this.directoryRoot = new Location(directoryRoot);
-    }
+  public FakeImage(Location directoryRoot) {
+    this.directoryRoot = directoryRoot;
   }
 
   public static void isValidRange(int arg, int min, int max) {
@@ -121,10 +115,10 @@ public class FakeImage {
    *           when any of the arguments fail validation.
    * @throws NullPointerException
    *           when null specified as argument value.
-   * @return {@link String} String representing the root directory of the
-   *           created structure.
+   * @return {@link Location} Instance representing the top-level directory
+   *           of the SPW structure.
    */
-  public String generateScreen(int plates, int plateAcquisitions, int rows,
+  public Location generateScreen(int plates, int plateAcquisitions, int rows,
       int columns, int fields) {
     isValidRange(plates, 1, 255);
     isValidRange(plateAcquisitions, 1, 255);
@@ -176,7 +170,7 @@ public class FakeImage {
     LOGGER.debug(String.format("Fake SPW structure generation took %s ms.", end
         - start));
 
-    return directoryRoot.getAbsolutePath();
+    return directoryRoot;
   }
 
 }

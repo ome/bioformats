@@ -37,6 +37,9 @@
 package loci.formats.tools;
 
 import loci.common.DebugTools;
+import loci.common.Location;
+import loci.formats.FormatHandler;
+import loci.formats.ResourceNamer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +55,7 @@ public class ImageFaker {
   private static final Logger LOGGER = LoggerFactory
       .getLogger(ImageFaker.class);
 
-  private String directoryRoot;
+  private String targetDirectoryPath;
 
   private int plates = 1;
 
@@ -84,8 +87,8 @@ public class ImageFaker {
           DebugTools.enableLogging("DEBUG");
         }
       } else {
-        if (directoryRoot == null) {
-          directoryRoot = args[i];
+        if (targetDirectoryPath == null) {
+          targetDirectoryPath = args[i];
         } else {
           LOGGER.error("Found unknown argument: {}; exiting.", args[i]);
           return false;
@@ -116,9 +119,18 @@ public class ImageFaker {
 
     boolean validArgs = parseArgs(args);
 
-    if (!validArgs || directoryRoot == null) {
+    if (!validArgs || targetDirectoryPath == null) {
       printUsage();
       return false;
+    }
+
+    Location directoryRoot;
+    if (!FormatHandler.checkSuffix(targetDirectoryPath,
+            ResourceNamer.FAKE_EXT)) {
+      directoryRoot = new Location(targetDirectoryPath + ResourceNamer.DOT
+        + ResourceNamer.FAKE_EXT);
+    } else {
+      directoryRoot = new Location(targetDirectoryPath);
     }
 
     FakeImage fake = new FakeImage(directoryRoot);
