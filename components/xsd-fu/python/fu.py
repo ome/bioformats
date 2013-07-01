@@ -221,6 +221,9 @@ CXX_HEADER_SUFFIX = ".h"
 # The default template for enum class processing.
 ENUM_TEMPLATE = 'Enum.template'
 
+# The default template for enum inclusion.
+ENUM_INCLUDEALL_TEMPLATE = 'Enums.template'
+
 # The default template for enum handler class processing.
 ENUM_HANDLER_TEMPLATE = 'EnumHandler.template'
 

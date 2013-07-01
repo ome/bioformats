@@ -247,6 +247,50 @@ def enumTypesMain(opts):
 				f.write(classContent)
 				f.close()
 
+def enumTypesIncludeAll(opts):
+	"""
+	Generate header to include all enum headers.
+	"""
+
+	model = parseXmlSchema(opts)
+	fu = TemplateInfo(opts.outdir, opts.package)
+	template = NewTextTemplate(open(template_path(ENUM_INCLUDEALL_TEMPLATE, opts)).read())
+	headers = set()
+
+	fullname = generated_filename("enums", TYPE_HEADER, opts)
+	fullname = os.path.join("ome", "xml", "model", fullname)
+
+	for obj in model.objects.values():
+            for prop in obj.properties.values():
+                if not prop.isEnumeration:
+                    continue
+
+		headername = None
+		try:
+                        # Note that the path is for embedding in the header, and must use forward slashes
+			headername = generated_filename(prop.langType, TYPE_HEADER, opts)
+			headername = "ome/xml/model/enums/" + headername
+		except ModelProcessingError:
+			continue
+
+		headers.add(headername)
+
+	fu.GUARD = guard(fullname)
+	fu.SOURCE_TYPE = TYPE_HEADER;
+	fu.HEADERS = sorted(headers);
+
+	fullname = os.path.join(opts.outdir, fullname)
+
+	outputDirectory = os.path.dirname(fullname)
+	if not os.path.exists(outputDirectory):
+            os.makedirs(outputDirectory)
+
+	f = open(fullname, "w")
+	classContent = template.generate(fu=fu, klass=prop,
+					 enum_value_name=enum_value_name).render()
+	f.write(classContent)
+	f.close()
+
 def enumHandlersMain(opts):
 	"""
 	Default main() that parses command line options and generates Java
@@ -636,6 +680,8 @@ if __name__ == '__main__':
 		metadataMain(opts)
 	elif a == "enum_types":
 		enumTypesMain(opts)
+	elif a == "enum_includeall":
+		enumTypesIncludeAll(opts)
 	elif a == "enum_handlers":
 		enumHandlersMain(opts)
 	elif a == "doc_gen":
