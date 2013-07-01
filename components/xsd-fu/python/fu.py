@@ -181,7 +181,7 @@ DEFAULT_NAMESPACE = "xsd:"
 DEFAULT_BASE_CLASS = "AbstractOMEModelObject"
 
 # The default Java package for OME XML model objects.
-DEFAULT_PACKAGE = "ome.xml.r2008"
+DEFAULT_PACKAGE = "ome.xml.model"
 
 # The package regular expression for OME namespaces.
 PACKAGE_NAMESPACE_RE = re.compile(
