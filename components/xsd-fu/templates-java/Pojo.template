@@ -93,36 +93,17 @@ public class ${klass.name} extends ${klass.langBaseType}
 		LoggerFactory.getLogger(${klass.name}.class);
 
 	// -- Instance variables --
+{% for prop in klass.instanceVariables %}\
 
-{% if klass.langType != 'Object' %}\
-	// Element's text data
-	private ${klass.langType} ${klass.name}_value;
+{% if prop[3] is not None %}\
+	// ${prop[3]}
 {% end %}\
-\
-{% for prop in klass.properties.values() %}\
-{% choose %}\
-{% when prop.isReference and prop.maxOccurs > 1%}
-	// Reference ${prop.name}
-	private List<${prop.langType}> ${prop.instanceVariableName} = new ArrayList<${prop.langType}>();
+{% if prop[0] is not None %}\
+{% if prop[2] is not None %}\
+	private ${prop[0]} ${prop[1]} = new ${prop[2]}();
 {% end %}\
-{% when prop.isBackReference and prop.maxOccurs > 1 %}
-	// Back reference ${prop.name}
-	private List<${prop.langType}> ${prop.instanceVariableName} = new ArrayList<${prop.langType}>();
-{% end %}\
-{% when prop.isBackReference %}
-	// Back reference ${prop.name}
-	private ${prop.langType} ${prop.instanceVariableName};
-{% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
-	// Property
-	private ${prop.langType} ${prop.instanceVariableName};
-{% end %}\
-{% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
-	// Property which occurs more than once
-	private List<${prop.langType}> ${prop.instanceVariableName} = new ArrayList<${prop.langType}>();
-{% end %}\
-{% otherwise %}
-	// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% if prop[2] is None %}\
+	private ${prop[0]} ${prop[1]};
 {% end %}\
 {% end %}\
 {% end %}\
@@ -154,30 +135,12 @@ public class ${klass.name} extends ${klass.langBaseType}
 	public ${klass.name}(${klass.name} orig)
 	{
 		super(orig);
-{% if klass.langType != 'Object' %}\
-		${klass.name}_value = orig.${klass.name}_value;
+{% for prop in klass.instanceVariables %}\
+{% if prop[0] is not None %}\
+		${prop[1]} = orig.${prop[1]};
 {% end %}\
-\
-{% for prop in klass.properties.values() %}\
-{% choose %}\
-{% when prop.isReference and prop.maxOccurs > 1%}
-		${prop.instanceVariableName} = orig.${prop.instanceVariableName};
-{% end %}\
-{% when prop.isBackReference and prop.maxOccurs > 1 %}
-		${prop.instanceVariableName} = orig.${prop.instanceVariableName};
-{% end %}\
-{% when prop.isBackReference %}
-		${prop.instanceVariableName} = orig.${prop.instanceVariableName};
-{% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
-		${prop.instanceVariableName} = orig.${prop.instanceVariableName};
-{% end %}\
-{% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
-		${prop.instanceVariableName} = orig.${prop.instanceVariableName};
-{% end %}\
-{% otherwise %}
-		// *** WARNING *** Unhandled or skipped property ${prop.name}
-{% end %}\
+{% if prop[0] is None %}\
+		// *** WARNING *** Unhandled or skipped property ${prop[1]}
 {% end %}\
 {% end %}\
 	}

@@ -115,9 +115,12 @@ def updateTypeMaps(opts):
 
     namespace = opts.namespace
 
+    global CURRENT_LANG
     global PRIMITIVE_TYPE_MAP
     global TYPE_MAP
     global BASE_TYPE_MAP
+
+    CURRENT_LANG = opts.lang
 
     PRIMITIVE_TYPE_MAP = {
         'PositiveInt': 'PositiveInteger',
@@ -131,7 +134,7 @@ def updateTypeMaps(opts):
         'Text': 'Text',
     }
 
-    if (opts.lang == LANG_JAVA):
+    if (CURRENT_LANG == LANG_JAVA):
         PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'Boolean'
         PRIMITIVE_TYPE_MAP[namespace + 'dateTime'] = 'Timestamp'
         PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'String'
@@ -142,7 +145,7 @@ def updateTypeMaps(opts):
         PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'Double'
         PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'String'
         PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'String'
-    elif (opts.lang == LANG_CXX):
+    elif (CURRENT_LANG == LANG_CXX):
         PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'bool'
         PRIMITIVE_TYPE_MAP[namespace + 'dateTime'] = 'Timestamp'
         PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'std::string'
@@ -159,9 +162,9 @@ def updateTypeMaps(opts):
     TYPE_MAP['Contact'] = 'Experimenter'
     TYPE_MAP['Pump'] = 'LightSource'
 
-    if (opts.lang == LANG_JAVA):
+    if (CURRENT_LANG == LANG_JAVA):
         TYPE_MAP['MIMEtype'] = 'String'
-    elif (opts.lang == LANG_CXX):
+    elif (CURRENT_LANG == LANG_CXX):
         TYPE_MAP['MIMEtype'] = 'std::string'
 
     BASE_TYPE_MAP = {
@@ -203,6 +206,7 @@ OMERO_NAMED_OPTIONAL = (
 
 LANG_JAVA = "Java"
 LANG_CXX = "C++"
+CURRENT_LANG = LANG_JAVA
 
 TYPE_SOURCE = "source"
 TYPE_HEADER = "header"
@@ -672,6 +676,74 @@ class OMEModelProperty(OMEModelEntity):
     instanceVariableName = property(_get_instanceVariableName,
         doc="""The property's instance variable name.""")
 
+    def _get_instanceVariableType(self):
+        itype = None
+
+        if (CURRENT_LANG == LANG_JAVA):
+            if self.isReference and self.maxOccurs > 1:
+                itype = "List<%s>" % self.langType
+            elif self.isBackReference and self.maxOccurs > 1:
+                itype = "List<%s>" % self.langType
+            elif self.isBackReference:
+                itype = self.langType
+            elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
+                itype = self.langType
+            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+                itype = "List<%s>" % self.langType
+        elif (CURRENT_LANG == LANG_CXX):
+            if self.isReference and self.maxOccurs > 1:
+                itype = "std::vector<%s::weak_ptr>" % self.langType
+            elif self.isBackReference and self.maxOccurs > 1:
+                itype = "std::vector<%s::weak_ptr>" % self.langType
+            elif self.isBackReference:
+                itype = self.langType
+            elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
+                itype = self.langType
+            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+                itype = "std::vector<%s::shared_ptr>" % self.langType
+
+        return itype
+    instanceVariableType = property(_get_instanceVariableType,
+        doc="""The property's Java instance variable type.""")
+
+    def _get_instanceVariableDefault(self):
+        idefault = None
+
+        if (CURRENT_LANG == LANG_JAVA):
+            if self.isReference and self.maxOccurs > 1:
+                idefault = "ArrayList<%s>" % self.langType
+            elif self.isBackReference and self.maxOccurs > 1:
+                idefault = "ArrayList<%s>" % self.langType
+            elif self.isBackReference:
+                idefault = None
+            elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
+                idefault = None
+            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+                idefault = "ArrayList<%s>" % self.langType
+
+        return idefault
+    instanceVariableDefault = property(_get_instanceVariableDefault,
+        doc="""The property's Java instance variable type.""")
+
+    def _get_instanceVariableComment(self):
+        icomment = "*** WARNING *** Unhandled or skipped property %s" % self.name
+
+        if self.isReference and self.maxOccurs > 1:
+            icomment = "%s reference (occurs more than once)" % self.name
+        elif self.isBackReference and self.maxOccurs > 1:
+            icomment = "%s back reference (occurs more than once)" % self.name
+        elif self.isBackReference:
+            icomment = "%s back reference" % self.name
+        elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
+            icomment = "%s property" % self.name
+        elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            icomment = "%s property (occurs more than once)" % self.name
+
+        return icomment
+
+    instanceVariableComment = property(_get_instanceVariableComment,
+        doc="""The property's Java instance variable comment.""")
+
     def isComplex(self):
         """
         Returns whether or not the property has a "complex" content type.
@@ -887,6 +959,17 @@ class OMEModelObject(OMEModelEntity):
         return self.argumentName
     instanceVariableName = property(_get_instanceVariableName,
         doc="""The property's instance variable name.""")
+
+    def _get_instanceVariables(self):
+        props = list();
+
+        if self.langType != 'Object':
+            props.append([self.langType, "%s_value" % self.name, None, "Element's text data"])
+        for prop in self.properties.values():
+            props.append([prop.instanceVariableType, prop.instanceVariableName, prop.instanceVariableDefault, prop.instanceVariableComment])
+        return props
+    instanceVariables = property(_get_instanceVariables,
+        doc="""The instance variables of this class.""")
 
     def isComplex(self):
         """
