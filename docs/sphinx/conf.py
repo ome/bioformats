@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #
+test
 # Bio-Formats documentation build configuration file, created by
 # sphinx-quickstart on Wed Aug 29 15:42:49 2012.
 #
