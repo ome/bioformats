@@ -19,6 +19,8 @@
 
 package loci.formats;
 
+import java.io.File;
+
 import loci.common.Location;
 
 /**
@@ -39,6 +41,8 @@ public class ResourceNamer {
   public static final String FIELD = "Field";
 
   public static final String FAKE_EXT = "fake";
+
+  public static final String DOT = ".";
 
   private static final int ALPHABET_LENGTH = 26;
 
@@ -76,7 +80,9 @@ public class ResourceNamer {
     StringBuilder sb = new StringBuilder();
     sb.append(resourceName + String.format("%03d", nameIndex));
     if (resourceExtension != null) {
-      sb.append(".");
+      if (!resourceExtension.startsWith(File.separator)) {
+        sb.append(DOT);
+      }
       sb.append(resourceExtension);
     }
     return new Location(resourceParentPath, sb.toString());
