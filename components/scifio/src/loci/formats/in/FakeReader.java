@@ -120,7 +120,8 @@ public class FakeReader extends FormatReader {
   /** Properties companion file which can be associated with this fake file */
   private String iniFile;
 
-  private boolean isSPW;
+  /** List of used files if the fake is a SPW structure */
+  private List<String> fakeSpwFields = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -244,7 +245,11 @@ public class FakeReader extends FormatReader {
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     if (new Location(id).isDirectory() && checkSuffix(id, "fake")) {
-      return false;
+      if (listFakeWellFields(id).size() > 1) {
+        return false;
+      } else {
+        return true;
+      }
     }
     if (checkSuffix(id, "fake" + ".ini")) {
       return ! new Location(id).exists();
@@ -305,12 +310,8 @@ public class FakeReader extends FormatReader {
       }
     }
 
-    if (new Location(id).isDirectory()) {
-      isSPW = true;
-    }
     // Logic copied from deltavision. This should probably be refactored into
     // a helper method "replaceBySuffix" or something.
-
     super.initFile(id);
     findLogFiles();
 
@@ -579,6 +580,22 @@ public class FakeReader extends FormatReader {
         valueToIndex[c][value] = index;
       }
     }
+  }
+
+  /** Traverses a SPW folder structured indicated by rootPath */
+  private List<String> listFakeWellFields(String traversedDirectory) {
+    File parent = new File(traversedDirectory);
+    if (parent.isDirectory()) {
+      File[] children = parent.listFiles();
+      if (children != null) {
+        for (File child : children) {
+          listFakeWellFields(child.getAbsolutePath());
+        }
+      }
+    } else {
+      fakeSpwFields.add(parent.getAbsolutePath());
+    }
+    return fakeSpwFields;
   }
 
   /** Fisher-Yates shuffle with constant seeds to ensure reproducibility. */
