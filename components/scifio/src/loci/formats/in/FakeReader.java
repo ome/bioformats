@@ -259,8 +259,11 @@ public class FakeReader extends FormatReader {
 
   @Override
   public boolean isThisType(String name, boolean open) {
-    if (checkSuffix(name, "fake.ini") || listFakeSeries(name).size() > 0)
+    if (checkSuffix(name, "fake.ini"))
     {
+      return true;
+    }
+    if (name.endsWith(".fake") && listFakeSeries(name).size() > 0) {
       return true;
     }
     return super.isThisType(name, open);
