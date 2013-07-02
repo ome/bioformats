@@ -143,15 +143,32 @@ public class FakeReaderTest {
   }
 
   @Test
-  public void testIsSingleFileReturnsTrueForOneWell()
-      throws Exception {
+  public void testIsSingleFileReturnsTrueForOneWell() throws Exception {
     assertTrue(reader.isSingleFile(oneWell.getAbsolutePath()));
   }
 
   @Test
-  public void testIsSingleFileReturnsFalseForTwoWells()
-      throws Exception {
+  public void testIsSingleFileReturnsFalseForTwoWells() throws Exception {
     assertFalse(reader.isSingleFile(twoWells.getAbsolutePath()));
+  }
+
+  @Test
+  public void testIsThisTypeReturnsTrueForOneWell() {
+    assertTrue(reader.isThisType(oneWell.getAbsolutePath()));
+  }
+
+  @Test
+  public void testGetSeriesUsedFilesReturnsOneForOneWell() throws Exception {
+    reader.setId(oneWell.getAbsolutePath());
+    assertEquals(1, reader.getSeriesUsedFiles(false).length);
+    assertEquals(0, reader.getSeriesUsedFiles(true).length);
+  }
+
+  @Test
+  public void testGetSeriesUsedFilesReturnsTwoForTwoWells() throws Exception {
+    reader.setId(twoWells.getAbsolutePath());
+    assertEquals(2, reader.getSeriesUsedFiles(false).length);
+    assertEquals(0, reader.getSeriesUsedFiles(true).length);
   }
 
   //
@@ -215,6 +232,7 @@ public class FakeReaderTest {
     }
   }
 
+  /** Removes fake SPW folders - deleteOnExit() has to be called on each. */
   void deleteTemporaryDirectoryOnExit(Location directoryRoot) {
     directoryRoot.deleteOnExit();
     Location[] children = directoryRoot.listFiles();
