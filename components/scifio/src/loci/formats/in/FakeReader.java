@@ -121,7 +121,7 @@ public class FakeReader extends FormatReader {
   private String iniFile;
 
   /** List of used files if the fake is a SPW structure */
-  private List<String> fakeSpwFields = new ArrayList<String>();
+  private List<String> fakeSeries = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -245,7 +245,7 @@ public class FakeReader extends FormatReader {
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     if (new Location(id).isDirectory() && checkSuffix(id, "fake")) {
-      if (listFakeWellFields(id).size() > 1) {
+      if (listFakeSeries(id).size() > 1) {
         return false;
       } else {
         return true;
@@ -259,7 +259,7 @@ public class FakeReader extends FormatReader {
 
   @Override
   public boolean isThisType(String name, boolean open) {
-    if (checkSuffix(name, "fake.ini"))
+    if (checkSuffix(name, "fake.ini") || listFakeSeries(name).size() > 0)
     {
       return true;
     }
@@ -270,7 +270,8 @@ public class FakeReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
       FormatTools.assertId(currentId, true, 1);
       List<String> files = new ArrayList<String>();
-      if (!noPixels) files.add(currentId);
+      fakeSeries.clear();
+      if (!noPixels) files.addAll(listFakeSeries(currentId));
       if (iniFile != null) files.add(iniFile);
       return files.toArray(new String[files.size()]);
   }
@@ -582,20 +583,20 @@ public class FakeReader extends FormatReader {
     }
   }
 
-  /** Traverses a SPW folder structured indicated by rootPath */
-  private List<String> listFakeWellFields(String traversedDirectory) {
+  /** Traverses a fake file folder structure indicated by traversedDirectory */
+  private List<String> listFakeSeries(String traversedDirectory) {
     File parent = new File(traversedDirectory);
     if (parent.isDirectory()) {
       File[] children = parent.listFiles();
       if (children != null) {
         for (File child : children) {
-          listFakeWellFields(child.getAbsolutePath());
+          listFakeSeries(child.getAbsolutePath());
         }
       }
     } else {
-      fakeSpwFields.add(parent.getAbsolutePath());
+      fakeSeries.add(parent.getAbsolutePath());
     }
-    return fakeSpwFields;
+    return fakeSeries;
   }
 
   /** Fisher-Yates shuffle with constant seeds to ensure reproducibility. */
