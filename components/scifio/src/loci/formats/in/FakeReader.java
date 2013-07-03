@@ -123,6 +123,10 @@ public class FakeReader extends FormatReader {
   /** List of used files if the fake is a SPW structure */
   private List<String> fakeSeries = new ArrayList<String>();
 
+  private OMEXMLMetadata omeXmlMetadata;
+
+  private OMEXMLService omeXmlService;
+
   // -- Constructor --
 
   /** Constructs a new fake reader. */
@@ -291,6 +295,28 @@ public class FakeReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     iniFile = null;
     super.close(fileOnly);
+  }
+
+  public OMEXMLMetadata getOmeXmlMetadata() {
+    if (omeXmlMetadata == null) {
+      try {
+        omeXmlMetadata = getOmeXmlService().createOMEXMLMetadata();
+      } catch (ServiceException exc) {
+        LOGGER.error("Could not create OME-XML metadata", exc);
+      }
+    }
+    return omeXmlMetadata;
+  }
+
+  public OMEXMLService getOmeXmlService() {
+    if (omeXmlService == null) {
+      try {
+        omeXmlService = new ServiceFactory().getInstance(OMEXMLService.class);
+      } catch (DependencyException exc) {
+        LOGGER.error("Could not create OME-XML service", exc);
+      }
+    }
+    return omeXmlService;
   }
 
   @Override
@@ -544,25 +570,13 @@ public class FakeReader extends FormatReader {
   private int populateSPW(MetadataStore store, int plates, int rows, int cols,
     int fields, int acqs)
   {
-    try {
-      final XMLMockObjects xml = new XMLMockObjects();
-      final OME ome =
-        xml.createPopulatedScreen(plates, rows, cols, fields, acqs);
-      final OMEXMLService omexmlService =
-        new ServiceFactory().getInstance(OMEXMLService.class);
-      final OMEXMLMetadata omeMeta = omexmlService.createOMEXMLMetadata();
-      omeMeta.setRoot(ome);
-      // copy populated SPW metadata into destination MetadataStore
-      omexmlService.convertMetadata(omeMeta, store);
-      return ome.sizeOfImageList();
-    }
-    catch (DependencyException exc) {
-      LOGGER.error("Could not create OME-XML service", exc);
-    }
-    catch (ServiceException exc) {
-      LOGGER.error("Could not create OME-XML metadata", exc);
-    }
-    return -1;
+    final XMLMockObjects xml = new XMLMockObjects();
+    final OME ome =
+      xml.createPopulatedScreen(plates, rows, cols, fields, acqs);
+    getOmeXmlMetadata().setRoot(ome);
+    // copy populated SPW metadata into destination MetadataStore
+    getOmeXmlService().convertMetadata(omeXmlMetadata, store);
+    return ome.sizeOfImageList();
   }
 
   /** Creates a mapping between indices and color values. */
