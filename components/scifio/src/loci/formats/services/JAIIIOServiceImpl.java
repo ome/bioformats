@@ -204,7 +204,7 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /** Register the JPEG-2000 readers with the reader service. */
-  private IIORegistry registerServiceProviders() {
+  private static IIORegistry registerServiceProviders() {
     IIORegistry registry = IIORegistry.getDefaultInstance();
     Iterator<J2KImageReaderSpi> iter =
       ServiceRegistry.lookupProviders(J2KImageReaderSpi.class);
