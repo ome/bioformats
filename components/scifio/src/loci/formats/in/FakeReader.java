@@ -55,12 +55,13 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.ome.OMEXMLMetadataRoot;
 import loci.formats.services.OMEXMLService;
-import ome.xml.model.OME;
 import ome.scifio.common.IniList;
 import ome.scifio.common.IniParser;
 import ome.scifio.common.IniTable;
 import ome.specification.XMLMockObjects;
+import ome.xml.model.OME;
 
 /**
  * FakeReader is the file format reader for faking input data.
@@ -573,7 +574,7 @@ public class FakeReader extends FormatReader {
     final XMLMockObjects xml = new XMLMockObjects();
     final OME ome =
       xml.createPopulatedScreen(plates, rows, cols, fields, acqs);
-    getOmeXmlMetadata().setRoot(ome);
+    getOmeXmlMetadata().setRoot(new OMEXMLMetadataRoot(ome));
     // copy populated SPW metadata into destination MetadataStore
     getOmeXmlService().convertMetadata(omeXmlMetadata, store);
     return ome.sizeOfImageList();
