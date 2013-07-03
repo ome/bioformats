@@ -48,6 +48,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.ReaderWrapper;
 import loci.formats.gui.AWTImageTools;
@@ -2116,7 +2117,7 @@ public class FormatReaderTest {
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
-    reader = new BufferedImageReader(new FileStitcher());
+    reader = new BufferedImageReader(new FileStitcher(new Memoizer(Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
     reader.setNormalized(true);
     reader.setOriginalMetadataPopulated(false);
     reader.setMetadataFiltered(true);
