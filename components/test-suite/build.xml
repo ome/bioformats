@@ -153,7 +153,7 @@ Type "ant -p" for a list of targets.
     </condition>
 
     <testng groups="automated" testname="Automated tests"
-      listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
+      listeners="loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       parallel="tests" threadCount="${testng.threadCount}"
       failureProperty="failedTest" useDefaultListeners="false">
