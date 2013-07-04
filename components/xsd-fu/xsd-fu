@@ -222,11 +222,11 @@ def enumTypesMain(opts):
 		for prop in obj.properties.values():
 			if not prop.isEnumeration:
 				continue
-			print "%s: %s" % (prop.name, prop.javaType)
+			print "%s: %s" % (prop.name, prop.langType)
 
 			for filetype in [TYPE_SOURCE, TYPE_HEADER]:
 				try:
-					fullname = generated_filename(prop.javaType, filetype, opts)
+					fullname = generated_filename(prop.langType, filetype, opts)
 					fullname = os.path.join("ome", "xml", "model", "enums", fullname)
 				except ModelProcessingError:
 					continue
@@ -261,11 +261,11 @@ def enumHandlersMain(opts):
 		for prop in obj.properties.values():
 			if not prop.isEnumeration:
 				continue
-			print "%s: %s" % (prop.name, prop.javaType)
+			print "%s: %s" % (prop.name, prop.langType)
 
 			for filetype in [TYPE_SOURCE, TYPE_HEADER]:
 				try:
-					fullname = generated_filename(prop.javaType + "EnumHandler", filetype, opts)
+					fullname = generated_filename(prop.langType + "EnumHandler", filetype, opts)
 					fullname = os.path.join("ome", "xml", "model", "enums", "handlers", fullname)
 				except ModelProcessingError:
 					continue

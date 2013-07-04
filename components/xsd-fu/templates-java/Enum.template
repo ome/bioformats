@@ -45,16 +45,16 @@
 
 package ${fu.package};
 
-public enum ${klass.javaType} implements Enumeration
+public enum ${klass.langType} implements Enumeration
 {
   ${", ".join(['%s("%s")' % (enum_value_name(value), value) for value in klass.possibleValues])};
 
-  private ${klass.javaType}(String value)
+  private ${klass.langType}(String value)
   {
     this.value = value;
   }
 
-  public static ${klass.javaType} fromString(String value)
+  public static ${klass.langType} fromString(String value)
     throws EnumerationException
   {
 {% for value in klass.possibleValues %}\
@@ -64,7 +64,7 @@ public enum ${klass.javaType} implements Enumeration
     }
 {% end %}\
     String s = String.format("%s not a supported value of %s",
-                             value, ${klass.javaType}.class);
+                             value, ${klass.langType}.class);
     throw new EnumerationException(s);
   }
 
