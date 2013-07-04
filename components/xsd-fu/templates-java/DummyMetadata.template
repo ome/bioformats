@@ -62,13 +62,6 @@
 			return True
 		return False
 
-	def is_parent_abstract(name):
-		parent = parent_object(name)
-		if parent is not None and \
-		   (parent.isAbstract or parent.isAbstractProprietary):
-			return True
-		return False
-
 	def sorted_properties(o):
 		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
 

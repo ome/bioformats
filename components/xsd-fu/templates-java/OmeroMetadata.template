@@ -90,13 +90,6 @@
             return True
         return False
 
-    def is_parent_abstract(name):
-        parent = parent_object(name)
-        if parent is not None and \
-           (parent.isAbstract or parent.isAbstractProprietary):
-            return True
-        return False
-
     def is_parent_abstract_proprietary(name):
         parent = parent_object(name)
         if parent is not None and parent.isAbstractProprietary:

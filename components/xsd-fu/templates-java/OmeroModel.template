@@ -66,13 +66,6 @@ ${fully_qualified_link_class_name(o, prop)}\
             return True
         return False
 
-    def is_parent_abstract(name):
-        parent = parent_object(name)
-        if parent is not None and \
-           (parent.isAbstract or parent.isAbstractProprietary):
-            return True
-        return False
-
     def sorted_objects():
         return sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name))
 
