@@ -761,6 +761,13 @@ class OMEModelProperty(OMEModelEntity):
             return False
         return self.delegate.isComplex()
 
+    def _get_isAbstractProprietary(self):
+        o = self.model.getObjectByName(self.name)
+        if o is None:
+            return False
+        return o.isAbstractProprietary
+    isAbstractProprietary = property(_get_isAbstractProprietary, doc="""Is the property abstract proprietary.""")
+
     def fromAttribute(klass, attribute, parent, model):
         """
         Instantiates a property from an XML Schema attribute.
@@ -973,6 +980,25 @@ class OMEModelObject(OMEModelEntity):
         return props
     instanceVariables = property(_get_instanceVariables,
         doc="""The instance variables of this class.""")
+
+    def _get_parents(self):
+        return resolve_parents(self.model, self.name)
+    parents = property(_get_parents,
+        doc="""The parents for this object.""")
+
+    def _get_parentName(self):
+        parents = resolve_parents(self.model, self.name)
+
+        name = self.langBaseType
+
+        if parents is not None:
+            parent = self.model.getObjectByName(parents.keys()[0])
+            if parent is not None and parent.isAbstractProprietary:
+                name = parent.name
+
+        return name
+    parentName = property(_get_parentName,
+        doc="""The parent class name for this object.""")
 
     def isComplex(self):
         """

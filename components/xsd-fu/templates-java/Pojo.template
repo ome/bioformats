@@ -1,14 +1,3 @@
-{% python
-	def parent_object():
-		if parents is None:
-			return None
-		return model.getObjectByName(parents.keys()[0])
-	def is_abstract_proprietary(name):
-		o = model.getObjectByName(name)
-		if o is None:
-			return False
-		return o.isAbstractProprietary
-%}\
 /*
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
@@ -71,14 +60,11 @@ import ${fu.package}.enums.*;
 import ${fu.package}.primitives.*;
 
 {% choose %}\
-{% when parent_object() is not None and parent_object().isAbstractProprietary %}\
-public class ${klass.name} extends ${parent_object().name}
-{% end %}\
 {% when klass.isAbstractProprietary or klass.isAbstract %}\
-public abstract class ${klass.name} extends ${klass.langBaseType}
+public abstract class ${klass.name} extends ${klass.parentName}
 {% end %}\
-{% when parent_object() is None or not parent_object().isAbstractProprietary %}\
-public class ${klass.name} extends ${klass.langBaseType}
+{% when not klass.isAbstractProprietary and not klass.isAbstract %}\
+public class ${klass.name} extends ${klass.parentName}
 {% end %}\
 {% end %}\
 {
@@ -258,7 +244,7 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() and not klass.isAbstractProprietary %}\
-{% if is_abstract_proprietary(prop.name) %}\
+{% if prop.isAbstractProprietary %}\
 		// Element property ${prop.name} which is complex (has
 		// sub-elements) and occurs more than once. The element's model
 		// object type is also abstract so we need to have a handler for
@@ -281,7 +267,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 		}
 {% end %}\
-{% if not is_abstract_proprietary(prop.name) %}\
+{% if not prop.isAbstractProprietary %}\
 		// Element property ${prop.name} which is complex (has
 		// sub-elements) and occurs more than once
 		List<Element> ${prop.name}_nodeList =

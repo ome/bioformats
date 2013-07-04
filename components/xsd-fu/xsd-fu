@@ -183,7 +183,7 @@ def main(opts):
 
 			f = open(fullname, "w")
 			classContent = template.generate(
-				fu=fu, klass=obj, parents=parents, model=model,
+				fu=fu, klass=obj, model=model,
 				customContent=customContent,
 				customUpdatePropertyContent=customUpdatePropertyContent,
 				customAsXMLElementPropertyContent=customAsXMLElementPropertyContent)
