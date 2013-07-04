@@ -82,7 +82,7 @@ public class FakeReaderTest {
 
     twoWells = new FakeImage(new Location(fake.getParent() + File.separator
         + this.getClass().getName() + System.currentTimeMillis() + ".fake"))
-    .generateScreen(1, 1, 1, 1, 2);
+    .generateScreen(1, 1, 1, 2, 1);
     deleteTemporaryDirectoryOnExit(twoWells);
 
     reader = new FakeReader();
@@ -169,6 +169,20 @@ public class FakeReaderTest {
     reader.setId(twoWells.getAbsolutePath());
     assertEquals(2, reader.getSeriesUsedFiles(false).length);
     assertEquals(0, reader.getSeriesUsedFiles(true).length);
+  }
+
+  @Test
+  public void testSetIdWithOneWell() throws Exception {
+    reader.setId(oneWell.getAbsolutePath());
+    assertEquals(1, reader.getOmeXmlMetadata().getWellCount(0));
+    assertEquals(1, reader.getUsedFiles().length);
+  }
+
+  @Test
+  public void testSetIdWithTwoWells() throws Exception {
+    reader.setId(twoWells.getAbsolutePath());
+    assertEquals(2, reader.getOmeXmlMetadata().getWellCount(0));
+    assertEquals(2, reader.getUsedFiles().length);
   }
 
   //

@@ -123,4 +123,13 @@ public class ResourceNamer {
     }
   }
 
+  public static int alphabeticIndexCount(String index) {
+    int count = 0;
+    char[] letters = index.toCharArray();
+    for (int i = 0; i < letters.length; i++) {
+      count += (letters[i] - 64) * Math.pow(ALPHABET_LENGTH, i);
+    }
+    return count;
+  }
+
 }

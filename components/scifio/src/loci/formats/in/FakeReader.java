@@ -39,9 +39,11 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -53,6 +55,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.ResourceNamer;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataRoot;
@@ -351,7 +354,12 @@ public class FakeReader extends FormatReader {
       path = new Location(id).getAbsoluteFile().getName();
     }
     String noExt = path.substring(0, path.lastIndexOf("."));
-    String[] tokens = noExt.split(TOKEN_SEPARATOR);
+    String[] tokens;
+    if (!isSPWStructure(id)) {
+      tokens = noExt.split(TOKEN_SEPARATOR);
+    } else {
+      tokens = extractTokensFromFakeSeries(id);
+    }
 
     String name = null;
     int sizeX = DEFAULT_SIZE_X;
@@ -567,6 +575,63 @@ public class FakeReader extends FormatReader {
   }
 
   // -- Helper methods --
+
+  private String[] extractTokensFromFakeSeries(String path) {
+    List<String> tokens = new ArrayList<String>();
+    int plates = 0, plateAcqs = 0, rows = 0, cols = 0, fields = 0;
+    String currentPlate = "";
+    // This is a sub-optimal approach, based on the assumption
+    // that the last fakeSeries[] element has the fakeImage with biggest indices
+    // in its name.
+    for (String fakeImage : fakeSeries) {
+      for (String pathToken : fakeImage.split(File.separator)) {
+        if (pathToken.startsWith(ResourceNamer.PLATE)) {
+          if (!pathToken.equals(currentPlate)) {
+            currentPlate = pathToken;
+            plates++;
+          }
+        }
+      }
+    }
+
+    for (String pathToken : fakeSeries.get(fakeSeries.size() - 1)
+        .split(File.separator)) {
+      if (pathToken.startsWith(ResourceNamer.RUN)) {
+        plateAcqs = Integer.valueOf(pathToken.substring(pathToken.lastIndexOf(
+            ResourceNamer.RUN) + ResourceNamer.RUN.length(),
+            pathToken.length())) + 1;
+      } else if (pathToken.startsWith(ResourceNamer.WELL)) {
+        String wellId = pathToken.substring(pathToken.lastIndexOf(
+            ResourceNamer.WELL) + ResourceNamer.WELL.length(),
+            pathToken.length());
+        String[] elements = wellId.split("(?<=\\p{L})(?=\\d)");
+        rows = ResourceNamer.alphabeticIndexCount(elements[0]);
+        cols = Integer.valueOf(elements[1]) + 1;
+      } else if (pathToken.startsWith(ResourceNamer.FIELD)) {
+        String fieldName = pathToken.substring(0, pathToken.lastIndexOf("."));
+        fields = Integer.valueOf(fieldName.substring(fieldName.lastIndexOf(
+            ResourceNamer.FIELD) + ResourceNamer.FIELD.length(),
+            fieldName.length())) + 1;
+      }
+    }
+
+    tokens.add(path);
+    tokens.add("plates="+plates);
+    tokens.add("plateRows="+rows);
+    tokens.add("plateCols="+cols);
+    tokens.add("fields="+fields);
+    tokens.add("plateAcqs="+plateAcqs);
+
+    return tokens.toArray(new String[tokens.size()]);
+  }
+
+  private boolean isSPWStructure(String path) {
+    if (listFakeSeries(path).get(0).equals(path)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   private int populateSPW(MetadataStore store, int plates, int rows, int cols,
     int fields, int acqs)
