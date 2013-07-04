@@ -44,9 +44,6 @@
 {% end %}\
 \
 {% python
-	def parent_object(name):
-		return model.getObjectByName(parents[name].keys()[0])
-
 	def is_abstract(name):
 		o = model.getObjectByName(name)
 		if o is not None and \
