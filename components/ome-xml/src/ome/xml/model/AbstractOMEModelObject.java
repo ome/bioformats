@@ -58,14 +58,6 @@ import org.w3c.dom.NodeList;
  */
 public abstract class AbstractOMEModelObject implements OMEModelObject {
 
-  public AbstractOMEModelObject() {
-    super();
-  }
-
-  public AbstractOMEModelObject(AbstractOMEModelObject orig) {
-    super();
-  }
-
   /* (non-Javadoc)
    * @see ome.xml.r201004.OMEModelObject#update(org.w3c.dom.Element, ome.xml.r201004.OMEModel)
    */
