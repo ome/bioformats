@@ -99,7 +99,9 @@ public class ${klass.name} extends ${klass.parentName}
 	/** Default constructor. */
 	public ${klass.name}()
 	{
+{% if klass.parentName is not None and klass.parentName != 'AbstractOMEModelObject' %}\
 		super();
+{% end %}\
 	}
 
 	/**
@@ -120,7 +122,9 @@ public class ${klass.name} extends ${klass.parentName}
 	/** Copy constructor. */
 	public ${klass.name}(${klass.name} orig)
 	{
+{% if klass.parentName is not None and klass.parentName != 'AbstractOMEModelObject' %}\
 		super(orig);
+{% end %}\
 {% for prop in klass.instanceVariables %}\
 {% if prop[0] is not None %}\
 		${prop[1]} = orig.${prop[1]};
