@@ -58,10 +58,14 @@ import org.w3c.dom.NodeList;
  */
 public abstract class AbstractOMEModelObject implements OMEModelObject {
 
+  /** @deprecated Subclasses should not chain up to any constructor of this class */
+  @Deprecated
   public AbstractOMEModelObject() {
     super();
   }
 
+  /** @deprecated Subclasses should not chain up to any constructor of this class */
+  @Deprecated
   public AbstractOMEModelObject(Element element) throws EnumerationException {
     update(element);
   }
@@ -69,6 +73,8 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
   /* (non-Javadoc)
    * @see ome.xml.r201004.OMEModelObject#update(org.w3c.dom.Element)
    */
+  /** @deprecated Use {@link #update(Element, Model) */
+  @Deprecated
   public void update(Element element) throws EnumerationException {
     // Nothing to update.
   }
