@@ -125,11 +125,16 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     XSLT_PATH + "2010-06-to-2011-06.xsl";
   private static final String XSLT_201106 =
     XSLT_PATH + "2011-06-to-2012-06.xsl";
+  private static final String XSLT_201306_DOWNGRADE =
+    XSLT_PATH + "2013-06-to-2012-06.xsl";
 
   // -- Cached stylesheets --
 
   /** Reordering stylesheet. */
   private static Templates reorderXSLT;
+
+  /** Stylesheets for downgrading from future schema releases. */
+  private static Templates downgrade201306;
 
   /** Stylesheets for updating from previous schema releases. */
   private static Templates update2003FC;
@@ -166,6 +171,17 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
     String transformed = null;
     try {
+
+      if (version.equals("2013-06")) {
+        xml = verifyOMENamespace(xml);
+        LOGGER.debug("Running DOWNGRADE_201306 stylesheet.");
+        if (downgrade201306 == null) {
+          downgrade201306 =
+            XMLTools.getStylesheet(XSLT_201306_DOWNGRADE, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(xml, downgrade201306);
+      }
+
       if (version.equals("2003-FC")) {
         xml = verifyOMENamespace(xml);
         LOGGER.debug("Running UPDATE_2003FC stylesheet.");
