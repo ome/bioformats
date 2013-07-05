@@ -139,6 +139,10 @@ public final class MetadataTools {
         r.getSizeY(), r.getSizeZ(), r.getSizeC(), r.getSizeT(),
         r.getRGBChannelCount());
 
+      store.setPixelsInterleaved(r.isInterleaved(), i);
+      store.setPixelsSignificantBits(
+        new PositiveInteger(r.getBitsPerPixel()), i);
+
       try {
         OMEXMLService service =
           new ServiceFactory().getInstance(OMEXMLService.class);
@@ -154,15 +158,10 @@ public final class MetadataTools {
               LOGGER.warn("Failed to resolve references", e);
             }
           }
-
-          OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) store.getRoot();
-          BinData bin = root.getImage(i).getPixels().getBinData(0);
-          bin.setLength(new NonNegativeLong(0L));
-          store.setRoot(root);
         }
       }
       catch (DependencyException exc) {
-        LOGGER.warn("Failed to set BinData.Length", exc);
+        LOGGER.warn("Failed to resolve references", exc);
       }
 
       if (doPlane) {
@@ -256,7 +255,7 @@ public final class MetadataTools {
     int sizeY, int sizeZ, int sizeC, int sizeT, int samplesPerPixel)
   {
     store.setPixelsID(createLSID("Pixels", series), series);
-    store.setPixelsBinDataBigEndian(!littleEndian, series, 0);
+    store.setPixelsBigEndian(!littleEndian, series);
     try {
       store.setPixelsDimensionOrder(
         DimensionOrder.fromString(dimensionOrder), series);
