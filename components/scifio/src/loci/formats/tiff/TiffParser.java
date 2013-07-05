@@ -439,7 +439,13 @@ public class TiffParser {
       }
     }
 
-    in.seek(offset + baseOffset + bytesPerEntry * numEntries);
+    long newOffset =offset + baseOffset + bytesPerEntry * numEntries;
+    if (newOffset < in.length()) {
+      in.seek(newOffset);
+    }
+    else {
+      in.seek(in.length());
+    }
 
     return ifd;
   }
