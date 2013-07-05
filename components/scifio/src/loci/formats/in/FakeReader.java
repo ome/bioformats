@@ -355,7 +355,7 @@ public class FakeReader extends FormatReader {
     }
     String noExt = path.substring(0, path.lastIndexOf("."));
     String[] tokens;
-    if (!isSPWStructure(id)) {
+    if (!isSPWStructure(new Location(id).getAbsolutePath())) {
       tokens = noExt.split(TOKEN_SEPARATOR);
     } else {
       tokens = extractTokensFromFakeSeries(id);
@@ -668,16 +668,18 @@ public class FakeReader extends FormatReader {
 
   /** Traverses a fake file folder structure indicated by traversedDirectory */
   private List<String> listFakeSeries(String traversedDirectory) {
-    File parent = new File(traversedDirectory);
-    if (parent.isDirectory()) {
-      File[] children = parent.listFiles();
-      if (children != null) {
-        for (File child : children) {
-          listFakeSeries(child.getAbsolutePath());
+    if (fakeSeries.isEmpty()) {
+      File parent = new File(traversedDirectory);
+      if (parent.isDirectory()) {
+        File[] children = parent.listFiles();
+        if (children != null) {
+          for (File child : children) {
+            listFakeSeries(child.getAbsolutePath());
+          }
         }
+      } else {
+        fakeSeries.add(parent.getAbsolutePath());
       }
-    } else {
-      fakeSeries.add(parent.getAbsolutePath());
     }
     return fakeSeries;
   }
