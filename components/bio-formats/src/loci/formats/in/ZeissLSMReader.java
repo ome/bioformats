@@ -1287,7 +1287,7 @@ public class ZeissLSMReader extends FormatReader {
         getImmersion(recording.immersion), instrument, 0);
       if (recording.magnification != null) {
         store.setObjectiveNominalMagnification(
-          new Double(recording.magnification), instrument, 0);
+          recording.magnification, instrument, 0);
       }
       store.setObjectiveLensNA(recording.lensNA, instrument, 0);
       store.setObjectiveIris(recording.iris, instrument, 0);
@@ -2226,7 +2226,7 @@ public class ZeissLSMReader extends FormatReader {
     public String startTime;
     // Objective data
     public String correction, immersion;
-    public Integer magnification;
+    public Double magnification;
     public Double lensNA;
     public Boolean iris;
 
@@ -2264,7 +2264,7 @@ public class ZeissLSMReader extends FormatReader {
         int slash = p.indexOf("/");
         if (slash > 0) {
           try {
-            magnification = new Integer(p.substring(0, slash - 1));
+            magnification = new Double(p.substring(0, slash - 1));
           }
           catch (NumberFormatException e) { }
         }

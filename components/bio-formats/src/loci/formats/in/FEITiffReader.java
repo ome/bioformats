@@ -77,7 +77,7 @@ public class FEITiffReader extends BaseTiffReader {
   private Double stageX, stageY, stageZ;
   private Double sizeX, sizeY, timeIncrement;
   private ArrayList<String> detectors;
-  private int magnification;
+  private Double magnification;
 
   // -- Constructor --
 
@@ -109,7 +109,7 @@ public class FEITiffReader extends BaseTiffReader {
       stageX = stageY = stageZ = null;
       sizeX = sizeY = timeIncrement = null;
       detectors = null;
-      magnification = 0;
+      magnification = null;
     }
   }
 
@@ -265,10 +265,9 @@ public class FEITiffReader extends BaseTiffReader {
           store.setDetectorType(getDetectorType("Other"), 0, i);
         }
       }
-      if (magnification > 0) {
+      if (magnification != null) {
         store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
-        store.setObjectiveNominalMagnification(
-          new Double(magnification), 0, 0);
+        store.setObjectiveNominalMagnification(magnification, 0, 0);
         store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
         store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
       }
@@ -327,7 +326,7 @@ public class FEITiffReader extends BaseTiffReader {
           userName = value;
         }
         else if (key.equals("Magnification")) {
-          magnification = (int) Double.parseDouble(value);
+          magnification = new Double(value);
         }
       }
     }

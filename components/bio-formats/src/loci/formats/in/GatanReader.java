@@ -237,16 +237,13 @@ public class GatanReader extends FormatReader {
 
       store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
 
-      if ((int) mag > 0) {
-        String objective = MetadataTools.createLSID("Objective", 0, 0);
-        store.setObjectiveID(objective, 0, 0);
-        store.setObjectiveCorrection(getCorrection("Unknown"), 0, 0);
-        store.setObjectiveImmersion(getImmersion("Unknown"), 0, 0);
-        store.setObjectiveNominalMagnification(
-          new Double(mag), 0, 0);
+      String objective = MetadataTools.createLSID("Objective", 0, 0);
+      store.setObjectiveID(objective, 0, 0);
+      store.setObjectiveCorrection(getCorrection("Unknown"), 0, 0);
+      store.setObjectiveImmersion(getImmersion("Unknown"), 0, 0);
+      store.setObjectiveNominalMagnification(mag, 0, 0);
 
-        store.setObjectiveSettingsID(objective, 0);
-      }
+      store.setObjectiveSettingsID(objective, 0);
 
       String detector = MetadataTools.createLSID("Detector", 0, 0);
       store.setDetectorID(detector, 0, 0);

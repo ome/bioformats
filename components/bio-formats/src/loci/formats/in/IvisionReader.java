@@ -69,7 +69,7 @@ public class IvisionReader extends FormatReader {
   private String exposureTime;
   private String gain, offset;
   private String deltaT;
-  private Integer magnification;
+  private Double magnification;
   private Double lensNA, refractiveIndex;
   private String wavelength;
 
@@ -302,8 +302,7 @@ public class IvisionReader extends FormatReader {
 
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (magnification != null) {
-        store.setObjectiveNominalMagnification(
-          new Double(magnification), 0, 0);
+        store.setObjectiveNominalMagnification(magnification, 0, 0);
       }
       if (refractiveIndex != null) {
         store.setObjectiveSettingsRefractiveIndex(refractiveIndex, 0);
@@ -349,7 +348,7 @@ public class IvisionReader extends FormatReader {
       else if ("iplab:Interval_T".equals(key)) deltaT = value;
       else if ("iplab:Objective_Mag".equals(key)) {
         try {
-          magnification = new Integer((int) Double.parseDouble(value));
+          magnification = new Double(value);
         }
         catch (NumberFormatException e) { }
       }

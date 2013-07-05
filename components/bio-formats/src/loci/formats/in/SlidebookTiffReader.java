@@ -244,14 +244,11 @@ public class SlidebookTiffReader extends BaseTiffReader {
 
       String mag = ifd.getIFDTextValue(MAGNIFICATION_TAG);
       if (mag != null) {
-        Integer magnification = (int) Double.parseDouble(mag);
-
         store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
         store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
         store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
         store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
-        store.setObjectiveNominalMagnification(
-          new Double(magnification), 0, 0);
+        store.setObjectiveNominalMagnification(new Double(mag), 0, 0);
       }
 
       Double x = new Double(ifd.getIFDTextValue(X_POS_TAG));
