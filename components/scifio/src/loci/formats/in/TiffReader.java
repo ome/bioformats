@@ -225,6 +225,7 @@ public class TiffReader extends BaseTiffReader {
     super.initMetadataStore();
     MetadataStore store = makeFilterMetadata();
     if (description != null) {
+      description = description.replaceAll("\n", "; ");
       store.setImageDescription(description, 0);
     }
     populateMetadataStoreImageJ(store);
