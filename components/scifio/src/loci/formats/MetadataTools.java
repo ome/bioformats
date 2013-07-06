@@ -124,6 +124,7 @@ public final class MetadataTools {
   {
     if (store == null || r == null) return;
     int oldSeries = r.getSeries();
+
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
 
@@ -152,16 +153,16 @@ public final class MetadataTools {
             OMEXMLMetadata omeMeta;
             try {
               omeMeta = service.getOMEMetadata(service.asRetrieve(baseStore));
-              omeMeta.resolveReferences();
+              service.addMetadataOnly(omeMeta, i);
             }
             catch (ServiceException e) {
-              LOGGER.warn("Failed to resolve references", e);
+              LOGGER.warn("Failed to add MetadataOnly", e);
             }
           }
         }
       }
       catch (DependencyException exc) {
-        LOGGER.warn("Failed to resolve references", exc);
+        LOGGER.warn("Failed to add MetadataOnly", exc);
       }
 
       if (doPlane) {
