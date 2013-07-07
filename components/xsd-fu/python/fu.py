@@ -132,11 +132,11 @@ def updateTypeMaps(opts):
         'Color': 'Color',
         'AffineTransform': 'AffineTransform',
         'Text': 'Text',
+        namespace + 'dateTime': 'Timestamp'
     }
 
     if (CURRENT_LANG == LANG_JAVA):
         PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'Boolean'
-        PRIMITIVE_TYPE_MAP[namespace + 'dateTime'] = 'Timestamp'
         PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'String'
         PRIMITIVE_TYPE_MAP[namespace + 'integer'] = 'Integer'
         PRIMITIVE_TYPE_MAP[namespace + 'int'] = 'Integer'
@@ -147,7 +147,6 @@ def updateTypeMaps(opts):
         PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'String'
     elif (CURRENT_LANG == LANG_CXX):
         PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'bool'
-        PRIMITIVE_TYPE_MAP[namespace + 'dateTime'] = 'Timestamp'
         PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'std::string'
         PRIMITIVE_TYPE_MAP[namespace + 'integer'] = 'int32_t'
         PRIMITIVE_TYPE_MAP[namespace + 'int'] = 'int32_t'
