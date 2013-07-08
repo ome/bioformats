@@ -26,6 +26,7 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -368,10 +369,12 @@ public class CellSensReader extends FormatReader {
     Location pixelsDir = new Location(dir, "_" + name + "_");
     String[] stackDirs = pixelsDir.list(true);
     if (stackDirs != null) {
+      Arrays.sort(stackDirs);
       for (String f : stackDirs) {
         Location stackDir = new Location(pixelsDir, f);
         String[] pixelsFiles = stackDir.list(true);
         if (pixelsFiles != null) {
+          Arrays.sort(pixelsFiles);
           for (String pixelsFile : pixelsFiles) {
             if (checkSuffix(pixelsFile, "ets")) {
               files.add(new Location(stackDir, pixelsFile).getAbsolutePath());
