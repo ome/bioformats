@@ -99,8 +99,8 @@ public class ImageFaker {
   }
 
   public void printUsage() {
-    String[] s = { "To generate a fake SPW file / dir structure, run:",
-        "  fakespw path [-plates] [-runs] [-rows] [-columns] ",
+    String[] s = { "To generate a fake file / dir structure, run:",
+        "  mkfake path [-plates] [-runs] [-rows] [-columns] ",
         "    [-fields] [-debug]", "",
         "        path: the top-level directory for the SPW structure",
         "     -plates: number of plates (default: 1)",
