@@ -253,11 +253,7 @@ public class FakeReader extends FormatReader {
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     if (new Location(id).isDirectory() && checkSuffix(id, "fake")) {
-      if (listFakeSeries(id).size() > 1) {
-        return false;
-      } else {
-        return true;
-      }
+      return listFakeSeries(id).size() <= 1;
     }
     if (checkSuffix(id, "fake" + ".ini")) {
       return ! new Location(id).exists();
@@ -626,11 +622,7 @@ public class FakeReader extends FormatReader {
   }
 
   private boolean isSPWStructure(String path) {
-    if (listFakeSeries(path).get(0).equals(path)) {
-      return false;
-    } else {
-      return true;
-    }
+    return listFakeSeries(path).get(0).equals(path);
   }
 
   private int populateSPW(MetadataStore store, int plates, int rows, int cols,
