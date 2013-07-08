@@ -351,10 +351,11 @@ public class FakeReader extends FormatReader {
     }
     String noExt = path.substring(0, path.lastIndexOf("."));
     String[] tokens;
-    if (!isSPWStructure(new Location(id).getAbsolutePath())) {
-      tokens = noExt.split(TOKEN_SEPARATOR);
-    } else {
+    if (!path.equals(id)
+        && isSPWStructure(new Location(id).getAbsolutePath())) {
       tokens = extractTokensFromFakeSeries(id);
+    } else {
+      tokens = noExt.split(TOKEN_SEPARATOR);
     }
 
     String name = null;
@@ -622,7 +623,7 @@ public class FakeReader extends FormatReader {
   }
 
   private boolean isSPWStructure(String path) {
-    return listFakeSeries(path).get(0).equals(path);
+    return !listFakeSeries(path).get(0).equals(path);
   }
 
   private int populateSPW(MetadataStore store, int plates, int rows, int cols,
@@ -660,18 +661,16 @@ public class FakeReader extends FormatReader {
 
   /** Traverses a fake file folder structure indicated by traversedDirectory */
   private List<String> listFakeSeries(String traversedDirectory) {
-    if (fakeSeries.isEmpty()) {
-      File parent = new File(traversedDirectory);
-      if (parent.isDirectory()) {
-        File[] children = parent.listFiles();
-        if (children != null) {
-          for (File child : children) {
-            listFakeSeries(child.getAbsolutePath());
-          }
+    File parent = new File(traversedDirectory);
+    if (parent.isDirectory()) {
+      File[] children = parent.listFiles();
+      if (children != null) {
+        for (File child : children) {
+          listFakeSeries(child.getAbsolutePath());
         }
-      } else {
-        fakeSeries.add(parent.getAbsolutePath());
       }
+    } else {
+      fakeSeries.add(parent.getAbsolutePath());
     }
     return fakeSeries;
   }
