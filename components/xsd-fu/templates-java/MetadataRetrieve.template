@@ -22,20 +22,10 @@
 {% end %}\
 \
 {% python
-	def parent_object(name):
-		return model.getObjectByName(parents[name].keys()[0])
-
 	def is_abstract(name):
 		o = model.getObjectByName(name)
 		if o is not None and \
 		   (o.isAbstract or o.isAbstractProprietary):
-			return True
-		return False
-
-	def is_parent_abstract(name):
-		parent = parent_object(name)
-		if parent is not None and \
-		   (parent.isAbstract or parent.isAbstractProprietary):
 			return True
 		return False
 
@@ -153,10 +143,10 @@ public interface MetadataRetrieve extends BaseMetadata {
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.javaType != 'Object' %}\
+{% if o.langType != 'Object' %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	${o.javaType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])});
+	${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])});
 
 {% end %}\
 {% if parents[o.name] is not None and not o.isAbstract %}\

@@ -42,24 +42,24 @@
 {% when is_abstract(parent) and prop.isReference %}\
 		// ${parent} is abstract proprietary
 		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
-		return o.getLinked${prop.javaMethodName}().getID();
+		return o.getLinked${prop.methodName}().getID();
 {% end %}\
 {% when is_abstract(parent) %}\
 		// ${parent} is abstract proprietary and not a reference
 		${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
-		return o.get${prop.javaMethodName}();
+		return o.get${prop.methodName}();
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
 		// ${prop.name} is reference and occurs more than once
-		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}(${index_name_string(prop.name)}).getID();
+		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
 {% end %}\
 {% when prop.isReference %}\
 		// ${prop.name} is reference and occurs only once
-		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.javaMethodName}().getID();
+		return root.${".".join(accessor(obj.name, parent, prop))}.getLinked${prop.methodName}().getID();
 {% end %}\
 {% otherwise %}\
 		// ${prop.name} is not a reference
-		return root.${".".join(accessor(obj.name, parent, prop))}.get${prop.javaMethodName}();
+		return root.${".".join(accessor(obj.name, parent, prop))}.get${prop.methodName}();
 {% end %}\
 {% end %}\
 	}
@@ -68,13 +68,13 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
 {% end %}\
 {% end %}\
 	{
@@ -82,11 +82,11 @@
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
 		// ${prop.name} is abstract proprietary and is a reference
-		${prop.name} ${prop.javaInstanceVariableName}_reference = new ${prop.name}();
-		${prop.javaInstanceVariableName}_reference.setID(${prop.javaArgumentName});
+		${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
+		${prop.instanceVariableName}_reference.setID(${prop.argumentName});
 		model.addReference(
 				root.${".".join(accessor(obj.name, parent, prop)[:-1])},
-				${prop.javaInstanceVariableName}_reference);
+				${prop.instanceVariableName}_reference);
 		// ${parent} is abstract proprietary
 {% end %}\
 {% when is_abstract(parent) %}\
@@ -116,19 +116,19 @@
 		${v['name']} o${i + 1} = o${i}.${v['accessor']};
 {% if v['level'] == 2 %}\
 {% if "ID" == prop.name %}\
-		model.addModelObject(${prop.javaArgumentName}, o${i + 1});
+		model.addModelObject(${prop.argumentName}, o${i + 1});
 {% end %}\
-		((${obj.name})o${i + 1}).set${prop.javaMethodName}(${prop.javaArgumentName});
+		((${obj.name})o${i + 1}).set${prop.methodName}(${prop.argumentName});
 {% end %}\
 {% end %}\
 {% end %}\
 {% when prop.isReference %}\
 		// ${prop.name} is reference and occurs more than once
-		${prop.name} ${prop.javaInstanceVariableName}_reference = new ${prop.name}();
-		${prop.javaInstanceVariableName}_reference.setID(${prop.javaArgumentName});
+		${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
+		${prop.instanceVariableName}_reference.setID(${prop.argumentName});
 		model.addReference(
 				root.${".".join(accessor(obj.name, parent, prop))},
-				${prop.javaInstanceVariableName}_reference);
+				${prop.instanceVariableName}_reference);
 {% end %}\
 {% otherwise %}\
 		// ${prop.name} is not a reference
@@ -151,9 +151,9 @@
 		${v['name']} o${i + 1} = o${i}.${v['accessor']};
 {% if v['level'] == 1 %}\
 {% if "ID" == prop.name %}\
-		model.addModelObject(${prop.javaArgumentName}, o${i + 1});
+		model.addModelObject(${prop.argumentName}, o${i + 1});
 {% end %}\
-		o${i + 1}.set${prop.javaMethodName}(${prop.javaArgumentName});
+		o${i + 1}.set${prop.methodName}(${prop.argumentName});
 {% end %}\
 {% end %}\
 {% end %}\
@@ -166,20 +166,10 @@ ${customContent[obj.name][prop.name]}
 {% end %}\
 \
 {% python
-	def parent_object(name):
-		return model.getObjectByName(parents[name].keys()[0])
-
 	def is_abstract(name):
 		o = model.getObjectByName(name)
 		if o is not None and \
 		   (o.isAbstract or o.isAbstractProprietary):
-			return True
-		return False
-
-	def is_parent_abstract(name):
-		parent = parent_object(name)
-		if parent is not None and \
-		   (parent.isAbstract or parent.isAbstractProprietary):
 			return True
 		return False
 
@@ -397,10 +387,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.javaType != 'Object' %}\
+{% if o.langType != 'Object' %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	public void set${o.name}Value(${o.javaType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+	public void set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		OME o0 = root;
 		if (o0.sizeOfImageList() == imageIndex)
@@ -426,7 +416,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o4.setValue(value);
 	}
 
-	public ${o.javaType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
+	public ${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		return root.getImage(imageIndex).getPixels().getTiffData(tiffDataIndex).getUUID().getValue();
 	}

@@ -55,22 +55,22 @@
 {% when is_abstract(parent) %}\
         // ${parent} is abstract proprietary and not a reference
         ${obj.name} o = (${obj.name}) get${parent}(${", ".join(accessor(obj.name, parent, prop))});
-        return o == null? null : o.get${prop.javaMethodName}();
+        return o == null? null : o.get${prop.methodName}();
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
         // ${prop.name} is reference and occurs more than once
         ${obj.name} o = get${obj.name}(${", ".join(accessor(obj.name, parent, prop))});
-        return o == null? null : null; /* TODO: reference handler o.get${prop.javaMethodName}(); */
+        return o == null? null : null; /* TODO: reference handler o.get${prop.methodName}(); */
 {% end %}\
 {% when prop.isReference %}\
         // ${prop.name} is reference and occurs only once
         ${obj.name} o = get${obj.name}(${", ".join(accessor(obj.name, parent, prop))});
-        return o == null? null : null; /* TODO: reference handler o.get${prop.javaMethodName}(); */
+        return o == null? null : null; /* TODO: reference handler o.get${prop.methodName}(); */
 {% end %}\
 {% otherwise %}\
         // ${prop.name} is not a reference
         ${obj.name} o = get${obj.name}(${", ".join(accessor(obj.name, parent, prop))});
-        return o == null? null : o.get${prop.javaMethodName}();
+        return o == null? null : o.get${prop.methodName}();
 {% end %}\
 {% end %}\
     }
@@ -87,13 +87,6 @@
         o = model.getObjectByName(name)
         if o is not None and \
            (o.isAbstract or o.isAbstractProprietary):
-            return True
-        return False
-
-    def is_parent_abstract(name):
-        parent = parent_object(name)
-        if parent is not None and \
-           (parent.isAbstract or parent.isAbstractProprietary):
             return True
         return False
 
@@ -394,11 +387,11 @@ public class OmeroMetadata implements MetadataRetrieve {
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.javaType != 'Object' %}\
+{% if o.langType != 'Object' %}\
     // Element's text data
     // ${repr(indexes[o.name])}
 
-    public ${o.javaType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
+    public ${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
     {
         // No-op
     }

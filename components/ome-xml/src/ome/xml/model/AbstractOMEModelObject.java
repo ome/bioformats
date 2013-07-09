@@ -58,25 +58,6 @@ import org.w3c.dom.NodeList;
  */
 public abstract class AbstractOMEModelObject implements OMEModelObject {
 
-  public AbstractOMEModelObject() {
-    super();
-  }
-
-  public AbstractOMEModelObject(Element element) throws EnumerationException {
-    update(element);
-  }
-
-  public AbstractOMEModelObject(AbstractOMEModelObject orig) {
-    super();
-  }
-
-  /* (non-Javadoc)
-   * @see ome.xml.r201004.OMEModelObject#update(org.w3c.dom.Element)
-   */
-  public void update(Element element) throws EnumerationException {
-    // Nothing to update.
-  }
-
   /* (non-Javadoc)
    * @see ome.xml.r201004.OMEModelObject#update(org.w3c.dom.Element, ome.xml.r201004.OMEModel)
    */
