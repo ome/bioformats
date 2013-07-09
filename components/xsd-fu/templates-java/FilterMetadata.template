@@ -14,50 +14,40 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
-{% if prop.javaType == "String" %}\
-		${prop.javaArgumentName} = filter? DataTools.sanitize(${prop.javaArgumentName}) : ${prop.javaArgumentName};
+{% if prop.langType == "String" %}\
+		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-		store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.javaArgumentName}, ${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
+		store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName}, ${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
 	}
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
 	{
-{% if prop.javaType == "String" %}\
-		${prop.javaArgumentName} = filter? DataTools.sanitize(${prop.javaArgumentName}) : ${prop.javaArgumentName};
+{% if prop.langType == "String" %}\
+		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-		store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.javaArgumentName}, ${indexes_name_string(indexes)});
+		store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName}, ${indexes_name_string(indexes)});
 	}
 {% end %}\
 {% otherwise %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
 	{
-{% if prop.javaType == "String" %}\
-		${prop.javaArgumentName} = filter? DataTools.sanitize(${prop.javaArgumentName}) : ${prop.javaArgumentName};
+{% if prop.langType == "String" %}\
+		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
 {% end %}\
-		store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.javaArgumentName});
+		store.set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.argumentName});
 	}
 {% end %}\
 {% end %}\
 {% end %}\
 \
 {% python
-	def parent_object(name):
-		return model.getObjectByName(parents[name].keys()[0])
-
 	def is_abstract(name):
 		o = model.getObjectByName(name)
 		if o is not None and \
 		   (o.isAbstract or o.isAbstractProprietary):
-			return True
-		return False
-
-	def is_parent_abstract(name):
-		parent = parent_object(name)
-		if parent is not None and \
-		   (parent.isAbstract or parent.isAbstractProprietary):
 			return True
 		return False
 
@@ -218,12 +208,12 @@ public class FilterMetadata implements MetadataStore
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.javaType != 'Object' %}\
+{% if o.langType != 'Object' %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	public void set${o.name}Value(${o.javaType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+	public void set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])})
 	{
-{% if o.javaType == "String" %}\
+{% if o.langType == "String" %}\
 		value = filter? DataTools.sanitize(value) : value;
 {% end %}\
 		store.set${o.name}Value(value, ${indexes_name_string(indexes[o.name].items()[0][1])});

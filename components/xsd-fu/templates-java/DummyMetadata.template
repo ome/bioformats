@@ -38,13 +38,13 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName}, ${indexes_string(indexes)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.javaArgumentName})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
 {% end %}\
 {% end %}\
 	{
@@ -52,20 +52,10 @@
 {% end %}\
 \
 {% python
-	def parent_object(name):
-		return model.getObjectByName(parents[name].keys()[0])
-
 	def is_abstract(name):
 		o = model.getObjectByName(name)
 		if o is not None and \
 		   (o.isAbstract or o.isAbstractProprietary):
-			return True
-		return False
-
-	def is_parent_abstract(name):
-		parent = parent_object(name)
-		if parent is not None and \
-		   (parent.isAbstract or parent.isAbstractProprietary):
 			return True
 		return False
 
@@ -242,14 +232,14 @@ public class DummyMetadata implements IMetadata
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.javaType != 'Object' %}\
+{% if o.langType != 'Object' %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	public void set${o.name}Value(${o.javaType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+	public void set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])})
 	{
 	}
 
-	public ${o.javaType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
+	public ${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		return null;
 	}

@@ -4,8 +4,8 @@
  superclass="${fully_qualified_class_name(parent_object(o.name).name)}"\
 {% end %}\
 {% otherwise %}\
-{% if obj.javaBase != fu.DEFAULT_BASE_CLASS %}\
- superclass="${fully_qualified_class_name(obj.javaBase)}"\
+{% if obj.langBaseType != fu.DEFAULT_BASE_CLASS %}\
+ superclass="${fully_qualified_class_name(obj.langBaseType)}"\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -29,19 +29,19 @@ ${fully_qualified_link_class_name(o, prop)}\
     def fully_qualified_class_name(obj_or_prop):
         if obj_or_prop.__class__ in (str, unicode):
             obj_or_prop = model.getObjectByName(obj_or_prop)
-        if obj_or_prop.javaType == 'Object':
+        if obj_or_prop.langType == 'Object':
             return '%s.%s' % (obj_or_prop.omeroPackage,
-                              obj_or_prop.javaMethodName)
+                              obj_or_prop.methodName)
         elif obj_or_prop.isPrimitive:
-            return obj_or_prop.javaType
+            return obj_or_prop.langType
         else:
-            return '%s.%s' % (obj_or_prop.omeroPackage, obj_or_prop.javaType)
+            return '%s.%s' % (obj_or_prop.omeroPackage, obj_or_prop.langType)
 
     def link_class_name(o, prop):
         if prop.isReference:
-            v = (o.javaMethodName, prop.javaMethodName)
+            v = (o.methodName, prop.methodName)
         else:
-            v = (prop.javaMethodName, o.javaMethodName)
+            v = (prop.methodName, o.methodName)
         return '%s%sLink' % v
 
     def fully_qualified_link_class_name(o, prop):
@@ -63,13 +63,6 @@ ${fully_qualified_link_class_name(o, prop)}\
         o = model.getObjectByName(name)
         if o is not None and \
            (o.isAbstract or o.isAbstractProprietary):
-            return True
-        return False
-
-    def is_parent_abstract(name):
-        parent = parent_object(name)
-        if parent is not None and \
-           (parent.isAbstract or parent.isAbstractProprietary):
             return True
         return False
 
@@ -204,43 +197,43 @@ ${customContent[o.name]['properties']}\
             <!--
             // Many-to-many reference ${prop.name}
             -->
-            <child name="${prop.javaInstanceVariableName}" type="${fq_link_class_name(o, prop)}" target="${fq_class_name(prop)}"{% if prop.isOrdered or prop.isParentOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+            <child name="${prop.instanceVariableName}" type="${fq_link_class_name(o, prop)}" target="${fq_class_name(prop)}"{% if prop.isOrdered or prop.isParentOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
             <!--
             // Reference ${prop.name}
             -->
-            <onemany name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.javaArgumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+            <onemany name="${prop.instanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.argumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
 {% when prop.isBackReference and prop.isManyToMany %}\
             <!--
             // Many-to-many back reference ${prop.name}
             -->
-            <parent name="${prop.javaInstanceVariableName}" type="${fq_link_class_name(o, prop)}" target="${fq_class_name(prop)}"{% if prop.isOrdered or prop.isChildOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+            <parent name="${prop.instanceVariableName}" type="${fq_link_class_name(o, prop)}" target="${fq_class_name(prop)}"{% if prop.isOrdered or prop.isChildOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
 {% when prop.isBackReference and prop.maxOccurs > 1 %}\
             <!--
             // Back reference ${prop.name} ${prop.minOccurs} ${prop.maxOccurs}
             -->
-            <{% if prop.isInjected and prop.minOccurs == 0 %}zeromany{% end %}{% if prop.isInjected and prop.minOccurs == 1 %}onemany{% end %}{% if not prop.isInjected and prop.minOccurs == 0 %}manyzero{% end %}{% if not prop.isInjected and prop.minOccurs == 1 %}manyone{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.javaArgumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+            <{% if prop.isInjected and prop.minOccurs == 0 %}zeromany{% end %}{% if prop.isInjected and prop.minOccurs == 1 %}onemany{% end %}{% if not prop.isInjected and prop.minOccurs == 0 %}manyzero{% end %}{% if not prop.isInjected and prop.minOccurs == 1 %}manyone{% end %} name="${prop.instanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.argumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
 {% when prop.isBackReference %}\
             <!--
             // Back reference ${prop.name} ${prop.minOccurs} ${prop.maxOccurs}
             -->
-            <{% if prop.minOccurs == 0 %}manyzero{% end %}{% if prop.minOccurs == 1 %}manyone{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+            <{% if prop.minOccurs == 0 %}manyzero{% end %}{% if prop.minOccurs == 1 %}manyone{% end %} name="${prop.instanceVariableName}" type="${fq_class_name(prop)}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
 {% when prop.maxOccurs == 1 and (not o.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or prop.name in fu.ABSTRACT_PROPRIETARY_OVERRIDE) %}\
             <!--
             // Property ${prop.name}
             -->
-            <{% if prop.minOccurs == 0 and not prop.isUnique %}optional{% end %}{% if prop.minOccurs == 1 or prop.isUnique %}required{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}"{% if prop.isUnique %} unique="true"{% end %}/>
+            <{% if prop.minOccurs == 0 and not prop.isUnique %}optional{% end %}{% if prop.minOccurs == 1 or prop.isUnique %}required{% end %} name="${prop.instanceVariableName}" type="${fq_class_name(prop)}"{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
 {% when prop.maxOccurs > 1 and not o.isAbstractProprietary %}\
             <!--
             // Property which occurs more than once ${prop.name}
             -->
-            <{% if prop.minOccurs == 0 %}zeromany{% end %}{% if prop.minOccurs == 1 %}onemany{% end %} name="${prop.javaInstanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.javaArgumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
+            <{% if prop.minOccurs == 0 %}zeromany{% end %}{% if prop.minOccurs == 1 %}onemany{% end %} name="${prop.instanceVariableName}" type="${fq_class_name(prop)}" inverse="${o.argumentName}"{% if prop.isOrdered %} ordered="true"{% end %}{% if prop.isUnique %} unique="true"{% end %}/>
 {% end %}\
 {% otherwise %}\
             <!--
@@ -267,8 +260,8 @@ ${customContent[o.name]['properties']}\
 {% for value in o.possibleValues %}\
         <entry name="${value}"/>
 {% end %}\
-{% if o.javaType in customContent and 'properties' in customContent[o.javaType] %}\
-${customContent[o.javaType]['properties']}\
+{% if o.langType in customContent and 'properties' in customContent[o.langType] %}\
+${customContent[o.langType]['properties']}\
 {% end %}\
     </enum>
 

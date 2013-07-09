@@ -1,5 +1,5 @@
 """
-Object model and helper classes used in the generation of Java classes from
+Object model and helper classes used in the generation of classes from
 an OME XML (http://www.ome-xml.org) XSD document.
 """
 
@@ -57,19 +57,19 @@ METADATA_OBJECT_IGNORE = ('BinData', 'External')
 # to these interfaces and implementations.
 METADATA_COUNT_IGNORE = {'Annotation': ['AnnotationRef']}
 
-# A global mapping from XSD Schema types and Java types that is used to
+# A global mapping from XSD Schema types and language types that is used to
 # inform and override type mappings for OME Model properties which are
 # comprised of XML Schema attributes, elements and OME XML reference virtual
-# types. It is a superset of JAVA_PRIMITIVE_BASE_TYPE_MAP.
-JAVA_TYPE_MAP = None
+# types. It is a superset of PRIMITIVE_TYPE_MAP.
+TYPE_MAP = None
 
-# A global type mapping from XSD Schema types to Java primitive base classes.
-JAVA_PRIMITIVE_TYPE_MAP = None
+# A global type mapping from XSD Schema types to language primitive base classes.
+PRIMITIVE_TYPE_MAP = None
 
-# A global type mapping from XSD Schema types to Java base classes that is
-# used to override places in the model where we do not wish subclassing to
-# take place.
-JAVA_BASE_TYPE_MAP = {}
+# A global type mapping from XSD Schema types to base classes that is used
+# to override places in the model where we do not wish subclassing to take
+# place.
+BASE_TYPE_MAP = {}
 
 # Types which have not been recognized as explicit defines (XML Schema
 # definitions that warrant a the creation of a first class model object) that
@@ -107,42 +107,66 @@ BACK_REFERENCE_CLASS_NAME_OVERRIDE = {
 # for.
 ABSTRACT_PROPRIETARY_OVERRIDE = ('Transform',)
 
-def updateTypeMaps(namespace):
+def updateTypeMaps(opts):
     """
     Updates the type maps with a new namespace. **Must** be executed at least
     once, **before** node class file generation.
     """
-    global JAVA_PRIMITIVE_TYPE_MAP
-    JAVA_PRIMITIVE_TYPE_MAP = {
-        namespace + 'boolean': 'Boolean',
-        namespace + 'dateTime': 'Timestamp',
-        namespace + 'string': 'String',
-        namespace + 'integer': 'Integer',
-        namespace + 'int': 'Integer',
-        namespace + 'long': 'Long',
+
+    namespace = opts.namespace
+
+    global CURRENT_LANG
+    global PRIMITIVE_TYPE_MAP
+    global TYPE_MAP
+    global BASE_TYPE_MAP
+
+    CURRENT_LANG = opts.lang
+
+    PRIMITIVE_TYPE_MAP = {
         'PositiveInt': 'PositiveInteger',
         'NonNegativeInt': 'NonNegativeInteger',
         'PositiveLong': 'PositiveLong',
         'NonNegativeLong': 'NonNegativeLong',
         'PositiveFloat': 'PositiveFloat',
-        namespace + 'float': 'Double',
-        namespace + 'double': 'Double',
-        namespace + 'anyURI': 'String',
-        namespace + 'hexBinary': 'String',
         'PercentFraction': 'PercentFraction',
         'Color': 'Color',
         'AffineTransform': 'AffineTransform',
         'Text': 'Text',
+        namespace + 'dateTime': 'Timestamp'
     }
-    global JAVA_TYPE_MAP
-    JAVA_TYPE_MAP = copy.deepcopy(JAVA_PRIMITIVE_TYPE_MAP)
-    JAVA_TYPE_MAP['MIMEtype'] = 'String'
-    JAVA_TYPE_MAP['Leader'] = 'Experimenter'
-    JAVA_TYPE_MAP['Contact'] = 'Experimenter'
-    JAVA_TYPE_MAP['Pump'] = 'LightSource'
 
-    global JAVA_BASE_TYPE_MAP
-    JAVA_BASE_TYPE_MAP = {
+    if (CURRENT_LANG == LANG_JAVA):
+        PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'Boolean'
+        PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'String'
+        PRIMITIVE_TYPE_MAP[namespace + 'integer'] = 'Integer'
+        PRIMITIVE_TYPE_MAP[namespace + 'int'] = 'Integer'
+        PRIMITIVE_TYPE_MAP[namespace + 'long'] = 'Long'
+        PRIMITIVE_TYPE_MAP[namespace + 'float'] = 'Double'
+        PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'Double'
+        PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'String'
+        PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'String'
+    elif (CURRENT_LANG == LANG_CXX):
+        PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'bool'
+        PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'std::string'
+        PRIMITIVE_TYPE_MAP[namespace + 'integer'] = 'int32_t'
+        PRIMITIVE_TYPE_MAP[namespace + 'int'] = 'int32_t'
+        PRIMITIVE_TYPE_MAP[namespace + 'long'] = 'int64_t'
+        PRIMITIVE_TYPE_MAP[namespace + 'float'] = 'double'
+        PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'double'
+        PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'std::string'
+        PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'std::string'
+
+    TYPE_MAP = copy.deepcopy(PRIMITIVE_TYPE_MAP)
+    TYPE_MAP['Leader'] = 'Experimenter'
+    TYPE_MAP['Contact'] = 'Experimenter'
+    TYPE_MAP['Pump'] = 'LightSource'
+
+    if (CURRENT_LANG == LANG_JAVA):
+        TYPE_MAP['MIMEtype'] = 'String'
+    elif (CURRENT_LANG == LANG_CXX):
+        TYPE_MAP['MIMEtype'] = 'std::string'
+
+    BASE_TYPE_MAP = {
         'UniversallyUniqueIdentifier': DEFAULT_BASE_CLASS
     }
 
@@ -152,11 +176,11 @@ DO_NOT_PROCESS = [] #["ID"]
 # Default root XML Schema namespace
 DEFAULT_NAMESPACE = "xsd:"
 
-# The default Java base class for OME XML model objects.
+# The default base class for OME XML model objects.
 DEFAULT_BASE_CLASS = "AbstractOMEModelObject"
 
 # The default Java package for OME XML model objects.
-DEFAULT_PACKAGE = "ome.xml.r2008"
+DEFAULT_PACKAGE = "ome.xml.model"
 
 # The package regular expression for OME namespaces.
 PACKAGE_NAMESPACE_RE = re.compile(
@@ -181,12 +205,13 @@ OMERO_NAMED_OPTIONAL = (
 
 LANG_JAVA = "Java"
 LANG_CXX = "C++"
+CURRENT_LANG = LANG_JAVA
 
 TYPE_SOURCE = "source"
 TYPE_HEADER = "header"
 
 JAVA_TEMPLATE_DIR = "templates-java"
-CXX_TEMPLATE_DIR = "templates-c++"
+CXX_TEMPLATE_DIR = "templates-cpp"
 
 JAVA_SOURCE_SUFFIX = ".java"
 CXX_SOURCE_SUFFIX = ".cpp"
@@ -194,6 +219,9 @@ CXX_HEADER_SUFFIX = ".h"
 
 # The default template for enum class processing.
 ENUM_TEMPLATE = 'Enum.template'
+
+# The default template for enum inclusion.
+ENUM_INCLUDEALL_TEMPLATE = 'Enums.template'
 
 # The default template for enum handler class processing.
 ENUM_HANDLER_TEMPLATE = 'EnumHandler.template'
@@ -330,7 +358,7 @@ class OMEModelEntity(object):
     common type resolution and text processing functionality.
     """
 
-    def resolveJavaTypeFromSimpleType(self, simpleTypeName):
+    def resolveLangTypeFromSimpleType(self, simpleTypeName):
         getSimpleType = self.model.getTopLevelSimpleType
         while True:
             simpleType = getSimpleType(simpleTypeName)
@@ -353,11 +381,11 @@ class OMEModelEntity(object):
             if simpleType.unionOf:
                 union = getSimpleType(simpleType.unionOf[0])
                 try:
-                    return JAVA_TYPE_MAP[union.getBase()]
+                    return TYPE_MAP[union.getBase()]
                 except KeyError:
                     simpleTypeName = union.getBase()
             try:
-                return JAVA_TYPE_MAP[simpleType.getBase()]
+                return TYPE_MAP[simpleType.getBase()]
             except KeyError:
                 simpleTypeName = simpleType.getBase()
 
@@ -392,21 +420,21 @@ class OMEModelEntity(object):
     omeroPackage = property(_get_omeroPackage,
         doc="""The OMERO package of the entity.""")
 
-    def _get_javaArgumentName(self):
+    def _get_argumentName(self):
         argumentName = REF_REGEX.sub('', self.name)
         return self.lowerCasePrefix(argumentName)
-    javaArgumentName = property(_get_javaArgumentName,
-        doc="""The property's Java argument name (camelCase).""")
+    argumentName = property(_get_argumentName,
+        doc="""The property's argument name (camelCase).""")
 
-    def _get_javaMethodName(self):
+    def _get_methodName(self):
         try:
             name = BACK_REFERENCE_NAME_OVERRIDE[self.key]
             return name[0].upper() + name[1:]
         except (KeyError, AttributeError):
             pass
         return BACKREF_REGEX.sub('', REF_REGEX.sub('', self.name))
-    javaMethodName = property(_get_javaMethodName,
-        doc="""The property's Java method name.""")
+    methodName = property(_get_methodName,
+        doc="""The property's method name.""")
 
     def _get_isGlobal(self):
         isGlobal = self._isGlobal
@@ -540,30 +568,30 @@ class OMEModelProperty(OMEModelEntity):
     namespace = property(_get_namespace,
         doc="""The root namespace of the property.""")
 
-    def _get_javaType(self):
+    def _get_langType(self):
         try:
             # Hand back the type of enumerations
             if self.isEnumeration:
-                javaType = self.name
+                langType = self.name
                 if len(self.delegate.values) == 0:
                     # As we have no directly defined possible values we have
                     # no reason to qualify our type explicitly.
                     return self.type
-                if javaType == "Type":
+                if langType == "Type":
                     # One of the OME XML unspecific "Type" properties which
                     # can only be qualified by the parent.
                     if self.type.endswith("string"):
-                        # We've been defined entirely inline, prefix our Java
+                        # We've been defined entirely inline, prefix our
                         # type name with the parent type's name.
-                        return "%s%s" % (self.parent.name, javaType)
+                        return "%s%s" % (self.parent.name, langType)
                     # There's another type which describes us, use its name
-                    # as our Java type name.
+                    # as our type name.
                     return self.type
-                return javaType
-            # Handle XML Schema types that directly map to Java types and
+                return langType
+            # Handle XML Schema types that directly map to language types and
             # handle cases where the type is prefixed by a namespace definition.
             # (ex. OME:NonNegativeInt).
-            return JAVA_TYPE_MAP[self.type.replace('OME:', '')]
+            return TYPE_MAP[self.type.replace('OME:', '')]
         except KeyError:
             # Hand back the type of references or complex types with the
             # useless OME XML 'Ref' suffix removed.
@@ -577,17 +605,17 @@ class OMEModelProperty(OMEModelEntity):
                 # We have a property whose type was defined by a top level
                 # simpleType.
                 simpleTypeName = self.type
-                return self.resolveJavaTypeFromSimpleType(simpleTypeName)
+                return self.resolveLangTypeFromSimpleType(simpleTypeName)
             logging.debug("%s dump: %s" % (self, self.__dict__))
             logging.debug("%s delegate dump: %s" % (self, self.delegate.__dict__))
             raise ModelProcessingError, \
-                "Unable to find %s Java type for %s" % (self.name, self.type)
-    javaType = property(_get_javaType, doc="""The property's Java type.""")
+                "Unable to find %s type for %s" % (self.name, self.type)
+    langType = property(_get_langType, doc="""The property's type.""")
 
     def _get_metadataStoreType(self):
         if not self.isPrimitive and not self.isEnumeration:
             return "String"
-        return self.javaType
+        return self.langType
     metadataStoreType = property(_get_metadataStoreType,
         doc="""The property's MetadataStore type.""")
 
@@ -601,11 +629,11 @@ class OMEModelProperty(OMEModelEntity):
         doc="""Whether or not the property is an Annotation.""")
 
     def _get_isPrimitive(self):
-        if self.javaType in JAVA_PRIMITIVE_TYPE_MAP.values():
+        if self.langType in PRIMITIVE_TYPE_MAP.values():
             return True
         return False
     isPrimitive = property(_get_isPrimitive,
-        doc="""Whether or not the property's Java type is a primitive.""")
+        doc="""Whether or not the property's language type is a primitive.""")
 
     def _get_isEnumeration(self):
         v = self.delegate.getValues()
@@ -628,27 +656,95 @@ class OMEModelProperty(OMEModelEntity):
     possibleValues = property(_get_possibleValues,
         doc="""If the property is an enumeration, it's possible values.""")
 
-    def _get_javaInstanceVariableName(self):
-        name = self.javaArgumentName
+    def _get_instanceVariableName(self):
+        name = self.argumentName
         if self.isManyToMany:
             if self.isBackReference:
                 name = self.model.getObjectByName(self.type)
-                name = name.javaInstanceVariableName
+                name = name.instanceVariableName
                 name = BACK_REFERENCE_NAME_OVERRIDE.get(self.key, name)
             return name + 'Links'
         try:
             if self.maxOccurs > 1:
                 plural = self.plural
                 if plural is None:
-                    plural = self.model.getObjectByName(self.javaMethodName).plural
+                    plural = self.model.getObjectByName(self.methodName).plural
                 return self.lowerCasePrefix(plural)
         except AttributeError:
             pass
         if self.isBackReference:
             name = BACKREF_REGEX.sub('', name)
         return name
-    javaInstanceVariableName = property(_get_javaInstanceVariableName,
-        doc="""The property's Java instance variable name.""")
+    instanceVariableName = property(_get_instanceVariableName,
+        doc="""The property's instance variable name.""")
+
+    def _get_instanceVariableType(self):
+        itype = None
+
+        if (CURRENT_LANG == LANG_JAVA):
+            if self.isReference and self.maxOccurs > 1:
+                itype = "List<%s>" % self.langType
+            elif self.isBackReference and self.maxOccurs > 1:
+                itype = "List<%s>" % self.langType
+            elif self.isBackReference:
+                itype = self.langType
+            elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
+                itype = self.langType
+            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+                itype = "List<%s>" % self.langType
+        elif (CURRENT_LANG == LANG_CXX):
+            if self.isReference and self.maxOccurs > 1:
+                itype = "std::vector<%s::weak_ptr>" % self.langType
+            elif self.isBackReference and self.maxOccurs > 1:
+                itype = "std::vector<%s::weak_ptr>" % self.langType
+            elif self.isBackReference:
+                itype = self.langType
+            elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
+                itype = self.langType
+            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+                itype = "std::vector<%s::shared_ptr>" % self.langType
+
+        return itype
+    instanceVariableType = property(_get_instanceVariableType,
+        doc="""The property's Java instance variable type.""")
+
+    def _get_instanceVariableDefault(self):
+        idefault = None
+
+        if (CURRENT_LANG == LANG_JAVA):
+            if self.isReference and self.maxOccurs > 1:
+                idefault = "ArrayList<%s>" % self.langType
+            elif self.isBackReference and self.maxOccurs > 1:
+                idefault = "ArrayList<%s>" % self.langType
+            elif self.isBackReference:
+                idefault = None
+            elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
+                idefault = None
+            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+                idefault = "ArrayList<%s>" % self.langType
+
+        return idefault
+    instanceVariableDefault = property(_get_instanceVariableDefault,
+        doc="""The property's Java instance variable type.""")
+
+    def _get_instanceVariableComment(self):
+        icomment = "*** WARNING *** Unhandled or skipped property %s" % self.name
+
+        if self.isReference and self.maxOccurs > 1:
+            icomment = "%s reference (occurs more than once)" % self.name
+        elif self.isBackReference and self.maxOccurs > 1:
+            icomment = "%s back reference (occurs more than once)" % self.name
+        elif self.isBackReference:
+            icomment = "%s back reference" % self.name
+        elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
+            icomment = "%s property" % self.name
+        elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+            icomment = "%s property (occurs more than once)" % self.name
+
+        return icomment
+
+    instanceVariableComment = property(_get_instanceVariableComment,
+        doc="""The property's Java instance variable comment.""")
 
     def isComplex(self):
         """
@@ -663,6 +759,13 @@ class OMEModelProperty(OMEModelEntity):
         if self.name == "Description":
             return False
         return self.delegate.isComplex()
+
+    def _get_isAbstractProprietary(self):
+        o = self.model.getObjectByName(self.name)
+        if o is None:
+            return False
+        return o.isAbstractProprietary
+    isAbstractProprietary = property(_get_isAbstractProprietary, doc="""Is the property abstract proprietary.""")
 
     def fromAttribute(klass, attribute, parent, model):
         """
@@ -804,17 +907,17 @@ class OMEModelObject(OMEModelEntity):
     isDescribed = property(_get_isDescribed,
         doc="""Whether or not the model object is described.""")
 
-    def _get_javaBase(self):
+    def _get_langBaseType(self):
         base = self.element.getBase()
-        if base in JAVA_BASE_TYPE_MAP:
-            return JAVA_BASE_TYPE_MAP[base]
+        if base in BASE_TYPE_MAP:
+            return BASE_TYPE_MAP[base]
         if base is None and self.element.attrs['type'] != self.name:
             base = self.element.attrs['type']
         if base is None:
             return DEFAULT_BASE_CLASS
         return base
-    javaBase = property(_get_javaBase,
-        doc="""The model object's Java base class.""")
+    langBaseType = property(_get_langBaseType,
+        doc="""The model object's base class.""")
 
     def _get_namespace(self):
         return self.element.namespace
@@ -835,36 +938,66 @@ class OMEModelObject(OMEModelEntity):
 
     def _get_refNodeName(self):
         if self.base == "Reference":
-            return self.properties["ID"].javaType
+            return self.properties["ID"].langType
         return None
     refNodeName = property(_get_refNodeName,
         doc="""The name of this node's reference node; None otherwise.""")
 
-    def _get_javaType(self):
+    def _get_langType(self):
         try:
-            return JAVA_TYPE_MAP[self.base]
+            return TYPE_MAP[self.base]
         except KeyError:
             if self.base is not None:
                 simpleType = self.model.getTopLevelSimpleType(self.base)
                 parent = self.model.getObjectByName(self.base)
                 if simpleType is not None:
-                    return self.resolveJavaTypeFromSimpleType(self.base)
+                    return self.resolveLangTypeFromSimpleType(self.base)
                 if parent is not None:
-                    return parent.javaType
+                    return parent.langType
             return "Object"
-    javaType = property(_get_javaType, doc="""The property's Java type.""")
+    langType = property(_get_langType, doc="""The property's type.""")
 
-    def _get_javaInstanceVariableName(self):
+    def _get_instanceVariableName(self):
         if self.isManyToMany:
-            return self.javaArgumentName + 'Links'
+            return self.argumentName + 'Links'
         try:
             if self.maxOccurs > 1:
                 return self.lowerCasePrefix(self.plural)
         except AttributeError:
             pass
-        return self.javaArgumentName
-    javaInstanceVariableName = property(_get_javaInstanceVariableName,
-        doc="""The property's Java instance variable name.""")
+        return self.argumentName
+    instanceVariableName = property(_get_instanceVariableName,
+        doc="""The property's instance variable name.""")
+
+    def _get_instanceVariables(self):
+        props = list();
+
+        if self.langType != 'Object':
+            props.append([self.langType, "%s_value" % self.name, None, "Element's text data"])
+        for prop in self.properties.values():
+            props.append([prop.instanceVariableType, prop.instanceVariableName, prop.instanceVariableDefault, prop.instanceVariableComment])
+        return props
+    instanceVariables = property(_get_instanceVariables,
+        doc="""The instance variables of this class.""")
+
+    def _get_parents(self):
+        return resolve_parents(self.model, self.name)
+    parents = property(_get_parents,
+        doc="""The parents for this object.""")
+
+    def _get_parentName(self):
+        parents = resolve_parents(self.model, self.name)
+
+        name = self.langBaseType
+
+        if parents is not None:
+            parent = self.model.getObjectByName(parents.keys()[0])
+            if parent is not None and parent.isAbstractProprietary:
+                name = parent.name
+
+        return name
+    parentName = property(_get_parentName,
+        doc="""The parent class name for this object.""")
 
     def isComplex(self):
         """
@@ -1022,7 +1155,7 @@ class OMEModel(object):
                     pass
                 if shortName not in references:
                     references[shortName] = list()
-                v = {'data_type': o.name, 'property_name': prop.javaMethodName,
+                v = {'data_type': o.name, 'property_name': prop.methodName,
                      'plural': prop.plural,
                      'maxOccurs': self.calculateMaxOccurs(o, prop),
                      'minOccurs': self.calculateMinOccurs(o, prop),
@@ -1117,9 +1250,9 @@ def parseXmlSchema(opts):
 
     logging.debug("Namespace: %s" % namespace)
     set_type_constants(namespace)
-    updateTypeMaps(namespace)
+    updateTypeMaps(opts)
     generateDS.generateDS.XsdNameSpace = namespace
-    logging.debug("Java type map: %s" % JAVA_TYPE_MAP)
+    logging.debug("Type map: %s" % TYPE_MAP)
 
     parser = sax.make_parser()
     ch = XschemaHandler()

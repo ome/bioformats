@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-Generate Java classes from an OME XML (http://www.ome-xml.org) XSD document.
+Generate code to process OME-XML from an OME-XML schema.
 """
 
 #
@@ -21,7 +21,6 @@ Generate Java classes from an OME XML (http://www.ome-xml.org) XSD document.
 #  with this program; if not, write to the Free Software Foundation, Inc.,
 #  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-
 
 import logging
 import sys
@@ -127,45 +126,47 @@ def main(opts):
 	base, filename = os.path.split(template_path(CLASS_TEMPLATE, opts))
 	name, extension = os.path.splitext(filename)
 	for obj in model.objects.values():
-		CUSTOM_CLASS_TEMPLATE = os.path.join(
-				base, '%s_%s%s' % (name, obj.name, extension))
-		customContent = ''
-		if os.path.exists(CUSTOM_CLASS_TEMPLATE):
-			customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
-			customContent = customTemplate.generate(
-				fu=fu, klass=obj, parents=parents, model=model)
-			customContent = customContent.render()
-		customTemplates = glob(os.path.join(
-				base, "%s_%s_update_*%s" % (name, obj.name, extension)))
-		# BEGIN Custom templates for update()
-		customUpdatePropertyContent = dict()
-		for customTemplate in customTemplates:
-			start = customTemplate.rfind("_") + 1
-			end = customTemplate.rfind(".")
-			propertyName = customTemplate[start:end]
-			customTemplate = NewTextTemplate(open(customTemplate))
-			content = customTemplate.generate(
-				fu=fu, klass=obj, parents=parents, model=model)
-			content = content.render()
-			customUpdatePropertyContent[propertyName] = content
-		# END Custom templates for update()
-		# BEGIN Custom templates for asXMLElement()
-		customTemplates = glob(os.path.join(
-				base, "%s_%s_asXMLElement_*%s" % (name, obj.name, extension)))
-		customAsXMLElementPropertyContent = dict()
-		for customTemplate in customTemplates:
-			start = customTemplate.rfind("_") + 1
-			end = customTemplate.rfind(".")
-			propertyName = customTemplate[start:end]
-			customTemplate = NewTextTemplate(open(customTemplate))
-			content = customTemplate.generate(
-				fu=fu, klass=obj, parents=parents, model=model)
-			content = content.render()
-			customAsXMLElementPropertyContent[propertyName] = content
-		# END Custom templates for asXMLElment()
-		parents = resolve_parents(model, obj.name)
-
 		for filetype in [TYPE_SOURCE, TYPE_HEADER]:
+			fu.SOURCE_TYPE = filetype;
+
+                        CUSTOM_CLASS_TEMPLATE = os.path.join(
+				base, '%s_%s%s' % (name, obj.name, extension))
+                        customContent = ''
+                        if os.path.exists(CUSTOM_CLASS_TEMPLATE):
+                                customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
+                                customContent = customTemplate.generate(
+                                        fu=fu, klass=obj, parents=parents, model=model)
+                                customContent = customContent.render()
+                        customTemplates = glob(os.path.join(
+                                        base, "%s_%s_update_*%s" % (name, obj.name, extension)))
+		        # BEGIN Custom templates for update()
+                        customUpdatePropertyContent = dict()
+                        for customTemplate in customTemplates:
+                                start = customTemplate.rfind("_") + 1
+                                end = customTemplate.rfind(".")
+                                propertyName = customTemplate[start:end]
+                                customTemplate = NewTextTemplate(open(customTemplate))
+                                content = customTemplate.generate(
+                                        fu=fu, klass=obj, parents=parents, model=model)
+                                content = content.render()
+                                customUpdatePropertyContent[propertyName] = content
+		        # END Custom templates for update()
+		        # BEGIN Custom templates for asXMLElement()
+                        customTemplates = glob(os.path.join(
+                                        base, "%s_%s_asXMLElement_*%s" % (name, obj.name, extension)))
+                        customAsXMLElementPropertyContent = dict()
+                        for customTemplate in customTemplates:
+                                start = customTemplate.rfind("_") + 1
+                                end = customTemplate.rfind(".")
+                                propertyName = customTemplate[start:end]
+                                customTemplate = NewTextTemplate(open(customTemplate))
+                                content = customTemplate.generate(
+                                        fu=fu, klass=obj, parents=parents, model=model)
+                                content = content.render()
+                                customAsXMLElementPropertyContent[propertyName] = content
+		        # END Custom templates for asXMLElment()
+                        parents = resolve_parents(model, obj.name)
+
 			try:
 				fullname = generated_filename(obj.name, filetype, opts)
 				fullname = os.path.join("ome", "xml", "model", fullname)
@@ -173,7 +174,6 @@ def main(opts):
 				continue
 
 			fu.GUARD = guard(fullname)
-			fu.SOURCE_TYPE = filetype;
 
 			fullname = os.path.join(opts.outdir, fullname)
 
@@ -183,7 +183,7 @@ def main(opts):
 
 			f = open(fullname, "w")
 			classContent = template.generate(
-				fu=fu, klass=obj, parents=parents, model=model,
+				fu=fu, klass=obj, model=model,
 				customContent=customContent,
 				customUpdatePropertyContent=customUpdatePropertyContent,
 				customAsXMLElementPropertyContent=customAsXMLElementPropertyContent)
@@ -222,11 +222,11 @@ def enumTypesMain(opts):
 		for prop in obj.properties.values():
 			if not prop.isEnumeration:
 				continue
-			print "%s: %s" % (prop.name, prop.javaType)
+			print "%s: %s" % (prop.name, prop.langType)
 
 			for filetype in [TYPE_SOURCE, TYPE_HEADER]:
 				try:
-					fullname = generated_filename(prop.javaType, filetype, opts)
+					fullname = generated_filename(prop.langType, filetype, opts)
 					fullname = os.path.join("ome", "xml", "model", "enums", fullname)
 				except ModelProcessingError:
 					continue
@@ -246,6 +246,50 @@ def enumTypesMain(opts):
 				f.write(classContent)
 				f.close()
 
+def enumTypesIncludeAll(opts):
+	"""
+	Generate header to include all enum headers.
+	"""
+
+	model = parseXmlSchema(opts)
+	fu = TemplateInfo(opts.outdir, opts.package)
+	template = NewTextTemplate(open(template_path(ENUM_INCLUDEALL_TEMPLATE, opts)).read())
+	headers = set()
+
+	fullname = generated_filename("enums", TYPE_HEADER, opts)
+	fullname = os.path.join("ome", "xml", "model", fullname)
+
+	for obj in model.objects.values():
+            for prop in obj.properties.values():
+                if not prop.isEnumeration:
+                    continue
+
+		headername = None
+		try:
+                        # Note that the path is for embedding in the header, and must use forward slashes
+			headername = generated_filename(prop.langType, TYPE_HEADER, opts)
+			headername = "ome/xml/model/enums/" + headername
+		except ModelProcessingError:
+			continue
+
+		headers.add(headername)
+
+	fu.GUARD = guard(fullname)
+	fu.SOURCE_TYPE = TYPE_HEADER;
+	fu.HEADERS = sorted(headers);
+
+	fullname = os.path.join(opts.outdir, fullname)
+
+	outputDirectory = os.path.dirname(fullname)
+	if not os.path.exists(outputDirectory):
+            os.makedirs(outputDirectory)
+
+	f = open(fullname, "w")
+	classContent = template.generate(fu=fu, klass=prop,
+					 enum_value_name=enum_value_name).render()
+	f.write(classContent)
+	f.close()
+
 def enumHandlersMain(opts):
 	"""
 	Default main() that parses command line options and generates Java
@@ -261,11 +305,11 @@ def enumHandlersMain(opts):
 		for prop in obj.properties.values():
 			if not prop.isEnumeration:
 				continue
-			print "%s: %s" % (prop.name, prop.javaType)
+			print "%s: %s" % (prop.name, prop.langType)
 
 			for filetype in [TYPE_SOURCE, TYPE_HEADER]:
 				try:
-					fullname = generated_filename(prop.javaType + "EnumHandler", filetype, opts)
+					fullname = generated_filename(prop.langType + "EnumHandler", filetype, opts)
 					fullname = os.path.join("ome", "xml", "model", "enums", "handlers", fullname)
 				except ModelProcessingError:
 					continue
@@ -635,6 +679,8 @@ if __name__ == '__main__':
 		metadataMain(opts)
 	elif a == "enum_types":
 		enumTypesMain(opts)
+	elif a == "enum_includeall":
+		enumTypesIncludeAll(opts)
 	elif a == "enum_handlers":
 		enumHandlersMain(opts)
 	elif a == "doc_gen":
