@@ -80,6 +80,10 @@ public class JAIIIOServiceImpl extends AbstractService
     "Please obtain jai_imageio.jar from " +
     "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html";
 
+  // -- Fields --
+
+  private IIORegistry serviceRegistry;
+
   // -- JAIIIOService API methods --
 
   /**
@@ -93,6 +97,8 @@ public class JAIIIOServiceImpl extends AbstractService
     checkClassDependency(J2KImageReadParam.class);
     checkClassDependency(J2KImageReader.class);
     checkClassDependency(J2KImageReaderSpi.class);
+
+    serviceRegistry = registerServiceProviders();
   }
 
   /* @see JAIIIOService#writeImage(OutputStream, BufferedImage, JPEG2000CodecOptions) */
@@ -192,13 +198,18 @@ public class JAIIIOServiceImpl extends AbstractService
 
   /** Set up the JPEG-2000 image reader. */
   private J2KImageReader getReader() {
+    J2KImageReaderSpi spi =
+      serviceRegistry.getServiceProviderByClass(J2KImageReaderSpi.class);
+    return new J2KImageReader(spi);
+  }
+
+  /** Register the JPEG-2000 readers with the reader service. */
+  private static IIORegistry registerServiceProviders() {
     IIORegistry registry = IIORegistry.getDefaultInstance();
     Iterator<J2KImageReaderSpi> iter =
       ServiceRegistry.lookupProviders(J2KImageReaderSpi.class);
     registry.registerServiceProviders(iter);
-    J2KImageReaderSpi spi =
-      registry.getServiceProviderByClass(J2KImageReaderSpi.class);
-    return new J2KImageReader(spi);
+    return registry;
   }
 
 }
