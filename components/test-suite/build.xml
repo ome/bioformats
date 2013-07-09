@@ -155,7 +155,7 @@ Type "ant -p" for a list of targets.
     <testng groups="automated" testname="Automated tests"
       listeners="loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
-      parallel="tests" threadCount="${testng.threadCount}"
+      parallel="instances" threadCount="${testng.threadCount}"
       failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
         <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
