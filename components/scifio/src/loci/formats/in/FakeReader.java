@@ -577,11 +577,13 @@ public class FakeReader extends FormatReader {
     List<String> tokens = new ArrayList<String>();
     int plates = 0, plateAcqs = 0, rows = 0, cols = 0, fields = 0;
     String currentPlate = "";
+    String regExFileSeparator = File.separatorChar == '\\' ?
+        "\\\\" : File.separator;
     // This is a sub-optimal approach, based on the assumption
     // that the last fakeSeries[] element has the fakeImage with biggest indices
     // in its name.
     for (String fakeImage : fakeSeries) {
-      for (String pathToken : fakeImage.split(File.separator)) {
+      for (String pathToken : fakeImage.split(regExFileSeparator)) {
         if (pathToken.startsWith(ResourceNamer.PLATE)) {
           if (!pathToken.equals(currentPlate)) {
             currentPlate = pathToken;
@@ -592,7 +594,7 @@ public class FakeReader extends FormatReader {
     }
 
     for (String pathToken : fakeSeries.get(fakeSeries.size() - 1)
-        .split(File.separator)) {
+        .split(regExFileSeparator)) {
       if (pathToken.startsWith(ResourceNamer.RUN)) {
         plateAcqs = Integer.valueOf(pathToken.substring(pathToken.lastIndexOf(
             ResourceNamer.RUN) + ResourceNamer.RUN.length(),
