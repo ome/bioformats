@@ -67,6 +67,11 @@ import ome.xml.model.enums.EnumerationException;
  */
 public class MakeTestOmeTiff {
 
+  public int sizeZsub = 1;
+  public int sizeTsub = 1;
+  public int sizeCsub = 1;
+  public boolean isModulo = false;
+
   public void makeSamples() throws FormatException, IOException {
     makeOmeTiff("single-channel", "439", "167", "1", "1", "1", "XYZCT");
     makeOmeTiff("multi-channel", "439", "167", "1", "3", "1", "XYZCT");
@@ -78,6 +83,8 @@ public class MakeTestOmeTiff {
     makeOmeTiff("4D-series", "439", "167", "5", "1", "7", "XYZCT");
     makeOmeTiff("multi-channel-4D-series", "439", "167", "5", "3", "7",
       "XYZCT");
+    makeOmeTiff("modulo-8D", "200", "250", "8", "9", "6",
+      "XYZCT", "4", "3", "2");
   }
 
   public int makeOmeTiff(final String... args) throws FormatException,
@@ -89,10 +96,15 @@ public class MakeTestOmeTiff {
     }
 
     // parse command line arguments
-    if (args.length != 7) {
+    if (args.length != 7 && args.length != 10 ) {
       displayUsage();
       return 1;
     }
+    
+    if (args.length == 10 ) {
+      isModulo = true;
+    }
+
     final String name = args[0];
     final CoreMetadata info = new CoreMetadata();
     info.sizeX = Integer.parseInt(args[1]);
@@ -103,6 +115,12 @@ public class MakeTestOmeTiff {
     info.imageCount = info.sizeZ * info.sizeC * info.sizeT;
     info.dimensionOrder = args[6].toUpperCase();
 
+    if (isModulo) {
+      sizeZsub = Integer.parseInt(args[7]);
+      sizeCsub = Integer.parseInt(args[8]);
+      sizeTsub = Integer.parseInt(args[9]);
+    }
+    
     makeOmeTiff(name, info);
     return 0;
   }
@@ -140,6 +158,19 @@ public class MakeTestOmeTiff {
     System.out.println("Example:");
     System.out.println("  java loci.formats.tools.MakeTestOmeTiff test \\");
     System.out.println("    517 239 5 3 4 XYCZT");
+    System.out.println();
+    System.out.println("Optional Usage: java loci.formats.tools.MakeTestOmeTiff name");
+    System.out.println("           SizeX SizeY SizeZ SizeC SizeT DimOrder SubZ SubC SubT");
+    System.out.println("This creates a 6D, 7D, or 8D file using the Modulo extension");
+    System.out.println();
+    System.out.println("  SubZ: splits of Z planes into extra dimension");
+    System.out.println("  SubC: splits of channels into extra dimension");
+    System.out.println("  SubT: splits of time points into extra dimension");
+    System.out.println("A value of 1 means no split");
+    System.out.println();
+    System.out.println("Example:");
+    System.out.println("  java loci.formats.tools.MakeTestOmeTiff test8D \\");
+    System.out.println("    517 239 6 4 8 XYCZT 3 2 2");
   }
 
   private String getId(final String name) {
@@ -245,6 +276,38 @@ public class MakeTestOmeTiff {
       space = 2;
     }
 
+    if (isModulo) {
+      if (info.sizeC > 1) {
+        lines.add(new TextLine("True Channel = " + ((zct[1]/sizeCsub) + 1) + "/" + info.sizeC/sizeCsub,
+          font, 20, space));
+        space = 2;
+      }
+      if (info.sizeC > 1) {
+        lines.add(new TextLine("Sub Channel = " + ((zct[1]%sizeCsub) + 1) + "/" + sizeCsub,
+          font, 20, space));
+        space = 2;
+      }
+      if (info.sizeZ > 1) {
+        lines.add(new TextLine("True-Z point = " + ((zct[0]/sizeZsub) + 1) + "/" + info.sizeZ/sizeZsub,
+          font, 20, space));
+        space = 2;
+      }
+      if (info.sizeZ > 1) {
+        lines.add(new TextLine("Sub-Z = " + ((zct[0]%sizeZsub) + 1) + "/" + sizeZsub,
+          font, 20, space));
+        space = 2;
+      }
+      if (info.sizeT > 1) {
+        lines.add(new TextLine("True-T point = " + ((zct[2]/sizeTsub) + 1) + "/" + info.sizeT/sizeTsub,
+          font, 20, space));
+        space = 2;
+      }
+      if (info.sizeT > 1) {
+        lines.add(new TextLine("Sub-T = " + ((zct[2]%sizeTsub) + 1) + "/" + sizeTsub,
+          font, 20, space));
+        space = 2;
+      }
+    }
     // draw text lines to image
     g.setColor(Color.white);
     int yoff = 0;
