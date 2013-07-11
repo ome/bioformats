@@ -581,6 +581,18 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     if (annotations == null) annotations = new StructuredAnnotations();
     int annotationIndex = annotations.sizeOfXMLAnnotationList();
 
+    String lastAnnotationID =
+      omexmlMeta.getXMLAnnotationID(annotationIndex - 1);
+    String lastIndex =
+      lastAnnotationID.substring(lastAnnotationID.lastIndexOf(":") + 1);
+    try {
+      int index = Integer.parseInt(lastIndex);
+      while (index >= annotationIndex) {
+        annotationIndex++;
+      }
+    }
+    catch (NumberFormatException e) { }
+
     for (String key : metadata.keySet()) {
       OriginalMetadataAnnotation annotation = new OriginalMetadataAnnotation();
       annotation.setID(MetadataTools.createLSID("Annotation", annotationIndex));
@@ -605,6 +617,18 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     if (annotations == null) annotations = new StructuredAnnotations();
     int annotationIndex = annotations.sizeOfXMLAnnotationList();
+
+    String lastAnnotationID =
+      omexmlMeta.getXMLAnnotationID(annotationIndex - 1);
+    String lastIndex =
+      lastAnnotationID.substring(lastAnnotationID.lastIndexOf(":") + 1);
+    try {
+      int index = Integer.parseInt(lastIndex);
+      while (index >= annotationIndex) {
+        annotationIndex++;
+      }
+    }
+    catch (NumberFormatException e) { }
 
     OriginalMetadataAnnotation annotation = new OriginalMetadataAnnotation();
     annotation.setID(MetadataTools.createLSID("Annotation", annotationIndex));
