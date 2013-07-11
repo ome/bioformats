@@ -2318,7 +2318,7 @@ public class DeltavisionReader extends FormatReader {
         minInten = in.readFloat();
         maxInten = in.readFloat();
         in.skipBytes(4);
-        expTime = in.readFloat() / 1000;
+        expTime = in.readFloat();
 
         ndFilter = in.readFloat() / 100;
         exWavelen = in.readFloat();
