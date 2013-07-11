@@ -1,0 +1,6 @@
+#define OME_XML_DATE "@date@"
+#define OME_XML_YEAR "@year@"
+#define OME_XML_VCS_REVISION "@vcs.revision@"
+#define OME_XML_VCS_DATE "@vcs.date@"
+#define OME_XML_RELEASE_VERSION "@release.version@"
+#define OME_XML_VISBIO_VERSION "@visbio.version@"

@@ -1,0 +1,75 @@
+<!--
+build.xml
+
+Ant build file for OME-XML Java library project.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="ome-xml-cpp" default="build" basedir=".">
+  <description>Build file for OME-XML C++ library project</description>
+
+  <property name="root.dir" location=".."/>
+  <property name="gen.dir" location="gen"/>
+  <import file="${root.dir}/ant/common.xml"/>
+  <import file="${root.dir}/ant/java.xml"/>
+  <import file="${root.dir}/ant/xsd-fu.xml"/>
+  <property file="build.properties"/>
+
+  <target name="generate-ome-xml" depends="init">
+    <property name="xsdfu.modelpath" value="${gen.dir}"/>
+
+    <delete dir="${xsdfu.modelpath}/gen/ome/xml/model"/>
+
+    <!-- Generate the OME model object classes -->
+    <xsd_fu package="ome.xml.model" lang="C++" output="${xsdfu.modelpath}">
+      <arg value="java_classes"/>
+    </xsd_fu>
+
+    <!-- Generate the OME model enumeration classes -->
+    <xsd_fu package="ome.xml.model.enums" lang="C++" output="${xsdfu.modelpath}">
+      <arg value="enum_types"/>
+    </xsd_fu>
+    <xsd_fu package="ome.xml.model.enums" lang="C++" output="${xsdfu.modelpath}">
+      <arg value="enum_includeall"/>
+    </xsd_fu>
+  </target>
+
+  <target name="generate-bioformats" depends="init">
+    <property name="xsdfu.metadatapath" value="${gen.dir}"/>
+    <property name="xsdfu.omepath" value="${gen.dir}"/>
+
+    <delete dir="${xsdfu.metadatapath}/ome/bioformats/meta"/>
+    <delete dir="${xsdfu.omepath}/ome/bioformats/ome"/>
+
+    <!-- Generate the metadata interfaces -->
+    <xsd_fu lang="C++" output="${xsdfu.metadatapath}">
+      <arg value="metadata"/>
+    </xsd_fu>
+    <!-- Generate the OME XML metadata interface -->
+    <xsd_fu lang="C++" output="${xsdfu.omepath}">
+      <arg value="omexml_metadata"/>
+    </xsd_fu>
+  </target>
+
+  <target name="generate-config">
+    <copy file="${src.dir}/config.h.in" tofile="${gen.dir}/config.h" preservelastmodified="true" overwrite="true">
+      <filterset>
+	<filter token="date" value="${DATE}"/>
+	<filter token="year" value="${YEAR}"/>
+	<filter token="vcs.revision" value="${vcs.revision}"/>
+	<filter token="vcs.date" value="${vcs.date}"/>
+	<filter token="release.version" value="${release.version}"/>
+      </filterset>
+    </copy>
+  </target>
+
+  <target name="generate-source" depends="init,generate-ome-xml,generate-bioformats,generate-config"/>
+
+  <target name="build" depends="generate-source"/>
+
+  <target name="clean">
+    <delete dir="${gen.dir}"/>
+    <delete dir="build"/>
+  </target>
+
+</project>
