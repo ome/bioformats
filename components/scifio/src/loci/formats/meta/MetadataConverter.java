@@ -822,6 +822,24 @@ public final class MetadataConverter {
         }
         catch (NullPointerException e) { }
 
+        try {
+          Boolean bigEndian = src.getPixelsBigEndian(i);
+          dest.setPixelsBigEndian(bigEndian, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Boolean interleaved = src.getPixelsInterleaved(i);
+          dest.setPixelsInterleaved(interleaved, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger significantBits = src.getPixelsSignificantBits(i);
+          dest.setPixelsSignificantBits(significantBits, i);
+        }
+        catch (NullPointerException e) { }
+
         int binDataCount = 0;
         try {
           binDataCount = src.getPixelsBinDataCount(i);
