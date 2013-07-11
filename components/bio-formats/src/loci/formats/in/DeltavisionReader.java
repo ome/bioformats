@@ -2253,7 +2253,7 @@ public class DeltavisionReader extends FormatReader {
     /** Maxiumum intensity. */
     public float maxInten;
 
-    /** Exposure time in milliseconds. */
+    /** Exposure time in seconds. */
     public float expTime;
 
     /** Neutral density value. */
