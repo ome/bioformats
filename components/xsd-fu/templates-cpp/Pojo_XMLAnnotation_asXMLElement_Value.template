@@ -1,0 +1,19 @@
+	xerces::dom::document Value_document = 0;
+//	try
+//	  {
+            // TODO: Parse document from string value.
+//	  }
+        // TODO: Catch and/or rethrow actual xerces exceptions...
+        xerces::dom::element value_element = document.createElementNS(NAMESPACE, "Value");
+        // TODO: Wrap in document
+        xerces::dom::nodelist Value_subNodes = Value_document->getChildNodes();
+
+        for (xerces::dom::nodelist::iterator elem = Value_subNodes.begin();
+             elem != Value_subNodes.end();
+             ++elem)
+	  {
+            // TODO: Wrap importNode in document.
+	    xerces::dom::node Value_subNode = document->importNode(*elem, true);
+	    value_element.appendChild(Value_subNode);
+	  }
+        XMLAnnotation_element.appendChild(value_element);

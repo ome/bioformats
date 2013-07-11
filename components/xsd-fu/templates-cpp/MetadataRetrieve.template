@@ -1,0 +1,275 @@
+{% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
+\
+{% def index_string(name) %}\
+{% choose %}\
+{% when name[:2].isupper()%}int ${name}Index{% end %}\
+{% otherwise %}int ${name[:1].lower()}${name[1:]}Index{% end %}\
+{% end %}\
+{% end %}\
+\
+{% def getter(parent, obj, prop, indexes) %}\
+{% choose %}\
+{% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
+	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)});\
+{% end %}\
+{% when len(indexes) > 0 %}\
+	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)});\
+{% end %}\
+{% otherwise %}\
+	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)});\
+{% end %}\
+{% end %}\
+{% end %}\
+\
+{% python
+	def parent_object(name):
+		return model.getObjectByName(parents[name].keys()[0])
+
+	def is_abstract(name):
+		o = model.getObjectByName(name)
+		if o is not None and \
+		   (o.isAbstract or o.isAbstractProprietary):
+			return True
+		return False
+
+	def is_parent_abstract(name):
+		parent = parent_object(name)
+		if parent is not None and \
+		   (parent.isAbstract or parent.isAbstractProprietary):
+			return True
+		return False
+
+	def sorted_properties(o):
+		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
+%}\
+\
+\
+/*
+ * #%L
+ * Bio-Formats C++ library for working with OME-XML metadata structures.
+ * %%
+ * Copyright © 2006 - 2013 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
+
+/*─────────────────────────────────────────────────────────────────────────────
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ *
+ *─────────────────────────────────────────────────────────────────────────────
+ */
+
+// #include <ome/xml/model.h>
+// #include <ome/xml/model/enums.h>
+// #include <ome/xml/model/primitives.h>
+
+#include <list>
+#include <stdexcept>
+
+{% if fu.SOURCE_TYPE == "header" %}\
+#ifndef ${fu.GUARD}
+#define ${fu.GUARD}
+{% end %}\
+
+namespace ome
+{
+  namespace bioformats
+  {
+    namespace meta
+    {
+
+/**
+ * A proxy whose responsibility it is to extract biological image data from a
+ * particular storage medium.
+ *
+ * <p>The <code>MetadataRetrieve</code> interface encompasses the metadata
+ * that any specific storage medium (file, relational database, etc.) should be
+ * expected to access from its backing data model.
+ *
+ * <p>The <code>MetadataRetrieve</code> interface goes hand in hand with the
+ * <code>MetadataStore</code> interface. Essentially,
+ * <code>MetadataRetrieve</code> provides the "getter" methods for a storage
+ * medium, and <code>MetadataStore</code> provides the "setter" methods.
+ *
+ * <p>Since it often makes sense for a storage medium to implement both
+ * interfaces, there is also an {@link IMetadata} interface encompassing
+ * both <code>MetadataStore</code> and <code>MetadataRetrieve</code>, which
+ * reduces the need to cast between object types.
+ *
+ * <p>See {@link loci.formats.ome.OMEXMLMetadata} for an example
+ * implementation.
+ *
+ * @author Melissa Linkert linkert at wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
+ */
+class MetadataRetrieve {
+public:
+  inline MetadataRetrieve() {}
+  inline virtual ~MetadataRetrieve() {}
+  // -- Entity counting (manual definitions) --
+
+  virtual int getPixelsBinDataCount(int imageIndex) = 0;
+
+  virtual int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) = 0;
+
+  virtual int getCommentAnnotationAnnotationCount(int commentAnnotationIndex) = 0;
+
+  virtual int getDoubleAnnotationAnnotationCount(int doubleAnnotationIndex) = 0;
+
+  virtual int getFileAnnotationAnnotationCount(int fileAnnotationIndex) = 0;
+
+  virtual int getListAnnotationAnnotationCount(int listAnnotationIndex) = 0;
+
+  virtual int getLongAnnotationAnnotationCount(int longAnnotationIndex) = 0;
+
+  virtual int getTagAnnotationAnnotationCount(int tagAnnotationIndex) = 0;
+
+  virtual int getTermAnnotationAnnotationCount(int termAnnotationIndex) = 0;
+
+  virtual int getTimestampAnnotationAnnotationCount(int timestampAnnotationIndex) = 0;
+
+  virtual int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex) = 0;
+
+  virtual String getLightSourceType(int instrumentIndex, int lightSourceIndex) = 0;
+
+  virtual String getShapeType(int roiIndex, int shapeIndex) = 0;
+
+  // -- Entity counting (code generated definitions) --
+
+{% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
+{% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
+{% if o.langType != 'Object' %}\
+	// Element's text data
+	// ${repr(indexes[o.name])}
+	virtual ${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])}) = 0;
+
+{% end %}\
+{% if parents[o.name] is not None and not o.isAbstract %}\
+	// ${o.name} entity counting
+{% for k, v in indexes[o.name].items() %}\
+{% if fu.max_occurs_under_parent(model, k, o.name) > 1 \
+      and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
+	virtual int get{% if is_multi_path[o.name] %}${k}{% end %}${o.name}Count(${indexes_string(v[:-1])}) = 0;
+
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+
+	// -- Entity retrieval (manual definitions) --
+
+	virtual bool getPixelsBinDataBigEndian(int imageIndex, int binDataIndex) = 0;
+
+	// -- Entity retrieval (code generated definitions) --
+
+	/** Gets the UUID associated with this collection of metadata. */
+	virtual String getUUID() = 0;
+
+{% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
+{% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
+{% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+	//
+	// ${o.name} property storage
+	//
+	// ${repr(parents[o.name])}
+	// Is multi path? ${is_multi_path[o.name]}
+
+{% choose %}\
+{% when o.isReference %}\
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+	// ${prop.minOccurs}:${prop.maxOccurs}
+	// Is multi path? ${is_multi_path[o.name]}
+	// Ignoring ${prop.name} property of reference ${o.name}
+
+{% end %}\
+{% end %}\
+{% otherwise %}\
+\
+{% for k, v in indexes[o.name].items() %}\
+{% if is_abstract(k) %}\
+{% for prop in sorted_properties(model.getObjectByName(k)) %}\
+{% choose %}\
+{% when not prop.isPrimitive and prop.isChoice %}\
+	// Ignoring ${prop.name} of parent abstract type
+{% end %}\
+{% otherwise %}\
+{% for parent_k, parent_v in indexes[k].items() %}\
+{% if not prop.isBackReference %}\
+	// ${prop.name} accessor from parent ${k}
+${getter(k, o, prop, v)}
+
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+\
+{% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% choose %}\
+{% when prop.isBackReference %}\
+	// Ignoring ${prop.name} back reference
+{% end %}\
+{% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+	// Ignoring ${prop.name} element, complex property
+{% end %}\
+{% otherwise %}\
+{% for k, v in indexes[o.name].items() %}\
+${getter(k, o, prop, v)}
+
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+{% end %}\
+};
+
+    }
+  }
+}
+
+{% if fu.SOURCE_TYPE == "header" %}\
+#endif // ${fu.GUARD}
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */
+{% end %}\
