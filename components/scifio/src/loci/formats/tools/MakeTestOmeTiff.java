@@ -83,6 +83,18 @@ public class MakeTestOmeTiff {
     makeOmeTiff("4D-series", "439", "167", "5", "1", "7", "XYZCT");
     makeOmeTiff("multi-channel-4D-series", "439", "167", "5", "3", "7",
       "XYZCT");
+    makeOmeTiff("modulo-6D-Z", "250", "200", "8", "3", "2",
+      "XYZCT", "4", "1", "1");
+    makeOmeTiff("modulo-6D-C", "250", "200", "4", "9", "2",
+      "XYZCT", "1", "3", "1");
+    makeOmeTiff("modulo-6D-T", "250", "200", "4", "3", "6",
+      "XYZCT", "1", "1", "2");
+    makeOmeTiff("modulo-7D-ZC", "250", "220", "8", "9", "2",
+      "XYZCT", "4", "3", "1");
+    makeOmeTiff("modulo-7D-CT", "250", "220", "4", "9", "6",
+      "XYZCT", "1", "3", "2");
+    makeOmeTiff("modulo-7D-ZT", "250", "220", "8", "3", "6",
+      "XYZCT", "4", "1", "2");
     makeOmeTiff("modulo-8D", "200", "250", "8", "9", "6",
       "XYZCT", "4", "3", "2");
   }
@@ -170,7 +182,7 @@ public class MakeTestOmeTiff {
     System.out.println();
     System.out.println("Example:");
     System.out.println("  java loci.formats.tools.MakeTestOmeTiff test8D \\");
-    System.out.println("    517 239 6 4 8 XYCZT 3 2 2");
+    System.out.println("    200 250 6 4 8 XYCZT 3 2 2");
   }
 
   private String getId(final String name) {
@@ -229,6 +241,35 @@ public class MakeTestOmeTiff {
       serviceFactory.getInstance(OMEXMLService.class);
     final IMetadata meta = omexmlService.createOMEXMLMetadata();
     MetadataTools.populateMetadata(meta, 0, name, info);
+    
+    if (isModulo) {
+      meta.setXMLAnnotationID("Annotation:Modulo:0", 0);
+      meta.setXMLAnnotationNamespace("openmicroscopy.org/omero/dimension/modulo", 0);
+      meta.setXMLAnnotationDescription("For a description of how 6D, 7D, and 8D data is stored using the Modulo extension see http://www.openmicroscopy.org/site/support/ome-model/developers/6d-7d-and-8d-storage.html", 0);
+      StringBuilder moduloBlock = new StringBuilder();
+      
+      moduloBlock.append("<Modulo namespace=\"http://www.openmicroscopy.org/Schemas/Additions/2011-09\">");
+      if (sizeZsub != 1) {
+        moduloBlock.append("<ModuloAlongZ Type=\"other\" TypeDescription=\"Example Data Over Z-Plane\" Start=\"0\" Step=\"1\" End=\"");
+        moduloBlock.append(sizeZsub);
+        moduloBlock.append("\"/>");
+      }
+      if (sizeTsub != 1) {
+        moduloBlock.append("<ModuloAlongT Type=\"other\" TypeDescription=\"Example Data Over Time \" Start=\"0\" Step=\"1\" End=\"");
+        moduloBlock.append(sizeTsub);
+        moduloBlock.append("\"/>");
+      }
+      if (sizeCsub != 1) {
+        moduloBlock.append("<ModuloAlongC Type=\"other\" TypeDescription=\"Example Data Over Channel\" Start=\"0\" Step=\"1\" End=\"");
+        moduloBlock.append(sizeCsub);
+        moduloBlock.append("\"/>");
+      }
+      moduloBlock.append("</Modulo>");
+      
+      meta.setXMLAnnotationValue(moduloBlock.toString(), 0);
+
+      meta.setImageAnnotationRef("Annotation:Modulo:0", 0, 0);
+    }
     return meta;
   }
 
@@ -277,32 +318,32 @@ public class MakeTestOmeTiff {
     }
 
     if (isModulo) {
-      if (info.sizeC > 1) {
-        lines.add(new TextLine("True Channel = " + ((zct[1]/sizeCsub) + 1) + "/" + info.sizeC/sizeCsub,
-          font, 20, space));
-        space = 2;
-      }
-      if (info.sizeC > 1) {
-        lines.add(new TextLine("Sub Channel = " + ((zct[1]%sizeCsub) + 1) + "/" + sizeCsub,
-          font, 20, space));
-        space = 2;
-      }
-      if (info.sizeZ > 1) {
+      if (sizeZsub > 1) {
         lines.add(new TextLine("True-Z point = " + ((zct[0]/sizeZsub) + 1) + "/" + info.sizeZ/sizeZsub,
           font, 20, space));
         space = 2;
       }
-      if (info.sizeZ > 1) {
+      if (sizeZsub > 1) {
         lines.add(new TextLine("Sub-Z = " + ((zct[0]%sizeZsub) + 1) + "/" + sizeZsub,
           font, 20, space));
         space = 2;
       }
-      if (info.sizeT > 1) {
+      if (sizeCsub > 1) {
+        lines.add(new TextLine("True Channel = " + ((zct[1]/sizeCsub) + 1) + "/" + info.sizeC/sizeCsub,
+          font, 20, space));
+        space = 2;
+      }
+      if (sizeCsub > 1) {
+        lines.add(new TextLine("Sub Channel = " + ((zct[1]%sizeCsub) + 1) + "/" + sizeCsub,
+          font, 20, space));
+        space = 2;
+      }
+      if (sizeTsub > 1) {
         lines.add(new TextLine("True-T point = " + ((zct[2]/sizeTsub) + 1) + "/" + info.sizeT/sizeTsub,
           font, 20, space));
         space = 2;
       }
-      if (info.sizeT > 1) {
+      if (sizeTsub > 1) {
         lines.add(new TextLine("Sub-T = " + ((zct[2]%sizeTsub) + 1) + "/" + sizeTsub,
           font, 20, space));
         space = 2;
