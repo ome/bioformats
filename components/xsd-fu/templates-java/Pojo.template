@@ -518,6 +518,9 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 
 {% end %}\
+		// Ensure any parent objects add their Elements first
+		${klass.name}_element = super.asXMLElement(document, ${klass.name}_element);
+
 {% for prop in klass.properties.values() %}\
 {% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
 		if (${prop.instanceVariableName} != null)
@@ -589,6 +592,6 @@ ${customAsXMLElementPropertyContent[prop.name]}
 		}
 {% end %}\
 {% end %}\
-		return super.asXMLElement(document, ${klass.name}_element);
+		return ${klass.name}_element;
 	}
 }
