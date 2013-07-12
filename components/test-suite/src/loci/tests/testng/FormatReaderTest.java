@@ -108,6 +108,7 @@ public class FormatReaderTest {
   private String id;
   private boolean skip = false;
   private Configuration config;
+  private String omexmlDir = System.getProperty("testng.omexmlDirectory");
 
   /**
    * Multiplier for use adjusting timing values. Slower machines take longer to
@@ -1249,11 +1250,26 @@ public class FormatReaderTest {
       if (!success) msg = TestTools.shortClassName(store);
 
       String file = reader.getCurrentFile() + ".ome.xml";
-      if (success && new File(file).exists()) {
-        String xml = DataTools.readFile(file);
-        OMEXMLMetadata base = omexmlService.createOMEXMLMetadata(xml);
+      if (success) {
+        if (!new File(file).exists() && omexmlDir != null &&
+          new File(omexmlDir).exists())
+        {
+          String dir = System.getProperty("testng.directory");
+          if (dir != null) {
+            file = reader.getCurrentFile().replace(dir, omexmlDir) + ".ome.xml";
 
-        success = omexmlService.isEqual(base, (OMEXMLMetadata) store);
+            if (!new File(file).exists()) {
+              file = reader.getCurrentFile().replace(dir, omexmlDir);
+              file = file.substring(0, file.lastIndexOf(".")) + ".ome.xml";
+            }
+          }
+        }
+        if (new File(file).exists()) {
+          String xml = DataTools.readFile(file);
+          OMEXMLMetadata base = omexmlService.createOMEXMLMetadata(xml);
+
+          success = omexmlService.isEqual(base, (OMEXMLMetadata) store);
+        }
       }
     }
     catch (Throwable t) {
