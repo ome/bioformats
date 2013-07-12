@@ -56,7 +56,7 @@
 #include <ome/xerces/dom/node.h>
 #include <ome/xerces/dom/nodelist.h>
 
-#include <ome/xml/model/OMEModel.h>
+//#include <ome/xml/model/OMEModel.h>
 
 {% if klass.parentName is not None %}\
 #include <ome/xml/model/${klass.parentName}.h>
@@ -73,6 +73,9 @@ namespace ome
   {
     namespace model
     {
+
+      // Forward declaration.
+      class OMEModel;
 
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if klass.parentName is not None %}\
@@ -345,8 +348,8 @@ ${customUpdatePropertyContent[prop.name]}
 	// -- ${klass.name} API methods --
 
         bool
-        link (Reference& reference,
-              OMEModelObject& o);
+        link (std::shared_ptr<Reference>& reference,
+	      OMEModelObject::shared_ptr& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool

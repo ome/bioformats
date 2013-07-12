@@ -57,9 +57,6 @@ namespace ome
         ~OMEModelImpl ();
 
       private:
-	typedef std::map<std::string, OMEModelObject::shared_ptr> object_map_type;
-	typedef std::map<OMEModelObject::shared_ptr, std::vector<Reference> > reference_map_type;
-
 	object_map_type modelObjects;
 	reference_map_type references;
 
@@ -82,9 +79,9 @@ namespace ome
 		      Reference::shared_ptr& b);
 
 	const reference_map_type&
-	getReferences ();
+	getReferences () const;
 
-	int
+	size_type
 	resolveReferences ();
 
       };

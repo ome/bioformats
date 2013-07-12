@@ -59,8 +59,11 @@ namespace ome
       class OMEModel
       {
       public:
-	typedef std::map<std::string, OMEModelObject::shared_ptr> object_map_type;
-	typedef std::map<OMEModelObject::shared_ptr, std::vector<Reference> > reference_map_type;
+        typedef OMEModelObject::shared_ptr object_ptr_type;
+        typedef std::vector<Reference::shared_ptr> reference_list_type;
+	typedef std::map<std::string, object_ptr_type> object_map_type;
+	typedef std::map<object_ptr_type, reference_list_type> reference_map_type;
+        typedef reference_map_type::size_type size_type;
 
         inline
 	OMEModel ()
@@ -98,7 +101,7 @@ namespace ome
 	getReferences () const = 0;
 
 	virtual
-	int
+	size_type
 	resolveReferences () = 0;
 
       };

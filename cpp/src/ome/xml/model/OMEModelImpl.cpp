@@ -41,6 +41,7 @@
 #include <string>
 
 #include <ome/xml/model/OMEModelImpl.h>
+#include <ome/xml/model/Reference.h>
 
 namespace ome
 {
@@ -79,7 +80,7 @@ namespace ome
 				   OMEModelObject::shared_ptr& object)
       {
         // Don't store references.
-        if (dynamic_cast<Reference *>(&object) != 0)
+        if (std::dynamic_pointer_cast<Reference>(object))
 	  return object;
 
         object_map_type::iterator i = modelObjects.find(id);
@@ -87,7 +88,6 @@ namespace ome
           i->second = object;
         else
           modelObjects.insert(std::make_pair(id, object));
-	}
 
         return object;
       }
@@ -95,16 +95,16 @@ namespace ome
       OMEModelObject::shared_ptr
       OMEModelImpl::getModelObject(const std::string& id) const
 	{
-          std::shared_ptr ret;
+          OMEModelObject::shared_ptr ret;
 
-          object_map_type::iterator i = modelObjects.find(id);
+          object_map_type::const_iterator i = modelObjects.find(id);
           if (i != modelObjects.end())
             ret = i->second;
 
 	  return ret;
 	}
 
-      const object_map_type&
+      const OMEModel::object_map_type&
       OMEModelImpl::getModelObjects () const
       {
 	return modelObjects;
@@ -114,52 +114,81 @@ namespace ome
       OMEModelImpl::addReference (OMEModelObject::shared_ptr& a,
 				  Reference::shared_ptr& b)
       {
-	std::vector<Reference::shared_ptr> bList = references.get(a);
-	if (bList == null) {
-	  bList = new ArrayList<Reference>();
-	  references.put(a, bList);
-	}
-	return bList.add(b);
+        reference_map_type::iterator i = references.find(a);
+
+        if (i != references.end())
+          {
+            std::pair<reference_map_type::iterator,bool> r =
+              references.insert(std::make_pair(a, reference_map_type::value_type::second_type()));
+            i = r.first;
+          }
+        i->second.push_back(b);
+        return true;
       }
 
-      const reference_map_type&
+      const OMEModel::reference_map_type&
       OMEModelImpl::getReferences () const
       {
 	return references;
       }
 
       // TODO: Rewrite java code.
-      int
+      // TODO: Return type must be unsigned.
+      OMEModel::size_type
       OMEModelImpl::resolveReferences ()
       {
 	int unhandledReferences = 0;
-	for (Entry<OMEModelObject, List<Reference>> entry : references.entrySet())
-	  {
-	    OMEModelObject a = entry.getKey();
-	    if (a == null) {
-	      List<Reference> references = entry.getValue();
-	      if (references == null) {
-		LOGGER.error("Null reference to null object, continuing.");
-		continue;
-	      }
-	      LOGGER.error("Null reference to {} objects, continuing.",
-			   references.size());
-	      unhandledReferences += references.size();
-	      continue;
-	    }
-	    for (Reference reference : entry.getValue()) {
-	      const std::string& referenceID = reference.getID();
-	      OMEModelObject b = getModelObject(referenceID);
-	      if (b == null) {
-		  LOGGER.warn("{} reference to {} missing from object hierarchy.",
-			      a, referenceID);
-		  unhandledReferences++;
-		  continue;
-	      }
-	      a.link(reference, b);
-	    }
-	  }
-	return unhandledReferences;
+
+        for (reference_map_type::iterator i = references.begin();
+             i != references.end();
+             ++i)
+          {
+            OMEModelObject::const_shared_ptr& a(i->first);
+
+	    if (!a)
+              {
+                const reference_list_type& references(i->second);
+
+                if (references.empty())
+                  std::clog << "No references to null object, continuing." << std::endl;
+                else
+                  std::clog << "Null reference to " << references.size()
+                            << " objects, continuing." << std::endl;
+                unhandledReferences += references.size();
+              }
+            else
+              {
+                reference_list_type& references(i->second);
+
+                for (reference_list_type::iterator ref = references.begin();
+                     ref != references.end();
+                     ++ref)
+                  {
+                    if (!(*ref))
+                      std::clog << typeid(*a).name() << "@" << a
+                                << " reference to null object, continuing." << std::endl;
+                    else
+                      {
+                        const std::string& referenceID = (*ref)->getID();
+
+                        OMEModelObject::shared_ptr b = getModelObject(referenceID);
+                        if (!b)
+                          {
+                            std::clog << typeid(*a).name() << "@" << a
+                                      << " reference to " << referenceID
+                                      << " missing from object hierarchy." << std::endl;
+                            unhandledReferences++;
+                          }
+                        else
+                          {
+                            OMEModelObject::shared_ptr aw(std::const_pointer_cast<OMEModelObject>(a));
+                            aw->link(*ref, b);
+                          }
+                      }
+                  }
+              }
+          }
+        return unhandledReferences;
       }
 
     }
