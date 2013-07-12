@@ -60,7 +60,7 @@ namespace ome
         {
         }
 
-        document (document& document):
+        document (const document& document):
           xmldoc(document.xmldoc)
         {
         }

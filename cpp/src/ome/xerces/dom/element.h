@@ -62,7 +62,7 @@ namespace ome
         {
         }
 
-        element (element& element):
+        element (const element& element):
           xmlelem(element.xmlelem)
         {
         }

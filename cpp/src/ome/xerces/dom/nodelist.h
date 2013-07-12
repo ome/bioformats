@@ -76,7 +76,7 @@ namespace ome
           {}
 
         public:
-          iterator (iterator& rhs):
+          iterator (const iterator& rhs):
             index(rhs.index),
             xmlnodelist(rhs.xmlnodelist),
             xmlnode(rhs.xmlnode)
@@ -155,7 +155,7 @@ namespace ome
         {
         }
 
-        nodelist (nodelist& nodelist):
+        nodelist (const nodelist& nodelist):
           xmlnodelist(nodelist.xmlnodelist)
         {
         }
@@ -230,15 +230,13 @@ namespace ome
         iterator
         begin()
         {
-          iterator i(xmlnodelist, 0);
-          return i;
+          return iterator(xmlnodelist, 0);
         }
 
         iterator
         end()
         {
-          iterator i;
-          return i;
+          return iterator();
         }
 
       private:

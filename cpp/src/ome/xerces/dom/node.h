@@ -60,7 +60,7 @@ namespace ome
         {
         }
 
-        node (node& node):
+        node (const node& node):
           xmlnode(node.xmlnode)
         {
         }
