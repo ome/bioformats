@@ -216,7 +216,7 @@ ${customContent}\
 
         {
           // Element's text data
-          std::string text(xerces::string(element->getTextContent()));
+          std::string text(element.getTextContent());
           if (!text.empty())
             {
               std::istringstream is(text);

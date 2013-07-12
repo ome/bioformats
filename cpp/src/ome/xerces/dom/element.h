@@ -114,6 +114,12 @@ namespace ome
                                        xerces::string(val));
         }
 
+        string
+        getTextContent () const
+        {
+          return xmlelem->getTextContent();
+        }
+
         element&
         operator= (element& element)
         {
