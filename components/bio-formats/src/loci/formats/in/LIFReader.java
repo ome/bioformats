@@ -133,7 +133,7 @@ public class LIFReader extends FormatReader {
   private HashMap[] detectorIndexes;
 
   private String[] immersions, corrections, objectiveModels;
-  private Integer[] magnification;
+  private Double[] magnification;
   private Double[] posX, posY, posZ;
   private Double[] refractiveIndex;
   private Vector[] cutIns, cutOuts, filterModels;
@@ -565,8 +565,7 @@ public class LIFReader extends FormatReader {
       store.setObjectiveLensNA(lensNA[index], i, 0);
       store.setObjectiveSerialNumber(serialNumber[index], i, 0);
       if (magnification[index] != null) {
-        store.setObjectiveNominalMagnification(
-          new Double(magnification[index]), i, 0);
+        store.setObjectiveNominalMagnification(magnification[index], i, 0);
       }
       store.setObjectiveImmersion(getImmersion(immersions[index]), i, 0);
       store.setObjectiveCorrection(getCorrection(corrections[index]), i, 0);
@@ -950,7 +949,7 @@ public class LIFReader extends FormatReader {
     activeDetector = new Vector[imageNodes.getLength()];
     serialNumber = new String[imageNodes.getLength()];
     lensNA = new Double[imageNodes.getLength()];
-    magnification = new Integer[imageNodes.getLength()];
+    magnification = new Double[imageNodes.getLength()];
     immersions = new String[imageNodes.getLength()];
     corrections = new String[imageNodes.getLength()];
     objectiveModels = new String[imageNodes.getLength()];
@@ -1470,10 +1469,9 @@ public class LIFReader extends FormatReader {
           if (x != -1) {
             foundMag = true;
 
-            int mag = (int) Double.parseDouble(token.substring(0, x));
             String na = token.substring(x + 1);
 
-            magnification[image] = mag;
+            magnification[image] = new Double(token.substring(0, x));
             lensNA[image] = new Double(na);
           }
           else {

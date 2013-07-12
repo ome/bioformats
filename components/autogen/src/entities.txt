@@ -1161,7 +1161,7 @@ type = String
 anchor = ManufacturerSpec_Model
 
 [Objective NominalMagnification]
-type = PositiveInteger
+type = Double
 
 [Objective SerialNumber]
 type = String

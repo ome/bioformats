@@ -60,7 +60,7 @@ public class NikonTiffReader extends BaseTiffReader {
 
   private double physicalSizeX, physicalSizeY, physicalSizeZ;
   private Vector<String> filterModels, dichroicModels, laserIDs;
-  private int magnification;
+  private Double magnification;
   private double lensNA, workingDistance, pinholeSize;
   private String correction, immersion;
   private Vector<Double> gain;
@@ -91,7 +91,7 @@ public class NikonTiffReader extends BaseTiffReader {
     if (!fileOnly) {
       physicalSizeX = physicalSizeY = physicalSizeZ = 0;
       dichroicModels = filterModels = laserIDs = null;
-      magnification = 0;
+      magnification = null;
       lensNA = workingDistance = pinholeSize = 0;
       correction = immersion = null;
       gain = null;
@@ -169,7 +169,7 @@ public class NikonTiffReader extends BaseTiffReader {
         correction = value;
       }
       else if (key.equals("history objective Magnification")) {
-        magnification = (int) Double.parseDouble(value);
+        magnification = new Double(value);
       }
       else if (key.equals("history objective NA")) {
         lensNA = Double.parseDouble(value);
@@ -239,8 +239,7 @@ public class NikonTiffReader extends BaseTiffReader {
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
       store.setObjectiveSettingsID(objectiveID, 0);
-      store.setObjectiveNominalMagnification(
-        new Double(magnification), 0, 0);
+      store.setObjectiveNominalMagnification(magnification, 0, 0);
 
       if (correction == null) correction = "Other";
       store.setObjectiveCorrection(getCorrection(correction), 0, 0);

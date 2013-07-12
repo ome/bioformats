@@ -69,7 +69,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
   private MinimalTiffReader delegate;
   private String date;
-  private Integer magnification;
+  private Double magnification;
   private String immersion;
   private String cameraType;
   private String cameraName;
@@ -159,7 +159,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
     String objective = ini.getTable(" MICROSCOPE ").get("Objective");
     int space = objective.indexOf(" ");
     if (space != -1) {
-      magnification = new Integer(objective.substring(0, space - 1));
+      magnification = new Double(objective.substring(0, space - 1));
       immersion = objective.substring(space + 1);
     }
 
@@ -228,8 +228,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
       store.setImageInstrumentRef(instrument, 0);
 
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
-      store.setObjectiveNominalMagnification(
-        new Double(magnification), 0, 0);
+      store.setObjectiveNominalMagnification(magnification, 0, 0);
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
 
       String detector = MetadataTools.createLSID("Detector", 0, 0);
