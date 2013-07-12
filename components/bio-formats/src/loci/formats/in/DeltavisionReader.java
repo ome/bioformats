@@ -2252,7 +2252,7 @@ public class DeltavisionReader extends FormatReader {
     /** Maxiumum intensity. */
     public float maxInten;
 
-    /** Exposure time in milliseconds. */
+    /** Exposure time in seconds. */
     public float expTime;
 
     /** Neutral density value. */
@@ -2317,7 +2317,7 @@ public class DeltavisionReader extends FormatReader {
         minInten = in.readFloat();
         maxInten = in.readFloat();
         in.skipBytes(4);
-        expTime = in.readFloat() / 1000;
+        expTime = in.readFloat();
 
         ndFilter = in.readFloat() / 100;
         exWavelen = in.readFloat();
