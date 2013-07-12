@@ -163,7 +163,10 @@ public class OMETiffReader extends FormatReader {
     }
     String comment = null;
     if (description instanceof TiffIFDEntry) {
-      comment = tp.getIFDValue((TiffIFDEntry) description).toString();
+      Object value = tp.getIFDValue((TiffIFDEntry) description);
+      if (value != null) {
+        comment = value.toString();
+      }
     }
     else if (description instanceof String) {
       comment = (String) description;

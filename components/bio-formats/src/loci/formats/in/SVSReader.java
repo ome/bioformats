@@ -118,8 +118,10 @@ public class SVSReader extends BaseTiffReader {
           String imageDescription = null;
 
           if (description instanceof TiffIFDEntry) {
-            imageDescription =
-              tiffParser.getIFDValue((TiffIFDEntry) description).toString();
+            Object value = tiffParser.getIFDValue((TiffIFDEntry) description);
+            if (value != null) {
+              imageDescription = value.toString();
+            }
           }
           else if (description instanceof String) {
             imageDescription = (String) description;
