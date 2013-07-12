@@ -72,6 +72,15 @@ namespace ome
       }
 
       inline
+      string(std::string const& str):
+	narrow(xercesc::XMLString::replicate(str.c_str())),
+	wide(xercesc::XMLString::transcode(str.c_str()))
+      {
+	assert(this->narrow != 0);
+	assert(this->wide != 0);
+      }
+
+      inline
       ~string()
       {
 	if (narrow)
@@ -88,13 +97,13 @@ namespace ome
 	return wide;
       }
 
-      inline
-      operator const char *() const
-      {
-	assert(this->narrow != 0);
+      // inline
+      // operator const char *() const
+      // {
+      //   assert(this->narrow != 0);
 
-	return narrow;
-      }
+      //   return narrow;
+      // }
 
       inline
       operator ::std::string() const
@@ -122,7 +131,7 @@ namespace ome
     operator<< (::std::ostream& stream,
 		const string&   str)
     {
-      return stream << static_cast<const char *>(str);
+      return stream << static_cast<std::string>(str);
     }
 
   }

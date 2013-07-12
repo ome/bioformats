@@ -4,3 +4,6 @@ OMEModelObject::addModelObject
  - references are not stored; but should it silently return or should it throw?
 
 asXMLElement
+
+Reference getID/setID: Should these be nullable and/or set at
+construction time if possible?

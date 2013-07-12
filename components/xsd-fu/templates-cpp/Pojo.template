@@ -64,6 +64,10 @@
 #include <ome/xml/model/enums.h>
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
+#include <sstream>
+
+#include <ome/xerces/string.h>
+
 #include <ome/xml/model/${klass.name}.h>
 {% end source%}\
 
@@ -74,9 +78,11 @@ namespace ome
     namespace model
     {
 
+{% if fu.SOURCE_TYPE == "header" %}\
       // Forward declaration.
       class OMEModel;
 
+{% end header %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 {% if klass.parentName is not None %}\
       class ${klass.name} : public ${klass.parentName}
@@ -149,7 +155,7 @@ namespace ome
         ${klass.name} (xerces::dom::element& element, OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${klass.name} (xerces::dom::element& element, OMEModel& model):
+      ${klass.name}::${klass.name} (xerces::dom::element& element, OMEModel& model):
 {% for prop in klass.instanceVariables %}\
 {% if prop[0] is not None %}\
 {% if prop == klass.instanceVariables[-1] %}\
@@ -171,7 +177,7 @@ namespace ome
 	~${klass.name} ();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${klass.name}::~${klass.name} ():
+      ${klass.name}::~${klass.name} ()
       {
       }
 {% end source %}\
@@ -201,23 +207,31 @@ ${customContent}\
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
 
-      virtual void
+      void
       ${klass.name}::update(const xerces::dom::element& element,
                             OMEModel& model)
       {
         ${klass.parentName}::update(element, model);
 {% if klass.langType != 'Object' %}\
-        // Element's text data
-        String ${klass.name}_value_textContent = element.getTextContent();
-        if (${klass.name}_value_textContent.trim().length() > 0) {
-          ${klass.name}_value = ${klass.langType}.valueOf(${klass.name}_value_textContent);
+
+        {
+          // Element's text data
+          std::string text(xerces::string(element->getTextContent()));
+          if (!text.empty())
+            {
+              std::istringstream is(text);
+              is >> ${klass.name}_value;
+              // TODO: Properly format error.
+              if (!is)
+                throw std::runtime_error("Failed to parse ${klass.name}_value");
+            }
         }
 {% end %}\
 {% if not klass.isAbstractProprietary %}\
-        String tagName = element.getTagName();
-        if (!"${klass.name}".equals(tagName))
+        std::string tagName(xerces::string(element->getTagName()));
+        if (tagName != "${klass.name}")
           {
-            LOGGER.debug("Expecting node name of ${klass.name} got {}", tagName);
+            std::clog << "Expecting node name of ${klass.name} got " << tagName << std::endl;
           }
 {% end %}\
 {% for prop in klass.properties.values() %}\
@@ -242,7 +256,7 @@ ${customUpdatePropertyContent[prop.name]}
         // *** IGNORING *** Skipped back reference ${prop.name}
 {% end %}\
 {% when prop.isAttribute and prop.name == "ID" %}\
-        if (!element.hasAttribute("ID") && getID() == null)
+ if (!element.hasAttribute("ID") && getID() == null)
           {
             // TODO: Should be its own exception
             throw new RuntimeException(String.format("${klass.name} missing required ID property."));
@@ -250,7 +264,13 @@ ${customUpdatePropertyContent[prop.name]}
         if (element.hasAttribute("ID"))
           {
             // ID property
-            set${prop.methodName}(${prop.langType}.valueOf(element.getAttribute("${prop.name}")));
+            
+            ${prop.langType} id;
+            std::istringstream is(element.getAttribute("${prop.name}"));
+            is >> id;
+            if (!is)
+              throw std::runtime_error("Failed to parse ${klass.name}_value");
+            set${prop.methodName}(id);
             // Adding this model object to the model handler
             model.addModelObject(getID(), this);
           }
@@ -264,7 +284,15 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% if not prop.isEnumeration %}\
             // Attribute property ${prop.name}
-            set${prop.methodName}(${prop.langType}.valueOf(element.getAttribute("${prop.name}")));
+            {
+              ${prop.langType} attr;
+              std::istringstream is(element.getAttribute("${prop.name}"));
+              is >> attr;
+              if (!is)
+                throw std::runtime_error("Failed to parse ${klass.name}_value");
+
+              set${prop.methodName}(attr);
+            }
 {% end %}\
           }
 {% end %}\
@@ -353,8 +381,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::link (Reference& reference,
-                           OMEModelObject& o)
+      ${klass.name}::link (std::shared_ptr<Reference>& reference,
+                           OMEModelObject::shared_ptr& o)
       {
         if (${klass.parentName}::link(reference, o))
           {
@@ -568,7 +596,7 @@ ${customUpdatePropertyContent[prop.name]}
       {
         if (${prop.instanceVariableName} == o)
           {
-            ${prop.instanceVariableName} = null;
+            ${prop.instanceVariableName} = 0;
           }
       }
 {% end source %}\
@@ -697,14 +725,15 @@ ${customUpdatePropertyContent[prop.name]}
         xerces::dom::element&
         ${klass.name}::asXMLElement (xerces::dom::document& document) const
 	{
-		return asXMLElementInternal(document, null);
+          xerces::dom::element nullelem;
+          return asXMLElementInternal(document, nullelem);
 	}
 {% end source %}\
 
 {% end %}\
+{% if fu.SOURCE_TYPE == "header" %}\
 
  protected:
-{% if fu.SOURCE_TYPE == "header" %}\
         xerces::dom::element&
 	asXMLElementInternal (xerces::dom::document& document,
                       xerces::dom::element& ${klass.name}_element) const;
@@ -726,7 +755,7 @@ ${customUpdatePropertyContent[prop.name]}
 			${klass.name}_element = abstractElement;
 		}
 {% end %}\
-		if (${klass.name}_element == null)
+		if (!${klass.name}_element)
 		{
 			${klass.name}_element =
 					document.createElementNS(NAMESPACE, "${klass.name}");
@@ -734,14 +763,14 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if klass.langType != 'Object' %}\
 		// Element's text data
-		if (${klass.name}_value != null) {
+		if (${klass.name}_value) {
 			${klass.name}_element.setTextContent(${klass.name}_value.toString());
 		}
 
 {% end %}\
 {% for prop in klass.properties.values() %}\
 {% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
-		if (${prop.instanceVariableName} != null)
+		if (${prop.instanceVariableName})
 		{
 {% choose %}\
 {% when prop.name in customAsXMLElementPropertyContent %}\
@@ -769,7 +798,11 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% end %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
 			// Attribute property ${prop.name}
-			${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.toString());
+                        {
+                          std::ostringstream os;
+                          os << ${prop.instanceVariableName};
+                          ${klass.name}_element.setAttribute("${prop.name}", os.str());
+                        }
 {% end %}\
 {% when prop.maxOccurs == 1 and prop.isComplex() %}\
 			// Element property ${prop.name} which is complex (has

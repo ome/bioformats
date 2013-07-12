@@ -45,6 +45,9 @@
 
 #include <xercesc/dom/DOMDocument.hpp>
 
+#include <ome/xerces/dom/element.h>
+#include <ome/xerces/string.h>
+
 namespace ome
 {
   namespace xerces
@@ -72,6 +75,16 @@ namespace ome
 
         ~document ()
         {
+        }
+
+        element
+        createElementNS(const std::string& ns,
+                        const std::string& name)
+        {
+          xerces::string xns(ns);
+          xerces::string xname(name);
+
+          return xmldoc->createElementNS(xns, xname);
         }
 
         document&

@@ -88,6 +88,26 @@ namespace ome
         {
         }
 
+        bool
+        hasAttribute (const std::string& attr) const
+        {
+          return xmlelem->hasAttribute(xerces::string(attr));
+        }
+
+        string
+        getAttribute (const std::string& attr) const
+        {
+          return xmlelem->getAttribute(xerces::string(attr));
+        }
+
+        void
+        setAttribute (const std::string& attr,
+                      const std::string& val)
+        {
+          return xmlelem->setAttribute(xerces::string(attr),
+                                       xerces::string(val));
+        }
+
         element&
         operator= (element& element)
         {

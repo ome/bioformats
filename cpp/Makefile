@@ -11,6 +11,7 @@ OBJS = \
   $(addsuffix .o, $(basename $(wildcard src/ome/xml/model/enums/*.cpp))) \
   $(addsuffix .o, $(basename $(wildcard src/ome/xml/model/primitives/*.cpp))) \
   $(addsuffix .o, $(basename $(wildcard src/ome/xerces/*.cpp))) \
+  $(addsuffix .o, $(basename $(wildcard gen/ome/xml/model/*.cpp))) \
   $(addsuffix .o, $(basename $(wildcard gen/ome/xml/model/enums/*.cpp))) \
 
 
