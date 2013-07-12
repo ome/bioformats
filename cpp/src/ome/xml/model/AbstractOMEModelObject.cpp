@@ -65,7 +65,7 @@ namespace ome
       }
 
       void
-      AbstractOMEModelObject::update (xerces::dom::element& element,
+      AbstractOMEModelObject::update (const xerces::dom::element& element,
                                       OMEModel& model)
       {
       }

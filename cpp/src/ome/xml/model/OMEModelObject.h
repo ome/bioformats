@@ -95,7 +95,7 @@ namespace ome
 	 * enumeration during model object creation.
 	 */
 	virtual void
-	update (xerces::dom::element& element,
+	update (const xerces::dom::element& element,
 		OMEModel& model) = 0;
 
 	/**

@@ -688,11 +688,11 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         xerces::dom::element&
-        asXMLElement (xerces::dom::document& document);
+        asXMLElement (xerces::dom::document& document) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
         xerces::dom::element&
-        ${klass.name}::asXMLElement (xerces::dom::document& document)
+        ${klass.name}::asXMLElement (xerces::dom::document& document) const
 	{
 		return asXMLElementInternal(document, null);
 	}
@@ -704,12 +704,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% if fu.SOURCE_TYPE == "header" %}\
         xerces::dom::element&
 	asXMLElementInternal (xerces::dom::document& document,
-                      xerces::dom::element& ${klass.name}_element);
+                      xerces::dom::element& ${klass.name}_element) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
         xerces::dom::element&
 	${klass.name}::asXMLElementInternal (xerces::dom::document& document,
-                      xerces::dom::element& ${klass.name}_element)
+                      xerces::dom::element& ${klass.name}_element) const
 	{
 		// Creating XML block for ${klass.name}
 
