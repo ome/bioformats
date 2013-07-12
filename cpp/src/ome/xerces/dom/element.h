@@ -88,6 +88,12 @@ namespace ome
         {
         }
 
+        string
+        getTagName () const
+        {
+          return xmlelem->getTagName();
+        }
+
         bool
         hasAttribute (const std::string& attr) const
         {
