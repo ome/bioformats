@@ -439,6 +439,10 @@ ${counter(k, o, v)}\
 
 	public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
 	{
+    Boolean bigEndian = root.getImage(imageIndex).getPixels().getBigEndian();
+    if (bigEndian != null) {
+      return bigEndian;
+    }
 		return root.getImage(imageIndex).getPixels().getBinData(binDataIndex).getBigEndian();
 	}
 
@@ -531,12 +535,7 @@ ${getter(k, o, prop, v)}\
 			o1.setPixels(new Pixels());
 		}
 		Pixels o2 = o1.getPixels();
-		if (o2.sizeOfBinDataList() == binDataIndex)
-		{
-			o2.addBinData(new BinData());
-		}
-		BinData o3 = o2.getBinData(binDataIndex);
-		o3.setBigEndian(bigEndian);
+		o2.setBigEndian(bigEndian);
 	}
 
 	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
