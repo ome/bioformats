@@ -449,7 +449,11 @@ ${counter(k, o, v)}\
 
 	public Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex)
 	{
-		return root.getImage(imageIndex).getPixels().getBigEndian();
+    Boolean bigEndian = root.getImage(imageIndex).getPixels().getBigEndian();
+    if (bigEndian != null) {
+      return bigEndian;
+    }
+		return root.getImage(imageIndex).getPixels().getBinData(binDataIndex).getBigEndian();
 	}
 
 	// -- Entity retrieval (code generated definitions) --
