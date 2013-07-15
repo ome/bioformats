@@ -283,8 +283,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     Double zRange = zPositions.get(zPositions.size() - 1) - zPositions.get(0);
     Double physicalSizeZ = Math.abs(zRange);
-    if (m.sizeZ > 1) {
-      physicalSizeZ /= (m.sizeZ - 1);
+    if (core[0].sizeZ > 1) {
+      physicalSizeZ /= (core[0].sizeZ - 1);
     }
 
     int totalPlanes = files.length * ifds.size();
