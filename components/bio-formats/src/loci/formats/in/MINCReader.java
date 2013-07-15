@@ -303,7 +303,7 @@ public class MINCReader extends FormatReader {
     Double stepSize = Double.parseDouble(attrs.get("step").toString());
     String units = attrs.get("units").toString();
     if (units.equals("mm")) {
-      stepSize /= 1000.0;
+      stepSize *= 1000.0;
     }
     return stepSize;
   }
