@@ -270,7 +270,7 @@ public class MINCReader extends FormatReader {
 
     String history = null;
     if (isMINC2) {
-      history = netcdf.getAttributeValue("/minc-2.0/history");
+      history = netcdf.getAttributeValue("/minc-2.0/ident");
     }
     else {
       history = netcdf.getAttributeValue("/history");
