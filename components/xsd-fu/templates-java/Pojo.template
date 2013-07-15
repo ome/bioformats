@@ -518,8 +518,10 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 
 {% end if NOT Object %}\
-		// Ensure any base objects add their Elements first
+{% if klass.isAnnotation %}\
+		// Ensure any base annotations add their Elements first
 		${klass.name}_element = super.asXMLElement(document, ${klass.name}_element);
+{% end if isAnnotation %}\
 
 {% for prop in klass.properties.values() %}\
 {% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
@@ -592,6 +594,14 @@ ${customAsXMLElementPropertyContent[prop.name]}
 		}
 {% end if %}\
 {% end for %}\
+
+{% choose %}\
+{% when klass.isAnnotation %}\
 		return ${klass.name}_element;
+{% end when isAnnotation %}\
+{% otherwise %}\
+		return super.asXMLElement(document, ${klass.name}_element);
+{% end otherwise %}\
+{% end choose %}\
 	}
 }
