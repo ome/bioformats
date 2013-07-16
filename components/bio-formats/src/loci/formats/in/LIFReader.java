@@ -505,7 +505,7 @@ public class LIFReader extends FormatReader {
     // for instance, the green channel may be #0, and the red channel may be #1
     realChannel = new int[tileCount.length][];
     int nextLut = 0;
-    for (int i=0; i<tileCount.length; i++) {
+    for (int i=0; i<core.length; i++) {
       int index = getTileIndex(i);
       if (realChannel[index] != null) {
         continue;
