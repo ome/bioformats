@@ -524,6 +524,7 @@ public class ImageInfo {
       boolean thumbnail = reader.isThumbnailSeries();
       boolean interleaved = reader.isInterleaved();
       boolean metadataComplete = reader.isMetadataComplete();
+      boolean flat = reader.hasFlattenedResolutions();
 
       // output basic metadata for series #i
       String seriesName = mr == null ? null : mr.getImageName(j);
