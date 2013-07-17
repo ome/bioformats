@@ -58,6 +58,7 @@ public class MINCReader extends FormatReader {
 
   private NetCDFService netcdf;
   private byte[][][] pixelData;
+  private boolean isMINC2 = false;
 
   // -- Constructor --
 
@@ -100,6 +101,7 @@ public class MINCReader extends FormatReader {
     if (!fileOnly) {
       if (netcdf != null) netcdf.close();
       pixelData = null;
+      isMINC2 = false;
     }
   }
 
@@ -117,10 +119,6 @@ public class MINCReader extends FormatReader {
     catch (DependencyException e) {
       throw new MissingLibraryException(e);
     }
-
-    Double physicalX = null;
-    Double physicalY = null;
-    Double physicalZ = null;
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Vector<String> variableList = netcdf.getVariableList();
@@ -142,18 +140,6 @@ public class MINCReader extends FormatReader {
           }
           else {
             addGlobalMeta(variable + " " + key, attributes.get(key));
-
-            if (key.equals("step")) {
-              if (variable.equals("/xspace")) {
-                physicalX = new Double(attributes.get(key).toString());
-              }
-              else if (variable.equals("/yspace")) {
-                physicalY = new Double(attributes.get(key).toString());
-              }
-              else if (variable.equals("/zspace")) {
-                physicalZ = new Double(attributes.get(key).toString());
-              }
-            }
           }
         }
       }
@@ -163,6 +149,10 @@ public class MINCReader extends FormatReader {
 
     try {
       Object pixels = netcdf.getVariableValue("/image");
+      if (pixels == null) {
+        pixels = netcdf.getVariableValue("/minc-2.0/image/N0/image");
+        isMINC2 = true;
+      }
 
       if (pixels instanceof byte[][][]) {
         m.pixelType = FormatTools.UINT8;
@@ -236,9 +226,35 @@ public class MINCReader extends FormatReader {
       throw new FormatException(e);
     }
 
-    m.sizeX = netcdf.getDimension("/xspace");
-    m.sizeY = netcdf.getDimension("/yspace");
-    m.sizeZ = netcdf.getDimension("/zspace");
+    m.littleEndian = isMINC2;
+
+    Double physicalX = null;
+    Double physicalY = null;
+    Double physicalZ = null;
+
+    if (isMINC2) {
+      Hashtable<String, Object> attrs =
+        netcdf.getVariableAttributes("/minc-2.0/dimensions/xspace");
+      m.sizeX = Integer.parseInt(attrs.get("length").toString());
+      physicalX = getStepSize(attrs);
+
+      attrs = netcdf.getVariableAttributes("/minc-2.0/dimensions/yspace");
+      m.sizeY = Integer.parseInt(attrs.get("length").toString());
+      physicalY = getStepSize(attrs);
+
+      attrs = netcdf.getVariableAttributes("/minc-2.0/dimensions/zspace");
+      m.sizeZ = Integer.parseInt(attrs.get("length").toString());
+      physicalZ = getStepSize(attrs);
+    }
+    else {
+      m.sizeX = netcdf.getDimension("/xspace");
+      m.sizeY = netcdf.getDimension("/yspace");
+      m.sizeZ = netcdf.getDimension("/zspace");
+
+      physicalX = getStepSize(netcdf.getVariableAttributes("/xspace"));
+      physicalY = getStepSize(netcdf.getVariableAttributes("/yspace"));
+      physicalZ = getStepSize(netcdf.getVariableAttributes("/zspace"));
+    }
 
     try {
       m.sizeT = netcdf.getDimension("/time");
@@ -252,13 +268,21 @@ public class MINCReader extends FormatReader {
     m.indexed = false;
     m.dimensionOrder = "XYZCT";
 
-    addGlobalMeta("Comment", netcdf.getAttributeValue("/history"));
+    String history = null;
+    if (isMINC2) {
+      history = netcdf.getAttributeValue("/minc-2.0/ident");
+    }
+    else {
+      history = netcdf.getAttributeValue("/history");
+    }
+
+    addGlobalMeta("Comment", history);
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setImageDescription(netcdf.getAttributeValue("/history"), 0);
+      store.setImageDescription(history, 0);
 
       PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalX);
       PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalY);
@@ -273,6 +297,15 @@ public class MINCReader extends FormatReader {
         store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
     }
+  }
+
+  private Double getStepSize(Hashtable<String, Object> attrs) {
+    Double stepSize = Double.parseDouble(attrs.get("step").toString());
+    String units = attrs.get("units").toString();
+    if (units.equals("mm")) {
+      stepSize *= 1000.0;
+    }
+    return stepSize;
   }
 
 }

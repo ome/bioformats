@@ -173,6 +173,9 @@ public class NetCDFServiceImpl extends AbstractService
     catch (IOException e) {
       throw new ServiceException(e);
     }
+    catch (NullPointerException e) {
+      return null;
+    }
   }
 
   /* (non-Javadoc)
