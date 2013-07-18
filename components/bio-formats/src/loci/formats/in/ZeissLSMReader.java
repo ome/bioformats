@@ -1293,6 +1293,10 @@ public class ZeissLSMReader extends FormatReader {
         store.setObjectiveNominalMagnification(
           new PositiveInteger(recording.magnification), instrument, 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          recording.magnification);
+      }
       store.setObjectiveLensNA(recording.lensNA, instrument, 0);
       store.setObjectiveIris(recording.iris, instrument, 0);
       store.setObjectiveID(objectiveID, instrument, 0);
