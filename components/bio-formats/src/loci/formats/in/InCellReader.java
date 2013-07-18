@@ -889,6 +889,24 @@ public class InCellReader extends FormatReader {
 
         Double pixelSizeX = new Double(attributes.getValue("pixel_width"));
         Double pixelSizeY = new Double(attributes.getValue("pixel_height"));
+        Double refractive = new Double(attributes.getValue("refractive_index"));
+
+        PositiveFloat x = FormatTools.getPhysicalSizeX(pixelSizeX);
+        PositiveFloat y = FormatTools.getPhysicalSizeY(pixelSizeY);
+
+        // link Objective to Image
+        String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+        store.setObjectiveID(objectiveID, 0, 0);
+        for (int i=0; i<getSeriesCount(); i++) {
+          store.setObjectiveSettingsID(objectiveID, i);
+          store.setObjectiveSettingsRefractiveIndex(refractive, i);
+          if (x != null) {
+            store.setPixelsPhysicalSizeX(x, i);
+          }
+          if (y != null) {
+            store.setPixelsPhysicalSizeY(y, i);
+          }
+        }
       }
       else if (qName.equals("ExcitationFilter")) {
         String wave = attributes.getValue("wavelength");
