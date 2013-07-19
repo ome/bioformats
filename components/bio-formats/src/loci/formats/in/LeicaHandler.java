@@ -434,13 +434,9 @@ public class LeicaHandler extends BaseHandler {
               break;
           }
           physicalSizeX = physicalSize.doubleValue();
-          if (physicalSize > 0) {
-            store.setPixelsPhysicalSizeX(
-              new PositiveFloat(physicalSize), numDatasets);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-              physicalSize);
+          PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSize);
+          if (sizeX != null) {
+            store.setPixelsPhysicalSizeX(sizeX, numDatasets);
           }
           break;
         case 2: // Y axis
@@ -457,13 +453,9 @@ public class LeicaHandler extends BaseHandler {
           else {
             coreMeta.sizeY = len;
             physicalSizeY = physicalSize.doubleValue();
-            if (physicalSize > 0) {
-              store.setPixelsPhysicalSizeY(
-                new PositiveFloat(physicalSize), numDatasets);
-            }
-            else {
-              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-                physicalSize);
+            PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSize);
+            if (sizeY != null) {
+              store.setPixelsPhysicalSizeY(sizeY, numDatasets);
             }
           }
           break;
@@ -473,13 +465,9 @@ public class LeicaHandler extends BaseHandler {
             coreMeta.sizeY = len;
             coreMeta.sizeZ = 1;
             physicalSizeY = physicalSize.doubleValue();
-            if (physicalSize > 0) {
-              store.setPixelsPhysicalSizeY(
-                new PositiveFloat(physicalSize), numDatasets);
-            }
-            else {
-              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-                physicalSize);
+            PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSize);
+            if (sizeY != null) {
+              store.setPixelsPhysicalSizeY(sizeY, numDatasets);
             }
             bytesPerAxis.put(new Integer(nBytes), "Y");
           }
@@ -494,13 +482,9 @@ public class LeicaHandler extends BaseHandler {
             coreMeta.sizeY = len;
             coreMeta.sizeT = 1;
             physicalSizeY = physicalSize.doubleValue();
-            if (physicalSize > 0) {
-              store.setPixelsPhysicalSizeY(
-                new PositiveFloat(physicalSize), numDatasets);
-            }
-            else {
-              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-                physicalSize);
+            PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSize);
+            if (sizeY != null) {
+              store.setPixelsPhysicalSizeY(sizeY, numDatasets);
             }
             bytesPerAxis.put(new Integer(nBytes), "Y");
           }
@@ -532,12 +516,9 @@ public class LeicaHandler extends BaseHandler {
       }
       else if (id.equals("dblStepSize")) {
         double zStep = Double.parseDouble(value) * 1000000;
-        if (zStep > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(zStep), numDatasets);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-            zStep);
+        PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(zStep);
+        if (sizeZ != null) {
+          store.setPixelsPhysicalSizeZ(sizeZ, numDatasets);
         }
       }
       else if (id.equals("nDelayTime_s")) {
@@ -571,13 +552,9 @@ public class LeicaHandler extends BaseHandler {
         }
         else if (id.endsWith("WaveLength")) {
           Integer exWave = new Integer(value);
-          if (exWave > 0) {
-            channel.exWave = new PositiveInteger(exWave);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for ExcitationWavelength; got {}",
-              exWave);
+          PositiveInteger ex = FormatTools.getExcitationWavelength(exWave);
+          if (ex != null) {
+            channel.exWave = ex;
           }
         }
         // NB: "UesrDefName" is not a typo.
@@ -728,22 +705,17 @@ public class LeicaHandler extends BaseHandler {
             MetadataTools.createLSID("Filter", numDatasets, nextFilter);
           store.setFilterID(id, numDatasets, nextFilter);
           store.setFilterModel(object, numDatasets, nextFilter);
-          if (v != null && v > 0) {
-            store.setTransmittanceRangeCutIn(
-              new PositiveInteger(v), numDatasets, nextFilter);
-          }
-          else {
-            LOGGER.warn("Expected positive value for CutIn; got {}", v);
+
+          PositiveInteger in = FormatTools.getCutIn(v);
+          if (in != null) {
+            store.setTransmittanceRangeCutIn(in, numDatasets, nextFilter);
           }
         }
         else if (attributes.getValue("Description").endsWith("(right)")) {
-          if (v != null && v > 0) {
-            store.setTransmittanceRangeCutOut(
-              new PositiveInteger(v), numDatasets, nextFilter);
+          PositiveInteger out = FormatTools.getCutOut(v);
+          if (out != null) {
+            store.setTransmittanceRangeCutOut(out, numDatasets, nextFilter);
             nextFilter++;
-          }
-          else {
-            LOGGER.warn("Expected positive value for CutOut; got {}", v);
           }
         }
       }
@@ -789,19 +761,14 @@ public class LeicaHandler extends BaseHandler {
           String filter =
             MetadataTools.createLSID("Filter", numDatasets, nextFilter);
           store.setFilterID(filter, numDatasets, nextFilter);
-          if (m.cutIn > 0) {
-            store.setTransmittanceRangeCutIn(
-              new PositiveInteger(m.cutIn), numDatasets, nextFilter);
+
+          PositiveInteger in = FormatTools.getCutIn(m.cutIn);
+          PositiveInteger out = FormatTools.getCutOut(m.cutOut);
+          if (in != null) {
+            store.setTransmittanceRangeCutIn(in, numDatasets, nextFilter);
           }
-          else {
-            LOGGER.warn("Expected positive value for CutIn; got {}", m.cutIn);
-          }
-          if (m.cutOut > 0) {
-            store.setTransmittanceRangeCutOut(
-              new PositiveInteger(m.cutOut), numDatasets, nextFilter);
-          }
-          else {
-            LOGGER.warn("Expected positive value for CutOut; got {}", m.cutOut);
+          if (out != null) {
+            store.setTransmittanceRangeCutOut(out, numDatasets, nextFilter);
           }
           store.setLightPathEmissionFilterRef(
             filter, numDatasets, nextChannel, 0);
@@ -838,14 +805,12 @@ public class LeicaHandler extends BaseHandler {
           store.setChannelLightSourceSettingsAttenuation(
             new PercentFraction((float) laser.intensity / 100f),
             numDatasets, nextChannel);
-          if (laser.wavelength > 0) {
-            store.setChannelExcitationWavelength(
-              new PositiveInteger(laser.wavelength), numDatasets, nextChannel);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for ExcitationWavelength; got {}",
-              laser.wavelength);
+
+          PositiveInteger wavelength =
+            FormatTools.getExcitationWavelength(laser.wavelength);
+          if (wavelength != null) {
+            store.setChannelExcitationWavelength(wavelength,
+              numDatasets, nextChannel);
           }
         }
 
@@ -871,13 +836,10 @@ public class LeicaHandler extends BaseHandler {
       }
       store.setLaserID(l.id, numDatasets, l.index);
       laserCount++;
-      if (l.wavelength > 0) {
-        store.setLaserWavelength(
-          new PositiveInteger(l.wavelength), numDatasets, l.index);
-      }
-      else {
-        LOGGER.warn("Expected positive value for Wavelength; got {}",
-          l.wavelength);
+
+      PositiveInteger wavelength = FormatTools.getWavelength(l.wavelength);
+      if (wavelength != null) {
+        store.setLaserWavelength(wavelength, numDatasets, l.index);
       }
       store.setLaserType(LaserType.OTHER, numDatasets, l.index);
       store.setLaserLaserMedium(LaserMedium.OTHER, numDatasets, l.index);
@@ -1063,11 +1025,9 @@ public class LeicaHandler extends BaseHandler {
       store.setLabelText(text, roi, 0);
       if (fontSize != null) {
         double size = Double.parseDouble(fontSize);
-        if (size >= 0) {
-          store.setLabelFontSize(new NonNegativeInteger((int) size), roi, 0);
-        }
-        else {
-          LOGGER.warn("Expected non-negative value for FontSize; got {}", size);
+        NonNegativeInteger fontSize = FormatTools.getFontSize((int) size);
+        if (fontSize != null) {
+          store.setLabelFontSize(fontSize, roi, 0);
         }
       }
       store.setLabelStrokeWidth(new Double(linewidth), roi, 0);

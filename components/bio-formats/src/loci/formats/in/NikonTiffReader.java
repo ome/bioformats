@@ -35,6 +35,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveInteger;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -218,26 +219,18 @@ public class NikonTiffReader extends BaseTiffReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription("", 0);
 
-      if (physicalSizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(physicalSizeZ);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalSizeX);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
-      if (physicalSizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalSizeY);
-      }
-      if (physicalSizeZ > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          physicalSizeZ);
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, 0);
       }
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -267,13 +260,10 @@ public class NikonTiffReader extends BaseTiffReader {
         String laser = MetadataTools.createLSID("LightSource", 0, i);
         store.setLaserID(laser, 0, i);
         store.setLaserModel(laserIDs.get(i), 0, i);
-        if (wavelength.get(i) > 0) {
-          store.setLaserWavelength(
-            new PositiveInteger(wavelength.get(i)), 0, i);
-        }
-        else {
-          LOGGER.warn("Expected positive value for Wavelength; got {}",
-            wavelength.get(i));
+
+        PositiveInteger wave = FormatTools.getWavelength(wavelength.get(i));
+        if (wave != null) {
+          store.setLaserWavelength(wave, 0, i);
         }
         store.setLaserType(getLaserType("Other"), 0, i);
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
@@ -288,25 +278,17 @@ public class NikonTiffReader extends BaseTiffReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         store.setChannelPinholeSize(pinholeSize, 0, c);
         if (c < exWave.size()) {
-          if (exWave.get(c) > 0) {
-            store.setChannelExcitationWavelength(
-              new PositiveInteger(exWave.get(c)), 0, c);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for ExcitationWavelength; got {}",
-              exWave.get(c));
+          PositiveInteger wave =
+            FormatTools.getExcitationWavelength(exWave.get(c));
+          if (wave != null) {
+            store.setChannelExcitationWavelength(wave, 0, c);
           }
         }
         if (c < emWave.size()) {
-          if (emWave.get(c) > 0) {
-            store.setChannelEmissionWavelength(
-              new PositiveInteger(emWave.get(c)), 0, c);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for EmissionWavelength; got {}",
-              emWave.get(c));
+          PositiveInteger wave =
+            FormatTools.getEmissionWavelength(emWave.get(c));
+          if (wave != null) {
+            store.setChannelEmissionWavelength(wave, 0, c);
           }
         }
       }

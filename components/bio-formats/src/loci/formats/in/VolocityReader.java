@@ -46,6 +46,7 @@ import loci.formats.MissingLibraryException;
 import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.MetakitService;
+import ome.xml.model.primitives.PositiveInteger;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -699,26 +700,18 @@ public class VolocityReader extends FormatReader {
           store.setChannelName(stack.channelNames[c], i, c);
         }
       }
-      if (stack.physicalX != null && stack.physicalX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(stack.physicalX), i);
+
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(stack.physicalX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(stack.physicalY);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(stack.physicalZ);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, i);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          stack.physicalX);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, i);
       }
-      if (stack.physicalY != null && stack.physicalY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(stack.physicalY), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          stack.physicalY);
-      }
-      if (stack.physicalZ != null && stack.physicalZ > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(stack.physicalZ), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          stack.physicalZ);
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
 
       String objective = MetadataTools.createLSID("Objective", 0, i);
