@@ -56,12 +56,9 @@
 #include <ome/xerces/dom/node.h>
 #include <ome/xerces/dom/nodelist.h>
 
-//#include <ome/xml/model/OMEModel.h>
-
-{% if klass.parentName is not None %}\
-#include <ome/xml/model/${klass.parentName}.h>
-{% end has parentName %}\
-#include <ome/xml/model/enums.h>
+{% for include in klass.dependencies %}\
+#include <${include}>
+{% end for%}\
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <sstream>
@@ -81,6 +78,9 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
       // Forward declaration.
       class OMEModel;
+{% for f in klass.forward %}\
+      class ${f};
+{% end for%}\
 
 {% end header %}\
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -92,11 +92,6 @@ namespace ome
 {% end no parentName %}\
       {
       public:
-	typedef std::shared_ptr<${klass.name}> shared_ptr;
-	typedef const std::shared_ptr<${klass.name}> const_shared_ptr;
-	typedef std::weak_ptr<${klass.name}> weak_ptr;
-	typedef const std::weak_ptr<${klass.name}> const_weak_ptr;
-
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       namespace
@@ -256,24 +251,25 @@ ${customUpdatePropertyContent[prop.name]}
         // *** IGNORING *** Skipped back reference ${prop.name}
 {% end %}\
 {% when prop.isAttribute and prop.name == "ID" %}\
- if (!element.hasAttribute("ID") && getID() == null)
-          {
-            // TODO: Should be its own exception
-            throw new RuntimeException(String.format("${klass.name} missing required ID property."));
-          }
-        if (element.hasAttribute("ID"))
-          {
-            // ID property
+// TODO: This should be validated when parsing the XML, so that the member does not need to be nullable.
+ // if (!element.hasAttribute("ID") && getID() == null)
+ //          {
+ //            // TODO: Should be its own exception
+ //            throw new RuntimeException(String.format("${klass.name} missing required ID property."));
+ //          }
+ //        if (element.hasAttribute("ID"))
+ //          {
+ //            // ID property
             
-            ${prop.langType} id;
-            std::istringstream is(element.getAttribute("${prop.name}"));
-            is >> id;
-            if (!is)
-              throw std::runtime_error("Failed to parse ${klass.name}_value");
-            set${prop.methodName}(id);
-            // Adding this model object to the model handler
-            model.addModelObject(getID(), this);
-          }
+ //            ${prop.langType} id;
+ //            std::istringstream is(element.getAttribute("${prop.name}"));
+ //            is >> id;
+ //            if (!is)
+ //              throw std::runtime_error("Failed to parse ${klass.name}_value");
+ //            set${prop.methodName}(id);
+ //            // Adding this model object to the model handler
+ //            model.addModelObject(getID(), this);
+ //          }
 {% end %}\
 {% when prop.isAttribute %}\
         if (element.hasAttribute("${prop.name}"))
@@ -302,8 +298,9 @@ ${customUpdatePropertyContent[prop.name]}
         if (${prop.name}_nodeList.size() > 1)
           {
             // TODO: Should be its own Exception
-            throw new RuntimeException(String.format("${prop.name} node list size %d != 1",
-                                                     ${prop.name}_nodeList.size()));
+            std::ostringstream os;
+            os << "${prop.name} node list size " << ${prop.name}_nodeList.size() << " != 1";
+            throw std::runtime_error(os.str());
           }
         else if (${prop.name}_nodeList.size() != 0)
           {
@@ -377,12 +374,12 @@ ${customUpdatePropertyContent[prop.name]}
 
         bool
         link (std::shared_ptr<Reference>& reference,
-	      OMEModelObject::shared_ptr& o);
+	      std::shared_ptr<OMEModelObject>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
       ${klass.name}::link (std::shared_ptr<Reference>& reference,
-                           OMEModelObject::shared_ptr& o)
+                           std::shared_ptr<OMEModelObject>& o)
       {
         if (${klass.parentName}::link(reference, o))
           {
@@ -409,7 +406,7 @@ ${customUpdatePropertyContent[prop.name]}
                 {
                   const ${prop.langType}& cmp;
                   contains(const ${prop.langType}& cmp): cmp(cmp) {}
-                  bool operator() (const ${prop.langType}::shared_ptr& elem) {return cmp == *elem;}
+                  bool operator() (std::shared_ptr<const ${prop.langType}>& elem) {return cmp == *elem;}
                 };
 
                 if (std::find_if(${prop.instanceVariableName}.begin(),
@@ -576,11 +573,11 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        link${prop.methodName} (${prop.langType}::shared_ptr& o);
+        link${prop.methodName} (std::shared_ptr<${prop.langType}>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::link${prop.methodName} (${prop.langType}::shared_ptr& o)
+      ${klass.name}::link${prop.methodName} (std::shared_ptr<${prop.langType}>& o)
       {
         ${prop.instanceVariableName} = o;
       }
@@ -588,11 +585,11 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        unlink${prop.methodName} (${prop.langType}::shared_ptr& o);
+        unlink${prop.methodName} (std::shared_ptr<${prop.langType}>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::unlink${prop.methodName} (${prop.langType}::shared_ptr& o)
+      ${klass.name}::unlink${prop.methodName} (std::shared_ptr<${prop.langType}>& o)
       {
         if (${prop.instanceVariableName} == o)
           {
