@@ -56,7 +56,7 @@
 #include <ome/xerces/dom/node.h>
 #include <ome/xerces/dom/nodelist.h>
 
-{% for include in klass.dependencies %}\
+{% for include in klass.header_dependencies %}\
 #include <${include}>
 {% end for%}\
 {% end header%}\
@@ -65,7 +65,9 @@
 
 #include <ome/xerces/string.h>
 
-#include <ome/xml/model/${klass.name}.h>
+{% for include in klass.source_dependencies %}\
+#include <${include}>
+{% end for%}\
 {% end source%}\
 
 namespace ome
@@ -238,8 +240,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% when prop.isReference %}\
         // Element reference ${prop.name}
-        std::vector<Element> ${prop.name}_nodeList =
-                                           getChildrenByTagName(element, "${prop.name}");
+        std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         for (xerces::dom::element ${prop.name}_element : ${prop.name}_nodeList)
           {
             ${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
@@ -293,8 +294,7 @@ ${customUpdatePropertyContent[prop.name]}
           }
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or not prop.isAttribute) %}\
-        std::vector<xerces::dom::element> ${prop.name}_nodeList =
-                                                        getChildrenByTagName(element, "${prop.name}");
+        std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         if (${prop.name}_nodeList.size() > 1)
           {
             // TODO: Should be its own Exception
@@ -311,7 +311,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not prop.isComplex() %}\
             // Element property ${prop.name} which is not complex (has no
             // sub-elements)
-            set${prop.methodName}(${prop.langType}.valueOf(${prop.name}_nodeList.get(0).getTextContent()));
+            set${prop.methodName}(${prop.langType}(${prop.name}_nodeList.at(0).getTextContent()));
 {% end %}\
           }
 {% end %}\
@@ -321,14 +321,12 @@ ${customUpdatePropertyContent[prop.name]}
         // sub-elements) and occurs more than once. The element's model
         // object type is also abstract so we need to have a handler for
         // each "subclass".
-        std::vector<Element> ${prop.name}_nodeList =
-                                           getChildrenByTagName(element, "${prop.name}");
+        std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         for (Element ${prop.name}_element : ${prop.name}_nodeList)
           {
 {% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
 {% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.isReference and inner_prop.isChoice %}\
-            std::vector<Element> ${inner_prop.name}_nodeList =
-                                                     getChildrenByTagName(${prop.name}_element, "${inner_prop.name}");
+            std::vector<xerces::dom::element> ${inner_prop.name}_nodeList(getChildrenByTagName(${prop.name}_element, "${inner_prop.name}"));
             for (Element ${inner_prop.name}_element : ${inner_prop.name}_nodeList)
               {
                 ${inner_prop.langType} o = new ${inner_prop.langType}(${prop.name}_element, model);
@@ -342,8 +340,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not prop.isAbstractProprietary %}\
         // Element property ${prop.name} which is complex (has
         // sub-elements) and occurs more than once
-        std::vector<Element> ${prop.name}_nodeList =
-                                           getChildrenByTagName(element, "${prop.name}");
+        std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         for (Element ${prop.name}_element : ${prop.name}_nodeList)
           {
             add${prop.methodName}(new ${prop.langType}(${prop.name}_element, model));
@@ -353,8 +350,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.maxOccurs > 1 %}\
         // Element property ${prop.name} which is not complex (has no
         // sub-elements) which occurs more than once
-        std::vector<Element> ${prop.name}_nodeList =
-                                           getChildrenByTagName("${prop.name}");
+        std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName("${prop.name}"));
         for (Element ${prop.name}_element : ${prop.name}_nodeList)
           {
             add${prop.methodName}(new ${prop.langType}(${prop.name}_element.getTextContent(), model));
@@ -495,7 +491,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${prop.langType}
       ${klass.name}::getLinked${prop.methodName}(int index)
       {
-        return ${prop.instanceVariableName}.get(index);
+        return ${prop.instanceVariableName}.at(index);
       }
 {% end source %}\
 
@@ -660,7 +656,7 @@ ${customUpdatePropertyContent[prop.name]}
       ${prop.langType}
       ${klass.name}::get${prop.methodName} (int index)
       {
-        return ${prop.instanceVariableName}.get(index);
+        return ${prop.instanceVariableName}.at(index);
       }
 {% end source %}\
 
@@ -746,7 +742,7 @@ ${customUpdatePropertyContent[prop.name]}
 		// Class is abstract so we may need to create its "container" element
 		if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
 		{
-			Element abstractElement =
+			xerces::dom::element abstractElement =
 					document.createElementNS(NAMESPACE, "${klass.name}");
 			abstractElement.appendChild(${klass.name}_element);
 			${klass.name}_element = abstractElement;
@@ -809,7 +805,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.maxOccurs == 1 %}\
 			// Element property ${prop.name} which is not complex (has no
 			// sub-elements)
-			Element ${prop.instanceVariableName}_element =
+			xerces::dom::element ${prop.instanceVariableName}_element =
 					document.createElementNS(NAMESPACE, "${prop.name}");
 			${prop.instanceVariableName}_element.setTextContent(${prop.instanceVariableName}.toString());
 			${klass.name}_element.appendChild(${prop.instanceVariableName}_element);
@@ -827,7 +823,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 			// sub-elements) which occurs more than once
 			for (${prop.langType} ${prop.instanceVariableName}_value : ${prop.instanceVariableName})
 			{
-				Element ${prop.instanceVariableName}_element =
+				xerces::dom::element ${prop.instanceVariableName}_element =
 						document.createElementNS(NAMESPACE, "${prop.name}");
 				${prop.instanceVariableName}_element.setTextContent(${prop.instanceVariableName}_value.toString());
 				${klass.name}_element.appendChild(${prop.instanceVariableName}_element);
