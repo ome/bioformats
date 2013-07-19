@@ -114,10 +114,12 @@ public class APLReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
     files.addAll(used);
-    if (getSeries() < xmlFiles.length &&
-      new Location(xmlFiles[getSeries()]).exists())
-    {
-      files.add(xmlFiles[getSeries()]);
+
+    if (getSeries() < xmlFiles.length) {
+      Location xmlFile = new Location(xmlFiles[getSeries()]);
+      if (xmlFile.exists() && !xmlFile.isDirectory()) {
+        files.add(xmlFiles[getSeries()]);
+      }
     }
     if (!noPixels && getSeries() < tiffFiles.length &&
       new Location(tiffFiles[getSeries()]).exists())
@@ -133,7 +135,10 @@ public class APLReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return parser[series].getSamples(ifds[series].get(no), buf, x, y, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    IFD ifd = ifds[getSeries()].get(no);
+    return parser[getSeries()].getSamples(ifd, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -151,6 +156,7 @@ public class APLReader extends FormatReader {
           }
         }
       }
+      parser = null;
     }
   }
 
@@ -356,6 +362,10 @@ public class APLReader extends FormatReader {
         parser[i].fillInIFD(ifd);
       }
 
+      for (IFD ifd : ifds[i]) {
+        parser[i].fillInIFD(ifd);
+      }
+
       // get core metadata from TIFF file
 
       IFD ifd = ifds[i].get(0);
@@ -386,7 +396,7 @@ public class APLReader extends FormatReader {
 
       // populate Image data
       MetadataTools.setDefaultCreationDate(store, mtb, i);
-      store.setImageName(row[imageName], i);
+      store.setImageName(row[imageName].trim(), i);
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         // populate Dimensions data
