@@ -42,8 +42,8 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -269,19 +269,14 @@ public class SISReader extends BaseTiffReader {
       physicalSizeX /= 1000;
       physicalSizeY /= 1000;
 
-      if (physicalSizeX > 0.000001) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(physicalSizeX);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(physicalSizeY);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected a positive value for PhysicalSizeX; got {}",
-          physicalSizeX);
-      }
-      if (physicalSizeY > 0.000001) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
-      }
-      else {
-        LOGGER.warn("Expected a positive value for PhysicalSizeY; got {}",
-          physicalSizeY);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
       store.setChannelName(channelName, 0, 0);
     }

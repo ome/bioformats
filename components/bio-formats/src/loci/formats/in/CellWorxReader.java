@@ -407,13 +407,12 @@ public class CellWorxReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    if (fieldMap.length * fieldMap[0].length > 0) {
-      store.setPlateAcquisitionMaximumFieldCount(
-        new PositiveInteger(fieldMap.length * fieldMap[0].length), 0, 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
-        fieldMap.length * fieldMap[0].length);
+
+    PositiveInteger fieldCount =
+      FormatTools.getMaxFieldCount(fieldMap.length * fieldMap[0].length);
+
+    if (fieldCount != null) {
+      store.setPlateAcquisitionMaximumFieldCount(fieldCount, 0, 0);
     }
 
     int nextImage = 0;

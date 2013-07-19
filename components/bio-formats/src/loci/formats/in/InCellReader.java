@@ -470,13 +470,10 @@ public class InCellReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    if (fieldCount > 0) {
-      store.setPlateAcquisitionMaximumFieldCount(
-        new PositiveInteger(fieldCount), 0, 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
-        fieldCount);
+
+    PositiveInteger maxFieldCount = FormatTools.getMaxFieldCount(fieldCount);
+    if (maxFieldCount != null) {
+      store.setPlateAcquisitionMaximumFieldCount(maxFieldCount, 0, 0);
     }
 
     // populate Image data
@@ -580,25 +577,17 @@ public class InCellReader extends FormatReader {
           }
           if (q < emWaves.size()) {
             int wave = emWaves.get(q).intValue();
-            if (wave > 0) {
-              store.setChannelEmissionWavelength(
-                new PositiveInteger(wave), i, q);
-            }
-            else {
-              LOGGER.warn(
-                "Expected positive value for EmissionWavelength; got {}", wave);
+            PositiveInteger emission = FormatTools.getEmissionWavelength(wave);
+            if (emission != null) {
+              store.setChannelEmissionWavelength(emission, i, q);
             }
           }
           if (q < exWaves.size()) {
             int wave = exWaves.get(q).intValue();
-            if (wave > 0) {
-              store.setChannelExcitationWavelength(
-                new PositiveInteger(wave), i, q);
-            }
-            else {
-              LOGGER.warn(
-                "Expected positive value for ExcitationWavelength; got {}",
-                wave);
+            PositiveInteger excitation =
+              FormatTools.getExcitationWavelength(wave);
+            if (excitation != null) {
+              store.setChannelExcitationWavelength(excitation, i, q);
             }
           }
         }
@@ -902,25 +891,20 @@ public class InCellReader extends FormatReader {
         Double pixelSizeY = new Double(attributes.getValue("pixel_height"));
         Double refractive = new Double(attributes.getValue("refractive_index"));
 
+        PositiveFloat x = FormatTools.getPhysicalSizeX(pixelSizeX);
+        PositiveFloat y = FormatTools.getPhysicalSizeY(pixelSizeY);
+
         // link Objective to Image
         String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
         store.setObjectiveID(objectiveID, 0, 0);
         for (int i=0; i<getSeriesCount(); i++) {
           store.setObjectiveSettingsID(objectiveID, i);
           store.setObjectiveSettingsRefractiveIndex(refractive, i);
-          if (pixelSizeX > 0) {
-            store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), i);
+          if (x != null) {
+            store.setPixelsPhysicalSizeX(x, i);
           }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-              pixelSizeX);
-          }
-          if (pixelSizeY > 0) {
-            store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), i);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-              pixelSizeY);
+          if (y != null) {
+            store.setPixelsPhysicalSizeY(y, i);
           }
         }
       }

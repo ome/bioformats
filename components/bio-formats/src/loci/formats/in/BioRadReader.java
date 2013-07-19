@@ -43,8 +43,8 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
@@ -717,20 +717,20 @@ public class BioRadReader extends FormatReader {
                     if (type == 257 && values.length >= 3) {
                       // found length of axis in um
                       Double pixelSize = new Double(values[2]);
-                      if (pixelSize > 0) {
-                        if (key.equals("AXIS_2")) {
-                          store.setPixelsPhysicalSizeX(
-                            new PositiveFloat(pixelSize), 0);
-                        }
-                        else if (key.equals("AXIS_3")) {
-                          store.setPixelsPhysicalSizeY(
-                            new PositiveFloat(pixelSize), 0);
+                      if (key.equals("AXIS_2")) {
+                        PositiveFloat size =
+                          FormatTools.getPhysicalSizeX(pixelSize);
+                        if (size != null) {
+                          store.setPixelsPhysicalSizeX(size, 0);
                         }
                       }
-                      else {
-                        LOGGER.warn(
-                          "Expected positive value for PhysicalSize; got {}",
-                          pixelSize);
+                      else if (key.equals("AXIS_3")) {
+                        PositiveFloat size =
+                          FormatTools.getPhysicalSizeY(pixelSize);
+
+                        if (size != null) {
+                          store.setPixelsPhysicalSizeY(size, 0);
+                        }
                       }
                     }
                   }
@@ -741,23 +741,17 @@ public class BioRadReader extends FormatReader {
             else if (n.p.startsWith("AXIS_2")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              if (pixelSize > 0) {
-                store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
-              }
-              else {
-                LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-                  pixelSize);
+              PositiveFloat size = FormatTools.getPhysicalSizeX(pixelSize);
+              if (size != null) {
+                store.setPixelsPhysicalSizeX(size, 0);
               }
             }
             else if (n.p.startsWith("AXIS_3")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              if (pixelSize > 0) {
-                store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
-              }
-              else {
-                LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-                  pixelSize);
+              PositiveFloat size = FormatTools.getPhysicalSizeY(pixelSize);
+              if (size != null) {
+                store.setPixelsPhysicalSizeY(size, 0);
               }
             }
             else {
@@ -786,13 +780,9 @@ public class BioRadReader extends FormatReader {
                   }
 
                   Double sizeZ = new Double(values[14]);
-                  if (sizeZ > 0) {
-                    store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), 0);
-                  }
-                  else {
-                    LOGGER.warn(
-                      "Expected positive value for PhysicalSizeZ; got {}",
-                      sizeZ);
+                  PositiveFloat size = FormatTools.getPhysicalSizeZ(sizeZ);
+                  if (size != null) {
+                    store.setPixelsPhysicalSizeZ(size, 0);
                   }
                   break;
                 case 2:
@@ -810,21 +800,13 @@ public class BioRadReader extends FormatReader {
                   double height = y2 - y1;
                   height /= getSizeY();
 
-                  if (width > 0) {
-                    store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
+                  PositiveFloat sizeX = FormatTools.getPhysicalSizeX(width);
+                  PositiveFloat sizeY = FormatTools.getPhysicalSizeY(height);
+                  if (sizeX != null) {
+                    store.setPixelsPhysicalSizeX(sizeX, 0);
                   }
-                  else {
-                    LOGGER.warn(
-                      "Expected positive value for PhysicalSizeX; got {}",
-                      width);
-                  }
-                  if (height > 0) {
-                    store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
-                  }
-                  else {
-                    LOGGER.warn(
-                      "Expected positive value for PhysicalSizeY; got {}",
-                      height);
+                  if (sizeY != null) {
+                    store.setPixelsPhysicalSizeY(sizeY, 0);
                   }
 
                   break;

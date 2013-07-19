@@ -357,13 +357,11 @@ public class BDReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    if (fieldRows * fieldCols > 0) {
-      store.setPlateAcquisitionMaximumFieldCount(
-        new PositiveInteger(fieldRows * fieldCols), 0, 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
-        fieldRows * fieldCols);
+
+    PositiveInteger fieldCount =
+      FormatTools.getMaxFieldCount(fieldRows * fieldCols);
+    if (fieldCount != null) {
+      store.setPlateAcquisitionMaximumFieldCount(fieldCount, 0, 0);
     }
 
     for (int row=0; row<wellRows; row++) {
@@ -447,23 +445,17 @@ public class BDReader extends FormatReader {
 
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
-          if (emWave[c] > 0) {
-            store.setChannelEmissionWavelength(
-              new PositiveInteger(emWave[c]), i, c);
+
+          PositiveInteger emission =
+            FormatTools.getEmissionWavelength(emWave[c]);
+          PositiveInteger excitation =
+            FormatTools.getExcitationWavelength(exWave[c]);
+
+          if (emission != null) {
+            store.setChannelEmissionWavelength(emission, i, c);
           }
-          else {
-            LOGGER.warn(
-              "Expected positive value for EmissionWavelength; got {}",
-              emWave[c]);
-          }
-          if (exWave[c] > 0) {
-            store.setChannelExcitationWavelength(
-              new PositiveInteger(exWave[c]), i, c);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for ExcitationWavelength; got {}",
-              exWave[c]);
+          if (excitation != null) {
+            store.setChannelExcitationWavelength(excitation, i, c);
           }
 
           String detectorID = MetadataTools.createLSID("Detector", 0, c);

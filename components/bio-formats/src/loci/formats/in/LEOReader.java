@@ -126,12 +126,13 @@ public class LEOReader extends BaseTiffReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (xSize > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(xSize), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(xSize), 0);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(xSize);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(xSize);
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, 0);
       }
-      else {
-        LOGGER.warn("Expected positive value for Physicalsize; got {}", xSize);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, 0);
       }
 
       String instrument = MetadataTools.createLSID("Instrument", 0);
