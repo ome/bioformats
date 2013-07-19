@@ -48,6 +48,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
+import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -385,12 +386,16 @@ public class APNGReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int rowLen = width * getRGBChannelCount() * bpp;
 
+    if (getBitsPerPixel() < bpp * 8) {
+      rowLen /= ((bpp * 8) / getBitsPerPixel());
+    }
+
     byte[] image = null;
 
     if (compression == 0 && interlace == 0) {
       // decompress the image
       byte[] filters = new byte[height];
-      image = new byte[FormatTools.getPlaneSize(this)];
+      image = new byte[rowLen * height];
 
       InflaterInputStream decompressor =
         new InflaterInputStream(new ByteArrayInputStream(bytes));
@@ -502,6 +507,17 @@ public class APNGReader extends FormatReader {
     }
 
     // de-interleave
+
+    if (getBitsPerPixel() < 8) {
+      byte[] expandedImage = new byte[FormatTools.getPlaneSize(this)];
+      BitBuffer bits = new BitBuffer(image);
+
+      for (int i=0; i<expandedImage.length; i++) {
+        expandedImage[i] = (byte) (bits.getBits(getBitsPerPixel()) & 0xff);
+      }
+
+      image = expandedImage;
+    }
 
     byte[] deinterleave = new byte[image.length];
 

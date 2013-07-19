@@ -115,7 +115,7 @@ public class CellWorxReader extends FormatReader {
       if (new Location(parent, htdName + ".htd").exists() ||
         new Location(parent, htdName + ".HTD").exists())
       {
-        return true;
+        return checkSuffix(name, "log") || isGroupFiles();
       }
     }
     return false;
