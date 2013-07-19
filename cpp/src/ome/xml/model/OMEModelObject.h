@@ -58,11 +58,12 @@ namespace ome
 
       // TODO: constness and ref type for params/return types
 
-      class OMEModelObject
+      class OMEModelObject : public std::enable_shared_from_this<OMEModelObject>
       {
       public:
         inline
-	OMEModelObject ()
+	OMEModelObject ():
+          std::enable_shared_from_this<OMEModelObject>()
 	{}
 
         inline virtual
@@ -77,7 +78,7 @@ namespace ome
 	virtual xerces::dom::element&
 	asXMLElement (xerces::dom::document& document) const = 0;
 
-	/** 
+	/**
 	 * Updates the object hierarchy recursively from an XML DOM tree.
 	 * <b>NOTE:</b> No properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object

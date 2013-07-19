@@ -245,9 +245,11 @@ ${customUpdatePropertyContent[prop.name]}
         std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         for (xerces::dom::element ${prop.name}_element : ${prop.name}_nodeList)
           {
-            ${prop.name} ${prop.instanceVariableName}_reference;
-            ${prop.instanceVariableName}_reference.setID(${prop.name}_element.getAttribute("ID"));
-            model.addReference(this, ${prop.instanceVariableName}_reference);
+            std::shared_ptr<${prop.name}> rcptr(new ${prop.name}());
+            rcptr->setID(${prop.name}_element.getAttribute("ID"));
+            std::shared_ptr<Reference> rptr(std::static_pointer_cast<Reference>(rcptr));
+            std::shared_ptr<OMEModelObject> optr(this);
+            model.addReference(optr, rptr);
           }
 {% end %}\
 {% when prop.isBackReference %}\
@@ -385,37 +387,38 @@ ${customUpdatePropertyContent[prop.name]}
           }
 {% for prop in klass.properties.values() %}\
 {% if prop.isReference %}\
-        if (dynamic_cast<${prop.name} *>(&reference))
+        if (std::dynamic_pointer_cast<${prop.name}>(reference))
           {
             // TODO: This bit is silly; why do we have two dynamic_casts here.
-            ${prop.langType} *o_casted = dynamic_cast<${prop.langType} *>(&o);
+            std::shared_ptr<${prop.langType}> o_casted = std::dynamic_pointer_cast<${prop.langType}>(o);
             if (o_casted)
               {
 {% if not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted.link${klass.type}(this);
+                o_casted->link${klass.type}(this);
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted.link${klass.name}${prop.methodName}(this);
+                o_casted->link${klass.name}${prop.methodName}(this);
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
-                struct contains
-                {
-                  const ${prop.langType}& cmp;
-                  contains(const ${prop.langType}& cmp): cmp(cmp) {}
-                  bool operator() (std::shared_ptr<const ${prop.langType}>& elem) {return cmp == *elem;}
-                };
+                // struct contains
+                // {
+                //   const ${prop.langType}& cmp;
+                //   contains(const std::shared_ptr<${prop.langType}>& cmp): cmp(cmp) {}
+                //   // Note this is a pointer comparison, not value.
+                //   bool operator() (std::shared_ptr<const ${prop.langType}>& elem) {return cmp == elem;}
+                // };
 
                 if (std::find_if(${prop.instanceVariableName}.begin(),
                                  ${prop.instanceVariableName}.end(),
-                                 contains(o)) == ${prop.instanceVariableName}.end())
+                                 o) == ${prop.instanceVariableName}.end())
                   {
-                    ${prop.instanceVariableName}.push_back(*o_casted);
+                    ${prop.instanceVariableName}.push_back(o_casted);
                   }
 {% end %}\
 {% if prop.maxOccurs == 1 %}\
-                ${prop.instanceVariableName} = *o_casted;
+                ${prop.instanceVariableName} = o_casted;
 {% end %}\
                 return true;
               }
@@ -474,11 +477,11 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-	std::vector<${prop.langType}>
+        ${prop.instanceVariableType}
         copyLinked${prop.methodName}List ();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::vector<${prop.langType}>
+      ${prop.instanceVariableType}
       ${klass.name}::copyLinked${prop.methodName}List ()
       {
         return ${prop.instanceVariableName};

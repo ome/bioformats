@@ -75,7 +75,7 @@ namespace ome
                               xerces::dom::element& element) const = 0;
 
       public:
-	/** 
+	/**
 	 * Updates the object hierarchy recursively from an XML DOM tree.
 	 * <b>NOTE:</b> No properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
