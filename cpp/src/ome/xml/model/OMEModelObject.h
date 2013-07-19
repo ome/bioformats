@@ -46,8 +46,6 @@
 #include <ome/xerces/dom/element.h>
 #include <ome/xerces/dom/document.h>
 
-// #include <ome/xml/model/Reference.h>
-
 namespace ome
 {
   namespace xml

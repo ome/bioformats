@@ -49,6 +49,7 @@
 
 #include <algorithm>
 #include <list>
+#include <string>
 #include <vector>
 
 #include <ome/xerces/dom/document.h>
@@ -78,11 +79,12 @@ namespace ome
     {
 
 {% if fu.SOURCE_TYPE == "header" %}\
-      // Forward declaration.
-      class OMEModel;
+{% if len(klass.forward) %}\
+      // Forward declarations.
+{% end if %}\
 {% for f in klass.forward %}\
       class ${f};
-{% end for%}\
+{% end for %}\
 
 {% end header %}\
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -243,7 +245,7 @@ ${customUpdatePropertyContent[prop.name]}
         std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         for (xerces::dom::element ${prop.name}_element : ${prop.name}_nodeList)
           {
-            ${prop.name} ${prop.instanceVariableName}_reference = new ${prop.name}();
+            ${prop.name} ${prop.instanceVariableName}_reference;
             ${prop.instanceVariableName}_reference.setID(${prop.name}_element.getAttribute("ID"));
             model.addReference(this, ${prop.instanceVariableName}_reference);
           }
@@ -485,11 +487,11 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if fu.SOURCE_TYPE == "header" %}\
 	${prop.langType}
-        getLinked${prop.methodName} (int index);
+        getLinked${prop.methodName} (int index) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.langType}
-      ${klass.name}::getLinked${prop.methodName}(int index)
+      ${klass.name}::getLinked${prop.methodName} (int index) const
       {
         return ${prop.instanceVariableName}.at(index);
       }
@@ -556,12 +558,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% if fu.SOURCE_TYPE == "header" %}\
 	// Reference
 	${prop.langType}
-        getLinked${prop.methodName} ();
+        getLinked${prop.methodName} () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       // Reference
       ${prop.langType}
-      ${klass.name}::getLinked${prop.methodName} ()
+      ${klass.name}::getLinked${prop.methodName} () const
       {
         return ${prop.instanceVariableName};
       }
@@ -597,12 +599,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
 {% if fu.SOURCE_TYPE == "header" %}\
 	// Property
-	${prop.langType}
-        get${prop.methodName} ();
+	${prop.retType}
+        get${prop.methodName} () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.langType}
-      ${klass.name}::get${prop.methodName} ()
+      ${prop.retType}
+      ${klass.name}::get${prop.methodName} () const
       {
         return ${prop.instanceVariableName};
       }
@@ -610,11 +612,11 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if fu.SOURCE_TYPE == "header" %}\
 	void
-        set${prop.methodName} (${prop.langType} ${prop.argumentName});
+        set${prop.methodName} (${prop.argType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::set${prop.methodName} (${prop.langType} ${prop.argumentName})
+      ${klass.name}::set${prop.methodName} (${prop.argType} ${prop.argumentName})
       {
         this->${prop.instanceVariableName} = ${prop.argumentName};
       }
@@ -649,12 +651,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-	${prop.langType}
-        get${prop.methodName} (int index);
+	${prop.retType}
+        get${prop.methodName} (int index) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.langType}
-      ${klass.name}::get${prop.methodName} (int index)
+      ${prop.retType}
+      ${klass.name}::get${prop.methodName} (int index) const
       {
         return ${prop.instanceVariableName}.at(index);
       }
@@ -663,12 +665,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% if fu.SOURCE_TYPE == "header" %}\
 	${prop.langType}
         set${prop.methodName} (int index,
-                               ${prop.langType} ${prop.argumentName});
+                               ${prop.argType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.langType}
       ${klass.name}::set${prop.methodName} (int index,
-                             ${prop.langType} ${prop.argumentName})
+                             ${prop.argType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
         ${prop.argumentName}.set${klass.type}(this);

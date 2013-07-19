@@ -45,7 +45,6 @@
 #include <vector>
 
 #include <ome/xml/model/OMEModelObject.h>
-#include <ome/xml/model/Reference.h>
 
 namespace ome
 {
@@ -54,6 +53,7 @@ namespace ome
     namespace model
     {
 
+      class Reference;
       // TODO: constness and ref type for params/return types
 
       class OMEModel
