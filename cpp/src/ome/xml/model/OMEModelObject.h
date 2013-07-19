@@ -63,11 +63,6 @@ namespace ome
       class OMEModelObject
       {
       public:
-	typedef std::shared_ptr<OMEModelObject> shared_ptr;
-	typedef const std::shared_ptr<OMEModelObject> const_shared_ptr;
-	typedef std::weak_ptr<OMEModelObject> weak_ptr;
-	typedef const std::weak_ptr<OMEModelObject> const_weak_ptr;
-
         inline
 	OMEModelObject ()
 	{}
@@ -110,7 +105,7 @@ namespace ome
 	 */
 	virtual bool
 	link (std::shared_ptr<Reference>& reference,
-	      OMEModelObject::shared_ptr& o) = 0;
+	      std::shared_ptr<OMEModelObject>& o) = 0;
 
       };
 

@@ -61,22 +61,22 @@ namespace ome
 	reference_map_type references;
 
       public:
-	OMEModelObject::shared_ptr
+	std::shared_ptr<OMEModelObject>
 	removeModelObject(const std::string& id);
 
-	OMEModelObject::shared_ptr
+	std::shared_ptr<OMEModelObject>
 	addModelObject(const std::string& id,
-		       OMEModelObject::shared_ptr& object);
+		       std::shared_ptr<OMEModelObject>& object);
 
-	OMEModelObject::shared_ptr
+	std::shared_ptr<OMEModelObject>
 	getModelObject(const std::string& id) const;
 
 	const object_map_type&
 	getModelObjects () const;
 
 	bool
-	addReference (OMEModelObject::shared_ptr& a,
-		      Reference::shared_ptr& b);
+	addReference (std::shared_ptr<OMEModelObject>& a,
+		      std::shared_ptr<Reference>& b);
 
 	const reference_map_type&
 	getReferences () const;

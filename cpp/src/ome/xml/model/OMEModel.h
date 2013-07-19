@@ -59,10 +59,9 @@ namespace ome
       class OMEModel
       {
       public:
-        typedef OMEModelObject::shared_ptr object_ptr_type;
-        typedef std::vector<Reference::shared_ptr> reference_list_type;
-	typedef std::map<std::string, object_ptr_type> object_map_type;
-	typedef std::map<object_ptr_type, reference_list_type> reference_map_type;
+        typedef std::vector<std::shared_ptr<Reference> > reference_list_type;
+	typedef std::map<std::string, std::shared_ptr<OMEModelObject> > object_map_type;
+	typedef std::map<std::shared_ptr<OMEModelObject>, reference_list_type> reference_map_type;
         typedef reference_map_type::size_type size_type;
 
         inline
@@ -74,16 +73,16 @@ namespace ome
 	{}
 
 	virtual
-	OMEModelObject::shared_ptr
+	std::shared_ptr<OMEModelObject>
 	addModelObject(const std::string&   id,
-		       OMEModelObject::shared_ptr& object) = 0;
+		       std::shared_ptr<OMEModelObject>& object) = 0;
 
 	virtual
-	OMEModelObject::shared_ptr
+	std::shared_ptr<OMEModelObject>
 	removeModelObject (const std::string& id) = 0;
 
 	virtual
-	OMEModelObject::shared_ptr
+	std::shared_ptr<OMEModelObject>
 	getModelObject (const std::string& id) const = 0;
 	
 	// TODO: Reference or value?
@@ -93,8 +92,8 @@ namespace ome
 
 	virtual
 	bool
-	addReference (OMEModelObject::shared_ptr& a,
-		      Reference::shared_ptr& b) = 0;
+	addReference (std::shared_ptr<OMEModelObject>& a,
+		      std::shared_ptr<Reference>& b) = 0;
 
 	virtual
 	const reference_map_type&

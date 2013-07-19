@@ -61,11 +61,6 @@ namespace ome
       class AbstractOMEModelObject : public OMEModelObject
       {
       public:
-	typedef std::shared_ptr<AbstractOMEModelObject> shared_ptr;
-	typedef const std::shared_ptr<AbstractOMEModelObject> const_shared_ptr;
-	typedef std::weak_ptr<AbstractOMEModelObject> weak_ptr;
-	typedef const std::weak_ptr<AbstractOMEModelObject> const_weak_ptr;
-
 	AbstractOMEModelObject ();
 
         virtual
@@ -96,7 +91,7 @@ namespace ome
 
 	virtual bool
 	link (std::shared_ptr<Reference>& reference,
-	      OMEModelObject::shared_ptr& o);
+	      std::shared_ptr<OMEModelObject>& o);
 
         /**
          * Retrieves all the children of an element that have a given tag name. If a
@@ -107,7 +102,7 @@ namespace ome
          * @return List of elements which have the tag <code>name</code>.
          */
         static std::vector<xerces::dom::element>
-        getChildrenByTagName (xerces::dom::element& parent,
+        getChildrenByTagName (const xerces::dom::element& parent,
                               const std::string& name);
 
         /**

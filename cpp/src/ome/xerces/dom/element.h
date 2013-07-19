@@ -46,6 +46,7 @@
 #include <xercesc/dom/DOMElement.hpp>
 
 #include <ome/xerces/dom/node.h>
+#include <ome/xerces/string.h>
 
 namespace ome
 {

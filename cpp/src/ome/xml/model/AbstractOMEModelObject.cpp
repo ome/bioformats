@@ -72,13 +72,13 @@ namespace ome
 
       bool
       AbstractOMEModelObject::link (std::shared_ptr<Reference>& reference,
-                                    OMEModelObject::shared_ptr& o)
+                                    std::shared_ptr<OMEModelObject>& o)
       {
         return false;
       }
 
       std::vector<xerces::dom::element>
-      AbstractOMEModelObject::getChildrenByTagName (xerces::dom::element& parent,
+      AbstractOMEModelObject::getChildrenByTagName (const xerces::dom::element& parent,
                                                     const std::string& name)
       {
         // TODO: May need to be a shared_ptr<element> if element is not refcounting.
