@@ -875,7 +875,10 @@ public class MetamorphReader extends BaseTiffReader {
                 comment = (String) commentEntry;
               }
               else if (commentEntry instanceof TiffIFDEntry) {
-                comment = tp.getIFDValue((TiffIFDEntry) commentEntry).toString();
+                Object value = tp.getIFDValue((TiffIFDEntry) commentEntry);
+                if (value != null) {
+                  comment = value.toString();
+                }
               }
             }
             if (comment != null) comment = comment.trim();
