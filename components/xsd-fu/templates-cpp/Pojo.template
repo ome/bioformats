@@ -95,7 +95,6 @@ namespace ome
       class ${klass.name}
 {% end no parentName %}\
       {
-      public:
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       namespace
@@ -127,13 +126,31 @@ namespace ome
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::${klass.name} ():
+{% if klass.parentName is not None %}\
+{% if len(klass.instanceVariables) == 0 %}\
+        ${klass.parentName}()
+{% end has no instance variables %}\
+{% if len(klass.instanceVariables) > 0 %}\
+        ${klass.parentName}(),
+{% end has instance variables %}\
+{% end has parent %}\
 {% for prop in klass.instanceVariables %}\
 {% if prop[0] is not None %}\
 {% if prop == klass.instanceVariables[-1] %}\
+{% if prop[2] is not None %}\
+        ${prop[1]}(${prop[2]})
+{% end has default %}\
+{% if prop[2] is None %}\
         ${prop[1]}()
+{% end no default %}\
 {% end last member %}\
 {% if prop != klass.instanceVariables[-1] %}\
+{% if prop[2] is not None %}\
         ${prop[1]}(),
+{% end has default %}\
+{% if prop[2] is None %}\
+        ${prop[1]}(${prop[2]}),
+{% end no default %}\
 {% end not last member %}\
 {% end has instance type %}\
 {% end for %}\
@@ -155,6 +172,15 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::${klass.name} (xerces::dom::element& element, OMEModel& model):
+        // TODO: Pass ctor args to parent?
+{% if klass.parentName is not None %}\
+{% if len(klass.instanceVariables) == 0 %}\
+        ${klass.parentName}()
+{% end has no instance variables %}\
+{% if len(klass.instanceVariables) > 0 %}\
+        ${klass.parentName}(),
+{% end has instance variables %}\
+{% end has parent %}\
 {% for prop in klass.instanceVariables %}\
 {% if prop[0] is not None %}\
 {% if prop == klass.instanceVariables[-1] %}\
@@ -281,12 +307,12 @@ ${customUpdatePropertyContent[prop.name]}
           {
 {% if prop.isEnumeration %}\
             // Attribute property which is an enumeration ${prop.name}
-            set${prop.methodName}(${prop.langType}.fromString(element.getAttribute("${prop.name}")));
+            set${prop.methodName}(${prop.langTypeNS}(element.getAttribute("${prop.name}")));
 {% end %}\
 {% if not prop.isEnumeration %}\
             // Attribute property ${prop.name}
             {
-              ${prop.langType} attr;
+              ${prop.langTypeNS} attr;
               std::istringstream is(element.getAttribute("${prop.name}"));
               is >> attr;
               if (!is)
@@ -310,7 +336,12 @@ ${customUpdatePropertyContent[prop.name]}
           {
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
             // Element property ${prop.name} which is complex (has sub-elements)
-            std::shared_ptr<${prop.langType}> p(new ${prop.langType}(${prop.name}_nodeList.get(0), model));
+{% if prop.minOccurs == 0 %}\
+            std::shared_ptr<${prop.langType}> p(new ${prop.langType}(${prop.name}_nodeList.at(0), model));
+{% end %}\
+{% if prop.minOccurs > 0 %}\
+            ${prop.langTypeNS} p(${prop.name}_nodeList.at(0), model);
+{% end %}\
             set${prop.methodName}(p);
 {% end %}\
 {% if not prop.isComplex() %}\
@@ -629,7 +660,12 @@ ${customUpdatePropertyContent[prop.name]}
       void
       ${klass.name}::set${prop.methodName} (${prop.argType} ${prop.argumentName})
       {
+{% if prop.minOccurs == 0 %}\
+        this->${prop.instanceVariableName} = std::shared_ptr<${prop.langTypeNS}>(new ${prop.langTypeNS}(${prop.argumentName}));
+{% end if %}\
+{% if prop.minOccurs > 0 %}\
         this->${prop.instanceVariableName} = ${prop.argumentName};
+{% end if %}\
       }
 {% end source %}\
 {% end %}\
@@ -674,29 +710,32 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-	${prop.langType}
+// NOTE: Return type set to void since we can't return abstract types by value.
+	void
         set${prop.methodName} (int index,
                                ${prop.argType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.langType}
+      void
       ${klass.name}::set${prop.methodName} (int index,
                              ${prop.argType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
         ${prop.argumentName}.set${klass.type}(this);
 {% end %}\
-        return ${prop.instanceVariableName}.set(index, ${prop.argumentName});
+// TODO: Check if the java arraylist.set would insert if at the end?
+// May need to push_back if 1 past the end.
+        ${prop.instanceVariableName}.at(index) = ${prop.argumentName};
       }
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
 	void
-        add${prop.methodName} (${prop.langType} ${prop.argumentName});
+        add${prop.methodName} (${prop.argType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::add${prop.methodName} (${prop.langType} ${prop.argumentName})
+      ${klass.name}::add${prop.methodName} (${prop.argType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
         ${prop.argumentName}.set${klass.type}(this);
@@ -706,11 +745,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-        void remove${prop.methodName} (${prop.langType} ${prop.argumentName});
+        void
+        remove${prop.methodName} (${prop.argType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::remove${prop.methodName} (${prop.langType} ${prop.argumentName})
+      ${klass.name}::remove${prop.methodName} (${prop.argType} ${prop.argumentName})
       {
         ${prop.instanceVariableName}.remove(${prop.argumentName});
       }
