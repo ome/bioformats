@@ -74,6 +74,15 @@ namespace ome
         {
         }
 
+        node
+        appendChild (const node& node)
+        {
+          // TODO: Catch and rethrow xerces exceptions with the xerces
+          // errors converted to sane descriptions.  And additionally
+          // for all other xerces methods which throw.
+          return this->xmlnode->appendChild(node.xmlnode);
+        }
+
         node&
         operator= (node& node)
         {

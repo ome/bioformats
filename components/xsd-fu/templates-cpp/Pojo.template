@@ -310,7 +310,8 @@ ${customUpdatePropertyContent[prop.name]}
           {
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
             // Element property ${prop.name} which is complex (has sub-elements)
-            set${prop.methodName}(new ${prop.langType}((Element) ${prop.name}_nodeList.get(0), model));
+            std::shared_ptr<${prop.langType}> p(new ${prop.langType}(${prop.name}_nodeList.get(0), model));
+            set${prop.methodName}(p);
 {% end %}\
 {% if not prop.isComplex() %}\
             // Element property ${prop.name} which is not complex (has no
@@ -333,8 +334,8 @@ ${customUpdatePropertyContent[prop.name]}
             std::vector<xerces::dom::element> ${inner_prop.name}_nodeList(getChildrenByTagName(${prop.name}_element, "${inner_prop.name}"));
             for (Element ${inner_prop.name}_element : ${inner_prop.name}_nodeList)
               {
-                ${inner_prop.langType} o = new ${inner_prop.langType}(${prop.name}_element, model);
-                o.update(${inner_prop.name}_element, model);
+                std::shared_ptr<${inner_prop.langType}> o(new ${inner_prop.langType}(${prop.name}_element, model));
+                o->update(${inner_prop.name}_element, model);
                 add${prop.methodName}(o);
               }
 {% end %}\
@@ -347,7 +348,8 @@ ${customUpdatePropertyContent[prop.name]}
         std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         for (Element ${prop.name}_element : ${prop.name}_nodeList)
           {
-            add${prop.methodName}(new ${prop.langType}(${prop.name}_element, model));
+            std::shared_ptr<${prop.langType}> o(new ${prop.langType}(${prop.name}_element, model));
+            add${prop.methodName}(o);
           }
 {% end %}\
 {% end %}\
@@ -357,7 +359,8 @@ ${customUpdatePropertyContent[prop.name]}
         std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName("${prop.name}"));
         for (Element ${prop.name}_element : ${prop.name}_nodeList)
           {
-            add${prop.methodName}(new ${prop.langType}(${prop.name}_element.getTextContent(), model));
+            std::shared_ptr<${prop.langType}> o(new ${prop.langType}(${prop.name}_element.getTextContent(), model));
+            add${prop.methodName}(o);
           }
 {% end %}\
 {% otherwise %}\
@@ -402,17 +405,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
-                // struct contains
-                // {
-                //   const ${prop.langType}& cmp;
-                //   contains(const std::shared_ptr<${prop.langType}>& cmp): cmp(cmp) {}
-                //   // Note this is a pointer comparison, not value.
-                //   bool operator() (std::shared_ptr<const ${prop.langType}>& elem) {return cmp == elem;}
-                // };
-
-                if (std::find_if(${prop.instanceVariableName}.begin(),
-                                 ${prop.instanceVariableName}.end(),
-                                 o) == ${prop.instanceVariableName}.end())
+// TODO: Use of const since this is nonmodifying.
+                if (contains(${prop.instanceVariableName}, o_casted))
                   {
                     ${prop.instanceVariableName}.push_back(o_casted);
                   }
@@ -489,11 +483,13 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-	${prop.langType}
+// TODO: Should this be shared_ptr rather than weak_ptr for pointer types?
+// This would force a strong reference if another thread were to remove the object.
+        const std::weak_ptr<${prop.langType}>&
         getLinked${prop.methodName} (int index) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.langType}
+      const std::weak_ptr<${prop.langType}>&
       ${klass.name}::getLinked${prop.methodName} (int index) const
       {
         return ${prop.instanceVariableName}.at(index);
@@ -501,26 +497,26 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-	${prop.langType}
+	const std::weak_ptr<${prop.langType}>&
         setLinked${prop.methodName} (int index,
-                                     ${prop.langType} o);
+                                     const std::shared_ptr<${prop.langType}>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.langType}
+      const std::weak_ptr<${prop.langType}>&
       ${klass.name}::setLinked${prop.methodName}(int index,
-                                  ${prop.langType} o)
+                                                 const std::shared_ptr<${prop.langType}>& o)
       {
-        return ${prop.instanceVariableName}.set(index, o);
+        return ${prop.instanceVariableName}.at(index) = o;
       }
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
 	bool
-        link${prop.methodName} (${prop.langType} o);
+        link${prop.methodName} (const std::shared_ptr<${prop.langType}>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::link${prop.methodName} (${prop.langType} o)
+      ${klass.name}::link${prop.methodName} (const std::shared_ptr<${prop.langType}>& o)
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
@@ -530,20 +526,22 @@ ${customUpdatePropertyContent[prop.name]}
         o.link${klass.name}${prop.methodName}(this);
 {% end %}\
 {% end %}\
-        if (!${prop.instanceVariableName}.contains(o)) {
-          return ${prop.instanceVariableName}.add(o);
-        }
+        if (contains(${prop.instanceVariableName}, o))
+          {
+            ${prop.instanceVariableName}.push_back(o);
+            return true;
+          }
         return false;
       }
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
 	bool
-        unlink${prop.methodName} (${prop.langType} o);
+        unlink${prop.methodName} (const std::shared_ptr<${prop.langType}>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::unlink${prop.methodName} (${prop.langType} o)
+      ${klass.name}::unlink${prop.methodName} (const std::shared_ptr<${prop.langType}>& o)
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
@@ -553,7 +551,17 @@ ${customUpdatePropertyContent[prop.name]}
         o.unlink${klass.name}${prop.methodName}(this);
 {% end %}\
 {% end %}\
-        return ${prop.instanceVariableName}.remove(o);
+        bool found = false;
+        ${prop.instanceVariableType}::iterator i =
+          std::find_if(${prop.instanceVariableName}.begin(),
+                       ${prop.instanceVariableName}.end(),
+                       compare_element<${prop.langType}>(o));
+        if (i != ${prop.instanceVariableName}.end())
+          {
+            found = true;
+            ${prop.instanceVariableName}.erase(i);
+          }
+        return found;
       }
 {% end source %}\
 {% end %}\
@@ -741,107 +749,134 @@ ${customUpdatePropertyContent[prop.name]}
 	${klass.name}::asXMLElementInternal (xerces::dom::document& document,
                       xerces::dom::element& ${klass.name}_element) const
 	{
-		// Creating XML block for ${klass.name}
+          // Creating XML block for ${klass.name}
 
 {% if klass.isAbstractProprietary %}\
-		// Class is abstract so we may need to create its "container" element
-		if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
-		{
-			xerces::dom::element abstractElement =
-					document.createElementNS(NAMESPACE, "${klass.name}");
-			abstractElement.appendChild(${klass.name}_element);
-			${klass.name}_element = abstractElement;
-		}
+          // Class is abstract so we may need to create its "container" element
+          if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
+            {
+              xerces::dom::element abstractElement =
+                document.createElementNS(NAMESPACE, "${klass.name}");
+              abstractElement.appendChild(${klass.name}_element);
+              ${klass.name}_element = abstractElement;
+            }
 {% end %}\
-		if (!${klass.name}_element)
-		{
-			${klass.name}_element =
-					document.createElementNS(NAMESPACE, "${klass.name}");
-		}
+          if (!${klass.name}_element)
+            {
+              ${klass.name}_element =
+                             document.createElementNS(NAMESPACE, "${klass.name}");
+            }
 
 {% if klass.langType != 'Object' %}\
-		// Element's text data
-		if (${klass.name}_value) {
-			${klass.name}_element.setTextContent(${klass.name}_value.toString());
-		}
+	    // Element's text data
+//            if (!${klass.name}_value.empty()) {
+            {
+              std::ostringstream os;
+              os << ${klass.name}_value;
+              ${klass.name}_element.setTextContent(os.str());
+//            }
 
 {% end %}\
 {% for prop in klass.properties.values() %}\
 {% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
-		if (${prop.instanceVariableName})
-		{
+            {
 {% choose %}\
 {% when prop.name in customAsXMLElementPropertyContent %}\
-			// -- BEGIN custom content from ${prop.name} property template --
+                // -- BEGIN custom content from ${prop.name} property template --
 ${customAsXMLElementPropertyContent[prop.name]}
-			// -- END custom content from ${prop.name} property template --
+                // -- END custom content from ${prop.name} property template --
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
-			// Reference property ${prop.name} which occurs more than once
-			for (${prop.langType} ${prop.instanceVariableName}_value : ${prop.instanceVariableName})
-			{
-				${prop.name} o = new ${prop.name}();
-				o.setID(${prop.instanceVariableName}_value.getID());
-				${klass.name}_element.appendChild(o.asXMLElement(document));
-			}
+               {
+                 // Reference property ${prop.name} which occurs more than once
+                 for (${prop.instanceVariableType}::const_iterator i = ${prop.instanceVariableName}.begin();
+                      i != ${prop.instanceVariableName}.end();
+                      ++i)
+                   {
+                     // TODO: Does not need to be shared--no new required?
+                     std::shared_ptr<${prop.name}> o(new ${prop.name}());
+                     std::shared_ptr<${prop.langType}> is(*i);
+                     if (is)
+                       {
+                         o->setID(is->getID());
+                         ${klass.name}_element.appendChild(o->asXMLElement(document));
+                       }
+                   }
+               }
 {% end %}\
 {% when prop.isReference %}\
-			// Reference property ${prop.name}
-			${prop.name} o = new ${prop.name}();
-			o.setID(${prop.instanceVariableName}.getID());
-			${klass.name}_element.appendChild(o.asXMLElement(document));
+                {
+                  // Reference property ${prop.name}
+                  // TODO: Does not need to be shared--no new required?
+                  std::shared_ptr<${prop.name}> o(new ${prop.name}());
+                  o->setID(${prop.instanceVariableName}.getID());
+                  ${klass.name}_element.appendChild(o->asXMLElement(document));
+                }
 {% end %}\
 {% when prop.isBackReference %}\
-			// *** IGNORING *** Skipped back reference ${prop.name}
+                // *** IGNORING *** Skipped back reference ${prop.name}
 {% end %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
-			// Attribute property ${prop.name}
-                        {
-                          std::ostringstream os;
-                          os << ${prop.instanceVariableName};
-                          ${klass.name}_element.setAttribute("${prop.name}", os.str());
-                        }
+                // Attribute property ${prop.name}
+                {
+                  std::ostringstream os;
+                  os << ${prop.instanceVariableName};
+                  ${klass.name}_element.setAttribute("${prop.name}", os.str());
+                }
 {% end %}\
 {% when prop.maxOccurs == 1 and prop.isComplex() %}\
-			// Element property ${prop.name} which is complex (has
-			// sub-elements)
-			${klass.name}_element.appendChild(${prop.instanceVariableName}.asXMLElement(document));
+                // Element property ${prop.name} which is complex (has
+                // sub-elements)
+                ${klass.name}_element.appendChild(${prop.instanceVariableName}.asXMLElement(document));
 {% end %}\
 {% when prop.maxOccurs == 1 %}\
-			// Element property ${prop.name} which is not complex (has no
-			// sub-elements)
-			xerces::dom::element ${prop.instanceVariableName}_element =
-					document.createElementNS(NAMESPACE, "${prop.name}");
-			${prop.instanceVariableName}_element.setTextContent(${prop.instanceVariableName}.toString());
-			${klass.name}_element.appendChild(${prop.instanceVariableName}_element);
+                // Element property ${prop.name} which is not complex (has no
+                // sub-elements)
+                {
+                  xerces::dom::element ${prop.instanceVariableName}_element =
+                  document.createElementNS(NAMESPACE, "${prop.name}");
+                  std::ostringstream os;
+                  os << ${prop.instanceVariableName};
+                  ${prop.instanceVariableName}_element.setTextContent(os.str());
+                  ${klass.name}_element.appendChild(${prop.instanceVariableName}_element);
+                }
 {% end %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() %}\
-			// Element property ${prop.name} which is complex (has
-			// sub-elements) and occurs more than once
-			for (${prop.langType} ${prop.instanceVariableName}_value : ${prop.instanceVariableName})
-			{
-				${klass.name}_element.appendChild(${prop.instanceVariableName}_value.asXMLElement(document));
-			}
+                {
+                  // Element property ${prop.name} which is complex (has
+                  // sub-elements) and occurs more than once
+                  for (${prop.instanceVariableType}::const_iterator i = ${prop.instanceVariableName}.begin();
+                       i != ${prop.instanceVariableName}.end();
+                       ++i)
+                    {
+                      ${klass.name}_element.appendChild(i->asXMLElement(document));
+                    }
 {% end %}\
 {% when prop.maxOccurs > 1 %}\
-			// Element property ${prop.name} which is not complex (has no
-			// sub-elements) which occurs more than once
-			for (${prop.langType} ${prop.instanceVariableName}_value : ${prop.instanceVariableName})
-			{
-				xerces::dom::element ${prop.instanceVariableName}_element =
-						document.createElementNS(NAMESPACE, "${prop.name}");
-				${prop.instanceVariableName}_element.setTextContent(${prop.instanceVariableName}_value.toString());
-				${klass.name}_element.appendChild(${prop.instanceVariableName}_element);
-			}
+                {
+                  // Element property ${prop.name} which is not complex (has no
+                  // sub-elements) which occurs more than once
+                  for (${prop.instanceVariableType}::const_iterator i = ${prop.instanceVariableName}.begin();
+                       i != ${prop.instanceVariableName}.end();
+                       ++i)
+                    {
+                      xerces::dom::element ${prop.instanceVariableName}_element =
+                        document.createElementNS(NAMESPACE, "${prop.name}");
+                      std::ostringstream os;
+                      os << *i;
+                      ${prop.instanceVariableName}_element.setTextContent(os.str());
+                      ${klass.name}_element.appendChild(${prop.instanceVariableName}_element);
+                  }
+                }
 {% end %}\
 {% otherwise %}\
-			// *** WARNING *** Unhandled or skipped property ${prop.name}
+                // *** WARNING *** Unhandled or skipped property ${prop.name}
 {% end %}\
 {% end %}\
-		}
+              }
 {% end %}\
 {% end %}\
-                return ${klass.parentName}::asXMLElementInternal(document, ${klass.name}_element);
+            return ${klass.parentName}::asXMLElementInternal(document, ${klass.name}_element);
 	}
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\

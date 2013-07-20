@@ -114,6 +114,36 @@ namespace ome
         static std::string
         stripNamespacePrefix (const std::string& v);
 
+      protected:
+        /// @todo: Use of const since this is nonmodifying.
+        template<typename T>
+        struct compare_element
+        {
+          std::shared_ptr<const T> cmp;
+
+          compare_element(const std::shared_ptr<const T>& cmp):
+            cmp(cmp)
+          {}
+
+          // Note this is a pointer comparison, not value.
+          bool
+          operator () (std::weak_ptr<const T> element)
+          {
+            std::shared_ptr<const T> shared_element(element);
+            return cmp && shared_element && cmp == shared_element;
+          }
+        };
+
+        template<class C, typename T>
+        bool
+        contains(const C& container,
+                 const std::shared_ptr<T>& value)
+        {
+          return (std::find_if(container.begin(),
+                               container.end(),
+                               compare_element<T>(value)) != container.end());
+        }
+
       };
 
     }

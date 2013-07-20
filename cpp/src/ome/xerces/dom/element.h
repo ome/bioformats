@@ -121,6 +121,12 @@ namespace ome
           return xmlelem->getTextContent();
         }
 
+        void
+        setTextContent (const std::string& val)
+        {
+          return xmlelem->setTextContent(xerces::string(val));
+        }
+
         element&
         operator= (element& element)
         {
