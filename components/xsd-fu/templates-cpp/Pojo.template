@@ -48,6 +48,7 @@
 #define ${fu.GUARD}
 
 #include <algorithm>
+#include <iostream>
 #include <list>
 #include <string>
 #include <vector>
@@ -292,7 +293,7 @@ ${customUpdatePropertyContent[prop.name]}
  //          {
  //            // ID property
             
- //            ${prop.langType} id;
+ //            ${prop.langTypeNS} id;
  //            std::istringstream is(element.getAttribute("${prop.name}"));
  //            is >> id;
  //            if (!is)
@@ -307,7 +308,13 @@ ${customUpdatePropertyContent[prop.name]}
           {
 {% if prop.isEnumeration %}\
             // Attribute property which is an enumeration ${prop.name}
+{% if prop.minOccurs == 0 %}\
+std::shared_ptr<${prop.langTypeNS}> nattr(new ${prop.langTypeNS}(element.getAttribute("${prop.name}")));
+            set${prop.methodName}(nattr);
+{% end %}\
+{% if prop.minOccurs > 0 %}\
             set${prop.methodName}(${prop.langTypeNS}(element.getAttribute("${prop.name}")));
+{% end %}\
 {% end %}\
 {% if not prop.isEnumeration %}\
             // Attribute property ${prop.name}
@@ -343,7 +350,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
             // Element property ${prop.name} which is complex (has sub-elements)
 {% if prop.minOccurs == 0 %}\
-            std::shared_ptr<${prop.langType}> p(new ${prop.langType}(${prop.name}_nodeList.at(0), model));
+            std::shared_ptr<${prop.langTypeNS}> p(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0), model));
 {% end %}\
 {% if prop.minOccurs > 0 %}\
             ${prop.langTypeNS} p(${prop.name}_nodeList.at(0), model);
@@ -353,7 +360,13 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not prop.isComplex() %}\
             // Element property ${prop.name} which is not complex (has no
             // sub-elements)
-            set${prop.methodName}(${prop.langType}(${prop.name}_nodeList.at(0).getTextContent()));
+{% if prop.minOccurs == 0 %}\
+            std::shared_ptr<${prop.langTypeNS}> ns(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0).getTextContent()));
+            set${prop.methodName}(ns);
+{% end %}\
+{% if prop.minOccurs > 0 %}\
+            set${prop.methodName}(${prop.langTypeNS}(${prop.name}_nodeList.at(0).getTextContent()));
+{% end %}\
 {% end %}\
           }
 {% end %}\
@@ -371,7 +384,7 @@ ${customUpdatePropertyContent[prop.name]}
             std::vector<xerces::dom::element> ${inner_prop.name}_nodeList(getChildrenByTagName(${prop.name}_element, "${inner_prop.name}"));
             for (Element ${inner_prop.name}_element : ${inner_prop.name}_nodeList)
               {
-                std::shared_ptr<${inner_prop.langType}> o(new ${inner_prop.langType}(${prop.name}_element, model));
+                std::shared_ptr<${inner_prop.langTypeNS}> o(new ${inner_prop.langTypeNS}(${prop.name}_element, model));
                 o->update(${inner_prop.name}_element, model);
                 add${prop.methodName}(o);
               }
@@ -385,7 +398,7 @@ ${customUpdatePropertyContent[prop.name]}
         std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         for (Element ${prop.name}_element : ${prop.name}_nodeList)
           {
-            std::shared_ptr<${prop.langType}> o(new ${prop.langType}(${prop.name}_element, model));
+            std::shared_ptr<${prop.langTypeNS}> o(new ${prop.langTypeNS}(${prop.name}_element, model));
             add${prop.methodName}(o);
           }
 {% end %}\
@@ -396,7 +409,7 @@ ${customUpdatePropertyContent[prop.name]}
         std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName("${prop.name}"));
         for (Element ${prop.name}_element : ${prop.name}_nodeList)
           {
-            std::shared_ptr<${prop.langType}> o(new ${prop.langType}(${prop.name}_element.getTextContent(), model));
+            std::shared_ptr<${prop.langTypeNS}> o(new ${prop.langTypeNS}(${prop.name}_element.getTextContent(), model));
             add${prop.methodName}(o);
           }
 {% end %}\
@@ -430,15 +443,15 @@ ${customUpdatePropertyContent[prop.name]}
         if (std::dynamic_pointer_cast<${prop.name}>(reference))
           {
             // TODO: This bit is silly; why do we have two dynamic_casts here.
-            std::shared_ptr<${prop.langType}> o_casted = std::dynamic_pointer_cast<${prop.langType}>(o);
+            std::shared_ptr<${prop.langTypeNS}> o_casted = std::dynamic_pointer_cast<${prop.langTypeNS}>(o);
             if (o_casted)
               {
 {% if not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted->link${klass.type}(this);
+                o_casted->link${klass.type}(std::shared_ptr<${klass.type}>(this));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-                o_casted->link${klass.name}${prop.methodName}(this);
+                o_casted->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.type}>(this));
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
@@ -520,11 +533,11 @@ ${customUpdatePropertyContent[prop.name]}
 {% if fu.SOURCE_TYPE == "header" %}\
 // TODO: Should this be shared_ptr rather than weak_ptr for pointer types?
 // This would force a strong reference if another thread were to remove the object.
-        const std::weak_ptr<${prop.langType}>&
+        const std::weak_ptr<${prop.langTypeNS}>&
         getLinked${prop.methodName} (${prop.instanceVariableType}::size_type index) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const std::weak_ptr<${prop.langType}>&
+      const std::weak_ptr<${prop.langTypeNS}>&
       ${klass.name}::getLinked${prop.methodName} (${prop.instanceVariableType}::size_type index) const
       {
         return ${prop.instanceVariableName}.at(index);
@@ -532,14 +545,14 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-	const std::weak_ptr<${prop.langType}>&
+	const std::weak_ptr<${prop.langTypeNS}>&
         setLinked${prop.methodName} (${prop.instanceVariableType}::size_type index,
-                                     const std::shared_ptr<${prop.langType}>& o);
+                                     const std::shared_ptr<${prop.langTypeNS}>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const std::weak_ptr<${prop.langType}>&
+      const std::weak_ptr<${prop.langTypeNS}>&
       ${klass.name}::setLinked${prop.methodName}(${prop.instanceVariableType}::size_type index,
-                                                 const std::shared_ptr<${prop.langType}>& o)
+                                                 const std::shared_ptr<${prop.langTypeNS}>& o)
       {
         return ${prop.instanceVariableName}.at(index) = o;
       }
@@ -547,11 +560,11 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if fu.SOURCE_TYPE == "header" %}\
 	bool
-        link${prop.methodName} (const std::shared_ptr<${prop.langType}>& o);
+        link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::link${prop.methodName} (const std::shared_ptr<${prop.langType}>& o)
+      ${klass.name}::link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& o)
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
@@ -572,11 +585,11 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if fu.SOURCE_TYPE == "header" %}\
 	bool
-        unlink${prop.methodName} (const std::shared_ptr<${prop.langType}>& o);
+        unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::unlink${prop.methodName} (const std::shared_ptr<${prop.langType}>& o)
+      ${klass.name}::unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& o)
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
@@ -590,7 +603,7 @@ ${customUpdatePropertyContent[prop.name]}
         ${prop.instanceVariableType}::iterator i =
           std::find_if(${prop.instanceVariableName}.begin(),
                        ${prop.instanceVariableName}.end(),
-                       compare_element<${prop.langType}>(o));
+                       compare_element<${prop.langTypeNS}>(o));
         if (i != ${prop.instanceVariableName}.end())
           {
             found = true;
@@ -603,12 +616,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.isReference %}
 {% if fu.SOURCE_TYPE == "header" %}\
 	// Reference
-	${prop.langType}
+	${prop.langTypeNS}
         getLinked${prop.methodName} () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       // Reference
-      ${prop.langType}
+      ${prop.langTypeNS}
       ${klass.name}::getLinked${prop.methodName} () const
       {
         return ${prop.instanceVariableName};
@@ -617,11 +630,11 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        link${prop.methodName} (std::shared_ptr<${prop.langType}>& o);
+        link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::link${prop.methodName} (std::shared_ptr<${prop.langType}>& o)
+      ${klass.name}::link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& o)
       {
         ${prop.instanceVariableName} = o;
       }
@@ -629,11 +642,11 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        unlink${prop.methodName} (std::shared_ptr<${prop.langType}>& o);
+        unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::unlink${prop.methodName} (std::shared_ptr<${prop.langType}>& o)
+      ${klass.name}::unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& o)
       {
         if (${prop.instanceVariableName} == o)
           {
@@ -659,11 +672,11 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.minOccurs == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	void
-        set${prop.methodName} (std::shared_ptr<${prop.langType}>& ${prop.argumentName});
+        set${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::set${prop.methodName} (std::shared_ptr<${prop.langType}>& ${prop.argumentName})
+      ${klass.name}::set${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
         this->${prop.instanceVariableName} = ${prop.argumentName};
       }
@@ -698,11 +711,11 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-	std::vector<${prop.langType}>
+	std::vector<${prop.langTypeNS}>
         copy${prop.methodName}List ();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::vector<${prop.langType}>
+      std::vector<${prop.langTypeNS}>
       ${klass.name}::copy${prop.methodName}List ()
       {
         return ${prop.instanceVariableName};
@@ -847,7 +860,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
                    {
                      // TODO: Does not need to be shared--no new required?
                      std::shared_ptr<${prop.name}> o(new ${prop.name}());
-                     std::shared_ptr<${prop.langType}> is(*i);
+                     std::shared_ptr<${prop.langTypeNS}> is(*i);
                      if (is)
                        {
                          o->setID(is->getID());
