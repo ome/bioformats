@@ -312,9 +312,15 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not prop.isEnumeration %}\
             // Attribute property ${prop.name}
             {
-              ${prop.langTypeNS} attr;
               std::istringstream is(element.getAttribute("${prop.name}"));
+{% if prop.minOccurs == 0 %}\
+              std::shared_ptr<${prop.langTypeNS}> attr(new ${prop.langTypeNS}());
+              is >> *attr;
+{% end %}\
+{% if prop.minOccurs > 0 %}\
+              ${prop.langTypeNS} attr;
               is >> attr;
+{% end %}\
               if (!is)
                 throw std::runtime_error("Failed to parse ${klass.name}_value");
 
@@ -487,14 +493,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% choose %}\
 {% when (prop.isReference or prop.isBackReference) and prop.maxOccurs > 1 %}
 {% if fu.SOURCE_TYPE == "header" %}\
-// TODO: Use size_type of container
 	// Reference which occurs more than once
-	int
+	${prop.instanceVariableType}::size_type
         sizeOfLinked${prop.methodName}List ();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-// TODO: Use size_type of container
-      int
+      ${prop.instanceVariableType}::size_type
       ${klass.name}::sizeOfLinked${prop.methodName}List ()
       {
         return ${prop.instanceVariableName}.size();
@@ -517,11 +521,11 @@ ${customUpdatePropertyContent[prop.name]}
 // TODO: Should this be shared_ptr rather than weak_ptr for pointer types?
 // This would force a strong reference if another thread were to remove the object.
         const std::weak_ptr<${prop.langType}>&
-        getLinked${prop.methodName} (int index) const;
+        getLinked${prop.methodName} (${prop.instanceVariableType}::size_type index) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::weak_ptr<${prop.langType}>&
-      ${klass.name}::getLinked${prop.methodName} (int index) const
+      ${klass.name}::getLinked${prop.methodName} (${prop.instanceVariableType}::size_type index) const
       {
         return ${prop.instanceVariableName}.at(index);
       }
@@ -529,12 +533,12 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if fu.SOURCE_TYPE == "header" %}\
 	const std::weak_ptr<${prop.langType}>&
-        setLinked${prop.methodName} (int index,
+        setLinked${prop.methodName} (${prop.instanceVariableType}::size_type index,
                                      const std::shared_ptr<${prop.langType}>& o);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::weak_ptr<${prop.langType}>&
-      ${klass.name}::setLinked${prop.methodName}(int index,
+      ${klass.name}::setLinked${prop.methodName}(${prop.instanceVariableType}::size_type index,
                                                  const std::shared_ptr<${prop.langType}>& o)
       {
         return ${prop.instanceVariableName}.at(index) = o;
@@ -652,33 +656,41 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 
+{% if prop.minOccurs == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	void
-        set${prop.methodName} (${prop.argType} ${prop.argumentName});
+        set${prop.methodName} (std::shared_ptr<${prop.langType}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::set${prop.methodName} (${prop.argType} ${prop.argumentName})
+      ${klass.name}::set${prop.methodName} (std::shared_ptr<${prop.langType}>& ${prop.argumentName})
       {
-{% if prop.minOccurs == 0 %}\
-        this->${prop.instanceVariableName} = std::shared_ptr<${prop.langTypeNS}>(new ${prop.langTypeNS}(${prop.argumentName}));
-{% end if %}\
-{% if prop.minOccurs > 0 %}\
         this->${prop.instanceVariableName} = ${prop.argumentName};
-{% end if %}\
       }
 {% end source %}\
+{% end occurs once %}\
+{% if prop.minOccurs > 0 %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+	void
+        set${prop.methodName} (const ${prop.langTypeNS}& ${prop.argumentName});
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      ${klass.name}::set${prop.methodName} (const ${prop.langTypeNS}& ${prop.argumentName})
+      {
+        this->${prop.instanceVariableName} = ${prop.argumentName};
+      }
+{% end source %}\
+{% end occurs more than once %}\
 {% end %}\
 {% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
 {% if fu.SOURCE_TYPE == "header" %}\
-// TODO: Use correct container size_type...
-	int
+        ${prop.instanceVariableType}::size_type
         sizeOf${prop.methodName}List ();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-// TODO: Use correct container size_type...
       // Property which occurs more than once
-      int
+      ${prop.instanceVariableType}::size_type
       ${klass.name}::sizeOf${prop.methodName}List ()
       {
         return ${prop.instanceVariableName}.size();
@@ -699,11 +711,11 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if fu.SOURCE_TYPE == "header" %}\
 	${prop.retType}
-        get${prop.methodName} (int index) const;
+        get${prop.methodName} (${prop.instanceVariableType}::size_type index) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.retType}
-      ${klass.name}::get${prop.methodName} (int index) const
+      ${klass.name}::get${prop.methodName} (${prop.instanceVariableType}::size_type index) const
       {
         return ${prop.instanceVariableName}.at(index);
       }
@@ -712,12 +724,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% if fu.SOURCE_TYPE == "header" %}\
 // NOTE: Return type set to void since we can't return abstract types by value.
 	void
-        set${prop.methodName} (int index,
+        set${prop.methodName} (${prop.instanceVariableType}::size_type index,
                                ${prop.argType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::set${prop.methodName} (int index,
+      ${klass.name}::set${prop.methodName} (${prop.instanceVariableType}::size_type index,
                              ${prop.argType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
