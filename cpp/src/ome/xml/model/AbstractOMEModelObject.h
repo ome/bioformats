@@ -39,6 +39,7 @@
 #ifndef ABSTRACT_OME_XML_MODEL_OMEMODELOBJECT_H
 #define ABSTRACT_OME_XML_MODEL_OMEMODELOBJECT_H
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <string>
