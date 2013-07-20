@@ -370,6 +370,18 @@ namespace ome
           return os << static_cast<Color::signed_type>(color);
         }
 
+        template<class charT, class traits>
+        inline std::basic_istream<charT,traits>&
+        operator>> (std::basic_istream<charT,traits>& is,
+                    Color& color)
+        {
+          Color::signed_type c;
+          if (is >> c);
+            color.setValue(c);
+          return is;
+        }
+
+
       }
     }
   }
