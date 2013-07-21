@@ -365,7 +365,12 @@ std::shared_ptr<${prop.langTypeNS}> nattr(new ${prop.langTypeNS}(element.getAttr
             set${prop.methodName}(ns);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
-            set${prop.methodName}(${prop.langTypeNS}(${prop.name}_nodeList.at(0).getTextContent()));
+${prop.langTypeNS} attr;
+            std::istringstream is(${prop.name}_nodeList.at(0).getTextContent());
+            is >> attr;
+            /// @todo: Throw on parse error (and also for other stream errors elsewhere)?
+            if (is)
+              set${prop.methodName}(attr);
 {% end %}\
 {% end %}\
           }
@@ -377,17 +382,21 @@ std::shared_ptr<${prop.langTypeNS}> nattr(new ${prop.langTypeNS}(element.getAttr
         // object type is also abstract so we need to have a handler for
         // each "subclass".
         std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
-        for (Element ${prop.name}_element : ${prop.name}_nodeList)
+        for (std::vector<xerces::dom::element>::iterator elem = ${prop.name}_nodeList.begin();
+             elem != ${prop.name}_nodeList.end();
+             ++elem)
           {
 {% for inner_prop in model.getObjectByName(prop.name).properties.values() %}\
 {% if not inner_prop.isAttribute and inner_prop.isComplex() and not inner_prop.isReference and inner_prop.isChoice %}\
-            std::vector<xerces::dom::element> ${inner_prop.name}_nodeList(getChildrenByTagName(${prop.name}_element, "${inner_prop.name}"));
-            for (Element ${inner_prop.name}_element : ${inner_prop.name}_nodeList)
-              {
-                std::shared_ptr<${inner_prop.langTypeNS}> o(new ${inner_prop.langTypeNS}(${prop.name}_element, model));
-                o->update(${inner_prop.name}_element, model);
-                add${prop.methodName}(o);
-              }
+            std::vector<xerces::dom::element> ${inner_prop.name}_nodeList(getChildrenByTagName(*elem, "${inner_prop.name}"));
+                 for (std::vector<xerces::dom::element>::iterator inner_elem = ${inner_prop.name}_nodeList.begin();
+                 inner_elem != ${inner_prop.name}_nodeList.end();
+                 ++inner_elem)
+                   {
+                     std::shared_ptr<${inner_prop.langTypeNS}> o(new ${inner_prop.langTypeNS}(*elem, model));
+                     o->update(*inner_elem, model);
+                     add${prop.methodName}(o);
+                   }
 {% end %}\
 {% end %}\
           }
