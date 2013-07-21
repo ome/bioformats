@@ -568,10 +568,10 @@ std::shared_ptr<${prop.langTypeNS}> nattr(new ${prop.langTypeNS}(element.getAttr
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        o.link${klass.type}(this);
+        o->link${klass.type}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        o.link${klass.name}${prop.methodName}(this);
+        o->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% end %}\
         if (contains(${prop.instanceVariableName}, o))
@@ -593,10 +593,10 @@ std::shared_ptr<${prop.langTypeNS}> nattr(new ${prop.langTypeNS}(element.getAttr
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        o.unlink${klass.type}(this);
+        o->unlink${klass.type}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        o.unlink${klass.name}${prop.methodName}(this);
+        o->unlink${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% end %}\
         bool found = false;
@@ -616,12 +616,12 @@ std::shared_ptr<${prop.langTypeNS}> nattr(new ${prop.langTypeNS}(element.getAttr
 {% when prop.isReference %}
 {% if fu.SOURCE_TYPE == "header" %}\
 	// Reference
-	${prop.langTypeNS}
+	${prop.retType}
         getLinked${prop.methodName} () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       // Reference
-      ${prop.langTypeNS}
+      ${prop.retType}
       ${klass.name}::getLinked${prop.methodName} () const
       {
         return ${prop.instanceVariableName};
@@ -669,32 +669,17 @@ std::shared_ptr<${prop.langTypeNS}> nattr(new ${prop.langTypeNS}(element.getAttr
       }
 {% end source %}\
 
-{% if prop.minOccurs == 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	void
-        set${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
+        set${prop.methodName} (${prop.argType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::set${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
+      ${klass.name}::set${prop.methodName} (${prop.argType} ${prop.argumentName})
       {
         this->${prop.instanceVariableName} = ${prop.argumentName};
       }
 {% end source %}\
-{% end occurs once %}\
-{% if prop.minOccurs > 0 %}\
-{% if fu.SOURCE_TYPE == "header" %}\
-	void
-        set${prop.methodName} (const ${prop.langTypeNS}& ${prop.argumentName});
-{% end header %}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      void
-      ${klass.name}::set${prop.methodName} (const ${prop.langTypeNS}& ${prop.argumentName})
-      {
-        this->${prop.instanceVariableName} = ${prop.argumentName};
-      }
-{% end source %}\
-{% end occurs more than once %}\
 {% end %}\
 {% when prop.maxOccurs > 1 and not klass.isAbstractProprietary %}
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -874,7 +859,12 @@ ${customAsXMLElementPropertyContent[prop.name]}
                   // Reference property ${prop.name}
                   // TODO: Does not need to be shared--no new required?
                   std::shared_ptr<${prop.name}> o(new ${prop.name}());
+{% if prop.minOccurs == 0 %}\
+                  o->setID(${prop.instanceVariableName}->getID());
+{% end %}\
+{% if prop.minOccurs > 0 %}\
                   o->setID(${prop.instanceVariableName}.getID());
+{% end %}\
                   ${klass.name}_element.appendChild(o->asXMLElement(document));
                 }
 {% end %}\
@@ -892,7 +882,13 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.maxOccurs == 1 and prop.isComplex() %}\
                 // Element property ${prop.name} which is complex (has
                 // sub-elements)
+{% if prop.minOccurs == 0 %}\
+                if (${prop.instanceVariableName})
+                  ${klass.name}_element.appendChild(${prop.instanceVariableName}->asXMLElement(document));
+{% end %}\
+{% if prop.minOccurs > 0 %}\
                 ${klass.name}_element.appendChild(${prop.instanceVariableName}.asXMLElement(document));
+{% end %}\
 {% end %}\
 {% when prop.maxOccurs == 1 %}\
                 // Element property ${prop.name} which is not complex (has no
