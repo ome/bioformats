@@ -777,7 +777,7 @@ ${prop.langTypeNS} attr;
       {
         ${prop.instanceVariableType}::iterator i = std::find_if(${prop.instanceVariableName}.begin(),
                                                                 ${prop.instanceVariableName}.end(),
-                                                                compare_element<${prop.argType}>(${prop.argumentName}));
+                                                                compare_element<${prop.langTypeNS}>(${prop.argumentName}));
         if (i != ${prop.instanceVariableName}.end())
           ${prop.instanceVariableName}.erase(i);
       }
@@ -927,8 +927,9 @@ ${customAsXMLElementPropertyContent[prop.name]}
                        i != ${prop.instanceVariableName}.end();
                        ++i)
                     {
-                      ${klass.name}_element.appendChild(i->asXMLElement(document));
+                      ${klass.name}_element.appendChild((*i)->asXMLElement(document));
                     }
+                }
 {% end %}\
 {% when prop.maxOccurs > 1 %}\
                 {
