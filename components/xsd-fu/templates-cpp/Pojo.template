@@ -405,9 +405,11 @@ ${prop.langTypeNS} attr;
         // Element property ${prop.name} which is complex (has
         // sub-elements) and occurs more than once
         std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
-        for (Element ${prop.name}_element : ${prop.name}_nodeList)
+        for (std::vector<xerces::dom::element>::iterator elem = ${prop.name}_nodeList.begin();
+             elem != ${prop.name}_nodeList.end();
+             ++elem)
           {
-            std::shared_ptr<${prop.langTypeNS}> o(new ${prop.langTypeNS}(${prop.name}_element, model));
+            std::shared_ptr<${prop.langTypeNS}> o(new ${prop.langTypeNS}(*elem, model));
             add${prop.methodName}(o);
           }
 {% end %}\
@@ -705,11 +707,11 @@ ${prop.langTypeNS} attr;
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-	std::vector<${prop.langTypeNS}>
+        const ${prop.instanceVariableType}&
         copy${prop.methodName}List ();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::vector<${prop.langTypeNS}>
+      const ${prop.instanceVariableType}&
       ${klass.name}::copy${prop.methodName}List ()
       {
         return ${prop.instanceVariableName};
@@ -740,7 +742,8 @@ ${prop.langTypeNS} attr;
                              ${prop.argType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
-        ${prop.argumentName}.set${klass.type}(this);
+        std::weak_ptr<${klass.type}> self(std::shared_ptr<${klass.type}>(this));
+        ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
 // TODO: Check if the java arraylist.set would insert if at the end?
 // May need to push_back if 1 past the end.
@@ -757,9 +760,10 @@ ${prop.langTypeNS} attr;
       ${klass.name}::add${prop.methodName} (${prop.argType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
-        ${prop.argumentName}.set${klass.type}(this);
+        std::weak_ptr<${klass.type}> self(std::shared_ptr<${klass.type}>(this));
+        ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
-        ${prop.instanceVariableName}.add(${prop.argumentName});
+        ${prop.instanceVariableName}.push_back(${prop.argumentName});
       }
 {% end source %}\
 
@@ -771,7 +775,11 @@ ${prop.langTypeNS} attr;
       void
       ${klass.name}::remove${prop.methodName} (${prop.argType} ${prop.argumentName})
       {
-        ${prop.instanceVariableName}.remove(${prop.argumentName});
+        ${prop.instanceVariableType}::iterator i = std::find_if(${prop.instanceVariableName}.begin(),
+                                                                ${prop.instanceVariableName}.end(),
+                                                                compare_element<${prop.argType}>(${prop.argumentName}));
+        if (i != ${prop.instanceVariableName}.end())
+          ${prop.instanceVariableName}.erase(i);
       }
 {% end source %}\
 {% end %}\
