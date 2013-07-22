@@ -253,6 +253,7 @@ public class FakeReader extends FormatReader {
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
     if (new Location(id).isDirectory() && checkSuffix(id, "fake")) {
+      fakeSeries.clear();
       return listFakeSeries(id).size() <= 1;
     }
     if (checkSuffix(id, "fake" + ".ini")) {
@@ -267,6 +268,7 @@ public class FakeReader extends FormatReader {
     {
       return true;
     }
+    fakeSeries.clear();
     if (name.endsWith(".fake") && listFakeSeries(name).size() > 0) {
       return true;
     }
@@ -345,15 +347,16 @@ public class FakeReader extends FormatReader {
     super.initFile(id);
     findLogFiles();
 
-    String path = id;
-    if (new Location(id).exists()) {
-      path = new Location(id).getAbsoluteFile().getName();
+    Location path = new Location(id);
+    String noExt;
+    if (path.exists()) {
+      noExt = path.getAbsolutePath().substring(0, path.getAbsolutePath().lastIndexOf("."));
+    } else {
+      noExt = id.substring(0, id.lastIndexOf("."));
     }
-    String noExt = path.substring(0, path.lastIndexOf("."));
     String[] tokens;
-    if (!path.equals(id)
-        && isSPWStructure(new Location(id).getAbsolutePath())) {
-      tokens = extractTokensFromFakeSeries(id);
+    if (path.isDirectory() && isSPWStructure(path.getAbsolutePath())) {
+      tokens = extractTokensFromFakeSeries(path.getAbsolutePath());
     } else {
       tokens = noExt.split(TOKEN_SEPARATOR);
     }
@@ -625,6 +628,7 @@ public class FakeReader extends FormatReader {
   }
 
   private boolean isSPWStructure(String path) {
+    fakeSeries.clear();
     return !listFakeSeries(path).get(0).equals(path);
   }
 
