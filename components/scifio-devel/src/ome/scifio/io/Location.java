@@ -443,6 +443,22 @@ public class Location {
   }
 
   /**
+   * Creates a directory structures described by this Location's internal
+   * {@link File} instance.
+   *
+   * @return <code>true</code> if the directory structure was created
+   *   successfully.
+   * @see File#mkdirs()
+   */
+  public boolean mkdirs() {
+      if (file == null) {
+          return false;
+      } else {
+          return file.mkdirs();
+      }
+  }
+
+  /**
    * Deletes this file.  If {@link #isDirectory()} returns true, then the
    * directory must be empty in order to be deleted.  URLs cannot be deleted.
    *
