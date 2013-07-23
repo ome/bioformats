@@ -36,14 +36,18 @@
 
 package loci.formats.utests;
 
-import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 
+import loci.common.Location;
 import loci.formats.in.FakeReader;
+import loci.formats.tools.FakeImage;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -52,6 +56,8 @@ import org.testng.annotations.Test;
 public class FakeReaderTest {
 
   private File fake, fakeIni;
+
+  private Location oneWell, twoWells, twoFields;
 
   private FakeReader reader;
 
@@ -67,6 +73,23 @@ public class FakeReaderTest {
         raf.close();
     }
     fakeIni.deleteOnExit();
+
+    // With JDK 7 this code can be simplified (using New I/O)
+    oneWell = new FakeImage(new Location(fake.getParent() + File.separator
+        + this.getClass().getName() + System.currentTimeMillis() + ".fake"))
+    .generateScreen(1, 1, 1, 1, 1);
+    deleteTemporaryDirectoryOnExit(oneWell);
+
+    twoWells = new FakeImage(new Location(fake.getParent() + File.separator
+        + this.getClass().getName() + System.currentTimeMillis() + ".fake"))
+    .generateScreen(1, 1, 1, 2, 1);
+    deleteTemporaryDirectoryOnExit(twoWells);
+
+    twoFields = new FakeImage(new Location(fake.getParent() + File.separator
+        + this.getClass().getName() + System.currentTimeMillis() + ".fake"))
+    .generateScreen(1, 1, 1, 1, 2);
+    deleteTemporaryDirectoryOnExit(twoFields);
+
     reader = new FakeReader();
   }
 
@@ -124,6 +147,54 @@ public class FakeReaderTest {
     assertEquals(128, reader.getSizeX());
   }
 
+  @Test
+  public void testIsSingleFileReturnsTrueForOneWell() throws Exception {
+    assertTrue(reader.isSingleFile(oneWell.getAbsolutePath()));
+  }
+
+  @Test
+  public void testIsSingleFileReturnsFalseForTwoWells() throws Exception {
+    assertFalse(reader.isSingleFile(twoWells.getAbsolutePath()));
+  }
+
+  @Test
+  public void testIsThisTypeReturnsTrueForOneWell() {
+    assertTrue(reader.isThisType(oneWell.getAbsolutePath()));
+  }
+
+  @Test
+  public void testGetSeriesUsedFilesReturnsOneForOneWell() throws Exception {
+    reader.setId(oneWell.getAbsolutePath());
+    assertEquals(1, reader.getSeriesUsedFiles(false).length);
+    assertEquals(0, reader.getSeriesUsedFiles(true).length);
+  }
+
+  @Test
+  public void testGetSeriesUsedFilesReturnsTwoForTwoWells() throws Exception {
+    reader.setId(twoWells.getAbsolutePath());
+    assertEquals(2, reader.getSeriesUsedFiles(false).length);
+    assertEquals(0, reader.getSeriesUsedFiles(true).length);
+  }
+
+  @Test
+  public void testSetIdWithOneWell() throws Exception {
+    reader.setId(oneWell.getAbsolutePath());
+    assertEquals(1, reader.getOmeXmlMetadata().getWellCount(0));
+    assertEquals(1, reader.getUsedFiles().length);
+  }
+
+  @Test
+  public void testSetIdWithTwoWells() throws Exception {
+    reader.setId(twoWells.getAbsolutePath());
+    assertEquals(2, reader.getOmeXmlMetadata().getWellCount(0));
+    assertEquals(2, reader.getUsedFiles().length);
+  }
+
+  @Test
+  public void testGetSeriesCountWithTwoFields() throws Exception {
+    reader.setId(twoFields.getAbsolutePath());
+    assertEquals(2, reader.getSeriesCount());
+  }
 
   //
   // HELPERS
@@ -183,6 +254,21 @@ public class FakeReaderTest {
     } finally {
       fos.close();
       pw.close();
+    }
+  }
+
+  /** Removes fake SPW folders - deleteOnExit() has to be called on each. */
+  void deleteTemporaryDirectoryOnExit(Location directoryRoot) {
+    directoryRoot.deleteOnExit();
+    Location[] children = directoryRoot.listFiles();
+    if (children != null) {
+      for (Location child : children) {
+        if (child.isDirectory()) {
+          deleteTemporaryDirectoryOnExit(child);
+        } else {
+          child.deleteOnExit();
+        }
+      }
     }
   }
 

@@ -39,9 +39,11 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 import loci.common.DataTools;
 import loci.common.Location;
@@ -53,14 +55,16 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.ResourceNamer;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.ome.OMEXMLMetadataRoot;
 import loci.formats.services.OMEXMLService;
-import ome.xml.model.OME;
 import ome.scifio.common.IniList;
 import ome.scifio.common.IniParser;
 import ome.scifio.common.IniTable;
 import ome.specification.XMLMockObjects;
+import ome.xml.model.OME;
 
 /**
  * FakeReader is the file format reader for faking input data.
@@ -119,6 +123,13 @@ public class FakeReader extends FormatReader {
 
   /** Properties companion file which can be associated with this fake file */
   private String iniFile;
+
+  /** List of used files if the fake is a SPW structure */
+  private List<String> fakeSeries = new ArrayList<String>();
+
+  private OMEXMLMetadata omeXmlMetadata;
+
+  private OMEXMLService omeXmlService;
 
   // -- Constructor --
 
@@ -241,6 +252,10 @@ public class FakeReader extends FormatReader {
 
   @Override
   public boolean isSingleFile(String id) throws FormatException, IOException {
+    if (new Location(id).isDirectory() && checkSuffix(id, "fake")) {
+      fakeSeries.clear();
+      return listFakeSeries(id).size() <= 1;
+    }
     if (checkSuffix(id, "fake" + ".ini")) {
       return ! new Location(id).exists();
     }
@@ -253,6 +268,10 @@ public class FakeReader extends FormatReader {
     {
       return true;
     }
+    fakeSeries.clear();
+    if (name.endsWith(".fake") && listFakeSeries(name).size() > 0) {
+      return true;
+    }
     return super.isThisType(name, open);
   }
 
@@ -260,7 +279,8 @@ public class FakeReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
       FormatTools.assertId(currentId, true, 1);
       List<String> files = new ArrayList<String>();
-      if (!noPixels) files.add(currentId);
+      fakeSeries.clear();
+      if (!noPixels) files.addAll(listFakeSeries(currentId));
       if (iniFile != null) files.add(iniFile);
       return files.toArray(new String[files.size()]);
   }
@@ -277,6 +297,28 @@ public class FakeReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     iniFile = null;
     super.close(fileOnly);
+  }
+
+  public OMEXMLMetadata getOmeXmlMetadata() {
+    if (omeXmlMetadata == null) {
+      try {
+        omeXmlMetadata = getOmeXmlService().createOMEXMLMetadata();
+      } catch (ServiceException exc) {
+        LOGGER.error("Could not create OME-XML metadata", exc);
+      }
+    }
+    return omeXmlMetadata;
+  }
+
+  public OMEXMLService getOmeXmlService() {
+    if (omeXmlService == null) {
+      try {
+        omeXmlService = new ServiceFactory().getInstance(OMEXMLService.class);
+      } catch (DependencyException exc) {
+        LOGGER.error("Could not create OME-XML service", exc);
+      }
+    }
+    return omeXmlService;
   }
 
   @Override
@@ -299,18 +341,24 @@ public class FakeReader extends FormatReader {
         }
       }
     }
+
     // Logic copied from deltavision. This should probably be refactored into
     // a helper method "replaceBySuffix" or something.
-
     super.initFile(id);
     findLogFiles();
 
     String path = id;
-    if (new Location(id).exists()) {
-      path = new Location(id).getAbsoluteFile().getName();
+    Location location = new Location(id);
+    String[] tokens;
+    if (location.exists()) {
+      path = location.getAbsoluteFile().getName();
     }
-    String noExt = path.substring(0, path.lastIndexOf("."));
-    String[] tokens = noExt.split(TOKEN_SEPARATOR);
+    if (location.isDirectory() && isSPWStructure(location.getAbsolutePath())) {
+      tokens = extractTokensFromFakeSeries(location.getAbsolutePath());
+    } else {
+      String noExt = path.substring(0, path.lastIndexOf("."));
+      tokens = noExt.split(TOKEN_SEPARATOR);
+    }
 
     String name = null;
     int sizeX = DEFAULT_SIZE_X;
@@ -527,28 +575,72 @@ public class FakeReader extends FormatReader {
 
   // -- Helper methods --
 
+  private String[] extractTokensFromFakeSeries(String path) {
+    List<String> tokens = new ArrayList<String>();
+    int plates = 0, plateAcqs = 0, rows = 0, cols = 0, fields = 0;
+    String currentPlate = "";
+    String regExFileSeparator = File.separatorChar == '\\' ?
+        "\\\\" : File.separator;
+    // This is a sub-optimal approach, based on the assumption
+    // that the last fakeSeries[] element has the fakeImage with biggest indices
+    // in its name.
+    for (String fakeImage : fakeSeries) {
+      for (String pathToken : fakeImage.split(regExFileSeparator)) {
+        if (pathToken.startsWith(ResourceNamer.PLATE)) {
+          if (!pathToken.equals(currentPlate)) {
+            currentPlate = pathToken;
+            plates++;
+          }
+        }
+      }
+    }
+
+    for (String pathToken : fakeSeries.get(fakeSeries.size() - 1)
+        .split(regExFileSeparator)) {
+      if (pathToken.startsWith(ResourceNamer.RUN)) {
+        plateAcqs = Integer.valueOf(pathToken.substring(pathToken.lastIndexOf(
+            ResourceNamer.RUN) + ResourceNamer.RUN.length(),
+            pathToken.length())) + 1;
+      } else if (pathToken.startsWith(ResourceNamer.WELL)) {
+        String wellId = pathToken.substring(pathToken.lastIndexOf(
+            ResourceNamer.WELL) + ResourceNamer.WELL.length(),
+            pathToken.length());
+        String[] elements = wellId.split("(?<=\\p{L})(?=\\d)");
+        rows = ResourceNamer.alphabeticIndexCount(elements[0]);
+        cols = Integer.valueOf(elements[1]) + 1;
+      } else if (pathToken.startsWith(ResourceNamer.FIELD)) {
+        String fieldName = pathToken.substring(0, pathToken.lastIndexOf("."));
+        fields = Integer.valueOf(fieldName.substring(fieldName.lastIndexOf(
+            ResourceNamer.FIELD) + ResourceNamer.FIELD.length(),
+            fieldName.length())) + 1;
+      }
+    }
+
+    tokens.add(path);
+    tokens.add("plates="+plates);
+    tokens.add("plateRows="+rows);
+    tokens.add("plateCols="+cols);
+    tokens.add("fields="+fields);
+    tokens.add("plateAcqs="+plateAcqs);
+
+    return tokens.toArray(new String[tokens.size()]);
+  }
+
+  private boolean isSPWStructure(String path) {
+    fakeSeries.clear();
+    return !listFakeSeries(path).get(0).equals(path);
+  }
+
   private int populateSPW(MetadataStore store, int plates, int rows, int cols,
     int fields, int acqs)
   {
-    try {
-      final XMLMockObjects xml = new XMLMockObjects();
-      final OME ome =
-        xml.createPopulatedScreen(plates, rows, cols, fields, acqs);
-      final OMEXMLService omexmlService =
-        new ServiceFactory().getInstance(OMEXMLService.class);
-      final OMEXMLMetadata omeMeta = omexmlService.createOMEXMLMetadata();
-      omeMeta.setRoot(ome);
-      // copy populated SPW metadata into destination MetadataStore
-      omexmlService.convertMetadata(omeMeta, store);
-      return ome.sizeOfImageList();
-    }
-    catch (DependencyException exc) {
-      LOGGER.error("Could not create OME-XML service", exc);
-    }
-    catch (ServiceException exc) {
-      LOGGER.error("Could not create OME-XML metadata", exc);
-    }
-    return -1;
+    final XMLMockObjects xml = new XMLMockObjects();
+    final OME ome =
+      xml.createPopulatedScreen(plates, rows, cols, fields, acqs);
+    getOmeXmlMetadata().setRoot(new OMEXMLMetadataRoot(ome));
+    // copy populated SPW metadata into destination MetadataStore
+    getOmeXmlService().convertMetadata(omeXmlMetadata, store);
+    return ome.sizeOfImageList();
   }
 
   /** Creates a mapping between indices and color values. */
@@ -570,6 +662,22 @@ public class FakeReader extends FormatReader {
         valueToIndex[c][value] = index;
       }
     }
+  }
+
+  /** Traverses a fake file folder structure indicated by traversedDirectory */
+  private List<String> listFakeSeries(String traversedDirectory) {
+    File parent = new File(traversedDirectory);
+    if (parent.isDirectory()) {
+      File[] children = parent.listFiles();
+      if (children != null) {
+        for (File child : children) {
+          listFakeSeries(child.getAbsolutePath());
+        }
+      }
+    } else {
+      fakeSeries.add(parent.getAbsolutePath());
+    }
+    return fakeSeries;
   }
 
   /** Fisher-Yates shuffle with constant seeds to ensure reproducibility. */

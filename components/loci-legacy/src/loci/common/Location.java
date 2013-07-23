@@ -292,6 +292,13 @@ public class Location {
   }
 
   /**
+   * @see ome.scifio.io.Location#mkdirs()
+   */
+  public boolean mkdirs() {
+      return loc.mkdirs();
+  }
+
+  /**
    * Deletes this file.  If {@link #isDirectory()} returns true, then the
    * directory must be empty in order to be deleted.  URLs cannot be deleted.
    *
