@@ -902,6 +902,10 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
     // -- XMLAnnotation methods --
 
+    public String getValue() {
+      return value;
+    }
+
     /* @see ome.xml.model.XMLAnnotation#asXMLElement(Document, Element) */
     protected Element asXMLElement(Document document, Element element) {
       if (element == null) {
