@@ -820,7 +820,7 @@ ${prop.langTypeNS} attr;
 
 {% if klass.isAbstractProprietary %}\
           // Class is abstract so we may need to create its "container" element
-          if (!"${klass.name}".equals(${klass.name}_element.getTagName()))
+          if (std::string(${klass.name}_element.getTagName()) != "${klass.name}")
             {
               xerces::dom::element abstractElement =
                 document.createElementNS(NAMESPACE, "${klass.name}");
