@@ -718,6 +718,15 @@ class OMEModelProperty(OMEModelEntity):
         doc="""If the property is an enumeration, its default value.""")
 
 
+    def _get_defaultValue(self):
+        if "OTHER" in self.delegate.getValues():
+            return "OTHER"
+        else:
+            return self.delegate.getValues()[0]
+    defaultValue = property(_get_defaultValue,
+        doc="""If the property is an enumeration, it's default value.""")
+
+
     def _get_argType(self):
         itype = None
 
