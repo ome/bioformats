@@ -309,7 +309,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isEnumeration %}\
             // Attribute property which is an enumeration ${prop.name}
 {% if prop.minOccurs == 0 %}\
-std::shared_ptr<${prop.langTypeNS}> nattr(new ${prop.langTypeNS}(element.getAttribute("${prop.name}")));
+            ${prop.instanceVariableType} nattr(new ${prop.langTypeNS}(element.getAttribute("${prop.name}")));
             set${prop.methodName}(nattr);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -321,7 +321,7 @@ std::shared_ptr<${prop.langTypeNS}> nattr(new ${prop.langTypeNS}(element.getAttr
             {
               std::istringstream is(element.getAttribute("${prop.name}"));
 {% if prop.minOccurs == 0 %}\
-              std::shared_ptr<${prop.langTypeNS}> attr(new ${prop.langTypeNS}());
+              ${prop.instanceVariableType} attr(new ${prop.langTypeNS}());
               is >> *attr;
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -350,7 +350,7 @@ std::shared_ptr<${prop.langTypeNS}> nattr(new ${prop.langTypeNS}(element.getAttr
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
             // Element property ${prop.name} which is complex (has sub-elements)
 {% if prop.minOccurs == 0 %}\
-            std::shared_ptr<${prop.langTypeNS}> p(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0), model));
+            ${prop.instanceVariableType} p(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0), model));
 {% end %}\
 {% if prop.minOccurs > 0 %}\
             ${prop.langTypeNS} p(${prop.name}_nodeList.at(0), model);
@@ -361,7 +361,7 @@ std::shared_ptr<${prop.langTypeNS}> nattr(new ${prop.langTypeNS}(element.getAttr
             // Element property ${prop.name} which is not complex (has no
             // sub-elements)
 {% if prop.minOccurs == 0 %}\
-            std::shared_ptr<${prop.langTypeNS}> ns(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0).getTextContent()));
+            ${prop.instanceVariableType} ns(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0).getTextContent()));
             set${prop.methodName}(ns);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -393,7 +393,7 @@ ${prop.langTypeNS} attr;
                  inner_elem != ${inner_prop.name}_nodeList.end();
                  ++inner_elem)
                    {
-                     std::shared_ptr<${inner_prop.langTypeNS}> o(new ${inner_prop.langTypeNS}(*elem, model));
+                     std::shared_ptr<${prop.methodName}> o(new ${inner_prop.langTypeNS}(*elem, model));
                      o->update(*inner_elem, model);
                      add${prop.methodName}(o);
                    }
@@ -409,7 +409,7 @@ ${prop.langTypeNS} attr;
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
-            std::shared_ptr<${prop.langTypeNS}> o(new ${prop.langTypeNS}(*elem, model));
+            std::shared_ptr<${prop.methodName}> o(new ${prop.langTypeNS}(*elem, model));
             add${prop.methodName}(o);
           }
 {% end %}\
@@ -420,7 +420,7 @@ ${prop.langTypeNS} attr;
         std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName("${prop.name}"));
         for (Element ${prop.name}_element : ${prop.name}_nodeList)
           {
-            std::shared_ptr<${prop.langTypeNS}> o(new ${prop.langTypeNS}(${prop.name}_element.getTextContent(), model));
+            std::shared_ptr<${prop.methodName}> o(new ${prop.langTypeNS}(${prop.name}_element.getTextContent(), model));
             add${prop.methodName}(o);
           }
 {% end %}\
