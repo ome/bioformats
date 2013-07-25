@@ -659,9 +659,9 @@ ${prop.langTypeNS} attr;
       void
       ${klass.name}::unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& o)
       {
-        if (${prop.instanceVariableName} == o)
+        if (std::shared_ptr<${prop.langTypeNS}>(${prop.instanceVariableName}) == o)
           {
-            ${prop.instanceVariableName} = 0;
+            ${prop.instanceVariableName} = std::shared_ptr<${prop.langTypeNS}>();
           }
       }
 {% end source %}\
@@ -876,12 +876,8 @@ ${customAsXMLElementPropertyContent[prop.name]}
                   // Reference property ${prop.name}
                   // TODO: Does not need to be shared--no new required?
                   std::shared_ptr<${prop.name}> o(new ${prop.name}());
-{% if prop.minOccurs == 0 %}\
-                  o->setID(${prop.instanceVariableName}->getID());
-{% end %}\
-{% if prop.minOccurs > 0 %}\
-                  o->setID(${prop.instanceVariableName}.getID());
-{% end %}\
+                  std::shared_ptr<${prop.langTypeNS}> sv(${prop.instanceVariableName});
+                  o->setID(sv->getID());
                   ${klass.name}_element.appendChild(o->asXMLElement(document));
                 }
 {% end %}\
