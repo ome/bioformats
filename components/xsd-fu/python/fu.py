@@ -152,6 +152,7 @@ def updateTypeMaps(opts):
         'PositiveFloat': 'PositiveFloat',
         'PercentFraction': 'PercentFraction',
         'Color': 'Color',
+        'AffineTransform': 'AffineTransform',
         'Text': 'Text',
         namespace + 'dateTime': 'Timestamp'
     }
