@@ -62,6 +62,14 @@ namespace ome
 	public:
 	  typedef boost::posix_time::ptime value_type;
 
+          /**
+           * Default construct a timestamp.
+           */
+          Timestamp():
+            value()
+          {
+          }
+
 	  /**
 	   * Construct a timestamp from an ISO-8601-formatted string.
 	   */
@@ -97,6 +105,25 @@ namespace ome
                     const Timestamp& timestamp)
         {
           return os << static_cast<Timestamp::value_type>(timestamp);
+        }
+
+        template<class charT, class traits>
+        inline std::basic_istream<charT,traits>&
+        operator>> (std::basic_istream<charT,traits>& is,
+                    Timestamp& timestamp)
+        {
+          std::locale iso8601_loc(std::locale::classic(),
+                                  new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%SZ%z"));
+
+          is.exceptions(std::ios_base::failbit);
+          is.imbue(iso8601_loc);
+
+          Timestamp::value_type value;
+          is >> value;
+          if (is)
+            timestamp = Timestamp(value);
+
+          return is;
         }
 
       }
