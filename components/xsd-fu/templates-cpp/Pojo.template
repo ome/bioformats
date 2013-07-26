@@ -147,10 +147,10 @@ namespace ome
 {% end last member %}\
 {% if prop != klass.instanceVariables[-1] %}\
 {% if prop[2] is not None %}\
-        ${prop[1]}(),
+        ${prop[1]}(${prop[2]}),
 {% end has default %}\
 {% if prop[2] is None %}\
-        ${prop[1]}(${prop[2]}),
+        ${prop[1]}(),
 {% end no default %}\
 {% end not last member %}\
 {% end has instance type %}\
@@ -185,10 +185,20 @@ namespace ome
 {% for prop in klass.instanceVariables %}\
 {% if prop[0] is not None %}\
 {% if prop == klass.instanceVariables[-1] %}\
+{% if prop[2] is not None %}\
+        ${prop[1]}(${prop[2]})
+{% end has default %}\
+{% if prop[2] is None %}\
         ${prop[1]}()
+{% end no default %}\
 {% end last member %}\
 {% if prop != klass.instanceVariables[-1] %}\
+{% if prop[2] is not None %}\
+        ${prop[1]}(${prop[2]}),
+{% end has default %}\
+{% if prop[2] is None %}\
         ${prop[1]}(),
+{% end no default %}\
 {% end not last member %}\
 {% end has instance type %}\
 {% end for %}\
