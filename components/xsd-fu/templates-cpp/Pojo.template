@@ -280,10 +280,13 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.isReference %}\
         // Element reference ${prop.name}
         std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
-        for (xerces::dom::element ${prop.name}_element : ${prop.name}_nodeList)
+        // TODO: C++11 for inherited from java template.
+        for (std::vector<xerces::dom::element>::iterator elem = ${prop.name}_nodeList.begin();
+             elem != ${prop.name}_nodeList.end();
+             ++elem)
           {
             std::shared_ptr<${prop.name}> rcptr(new ${prop.name}());
-            rcptr->setID(${prop.name}_element.getAttribute("ID"));
+            rcptr->setID(elem->getAttribute("ID"));
             std::shared_ptr<Reference> rptr(std::static_pointer_cast<Reference>(rcptr));
             std::shared_ptr<OMEModelObject> optr(this);
             model.addReference(optr, rptr);
@@ -428,9 +431,11 @@ ${prop.langTypeNS} attr;
         // Element property ${prop.name} which is not complex (has no
         // sub-elements) which occurs more than once
         std::vector<xerces::dom::element> ${prop.name}_nodeList(getChildrenByTagName("${prop.name}"));
-        for (Element ${prop.name}_element : ${prop.name}_nodeList)
+        for (std::vector<xerces::dom::element>::iterator elem = ${prop.name}_nodeList.begin();
+             elem != ${prop.name}_nodeList.end();
+             ++elem)
           {
-            std::shared_ptr<${prop.methodName}> o(new ${prop.langTypeNS}(${prop.name}_element.getTextContent(), model));
+            std::shared_ptr<${prop.methodName}> o(new ${prop.langTypeNS}(elem->getTextContent(), model));
             add${prop.methodName}(o);
           }
 {% end %}\
