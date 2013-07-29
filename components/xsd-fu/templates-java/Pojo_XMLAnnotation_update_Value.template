@@ -9,8 +9,8 @@
 		}
 		else if (Value_nodeList.size() != 0)
 		{
-			// Element property Value which is not complex (has no
-			// sub-elements)
+			// Element property Value which is complex (has only
+			// sub-elements, no attributes, no text content)
 			java.io.StringWriter sw = new java.io.StringWriter();
 			javax.xml.transform.stream.StreamResult sr =
 				new javax.xml.transform.stream.StreamResult(sw);
@@ -19,9 +19,7 @@
 
 			try
 			{
-				javax.xml.transform.Transformer t = tf.newTransformer(
-					new javax.xml.transform.stream.StreamSource(
-						this.getClass().getResourceAsStream("StripWhitespace.xsl")));
+				javax.xml.transform.Transformer t = tf.newTransformer();
 				t.setOutputProperty(
 					javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
 				t.setOutputProperty(
