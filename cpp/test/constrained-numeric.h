@@ -77,68 +77,73 @@ verify(const constrained_numeric_test<T>& test)
 	assert(less_val == test.less_val);
 	assert(op_val == test.op_val);
 	assert(str_val == pos_val);
-	assert(pos_val != less_val);
 
 	// Test operators
 
         // Note that exact equality comparisons should be avoided for
         // floating point types.
 
-	assert(pos_val > less_val);
-	assert(pos_val >= less_val);
-	assert(pos_val > test.less_val);
-	assert(pos_val >= test.less_val);
-
-	assert(less_val < pos_val);
-	assert(less_val <= pos_val);
-	assert(less_val < test.pos_val);
-	assert(less_val <= test.pos_val);
-
-	T plus_val(pos_val);
-	plus_val = pos_val + test.op_val;
-	assert(plus_val > pos_val);
-	T plus_val2(pos_val);
-	plus_val2 += test.op_val;
-        if (test.exact)
+        if (pos_val != less_val)
           {
-            assert(plus_val == test.add_result);
-            assert(plus_val2 == test.add_result);
-            assert(plus_val == plus_val2);
-          }
-	T plus_val3(pos_val);
-	plus_val3 = pos_val + op_val;
-	assert(plus_val3 > pos_val);
-	T plus_val4(pos_val);
-	plus_val4 += op_val;
-        if (test.exact)
-          {
-            assert(plus_val3 == test.add_result);
-            assert(plus_val4 == test.add_result);
-            assert(plus_val == plus_val4);
+            assert(pos_val > less_val);
+            assert(pos_val >= less_val);
+            assert(pos_val > test.less_val);
+            assert(pos_val >= test.less_val);
+
+            assert(less_val < pos_val);
+            assert(less_val <= pos_val);
+            assert(less_val < test.pos_val);
+            assert(less_val <= test.pos_val);
           }
 
-	T minus_val(plus_val);
-	minus_val = plus_val - test.op_val;
-	assert(minus_val < plus_val);
-	T minus_val2(plus_val);
-	minus_val2 -= test.op_val;
-        if (test.exact)
+        if (pos_val != less_val)
           {
-            assert(minus_val == test.add_result);
-            assert(minus_val2 == test.add_result);
-            assert(minus_val == minus_val2);
-          }
+            T plus_val(pos_val);
+            plus_val = pos_val + test.op_val;
+            assert(plus_val > pos_val);
+            T plus_val2(pos_val);
+            plus_val2 += test.op_val;
+            if (test.exact)
+              {
+                assert(plus_val == test.add_result);
+                assert(plus_val2 == test.add_result);
+                assert(plus_val == plus_val2);
+              }
+            T plus_val3(pos_val);
+            plus_val3 = pos_val + op_val;
+            assert(plus_val3 > pos_val);
+            T plus_val4(pos_val);
+            plus_val4 += op_val;
+            if (test.exact)
+              {
+                assert(plus_val3 == test.add_result);
+                assert(plus_val4 == test.add_result);
+                assert(plus_val == plus_val4);
+              }
 
-	T minus_val3(plus_val);
-	minus_val3 = plus_val - op_val;
-	assert(minus_val3 < plus_val);
-	T minus_val4(plus_val);
-	minus_val4 -= op_val;
-        if (test.exact)
-          {
-            assert(minus_val3 == test.add_result);
-            assert(minus_val4 == test.add_result);
-            assert(minus_val == minus_val4);
+            T minus_val(pos_val);
+            minus_val = pos_val - test.op_val;
+           assert(minus_val < pos_val);
+           T minus_val2(pos_val);
+           minus_val2 -= test.op_val;
+           if (test.exact)
+              {
+                assert(minus_val == test.sub_result);
+                assert(minus_val2 == test.sub_result);
+                assert(minus_val == minus_val2);
+              }
+
+            T minus_val3(pos_val);
+            minus_val3 = pos_val - op_val;
+            assert(minus_val3 < pos_val);
+            T minus_val4(pos_val);
+            minus_val4 -= op_val;
+            if (test.exact)
+              {
+                assert(minus_val3 == test.sub_result);
+                assert(minus_val4 == test.sub_result);
+                assert(minus_val == minus_val4);
+              }
           }
 
 	T mul_val(pos_val);
@@ -147,8 +152,8 @@ verify(const constrained_numeric_test<T>& test)
 	mul_val2 *= test.op_val;
         if (test.exact)
           {
-            assert(mul_val == test.add_result);
-            assert(mul_val2 == test.add_result);
+            assert(mul_val == test.mul_result);
+            assert(mul_val2 == test.mul_result);
             assert(mul_val == mul_val2);
           }
 
@@ -158,8 +163,8 @@ verify(const constrained_numeric_test<T>& test)
 	mul_val4 *= op_val;
         if (test.exact)
           {
-            assert(mul_val3 == test.add_result);
-            assert(mul_val4 == test.add_result);
+            assert(mul_val3 == test.mul_result);
+            assert(mul_val4 == test.mul_result);
             assert(mul_val == mul_val4);
           }
 
@@ -169,8 +174,8 @@ verify(const constrained_numeric_test<T>& test)
 	div_val2 /= test.op_val;
         if (test.exact)
           {
-            assert(div_val == test.add_result);
-            assert(div_val2 == test.add_result);
+            assert(div_val == test.div_result);
+            assert(div_val2 == test.div_result);
             assert(div_val == div_val2);
           }
 
@@ -180,8 +185,8 @@ verify(const constrained_numeric_test<T>& test)
 	div_val4 /= op_val;
         if (test.exact)
           {
-            assert(div_val3 == test.add_result);
-            assert(div_val4 == test.add_result);
+            assert(div_val3 == test.div_result);
+            assert(div_val4 == test.div_result);
             assert(div_val == div_val4);
           }
 
@@ -191,13 +196,13 @@ verify(const constrained_numeric_test<T>& test)
     catch(const std::invalid_argument& e)
       {
       if (test.op_exception_expected)
-	std::cout << "Caught expected exception: " << e.what() << std::endl;
+	std::cout << "Caught expected exception (1): " << e.what() << std::endl;
       else
 	assert(0);
       }
     catch(...)
       {
-	std::cout << "Caught unexpected exception" << std::endl;
+	std::cout << "Caught unexpected exception (1)" << std::endl;
 	assert(0);
       }
 
@@ -205,7 +210,7 @@ verify(const constrained_numeric_test<T>& test)
   catch (const std::invalid_argument& e)
     {
       if (test.exception_expected)
-	std::cout << "Caught expected exception: " << e.what() << std::endl;
+	std::cout << "Caught expected exception (2): " << e.what() << std::endl;
       else
 	assert(0);
     }
@@ -225,16 +230,10 @@ verify(const constrained_numeric_test<T>& test)
       std::ostringstream os;
       os << pos_val;
       assert(os.str() == test.string_val);
-
-      if (test.op_exception_expected)
-        assert(0);
     }
   catch (const std::invalid_argument& e)
     {
-      if (test.exception_expected)
-	std::cout << "Caught expected exception: " << e.what() << std::endl;
-      else
-	assert(0);
+      std::cout << "Caught unexpected exception (2): " << e.what() << std::endl;
     }
 
 }

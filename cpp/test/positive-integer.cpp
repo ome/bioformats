@@ -19,7 +19,7 @@ main ()
       {"23",    23,  10,  15, 23+15,  23-15, 23*15, 23/15, false, false, true},
       {"-42",   -42, 1,   1,  1,      1,     1,     1,     true,  false, true},
       {"1",     -42, 1,   1,  1,      1,     1,     1,     true,  false, true},
-      {"82",    82,  23,  1,  1,      1,     1,     1,     false, false, true},
+      {"82",    82,  23,  4,  82+4,   82-4,    82*4,     82/4,     false, false, true},
       {"0",     0,   1,   1,  1,      1,     1,     1,     true,  false, true},
       {"1",     0,   1,   1,  1,      1,     1,     1,     true,  false, true},
       {"invld", 1,   1,   1,  1,      1,     1,     1,     true,  false, true}
@@ -31,7 +31,10 @@ main ()
   for (std::vector<constrained_numeric_test<PositiveInteger> >::const_iterator t = tests.begin();
        t != tests.end();
        ++t)
-    verify(*t);
+    {
+      std::cout << t->string_val << std::endl;
+      verify(*t);
+    }
 
   std::cout << "OK" << std::endl;
 }
