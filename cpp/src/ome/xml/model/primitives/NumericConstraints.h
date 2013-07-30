@@ -76,7 +76,7 @@ namespace ome
           inline bool
           operator() (const N& value) const
           {
-            return value > static_cast<N>(0);
+            return value >= static_cast<N>(0);
           }
         };
 
