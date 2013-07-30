@@ -29,7 +29,7 @@ main ()
   std::vector<constrained_numeric_test<PositiveFloat> > tests(init_tests,
                                                               init_tests + (sizeof(init_tests) / sizeof(init_tests[0])));
 
-  for (std::vector<test<PositiveFloat> >::const_iterator t = tests.begin();
+  for (std::vector<constrained_numeric_test<PositiveFloat> >::const_iterator t = tests.begin();
        t != tests.end();
        ++t)
     verify(*t);
