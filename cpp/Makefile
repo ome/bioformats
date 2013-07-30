@@ -18,7 +18,8 @@ OBJS = \
 TESTS = \
 	test/color \
 	test/enum  \
-	test/positive-float
+	test/positive-float \
+	text/positive-integer
 #	test/xerces
 
 all: $(TESTS)
