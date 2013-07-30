@@ -82,7 +82,7 @@ public class XMLAnnotationTest {
     assertEquals(1, channel.sizeOfLinkedAnnotationList());
     Annotation annotation = channel.getLinkedAnnotation(0);
     assertEquals(XMLAnnotation.class, annotation.getClass());
-    assertEquals("<TestData><key>foo</key><value>bar</value></TestData>",
+    assertEquals("<TestData>\n                    <key>foo</key>\n\t\t\t\t\t<value>bar</value>\n                </TestData>",
                  ((XMLAnnotation) annotation).getValue());
   }
 
