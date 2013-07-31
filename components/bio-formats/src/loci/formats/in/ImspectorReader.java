@@ -54,7 +54,7 @@ public class ImspectorReader extends FormatReader {
 
   private ArrayList<Long> pixelsOffsets = new ArrayList<Long>();
   private ArrayList<String> uniquePMTs = new ArrayList<String>();
-  private int planesPerBlock = 1;
+  private ArrayList<Integer> planesPerBlock = new ArrayList<Integer>();
   private boolean isFLIM = false;
   private int tileCount = 1;
 
@@ -83,9 +83,25 @@ public class ImspectorReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int offsetsPerSeries = pixelsOffsets.size() / getSeriesCount();
-    int block = getSeries() * offsetsPerSeries + no / planesPerBlock;
-    int plane = no % planesPerBlock;
+    int index = 0;
+    for (int i=0; i<getSeries(); i++) {
+      index += core.get(i).imageCount;
+    }
+    index += no;
+
+    int block = 0;
+    int plane = 0;
+    while (index >= 0) {
+      int planeCount = planesPerBlock.get(block);
+      if (planeCount <= index) {
+        index -= planeCount;
+        block++;
+      }
+      else {
+        plane = index;
+        index = -1;
+      }
+    }
 
     in.seek(pixelsOffsets.get(block) + FormatTools.getPlaneSize(this) * plane);
     readPlane(in, x, y, w, h, buf);
@@ -98,7 +114,7 @@ public class ImspectorReader extends FormatReader {
     if (!fileOnly) {
       pixelsOffsets.clear();
       uniquePMTs.clear();
-      planesPerBlock = 1;
+      planesPerBlock.clear();
       isFLIM = false;
       tileCount = 1;
     }
@@ -154,7 +170,7 @@ public class ImspectorReader extends FormatReader {
     in.skipBytes(6);
     m.sizeX = in.readInt();
     m.sizeY = in.readInt();
-    planesPerBlock = in.readInt();
+    planesPerBlock.add(in.readInt());
 
     in.skipBytes(20);
     for (int i=0; i<4; i++) {
@@ -168,11 +184,11 @@ public class ImspectorReader extends FormatReader {
       addGlobalMeta(values[i], values[i + 1]);
 
       if (values[i].equals("Instrument Mode")) {
-        isFLIM = values[i + 1].equals("TCSPC");
+        isFLIM = values[i + 1].equals("TCSPC") || values[i + 1].equals("FLIM");
       }
     }
     m.pixelType = FormatTools.UINT16;
-    in.skipBytes(m.sizeX * m.sizeY * planesPerBlock * 2 + 2);
+    in.skipBytes(m.sizeX * m.sizeY * planesPerBlock.get(0) * 2 + 2);
 
     int tileX = 1;
     int tileY = 1;
@@ -184,13 +200,18 @@ public class ImspectorReader extends FormatReader {
         length = in.readShort();
       }
       else {
-        length = in.read();
+        length = in.read() & 0xff;
       }
       if (length == 0 && check == 65535) {
         in.skipBytes(46);
         skipTagBlock();
         in.skipBytes(50);
         findOffset();
+        continue;
+      }
+      else if (length == 3 && check == 65535) {
+        in.seek(in.getFilePointer() - 2);
+        findOffset(false);
         continue;
       }
       tag = in.readString(length);
@@ -203,14 +224,24 @@ public class ImspectorReader extends FormatReader {
           length = in.readShort();
           if (length == 0) {
             in.skipBytes(1);
-            length = in.readShort();
-            in.skipBytes(length - 2);
-            break;
+            if ((in.read() & 0xff) == 0xff) {
+              length = in.readShort();
+            }
+            else {
+              in.seek(in.getFilePointer() - 1);
+              length = in.readShort();
+              in.skipBytes(length - 2);
+              break;
+            }
           }
           in.skipBytes(length + 50);
 
+
           findOffset();
           break;
+        }
+        else if (tag.equals("Label")) {
+          in.skipBytes(4);
         }
         length = in.read();
 
@@ -219,6 +250,7 @@ public class ImspectorReader extends FormatReader {
         }
 
         String key = in.readString(length);
+
         int type = in.readInt();
         String value = null;
         if (type == 5) {
@@ -229,13 +261,19 @@ public class ImspectorReader extends FormatReader {
           }
           value = in.readString(length);
         }
-        else if (type > 0xffff) {
+        else if (type > 0xffff && type != 0x80000) {
           in.seek(in.getFilePointer() - 2);
           value = String.valueOf(in.readDouble());
         }
         else {
           length = in.read();
           value = in.readString(length);
+        }
+
+        if (tag.equals("Label")) {
+          in.skipBytes(350);
+          findOffset();
+          break;
         }
 
         int check1 = in.readShort();
@@ -288,9 +326,14 @@ public class ImspectorReader extends FormatReader {
       }
     }
 
+    for (Integer blockSize : planesPerBlock) {
+      m.imageCount += blockSize;
+    }
+
     if (isFLIM) {
       m.sizeZ = 1;
-      m.sizeC = planesPerBlock;
+      m.sizeC = m.imageCount;
+      m.cTypes = new String[] {FormatTools.LIFETIME};
     }
     else {
       if (uniquePMTs.size() <= pixelsOffsets.size()) {
@@ -299,13 +342,16 @@ public class ImspectorReader extends FormatReader {
       else {
         m.sizeC = 1;
       }
-      m.sizeZ = planesPerBlock;
+      m.sizeZ = m.imageCount / m.sizeC;
     }
-    m.imageCount = pixelsOffsets.size() * planesPerBlock;
     m.sizeT = m.imageCount / (m.sizeZ * m.sizeC);
     m.dimensionOrder = "XYZCT";
 
     tileCount = tileX * tileY;
+
+    if ((m.imageCount % tileCount) != 0) {
+      tileCount = 1;
+    }
 
     if (tileCount > 1) {
       m.imageCount /= tileCount;
@@ -334,6 +380,12 @@ public class ImspectorReader extends FormatReader {
   /** Read the header for an image stack. */
   private void readStackHeader() throws IOException {
     int count = in.readInt();
+    if (count > 0xffff) {
+      in.seek(in.getFilePointer() - 2);
+      int len = in.readShort();
+      in.skipBytes(len);
+      count = in.readInt() + 1;
+    }
     for (int i=0; i<count; i++) {
       int length = in.read();
       if (length == 0) {
@@ -356,12 +408,21 @@ public class ImspectorReader extends FormatReader {
 
   /** Find the offset to the next block of pixel data. */
   private void findOffset() throws IOException {
-    readStackHeader();
+    findOffset(true);
+  }
+
+  private void findOffset(boolean readStackHeader) throws IOException {
+    if (readStackHeader) {
+      readStackHeader();
+    }
 
     while (in.readShort() != 3);
 
     in.skipBytes(26);
     int len = in.read();
+    if (len < 0) {
+      return;
+    }
     String pmt = in.readString(len);
     // as far as we know, valid PMT names only start with "PMT" or "TCSPC",
     // depending upon the acquisition mode
@@ -371,14 +432,30 @@ public class ImspectorReader extends FormatReader {
       uniquePMTs.add(pmt);
     }
 
+    boolean noPMT = len == 0;
+
     CoreMetadata m = core.get(0);
-    in.skipBytes(38);
+    in.skipBytes(14);
+    planesPerBlock.add(in.readInt());
+    in.skipBytes(noPMT ? 16 : 20);
     for (int i=0; i<4; i++) {
       len = in.read();
+      if (len < 0) {
+        noPMT = true;
+        break;
+      }
       String pmtSetting = in.readString(len);
     }
 
-    int planeSize = m.sizeX * m.sizeY * planesPerBlock * 2;
+    if (noPMT) {
+      while ((in.readShort() & 0xffff) != 0x8003);
+      in.seek(in.getFilePointer() - 2);
+      planesPerBlock.remove(planesPerBlock.size() - 1);
+      return;
+    }
+
+    int planeSize =
+      m.sizeX * m.sizeY * planesPerBlock.get(planesPerBlock.size() - 1) * 2;
     if (in.getFilePointer() + planeSize < in.length()) {
       pixelsOffsets.add(in.getFilePointer());
       in.skipBytes(planeSize + 2);
