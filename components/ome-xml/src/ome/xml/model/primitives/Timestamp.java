@@ -153,7 +153,7 @@ public class Timestamp extends PrimitiveType<String> {
    * @return See above.
    */
   public java.sql.Date asSqlDate() {
-    return new java.sql.Date(new DateTime(timestamp).getMillis());
+    return new java.sql.Date(timestamp.getMillis());
   }
 
   /* (non-Javadoc)
