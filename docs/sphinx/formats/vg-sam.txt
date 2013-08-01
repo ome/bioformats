@@ -19,6 +19,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`VG SAM <vg-sam-metadata>`
 
+Original Metadata Support: :doc:`VG SAM <VGSAMReader>`
 
 
 We currently have:

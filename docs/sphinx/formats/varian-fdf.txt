@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Varian FDF <varian-fdf-metadata>`
 
+Original Metadata Support: :doc:`Varian FDF <VarianFDFReader>`
 
 
 We currently have:

@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Zeiss LSM (Laser Scanning Microscope) 510/710 <zeiss-lsm-metadata>`
 
+Original Metadata Support: :doc:`Zeiss LSM (Laser Scanning Microscope) 510/710 <ZeissLSMReader>`
 Freely Available Software:
 
 - `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_ 

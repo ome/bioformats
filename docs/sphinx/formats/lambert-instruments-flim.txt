@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Lambert Instruments FLIM <lambert-instruments-flim-metadata>`
 
+Original Metadata Support: :doc:`Lambert Instruments FLIM <LiFlimReader>`
 
 
 We currently have:

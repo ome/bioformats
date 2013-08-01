@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`FITS (Flexible Image Transport System) <fits-metadata>`
 
+Original Metadata Support: :doc:`FITS (Flexible Image Transport System) <FitsReader>`
 
 
 We currently have:

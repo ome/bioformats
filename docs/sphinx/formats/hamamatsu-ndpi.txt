@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Hamamatsu ndpi <hamamatsu-ndpi-metadata>`
 
+Original Metadata Support: :doc:`Hamamatsu ndpi <NDPIReader>`
 Freely Available Software:
 
 - `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_

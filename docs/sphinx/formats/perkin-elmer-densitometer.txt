@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Perkin Elmer Densitometer <perkin-elmer-densitometer-metadata>`
 
+Original Metadata Support: :doc:`Perkin Elmer Densitometer <PDSReader>`
 
 
 We currently have:

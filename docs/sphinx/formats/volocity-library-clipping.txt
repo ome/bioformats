@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Volocity Library Clipping <volocity-library-clipping-metadata>`
 
+Original Metadata Support: :doc:`Volocity Library Clipping <VolocityClippingReader>`
 
 
 We currently have:

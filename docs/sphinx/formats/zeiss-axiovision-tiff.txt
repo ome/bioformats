@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Zeiss AxioVision TIFF <zeiss-axiovision-tiff-metadata>`
 
+Original Metadata Support: :doc:`Zeiss AxioVision TIFF <ZeissTIFFReader>`
 Freely Available Software:
 
 - `Zeiss ZEN Lite <http://microscopy.zeiss.com/microscopy/en_de/downloads/zen.html>`_

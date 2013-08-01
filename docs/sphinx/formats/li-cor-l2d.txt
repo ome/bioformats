@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Li-Cor L2D <li-cor-l2d-metadata>`
 
+Original Metadata Support: :doc:`Li-Cor L2D <L2DReader>`
 
 
 We currently have:

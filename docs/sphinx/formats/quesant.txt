@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Quesant <quesant-metadata>`
 
+Original Metadata Support: :doc:`Quesant <QuesantReader>`
 
 
 We currently have:

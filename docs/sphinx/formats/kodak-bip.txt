@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Kodak BIP <kodak-bip-metadata>`
 
+Original Metadata Support: :doc:`Kodak BIP <KodakReader>`
 
 
 We currently have:

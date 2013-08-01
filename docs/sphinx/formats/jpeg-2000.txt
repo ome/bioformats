@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`JPEG 2000 <jpeg-2000-metadata>`
 
+Original Metadata Support: :doc:`JPEG 2000 <JPEG2000Reader>`
 Freely Available Software:
 
 - `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_

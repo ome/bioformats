@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Oxford Instruments <oxford-instruments-metadata>`
 
+Original Metadata Support: :doc:`Oxford Instruments <OxfordInstrumentsReader>`
 
 
 We currently have:

@@ -19,6 +19,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Inveon <inveon-metadata>`
 
+Original Metadata Support: :doc:`Inveon <InveonReader>`
 
 
 We currently have:

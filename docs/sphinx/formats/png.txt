@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`PNG (Portable Network Graphics) <png-metadata>`
 
+Original Metadata Support: :doc:`PNG (Portable Network Graphics) <APNGReader>`
 Freely Available Software:
 
 - `PNG Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/png-writer.html>`_

@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`IPLab <iplab-metadata>`
 
+Original Metadata Support: :doc:`IPLab <IPLabReader>`
 Freely Available Software:
 
 - `IPLab Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/iplab-reader.html>`_

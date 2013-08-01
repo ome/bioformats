@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Evotec/PerkinElmer Opera Flex <evotecperkinelmer-opera-flex-metadata>`
 
+Original Metadata Support: :doc:`Evotec/PerkinElmer Opera Flex <FlexReader>`
 
 
 We currently have:

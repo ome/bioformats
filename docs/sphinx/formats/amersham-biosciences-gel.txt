@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Amersham Biosciences Gel <amersham-biosciences-gel-metadata>`
 
+Original Metadata Support: :doc:`Amersham Biosciences Gel <GelReader>`
 
 
 We currently have:

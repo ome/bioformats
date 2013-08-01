@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Olympus SIS TIFF <olympus-sis-tiff-metadata>`
 
+Original Metadata Support: :doc:`Olympus SIS TIFF <SISReader>`
 
 
 We currently have:

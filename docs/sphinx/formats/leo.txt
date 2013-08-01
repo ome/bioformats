@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`LEO <leo-metadata>`
 
+Original Metadata Support: :doc:`LEO <LEOReader>`
 
 
 We currently have:

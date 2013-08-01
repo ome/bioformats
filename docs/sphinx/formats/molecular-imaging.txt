@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Molecular Imaging <molecular-imaging-metadata>`
 
+Original Metadata Support: :doc:`Molecular Imaging <MolecularImagingReader>`
 
 
 We currently have:

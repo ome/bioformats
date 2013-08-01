@@ -21,6 +21,7 @@ Officially Supported Versions: 1.0, 2.0
 
 Supported Metadata Fields: :doc:`Zeiss AxioVision ZVI (Zeiss Vision Image) <zeiss-axiovision-zvi-metadata>`
 
+Original Metadata Support: :doc:`Zeiss AxioVision ZVI (Zeiss Vision Image) <ZeissZVIReader>`
 Freely Available Software:
 
 - `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_

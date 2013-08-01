@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Minolta MRW <minolta-mrw-metadata>`
 
+Original Metadata Support: :doc:`Minolta MRW <MRWReader>`
 Freely Available Software:
 
 - `dcraw <http://www.cybercom.net/%7Edcoffin/dcraw/>`_

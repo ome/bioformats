@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Hamamatsu Aquacosmos NAF <hamamatsu-aquacosmos-naf-metadata>`
 
+Original Metadata Support: :doc:`Hamamatsu Aquacosmos NAF <NAFReader>`
 
 
 We currently have:

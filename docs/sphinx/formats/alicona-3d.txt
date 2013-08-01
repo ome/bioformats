@@ -20,6 +20,7 @@ Officially Supported Versions: 1.0
 
 Supported Metadata Fields: :doc:`Alicona 3D <alicona-3d-metadata>`
 
+Original Metadata Support: :doc:`Alicona 3D <AliconaReader>`
 
 
 We currently have:

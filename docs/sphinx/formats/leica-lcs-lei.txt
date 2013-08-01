@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Leica LCS LEI <leica-lcs-lei-metadata>`
 
+Original Metadata Support: :doc:`Leica LCS LEI <LeicaReader>`
 Freely Available Software:
 
 - `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_

@@ -19,6 +19,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Trestle <trestle-metadata>`
 
+Original Metadata Support: :doc:`Trestle <TrestleReader>`
 
 Sample Datasets:
 

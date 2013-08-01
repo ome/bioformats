@@ -20,6 +20,7 @@ Officially Supported Versions: 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-
 
 Supported Metadata Fields: :doc:`OME-TIFF <ome-tiff-metadata>`
 
+Original Metadata Support: :doc:`OME-TIFF <OMETiffReader>`
 
 
 We currently have:

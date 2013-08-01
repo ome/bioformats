@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`VisiTech XYS <visitech-xys-metadata>`
 
+Original Metadata Support: :doc:`VisiTech XYS <VisitechReader>`
 
 
 We currently have:

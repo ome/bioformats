@@ -18,6 +18,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Bruker MRI <bruker-mri-metadata>`
 
+Original Metadata Support: :doc:`Bruker MRI <BrukerReader>`
 Freely Available Software:
 
 - `Bruker plugin for ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_

@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Prairie Technologies TIFF <prairie-tech-tiff-metadata>`
 
+Original Metadata Support: :doc:`Prairie Technologies TIFF <PrairieReader>`
 
 
 We currently have:

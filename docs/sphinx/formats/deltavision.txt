@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`DeltaVision <deltavision-metadata>`
 
+Original Metadata Support: :doc:`DeltaVision <DeltavisionReader>`
 Freely Available Software:
 
 - `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_

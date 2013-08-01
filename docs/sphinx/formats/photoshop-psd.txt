@@ -20,6 +20,7 @@ Officially Supported Versions: 1.0
 
 Supported Metadata Fields: :doc:`Adobe Photoshop PSD <photoshop-psd-metadata>`
 
+Original Metadata Support: :doc:`Adobe Photoshop PSD <PSDReader>`
 
 
 We currently have:

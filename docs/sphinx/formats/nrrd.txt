@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`NRRD (Nearly Raw Raster Data) <nrrd-metadata>`
 
+Original Metadata Support: :doc:`NRRD (Nearly Raw Raster Data) <NRRDReader>`
 Freely Available Software:
 
 - `nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_

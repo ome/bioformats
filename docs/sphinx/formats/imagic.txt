@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`IMAGIC <imagic-metadata>`
 
+Original Metadata Support: :doc:`IMAGIC <ImagicReader>`
 Freely Available Software:
 
 - `em2em <http://www.imagescience.de/em2em.html>`_

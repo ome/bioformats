@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Windows Bitmap <windows-bitmap-metadata>`
 
+Original Metadata Support: :doc:`Windows Bitmap <BMPReader>`
 Freely Available Software:
 
 - `BMP Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html>`_

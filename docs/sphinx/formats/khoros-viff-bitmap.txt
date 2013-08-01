@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Khoros VIFF (Visualization Image File Format) Bitmap <khoros-viff-bitmap-metadata>`
 
+Original Metadata Support: :doc:`Khoros VIFF (Visualization Image File Format) Bitmap <KhorosReader>`
 
 Sample Datasets:
 

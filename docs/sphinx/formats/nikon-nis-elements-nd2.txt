@@ -20,6 +20,8 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Nikon NIS-Elements ND2 <nikon-nis-elements-nd2-metadata>`
 
+Original Metadata Support: :doc:`Nikon NIS-Elements ND2 <ND2Reader>`
+
 Freely Available Software:
 
 - `NIS-Elements Viewer from Nikon <http://www.nis-elements.com/resources-downloads.html>`_

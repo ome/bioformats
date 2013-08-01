@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`NEF (Nikon Electronic Format) <nef-metadata>`
 
+Original Metadata Support: :doc:`NEF (Nikon Electronic Format) <NikonReader>`
 
 Sample Datasets:
 

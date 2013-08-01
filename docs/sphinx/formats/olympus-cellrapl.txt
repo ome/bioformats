@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Olympus CellR/APL <olympus-cellrapl-metadata>`
 
+Original Metadata Support: :doc:`Olympus CellR/APL <APLReader>`
 
 
 We currently have:

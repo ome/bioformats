@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Olympus ScanR <olympus-scanr-metadata>`
 
+Original Metadata Support: :doc:`Olympus ScanR <ScanrReader>`
 
 
 We currently have:

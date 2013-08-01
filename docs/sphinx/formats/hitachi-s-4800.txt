@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Hitachi S-4800 <hitachi-s-4800-metadata>`
 
+Original Metadata Support: :doc:`Hitachi S-4800 <HitachiReader>`
 
 
 We currently have:

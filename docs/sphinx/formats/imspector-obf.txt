@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Imspector OBF <imspector-obf-metadata>`
 
+Original Metadata Support: :doc:`Imspector OBF <OBFReader>`
 
 
 We currently have:

@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Zeiss CZI <zeiss-czi-metadata>`
 
+Original Metadata Support: :doc:`Zeiss CZI <ZeissCZIReader>`
 Freely Available Software:
 
 - `Zeiss ZEN 2011 <http://www.zeiss.de/C12567BE0045ACF1/Contents-Frame/A57B6AE510CE8FF1C12578FE002A725D>`_

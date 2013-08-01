@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`WA-TOP <wa-top-metadata>`
 
+Original Metadata Support: :doc:`WA-TOP <WATOPReader>`
 
 
 We currently have:

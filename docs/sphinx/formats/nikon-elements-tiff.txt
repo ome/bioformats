@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Nikon Elements TIFF <nikon-elements-tiff-metadata>`
 
+Original Metadata Support: :doc:`Nikon Elements TIFF <NikonElementsTiffReader>`
 
 
 We currently have:

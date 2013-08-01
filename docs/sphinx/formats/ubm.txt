@@ -19,6 +19,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`UBM <ubm-metadata>`
 
+Original Metadata Support: :doc:`UBM <UBMReader>`
 
 
 We currently have:

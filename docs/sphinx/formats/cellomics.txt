@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Cellomics <cellomics-metadata>`
 
+Original Metadata Support: :doc:`Cellomics <CellomicsReader>`
 
 
 We currently have:

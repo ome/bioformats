@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Aperio AFI <aperio-afi-metadata>`
 
+Original Metadata Support: :doc:`Aperio AFI <AFIReader>`
 
 
 We currently have:

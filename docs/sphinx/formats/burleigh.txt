@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Burleigh <burleigh-metadata>`
 
+Original Metadata Support: :doc:`Burleigh <BurleighReader>`
 
 
 We currently have:

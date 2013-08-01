@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Micro-Manager <micro-manager-metadata>`
 
+Original Metadata Support: :doc:`Micro-Manager <MicromanagerReader>`
 Freely Available Software:
 
 - `Micro-Manager <http://micro-manager.org/>`_

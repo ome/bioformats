@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`ImagePro Sequence <imagepro-sequence-metadata>`
 
+Original Metadata Support: :doc:`ImagePro Sequence <SEQReader>`
 
 
 We currently have:
