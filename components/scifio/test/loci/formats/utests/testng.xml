@@ -39,6 +39,7 @@
         <classes>
             <class name="loci.formats.utests.JAIIIOServiceTest"/>
             <class name="loci.formats.utests.LuraWaveServiceTest"/>
+            <class name="loci.formats.utests.OMEXMLServiceTest"/>
         </classes>
         <packages>
             <package name="loci.formats.utests.xml"/>
