@@ -38,9 +38,13 @@ package ome.scifio.common;
 
 import java.text.FieldPosition;
 import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+
+import org.joda.time.Instant;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.IllegalInstantException;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * A utility class with convenience methods for working with dates.
@@ -71,8 +75,17 @@ public final class DateTools {
   public static final long ZVI_EPOCH = 2921084975759000L;
   public static final long ALT_ZVI_EPOCH = 2921084284761000L;
 
-  /** ISO 8601 date format string. */
+  /** ISO 8601 date output formatter with milliseconds. */
+  public static final String ISO8601_FORMATMS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+
+  /** ISO 8601 date output formatter without milliseconds. */
   public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+
+  /** Human readable timestamp string */
+  public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+  /** Human readable timestamp filename string */
+  public static final String FILENAME_FORMAT = "yyyy-MM-dd_HH-mm-ss";
 
   // -- Constructor --
 
@@ -132,17 +145,20 @@ public final class DateTools {
         break;
     }
 
-    SimpleDateFormat fmt = new SimpleDateFormat(outputFormat);
-    if (correctTimeZoneForGMT) {
-      TimeZone tz = TimeZone.getDefault();
-      ms -= tz.getOffset(ms);
+    final DateTimeFormatter fmt = DateTimeFormat.forPattern(outputFormat);
+
+    try {
+      if (correctTimeZoneForGMT) {
+        DateTimeZone tz = DateTimeZone.getDefault();
+        ms = tz.convertLocalToUTC(ms, false);
+      }
     }
-    StringBuffer sb = new StringBuffer();
+    catch (ArithmeticException e) {}
+    catch (IllegalInstantException e) {}
 
-    Date d = new Date(ms);
+    DateTime d = new DateTime(ms, DateTimeZone.UTC);
 
-    fmt.format(d, sb, new FieldPosition(0));
-    return sb.toString();
+    return fmt.print(d);
   }
 
   /**
@@ -166,12 +182,19 @@ public final class DateTools {
    */
   public static String formatDate(String date, String format, boolean lenient) {
     if (date == null) return null;
-    SimpleDateFormat sdf = new SimpleDateFormat(format);
-    sdf.setLenient(lenient);
-    Date d = sdf.parse(date, new ParsePosition(0));
-    if (d == null) return null;
-    sdf = new SimpleDateFormat(ISO8601_FORMAT);
-    return sdf.format(d);
+    final DateTimeFormatter parser = DateTimeFormat.forPattern(format);
+    Instant timestamp = Instant.parse(date, parser);
+
+    if (timestamp == null)
+      return "";
+
+    DateTimeFormatter isoformat = null;
+    if ((timestamp.getMillis() % 1000) != 0)
+      isoformat = DateTimeFormat.forPattern(ISO8601_FORMATMS);
+    else
+      isoformat = DateTimeFormat.forPattern(ISO8601_FORMAT);
+
+    return isoformat.print(timestamp);
   }
 
   /**
@@ -208,10 +231,31 @@ public final class DateTools {
    * (in Unix format: milliseconds since January 1, 1970).
    */
   public static long getTime(String date, String format) {
-    SimpleDateFormat f = new SimpleDateFormat(format);
-    Date d = f.parse(date, new ParsePosition(0));
-    if (d == null) return -1;
-    return d.getTime();
+    final DateTimeFormatter parser = DateTimeFormat.forPattern(format);
+    Instant timestamp = Instant.parse(date, parser);
+    if (timestamp == null) return -1;
+    return timestamp.getMillis();
+  }
+
+  /**
+   * Returns a timestamp for the current timezone in a
+   * human-readable locale-independent format ("YYYY-MM-DD HH:MM:SS")
+   */
+  public static String getTimestamp()
+  {
+    final DateTimeFormatter fmt = DateTimeFormat.forPattern(TIMESTAMP_FORMAT);
+    return fmt.print(new DateTime());
+  }
+
+  /**
+   * Returns a timestamp for the current timezone in a format suitable
+   * for a filename in a locale-independent format
+   * ("YYYY-MM-DD_HH-MM-SS")
+   */
+  public static String getFileTimestamp()
+  {
+    final DateTimeFormatter fmt = DateTimeFormat.forPattern(FILENAME_FORMAT);
+    return fmt.print(new DateTime());
   }
 
 }
