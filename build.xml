@@ -210,7 +210,7 @@ JUnit
     License:   Common Public License
 
 Apache log4j
-    JAR file:  log4j-1.2.15.jar
+    JAR file:  log4j-1.2.17.jar
     URL:       http://logging.apache.org/log4j/
     Notes:     required by SLF4J implementation
     License:   Apache
@@ -228,13 +228,13 @@ NetCDF
     License:   LGPL
 
 Simple Logging Facade for Java API
-    JAR file:  slf4j-api-1.5.10.jar
+    JAR file:  slf4j-api-1.7.2.jar
     URL:       http://www.slf4j.org/
     Notes:     used for all logging in loci.*
     License:   BSD
 
 Simple Logging Facade for Java log4j Binding
-    JAR file:  slf4j-log4j12-1.5.10.jar
+    JAR file:  slf4j-log4j12-1.7.2.jar
     URL:       http://www.slf4j.org/
     Notes:     used for all logging in loci.*
     License:   BSD
