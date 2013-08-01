@@ -42,7 +42,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -69,6 +68,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import loci.common.Constants;
+import loci.common.DateTools;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -288,7 +288,7 @@ public class ConfigWindow extends JFrame
 
   /** Populate configuration information in a separate thread. */
   public void run() {
-    log.println("LOCI Plugins configuration - " + new Date());
+    log.println("LOCI Plugins configuration - " + DateTools.getTimestamp());
 
     // list system properties
     log.println();
