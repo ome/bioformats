@@ -1,0 +1,2511 @@
+*******************************************************************************
+ZeissTIFFReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Zeiss AxioVision TIFF format reader.
+
+Key/value pairs
+===============================================================================
+
+* Image Channel Index #10
+
+::
+
+  - 3
+
+* Image Channel Index #11
+
+::
+
+  - 1
+
+* Image Channel Index #12
+
+::
+
+  - 3
+
+* Image Channel Index #13
+
+::
+
+  - 1
+
+* Image Channel Index #14
+
+::
+
+  - 3
+
+* MultiChannelEnabled
+
+::
+
+  - 1
+
+* Image Channel Index #15
+
+::
+
+  - 1
+
+* Image Channel Index #16
+
+::
+
+  - 3
+
+* Image Channel Index #17
+
+::
+
+  - 1
+
+* Image Channel Index #18
+
+::
+
+  - 3
+
+* Image Channel Index #19
+
+::
+
+  - 1
+
+* Timestamp #41
+
+::
+
+  - 5/1/2007 2:43:28 PM
+
+* Timestamp #42
+
+::
+
+  - 5/1/2007 2:43:31 PM
+
+* Timestamp #40
+
+::
+
+  - 5/1/2007 2:43:25 PM
+
+* TransmittedLightHalogenLampMode 1
+
+::
+
+  - 4
+
+* TransmittedLightHalogenLampMode 3
+
+::
+
+  - 4
+
+* Timestamp #49
+
+::
+
+  - 5/1/2007 2:43:51 PM
+
+* Timestamp #47
+
+::
+
+  - 5/1/2007 2:43:45 PM
+
+* Timestamp #48
+
+::
+
+  - 5/1/2007 2:43:47 PM
+
+* Timestamp #45
+
+::
+
+  - 5/1/2007 2:43:39 PM
+
+* Timestamp #46
+
+::
+
+  - 5/1/2007 2:43:42 PM
+
+* Timestamp #43
+
+::
+
+  - 5/1/2007 2:43:34 PM
+
+* Timestamp #44
+
+::
+
+  - 5/1/2007 2:43:36 PM
+
+* X position for position #02
+
+::
+
+  - -8483.811
+
+* X position for position #03
+
+::
+
+  - -5521.971
+
+* X position for position #04
+
+::
+
+  - -5521.971
+
+* X position for position #05
+
+::
+
+  - -2549.811
+
+* Image Channel Index #03
+
+::
+
+  - 1
+
+* Timestamp #29
+
+::
+
+  - 5/1/2007 2:42:52 PM
+
+* Image Channel Index #04
+
+::
+
+  - 3
+
+* Image Channel Index #01
+
+::
+
+  - 1
+
+* X position for position #01
+
+::
+
+  - -8483.811
+
+* Image Channel Index #02
+
+::
+
+  - 3
+
+* AxioCam Enhance Color 3
+
+::
+
+  - 0
+
+* Image Channel Index #07
+
+::
+
+  - 1
+
+* Image Channel Index #08
+
+::
+
+  - 3
+
+* AxioCam Enhance Color 1
+
+::
+
+  - 0
+
+* Image Channel Index #05
+
+::
+
+  - 1
+
+* Image Channel Index #06
+
+::
+
+  - 3
+
+* X position for position #06
+
+::
+
+  - -2549.811
+
+* X position for position #07
+
+::
+
+  - 417.189
+
+* Image Channel Index #09
+
+::
+
+  - 1
+
+* X position for position #08
+
+::
+
+  - 417.189
+
+* X position for position #09
+
+::
+
+  - 3384.189
+
+* Timestamp #30
+
+::
+
+  - 5/1/2007 2:42:55 PM
+
+* Timestamp #31
+
+::
+
+  - 5/1/2007 2:42:58 PM
+
+* Timestamp #36
+
+::
+
+  - 5/1/2007 2:43:12 PM
+
+* Timestamp #37
+
+::
+
+  - 5/1/2007 2:43:16 PM
+
+* Timestamp #38
+
+::
+
+  - 5/1/2007 2:43:18 PM
+
+* Timestamp #39
+
+::
+
+  - 5/1/2007 2:43:22 PM
+
+* Timestamp #32
+
+::
+
+  - 5/1/2007 2:43:00 PM
+
+* Timestamp #33
+
+::
+
+  - 5/1/2007 2:43:04 PM
+
+* Timestamp #34
+
+::
+
+  - 5/1/2007 2:43:06 PM
+
+* Timestamp #35
+
+::
+
+  - 5/1/2007 2:43:10 PM
+
+* ImageTile Index 3
+
+::
+
+  - 24
+
+* AxioCam Shutter Signal 3
+
+::
+
+  - 0
+
+* X position for position #11
+
+::
+
+  - 3394.509
+
+* X position for position #12
+
+::
+
+  - 3394.509
+
+* ImageTile Index 1
+
+::
+
+  - 24
+
+* AxioCam NIR Mode 3
+
+::
+
+  - 0
+
+* X position for position #10
+
+::
+
+  - 3384.189
+
+* X position for position #15
+
+::
+
+  - -2539.491
+
+* AxioCam NIR Mode 1
+
+::
+
+  - 0
+
+* X position for position #16
+
+::
+
+  - -2539.491
+
+* AxioCam Shutter Signal 1
+
+::
+
+  - 0
+
+* X position for position #13
+
+::
+
+  - 430.089
+
+* X position for position #14
+
+::
+
+  - 430.089
+
+* X position for position #19
+
+::
+
+  - -8473.491
+
+* X position for position #17
+
+::
+
+  - -5511.651
+
+* X position for position #18
+
+::
+
+  - -5511.651
+
+* X position for position #20
+
+::
+
+  - -8473.491
+
+* X position for position #21
+
+::
+
+  - -8463.171
+
+* X position for position #22
+
+::
+
+  - -8463.171
+
+* X position for position #23
+
+::
+
+  - -5501.331
+
+* X position for position #24
+
+::
+
+  - -5501.331
+
+* X position for position #25
+
+::
+
+  - -2529.171
+
+* X position for position #26
+
+::
+
+  - -2529.171
+
+* X position for position #27
+
+::
+
+  - 440.409
+
+* Acquisition pause annotation 1
+
+::
+
+  - 
+
+* X position for position #28
+
+::
+
+  - 440.409
+
+* X position for position #29
+
+::
+
+  - 3407.409
+
+* Acquisition pause annotation 3
+
+::
+
+  - 
+
+* Reflected Light Shutter 1
+
+::
+
+  - 2
+
+* Reflected Light Shutter 3
+
+::
+
+  - 2
+
+* MicroscopeType 3
+
+::
+
+  - 56
+
+* Image Memory Usage (RAM)
+
+::
+
+  - 42100
+
+* Image Index V 0
+
+::
+
+  - 
+
+* Image Index V 3
+
+::
+
+  - 0
+
+* MicroscopeType 1
+
+::
+
+  - 56
+
+* Image Index V 1
+
+::
+
+  - 0
+
+* X position for position #39
+
+::
+
+  - -8452.851
+
+* X position for position #38
+
+::
+
+  - -5491.011
+
+* X position for position #37
+
+::
+
+  - -5491.011
+
+* X position for position #36
+
+::
+
+  - -2516.271
+
+* X position for position #35
+
+::
+
+  - -2516.271
+
+* X position for position #34
+
+::
+
+  - 453.309
+
+* X position for position #33
+
+::
+
+  - 453.309
+
+* X position for position #32
+
+::
+
+  - 3417.729
+
+* X position for position #31
+
+::
+
+  - 3417.729
+
+* Timestamp #06
+
+::
+
+  - 5/1/2007 2:41:45 PM
+
+* Timestamp #05
+
+::
+
+  - 5/1/2007 2:41:42 PM
+
+* X position for position #30
+
+::
+
+  - 3407.409
+
+* tag_ID_2071 0
+
+::
+
+  - 0
+
+* Timestamp #04
+
+::
+
+  - 5/1/2007 2:41:39 PM
+
+* Timestamp #03
+
+::
+
+  - 5/1/2007 2:41:36 PM
+
+* Timestamp #02
+
+::
+
+  - 5/1/2007 2:41:33 PM
+
+* Timestamp #01
+
+::
+
+  - 5/1/2007 2:41:31 PM
+
+* Image Channel Index #50
+
+::
+
+  - 3
+
+* BlackValue 1
+
+::
+
+  - 0
+
+* BlackValue 3
+
+::
+
+  - 0
+
+* tag_ID_2071 1
+
+::
+
+  - 0
+
+* tag_ID_2071 3
+
+::
+
+  - 1.5010000000002
+
+* Image Channel Index #49
+
+::
+
+  - 1
+
+* X position for position #47
+
+::
+
+  - 463.629
+
+* Image Channel Index #44
+
+::
+
+  - 3
+
+* Objective Contrast Method 3
+
+::
+
+  - 1
+
+* X position for position #46
+
+::
+
+  - -2505.951
+
+* Image Channel Index #43
+
+::
+
+  - 1
+
+* X position for position #49
+
+::
+
+  - 3428.049
+
+* Image Channel Index #42
+
+::
+
+  - 3
+
+* Objective Contrast Method 1
+
+::
+
+  - 1
+
+* X position for position #48
+
+::
+
+  - 463.629
+
+* Image Channel Index #41
+
+::
+
+  - 1
+
+* X position for position #43
+
+::
+
+  - -5480.691
+
+* Image Channel Index #48
+
+::
+
+  - 3
+
+* X position for position #42
+
+::
+
+  - -8442.531
+
+* Image Channel Index #47
+
+::
+
+  - 1
+
+* X position for position #45
+
+::
+
+  - -2505.951
+
+* Image Channel Index #46
+
+::
+
+  - 3
+
+* X position for position #44
+
+::
+
+  - -5480.691
+
+* Image Channel Index #45
+
+::
+
+  - 1
+
+* X position for position #40
+
+::
+
+  - -8452.851
+
+* X position for position #41
+
+::
+
+  - -8442.531
+
+* Ocular Total Magnification 1
+
+::
+
+  - 25
+
+* Image Channel Index #40
+
+::
+
+  - 3
+
+* Ocular Total Magnification 3
+
+::
+
+  - 25
+
+* Parfocal Correction 3
+
+::
+
+  - -1
+
+* Parfocal Correction 1
+
+::
+
+  - -1
+
+* Objective ID 3
+
+::
+
+  - Objective.440310-9903-000
+
+* Image Channel Index #39
+
+::
+
+  - 1
+
+* Image Channel Index #38
+
+::
+
+  - 3
+
+* Objective ID 1
+
+::
+
+  - Objective.440310-9903-000
+
+* Image Channel Index #35
+
+::
+
+  - 1
+
+* Image Channel Index #34
+
+::
+
+  - 3
+
+* Image Channel Index #37
+
+::
+
+  - 1
+
+* Timestamp #18
+
+::
+
+  - 5/1/2007 2:42:20 PM
+
+* Image Channel Index #36
+
+::
+
+  - 3
+
+* Timestamp #19
+
+::
+
+  - 5/1/2007 2:42:23 PM
+
+* Y position for position #1
+
+::
+
+  - 113
+
+* Image Channel Index #31
+
+::
+
+  - 1
+
+* Image Channel Index #30
+
+::
+
+  - 3
+
+* Image Channel Index #33
+
+::
+
+  - 1
+
+* Image Channel Index #32
+
+::
+
+  - 3
+
+* Timestamp #24
+
+::
+
+  - 5/1/2007 2:42:37 PM
+
+* Microscope Port 3
+
+::
+
+  - 5
+
+* Timestamp #23
+
+::
+
+  - 5/1/2007 2:42:34 PM
+
+* Timestamp #22
+
+::
+
+  - 5/1/2007 2:42:31 PM
+
+* Timestamp #21
+
+::
+
+  - 5/1/2007 2:42:28 PM
+
+* Timestamp #28
+
+::
+
+  - 5/1/2007 2:42:48 PM
+
+* Timestamp #27
+
+::
+
+  - 5/1/2007 2:42:46 PM
+
+* Timestamp #26
+
+::
+
+  - 5/1/2007 2:42:43 PM
+
+* Microscope Port 1
+
+::
+
+  - 5
+
+* Timestamp #25
+
+::
+
+  - 5/1/2007 2:42:40 PM
+
+* X position for position #50
+
+::
+
+  - 3428.049
+
+* Objective Name 3
+
+::
+
+  - EC Plan-Neofluar 2.5x/0.075
+
+* Timestamp #20
+
+::
+
+  - 5/1/2007 2:42:25 PM
+
+* Objective Name 1
+
+::
+
+  - EC Plan-Neofluar 2.5x/0.075
+
+* Image Channel Index #29
+
+::
+
+  - 1
+
+* Image Channel Index #28
+
+::
+
+  - 3
+
+* Image Channel Index #27
+
+::
+
+  - 1
+
+* Image Channel Index #26
+
+::
+
+  - 3
+
+* Timestamp #07
+
+::
+
+  - 5/1/2007 2:41:48 PM
+
+* Image Channel Index #25
+
+::
+
+  - 1
+
+* Timestamp #08
+
+::
+
+  - 5/1/2007 2:41:51 PM
+
+* Image Channel Index #24
+
+::
+
+  - 3
+
+* Timestamp #09
+
+::
+
+  - 5/1/2007 2:41:54 PM
+
+* Image Channel Index #23
+
+::
+
+  - 1
+
+* Image Channel Index #22
+
+::
+
+  - 3
+
+* Image Channel Index #21
+
+::
+
+  - 1
+
+* Stage calibrated 3
+
+::
+
+  - 0
+
+* Image Channel Index #20
+
+::
+
+  - 3
+
+* Stage calibrated 1
+
+::
+
+  - 0
+
+* Timestamp #11
+
+::
+
+  - 5/1/2007 2:41:59 PM
+
+* Timestamp #10
+
+::
+
+  - 5/1/2007 2:41:56 PM
+
+* Timestamp #13
+
+::
+
+  - 5/1/2007 2:42:05 PM
+
+* Timestamp #12
+
+::
+
+  - 5/1/2007 2:42:02 PM
+
+* Timestamp #15
+
+::
+
+  - 5/1/2007 2:42:11 PM
+
+* Y position for position #01
+
+::
+
+  - 684.895
+
+* Timestamp #14
+
+::
+
+  - 5/1/2007 2:42:08 PM
+
+* Y position for position #02
+
+::
+
+  - 684.895
+
+* Timestamp #17
+
+::
+
+  - 5/1/2007 2:42:17 PM
+
+* Y position for position #03
+
+::
+
+  - 669.415
+
+* Timestamp #16
+
+::
+
+  - 5/1/2007 2:42:14 PM
+
+* Y position for position #04
+
+::
+
+  - 669.415
+
+* Y position for position #05
+
+::
+
+  - 651.355
+
+* Y position for position #06
+
+::
+
+  - 651.355
+
+* Y position for position #07
+
+::
+
+  - 635.875
+
+* Y position for position #08
+
+::
+
+  - 635.875
+
+* FocusDepth 3
+
+::
+
+  - 97.7777777777778
+
+* Y position for position #09
+
+::
+
+  - 620.395
+
+* FocusDepth 1
+
+::
+
+  - 97.7777777777778
+
+* Objective Magnification 3
+
+::
+
+  - 2.5
+
+* Y position for position #17
+
+::
+
+  - 2893.375
+
+* Y position for position #16
+
+::
+
+  - 2875.315
+
+* Objective Magnification 1
+
+::
+
+  - 2.5
+
+* Y position for position #19
+
+::
+
+  - 2908.855
+
+* Y position for position #18
+
+::
+
+  - 2893.375
+
+* Y position for position #13
+
+::
+
+  - 2859.835
+
+* Y position for position #12
+
+::
+
+  - 2844.355
+
+* Y position for position #15
+
+::
+
+  - 2875.315
+
+* GammaValue 3
+
+::
+
+  - 1
+
+* Y position for position #14
+
+::
+
+  - 2859.835
+
+* GammaValue 0
+
+::
+
+  - 1
+
+* GammaValue 1
+
+::
+
+  - 1
+
+* Y position for position #11
+
+::
+
+  - 2844.355
+
+* Y position for position #10
+
+::
+
+  - 620.395
+
+* ImageRelativeTime3 0
+
+::
+
+  - 12:00:00 AM
+
+* ReflectorMagnification 1
+
+::
+
+  - 1
+
+* ReflectorMagnification 3
+
+::
+
+  - 1
+
+* Y position for position #29
+
+::
+
+  - 5070.895
+
+* Y position for position #28
+
+::
+
+  - 5086.375
+
+* Y position for position #27
+
+::
+
+  - 5086.375
+
+* Y position for position #26
+
+::
+
+  - 5101.855
+
+* Y position for position #25
+
+::
+
+  - 5101.855
+
+* Y position for position #24
+
+::
+
+  - 5119.915
+
+* Y position for position #23
+
+::
+
+  - 5119.915
+
+* Y position for position #22
+
+::
+
+  - 5135.395
+
+* Y position for position #21
+
+::
+
+  - 5135.395
+
+* Y position for position #20
+
+::
+
+  - 2908.855
+
+* ImageRelativeTime4 3
+
+::
+
+  - 12:02:23 AM
+
+* ImageRelativeTime4 0
+
+::
+
+  - 12:00:00 AM
+
+* ImageRelativeTime4 1
+
+::
+
+  - 12:02:20 AM
+
+* Condenser N.A. 3
+
+::
+
+  - 3.886925795053
+
+* LightManagerEnabled 3
+
+::
+
+  - -1
+
+* Condenser N.A. 1
+
+::
+
+  - 3.886925795053
+
+* LightManagerEnabled 1
+
+::
+
+  - -1
+
+* ImageRelativeTime3 3
+
+::
+
+  - 12:02:23 AM
+
+* Emission Wavelength 1
+
+::
+
+  - 617
+
+* ImageRelativeTime3 1
+
+::
+
+  - 12:02:20 AM
+
+* Emission Wavelength 3
+
+::
+
+  - 461
+
+* Y position for position #39
+
+::
+
+  - 7364.515
+
+* Y position for position #38
+
+::
+
+  - 7349.035
+
+* Y position for position #31
+
+::
+
+  - 7297.435
+
+* RelFocusPosition1 1
+
+::
+
+  - 0
+
+* Y position for position #30
+
+::
+
+  - 5070.895
+
+* RelFocusPosition1 0
+
+::
+
+  - 0
+
+* Y position for position #33
+
+::
+
+  - 7312.915
+
+* Y position for position #32
+
+::
+
+  - 7297.435
+
+* Y position for position #35
+
+::
+
+  - 7328.395
+
+* Y position for position #34
+
+::
+
+  - 7312.915
+
+* Y position for position #37
+
+::
+
+  - 7349.035
+
+* RelFocusPosition1 3
+
+::
+
+  - 1.5010000000002
+
+* Y position for position #36
+
+::
+
+  - 7328.395
+
+* Camera Framestart Top 1
+
+::
+
+  - 0
+
+* Camera Framestart Top 3
+
+::
+
+  - 0
+
+* Y position for position #49
+
+::
+
+  - 9523.975
+
+* Y position for position #44
+
+::
+
+  - 9575.575
+
+* Y position for position #43
+
+::
+
+  - 9575.575
+
+* Y position for position #42
+
+::
+
+  - 9591.055
+
+* Y position for position #41
+
+::
+
+  - 9591.055
+
+* Y position for position #48
+
+::
+
+  - 9539.455
+
+* Y position for position #47
+
+::
+
+  - 9539.455
+
+* Y position for position #46
+
+::
+
+  - 9554.935
+
+* Y position for position #45
+
+::
+
+  - 9554.935
+
+* Excitation Wavelength 1
+
+::
+
+  - 590
+
+* Y position for position #40
+
+::
+
+  - 7364.515
+
+* Excitation Wavelength 3
+
+::
+
+  - 359
+
+* Focus calibrated 1
+
+::
+
+  - 0
+
+* Focus calibrated 3
+
+::
+
+  - 0
+
+* Microscope Name 3
+
+::
+
+  - Axio Imager Z1
+
+* Microscope Name 1
+
+::
+
+  - Axio Imager Z1
+
+* Y position for position #50
+
+::
+
+  - 9523.975
+
+* Objective Turret Position 1
+
+::
+
+  - 1
+
+* Objective Turret Position 3
+
+::
+
+  - 1
+
+* CameraFrameScalingFactor 3
+
+::
+
+  - 1
+
+* Camera Frame Width 1
+
+::
+
+  - 1388
+
+* Reflector Position 1
+
+::
+
+  - 2
+
+* Camera Frame Width 3
+
+::
+
+  - 1388
+
+* Reflector Position 3
+
+::
+
+  - 1
+
+* PixelType
+
+::
+
+  - 3
+
+* RelFocusPosition2 3
+
+::
+
+  - 1.5010000000002
+
+* RelFocusPosition2 1
+
+::
+
+  - 0
+
+* RelFocusPosition2 0
+
+::
+
+  - 0
+
+* ImageWidth
+
+::
+
+  - 186
+
+* Reflector ID 3
+
+::
+
+  - Reflector.488049-0000-000
+
+* Reflector ID 1
+
+::
+
+  - Reflector.000000-1114-101
+
+* Objective N.A. 3
+
+::
+
+  - 0.075
+
+* Objective N.A. 1
+
+::
+
+  - 0.075
+
+* Image acquisition Index
+
+::
+
+  - 0
+
+* WhiteValue
+
+::
+
+  - 1
+
+* Camera Shading Correction 3
+
+::
+
+  - 0
+
+* Camera Shading Correction 1
+
+::
+
+  - 0
+
+* GammaValue
+
+::
+
+  - 1
+
+* AxioCam Black Reference 3
+
+::
+
+  - 0
+
+* AxioCam Black Reference 1
+
+::
+
+  - 0
+
+* Reflector 1
+
+::
+
+  - 43 DsRed
+
+* Reflector 3
+
+::
+
+  - 49 DAPI
+
+* Condenser Contrast 3
+
+::
+
+  - 1
+
+* Condenser Contrast 1
+
+::
+
+  - 1
+
+* Amplification Index 1
+
+::
+
+  - 0
+
+* Amplification Index 3
+
+::
+
+  - 0
+
+* CameraFrameScalingFactor 1
+
+::
+
+  - 1
+
+* Camera Binning 1
+
+::
+
+  - 1
+
+* Camera Binning 3
+
+::
+
+  - 1
+
+* Camera Frame Height 1
+
+::
+
+  - 1040
+
+* Camera Frame Height 3
+
+::
+
+  - 1040
+
+* Exposure Time [ms] 1
+
+::
+
+  - 538.096
+
+* BlackValue
+
+::
+
+  - 0
+
+* Exposure Time [ms] 3
+
+::
+
+  - 1501.654
+
+* MultiChannel Color 3
+
+::
+
+  - 255
+
+* Acquisition Bit Depth 3
+
+::
+
+  - 12
+
+* MultiChannel Color 0
+
+::
+
+  - 16777215
+
+* MultiChannel Color 1
+
+::
+
+  - 16711680
+
+* ContrastManagerMode 1
+
+::
+
+  - 3
+
+* Image Index Z 0
+
+::
+
+  - 0
+
+* Original Stage Position X 1
+
+::
+
+  - 3305.241
+
+* Original Stage Position X 3
+
+::
+
+  - 3305.241
+
+* Image Index T
+
+::
+
+  - 0
+
+* Image Index S
+
+::
+
+  - 0
+
+* Acquisition Bit Depth 1
+
+::
+
+  - 12
+
+* Image Index Z 3
+
+::
+
+  - 0
+
+* Image Index Z 1
+
+::
+
+  - 0
+
+* ImageHeight
+
+::
+
+  - 226
+
+* Transmitted Light Shutter 1
+
+::
+
+  - 1
+
+* CameraLiveScalingFactor 1
+
+::
+
+  - 0.333333333333333
+
+* Image Index U 0
+
+::
+
+  - 
+
+* Image Index U 1
+
+::
+
+  - 0
+
+* Image Index U 3
+
+::
+
+  - 0
+
+* Image Index T 3
+
+::
+
+  - 0
+
+* Image Index T 1
+
+::
+
+  - 0
+
+* Filename
+
+::
+
+  - 
+
+* Transmitted Light Shutter 3
+
+::
+
+  - 1
+
+* CameraLiveScalingFactor 3
+
+::
+
+  - 0.333333333333333
+
+* DeepView Slider Name 1
+
+::
+
+  - 0
+
+* DeepView Slider Name 3
+
+::
+
+  - 0
+
+* Camera 3
+
+::
+
+  - AxioCamMR
+
+* Image Index S 1
+
+::
+
+  - 0
+
+* Image Index S 3
+
+::
+
+  - 0
+
+* Camera 1
+
+::
+
+  - AxioCamMR
+
+* MicroscopeMagnification 3
+
+::
+
+  - 2.5
+
+* Stage Position Y 3
+
+::
+
+  - 9523.975
+
+* MicroscopeMagnification 1
+
+::
+
+  - 2.5
+
+* Stage Position Y 1
+
+::
+
+  - 9523.975
+
+* Stage Position Y 0
+
+::
+
+  - 113
+
+* MultiChannel Color
+
+::
+
+  - 255
+
+* TransmittedLightHalogenLampVoltage 3
+
+::
+
+  - 3.77221135029354
+
+* Channel Name 3
+
+::
+
+  - DAPI
+
+* Channel Name 1
+
+::
+
+  - Alexa 594
+
+* Acquisition Bit Depth
+
+::
+
+  - 
+
+* TransmittedLightHalogenLampVoltage 1
+
+::
+
+  - 3.77221135029354
+
+* CameraFramePixelDistance 3
+
+::
+
+  - 6.45
+
+* CameraFramePixelDistance 1
+
+::
+
+  - 6.45
+
+* AxioCam Delay Time 1
+
+::
+
+  - 20
+
+* AxioCam Delay Time 3
+
+::
+
+  - 20
+
+* Original Stage Position Y 1
+
+::
+
+  - 9379.495
+
+* Original Stage Position Y 3
+
+::
+
+  - 9379.495
+
+* WhiteValue 1
+
+::
+
+  - 1
+
+* WhiteValue 3
+
+::
+
+  - 1
+
+* AxioCam MicroScanning 3
+
+::
+
+  - 0
+
+* AxioCam MicroScanning 1
+
+::
+
+  - 0
+
+* MultiChannel Weight
+
+::
+
+  - 1
+
+* DeviceScalingName 1
+
+::
+
+  - AxioCamMRPlus
+
+* Camera Framestart Left 1
+
+::
+
+  - 0
+
+* DeviceScalingName 3
+
+::
+
+  - AxioCamMRPlus
+
+* Camera Framestart Left 3
+
+::
+
+  - 0
+
+* X position for position #1
+
+::
+
+  - 93
+
+* Stage Position X 0
+
+::
+
+  - 93
+
+* Stage Position X 1
+
+::
+
+  - 3428.049
+
+* Stage Position X 3
+
+::
+
+  - 3428.049
+
+* MultiChannel Weight 3
+
+::
+
+  - 1
+
+* Objective Working Distance 1
+
+::
+
+  - 9500
+
+* Objective Working Distance 3
+
+::
+
+  - 9500
+
+* Objective Immersion Type 1
+
+::
+
+  - 1
+
+* Lightmanager Mode 1
+
+::
+
+  - 2
+
+* Lightmanager Mode 3
+
+::
+
+  - 2
+
+* ImageRelativeTime 0
+
+::
+
+  - 12:00:00 AM
+
+* ImageRelativeTime 1
+
+::
+
+  - 12:02:20 AM
+
+* AxioCam Selector 1
+
+::
+
+  - 0
+
+* ImageRelativeTime 3
+
+::
+
+  - 12:02:23 AM
+
+* Objective Immersion Type 3
+
+::
+
+  - 1
+
+* Camera Adapter Magnification 1
+
+::
+
+  - 1
+
+* AxioCam Selector 3
+
+::
+
+  - 0
+
+* Camera Adapter Magnification 3
+
+::
+
+  - 1
+
+* MicroscopeIllumination 3
+
+::
+
+  - -1
+
+* MicroscopeIllumination 1
+
+::
+
+  - -1
+
+* MultiChannel Weight 0
+
+::
+
+  - 1
+
+* MultiChannel Weight 1
+
+::
+
+  - 1
+
+* CameraFrameImageOrientation 1
+
+::
+
+  - 1
+
+* Dazzle Protection Active 1
+
+::
+
+  - -1
+
+* Dazzle Protection Active 3
+
+::
+
+  - -1
+
+* Focus Position 1
+
+::
+
+  - 10535.738
+
+* Focus Position 3
+
+::
+
+  - 10537.239
+
+* ImageTile Index
+
+::
+
+  - 0
+
+* ContrastManagerMode 3
+
+::
+
+  - 3
+
+* CameraFrameImageOrientation 3
+
+::
+
+  - 1
+
+* AxioCam Shutter Control 3
+
+::
+
+  - 0
+
+* AxioCam Type 1
+
+::
+
+  - 4114
+
+* AxioCam Shutter Control 1
+
+::
+
+  - 0
+
+* AxioCam Type 3
+
+::
+
+  - 4114
+
+* AxioCam Color Model 1
+
+::
+
+  - 0
+
+* AxioCam Resolution 1
+
+::
+
+  - 5633
+
+* AxioCam Color Model 3
+
+::
+
+  - 0
+
+* AxioCam Resolution 3
+
+::
+
+  - 5633
+
+* Image acquisition Index 1
+
+::
+
+  - 0
+
+* ImageRelativeTime2 3
+
+::
+
+  - 12:02:23 AM
+
+* Image acquisition Index 3
+
+::
+
+  - 0
+
+* ImageRelativeTime1 3
+
+::
+
+  - 12:02:23 AM
+
+* MultiChannelEnabled 0
+
+::
+
+  - 1
+
+* ImageRelativeTime1 0
+
+::
+
+  - 12:00:00 AM
+
+* ImageRelativeTime1 1
+
+::
+
+  - 12:02:20 AM
+
+* ImageRelativeTime2 1
+
+::
+
+  - 12:02:20 AM
+
+* ImageRelativeTime2 0
+
+::
+
+  - 12:00:00 AM
+
+* MultiChannelEnabled 3
+
+::
+
+  - 1
+
+* MultiChannelEnabled 1
+
+::
+
+  - 1
+
+* Image Channel Index #1
+
+::
+
+  - 0
+
+* Acquisition Date 1
+
+::
+
+  - 5/1/2007 2:43:47 PM
+
+* Acquisition Date 3
+
+::
+
+  - 5/1/2007 2:43:51 PM
+

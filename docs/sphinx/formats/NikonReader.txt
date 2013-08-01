@@ -1,0 +1,419 @@
+*******************************************************************************
+NikonReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Nikon NEF format reader.
+
+Key/value pairs
+===============================================================================
+
+* USER_COMMENT
+
+::
+
+  - [B@23dcc5
+  - [B@1c107f4
+  - [B@1fb2e99
+  - [B@7dd383
+  - [B@87cacb
+  - [B@713658
+  - [B@5fffe
+  - [B@cee11e
+  - [B@19a3682
+
+* CONTRAST
+
+::
+
+  - 0
+
+* MAX_APERTURE_VALUE
+
+::
+
+  - 40/10
+  - 30/10
+  - 36/10
+  - 55/10
+  - 352/96
+
+* EXIF_VERSION
+
+::
+
+  - [B@c14e39
+
+* EXPOSURE_MODE
+
+::
+
+  - 0
+
+* LIGHT_SOURCE
+
+::
+
+  - 0
+
+* BitsPerSample
+
+::
+
+  - 12
+
+* SHUTTER_SPEED_VALUE
+
+::
+
+  - 480/96
+
+* YResolution
+
+::
+
+  - 300
+  - 180
+
+* SATURATION
+
+::
+
+  - 0
+
+* METERING_MODE
+
+::
+
+  - 5
+
+* CFA_PATTERN
+
+::
+
+  - [I@1ca1ead
+  - [I@a909c7
+  - [I@11a0fad
+  - [I@983bcc
+  - [I@48c90e
+  - [I@d8d88d
+  - [I@1d0f59a
+  - [I@c88db2
+  - [I@1e2b024
+
+* FLASH
+
+::
+
+  - 0
+  - 16
+
+* ImageLength
+
+::
+
+  - 2868
+  - 1324
+  - 1648
+  - 2152
+  - 3048
+
+* XResolution
+
+::
+
+  - 300
+  - 180
+
+* F_NUMBER
+
+::
+
+  - 85/10
+  - 40/10
+  - 4/1
+  - 220/10
+  - 80/10
+  - 160/10
+  - 130/10
+  - 56/10
+  - 67/10
+  - 35/10
+
+* SHARPNESS
+
+::
+
+  - 0
+
+* CUSTOM_RENDERED
+
+::
+
+  - 0
+
+* SamplesPerPixel
+
+::
+
+  - 1
+
+* ResolutionUnit
+
+::
+
+  - Inch
+
+* PhotometricInterpretation
+
+::
+
+  - Color Filter Array
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* APERTURE_VALUE
+
+::
+
+  - 352/96
+
+* COLOR_SPACE
+
+::
+
+  - 1
+
+* SUB_SEC_TIME_DIGITIZED
+
+::
+
+  - 63
+  - 00
+  - 24
+  - 06
+  - 94
+  - 32
+
+* EXPOSURE_PROGRAM
+
+::
+
+  - 3
+  - 2
+
+* FILE_SOURCE
+
+::
+
+  - 3
+
+* DIGITAL_ZOOM_RATIO
+
+::
+
+  - 1/1
+  - 133/100
+
+* MAKER_NOTE
+
+::
+
+  - 4
+
+* SUB_SEC_TIME_ORIGINAL
+
+::
+
+  - 63
+  - 00
+  - 24
+  - 06
+  - 94
+  - 32
+
+* SCENE_TYPE
+
+::
+
+  - 1
+
+* WHITE_BALANCE
+
+::
+
+  - 0
+
+* ImageWidth
+
+::
+
+  - 4320
+  - 2012
+  - 2496
+  - 3264
+  - 4080
+
+* LITTLE_ENDIAN
+
+::
+
+  - false
+  - true
+
+* SENSING_METHOD
+
+::
+
+  - 2
+
+* RELATED_SOUND_FILE
+
+::
+
+  -             
+
+* PlanarConfiguration
+
+::
+
+  - Chunky
+
+* Orientation
+
+::
+
+  - 1st row -> left; 1st column -> bottom
+
+* FOCAL_LENGTH
+
+::
+
+  - 6000/10
+  - 600/10
+  - 180/10
+  - 10000/10
+  - 10470/1000
+
+* DATE_TIME_DIGITIZED
+
+::
+
+  - 2000:07:22 14:58:21
+  - 2005:03:05 15:43:37
+  - 2005:03:02 15:48:19
+  - 2005:03:05 15:44:27
+  - 2005:03:05 15:43:55
+  - 2005:03:05 15:44:06
+  - 2001:03:03 13:18:39
+  - 2004:04:20 17:27:08
+  - 2005:03:05 15:45:56
+
+* DATE_TIME_ORIGINAL
+
+::
+
+  - 2000:07:22 14:58:21
+  - 2005:03:05 15:43:37
+  - 2005:03:02 15:48:19
+  - 2005:03:05 15:44:27
+  - 2005:03:05 15:43:55
+  - 2005:03:05 15:44:06
+  - 2001:03:03 13:18:39
+  - 2004:04:20 17:27:08
+  - 2005:03:05 15:45:56
+  - 2011:07:11 10:32:04
+
+* GAIN_CONTROL
+
+::
+
+  - 1
+  - 0
+  - 2
+
+* NewSubfileType
+
+::
+
+  - 0
+
+* SCENE_CAPTURE_TYPE
+
+::
+
+  - 0
+
+* Compression
+
+::
+
+  - Nikon
+  - Uncompressed
+
+* ISO_SPEED_RATINGS
+
+::
+
+  - 400
+  - 401
+
+* BIG_TIFF
+
+::
+
+  - false
+
+* EXPOSURE_BIAS_VALUE
+
+::
+
+  - 0/6
+  - 0/96
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - RGB
+
+* SUBJECT_DISTANCE_RANGE
+
+::
+
+  - 0
+
+* SUB_SEC_TIME
+
+::
+
+  - 63
+  - 00
+  - 24
+  - 06
+  - 94
+  - 32
+
+* EXPOSURE_TIME
+
+::
+
+  - 10/2500
+  - 10/600
+  - 10/2000
+  - 10/1250
+  - 10/25000
+  - 31250/1000000
+
+* FOCAL_LENGTH_35MM_FILM
+
+::
+
+  - 900
+  - 27
+  - 2000
+  - 58
+

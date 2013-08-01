@@ -1,0 +1,1301 @@
+*******************************************************************************
+InCellReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats InCell 1000/2000 format reader.
+
+Key/value pairs
+===============================================================================
+
+* SoftwareAutoFocus - mode_type
+
+::
+
+  - Adaptive
+
+* TimeSchedule - enabled
+
+::
+
+  - false
+  - true
+
+* ObjectiveCalibration - refractive_index
+
+::
+
+  - 1.000000
+
+* Wavelength - z_step
+
+::
+
+  - 0.0
+
+* SoftwareAutoFocus - focus_wavelength
+
+::
+
+  - first
+
+* SoftwareAutoFocus - max_search_range
+
+::
+
+  - 5000.0
+
+* Image - acquisition_time_ms
+
+::
+
+  - 4413
+  - 781.16
+  - 5104
+  - 64377
+
+* Output - image_format
+
+::
+
+  - TIFF
+
+* AutoLeadAcquisitionProtocol - version
+
+::
+
+  - 1.1
+
+* ExcitationFilter - name
+
+::
+
+  - D360_40x
+  - HQ480_40x
+
+* Wave - excitation_filter
+
+::
+
+  - D360_40x
+  - HQ480_40x
+
+* OffsetFromWellCenter - unit
+
+::
+
+  - µm
+
+* Column - number
+
+::
+
+  - 1
+  - 7
+
+* FieldOffsets - flex_num_fields
+
+::
+
+  - false
+
+* NamingConvention - columns
+
+::
+
+  - 12
+
+* Identifier - version
+
+::
+
+  - 1.0
+
+* Specimen - unit
+
+::
+
+  - µm
+
+* SoftwareAutoFocus - init_stepping
+
+::
+
+  - 0.0
+
+* Deconvolution - normalize_intensity
+
+::
+
+  - true
+
+* Plate - rows
+
+::
+
+  - 8
+
+* Output - write_stack_to_dce
+
+::
+
+  - 
+
+* Wave - emission_filter
+
+::
+
+  - HQ460_40M
+  - HQ535_50M
+
+* HWAFOffset - value
+
+::
+
+  - -2.1
+  - 0.0
+  - -5.0
+  - -9.2
+
+* Shifting - shift_x
+
+::
+
+  - 0.0
+
+* Shifting - shift_y
+
+::
+
+  - 0.0
+
+* FFC - applied
+
+::
+
+  - false
+
+* Creation - date
+
+::
+
+  - 2007-10-17
+  - 2012-01-11
+  - 2009-06-25
+  - 2009-03-19
+
+* TimeSchedule - mode
+
+::
+
+  - spit and stare
+  - look walk look
+
+* Microscopy - type
+
+::
+
+  - Fluorescence
+
+* Image - thumbnail
+
+::
+
+  - A - 1(fld 1)_thumb.tif
+  - D - 7(fld 1 wv HQ480_40x - HQ535_50M- time 01 - 0 ms)_thumb.tif
+
+* Images - number
+
+::
+
+  - 50
+  - 384
+  - 352
+  - 336
+
+* NamingConvention - rows
+
+::
+
+  - 8
+
+* Layout - columns
+
+::
+
+  - 2
+
+* oz_grid - freqency
+
+::
+
+  - -1.0000000000000
+
+* PlateHeater - temperature
+
+::
+
+  - 37.0
+
+* Output - save_3d_image_in_dv
+
+::
+
+  - false
+
+* ObjectiveCalibration - focal_length
+
+::
+
+  - 5000.000
+  - 20.0
+  - 10000.00
+  - 20000.00
+
+* Deconvolution - method
+
+::
+
+  - Enhanced Ratio (aggressive)
+
+* Specimen - on_slide
+
+::
+
+  - false
+
+* oz_grid - angle
+
+::
+
+  - -1.0000000000000
+
+* TimeSchedule - incubate_between_time_points
+
+::
+
+  - false
+
+* Wavelengths - link_offset
+
+::
+
+  - false
+
+* Combining - phase_contrast_invert_phase_out
+
+::
+
+  - 0
+
+* Wavelength - visuals
+
+::
+
+  - MONOCHRM.VIS
+
+* Layout - rows
+
+::
+
+  - 1
+  - 2
+
+* Application - software_version
+
+::
+
+  - 3.3 RC4
+
+* UUID - value
+
+::
+
+  - 1cee000b-8035-437f-b971-44cf54d2b57d
+
+* Gain - value
+
+::
+
+  - 2
+
+* Binning - value
+
+::
+
+  - 1x1
+
+* SoftwareAutoFocus - show_live_image
+
+::
+
+  - false
+
+* SoftwareAutoFocus - min_stepping
+
+::
+
+  - -1500.0
+
+* AcqWave - id
+
+::
+
+  - 1
+
+* Row - number
+
+::
+
+  - 1
+  - 4
+
+* ImageStack - version
+
+::
+
+  - 1.0
+
+* FocusPosition - unit
+
+::
+
+  - µm
+
+* Computer - name
+
+::
+
+  - XW6200INCELL
+
+* Exclude - col
+
+::
+
+  - 12
+  - 1
+
+* Combining - phase_contrast_illumination_type
+
+::
+
+  - 0
+
+* Creation - time
+
+::
+
+  - 17:04:54
+  - 13:51:23
+  - 10:26:28
+  - 10:44:31
+
+* SpecimenHolder - label
+
+::
+
+  - 2007.10.17.17.04.55
+  - Cellbind 96-well plate
+  - 2009_97_238_IM
+  - H2b10xtrial
+
+* Wavelength - z_slice
+
+::
+
+  - 1
+
+* PlateHeight - unit
+
+::
+
+  - mm
+
+* Wave - id
+
+::
+
+  - 1
+
+* Polychroic - id
+
+::
+
+  - X
+
+* EmissionFilter - name
+
+::
+
+  - HQ460_40M
+  - DAPI
+  - HQ460_40m
+  - HQ535_50M
+
+* TimeSchedule - time_unit
+
+::
+
+  - sec
+
+* NamingRows - type
+
+::
+
+  - sequence
+
+* ObjectiveCalibration - magnification
+
+::
+
+  - 40.00000
+  - 10.0
+  - 20.00000
+  - 10.00000
+
+* Identifier - wave_index
+
+::
+
+  - 0
+
+* Camera - oz_image_quality
+
+::
+
+  - NA
+
+* Combining - dic_modulation_mode
+
+::
+
+  - 1
+
+* BottomThickness - unit
+
+::
+
+  - µm
+
+* Specimen - expected_thickness
+
+::
+
+  - 1.0
+
+* ObjectiveCalibration - id
+
+::
+
+  - 12111
+
+* Output - write_stack_to_xml
+
+::
+
+  - 
+
+* Deconvolution - camera_intensity_offset
+
+::
+
+  - 50
+
+* ObjectiveCalibration - numerical_aperture
+
+::
+
+  - 0.450000
+
+* Wavelength - imaging_mode
+
+::
+
+  - 2-D
+
+* Images - version
+
+::
+
+  - 1.0
+
+* TopLeftWellCenterOffset - vertical
+
+::
+
+  - 9.1700
+  - 10.4
+  - 11.2400
+  - 11.3000
+
+* OffsetFromWellCenter - version
+
+::
+
+  - 1.0
+
+* Y position for position #1
+
+::
+
+  - 3138.3603
+  - 757.759765625
+  - 2134.3466
+  - -2088.3251
+
+* ZDimensionParameters - linked
+
+::
+
+  - true
+
+* ObjectiveCalibration - lineartype
+
+::
+
+  - 7
+
+* Source - percentage
+
+::
+
+  - 100.0
+
+* ImageErrorLog - hardware_auto_focus_search
+
+::
+
+  - failed
+
+* offset_point - y
+
+::
+
+  - -4707.5405
+  - -757.759765625
+  - -2134.3466
+  - 2013.7421
+
+* offset_point - x
+
+::
+
+  - -6119.8027
+  - 0.0
+  - -2744.1599
+  - -2013.7421
+
+* Source - color
+
+::
+
+  - Blue
+
+* Plate - name
+
+::
+
+  - MP uClear 384
+  - Cellbind 96-well plate
+  - Greiner uClear
+  - Corning 96 CellBind
+
+* SpecimenHolder - type
+
+::
+
+  - Plate
+
+* Spacing - spacing_percentage
+
+::
+
+  - 
+
+* HWAFOffset - unit
+
+::
+
+  - µm
+
+* Spacing - spacing_y
+
+::
+
+  - 0.0
+
+* Spacing - spacing_x
+
+::
+
+  - 0.0
+
+* WellVolume - value
+
+::
+
+  - 138.0000
+  - 340.0
+  - 392.0000
+  - 360.0000
+
+* ObjectiveCalibration - objective_name
+
+::
+
+  - NIKON_40X_PLANFLUO
+  - Nikon 10X/0.45, Plan Apo, CFI/60
+  - Nikon_20x_PlanFluo
+  - Nikon_10x_PlanApo
+
+* Polychroic - name
+
+::
+
+  - QUAD2
+
+* FocusOffset - value
+
+::
+
+  - -12.0
+
+* StackDestination - image_folder
+
+::
+
+  - D:\mporter
+  -  
+  - F:\FRANS\IM
+
+* WellParameters - unit
+
+::
+
+  - mm
+
+* ObjectiveCalibration - pixel_height
+
+::
+
+  - 0.161250000000000
+  - 0.74
+  - 0.323000000000000
+  - 0.645000000000000
+
+* Application - license
+
+::
+
+  - ALB06070
+
+* WellSpacing - horizontal
+
+::
+
+  - 9.0000
+
+* Source - wavelength
+
+::
+
+  - D360_40x - HQ460_40m
+
+* Size - height
+
+::
+
+  - 1040
+
+* FocusOffset - unit
+
+::
+
+  - µm
+
+* Identifier - field_index
+
+::
+
+  - 0
+
+* NamingColumns - begin
+
+::
+
+  - 1
+
+* Exposure - unit
+
+::
+
+  - ms
+
+* Camera - apply_oz_artifact_removal
+
+::
+
+  - false
+
+* Application - name
+
+::
+
+  - IN Cell Analyzer 1000
+
+* ObjectiveCalibration - pixel_width
+
+::
+
+  - 0.161250000000000
+  - 0.74
+  - 0.323000000000000
+  - 0.645000000000000
+
+* Direction - value
+
+::
+
+  - Horizontal Snake
+
+* X position for position #1
+
+::
+
+  - -4079.8685
+  - 0.0
+  - 3201.5198
+  - -2237.4912
+
+* FieldOffsets - number_of_fields
+
+::
+
+  - 2
+  - 4
+
+* FieldOffsets - mode
+
+::
+
+  - user_defined
+
+* WellParameters - shape
+
+::
+
+  - Round
+
+* SoftwareAutoFocus - skip_well
+
+::
+
+  - 1
+
+* PlateHeight - value
+
+::
+
+  - 14.4000
+  - 14.2000
+
+* EmissionFilter - unit
+
+::
+
+  - nm
+
+* FieldOffsets - custom_loc_x
+
+::
+
+  - -0.2955
+  - 0.0
+  - 0.0000
+  - 0.2121
+
+* FieldOffsets - custom_loc_y
+
+::
+
+  - -0.2273
+  - 0.0
+  - 0.0000
+  - 0.2121
+
+* Plate - SampleHolderType
+
+::
+
+  - Well Plate
+
+* BottomThickness - value
+
+::
+
+  - 250.0000
+  - 520.0
+  - 200.0000
+  - 500.0000
+
+* ZDimensionParameters - enabled
+
+::
+
+  - false
+
+* Camera - use_ffc
+
+::
+
+  - false
+
+* SoftwareAutoFocus - refocusEachTimePoint
+
+::
+
+  - false
+
+* ObjectiveCalibration - unit
+
+::
+
+  - µm
+
+* TopLeftWellCenterOffset - unit
+
+::
+
+  - mm
+
+* Identifier - time_index
+
+::
+
+  - 0
+
+* EmissionFilter - wavelength
+
+::
+
+  - 460
+  - 535
+
+* TimePoint - ms
+
+::
+
+  - 0
+
+* LaserAutoFocus - enabled
+
+::
+
+  - true
+
+* Camera - name
+
+::
+
+  - CoolSnap HQ
+
+* Camera - apply_ffc
+
+::
+
+  - false
+
+* BottomHeight - value
+
+::
+
+  - 3.3900
+  - 2.89
+  - 2.5000
+  - 3.5700
+
+* offset_point - index
+
+::
+
+  - 1
+
+* Wave - optical_z_sectioning
+
+::
+
+  - 0
+
+* Operator - login
+
+::
+
+  - Administrator
+
+* Plate - columns
+
+::
+
+  - 12
+
+* FieldOffsets - margin
+
+::
+
+  - 0.0000
+
+* Wavelength - show
+
+::
+
+  - true
+
+* TopLeftWellCenterOffset - horizontal
+
+::
+
+  - 12.2700
+  - 14.3
+  - 14.3800
+  - 14.7000
+
+* Wavelength - index
+
+::
+
+  - 0
+
+* UseOZModule - state
+
+::
+
+  - 0
+
+* Wavelength - fusion_wave
+
+::
+
+  - false
+
+* Combining - enabled
+
+::
+
+  - false
+
+* Wavelength - use_oz_module
+
+::
+
+  - false
+
+* Image - cell_count
+
+::
+
+  - 0
+
+* Exposure - time
+
+::
+
+  - 300
+  - 50
+  - 100
+  - 46
+
+* PlateTemperature - value
+
+::
+
+  - 23.3
+  - 23.8
+  - 37.2
+
+* Wavelengths - link_offset_refer_wave
+
+::
+
+  - -1
+
+* Image - version
+
+::
+
+  - 1.1
+
+* NamingConvention - type
+
+::
+
+  - rowcolumn
+
+* Deconvolution - number_cycles
+
+::
+
+  - 5
+
+* Camera - version
+
+::
+
+  - 1.0
+
+* ExcitationFilter - unit
+
+::
+
+  - nm
+
+* Image - GUID
+
+::
+
+  - {DF4A1FA6-1C80-4edc-95C5-9E5E3E10F9FA}
+  - 6517de7f-72fb-48d8-ab37-7e5de05b5ea7
+  - {6792A61E-2C27-43f4-864B-204AEAEDA747}
+  - {C0C5A556-8398-4250-8CA7-A5E13CBE9633}
+
+* StackDestination - current_path
+
+::
+
+  - bar_code
+
+* WellSpacing - vertical
+
+::
+
+  - 9.0000
+
+* BottomInterface - name
+
+::
+
+  - Plastic
+
+* Combining - version
+
+::
+
+  - 1.0
+
+* Identifier - z_index
+
+::
+
+  - 0
+
+* WellParameters - size
+
+::
+
+  - 3.340
+  - 6.17
+  - 6.500
+  - 6.350
+
+* AutoLeadAcquisitionProtocol - fingerprint
+
+::
+
+  - d7853f8527edd8970ef0024d026fb49b
+
+* Combining - dic_contrast_angle
+
+::
+
+  - 2.3562
+
+* Exclude - row
+
+::
+
+  - 1
+
+* SoftwareAutoFocus - skip_field
+
+::
+
+  - 1
+
+* StackDestination - base_path
+
+::
+
+  - predefined
+  - system_default
+
+* NamingRows - begin
+
+::
+
+  - A
+
+* ImageErrorLog - acquisition
+
+::
+
+  - ACQUISITION
+
+* OffsetFromWellCenter - y
+
+::
+
+  - -759.091
+  - 757.75977
+  - -689.394
+  - 1298.864
+
+* SoftwareAutoFocus - enabled
+
+::
+
+  - false
+
+* NamingColumns - type
+
+::
+
+  - sequence
+
+* OffsetFromWellCenter - x
+
+::
+
+  - -986.818
+  - 0.0
+  - -886.364
+  - -1298.86
+
+* Bias - value
+
+::
+
+  - 97.3964
+
+* Plate - version
+
+::
+
+  - 1.0
+
+* FocusPosition - z
+
+::
+
+  - -2674.64
+  - 3479.38
+  - -3710.60
+  - -3827.70
+
+* WellSpacing - unit
+
+::
+
+  - mm
+
+* Images - path
+
+::
+
+  - D:\mporter\2007.10.17.17.04.55\
+  - Z:\hay lab\Katie\120111\&#124;KJH YFPPML 2000\&#124;KJH YFPPML 2000_A-101061_1
+  - F:\FRANS\IM\2009_97_238_IM\
+  - D:\TEMP\livecellH2B19309scm\H2b10xtrial\
+
+* ExcitationFilter - wavelength
+
+::
+
+  - 360
+  - 480
+
+* AutoLeadAcquisitionProtocol - name
+
+::
+
+  - MP_384Well_4Channel_inside
+  - |KJH YFPPML 2000
+  - Mara_Alexa488_and Hoechst_EB1
+  - livecellH2B19309scm
+
+* Camera - support_oz_module
+
+::
+
+  - false
+
+* FieldOffsets - weight
+
+::
+
+  - user_defined
+
+* Combining - dic_combiner_prism
+
+::
+
+  - 0.0000
+
+* Well - label
+
+::
+
+  - A - 1(fld 1)
+  - A - 1
+  - A - 1(fld 1 wv D360_40x - HQ460_40m)
+  - D - 7(fld 1 wv HQ480_40x - HQ535_50M- time 01 - 0 ms)
+
+* Image - filename
+
+::
+
+  - A - 1(fld 1).tif
+  - A - 1(fld 1 wv DAPI - DAPI).tif
+  - A - 1(fld 1 wv D360_40x - HQ460_40m).im
+  - D - 7(fld 1 wv HQ480_40x - HQ535_50M- time 01 - 0 ms).tif
+
+* PlateHeater - use
+
+::
+
+  - false
+  - true
+
+* Combining - dic_absorption
+
+::
+
+  - 0.5000
+
+* Size - width
+
+::
+
+  - 1392
+
+* Combining - phase_contrast_high_pass_filter
+
+::
+
+  - 0.0000
+
+* Images - image_format
+
+::
+
+  - TIFF
+
+* SoftwareAutoFocus - mode_value
+
+::
+
+  - Large
+
+* Wavelength - z_section
+
+::
+
+  - 0.0
+

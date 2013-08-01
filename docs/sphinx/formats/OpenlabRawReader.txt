@@ -1,0 +1,45 @@
+*******************************************************************************
+OpenlabRawReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Openlab RAW format reader.
+
+Key/value pairs
+===============================================================================
+
+* Image name
+
+::
+
+  - mri-stack.tif
+
+* Bytes per pixel
+
+::
+
+  - 1
+
+* Height
+
+::
+
+  - 226
+
+* Width
+
+::
+
+  - 186
+
+* Version
+
+::
+
+  - 1
+
+* Timestamp
+
+::
+
+  - 2013-08-01T16:38:43
+

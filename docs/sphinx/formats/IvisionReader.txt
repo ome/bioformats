@@ -1,0 +1,135 @@
+*******************************************************************************
+IvisionReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats IVision format reader.
+
+Key/value pairs
+===============================================================================
+
+* iplab:Capture_Date
+
+::
+
+  - 2009-01-23T22:57:54Z
+
+* iplab:Calibrate_XY
+
+::
+
+  - 7
+
+* iplab:Camera_MaxY
+
+::
+
+  - 1040
+
+* iplab:Camera_MaxX
+
+::
+
+  - 1392
+
+* iplab:Acquire_UUID
+
+::
+
+  - 451843E0-E9A1-11DD-81FB-0023329DA54A
+
+* iplab:Filter_Pos
+
+::
+
+  - 0
+
+* iplab:Grab_Bottom
+
+::
+
+  - 1040
+
+* iplab:Grab_Right
+
+::
+
+  - 1392
+
+* iplab:Grab_Left
+
+::
+
+  - 0
+
+* iplab:Camera_BitDepth
+
+::
+
+  - 12
+
+* iplab:Calibrate_XYDescr
+
+::
+
+  - 4xObj
+
+* iplab:Grab_Top
+
+::
+
+  - 0
+
+* iplab:Exposure
+
+::
+
+  - 400
+
+* iplab:Gain
+
+::
+
+  - 100
+
+* iplab:Offset
+
+::
+
+  - 0.0
+
+* iplab:Bin_Y
+
+::
+
+  - 1
+
+* iplab:Calibrate_XYUnits
+
+::
+
+  - 1
+
+* iplab:Bin_X
+
+::
+
+  - 1
+
+* iplab:Camera_Name
+
+::
+
+  - QImaging
+
+* iplab:Filter_Name
+
+::
+
+  - QCam Filter
+
+* Version
+
+::
+
+  - 3.9a
+

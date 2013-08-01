@@ -1,0 +1,173 @@
+*******************************************************************************
+KodakReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Kodak Molecular Imaging format reader.
+
+Key/value pairs
+===============================================================================
+
+* Magnification Stage
+
+::
+
+  - No
+
+* X-binning
+
+::
+
+  - 2x Binning
+
+* Orientation
+
+::
+
+  - Flip Horizontal
+
+* Illumination Source
+
+::
+
+  - Luminescence
+
+* Horizontal Resolution
+
+::
+
+  - 344 ppi
+
+* Y-binning
+
+::
+
+  - 2x Binning
+
+* Exposure Time
+
+::
+
+  - 45.000 sec.
+
+* Lens Correction Done
+
+::
+
+  - Yes (v3.0.0)
+
+* f-Stop
+
+::
+
+  - O
+
+* Emission Filter Description
+
+::
+
+  - 0. 0
+
+* Percent of Saturated Pixels
+
+::
+
+  - ~0.00%
+
+* Pixel Saturation Threshold
+
+::
+
+  - 65535
+
+* Capture Time/Date
+
+::
+
+  - 16:52:19 on 10/05/2010
+  - 13:33:37 on 09/14/2010
+  - 20:26:07 on 09/11/2010
+
+* Image Capture Source
+
+::
+
+  - IS4000MM
+
+* Total Experiment Duration
+
+::
+
+  - 315.00 secs.
+
+* Reference File
+
+::
+
+  - NA
+
+* Vertical Resolution
+
+::
+
+  - 344 ppi
+
+* Exposure
+
+::
+
+  - 3 of 3 (Increment: X 0.50)
+
+* FOV
+
+::
+
+  - 76.5 mm
+
+* Exposure Type
+
+::
+
+  - Progressive Exposure
+
+* Annotation
+
+::
+
+  - 
+
+* Username
+
+::
+
+  - 
+
+* CCD Temperature
+
+::
+
+  - -29.00 C
+
+* Excitation Filter Description
+
+::
+
+  - 0. Open
+
+* Image Warping
+
+::
+
+  - Yes
+
+* Illumination Correction Done
+
+::
+
+  - No
+
+* Focal Plane
+
+::
+
+  - 0.0 mm
+

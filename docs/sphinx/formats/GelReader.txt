@@ -1,0 +1,153 @@
+*******************************************************************************
+GelReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Amersham Biosciences GEL format reader.
+
+Key/value pairs
+===============================================================================
+
+* MinSampleValue
+
+::
+
+  - 0
+
+* NumberOfChannels
+
+::
+
+  - 1
+
+* Lab name
+
+::
+
+  - typhoonuser
+
+* Software
+
+::
+
+  - tag = 305, type = ASCII, count = 49, offset = 1600488
+
+* Time prepared
+
+::
+
+  - 2007:05:04 11:44:45
+
+* Instrument Model
+
+::
+
+  - tag = 272, type = ASCII, count = 12, offset = 1600476
+
+* ImageLength
+
+::
+
+  - 800
+
+* NewSubfileType
+
+::
+
+  - 0
+
+* MaxSampleValue
+
+::
+
+  - 45854
+
+* Scale factor
+
+::
+
+  - 1/21025
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* Sample info
+
+::
+
+  - Scan Information for channel 1        Fluorescence mode       600 V : Normal sensitivity       Scanned A1 to E4       580 BP 30 / Green (532 nm)       focal plane = Platen
+
+* BitsPerSample
+
+::
+
+  - 16
+
+* DateTime
+
+::
+
+  - tag = 306, type = ASCII, count = 20, offset = 1600601
+
+* Document Name
+
+::
+
+  - tag = 269, type = ASCII, count = 28, offset = 1600448
+
+* SamplesPerPixel
+
+::
+
+  - 1
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - Monochrome
+
+* ImageWidth
+
+::
+
+  - 1000
+
+* PhotometricInterpretation
+
+::
+
+  - WhiteIsZero
+
+* File units
+
+::
+
+  - Counts
+
+* ResolutionUnit
+
+::
+
+  - Centimeter
+
+* Date prepared
+
+::
+
+  - 2007:05:04 11:44:45
+
+* Artist
+
+::
+
+  - tag = 315, type = ASCII, count = 12, offset = 1600549
+
+* Data format
+
+::
+
+  - square root
+

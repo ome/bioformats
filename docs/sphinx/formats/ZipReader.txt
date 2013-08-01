@@ -1,0 +1,87 @@
+*******************************************************************************
+ZipReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Zip format reader.
+
+Key/value pairs
+===============================================================================
+
+* NumberOfChannels
+
+::
+
+  - 1
+
+* ImageJ
+
+::
+
+  - 1.45q
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* loop
+
+::
+
+  - false
+
+* ImageLength
+
+::
+
+  - 154
+
+* images
+
+::
+
+  - 114
+
+* MetaMorph
+
+::
+
+  - no
+
+* SamplesPerPixel
+
+::
+
+  - 1
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - Monochrome
+
+* ImageWidth
+
+::
+
+  - 121
+
+* NewSubfileType
+
+::
+
+  - 0
+
+* PhotometricInterpretation
+
+::
+
+  - BlackIsZero
+
+* Compression
+
+::
+
+  - Uncompressed
+

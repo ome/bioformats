@@ -1,0 +1,15 @@
+*******************************************************************************
+MNGReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Multiple Network Graphics format reader.
+
+Key/value pairs
+===============================================================================
+
+* Number of frames
+
+::
+
+  - 32
+

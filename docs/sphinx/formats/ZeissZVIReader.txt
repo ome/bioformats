@@ -1,0 +1,5873 @@
+*******************************************************************************
+ZeissZVIReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Zeiss Vision Image (ZVI) format reader.
+
+Key/value pairs
+===============================================================================
+
+* Y position for position #001
+
+::
+
+  - 3637.0
+
+* Y position for position #002
+
+::
+
+  - 3637.0
+
+* tag_ID_8450 0
+
+::
+
+  - 16711680
+
+* tag_ID_8450 1
+
+::
+
+  - 16711680
+
+* Last modified by 0
+
+::
+
+  - Administrator
+  - rieder
+
+* tag_ID_8450 2
+
+::
+
+  - 16711680
+
+* tag_ID_8450 3
+
+::
+
+  - 16711680
+
+* Transmitted Light Fieldstop Aperture 0
+
+::
+
+  - 99.99999999999999
+
+* Transmitted Light Fieldstop Aperture 1
+
+::
+
+  - 99.99999999999999
+
+* Transmitted Light Fieldstop Aperture 2
+
+::
+
+  - 99.99999999999999
+
+* Transmitted Light Fieldstop Aperture 3
+
+::
+
+  - 99.99999999999999
+
+* Y position for position #004
+
+::
+
+  - 3637.0
+
+* Y position for position #003
+
+::
+
+  - 3637.0
+
+* Y position for position #006
+
+::
+
+  - 3637.0
+
+* Y position for position #005
+
+::
+
+  - 3637.0
+
+* Y position for position #008
+
+::
+
+  - 3637.0
+
+* Y position for position #007
+
+::
+
+  - 3637.0
+
+* Y position for position #009
+
+::
+
+  - 3637.0
+
+* Y position for position #010
+
+::
+
+  - 3637.0
+
+* Y position for position #011
+
+::
+
+  - 3637.0
+
+* Y position for position #012
+
+::
+
+  - 3637.0
+
+* Y position for position #013
+
+::
+
+  - 3637.0
+
+* ImageTile Index 3
+
+::
+
+  - 0
+
+* ImageTile Index 1
+
+::
+
+  - 0
+
+* ImageTile Index 2
+
+::
+
+  - 0
+
+* ImageTile Index 0
+
+::
+
+  - 0
+
+* Y position for position #019
+
+::
+
+  - 3637.0
+
+* Y position for position #018
+
+::
+
+  - 3637.0
+
+* Y position for position #017
+
+::
+
+  - 3637.0
+
+* Y position for position #016
+
+::
+
+  - 3637.0
+
+* Y position for position #015
+
+::
+
+  - 3637.0
+
+* Y position for position #014
+
+::
+
+  - 3637.0
+
+* Y position for position #023
+
+::
+
+  - 3637.0
+
+* Y position for position #024
+
+::
+
+  - 3637.0
+
+* Y position for position #021
+
+::
+
+  - 3637.0
+
+* Y position for position #022
+
+::
+
+  - 3637.0
+
+* Y position for position #020
+
+::
+
+  - 3637.0
+
+* tag_ID_8456 3
+
+::
+
+  - 0
+
+* Scale Factor for Z
+
+::
+
+  - 1.0
+  - 0.2
+
+* tag_ID_8456 2
+
+::
+
+  - 0
+
+* tag_ID_8456 1
+
+::
+
+  - 0
+
+* tag_ID_8456 0
+
+::
+
+  - 0
+
+* Reflected Light Shutter 0
+
+::
+
+  - 1
+  - 2
+
+* Acquisition pause annotation 1
+
+::
+
+  - 
+
+* Y position for position #029
+
+::
+
+  - 3637.0
+
+* Acquisition pause annotation 0
+
+::
+
+  - 
+
+* Acquisition pause annotation 3
+
+::
+
+  - 
+
+* ImageHeight 3
+
+::
+
+  - 512
+
+* Acquisition pause annotation 2
+
+::
+
+  - 
+
+* ImageHeight 2
+
+::
+
+  - 512
+
+* Y position for position #026
+
+::
+
+  - 3637.0
+
+* ImageHeight 1
+
+::
+
+  - 512
+
+* Y position for position #025
+
+::
+
+  - 3637.0
+
+* ImageHeight 0
+
+::
+
+  - 1040
+  - 512
+
+* Y position for position #028
+
+::
+
+  - 3637.0
+
+* Scale Factor for X
+
+::
+
+  - 0.0638569604086845
+  - 0.06430834923034806
+
+* Y position for position #027
+
+::
+
+  - 3637.0
+
+* Scale Factor for Y
+
+::
+
+  - 0.0638569604086845
+  - 0.06430834923034806
+
+* Document Type
+
+::
+
+  - Image
+
+* Y position for position #032
+
+::
+
+  - 3637.0
+
+* Y position for position #033
+
+::
+
+  - 3637.0
+
+* Y position for position #034
+
+::
+
+  - 3637.0
+
+* Y position for position #035
+
+::
+
+  - 3637.0
+
+* Y position for position #030
+
+::
+
+  - 3637.0
+
+* Y position for position #031
+
+::
+
+  - 3637.0
+
+* Reflected Light Shutter 1
+
+::
+
+  - 2
+
+* Number Raw Count
+
+::
+
+  - 2
+  - 112
+
+* Reflected Light Shutter 2
+
+::
+
+  - 2
+
+* Reflected Light Shutter 3
+
+::
+
+  - 2
+
+* Image Memory Usage (RAM)
+
+::
+
+  - 8665120.0
+  - 5.8944256E7
+
+* MicroscopeType 3
+
+::
+
+  - 56
+
+* MicroscopeType 2
+
+::
+
+  - 3
+  - 56
+
+* MicroscopeType 1
+
+::
+
+  - 56
+
+* MicroscopeType 0
+
+::
+
+  - 3
+  - 56
+
+* tag_ID_2071 0
+
+::
+
+  - 0.0
+  - 5.399999999999999
+
+* tag_ID_2071 2
+
+::
+
+  - 0.0
+  - 5.399999999999999
+
+* tag_ID_2071 1
+
+::
+
+  - 5.399999999999999
+
+* tag_ID_2071 3
+
+::
+
+  - 5.399999999999999
+
+* Reference
+
+::
+
+  - C:\Documents and Settings\Administrator\Desktop\MWilson\9.17.08\BY4741NQ2.jpg
+  - D:\rieder\AutoSave\hMADS-24h-BAC1-7-AF647-AF488-RHO-1day-hyb-CSK-2007-06-29-0008\hMADS-24h-BAC1-7-AF647-AF488-RHO-1day-hyb-CSK-2007-06-29-0008_Position(113).zvi
+
+* Y position for position #2
+
+::
+
+  - 0.0
+
+* Y position for position #1
+
+::
+
+  - 0.0
+
+* Y position for position #3
+
+::
+
+  - 0.0
+
+* ImageRelativeTime3 0
+
+::
+
+  - 0
+  - 4568561697182187520
+
+* tag_ID_20478
+
+::
+
+  - 
+
+* File Date
+
+::
+
+  - 4675690349169552480
+  - 4675629040879997007
+
+* Condenser N.A. 2
+
+::
+
+  - 0.95
+  - 100.0
+
+* Condenser N.A. 3
+
+::
+
+  - 100.0
+
+* Condenser N.A. 0
+
+::
+
+  - 0.95
+  - 100.0
+
+* Condenser N.A. 1
+
+::
+
+  - 100.0
+
+* ImageRelativeTime3 3
+
+::
+
+  - 4568748213737095168
+
+* Emission Wavelength 0
+
+::
+
+  - 550
+  - 461
+
+* Emission Wavelength 1
+
+::
+
+  - 519
+
+* ImageRelativeTime3 1
+
+::
+
+  - 4568627398035111936
+
+* Emission Wavelength 2
+
+::
+
+  - 580
+
+* Emission Wavelength 3
+
+::
+
+  - 668
+
+* ImageRelativeTime3 2
+
+::
+
+  - 4541956952720146432
+  - 4568700537637175296
+
+* Beamsplitter Type Infinity Space 2
+
+::
+
+  - 1
+
+* Beamsplitter Type Infinity Space 3
+
+::
+
+  - 1
+
+* Beamsplitter Type Infinity Space 0
+
+::
+
+  - 1
+
+* Beamsplitter Type Infinity Space 1
+
+::
+
+  - 1
+
+* Excitation Wavelength 0
+
+::
+
+  - 550
+  - 359
+
+* Excitation Wavelength 2
+
+::
+
+  - 540
+
+* Excitation Wavelength 1
+
+::
+
+  - 495
+
+* tag_ID_8449 0
+
+::
+
+  - Position(113)
+
+* tag_ID_8449 1
+
+::
+
+  - Position(113)
+
+* Excitation Wavelength 3
+
+::
+
+  - 650
+
+* tag_ID_8449 2
+
+::
+
+  - Position(113)
+
+* tag_ID_8449 3
+
+::
+
+  - Position(113)
+
+* Objective Turret Position 0
+
+::
+
+  - 5
+  - 4
+
+* Objective Turret Position 1
+
+::
+
+  - 4
+
+* Objective Turret Position 2
+
+::
+
+  - 5
+  - 4
+
+* Objective Turret Position 3
+
+::
+
+  - 4
+
+* File ID 0
+
+::
+
+  - BY4741NQ2.jpg
+  - hMADS-24h-BAC1-7-AF647-AF488-RHO-1day-hyb-CSK-2007-06-29-0008_Position(113).zvi
+
+* Scale Unit for X
+
+::
+
+  - 76
+
+* Scale Unit for Y
+
+::
+
+  - 76
+
+* Scale Unit for Z
+
+::
+
+  - 0
+  - 76
+
+* PixelType
+
+::
+
+  - 1
+  - 4
+
+* RelFocusPosition2 3
+
+::
+
+  - 5.399999999999999
+
+* RelFocusPosition2 2
+
+::
+
+  - 0.0
+  - 5.399999999999999
+
+* RelFocusPosition2 1
+
+::
+
+  - 5.399999999999999
+
+* RelFocusPosition2 0
+
+::
+
+  - 0.0
+  - 5.399999999999999
+
+* ImageWidth
+
+::
+
+  - 1388
+  - 512
+
+* Objective N.A. 3
+
+::
+
+  - 1.4
+
+* Objective N.A. 2
+
+::
+
+  - 1.3
+  - 1.4
+
+* Objective N.A. 1
+
+::
+
+  - 1.4
+
+* Objective N.A. 0
+
+::
+
+  - 1.3
+  - 1.4
+
+* X position for position #076
+
+::
+
+  - 5389.0
+
+* X position for position #075
+
+::
+
+  - 5389.0
+
+* X position for position #078
+
+::
+
+  - 5389.0
+
+* X position for position #077
+
+::
+
+  - 5389.0
+
+* X position for position #072
+
+::
+
+  - 5389.0
+
+* X position for position #071
+
+::
+
+  - 5389.0
+
+* X position for position #074
+
+::
+
+  - 5389.0
+
+* X position for position #073
+
+::
+
+  - 5389.0
+
+* tag_ID_8454 3
+
+::
+
+  - blue
+
+* X position for position #070
+
+::
+
+  - 5389.0
+
+* tag_ID_8454 2
+
+::
+
+  - blue
+
+* tag_ID_8454 1
+
+::
+
+  - blue
+
+* tag_ID_8454 0
+
+::
+
+  - blue
+
+* Reflector 1
+
+::
+
+  - 17 Alexa Fluor 488
+
+* Reflector 0
+
+::
+
+  - Refl. DIC
+  - 49 49 DAPI BP
+
+* Reflector 3
+
+::
+
+  - 50 Cy 5
+
+* Reflector 2
+
+::
+
+  - Rhodamine
+  - 20 Rhodamine
+
+* X position for position #068
+
+::
+
+  - 5389.0
+
+* X position for position #069
+
+::
+
+  - 5389.0
+
+* Condenser Contrast 3
+
+::
+
+  - 1
+
+* Condenser Contrast 0
+
+::
+
+  - 8
+  - 1
+
+* X position for position #089
+
+::
+
+  - 5389.0
+
+* X position for position #088
+
+::
+
+  - 5389.0
+
+* Condenser Contrast 2
+
+::
+
+  - 8
+  - 1
+
+* X position for position #087
+
+::
+
+  - 5389.0
+
+* Condenser Contrast 1
+
+::
+
+  - 1
+
+* X position for position #086
+
+::
+
+  - 5389.0
+
+* X position for position #085
+
+::
+
+  - 5389.0
+
+* X position for position #084
+
+::
+
+  - 5389.0
+
+* X position for position #083
+
+::
+
+  - 5389.0
+
+* X position for position #082
+
+::
+
+  - 5389.0
+
+* Amplification Index 0
+
+::
+
+  - 1
+  - 0
+
+* X position for position #081
+
+::
+
+  - 5389.0
+
+* Amplification Index 1
+
+::
+
+  - 0
+
+* X position for position #080
+
+::
+
+  - 5389.0
+
+* Amplification Index 2
+
+::
+
+  - 1
+  - 0
+
+* Amplification Index 3
+
+::
+
+  - 0
+
+* CameraFrameScalingFactor 1
+
+::
+
+  - 1.0
+
+* CameraFrameScalingFactor 0
+
+::
+
+  - 1
+  - 1.0
+
+* Camera Frame Height 0
+
+::
+
+  - 1040
+  - 512
+
+* Camera Frame Height 1
+
+::
+
+  - 512
+
+* Camera Frame Height 2
+
+::
+
+  - 1040
+  - 512
+
+* Camera Frame Height 3
+
+::
+
+  - 512
+
+* X position for position #079
+
+::
+
+  - 5389.0
+
+* X position for position #094
+
+::
+
+  - 5389.0
+
+* X position for position #093
+
+::
+
+  - 5389.0
+
+* X position for position #096
+
+::
+
+  - 5389.0
+
+* X position for position #095
+
+::
+
+  - 5389.0
+
+* Exposure Time [ms] 1
+
+::
+
+  - 999.776
+
+* X position for position #098
+
+::
+
+  - 5389.0
+
+* Exposure Time [ms] 0
+
+::
+
+  - 1.228
+  - 24.676
+
+* X position for position #097
+
+::
+
+  - 5389.0
+
+* BlackValue
+
+::
+
+  - 0.0
+
+* X position for position #099
+
+::
+
+  - 5389.0
+
+* Exposure Time [ms] 3
+
+::
+
+  - 499.888
+
+* Exposure Time [ms] 2
+
+::
+
+  - 199.55
+  - 1499.664
+
+* Image Channel Index #113
+
+::
+
+  - 3
+
+* X position for position #090
+
+::
+
+  - 5389.0
+
+* User Name
+
+::
+
+  - 
+  - Dietmar Rieder
+
+* X position for position #092
+
+::
+
+  - 5389.0
+
+* X position for position #091
+
+::
+
+  - 5389.0
+
+* Beamsplitter Infinity Space 3
+
+::
+
+  - 0.0
+
+* Beamsplitter Infinity Space 2
+
+::
+
+  - 0.0
+
+* Beamsplitter Infinity Space 1
+
+::
+
+  - 0.0
+
+* Beamsplitter Infinity Space 0
+
+::
+
+  - 0.0
+
+* Subject
+
+::
+
+  - 
+
+* Acquisition Bit Depth 3
+
+::
+
+  - 12
+
+* Image Channel Index #108
+
+::
+
+  - 2
+
+* Image Channel Index #109
+
+::
+
+  - 3
+
+* Image Channel Index #106
+
+::
+
+  - 0
+
+* Image Channel Index #107
+
+::
+
+  - 1
+
+* ContrastManagerMode 1
+
+::
+
+  - 3
+
+* Image Channel Index #104
+
+::
+
+  - 2
+
+* ContrastManagerMode 0
+
+::
+
+  - 3
+
+* Image Channel Index #105
+
+::
+
+  - 3
+
+* Image Channel Index #102
+
+::
+
+  - 0
+
+* Title
+
+::
+
+  - BY4741NQ2
+  - 
+
+* Image Channel Index #103
+
+::
+
+  - 1
+
+* Image Channel Index #112
+
+::
+
+  - 2
+
+* Image Channel Index #111
+
+::
+
+  - 1
+
+* Image Channel Index #110
+
+::
+
+  - 0
+
+* Image Index T
+
+::
+
+  - 0
+
+* Image Index S
+
+::
+
+  - 0
+
+* Acquisition Bit Depth 1
+
+::
+
+  - 12
+
+* Acquisition Bit Depth 2
+
+::
+
+  - 12
+
+* Acquisition Bit Depth 0
+
+::
+
+  - 
+  - 12
+
+* ImageHeight
+
+::
+
+  - 1040
+  - 512
+
+* CameraLiveScalingFactor 2
+
+::
+
+  - 1.0
+
+* CameraLiveScalingFactor 1
+
+::
+
+  - 1.0
+
+* CameraLiveScalingFactor 0
+
+::
+
+  - 1.0
+
+* Image Index T 3
+
+::
+
+  - 0
+
+* Image Index T 0
+
+::
+
+  - 0
+
+* Image Index T 1
+
+::
+
+  - 0
+
+* Image Index T 2
+
+::
+
+  - 0
+
+* CameraLiveScalingFactor 3
+
+::
+
+  - 1.0
+
+* DeepView Slider Name 1
+
+::
+
+  - 0
+
+* DeepView Slider Name 2
+
+::
+
+  - 0
+
+* DeepView Slider Name 3
+
+::
+
+  - 0
+
+* Camera 3
+
+::
+
+  - AxioCamMR
+
+* DeepView Slider Name 0
+
+::
+
+  - 0
+
+* Camera 2
+
+::
+
+  - AxioCamHR
+  - AxioCamMR
+
+* Camera 1
+
+::
+
+  - AxioCamMR
+
+* Camera 0
+
+::
+
+  - AxioCamHR
+  - AxioCamMR
+
+* Scale Height
+
+::
+
+  - 66.41123882503187
+  - 32.92587480593821
+
+* Channel Name 2
+
+::
+
+  - Rhodamine
+
+* Channel Name 3
+
+::
+
+  - Alexa 647
+
+* Channel Name 0
+
+::
+
+  - DIC (Nomarski)
+  - DAPI
+
+* Channel Name 1
+
+::
+
+  - Alexa 488
+
+* Acquisition Bit Depth
+
+::
+
+  - 12
+
+* CameraFramePixelDistance 0
+
+::
+
+  - 6.45
+
+* CameraFramePixelDistance 3
+
+::
+
+  - 6.45
+
+* CameraFramePixelDistance 1
+
+::
+
+  - 6.45
+
+* CameraFramePixelDistance 2
+
+::
+
+  - 6.45
+
+* AxioCam Delay Time 0
+
+::
+
+  - 0
+  - 80
+
+* AxioCam Delay Time 1
+
+::
+
+  - 80
+
+* AxioCam Delay Time 2
+
+::
+
+  - 0
+  - 80
+
+* User ID
+
+::
+
+  - 
+  - Rieder
+
+* AxioCam Delay Time 3
+
+::
+
+  - 80
+
+* Original Stage Position Y 2
+
+::
+
+  - 3637.0
+
+* Original Stage Position Y 1
+
+::
+
+  - 3637.0
+
+* Original Stage Position Y 3
+
+::
+
+  - 3637.0
+
+* Original Stage Position Y 0
+
+::
+
+  - 3637.0
+
+* WhiteValue 1
+
+::
+
+  - 0.0625
+
+* WhiteValue 0
+
+::
+
+  - 1.0
+  - 0.0625
+
+* WhiteValue 3
+
+::
+
+  - 0.0625
+
+* WhiteValue 2
+
+::
+
+  - 0.0625
+
+* Y position for position #098
+
+::
+
+  - 3637.0
+
+* Y position for position #099
+
+::
+
+  - 3637.0
+
+* Y position for position #096
+
+::
+
+  - 3637.0
+
+* Transmitted Light Filter 2 Position 1
+
+::
+
+  - 1
+
+* Y position for position #097
+
+::
+
+  - 3637.0
+
+* Transmitted Light Filter 2 Position 0
+
+::
+
+  - 1
+
+* Y position for position #094
+
+::
+
+  - 3637.0
+
+* Transmitted Light Filter 2 Position 3
+
+::
+
+  - 1
+
+* Y position for position #095
+
+::
+
+  - 3637.0
+
+* Transmitted Light Filter 2 Position 2
+
+::
+
+  - 1
+
+* Y position for position #092
+
+::
+
+  - 3637.0
+
+* Y position for position #093
+
+::
+
+  - 3637.0
+
+* Y position for position #090
+
+::
+
+  - 3637.0
+
+* Y position for position #091
+
+::
+
+  - 3637.0
+
+* Document Subtype
+
+::
+
+  - 
+
+* AxioCam MicroScanning 0
+
+::
+
+  - 0
+
+* Condenser Front Lens 2
+
+::
+
+  - 1
+
+* Condenser Front Lens 3
+
+::
+
+  - 1
+
+* Condenser Front Lens 0
+
+::
+
+  - 2
+  - 1
+
+* Condenser Front Lens 1
+
+::
+
+  - 1
+
+* AxioCam MicroScanning 3
+
+::
+
+  - 0
+
+* AxioCam MicroScanning 1
+
+::
+
+  - 0
+
+* AxioCam MicroScanning 2
+
+::
+
+  - 0
+
+* Y position for position #087
+
+::
+
+  - 3637.0
+
+* ImageWidth 0
+
+::
+
+  - 1388
+  - 512
+
+* Y position for position #088
+
+::
+
+  - 3637.0
+
+* Y position for position #089
+
+::
+
+  - 3637.0
+
+* Scale Depth
+
+::
+
+  - 
+
+* Y position for position #083
+
+::
+
+  - 3637.0
+
+* Y position for position #084
+
+::
+
+  - 3637.0
+
+* ImageWidth 3
+
+::
+
+  - 512
+
+* Y position for position #085
+
+::
+
+  - 3637.0
+
+* ImageWidth 2
+
+::
+
+  - 512
+
+* Y position for position #086
+
+::
+
+  - 3637.0
+
+* ImageWidth 1
+
+::
+
+  - 512
+
+* Y position for position #080
+
+::
+
+  - 3637.0
+
+* Y position for position #081
+
+::
+
+  - 3637.0
+
+* Y position for position #082
+
+::
+
+  - 3637.0
+
+* TransmittedLightVirtualFilter 0
+
+::
+
+  - ND 100
+
+* TransmittedLightVirtualFilter 1
+
+::
+
+  - ND 100
+
+* TransmittedLightVirtualFilter 2
+
+::
+
+  - ND 100
+
+* X position for position #1
+
+::
+
+  - 0.0
+
+* TransmittedLightVirtualFilter 3
+
+::
+
+  - ND 100
+
+* X position for position #001
+
+::
+
+  - 5389.0
+
+* Stage Position X 0
+
+::
+
+  - 0.0
+  - 5389.0
+
+* Stage Position X 1
+
+::
+
+  - 5389.0
+
+* Stage Position X 2
+
+::
+
+  - 0.0
+  - 5389.0
+
+* Stage Position X 3
+
+::
+
+  - 5389.0
+
+* X position for position #004
+
+::
+
+  - 5389.0
+
+* X position for position #005
+
+::
+
+  - 5389.0
+
+* X position for position #002
+
+::
+
+  - 5389.0
+
+* X position for position #003
+
+::
+
+  - 5389.0
+
+* X position for position #008
+
+::
+
+  - 5389.0
+
+* X position for position #009
+
+::
+
+  - 5389.0
+
+* X position for position #006
+
+::
+
+  - 5389.0
+
+* X position for position #007
+
+::
+
+  - 5389.0
+
+* X position for position #012
+
+::
+
+  - 5389.0
+
+* X position for position #011
+
+::
+
+  - 5389.0
+
+* X position for position #010
+
+::
+
+  - 5389.0
+
+* X position for position #3
+
+::
+
+  - 0.0
+
+* X position for position #2
+
+::
+
+  - 0.0
+
+* AxioCam Selector 2
+
+::
+
+  - 0
+
+* ImageRelativeTime 0
+
+::
+
+  - 0
+  - 4568561697182187520
+
+* AxioCam Selector 1
+
+::
+
+  - 0
+
+* ImageRelativeTime 1
+
+::
+
+  - 4568627398035111936
+
+* AxioCam Selector 0
+
+::
+
+  - 0
+
+* ImageRelativeTime 2
+
+::
+
+  - 4541956952720146432
+  - 4568700537637175296
+
+* ImageRelativeTime 3
+
+::
+
+  - 4568748213737095168
+
+* AxioCam Selector 3
+
+::
+
+  - 0
+
+* X position for position #013
+
+::
+
+  - 5389.0
+
+* X position for position #014
+
+::
+
+  - 5389.0
+
+* X position for position #015
+
+::
+
+  - 5389.0
+
+* X position for position #016
+
+::
+
+  - 5389.0
+
+* X position for position #017
+
+::
+
+  - 5389.0
+
+* X position for position #018
+
+::
+
+  - 5389.0
+
+* MicroscopeIllumination 0
+
+::
+
+  - 2
+
+* X position for position #019
+
+::
+
+  - 5389.0
+
+* MicroscopeIllumination 3
+
+::
+
+  - 2
+
+* MicroscopeIllumination 2
+
+::
+
+  - 2
+
+* MicroscopeIllumination 1
+
+::
+
+  - 2
+
+* X position for position #021
+
+::
+
+  - 5389.0
+
+* PixelType 2
+
+::
+
+  - 4
+
+* X position for position #020
+
+::
+
+  - 5389.0
+
+* PixelType 3
+
+::
+
+  - 4
+
+* X position for position #023
+
+::
+
+  - 5389.0
+
+* PixelType 0
+
+::
+
+  - 1
+  - 4
+
+* X position for position #022
+
+::
+
+  - 5389.0
+
+* PixelType 1
+
+::
+
+  - 4
+
+* X position for position #029
+
+::
+
+  - 5389.0
+
+* X position for position #028
+
+::
+
+  - 5389.0
+
+* X position for position #027
+
+::
+
+  - 5389.0
+
+* X position for position #026
+
+::
+
+  - 5389.0
+
+* X position for position #025
+
+::
+
+  - 5389.0
+
+* X position for position #024
+
+::
+
+  - 5389.0
+
+* Y position for position #057
+
+::
+
+  - 3637.0
+
+* Focus Position 0
+
+::
+
+  - 3871.92
+  - 33.998
+
+* Y position for position #056
+
+::
+
+  - 3637.0
+
+* Y position for position #055
+
+::
+
+  - 3637.0
+
+* Focus Position 2
+
+::
+
+  - 3871.92
+  - 33.998
+
+* Y position for position #054
+
+::
+
+  - 3637.0
+
+* Focus Position 1
+
+::
+
+  - 33.998
+
+* Y position for position #053
+
+::
+
+  - 3637.0
+
+* Y position for position #052
+
+::
+
+  - 3637.0
+
+* Focus Position 3
+
+::
+
+  - 33.998
+
+* Y position for position #051
+
+::
+
+  - 3637.0
+
+* ContrastManagerMode 3
+
+::
+
+  - 3
+
+* ImageTile Index
+
+::
+
+  - 0
+
+* Y position for position #050
+
+::
+
+  - 3637.0
+
+* ContrastManagerMode 2
+
+::
+
+  - 3
+
+* Y position for position #049
+
+::
+
+  - 3637.0
+
+* Y position for position #047
+
+::
+
+  - 3637.0
+
+* Y position for position #048
+
+::
+
+  - 3637.0
+
+* X position for position #033
+
+::
+
+  - 5389.0
+
+* X position for position #034
+
+::
+
+  - 5389.0
+
+* X position for position #031
+
+::
+
+  - 5389.0
+
+* X position for position #032
+
+::
+
+  - 5389.0
+
+* X position for position #030
+
+::
+
+  - 5389.0
+
+* X position for position #039
+
+::
+
+  - 5389.0
+
+* X position for position #036
+
+::
+
+  - 5389.0
+
+* AxioCam Type 0
+
+::
+
+  - 8209
+  - 4114
+
+* X position for position #035
+
+::
+
+  - 5389.0
+
+* AxioCam Type 1
+
+::
+
+  - 4114
+
+* X position for position #038
+
+::
+
+  - 5389.0
+
+* AxioCam Type 2
+
+::
+
+  - 8209
+  - 4114
+
+* X position for position #037
+
+::
+
+  - 5389.0
+
+* AxioCam Type 3
+
+::
+
+  - 4114
+
+* Y position for position #044
+
+::
+
+  - 3637.0
+
+* TransmittedLightVirtualFilterPosition 3
+
+::
+
+  - 1
+
+* Y position for position #043
+
+::
+
+  - 3637.0
+
+* Y position for position #046
+
+::
+
+  - 3637.0
+
+* Y position for position #045
+
+::
+
+  - 3637.0
+
+* Y position for position #040
+
+::
+
+  - 3637.0
+
+* TransmittedLightVirtualFilterPosition 0
+
+::
+
+  - 1
+
+* Y position for position #042
+
+::
+
+  - 3637.0
+
+* TransmittedLightVirtualFilterPosition 1
+
+::
+
+  - 1
+
+* Y position for position #041
+
+::
+
+  - 3637.0
+
+* TransmittedLightVirtualFilterPosition 2
+
+::
+
+  - 1
+
+* AxioCam Resolution 1
+
+::
+
+  - 5633
+
+* AxioCam Resolution 0
+
+::
+
+  - 9729
+  - 5633
+
+* Y position for position #036
+
+::
+
+  - 3637.0
+
+* Y position for position #037
+
+::
+
+  - 3637.0
+
+* Y position for position #038
+
+::
+
+  - 3637.0
+
+* AxioCam Resolution 3
+
+::
+
+  - 5633
+
+* Y position for position #039
+
+::
+
+  - 3637.0
+
+* AxioCam Resolution 2
+
+::
+
+  - 9729
+  - 5633
+
+* X position for position #042
+
+::
+
+  - 5389.0
+
+* X position for position #043
+
+::
+
+  - 5389.0
+
+* X position for position #044
+
+::
+
+  - 5389.0
+
+* X position for position #045
+
+::
+
+  - 5389.0
+
+* X position for position #040
+
+::
+
+  - 5389.0
+
+* X position for position #041
+
+::
+
+  - 5389.0
+
+* X position for position #049
+
+::
+
+  - 5389.0
+
+* Image acquisition Index 0
+
+::
+
+  - 0
+
+* X position for position #048
+
+::
+
+  - 5389.0
+
+* Image acquisition Index 1
+
+::
+
+  - 0
+
+* X position for position #047
+
+::
+
+  - 5389.0
+
+* X position for position #046
+
+::
+
+  - 5389.0
+
+* Y position for position #071
+
+::
+
+  - 3637.0
+
+* ImageRelativeTime2 2
+
+::
+
+  - 4541956952720146432
+  - 4568700537637175296
+
+* Y position for position #070
+
+::
+
+  - 3637.0
+
+* ImageRelativeTime2 3
+
+::
+
+  - 4568748213737095168
+
+* Image acquisition Index 2
+
+::
+
+  - 0
+
+* Image acquisition Index 3
+
+::
+
+  - 0
+
+* Y position for position #075
+
+::
+
+  - 3637.0
+
+* Y position for position #074
+
+::
+
+  - 3637.0
+
+* Y position for position #073
+
+::
+
+  - 3637.0
+
+* Y position for position #072
+
+::
+
+  - 3637.0
+
+* Y position for position #079
+
+::
+
+  - 3637.0
+
+* Y position for position #078
+
+::
+
+  - 3637.0
+
+* Reflected Light Aperture 1
+
+::
+
+  - -0.351493848857645
+
+* Y position for position #077
+
+::
+
+  - 3637.0
+
+* Reflected Light Aperture 0
+
+::
+
+  - -0.351493848857645
+
+* Y position for position #076
+
+::
+
+  - 3637.0
+
+* Reflected Light Aperture 2
+
+::
+
+  - -0.351493848857645
+
+* Reflected Light Aperture 3
+
+::
+
+  - -0.351493848857645
+
+* Y position for position #069
+
+::
+
+  - 3637.0
+
+* File Size
+
+::
+
+  - 122507
+  - 59629568
+
+* X position for position #051
+
+::
+
+  - 5389.0
+
+* X position for position #052
+
+::
+
+  - 5389.0
+
+* ImageRelativeTime2 1
+
+::
+
+  - 4568627398035111936
+
+* X position for position #050
+
+::
+
+  - 5389.0
+
+* ImageRelativeTime2 0
+
+::
+
+  - 0
+  - 4568561697182187520
+
+* X position for position #055
+
+::
+
+  - 5389.0
+
+* X position for position #056
+
+::
+
+  - 5389.0
+
+* X position for position #053
+
+::
+
+  - 5389.0
+
+* X position for position #054
+
+::
+
+  - 5389.0
+
+* X position for position #058
+
+::
+
+  - 5389.0
+
+* X position for position #057
+
+::
+
+  - 5389.0
+
+* X position for position #059
+
+::
+
+  - 5389.0
+
+* Y position for position #060
+
+::
+
+  - 3637.0
+
+* Y position for position #062
+
+::
+
+  - 3637.0
+
+* Acquisition Date 2
+
+::
+
+  - 9/17/2008 7:05:43 PM
+  - 4675629040876530287
+
+* Y position for position #061
+
+::
+
+  - 3637.0
+
+* Acquisition Date 1
+
+::
+
+  - 4675629040872170827
+
+* Y position for position #064
+
+::
+
+  - 3637.0
+
+* Acquisition Date 0
+
+::
+
+  - 9/17/2008 7:05:39 PM
+  - 4675629040868254751
+
+* Y position for position #063
+
+::
+
+  - 3637.0
+
+* Y position for position #066
+
+::
+
+  - 3637.0
+
+* Y position for position #065
+
+::
+
+  - 3637.0
+
+* Y position for position #068
+
+::
+
+  - 3637.0
+
+* Y position for position #067
+
+::
+
+  - 3637.0
+
+* Acquisition Date 3
+
+::
+
+  - 4675629040879372004
+
+* Y position for position #058
+
+::
+
+  - 3637.0
+
+* NumberOfRawImages
+
+::
+
+  - 2
+  - 112
+
+* Y position for position #059
+
+::
+
+  - 3637.0
+
+* ObjectType
+
+::
+
+  - 95
+
+* X position for position #060
+
+::
+
+  - 5389.0
+
+* X position for position #061
+
+::
+
+  - 5389.0
+
+* X position for position #062
+
+::
+
+  - 5389.0
+
+* X position for position #063
+
+::
+
+  - 5389.0
+
+* X position for position #064
+
+::
+
+  - 5389.0
+
+* X position for position #065
+
+::
+
+  - 5389.0
+
+* X position for position #066
+
+::
+
+  - 5389.0
+
+* X position for position #067
+
+::
+
+  - 5389.0
+
+* Y position for position #101
+
+::
+
+  - 3637.0
+
+* Y position for position #100
+
+::
+
+  - 3637.0
+
+* Image Memory Usage (RAM) 0
+
+::
+
+  - 4330624
+  - 524352
+
+* Image Memory Usage (RAM) 1
+
+::
+
+  - 524352
+
+* Image Memory Usage (RAM) 2
+
+::
+
+  - 524352
+
+* Image Memory Usage (RAM) 3
+
+::
+
+  - 524352
+
+* Keywords
+
+::
+
+  - 
+
+* Y position for position #110
+
+::
+
+  - 3637.0
+
+* Y position for position #112
+
+::
+
+  - 3637.0
+
+* Y position for position #111
+
+::
+
+  - 3637.0
+
+* Transmitted Light Filter 2 2
+
+::
+
+  - ND 100
+
+* AxioCam Enhance Color 3
+
+::
+
+  - 0
+
+* Transmitted Light Filter 2 1
+
+::
+
+  - ND 100
+
+* Transmitted Light Filter 2 0
+
+::
+
+  - ND 100
+
+* AxioCam Enhance Color 1
+
+::
+
+  - 0
+
+* AxioCam Enhance Color 2
+
+::
+
+  - 0
+
+* AxioCam Enhance Color 0
+
+::
+
+  - 0
+
+* Transmitted Light Filter 2 3
+
+::
+
+  - ND 100
+
+* User Fax
+
+::
+
+  - 
+  - +43 316 8735340
+
+* Y position for position #106
+
+::
+
+  - 3637.0
+
+* Y position for position #107
+
+::
+
+  - 3637.0
+
+* Y position for position #108
+
+::
+
+  - 3637.0
+
+* Y position for position #109
+
+::
+
+  - 3637.0
+
+* Y position for position #102
+
+::
+
+  - 3637.0
+
+* Y position for position #103
+
+::
+
+  - 3637.0
+
+* Y position for position #104
+
+::
+
+  - 3637.0
+
+* Y position for position #105
+
+::
+
+  - 3637.0
+
+* AxioCam Shutter Signal 3
+
+::
+
+  - 0
+
+* Timestamp #108
+
+::
+
+  - 4675629040865278070
+
+* Timestamp #109
+
+::
+
+  - 4675629040868254751
+
+* AxioCam NIR Mode 2
+
+::
+
+  - 0
+  - 1
+
+* AxioCam NIR Mode 3
+
+::
+
+  - 1
+
+* AxioCam NIR Mode 0
+
+::
+
+  - 0
+  - 1
+
+* AxioCam Shutter Signal 0
+
+::
+
+  - 1
+  - 0
+
+* AxioCam NIR Mode 1
+
+::
+
+  - 1
+
+* AxioCam Shutter Signal 1
+
+::
+
+  - 0
+
+* AxioCam Shutter Signal 2
+
+::
+
+  - 1
+  - 0
+
+* Author
+
+::
+
+  - 
+
+* Timestamp #110
+
+::
+
+  - 4675629040872170827
+
+* Timestamp #112
+
+::
+
+  - 4675629040879372004
+
+* Timestamp #111
+
+::
+
+  - 4675629040876530287
+
+* Timestamp #103
+
+::
+
+  - 4675629040848307204
+
+* Timestamp #102
+
+::
+
+  - 4675629040843934367
+
+* Timestamp #101
+
+::
+
+  - 4675629040840029478
+
+* Timestamp #100
+
+::
+
+  - 4675629040837010651
+
+* Timestamp #107
+
+::
+
+  - 4675629040862435667
+
+* Timestamp #106
+
+::
+
+  - 4675629040858057171
+
+* Timestamp #105
+
+::
+
+  - 4675629040854148264
+
+* Timestamp #104
+
+::
+
+  - 4675629040851154487
+
+* X position for position #113
+
+::
+
+  - 5389.0
+
+* X position for position #112
+
+::
+
+  - 5389.0
+
+* BlackValue 1
+
+::
+
+  - 0.0
+
+* BlackValue 0
+
+::
+
+  - 0.0
+
+* BlackValue 3
+
+::
+
+  - 0.0
+
+* BlackValue 2
+
+::
+
+  - 0.0
+
+* Comments
+
+::
+
+  - 
+
+* Objective Contrast Method 2
+
+::
+
+  - 2
+
+* Objective Contrast Method 3
+
+::
+
+  - 2
+
+* Objective Contrast Method 0
+
+::
+
+  - 2
+
+* X position for position #110
+
+::
+
+  - 5389.0
+
+* X position for position #111
+
+::
+
+  - 5389.0
+
+* Objective Contrast Method 1
+
+::
+
+  - 2
+
+* X position for position #106
+
+::
+
+  - 5389.0
+
+* X position for position #105
+
+::
+
+  - 5389.0
+
+* Ocular Total Magnification 0
+
+::
+
+  - 1000
+  - 1000.0
+
+* X position for position #108
+
+::
+
+  - 5389.0
+
+* X position for position #107
+
+::
+
+  - 5389.0
+
+* Ocular Total Magnification 2
+
+::
+
+  - 1000
+  - 1000.0
+
+* X position for position #102
+
+::
+
+  - 5389.0
+
+* Ocular Total Magnification 1
+
+::
+
+  - 1000.0
+
+* X position for position #101
+
+::
+
+  - 5389.0
+
+* X position for position #104
+
+::
+
+  - 5389.0
+
+* Ocular Total Magnification 3
+
+::
+
+  - 1000.0
+
+* X position for position #103
+
+::
+
+  - 5389.0
+
+* Parfocal Correction 2
+
+::
+
+  - 0
+  - ��
+
+* Parfocal Correction 3
+
+::
+
+  - ��
+
+* X position for position #109
+
+::
+
+  - 5389.0
+
+* Parfocal Correction 0
+
+::
+
+  - 0
+  - ��
+
+* Parfocal Correction 1
+
+::
+
+  - ��
+
+* Objective ID 3
+
+::
+
+  - Objective.440780-9904-000
+
+* Objective ID 2
+
+::
+
+  - Objective.440780-9904-000
+
+* Objective ID 1
+
+::
+
+  - Objective.440780-9904-000
+
+* Objective ID 0
+
+::
+
+  - Objective.440780-9904-000
+
+* User Phone
+
+::
+
+  - 
+  - +43 316 8735339
+
+* Microscope Port 3
+
+::
+
+  - 5
+
+* Y position for position #113
+
+::
+
+  - 3637.0
+
+* Microscope Port 0
+
+::
+
+  - 5
+
+* Microscope Port 1
+
+::
+
+  - 5
+
+* Microscope Port 2
+
+::
+
+  - 5
+
+* Objective Name 3
+
+::
+
+  - Plan-Apochromat 100x/1.40 Oil
+
+* Objective Name 2
+
+::
+
+  - Plan Neofluar 100x/1.30 Oil (DIC III)
+  - Plan-Apochromat 100x/1.40 Oil
+
+* Objective Name 1
+
+::
+
+  - Plan-Apochromat 100x/1.40 Oil
+
+* Objective Name 0
+
+::
+
+  - Plan Neofluar 100x/1.30 Oil (DIC III)
+  - Plan-Apochromat 100x/1.40 Oil
+
+* tag_ID_8457 1
+
+::
+
+  - 0
+
+* tag_ID_8457 2
+
+::
+
+  - 0
+
+* tag_ID_8457 0
+
+::
+
+  - 0
+
+* Stage calibrated 3
+
+::
+
+  - 
+
+* Stage calibrated 2
+
+::
+
+  - 
+
+* Stage calibrated 1
+
+::
+
+  - 
+
+* Stage calibrated 0
+
+::
+
+  - 
+
+* FocusDepth 0
+
+::
+
+  - 0.325443786982249
+  - 0.2806122448979592
+
+* tag_ID_8457 3
+
+::
+
+  - 0
+
+* FocusDepth 3
+
+::
+
+  - 0.2806122448979592
+
+* FocusDepth 1
+
+::
+
+  - 0.2806122448979592
+
+* FocusDepth 2
+
+::
+
+  - 0.325443786982249
+  - 0.2806122448979592
+
+* Objective Magnification 3
+
+::
+
+  - 100.0
+
+* Objective Magnification 2
+
+::
+
+  - 100
+  - 100.0
+
+* Objective Magnification 1
+
+::
+
+  - 100.0
+
+* Objective Magnification 0
+
+::
+
+  - 100
+  - 100.0
+
+* GammaValue 2
+
+::
+
+  - 1.0
+
+* GammaValue 3
+
+::
+
+  - 1.0
+
+* GammaValue 0
+
+::
+
+  - 1.0
+
+* GammaValue 1
+
+::
+
+  - 1.0
+
+* ReflectorMagnification 2
+
+::
+
+  - 1.0
+
+* ReflectorMagnification 1
+
+::
+
+  - 1.0
+
+* ReflectorMagnification 3
+
+::
+
+  - 1.0
+
+* ReflectorMagnification 0
+
+::
+
+  - 1.0
+
+* ImageRelativeTime4 2
+
+::
+
+  - 4541956952720146432
+  - 4568700537637175296
+
+* ImageRelativeTime4 3
+
+::
+
+  - 4568748213737095168
+
+* ImageRelativeTime4 0
+
+::
+
+  - 0
+  - 4568561697182187520
+
+* ImageRelativeTime4 1
+
+::
+
+  - 4568627398035111936
+
+* LightManagerEnabled 3
+
+::
+
+  - ��
+
+* LightManagerEnabled 2
+
+::
+
+  - 0
+  - ��
+
+* LightManagerEnabled 1
+
+::
+
+  - ��
+
+* LightManagerEnabled 0
+
+::
+
+  - 0
+  - ��
+
+* RelFocusPosition1 2
+
+::
+
+  - 0.0
+  - 5.399999999999999
+
+* RelFocusPosition1 1
+
+::
+
+  - 5.399999999999999
+
+* RelFocusPosition1 0
+
+::
+
+  - 0.0
+  - 5.399999999999999
+
+* RelFocusPosition1 3
+
+::
+
+  - 5.399999999999999
+
+* User Company
+
+::
+
+  - 
+  - Institute for Genomics and Bioinformatics
+
+* Camera Framestart Top 2
+
+::
+
+  - 0
+  - 264
+
+* Camera Framestart Top 1
+
+::
+
+  - 264
+
+* Camera Framestart Top 0
+
+::
+
+  - 0
+  - 264
+
+* Camera Framestart Top 3
+
+::
+
+  - 264
+
+* Focus calibrated 2
+
+::
+
+  - 0
+  - 
+
+* Focus calibrated 1
+
+::
+
+  - 
+
+* Focus calibrated 0
+
+::
+
+  - 0
+  - 
+
+* Focus calibrated 3
+
+::
+
+  - 
+
+* Storage Media 0
+
+::
+
+  - CZV,c859232f
+
+* Microscope Name 3
+
+::
+
+  - Axio Imager Z1
+
+* Microscope Name 2
+
+::
+
+  - Axioskop 2
+  - Axio Imager Z1
+
+* Microscope Name 1
+
+::
+
+  - Axio Imager Z1
+
+* Microscope Name 0
+
+::
+
+  - Axioskop 2
+  - Axio Imager Z1
+
+* User Company Logo
+
+::
+
+  - 
+
+* CameraFrameScalingFactor 3
+
+::
+
+  - 1.0
+
+* CameraFrameScalingFactor 2
+
+::
+
+  - 1
+  - 1.0
+
+* Camera Frame Width 1
+
+::
+
+  - 512
+
+* Reflector Position 0
+
+::
+
+  - 2
+  - 1
+
+* Camera Frame Width 0
+
+::
+
+  - 1388
+  - 512
+
+* Camera Frame Width 3
+
+::
+
+  - 512
+
+* Reflector Position 1
+
+::
+
+  - 4
+
+* Reflector Position 2
+
+::
+
+  - 4
+  - 6
+
+* Camera Frame Width 2
+
+::
+
+  - 1388
+  - 512
+
+* Timestamp #1
+
+::
+
+  - 9/17/2008 7:05:39 PM
+
+* Reflector Position 3
+
+::
+
+  - 8
+
+* Timestamp #2
+
+::
+
+  - 9/17/2008 7:05:43 PM
+
+* Reflector ID 0
+
+::
+
+  - Reflector.488049-0000-000
+
+* Reflector ID 3
+
+::
+
+  - Reflector.488050-0000-000
+
+* Reflector ID 1
+
+::
+
+  - Reflector.488017-0000-000
+
+* Reflector ID 2
+
+::
+
+  - Reflector.488020-0000-000
+
+* Image Channel Index #100
+
+::
+
+  - 2
+
+* Image Channel Index #101
+
+::
+
+  - 3
+
+* Image acquisition Index
+
+::
+
+  - 0
+
+* WhiteValue
+
+::
+
+  - 1.0
+  - 0.0625
+
+* Camera Shading Correction 3
+
+::
+
+  - 0
+
+* Camera Shading Correction 2
+
+::
+
+  - 0
+
+* Camera Shading Correction 1
+
+::
+
+  - 0
+
+* GammaValue
+
+::
+
+  - 1.0
+
+* AxioCam Black Reference 3
+
+::
+
+  - 1
+
+* AxioCam Black Reference 2
+
+::
+
+  - 1
+
+* Scale Width
+
+::
+
+  - 88.63346104725407
+  - 32.92587480593821
+
+* AxioCam Black Reference 1
+
+::
+
+  - 1
+
+* AxioCam Black Reference 0
+
+::
+
+  - 1
+
+* Image Channel Index #002
+
+::
+
+  - 0
+
+* Image Channel Index #001
+
+::
+
+  - 0
+
+* Camera Binning 0
+
+::
+
+  - 1
+
+* Camera Binning 1
+
+::
+
+  - 1
+
+* Camera Binning 2
+
+::
+
+  - 1
+
+* Camera Binning 3
+
+::
+
+  - 1
+
+* Camera Shading Correction 0
+
+::
+
+  - 0
+
+* Image Channel Index #014
+
+::
+
+  - 0
+
+* Image Channel Index #015
+
+::
+
+  - 1
+
+* Image Channel Index #016
+
+::
+
+  - 2
+
+* Image Channel Index #017
+
+::
+
+  - 3
+
+* Image Channel Index #018
+
+::
+
+  - 0
+
+* Image Channel Index #019
+
+::
+
+  - 1
+
+* Infinityspace Portchanger Position 0
+
+::
+
+  - 1
+
+* Infinityspace Portchanger Position 1
+
+::
+
+  - 1
+
+* Infinityspace Portchanger Position 2
+
+::
+
+  - 1
+
+* Infinityspace Portchanger Position 3
+
+::
+
+  - 1
+
+* MultiChannel Color 3
+
+::
+
+  - 6553855
+
+* Image Channel Index #020
+
+::
+
+  - 2
+
+* Image Channel Index #022
+
+::
+
+  - 0
+
+* Image Channel Index #021
+
+::
+
+  - 3
+
+* Image Channel Index #024
+
+::
+
+  - 2
+
+* Image Channel Index #023
+
+::
+
+  - 1
+
+* Image Channel Index #005
+
+::
+
+  - 3
+
+* Image Channel Index #006
+
+::
+
+  - 0
+
+* Image Channel Index #003
+
+::
+
+  - 1
+
+* Image Channel Index #004
+
+::
+
+  - 2
+
+* Image Channel Index #009
+
+::
+
+  - 3
+
+* Image Channel Index #007
+
+::
+
+  - 1
+
+* Image Channel Index #008
+
+::
+
+  - 2
+
+* MultiChannel Color 0
+
+::
+
+  - 16777215
+  - 16711680
+
+* MultiChannel Color 2
+
+::
+
+  - 255
+  - 41215
+
+* MultiChannel Color 1
+
+::
+
+  - 65280
+
+* Image Index Z 0
+
+::
+
+  - 0
+  - 27
+
+* Original Stage Position X 0
+
+::
+
+  - 5389.0
+
+* Original Stage Position X 1
+
+::
+
+  - 5389.0
+
+* Original Stage Position X 2
+
+::
+
+  - 5389.0
+
+* Original Stage Position X 3
+
+::
+
+  - 5389.0
+
+* Image Channel Index #013
+
+::
+
+  - 3
+
+* Image Index Z 3
+
+::
+
+  - 27
+
+* Image Channel Index #012
+
+::
+
+  - 2
+
+* Image Index Z 2
+
+::
+
+  - 0
+  - 27
+
+* Image Channel Index #011
+
+::
+
+  - 1
+
+* Image Index Z 1
+
+::
+
+  - 27
+
+* Image Channel Index #010
+
+::
+
+  - 0
+
+* Transmitted Light Shutter 0
+
+::
+
+  - 1
+
+* Transmitted Light Shutter 1
+
+::
+
+  - 1
+
+* Timestamp #080
+
+::
+
+  - 4675629040766065485
+
+* Image Channel Index #037
+
+::
+
+  - 3
+
+* Image Channel Index #036
+
+::
+
+  - 2
+
+* Filename
+
+::
+
+  - BY4741NQ2.zvi
+  - hMADS-24h-BAC1-7-AF647-AF488-RHO-1day-hyb-CSK-2007-06-29-0008_Position(113).zvi
+
+* Transmitted Light Shutter 2
+
+::
+
+  - 1
+
+* Image Channel Index #039
+
+::
+
+  - 1
+
+* Transmitted Light Shutter 3
+
+::
+
+  - 1
+
+* Image Channel Index #038
+
+::
+
+  - 0
+
+* tag_ID_8453 2
+
+::
+
+  - 
+
+* Image Channel Index #043
+
+::
+
+  - 1
+
+* tag_ID_8453 1
+
+::
+
+  - 
+
+* Image Channel Index #044
+
+::
+
+  - 2
+
+* Timestamp #089
+
+::
+
+  - 4675629040797563815
+
+* tag_ID_8453 0
+
+::
+
+  - 
+
+* Image Channel Index #045
+
+::
+
+  - 3
+
+* Image Channel Index #046
+
+::
+
+  - 0
+
+* Image Channel Index #040
+
+::
+
+  - 2
+
+* Image Channel Index #041
+
+::
+
+  - 3
+
+* tag_ID_8453 3
+
+::
+
+  - 
+
+* Filename 0
+
+::
+
+  - 
+
+* Image Channel Index #042
+
+::
+
+  - 0
+
+* Image Index S 1
+
+::
+
+  - 0
+
+* Timestamp #083
+
+::
+
+  - 4675629040777331056
+
+* Filename 1
+
+::
+
+  - 
+
+* Timestamp #084
+
+::
+
+  - 4675629040780176990
+
+* Image Index S 0
+
+::
+
+  - 0
+
+* Filename 2
+
+::
+
+  - 
+
+* Image Index S 3
+
+::
+
+  - 0
+
+* Timestamp #081
+
+::
+
+  - 4675629040769062111
+
+* Filename 3
+
+::
+
+  - 
+
+* Image Index S 2
+
+::
+
+  - 0
+
+* Timestamp #082
+
+::
+
+  - 4675629040772964728
+
+* Timestamp #087
+
+::
+
+  - 4675629040791683320
+
+* Timestamp #088
+
+::
+
+  - 4675629040794554192
+
+* Timestamp #085
+
+::
+
+  - 4675629040783372541
+
+* Timestamp #086
+
+::
+
+  - 4675629040787329298
+
+* Timestamp #091
+
+::
+
+  - 4675629040805870314
+
+* Timestamp #090
+
+::
+
+  - 4675629040801493687
+
+* MicroscopeMagnification 3
+
+::
+
+  - 100.0
+
+* Stage Position Y 3
+
+::
+
+  - 3637.0
+
+* Stage Position Y 2
+
+::
+
+  - 0.0
+  - 3637.0
+
+* MicroscopeMagnification 1
+
+::
+
+  - 100.0
+
+* Stage Position Y 1
+
+::
+
+  - 3637.0
+
+* Stage Position Y 0
+
+::
+
+  - 0.0
+  - 3637.0
+
+* MicroscopeMagnification 2
+
+::
+
+  - 100.0
+
+* Image Channel Index #029
+
+::
+
+  - 3
+
+* Image Channel Index #028
+
+::
+
+  - 2
+
+* MicroscopeMagnification 0
+
+::
+
+  - 100.0
+
+* Image Channel Index #027
+
+::
+
+  - 1
+
+* Image Channel Index #026
+
+::
+
+  - 0
+
+* Image Channel Index #025
+
+::
+
+  - 3
+
+* Image Channel Index #034
+
+::
+
+  - 0
+
+* Image Channel Index #035
+
+::
+
+  - 1
+
+* Image Channel Index #032
+
+::
+
+  - 2
+
+* Image Channel Index #033
+
+::
+
+  - 3
+
+* Image Channel Index #030
+
+::
+
+  - 0
+
+* Image Channel Index #031
+
+::
+
+  - 1
+
+* Timestamp #092
+
+::
+
+  - 4675629040808718174
+
+* Timestamp #093
+
+::
+
+  - 4675629040811742337
+
+* Timestamp #094
+
+::
+
+  - 4675629040815668217
+
+* Timestamp #095
+
+::
+
+  - 4675629040820039603
+
+* Timestamp #096
+
+::
+
+  - 4675629040822895922
+
+* Timestamp #097
+
+::
+
+  - 4675629040825914267
+
+* Timestamp #098
+
+::
+
+  - 4675629040829828911
+
+* Timestamp #099
+
+::
+
+  - 4675629040834172652
+
+* Image Channel Index #059
+
+::
+
+  - 1
+
+* Image Channel Index #058
+
+::
+
+  - 0
+
+* Halogen Lamp Mode 0
+
+::
+
+  - 8
+
+* Image Channel Index #061
+
+::
+
+  - 3
+
+* Image Channel Index #062
+
+::
+
+  - 0
+
+* Image Channel Index #063
+
+::
+
+  - 1
+
+* Image Channel Index #064
+
+::
+
+  - 2
+
+* Halogen Lamp Mode 2
+
+::
+
+  - 512
+
+* Image Channel Index #065
+
+::
+
+  - 3
+
+* Image Channel Index #066
+
+::
+
+  - 0
+
+* Image Channel Index #067
+
+::
+
+  - 1
+
+* Image Channel Index #068
+
+::
+
+  - 2
+
+* FileLink 0
+
+::
+
+  - BY4741NQ2.jpg
+  - hMADS-24h-BAC1-7-AF647-AF488-RHO-1day-hyb-CSK-2007-06-29-0008_Position(113).zvi
+
+* Image Channel Index #060
+
+::
+
+  - 2
+
+* Image Channel Index #049
+
+::
+
+  - 3
+
+* Image Channel Index #048
+
+::
+
+  - 2
+
+* Image Channel Index #047
+
+::
+
+  - 1
+
+* Image Channel Index #052
+
+::
+
+  - 2
+
+* Image Channel Index #053
+
+::
+
+  - 3
+
+* Image Channel Index #050
+
+::
+
+  - 0
+
+* Image Channel Index #051
+
+::
+
+  - 1
+
+* Image Channel Index #056
+
+::
+
+  - 2
+
+* Image Channel Index #057
+
+::
+
+  - 3
+
+* Image Channel Index #054
+
+::
+
+  - 0
+
+* Image Channel Index #055
+
+::
+
+  - 1
+
+* Halogen Lamp Voltage 0
+
+::
+
+  - 10.66
+
+* Halogen Lamp Voltage 2
+
+::
+
+  - 1.0
+
+* Image Channel Index #082
+
+::
+
+  - 0
+
+* Image Channel Index #081
+
+::
+
+  - 3
+
+* Timestamp #040
+
+::
+
+  - 4675629040624485272
+
+* Image Channel Index #080
+
+::
+
+  - 2
+
+* Timestamp #042
+
+::
+
+  - 4675629040631459367
+
+* Timestamp #041
+
+::
+
+  - 4675629040627510639
+
+* Timestamp #044
+
+::
+
+  - 4675629040638663333
+
+* Timestamp #043
+
+::
+
+  - 4675629040635812199
+
+* Transmitted Light Filter 1 Position 0
+
+::
+
+  - 1
+
+* Timestamp #046
+
+::
+
+  - 4675629040645700521
+
+* Timestamp #045
+
+::
+
+  - 4675629040641650622
+
+* Image Channel Index #089
+
+::
+
+  - 3
+
+* Transmitted Light Filter 1 Position 2
+
+::
+
+  - 1
+
+* Timestamp #048
+
+::
+
+  - 4675629040652888681
+
+* Image Channel Index #088
+
+::
+
+  - 2
+
+* Transmitted Light Filter 1 Position 1
+
+::
+
+  - 1
+
+* Timestamp #047
+
+::
+
+  - 4675629040650044241
+
+* Image Channel Index #087
+
+::
+
+  - 1
+
+* Image Channel Index #086
+
+::
+
+  - 0
+
+* Transmitted Light Filter 1 Position 3
+
+::
+
+  - 1
+
+* Timestamp #049
+
+::
+
+  - 4675629040655882923
+
+* Image Channel Index #085
+
+::
+
+  - 3
+
+* Image Channel Index #084
+
+::
+
+  - 2
+
+* Image Channel Index #083
+
+::
+
+  - 1
+
+* Image Channel Index #3
+
+::
+
+  - 2
+
+* Timestamp #051
+
+::
+
+  - 4675629040664203081
+
+* Timestamp #050
+
+::
+
+  - 4675629040659823899
+
+* Image Channel Index #071
+
+::
+
+  - 1
+
+* Camera Framestart Left 0
+
+::
+
+  - 0
+  - 438
+
+* Image Channel Index #070
+
+::
+
+  - 0
+
+* Timestamp #055
+
+::
+
+  - 4675629040678311935
+
+* Timestamp #054
+
+::
+
+  - 4675629040673952845
+
+* Timestamp #053
+
+::
+
+  - 4675629040670033950
+
+* Timestamp #052
+
+::
+
+  - 4675629040667052006
+
+* User Country
+
+::
+
+  - 
+  - Styria
+
+* Timestamp #059
+
+::
+
+  - 4675629040692607823
+
+* Image Channel Index #077
+
+::
+
+  - 3
+
+* Timestamp #058
+
+::
+
+  - 4675629040688046819
+
+* Image Channel Index #076
+
+::
+
+  - 2
+
+* Timestamp #057
+
+::
+
+  - 4675629040684160494
+
+* Image Channel Index #079
+
+::
+
+  - 1
+
+* Timestamp #056
+
+::
+
+  - 4675629040681150479
+
+* Image Channel Index #078
+
+::
+
+  - 0
+
+* Camera Framestart Left 1
+
+::
+
+  - 438
+
+* DeviceScalingName 1
+
+::
+
+  - AxioCamMRPlus
+
+* Image Channel Index #073
+
+::
+
+  - 3
+
+* Camera Framestart Left 2
+
+::
+
+  - 0
+  - 438
+
+* DeviceScalingName 0
+
+::
+
+  - AxioCamHRPlus
+  - AxioCamMRPlus
+
+* Image Channel Index #072
+
+::
+
+  - 2
+
+* Camera Framestart Left 3
+
+::
+
+  - 438
+
+* DeviceScalingName 3
+
+::
+
+  - AxioCamMRPlus
+
+* Image Channel Index #075
+
+::
+
+  - 1
+
+* DeviceScalingName 2
+
+::
+
+  - AxioCamHRPlus
+  - AxioCamMRPlus
+
+* Image Channel Index #074
+
+::
+
+  - 0
+
+* Image Channel Index #069
+
+::
+
+  - 3
+
+* Timestamp #064
+
+::
+
+  - 4675629040709673783
+
+* Timestamp #063
+
+::
+
+  - 4675629040706818907
+
+* Timestamp #066
+
+::
+
+  - 4675629040716556044
+
+* MultiChannel Weight 3
+
+::
+
+  - 1.0
+
+* Timestamp #065
+
+::
+
+  - 4675629040712666852
+
+* Objective Working Distance 0
+
+::
+
+  - 200
+  - 90.0
+
+* MultiChannel Weight 2
+
+::
+
+  - 1.0
+
+* Timestamp #060
+
+::
+
+  - 4675629040695476628
+
+* Objective Working Distance 1
+
+::
+
+  - 90.0
+
+* Objective Working Distance 2
+
+::
+
+  - 200
+  - 90.0
+
+* Timestamp #062
+
+::
+
+  - 4675629040702356904
+
+* Objective Working Distance 3
+
+::
+
+  - 90.0
+
+* Timestamp #061
+
+::
+
+  - 4675629040698472419
+
+* Timestamp #068
+
+::
+
+  - 4675629040723785373
+
+* Timestamp #067
+
+::
+
+  - 4675629040720942441
+
+* Timestamp #069
+
+::
+
+  - 4675629040726770496
+
+* Objective Immersion Type 0
+
+::
+
+  - 2
+
+* Objective Immersion Type 1
+
+::
+
+  - 2
+
+* Lightmanager Mode 1
+
+::
+
+  - 2
+
+* Lightmanager Mode 0
+
+::
+
+  - 2
+
+* Lightmanager Mode 3
+
+::
+
+  - 2
+
+* Lightmanager Mode 2
+
+::
+
+  - 2
+
+* Objective Immersion Type 2
+
+::
+
+  - 2
+
+* Objective Immersion Type 3
+
+::
+
+  - 2
+
+* Timestamp #077
+
+::
+
+  - 4675629040754976940
+
+* Timestamp #076
+
+::
+
+  - 4675629040751998068
+
+* Timestamp #075
+
+::
+
+  - 4675629040749154623
+
+* Timestamp #074
+
+::
+
+  - 4675629040744774816
+
+* Timestamp #073
+
+::
+
+  - 4675629040740877300
+
+* Image Channel Index #091
+
+::
+
+  - 1
+
+* Camera Adapter Magnification 1
+
+::
+
+  - 1.0
+
+* Timestamp #072
+
+::
+
+  - 4675629040737876868
+
+* Image Channel Index #090
+
+::
+
+  - 0
+
+* Camera Adapter Magnification 2
+
+::
+
+  - 1.0
+
+* Timestamp #071
+
+::
+
+  - 4675629040735059750
+
+* Image Channel Index #093
+
+::
+
+  - 3
+
+* Camera Adapter Magnification 3
+
+::
+
+  - 1.0
+
+* Timestamp #070
+
+::
+
+  - 4675629040730692063
+
+* Image Channel Index #092
+
+::
+
+  - 2
+
+* Image Channel Index #095
+
+::
+
+  - 1
+
+* Image Channel Index #094
+
+::
+
+  - 0
+
+* Image Channel Index #097
+
+::
+
+  - 3
+
+* Image Channel Index #096
+
+::
+
+  - 2
+
+* Camera Adapter Magnification 0
+
+::
+
+  - 1.0
+
+* Image Channel Index #099
+
+::
+
+  - 1
+
+* Image Channel Index #098
+
+::
+
+  - 0
+
+* Timestamp #079
+
+::
+
+  - 4675629040763223057
+
+* Timestamp #078
+
+::
+
+  - 4675629040758875595
+
+* X position for position #100
+
+::
+
+  - 5389.0
+
+* User Address
+
+::
+
+  - 
+  - Petersgasse 14
+
+* MultiChannel Weight 0
+
+::
+
+  - 1.0
+
+* MultiChannel Weight 1
+
+::
+
+  - 1.0
+
+* CameraFrameImageOrientation 1
+
+::
+
+  - 0
+
+* Timestamp #001
+
+::
+
+  - 4675629040485874584
+
+* Dazzle Protection Active 1
+
+::
+
+  - ��
+
+* CameraFrameImageOrientation 2
+
+::
+
+  - 4
+  - 0
+
+* Timestamp #002
+
+::
+
+  - 4675629040489807695
+
+* Dazzle Protection Active 2
+
+::
+
+  - ��
+
+* Timestamp #003
+
+::
+
+  - 4675629040494170024
+
+* Dazzle Protection Active 3
+
+::
+
+  - ��
+
+* CameraFrameImageOrientation 0
+
+::
+
+  - 4
+  - 0
+
+* Timestamp #004
+
+::
+
+  - 4675629040497004875
+
+* Timestamp #005
+
+::
+
+  - 4675629040500025697
+
+* Timestamp #006
+
+::
+
+  - 4675629040503974786
+
+* Timestamp #007
+
+::
+
+  - 4675629040508353848
+
+* Timestamp #008
+
+::
+
+  - 4675629040511197097
+
+* Dazzle Protection Active 0
+
+::
+
+  - ��
+
+* tag_ID_8455 0
+
+::
+
+  - 0
+
+* tag_ID_8455 1
+
+::
+
+  - 0
+
+* tag_ID_8455 2
+
+::
+
+  - 0
+
+* tag_ID_8455 3
+
+::
+
+  - 0
+
+* CameraFrameImageOrientation 3
+
+::
+
+  - 0
+
+* Timestamp #014
+
+::
+
+  - 4675629040532322863
+
+* Timestamp #015
+
+::
+
+  - 4675629040536786936
+
+* Timestamp #012
+
+::
+
+  - 4675629040525418608
+
+* Timestamp #013
+
+::
+
+  - 4675629040528404414
+
+* AxioCam Shutter Control 2
+
+::
+
+  - 0
+  - 1
+
+* Timestamp #018
+
+::
+
+  - 4675629040546556062
+
+* Timestamp #019
+
+::
+
+  - 4675629040550922693
+
+* AxioCam Shutter Control 3
+
+::
+
+  - 1
+
+* AxioCam Shutter Control 0
+
+::
+
+  - 0
+  - 1
+
+* Timestamp #016
+
+::
+
+  - 4675629040539627809
+
+* Timestamp #017
+
+::
+
+  - 4675629040542637654
+
+* AxioCam Shutter Control 1
+
+::
+
+  - 1
+
+* AxioCam Color Model 0
+
+::
+
+  - 1
+  - 0
+
+* User City
+
+::
+
+  - 
+  - Graz
+
+* AxioCam Color Model 1
+
+::
+
+  - 0
+
+* Timestamp #010
+
+::
+
+  - 4675629040518093775
+
+* Timestamp #011
+
+::
+
+  - 4675629040522558798
+
+* AxioCam Color Model 3
+
+::
+
+  - 0
+
+* AxioCam Color Model 2
+
+::
+
+  - 1
+  - 0
+
+* Timestamp #009
+
+::
+
+  - 4675629040514201065
+
+* Timestamp #027
+
+::
+
+  - 4675629040579248733
+
+* Timestamp #028
+
+::
+
+  - 4675629040582105226
+
+* Timestamp #029
+
+::
+
+  - 4675629040585097026
+
+* Timestamp #023
+
+::
+
+  - 4675629040565033158
+
+* Timestamp #024
+
+::
+
+  - 4675629040567905745
+
+* Timestamp #025
+
+::
+
+  - 4675629040570923739
+
+* Timestamp #026
+
+::
+
+  - 4675629040574870520
+
+* ImageRelativeTime1 3
+
+::
+
+  - 4568748213737095168
+
+* Timestamp #020
+
+::
+
+  - 4675629040553771044
+
+* Timestamp #021
+
+::
+
+  - 4675629040556782821
+
+* Timestamp #022
+
+::
+
+  - 4675629040560692793
+
+* Transmitted Light Filter 1 0
+
+::
+
+  - ND 100
+
+* Transmitted Light Filter 1 1
+
+::
+
+  - ND 100
+
+* Transmitted Light Filter 1 2
+
+::
+
+  - ND 100
+
+* Transmitted Light Filter 1 3
+
+::
+
+  - ND 100
+
+* ImageRelativeTime1 0
+
+::
+
+  - 0
+  - 4568561697182187520
+
+* ImageRelativeTime1 2
+
+::
+
+  - 4541956952720146432
+  - 4568700537637175296
+
+* ImageRelativeTime1 1
+
+::
+
+  - 4568627398035111936
+
+* Image Channel Index #1
+
+::
+
+  - 0
+
+* Timestamp #038
+
+::
+
+  - 4675629040617264035
+
+* Image Channel Index #2
+
+::
+
+  - 0
+
+* Timestamp #039
+
+::
+
+  - 4675629040621628954
+
+* Timestamp #036
+
+::
+
+  - 4675629040610336588
+
+* Timestamp #037
+
+::
+
+  - 4675629040613367837
+
+* Timestamp #034
+
+::
+
+  - 4675629040603153593
+
+* Timestamp #035
+
+::
+
+  - 4675629040607499943
+
+* Timestamp #032
+
+::
+
+  - 4675629040596236814
+
+* Timestamp #033
+
+::
+
+  - 4675629040599254814
+
+* Timestamp #030
+
+::
+
+  - 4675629040589026993
+
+* Timestamp #031
+
+::
+
+  - 4675629040593390975
+

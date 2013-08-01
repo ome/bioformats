@@ -1,0 +1,553 @@
+*******************************************************************************
+SDTReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats SPCImage Data format reader.
+
+Key/value pairs
+===============================================================================
+
+* MeasureInfo.modType
+
+::
+
+  - SPC-830
+
+* MeasureInfo.bordU
+
+::
+
+  - 0
+
+* bhfileHeader.noOfMeasDescBlocks
+
+::
+
+  - 1
+
+* bhfileHeader.revision
+
+::
+
+  - 588
+
+* MeasureInfo.date
+
+::
+
+  - 11:28:2007
+  - 11:07:2007
+
+* MeasureInfo.stopt
+
+::
+
+  - 1
+
+* MeasureInfo.deadTimeComp
+
+::
+
+  - 0
+
+* MeasureInfo.steps
+
+::
+
+  - 1
+
+* bhfileHeader.chksum
+
+::
+
+  - 62464
+
+* BHFileBlockHeader.blockNo
+
+::
+
+  - 1
+
+* Date
+
+::
+
+  - 11:28:2003
+  - 11:07:2003
+
+* BHFileBlockHeader.blockLength
+
+::
+
+  - 33554432
+
+* MeasureInfo.tacLH
+
+::
+
+  - 97.254906
+
+* ID
+
+::
+
+  - SPC Setup & Data File
+
+* MeasureInfo.linediv
+
+::
+
+  - 2
+
+* bhfileHeader.reserved1
+
+::
+
+  - 1
+
+* bhfileHeader.reserved2
+
+::
+
+  - 0
+
+* bhfileHeader.headerValid
+
+::
+
+  - 21845
+
+* MeasureInfo.tacLL
+
+::
+
+  - 13.333333
+
+* Version
+
+::
+
+  - 1  781 M
+
+* MeasureInfo.dither
+
+::
+
+  - 256
+
+* MeasureInfo.bordL
+
+::
+
+  - 0
+
+* MeasureInfo.memBank
+
+::
+
+  - 0
+
+* MeasureInfo.epxDiv
+
+::
+
+  - 4
+
+* MeasureInfo.pixTime
+
+::
+
+  - 1.0E-5
+
+* MeasureInfo.trigger
+
+::
+
+  - 0
+
+* MeasureInfo.polarityF
+
+::
+
+  - 1
+
+* MeasureInfo.cfdHF
+
+::
+
+  - 5.0
+
+* MeasureInfo.modFpgaVer
+
+::
+
+  - 0
+
+* MeasureInfo.measMode
+
+::
+
+  - 9
+
+* MeasureInfo.incr
+
+::
+
+  - 1
+
+* MeasureInfo.page
+
+::
+
+  - 1
+
+* channels
+
+::
+
+  - 16
+
+* MeasureInfo.tacOF
+
+::
+
+  - 1.9291819
+
+* MeasureInfo.polarityP
+
+::
+
+  - 0
+
+* MeasureInfo.modSerNo
+
+::
+
+  - 3B0027
+
+* MeasureInfo.cfdZC
+
+::
+
+  - -8.3149605
+
+* MeasureInfo.polarityL
+
+::
+
+  - 1
+
+* MeasureInfo.synZC
+
+::
+
+  - -12.850393
+
+* bhfileHeader.setupOffs
+
+::
+
+  - 396
+
+* MeasureInfo.synFD
+
+::
+
+  - 1
+
+* MeasureInfo.cycles
+
+::
+
+  - 1
+
+* Contents
+
+::
+
+  - 
+
+* MeasureInfo.colT
+
+::
+
+  - 60.0
+
+* time base
+
+::
+
+  - 12.500000146076218
+
+* MeasureInfo.overflowCorrFactor
+
+::
+
+  - 0.0
+
+* MeasureInfo.useMotor
+
+::
+
+  - 0
+
+* bhfileHeader.noOfDataBlocks
+
+::
+
+  - 1
+
+* bhfileHeader.measDescBlockLength
+
+::
+
+  - 211
+
+* Author
+
+::
+
+  - Unknown
+
+* BHFileBlockHeader.nextBlockOffs
+
+::
+
+  - 33555077
+
+* MeasureInfo.flbckY
+
+::
+
+  - 0
+
+* MeasureInfo.flbckX
+
+::
+
+  - 0
+
+* BHFileBlockHeader.lblockNo
+
+::
+
+  - 1
+
+* bhfileHeader.measDescBlockOffs
+
+::
+
+  - 412
+
+* MeasureInfo.adcRE
+
+::
+
+  - 64
+
+* time bins
+
+::
+
+  - 64
+
+* MeasureInfo.ealDE
+
+::
+
+  - 0
+
+* Time
+
+::
+
+  - 13:22:11
+  - 17:36:31
+
+* MeasureInfo.scanX
+
+::
+
+  - 128
+
+* MeasureInfo.synTH
+
+::
+
+  - -19.607843
+
+* MeasureInfo.scanY
+
+::
+
+  - 128
+
+* MeasureInfo.scanRY
+
+::
+
+  - 1
+
+* MeasureInfo.scanRX
+
+::
+
+  - 16
+
+* Company
+
+::
+
+  - Unknown
+
+* MeasureInfo.time
+
+::
+
+  - 13:22:14
+  - 17:36:31
+
+* MeasureInfo.fifoTyp
+
+::
+
+  - 0
+
+* BHFileBlockHeader.measDescBlockNo
+
+::
+
+  - 0
+
+* MeasureInfo.ncy
+
+::
+
+  - 1
+
+* MeasureInfo.cfdLH
+
+::
+
+  - 80.0
+
+* MeasureInfo.ncx
+
+::
+
+  - 1
+
+* MeasureInfo.cfdLL
+
+::
+
+  - -121.56863
+
+* BHFileBlockHeader.blockType
+
+::
+
+  - 19
+
+* bhfileHeader.dataBlockLength
+
+::
+
+  - 33554432
+
+* Revision
+
+::
+
+  - 8 bits ADC
+
+* bhfileHeader.infoOffs
+
+::
+
+  - 42
+
+* MeasureInfo.repT
+
+::
+
+  - 60.0
+
+* MeasureInfo.modTypeCode
+
+::
+
+  - 830
+
+* Title
+
+::
+
+  - 
+
+* MeasureInfo.synHF
+
+::
+
+  - 4.0
+
+* MeasureInfo.pixClk
+
+::
+
+  - 0
+
+* bhfileHeader.infoLength
+
+::
+
+  - 354
+
+* MeasureInfo.tacG
+
+::
+
+  - 4
+
+* MeasureInfo.offset
+
+::
+
+  - 0.0
+
+* bhfileHeader.dataBlockOffs
+
+::
+
+  - 623
+
+* MeasureInfo.overfl
+
+::
+
+  - 78
+
+* BHFileBlockHeader.dataOffs
+
+::
+
+  - 645
+
+* MeasureInfo.adcZoom
+
+::
+
+  - 0
+
+* MeasureInfo.accumulate
+
+::
+
+  - 0
+
+* MeasureInfo.tacR
+
+::
+
+  - 5.0E-8
+

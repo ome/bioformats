@@ -1,0 +1,669 @@
+*******************************************************************************
+PrairieReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Prairie TIFF format reader.
+
+Key/value pairs
+===============================================================================
+
+* scanlinePeriod
+
+::
+
+  - 0.002696
+
+* ccStagePresent
+
+::
+
+  - True
+
+* galvo_YAxis+AmplitudePark
+
+::
+
+  - -1.5
+
+* galvo_YAxis+VoltsPerDegree
+
+::
+
+  - 4
+
+* directory_Base
+
+::
+
+  - C:\Documents and Settings\user\My Documents\test1
+
+* bidirectionalMode
+
+::
+
+  - 0
+
+* softShutter
+
+::
+
+  - False
+
+* calMode
+
+::
+
+  - 0
+
+* rotation
+
+::
+
+  - 0
+
+* opticalZoomMin
+
+::
+
+  - 1
+
+* fileIteration_LineScan
+
+::
+
+  - 34
+
+* galvo_YAxis+SpeedMax
+
+::
+
+  - 8
+
+* fileIteration_BrightnessOverTime
+
+::
+
+  - 8
+
+* opticalZoom
+
+::
+
+  - 1.0
+
+* porchFront
+
+::
+
+  - 20
+
+* systemType
+
+::
+
+  - 3
+
+* cycleCount
+
+::
+
+  - 1
+
+* directory_WSeries
+
+::
+
+  - WSeries-12152006-1335
+
+* pixelsPerLine
+
+::
+
+  - 512
+
+* hardShutter
+
+::
+
+  - False
+
+* currentScanCenterPitch
+
+::
+
+  - 1
+
+* polarityTrigger
+
+::
+
+  - 0
+
+* binningMode
+
+::
+
+  - 0
+
+* ccLaserPresent
+
+::
+
+  - False
+
+* galvo_XAxis+SpeedMax
+
+::
+
+  - 8
+
+* currentScanCenter_YAxis
+
+::
+
+  - 0
+
+* frameAveraging
+
+::
+
+  - 4
+
+* directory_LineScan
+
+::
+
+  - LineScan-12152006-1335
+
+* date
+
+::
+
+  - 12/15/2006 2:18:43 PM
+
+* vclampImagePath
+
+::
+
+  - C:\NewImage
+
+* meta
+
+::
+
+  - loci.formats.in.PrairieMetadata@f2e4b5
+
+* micronsPerPixel_YAxis
+
+::
+
+  - 0.632911392405062
+
+* galvo_XAxis+AmplitudeMax
+
+::
+
+  - 20
+
+* sequenceCount
+
+::
+
+  - 1
+
+* framePeriod
+
+::
+
+  - 1.380352
+
+* micronsPerPixel_XAxis
+
+::
+
+  - 0.632911392405062
+
+* framerate
+
+::
+
+  - 0.724452893175074
+
+* updateRateMin
+
+::
+
+  - 1
+
+* motorStepSize_ZAxis
+
+::
+
+  - 0.5
+
+* galvo_XAxis+AmplitudePark
+
+::
+
+  - 1.5
+
+* directory_BrightnessOverTime
+
+::
+
+  - BrightnessOverTime-12152006-1335
+
+* updateRate
+
+::
+
+  - 1
+
+* scanningMode
+
+::
+
+  - 0
+
+* channel_2
+
+::
+
+  - True
+
+* flushFrameBufferPath
+
+::
+
+  - C:\Documents and Settings\dwimages\ZSeries-12142006-1438-060
+
+* channel_3
+
+::
+
+  - False
+
+* channel_0
+
+::
+
+  - True
+
+* channel_1
+
+::
+
+  - True
+
+* galvo_YAxis+ScanCenter
+
+::
+
+  - 0
+
+* type
+
+::
+
+  - Single
+
+* galvo_YAxis+AmplitudeScan
+
+::
+
+  - -1.5
+
+* currentScanAmplitude_XAxis
+
+::
+
+  - 1.5
+
+* fileIteration_TSeries
+
+::
+
+  - 38
+
+* pmtGain_3
+
+::
+
+  - 0
+
+* pmtGain_1
+
+::
+
+  - 580.357142857143
+
+* pmtGain_2
+
+::
+
+  - 625
+
+* fileIteration_ZSeries
+
+::
+
+  - 61
+
+* positionCurrent_YAxis
+
+::
+
+  - -2055.625
+
+* fileIteration_TriggerSync
+
+::
+
+  - 1
+
+* pmtGain_0
+
+::
+
+  - 691.964285714286
+
+* cycle
+
+::
+
+  - 1
+
+* currentScanCenter_XAxis
+
+::
+
+  - 0
+
+* indexCount
+
+::
+
+  - 1
+
+* positionCurrent_ZAxis
+
+::
+
+  - 73.325
+
+* polarityShutter
+
+::
+
+  - 0
+
+* inputTriggerPresent
+
+::
+
+  - True
+
+* daq_3
+
+::
+
+  - 5
+
+* polarityBlanking
+
+::
+
+  - 1
+
+* porchBack
+
+::
+
+  - 10
+
+* displayScalingFactor
+
+::
+
+  - 1
+
+* updateRateMax
+
+::
+
+  - 1
+
+* daq_2
+
+::
+
+  - 5
+
+* photoActivationPresent
+
+::
+
+  - True
+
+* daq_1
+
+::
+
+  - 5
+
+* aodLineAdvance
+
+::
+
+  - 1
+
+* daq_0
+
+::
+
+  - 5
+
+* positionCurrent_XAxis
+
+::
+
+  - -677.5
+
+* directory_TriggerSync
+
+::
+
+  - TriggerSync-12152006-1335
+
+* vclampActive
+
+::
+
+  - False
+
+* laserPower_1
+
+::
+
+  - 0
+
+* dwellTime
+
+::
+
+  - 4.0
+
+* galvo_XAxis+VoltsPerDegree
+
+::
+
+  - 4
+
+* galvo_XAxis+AccelerationMax
+
+::
+
+  - 48
+
+* laserPower_0
+
+::
+
+  - 0
+
+* fileIteration_SingleImage
+
+::
+
+  - 1
+
+* currentScanAmplitude_YAxis
+
+::
+
+  - -1.5
+
+* pixelsPerLineMin
+
+::
+
+  - 94
+
+* objectiveLens
+
+::
+
+  - Olympus 60x
+
+* directory_SingleImage
+
+::
+
+  - pollen-001
+
+* ccFocusPresent
+
+::
+
+  - True
+
+* galvo_YAxis+PanDirection
+
+::
+
+  - 1
+
+* yAspectExpansion
+
+::
+
+  - 1
+
+* directory_ZSeries
+
+::
+
+  - ZSeries-12152006-1335
+
+* pockelsLag
+
+::
+
+  - 0
+
+* pmtOffset_0
+
+::
+
+  - 0
+
+* linesPerFrame
+
+::
+
+  - 512
+
+* dwellTimeMin
+
+::
+
+  - 0.8
+
+* pmtOffset_3
+
+::
+
+  - 0
+
+* pmtOffset_1
+
+::
+
+  - 0
+
+* pmtOffset_2
+
+::
+
+  - 0
+
+* galvo_YAxis+LagTime
+
+::
+
+  - 88
+
+* galvo_XAxis+PanDirection
+
+::
+
+  - -1
+
+* galvo_YAxis+AmplitudeMax
+
+::
+
+  - 20
+
+* galvo_YAxis+AccelerationMax
+
+::
+
+  - 48
+
+* galvo_XAxis+ScanCenter
+
+::
+
+  - 0
+
+* tseriesCycle
+
+::
+
+  - 1
+
+* galvo_XAxis+AmplitudeScan
+
+::
+
+  - 1.5
+
+* aodLineDelay
+
+::
+
+  - 1
+
+* galvo_XAxis+LagTime
+
+::
+
+  - 88
+
+* directory_TSeries
+
+::
+
+  - TSeries-12152006-1335
+

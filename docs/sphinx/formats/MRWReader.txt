@@ -1,0 +1,303 @@
+*******************************************************************************
+MRWReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Minolta MRW format reader.
+
+Key/value pairs
+===============================================================================
+
+* ORIENTATION
+
+::
+
+  - 1
+
+* USER_COMMENT
+
+::
+
+  - [B@ba7d0f
+
+* 37396
+
+::
+
+  - [I@3aaa32
+
+* CONTRAST
+
+::
+
+  - 0
+
+* MAX_APERTURE_VALUE
+
+::
+
+  - 497/100
+
+* EXIF_VERSION
+
+::
+
+  - [B@1e56319
+
+* 50341
+
+::
+
+  - [B@9ab03
+
+* EXPOSURE_MODE
+
+::
+
+  - 0
+
+* COMPONENTS_CONFIGURATION
+
+::
+
+  - [B@cd0da4
+
+* LIGHT_SOURCE
+
+::
+
+  - 0
+
+* IMAGE_DESCRIPTION
+
+::
+
+  - KONICA MINOLTA DIGITAL CAMERA
+
+* SATURATION
+
+::
+
+  - 0
+
+* COMPRESSION
+
+::
+
+  - 1
+
+* METERING_MODE
+
+::
+
+  - 5
+
+* FLASH_PIX_VERSION
+
+::
+
+  - [B@17bbcd6
+
+* DATE_TIME
+
+::
+
+  - 2005:11:19 11:21:02
+
+* Y_RESOLUTION
+
+::
+
+  - 72/1
+
+* BRIGHTNESS_VALUE
+
+::
+
+  - 737/100
+
+* FLASH
+
+::
+
+  - 16
+
+* 40965
+
+::
+
+  - 17662
+
+* F_NUMBER
+
+::
+
+  - 90/10
+
+* PIXEL_X_DIMENSION
+
+::
+
+  - 3008
+
+* SHARPNESS
+
+::
+
+  - 2
+
+* MODEL
+
+::
+
+  - DYNAX 5D
+
+* CUSTOM_RENDERED
+
+::
+
+  - 0
+
+* RESOLUTION_UNIT
+
+::
+
+  - 2
+
+* COLOR_SPACE
+
+::
+
+  - 1
+
+* X_RESOLUTION
+
+::
+
+  - 72/1
+
+* EXPOSURE_PROGRAM
+
+::
+
+  - 3
+
+* SOFTWARE
+
+::
+
+  - DYNAX 5D v1.00           
+
+* IMAGE_LENGTH
+
+::
+
+  - 2000
+
+* DIGITAL_ZOOM_RATIO
+
+::
+
+  - 0/1
+
+* EXIF
+
+::
+
+  - 434
+
+* IMAGE_WIDTH
+
+::
+
+  - 3008
+
+* MAKE
+
+::
+
+  - KONICA MINOLTA 
+
+* MAKER_NOTE
+
+::
+
+  - [B@aaa836
+
+* WHITE_BALANCE
+
+::
+
+  - 0
+
+* PIXEL_Y_DIMENSION
+
+::
+
+  - 2000
+
+* LITTLE_ENDIAN
+
+::
+
+  - false
+
+* DATE_TIME_DIGITIZED
+
+::
+
+  - 2005:11:19 11:21:02
+
+* FOCAL_LENGTH
+
+::
+
+  - 450/10
+
+* DATE_TIME_ORIGINAL
+
+::
+
+  - 2005:11:19 11:21:02
+
+* GAIN_CONTROL
+
+::
+
+  - 2
+
+* SCENE_CAPTURE_TYPE
+
+::
+
+  - 0
+
+* ISO_SPEED_RATINGS
+
+::
+
+  - 1600
+
+* BIG_TIFF
+
+::
+
+  - false
+
+* EXPOSURE_BIAS_VALUE
+
+::
+
+  - 0/10
+
+* FOCAL_LENGTH_35MM_FILM
+
+::
+
+  - 67
+
+* EXPOSURE_TIME
+
+::
+
+  - 1/800
+

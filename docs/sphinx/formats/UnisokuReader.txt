@@ -1,0 +1,99 @@
+*******************************************************************************
+UnisokuReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Unisoku STM format reader.
+
+Key/value pairs
+===============================================================================
+
+* :ascii flag; data type(2=byte; 3=+-byte; 4=word; 5=+-word; 8=float)
+
+::
+
+  - 0 4
+
+* :date; time
+
+::
+
+  - 11/13/03 16:59:20
+
+* :STM data
+
+::
+
+  - 
+
+* :stm voltage; current; scan time; accum; scan voltage
+
+::
+
+  - -1.30 0.50 67 10 1.578
+
+* :x_data -> unit; start; end; log flag; exchange rate; scan unit
+
+::
+
+  - nm 0.00 20.00 0 6.337 1
+
+* :reserved
+
+::
+
+  - a a a a
+
+* :sample name
+
+::
+
+  - Si(111)
+
+* :z_data -> unit; max; mini; (max; mini)(before conversion); log flag
+
+::
+
+  - % 65535 0 14.286 0.000 0
+
+* :data volume(x*y)
+
+::
+
+  - 512 512
+
+* :y_data -> unit; start; end; inequality flag; log flag
+
+::
+
+  - nm 0.0 20.0 0 0
+
+* :y_data array (if inequality flag = 1)
+
+::
+
+  - 
+
+* :stm voltage unit; stm current unit
+
+::
+
+  - V nA a a
+
+* :remark
+
+::
+
+  - at 63 K
+
+* :x;y dimension(1=Length;2=Time;3=Current;4=Vt;5=Tmp;6=/L;7=/T;8=other)
+
+::
+
+  - 1 1
+
+* :format version
+
+::
+
+  - 100
+

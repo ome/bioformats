@@ -1,0 +1,43 @@
+*******************************************************************************
+EPSReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Encapsulated PostScript format reader.
+
+Key/value pairs
+===============================================================================
+
+* Y-coordinate of origin
+
+::
+
+  - 0
+
+* X-coordinate of origin
+
+::
+
+  - 0
+
+* %%Title
+
+::
+
+  -  image2.eps
+  -  image3.eps
+  -  image5.eps
+  -  image1.eps
+  -  image4.eps
+
+* %%Creator
+
+::
+
+  -  LOCI Bio-Formats
+
+* %%Pages
+
+::
+
+  -  1
+

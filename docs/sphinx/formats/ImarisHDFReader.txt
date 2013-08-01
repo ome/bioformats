@@ -1,0 +1,3351 @@
+*******************************************************************************
+ImarisHDFReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Bitplane Imaris 5.5 (HDF) format reader.
+
+Key/value pairs
+===============================================================================
+
+* RecordingEntrySample0time
+
+::
+
+  - 38768.393
+
+* MF_SG_YInc
+
+::
+
+  - 310
+
+* UnknownEntry_1879048213
+
+::
+
+  - 0.000
+
+* UnknownEntry_1879048214
+
+::
+
+  - 0.000
+
+* TimePoint150
+
+::
+
+  - 2006-02-20 34:28:34.353
+
+* UnknownEntry_1879048215
+
+::
+
+  - 0.000
+
+* TimePoint151
+
+::
+
+  - 2006-02-20 34:38:20.677
+
+* UnknownEntry_1879048216
+
+::
+
+  - 0.000
+
+* TimePoint152
+
+::
+
+  - 2006-02-20 34:48:06.177
+
+* UnknownEntry_1879048217
+
+::
+
+  - 0.000
+
+* TimePoint153
+
+::
+
+  - 2006-02-20 34:57:51.501
+
+* MF_FOV_Width
+
+::
+
+  - 1280
+
+* TimerEntryActivationNumber
+
+::
+
+  - 4294967295
+
+* TimePoint154
+
+::
+
+  - 2006-02-20 35:07:36.265
+
+* TimePoint155
+
+::
+
+  - 2006-02-20 35:17:22.264
+
+* TimePoint156
+
+::
+
+  - 2006-02-20 35:27:08.183
+
+* TimePoint158
+
+::
+
+  - 2006-02-20 35:46:40.522
+
+* TimePoint157
+
+::
+
+  - 2006-02-20 35:36:54.213
+
+* TrackEntrySamplingMode
+
+::
+
+  - 1
+
+* TimePoint159
+
+::
+
+  - 2006-02-20 35:56:26.471
+
+* UnknownEntry_2415919111
+
+::
+
+  - 0.000
+
+* UnknownEntry_2415919110
+
+::
+
+  - 0.000
+
+* DetchannelEntryIntegrationMode
+
+::
+
+  - 0
+
+* TimePoint162
+
+::
+
+  - 2006-02-20 36:25:44.899
+
+* TimePoint163
+
+::
+
+  - 2006-02-20 36:35:30.274
+
+* TimePoint160
+
+::
+
+  - 2006-02-20 36:06:12.796
+
+* TimePoint161
+
+::
+
+  - 2006-02-20 36:15:59.060
+
+* TimePoint166
+
+::
+
+  - 2006-02-20 37:04:48.201
+
+* Metafer_Frame_ID
+
+::
+
+  - 0
+
+* TimePoint167
+
+::
+
+  - 2006-02-20 37:14:34.841
+
+* TimePoint164
+
+::
+
+  - 2006-02-20 36:45:15.833
+
+* TimePoint165
+
+::
+
+  - 2006-02-20 36:55:02.502
+
+* TimePoint169
+
+::
+
+  - 2006-02-20 37:34:05.009
+
+* TimePoint168
+
+::
+
+  - 2006-02-20 37:24:19.745
+
+* Sign
+
+::
+
+  - 1
+
+* RecordingEntryNutation
+
+::
+
+  - 0.000
+
+* VSlide_FOV_Count
+
+::
+
+  - 3641
+
+* RecordingEntryImagesNumberChannels
+
+::
+
+  - 3
+
+* TimePoint170
+
+::
+
+  - 2006-02-20 37:43:52.319
+
+* TimePoint175
+
+::
+
+  - 2006-02-20 38:32:43.350
+
+* TimePoint176
+
+::
+
+  - 2006-02-20 38:42:28.834
+
+* TimePoint177
+
+::
+
+  - 2006-02-20 38:52:14.504
+
+* TimePoint178
+
+::
+
+  - 2006-02-20 39:02:00.218
+
+* TimePoint171
+
+::
+
+  - 2006-02-20 37:53:38.378
+
+* TimePoint172
+
+::
+
+  - 2006-02-20 38:03:24.392
+
+* LaserEntryAcquire
+
+::
+
+  - 1
+
+* TimePoint173
+
+::
+
+  - 2006-02-20 38:13:11.107
+
+* RecordingEntryStartScanTime
+
+::
+
+  - 0.000
+
+* TimePoint174
+
+::
+
+  - 2006-02-20 38:22:57.041
+
+* TimeIntervall
+
+::
+
+  - 585.646
+
+* RecordingEntryDescription
+
+::
+
+  - H2B_mRFP - EGFP-alpha-Tubulin
+
+* TimePoint179
+
+::
+
+  - 2006-02-20 39:11:46.422
+
+* MF_CS_Channel
+
+::
+
+  - 3
+
+* Y
+
+::
+
+  - 512
+  - 147328
+  - 371
+
+* X
+
+::
+
+  - 512
+  - 63104
+  - 617
+
+* Z
+
+::
+
+  - 42
+  - 1
+  - 38
+
+* TimePoint180
+
+::
+
+  - 2006-02-20 39:21:32.496
+
+* TimePoint181
+
+::
+
+  - 2006-02-20 39:31:18.446
+
+* TimePoint188
+
+::
+
+  - 2006-02-20 40:39:46.337
+
+* TimePoint189
+
+::
+
+  - 2006-02-20 40:49:32.476
+
+* TimePoint186
+
+::
+
+  - 2006-02-20 40:20:12.293
+
+* TimePoint187
+
+::
+
+  - 2006-02-20 40:29:59.727
+
+* TimePoint184
+
+::
+
+  - 2006-02-20 40:00:39.174
+
+* TimePoint185
+
+::
+
+  - 2006-02-20 40:10:25.843
+
+* TimePoint230
+
+::
+
+  - 2006-02-20 47:30:48.591
+
+* TimePoint182
+
+::
+
+  - 2006-02-20 39:41:04.680
+
+* TimePoint231
+
+::
+
+  - 2006-02-20 47:40:37.460
+
+* TimePoint183
+
+::
+
+  - 2006-02-20 39:50:52.335
+
+* IllumchannelEntryWavelength
+
+::
+
+  - 488.000
+
+* Metafer_Win_User
+
+::
+
+  - Fluorescence Scanner
+
+* VSlide_Parameter_Set
+
+::
+
+  - Standard-FL.vsp
+
+* ColorOpacity
+
+::
+
+  - 000
+
+* FileTimePoints
+
+::
+
+  - 1
+
+* DetchannelEntryDetectorGainLast
+
+::
+
+  - 643.382
+
+* TimePoint194
+
+::
+
+  - 2006-02-20 41:38:28.118
+
+* TimePoint220
+
+::
+
+  - 2006-02-20 45:52:51.150
+
+* TimePoint193
+
+::
+
+  - 2006-02-20 41:28:41.199
+
+* TimePoint196
+
+::
+
+  - 2006-02-20 41:58:01.272
+
+* TimePoint222
+
+::
+
+  - 2006-02-20 46:12:27.154
+
+* TimePoint195
+
+::
+
+  - 2006-02-20 41:48:15.368
+
+* TimePoint221
+
+::
+
+  - 2006-02-20 46:02:39.064
+
+* RecordingEntryImagesWidth
+
+::
+
+  - 512
+
+* TimePoint198
+
+::
+
+  - 2006-02-20 42:17:34.501
+
+* Colorrange
+
+::
+
+  - 255
+
+* TimePoint197
+
+::
+
+  - 2006-02-20 42:07:48.502
+
+* TimePoint199
+
+::
+
+  - 2006-02-20 42:27:21.781
+
+* RecordingEntryPlanesPerVolume
+
+::
+
+  - 5
+
+* TimePoint190
+
+::
+
+  - 2006-02-20 40:59:19.095
+
+* TimePoint192
+
+::
+
+  - 2006-02-20 41:18:54.405
+
+* TimePoint191
+
+::
+
+  - 2006-02-20 41:09:06.735
+
+* VSlide_StitchMode
+
+::
+
+  - 1
+
+* BeamsplitterEntryFilter
+
+::
+
+  - None
+
+* TimePoint227
+
+::
+
+  - 2006-02-20 47:01:24.387
+
+* TimePoint228
+
+::
+
+  - 2006-02-20 47:11:12.366
+
+* TimePoint229
+
+::
+
+  - 2006-02-20 47:21:00.686
+
+* TimePoint223
+
+::
+
+  - 2006-02-20 46:22:15.209
+
+* TimePoint224
+
+::
+
+  - 2006-02-20 46:32:02.443
+
+* TimePoint225
+
+::
+
+  - 2006-02-20 46:41:49.613
+
+* TimerEntryInterval
+
+::
+
+  - 0.000
+
+* TimePoint226
+
+::
+
+  - 2006-02-20 46:51:36.777
+
+* TimePoint211
+
+::
+
+  - 2006-02-20 44:24:45.064
+
+* TimePoint210
+
+::
+
+  - 2006-02-20 44:14:57.659
+
+* TrackEntryAcquire
+
+::
+
+  - 0
+
+* RefractionIndexImmersion
+
+::
+
+  - not known
+
+* VSlide_Version
+
+::
+
+  - 1.0.122
+
+* TimePoint2
+
+::
+
+  - 2006-02-20 11:04:15.752
+
+* TimePoint1
+
+::
+
+  - 4713-11-24 00:00:00.000
+  - 2012-08-23 00:03:51
+  - 2003-05-12 00:00:00.000
+
+* TimePoint5
+
+::
+
+  - 2006-02-20 11:33:29.029
+
+* NumericalAperture
+
+::
+
+  - 1.320
+  - 
+
+* SubSection_6
+
+::
+
+  - SubblockTimer_6
+
+* TimePoint6
+
+::
+
+  - 2006-02-20 11:43:12.758
+
+* TimePoint3
+
+::
+
+  - 2006-02-20 11:14:00.531
+
+* TimePoint4
+
+::
+
+  - 2006-02-20 11:23:44.780
+
+* SubSection_3
+
+::
+
+  - SubblockTrack_3
+
+* TimePoint9
+
+::
+
+  - 2006-02-20 12:12:27.501
+
+* BeamsplitterEntryName
+
+::
+
+  - FW1
+
+* SubSection_2
+
+::
+
+  - SubblockTrack_2
+
+* SubSection_5
+
+::
+
+  - SubblockTimer_5
+
+* DetchannelFilterName
+
+::
+
+  - BP 505-550
+
+* TimePoint7
+
+::
+
+  - 2006-02-20 11:52:57.602
+
+* SubSection_4
+
+::
+
+  - SubblockDataChannels_3
+
+* TimePoint8
+
+::
+
+  - 2006-02-20 12:02:42.486
+
+* TimePoint218
+
+::
+
+  - 2006-02-20 45:33:16.311
+
+* TimePoint219
+
+::
+
+  - 2006-02-20 45:43:02.480
+
+* SubSection_1
+
+::
+
+  - SubblockTrack_1
+
+* TimePoint216
+
+::
+
+  - 2006-02-20 45:13:42.587
+
+* TimePoint217
+
+::
+
+  - 2006-02-20 45:23:28.646
+
+* TimePoint214
+
+::
+
+  - 2006-02-20 44:54:07.668
+
+* TimePoint99
+
+::
+
+  - 2006-02-20 26:10:55.819
+
+* TimePoint215
+
+::
+
+  - 2006-02-20 45:03:55.367
+
+* TimePoint98
+
+::
+
+  - 2006-02-20 26:01:10.275
+
+* TimePoint212
+
+::
+
+  - 2006-02-20 44:34:32.734
+
+* TimePoint97
+
+::
+
+  - 2006-02-20 25:51:25.096
+
+* Metafer_PC_Name
+
+::
+
+  - MF_743
+
+* TrackEntryMultiplexOrder
+
+::
+
+  - 3
+
+* TimePoint213
+
+::
+
+  - 2006-02-20 44:44:20.733
+
+* TimePoint96
+
+::
+
+  - 2006-02-20 25:41:39.427
+
+* MF_Search_Start_Time
+
+::
+
+  - 2012-08-22 23:56:46
+
+* ImageBlockSizeX
+
+::
+
+  - 128
+
+* ImageBlockSizeY
+
+::
+
+  - 128
+
+* ImageBlockSizeZ
+
+::
+
+  - 16
+  - 1
+  - 64
+
+* Entry1
+
+::
+
+  - bpIpCommandCropTime from 4 to 25
+  - <bpIpGaussianFilterCommand sigma = "0.250" channels = "on on "/>
+
+* Entry0
+
+::
+
+  - <bpIpContrastStretchCommand minsrc = "0.000 0.000 0.000" maxsrc = "1236.000 2472.000 1197.000" mindest = "0 0 0" maxdest = "65535 65535 65535" channels = "on on on "/>
+  - <bpIpFlip3dCommand direction = "2" channels = "on on "/>
+
+* DetchannelEntryCountingTrigger
+
+::
+
+  - 5.000
+
+* TimePoint200
+
+::
+
+  - 2006-02-20 42:37:08.650
+
+* DetchannelEntryAmplifierGainLast
+
+::
+
+  - 1.003
+
+* TimePoint209
+
+::
+
+  - 2006-02-20 44:05:10.415
+
+* MF_Spiral_PL
+
+::
+
+  - 0
+
+* RecordingEntryZoomX
+
+::
+
+  - 1.000
+
+* RecordingEntryZoomY
+
+::
+
+  - 1.000
+
+* RecordingEntryZoomZ
+
+::
+
+  - 1.000
+
+* TimePoint201
+
+::
+
+  - 2006-02-20 42:46:56.015
+
+* TimePoint202
+
+::
+
+  - 2006-02-20 42:56:41.994
+
+* TimePoint203
+
+::
+
+  - 2006-02-20 43:06:28.023
+
+* VSlide_Max_Magnific_Error
+
+::
+
+  - 2.00
+
+* TimePoint204
+
+::
+
+  - 2006-02-20 43:16:14.597
+
+* TimePoint205
+
+::
+
+  - 2006-02-20 43:26:00.202
+
+* RecordingEntryRotation
+
+::
+
+  - 0.000
+
+* TimePoint206
+
+::
+
+  - 2006-02-20 43:35:47.856
+
+* TimePoint207
+
+::
+
+  - 2006-02-20 43:45:35.106
+
+* TimePoint208
+
+::
+
+  - 2006-02-20 43:55:22.570
+
+* UnknownEntry_1879048229
+
+::
+
+  - 575.000
+
+* UnknownEntry_1879048228
+
+::
+
+  - 575.000
+
+* MarkerEntryName
+
+::
+
+  - Marker2
+
+* UnknownEntry_1879048227
+
+::
+
+  - 735.000
+
+* UnknownEntry_1879048226
+
+::
+
+  - 415.000
+
+* UnknownEntry_1879048225
+
+::
+
+  - 32
+
+* Metafer_Frame_Pos
+
+::
+
+  - 10
+
+* UnknownEntry_1879048224
+
+::
+
+  - 0.000
+
+* ExtMax1
+
+::
+
+  - 39.702
+  - 23469.000
+  - 92.625
+
+* ExtMax2
+
+::
+
+  - 6.676
+  - 0.025
+  - 56.250
+
+* RecordingEntrySampleSpacing
+
+::
+
+  - 0.279
+
+* TrackEntrySamplingMethod
+
+::
+
+  - 1
+
+* ExtMax0
+
+::
+
+  - 39.702
+  - 8548.000
+  - 154.125
+
+* Metafer_FOV_Count
+
+::
+
+  - 3641
+
+* VSlide_Stitch_Start_Date
+
+::
+
+  - 2012-08-23 00:03:51
+
+* Refraction_index_of_design_medium
+
+::
+
+  - 0.000
+
+* Metafer_Classifer
+
+::
+
+  - 20x Mouse brain Sophie 2
+
+* Metafer_SystemID
+
+::
+
+  - MF-743
+
+* TimePoint69
+
+::
+
+  - 2006-02-20 21:18:15.039
+
+* HistogramMin
+
+::
+
+  - 0.000
+
+* TimePoint67
+
+::
+
+  - 2006-02-20 20:58:45.561
+
+* TimePoint68
+
+::
+
+  - 2006-02-20 21:08:30.825
+
+* DataType
+
+::
+
+  - 0
+
+* TimePoint65
+
+::
+
+  - 2006-02-20 20:39:15.522
+
+* TimePoint66
+
+::
+
+  - 2006-02-20 20:49:00.972
+
+* TimePoint63
+
+::
+
+  - 2006-02-20 20:19:45.589
+
+* TimePoint64
+
+::
+
+  - 2006-02-20 20:29:29.838
+
+* DataSetInfoDirectoryName
+
+::
+
+  - DataSetInfo
+
+* DetchannelAmplifierName
+
+::
+
+  - Amplifier1
+
+* UnknownEntry_3489660951
+
+::
+
+  - 1
+
+* RecordingEntryOriginalScanData
+
+::
+
+  - 1
+
+* UnknownEntry_3489660945
+
+::
+
+  - 0.000
+
+* UnknownEntry_3489660944
+
+::
+
+  - 0.000
+
+* Pinhole
+
+::
+
+  - 0
+
+* TrackEntryTimeBetweenStacks
+
+::
+
+  - 0.000
+
+* TimePoint73
+
+::
+
+  - 2006-02-20 21:57:16.756
+
+* TimePoint72
+
+::
+
+  - 2006-02-20 21:47:30.931
+
+* TimePoint71
+
+::
+
+  - 2006-02-20 21:37:45.937
+
+* DetchannelEntryDetectorGainFirst
+
+::
+
+  - 643.382
+
+* TimePoint70
+
+::
+
+  - 2006-02-20 21:28:00.503
+
+* TimePoint56
+
+::
+
+  - 2006-02-20 19:11:32.771
+
+* TimePoint57
+
+::
+
+  - 2006-02-20 19:21:16.990
+
+* TimePoint58
+
+::
+
+  - 2006-02-20 19:31:01.999
+
+* TimePoint59
+
+::
+
+  - 2006-02-20 19:40:47.088
+
+* TimePoint52
+
+::
+
+  - 2006-02-20 18:32:32.754
+
+* Gain
+
+::
+
+  - 0
+
+* TimePoint53
+
+::
+
+  - 2006-02-20 18:42:17.438
+
+* TimePoint54
+
+::
+
+  - 2006-02-20 18:52:02.423
+
+* TimePoint55
+
+::
+
+  - 2006-02-20 19:01:47.247
+
+* Color
+
+::
+
+  - 000 0.000
+
+* UnknownEntry_3489660931
+
+::
+
+  - 2
+
+* DimensionTime
+
+::
+
+  - 231
+
+* TimePoint60
+
+::
+
+  - 2006-02-20 19:50:32.257
+
+* TimePoint62
+
+::
+
+  - 2006-02-20 20:10:01.125
+
+* TimePoint61
+
+::
+
+  - 2006-02-20 20:00:17.081
+
+* TimePoint87
+
+::
+
+  - 2006-02-20 24:13:50.479
+
+* TimePoint88
+
+::
+
+  - 2006-02-20 24:23:35.333
+
+* TimePoint85
+
+::
+
+  - 2006-02-20 23:54:20.271
+
+* TimePoint86
+
+::
+
+  - 2006-02-20 24:04:05.205
+
+* TimePoint89
+
+::
+
+  - 2006-02-20 24:33:20.207
+
+* ExtraDataLength
+
+::
+
+  - 0
+
+* DatachannelEntryColor
+
+::
+
+  - 65280
+
+* ThumbnailDirectoryName
+
+::
+
+  - Thumbnail
+
+* TrackEntryIsRatioTrack
+
+::
+
+  - 0
+
+* VSP_Irreg_PL_Mode
+
+::
+
+  - 1
+
+* TimePoint91
+
+::
+
+  - 2006-02-20 24:52:52.946
+
+* TimePoint90
+
+::
+
+  - 2006-02-20 24:43:07.121
+
+* TimePoint95
+
+::
+
+  - 2006-02-20 25:31:53.947
+
+* TimePoint94
+
+::
+
+  - 2006-02-20 25:22:08.528
+
+* ImarisDataSet
+
+::
+
+  - ImarisDataSet
+
+* TimePoint93
+
+::
+
+  - 2006-02-20 25:12:23.734
+
+* TimePoint92
+
+::
+
+  - 2006-02-20 25:02:38.445
+
+* TimePoint74
+
+::
+
+  - 2006-02-20 22:07:02.065
+
+* TimePoint107
+
+::
+
+  - 2006-02-20 27:28:57.177
+
+* DetchannelIntegratorName
+
+::
+
+  - Integrator3
+
+* TimePoint75
+
+::
+
+  - 2006-02-20 22:16:48.204
+
+* TimePoint106
+
+::
+
+  - 2006-02-20 27:19:12.168
+
+* TimePoint76
+
+::
+
+  - 2006-02-20 22:26:33.433
+
+* TimePoint109
+
+::
+
+  - 2006-02-20 27:48:26.590
+
+* TimePoint77
+
+::
+
+  - 2006-02-20 22:36:19.117
+
+* TimePoint108
+
+::
+
+  - 2006-02-20 27:38:41.361
+
+* TimePoint78
+
+::
+
+  - 2006-02-20 22:46:03.957
+
+* RecordingEntryPrecession
+
+::
+
+  - 0.000
+
+* TimePoint103
+
+::
+
+  - 2006-02-20 26:49:56.491
+
+* TimePoint79
+
+::
+
+  - 2006-02-20 22:55:49.841
+
+* TimePoint102
+
+::
+
+  - 2006-02-20 26:40:11.322
+
+* TimePoint105
+
+::
+
+  - 2006-02-20 27:09:26.594
+
+* Foc_Plane_Dist
+
+::
+
+  - 200
+
+* TimePoint104
+
+::
+
+  - 2006-02-20 26:59:41.190
+
+* DatachannelEntryRatioTrack2
+
+::
+
+  - 0
+
+* VSlide_Matching_Qual
+
+::
+
+  - 95
+
+* DatachannelEntryRatioTrack1
+
+::
+
+  - 0
+
+* MF_TIFFCompress
+
+::
+
+  - 0
+
+* TimePoint80
+
+::
+
+  - 2006-02-20 23:05:34.620
+
+* TimePoint100
+
+::
+
+  - 2006-02-20 26:20:40.643
+
+* TimePoint101
+
+::
+
+  - 2006-02-20 26:30:25.842
+
+* TimePoint82
+
+::
+
+  - 2006-02-20 23:25:04.878
+
+* TimePoint81
+
+::
+
+  - 2006-02-20 23:15:20.129
+
+* ColorRange
+
+::
+
+  - 7
+  - 255
+  - 6564
+  - 308
+
+* TimePoint84
+
+::
+
+  - 2006-02-20 23:44:34.681
+
+* TimePoint83
+
+::
+
+  - 2006-02-20 23:34:49.092
+
+* ManufactorType
+
+::
+
+  - LSM
+
+* MF_Microscope_Config
+
+::
+
+  - 1
+
+* DetchannelEntryAmplifierOffsFirst
+
+::
+
+  - -0.004
+
+* RecordingEntryStopScanEvent
+
+::
+
+  - 0
+
+* TimePoint29
+
+::
+
+  - 2006-02-20 14:48:24.361
+
+* TimePoint28
+
+::
+
+  - 2006-02-20 14:38:39.237
+
+* Offset
+
+::
+
+  - 0
+
+* TimePoint27
+
+::
+
+  - 2006-02-20 14:28:53.928
+
+* TimePoint26
+
+::
+
+  - 2006-02-20 14:19:09.098
+
+* TimePoint115
+
+::
+
+  - 2006-02-20 28:46:59.536
+
+* LSMPinhole
+
+::
+
+  - 000
+  - 
+
+* TimePoint25
+
+::
+
+  - 2006-02-20 14:09:24.724
+
+* TimePoint116
+
+::
+
+  - 2006-02-20 28:56:45.140
+
+* TimePoint24
+
+::
+
+  - 2006-02-20 13:59:39.555
+
+* TimePoint113
+
+::
+
+  - 2006-02-20 28:27:28.857
+
+* TimePoint23
+
+::
+
+  - 2006-02-20 13:49:55.011
+
+* TimePoint114
+
+::
+
+  - 2006-02-20 28:37:14.837
+
+* TimePoint22
+
+::
+
+  - 2006-02-20 14:19:09.098
+
+* TimePoint119
+
+::
+
+  - 2006-02-20 29:26:01.082
+
+* TimePoint21
+
+::
+
+  - 2006-02-20 14:09:24.724
+
+* TimePoint20
+
+::
+
+  - 2006-02-20 13:59:39.555
+
+* TimePoint117
+
+::
+
+  - 2006-02-20 29:06:30.434
+
+* TimePoint118
+
+::
+
+  - 2006-02-20 29:16:15.838
+
+* MF_SG_YDim
+
+::
+
+  - 152
+
+* ImageSizeZ
+
+::
+
+  - 21
+  - 5
+  - 42
+  - 1
+  - 9
+
+* ImageSizeY
+
+::
+
+  - 128
+  - 151
+  - 256
+  - 1151
+  - 46
+
+* ImageSizeX
+
+::
+
+  - 128
+  - 136
+  - 256
+  - 493
+  - 77
+
+* TimePoint112
+
+::
+
+  - 2006-02-20 28:17:43.033
+
+* Label1
+
+::
+
+  - channels
+
+* TimePoint111
+
+::
+
+  - 2006-02-20 28:07:57.974
+
+* Label0
+
+::
+
+  - intensity
+
+* TimePoint110
+
+::
+
+  - 2006-02-20 27:58:12.150
+
+* Label3
+
+::
+
+  - Y
+
+* No_Foc_Levs
+
+::
+
+  - 3
+
+* Label2
+
+::
+
+  - X
+
+* MF_Fields_per_Pos_Y
+
+::
+
+  - 1
+
+* MF_Fields_per_Pos_X
+
+::
+
+  - 1
+
+* MF_Has_Bayer_Mask
+
+::
+
+  - 0
+
+* TimePoint17
+
+::
+
+  - 2006-02-20 13:30:24.578
+
+* TimePoint16
+
+::
+
+  - 2006-02-20 13:20:40.159
+
+* TrackEntryIsBleachAfterScanNumber
+
+::
+
+  - 0
+
+* TimePoint19
+
+::
+
+  - 2006-02-20 13:49:55.011
+
+* TimePoint18
+
+::
+
+  - 2006-02-20 13:40:09.967
+
+* DatachannelEntryRatioConst4
+
+::
+
+  - 0.000
+
+* TimePoint124
+
+::
+
+  - 2006-02-20 30:14:49.674
+
+* TimePoint13
+
+::
+
+  - 2006-02-20 12:51:26.382
+
+* TimePoint125
+
+::
+
+  - 2006-02-20 30:24:35.918
+
+* TimePoint12
+
+::
+
+  - 2006-02-20 12:41:41.948
+
+* RecordingEntryLinesPerPlane
+
+::
+
+  - 512
+
+* DatachannelEntryRatioConst3
+
+::
+
+  - 1.000
+
+* TimePoint126
+
+::
+
+  - 2006-02-20 30:34:22.352
+
+* TimePoint15
+
+::
+
+  - 2006-02-20 13:10:55.365
+
+* Label4
+
+::
+
+  - Z
+
+* DatachannelEntryRatioConst2
+
+::
+
+  - 0.000
+
+* TimePoint127
+
+::
+
+  - 2006-02-20 30:44:07.361
+
+* TimePoint14
+
+::
+
+  - 2006-02-20 13:01:10.181
+
+* DatachannelEntryRatioConst1
+
+::
+
+  - 0.000
+
+* TimePoint128
+
+::
+
+  - 2006-02-20 30:53:52.641
+
+* TimePoint129
+
+::
+
+  - 2006-02-20 31:03:37.135
+
+* MF_IrregPL
+
+::
+
+  - 0
+
+* TimePoint11
+
+::
+
+  - 2006-02-20 12:31:56.529
+
+* TimePoint10
+
+::
+
+  - 2006-02-20 12:22:11.609
+
+* TimePoint121
+
+::
+
+  - 2006-02-20 29:45:32.136
+
+* TimePoint120
+
+::
+
+  - 2006-02-20 29:35:47.112
+
+* TimePoint123
+
+::
+
+  - 2006-02-20 30:05:03.784
+
+* DetchannelEntryAcquire
+
+::
+
+  - 1
+
+* TimePoint122
+
+::
+
+  - 2006-02-20 29:55:18.070
+
+* TrackEntryCollimator2Position
+
+::
+
+  - 1
+
+* RecordingEntryImagesHeight
+
+::
+
+  - 512
+
+* TimePoint49
+
+::
+
+  - 2006-02-20 18:03:16.482
+
+* TrackEntryMultiplexType
+
+::
+
+  - 1
+
+* TimePoint44
+
+::
+
+  - 2006-02-20 17:14:34.237
+
+* VSP_Allow_Suffixing
+
+::
+
+  - 0
+
+* TimePoint43
+
+::
+
+  - 2006-02-20 17:04:49.178
+
+* MF_SG_XDim
+
+::
+
+  - 41
+
+* TimePoint139
+
+::
+
+  - 2006-02-20 32:41:13.777
+
+* TimePoint42
+
+::
+
+  - 2006-02-20 16:55:03.978
+
+* TimePoint41
+
+::
+
+  - 2006-02-20 16:45:19.319
+
+* TimePoint137
+
+::
+
+  - 2006-02-20 32:21:41.313
+
+* TimePoint48
+
+::
+
+  - 2006-02-20 17:53:31.843
+
+* TimePoint138
+
+::
+
+  - 2006-02-20 32:31:27.433
+
+* TimePoint47
+
+::
+
+  - 2006-02-20 17:43:47.419
+
+* TimePoint135
+
+::
+
+  - 2006-02-20 32:02:10.650
+
+* TimePoint46
+
+::
+
+  - 2006-02-20 17:34:02.500
+
+* TimePoint136
+
+::
+
+  - 2006-02-20 32:11:56.534
+
+* TimePoint45
+
+::
+
+  - 2006-02-20 17:24:18.001
+
+* TimePoint134
+
+::
+
+  - 2006-02-20 31:52:26.071
+
+* TimePoint133
+
+::
+
+  - 2006-02-20 31:42:41.342
+
+* TimePoint132
+
+::
+
+  - 2006-02-20 31:32:54.672
+
+* TimePoint131
+
+::
+
+  - 2006-02-20 31:23:08.193
+
+* TimePoint130
+
+::
+
+  - 2006-02-20 31:13:23.084
+
+* TimePoint50
+
+::
+
+  - 2006-02-20 18:13:01.086
+
+* TimePoint51
+
+::
+
+  - 2006-02-20 18:22:46.850
+
+* Max
+
+::
+
+  - 255
+
+* DetchannelPinholeName
+
+::
+
+  - PH3
+
+* MF_Gain
+
+::
+
+  - 16.00
+
+* RecordingEntryStartScanEvent
+
+::
+
+  - 0
+
+* MF_PL_Scan
+
+::
+
+  - 1
+
+* TimePoint39
+
+::
+
+  - 2006-02-20 16:25:49.421
+
+* TimePoint38
+
+::
+
+  - 2006-02-20 16:16:05.327
+
+* DetchannelEntryAmplifierGainFirst
+
+::
+
+  - 1.003
+
+* Creator
+
+::
+
+  - Imaris x64
+  - VSlide
+  - Imaris File Converter
+
+* TimePoint31
+
+::
+
+  - 2006-02-20 15:07:52.779
+
+* TimePoint30
+
+::
+
+  - 2006-02-20 14:58:08.715
+
+* TimePoint33
+
+::
+
+  - 2006-02-20 15:27:21.462
+
+* TimePoint32
+
+::
+
+  - 2006-02-20 15:17:37.403
+
+* TimePoint146
+
+::
+
+  - 2006-02-20 33:49:31.176
+
+* TimePoint35
+
+::
+
+  - 2006-02-20 15:46:51.835
+
+* MicroscopeMode
+
+::
+
+  - not known
+  - MetaCyte FL
+
+* TimePoint147
+
+::
+
+  - 2006-02-20 33:59:17.941
+
+* TimePoint34
+
+::
+
+  - 2006-02-20 15:37:07.086
+
+* TimePoint148
+
+::
+
+  - 2006-02-20 34:09:03.300
+
+* TimePoint37
+
+::
+
+  - 2006-02-20 16:06:20.843
+
+* MF_Image_Flip_Mode
+
+::
+
+  - 0
+
+* TimePoint36
+
+::
+
+  - 2006-02-20 15:56:36.909
+
+* Compression
+
+::
+
+  - uncompressed
+  - 8343
+
+* TimePoint149
+
+::
+
+  - 2006-02-20 34:18:49.464
+
+* TimePoint143
+
+::
+
+  - 2006-02-20 33:20:14.233
+
+* TimePoint142
+
+::
+
+  - 2006-02-20 33:10:30.159
+
+* TimePoint145
+
+::
+
+  - 2006-02-20 33:39:45.382
+
+* TimePoint144
+
+::
+
+  - 2006-02-20 33:30:00.543
+
+* TimePoint141
+
+::
+
+  - 2006-02-20 33:00:44.645
+
+* TimePoint140
+
+::
+
+  - 2006-02-20 32:50:59.616
+
+* TimePoint40
+
+::
+
+  - 2006-02-20 16:35:34.760
+
+* ThumbnailSize
+
+::
+
+  - 256
+
+* TrackEntryBleachScanNumber
+
+::
+
+  - 1
+
+* TimerEntryActivationTime
+
+::
+
+  - -1.000
+
+* MF_UniDirPositXY
+
+::
+
+  - 1
+
+* RecordingEntryObjective
+
+::
+
+  - Plan-Apochromat 63x/1.4 Oil DIC
+
+* Format
+
+::
+
+  - real
+
+* UnknownEntry_268435536
+
+::
+
+  - 0.000
+
+* RecordingEntryTimeSeries
+
+::
+
+  - 1
+
+* RecordingEntryUseReducedMemoryRois
+
+::
+
+  - 0
+
+* RecordingEntryImagesNumberPlanes
+
+::
+
+  - 5
+
+* UnknownEntry_268435528
+
+::
+
+  - 0
+
+* VSlide_Use_Only_MFField_Info
+
+::
+
+  - 0
+
+* UnknownEntry_268435529
+
+::
+
+  - 0.000
+
+* DetchannelEntryAmplifierOffsLast
+
+::
+
+  - -0.004
+
+* MF_BackToFront
+
+::
+
+  - 0
+
+* Metafer_Version
+
+::
+
+  - 3.10.132
+
+* VSP_Delete_InputFiles
+
+::
+
+  - 1
+
+* UnknownEntry_268435545
+
+::
+
+  - 1
+
+* UnknownEntry_268435547
+
+::
+
+  - 512
+
+* UnknownEntry_268435546
+
+::
+
+  - 512
+
+* UnknownEntry_268435541
+
+::
+
+  - 1030
+
+* UnknownEntry_268435540
+
+::
+
+  - 1300
+
+* UnknownEntry_268435543
+
+::
+
+  - 0.000
+
+* UnknownEntry_268435542
+
+::
+
+  - 0.000
+
+* RecordingEntryUseRois
+
+::
+
+  - 0
+
+* UnknownEntry_268435537
+
+::
+
+  - 1
+
+* UnknownEntry_268435538
+
+::
+
+  - 1
+
+* UnknownEntry_268435539
+
+::
+
+  - 0
+
+* BeamsplitterEntryFilterSet
+
+::
+
+  - FW1
+
+* RecordingEntryUser
+
+::
+
+  - Administrator
+
+* SigBits
+
+::
+
+  - 32
+
+* IllumchannelEntryPower
+
+::
+
+  - 2.000
+
+* PixelSize
+
+::
+
+  - 0
+
+* GammaCorrection
+
+::
+
+  - 000
+
+* LaserEntryName
+
+::
+
+  - DPSS 561-10
+
+* ImarisVersion
+
+::
+
+  - 5.5.0
+
+* VSP_Delete_Prev_InputFiles
+
+::
+
+  - 1
+
+* Order1
+
+::
+
+  - ch
+
+* Order0
+
+::
+
+  - bits
+
+* Order3
+
+::
+
+  - y
+
+* ManufactorString
+
+::
+
+  - 
+  - MetaSystems GmbH
+  - Generic Imaris 2.x
+
+* Order2
+
+::
+
+  - x
+
+* Order4
+
+::
+
+  - z
+
+* MF_Ext_FocImg_1:1_Scale
+
+::
+
+  - 1
+
+* ThumbnailMode
+
+::
+
+  - thumbnailMIP
+
+* DatachannelEntryRatioType
+
+::
+
+  - 0
+
+* VSlide_SysId
+
+::
+
+  - MF-743
+
+* MF_FOV_Heigth
+
+::
+
+  - 1024
+
+* ThumbnailY
+
+::
+
+  - 128
+
+* ThumbnailX
+
+::
+
+  - 128
+
+* RecordingEntryLineSpacing
+
+::
+
+  - 0.279
+
+* DetchannelEntrySpecialMode
+
+::
+
+  - 0
+
+* Filename
+
+::
+
+  - D:\Users\oKobler\Deconvoliert\071003_o383_o385_decon\o383_l1_high\20_o383_l1_high.ics
+  - ¸Kontiki¥mageBaseÅmages°G-FRB6CB.ims
+
+* DetchannelFilterSetName
+
+::
+
+  - EF3
+
+* RecordingEntryImagesNumberStacks
+
+::
+
+  - 231
+
+* Version
+
+::
+
+  - 6.0
+  - 1.0.122
+  - 5.7
+
+* Min
+
+::
+
+  - 5
+
+* Entries
+
+::
+
+  - 1
+  - 0
+  - 2
+
+* RecordingEntryNumberOfStacks
+
+::
+
+  - 1
+
+* RecordingEntryScanDirection
+
+::
+
+  - 0
+
+* Metafer_Slide_Pos
+
+::
+
+  - 3
+
+* MF_UniDirPositZ
+
+::
+
+  - 0
+
+* LaserEntryPower
+
+::
+
+  - 15.000
+
+* UnknownEntry_268435553
+
+::
+
+  - -10000000000.000
+
+* UnknownEntry_268435554
+
+::
+
+  - 0
+
+* UnknownEntry_268435551
+
+::
+
+  - 0.000
+
+* UnknownEntry_268435552
+
+::
+
+  - 1.000
+
+* UnknownEntry_268435555
+
+::
+
+  - 0
+
+* UnknownEntry_268435550
+
+::
+
+  - 0.000
+
+* MF_SW_MaxY
+
+::
+
+  - 22998
+
+* MF_SW_MaxX
+
+::
+
+  - 6431
+
+* HistogramMax
+
+::
+
+  - 255.000
+
+* Refraction_index_of_embedding_medium
+
+::
+
+  - 1.515
+
+* MF_Inhomgeneous_Correction
+
+::
+
+  - 0
+
+* UnknownEntry_268435549
+
+::
+
+  - 512
+
+* UnknownEntry_268435548
+
+::
+
+  - 512
+
+* Description
+
+::
+
+  - Nikon ICS file
+  - 
+  - Image courtesy of Dr. Martin Tewinkel, Olympus Europe, 1999
+
+* Lenspower
+
+::
+
+  - 100
+
+* ByteOrder1
+
+::
+
+  - 2
+
+* ByteOrder0
+
+::
+
+  - 1
+
+* ByteOrder3
+
+::
+
+  - 4
+
+* ByteOrder2
+
+::
+
+  - 3
+
+* ByteOrder4
+
+::
+
+  - 0
+
+* VSlide_Use_Blending
+
+::
+
+  - 1
+
+* VSlide_PCName
+
+::
+
+  - MF_743
+
+* FileName
+
+::
+
+  - p75Cherry M2 010-3~B.ims
+
+* RecordingEntrySamplesPerLine
+
+::
+
+  - 512
+
+* ScanType
+
+::
+
+  - 6
+
+* LSMPhotons
+
+::
+
+  - 1
+
+* RecordingEntryStopScanTime
+
+::
+
+  - 0.000
+
+* VSlide_Max_Angle_Error
+
+::
+
+  - 0.50
+
+* MF_ApplyMCyIP
+
+::
+
+  - 1
+
+* UnknownEntry_1073741881
+
+::
+
+  - 0.000
+
+* Coord
+
+::
+
+  - video
+
+* UnknownEntry_1073741880
+
+::
+
+  - Lens LSM
+
+* RecordingDate
+
+::
+
+  - 4713-11-24 00:00:00.000
+  - 2012-08-23 03:45:13
+  - 2003-05-12 00:00:00.000
+
+* UnknownEntry_1073741884
+
+::
+
+  - -1000000.000
+
+* DataSetDirectoryName
+
+::
+
+  - DataSet
+
+* UnknownEntry_1073741882
+
+::
+
+  - -1.000
+
+* TrackEntryBleachCount
+
+::
+
+  - 1
+
+* UnknownEntry_1073741883
+
+::
+
+  - 0
+
+* RecordingEntryNotes
+
+::
+
+  - HeLa cells
+
+* RecordingEntryName
+
+::
+
+  - 02
+
+* LSMEmissionWavelength
+
+::
+
+  - 000
+  - 
+
+* UnknownEntry_1073741874
+
+::
+
+  - 4294967295
+
+* UnknownEntry_1073741875
+
+::
+
+  - 0
+
+* UnknownEntry_1073741876
+
+::
+
+  - 0.000
+
+* UnknownEntry_1073741877
+
+::
+
+  - 0.000
+
+* UnknownEntry_1073741878
+
+::
+
+  - 0.000
+
+* UnknownEntry_1073741879
+
+::
+
+  - Tubelens
+
+* ExtMin0
+
+::
+
+  - -0.039
+  - -11783.000
+  - -0.125
+
+* LensPower
+
+::
+
+  - 20.02x
+
+* DetchannelDetectionChannelName
+
+::
+
+  - Ch3
+
+* ExtMin1
+
+::
+
+  - -0.039
+  - -24409.000
+  - -0.125
+
+* ExtMin2
+
+::
+
+  - -0.080
+  - 0.000
+  - -0.750
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* TrackEntrySamplingNumber
+
+::
+
+  - 2
+
+* ManufactorModel
+
+::
+
+  - LMS
+
+* TrackEntryIsBleachTrack
+
+::
+
+  - 1
+
+* RecordingEntryPlaneSpacing
+
+::
+
+  - 2.500
+
+* TrackEntryCollimator2Name
+
+::
+
+  - UV/Vis
+
+* Unit
+
+::
+
+  - um
+
+* NumberOfImages
+
+::
+
+  - 1
+
+* RefractionIndexEmbedding
+
+::
+
+  - not known
+
+* DatachannelEntryName
+
+::
+
+  - Ch3
+
+* VSP_Allow_Overwriting
+
+::
+
+  - 1
+
+* DatasetTimePoints
+
+::
+
+  - 1
+
+* CCDPixSize
+
+::
+
+  - 6.45
+
+* VSP_Opt_Size_Offline
+
+::
+
+  - 1
+
+* RecordingEntryScanMode
+
+::
+
+  - Stack
+
+* MF_Is_Color_Cam
+
+::
+
+  - 0
+
+* RecordingEntrySpecialScanMode
+
+::
+
+  - FocusStep
+
+* DetchannelPointDetectorName
+
+::
+
+  - Pmt3
+
+* TrackEntryCollimator1Name
+
+::
+
+  - IR/Vis
+
+* UnknownEntry_1073741849
+
+::
+
+  - 2.560
+
+* UnknownEntry_1073741848
+
+::
+
+  - 0.000
+
+* ColorMode
+
+::
+
+  - BaseColor
+
+* DatachannelEntrySampletype
+
+::
+
+  - 1
+
+* MF_MirrorH
+
+::
+
+  - 1
+
+* MF_BacklashCompensation
+
+::
+
+  - 0
+
+* MF_Camera_Model_Number
+
+::
+
+  - 10
+
+* RecordingEntrySample0y
+
+::
+
+  - 0.000
+
+* RecordingEntrySample0z
+
+::
+
+  - 5.000
+
+* LSMExcitationWavelength
+
+::
+
+  - 000
+  - 
+
+* RecordingEntrySample0x
+
+::
+
+  - 0.000
+
+* MF_No_Captured_Chans
+
+::
+
+  - 3
+
+* MF_MirrorV
+
+::
+
+  - 1
+
+* DatachannelEntryBitspersample
+
+::
+
+  - 8
+
+* RecordingEntryLinscanXySize
+
+::
+
+  - 512
+
+* TrackEntryCollimator1Position
+
+::
+
+  - 1
+
+* IllumchannelEntryName
+
+::
+
+  - 488
+
+* MF_SG_XInc
+
+::
+
+  - 392
+
+* Metafer_User
+
+::
+
+  - /
+
+* DetchannelEntryPinholeDiameter
+
+::
+
+  - 1000.000
+
+* IllumchannelEntryAcquire
+
+::
+
+  - 1
+
+* TrackEntryName
+
+::
+
+  - Bleach1
+
+* VSlide_WinUser
+
+::
+
+  - Fluorescence Scanner
+
+* MF_SW_MinX
+
+::
+
+  - -9661
+
+* Name
+
+::
+
+  - D:\Users\oKobler\Deconvoliert\071003_o383_o385_decon\o383_l1_high\20_o383_l1_high.ids
+  - Alexa647
+  - /home/bitplane/development/Beta/ReleaseDistrisFeb99/data/general/TG-FRB6C.ims
+
+* MF_SW_MinY
+
+::
+
+  - -24140
+
+* Noc
+
+::
+
+  - 2
+

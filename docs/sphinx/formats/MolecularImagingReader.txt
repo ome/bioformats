@@ -1,0 +1,669 @@
+*******************************************************************************
+MolecularImagingReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Molecular Imaging format reader.
+
+Key/value pairs
+===============================================================================
+
+* z_v_to_angs
+
+::
+
+  - 72.000000
+
+* servo_range
+
+::
+
+  - 215.000000
+
+* op_mode
+
+::
+
+  - AFM
+
+* 3D_lightrot_y
+
+::
+
+  - 0.000000
+
+* Parameter_8
+
+::
+
+  - 0.010000
+
+* 3D_lightrot_x
+
+::
+
+  - 0.000000
+
+* 3D_lightrot_z
+
+::
+
+  - 0.000000
+
+* time
+
+::
+
+  - 16:15:52
+
+* low_Ve_range
+
+::
+
+  - FALSE
+
+* Date
+
+::
+
+  - 21.11.1999
+
+* y_mod_ampl
+
+::
+
+  - 1.000000
+
+* scan_rot
+
+::
+
+  - 0.000000
+
+* y_v_to_angs_1
+
+::
+
+  - 0.080215
+
+* scale_mode
+
+::
+
+  - 0
+
+* 3D_birds_view
+
+::
+
+  - TRUE
+
+* servo_sense
+
+::
+
+  - -1.000000
+
+* co_window_lo
+
+::
+
+  - -0.004390
+
+* num_format
+
+::
+
+  - 0
+
+* UK
+
+::
+
+  - SOFT
+
+* aux_from
+
+::
+
+  - 0.000000
+
+* FilterHistory
+
+::
+
+  - 0  8  0  0  0  0  0  0  0  0
+
+* buffer_mode
+
+::
+
+  - 0
+
+* 3D_color_mode
+
+::
+
+  - 2
+
+* z_ramp_step
+
+::
+
+  - 0.600000
+
+* z_bias
+
+::
+
+  - 215.000015
+
+* setpoint
+
+::
+
+  - 0.000000
+
+* 3D_xyzrot_x
+
+::
+
+  - 0.000000
+
+* 3D_xyzrot_z
+
+::
+
+  - 0.000000
+
+* 3D_xyzrot_y
+
+::
+
+  - 0.000000
+
+* modulation
+
+::
+
+  - 0.100000
+
+* source_mode
+
+::
+
+  - 13
+
+* 3D_resolution
+
+::
+
+  - 2
+
+* auto_adjust
+
+::
+
+  - FALSE
+
+* rt_smooth
+
+::
+
+  - FALSE
+
+* i_servo_gain
+
+::
+
+  - 0.125893
+
+* CalFactor_G1
+
+::
+
+  - 0.000000
+
+* CalFactor_G2
+
+::
+
+  - 0.000000
+
+* aux_to
+
+::
+
+  - 200.000000
+
+* auto_z_cnter
+
+::
+
+  - FALSE
+
+* image_id_ole
+
+::
+
+  - 36485.677685
+
+* DisplayTiltX
+
+::
+
+  - 0.000000
+
+* DisplayTiltY
+
+::
+
+  - 0.000000
+
+* up_dwn_toggle
+
+::
+
+  - TRUE
+
+* 3D_draw_ax
+
+::
+
+  - 5
+
+* 3D_lightfrac
+
+::
+
+  - 20.000000
+
+* y_mod_offset
+
+::
+
+  - 0.000000
+
+* Color_file
+
+::
+
+  - gold
+
+* convers_coeff
+
+::
+
+  - 1.000000
+
+* y_v_to_angs_0
+
+::
+
+  - 165.980423
+
+* square_scan
+
+::
+
+  - TRUE
+
+* time_constant
+
+::
+
+  - 8.726400
+
+* aux_step
+
+::
+
+  - 0.000000
+
+* line_freq
+
+::
+
+  - 3.255208
+
+* tip_restore
+
+::
+
+  - FALSE
+
+* tip_bias
+
+::
+
+  - -6.729001
+
+* z_ramp_ampl
+
+::
+
+  - 100.000000
+
+* tilt_angle_zy
+
+::
+
+  - 0.000000
+
+* tilt_angle_zx
+
+::
+
+  - 0.000000
+
+* length_y
+
+::
+
+  - 30000.000000
+
+* buffer_id
+
+::
+
+  - 1
+
+* max_z_volt
+
+::
+
+  - 215.000000
+
+* rt_median
+
+::
+
+  - FALSE
+
+* tip_lift
+
+::
+
+  - TRUE
+
+* auto_z_period
+
+::
+
+  - 0
+
+* software
+
+::
+
+  - UK2002S 4.18
+
+* Parameter_22
+
+::
+
+  - 10.000000
+
+* CalFactor_E2
+
+::
+
+  - 0.000000
+
+* average_input
+
+::
+
+  - TRUE
+
+* CalFactor_E1
+
+::
+
+  - 0.000000
+
+* stm_log_on
+
+::
+
+  - FALSE
+
+* hysteresis_x
+
+::
+
+  - 0.000000
+
+* hysteresis_y
+
+::
+
+  - 0.000000
+
+* CalFactor_D2
+
+::
+
+  - 0.000000
+
+* smooth_scan
+
+::
+
+  - TRUE
+
+* co_window_hi
+
+::
+
+  - 0.000610
+
+* multiple_scan
+
+::
+
+  - FALSE
+
+* start_y
+
+::
+
+  - 516.600037
+
+* max_x_volt
+
+::
+
+  - 215.000000
+
+* start_x
+
+::
+
+  - 35729.867188
+
+* buffername
+
+::
+
+  - 20-11_001
+
+* 3D_draw_mode
+
+::
+
+  - -2
+
+* Parameter_18
+
+::
+
+  - 1.000000
+
+* Parameter_17
+
+::
+
+  - -1.000000
+
+* Parameter_19
+
+::
+
+  - 0.000000
+
+* collect_mode
+
+::
+
+  - 2
+
+* Parameter_16
+
+::
+
+  - 0.000000
+
+* Parameter_15
+
+::
+
+  - 20.000000
+
+* aux_dwell
+
+::
+
+  - 100.000000
+
+* Parameter_12
+
+::
+
+  - 0.010000
+
+* Parameter_11
+
+::
+
+  - 100.000000
+
+* 3D_z_scaling
+
+::
+
+  - 3.000000
+
+* CalFactor_D1
+
+::
+
+  - 0.000000
+
+* length_x
+
+::
+
+  - 30000.000000
+
+* line_descript
+
+::
+
+  - DBDBDBDB
+
+* samples_y
+
+::
+
+  - 256
+
+* samples_x
+
+::
+
+  - 256
+
+* CalFactor_C1
+
+::
+
+  - 0.000000
+
+* CalFactor_C2
+
+::
+
+  - 0.000000
+
+* max_y_volt
+
+::
+
+  - 215.000000
+
+* scan_dir
+
+::
+
+  - 1
+
+* p_servo_gain
+
+::
+
+  - 0.153109
+
+* 3D_height
+
+::
+
+  - 1.000000
+
+* Data_type
+
+::
+
+  - attached
+
+* Input_filter
+
+::
+
+  - 0.000000
+
+* comp_entry
+
+::
+
+  - 4
+
+* drawmode
+
+::
+
+  - 4
+
+* x_v_to_angs_1
+
+::
+
+  - 0.102363
+
+* x_v_to_angs_0
+
+::
+
+  - 122.147911
+
+* 3D_heightfrac
+
+::
+
+  - 80.000000
+
+* filename
+
+::
+
+  - N:\20-11_001.STP
+

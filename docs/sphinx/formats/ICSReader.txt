@@ -1,0 +1,93 @@
+*******************************************************************************
+ICSReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Image Cytometry Standard format reader.
+
+Key/value pairs
+===============================================================================
+
+* layout coordinates
+
+::
+
+  - video
+
+* representation compression
+
+::
+
+  - uncompressed
+
+* parameter labels
+
+::
+
+  - intensity x-position y-position
+
+* layout significant_bits
+
+::
+
+  - 8
+
+* history text
+
+::
+
+  - 
+
+* ics_version
+
+::
+
+  - 1.0
+
+* layout sizes
+
+::
+
+  - 8 256 256
+
+* representation format
+
+::
+
+  - integer
+
+* layout order
+
+::
+
+  - bits x y
+
+* representation byte_order
+
+::
+
+  - 1
+
+* parameter origin
+
+::
+
+  - 0.000000 0.000000 0.000000
+
+* filename
+
+::
+
+  - qdna1
+
+* layout parameters
+
+::
+
+  - 3
+
+* representation sign
+
+::
+
+  - unsigned
+

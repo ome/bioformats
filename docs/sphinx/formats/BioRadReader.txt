@@ -1,0 +1,1774 @@
+*******************************************************************************
+BioRadReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Bio-Rad PIC format reader.
+
+Key/value pairs
+===============================================================================
+
+* SETTING_02_ID
+
+::
+
+  - 1
+
+* SETTING_02_NAME
+
+::
+
+  - Sim1
+  - 488
+
+* SETTING_02_TRANS_DET_COUNT
+
+::
+
+  - 1
+  - 0
+
+* LAST_SETTING_IS_LINE_BY_LINE
+
+::
+
+  - 0
+
+* SETTING_02_2PH_01_GAIN
+
+::
+
+  - 0.195000
+
+* SETTING_01_ID
+
+::
+
+  - 0
+
+* SETTING_01_IS_LOCK_PRIMARY_LASERS
+
+::
+
+  - 0
+
+* SETTING_02_2PH_01_ID
+
+::
+
+  - 5
+
+* SETTING_01_DET_01_DICHROIC
+
+::
+
+  - 100% Det 1
+
+* SETTING_01_MIXER_02_ID
+
+::
+
+  - 2
+
+* SETTING_01_IS_SIMULTANEOUS
+
+::
+
+  - 1
+
+* SETTING_01_LASER_COUNT
+
+::
+
+  - 4
+  - 1
+
+* SETTING_02_IS_LOCK_MIXERS
+
+::
+
+  - 0
+
+* SETTING_02_LASER_01_NAME
+
+::
+
+  - Ar
+
+* SETTING_02_LASER_COUNT
+
+::
+
+  - 4
+  - 1
+
+* SETTING_02_LASER_01_ND_ON
+
+::
+
+  - 0
+
+* AXIS_0 intensity (Y)
+
+::
+
+  - 1.000000e+000
+
+* SETTING_02_CYCLES
+
+::
+
+  - 10
+  - 50
+
+* SETTING_02_2PH_02_NAME
+
+::
+
+  - DirectDetector 2
+
+* INFO_IS_RADIANCE
+
+::
+
+  - 1
+
+* SETTING_02_LASER_01_FILTER
+
+::
+
+  - 0.000000
+
+* SETTING_01_MIXER_02_NAME
+
+::
+
+  - PMT 1
+
+* SETTING_02_LASER_01_EXC_FLT
+
+::
+
+  - 
+
+* LAST_SETTING_IS_SIMULTANEOUS
+
+::
+
+  - 1
+
+* SETTING_02_DET_01_PHOTON_COUNTING
+
+::
+
+  - 0
+
+* Timestamp #108
+
+::
+
+  - 1113.593
+
+* Timestamp #109
+
+::
+
+  - 1123.906
+
+* SETTING_02_LASER_04_LINE_01_ID
+
+::
+
+  - 1
+
+* SETTING_02_DET_01_ID
+
+::
+
+  - 1
+
+* SETTING_01_IS_LOCK_OPTICS
+
+::
+
+  - 0
+
+* INFO_OBJECTIVE_NAME
+
+::
+
+  - 40x Oil
+
+* SETTING_01_MIXER_01_MODE
+
+::
+
+  - 0
+
+* SETTING_01_DET_01_EMIT_FLT
+
+::
+
+  - OPEN
+
+* SETTINGS_COUNT
+
+::
+
+  - 2
+
+* SETTING_01_MIXER_02_MODE
+
+::
+
+  - 0
+
+* SETTING_01_IS_AUTO_ADVANCE
+
+::
+
+  - 0
+
+* Timestamp #110
+
+::
+
+  - 1134.203
+
+* file_id
+
+::
+
+  - 12345
+
+* Timestamp #112
+
+::
+
+  - 1154.812
+
+* Timestamp #111
+
+::
+
+  - 1144.515
+
+* Timestamp #114
+
+::
+
+  - 1175.421
+
+* SETTING_02_2PH_01_OFFSET
+
+::
+
+  - -4.300000
+
+* Timestamp #113
+
+::
+
+  - 1165.125
+
+* Timestamp #116
+
+::
+
+  - 1196.031
+
+* SETTING_02_DET_01_OFFSET
+
+::
+
+  - 0.000000
+
+* Timestamp #115
+
+::
+
+  - 1185.718
+
+* Timestamp #117
+
+::
+
+  - 1206.328
+
+* SETTING_01_MIXER_COUNT
+
+::
+
+  - 2
+  - 1
+
+* SETTING_02_MIXER_01_NAME
+
+::
+
+  - DirectDetector 1
+  - PMT 1
+
+* SETTING_01_DET_01_NAME
+
+::
+
+  - PMT 1
+
+* Z_CORRECT_FACTOR
+
+::
+
+  - 1.000000 1.647446
+  - 1.000000 1.000000
+
+* SETTING_01_DET_01_PHOTON_COUNTING
+
+::
+
+  - 0
+
+* AXIS_2 distance (Y) in microns
+
+::
+
+  - 6.070000e-001
+  - 2.642857e-001
+
+* SETTING_02_PANE_ID
+
+::
+
+  - 0
+
+* SETTING_01_DET_01_OFFSET
+
+::
+
+  - 0.000000
+
+* Timestamp #103
+
+::
+
+  - 1062.078
+
+* Timestamp #102
+
+::
+
+  - 1051.765
+
+* Timestamp #101
+
+::
+
+  - 1041.468
+
+* Timestamp #100
+
+::
+
+  - 1031.156
+
+* Timestamp #107
+
+::
+
+  - 1103.296
+
+* notes
+
+::
+
+  - true
+
+* Timestamp #106
+
+::
+
+  - 1092.984
+
+* Timestamp #105
+
+::
+
+  - 1082.687
+
+* Timestamp #104
+
+::
+
+  - 1072.375
+
+* Timestamp #080
+
+::
+
+  - 825.078
+
+* INFO_OBJECTIVE_ZOOM
+
+::
+
+  - 1
+  - 1.4
+
+* SETTING_02_LASER_04_LINE_01_SEC
+
+::
+
+  - 0.0
+
+* AXIS_3 distance (Y) in microns
+
+::
+
+  - 6.070000e-001
+  - 2.642857e-001
+
+* SETTING_01_PANE_ID
+
+::
+
+  - 0
+
+* AXIS_4 distance (X) in microns
+
+::
+
+  - -4.400000e+001
+  - 0.000000e+000
+
+* SETTING_02_IS_LINE_BY_LINE
+
+::
+
+  - 0
+
+* Timestamp #089
+
+::
+
+  - 917.812
+
+* SETTING_02_LASER_04_LINE_01_POWER
+
+::
+
+  - 25.7
+
+* SETTING_01_IS_LOCK_SECONDARY_LASERS
+
+::
+
+  - 0
+
+* SETTING_02_LASER_01_LINE_01_ID
+
+::
+
+  - 3
+
+* SETTING_02_2PH_02_GAIN
+
+::
+
+  - 9.300000
+
+* Timestamp #083
+
+::
+
+  - 856.000
+
+* SETTING_02_MIXER_02_MODE
+
+::
+
+  - 0
+
+* Timestamp #084
+
+::
+
+  - 866.296
+
+* SETTING_01_LASER_01_ND_ON
+
+::
+
+  - 0
+
+* LENS_MAGNIFICATION
+
+::
+
+  - 40.000000
+  - 1.000000
+
+* Timestamp #081
+
+::
+
+  - 835.390
+
+* Timestamp #082
+
+::
+
+  - 845.687
+
+* Timestamp #087
+
+::
+
+  - 897.203
+
+* Timestamp #088
+
+::
+
+  - 907.515
+
+* Timestamp #085
+
+::
+
+  - 876.593
+
+* SETTING_01_2PH_DET_COUNT
+
+::
+
+  - 4
+  - 0
+
+* Timestamp #086
+
+::
+
+  - 886.906
+
+* SETTING_02_MIXER_01_ID
+
+::
+
+  - 1
+
+* SETTING_02_DET_01_POLARIZATION_FILTER
+
+::
+
+  - 0
+
+* SETTING_02_IS_LOCK_PRIMARY_LASERS
+
+::
+
+  - 0
+
+* SETTING_02_2PH_01_NAME
+
+::
+
+  - DirectDetector 1
+
+* SETTING_02_2PH_02_OFFSET
+
+::
+
+  - -2.500000
+
+* SETTING_02_CYCLE_TIME
+
+::
+
+  - 0
+  - 420
+
+* Timestamp #091
+
+::
+
+  - 938.421
+
+* Timestamp #090
+
+::
+
+  - 928.125
+
+* PIXEL_BIT_DEPTH
+
+::
+
+  - 8
+
+* INFO_SCAN_ROTATE
+
+::
+
+  - 0
+
+* lens
+
+::
+
+  - 40
+  - 1
+
+* INFO_FILTER_NAME
+
+::
+
+  - Direct
+
+* ramp1_max
+
+::
+
+  - 255
+  - 220
+
+* AXIS_2 distance (X) in microns
+
+::
+
+  - 0.000000e+000
+
+* Timestamp #092
+
+::
+
+  - 948.734
+
+* Timestamp #093
+
+::
+
+  - 959.031
+
+* Timestamp #094
+
+::
+
+  - 969.343
+
+* Timestamp #095
+
+::
+
+  - 979.640
+
+* Timestamp #096
+
+::
+
+  - 989.953
+
+* SETTING_02_IS_TWO_PHOTON_LENS
+
+::
+
+  - 1
+  - 0
+
+* Timestamp #097
+
+::
+
+  - 1000.250
+
+* Timestamp #098
+
+::
+
+  - 1010.562
+
+* Timestamp #099
+
+::
+
+  - 1020.859
+
+* SETTING_02_MIXER_01_MODE
+
+::
+
+  - 0
+
+* AXIS_3 distance (X) in microns
+
+::
+
+  - 0.000000e+000
+
+* AXIS_4 distance (Y) in microns
+
+::
+
+  - 1.000000e+000
+  - 8.200000e-001
+
+* SETTING_02_LASER_01_LINE_01_POWER
+
+::
+
+  - 12.5
+
+* SETTING_01_IS_LOCK_DETECTORS
+
+::
+
+  - 0
+
+* name
+
+::
+
+  - untitled54_raw.PIC
+  - arwen0205_raw.PIC
+
+* SETTING_01_DET_01_CONNECT_LASER
+
+::
+
+  - 11
+
+* SETTING_02_DETECTOR_COUNT
+
+::
+
+  - 3
+  - 1
+
+* SETTING_02_IS_LOCK_SECONDARY_LASERS
+
+::
+
+  - 0
+
+* SETTING_02_LASER_04_ND_ON
+
+::
+
+  - 0
+
+* SETTING_02_IS_AUTO_ADVANCE
+
+::
+
+  - 0
+
+* SETTING_02_IS_SIMULTANEOUS
+
+::
+
+  - 1
+
+* color2
+
+::
+
+  - 7
+
+* color1
+
+::
+
+  - 7
+
+* SETTING_01_LASER_01_PICK_OFF
+
+::
+
+  - 
+
+* Timestamp #040
+
+::
+
+  - 412.906
+
+* Timestamp #042
+
+::
+
+  - 433.515
+
+* Timestamp #041
+
+::
+
+  - 423.218
+
+* Timestamp #044
+
+::
+
+  - 454.125
+
+* SETTING_01_LASER_01_ID
+
+::
+
+  - 1
+
+* Timestamp #043
+
+::
+
+  - 443.828
+
+* Timestamp #046
+
+::
+
+  - 474.734
+
+* Timestamp #045
+
+::
+
+  - 464.437
+
+* SETTING_02_LASER_04_FILTER
+
+::
+
+  - 0.000000
+
+* Timestamp #048
+
+::
+
+  - 495.343
+
+* Timestamp #047
+
+::
+
+  - 485.046
+
+* ny
+
+::
+
+  - 512
+
+* nx
+
+::
+
+  - 512
+
+* SETTING_01_LASER_01_LINE_COUNT
+
+::
+
+  - 4
+  - 0
+
+* Timestamp #049
+
+::
+
+  - 505.656
+
+* SETTING_02_DET_01_DICHROIC
+
+::
+
+  - 100% Det 1
+
+* SETTING_02_LASER_04_NAME
+
+::
+
+  - Chameleon
+
+* npic
+
+::
+
+  - 117
+  - 71
+
+* SETTING_01_DET_01_GAIN
+
+::
+
+  - 1.000000
+
+* SETTING_02_MIXER_02_NAME
+
+::
+
+  - DirectDetector 2
+
+* SETTING_01_LASER_01_EXC_FLT
+
+::
+
+  - 
+
+* SETTING_02_LASER_04_EXC_FLT
+
+::
+
+  - 
+
+* Timestamp #051
+
+::
+
+  - 526.265
+
+* Timestamp #050
+
+::
+
+  - 515.953
+
+* Timestamp #055
+
+::
+
+  - 567.468
+
+* Timestamp #054
+
+::
+
+  - 557.171
+
+* Timestamp #053
+
+::
+
+  - 546.875
+
+* SETTING_02_2PH_02_EMIT_FLT
+
+::
+
+  - 670 UVDCLP
+
+* Timestamp #052
+
+::
+
+  - 536.562
+
+* Timestamp #059
+
+::
+
+  - 608.687
+
+* ramp1_min
+
+::
+
+  - 0
+  - 32
+
+* Timestamp #058
+
+::
+
+  - 598.390
+
+* Timestamp #057
+
+::
+
+  - 588.078
+
+* Timestamp #056
+
+::
+
+  - 577.781
+
+* SETTING_02_2PH_02_CONNECT_LASER
+
+::
+
+  - 41
+
+* SETTING_02_LASER_04_LINE_COUNT
+
+::
+
+  - 1
+
+* RAMP1_MAX
+
+::
+
+  - 255
+  - 220
+
+* SCALE_FACTOR
+
+::
+
+  - 20.000000
+
+* SETTING_02_2PH_01_EMIT_FLT
+
+::
+
+  - G/R
+
+* SETTING_02_DET_01_GAIN
+
+::
+
+  - 39.799999
+
+* SETTING_02_DET_01_EMIT_FLT
+
+::
+
+  - HQ500LP
+
+* Timestamp #064
+
+::
+
+  - 660.218
+
+* Timestamp #063
+
+::
+
+  - 649.906
+
+* Timestamp #066
+
+::
+
+  - 680.828
+
+* GUID
+
+::
+
+  - {6214972F-4E7A-4B2A-9D00-B1A213F3D23E}
+  - {44447233-3000-45DD-A7D1-54122FFC956C}
+
+* Timestamp #065
+
+::
+
+  - 670.515
+
+* Timestamp #060
+
+::
+
+  - 619.000
+
+* Timestamp #062
+
+::
+
+  - 639.609
+
+* Timestamp #061
+
+::
+
+  - 629.296
+
+* SETTING_02_2PH_01_CONNECT_LASER
+
+::
+
+  - 41
+
+* PIC_FF_VERSION
+
+::
+
+  - 5.0
+  - 4.5
+
+* SETTING_01_DETECTOR_COUNT
+
+::
+
+  - 3
+  - 1
+
+* Timestamp #068
+
+::
+
+  - 701.437
+
+* Timestamp #067
+
+::
+
+  - 691.125
+
+* AXIS_9 RGB type (Y)
+
+::
+
+  - 2.000000e+000
+  - 0.000000e+000
+
+* Timestamp #069
+
+::
+
+  - 711.734
+
+* SETTING_01_IS_LINE_BY_LINE
+
+::
+
+  - 0
+
+* SETTING_01_CYCLES
+
+::
+
+  - 10
+
+* SETTING_01_IS_TWO_PHOTON_LENS
+
+::
+
+  - 0
+
+* METHOD_NAME
+
+::
+
+  - DAPI + A568  sim dds
+  - arwenblue
+
+* edited
+
+::
+
+  - 0
+
+* Timestamp #077
+
+::
+
+  - 794.171
+
+* Timestamp #076
+
+::
+
+  - 783.859
+
+* Timestamp #075
+
+::
+
+  - 773.562
+
+* SETTING_01_MIXER_01_NAME
+
+::
+
+  - PMT 1
+
+* Timestamp #074
+
+::
+
+  - 763.250
+
+* Timestamp #073
+
+::
+
+  - 752.953
+
+* Timestamp #072
+
+::
+
+  - 742.640
+
+* SETTING_01_LASER_01_NAME
+
+::
+
+  - Ar
+
+* Timestamp #071
+
+::
+
+  - 732.343
+
+* Timestamp #070
+
+::
+
+  - 722.031
+
+* AXIS_9 RGB type (X)
+
+::
+
+  - 0.000000e+000
+
+* Timestamp #079
+
+::
+
+  - 814.781
+
+* Timestamp #078
+
+::
+
+  - 804.468
+
+* SETTING_02_LASER_01_ID
+
+::
+
+  - 1
+
+* INFO_PIXEL_DWELL
+
+::
+
+  - 3.77604e-005
+  - 2.60417e-006
+
+* SETTING_02_LASER_01_LINE_01_SEC
+
+::
+
+  - 0.0
+
+* SETTING_02_2PH_02_PHOTON_COUNTING
+
+::
+
+  - 0
+
+* ramp2_max
+
+::
+
+  - 255
+
+* SETTING_02_DET_01_BLOCK_FLT
+
+::
+
+  - OPEN
+
+* Timestamp #001
+
+::
+
+  - 11.046
+
+* ramp2_min
+
+::
+
+  - 0
+
+* Timestamp #002
+
+::
+
+  - 21.359
+
+* Timestamp #003
+
+::
+
+  - 31.656
+
+* Timestamp #004
+
+::
+
+  - 41.968
+
+* Timestamp #005
+
+::
+
+  - 52.265
+
+* SETTING_02_IS_LOCK_DETECTORS
+
+::
+
+  - 0
+
+* Timestamp #006
+
+::
+
+  - 62.578
+
+* Timestamp #007
+
+::
+
+  - 72.875
+
+* Timestamp #008
+
+::
+
+  - 83.187
+
+* SETTING_01_DET_01_BLOCK_FLT
+
+::
+
+  - OPEN
+
+* SETTING_02_LASER_01_PICK_OFF
+
+::
+
+  - 
+
+* INFO_OBJECTIVE_MAGNIFICATION
+
+::
+
+  - 40
+
+* SETTING_01_DET_01_ID
+
+::
+
+  - 1
+
+* RAMP_GAMMA1
+
+::
+
+  - 1.000000e+000
+  - 2.000000e+000
+
+* SETTING_02_DET_01_IRIS
+
+::
+
+  - 1.500000
+
+* SETTING_01_DET_01_POLARIZATION_FILTER
+
+::
+
+  - 0
+
+* INFO_PAN_COORDS_Y
+
+::
+
+  - 0
+  - 0.0142857
+
+* INFO_PAN_COORDS_X
+
+::
+
+  - 0
+  - 0.0285714
+
+* SETTING_02_DET_01_CONNECT_LASER
+
+::
+
+  - 13
+
+* SETTING_02_2PH_02_ID
+
+::
+
+  - 6
+
+* Timestamp #014
+
+::
+
+  - 145.000
+
+* Timestamp #015
+
+::
+
+  - 155.312
+
+* Timestamp #012
+
+::
+
+  - 124.390
+
+* Timestamp #013
+
+::
+
+  - 134.703
+
+* Timestamp #018
+
+::
+
+  - 186.218
+
+* SETTING_02_IS_LOCK_OPTICS
+
+::
+
+  - 0
+
+* Timestamp #019
+
+::
+
+  - 196.531
+
+* Timestamp #016
+
+::
+
+  - 165.609
+
+* SETTING_02_LASER_04_PICK_OFF
+
+::
+
+  - 90
+
+* SETTING_01_LASER_01_FILTER
+
+::
+
+  - 0.000000
+
+* Timestamp #017
+
+::
+
+  - 175.921
+
+* Timestamp #010
+
+::
+
+  - 103.781
+
+* SETTING_02_MIXER_COUNT
+
+::
+
+  - 2
+  - 1
+
+* SETTING_01_NAME
+
+::
+
+  - Sim0
+
+* Timestamp #011
+
+::
+
+  - 114.093
+
+* SETTING_02_2PH_01_PHOTON_COUNTING
+
+::
+
+  - 0
+
+* mag_factor
+
+::
+
+  - 1.0
+
+* SETTING_01_IS_LOCK_MIXERS
+
+::
+
+  - 0
+
+* SETTING_02_LASER_04_ID
+
+::
+
+  - 4
+
+* SETTING_02_LASER_01_LINE_COUNT
+
+::
+
+  - 1
+
+* Timestamp #009
+
+::
+
+  - 93.484
+
+* Timestamp #027
+
+::
+
+  - 278.953
+
+* Timestamp #028
+
+::
+
+  - 289.265
+
+* Timestamp #029
+
+::
+
+  - 299.562
+
+* Timestamp #023
+
+::
+
+  - 237.750
+
+* Timestamp #024
+
+::
+
+  - 248.046
+
+* SETTING_01_MIXER_01_ID
+
+::
+
+  - 1
+
+* Timestamp #025
+
+::
+
+  - 258.343
+
+* Timestamp #026
+
+::
+
+  - 268.656
+
+* Timestamp #020
+
+::
+
+  - 206.828
+
+* Timestamp #021
+
+::
+
+  - 217.140
+
+* Timestamp #022
+
+::
+
+  - 227.437
+
+* INFO_FRAME_RATE
+
+::
+
+  - 0.0972139
+  - 0.976563
+
+* SETTING_01_CYCLE_TIME
+
+::
+
+  - 0
+  - 1
+
+* RAMP1_MIN
+
+::
+
+  - 0
+  - 32
+
+* SETTING_01_DET_01_IRIS
+
+::
+
+  - 1.000000
+
+* image_number
+
+::
+
+  - 0
+
+* AXIS_0 intensity (X)
+
+::
+
+  - 0.000000e+000
+
+* INFO_RASTER_RATE
+
+::
+
+  - 50
+  - 500
+
+* SETTING_02_DET_01_NAME
+
+::
+
+  - PMT 1
+
+* SETTING_02_LASER_04_LINE_01_COLOUR
+
+::
+
+  - 780
+
+* SETTING_02_LASER_01_LINE_01_COLOUR
+
+::
+
+  - 488
+
+* Timestamp #038
+
+::
+
+  - 392.312
+
+* Timestamp #039
+
+::
+
+  - 402.609
+
+* SETTING_02_2PH_DET_COUNT
+
+::
+
+  - 4
+  - 0
+
+* Timestamp #036
+
+::
+
+  - 371.703
+
+* SETTING_02_MIXER_02_ID
+
+::
+
+  - 2
+
+* Timestamp #037
+
+::
+
+  - 382.000
+
+* Timestamp #034
+
+::
+
+  - 351.093
+
+* Timestamp #035
+
+::
+
+  - 361.390
+
+* Note #1
+
+::
+
+  - level=-1; num=0; status=1; type=VARIABLE; x=0; y=0; text=AXIS_0 004 0.000000e+000 1.000000e+000 Intensity
+
+* Timestamp #032
+
+::
+
+  - 330.484
+
+* Note #2
+
+::
+
+  - level=-1; num=0; status=1; type=VARIABLE; x=0; y=0; text=AXIS_4 001 -4.400000e+001 1.000000e+000 Microns
+  - level=-1; num=0; status=1; type=VARIABLE; x=0; y=0; text=AXIS_4 001 0.000000e+000 8.200000e-001 Microns
+
+* Timestamp #033
+
+::
+
+  - 340.781
+
+* Note #3
+
+::
+
+  - level=-1; num=0; status=1; type=VARIABLE; x=0; y=0; text=AXIS_9 011 0.000000e+000 2.000000e+000 RGB channel
+  - level=-1; num=0; status=1; type=VARIABLE; x=0; y=0; text=AXIS_5 002 0.000000e+000 4.200000e+002 Seconds
+
+* Timestamp #030
+
+::
+
+  - 309.875
+
+* Note #4
+
+::
+
+  - level=-1; num=0; status=1; type=VARIABLE; x=0; y=0; text=AXIS_9 011 0.000000e+000 0.000000e+000 RGB channel
+
+* Timestamp #031
+
+::
+
+  - 320.171
+
+* SETTING_01_TRANS_DET_COUNT
+
+::
+
+  - 1
+  - 0
+
+* merged
+
+::
+
+  - MERGE_OFF
+

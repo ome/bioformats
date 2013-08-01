@@ -1,0 +1,18 @@
+*******************************************************************************
+KhorosReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Khoros XV format reader.
+
+Key/value pairs
+===============================================================================
+
+* Comment
+
+::
+
+  - This image came from a photograph of Tom and Sue Sauer's cat, Tigger, when       he was but a kitten in the foliage.       
+  - This is a synthesized image;  it was not raytraced.  It was created with       various shading algorithms.  The code that generated this was provided by       Prof. Micheal Rodriguez of UNM in 1984.       
+  - This is a nuclear magnetic resonance image; it shows a vertical cutaway of       a person's head that was provided by the Center for Non-Invasive Diagnostics       at the University of New Mexico.       
+  - This is a Synthetic Aperture Radar (SAR) image of the        Willow Run Airport in Michigan. It comes courtesy of the       Environmental Research Institute of Michigan, aka ERIM, in Ann       Arbor.              
+

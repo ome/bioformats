@@ -1,0 +1,126 @@
+*******************************************************************************
+NDPIReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Hamamatsu NDPI format reader.
+
+Key/value pairs
+===============================================================================
+
+* Software
+
+::
+
+  - NDP.scan
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* Instrument Make
+
+::
+
+  - Hamamatsu
+
+* Instrument Model
+
+::
+
+  - NanoZoomer
+
+* ImageLength
+
+::
+
+  - 33792
+  - 50688
+  - 38144
+  - 30464
+  - 32512
+  - 32768
+
+* XResolution
+
+::
+
+  - 21995
+
+* Compression
+
+::
+
+  - JPEG
+
+* ReferenceBlackWhite
+
+::
+
+  - 0
+
+* DateTime
+
+::
+
+  - 2009:12:31 09:18:06
+  - 2009:12:31 10:08:51
+  - 2009:12:31 09:11:46
+  - 2009:12:18 09:35:45
+  - 2009:12:18 09:23:26
+  - 2009:12:18 09:29:25
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - RGB
+
+* SamplesPerPixel
+
+::
+
+  - 3
+
+* YResolution
+
+::
+
+  - 21975
+
+* ImageWidth
+
+::
+
+  - 79872
+  - 71680
+  - 51200
+  - 53248
+  - 45056
+  - 49152
+
+* PhotometricInterpretation
+
+::
+
+  - YCbCr
+
+* YCbCrSubSampling
+
+::
+
+  - chroma image dimensions = luma image dimensions
+
+* ResolutionUnit
+
+::
+
+  - Centimeter
+

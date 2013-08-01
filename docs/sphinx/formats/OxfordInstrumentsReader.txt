@@ -1,0 +1,123 @@
+*******************************************************************************
+OxfordInstrumentsReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Oxford Instruments format reader.
+
+Key/value pairs
+===============================================================================
+
+* Description
+
+::
+
+  - Capture Type: Spectroscopy Curr 
+
+* ADC (Y) Min
+
+::
+
+  - -28, ADC Max: 42
+
+* File Version
+
+::
+
+  - 10001
+
+* Y Min Value
+
+::
+
+  - -0.09(nA), Y Max Value: 0.13(nA)
+
+* Capture Type
+
+::
+
+  - Spectroscopy Current-Voltage
+
+* Acquisition date
+
+::
+
+  - 1998-06-19T16:47:00
+
+* Date Taken
+
+::
+
+  - 19:6:1998
+
+* Scan DAC X,Y Location
+
+::
+
+  - 2023,707
+
+* No. Points
+
+::
+
+  - 90
+
+* Z minimum (um)
+
+::
+
+  - 0.0
+
+* X size (um)
+
+::
+
+  - 0.0
+
+* Scan time (s)
+
+::
+
+  - 0.04
+
+* Time Taken
+
+::
+
+  - 16:47:05
+
+* Acquisition Time
+
+::
+
+  - 0.04(s)
+
+* Z maximum (um)
+
+::
+
+  - 0.0
+
+* Averaging
+
+::
+
+  - OFF
+
+* Initial Delay
+
+::
+
+  - 10 �s
+
+* Sample Delay
+
+::
+
+  - 10 �s
+
+* Y size (um)
+
+::
+
+  - 0.0
+

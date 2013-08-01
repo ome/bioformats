@@ -1,0 +1,45 @@
+*******************************************************************************
+QuesantReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Quesant AFM format reader.
+
+Key/value pairs
+===============================================================================
+
+* Z dynamic range
+
+::
+
+  - 2.4206E-41
+
+* Proportional gain
+
+::
+
+  - 250.0
+
+* Scan rate (Hz)
+
+::
+
+  - 2.5
+
+* Is STM image
+
+::
+
+  - false
+
+* Tunnel current
+
+::
+
+  - -0.3338623
+
+* Integral gain
+
+::
+
+  - 120.0
+

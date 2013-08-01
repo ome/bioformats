@@ -1,0 +1,147 @@
+*******************************************************************************
+PDSReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Perkin Elmer Densitometer format reader.
+
+Key/value pairs
+===============================================================================
+
+* SETVAL
+
+::
+
+  - '                  D'
+
+* XPOS
+
+::
+
+  - 0
+
+* Lines Done
+
+::
+
+  - 960
+  - 2000
+
+* SIGNX
+
+::
+
+  - '                  -'
+
+* YPOS
+
+::
+
+  - 0
+
+* Y position for position #1
+
+::
+
+  - 0.0
+
+* AXSCAN
+
+::
+
+  - '                  X'
+
+* SPEED
+
+::
+
+  - 100
+
+* OPERATOR I.D.
+
+::
+
+  - 'jmm                                     '
+
+* X position for position #1
+
+::
+
+  - 0.0
+
+* SIGNY
+
+::
+
+  - '                  +'
+
+* SCAN TYPE
+
+::
+
+  - '               EDGE  '
+
+* SEGMENT SIZE
+
+::
+
+  - 960
+  - 2920
+
+* NXP
+
+::
+
+  - 960
+  - 2920
+
+* NYP
+
+::
+
+  - 960
+  - 2000
+
+* IDENTIFICATION
+
+::
+
+  - 'pt1173a     mag 28000         '
+  - 'd91190        mag 19500  '
+
+* DELTAY
+
+::
+
+  - 25
+
+* DELTAX
+
+::
+
+  - 25
+
+* COLOR
+
+::
+
+  - 0
+
+* BACKUP
+
+::
+
+  - 'F'
+
+* FILE REC LEN
+
+::
+
+  - 512
+
+* SCAN TIME
+
+::
+
+  - ' 1:03:30  1-MAY-**'
+  - '20:07:28  2-MAY-**'
+

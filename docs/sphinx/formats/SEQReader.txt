@@ -1,0 +1,135 @@
+*******************************************************************************
+SEQReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Image-Pro Sequence format reader.
+
+Key/value pairs
+===============================================================================
+
+* Predictor
+
+::
+
+  - Horizontal differencing
+  - No prediction scheme
+
+* PlanarConfiguration
+
+::
+
+  - Chunky
+
+* NumberOfChannels
+
+::
+
+  - 1
+  - 3
+
+* Software
+
+::
+
+  - Image-Pro Plus
+
+* slices
+
+::
+
+  - 1
+
+* ImageLength
+
+::
+
+  - 512
+  - 480
+
+* channels
+
+::
+
+  - 1
+  - 3
+
+* XResolution
+
+::
+
+  - 100
+  - 300
+
+* NewSubfileType
+
+::
+
+  - 0
+
+* Compression
+
+::
+
+  - LZW
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* DateTime
+
+::
+
+  - 01/07/1997 05:08:04.780 PM
+  - 03/27/1998 12:32:18.480 PM
+
+* frames
+
+::
+
+  - 30
+  - 1
+
+* SamplesPerPixel
+
+::
+
+  - 1
+  - 3
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - Monochrome
+  - RGB
+
+* YResolution
+
+::
+
+  - 100
+  - 300
+
+* ImageWidth
+
+::
+
+  - 512
+  - 640
+
+* PhotometricInterpretation
+
+::
+
+  - BlackIsZero
+  - RGB
+
+* Number of images
+
+::
+
+  - 0
+

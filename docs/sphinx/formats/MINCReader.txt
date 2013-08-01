@@ -1,0 +1,366 @@
+*******************************************************************************
+MINCReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats MINC MRI format reader.
+
+Key/value pairs
+===============================================================================
+
+* /zspace spacing
+
+::
+
+  - regular__
+
+* /rootvariable children
+
+::
+
+  - image
+
+* /rootvariable vartype
+
+::
+
+  - group________
+
+* /xspace spacing
+
+::
+
+  - regular__
+
+* /xspace version
+
+::
+
+  - MINC Version    1.0
+
+* /image vartype
+
+::
+
+  - group________
+
+* /xspace direction_cosines
+
+::
+
+  - 1.0 0.0 0.0
+
+* /yspace alignment
+
+::
+
+  - centre
+
+* /image-min version
+
+::
+
+  - MINC Version    1.0
+
+* /image-max version
+
+::
+
+  - MINC Version    1.0
+
+* /yspace version
+
+::
+
+  - MINC Version    1.0
+
+* /image-min vartype
+
+::
+
+  - var_attribute
+
+* /image-max varid
+
+::
+
+  - MINC standard variable
+
+* /zspace varid
+
+::
+
+  - MINC standard variable
+
+* /zspace alignment
+
+::
+
+  - centre
+
+* /xspace comments
+
+::
+
+  - X increases from patient left to right
+
+* /xspace vartype
+
+::
+
+  - dimension____
+
+* /image-min varid
+
+::
+
+  - MINC standard variable
+
+* /image parent
+
+::
+
+  - rootvariable
+
+* /image signtype
+
+::
+
+  - unsigned
+
+* /xspace varid
+
+::
+
+  - MINC standard variable
+
+* Comment
+
+::
+
+  - Tue Dec 19 13:57:42 EST 1995>>> icbm_make_templates
+
+* /yspace spacing
+
+::
+
+  - regular__
+
+* /xspace spacetype
+
+::
+
+  - talairach_
+
+* /image complete
+
+::
+
+  - false
+
+* /zspace direction_cosines
+
+::
+
+  - 0.0 0.0 1.0
+
+* /image-max parent
+
+::
+
+  - image
+
+* /yspace varid
+
+::
+
+  - MINC standard variable
+
+* /rootvariable varid
+
+::
+
+  - MINC standard variable
+
+* /rootvariable version
+
+::
+
+  - MINC Version    1.0
+
+* /xspace step
+
+::
+
+  - 2.0
+  - 4.0
+  - 1.0
+  - 3.0
+
+* /xspace alignment
+
+::
+
+  - centre
+
+* /image version
+
+::
+
+  - MINC Version    1.0
+
+* /yspace step
+
+::
+
+  - 2.0
+  - 4.0
+  - 1.0
+  - 3.0
+
+* /zspace version
+
+::
+
+  - MINC Version    1.0
+
+* /zspace vartype
+
+::
+
+  - dimension____
+
+* /image valid_range
+
+::
+
+  - 0.0 255.0
+
+* /rootvariable parent
+
+::
+
+  - 
+
+* /image-min parent
+
+::
+
+  - image
+
+* /yspace direction_cosines
+
+::
+
+  - 0.0 1.0 0.0
+
+* /zspace comments
+
+::
+
+  - Z increases from patient inferior to superior
+
+* /image varid
+
+::
+
+  - MINC standard variable
+
+* /image image-min
+
+::
+
+  - --->image-min
+
+* /zspace start
+
+::
+
+  - -72.0
+
+* /yspace vartype
+
+::
+
+  - dimension____
+
+* /xspace start
+
+::
+
+  - -90.0
+
+* /xspace units
+
+::
+
+  - mm
+
+* /yspace units
+
+::
+
+  - mm
+
+* /zspace step
+
+::
+
+  - 2.0
+  - 4.0
+  - 1.0
+  - 3.0
+
+* /image-min _FillValue
+
+::
+
+  - 0.0
+
+* /yspace start
+
+::
+
+  - -126.0
+
+* /image image-max
+
+::
+
+  - --->image-max
+
+* /yspace comments
+
+::
+
+  - Y increases from patient posterior to anterior
+
+* /yspace spacetype
+
+::
+
+  - talairach_
+
+* /image-max vartype
+
+::
+
+  - var_attribute
+
+* /zspace units
+
+::
+
+  - mm
+
+* /image-max _FillValue
+
+::
+
+  - 1.0
+
+* /zspace spacetype
+
+::
+
+  - talairach_
+

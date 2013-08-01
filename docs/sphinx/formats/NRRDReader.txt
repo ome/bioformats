@@ -1,0 +1,78 @@
+*******************************************************************************
+NRRDReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats NRRD format reader.
+
+Key/value pairs
+===============================================================================
+
+* sizes
+
+::
+
+  - 512 512 88
+
+* dimension
+
+::
+
+  - 3
+
+* spacings
+
+::
+
+  - 0.32964843 0.32964843 1.0
+
+* endian
+
+::
+
+  - little
+
+* data file
+
+::
+
+  - average-goodbrains-warp40-5_e1e-2.PIC.gz
+  - average-goodbrains-warp40-5_e1e-2.PIC
+
+* centers
+
+::
+
+  - node node node
+
+* encoding
+
+::
+
+  - raw
+
+* axis mins
+
+::
+
+  - -0.054334043797498136 -0.054334043797498136 -0.5
+
+* byte skip
+
+::
+
+  - 76
+
+* type
+
+::
+
+  - uint8
+
+* units
+
+::
+
+  - pixels pixels pixels
+  - pixel pixel pixel
+  - microns microns microns
+

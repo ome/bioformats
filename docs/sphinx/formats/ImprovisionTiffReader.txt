@@ -1,0 +1,228 @@
+*******************************************************************************
+ImprovisionTiffReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Improvision TIFF format reader.
+
+Key/value pairs
+===============================================================================
+
+* MinSampleValue
+
+::
+
+  - 0
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* ZPlane
+
+::
+
+  - 1
+
+* Software
+
+::
+
+  - Volocity 5.2.0
+
+* TotalTimepoints
+
+::
+
+  - 1
+
+* ChannelName
+
+::
+
+  - 1
+
+* ImageName
+
+::
+
+  - 
+
+* BitsPerSample
+
+::
+
+  - 16
+  - 8
+
+* Improvision
+
+::
+
+  - yes
+
+* ZCalibrationMicrons
+
+::
+
+  - 1
+
+* ChannelNo
+
+::
+
+  - 1
+
+* ImageWidth
+
+::
+
+  - 512
+
+* XCalibrationMicrons
+
+::
+
+  - 1
+
+* YCalibrationMicrons
+
+::
+
+  - 1
+
+* BlackPoint
+
+::
+
+  - 0
+
+* TimepointName
+
+::
+
+  - 1
+
+* PlanarConfiguration
+
+::
+
+  - Chunky
+
+* Orientation
+
+::
+
+  - 1st row -> top; 1st column -> left
+
+* PageName #0
+
+::
+
+  - 
+
+* ImageLength
+
+::
+
+  - 512
+
+* WhitePoint
+
+::
+
+  - 255
+
+* TimepointNo
+
+::
+
+  - 1
+
+* NewSubfileType
+
+::
+
+  - 2
+
+* SampleUUID
+
+::
+
+  - 070486cd-c230-4709-a7af-e42c5edaf002
+  - 71099aff-182f-436f-b8ad-5fcca90655a7
+  - 443d80a3-0fd5-4df1-bff7-f2a09edf22ba
+  - e15e9bc9-ac24-4118-b576-fac68057f75c
+  - 0c99308b-29f5-425c-964d-8c91f7a16b45
+
+* WhiteColour
+
+::
+
+  - 255,255,255
+
+* MaxSampleValue
+
+::
+
+  - 255
+
+* TimeStampMicroSeconds
+
+::
+
+  - 3115382540226204
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* TimeStamp
+
+::
+
+  - 17:02:20.226 on 20 Sep 2002
+
+* TotalChannels
+
+::
+
+  - 1
+
+* TotalZPlanes
+
+::
+
+  - 1
+
+* Document Name
+
+::
+
+  - Vessels 1bit.tif
+  - Vessels 16bit grey.tif
+  - Vessels 8bit grey.tif
+  - Vessels 48bit Col.tif
+  - Vessels 32bit Col.tif
+
+* SamplesPerPixel
+
+::
+
+  - 3
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - RGB
+
+* PhotometricInterpretation
+
+::
+
+  - RGB
+

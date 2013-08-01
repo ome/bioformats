@@ -1,0 +1,3892 @@
+*******************************************************************************
+ND2Reader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Nikon ND2 format reader.
+
+Key/value pairs
+===============================================================================
+
+* 
+
+::
+
+  - 0
+
+* wsCommandAfterLoop
+
+::
+
+  - 
+
+* sSpecSettings
+
+::
+
+  - 
+
+* timestamp #29
+
+::
+
+  - 280.12672839704527
+
+* m_eShutterType0
+
+::
+
+  - 0
+
+* MetadataSeq 0 m_bEnableAutoWhite
+
+::
+
+  - false
+
+* MetadataSeq 0 m_iZoomUse
+
+::
+
+  - 1
+
+* sCal.dKd
+
+::
+
+  - 224
+
+* m_sLightShortName0
+
+::
+
+  - Light (DIA)
+
+* MetadataSeq 0 m_SWNameString
+
+::
+
+  - NIS-Elements BR
+
+* m_ibShutterModeValid0
+
+::
+
+  - 1
+
+* LaserboxSelectWheel
+
+::
+
+  - 1
+
+* timestamp #30
+
+::
+
+  - 290.12732316537387
+
+* timestamp #31
+
+::
+
+  - 300.1278869241755
+
+* dOffsetCustom
+
+::
+
+  - 0
+
+* LineSkip
+
+::
+
+  - 0
+
+* MetadataSeq 0 ReadoutSpeed
+
+::
+
+  - 1
+
+* right
+
+::
+
+  - 0
+
+* dGainBlue
+
+::
+
+  - 1
+
+* MetadataSeq 0 CameraName
+
+::
+
+  - CoolSnap HQ
+
+* MetadataSeq 0 m_sFilterName0
+
+::
+
+  - Red (Ex)
+
+* TDPMTHighVoltage
+
+::
+
+  - 0
+
+* timestamp #19
+
+::
+
+  - 180.13647544590012
+
+* timestamp #18
+
+::
+
+  - 170.13601169980876
+
+* CameraUniqueName
+
+::
+
+  - Nikon_A1_New
+
+* m_sZPhysFullName0
+
+::
+
+  - Nikon TE2000
+
+* MetadataSeq 0 dFadingCorr
+
+::
+
+  - 0.000000000000000
+
+* dTemperK
+
+::
+
+  - -1
+
+* LiveRTNDD
+
+::
+
+  - 18446744073709551615
+
+* bCalibrated
+
+::
+
+  - true
+
+* IRLaser2Wavelength
+
+::
+
+  - 800
+
+* m_iFilterUse0
+
+::
+
+  - 1
+
+* ScannerTypeIndex
+
+::
+
+  - 0
+
+* MetadataSeq 0 FlexibleHeight
+
+::
+
+  - -1
+
+* MetadataSeq 0 m_uiAutoWhiteColor
+
+::
+
+  - 16777215
+
+* bFlippedLeftRight
+
+::
+
+  - false
+
+* dCoeff_2
+
+::
+
+  - 0
+
+* timestamp #20
+
+::
+
+  - 190.1370785951838
+
+* dCoeff_3
+
+::
+
+  - 0
+
+* dTValue
+
+::
+
+  - 0
+
+* timestamp #23
+
+::
+
+  - 220.12321314580365
+
+* timestamp #24
+
+::
+
+  - 230.12377550777978
+
+* MetadataSeq 0 uiNumer
+
+::
+
+  - 0
+
+* timestamp #21
+
+::
+
+  - 200.13770800478756
+
+* dCoeff_0
+
+::
+
+  - 0
+
+* timestamp #22
+
+::
+
+  - 210.12276755844428
+
+* dCoeff_1
+
+::
+
+  - 0
+
+* timestamp #27
+
+::
+
+  - 260.125532714352
+
+* CH3ChannelLaserIndex
+
+::
+
+  - 2
+
+* EmWavelength
+
+::
+
+  - 700
+
+* timestamp #28
+
+::
+
+  - 270.126110720776
+
+* timestamp #25
+
+::
+
+  - 240.1243839650005
+
+* StimMode
+
+::
+
+  - 0
+
+* timestamp #26
+
+::
+
+  - 250.12494688570686
+
+* CH3CLEMBrightness
+
+::
+
+  - 4
+
+* MetadataSeq 0 m_eFilterType0
+
+::
+
+  - 0
+
+* MetadataSeq 0 sCal.dTMeasCalMax
+
+::
+
+  - 0.000000000000000
+
+* FLBlock1Index
+
+::
+
+  - 0
+
+* wsObjectiveName
+
+::
+
+  - Plan Fluor 20xC ELWD ADL
+  - Plan Apochromat 60x oil DM
+
+* dRefractIndex1
+
+::
+
+  - 1
+  - 1.515
+
+* dRefractIndex2
+
+::
+
+  - 1
+  - 1.515
+
+* MetadataSeq 0 Average
+
+::
+
+  - 1
+
+* CH4PMTHighVoltage
+
+::
+
+  - 173
+
+* left
+
+::
+
+  - 0
+
+* Microscope Settings
+
+::
+
+  -    SimFilter (EPI)
+  -    Z Drive
+
+* MetadataSeq 0 bPickFromGraph
+
+::
+
+  - false
+
+* MetadataSeq 0 m_ibFilterExist0
+
+::
+
+  - 1
+
+* AverageToQualityCH
+
+::
+
+  - 
+
+* dGainGrouped
+
+::
+
+  - 1
+
+* MetadataSeq 0 dExposureBlue
+
+::
+
+  - 0.000000000000000
+
+* MultiViewEnabled
+
+::
+
+  - false
+
+* wsCommandBeforeCapture
+
+::
+
+  - 
+
+* vUnknownData
+
+::
+
+  - 
+
+* MetadataSeq 0 wsNotes
+
+::
+
+  - 
+
+* TextInfoItem_13
+
+::
+
+  - 
+
+* TextInfoItem_12
+
+::
+
+  - 
+
+* MetadataSeq 0 dTimeAbsolute
+
+::
+
+  - 2454615.106991203500000
+
+* TextInfoItem_11
+
+::
+
+  - 
+
+* TextInfoItem_10
+
+::
+
+  - 
+
+* uiCount
+
+::
+
+  - 0
+
+* MetadataSeq 0 dTValue
+
+::
+
+  - 0.000000000000000
+
+* MetadataSeq 0 Flip
+
+::
+
+  - 0
+
+* MetadataSeq 0 dYPos
+
+::
+
+  - 0.000000000000000
+
+* CameraUserName
+
+::
+
+  - Nikon A1plus
+
+* X1Ex2Em2ndPMTIndex
+
+::
+
+  - 1
+
+* TNDD1ChannelLaserIndex
+
+::
+
+  - -110
+
+* m_iZUse0
+
+::
+
+  - 1
+
+* MetadataSeq 0 m_bEnableAutoContrast
+
+::
+
+  - false
+
+* Pinhole size
+
+::
+
+  - -1
+
+* m_dShutterAperture0
+
+::
+
+  - 0
+
+* dGammaGreen
+
+::
+
+  - 1
+
+* MetadataSeq 0 m_dLUTsRangeMin
+
+::
+
+  - 0.000000000000000
+
+* MetadataSeq 0 EnableAutoExposure
+
+::
+
+  - true
+
+* MetadataSeq 0 sCal.dRmin
+
+::
+
+  - 0.000000000000000
+
+* MetadataSeq 0 dGainRed
+
+::
+
+  - 1.000000000000000
+
+* MetadataSeq 0 m_VersionString
+
+::
+
+  - 3.00 (Build 449)
+
+* MetadataSeq 0 Integrate
+
+::
+
+  - 1
+
+* MetadataSeq 0 uiMinDst
+
+::
+
+  - 0
+
+* dOffsetGrouped
+
+::
+
+  - 0
+
+* MetadataSeq 0 QuantilPromile
+
+::
+
+  - 0.100000000000000
+
+* m_sName
+
+::
+
+  - Red (Ex)
+  -  
+  - 
+  - DIA
+
+* sOpticalConfigName
+
+::
+
+  - TexRed
+  - 
+  - Phako
+
+* dTimeMSec
+
+::
+
+  - 2559907.5718889916
+  - 391.178487766534
+  - 26346.0492883865
+
+* ImagingScannerWidth
+
+::
+
+  - 3
+
+* CH1CLEMNoSignalThreshold
+
+::
+
+  - 500
+
+* MetadataSeq 0 dExposure
+
+::
+
+  - 0.000000000000000
+
+* MetadataSeq 0 m_eNature
+
+::
+
+  - 0
+
+* m_GrabberString
+
+::
+
+  - MuTech MV1500
+
+* LiveVAAS
+
+::
+
+  - 0
+
+* m_iAnalyzerUse
+
+::
+
+  - 1
+
+* UpdateLPAutomatically
+
+::
+
+  - true
+
+* MetadataSeq 0 CameraOffset
+
+::
+
+  - 0.000000000000000
+
+* MetadataSeq 0 m_uiCount
+
+::
+
+  - 0
+
+* uiColorCustom
+
+::
+
+  - 255
+
+* X2Ex1EmEnable
+
+::
+
+  - 0
+
+* dExposureGreen
+
+::
+
+  - 0
+
+* uiLutComponentCount
+
+::
+
+  - 1
+
+* MetadataSeq 0 dTemperK
+
+::
+
+  - 293.000000000000000
+
+* MetadataSeq 0 CaptureMaxExposure
+
+::
+
+  - 30000.000000000000000
+
+* MetadataSeq 0 left
+
+::
+
+  - 0
+
+* aMeasProbesBase64
+
+::
+
+  - AAA=
+
+* MetadataSeq 0 uiRow
+
+::
+
+  - 0
+
+* uiDenom
+
+::
+
+  - 1
+
+* ImagingZoom
+
+::
+
+  - 1
+
+* MaxSaturatedValue
+
+::
+
+  - 4294967295
+
+* m_sLightPathPhysConnectionString
+
+::
+
+  - COM1
+
+* dOffsetGrayScal
+
+::
+
+  - 0
+
+* CH3PMTHighVoltage
+
+::
+
+  - 128
+
+* MetadataSeq 0 m_uiColor
+
+::
+
+  - 16777215
+
+* CH2CLEMNoSignalThreshold
+
+::
+
+  - 500
+
+* X2Ex1EmPMTIndex
+
+::
+
+  - 0
+
+* m_iLightPathPosition
+
+::
+
+  - 4
+
+* MetadataSeq 0 uiWavelength
+
+::
+
+  - 0
+
+* iOffsetBlue
+
+::
+
+  - 0
+
+* m_iLightPathUse
+
+::
+
+  - 1
+
+* CH2LaserStimulationPower2
+
+::
+
+  - 0
+
+* CH2LaserStimulationPower3
+
+::
+
+  - 0
+
+* uiCompCount
+
+::
+
+  - 1
+
+* m_sLightPathShortName
+
+::
+
+  - LightPath
+
+* CH2LaserStimulationPower1
+
+::
+
+  - 0
+
+* VirtualComponents
+
+::
+
+  - 3
+
+* EPIAdditionalFilterKey
+
+::
+
+  - 
+
+* ExWavelength
+
+::
+
+  - 0
+
+* eCompression
+
+::
+
+  - 0
+
+* m_sAnalyzerPhysConnectionString
+
+::
+
+  - COM1
+
+* X position
+
+::
+
+  - 26053.3
+
+* MetadataSeq 0 bottom
+
+::
+
+  - 0
+
+* ChannelSeriesMode
+
+::
+
+  - 0
+
+* Y position for position #1
+
+::
+
+  - -4459.400000000001
+
+* timestamp #07
+
+::
+
+  - 60.129587140263986
+
+* MetadataSeq 0 dAspect
+
+::
+
+  - 1.000000000000000
+
+* timestamp #08
+
+::
+
+  - 70.13009865779057
+
+* timestamp #09
+
+::
+
+  - 80.13066912135481
+
+* MetadataSeq 0 bFlippedUpDown
+
+::
+
+  - false
+
+* timestamp #15
+
+::
+
+  - 140.13415950909817
+
+* m_dLightVoltage0
+
+::
+
+  - 9.3
+
+* timestamp #14
+
+::
+
+  - 130.13365162331982
+
+* timestamp #17
+
+::
+
+  - 160.13532921083458
+
+* timestamp #16
+
+::
+
+  - 150.1347447790131
+
+* MetadataSeq 0 iOffsetGreen
+
+::
+
+  - 0
+
+* timestamp #11
+
+::
+
+  - 100.13187430245988
+
+* SLxImageAttributes
+
+::
+
+  - 13
+
+* timestamp #10
+
+::
+
+  - 90.13127003571577
+
+* MetadataSeq 0 dGammaSrc
+
+::
+
+  - 1.000000000000000
+
+* sDescription
+
+::
+
+  - 
+
+* timestamp #13
+
+::
+
+  - 120.133009083556
+
+* timestamp #12
+
+::
+
+  - 110.1324118009396
+
+* Stim405Enable3
+
+::
+
+  - 0
+
+* Average
+
+::
+
+  - 1
+
+* ScanFrameRateIndex
+
+::
+
+  - 6
+
+* Stim405Enable2
+
+::
+
+  - 0
+
+* Stim405Enable1
+
+::
+
+  - 0
+
+* dXPos
+
+::
+
+  - -1
+
+* m_ibLightIrisControllable0
+
+::
+
+  - 0
+
+* MetadataSeq 0 bCalibrated
+
+::
+
+  - true
+
+* MetadataSeq 0 Rotate
+
+::
+
+  - 0.000000000000000
+
+* dGamma
+
+::
+
+  - 1
+
+* MetadataSeq 0 m_sDescr
+
+::
+
+  - 
+
+* MetadataSeq 0 m_sZoomFullName
+
+::
+
+  - $*2_Zoom
+
+* uiSpectralColorMode
+
+::
+
+  - 0
+
+* timestamp #06
+
+::
+
+  - 50.12890353382937
+
+* IntegrateToQualityCH
+
+::
+
+  - 
+
+* timestamp #05
+
+::
+
+  - 40.128491749648006
+
+* SetColorManually
+
+::
+
+  - true
+
+* timestamp #04
+
+::
+
+  - 30.127739698760212
+
+* timestamp #03
+
+::
+
+  - 20.12714772408083
+
+* TDIn
+
+::
+
+  - 0
+
+* timestamp #02
+
+::
+
+  - 10.126866682777182
+
+* timestamp #01
+
+::
+
+  - 0.3911784877665341
+
+* m_sDescr
+
+::
+
+  - 
+
+* m_sShutterPhysConnectionString0
+
+::
+
+  - COM1
+
+* bValid
+
+::
+
+  - true
+
+* uiDenOffset
+
+::
+
+  - 0
+
+* m_ibFilterPositionValid0
+
+::
+
+  - 1
+
+* MetadataSeq 0 MaxBulbExposure
+
+::
+
+  - -1.000000000000000
+
+* ScanCropAspect
+
+::
+
+  - 0
+
+* CH4ChannelLaserIndex
+
+::
+
+  - 3
+
+* bFlippedUpDown
+
+::
+
+  - false
+
+* timestamp #1
+
+::
+
+  - 2559.9075718889917
+  - 26.346049288386478
+
+* MetadataSeq 0 uiOverExpColor
+
+::
+
+  - 255
+
+* iOffset
+
+::
+
+  - 0
+
+* m_iActiveShutterType
+
+::
+
+  - -1
+
+* MetadataSeq 0 Exposure
+
+::
+
+  - 2510.500000000000000
+
+* dAvgPeriodDiff
+
+::
+
+  - 0
+
+* eType
+
+::
+
+  - 0
+
+* m_sFilterFullName0
+
+::
+
+  - TE2000 Filter Block Changer
+
+* MetadataSeq 0 m_sName
+
+::
+
+  - 
+
+* m_CompanyString
+
+::
+
+  - NIKON GmbH
+
+* m_CopyrightString
+
+::
+
+  - Copyright © 1991-2007  Laboratory Imaging,  http://www.lim.cz
+
+* uiRepeatCount
+
+::
+
+  - 1
+
+* MetadataSeq 0 uiBkgndSize
+
+::
+
+  - 0
+
+* dCalibration
+
+::
+
+  - 0.411049193836051
+  - 0.489221
+  - 0.157475
+
+* HVLinearCorrection
+
+::
+
+  - 0
+
+* m_uiPropGroupCount
+
+::
+
+  - 2
+
+* MetadataSeq 0 uiCount
+
+::
+
+  - 0
+
+* vGrabberCameraSettingsFQMode
+
+::
+
+  - 0
+
+* m_ibShutterStateOpen0
+
+::
+
+  - 0
+
+* MetadataSeq 0 m_iFilterUse0
+
+::
+
+  - 1
+
+* MetadataSeq 0 dGammaRed
+
+::
+
+  - 1.000000000000000
+
+* Color
+
+::
+
+  - 5855660
+
+* dObjectiveMag
+
+::
+
+  - -1
+
+* ScanAreaAspect
+
+::
+
+  - 1
+
+* MetadataSeq 0 QuantilRelative
+
+::
+
+  - true
+
+* uiColorGroup
+
+::
+
+  - 255
+
+* MetadataSeq 0 m_NFRString
+
+::
+
+  - 
+
+* MetadataSeq 0 m_ibFilterPositionValid0
+
+::
+
+  - 1
+
+* MetadataSeq 0 m_sZoomPhysFullName
+
+::
+
+  - $*2_Manual Zoom
+
+* X2Ex1Em1stLaserPower
+
+::
+
+  - 0
+
+* uiMaxSrc
+
+::
+
+  - 65535
+
+* iOffsetGreen
+
+::
+
+  - 0
+
+* MetadataSeq 0 top
+
+::
+
+  - 0
+
+* MetadataSeq 0 sSpecSettings
+
+::
+
+  - 
+
+* CH4PMTOffset
+
+::
+
+  - 0
+
+* MetadataSeq 0 uiCol
+
+::
+
+  - 0
+
+* dGammaSrc
+
+::
+
+  - 1
+
+* ScanMode
+
+::
+
+  - 0
+
+* CH2CLEMBrightness
+
+::
+
+  - 4
+
+* m_bRatioViewEnabled
+
+::
+
+  - false
+
+* MetadataSeq 0 bPoints
+
+::
+
+  - false
+
+* MetadataSeq 0 ClearCycles
+
+::
+
+  - 2
+
+* m_sLightPathPositionName
+
+::
+
+  - Left
+
+* MetadataSeq 0 m_bViewLut
+
+::
+
+  - true
+
+* CH1PMTHighVoltage
+
+::
+
+  - 133
+
+* MetadataSeq 0 AsymetricalBinningY
+
+::
+
+  - -1
+
+* MetadataSeq 0 dXPos
+
+::
+
+  - 0.000000000000000
+
+* m_sFilterName0
+
+::
+
+  - DIA
+
+* MetadataSeq 0 m_sZoomShortName
+
+::
+
+  - $*2_Zoom
+
+* m_ibZPositionValid0
+
+::
+
+  - 1
+
+* dStep
+
+::
+
+  - 0.000000000000000
+  - 2.5
+  - 0
+
+* dDuration
+
+::
+
+  - 600000
+
+* eModality
+
+::
+
+  - 0
+  - 1
+
+* m_ibLightStateValid0
+
+::
+
+  - 1
+
+* m_uiCount
+
+::
+
+  - 1
+
+* MetadataSeq 0 sCal.dTMeasCalMin
+
+::
+
+  - 0.000000000000000
+
+* ExcitationSourceName
+
+::
+
+  - 
+
+* m_bShowSpectralGraph
+
+::
+
+  - true
+
+* MetadataSeq 0 AsymetricalBinningX
+
+::
+
+  - -1
+
+* uiCol
+
+::
+
+  - 0
+
+* X2Ex1Em1stLaserIndex
+
+::
+
+  - 0
+
+* CH4CLEMNoSignalThreshold
+
+::
+
+  - 500
+
+* CH4CLEMBrightness
+
+::
+
+  - 4
+
+* uiColor
+
+::
+
+  - 16777215
+
+* CH1CLEMEnoughSignalThreshold
+
+::
+
+  - 2000
+
+* uiPeriodCount
+
+::
+
+  - 3
+
+* MetadataSeq 0 m_ibZoomExist
+
+::
+
+  - 1
+
+* wsApplicationDesc
+
+::
+
+  - 
+
+* StimulationTime1
+
+::
+
+  - 1
+
+* MetadataSeq 0 vGrabberCameraSettingsFQMode
+
+::
+
+  - 1
+
+* StimulationTime3
+
+::
+
+  - 1
+
+* MetadataSeq 0 bColorOverExp
+
+::
+
+  - false
+
+* StimulationTime2
+
+::
+
+  - 1
+
+* Detector
+
+::
+
+  - 0
+
+* MetadataSeq 0 uiPhysicalVarCount
+
+::
+
+  - 0
+
+* m_uiColor
+
+::
+
+  - 16777215
+
+* StimulationEnable3LaserMask
+
+::
+
+  - 0
+
+* no_name
+
+::
+
+  - 
+
+* MetadataSeq 0 dObjectiveNA
+
+::
+
+  - 0.000000000000000
+
+* MetadataSeq 0 sCal.dFmin
+
+::
+
+  - 1.000000000000000
+
+* MetadataSeq 0 bFlippedLeftRight
+
+::
+
+  - false
+
+* MetadataSeq 0 AverageCH
+
+::
+
+  - 
+
+* wszUniqueName
+
+::
+
+  - A1New_Format
+
+* m_eNature
+
+::
+
+  - 0
+
+* MetadataSeq 0 uiGradient
+
+::
+
+  - 0
+
+* CH2PMTHighVoltage
+
+::
+
+  - 123
+
+* wsUserDesc
+
+::
+
+  - 
+
+* ID
+
+::
+
+  - Z
+
+* LineAveraging
+
+::
+
+  - 0
+
+* eTimeSource
+
+::
+
+  - 0
+
+* Size
+
+::
+
+  - 1
+
+* MetadataSeq 0 dRefractIndex1
+
+::
+
+  - -1.000000000000000
+
+* MetadataSeq 0 dRefractIndex2
+
+::
+
+  - -1.000000000000000
+
+* m_ibAnalyzerInserted
+
+::
+
+  - 1
+
+* uiPhysicalVarCount
+
+::
+
+  - 0
+
+* uiModalityMask
+
+::
+
+  - 1049089
+
+* MetadataSeq 0 uiDenOffset
+
+::
+
+  - 0
+
+* OpticalModeCtrl
+
+::
+
+  - 1
+
+* MetadataSeq 0 sCal.dRmax
+
+::
+
+  - 2.000000000000000
+
+* MetadataSeq 0 uiMinSrc
+
+::
+
+  - 0
+
+* uiCon20(L
+
+::
+
+  - 0
+
+* m_sZPhysConnectionString0
+
+::
+
+  - COM1
+
+* LiveUnmix
+
+::
+
+  - 0
+
+* dZPos
+
+::
+
+  - 0.0
+  - -1
+  - 3212.7
+
+* DIAAdditionalFilterKey
+
+::
+
+  - 
+
+* AverageToQuality
+
+::
+
+  - 0
+
+* CH4LaserStimulationPower3
+
+::
+
+  - 0
+
+* m_iGraphSelected
+
+::
+
+  - 3
+
+* CH4LaserStimulationPower2
+
+::
+
+  - 0
+
+* MetadataSeq 0 sDescription
+
+::
+
+  - 
+
+* MetadataSeq 0 LiveAcceleration
+
+::
+
+  - 10
+
+* CH4LaserStimulationPower1
+
+::
+
+  - 0
+
+* uiVirtualComponents
+
+::
+
+  - 1
+
+* MetadataSeq 0 dCamChipSizeX
+
+::
+
+  - 0.000000000000000
+
+* MetadataSeq 0 dCamChipSizeY
+
+::
+
+  - 0.000000000000000
+
+* Type
+
+::
+
+  - 3
+
+* dGainCustom
+
+::
+
+  - 1
+
+* MetadataSeq 0 dExposureRed
+
+::
+
+  - 0.000000000000000
+
+* MetadataSeq 0 eType
+
+::
+
+  - 0
+
+* bZPosAbsolute
+
+::
+
+  - false
+  - true
+
+* dProjectiveMag
+
+::
+
+  - -1
+
+* uiNumer
+
+::
+
+  - 0
+
+* m_eShutterMode0
+
+::
+
+  - 0
+
+* Z position for position, plane #1
+
+::
+
+  - 2644.525
+
+* MetadataSeq 0 m_bLUTsZoomed
+
+::
+
+  - false
+
+* CH2CLEMEnoughSignalThreshold
+
+::
+
+  - 2000
+
+* dGainRed
+
+::
+
+  - 1
+
+* MetadataSeq 0 m_dZoomPosition
+
+::
+
+  - 1.000000000000000
+
+* m_sLightPathPhysFullName
+
+::
+
+  - Nikon TE2000
+
+* MetadataSeq 0 uiColor
+
+::
+
+  - 16777215
+
+* CH2LaserPower
+
+::
+
+  - 1
+
+* PinholeSizeType
+
+::
+
+  - 0
+
+* m_SWNameString
+
+::
+
+  - NIS-Elements AR
+
+* MetadataSeq 0 dMin
+
+::
+
+  - 0.000000000000000
+
+* CLEMMode
+
+::
+
+  - 0
+
+* MetadataSeq 0 dGamma
+
+::
+
+  - 1.000000000000000
+
+* Key
+
+::
+
+  - 
+
+* StimulationEnable1LaserMask
+
+::
+
+  - 0
+
+* MetadataSeq 0 dGammaGreen
+
+::
+
+  - 1.000000000000000
+
+* CH4CLEMEnoughSignalThreshold
+
+::
+
+  - 2000
+
+* ScanSpeedModeIndex
+
+::
+
+  - 0
+
+* ScanYOffset
+
+::
+
+  - 0
+
+* AverageCH
+
+::
+
+  - 
+
+* uiWidth
+
+::
+
+  - 1536
+
+* dYPos
+
+::
+
+  - -1
+
+* uiSampleIndex
+
+::
+
+  - 0
+
+* TDChannelIndex
+
+::
+
+  - -100
+
+* ImagingUseImagingChannelBit
+
+::
+
+  - 15
+
+* CH3PMTOffset
+
+::
+
+  - 0
+
+* CH1LaserPower
+
+::
+
+  - 1
+
+* DIAAdditionalFilterName
+
+::
+
+  - 
+
+* Stim488LaserPower2
+
+::
+
+  - 0
+
+* Stim488LaserPower1
+
+::
+
+  - 0
+
+* MetadataSeq 0 sCal.dVisc
+
+::
+
+  - 1.000000000000000
+
+* m_uiAutoWhiteColor
+
+::
+
+  - 16777215
+
+* Stim488LaserPower3
+
+::
+
+  - 0
+
+* MetadataSeq 0 dObjectiveMag
+
+::
+
+  - -1.000000000000000
+
+* m_sZFullName0
+
+::
+
+  - TE2000 Z Drive
+
+* MetadataSeq 0 dMax
+
+::
+
+  - 2.000000000000000
+
+* m_ibAnalyzerStateValid
+
+::
+
+  - 1
+
+* uiColorSpace
+
+::
+
+  - 1
+
+* sCal.dRmax
+
+::
+
+  - 2
+
+* sObjective
+
+::
+
+  - A 
+  - Plan Fluor 20xC ELWD ADL
+  - Plan Apochromat 60x oil DM
+
+* MetadataSeq 0 sCameraName
+
+::
+
+  - 
+
+* MetadataSeq 0 m_eSpctType
+
+::
+
+  - 1
+
+* wsCustomData
+
+::
+
+  - 
+
+* bottom
+
+::
+
+  - 0
+
+* FLBlock2Index
+
+::
+
+  - 0
+
+* ScanCropZoom
+
+::
+
+  - 0
+
+* m_dLightIrisIntensity0
+
+::
+
+  - 0
+
+* MetadataSeq 0 dGammaBlue
+
+::
+
+  - 1.000000000000000
+
+* dZoom
+
+::
+
+  - 1
+
+* 5/28/2008  10
+
+::
+
+  - 34
+
+* MetadataSeq 0 LimitListedExposureMin
+
+::
+
+  - -1.000000000000000
+
+* X2Ex1Em2ndLaserPower
+
+::
+
+  - 0
+
+* CLEMChannellEnable
+
+::
+
+  - 255
+
+* uiGradient
+
+::
+
+  - 0
+
+* Stim488Enable2
+
+::
+
+  - 0
+
+* Stim488Enable3
+
+::
+
+  - 0
+
+* CH3LaserPower
+
+::
+
+  - 1
+
+* m_ePlacement
+
+::
+
+  - 1
+  - 0
+
+* FLBlock3Index
+
+::
+
+  - 0
+
+* m_sLightFullName0
+
+::
+
+  - TE2000 Light Source
+
+* m_bGrayGraph
+
+::
+
+  - false
+
+* sCameraFormatName
+
+::
+
+  - 
+
+* m_ibLightVoltageValid0
+
+::
+
+  - 1
+
+* dGain
+
+::
+
+  - 1
+
+* uiGroupCount
+
+::
+
+  - 3
+
+* MetadataSeq 0 UseOneFormat
+
+::
+
+  - false
+
+* uiWidthBytes
+
+::
+
+  - 3072
+
+* MetadataSeq 0 ePictureYAxis
+
+::
+
+  - 1
+
+* MetadataSeq 0 sCameraFormatName
+
+::
+
+  - 
+
+* MetadataSeq 0 QuantilPixels
+
+::
+
+  - 100
+
+* ScanDirection
+
+::
+
+  - 0
+
+* dMinPeriodDiff
+
+::
+
+  - 0
+
+* dGainGreen
+
+::
+
+  - 1
+
+* ChannelIsActive
+
+::
+
+  - true
+
+* Stim488Enable1
+
+::
+
+  - 0
+
+* m_sLightPhysFullName0
+
+::
+
+  - Nikon TE2000
+
+* CH1PMTOffset
+
+::
+
+  - 0
+
+* MetadataSeq 0 eModality
+
+::
+
+  - 1
+
+* MetadataSeq 0 dGain
+
+::
+
+  - 1.000000000000000
+
+* m_sLightPhysConnectionString0
+
+::
+
+  - COM1
+
+* uiGroup
+
+::
+
+  - 1
+
+* uiRow
+
+::
+
+  - 0
+
+* dAcqTime
+
+::
+
+  - 0.000000000000000
+  - 391.178487766534
+  - 0
+
+* m_ibLightStateOn0
+
+::
+
+  - 1
+
+* MetadataSeq 0 iOffsetRed
+
+::
+
+  - 0
+
+* MetadataSeq 0 uiDenom
+
+::
+
+  - 1
+
+* uiBkgndSize
+
+::
+
+  - 0
+
+* m_bEnableAutoContrast
+
+::
+
+  - false
+
+* TNDD4ChannelLaserIndex
+
+::
+
+  - -110
+
+* uiSequenceCount
+
+::
+
+  - 1
+
+* MetadataSeq 0 sCal.dFmax
+
+::
+
+  - 255.000000000000000
+
+* m_NFRString
+
+::
+
+  - 
+
+* MetadataSeq 0 wsObjectiveName
+
+::
+
+  - Zoom 2
+
+* number of timepoints
+
+::
+
+  - 1
+
+* MetadataSeq 0 dLampVoltage
+
+::
+
+  - 0.000000000000000
+
+* uiRepresentation
+
+::
+
+  - 0
+
+* m_iGraphScale
+
+::
+
+  - 0
+
+* dAspect
+
+::
+
+  - 1
+
+* MetadataSeq 0 dAngle
+
+::
+
+  - 0.000000000000000
+
+* uiBpcInMemory
+
+::
+
+  - 16
+
+* m_sAnalyzerFullName
+
+::
+
+  - TE2000 Analyzer
+
+* MetadataSeq 0 wszUniqueName
+
+::
+
+  - FMT 1x1 (CoolSnap HQ)
+
+* MetadataSeq 0 CaptureQuality
+
+::
+
+  - 75
+
+* wsCommandAfterCapture
+
+::
+
+  - 
+
+* m_bGraphVerticalSplit
+
+::
+
+  - false
+
+* m_ibLightIrisIntensityValid0
+
+::
+
+  - 0
+
+* ePixelType
+
+::
+
+  - 1
+
+* CLEMNoSignalDecisionRatio
+
+::
+
+  - 25
+
+* sCal.dFmin
+
+::
+
+  - 255
+
+* dExposureRed
+
+::
+
+  - 0
+
+* CH4LaserPower
+
+::
+
+  - 1
+
+* Y position
+
+::
+
+  - -4459.400000000001
+
+* m_sFilterShortName0
+
+::
+
+  - Filter Blocks (Turret)
+
+* m_dZPosition0
+
+::
+
+  - 3212.7
+
+* MetadataSeq 0 LimitListedExposureMax
+
+::
+
+  - -1.000000000000000
+
+* m_sFilterPhysFullName0
+
+::
+
+  - Nikon TE2000
+
+* CH2PMTOffset
+
+::
+
+  - 0
+
+* uiHeight
+
+::
+
+  - 1536
+
+* dOffsetTrueColor
+
+::
+
+  - 0
+
+* _01
+
+::
+
+  - false
+
+* MetadataSeq 0 m_iActiveShutterType
+
+::
+
+  - -1
+
+* _02
+
+::
+
+  - 
+  - false
+  - true
+
+* MetadataSeq 0 dZoom
+
+::
+
+  - 1.000000000000000
+
+* PinholeSize
+
+::
+
+  - 38.0694792982456
+
+* MetadataSeq 0 m_bRatioViewEnabled
+
+::
+
+  - false
+
+* ScanCropYOffset
+
+::
+
+  - 0
+
+* iOffsetRed
+
+::
+
+  - 0
+
+* MetadataSeq 0 uiMaxSrc
+
+::
+
+  - 65535
+
+* MetadataSeq 0 uiNumOffset
+
+::
+
+  - 0
+
+* ScanAngle
+
+::
+
+  - 0
+
+* SignificantBits
+
+::
+
+  - 12
+
+* dWavelength
+
+::
+
+  - 0.000000000000000
+  - 0.0
+
+* bPickFromGraph
+
+::
+
+  - false
+
+* top
+
+::
+
+  - 0
+
+* MetadataSeq 0 m_iFilterPosition0
+
+::
+
+  - 2
+
+* m_bShowAllComp
+
+::
+
+  - true
+
+* TextInfoItem
+
+::
+
+  - Zoom 2
+
+* MetadataSeq 0 AverageToQualityCH
+
+::
+
+  - 
+
+* MetadataSeq 0 ConversionGain
+
+::
+
+  - 2
+
+* m_iFilterPosition0
+
+::
+
+  - 3
+
+* CH3LaserStimulationPower3
+
+::
+
+  - 0
+
+* sCal.dTMeasCalMax
+
+::
+
+  - 0
+
+* CH3LaserStimulationPower1
+
+::
+
+  - 0
+
+* CH3LaserStimulationPower2
+
+::
+
+  - 0
+
+* bUsePFS
+
+::
+
+  - false
+
+* uiComp
+
+::
+
+  - 1
+
+* bControlShutter
+
+::
+
+  - true
+
+* m_ibZExist0
+
+::
+
+  - 1
+
+* IRLaser1Wavelength
+
+::
+
+  - 800
+
+* dCamChipSizeX
+
+::
+
+  - 0
+
+* _00
+
+::
+
+  - true
+
+* dCamChipSizeY
+
+::
+
+  - 0
+
+* TransmitNDDIn
+
+::
+
+  - 0
+
+* MetadataSeq 0 wsCustomData
+
+::
+
+  - 
+
+* TDPMTOffset
+
+::
+
+  - 0
+
+* dMin
+
+::
+
+  - 0
+
+* m_eSpctType
+
+::
+
+  - 1
+  - 8
+
+* MetadataSeq 0 TriggerMode
+
+::
+
+  - 0
+
+* MetadataSeq 0 bZPosAbsolute
+
+::
+
+  - false
+
+* MetadataSeq 0 dProjectiveMag
+
+::
+
+  - 1.000000000000000
+
+* MetadataSeq 0 dCalibration
+
+::
+
+  - 2.404240485564305
+
+* MetadataSeq 0 m_sFilterPhysFullName0
+
+::
+
+  - Simulated Filter Changer
+
+* MetadataSeq 0 ClearMode
+
+::
+
+  - 0
+
+* uiTileHeight
+
+::
+
+  - 1536
+
+* dExposureBlue
+
+::
+
+  - 0
+
+* m_iShutterUse0
+
+::
+
+  - 1
+
+* MetadataSeq 0 dTimeMSec
+
+::
+
+  - 9415.463697201572400
+  - 1776092.425675720000000
+  - 2926113.557132370800000
+
+* MetadataSeq 0 m_CompanyString
+
+::
+
+  - NIKON Corporation
+
+* sCal.dRmin
+
+::
+
+  - 0
+
+* uiWavelength
+
+::
+
+  - 0
+
+* bControlLight
+
+::
+
+  - false
+
+* MetadataSeq 0 AverageToQuality
+
+::
+
+  - 0.000000000000000
+
+* MetadataSeq 0 dGainBlue
+
+::
+
+  - 1.000000000000000
+
+* dGainGrayScale
+
+::
+
+  - 1
+
+* wsNotes
+
+::
+
+  - 
+
+* LineAcquireMode
+
+::
+
+  - 0
+
+* m_iLightUse0
+
+::
+
+  - 1
+
+* m_ibShutterStateValid0
+
+::
+
+  - 1
+
+* MetadataSeq 0 ePictureXAxis
+
+::
+
+  - 0
+
+* dCompressionParam
+
+::
+
+  - 0
+
+* Negate
+
+::
+
+  - 0
+
+* m_ibLightPathExist
+
+::
+
+  - 1
+
+* MetadataSeq 0 m_sFilterFullName0
+
+::
+
+  - Simulated Filter Changer Device
+
+* _0
+
+::
+
+  - Scan Area Settings
+
+* _1
+
+::
+
+  - Scan Area Position
+
+* dTimeAbsolute
+
+::
+
+  - 2455950.173924028
+  - 2454364.92029839
+  - 2454329.13359774
+
+* MetadataSeq 0 m_sFilterPhysConnectionString0
+
+::
+
+  - 
+
+* TNDD2ChannelLaserIndex
+
+::
+
+  - -110
+
+* sCameraName
+
+::
+
+  - 
+
+* dGammaBlue
+
+::
+
+  - 1
+
+* dRange
+
+::
+
+  - 0.000000000000000
+  - 25
+  - 0
+
+* FlexibleHeight
+
+::
+
+  - -1
+
+* m_sZShortName0
+
+::
+
+  - Z Drive
+
+* dObjectiveNA
+
+::
+
+  - 0.45
+  - 1.4
+
+* ScanCropXOffset
+
+::
+
+  - 0
+
+* m_eLightType0
+
+::
+
+  - 3
+
+* m_dGraphOffset00
+
+::
+
+  - 0
+
+* X position for position #1
+
+::
+
+  - 26053.3
+
+* LastEmissionFilterKey1
+
+::
+
+  - 
+
+* MetadataSeq 0 sCal.dKd
+
+::
+
+  - 224.000000000000000
+
+* m_dGraphOffset01
+
+::
+
+  - 0
+
+* m_dGraphOffset02
+
+::
+
+  - 0
+
+* dCamBinningY
+
+::
+
+  - 1
+
+* dCamBinningX
+
+::
+
+  - 1
+
+* MetadataSeq 0 IntegrateCH
+
+::
+
+  - 
+
+* m_VersionString
+
+::
+
+  - 2.30, SP3 (Build 367)
+
+* dGainTrueColor
+
+::
+
+  - 1
+
+* dMaxPeriodDiff
+
+::
+
+  - 0
+
+* LastEmissionFilterKey2
+
+::
+
+  - 
+
+* MetadataSeq 0 m_sZoomPhysConnectionString
+
+::
+
+  - 
+
+* MetadataSeq 0 dGainGreen
+
+::
+
+  - 1.000000000000000
+
+* MetadataSeq 0 iOffset
+
+::
+
+  - 0
+
+* m_sShutterShortName0
+
+::
+
+  - Shutter (EPI)
+
+* m_ibAnalyzerExist
+
+::
+
+  - 1
+
+* TypeID
+
+::
+
+  - 0
+
+* Unit
+
+::
+
+  - µm
+
+* Camera Settings
+
+::
+
+  -    Exposure
+
+* MetadataSeq 0 m_dLUTsRangeMax
+
+::
+
+  - 1.000000000000000
+
+* TNDD3ChannelLaserIndex
+
+::
+
+  - -110
+
+* Stim405LaserPower1
+
+::
+
+  - 0
+
+* m_sAnalyzerPhysFullName
+
+::
+
+  - Nikon TE2000
+
+* Stim405LaserPower2
+
+::
+
+  - 0
+
+* MetadataSeq 0 right
+
+::
+
+  - 0
+
+* dGammaRed
+
+::
+
+  - 1
+
+* Stim405LaserPower3
+
+::
+
+  - 0
+
+* CH2ChannelLaserIndex
+
+::
+
+  - 1
+
+* CH3CLEMNoSignalThreshold
+
+::
+
+  - 500
+
+* m_ibShutterApertureValid0
+
+::
+
+  - 1
+
+* MetadataSeq 0 m_CopyrightString
+
+::
+
+  - Copyright Â© 1991-2007  Laboratory Imaging,  http://www.lim.cz
+
+* m_sShutterFullName0
+
+::
+
+  - TE2000 Epi Shutter
+
+* Desc
+
+::
+
+  - Ti ZDrive
+
+* bPoints
+
+::
+
+  - false
+
+* m_bViewLut
+
+::
+
+  - true
+
+* X2Ex1Em2ndLaserIndex
+
+::
+
+  - 1
+
+* m_ibFilterActAsShutter0
+
+::
+
+  - 0
+
+* m_dGraphZoom02
+
+::
+
+  - 1
+
+* m_dGraphZoom01
+
+::
+
+  - 1
+
+* MetadataSeq 0 m_ibFilterActAsShutter0
+
+::
+
+  - 0
+
+* TextInfoItem_6
+
+::
+
+  - 
+
+* TextInfoItem_5
+
+::
+
+  - - Nonequidistant
+  - Plane #2
+
+* FrameSkip
+
+::
+
+  - 0
+
+* TextInfoItem_8
+
+::
+
+  - 
+
+* TextInfoItem_7
+
+::
+
+  - 
+
+* TextInfoItem_2
+
+::
+
+  - 
+
+* dPrecision
+
+::
+
+  - 0
+
+* TextInfoItem_1
+
+::
+
+  - 
+
+* TextInfoItem_4
+
+::
+
+  - 
+
+* TextInfoItem_3
+
+::
+
+  - 
+
+* MetadataSeq 0 iOffsetBlue
+
+::
+
+  - 0
+
+* m_ibLightExist0
+
+::
+
+  - 1
+
+* TextInfoItem_9
+
+::
+
+  - 
+
+* m_dGraphZoom00
+
+::
+
+  - 1
+
+* m_ibLightPathPositionValid
+
+::
+
+  - 1
+
+* m_sShutterPhysFullName0
+
+::
+
+  - Nikon TE2000
+
+* m_eFilterType0
+
+::
+
+  - 2
+
+* MetadataSeq 0 sOpticalConfigName
+
+::
+
+  - 
+
+* MetadataSeq 0 m_ibZoomPositionValid
+
+::
+
+  - 1
+
+* CH3CLEMEnoughSignalThreshold
+
+::
+
+  - 2000
+
+* LastEmissionFilterName2
+
+::
+
+  - 
+
+* LastEmissionFilterName1
+
+::
+
+  - 
+
+* MetadataSeq 0 m_ePlacement
+
+::
+
+  - 1
+
+* TextInfoItem_0
+
+::
+
+  - 
+
+* m_sFilterPhysConnectionString0
+
+::
+
+  - COM1
+
+* uiMinDst
+
+::
+
+  - 0
+
+* MetadataSeq 0 SensorMode
+
+::
+
+  - 0
+
+* dFadingCorr
+
+::
+
+  - 0.000000000000000
+  - 1.25164011933875e-308
+  - 0
+
+* ChannelCount
+
+::
+
+  - 4
+
+* sCal.dFmax
+
+::
+
+  - 1
+
+* dStart
+
+::
+
+  - 0
+
+* MetadataSeq 0 m_sFilterShortName0
+
+::
+
+  - SimFilter (EPI)
+
+* m_ibFilterExist0
+
+::
+
+  - 1
+
+* MetadataSeq 0 dWavelength
+
+::
+
+  - 0.000000000000000
+
+* dSpeed
+
+::
+
+  - 0.000000000000000
+  - 10
+  - 0
+
+* m_sAnalyzerShortName
+
+::
+
+  - Analyzer
+
+* Integrate
+
+::
+
+  - 1
+
+* ScanXOffset
+
+::
+
+  - 0
+
+* MetadataSeq 0 dCamBinningY
+
+::
+
+  - 1.000000000000000
+
+* MetadataSeq 0 dCamBinningX
+
+::
+
+  - 1.000000000000000
+
+* IntegrateCH
+
+::
+
+  - 
+
+* dLampVoltage
+
+::
+
+  - 0.000000000000000
+  - 0
+  - 9.3
+
+* StimulationEnable2LaserMask
+
+::
+
+  - 0
+
+* MetadataSeq 0 m_GrabberString
+
+::
+
+  - Roper Scientific
+
+* ExcitationSourceKey
+
+::
+
+  - 
+
+* MetadataSeq 0 dZPos
+
+::
+
+  - 0.000000000000000
+
+* m_bEnableAutoWhite
+
+::
+
+  - false
+
+* uiMinSrc
+
+::
+
+  - 0
+
+* MetadataSeq 0 dAcqTime
+
+::
+
+  - 0.000000000000000
+
+* m_sLightPathFullName
+
+::
+
+  - TE2000 LightPath
+
+* uiNumOffset
+
+::
+
+  - 0
+
+* CH1ChannelLaserIndex
+
+::
+
+  - 0
+
+* MetadataSeq 0 dStgLgCT22
+
+::
+
+  - 1.000000000000000
+
+* dMax
+
+::
+
+  - 2
+
+* MetadataSeq 0 dStgLgCT21
+
+::
+
+  - 0.000000000000000
+
+* dExposure
+
+::
+
+  - 0
+
+* dPeriod
+
+::
+
+  - 60000
+
+* MetadataSeq 0 IntegrateToQualityCH
+
+::
+
+  - 
+
+* EPIAdditionalFilterName
+
+::
+
+  - 
+
+* wsCommandBeforeLoop
+
+::
+
+  - 
+
+* m_ibShutterExist0
+
+::
+
+  - 1
+
+* sCal.dTMeasCalMin
+
+::
+
+  - 0
+
+* dAngle
+
+::
+
+  - 0
+
+* ReflectNDDIn
+
+::
+
+  - 0
+
+* CH1CLEMBrightness
+
+::
+
+  - 4
+
+* sCal.dVisc
+
+::
+
+  - 1
+
+* MetadataSeq 0 EnableExposureEtc
+
+::
+
+  - true
+
+* MetadataSeq 0 KeepOverlapped
+
+::
+
+  - false
+
+* uiTileWidth
+
+::
+
+  - 1536
+
+* MetadataSeq 0 dStgLgCT12
+
+::
+
+  - 0.000000000000000
+
+* MetadataSeq 0 dStgLgCT11
+
+::
+
+  - 1.000000000000000
+
+* MetadataSeq 0 CameraUniqueName
+
+::
+
+  - CoolSNAP HQ
+
+* MetadataSeq 0 uiOutside
+
+::
+
+  - 0
+
+* Name
+
+::
+
+  - Cy5
+
+* UseStimulationLaserMask
+
+::
+
+  - 105
+
+* CH1LaserStimulationPower1
+
+::
+
+  - 0
+
+* CH1LaserStimulationPower2
+
+::
+
+  - 0
+
+* uiBpcSignificant
+
+::
+
+  - 12
+
+* FirstDMIndex
+
+::
+
+  - 2
+
+* CH1LaserStimulationPower3
+
+::
+
+  - 0
+
+* MetadataSeq 0 dExposureGreen
+
+::
+
+  - 0.000000000000000
+

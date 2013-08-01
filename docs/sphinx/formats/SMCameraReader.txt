@@ -1,0 +1,21 @@
+*******************************************************************************
+SMCameraReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats SM Camera format reader.
+
+Key/value pairs
+===============================================================================
+
+* Image width
+
+::
+
+  - 748
+
+* Image height
+
+::
+
+  - 506
+

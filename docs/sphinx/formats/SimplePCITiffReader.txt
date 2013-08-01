@@ -1,0 +1,321 @@
+*******************************************************************************
+SimplePCITiffReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats SimplePCI TIFF format reader.
+
+Key/value pairs
+===============================================================================
+
+* [ CAPTURE ] c_iCamType
+
+::
+
+  - 15
+
+* [ CAPTURE ] c_Expos5
+
+::
+
+  - 33000.000000
+
+* [ CAPTURE ] c_Expos3
+
+::
+
+  - 408428.828389
+
+* [ CAPTURE ] c_Expos4
+
+::
+
+  - 33000.000000
+
+* [ ROI ] roi.h
+
+::
+
+  - 1000
+
+* [ ROI ] roi.y1
+
+::
+
+  - 0
+
+* [ ROI ] roi.y2
+
+::
+
+  - 999
+
+* [ CAPTURE ] c_ScanFile
+
+::
+
+  - F:\Martin\100413 xyz test\100415.scn
+
+* [ CALIBRATION ] factor
+
+::
+
+  - 1.000000
+
+* [ CAPTURE ] c_Focus24BitMode
+
+::
+
+  - TRUE
+
+* [ CAPTURE ] c_sCamSubType
+
+::
+
+  - LNK00
+
+* BitsPerSample
+
+::
+
+  - 16
+
+* [ ROI ] roi.w
+
+::
+
+  - 1000
+
+* [ CAPTURE ] c_Expos2
+
+::
+
+  - 184247.668679
+
+* [ CAPTURE TIME ] Time_From_Start
+
+::
+
+  - 00:00:03.6898
+
+* [ CAPTURE ] c_Expos1
+
+::
+
+  - 39274.287855
+
+* YResolution
+
+::
+
+  - 72
+
+* [ CALIBRATION ] calib_index
+
+::
+
+  - 5
+
+* [ CAPTURE ] c_Filter3
+
+::
+
+  - 12
+
+* [ CAPTURE ] c_Filter2
+
+::
+
+  - 11
+
+* [ ROI ] roi.x2
+
+::
+
+  - 999
+
+* [ CAPTURE ] c_Filter1
+
+::
+
+  - 10
+
+* [ ROI ] roi.type
+
+::
+
+  - 5
+
+* ImageLength
+
+::
+
+  - 1000
+
+* XResolution
+
+::
+
+  - 72
+
+* [ ROI ] roi.x1
+
+::
+
+  - 0
+
+* [ CAPTURE ] c_Capture1ToDoc
+
+::
+
+  - TRUE
+
+* [ CALIBRATION ] scale_len
+
+::
+
+  - 100.000000
+
+* SamplesPerPixel
+
+::
+
+  - 3
+
+* [ CAPTURE TIME ] Time_From_Last
+
+::
+
+  - 00:00:03.6898
+
+* ResolutionUnit
+
+::
+
+  - Inch
+
+* PhotometricInterpretation
+
+::
+
+  - RGB
+
+* [ ROI ] roi.area
+
+::
+
+  - 1000000.000000
+
+* [ CAPTURE DEVICE ] Binning
+
+::
+
+  - 1
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* [ MICROSCOPE ] Objective
+
+::
+
+  - 40x Air
+
+* [ CAPTURE ] c_EnableCustom
+
+::
+
+  - TRUE
+
+* [ CAPTURE DEVICE ] Capture Region
+
+::
+
+  - (0, 0, 1000, 1000)
+
+* ImageWidth
+
+::
+
+  - 1000
+
+* [ CALIBRATION ] symbol
+
+::
+
+  - Px
+
+* [ CAPTURE DEVICE ] Camera Name
+
+::
+
+  - C9100-02 LNK00
+
+* PlanarConfiguration
+
+::
+
+  - Chunky
+
+* Orientation
+
+::
+
+  - 1st row -> top; 1st column -> left
+
+* [ CALIBRATION ] units
+
+::
+
+  - Pixels
+
+* [ CAPTURE DEVICE ] Camera Size-Bits
+
+::
+
+  - 1000x1000, 14-Bits
+
+* [ CAPTURE DEVICE ] Camera Type
+
+::
+
+  - D_CAM - LNK00
+
+* [ ROI ] roi.name
+
+::
+
+  - C:\Documents and Settings\martin\My Documents\SIMPLE.ROI
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* [ CALIBRATION ] title
+
+::
+
+  - Default
+
+* [ CAPTURE DEVICE ] Display Depth
+
+::
+
+  - 14
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - RGB
+
+* [ CALIBRATION ] magnification
+
+::
+
+  - 1.000000
+

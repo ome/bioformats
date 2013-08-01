@@ -1,0 +1,51 @@
+*******************************************************************************
+TopometrixReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats TopoMetrix format reader.
+
+Key/value pairs
+===============================================================================
+
+* DAC to world zero
+
+::
+
+  - 0.03200000151991844
+
+* X size (in um)
+
+::
+
+  - 50.0
+
+* Comment
+
+::
+
+  - Z= 14.24UM
+
+* Y size (in um)
+
+::
+
+  - 50.0
+
+* Version
+
+::
+
+  - 3
+
+* ADC
+
+::
+
+  - 0.9560546875
+
+* Acquisition date
+
+::
+
+  - 12/11/95 11:54:21
+

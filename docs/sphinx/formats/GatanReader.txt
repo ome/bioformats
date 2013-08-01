@@ -1,0 +1,1474 @@
+*******************************************************************************
+GatanReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Gatan Digital Micrograph format reader.
+
+Key/value pairs
+===============================================================================
+
+* 
+
+::
+
+  - 0.0
+
+* rshift
+
+::
+
+  - 0.0
+
+* Current Device Name
+
+::
+
+  - MSC LMFS485B 1
+
+* PixelDepth
+
+::
+
+  - 3.3554432E7
+
+* Bright
+
+::
+
+  - 7.0
+
+* FamilyName
+
+::
+
+  - Lucida Console
+
+* IsMoveable
+
+::
+
+  - 1.0
+
+* bias
+
+::
+
+  - 1.6777216E7
+
+* Device Name
+
+::
+
+  - DigiScan
+
+* Minimum Exposure (s)
+
+::
+
+  - 0.05
+
+* FillMode
+
+::
+
+  - 256.0
+
+* Brightness
+
+::
+
+  - 0.5
+
+* Selected
+
+::
+
+  - 0.0
+
+* SparseSurvey_GridSize
+
+::
+
+  - 2.68435456E8
+
+* command mask
+
+::
+
+  - -1.0
+
+* CCD Read Area
+
+::
+
+  - 0.0, 0.0, 0.0, 0.0
+
+* Exposure (s)
+
+::
+
+  - 2.0
+
+* Tag path
+
+::
+
+  - Microscope Info:Detector
+
+* Processing
+
+::
+
+  - Gain Normalized
+
+* HasWindowPosition
+
+::
+
+  - 1.0
+
+* Maximum Exposure (s)
+
+::
+
+  - 1.0
+
+* control mask
+
+::
+
+  - -2049.0
+
+* Rotation
+
+::
+
+  - 0.0
+
+* Knife retract speed (mm/s)
+
+::
+
+  - 1.2
+
+* vclearb
+
+::
+
+  - 2560.0
+
+* Lower Threshold (%)
+
+::
+
+  - 20.0
+
+* vcleara
+
+::
+
+  - 0.0
+
+* Microscope Info
+
+::
+
+  - Microscope Tecnai 12 D1014 Twin( User SUPERVISOR( Gun W HT 80 kV Emission 1 4.29 uA( Mode TEM uP SA Zoom Image Magn 15000x( Spot 3( Intensity 39.365%( Obj 92.146%( Dif 53.939%( Stage -427.011 um, 113.878 um, -16.769 um, 0.00 deg, 0.00 deg(
+  - Microscope Tecnai 12 D1014 Twin( User SUPERVISOR( Gun W HT 80 kV Emission 3 11.03 uA( Mode TEM uP SA Zoom Image Magn 11000x( Spot 2( Intensity 55.713%( Obj 92.464%( Dif 50.990%( Stage -91.084 um, -152.956 um, -18.048 um, 0.00 deg, 0.00 deg(
+
+* Recorded
+
+::
+
+  - 1.0
+
+* hclearb
+
+::
+
+  - -11264.0
+
+* read device
+
+::
+
+  - 1024.0
+
+* hcleara
+
+::
+
+  - 512.0
+
+* Normally Closed
+
+::
+
+  - 1.0
+
+* Probe Current (nA)
+
+::
+
+  - 0.0
+
+* Start Next Frame Immediately
+
+::
+
+  - 1.0
+
+* ViewDisplayID
+
+::
+
+  - 1.34217728E8
+
+* Vertical Flip
+
+::
+
+  - 0.0
+
+* Minimum Value (counts)
+
+::
+
+  - -99.0
+
+* AnnotationType
+
+::
+
+  - 3.3554432E8
+
+* SessionID
+
+::
+
+  - 1.906494798E9
+
+* max
+
+::
+
+  - -8454144.0
+
+* Required Data Characteristics
+
+::
+
+  - 5.0331648E7
+
+* Dark Level (counts)
+
+::
+
+  - 1501.0
+
+* Parameter Set Name
+
+::
+
+  - Focus
+
+* TimeStamp
+
+::
+
+  - Wed Nov 30 09:27:33 2011(
+
+* ApplicationBounds
+
+::
+
+  - 0.0, 0.0, 0.0, 0.0
+
+* WindowRect
+
+::
+
+  - 0.0, 0.0, 0.0, 0.0
+
+* Upper Threshold (%)
+
+::
+
+  - 90.0
+
+* Label
+
+::
+
+  - Detector
+
+* SparseSurvey_NumberPixels
+
+::
+
+  - 5.36870912E8
+
+* Rectangle
+
+::
+
+  - 0.0, 0.0, 0.0, 0.0
+
+* DrawPaper
+
+::
+
+  - 1.0
+
+* Horizontal Pixel Step
+
+::
+
+  - 4096.0
+
+* WindowPosition
+
+::
+
+  - 0.0, 0.0, 0.0, 4.02653184E8
+  - 0.0, 0.0, 0.0, 2.16172782113783808E18
+  - 0.0, 0.0, 0.0, 6.03979776E8
+
+* Attributes
+
+::
+
+  - 1.17440512E8
+
+* Specimen Info
+
+::
+
+  - Specimen information is not available yet
+
+* Vertical Pixel Step
+
+::
+
+  - 0.0
+
+* Gamma
+
+::
+
+  - 0.5
+
+* Emission Current (µA)
+
+::
+
+  - 0.0
+
+* ADC Min
+
+::
+
+  - 0.0
+
+* General
+
+::
+
+  - 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.6777216E7
+
+* Voltage
+
+::
+
+  - 80000.0
+
+* Parameter Set Tag Path
+
+::
+
+  - Imaging:View:Focus
+
+* IsVisible
+
+::
+
+  - 1.0
+
+* Exposure Start (ns)
+
+::
+
+  - 3.7850493834269264E10
+  - 3.159241161263656E11
+
+* IsZoomedToWindow
+
+::
+
+  - 0.0
+
+* Scale
+
+::
+
+  - 0.0, 1.0
+
+* Data Type
+
+::
+
+  - 3.3554432E8
+
+* Version
+
+::
+
+  - 770.0
+
+* Window Relative Position
+
+::
+
+  - 0.0, 0.0
+
+* control
+
+::
+
+  - -21248.0
+
+* Value
+
+::
+
+  - Denk
+
+* STEM Camera Length
+
+::
+
+  - 1.0
+
+* SparseSurvey_UseNumberPixels
+
+::
+
+  - 1.0
+
+* ImageIndex
+
+::
+
+  - 0.0
+
+* Active Size (pixels)
+
+::
+
+  - 0.0, 1048576.0
+
+* EstimatedMax
+
+::
+
+  - 1663.0
+  - 12870.0
+  - 397.0
+
+* ImageDisplayType
+
+::
+
+  - 1.6777216E7
+
+* samples
+
+::
+
+  - 256.0
+
+* Source
+
+::
+
+  - MSC LMFS485B 1
+
+* Mode Name
+
+::
+
+  - Imaging
+
+* ForegroundColor
+
+::
+
+  - 0.0, 0.0, 0.0
+
+* Target Intensity (%)
+
+::
+
+  - 50.0
+
+* Magnification Interpolated
+
+::
+
+  - 0.0
+
+* SourceSize_Pixels
+
+::
+
+  - 0.0, -1.425932288E9
+
+* Applied
+
+::
+
+  - 1.0
+
+* vblank
+
+::
+
+  - 512.0
+
+* TextOffsetH
+
+::
+
+  - 1.0
+
+* Binning
+
+::
+
+  - 0.0, 1.6777216E7
+
+* Update Interval (s)
+
+::
+
+  - 0.1
+
+* Spot Size
+
+::
+
+  - 3000.0
+
+* Sum Frames
+
+::
+
+  - 0.0
+
+* Frame Time (ns)
+
+::
+
+  - 9.8187156E9
+
+* Acquisition Start Time (epoch)
+
+::
+
+  - 1.1030404437187505E12
+  - 1.1029722337343745E12
+
+* CaptionSize
+
+::
+
+  - 2560.0
+
+* Quality Level
+
+::
+
+  - 3.3554432E7
+
+* Pixel Size (um)
+
+::
+
+  - 0.0, 15.0
+
+* Contrast
+
+::
+
+  - 0.5
+
+* TextOffsetV
+
+::
+
+  - 1.0
+
+* Acquisition Date
+
+::
+
+  - 12/14/2004
+  - 11/30/2011
+  - 12/13/2004
+
+* Zoom factor
+
+::
+
+  - 1.0
+
+* Diagonal Flip
+
+::
+
+  - 0.0
+
+* HighLimit
+
+::
+
+  - 4015.0
+  - 32721.62109375
+  - 922.0297241210938
+
+* Synchronize Lines
+
+::
+
+  - 0.0
+
+* Continuous Readout
+
+::
+
+  - 1.0
+
+* Specimen position (um)
+
+::
+
+  - 117.65416816428858
+
+* SurveyTechique
+
+::
+
+  - 3.3554432E7
+
+* Horizontal Image Center
+
+::
+
+  - 1024.0
+
+* Exposure Time (ns)
+
+::
+
+  - 1.9999224E9
+
+* pdel
+
+::
+
+  - 32000.0
+
+* vread
+
+::
+
+  - 528.0
+
+* Sample Time
+
+::
+
+  - 2.5
+
+* Specimen
+
+::
+
+  - 
+
+* MinimumContrast
+
+::
+
+  - 0.0
+
+* Dark Current (counts/s)
+
+::
+
+  - 0.0
+
+* Signal Index
+
+::
+
+  - 256.0
+
+* Settling (s)
+
+::
+
+  - 0.0
+
+* DoAutoSurvey
+
+::
+
+  - 1.0
+
+* Cs(mm)
+
+::
+
+  - 2.21
+  - 0.0
+  - 1.0
+
+* Channel
+
+::
+
+  - 256.0
+
+* DataType
+
+::
+
+  - 1.6777216E7
+
+* Operator
+
+::
+
+  - U-Wis
+  - gatan
+  - 
+
+* Origin
+
+::
+
+  - 0.0
+
+* Probe Size (nm)
+
+::
+
+  - 0.0
+
+* yPos (µm)
+
+::
+
+  - -52.5157
+
+* LayedOut
+
+::
+
+  - 0.0
+
+* Knife cut speed (mm/s)
+
+::
+
+  - 0.1
+
+* HasBackground
+
+::
+
+  - 0.0
+
+* Rotation Offset
+
+::
+
+  - 0.0
+
+* Illumination Mode
+
+::
+
+  - TEM
+
+* LowLimit
+
+::
+
+  - 1757.8896484375
+  - 20571.255859375
+  - 397.0
+
+* Imaging Mode
+
+::
+
+  - IMAGING
+
+* RestoreImageDisplayID
+
+::
+
+  - 1.34217728E8
+
+* hblank
+
+::
+
+  - 512.0
+
+* Slot
+
+::
+
+  - 0.0
+
+* Integration Percentage
+
+::
+
+  - 80.0
+
+* hbin
+
+::
+
+  - 256.0
+
+* RangeAdjust
+
+::
+
+  - 1.0
+
+* Flip
+
+::
+
+  - 0.0
+
+* ClassName
+
+::
+
+  - ImageSource:Simple
+
+* Indicated Magnification
+
+::
+
+  - 15000.0
+  - 13708.0
+  - -1.31465216E8
+
+* RestoreImageDisplayBounds
+
+::
+
+  - 0.0, 0.0, 0.0, 0.0
+
+* Horizontal Perpendicular Pixel Step
+
+::
+
+  - 0.0
+
+* Horizontal Flip
+
+::
+
+  - 0.0
+
+* Viewer Class
+
+::
+
+  - view
+
+* EstimatedMaxTrimPercentage
+
+::
+
+  - 0.0010000000474974513
+
+* Zoom
+
+::
+
+  - 1.0
+
+* IsFixedInPageMode
+
+::
+
+  - 0.0
+
+* ImageRef
+
+::
+
+  - 1.6777216E7
+
+* ContrastMode
+
+::
+
+  - 1.6777216E7
+
+* Shutter Exposure
+
+::
+
+  - 0.0
+
+* Horizontal Spacing
+
+::
+
+  - 16.0
+
+* Corrections
+
+::
+
+  - 8.4082688E7
+
+* Read Frame Window
+
+::
+
+  - 1.6777216E7
+
+* Signal ID
+
+::
+
+  - 1.6777216E8
+
+* Flyback
+
+::
+
+  - 200.0
+
+* Field of View (µm)
+
+::
+
+  - 10.820908069193171
+
+* Microscope
+
+::
+
+  - Quanta
+
+* Saturation Level (counts)
+
+::
+
+  - 14001.0
+
+* Acquisition Time (OS)
+
+::
+
+  - 1.2967147664698672E17
+
+* Integrate Frames
+
+::
+
+  - 0.0
+
+* IsSelectable
+
+::
+
+  - 1.0
+
+* Bitshift
+
+::
+
+  - 768.0
+
+* Frame Combine Style
+
+::
+
+  - Copy
+
+* HiLimitContrastDeltaTriggerPercentage
+
+::
+
+  - 0.0
+
+* Acquisition Time
+
+::
+
+  - 10:08:23 AM
+  - 9:27:44 AM
+  - 3:16:14 PM
+
+* command
+
+::
+
+  - -8828.0
+  - -8832.0
+
+* Operating Mode
+
+::
+
+  - imaging
+
+* Reads Per Acquire
+
+::
+
+  - 1.6777216E7
+
+* EstimatedMinTrimPercentage
+
+::
+
+  - 0.0010000000474974513
+
+* Operation Mode
+
+::
+
+  - Imaging
+
+* min
+
+::
+
+  - 8454143.0
+
+* Camera Number
+
+::
+
+  - 0.0
+
+* xPos (µm)
+
+::
+
+  - -783.527
+
+* IsResizable
+
+::
+
+  - 1.0
+
+* Vertical Spacing
+
+::
+
+  - 16.0
+
+* Maximum Value (counts)
+
+::
+
+  - 16383.0
+
+* Vertical Image Center
+
+::
+
+  - 1024.0
+
+* RequiredVersion
+
+::
+
+  - 1283.0
+
+* HT Extrapolated
+
+::
+
+  - 0.0
+
+* EstimatedMin
+
+::
+
+  - 4015.0
+  - 37138.0
+  - 930.0
+
+* ComplexRange
+
+::
+
+  - 1000.0
+
+* Datatype
+
+::
+
+  - 2.68435456E8
+
+* Frame Index
+
+::
+
+  - 1.6777216E7
+  - 2.5165824E8
+
+* Acquired
+
+::
+
+  - 0.0
+
+* Screen Relative Position
+
+::
+
+  - 0.0, 0.0
+
+* CaptionOn
+
+::
+
+  - 0.0
+
+* ADC shift
+
+::
+
+  - 0.0
+
+* Dont Expose If Unnecessary
+
+::
+
+  - 1.0
+
+* Offset
+
+::
+
+  - 0.0, 0.0
+
+* Detector
+
+::
+
+  - Denk
+
+* hread
+
+::
+
+  - 528.0
+
+* TargetDisplayID
+
+::
+
+  - -1.0
+
+* ADC Max
+
+::
+
+  - 16383.0
+
+* DrawMargins
+
+::
+
+  - 1.0
+
+* WD (mm)
+
+::
+
+  - 5879.73
+
+* Vertical DS Offset
+
+::
+
+  - 0.0
+
+* Bias (counts)
+
+::
+
+  - 1501.0
+
+* BrightColor
+
+::
+
+  - 0.0, 0.0, 0.0
+
+* Size
+
+::
+
+  - 2.34881024E8
+
+* ComplexMode
+
+::
+
+  - 6.7108864E7
+
+* Do Auto Zoom
+
+::
+
+  - 0.0
+
+* Frame Start (ns)
+
+::
+
+  - 3.7850493834269264E10
+  - 3.159241161263656E11
+
+* View Name
+
+::
+
+  - View
+
+* IsInverted
+
+::
+
+  - 0.0
+
+* ImageSource
+
+::
+
+  - 0.0
+
+* Antiblooming
+
+::
+
+  - 1.0
+  - 0.0
+
+* register mask
+
+::
+
+  - -65280.0
+
+* Exposure Number
+
+::
+
+  - 2.1823488E8
+  - 3.2695936E8
+  - -1.308557312E9
+
+* Pressure (Torr)
+
+::
+
+  - 0.298266
+
+* exposure
+
+::
+
+  - 1.914830848E9
+
+* Corrections Mask
+
+::
+
+  - 8.22280192E8
+
+* LowLimitContrastDeltaTriggerPercentage
+
+::
+
+  - 0.0
+
+* Number Summing Frames
+
+::
+
+  - 10.0
+
+* DoIntegralZoom
+
+::
+
+  - 0.0
+
+* Class Name
+
+::
+
+  - cm_imgproc_histogram
+
+* UniqueID
+
+::
+
+  - 1.34217728E8
+
+* DisplayCalibratedUnits
+
+::
+
+  - 1.0
+
+* CLUTName
+
+::
+
+  - Greyscale
+
+* Readout Time (ns)
+
+::
+
+  - 7.8165252E9
+
+* Shutter Index
+
+::
+
+  - 0.0
+
+* BackgroundColor
+
+::
+
+  - 0.0, 0.0, 0.0
+
+* TextWidth
+
+::
+
+  - 288.0
+
+* Oscillator
+
+::
+
+  - 1.0
+
+* ImageDisplayBounds
+
+::
+
+  - 0.0, 0.0, 0.0, 0.0
+
+* Units
+
+::
+
+  - nm
+
+* IsTranslatable
+
+::
+
+  - 1.0
+
+* vbin
+
+::
+
+  - 256.0
+
+* Current Mode
+
+::
+
+  - Imaging
+
+* InImageMode
+
+::
+
+  - 1.0
+
+* Vertical Perpendicular Pixel Step
+
+::
+
+  - 4096.0
+
+* BackgroundMode
+
+::
+
+  - 512.0
+
+* Sub Area Adjust
+
+::
+
+  - 0.0, 0.0, 0.0, 0.0
+
+* Num Pre Read Commands
+
+::
+
+  - 0.0
+
+* Processing Position
+
+::
+
+  - precorrection
+
+* Name
+
+::
+
+  - biosamplefullframe
+  - BSED - slice 0010
+  - DMtest2
+
+* Do Auto Expose
+
+::
+
+  - 0.0
+
+* NextDocumentObjectID
+
+::
+
+  - 1.84549376E8
+
+* Horizontal DS Offset
+
+::
+
+  - 0.0
+

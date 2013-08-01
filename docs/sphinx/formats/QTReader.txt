@@ -1,0 +1,27 @@
+*******************************************************************************
+QTReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats QuickTime format reader.
+
+Key/value pairs
+===============================================================================
+
+* Codec
+
+::
+
+  - rle 
+
+* Frames per second
+
+::
+
+  - 85
+
+* Bits per pixel
+
+::
+
+  - 32
+

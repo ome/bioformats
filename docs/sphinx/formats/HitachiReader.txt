@@ -1,0 +1,267 @@
+*******************************************************************************
+HitachiReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Hitachi format reader.
+
+Key/value pairs
+===============================================================================
+
+* Condition
+
+::
+
+  - Vacc=5kV   Mag=x5.00k   WD=13.1mm
+
+* WorkingDistance
+
+::
+
+  - 13100 um
+
+* Format
+
+::
+
+  - tif
+
+* DataNumber
+
+::
+
+  - ZMB-UniBS
+
+* DecelerationVoltage
+
+::
+
+  - 0 Volt
+
+* KeyWord1
+
+::
+
+  - surface
+
+* KeyWord2
+
+::
+
+  - surface
+
+* StagePositionR
+
+::
+
+  - 0
+
+* StagePositionT
+
+::
+
+  - 0
+
+* StagePositionY
+
+::
+
+  - 24953000
+
+* Condencer1
+
+::
+
+  - 5000
+
+* SerialNumber
+
+::
+
+  - HI-9018-0003
+
+* StagePositionZ
+
+::
+
+  - 8000000
+
+* AcceleratingVoltage
+
+::
+
+  - 5000 Volt
+
+* StageType
+
+::
+
+  - 2
+
+* ImageName
+
+::
+
+  - 001_q07.tif
+
+* StagePositionX
+
+::
+
+  - 25112000
+
+* Time
+
+::
+
+  - 10:26:04
+
+* Date
+
+::
+
+  - 05/09/2011
+
+* SubMagnification
+
+::
+
+  - 0
+
+* ColorMode
+
+::
+
+  - Grayscale
+
+* ScreenMode
+
+::
+
+  - Small Screen
+
+* InstructName
+
+::
+
+  - S-4800
+
+* ScanSpeed
+
+::
+
+  - Tv1
+
+* Media
+
+::
+
+  - NE[ ]
+
+* DataDisplayCombine
+
+::
+
+  - 1
+
+* Comment
+
+::
+
+  - 
+
+* Vacuum
+
+::
+
+  - 
+
+* LensMode
+
+::
+
+  - Normal
+
+* SpecimenBias
+
+::
+
+  - 0 V
+
+* header
+
+::
+
+  - SemImageFile
+
+* PhotoSize
+
+::
+
+  - 1000
+
+* SignalName
+
+::
+
+  - SE(M)
+
+* ColorPalette
+
+::
+
+  - 
+
+* EmissionCurrent
+
+::
+
+  - 23100 nA
+
+* SubSignalName
+
+::
+
+  - 
+
+* SampleName
+
+::
+
+  - Physik
+
+* DataSize
+
+::
+
+  - 1280x960
+
+* Magnification
+
+::
+
+  - 5000
+
+* PixelSize
+
+::
+
+  - 19.84375
+
+* Directory
+
+::
+
+  - Z:\dani\marot\
+
+* MicronMarker
+
+::
+
+  - 10000
+
+* CalibrationScanSpeed
+
+::
+
+  - 21
+

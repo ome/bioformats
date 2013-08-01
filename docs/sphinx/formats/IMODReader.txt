@@ -1,0 +1,99 @@
+*******************************************************************************
+IMODReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats IMOD format reader.
+
+Key/value pairs
+===============================================================================
+
+* Beta
+
+::
+
+  - 0.0
+
+* Z offset
+
+::
+
+  - 0.0
+
+* Alpha
+
+::
+
+  - 0.0
+
+* Y scale
+
+::
+
+  - 1.0
+
+* Model name
+
+::
+
+  - IMOD-NewModel                           �{N ����            x�H ��������    ��H             ����            �   I   �Q8�����    
+
+* X scale
+
+::
+
+  - 1.0
+
+* Y offset
+
+::
+
+  - 0.0
+
+* Z scale
+
+::
+
+  - 1.0
+
+* Mouse mode
+
+::
+
+  - 1
+
+* Gamma
+
+::
+
+  - 0.0
+
+* White level
+
+::
+
+  - 237
+
+* Model flags
+
+::
+
+  - 61440
+
+* X offset
+
+::
+
+  - 0.0
+
+* Black level
+
+::
+
+  - 199
+
+* Model drawing mode
+
+::
+
+  - 1
+

@@ -1,0 +1,2906 @@
+*******************************************************************************
+LIFReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Leica Image File Format format reader.
+
+Key/value pairs
+===============================================================================
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ROISet|PossibleChildROITypes
+
+::
+
+  - 65535
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|SuppressionMode
+
+::
+
+  - 2
+
+* HardwareSetting|FilterSettingRecord|SP Mirror Channel 2 (stain) #1
+
+::
+
+  - Leica/ALEXA 568
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Detector|Gain
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsMPShutterActive
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|bIsColour #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|PMT Trans #1
+
+::
+
+  - Inactive
+  - Active
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ValidEndStack
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|EnableDoubleMode
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|bWFUseSameZoom #1
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|CameraName #1
+
+::
+
+  - DFC 350 FX R2
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ZPosition
+
+::
+
+  - -5.78164916476031E-07
+
+* HardwareSetting|FilterSettingRecord|Y Scan Actuator (POS) #2
+
+::
+
+  - 9.23871773701734E-09
+  - 3.1870804579066E-04
+
+* HardwareSetting|ScannerSettingRecord|bStepSizerActivated #1
+
+::
+
+  - 0
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LastNonMP_MFP_FW_Name
+
+::
+
+  - Substrate 
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|OutTriggerRecordInEvent
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|Y Scan Actuator (POS) #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|bValidBegin #1
+
+::
+
+  - 0
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|BlockName
+
+::
+
+  - Job(Seq.Scan) 2
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsActivatedStepSizer
+
+::
+
+  - 0
+
+* RelTimeStamp|Time
+
+::
+
+  - 29.1952492487052
+  - 20.9075468887954
+  - 18.5590231352919
+  - 20.2056892121772
+  - 20.3693402422849
+  - 28.3630022349145
+  - 19.3699231226453
+  - 15.5564390923288
+  - 14.4041624599648
+  - 20.6489808551438
+  - 20.7263426771918
+  - 16.0970856781947
+  - 24.4850051386271
+  - 16.5296669783214
+  - 18.8009167787702
+  - 14.4793213015385
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsTimeMinimizeEnabled
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Detector|IsActive
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nEnd #1
+
+::
+
+  - 0
+  - 470459
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ValidBeginStack
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nLines #1
+
+::
+
+  - 1.00000000000011
+  - 8.00000000000091
+
+* HardwareSetting|ScannerSettingRecord|nROIlhx #1
+
+::
+
+  - 1296
+
+* HardwareSetting|FilterSettingRecord|AOBS (7) #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|PMT 3 (HV_Unit) #1
+
+::
+
+  - V
+
+* HardwareSetting|FilterSettingRecord|AOBS (7) #2
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|DMI6000 Stage Pos y #1
+
+::
+
+  - 0.04300128657708
+
+* HardwareSetting|ScannerSettingRecord|sWFC2LUT #1
+
+::
+
+  - Blue
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|StagePosZ
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|StagePosX
+
+::
+
+  - 12854831
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|StagePosY
+
+::
+
+  - 8949169
+
+* HardwareSetting|ScannerSettingRecord|sWFC1FluoCubeName #1
+
+::
+
+  - N3
+
+* HardwareSetting|ScannerSettingRecord|nWFC2IntensityMode #1
+
+::
+
+  - 210
+
+* HardwareSetting|FilterSettingRecord|Laser wavelength #5
+
+::
+
+  - 800
+
+* HardwareSetting|FilterSettingRecord|Laser wavelength #4
+
+::
+
+  - 633
+
+* HardwareSetting|ScannerSettingRecord|eAOBSIntensityLow_World543 #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|Laser wavelength #3
+
+::
+
+  - 543
+
+* HardwareSetting|FilterSettingRecord|Laser wavelength #2
+
+::
+
+  - 458
+
+* HardwareSetting|FilterSettingRecord|Laser wavelength #1
+
+::
+
+  - 405
+
+* HardwareSetting|FilterSettingRecord|Power State #1
+
+::
+
+  - On
+
+* HardwareSetting|ScannerSettingRecord|nFormatOutDimension #1
+
+::
+
+  - 512
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Detector|IsFlimActive
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|bUseChaserUVShutter #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOBS (4) #1
+
+::
+
+  - 100
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ActiveCS_SubModeForTLD
+
+::
+
+  - 100
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Pinhole
+
+::
+
+  - 6.00000028498471E-04
+
+* HardwareSetting|FilterSettingRecord|AOBS (4) #2
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|PanFirstDim
+
+::
+
+  - 8.67361737988404E-19
+
+* HardwareSetting|FilterSettingRecord|X Scan Actuator (Gain) #1
+
+::
+
+  - 1
+  - 8
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|End
+
+::
+
+  - -2.49999701976847E-04
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Wheel|FilterIndex
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nWFChannelInfo #1
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|SP Mirror Channel 2 (right) #1
+
+::
+
+  - 540
+  - 550
+
+* HardwareSetting|ScannerSettingRecord|eDirectional #1
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LambdaEmission|BandWidth
+
+::
+
+  - 5
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|OutTriggerDescription
+
+::
+
+  - 
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|LaserLine
+
+::
+
+  - 633
+
+* HardwareSetting|FilterSettingRecord|PMT 4 #1
+
+::
+
+  - Inactive
+  - Active
+
+* HardwareSetting|FilterSettingRecord|SP Mirror Channel 4 (right) #1
+
+::
+
+  - 800
+  - 700
+
+* HardwareSetting|ScannerSettingRecord|nWFC3Intensity #1
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|InDimension
+
+::
+
+  - 128
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ScanSpeed
+
+::
+
+  - 400
+
+* HardwareSetting|ScannerSettingRecord|bIsRoi #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|dblVoxelZ #1
+
+::
+
+  - 0
+  - 1.67369802625227E-07
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|CompleteTime
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ObjectiveNumber
+
+::
+
+  - 11506251
+
+* ChannelDescription|BytesInc
+
+::
+
+  - 786432
+  - 2
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|LineIndex
+
+::
+
+  - 6
+
+* HardwareSetting|ScannerSettingRecord|bUseMP2Shutter #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOBS (6) #2
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|Rotation Direction #1
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|AOBS (6) #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nAOBSConfigs #1
+
+::
+
+  - 7
+
+* HardwareSetting|ScannerSettingRecord|sWFC3FluoCubeName #1
+
+::
+
+  - A4
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ObjectivePos
+
+::
+
+  - 3
+
+* HardwareSetting|FilterSettingRecord|AOTF (476) #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOTF (476) #2
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ScanMode
+
+::
+
+  - xyz
+
+* HardwareSetting|FilterSettingRecord|AOTF (594) #2
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOTF (594) #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Wheel|SpectrumChanged
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|SyncInTriggerCycle
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Quantity|Unit
+
+::
+
+  - m
+
+* HardwareSetting|ScannerSettingRecord|nWFC0IntensityMode #1
+
+::
+
+  - 210
+
+* HardwareSetting|ScannerSettingRecord|nBlackValue #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|dwLogiChMask #1
+
+::
+
+  - 4
+  - 27
+
+* HardwareSetting|FilterSettingRecord|AOBS (2) #1
+
+::
+
+  - 100
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|fWFC3Gain #1
+
+::
+
+  - 3.5
+
+* HardwareSetting|FilterSettingRecord|AOBS (2) #2
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ScanDirectionX
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|Scan Field Rotation #1
+
+::
+
+  - 89.9977497749775
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LambdaEmission|BandWidthMode
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|eAOBSIntensityLow_World488 #1
+
+::
+
+  - 0
+
+* RelTimeStamp|Frame
+
+::
+
+  - 22
+  - 25
+  - 19
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsVisShutterActive
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|fWFC1Gain #1
+
+::
+
+  - 4.5
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Zoom
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Detector|IsFlimDetector
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|SyncOutTriggerPulseEndLine
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsPulsed635VisibleActive
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Sections
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|SP Mirror Channel 1 (stain) #1
+
+::
+
+  - Leica/FITC
+  - Leica/DAPI
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Lines
+
+::
+
+  - 512
+
+* HardwareSetting|FilterSettingRecord|inverse flag topo #1
+
+::
+
+  - 1
+
+* DimensionDescription|DimID
+
+::
+
+  - 2
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|InTriggerRecordInEvent
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|PMT 1 (HV_Unit) #1
+
+::
+
+  - V
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|SyncOutTriggerCycle
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Wheel|FilterSpectrumPos
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|bWFIsFastFilterWheelExcitation1 #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LambdaEmission|IsValid
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|StepSizeConstant
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|PMT 2 (Offs.) #1
+
+::
+
+  - -4.48666666666666
+  - 0
+
+* HardwareSetting|FilterSettingRecord|VariantType
+
+::
+
+  - 8
+
+* HardwareSetting|FilterSettingRecord|Objective #1
+
+::
+
+  - HCX PL APO CS  40.0x1.25 OIL  UV
+
+* HardwareSetting|FilterSettingRecord|Laser output power #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|bValidEnd #1
+
+::
+
+  - 0
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|dblLambdaBeginRight_0 #1
+
+::
+
+  - 642.5
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Line_Accumulation
+
+::
+
+  - 1
+
+* DimensionDescription|Origin
+
+::
+
+  - 2.168404e-020
+  - 1.282763e-005
+  - 0.000000e+000
+
+* HardwareSetting|ScannerSettingRecord|nWFC3ContrastMethod #1
+
+::
+
+  - 205
+
+* HardwareSetting|ScannerSettingRecord|fWFC3ExposureTime #1
+
+::
+
+  - 0.2072574
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Detector|Offset
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|VariantType
+
+::
+
+  - 8
+
+* HardwareSetting|FilterSettingRecord|ObjectName
+
+::
+
+  - SP Mirror Channel 4
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|AutofocusRedoEveryNTimePoints
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|eAOBSIntensityLow_World633 #1
+
+::
+
+  - 0
+
+* DimensionDescription|BitInc
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsChaserUVShutterActive
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Laser|CanDoLinearOutputPower
+
+::
+
+  - 0
+
+* ChannelDescription|IsLUTInverted
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|IsLineDeactivated
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LineAverage
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|dblSizeY #1
+
+::
+
+  - 0.0003875
+  - 0.0000484375
+
+* HardwareSetting|ScannerSettingRecord|nWFC2Intensity #1
+
+::
+
+  - 4
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|CanDoGainOffset
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|STEDDelayTime
+
+::
+
+  - 42
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|MaxLines
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|dblSizeZ #1
+
+::
+
+  - 0
+  - -3.84950546038021E-05
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|InTriggerShowInGraph
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|bUseVisibleShutter #1
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|Description
+
+::
+
+  - WFC3FluoChromeName
+
+* HardwareSetting|FilterSettingRecord|PMT 2 (HV_Unit) #1
+
+::
+
+  - V
+
+* HardwareSetting|FilterSettingRecord|Z Scan Actuator (POS) #2
+
+::
+
+  - -5.78164916476031E-07
+  - -2.56674228507464E-05
+
+* HardwareSetting|FilterSettingRecord|AOTF (458) #2
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|Z Scan Actuator (POS) #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOTF (458) #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|eDirectionalY #1
+
+::
+
+  - 1
+
+* ChannelScalingInfo|WhiteValue
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|nWFC2WaveLength #1
+
+::
+
+  - 1
+
+* ChannelDescription|Resolution
+
+::
+
+  - 8
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|AutofocusChannel
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|eBinning #1
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ObjectiveName
+
+::
+
+  - Dummy4
+
+* HardwareSetting|ScannerSettingRecord|nROIrby #1
+
+::
+
+  - 1040
+
+* HardwareSetting|FilterSettingRecord|Excitation Beam Splitter FW #1
+
+::
+
+  - TD 488/543/633
+
+* HardwareSetting|FilterSettingRecord|PMT 1 (Preamp) #1
+
+::
+
+  - Standard
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsSuperZ
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Detector|Channel
+
+::
+
+  - 1001
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|AOBSIntensityLowDev
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|sWFC0UserDefName #1
+
+::
+
+  - new 1
+
+* HardwareSetting|FilterSettingRecord|SP Mirror Channel 3 (right) #1
+
+::
+
+  - 630
+  - 555.454545454545
+
+* ChannelDescription|Unit
+
+::
+
+  - 
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Memory|Size
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ActiveCS_SubModeForRLD
+
+::
+
+  - -1
+
+* HardwareSetting|FilterSettingRecord|Hardware Type No. #1
+
+::
+
+  - 7
+
+* HardwareSetting|FilterSettingRecord|PMT 2 #1
+
+::
+
+  - Inactive
+  - Active
+
+* HardwareSetting|ScannerSettingRecord|bUseUVShutter #1
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LambdaEmission|Sections
+
+::
+
+  - 31
+
+* HardwareSetting|ScannerSettingRecord|eWFC0FluoCubePos #1
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|MP Offset #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|SyncInTriggerCount
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|sWFC0LUT #1
+
+::
+
+  - Green
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LUT|LutName
+
+::
+
+  - Green
+
+* HardwareSetting|FilterSettingRecord|X Scan Actuator (Offs.) #1
+
+::
+
+  - 8.67361737988404E-19
+  - 1.04855625835954E-03
+
+* HardwareSetting|ScannerSettingRecord|nWFC1IntensityMode #1
+
+::
+
+  - 210
+
+* HardwareSetting|LDM_Block_Sequential|SequentialMode
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|PulsFreq
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|Polarization FW #1
+
+::
+
+  - Empty 1 
+
+* HardwareSetting|ScannerSettingRecord|csLutName3 #1
+
+::
+
+  - Red
+
+* HardwareSetting|ScannerSettingRecord|nChannels #1
+
+::
+
+  - 1
+  - 4
+
+* HardwareSetting|FilterSettingRecord|Y Scan Actuator (Gain) #1
+
+::
+
+  - 1
+  - 8
+
+* HardwareSetting|FilterSettingRecord|Refraction index #1
+
+::
+
+  - 1.518
+
+* HardwareSetting|FilterSettingRecord|TLD_Settings #1
+
+::
+
+  - 100
+
+* HardwareSetting|ScannerSettingRecord|nWFC0Intensity #1
+
+::
+
+  - 4
+
+* HardwareSetting|ScannerSettingRecord|bWFIsFastFilterWheelEmission1 #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nBit #1
+
+::
+
+  - 8
+
+* HardwareSetting|ScannerSettingRecord|bUseMPShutter #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|PMT 3 (Preamp) #1
+
+::
+
+  - Standard
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ROISet|PossibleROITransforms
+
+::
+
+  - 65535
+
+* HardwareSetting|ScannerSettingRecord|bValidLambdaBegin #1
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|sWFC1UserDefName #1
+
+::
+
+  - new 2
+
+* HardwareSetting|ScannerSettingRecord|bWFIsHighSpeedMode #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|Offset
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|sWFC3UserDefName #1
+
+::
+
+  - new 4
+
+* HardwareSetting|FilterSettingRecord|PMT 3 (HV) #1
+
+::
+
+  - 444.743266956588
+
+* HardwareSetting|ScannerSettingRecord|eAOBSMode_488 #1
+
+::
+
+  - 2
+
+* HardwareSetting|ScannerSettingRecord|dwChannelMask #1
+
+::
+
+  - 8
+  - 54
+
+* ChannelDescription|ChannelTag
+
+::
+
+  - 0
+  - 3
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|IntensityDev
+
+::
+
+  - 30.0006103888177
+
+* HardwareSetting|ScannerSettingRecord|Data
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|PMT 1 (Offs.) #1
+
+::
+
+  - -1
+  - 0.480000000000004
+  - 0.38666666666667
+  - 0.466666666666669
+
+* HardwareSetting|ScannerSettingRecord|nPages #1
+
+::
+
+  - 1
+  - 8
+
+* HardwareSetting|FilterSettingRecord|Phase #1
+
+::
+
+  - -27.52880140383
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ROISet|PossibleROIActions
+
+::
+
+  - 65535
+
+* HardwareSetting|ScannerSettingRecord|sWFC0FluoCubeName #1
+
+::
+
+  - L5
+
+* HardwareSetting|FilterSettingRecord|DMI6000 Stage Pos x #1
+
+::
+
+  - 0.06451753044357
+
+* HardwareSetting|ScannerSettingRecord|bSecondCrystal #1
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Wheel|IndexChanged
+
+::
+
+  - 0
+
+* Quantity|Unit
+
+::
+
+  - V
+
+* HardwareSetting|FilterSettingRecord|Y Scan Actuator #1
+
+::
+
+  - Active
+
+* HardwareSetting|ScannerSettingRecord|nWFC0WaveLength #1
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|Z Scan Actuator (Gain) #1
+
+::
+
+  - 1
+  - 1.00000095367523
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|IsLineChecked
+
+::
+
+  - 0
+
+* DimensionDescription|Unit
+
+::
+
+  - m
+  - Pixel
+
+* HardwareSetting|FilterSettingRecord|Power State #4
+
+::
+
+  - On
+
+* HardwareSetting|FilterSettingRecord|Power State #5
+
+::
+
+  - Off
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsUVShutterActive
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|Power State #2
+
+::
+
+  - On
+
+* HardwareSetting|FilterSettingRecord|Power State #3
+
+::
+
+  - On
+
+* HardwareSetting|FilterSettingRecord|PMT 2 (Preamp) #1
+
+::
+
+  - Standard
+
+* HardwareSetting|ScannerSettingRecord|eAOBSMode_633 #1
+
+::
+
+  - 2
+
+* HardwareSetting|FilterSettingRecord|AOTF (405) #1
+
+::
+
+  - 20.0024415552707
+  - 50.0030519440884
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|SyncOutTriggerStartOffset
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|bWFIsFastFilterWheelExcitation2 #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|OpenVirtual
+
+::
+
+  - 0
+
+* ChannelScalingInfo|BlackValue
+
+::
+
+  - 0
+
+* ChannelDescription|Min
+
+::
+
+  - 0.000000e+000
+
+* HardwareSetting|ScannerSettingRecord|csLutName0 #1
+
+::
+
+  - Blue
+
+* HardwareSetting|ScannerSettingRecord|csScanMode #1
+
+::
+
+  - xyz
+
+* HardwareSetting|FilterSettingRecord|AOTF (405) #2
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nSections #1
+
+::
+
+  - 1
+  - 231
+
+* HardwareSetting|ScannerSettingRecord|nWFC1WaveLength #1
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ZUseMode
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|csLutName6 #1
+
+::
+
+  - Green
+
+* HardwareSetting|ScannerSettingRecord|SystemType #1
+
+::
+
+  - TCS SP5
+
+* HardwareSetting|ScannerSettingRecord|nWFC1Intensity #1
+
+::
+
+  - 5
+
+* HardwareSetting|FilterSettingRecord|Data
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|FrameAverage
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|csLutName2 #1
+
+::
+
+  - Magenta
+  - Blue
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|Gain
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|DMI6000 Stage ZOrigin #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Wheel|IsSpectrumTurnMode
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nWFC3IntensityMode #1
+
+::
+
+  - 210
+
+* HardwareSetting|FilterSettingRecord|AOTF (496) #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LambdaEmission|Channel
+
+::
+
+  - 3
+
+* HardwareSetting|FilterSettingRecord|AOTF (496) #2
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|Target Slider #1
+
+::
+
+  - Target Park 
+
+* HardwareSetting|FilterSettingRecord|PMT 4 (Offs.) #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|InTriggerDescription
+
+::
+
+  - 
+
+* HardwareSetting|ScannerSettingRecord|csLutName7 #1
+
+::
+
+  - Glow
+
+* HardwareSetting|FilterSettingRecord|Excitation FW MP #1
+
+::
+
+  - ND 3
+
+* HardwareSetting|ScannerSettingRecord|bWFIsFastFilterWheelEmission2 #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|dblStepSize #1
+
+::
+
+  - 0
+  - 1.67369802625226E-07
+
+* HardwareSetting|FilterSettingRecord|X Scan Actuator (POS) #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LastTCalcMode
+
+::
+
+  - 3
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Quantity|Value
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nWhiteValue #1
+
+::
+
+  - 255
+
+* HardwareSetting|ScannerSettingRecord|bWFIsFRETMode #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Wheel|Qualifier
+
+::
+
+  - 30
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|VersionNumber
+
+::
+
+  - 2
+
+* DimensionDescription|Length
+
+::
+
+  - 3.875000e-004
+  - -3.849505e-005
+  - 9.300000e+002
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Wheel|WheelName|FilterName
+
+::
+
+  - --- 
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Detector|StoreFlimGain
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|fWFC0Gain #1
+
+::
+
+  - 3.6
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Laser|Qualifier
+
+::
+
+  - 50
+
+* HardwareSetting|Name
+
+::
+
+  - default
+
+* HardwareSetting|ScannerSettingRecord|dblZoom #1
+
+::
+
+  - 1
+  - 8
+
+* HardwareSetting|FilterSettingRecord|Z Scan Actuator #1
+
+::
+
+  - Inactive
+
+* HardwareSetting|FilterSettingRecord|X Scan Actuator #1
+
+::
+
+  - Active
+
+* HardwareSetting|ScannerSettingRecord|sWFC2UserDefName #1
+
+::
+
+  - new 3
+
+* HardwareSetting|ScannerSettingRecord|eDataSource #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|eAOBSIntensity_World633 #1
+
+::
+
+  - 100
+
+* HardwareSetting|ScannerSettingRecord|Unit
+
+::
+
+  - 
+
+* HardwareSetting|FilterSettingRecord|DMI6000 Stage YOrigin #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nAverageFrame #1
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|nAverageLine #1
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Memory|MemoryBlockID
+
+::
+
+  - MemBlock_97
+
+* HardwareSetting|FilterSettingRecord|PMT 2 (HV) #1
+
+::
+
+  - 872.739757381552
+  - 674.124513618677
+
+* HardwareSetting|ScannerSettingRecord|eAOBSMode_543 #1
+
+::
+
+  - 2
+
+* HardwareSetting|FilterSettingRecord|ClassName
+
+::
+
+  - CSpectrophotometerUnit
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsMP2ShutterActive
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nMirrorY #1
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LUT|Channel
+
+::
+
+  - 1001
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|SyncOutTriggerPulseStartLine
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|PMT NDD1 #1
+
+::
+
+  - Inactive
+
+* HardwareSetting|FilterSettingRecord|PMT 1 (HV) #1
+
+::
+
+  - 1188.22003509575
+  - 661.936369878691
+  - 407.434958419165
+  - 885.728999771115
+
+* HardwareSetting|ScannerSettingRecord|nWFC3WaveLength #1
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|eWFC1FluoCubePos #1
+
+::
+
+  - 2
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|CanDoOpticalZoom
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|Y Scan Actuator (Offs.) #1
+
+::
+
+  - 8.67361737988404E-19
+  - -6.06188502995725E-04
+
+* HardwareSetting|FilterSettingRecord|PMT 1 #1
+
+::
+
+  - Inactive
+  - Active
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|MultiBand|RightWorld
+
+::
+
+  - 800
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|AOBSIntensityDev
+
+::
+
+  - 100
+
+* HardwareSetting|ScannerSettingRecord|bEnableRoiScan #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|Scan Speed #1
+
+::
+
+  - 400
+
+* HardwareSetting|ScannerSettingRecord|dblSizeX #1
+
+::
+
+  - 0.0003875
+  - 0.0000484375
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|CycleCount
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|dblPinholeAiry #1
+
+::
+
+  - 8.83267424655041
+  - 0.999358865340077
+
+* HardwareSetting|FilterSettingRecord|PMT Trans (HV_Unit) #1
+
+::
+
+  - V
+
+* HardwareSetting|FilterSettingRecord|AOTF (514) #2
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOTF (514) #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsFCSFilterAndAOTFAutomationActive
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|PMT Trans (HV) #1
+
+::
+
+  - 114.232852674144
+
+* HardwareSetting|ScannerSettingRecord|eWFC3FluoCubePos #1
+
+::
+
+  - 0
+
+* ChannelDescription|NameOfMeasuredQuantity
+
+::
+
+  - 
+
+* HardwareSetting|ScannerSettingRecord|nBrightness #1
+
+::
+
+  - 50
+
+* HardwareSetting|FilterSettingRecord|Order number (Obj.) #1
+
+::
+
+  - 11506251
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|InTrigger
+
+::
+
+  - -1
+
+* HardwareSetting|FilterSettingRecord|PMT NDD2 #1
+
+::
+
+  - Inactive
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Magnification
+
+::
+
+  - 40
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LastNonMP_Pol_FW_Name
+
+::
+
+  - Empty 1 
+
+* HardwareSetting|FilterSettingRecord|Y-Phase #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|IsChanged
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|Qualifier
+
+::
+
+  - 10
+
+* HardwareSetting|ScannerSettingRecord|dblTheoCamPixelSizeY #1
+
+::
+
+  - 0.00000645
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|PanSecondDim
+
+::
+
+  - 3.18698427154884E-04
+
+* HardwareSetting|FilterSettingRecord|Z Scan Actuator (Offs.) #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsUserSettingNameSet
+
+::
+
+  - 0
+
+* DimensionDescription|BytesInc
+
+::
+
+  - 512
+  - 1048576
+  - 2792
+
+* HardwareSetting|ScannerSettingRecord|bIsSequential #1
+
+::
+
+  - 1
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nWFCurrentChannel #1
+
+::
+
+  - 3
+
+* HardwareSetting|ScannerSettingRecord|nWFC2ContrastMethod #1
+
+::
+
+  - 205
+
+* HardwareSetting|FilterSettingRecord|PMT 3 (Offs.) #1
+
+::
+
+  - -0.546666666666667
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|OutDimension
+
+::
+
+  - 128
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsUV405ShutterActive
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|csLutName4 #1
+
+::
+
+  - Gray
+
+* HardwareSetting|FilterSettingRecord|PMT Trans (Preamp) #1
+
+::
+
+  - Standard
+
+* HardwareSetting|ScannerSettingRecord|csLutName5 #1
+
+::
+
+  - Red
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Laser|Wavelength
+
+::
+
+  - 800
+
+* HardwareSetting|ScannerSettingRecord|dblGamma #1
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|bValidLambdaEnd #1
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|dblVoxelX #1
+
+::
+
+  - 7.58317025440313E-07
+  - 9.47896281800391E-08
+
+* HardwareSetting|FilterSettingRecord|AOTF (543) #2
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOTF (543) #1
+
+::
+
+  - 0
+  - 50.0030519440884
+
+* HardwareSetting|ScannerSettingRecord|fWFC1ExposureTime #1
+
+::
+
+  - 0.2072574
+
+* ChannelDescription|LUTName
+
+::
+
+  - Red
+  - Gray
+  - 
+
+* ChannelDescription|Max
+
+::
+
+  - 2.550000e+002
+
+* HardwareSetting|LDM_Block_Sequential|AutoFocusSequence
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|Variant
+
+::
+
+  - 
+
+* HardwareSetting|ScannerSettingRecord|dblLambdaBeginLeft_0 #1
+
+::
+
+  - 637.5
+
+* HardwareSetting|ScannerSettingRecord|sWFC3LUT #1
+
+::
+
+  - Gray
+
+* HardwareSetting|FilterSettingRecord|PMT Trans (Offs.) #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|CycleTime
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsAutofocusOnStart
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|CanDoPulseFreq
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nWFChannelCount #1
+
+::
+
+  - 4
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LambdaEmission|Resolution
+
+::
+
+  - 5
+
+* HardwareSetting|ScannerSettingRecord|eWFC2FluoCubePos #1
+
+::
+
+  - 3
+
+* HardwareSetting|ScannerSettingRecord|eAOBSIntensity_World488 #1
+
+::
+
+  - 100
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|SequenceIndex
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nLineAccumulation #1
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|FrameAccumulation
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|AOBS (0) #2
+
+::
+
+  - 0
+
+* ChannelDescription|DataType
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOBS (0) #1
+
+::
+
+  - 100
+
+* HardwareSetting|ScannerSettingRecord|eZUseMode #1
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|nFormatInDimension #1
+
+::
+
+  - 512
+
+* HardwareSetting|FilterSettingRecord|Attribute
+
+::
+
+  - Stain
+
+* HardwareSetting|FilterSettingRecord|AOBS (1) #2
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|UseMaxIterationsForT
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|dblTheoCamPixelSizeX #1
+
+::
+
+  - 0.00000645
+
+* HardwareSetting|FilterSettingRecord|AOBS (1) #1
+
+::
+
+  - 100
+
+* HardwareSetting|FilterSettingRecord|SP Mirror Channel 4 (left) #1
+
+::
+
+  - 680
+  - 560
+
+* HardwareSetting|FilterSettingRecord|UV Lens FW #1
+
+::
+
+  - Lens 10x
+  - L9
+
+* HardwareSetting|ScannerSettingRecord|nWFC1ContrastMethod #1
+
+::
+
+  - 205
+
+* HardwareSetting|ScannerSettingRecord|dblPinhole #1
+
+::
+
+  - 6.00000028498471E-04
+  - 6.78860479790053E-05
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsSuperContShutterActive
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOTF (633) #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOTF (633) #2
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsChaserVisShutterActive
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|MultiBand|Channel
+
+::
+
+  - 4
+
+* HardwareSetting|ScannerSettingRecord|bUseUV405Shutter #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|AotfQualifier
+
+::
+
+  - 10
+
+* HardwareSetting|ScannerSettingRecord|fWFC2Gain #1
+
+::
+
+  - 7.9
+
+* HardwareSetting|ScannerSettingRecord|sWFC1LUT #1
+
+::
+
+  - Red
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Detector|nStoreFlimOffset
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|UserSettingName
+
+::
+
+  - S12
+
+* HardwareSetting|ScannerSettingRecord|eStackFlowMode #1
+
+::
+
+  - 2
+
+* Quantity|Value
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|DMI6000 Stage Pos z #1
+
+::
+
+  - 0
+
+* Reverse Y orientation
+
+::
+
+  - true
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|SyncInTriggerStartOffset
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LambdaEmission|LambdaEnd
+
+::
+
+  - 790
+
+* HardwareSetting|ScannerSettingRecord|nLambdaSections #1
+
+::
+
+  - 31
+
+* HardwareSetting|FilterSettingRecord|PMT 4 (Preamp) #1
+
+::
+
+  - Standard
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|PhaseX
+
+::
+
+  - 23747
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|SyncOutTriggerPulsCount
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|LambdaEmission|LambdaBegin
+
+::
+
+  - 640
+
+* HardwareSetting|ScannerSettingRecord|nWFC0ContrastMethod #1
+
+::
+
+  - 205
+
+* HardwareSetting|FilterSettingRecord|RLD_Settings #1
+
+::
+
+  - -1
+
+* HardwareSetting|ScannerSettingRecord|Identifier
+
+::
+
+  - sWFC3FluoChromeName
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|OpticalZoom
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|dblLambdaEndLeft_0 #1
+
+::
+
+  - 787.5
+
+* Image name
+
+::
+
+  - Image000
+  - Image001
+  - Image002
+  - Image003
+  - Series004
+  - series 01 - XYZCh
+  - series 01 - XYZCh snapshot
+  - series 02 - XYZChBF
+  - series 02 - XYZChBF Snapshot
+  - series 03 - XZChRefl
+  - series 03 - XZChRefl Snapshot
+  - series 04 - XYlambda
+  - series 04 - XYlambda Snapshot
+  - image 01 - XYCh-10x
+  - image 02 - XYCh-20x
+  - image 03 - XYCh-40x
+  - image 04 - XYCh-40x rot
+  - series 06 - XYZCh
+  - series 06 - XYZCh Snapshot
+
+* HardwareSetting|ScannerSettingRecord|eSequentialMode #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|bUseChaserVisibleShutter #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|CanDoCSMode
+
+::
+
+  - 1
+
+* HardwareSetting|ScannerSettingRecord|bStepSizeConstant #1
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|AutoFocusMode
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|SP Mirror Channel 1 (left) #1
+
+::
+
+  - 420
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Laser|OutputPower
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|dblVoxelY #1
+
+::
+
+  - 7.58317025440313E-07
+  - 9.47896281800391E-08
+
+* HardwareSetting|ScannerSettingRecord|nBegin #1
+
+::
+
+  - 0
+  - 551189
+
+* HardwareSetting|FilterSettingRecord|AOBS (5) #1
+
+::
+
+  - 100
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|RotatorAngle
+
+::
+
+  - 89.9977497749775
+
+* HardwareSetting|FilterSettingRecord|AOBS (5) #2
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|MP Gain #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nROIrbx #1
+
+::
+
+  - 1392
+
+* HardwareSetting|FilterSettingRecord|AOTF (488) #1
+
+::
+
+  - 0
+  - 9.99816883354697
+
+* HardwareSetting|FilterSettingRecord|Description
+
+::
+
+  - SP Mirror Channel 4 (stain)
+
+* HardwareSetting|FilterSettingRecord|AOTF (488) #2
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|bUseSuperContVisibleShutter #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|bWFIsSameIntForSameFluoChrome #1
+
+::
+
+  - 0
+
+* ChannelScalingInfo|Automatic
+
+::
+
+  - 0
+
+* ChannelDescription|BitInc
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|csLutName1 #1
+
+::
+
+  - Green
+
+* HardwareSetting|FilterSettingRecord|Multifunction Port (MFP) #1
+
+::
+
+  - Substrate 
+
+* HardwareSetting|FilterSettingRecord|SP Mirror Channel 2 (left) #1
+
+::
+
+  - 500
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Laser|LaserName
+
+::
+
+  - IR
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|OutTriggerShowInGraph
+
+::
+
+  - 1
+
+* DimensionDescription|NumberOfElements
+
+::
+
+  - 512
+  - 231
+  - 930
+
+* HardwareSetting|ScannerSettingRecord|fWFC2ExposureTime #1
+
+::
+
+  - 0.633015
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|OutTrigger
+
+::
+
+  - -1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|OutCheckedIntensity
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nAccumulation #1
+
+::
+
+  - 1
+
+* Reverse X orientation
+
+::
+
+  - true
+
+* HardwareSetting|ScannerSettingRecord|nMirrorX #1
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|PMT 4 (HV) #1
+
+::
+
+  - 733.99710078584
+  - 382.658121614405
+  - 402.265964751659
+  - 346.646829938201
+  - 889.1432059205
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|ROISet|ROISetType
+
+::
+
+  - 1
+
+* HardwareSetting|FilterSettingRecord|Dummy Name (Obj.) #1
+
+::
+
+  - Dummy4
+
+* HardwareSetting|FilterSettingRecord|PMT 4 (HV_Unit) #1
+
+::
+
+  - V
+
+* HardwareSetting|FilterSettingRecord|Numerical aperture (Obj.) #1
+
+::
+
+  - 1.25
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|IsSTEDActive
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|PMT 3 (IsFLIM) #1
+
+::
+
+  - Inactive
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|MultiBand|LeftWorld
+
+::
+
+  - 680
+
+* HardwareSetting|FilterSettingRecord|Variant
+
+::
+
+  - 
+
+* HardwareSetting|ScannerSettingRecord|fWFC0ExposureTime #1
+
+::
+
+  - 0.484015
+
+* HardwareSetting|ScannerSettingRecord|eAOBSIntensity_World543 #1
+
+::
+
+  - 100
+
+* HardwareSetting|FilterSettingRecord|DMI6000 Stage XOrigin #1
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|dblWFSameZoom #1
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Pages
+
+::
+
+  - 1
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Detector|IsReferenceUnitActivatedForCorrection
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOBS (3) #1
+
+::
+
+  - 100
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|bUsePulsed635VisibleLight #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|AOBS (3) #2
+
+::
+
+  - 0
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Begin
+
+::
+
+  - -2.49999701976847E-04
+
+* HardwareSetting|FilterSettingRecord|PMT 3 #1
+
+::
+
+  - Active
+  - Inactive
+
+* HardwareSetting|FilterSettingRecord|EOM (800) #2
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|SP Mirror Channel 1 (right) #1
+
+::
+
+  - 480
+
+* HardwareSetting|FilterSettingRecord|EOM (800) #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|SP Mirror Channel 3 (left) #1
+
+::
+
+  - 550
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|MultiBand|DyeName
+
+::
+
+  - 
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|PinholeAiry
+
+::
+
+  - 8.83267424655041
+
+* HardwareSetting|ScannerSettingRecord|bWFUseSameExposureTime #1
+
+::
+
+  - 0
+
+* HardwareSetting|FilterSettingRecord|System Number #1
+
+::
+
+  - 5100000293
+
+* HardwareSetting|LDM_Block_Sequential|ATLConfocalSettingDefinition|Aotf|LaserLineSetting|IntensityLowDev
+
+::
+
+  - 0
+
+* HardwareSetting|ScannerSettingRecord|nROIlhy #1
+
+::
+
+  - 940
+
+* HardwareSetting|ScannerSettingRecord|dblLambdaEndRight_0 #1
+
+::
+
+  - 792.5
+
+* HardwareSetting|ScannerSettingRecord|sWFC2FluoCubeName #1
+
+::
+
+  - Y5
+
+* ChannelScalingInfo|GammaValue
+
+::
+
+  - 1
+

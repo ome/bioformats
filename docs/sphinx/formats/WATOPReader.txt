@@ -1,0 +1,51 @@
+*******************************************************************************
+WATOPReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats WA Technology TOP format reader.
+
+Key/value pairs
+===============================================================================
+
+* Tunnel current (in amps)
+
+::
+
+  - 0.998
+
+* Sample volts
+
+::
+
+  - -2.0
+
+* X size (in um)
+
+::
+
+  - 97.66
+
+* Z size (in um)
+
+::
+
+  - 3500.0
+
+* Comment
+
+::
+
+  -  Island res?   '   '   '   '   ' 
+
+* Y size (in um)
+
+::
+
+  - 97.66
+
+* Acquisition date
+
+::
+
+  - 1995-09-20T15:54:00
+

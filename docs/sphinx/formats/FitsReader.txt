@@ -1,0 +1,2601 @@
+*******************************************************************************
+FitsReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Flexible Image Transport System format reader.
+
+Key/value pairs
+===============================================================================
+
+* 
+
+::
+
+  - 0.0000000E+00
+
+* / FOC PHOTOMETRY KEYWORDS
+
+::
+
+  - 'FOC               '
+
+* PIMAX
+
+::
+
+  - 235
+
+* DBJD10
+
+::
+
+  - 2433282.42299999995
+
+* BACCORR
+
+::
+
+  - 'PERFORM           '
+
+* SBUN8
+
+::
+
+  - 'dimensionless'
+
+* DBJD9
+
+::
+
+  - 2433282.42299999995
+
+* SBUN9
+
+::
+
+  - 'dimensionless'
+
+* DBJD8
+
+::
+
+  - 2433282.42299999995
+
+* EXPSTRT
+
+::
+
+  - 0.8703093E-05
+
+* DBJD16
+
+::
+
+  - 2433282.42299999995
+
+* DBJD15
+
+::
+
+  - 2433282.42299999995
+
+* DBJD14
+
+::
+
+  - 2433282.42299999995
+
+* DBJD13
+
+::
+
+  - 2433282.42299999995
+
+* DBJD12
+
+::
+
+  - 2433282.42299999995
+
+* OPSIZE
+
+::
+
+  - 1152
+
+* DBJD11
+
+::
+
+  - 2433282.42299999995
+
+* PHOTPLAM
+
+::
+
+  - 0.0000000E+00
+
+* SBUN7
+
+::
+
+  - 'dimensionless'
+
+* SBUN6
+
+::
+
+  - 'dimensionless'
+
+* SBUN5
+
+::
+
+  - 'dimensionless'
+
+* SBUN4
+
+::
+
+  - 'dimensionless'
+
+* SBUN3
+
+::
+
+  - 'dimensionless'
+
+* SBUN2
+
+::
+
+  - 'dimensionless'
+
+* SBUN1
+
+::
+
+  - 'dimensionless'
+
+* CUNIHUM1
+
+::
+
+  - 'index   '
+
+* CUNIHUM2
+
+::
+
+  - 'index   '
+
+* STDCFFF
+
+::
+
+  - '0                 '
+
+* CDELT1
+
+::
+
+  - -4.16666688E-03
+
+* CDELT2
+
+::
+
+  - 4.16666688E-03
+
+* PHAS13
+
+::
+
+  - 0.7500
+
+* PHAS14
+
+::
+
+  - 0.8125
+
+* PHAS15
+
+::
+
+  - 0.8750
+
+* PHAS16
+
+::
+
+  - 0.9375
+
+* STDCFFP
+
+::
+
+  - '0000              '
+
+* PHAS10
+
+::
+
+  - 0.5625
+
+* CONTENT
+
+::
+
+  - 'IMAGE   '
+
+* PHAS11
+
+::
+
+  - 0.6250
+
+* PHAS12
+
+::
+
+  - 0.6875
+
+* REVISION
+
+::
+
+  - 2
+
+* BITPIX
+
+::
+
+  - 16
+  - -32
+
+* MODHFILE
+
+::
+
+  - 'N
+
+* SCUN4
+
+::
+
+  - 'meter   '
+
+* SCUN3
+
+::
+
+  - 'meter   '
+
+* SCUN2
+
+::
+
+  - 'meter   '
+
+* SCUN1
+
+::
+
+  - 'meter   '
+
+* SCUN8
+
+::
+
+  - 'meter   '
+
+* SCUN7
+
+::
+
+  - 'meter   '
+
+* SCUN6
+
+::
+
+  - 'meter   '
+
+* SCUN5
+
+::
+
+  - 'meter   '
+
+* SCUN9
+
+::
+
+  - 'meter   '
+
+* SRIFRSOS
+
+::
+
+  - 0.00000000000000000E+00
+
+* RA_NOM
+
+::
+
+  - 3.320239E+02
+
+* BSCALE
+
+::
+
+  - 1.4282676717429E-2
+  - 1.00000000E-03
+
+* MJDREFF
+
+::
+
+  - 8.79745370370074E-01
+
+* MJDREFI
+
+::
+
+  - 48043
+
+* PXLCORR
+
+::
+
+  - 'OMIT              '
+
+* FITSDATE
+
+::
+
+  - '21
+
+* / GROUP PARAMETERS: OSS
+
+::
+
+  - 'TIME    '
+
+* INST1
+
+::
+
+  - 'BIGVAX  '
+
+* COMMENT   COORDINATE CONVERSION
+
+::
+
+  - 3.00000000E+01
+
+* INST5
+
+::
+
+  - 'BIGVAX  '
+
+* CRVAL1
+
+::
+
+  - 12.6869651851956
+  - 3.32023895E+02
+
+* INST4
+
+::
+
+  - 'BIGVAX  '
+
+* INST3
+
+::
+
+  - 'BIGVAX  '
+
+* INST2
+
+::
+
+  - 'BIGVAX  '
+
+* INST8
+
+::
+
+  - 'BIGVAX  '
+
+* INST9
+
+::
+
+  - 'BIGVAX  '
+
+* INST6
+
+::
+
+  - 'BIGVAX  '
+
+* INST7
+
+::
+
+  - 'BIGVAX  '
+
+* / FOC DATA DESCRIPTOR KEYWORDS
+
+::
+
+  - 'TIME    '
+
+* BUNITHUM
+
+::
+
+  - 'Humong:  various different units & dimensions'
+
+* CUNIOBS2
+
+::
+
+  - 'index   '
+
+* CUNIOBS1
+
+::
+
+  - 'index   '
+
+* SDASMGNU
+
+::
+
+  - 1
+
+* HDUCLASS
+
+::
+
+  - 'OGIP    '
+
+* IRAF-B/P
+
+::
+
+  - 32
+
+* CRVAL3
+
+::
+
+  - 87038170.4511719
+
+* CRVAL2
+
+::
+
+  - -52.1012661989035
+  - 4.55138893E+01
+
+* DATAMAX
+
+::
+
+  - 9.360000E2
+
+* CAMMODE
+
+::
+
+  - 'NOTUSED           '
+
+* OBSR1
+
+::
+
+  - 'G.D. Penrod'
+
+* HISTORY   SASS FILE USED: BACMP1.SEQ;1
+
+::
+
+  - 3.00000000E+01
+
+* UNICORR
+
+::
+
+  - 'PERFORM           '
+
+* MJD-OBS
+
+::
+
+  - 4.806248E+04
+
+* SBUN10
+
+::
+
+  - 'dimensionless'
+
+* SBUN14
+
+::
+
+  - 'dimensionless'
+
+* SBUN13
+
+::
+
+  - 'dimensionless'
+
+* SBUN12
+
+::
+
+  - 'dimensionless'
+
+* SBUN11
+
+::
+
+  - 'dimensionless'
+
+* SBUN16
+
+::
+
+  - 'dimensionless'
+
+* / CALIBRATION REFERENCE FILES
+
+::
+
+  - 512
+
+* SBUN15
+
+::
+
+  - 'dimensionless'
+
+* DEC_NOM
+
+::
+
+  - 4.551389E+01
+
+* OBSR4
+
+::
+
+  - 'G.D. Penrod'
+
+* OBSR5
+
+::
+
+  - 'G.D. Penrod'
+
+* OBSR2
+
+::
+
+  - 'G.D. Penrod'
+
+* OBSR3
+
+::
+
+  - 'G.D. Penrod'
+
+* OBSR8
+
+::
+
+  - 'G.D. Penrod'
+
+* OBSR9
+
+::
+
+  - 'G.D. Penrod'
+
+* OBSR6
+
+::
+
+  - 'G.D. Penrod'
+
+* OBSR7
+
+::
+
+  - 'G.D. Penrod'
+
+* SDLT9
+
+::
+
+  - 7.500E-12
+
+* SRVL5
+
+::
+
+  - 6.4308520E-07
+
+* SRVL6
+
+::
+
+  - 6.4308520E-07
+
+* SRVL7
+
+::
+
+  - 6.4308520E-07
+
+* SRVL8
+
+::
+
+  - 6.4308520E-07
+
+* SRVL9
+
+::
+
+  - 6.4308520E-07
+
+* GRAPHTAB
+
+::
+
+  - 'mtab$a3c1003jm.tmg'
+
+* HISTORY
+
+::
+
+  - BACMP1.SEQ;1(X,512-Y+1)
+
+* SBTY10
+
+::
+
+  - 'Flam
+
+* SBTY11
+
+::
+
+  - 'Flam
+
+* SBTY12
+
+::
+
+  - 'Flam
+
+* SBTY13
+
+::
+
+  - 'Flam
+
+* SBTY14
+
+::
+
+  - 'Flam
+
+* SBTY15
+
+::
+
+  - 'Flam
+
+* SBTY16
+
+::
+
+  - 'Flam
+
+* PIMIN
+
+::
+
+  - 11
+
+* ORIGIN
+
+::
+
+  - 'STScI-STSDAS'
+  - 'USRSDC  '
+
+* COMMENT
+
+::
+
+  - 3.00000000E+01
+
+* ROLL_NOM
+
+::
+
+  - -1.349511E+02
+
+* OBSFILNM
+
+::
+
+  - 'vogtdata.dat'
+
+* BATCHNAM
+
+::
+
+  - 'all synthetic VogtStar obs'
+
+* SBTY8
+
+::
+
+  - 'Flam
+
+* SBTY9
+
+::
+
+  - 'Flam
+
+* SLIN12
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SBTY6
+
+::
+
+  - 'Flam
+
+* SLIN11
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SBTY7
+
+::
+
+  - 'Flam
+
+* SLIN10
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* ITFHFILE
+
+::
+
+  - 'xref$91b13138x.r1h'
+
+* SBTY4
+
+::
+
+  - 'Flam
+
+* SBTY5
+
+::
+
+  - 'Flam
+
+* HISTORY   which declination increases along the +Y axis and
+
+::
+
+  - 3.00000000E+01
+
+* NSEG2
+
+::
+
+  - 32
+
+* SLIN13
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SDLT7
+
+::
+
+  - 7.500E-12
+
+* SBTY1
+
+::
+
+  - 'Flam
+
+* NSEG1
+
+::
+
+  - 32
+
+* SLIN14
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SDLT8
+
+::
+
+  - 7.500E-12
+
+* SLIN15
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SDLT5
+
+::
+
+  - 7.500E-12
+
+* SBTY3
+
+::
+
+  - 'Flam
+
+* SLIN16
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SDLT6
+
+::
+
+  - 7.500E-12
+
+* SBTY2
+
+::
+
+  - 'Flam
+
+* NSEG6
+
+::
+
+  - 32
+
+* SDLT3
+
+::
+
+  - 7.500E-12
+
+* NSEG5
+
+::
+
+  - 32
+
+* SDLT4
+
+::
+
+  - 7.500E-12
+
+* NSEG4
+
+::
+
+  - 32
+
+* LEDMODE
+
+::
+
+  - 'NOTUSED           '
+
+* SDLT1
+
+::
+
+  - 7.500E-12
+
+* NSEG3
+
+::
+
+  - 32
+
+* FILTER
+
+::
+
+  - 'NONE    '
+
+* QPOENAME
+
+::
+
+  - 'rp110590n00.qp'
+
+* SDLT2
+
+::
+
+  - 7.500E-12
+
+* NSEG9
+
+::
+
+  - 32
+
+* NSEG7
+
+::
+
+  - 32
+
+* NSEG8
+
+::
+
+  - 32
+
+* SCTY14
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* NSEG10
+
+::
+
+  - 32
+
+* SCTY15
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* NSEG11
+
+::
+
+  - 32
+
+* SCTY16
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* ONTIME
+
+::
+
+  - 1.963000E+03
+
+* HUMFILNM
+
+::
+
+  - 'vogtstar.awe'
+
+* SCTY10
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* NSEG14
+
+::
+
+  - 32
+
+* SCTY11
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* NSEG15
+
+::
+
+  - 32
+
+* RESHFILE
+
+::
+
+  - 'N
+
+* SCTY12
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* NSEG12
+
+::
+
+  - 32
+
+* SCTY13
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* NSEG13
+
+::
+
+  - 32
+
+* NSEG16
+
+::
+
+  - 32
+
+* DEC
+
+::
+
+  - -0.5213817E+02
+  - 'none    '
+
+* SAMPBEG
+
+::
+
+  - 257
+
+* OBSDATA
+
+::
+
+  - T
+
+* BLOCKED
+
+::
+
+  - T
+
+* ATYPEHUM
+
+::
+
+  - 'MSRArray:  matrix-stored rectangular 2-d array'
+
+* SUNANGLE
+
+::
+
+  - 0.1287219E+03
+
+* TARGNAMC
+
+::
+
+  - '                  '
+
+* PHOTZPT
+
+::
+
+  - 0.0000000E+00
+
+* TARGNAM1
+
+::
+
+  - 'BPM16274          '
+
+* SCTY2
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* SCTY1
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* SCTY4
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* SCTY3
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* INSTRUME
+
+::
+
+  - 'FOC               '
+  - 'PSPCC   '
+
+* TELE15
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE16
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE13
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE14
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE11
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE12
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE10
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* BACHFILE
+
+::
+
+  - 'xref$91b1313sx.r0h'
+
+* DBJD3
+
+::
+
+  - 2433282.42299999995
+
+* PROCDATE
+
+::
+
+  - '8-APR-1994 10:37:07'
+
+* DBJD2
+
+::
+
+  - 2433282.42299999995
+
+* DBJD1
+
+::
+
+  - 2433282.42299999995
+
+* DBJD7
+
+::
+
+  - 2433282.42299999995
+
+* DBJD6
+
+::
+
+  - 2433282.42299999995
+
+* / CALIBRATION KEYWORDS
+
+::
+
+  - 'OMIT              '
+
+* DBJD5
+
+::
+
+  - 2433282.42299999995
+
+* DBJD4
+
+::
+
+  - 2433282.42299999995
+
+* EXPEND
+
+::
+
+  - 0.8703811E-05
+
+* HISTORY   right ascension increased along the -X axis by the
+
+::
+
+  - 3.00000000E+01
+
+* SDEHFILE
+
+::
+
+  - 'N
+
+* OBSERVER
+
+::
+
+  - 'MPE, ROSAT-TEAM'
+
+* LIVETIME
+
+::
+
+  - 1.884999E+03
+
+* TELESCOP
+
+::
+
+  - 'ROSAT   '
+
+* ATYPEOBS
+
+::
+
+  - 'MSRArray:  matrix-stored rectangular 2-d array'
+
+* SRPX11
+
+::
+
+  - 16.5000
+
+* SRPX10
+
+::
+
+  - 16.5000
+
+* SRVL3
+
+::
+
+  - 6.4308520E-07
+
+* CTYPHUM2
+
+::
+
+  - 'EP#Obs:  Parameter number; obs'
+
+* SRPX15
+
+::
+
+  - 16.5000
+
+* SDLT12
+
+::
+
+  - 7.500E-12
+
+* SRVL4
+
+::
+
+  - 6.4308520E-07
+
+* SRPX14
+
+::
+
+  - 16.5000
+
+* SDLT13
+
+::
+
+  - 7.500E-12
+
+* SRVL1
+
+::
+
+  - 6.4308520E-07
+
+* SRPX13
+
+::
+
+  - 16.5000
+
+* SDLT10
+
+::
+
+  - 7.500E-12
+
+* SRVL2
+
+::
+
+  - 6.4308520E-07
+
+* CTYPHUM1
+
+::
+
+  - 'see SCTYn'
+
+* SRPX12
+
+::
+
+  - 16.5000
+
+* SDLT11
+
+::
+
+  - 7.500E-12
+
+* BLMHFILE
+
+::
+
+  - 'xref$a1m1626px.r7h'
+
+* SDLT16
+
+::
+
+  - 7.500E-12
+
+* SDLT14
+
+::
+
+  - 7.500E-12
+
+* SRPX16
+
+::
+
+  - 16.5000
+
+* SDLT15
+
+::
+
+  - 7.500E-12
+
+* OBSR10
+
+::
+
+  - 'G.D. Penrod'
+
+* SETUPID
+
+::
+
+  - 'NOMINAL '
+
+* OBSR12
+
+::
+
+  - 'G.D. Penrod'
+
+* OBSR11
+
+::
+
+  - 'G.D. Penrod'
+
+* OBSR14
+
+::
+
+  - 'G.D. Penrod'
+
+* OBSR13
+
+::
+
+  - 'G.D. Penrod'
+
+* OPTCRLY
+
+::
+
+  - 'F96               '
+
+* OBSR16
+
+::
+
+  - 'G.D. Penrod'
+
+* OBSR15
+
+::
+
+  - 'G.D. Penrod'
+
+* LINEBEG
+
+::
+
+  - 257
+
+* INST12
+
+::
+
+  - 'BIGVAX  '
+
+* INST11
+
+::
+
+  - 'BIGVAX  '
+
+* INST10
+
+::
+
+  - 'BIGVAX  '
+
+* GEODEFV
+
+::
+
+  - 0.0000000E+00
+
+* WAT0_001
+
+::
+
+  - 'system=physical'
+
+* ITFCORR
+
+::
+
+  - 'PERFORM           '
+
+* INST16
+
+::
+
+  - 'BIGVAX  '
+
+* FILETYPE
+
+::
+
+  - 'SCI               '
+
+* INST15
+
+::
+
+  - 'BIGVAX  '
+
+* INST14
+
+::
+
+  - 'BIGVAX  '
+
+* INST13
+
+::
+
+  - 'BIGVAX  '
+
+* COMMENT   in the lower left-hand corner.
+
+::
+
+  - 3.00000000E+01
+
+* FPKTTIME
+
+::
+
+  - '28-AUG-1990 21:27:29.81 '
+
+* BUNIT
+
+::
+
+  - 'Humong:  various different units & dimensions'
+
+* ROOTNAME
+
+::
+
+  - 'X0CJ010CT         '
+
+* CTYPOBS1
+
+::
+
+  - 'see SCTYn'
+
+* CTYPOBS2
+
+::
+
+  - 'Obs1Sig2:  (if 1: observation;  if 2: sigma)'
+
+* TELE6
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* IRAFTYPE
+
+::
+
+  - 'FLOATING'
+
+* TELE7
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE8
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE9
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE2
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE3
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE4
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TELE5
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* TIME_END
+
+::
+
+  - '13:07:12.000'
+
+* TELE1
+
+::
+
+  - 'Penrod''s Ingenuity'
+
+* RDF_DATE
+
+::
+
+  - '24-MAR-1994'
+
+* SHTMODE
+
+::
+
+  - 'NOTUSED           '
+
+* SCSEQEND
+
+::
+
+  - 1612816
+
+* EQUINOX
+
+::
+
+  - 2.000000E+03
+  - 1981.000
+
+* CD1_2
+
+::
+
+  - 5.689839E-6
+
+* CD1_1
+
+::
+
+  - 2.383380E-6
+
+* PROC_SYS
+
+::
+
+  - 'SASS7_1 '
+
+* LINEOFF
+
+::
+
+  - 0.2560000E+03
+
+* MOONANGL
+
+::
+
+  - 0.8711864E+02
+
+* COMMENT   is the coordinate of the center of the pixel
+
+::
+
+  - 3.00000000E+01
+
+* SCTY6
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* SCTY5
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* SCTY8
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* SCTY7
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* SRPX9
+
+::
+
+  - 16.5000
+
+* SCTY9
+
+::
+
+  - 'WaveVac: Wavelength of the light in vacuum'
+
+* SRPX7
+
+::
+
+  - 16.5000
+
+* SRPX8
+
+::
+
+  - 16.5000
+
+* SRPX6
+
+::
+
+  - 16.5000
+
+* SRPX5
+
+::
+
+  - 16.5000
+
+* BTYPEHUM
+
+::
+
+  - 'Humong:  apriori; dObs
+
+* TIME-OBS
+
+::
+
+  - '11:24:43.000'
+
+* SRPX4
+
+::
+
+  - 16.5000
+
+* SRPX3
+
+::
+
+  - 16.5000
+
+* SRPX2
+
+::
+
+  - 16.5000
+
+* NAXIS
+
+::
+
+  - 2
+
+* SRPX1
+
+::
+
+  - 16.5000
+
+* DATE-OBS
+
+::
+
+  - '20
+
+* COMPTAB
+
+::
+
+  - 'mtab$a3c10030m.tmc'
+
+* BUNITOBS
+
+::
+
+  - 'see SBUNn'
+
+* / STATISTICAL KEYWORDS
+
+::
+
+  - 0.0000000E+00
+
+* RA
+
+::
+
+  - 0.1251325E+02
+  - 'none    '
+
+* FILLCNT
+
+::
+
+  - 0
+
+* UNITAB
+
+::
+
+  - 'xtab$a3f1011cx.cxu'
+
+* EXTEND
+
+::
+
+  - T
+
+* OBS_MODE
+
+::
+
+  - 'POINTING'
+
+* ERRCNT
+
+::
+
+  - 0
+
+* GEOHFILE
+
+::
+
+  - 'xref$a3f0949jx.r5h'
+
+* DATE_END
+
+::
+
+  - '20
+
+* NSEGPGRP
+
+::
+
+  - 0
+
+* / CALIBRATION FLAGS AND INDICATORS
+
+::
+
+  - 0
+
+* COMMENT   This image uses the convention in which (1,1)
+
+::
+
+  - 3.00000000E+01
+
+* NSEGMENT
+
+::
+
+  - 16
+
+* PHAS1
+
+::
+
+  - 0.0000
+
+* PHAS5
+
+::
+
+  - 0.2500
+
+* PHAS4
+
+::
+
+  - 0.1875
+
+* PHAS3
+
+::
+
+  - 0.1250
+
+* PHAS2
+
+::
+
+  - 0.0625
+
+* PHAS9
+
+::
+
+  - 0.5000
+
+* PHAS8
+
+::
+
+  - 0.4375
+
+* PHAS7
+
+::
+
+  - 0.3750
+
+* HISTORY   following transformation:
+
+::
+
+  - 3.00000000E+01
+
+* PHAS6
+
+::
+
+  - 0.3125
+
+* SCUN16
+
+::
+
+  - 'meter   '
+
+* SCUN15
+
+::
+
+  - 'meter   '
+
+* SCUN14
+
+::
+
+  - 'meter   '
+
+* RESCORR
+
+::
+
+  - 'OMIT              '
+
+* SCUN13
+
+::
+
+  - 'meter   '
+
+* SCUN12
+
+::
+
+  - 'meter   '
+
+* SCUN11
+
+::
+
+  - 'meter   '
+
+* / DISPLAY KEYWORDS
+
+::
+
+  - '0000              '
+
+* SCUN10
+
+::
+
+  - 'meter   '
+
+* CD2_2
+
+::
+
+  - 2.518288E-6
+
+* PLAN_EXP
+
+::
+
+  - 0.9000000000000E+03
+
+* HISTORY   The image has been converted to a coordinate system in
+
+::
+
+  - 3.00000000E+01
+
+* CD2_1
+
+::
+
+  - -5.385026E-6
+
+* FILTNAM3
+
+::
+
+  - 'CLEAR3            '
+
+* FILTNAM4
+
+::
+
+  - 'F346M             '
+
+* ZEROTIME
+
+::
+
+  - '21:06:50'
+
+* FILTNAM1
+
+::
+
+  - 'F4ND              '
+
+* FILTNAM2
+
+::
+
+  - 'CLEAR2            '
+
+* / CALIBRATION SWITCHES: perform,omit,complete
+
+::
+
+  - 'N
+
+* SDECORR
+
+::
+
+  - 'OMIT              '
+
+* SCSEQBEG
+
+::
+
+  - 1606667
+
+* DTCOR
+
+::
+
+  - 9.602644E-01
+
+* OPTELT3
+
+::
+
+  - 0
+
+* OPTELT2
+
+::
+
+  - 0
+
+* NAXIS1
+
+::
+
+  - 512
+
+* LINEPFM
+
+::
+
+  - 512
+
+* NAXIS2
+
+::
+
+  - 512
+  - 861
+
+* OPTELT4
+
+::
+
+  - 1
+
+* BZERO
+
+::
+
+  - 4.6800000000000E2
+  - 0.00000000E+00
+
+* OPTELT1
+
+::
+
+  - 7
+
+* RDF_VERS
+
+::
+
+  - '2.3     '
+
+* PHOTFLAM
+
+::
+
+  - 0.0000000E+00
+
+* DNFORMT
+
+::
+
+  - 16
+
+* PHOTBW
+
+::
+
+  - 0.0000000E+00
+
+* GEOCORR
+
+::
+
+  - 'PERFORM           '
+
+* HDUCLAS1
+
+::
+
+  - 'IMAGE   '
+
+* HDUCLAS2
+
+::
+
+  - 'BKG     '
+
+* IRAF-MIN
+
+::
+
+  - 0.000000E0
+
+* PLAN_SN
+
+::
+
+  - 0.1000000000000E+03
+
+* RADECSYS
+
+::
+
+  - 'FK5     '
+
+* WAVCORR
+
+::
+
+  - 'PERFORM           '
+
+* SAMPOFF
+
+::
+
+  - 0.2560000E+03
+
+* BTYPE
+
+::
+
+  - 'Humong:  apriori; dObs
+
+* EXPOSURE
+
+::
+
+  - 0.7230000E+03
+
+* CRPIX1
+
+::
+
+  - 257.
+  - 2.56516663E+02
+
+* PEP_EXPO
+
+::
+
+  - '7.0000000#001     '
+
+* CRPIX2
+
+::
+
+  - 257.
+  - 2.56516663E+02
+
+* MIR_REVR
+
+::
+
+  - 0
+
+* SAMPPLN
+
+::
+
+  - 512
+
+* SMMMODE
+
+::
+
+  - 'NOTUSED           '
+
+* SRVL10
+
+::
+
+  - 6.4308520E-07
+
+* SRVL11
+
+::
+
+  - 6.4308520E-07
+
+* SRVL12
+
+::
+
+  - 6.4308520E-07
+
+* SRVL13
+
+::
+
+  - 6.4308520E-07
+
+* NUM_OBIS
+
+::
+
+  - 2
+
+* SRVL14
+
+::
+
+  - 6.4308520E-07
+
+* SRVL15
+
+::
+
+  - 6.4308520E-07
+
+* SRVL16
+
+::
+
+  - 6.4308520E-07
+
+* CUNIT1
+
+::
+
+  - 'index   '
+
+* CUNIT2
+
+::
+
+  - 'index   '
+
+* SLIN8
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SLIN9
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* PRIORITY
+
+::
+
+  - 1
+
+* SLIN6
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SLIN7
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* HISTORY   IMAGE(X,Y)
+
+::
+
+  - BACMP1.SEQ;1(X,512-Y+1)
+
+* SLIN4
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SLIN5
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SLIN2
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SLIN3
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* SLIN1
+
+::
+
+  - 'Fe I, 643.0852nm'
+
+* EXPTIME
+
+::
+
+  - 0.7230000E+03
+
+* PXFORMT
+
+::
+
+  - 'NORMAL            '
+
+* / FOC INSTRUMENT DESCRIPTOR KEYWORDS
+
+::
+
+  - 'FOC               '
+
+* OBS_ID
+
+::
+
+  - 'CA110590P.N2'
+
+* LPKTTIME
+
+::
+
+  - '25-APR-1990 17:30:15.61 '
+
+* PROPOSID
+
+::
+
+  - '03039             '
+
+* OBJECT
+
+::
+
+  - 'XRT
+  - 'VogtStar:  a synthetic RS CVn'
+
+* ATYPE
+
+::
+
+  - 'MSRArray:  matrix-stored rectangular 2-d array'
+
+* LTM2_2
+
+::
+
+  - 3.33333351E-02
+
+* NBATCH
+
+::
+
+  - 0
+
+* UNIHFILE
+
+::
+
+  - 'N
+
+* BTYPEOBS
+
+::
+
+  - 'Obs&Sig:  (observation or sigma:  see SBTYn)'
+
+* LTM1_1
+
+::
+
+  - 3.33333351E-02
+
+* ZERODATE
+
+::
+
+  - '01
+
+* IRAFNAME
+
+::
+
+  - 'x0cj010ct_cvt.d0h'
+  - 'rp110590n00_bk1.imh'
+
+* HUMDATA
+
+::
+
+  - T
+
+* ROR_NUM
+
+::
+
+  - 110590
+
+* LEDCOLOR
+
+::
+
+  - '                  '
+
+* PHOTMODE
+
+::
+
+  - '                  '
+
+* BLKFACT
+
+::
+
+  - 3.00000000E+01
+
+* PODPSFF
+
+::
+
+  - '0                 '
+
+* ORIENTAT
+
+::
+
+  - 66.12611
+
+* PLOTID
+
+::
+
+  - 'FOC               '
+
+* IRAF-MAX
+
+::
+
+  - 9.360000E2
+
+* DATE
+
+::
+
+  - '28
+  - '11
+
+* / DMF EXPOSURE DATA
+
+::
+
+  - 0.0000000E+00
+
+* CTYPE3
+
+::
+
+  - 'TIME    '
+
+* DATAMIN
+
+::
+
+  - 0.000000E0
+
+* CTYPE1
+
+::
+
+  - 'RA---TAN'
+  - 'see SCTYn'
+
+* CTYPE2
+
+::
+
+  - 'DEC--TAN'
+  - 'EP#Obs:  Parameter number; obs'
+

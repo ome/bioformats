@@ -1,0 +1,1193 @@
+*******************************************************************************
+IPLabReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats IPLab format reader.
+
+Key/value pairs
+===============================================================================
+
+* Timestamp #41
+
+::
+
+  - 200.00203
+
+* Timestamp #42
+
+::
+
+  - 205.00204
+
+* Timestamp #40
+
+::
+
+  - 195.00203
+
+* Timestamp #49
+
+::
+
+  - 240.00206
+
+* Timestamp #47
+
+::
+
+  - 230.00206
+
+* Timestamp #48
+
+::
+
+  - 235.00206
+
+* Timestamp #45
+
+::
+
+  - 220.00204
+
+* Timestamp #46
+
+::
+
+  - 225.00204
+
+* Timestamp #43
+
+::
+
+  - 210.00204
+
+* Timestamp #44
+
+::
+
+  - 215.00204
+
+* Timestamp #29
+
+::
+
+  - 140.002
+
+* Timestamp #30
+
+::
+
+  - 145.002
+
+* Timestamp #31
+
+::
+
+  - 150.002
+
+* Timestamp #36
+
+::
+
+  - 175.00201
+
+* Timestamp #37
+
+::
+
+  - 180.00201
+
+* Timestamp #38
+
+::
+
+  - 185.00203
+
+* Timestamp #39
+
+::
+
+  - 190.00203
+
+* Timestamp #32
+
+::
+
+  - 155.002
+
+* Timestamp #33
+
+::
+
+  - 160.00201
+
+* Timestamp #34
+
+::
+
+  - 165.00201
+
+* Timestamp #35
+
+::
+
+  - 170.00201
+
+* Timestamp #108
+
+::
+
+  - 214.00044
+
+* Timestamp #60
+
+::
+
+  - 295.01285
+
+* Timestamp #61
+
+::
+
+  - 300.01285
+
+* Timestamp #50
+
+::
+
+  - 245.00206
+
+* Timestamp #51
+
+::
+
+  - 250.00206
+
+* Timestamp #52
+
+::
+
+  - 255.00208
+
+* Timestamp #53
+
+::
+
+  - 260.00208
+
+* Timestamp #103
+
+::
+
+  - 204.00043
+
+* Timestamp #54
+
+::
+
+  - 265.01282
+
+* Timestamp #102
+
+::
+
+  - 202.00043
+
+* Timestamp #55
+
+::
+
+  - 270.01282
+
+* Timestamp #101
+
+::
+
+  - 200.00041
+
+* Timestamp #56
+
+::
+
+  - 275.01282
+
+* Timestamp #100
+
+::
+
+  - 198.00041
+
+* Timestamp #57
+
+::
+
+  - 280.01282
+
+* Timestamp #107
+
+::
+
+  - 212.00044
+
+* Timestamp #58
+
+::
+
+  - 285.01282
+
+* Timestamp #106
+
+::
+
+  - 210.00044
+
+* Timestamp #59
+
+::
+
+  - 290.01285
+
+* Timestamp #105
+
+::
+
+  - 208.00043
+
+* Timestamp #104
+
+::
+
+  - 206.00043
+
+* Timestamp #080
+
+::
+
+  - 158.00032
+
+* Timestamp #06
+
+::
+
+  - 25.00002
+
+* Timestamp #05
+
+::
+
+  - 20.000017
+
+* Timestamp #089
+
+::
+
+  - 176.00038
+
+* Timestamp #04
+
+::
+
+  - 15.000012
+
+* Timestamp #03
+
+::
+
+  - 10.000009
+
+* Timestamp #02
+
+::
+
+  - 5.000005
+
+* Timestamp #01
+
+::
+
+  - 0.0
+
+* Timestamp #083
+
+::
+
+  - 164.00032
+
+* Timestamp #084
+
+::
+
+  - 166.00035
+
+* Timestamp #081
+
+::
+
+  - 160.00032
+
+* Timestamp #082
+
+::
+
+  - 162.00032
+
+* Timestamp #087
+
+::
+
+  - 172.00037
+
+* Timestamp #088
+
+::
+
+  - 174.00037
+
+* Timestamp #085
+
+::
+
+  - 168.00035
+
+* Timestamp #086
+
+::
+
+  - 170.00037
+
+* Timestamp #091
+
+::
+
+  - 180.00038
+
+* NormalizationMax #1
+
+::
+
+  - 65535.0
+  - 6500.0
+
+* Timestamp #090
+
+::
+
+  - 178.00038
+
+* Channels
+
+::
+
+  - 1
+
+* Notes
+
+::
+
+  -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
+* Timestamp #092
+
+::
+
+  - 182.0004
+
+* Timestamp #093
+
+::
+
+  - 184.0004
+
+* Timestamp #094
+
+::
+
+  - 186.0004
+
+* Timestamp #095
+
+::
+
+  - 188.0004
+
+* Timestamp #096
+
+::
+
+  - 190.0004
+
+* Timestamp #097
+
+::
+
+  - 192.00041
+
+* Timestamp #098
+
+::
+
+  - 194.00041
+
+* Timestamp #099
+
+::
+
+  - 196.00041
+
+* Timestamp #18
+
+::
+
+  - 85.00195
+
+* Timestamp #19
+
+::
+
+  - 90.00196
+
+* Timestamp #24
+
+::
+
+  - 115.001976
+
+* Timestamp #23
+
+::
+
+  - 110.001976
+
+* Descriptor
+
+::
+
+  - Default                                                         
+
+* Timestamp #22
+
+::
+
+  - 105.00197
+
+* Timestamp #21
+
+::
+
+  - 100.00197
+
+* Timestamp #28
+
+::
+
+  - 135.00198
+
+* Timestamp #27
+
+::
+
+  - 130.00198
+
+* Timestamp #26
+
+::
+
+  - 125.00198
+
+* Timestamp #25
+
+::
+
+  - 120.001976
+
+* NormalizationWhite #1
+
+::
+
+  - 127.0
+
+* Timestamp #20
+
+::
+
+  - 95.00196
+
+* Timestamp #07
+
+::
+
+  - 30.000025
+
+* Timestamp #08
+
+::
+
+  - 35.000027
+
+* Timestamp #09
+
+::
+
+  - 40.00003
+
+* Timestamp #11
+
+::
+
+  - 50.00004
+
+* Timestamp #10
+
+::
+
+  - 45.000034
+
+* Timestamp #13
+
+::
+
+  - 60.00005
+
+* Timestamp #12
+
+::
+
+  - 55.000042
+
+* Header-1
+
+::
+
+  -                     
+
+* Timestamp #15
+
+::
+
+  - 70.001945
+
+* Timestamp #14
+
+::
+
+  - 65.001945
+
+* Timestamp #17
+
+::
+
+  - 80.00195
+
+* Timestamp #16
+
+::
+
+  - 75.00195
+
+* NormalizationBlack #1
+
+::
+
+  - 0.0
+
+* Timestamp #040
+
+::
+
+  - 78.00012
+
+* Timestamp #042
+
+::
+
+  - 82.00013
+
+* Timestamp #041
+
+::
+
+  - 80.00012
+
+* Timestamp #044
+
+::
+
+  - 86.00014
+
+* Timestamp #043
+
+::
+
+  - 84.00013
+
+* Timestamp #046
+
+::
+
+  - 90.000145
+
+* Timestamp #045
+
+::
+
+  - 88.000145
+
+* Timestamp #048
+
+::
+
+  - 94.00015
+
+* Timestamp #047
+
+::
+
+  - 92.00015
+
+* Timestamp #049
+
+::
+
+  - 96.00016
+
+* ResolutionStyle #2
+
+::
+
+  - 0
+
+* LUT type
+
+::
+
+  - monochrome
+
+* ResolutionStyle #3
+
+::
+
+  - 0
+
+* ResolutionStyle #1
+
+::
+
+  - 0
+
+* ResolutionStyle #4
+
+::
+
+  - 0
+
+* Timestamp #051
+
+::
+
+  - 100.00016
+
+* Timestamp #050
+
+::
+
+  - 98.00016
+
+* Timestamp #055
+
+::
+
+  - 108.000175
+
+* Timestamp #054
+
+::
+
+  - 106.000175
+
+* Timestamp #053
+
+::
+
+  - 104.00017
+
+* Timestamp #052
+
+::
+
+  - 102.00017
+
+* Timestamp #059
+
+::
+
+  - 116.00019
+
+* Timestamp #058
+
+::
+
+  - 114.00018
+
+* TDepth
+
+::
+
+  - 108
+  - 61
+
+* Timestamp #057
+
+::
+
+  - 112.00018
+
+* Timestamp #056
+
+::
+
+  - 110.000175
+
+* Timestamp #064
+
+::
+
+  - 126.00021
+
+* Timestamp #063
+
+::
+
+  - 124.00021
+
+* Timestamp #066
+
+::
+
+  - 130.00023
+
+* Timestamp #065
+
+::
+
+  - 128.00021
+
+* Timestamp #060
+
+::
+
+  - 118.0002
+
+* UnitsPerPixel #2
+
+::
+
+  - 1.0
+
+* Timestamp #062
+
+::
+
+  - 122.000206
+
+* UnitsPerPixel #1
+
+::
+
+  - 1.0
+
+* Timestamp #061
+
+::
+
+  - 120.000206
+
+* UnitsPerPixel #4
+
+::
+
+  - 1.0
+
+* UnitsPerPixel #3
+
+::
+
+  - 1.0
+
+* Timestamp #068
+
+::
+
+  - 134.00024
+
+* Timestamp #067
+
+::
+
+  - 132.00023
+
+* Timestamp #069
+
+::
+
+  - 136.00027
+
+* Timestamp #077
+
+::
+
+  - 152.0003
+
+* Timestamp #076
+
+::
+
+  - 150.0003
+
+* Timestamp #075
+
+::
+
+  - 148.0003
+
+* Timestamp #074
+
+::
+
+  - 146.00029
+
+* Timestamp #073
+
+::
+
+  - 144.00029
+
+* Timestamp #072
+
+::
+
+  - 142.00029
+
+* Timestamp #071
+
+::
+
+  - 140.00029
+
+* Timestamp #070
+
+::
+
+  - 138.00027
+
+* Timestamp #079
+
+::
+
+  - 156.0003
+
+* Timestamp #078
+
+::
+
+  - 154.0003
+
+* NormalizationGamma #1
+
+::
+
+  - 50.0
+
+* Timestamp #001
+
+::
+
+  - 0.0
+
+* Timestamp #002
+
+::
+
+  - 2.000004
+
+* Timestamp #003
+
+::
+
+  - 4.000007
+
+* Timestamp #004
+
+::
+
+  - 6.00001
+
+* Timestamp #005
+
+::
+
+  - 8.000014
+
+* Timestamp #006
+
+::
+
+  - 10.000017
+
+* Timestamp #007
+
+::
+
+  - 12.000019
+
+* Timestamp #008
+
+::
+
+  - 14.000022
+
+* Width
+
+::
+
+  - 256
+
+* Timestamp #014
+
+::
+
+  - 26.000044
+
+* Timestamp #015
+
+::
+
+  - 28.000048
+
+* Timestamp #012
+
+::
+
+  - 22.000034
+
+* Timestamp #013
+
+::
+
+  - 24.000038
+
+* Timestamp #018
+
+::
+
+  - 34.000057
+
+* Timestamp #019
+
+::
+
+  - 36.00006
+
+* Timestamp #016
+
+::
+
+  - 30.00005
+
+* Timestamp #017
+
+::
+
+  - 32.000053
+
+* Height
+
+::
+
+  - 256
+
+* Timestamp #010
+
+::
+
+  - 18.000029
+
+* Timestamp #011
+
+::
+
+  - 20.000032
+
+* Timestamp #009
+
+::
+
+  - 16.000027
+
+* Timestamp #027
+
+::
+
+  - 52.00008
+
+* Timestamp #028
+
+::
+
+  - 54.000084
+
+* Timestamp #029
+
+::
+
+  - 56.000088
+
+* Timestamp #023
+
+::
+
+  - 44.000072
+
+* Timestamp #024
+
+::
+
+  - 46.000076
+
+* Timestamp #025
+
+::
+
+  - 48.000076
+
+* Timestamp #026
+
+::
+
+  - 50.00008
+
+* Timestamp #020
+
+::
+
+  - 38.00006
+
+* UnitName #1
+
+::
+
+  - 0
+
+* Timestamp #021
+
+::
+
+  - 40.000065
+
+* Timestamp #022
+
+::
+
+  - 42.00007
+
+* PixelType
+
+::
+
+  - 16 bit unsigned short
+
+* NormalizationSource #1
+
+::
+
+  - user
+
+* ZDepth
+
+::
+
+  - 1
+
+* Timestamp #038
+
+::
+
+  - 74.000114
+
+* Timestamp #039
+
+::
+
+  - 76.00012
+
+* Timestamp #036
+
+::
+
+  - 70.00011
+
+* NormalizationMin #1
+
+::
+
+  - 0.0
+
+* Timestamp #037
+
+::
+
+  - 72.000114
+
+* Timestamp #034
+
+::
+
+  - 66.00011
+
+* Timestamp #035
+
+::
+
+  - 68.00011
+
+* Timestamp #032
+
+::
+
+  - 62.0001
+
+* Timestamp #033
+
+::
+
+  - 64.0001
+
+* Timestamp #030
+
+::
+
+  - 58.00009
+
+* Timestamp #031
+
+::
+
+  - 60.00009
+
+* UnitName #4
+
+::
+
+  - 851968
+
+* UnitName #2
+
+::
+
+  - 0
+
+* UnitName #3
+
+::
+
+  - 0
+

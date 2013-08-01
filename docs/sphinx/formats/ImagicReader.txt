@@ -1,0 +1,297 @@
+*******************************************************************************
+ImagicReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats IMAGIC format reader.
+
+Key/value pairs
+===============================================================================
+
+* EYSHIFT
+
+::
+
+  - 0.0
+
+* PCOHER
+
+::
+
+  - 0.0
+
+* IMAGIC Version (IMAVERS)
+
+::
+
+  - -1
+
+* ANGLE
+
+::
+
+  - 0.0
+
+* CCC3D
+
+::
+
+  - 0.0
+
+* IYOLD
+
+::
+
+  - 0
+
+* OVQUAL
+
+::
+
+  - 0.0
+
+* SPABERR (in mm)
+
+::
+
+  - 0.0
+
+* CCC
+
+::
+
+  - 0.0
+
+* PGROUP
+
+::
+
+  - 0
+
+* XSHIFT
+
+::
+
+  - 0.0
+
+* NUMCLS
+
+::
+
+  - 0.0
+
+* MIDENT
+
+::
+
+  - 0
+
+* EBETA
+
+::
+
+  - 0.0
+
+* EZSHIFT
+
+::
+
+  - 0
+
+* ERRAR
+
+::
+
+  - 0.0
+
+* CLASSNO
+
+::
+
+  - 0.0
+
+* REALTYPE
+
+::
+
+  - 33686018
+
+* REF
+
+::
+
+  - 0
+
+* ERR3D
+
+::
+
+  - 0.0
+
+* REPQUAL
+
+::
+
+  - 0.0
+
+* INFORMAT
+
+::
+
+  - 0.0
+
+* NUMEIGEN
+
+::
+
+  - 0
+
+* IXOLD
+
+::
+
+  - 0
+
+* REF3D
+
+::
+
+  - 0
+
+* Minimum density (DENSMIN)
+
+::
+
+  - 0.0
+
+* EANGLE
+
+::
+
+  - 0.0
+
+* ZSHIFT
+
+::
+
+  - 0.0
+
+* NALISUM
+
+::
+
+  - 0
+
+* NIACTIVE
+
+::
+
+  - 0
+
+* CMTOTVAR
+
+::
+
+  - 0.0
+
+* EXSHIFT
+
+::
+
+  - 0.0
+
+* Image name
+
+::
+
+  - SPIDER input image = singleImage.spi                                            
+
+* Defocus angle (DEFANGLE)
+
+::
+
+  - 0.0
+
+* Average density (AVDENS)
+
+::
+
+  - 0.0
+
+* DEFOCUS1
+
+::
+
+  - 0.0
+
+* DEFOCUS2
+
+::
+
+  - 0.0
+
+* SIGMA
+
+::
+
+  - 0.0
+
+* SINOEND
+
+::
+
+  - 0.0
+
+* EGAMMA
+
+::
+
+  - 0.0
+
+* RESOLY
+
+::
+
+  - 0.0
+
+* EALPHA
+
+::
+
+  - 0.0
+
+* RESOLZ
+
+::
+
+  - 0.0
+
+* Maximum density (DENSMAX)
+
+::
+
+  - 0.0
+
+* SINOSTRT
+
+::
+
+  - 0.0
+
+* VOLTAGE (in kV)
+
+::
+
+  - 0.0
+
+* YSHIFT
+
+::
+
+  - 0.0
+
+* RESOLX
+
+::
+
+  - 0.0
+

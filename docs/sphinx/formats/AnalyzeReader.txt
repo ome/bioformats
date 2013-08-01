@@ -1,0 +1,163 @@
+*******************************************************************************
+AnalyzeReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Analyze 7.5 format reader.
+
+Key/value pairs
+===============================================================================
+
+* Exposure time
+
+::
+
+  - 1.0
+  - 0.0
+
+* Auxiliary file
+
+::
+
+  - brainmask.mnc           
+  -                         
+
+* Compressed
+
+::
+
+  - 0.0
+
+* Calibrated minimum
+
+::
+
+  - 0.0
+
+* Slice thickness
+
+::
+
+  - 2.0
+  - 5.0
+
+* Description
+
+::
+
+  - spm2 brainmask template all voxels > 5                                          
+  - 1 year old male (M.K.)                                                          
+
+* Orientation
+
+::
+
+  -  
+
+* Number of dimensions
+
+::
+
+  - 4
+
+* Database name
+
+::
+
+  -                   
+  - MR_chest_cine     
+
+* Pixel maximum
+
+::
+
+  - 3.57E-43
+
+* Originator
+
+::
+
+  - . @ %     
+  -           
+
+* Voxel height
+
+::
+
+  - 2.0
+  - 0.7770000100135803
+
+* Data type
+
+::
+
+  - 2
+
+* Scan Number
+
+::
+
+  -           
+
+* Generated
+
+::
+
+  - MR        
+  -           
+
+* Calibrated maximum
+
+::
+
+  - 0.0
+
+* Number of bits per pixel
+
+::
+
+  - 8
+
+* Pixel offset
+
+::
+
+  - 0
+
+* Acquisition Time
+
+::
+
+  -           
+
+* Patient ID
+
+::
+
+  - NO ID     
+  -           
+
+* Pixel minimum
+
+::
+
+  - 0.0
+
+* Acquisition Date
+
+::
+
+  -           
+
+* Voxel width
+
+::
+
+  - 2.0
+  - 0.7770000100135803
+
+* Verified
+
+::
+
+  - 0.0
+

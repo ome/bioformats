@@ -1,0 +1,282 @@
+*******************************************************************************
+SVSReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Aperio SVS format reader.
+
+Key/value pairs
+===============================================================================
+
+* User
+
+::
+
+  - 9b9ca8b5-9a1f-41be-84d5-fab1b07931d1
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* 26000x34320 [0,100 25013x34220] (240x240) -> 1563x2138 J2K/MIL Q
+
+::
+
+  - 70
+
+* 20000x18848 [0,100 19241x18748] (240x240) -> 4810x4687 J2K/MIL Q
+
+::
+
+  - 70
+
+* LineAreaXOffset
+
+::
+
+  - 0.000000
+
+* TileByteCounts
+
+::
+
+  - 10041
+  - 1134
+  - 401
+  - 455
+
+* 18000x11141 [0,100 17317x11041] (240x240) -> 4329x2760 J2K/MIL Q
+
+::
+
+  - 70
+
+* TileLength
+
+::
+
+  - 240
+
+* 6120x6414 [0,50 6000x6314] (240x240) JPEG/RGB Q
+
+::
+
+  - 30
+
+* Filename
+
+::
+
+  - SAC 14
+
+* AppMag
+
+::
+
+  - 40
+
+* Time
+
+::
+
+  - 12:03:31
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* Date
+
+::
+
+  - 03/04/08
+
+* LineAreaYOffset
+
+::
+
+  - 0.000000
+
+* 20000x18848 [0,100 19241x18748] (240x240) -> 2405x2343 J2K/MIL Q
+
+::
+
+  - 70
+
+* LineCameraSkew
+
+::
+
+  - 0.001418
+
+* 26000x34320 [0,100 25013x34220] (240x240) -> 6253x8555 J2K/MIL Q
+
+::
+
+  - 70
+
+* ImageWidth
+
+::
+
+  - 1834
+  - 17317
+  - 19241
+  - 25013
+
+* TileOffsets
+
+::
+
+  - 8
+
+* Originalheight
+
+::
+
+  - 34320
+
+* Top
+
+::
+
+  - 16.189258
+
+* PlanarConfiguration
+
+::
+
+  - Chunky
+
+* ImageID
+
+::
+
+  - 5265
+
+* 26000x34320 [0,100 25013x34220] (240x240) J2K/MIL Q
+
+::
+
+  - 70
+
+* 18000x11141 [0,100 17317x11041] (240x240) J2K/MIL Q
+
+::
+
+  - 70
+
+* ImageLength
+
+::
+
+  - 1993
+  - 11041
+  - 18748
+  - 34220
+
+* Comment
+
+::
+
+  - macro 1280x501
+
+* NewSubfileType
+
+::
+
+  - 0
+
+* 6000x6314 [3599,3011 1834x1993] (240x240) JPEG/RGB Q
+
+::
+
+  - 30;Aperio Image Library v8.0.19
+
+* Left
+
+::
+
+  - 38.818581
+
+* Title
+
+::
+
+  - none
+
+* Compression
+
+::
+
+  - JPEG-2000
+
+* ScanScope ID
+
+::
+
+  - SS5054
+
+* StripeWidth
+
+::
+
+  - 2034
+
+* TileWidth
+
+::
+
+  - 240
+
+* 20000x18848 [0,100 19241x18748] (240x240) J2K/MIL Q
+
+::
+
+  - 70
+
+* MPP
+
+::
+
+  - 0.2505
+
+* SamplesPerPixel
+
+::
+
+  - 3
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - RGB
+
+* OriginalWidth
+
+::
+
+  - 26000
+
+* YCbCrSubSampling
+
+::
+
+  - chroma image dimensions are half the luma image dimensions
+
+* PhotometricInterpretation
+
+::
+
+  - RGB
+
+* DSR ID
+
+::
+
+  - phssqlweb48
+

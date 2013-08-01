@@ -1,0 +1,69 @@
+*******************************************************************************
+BMPReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Windows Bitmap format reader.
+
+Key/value pairs
+===============================================================================
+
+* X resolution
+
+::
+
+  - 0
+
+* Compression type
+
+::
+
+  - None
+
+* File size (in bytes)
+
+::
+
+  - 410678
+
+* Y resolution
+
+::
+
+  - 0
+
+* Indexed color
+
+::
+
+  - true
+
+* Image width
+
+::
+
+  - 640
+
+* Image height
+
+::
+
+  - 640
+
+* Bits per pixel
+
+::
+
+  - 8
+
+* Magic identifier
+
+::
+
+  - BM
+
+* Color planes
+
+::
+
+  - 1
+

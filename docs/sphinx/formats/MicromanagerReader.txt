@@ -1,0 +1,1660 @@
+*******************************************************************************
+MicromanagerReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Micro-Manager format reader.
+
+Key/value pairs
+===============================================================================
+
+* /dev/tty.USA49W3d2P2.2-AnswerTimeout
+
+::
+
+  - 500.00
+
+* Core-Initialize
+
+::
+
+  - 1
+
+* Arduino-Switch-Timed Output Mode
+
+::
+
+  - Idle
+
+* ASIFWController-Description
+
+::
+
+  - ASIFW1000 controller
+
+* acqRootName
+
+::
+
+  - AcquisitionData
+
+* Camera-TriggerPolarity
+
+::
+
+  - Negative
+
+* FrameKey-0-1-0
+
+::
+
+  - 
+
+* FrameKey-0-1-1
+
+::
+
+  - 
+
+* FrameKey-0-1-2
+
+::
+
+  - 
+
+* FrameKey-0-1-3
+
+::
+
+  - 
+
+* FrameKey-0-0-1
+
+::
+
+  - 
+
+* FrameKey-0-0-2
+
+::
+
+  - 
+
+* Camera-EMGain
+
+::
+
+  - 110
+
+* FrameKey-0-0-3
+
+::
+
+  - 
+
+* FrameKey-0-0-4
+
+::
+
+  - 
+
+* /dev/tty.USA49W3d2P1.1-Parity
+
+::
+
+  - None
+
+* XYStage-Speed-S
+
+::
+
+  - 5.75
+
+* /dev/tty.USA49W3d2P2.2-Parity
+
+::
+
+  - None
+
+* FrameKey-0-0-0
+
+::
+
+  - 
+
+* Arduino-Shutter-Name
+
+::
+
+  - Arduino-Shutter
+
+* ZeissTubeLens-State
+
+::
+
+  - 0
+
+* XYStage-Error-E(nm)
+
+::
+
+  - 500.00
+
+* FrameKey-2-1-2
+
+::
+
+  - 
+
+* XYStage-StepSizeX_um
+
+::
+
+  - 0.10
+
+* /dev/tty.USA49W3d2P2.2-DataBits
+
+::
+
+  - 8
+
+* ZStage-Port
+
+::
+
+  - /dev/tty.USA49W3d2P2.2
+
+* Camera-TransposeXY
+
+::
+
+  - 1
+
+* acqChannel8ContrastMin0
+
+::
+
+  - 0.0
+
+* Camera-Sensor Cooler
+
+::
+
+  - On
+
+* acqChannel8ContrastMin1
+
+::
+
+  - 0.0
+
+* Camera-Output Trigger Period
+
+::
+
+  - 0.00
+
+* /dev/tty.usbserial-A6006kiM-AnswerTimeout
+
+::
+
+  - 500.00
+
+* Arduino-Hub-Version
+
+::
+
+  - 1
+
+* Camera-Name
+
+::
+
+  - Hamamatsu_DCAM
+
+* Exposure-ms
+
+::
+
+  - 66.6
+  - 10
+
+* ZStage-Axis
+
+::
+
+  - Z
+
+* ZeissSidePort-Description
+
+::
+
+  - Side Port
+
+* ZeissScope-Description
+
+::
+
+  - Zeiss microscope CAN bus adapter
+
+* ChColors
+
+::
+
+  - -65485,         -1336960
+  - -16777012,         -6553
+
+* DAC-2-Channel
+
+::
+
+  - 2
+
+* ASIFilterWheel-State
+
+::
+
+  - 5
+
+* Arduino-Switch-State
+
+::
+
+  - 32
+
+* ZeissFocusAxis-Move Mode
+
+::
+
+  - Direct move to target
+
+* /dev/tty.USA49W3d2P3.3-BaudRate
+
+::
+
+  - 57600
+
+* Arduino-Switch-Repeat Timed Pattern
+
+::
+
+  - 0
+
+* XYStage-Name
+
+::
+
+  - XYStage
+
+* Camera-Output Trigger Delay
+
+::
+
+  - 0.00
+
+* /dev/tty.USA49W3d2P1.1-DelayBetweenCharsMs
+
+::
+
+  - 0.00
+
+* FrameKey-2-1-1
+
+::
+
+  - 
+
+* FrameKey-2-1-0
+
+::
+
+  - 
+
+* ZeissScope-Port
+
+::
+
+  - /dev/tty.USA49W3d2P3.3
+
+* ZeissScope-Name
+
+::
+
+  - ZeissScope
+
+* acqChannelName0
+
+::
+
+  - Cy3
+
+* Camera-Driver Version
+
+::
+
+  - 5.16
+
+* /dev/tty.USA49W3d2P1.1-AnswerTimeout
+
+::
+
+  - 500.00
+
+* acqChannelName1
+
+::
+
+  - FITC
+
+* z-step_um
+
+::
+
+  - 1.0
+
+* ChContrastMin
+
+::
+
+  - 1547,         142
+  - 2,         
+
+* FrameKey-2-0-0
+
+::
+
+  - 
+
+* FrameKey-2-0-2
+
+::
+
+  - 
+
+* FrameKey-2-0-1
+
+::
+
+  - 
+
+* XYStage-Port
+
+::
+
+  - /dev/tty.USA49W3d2P2.2
+
+* Arduino-Switch-TriggerMode
+
+::
+
+  - Idle
+
+* /dev/tty.usbserial-A6006kiM-Parity
+
+::
+
+  - None
+
+* /dev/tty.USA49W3d2P2.2-BaudRate
+
+::
+
+  - 9600
+
+* enableMultiPosition
+
+::
+
+  - false
+
+* Camera-TransposeCorrection
+
+::
+
+  - 0
+
+* FrameKey-0-1-4
+
+::
+
+  - 
+
+* ASIFilterWheel-Label
+
+::
+
+  - 525-50
+
+* Camera-Trigger
+
+::
+
+  - Software
+
+* acqChannel16ContrastMin0
+
+::
+
+  - 0.0
+
+* ZeissObjectiveTurret-State
+
+::
+
+  - 3
+
+* acqChannel16ContrastMin1
+
+::
+
+  - 0.0
+
+* Arduino-Switch-Label
+
+::
+
+  - 1
+
+* Core-Camera
+
+::
+
+  - Camera
+
+* Camera-CCDMode
+
+::
+
+  - EM CCD
+
+* ZStage-Description
+
+::
+
+  - ASI Z-stage driver adapter
+
+* Arduino-Switch-Blanking Mode
+
+::
+
+  - Idle
+
+* /dev/tty.USA49W3d2P3.3-StopBits
+
+::
+
+  - 1
+
+* ASIFilterWheel-Description
+
+::
+
+  - ASIFW1000 FilterWheel
+
+* Arduino-Shutter-Description
+
+::
+
+  - Arduino shutter driver
+
+* acqZValues
+
+::
+
+  - 0
+
+* DAC-2-Name
+
+::
+
+  - 
+
+* ZeissReflectorTurret-Description
+
+::
+
+  - Reflector Turret
+
+* Frames
+
+::
+
+  - 2
+  - 3
+
+* ZeissTubeLens-Name
+
+::
+
+  - ZeissTubeLens
+
+* Camera-Output Trigger Polarity
+
+::
+
+  - Negative
+
+* Summary
+
+::
+
+  - 
+
+* Channels
+
+::
+
+  - 2
+
+* Source
+
+::
+
+  - Micro-Manager
+
+* XYStage-OverShoot(um)
+
+::
+
+  - 0.00
+
+* /dev/tty.USA49W3d2P1.1-Handshaking
+
+::
+
+  - Off
+
+* ASIFWController-Name
+
+::
+
+  - ASIFWController
+
+* XYStage-Wait_Cycles
+
+::
+
+  - 0
+
+* Arduino-Hub-Logic
+
+::
+
+  - Normal
+
+* acqTimeInit
+
+::
+
+  - 1
+
+* /dev/tty.USA49W3d2P3.3-DataBits
+
+::
+
+  - 8
+
+* ZeissTubeLens-Label
+
+::
+
+  - 1-\u00101.0
+
+* SystemState
+
+::
+
+  - 
+
+* acqZbottom
+
+::
+
+  - -2.0
+
+* ZeissSidePort-Label
+
+::
+
+  - 3-20%BP_80%R\u0010
+
+* Arduino-Switch-Delay (ms)
+
+::
+
+  - 0
+
+* XYStage-MotorOnOff
+
+::
+
+  - On
+
+* acqDirName
+
+::
+
+  - Untitled
+
+* acqChannelZOffset1
+
+::
+
+  - 0.0
+
+* acqChannelColorG1
+
+::
+
+  - 255
+
+* /dev/tty.USA49W3d2P1.1-DataBits
+
+::
+
+  - 8
+
+* acqChannelColorG0
+
+::
+
+  - 0
+
+* DAC-2-Volts
+
+::
+
+  - 5.00
+
+* acqChannelZOffset0
+
+::
+
+  - 0.0
+
+* Arduino-Switch-Name
+
+::
+
+  - Arduino-Switch
+
+* /dev/tty.USA49W3d2P1.1-Name
+
+::
+
+  - Serial Port driver
+
+* Camera-PixelType
+
+::
+
+  - 16bit
+
+* Camera-Direct EM Gain Mode
+
+::
+
+  - 1
+
+* /dev/tty.USA49W3d2P3.3-Description
+
+::
+
+  - Serial port driver (Unix)
+
+* DAC-1-MaxVolt
+
+::
+
+  - 5.00
+
+* XYStage-TransposeMirrorY
+
+::
+
+  - 0
+
+* XYStage-TransposeMirrorX
+
+::
+
+  - 0
+
+* ZeissFocusAxis-Velocity-Acceleration
+
+::
+
+  - Fast
+
+* ZeissReflectorTurret-Label
+
+::
+
+  - 6-   
+
+* column_width2
+
+::
+
+  - 77
+
+* Camera-ReadoutTime
+
+::
+
+  - 31.31
+
+* column_width1
+
+::
+
+  - 77
+
+* column_width4
+
+::
+
+  - 77
+
+* column_width3
+
+::
+
+  - 77
+
+* column_width0
+
+::
+
+  - 77
+
+* FileName
+
+::
+
+  - img_000000000_FITC_003.tif
+  - img_1_DAPI_2.tif
+
+* acqNumframes
+
+::
+
+  - 1
+
+* Arduino-Switch-Description
+
+::
+
+  - Arduino digital output driver
+
+* Arduino-Switch-Nr. Patterns Used
+
+::
+
+  - 4
+
+* /dev/tty.USA49W3d2P2.2-Handshaking
+
+::
+
+  - Off
+
+* Camera-Exposure
+
+::
+
+  - 66.60
+
+* Camera-Binning
+
+::
+
+  - 2
+
+* Core-Focus
+
+::
+
+  - ZStage
+
+* Channel
+
+::
+
+  - FITC
+  - DAPI
+
+* ZeissSidePort-State
+
+::
+
+  - 2
+
+* Camera-PhotonImagingMode
+
+::
+
+  - 0
+
+* /dev/tty.USA49W3d2P1.1-StopBits
+
+::
+
+  - 1
+
+* Camera-Camera Version
+
+::
+
+  - 2.0
+
+* Z-um
+
+::
+
+  - -1.9000000000000004
+  - 1
+
+* XYStage-Version
+
+::
+
+  - Version: USB-8.6b 
+
+* acqContinuousFocusOffForZMove
+
+::
+
+  - false
+
+* sliceMode
+
+::
+
+  - 0
+
+* XYStage-Backlash-B
+
+::
+
+  - 0.00
+
+* MetadataVersion
+
+::
+
+  - 8
+  - 4
+
+* ZStage-Name
+
+::
+
+  - ZStage
+
+* /dev/tty.usbserial-A6006kiM-Description
+
+::
+
+  - Serial port driver (Unix)
+
+* ChNames
+
+::
+
+  - Cy3,         FITC
+  - DAPI,         Cy5
+
+* /dev/tty.USA49W3d2P3.3-AnswerTimeout
+
+::
+
+  - 500.00
+
+* ASIFilterWheel-ASIFilterWheelNumber
+
+::
+
+  - 1
+
+* acqChannel16ContrastMax0
+
+::
+
+  - 65535.0
+
+* acqNumchannels
+
+::
+
+  - 2
+
+* acqChannel16ContrastMax1
+
+::
+
+  - 65535.0
+
+* Comment
+
+::
+
+  - 
+
+* enableSliceSettings
+
+::
+
+  - true
+
+* /dev/tty.usbserial-A6006kiM-Port
+
+::
+
+  - /dev/tty.usbserial-A6006kiM
+
+* PixelSize_um
+
+::
+
+  - 0.1652
+
+* DAC-1-Name
+
+::
+
+  - 
+
+* DAC-1-Volts
+
+::
+
+  - 0.00
+
+* Core-ImageProcessor
+
+::
+
+  - 
+
+* acqChannelColorB0
+
+::
+
+  - 51
+
+* acqChannelColorB1
+
+::
+
+  - 0
+
+* XYStage-StepSizeY_um
+
+::
+
+  - 0.10
+
+* ZeissObjectiveTurret-Label
+
+::
+
+  - 4-alpha Plan-Fluar 100x-1.45 Oil\u0010
+
+* Core-AutoShutter
+
+::
+
+  - 1
+
+* ZeissFocusAxis-Position
+
+::
+
+  - 0.01
+
+* /dev/tty.usbserial-A6006kiM-StopBits
+
+::
+
+  - 1
+
+* GUID
+
+::
+
+  - 27b3a1ba5a57009c-4bf374b063410e90
+  - 94d3f3aa71ee4ef-5dc372969ce17d1c
+
+* acqChannel8ContrastMax1
+
+::
+
+  - 255.0
+
+* Interval_ms
+
+::
+
+  - 500
+
+* acqChannel8ContrastMax0
+
+::
+
+  - 255.0
+
+* ASIFilterWheel-ClosedPosition
+
+::
+
+  - 
+
+* Core-XYStage
+
+::
+
+  - XYStage
+
+* Camera-CameraID
+
+::
+
+  - S/N: 480012
+
+* acqSkip1
+
+::
+
+  - 0
+
+* acqChannelColorR0
+
+::
+
+  - 255
+
+* acqSkip0
+
+::
+
+  - 0
+
+* acqChannelExp0
+
+::
+
+  - 66.6
+
+* acqChannelColorR1
+
+::
+
+  - 51
+
+* Time
+
+::
+
+  - Wed Dec 17 09:51:58 PST 2008
+  - Mon Jun 04 21:18:24 PDT 2007
+
+* /dev/tty.usbserial-A6006kiM-DataBits
+
+::
+
+  - 8
+
+* Arduino-Switch-Blank On
+
+::
+
+  - Low
+
+* /dev/tty.USA49W3d2P1.1-Port
+
+::
+
+  - /dev/tty.USA49W3d2P1.1
+
+* ZeissScope-AnswerTimeOut
+
+::
+
+  - 250.00
+
+* acqZtop
+
+::
+
+  - 2.0
+
+* acqChannelExp1
+
+::
+
+  - 66.6
+
+* Core-AutoFocus
+
+::
+
+  - 
+
+* IJType
+
+::
+
+  - 1
+  - 0
+
+* ASIFWController-Port
+
+::
+
+  - /dev/tty.USA49W3d2P1.1
+
+* ZeissTubeLens-Description
+
+::
+
+  - Tube Lens (optoavar)
+
+* Camera-CameraName
+
+::
+
+  - C9100-13 with M10354-01
+
+* Camera-ScanMode
+
+::
+
+  - 3
+
+* DAC-2-MaxVolt
+
+::
+
+  - 5.00
+
+* Slice
+
+::
+
+  - 3
+  - 2
+
+* DAC-1-Description
+
+::
+
+  - Arduino DAC driver
+
+* XYStage-NrMoveRepetitions
+
+::
+
+  - 0
+
+* singleFrame
+
+::
+
+  - false
+
+* /dev/tty.USA49W3d2P3.3-DelayBetweenCharsMs
+
+::
+
+  - 0.00
+
+* ChContrastMax
+
+::
+
+  - 15157,         782
+  - 22,         2
+
+* Arduino-Switch-GetPattern
+
+::
+
+  - 0
+
+* autofocus_enabled
+
+::
+
+  - false
+
+* ZeissScope-Microscope Version
+
+::
+
+  - Application version: 
+
+* Camera-Temperature
+
+::
+
+  - -65.00
+
+* /dev/tty.USA49W3d2P2.2-DelayBetweenCharsMs
+
+::
+
+  - 0.00
+
+* FrameKey-1-0-4
+
+::
+
+  - 
+
+* FrameKey-1-1-0
+
+::
+
+  - 
+
+* FrameKey-1-1-2
+
+::
+
+  - 
+
+* FrameKey-1-1-1
+
+::
+
+  - 
+
+* Core-Shutter
+
+::
+
+  - Arduino-Shutter
+
+* acqContinuousFocusOffForXYMove
+
+::
+
+  - false
+
+* Arduino-Switch-SetPattern
+
+::
+
+  -  
+
+* Camera-ActualInterval-ms
+
+::
+
+  - 66.60
+
+* ZeissReflectorTurret-Name
+
+::
+
+  - ZeissReflectorTurret
+
+* Core-TimeoutMs
+
+::
+
+  - 5000
+
+* FrameKey-1-0-1
+
+::
+
+  - 
+
+* Camera-Output Trigger Active
+
+::
+
+  - 1
+
+* /dev/tty.usbserial-A6006kiM-Name
+
+::
+
+  - Serial Port driver
+
+* FrameKey-1-0-0
+
+::
+
+  - 
+
+* FrameKey-1-0-3
+
+::
+
+  - 
+
+* /dev/tty.usbserial-A6006kiM-BaudRate
+
+::
+
+  - 57600
+
+* FrameKey-1-0-2
+
+::
+
+  - 
+
+* ElapsedTime-ms
+
+::
+
+  - 1071
+  - 1375
+
+* ZeissObjectiveTurret-Description
+
+::
+
+  - Objective Turret
+
+* /dev/tty.usbserial-A6006kiM-Handshaking
+
+::
+
+  - Off
+
+* Frame
+
+::
+
+  - 
+
+* Camera-Slot
+
+::
+
+  - 0
+
+* Width
+
+::
+
+  - 256
+  - 128
+
+* PixelAspect
+
+::
+
+  - 1.0
+
+* Camera-Description
+
+::
+
+  - Hamamatsu DCAM API device adapter
+
+* ASIFilterWheel-Name
+
+::
+
+  - ASIFilterWheel
+
+* /dev/tty.USA49W3d2P2.2-StopBits
+
+::
+
+  - 1
+
+* ZeissReflectorTurret-State
+
+::
+
+  - 5
+
+* Height
+
+::
+
+  - 256
+  - 128
+
+* /dev/tty.usbserial-A6006kiM-DelayBetweenCharsMs
+
+::
+
+  - 0.00
+
+* /dev/tty.USA49W3d2P2.2-Name
+
+::
+
+  - Serial Port driver
+
+* acqInterval
+
+::
+
+  - 1000.0
+
+* acqZstep
+
+::
+
+  - 1.0
+
+* /dev/tty.USA49W3d2P1.1-Description
+
+::
+
+  - Serial port driver (Unix)
+
+* Camera-TransposeMirrorX
+
+::
+
+  - 0
+
+* Arduino-Shutter-OnOff
+
+::
+
+  - 0
+
+* Arduino-Hub-Name
+
+::
+
+  - Arduino-Hub
+
+* Camera-TransposeMirrorY
+
+::
+
+  - 1
+
+* /dev/tty.USA49W3d2P1.1-BaudRate
+
+::
+
+  - 9600
+
+* Arduino-Switch-Skip Patterns (Nr.)
+
+::
+
+  - 0
+
+* Slices
+
+::
+
+  - 5
+  - 3
+
+* ASIFWController-Firmware version
+
+::
+
+  - Version: 2.0d
+
+* XYStage-Description
+
+::
+
+  - ASI XY stage driver adapter
+
+* acqSaveFiles
+
+::
+
+  - false
+
+* Depth
+
+::
+
+  - 2
+  - 1
+
+* DAC-2-Description
+
+::
+
+  - Arduino DAC driver
+
+* /dev/tty.USA49W3d2P2.2-Port
+
+::
+
+  - /dev/tty.USA49W3d2P2.2
+
+* /dev/tty.USA49W3d2P3.3-Parity
+
+::
+
+  - None
+
+* ZeissSidePort-Name
+
+::
+
+  - ZeissSidePort
+
+* /dev/tty.USA49W3d2P3.3-Name
+
+::
+
+  - Serial Port driver
+
+* Camera-Gain
+
+::
+
+  - 0
+
+* Camera-Temperature Set Point
+
+::
+
+  - -65.00
+
+* /dev/tty.USA49W3d2P3.3-Handshaking
+
+::
+
+  - Hardware
+
+* DAC-1-Channel
+
+::
+
+  - 1
+
+* column_order0
+
+::
+
+  - 0
+
+* /dev/tty.USA49W3d2P3.3-Port
+
+::
+
+  - /dev/tty.USA49W3d2P3.3
+
+* column_order3
+
+::
+
+  - 3
+
+* column_order4
+
+::
+
+  - 4
+
+* column_order1
+
+::
+
+  - 1
+
+* column_order2
+
+::
+
+  - 2
+
+* Arduino-Hub-Port
+
+::
+
+  - /dev/tty.usbserial-A6006kiM
+
+* positionMode
+
+::
+
+  - 0
+
+* ZeissObjectiveTurret-Name
+
+::
+
+  - ZeissObjectiveTurret
+
+* acqChannelGroup
+
+::
+
+  - Channel
+
+* FrameKey-1-1-3
+
+::
+
+  - 
+
+* /dev/tty.USA49W3d2P2.2-Description
+
+::
+
+  - Serial port driver (Unix)
+
+* FrameKey-1-1-4
+
+::
+
+  - 
+
+* XYStage-FinishError-PCROS(nm)
+
+::
+
+  - 11.00
+
