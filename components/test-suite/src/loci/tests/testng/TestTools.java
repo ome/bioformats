@@ -34,10 +34,8 @@ import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.FieldPosition;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import loci.common.ByteArrayHandle;
@@ -72,11 +70,6 @@ public class TestTools {
 
   public static final String DIVIDER =
     "----------------------------------------";
-
-  /** Gets a timestamp for the current moment. */
-  public static String timestamp() {
-    return DateTools.convertDate(System.currentTimeMillis(), DateTools.UNIX);
-  }
 
   /** Calculate the SHA-1 of a byte array. */
   public static String sha1(byte[] b, int offset, int len) {
@@ -171,10 +164,8 @@ public class TestTools {
 
   /** Creates a new log file. */
   public static void createLogFile() {
-    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-    StringBuffer dateBuf = new StringBuffer();
-    fmt.format(new Date(), dateBuf, new FieldPosition(0));
-    String logFile = "loci-software-test-" + dateBuf + ".log";
+    String timestamp = "-" + DateTools.getFileTimestamp();
+    String logFile = "loci-software-test-" + timestamp + ".log";
     LOGGER.info("Output logged to {}", logFile);
     try {
       org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
