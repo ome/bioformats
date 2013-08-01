@@ -45,7 +45,7 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.14</version>
+      <version>${log4j.version}</version>
     </dependency>
     <dependency>
       <groupId>ome</groupId>
@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.5.10</version>
+      <version>${slf4j.version}</version>
     </dependency>
 
     <dependency>
@@ -73,7 +73,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.10</version>
+      <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
