@@ -90,7 +90,7 @@ public class TimestampTest {
   @Test
   public void testAsDateTime()
   {
-    DateTime d = a.asDateTime();
+    DateTime d = a.asDateTime(null);
     assertYMDHMSS(d.toInstant());
   }
 

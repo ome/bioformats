@@ -126,10 +126,11 @@ public class Timestamp extends PrimitiveType<String> {
 
   /**
    * Returns the timestamp as a Joda {@link org.joda.time.DateTime} type.
+   * @param zone the DateTime instance uses the specified timezone, or the default zone if null.
    * @return See above.
    */
-  public DateTime asDateTime() {
-    return new DateTime(timestamp);
+  public DateTime asDateTime(DateTimeZone zone) {
+      return new DateTime(timestamp, zone);
   }
 
   /**
