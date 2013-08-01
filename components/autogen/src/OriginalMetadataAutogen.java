@@ -56,12 +56,14 @@ public class OriginalMetadataAutogen {
   private HashMap<String, HashMap<String, ArrayList>> metadata =
     new HashMap<String, HashMap<String, ArrayList>>();
   private ImageReader reader = new ImageReader();
+  private String version;
 
   // -- Constructor --
 
-  public OriginalMetadataAutogen(String listFile)
+  public OriginalMetadataAutogen(String listFile, String version)
     throws FormatException, IOException
   {
+    this.version = version;
     String[] files = DataTools.readFile(listFile).split("\n");
     for (int i=0; i<files.length; i++) {
       parseFile(files[i]);
@@ -73,35 +75,23 @@ public class OriginalMetadataAutogen {
   // -- API Methods --
 
   public void write() throws Exception {
-    File doc = new File("doc");
-    if (!doc.exists()) {
-      boolean success = doc.mkdir();
-      if (!success) {
-        throw new IOException("Could not create " + doc.getAbsolutePath());
-      }
-    }
-    File docMeta = new File(doc, "original_meta");
-    if (!docMeta.exists()) {
-      boolean success = docMeta.mkdir();
-      if (!success) {
-        throw new IOException("Could not create " + docMeta.getAbsolutePath());
-      }
-    }
-
     VelocityEngine engine = VelocityTools.createEngine();
     VelocityContext context = VelocityTools.createContext();
 
+    MetaSupportList supportList = new MetaSupportList(version);
+    context.put("q", supportList);
+
     for (String format : metadata.keySet()) {
+      supportList.setHandler(format);
       HashMap<String, ArrayList> meta = metadata.get(format);
 
-      context.put("q", meta);
-      context.put("format", format);
+      context.put("originalMetadata", meta);
 
       String filename = format.replaceAll(" ", "_");
       filename = filename.replaceAll("/", "_");
 
       VelocityTools.processTemplate(engine, context, TEMPLATE,
-        "doc/original_meta/" + filename + ".txt");
+        "../../docs/sphinx/formats/" + filename + ".txt");
     }
   }
 
@@ -124,20 +114,47 @@ public class OriginalMetadataAutogen {
   }
 
   private void addMetadata(Hashtable<String, Object> readerMetadata) {
-    String format = reader.getFormat();
+    String format = reader.getReader().getClass().getSimpleName();
     HashMap<String, ArrayList> meta = metadata.get(format);
     if (meta == null) {
       meta = new HashMap<String, ArrayList>();
     }
     for (String key : readerMetadata.keySet()) {
-      if (meta.containsKey(key) &&
-        !meta.get(key).contains(readerMetadata.get(key)))
-      {
-        meta.get(key).add(readerMetadata.get(key));
+      String value = readerMetadata.get(key).toString();
+      key = key.replaceAll("/", "\\/");
+      key = key.replaceAll("\n", " ");
+      key = key.replaceAll("\\p{Cntrl}", " ");
+      if (key.startsWith("*")) {
+        key = "\\" + key;
+      }
+
+      String[] lines = value.split("\n");
+      if (lines.length == 0) {
+        continue;
+      }
+
+      StringBuffer sb = new StringBuffer();
+      sb.append(lines[0]);
+      for (int i=1; i<lines.length; i++) {
+        sb.append("\n      ");
+        sb.append(lines[i].trim());
+      }
+      value = sb.toString();
+      if (value.length() > 4095) {
+        continue;
+      }
+
+      value = value.replaceAll("\\p{Cntrl}", " ");
+      if (value.startsWith("*")) {
+        value = "\\" + value;
+      }
+
+      if (meta.containsKey(key) && !meta.get(key).contains(value)) {
+        meta.get(key).add(value);
       }
       else {
         ArrayList list = new ArrayList();
-        list.add(readerMetadata.get(key));
+        list.add(value);
         meta.put(key, list);
       }
     }
@@ -147,7 +164,7 @@ public class OriginalMetadataAutogen {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
-    OriginalMetadataAutogen autogen = new OriginalMetadataAutogen(args[0]);
+    OriginalMetadataAutogen autogen = new OriginalMetadataAutogen(args[0], args[1]);
     autogen.write();
   }
 

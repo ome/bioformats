@@ -31,6 +31,15 @@ Officially Supported Versions: $versions
 Supported Metadata Fields: :doc:`$format <$metadataPage>`
 #end
 
+#if ($originalMetadataPage)
+Original Metadata Support: :doc:`$format <$originalMetadataPage>`
+#else
+Original Metadata Support: #foreach ($item in $reader)
+#set ($readerPage = $item.replaceAll(".java", ""))
+#if ($velocityHasNext):doc:`$format <$readerPage>`, #else:doc:`$format <$readerPage>`#end
+#end
+#end
+
 #if ($software)
 Freely Available Software:
 

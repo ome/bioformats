@@ -25,6 +25,7 @@ Type "ant -p" for a list of targets.
     <java classname="OriginalMetadataAutogen"
       classpath="${classes.dir}:${component.runtime-cp}" fork="true">
       <arg value="${filelist}"/>
+      <arg value="${omexml.version}"/>
     </java>
   </target>
 
