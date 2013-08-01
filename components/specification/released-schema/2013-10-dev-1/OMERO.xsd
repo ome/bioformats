@@ -1,5 +1,4 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
-<?xml-stylesheet href="http://cvs.openmicroscopy.org.uk/snapshots/omero/editor/omeXsd/display.xsl" type="text/xsl"?>
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
@@ -83,84 +82,7 @@
 						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
-                <xsd:element name = "Session" minOccurs="0" maxOccurs="unbounded">
-                    <xsd:annotation>
-                        <xsd:appinfo><xsdfu><plural>Sessions</plural><global/></xsdfu></xsd:appinfo>
-                        <xsd:documentation>Describes a session.</xsd:documentation>
-                    </xsd:annotation>
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
-                                <xsd:annotation>
-                                    <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
-                                </xsd:annotation>
-                            </xsd:element>
-                            <xsd:element name="Event" minOccurs="0" maxOccurs="unbounded">
-                                <xsd:annotation>
-                                    <xsd:appinfo><xsdfu><plural>Events</plural><immutable/><global/></xsdfu></xsd:appinfo>
-                                    <xsd:documentation>Describes an Event.</xsd:documentation>
-                                </xsd:annotation>
-                                <xsd:complexType>
-                                    <xsd:sequence>
-                                        <xsd:element ref="OME:ExperimenterRef" minOccurs="1" maxOccurs="1">
-                                            <xsd:annotation>
-                                                <xsd:appinfo><xsdfu><injected/></xsdfu></xsd:appinfo>
-                                            </xsd:annotation>
-                                        </xsd:element>
-                                        <xsd:element ref="OME:ExperimenterGroupRef" minOccurs="1" maxOccurs="1">
-                                            <xsd:annotation>
-                                                <xsd:appinfo><xsdfu><injected/></xsdfu></xsd:appinfo>
-                                            </xsd:annotation>
-                                        </xsd:element>
-                                        <xsd:element name="EventRef" minOccurs="0" maxOccurs="1">
-                                            <xsd:complexType>
-                                                <xsd:complexContent>
-                                                    <xsd:extension base="OME:Reference">
-                                                        <xsd:attribute name="ID" use="required" type="EventID"/>
-                                                    </xsd:extension>
-                                                </xsd:complexContent>
-                                            </xsd:complexType>
-                                        </xsd:element>
-                                        <xsd:element name="EventLog" minOccurs="0" maxOccurs="unbounded">
-                                            <xsd:annotation>
-                                                <xsd:appinfo><xsdfu><plural>EventLogs</plural><immutable/><global/></xsdfu></xsd:appinfo>
-                                                <xsd:documentation>Describes an EventLog.</xsd:documentation>
-                                            </xsd:annotation>
-                                            <xsd:complexType>
-                                                <xsd:attribute name="EntityId" use="required"
-                                                    type="xsd:long"/>
-                                                <xsd:attribute name="EntityType" use="required"
-                                                    type="xsd:string"/>
-                                                <xsd:attribute name="Action" use="required" type="xsd:string"/>
-                                            </xsd:complexType>
-                                        </xsd:element>
-                                    </xsd:sequence>
-                                    <xsd:attribute name="ID" use="required" type="EventID"/>
-                                    <xsd:attribute name="Status" use="optional" type="xsd:string"/>
-                                    <xsd:attribute name="Time" use="required" type="xsd:dateTime"/>
-                                    <xsd:attribute name="Type" use="required" type="EventType"/>
-                                </xsd:complexType>
-                            </xsd:element>
-                            <xsd:element ref="OME:ExperimenterRef" minOccurs="1" maxOccurs="1">
-                                <xsd:annotation>
-                                    <xsd:appinfo><xsdfu><injected/></xsdfu></xsd:appinfo>
-                                </xsd:annotation>
-                            </xsd:element>
-                        </xsd:sequence>
-                        <xsd:attribute name="Uuid" use="required" type="xsd:string">
-                            <xsd:annotation>
-                                <xsd:appinfo><xsdfu><unique/></xsdfu></xsd:appinfo>
-                            </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="DefaultEventType" use="required" type="EventType"/>
-                        <xsd:attribute name="UserAgent" use="optional" type="xsd:string"/>
-                        <xsd:attribute name="TimeToIdle" use="required" type="OME:NonNegativeLong"/>
-                        <xsd:attribute name="TimeToLive" use="required" type="OME:NonNegativeLong"/>
-                        <xsd:attribute name="Started" use="required" type="xsd:dateTime"/>
-                        <xsd:attribute name="Closed" use="optional" type="xsd:dateTime"/>
-                        <xsd:attribute name="Message" use="optional" type="Text"/>
-                    </xsd:complexType>
-                </xsd:element>
+            	<xsd:element name = "Session" minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
 			<xsd:attribute name="Uuid" use="required" type="OME:UniversallyUniqueIdentifier">
 				<xsd:annotation>
@@ -173,6 +95,81 @@
 			<xsd:attribute name="Scale" use="optional" type="xsd:integer"/>
 		</xsd:complexType>
 	</xsd:element>
+
+	<xsd:complexType name="Session">
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Sessions</plural><global/></xsdfu></xsd:appinfo>
+			<xsd:documentation>Describes a session.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="Event" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:appinfo><xsdfu><plural>Events</plural><immutable/><global/></xsdfu></xsd:appinfo>
+					<xsd:documentation>Describes an Event.</xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="OME:ExperimenterRef" minOccurs="1" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:appinfo><xsdfu><injected/></xsdfu></xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element ref="OME:ExperimenterGroupRef" minOccurs="1" maxOccurs="1">
+							<xsd:annotation>
+								<xsd:appinfo><xsdfu><injected/></xsdfu></xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+						<xsd:element name="EventRef" minOccurs="0" maxOccurs="1">
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="OME:Reference">
+										<xsd:attribute name="ID" use="required" type="EventID"/>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
+						<xsd:element name="EventLog" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:appinfo><xsdfu><plural>EventLogs</plural><immutable/><global/></xsdfu></xsd:appinfo>
+								<xsd:documentation>Describes an EventLog.</xsd:documentation>
+							</xsd:annotation>
+							<xsd:complexType>
+								<xsd:attribute name="EntityId" use="required" type="xsd:long"/>
+								<xsd:attribute name="EntityType" use="required" type="xsd:string"/>
+								<xsd:attribute name="Action" use="required" type="xsd:string"/>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+					<xsd:attribute name="ID" use="required" type="EventID"/>
+					<xsd:attribute name="Status" use="optional" type="xsd:string"/>
+					<xsd:attribute name="Time" use="required" type="xsd:dateTime"/>
+					<xsd:attribute name="Type" use="required" type="EventType"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="OME:ExperimenterRef" minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo><xsdfu><injected/></xsdfu></xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="Uuid" use="required" type="xsd:string">
+			<xsd:annotation>
+				<xsd:appinfo><xsdfu><unique/></xsdfu></xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="DefaultEventType" use="required" type="EventType"/>
+		<xsd:attribute name="UserAgent" use="optional" type="xsd:string"/>
+		<xsd:attribute name="TimeToIdle" use="required" type="OME:NonNegativeLong"/>
+		<xsd:attribute name="TimeToLive" use="required" type="OME:NonNegativeLong"/>
+		<xsd:attribute name="Started" use="required" type="xsd:dateTime"/>
+		<xsd:attribute name="Closed" use="optional" type="xsd:dateTime"/>
+		<xsd:attribute name="Message" use="optional" type="Text"/>
+	</xsd:complexType>
 
 	<xsd:element name = "Share"> <!-- top level definition -->
         <xsd:annotation>
@@ -300,11 +297,16 @@
                         <xsd:appinfo><xsdfu><ordered/></xsdfu></xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-				<xsd:element minOccurs="0" maxOccurs="unbounded" ref="CodomainMapContext">
-                    <xsd:annotation>
-                        <xsd:appinfo><xsdfu><ordered/></xsdfu></xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
+				<xsd:element name="CodomainMapContext" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><ordered/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:complexContent>
+							<xsd:extension base="CodomainMapContext"/>
+						</xsd:complexContent>
+					</xsd:complexType>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="Model" use="required" type="RenderingModel"/>
 			<xsd:attribute name="DefaultZ" use="required" type="OME:NonNegativeInt"/>
@@ -419,59 +421,61 @@
 		</xsd:complexType>
 	</xsd:element>
 
-	<xsd:element name = "Job"> <!-- top level definition -->
+	<xsd:complexType name="Job"> <!-- top level definition -->
 		<xsd:annotation>
-            <xsd:appinfo><xsdfu><plural>Jobs</plural><abstract/></xsdfu></xsd:appinfo>
+			<xsd:appinfo><xsdfu><plural>Jobs</plural><abstract/></xsdfu></xsd:appinfo>
 			<xsd:documentation>Describes a Job</xsd:documentation>
 		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="OriginalFileRef" minOccurs="1" maxOccurs="1">
+				<xsd:annotation>
+					<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:complexContent>
+						<xsd:extension base="OME:Reference">
+							<xsd:attribute name="ID" use="required" type="OriginalFileID"/>
+						</xsd:extension>
+					</xsd:complexContent>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="UserName" use="required" type="xsd:string"/>
+		<xsd:attribute name="GroupName" use="required" type="xsd:string"/>
+		<xsd:attribute name="Type" use="required" type="xsd:string"/>
+		<xsd:attribute name="Message" use="required" type="xsd:string"/>
+		<xsd:attribute name="Status" use="required" type="JobStatus"/>
+		<xsd:attribute name="Submitted" use="required" type="xsd:dateTime"/>
+		<xsd:attribute name="ScheduledFor" use="required" type="xsd:dateTime"/>
+		<xsd:attribute name="Started" use="optional" type="xsd:dateTime"/>
+		<xsd:attribute name="Finished" use="optional" type="xsd:dateTime"/>
+	</xsd:complexType>
+
+	<xsd:element name="QuantumDef">
 		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="OriginalFileRef" minOccurs="1" maxOccurs="1">
-                    <xsd:annotation>
-                        <xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
-                    </xsd:annotation>
-					<xsd:complexType>
-						<xsd:complexContent>
-							<xsd:extension base="OME:Reference">
-								<xsd:attribute name="ID" use="required" type="OriginalFileID"/>
-							</xsd:extension>
-						</xsd:complexContent>
-					</xsd:complexType>
-				</xsd:element>
-			</xsd:sequence>
-			<xsd:attribute name="UserName" use="required" type="xsd:string"/>
-			<xsd:attribute name="GroupName" use="required" type="xsd:string"/>
-			<xsd:attribute name="Type" use="required" type="xsd:string"/>
-			<xsd:attribute name="Message" use="required" type="xsd:string"/>
-			<xsd:attribute name="Status" use="required" type="JobStatus"/>
-			<xsd:attribute name="Submitted" use="required" type="xsd:dateTime"/>
-			<xsd:attribute name="ScheduledFor" use="required" type="xsd:dateTime"/>
-			<xsd:attribute name="Started" use="optional" type="xsd:dateTime"/>
-			<xsd:attribute name="Finished" use="optional" type="xsd:dateTime"/>
+			<xsd:annotation>
+				<xsd:appinfo><xsdfu><plural>QuantumDefs</plural></xsdfu></xsd:appinfo>
+			</xsd:annotation>
+			<xsd:attribute name="CDStart" use="required" type="xsd:integer"/>
+			<xsd:attribute name="CDEnd" use="required" type="xsd:integer"/>
+			<xsd:attribute name="BitResolution" use="required" type="xsd:integer"/>
 		</xsd:complexType>
 	</xsd:element>
-
-	<xsd:complexType name="QuantumDef">
-		<xsd:annotation>
-            <xsd:appinfo><xsdfu><plural>QuantumDefs</plural></xsdfu></xsd:appinfo>
-		</xsd:annotation>
-		<xsd:attribute name="CDStart" use="required" type="xsd:integer"/>
-		<xsd:attribute name="CDEnd" use="required" type="xsd:integer"/>
-		<xsd:attribute name="BitResolution" use="required" type="xsd:integer"/>
-	</xsd:complexType>
-
-	<xsd:complexType name="ChannelBinding">
-		<xsd:annotation>
-            <xsd:appinfo><xsdfu><plural>ChannelBindings</plural></xsdfu></xsd:appinfo>
-		</xsd:annotation>
-		<xsd:attribute name="Family" use="required" type="Family"/>
-		<xsd:attribute name="Coefficient" use="required" type="xsd:double"/>
-		<xsd:attribute name="InputStart" use="required" type="xsd:double"/>
-		<xsd:attribute name="InputEnd" use="required" type="xsd:double"/>
-		<xsd:attribute name="Active" use="required" type="xsd:boolean"/>
-		<xsd:attribute name="NoiseReduction" use="required" type="xsd:boolean"/>
-		<xsd:attribute name="Color" use="required" type="OME:Color"/>
-	</xsd:complexType>
+	
+	<xsd:element  name="ChannelBinding">
+		<xsd:complexType>
+			<xsd:annotation>
+				<xsd:appinfo><xsdfu><plural>ChannelBindings</plural></xsdfu></xsd:appinfo>
+			</xsd:annotation>
+			<xsd:attribute name="Family" use="required" type="Family"/>
+			<xsd:attribute name="Coefficient" use="required" type="xsd:double"/>
+			<xsd:attribute name="InputStart" use="required" type="xsd:double"/>
+			<xsd:attribute name="InputEnd" use="required" type="xsd:double"/>
+			<xsd:attribute name="Active" use="required" type="xsd:boolean"/>
+			<xsd:attribute name="NoiseReduction" use="required" type="xsd:boolean"/>
+			<xsd:attribute name="Color" use="required" type="OME:Color"/>
+		</xsd:complexType>
+	</xsd:element>
 
 	<xsd:complexType name="CodomainMapContext">
 		<xsd:annotation>
@@ -713,7 +717,7 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 
-    <xsd:element name="PixelsRef" minOccurs="0" maxOccurs="unbounded"> <!-- top level definition -->
+    <xsd:element name="PixelsRef" > <!-- top level definition -->
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="OME:Reference">

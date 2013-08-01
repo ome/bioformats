@@ -153,7 +153,6 @@
 		<xsd:key name="ExperimentIDKey"><xsd:selector xpath="OME:Experiment"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ExperimenterIDKey"><xsd:selector xpath="OME:Experimenter"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="FilterIDKey"><xsd:selector xpath="OME:Instrument/OME:Filter"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="FilterSetIDKey"><xsd:selector xpath="OME:Instrument/OME:FilterSet"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ExperimenterGroupIDKey"><xsd:selector xpath="OME:ExperimenterGroup"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ImageIDKey"><xsd:selector xpath="OME:Image"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="InstrumentIDKey"><xsd:selector xpath="OME:Instrument"/><xsd:field xpath="@ID"/></xsd:key>
@@ -193,16 +192,12 @@
 		<xsd:keyref name="ImageMicrobeamManipulationIDKeyRef" refer="OME:MicrobeamManipulationIDKey" ><xsd:selector xpath="OME:Image/OME:MicrobeamManipulationRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImageObjectiveSettingsObjectiveIDKeyRef" refer="OME:ObjectiveIDKey" ><xsd:selector xpath="OME:Image/OME:ObjectiveSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelDetectorSettingsDetectorIDKeyRef" refer="OME:DetectorIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:DetectorSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ImagePixelsChannelFilterSetIDKeyRef" refer="OME:FilterSetIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:FilterSetRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelLightPathExcitationFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:ExcitationFilterPath/OME:FilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelLightPathExcitationDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:ExcitationFilterPath/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelLightPathDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelLightPathEmissionFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:EmissionFilterPath/OME:FilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelLightPathEmissionDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:EmissionFilterPath/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelLightSourceSettingsLightSourceIDKeyRef" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightSourceSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="InstrumentFilterSetExcitationFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:ExcitationFilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="InstrumentFilterSetDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="InstrumentFilterSetEmissionFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:EmissionFilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentLightSourceLaserPumpLightSourceIDKey" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Instrument/OME:LightSource/OME:Laser/OME:Pump"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="PlateScreenIDKeyRef" refer="OME:ScreenIDKey" ><xsd:selector xpath="SPW:Plate/SPW:ScreenRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="PlateWellReagentIDKeyRef" refer="OME:ReagentIDKey" ><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:ReagentRef"/><xsd:field xpath="@ID"/></xsd:keyref>
@@ -550,15 +545,12 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="LightSourceSettings" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="DetectorSettings" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="FilterSetRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="ConfigurationSettings" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
-				<xsd:element ref="LightPath" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ChannelID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string">
@@ -905,9 +897,10 @@
 				<xsd:element ref="LightSource" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Detector" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Objective" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Filter" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Dichroic" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="LightPath" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Configuration" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="InstrumentID"/>
 		</xsd:complexType>
@@ -1598,38 +1591,6 @@
 	</xsd:element>
 
 	<!-- Filter elements -->
-	<xsd:element name="FilterSet"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:appinfo><xsdfu><plural>FilterSets</plural></xsdfu></xsd:appinfo>
-			<xsd:documentation>Filter set manufacturer specification</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="ManufacturerSpec">
-					<xsd:sequence>
-						<xsd:element name="ExcitationFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
-							<xsd:annotation>
-								<xsd:appinfo><xsdfu><plural>ExcitationFilters</plural><manytomany/></xsdfu></xsd:appinfo>
-								<xsd:documentation>
-									The Filters placed in the Excitation light path.
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:element>
-						<xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
-						<xsd:element name="EmissionFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
-							<xsd:annotation>
-								<xsd:appinfo><xsdfu><plural>EmissionFilters</plural><manytomany/></xsdfu></xsd:appinfo>
-								<xsd:documentation>
-									The Filters placed in the Emission light path.
-								</xsd:documentation>
-							</xsd:annotation>
-						</xsd:element>
-					</xsd:sequence>
-					<xsd:attribute name="ID" use="required" type="FilterSetID"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
 	<xsd:element name="Filter"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:appinfo><xsdfu><plural>Filters</plural></xsdfu></xsd:appinfo>
@@ -1641,7 +1602,7 @@
 				It may also contain a Type attribute which may be set to
 				'LongPass', 'ShortPass', 'BandPass', 'MultiPass',
 				'Dichroic', 'NeutralDensity', 'Tuneable' or 'Other'.
-				It can be associated with an optional FilterWheel - Note: this is not the same as a FilterSet
+				It can be associated with an optional FilterWheel
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1760,8 +1721,10 @@
 					</xsd:annotation>
 				</xsd:element>
 			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="LightPathID"/>
 		</xsd:complexType>
 	</xsd:element>
+	
 	<xsd:element name="DichroicRef">  <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
@@ -2097,7 +2060,26 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-
+	
+	
+	<xsd:element name="Configuration"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Configurations</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				This element
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="LightSourceSettings" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="LightPathRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="ObjectiveSettings" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="DetectorSettings" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="ID" use="required" type="ConfigurationID"/>
+		</xsd:complexType>
+	</xsd:element>
+	
 	<!-- References -->
 	<xsd:complexType name="Reference">
 		<xsd:annotation>
@@ -2231,16 +2213,43 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="FilterSetRef"> <!-- top level definition -->
+	<xsd:element name="LightPathRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="FilterSetID"/>
+					<xsd:attribute name="ID" use="required" type="LightPathID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-
+	<xsd:element name="ConfigurationRef"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="Reference">
+					<xsd:attribute name="ID" use="required" type="ConfigurationID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="LightSourceRef"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="Reference">
+					<xsd:attribute name="ID" use="required" type="LightSourceID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="DetectorRef"> <!-- top level definition -->
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="Reference">
+					<xsd:attribute name="ID" use="required" type="DetectorID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	
 	<!-- Settings -->
 	<xsd:complexType name="Settings">
 		<xsd:annotation>
@@ -2418,6 +2427,44 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
+	<xsd:element name="ConfigurationSettings"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>ConfigurationSettingsCombinations</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				This holds the setting applied to an instrument Configuration as well as a
+				reference to the Configuration.
+				The ID is the Configuration used in this case.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="Settings">
+					<xsd:attribute name="ID" use="required" type="ConfigurationID"/>
+					<xsd:attribute name="LightSourceRef" use="optional" type="LightSourceID">
+						<xsd:annotation>
+							<xsd:documentation>
+								An optional XXXXXX LightSource 
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="LightPathRef" use="optional" type="LightPathID">
+						<xsd:annotation>
+							<xsd:documentation>
+								An optional XXXXXX LightPath 
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="DetectorRef" use="optional" type="DetectorID">
+						<xsd:annotation>
+							<xsd:documentation>
+								An optional XXXXXX Detector 
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
 
 	<!-- ID types -->
 	<xsd:simpleType name="LSID">
@@ -2491,11 +2538,6 @@
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Filter:\S+)|(Filter:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="FilterSetID">
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:FilterSet:\S+)|(FilterSet:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 	<xsd:simpleType name="DetectorID">
 		<xsd:restriction base="LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Detector:\S+)|(Detector:\S+)"/>
@@ -2516,5 +2558,15 @@
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Module:\S+)|(Module:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-
+	<xsd:simpleType name="LightPathID">
+		<xsd:restriction base="LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:LightPath:\S+)|(LightPath:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ConfigurationID">
+		<xsd:restriction base="LSID">
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Configuration:\S+)|(Configuration:\S+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
 </xsd:schema>
