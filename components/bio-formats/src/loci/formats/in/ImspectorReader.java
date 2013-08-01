@@ -64,6 +64,7 @@ public class ImspectorReader extends FormatReader {
   public ImspectorReader() {
     super("Lavision Imspector", "msr");
     domains = new String[] {FormatTools.FLIM_DOMAIN};
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
