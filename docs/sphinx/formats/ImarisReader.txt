@@ -11,7 +11,7 @@ Key/value pairs
 
 ::
 
-  -      ��p      ��                              (�����  � ����      ��
+  -        p                                      (                     
 
 * Image name
 

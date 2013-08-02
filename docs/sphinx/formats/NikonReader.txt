@@ -14,12 +14,12 @@ Key/value pairs
   - [B@23dcc5
   - [B@1c107f4
   - [B@1fb2e99
-  - [B@7dd383
-  - [B@87cacb
-  - [B@713658
-  - [B@5fffe
-  - [B@cee11e
-  - [B@19a3682
+  - [B@c945ea
+  - [B@112f78c
+  - [B@a6d5e4
+  - [B@1e9aade
+  - [B@1da30b
+  - [B@170b587
 
 * CONTRAST
 
@@ -41,7 +41,7 @@ Key/value pairs
 
 ::
 
-  - [B@c14e39
+  - [B@b5360e
 
 * EXPOSURE_MODE
 
@@ -93,12 +93,12 @@ Key/value pairs
   - [I@1ca1ead
   - [I@a909c7
   - [I@11a0fad
-  - [I@983bcc
-  - [I@48c90e
-  - [I@d8d88d
-  - [I@1d0f59a
-  - [I@c88db2
-  - [I@1e2b024
+  - [I@7dd383
+  - [I@87cacb
+  - [I@713658
+  - [I@1ac5471
+  - [I@cee11e
+  - [I@19a3682
 
 * FLASH
 

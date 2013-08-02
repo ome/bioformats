@@ -17,13 +17,13 @@ Key/value pairs
 
 ::
 
-  - [B@ba7d0f
+  - [B@14471a3
 
 * 37396
 
 ::
 
-  - [I@3aaa32
+  - [I@9ab03
 
 * CONTRAST
 
@@ -41,13 +41,13 @@ Key/value pairs
 
 ::
 
-  - [B@1e56319
+  - [B@17bbcd6
 
 * 50341
 
 ::
 
-  - [B@9ab03
+  - [B@1bcd11b
 
 * EXPOSURE_MODE
 
@@ -59,7 +59,7 @@ Key/value pairs
 
 ::
 
-  - [B@cd0da4
+  - [B@aaa836
 
 * LIGHT_SOURCE
 
@@ -95,7 +95,7 @@ Key/value pairs
 
 ::
 
-  - [B@17bbcd6
+  - [B@ba7d0f
 
 * DATE_TIME
 
@@ -221,7 +221,7 @@ Key/value pairs
 
 ::
 
-  - [B@aaa836
+  - [B@168880f
 
 * WHITE_BALANCE
 

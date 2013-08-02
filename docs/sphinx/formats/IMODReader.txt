@@ -35,7 +35,7 @@ Key/value pairs
 
 ::
 
-  - IMOD-NewModel                           �{N ����            x�H ��������    ��H             ����            �   I   �Q8�����    
+  - IMOD-NewModel                            {N                 x H               H                                 I    Q8         
 
 * X scale
 

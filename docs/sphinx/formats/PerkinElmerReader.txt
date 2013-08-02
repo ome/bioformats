@@ -13,6 +13,12 @@ Key/value pairs
 
   - 12
 
+* 0.222222 m,0.222222 m
+
+::
+
+  - 
+
 * SubfileType X
 
 ::
@@ -187,6 +193,12 @@ Key/value pairs
 
   - 43.500000
 
+* This software Copyright   1991-2006 PerkinElmer Life and Analytical Sciences
+
+::
+
+  - For further information please contact your local PerkinElmer Service Representative
+
 * Camera Data
 
 ::
@@ -217,12 +229,6 @@ Key/value pairs
 
   - Metta         2 copy Cnn g-tubGFP 111221 - 2 copy Cnn g-tubGFP 111221#20       1 Wavelengths       5 Frames       17 Slices
 
-* This software Copyright � 1991-2006 PerkinElmer Life and Analytical Sciences
-
-::
-
-  - For further information please contact your local PerkinElmer Service Representative
-
 * Slice17,
 
 ::
@@ -239,7 +245,7 @@ Key/value pairs
 
 ::
 
-  - �m
+  -  m
 
 * 36.500000
 
@@ -252,12 +258,6 @@ Key/value pairs
 ::
 
   - 6
-
-* 0.222222�m,0.222222�m
-
-::
-
-  - 
 
 * Notes:
 

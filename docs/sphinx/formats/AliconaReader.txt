@@ -29,7 +29,7 @@ Key/value pairs
 
 ::
 
-  - AuF2A�B�I�
+  - AuF2A B I 
 
 * PixelSizeXMeter
 
@@ -41,7 +41,7 @@ Key/value pairs
 
 ::
 
-  - x`�;PBZ<�=
+  - x` ;PBZ< =
 
 * PlanePntZ
 

@@ -391,7 +391,7 @@ Key/value pairs
 
 ::
 
-  - 77.57�m
+  - 77.57 m
 
 * Image Type
 
@@ -784,25 +784,25 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 1 0       Calibrated Position 1.000000 1.456131       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 1 0       Calibrated Position 1.000000 1.456131       Units  m       Number Of Positions 68 2
 
 * PageName #2
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 2 0       Calibrated Position 2.000000 2.894932       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 2 0       Calibrated Position 2.000000 2.894932       Units  m       Number Of Positions 68 2
 
 * PageName #3
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 3 0       Calibrated Position 3.000000 4.331075       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 3 0       Calibrated Position 3.000000 4.331075       Units  m       Number Of Positions 68 2
 
 * PageName #4
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 4 0       Calibrated Position 4.000000 5.770113       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 4 0       Calibrated Position 4.000000 5.770113       Units  m       Number Of Positions 68 2
 
 * Dimension 4 Resolution
 
@@ -815,13 +815,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 0 0       Calibrated Position 0.000000 0.000000       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 0 0       Calibrated Position 0.000000 0.000000       Units  m       Number Of Positions 68 2
 
 * PageName #9
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 9 0       Calibrated Position 9.000000 12.945192       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 9 0       Calibrated Position 9.000000 12.945192       Units  m       Number Of Positions 68 2
 
 * ImageLength
 
@@ -836,25 +836,25 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 5 0       Calibrated Position 5.000000 7.206173       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 5 0       Calibrated Position 5.000000 7.206173       Units  m       Number Of Positions 68 2
 
 * PageName #6
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 6 0       Calibrated Position 6.000000 8.646698       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 6 0       Calibrated Position 6.000000 8.646698       Units  m       Number Of Positions 68 2
 
 * PageName #7
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 7 0       Calibrated Position 7.000000 10.080397       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 7 0       Calibrated Position 7.000000 10.080397       Units  m       Number Of Positions 68 2
 
 * PageName #8
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 8 0       Calibrated Position 8.000000 11.503708       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 8 0       Calibrated Position 8.000000 11.503708       Units  m       Number Of Positions 68 2
 
 * Dimension 8 Resolution
 
@@ -1122,7 +1122,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 51 1       Calibrated Position 51.000000 73.440713       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 51 1       Calibrated Position 51.000000 73.440713       Units  m       Number Of Positions 68 2
 
 * RGB 251
 
@@ -1140,7 +1140,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 47 1       Calibrated Position 47.000000 67.668445       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 47 1       Calibrated Position 47.000000 67.668445       Units  m       Number Of Positions 68 2
 
 * RGB 255
 
@@ -1152,7 +1152,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 48 1       Calibrated Position 48.000000 69.091796       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 48 1       Calibrated Position 48.000000 69.091796       Units  m       Number Of Positions 68 2
 
 * RGB 252
 
@@ -1164,7 +1164,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 49 1       Calibrated Position 49.000000 70.529884       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 49 1       Calibrated Position 49.000000 70.529884       Units  m       Number Of Positions 68 2
 
 * Intensity Name
 
@@ -1182,7 +1182,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 50 1       Calibrated Position 50.000000 71.990490       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 50 1       Calibrated Position 50.000000 71.990490       Units  m       Number Of Positions 68 2
 
 * RGB 111
 
@@ -1194,7 +1194,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 43 1       Calibrated Position 43.000000 61.894574       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 43 1       Calibrated Position 43.000000 61.894574       Units  m       Number Of Positions 68 2
 
 * RGB 112
 
@@ -1206,13 +1206,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 44 1       Calibrated Position 44.000000 63.334159       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 44 1       Calibrated Position 44.000000 63.334159       Units  m       Number Of Positions 68 2
 
 * PageName #113
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 45 1       Calibrated Position 45.000000 64.765429       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 45 1       Calibrated Position 45.000000 64.765429       Units  m       Number Of Positions 68 2
 
 * RGB 110
 
@@ -1224,13 +1224,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 46 1       Calibrated Position 46.000000 66.220701       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 46 1       Calibrated Position 46.000000 66.220701       Units  m       Number Of Positions 68 2
 
 * PageName #110
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 42 1       Calibrated Position 42.000000 60.450807       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 42 1       Calibrated Position 42.000000 60.450807       Units  m       Number Of Positions 68 2
 
 * RGB 109
 
@@ -1344,13 +1344,13 @@ Key/value pairs
 
 ::
 
-  - �m
+  -  m
 
 * PageName #128
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 60 1       Calibrated Position 60.000000 86.373184       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 60 1       Calibrated Position 60.000000 86.373184       Units  m       Number Of Positions 68 2
 
 * File Version
 
@@ -1362,7 +1362,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 61 1       Calibrated Position 61.000000 87.816681       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 61 1       Calibrated Position 61.000000 87.816681       Units  m       Number Of Positions 68 2
 
 * Dimension 6 Resolution
 
@@ -1375,13 +1375,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 58 1       Calibrated Position 58.000000 83.491982       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 58 1       Calibrated Position 58.000000 83.491982       Units  m       Number Of Positions 68 2
 
 * PageName #127
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 59 1       Calibrated Position 59.000000 84.934127       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 59 1       Calibrated Position 59.000000 84.934127       Units  m       Number Of Positions 68 2
 
 * RGB 120
 
@@ -1393,7 +1393,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 56 1       Calibrated Position 56.000000 80.607328       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 56 1       Calibrated Position 56.000000 80.607328       Units  m       Number Of Positions 68 2
 
 * RGB 121
 
@@ -1405,7 +1405,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 57 1       Calibrated Position 57.000000 82.031290       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 57 1       Calibrated Position 57.000000 82.031290       Units  m       Number Of Positions 68 2
 
 * RGB 122
 
@@ -1417,7 +1417,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 54 1       Calibrated Position 54.000000 77.726368       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 54 1       Calibrated Position 54.000000 77.726368       Units  m       Number Of Positions 68 2
 
 * RGB 123
 
@@ -1429,19 +1429,19 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 55 1       Calibrated Position 55.000000 79.170659       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 55 1       Calibrated Position 55.000000 79.170659       Units  m       Number Of Positions 68 2
 
 * PageName #120
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 52 1       Calibrated Position 52.000000 74.863628       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 52 1       Calibrated Position 52.000000 74.863628       Units  m       Number Of Positions 68 2
 
 * PageName #121
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 53 1       Calibrated Position 53.000000 76.297422       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 53 1       Calibrated Position 53.000000 76.297422       Units  m       Number Of Positions 68 2
 
 * RGB 118
 
@@ -1501,7 +1501,7 @@ Key/value pairs
 
 ::
 
-  - �m
+  -  m
 
 * PhotometricInterpretation
 
@@ -1573,7 +1573,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 62 1       Calibrated Position 62.000000 89.269950       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 62 1       Calibrated Position 62.000000 89.269950       Units  m       Number Of Positions 68 2
 
 * RGB 0
 
@@ -1585,13 +1585,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 63 1       Calibrated Position 63.000000 90.691641       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 63 1       Calibrated Position 63.000000 90.691641       Units  m       Number Of Positions 68 2
 
 * PageName #132
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 64 1       Calibrated Position 64.000000 92.127636       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 64 1       Calibrated Position 64.000000 92.127636       Units  m       Number Of Positions 68 2
 
 * RGB 133
 
@@ -1603,7 +1603,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 65 1       Calibrated Position 65.000000 93.550418       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 65 1       Calibrated Position 65.000000 93.550418       Units  m       Number Of Positions 68 2
 
 * RGB 134
 
@@ -1615,7 +1615,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 66 1       Calibrated Position 66.000000 94.987618       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 66 1       Calibrated Position 66.000000 94.987618       Units  m       Number Of Positions 68 2
 
 * RGB 131
 
@@ -1627,7 +1627,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 67 1       Calibrated Position 67.000000 96.441013       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 67 1       Calibrated Position 67.000000 96.441013       Units  m       Number Of Positions 68 2
 
 * Laser-Shutter HeNe-G
 
@@ -1968,61 +1968,61 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 31 1       Calibrated Position 31.000000 44.627197       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 31 1       Calibrated Position 31.000000 44.627197       Units  m       Number Of Positions 68 2
 
 * PageName #98
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 30 1       Calibrated Position 30.000000 43.200091       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 30 1       Calibrated Position 30.000000 43.200091       Units  m       Number Of Positions 68 2
 
 * PageName #97
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 29 1       Calibrated Position 29.000000 41.766558       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 29 1       Calibrated Position 29.000000 41.766558       Units  m       Number Of Positions 68 2
 
 * PageName #96
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 28 1       Calibrated Position 28.000000 40.331010       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 28 1       Calibrated Position 28.000000 40.331010       Units  m       Number Of Positions 68 2
 
 * PageName #95
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 27 1       Calibrated Position 27.000000 38.895539       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 27 1       Calibrated Position 27.000000 38.895539       Units  m       Number Of Positions 68 2
 
 * PageName #94
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 26 1       Calibrated Position 26.000000 37.454091       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 26 1       Calibrated Position 26.000000 37.454091       Units  m       Number Of Positions 68 2
 
 * PageName #93
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 25 1       Calibrated Position 25.000000 36.018761       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 25 1       Calibrated Position 25.000000 36.018761       Units  m       Number Of Positions 68 2
 
 * PageName #92
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 24 1       Calibrated Position 24.000000 34.563221       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 24 1       Calibrated Position 24.000000 34.563221       Units  m       Number Of Positions 68 2
 
 * PageName #91
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 23 1       Calibrated Position 23.000000 33.127470       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 23 1       Calibrated Position 23.000000 33.127470       Units  m       Number Of Positions 68 2
 
 * PageName #90
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 22 1       Calibrated Position 22.000000 31.676132       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 22 1       Calibrated Position 22.000000 31.676132       Units  m       Number Of Positions 68 2
 
 * RGB 148
 
@@ -2100,7 +2100,7 @@ Key/value pairs
 
 ::
 
-  - 80.0�m
+  - 80.0 m
 
 * SecondsPerScanLine
 
@@ -2112,7 +2112,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 20 1       Calibrated Position 20.000000 28.801295       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 20 1       Calibrated Position 20.000000 28.801295       Units  m       Number Of Positions 68 2
 
 * Dimension 7 Size
 
@@ -2124,37 +2124,37 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 19 1       Calibrated Position 19.000000 27.363859       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 19 1       Calibrated Position 19.000000 27.363859       Units  m       Number Of Positions 68 2
 
 * PageName #89
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 21 1       Calibrated Position 21.000000 30.236906       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 21 1       Calibrated Position 21.000000 30.236906       Units  m       Number Of Positions 68 2
 
 * PageName #84
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 16 1       Calibrated Position 16.000000 23.032054       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 16 1       Calibrated Position 16.000000 23.032054       Units  m       Number Of Positions 68 2
 
 * PageName #83
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 15 1       Calibrated Position 15.000000 21.596000       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 15 1       Calibrated Position 15.000000 21.596000       Units  m       Number Of Positions 68 2
 
 * PageName #86
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 18 1       Calibrated Position 18.000000 25.920757       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 18 1       Calibrated Position 18.000000 25.920757       Units  m       Number Of Positions 68 2
 
 * PageName #85
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 17 1       Calibrated Position 17.000000 24.460720       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 17 1       Calibrated Position 17.000000 24.460720       Units  m       Number Of Positions 68 2
 
 * RGB 4
 
@@ -2166,7 +2166,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 12 1       Calibrated Position 12.000000 17.283725       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 12 1       Calibrated Position 12.000000 17.283725       Units  m       Number Of Positions 68 2
 
 * RGB 3
 
@@ -2184,7 +2184,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 14 1       Calibrated Position 14.000000 20.176609       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 14 1       Calibrated Position 14.000000 20.176609       Units  m       Number Of Positions 68 2
 
 * RGB 5
 
@@ -2202,7 +2202,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 13 1       Calibrated Position 13.000000 18.721162       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 13 1       Calibrated Position 13.000000 18.721162       Units  m       Number Of Positions 68 2
 
 * RGB 157
 
@@ -2368,7 +2368,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 35 1       Calibrated Position 35.000000 50.374898       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 35 1       Calibrated Position 35.000000 50.374898       Units  m       Number Of Positions 68 2
 
 * RGB 187
 
@@ -2380,7 +2380,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 34 1       Calibrated Position 34.000000 48.939185       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 34 1       Calibrated Position 34.000000 48.939185       Units  m       Number Of Positions 68 2
 
 * RGB 186
 
@@ -2392,14 +2392,14 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 33 1       Calibrated Position 33.000000 47.477875       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 33 1       Calibrated Position 33.000000 47.477875       Units  m       Number Of Positions 68 2
 
 * Dimension 3 Units
 
 ::
 
   - nm
-  - �m
+  -  m
 
 * RGB 189
 
@@ -2411,7 +2411,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 32 1       Calibrated Position 32.000000 46.046528       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 32 1       Calibrated Position 32.000000 46.046528       Units  m       Number Of Positions 68 2
 
 * RGB 188
 
@@ -2423,31 +2423,31 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 39 1       Calibrated Position 39.000000 56.157520       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 39 1       Calibrated Position 39.000000 56.157520       Units  m       Number Of Positions 68 2
 
 * PageName #106
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 38 1       Calibrated Position 38.000000 54.713385       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 38 1       Calibrated Position 38.000000 54.713385       Units  m       Number Of Positions 68 2
 
 * PageName #105
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 37 1       Calibrated Position 37.000000 53.265964       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 37 1       Calibrated Position 37.000000 53.265964       Units  m       Number Of Positions 68 2
 
 * PageName #104
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 36 1       Calibrated Position 36.000000 51.830213       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 36 1       Calibrated Position 36.000000 51.830213       Units  m       Number Of Positions 68 2
 
 * PageName #109
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 41 1       Calibrated Position 41.000000 59.015728       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 41 1       Calibrated Position 41.000000 59.015728       Units  m       Number Of Positions 68 2
 
 * RGB 181
 
@@ -2459,7 +2459,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 40 1       Calibrated Position 40.000000 57.576192       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 40 1       Calibrated Position 40.000000 57.576192       Units  m       Number Of Positions 68 2
 
 * Dimension 8 Origin
 
@@ -2507,7 +2507,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 54 0       Calibrated Position 54.000000 77.726368       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 54 0       Calibrated Position 54.000000 77.726368       Units  m       Number Of Positions 68 2
 
 * Laser-Shutter M_Ar1
 
@@ -2519,7 +2519,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 55 0       Calibrated Position 55.000000 79.170659       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 55 0       Calibrated Position 55.000000 79.170659       Units  m       Number Of Positions 68 2
 
 * Laser-Shutter M_Ar2
 
@@ -2531,7 +2531,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 56 0       Calibrated Position 56.000000 80.607328       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 56 0       Calibrated Position 56.000000 80.607328       Units  m       Number Of Positions 68 2
 
 * Laser-Shutter M_Ar3
 
@@ -2543,31 +2543,31 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 57 0       Calibrated Position 57.000000 82.031290       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 57 0       Calibrated Position 57.000000 82.031290       Units  m       Number Of Positions 68 2
 
 * PageName #50
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 50 0       Calibrated Position 50.000000 71.990490       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 50 0       Calibrated Position 50.000000 71.990490       Units  m       Number Of Positions 68 2
 
 * PageName #51
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 51 0       Calibrated Position 51.000000 73.440713       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 51 0       Calibrated Position 51.000000 73.440713       Units  m       Number Of Positions 68 2
 
 * PageName #52
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 52 0       Calibrated Position 52.000000 74.863628       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 52 0       Calibrated Position 52.000000 74.863628       Units  m       Number Of Positions 68 2
 
 * PageName #53
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 53 0       Calibrated Position 53.000000 76.297422       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 53 0       Calibrated Position 53.000000 76.297422       Units  m       Number Of Positions 68 2
 
 * RGB 190
 
@@ -2591,13 +2591,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 48 0       Calibrated Position 48.000000 69.091796       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 48 0       Calibrated Position 48.000000 69.091796       Units  m       Number Of Positions 68 2
 
 * PageName #47
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 47 0       Calibrated Position 47.000000 67.668445       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 47 0       Calibrated Position 47.000000 67.668445       Units  m       Number Of Positions 68 2
 
 * Date
 
@@ -2609,7 +2609,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 49 0       Calibrated Position 49.000000 70.529884       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 49 0       Calibrated Position 49.000000 70.529884       Units  m       Number Of Positions 68 2
 
 * RGB 197
 
@@ -2670,7 +2670,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 45 0       Calibrated Position 45.000000 64.765429       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 45 0       Calibrated Position 45.000000 64.765429       Units  m       Number Of Positions 68 2
 
 * Comment
 
@@ -2682,37 +2682,37 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 46 0       Calibrated Position 46.000000 66.220701       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 46 0       Calibrated Position 46.000000 66.220701       Units  m       Number Of Positions 68 2
 
 * PageName #43
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 43 0       Calibrated Position 43.000000 61.894574       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 43 0       Calibrated Position 43.000000 61.894574       Units  m       Number Of Positions 68 2
 
 * PageName #44
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 44 0       Calibrated Position 44.000000 63.334159       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 44 0       Calibrated Position 44.000000 63.334159       Units  m       Number Of Positions 68 2
 
 * PageName #41
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 41 0       Calibrated Position 41.000000 59.015728       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 41 0       Calibrated Position 41.000000 59.015728       Units  m       Number Of Positions 68 2
 
 * PageName #42
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 42 0       Calibrated Position 42.000000 60.450807       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 42 0       Calibrated Position 42.000000 60.450807       Units  m       Number Of Positions 68 2
 
 * PageName #40
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 40 0       Calibrated Position 40.000000 57.576192       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 40 0       Calibrated Position 40.000000 57.576192       Units  m       Number Of Positions 68 2
 
 * Dimension 5 Units
 
@@ -2724,13 +2724,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 39 0       Calibrated Position 39.000000 56.157520       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 39 0       Calibrated Position 39.000000 56.157520       Units  m       Number Of Positions 68 2
 
 * PageName #38
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 38 0       Calibrated Position 38.000000 54.713385       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 38 0       Calibrated Position 38.000000 54.713385       Units  m       Number Of Positions 68 2
 
 * Dimension 3 Size
 
@@ -2743,13 +2743,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 37 0       Calibrated Position 37.000000 53.265964       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 37 0       Calibrated Position 37.000000 53.265964       Units  m       Number Of Positions 68 2
 
 * PageName #36
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 36 0       Calibrated Position 36.000000 51.830213       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 36 0       Calibrated Position 36.000000 51.830213       Units  m       Number Of Positions 68 2
 
 * Dimension 7 Units
 
@@ -2785,67 +2785,67 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 2 1       Calibrated Position 2.000000 2.894932       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 2 1       Calibrated Position 2.000000 2.894932       Units  m       Number Of Positions 68 2
 
 * PageName #71
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 3 1       Calibrated Position 3.000000 4.331075       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 3 1       Calibrated Position 3.000000 4.331075       Units  m       Number Of Positions 68 2
 
 * PageName #72
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 4 1       Calibrated Position 4.000000 5.770113       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 4 1       Calibrated Position 4.000000 5.770113       Units  m       Number Of Positions 68 2
 
 * PageName #73
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 5 1       Calibrated Position 5.000000 7.206173       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 5 1       Calibrated Position 5.000000 7.206173       Units  m       Number Of Positions 68 2
 
 * PageName #74
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 6 1       Calibrated Position 6.000000 8.646698       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 6 1       Calibrated Position 6.000000 8.646698       Units  m       Number Of Positions 68 2
 
 * PageName #75
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 7 1       Calibrated Position 7.000000 10.080397       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 7 1       Calibrated Position 7.000000 10.080397       Units  m       Number Of Positions 68 2
 
 * PageName #76
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 8 1       Calibrated Position 8.000000 11.503708       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 8 1       Calibrated Position 8.000000 11.503708       Units  m       Number Of Positions 68 2
 
 * PageName #77
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 9 1       Calibrated Position 9.000000 12.945192       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 9 1       Calibrated Position 9.000000 12.945192       Units  m       Number Of Positions 68 2
 
 * PageName #78
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 10 1       Calibrated Position 10.000000 14.408428       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 10 1       Calibrated Position 10.000000 14.408428       Units  m       Number Of Positions 68 2
 
 * PageName #79
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 11 1       Calibrated Position 11.000000 15.844332       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 11 1       Calibrated Position 11.000000 15.844332       Units  m       Number Of Positions 68 2
 
 * PageName #69
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 1 1       Calibrated Position 1.000000 1.456131       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 1 1       Calibrated Position 1.000000 1.456131       Units  m       Number Of Positions 68 2
 
 * Time
 
@@ -2875,13 +2875,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 60 0       Calibrated Position 60.000000 86.373184       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 60 0       Calibrated Position 60.000000 86.373184       Units  m       Number Of Positions 68 2
 
 * PageName #63
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 63 0       Calibrated Position 63.000000 90.691641       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 63 0       Calibrated Position 63.000000 90.691641       Units  m       Number Of Positions 68 2
 
 * Dimension 4 Size
 
@@ -2896,31 +2896,31 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 64 0       Calibrated Position 64.000000 92.127636       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 64 0       Calibrated Position 64.000000 92.127636       Units  m       Number Of Positions 68 2
 
 * PageName #61
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 61 0       Calibrated Position 61.000000 87.816681       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 61 0       Calibrated Position 61.000000 87.816681       Units  m       Number Of Positions 68 2
 
 * PageName #62
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 62 0       Calibrated Position 62.000000 89.269950       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 62 0       Calibrated Position 62.000000 89.269950       Units  m       Number Of Positions 68 2
 
 * PageName #67
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 67 0       Calibrated Position 67.000000 96.441013       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 67 0       Calibrated Position 67.000000 96.441013       Units  m       Number Of Positions 68 2
 
 * PageName #68
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 0 1       Calibrated Position 0.000000 0.000000       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 0 1       Calibrated Position 0.000000 0.000000       Units  m       Number Of Positions 68 2
 
 * Dimension 4 Units
 
@@ -2934,13 +2934,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 65 0       Calibrated Position 65.000000 93.550418       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 65 0       Calibrated Position 65.000000 93.550418       Units  m       Number Of Positions 68 2
 
 * PageName #66
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 66 0       Calibrated Position 66.000000 94.987618       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 66 0       Calibrated Position 66.000000 94.987618       Units  m       Number Of Positions 68 2
 
 * Image name
 
@@ -2955,13 +2955,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 59 0       Calibrated Position 59.000000 84.934127       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 59 0       Calibrated Position 59.000000 84.934127       Units  m       Number Of Positions 68 2
 
 * PageName #58
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 58 0       Calibrated Position 58.000000 83.491982       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 58 0       Calibrated Position 58.000000 83.491982       Units  m       Number Of Positions 68 2
 
 * MetaDataPhotometricInterpretation
 
@@ -2979,25 +2979,25 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 11 0       Calibrated Position 11.000000 15.844332       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 11 0       Calibrated Position 11.000000 15.844332       Units  m       Number Of Positions 68 2
 
 * PageName #10
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 10 0       Calibrated Position 10.000000 14.408428       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 10 0       Calibrated Position 10.000000 14.408428       Units  m       Number Of Positions 68 2
 
 * PageName #13
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 13 0       Calibrated Position 13.000000 18.721162       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 13 0       Calibrated Position 13.000000 18.721162       Units  m       Number Of Positions 68 2
 
 * PageName #12
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 12 0       Calibrated Position 12.000000 17.283725       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 12 0       Calibrated Position 12.000000 17.283725       Units  m       Number Of Positions 68 2
 
 * Gray Channel Size
 
@@ -3053,13 +3053,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 31 0       Calibrated Position 31.000000 44.627197       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 31 0       Calibrated Position 31.000000 44.627197       Units  m       Number Of Positions 68 2
 
 * PageName #30
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 30 0       Calibrated Position 30.000000 43.200091       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 30 0       Calibrated Position 30.000000 43.200091       Units  m       Number Of Positions 68 2
 
 * FLUOVIEW Version
 
@@ -3071,13 +3071,13 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 33 0       Calibrated Position 33.000000 47.477875       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 33 0       Calibrated Position 33.000000 47.477875       Units  m       Number Of Positions 68 2
 
 * PageName #32
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 32 0       Calibrated Position 32.000000 46.046528       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 32 0       Calibrated Position 32.000000 46.046528       Units  m       Number Of Positions 68 2
 
 * Objective Lens
 
@@ -3089,7 +3089,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 35 0       Calibrated Position 35.000000 50.374898       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 35 0       Calibrated Position 35.000000 50.374898       Units  m       Number Of Positions 68 2
 
 * Dimension 3 Resolution
 
@@ -3103,7 +3103,7 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 34 0       Calibrated Position 34.000000 48.939185       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 34 0       Calibrated Position 34.000000 48.939185       Units  m       Number Of Positions 68 2
 
 * Dimension 8 Units
 
@@ -3124,61 +3124,61 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 25 0       Calibrated Position 25.000000 36.018761       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 25 0       Calibrated Position 25.000000 36.018761       Units  m       Number Of Positions 68 2
 
 * PageName #26
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 26 0       Calibrated Position 26.000000 37.454091       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 26 0       Calibrated Position 26.000000 37.454091       Units  m       Number Of Positions 68 2
 
 * PageName #27
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 27 0       Calibrated Position 27.000000 38.895539       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 27 0       Calibrated Position 27.000000 38.895539       Units  m       Number Of Positions 68 2
 
 * PageName #28
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 28 0       Calibrated Position 28.000000 40.331010       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 28 0       Calibrated Position 28.000000 40.331010       Units  m       Number Of Positions 68 2
 
 * PageName #29
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 29 0       Calibrated Position 29.000000 41.766558       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 29 0       Calibrated Position 29.000000 41.766558       Units  m       Number Of Positions 68 2
 
 * PageName #20
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 20 0       Calibrated Position 20.000000 28.801295       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 20 0       Calibrated Position 20.000000 28.801295       Units  m       Number Of Positions 68 2
 
 * PageName #24
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 24 0       Calibrated Position 24.000000 34.563221       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 24 0       Calibrated Position 24.000000 34.563221       Units  m       Number Of Positions 68 2
 
 * PageName #23
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 23 0       Calibrated Position 23.000000 33.127470       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 23 0       Calibrated Position 23.000000 33.127470       Units  m       Number Of Positions 68 2
 
 * PageName #22
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 22 0       Calibrated Position 22.000000 31.676132       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 22 0       Calibrated Position 22.000000 31.676132       Units  m       Number Of Positions 68 2
 
 * PageName #21
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 21 0       Calibrated Position 21.000000 30.236906       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 21 0       Calibrated Position 21.000000 30.236906       Units  m       Number Of Positions 68 2
 
 * Dimension 9 Origin
 
@@ -3190,31 +3190,31 @@ Key/value pairs
 
 ::
 
-  - 3.23�m
+  - 3.23 m
 
 * PageName #16
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 16 0       Calibrated Position 16.000000 23.032054       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 16 0       Calibrated Position 16.000000 23.032054       Units  m       Number Of Positions 68 2
 
 * PageName #17
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 17 0       Calibrated Position 17.000000 24.460720       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 17 0       Calibrated Position 17.000000 24.460720       Units  m       Number Of Positions 68 2
 
 * PageName #14
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 14 0       Calibrated Position 14.000000 20.176609       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 14 0       Calibrated Position 14.000000 20.176609       Units  m       Number Of Positions 68 2
 
 * PageName #15
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 15 0       Calibrated Position 15.000000 21.596000       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 15 0       Calibrated Position 15.000000 21.596000       Units  m       Number Of Positions 68 2
 
 * Magnification
 
@@ -3226,11 +3226,11 @@ Key/value pairs
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 18 0       Calibrated Position 18.000000 25.920757       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 18 0       Calibrated Position 18.000000 25.920757       Units  m       Number Of Positions 68 2
 
 * PageName #19
 
 ::
 
-  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units �m �m       [Higher Dimensions]       Name Z Ch       Spatial Position 19 0       Calibrated Position 19.000000 27.363859       Units �m       Number Of Positions 68 2
+  - [Primary Dimensions]       Name X Y       Offset 0.000000 0.000000       Resolution 12.429611 12.429611       Units  m  m       [Higher Dimensions]       Name Z Ch       Spatial Position 19 0       Calibrated Position 19.000000 27.363859       Units  m       Number Of Positions 68 2
 

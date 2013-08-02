@@ -191,7 +191,7 @@ Key/value pairs
 
 ::
 
-  - loci.formats.in.PrairieMetadata@f2e4b5
+  - loci.formats.in.PrairieMetadata@1e54826
 
 * micronsPerPixel_YAxis
 

@@ -107,13 +107,13 @@ Key/value pairs
 
 ::
 
-  - 10 �s
+  - 10  s
 
 * Sample Delay
 
 ::
 
-  - 10 �s
+  - 10  s
 
 * Y size (um)
 

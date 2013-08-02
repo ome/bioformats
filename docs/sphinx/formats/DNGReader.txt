@@ -11,13 +11,13 @@ Key/value pairs
 
 ::
 
-  - [B@1b8c229
+  - [B@1712310
 
 * EXIF_VERSION
 
 ::
 
-  - [B@1bc879e
+  - [B@1b7eff5
 
 * EXPOSURE_MODE
 
@@ -29,7 +29,7 @@ Key/value pairs
 
 ::
 
-  - [B@6bc833
+  - [B@eae08e
 
 * BitsPerSample
 
@@ -65,7 +65,7 @@ Key/value pairs
 
 ::
 
-  - [B@249ce6
+  - [B@3cbc57
 
 * FLASH
 

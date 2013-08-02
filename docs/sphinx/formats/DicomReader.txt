@@ -679,8 +679,8 @@ Key/value pairs
 
 ::
 
-  - ���F
-  - � �E
+  -    F
+  -    E
 
 * 0020,0013 Instance Number #1
 

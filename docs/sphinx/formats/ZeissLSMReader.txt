@@ -2134,7 +2134,7 @@ Key/value pairs
 ::
 
   - 
-  - �
+  -  
 
 * DetectionChannels IDAvailableFilterSet1 #087
 
@@ -4634,6 +4634,44 @@ Key/value pairs
 
   - 3.6
 
+* Recordings   d     R [  ]         O  s  X  t  f  t  R  o    [  ^         c  D  e  i  Z             [  _                 2 #6
+
+::
+
+  - 3.0000000000000008E-5
+
+* Recordings   d     R [  ]         O  s  X  t  f  t  R  o    [  ^         c  D  e  i  Z             [  _                 2 #4
+
+::
+
+  - 3.0E-5
+
+* Recordings   d     R [  ]         O  s  X  t  f  t  R  o    [  ^         c  D  e  i  Z             [  _                 2 #5
+
+::
+
+  - 3.0E-5
+  - 3.0000000000000008E-5
+
+* Recordings   d     R [  ]         O  s  X  t  f  t  R  o    [  ^         c  D  e  i  Z             [  _                 2 #2
+
+::
+
+  - 3.0E-5
+
+* Recordings   d     R [  ]         O  s  X  t  f  t  R  o    [  ^         c  D  e  i  Z             [  _                 2 #3
+
+::
+
+  - 3.0E-5
+
+* Recordings   d     R [  ]         O  s  X  t  f  t  R  o    [  ^         c  D  e  i  Z             [  _                 2 #1
+
+::
+
+  - 0.0
+  - 3.0E-5
+
 * DataChannels RatioChannel1 #052
 
 ::
@@ -5760,14 +5798,14 @@ Key/value pairs
 ::
 
   - 
-  - �
+  -  
 
 * DetectionChannel Dye Folder #09
 
 ::
 
   - A
-  - �
+  -  
 
 * Recordings ImagesHeight #13
 
@@ -5799,7 +5837,7 @@ Key/value pairs
 ::
 
   - )
-  - �
+  -  
 
 * DetectionChannel Dye Folder #04
 
@@ -5827,7 +5865,7 @@ Key/value pairs
 ::
 
   - 
-  - �
+  -  
 
 * DataChannels DyeName #150
 
@@ -7129,7 +7167,7 @@ Key/value pairs
 ::
 
   - 
-  - �
+  -  
 
 * DataChannels RatioChannel1 #100
 
@@ -7151,7 +7189,7 @@ Key/value pairs
 
   - 
   - '
-  - �
+  -  
 
 * Lasers IDLaser #11
 
@@ -7226,7 +7264,7 @@ Key/value pairs
 
 ::
 
-  - �
+  -  
 
 * DataChannels RatioChannel1 #102
 
@@ -14583,7 +14621,7 @@ Key/value pairs
 
 ::
 
-  - ����=���        
+  -     =           
 
 * DetectionChannels IDTrack #029
 
@@ -15156,13 +15194,13 @@ Key/value pairs
 
 ::
 
-  - �4!   ����=��� E   
+  -  4!       =    E   
 
 * Recordings RecordingName #10
 
 ::
 
-  - =��� E          
+  - =    E          
 
 * DetectionChannels IDTrack #010
 
@@ -15174,13 +15212,13 @@ Key/value pairs
 
 ::
 
-  - ����=��� E      
+  -     =    E      
 
 * Recordings RecordingName #12
 
 ::
 
-  - ����=���        
+  -     =           
 
 * DetectionChannels IDTrack #012
 
@@ -48392,35 +48430,35 @@ Key/value pairs
 ::
 
   - 
-  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/        �
+  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/         
 
 * Recordings Notes #2
 
 ::
 
   - 
-  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/        �
+  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/         
 
 * Recordings Notes #3
 
 ::
 
   - 
-  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/        �
+  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/         
 
 * Recordings Notes #4
 
 ::
 
   - 
-  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/        �
+  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/         
 
 * Recordings Notes #5
 
 ::
 
   - 
-  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/        �
+  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/         
 
 * DetectionChannels DetectorGainFirstImage #046
 
@@ -48661,7 +48699,7 @@ Key/value pairs
 
   - 
   - )
-  - �
+  -  
 
 * DetectionChannels DetectorGainFirstImage #014
 
@@ -48743,7 +48781,7 @@ Key/value pairs
 
   - 
   - ,
-  - �
+  -  
 
 * DetectionChannels SpiWavelengthStart1 #131
 
@@ -48797,7 +48835,7 @@ Key/value pairs
 
 ::
 
-  - �
+  -  
 
 * DetectionChannels DetectorGainFirstImage #019
 
@@ -48810,7 +48848,7 @@ Key/value pairs
 ::
 
   - 
-  - �
+  -  
 
 * DetectionChannels DetectorGainFirstImage #018
 
@@ -50777,36 +50815,17 @@ Key/value pairs
 
   - 0.0
 
-* Recordings ��d�� ��R [  ]       ��O��s��X��t��f��t��R��o��  [  ^       ��c��D��e��i��Z�� �� �� ��  [  _                 2 #4
-
-::
-
-  - 3.0E-5
-
 * DataChannels RatioConstant4 #131
 
 ::
 
   - 0.0
 
-* Recordings ��d�� ��R [  ]       ��O��s��X��t��f��t��R��o��  [  ^       ��c��D��e��i��Z�� �� �� ��  [  _                 2 #5
-
-::
-
-  - 3.0E-5
-  - 3.0000000000000008E-5
-
 * DataChannels RatioConstant4 #132
 
 ::
 
   - 0.0
-
-* Recordings ��d�� ��R [  ]       ��O��s��X��t��f��t��R��o��  [  ^       ��c��D��e��i��Z�� �� �� ��  [  _                 2 #6
-
-::
-
-  - 3.0000000000000008E-5
 
 * DataChannels RatioConstant4 #133
 
@@ -50826,24 +50845,11 @@ Key/value pairs
 
   - 0.0
 
-* Recordings ��d�� ��R [  ]       ��O��s��X��t��f��t��R��o��  [  ^       ��c��D��e��i��Z�� �� �� ��  [  _                 2 #1
-
-::
-
-  - 0.0
-  - 3.0E-5
-
 * DataChannels RatioConstant4 #136
 
 ::
 
   - 0.0
-
-* Recordings ��d�� ��R [  ]       ��O��s��X��t��f��t��R��o��  [  ^       ��c��D��e��i��Z�� �� �� ��  [  _                 2 #2
-
-::
-
-  - 3.0E-5
 
 * DetectionChannels SpiWavelengthStart1 #081
 
@@ -50857,12 +50863,6 @@ Key/value pairs
 ::
 
   - 0.0
-
-* Recordings ��d�� ��R [  ]       ��O��s��X��t��f��t��R��o��  [  ^       ��c��D��e��i��Z�� �� �� ��  [  _                 2 #3
-
-::
-
-  - 3.0E-5
 
 * DetectionChannels SpiWavelengthStart1 #080
 
@@ -51060,7 +51060,7 @@ Key/value pairs
 ::
 
   - 
-  - �
+  -  
 
 * Track ID Transmission Filter 2 #2
 
@@ -52010,48 +52010,17 @@ Key/value pairs
 
   -  
 
-* Recordings   ��e��i��t��t��g�� #1
-
-::
-
-  - 1.0
-
 * DetectionChannels IDAvailableIntegrator #119
 
 ::
 
   - IntegratorSPI
 
-* Recordings   ��e��i��t��t��g�� #3
-
-::
-
-  - 1.0
-
-* Recordings   ��e��i��t��t��g�� #2
-
-::
-
-  - 1.0
-
-* Recordings   ��e��i��t��t��g�� #5
-
-::
-
-  - 1.0
-  - 1.0000000000000004
-
 * DetectionChannels IDAvailableIntegrator #116
 
 ::
 
   - IntegratorSPI
-
-* Recordings   ��e��i��t��t��g�� #4
-
-::
-
-  - 1.0
 
 * DetectionChannels IDAvailableIntegrator #115
 
@@ -52064,12 +52033,6 @@ Key/value pairs
 ::
 
   - IntegratorSPI
-
-* Recordings   ��e��i��t��t��g�� #6
-
-::
-
-  - 1.0000000000000004
 
 * DetectionChannels IDAvailableIntegrator #117
 
@@ -57174,7 +57137,7 @@ Key/value pairs
 ::
 
   - 
-  - �
+  -  
 
 * DetectionChannels SpiWavelengthStart1 #03
 
@@ -57249,7 +57212,7 @@ Key/value pairs
 ::
 
   - F
-  - �
+  -  
 
 * DetectionChannel Dye Name #07
 
@@ -57289,14 +57252,14 @@ Key/value pairs
 ::
 
   - #
-  - �
+  -  
 
 * DetectionChannel Dye Name #10
 
 ::
 
   - $
-  - �
+  -  
 
 * Recording Stop Scan Event #1
 
@@ -75484,31 +75447,31 @@ Key/value pairs
 
 ::
 
-  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/        �
+  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/         
 
 * Recordings Notes #11
 
 ::
 
-  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/        �
+  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/         
 
 * Recordings Notes #12
 
 ::
 
-  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/        �
+  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/         
 
 * Recordings Notes #10
 
 ::
 
-  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/        �
+  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/         
 
 * Recordings Notes #13
 
 ::
 
-  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/        �
+  - C7GC8FB7FB7HD9GC8GC8GC8GC8FB7HD9GC8HD9GC8GC8GC8GC8FB7FB7GC8EA6GC8EA6D@5EA6C?4D@5C?4D@5C?3C?4B>3C?4B>3A=2B>3A=2A=2@<1B>2@<1>:/A=1>:/74&5@%5K%78(8:(7E(4B$;V+?K/>:-8?(?;/<@,<;,9N);B*DE3AV/>O,>S,CR0>D-?H-=C+BF0@s.CJ2>:.;F+?;/<9-@<1@<1@<0B>2A=1A=2B>3@<0A=2A=2D@5C?4D@5D@5FB7D@5D@5FB7FB7FB7GC8GC8FB7IE:GC8GC8FB7FB7FB7HD9FB7FB7HD9IE:JF;HD9IE:IE:JF;IE:IE:IE:GC9HD9PLAUQFA=2JF:IE:HD9GC8HD8GC8EA6FB7FB7GC7FB7GC8HD9FB7IE:GC8GC8GC8GC8FB7GC7FB7HD9GC8FB8HD9FB7EF6FB7D@4EA6D@5D@5D@5C?4B>3D@5B>3C?4B>2AG2A=2B>3B>3A=1@<1A=2>:0?;0>:/         
 
 * Tracks TriggerOut #29
 
@@ -84652,6 +84615,43 @@ Key/value pairs
 
   - NT3
   - HT
+
+* Recordings     e  i  t  t  g   #4
+
+::
+
+  - 1.0
+
+* Recordings     e  i  t  t  g   #5
+
+::
+
+  - 1.0
+  - 1.0000000000000004
+
+* Recordings     e  i  t  t  g   #6
+
+::
+
+  - 1.0000000000000004
+
+* Recordings     e  i  t  t  g   #1
+
+::
+
+  - 1.0
+
+* Recordings     e  i  t  t  g   #2
+
+::
+
+  - 1.0
+
+* Recordings     e  i  t  t  g   #3
+
+::
+
+  - 1.0
 
 * IlluminationChannels IDIlluminationChannel #001
 
@@ -96262,7 +96262,7 @@ Key/value pairs
 ::
 
   - #
-  - �
+  -  
 
 * DetectionChannels IDAvailableFilterSet #091
 
@@ -96431,7 +96431,7 @@ Key/value pairs
 ::
 
   - 02-01
-  - ����=��� E      
+  -     =    E      
 
 * Recordings RecordingName #6
 
@@ -96463,7 +96463,7 @@ Key/value pairs
 ::
 
   - 01-01
-  - ����=���        
+  -     =           
 
 * Recordings SpacingPlane #1
 
@@ -96476,21 +96476,21 @@ Key/value pairs
 ::
 
   - 01-02
-  - =��� E          
+  - =    E          
 
 * Recordings RecordingName #3
 
 ::
 
   - 01-03
-  - �4!   ����=��� E   
+  -  4!       =    E   
 
 * Recordings RecordingName #4
 
 ::
 
   - 02-02
-  - ����=���        
+  -     =           
 
 * Recordings SpacingPlane #4
 
@@ -97680,7 +97680,7 @@ Key/value pairs
 ::
 
   - KAB1
-  - �
+  -  
   - @
 
 * DataChannels RatioType #032

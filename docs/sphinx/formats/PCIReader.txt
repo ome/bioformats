@@ -48236,7 +48236,7 @@ Key/value pairs
 ::
 
   - um ;Current Calibration Symbol
-  - �m ;Current Calibration Symbol
+  -  m ;Current Calibration Symbol
 
 * Field 367 Display_Depth
 

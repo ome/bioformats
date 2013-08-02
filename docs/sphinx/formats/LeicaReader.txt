@@ -77377,7 +77377,7 @@ Key/value pairs
 ::
 
   - xyz
-  - xy�
+  - xy 
 
 * Time-marker 2 Dimension 8095 coordinate
 
@@ -129601,7 +129601,7 @@ Key/value pairs
 
 ::
 
-  - � �  ch�    Green���� �
+  -      ch     Green      
 
 * Time-marker 2 Dimension 10458 coordinate
 
@@ -129619,7 +129619,7 @@ Key/value pairs
 
 ::
 
-  - Red���� �          Blue����
+  - Red                Blue    
 
 * Time-marker 2 Dimension 1021 coordinate
 

@@ -124,6 +124,7 @@ public class OriginalMetadataAutogen {
       key = key.replaceAll("/", "\\/");
       key = key.replaceAll("\n", " ");
       key = key.replaceAll("\\p{Cntrl}", " ");
+      key = key.replaceAll("\ufffd", " ");
       if (key.startsWith("*")) {
         key = "\\" + key;
       }
@@ -145,6 +146,7 @@ public class OriginalMetadataAutogen {
       }
 
       value = value.replaceAll("\\p{Cntrl}", " ");
+      value = value.replaceAll("\ufffd", " ");
       if (value.startsWith("*")) {
         value = "\\" + value;
       }
