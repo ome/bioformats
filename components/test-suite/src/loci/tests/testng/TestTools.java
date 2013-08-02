@@ -164,7 +164,7 @@ public class TestTools {
 
   /** Creates a new log file. */
   public static void createLogFile() {
-    String timestamp = "-" + DateTools.getFileTimestamp();
+    String timestamp = DateTools.getFileTimestamp();
     String logFile = "loci-software-test-" + timestamp + ".log";
     LOGGER.info("Output logged to {}", logFile);
     try {
