@@ -48,14 +48,27 @@ public class ImspectorReader extends FormatReader {
 
   // -- Constants --
 
+  /** The header for each file contains this string. */
   private static final String MAGIC_STRING = "CDataStack";
 
   // -- Fields --
 
+  /** List of offsets to each block of pixel data. */
   private ArrayList<Long> pixelsOffsets = new ArrayList<Long>();
+
+  /** List of PMTs active during acquisition. */
   private ArrayList<String> uniquePMTs = new ArrayList<String>();
+
+  /**
+   * Number of planes in each block of pixel data.  The blocks will
+   * often (though not always) be of equal size.
+   */
   private ArrayList<Integer> planesPerBlock = new ArrayList<Integer>();
+
+  /** Whether or not this file contains FLIM data. */
   private boolean isFLIM = false;
+
+  /** The number of mosaic tiles stored in the file. */
   private int tileCount = 1;
 
   // -- Constructor --
@@ -84,6 +97,7 @@ public class ImspectorReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    // calculate the block index from the series and image numbers
     int index = 0;
     for (int i=0; i<getSeries(); i++) {
       index += core.get(i).imageCount;
@@ -141,13 +155,7 @@ public class ImspectorReader extends FormatReader {
     String tag = in.readString(length);
     int count = in.readInt();
 
-    for (int i=0; i<count; i++) {
-      int strlen = in.read();
-      String value = in.readString(strlen);
-      if (strlen == 0) {
-        i--;
-      }
-    }
+    skipTags(count);
 
     if (in.getFilePointer() % 2 == 1) {
       in.skipBytes(1);
@@ -194,6 +202,8 @@ public class ImspectorReader extends FormatReader {
     int tileX = 1;
     int tileY = 1;
 
+    // read through the file looking for metadata and pixels offsets
+    // 0x8003 and 0xffff appear to be special markers for metadata sections
     while (in.getFilePointer() < in.length()) {
       check = in.readShort() & 0xffff;
       if (check != 0x8003) {
@@ -313,6 +323,7 @@ public class ImspectorReader extends FormatReader {
             check2 = valueLen;
         }
 
+        // parse the tile dimensions, if present
         if (key.equals("Stitching X")) {
           try {
             tileX = Integer.parseInt(value);
@@ -357,6 +368,7 @@ public class ImspectorReader extends FormatReader {
           in.seek(in.getFilePointer() - 4);
         }
 
+        // find the end of this metadata section
         check1 = in.read() & 0xff;
         check2 = in.read() & 0xff;
         while (!(check1 == 3 && check2 == 128) &&
@@ -399,10 +411,14 @@ public class ImspectorReader extends FormatReader {
 
     tileCount = tileX * tileY;
 
+    // correct the tile count if it doesn't make sense
+    // the count may have been incorrectly recorded or parsed
     if ((m.imageCount % tileCount) != 0) {
       tileCount = 1;
     }
 
+    // recalculate image counts based upon the tile count
+    // tiles are assumed to have the same dimensions
     if (tileCount > 1) {
       m.imageCount /= tileCount;
       if (m.sizeT >= tileCount) {
@@ -433,6 +449,12 @@ public class ImspectorReader extends FormatReader {
       in.skipBytes(len);
       count = in.readInt() + 1;
     }
+    skipTags(count);
+    skipTagBlock();
+  }
+
+  /** Skip a block of unknown string values. */
+  private void skipTags(int count) throws IOException {
     for (int i=0; i<count; i++) {
       int length = in.read();
       if (length == 0) {
@@ -443,7 +465,6 @@ public class ImspectorReader extends FormatReader {
       }
       String tag = in.readString(length);
     }
-    skipTagBlock();
   }
 
   /** Skip an unknown tag. */
