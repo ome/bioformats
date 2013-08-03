@@ -373,9 +373,6 @@ public class ImspectorReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-    }
   }
 
   /** Read the header for an image stack. */
