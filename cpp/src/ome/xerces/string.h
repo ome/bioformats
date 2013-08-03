@@ -97,14 +97,6 @@ namespace ome
 	return wide;
       }
 
-      // inline
-      // operator const char *() const
-      // {
-      //   assert(this->narrow != 0);
-
-      //   return narrow;
-      // }
-
       inline
       operator ::std::string() const
       {

@@ -1,6 +1,6 @@
 #include <ome/xml/model/primitives/PositiveFloat.h>
 
-#include <test/constrained-numeric.h>
+#include "constrained-numeric.h"
 
 #include <cassert>
 #include <cstdlib>

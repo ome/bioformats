@@ -77,7 +77,7 @@ int main (int argc, char *argv[])
 	}
       catch (const xercesc::XMLException &e)
 	{
-	  fatal("XML parse error", xml::string(e.getMessage()));
+	  fatal("XML parse error", xml::string(e.getMessage()).str().c_str());
 	}
       catch (const xercesc::DOMException &e)
 	{
@@ -85,7 +85,7 @@ int main (int argc, char *argv[])
 	  XMLCh error[maxc + 1];
 
 	  if (xercesc::DOMImplementation::loadDOMExceptionMsg(e.code, error, maxc))
-	    fatal("XML DOM parse error", xml::string(error));
+	    fatal("XML DOM parse error", xml::string(error).str().c_str());
 	  else
 	    fatal("XML DOM parse error (no error message)");
 	}
@@ -104,7 +104,7 @@ int main (int argc, char *argv[])
     }
   catch (const xercesc::XMLException &e)
     {
-      fatal("XML parse error", xml::string(e.getMessage()));
+      fatal("XML parse error", xml::string(e.getMessage()).str().c_str());
     }
   return 1;
 }

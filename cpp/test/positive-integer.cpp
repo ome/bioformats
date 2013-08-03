@@ -1,6 +1,6 @@
 #include <ome/xml/model/primitives/PositiveInteger.h>
 
-#include <test/constrained-numeric.h>
+#include "constrained-numeric.h"
 
 #include <cassert>
 #include <cstdlib>
