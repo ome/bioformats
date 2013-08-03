@@ -15,22 +15,22 @@ set(XSD_FU_ARGS -p ome.xml.model -l C++ -o ${GEN_DIR} ${MODEL_FILES})
 
 execute_process(COMMAND ${XSD_FU} java_classes -f source ${XSD_FU_ARGS}
   OUTPUT_VARIABLE MODEL_GENERATED_MODEL_SOURCES)
-string(REPLACE "\n" ";" MODEL_GENERATED_MODEL_SOURCES ${MODEL_GENERATED_MODEL_SOURCES})
+string(REPLACE "\n" ";" MODEL_GENERATED_MODEL_SOURCES "${MODEL_GENERATED_MODEL_SOURCES}")
 execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_MODEL_SOURCES})
 
 execute_process(COMMAND ${XSD_FU} java_classes -f header ${XSD_FU_ARGS}
   OUTPUT_VARIABLE MODEL_GENERATED_MODEL_HEADERS)
-string(REPLACE "\n" ";" MODEL_GENERATED_MODEL_HEADERS ${MODEL_GENERATED_MODEL_HEADERS})
+string(REPLACE "\n" ";" MODEL_GENERATED_MODEL_HEADERS "${MODEL_GENERATED_MODEL_HEADERS}")
 execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_MODEL_HEADERS})
 
 execute_process(COMMAND ${XSD_FU} enum_types -f source ${XSD_FU_ARGS}
   OUTPUT_VARIABLE MODEL_GENERATED_ENUM_SOURCES)
-string(REPLACE "\n" ";" MODEL_GENERATED_ENUM_SOURCES ${MODEL_GENERATED_ENUM_SOURCES})
+string(REPLACE "\n" ";" MODEL_GENERATED_ENUM_SOURCES "${MODEL_GENERATED_ENUM_SOURCES}")
 execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_ENUM_SOURCES})
 
 execute_process(COMMAND ${XSD_FU} enum_types -f header ${XSD_FU_ARGS}
   OUTPUT_VARIABLE MODEL_GENERATED_ENUM_HEADERS)
-string(REPLACE "\n" ";" MODEL_GENERATED_ENUM_HEADERS ${MODEL_GENERATED_ENUM_HEADERS})
+string(REPLACE "\n" ";" MODEL_GENERATED_ENUM_HEADERS "${MODEL_GENERATED_ENUM_HEADERS}")
 execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_ENUM_HEADERS})
 
 execute_process(COMMAND ${XSD_FU} enum_includeall -f header ${XSD_FU_ARGS}
@@ -119,6 +119,5 @@ foreach(header ${MODEL_GENERATED_MODEL_HEADERS} ${MODEL_GENERATED_ENUM_HEADERS} 
   list(APPEND test_headers_SOURCES "gen/test/headers/${genheader}")
 #  set(test_headers_SOURCES ${test_headers_SOURCES} PARENT_SCOPE )
 endforeach(header)
-execute_process(COMMAND ${CMAKE_COMMAND} -E echo TEST: ${test_headers_SOURCES})
 add_executable(test/headers test/headers.cpp ${test_headers_SOURCES})
 target_link_libraries(test/headers ome-xml)
