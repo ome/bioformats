@@ -215,6 +215,9 @@ public class ImspectorReader extends FormatReader {
         findOffset(false);
         continue;
       }
+      if (length < 0) {
+        continue;
+      }
       tag = in.readString(length);
 
       while (in.getFilePointer() < in.length()) {
@@ -277,8 +280,54 @@ public class ImspectorReader extends FormatReader {
           break;
         }
 
-        int check1 = in.readShort();
-        int check2 = in.readShort();
+        int valueType = in.readShort();
+        int valueLen = in.readShort();
+        int check1 = 0, check2 = 0;
+
+        // type codes were determined by trial and error, and may not be correct
+        switch (valueType) {
+          case 10:
+          case 11:
+          case 12:
+            key = value;
+            value = String.valueOf(in.readInt() == 1);
+            break;
+          case 2:
+          case 9:
+          case 14:
+            key = value;
+            value = String.valueOf(in.readFloat());
+            break;
+          case 0:
+          case 1:
+          case 4:
+          case 5:
+          case 6:
+          case 8:
+            key = value;
+            value = String.valueOf(in.readInt());
+            break;
+          default:
+            LOGGER.debug("found type {}", valueType);
+            check1 = valueType;
+            check2 = valueLen;
+        }
+
+        if (key.equals("Stitching X")) {
+          try {
+            tileX = Integer.parseInt(value);
+          }
+          catch (NumberFormatException e) { }
+        }
+        else if (key.equals("Stitching Y")) {
+          try {
+            tileY = Integer.parseInt(value);
+          }
+          catch (NumberFormatException e) { }
+        }
+
+        check1 = in.readShort();
+        check2 = in.readShort();
 
         // read the real value
         // ends with 0x03, 0x80
