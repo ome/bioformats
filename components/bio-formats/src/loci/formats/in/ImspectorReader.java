@@ -452,11 +452,14 @@ public class ImspectorReader extends FormatReader {
       return;
     }
 
-    int planeSize =
-      m.sizeX * m.sizeY * planesPerBlock.get(planesPerBlock.size() - 1) * 2;
+    long planeSize = (long) m.sizeX * m.sizeY *
+      planesPerBlock.get(planesPerBlock.size() - 1) * 2;
     if (in.getFilePointer() + planeSize < in.length()) {
       pixelsOffsets.add(in.getFilePointer());
-      in.skipBytes(planeSize + 2);
+      in.skipBytes((int) planeSize + 2);
+    }
+    else {
+      planesPerBlock.remove(planesPerBlock.size() - 1);
     }
   }
 
