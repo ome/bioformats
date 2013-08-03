@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(GEN_DIR gen)
 
-set(XSD_FU ../components/xsd-fu/xsd-fu)
+set(XSD_FU python ../components/xsd-fu/xsd-fu)
 set(MODEL_VERSION 2013-06)
 set(MODEL_PATH ../components/specification/released-schema/${MODEL_VERSION})
 set(MODEL_FILES
