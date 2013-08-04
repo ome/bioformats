@@ -19,3 +19,13 @@ Timestamp
 - Doesn't handle timezones
 - Doesn't round trip without loss
 - No sub-second precision
+
+
+Windows
+-------
+
+MSVC
+cmake
+python (+ genshi)
+boost
+qt
