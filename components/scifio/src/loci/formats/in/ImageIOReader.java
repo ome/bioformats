@@ -65,7 +65,12 @@ public abstract class ImageIOReader extends BIFormatReader {
 
   // -- Fields --
 
-  private BufferedImage img;
+  /**
+   * Transient reference to a {@link BufferedImage} for this
+   * {@link #currentId}. May be null after de-serialization,
+   * in which case {@link #initImage} must be called.
+   */
+  private transient BufferedImage img;
 
   // -- Constructors --
 
@@ -103,6 +108,9 @@ public abstract class ImageIOReader extends BIFormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
 
+    if (img == null) {
+      initImage();
+    }
     return AWTImageTools.getSubimage(img, isLittleEndian(), x, y, w, h);
   }
 
@@ -115,11 +123,7 @@ public abstract class ImageIOReader extends BIFormatReader {
 
     LOGGER.info("Populating metadata");
     m.imageCount = 1;
-    RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
-    DataInputStream dis = new DataInputStream(ras);
-    img = ImageIO.read(dis);
-    dis.close();
-    if (img == null) throw new FormatException("Invalid image stream");
+    initImage();
 
     m.sizeX = img.getWidth();
     m.sizeY = img.getHeight();
@@ -140,6 +144,22 @@ public abstract class ImageIOReader extends BIFormatReader {
     // populate the metadata store
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
+  }
+
+  protected void initImage() throws IOException, FormatException {
+      RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
+      try {
+        DataInputStream dis = new DataInputStream(ras);
+        try {
+          img = ImageIO.read(dis);
+        } finally {
+            dis.close();
+        }
+      } finally {
+          ras.close();
+      }
+      if (img == null) throw new FormatException("Invalid image stream");
+
   }
 
 }
