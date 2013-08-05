@@ -365,6 +365,19 @@ ZZ
   VERSION => "1.43o"
 );
 
+my %jodatime = (
+  NAME    => "joda-time",
+  TITLE   => "Joda Time",
+  JAR     => "joda-time-2.2.jar",
+  PACKAGE => "org.joda.time",
+  LICENSE => "Apache",
+  URL     => "http://joda-time.sourceforge.net/",
+  NOTES   => <<ZZ,
+used for timestamps, replacing Date and Calendar
+ZZ
+  VERSION => "2.2"
+);
+
 my %junit = (
   NAME    => "junit",
   TITLE   => "JUnit",
@@ -575,6 +588,7 @@ my @libs = (
   \%findbugs,
   \%forms,
   \%ij,
+  \%jodatime,
   \%junit,
   \%log4j,
   \%netcdf,

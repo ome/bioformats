@@ -38,10 +38,18 @@
 
 package ome.xml.model.primitives;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import org.joda.time.Instant;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Primitive type that represents an ISO 8601 timestamp.
@@ -52,45 +60,81 @@ import java.util.Date;
  */
 public class Timestamp extends PrimitiveType<String> {
 
-  /** ISO 8601 date format string. */
-  public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+  /** ISO 8601 date input formatter. */
+  public static final DateTimeFormatter parser = ISODateTimeFormat.dateTimeParser().withZone(DateTimeZone.UTC);
 
-  /** Date as a Java type. */
-  private final Date asDate;
+  /** ISO 8601 date output formatter with milliseconds. */
+  public static final DateTimeFormatter formatms = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
-  /** ISO 8601 date format parser / printer. */
-  private transient final SimpleDateFormat dateFormat =
-      new SimpleDateFormat(ISO8601_FORMAT);
+  /** ISO 8601 date output formatter without milliseconds. */
+  public static final DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-  public Timestamp(String value) {
-    super(value);
-    Date date = new Date();
-    try {
-      date = dateFormat.parse(value);
-    }
-    catch (ParseException e) {
-    }
-    asDate = date;
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(Timestamp.class);
+
+  final Instant timestamp;
+
+  public Timestamp(final String value) throws IllegalArgumentException, UnsupportedOperationException {
+    this.timestamp = Instant.parse(value, parser);
+    this.value = toString();
   }
 
-  public Timestamp(Date date) {
-    asDate = date;
-    value = dateFormat.format(date);
+  public Timestamp(final Instant instant) {
+    this.timestamp = new Instant(instant);
+    this.value = toString();
   }
 
-  public Timestamp(Calendar calendar) {
-    asDate = calendar.getTime();
-    value = dateFormat.format(asDate);
+  public Timestamp(final DateTime datetime) {
+    this.timestamp = datetime.toInstant();
+    this.value = toString();
+  }
+
+  public Timestamp(final Date date) {
+    this.timestamp = new Instant(date);
+    this.value = toString();
+  }
+
+  public Timestamp(final Calendar calendar) {
+    this.timestamp = new Instant(calendar);
+    this.value = toString();
   }
 
   /**
    * Returns a <code>Timestamp</code> object holding the value of
-   * the specified string.
+   * the specified string, or null if parsing failed.
    * @param s The string to be parsed.
    * @return See above.
    */
   public static Timestamp valueOf(String value) {
-    return new Timestamp(value);
+    Timestamp t = null;
+    try {
+      t = new Timestamp(value);
+    }
+    catch (IllegalArgumentException e) {
+        LOGGER.debug("Invalid timestamp '{}'", value);
+    }
+    catch (UnsupportedOperationException e) {
+        LOGGER.debug("Error parsing timestamp '{}'", value, e);
+    }
+    return t;
+  }
+
+  /**
+   * Returns the timestamp as a Joda {@link org.joda.time.DateTime} type.
+   * @return See above.
+   */
+  public Instant asInstant() {
+    return timestamp;
+  }
+
+  /**
+   * Returns the timestamp as a Joda {@link org.joda.time.DateTime} type.
+   * @param zone the DateTime instance uses the specified timezone, or the default zone if null.
+   * @return See above.
+   */
+  public DateTime asDateTime(DateTimeZone zone) {
+      return new DateTime(timestamp, zone);
   }
 
   /**
@@ -98,7 +142,7 @@ public class Timestamp extends PrimitiveType<String> {
    * @return See above.
    */
   public Date asDate() {
-    return asDate;
+    return new DateTime(timestamp).toDate();
   }
 
   /**
@@ -106,9 +150,7 @@ public class Timestamp extends PrimitiveType<String> {
    * @return See above.
    */
   public Calendar asCalendar() {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(asDate);
-    return calendar;
+    return new DateTime(timestamp).toGregorianCalendar();
   }
 
   /**
@@ -116,6 +158,20 @@ public class Timestamp extends PrimitiveType<String> {
    * @return See above.
    */
   public java.sql.Date asSqlDate() {
-    return new java.sql.Date(asDate.getTime());
+    return new java.sql.Date(timestamp.getMillis());
   }
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString() {
+    if (timestamp == null)
+        return "";
+    if ((timestamp.getMillis() % 1000) != 0)
+        return formatms.print(timestamp);
+    else
+        return format.print(timestamp);
+  }
+
 }
