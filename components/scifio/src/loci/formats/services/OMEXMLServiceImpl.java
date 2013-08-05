@@ -518,6 +518,14 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
     for (int i=0; i<annotations.sizeOfXMLAnnotationList(); i++) {
       XMLAnnotation annotation = annotations.getXMLAnnotation(i);
+
+      if (annotation instanceof OriginalMetadataAnnotation) {
+        OriginalMetadataAnnotation original =
+          (OriginalMetadataAnnotation) annotation;
+        metadata.put(original.getKey(), original.getValue());
+        continue;
+      }
+
       String xml = annotation.getValue();
 
       try {
@@ -901,6 +909,14 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     }
 
     // -- XMLAnnotation methods --
+
+    public String getKey() {
+      return key;
+    }
+
+    public String getValue() {
+      return value;
+    }
 
     /* @see ome.xml.model.XMLAnnotation#asXMLElement(Document, Element) */
     protected Element asXMLElement(Document document, Element element) {
