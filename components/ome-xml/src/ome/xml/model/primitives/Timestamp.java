@@ -69,31 +69,26 @@ public class Timestamp extends PrimitiveType<String> {
   final Instant timestamp;
 
   public Timestamp(final String value) throws IllegalArgumentException, UnsupportedOperationException {
-    super(null);
     this.timestamp = Instant.parse(value, parser);
     this.value = toString();
   }
 
   public Timestamp(final Instant instant) {
-    super(null);
     this.timestamp = new Instant(instant);
     this.value = toString();
   }
 
   public Timestamp(final DateTime datetime) {
-    super(null);
     this.timestamp = datetime.toInstant();
     this.value = toString();
   }
 
   public Timestamp(final Date date) {
-    super(null);
     this.timestamp = new Instant(date);
     this.value = toString();
   }
 
   public Timestamp(final Calendar calendar) {
-    super(null);
     this.timestamp = new Instant(calendar);
     this.value = toString();
   }
