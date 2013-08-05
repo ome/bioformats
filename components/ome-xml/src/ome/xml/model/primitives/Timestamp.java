@@ -48,6 +48,9 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Primitive type that represents an ISO 8601 timestamp.
  *
@@ -65,6 +68,10 @@ public class Timestamp extends PrimitiveType<String> {
 
   /** ISO 8601 date output formatter without milliseconds. */
   public static final DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(Timestamp.class);
 
   final Instant timestamp;
 
@@ -105,8 +112,10 @@ public class Timestamp extends PrimitiveType<String> {
       t = new Timestamp(value);
     }
     catch (IllegalArgumentException e) {
+        LOGGER.debug("Invalid timestamp '{}'", value);
     }
     catch (UnsupportedOperationException e) {
+        LOGGER.debug("Error parsing timestamp '{}'", value, e);
     }
     return t;
   }
