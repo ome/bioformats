@@ -52,15 +52,20 @@ Type "ant -p" for a list of targets.
         <!-- Check git describe twice: first to see if this is an exact
              match and once to get the full string for parsing major,
              minor, and patch values -->
-        <exec executable="git" outputproperty="git.describe.exact"
-          failifexecutionfails="false" failonerror="false"
-          resultproperty="git.describe.exact.rc">
-          <arg value="describe"/>
-          <arg value="--match=v[0-9]*"/>
-          <arg value="--exact"/>
-        </exec>
+        <trycatch>
+          <try>
+            <exec executable="git" outputproperty="git.describe.exact"
+              resultproperty="git.describe.exact.rc"
+              failifexecutionfails="false" failonerror="true">
+              <arg value="describe"/>
+              <arg value="--match=v[0-9]*"/>
+              <arg value="--exact"/>
+            </exec>
+          </try>
+          <catch></catch>
+        </trycatch>
         <exec executable="git" outputproperty="git.describe"
-          failifexecutionfails="false" failonerror="false">
+          failifexecutionfails="false">
           <arg value="describe"/>
           <arg value="--match=v[0-9]*"/>
         </exec>
