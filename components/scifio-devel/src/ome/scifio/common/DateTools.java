@@ -46,6 +46,9 @@ import org.joda.time.IllegalInstantException;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A utility class with convenience methods for working with dates.
  *
@@ -86,6 +89,10 @@ public final class DateTools {
 
   /** Human readable timestamp filename string */
   public static final String FILENAME_FORMAT = "yyyy-MM-dd_HH-mm-ss";
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(DateTools.class);
 
   // -- Constructor --
 
@@ -183,10 +190,20 @@ public final class DateTools {
   public static String formatDate(String date, String format, boolean lenient) {
     if (date == null) return null;
     final DateTimeFormatter parser = DateTimeFormat.forPattern(format);
-    Instant timestamp = Instant.parse(date, parser);
+    Instant timestamp = null;
+
+    try {
+      timestamp = Instant.parse(date, parser);
+    }
+    catch (IllegalArgumentException e) {
+        LOGGER.debug("Invalid timestamp '{}'", date);
+    }
+    catch (UnsupportedOperationException e) {
+        LOGGER.debug("Error parsing timestamp '{}'", date, e);
+    }
 
     if (timestamp == null)
-      return "";
+      return null;
 
     DateTimeFormatter isoformat = null;
     if ((timestamp.getMillis() % 1000) != 0)
@@ -232,7 +249,16 @@ public final class DateTools {
    */
   public static long getTime(String date, String format) {
     final DateTimeFormatter parser = DateTimeFormat.forPattern(format);
-    Instant timestamp = Instant.parse(date, parser);
+    Instant timestamp = null;
+    try {
+      Instant.parse(date, parser);
+    }
+    catch (IllegalArgumentException e) {
+        LOGGER.debug("Invalid timestamp '{}'", date);
+    }
+    catch (UnsupportedOperationException e) {
+        LOGGER.debug("Error parsing timestamp '{}'", date, e);
+    }
     if (timestamp == null) return -1;
     return timestamp.getMillis();
   }
