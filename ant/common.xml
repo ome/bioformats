@@ -48,11 +48,52 @@ Type "ant -p" for a list of targets.
           regexp="commit ([a-f0-9]+)" select="\1"/>
         <propertyregex property="vcs.date"
           input="${git.info}" regexp="Date: +([^\n]*)" select="\1"/>
+
+        <!-- Check git describe twice: first to see if this is an exact
+             match and once to get the full string for parsing major,
+             minor, and patch values -->
+        <exec executable="git" outputproperty="git.describe.exact"
+          failifexecutionfails="false" failonerror="false"
+          resultproperty="git.describe.exact.rc">
+          <arg value="describe"/>
+          <arg value="--match=v[0-9]*"/>
+          <arg value="--exact"/>
+        </exec>
+        <exec executable="git" outputproperty="git.describe"
+          failifexecutionfails="false" failonerror="false">
+          <arg value="describe"/>
+          <arg value="--match=v[0-9]*"/>
+        </exec>
+        <if>
+          <isset property="git.describe"/>
+          <then>
+            <property name="release.version.regex" value="v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)"/>
+            <propertyregex property="tag.major" input="${git.describe}" regexp="${release.version.regex}" select="\1"/>
+            <propertyregex property="tag.minor" input="${git.describe}" regexp="${release.version.regex}" select="\2"/>
+            <propertyregex property="tag.patch" input="${git.describe}" regexp="${release.version.regex}" select="\3"/>
+            <propertyregex property="tag.extra" input="${git.describe}" regexp="${release.version.regex}" select="\4"/>
+          </then>
+        </if>
+
+        <!-- If this is an exact match or if "use.inexact.version" is set, then
+             use the re-created version number (minus the "v" prefix) -->
+        <if>
+          <or>
+            <equals arg1="0" arg2="git.describe.exact.rc"/>
+            <isset property="use.inexact.version"/>
+          </or>
+          <then>
+            <property name="release.version" value="${tag.major}.${tag.minor}.${tag.patch}${tag.extra}"/>
+          </then>
+          <else>
+            <property name="release.version" value="${tag.major}.${tag.minor}.${tag.patch}-DEV"/>
+          </else>
+        </if>
       </then>
     </if>
 
-    <!-- set release version from repository URL -->
-    <property name="release.version" value="4.4.9-DEV"/>
+    <!-- set release version by default if nothing is set -->
+    <property name="release.version" value="UNKNOWN"/>
   </target>
 
 </project>
