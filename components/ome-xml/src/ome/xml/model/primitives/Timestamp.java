@@ -107,6 +107,8 @@ public class Timestamp extends PrimitiveType<String> {
    * @return See above.
    */
   public static Timestamp valueOf(String value) {
+    if (value == null)
+      return null;
     Timestamp t = null;
     try {
       t = new Timestamp(value);
