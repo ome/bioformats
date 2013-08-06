@@ -80,8 +80,17 @@ Type "ant -p" for a list of targets.
           </then>
         </if>
 
-        <!-- If this is an exact match or if "use.inexact.version" is set, then
-             use the re-created version number (minus the "v" prefix) -->
+        <!-- First check if Bio-Formats is being built as a part of the top-level
+             OME repository. If so, use that version. Otherwise, if this is an
+             exact match or if "use.inexact.version" is set, then use the re-created
+             version number (minus the "v" prefix) -->
+
+        <if>
+          <isset property="omero.version"/>
+          <then>
+            <property name="release.version" value="${omero.version}"/>
+          </then>
+        </if>
         <if>
           <or>
             <equals arg1="0" arg2="git.describe.exact.rc"/>
