@@ -51,6 +51,66 @@ classdef TestBfGetPlane < TestBfMatlab
             tearDown@TestBfMatlab(self)
         end
         
+        % Input check tests
+        function checkInvalidInput(self, f)
+            self.reader.setId('test.fake');
+            assertExceptionThrown(f,...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testReaderClass(self)
+            self.checkInvalidInput(@() bfGetPlane(0, 1));
+        end
+        
+        function testZeroPlane(self)
+            self.checkInvalidInput(@() bfGetPlane(self.reader, 0));
+        end
+        
+        function testOversizedPlaneIndex(self)
+            self.checkInvalidInput(@() bfGetPlane(self.reader,...
+                self.reader.getImageCount()+1));
+        end
+        
+        function testPlaneIndexArray(self)
+            self.checkInvalidInput(@() bfGetPlane(self.reader, [1 1]));
+        end
+        
+        function testZeroX(self)
+            self.checkInvalidInput(@() bfGetPlane(self.reader, 1, 0));
+        end
+        
+        function testOversizedX(self)
+            self.checkInvalidInput(@() bfGetPlane(self.reader, 1,...
+                self.reader.getSizeX() +1));
+        end
+        
+        function testZeroY(self)
+            self.checkInvalidInput(@() bfGetPlane(self.reader, 1, 1, 0));
+        end
+        
+        function testOversizedY(self)
+            self.checkInvalidInput(@() bfGetPlane(self.reader, 1, 1,...
+                self.reader.getSizeX() +1));
+        end
+        
+        function testZeroWidth(self)
+            self.checkInvalidInput(@() bfGetPlane(self.reader, 1, 1, 0));
+        end
+        
+        function testOversizedWidth(self)
+            self.checkInvalidInput(@() bfGetPlane(self.reader, 1, 1,...
+                self.reader.getSizeX() +1));
+        end
+        
+        function testZeroHeight(self)
+            self.checkInvalidInput(@() bfGetPlane(self.reader, 1, 1, 1, 0));
+        end
+        
+        function testOversizedHeight(self)
+            self.checkInvalidInput(@() bfGetPlane(self.reader, 1, 1, 1, 1,...
+                self.reader.getSizeX() +1));
+        end
+        
         % Pixel type tests
         function checkPixelsType(self, pixelsType)
             self.reader.setId([pixelsType '-test&pixelType=' pixelsType '.fake']);
