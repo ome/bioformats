@@ -1,30 +1,21 @@
 function I = bfGetPlane(r, iPlane, varargin)
-% Get the plane data from a dataset reader using bioformats tools
+% BFGETPLANE Retrieve the plane data from a reader using Bio-Formats
 % 
-% SYNOPSIS I = bfGetPlane(r, iPlane)
+%   I = bfGetPlane(r, iPlane) returns a specified plane from the input
+%   format reader. The index specifying the plane to retrieve should be
+%   contained between 1 and the number of planes for the series.
 %
-% Input 
-%    r - the reader object (e.g. the output bfGetReader)
+%   I = bfGetPlane(r, iPlane, x, y, width, height) only returns the tile
+%   which origin is specified by (x, y) and dimensions are specified by
+%   (width, height).
 %
-%    iPlane - a scalar giving the index of the plane to be retrieved.
+% Examples
 %
-%    x - (Optional) A scalar giving the x-coordinate of the tile origin.
-%    Default: 1
+%    I = bfGetPlane(r, 1) % First plane of the series
+%    I = bfGetPlane(r, r.getImageCount()) % Last plane of the series
+%    I = bfGetPlane(r, 1, 1, 1, 20, 20) % 20x20 tile originated at (0, 0)
 %
-%    y - (Optional) A scalar giving the y-coordinate of the tile origin.
-%    Default: 1
-%
-%    w - (Optional) A scalar giving the width of the tile. 
-%    Default: r.getSizeX()
-%
-%    h - (Optional) A scalar giving the height of the tile.
-%    Default: r.getSizeY()
-%
-% Output
-%
-%    I - an array of size (width x height) containing the plane
-%
-% See also bfGetReader
+% See also: BFGETREADER
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
