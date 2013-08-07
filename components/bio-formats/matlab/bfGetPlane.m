@@ -41,15 +41,19 @@ function I = bfGetPlane(r, iPlane, varargin)
 % Input check
 ip = inputParser;
 ip.addRequired('r', @(x) isa(x, 'loci.formats.IFormatReader'));
-ip.addRequired('iPlane', @isscalar);
+ip.parse(r);
 
-% Define optional arguments to retrieve tile.
-% No check is perform on this argument as they should already be checked in
-% openBytes()
-ip.addOptional('x', 1, @isscalar);
-ip.addOptional('y', 1, @isscalar);
-ip.addOptional('width', r.getSizeX(), @isscalar);
-ip.addOptional('height', r.getSizeY(), @isscalar);
+% Plane check
+isValidPlane = @(x) isscalar(x) && ismember(x, 1 : r.getImageCount());
+ip.addRequired('iPlane', isValidPlane);
+
+% Optional tile arguments check
+isValidX = @(x) isscalar(x) && ismember(x, 1 : r.getSizeX());
+isValidY = @(x) isscalar(x) && ismember(x, 1 : r.getSizeX());
+ip.addOptional('x', 1, isValidX);
+ip.addOptional('y', 1, isValidY);
+ip.addOptional('width', r.getSizeX(), isValidX);
+ip.addOptional('height', r.getSizeY(), isValidY);
 ip.parse(r, iPlane, varargin{:});
 
 % check MATLAB version, since typecast function requires MATLAB 7.1+
