@@ -63,8 +63,6 @@ ip.parse(r, iPlane, varargin{:});
 
 % check MATLAB version, since typecast function requires MATLAB 7.1+
 canTypecast = versionCheck(version, 7, 1);
-bioFormatsVersion = char(loci.formats.FormatTools.VERSION);
-isBioFormatsTrunk = versionCheck(bioFormatsVersion, 5, 0);
 
 % Get pixel type
 pixelType = r.getPixelType();
@@ -78,7 +76,7 @@ plane = r.openBytes(iPlane - 1, ip.Results.x - 1, ip.Results.y - 1, ...
     ip.Results.w, ip.Results.h);
     
 % convert byte array to MATLAB image
-if isBioFormatsTrunk && (sgn || ~canTypecast)
+if sgn || ~canTypecast
     % can get the data directly to a matrix
     arr = loci.common.DataTools.makeDataArray2D(plane, ...
         bpp, fp, little, height);
