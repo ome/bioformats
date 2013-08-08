@@ -57,6 +57,14 @@ ip.addOptional('width', r.getSizeX(), isValidX);
 ip.addOptional('height', r.getSizeY(), isValidY);
 ip.parse(r, iPlane, varargin{:});
 
+% Additional check for tile size
+assert(ip.Results.x - 1 + ip.Results.width <= r.getSizeX(),...
+     'MATLAB:InputParser:ArgumentFailedValidation',...
+     'Invalid tile size');
+assert(ip.Results.y - 1 + ip.Results.height <= r.getSizeY(),...
+     'MATLAB:InputParser:ArgumentFailedValidation',...
+     'Invalid tile size');
+
 % check MATLAB version, since typecast function requires MATLAB 7.1+
 canTypecast = versionCheck(version, 7, 1);
 

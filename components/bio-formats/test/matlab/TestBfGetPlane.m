@@ -118,6 +118,7 @@ classdef TestBfGetPlane < TestBfMatlab
             self.checkInvalidTileInput();
         end
         
+        
         function testZeroTileWidth(self)
             self.x = 1;
             self.y = 1;
@@ -129,6 +130,13 @@ classdef TestBfGetPlane < TestBfMatlab
             self.x = 1;
             self.y = 1;
             self.width = self.sizeX + 1;
+            self.checkInvalidTileInput();
+        end
+        
+        function testOversizedTileWidth2(self)
+            self.x = 2;
+            self.y = 1;
+            self.width = self.sizeX;
             self.checkInvalidTileInput();
         end
         
@@ -145,6 +153,14 @@ classdef TestBfGetPlane < TestBfMatlab
             self.y = 1;
             self.width = self.sizeX;
             self.height = self.sizeY + 1;
+            self.checkInvalidTileInput();
+        end
+        
+        function testOversizedTileHeight2(self)
+            self.x = 1;
+            self.y = 2;
+            self.width = self.sizeX;
+            self.height = self.sizeY;
             self.checkInvalidTileInput();
         end
         
