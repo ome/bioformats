@@ -5,12 +5,6 @@
     http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.scijava</groupId>
-    <artifactId>pom-scijava</artifactId>
-    <version>1.28</version>
-  </parent>
-
   <groupId>loci</groupId>
   <artifactId>pom-scifio</artifactId>
   <version>${release.version}</version>
@@ -59,6 +53,8 @@
   </properties>
 
   <build>
+    <defaultGoal>install</defaultGoal>
+
     <sourceDirectory>${project.basedir}/src</sourceDirectory>
     <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
     <resources>
