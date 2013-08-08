@@ -29,4 +29,4 @@ license (though individual modules can fall under any licensing
 framework, and Bio-Formats will continue to have a dual GPL + commercial
 license).
 
-For further information, see the `SCIFIO home page <http://loci.wisc.edu/software/scifio>`_.
+For further information, see the `SCIFIO home page <http://scif.io/>`_.
