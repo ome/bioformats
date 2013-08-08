@@ -40,7 +40,8 @@ function I = bfGetPlane(r, iPlane, varargin)
 
 % Input check
 ip = inputParser;
-ip.addRequired('r', @(x) isa(x, 'loci.formats.IFormatReader'));
+ip.addRequired('r', @(x) isa(x, 'loci.formats.IFormatReader') && ...
+    ~isempty(x.getCurrentFile()));
 ip.parse(r);
 
 % Plane check

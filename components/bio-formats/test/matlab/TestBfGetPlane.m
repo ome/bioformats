@@ -68,6 +68,11 @@ classdef TestBfGetPlane < TestBfMatlab
             assertExceptionThrown(f,...
                 'MATLAB:InputParser:ArgumentFailedValidation');
         end
+
+        function testInvalidReader(self)
+            self.reader.close();
+            self.checkInvalidInput();
+        end
         
         function testZeroPlane(self)
             self.iPlane = 0;
