@@ -13,7 +13,7 @@
 
   <groupId>loci</groupId>
   <artifactId>pom-scifio</artifactId>
-  <version>4.5-SNAPSHOT</version>
+  <version>${release.version}</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -47,6 +47,7 @@
   </modules>
 
   <properties>
+    <release.version>5.0.0-SNAPSHOT</release.version>
     <project.rootdir>${basedir}</project.rootdir>
     <xsdfu.schemaver>2013-06</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
