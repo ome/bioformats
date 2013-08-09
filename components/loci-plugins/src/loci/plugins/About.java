@@ -32,6 +32,7 @@ import ij.plugin.PlugIn;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import loci.formats.FormatTools;
 import loci.formats.IFormatHandler;
 
 /**
@@ -67,9 +68,9 @@ public final class About implements PlugIn {
 
   public static void about() {
     String msg = "<html>" +
-      "LOCI Plugins for ImageJ, revision @vcs.revision@, built @date@" +
-      "<br>Release: @release.version@" +
-      "<br>Copyright (C) 2005 - @year@ Open Microscopy Environment:" +
+      "LOCI Plugins for ImageJ, revision " + FormatTools.VCS_REVISION +
+      ", built " + FormatTools.DATE + "<br>Release: " + FormatTools.VERSION +
+      "<br>Copyright (C) 2005 - ${year} Open Microscopy Environment:" +
       "<ul>" +
       "<li>Board of Regents of the University of Wisconsin-Madison</li>" +
       "<li>Glencoe Software, Inc.</li>" +
