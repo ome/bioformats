@@ -600,7 +600,8 @@ public class ImageViewer extends JFrame implements ActionListener,
       String msg = "<html>" +
         "OME Bio-Formats package for reading and " +
         "converting biological file formats." +
-        "<br>Copyright (C) 2005 - ${year} Open Microscopy Environment:" +
+        "<br>Copyright (C) 2005 - " + FormatTools.YEAR +
+        " Open Microscopy Environment:" +
         "<ul>" +
         "<li>Board of Regents of the University of Wisconsin-Madison</li>" +
         "<li>Glencoe Software, Inc.</li>" +
