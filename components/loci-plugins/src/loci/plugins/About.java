@@ -70,7 +70,8 @@ public final class About implements PlugIn {
     String msg = "<html>" +
       "LOCI Plugins for ImageJ, revision " + FormatTools.VCS_REVISION +
       ", built " + FormatTools.DATE + "<br>Release: " + FormatTools.VERSION +
-      "<br>Copyright (C) 2005 - ${year} Open Microscopy Environment:" +
+      "<br>Copyright (C) 2005 - " + FormatTools.YEAR +
+      " Open Microscopy Environment:" +
       "<ul>" +
       "<li>Board of Regents of the University of Wisconsin-Madison</li>" +
       "<li>Glencoe Software, Inc.</li>" +

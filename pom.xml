@@ -41,7 +41,12 @@
   </modules>
 
   <properties>
+    <maven.build.timestamp.format>d MMMMM yyyy</maven.build.timestamp.format>
+
     <release.version>5.0.0-SNAPSHOT</release.version>
+    <vcs.revision></vcs.revision>
+    <date>${maven.build.timestamp}</date>
+    <year>2013</year>
     <project.rootdir>${basedir}</project.rootdir>
     <xsdfu.schemaver>2013-06</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
@@ -63,11 +68,19 @@
         <excludes>
           <exclude>**/*.java</exclude>
           <exclude>**/package.html</exclude>
+          <exclude>**/*.properties</exclude>
         </excludes>
       </resource>
       <resource>
         <targetPath>META-INF/lib</targetPath>
         <directory>${project.basedir}/lib</directory>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/src</directory>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+        <filtering>true</filtering>
       </resource>
     </resources>
     <testResources>
