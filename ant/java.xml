@@ -255,14 +255,14 @@ your FindBugs installation's lib directory. E.g.:
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}"
         includes="${component.source} ${component.resources-text}"/>
-      <filterset>
-        <filter token="date" value="${DATE}"/>
-        <filter token="year" value="${YEAR}"/>
-        <filter token="vcs.revision" value="${vcs.revision}"/>
-        <filter token="vcs.date" value="${vcs.date}"/>
-        <filter token="release.version" value="${release.version}"/>
-      </filterset>
     </copy>
+
+    <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
+    <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
+    <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
+    <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
+    <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>
+
     <!-- copy resources to classes folder -->
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${dest.dir}" excludes="${component.source}"/>
@@ -286,14 +286,13 @@ your FindBugs installation's lib directory. E.g.:
 	<copy todir="${dest.dir}" preservelastmodified="true">
 	  <fileset dir="${gensrc.dir}"
 		   includes="${component.source} ${component.resources-text}"/>
-	  <filterset>
-	    <filter token="date" value="${DATE}"/>
-	    <filter token="year" value="${YEAR}"/>
-	    <filter token="vcs.revision" value="${vcs.revision}"/>
-	    <filter token="vcs.date" value="${vcs.date}"/>
-	    <filter token="release.version" value="${release.version}"/>
-	  </filterset>
-	</copy>
+  </copy>
+
+  <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
+  <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
+  <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
+  <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
+  <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>
 	<!-- copy resources to classes folder -->
 	<copy todir="${classes.dir}" preservelastmodified="true">
 	  <fileset dir="${dest.dir}" excludes="${component.source}"/>
