@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.formats.FileStitcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,6 +169,23 @@ public class FormatReaderTestFactory {
     }
     else {
       files.add(filename);
+    }
+
+    // remove duplicates
+    int index = 0;
+    while (index < files.size()) {
+      String file = (String) files.get(index);
+      try {
+        FileStitcher reader = new FileStitcher();
+        reader.setId(file);
+        String[] usedFiles = reader.getUsedFiles();
+        for (int q=1; q<usedFiles.length; q++) {
+          files.remove(usedFiles[q]);
+        }
+      }
+      catch (Exception e) { }
+
+      index++;
     }
 
     // create test class instances
