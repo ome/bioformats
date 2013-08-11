@@ -1,0 +1,536 @@
+/*
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
+
+package loci.formats.in;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
+import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
+
+/**
+ * ImspectorReader is the file format reader for Imspector .msr files.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ImspectorReader.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ImspectorReader.java;hb=HEAD">Gitweb</a></dd></dl>
+ */
+public class ImspectorReader extends FormatReader {
+
+  // -- Constants --
+
+  /** The header for each file contains this string. */
+  private static final String MAGIC_STRING = "CDataStack";
+
+  // -- Fields --
+
+  /** List of offsets to each block of pixel data. */
+  private ArrayList<Long> pixelsOffsets = new ArrayList<Long>();
+
+  /** List of PMTs active during acquisition. */
+  private ArrayList<String> uniquePMTs = new ArrayList<String>();
+
+  /**
+   * Number of planes in each block of pixel data.  The blocks will
+   * often (though not always) be of equal size.
+   */
+  private ArrayList<Integer> planesPerBlock = new ArrayList<Integer>();
+
+  /** Whether or not this file contains FLIM data. */
+  private boolean isFLIM = false;
+
+  /** The number of mosaic tiles stored in the file. */
+  private int tileCount = 1;
+
+  // -- Constructor --
+
+  /** Constructs a new Imspector reader. */
+  public ImspectorReader() {
+    super("Lavision Imspector", "msr");
+    domains = new String[] {FormatTools.FLIM_DOMAIN};
+    suffixSufficient = false;
+  }
+
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    final int blockLen = 32;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return (stream.readString(blockLen)).indexOf(MAGIC_STRING) >= 0;
+  }
+
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    // calculate the block index from the series and image numbers
+    int index = 0;
+    for (int i=0; i<getSeries(); i++) {
+      index += core.get(i).imageCount;
+    }
+    index += no;
+
+    int block = 0;
+    int plane = 0;
+    while (index >= 0) {
+      int planeCount = planesPerBlock.get(block);
+      if (planeCount <= index) {
+        index -= planeCount;
+        block++;
+      }
+      else {
+        plane = index;
+        index = -1;
+      }
+    }
+
+    in.seek(pixelsOffsets.get(block) + FormatTools.getPlaneSize(this) * plane);
+    readPlane(in, x, y, w, h, buf);
+    return buf;
+  }
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      pixelsOffsets.clear();
+      uniquePMTs.clear();
+      planesPerBlock.clear();
+      isFLIM = false;
+      tileCount = 1;
+    }
+  }
+
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
+    super.initFile(id);
+    in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
+
+    // pixel data is stored uncompressed in blocks of one or more planes
+    // as far as we know, pixels are always little-endian unsigned 16-bit
+
+    m.littleEndian = true;
+
+    in.order(isLittleEndian());
+    in.skipBytes(20);
+
+    int length = in.readShort();
+    String tag = in.readString(length);
+    int count = in.readInt();
+
+    skipTags(count);
+
+    if (in.getFilePointer() % 2 == 1) {
+      in.skipBytes(1);
+    }
+
+    length = in.readShort();
+
+    String metadata = in.readString(length);
+    String[] values = metadata.split("::");
+
+    int check = in.readShort();
+    while (check != 3 && check != 2) {
+      check = in.readShort();
+    }
+
+    in.skipBytes(26);
+    int pmtMarkerLength = in.read();
+    String pmtMarker = in.readString(pmtMarkerLength);
+    uniquePMTs.add(pmtMarker);
+
+    in.skipBytes(6);
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
+    planesPerBlock.add(in.readInt());
+
+    in.skipBytes(20);
+    for (int i=0; i<4; i++) {
+      int len = in.read();
+      String pmtSetting = in.readString(len);
+    }
+
+    pixelsOffsets.add(in.getFilePointer());
+
+    for (int i=0; i<values.length; i+=2) {
+      addGlobalMeta(values[i], values[i + 1]);
+
+      if (values[i].equals("Instrument Mode")) {
+        isFLIM = values[i + 1].equals("TCSPC") || values[i + 1].equals("FLIM");
+      }
+    }
+    m.pixelType = FormatTools.UINT16;
+    in.skipBytes(m.sizeX * m.sizeY * planesPerBlock.get(0) * 2 + 2);
+
+    int tileX = 1;
+    int tileY = 1;
+
+    // read through the file looking for metadata and pixels offsets
+    // 0x8003 and 0xffff appear to be special markers for metadata sections
+    while (in.getFilePointer() < in.length()) {
+      check = in.readShort() & 0xffff;
+      if (check != 0x8003) {
+        in.skipBytes(2);
+        length = in.readShort();
+      }
+      else {
+        length = in.read() & 0xff;
+      }
+      if (length == 0 && check == 65535) {
+        in.skipBytes(46);
+        skipTagBlock();
+        in.skipBytes(50);
+        findOffset();
+        continue;
+      }
+      else if (length == 3 && check == 65535) {
+        in.seek(in.getFilePointer() - 2);
+        findOffset(false);
+        continue;
+      }
+      if (length < 0) {
+        continue;
+      }
+      tag = in.readString(length);
+
+      while (in.getFilePointer() < in.length()) {
+        if (tag.equals("CImageStack")) {
+          readStackHeader();
+
+          in.skipBytes(65);
+          length = in.readShort();
+          if (length == 0) {
+            in.skipBytes(1);
+            if ((in.read() & 0xff) == 0xff) {
+              length = in.readShort();
+            }
+            else {
+              in.seek(in.getFilePointer() - 1);
+              length = in.readShort();
+              in.skipBytes(length - 2);
+              break;
+            }
+          }
+          in.skipBytes(length + 50);
+
+
+          findOffset();
+          break;
+        }
+        else if (tag.equals("Label")) {
+          in.skipBytes(4);
+        }
+        length = in.read();
+
+        if (length < 0) {
+          break;
+        }
+
+        String key = in.readString(length);
+
+        int type = in.readInt();
+        String value = null;
+        if (type == 5) {
+          length = in.read();
+          if (length == 0) {
+            in.skipBytes(4);
+            length = in.read();
+          }
+          value = in.readString(length);
+        }
+        else if (type > 0xffff && type != 0x80000) {
+          in.seek(in.getFilePointer() - 2);
+          value = String.valueOf(in.readDouble());
+        }
+        else {
+          length = in.read();
+          value = in.readString(length);
+        }
+
+        if (tag.equals("Label")) {
+          in.skipBytes(350);
+          findOffset();
+          break;
+        }
+
+        int valueType = in.readShort();
+        int valueLen = in.readShort();
+        int check1 = 0, check2 = 0;
+
+        // type codes were determined by trial and error, and may not be correct
+        switch (valueType) {
+          case 10:
+          case 11:
+          case 12:
+            key = value;
+            value = String.valueOf(in.readInt() == 1);
+            break;
+          case 2:
+          case 9:
+          case 14:
+            key = value;
+            value = String.valueOf(in.readFloat());
+            break;
+          case 0:
+          case 1:
+          case 4:
+          case 5:
+          case 6:
+          case 8:
+            key = value;
+            value = String.valueOf(in.readInt());
+            break;
+          default:
+            LOGGER.debug("found type {}", valueType);
+            check1 = valueType;
+            check2 = valueLen;
+        }
+
+        // parse the tile dimensions, if present
+        if (key.equals("Stitching X")) {
+          try {
+            tileX = Integer.parseInt(value);
+          }
+          catch (NumberFormatException e) { }
+        }
+        else if (key.equals("Stitching Y")) {
+          try {
+            tileY = Integer.parseInt(value);
+          }
+          catch (NumberFormatException e) { }
+        }
+
+        check1 = in.readShort();
+        check2 = in.readShort();
+
+        // read the real value
+        // ends with 0x03, 0x80
+        if (check1 == 0 && check2 == 8) {
+          if (in.readShort() != 0x8003) {
+            in.seek(in.getFilePointer() - 2);
+            int v = in.readInt();
+            if (v < 0xffff) {
+              value = String.valueOf(v);
+
+              if (key.equals("StitchingX")) {
+                tileX = v;
+              }
+              else if (key.equals("StitchingY")) {
+                tileY = v;
+              }
+            }
+            else {
+              in.seek(in.getFilePointer() - 4);
+            }
+          }
+          else {
+            in.seek(in.getFilePointer() - 2);
+          }
+        }
+        else {
+          in.seek(in.getFilePointer() - 4);
+        }
+
+        // find the end of this metadata section
+        check1 = in.read() & 0xff;
+        check2 = in.read() & 0xff;
+        while (!(check1 == 3 && check2 == 128) &&
+          !(type == 5 && check1 == 255 && check2 == 255) &&
+          in.getFilePointer() < in.length())
+        {
+          check1 = check2;
+          check2 = in.read() & 0xff;
+        }
+
+        addGlobalMeta(key, value);
+
+        if (check1 == 255 && check2 == 255) {
+          in.seek(in.getFilePointer() - 2);
+          break;
+        }
+      }
+    }
+
+    for (Integer blockSize : planesPerBlock) {
+      m.imageCount += blockSize;
+    }
+
+    if (isFLIM) {
+      m.sizeZ = 1;
+      m.sizeC = m.imageCount;
+      m.cTypes = new String[] {FormatTools.LIFETIME};
+    }
+    else {
+      if (uniquePMTs.size() <= pixelsOffsets.size()) {
+        m.sizeC = uniquePMTs.size();
+      }
+      else {
+        m.sizeC = 1;
+      }
+      m.sizeZ = m.imageCount / m.sizeC;
+    }
+    m.sizeT = m.imageCount / (m.sizeZ * m.sizeC);
+    m.dimensionOrder = "XYZCT";
+
+    tileCount = tileX * tileY;
+
+    // correct the tile count if it doesn't make sense
+    // the count may have been incorrectly recorded or parsed
+    if ((m.imageCount % tileCount) != 0) {
+      tileCount = 1;
+    }
+
+    // recalculate image counts based upon the tile count
+    // tiles are assumed to have the same dimensions
+    if (tileCount > 1) {
+      m.imageCount /= tileCount;
+      if (m.sizeT >= tileCount) {
+        m.sizeT /= tileCount;
+      }
+      else if (m.sizeC >= tileCount) {
+        m.sizeC /= tileCount;
+      }
+      else {
+        m.sizeZ /= tileCount;
+      }
+
+      for (int i=1; i<tileCount; i++) {
+        core.add(m);
+      }
+    }
+
+    MetadataStore store = makeFilterMetadata();
+    MetadataTools.populatePixels(store, this);
+  }
+
+  /** Read the header for an image stack. */
+  private void readStackHeader() throws IOException {
+    int count = in.readInt();
+    if (count > 0xffff) {
+      in.seek(in.getFilePointer() - 2);
+      int len = in.readShort();
+      in.skipBytes(len);
+      count = in.readInt() + 1;
+    }
+    skipTags(count);
+    skipTagBlock();
+  }
+
+  /** Skip a block of unknown string values. */
+  private void skipTags(int count) throws IOException {
+    for (int i=0; i<count; i++) {
+      int length = in.read();
+      if (length == 0) {
+        i--;
+      }
+      if (length < 0) {
+        return;
+      }
+      String tag = in.readString(length);
+    }
+  }
+
+  /** Skip an unknown tag. */
+  private void skipTagBlock() throws IOException {
+    in.skipBytes(1);
+    int length = in.readShort();
+    in.skipBytes(length);
+  }
+
+  /** Find the offset to the next block of pixel data. */
+  private void findOffset() throws IOException {
+    findOffset(true);
+  }
+
+  private void findOffset(boolean readStackHeader) throws IOException {
+    if (readStackHeader) {
+      readStackHeader();
+    }
+
+    while (in.readShort() != 3);
+
+    in.skipBytes(26);
+    int len = in.read();
+    if (len < 0) {
+      return;
+    }
+    String pmt = in.readString(len);
+    // as far as we know, valid PMT names only start with "PMT" or "TCSPC",
+    // depending upon the acquisition mode
+    if (!uniquePMTs.contains(pmt) && (pmt.startsWith("PMT") ||
+      pmt.startsWith("TCSPC")))
+    {
+      uniquePMTs.add(pmt);
+    }
+
+    boolean noPMT = len == 0;
+
+    CoreMetadata m = core.get(0);
+    in.skipBytes(14);
+    planesPerBlock.add(in.readInt());
+    in.skipBytes(noPMT ? 16 : 20);
+    for (int i=0; i<4; i++) {
+      len = in.read();
+      if (len < 0) {
+        noPMT = true;
+        break;
+      }
+      String pmtSetting = in.readString(len);
+    }
+
+    if (noPMT) {
+      while ((in.readShort() & 0xffff) != 0x8003);
+      in.seek(in.getFilePointer() - 2);
+      planesPerBlock.remove(planesPerBlock.size() - 1);
+      return;
+    }
+
+    long planeSize = (long) m.sizeX * m.sizeY *
+      planesPerBlock.get(planesPerBlock.size() - 1) * 2;
+    if (in.getFilePointer() + planeSize < in.length()) {
+      pixelsOffsets.add(in.getFilePointer());
+      in.skipBytes((int) planeSize + 2);
+    }
+    else {
+      planesPerBlock.remove(planesPerBlock.size() - 1);
+    }
+  }
+
+}

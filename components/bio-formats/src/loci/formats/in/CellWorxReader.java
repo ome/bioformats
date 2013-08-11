@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -85,6 +86,8 @@ public class CellWorxReader extends FormatReader {
   private IFormatReader lastReader;
 
   private OMEXMLService service;
+  private HashMap<Integer, Timestamp> timestamps =
+    new HashMap<Integer, Timestamp>();
 
   // -- Constructor --
 
@@ -217,6 +220,7 @@ public class CellWorxReader extends FormatReader {
       lastReader = null;
       doChannels = false;
       service = null;
+      timestamps.clear();
     }
   }
 
@@ -477,6 +481,11 @@ public class CellWorxReader extends FormatReader {
       for (int well=0; well<wellCount; well++) {
         parseWellLogFile(well, store);
       }
+      if (timestamps.size() > 0) {
+        store.setPlateAcquisitionStartTime(timestamps.get(0), 0, 0);
+        store.setPlateAcquisitionEndTime(
+          timestamps.get(timestamps.size() - 1), 0, 0);
+      }
       for (int i=0; i<core.size(); i++) {
         for (int c=0; c<getSizeC(); c++) {
           if (c < wavelengths.length) {
@@ -568,8 +577,10 @@ public class CellWorxReader extends FormatReader {
         String date = DateTools.formatDate(value, DATE_FORMAT);
         for (int field=0; field<fieldCount; field++) {
           if (date != null) {
+            int imageIndex = seriesIndex + field;
+            timestamps.put(imageIndex, new Timestamp(date));
             store.setImageAcquisitionDate(
-              new Timestamp(date), seriesIndex + field);
+              timestamps.get(imageIndex), imageIndex);
           }
         }
       }
