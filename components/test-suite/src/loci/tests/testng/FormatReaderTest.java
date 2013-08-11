@@ -1687,7 +1687,7 @@ public class FormatReaderTest {
         }
         if (!md5.equals(expected1) && !md5.equals(expected2)) {
           success = false;
-          msg = "series " + i;
+          msg = "series " + i + " (" + md5 + ")";
         }
       }
     }
@@ -1831,7 +1831,7 @@ public class FormatReaderTest {
           (expected1 != null || expected2 != null))
         {
           success = false;
-          msg = "series " + i;
+          msg = "series " + i + " (" + md5 + ")";
         }
       }
     }
