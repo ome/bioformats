@@ -2144,7 +2144,9 @@ public class FormatReaderTest {
     // initialize configuration tree
     if (config == null) {
       try {
-        config = configTree.get(id);
+        synchronized (configTree) {
+          config = configTree.get(id);
+        }
       }
       catch (IOException e) { }
     }
