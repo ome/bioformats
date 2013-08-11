@@ -2214,7 +2214,7 @@ public class FormatReaderTest {
   }
 
   /** Outputs test result and generates appropriate assertion. */
-  private void result(String testName, boolean success) {
+  private static void result(String testName, boolean success) {
     result(testName, success, null);
   }
 
@@ -2222,10 +2222,9 @@ public class FormatReaderTest {
    * Outputs test result with optional extra message
    * and generates appropriate assertion.
    */
-  private void result(String testName, boolean success, String msg) {
-    LOGGER.info("\t{}: {} ({}) ({}, {})", new Object[] {testName,
-      success ? "PASSED" : "FAILED", msg == null ? "" : msg, id,
-      config.getFile()});
+  private static void result(String testName, boolean success, String msg) {
+    LOGGER.info("\t{}: {} ({})", new Object[] {testName,
+      success ? "PASSED" : "FAILED", msg == null ? "" : msg});
     if (msg == null) assert success;
     else assert success : msg;
   }
