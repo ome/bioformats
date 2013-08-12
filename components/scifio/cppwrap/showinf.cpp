@@ -42,8 +42,9 @@
 #include "javaTools.h"
 
 // for Bio-Formats C++ bindings
-#include "scifio-4.4.10-SNAPSHOT.h"
-#include "loci-common-4.4.10-SNAPSHOT.h"
+#include "scifio-${release.version}.h"
+#include "loci-legacy-${release.version}.h"
+#include "scifio-devel-${release.version}.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Object;
