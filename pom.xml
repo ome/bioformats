@@ -43,8 +43,9 @@
   <properties>
     <maven.build.timestamp.format>d MMMMM yyyy</maven.build.timestamp.format>
 
-    <release.version>5.0.0-SNAPSHOT</release.version>
-    <vcs.revision></vcs.revision>
+    <revision>${git.revision}</revision>
+    <vcs.revision>${shortRevision}</vcs.revision>
+    <release.version>${release}</release.version>
     <date>${maven.build.timestamp}</date>
     <year>2013</year>
     <project.rootdir>${basedir}</project.rootdir>
@@ -55,6 +56,12 @@
     <xsdfu.roi>${xsdfu.schemapath}/ROI.xsd</xsdfu.roi>
     <xsdfu.sa>${xsdfu.schemapath}/SA.xsd</xsdfu.sa>
     <xsdfu.spw>${xsdfu.schemapath}/SPW.xsd</xsdfu.spw>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <!-- needed for jgit-buildnumber -->
+    <session.executionRootDirectory>${project.basedir}</session.executionRootDirectory>
   </properties>
 
   <build>
@@ -93,6 +100,48 @@
       </testResource>
     </testResources>
     <plugins>
+      <plugin>
+        <groupId>ru.concerteza.buildnumber</groupId>
+        <artifactId>maven-jgit-buildnumber-plugin</artifactId>
+        <version>1.2.6</version>
+        <executions>
+          <execution>
+            <id>git-buildnumber</id>
+            <goals>
+                <goal>extract-buildnumber</goal>
+            </goals>
+            <phase>initialize</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <defaults>
+                <tag>${git.tag}</tag>
+                <default>5.0.0-SNAPSHOT</default>
+              </defaults>
+              <source>
+                if (project.properties.tag) {
+                  project.properties.release = project.properties.tag
+                }
+                else {
+                  project.properties.release = project.properties.default
+                }
+                project.properties.shortRevision = project.properties.revision.substring(0, 7)
+              </source>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
