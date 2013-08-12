@@ -181,6 +181,7 @@ public class FormatReaderTestFactory {
         for (int q=1; q<usedFiles.length; q++) {
           files.remove(usedFiles[q]);
         }
+        reader.close();
       }
       catch (Exception e) { }
 
