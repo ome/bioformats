@@ -60,14 +60,20 @@ import org.slf4j.LoggerFactory;
  */
 public class Timestamp extends PrimitiveType<String> {
 
+  /** ISO 8601 date output format with milliseconds. */
+  public static final String ISO8601_FORMAT_MS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+
+  /** ISO 8601 date output format without milliseconds. */
+  public static final String ISO8601_FORMAT_S = "yyyy-MM-dd'T'HH:mm:ss";
+
   /** ISO 8601 date input formatter. */
-  public static final DateTimeFormatter parser = ISODateTimeFormat.dateTimeParser().withZone(DateTimeZone.UTC);
+  public static final DateTimeFormatter ISO8601_PARSER = ISODateTimeFormat.dateTimeParser().withZone(DateTimeZone.UTC);
 
   /** ISO 8601 date output formatter with milliseconds. */
-  public static final DateTimeFormatter formatms = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+  public static final DateTimeFormatter ISO8601_FORMATTER_MS = DateTimeFormat.forPattern(ISO8601_FORMAT_MS);
 
   /** ISO 8601 date output formatter without milliseconds. */
-  public static final DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+  public static final DateTimeFormatter ISO8601_FORMATTER_S = DateTimeFormat.forPattern(ISO8601_FORMAT_S);
 
   /** Logger for this class. */
   private static final Logger LOGGER =
@@ -76,7 +82,7 @@ public class Timestamp extends PrimitiveType<String> {
   final Instant timestamp;
 
   public Timestamp(final String value) throws IllegalArgumentException, UnsupportedOperationException {
-    this.timestamp = Instant.parse(value, parser);
+    this.timestamp = Instant.parse(value, ISO8601_PARSER);
     this.value = toString();
   }
 
@@ -171,9 +177,9 @@ public class Timestamp extends PrimitiveType<String> {
     if (timestamp == null)
         return "";
     if ((timestamp.getMillis() % 1000) != 0)
-        return formatms.print(timestamp);
+        return ISO8601_FORMATTER_MS.print(timestamp);
     else
-        return format.print(timestamp);
+        return ISO8601_FORMATTER_S.print(timestamp);
   }
 
 }

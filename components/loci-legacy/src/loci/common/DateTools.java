@@ -66,16 +66,16 @@ public final class DateTools {
   public static final long ALT_ZVI_EPOCH = ome.scifio.common.DateTools.ALT_ZVI_EPOCH;
   
   /** ISO 8601 date output formatter with milliseconds. */
-  public static final String ISO8601_FORMATMS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+  public static final String ISO8601_FORMAT_MS = ome.scifio.common.DateTools.ISO8601_FORMAT_MS;
 
   /** ISO 8601 date output formatter without milliseconds. */
-  public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+  public static final String ISO8601_FORMAT = ome.scifio.common.DateTools.ISO8601_FORMAT_S;
 
   /** Human readable timestamp string */
-  public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
+  public static final String TIMESTAMP_FORMAT = ome.scifio.common.DateTools.TIMESTAMP_FORMAT;
 
   /** Human readable timestamp filename string */
-  public static final String FILENAME_FORMAT = "yyyy-MM-dd_HH-mm-ss";
+  public static final String FILENAME_FORMAT = ome.scifio.common.DateTools.FILENAME_FORMAT;
   
   // -- Constructor --
 

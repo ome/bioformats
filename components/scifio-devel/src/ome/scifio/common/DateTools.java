@@ -79,10 +79,10 @@ public final class DateTools {
   public static final long ALT_ZVI_EPOCH = 2921084284761000L;
 
   /** ISO 8601 date output format with milliseconds. */
-  public static final String ISO8601_FORMATMS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+  public static final String ISO8601_FORMAT_MS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
   /** ISO 8601 date output format without milliseconds. */
-  public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+  public static final String ISO8601_FORMAT_S = "yyyy-MM-dd'T'HH:mm:ss";
 
   /** Human readable timestamp string */
   public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -91,10 +91,10 @@ public final class DateTools {
   public static final String FILENAME_FORMAT = "yyyy-MM-dd_HH-mm-ss";
 
   /** ISO 8601 date formatter with milliseconds. */
-  private static final DateTimeFormatter ISO8601_FORMATTER_MS = DateTimeFormat.forPattern(ISO8601_FORMATMS);
+  private static final DateTimeFormatter ISO8601_FORMATTER_MS = DateTimeFormat.forPattern(ISO8601_FORMAT_MS);
 
   /** ISO 8601 date formatter without milliseconds. */
-  private static final DateTimeFormatter ISO8601_FORMATTER_S = DateTimeFormat.forPattern(ISO8601_FORMAT);
+  private static final DateTimeFormatter ISO8601_FORMATTER_S = DateTimeFormat.forPattern(ISO8601_FORMAT_S);
 
   /** Human readable timestamp formatter. */
   private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormat.forPattern(TIMESTAMP_FORMAT);
@@ -123,7 +123,7 @@ public final class DateTools {
 
   /** Converts the given timestamp into an ISO8601 date. */
   public static String convertDate(long stamp, int format) {
-    return convertDate(stamp, format, ISO8601_FORMAT);
+    return convertDate(stamp, format, ISO8601_FORMAT_S);
   }
 
   /** Converts the given timestamp into a date string with the given format. */
