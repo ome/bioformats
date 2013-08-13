@@ -175,7 +175,7 @@ public class TestTools {
       org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
       root.setLevel(Level.INFO);
       root.addAppender(new WriterAppender(
-        new PatternLayout("%p [%d{dd-MM-yyyy HH:mm:ss.SSS}] %m%n"),
+        new PatternLayout("%p [%t] [%d{dd-MM-yyyy HH:mm:ss.SSS}] %m%n"),
         new PrintWriter(logFile, Constants.ENCODING)));
     }
     catch (IOException e) { LOGGER.info("", e); }
