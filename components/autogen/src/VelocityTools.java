@@ -28,11 +28,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Properties;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.DateTimeZone;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -66,10 +61,6 @@ public class VelocityTools {
     // populate Velocity context
     VelocityContext context = new VelocityContext();
     context.put("user", System.getProperty("user.name"));
-    DateTimeFormatter dateFmt = DateTimeFormat.mediumDate();
-    DateTimeFormatter timeFmt = DateTimeFormat.longTime();
-    DateTime date = new DateTime();
-    context.put("timestamp", dateFmt.print(date) + " " + timeFmt.print(date));
 
     return context;
   }
