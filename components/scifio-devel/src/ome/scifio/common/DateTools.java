@@ -78,10 +78,10 @@ public final class DateTools {
   public static final long ZVI_EPOCH = 2921084975759000L;
   public static final long ALT_ZVI_EPOCH = 2921084284761000L;
 
-  /** ISO 8601 date output formatter with milliseconds. */
+  /** ISO 8601 date output format with milliseconds. */
   public static final String ISO8601_FORMATMS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
-  /** ISO 8601 date output formatter without milliseconds. */
+  /** ISO 8601 date output format without milliseconds. */
   public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
   /** Human readable timestamp string */
@@ -89,6 +89,18 @@ public final class DateTools {
 
   /** Human readable timestamp filename string */
   public static final String FILENAME_FORMAT = "yyyy-MM-dd_HH-mm-ss";
+
+  /** ISO 8601 date formatter with milliseconds. */
+  private static final DateTimeFormatter ISO8601_FORMATTER_MS = DateTimeFormat.forPattern(ISO8601_FORMATMS);
+
+  /** ISO 8601 date formatter without milliseconds. */
+  private static final DateTimeFormatter ISO8601_FORMATTER_S = DateTimeFormat.forPattern(ISO8601_FORMAT);
+
+  /** Human readable timestamp formatter. */
+  private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormat.forPattern(TIMESTAMP_FORMAT);
+
+  /** Human readable timestamp filename formatter. */
+  private static final DateTimeFormatter FILENAME_FORMATTER = DateTimeFormat.forPattern(FILENAME_FORMAT);
 
   /** Logger for this class. */
   private static final Logger LOGGER =
@@ -205,11 +217,11 @@ public final class DateTools {
     if (timestamp == null)
       return null;
 
-    DateTimeFormatter isoformat = null;
+    final DateTimeFormatter isoformat;
     if ((timestamp.getMillis() % 1000) != 0)
-      isoformat = DateTimeFormat.forPattern(ISO8601_FORMATMS);
+      isoformat = ISO8601_FORMATTER_MS;
     else
-      isoformat = DateTimeFormat.forPattern(ISO8601_FORMAT);
+      isoformat = ISO8601_FORMATTER_S;
 
     return isoformat.print(timestamp);
   }
@@ -269,8 +281,7 @@ public final class DateTools {
    */
   public static String getTimestamp()
   {
-    final DateTimeFormatter fmt = DateTimeFormat.forPattern(TIMESTAMP_FORMAT);
-    return fmt.print(new DateTime());
+    return TIMESTAMP_FORMATTER.print(new DateTime());
   }
 
   /**
@@ -280,8 +291,7 @@ public final class DateTools {
    */
   public static String getFileTimestamp()
   {
-    final DateTimeFormatter fmt = DateTimeFormat.forPattern(FILENAME_FORMAT);
-    return fmt.print(new DateTime());
+    return FILENAME_FORMATTER.print(new DateTime());
   }
 
 }
