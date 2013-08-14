@@ -38,9 +38,6 @@
 
 package ome.xml.utests;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.joda.time.Instant;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
@@ -73,13 +70,6 @@ public class TimestampTest {
     Assert.assertEquals(lt.getMillisOfSecond(), 732);
   }
 
-  private Calendar createCalendar(Date date) {
-    Assert.assertNotNull(date);
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(date);
-    return calendar;
-  }
-
   @Test
   public void testAsInstant()
   {
@@ -95,34 +85,15 @@ public class TimestampTest {
   }
 
   @Test
-  public void testAsDate() {
-    DateTime d = new DateTime(a.asDate());
-    assertYMDHMSS(d.toInstant());
-  }
-
-  @Test
-  public void testAsCalendar() {
-    DateTime d = new DateTime(a.asCalendar());
-    assertYMDHMSS(d.toInstant());
-  }
-
-  @Test
-  public void testAsSqlDate() {
-    java.sql.Date date = a.asSqlDate();
-    DateTime d = new DateTime(date);
-    assertYMDHMSS(d.toInstant());
-  }
-
-  @Test
-  public void testDateConstructor() {
-    Timestamp b = new Timestamp(a.asDate());
+  public void testInstantConstructor() {
+    Timestamp b = new Timestamp(a.asInstant());
     Assert.assertEquals(b, a);
     assertYMDHMSS(b.asInstant());
   }
 
   @Test
-  public void testCalendarConstructor() {
-    Timestamp b = new Timestamp(a.asCalendar());
+  public void testDateTimeConstructor() {
+    Timestamp b = new Timestamp(a.asDateTime(null));
     Assert.assertEquals(b, a);
     assertYMDHMSS(b.asInstant());
   }
