@@ -30,9 +30,10 @@ import java.io.IOException;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.TimeZone;
 import java.util.Vector;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1684,12 +1685,12 @@ public class MetamorphReader extends BaseTiffReader {
 
   /** Converts a time value in milliseconds into a human-readable string. */
   public static String decodeTime(int millis) {
-    Calendar time = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-    time.setTimeInMillis(millis);
-    String hours = intFormat(time.get(Calendar.HOUR_OF_DAY), 2);
-    String minutes = intFormat(time.get(Calendar.MINUTE), 2);
-    String seconds = intFormat(time.get(Calendar.SECOND), 2);
-    String ms = intFormat(time.get(Calendar.MILLISECOND), 3);
+    DateTime tm = new DateTime(millis, DateTimeZone.UTC);
+    String hours = intFormat(tm.getHourOfDay(), 2);
+    String minutes = intFormat(tm.getMinuteOfHour(), 2);
+    String seconds = intFormat(tm.getSecondOfMinute(), 2);
+    String ms = intFormat(tm.getMillisOfSecond(), 3);
+
     return hours + ":" + minutes + ":" + seconds + ":" + ms;
   }
 
