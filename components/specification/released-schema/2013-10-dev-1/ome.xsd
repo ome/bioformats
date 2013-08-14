@@ -1373,6 +1373,40 @@
 			<xsd:pattern value="(urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+
+	<xsd:element name="Map">
+		<xsd:annotation>
+			<xsd:documentation>
+				This is a Mapping of key/value pairs.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="OME:MapPairs"/>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="MapPairs">
+		<xsd:sequence minOccurs="1" maxOccurs="1">
+			<xsd:element name="M" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation> This is a key/value pair used to build up a Mapping. The
+						Element and Attribute name are kept to single letters to minimize the
+						length at the expense of readability as they are likely to occur many
+						times. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="xsd:string">
+							<xsd:attribute name="K" type="xsd:string"/>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
 	<xsd:simpleType name="PixelType">
 		<xsd:annotation>
 			<xsd:documentation>
