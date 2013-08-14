@@ -111,6 +111,11 @@
 	</OME:ExperimenterGroup>
 	
 	<Instrument ID="Instrument:0">
+		<LightSource ID="LightSource:0">
+			<GenericSource>
+				<Map><M K="a">1</M><M K="b">2</M><M K="c">3</M></Map>
+			</GenericSource>
+		</LightSource>
 		<Objective ID="Objective:0" LotNumber="123" Manufacturer="OME-Labs"
 			NominalMagnification="20" CalibratedMagnification="20.34"/>
 	</Instrument>

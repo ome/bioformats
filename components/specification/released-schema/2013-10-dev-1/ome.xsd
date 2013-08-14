@@ -1376,6 +1376,7 @@
 
 	<xsd:element name="Map">
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Maps</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This is a Mapping of key/value pairs.
 			</xsd:documentation>
@@ -1388,9 +1389,13 @@
 	</xsd:element>
 
 	<xsd:complexType name="MapPairs">
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>MapPairsCollection</plural></xsdfu></xsd:appinfo>
+		</xsd:annotation>
 		<xsd:sequence minOccurs="1" maxOccurs="1">
 			<xsd:element name="M" minOccurs="0" maxOccurs="unbounded">
 				<xsd:annotation>
+					<xsd:appinfo><xsdfu><plural>Ms</plural></xsdfu></xsd:appinfo>
 					<xsd:documentation> This is a key/value pair used to build up a Mapping. The
 						Element and Attribute name are kept to single letters to minimize the
 						length at the expense of readability as they are likely to occur many
@@ -1825,6 +1830,7 @@
 						<xsd:element ref="Filament" minOccurs="1" maxOccurs="1"/>
 						<xsd:element ref="Arc" minOccurs="1" maxOccurs="1"/>
 						<xsd:element ref="LightEmittingDiode" minOccurs="1" maxOccurs="1"/>
+						<xsd:element ref="GenericSource" minOccurs="1" maxOccurs="1"/>
 					</xsd:choice>
 					<xsd:attribute name="ID" use="required" type="LightSourceID">
 						<xsd:annotation>
@@ -2077,6 +2083,22 @@
 				this topic.
 			</xsd:documentation>
 		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="GenericSource"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>GenericSources</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				The GenericSource element is used to represent
+				a source as a collection of key/value pairs, stored
+				in a Map. The other lightsource objects should
+				always be used in preference to this if possible.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Map"/>
+			</xsd:sequence>
+		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Pump"> <!-- top level definition -->
 		<xsd:annotation>
