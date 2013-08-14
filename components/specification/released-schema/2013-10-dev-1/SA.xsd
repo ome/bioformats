@@ -81,6 +81,7 @@
 				<xsd:element ref="TimestampAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="TagAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="TermAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="MapAnnotation" minOccurs="1" maxOccurs="1"/>
 			</xsd:choice>
 		</xsd:complexType>
 	</xsd:element>
@@ -371,6 +372,29 @@
 				<xsd:extension base="BasicAnnotation">
 					<xsd:sequence>
 						<xsd:element name="Value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="MapAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>MapAnnotations</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				An map annotation. The contents of this is a list of key/value pairs.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="TextAnnotation">
+					<xsd:sequence>
+						<xsd:element name="Value" minOccurs="1" maxOccurs="1">
+							<xsd:complexType>
+								<xsd:complexContent>
+									<xsd:extension base="OME:MapPairs"/>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:element>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
