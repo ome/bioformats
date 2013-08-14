@@ -146,6 +146,11 @@
 				<test2/>
 			</SA:Value>
 		</SA:XMLAnnotation>
+		<SA:MapAnnotation ID="Annotation:2">
+			<SA:Value>
+				<M K="a">1</M><M K="b">2</M><M K="c">3</M>
+			</SA:Value>
+		</SA:MapAnnotation>
 	</SA:StructuredAnnotations>
 	<ROI:ROI ID="ROI:0">
 		<ROI:Union>
