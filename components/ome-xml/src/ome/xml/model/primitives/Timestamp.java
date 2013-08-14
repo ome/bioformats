@@ -38,9 +38,6 @@
 
 package ome.xml.model.primitives;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.joda.time.Instant;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -96,16 +93,6 @@ public class Timestamp extends PrimitiveType<String> {
     this.value = toString();
   }
 
-  public Timestamp(final Date date) {
-    this.timestamp = new Instant(date);
-    this.value = toString();
-  }
-
-  public Timestamp(final Calendar calendar) {
-    this.timestamp = new Instant(calendar);
-    this.value = toString();
-  }
-
   /**
    * Returns a <code>Timestamp</code> object holding the value of
    * the specified string, or null if parsing failed.
@@ -143,30 +130,6 @@ public class Timestamp extends PrimitiveType<String> {
    */
   public DateTime asDateTime(DateTimeZone zone) {
       return new DateTime(timestamp, zone);
-  }
-
-  /**
-   * Returns the timestamp as a Java {@link java.util.Date} date type.
-   * @return See above.
-   */
-  public Date asDate() {
-    return new DateTime(timestamp).toDate();
-  }
-
-  /**
-   * Returns the timestamp as a Java {@link java.util.Calendar} date type.
-   * @return See above.
-   */
-  public Calendar asCalendar() {
-    return new DateTime(timestamp).toGregorianCalendar();
-  }
-
-  /**
-   * Returns the timesamp as a Java SQL {@link java.sql.Date} date type.
-   * @return See above.
-   */
-  public java.sql.Date asSqlDate() {
-    return new java.sql.Date(timestamp.getMillis());
   }
 
   /* (non-Javadoc)
