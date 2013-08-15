@@ -22,13 +22,15 @@ Generate code to process OME-XML from an OME-XML schema.
 #  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
+from __future__ import print_function
+
 import logging
 import sys
 import os
 import re
 
-# sys.path.insert(0, os.path.abspath('python/Genshi-0.5dev_r765-py2.4-macosx-10.4-fat.egg'))
-sys.path.insert(0, os.path.abspath('python'))
+# Needed to import fu.py
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), 'python'))
 
 from fu import *
 from util import odict
@@ -36,10 +38,10 @@ from util import odict
 try:
 	from genshi.template import NewTextTemplate
 except ImportError:
-	print """The genshi module was not found, but is required by xsd-fu.
+	print("""The genshi module was not found, but is required by xsd-fu.
 If this is provided by your distribution, install the
 "python-genshi" package or its equivalent.  Otherwise, run
-"pip install genshi" (you may need to install pip first)."""
+"pip install genshi" (you may need to install pip first).""", file=sys.stderr)
 
 	sys.exit(1)
 
@@ -53,7 +55,7 @@ def baseUsage(error):
 	Prints usage so that we don't have to. :)
 	"""
 	cmd = sys.argv[0]
-	print """%s
+	print("""%s
 Usage: %s <subcommand> ...
 Executes an OME-XML Schema definition parsing and code generation subcommand.
 
@@ -74,7 +76,7 @@ Available subcommands:
   debug
 
 Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
-	(error, cmd)
+	(error, cmd))
 	sys.exit(2)
 
 def mainUsage(error):
@@ -82,7 +84,7 @@ def mainUsage(error):
 	Prints usage so that we don't have to. :)
 	"""
 	cmd = sys.argv[0]
-	print """%s
+	print("""%s
 Usage: %s [-n xsd_namespace] [-p package] -o <output_dir> -l <lang> <path/to/ome.xsd...>
 Generates Java classes from an OME XML Schema definition.
 
@@ -93,7 +95,7 @@ Examples:
   %s -n 'xs:' -p ome.xml -o ome/xml schemas/ome.xsd
 
 Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
-	(error, cmd, DEFAULT_PACKAGE, DEFAULT_NAMESPACE, cmd)
+	(error, cmd, DEFAULT_PACKAGE, DEFAULT_NAMESPACE, cmd))
 	sys.exit(2)
 
 def metadataUsage(error):
@@ -101,7 +103,7 @@ def metadataUsage(error):
 	Prints usage so that we don't have to. :)
 	"""
 	cmd = sys.argv[0]
-	print """%s
+	print("""%s
 Usage: %s [-n xsd_namespace] <path/to/ome.xsd...>
 Generates a metadata interface from one or multiple OME schema definitions.
 
@@ -111,7 +113,7 @@ Examples:
   %s -n 'xs:' ome.xsd ROI.xsd SPW.xsd
 
 Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
-	(error, cmd, DEFAULT_NAMESPACE, cmd)
+	(error, cmd, DEFAULT_NAMESPACE, cmd))
 	sys.exit(2)
 
 def main(opts):
@@ -126,70 +128,74 @@ def main(opts):
 	base, filename = os.path.split(template_path(CLASS_TEMPLATE, opts))
 	name, extension = os.path.splitext(filename)
 	for obj in model.objects.values():
-		for filetype in [TYPE_SOURCE, TYPE_HEADER]:
-			fu.SOURCE_TYPE = filetype;
+		fu.SOURCE_TYPE = opts.filetype;
 
-                        CUSTOM_CLASS_TEMPLATE = os.path.join(
-				base, '%s_%s%s' % (name, obj.name, extension))
-                        customContent = ''
-                        if os.path.exists(CUSTOM_CLASS_TEMPLATE):
-                                customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
-                                customContent = customTemplate.generate(
-                                        fu=fu, klass=obj, parents=parents, model=model)
-                                customContent = customContent.render()
-                        customTemplates = glob(os.path.join(
-                                        base, "%s_%s_update_*%s" % (name, obj.name, extension)))
-		        # BEGIN Custom templates for update()
-                        customUpdatePropertyContent = dict()
-                        for customTemplate in customTemplates:
-                                start = customTemplate.rfind("_") + 1
-                                end = customTemplate.rfind(".")
-                                propertyName = customTemplate[start:end]
-                                customTemplate = NewTextTemplate(open(customTemplate))
-                                content = customTemplate.generate(
-                                        fu=fu, klass=obj, parents=parents, model=model)
-                                content = content.render()
-                                customUpdatePropertyContent[propertyName] = content
-		        # END Custom templates for update()
-		        # BEGIN Custom templates for asXMLElement()
-                        customTemplates = glob(os.path.join(
-                                        base, "%s_%s_asXMLElement_*%s" % (name, obj.name, extension)))
-                        customAsXMLElementPropertyContent = dict()
-                        for customTemplate in customTemplates:
-                                start = customTemplate.rfind("_") + 1
-                                end = customTemplate.rfind(".")
-                                propertyName = customTemplate[start:end]
-                                customTemplate = NewTextTemplate(open(customTemplate))
-                                content = customTemplate.generate(
-                                        fu=fu, klass=obj, parents=parents, model=model)
-                                content = content.render()
-                                customAsXMLElementPropertyContent[propertyName] = content
-		        # END Custom templates for asXMLElment()
-                        parents = resolve_parents(model, obj.name)
+		CUSTOM_CLASS_TEMPLATE = os.path.join(
+			base, '%s_%s%s' % (name, obj.name, extension))
+		customContent = ''
+		if os.path.exists(CUSTOM_CLASS_TEMPLATE):
+			customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
+			customContent = customTemplate.generate(
+				fu=fu, klass=obj, parents=parents, model=model)
+			customContent = customContent.render()
+		customTemplates = glob(os.path.join(
+				base, "%s_%s_update_*%s" % (name, obj.name, extension)))
+		# BEGIN Custom templates for update()
+		customUpdatePropertyContent = dict()
+		for customTemplate in customTemplates:
+			start = customTemplate.rfind("_") + 1
+			end = customTemplate.rfind(".")
+			propertyName = customTemplate[start:end]
+			customTemplate = NewTextTemplate(open(customTemplate))
+			content = customTemplate.generate(
+				fu=fu, klass=obj, parents=parents, model=model)
+			content = content.render()
+			customUpdatePropertyContent[propertyName] = content
+		# END Custom templates for update()
+		# BEGIN Custom templates for asXMLElement()
+		customTemplates = glob(os.path.join(
+				base, "%s_%s_asXMLElement_*%s" % (name, obj.name, extension)))
+		customAsXMLElementPropertyContent = dict()
+		for customTemplate in customTemplates:
+			start = customTemplate.rfind("_") + 1
+			end = customTemplate.rfind(".")
+			propertyName = customTemplate[start:end]
+			customTemplate = NewTextTemplate(open(customTemplate))
+			content = customTemplate.generate(
+				fu=fu, klass=obj, parents=parents, model=model)
+			content = content.render()
+			customAsXMLElementPropertyContent[propertyName] = content
+		# END Custom templates for asXMLElment()
+		parents = resolve_parents(model, obj.name)
 
-			try:
-				fullname = generated_filename(obj.name, filetype, opts)
-				fullname = os.path.join("ome", "xml", "model", fullname)
-			except ModelProcessingError:
-				continue
+		try:
+			fullname = generated_filename(obj.name, opts.filetype, opts)
+			fullname = os.path.join("ome", "xml", "model", fullname)
+		except ModelProcessingError:
+			continue
 
-			fu.GUARD = guard(fullname)
+		fu.GUARD = guard(fullname)
 
-			fullname = os.path.join(opts.outdir, fullname)
+		fullname = os.path.join(opts.outdir, fullname)
 
-			outputDirectory = os.path.dirname(fullname)
-			if not os.path.exists(outputDirectory):
-				os.makedirs(outputDirectory)
+		if (opts.verbose == True):
+			print(fullname)
+		if (opts.dryrun == True):
+			continue
 
-			f = open(fullname, "w")
-			classContent = template.generate(
-				fu=fu, klass=obj, model=model,
-				customContent=customContent,
-				customUpdatePropertyContent=customUpdatePropertyContent,
-				customAsXMLElementPropertyContent=customAsXMLElementPropertyContent)
-			classContent = classContent.render()
-			f.write(classContent)
-			f.close()
+		outputDirectory = os.path.dirname(fullname)
+		if not os.path.exists(outputDirectory):
+			os.makedirs(outputDirectory)
+
+		f = open(fullname, "w")
+		classContent = template.generate(
+			fu=fu, klass=obj, model=model,
+			customContent=customContent,
+			customUpdatePropertyContent=customUpdatePropertyContent,
+			customAsXMLElementPropertyContent=customAsXMLElementPropertyContent)
+		classContent = classContent.render()
+		f.write(classContent)
+		f.close()
 
 def enum_value_name(value):
 	"""
@@ -222,29 +228,32 @@ def enumTypesMain(opts):
 		for prop in obj.properties.values():
 			if not prop.isEnumeration:
 				continue
-			print "%s: %s" % (prop.name, prop.langType)
 
-			for filetype in [TYPE_SOURCE, TYPE_HEADER]:
-				try:
-					fullname = generated_filename(prop.langType, filetype, opts)
-					fullname = os.path.join("ome", "xml", "model", "enums", fullname)
-				except ModelProcessingError:
-					continue
+			try:
+				fullname = generated_filename(prop.langType, opts.filetype, opts)
+				fullname = os.path.join("ome", "xml", "model", "enums", fullname)
+			except ModelProcessingError:
+				continue
 
-				fu.GUARD = guard(fullname)
-				fu.SOURCE_TYPE = filetype;
+			fu.GUARD = guard(fullname)
+			fu.SOURCE_TYPE = opts.filetype;
 
-				fullname = os.path.join(opts.outdir, fullname)
+			fullname = os.path.join(opts.outdir, fullname)
 
-				outputDirectory = os.path.dirname(fullname)
-				if not os.path.exists(outputDirectory):
-					os.makedirs(outputDirectory)
+			if (opts.verbose == True):
+				print(fullname)
+			if (opts.dryrun == True):
+				continue
 
-				f = open(fullname, "w")
-				classContent = template.generate(fu=fu, klass=prop,
-								 enum_value_name=enum_value_name).render()
-				f.write(classContent)
-				f.close()
+			outputDirectory = os.path.dirname(fullname)
+			if not os.path.exists(outputDirectory):
+				os.makedirs(outputDirectory)
+
+			f = open(fullname, "w")
+			classContent = template.generate(fu=fu, klass=prop,
+							 enum_value_name=enum_value_name).render()
+			f.write(classContent)
+			f.close()
 
 def enumTypesIncludeAll(opts):
 	"""
@@ -254,25 +263,10 @@ def enumTypesIncludeAll(opts):
 	model = parseXmlSchema(opts)
 	fu = TemplateInfo(opts.outdir, opts.package)
 	template = NewTextTemplate(open(template_path(ENUM_INCLUDEALL_TEMPLATE, opts)).read())
-	headers = set()
+	headers = model.getEnumHeaders()
 
 	fullname = generated_filename("enums", TYPE_HEADER, opts)
 	fullname = os.path.join("ome", "xml", "model", fullname)
-
-	for obj in model.objects.values():
-            for prop in obj.properties.values():
-                if not prop.isEnumeration:
-                    continue
-
-		headername = None
-		try:
-                        # Note that the path is for embedding in the header, and must use forward slashes
-			headername = generated_filename(prop.langType, TYPE_HEADER, opts)
-			headername = "ome/xml/model/enums/" + headername
-		except ModelProcessingError:
-			continue
-
-		headers.add(headername)
 
 	fu.GUARD = guard(fullname)
 	fu.SOURCE_TYPE = TYPE_HEADER;
@@ -280,13 +274,17 @@ def enumTypesIncludeAll(opts):
 
 	fullname = os.path.join(opts.outdir, fullname)
 
+	if (opts.verbose == True):
+		print(fullname)
+	if (opts.dryrun == True):
+		return
+
 	outputDirectory = os.path.dirname(fullname)
 	if not os.path.exists(outputDirectory):
-            os.makedirs(outputDirectory)
+		os.makedirs(outputDirectory)
 
 	f = open(fullname, "w")
-	classContent = template.generate(fu=fu, klass=prop,
-					 enum_value_name=enum_value_name).render()
+	classContent = template.generate(fu=fu).render()
 	f.write(classContent)
 	f.close()
 
@@ -305,29 +303,32 @@ def enumHandlersMain(opts):
 		for prop in obj.properties.values():
 			if not prop.isEnumeration:
 				continue
-			print "%s: %s" % (prop.name, prop.langType)
 
-			for filetype in [TYPE_SOURCE, TYPE_HEADER]:
-				try:
-					fullname = generated_filename(prop.langType + "EnumHandler", filetype, opts)
-					fullname = os.path.join("ome", "xml", "model", "enums", "handlers", fullname)
-				except ModelProcessingError:
-					continue
+			try:
+				fullname = generated_filename(prop.langType + "EnumHandler", opts.filetype, opts)
+				fullname = os.path.join("ome", "xml", "model", "enums", "handlers", fullname)
+			except ModelProcessingError:
+				continue
 
-				fu.GUARD = guard(fullname)
-				fu.SOURCE_TYPE = filetype;
+			fu.GUARD = guard(fullname)
+			fu.SOURCE_TYPE = opts.filetype;
 
-				fullname = os.path.join(opts.outdir, fullname)
+			fullname = os.path.join(opts.outdir, fullname)
 
-				outputDirectory = os.path.dirname(fullname)
-				if not os.path.exists(outputDirectory):
-					os.makedirs(outputDirectory)
+			if (opts.verbose == True):
+				print(fullname)
+			if (opts.dryrun == True):
+				continue
 
-				f = open(fullname, "w")
-				classContent = template.generate(fu=fu, klass=prop,
-								 enum_value_name=enum_value_name, config=config).render()
-				f.write(classContent)
-				f.close()
+			outputDirectory = os.path.dirname(fullname)
+			if not os.path.exists(outputDirectory):
+				os.makedirs(outputDirectory)
+
+			f = open(fullname, "w")
+			classContent = template.generate(fu=fu, klass=prop,
+							 enum_value_name=enum_value_name, config=config).render()
+			f.write(classContent)
+			f.close()
 
 def index_string(name, max_occurs, level):
 	"""Makes a Java method signature string from an index name."""
@@ -393,8 +394,8 @@ def processMetadataTemplate(template, outputFilename, opts):
 		indexes[name] = odict()
 		parents[name] = resolve_parents(model, name)
 		is_multi_path[name] = resolve_hierarchy(indexes[name], model,
-		                                        {name: parents[name]},
-		                                        index_string)
+							{name: parents[name]},
+							index_string)
 
 	fu = TemplateInfo(None, None)
 	fu.max_occurs_under_parent = max_occurs_under_parent
@@ -421,27 +422,28 @@ def processMetadataTemplate(template, outputFilename, opts):
 			customContent[objectName] = dict()
 		customContent[objectName][propertyName] = customTemplate.render()
 
-	for filetype in [TYPE_SOURCE, TYPE_HEADER]:
-		try:
-			fullname = generated_filename(outputFilename, filetype, opts)
-		except ModelProcessingError:
-			continue
+        fullname = generated_filename(outputFilename, opts.filetype, opts)
 
-		fu.GUARD = guard(fullname)
-		fu.SOURCE_TYPE = filetype;
+	fu.GUARD = guard(fullname)
+	fu.SOURCE_TYPE = opts.filetype;
 
-		fullname = os.path.join(opts.outdir, fullname)
+	fullname = os.path.join(opts.outdir, fullname)
 
-		outputDirectory = os.path.dirname(fullname)
-		if not os.path.exists(outputDirectory):
-			os.makedirs(outputDirectory)
+	if (opts.verbose == True):
+		print(fullname)
+	if (opts.dryrun == True):
+		return
 
-		content = template.generate(fu=fu, model=model, parents=parents,
-					    is_multi_path=is_multi_path, indexes=indexes,
-					    customContent=customContent).render()
-		f = open(fullname, "w")
-		f.write(content)
-		f.close()
+	outputDirectory = os.path.dirname(fullname)
+	if not os.path.exists(outputDirectory):
+		os.makedirs(outputDirectory)
+
+	content = template.generate(fu=fu, model=model, parents=parents,
+				    is_multi_path=is_multi_path, indexes=indexes,
+				    customContent=customContent).render()
+	f = open(fullname, "w")
+	f.write(content)
+	f.close()
 
 def omeXmlMetadataMain(opts):
 	"""
@@ -457,7 +459,7 @@ def omeXmlMetadataMain(opts):
 
 	processMetadataTemplate(OMEXML_METADATA_TEMPLATE,
 				os.path.join(relpath, "OMEXMLMetadataImpl"),
-	                        opts)
+				opts)
 
 def omeroMetadataMain(opts):
 	"""
@@ -466,7 +468,7 @@ def omeroMetadataMain(opts):
 	"""
 
 	processMetadataTemplate(OMERO_METADATA_TEMPLATE, "OmeroMetadata",
-	                        opts)
+				opts)
 
 def omeroModelMain(opts):
 	"""
@@ -475,7 +477,7 @@ def omeroModelMain(opts):
 	"""
 
 	processMetadataTemplate(OMERO_MODEL_TEMPLATE, "OmeroModel.xml",
-	                        opts)
+				opts)
 
 def metadataMain(opts):
 	"""
@@ -491,23 +493,23 @@ def metadataMain(opts):
 
 	processMetadataTemplate(METADATA_STORE_TEMPLATE,
 				os.path.join(relpath, "MetadataStore"),
-	                        opts)
+				opts)
 
 	processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE,
 				os.path.join(relpath, "MetadataRetrieve"),
-	                        opts)
+				opts)
 
 	processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE,
 				os.path.join(relpath, "AggregateMetadata"),
-	                        opts)
+				opts)
 
 	processMetadataTemplate(FILTER_METADATA_TEMPLATE,
 				os.path.join(relpath, "FilterMetadata"),
-	                        opts)
+				opts)
 
 	processMetadataTemplate(DUMMY_METADATA_TEMPLATE,
 				os.path.join(relpath, "DummyMetadata"),
-	                        opts)
+				opts)
 
 def debugMain(opts):
 	"""
@@ -526,25 +528,25 @@ def debugMain(opts):
 			CUSTOM_CLASS_TEMPLATE = os.path.join(base, '%s_%s%s' % (name, obj.name, extension))
 			customContent = ''
 			if os.path.exists(CUSTOM_CLASS_TEMPLATE):
-	       			customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
+				customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
 				customContent = customTemplate.generate(
 					fu=fu, klass=obj, parents=parents, model=model)
 				customContent = customContent.render()
-			print "Dump: %s" % obj.__dict__
-			print "Element Dump: %s" % obj.element.__dict__
-			print " +-- %s(base=%s, type=%s)" % (obj.name, obj.base, obj.type)
+			print("Dump: %s" % obj.__dict__)
+			print("Element Dump: %s" % obj.element.__dict__)
+			print(" +-- %s(base=%s, type=%s)" % (obj.name, obj.base, obj.type))
 			for prop in obj.properties.values():
-				print "Dump: %s" % prop.__dict__
-				print "Delegate Dump: %s" % prop.delegate.__dict__
-				print " +---- %s(%s) [%d:%d]" % \
-				    (prop.name, prop.type, prop.minOccurs, prop.maxOccurs)
-			print "\n"
+				print("Dump: %s" % prop.__dict__)
+				print("Delegate Dump: %s" % prop.delegate.__dict__)
+				print(" +---- %s(%s) [%d:%d]" % \
+				    (prop.name, prop.type, prop.minOccurs, prop.maxOccurs))
+			print("\n")
 
 			fu.GUARD = guard(fullname)
-			fu.SOURCE_TYPE = filetype;
+			fu.SOURCE_TYPE = opts.filetype;
 
-			print template.generate(
-					fu=fu, klass=obj, parents=parents, model=model, customContent=customContent).render()
+			print(template.generate(
+					fu=fu, klass=obj, parents=parents, model=model, customContent=customContent).render())
 
 def docGenMain(opts):
 	"""
@@ -559,21 +561,21 @@ def docGenMain(opts):
 	["SPW",           "../specification/InProgress/SPW.xsd"],
 	["BinaryFile",    "../specification/InProgress/BinaryFile.xsd"],
 	["SA",            "../specification/InProgress/SA.xsd"],
-	["ROI",            "../specification/InProgress/ROI.xsd"]
+	["ROI",           "../specification/InProgress/ROI.xsd"]
 	]:
 		prefix = theSchemas[0] + ":"
 		opts.args = [theSchemas[1]]
 		model = parseXmlSchema(opts)
 		fu = TemplateInfo(opts.outdir, opts.package)
 		template = NewTextTemplate(open(template_path(CLASS_TEMPLATE, opts)).read())
-		print " == `%s` ==" % (prefix)
+		print(" == `%s` ==" % (prefix))
 		for obj in model.objects.values():
-			print " === %s%s ===" % (prefix, obj.name)
-			print " * %s%s(base = `%s`, type = `%s`)" % (prefix, obj.name, obj.base, obj.type)
+			print(" === %s%s ===" % (prefix, obj.name))
+			print(" * %s%s(base = `%s`, type = `%s`)" % (prefix, obj.name, obj.base, obj.type))
 			for prop in obj.properties.values():
-				print "   * %s%s:%s( `%s` ) ![%d:%d]" % \
-				    (prefix, obj.name, prop.name, prop.type, prop.minOccurs, prop.maxOccurs)
-			print "\n"
+				print("   * %s%s:%s( `%s` ) ![%d:%d]" % \
+				    (prefix, obj.name, prop.name, prop.type, prop.minOccurs, prop.maxOccurs))
+			print("\n")
 
 def tabGenMain(opts):
 	"""
@@ -609,29 +611,40 @@ def parentlist(model, name, pre):
 			#print pre + name;
 			for prop in obj.properties.values():
 				if prop.name[-14:] == "_BackReference":
-					print "-\t-\t" + prop.name + "\t" + prop.type + "\tback\t" + pre + prop.name;
+					print("-\t-\t" + prop.name + "\t" + prop.type + "\tback\t" + pre + prop.name)
 					pass
 				else:
 					if prop.name == name:
-						print "%s\t%s" % (prop.minOccurs, prop.maxOccurs ) + "\t" + prop.name + "\t" + prop.type + "\trecursion\t" + pre + prop.name + " - recursion";
+						print("%s\t%s" % (prop.minOccurs, prop.maxOccurs ) + "\t" + prop.name + "\t" + prop.type + "\trecursion\t" + pre + prop.name + " - recursion")
 					else:
-						print "%s\t%s" % (prop.minOccurs, prop.maxOccurs ) + "\t" + prop.name + "\t" + prop.type + "\t\t" + pre + prop.name;
+						print("%s\t%s" % (prop.minOccurs, prop.maxOccurs ) + "\t" + prop.name + "\t" + prop.type + "\t\t" + pre + prop.name)
 						parentlist(model, prop.type, pre + prop.name + ":")
 
 
 class options:
 	def __init__(self, args):
 		try:
-			self.options, self.args = gnu_getopt(args[1:], "l:o:p:n:t:")
-		except GetoptError, (msg, opt):
+			self.options, self.args = gnu_getopt(args[1:], "df:l:o:p:n:t:qv")
+		except GetoptError(msg, opt):
 			mainUsage(msg)
 
 		self.outdir = None
 		self.package = DEFAULT_PACKAGE
 		self.namespace = DEFAULT_NAMESPACE
 		self.lang = LANG_JAVA
-		self.templatepath = "."
+		self.filetype = TYPE_SOURCE
+		self.templatepath = os.path.dirname(os.path.realpath(__file__))
+		self.verbose = True
+		self.dryrun = False
 		for option, argument in self.options:
+			if option == "-f":
+				if argument == TYPE_SOURCE:
+					self.filetype = TYPE_SOURCE
+				elif argument == TYPE_HEADER:
+					self.filetype = TYPE_HEADER
+				else:
+					mainUsage("Invalid filetype; source and header are the only valid options")
+					sys.exit(1)
 			if option == "-l":
 				if argument == LANG_JAVA:
 					self.lang = LANG_JAVA
@@ -648,6 +661,12 @@ class options:
 				self.namespace = argument
 			if option == "-t":
 				self.templatepath = argument
+			if option == "-q":
+				self.verbose = False
+			if option == "-v":
+				self.verbose = True
+			if options == "-d":
+				self.dryrun = True
 		if self.outdir is None:
 			mainUsage("Output directory must be specified!")
 			sys.exit(1)
