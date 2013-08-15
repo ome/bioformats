@@ -707,7 +707,7 @@ class OMEModelProperty(OMEModelEntity):
     def _get_possibleValues(self):
         return self.delegate.getValues()
     possibleValues = property(_get_possibleValues,
-        doc="""If the property is an enumeration, it's possible values.""")
+        doc="""If the property is an enumeration, its possible values.""")
 
     def _get_defaultValue(self):
         if "OTHER" in self.delegate.getValues():
@@ -715,7 +715,7 @@ class OMEModelProperty(OMEModelEntity):
         else:
             return self.delegate.getValues()[0]
     defaultValue = property(_get_defaultValue,
-        doc="""If the property is an enumeration, it's default value.""")
+        doc="""If the property is an enumeration, its default value.""")
 
 
     def _get_argType(self):
