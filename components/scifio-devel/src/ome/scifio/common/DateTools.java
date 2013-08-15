@@ -38,9 +38,16 @@ package ome.scifio.common;
 
 import java.text.FieldPosition;
 import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+
+import org.joda.time.Instant;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.IllegalInstantException;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A utility class with convenience methods for working with dates.
@@ -71,8 +78,33 @@ public final class DateTools {
   public static final long ZVI_EPOCH = 2921084975759000L;
   public static final long ALT_ZVI_EPOCH = 2921084284761000L;
 
-  /** ISO 8601 date format string. */
-  public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+  /** ISO 8601 date output format with milliseconds. */
+  public static final String ISO8601_FORMAT_MS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+
+  /** ISO 8601 date output format without milliseconds. */
+  public static final String ISO8601_FORMAT_S = "yyyy-MM-dd'T'HH:mm:ss";
+
+  /** Human readable timestamp string */
+  public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+  /** Human readable timestamp filename string */
+  public static final String FILENAME_FORMAT = "yyyy-MM-dd_HH-mm-ss";
+
+  /** ISO 8601 date formatter with milliseconds. */
+  private static final DateTimeFormatter ISO8601_FORMATTER_MS = DateTimeFormat.forPattern(ISO8601_FORMAT_MS);
+
+  /** ISO 8601 date formatter without milliseconds. */
+  private static final DateTimeFormatter ISO8601_FORMATTER_S = DateTimeFormat.forPattern(ISO8601_FORMAT_S);
+
+  /** Human readable timestamp formatter. */
+  private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormat.forPattern(TIMESTAMP_FORMAT);
+
+  /** Human readable timestamp filename formatter. */
+  private static final DateTimeFormatter FILENAME_FORMATTER = DateTimeFormat.forPattern(FILENAME_FORMAT);
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(DateTools.class);
 
   // -- Constructor --
 
@@ -91,7 +123,7 @@ public final class DateTools {
 
   /** Converts the given timestamp into an ISO8601 date. */
   public static String convertDate(long stamp, int format) {
-    return convertDate(stamp, format, ISO8601_FORMAT);
+    return convertDate(stamp, format, ISO8601_FORMAT_S);
   }
 
   /** Converts the given timestamp into a date string with the given format. */
@@ -132,17 +164,20 @@ public final class DateTools {
         break;
     }
 
-    SimpleDateFormat fmt = new SimpleDateFormat(outputFormat);
-    if (correctTimeZoneForGMT) {
-      TimeZone tz = TimeZone.getDefault();
-      ms -= tz.getOffset(ms);
+    final DateTimeFormatter fmt = DateTimeFormat.forPattern(outputFormat);
+
+    try {
+      if (correctTimeZoneForGMT) {
+        DateTimeZone tz = DateTimeZone.getDefault();
+        ms = tz.convertLocalToUTC(ms, false);
+      }
     }
-    StringBuffer sb = new StringBuffer();
+    catch (ArithmeticException e) {}
+    catch (IllegalInstantException e) {}
 
-    Date d = new Date(ms);
+    DateTime d = new DateTime(ms, DateTimeZone.UTC);
 
-    fmt.format(d, sb, new FieldPosition(0));
-    return sb.toString();
+    return fmt.print(d);
   }
 
   /**
@@ -166,12 +201,29 @@ public final class DateTools {
    */
   public static String formatDate(String date, String format, boolean lenient) {
     if (date == null) return null;
-    SimpleDateFormat sdf = new SimpleDateFormat(format);
-    sdf.setLenient(lenient);
-    Date d = sdf.parse(date, new ParsePosition(0));
-    if (d == null) return null;
-    sdf = new SimpleDateFormat(ISO8601_FORMAT);
-    return sdf.format(d);
+    final DateTimeFormatter parser = DateTimeFormat.forPattern(format);
+    Instant timestamp = null;
+
+    try {
+      timestamp = Instant.parse(date, parser);
+    }
+    catch (IllegalArgumentException e) {
+        LOGGER.debug("Invalid timestamp '{}'", date);
+    }
+    catch (UnsupportedOperationException e) {
+        LOGGER.debug("Error parsing timestamp '{}'", date, e);
+    }
+
+    if (timestamp == null)
+      return null;
+
+    final DateTimeFormatter isoformat;
+    if ((timestamp.getMillis() % 1000) != 0)
+      isoformat = ISO8601_FORMATTER_MS;
+    else
+      isoformat = ISO8601_FORMATTER_S;
+
+    return isoformat.print(timestamp);
   }
 
   /**
@@ -208,10 +260,38 @@ public final class DateTools {
    * (in Unix format: milliseconds since January 1, 1970).
    */
   public static long getTime(String date, String format) {
-    SimpleDateFormat f = new SimpleDateFormat(format);
-    Date d = f.parse(date, new ParsePosition(0));
-    if (d == null) return -1;
-    return d.getTime();
+    final DateTimeFormatter parser = DateTimeFormat.forPattern(format);
+    Instant timestamp = null;
+    try {
+      Instant.parse(date, parser);
+    }
+    catch (IllegalArgumentException e) {
+        LOGGER.debug("Invalid timestamp '{}'", date);
+    }
+    catch (UnsupportedOperationException e) {
+        LOGGER.debug("Error parsing timestamp '{}'", date, e);
+    }
+    if (timestamp == null) return -1;
+    return timestamp.getMillis();
+  }
+
+  /**
+   * Returns a timestamp for the current timezone in a
+   * human-readable locale-independent format ("YYYY-MM-DD HH:MM:SS")
+   */
+  public static String getTimestamp()
+  {
+    return TIMESTAMP_FORMATTER.print(new DateTime());
+  }
+
+  /**
+   * Returns a timestamp for the current timezone in a format suitable
+   * for a filename in a locale-independent format
+   * ("YYYY-MM-DD_HH-MM-SS")
+   */
+  public static String getFileTimestamp()
+  {
+    return FILENAME_FORMATTER.print(new DateTime());
   }
 
 }

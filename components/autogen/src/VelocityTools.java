@@ -26,9 +26,6 @@
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Properties;
 
 import org.apache.velocity.Template;
@@ -64,10 +61,6 @@ public class VelocityTools {
     // populate Velocity context
     VelocityContext context = new VelocityContext();
     context.put("user", System.getProperty("user.name"));
-    DateFormat dateFmt = DateFormat.getDateInstance(DateFormat.MEDIUM);
-    DateFormat timeFmt = DateFormat.getTimeInstance(DateFormat.LONG);
-    Date date = Calendar.getInstance().getTime();
-    context.put("timestamp", dateFmt.format(date) + " " + timeFmt.format(date));
 
     return context;
   }
