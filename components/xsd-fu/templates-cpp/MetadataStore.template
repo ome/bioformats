@@ -99,7 +99,7 @@ package loci.formats.meta;
 #include <vector>
 
 #include <ome/bioformats/meta/BaseMetadata.h>
-#include <ome/xml/model.h>
+// #include <ome/xml/model.h>
 
 {% if fu.SOURCE_TYPE == "header" %}\
 #ifndef ${fu.GUARD}
