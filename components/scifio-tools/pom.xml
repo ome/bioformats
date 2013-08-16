@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>loci</groupId>
+    <groupId>ome</groupId>
     <artifactId>pom-scifio</artifactId>
     <version>${release.version}</version>
     <relativePath>../..</relativePath>

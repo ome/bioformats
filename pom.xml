@@ -5,7 +5,7 @@
     http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>loci</groupId>
+  <groupId>ome</groupId>
   <artifactId>pom-scifio</artifactId>
   <version>${release.version}</version>
   <packaging>pom</packaging>
