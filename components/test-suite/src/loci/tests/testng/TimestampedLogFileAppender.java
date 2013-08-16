@@ -26,8 +26,8 @@
 package loci.tests.testng;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import loci.common.DateTools;
 
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
@@ -79,8 +79,7 @@ public class TimestampedLogFileAppender extends FileAppender {
         final int lastDotIndex = this.fileName.lastIndexOf(".");
         String newFileName = "";
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss");
-        String timestamp = "-" + sdf.format(new Date());
+        String timestamp = "-" + DateTools.getFileTimestamp();
 
         if (lastDotIndex != -1) {
             newFileName = this.fileName.substring(0, lastDotIndex) +

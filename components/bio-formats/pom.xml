@@ -73,6 +73,11 @@
       <artifactId>slf4j-api</artifactId>
       <version>1.5.10</version>
     </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.2</version>
+    </dependency>
 
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
 
