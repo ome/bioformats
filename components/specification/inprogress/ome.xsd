@@ -1393,6 +1393,7 @@
 
 	<xsd:element name="Map">
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Maps</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This is a Mapping of key/value pairs.
 			</xsd:documentation>
@@ -1405,9 +1406,13 @@
 	</xsd:element>
 
 	<xsd:complexType name="MapPairs">
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>MapPairsCollection</plural></xsdfu></xsd:appinfo>
+		</xsd:annotation>
 		<xsd:sequence minOccurs="1" maxOccurs="1">
 			<xsd:element name="M" minOccurs="0" maxOccurs="unbounded">
 				<xsd:annotation>
+					<xsd:appinfo><xsdfu><plural>Ms</plural></xsdfu></xsd:appinfo>
 					<xsd:documentation> This is a key/value pair used to build up a Mapping. The
 						Element and Attribute name are kept to single letters to minimize the
 						length at the expense of readability as they are likely to occur many
