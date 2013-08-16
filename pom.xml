@@ -43,8 +43,7 @@
   <properties>
     <maven.build.timestamp.format>d MMMMM yyyy</maven.build.timestamp.format>
 
-    <revision>${git.revision}</revision>
-    <vcs.revision>${shortRevision}</vcs.revision>
+    <vcs.revision>${revision}</vcs.revision>
     <release.version>${release}</release.version>
     <date>${maven.build.timestamp}</date>
     <year>2013</year>
@@ -59,9 +58,6 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-    <!-- needed for jgit-buildnumber -->
-    <session.executionRootDirectory>${project.basedir}</session.executionRootDirectory>
   </properties>
 
   <build>
@@ -102,20 +98,6 @@
     </testResources>
     <plugins>
       <plugin>
-        <groupId>ru.concerteza.buildnumber</groupId>
-        <artifactId>maven-jgit-buildnumber-plugin</artifactId>
-        <version>1.2.6</version>
-        <executions>
-          <execution>
-            <id>git-buildnumber</id>
-            <goals>
-                <goal>extract-buildnumber</goal>
-            </goals>
-            <phase>initialize</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
         <version>1.4</version>
@@ -127,17 +109,73 @@
             </goals>
             <configuration>
               <defaults>
-                <tag>${git.tag}</tag>
-                <default>5.0.0-SNAPSHOT</default>
+                <default>UNKNOWN</default>
               </defaults>
               <source>
-                if (project.properties.tag) {
-                  project.properties.release = project.properties.tag
+                import java.util.regex.Pattern
+
+                def ant = new AntBuilder()
+                try {
+                  ant.exec(outputproperty:"revision",
+                    failifexecutionfails:"false",
+                    executable: 'git') {
+                      arg(line:"rev-parse --short HEAD")
+                  }
+                }
+                catch (Exception e) { }
+
+                try {
+                  ant.exec(outputproperty:"exactTag",
+                    resultproperty:"exactTagRC",
+                    failifexecutionfails:"true",
+                    failonerror:"false",
+                    executable: 'git') {
+                      arg(line:"describe --match=v[0-9]* --exact")
+                  }
+                }
+                catch (Exception e) {
+                  ant.project.properties.exactTagRC = ""
+                  ant.project.properties.exactTag = ""
+                }
+
+                try {
+                  ant.exec(outputproperty:"describe",
+                    failifexecutionfails:"true",
+                    executable: 'git') {
+                      arg(line:"describe --match=v[0-9]*")
+                  }
+                }
+                catch (Exception e) {
+                  ant.project.properties.describe = ""
+                }
+
+                println ant.project.properties.exactTagRC
+                println ant.project.properties.exactTag
+                println ant.project.properties.describe
+
+                if (ant.project.properties.exactTagRC == 0) {
+                  // if we're building from a tag, set the release name
+                  // to be the tag name, minus the leading 'v'
+                  project.properties.release = ant.project.properties.exactTag.substring(1)
+                }
+                else if (ant.project.properties.describe) {
+                  // if we're building within Git, but not from a tag,
+                  // then use the last known tag's number to set a snapshot
+                  // version
+                  def regex = Pattern.compile("v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)")
+                  def groups = regex.matcher(ant.project.properties.describe)
+                  groups.matches()
+                  def major = groups.group(1)
+                  def minor = groups.group(2)
+                  def patch = groups.group(3)
+                  project.properties.release = major + "." + minor + "." + patch + "-SNAPSHOT"
                 }
                 else {
+                  // if we're building outside of Git, set a default
+                  // version number
                   project.properties.release = project.properties.default
                 }
-                project.properties.shortRevision = project.properties.revision.substring(0, 7)
+                project.properties.revision = ant.project.properties.revision
               </source>
             </configuration>
           </execution>
