@@ -258,6 +258,18 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.get16BitLookupTable();
   }
 
+  public Modulo getModuloZ() {
+    return reader.getModuloZ();
+  }
+
+  public Modulo getModuloC() {
+    return reader.getModuloC();
+  }
+
+  public Modulo getModuloT() {
+    return reader.getModuloT();
+  }
+
   public int[] getChannelDimLengths() {
     return reader.getChannelDimLengths();
   }

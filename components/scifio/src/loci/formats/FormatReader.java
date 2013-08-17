@@ -736,6 +736,24 @@ public abstract class FormatReader extends FormatHandler
     return null;
   }
 
+  /* @see IFormatReader#getModuloZ() */
+  public Modulo getModuloZ() {
+    FormatTools.assertId(currentId, true, 1);
+    return core.get(getCoreIndex()).moduloZ;
+  }
+
+  /* @see IFormatReader#getModuloC() */
+  public Modulo getModuloC() {
+    FormatTools.assertId(currentId, true, 1);
+    return core.get(getCoreIndex()).moduloC;
+  }
+
+  /* @see IFormatReader#getModuloT() */
+  public Modulo getModuloT() {
+    FormatTools.assertId(currentId, true, 1);
+    return core.get(getCoreIndex()).moduloT;
+  }
+
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
     FormatTools.assertId(currentId, true, 1);
