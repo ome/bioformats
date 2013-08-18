@@ -394,8 +394,10 @@ public class ImspectorReader extends FormatReader {
 
     if (isFLIM) {
       m.sizeZ = 1;
-      m.sizeC = m.imageCount;
-      m.cTypes = new String[] {FormatTools.LIFETIME};
+      m.sizeT = m.imageCount;
+      m.moduloT.parentType = FormatTools.LIFETIME;
+      m.sizeC = m.imageCount / (m.sizeZ * m.sizeT);
+      m.dimensionOrder = "XYZTC";
     }
     else {
       if (uniquePMTs.size() <= pixelsOffsets.size()) {
@@ -405,9 +407,9 @@ public class ImspectorReader extends FormatReader {
         m.sizeC = 1;
       }
       m.sizeZ = m.imageCount / m.sizeC;
+      m.sizeT = m.imageCount / (m.sizeZ * m.sizeC);
+      m.dimensionOrder = "XYZCT";
     }
-    m.sizeT = m.imageCount / (m.sizeZ * m.sizeC);
-    m.dimensionOrder = "XYZCT";
 
     tileCount = tileX * tileY;
 
