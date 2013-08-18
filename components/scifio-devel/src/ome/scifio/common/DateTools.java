@@ -263,7 +263,7 @@ public final class DateTools {
     final DateTimeFormatter parser = DateTimeFormat.forPattern(format);
     Instant timestamp = null;
     try {
-      Instant.parse(date, parser);
+      timestamp = Instant.parse(date, parser);
     }
     catch (IllegalArgumentException e) {
         LOGGER.debug("Invalid timestamp '{}'", date);
