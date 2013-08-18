@@ -27,12 +27,14 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -355,15 +357,15 @@ public class ZeissZVIReader extends BaseZeissReader {
     }
   }
 
-    @Override
-    protected void fillMetadataPass5(MetadataStore store) throws FormatException, IOException {
-      super.fillMetadataPass5(store);
+  @Override
+  protected void fillMetadataPass5(MetadataStore store) throws FormatException, IOException {
+    super.fillMetadataPass5(store);
 
     for (String name : tagsToParse) {
       int imageNum = getImageNumber(name, -1);
       parseTags(imageNum, name, store);
-      }
     }
+  }
 
   @Override
   protected void countImages() {
@@ -407,41 +409,60 @@ public class ZeissZVIReader extends BaseZeissReader {
   }
 
   private String getNextTag(RandomAccessInputStream s) throws IOException {
+    // See
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/ms221170(v=vs.85).aspx
+    // for VARENUM enumeration values
     int type = s.readShort();
     switch (type) {
-      case 0:
-      case 1:
+      case 0: // VT_EMPTY
+      case 1: // VT_NULL
         return "";
-      case 2:
+      case 2: // VT_I2
         return String.valueOf(s.readShort());
-      case 3:
-      case 22:
-      case 23:
+      case 3: // VT_I4
+      case 22: // VT_INT
         return String.valueOf(s.readInt());
-      case 4:
+      case 19: // VT_UI4
+      case 23: // VT_UINT
+        return String.valueOf(s.readUnsignedInt());
+      case 4: // VT_R4
         return String.valueOf(s.readFloat());
-      case 5:
+      case 5: // VT_R8
         return String.valueOf(s.readDouble());
-      case 7:
-      case 20:
-      case 21:
-        return String.valueOf(s.readLong());
-      case 8:
-      case 69:
+      case 7: // VT_DATE
+          return String.valueOf(s.readDouble());
+      case 20: // VT_I8
+          String str2 = String.valueOf(s.readLong());
+          return str2;
+      case 21: // VT_UI8
+          byte[] raw = new byte[8];
+          s.read(raw);
+          BigInteger b1 = new BigInteger(1, raw);
+          // long v1 = s.readUnsignedInt();
+          // long v2 = s.readUnsignedInt();
+          // BigInteger b1 = new BigInteger(v1);
+          // BigInteger b2 = new BigInteger(v2);
+          // BigInteger b3 = new BigInteger(4294967296L);
+          // b1.multiply(b3);
+          // b1.add(b2);
+          // String str3 = String.valueOf(s.readLong());
+          return b1.toString();
+      case 8: // VT_BSTR
+      case 69: // VT_STORED_OBJECT
         int len = s.readInt();
         return s.readString(len);
-      case 9:
-      case 13:
+      case 9: // VT_DISPATCH
+      case 13: // VT_UNKNOWN
         s.skipBytes(16);
         return "";
-      case 11:
+      case 11: // VT_BOOL
         return String.valueOf(s.readShort()!=0);
-      case 63:
-      case 65:
+      case 63: // ???
+      case 65: // VT_BLOB
         len = s.readInt();
         s.skipBytes(len);
         return "";
-      case 66:
+      case 66: // VT_STREAM
         len = s.readShort();
         return s.readString(len);
       default:
@@ -475,7 +496,8 @@ public class ZeissZVIReader extends BaseZeissReader {
 
       s.skipBytes(6);
 
-      tags.add(new Tag(tagID, value, Context.MAIN));
+      if (tagID != 1047) // Use 1025 only for ZVI.
+        tags.add(new Tag(tagID, value, Context.MAIN));
     }
 
     parseMainTags(image, store, tags);

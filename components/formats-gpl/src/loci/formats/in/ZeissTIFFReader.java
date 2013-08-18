@@ -418,8 +418,17 @@ public class ZeissTIFFReader extends BaseZeissReader {
     // Determine number of separate timepoints, channels, and z slices.
     for (ZeissTIFFHandler.Plane p : tiffInfo.handler.planes) {
       Plane np = new Plane();
+      boolean tag_1047_present = false;
       for (Tag t : p.tagset.tags) {
-        np.tags.put(t.getKey(), t.getValue());
+        if (t.getKeyID() == 1047)
+          tag_1047_present = true;
+      }
+      for (Tag t : p.tagset.tags) {
+         // Use 1047 in preference to 1025 since 1025 is a
+         // locale-specific text date rather than a float, and it's
+         // better to use the latter.
+        if (t.getKeyID() != 1025 || tag_1047_present == false)
+          np.tags.put(t.getKey(), t.getValue());
       }
       np.taglist = p.tagset.tags;
       // Special case: _single plane is for base image only.  Should only occur when we don't have a _files directory.

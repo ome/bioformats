@@ -52,6 +52,9 @@ import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 /**
  * BaseZeissReader contains common functionality required by
  * readers for Zeiss AxioVision formats.
@@ -69,6 +72,7 @@ public abstract class BaseZeissReader extends FormatReader {
   protected int[] offsets;
   protected int[][] coordinates;
 
+  protected Timestamp acquisitionDate;
   protected Map<Integer, String> timestamps, exposureTime;
   protected int cIndex = -1;
   protected boolean isJPEG, isZlib;
@@ -303,13 +307,9 @@ public abstract class BaseZeissReader extends FormatReader {
       long firstStamp = 0;
       if (timestamps.size() > 0) {
         String timestamp = timestamps.get(0);
-        firstStamp = parseTimestamp(timestamp);
-        firstStamp /= 1600;
-        int epoch = timestamps.size() == 1 ? DateTools.ALT_ZVI : DateTools.ZVI;
-        String date = DateTools.convertDate(firstStamp, epoch);
-        if (date != null) {
-          store.setImageAcquisitionDate(new Timestamp(date), i);
-        }
+        store.setImageAcquisitionDate(new Timestamp(timestamp), i);
+      } else if (acquisitionDate != null) {
+        store.setImageAcquisitionDate(acquisitionDate, i);
       }
     }
 
@@ -384,7 +384,10 @@ public abstract class BaseZeissReader extends FormatReader {
           store.setPixelsPhysicalSizeZ(sizeZ, i);
         }
 
-        long firstStamp = parseTimestamp(timestamps.get(0));
+        Timestamp firstStamp = null;
+        if (timestamps.get(0) != null) {
+          firstStamp = new Timestamp(timestamps.get(0));
+        }
 
         for (int plane=0; plane<getImageCount(); plane++) {
           int[] zct = getZCTCoords(plane);
@@ -404,11 +407,11 @@ public abstract class BaseZeissReader extends FormatReader {
 
           int posIndex = i * getImageCount() + plane;
 
-          if (posIndex < timestamps.size()) {
-            String timestamp = timestamps.get(posIndex);
-            long stamp = parseTimestamp(timestamp);
-            stamp -= firstStamp;
-            store.setPlaneDeltaT(new Time((double) stamp / 1600000, UNITS.SECOND), i, plane);
+          if (posIndex < timestamps.size() && firstStamp != null) {
+            Timestamp timestamp = new Timestamp(timestamps.get(posIndex));
+            long difference = timestamp.asInstant().getMillis() - firstStamp.asInstant().getMillis();
+            double delta = (double) difference;
+            store.setPlaneDeltaT(new Time(delta, UNITS.MILLISECOND), i, plane);
           }
 
           if (stageX.get(posIndex) != null) {
@@ -827,7 +830,17 @@ public abstract class BaseZeissReader extends FormatReader {
         }
 
         if (cIndex != -1) key += " " + cIndex;
-        addGlobalMeta(key, value);
+        if (!key.startsWith("Camera Acquisition Time") && !key.startsWith("ImageRelativeTime")) {
+          String metavalue = value;
+          if (key.endsWith("Date")) {
+            try {
+              metavalue = DateTools.convertDate(parseTimestamp(value), DateTools.UNIX, DateTools.ISO8601_FORMAT_MS);
+            }
+            catch (Exception e) {
+            }
+          }
+          addGlobalMeta(key, metavalue);
+        }
 
         if (key.startsWith("ImageTile") && !(store instanceof DummyMetadata)) {
           if (!tiles.containsKey(new Integer(value))) {
@@ -999,14 +1012,21 @@ public abstract class BaseZeissReader extends FormatReader {
           imageDescription = value;
         }
         else if (key.startsWith("Acquisition Date")) {
-          if (timepoint > 0) {
-            timestamps.put(timepoint - 1, value);
-            addGlobalMetaList("Timestamp", value);
-          }
-          else {
-            timestamps.put(timepoint, value);
+          acquisitionDate = new Timestamp(DateTools.convertDate(parseTimestamp(value), DateTools.UNIX, DateTools.ISO8601_FORMAT_MS));
+        }
+        else if (image >= 0 && key.startsWith("Camera Acquisition Time")) { // Note Double variant for TIFF XML.
+          String date = DateTools.convertDate(parseTimestamp(value), DateTools.UNIX, DateTools.ISO8601_FORMAT_MS);
+          addSeriesMetaList(key, date);
+          if (timepoint != 0) { // First timepoint is duplicated for some reason.
+            timestamps.put(timepoint - 1, date);
+          } else {
+            timestamps.put(timepoint, date);
           }
           timepoint++;
+        }
+        else if (image >= 0 && key.startsWith("ImageRelativeTime")) {
+          Double reltime = Double.parseDouble(value) * 1000 * 60*60*24;
+          addSeriesMetaList(key, reltime);
         }
       }
       catch (NumberFormatException e) { }
@@ -1044,26 +1064,33 @@ public abstract class BaseZeissReader extends FormatReader {
    * @return a timestamp
    */
   private long parseTimestamp(String s) {
-    long stamp = 0;
-    try {
-      stamp = Long.parseLong(s);
-    }
-    catch (NumberFormatException exc) {
-      try {
-        stamp = Double.doubleToLongBits(Double.parseDouble(s));
-      }
-      catch (Exception e) {
-        if (s != null) {
-          stamp = DateTools.getTime(s, "M/d/y h:mm:ss aa");
-          if (stamp < 0) {
-            stamp = DateTools.getTime(s, "d/M/y H:mm:ss");
-          }
-          stamp += DateTools.ZVI_EPOCH;
-          stamp *= 1600;
+    try
+      {
+        double dstamp = Double.parseDouble(s); // Time in days since the ZVI epoch
+        DateTime epoch = new DateTime(1900, 1, 1, 0, 0, DateTimeZone.UTC); // 1900-01-01 00:00:00
+
+        long millisInDay = 24L * 60L * 60L * 1000L;
+        int days = (int) Math.floor(dstamp);
+        int millis = (int)((dstamp - days) * millisInDay + 0.5);
+
+        days -= 1; // We start on day 1
+        if (days > 60) { // Date prior to 1900-03-01
+          days -= 1; // 1900-02-29 is considered a valid date by Excel; correct for this.
         }
+
+        DateTime dtstamp = epoch.plusDays(days);
+        dtstamp = dtstamp.plusMillis(millis);
+
+        return dtstamp.getMillis();
       }
-    }
-    return stamp;
+    catch (NumberFormatException e)
+      {
+        // Not a Double; one file (BY4741NQ2.zvi) contains a string in
+        // place of the float64 defined in the spec, so try parsing
+        // using US date format.  May be a historical AxioVision bug.
+        String us_format = "MM/dd/yyyy hh:mm:ss aa";
+        return DateTools.getTime(s, us_format, null);
+      }
   }
 
   public enum Context { MAIN, SCALING, PLANE }
@@ -1122,6 +1149,11 @@ public abstract class BaseZeissReader extends FormatReader {
     public String getKey()
     {
       return getKey(keyid);
+    }
+
+    public int getKeyID()
+    {
+      return keyid;
     }
 
     public void setValue(String value)
@@ -1232,7 +1264,7 @@ public abstract class BaseZeissReader extends FormatReader {
         case 1002: return "Code";
         case 1003: return "Source";
         case 1004: return "Message";
-        case 1025: return "Acquisition Date"; // Also "Camera Acquisition Time" in latest AxioVision, which more closely matches its per-plane meaning. and "CameraImageAcquisitionTime" in the spec
+        case 1025: return "Camera Acquisition Time"; // Also "Acquisition Date" in older AxioVision versions, and "CameraImageAcquisitionTime" in the spec.  Double for ZVI, nonportable date string for TIFF.
         case 1026: return "8-bit Acquisition";
         case 1027: return "Camera Bit Depth";
         case 1029: return "MonoReferenceLow";
@@ -1248,7 +1280,7 @@ public abstract class BaseZeissReader extends FormatReader {
         case 1044: return "CameraTriggerSignalType";
         case 1045: return "CameraTriggerEnable";
         case 1046: return "GrabberTimeout";
-        case 1047: return "tag_ID_1047"; // Undocumented in spec.
+        case 1047: return "Camera Acquisition Time"; // Undocumented in spec., but appears to be 1025 as string double value.  Avoids the need for fragile date parsing.
         case 1281: return "MultiChannelEnabled";
         case 1282: return "MultiChannel Color"; // False colour for the channel; "Multichannel Colour" in spec.
         case 1283: return "MultiChannel Weight"; // False colour weighting; "Multichannel Weight" in spec.
