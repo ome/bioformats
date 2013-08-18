@@ -201,7 +201,7 @@ public final class DateTools {
    */
   public static String formatDate(String date, String format, boolean lenient) {
     if (date == null) return null;
-    final DateTimeFormatter parser = DateTimeFormat.forPattern(format);
+    final DateTimeFormatter parser = DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
     Instant timestamp = null;
 
     try {
@@ -260,7 +260,7 @@ public final class DateTools {
    * (in Unix format: milliseconds since January 1, 1970).
    */
   public static long getTime(String date, String format) {
-    final DateTimeFormatter parser = DateTimeFormat.forPattern(format);
+    final DateTimeFormatter parser = DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
     Instant timestamp = null;
     try {
       timestamp = Instant.parse(date, parser);
