@@ -219,7 +219,6 @@ public class AFIReader extends FormatReader {
       c.sizeC = pixels.size();
       c.imageCount = c.sizeC * c.sizeZ * c.sizeT;
       c.rgb = false;
-      c.cLengths = new int[] {c.sizeC};
       if (i == 0) {
         c.resolutionCount = core.size() - EXTRA_IMAGES;
       }

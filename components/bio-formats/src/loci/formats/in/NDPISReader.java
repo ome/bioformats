@@ -179,7 +179,6 @@ public class NDPISReader extends FormatReader {
       ms.sizeC = readers.length;
       ms.rgb = false;
       ms.imageCount = ms.sizeC * ms.sizeZ * ms.sizeT;
-      ms.cLengths = new int[] {getSizeC()};
     }
 
     MetadataStore store = makeFilterMetadata();
