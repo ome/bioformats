@@ -755,7 +755,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     return equals(root1, root2);
   }
 
-  public void addModuloAlong(OMEXMLMetadata meta, CoreMetadata core) {
+  public void addModuloAlong(OMEXMLMetadata meta, CoreMetadata core, int image)
+  {
     int annotationIndex = meta.getXMLAnnotationCount();
 
     if (annotationIndex > 0) {
@@ -771,30 +772,38 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       catch (NumberFormatException e) { }
     }
 
+    int imageAnnotation = 0;
+
     if (core.moduloZ.length() > 1) {
       String zAnnotation = core.moduloZ.toXMLAnnotation();
-      meta.setXMLAnnotationID(MetadataTools.createLSID(
-        "Annotation", annotationIndex), annotationIndex);
+      String id = MetadataTools.createLSID("Annotation", annotationIndex);
+      meta.setXMLAnnotationID(id, annotationIndex);
       meta.setXMLAnnotationNamespace(MODULO_NS, annotationIndex);
       meta.setXMLAnnotationValue(zAnnotation, annotationIndex);
       annotationIndex++;
+
+      meta.setImageAnnotationRef(id, image, imageAnnotation++);
     }
 
     if (core.moduloC.length() > 1) {
       String cAnnotation = core.moduloC.toXMLAnnotation();
-      meta.setXMLAnnotationID(MetadataTools.createLSID(
-        "Annotation", annotationIndex), annotationIndex);
+      String id = MetadataTools.createLSID("Annotation", annotationIndex);
+      meta.setXMLAnnotationID(id, annotationIndex);
       meta.setXMLAnnotationNamespace(MODULO_NS, annotationIndex);
       meta.setXMLAnnotationValue(cAnnotation, annotationIndex);
       annotationIndex++;
+
+      meta.setImageAnnotationRef(id, image, imageAnnotation++);
     }
 
     if (core.moduloT.length() > 1) {
       String tAnnotation = core.moduloT.toXMLAnnotation();
-      meta.setXMLAnnotationID(MetadataTools.createLSID(
-        "Annotation", annotationIndex), annotationIndex);
+      String id = MetadataTools.createLSID("Annotation", annotationIndex);
+      meta.setXMLAnnotationID(id, annotationIndex);
       meta.setXMLAnnotationNamespace(MODULO_NS, annotationIndex);
       meta.setXMLAnnotationValue(tAnnotation, annotationIndex);
+
+      meta.setImageAnnotationRef(id, image, imageAnnotation);
     }
   }
 

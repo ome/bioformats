@@ -210,8 +210,10 @@ public interface OMEXMLService extends Service {
    * @param omexmlMeta An object of type {@link loci.formats.ome.OMEXMLMetadata}
    * @param core A fully populated object of type
    *   {@link loci.formats.CoreMetadata}
+   * @param image Index of the Image to which the annotation should be linked.
    */
-  public void addModuloAlong(OMEXMLMetadata omexmlMeta, CoreMetadata core);
+  public void addModuloAlong(OMEXMLMetadata omexmlMeta, CoreMetadata core,
+    int image);
 
   /**
    * Converts information from an OME-XML string (source)

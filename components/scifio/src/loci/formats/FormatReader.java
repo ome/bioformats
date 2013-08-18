@@ -1350,41 +1350,60 @@ public abstract class FormatReader extends FormatHandler
     if (!id.equals(currentId)) {
       initFile(id);
 
+      MetadataStore store = getMetadataStore();
       if (saveOriginalMetadata) {
-        MetadataStore store = getMetadataStore();
         if (store instanceof OMEXMLMetadata) {
-          try {
-            if (factory == null) factory = new ServiceFactory();
-            if (service == null) {
-              service = factory.getInstance(OMEXMLService.class);
-            }
+          setupService();
+          Hashtable<String, Object> allMetadata =
+            new Hashtable<String, Object>();
+          allMetadata.putAll(metadata);
 
-            Hashtable<String, Object> allMetadata =
-              new Hashtable<String, Object>();
-            allMetadata.putAll(metadata);
-
-            for (int series=0; series<getSeriesCount(); series++) {
-              String name = "Series " + series;
-              try {
-                String realName = ((IMetadata) store).getImageName(series);
-                if (realName != null && realName.trim().length() != 0) {
-                  name = realName;
-                }
+          for (int series=0; series<getSeriesCount(); series++) {
+            String name = "Series " + series;
+            try {
+              String realName = ((IMetadata) store).getImageName(series);
+              if (realName != null && realName.trim().length() != 0) {
+                name = realName;
               }
-              catch (Exception e) { }
-              setSeries(series);
-              MetadataTools.merge(getSeriesMetadata(), allMetadata, name + " ");
             }
-            setSeries(0);
+            catch (Exception e) { }
+            setSeries(series);
+            MetadataTools.merge(getSeriesMetadata(), allMetadata, name + " ");
+          }
+          setSeries(0);
 
-            service.populateOriginalMetadata(
-              (OMEXMLMetadata) store, allMetadata);
-          }
-          catch (DependencyException e) {
-            LOGGER.warn("OMEXMLService not available.", e);
-          }
+          service.populateOriginalMetadata((OMEXMLMetadata) store, allMetadata);
         }
       }
+
+      if (store instanceof OMEXMLMetadata) {
+        setupService();
+
+        for (int series=0; series<getSeriesCount(); series++) {
+          setSeries(series);
+
+          if (getModuloZ().length() > 0 || getModuloC().length() > 0 ||
+            getModuloT().length() > 0)
+          {
+            service.addModuloAlong(
+              (OMEXMLMetadata) store, core.get(series), series);
+          }
+        }
+        setSeries(0);
+      }
+    }
+  }
+
+  /** Initialize the OMEXMLService needed by {@link setId(String)} */
+  private void setupService() {
+    try {
+      if (factory == null) factory = new ServiceFactory();
+      if (service == null) {
+        service = factory.getInstance(OMEXMLService.class);
+      }
+    }
+    catch (DependencyException e) {
+      LOGGER.warn("OMEXMLService not available.", e);
     }
   }
 
