@@ -1046,6 +1046,7 @@ public class ImageInfo {
       sb.append(modulo.parentType);
       sb.append(" x ");
       sb.append(modulo.length());
+      sb.append(" ");
       sb.append(modulo.type);
       sb.append(")");
 
