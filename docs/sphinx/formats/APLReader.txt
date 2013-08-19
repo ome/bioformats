@@ -1,0 +1,13347 @@
+*******************************************************************************
+APLReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Olympus APL format reader.
+
+Key/value pairs
+===============================================================================
+
+* Remote Record ID #02
+
+::
+
+  - 
+
+* Remote Record ID #01
+
+::
+
+  - 
+
+* Remote Record ID #04
+
+::
+
+  - 
+
+* Remote Record ID #03
+
+::
+
+  - 
+
+* Document Insertion Date #08
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Insertion Date #07
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Remote Record ID #09
+
+::
+
+  - 
+
+* Document Insertion Date #06
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #19
+
+::
+
+  - 
+
+* Document Insertion Date #05
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #18
+
+::
+
+  - 
+
+* Document Insertion Date #04
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #17
+
+::
+
+  - 
+
+* Remote Record ID #06
+
+::
+
+  - 
+
+* Document Insertion Date #03
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #16
+
+::
+
+  - 
+
+* Remote Record ID #05
+
+::
+
+  - 
+
+* Document Insertion Date #02
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #15
+
+::
+
+  - 
+
+* Remote Record ID #08
+
+::
+
+  - 
+
+* Document Insertion Date #01
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #14
+
+::
+
+  - 
+
+* Remote Record ID #07
+
+::
+
+  - 
+
+* Image Comment #23
+
+::
+
+  - 
+
+* Image Comment #24
+
+::
+
+  - 
+
+* Image Comment #21
+
+::
+
+  - 
+
+* Image Comment #22
+
+::
+
+  - 
+
+* Image Comment #20
+
+::
+
+  - 
+
+* Document Insertion Date #09
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Insertion Date #11
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Insertion Date #10
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Replacement Time #01
+
+::
+
+  - 
+
+* Document Replacement Time #02
+
+::
+
+  - 
+
+* Document Replacement Time #03
+
+::
+
+  - 
+
+* Document Replacement Time #04
+
+::
+
+  - 
+
+* Document Insertion Date #17
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Replacement Time #05
+
+::
+
+  - 
+
+* Document Insertion Date #16
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #29
+
+::
+
+  - 
+
+* Document Replacement Time #06
+
+::
+
+  - 
+
+* Document Insertion Date #19
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Replacement Time #07
+
+::
+
+  - 
+
+* Document Insertion Date #18
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Replacement Time #08
+
+::
+
+  - 
+
+* Document Insertion Date #13
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #26
+
+::
+
+  - 
+
+* Document Replacement Time #09
+
+::
+
+  - 
+
+* Document Insertion Date #12
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #25
+
+::
+
+  - 
+
+* Document Insertion Date #15
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #28
+
+::
+
+  - 
+
+* Document Insertion Date #14
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #27
+
+::
+
+  - 
+
+* Image Comment #32
+
+::
+
+  - 
+
+* Image Comment #33
+
+::
+
+  - 
+
+* Image Comment #34
+
+::
+
+  - 
+
+* Image Comment #35
+
+::
+
+  - 
+
+* Image Comment #30
+
+::
+
+  - 
+
+* Image Comment #31
+
+::
+
+  - 
+
+* Remote Record ID #20
+
+::
+
+  - 
+
+* Remote Record ID #22
+
+::
+
+  - 
+
+* Remote Record ID #21
+
+::
+
+  - 
+
+* Remote Record ID #24
+
+::
+
+  - 
+
+* Document Insertion Date #22
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Remote Record ID #23
+
+::
+
+  - 
+
+* Document Insertion Date #21
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Remote Record ID #26
+
+::
+
+  - 
+
+* Document Insertion Date #20
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Remote Record ID #25
+
+::
+
+  - 
+
+* Remote Record ID #28
+
+::
+
+  - 
+
+* Document Insertion Date #26
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Remote Record ID #27
+
+::
+
+  - 
+
+* Document Insertion Date #25
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Insertion Date #24
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Remote Record ID #29
+
+::
+
+  - 
+
+* Document Insertion Date #23
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Insertion Date #29
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Insertion Date #28
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Insertion Date #27
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #01
+
+::
+
+  - 
+
+* Image Comment #02
+
+::
+
+  - 
+
+* Remote Record ID #11
+
+::
+
+  - 
+
+* Sample / Preparation #09
+
+::
+
+  - 
+
+* Remote Record ID #10
+
+::
+
+  - 
+
+* Sample / Preparation #06
+
+::
+
+  - 
+
+* Remote Record ID #15
+
+::
+
+  - 
+
+* Document Insertion Date #31
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Sample / Preparation #05
+
+::
+
+  - 
+
+* Remote Record ID #14
+
+::
+
+  - 
+
+* Document Insertion Date #30
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Sample / Preparation #08
+
+::
+
+  - 
+
+* Remote Record ID #13
+
+::
+
+  - 
+
+* Document Insertion Date #33
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Sample / Preparation #07
+
+::
+
+  - 
+
+* Remote Record ID #12
+
+::
+
+  - 
+
+* Document Insertion Date #32
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Sample / Preparation #02
+
+::
+
+  - 
+
+* Remote Record ID #19
+
+::
+
+  - 
+
+* Image Comment #04
+
+::
+
+  - 
+
+* Document Insertion Date #35
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Sample / Preparation #01
+
+::
+
+  - 
+
+* Remote Record ID #18
+
+::
+
+  - 
+
+* Image Comment #03
+
+::
+
+  - 
+
+* Document Insertion Date #34
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Sample / Preparation #04
+
+::
+
+  - 
+
+* Remote Record ID #17
+
+::
+
+  - 
+
+* Image Comment #06
+
+::
+
+  - 
+
+* Document Insertion Date #37
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Sample / Preparation #03
+
+::
+
+  - 
+
+* Remote Record ID #16
+
+::
+
+  - 
+
+* Image Comment #05
+
+::
+
+  - 
+
+* Document Insertion Date #36
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #08
+
+::
+
+  - 
+
+* Document Insertion Date #39
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #07
+
+::
+
+  - 
+
+* Document Insertion Date #38
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Image Comment #09
+
+::
+
+  - 
+
+* Image Comment #10
+
+::
+
+  - 
+
+* Image Comment #11
+
+::
+
+  - 
+
+* Image Comment #12
+
+::
+
+  - 
+
+* Image Comment #13
+
+::
+
+  - 
+
+* Sample / Preparation #10
+
+::
+
+  - 
+
+* Sample / Preparation #11
+
+::
+
+  - 
+
+* Sample / Preparation #14
+
+::
+
+  - 
+
+* Sample / Preparation #15
+
+::
+
+  - 
+
+* Sample / Preparation #12
+
+::
+
+  - 
+
+* Sample / Preparation #13
+
+::
+
+  - 
+
+* Sample / Preparation #18
+
+::
+
+  - 
+
+* RecordType #38
+
+::
+
+  - 4
+
+* Sample / Preparation #19
+
+::
+
+  - 
+
+* RecordType #37
+
+::
+
+  - 1
+
+* Sample / Preparation #16
+
+::
+
+  - 
+
+* RecordType #36
+
+::
+
+  - 2
+
+* Sample / Preparation #17
+
+::
+
+  - 
+
+* RecordType #35
+
+::
+
+  - 4
+
+* RecordType #39
+
+::
+
+  - 2
+
+* RecordType #30
+
+::
+
+  - 2
+
+* RecordType #33
+
+::
+
+  - 2
+
+* RecordType #34
+
+::
+
+  - 1
+
+* RecordType #31
+
+::
+
+  - 1
+
+* RecordType #32
+
+::
+
+  - 4
+
+* Sample / Preparation #20
+
+::
+
+  - 
+
+* Sample / Preparation #21
+
+::
+
+  - 
+
+* Sample / Preparation #22
+
+::
+
+  - 
+
+* Sample / Preparation #23
+
+::
+
+  - 
+
+* Sample / Preparation #24
+
+::
+
+  - 
+
+* Sample / Preparation #25
+
+::
+
+  - 
+
+* Remote Record ID #38
+
+::
+
+  - 
+
+* Sample / Preparation #26
+
+::
+
+  - 
+
+* Remote Record ID #39
+
+::
+
+  - 
+
+* Sample / Preparation #27
+
+::
+
+  - 
+
+* Remote Record ID #36
+
+::
+
+  - 
+
+* RecordType #25
+
+::
+
+  - 1
+
+* Sample / Preparation #28
+
+::
+
+  - 
+
+* Remote Record ID #37
+
+::
+
+  - 
+
+* RecordType #24
+
+::
+
+  - 2
+
+* Sample / Preparation #29
+
+::
+
+  - 
+
+* Remote Record ID #34
+
+::
+
+  - 
+
+* RecordType #27
+
+::
+
+  - 2
+
+* Remote Record ID #35
+
+::
+
+  - 
+
+* RecordType #26
+
+::
+
+  - 4
+
+* Remote Record ID #32
+
+::
+
+  - 
+
+* RecordType #29
+
+::
+
+  - 4
+
+* Remote Record ID #33
+
+::
+
+  - 
+
+* RecordType #28
+
+::
+
+  - 1
+
+* Remote Record ID #30
+
+::
+
+  - 
+
+* Remote Record ID #31
+
+::
+
+  - 
+
+* RecordType #20
+
+::
+
+  - 4
+
+* RecordType #21
+
+::
+
+  - 2
+
+* Channel #01
+
+::
+
+  - 
+
+* RecordType #22
+
+::
+
+  - 1
+
+* RecordType #23
+
+::
+
+  - 4
+
+* Channel #03
+
+::
+
+  - 
+
+* Channel #02
+
+::
+
+  - 
+
+* Channel #05
+
+::
+
+  - 
+
+* Channel #04
+
+::
+
+  - 
+
+* Channel #07
+
+::
+
+  - 
+
+* Channel #06
+
+::
+
+  - 
+
+* Channel #09
+
+::
+
+  - 
+
+* Channel #08
+
+::
+
+  - 
+
+* Sample / Preparation #36
+
+::
+
+  - 
+
+* Document Modification Date #16
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Last Backup #07
+
+::
+
+  - 
+
+* Sample / Preparation #37
+
+::
+
+  - 
+
+* Document Modification Date #15
+
+::
+
+  - 
+
+* Last Backup #08
+
+::
+
+  - 
+
+* Sample / Preparation #34
+
+::
+
+  - 
+
+* Document Modification Date #18
+
+::
+
+  - 
+
+* Last Backup #05
+
+::
+
+  - 
+
+* Sample / Preparation #35
+
+::
+
+  - 
+
+* Document Modification Date #17
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Last Backup #06
+
+::
+
+  - 
+
+* Sample / Preparation #32
+
+::
+
+  - 
+
+* Document Modification Date #12
+
+::
+
+  - 
+
+* Last Backup #03
+
+::
+
+  - 
+
+* Sample / Preparation #33
+
+::
+
+  - 
+
+* Document Modification Date #11
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Last Backup #04
+
+::
+
+  - 
+
+* Sample / Preparation #30
+
+::
+
+  - 
+
+* Document Modification Date #14
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Last Backup #01
+
+::
+
+  - 
+
+* Sample / Preparation #31
+
+::
+
+  - 
+
+* Document Modification Date #13
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Last Backup #02
+
+::
+
+  - 
+
+* RecordType #19
+
+::
+
+  - 1
+
+* RecordType #18
+
+::
+
+  - 2
+
+* RecordType #17
+
+::
+
+  - 4
+
+* RecordType #16
+
+::
+
+  - 1
+
+* RecordType #15
+
+::
+
+  - 2
+
+* Document Modification Date #19
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Sample / Preparation #38
+
+::
+
+  - 
+
+* RecordType #14
+
+::
+
+  - 4
+
+* Last Backup #09
+
+::
+
+  - 
+
+* Sample / Preparation #39
+
+::
+
+  - 
+
+* RecordType #13
+
+::
+
+  - 1
+
+* Channel #12
+
+::
+
+  - 
+
+* RecordType #11
+
+::
+
+  - 4
+
+* Channel #11
+
+::
+
+  - 
+
+* RecordType #12
+
+::
+
+  - 2
+
+* Channel #10
+
+::
+
+  - 
+
+* RecordType #10
+
+::
+
+  - 1
+
+* Channel #19
+
+::
+
+  - 
+
+* Channel #18
+
+::
+
+  - 
+
+* Channel #17
+
+::
+
+  - 
+
+* Document Modification Date #10
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Channel #16
+
+::
+
+  - 
+
+* Channel #15
+
+::
+
+  - 
+
+* Channel #14
+
+::
+
+  - 
+
+* Channel #13
+
+::
+
+  - 
+
+* Document Modification Date #07
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Last Backup #16
+
+::
+
+  - 
+
+* Document Modification Date #06
+
+::
+
+  - 
+
+* Last Backup #17
+
+::
+
+  - 
+
+* Document Modification Date #05
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Last Backup #18
+
+::
+
+  - 
+
+* Document Modification Date #04
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Last Backup #19
+
+::
+
+  - 
+
+* Document Modification Date #03
+
+::
+
+  - 
+
+* Last Backup #12
+
+::
+
+  - 
+
+* Document Modification Date #02
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Last Backup #13
+
+::
+
+  - 
+
+* Document Modification Date #01
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Last Backup #14
+
+::
+
+  - 
+
+* Last Backup #15
+
+::
+
+  - 
+
+* RecordType #07
+
+::
+
+  - 1
+
+* RecordType #06
+
+::
+
+  - 2
+
+* RecordType #09
+
+::
+
+  - 2
+
+* RecordType #08
+
+::
+
+  - 4
+
+* RecordType #03
+
+::
+
+  - 2
+
+* RecordType #02
+
+::
+
+  - 4
+
+* RecordType #05
+
+::
+
+  - 4
+
+* Document Modification Date #09
+
+::
+
+  - 
+
+* RecordType #04
+
+::
+
+  - 1
+
+* Document Modification Date #08
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Channel #21
+
+::
+
+  - 
+
+* Channel #20
+
+::
+
+  - 
+
+* Channel #23
+
+::
+
+  - 
+
+* Channel #22
+
+::
+
+  - 
+
+* RecordType #01
+
+::
+
+  - 1
+
+* Channel #29
+
+::
+
+  - 
+
+* Channel #28
+
+::
+
+  - 
+
+* Last Backup #11
+
+::
+
+  - 
+
+* Last Backup #10
+
+::
+
+  - 
+
+* Channel #25
+
+::
+
+  - 
+
+* Channel #24
+
+::
+
+  - 
+
+* Channel #27
+
+::
+
+  - 
+
+* Channel #26
+
+::
+
+  - 
+
+* Channel #35
+
+::
+
+  - 
+
+* Channel #36
+
+::
+
+  - 
+
+* Channel #37
+
+::
+
+  - 
+
+* Channel #38
+
+::
+
+  - 
+
+* Channel #39
+
+::
+
+  - 
+
+* Document Modification Date #32
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #31
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #30
+
+::
+
+  - 
+
+* Channel #30
+
+::
+
+  - 
+
+* Channel #31
+
+::
+
+  - 
+
+* Channel #32
+
+::
+
+  - 
+
+* Channel #33
+
+::
+
+  - 
+
+* Channel #34
+
+::
+
+  - 
+
+* Document Modification Date #35
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #36
+
+::
+
+  - 
+
+* Document Modification Date #33
+
+::
+
+  - 
+
+* Document Modification Date #34
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #39
+
+::
+
+  - 
+
+* Document Modification Date #37
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #38
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #21
+
+::
+
+  - 
+
+* Document Modification Date #20
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #22
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #23
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #24
+
+::
+
+  - 
+
+* Document Modification Date #25
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #26
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #27
+
+::
+
+  - 
+
+* Document Modification Date #28
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Date #29
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Modification Time #06
+
+::
+
+  - 
+
+* Document Modification Time #05
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Modification Time #08
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Modification Time #07
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Modification Time #02
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Modification Time #01
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Modification Time #04
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Modification Time #03
+
+::
+
+  - 
+
+* Document Modification Time #09
+
+::
+
+  - 
+
+* Height #30
+
+::
+
+  - 0.13619200006389626
+
+* Document Modification Time #14
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #31
+
+::
+
+  - 
+
+* Bits per Pixel #01
+
+::
+
+  - 
+
+* Document Modification Time #15
+
+::
+
+  - 
+
+* Height #32
+
+::
+
+  - 
+
+* Document Modification Time #12
+
+::
+
+  - 
+
+* Height #33
+
+::
+
+  - 0.13619200006389626
+
+* Bits per Pixel #03
+
+::
+
+  - 16
+
+* Document Modification Time #13
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #34
+
+::
+
+  - 
+
+* Bits per Pixel #02
+
+::
+
+  - 
+
+* Document Modification Time #18
+
+::
+
+  - 
+
+* Height #35
+
+::
+
+  - 
+
+* Document Modification Time #19
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #36
+
+::
+
+  - 0.13619200006389626
+
+* Document Modification Time #16
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #37
+
+::
+
+  - 
+
+* Document Modification Time #17
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #38
+
+::
+
+  - 
+
+* Bits per Pixel #08
+
+::
+
+  - 
+
+* Height #39
+
+::
+
+  - 0.13619200006389626
+
+* Bits per Pixel #09
+
+::
+
+  - 16
+
+* Document Modification Time #11
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Bits per Pixel #04
+
+::
+
+  - 
+
+* Document Modification Time #10
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Bits per Pixel #05
+
+::
+
+  - 
+
+* Bits per Pixel #06
+
+::
+
+  - 16
+
+* Bits per Pixel #07
+
+::
+
+  - 
+
+* Document Modification Time #23
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #22
+
+::
+
+  - 
+
+* Document Modification Time #24
+
+::
+
+  - 
+
+* Height #23
+
+::
+
+  - 
+
+* Document Modification Time #25
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #20
+
+::
+
+  - 
+
+* Document Modification Time #26
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #21
+
+::
+
+  - 0.13619200006389626
+
+* Document Modification Time #27
+
+::
+
+  - 
+
+* Height #26
+
+::
+
+  - 
+
+* Document Modification Time #28
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #27
+
+::
+
+  - 0.13619200006389626
+
+* Document Modification Time #29
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #24
+
+::
+
+  - 0.13619200006389626
+
+* Height #25
+
+::
+
+  - 
+
+* Height #29
+
+::
+
+  - 
+
+* Height #28
+
+::
+
+  - 
+
+* Document Modification Time #20
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Modification Time #22
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Modification Time #21
+
+::
+
+  - 
+
+* Height #13
+
+::
+
+  - 
+
+* Height #14
+
+::
+
+  - 
+
+* Document Modification Time #38
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #15
+
+::
+
+  - 0.13619200006389626
+
+* Document Modification Time #39
+
+::
+
+  - 
+
+* Height #16
+
+::
+
+  - 
+
+* Document Modification Time #36
+
+::
+
+  - 
+
+* Document Modification Time #37
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #10
+
+::
+
+  - 
+
+* Document Modification Time #34
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #11
+
+::
+
+  - 
+
+* Document Modification Time #35
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Height #12
+
+::
+
+  - 0.13619200006389626
+
+* Document Modification Time #33
+
+::
+
+  - 
+
+* Image Comment #36
+
+::
+
+  - 
+
+* Document Modification Time #32
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Image Comment #37
+
+::
+
+  - 
+
+* Document Modification Time #31
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Image Comment #38
+
+::
+
+  - 
+
+* Document Modification Time #30
+
+::
+
+  - 
+
+* Image Comment #39
+
+::
+
+  - 
+
+* Height #18
+
+::
+
+  - 0.13619200006389626
+
+* Height #17
+
+::
+
+  - 
+
+* Height #19
+
+::
+
+  - 
+
+* Height #04
+
+::
+
+  - 
+
+* Height #05
+
+::
+
+  - 
+
+* Height #02
+
+::
+
+  - 
+
+* Height #03
+
+::
+
+  - 0.13619200006389626
+
+* Height #01
+
+::
+
+  - 
+
+* Height #09
+
+::
+
+  - 0.13619200006389626
+
+* Height #08
+
+::
+
+  - 
+
+* Height #07
+
+::
+
+  - 
+
+* Height #06
+
+::
+
+  - 0.13619200006389626
+
+* Audio File #17
+
+::
+
+  - 0
+
+* Audio File #16
+
+::
+
+  - 0
+
+* Audio File #15
+
+::
+
+  - 0
+
+* Audio File #14
+
+::
+
+  - 0
+
+* Audio File #13
+
+::
+
+  - 0
+
+* Audio File #12
+
+::
+
+  - 0
+
+* Audio File #11
+
+::
+
+  - 0
+
+* Audio File #10
+
+::
+
+  - 0
+
+* Volume ID #19
+
+::
+
+  - 
+
+* Volume ID #15
+
+::
+
+  - 1
+
+* Volume ID #16
+
+::
+
+  - 
+
+* Volume ID #17
+
+::
+
+  - 1
+
+* Audio File #18
+
+::
+
+  - 0
+
+* Volume ID #18
+
+::
+
+  - 1
+
+* Audio File #19
+
+::
+
+  - 0
+
+* Volume ID #11
+
+::
+
+  - 1
+
+* Volume ID #12
+
+::
+
+  - 1
+
+* Volume ID #13
+
+::
+
+  - 
+
+* Volume ID #14
+
+::
+
+  - 1
+
+* Volume ID #10
+
+::
+
+  - 
+
+* Time Frames #39
+
+::
+
+  - 60
+
+* Time Frames #37
+
+::
+
+  - 0
+
+* Time Frames #38
+
+::
+
+  - 
+
+* Audio File #04
+
+::
+
+  - 0
+
+* Audio File #03
+
+::
+
+  - 0
+
+* Audio File #06
+
+::
+
+  - 0
+
+* Audio File #05
+
+::
+
+  - 0
+
+* Audio File #02
+
+::
+
+  - 0
+
+* Audio File #01
+
+::
+
+  - 0
+
+* Volume ID #08
+
+::
+
+  - 1
+
+* Volume ID #09
+
+::
+
+  - 1
+
+* Volume ID #06
+
+::
+
+  - 1
+
+* Audio File #07
+
+::
+
+  - 0
+
+* Volume ID #07
+
+::
+
+  - 
+
+* Audio File #08
+
+::
+
+  - 0
+
+* Volume ID #04
+
+::
+
+  - 
+
+* Audio File #09
+
+::
+
+  - 0
+
+* Volume ID #05
+
+::
+
+  - 1
+
+* Volume ID #02
+
+::
+
+  - 1
+
+* Volume ID #03
+
+::
+
+  - 1
+
+* Volume ID #01
+
+::
+
+  - 
+
+* Audio File #31
+
+::
+
+  - 0
+
+* Audio File #30
+
+::
+
+  - 0
+
+* Audio File #35
+
+::
+
+  - 0
+
+* Audio File #34
+
+::
+
+  - 0
+
+* Audio File #33
+
+::
+
+  - 0
+
+* Audio File #32
+
+::
+
+  - 0
+
+* Audio File #39
+
+::
+
+  - 0
+
+* Audio File #38
+
+::
+
+  - 0
+
+* Audio File #37
+
+::
+
+  - 0
+
+* Audio File #36
+
+::
+
+  - 0
+
+* Volume ID #37
+
+::
+
+  - 
+
+* Volume ID #38
+
+::
+
+  - 1
+
+* Volume ID #39
+
+::
+
+  - 1
+
+* Volume ID #30
+
+::
+
+  - 1
+
+* Volume ID #31
+
+::
+
+  - 
+
+* Volume ID #32
+
+::
+
+  - 1
+
+* Volume ID #33
+
+::
+
+  - 1
+
+* Volume ID #34
+
+::
+
+  - 
+
+* Volume ID #35
+
+::
+
+  - 1
+
+* Volume ID #36
+
+::
+
+  - 1
+
+* Audio File #20
+
+::
+
+  - 0
+
+* Audio File #22
+
+::
+
+  - 0
+
+* Audio File #21
+
+::
+
+  - 0
+
+* Audio File #24
+
+::
+
+  - 0
+
+* Audio File #23
+
+::
+
+  - 0
+
+* Audio File #26
+
+::
+
+  - 0
+
+* Audio File #25
+
+::
+
+  - 0
+
+* Audio File #28
+
+::
+
+  - 0
+
+* Audio File #27
+
+::
+
+  - 0
+
+* Volume ID #28
+
+::
+
+  - 
+
+* Audio File #29
+
+::
+
+  - 0
+
+* Volume ID #29
+
+::
+
+  - 1
+
+* Volume ID #26
+
+::
+
+  - 1
+
+* Volume ID #27
+
+::
+
+  - 1
+
+* Volume ID #20
+
+::
+
+  - 1
+
+* Volume ID #21
+
+::
+
+  - 1
+
+* Volume ID #24
+
+::
+
+  - 1
+
+* Volume ID #25
+
+::
+
+  - 
+
+* Volume ID #22
+
+::
+
+  - 
+
+* Volume ID #23
+
+::
+
+  - 1
+
+* Time Frames #05
+
+::
+
+  - 
+
+* Time Frames #04
+
+::
+
+  - 0
+
+* Time Frames #07
+
+::
+
+  - 0
+
+* Time Frames #06
+
+::
+
+  - 5
+
+* Time Frames #09
+
+::
+
+  - 11
+
+* Time Frames #08
+
+::
+
+  - 
+
+* Time Frames #10
+
+::
+
+  - 0
+
+* Time Frames #11
+
+::
+
+  - 
+
+* Time Frames #12
+
+::
+
+  - 5
+
+* Time Frames #13
+
+::
+
+  - 0
+
+* Time Frames #14
+
+::
+
+  - 
+
+* Time Frames #02
+
+::
+
+  - 
+
+* Time Frames #03
+
+::
+
+  - 4
+
+* Time Frames #01
+
+::
+
+  - 0
+
+* Time Frames #27
+
+::
+
+  - 120
+
+* Time Frames #26
+
+::
+
+  - 
+
+* Time Frames #29
+
+::
+
+  - 
+
+* Time Frames #28
+
+::
+
+  - 0
+
+* Time Frames #33
+
+::
+
+  - 60
+
+* Time Frames #34
+
+::
+
+  - 0
+
+* Time Frames #35
+
+::
+
+  - 
+
+* Time Frames #36
+
+::
+
+  - 60
+
+* Time Frames #30
+
+::
+
+  - 5
+
+* Time Frames #31
+
+::
+
+  - 0
+
+* Time Frames #32
+
+::
+
+  - 
+
+* Time Frames #19
+
+::
+
+  - 0
+
+* Time Frames #18
+
+::
+
+  - 30
+
+* Time Frames #17
+
+::
+
+  - 
+
+* Time Frames #16
+
+::
+
+  - 0
+
+* Time Frames #15
+
+::
+
+  - 4
+
+* Time Frames #24
+
+::
+
+  - 6
+
+* Time Frames #25
+
+::
+
+  - 0
+
+* Time Frames #22
+
+::
+
+  - 0
+
+* Time Frames #23
+
+::
+
+  - 
+
+* Time Frames #20
+
+::
+
+  - 
+
+* Time Frames #21
+
+::
+
+  - 120
+
+* Last Backup #32
+
+::
+
+  - 
+
+* Last Backup #33
+
+::
+
+  - 
+
+* Last Backup #30
+
+::
+
+  - 
+
+* Last Backup #31
+
+::
+
+  - 
+
+* Last Backup #39
+
+::
+
+  - 
+
+* Last Backup #38
+
+::
+
+  - 
+
+* Markers #38
+
+::
+
+  - 
+
+* Last Backup #37
+
+::
+
+  - 
+
+* Markers #37
+
+::
+
+  - 0
+
+* Last Backup #36
+
+::
+
+  - 
+
+* Last Backup #35
+
+::
+
+  - 
+
+* Markers #39
+
+::
+
+  - 0
+
+* Last Backup #34
+
+::
+
+  - 
+
+* Last Backup #20
+
+::
+
+  - 
+
+* Last Backup #21
+
+::
+
+  - 
+
+* Last Backup #22
+
+::
+
+  - 
+
+* Last Backup #28
+
+::
+
+  - 
+
+* Last Backup #27
+
+::
+
+  - 
+
+* Last Backup #29
+
+::
+
+  - 
+
+* Last Backup #24
+
+::
+
+  - 
+
+* Last Backup #23
+
+::
+
+  - 
+
+* Last Backup #26
+
+::
+
+  - 
+
+* Last Backup #25
+
+::
+
+  - 
+
+* Y-Size #03
+
+::
+
+  - 256
+
+* Y-Size #02
+
+::
+
+  - 
+
+* Y-Size #01
+
+::
+
+  - 0
+
+* Y-Size #07
+
+::
+
+  - 0
+
+* Y-Size #06
+
+::
+
+  - 256
+
+* Y-Size #05
+
+::
+
+  - 
+
+* Y-Size #04
+
+::
+
+  - 0
+
+* Y-Size #12
+
+::
+
+  - 256
+
+* Y-Size #11
+
+::
+
+  - 
+
+* Y-Size #14
+
+::
+
+  - 
+
+* Y-Size #13
+
+::
+
+  - 0
+
+* Y-Size #16
+
+::
+
+  - 0
+
+* Y-Size #15
+
+::
+
+  - 256
+
+* Y-Size #18
+
+::
+
+  - 256
+
+* Y-Size #17
+
+::
+
+  - 
+
+* Y-Size #10
+
+::
+
+  - 0
+
+* Y-Size #08
+
+::
+
+  - 
+
+* Y-Size #09
+
+::
+
+  - 256
+
+* Exposure Time #08
+
+::
+
+  - 
+
+* Exposure Time #07
+
+::
+
+  - 
+
+* Exposure Time #09
+
+::
+
+  - 250.00
+
+* Markers #01
+
+::
+
+  - 0
+
+* Markers #03
+
+::
+
+  - 0
+
+* Markers #02
+
+::
+
+  - 
+
+* Exposure Time #01
+
+::
+
+  - 
+
+* Exposure Time #02
+
+::
+
+  - 
+
+* Exposure Time #03
+
+::
+
+  - 500.00
+
+* Exposure Time #04
+
+::
+
+  - 
+
+* Exposure Time #05
+
+::
+
+  - 
+
+* Exposure Time #06
+
+::
+
+  - 500.00
+
+* Exposure Time #19
+
+::
+
+  - 
+
+* Exposure Time #18
+
+::
+
+  - 250.00
+
+* Markers #14
+
+::
+
+  - 
+
+* Markers #13
+
+::
+
+  - 0
+
+* Markers #12
+
+::
+
+  - 0
+
+* Markers #11
+
+::
+
+  - 
+
+* Markers #10
+
+::
+
+  - 0
+
+* Markers #08
+
+::
+
+  - 
+
+* Markers #09
+
+::
+
+  - 0
+
+* Markers #06
+
+::
+
+  - 0
+
+* Document Replacement Time #39
+
+::
+
+  - 
+
+* Markers #07
+
+::
+
+  - 0
+
+* Document Replacement Time #38
+
+::
+
+  - 
+
+* Markers #04
+
+::
+
+  - 0
+
+* Markers #05
+
+::
+
+  - 
+
+* Exposure Time #12
+
+::
+
+  - 250.00
+
+* Document Replacement Time #35
+
+::
+
+  - 
+
+* Exposure Time #13
+
+::
+
+  - 
+
+* Document Replacement Time #34
+
+::
+
+  - 
+
+* Exposure Time #10
+
+::
+
+  - 
+
+* Document Replacement Time #37
+
+::
+
+  - 
+
+* Exposure Time #11
+
+::
+
+  - 
+
+* Document Replacement Time #36
+
+::
+
+  - 
+
+* Exposure Time #16
+
+::
+
+  - 
+
+* Document Replacement Time #31
+
+::
+
+  - 
+
+* Exposure Time #17
+
+::
+
+  - 
+
+* Document Replacement Time #30
+
+::
+
+  - 
+
+* Exposure Time #14
+
+::
+
+  - 
+
+* Document Replacement Time #33
+
+::
+
+  - 
+
+* Exposure Time #15
+
+::
+
+  - 250.00
+
+* Document Replacement Time #32
+
+::
+
+  - 
+
+* Exposure Time #29
+
+::
+
+  - 
+
+* Markers #21
+
+::
+
+  - 0
+
+* Markers #20
+
+::
+
+  - 
+
+* Markers #23
+
+::
+
+  - 
+
+* Markers #22
+
+::
+
+  - 0
+
+* Markers #25
+
+::
+
+  - 0
+
+* Markers #24
+
+::
+
+  - 0
+
+* Markers #15
+
+::
+
+  - 0
+
+* Markers #16
+
+::
+
+  - 0
+
+* Document Replacement Time #29
+
+::
+
+  - 
+
+* Markers #17
+
+::
+
+  - 
+
+* Document Replacement Time #28
+
+::
+
+  - 
+
+* Markers #18
+
+::
+
+  - 0
+
+* Exposure Time #20
+
+::
+
+  - 
+
+* Document Replacement Time #27
+
+::
+
+  - 
+
+* Markers #19
+
+::
+
+  - 0
+
+* Exposure Time #25
+
+::
+
+  - 
+
+* Document Replacement Time #22
+
+::
+
+  - 
+
+* Exposure Time #26
+
+::
+
+  - 
+
+* Document Replacement Time #21
+
+::
+
+  - 
+
+* Exposure Time #27
+
+::
+
+  - 250.00
+
+* Document Replacement Time #20
+
+::
+
+  - 
+
+* Exposure Time #28
+
+::
+
+  - 
+
+* Exposure Time #21
+
+::
+
+  - 250.00
+
+* Document Replacement Time #26
+
+::
+
+  - 
+
+* Exposure Time #22
+
+::
+
+  - 
+
+* Document Replacement Time #25
+
+::
+
+  - 
+
+* Exposure Time #23
+
+::
+
+  - 
+
+* Document Replacement Time #24
+
+::
+
+  - 
+
+* Exposure Time #24
+
+::
+
+  - 250.00
+
+* Document Replacement Time #23
+
+::
+
+  - 
+
+* Markers #32
+
+::
+
+  - 
+
+* Markers #31
+
+::
+
+  - 0
+
+* Markers #30
+
+::
+
+  - 0
+
+* Markers #36
+
+::
+
+  - 0
+
+* Markers #35
+
+::
+
+  - 
+
+* Markers #34
+
+::
+
+  - 0
+
+* Markers #33
+
+::
+
+  - 0
+
+* Markers #28
+
+::
+
+  - 0
+
+* Exposure Time #30
+
+::
+
+  - 250.00
+
+* Document Replacement Time #17
+
+::
+
+  - 
+
+* Markers #29
+
+::
+
+  - 
+
+* Exposure Time #31
+
+::
+
+  - 
+
+* Document Replacement Time #16
+
+::
+
+  - 
+
+* Markers #26
+
+::
+
+  - 
+
+* Document Replacement Time #19
+
+::
+
+  - 
+
+* Markers #27
+
+::
+
+  - 0
+
+* Document Replacement Time #18
+
+::
+
+  - 
+
+* Exposure Time #38
+
+::
+
+  - 
+
+* Exposure Time #39
+
+::
+
+  - 250.00
+
+* Exposure Time #36
+
+::
+
+  - 250.00
+
+* Document Replacement Time #11
+
+::
+
+  - 
+
+* Exposure Time #37
+
+::
+
+  - 
+
+* Document Replacement Time #10
+
+::
+
+  - 
+
+* Exposure Time #34
+
+::
+
+  - 
+
+* Document Replacement Time #13
+
+::
+
+  - 
+
+* Exposure Time #35
+
+::
+
+  - 
+
+* Document Replacement Time #12
+
+::
+
+  - 
+
+* Exposure Time #32
+
+::
+
+  - 
+
+* Document Replacement Time #15
+
+::
+
+  - 
+
+* Exposure Time #33
+
+::
+
+  - 250.00
+
+* Document Replacement Time #14
+
+::
+
+  - 
+
+* Color Channels #29
+
+::
+
+  - 
+
+* Color Channels #28
+
+::
+
+  - 0
+
+* File Size #20
+
+::
+
+  - 2869
+
+* Color Channels #27
+
+::
+
+  - 1
+
+* File Size #21
+
+::
+
+  - 15773176
+
+* Color Channels #26
+
+::
+
+  - 
+
+* Color Channels #25
+
+::
+
+  - 0
+
+* Color Channels #24
+
+::
+
+  - 1
+
+* Color Channels #23
+
+::
+
+  - 
+
+* Color Channels #22
+
+::
+
+  - 0
+
+* File Size #26
+
+::
+
+  - 2869
+
+* File Size #27
+
+::
+
+  - 3965174
+
+* File Size #28
+
+::
+
+  - 
+
+* File Size #29
+
+::
+
+  - 2868
+
+* File Size #22
+
+::
+
+  - 
+
+* File Size #23
+
+::
+
+  - 2869
+
+* File Size #24
+
+::
+
+  - 790242
+
+* File Size #25
+
+::
+
+  - 
+
+* Color Channels #20
+
+::
+
+  - 
+
+* Color Channels #21
+
+::
+
+  - 1
+
+* Color Channels #16
+
+::
+
+  - 0
+
+* File Size #10
+
+::
+
+  - 
+
+* Color Channels #15
+
+::
+
+  - 1
+
+* Color Channels #18
+
+::
+
+  - 1
+
+* Color Channels #17
+
+::
+
+  - 
+
+* Color Channels #12
+
+::
+
+  - 1
+
+* Color Channels #11
+
+::
+
+  - 
+
+* Color Channels #14
+
+::
+
+  - 
+
+* Color Channels #13
+
+::
+
+  - 0
+
+* File Size #17
+
+::
+
+  - 2868
+
+* File Size #18
+
+::
+
+  - 3943756
+
+* File Size #15
+
+::
+
+  - 527350
+
+* File Size #16
+
+::
+
+  - 
+
+* File Size #13
+
+::
+
+  - 
+
+* File Size #14
+
+::
+
+  - 2867
+
+* Color Channels #19
+
+::
+
+  - 0
+
+* File Size #11
+
+::
+
+  - 2867
+
+* File Size #12
+
+::
+
+  - 658784
+
+* File Size #19
+
+::
+
+  - 
+
+* Color Channels #10
+
+::
+
+  - 0
+
+* Color Channels #34
+
+::
+
+  - 0
+
+* Color Channels #33
+
+::
+
+  - 1
+
+* Color Channels #36
+
+::
+
+  - 1
+
+* Color Channels #35
+
+::
+
+  - 
+
+* File Size #31
+
+::
+
+  - 
+
+* Color Channels #38
+
+::
+
+  - 
+
+* File Size #32
+
+::
+
+  - 2868
+
+* Color Channels #37
+
+::
+
+  - 0
+
+* File Size #30
+
+::
+
+  - 658802
+
+* Color Channels #39
+
+::
+
+  - 1
+
+* File Size #35
+
+::
+
+  - 2868
+
+* File Size #36
+
+::
+
+  - 7886894
+
+* File Size #33
+
+::
+
+  - 7886894
+
+* File Size #34
+
+::
+
+  - 
+
+* File Size #39
+
+::
+
+  - 7886894
+
+* File Size #37
+
+::
+
+  - 
+
+* File Size #38
+
+::
+
+  - 2868
+
+* Color Channels #30
+
+::
+
+  - 1
+
+* Color Channels #31
+
+::
+
+  - 0
+
+* Color Channels #32
+
+::
+
+  - 
+
+* Y-Resolution #10
+
+::
+
+  - 
+
+* Y-Resolution #11
+
+::
+
+  - 
+
+* Y-Resolution #14
+
+::
+
+  - 
+
+* Y-Resolution #15
+
+::
+
+  - 256
+
+* Y-Resolution #12
+
+::
+
+  - 256
+
+* Y-Resolution #13
+
+::
+
+  - 
+
+* Y-Resolution #18
+
+::
+
+  - 256
+
+* Y-Resolution #19
+
+::
+
+  - 
+
+* Y-Resolution #16
+
+::
+
+  - 
+
+* Y-Resolution #17
+
+::
+
+  - 
+
+* Y-Resolution #01
+
+::
+
+  - 
+
+* Y-Resolution #02
+
+::
+
+  - 
+
+* Y-Resolution #03
+
+::
+
+  - 256
+
+* Y-Resolution #04
+
+::
+
+  - 
+
+* Y-Resolution #05
+
+::
+
+  - 
+
+* Y-Resolution #06
+
+::
+
+  - 256
+
+* Y-Resolution #07
+
+::
+
+  - 
+
+* Y-Resolution #08
+
+::
+
+  - 
+
+* Y-Resolution #09
+
+::
+
+  - 256
+
+* Y-Resolution #36
+
+::
+
+  - 256
+
+* Y-Resolution #37
+
+::
+
+  - 
+
+* Y-Resolution #34
+
+::
+
+  - 
+
+* Y-Resolution #35
+
+::
+
+  - 
+
+* Y-Resolution #32
+
+::
+
+  - 
+
+* Y-Resolution #33
+
+::
+
+  - 256
+
+* Y-Resolution #30
+
+::
+
+  - 256
+
+* Y-Resolution #31
+
+::
+
+  - 
+
+* Y-Resolution #38
+
+::
+
+  - 
+
+* Y-Resolution #39
+
+::
+
+  - 256
+
+* Y-Resolution #23
+
+::
+
+  - 
+
+* Y-Resolution #24
+
+::
+
+  - 256
+
+* Y-Resolution #25
+
+::
+
+  - 
+
+* Y-Resolution #26
+
+::
+
+  - 
+
+* Y-Resolution #20
+
+::
+
+  - 
+
+* Y-Resolution #21
+
+::
+
+  - 256
+
+* Y-Resolution #22
+
+::
+
+  - 
+
+* Y-Resolution #27
+
+::
+
+  - 128
+
+* Y-Resolution #28
+
+::
+
+  - 
+
+* Y-Resolution #29
+
+::
+
+  - 
+
+* Remote Database ID #18
+
+::
+
+  - 
+
+* Remote Database ID #19
+
+::
+
+  - 
+
+* Remote Database ID #17
+
+::
+
+  - 
+
+* Remote Database ID #16
+
+::
+
+  - 
+
+* Remote Database ID #15
+
+::
+
+  - 
+
+* Remote Database ID #14
+
+::
+
+  - 
+
+* Remote Database ID #13
+
+::
+
+  - 
+
+* Remote Database ID #12
+
+::
+
+  - 
+
+* Remote Database ID #11
+
+::
+
+  - 
+
+* Remote Database ID #10
+
+::
+
+  - 
+
+* Remote Database ID #07
+
+::
+
+  - 
+
+* Remote Database ID #08
+
+::
+
+  - 
+
+* Remote Database ID #09
+
+::
+
+  - 
+
+* Remote Database ID #04
+
+::
+
+  - 
+
+* Remote Database ID #03
+
+::
+
+  - 
+
+* Remote Database ID #06
+
+::
+
+  - 
+
+* Remote Database ID #05
+
+::
+
+  - 
+
+* Remote Database ID #02
+
+::
+
+  - 
+
+* Remote Database ID #01
+
+::
+
+  - 
+
+* Binning #01
+
+::
+
+  - 0
+
+* Binning #10
+
+::
+
+  - 0
+
+* Binning #12
+
+::
+
+  - 2
+
+* Binning #11
+
+::
+
+  - 
+
+* Image Name #33
+
+::
+
+  - FITC
+
+* Image Name #32
+
+::
+
+  - ExperimentPlan
+
+* Image Name #31
+
+::
+
+  - 
+
+* Image Name #30
+
+::
+
+  - FITC
+
+* Image Name #37
+
+::
+
+  - 
+
+* Image Name #36
+
+::
+
+  - FITC
+
+* Image Name #35
+
+::
+
+  - ExperimentPlan
+
+* Image Name #34
+
+::
+
+  - 
+
+* Binning #02
+
+::
+
+  - 
+
+* Binning #03
+
+::
+
+  - 2
+
+* Image Name #39
+
+::
+
+  - FITC
+
+* Binning #04
+
+::
+
+  - 0
+
+* Image Name #38
+
+::
+
+  - ExperimentPlan
+
+* Binning #05
+
+::
+
+  - 
+
+* Binning #06
+
+::
+
+  - 2
+
+* Binning #07
+
+::
+
+  - 0
+
+* Binning #08
+
+::
+
+  - 
+
+* Binning #09
+
+::
+
+  - 2
+
+* File Size #08
+
+::
+
+  - 2867
+
+* File Size #09
+
+::
+
+  - 1447406
+
+* File Size #03
+
+::
+
+  - 527352
+
+* Color Channels #08
+
+::
+
+  - 
+
+* File Size #02
+
+::
+
+  - 2866
+
+* Color Channels #09
+
+::
+
+  - 1
+
+* File Size #01
+
+::
+
+  - 
+
+* File Size #07
+
+::
+
+  - 
+
+* Remote Database ID #30
+
+::
+
+  - 
+
+* File Size #06
+
+::
+
+  - 658786
+
+* Remote Database ID #31
+
+::
+
+  - 
+
+* File Size #05
+
+::
+
+  - 2866
+
+* File Size #04
+
+::
+
+  - 
+
+* Remote Database ID #34
+
+::
+
+  - 
+
+* Color Channels #01
+
+::
+
+  - 0
+
+* Remote Database ID #35
+
+::
+
+  - 
+
+* Color Channels #02
+
+::
+
+  - 
+
+* Remote Database ID #32
+
+::
+
+  - 
+
+* Color Channels #03
+
+::
+
+  - 1
+
+* Remote Database ID #33
+
+::
+
+  - 
+
+* Color Channels #04
+
+::
+
+  - 0
+
+* Remote Database ID #38
+
+::
+
+  - 
+
+* Color Channels #05
+
+::
+
+  - 
+
+* Remote Database ID #39
+
+::
+
+  - 
+
+* Color Channels #06
+
+::
+
+  - 1
+
+* Remote Database ID #36
+
+::
+
+  - 
+
+* Color Channels #07
+
+::
+
+  - 0
+
+* Remote Database ID #37
+
+::
+
+  - 
+
+* Remote Database ID #29
+
+::
+
+  - 
+
+* Remote Database ID #20
+
+::
+
+  - 
+
+* Remote Database ID #21
+
+::
+
+  - 
+
+* Remote Database ID #22
+
+::
+
+  - 
+
+* Remote Database ID #23
+
+::
+
+  - 
+
+* Remote Database ID #24
+
+::
+
+  - 
+
+* Remote Database ID #25
+
+::
+
+  - 
+
+* Remote Database ID #26
+
+::
+
+  - 
+
+* Remote Database ID #27
+
+::
+
+  - 
+
+* Remote Database ID #28
+
+::
+
+  - 
+
+* Bits per Pixel #19
+
+::
+
+  - 
+
+* Bits per Pixel #16
+
+::
+
+  - 
+
+* Bits per Pixel #15
+
+::
+
+  - 16
+
+* Bits per Pixel #18
+
+::
+
+  - 16
+
+* Bits per Pixel #17
+
+::
+
+  - 
+
+* Frames #29
+
+::
+
+  - 
+
+* Record Version #19
+
+::
+
+  - 
+
+* Record Version #18
+
+::
+
+  - 
+
+* Record Version #17
+
+::
+
+  - 
+
+* Record Version #16
+
+::
+
+  - 
+
+* Record Version #15
+
+::
+
+  - 
+
+* Frames #21
+
+::
+
+  - 120
+
+* Document Replacement Date #37
+
+::
+
+  - 
+
+* Record Version #13
+
+::
+
+  - 
+
+* Frames #22
+
+::
+
+  - 
+
+* Document Replacement Date #38
+
+::
+
+  - 
+
+* Record Version #14
+
+::
+
+  - 
+
+* Frames #23
+
+::
+
+  - 
+
+* Document Replacement Date #39
+
+::
+
+  - 
+
+* Record Version #11
+
+::
+
+  - 
+
+* Frames #24
+
+::
+
+  - 6
+
+* Record Version #12
+
+::
+
+  - 
+
+* Frames #25
+
+::
+
+  - 
+
+* Frames #26
+
+::
+
+  - 
+
+* Record Version #10
+
+::
+
+  - 
+
+* Frames #27
+
+::
+
+  - 120
+
+* Frames #28
+
+::
+
+  - 
+
+* Bits per Pixel #11
+
+::
+
+  - 
+
+* Document Replacement Date #30
+
+::
+
+  - 
+
+* Bits per Pixel #12
+
+::
+
+  - 16
+
+* Document Replacement Date #31
+
+::
+
+  - 
+
+* Bits per Pixel #13
+
+::
+
+  - 
+
+* Document Replacement Date #32
+
+::
+
+  - 
+
+* Bits per Pixel #14
+
+::
+
+  - 
+
+* Document Replacement Date #33
+
+::
+
+  - 
+
+* Document Replacement Date #34
+
+::
+
+  - 
+
+* Document Replacement Date #35
+
+::
+
+  - 
+
+* Frames #20
+
+::
+
+  - 
+
+* Document Replacement Date #36
+
+::
+
+  - 
+
+* Bits per Pixel #10
+
+::
+
+  - 
+
+* Binning #39
+
+::
+
+  - 2
+
+* Binning #36
+
+::
+
+  - 2
+
+* Bits per Pixel #29
+
+::
+
+  - 
+
+* Binning #35
+
+::
+
+  - 
+
+* Bits per Pixel #28
+
+::
+
+  - 
+
+* Binning #38
+
+::
+
+  - 
+
+* Bits per Pixel #27
+
+::
+
+  - 16
+
+* Binning #37
+
+::
+
+  - 0
+
+* Bits per Pixel #26
+
+::
+
+  - 
+
+* Record Version #09
+
+::
+
+  - 
+
+* Record Version #08
+
+::
+
+  - 
+
+* Record Version #05
+
+::
+
+  - 
+
+* Record Version #04
+
+::
+
+  - 
+
+* Record Version #07
+
+::
+
+  - 
+
+* Record Version #06
+
+::
+
+  - 
+
+* Frames #34
+
+::
+
+  - 
+
+* Document Replacement Date #28
+
+::
+
+  - 
+
+* Frames #35
+
+::
+
+  - 
+
+* Document Replacement Date #29
+
+::
+
+  - 
+
+* Record Version #01
+
+::
+
+  - 
+
+* Frames #32
+
+::
+
+  - 
+
+* Document Replacement Date #26
+
+::
+
+  - 
+
+* Record Version #02
+
+::
+
+  - 
+
+* Frames #33
+
+::
+
+  - 60
+
+* Document Replacement Date #27
+
+::
+
+  - 
+
+* Record Version #03
+
+::
+
+  - 
+
+* Frames #38
+
+::
+
+  - 
+
+* Frames #39
+
+::
+
+  - 60
+
+* Frames #36
+
+::
+
+  - 60
+
+* Frames #37
+
+::
+
+  - 
+
+* Document Replacement Date #20
+
+::
+
+  - 
+
+* Bits per Pixel #24
+
+::
+
+  - 16
+
+* Document Replacement Date #21
+
+::
+
+  - 
+
+* Bits per Pixel #25
+
+::
+
+  - 
+
+* Bits per Pixel #22
+
+::
+
+  - 
+
+* Bits per Pixel #23
+
+::
+
+  - 
+
+* Frames #30
+
+::
+
+  - 5
+
+* Document Replacement Date #24
+
+::
+
+  - 
+
+* Bits per Pixel #20
+
+::
+
+  - 
+
+* Frames #31
+
+::
+
+  - 
+
+* Document Replacement Date #25
+
+::
+
+  - 
+
+* Bits per Pixel #21
+
+::
+
+  - 16
+
+* Document Replacement Date #22
+
+::
+
+  - 
+
+* Document Replacement Date #23
+
+::
+
+  - 
+
+* Binning #27
+
+::
+
+  - 4
+
+* Bits per Pixel #38
+
+::
+
+  - 
+
+* Binning #26
+
+::
+
+  - 
+
+* Bits per Pixel #37
+
+::
+
+  - 
+
+* Binning #25
+
+::
+
+  - 0
+
+* Binning #24
+
+::
+
+  - 2
+
+* Bits per Pixel #39
+
+::
+
+  - 16
+
+* Binning #29
+
+::
+
+  - 
+
+* Binning #28
+
+::
+
+  - 0
+
+* Frames #08
+
+::
+
+  - 
+
+* Frames #07
+
+::
+
+  - 
+
+* Frames #09
+
+::
+
+  - 11
+
+* Frames #03
+
+::
+
+  - 4
+
+* Frames #04
+
+::
+
+  - 
+
+* Frames #05
+
+::
+
+  - 
+
+* Frames #06
+
+::
+
+  - 5
+
+* Frames #01
+
+::
+
+  - 
+
+* Frames #02
+
+::
+
+  - 
+
+* Binning #30
+
+::
+
+  - 2
+
+* Bits per Pixel #30
+
+::
+
+  - 16
+
+* Bits per Pixel #31
+
+::
+
+  - 
+
+* Bits per Pixel #32
+
+::
+
+  - 
+
+* Binning #33
+
+::
+
+  - 2
+
+* Bits per Pixel #33
+
+::
+
+  - 16
+
+* Binning #34
+
+::
+
+  - 0
+
+* Bits per Pixel #34
+
+::
+
+  - 
+
+* Binning #31
+
+::
+
+  - 0
+
+* Bits per Pixel #35
+
+::
+
+  - 
+
+* Binning #32
+
+::
+
+  - 
+
+* Bits per Pixel #36
+
+::
+
+  - 16
+
+* Binning #14
+
+::
+
+  - 
+
+* Binning #13
+
+::
+
+  - 0
+
+* Binning #16
+
+::
+
+  - 0
+
+* Binning #15
+
+::
+
+  - 2
+
+* Binning #18
+
+::
+
+  - 2
+
+* Binning #17
+
+::
+
+  - 
+
+* Binning #19
+
+::
+
+  - 0
+
+* Frames #19
+
+::
+
+  - 
+
+* Frames #18
+
+::
+
+  - 30
+
+* Frames #16
+
+::
+
+  - 
+
+* Frames #17
+
+::
+
+  - 
+
+* Frames #14
+
+::
+
+  - 
+
+* Frames #15
+
+::
+
+  - 4
+
+* Frames #12
+
+::
+
+  - 5
+
+* Frames #13
+
+::
+
+  - 
+
+* Frames #10
+
+::
+
+  - 
+
+* Frames #11
+
+::
+
+  - 
+
+* Binning #20
+
+::
+
+  - 
+
+* Binning #21
+
+::
+
+  - 2
+
+* Binning #22
+
+::
+
+  - 0
+
+* Binning #23
+
+::
+
+  - 
+
+* Width #20
+
+::
+
+  - 
+
+* Width #23
+
+::
+
+  - 
+
+* Width #24
+
+::
+
+  - 0.13619200006389626
+
+* Width #21
+
+::
+
+  - 0.13619200006389626
+
+* Width #22
+
+::
+
+  - 
+
+* Width #27
+
+::
+
+  - 0.13619200006389626
+
+* Width #28
+
+::
+
+  - 
+
+* Width #25
+
+::
+
+  - 
+
+* Width #26
+
+::
+
+  - 
+
+* Experiment Name #19
+
+::
+
+  - _007
+
+* Experiment Name #18
+
+::
+
+  - _006
+
+* Width #29
+
+::
+
+  - 
+
+* Experiment Name #13
+
+::
+
+  - _005
+
+* Experiment Name #12
+
+::
+
+  - _004
+
+* Experiment Name #11
+
+::
+
+  - _004
+
+* Experiment Name #10
+
+::
+
+  - _004
+
+* Experiment Name #17
+
+::
+
+  - _006
+
+* Experiment Name #16
+
+::
+
+  - _006
+
+* Experiment Name #15
+
+::
+
+  - _005
+
+* Experiment Name #14
+
+::
+
+  - _005
+
+* Width #10
+
+::
+
+  - 
+
+* Width #11
+
+::
+
+  - 
+
+* Width #12
+
+::
+
+  - 0.13619200006389626
+
+* Width #13
+
+::
+
+  - 
+
+* Width #14
+
+::
+
+  - 
+
+* Width #15
+
+::
+
+  - 0.13619200006389626
+
+* Width #16
+
+::
+
+  - 
+
+* Width #17
+
+::
+
+  - 
+
+* Experiment Name #08
+
+::
+
+  - _003
+
+* Width #19
+
+::
+
+  - 
+
+* Experiment Name #07
+
+::
+
+  - _003
+
+* Width #18
+
+::
+
+  - 0.13619200006389626
+
+* Experiment Name #09
+
+::
+
+  - _003
+
+* Experiment Name #02
+
+::
+
+  - _001
+
+* Experiment Name #01
+
+::
+
+  - _001
+
+* Experiment Name #04
+
+::
+
+  - _002
+
+* Experiment Name #03
+
+::
+
+  - _001
+
+* Experiment Name #06
+
+::
+
+  - _002
+
+* Experiment Name #05
+
+::
+
+  - _002
+
+* Experiment Name #30
+
+::
+
+  - _010
+
+* Experiment Name #31
+
+::
+
+  - _011
+
+* Document Replacement Date #12
+
+::
+
+  - 
+
+* Document Replacement Date #11
+
+::
+
+  - 
+
+* Document Replacement Date #14
+
+::
+
+  - 
+
+* Document Replacement Date #13
+
+::
+
+  - 
+
+* Document Replacement Date #10
+
+::
+
+  - 
+
+* Experiment Name #39
+
+::
+
+  - _013
+
+* Document Replacement Date #19
+
+::
+
+  - 
+
+* Experiment Name #38
+
+::
+
+  - _013
+
+* Experiment Name #37
+
+::
+
+  - _013
+
+* Experiment Name #36
+
+::
+
+  - _012
+
+* Document Replacement Date #16
+
+::
+
+  - 
+
+* Experiment Name #35
+
+::
+
+  - _012
+
+* Document Replacement Date #15
+
+::
+
+  - 
+
+* Experiment Name #34
+
+::
+
+  - _012
+
+* Document Replacement Date #18
+
+::
+
+  - 
+
+* Experiment Name #33
+
+::
+
+  - _011
+
+* Document Replacement Date #17
+
+::
+
+  - 
+
+* Experiment Name #32
+
+::
+
+  - _011
+
+* Width #30
+
+::
+
+  - 0.13619200006389626
+
+* Experiment Name #20
+
+::
+
+  - _007
+
+* Width #31
+
+::
+
+  - 
+
+* Width #36
+
+::
+
+  - 0.13619200006389626
+
+* Width #37
+
+::
+
+  - 
+
+* Width #38
+
+::
+
+  - 
+
+* Width #39
+
+::
+
+  - 0.13619200006389626
+
+* Width #32
+
+::
+
+  - 
+
+* Width #33
+
+::
+
+  - 0.13619200006389626
+
+* Width #34
+
+::
+
+  - 
+
+* Width #35
+
+::
+
+  - 
+
+* Document Replacement Date #03
+
+::
+
+  - 
+
+* Document Replacement Date #02
+
+::
+
+  - 
+
+* Document Replacement Date #01
+
+::
+
+  - 
+
+* Experiment Name #29
+
+::
+
+  - _010
+
+* Experiment Name #26
+
+::
+
+  - _009
+
+* Experiment Name #25
+
+::
+
+  - _009
+
+* Document Replacement Date #09
+
+::
+
+  - 
+
+* Experiment Name #28
+
+::
+
+  - _010
+
+* Document Replacement Date #08
+
+::
+
+  - 
+
+* Experiment Name #27
+
+::
+
+  - _009
+
+* Document Replacement Date #07
+
+::
+
+  - 
+
+* Experiment Name #22
+
+::
+
+  - _008
+
+* Document Replacement Date #06
+
+::
+
+  - 
+
+* Experiment Name #21
+
+::
+
+  - _007
+
+* Document Replacement Date #05
+
+::
+
+  - 
+
+* Experiment Name #24
+
+::
+
+  - _008
+
+* Document Replacement Date #04
+
+::
+
+  - 
+
+* Experiment Name #23
+
+::
+
+  - _008
+
+* Document Creation Time #10
+
+::
+
+  - 
+
+* Document Creation Time #13
+
+::
+
+  - 
+
+* Document Creation Time #14
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #11
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #12
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #18
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #17
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #16
+
+::
+
+  - 
+
+* Document Creation Time #15
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #19
+
+::
+
+  - 
+
+* Calibration Unit #02
+
+::
+
+  - 
+
+* Calibration Unit #01
+
+::
+
+  - 
+
+* Document Creation Time #01
+
+::
+
+  - 
+
+* Document Creation Time #02
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #03
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #05
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #04
+
+::
+
+  - 
+
+* Document Creation Time #07
+
+::
+
+  - 
+
+* Document Creation Time #06
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #09
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #08
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #35
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #36
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #33
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #34
+
+::
+
+  - 
+
+* Document Creation Time #31
+
+::
+
+  - 
+
+* Document Creation Time #32
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #30
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #39
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #38
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #37
+
+::
+
+  - 
+
+* Document Creation Time #22
+
+::
+
+  - 
+
+* Document Creation Time #23
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #24
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #25
+
+::
+
+  - 
+
+* Document Creation Time #20
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #21
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #27
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #26
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #29
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Time #28
+
+::
+
+  - 
+
+* Calibration Unit #37
+
+::
+
+  - 
+
+* Calibration Unit #36
+
+::
+
+  - mm
+
+* Calibration Unit #39
+
+::
+
+  - mm
+
+* Calibration Unit #38
+
+::
+
+  - 
+
+* Calibration Unit #29
+
+::
+
+  - 
+
+* Calibration Unit #28
+
+::
+
+  - 
+
+* Calibration Unit #27
+
+::
+
+  - mm
+
+* Calibration Unit #26
+
+::
+
+  - 
+
+* Calibration Unit #25
+
+::
+
+  - 
+
+* Calibration Unit #34
+
+::
+
+  - 
+
+* Calibration Unit #35
+
+::
+
+  - 
+
+* Calibration Unit #32
+
+::
+
+  - 
+
+* Calibration Unit #33
+
+::
+
+  - mm
+
+* Calibration Unit #30
+
+::
+
+  - mm
+
+* Calibration Unit #31
+
+::
+
+  - 
+
+* Calibration Unit #15
+
+::
+
+  - mm
+
+* Record Version #30
+
+::
+
+  - 
+
+* Calibration Unit #14
+
+::
+
+  - 
+
+* Calibration Unit #17
+
+::
+
+  - 
+
+* Record Version #32
+
+::
+
+  - 
+
+* Calibration Unit #16
+
+::
+
+  - 
+
+* Record Version #31
+
+::
+
+  - 
+
+* Calibration Unit #19
+
+::
+
+  - 
+
+* Record Version #34
+
+::
+
+  - 
+
+* Calibration Unit #18
+
+::
+
+  - mm
+
+* Record Version #33
+
+::
+
+  - 
+
+* Record Version #36
+
+::
+
+  - 
+
+* Record Version #35
+
+::
+
+  - 
+
+* Record Version #37
+
+::
+
+  - 
+
+* Record Version #38
+
+::
+
+  - 
+
+* Record Version #39
+
+::
+
+  - 
+
+* Calibration Unit #20
+
+::
+
+  - 
+
+* Calibration Unit #21
+
+::
+
+  - mm
+
+* Calibration Unit #22
+
+::
+
+  - 
+
+* Calibration Unit #23
+
+::
+
+  - 
+
+* Calibration Unit #24
+
+::
+
+  - mm
+
+* Calibration Unit #06
+
+::
+
+  - mm
+
+* Record Version #21
+
+::
+
+  - 
+
+* Calibration Unit #05
+
+::
+
+  - 
+
+* Record Version #20
+
+::
+
+  - 
+
+* Calibration Unit #04
+
+::
+
+  - 
+
+* Calibration Unit #03
+
+::
+
+  - mm
+
+* Record Version #25
+
+::
+
+  - 
+
+* Calibration Unit #09
+
+::
+
+  - mm
+
+* Record Version #24
+
+::
+
+  - 
+
+* Calibration Unit #08
+
+::
+
+  - 
+
+* Record Version #23
+
+::
+
+  - 
+
+* Calibration Unit #07
+
+::
+
+  - 
+
+* Record Version #22
+
+::
+
+  - 
+
+* Record Version #28
+
+::
+
+  - 
+
+* Record Version #29
+
+::
+
+  - 
+
+* Record Version #26
+
+::
+
+  - 
+
+* Record Version #27
+
+::
+
+  - 
+
+* Calibration Unit #12
+
+::
+
+  - mm
+
+* Calibration Unit #13
+
+::
+
+  - 
+
+* Calibration Unit #10
+
+::
+
+  - 
+
+* Calibration Unit #11
+
+::
+
+  - 
+
+* Image Path #39
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000039.tif
+
+* Image Path #38
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000038\ExperimentPlan.obsep
+
+* Image Path #37
+
+::
+
+  - 
+
+* Image Path #36
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000036.tif
+
+* Image Path #34
+
+::
+
+  - 
+
+* Image Path #35
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000035\ExperimentPlan.obsep
+
+* Image Path #32
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000032\ExperimentPlan.obsep
+
+* Image Path #33
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000033.tif
+
+* Image Path #30
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000030.tif
+
+* Image Path #31
+
+::
+
+  - 
+
+* Image Path #29
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000029\ExperimentPlan.obsep
+
+* Image Path #26
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000026\ExperimentPlan.obsep
+
+* Image Path #25
+
+::
+
+  - 
+
+* Image Path #28
+
+::
+
+  - 
+
+* Image Path #27
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000027.tif
+
+* Image Path #21
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000021.tif
+
+* Image Path #22
+
+::
+
+  - 
+
+* Image Path #23
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000023\ExperimentPlan.obsep
+
+* Image Path #24
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000024.tif
+
+* Image Path #20
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000020\ExperimentPlan.obsep
+
+* Width #01
+
+::
+
+  - 
+
+* Width #02
+
+::
+
+  - 
+
+* Width #03
+
+::
+
+  - 0.13619200006389626
+
+* Width #04
+
+::
+
+  - 
+
+* Width #05
+
+::
+
+  - 
+
+* Width #06
+
+::
+
+  - 0.13619200006389626
+
+* Width #08
+
+::
+
+  - 
+
+* Width #07
+
+::
+
+  - 
+
+* Width #09
+
+::
+
+  - 0.13619200006389626
+
+* Image Path #16
+
+::
+
+  - 
+
+* Image Path #17
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000017\ExperimentPlan.obsep
+
+* Image Path #14
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000014\ExperimentPlan.obsep
+
+* Image Path #15
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000015.tif
+
+* Image Path #18
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000018.tif
+
+* Image Path #19
+
+::
+
+  - 
+
+* Image Path #13
+
+::
+
+  - 
+
+* Image Path #12
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000012.tif
+
+* Image Path #11
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000011\ExperimentPlan.obsep
+
+* Image Path #10
+
+::
+
+  - 
+
+* Image Path #03
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000003.tif
+
+* Image Path #04
+
+::
+
+  - 
+
+* Image Path #05
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000005\ExperimentPlan.obsep
+
+* Image Path #06
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000006.tif
+
+* Image Path #07
+
+::
+
+  - 
+
+* Image Path #08
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000008\ExperimentPlan.obsep
+
+* Image Path #09
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\6I5L68A2_F00000009.tif
+
+* Image Path #02
+
+::
+
+  - D:\Colin\07-06-21\6I5L68A2_DocumentFiles\D00000002\ExperimentPlan.obsep
+
+* Image Path #01
+
+::
+
+  - 
+
+* Document Files Size #25
+
+::
+
+  - 3968043
+
+* Document Files Size #24
+
+::
+
+  - 
+
+* Document Files Size #27
+
+::
+
+  - 
+
+* Document Files Size #26
+
+::
+
+  - 
+
+* Document Files Size #21
+
+::
+
+  - 
+
+* Document Files Size #20
+
+::
+
+  - 
+
+* Date #31
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Files Size #23
+
+::
+
+  - 
+
+* Date #30
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Files Size #22
+
+::
+
+  - 793111
+
+* Document Files Size #29
+
+::
+
+  - 
+
+* Document Files Size #28
+
+::
+
+  - 661670
+
+* Date #32
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #33
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #34
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #35
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #36
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #37
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #38
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #39
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Files Size #38
+
+::
+
+  - 
+
+* Document Files Size #37
+
+::
+
+  - 7889762
+
+* Document Files Size #36
+
+::
+
+  - 
+
+* Document Files Size #35
+
+::
+
+  - 
+
+* Date #20
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Files Size #34
+
+::
+
+  - 7889762
+
+* Document Files Size #33
+
+::
+
+  - 
+
+* Document Files Size #32
+
+::
+
+  - 
+
+* Document Files Size #31
+
+::
+
+  - 7889762
+
+* Document Files Size #39
+
+::
+
+  - 
+
+* Date #29
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #23
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #24
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Files Size #30
+
+::
+
+  - 
+
+* Date #21
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #22
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #27
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #28
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #25
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #26
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Files Size #01
+
+::
+
+  - 530218
+
+* Document Files Size #03
+
+::
+
+  - 
+
+* Document Files Size #02
+
+::
+
+  - 
+
+* Document Files Size #05
+
+::
+
+  - 
+
+* Document Files Size #04
+
+::
+
+  - 661652
+
+* Document Files Size #07
+
+::
+
+  - 1450273
+
+* Document Files Size #06
+
+::
+
+  - 
+
+* Time #39
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Files Size #09
+
+::
+
+  - 
+
+* Time #38
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Files Size #08
+
+::
+
+  - 
+
+* Time #37
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #36
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #35
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #34
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #33
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #31
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #32
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #30
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Date #18
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #19
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #14
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #15
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #16
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #17
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #10
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #11
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #12
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #13
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Files Size #12
+
+::
+
+  - 
+
+* Document Files Size #11
+
+::
+
+  - 
+
+* Document Files Size #10
+
+::
+
+  - 661651
+
+* Document Files Size #16
+
+::
+
+  - 3946624
+
+* Document Files Size #15
+
+::
+
+  - 
+
+* Document Files Size #14
+
+::
+
+  - 
+
+* Document Files Size #13
+
+::
+
+  - 530217
+
+* Document Files Size #19
+
+::
+
+  - 15776045
+
+* Document Files Size #18
+
+::
+
+  - 
+
+* Document Files Size #17
+
+::
+
+  - 
+
+* Date #09
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #07
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #08
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #05
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #06
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #03
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #04
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #01
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Date #02
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #34
+
+::
+
+  - _012
+
+* Record Name #35
+
+::
+
+  - ExperimentPlan
+
+* Record Name #32
+
+::
+
+  - ExperimentPlan
+
+* Document Creation Date #01
+
+::
+
+  - 
+
+* Record Name #33
+
+::
+
+  - FITC
+
+* Document Creation Date #02
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #30
+
+::
+
+  - FITC
+
+* Record Name #31
+
+::
+
+  - _011
+
+* Time #21
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #20
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #28
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #29
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #26
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #27
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #24
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #25
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #22
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #23
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Creation Date #08
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Creation Date #07
+
+::
+
+  - 
+
+* Record Name #29
+
+::
+
+  - ExperimentPlan
+
+* Document Creation Date #09
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #28
+
+::
+
+  - _010
+
+* Document Creation Date #04
+
+::
+
+  - 
+
+* Record Name #27
+
+::
+
+  - FITC
+
+* Document Creation Date #03
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #26
+
+::
+
+  - ExperimentPlan
+
+* Document Creation Date #06
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #25
+
+::
+
+  - _009
+
+* Document Creation Date #05
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Time #10
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #15
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #16
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #17
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #18
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #11
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #12
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #13
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #14
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Record Name #37
+
+::
+
+  - _013
+
+* Time #19
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Record Name #36
+
+::
+
+  - FITC
+
+* Record Name #39
+
+::
+
+  - FITC
+
+* Record Name #38
+
+::
+
+  - ExperimentPlan
+
+* Time #02
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #03
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #01
+
+::
+
+  - 12/13/1901 20:45:52
+
+* ID #01
+
+::
+
+  - 1
+
+* Time #06
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #07
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #04
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #05
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #08
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Time #09
+
+::
+
+  - 12/13/1901 20:45:52
+
+* ID #09
+
+::
+
+  - 9
+
+* ID #08
+
+::
+
+  - 8
+
+* ID #07
+
+::
+
+  - 7
+
+* ID #06
+
+::
+
+  - 6
+
+* ID #05
+
+::
+
+  - 5
+
+* ID #04
+
+::
+
+  - 4
+
+* ID #03
+
+::
+
+  - 3
+
+* ID #02
+
+::
+
+  - 2
+
+* ID #11
+
+::
+
+  - 11
+
+* ID #12
+
+::
+
+  - 12
+
+* ID #10
+
+::
+
+  - 10
+
+* Document Creation Date #35
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Creation Date #34
+
+::
+
+  - 
+
+* Record Name #02
+
+::
+
+  - ExperimentPlan
+
+* Document Creation Date #33
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #01
+
+::
+
+  - _001
+
+* Document Creation Date #32
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Creation Date #31
+
+::
+
+  - 
+
+* Document Creation Date #30
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Creation Date #38
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Creation Date #39
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Creation Date #36
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Creation Date #37
+
+::
+
+  - 
+
+* Document Creation Date #20
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #13
+
+::
+
+  - _005
+
+* Document Creation Date #22
+
+::
+
+  - 
+
+* Record Name #12
+
+::
+
+  - 488
+
+* Document Creation Date #21
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #11
+
+::
+
+  - ExperimentPlan
+
+* Document Creation Date #24
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #10
+
+::
+
+  - _004
+
+* Document Creation Date #23
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #05
+
+::
+
+  - ExperimentPlan
+
+* Document Creation Date #25
+
+::
+
+  - 
+
+* Record Name #06
+
+::
+
+  - 488
+
+* Document Creation Date #26
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #03
+
+::
+
+  - 488
+
+* Document Creation Date #27
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #04
+
+::
+
+  - _002
+
+* Document Creation Date #28
+
+::
+
+  - 
+
+* Record Name #09
+
+::
+
+  - 488
+
+* Document Creation Date #29
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #07
+
+::
+
+  - _003
+
+* Record Name #08
+
+::
+
+  - ExperimentPlan
+
+* Record Name #20
+
+::
+
+  - ExperimentPlan
+
+* Record Name #22
+
+::
+
+  - _008
+
+* Document Creation Date #13
+
+::
+
+  - 
+
+* Record Name #21
+
+::
+
+  - FITC
+
+* Document Creation Date #12
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #24
+
+::
+
+  - FITC
+
+* Document Creation Date #11
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #23
+
+::
+
+  - ExperimentPlan
+
+* Document Creation Date #10
+
+::
+
+  - 
+
+* Record Name #14
+
+::
+
+  - ExperimentPlan
+
+* Document Creation Date #16
+
+::
+
+  - 
+
+* Record Name #15
+
+::
+
+  - 488
+
+* Document Creation Date #17
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #16
+
+::
+
+  - _006
+
+* Document Creation Date #14
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #17
+
+::
+
+  - ExperimentPlan
+
+* Document Creation Date #15
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Record Name #18
+
+::
+
+  - FITC
+
+* Record Name #19
+
+::
+
+  - _007
+
+* Document Creation Date #18
+
+::
+
+  - 6/21/2007 0:0:0
+
+* Document Creation Date #19
+
+::
+
+  - 
+
+* Z-Step Width #17
+
+::
+
+  - 
+
+* File Name #09
+
+::
+
+  - 6I5L68A2_F00000009.tif
+
+* Z-Step Width #18
+
+::
+
+  - 0.0
+
+* File Name #08
+
+::
+
+  - ExperimentPlan.obsep
+
+* Z-Step Width #15
+
+::
+
+  - 0.0
+
+* File Name #07
+
+::
+
+  - 
+
+* Z-Step Width #16
+
+::
+
+  - 0.0
+
+* File Name #06
+
+::
+
+  - 6I5L68A2_F00000006.tif
+
+* Z-Step Width #13
+
+::
+
+  - 0.0
+
+* Z-Step Width #14
+
+::
+
+  - 
+
+* Z-Step Width #11
+
+::
+
+  - 
+
+* Z-Step Width #12
+
+::
+
+  - 0.0
+
+* File Name #01
+
+::
+
+  - 
+
+* Z-Step Width #10
+
+::
+
+  - 0.0
+
+* File Name #05
+
+::
+
+  - ExperimentPlan.obsep
+
+* File Name #04
+
+::
+
+  - 
+
+* File Name #03
+
+::
+
+  - 6I5L68A2_F00000003.tif
+
+* File Name #02
+
+::
+
+  - ExperimentPlan.obsep
+
+* Fixed #29
+
+::
+
+  - 0
+
+* Image Dimension #29
+
+::
+
+  - 
+
+* Image Dimension #28
+
+::
+
+  - 
+
+* Fixed #27
+
+::
+
+  - 0
+
+* Image Dimension #27
+
+::
+
+  - 
+
+* Fixed #28
+
+::
+
+  - 0
+
+* Image Dimension #26
+
+::
+
+  - 
+
+* Fixed #25
+
+::
+
+  - 0
+
+* Fixed #26
+
+::
+
+  - 0
+
+* Fixed #23
+
+::
+
+  - 0
+
+* Fixed #24
+
+::
+
+  - 0
+
+* Fixed #21
+
+::
+
+  - 0
+
+* Image Dimension #21
+
+::
+
+  - 
+
+* Fixed #22
+
+::
+
+  - 0
+
+* Image Dimension #20
+
+::
+
+  - 
+
+* Fixed #20
+
+::
+
+  - 0
+
+* Image Dimension #25
+
+::
+
+  - 
+
+* Image Dimension #24
+
+::
+
+  - 
+
+* Image Dimension #23
+
+::
+
+  - 
+
+* Z-Step Width #19
+
+::
+
+  - 0.0
+
+* Image Dimension #22
+
+::
+
+  - 
+
+* Z-Step Width #04
+
+::
+
+  - 0.0
+
+* Document Insertion Time #02
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #05
+
+::
+
+  - 
+
+* Document Insertion Time #03
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #06
+
+::
+
+  - 0.0
+
+* Document Insertion Time #04
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #07
+
+::
+
+  - 0.0
+
+* Document Insertion Time #05
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #06
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #01
+
+::
+
+  - 0.0
+
+* Document Insertion Time #07
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #02
+
+::
+
+  - 
+
+* Document Insertion Time #08
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #03
+
+::
+
+  - 0.0
+
+* Document Insertion Time #09
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #01
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Fixed #38
+
+::
+
+  - 0
+
+* Image Dimension #16
+
+::
+
+  - 
+
+* Fixed #39
+
+::
+
+  - 0
+
+* Image Dimension #15
+
+::
+
+  - 
+
+* Image Dimension #18
+
+::
+
+  - 
+
+* Image Dimension #17
+
+::
+
+  - 
+
+* Fixed #34
+
+::
+
+  - 0
+
+* Fixed #35
+
+::
+
+  - 0
+
+* Image Dimension #19
+
+::
+
+  - 
+
+* Fixed #36
+
+::
+
+  - 0
+
+* Fixed #37
+
+::
+
+  - 0
+
+* Fixed #30
+
+::
+
+  - 0
+
+* Fixed #31
+
+::
+
+  - 0
+
+* Fixed #32
+
+::
+
+  - 0
+
+* Image Dimension #10
+
+::
+
+  - 
+
+* Fixed #33
+
+::
+
+  - 0
+
+* Image Dimension #12
+
+::
+
+  - 
+
+* Z-Step Width #09
+
+::
+
+  - 0.0
+
+* Image Dimension #11
+
+::
+
+  - 
+
+* Z-Step Width #08
+
+::
+
+  - 
+
+* Image Dimension #14
+
+::
+
+  - 
+
+* Image Dimension #13
+
+::
+
+  - 
+
+* Z-Step Width #35
+
+::
+
+  - 
+
+* Document Insertion Time #19
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #36
+
+::
+
+  - 0.0
+
+* Z-Step Width #33
+
+::
+
+  - 0.0
+
+* Document Insertion Time #17
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #34
+
+::
+
+  - 0.0
+
+* Document Insertion Time #18
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #39
+
+::
+
+  - 0.0
+
+* Document Insertion Time #15
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #16
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #37
+
+::
+
+  - 0.0
+
+* Document Insertion Time #13
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #38
+
+::
+
+  - 
+
+* Document Insertion Time #14
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #11
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #12
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #10
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #31
+
+::
+
+  - 0.0
+
+* Z-Step Width #32
+
+::
+
+  - 
+
+* Z-Step Width #30
+
+::
+
+  - 0.0
+
+* Fixed #03
+
+::
+
+  - 0
+
+* Fixed #04
+
+::
+
+  - 0
+
+* Fixed #01
+
+::
+
+  - 0
+
+* Fixed #02
+
+::
+
+  - 0
+
+* Fixed #07
+
+::
+
+  - 0
+
+* Fixed #08
+
+::
+
+  - 0
+
+* Fixed #05
+
+::
+
+  - 0
+
+* Fixed #06
+
+::
+
+  - 0
+
+* Z-Step Width #22
+
+::
+
+  - 0.0
+
+* Document Insertion Time #28
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #23
+
+::
+
+  - 
+
+* Document Insertion Time #29
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #24
+
+::
+
+  - 0.0
+
+* Z-Step Width #25
+
+::
+
+  - 0.0
+
+* Z-Step Width #26
+
+::
+
+  - 
+
+* Document Insertion Time #24
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #27
+
+::
+
+  - 0.0
+
+* Document Insertion Time #25
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #28
+
+::
+
+  - 0.0
+
+* Document Insertion Time #26
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #29
+
+::
+
+  - 
+
+* Document Insertion Time #27
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #20
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Fixed #09
+
+::
+
+  - 0
+
+* Document Insertion Time #21
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #22
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #23
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Z-Step Width #20
+
+::
+
+  - 
+
+* Z-Step Width #21
+
+::
+
+  - 0.0
+
+* Fixed #12
+
+::
+
+  - 0
+
+* Fixed #13
+
+::
+
+  - 0
+
+* Fixed #14
+
+::
+
+  - 0
+
+* Fixed #15
+
+::
+
+  - 0
+
+* Fixed #16
+
+::
+
+  - 0
+
+* Image Dimension #38
+
+::
+
+  - 
+
+* Fixed #17
+
+::
+
+  - 0
+
+* Image Dimension #37
+
+::
+
+  - 
+
+* Fixed #18
+
+::
+
+  - 0
+
+* Fixed #19
+
+::
+
+  - 0
+
+* Image Dimension #39
+
+::
+
+  - 
+
+* Image Dimension #34
+
+::
+
+  - 
+
+* Image Dimension #33
+
+::
+
+  - 
+
+* Image Dimension #36
+
+::
+
+  - 
+
+* Image Dimension #35
+
+::
+
+  - 
+
+* Image Dimension #30
+
+::
+
+  - 
+
+* Fixed #10
+
+::
+
+  - 0
+
+* Image Dimension #32
+
+::
+
+  - 
+
+* Fixed #11
+
+::
+
+  - 0
+
+* Image Dimension #31
+
+::
+
+  - 
+
+* Document Insertion Time #30
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #34
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #33
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #32
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #31
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #38
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #37
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #36
+
+::
+
+  - 12/13/1901 20:45:52
+
+* Document Insertion Time #35
+
+::
+
+  - 12/13/1901 20:45:52
+
+* ID #23
+
+::
+
+  - 23
+
+* ID #22
+
+::
+
+  - 22
+
+* ID #21
+
+::
+
+  - 21
+
+* Document Insertion Time #39
+
+::
+
+  - 12/13/1901 20:45:52
+
+* ID #20
+
+::
+
+  - 20
+
+* Image Name #22
+
+::
+
+  - 
+
+* ID #15
+
+::
+
+  - 15
+
+* Image Name #21
+
+::
+
+  - FITC
+
+* ID #16
+
+::
+
+  - 16
+
+* Image Name #20
+
+::
+
+  - ExperimentPlan
+
+* ID #13
+
+::
+
+  - 13
+
+* ID #14
+
+::
+
+  - 14
+
+* Image Name #26
+
+::
+
+  - ExperimentPlan
+
+* ID #19
+
+::
+
+  - 19
+
+* Image Name #25
+
+::
+
+  - 
+
+* Image Name #24
+
+::
+
+  - FITC
+
+* ID #17
+
+::
+
+  - 17
+
+* Image Name #23
+
+::
+
+  - ExperimentPlan
+
+* ID #18
+
+::
+
+  - 18
+
+* Image Name #29
+
+::
+
+  - ExperimentPlan
+
+* Image Name #28
+
+::
+
+  - 
+
+* Image Name #27
+
+::
+
+  - FITC
+
+* File Name #31
+
+::
+
+  - 
+
+* File Name #32
+
+::
+
+  - ExperimentPlan.obsep
+
+* File Name #33
+
+::
+
+  - 6I5L68A2_F00000033.tif
+
+* File Name #34
+
+::
+
+  - 
+
+* File Name #35
+
+::
+
+  - ExperimentPlan.obsep
+
+* File Name #36
+
+::
+
+  - 6I5L68A2_F00000036.tif
+
+* File Name #37
+
+::
+
+  - 
+
+* File Name #38
+
+::
+
+  - ExperimentPlan.obsep
+
+* File Name #39
+
+::
+
+  - 6I5L68A2_F00000039.tif
+
+* ID #30
+
+::
+
+  - 30
+
+* ID #32
+
+::
+
+  - 32
+
+* ID #31
+
+::
+
+  - 31
+
+* ID #34
+
+::
+
+  - 34
+
+* ID #33
+
+::
+
+  - 33
+
+* ID #24
+
+::
+
+  - 24
+
+* ID #25
+
+::
+
+  - 25
+
+* Image Name #11
+
+::
+
+  - ExperimentPlan
+
+* ID #26
+
+::
+
+  - 26
+
+* Image Name #10
+
+::
+
+  - 
+
+* ID #27
+
+::
+
+  - 27
+
+* Image Name #13
+
+::
+
+  - 
+
+* ID #28
+
+::
+
+  - 28
+
+* Image Name #12
+
+::
+
+  - 488
+
+* ID #29
+
+::
+
+  - 29
+
+* Image Name #15
+
+::
+
+  - 488
+
+* Image Name #14
+
+::
+
+  - ExperimentPlan
+
+* Image Name #17
+
+::
+
+  - ExperimentPlan
+
+* Image Name #16
+
+::
+
+  - 
+
+* Image Name #19
+
+::
+
+  - 
+
+* Image Name #18
+
+::
+
+  - FITC
+
+* File Name #30
+
+::
+
+  - 6I5L68A2_F00000030.tif
+
+* File Name #26
+
+::
+
+  - ExperimentPlan.obsep
+
+* File Name #27
+
+::
+
+  - 6I5L68A2_F00000027.tif
+
+* File Name #24
+
+::
+
+  - 6I5L68A2_F00000024.tif
+
+* File Name #25
+
+::
+
+  - 
+
+* File Name #22
+
+::
+
+  - 
+
+* File Name #23
+
+::
+
+  - ExperimentPlan.obsep
+
+* File Name #20
+
+::
+
+  - ExperimentPlan.obsep
+
+* File Name #21
+
+::
+
+  - 6I5L68A2_F00000021.tif
+
+* File Name #28
+
+::
+
+  - 
+
+* File Name #29
+
+::
+
+  - ExperimentPlan.obsep
+
+* Image Dimension #02
+
+::
+
+  - 
+
+* Image Name #04
+
+::
+
+  - 
+
+* Image Dimension #03
+
+::
+
+  - 
+
+* Image Name #03
+
+::
+
+  - 488
+
+* Image Name #02
+
+::
+
+  - ExperimentPlan
+
+* ID #39
+
+::
+
+  - 39
+
+* Image Dimension #01
+
+::
+
+  - 
+
+* Image Name #01
+
+::
+
+  - 
+
+* ID #37
+
+::
+
+  - 37
+
+* ID #38
+
+::
+
+  - 38
+
+* ID #35
+
+::
+
+  - 35
+
+* ID #36
+
+::
+
+  - 36
+
+* Image Dimension #08
+
+::
+
+  - 
+
+* Image Dimension #09
+
+::
+
+  - 
+
+* Image Name #09
+
+::
+
+  - 488
+
+* Image Dimension #06
+
+::
+
+  - 
+
+* Image Name #08
+
+::
+
+  - ExperimentPlan
+
+* Image Dimension #07
+
+::
+
+  - 
+
+* Image Name #07
+
+::
+
+  - 
+
+* Image Dimension #04
+
+::
+
+  - 
+
+* Image Name #06
+
+::
+
+  - 488
+
+* Image Dimension #05
+
+::
+
+  - 
+
+* Image Name #05
+
+::
+
+  - ExperimentPlan
+
+* File Name #13
+
+::
+
+  - 
+
+* File Name #14
+
+::
+
+  - ExperimentPlan.obsep
+
+* File Name #15
+
+::
+
+  - 6I5L68A2_F00000015.tif
+
+* File Name #16
+
+::
+
+  - 
+
+* File Name #10
+
+::
+
+  - 
+
+* File Name #11
+
+::
+
+  - ExperimentPlan.obsep
+
+* File Name #12
+
+::
+
+  - 6I5L68A2_F00000012.tif
+
+* File Name #17
+
+::
+
+  - ExperimentPlan.obsep
+
+* File Name #18
+
+::
+
+  - 6I5L68A2_F00000018.tif
+
+* File Name #19
+
+::
+
+  - 
+
+* Parent ID #28
+
+::
+
+  - 0
+
+* Parent ID #29
+
+::
+
+  - 28
+
+* Parent ID #26
+
+::
+
+  - 25
+
+* Parent ID #27
+
+::
+
+  - 25
+
+* Parent ID #24
+
+::
+
+  - 22
+
+* Parent ID #25
+
+::
+
+  - 0
+
+* Parent ID #22
+
+::
+
+  - 0
+
+* Parent ID #23
+
+::
+
+  - 22
+
+* Parent ID #20
+
+::
+
+  - 19
+
+* Parent ID #21
+
+::
+
+  - 19
+
+* Parent ID #19
+
+::
+
+  - 0
+
+* Image Type #01
+
+::
+
+  - 
+
+* Image Type #04
+
+::
+
+  - 
+
+* Parent ID #15
+
+::
+
+  - 13
+
+* Image Type #05
+
+::
+
+  - 
+
+* Parent ID #16
+
+::
+
+  - 0
+
+* Image Type #02
+
+::
+
+  - 
+
+* Parent ID #17
+
+::
+
+  - 16
+
+* Image Type #03
+
+::
+
+  - Multi Dimension
+
+* Parent ID #18
+
+::
+
+  - 16
+
+* Image Type #08
+
+::
+
+  - 
+
+* Parent ID #11
+
+::
+
+  - 10
+
+* Image Type #09
+
+::
+
+  - Multi Dimension
+
+* Parent ID #12
+
+::
+
+  - 10
+
+* Image Type #06
+
+::
+
+  - Multi Dimension
+
+* Parent ID #13
+
+::
+
+  - 0
+
+* Image Type #07
+
+::
+
+  - 
+
+* Parent ID #14
+
+::
+
+  - 13
+
+* Parent ID #10
+
+::
+
+  - 0
+
+* Y-Size #35
+
+::
+
+  - 
+
+* Y-Size #36
+
+::
+
+  - 256
+
+* Y-Size #33
+
+::
+
+  - 256
+
+* Y-Size #34
+
+::
+
+  - 0
+
+* Y-Size #39
+
+::
+
+  - 256
+
+* Y-Size #37
+
+::
+
+  - 0
+
+* Y-Size #38
+
+::
+
+  - 
+
+* Y-Size #31
+
+::
+
+  - 0
+
+* Y-Size #32
+
+::
+
+  - 
+
+* Y-Size #30
+
+::
+
+  - 256
+
+* Parent ID #37
+
+::
+
+  - 0
+
+* Y-Size #22
+
+::
+
+  - 0
+
+* Parent ID #38
+
+::
+
+  - 37
+
+* Y-Size #23
+
+::
+
+  - 
+
+* Parent ID #39
+
+::
+
+  - 37
+
+* Y-Size #24
+
+::
+
+  - 256
+
+* Y-Size #25
+
+::
+
+  - 0
+
+* Y-Size #26
+
+::
+
+  - 
+
+* Y-Size #27
+
+::
+
+  - 128
+
+* Y-Size #28
+
+::
+
+  - 0
+
+* Y-Size #29
+
+::
+
+  - 
+
+* Parent ID #30
+
+::
+
+  - 28
+
+* Parent ID #31
+
+::
+
+  - 0
+
+* Parent ID #32
+
+::
+
+  - 31
+
+* Regions Of Interest (ROIs) #38
+
+::
+
+  - 
+
+* Parent ID #33
+
+::
+
+  - 31
+
+* Regions Of Interest (ROIs) #39
+
+::
+
+  - 0
+
+* Parent ID #34
+
+::
+
+  - 0
+
+* Parent ID #35
+
+::
+
+  - 34
+
+* Y-Size #20
+
+::
+
+  - 
+
+* Parent ID #36
+
+::
+
+  - 34
+
+* Y-Size #21
+
+::
+
+  - 256
+
+* Regions Of Interest (ROIs) #35
+
+::
+
+  - 
+
+* Z-Layers #06
+
+::
+
+  - 1
+
+* Regions Of Interest (ROIs) #34
+
+::
+
+  - 0
+
+* Z-Layers #07
+
+::
+
+  - 0
+
+* Regions Of Interest (ROIs) #37
+
+::
+
+  - 0
+
+* Z-Layers #04
+
+::
+
+  - 0
+
+* Regions Of Interest (ROIs) #36
+
+::
+
+  - 0
+
+* Z-Layers #05
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #31
+
+::
+
+  - 0
+
+* Z-Layers #02
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #30
+
+::
+
+  - 0
+
+* Z-Layers #03
+
+::
+
+  - 1
+
+* Regions Of Interest (ROIs) #33
+
+::
+
+  - 0
+
+* Regions Of Interest (ROIs) #32
+
+::
+
+  - 
+
+* Z-Layers #01
+
+::
+
+  - 0
+
+* Y-Size #19
+
+::
+
+  - 0
+
+* Graph Comment #25
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #29
+
+::
+
+  - 
+
+* Graph Comment #24
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #28
+
+::
+
+  - 0
+
+* Graph Comment #23
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #27
+
+::
+
+  - 0
+
+* Graph Comment #22
+
+::
+
+  - 
+
+* Graph Comment #29
+
+::
+
+  - 
+
+* Graph Comment #28
+
+::
+
+  - 
+
+* Graph Comment #27
+
+::
+
+  - 
+
+* Graph Comment #26
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #21
+
+::
+
+  - 0
+
+* Regions Of Interest (ROIs) #22
+
+::
+
+  - 0
+
+* Regions Of Interest (ROIs) #20
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #25
+
+::
+
+  - 0
+
+* Graph Comment #20
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #26
+
+::
+
+  - 
+
+* Graph Comment #21
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #23
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #24
+
+::
+
+  - 0
+
+* Regions Of Interest (ROIs) #17
+
+::
+
+  - 
+
+* Graph Comment #34
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #16
+
+::
+
+  - 0
+
+* Graph Comment #33
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #19
+
+::
+
+  - 0
+
+* Graph Comment #36
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #18
+
+::
+
+  - 0
+
+* Graph Comment #35
+
+::
+
+  - 
+
+* Graph Comment #38
+
+::
+
+  - 
+
+* Graph Comment #37
+
+::
+
+  - 
+
+* Graph Comment #39
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #10
+
+::
+
+  - 0
+
+* Regions Of Interest (ROIs) #11
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #12
+
+::
+
+  - 0
+
+* Regions Of Interest (ROIs) #13
+
+::
+
+  - 0
+
+* Graph Comment #30
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #14
+
+::
+
+  - 
+
+* Graph Comment #31
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #15
+
+::
+
+  - 0
+
+* Graph Comment #32
+
+::
+
+  - 
+
+* Graph Comment #07
+
+::
+
+  - 
+
+* Graph Comment #06
+
+::
+
+  - 
+
+* Graph Comment #05
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #09
+
+::
+
+  - 0
+
+* Graph Comment #04
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #08
+
+::
+
+  - 
+
+* Graph Comment #03
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #07
+
+::
+
+  - 0
+
+* Graph Comment #02
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #06
+
+::
+
+  - 0
+
+* Graph Comment #01
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #05
+
+::
+
+  - 
+
+* Graph Comment #09
+
+::
+
+  - 
+
+* Graph Comment #08
+
+::
+
+  - 
+
+* Regions Of Interest (ROIs) #03
+
+::
+
+  - 0
+
+* Regions Of Interest (ROIs) #04
+
+::
+
+  - 0
+
+* Regions Of Interest (ROIs) #01
+
+::
+
+  - 0
+
+* Regions Of Interest (ROIs) #02
+
+::
+
+  - 
+
+* Graph Comment #16
+
+::
+
+  - 
+
+* Graph Comment #15
+
+::
+
+  - 
+
+* Graph Comment #18
+
+::
+
+  - 
+
+* Graph Comment #17
+
+::
+
+  - 
+
+* Graph Comment #12
+
+::
+
+  - 
+
+* Graph Comment #11
+
+::
+
+  - 
+
+* Graph Comment #14
+
+::
+
+  - 
+
+* Graph Comment #13
+
+::
+
+  - 
+
+* Graph Comment #19
+
+::
+
+  - 
+
+* Graph Comment #10
+
+::
+
+  - 
+
+* Document Count #01
+
+::
+
+  - 2
+
+* Document Count #02
+
+::
+
+  - 
+
+* Document Count #09
+
+::
+
+  - 
+
+* Document Count #08
+
+::
+
+  - 
+
+* Document Count #07
+
+::
+
+  - 2
+
+* Document Count #06
+
+::
+
+  - 
+
+* Document Count #05
+
+::
+
+  - 
+
+* Document Count #04
+
+::
+
+  - 2
+
+* Document Count #03
+
+::
+
+  - 
+
+* Flags #02
+
+::
+
+  - 0
+
+* Flags #03
+
+::
+
+  - 0
+
+* Flags #04
+
+::
+
+  - 0
+
+* Flags #05
+
+::
+
+  - 0
+
+* Flags #01
+
+::
+
+  - 0
+
+* Document Count #10
+
+::
+
+  - 2
+
+* Document Count #11
+
+::
+
+  - 
+
+* Document Count #12
+
+::
+
+  - 
+
+* Document Count #13
+
+::
+
+  - 2
+
+* Write Protection #02
+
+::
+
+  - 
+
+* Write Protection #01
+
+::
+
+  - 
+
+* Document Count #19
+
+::
+
+  - 2
+
+* Document Count #18
+
+::
+
+  - 
+
+* Document Count #15
+
+::
+
+  - 
+
+* Document Count #14
+
+::
+
+  - 
+
+* Document Count #17
+
+::
+
+  - 
+
+* Document Count #16
+
+::
+
+  - 2
+
+* Flags #07
+
+::
+
+  - 0
+
+* Flags #06
+
+::
+
+  - 0
+
+* Flags #09
+
+::
+
+  - 0
+
+* Flags #08
+
+::
+
+  - 0
+
+* Flags #11
+
+::
+
+  - 0
+
+* Flags #12
+
+::
+
+  - 0
+
+* Flags #10
+
+::
+
+  - 0
+
+* Flags #15
+
+::
+
+  - 0
+
+* Flags #16
+
+::
+
+  - 0
+
+* Flags #13
+
+::
+
+  - 0
+
+* Flags #14
+
+::
+
+  - 0
+
+* Write Protection #11
+
+::
+
+  - 
+
+* Document Count #20
+
+::
+
+  - 
+
+* Write Protection #10
+
+::
+
+  - 
+
+* Write Protection #13
+
+::
+
+  - 
+
+* Write Protection #12
+
+::
+
+  - 
+
+* Document Count #23
+
+::
+
+  - 
+
+* Document Count #24
+
+::
+
+  - 
+
+* Document Count #21
+
+::
+
+  - 
+
+* Document Count #22
+
+::
+
+  - 2
+
+* Document Count #28
+
+::
+
+  - 2
+
+* Write Protection #07
+
+::
+
+  - 
+
+* Document Count #27
+
+::
+
+  - 
+
+* Write Protection #08
+
+::
+
+  - 
+
+* Document Count #26
+
+::
+
+  - 
+
+* Write Protection #09
+
+::
+
+  - 
+
+* Document Count #25
+
+::
+
+  - 2
+
+* Write Protection #03
+
+::
+
+  - 
+
+* Write Protection #04
+
+::
+
+  - 
+
+* Write Protection #05
+
+::
+
+  - 
+
+* Document Count #29
+
+::
+
+  - 
+
+* Write Protection #06
+
+::
+
+  - 
+
+* Flags #19
+
+::
+
+  - 0
+
+* Flags #18
+
+::
+
+  - 0
+
+* Flags #17
+
+::
+
+  - 0
+
+* Flags #20
+
+::
+
+  - 0
+
+* Flags #21
+
+::
+
+  - 0
+
+* Flags #22
+
+::
+
+  - 0
+
+* Flags #23
+
+::
+
+  - 0
+
+* Flags #24
+
+::
+
+  - 0
+
+* Flags #25
+
+::
+
+  - 0
+
+* Flags #26
+
+::
+
+  - 0
+
+* Flags #27
+
+::
+
+  - 0
+
+* Write Protection #24
+
+::
+
+  - 
+
+* Write Protection #23
+
+::
+
+  - 
+
+* Document Count #30
+
+::
+
+  - 
+
+* Write Protection #22
+
+::
+
+  - 
+
+* Document Count #31
+
+::
+
+  - 2
+
+* Write Protection #21
+
+::
+
+  - 
+
+* Document Count #32
+
+::
+
+  - 
+
+* Write Protection #20
+
+::
+
+  - 
+
+* Document Count #33
+
+::
+
+  - 
+
+* Document Count #34
+
+::
+
+  - 2
+
+* Document Count #35
+
+::
+
+  - 
+
+* Document Count #37
+
+::
+
+  - 2
+
+* Document Count #36
+
+::
+
+  - 
+
+* Document Count #39
+
+::
+
+  - 
+
+* Write Protection #18
+
+::
+
+  - 
+
+* Document Count #38
+
+::
+
+  - 
+
+* Write Protection #19
+
+::
+
+  - 
+
+* Write Protection #16
+
+::
+
+  - 
+
+* Write Protection #17
+
+::
+
+  - 
+
+* Write Protection #14
+
+::
+
+  - 
+
+* Write Protection #15
+
+::
+
+  - 
+
+* Flags #29
+
+::
+
+  - 0
+
+* Flags #28
+
+::
+
+  - 0
+
+* Flags #30
+
+::
+
+  - 0
+
+* Write Protection #30
+
+::
+
+  - 
+
+* Write Protection #31
+
+::
+
+  - 
+
+* Z-Layers #10
+
+::
+
+  - 0
+
+* Write Protection #32
+
+::
+
+  - 
+
+* Write Protection #33
+
+::
+
+  - 
+
+* Write Protection #34
+
+::
+
+  - 
+
+* Write Protection #35
+
+::
+
+  - 
+
+* Flags #38
+
+::
+
+  - 0
+
+* Z-Layers #14
+
+::
+
+  - 
+
+* Flags #37
+
+::
+
+  - 0
+
+* Z-Layers #13
+
+::
+
+  - 0
+
+* Flags #36
+
+::
+
+  - 0
+
+* Z-Layers #12
+
+::
+
+  - 1
+
+* Flags #35
+
+::
+
+  - 0
+
+* Z-Layers #11
+
+::
+
+  - 
+
+* Flags #34
+
+::
+
+  - 0
+
+* Z-Layers #18
+
+::
+
+  - 1
+
+* Flags #33
+
+::
+
+  - 0
+
+* Z-Layers #17
+
+::
+
+  - 
+
+* Flags #32
+
+::
+
+  - 0
+
+* Z-Layers #16
+
+::
+
+  - 0
+
+* Flags #31
+
+::
+
+  - 0
+
+* Z-Layers #15
+
+::
+
+  - 1
+
+* Z-Layers #08
+
+::
+
+  - 
+
+* Z-Layers #09
+
+::
+
+  - 1
+
+* Image Type #39
+
+::
+
+  - Multi Dimension
+
+* Flags #39
+
+::
+
+  - 0
+
+* Image Type #34
+
+::
+
+  - 
+
+* Write Protection #26
+
+::
+
+  - 
+
+* Image Type #33
+
+::
+
+  - Multi Dimension
+
+* Write Protection #25
+
+::
+
+  - 
+
+* Image Type #32
+
+::
+
+  - 
+
+* Write Protection #28
+
+::
+
+  - 
+
+* Image Type #31
+
+::
+
+  - 
+
+* Write Protection #27
+
+::
+
+  - 
+
+* Image Type #38
+
+::
+
+  - 
+
+* Image Type #37
+
+::
+
+  - 
+
+* Write Protection #29
+
+::
+
+  - 
+
+* Image Type #36
+
+::
+
+  - Multi Dimension
+
+* Image Type #35
+
+::
+
+  - 
+
+* Z-Layers #21
+
+::
+
+  - 1
+
+* Z-Layers #20
+
+::
+
+  - 
+
+* Z-Layers #23
+
+::
+
+  - 
+
+* Z-Layers #22
+
+::
+
+  - 0
+
+* Z-Layers #25
+
+::
+
+  - 0
+
+* Z-Layers #24
+
+::
+
+  - 1
+
+* Z-Layers #27
+
+::
+
+  - 1
+
+* Z-Layers #26
+
+::
+
+  - 
+
+* Z-Layers #29
+
+::
+
+  - 
+
+* Z-Layers #28
+
+::
+
+  - 0
+
+* Z-Layers #19
+
+::
+
+  - 0
+
+* Write Protection #39
+
+::
+
+  - 
+
+* Write Protection #38
+
+::
+
+  - 
+
+* Write Protection #37
+
+::
+
+  - 
+
+* Write Protection #36
+
+::
+
+  - 
+
+* Z-Layers #32
+
+::
+
+  - 
+
+* Z-Layers #31
+
+::
+
+  - 0
+
+* Z-Layers #30
+
+::
+
+  - 1
+
+* Z-Layers #39
+
+::
+
+  - 1
+
+* Z-Layers #38
+
+::
+
+  - 
+
+* Z-Layers #37
+
+::
+
+  - 0
+
+* Z-Layers #36
+
+::
+
+  - 1
+
+* Z-Layers #35
+
+::
+
+  - 
+
+* Z-Layers #34
+
+::
+
+  - 0
+
+* Z-Layers #33
+
+::
+
+  - 1
+
+* Parent ID #01
+
+::
+
+  - 0
+
+* Image Type #19
+
+::
+
+  - 
+
+* Image Type #18
+
+::
+
+  - Multi Dimension
+
+* Parent ID #03
+
+::
+
+  - 1
+
+* Image Type #17
+
+::
+
+  - 
+
+* Parent ID #02
+
+::
+
+  - 1
+
+* Image Type #16
+
+::
+
+  - 
+
+* Parent ID #05
+
+::
+
+  - 4
+
+* Image Type #15
+
+::
+
+  - Multi Dimension
+
+* Parent ID #04
+
+::
+
+  - 0
+
+* Image Type #14
+
+::
+
+  - 
+
+* Parent ID #07
+
+::
+
+  - 0
+
+* Image Type #13
+
+::
+
+  - 
+
+* Parent ID #06
+
+::
+
+  - 4
+
+* Image Type #12
+
+::
+
+  - Multi Dimension
+
+* Parent ID #09
+
+::
+
+  - 7
+
+* Image Type #11
+
+::
+
+  - 
+
+* Parent ID #08
+
+::
+
+  - 7
+
+* Image Type #10
+
+::
+
+  - 
+
+* Image Type #30
+
+::
+
+  - Multi Dimension
+
+* Image Type #29
+
+::
+
+  - 
+
+* Image Type #28
+
+::
+
+  - 
+
+* Image Type #25
+
+::
+
+  - 
+
+* Image Type #24
+
+::
+
+  - Multi Dimension
+
+* Image Type #27
+
+::
+
+  - Multi Dimension
+
+* Image Type #26
+
+::
+
+  - 
+
+* Image Type #21
+
+::
+
+  - Multi Dimension
+
+* Image Type #20
+
+::
+
+  - 
+
+* Image Type #23
+
+::
+
+  - 
+
+* Image Type #22
+
+::
+
+  - 
+
+* Magnification #19
+
+::
+
+  - 
+
+* Magnification #18
+
+::
+
+  - 60.0
+
+* Magnification #17
+
+::
+
+  - 
+
+* Magnification #16
+
+::
+
+  - 
+
+* Magnification #15
+
+::
+
+  - 60.0
+
+* Magnification #14
+
+::
+
+  - 
+
+* Magnification #13
+
+::
+
+  - 
+
+* Experiment Comment #09
+
+::
+
+  - 
+
+* Magnification #12
+
+::
+
+  - 60.0
+
+* Experiment Comment #08
+
+::
+
+  - 
+
+* Magnification #11
+
+::
+
+  - 
+
+* Experiment Comment #07
+
+::
+
+  - 
+
+* Magnification #10
+
+::
+
+  - 
+
+* Experiment Comment #06
+
+::
+
+  - 
+
+* Experiment Comment #05
+
+::
+
+  - 
+
+* Experiment Comment #04
+
+::
+
+  - 
+
+* Experiment Comment #03
+
+::
+
+  - 
+
+* Experiment Comment #02
+
+::
+
+  - 
+
+* Experiment Comment #01
+
+::
+
+  - 
+
+* Experiment Comment #10
+
+::
+
+  - 
+
+* Experiment Comment #11
+
+::
+
+  - 
+
+* Magnification #29
+
+::
+
+  - 
+
+* Magnification #28
+
+::
+
+  - 
+
+* Magnification #25
+
+::
+
+  - 
+
+* Magnification #24
+
+::
+
+  - 60.0
+
+* Magnification #27
+
+::
+
+  - 60.0
+
+* Magnification #26
+
+::
+
+  - 
+
+* Magnification #21
+
+::
+
+  - 60.0
+
+* Experiment Comment #17
+
+::
+
+  - 
+
+* Magnification #20
+
+::
+
+  - 
+
+* Experiment Comment #16
+
+::
+
+  - 
+
+* Magnification #23
+
+::
+
+  - 
+
+* Experiment Comment #19
+
+::
+
+  - 
+
+* Magnification #22
+
+::
+
+  - 
+
+* Experiment Comment #18
+
+::
+
+  - 
+
+* Experiment Comment #13
+
+::
+
+  - 
+
+* Experiment Comment #12
+
+::
+
+  - 
+
+* Experiment Comment #15
+
+::
+
+  - 
+
+* Experiment Comment #14
+
+::
+
+  - 
+
+* Experiment Comment #20
+
+::
+
+  - 
+
+* Experiment Comment #21
+
+::
+
+  - 
+
+* Experiment Comment #22
+
+::
+
+  - 
+
+* Magnification #38
+
+::
+
+  - 
+
+* Magnification #37
+
+::
+
+  - 
+
+* Magnification #36
+
+::
+
+  - 60.0
+
+* Magnification #35
+
+::
+
+  - 
+
+* X-Size #31
+
+::
+
+  - 0
+
+* Magnification #39
+
+::
+
+  - 60.0
+
+* X-Size #30
+
+::
+
+  - 256
+
+* Magnification #30
+
+::
+
+  - 60.0
+
+* Experiment Comment #26
+
+::
+
+  - 
+
+* X-Size #33
+
+::
+
+  - 256
+
+* Experiment Comment #25
+
+::
+
+  - 
+
+* X-Size #32
+
+::
+
+  - 
+
+* Experiment Comment #24
+
+::
+
+  - 
+
+* X-Size #35
+
+::
+
+  - 
+
+* Experiment Comment #23
+
+::
+
+  - 
+
+* X-Size #34
+
+::
+
+  - 0
+
+* Magnification #34
+
+::
+
+  - 
+
+* X-Size #37
+
+::
+
+  - 0
+
+* Magnification #33
+
+::
+
+  - 60.0
+
+* Experiment Comment #29
+
+::
+
+  - 
+
+* X-Size #36
+
+::
+
+  - 256
+
+* Magnification #32
+
+::
+
+  - 
+
+* Experiment Comment #28
+
+::
+
+  - 
+
+* X-Size #39
+
+::
+
+  - 256
+
+* Magnification #31
+
+::
+
+  - 
+
+* Experiment Comment #27
+
+::
+
+  - 
+
+* X-Size #38
+
+::
+
+  - 
+
+* X-Size #29
+
+::
+
+  - 
+
+* Experiment Comment #32
+
+::
+
+  - 
+
+* Experiment Comment #33
+
+::
+
+  - 
+
+* Experiment Comment #30
+
+::
+
+  - 
+
+* Experiment Comment #31
+
+::
+
+  - 
+
+* Experiment Comment #35
+
+::
+
+  - 
+
+* Experiment Comment #34
+
+::
+
+  - 
+
+* Experiment Comment #37
+
+::
+
+  - 
+
+* Experiment Comment #36
+
+::
+
+  - 
+
+* Experiment Comment #39
+
+::
+
+  - 
+
+* Experiment Comment #38
+
+::
+
+  - 
+
+* Volume Label #04
+
+::
+
+  - 
+
+* Volume Label #03
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #06
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #05
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #02
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #01
+
+::
+
+  - 
+
+* Volume Label #08
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #07
+
+::
+
+  - 
+
+* Volume Label #09
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #13
+
+::
+
+  - 
+
+* Volume Label #12
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #11
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #10
+
+::
+
+  - 
+
+* Volume Label #17
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #16
+
+::
+
+  - 
+
+* Volume Label #15
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #14
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #19
+
+::
+
+  - 
+
+* Volume Label #18
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #22
+
+::
+
+  - 
+
+* Volume Label #21
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #24
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #23
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #26
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #25
+
+::
+
+  - 
+
+* Volume Label #28
+
+::
+
+  - 
+
+* Volume Label #27
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #29
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #20
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #31
+
+::
+
+  - 
+
+* Volume Label #30
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #36
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #37
+
+::
+
+  - 
+
+* Volume Label #38
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #39
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #32
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #33
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* Volume Label #34
+
+::
+
+  - 
+
+* Volume Label #35
+
+::
+
+  - 07-06-21_6I5L68A2_0_0
+
+* X-Resolution #30
+
+::
+
+  - 256
+
+* X-Resolution #31
+
+::
+
+  - 
+
+* X-Resolution #32
+
+::
+
+  - 
+
+* X-Resolution #33
+
+::
+
+  - 256
+
+* X-Resolution #34
+
+::
+
+  - 
+
+* X-Resolution #35
+
+::
+
+  - 
+
+* X-Resolution #36
+
+::
+
+  - 256
+
+* X-Resolution #37
+
+::
+
+  - 
+
+* X-Resolution #38
+
+::
+
+  - 
+
+* X-Resolution #39
+
+::
+
+  - 256
+
+* X-Resolution #29
+
+::
+
+  - 
+
+* X-Resolution #28
+
+::
+
+  - 
+
+* X-Resolution #27
+
+::
+
+  - 128
+
+* X-Resolution #26
+
+::
+
+  - 
+
+* X-Resolution #25
+
+::
+
+  - 
+
+* X-Resolution #24
+
+::
+
+  - 256
+
+* X-Resolution #23
+
+::
+
+  - 
+
+* X-Resolution #22
+
+::
+
+  - 
+
+* X-Resolution #21
+
+::
+
+  - 256
+
+* X-Resolution #20
+
+::
+
+  - 
+
+* X-Size #09
+
+::
+
+  - 256
+
+* X-Size #08
+
+::
+
+  - 
+
+* X-Size #07
+
+::
+
+  - 0
+
+* X-Size #16
+
+::
+
+  - 0
+
+* X-Size #17
+
+::
+
+  - 
+
+* X-Size #14
+
+::
+
+  - 
+
+* Comment #39
+
+::
+
+  - 
+
+* X-Size #15
+
+::
+
+  - 256
+
+* X-Size #12
+
+::
+
+  - 256
+
+* X-Size #13
+
+::
+
+  - 0
+
+* X-Size #10
+
+::
+
+  - 0
+
+* X-Size #11
+
+::
+
+  - 
+
+* Comment #34
+
+::
+
+  - 
+
+* Comment #33
+
+::
+
+  - 
+
+* Comment #32
+
+::
+
+  - 
+
+* Comment #31
+
+::
+
+  - 
+
+* Comment #38
+
+::
+
+  - 
+
+* Comment #37
+
+::
+
+  - 
+
+* Comment #36
+
+::
+
+  - 
+
+* Comment #35
+
+::
+
+  - 
+
+* X-Resolution #19
+
+::
+
+  - 
+
+* X-Resolution #16
+
+::
+
+  - 
+
+* X-Resolution #15
+
+::
+
+  - 256
+
+* X-Resolution #18
+
+::
+
+  - 256
+
+* Comment #30
+
+::
+
+  - 
+
+* X-Resolution #17
+
+::
+
+  - 
+
+* X-Resolution #12
+
+::
+
+  - 256
+
+* X-Resolution #11
+
+::
+
+  - 
+
+* X-Resolution #14
+
+::
+
+  - 
+
+* X-Resolution #13
+
+::
+
+  - 
+
+* X-Size #19
+
+::
+
+  - 0
+
+* X-Size #18
+
+::
+
+  - 256
+
+* X-Resolution #10
+
+::
+
+  - 
+
+* Comment #29
+
+::
+
+  - 
+
+* X-Size #25
+
+::
+
+  - 0
+
+* Comment #28
+
+::
+
+  - 
+
+* X-Size #26
+
+::
+
+  - 
+
+* X-Size #27
+
+::
+
+  - 128
+
+* X-Size #28
+
+::
+
+  - 0
+
+* X-Size #21
+
+::
+
+  - 256
+
+* X-Size #22
+
+::
+
+  - 0
+
+* X-Size #23
+
+::
+
+  - 
+
+* X-Size #24
+
+::
+
+  - 256
+
+* Comment #21
+
+::
+
+  - 
+
+* Comment #20
+
+::
+
+  - 
+
+* Comment #23
+
+::
+
+  - 
+
+* Comment #22
+
+::
+
+  - 
+
+* X-Size #20
+
+::
+
+  - 
+
+* Comment #25
+
+::
+
+  - 
+
+* Comment #24
+
+::
+
+  - 
+
+* Comment #27
+
+::
+
+  - 
+
+* Comment #26
+
+::
+
+  - 
+
+* X-Resolution #07
+
+::
+
+  - 
+
+* X-Resolution #06
+
+::
+
+  - 256
+
+* X-Resolution #05
+
+::
+
+  - 
+
+* X-Resolution #04
+
+::
+
+  - 
+
+* X-Resolution #09
+
+::
+
+  - 256
+
+* X-Resolution #08
+
+::
+
+  - 
+
+* X-Resolution #03
+
+::
+
+  - 256
+
+* X-Resolution #02
+
+::
+
+  - 
+
+* X-Resolution #01
+
+::
+
+  - 
+
+* Comment #19
+
+::
+
+  - 
+
+* Comment #18
+
+::
+
+  - 
+
+* Comment #17
+
+::
+
+  - 
+
+* Comment #16
+
+::
+
+  - 
+
+* Comment #15
+
+::
+
+  - 
+
+* Comment #14
+
+::
+
+  - 
+
+* Comment #13
+
+::
+
+  - 
+
+* Comment #12
+
+::
+
+  - 
+
+* Comment #11
+
+::
+
+  - 
+
+* Comment #10
+
+::
+
+  - 
+
+* X-Size #01
+
+::
+
+  - 0
+
+* X-Size #02
+
+::
+
+  - 
+
+* Comment #07
+
+::
+
+  - 
+
+* X-Size #03
+
+::
+
+  - 256
+
+* Magnification #01
+
+::
+
+  - 
+
+* Comment #06
+
+::
+
+  - 
+
+* X-Size #04
+
+::
+
+  - 0
+
+* Comment #09
+
+::
+
+  - 
+
+* X-Size #05
+
+::
+
+  - 
+
+* Comment #08
+
+::
+
+  - 
+
+* X-Size #06
+
+::
+
+  - 256
+
+* Magnification #04
+
+::
+
+  - 
+
+* Comment #03
+
+::
+
+  - 
+
+* Magnification #05
+
+::
+
+  - 
+
+* Comment #02
+
+::
+
+  - 
+
+* Magnification #02
+
+::
+
+  - 
+
+* Comment #05
+
+::
+
+  - 
+
+* Magnification #03
+
+::
+
+  - 60.0
+
+* Comment #04
+
+::
+
+  - 
+
+* Magnification #08
+
+::
+
+  - 
+
+* Magnification #09
+
+::
+
+  - 60.0
+
+* Magnification #06
+
+::
+
+  - 60.0
+
+* Comment #01
+
+::
+
+  - 
+
+* Magnification #07
+
+::
+
+  - 
+

@@ -1,0 +1,151 @@
+*******************************************************************************
+SISReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Olympus SIS TIFF format reader.
+
+Key/value pairs
+===============================================================================
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* PlanarConfiguration
+
+::
+
+  - Chunky
+
+* Software
+
+::
+
+  - analySIS 5.0
+
+* Nanometers per pixel (Y)
+
+::
+
+  - 6.864330744981835
+  - 2.6122462695484088
+  - 3.3605897437106385
+
+* Instrument Make
+
+::
+
+  - Olympus Soft Imaging Solutions
+
+* Nanometers per pixel (X)
+
+::
+
+  - 6.864330744981835
+  - 2.6122462695484088
+  - 3.3605897437106385
+
+* Channel name
+
+::
+
+  - Morada 11 MPixel Steve3 
+
+* ImageLength
+
+::
+
+  - 2502
+
+* NewSubfileType
+
+::
+
+  - 0
+
+* Acquisition date
+
+::
+
+  - 2011-03-31T13:52:00
+  - 2011-03-31T13:58:00
+  - 2011-01-27T10:57:00
+  - 2011-01-27T11:00:00
+  - 2011-03-31T14:09:00
+  - 2011-03-31T12:03:00
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* Camera name
+
+::
+
+  - Morada
+
+* Image name
+
+::
+
+  - CG 3.31.11_1_10000X 
+  - CG 3.31.11_2_15000X 
+  - L1500k P_3_7500X 
+  - L1500k P_4_7500X 
+  - CG 3.31.11_3_20000X 
+  - L1468a-2_4_15000X 
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* SamplesPerPixel
+
+::
+
+  - 1
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - Monochrome
+
+* ImageWidth
+
+::
+
+  - 3838
+
+* PhotometricInterpretation
+
+::
+
+  - Palette
+
+* ResolutionUnit
+
+::
+
+  - None
+
+* Artist
+
+::
+
+  - iTEM Workstation
+
+* Magnification
+
+::
+
+  - 7500.0
+  - 20000.0
+  - 15000.0
+

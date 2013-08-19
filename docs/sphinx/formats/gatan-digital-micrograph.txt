@@ -20,6 +20,7 @@ Officially Supported Versions: 3
 
 Supported Metadata Fields: :doc:`Gatan Digital Micrograph <gatan-digital-micrograph-metadata>`
 
+Original Metadata Support: :doc:`Gatan Digital Micrograph <GatanReader>`
 Freely Available Software:
 
 - `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_ 

@@ -1,0 +1,14221 @@
+*******************************************************************************
+FV1000Reader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Olympus FV1000 format reader.
+
+Key/value pairs
+===============================================================================
+
+* [Axis 3 Parameters Common] Interval
+
+::
+
+  - 250
+  - 1000
+
+* Image 117 : Confocal
+
+::
+
+  - ON
+
+* [Channel 3 Parameters] LightType
+
+::
+
+  - Transmitted Light
+  - Fluorescence
+
+* Image 86 : PMTVoltage
+
+::
+
+  - 181
+
+* [Axis 3 Parameters Common] AxisName
+
+::
+
+  - Z
+
+* Image 200 : PMTVoltage
+
+::
+
+  - 181
+
+* RotationValue Before Clip
+
+::
+
+  - 0
+  - 3374
+
+* [Sequential Group 27 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* Image 2 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* [Sequential Group 27 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* Image 13 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* Image 196 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Sequential Group 0 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 0 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* Image 18 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* [Sequential Group 0 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 0 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 0 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 0 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [GUI Channel 3 Parameters] ExcitationDM Name
+
+::
+
+  - DM488/543/633
+  - DM405/488/559-561
+
+* [Axis 7 Parameters Common] UnitName
+
+::
+
+  - mm
+
+* [GUI Channel 4 Parameters] Physical CH Number
+
+::
+
+  - 4
+
+* [GUI Channel 1 Parameters] BF Range
+
+::
+
+  - 0
+  - 50
+
+* [Axis 1 Parameters Common] GUI MaxSize
+
+::
+
+  - 512
+  - 428
+
+* Image 153 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 44 : Confocal
+
+::
+
+  - OFF
+
+* Image 32 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* Image 120 : PMTVoltage
+
+::
+
+  - 602
+
+* [GUI Channel 2 Parameters] Confocal
+
+::
+
+  - ON
+
+* Image 159 : PMTVoltage
+
+::
+
+  - 602
+
+* [Sequential Group 14 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* Image 1 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* [Sequential Group 14 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Channel 2 Parameters] AnalogPMTOffset
+
+::
+
+  - 600
+  - 400
+
+* [Channel 2 Parameters] BF Position
+
+::
+
+  - 1
+  - 500
+
+* [Sequential Group 14 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* Image 186 : Confocal
+
+::
+
+  - ON
+
+* [Axis 0 Parameters Common] AbsolutePosition
+
+::
+
+  - 0.0
+
+* Image 2 : Confocal
+
+::
+
+  - OFF
+
+* Image 114 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 17 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* [Axis 2 Parameters Common] GUI MaxSize
+
+::
+
+  - 3
+
+* Image 80 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 18 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 3 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 3 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Channel 2 Parameters] EmissionWavelength
+
+::
+
+  - 567
+  - 520
+
+* [File Info] FileFormat
+
+::
+
+  - Olympus Image Format
+
+* [Sequential Group 3 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 3 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Channel 3 Parameters] SequentialNumber
+
+::
+
+  - 1
+  - 3
+
+* [Sequential Group 30 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 3 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* Image 203 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Sequential Group 30 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 3 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 30 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 3 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [GUI Channel 2 Parameters] DyeName
+
+::
+
+  - EGFP
+  - Alexa Fluor 488
+
+* Image 195 : Confocal
+
+::
+
+  - ON
+
+* Image 58 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 3 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 3 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* Image 64 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 3 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 141 : Confocal
+
+::
+
+  - ON
+
+* Image 143 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 108 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 10 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [GUI Channel 3 Parameters] CountingPMTGain
+
+::
+
+  - 0
+
+* [Acquisition Parameters Common] IntegrationType
+
+::
+
+  - None
+  - Line Kalman
+
+* [GUI Channel 2 Parameters] BF Position
+
+::
+
+  - 2
+  - 500
+
+* Image 117 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 17 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 34 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* Image 172 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 30 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* Image 141 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 30 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 30 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 30 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* Image 87 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 30 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 30 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 30 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* Image 71 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 180 : Confocal
+
+::
+
+  - ON
+
+* Image 40 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* [Axis 3 Parameters Common] CalibrateValueA
+
+::
+
+  - 100.0
+
+* [Axis 3 Parameters Common] CalibrateValueB
+
+::
+
+  - 0.0
+
+* Image 127 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 35 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* [Sequential Group 8 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* Image 60 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 11 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* [File Info] DataName
+
+::
+
+  - PIP2 ESCV control Z 1.oib
+  - PIP2 ESCV  Z 1 after.oib
+  - 31h_pea3_fgf10_01_1.oif
+
+* Image 137 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 8 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* Image 30 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 31 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 42 : Confocal
+
+::
+
+  - ON
+
+* Image 68 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 9 : Confocal
+
+::
+
+  - ON
+
+* Image 137 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Sequential Group 27 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 55 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 178 : Confocal
+
+::
+
+  - ON
+
+* Image 62 : Confocal
+
+::
+
+  - OFF
+
+* Image 162 : Confocal
+
+::
+
+  - ON
+
+* Image 201 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Laser 3 Parameters] Laser Enable
+
+::
+
+  - 1
+
+* [Laser 5 Parameters] Laser Enable
+
+::
+
+  - 0
+  - 1
+
+* Image 129 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 168 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 31 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 31 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 31 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* Image 195 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 31 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 31 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* Image 189 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 31 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 31 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 31 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [GUI Channel 5 Parameters] AnalogPMTOffset
+
+::
+
+  - 500
+  - 400
+
+* [Sequential Group 4 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* Image 99 : Confocal
+
+::
+
+  - ON
+
+* Image 47 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 37 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* Image 18 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 12 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 12 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 12 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 12 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* Image 99 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 12 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* Image 99 : PMTVoltage
+
+::
+
+  - 602
+
+* [Sequential Group 12 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 12 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 12 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 192 : Confocal
+
+::
+
+  - ON
+
+* Image 134 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 12 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Channel 1 Parameters] EmissionWavelength
+
+::
+
+  - 510
+  - 461
+
+* Image 24 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 12 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* Image 130 : Confocal
+
+::
+
+  - ON
+
+* Image 133 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Reference Image Parameter] ImageDepth
+
+::
+
+  - 2
+
+* [Sequential Group 22 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [GUI Channel 3 Parameters] BF Position
+
+::
+
+  - 1
+  - 2
+
+* Image 49 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Axis 2 Parameters Common] CalibrateValueA
+
+::
+
+  - 100.0
+
+* [Sequential Group 2 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 2 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Axis 2 Parameters Common] CalibrateValueB
+
+::
+
+  - 0.0
+
+* [Sequential Group 2 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Channel 3 Parameters] EmissionWavelength
+
+::
+
+  - 0
+  - 603
+
+* Image 75 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 2 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* Image 157 : Confocal
+
+::
+
+  - ON
+
+* Image 81 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 2 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Acquisition Parameters Common] LightPath
+
+::
+
+  - 2
+
+* [Sequential Group 2 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* Image 91 : Confocal
+
+::
+
+  - ON
+
+* [Acquisition Parameters Common] Number of use Laser
+
+::
+
+  - 2
+  - 3
+
+* Image 202 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* ScanSpeed
+
+::
+
+  - 8.0
+  - 4.0
+
+* Image 20 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 88 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Channel 2 Parameters] Device CH Number
+
+::
+
+  - 3
+  - 2
+
+* [Reference Image Parameter] WidthConvertValue
+
+::
+
+  - 0.082
+  - 0.155
+
+* Image 62 : PMTVoltage
+
+::
+
+  - 181
+
+* [Sequential Group 31 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Version Info] SystemName
+
+::
+
+  - FLUOVIEW FV1000
+
+* [Sequential Group 31 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* Image 174 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 92 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 49 : Confocal
+
+::
+
+  - ON
+
+* [Acquisition Parameters Common] StopScan InputTrigger
+
+::
+
+  - 0
+
+* [GUI Channel 1 Parameters] DyeName
+
+::
+
+  - 
+  - DAPI
+
+* [GUI Channel 3 Parameters] AnalogPMTGain
+
+::
+
+  - 1000
+
+* Image 197 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 28 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* Image 188 : Confocal
+
+::
+
+  - OFF
+
+* Image 62 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Axis 4 Parameters Common] Interval
+
+::
+
+  - 0
+
+* Image 22 : Confocal
+
+::
+
+  - ON
+
+* [GUI Channel 5 Parameters] BF Range
+
+::
+
+  - 0
+
+* Image 45 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Axis 3 Parameters Common] AbsolutePosition
+
+::
+
+  - 839050.0
+  - 5362250.0
+
+* Image 180 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 123 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 11 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 14 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [Channel 2 Parameters] SequentialNumber
+
+::
+
+  - 2
+
+* [ProfileSaveInfo] ROICount
+
+::
+
+  - 42
+
+* Image 31 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* Image 86 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 22 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* Image 3 : Confocal
+
+::
+
+  - ON
+
+* Image 176 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 44 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Sequential Group 18 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* Image 160 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 18 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* Image 16 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* [GUI Channel 1 Parameters] PMTDetectingMode
+
+::
+
+  - 0
+
+* Image 110 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 175 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 19 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* Step
+
+::
+
+  - 0.0
+
+* [GUI Channel 4 Parameters] PMTDetectingMode
+
+::
+
+  - 0
+
+* [Channel 3 Parameters] Confocal
+
+::
+
+  - OFF
+  - ON
+
+* [Sequential Group 18 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* Image 204 : Confocal
+
+::
+
+  - ON
+
+* Image 196 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 18 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* Image 138 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 18 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 18 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Laser 2 Parameters] LaserWavelength
+
+::
+
+  - 515
+
+* [Channel 1 Parameters] LightType
+
+::
+
+  - Fluorescence
+
+* Image 162 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 160 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Axis 1 Parameters Common] AbsolutePosition
+
+::
+
+  - 0.0
+
+* Image 44 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 54 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 198 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 9 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 23 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [GUI Channel 1 Parameters] EmissionWavelength
+
+::
+
+  - 0
+  - 461
+
+* [Sequential Group 2 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+  - 1
+
+* [ProfileSaveInfo] RoiFileName118
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_469926936_6815390.roi
+
+* [Sequential Group 12 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName117
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_469926936_6812578.roi
+
+* [ProfileSaveInfo] RoiFileName119
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_13427648_6818234.roi
+
+* Image 125 : PMTVoltage
+
+::
+
+  - 181
+
+* [ProfileSaveInfo] RoiFileName120
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_13427648_6821046.roi
+
+* [ProfileSaveInfo] RoiFileName121
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_338323880_6823906.roi
+
+* [ProfileSaveInfo] RoiFileName122
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_338323880_6826718.roi
+
+* [ProfileSaveInfo] RoiFileName123
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471278320_6829546.roi
+
+* [GUI Channel 3 Parameters] BF Name
+
+::
+
+  - BA560-660
+  - BA585-685
+
+* [ProfileSaveInfo] RoiFileName124
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471278320_6832359.roi
+
+* [GUI Channel 3 Parameters] Spectrum CH Enable
+
+::
+
+  - 0
+
+* [Sequential Group 15 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName125
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471300240_6835203.roi
+
+* [Sequential Group 15 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 64 : Confocal
+
+::
+
+  - ON
+
+* Image 29 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* [ProfileSaveInfo] RoiFileName126
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471300240_6838015.roi
+
+* [Sequential Group 15 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName127
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_13517504_6840875.roi
+
+* [Sequential Group 15 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 15 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* Image 166 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 15 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 15 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 15 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* Adjust Outward
+
+::
+
+  - 0
+
+* Image 175 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Sequential Group 15 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [GUI Channel 4 Parameters] Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 15 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* Image 127 : Confocal
+
+::
+
+  - ON
+
+* Image 134 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 50 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Sequential Group 6 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [Channel 2 Parameters] Physical CH Number
+
+::
+
+  - 3
+  - 2
+
+* [GUI Channel 2 Parameters] ExcitationWavelength
+
+::
+
+  - 488
+
+* [Sequential Group 30 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName109
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_343210024_6789937.roi
+
+* [GUI Channel 4 Parameters] ExcitationDM Name
+
+::
+
+  - DM488/543/633
+  - DM405/488/561/633
+
+* [ProfileSaveInfo] RoiFileName108
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336127264_6787093.roi
+
+* [ProfileSaveInfo] RoiFileName107
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336127264_6784265.roi
+
+* [ProfileSaveInfo] RoiFileName106
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336129128_6781421.roi
+
+* [Axis 7 Parameters Common] CalibrateValueB
+
+::
+
+  - 0.0
+
+* [Axis 7 Parameters Common] CalibrateValueA
+
+::
+
+  - 100.0
+
+* Image 31 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* Image 33 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* [ProfileSaveInfo] RoiFileName111
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339897632_6795609.roi
+
+* Image 182 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [ProfileSaveInfo] RoiFileName112
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339897632_6798421.roi
+
+* [ProfileSaveInfo] RoiFileName110
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_343210024_6792750.roi
+
+* [GUI Channel 3 Parameters] ExcitationDM Position
+
+::
+
+  - 3
+  - 6
+
+* [ProfileSaveInfo] RoiFileName115
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336751616_6806921.roi
+
+* [ProfileSaveInfo] RoiFileName116
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336751616_6809734.roi
+
+* [ProfileSaveInfo] RoiFileName113
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340999872_6801250.roi
+
+* [Acquisition Parameters Common] StartScan InputTrigger Enable
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName114
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340999872_6804062.roi
+
+* Image 142 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 9 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* [GUI Channel 5 Parameters] Physical CH Number
+
+::
+
+  - 5
+
+* [Axis 8 Parameters Common] EndPosition
+
+::
+
+  - 0.0
+
+* Image 143 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 11 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 105 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 43 : Confocal
+
+::
+
+  - ON
+
+* [Axis 5 Parameters Common] StartPosition
+
+::
+
+  - 0.0
+
+* Image 24 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* [GUI Channel 5 Parameters] CountingPMTGain
+
+::
+
+  - 0
+
+* [GUI Channel 3 Parameters] Physical CH Number
+
+::
+
+  - 3
+
+* Image 96 : Confocal
+
+::
+
+  - ON
+
+* [Channel 2 Parameters] CountingPMTVoltage
+
+::
+
+  - 0
+
+* Image 175 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 3 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 158 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 58 : PMTVoltage
+
+::
+
+  - 715
+
+* [ProfileSaveInfo] RoiFileName129
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339077208_6846531.roi
+
+* [ProfileSaveInfo] RoiFileName128
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_13517504_6843687.roi
+
+* Image 177 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] RoiFileName137
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_CUTHZ.roi
+
+* [Sequential Group 26 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 25 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName138
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_CUTVZ.roi
+
+* [Sequential Group 25 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName135
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_338116384_6863500.roi
+
+* [Sequential Group 26 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName136
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_338116384_6866312.roi
+
+* [Sequential Group 26 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName133
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339081064_6857843.roi
+
+* [Sequential Group 26 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 25 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName134
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339081064_6860656.roi
+
+* [Sequential Group 26 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 25 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName131
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_467836632_6852203.roi
+
+* [Sequential Group 25 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName132
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_467836632_6855015.roi
+
+* [Sequential Group 26 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 25 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* Image 58 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [ProfileSaveInfo] RoiFileName130
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339077208_6849343.roi
+
+* [GUI Channel 2 Parameters] ExcitationDM Position
+
+::
+
+  - 3
+  - 6
+
+* Image 153 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 70 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 7 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* Image 25 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* [Channel 1 Parameters] CountingPMTGain
+
+::
+
+  - 0
+
+* Image 198 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 67 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Channel 1 Parameters] SequentialNumber
+
+::
+
+  - 1
+
+* [Sequential Group 16 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 7 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* [Laser 3 Parameters] LaserCombinerType
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [GUI Channel 3 Parameters] SequentialNumber
+
+::
+
+  - 1
+  - 2
+  - 3
+
+* [GUI Channel 4 Parameters] CH Name
+
+::
+
+  - OP4CH
+
+* Image 176 : PMTVoltage
+
+::
+
+  - 181
+
+* [Axis 7 Parameters Common] MaxSize
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 130 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 75 : Confocal
+
+::
+
+  - ON
+
+* Image 191 : Confocal
+
+::
+
+  - OFF
+
+* Image 192 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 116 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 0 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 2
+  - 1
+
+* [Sequential Group 8 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 163 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 8 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 8 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* Image 148 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 157 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Axis 1 Parameters Common] MaxSize
+
+::
+
+  - 512
+  - 428
+
+* [2D Display] T Interval
+
+::
+
+  - 1
+
+* [File Info] UserName
+
+::
+
+  - Naomi
+  - Raible
+
+* [ProfileSaveInfo] IniFileName3
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z002.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z002.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z002.pty
+
+* [ProfileSaveInfo] IniFileName4
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z002.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z002.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z002.pty
+
+* [ProfileSaveInfo] IniFileName5
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z002.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z002.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z002.pty
+
+* Image 100 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName6
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z003.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z003.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z003.pty
+
+* Image 83 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [ProfileSaveInfo] IniFileName0
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z001.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z001.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z001.pty
+
+* [ProfileSaveInfo] IniFileName1
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z001.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z001.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z001.pty
+
+* [ProfileSaveInfo] IniFileName2
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z001.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z001.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z001.pty
+
+* [Acquisition Parameters Common] IntegrationCount
+
+::
+
+  - 0
+  - 2
+
+* [Axis 7 Parameters Common] PixUnit
+
+::
+
+  - mm
+
+* [ProfileSaveInfo] IniFileName7
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z003.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z003.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z003.pty
+
+* Image 37 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* [ProfileSaveInfo] IniFileName8
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z003.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z003.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z003.pty
+
+* [ProfileSaveInfo] IniFileName9
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z004.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z004.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z004.pty
+
+* Image 200 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 145 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Axis 0 Parameters Common] EndPosition
+
+::
+
+  - 41.902
+  - 158.565
+
+* Image 145 : Confocal
+
+::
+
+  - ON
+
+* Y Pinhole
+
+::
+
+  - 151
+  - -146
+
+* Image 156 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 116 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 194 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Channel 2 Parameters] ExcitationDM Name
+
+::
+
+  - DM488/543/633
+  - DM405/488/559-561
+
+* Image 153 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 18 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* Image 161 : PMTVoltage
+
+::
+
+  - 181
+
+* [Sequential Group 4 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [GUI Channel 3 Parameters] EmissionDM Name
+
+::
+
+  - Mirror
+
+* [Sequential Group 4 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 21 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 126 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 4 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* Image 121 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Sequential Group 4 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 4 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* Image 67 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 160 : PMTVoltage
+
+::
+
+  - 715
+
+* [GUI Channel 4 Parameters] ExcitationDM Position
+
+::
+
+  - 3
+
+* [Sequential Group 15 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [Sequential Group 11 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 90 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 174 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 12 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 12 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 12 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* Image 94 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 12 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* Image 60 : PMTVoltage
+
+::
+
+  - 602
+
+* [Sequential Group 12 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 12 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [GUI Channel 4 Parameters] EmissionDM Position
+
+::
+
+  - 0
+
+* [Laser 5 Parameters] LaserWavelength
+
+::
+
+  - 405
+
+* [Sequential Group 20 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 148 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 203 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 165 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 5 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* Image 120 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 146 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 111 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 167 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 31 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 31 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 31 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 31 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 31 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* Image 17 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* PinholeDiameter
+
+::
+
+  - 110000
+  - 75000
+
+* Image 173 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 182 : PMTVoltage
+
+::
+
+  - 181
+
+* [Sequential Group 31 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* Image 73 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [GUI Channel 3 Parameters] EmissionWavelength
+
+::
+
+  - 567
+  - 603
+
+* AS Level
+
+::
+
+  - 9999
+
+* [Acquisition Parameters Common] GUI StartScanMode
+
+::
+
+  - 5
+  - 4
+  - 0
+
+* Image 194 : Confocal
+
+::
+
+  - OFF
+
+* [GUI Channel 2 Parameters] EmissionDM Name
+
+::
+
+  - SDM560
+
+* [Acquisition Parameters Common] Z Slices Check
+
+::
+
+  - 0
+
+* Image 53 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Axis 1 Parameters Common] AxisCode
+
+::
+
+  - Y
+
+* Image 162 : PMTVoltage
+
+::
+
+  - 602
+
+* [2D Display] ShowLabelOnColorBar
+
+::
+
+  - 0
+  - 1
+
+* Image 188 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 72 : Confocal
+
+::
+
+  - ON
+
+* [Channel 1 Parameters] BF Position
+
+::
+
+  - 2
+  - 425
+
+* [GUI Channel 3 Parameters] Confocal
+
+::
+
+  - ON
+
+* [Channel 1 Parameters] Spectrum CH Enable
+
+::
+
+  - 0
+  - 1
+
+* [Axis 7 Parameters Common] EndPosition
+
+::
+
+  - 0.0
+
+* PinholeScale
+
+::
+
+  - 1
+
+* Image 143 : Confocal
+
+::
+
+  - OFF
+
+* Image 193 : Confocal
+
+::
+
+  - ON
+
+* Image 35 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 177 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [GUI Channel 4 Parameters] CH Activate
+
+::
+
+  - 0
+
+* Image 205 : Confocal
+
+::
+
+  - ON
+
+* Image 184 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [2D Display] V Axis
+
+::
+
+  - C
+
+* Image 41 : Confocal
+
+::
+
+  - OFF
+
+* [GUI Channel 5 Parameters] ExcitationDM Position
+
+::
+
+  - 3
+
+* Image 38 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* [File Info] Path
+
+::
+
+  - D:/FV10-ASW/Users/Naomi/Image/
+  - F:/confocal/FISH/pea3 and fgf10/
+
+* [Sequential Group 1 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Acquisition Parameters Common] StartScan OutputTrigger Enable
+
+::
+
+  - 0
+
+* [Sequential Group 1 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 1 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* LightControl
+
+::
+
+  - 9999
+
+* [Sequential Group 1 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 1 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 1 Parameters Common] ChannelIndex  0
+
+::
+
+  - 2
+  - 1
+
+* Image 55 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 1 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Axis 3 Parameters Common] EndPosition
+
+::
+
+  - 636070.0
+  - 633450.0
+  - 605730.0
+
+* [Sequential Group 1 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* Image 118 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Sequential Group 1 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* Image 151 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 26 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 1 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* Image 155 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 194 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 38 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* Image 41 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* [2D Display] L End Pos
+
+::
+
+  - -1
+
+* [GUI Channel 3 Parameters] AnalogPMTOffset
+
+::
+
+  - 600
+  - 400
+
+* [Acquisition Parameters Common] SamplingClock
+
+::
+
+  - 125000
+  - 250000
+
+* [Sequential Group 10 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [2D Display] ChAutoFit
+
+::
+
+  - 1
+
+* [Axis 6 Parameters Common] AxisName
+
+::
+
+  - Lambda
+
+* Image 7 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* Image 64 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 21 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* Image 93 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 127 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 184 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 31 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* [ProfileSaveInfo] RoiFileName40
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_CUTHZ.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_343206936_6594734.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_CUTHZ.roi
+
+* Image 185 : Confocal
+
+::
+
+  - OFF
+
+* [ProfileSaveInfo] RoiFileName44
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471516920_6606046.roi
+
+* [ProfileSaveInfo] RoiFileName43
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471516920_6603218.roi
+
+* [ProfileSaveInfo] RoiFileName42
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339122824_6600375.roi
+
+* [ProfileSaveInfo] RoiFileName41
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_CUTVZ.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339122824_6597578.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_CUTVZ.roi
+
+* [ProfileSaveInfo] RoiFileName48
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339334336_6617359.roi
+
+* Image 194 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [ProfileSaveInfo] RoiFileName47
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339334336_6614546.roi
+
+* [ProfileSaveInfo] RoiFileName46
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339329464_6611718.roi
+
+* Image 78 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] RoiFileName45
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339329464_6608890.roi
+
+* [ProfileSaveInfo] RoiFileName49
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_468170464_6620203.roi
+
+* [Sequential Group 4 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [GUI Channel 1 Parameters] CountingPMTVoltage
+
+::
+
+  - 0
+
+* Image 163 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 20 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 25 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* Image 133 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 72 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 26 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* Image 5 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 26 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName51
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339353432_6625875.roi
+
+* [Sequential Group 26 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName50
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_468170464_6623015.roi
+
+* [Sequential Group 26 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName53
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339116224_6631515.roi
+
+* [ProfileSaveInfo] RoiFileName52
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339353432_6628671.roi
+
+* [ProfileSaveInfo] RoiFileName55
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_466061952_6637187.roi
+
+* [GUI Channel 1 Parameters] AnalogPMTOffset
+
+::
+
+  - 400
+  - 500
+
+* [ProfileSaveInfo] RoiFileName54
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339116224_6634343.roi
+
+* [ProfileSaveInfo] RoiFileName57
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_13495488_6642843.roi
+
+* Image 108 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [ProfileSaveInfo] RoiFileName56
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_466061952_6640000.roi
+
+* Image 183 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] RoiFileName59
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_469963624_6648500.roi
+
+* [Sequential Group 26 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName58
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_13495488_6645671.roi
+
+* [Sequential Group 26 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Axis 8 Parameters Common] PixUnit
+
+::
+
+  - Unknown
+
+* [Sequential Group 26 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 26 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* Image 61 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Sequential Group 26 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 26 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* Image 139 : Confocal
+
+::
+
+  - ON
+
+* Image 4 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* [Channel 3 Parameters] ExcitationDM Name
+
+::
+
+  - DM488/543/633
+  - DM405/488/559-561
+
+* [Axis 2 Parameters Common] AxisName
+
+::
+
+  - Ch
+
+* Image 89 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 97 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [ProfileSaveInfo] LUTCount
+
+::
+
+  - 3
+
+* [ProfileSaveInfo] RoiFileName22
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240394776_3701796.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_341486888_6543812.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_125101320_12368359.roi
+
+* [ProfileSaveInfo] RoiFileName21
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_336600088_3698953.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_341486888_6541000.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_124314088_12363609.roi
+
+* [ProfileSaveInfo] RoiFileName20
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240236192_3696109.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_467651064_6538156.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_124314088_12358921.roi
+
+* Image 80 : Confocal
+
+::
+
+  - OFF
+
+* [GUI Channel 5 Parameters] EmissionWavelength
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 179 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [ProfileSaveInfo] RoiFileName29
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240322800_3721703.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337906720_6563640.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97377080_12401265.roi
+
+* [File Info] FileType
+
+::
+
+  - GrayScale
+
+* [ProfileSaveInfo] RoiFileName28
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240260512_3718859.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336755792_6560781.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97377080_12396593.roi
+
+* Image 93 : PMTVoltage
+
+::
+
+  - 602
+
+* [ProfileSaveInfo] RoiFileName27
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240255640_3716015.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336755792_6557984.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97458232_12391843.roi
+
+* [ProfileSaveInfo] RoiFileName26
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240228832_3713156.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340935256_6555140.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97458232_12387140.roi
+
+* [ProfileSaveInfo] RoiFileName25
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_338009104_3710328.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340935256_6552312.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97458232_12382468.roi
+
+* Image 136 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [ProfileSaveInfo] RoiFileName24
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_338004232_3707484.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336129288_6549468.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_125101320_12377718.roi
+
+* [ProfileSaveInfo] RoiFileName23
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240138112_3704640.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336129288_6546656.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_125101320_12373046.roi
+
+* Image 128 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 114 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 51 : PMTVoltage
+
+::
+
+  - 602
+
+* [GUI Channel 1 Parameters] Spectrum CH Enable
+
+::
+
+  - 0
+  - 1
+
+* Image 8 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* Image 33 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 27 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [Channel 3 Parameters] AnalogPMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* [ProfileSaveInfo] RoiFileName31
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240332616_3727375.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339896408_6569296.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_127643008_12410703.roi
+
+* [Sequential Group 25 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName30
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240327672_3724531.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337906720_6566453.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97377080_12405953.roi
+
+* [Sequential Group 25 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName33
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240342432_3733046.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337849784_6574953.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_127643008_12420062.roi
+
+* [Laser 1 Parameters] LaserTransmissivity
+
+::
+
+  - 20
+  - 30
+
+* [Sequential Group 25 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName32
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240337560_3730203.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339896408_6572109.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_127643008_12415375.roi
+
+* [Laser 3 Parameters] LaserTransmissivity
+
+::
+
+  - 50
+  - 130
+  - 35
+
+* [Sequential Group 25 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* Image 114 : PMTVoltage
+
+::
+
+  - 602
+
+* [Sequential Group 25 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName39
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240281824_3750109.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_343206936_6591937.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97436072_12448281.roi
+
+* [Channel 2 Parameters] DyeName
+
+::
+
+  - Cy3
+  - Alexa Fluor 488
+
+* [ProfileSaveInfo] RoiFileName38
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240244112_3747265.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471540672_6589078.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97436072_12443593.roi
+
+* [Sequential Group 25 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName35
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240352248_3738734.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337767144_6580609.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97431200_12429500.roi
+
+* [Sequential Group 25 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName34
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240347376_3735890.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337849784_6577765.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97431200_12424796.roi
+
+* [Sequential Group 25 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName37
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240239240_3744421.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471540672_6586265.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97436072_12438921.roi
+
+* [Laser 4 Parameters] LaserCombinerType
+
+::
+
+  - 0
+
+* [Sequential Group 25 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName36
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240250680_3741578.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337767144_6583421.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97431200_12434187.roi
+
+* [Sequential Group 25 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Axis 5 Parameters Common] AbsolutePosition
+
+::
+
+  - 0.0
+
+* Image 119 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 63 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 80 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 37 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* Image 110 : PMTVoltage
+
+::
+
+  - 181
+
+* [ProfileSaveInfo] RoiFileName89
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_338882568_6733359.roi
+
+* Image 29 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 14 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* [ProfileSaveInfo] RoiFileName83
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_240240384_6716375.roi
+
+* [ProfileSaveInfo] RoiFileName84
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_240240384_6719187.roi
+
+* [ProfileSaveInfo] RoiFileName81
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_240281584_6710718.roi
+
+* [ProfileSaveInfo] RoiFileName82
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_240281584_6713515.roi
+
+* [ProfileSaveInfo] RoiFileName87
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_467652368_6727703.roi
+
+* [ProfileSaveInfo] RoiFileName88
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_467652368_6730515.roi
+
+* [ProfileSaveInfo] RoiFileName85
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336224032_6722031.roi
+
+* Image 73 : PMTVoltage
+
+::
+
+  - 715
+
+* [ProfileSaveInfo] RoiFileName86
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336224032_6724859.roi
+
+* Image 109 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 115 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [ProfileSaveInfo] RoiFileName80
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471538648_6707875.roi
+
+* [Acquisition Parameters Common] ImageCaputreDate
+
+::
+
+  - '2007-06-05 09:24:17'
+  - '2007-06-05 10:11:36'
+  - '2007-06-07 11:32:03'
+
+* [GUI Channel 4 Parameters] Device CH Number
+
+::
+
+  - 1
+
+* Image 184 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [GUI Channel 2 Parameters] Physical CH Number
+
+::
+
+  - 2
+
+* Image 121 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 103 : PMTVoltage
+
+::
+
+  - 715
+
+* [Channel 3 Parameters] CH Name
+
+::
+
+  - TD1
+  - CH3
+
+* Image 25 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* [Sequential Group 26 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 203 : Confocal
+
+::
+
+  - OFF
+
+* [Channel 3 Parameters] BF Position
+
+::
+
+  - 0
+  - 2
+
+* [Sequential Group 7 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 96 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 142 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] RoiFileName92
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336755952_6741828.roi
+
+* RotationValue After Clip
+
+::
+
+  - 0
+  - 3374
+
+* [ProfileSaveInfo] RoiFileName93
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339896568_6744687.roi
+
+* [ProfileSaveInfo] RoiFileName94
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339896568_6747484.roi
+
+* Image 126 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [ProfileSaveInfo] RoiFileName95
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340987016_6750328.roi
+
+* Image 193 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [ProfileSaveInfo] RoiFileName96
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340987016_6753156.roi
+
+* [ProfileSaveInfo] RoiFileName97
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337920848_6755984.roi
+
+* [ProfileSaveInfo] RoiFileName98
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337920848_6758812.roi
+
+* [ProfileSaveInfo] RoiFileName99
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337800080_6761640.roi
+
+* [Channel 3 Parameters] EmissionDM Name
+
+::
+
+  - 
+  - Mirror
+
+* Image 176 : Confocal
+
+::
+
+  - OFF
+
+* Image 136 : PMTVoltage
+
+::
+
+  - 715
+
+* [ProfileSaveInfo] RoiFileName91
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336755952_6739015.roi
+
+* [ProfileSaveInfo] RoiFileName90
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_338882568_6736171.roi
+
+* [GUI Channel 2 Parameters] CountingPMTOffset
+
+::
+
+  - 160
+
+* Image 23 : Confocal
+
+::
+
+  - OFF
+
+* [Axis 0 Parameters Common] AxisCode
+
+::
+
+  - X
+
+* Image 34 : Confocal
+
+::
+
+  - ON
+
+* Image 57 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] RoiFileName69
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340414752_6676781.roi
+
+* [ProfileSaveInfo] RoiFileName67
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336297504_6671125.roi
+
+* [ProfileSaveInfo] RoiFileName68
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336297504_6673937.roi
+
+* [ProfileSaveInfo] RoiFileName65
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336506848_6665468.roi
+
+* [ProfileSaveInfo] RoiFileName66
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336506848_6668281.roi
+
+* [ProfileSaveInfo] RoiFileName63
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471308144_6659812.roi
+
+* [ProfileSaveInfo] RoiFileName64
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471308144_6662640.roi
+
+* [ProfileSaveInfo] RoiFileName61
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_343208280_6654156.roi
+
+* [Channel 1 Parameters] BF Range
+
+::
+
+  - 0
+  - 50
+
+* [ProfileSaveInfo] RoiFileName62
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_343208280_6656968.roi
+
+* [ProfileSaveInfo] RoiFileName60
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_469963624_6651312.roi
+
+* [2D Display] Columns
+
+::
+
+  - 2
+
+* Image 25 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* [Axis 1 Parameters Common] StartPosition
+
+::
+
+  - 0.0
+
+* Image 36 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* [Axis 1 Parameters Common] CalibrateValueB
+
+::
+
+  - 0.0
+
+* [Axis 1 Parameters Common] CalibrateValueA
+
+::
+
+  - 100.0
+
+* [2D Display] Image Size Auto
+
+::
+
+  - 1
+
+* Image 88 : PMTVoltage
+
+::
+
+  - 715
+
+* [Axis 3 Parameters Common] StartPosition
+
+::
+
+  - 626320.0
+  - 616450.0
+  - 592730.0
+
+* Resolution
+
+::
+
+  - 10.0
+
+* [ProfileSaveInfo] RoiFileName78
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_338056336_6702234.roi
+
+* [ProfileSaveInfo] RoiFileName79
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471538648_6705062.roi
+
+* [Axis 4 Parameters Common] MaxSize
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName74
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_466062272_6690906.roi
+
+* [ProfileSaveInfo] RoiFileName75
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_240341952_6693750.roi
+
+* Image 101 : Confocal
+
+::
+
+  - OFF
+
+* Image 152 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [ProfileSaveInfo] RoiFileName76
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_240341952_6696578.roi
+
+* [ProfileSaveInfo] RoiFileName77
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_338056336_6699421.roi
+
+* [ProfileSaveInfo] RoiFileName70
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340414752_6679593.roi
+
+* Image 181 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [ProfileSaveInfo] RoiFileName71
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471540912_6682437.roi
+
+* [ProfileSaveInfo] RoiFileName72
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471540912_6685250.roi
+
+* Image 171 : Confocal
+
+::
+
+  - ON
+
+* Image 164 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [ProfileSaveInfo] RoiFileName73
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_466062272_6688093.roi
+
+* Image 14 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 7 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* Image 71 : Confocal
+
+::
+
+  - OFF
+
+* [Axis 1 Parameters Common] EndPosition
+
+::
+
+  - 41.902
+  - 66.185
+
+* Image 167 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 102 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 117 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 167 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 79 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 36 : Confocal
+
+::
+
+  - ON
+
+* Image 45 : PMTVoltage
+
+::
+
+  - 602
+
+* [Sequential Group 17 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Acquisition Parameters Common] GUI StopScanMode
+
+::
+
+  - 5
+  - 4
+  - 0
+
+* [Sequential Group 3 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Axis 6 Parameters Common] UnitName
+
+::
+
+  - nm
+
+* [Sequential Group 3 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 3 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* Image 173 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 3 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 3 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 3 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 15 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 46 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 26 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 13 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* Image 170 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 120 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Axis 4 Parameters Common] AxisName
+
+::
+
+  - T
+
+* [Axis 4 Parameters Common] CalibrateValueB
+
+::
+
+  - 0.0
+
+* [Laser 3 Parameters] ND Scale
+
+::
+
+  - 5
+
+* [Axis 4 Parameters Common] CalibrateValueA
+
+::
+
+  - 100.0
+
+* [GUI Channel 4 Parameters] BF Position
+
+::
+
+  - 1
+
+* Image 92 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 14 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* [2D Display] ShowDivisionsOnScale
+
+::
+
+  - 1
+
+* Image 190 : Confocal
+
+::
+
+  - ON
+
+* Image 65 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Channel 1 Parameters] CH Name
+
+::
+
+  - CH2
+  - CHS1
+
+* [Laser 1 Parameters] LaserCombinerType
+
+::
+
+  - 0
+
+* Image 168 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [GUI Channel 3 Parameters] AnalogPMTVoltage
+
+::
+
+  - 715
+  - 564
+
+* [Axis 6 Parameters Common] AxisCode
+
+::
+
+  - L
+
+* [Sequential Group 6 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 82 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 9 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 77 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 178 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 47 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 40 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* Image 146 : Confocal
+
+::
+
+  - OFF
+
+* Image 76 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Sequential Group 6 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* Image 200 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 6 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* Image 104 : Confocal
+
+::
+
+  - OFF
+
+* [GUI Channel 1 Parameters] Device CH Number
+
+::
+
+  - 1
+
+* Image 144 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 14 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* Image 154 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 69 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Axis 4 Parameters Common] GUI MaxSize
+
+::
+
+  - 0
+
+* Image 19 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* Image 132 : Confocal
+
+::
+
+  - ON
+
+* [GUI Channel 2 Parameters] EmissionWavelength
+
+::
+
+  - 510
+  - 520
+
+* Image 172 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* RotationValue
+
+::
+
+  - 0.0
+  - 337.4
+
+* [ProfileSaveInfo] RoiFileName101
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471518704_6767296.roi
+
+* [ProfileSaveInfo] RoiFileName100
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337800080_6764453.roi
+
+* [Sequential Group 1 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 1 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName105
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336129128_6778609.roi
+
+* [Sequential Group 1 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName104
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336739488_6775765.roi
+
+* [Sequential Group 1 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName103
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336739488_6772953.roi
+
+* Image 25 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 1 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName102
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_471518704_6770125.roi
+
+* [Sequential Group 1 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* Image 125 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 130 : PMTVoltage
+
+::
+
+  - 715
+
+* [ProfileSaveInfo] RoiFileName14
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240446016_3679062.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340415072_6521171.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97364864_12330718.roi
+
+* [ProfileSaveInfo] RoiFileName15
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240437728_3681906.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337799920_6524015.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97364864_12335406.roi
+
+* [ProfileSaveInfo] RoiFileName12
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240388832_3673375.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_13520808_6515500.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_125626384_12321296.roi
+
+* [ProfileSaveInfo] RoiFileName13
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240429688_3676218.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340415072_6518343.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_97364864_12326031.roi
+
+* [ProfileSaveInfo] RoiFileName18
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240420888_3690437.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_343171912_6532484.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_123252392_12349500.roi
+
+* [ProfileSaveInfo] RoiFileName19
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240199648_3693265.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_467651064_6535343.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_124314088_12354250.roi
+
+* [Axis 1 Parameters Common] PixUnit
+
+::
+
+  - um
+
+* [Sequential Group 22 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] RoiFileName16
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240404816_3684750.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337799920_6526828.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_123252392_12340140.roi
+
+* [ProfileSaveInfo] RoiFileName17
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240412880_3687593.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_343171912_6529671.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_123252392_12344828.roi
+
+* Image 82 : Confocal
+
+::
+
+  - ON
+
+* Image 197 : Confocal
+
+::
+
+  - OFF
+
+* [ProfileSaveInfo] RoiFileName10
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_336628448_3667687.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340988480_6509843.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_125626384_12311921.roi
+
+* [ProfileSaveInfo] RoiFileName11
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_336612264_3670531.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_13520808_6512687.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_125626384_12316609.roi
+
+* Image 119 : Confocal
+
+::
+
+  - OFF
+
+* Image 158 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 24 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [GUI Channel 5 Parameters] ExcitationDM Name
+
+::
+
+  - DM488/543/633
+  - DM405/488/561/633
+
+* [Sequential Group 24 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* Image 35 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* [Acquisition Parameters Common] ZoomValue
+
+::
+
+  - 5.0
+  - 2.0
+
+* [Axis 0 Parameters Common] PixUnit
+
+::
+
+  - um
+
+* [Sequential Group 9 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* Image 27 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 9 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 61 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 166 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Axis 7 Parameters Common] AxisCode
+
+::
+
+  - P
+
+* [Sequential Group 23 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 23 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* Image 112 : Confocal
+
+::
+
+  - ON
+
+* Image 67 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 17 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 17 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* Image 76 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 17 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 17 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* Image 139 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Sequential Group 23 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 17 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 23 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 23 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 23 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* Image 181 : PMTVoltage
+
+::
+
+  - 715
+
+* [GUI Channel 3 Parameters] BF Range
+
+::
+
+  - 0
+
+* [Acquisition Parameters Common] EveryTrigger Enable
+
+::
+
+  - 0
+
+* [Reference Image Parameter] ImageHeight
+
+::
+
+  - 512
+  - 1024
+
+* [Axis 0 Parameters Common] GUI MaxSize
+
+::
+
+  - 512
+  - 1024
+
+* Image 165 : Confocal
+
+::
+
+  - ON
+
+* Image 34 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* Image 103 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 85 : Confocal
+
+::
+
+  - ON
+
+* [GUI Channel 3 Parameters] CountingPMTVoltage
+
+::
+
+  - 0
+
+* [Channel 3 Parameters] CountingPMTGain
+
+::
+
+  - 0
+
+* [GUI Channel 4 Parameters] EmissionDM Name
+
+::
+
+  - (null)
+
+* [GUI Channel 3 Parameters] CountingPMTOffset
+
+::
+
+  - 160
+
+* [ProfileSaveInfo] IniFileName130
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z044.pty
+
+* [ProfileSaveInfo] IniFileName124
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z042.pty
+
+* [ProfileSaveInfo] IniFileName125
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z042.pty
+
+* [Axis 2 Parameters Common] MaxSize
+
+::
+
+  - 3
+
+* [ProfileSaveInfo] IniFileName126
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z043.pty
+
+* [ProfileSaveInfo] IniFileName127
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z043.pty
+
+* [Sequential Group 12 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName120
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z041.pty
+
+* Image 70 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [ProfileSaveInfo] IniFileName121
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z041.pty
+
+* [ProfileSaveInfo] IniFileName122
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z041.pty
+
+* Image 201 : PMTVoltage
+
+::
+
+  - 602
+
+* [ProfileSaveInfo] IniFileName123
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z042.pty
+
+* [Axis 6 Parameters Common] EndPosition
+
+::
+
+  - 401.0
+  - 505.0
+
+* [ProfileSaveInfo] IniFileName128
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z043.pty
+
+* [ProfileSaveInfo] IniFileName129
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z044.pty
+
+* Image 95 : Confocal
+
+::
+
+  - OFF
+
+* [Axis 5 Parameters Common] GUI MaxSize
+
+::
+
+  - 0
+
+* Image 19 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* Image 136 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 161 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Axis 2 Parameters Common] EndPosition
+
+::
+
+  - 3.0
+
+* Image 187 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Sequential Group 18 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 150 : PMTVoltage
+
+::
+
+  - 602
+
+* [ProfileSaveInfo] IniFileName115
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z039.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z039.pty
+
+* Image 116 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [ProfileSaveInfo] IniFileName116
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z039.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z039.pty
+
+* [ProfileSaveInfo] IniFileName113
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z038.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z038.pty
+
+* [ProfileSaveInfo] IniFileName114
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z039.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z039.pty
+
+* [ProfileSaveInfo] ObjectCount
+
+::
+
+  - 166
+  - 350
+  - 91
+
+* [ProfileSaveInfo] IniFileName111
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z038.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z038.pty
+
+* [ProfileSaveInfo] IniFileName112
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z038.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z038.pty
+
+* Image 118 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName110
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z037.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z037.pty
+
+* [ProfileSaveInfo] IniFileName119
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z040.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z040.pty
+
+* [ProfileSaveInfo] IniFileName117
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z040.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z040.pty
+
+* [Axis 5 Parameters Common] MaxSize
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName118
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z040.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z040.pty
+
+* Image 167 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Laser 0 Parameters] LaserWavelength
+
+::
+
+  - 458
+
+* Image 94 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Channel 1 Parameters] PMTDetectingMode
+
+::
+
+  - 0
+
+* Image 38 : Confocal
+
+::
+
+  - OFF
+
+* Image 78 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 185 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 179 : PMTVoltage
+
+::
+
+  - 181
+
+* [ProfileSaveInfo] IniFileName150
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z051.pty
+
+* [ProfileSaveInfo] IniFileName152
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z051.pty
+
+* [ProfileSaveInfo] IniFileName151
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z051.pty
+
+* [ProfileSaveInfo] IniFileName142
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z048.pty
+
+* [ProfileSaveInfo] IniFileName143
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z048.pty
+
+* [ProfileSaveInfo] IniFileName144
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z049.pty
+
+* Image 0 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [ProfileSaveInfo] IniFileName145
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z049.pty
+
+* [Axis 2 Parameters Common] PixUnit
+
+::
+
+  - Ch
+
+* Image 66 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName146
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z049.pty
+
+* Image 122 : PMTVoltage
+
+::
+
+  - 181
+
+* [ProfileSaveInfo] IniFileName147
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z050.pty
+
+* [ProfileSaveInfo] IniFileName148
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z050.pty
+
+* [ProfileSaveInfo] IniFileName149
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z050.pty
+
+* Image 17 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* [Sequential Group 0 Parameters Common] Sequential Enable
+
+::
+
+  - 1
+
+* Image 54 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Axis 7 Parameters Common] GUI MaxSize
+
+::
+
+  - 0
+
+* Image 138 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 115 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 175 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 16 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* [ProfileSaveInfo] IniFileName141
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z048.pty
+
+* [ProfileSaveInfo] IniFileName140
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z047.pty
+
+* Image 0 : Confocal
+
+::
+
+  - ON
+
+* Image 52 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* YPanValue
+
+::
+
+  - 142
+  - -51
+  - 0
+
+* [ProfileSaveInfo] IniFileName133
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z045.pty
+
+* [ProfileSaveInfo] IniFileName134
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z045.pty
+
+* [ProfileSaveInfo] IniFileName131
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z044.pty
+
+* [ProfileSaveInfo] IniFileName132
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z045.pty
+
+* Image 82 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 6 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* [ProfileSaveInfo] IniFileName137
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z046.pty
+
+* [Sequential Group 0 Parameters Common] ChannelIndex  1
+
+::
+
+  - 4
+  - 0
+
+* [ProfileSaveInfo] IniFileName138
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z047.pty
+
+* [Sequential Group 0 Parameters Common] ChannelIndex  0
+
+::
+
+  - 1
+  - 0
+
+* [ProfileSaveInfo] IniFileName135
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z046.pty
+
+* [Sequential Group 0 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName136
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z046.pty
+
+* [Sequential Group 0 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 0 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 0 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName139
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z047.pty
+
+* [Sequential Group 0 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 0 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 0 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 0 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName171
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z058.pty
+
+* [ProfileSaveInfo] IniFileName172
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z058.pty
+
+* [ProfileSaveInfo] IniFileName173
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z058.pty
+
+* Image 91 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [ProfileSaveInfo] IniFileName174
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z059.pty
+
+* Image 100 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 27 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* [ProfileSaveInfo] IniFileName170
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z057.pty
+
+* Image 8 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* Image 6 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Corr Bright] Corr Bright ZPos Count
+
+::
+
+  - 0
+
+* [Channel 3 Parameters] Spectrum CH Enable
+
+::
+
+  - 0
+
+* [Axis 6 Parameters Common] PixUnit
+
+::
+
+  - nm
+
+* Image 165 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 32 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* [ProfileSaveInfo] IniFileName169
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z057.pty
+
+* Image 156 : PMTVoltage
+
+::
+
+  - 602
+
+* [ProfileSaveInfo] IniFileName168
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z057.pty
+
+* [ProfileSaveInfo] IniFileName165
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z056.pty
+
+* [ProfileSaveInfo] IniFileName164
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z055.pty
+
+* [ProfileSaveInfo] IniFileName167
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z056.pty
+
+* [ProfileSaveInfo] IniFileName166
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z056.pty
+
+* [ProfileSaveInfo] IniFileName162
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z055.pty
+
+* [Sequential Group 16 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName163
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z055.pty
+
+* [Sequential Group 16 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName160
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z054.pty
+
+* [Sequential Group 16 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName161
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z054.pty
+
+* [Sequential Group 16 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 16 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 16 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 16 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* Image 31 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* Image 142 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Sequential Group 16 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* Image 112 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [GUI Channel 4 Parameters] CountingPMTOffset
+
+::
+
+  - 160
+
+* [Sequential Group 16 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* Image 164 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 131 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 16 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* Image 74 : Confocal
+
+::
+
+  - OFF
+
+* [ProfileSaveInfo] IniFileName159
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z054.pty
+
+* [ProfileSaveInfo] IniFileName158
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z053.pty
+
+* [ProfileSaveInfo] IniFileName157
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z053.pty
+
+* [ProfileSaveInfo] IniFileName156
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z053.pty
+
+* [ProfileSaveInfo] IniFileName155
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z052.pty
+
+* [ProfileSaveInfo] IniFileName154
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z052.pty
+
+* [ProfileSaveInfo] IniFileName153
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z052.pty
+
+* Image 154 : Confocal
+
+::
+
+  - ON
+
+* [GUI Channel 1 Parameters] EmissionDM Position
+
+::
+
+  - 2
+  - 5
+
+* [ProfileSaveInfo] IniFileName190
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z064.pty
+
+* [ProfileSaveInfo] IniFileName191
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z064.pty
+
+* [Sequential Group 13 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName192
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z065.pty
+
+* [Sequential Group 13 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName193
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z065.pty
+
+* [Sequential Group 13 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName194
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z065.pty
+
+* [Sequential Group 13 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName195
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z066.pty
+
+* [Sequential Group 13 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName196
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z066.pty
+
+* [Sequential Group 13 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* Image 79 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Sequential Group 13 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 13 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 13 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 13 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* Image 56 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 33 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* [Channel 1 Parameters] Physical CH Number
+
+::
+
+  - 2
+  - 1
+
+* Image 23 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* [2D Display] L Interval
+
+::
+
+  - 1
+
+* Image 190 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Sequential Group 16 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName187
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z063.pty
+
+* [ProfileSaveInfo] IniFileName186
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z063.pty
+
+* [ProfileSaveInfo] IniFileName189
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z064.pty
+
+* Image 61 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [ProfileSaveInfo] IniFileName188
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z063.pty
+
+* Image 68 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [ProfileSaveInfo] IniFileName180
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z061.pty
+
+* [Sequential Group 30 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName181
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z061.pty
+
+* [Sequential Group 30 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 30 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 30 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName184
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z062.pty
+
+* [Channel 1 Parameters] EmissionDM Name
+
+::
+
+  - SDM560
+  - SDM490
+
+* [ProfileSaveInfo] IniFileName185
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z062.pty
+
+* [ProfileSaveInfo] IniFileName182
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z061.pty
+
+* [Sequential Group 30 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName183
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z062.pty
+
+* [Sequential Group 30 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* Image 42 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 155 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 43 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 52 : PMTVoltage
+
+::
+
+  - 715
+
+* [Axis 6 Parameters Common] Interval
+
+::
+
+  - 1
+  - 5
+
+* Image 50 : Confocal
+
+::
+
+  - OFF
+
+* Image 106 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Sequential Group 30 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [GUI Channel 5 Parameters] EmissionDM Position
+
+::
+
+  - 0
+
+* Image 106 : PMTVoltage
+
+::
+
+  - 715
+
+* [ProfileSaveInfo] IniFileName178
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z060.pty
+
+* [ProfileSaveInfo] IniFileName177
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z060.pty
+
+* [Sequential Group 25 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName176
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z059.pty
+
+* [ProfileSaveInfo] IniFileName175
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z059.pty
+
+* Image 111 : Confocal
+
+::
+
+  - ON
+
+* Image 197 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Acquisition Parameters Common] StopScan InputTrigger Enable
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName179
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z060.pty
+
+* Image 183 : PMTVoltage
+
+::
+
+  - 602
+
+* [Sequential Group 2 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 2 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 2 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 2 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 2 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 2 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Axis 6 Parameters Common] StartPosition
+
+::
+
+  - 400.0
+  - 500.0
+
+* [Sequential Group 2 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 2 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 2 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* Image 128 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 2 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+  - 2
+
+* [Axis 7 Parameters Common] StartPosition
+
+::
+
+  - 0.0
+
+* Image 11 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* Image 179 : Confocal
+
+::
+
+  - OFF
+
+* Image 113 : PMTVoltage
+
+::
+
+  - 181
+
+* [Channel 1 Parameters] AnalogPMTOffset
+
+::
+
+  - 500
+
+* [2D Display] Grid
+
+::
+
+  - 0
+
+* [Acquisition Parameters Common] Total Number of Sequential
+
+::
+
+  - 2
+  - 3
+
+* Image 185 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [GUI Channel 3 Parameters] ExcitationWavelength
+
+::
+
+  - 543
+  - 561
+
+* Image 117 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 11 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [Axis 5 Parameters Common] CalibrateValueB
+
+::
+
+  - 0.0
+
+* [Axis 5 Parameters Common] CalibrateValueA
+
+::
+
+  - 100.0
+
+* Image 4 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* [Sequential Group 23 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 23 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Laser 0 Parameters] Laser Enable
+
+::
+
+  - 0
+
+* [Sequential Group 23 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [GUI Channel 5 Parameters] ExcitationWavelength
+
+::
+
+  - 543
+  - 488
+
+* [Sequential Group 23 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [GUI Channel 4 Parameters] AnalogPMTVoltage
+
+::
+
+  - 669
+  - 595
+
+* [Sequential Group 23 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 23 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Corr Bright] Corr Bright OnOff
+
+::
+
+  - 0
+
+* [Sequential Group 23 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 23 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 23 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 23 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* Image 199 : Confocal
+
+::
+
+  - ON
+
+* Image 124 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Axis 3 Parameters Common] Stop Absolute Position
+
+::
+
+  - 1475120
+  - 1472500
+  - 5967980
+
+* AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 135 : PMTVoltage
+
+::
+
+  - 602
+
+* [Axis 1 Parameters Common] ClipPosition
+
+::
+
+  - 0
+  - 330
+
+* Image 61 : Confocal
+
+::
+
+  - ON
+
+* Image 16 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* [GUI Channel 5 Parameters] CountingPMTVoltage
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* Image 169 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Acquisition Parameters Common] Z Stepsize Check
+
+::
+
+  - 0
+  - 1
+
+* [Axis 6 Parameters Common] AbsolutePosition
+
+::
+
+  - 0.0
+
+* [Channel 2 Parameters] PMTDetectingMode
+
+::
+
+  - 0
+
+* Image 189 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 6 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Laser 5 Parameters] LaserCombinerType
+
+::
+
+  - 0
+
+* CountingPMTGain
+
+::
+
+  - 0.0
+
+* [Sequential Group 6 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* Image 160 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 186 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Axis 5 Parameters Common] UnitName
+
+::
+
+  - deg
+
+* Image 83 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 106 : Confocal
+
+::
+
+  - ON
+
+* Image 98 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 37 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* Image 59 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 190 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 3 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* [GUI Channel 5 Parameters] BF Position
+
+::
+
+  - 0
+
+* [GUI Channel 1 Parameters] Confocal
+
+::
+
+  - ON
+
+* Image 15 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* [Axis 8 Parameters Common] UnitName
+
+::
+
+  - Unknown
+
+* Image 186 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 150 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 27 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Axis 8 Parameters Common] MaxSize
+
+::
+
+  - 0
+
+* Image 197 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 27 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 27 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] LutFileName0
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_LUT1.lut
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_LUT1.lut
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_LUT1.lut
+
+* [ProfileSaveInfo] LutFileName1
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_LUT2.lut
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_LUT2.lut
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_LUT2.lut
+
+* [ProfileSaveInfo] LutFileName2
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_LUT3.lut
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_LUT3.lut
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_LUT3.lut
+
+* [Axis Parameter Common] AxisCount
+
+::
+
+  - 4
+
+* Image 52 : Confocal
+
+::
+
+  - ON
+
+* [2D Display] View 1
+
+::
+
+  - 1
+
+* [GUI Channel 5 Parameters] CountingPMTOffset
+
+::
+
+  - 160
+
+* [2D Display] View 2
+
+::
+
+  - 2
+
+* [2D Display] View 3
+
+::
+
+  - 3
+
+* Image 6 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* Image 8 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* Image 144 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 30 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* [Channel 2 Parameters] CH Name
+
+::
+
+  - CH3
+  - CHS2
+
+* [ProfileSaveInfo] IniFileName109
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z037.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z037.pty
+
+* [ProfileSaveInfo] IniFileName108
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z037.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z037.pty
+
+* [ProfileSaveInfo] IniFileName107
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z036.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z036.pty
+
+* [ProfileSaveInfo] IniFileName106
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z036.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z036.pty
+
+* Image 151 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Channel 2 Parameters] EmissionDM Name
+
+::
+
+  - Mirror
+  - SDM560
+
+* [Channel 3 Parameters] AnalogPMTOffset
+
+::
+
+  - 500
+  - 400
+
+* [ProfileSaveInfo] IniFileName101
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z034.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z034.pty
+
+* [ProfileSaveInfo] IniFileName100
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z034.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z034.pty
+
+* Image 4 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* [ProfileSaveInfo] IniFileName105
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z036.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z036.pty
+
+* Image 131 : PMTVoltage
+
+::
+
+  - 181
+
+* [ProfileSaveInfo] IniFileName104
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z035.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z035.pty
+
+* [ProfileSaveInfo] IniFileName103
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z035.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z035.pty
+
+* Image 63 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [ProfileSaveInfo] IniFileName102
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z035.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z035.pty
+
+* [Sequential Group 9 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* Image 97 : Confocal
+
+::
+
+  - ON
+
+* [Channel 1 Parameters] ExcitationDM Name
+
+::
+
+  - DM488/543/633
+  - DM405/488/559-561
+
+* [Sequential Group 9 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* Image 115 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 24 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 9 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* Image 29 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 24 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* Image 104 : PMTVoltage
+
+::
+
+  - 181
+
+* [Reference Image Parameter] PixConvertValue
+
+::
+
+  - 1.0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 24 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [GUI Channel 3 Parameters] EmissionDM Position
+
+::
+
+  - 1
+
+* Image 152 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 206 : Confocal
+
+::
+
+  - OFF
+
+* [Axis 0 Parameters Common] AxisName
+
+::
+
+  - X
+
+* Image 187 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 204 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 25 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 113 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Axis 3 Parameters Common] Start Absolute Position
+
+::
+
+  - 1465370
+  - 1455500
+  - 5954980
+
+* Image 48 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 53 : Confocal
+
+::
+
+  - OFF
+
+* [Laser 0 Parameters] ND Scale
+
+::
+
+  - 5
+
+* Image 170 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 84 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 171 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 27 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* Image 141 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 149 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Sequential Group 8 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [Laser 1 Parameters] Laser Enable
+
+::
+
+  - 1
+
+* [GUI Channel 5 Parameters] Spectrum CH Enable
+
+::
+
+  - 0
+
+* Image 22 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* [Laser 2 Parameters] LaserCombinerType
+
+::
+
+  - 0
+
+* [Axis 0 Parameters Common] UnitName
+
+::
+
+  - um
+
+* Image 99 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [GUI Channel 2 Parameters] CountingPMTGain
+
+::
+
+  - 0
+
+* [Reference Image Parameter] HeightUnit
+
+::
+
+  - um
+
+* Image 35 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* [2D Display] Center Point Type
+
+::
+
+  - 0
+
+* [Sequential Group 7 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 7 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 7 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* Image 45 : Confocal
+
+::
+
+  - ON
+
+* [GUI Channel 2 Parameters] CH Activate
+
+::
+
+  - 1
+
+* [Sequential Group 9 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 58 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 97 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 49 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 7 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* Image 36 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* [Sequential Group 7 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 7 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 7 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Axis 1 Parameters Common] UnitName
+
+::
+
+  - um
+
+* [Sequential Group 7 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 7 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 7 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* Image 13 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* Image 10 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* Image 19 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* Image 116 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 6 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* [Laser 5 Parameters] ND Scale
+
+::
+
+  - 5
+
+* Image 78 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [GUI Channel 4 Parameters] DyeName
+
+::
+
+  - 
+
+* [Sequential Group 16 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 16 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* Image 201 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 16 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Axis 5 Parameters Common] AxisName
+
+::
+
+  - Angle
+
+* [Sequential Group 16 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Axis 2 Parameters Common] AxisCode
+
+::
+
+  - C
+
+* [Sequential Group 16 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 16 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* Image 149 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 169 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [2D Display] Rows
+
+::
+
+  - 2
+
+* Image 171 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 163 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 98 : Confocal
+
+::
+
+  - OFF
+
+* Image 154 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 34 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* [Axis 4 Parameters Common] UnitName
+
+::
+
+  - ms
+
+* [Laser 4 Parameters] ND Scale
+
+::
+
+  - 5
+
+* [GUI Channel 5 Parameters] Device CH Number
+
+::
+
+  - 1
+
+* [Channel 3 Parameters] Physical CH Number
+
+::
+
+  - 5
+  - 3
+
+* [Sequential Group 17 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 17 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [GUI Channel 2 Parameters] Spectrum CH Enable
+
+::
+
+  - 0
+  - 1
+
+* [Sequential Group 17 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 17 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 17 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* Image 92 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 66 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 98 : PMTVoltage
+
+::
+
+  - 181
+
+* [Sequential Group 17 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 17 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 17 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 17 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 17 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* Image 93 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 43 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Sequential Group 3 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 134 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 81 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Laser 0 Parameters] LaserTransmissivity
+
+::
+
+  - 0
+  - 148
+
+* Image 189 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 13 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [Acquisition Parameters Common] ImageCaputreDate+MilliSec
+
+::
+
+  - 171
+  - 500
+  - 93
+
+* [2D Display] Z Interval
+
+::
+
+  - 1
+
+* [2D Display] H Axis
+
+::
+
+  - C
+
+* Image 137 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 32 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* Image 46 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 157 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 74 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 79 : Confocal
+
+::
+
+  - ON
+
+* Image 198 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 21 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* Image 157 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 129 : Confocal
+
+::
+
+  - ON
+
+* Image 85 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 48 : PMTVoltage
+
+::
+
+  - 602
+
+* [Sequential Group 21 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 21 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 21 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 21 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* Image 21 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 145 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Sequential Group 21 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 21 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* Image 202 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 21 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 21 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [GUI Channel 4 Parameters] CountingPMTVoltage
+
+::
+
+  - 0
+
+* [Sequential Group 21 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 189 : PMTVoltage
+
+::
+
+  - 602
+
+* [Acquisition Parameters Common] SequentialMode
+
+::
+
+  - Frame
+
+* [ProfileSaveInfo] IniFileNameThumbnail0
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_Thumb.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_Thumb.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_Thumb.pty
+
+* Image 130 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 47 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 171 : PMTVoltage
+
+::
+
+  - 602
+
+* [Axis 0 Parameters Common] StartPosition
+
+::
+
+  - 0.0
+
+* Image 183 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 158 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 73 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Laser 1 Parameters] ND Scale
+
+::
+
+  - 5
+
+* [Reference Image Parameter] HeightConvertValue
+
+::
+
+  - 0.082
+  - 0.155
+
+* Image 95 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 76 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Channel 3 Parameters] BF Name
+
+::
+
+  - 
+  - BA585-685
+
+* Image 10 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* [Axis 2 Parameters Common] StartPosition
+
+::
+
+  - 1.0
+
+* Image 55 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Acquisition Parameters Common] ScanMode
+
+::
+
+  - XYZ
+
+* Image 111 : PMTVoltage
+
+::
+
+  - 602
+
+* [Acquisition Parameters Common] Auto HV
+
+::
+
+  - 1
+
+* [Version Info] SystemVersion
+
+::
+
+  - 1.6.1.0
+
+* Image 70 : Confocal
+
+::
+
+  - ON
+
+* Image 62 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 27 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* [GUI Channel 1 Parameters] ExcitationDM Position
+
+::
+
+  - 3
+  - 6
+
+* Image 86 : Confocal
+
+::
+
+  - OFF
+
+* X Pinhole
+
+::
+
+  - -11
+  - 993
+
+* Image 83 : Confocal
+
+::
+
+  - OFF
+
+* Image 91 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 143 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Sequential Group 28 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Channel 1 Parameters] CountingPMTVoltage
+
+::
+
+  - 0
+
+* [Sequential Group 28 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 28 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 28 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 28 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 28 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 28 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 28 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* Image 164 : PMTVoltage
+
+::
+
+  - 181
+
+* [Sequential Group 28 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [2D Display] Z End Pos
+
+::
+
+  - 40
+  - 69
+  - 14
+
+* [Sequential Group 28 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Channel 2 Parameters] CountingPMTGain
+
+::
+
+  - 0
+
+* Image 77 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 202 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Sequential Group 22 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 22 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* Image 1 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* [Sequential Group 22 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 22 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 22 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 22 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 22 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 22 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 55 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 22 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [GUI Channel 5 Parameters] AnalogPMTGain
+
+::
+
+  - 1000
+
+* [Sequential Group 22 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* Image 29 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* Image 96 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [GUI Channel 1 Parameters] BF Name
+
+::
+
+  - BA430-470
+  - (null)
+
+* [GUI Channel 4 Parameters] AnalogPMTOffset
+
+::
+
+  - 600
+  - 400
+
+* [Axis 2 Parameters Common] UnitName
+
+::
+
+  - Ch
+
+* Image 13 : Confocal
+
+::
+
+  - ON
+
+* Image 16 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* [Axis 5 Parameters Common] PixUnit
+
+::
+
+  - deg
+
+* Image 67 : Confocal
+
+::
+
+  - ON
+
+* Image 41 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 18 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* [Axis 3 Parameters Common] UnitName
+
+::
+
+  - nm
+
+* Image 144 : Confocal
+
+::
+
+  - ON
+
+* [Axis 5 Parameters Common] EndPosition
+
+::
+
+  - 0.0
+
+* Image 152 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 57 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 147 : Confocal
+
+::
+
+  - ON
+
+* Image 100 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 59 : Confocal
+
+::
+
+  - OFF
+
+* [GUI Channel 4 Parameters] SequentialNumber
+
+::
+
+  - 1
+
+* Image 191 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 8 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 111 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 155 : Confocal
+
+::
+
+  - OFF
+
+* Image 188 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 114 : Confocal
+
+::
+
+  - ON
+
+* Image 162 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 205 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 11 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 11 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Axis 6 Parameters Common] GUI MaxSize
+
+::
+
+  - 0
+
+* [Sequential Group 11 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* Image 101 : PMTVoltage
+
+::
+
+  - 181
+
+* [Sequential Group 11 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Laser 2 Parameters] ND Scale
+
+::
+
+  - 5
+
+* Image 36 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 11 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 113 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 11 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 11 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* Number
+
+::
+
+  - 1
+
+* [Sequential Group 11 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 11 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 11 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [GUI Channel 2 Parameters] SequentialNumber
+
+::
+
+  - 1
+  - 2
+
+* [GUI Channel 4 Parameters] EmissionWavelength
+
+::
+
+  - 0
+
+* [GUI Channel 2 Parameters] Device CH Number
+
+::
+
+  - 2
+
+* [Channel 2 Parameters] AnalogPMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* Image 33 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 16 : Confocal
+
+::
+
+  - ON
+
+* Image 40 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* [Channel 3 Parameters] ExcitationWavelength
+
+::
+
+  - 543
+  - 561
+
+* [Acquisition Parameters Common] StartScan InputTrigegr
+
+::
+
+  - 0
+
+* Image 183 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 125 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Sequential Group 7 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 196 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 39 : Confocal
+
+::
+
+  - ON
+
+* Image 174 : Confocal
+
+::
+
+  - ON
+
+* [Channel 2 Parameters] BF Name
+
+::
+
+  - BA560-660
+  - (null)
+
+* Image 64 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 37 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName197
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z066.pty
+
+* [ProfileSaveInfo] IniFileName198
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z067.pty
+
+* [ProfileSaveInfo] IniFileName199
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z067.pty
+
+* CountingPMTVoltage
+
+::
+
+  - 0
+
+* [Acquisition Parameters Common] ScanRegionMode
+
+::
+
+  - 1
+  - 6
+
+* [ProfileSaveInfo] Version
+
+::
+
+  - 1.0.0.0
+
+* Image 17 : Confocal
+
+::
+
+  - OFF
+
+* Image 138 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 147 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 158 : Confocal
+
+::
+
+  - OFF
+
+* [Acquisition Parameters Common] RegionMode
+
+::
+
+  - None
+  - Clip
+
+* Image 140 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 24 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 52 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Channel 3 Parameters] PMTDetectingMode
+
+::
+
+  - 0
+
+* Image 173 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 170 : Confocal
+
+::
+
+  - OFF
+
+* [2D Display] T Start Pos
+
+::
+
+  - 1
+
+* [GUI Channel 5 Parameters] EmissionDM Name
+
+::
+
+  - 
+
+* [GUI Channel 5 Parameters] PMTDetectingMode
+
+::
+
+  - 0
+
+* Image 50 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 178 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 24 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* Image 85 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 108 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 7 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* Image 153 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 7 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 7 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 7 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Axis 6 Parameters Common] MaxSize
+
+::
+
+  - 0
+
+* Image 173 : Confocal
+
+::
+
+  - OFF
+
+* Image 90 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Channel 2 Parameters] BF Range
+
+::
+
+  - 0
+  - 50
+
+* Image 2 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* Image 57 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 94 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 95 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 107 : Confocal
+
+::
+
+  - OFF
+
+* Image 136 : Confocal
+
+::
+
+  - ON
+
+* Image 27 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 174 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 148 : Confocal
+
+::
+
+  - ON
+
+* SamplingClock
+
+::
+
+  - 125000
+  - 250000
+
+* Image 190 : PMTVoltage
+
+::
+
+  - 715
+
+* [Channel 1 Parameters] AnalogPMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* Image 113 : Confocal
+
+::
+
+  - OFF
+
+* Image 163 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Pan Scale
+
+::
+
+  - 2
+
+* XPanValue
+
+::
+
+  - 0
+
+* [Acquisition Parameters Common] Total Number of Laser
+
+::
+
+  - 6
+
+* [Laser 1 Parameters] LaserWavelength
+
+::
+
+  - 488
+
+* [2D Display] Tile Type
+
+::
+
+  - 1
+  - 2
+
+* [Sequential Group 29 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [GUI Channel 3 Parameters] CH Activate
+
+::
+
+  - 1
+
+* [GUI Channel 1 Parameters] EmissionDM Name
+
+::
+
+  - Glass
+  - SDM490
+
+* Image 15 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* [GUI Channel 1 Parameters] CountingPMTOffset
+
+::
+
+  - 160
+
+* Image 26 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* Image 199 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 15 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* [GUI Channel 2 Parameters] AnalogPMTGain
+
+::
+
+  - 1000
+  - 2000
+
+* Image 119 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 18 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* CountingPMTOffset
+
+::
+
+  - 1.600000
+
+* Image 84 : PMTVoltage
+
+::
+
+  - 602
+
+* [Channel 3 Parameters] ExcitationDM Position
+
+::
+
+  - 3
+  - 6
+
+* Image 168 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 71 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 46 : Confocal
+
+::
+
+  - ON
+
+* Image 119 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 13 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* Image 20 : Confocal
+
+::
+
+  - OFF
+
+* [Axis 0 Parameters Common] ClipPosition
+
+::
+
+  - 0
+
+* Image 40 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* Image 6 : Confocal
+
+::
+
+  - ON
+
+* [Version Info] FileVersion
+
+::
+
+  - 1.2.4.0
+
+* [GUI Channel 2 Parameters] AnalogPMTVoltage
+
+::
+
+  - 602
+  - 414
+
+* Adjust Retrun
+
+::
+
+  - 0
+
+* [Sequential Group 17 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 147 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 11 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* Image 42 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 109 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [ProfileSaveInfo] IniFileName91
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z031.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z031.pty
+
+* [ProfileSaveInfo] IniFileName90
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z031.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z031.pty
+
+* [ProfileSaveInfo] IniFileName97
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z033.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z033.pty
+
+* [ProfileSaveInfo] IniFileName96
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z033.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z033.pty
+
+* [ProfileSaveInfo] IniFileName99
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z034.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z034.pty
+
+* [ProfileSaveInfo] IniFileName98
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z033.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z033.pty
+
+* [ProfileSaveInfo] IniFileName93
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z032.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z032.pty
+
+* [ProfileSaveInfo] IniFileName92
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z031.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z031.pty
+
+* [ProfileSaveInfo] IniFileName95
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z032.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z032.pty
+
+* [GUI Channel 1 Parameters] Physical CH Number
+
+::
+
+  - 1
+
+* [ProfileSaveInfo] IniFileName94
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z032.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z032.pty
+
+* Image 100 : PMTVoltage
+
+::
+
+  - 715
+
+* [Channel 3 Parameters] CountingPMTOffset
+
+::
+
+  - 160
+
+* Image 127 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 144 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 152 : Confocal
+
+::
+
+  - OFF
+
+* Image 110 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [GUI Channel 5 Parameters] CH Activate
+
+::
+
+  - 1
+  - 0
+
+* [Axis 6 Parameters Common] CH Number
+
+::
+
+  - 2
+
+* [Axis 1 Parameters Common] AxisName
+
+::
+
+  - Y
+
+* [GUI Channel 5 Parameters] SequentialNumber
+
+::
+
+  - 1
+
+* Image 104 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Acquisition Parameters Common] Auto C.A
+
+::
+
+  - 1
+
+* [Sequential Group 21 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Laser 4 Parameters] LaserWavelength
+
+::
+
+  - 633
+
+* [Sequential Group 21 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* Image 48 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 7 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 7 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [GUI Channel 2 Parameters] PMTDetectingMode
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 21 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 21 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 21 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 21 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] FrameCount
+
+::
+
+  - 120
+  - 207
+  - 45
+
+* [Sequential Group 29 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* ObjectiveLens WDValue
+
+::
+
+  - 9999.0
+
+* Image 181 : Confocal
+
+::
+
+  - ON
+
+* Image 102 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 29 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 123 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 59 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 66 : PMTVoltage
+
+::
+
+  - 602
+
+* [Axis 3 Parameters Common] GUI MaxSize
+
+::
+
+  - 40
+  - 69
+  - 14
+
+* Image 87 : Confocal
+
+::
+
+  - ON
+
+* Image 156 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 76 : Confocal
+
+::
+
+  - ON
+
+* Image 146 : PMTVoltage
+
+::
+
+  - 181
+
+* Observation Mode
+
+::
+
+  - LSM
+
+* [Channel 3 Parameters] Device CH Number
+
+::
+
+  - 1
+  - 3
+
+* [2D Display] View Max CH
+
+::
+
+  - 3
+
+* [Channel 2 Parameters] ExcitationWavelength
+
+::
+
+  - 543
+  - 488
+
+* [Axis 3 Parameters Common] AxisCode
+
+::
+
+  - Z
+
+* Image 122 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [GUI Channel 2 Parameters] BF Name
+
+::
+
+  - BA505-525
+  - (null)
+
+* Image 166 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 115 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 12 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 169 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 192 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 77 : Confocal
+
+::
+
+  - OFF
+
+* [Reference Image Parameter] PixUnit
+
+::
+
+  - Intensity
+
+* Image 164 : Confocal
+
+::
+
+  - OFF
+
+* Image 147 : PMTVoltage
+
+::
+
+  - 602
+
+* [Sequential Group 13 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [Sequential Group 31 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName204
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z069.pty
+
+* [Sequential Group 22 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName203
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z068.pty
+
+* [ProfileSaveInfo] IniFileName202
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z068.pty
+
+* Image 187 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Sequential Group 22 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName201
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z068.pty
+
+* Image 180 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 22 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName200
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z067.pty
+
+* Image 121 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 22 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 22 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName206
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z069.pty
+
+* Image 131 : Confocal
+
+::
+
+  - OFF
+
+* [ProfileSaveInfo] IniFileName205
+
+::
+
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z069.pty
+
+* [Sequential Group 22 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Acquisition Parameters Common] LaserTransmissivity01
+
+::
+
+  - 2.0
+  - 3.0
+
+* Image 142 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 33 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* [Acquisition Parameters Common] LaserTransmissivity02
+
+::
+
+  - 5.0
+  - 13.0
+  - 3.5
+
+* [Acquisition Parameters Common] LaserTransmissivity03
+
+::
+
+  - 20.0
+
+* Image 145 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 4 : Confocal
+
+::
+
+  - ON
+
+* Image 123 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 176 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 132 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 32 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 3 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* [Axis 7 Parameters Common] AbsolutePosition
+
+::
+
+  - 0.0
+
+* Image 169 : Confocal
+
+::
+
+  - ON
+
+* Image 66 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 205 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 126 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 56 : Confocal
+
+::
+
+  - OFF
+
+* [GUI Channel 3 Parameters] PMTDetectingMode
+
+::
+
+  - 0
+
+* [Sequential Group 19 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] TotalFileSize
+
+::
+
+  - 44221196
+
+* [Axis 4 Parameters Common] EndPosition
+
+::
+
+  - 110797.0
+  - 384719.0
+  - 183437.0
+
+* Image 87 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 12 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* Image 122 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 42 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 159 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 195 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 3 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* Image 38 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* Image 94 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 102 : Confocal
+
+::
+
+  - ON
+
+* Image 60 : Confocal
+
+::
+
+  - ON
+
+* Image 132 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 24 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 179 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 205 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Acquisition Parameters Common] Acquisition Device
+
+::
+
+  - FV1000
+
+* Image 51 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 105 : Confocal
+
+::
+
+  - ON
+
+* Image 140 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 103 : Confocal
+
+::
+
+  - ON
+
+* PMTDetectingMode
+
+::
+
+  - Analog
+
+* [Axis 5 Parameters Common] AxisCode
+
+::
+
+  - A
+
+* [Acquisition Parameters Common] Assign Dye Manually
+
+::
+
+  - 0
+
+* Image 168 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 48 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 19 : Confocal
+
+::
+
+  - ON
+
+* [Channel 1 Parameters] Device CH Number
+
+::
+
+  - 2
+  - 1
+
+* Image 15 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 5 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* [GUI Channel 1 Parameters] AnalogPMTVoltage
+
+::
+
+  - 654
+  - 588
+
+* [2D Display] View Cnt
+
+::
+
+  - 3
+
+* Image 135 : Confocal
+
+::
+
+  - ON
+
+* Image 109 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 11 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 26 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [Sequential Group 11 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 11 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* Image 195 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [GUI Channel 5 Parameters] BF Name
+
+::
+
+  - 
+
+* [Bleach GUI Parameters Common] UseScanner
+
+::
+
+  - 3
+
+* Image 200 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 28 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 41 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* Image 44 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 140 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 11 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 11 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 11 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Laser 3 Parameters] LaserWavelength
+
+::
+
+  - 543
+  - 561
+
+* Image 1 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* Image 39 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 21 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* Image 182 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 204 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 122 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 17 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 107 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 192 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 13 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Channel 2 Parameters] AnalogPMTGain
+
+::
+
+  - 1000
+  - 2000
+
+* Image 199 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 0 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* [Sequential Group 13 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 13 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 13 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 13 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* Image 105 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [Sequential Group 5 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [Sequential Group 13 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 20 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* Image 54 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 20 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 20 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* Image 151 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 20 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* header
+
+::
+
+  - ROI Parameter
+
+* [Sequential Group 20 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Reference Image Parameter] ImageWidth
+
+::
+
+  - 512
+  - 1024
+
+* [Channel 1 Parameters] EmissionDM Position
+
+::
+
+  - 3
+  - 5
+
+* [Sequential Group 20 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* Image 34 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* Image 125 : Confocal
+
+::
+
+  - OFF
+
+* Image 38 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* Image 107 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 198 : PMTVoltage
+
+::
+
+  - 602
+
+* [GUI Channel 1 Parameters] CH Name
+
+::
+
+  - CH1
+  - CHS1
+
+* [GUI Channel 1 Parameters] CH Activate
+
+::
+
+  - 0
+  - 1
+
+* Image 121 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Laser 0 Parameters] LaserCombinerType
+
+::
+
+  - 0
+
+* Image 187 : Confocal
+
+::
+
+  - ON
+
+* Image 63 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 2 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* Image 0 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 199 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 24 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 191 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 159 : Confocal
+
+::
+
+  - ON
+
+* Image 87 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 91 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Acquisition Parameters Common] StopScanTime
+
+::
+
+  - 0
+
+* Image 54 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [2D Display] T End Pos
+
+::
+
+  - -1
+
+* [Sequential Group 14 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 70 : PMTVoltage
+
+::
+
+  - 715
+
+* [Axis 8 Parameters Common] StartPosition
+
+::
+
+  - 0.0
+
+* Image 46 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 10 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* Image 20 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* [GUI Channel 5 Parameters] AnalogPMTVoltage
+
+::
+
+  - 181
+  - 172
+
+* Image 69 : PMTVoltage
+
+::
+
+  - 602
+
+* [Sequential Group 1 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 1
+
+* Image 10 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* Image 126 : Confocal
+
+::
+
+  - ON
+
+* Image 69 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [GUI Channel 4 Parameters] BF Range
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* Image 177 : PMTVoltage
+
+::
+
+  - 602
+
+* [GUI Channel 2 Parameters] BF Range
+
+::
+
+  - 0
+  - 50
+
+* [GUI Channel 1 Parameters] CountingPMTGain
+
+::
+
+  - 0
+
+* Image 65 : Confocal
+
+::
+
+  - OFF
+
+* [Laser 2 Parameters] Laser Enable
+
+::
+
+  - 0
+
+* Image 5 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* ObjectiveLens Name
+
+::
+
+  - UPLSAPO  60X O  NA:1.35
+  - UPLFL      40X O  NA:1.30
+
+* [Sequential Group 5 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* Image 12 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* [Sequential Group 5 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [GUI Channel 4 Parameters] ExcitationWavelength
+
+::
+
+  - 633
+
+* Image 49 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 68 : Confocal
+
+::
+
+  - OFF
+
+* Image 151 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Axis 4 Parameters Common] StartPosition
+
+::
+
+  - 0.0
+
+* [Laser 5 Parameters] LaserTransmissivity
+
+::
+
+  - 10
+  - 200
+
+* Image 5 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* Image 182 : Confocal
+
+::
+
+  - OFF
+
+* Image 15 : Confocal
+
+::
+
+  - ON
+
+* Image 102 : PMTVoltage
+
+::
+
+  - 602
+
+* [GUI Channel 3 Parameters] DyeName
+
+::
+
+  - Cy3
+  - Alexa Fluor 568
+
+* [Sequential Group 29 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 29 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* Image 118 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 63 : Confocal
+
+::
+
+  - ON
+
+* Image 74 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Channel 3 Parameters] CountingPMTVoltage
+
+::
+
+  - 0
+
+* Image 204 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 28 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 30 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 50 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [ProfileSaveInfo] IniFileName79
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z027.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z027.pty
+
+* [ProfileSaveInfo] IniFileName78
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z027.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z027.pty
+
+* [Acquisition Parameters Common] LaserWavelength02
+
+::
+
+  - 543
+  - 561
+
+* [Acquisition Parameters Common] AcquisitionMode
+
+::
+
+  - 1
+
+* Image 39 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* [Acquisition Parameters Common] LaserWavelength03
+
+::
+
+  - 405
+
+* [Acquisition Parameters Common] LaserWavelength01
+
+::
+
+  - 488
+
+* [GUI Channel 1 Parameters] ExcitationDM Name
+
+::
+
+  - DM488/543/633
+  - DM405/488/559-561
+
+* Image 2 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* [ProfileSaveInfo] IniFileName76
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z026.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z026.pty
+
+* Image 161 : Confocal
+
+::
+
+  - OFF
+
+* [ProfileSaveInfo] IniFileName77
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z026.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z026.pty
+
+* Image 93 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName74
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z025.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z025.pty
+
+* Image 3 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [ProfileSaveInfo] IniFileName75
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z026.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z026.pty
+
+* [ProfileSaveInfo] IniFileName72
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z025.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z025.pty
+
+* Image 128 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 10 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName73
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z025.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z025.pty
+
+* [ProfileSaveInfo] IniFileName70
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z024.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z024.pty
+
+* [ProfileSaveInfo] IniFileName71
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z024.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z024.pty
+
+* [Sequential Group 19 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 19 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* Image 201 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [ProfileSaveInfo] IniFileName89
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z030.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z030.pty
+
+* Image 12 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Acquisition Parameters Common] StartScanTime
+
+::
+
+  - 0
+
+* Image 65 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 21 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 39 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* Image 79 : PMTVoltage
+
+::
+
+  - 715
+
+* [ProfileSaveInfo] IniFileName80
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z027.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z027.pty
+
+* Image 60 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [GUI Channel 1 Parameters] AnalogPMTGain
+
+::
+
+  - 1000
+
+* Image 172 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 97 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Sequential Group 19 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName85
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z029.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z029.pty
+
+* [Sequential Group 19 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName86
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z029.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z029.pty
+
+* [Sequential Group 19 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName87
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z030.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z030.pty
+
+* [Sequential Group 19 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName88
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z030.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z030.pty
+
+* [Sequential Group 19 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName81
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z028.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z028.pty
+
+* [Channel 2 Parameters] ExcitationDM Position
+
+::
+
+  - 3
+  - 6
+
+* [Sequential Group 19 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName82
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z028.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z028.pty
+
+* [Sequential Group 19 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName83
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z028.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z028.pty
+
+* Image 77 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 19 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName84
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z029.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z029.pty
+
+* [Channel 1 Parameters] CountingPMTOffset
+
+::
+
+  - 160
+
+* [ProfileSaveInfo] IniFileName59
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z020.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z020.pty
+
+* [ProfileSaveInfo] IniFileName58
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z020.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z020.pty
+
+* [ProfileSaveInfo] IniFileName57
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z020.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z020.pty
+
+* Image 75 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [ProfileSaveInfo] IniFileName56
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z019.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z019.pty
+
+* [Axis 3 Parameters Common] PixUnit
+
+::
+
+  - nm
+
+* Image 39 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* Image 84 : Confocal
+
+::
+
+  - ON
+
+* AbsPositionValue
+
+::
+
+  - 0.0
+
+* Image 85 : PMTVoltage
+
+::
+
+  - 715
+
+* AbsPositionUnitName
+
+::
+
+  - mm
+
+* [Axis 7 Parameters Common] AxisName
+
+::
+
+  - Point
+
+* [ProfileSaveInfo] IniFileName50
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z017.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z017.pty
+
+* [ProfileSaveInfo] IniFileName51
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z018.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z018.pty
+
+* Image 95 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 10 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 124 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [ProfileSaveInfo] IniFileName54
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z019.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z019.pty
+
+* [GUI Channel 4 Parameters] AnalogPMTGain
+
+::
+
+  - 1000
+
+* [ProfileSaveInfo] IniFileName55
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z019.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z019.pty
+
+* [ProfileSaveInfo] IniFileName52
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z018.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z018.pty
+
+* [ProfileSaveInfo] IniFileName53
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z018.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z018.pty
+
+* [Axis 8 Parameters Common] AbsolutePosition
+
+::
+
+  - 0.0
+
+* Image 134 : Confocal
+
+::
+
+  - OFF
+
+* [ProfileSaveInfo] IniFileName68
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z023.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z023.pty
+
+* [Sequential Group 10 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName67
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z023.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z023.pty
+
+* [Sequential Group 10 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 10 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName69
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z024.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z024.pty
+
+* [Sequential Group 10 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 10 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 10 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 10 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 10 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* Image 74 : PMTVoltage
+
+::
+
+  - 181
+
+* [Laser 2 Parameters] LaserTransmissivity
+
+::
+
+  - 100
+  - 294
+
+* Image 0 : PMTVoltage
+
+::
+
+  - 602
+  - 588
+
+* Image 146 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 53 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 72 : PMTVoltage
+
+::
+
+  - 602
+
+* [Sequential Group 10 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* Image 56 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [GUI Channel 5 Parameters] Confocal
+
+::
+
+  - OFF
+
+* Image 69 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName60
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z021.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z021.pty
+
+* [ProfileSaveInfo] IniFileName61
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z021.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z021.pty
+
+* [ProfileSaveInfo] IniFileName62
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z021.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z021.pty
+
+* Image 53 : PMTVoltage
+
+::
+
+  - 181
+
+* [ProfileSaveInfo] IniFileName63
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z022.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z022.pty
+
+* [ProfileSaveInfo] IniFileName64
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z022.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z022.pty
+
+* [ProfileSaveInfo] IniFileName65
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z022.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z022.pty
+
+* [ProfileSaveInfo] IniFileName66
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z023.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z023.pty
+
+* [Axis 2 Parameters Common] AbsolutePosition
+
+::
+
+  - 0.0
+
+* Image 1 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* [ProfileSaveInfo] IniFileName38
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z013.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z013.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z013.pty
+
+* Image 150 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [ProfileSaveInfo] IniFileName39
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z014.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z014.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z014.pty
+
+* [ProfileSaveInfo] IniFileName36
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z013.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z013.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z013.pty
+
+* [ProfileSaveInfo] IniFileName37
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z013.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z013.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z013.pty
+
+* Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName34
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z012.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z012.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z012.pty
+
+* [ProfileSaveInfo] IniFileName35
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z012.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z012.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z012.pty
+
+* [ProfileSaveInfo] IniFileName33
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z012.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z012.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z012.pty
+
+* [ProfileSaveInfo] IniFileName32
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z011.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z011.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z011.pty
+
+* Image 84 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [ProfileSaveInfo] IniFileName31
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z011.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z011.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z011.pty
+
+* [ProfileSaveInfo] IniFileName30
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z011.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z011.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z011.pty
+
+* [Axis 4 Parameters Common] PixUnit
+
+::
+
+  - ms
+
+* Image 120 : Confocal
+
+::
+
+  - ON
+
+* [Acquisition Parameters Common] Observation Mode
+
+::
+
+  - 3
+
+* Image 29 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* Image 206 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 138 : Confocal
+
+::
+
+  - ON
+
+* Image 35 : Confocal
+
+::
+
+  - OFF
+
+* [ProfileSaveInfo] IniFileName49
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z017.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z017.pty
+
+* Image 98 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [ProfileSaveInfo] IniFileName45
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z016.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z016.pty
+
+* [ProfileSaveInfo] IniFileName46
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z016.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z016.pty
+
+* Image 129 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [ProfileSaveInfo] IniFileName47
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z016.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z016.pty
+
+* [ProfileSaveInfo] IniFileName48
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z017.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z017.pty
+
+* Image 155 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 161 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [ProfileSaveInfo] IniFileName42
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z015.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z015.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z001-R001.pty
+
+* [Sequential Group 15 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName41
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z014.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z014.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z014.pty
+
+* [Sequential Group 15 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* Image 28 : AnalogPMTOffset
+
+::
+
+  - 6
+  - 4
+
+* [ProfileSaveInfo] IniFileName44
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z015.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z015.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z001-R003.pty
+
+* [Sequential Group 15 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* Image 133 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName43
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z015.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z015.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z001-R002.pty
+
+* Image 107 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Sequential Group 15 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName40
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z014.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z014.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z014.pty
+
+* [Sequential Group 15 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 15 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* Image 75 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 43 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 1 : Confocal
+
+::
+
+  - ON
+
+* [GUI Channel 3 Parameters] CH Name
+
+::
+
+  - CH3
+
+* Image 90 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName14
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z005.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z005.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z005.pty
+
+* [ProfileSaveInfo] IniFileName15
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z006.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z006.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z006.pty
+
+* Image 112 : PMTVoltage
+
+::
+
+  - 715
+
+* [ProfileSaveInfo] IniFileName12
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z005.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z005.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z005.pty
+
+* [ProfileSaveInfo] IniFileName13
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z005.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z005.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z005.pty
+
+* Image 73 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName18
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z007.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z007.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z007.pty
+
+* [Acquisition Parameters Common] StartScan OutputTrigger
+
+::
+
+  - 0
+
+* [ProfileSaveInfo] IniFileName19
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z007.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z007.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z007.pty
+
+* Image 89 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [ProfileSaveInfo] IniFileName16
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z006.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z006.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z006.pty
+
+* [ProfileSaveInfo] IniFileName17
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z006.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z006.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z006.pty
+
+* Image 149 : Confocal
+
+::
+
+  - OFF
+
+* Image 128 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 28 : PMTVoltage
+
+::
+
+  - 715
+  - 414
+
+* [GUI Channel 4 Parameters] BF Name
+
+::
+
+  - BA655-755
+
+* [ProfileSaveInfo] IniFileName11
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z004.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z004.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z004.pty
+
+* [Channel 1 Parameters] ExcitationWavelength
+
+::
+
+  - 488
+  - 405
+
+* Image 154 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [ProfileSaveInfo] IniFileName10
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z004.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z004.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z004.pty
+
+* Image 78 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [GUI Channel 1 Parameters] ExcitationWavelength
+
+::
+
+  - 405
+
+* [Axis 8 Parameters Common] AxisCode
+
+::
+
+  - Q
+
+* [Channel 1 Parameters] DyeName
+
+::
+
+  - EGFP
+  - DAPI
+
+* Image 28 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* [ProfileSaveInfo] IniFileName23
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z008.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z008.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z008.pty
+
+* [ProfileSaveInfo] IniFileName24
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z009.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z009.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z009.pty
+
+* [ProfileSaveInfo] IniFileName25
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z009.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z009.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z009.pty
+
+* [ProfileSaveInfo] IniFileName26
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z009.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z009.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z009.pty
+
+* [ProfileSaveInfo] IniFileName27
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z010.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z010.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z010.pty
+
+* [ProfileSaveInfo] IniFileName28
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z010.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z010.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z010.pty
+
+* [ProfileSaveInfo] IniFileName29
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z010.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z010.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z010.pty
+
+* [Sequential Group 8 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 110 : Confocal
+
+::
+
+  - OFF
+
+* Image 141 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Axis 0 Parameters Common] CalibrateValueA
+
+::
+
+  - 100.0
+
+* Image 156 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] IniFileName20
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C003Z007.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C003Z007.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C003Z007.pty
+
+* [ProfileSaveInfo] IniFileName22
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C002Z008.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C002Z008.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C002Z008.pty
+
+* [ProfileSaveInfo] IniFileName21
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_C001Z008.pty
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_C001Z008.pty
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_C001Z008.pty
+
+* Image 24 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 68 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Axis 0 Parameters Common] CalibrateValueB
+
+::
+
+  - 0.0
+
+* [Acquisition Parameters Common] StopScan OutputTrigger
+
+::
+
+  - 0
+
+* [GUI Channel 1 Parameters] SequentialNumber
+
+::
+
+  - 1
+
+* [Sequential Group 20 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* [Sequential Group 20 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* Image 180 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 124 : Confocal
+
+::
+
+  - ON
+
+* Image 188 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 12 : Confocal
+
+::
+
+  - ON
+
+* Image 202 : Confocal
+
+::
+
+  - ON
+
+* Image 56 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 149 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 135 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 166 : Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 20 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 20 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 20 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 20 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 20 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 20 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 20 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 20 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* Image 20 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* [ProfileSaveInfo] RoiFileName9
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240365104_3664859.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_340988480_6507031.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_125892248_12307187.roi
+
+* [ProfileSaveInfo] RoiFileName8
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240182136_3662015.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336524808_6504203.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_125892248_12302500.roi
+
+* [ProfileSaveInfo] RoiFileName7
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_336642680_3659171.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_336524808_6501390.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_125892248_12297812.roi
+
+* Image 101 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 124 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 21 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+
+* Image 81 : PMTVoltage
+
+::
+
+  - 602
+
+* Image 72 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 92 : Confocal
+
+::
+
+  - OFF
+
+* Image 30 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* Image 40 : Confocal
+
+::
+
+  - ON
+
+* [Channel 2 Parameters] Confocal
+
+::
+
+  - ON
+
+* ZoomValue
+
+::
+
+  - 5.0
+  - 2.0
+
+* [GUI Channel 4 Parameters] CountingPMTGain
+
+::
+
+  - 0
+
+* Image 59 : PMTVoltage
+
+::
+
+  - 181
+
+* [Sequential Group 1 Parameters Common] Sequential Enable
+
+::
+
+  - 1
+
+* [Channel 3 Parameters] EmissionDM Position
+
+::
+
+  - 0
+  - 1
+
+* Image 165 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* Image 47 : Confocal
+
+::
+
+  - OFF
+
+* Image 51 : Confocal
+
+::
+
+  - ON
+
+* Image 133 : PMTVoltage
+
+::
+
+  - 715
+
+* [GUI Channel 2 Parameters] CH Name
+
+::
+
+  - CH2
+  - CHS2
+
+* Image 105 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 186 : ExcitationOutPutLevel
+
+::
+
+  - 2
+
+* [GUI Channel 2 Parameters] CountingPMTVoltage
+
+::
+
+  - 0
+
+* Image 22 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* Image 108 : PMTVoltage
+
+::
+
+  - 602
+
+* [Axis 8 Parameters Common] CalibrateValueA
+
+::
+
+  - 100.0
+
+* [2D Display] Z Start Pos
+
+::
+
+  - 1
+
+* Image 23 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* [Channel 1 Parameters] AnalogPMTGain
+
+::
+
+  - 1000
+
+* [ProfileSaveInfo] Name
+
+::
+
+  - COFAImages
+
+* Image 118 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 5 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 14 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Acquisition Parameters Common] ScanDirection
+
+::
+
+  - Oneway
+
+* [Sequential Group 14 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 5 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* Image 193 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Channel 1 Parameters] Confocal
+
+::
+
+  - ON
+
+* [Sequential Group 5 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 65 : PMTVoltage
+
+::
+
+  - 181
+
+* [Axis 8 Parameters Common] AxisName
+
+::
+
+  - Unknown
+
+* Image 28 : Confocal
+
+::
+
+  - ON
+
+* [Channel 2 Parameters] Spectrum CH Enable
+
+::
+
+  - 0
+  - 1
+
+* Image 7 : Confocal
+
+::
+
+  - ON
+
+* [ProfileSaveInfo] RoiFileName0
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_338927984_3639328.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_339080088_6478812.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_119832048_12255515.roi
+
+* [ProfileSaveInfo] RoiFileName2
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240441224_3644984.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337359328_6487250.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_126678792_12274281.roi
+
+* [ProfileSaveInfo] RoiFileName1
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_336657688_3642156.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_337359328_6484453.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_126678792_12269609.roi
+
+* [ProfileSaveInfo] RoiFileName4
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_240224600_3650656.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_13525104_6492890.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_96538824_12283703.roi
+
+* [ProfileSaveInfo] RoiFileName3
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_338911080_3647812.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_13525104_6490078.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_126678792_12278968.roi
+
+* [ProfileSaveInfo] RoiFileName6
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_338874552_3656328.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_341440656_6498546.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_96538824_12293078.roi
+
+* [ProfileSaveInfo] RoiFileName5
+
+::
+
+  - PIP2 ESCV control Z 1.oif.files/PIP2 ESCV control Z 1_337725192_3653484.roi
+  - PIP2 ESCV  Z 1 after.oif.files/PIP2 ESCV  Z 1 after_341440656_6495734.roi
+  - 31h_pea3_fgf10_01_1.oif.files/31h_pea3_fgf10_01_1_96538824_12288390.roi
+
+* Image 104 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 181 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Axis 6 Parameters Common] Stop Absolute Position
+
+::
+
+  - 400
+  - 520
+
+* Image 140 : PMTVoltage
+
+::
+
+  - 181
+
+* [Axis 8 Parameters Common] CalibrateValueB
+
+::
+
+  - 0.0
+
+* Image 170 : PMTVoltage
+
+::
+
+  - 181
+
+* [Channel 3 Parameters] DyeName
+
+::
+
+  - None
+  - Alexa Fluor 568
+
+* Image 88 : Confocal
+
+::
+
+  - ON
+
+* Image 129 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 101 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 172 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* [Axis 6 Parameters Common] Start Absolute Position
+
+::
+
+  - 400
+  - 500
+
+* Image 41 : PMTVoltage
+
+::
+
+  - 181
+  - 564
+
+* [GUI Channel 4 Parameters] Spectrum CH Enable
+
+::
+
+  - 0
+
+* [Channel 1 Parameters] BF Name
+
+::
+
+  - BA505-525
+  - (null)
+
+* Image 22 : AnalogPMTGain
+
+::
+
+  - 2.0
+
+* [Acquisition Parameters Common] StopScan OutputTrigger Enable
+
+::
+
+  - 0
+
+* [Channel 2 Parameters] EmissionDM Position
+
+::
+
+  - 1
+  - 4
+
+* Image 191 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 80 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 21 : Confocal
+
+::
+
+  - ON
+
+* Image 206 : PMTVoltage
+
+::
+
+  - 181
+
+* Image 90 : PMTVoltage
+
+::
+
+  - 602
+
+* [Channel 2 Parameters] LightType
+
+::
+
+  - Fluorescence
+
+* [2D Display] L Start Pos
+
+::
+
+  - 1
+
+* Image 193 : PMTVoltage
+
+::
+
+  - 715
+
+* Image 36 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* [Sequential Group 29 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* [GUI Channel 2 Parameters] ExcitationDM Name
+
+::
+
+  - DM488/543/633
+  - DM405/488/559-561
+
+* [Sequential Group 19 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 19 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Axis 3 Parameters Common] MaxSize
+
+::
+
+  - 40
+  - 69
+  - 14
+
+* [Sequential Group 19 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* Image 159 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 137 : PMTVoltage
+
+::
+
+  - 181
+
+* [Sequential Group 19 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 31 : Confocal
+
+::
+
+  - ON
+
+* Image 83 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 23 Parameters Common] Sequential NumberOfChannel
+
+::
+
+  - 0
+
+* Image 139 : PMTVoltage
+
+::
+
+  - 715
+
+* [Sequential Group 18 Parameters Common] ChannelIndex  9
+
+::
+
+  - 0
+
+* Image 26 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* Image 26 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* [Sequential Group 18 Parameters Common] ChannelIndex  4
+
+::
+
+  - 0
+
+* [Sequential Group 18 Parameters Common] ChannelIndex  3
+
+::
+
+  - 0
+
+* [Sequential Group 18 Parameters Common] ChannelIndex  2
+
+::
+
+  - 0
+
+* [Sequential Group 18 Parameters Common] ChannelIndex  1
+
+::
+
+  - 0
+
+* [Sequential Group 18 Parameters Common] ChannelIndex  8
+
+::
+
+  - 0
+
+* Image 96 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Sequential Group 18 Parameters Common] ChannelIndex  7
+
+::
+
+  - 0
+
+* [Sequential Group 18 Parameters Common] ChannelIndex  6
+
+::
+
+  - 0
+
+* [Sequential Group 18 Parameters Common] ChannelIndex  5
+
+::
+
+  - 0
+
+* Image 23 : AnalogPMTGain
+
+::
+
+  - 1.0
+
+* Image 14 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 18 Parameters Common] ChannelIndex  0
+
+::
+
+  - 0
+
+* Image 178 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [Axis Parameter Common] AxisOrder
+
+::
+
+  - XYCZ
+
+* Image 184 : Confocal
+
+::
+
+  - ON
+
+* Image 32 : Confocal
+
+::
+
+  - OFF
+
+* Image 20 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 4
+
+* [Axis 4 Parameters Common] AbsolutePosition
+
+::
+
+  - 0.0
+
+* Image 150 : Confocal
+
+::
+
+  - ON
+
+* [Axis 4 Parameters Common] AxisCode
+
+::
+
+  - T
+
+* [GUI Channel 2 Parameters] EmissionDM Position
+
+::
+
+  - 3
+  - 4
+
+* [Sequential Group 28 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Axis 6 Parameters Common] CalibrateValueA
+
+::
+
+  - 100.0
+
+* [Axis 6 Parameters Common] CalibrateValueB
+
+::
+
+  - 0.0
+
+* [GUI Channel 1 Parameters] BF Position
+
+::
+
+  - 2
+  - 425
+
+* Image 86 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 177 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Laser 4 Parameters] Laser Enable
+
+::
+
+  - 0
+
+* [Sequential Group 28 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 28 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* Image 203 : PMTVoltage
+
+::
+
+  - 181
+
+* [Sequential Group 28 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* Image 106 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Sequential Group 19 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Laser 4 Parameters] LaserTransmissivity
+
+::
+
+  - 10
+  - 20
+
+* [Sequential Group 28 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 19 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* [Sequential Group 28 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* [Sequential Group 19 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Channel 2 Parameters] CountingPMTOffset
+
+::
+
+  - 160
+
+* [Reference Image Parameter] WidthUnit
+
+::
+
+  - um
+
+* [Sequential Group 10 Parameters Common] ChannelIndex 14
+
+::
+
+  - 0
+
+* Image 8 : Confocal
+
+::
+
+  - OFF
+
+* [Sequential Group 10 Parameters Common] ChannelIndex 15
+
+::
+
+  - 0
+
+* [Sequential Group 10 Parameters Common] ChannelIndex 12
+
+::
+
+  - 0
+
+* [Sequential Group 10 Parameters Common] ChannelIndex 13
+
+::
+
+  - 0
+
+* [Sequential Group 10 Parameters Common] ChannelIndex 10
+
+::
+
+  - 0
+
+* [Sequential Group 10 Parameters Common] ChannelIndex 11
+
+::
+
+  - 0
+
+* Image 45 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 139 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 81 : Confocal
+
+::
+
+  - ON
+
+* Image 71 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Reference Image Parameter] ValidBitCounts
+
+::
+
+  - 12
+
+* [Channel 1 Parameters] ExcitationDM Position
+
+::
+
+  - 3
+  - 6
+
+* Image 132 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 123 : Confocal
+
+::
+
+  - ON
+
+* Image 196 : Confocal
+
+::
+
+  - ON
+
+* ObjectiveLens NAValue
+
+::
+
+  - 1.35
+  - 1.3
+
+* [Channel 3 Parameters] BF Range
+
+::
+
+  - 0
+
+* Image 88 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 57 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [Acquisition Parameters Common] FindMode
+
+::
+
+  - 1
+
+* Image 206 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* [GUI Channel 3 Parameters] Device CH Number
+
+::
+
+  - 3
+
+* Image 89 : Confocal
+
+::
+
+  - OFF
+
+* [Axis 8 Parameters Common] GUI MaxSize
+
+::
+
+  - 0
+
+* Image 131 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Image 89 : PMTVoltage
+
+::
+
+  - 181
+
+* [2D Display] Show Center Point
+
+::
+
+  - 0
+
+* Image 51 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 23 : AnalogPMTOffset
+
+::
+
+  - 5
+  - 4
+
+* Image 4 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+  - 3
+
+* Image 185 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* [GUI Channel 5 Parameters] CH Name
+
+::
+
+  - TD1
+
+* [Axis 6 Parameters Common] Resolution
+
+::
+
+  - 10
+
+* Image 30 : Confocal
+
+::
+
+  - ON
+
+* Image 103 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* [Channel 3 Parameters] AnalogPMTGain
+
+::
+
+  - 1000
+
+* [GUI Channel 5 Parameters] DyeName
+
+::
+
+  - None
+
+* [GUI Channel 2 Parameters] AnalogPMTOffset
+
+::
+
+  - 500
+  - 400
+
+* [2D Display] ShowLabelOnScale
+
+::
+
+  - 1
+
+* Image 135 : AnalogPMTOffset
+
+::
+
+  - 5
+
+* Image 112 : AnalogPMTOffset
+
+::
+
+  - 6
+
+* Image 82 : ExcitationOutPutLevel
+
+::
+
+  - 5
+  - 13
+
+* Image 109 : Confocal
+
+::
+
+  - ON
+
+* [Axis 0 Parameters Common] MaxSize
+
+::
+
+  - 512
+  - 1024
+
+* Image 9 : ExcitationOutPutLevel
+
+::
+
+  - 2
+  - 20
+
+* [Sequential Group 2 Parameters Common] Sequential Enable
+
+::
+
+  - 0
+  - 1
+
+* Image 148 : ExcitationOutPutLevel
+
+::
+
+  - 13
+
+* Magnification
+
+::
+
+  - 60.0
+  - 40.0
+

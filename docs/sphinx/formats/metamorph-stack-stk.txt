@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`MetaMorph Stack (STK) <metamorph-stack-stk-metadata>`
 
+Original Metadata Support: :doc:`MetaMorph Stack (STK) <MetamorphReader>`
 
 
 We currently have:

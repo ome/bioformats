@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Targa <targa-metadata>`
 
+Original Metadata Support: :doc:`Targa <TargaReader>`
 
 
 We currently have:

@@ -1,0 +1,3085 @@
+*******************************************************************************
+InveonReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Inveon format reader.
+
+Key/value pairs
+===============================================================================
+
+* y_filter
+
+::
+
+  - None
+
+* zoom
+
+::
+
+  - 1
+
+* ct_projection_horizontal_bed_offset 44
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 45
+
+::
+
+  - 203.999
+
+* subject_weight
+
+::
+
+  - 0
+
+* ct_projection_horizontal_bed_offset 42
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 43
+
+::
+
+  - 203.999
+
+* axial_plane_size
+
+::
+
+  - 0
+
+* ct_projection_horizontal_bed_offset 40
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 41
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 48
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 49
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 46
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 47
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 31
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 32
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 33
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 34
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 30
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 39
+
+::
+
+  - 203.999
+
+* modality
+
+::
+
+  - CT acquisition
+
+* ct_projection_horizontal_bed_offset 35
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 36
+
+::
+
+  - 203.999
+
+* rotating_stage_stop_position
+
+::
+
+  - 220
+
+* ct_projection_horizontal_bed_offset 37
+
+::
+
+  - 203.999
+
+* ct_proj_size_transaxial
+
+::
+
+  - 768
+
+* ct_projection_horizontal_bed_offset 38
+
+::
+
+  - 203.999
+
+* ct_average_dark_projections
+
+::
+
+  - 60
+
+* gmt_scan_time
+
+::
+
+  - xxx
+  - Fri Sep 21 21:54:12 2012
+
+* analgesia
+
+::
+
+  - xxx
+
+* reconstruction_user_id
+
+::
+
+  -  xxx
+
+* ct_projection_horizontal_bed_offset 62
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 63
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 60
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 61
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 66
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 67
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 64
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 65
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 68
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 69
+
+::
+
+  - 203.999
+
+* number_of_dimensions
+
+::
+
+  - 3
+
+* detector_panel
+
+::
+
+  - -1
+
+* ct_header_size
+
+::
+
+  - 35072
+
+* other_drugs
+
+::
+
+  - XXX
+  - xxx
+
+* x_filter
+
+::
+
+  - Shepp filter
+  - None
+
+* operator
+
+::
+
+  - xxx
+  - op
+
+* file_type
+
+::
+
+  - Image data
+  - CT projection
+
+* ct_projection_horizontal_bed_offset 50
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 51
+
+::
+
+  - 203.999
+
+* ct_warping
+
+::
+
+  - Bilinear
+
+* ct_projection_horizontal_bed_offset 52
+
+::
+
+  - 203.999
+
+* subject_sex
+
+::
+
+  - 0
+
+* ct_projection_horizontal_bed_offset 53
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 54
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 55
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 56
+
+::
+
+  - 203.999
+
+* ct_cropped_axial_pixels
+
+::
+
+  - 2048
+
+* ct_projection_horizontal_bed_offset 57
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 58
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 59
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 80
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 81
+
+::
+
+  - 203.999
+
+* energy_window
+
+::
+
+  - -1
+
+* ct_tx_rotation_offsets
+
+::
+
+  - 0 0 0
+
+* injected_compound
+
+::
+
+  - gastroview
+  - XXXX
+
+* ct_projection_horizontal_bed_offset 104
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 25
+
+::
+
+  - 15.6699
+
+* ct_projection_horizontal_bed_offset 103
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 26
+
+::
+
+  - 15.6915
+
+* ct_projection_horizontal_bed_offset 102
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 27
+
+::
+
+  - 15.6745
+
+* ct_projection_horizontal_bed_offset 101
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 28
+
+::
+
+  - 15.6489
+
+* ct_projection_horizontal_bed_offset 100
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 29
+
+::
+
+  - 15.6234
+
+* data_type
+
+::
+
+  - 2
+
+* ct_projection_horizontal_bed_offset 89
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 88
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 87
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 86
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 20
+
+::
+
+  - 15.6877
+
+* ct_projection_horizontal_bed_offset 85
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 21
+
+::
+
+  - 15.6661
+
+* ct_projection_horizontal_bed_offset 84
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 22
+
+::
+
+  - 15.6444
+
+* ct_projection_horizontal_bed_offset 83
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 23
+
+::
+
+  - 15.6267
+
+* ct_projection_horizontal_bed_offset 82
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 24
+
+::
+
+  - 15.6483
+
+* subject_date_of_birth
+
+::
+
+  - xxx
+
+* ct_projection_horizontal_bed_offset 70
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 16
+
+::
+
+  - 15.6688
+
+* ct_projection_center_offset 17
+
+::
+
+  - 15.6734
+
+* ct_projection_center_offset 14
+
+::
+
+  - 15.673
+
+* ct_projection_center_offset 15
+
+::
+
+  - 15.6709
+
+* ct_projection_horizontal_bed_offset 79
+
+::
+
+  - 203.999
+
+* maximum
+
+::
+
+  - 32767
+
+* ct_projection_center_offset 18
+
+::
+
+  - 15.6818
+
+* ct_projection_center_offset 19
+
+::
+
+  - 15.6902
+
+* ct_projection_horizontal_bed_offset 76
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 75
+
+::
+
+  - 203.999
+
+* scatter_correction_user_id
+
+::
+
+  -  xxx
+
+* ct_projection_horizontal_bed_offset 78
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 77
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 72
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 12
+
+::
+
+  - 15.6798
+
+* ct_projection_horizontal_bed_offset 71
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 13
+
+::
+
+  - 15.6753
+
+* ct_projection_horizontal_bed_offset 74
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 10
+
+::
+
+  - 15.6889
+
+* ct_projection_horizontal_bed_offset 73
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 11
+
+::
+
+  - 15.6844
+
+* subject_phenotype
+
+::
+
+  - xxx
+
+* volume_origin_x
+
+::
+
+  - 0
+
+* volume_origin_y
+
+::
+
+  - 0
+
+* volume_origin_z
+
+::
+
+  - 0
+
+* ct_projection_center_offset 47
+
+::
+
+  - 15.6951
+
+* ct_projection_center_offset 48
+
+::
+
+  - 15.6791
+
+* ct_projection_center_offset 49
+
+::
+
+  - 15.663
+
+* ct_projection_center_offset 43
+
+::
+
+  - 15.6208
+
+* ct_projection_center_offset 44
+
+::
+
+  - 15.6539
+
+* ct_projection_center_offset 45
+
+::
+
+  - 15.687
+
+* ct_projection_center_offset 46
+
+::
+
+  - 15.7112
+
+* ct_last_recon_proj
+
+::
+
+  - 0
+
+* ct_projection_center_offset 40
+
+::
+
+  - 15.6756
+
+* ct_projection_center_offset 41
+
+::
+
+  - 15.6482
+
+* ct_projection_center_offset 42
+
+::
+
+  - 15.6207
+
+* number_detector_panels
+
+::
+
+  - 1
+
+* ct_projection_horizontal_bed_offset 90
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 91
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 92
+
+::
+
+  - 203.999
+
+* acquisition_notes
+
+::
+
+  -  xxx
+
+* recon_algorithm
+
+::
+
+  - Filtered Backprojection
+  - Unknown
+
+* ct_projection_center_offset 38
+
+::
+
+  - 15.6649
+
+* ct_projection_center_offset 39
+
+::
+
+  - 15.689
+
+* ct_projection_center_offset 36
+
+::
+
+  - 15.6166
+
+* ct_projection_center_offset 37
+
+::
+
+  - 15.6407
+
+* ct_projection_horizontal_bed_offset 94
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 34
+
+::
+
+  - 15.67
+
+* subject_genus
+
+::
+
+  - xxx
+  - string
+
+* ct_projection_horizontal_bed_offset 93
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 35
+
+::
+
+  - 15.6433
+
+* ct_projection_horizontal_bed_offset 96
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 32
+
+::
+
+  - 15.6835
+
+* ct_projection_horizontal_bed_offset 95
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 33
+
+::
+
+  - 15.6967
+
+* ct_projection_horizontal_bed_offset 98
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 30
+
+::
+
+  - 15.6271
+
+* ct_projection_horizontal_bed_offset 97
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 31
+
+::
+
+  - 15.6553
+
+* ct_projection_horizontal_bed_offset 99
+
+::
+
+  - 203.999
+
+* ct_projection_center_offset 64
+
+::
+
+  - 15.7411
+
+* gantry_rotation
+
+::
+
+  - Continuous rotation
+
+* ct_projection_center_offset 63
+
+::
+
+  - 15.7396
+
+* ct_projection_center_offset 62
+
+::
+
+  - 15.7382
+
+* ct_projection_center_offset 61
+
+::
+
+  - 15.7376
+
+* ct_projection_center_offset 68
+
+::
+
+  - 15.7529
+
+* ct_projection_center_offset 67
+
+::
+
+  - 15.7491
+
+* ct_projection_center_offset 66
+
+::
+
+  - 15.7453
+
+* rotation_direction
+
+::
+
+  - Counterclockwise
+
+* ct_projection_center_offset 65
+
+::
+
+  - 15.7426
+
+* ct_projection_center_offset 112
+
+::
+
+  - 15.6734
+
+* ct_projection_center_offset 111
+
+::
+
+  - 15.6761
+
+* ct_projection_center_offset 114
+
+::
+
+  - 15.6691
+
+* ct_proj_downsample_factor
+
+::
+
+  - 0
+
+* ct_projection_center_offset 113
+
+::
+
+  - 15.6712
+
+* ct_projection_center_offset 69
+
+::
+
+  - 15.7567
+
+* ct_projection_center_offset 110
+
+::
+
+  - 15.6807
+
+* ct_projection_center_offset 119
+
+::
+
+  - 15.67
+
+* ct_projection_center_offset 115
+
+::
+
+  - 15.6718
+
+* ct_projection_center_offset 116
+
+::
+
+  - 15.6803
+
+* rotation
+
+::
+
+  - 0
+
+* ct_projection_center_offset 117
+
+::
+
+  - 15.6887
+
+* subject_length
+
+::
+
+  - 0
+
+* z_filter
+
+::
+
+  - None
+
+* ct_projection_center_offset 118
+
+::
+
+  - 15.6917
+
+* ct_source_to_detector
+
+::
+
+  - 422.28
+
+* ct_projection_center_offset 70
+
+::
+
+  - 15.7609
+
+* ct_projection_center_offset 71
+
+::
+
+  - 15.765
+
+* ct_projection_center_offset 51
+
+::
+
+  - 15.6984
+
+* ct_projection_center_offset 50
+
+::
+
+  - 15.6791
+
+* ct_projection_center_offset 53
+
+::
+
+  - 15.7253
+
+* ct_projection_center_offset 52
+
+::
+
+  - 15.7178
+
+* ct_proj_size_axial
+
+::
+
+  - 512
+
+* ct_projection_center_offset 55
+
+::
+
+  - 15.727
+
+* ct_projection_center_offset 54
+
+::
+
+  - 15.7262
+
+* ct_projection_center_offset 57
+
+::
+
+  - 15.7312
+
+* ct_projection_center_offset 56
+
+::
+
+  - 15.7285
+
+* ct_projection_center_offset 59
+
+::
+
+  - 15.7362
+
+* ct_projection_center_offset 58
+
+::
+
+  - 15.7338
+
+* ct_projection_center_offset 120
+
+::
+
+  - 15.6484
+
+* ct_cropped_transaxial_pixels
+
+::
+
+  - 3072
+
+* ct_aluminum_filter_thickness
+
+::
+
+  - 0
+
+* ct_projection_center_offset 60
+
+::
+
+  - 15.7369
+
+* ct_projection_center_offset 89
+
+::
+
+  - 15.7514
+
+* ct_projection_center_offset 88
+
+::
+
+  - 15.7547
+
+* projection 99
+
+::
+
+  - 181.5
+
+* ct_projection_center_offset 87
+
+::
+
+  - 15.7581
+
+* projection 98
+
+::
+
+  - 179.667
+
+* ct_projection_center_offset 86
+
+::
+
+  - 15.7615
+
+* ct_projection_center_offset 85
+
+::
+
+  - 15.7647
+
+* ct_projection_center_offset 84
+
+::
+
+  - 15.7656
+
+* ct_projection_center_offset 83
+
+::
+
+  - 15.7665
+
+* ct_bh_correction
+
+::
+
+  - 0
+
+* histogram_user_id
+
+::
+
+  -  xxx
+
+* modality_configuration
+
+::
+
+  - Inveon_MM_Std_CT
+
+* ct_projection_center_offset 92
+
+::
+
+  - 15.7411
+
+* projection 92
+
+::
+
+  - 168.667
+
+* ct_projection_center_offset 93
+
+::
+
+  - 15.7369
+
+* projection 93
+
+::
+
+  - 170.5
+
+* ct_projection_center_offset 90
+
+::
+
+  - 15.7481
+
+* projection 90
+
+::
+
+  - 165
+
+* ct_projection_center_offset 91
+
+::
+
+  - 15.7447
+
+* projection 91
+
+::
+
+  - 166.833
+
+* projection 96
+
+::
+
+  - 176
+
+* projection 97
+
+::
+
+  - 177.833
+
+* projection 94
+
+::
+
+  - 172.333
+
+* ct_file_version
+
+::
+
+  - 4
+
+* projection 95
+
+::
+
+  - 174.167
+
+* ct_projection_center_offset 77
+
+::
+
+  - 15.7691
+
+* ct_projection_center_offset 76
+
+::
+
+  - 15.7694
+
+* ct_projection_center_offset 79
+
+::
+
+  - 15.7685
+
+* ct_projection_center_offset 78
+
+::
+
+  - 15.7688
+
+* ct_projection_center_offset 73
+
+::
+
+  - 15.7693
+
+* ct_projection_center_offset 72
+
+::
+
+  - 15.7691
+
+* ct_projection_center_offset 75
+
+::
+
+  - 15.7696
+
+* ct_projection_center_offset 74
+
+::
+
+  - 15.7694
+
+* ct_projection_center_offset 5
+
+::
+
+  - 15.7063
+
+* ct_projection_center_offset 6
+
+::
+
+  - 15.7027
+
+* ct_projection_center_offset 7
+
+::
+
+  - 15.6992
+
+* ct_projection_center_offset 8
+
+::
+
+  - 15.6959
+
+* ct_projection_center_offset 9
+
+::
+
+  - 15.6925
+
+* ct_projection_center_offset 103
+
+::
+
+  - 15.707
+
+* ct_projection_center_offset 102
+
+::
+
+  - 15.7106
+
+* ct_projection_center_offset 101
+
+::
+
+  - 15.7112
+
+* ct_projection_center_offset 100
+
+::
+
+  - 15.7083
+
+* ct_projection_center_offset 106
+
+::
+
+  - 15.6965
+
+* ct_projection_center_offset 107
+
+::
+
+  - 15.6931
+
+* ct_projection_center_offset 104
+
+::
+
+  - 15.7034
+
+* ct_projection_center_offset 0
+
+::
+
+  - 15.7028
+
+* ct_projection_center_offset 105
+
+::
+
+  - 15.6998
+
+* ct_projection_center_offset 2
+
+::
+
+  - 15.7088
+
+* ct_projection_center_offset 1
+
+::
+
+  - 15.7058
+
+* ct_projection_center_offset 108
+
+::
+
+  - 15.6897
+
+* ct_projection_center_offset 4
+
+::
+
+  - 15.71
+
+* ct_projection_center_offset 109
+
+::
+
+  - 15.6852
+
+* ct_projection_center_offset 3
+
+::
+
+  - 15.7118
+
+* ct_transaxial_bin_factor
+
+::
+
+  - 4
+
+* ct_projection_center_offset 80
+
+::
+
+  - 15.7682
+
+* ct_projection_center_offset 81
+
+::
+
+  - 15.7679
+
+* ct_projection_center_offset 82
+
+::
+
+  - 15.7675
+
+* subject_age
+
+::
+
+  - xxx
+
+* investigator
+
+::
+
+  - xxx
+  - op
+
+* study
+
+::
+
+  - XXXXX
+
+* scale_factor
+
+::
+
+  - 1
+
+* projection 78
+
+::
+
+  - 143
+
+* projection 79
+
+::
+
+  - 144.833
+
+* ct_detector_vertical_offset
+
+::
+
+  - 0
+
+* projection 76
+
+::
+
+  - 139.333
+
+* projection 77
+
+::
+
+  - 141.167
+
+* projection 75
+
+::
+
+  - 137.5
+
+* projection 74
+
+::
+
+  - 135.667
+
+* anesthesia
+
+::
+
+  - xxx
+
+* projection 73
+
+::
+
+  - 133.833
+
+* projection 72
+
+::
+
+  - 132
+
+* projection 71
+
+::
+
+  - 130.167
+
+* projection 70
+
+::
+
+  - 128.333
+
+* pixel_size_y
+
+::
+
+  - 0.216955
+  - 0
+
+* pixel_size_z
+
+::
+
+  - 0.216955
+  - 0
+
+* ct_attenuation_water
+
+::
+
+  - 0
+
+* y_dimension
+
+::
+
+  - 384
+  - 512
+
+* pixel_size_x
+
+::
+
+  - 0.216955
+  - 0
+
+* bed
+
+::
+
+  - 2
+  - 1
+
+* ct_projection_center_offset 94
+
+::
+
+  - 15.7328
+
+* cell_line
+
+::
+
+  - xxx
+
+* ct_projection_center_offset 95
+
+::
+
+  - 15.7282
+
+* ct_projection_center_offset 96
+
+::
+
+  - 15.7203
+
+* ct_projection_center_offset 97
+
+::
+
+  - 15.7123
+
+* projection 87
+
+::
+
+  - 159.5
+
+* ct_projection_center_offset 98
+
+::
+
+  - 15.7043
+
+* ct_projection_center_offset 99
+
+::
+
+  - 15.7053
+
+* projection 88
+
+::
+
+  - 161.333
+
+* projection 89
+
+::
+
+  - 163.167
+
+* projection 84
+
+::
+
+  - 154
+
+* ct_recon_every_nth_proj
+
+::
+
+  - 0
+
+* projection 83
+
+::
+
+  - 152.167
+
+* projection 86
+
+::
+
+  - 157.667
+
+* projection 85
+
+::
+
+  - 155.833
+
+* projection 80
+
+::
+
+  - 146.667
+
+* recon_version
+
+::
+
+  - 005.046
+  - 000.000
+
+* projection 82
+
+::
+
+  - 150.333
+
+* projection 81
+
+::
+
+  - 148.5
+
+* ct_projection_horizontal_bed_offset 25
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 24
+
+::
+
+  - 203.999
+
+* scan_time
+
+::
+
+  - xxx
+  - Fri Sep 21 17:50:17 2012
+
+* ct_projection_horizontal_bed_offset 27
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 26
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 29
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 28
+
+::
+
+  - 203.999
+
+* projection 56
+
+::
+
+  - 102.667
+
+* projection 57
+
+::
+
+  - 104.5
+
+* acquisition_file_name
+
+::
+
+  - batch1_v1.cat
+
+* projection 54
+
+::
+
+  - 99
+
+* ct_scan_time
+
+::
+
+  - xxx
+
+* projection 55
+
+::
+
+  - 100.833
+
+* acquisition_user_id
+
+::
+
+  -  xxx
+
+* ct_projection_horizontal_bed_offset 21
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 20
+
+::
+
+  - 203.999
+
+* projection 58
+
+::
+
+  - 106.333
+
+* ct_projection_horizontal_bed_offset 23
+
+::
+
+  - 203.999
+
+* projection 59
+
+::
+
+  - 108.167
+
+* ct_projection_horizontal_bed_offset 22
+
+::
+
+  - 203.999
+
+* ct_hounsfield_scale
+
+::
+
+  - 0
+
+* projection 53
+
+::
+
+  - 97.1667
+
+* projection 52
+
+::
+
+  - 95.3333
+
+* projection 51
+
+::
+
+  - 93.5
+
+* projection 50
+
+::
+
+  - 91.6667
+
+* ct_projection_horizontal_bed_offset 16
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 15
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 14
+
+::
+
+  - 203.999
+
+* ct_projection_average_center_offset
+
+::
+
+  - 15.7088
+
+* ct_projection_horizontal_bed_offset 13
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 19
+
+::
+
+  - 203.999
+
+* pixel_size
+
+::
+
+  - 0
+
+* ct_projection_horizontal_bed_offset 18
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 17
+
+::
+
+  - 203.999
+
+* projection 65
+
+::
+
+  - 119.167
+
+* projection 66
+
+::
+
+  - 121
+
+* projection 67
+
+::
+
+  - 122.833
+
+* projection 68
+
+::
+
+  - 124.667
+
+* projection 69
+
+::
+
+  - 126.5
+
+* ct_projection_horizontal_bed_offset 12
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 11
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 10
+
+::
+
+  - 203.999
+
+* projection 60
+
+::
+
+  - 110
+
+* projection 62
+
+::
+
+  - 113.667
+
+* projection 61
+
+::
+
+  - 111.833
+
+* projection 64
+
+::
+
+  - 117.333
+
+* projection 63
+
+::
+
+  - 115.5
+
+* ct_light_calibration_projections
+
+::
+
+  - 1
+
+* bed_offset
+
+::
+
+  - 18.1783
+  - 22.6215
+
+* projection 41
+
+::
+
+  - 75.1667
+
+* projection 42
+
+::
+
+  - 77
+
+* projection 40
+
+::
+
+  - 73.3333
+
+* projection 46
+
+::
+
+  - 84.3333
+
+* ct_tx_transaxial_offsets
+
+::
+
+  - 0 0 0
+
+* projection 45
+
+::
+
+  - 82.5
+
+* projection 44
+
+::
+
+  - 80.6667
+
+* projection 43
+
+::
+
+  - 78.8333
+
+* projection 49
+
+::
+
+  - 89.8333
+
+* projection 48
+
+::
+
+  - 88
+
+* projection 47
+
+::
+
+  - 86.1667
+
+* transaxial_bin_size
+
+::
+
+  - 0
+
+* time_frames
+
+::
+
+  - 0
+
+* projection 119
+
+::
+
+  - 218.167
+
+* ct_exposure_time
+
+::
+
+  - xxx
+
+* projection 113
+
+::
+
+  - 207.167
+
+* projection 114
+
+::
+
+  - 209
+
+* projection 111
+
+::
+
+  - 203.5
+
+* projection 112
+
+::
+
+  - 205.333
+
+* projection 117
+
+::
+
+  - 214.5
+
+* projection 118
+
+::
+
+  - 216.333
+
+* projection 30
+
+::
+
+  - 55
+
+* projection 115
+
+::
+
+  - 210.833
+
+* x_dimension
+
+::
+
+  - 384
+  - 768
+
+* projection 31
+
+::
+
+  - 56.8333
+
+* projection 116
+
+::
+
+  - 212.667
+
+* projection 33
+
+::
+
+  - 60.5
+
+* projection 32
+
+::
+
+  - 58.6667
+
+* projection 35
+
+::
+
+  - 64.1667
+
+* projection 34
+
+::
+
+  - 62.3333
+
+* projection 37
+
+::
+
+  - 67.8333
+
+* projection 36
+
+::
+
+  - 66
+
+* projection 120
+
+::
+
+  - 220
+
+* projection 39
+
+::
+
+  - 71.5
+
+* horizontal_bed_calibration
+
+::
+
+  - 0
+
+* projection 38
+
+::
+
+  - 69.6667
+
+* ct_anode_current
+
+::
+
+  - xxx
+
+* projection 108
+
+::
+
+  - 198
+
+* minimum
+
+::
+
+  - -32767
+
+* projection 109
+
+::
+
+  - 199.833
+
+* projection 104
+
+::
+
+  - 190.667
+
+* projection 20
+
+::
+
+  - 36.6667
+
+* projection 105
+
+::
+
+  - 192.5
+
+* projection 106
+
+::
+
+  - 194.333
+
+* projection 107
+
+::
+
+  - 196.167
+
+* projection 100
+
+::
+
+  - 183.333
+
+* projection 101
+
+::
+
+  - 185.167
+
+* projection 102
+
+::
+
+  - 187
+
+* projection 103
+
+::
+
+  - 188.833
+
+* projection 28
+
+::
+
+  - 51.3333
+
+* projection 27
+
+::
+
+  - 49.5
+
+* projection 26
+
+::
+
+  - 47.6667
+
+* projection 110
+
+::
+
+  - 201.667
+
+* projection 25
+
+::
+
+  - 45.8333
+
+* projection 24
+
+::
+
+  - 44
+
+* projection 23
+
+::
+
+  - 42.1667
+
+* projection 22
+
+::
+
+  - 40.3333
+
+* projection 21
+
+::
+
+  - 38.5
+
+* y_offset
+
+::
+
+  - 0
+
+* projection 29
+
+::
+
+  - 53.1667
+
+* ct_detector_vertical_tilt
+
+::
+
+  - 0
+
+* vertical_bed_calibration
+
+::
+
+  - 0
+
+* ct_average_light_projections
+
+::
+
+  - 60
+
+* projection 15
+
+::
+
+  - 27.5
+
+* z_dimension
+
+::
+
+  - 463
+  - 121
+
+* projection 14
+
+::
+
+  - 25.6667
+
+* projection 17
+
+::
+
+  - 31.1667
+
+* projection 16
+
+::
+
+  - 29.3333
+
+* projection 11
+
+::
+
+  - 20.1667
+
+* projection 10
+
+::
+
+  - 18.3333
+
+* ct_projection_interpolation
+
+::
+
+  - Unknown
+
+* projection 13
+
+::
+
+  - 23.8333
+
+* projection 12
+
+::
+
+  - 22
+
+* projection 19
+
+::
+
+  - 34.8333
+
+* projection 18
+
+::
+
+  - 33
+
+* ct_uncropped_transaxial_pixels
+
+::
+
+  - 3072
+
+* normalization_applied
+
+::
+
+  - None
+
+* x_offset
+
+::
+
+  - 0
+
+* subject_orientation
+
+::
+
+  - Unknown
+
+* subject_scan_region
+
+::
+
+  - whole body
+
+* vertical_bed_offset
+
+::
+
+  - 0.7
+
+* ct_horiz_rot_axis_bed_angle
+
+::
+
+  - 0.03
+
+* ct_first_recon_proj
+
+::
+
+  - 0
+
+* ct_projection_horizontal_bed_offset 1
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 0
+
+::
+
+  - 203.999
+
+* ct_uncropped_axial_pixels
+
+::
+
+  - 2048
+
+* frame
+
+::
+
+  - 0
+
+* ct_projection_horizontal_bed_offset 5
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 4
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 3
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 2
+
+::
+
+  - 203.999
+
+* z_offset
+
+::
+
+  - 0
+
+* model
+
+::
+
+  - Unknown
+
+* food_access
+
+::
+
+  -  xxx
+  - xxx
+
+* ct_projection_horizontal_bed_offset 6
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 7
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 8
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 9
+
+::
+
+  - 203.999
+
+* registration_available
+
+::
+
+  - None
+
+* institution
+
+::
+
+  - xxxx
+  - XXX
+
+* bed_passes
+
+::
+
+  - 1
+
+* ct_xray_voltage
+
+::
+
+  - xxx
+
+* notebook
+
+::
+
+  - xxx
+
+* ct_calibration_exposures
+
+::
+
+  - 60
+  - xxx
+
+* ct_xray_detector_pitch
+
+::
+
+  - 108.478
+
+* PET_Radiopharmaceutical
+
+::
+
+  - xxx
+
+* ct_cone_angle
+
+::
+
+  - 13.6315
+
+* bed_control
+
+::
+
+  - Multimodality bed control
+
+* rotating_stage_start_position
+
+::
+
+  - 0
+
+* ct_axial_bin_factor
+
+::
+
+  - 4
+
+* number_of_bed_positions
+
+::
+
+  - 2
+
+* total_frames
+
+::
+
+  - 1
+  - 2
+
+* ExpID_ELN
+
+::
+
+  - xxx
+
+* subject_weight_units
+
+::
+
+  - Unknown
+
+* ct_projection_horizontal_bed_offset 114
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 115
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 112
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 113
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 110
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 111
+
+::
+
+  - 203.999
+
+* ct_hounsfield_offset
+
+::
+
+  - 0
+
+* ct_gating
+
+::
+
+  - 0
+
+* version
+
+::
+
+  - 001.940
+
+* study_model
+
+::
+
+  - xxx
+
+* ct_projection_horizontal_bed_offset 109
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 108
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 107
+
+::
+
+  - 203.999
+
+* number_of_projections
+
+::
+
+  - 121
+
+* ct_projection_horizontal_bed_offset 106
+
+::
+
+  - 203.999
+
+* ct_vert_rot_axis_bed_angle
+
+::
+
+  - 0.03
+
+* ct_projection_horizontal_bed_offset 105
+
+::
+
+  - 203.999
+
+* study_identifier
+
+::
+
+  - 1.1.05100.01063.20120921175015
+  - 1
+
+* ct_dependent_light_calibration_projections
+
+::
+
+  - 0
+
+* ct_detector_horizontal_tilt
+
+::
+
+  - 0
+
+* ending_bed_offset
+
+::
+
+  - 22.6215
+
+* ct_projection_horizontal_bed_offset 120
+
+::
+
+  - 203.999
+
+* ct_detector_transaxial_position
+
+::
+
+  - 0
+
+* ct_projection_horizontal_bed_offset 117
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 116
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 119
+
+::
+
+  - 203.999
+
+* ct_projection_horizontal_bed_offset 118
+
+::
+
+  - 203.999
+
+* frame_duration
+
+::
+
+  - 84
+  - 168
+
+* projection 0
+
+::
+
+  - 0
+
+* frame_start
+
+::
+
+  - 0
+
+* subject_length_units
+
+::
+
+  - Unknown
+
+* event_type
+
+::
+
+  - Unknown
+
+* ct_source_to_crot
+
+::
+
+  - 348.52
+
+* study_2
+
+::
+
+  - IM-xxxxx
+
+* gantry_revolutions
+
+::
+
+  - 0
+
+* subject_identifier
+
+::
+
+  - xxx
+
+* bed_motion
+
+::
+
+  - Multiple bed positions
+
+* gate
+
+::
+
+  - 0
+
+* projection 9
+
+::
+
+  - 16.5
+
+* projection 6
+
+::
+
+  - 11
+
+* projection 5
+
+::
+
+  - 9.16667
+
+* projection 8
+
+::
+
+  - 14.6667
+
+* projection 7
+
+::
+
+  - 12.8333
+
+* projection 2
+
+::
+
+  - 3.66667
+
+* projection 1
+
+::
+
+  - 1.83333
+
+* projection 4
+
+::
+
+  - 7.33333
+
+* projection 3
+
+::
+
+  - 5.5
+
+* water_access
+
+::
+
+  -  xxx
+  - xxx
+
+* file_name
+
+::
+
+  - batch1_v1.ct.img
+  - batch1_v1.cat
+
+* acquisition_mode
+
+::
+
+  - CT projection
+
+* data_file_pointer
+
+::
+
+  - 0 0
+  - 0 96766208
+
+* ct_xray_detector_offset
+
+::
+
+  - 0
+

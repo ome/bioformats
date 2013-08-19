@@ -1,0 +1,1524 @@
+*******************************************************************************
+OpenlabReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Openlab LIFF format reader.
+
+Key/value pairs
+===============================================================================
+
+* Plane Name #97
+
+::
+
+  - tubes z = 33
+
+* Plane Name #98
+
+::
+
+  - spd z = 33
+
+* Plane Name #99
+
+::
+
+  - dna z = 33
+
+* Plane Name #94
+
+::
+
+  - tubes z = 32
+
+* Plane Name #93
+
+::
+
+  - dna z = 31
+
+* Plane Name #96
+
+::
+
+  - dna z = 32
+
+* Plane Name #95
+
+::
+
+  - spd z = 32
+
+* Plane Name #90
+
+::
+
+  - dna z = 30
+
+* Plane Name #92
+
+::
+
+  - spd z = 31
+
+* Plane Name #91
+
+::
+
+  - tubes z = 31
+
+* Plane Name #100
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=26
+
+* Plane Name #108
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=34
+
+* Plane Name #107
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=33
+
+* Plane Name #106
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=32
+
+* Plane Name #105
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=31
+
+* Plane Name #104
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=30
+
+* Plane Name #103
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=29
+
+* Plane Name #102
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=28
+
+* Plane Name #101
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=27
+
+* Plane Name #88
+
+::
+
+  - tubes z = 30
+
+* Plane Name #89
+
+::
+
+  - spd z = 30
+
+* Plane Name #86
+
+::
+
+  - spd z = 29
+
+* Plane Name #109
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=35
+
+* Plane Name #87
+
+::
+
+  - dna z = 29
+
+* Plane Name #85
+
+::
+
+  - tubes z = 29
+
+* Plane Name #84
+
+::
+
+  - dna z = 28
+
+* Plane Name #83
+
+::
+
+  - spd z = 28
+
+* Plane Name #82
+
+::
+
+  - tubes z = 28
+
+* Plane Name #81
+
+::
+
+  - dna z = 27
+
+* Plane Name #80
+
+::
+
+  - spd z = 27
+
+* Plane Name #110
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=36
+
+* Plane Name #111
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=37
+
+* Plane Name #75
+
+::
+
+  - dna z = 25
+
+* Plane Name #76
+
+::
+
+  - tubes z = 26
+
+* Plane Name #77
+
+::
+
+  - spd z = 26
+
+* Plane Name #78
+
+::
+
+  - dna z = 26
+
+* Plane Name #79
+
+::
+
+  - tubes z = 27
+
+* Plane Name #70
+
+::
+
+  - tubes z = 24
+
+* Plane Name #72
+
+::
+
+  - dna z = 24
+
+* Plane Name #71
+
+::
+
+  - spd z = 24
+
+* Plane Name #74
+
+::
+
+  - spd z = 25
+
+* Plane Name #73
+
+::
+
+  - tubes z = 25
+
+* Plane Name #66
+
+::
+
+  - dna z = 22
+
+* Plane Name #67
+
+::
+
+  - tubes z = 23
+
+* Plane Name #64
+
+::
+
+  - tubes z = 22
+
+* Plane Name #65
+
+::
+
+  - spd z = 22
+
+* Plane Name #68
+
+::
+
+  - spd z = 23
+
+* Plane Name #69
+
+::
+
+  - dna z = 23
+
+* Plane Name #63
+
+::
+
+  - dna z = 21
+
+* Plane Name #62
+
+::
+
+  - spd z = 21
+
+* Plane Name #61
+
+::
+
+  - tubes z = 21
+
+* Plane Name #60
+
+::
+
+  - dna z = 20
+
+* Plane Name #58
+
+::
+
+  - tubes z = 20
+
+* Plane Name #57
+
+::
+
+  - dna z = 19
+
+* Plane Name #59
+
+::
+
+  - spd z = 20
+
+* Plane Name #54
+
+::
+
+  - dna z = 18
+
+* Plane Name #53
+
+::
+
+  - spd z = 18
+
+* Plane Name #56
+
+::
+
+  - spd z = 19
+
+* Plane Name #55
+
+::
+
+  - tubes z = 19
+
+* Plane Name #138
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=27
+
+* Plane Name #139
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=28
+
+* Plane Name #134
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=23
+
+* Plane Name #135
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=24
+
+* Plane Name #136
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=25
+
+* Plane Name #137
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=26
+
+* Plane Name #142
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=31
+
+* Plane Name #141
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=30
+
+* Plane Name #144
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=33
+
+* Plane Name #143
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=32
+
+* Plane Name #140
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=29
+
+* Plane Name #50
+
+::
+
+  - spd z = 17
+
+* Plane Name #51
+
+::
+
+  - dna z = 17
+
+* Plane Name #52
+
+::
+
+  - tubes z = 18
+
+* Plane Name #001
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=1
+
+* Plane Name #49
+
+::
+
+  - tubes z = 17
+
+* Plane Name #004
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=4
+
+* Plane Name #48
+
+::
+
+  - dna z = 16
+
+* Plane Name #005
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=5
+
+* Plane Name #47
+
+::
+
+  - spd z = 16
+
+* Plane Name #002
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=2
+
+* Plane Name #46
+
+::
+
+  - tubes z = 16
+
+* Plane Name #003
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=3
+
+* Plane Name #45
+
+::
+
+  - dna z = 15
+
+* Plane Name #008
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=8
+
+* Plane Name #44
+
+::
+
+  - spd z = 15
+
+* Plane Name #009
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=9
+
+* Plane Name #43
+
+::
+
+  - tubes z = 15
+
+* Plane Name #006
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=6
+
+* Plane Name #42
+
+::
+
+  - dna z = 14
+
+* Plane Name #007
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=7
+
+* Plane Name #147
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=36
+
+* Plane Name #148
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=37
+
+* Plane Name #145
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=34
+
+* Plane Name #146
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=35
+
+* Plane Name #40
+
+::
+
+  - tubes z = 14
+
+* Plane Name #41
+
+::
+
+  - spd z = 14
+
+* Plane Name #012
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=12
+
+* Plane Name #011
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=11
+
+* Plane Name #010
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=10
+
+* Plane Name #32
+
+::
+
+  - spd z = 11
+  - Merge+" "+str(count)
+
+* Plane Name #017
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=17
+
+* Plane Name #12
+
+::
+
+  - dna z = 4
+  - Merge+" "+str(count)
+
+* Plane Name #31
+
+::
+
+  - tubes z = 11
+  - Merge+" "+str(count)
+
+* Plane Name #018
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=18
+
+* Plane Name #11
+
+::
+
+  - spd z = 4
+  - Merge+" "+str(count)
+
+* Plane Name #34
+
+::
+
+  - tubes z = 12
+
+* Plane Name #019
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=19
+
+* Plane Name #10
+
+::
+
+  - tubes z = 4
+  - Merge+" "+str(count)
+
+* Plane Name #33
+
+::
+
+  - dna z = 11
+  - Merge+" "+str(count)
+
+* Plane Name #36
+
+::
+
+  - dna z = 12
+
+* Plane Name #013
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=13
+
+* Plane Name #16
+
+::
+
+  - tubes z = 6
+  - Merge+" "+str(count)
+
+* Plane Name #35
+
+::
+
+  - spd z = 12
+
+* Plane Name #014
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=14
+
+* Plane Name #15
+
+::
+
+  - dna z = 5
+  - Merge+" "+str(count)
+
+* Plane Name #38
+
+::
+
+  - spd z = 13
+
+* Plane Name #015
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=15
+
+* Plane Name #14
+
+::
+
+  - spd z = 5
+  - Merge+" "+str(count)
+
+* Plane Name #37
+
+::
+
+  - tubes z = 13
+
+* Plane Name #016
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=16
+
+* Plane Name #13
+
+::
+
+  - tubes z = 5
+  - Merge+" "+str(count)
+
+* Plane Name #112
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=1
+
+* Plane Name #39
+
+::
+
+  - dna z = 13
+
+* Plane Name #113
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=2
+
+* Plane Name #19
+
+::
+
+  - tubes z = 7
+  - Merge+" "+str(count)
+
+* Plane Name #114
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=3
+
+* Plane Name #18
+
+::
+
+  - dna z = 6
+  - Merge+" "+str(count)
+
+* Plane Name #115
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=4
+
+* Plane Name #17
+
+::
+
+  - spd z = 6
+  - Merge+" "+str(count)
+
+* Plane Name #116
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=5
+
+* Plane Name #117
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=6
+
+* Plane Name #118
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=7
+
+* Plane Name #119
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=8
+
+* Plane Name #120
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=9
+
+* Plane Name #122
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=11
+
+* Plane Name #121
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=10
+
+* Plane Name #021
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=21
+
+* Plane Name #020
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=20
+
+* Plane Name #023
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=23
+
+* Plane Name #022
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=22
+
+* Plane Name #30
+
+::
+
+  - dna z = 10
+  - Merge+" "+str(count)
+
+* Plane Name #23
+
+::
+
+  - spd z = 8
+  - Merge+" "+str(count)
+
+* Plane Name #22
+
+::
+
+  - tubes z = 8
+  - Merge+" "+str(count)
+
+* Plane Name #01
+
+::
+
+  - tubes z = 1
+  - Merge+" "+str(count)
+
+* Plane Name #028
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=28
+
+* Plane Name #21
+
+::
+
+  - dna z = 7
+  - Merge+" "+str(count)
+
+* Plane Name #029
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=29
+
+* Plane Name #20
+
+::
+
+  - spd z = 7
+  - Merge+" "+str(count)
+
+* Plane Name #27
+
+::
+
+  - dna z = 9
+  - Merge+" "+str(count)
+
+* Plane Name #026
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=26
+
+* Plane Name #03
+
+::
+
+  - dna z = 1
+  - Merge+" "+str(count)
+
+* Plane Name #26
+
+::
+
+  - spd z = 9
+  - Merge+" "+str(count)
+
+* Plane Name #02
+
+::
+
+  - spd z = 1
+  - Merge+" "+str(count)
+
+* Plane Name #027
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=27
+
+* Plane Name #25
+
+::
+
+  - tubes z = 9
+  - Merge+" "+str(count)
+
+* Plane Name #024
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=24
+
+* Plane Name #05
+
+::
+
+  - spd z = 2
+  - Merge+" "+str(count)
+
+* Plane Name #025
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=25
+
+* Plane Name #24
+
+::
+
+  - dna z = 8
+  - Merge+" "+str(count)
+
+* Plane Name #04
+
+::
+
+  - tubes z = 2
+  - Merge+" "+str(count)
+
+* Plane Name #125
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=14
+
+* Plane Name #07
+
+::
+
+  - tubes z = 3
+  - Merge+" "+str(count)
+
+* Plane Name #126
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=15
+
+* Plane Name #06
+
+::
+
+  - dna z = 2
+  - Merge+" "+str(count)
+
+* Plane Name #29
+
+::
+
+  - spd z = 10
+  - Merge+" "+str(count)
+
+* Plane Name #123
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=12
+
+* Plane Name #09
+
+::
+
+  - dna z = 3
+  - Merge+" "+str(count)
+
+* Plane Name #28
+
+::
+
+  - tubes z = 10
+  - Merge+" "+str(count)
+
+* Plane Name #124
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=13
+
+* Plane Name #08
+
+::
+
+  - spd z = 3
+  - Merge+" "+str(count)
+
+* Plane Name #129
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=18
+
+* Plane Name #127
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=16
+
+* Plane Name #128
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=17
+
+* Plane Name #133
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=22
+
+* Plane Name #132
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=21
+
+* Plane Name #131
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=20
+
+* Plane Name #130
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=3 Z=19
+
+* Plane Name #034
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=34
+
+* Plane Name #033
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=33
+
+* Plane Name #032
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=32
+
+* Plane Name #031
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=31
+
+* Plane Name #030
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=30
+
+* Plane Name #040
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=3
+
+* Plane Name #041
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=4
+
+* Plane Name #044
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=7
+
+* Plane Name #045
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=8
+
+* Plane Name #042
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=5
+
+* Plane Name #043
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=6
+
+* Plane Name #038
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=1
+
+* Plane Name #037
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=37
+
+* Plane Name #036
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=36
+
+* Plane Name #035
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=0 Z=35
+
+* Plane Name #039
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=2
+
+* Plane Name #050
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=13
+
+* Plane Name #051
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=14
+
+* Plane Name #052
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=15
+
+* Plane Name #053
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=16
+
+* Plane Name #054
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=17
+
+* Plane Name #055
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=18
+
+* Plane Name #056
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=19
+
+* Plane Name #047
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=10
+
+* Plane Name #046
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=9
+
+* Plane Name #049
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=12
+
+* Plane Name #048
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=11
+
+* Plane Name #066
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=29
+
+* Plane Name #067
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=30
+
+* Plane Name #064
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=27
+
+* Plane Name #065
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=28
+
+* Plane Name #062
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=25
+
+* Plane Name #063
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=26
+
+* Plane Name #060
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=23
+
+* Plane Name #061
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=24
+
+* Plane Name #059
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=22
+
+* Plane Name #058
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=21
+
+* Plane Name #057
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=20
+
+* Plane Name #075
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=1
+
+* Plane Name #076
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=2
+
+* Plane Name #077
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=3
+
+* Plane Name #078
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=4
+
+* Plane Name #071
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=34
+
+* Plane Name #072
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=35
+
+* Plane Name #073
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=36
+
+* Plane Name #074
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=37
+
+* Plane Name #070
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=33
+
+* Plane Name #069
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=32
+
+* Plane Name #068
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=1 Z=31
+
+* Plane Name #081
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=7
+
+* Plane Name #080
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=6
+
+* Plane Name #085
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=11
+
+* Plane Name #084
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=10
+
+* Plane Name #083
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=9
+
+* Plane Name #082
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=8
+
+* Plane Name #089
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=15
+
+* Plane Name #088
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=14
+
+* Plane Name #087
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=13
+
+* Plane Name #086
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=12
+
+* Plane Name #079
+
+::
+
+  - !DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=5
+
+* Plane Name #090
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=16
+
+* Plane Name #092
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=18
+
+* Plane Name #091
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=17
+
+* Plane Name #094
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=20
+
+* Plane Name #093
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=19
+
+* Plane Name #096
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=22
+
+* Plane Name #095
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=21
+
+* Plane Name #098
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=24
+
+* Plane Name #097
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=23
+
+* Plane Name #099
+
+::
+
+  - "DLD1-MT-04_R3D_D3D.dv T=1 C=2 Z=25
+

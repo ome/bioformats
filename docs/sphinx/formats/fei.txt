@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`FEI <fei-metadata>`
 
+Original Metadata Support: :doc:`FEI <FEIReader>`
 
 
 We currently have:

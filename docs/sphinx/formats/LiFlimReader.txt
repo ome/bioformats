@@ -1,0 +1,452 @@
+*******************************************************************************
+LiFlimReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats LI-FLIM format reader.
+
+Key/value pairs
+===============================================================================
+
+* FLIMIMAGE: INFO - compression
+
+::
+
+  - 1
+
+* FLIMIMAGE: INFO - version
+
+::
+
+  - 1.0
+
+* FLIMIMAGE: FREQUENCIES - f0
+
+::
+
+  - 4e+007
+  - 1e+007
+
+* PARAMETERS: ACQUISITION SETTINGS - UpperThreshold
+
+::
+
+  - 1
+
+* FLIMIMAGE: CHANNELS - c2label
+
+::
+
+  - DC Intensity
+  - Lifetime 2
+
+* FLIMIMAGE: CHANNELS - c4units
+
+::
+
+  - 
+
+* PARAMETERS: ACQUISITION SETTINGS - TimeLapseIdle
+
+::
+
+  - 1
+
+* FLIMIMAGE: LAYOUT - timestamps
+
+::
+
+  - 1
+  - 5
+
+* FLIMIMAGE: LAYOUT - datatype
+
+::
+
+  - REAL32
+
+* PARAMETERS: ACQUISITION SETTINGS - TimeLapsePeriod
+
+::
+
+  - 30 s
+  - 0 s
+
+* ROI: ROI0 - p3
+
+::
+
+  - 9 31
+
+* PARAMETERS: ACQUISITION SETTINGS - NumZSteps
+
+::
+
+  - 10
+  - 3
+
+* PARAMETERS: Dummy Camera - Component0Fraction
+
+::
+
+  - 1
+
+* PARAMETERS: Dummy Camera - Component1Fraction
+
+::
+
+  - 1
+
+* FLIMIMAGE: CHANNELS - c5units
+
+::
+
+  - adu
+
+* PARAMETERS: Dummy Camera - ExposureTime
+
+::
+
+  - 0 ms
+  - 2 ms
+
+* PARAMETERS: Dummy Camera - Height
+
+::
+
+  - 48 pixels
+  - 24 pixels
+
+* PARAMETERS: ACQUISITION SETTINGS - UseZStack
+
+::
+
+  - 0
+  - 1
+
+* PARAMETERS: ACQUISITION SETTINGS - UseAveraging
+
+::
+
+  - 0
+
+* FLIMIMAGE: TIMESTAMPS - t1
+
+::
+
+  - 30019886 2031691744
+
+* FLIMIMAGE: TIMESTAMPS - t2
+
+::
+
+  - 30019886 2057631744
+
+* PARAMETERS: ACQUISITION SETTINGS - AbsoluteThreshold
+
+::
+
+  - 0
+
+* FLIMIMAGE: TIMESTAMPS - t3
+
+::
+
+  - 30019886 2083411744
+
+* PARAMETERS: Dummy Camera - Component0Lifetime
+
+::
+
+  - 4 ns
+
+* FLIMIMAGE: TIMESTAMPS - t4
+
+::
+
+  - 30019886 2109191744
+
+* FLIMIMAGE: CHANNELS - c5label
+
+::
+
+  - DC Intensity
+
+* ROI: ROI0 - p0
+
+::
+
+  - 9 2
+
+* ROI: ROI0 - p1
+
+::
+
+  - 48 2
+
+* FLIMIMAGE: TIMESTAMPS - t0
+
+::
+
+  - 30019881 2552938224
+  - 30019886 2005601744
+
+* ROI: ROI0 - p2
+
+::
+
+  - 48 31
+
+* FLIMIMAGE: CHANNELS - c3label
+
+::
+
+  - Fraction 2
+
+* PARAMETERS: ACQUISITION SETTINGS - UsePseudoRandomOrder
+
+::
+
+  - 1
+
+* FLIMIMAGE: LAYOUT - channels
+
+::
+
+  - 3
+  - 6
+
+* PARAMETERS: ACQUISITION SETTINGS - NumPhases
+
+::
+
+  - 12
+
+* PARAMETERS: ACQUISITION SETTINGS - UseMultiFrequency
+
+::
+
+  - 0
+  - 1
+
+* FLIMIMAGE: LAYOUT - phases
+
+::
+
+  - 1
+
+* PARAMETERS: Dummy Camera - HarmonicsRatio
+
+::
+
+  - 2
+
+* FLIMIMAGE: CHANNELS - c4label
+
+::
+
+  - Chi-square
+
+* PARAMETERS: Dummy Camera - Component2Enabled
+
+::
+
+  - 0
+  - 1
+
+* PARAMETERS: Dummy Camera - Component2Fraction
+
+::
+
+  - 1
+
+* ROI: ROI0 - name
+
+::
+
+  - 1
+
+* FLIMIMAGE: CHANNELS - c1label
+
+::
+
+  - Lifetime (mod)
+  - Fraction 1
+
+* PARAMETERS: Dummy Camera - Component0Enabled
+
+::
+
+  - 0
+
+* PARAMETERS: Dummy Camera - Component1Enabled
+
+::
+
+  - 1
+
+* PARAMETERS: Dummy Camera - SNR
+
+::
+
+  - 50
+
+* PARAMETERS: Dummy Camera - Component2Lifetime
+
+::
+
+  - 3 ns
+
+* PARAMETERS: Dummy Camera - NumHarmonics
+
+::
+
+  - 6
+
+* PARAMETERS: Dummy Camera - UseHarmonics
+
+::
+
+  - 0
+
+* PARAMETERS: ACQUISITION SETTINGS - NumAveraging
+
+::
+
+  - 2
+
+* FLIMIMAGE: LAYOUT - frequencies
+
+::
+
+  - 1
+
+* PARAMETERS: ACQUISITION SETTINGS - LowerThreshold
+
+::
+
+  - 0.15
+
+* FLIMIMAGE: CHANNELS - c0units
+
+::
+
+  - ns
+
+* PARAMETERS: Dummy Camera - Component1Lifetime
+
+::
+
+  - 2 ns
+
+* PARAMETERS: ACQUISITION SETTINGS - MultiFrequencyVector
+
+::
+
+  - 10 12.5992 15.874 20 25.1984 31.748 40 50.3968 63.496 80 MHz
+  - 10 20 40 80 MHz
+
+* PARAMETERS: ACQUISITION SETTINGS - RefLifetime
+
+::
+
+  - 4 ns
+
+* PARAMETERS: ACQUISITION SETTINGS - FilterSize
+
+::
+
+  - 3
+
+* PARAMETERS: ACQUISITION SETTINGS - Frequency
+
+::
+
+  - 40 MHz
+  - 80 MHz
+
+* FLIMIMAGE: CHANNELS - c2units
+
+::
+
+  - adu
+  - ns
+
+* ROI: INFO - numregions
+
+::
+
+  - 1
+
+* FLIMIMAGE: CHANNELS - c3units
+
+::
+
+  - 
+
+* PARAMETERS: Dummy Camera - Width
+
+::
+
+  - 64 pixels
+  - 32 pixels
+
+* ROI: ROI0 - numpoints
+
+::
+
+  - 4
+
+* FLIMIMAGE: LAYOUT - z
+
+::
+
+  - 1
+  - 3
+
+* FLIMIMAGE: CHANNELS - c1units
+
+::
+
+  - ns
+  - 
+
+* PARAMETERS: Dummy Camera - BackgroundLevel
+
+::
+
+  - 100 adu
+
+* FLIMIMAGE: CHANNELS - c0label
+
+::
+
+  - Lifetime (phase)
+  - Lifetime 1
+
+* PARAMETERS: ACQUISITION SETTINGS - TimeLapseSamples
+
+::
+
+  - 20
+  - 5
+
+* COMMENTS: LI-FLIM - Version
+
+::
+
+  - 1, 2, 7, 133
+
+* FLIMIMAGE: LAYOUT - y
+
+::
+
+  - 48
+  - 24
+
+* FLIMIMAGE: LAYOUT - x
+
+::
+
+  - 64
+  - 32
+

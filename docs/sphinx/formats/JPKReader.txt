@@ -1,0 +1,298 @@
+*******************************************************************************
+JPKReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats JPK Instruments format reader.
+
+Key/value pairs
+===============================================================================
+
+* Tag 32962
+
+::
+
+  - raw
+
+* Tag 32849
+
+::
+
+  - 0
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* Tag 32928
+
+::
+
+  - Raw data
+
+* Tag 32929
+
+::
+
+  - UnsignedShort
+
+* Tag 32848
+
+::
+
+  - thumbnail
+  - height
+
+* Tag 33075
+
+::
+
+  - LinearScaling
+
+* Tag 33076
+
+::
+
+  - -1.3721675440604259E-10
+
+* Tag 33077
+
+::
+
+  - 8.9925E-6
+
+* Tag 32896
+
+::
+
+  - 4
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* Tag 32897
+
+::
+
+  - calibrated
+
+* Tag 33058
+
+::
+
+  - nominal
+
+* Tag 33057
+
+::
+
+  - RelativeCalibration
+
+* Tag 33010
+
+::
+
+  - raw
+
+* ImageWidth
+
+::
+
+  - 64
+
+* Tag 33072
+
+::
+
+  - New-2003-04-01
+
+* Tag 32960
+
+::
+
+  - volts
+
+* Tag 33056
+
+::
+
+  - calibrated
+
+* Tag 33073
+
+::
+
+  - UnsignedShort
+
+* Tag 32961
+
+::
+
+  - RelativeCalibration
+
+* Tag 33074
+
+::
+
+  - m
+
+* Tag 33028
+
+::
+
+  - -2.2888532845044634E-10
+
+* Tag 32976
+
+::
+
+  - 15?m (max range)
+
+* Tag 33029
+
+::
+
+  - 1.5E-5
+
+* Tag 32979
+
+::
+
+  - LinearScaling
+
+* Tag 32978
+
+::
+
+  - V
+
+* Tag 33008
+
+::
+
+  - nominal
+
+* Tag 32981
+
+::
+
+  - 0.0
+
+* Tag 32977
+
+::
+
+  - UnsignedShort
+
+* Tag 32980
+
+::
+
+  - 0.0015411612115663385
+
+* Tag 33009
+
+::
+
+  - RelativeCalibration
+
+* Tag 32931
+
+::
+
+  - LinearScaling
+
+* Tag 32913
+
+::
+
+  - AbsoluteCalibration
+
+* ImageLength
+
+::
+
+  - 64
+
+* Tag 32932
+
+::
+
+  - 1.0
+
+* Tag 32912
+
+::
+
+  - raw
+
+* Tag 32933
+
+::
+
+  - -32768.0
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* Tag 32864
+
+::
+
+  - 0
+
+* Tag 32850
+
+::
+
+  - Height
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - Monochrome
+
+* SamplesPerPixel
+
+::
+
+  - 1
+
+* Tag 33025
+
+::
+
+  - UnsignedShort
+
+* PhotometricInterpretation
+
+::
+
+  - Palette
+
+* Tag 33024
+
+::
+
+  - 15?m (max range)
+
+* Tag 33027
+
+::
+
+  - LinearScaling
+
+* Tag 33026
+
+::
+
+  - m
+

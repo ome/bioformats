@@ -1,0 +1,124 @@
+*******************************************************************************
+AVIReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Audio Video Interleave format reader.
+
+Key/value pairs
+===============================================================================
+
+* Stream sample size
+
+::
+
+  - 0
+
+* Stream quality
+
+::
+
+  - 0
+
+* Frame width
+
+::
+
+  - 520
+
+* Initial frames
+
+::
+
+  - 0
+
+* Bitmap compression value
+
+::
+
+  - 1
+
+* Horizontal resolution
+
+::
+
+  - 0
+
+* Max. bytes per second
+
+::
+
+  - 125252
+  - 155346
+  - 153000
+
+* Bits per pixel
+
+::
+
+  - 8
+
+* Scale factor
+
+::
+
+  - 0
+
+* Frame rate
+
+::
+
+  - 0
+
+* Start time
+
+::
+
+  - 0
+
+* Compression
+
+::
+
+  - Microsoft Run-Length Encoding (MSRLE)
+
+* Frame height
+
+::
+
+  - 396
+  - 398
+
+* Vertical resolution
+
+::
+
+  - 0
+
+* Total frames
+
+::
+
+  - 210
+  - 223
+  - 136
+
+* Length
+
+::
+
+  - 0
+
+* Number of colors used
+
+::
+
+  - 256
+
+* Microseconds per frame
+
+::
+
+  - 200000
+  - 100000
+  - 142857
+

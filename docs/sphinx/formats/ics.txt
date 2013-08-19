@@ -20,6 +20,7 @@ Officially Supported Versions: 1.0, 2.0
 
 Supported Metadata Fields: :doc:`ICS (Image Cytometry Standard) <ics-metadata>`
 
+Original Metadata Support: :doc:`ICS (Image Cytometry Standard) <ICSReader>`
 Freely Available Software:
 
 - `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ 

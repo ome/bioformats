@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`SimplePCI & HCImage TIFF <simplepci-hcimage-tiff-metadata>`
 
+Original Metadata Support: :doc:`SimplePCI & HCImage TIFF <SimplePCITiffReader>`
 
 
 We currently have:

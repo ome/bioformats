@@ -1,0 +1,351 @@
+*******************************************************************************
+PerkinElmerReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats PerkinElmer format reader.
+
+Key/value pairs
+===============================================================================
+
+* SubfileType Y
+
+::
+
+  - 12
+
+* 0.222222 m,0.222222 m
+
+::
+
+  - 
+
+* SubfileType X
+
+::
+
+  - 12
+
+* 41.500000
+
+::
+
+  - 42.000000
+
+* Image Length
+
+::
+
+  - 256
+
+* Title:
+
+::
+
+  - 
+
+* Slice2,
+
+::
+
+  - 36.500000
+
+* Slice14,
+
+::
+
+  - 42.500000
+
+* Slice6,
+
+::
+
+  - 38.500000
+
+* Slice10,
+
+::
+
+  - 40.500000
+
+* Origin Z
+
+::
+
+  - A
+
+* 42.500000
+
+::
+
+  - 43.000000
+
+* Zero 1
+
+::
+
+  - 0
+
+* Zero 2
+
+::
+
+  - 0
+
+* Image Width
+
+::
+
+  - 336
+
+* SubfileType Z
+
+::
+
+  - 20.3434
+
+* 38.500000
+
+::
+
+  - 39.000000
+
+* Slice1,
+
+::
+
+  - 36.000000
+
+* Slice9,
+
+::
+
+  - 40.000000
+
+* Slice13,
+
+::
+
+  - 42.000000
+
+* Analysis results:
+
+::
+
+  - 
+
+* Slice5,
+
+::
+
+  - 38.000000
+
+* Dimension Label Z
+
+::
+
+  - 12
+
+* Dimension Label X
+
+::
+
+  - I
+
+* Dimension Label Y
+
+::
+
+  - A
+
+* Slice8,
+
+::
+
+  - 39.500000
+
+* Slice4,
+
+::
+
+  - 37.500000
+
+* Pixel Size X
+
+::
+
+  - 0.222222
+
+* Slice12,
+
+::
+
+  - 41.500000
+
+* Pixel Size Y
+
+::
+
+  - 0.222222
+
+* Slice16,
+
+::
+
+  - 43.500000
+
+* This software Copyright   1991-2006 PerkinElmer Life and Analytical Sciences
+
+::
+
+  - For further information please contact your local PerkinElmer Service Representative
+
+* Camera Data
+
+::
+
+  -         A (488 Open ) ( Shutter ): Exposure 300, 336x256x12, Binned 2x2, Gain 200
+
+* Origin Y
+
+::
+
+  - 0.0000
+
+* Origin X
+
+::
+
+  - 0.0
+
+* 43.500000
+
+::
+
+  - 44.000000
+
+* Experiment details:
+
+::
+
+  - Metta         2 copy Cnn g-tubGFP 111221 - 2 copy Cnn g-tubGFP 111221#20       1 Wavelengths       5 Frames       17 Slices
+
+* Slice17,
+
+::
+
+  - 44.000000
+
+* Dark reference position:
+
+::
+
+  - 0,0,0,0
+
+* Calibration Unit
+
+::
+
+  -  m
+
+* 36.500000
+
+::
+
+  - 37.000000
+
+* Number of Wavelengths/Timepoints
+
+::
+
+  - 6
+
+* Notes:
+
+::
+
+  - 
+
+* Slice7,
+
+::
+
+  - 39.000000
+
+* Finish Time:
+
+::
+
+  - 15:45:49 (22/12/2011)
+
+* 37.500000
+
+::
+
+  - 38.000000
+
+* Slice3,
+
+::
+
+  - 37.000000
+
+* Extra int
+
+::
+
+  - -1
+
+* 40.500000
+
+::
+
+  - 41.000000
+
+* Start Time:
+
+::
+
+  - 15:44:16 (22/12/2011)
+
+* Slice11,
+
+::
+
+  - 41.000000
+
+* Z slice space
+
+::
+
+  - 0.500000
+
+* Slice15,
+
+::
+
+  - 43.000000
+
+* 39.500000
+
+::
+
+  - 40.000000
+
+* Slice Z positions
+
+::
+
+  - 
+
+* Experiment flags:
+
+::
+
+  - 2
+
+* Number of slices
+
+::
+
+  - 17
+

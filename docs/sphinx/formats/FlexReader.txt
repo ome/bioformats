@@ -1,0 +1,3729 @@
+*******************************************************************************
+FlexReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Evotec Flex format reader.
+
+Key/value pairs
+===============================================================================
+
+* Y position for position #101
+
+::
+
+  - 0.0
+
+* Y position for position #100
+
+::
+
+  - 0.0
+
+* Y position for position #001
+
+::
+
+  - 0.0
+
+* Y position for position #002
+
+::
+
+  - 0.0
+
+* Y position for position #110
+
+::
+
+  - 0.0
+
+* Y position for position #112
+
+::
+
+  - 0.0
+
+* Y position for position #111
+
+::
+
+  - 0.0
+
+* Y position for position #004
+
+::
+
+  - 0.0
+
+* Y position for position #003
+
+::
+
+  - 0.0
+
+* Y position for position #006
+
+::
+
+  - 0.0
+
+* Y position for position #005
+
+::
+
+  - 0.0
+
+* Y position for position #008
+
+::
+
+  - 0.0
+
+* Y position for position #007
+
+::
+
+  - 0.0
+
+* Y position for position #009
+
+::
+
+  - 0.0
+
+* Y position for position #010
+
+::
+
+  - 0.0
+
+* Y position for position #011
+
+::
+
+  - 0.0
+
+* Y position for position #012
+
+::
+
+  - 0.0
+
+* Y position for position #013
+
+::
+
+  - 0.0
+
+* Y position for position #106
+
+::
+
+  - 0.0
+
+* Y position for position #107
+
+::
+
+  - 0.0
+
+* Y position for position #108
+
+::
+
+  - 0.0
+
+* Y position for position #109
+
+::
+
+  - 0.0
+
+* Y position for position #102
+
+::
+
+  - 0.0
+
+* Y position for position #103
+
+::
+
+  - 0.0
+
+* Y position for position #104
+
+::
+
+  - 0.0
+
+* Y position for position #105
+
+::
+
+  - 0.0
+
+* Y position for position #019
+
+::
+
+  - 0.0
+
+* Y position for position #018
+
+::
+
+  - 0.0
+
+* Y position for position #017
+
+::
+
+  - 0.0
+
+* Y position for position #016
+
+::
+
+  - 0.0
+
+* Y position for position #015
+
+::
+
+  - 0.0
+
+* Y position for position #014
+
+::
+
+  - 0.0
+
+* Y position for position #023
+
+::
+
+  - 0.0
+
+* Y position for position #024
+
+::
+
+  - 0.0
+
+* Y position for position #021
+
+::
+
+  - 0.0
+
+* Y position for position #022
+
+::
+
+  - 0.0
+
+* Y position for position #020
+
+::
+
+  - 0.0
+
+* Y position for position #029
+
+::
+
+  - 0.0
+
+* Y position for position #026
+
+::
+
+  - 0.0
+
+* Y position for position #025
+
+::
+
+  - 0.0
+
+* Y position for position #028
+
+::
+
+  - 0.0
+
+* Y position for position #027
+
+::
+
+  - 0.0
+
+* Y position for position #032
+
+::
+
+  - 0.0
+
+* Y position for position #033
+
+::
+
+  - 0.0
+
+* Y position for position #034
+
+::
+
+  - 0.0
+
+* Y position for position #035
+
+::
+
+  - 0.0
+
+* Y position for position #030
+
+::
+
+  - 0.0
+
+* Y position for position #031
+
+::
+
+  - 0.0
+
+* X position for position #121
+
+::
+
+  - 667.0
+
+* X position for position #122
+
+::
+
+  - 667.0
+
+* X position for position #120
+
+::
+
+  - 667.0
+
+* X position for position #119
+
+::
+
+  - 667.0
+
+* X position for position #118
+
+::
+
+  - 667.0
+
+* X position for position #117
+
+::
+
+  - 667.0
+
+* X position for position #116
+
+::
+
+  - 667.0
+
+* X position for position #115
+
+::
+
+  - 667.0
+
+* X position for position #114
+
+::
+
+  - 667.0
+
+* X position for position #113
+
+::
+
+  - 667.0
+
+* X position for position #112
+
+::
+
+  - 667.0
+
+* X position for position #110
+
+::
+
+  - 667.0
+
+* X position for position #111
+
+::
+
+  - 667.0
+
+* X position for position #106
+
+::
+
+  - 667.0
+
+* X position for position #105
+
+::
+
+  - 667.0
+
+* X position for position #108
+
+::
+
+  - 667.0
+
+* X position for position #107
+
+::
+
+  - 667.0
+
+* X position for position #102
+
+::
+
+  - 667.0
+
+* X position for position #101
+
+::
+
+  - 667.0
+
+* X position for position #104
+
+::
+
+  - 667.0
+
+* X position for position #103
+
+::
+
+  - 667.0
+
+* X position for position #109
+
+::
+
+  - 667.0
+
+* Y position for position #122
+
+::
+
+  - 0.0
+
+* Y position for position #123
+
+::
+
+  - 0.0
+
+* Y position for position #120
+
+::
+
+  - 0.0
+
+* Y position for position #121
+
+::
+
+  - 0.0
+
+* Y position for position #116
+
+::
+
+  - 0.0
+
+* Y position for position #115
+
+::
+
+  - 0.0
+
+* Y position for position #114
+
+::
+
+  - 0.0
+
+* Y position for position #113
+
+::
+
+  - 0.0
+
+* Y position for position #119
+
+::
+
+  - 0.0
+
+* Y position for position #118
+
+::
+
+  - 0.0
+
+* Y position for position #117
+
+::
+
+  - 0.0
+
+* X position for position #124
+
+::
+
+  - 667.0
+
+* X position for position #123
+
+::
+
+  - 667.0
+
+* Y position for position #124
+
+::
+
+  - 0.0
+
+* Name #031
+
+::
+
+  - 31:Cam1
+
+* Name #032
+
+::
+
+  - 32:Cam3
+
+* Name #033
+
+::
+
+  - 33:Cam1
+
+* Factor #081
+
+::
+
+  - 1.000000
+
+* Name #034
+
+::
+
+  - 34:Cam3
+
+* Factor #080
+
+::
+
+  - 1.000000
+
+* Name #035
+
+::
+
+  - 35:Cam1
+
+* Name #036
+
+::
+
+  - 36:Cam3
+
+* Name #037
+
+::
+
+  - 37:Cam1
+
+* Name #038
+
+::
+
+  - 38:Cam3
+
+* Factor #087
+
+::
+
+  - 1.000000
+
+* Name #039
+
+::
+
+  - 39:Cam1
+
+* Factor #086
+
+::
+
+  - 1.000000
+
+* Factor #089
+
+::
+
+  - 1.000000
+
+* Factor #088
+
+::
+
+  - 1.000000
+
+* Factor #083
+
+::
+
+  - 1.000000
+
+* Factor #082
+
+::
+
+  - 1.000000
+
+* Factor #085
+
+::
+
+  - 1.000000
+
+* Factor #084
+
+::
+
+  - 1.000000
+
+* Factor #079
+
+::
+
+  - 1.000000
+
+* Name #041
+
+::
+
+  - 41:Cam1
+
+* Name #040
+
+::
+
+  - 40:Cam3
+
+* Name #022
+
+::
+
+  - 22:Cam3
+
+* Factor #070
+
+::
+
+  - 1.000000
+
+* Name #023
+
+::
+
+  - 23:Cam1
+
+* Name #020
+
+::
+
+  - 20:Cam3
+
+* Name #021
+
+::
+
+  - 21:Cam1
+
+* Name #026
+
+::
+
+  - 26:Cam3
+
+* Name #027
+
+::
+
+  - 27:Cam1
+
+* Name #024
+
+::
+
+  - 24:Cam3
+
+* Name #025
+
+::
+
+  - 25:Cam1
+
+* Factor #078
+
+::
+
+  - 1.000000
+
+* Factor #077
+
+::
+
+  - 1.000000
+
+* Name #028
+
+::
+
+  - 28:Cam3
+
+* Factor #076
+
+::
+
+  - 1.000000
+
+* Name #029
+
+::
+
+  - 29:Cam1
+
+* Factor #075
+
+::
+
+  - 1.000000
+
+* Factor #074
+
+::
+
+  - 1.000000
+
+* Factor #073
+
+::
+
+  - 1.000000
+
+* Factor #072
+
+::
+
+  - 1.000000
+
+* Factor #071
+
+::
+
+  - 1.000000
+
+* Factor #068
+
+::
+
+  - 1.000000
+
+* Factor #069
+
+::
+
+  - 1.000000
+
+* Name #030
+
+::
+
+  - 30:Cam3
+
+* Name #013
+
+::
+
+  - 13:Cam1
+
+* Name #014
+
+::
+
+  - 14:Cam3
+
+* Name #015
+
+::
+
+  - 15:Cam1
+
+* Name #016
+
+::
+
+  - 16:Cam3
+
+* Name #010
+
+::
+
+  - 10:Cam3
+
+* Name #011
+
+::
+
+  - 11:Cam1
+
+* Name #012
+
+::
+
+  - 12:Cam3
+
+* Name #017
+
+::
+
+  - 17:Cam1
+
+* Name #018
+
+::
+
+  - 18:Cam3
+
+* Name #019
+
+::
+
+  - 19:Cam1
+
+* Name #111
+
+::
+
+  - 111:Cam1
+
+* Name #110
+
+::
+
+  - 110:Cam3
+
+* Name #113
+
+::
+
+  - 113:Cam1
+
+* Name #112
+
+::
+
+  - 112:Cam3
+
+* Name #115
+
+::
+
+  - 115:Cam1
+
+* Name #114
+
+::
+
+  - 114:Cam3
+
+* Name #117
+
+::
+
+  - 117:Cam1
+
+* Name #116
+
+::
+
+  - 116:Cam3
+
+* Name #119
+
+::
+
+  - 119:Cam1
+
+* Name #118
+
+::
+
+  - 118:Cam3
+
+* Name #004
+
+::
+
+  - 4:Cam3
+
+* Name #005
+
+::
+
+  - 5:Cam1
+
+* Name #002
+
+::
+
+  - 2:Cam3
+
+* Name #003
+
+::
+
+  - 3:Cam1
+
+* Factor #092
+
+::
+
+  - 1.000000
+
+* Name #001
+
+::
+
+  - 1:Cam1
+
+* Factor #091
+
+::
+
+  - 1.000000
+
+* Factor #090
+
+::
+
+  - 1.000000
+
+* Factor #096
+
+::
+
+  - 1.000000
+
+* Factor #095
+
+::
+
+  - 1.000000
+
+* Factor #094
+
+::
+
+  - 1.000000
+
+* Factor #093
+
+::
+
+  - 1.000000
+
+* Name #008
+
+::
+
+  - 8:Cam3
+
+* Name #009
+
+::
+
+  - 9:Cam1
+
+* Factor #099
+
+::
+
+  - 1.000000
+
+* Name #006
+
+::
+
+  - 6:Cam3
+
+* Factor #098
+
+::
+
+  - 1.000000
+
+* Name #007
+
+::
+
+  - 7:Cam1
+
+* Factor #097
+
+::
+
+  - 1.000000
+
+* Name #100
+
+::
+
+  - 100:Cam3
+
+* Name #104
+
+::
+
+  - 104:Cam3
+
+* Name #103
+
+::
+
+  - 103:Cam1
+
+* Name #102
+
+::
+
+  - 102:Cam3
+
+* Name #101
+
+::
+
+  - 101:Cam1
+
+* Name #108
+
+::
+
+  - 108:Cam3
+
+* Name #107
+
+::
+
+  - 107:Cam1
+
+* Name #106
+
+::
+
+  - 106:Cam3
+
+* Name #105
+
+::
+
+  - 105:Cam1
+
+* Name #109
+
+::
+
+  - 109:Cam1
+
+* Name #123
+
+::
+
+  - 123:Cam1
+
+* Name #124
+
+::
+
+  - 124:Cam3
+
+* Name #121
+
+::
+
+  - 121:Cam1
+
+* Name #122
+
+::
+
+  - 122:Cam3
+
+* Name #120
+
+::
+
+  - 120:Cam3
+
+* Z position for position #092
+
+::
+
+  - -3.0
+
+* Z position for position #091
+
+::
+
+  - -3.0
+
+* Z position for position #094
+
+::
+
+  - -3.0
+
+* Z position for position #093
+
+::
+
+  - -3.0
+
+* Z position for position #090
+
+::
+
+  - -3.0
+
+* Z position for position #099
+
+::
+
+  - -3.0
+
+* Z position for position #096
+
+::
+
+  - -3.0
+
+* Z position for position #095
+
+::
+
+  - -3.0
+
+* Z position for position #098
+
+::
+
+  - -3.0
+
+* Z position for position #097
+
+::
+
+  - -3.0
+
+* X position for position #076
+
+::
+
+  - 667.0
+
+* Z position for position #079
+
+::
+
+  - -3.0
+
+* Factor #101
+
+::
+
+  - 1.000000
+
+* Name #043
+
+::
+
+  - 43:Cam1
+
+* X position for position #075
+
+::
+
+  - 667.0
+
+* Factor #102
+
+::
+
+  - 1.000000
+
+* Name #042
+
+::
+
+  - 42:Cam3
+
+* X position for position #078
+
+::
+
+  - 667.0
+
+* Factor #103
+
+::
+
+  - 1.000000
+
+* Z position for position #077
+
+::
+
+  - -3.0
+
+* Name #045
+
+::
+
+  - 45:Cam1
+
+* X position for position #077
+
+::
+
+  - 667.0
+
+* Factor #104
+
+::
+
+  - 1.000000
+
+* Z position for position #078
+
+::
+
+  - -3.0
+
+* Name #044
+
+::
+
+  - 44:Cam3
+
+* X position for position #072
+
+::
+
+  - 667.0
+
+* Factor #105
+
+::
+
+  - 1.000000
+
+* Z position for position #075
+
+::
+
+  - -3.0
+
+* Name #047
+
+::
+
+  - 47:Cam1
+
+* X position for position #071
+
+::
+
+  - 667.0
+
+* Factor #106
+
+::
+
+  - 1.000000
+
+* Z position for position #076
+
+::
+
+  - -3.0
+
+* Name #046
+
+::
+
+  - 46:Cam3
+
+* X position for position #074
+
+::
+
+  - 667.0
+
+* Factor #107
+
+::
+
+  - 1.000000
+
+* Z position for position #073
+
+::
+
+  - -3.0
+
+* Name #049
+
+::
+
+  - 49:Cam1
+
+* X position for position #073
+
+::
+
+  - 667.0
+
+* Factor #108
+
+::
+
+  - 1.000000
+
+* Z position for position #074
+
+::
+
+  - -3.0
+
+* Name #048
+
+::
+
+  - 48:Cam3
+
+* Factor #006
+
+::
+
+  - 1.000000
+
+* Z position for position #071
+
+::
+
+  - -3.0
+
+* Factor #109
+
+::
+
+  - 1.000000
+
+* Factor #007
+
+::
+
+  - 1.000000
+
+* Z position for position #072
+
+::
+
+  - -3.0
+
+* X position for position #070
+
+::
+
+  - 667.0
+
+* Factor #008
+
+::
+
+  - 1.000000
+
+* Factor #009
+
+::
+
+  - 1.000000
+
+* Z position for position #070
+
+::
+
+  - -3.0
+
+* Factor #002
+
+::
+
+  - 1.000000
+
+* Factor #003
+
+::
+
+  - 1.000000
+
+* Factor #004
+
+::
+
+  - 1.000000
+
+* Factor #005
+
+::
+
+  - 1.000000
+
+* Factor #010
+
+::
+
+  - 1.000000
+
+* Factor #012
+
+::
+
+  - 1.000000
+
+* Factor #011
+
+::
+
+  - 1.000000
+
+* X position for position #068
+
+::
+
+  - 667.0
+
+* X position for position #069
+
+::
+
+  - 667.0
+
+* Name #050
+
+::
+
+  - 50:Cam3
+
+* Factor #111
+
+::
+
+  - 1.000000
+
+* Name #051
+
+::
+
+  - 51:Cam1
+
+* Factor #110
+
+::
+
+  - 1.000000
+
+* Name #052
+
+::
+
+  - 52:Cam3
+
+* X position for position #089
+
+::
+
+  - 667.0
+
+* Factor #114
+
+::
+
+  - 1.000000
+
+* Z position for position #088
+
+::
+
+  - -3.0
+
+* Name #056
+
+::
+
+  - 56:Cam3
+
+* X position for position #088
+
+::
+
+  - 667.0
+
+* Z position for position #089
+
+::
+
+  - -3.0
+
+* Factor #115
+
+::
+
+  - 1.000000
+
+* Name #055
+
+::
+
+  - 55:Cam1
+
+* X position for position #087
+
+::
+
+  - 667.0
+
+* Factor #112
+
+::
+
+  - 1.000000
+
+* Name #054
+
+::
+
+  - 54:Cam3
+
+* X position for position #086
+
+::
+
+  - 667.0
+
+* Factor #113
+
+::
+
+  - 1.000000
+
+* Name #053
+
+::
+
+  - 53:Cam1
+
+* X position for position #085
+
+::
+
+  - 667.0
+
+* Factor #118
+
+::
+
+  - 1.000000
+
+* Z position for position #084
+
+::
+
+  - -3.0
+
+* X position for position #084
+
+::
+
+  - 667.0
+
+* Factor #119
+
+::
+
+  - 1.000000
+
+* Z position for position #085
+
+::
+
+  - -3.0
+
+* Name #059
+
+::
+
+  - 59:Cam1
+
+* X position for position #083
+
+::
+
+  - 667.0
+
+* Factor #116
+
+::
+
+  - 1.000000
+
+* Z position for position #086
+
+::
+
+  - -3.0
+
+* Name #058
+
+::
+
+  - 58:Cam3
+
+* X position for position #082
+
+::
+
+  - 667.0
+
+* Factor #117
+
+::
+
+  - 1.000000
+
+* Z position for position #087
+
+::
+
+  - -3.0
+
+* Name #057
+
+::
+
+  - 57:Cam1
+
+* X position for position #081
+
+::
+
+  - 667.0
+
+* Factor #019
+
+::
+
+  - 1.000000
+
+* Z position for position #080
+
+::
+
+  - -3.0
+
+* X position for position #080
+
+::
+
+  - 667.0
+
+* Z position for position #081
+
+::
+
+  - -3.0
+
+* Factor #017
+
+::
+
+  - 1.000000
+
+* Z position for position #082
+
+::
+
+  - -3.0
+
+* Factor #018
+
+::
+
+  - 1.000000
+
+* Z position for position #083
+
+::
+
+  - -3.0
+
+* Factor #015
+
+::
+
+  - 1.000000
+
+* Factor #016
+
+::
+
+  - 1.000000
+
+* Factor #013
+
+::
+
+  - 1.000000
+
+* Factor #014
+
+::
+
+  - 1.000000
+
+* Factor #023
+
+::
+
+  - 1.000000
+
+* Factor #022
+
+::
+
+  - 1.000000
+
+* Factor #021
+
+::
+
+  - 1.000000
+
+* Factor #020
+
+::
+
+  - 1.000000
+
+* Factor #122
+
+::
+
+  - 1.000000
+
+* Name #062
+
+::
+
+  - 62:Cam3
+
+* Factor #121
+
+::
+
+  - 1.000000
+
+* Name #063
+
+::
+
+  - 63:Cam1
+
+* X position for position #079
+
+::
+
+  - 667.0
+
+* Factor #120
+
+::
+
+  - 1.000000
+
+* Name #060
+
+::
+
+  - 60:Cam3
+
+* Name #061
+
+::
+
+  - 61:Cam1
+
+* X position for position #094
+
+::
+
+  - 667.0
+
+* Z position for position #053
+
+::
+
+  - -3.0
+
+* Name #069
+
+::
+
+  - 69:Cam1
+
+* X position for position #093
+
+::
+
+  - 667.0
+
+* Z position for position #054
+
+::
+
+  - -3.0
+
+* Name #068
+
+::
+
+  - 68:Cam3
+
+* X position for position #096
+
+::
+
+  - 667.0
+
+* Z position for position #051
+
+::
+
+  - -3.0
+
+* X position for position #095
+
+::
+
+  - 667.0
+
+* Z position for position #052
+
+::
+
+  - -3.0
+
+* X position for position #098
+
+::
+
+  - 667.0
+
+* Z position for position #057
+
+::
+
+  - -3.0
+
+* Factor #123
+
+::
+
+  - 1.000000
+
+* Name #065
+
+::
+
+  - 65:Cam1
+
+* X position for position #097
+
+::
+
+  - 667.0
+
+* Z position for position #058
+
+::
+
+  - -3.0
+
+* Factor #124
+
+::
+
+  - 1.000000
+
+* Name #064
+
+::
+
+  - 64:Cam3
+
+* Z position for position #055
+
+::
+
+  - -3.0
+
+* Name #067
+
+::
+
+  - 67:Cam1
+
+* X position for position #099
+
+::
+
+  - 667.0
+
+* Z position for position #056
+
+::
+
+  - -3.0
+
+* Name #066
+
+::
+
+  - 66:Cam3
+
+* X position for position #090
+
+::
+
+  - 667.0
+
+* Z position for position #050
+
+::
+
+  - -3.0
+
+* X position for position #092
+
+::
+
+  - 667.0
+
+* X position for position #091
+
+::
+
+  - 667.0
+
+* Name #071
+
+::
+
+  - 71:Cam1
+
+* Name #072
+
+::
+
+  - 72:Cam3
+
+* Z position for position #049
+
+::
+
+  - -3.0
+
+* Name #073
+
+::
+
+  - 73:Cam1
+
+* Z position for position #048
+
+::
+
+  - -3.0
+
+* Name #074
+
+::
+
+  - 74:Cam3
+
+* Name #070
+
+::
+
+  - 70:Cam3
+
+* Z position for position #062
+
+::
+
+  - -3.0
+
+* Z position for position #063
+
+::
+
+  - -3.0
+
+* Z position for position #064
+
+::
+
+  - -3.0
+
+* Z position for position #065
+
+::
+
+  - -3.0
+
+* Name #079
+
+::
+
+  - 79:Cam1
+
+* Z position for position #066
+
+::
+
+  - -3.0
+
+* Name #078
+
+::
+
+  - 78:Cam3
+
+* Z position for position #067
+
+::
+
+  - -3.0
+
+* Name #077
+
+::
+
+  - 77:Cam1
+
+* Z position for position #068
+
+::
+
+  - -3.0
+
+* Name #076
+
+::
+
+  - 76:Cam3
+
+* Z position for position #069
+
+::
+
+  - -3.0
+
+* Name #075
+
+::
+
+  - 75:Cam1
+
+* Z position for position #060
+
+::
+
+  - -3.0
+
+* Z position for position #061
+
+::
+
+  - -3.0
+
+* Factor #001
+
+::
+
+  - 1.000000
+
+* Name #084
+
+::
+
+  - 84:Cam3
+
+* Z position for position #059
+
+::
+
+  - -3.0
+
+* Name #085
+
+::
+
+  - 85:Cam1
+
+* Name #082
+
+::
+
+  - 82:Cam3
+
+* Name #083
+
+::
+
+  - 83:Cam1
+
+* Name #080
+
+::
+
+  - 80:Cam3
+
+* Name #081
+
+::
+
+  - 81:Cam1
+
+* Factor #047
+
+::
+
+  - 1.000000
+
+* Factor #046
+
+::
+
+  - 1.000000
+
+* Factor #049
+
+::
+
+  - 1.000000
+
+* Factor #048
+
+::
+
+  - 1.000000
+
+* Z position for position #036
+
+::
+
+  - -3.0
+
+* Name #086
+
+::
+
+  - 86:Cam3
+
+* Z position for position #035
+
+::
+
+  - -3.0
+
+* Name #087
+
+::
+
+  - 87:Cam1
+
+* Z position for position #034
+
+::
+
+  - -3.0
+
+* Name #088
+
+::
+
+  - 88:Cam3
+
+* Z position for position #033
+
+::
+
+  - -3.0
+
+* Name #089
+
+::
+
+  - 89:Cam1
+
+* Z position for position #032
+
+::
+
+  - -3.0
+
+* Z position for position #102
+
+::
+
+  - -3.0
+
+* Z position for position #031
+
+::
+
+  - -3.0
+
+* Z position for position #101
+
+::
+
+  - -3.0
+
+* Z position for position #030
+
+::
+
+  - -3.0
+
+* Z position for position #100
+
+::
+
+  - -3.0
+
+* Name #090
+
+::
+
+  - 90:Cam3
+
+* Name #092
+
+::
+
+  - 92:Cam3
+
+* Name #091
+
+::
+
+  - 91:Cam1
+
+* Z position for position #028
+
+::
+
+  - -3.0
+
+* Name #094
+
+::
+
+  - 94:Cam3
+
+* Z position for position #029
+
+::
+
+  - -3.0
+
+* Name #093
+
+::
+
+  - 93:Cam1
+
+* Z position for position #026
+
+::
+
+  - -3.0
+
+* Name #096
+
+::
+
+  - 96:Cam3
+
+* Z position for position #027
+
+::
+
+  - -3.0
+
+* Name #095
+
+::
+
+  - 95:Cam1
+
+* Factor #053
+
+::
+
+  - 1.000000
+
+* Factor #054
+
+::
+
+  - 1.000000
+
+* Factor #055
+
+::
+
+  - 1.000000
+
+* Factor #056
+
+::
+
+  - 1.000000
+
+* Factor #050
+
+::
+
+  - 1.000000
+
+* Factor #051
+
+::
+
+  - 1.000000
+
+* Factor #052
+
+::
+
+  - 1.000000
+
+* Factor #059
+
+::
+
+  - 1.000000
+
+* Factor #058
+
+::
+
+  - 1.000000
+
+* Factor #057
+
+::
+
+  - 1.000000
+
+* Z position for position #045
+
+::
+
+  - -3.0
+
+* Name #099
+
+::
+
+  - 99:Cam1
+
+* Z position for position #044
+
+::
+
+  - -3.0
+
+* Z position for position #047
+
+::
+
+  - -3.0
+
+* Name #097
+
+::
+
+  - 97:Cam1
+
+* Z position for position #046
+
+::
+
+  - -3.0
+
+* Name #098
+
+::
+
+  - 98:Cam3
+
+* Z position for position #041
+
+::
+
+  - -3.0
+
+* Z position for position #040
+
+::
+
+  - -3.0
+
+* Z position for position #043
+
+::
+
+  - -3.0
+
+* Z position for position #042
+
+::
+
+  - -3.0
+
+* Z position for position #037
+
+::
+
+  - -3.0
+
+* Z position for position #038
+
+::
+
+  - -3.0
+
+* Z position for position #039
+
+::
+
+  - -3.0
+
+* Factor #066
+
+::
+
+  - 1.000000
+
+* Factor #067
+
+::
+
+  - 1.000000
+
+* Factor #064
+
+::
+
+  - 1.000000
+
+* Factor #065
+
+::
+
+  - 1.000000
+
+* Factor #062
+
+::
+
+  - 1.000000
+
+* Factor #063
+
+::
+
+  - 1.000000
+
+* Factor #060
+
+::
+
+  - 1.000000
+
+* Factor #061
+
+::
+
+  - 1.000000
+
+* Factor #025
+
+::
+
+  - 1.000000
+
+* Factor #024
+
+::
+
+  - 1.000000
+
+* Factor #027
+
+::
+
+  - 1.000000
+
+* Factor #026
+
+::
+
+  - 1.000000
+
+* Factor #029
+
+::
+
+  - 1.000000
+
+* Factor #028
+
+::
+
+  - 1.000000
+
+* Z position for position #010
+
+::
+
+  - -3.0
+
+* Z position for position #124
+
+::
+
+  - -3.0
+
+* Z position for position #123
+
+::
+
+  - -3.0
+
+* Z position for position #122
+
+::
+
+  - -3.0
+
+* Z position for position #121
+
+::
+
+  - -3.0
+
+* Z position for position #014
+
+::
+
+  - -3.0
+
+* Z position for position #120
+
+::
+
+  - -3.0
+
+* Z position for position #013
+
+::
+
+  - -3.0
+
+* Z position for position #012
+
+::
+
+  - -3.0
+
+* Z position for position #011
+
+::
+
+  - -3.0
+
+* Z position for position #006
+
+::
+
+  - -3.0
+
+* Z position for position #007
+
+::
+
+  - -3.0
+
+* Z position for position #004
+
+::
+
+  - -3.0
+
+* Z position for position #118
+
+::
+
+  - -3.0
+
+* Z position for position #005
+
+::
+
+  - -3.0
+
+* Z position for position #119
+
+::
+
+  - -3.0
+
+* Z position for position #116
+
+::
+
+  - -3.0
+
+* Z position for position #117
+
+::
+
+  - -3.0
+
+* Z position for position #008
+
+::
+
+  - -3.0
+
+* Z position for position #114
+
+::
+
+  - -3.0
+
+* Z position for position #009
+
+::
+
+  - -3.0
+
+* Z position for position #115
+
+::
+
+  - -3.0
+
+* Factor #030
+
+::
+
+  - 1.000000
+
+* Factor #031
+
+::
+
+  - 1.000000
+
+* Factor #032
+
+::
+
+  - 1.000000
+
+* Factor #033
+
+::
+
+  - 1.000000
+
+* Factor #034
+
+::
+
+  - 1.000000
+
+* Factor #038
+
+::
+
+  - 1.000000
+
+* Factor #037
+
+::
+
+  - 1.000000
+
+* Factor #036
+
+::
+
+  - 1.000000
+
+* Factor #035
+
+::
+
+  - 1.000000
+
+* Factor #039
+
+::
+
+  - 1.000000
+
+* Z position for position #111
+
+::
+
+  - -3.0
+
+* Z position for position #110
+
+::
+
+  - -3.0
+
+* Z position for position #021
+
+::
+
+  - -3.0
+
+* Z position for position #113
+
+::
+
+  - -3.0
+
+* Z position for position #020
+
+::
+
+  - -3.0
+
+* Z position for position #112
+
+::
+
+  - -3.0
+
+* Z position for position #023
+
+::
+
+  - -3.0
+
+* Z position for position #022
+
+::
+
+  - -3.0
+
+* Z position for position #025
+
+::
+
+  - -3.0
+
+* Z position for position #024
+
+::
+
+  - -3.0
+
+* Z position for position #015
+
+::
+
+  - -3.0
+
+* Z position for position #107
+
+::
+
+  - -3.0
+
+* Z position for position #016
+
+::
+
+  - -3.0
+
+* Z position for position #108
+
+::
+
+  - -3.0
+
+* Z position for position #017
+
+::
+
+  - -3.0
+
+* Z position for position #109
+
+::
+
+  - -3.0
+
+* Z position for position #018
+
+::
+
+  - -3.0
+
+* Z position for position #019
+
+::
+
+  - -3.0
+
+* Z position for position #103
+
+::
+
+  - -3.0
+
+* Z position for position #104
+
+::
+
+  - -3.0
+
+* Z position for position #105
+
+::
+
+  - -3.0
+
+* Z position for position #106
+
+::
+
+  - -3.0
+
+* Factor #040
+
+::
+
+  - 1.000000
+
+* Factor #041
+
+::
+
+  - 1.000000
+
+* Factor #044
+
+::
+
+  - 1.000000
+
+* Factor #045
+
+::
+
+  - 1.000000
+
+* Factor #042
+
+::
+
+  - 1.000000
+
+* Factor #043
+
+::
+
+  - 1.000000
+
+* Y position for position #098
+
+::
+
+  - 0.0
+
+* Y position for position #099
+
+::
+
+  - 0.0
+
+* Y position for position #096
+
+::
+
+  - 0.0
+
+* Y position for position #097
+
+::
+
+  - 0.0
+
+* Y position for position #094
+
+::
+
+  - 0.0
+
+* Y position for position #095
+
+::
+
+  - 0.0
+
+* Y position for position #092
+
+::
+
+  - 0.0
+
+* Y position for position #093
+
+::
+
+  - 0.0
+
+* Y position for position #090
+
+::
+
+  - 0.0
+
+* Y position for position #091
+
+::
+
+  - 0.0
+
+* Y position for position #087
+
+::
+
+  - 0.0
+
+* Y position for position #088
+
+::
+
+  - 0.0
+
+* Y position for position #089
+
+::
+
+  - 0.0
+
+* Y position for position #083
+
+::
+
+  - 0.0
+
+* Y position for position #084
+
+::
+
+  - 0.0
+
+* Y position for position #085
+
+::
+
+  - 0.0
+
+* Y position for position #086
+
+::
+
+  - 0.0
+
+* Y position for position #080
+
+::
+
+  - 0.0
+
+* Y position for position #081
+
+::
+
+  - 0.0
+
+* Y position for position #082
+
+::
+
+  - 0.0
+
+* Z position for position #002
+
+::
+
+  - -3.0
+
+* Z position for position #003
+
+::
+
+  - -3.0
+
+* X position for position #001
+
+::
+
+  - 667.0
+
+* Z position for position #001
+
+::
+
+  - -3.0
+
+* X position for position #004
+
+::
+
+  - 667.0
+
+* X position for position #005
+
+::
+
+  - 667.0
+
+* X position for position #002
+
+::
+
+  - 667.0
+
+* X position for position #003
+
+::
+
+  - 667.0
+
+* X position for position #008
+
+::
+
+  - 667.0
+
+* X position for position #009
+
+::
+
+  - 667.0
+
+* X position for position #006
+
+::
+
+  - 667.0
+
+* X position for position #007
+
+::
+
+  - 667.0
+
+* X position for position #012
+
+::
+
+  - 667.0
+
+* X position for position #011
+
+::
+
+  - 667.0
+
+* X position for position #010
+
+::
+
+  - 667.0
+
+* X position for position #013
+
+::
+
+  - 667.0
+
+* X position for position #014
+
+::
+
+  - 667.0
+
+* X position for position #015
+
+::
+
+  - 667.0
+
+* X position for position #016
+
+::
+
+  - 667.0
+
+* X position for position #017
+
+::
+
+  - 667.0
+
+* X position for position #018
+
+::
+
+  - 667.0
+
+* X position for position #019
+
+::
+
+  - 667.0
+
+* X position for position #100
+
+::
+
+  - 667.0
+
+* X position for position #021
+
+::
+
+  - 667.0
+
+* X position for position #020
+
+::
+
+  - 667.0
+
+* X position for position #023
+
+::
+
+  - 667.0
+
+* X position for position #022
+
+::
+
+  - 667.0
+
+* X position for position #029
+
+::
+
+  - 667.0
+
+* X position for position #028
+
+::
+
+  - 667.0
+
+* X position for position #027
+
+::
+
+  - 667.0
+
+* X position for position #026
+
+::
+
+  - 667.0
+
+* X position for position #025
+
+::
+
+  - 667.0
+
+* X position for position #024
+
+::
+
+  - 667.0
+
+* Y position for position #057
+
+::
+
+  - 0.0
+
+* Y position for position #056
+
+::
+
+  - 0.0
+
+* Y position for position #055
+
+::
+
+  - 0.0
+
+* Y position for position #054
+
+::
+
+  - 0.0
+
+* Y position for position #053
+
+::
+
+  - 0.0
+
+* Y position for position #052
+
+::
+
+  - 0.0
+
+* Y position for position #051
+
+::
+
+  - 0.0
+
+* Y position for position #050
+
+::
+
+  - 0.0
+
+* Y position for position #049
+
+::
+
+  - 0.0
+
+* Y position for position #047
+
+::
+
+  - 0.0
+
+* Y position for position #048
+
+::
+
+  - 0.0
+
+* X position for position #033
+
+::
+
+  - 667.0
+
+* X position for position #034
+
+::
+
+  - 667.0
+
+* X position for position #031
+
+::
+
+  - 667.0
+
+* X position for position #032
+
+::
+
+  - 667.0
+
+* X position for position #030
+
+::
+
+  - 667.0
+
+* X position for position #039
+
+::
+
+  - 667.0
+
+* X position for position #036
+
+::
+
+  - 667.0
+
+* X position for position #035
+
+::
+
+  - 667.0
+
+* X position for position #038
+
+::
+
+  - 667.0
+
+* X position for position #037
+
+::
+
+  - 667.0
+
+* Y position for position #044
+
+::
+
+  - 0.0
+
+* Y position for position #043
+
+::
+
+  - 0.0
+
+* Y position for position #046
+
+::
+
+  - 0.0
+
+* Y position for position #045
+
+::
+
+  - 0.0
+
+* Y position for position #040
+
+::
+
+  - 0.0
+
+* Y position for position #042
+
+::
+
+  - 0.0
+
+* Y position for position #041
+
+::
+
+  - 0.0
+
+* Y position for position #036
+
+::
+
+  - 0.0
+
+* Y position for position #037
+
+::
+
+  - 0.0
+
+* Y position for position #038
+
+::
+
+  - 0.0
+
+* Y position for position #039
+
+::
+
+  - 0.0
+
+* X position for position #042
+
+::
+
+  - 667.0
+
+* X position for position #043
+
+::
+
+  - 667.0
+
+* X position for position #044
+
+::
+
+  - 667.0
+
+* X position for position #045
+
+::
+
+  - 667.0
+
+* X position for position #040
+
+::
+
+  - 667.0
+
+* X position for position #041
+
+::
+
+  - 667.0
+
+* X position for position #049
+
+::
+
+  - 667.0
+
+* X position for position #048
+
+::
+
+  - 667.0
+
+* X position for position #047
+
+::
+
+  - 667.0
+
+* X position for position #046
+
+::
+
+  - 667.0
+
+* Y position for position #071
+
+::
+
+  - 0.0
+
+* Y position for position #070
+
+::
+
+  - 0.0
+
+* Y position for position #075
+
+::
+
+  - 0.0
+
+* Y position for position #074
+
+::
+
+  - 0.0
+
+* Y position for position #073
+
+::
+
+  - 0.0
+
+* Y position for position #072
+
+::
+
+  - 0.0
+
+* Y position for position #079
+
+::
+
+  - 0.0
+
+* Y position for position #078
+
+::
+
+  - 0.0
+
+* Y position for position #077
+
+::
+
+  - 0.0
+
+* Y position for position #076
+
+::
+
+  - 0.0
+
+* Y position for position #069
+
+::
+
+  - 0.0
+
+* X position for position #051
+
+::
+
+  - 667.0
+
+* X position for position #052
+
+::
+
+  - 667.0
+
+* X position for position #050
+
+::
+
+  - 667.0
+
+* X position for position #055
+
+::
+
+  - 667.0
+
+* X position for position #056
+
+::
+
+  - 667.0
+
+* X position for position #053
+
+::
+
+  - 667.0
+
+* X position for position #054
+
+::
+
+  - 667.0
+
+* X position for position #058
+
+::
+
+  - 667.0
+
+* X position for position #057
+
+::
+
+  - 667.0
+
+* X position for position #059
+
+::
+
+  - 667.0
+
+* Factor #100
+
+::
+
+  - 1.000000
+
+* Y position for position #060
+
+::
+
+  - 0.0
+
+* Y position for position #062
+
+::
+
+  - 0.0
+
+* Y position for position #061
+
+::
+
+  - 0.0
+
+* Y position for position #064
+
+::
+
+  - 0.0
+
+* Y position for position #063
+
+::
+
+  - 0.0
+
+* Y position for position #066
+
+::
+
+  - 0.0
+
+* Y position for position #065
+
+::
+
+  - 0.0
+
+* Y position for position #068
+
+::
+
+  - 0.0
+
+* Y position for position #067
+
+::
+
+  - 0.0
+
+* Y position for position #058
+
+::
+
+  - 0.0
+
+* Y position for position #059
+
+::
+
+  - 0.0
+
+* X position for position #060
+
+::
+
+  - 667.0
+
+* X position for position #061
+
+::
+
+  - 667.0
+
+* X position for position #062
+
+::
+
+  - 667.0
+
+* X position for position #063
+
+::
+
+  - 667.0
+
+* X position for position #064
+
+::
+
+  - 667.0
+
+* X position for position #065
+
+::
+
+  - 667.0
+
+* X position for position #066
+
+::
+
+  - 667.0
+
+* X position for position #067
+
+::
+
+  - 667.0
+

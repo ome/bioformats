@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Olympus FluoView TIFF <olympus-fluoview-tiff-metadata>`
 
+Original Metadata Support: :doc:`Olympus FluoView TIFF <FluoviewReader>`
 Freely Available Software:
 
 - `DIMIN <http://www.dimin.net/>`_

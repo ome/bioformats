@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Improvision TIFF <improvision-tiff-metadata>`
 
+Original Metadata Support: :doc:`Improvision TIFF <ImprovisionTiffReader>`
 
 
 We currently have:

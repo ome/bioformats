@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Animated PNG <png-metadata>`
 
+Original Metadata Support: :doc:`Animated PNG <APNGReader>`
 Freely Available Software:
 
 - `Firefox 3+ <http://www.mozilla.com/firefox>`_ 

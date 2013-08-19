@@ -169,6 +169,7 @@ public class FormatPageAutogen {
           context.remove("metadataPage");
         }
       }
+      context.put("originalMetadataPage", table.get("originalMetadataPage"));
 
       VelocityTools.processTemplate(engine, context, TEMPLATE,
         "../../docs/sphinx/" + filename + ".txt");

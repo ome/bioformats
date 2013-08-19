@@ -1,0 +1,325 @@
+*******************************************************************************
+NiftiReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats NIfTI format reader.
+
+Key/value pairs
+===============================================================================
+
+* Q-form Code
+
+::
+
+  - 4
+  - 1
+
+* Calibrated minimum
+
+::
+
+  - 0.0
+
+* Affine transform Z[2]
+
+::
+
+  - 6.9796E-41
+  - -21535.646
+
+* Slice end
+
+::
+
+  - 0
+
+* Affine transform Y[0]
+
+::
+
+  - 2.2959E-41
+  - -5.2924413E31
+
+* Bits per pixel
+
+::
+
+  - 8
+  - 32
+
+* Scale slope
+
+::
+
+  - 0.0
+
+* Calibrated maximum
+
+::
+
+  - 0.0
+
+* Quaternion y parameter
+
+::
+
+  - 0.0
+
+* Width
+
+::
+
+  - 91
+  - 201
+
+* Intent code
+
+::
+
+  - 0
+
+* Quaternion d parameter
+
+::
+
+  - 0.0
+
+* Affine transform X[3]
+
+::
+
+  - 0.0
+  - 2.258E-41
+
+* Number of Z slices
+
+::
+
+  - 91
+  - 96
+
+* Voxel height
+
+::
+
+  - 2.0
+  - 0.4745189845561981
+
+* Affine transform Y[1]
+
+::
+
+  - 0.0
+  - 2.258E-41
+
+* Height
+
+::
+
+  - 109
+  - 161
+
+* Data type
+
+::
+
+  - 2
+  - 16
+
+* Affine transform Z[1]
+
+::
+
+  - 2.2959E-41
+  - -21504.0
+
+* Affine transform X[0]
+
+::
+
+  - 0.0
+  - 2.258E-41
+
+* Quaternion c parameter
+
+::
+
+  - 0.0
+
+* Slice duration
+
+::
+
+  - 0.0
+
+* Quaternion b parameter
+
+::
+
+  - 0.0
+
+* Voxel width
+
+::
+
+  - 2.0
+  - 0.4745189845561981
+
+* Time increment
+
+::
+
+  - 1.0
+
+* Affine transform Z[0]
+
+::
+
+  - 0.0
+
+* Intent name
+
+::
+
+  -               ni
+
+* Affine transform Y[2]
+
+::
+
+  - 6.9947E-41
+  - -5.2924413E31
+
+* S-form Code
+
+::
+
+  - 0
+
+* Slice start
+
+::
+
+  - 0
+
+* Number of time points
+
+::
+
+  - 1
+
+* Slice Ordering
+
+::
+
+  -  
+
+* Affine transform X[1]
+
+::
+
+  - 0.0
+
+* Slice thickness
+
+::
+
+  - 2.0
+  - 0.7960000038146973
+
+* Description
+
+::
+
+  - L3.2beta                                                                      no
+  -                                                                               no
+
+* Number of dimensions
+
+::
+
+  - 3
+
+* Affine transform Z[3]
+
+::
+
+  - 0.0
+  - 2.2705E-41
+
+* Time offset
+
+::
+
+  - 0.0
+  - 1.83671E-40
+
+* Scale intercept
+
+::
+
+  - 0.0
+
+* Affine transform Y[3]
+
+::
+
+  - 0.0
+  - 2.258E-41
+
+* Quaternion x parameter
+
+::
+
+  - 0.0
+
+* Dimension 6
+
+::
+
+  - 1
+
+* Affine transform X[2]
+
+::
+
+  - 2.3929E-41
+  - -5.2924413E31
+
+* Intent #1
+
+::
+
+  - 0.0
+
+* Intent #2
+
+::
+
+  - 0.0
+
+* Dimension 7
+
+::
+
+  - 1
+
+* Intent #3
+
+::
+
+  - 0.0
+
+* Dimension 5
+
+::
+
+  - 1
+
+* Quaternion z parameter
+
+::
+
+  - 6.8877E-41
+  - -5.2924413E31
+

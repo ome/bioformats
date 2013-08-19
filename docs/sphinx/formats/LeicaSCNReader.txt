@@ -1,0 +1,747 @@
+*******************************************************************************
+LeicaSCNReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Leica SCN format reader.
+
+Key/value pairs
+===============================================================================
+
+* view.offsetX for image #06
+
+::
+
+  - 9994575
+
+* view.offsetX for image #05
+
+::
+
+  - 9994575
+
+* view.offsetX for image #08
+
+::
+
+  - 12493219
+
+* view.offsetX for image #07
+
+::
+
+  - 12493219
+
+* view.offsetX for image #09
+
+::
+
+  - 12493219
+
+* view.sizeY for image #01
+
+::
+
+  - 76734666
+
+* view.sizeY for image #02
+
+::
+
+  - 76734666
+
+* view.sizeY for image #03
+
+::
+
+  - 6912000
+
+* view.sizeY for image #04
+
+::
+
+  - 6912000
+
+* view.sizeY for image #05
+
+::
+
+  - 6912000
+
+* view.offsetX for image #02
+
+::
+
+  - 0
+
+* view.sizeY for image #06
+
+::
+
+  - 6912000
+
+* view.offsetX for image #01
+
+::
+
+  - 0
+
+* view.sizeY for image #07
+
+::
+
+  - 15920000
+
+* view.offsetX for image #04
+
+::
+
+  - 9994575
+
+* view.sizeY for image #08
+
+::
+
+  - 15920000
+
+* view.offsetX for image #03
+
+::
+
+  - 9994575
+
+* view.sizeY for image #09
+
+::
+
+  - 15920000
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* YResolution
+
+::
+
+  - 0
+
+* scanSettings.illuminationSettings.illuminationSource for image #09
+
+::
+
+  - brightfield
+
+* scanSettings.objectiveSettings.objective for image #09
+
+::
+
+  - 40
+
+* collection.uuid
+
+::
+
+  - urn:uuid:3c3c6482-281f-4ac8-8976-baa4302a8ac9
+
+* scanSettings.objectiveSettings.objective for image #08
+
+::
+
+  - 40
+
+* view.sizeY for image #10
+
+::
+
+  - 15920000
+
+* scanSettings.objectiveSettings.objective for image #07
+
+::
+
+  - 40
+
+* scanSettings.illuminationSettings.illuminationSource for image #02
+
+::
+
+  - brightfield
+
+* scanSettings.objectiveSettings.objective for image #06
+
+::
+
+  - 40
+
+* scanSettings.illuminationSettings.illuminationSource for image #01
+
+::
+
+  - brightfield
+
+* XResolution
+
+::
+
+  - 0
+
+* view.offsetX for image #10
+
+::
+
+  - 12493219
+
+* scanSettings.illuminationSettings.illuminationSource for image #04
+
+::
+
+  - brightfield
+
+* scanSettings.objectiveSettings.objective for image #05
+
+::
+
+  - 40
+
+* scanSettings.illuminationSettings.illuminationSource for image #03
+
+::
+
+  - brightfield
+
+* scanSettings.objectiveSettings.objective for image #04
+
+::
+
+  - 40
+
+* scanSettings.illuminationSettings.illuminationSource for image #06
+
+::
+
+  - brightfield
+
+* scanSettings.objectiveSettings.objective for image #03
+
+::
+
+  - 40
+
+* scanSettings.illuminationSettings.illuminationSource for image #05
+
+::
+
+  - brightfield
+
+* scanSettings.objectiveSettings.objective for image #02
+
+::
+
+  - 0.60833
+
+* scanSettings.illuminationSettings.illuminationSource for image #08
+
+::
+
+  - brightfield
+
+* scanSettings.objectiveSettings.objective for image #01
+
+::
+
+  - 0.60833
+
+* scanSettings.illuminationSettings.illuminationSource for image #07
+
+::
+
+  - brightfield
+
+* scanSettings.objectiveSettings.objective for image #10
+
+::
+
+  - 40
+
+* scanSettings.illuminationSettings.illuminationSource for image #10
+
+::
+
+  - brightfield
+
+* collection.barcode
+
+::
+
+  - 
+
+* PhotometricInterpretation
+
+::
+
+  - YCbCr
+
+* ResolutionUnit
+
+::
+
+  - Centimeter
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* TileOffsets
+
+::
+
+  - 16
+
+* PlanarConfiguration
+
+::
+
+  - Chunky
+
+* collection.ocr
+
+::
+
+  - 
+
+* TileWidth
+
+::
+
+  - 512
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - RGB
+
+* YCbCrSubSampling
+
+::
+
+  - chroma image dimensions = luma image dimensions
+
+* scanSettings.illuminationSettings.numericalAperture for image #01
+
+::
+
+  - 0.7
+
+* scanSettings.illuminationSettings.numericalAperture for image #02
+
+::
+
+  - 0.7
+
+* scanSettings.illuminationSettings.numericalAperture for image #03
+
+::
+
+  - 0.65
+
+* scanSettings.illuminationSettings.numericalAperture for image #04
+
+::
+
+  - 0.65
+
+* scanSettings.illuminationSettings.numericalAperture for image #05
+
+::
+
+  - 0.65
+
+* scanSettings.illuminationSettings.numericalAperture for image #06
+
+::
+
+  - 0.65
+
+* view.spacingZ for image #10
+
+::
+
+  - 0
+
+* scanSettings.illuminationSettings.numericalAperture for image #07
+
+::
+
+  - 0.65
+
+* device.model for image #09
+
+::
+
+  - Leica SCN400
+
+* scanSettings.illuminationSettings.numericalAperture for image #08
+
+::
+
+  - 0.65
+
+* device.model for image #08
+
+::
+
+  - Leica SCN400
+
+* scanSettings.illuminationSettings.numericalAperture for image #09
+
+::
+
+  - 0.65
+
+* TileLength
+
+::
+
+  - 512
+
+* view.sizeX for image #02
+
+::
+
+  - 26498775
+
+* view.sizeX for image #01
+
+::
+
+  - 26498775
+
+* view.sizeX for image #06
+
+::
+
+  - 7040000
+
+* view.sizeX for image #05
+
+::
+
+  - 7040000
+
+* view.sizeX for image #04
+
+::
+
+  - 7040000
+
+* view.sizeX for image #03
+
+::
+
+  - 7040000
+
+* view.sizeX for image #09
+
+::
+
+  - 1776000
+
+* view.sizeX for image #08
+
+::
+
+  - 1776000
+
+* view.sizeX for image #07
+
+::
+
+  - 1776000
+
+* device.model for image #10
+
+::
+
+  - Leica SCN400
+
+* ImageLength
+
+::
+
+  - 4668
+
+* view.spacingZ for image #04
+
+::
+
+  - 0
+
+* view.spacingZ for image #03
+
+::
+
+  - 0
+
+* view.spacingZ for image #02
+
+::
+
+  - 0
+
+* view.spacingZ for image #01
+
+::
+
+  - 0
+
+* view.spacingZ for image #08
+
+::
+
+  - 0
+
+* collection.name
+
+::
+
+  - ImageCollection_0000000418
+
+* view.spacingZ for image #07
+
+::
+
+  - 0
+
+* view.spacingZ for image #06
+
+::
+
+  - 0
+
+* view.spacingZ for image #05
+
+::
+
+  - 0
+
+* view.spacingZ for image #09
+
+::
+
+  - 0
+
+* view.sizeX for image #10
+
+::
+
+  - 1776000
+
+* device.version for image #10
+
+::
+
+  - 
+
+* SamplesPerPixel
+
+::
+
+  - 3
+
+* device.version for image #09
+
+::
+
+  - 
+
+* TileByteCounts
+
+::
+
+  - 56751
+
+* view.offsetY for image #10
+
+::
+
+  - 31430309
+
+* device.version for image #08
+
+::
+
+  - 
+
+* device.version for image #07
+
+::
+
+  - 
+
+* device.version for image #06
+
+::
+
+  - 
+
+* device.version for image #05
+
+::
+
+  - 
+
+* ImageWidth
+
+::
+
+  - 1612
+
+* device.version for image #04
+
+::
+
+  - 
+
+* device.version for image #03
+
+::
+
+  - 
+
+* device.version for image #02
+
+::
+
+  - 
+
+* device.version for image #01
+
+::
+
+  - 
+
+* scanSettings.illuminationSettings.numericalAperture for image #10
+
+::
+
+  - 0.65
+
+* Compression
+
+::
+
+  - JPEG
+
+* view.offsetY for image #01
+
+::
+
+  - 0
+
+* device.model for image #06
+
+::
+
+  - Leica SCN400
+
+* creationDate
+
+::
+
+  - 2010-10-27T13:11:34.68Z
+
+* device.model for image #07
+
+::
+
+  - Leica SCN400
+
+* view.offsetY for image #03
+
+::
+
+  - 35704305
+
+* device.model for image #04
+
+::
+
+  - Leica SCN400
+
+* view.offsetY for image #02
+
+::
+
+  - 0
+
+* device.model for image #05
+
+::
+
+  - Leica SCN400
+
+* ReferenceBlackWhite
+
+::
+
+  - 0
+
+* device.model for image #02
+
+::
+
+  - Leica SCN400
+
+* device.model for image #03
+
+::
+
+  - Leica SCN400
+
+* device.model for image #01
+
+::
+
+  - Leica SCN400
+
+* view.offsetY for image #09
+
+::
+
+  - 31430309
+
+* view.offsetY for image #08
+
+::
+
+  - 31430309
+
+* view.offsetY for image #05
+
+::
+
+  - 35704305
+
+* view.offsetY for image #04
+
+::
+
+  - 35704305
+
+* view.offsetY for image #07
+
+::
+
+  - 31430309
+
+* view.offsetY for image #06
+
+::
+
+  - 35704305
+

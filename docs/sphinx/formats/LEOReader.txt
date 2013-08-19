@@ -1,0 +1,93 @@
+*******************************************************************************
+LEOReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats LEO format reader.
+
+Key/value pairs
+===============================================================================
+
+* NumberOfChannels
+
+::
+
+  - 1
+
+* ImageLength
+
+::
+
+  - 768
+
+* NewSubfileType
+
+::
+
+  - 0
+
+* Acquisition date
+
+::
+
+  - 09:08 23-Jul-1999
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* Working Distance
+
+::
+
+  - 0.01419501659
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - Monochrome
+
+* EHT
+
+::
+
+  - 10000.0
+
+* SamplesPerPixel
+
+::
+
+  - 1
+
+* ImageWidth
+
+::
+
+  - 1024
+
+* PhotometricInterpretation
+
+::
+
+  - BlackIsZero
+
+* Filament
+
+::
+
+  - 2.769999981
+
+* Physical pixel size
+
+::
+
+  - 0.5729166332 um
+

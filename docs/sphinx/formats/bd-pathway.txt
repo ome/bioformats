@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`BD Pathway <bd-pathway-metadata>`
 
+Original Metadata Support: :doc:`BD Pathway <BDReader>`
 
 
 We currently have:

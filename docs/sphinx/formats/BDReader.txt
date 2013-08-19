@@ -1,0 +1,5127 @@
+*******************************************************************************
+BDReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats BD Pathway format reader.
+
+Key/value pairs
+===============================================================================
+
+* Transmitted Light.dye [NumeratorBackgroundConstant] Value
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [Capture] Version
+
+::
+
+  - 
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] AutoMaxExposure
+
+::
+
+  - 5.000000
+
+* Laser AutoFocus.afc [Region] Mode
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] Algo_SimpleThresh_RollingAveWidth
+
+::
+
+  - 100
+
+* Laser AutoFocus.afc [ThresholdSkip] Threshold
+
+::
+
+  - 500
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] RegionY
+
+::
+
+  - -1
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] RegionX
+
+::
+
+  - -1
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] TargetIntensity
+
+::
+
+  - 3000
+
+* Transmitted Light.dye [Calibration] DenHi
+
+::
+
+  - 50.000000
+
+* Laser AutoFocus.afc [General] BASIS
+
+::
+
+  - 1
+
+* Lamp A Reference.ffc [Capture] LightPath
+
+::
+
+  - Lamp A Reference
+
+* DsRed - Confocal.dye [General] DynRng_Max
+
+::
+
+  - 500
+
+* Lamp A Reference.ffc [0] AssignedGeometry
+
+::
+
+  - 20X NA 075 Olympus
+
+* Relative Z (Z Stack).xyz [Z1Axis] Z1AxisMode
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] Algo_SimpleThresh_RollingAveWidth
+
+::
+
+  - 200
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] CaptureNumber
+
+::
+
+  - 1
+
+* Experiment.exp [AAAS_DiEx] 3
+
+::
+
+  - Open
+
+* Experiment.exp [AAAS_DiEx] 4
+
+::
+
+  - 50%A/10%B
+
+* Experiment.exp [AAAS_DiEx] 1
+
+::
+
+  - Mirror
+
+* Experiment.exp [AAAS_DiEx] 2
+
+::
+
+  - 370DCLP
+
+* DsRed - Confocal.drt [SamplingRate] Mode
+
+::
+
+  - 0
+
+* Experiment.exp [AAAS_DiEx] 5
+
+::
+
+  - 10%A/40%B
+
+* Lamp A Reference.ffc [0] MeanCameraBias
+
+::
+
+  - 528.811808
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] SimpleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] DownTrend_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Reference.ffc [Capture] LampA
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [Capture] LampB
+
+::
+
+  - 0
+
+* Relative Z (Z Stack).xyz [YAxis] YAxisMode
+
+::
+
+  - 1
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] RegionCX
+
+::
+
+  - -1
+
+* Experiment.exp [Version] ATTOBMPBUTTON.OCX
+
+::
+
+  - 1, 6, 0, 39 (RC4)
+
+* Laser AutoFocus.afc [Algorithm] Number
+
+::
+
+  - 2
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] FullChip
+
+::
+
+  - 1
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] RegionCY
+
+::
+
+  - -1
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] LaserFocusAchievable
+
+::
+
+  - 1
+
+* Experiment.exp [Version] PLC
+
+::
+
+  - 5.04.18
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] Gain
+
+::
+
+  - 0.000000
+
+* Transmitted.ltp [Dichroic] DescriptionEpiDichroic
+
+::
+
+  - 595LP
+
+* DsRed - Confocal.dye [Denominator] LightPath
+
+::
+
+  - Alexa 594 - Confocal
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] Algo_SimpleThresh_RollingAveWidth
+
+::
+
+  - 99
+
+* Experiment.exp [TimeOut] Segment
+
+::
+
+  - 60.000000
+
+* Experiment.exp [DsRed - Confocal] DynRng_Min
+
+::
+
+  - 144
+
+* Laser AutoFocus.afc [Capture] Bin
+
+::
+
+  - 8
+
+* DsRed - Confocal.dye [Numerator] Excitation
+
+::
+
+  - Fura-2 - 334 nm
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] LaserDataFrequencyHz
+
+::
+
+  - 12000
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] AutoExpose
+
+::
+
+  - 1
+
+* Experiment.exp [Camera] ChipWidthUsed
+
+::
+
+  - 1344
+
+* Transmitted Light.dye [Denominator] Exposure
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] LaserAFDisplacement
+
+::
+
+  - 200.000000
+
+* Transmitted Light.dye [ImageAutoSave] Interval
+
+::
+
+  - 1.000000
+
+* Lamp A Reference.ffc [Capture] CaptureNumber
+
+::
+
+  - 10
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] LaserAlgorithmType
+
+::
+
+  - 2
+
+* DsRed - Confocal.ltp [Dichroic] DescriptionEpiDichroic
+
+::
+
+  - 595LP
+
+* Laser AutoFocus.afc [Algorithm] ZOffset
+
+::
+
+  - 0.000000
+
+* DsRed - Confocal.dye [Data] RatioDisplayMode
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] BlurOn
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] LaserDataPoints
+
+::
+
+  - 6000
+
+* Montage 2 x 2.mon [General] AFFrameInterval
+
+::
+
+  - 1
+
+* Lamp A Reference.ffc [Capture] MeanCameraBias
+
+::
+
+  - 552.727012
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] LaserAFOffsets
+
+::
+
+  - 3.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] LaserAlgorithmType
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] Algo_SimpleThresh_Percentage
+
+::
+
+  - 15
+
+* Laser AutoFocus.afc [Capture] UseDye
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] LaserAlgorithmType
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] Gain
+
+::
+
+  - 0.000000
+
+* Transmitted Light.dye [Calibration] DenLo
+
+::
+
+  - 200.000000
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] Exposure
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] DoubleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Experiment.exp [General] Dyes
+
+::
+
+  - 2
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] Algo_DownTrend_Limit
+
+::
+
+  - 5
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] LaserFocusAchievable
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] LaserAFOffsets
+
+::
+
+  - 90.880000
+
+* DsRed - Confocal.ltp [Sliders] Confocal
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] SimpleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] RegionCX
+
+::
+
+  - -1
+
+* Transmitted Light.dye [Experiment] Reanalysis
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] RegionCY
+
+::
+
+  - -1
+
+* Transmitted Light.dye [Dlg_ZStack] SaveZSection
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [General] Type
+
+::
+
+  - Flat Field
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] Shoulder Peak_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Experiment.exp [Image] TilesY
+
+::
+
+  - 2
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] Version
+
+::
+
+  - 
+
+* Experiment.exp [Image] TilesX
+
+::
+
+  - 2
+
+* Lamp A Reference.ffc [Experiment] Reanalysis
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Data] XAxisSpan
+
+::
+
+  - 100.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] DoubleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] CaptureNumber
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] ValidMeanCameraBias
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] LaserGain
+
+::
+
+  - 20
+
+* Relative Z (Z Stack).xyz [Z1Axis] Z1AxisValue
+
+::
+
+  - 2.000
+
+* Transmitted Reference.ffc [Capture] RegionX
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] LaserAlgorithmType
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [Capture] RegionY
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] LaserDataFrequencyHz
+
+::
+
+  - 12000
+
+* Lamp A Reference.ffc [0] LampB
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Denominator] Excitation
+
+::
+
+  - Fura-2 - 380 nm
+
+* Lamp A Reference.ffc [0] LampA
+
+::
+
+  - 1
+
+* Experiment.exp [Version] ATTOWORKFLOW.DLL
+
+::
+
+  - 1, 6, 0, 39 (RC4)
+
+* Transmitted Reference.ffc [0] RefImage
+
+::
+
+  - Transmitted Reference_20X NA 075 Olympus_ffc.tif
+
+* Transmitted.ltp [FlatField] On
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] LaserAlgorithmType
+
+::
+
+  - 2
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] ValidMeanCameraBias
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [0] Geometry
+
+::
+
+  - 20X NA 075 Olympus
+
+* DsRed - Confocal.dye [Numerator] UpperThreshold
+
+::
+
+  - 4095
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] Shoulder Peak_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] SimpleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 200
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] DoubleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Reference.ffc [0] LightPath
+
+::
+
+  - Transmitted Reference
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] Algo_SimpleThresh_RollingAveWidth
+
+::
+
+  - 50
+
+* Relative Z (Z Stack).xyz [XAxis] XAxisEnabled
+
+::
+
+  - 0
+
+* Transmitted Light.dye [General] DynRng_Max
+
+::
+
+  - 1300
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] DownTrend_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Light.dye [Calibration] Active
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] DoubleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Light.dye [Numerator] UpperThreshold
+
+::
+
+  - 4095
+
+* DsRed - Confocal.ltp [Shutters] B
+
+::
+
+  - 0
+
+* Experiment.exp [Version] ATTOCOMUTILS.DLL
+
+::
+
+  - 1, 6, 0, 39
+
+* DsRed - Confocal.ltp [Shutters] A
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [Dlg_ZStack] SaveZSection
+
+::
+
+  - 0
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] TargetIntensity
+
+::
+
+  - 3000
+
+* Transmitted Reference.ffc [Bias] Enable
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] SimpleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* DsRed - Confocal.ltp [FlatField] Setting
+
+::
+
+  - Lamp A Reference
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] SimpleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 100
+
+* Experiment.exp [ADC] Active
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] Algo_SimpleThresh_Percentage
+
+::
+
+  - 15
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] Algo_DownTrend_Sensitivity
+
+::
+
+  - 0.500000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] LaserDataPoints
+
+::
+
+  - 2000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] LaserFocusAchievable
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [DenominatorBackgroundConstant] Method
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] Trans
+
+::
+
+  - 0
+
+* Transmitted light.drt [Probe1] Name
+
+::
+
+  - Transmitted Light
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] DownTrend_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] Offset
+
+::
+
+  - 255.000000
+
+* Transmitted Reference.ffc [Capture] MeanCameraBias
+
+::
+
+  - 552.727012
+
+* Transmitted Light.dye [Dlg_ZStack] Sections_Dye
+
+::
+
+  - 25
+
+* DsRed - Confocal.dye [Calibration] RLo
+
+::
+
+  - 0.220000
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] LampB
+
+::
+
+  - 0
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] LampA
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] LaserGain
+
+::
+
+  - 15
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] AutoMinExposure
+
+::
+
+  - 0.001000
+
+* Transmitted Reference.ffc [0] ValidMeanCameraBias
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [Data] YAxisMax
+
+::
+
+  - 3.000000
+
+* Transmitted Light.dye [Dlg_ZStack] Interval
+
+::
+
+  - 0.500000
+
+* DsRed - Confocal.dye [General] DynRng_Min
+
+::
+
+  - 144
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] Shoulder Peak_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Laser AutoFocus.afc [StartZ] UseZ
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [Capture] Offset
+
+::
+
+  - 255.000000
+
+* Transmitted Light.dye [DenominatorBackgroundConstant] Method
+
+::
+
+  - 0
+
+* Transmitted Light.dye [Data] ExportTxt
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] DoubleThreshold_Algo_UseSmoothing
+
+::
+
+  - 1
+
+* Experiment.exp [AAAS_ExA] 3
+
+::
+
+  - 555/28
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] AutoMaxExposure
+
+::
+
+  - 5.000000
+
+* Experiment.exp [AAAS_ExA] 4
+
+::
+
+  - 340
+
+* Experiment.exp [AAAS_ExA] 5
+
+::
+
+  - 380/10ND
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] Shoulder Peak_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Experiment.exp [AAAS_ExA] 6
+
+::
+
+  - 360/10
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] LaserAFOffsets
+
+::
+
+  - 60.000000
+
+* Experiment.exp [AAAS_ExA] 7
+
+::
+
+  - 380/10
+
+* Experiment.exp [AAAS_ExA] 8
+
+::
+
+  - 440/10
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 1
+
+::
+
+  - MoveWell(39,96)
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] LaserGain
+
+::
+
+  - 0
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] BlurStrength
+
+::
+
+  - 1
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 5
+
+::
+
+  - MoveXYZ("Relative Z (Z Stack)")
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 4
+
+::
+
+  - ProbeCycle("DsRed - Confocal",1.000,6)
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 3
+
+::
+
+  - ProbeCycle("Transmitted light",1.000,6)
+
+* Transmitted Reference.ffc [Capture] BlurOn
+
+::
+
+  - 0
+
+* Experiment.exp [AAAS_ExA] 1
+
+::
+
+  - 470/40
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] DoubleThreshold_Algo_UseSmoothing
+
+::
+
+  - 1
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 2
+
+::
+
+  - Autofocus("Laser AutoFocus")
+
+* Experiment.exp [AAAS_ExA] 2
+
+::
+
+  - 488/10
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 8
+
+::
+
+  - ProbeCycle("DsRed - Confocal",1.000,6)
+
+* Experiment.exp [Geometry] Name
+
+::
+
+  - 20X NA 075 Olympus Confocal
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 9
+
+::
+
+  - MoveWell(43,96)
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 6
+
+::
+
+  - ProbeCycle("DsRed - Confocal",1.000,6)
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 7
+
+::
+
+  - MoveXYZ("Relative Z (Z Stack)")
+
+* Experiment.exp [Version] ATTOMULTISLIDER.OCX
+
+::
+
+  - 1,6,0,39
+
+* Transmitted Light.dye [Denominator] LowerThreshold
+
+::
+
+  - 300
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] Algo_DownTrend_Sensitivity
+
+::
+
+  - 0.500000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] DownTrend_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] Algo_SimpleThresh_RollingAveWidth
+
+::
+
+  - 200
+
+* Experiment.exp [Version] ATTOGRAPH.OCX
+
+::
+
+  - 1, 6, 0, 39
+
+* Experiment.exp [Camera] Bitdepth
+
+::
+
+  - 16
+
+* DsRed - Confocal.dye [Calibration] DenHi
+
+::
+
+  - 50.000000
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] LightPath
+
+::
+
+  - 
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] Version
+
+::
+
+  - 
+
+* 20X NA 075 Olympus Confocal.geo [Reference] Scale
+
+::
+
+  - 0.312556
+
+* Laser AutoFocus.afc [ThresholdSkip] Percent
+
+::
+
+  - 99.000000
+
+* Transmitted Reference.ffc [Capture] ValidMeanCameraBias
+
+::
+
+  - 1
+
+* Laser AutoFocus.afc [StartZ] Z
+
+::
+
+  - 3651.840000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] Algo_SimpleThresh_Percentage
+
+::
+
+  - 15
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] Algo_SimpleThresh_RollingAveWidth
+
+::
+
+  - 20
+
+* Experiment.exp [Camera] ChipHeightUsed
+
+::
+
+  - 1024
+
+* Experiment.exp [AAAS_DiEpi] 3
+
+::
+
+  - 400DCLP
+
+* Experiment.exp [AAAS_DiEpi] 2
+
+::
+
+  - Fura/TRITC
+
+* Experiment.exp [AAAS_DiEpi] 5
+
+::
+
+  - 84000
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] DoubleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Experiment.exp [AAAS_DiEpi] 4
+
+::
+
+  - 595LP
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] Algo_SimpleThresh_RollingAveWidth
+
+::
+
+  - 10
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] DoubleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Lamp A Reference.ffc [Capture] BinY
+
+::
+
+  - 1
+
+* Experiment.exp [AAAS_DiEpi] 1
+
+::
+
+  - Fura/FITC
+
+* Lamp A Reference.ffc [Capture] BinX
+
+::
+
+  - 1
+
+* Experiment.exp [Version] ATTOPSEUDOCOLORLIST.OCX
+
+::
+
+  - 1,6,0,39
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] DownTrend_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Calibration] A
+
+::
+
+  - 1.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] Algo_DownTrend_Limit
+
+::
+
+  - 5
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] LaserDataFrequencyHz
+
+::
+
+  - 12000
+
+* Transmitted Light.dye [Denominator] Offset
+
+::
+
+  - 255.000000
+
+* DsRed - Confocal.dye [NumeratorBackgroundConstant] Value
+
+::
+
+  - 0
+
+* Relative Z (Z Stack).xyz [General] Version
+
+::
+
+  - XYZMotionAAAS
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] LaserAFDisplacement
+
+::
+
+  - 100.000000
+
+* Transmitted Reference.ffc [0] AssignedGeometry
+
+::
+
+  - 20X NA 075 Olympus
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] DownTrend_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* DsRed - Confocal.dye [General] ViewRois
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [Capture] LightPath
+
+::
+
+  - Transmitted Reference
+
+* DsRed - Confocal.dye [General] Integration
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [Capture] Trans
+
+::
+
+  - 0
+
+* Montage 2 x 2.mon [General] AFInitialFrame
+
+::
+
+  - 1
+
+* Lamp A Reference.ffc [Capture] FullChip
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] FullChip
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] LaserAFDisplacement
+
+::
+
+  - 0.000000
+
+* Transmitted Light.dye [General] DynRng_Min
+
+::
+
+  - 600
+
+* Experiment.exp [Transmitted Light] DynRng_Auto
+
+::
+
+  - 0
+
+* Experiment.exp [Version] ATTO3DSURFACE.OCX
+
+::
+
+  - 1, 6, 0, 39
+
+* Experiment.exp [Version] ATTOHISTOGRAM.OCX
+
+::
+
+  - 1, 6, 0, 39
+
+* Experiment.exp [Version] ATTODATACLASSES.DLL
+
+::
+
+  - 1, 6, 0, 39 (SP1)
+
+* DsRed - Confocal.drt [General] Version
+
+::
+
+  - 7.00
+
+* Transmitted Light.dye [Dlg_ZStack] Bottom
+
+::
+
+  - -5.160000
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] SimpleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 200
+
+* DsRed - Confocal.dye [DenominatorBackgroundConstant] Offset
+
+::
+
+  - 0
+
+* Experiment.exp [ADC] Original
+
+::
+
+  - transmitted & DsRed Confocal Z-stack (96 Well).adc
+
+* DsRed - Confocal.dye [General] AutoRng_OffsetMax
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] LaserDataPoints
+
+::
+
+  - 2000
+
+* Experiment.exp [Version] ATTOSTACKBUTTON.OCX
+
+::
+
+  - 1,6,0,39
+
+* Experiment.exp [Version] ATTOCOLORSLIDER.OCX
+
+::
+
+  - 1, 6, 0, 39
+
+* DsRed - Confocal.drt [SamplingRate] Seconds
+
+::
+
+  - 0.000000
+
+* Transmitted Reference.ffc [General] Method
+
+::
+
+  - 0
+
+* Experiment.exp [Version] ATTODAQ.DLL
+
+::
+
+  - 1, 6, 0, 39 (SP2a)
+
+* DsRed - Confocal.dye [Numerator] LowerThreshold
+
+::
+
+  - 200
+
+* Laser AutoFocus.afc [Capture] UseBin
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] DoubleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted light.drt [Probe1] Type
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] DoubleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* 96 Well BD Falcon Imaging [353219].plt [PlateType] Brand
+
+::
+
+  - BD Falcon
+
+* Transmitted Light.dye [General] RoiName
+
+::
+
+  - No ROI
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] DoubleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 50
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] Shoulder Peak_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] SimpleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] LaserAlgorithmType
+
+::
+
+  - 2
+
+* Relative Z (Z Stack).xyz [XAxis] XAxisMode
+
+::
+
+  - 1
+
+* Lamp A Reference.ffc [Capture] Gain
+
+::
+
+  - 0.000000
+
+* Transmitted Light.dye [Numerator] Excitation
+
+::
+
+  - Fura-2 - 334 nm
+
+* Transmitted Light.dye [General] Averaging
+
+::
+
+  - 1
+
+* Laser AutoFocus.afc [General] D
+
+::
+
+  - 120.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] SimpleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 200
+
+* Transmitted.ltp [Shutters] Trans
+
+::
+
+  - 1
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] MeanCameraBias
+
+::
+
+  - 0.000000
+
+* Transmitted Reference.ffc [Capture] AutoMaxExposure
+
+::
+
+  - 2.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] DownTrend_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Light.dye [General] ThresholdMode
+
+::
+
+  - 1
+
+* Transmitted Light.dye [General] ThresholdOn
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] Shoulder Peak_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Light.dye [Numerator] LampIntensity
+
+::
+
+  - 100.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] Algo_SimpleThresh_Percentage
+
+::
+
+  - 18
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] Algo_DownTrend_Limit
+
+::
+
+  - 5
+
+* Transmitted Light.dye [General] MaxExposure
+
+::
+
+  - 2.000000
+
+* DsRed - Confocal.dye [General] ThresholdMode
+
+::
+
+  - 1
+
+* Transmitted Light.dye [Denominator] LampIntensity
+
+::
+
+  - 100.000000
+
+* Experiment.exp [MeanCameraBias] Enabled
+
+::
+
+  - 1
+
+* Montage 2 x 2.mon [General] UseCellCount
+
+::
+
+  - 0
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] BinY
+
+::
+
+  - -1
+
+* Transmitted Reference.ffc [0] Sample
+
+::
+
+  - Green Slide
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] BinX
+
+::
+
+  - -1
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] DoubleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* DsRed - Confocal.dye [ImageAutoSave] Interval
+
+::
+
+  - 1.000000
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] BlurStrength
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [NumeratorBackgroundConstant] Method
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] LaserAFOffsets
+
+::
+
+  - 0.000000
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] Gain
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] LaserAFDisplacement
+
+::
+
+  - 0.000000
+
+* DsRed - Confocal.dye [Data] YAxisLabel
+
+::
+
+  - Calcium
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] LaserFocusAchievable
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] SimpleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 99
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] LaserAFOffsets
+
+::
+
+  - 0.000000
+
+* Transmitted light.drt [General] Type
+
+::
+
+  - ProbeCycle
+
+* Experiment.exp [MeanCameraBias] y1
+
+::
+
+  - 0.000000
+
+* Experiment.exp [MeanCameraBias] y2
+
+::
+
+  - 0.000000
+
+* Experiment.exp [Camera] ChipOriginX
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] LaserDataPoints
+
+::
+
+  - 8000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] Shoulder Peak_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Experiment.exp [Dyes] 2
+
+::
+
+  - DsRed - Confocal
+
+* Experiment.exp [Dyes] 1
+
+::
+
+  - Transmitted Light
+
+* Experiment.exp [Camera] ChipOriginY
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [Sample] Name
+
+::
+
+  - Green Slide
+
+* Transmitted Light.dye [Data] RatioDisplayMode
+
+::
+
+  - 0
+
+* Transmitted Light.dye [Data_GraphColors] UseSystem
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] DownTrend_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [Experiment] Reanalysis
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] MeanCameraBias
+
+::
+
+  - 0.000000
+
+* Relative Z (Z Stack).xyz [YAxis] YAxisValue
+
+::
+
+  - -100.000
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] Algo_DownTrend_Sensitivity
+
+::
+
+  - 0.500000
+
+* Experiment.exp [DsRed - Confocal] DynRng_Auto
+
+::
+
+  - 0
+
+* Experiment.exp [MeanCameraBias] x2
+
+::
+
+  - 0.000000
+
+* Experiment.exp [MeanCameraBias] x1
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] LaserDataPoints
+
+::
+
+  - 2000
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] Version
+
+::
+
+  - 
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] LaserGain
+
+::
+
+  - 70
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] Algo_SimpleThresh_Percentage
+
+::
+
+  - 15
+
+* DsRed - Confocal.ltp [Dichroic] Epi
+
+::
+
+  - 3
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] SimpleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Reference.ffc [Capture] Geometry
+
+::
+
+  - 20X NA 075 Olympus
+
+* DsRed - Confocal.ltp [General] Type
+
+::
+
+  - LightPathAAAS
+
+* Lamp A Reference.ffc [Capture] BlurOn
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] LaserGain
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] LaserFocusAchievable
+
+::
+
+  - 1
+
+* Transmitted Reference.ffc [Capture] CaptureNumber
+
+::
+
+  - 10
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] SimpleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] LaserGain
+
+::
+
+  - 20
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Montage] Mode
+
+::
+
+  - 2
+
+* Laser AutoFocus.afc [General] Type
+
+::
+
+  - Auto-Focus
+
+* Transmitted Reference.ffc [Capture] Gain
+
+::
+
+  - 0.000000
+
+* DsRed - Confocal.dye [General] AutoRng_OffsetMin
+
+::
+
+  - 0
+
+* Laser AutoFocus.afc [General] Version
+
+::
+
+  - 7.00
+
+* DsRed - Confocal.dye [Dlg_ZStack] Enabled
+
+::
+
+  - 0
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] LightPath
+
+::
+
+  - 
+
+* DsRed - Confocal.dye [NumeratorBackgroundConstant] Offset
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [Capture] AutoMinExposure
+
+::
+
+  - 0.001000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] DoubleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Denominator] Exposure
+
+::
+
+  - 0.000000
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] AutoMinExposure
+
+::
+
+  - 0.001000
+
+* Transmitted Light.dye [Dlg_ZStack] Enabled
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] DownTrend_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] RegionX
+
+::
+
+  - -1
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] RegionY
+
+::
+
+  - -1
+
+* Lamp A Reference.ffc [Capture] Exposure
+
+::
+
+  - 1.000000
+
+* Lamp A Reference.ffc [0] RefImageDir
+
+::
+
+  - 
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] LaserAFDisplacement
+
+::
+
+  - 150.000000
+
+* DsRed - Confocal.dye [Denominator] UpperThreshold
+
+::
+
+  - 4095
+
+* DsRed - Confocal.dye [Dlg_ZStack] Bottom_Dye
+
+::
+
+  - -5.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] SimpleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 10
+
+* Transmitted.ltp [Shutters] B
+
+::
+
+  - 0
+
+* Transmitted.ltp [Shutters] A
+
+::
+
+  - 0
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Montage] Setting
+
+::
+
+  - Montage 2 x 2
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] DownTrend_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] Algo_SimpleThresh_RollingAveWidth
+
+::
+
+  - 20
+
+* DsRed - Confocal.dye [ImageAutoSave] Den
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [General] Method
+
+::
+
+  - 0
+
+* Relative Z (Z Stack).xyz [XAxis] XAxisValue
+
+::
+
+  - 100.000
+
+* Transmitted Light.dye [Dlg_ZStack] Sections
+
+::
+
+  - 25
+
+* Transmitted light.drt [SamplingRate] Seconds
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] DownTrend_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Lamp A Reference.ffc [0] Time
+
+::
+
+  - 22:18:58 Mar. 03, 2007
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] Shoulder Peak_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Light.dye [DenominatorBackgroundConstant] Offset
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] LaserAFOffsets
+
+::
+
+  - -5.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] Shoulder Peak_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted.ltp [General] Version
+
+::
+
+  - 7.00
+
+* Objective
+
+::
+
+  - 20X NA 075 Olympus Confocal
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] SimpleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 50
+
+* Transmitted Light.dye [Calibration] A
+
+::
+
+  - 1.000000
+
+* DsRed - Confocal.dye [Dlg_ZStack] Sections_Dye
+
+::
+
+  - 5
+
+* Experiment.exp [Version] ATTOIMAGE.EXE
+
+::
+
+  - 1, 6, 1, 05
+
+* Transmitted Reference.ffc [Capture] TargetIntensity
+
+::
+
+  - 3000
+
+* Montage 2 x 2.mon [General] AFType
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] LaserAlgorithmType
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [0] Offset
+
+::
+
+  - 255.000000
+
+* Transmitted Light.dye [Data] XAxisSpan
+
+::
+
+  - 100.000000
+
+* Transmitted.ltp [Dichroic] Ex
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [Capture] BlurStrength
+
+::
+
+  - 1
+
+* Transmitted Light.dye [Dlg_ZStack] Bottom_Dye
+
+::
+
+  - -5.160000
+
+* DsRed - Confocal.dye [Data] StoreMeanOfRatios
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] LaserAFOffsets
+
+::
+
+  - 0.500000
+
+* Experiment.exp [Automation] SystemName
+
+::
+
+  - Pathway
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] LaserDataFrequencyHz
+
+::
+
+  - 12000
+
+* DsRed - Confocal.drt [Probe1] Name
+
+::
+
+  - DsRed - Confocal
+
+* Transmitted light.drt [SamplingRate] Mode
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] Shoulder Peak_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] LampA
+
+::
+
+  - 0
+
+* Experiment.exp [DsRed - Confocal] DynRng_Max
+
+::
+
+  - 500
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] LampB
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] DoubleThreshold_Algo_UseSmoothing
+
+::
+
+  - 1
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] BlurOn
+
+::
+
+  - 0
+
+* Transmitted Light.dye [ImageAutoSave] Rat
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [PlateType] Description
+
+::
+
+  - Imaging [353219]
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] BlurStrength
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] AutoExpose
+
+::
+
+  - 1
+
+* Transmitted Reference.ffc [Sample] Name
+
+::
+
+  - Green Slide
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] DoubleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Light.dye [Denominator] Gain
+
+::
+
+  - 0.000000
+
+* DsRed - Confocal.dye [General] ThresholdOn
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [ImageAutoSave] Rat
+
+::
+
+  - 0
+
+* Transmitted Light.dye [Dlg_ZStack] Interval_Dye
+
+::
+
+  - 0.500000
+
+* Experiment.exp [Transmitted Light] DynRng_Min
+
+::
+
+  - 600
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] Shoulder Peak_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [0] ValidMeanCameraBias
+
+::
+
+  - 1
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] BlurOn
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] LaserAFDisplacement
+
+::
+
+  - 200.000000
+
+* Transmitted Reference.ffc [0] LampB
+
+::
+
+  - 0
+
+* DsRed - Confocal.ltp [General] Version
+
+::
+
+  - 7.00
+
+* Transmitted Reference.ffc [0] LampA
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] Algo_DownTrend_Limit
+
+::
+
+  - 5
+
+* Transmitted Light.dye [Numerator] LightPath
+
+::
+
+  - Transmitted
+
+* Montage 2 x 2.mon [General] CYGap
+
+::
+
+  - 0.000000
+
+* Transmitted Light.dye [Data_GraphColors] Axes_B
+
+::
+
+  - 255
+
+* DsRed - Confocal.dye [Denominator] LampIntensity
+
+::
+
+  - 100.000000
+
+* Transmitted Light.dye [Data_GraphColors] Axes_G
+
+::
+
+  - 232
+
+* DsRed - Confocal.dye [Numerator] Exposure
+
+::
+
+  - 0.250000
+
+* Montage 2 x 2.mon [General] AFSetting
+
+::
+
+  - 
+
+* Transmitted Light.dye [Numerator] Exposure
+
+::
+
+  - 0.020000
+
+* DsRed - Confocal.dye [Data_GraphColors] Int_R
+
+::
+
+  - 64
+
+* Transmitted Light.dye [Data_GraphColors] Axes_R
+
+::
+
+  - 232
+
+* DsRed - Confocal.dye [Data_GraphColors] Int_G
+
+::
+
+  - 128
+
+* Transmitted light.drt [General] Probes
+
+::
+
+  - 1
+
+* Transmitted Light.dye [Calibration] Method
+
+::
+
+  - 1
+
+* Transmitted Reference.ffc [Capture] AutoExpose
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] Shoulder Peak_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* DsRed - Confocal.dye [Denominator] Offset
+
+::
+
+  - 255.000000
+
+* DsRed - Confocal.dye [Data_GraphColors] Int_B
+
+::
+
+  - 128
+
+* Transmitted Light.dye [General] Wavelengths
+
+::
+
+  - 1
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] RegionX
+
+::
+
+  - -1
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] RegionY
+
+::
+
+  - -1
+
+* Transmitted Light.dye [ImageAutoSave] Active
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] LaserDataFrequencyHz
+
+::
+
+  - 12000
+
+* Transmitted.ltp [Excitation] B
+
+::
+
+  - -1
+
+* Transmitted.ltp [Excitation] A
+
+::
+
+  - -1
+
+* Laser AutoFocus.afc [General] n
+
+::
+
+  - 8
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] LaserFocusAchievable
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] SimpleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [General] Type
+
+::
+
+  - Macro
+
+* Montage 2 x 2.mon [General] Type
+
+::
+
+  - Montage
+
+* Transmitted Light.dye [Dlg_ZStack] UseGlobalStack
+
+::
+
+  - 0
+
+* DsRed - Confocal.drt [Probe1] Type
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] MeanCameraBias
+
+::
+
+  - 0.000000
+
+* Lamp A Reference.ffc [0] BinY
+
+::
+
+  - 1
+
+* Lamp A Reference.ffc [0] BinX
+
+::
+
+  - 1
+
+* Lamp A Reference.ffc [0] RegionCX
+
+::
+
+  - 672
+
+* Lamp A Reference.ffc [0] RegionCY
+
+::
+
+  - 512
+
+* Lamp A Reference.ffc [0] Offset
+
+::
+
+  - 255.000000
+
+* Experiment.exp [Lamps_4] Time
+
+::
+
+  - 19:00 Dec. 31, 1969
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] LaserDataPoints
+
+::
+
+  - 2000
+
+* Experiment.exp [Camera] BinX
+
+::
+
+  - 2
+
+* Experiment.exp [Camera] BinY
+
+::
+
+  - 2
+
+* Transmitted Light.dye [Background] ConstantNum
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] Algo_SimpleThresh_Percentage
+
+::
+
+  - 15
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] Shoulder Peak_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Relative Z (Z Stack).xyz [Z1Axis] Z1AxisEnabled
+
+::
+
+  - 1
+
+* Montage 2 x 2.mon [General] UseAutofocus
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Dlg_ZStack] Top
+
+::
+
+  - 5.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] DownTrend_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Experiment.exp [Version] ATTOWASHSETUP.OCX
+
+::
+
+  - 1,6,0,39
+
+* Lamp A Reference.ffc [Capture] LampB
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [Capture] LampA
+
+::
+
+  - 1
+
+* Transmitted Light.dye [Denominator] LightPath
+
+::
+
+  - Transmitted
+
+* Relative Z (Z Stack).xyz [General] Type
+
+::
+
+  - 1.00
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] SimpleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] MeanCameraBias
+
+::
+
+  - 0.000000
+
+* 20X NA 075 Olympus Confocal.geo [General] Version
+
+::
+
+  - Geometry
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] Algo_DownTrend_Sensitivity
+
+::
+
+  - 0.600000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] DownTrend_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Data] ExportTxt
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] LaserDataFrequencyHz
+
+::
+
+  - 12000
+
+* DsRed - Confocal.dye [General] RatioMultiplier
+
+::
+
+  - 100
+
+* DsRed - Confocal.dye [Dlg_ZStack] Top_Dye
+
+::
+
+  - 5.000000
+
+* 20X NA 075 Olympus Confocal.geo [Reference] Binning
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] Algo_DownTrend_Limit
+
+::
+
+  - 4
+
+* Lamp A Reference.ffc [Bias] Enable
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] DownTrend_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Light.dye [Denominator] Excitation
+
+::
+
+  - Fura-2 - 380 nm
+
+* Experiment.exp [Transmitted Light] DynRng_Max
+
+::
+
+  - 1300
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] Shoulder Peak_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Reference.ffc [0] RegionCX
+
+::
+
+  - 672
+
+* Transmitted Reference.ffc [0] RegionCY
+
+::
+
+  - 512
+
+* Transmitted.ltp [Shutters] SpinDisk
+
+::
+
+  - 0
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [DataClass] Active
+
+::
+
+  - 0
+
+* 20X NA 075 Olympus Confocal.geo [Calibration] StartY
+
+::
+
+  - 236
+
+* 20X NA 075 Olympus Confocal.geo [Calibration] StartX
+
+::
+
+  - 362
+
+* Transmitted Reference.ffc [0] Version
+
+::
+
+  - 
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] LaserDataFrequencyHz
+
+::
+
+  - 12000
+
+* DsRed - Confocal.dye [BackgroundSubtraction] NumeratorMethod
+
+::
+
+  - -1
+
+* Experiment.exp [Lamps_3] Name
+
+::
+
+  - B
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] Algo_SimpleThresh_Percentage
+
+::
+
+  - 15
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] DoubleThreshold_Algo_UseSmoothing
+
+::
+
+  - 1
+
+* Transmitted Light.dye [Numerator] LowerThreshold
+
+::
+
+  - 200
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] Algo_SimpleThresh_Percentage
+
+::
+
+  - 38
+
+* Transmitted Light.dye [General] Integration
+
+::
+
+  - 0
+
+* Transmitted Light.dye [Denominator] Emission
+
+::
+
+  - 520 nm
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] SimpleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 200
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] DownTrend_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Light.dye [Data_GraphColors] Ext_G
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] LaserAFDisplacement
+
+::
+
+  - 0.000000
+
+* Transmitted Light.dye [Data_GraphColors] Ext_B
+
+::
+
+  - 160
+
+* DsRed - Confocal.ltp [Emission] DescriptionA
+
+::
+
+  - FURA/TRITC
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] CaptureNumber
+
+::
+
+  - 1
+
+* Transmitted Light.dye [DenominatorBackgroundConstant] Value
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Numerator] Gain
+
+::
+
+  - 0.000000
+
+* Lamp A Reference.ffc [0] Gain
+
+::
+
+  - 0.000000
+
+* Transmitted Light.dye [Data_GraphColors] Ext_R
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [BackgroundSubtraction] DenominatorMethod
+
+::
+
+  - -1
+
+* Montage 2 x 2.mon [General] TileWidth
+
+::
+
+  - 2
+
+* Lamp A Reference.ffc [0] RegionX
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [0] RegionY
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [DenominatorBackgroundConstant] Value
+
+::
+
+  - 0
+
+* Transmitted.ltp [Emission] DescriptionA
+
+::
+
+  - 645/75
+
+* Experiment.exp [Version] NEURITEANALYSISSVR.DLL
+
+::
+
+  - 1, 6, 0, 39 (RC4)
+
+* DsRed - Confocal.dye [ImageAutoSave] Active
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] AutoMinExposure
+
+::
+
+  - 0.001000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] LaserGain
+
+::
+
+  - 10
+
+* Experiment.exp [MeanCameraBias] Q21
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] LaserDataPoints
+
+::
+
+  - 6000
+
+* DsRed - Confocal.ltp [Emission] A
+
+::
+
+  - 1
+
+* Transmitted Light.dye [Dlg_ZStack] Top
+
+::
+
+  - 5.160000
+
+* Transmitted Reference.ffc [Capture] Offset
+
+::
+
+  - 255.000000
+
+* Experiment.exp [MeanCameraBias] Q22
+
+::
+
+  - 0.000000
+
+* DsRed - Confocal.dye [Dlg_ZStack] Interval_Dye
+
+::
+
+  - 0.500000
+
+* Transmitted Light.dye [General] AutoRng_OffsetMax
+
+::
+
+  - 0
+
+* Experiment.exp [Lamps_1] Time
+
+::
+
+  - 19:00 Dec. 31, 1969
+
+* Transmitted Reference.ffc [0] Exposure
+
+::
+
+  - 0.001000
+
+* Experiment.exp [Lamps] Number
+
+::
+
+  - 4
+
+* Experiment.exp [MeanCameraBias] Q12
+
+::
+
+  - 0.000000
+
+* Experiment.exp [MeanCameraBias] Q11
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] Algo_DownTrend_Limit
+
+::
+
+  - 5
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] Shoulder Peak_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Lamp A Reference.ffc [Capture] Geometry
+
+::
+
+  - 20X NA 075 Olympus
+
+* Experiment.exp [Version] ATTOHISTOGRAM2.OCX
+
+::
+
+  - 1, 6, 0, 39
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] Shoulder Peak_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] Algo_DownTrend_Sensitivity
+
+::
+
+  - 0.500000
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [General] Lines
+
+::
+
+  - 25
+
+* DsRed - Confocal.dye [Denominator] Gain
+
+::
+
+  - 0.000000
+
+* Transmitted Light.dye [Numerator] Offset
+
+::
+
+  - 255.000000
+
+* DsRed - Confocal.dye [General] Averaging
+
+::
+
+  - 1
+
+* DsRed - Confocal.drt [General] Type
+
+::
+
+  - ProbeCycle
+
+* Montage 2 x 2.mon [General] UseBorder
+
+::
+
+  - 0
+
+* Experiment.exp [AAAS_ExB] 1
+
+::
+
+  - 335
+
+* DsRed - Confocal.ltp [Excitation] A
+
+::
+
+  - 2
+
+* Experiment.exp [AAAS_ExB] 2
+
+::
+
+  - 548/20
+
+* Experiment.exp [AAAS_ExB] 3
+
+::
+
+  - 460/10
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] Shoulder Peak_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Dlg_ZStack] UseGlobalStack
+
+::
+
+  - 0
+
+* DsRed - Confocal.ltp [Excitation] B
+
+::
+
+  - -1
+
+* Experiment.exp [AAAS_ExB] 8
+
+::
+
+  - open
+
+* Transmitted.ltp [Sliders] Confocal
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] Shoulder Peak_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Experiment.exp [AAAS_ExB] 4
+
+::
+
+  - 560/55
+
+* Experiment.exp [Version] ATTOCAMERASERVER.EXE
+
+::
+
+  - 1, 6, 0, 39 (RC4)
+
+* Experiment.exp [AAAS_ExB] 5
+
+::
+
+  - 635/20
+
+* Transmitted Reference.ffc [Capture] Trans
+
+::
+
+  - 1
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] Trans
+
+::
+
+  - 0
+
+* Experiment.exp [AAAS_ExB] 6
+
+::
+
+  - 488/10B
+
+* Experiment.exp [AAAS_ExB] 7
+
+::
+
+  - open
+
+* Lamp A Reference.ffc [General] Version
+
+::
+
+  - 7.00
+
+* Experiment.exp [Image] Montaged
+
+::
+
+  - 1
+
+* Experiment.exp [Lamps_2] Name
+
+::
+
+  - A
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] TargetIntensity
+
+::
+
+  - 3000
+
+* DsRed - Confocal.ltp [Sliders] Objective
+
+::
+
+  - -1
+
+* Transmitted Light.dye [BackgroundSubtraction] DenominatorMethod
+
+::
+
+  - -1
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] LaserAFDisplacement
+
+::
+
+  - 3.000000
+
+* Experiment.exp [General] ThumbNailDisplay
+
+::
+
+  - GRAPH
+
+* Transmitted Reference.ffc [0] Gain
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] DownTrend_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Light.dye [BackgroundSubtraction] NumeratorMethod
+
+::
+
+  - -1
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] TargetIntensity
+
+::
+
+  - 3000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] Algo_DownTrend_Limit
+
+::
+
+  - 5
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] LightPath
+
+::
+
+  - 
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] AutoExpose
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] SimpleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] LaserDataPoints
+
+::
+
+  - 2000
+
+* Transmitted Light.dye [General] ViewRois
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] Algo_SimpleThresh_RollingAveWidth
+
+::
+
+  - 200
+
+* Transmitted Reference.ffc [Capture] BinX
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] SimpleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [Capture] BinY
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] LaserGain
+
+::
+
+  - 9
+
+* Experiment.exp [Lamps_2] Time
+
+::
+
+  - 19:00 Dec. 31, 1969
+
+* Lamp A Reference.ffc [Capture] AutoExpose
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] LaserFocusAchievable
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] LaserGain
+
+::
+
+  - 15
+
+* Transmitted Light.dye [Calibration] RHi
+
+::
+
+  - 2.000000
+
+* Transmitted.ltp [Dichroic] DescriptionExDichroic
+
+::
+
+  - Mirror
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] CaptureNumber
+
+::
+
+  - 1
+
+* Experiment.exp [AAAS_EmA] 8
+
+::
+
+  - open
+
+* Experiment.exp [AAAS_EmA] 7
+
+::
+
+  - 645/75
+
+* Experiment.exp [AAAS_EmA] 6
+
+::
+
+  - 570LP
+
+* Experiment.exp [AAAS_EmA] 1
+
+::
+
+  - FURA/FITC
+
+* Experiment.exp [AAAS_EmA] 2
+
+::
+
+  - FURA/TRITC
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] Shoulder Peak_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Experiment.exp [AAAS_EmA] 3
+
+::
+
+  - 435LP
+
+* Experiment.exp [AAAS_EmA] 4
+
+::
+
+  - 84101
+
+* Experiment.exp [AAAS_EmA] 5
+
+::
+
+  - 515LP
+
+* Transmitted.ltp [Emission] A
+
+::
+
+  - 6
+
+* Transmitted Reference.ffc [0] RegionY
+
+::
+
+  - 0
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [General] Compound
+
+::
+
+  - 1
+
+* Montage 2 x 2.mon [General] TileHeight
+
+::
+
+  - 2
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] Offset
+
+::
+
+  - 255.000000
+
+* DsRed - Confocal.dye [General] MaxExposure
+
+::
+
+  - 2.000000
+
+* Transmitted Reference.ffc [0] MeanCameraBias
+
+::
+
+  - 528.811808
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] Trans
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] Shoulder Peak_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Reference.ffc [0] RegionX
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [Capture] FullChip
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] Shoulder Peak_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* DsRed - Confocal.ltp [FlatField] On
+
+::
+
+  - 0
+
+* 20X NA 075 Olympus Confocal.geo [Laser Auto-Focus] SearchSpan
+
+::
+
+  - 2000.000000
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] Offset
+
+::
+
+  - 255.000000
+
+* Experiment.exp [MeanCameraBias] Set
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] Algo_SimpleThresh_Percentage
+
+::
+
+  - 25
+
+* DsRed - Confocal.ltp [Excitation] DescriptionB
+
+::
+
+  - 560/55
+
+* Laser AutoFocus.afc [ThresholdSkip] Use
+
+::
+
+  - 0
+
+* DsRed - Confocal.ltp [Excitation] DescriptionA
+
+::
+
+  - 555/28
+
+* DsRed - Confocal.dye [Calibration] Active
+
+::
+
+  - 0
+
+* Experiment.exp [Version] ATTO3DVOLUME.OCX
+
+::
+
+  - 1,6,0,39
+
+* Transmitted Light.dye [Data] StoreMeanOfRatios
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [General] RoiName
+
+::
+
+  - No ROI
+
+* Transmitted Reference.ffc [Capture] RegionCX
+
+::
+
+  - 1344
+
+* Transmitted Reference.ffc [Capture] RegionCY
+
+::
+
+  - 1024
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] Exposure
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] DownTrend_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] Algo_DownTrend_Sensitivity
+
+::
+
+  - 0.500000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] DownTrend_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] Algo_SimpleThresh_RollingAveWidth
+
+::
+
+  - 50
+
+* DsRed - Confocal.dye [Denominator] LowerThreshold
+
+::
+
+  - 300
+
+* Experiment.exp [General] Version
+
+::
+
+  - 7.00
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] LaserDataPoints
+
+::
+
+  - 3000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] LaserFocusAchievable
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] Algo_DownTrend_Limit
+
+::
+
+  - 5
+
+* Experiment.exp [Camera] BitdepthUsed
+
+::
+
+  - 12
+
+* Transmitted Light.dye [General] AutoRng_OffsetMin
+
+::
+
+  - 0
+
+* Transmitted Light.dye [Calibration] RLo
+
+::
+
+  - 0.220000
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] RegionX
+
+::
+
+  - -1
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] RegionY
+
+::
+
+  - -1
+
+* Transmitted Light.dye [NumeratorBackgroundConstant] Method
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] RegionCX
+
+::
+
+  - -1
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] LaserAFOffsets
+
+::
+
+  - 0.000000
+
+* DsRed - Confocal.dye [Calibration] Kd
+
+::
+
+  - 225.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] LaserAlgorithmType
+
+::
+
+  - 2
+
+* Laser AutoFocus.afc [Algorithm] UseBrightness
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Numerator] Offset
+
+::
+
+  - 255.000000
+
+* Experiment.exp [Version] ATTODIO.DLL
+
+::
+
+  - 1, 6, 0, 39
+
+* Laser AutoFocus.afc [Algorithm] UseMedian
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [0] RefImageDir
+
+::
+
+  - 
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] DownTrend_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* DsRed - Confocal.drt [General] Probes
+
+::
+
+  - 1
+
+* Laser AutoFocus.afc [Capture] ScaleForBin
+
+::
+
+  - 1
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] LightPath
+
+::
+
+  - 
+
+* DsRed - Confocal.dye [Dlg_ZStack] Interval
+
+::
+
+  - 0.500000
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] RegionCY
+
+::
+
+  - -1
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] Algo_SimpleThresh_Percentage
+
+::
+
+  - 40
+
+* Lamp A Reference.ffc [Reference] NumImages
+
+::
+
+  - 1
+
+* Transmitted Reference.ffc [Capture] Version
+
+::
+
+  - 
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] Geometry
+
+::
+
+  - 
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] ValidMeanCameraBias
+
+::
+
+  - 0
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [General] Version
+
+::
+
+  - 7.00
+
+* Montage 2 x 2.mon [General] Version
+
+::
+
+  - 1.00
+
+* DsRed - Confocal.dye [Numerator] LampIntensity
+
+::
+
+  - 100.000000
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 24
+
+::
+
+  - ProbeCycle("DsRed - Confocal",1.000,6)
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 25
+
+::
+
+  - Stop()
+
+* Relative Z (Z Stack).xyz [YAxis] YAxisEnabled
+
+::
+
+  - 0
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 20
+
+::
+
+  - ProbeCycle("DsRed - Confocal",1.000,6)
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 21
+
+::
+
+  - MoveXYZ("Relative Z (Z Stack)")
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 22
+
+::
+
+  - ProbeCycle("DsRed - Confocal",1.000,6)
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 23
+
+::
+
+  - MoveXYZ("Relative Z (Z Stack)")
+
+* DsRed - Confocal.dye [Calibration] I2
+
+::
+
+  - 1.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] Algo_SimpleThresh_RollingAveWidth
+
+::
+
+  - 200
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] Geometry
+
+::
+
+  - 
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] DownTrend_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Experiment.exp [Lamps_3] Time
+
+::
+
+  - 19:00 Dec. 31, 1969
+
+* Transmitted Light.dye [Numerator] Emission
+
+::
+
+  - 520 nm
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] DownTrend_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Light.dye [Denominator] UpperThreshold
+
+::
+
+  - 4095
+
+* DsRed - Confocal.dye [Calibration] Method
+
+::
+
+  - 1
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] AutoExpose
+
+::
+
+  - 1
+
+* Lamp A Reference.ffc [0] LightPath
+
+::
+
+  - Lamp A Reference
+
+* Transmitted Light.dye [Calibration] Kd
+
+::
+
+  - 225.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] DoubleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Light.dye [Background] ConstantDen
+
+::
+
+  - 0.000000
+
+* Experiment.exp [ADC] Latest
+
+::
+
+  - transmitted & DsRed Confocal Z-stack (96 Well).adc
+
+* Lamp A Reference.ffc [0] Exposure
+
+::
+
+  - 0.001000
+
+* DsRed - Confocal.dye [Dlg_ZStack] Sections
+
+::
+
+  - 5
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] LaserGain
+
+::
+
+  - 15
+
+* DsRed - Confocal.dye [Data_GraphColors] Axes_R
+
+::
+
+  - 232
+
+* Montage 2 x 2.mon [General] CXGap
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] DownTrend_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] LaserAlgorithmType
+
+::
+
+  - 0
+
+* Transmitted Light.dye [Dlg_ZStack] Top_Dye
+
+::
+
+  - 5.160000
+
+* DsRed - Confocal.dye [Data_GraphColors] Axes_B
+
+::
+
+  - 255
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] Exposure
+
+::
+
+  - 0.000000
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] BlurStrength
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [Data_GraphColors] Axes_G
+
+::
+
+  - 232
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 15
+
+::
+
+  - MoveXYZ("Relative Z (Z Stack)")
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 16
+
+::
+
+  - ProbeCycle("DsRed - Confocal",1.000,6)
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 13
+
+::
+
+  - MoveXYZ("Relative Z (Z Stack)")
+
+* Transmitted.ltp [General] Type
+
+::
+
+  - LightPathAAAS
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 14
+
+::
+
+  - ProbeCycle("DsRed - Confocal",1.000,6)
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] LaserDataFrequencyHz
+
+::
+
+  - 30000
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 19
+
+::
+
+  - ProbeCycle("Transmitted light",1.000,6)
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 17
+
+::
+
+  - MoveWell(47,96)
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 18
+
+::
+
+  - Autofocus("Laser AutoFocus")
+
+* Experiment.exp [Image] BitdepthStored
+
+::
+
+  - 16
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] SimpleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 50
+
+* DsRed - Confocal.dye [General] DynRng_Auto
+
+::
+
+  - 0
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 11
+
+::
+
+  - ProbeCycle("Transmitted light",1.000,6)
+
+* Experiment.exp [General] Type
+
+::
+
+  - Experiment
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 12
+
+::
+
+  - ProbeCycle("DsRed - Confocal",1.000,6)
+
+* Transmitted Reference.ffc [0] Trans
+
+::
+
+  - 1
+
+* transmitted & DsRed Confocal Z-stack (96 Well).mac [Macro] 10
+
+::
+
+  - Autofocus("Laser AutoFocus")
+
+* Experiment.exp [Image] TilePixelsY
+
+::
+
+  - 512
+
+* Experiment.exp [Image] TilePixelsX
+
+::
+
+  - 672
+
+* DsRed - Confocal.dye [Calibration] DenLo
+
+::
+
+  - 200.000000
+
+* DsRed - Confocal.ltp [Dichroic] DescriptionExDichroic
+
+::
+
+  - Open
+
+* DsRed - Confocal.dye [Dlg_ZStack] Bottom
+
+::
+
+  - -5.000000
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] Version
+
+::
+
+  - 
+
+* DsRed - Confocal.ltp [Shutters] SpinDisk
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [PlateType] Wells
+
+::
+
+  - 96
+
+* Transmitted Light.dye [Calibration] I2
+
+::
+
+  - 1.000000
+
+* Transmitted Light.dye [Data_GraphColors] Int_R
+
+::
+
+  - 64
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] LaserFocusAchievable
+
+::
+
+  - 1
+
+* Relative Z (Z Stack).xyz [Z2Axis] Z2AxisMode
+
+::
+
+  - 1
+
+* Transmitted Light.dye [General] DynRng_Auto
+
+::
+
+  - 0
+
+* DsRed - Confocal.ltp [Dichroic] Ex
+
+::
+
+  - 2
+
+* Lamp A Reference.ffc [0] Sample
+
+::
+
+  - Green Slide
+
+* Transmitted Reference.ffc [Capture] BlurStrength
+
+::
+
+  - 1
+
+* Lamp A Reference.ffc [Capture] RegionCX
+
+::
+
+  - 1344
+
+* Lamp A Reference.ffc [Capture] RegionCY
+
+::
+
+  - 1024
+
+* Transmitted Reference.ffc [Capture] Exposure
+
+::
+
+  - 1.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus] Algo_DownTrend_Limit
+
+::
+
+  - 5
+
+* DsRed - Confocal.dye [ImageAutoSave] Num
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] LaserAFOffsets
+
+::
+
+  - 0.000000
+
+* Laser AutoFocus.afc [ThresholdSkip] Mode
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] DoubleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [0] BinX
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] SimpleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [0] BinY
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] LaserAFDisplacement
+
+::
+
+  - 100.000000
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] BinY
+
+::
+
+  - -1
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] BinX
+
+::
+
+  - -1
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] DoubleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Laser AutoFocus.afc [Region] SizeX
+
+::
+
+  - 150
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] DoubleThreshold_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* DsRed - Confocal.dye [Numerator] Emission
+
+::
+
+  - 520 nm
+
+* Laser AutoFocus.afc [Region] SizeY
+
+::
+
+  - 150
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] Algo_DownTrend_Limit
+
+::
+
+  - 5
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] LaserDataFrequencyHz
+
+::
+
+  - 12000
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] LaserGain
+
+::
+
+  - 6
+
+* Transmitted Light.dye [Data_GraphColors] Int_B
+
+::
+
+  - 128
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] BinY
+
+::
+
+  - -1
+
+* Transmitted Light.dye [Data_GraphColors] Int_G
+
+::
+
+  - 128
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] BinX
+
+::
+
+  - -1
+
+* Transmitted Reference.ffc [General] Version
+
+::
+
+  - 7.00
+
+* Transmitted Light.dye [General] RatioMultiplier
+
+::
+
+  - 100
+
+* Transmitted Reference.ffc [0] Time
+
+::
+
+  - 22:17:27 Mar. 03, 2007
+
+* DsRed - Confocal.dye [Calibration] RHi
+
+::
+
+  - 2.000000
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] Exposure
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] DoubleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Experiment.exp [Version] ATTODAQDEMO.DLL
+
+::
+
+  - 1, 6, 0, 39 (SP2a)
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] BinX
+
+::
+
+  - -1
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] BinY
+
+::
+
+  - -1
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] Algo_SimpleThresh_Percentage
+
+::
+
+  - 20
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] LaserAFDisplacement
+
+::
+
+  - 150.000000
+
+* 20X NA 075 Olympus Confocal.geo [Reference] Distance
+
+::
+
+  - 200.000000
+
+* Experiment.exp [Version] ATTOAUTOMATION.DLL
+
+::
+
+  - 1, 6, 0, 0 (RC4)
+
+* DsRed - Confocal.dye [General] Wavelengths
+
+::
+
+  - 1
+
+* Transmitted light.drt [General] Version
+
+::
+
+  - 7.00
+
+* DsRed - Confocal.ltp [Sliders] Binoc
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] LaserDataPoints
+
+::
+
+  - 3000
+
+* Laser AutoFocus.afc [Capture] DyeName
+
+::
+
+  - Hoechst
+
+* Transmitted.ltp [Sliders] Binoc
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [Experiment] Reanalysis
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] BlurOn
+
+::
+
+  - 0
+
+* 20X NA 075 Olympus Confocal.geo [Calibration] EndY
+
+::
+
+  - 227
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] LaserAFOffsets
+
+::
+
+  - 0.280000
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] FullChip
+
+::
+
+  - 1
+
+* Experiment.exp [TimeOut] Enabled
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] Geometry
+
+::
+
+  - 
+
+* 20X NA 075 Olympus Confocal.geo [Calibration] EndX
+
+::
+
+  - 1000
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] FullChip
+
+::
+
+  - 1
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] AutoMinExposure
+
+::
+
+  - 0.001000
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] LaserDataFrequencyHz
+
+::
+
+  - 12000
+
+* Transmitted Light.dye [Background] Mode
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] LaserDataPoints
+
+::
+
+  - 4000
+
+* Relative Z (Z Stack).xyz [Sensitivity] Sensitivity
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] SimpleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Light.dye [NumeratorBackgroundCapture] Gain
+
+::
+
+  - 0.000000
+
+* DsRed - Confocal.dye [Calibration] B3
+
+::
+
+  - 0.000000
+
+* Experiment.exp [Version] ATTODATAUTILITES.DLL
+
+::
+
+  - 1, 6, 0, 39 (1, 6, 0, 39)
+
+* 96 Well BD Falcon Imaging [353219].plt [20 X Low Olympus] Algo_DownTrend_Sensitivity
+
+::
+
+  - 0.500000
+
+* Transmitted.ltp [Sliders] Objective
+
+::
+
+  - -1
+
+* Lamp A Reference.ffc [0] Geometry
+
+::
+
+  - 20X NA 075 Olympus
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] Geometry
+
+::
+
+  - 
+
+* Transmitted Light.dye [Background] On
+
+::
+
+  - 0
+
+* Transmitted Light.dye [ImageAutoSave] Num
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] LaserAFOffsets
+
+::
+
+  - 0.300000
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] LampB
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] LampA
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Denominator] Emission
+
+::
+
+  - 520 nm
+
+* Transmitted Light.dye [ImageAutoSave] IntervalType
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [Capture] TargetIntensity
+
+::
+
+  - 3000
+
+* Experiment.exp [Version] PLC Fluidics
+
+::
+
+  - Ver. 5.03.00
+
+* Transmitted.ltp [Dichroic] Epi
+
+::
+
+  - 3
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] LampA
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [4X Olympus] LaserFocusAchievable
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [NumeratorBackgroundCapture] LampB
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [Capture] AutoMaxExposure
+
+::
+
+  - 2.000000
+
+* Transmitted.ltp [FlatField] Setting
+
+::
+
+  - Transmitted Reference
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] Trans
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] Algo_DownTrend_Sensitivity
+
+::
+
+  - 0.500000
+
+* 20X NA 075 Olympus Confocal.geo [General] Type
+
+::
+
+  - 1.00
+
+* Lamp A Reference.ffc [0] Version
+
+::
+
+  - 
+
+* Transmitted Light.dye [Calibration] B3
+
+::
+
+  - 0.000000
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] Offset
+
+::
+
+  - 255.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] LaserDataFrequencyHz
+
+::
+
+  - 12000
+
+* Relative Z (Z Stack).xyz [Z2Axis] Z2AxisValue
+
+::
+
+  - 0.000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus] LaserFocusAchievable
+
+::
+
+  - 1
+
+* Experiment.exp [Lamps_1] Name
+
+::
+
+  - 
+
+* Transmitted Light.dye [ImageAutoSave] Den
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [0] RefImage
+
+::
+
+  - Lamp A Reference_20X NA 075 Olympus_ffc.tif
+
+* DsRed - Confocal.dye [Numerator] LightPath
+
+::
+
+  - DsRed - Confocal
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] Algo_DownTrend_Sensitivity
+
+::
+
+  - 0.500000
+
+* Transmitted Light.dye [Data] YAxisLabel
+
+::
+
+  - Calcium
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] RegionCY
+
+::
+
+  - -1
+
+* Lamp A Reference.ffc [Capture] AutoMinExposure
+
+::
+
+  - 0.001000
+
+* Experiment.exp [Lamps_4] Name
+
+::
+
+  - Trans
+
+* 96 Well BD Falcon Imaging [353219].plt [20X NA 075 Olympus Confocal] Shoulder Peak_Algo_RollingAveWidth
+
+::
+
+  - 20
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] RegionCX
+
+::
+
+  - -1
+
+* 96 Well BD Falcon Imaging [353219].plt [20X LWD Olympus] Algo_DownTrend_Limit
+
+::
+
+  - 5
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] SimpleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [40X LWD Olympus] DoubleThreshold_Algo_UseSmoothing
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [Reference] NumImages
+
+::
+
+  - 1
+
+* Lamp A Reference.ffc [0] Trans
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] LaserAlgorithmType
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Data_GraphColors] UseSystem
+
+::
+
+  - 1
+
+* DsRed - Confocal.dye [ImageAutoSave] IntervalType
+
+::
+
+  - 0
+
+* Transmitted Light.dye [Data] YAxisMax
+
+::
+
+  - 5.000000
+
+* Transmitted Light.dye [Numerator] Gain
+
+::
+
+  - 0.000000
+
+* 96 Well BD Falcon Imaging [353219].plt [40X Olympus Confocal] LaserAFDisplacement
+
+::
+
+  - 0.000000
+
+* DsRed - Confocal.dye [DenominatorBackgroundCapture] AutoMaxExposure
+
+::
+
+  - 5.000000
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] ValidMeanCameraBias
+
+::
+
+  - 0
+
+* Lamp A Reference.ffc [Capture] RegionY
+
+::
+
+  - 0
+
+* DsRed - Confocal.dye [Data_GraphColors] Ext_R
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [10X Olympus] LaserAlgorithmType
+
+::
+
+  - 2
+
+* DsRed - Confocal.dye [Data_GraphColors] Ext_G
+
+::
+
+  - 0
+
+* 96 Well BD Falcon Imaging [353219].plt [60X Olympus] Algo_DownTrend_Sensitivity
+
+::
+
+  - 0.500000
+
+* DsRed - Confocal.ltp [Shutters] Trans
+
+::
+
+  - 0
+
+* Experiment.exp [Version] ATTOMULTIWELL.OCX
+
+::
+
+  - 1,6,0,39 (1,6,0,39)
+
+* DsRed - Confocal.dye [Data_GraphColors] Ext_B
+
+::
+
+  - 160
+
+* Lamp A Reference.ffc [Capture] RegionX
+
+::
+
+  - 0
+
+* Relative Z (Z Stack).xyz [Z2Axis] Z2AxisEnabled
+
+::
+
+  - 0
+
+* Camera binning
+
+::
+
+  - 2x2
+
+* Transmitted Light.dye [NumeratorBackgroundConstant] Offset
+
+::
+
+  - 0
+
+* Transmitted Reference.ffc [General] Type
+
+::
+
+  - Flat Field
+
+* Montage 2 x 2.mon [General] CellCount
+
+::
+
+  - 500
+
+* Transmitted Light.dye [DenominatorBackgroundCapture] AutoMaxExposure
+
+::
+
+  - 5.000000
+
+* Lamp A Reference.ffc [Capture] ValidMeanCameraBias
+
+::
+
+  - 1
+
+* 96 Well BD Falcon Imaging [353219].plt [10 X Olympus] Algo_DownTrend_Sensitivity
+
+::
+
+  - 0.500000
+

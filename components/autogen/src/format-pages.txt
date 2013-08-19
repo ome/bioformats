@@ -1478,6 +1478,7 @@ opennessRating = Fair
 presenceRating = Very good
 utilityRating = Very good
 reader = NativeND2Reader.java
+originalMetadataPage = ND2Reader
 notes = There are two distinct versions of ND2: an old version, which uses \n
 JPEG-2000 compression, and a new version which is either uncompressed or \n
 Zip-compressed.  We are not aware of the version number or release date \n
@@ -1866,6 +1867,7 @@ presenceRating = Outstanding
 utilityRating = Poor
 reader = NativeQTReader.java
 writer = QTWriter.java
+originalMetadataPage = QTReader
 notes = Bio-Formats has two modes of operation for QuickTime: \n
 \n
   * QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
@@ -2046,6 +2048,7 @@ presenceRating = Outstanding
 utilityRating = Fair
 reader = TiffReader.java
 writer = TiffWriter.java
+originalMetadataPage = TiffDelegateReader
 notes = Bio-Formats can also read BigTIFF files (TIFF files larger than 4 GB). \n
 Bio-Formats can save image stacks as TIFF or BigTIFF. \n
 \n

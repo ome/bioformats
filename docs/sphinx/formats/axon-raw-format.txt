@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Axon Raw Format <axon-raw-format-metadata>`
 
+Original Metadata Support: :doc:`Axon Raw Format <ARFReader>`
 
 
 We currently have:

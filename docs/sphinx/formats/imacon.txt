@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Imacon <imacon-metadata>`
 
+Original Metadata Support: :doc:`Imacon <ImaconReader>`
 
 
 We currently have:

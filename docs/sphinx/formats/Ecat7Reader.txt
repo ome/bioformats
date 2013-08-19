@@ -1,0 +1,835 @@
+*******************************************************************************
+Ecat7Reader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats ECAT7 format reader.
+
+Key/value pairs
+===============================================================================
+
+* Filter code
+
+::
+
+  - 8
+
+* R filter code
+
+::
+
+  - 8
+
+* Wobble speed
+
+::
+
+  - 0
+
+* Bed elevation
+
+::
+
+  - 80.706
+  - 80.702
+
+* CTI fill
+
+::
+
+  - 0.0
+
+* True lower threshold
+
+::
+
+  - 350
+
+* R filter cutoff
+
+::
+
+  - 0.0
+
+* Frame duration
+
+::
+
+  - 30000
+
+* Physician name
+
+::
+
+  -                                 
+
+* Operator name
+
+::
+
+  -                                 
+
+* System type
+
+::
+
+  - 962
+
+* Patient weight
+
+::
+
+  - 0.0
+
+* Facility name
+
+::
+
+  - ECAT                
+
+* Well counter correction factor
+
+::
+
+  - 0.0
+
+* MT (2, 1)
+
+::
+
+  - 0.0
+
+* Intrinsic tilt
+
+::
+
+  - 0.0
+
+* Patient sex
+
+::
+
+  - F
+
+* Bin size
+
+::
+
+  - 0.225
+
+* Calibration units
+
+::
+
+  - 1
+
+* True upper threshold
+
+::
+
+  - 650
+
+* User fill
+
+::
+
+  - 0.0
+
+* Z pixel size
+
+::
+
+  - 0.2425
+
+* File type
+
+::
+
+  - 7
+
+* Calibration units label
+
+::
+
+  - 1
+
+* Recon. views
+
+::
+
+  - 128
+
+* Patient height
+
+::
+
+  - 0.0
+
+* Z filter cutoff
+
+::
+
+  - 0.0
+
+* Decay correction factor
+
+::
+
+  - 1.0031623
+  - 1.0015812
+  - 1.001583
+
+* Patient dexterity
+
+::
+
+  - U
+
+* MT (2, 2)
+
+::
+
+  - 0.0
+
+* Frame start time
+
+::
+
+  - 16
+  - 33
+
+* Patient name
+
+::
+
+  - FP609_1_Jarcho, 11.20.07        
+  - FP609_2_Jarcho, 11.21.07        
+
+* X pixel size
+
+::
+
+  - 0.18721865
+
+* Number of accepted beats
+
+::
+
+  - 0
+
+* Z filter order
+
+::
+
+  - 0
+
+* Z resolution
+
+::
+
+  - 0.0
+
+* MT (1, 4)
+
+::
+
+  - 0.0
+
+* Dose start time
+
+::
+
+  - 1195685676
+  - 1195600392
+  - 1199737857
+  - 1195594370
+  - 1195679657
+
+* Isotope Name
+
+::
+
+  - F-18    
+
+* X offset
+
+::
+
+  - 0.0
+
+* Radiopharmaceutical
+
+::
+
+  - F-18 Solution                   
+
+* Study type
+
+::
+
+  - FP609_1_Ja0 
+  - FP609_2_Ja0 
+
+* Original path
+
+::
+
+  - /home/data/FP609_2_Jarcho_224_fe
+  - /home/data/FP609_1_Jarcho_225_57
+  - /home/data/MotionTracker_95_abe_
+  - /home/data/FP609_1_Jarcho_225_5a
+  - /home/data/FP609_2_Jarcho_224_c0
+
+* Image minimum
+
+::
+
+  - 0
+
+* Recon. zoom
+
+::
+
+  - 2.75
+
+* MT (2, 3)
+
+::
+
+  - 0.0
+
+* Number of dimensions
+
+::
+
+  - 3
+
+* MT (3, 4)
+
+::
+
+  - 0.0
+
+* Z rotation angle
+
+::
+
+  - 0.0
+
+* Gantry rotation
+
+::
+
+  - 0.0
+
+* Lower threshold
+
+::
+
+  - 0
+
+* Annotation
+
+::
+
+  - osem-wa6/16                             
+
+* Filter scatter fraction
+
+::
+
+  - 0.34570116
+  - 0.3509256
+  - 0.2643202
+  - 0.48254684
+  - 0.490193
+
+* Filter order
+
+::
+
+  - 0
+
+* Gantry tilt
+
+::
+
+  - 0.0
+
+* Image maximum
+
+::
+
+  - 32767
+  - 32766
+
+* Source type
+
+::
+
+  - 2
+
+* MT (1, 1)
+
+::
+
+  - 0.0
+
+* Number of bed positions
+
+::
+
+  - 0
+
+* Acquisition type
+
+::
+
+  - 4
+
+* Y pixel size
+
+::
+
+  - 0.18721865
+
+* Recon. type
+
+::
+
+  - 11
+
+* MT (2, 4)
+
+::
+
+  - 0.0
+
+* MT (3, 3)
+
+::
+
+  - 0.0
+
+* R wave offset
+
+::
+
+  - 0
+
+* Z filter code
+
+::
+
+  - 1
+
+* Patient ID
+
+::
+
+  - FP609_1         
+  - FP609_2         
+
+* Version
+
+::
+
+  - 72
+
+* R filter resolution
+
+::
+
+  - 0.4
+
+* Distance scanned
+
+::
+
+  - 15.52
+
+* Z offset
+
+::
+
+  - 0.0
+
+* Filter resolution
+
+::
+
+  - 0.0
+
+* Coin. sample mode
+
+::
+
+  - 0
+
+* R filter order
+
+::
+
+  - 0
+
+* Scatter type
+
+::
+
+  - 2
+
+* Patient age
+
+::
+
+  - 0.0
+
+* Y resolution
+
+::
+
+  - 0.0
+
+* Y offset
+
+::
+
+  - 0.0
+
+* Data type
+
+::
+
+  - 6
+
+* Septa state
+
+::
+
+  - 1
+
+* Number of R elements
+
+::
+
+  - 288.0
+
+* Branching fraction
+
+::
+
+  - 0.97
+
+* MT (3, 2)
+
+::
+
+  - 0.0
+
+* Fill CTI #2
+
+::
+
+  - 0.0
+
+* Fill CTI #3
+
+::
+
+  - 0.0
+
+* Fill CTI #4
+
+::
+
+  - 0.0
+
+* Plane separation
+
+::
+
+  - 0.2425
+
+* Scan start
+
+::
+
+  - 1195685676
+  - 1195600392
+  - 1199737857
+  - 1195594370
+  - 1195679657
+
+* Patient orientation
+
+::
+
+  - 8
+
+* Fill CTI #5
+
+::
+
+  - 0.0
+
+* Filter cutoff frequency
+
+::
+
+  - 0.0
+
+* Acquistion mode
+
+::
+
+  - 0
+
+* Number of angles
+
+::
+
+  - 144.0
+
+* Fill CTI #1
+
+::
+
+  - 0.0
+
+* Z filter resolution
+
+::
+
+  - 0.0
+
+* Calibration factor
+
+::
+
+  - 9279121.0
+
+* Fill CTI #6
+
+::
+
+  - 0.0
+
+* Processing code
+
+::
+
+  - 2947
+
+* Patient birth date
+
+::
+
+  - -57600
+
+* MT (1, 3)
+
+::
+
+  - 0.0
+
+* Isotope half-life
+
+::
+
+  - 6586.2
+
+* MT (3, 1)
+
+::
+
+  - 0.0
+
+* Transaxial FOV
+
+::
+
+  - 58.3
+
+* Bed position #11
+
+::
+
+  - 0.0
+
+* Serial number
+
+::
+
+  - 1         
+
+* Bed position #10
+
+::
+
+  - 0.0
+
+* Bed position #15
+
+::
+
+  - 0.0
+
+* Number of gates
+
+::
+
+  - 1
+
+* Bed position #14
+
+::
+
+  - 0.0
+
+* Bed position #13
+
+::
+
+  - 0.0
+
+* Bed position #12
+
+::
+
+  - 0.0
+
+* Filter ramp slope
+
+::
+
+  - 0.0
+
+* Process code
+
+::
+
+  -           
+
+* X resolution
+
+::
+
+  - 0.0
+
+* Gate duration
+
+::
+
+  - 0
+
+* Description
+
+::
+
+  - Dynamic Frames  6i/16s          
+
+* Filter scatter slope
+
+::
+
+  - 0.0
+
+* MT (1, 2)
+
+::
+
+  - 0.0
+
+* Bed position #05
+
+::
+
+  - 0.0
+
+* Data units
+
+::
+
+  - Bq/cc                           
+
+* Bed position #06
+
+::
+
+  - 0.0
+
+* Bed position #07
+
+::
+
+  - 0.0
+
+* Bed position #08
+
+::
+
+  - 0.0
+
+* Bed position #09
+
+::
+
+  - 0.0
+
+* Scale factor
+
+::
+
+  - 9.762767E-8
+  - 8.955304E-8
+  - 2.557538E-6
+  - 7.363507E-8
+  - 4.572834E-8
+
+* Compression
+
+::
+
+  - 0
+
+* Bed position #02
+
+::
+
+  - 0.0
+
+* Bed position #01
+
+::
+
+  - 0.0
+
+* Bed position #04
+
+::
+
+  - 0.0
+
+* Angular compression
+
+::
+
+  - 1
+
+* Bed position #03
+
+::
+
+  - 0.0
+
+* Dosage
+
+::
+
+  - 0.0
+
+* Axial sample mode
+
+::
+
+  - 0
+

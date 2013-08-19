@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`DICOM <dicom-metadata>`
 
+Original Metadata Support: :doc:`DICOM <DicomReader>`
 Freely Available Software:
 
 - `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_ 

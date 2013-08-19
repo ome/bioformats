@@ -1,0 +1,130 @@
+*******************************************************************************
+SlidebookReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Olympus Slidebook format reader.
+
+Key/value pairs
+===============================================================================
+
+* channel intensification #09
+
+::
+
+  - -1
+
+* channel intensification #08
+
+::
+
+  - -1
+
+* channel intensification #07
+
+::
+
+  - -1
+
+* channel #1
+
+::
+
+  - Xe Reflect
+  - FITC
+
+* channel intensification #10
+
+::
+
+  - -1
+
+* channel intensification #01
+
+::
+
+  - -1
+
+* channel intensification #11
+
+::
+
+  - -1
+
+* channel intensification #02
+
+::
+
+  - -1
+
+* channel intensification #12
+
+::
+
+  - -1
+
+* channel 0 Neutral density
+
+::
+
+  - 1.0
+
+* Mag. changer
+
+::
+
+  - 1.0 x 
+
+* channel intensification #05
+
+::
+
+  - -1
+
+* channel intensification #06
+
+::
+
+  - -1
+
+* channel intensification #03
+
+::
+
+  - -1
+
+* channel intensification #04
+
+::
+
+  - -1
+
+* channel intensification #5
+
+::
+
+  - 0
+
+* channel intensification #2
+
+::
+
+  - -1
+
+* channel intensification #1
+
+::
+
+  - -1
+
+* channel intensification #4
+
+::
+
+  - 0
+
+* channel intensification #3
+
+::
+
+  - -1
+

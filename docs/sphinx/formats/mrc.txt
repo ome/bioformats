@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`MRC (Medical Research Council) <mrc-metadata>`
 
+Original Metadata Support: :doc:`MRC (Medical Research Council) <MRCReader>`
 
 Sample Datasets:
 

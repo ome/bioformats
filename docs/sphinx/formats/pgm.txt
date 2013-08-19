@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`PGM (Portable Gray Map) <pgm-metadata>`
 
+Original Metadata Support: :doc:`PGM (Portable Gray Map) <PGMReader>`
 Freely Available Software:
 
 - `Netpbm graphics filter <http://netpbm.sourceforge.net/>`_

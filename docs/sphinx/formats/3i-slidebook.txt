@@ -21,6 +21,7 @@ Officially Supported Versions: 4.1, 4.2
 
 Supported Metadata Fields: :doc:`3i SlideBook <3i-slidebook-metadata>`
 
+Original Metadata Support: :doc:`3i SlideBook <SlidebookReader>`
 
 
 We currently have:

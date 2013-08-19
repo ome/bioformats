@@ -1,0 +1,199 @@
+*******************************************************************************
+L2DReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Li-Cor L2D format reader.
+
+Key/value pairs
+===============================================================================
+
+* ApplicationName
+
+::
+
+  - Odyssey 
+
+* BarCode
+
+::
+
+  -  
+
+* IPS0\:ScanName
+
+::
+
+  - 
+
+* ImageSetNames
+
+::
+
+  -  
+
+* ImageSetNumbers
+
+::
+
+  -  
+
+* FocusOffset
+
+::
+
+  - 0 
+
+* NumImageSetNames
+
+::
+
+  - 0 
+
+* FileVersion
+
+::
+
+  - SCAN VERSION 1.6 
+
+* ScanChannels
+
+::
+
+  - 800 
+
+* ScannerName
+
+::
+
+  - Odyssey 
+
+* ScanResolution
+
+::
+
+  - 169.49153 
+
+* NumImageSetNumbers
+
+::
+
+  - 0 
+
+* ExperimentNames
+
+::
+
+  - 28020811 
+
+* FileType
+
+::
+
+  - LI-COR LI2D SCAN File 
+
+* NumScans
+
+::
+
+  - 4
+
+* ScanArea
+
+::
+
+  - 0.0,0.0 to 7.0,5.0 
+
+* IPS0\:UserName
+
+::
+
+  - 
+
+* Comments
+
+::
+
+  -  
+
+* NumImageNames
+
+::
+
+  - 1 
+
+* ScanNames
+
+::
+
+  - 2802081_9, 2802081_10, 2802081_11, 2802081_12
+
+* ScanIntensity700
+
+::
+
+  - 5 
+
+* ScanQuality
+
+::
+
+  - medium 
+
+* IPS0\:ScanGroupName
+
+::
+
+  - 
+
+* ScanGroup
+
+::
+
+  - kesireddy 
+
+* NumExperimentNames
+
+::
+
+  - 1 
+
+* NumInProgress
+
+::
+
+  - 0
+
+* IPS0\:ScannerName
+
+::
+
+  - 
+
+* Name
+
+::
+
+  - 290208 HSKMandmir2
+  - 2802081_9 
+  - 2802081_10 
+  - 2802081_11 
+  - 2802081_12 
+
+* ScanDate
+
+::
+
+  - 2008, 1, 29 
+
+* ScanIntensity800
+
+::
+
+  - 5 
+
+* ImageNames
+
+::
+
+  - 800.TIF 
+

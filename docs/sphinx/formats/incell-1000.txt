@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`InCell 1000 <incell-1000-metadata>`
 
+Original Metadata Support: :doc:`InCell 1000 <InCellReader>`
 
 
 We currently have:

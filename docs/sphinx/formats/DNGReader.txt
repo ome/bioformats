@@ -1,0 +1,303 @@
+*******************************************************************************
+DNGReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats DNG format reader.
+
+Key/value pairs
+===============================================================================
+
+* USER_COMMENT
+
+::
+
+  - [B@1712310
+
+* EXIF_VERSION
+
+::
+
+  - [B@1b7eff5
+
+* EXPOSURE_MODE
+
+::
+
+  - 1
+
+* COMPONENTS_CONFIGURATION
+
+::
+
+  - [B@eae08e
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* DateTime
+
+::
+
+  - 2013:03:08 17:27:32
+
+* YResolution
+
+::
+
+  - 72
+
+* SHUTTER_SPEED_VALUE
+
+::
+
+  - 327680/65536
+
+* METERING_MODE
+
+::
+
+  - 2
+
+* FLASH_PIX_VERSION
+
+::
+
+  - [B@3cbc57
+
+* FLASH
+
+::
+
+  - 16
+
+* ImageLength
+
+::
+
+  - 3744
+
+* Instrument Model
+
+::
+
+  - Canon EOS 5D Mark II
+
+* XResolution
+
+::
+
+  - 72
+
+* 40965
+
+::
+
+  - 42308
+
+* F_NUMBER
+
+::
+
+  - 4/1
+
+* PIXEL_X_DIMENSION
+
+::
+
+  - 5616
+
+* FOCAL_PLANE_Y_RESOLUTION
+
+::
+
+  - 3744000/958
+
+* CUSTOM_RENDERED
+
+::
+
+  - 0
+
+* FOCAL_PLANE_X_RESOLUTION
+
+::
+
+  - 5616000/1459
+
+* ResolutionUnit
+
+::
+
+  - Inch
+
+* PhotometricInterpretation
+
+::
+
+  - RGB
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* COLOR_SPACE
+
+::
+
+  - 1
+
+* APERTURE_VALUE
+
+::
+
+  - 262144/65536
+
+* SUB_SEC_TIME_DIGITIZED
+
+::
+
+  - 26
+
+* EXPOSURE_PROGRAM
+
+::
+
+  - 1
+
+* Instrument Make
+
+::
+
+  - Canon
+
+* MAKER_NOTE
+
+::
+
+  - 1
+
+* SUB_SEC_TIME_ORIGINAL
+
+::
+
+  - 26
+
+* Copyright
+
+::
+
+  - 
+
+* WHITE_BALANCE
+
+::
+
+  - 0
+
+* PIXEL_Y_DIMENSION
+
+::
+
+  - 3744
+
+* ImageWidth
+
+::
+
+  - 5616
+
+* Artist
+
+::
+
+  - 
+
+* LITTLE_ENDIAN
+
+::
+
+  - true
+
+* Orientation
+
+::
+
+  - 1st row -> right; 1st column -> top
+
+* FOCAL_LENGTH
+
+::
+
+  - 50/1
+
+* DATE_TIME_DIGITIZED
+
+::
+
+  - 2013:03:08 17:27:32
+
+* DATE_TIME_ORIGINAL
+
+::
+
+  - 2013:03:08 17:27:32
+
+* SCENE_CAPTURE_TYPE
+
+::
+
+  - 0
+
+* Compression
+
+::
+
+  - Old JPEG
+
+* ISO_SPEED_RATINGS
+
+::
+
+  - 100
+
+* BIG_TIFF
+
+::
+
+  - false
+
+* EXPOSURE_BIAS_VALUE
+
+::
+
+  - 0/1
+
+* FOCAL_PLANE_RESOLUTION_UNIT
+
+::
+
+  - 2
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - RGB
+
+* SUB_SEC_TIME
+
+::
+
+  - 26
+
+* EXPOSURE_TIME
+
+::
+
+  - 1/30
+

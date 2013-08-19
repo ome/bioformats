@@ -1,0 +1,159 @@
+*******************************************************************************
+TillVisionReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats TillVision format reader.
+
+Key/value pairs
+===============================================================================
+
+* Ratio Scale Factor
+
+::
+
+  - 1000,000000
+
+* Monochromator wavelength [nm]
+
+::
+
+  - 350
+
+* Beta
+
+::
+
+  - 8,000000
+
+* RMin
+
+::
+
+  - 0,000000
+
+* Exposure time [ms]
+
+::
+
+  - 50
+
+* Chip window y-position
+
+::
+
+  - 0
+
+* Image name where ROI A was extracted from
+
+::
+
+  - Snapshot, ROI Index : 0
+
+* Monochromator wavelength increment[nm]
+
+::
+
+  - 0
+
+* Protocol
+
+::
+
+  - 
+
+* Background correction mode
+
+::
+
+  - Using ROIs
+
+* BleachRate
+
+::
+
+  - 1,0000
+
+* Horizontal binning factor
+
+::
+
+  - 4
+
+* Start time of experiment
+
+::
+
+  - 02:30:27.215 PM
+
+* Image name where ROI B was extracted from
+
+::
+
+  - Snapshot, ROI Index : 0
+
+* RMax
+
+::
+
+  - 12,000000
+
+* T1
+
+::
+
+  - 12
+
+* T2
+
+::
+
+  - 12
+
+* Numerator
+
+::
+
+  - Fluorescence 350nm1
+
+* Denominator
+
+::
+
+  - Fluorescence 350nm1(F0)
+
+* Vertical binning factor
+
+::
+
+  - 4
+
+* Image type
+
+::
+
+  - Fluorescence
+
+* Chip window width
+
+::
+
+  - 344
+
+* Chip window x-position
+
+::
+
+  - 0
+
+* Kd
+
+::
+
+  - 224,000000
+
+* Chip window height
+
+::
+
+  - 260
+

@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Becker & Hickl SPCImage <becker-hickl-spcimage-metadata>`
 
+Original Metadata Support: :doc:`Becker & Hickl SPCImage <SDTReader>`
 
 
 We currently have:

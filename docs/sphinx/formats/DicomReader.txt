@@ -1,0 +1,756 @@
+*******************************************************************************
+DicomReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats DICOM format reader.
+
+Key/value pairs
+===============================================================================
+
+* 0008,1010 Station Name #1
+
+::
+
+  - 
+
+* 0028,0011 Columns #1
+
+::
+
+  - 512
+  - 440
+
+* 0008,0018 SOP Instance UID #1
+
+::
+
+  - 
+
+* 0008,1030 Study Description #1
+
+::
+
+  - 
+
+* 0002,0003 Media Storage SOP Instance UID #1
+
+::
+
+  - 1.3.46.670589.11.30.9.1062531302827752870602.13.1.1.1.0.0.1
+
+* 0020,0032 Image Position (Patient) #1
+
+::
+
+  - 
+
+* 2005,fb3a 2005,fb3a #1
+
+::
+
+  - Breath hold
+  - Brain
+
+* 2001,fc0b 2001,fc0b #1
+
+::
+
+  - CORONAL
+  - TRANSVERSAL
+
+* 2005,fb13 2005,fb13 #1
+
+::
+
+  - PATCH
+
+* 0028,0031 Zoom Factor #1
+
+::
+
+  - 
+
+* 0008,0022 Acquisition Date #1
+
+::
+
+  - 
+
+* 0008,0008 Image Type #1
+
+::
+
+  - 
+
+* 0018,1400 Acquisition Device Processing Descr. #1
+
+::
+
+  - 
+
+* 0020,000d Study Instance UID #1
+
+::
+
+  - 
+
+* 0020,0011 Series Number #1
+
+::
+
+  - 
+
+* Header information
+
+::
+
+  -                                                                                                                                 
+
+* 2001,fc20 2001,fc20 #1
+
+::
+
+  - GraSE
+
+* 0008,0031 Series Time #1
+
+::
+
+  - 
+
+* 0028,0010 Rows #1
+
+::
+
+  - 512
+  - 440
+
+* 0018,0088 Spacing Between Slices #1
+
+::
+
+  - 4
+  - 6
+
+* 0018,0015 Body Part Examined #1
+
+::
+
+  - 
+
+* 0018,1260 Plate Type #1
+
+::
+
+  - 
+
+* 0018,0087 Magnetic Field Strength #1
+
+::
+
+  - 
+
+* 0018,5100 Patient Position #1
+
+::
+
+  - 
+
+* 0018,0084 Imaging Frequency #1
+
+::
+
+  - 
+
+* 0002,0012 Implementation Class UID #1
+
+::
+
+  - 1.3.46.670589.17.1
+
+* 0018,1088 Heart Rate #1
+
+::
+
+  - 
+
+* 0028,1053 Rescale Slope #1
+
+::
+
+  - 1.41758
+  - 3.01099
+
+* 0028,1051 Window Width #1
+
+::
+
+  - 2178
+  - 2341
+  - 1024
+
+* 0028,1050 Window Center #1
+
+::
+
+  - 1021
+  - 1305
+  - 550
+
+* 0018,1082 High R-R Value #1
+
+::
+
+  - 
+
+* 0008,0012 Instance Creation Date #1
+
+::
+
+  - 
+
+* 0008,0064 Conversion Type #1
+
+::
+
+  - 
+
+* 0008,0030 Study Time #1
+
+::
+
+  - 
+
+* 0008,0021 Series Date #1
+
+::
+
+  - 
+
+* 0008,0070 Manufacturer #1
+
+::
+
+  - 
+
+* 0008,103e Series Description #1
+
+::
+
+  - 
+
+* 0010,0030 Patient's Birth Date #1
+
+::
+
+  - 
+
+* 2001,00fc 2001,00fc #1
+
+::
+
+  - PHILIPS IMAGING DD 001
+
+* 2005,fb2a 2005,fb2a #1
+
+::
+
+  - 9304634
+  - 7910182
+
+* 2005,fb3e 2005,fb3e #1
+
+::
+
+  - 
+
+* 0018,0091 Echo Train Length #1
+
+::
+
+  - 
+
+* 0018,0080 Repetition Time #1
+
+::
+
+  - 
+
+* 0018,0089 Number of Phase Encoding Steps #1
+
+::
+
+  - 
+
+* 0020,000e Series Instance UID #1
+
+::
+
+  - 
+
+* 0020,0052 Frame of Reference UID #1
+
+::
+
+  - 
+
+* 0018,1250 Receive Coil Name #1
+
+::
+
+  - 
+
+* 0018,0020 Scanning Sequence #1
+
+::
+
+  - 
+
+* 0018,0083 Number of Averages #1
+
+::
+
+  - 
+
+* 0010,0040 Patient's Sex #1
+
+::
+
+  - 
+
+* 0008,0060 Modality #1
+
+::
+
+  - 
+
+* 0018,1251 Transmit Coil Name #1
+
+::
+
+  - 
+
+* 0002,0016 Source Application Entity Title #1
+
+::
+
+  - VTS_DCM_STORE
+
+* 0018,1050 Spatial Resolution #1
+
+::
+
+  - 
+
+* 2001,fc3f 2001,fc3f #1
+
+::
+
+  - INTERPOLATE
+
+* 0018,1401 Acquisition Device Processing Code #1
+
+::
+
+  - 
+
+* 0008,0050 Accession Number #1
+
+::
+
+  - 
+
+* 0018,1312 In-plane Phase Encoding Direction #1
+
+::
+
+  - 
+
+* 0018,1402 Cassette Orientation #1
+
+::
+
+  - 
+
+* 0008,0020 Study Date #1
+
+::
+
+  - 
+
+* 0008,0080 Institution Name #1
+
+::
+
+  - 
+
+* 0028,0032 Zoom Center #1
+
+::
+
+  - 
+
+* 2001,fc1a 2001,fc1a #1
+
+::
+
+  - 
+
+* 0018,0050 Slice Thickness #1
+
+::
+
+  - 
+
+* 0028,0030 Pixel Spacing #1
+
+::
+
+  - 1.46484\1.46484
+  - 0.449219\0.449219
+
+* 0020,0012 Acquisition Number #1
+
+::
+
+  - 
+
+* 0018,1030 Protocol Name #1
+
+::
+
+  - 
+
+* 0002,0013 Implementation Version Name #1
+
+::
+
+  - ARCVTS04NOV99
+
+* 0008,1140 Referenced Image Sequence #1
+
+::
+
+  - 
+
+* 0028,0004 Photometric Interpretation #1
+
+::
+
+  - MONOCHROME2
+  - MONOCHROME1
+
+* 2005,fb1e 2005,fb1e #1
+
+::
+
+  - compose
+
+* 0018,0086 Echo Number(s) #1
+
+::
+
+  - 
+
+* 0018,1081 Low R-R Value #1
+
+::
+
+  - 
+
+* 0018,5101 View Position #1
+
+::
+
+  - 
+
+* 0002,0010 Transfer Syntax UID #1
+
+::
+
+  - 1.2.840.10008.1.2
+
+* 0010,0020 Patient ID #1
+
+::
+
+  - 
+
+* 0018,6000 Sensitivity #1
+
+::
+
+  - 
+
+* 0008,0016 SOP Class UID #1
+
+::
+
+  - 
+
+* 2005,00fb 2005,00fb #1
+
+::
+
+  - PHILIPS MR IMAGING DD 001
+
+* 0018,0085 Imaged Nucleus #1
+
+::
+
+  - 
+
+* 0028,0100 Bits Allocated #1
+
+::
+
+  - 16
+
+* 0008,0033 Content Time #1
+
+::
+
+  - 
+
+* 0008,0023 Content Date #1
+
+::
+
+  - 
+
+* 0018,1261 Phosphor Type #1
+
+::
+
+  - 
+
+* 0008,0005 Specific Character Set #1
+
+::
+
+  - 
+
+* 0018,1403 Cassette Size #1
+
+::
+
+  - 
+
+* 0010,1030 Patient's Weight #1
+
+::
+
+  - 
+
+* 0018,0093 Percent Sampling #1
+
+::
+
+  - 
+
+* 0008,0014 Instance Creator UID #1
+
+::
+
+  - 
+
+* 0028,0002 Samples per pixel #1
+
+::
+
+  - 1
+
+* 0018,1083 Intervals Acquired #1
+
+::
+
+  - 
+
+* 0018,0081 Echo Time #1
+
+::
+
+  - 
+
+* 0008,0013 Instance Creation Time #1
+
+::
+
+  - 
+
+* 0018,0021 Sequence Variant #1
+
+::
+
+  - 
+
+* 0028,0102 High Bit #1
+
+::
+
+  - 
+
+* 0020,0037 Image Orientation (Patient) #1
+
+::
+
+  - 
+
+* 2010,0100 Border Density #1
+
+::
+
+  - 
+
+* 0008,0032 Acquisition Time #1
+
+::
+
+  - 
+
+* 0020,0010 0020,0010 #1
+
+::
+
+  - 282775287
+  - 282775290
+
+* 0008,1090 Manufacturer's Model Name #1
+
+::
+
+  - 
+
+* 0018,0094 Percent Phase Field of View #1
+
+::
+
+  - 
+
+* 0018,0022 Scan Options #1
+
+::
+
+  - 
+
+* 0008,1040 Institutional Department Name #1
+
+::
+
+  - 
+
+* 0028,0103 Pixel Representation #1
+
+::
+
+  - 0
+
+* 0018,1020 Software Version(s) #1
+
+::
+
+  - 
+
+* 2005,fb27 2005,fb27 #1
+
+::
+
+  - MINIMUM
+
+* 0021,00fd 0021,00fd #1
+
+::
+
+  - PHILIPS-MR-1
+
+* 0019,00fe 0019,00fe #1
+
+::
+
+  - PHILIPS-MR-1
+
+* 0028,1052 Rescale Intercept #1
+
+::
+
+  - 0
+
+* 2005,fb30 2005,fb30 #1
+
+::
+
+  -    F
+  -    E
+
+* 0020,0013 Instance Number #1
+
+::
+
+  - 
+
+* 0018,1000 Device Serial Number #1
+
+::
+
+  - 
+
+* 0010,0010 Patient's Name #1
+
+::
+
+  - 
+
+* 0018,1084 Intervals Rejected #1
+
+::
+
+  - 
+
+* 0028,1054 Rescale Type #1
+
+::
+
+  - 
+
+* 0018,0023 MR Acquisition Type #1
+
+::
+
+  - 
+
+* 0002,0002 Media Storage SOP Class UID #1
+
+::
+
+  - 1.2.840.10008.5.1.4.1.1.4
+
+* 0018,1314 Flip Angle #1
+
+::
+
+  - 
+
+* 0028,0034 Pixel Aspect Ratio #1
+
+::
+
+  - 
+
+* 2005,fb35 2005,fb35 #1
+
+::
+
+  - PIXEL
+
+* 2005,fb1f 2005,fb1f #1
+
+::
+
+  - compose
+
+* 0028,0101 Bits Stored #1
+
+::
+
+  - 
+

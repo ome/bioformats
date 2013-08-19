@@ -1,0 +1,285 @@
+*******************************************************************************
+GatanDM2Reader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Gatan DM2 format reader.
+
+Key/value pairs
+===============================================================================
+
+* Tag 14
+
+::
+
+  - 0.5
+
+* Tag 15
+
+::
+
+  - 0.5
+
+* Image label
+
+::
+
+  - 
+
+* Tag 17
+
+::
+
+  - 63.245552
+
+* AskForMagnificationMethod
+
+::
+
+  - 
+
+* Physical size units
+
+::
+
+  - µm
+
+* Tag 19
+
+::
+
+  - 
+
+* Operator
+
+::
+
+  - ifuser
+
+* Binning
+
+::
+
+  - 2.0
+
+* Physical height
+
+::
+
+  - 0.0073846155
+
+* BlackContrastLimit
+
+::
+
+  - 2457.0
+
+* Origin
+
+::
+
+  - 0.0
+
+* Tag c
+
+::
+
+  - 1
+
+* AskedForMagnificationYet
+
+::
+
+  - 1
+
+* Tag d
+
+::
+
+  - 1
+
+* Tag 2d
+
+::
+
+  - 
+
+* Exposure
+
+::
+
+  - 0.3
+
+* Voltage
+
+::
+
+  - 100000.0
+
+* Acquisition Time
+
+::
+
+  - 21:32:03
+
+* Tag 2a
+
+::
+
+  - ÿÿÿÿÿÿ
+
+* SavePreview
+
+::
+
+  - false
+
+* Acquisition Date
+
+::
+
+  - 07/31/2008
+
+* Tag 2c
+
+::
+
+  - 1
+
+* Scale
+
+::
+
+  - 1.0
+
+* MaxPixelValue
+
+::
+
+  - 6158.0
+
+* CCD Size
+
+::
+
+  - 1024 x 1024
+
+* Keywords
+
+::
+
+  - word1, word2
+
+* Indicated Magnification
+
+::
+
+  - 25000.0
+
+* Acquisition Mode
+
+::
+
+  - Gain Normalized
+
+* Tag 27
+
+::
+
+  - 1
+
+* SaveAsCreateCustomIcon
+
+::
+
+  - false
+
+* Physical Pixel Size
+
+::
+
+  - 48.0
+
+* WhiteContrastLimit
+
+::
+
+  - 6158.0
+
+* MinPixelValue
+
+::
+
+  - 2457.0
+
+* Tag 28
+
+::
+
+  - 0
+
+* Camera Area
+
+::
+
+  - 
+
+* Tag 23
+
+::
+
+  - 0
+
+* Source
+
+::
+
+  - Gatan SSC
+
+* Name
+
+::
+
+  - philips CM100
+
+* UpdateFetch
+
+::
+
+  - false
+
+* Tag 1d
+
+::
+
+  - 4
+
+* DataBarApplied
+
+::
+
+  - true
+
+* MinimumContrast
+
+::
+
+  - 0.0
+
+* Tag 0
+
+::
+
+  - 
+
+* Physical width
+
+::
+
+  - 0.0073846155
+
+* Exposure Number
+
+::
+
+  - 
+

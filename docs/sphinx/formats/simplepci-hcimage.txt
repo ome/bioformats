@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`SimplePCI & HCImage <simplepci-hcimage-metadata>`
 
+Original Metadata Support: :doc:`SimplePCI & HCImage <PCIReader>`
 
 
 We currently have:

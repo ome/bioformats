@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Bio-Rad Gel <bio-rad-gel-metadata>`
 
+Original Metadata Support: :doc:`Bio-Rad Gel <BioRadGelReader>`
 
 
 We currently have:

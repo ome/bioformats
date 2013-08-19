@@ -20,6 +20,7 @@ Officially Supported Versions: 1.0, 2.0
 
 Supported Metadata Fields: :doc:`Olympus FluoView FV1000 <olympus-fluoview-fv1000-metadata>`
 
+Original Metadata Support: :doc:`Olympus FluoView FV1000 <FV1000Reader>`
 Freely Available Software:
 
 - `FV-Viewer from Olympus <http://www.olympus.co.uk/microscopy/22_FluoView_FV1000__Confocal_Microscope.htm>`_

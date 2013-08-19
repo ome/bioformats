@@ -1,0 +1,141 @@
+*******************************************************************************
+AliconaReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Alicona AL3D format reader.
+
+Key/value pairs
+===============================================================================
+
+* Cols
+
+::
+
+  - 576
+
+* Rows
+
+::
+
+  - 472
+
+* InvalidPixelValue
+
+::
+
+  - 2.999999989754e+21
+
+* PlaceHolder
+
+::
+
+  - AuF2A B I 
+
+* PixelSizeXMeter
+
+::
+
+  - 1.26913e-06
+
+* DirSpacer
+
+::
+
+  - x` ;PBZ< =
+
+* PlanePntZ
+
+::
+
+  - -0.000867220432019
+
+* CreatingApplication
+
+::
+
+  - IFM2.0.1 Aug 31 2006
+
+* TexturePtr
+
+::
+
+  - 0;1;2
+
+* TextureImageOffset
+
+::
+
+  - 1088905
+
+* TagCount
+
+::
+
+  - 20
+
+* PlanePntX
+
+::
+
+  - 0.000365509440000
+
+* IconOffset
+
+::
+
+  - 0
+
+* PlanePntY
+
+::
+
+  - 0.000299514680000
+
+* Sign
+
+::
+
+  - 171333
+
+* PlaneNVY
+
+::
+
+  - 0.013176
+
+* PlaneNVX
+
+::
+
+  - -0.059822
+
+* PlaneNVZ
+
+::
+
+  - 0.998122
+
+* NumberOfPlanes
+
+::
+
+  - 3
+
+* PixelSizeYMeter
+
+::
+
+  - 1.26913e-06
+
+* Version
+
+::
+
+  - 1
+
+* DepthImageOffset
+
+::
+
+  - 1417
+

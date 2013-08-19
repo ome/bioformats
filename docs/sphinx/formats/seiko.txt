@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Seiko <seiko-metadata>`
 
+Original Metadata Support: :doc:`Seiko <SeikoReader>`
 
 
 We currently have:

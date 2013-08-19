@@ -1,16 +1,21 @@
-= $format =
+*******************************************************************************
+$q.handler()
+*******************************************************************************
 #set ($handler = "Bio-Formats " + $q.format() + " format " + $q.handlerType())
 
-This page lists original metadata key/value pairs for $format files.
+This page lists original metadata key/value pairs for the $handler.
 
-== Key/value pairs ==
+Key/value pairs
+===============================================================================
 
-#foreach ($key in $q.keySet())
-#set ($valueList = $q.get($key))
-  $key = {
+#foreach ($key in $originalMetadata.keySet())
+#set ($valueList = $originalMetadata.get($key))
+* $key
+
+::
+
 #foreach ($value in $valueList)
-$value,
+  - $value
 #end
-}
 
 #end

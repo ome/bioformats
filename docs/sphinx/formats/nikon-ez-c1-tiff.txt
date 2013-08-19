@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Nikon EZ-C1 TIFF <nikon-ez-c1-tiff-metadata>`
 
+Original Metadata Support: :doc:`Nikon EZ-C1 TIFF <NikonTiffReader>`
 
 
 We currently have:

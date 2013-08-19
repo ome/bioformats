@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`ECAT7 <ecat7-metadata>`
 
+Original Metadata Support: :doc:`ECAT7 <Ecat7Reader>`
 
 
 We currently have:

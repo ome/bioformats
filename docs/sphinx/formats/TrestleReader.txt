@@ -1,0 +1,193 @@
+*******************************************************************************
+TrestleReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Trestle format reader.
+
+Key/value pairs
+===============================================================================
+
+* Software
+
+::
+
+  - MedScan v3.4.2.1 - Release
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* TileByteCounts
+
+::
+
+  - 2503
+
+* JPEG Quality
+
+::
+
+  - 75
+
+* TileLength
+
+::
+
+  - 352
+
+* XPosition
+
+::
+
+  - 47395
+  - 40854
+  - 44595
+
+* DateTime
+
+::
+
+  - 2010:01:04 15:00:48
+  - 2010:01:04 14:49:54
+  - 2010:01:04 14:41:53
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* Copyright
+
+::
+
+  - (c) 2005 Trestle Corp.
+
+* Objective Power
+
+::
+
+  - 10
+
+* YResolution
+
+::
+
+  - 0
+
+* ImageWidth
+
+::
+
+  - 66304
+  - 71680
+  - 46592
+
+* OverlapsXY
+
+::
+
+  - 64 64 32 32 16 16
+
+* TileOffsets
+
+::
+
+  - 8
+
+* White Balance
+
+::
+
+  - C0AAA1
+
+* YPosition
+
+::
+
+  - 24310
+  - 20524
+  - 23405
+
+* PlanarConfiguration
+
+::
+
+  - Chunky
+
+* Orientation
+
+::
+
+  - 1st row -> top; 1st column -> left
+
+* Background Color
+
+::
+
+  - E6E6E6
+
+* ImageLength
+
+::
+
+  - 46464
+  - 30976
+  - 33792
+
+* XResolution
+
+::
+
+  - 0
+
+* Compression
+
+::
+
+  - JPEG
+
+* TileWidth
+
+::
+
+  - 448
+
+* ReferenceBlackWhite
+
+::
+
+  - 0
+
+* HostComputer
+
+::
+
+  - TRESTLE-CP01
+
+* SamplesPerPixel
+
+::
+
+  - 3
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - RGB
+
+* YCbCrSubSampling
+
+::
+
+  - chroma image dimensions are half the luma image dimensions
+
+* PhotometricInterpretation
+
+::
+
+  - YCbCr
+

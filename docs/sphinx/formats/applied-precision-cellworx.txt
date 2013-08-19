@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Applied Precision CellWorX <applied-precision-cellworx-metadata>`
 
+Original Metadata Support: :doc:`Applied Precision CellWorX <CellWorxReader>`
 
 
 We currently have:

@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`PCX (PC Paintbrush) <pcx-pc-paintbrush-metadata>`
 
+Original Metadata Support: :doc:`PCX (PC Paintbrush) <PCXReader>`
 
 
 We currently have:

@@ -19,6 +19,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Text <text-metadata>`
 
+Original Metadata Support: :doc:`Text <TextReader>`
 
 
 We currently have:

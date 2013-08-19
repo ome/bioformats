@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`cellSens VSI <cellsens-vsi-metadata>`
 
+Original Metadata Support: :doc:`cellSens VSI <CellSensReader>`
 
 
 We currently have:

@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`IMOD <imod-metadata>`
 
+Original Metadata Support: :doc:`IMOD <IMODReader>`
 Freely Available Software:
 
 - `IMOD <http://bio3d.colorado.edu/imod/>`_

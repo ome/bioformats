@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Hamamatsu VMS <hamamatsu-vms-metadata>`
 
+Original Metadata Support: :doc:`Hamamatsu VMS <HamamatsuVMSReader>`
 
 Sample Datasets:
 

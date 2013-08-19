@@ -1,0 +1,5204 @@
+*******************************************************************************
+MetamorphReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Metamorph STK format reader.
+
+Key/value pairs
+===============================================================================
+
+* stageY[14]
+
+::
+
+  - 0.0
+
+* 
+
+::
+
+  - 
+
+* zDistance[38]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[15]
+
+::
+
+  - 1.25
+  - 0.0
+
+* cameraYChipOffset[14]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[28]
+
+::
+
+  - 0.0
+
+* stageLabel[01]
+
+::
+
+  -  
+
+* threshold-state
+
+::
+
+  - ThresholdOff
+
+* UIC4 absoluteZ[35]
+
+::
+
+  - 0.0
+
+* stageX[14]
+
+::
+
+  - 0.0
+
+* stageX[44]
+
+::
+
+  - 0.0
+
+* zDistance[18]
+
+::
+
+  - 0.25
+  - 0.0
+
+* stageLabel[21]
+
+::
+
+  -  
+
+* UIC1 absoluteZ[27]
+
+::
+
+  - 1.4663280086500601E-5
+
+* stageY[34]
+
+::
+
+  - 0.0
+
+* zDistance[37]
+
+::
+
+  - 0.0
+
+* Channel #1 _IllumSetting_
+
+::
+
+  - GFP
+
+* stageY[13]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[16]
+
+::
+
+  - 1.5
+  - 0.0
+
+* cameraYChipOffset[15]
+
+::
+
+  - 0.0
+
+* stageLabel[02]
+
+::
+
+  -  
+
+* cameraXChipOffset[29]
+
+::
+
+  - 0.0
+
+* stageX[13]
+
+::
+
+  - 0.0
+
+* stageX[43]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[28]
+
+::
+
+  - 1.5300735965399937E-5
+
+* stageY[33]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[36]
+
+::
+
+  - 0.0
+
+* zDistance[17]
+
+::
+
+  - 0.25
+  - 0.0
+
+* stageLabel[22]
+
+::
+
+  -  
+
+* stageY[12]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[12]
+
+::
+
+  - 0.0
+
+* zDistance[36]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[46]
+
+::
+
+  - 0.0
+
+* grayMin
+
+::
+
+  - -1/1
+
+* UIC4 absoluteZ[13]
+
+::
+
+  - 0.75
+  - 0.0
+
+* stageX[12]
+
+::
+
+  - 0.0
+
+* Channel #4 _MagSetting_
+
+::
+
+  - _MagNA_
+
+* cameraXChipOffset[26]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[33]
+
+::
+
+  - 0.0
+
+* stageX[46]
+
+::
+
+  - 0.0
+
+* MaxScale
+
+::
+
+  - 1127
+  - 233
+  - 2232
+  - 0
+
+* stageY[32]
+
+::
+
+  - 0.0
+
+* absoluteZValid[30]
+
+::
+
+  - 1
+
+* UIC1 absoluteZ[29]
+
+::
+
+  - 1.7976931348623157E308
+
+* zDistance[16]
+
+::
+
+  - 0.25
+  - 0.0
+
+* UIC4 absoluteZ[14]
+
+::
+
+  - 1.0
+  - 0.0
+
+* cameraYChipOffset[13]
+
+::
+
+  - 0.0
+
+* stageY[11]
+
+::
+
+  - 0.0
+
+* stageLabel[00]
+
+::
+
+  -  
+
+* stageY[30]
+
+::
+
+  - 0.0
+
+* zDistance[35]
+
+::
+
+  - 0.0
+
+* creationTime[40]
+
+::
+
+  - 17:16:03:518
+
+* cameraXChipOffset[47]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[27]
+
+::
+
+  - 0.0
+
+* Spectral LMM ND 491
+
+::
+
+  - 35.7
+
+* AbsoluteZ
+
+::
+
+  - 11509135
+  - 359187
+  - 2521954
+  - 1568609
+
+* stageX[11]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[34]
+
+::
+
+  - 0.0
+
+* absoluteZValid[31]
+
+::
+
+  - 1
+
+* stageLabel[20]
+
+::
+
+  -  
+
+* stageY[31]
+
+::
+
+  - 0.0
+
+* stageX[45]
+
+::
+
+  - 0.0
+
+* creationTime[20]
+
+::
+
+  - 01:30:47:225
+  - 17:14:03:518
+
+* zDistance[15]
+
+::
+
+  - 0.25
+  - 0.0
+
+* Software
+
+::
+
+  - MetaMorph 6.1
+
+* UIC4 absoluteZ[11]
+
+::
+
+  - 0.25
+  - 0.0
+
+* cameraYChipOffset[31]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[10]
+
+::
+
+  - 0.0
+
+* creationTime[41]
+
+::
+
+  - 17:16:09:518
+
+* grayPointCount
+
+::
+
+  - 0
+
+* stageY[10]
+
+::
+
+  - 0.0
+
+* zDistance[14]
+
+::
+
+  - 0.25
+  - 0.0
+
+* stageX[18]
+
+::
+
+  - 0.0
+
+* stageY[38]
+
+::
+
+  - 0.0
+
+* Spectral LMM Shutter 644
+
+::
+
+  - Closed
+
+* gray-calibration-units
+
+::
+
+  - 
+
+* currentBuffer
+
+::
+
+  - 4
+  - 5
+
+* UIC4 absoluteZ[39]
+
+::
+
+  - 0.0
+
+* stageLabel[39]
+
+::
+
+  -  
+
+* stageLabel[25]
+
+::
+
+  -  
+
+* cameraXChipOffset[24]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[12]
+
+::
+
+  - 0.5
+  - 0.0
+
+* WaveDoZ1
+
+::
+
+  - TRUE
+
+* WaveDoZ2
+
+::
+
+  - TRUE
+
+* WaveDoZ3
+
+::
+
+  - FALSE
+
+* grayMax
+
+::
+
+  - -1/1
+
+* Baseport Lambda10-2 Wheel A #2
+
+::
+
+  - Filter 7
+
+* creationTime[42]
+
+::
+
+  - 17:16:15:518
+
+* cameraYChipOffset[11]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[30]
+
+::
+
+  - 0.0
+
+* stageY[37]
+
+::
+
+  - 0.0
+
+* zDistance[13]
+
+::
+
+  - 0.25
+  - 0.0
+
+* stageX[17]
+
+::
+
+  - 0.0
+
+* stageLabel[26]
+
+::
+
+  -  
+
+* cameraXChipOffset[25]
+
+::
+
+  - 0.0
+
+* ApplicationVersion
+
+::
+
+  - 7.5.5.0
+
+* Stage1
+
+::
+
+  - "N14"
+
+* zDistance[12]
+
+::
+
+  - 0.25
+  - 0.0
+
+* Y position for position #1
+
+::
+
+  - 0.0
+
+* Stage2
+
+::
+
+  - "N15"
+
+* creationTime[43]
+
+::
+
+  - 17:16:21:518
+
+* Channel #2 _MagNA_
+
+::
+
+  - 4.778309744537072E-299
+
+* UIC4 absoluteZ[37]
+
+::
+
+  - 0.0
+
+* Region
+
+::
+
+  - 512 x 512, offset at (0, 0)
+  - 535 x 512, offset at (0, 0)
+  - 298 x 478, offset at (2, 2)
+  - 512 x 492, offset at (0, 0)
+  - 1392 x 1040, offset at (0, 0)
+
+* Spectral LMM ND 444
+
+::
+
+  - 41.9
+
+* stageX[16]
+
+::
+
+  - 0.0
+
+* stageY[36]
+
+::
+
+  - 0.0
+
+* Channel #1 _MagRI_
+
+::
+
+  - 4.778309744537072E-299
+
+* stageX[42]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[22]
+
+::
+
+  - 0.0
+
+* Channel #0 _MagNA_
+
+::
+
+  - 8.289046E-317
+
+* stageLabel[23]
+
+::
+
+  -  
+
+* UIC4 absoluteZ[10]
+
+::
+
+  - 0.0
+
+* stageX[40]
+
+::
+
+  - 0.0
+
+* zDistance[11]
+
+::
+
+  - 0.25
+  - 0.0
+
+* zDistance[39]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[38]
+
+::
+
+  - 0.0
+
+* creationTime[44]
+
+::
+
+  - 17:16:27:518
+
+* stageX[41]
+
+::
+
+  - 0.0
+
+* stageY[35]
+
+::
+
+  - 0.0
+
+* stageX[15]
+
+::
+
+  - 0.0
+
+* gray-calibration-values
+
+::
+
+  - 
+
+* cameraXChipOffset[23]
+
+::
+
+  - 0.0
+
+* stageLabel[24]
+
+::
+
+  -  
+
+* cameraXChipOffset[20]
+
+::
+
+  - 0.0
+
+* zDistance[30]
+
+::
+
+  - 0.0
+
+* absoluteZValid[36]
+
+::
+
+  - 1
+
+* Wavelength [44]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[47]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[40]
+
+::
+
+  - 0.0
+
+* BitsPerSample
+
+::
+
+  - 16
+  - 8
+
+* zDistance[10]
+
+::
+
+  - 0.25
+  - 0.0
+
+* creationDate[4]
+
+::
+
+  - 01/03/2002
+  - 12/07/2005
+
+* Wavelength
+
+::
+
+  - 0
+
+* cameraYChipOffset[35]
+
+::
+
+  - 0.0
+
+* Photonic Instruments Mosaic Mask
+
+::
+
+  - Black Mask
+
+* cameraXChipOffset[21]
+
+::
+
+  - 0.0
+
+* absoluteZValid[37]
+
+::
+
+  - 1
+
+* UIC1 absoluteZ[20]
+
+::
+
+  - 1.3902088632418524E-6
+  - 1.0200646721002111E-5
+
+* Zoom
+
+::
+
+  - 100
+
+* Spectral LMM Shutter 491
+
+::
+
+  - Closed
+
+* XResolution
+
+::
+
+  - 72
+
+* Zeiss Base Port
+
+::
+
+  - BP
+
+* Wavelength [43]
+
+::
+
+  - 0.0
+
+* gray-calibration-min
+
+::
+
+  - -1
+
+* creationDate[3]
+
+::
+
+  - 01/03/2002
+  - 12/07/2005
+
+* cameraXChipOffset[41]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[34]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[21]
+
+::
+
+  - 1.0838131863087618E-5
+
+* absoluteZValid[38]
+
+::
+
+  - 1
+
+* z-position
+
+::
+
+  - 0
+
+* Wavelength [42]
+
+::
+
+  - 0.0
+
+* absoluteZValid[10]
+
+::
+
+  - 1
+
+* creationDate[2]
+
+::
+
+  - 01/03/2002
+  - 12/07/2005
+
+* cameraYChipOffset[33]
+
+::
+
+  - 0.0
+
+* absoluteZValid[39]
+
+::
+
+  - 1
+
+* Temperature
+
+::
+
+  - -89
+  - -36.5
+  - -68
+
+* Wavelength [41]
+
+::
+
+  - 0.0
+
+* NewSubfileType
+
+::
+
+  - 0
+
+* UIC1 absoluteZ[22]
+
+::
+
+  - 3.6
+
+* stageX[19]
+
+::
+
+  - 0.0
+
+* creationDate[1]
+
+::
+
+  - 01/03/2002
+  - 12/07/2005
+
+* absoluteZValid[11]
+
+::
+
+  - 1
+
+* WaveInFileName
+
+::
+
+  - TRUE
+
+* cameraYChipOffset[32]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[23]
+
+::
+
+  - 4.75
+
+* absoluteZValid[32]
+
+::
+
+  - 1
+
+* zDistance[34]
+
+::
+
+  - 0.0
+
+* _IllumSetting_
+
+::
+
+  - 491-525-50-FITC
+  - DIC Confocal
+
+* Wavelength [40]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[39]
+
+::
+
+  - 0.0
+
+* Channel #1 _MagNA_
+
+::
+
+  - 7.291122046717944E-304
+
+* UIC4 absoluteZ[31]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[44]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[43]
+
+::
+
+  - 0.0
+
+* Spectral LMM Shutter 444
+
+::
+
+  - Closed
+
+* absoluteZValid[12]
+
+::
+
+  - 1
+
+* Wavelength [20]
+
+::
+
+  - 0.0
+
+* creationDate[0]
+
+::
+
+  - 01/03/2002
+  - 12/07/2005
+
+* look-up-table-name
+
+::
+
+  - Set By Wavelength
+
+* absoluteZValid[33]
+
+::
+
+  - 1
+
+* UIC1 absoluteZ[24]
+
+::
+
+  - 1.7976931348623157E308
+
+* zDistance[33]
+
+::
+
+  - 0.0
+
+* ImageLength
+
+::
+
+  - 512
+  - 239
+  - 492
+  - 92
+
+* UIC4 absoluteZ[32]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[45]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[38]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[44]
+
+::
+
+  - 0.0
+
+* absoluteZValid[13]
+
+::
+
+  - 1
+
+* zDistance[32]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[25]
+
+::
+
+  - 1.3388075687254552E-5
+
+* absoluteZValid[34]
+
+::
+
+  - 1
+
+* cameraYChipOffset[37]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[42]
+
+::
+
+  - 0.0
+
+* CameraBin
+
+::
+
+  - 2x2
+
+* ImageWidth
+
+::
+
+  - 512
+  - 353
+
+* absoluteZValid[14]
+
+::
+
+  - 1
+
+* UIC1 absoluteZ[45]
+
+::
+
+  - 0.0
+
+* zDistance[31]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[26]
+
+::
+
+  - 1.402560310093334E-5
+
+* absoluteZValid[35]
+
+::
+
+  - 1
+
+* UIC4 absoluteZ[30]
+
+::
+
+  - 0.0
+
+* NStagePositions
+
+::
+
+  - 2
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* absoluteZValid[15]
+
+::
+
+  - 1
+
+* cameraYChipOffset[36]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[43]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[46]
+
+::
+
+  - 0.0
+
+* Wavelength [11]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[2]
+
+::
+
+  - 2.0
+  - 0.0
+
+* stageX[0]
+
+::
+
+  - 0.0
+  - 4655.0
+
+* absoluteZValid[05]
+
+::
+
+  - 1
+
+* creationDate[07]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* UIC1 absoluteZ[40]
+
+::
+
+  - 2.9325662759978376E-5
+
+* creationDate[27]
+
+::
+
+  - 28/11/2005
+
+* UIC1 absoluteZ[02]
+
+::
+
+  - 0.0
+
+* Emission Wheel B
+
+::
+
+  - 525/50
+  - 620/60
+
+* stageLabel[40]
+
+::
+
+  -  
+
+* NWavelengths
+
+::
+
+  - 3
+
+* creationDate[46]
+
+::
+
+  - 28/11/2005
+
+* UIC1 absoluteZ[3]
+
+::
+
+  - 0.74
+  - 1.0
+
+* Wavelength [12]
+
+::
+
+  - 0.0
+
+* absoluteZValid[04]
+
+::
+
+  - 1
+
+* creationDate[06]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* cameraXChipOffset[3]
+
+::
+
+  - 2.0
+  - 0.0
+
+* creationDate[26]
+
+::
+
+  - 28/11/2005
+
+* UIC1 absoluteZ[01]
+
+::
+
+  - 0.0
+
+* Photonic Instruments Mosaic Shutter
+
+::
+
+  - Closed
+
+* PhotometricInterpretation
+
+::
+
+  - BlackIsZero
+  - Palette
+
+* creationDate[47]
+
+::
+
+  - 28/11/2005
+
+* UIC1 absoluteZ[4]
+
+::
+
+  - 1.7976931348623157E308
+  - 0.0
+
+* creationDate[09]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* Wavelength [38]
+
+::
+
+  - 0.0
+
+* Spatial Calibration
+
+::
+
+  - off
+  - on
+
+* cameraXChipOffset[4]
+
+::
+
+  - 2.0
+  - 0.0
+
+* absoluteZValid[07]
+
+::
+
+  - 1
+
+* UIC1 absoluteZ[42]
+
+::
+
+  - 4.2724609375E-4
+
+* Channel #3 _MagRI_
+
+::
+
+  - 2.0522684082944837E-289
+
+* cameraYChipOffset[28]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[00]
+
+::
+
+  - 2.5
+  - 0.0
+
+* gamma
+
+::
+
+  - 1
+
+* stageLabel[42]
+
+::
+
+  -  
+
+* creationDate[29]
+
+::
+
+  - 28/11/2005
+
+* NTimePoints
+
+::
+
+  - 2
+
+* creationDate[08]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* Wavelength [10]
+
+::
+
+  - 0.0
+
+* Wavelength [39]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[41]
+
+::
+
+  - 5.875
+
+* Mosaic Laser Power
+
+::
+
+  - Closed
+
+* absoluteZValid[06]
+
+::
+
+  - 1
+
+* cameraYChipOffset[29]
+
+::
+
+  - 0.0
+
+* creationDate[28]
+
+::
+
+  - 28/11/2005
+
+* stageLabel[41]
+
+::
+
+  -  
+
+* NewLUT
+
+::
+
+  - 8
+
+* creationTime[18]
+
+::
+
+  - 01:30:43:236
+  - 17:13:51:518
+
+* stageX[4]
+
+::
+
+  - 0.0
+  - 4655.0
+
+* creationDate[03]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* absoluteZValid[09]
+
+::
+
+  - 1
+
+* creationDate[42]
+
+::
+
+  - 28/11/2005
+
+* Wavelength [16]
+
+::
+
+  - 0.0
+
+* Wavelength [35]
+
+::
+
+  - 0.0
+
+* absoluteZValid[29]
+
+::
+
+  - 1
+
+* creationDate[02]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* absoluteZValid[08]
+
+::
+
+  - 1
+
+* stageX[3]
+
+::
+
+  - 0.0
+  - 4655.0
+
+* Wavelength [37]
+
+::
+
+  - 0.0
+
+* creationDate[43]
+
+::
+
+  - 28/11/2005
+
+* creationTime[17]
+
+::
+
+  - 01:30:41:185
+  - 17:13:45:518
+
+* ThreshState
+
+::
+
+  - off
+
+* Wavelength [17]
+
+::
+
+  - 0.0
+
+* Wavelength [36]
+
+::
+
+  - 0.0
+
+* absoluteZValid[28]
+
+::
+
+  - 1
+
+* creationDate[05]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* threshold-color
+
+::
+
+  - 4080ff
+
+* cameraXChipOffset[0]
+
+::
+
+  - 2.0
+  - 0.0
+
+* stageX[2]
+
+::
+
+  - 0.0
+  - 4655.0
+
+* Wavelength [13]
+
+::
+
+  - 0.0
+
+* stage-label
+
+::
+
+  - N15
+
+* Binning
+
+::
+
+  - 1 x 1
+  - 2 x 2
+
+* Subtract
+
+::
+
+  - Off
+
+* creationDate[44]
+
+::
+
+  - 28/11/2005
+
+* Wavelength [33]
+
+::
+
+  - 0.0
+
+* Zeiss Side Port
+
+::
+
+  - 100% SP left
+
+* Description
+
+::
+
+  - 
+
+* creationTime[19]
+
+::
+
+  - 01:30:45:225
+  - 17:13:57:518
+
+* stageX[1]
+
+::
+
+  - 0.0
+  - 4655.0
+
+* creationDate[04]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* cameraXChipOffset[1]
+
+::
+
+  - 2.0
+  - 0.0
+
+* Wavelength [14]
+
+::
+
+  - 0.0
+
+* Wavelength [34]
+
+::
+
+  - 0.0
+
+* creationDate[45]
+
+::
+
+  - 28/11/2005
+
+* Wavelength [15]
+
+::
+
+  - 0.0
+
+* autoscale-min-percent
+
+::
+
+  - 0.05
+
+* stageLabel[18]
+
+::
+
+  -  
+
+* stageY[29]
+
+::
+
+  - 0.0
+
+* stageX[39]
+
+::
+
+  - 0.0
+
+* absoluteZValid[4]
+
+::
+
+  - 1
+
+* creationTime[34]
+
+::
+
+  - 17:15:27:518
+
+* DG4/5 Shutter
+
+::
+
+  - Closed
+
+* creationTime[14]
+
+::
+
+  - 01:30:35:195
+  - 17:13:27:518
+
+* stageY[09]
+
+::
+
+  - 0.0
+
+* stageLabel[17]
+
+::
+
+  -  
+
+* absoluteZValid[3]
+
+::
+
+  - 1
+
+* creationTime[33]
+
+::
+
+  - 17:15:21:518
+
+* stageLabel[47]
+
+::
+
+  -  
+
+* X position for position #1
+
+::
+
+  - 0.0
+
+* creationTime[13]
+
+::
+
+  - 01:30:33:200
+  - 17:13:21:518
+
+* YCalibration
+
+::
+
+  - 1/1
+
+* NDInfoFile
+
+::
+
+  - Version 2.0
+
+* DG4/5 Wavelength
+
+::
+
+  - DAPI
+
+* Predictor
+
+::
+
+  - No prediction scheme
+
+* NumberOfChannels
+
+::
+
+  - 1
+  - 3
+
+* stageLabel[16]
+
+::
+
+  -  
+
+* cameraYChipOffset[09]
+
+::
+
+  - 0.0
+
+* look-up-table-type
+
+::
+
+  - by-wavelength
+
+* creationTime[36]
+
+::
+
+  - 17:15:39:518
+
+* stageY[27]
+
+::
+
+  - 0.0
+
+* Wavelength [18]
+
+::
+
+  - 0.0
+
+* spatial-calibration-state
+
+::
+
+  - on
+
+* creationTime[16]
+
+::
+
+  - 01:30:39:190
+  - 17:13:39:518
+
+* UIC1 absoluteZ[09]
+
+::
+
+  - 4.3444140219611864E-7
+  - 3.187763070147364E-6
+
+* creationDate[01]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* creationDate[21]
+
+::
+
+  - 28/11/2005
+
+* stageY[07]
+
+::
+
+  - 0.0
+
+* image-name
+
+::
+
+  - 491-525-50-FITC
+  - DIC Confocal
+
+* stageLabel[15]
+
+::
+
+  -  
+
+* UIC1 absoluteZ[07]
+
+::
+
+  - 3.0
+
+* stageY[28]
+
+::
+
+  - 0.0
+
+* Channel #2 _MagSetting_
+
+::
+
+  - _MagNA_
+
+* Wavelength [19]
+
+::
+
+  - 0.0
+
+* Spectral LMM ND 523
+
+::
+
+  - 52.5
+
+* cameraYChipOffset[08]
+
+::
+
+  - 0.0
+
+* creationTime[35]
+
+::
+
+  - 17:15:33:518
+
+* creationTime[15]
+
+::
+
+  - 01:30:37:195
+  - 17:13:33:518
+
+* Channel #3 _MagNA_
+
+::
+
+  - 3.131513074179815E-294
+
+* creationDate[00]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* UIC1 absoluteZ[08]
+
+::
+
+  - 3.4755336334340773E-7
+  - 2.5502234633309746E-6
+
+* stageY[08]
+
+::
+
+  - 0.0
+
+* creationDate[20]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* stageX[35]
+
+::
+
+  - 0.0
+
+* zDistance[09]
+
+::
+
+  - 0.25
+  - 0.0
+
+* creationTime[38]
+
+::
+
+  - 17:15:51:518
+
+* cameraYChipOffset[07]
+
+::
+
+  - 0.0
+
+* stageLabel[44]
+
+::
+
+  -  
+
+* UIC1 absoluteZ[06]
+
+::
+
+  - 0.001774622892635315
+  - 1.7976931348623157E308
+
+* absoluteZValid[0]
+
+::
+
+  - 1
+
+* stageX[21]
+
+::
+
+  - 0.0
+
+* creationDate[23]
+
+::
+
+  - 28/11/2005
+
+* creationTime[10]
+
+::
+
+  - 01:30:27:215
+  - 17:13:03:518
+
+* UIC1 absoluteZ[0]
+
+::
+
+  - 3.0
+  - 3643.45
+
+* stageY[05]
+
+::
+
+  - 0.0
+
+* MinScale
+
+::
+
+  - 0
+
+* stageX[36]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[06]
+
+::
+
+  - 0.0
+
+* creationTime[37]
+
+::
+
+  - 17:15:45:518
+
+* UIC1 absoluteZ[05]
+
+::
+
+  - 0.002004008016032064
+  - 1.7976931348623157E308
+
+* stageLabel[43]
+
+::
+
+  -  
+
+* creationDate[22]
+
+::
+
+  - 28/11/2005
+
+* stageX[22]
+
+::
+
+  - 0.0
+
+* wavelength
+
+::
+
+  - 0
+
+* stageY[06]
+
+::
+
+  - 0.0
+
+* CalibrationUnits
+
+::
+
+  -      
+
+* SamplesPerPixel
+
+::
+
+  - 1
+
+* UIC4 absoluteZ[19]
+
+::
+
+  - 2.25
+  - 0.0
+
+* ThreshStateBlue
+
+::
+
+  - 64
+
+* ApplicationName
+
+::
+
+  - MetaMorph
+
+* stageLabel[46]
+
+::
+
+  -  
+
+* AutoScaleHiInfo
+
+::
+
+  - 0/1
+
+* zDistance[07]
+
+::
+
+  - 0.25
+  - 0.0
+
+* camera-chip-offset-y
+
+::
+
+  - 0
+
+* Channel #0 _MagRI_
+
+::
+
+  - 7.291122046717944E-304
+
+* stageX[37]
+
+::
+
+  - 0.0
+
+* camera-chip-offset-x
+
+::
+
+  - 0
+
+* creationDate[25]
+
+::
+
+  - 28/11/2005
+
+* UIC1 absoluteZ[04]
+
+::
+
+  - 1.7976931348623157E308
+
+* absoluteZValid[2]
+
+::
+
+  - 1
+
+* number-of-planes
+
+::
+
+  - 3
+  - 1
+
+* stageY[03]
+
+::
+
+  - 0.0
+
+* Frames to Average
+
+::
+
+  - 1
+
+* UIC4 absoluteZ[18]
+
+::
+
+  - 2.0
+  - 0.0
+
+* cameraYChipOffset[05]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[2]
+
+::
+
+  - 0.0
+
+* creationTime[12]
+
+::
+
+  - 01:30:31:205
+  - 17:13:15:518
+
+* creationTime[39]
+
+::
+
+  - 17:15:57:518
+
+* stageLabel[45]
+
+::
+
+  -  
+
+* zDistance[08]
+
+::
+
+  - 0.25
+  - 0.0
+
+* UIC1 absoluteZ[03]
+
+::
+
+  - 1.0
+
+* PlaneProperty
+
+::
+
+  - 2521864
+
+* stageX[38]
+
+::
+
+  - 0.0
+
+* stageX[20]
+
+::
+
+  - 0.0
+
+* creationDate[24]
+
+::
+
+  - 28/11/2005
+
+* absoluteZValid[1]
+
+::
+
+  - 1
+
+* ThreshStateGreen
+
+::
+
+  - 128
+
+* stageLabel[19]
+
+::
+
+  -  
+
+* Name
+
+::
+
+  - Subtract 
+  - FITC 
+  - GFP  
+  - 654Atemp 
+
+* stageY[04]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[1]
+
+::
+
+  - 0.0
+
+* creationTime[11]
+
+::
+
+  - 01:30:29:211
+  - 17:13:09:518
+
+* UIC4 absoluteZ[17]
+
+::
+
+  - 1.75
+  - 0.0
+
+* cameraYChipOffset[04]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[34]
+
+::
+
+  - 0.0
+
+* Zeiss Halogen Intensity
+
+::
+
+  - 7.98902
+
+* UIC4 absoluteZ[07]
+
+::
+
+  - -0.75
+  - 0.0
+
+* cameraYChipOffset[24]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[25]
+
+::
+
+  - 0.0
+
+* stageY[24]
+
+::
+
+  - 0.0
+
+* zDistance[28]
+
+::
+
+  - 0.0
+
+* stageX[34]
+
+::
+
+  - 0.0
+
+* stageY[44]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[17]
+
+::
+
+  - 1.7976931348623157E308
+
+* Pre-Amplifier Gain
+
+::
+
+  - 1.00x
+
+* Bit Depth
+
+::
+
+  - 16-bit (1 MHz)
+
+* cameraXChipOffset[14]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[45]
+
+::
+
+  - 0.0
+
+* stageX[00]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[35]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[08]
+
+::
+
+  - -0.5
+  - 0.0
+
+* stageY[23]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[25]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[26]
+
+::
+
+  - 0.0
+
+* DG4/5 Intensity
+
+::
+
+  - 100
+
+* UIC1 absoluteZ[19]
+
+::
+
+  - 0.15
+
+* zDistance[47]
+
+::
+
+  - 0.0
+
+* pixel-size-x
+
+::
+
+  - 512
+
+* Wavelength [0]
+
+::
+
+  - 488.0
+  - 0.0
+
+* UIC1 absoluteZ[18]
+
+::
+
+  - 2.136263065537499E-4
+  - 0.054901960784313725
+
+* stageY[43]
+
+::
+
+  - 0.0
+
+* zDistance[27]
+
+::
+
+  - 0.0
+
+* stageX[33]
+
+::
+
+  - 0.0
+
+* pixel-size-y
+
+::
+
+  - 512
+
+* cameraXChipOffset[15]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[46]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[16]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[05]
+
+::
+
+  - -1.25
+  - 0.0
+
+* cameraXChipOffset[36]
+
+::
+
+  - 0.0
+
+* threshold-high
+
+::
+
+  - 65535
+
+* stageY[26]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[26]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[27]
+
+::
+
+  - 0.0
+
+* stageY[46]
+
+::
+
+  - 0.0
+
+* stageX[32]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[15]
+
+::
+
+  - 1.7976931348623157E308
+  - 0.0859375
+
+* Baseline Offset
+
+::
+
+  - 0
+
+* UIC4 absoluteZ[47]
+
+::
+
+  - 0.0
+
+* stageX[02]
+
+::
+
+  - 0.0
+
+* LastSavedTime
+
+::
+
+  - 01/01/-4713 00:00:00:000
+  - 12/07/2005 13:29:20:718
+  - 27/01/2006 13:40:13:650
+
+* cameraYChipOffset[0]
+
+::
+
+  - 2.0
+  - 0.0
+
+* cameraXChipOffset[17]
+
+::
+
+  - 0.0
+
+* Channel #4 _MagNA_
+
+::
+
+  - 2.0522684082944837E-289
+
+* cameraXChipOffset[37]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[06]
+
+::
+
+  - -1.0
+  - 0.0
+
+* Trigger On
+
+::
+
+  - 0
+
+* stageY[25]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[27]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[28]
+
+::
+
+  - 0.0
+
+* stageX[31]
+
+::
+
+  - 0.0
+
+* stageY[45]
+
+::
+
+  - 0.0
+
+* zDistance[29]
+
+::
+
+  - 0.0
+
+* stageLabel[10]
+
+::
+
+  -  
+
+* UIC1 absoluteZ[16]
+
+::
+
+  - 1.7976931348623157E308
+  - 0.1875
+
+* stageX[01]
+
+::
+
+  - 0.0
+
+* stageY[20]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[41]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[06]
+
+::
+
+  - 0.0
+
+* Channel #2 _IllumSetting_
+
+::
+
+  - GFP
+
+* creationTime[31]
+
+::
+
+  - 17:15:09:518
+
+* cameraYChipOffset[20]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[21]
+
+::
+
+  - 0.0
+
+* stageX[04]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[38]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[10]
+
+::
+
+  - 0.0
+
+* Spectral LMM ND 561
+
+::
+
+  - 56.3
+
+* stageLabel[11]
+
+::
+
+  -  
+
+* Wavelength [3]
+
+::
+
+  - 488.0
+  - 0.0
+
+* stageLabel[29]
+
+::
+
+  -  
+
+* cameraYChipOffset[00]
+
+::
+
+  - 0.0
+
+* _MagNA_
+
+::
+
+  - 1.4
+
+* zDistance[24]
+
+::
+
+  - 0.0
+
+* stageX[30]
+
+::
+
+  - 0.0
+
+* zDistance[23]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[40]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[21]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[07]
+
+::
+
+  - 0.0
+
+* AbsoluteZValid
+
+::
+
+  - 0
+
+* UIC4 absoluteZ[22]
+
+::
+
+  - 0.0
+
+* Vertical Shift Speed
+
+::
+
+  - 303.03 KHz (3.30 usec/pixel)
+
+* stageX[03]
+
+::
+
+  - 0.0
+
+* grayFit
+
+::
+
+  - 4
+
+* cameraXChipOffset[11]
+
+::
+
+  - 0.0
+
+* autoscale-state
+
+::
+
+  - on
+
+* DoTimelapse
+
+::
+
+  - TRUE
+
+* stageLabel[12]
+
+::
+
+  -  
+
+* cameraXChipOffset[39]
+
+::
+
+  - 0.0
+
+* creationTime[32]
+
+::
+
+  - 17:15:15:518
+
+* Wavelength [4]
+
+::
+
+  - 488.0
+  - 0.0
+
+* stageY[47]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[01]
+
+::
+
+  - 0.0
+
+* ThreshStateRed
+
+::
+
+  - 255
+
+* cameraYChipOffset[22]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[08]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[39]
+
+::
+
+  - 2.6774905283772558E-5
+
+* stageY[22]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[09]
+
+::
+
+  - -0.25
+  - 0.0
+
+* UIC4 absoluteZ[23]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[43]
+
+::
+
+  - 0.0
+
+* _MagSetting_
+
+::
+
+  - 63X
+
+* stageLabel[13]
+
+::
+
+  -  
+
+* cameraXChipOffset[12]
+
+::
+
+  - 0.0
+
+* stageX[06]
+
+::
+
+  - 0.0
+
+* zDistance[26]
+
+::
+
+  - 0.0
+
+* Spectral LMM Shutter 523
+
+::
+
+  - Closed
+
+* cameraYChipOffset[02]
+
+::
+
+  - 0.0
+
+* Wavelength [1]
+
+::
+
+  - 488.0
+  - 0.0
+
+* CameraChipOffset
+
+::
+
+  - 11509110
+  - 359154
+  - 2521921
+  - 1568576
+
+* stageLabel[27]
+
+::
+
+  -  
+
+* creationTime[30]
+
+::
+
+  - 17:15:03:518
+
+* cameraYChipOffset[23]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[09]
+
+::
+
+  - 0.0
+
+* stageY[21]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[42]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[24]
+
+::
+
+  - 0.0
+
+* Zeiss Tube Lens
+
+::
+
+  - 1.0x
+
+* Channel #0 _MagSetting_
+
+::
+
+  - _MagNA_
+
+* stageLabel[14]
+
+::
+
+  -  
+
+* cameraXChipOffset[13]
+
+::
+
+  - 0.0
+
+* stageX[05]
+
+::
+
+  - 0.0
+
+* zDistance[25]
+
+::
+
+  - 0.0
+
+* grayY
+
+::
+
+  - 0/1
+
+* stageLabel[28]
+
+::
+
+  -  
+
+* cameraYChipOffset[03]
+
+::
+
+  - 0.0
+
+* grayX
+
+::
+
+  - 0/1
+
+* Wavelength [2]
+
+::
+
+  - 488.0
+  - 0.0
+
+* stageX[08]
+
+::
+
+  - 0.0
+
+* zDistance[40]
+
+::
+
+  - 0.0
+
+* timestamp #1
+
+::
+
+  - 2009-06-01T14:47:47
+  - 2009-06-01T14:47:46
+  - 2009-06-01T14:47:57
+  - 2009-06-01T14:47:55
+
+* absoluteZValid[26]
+
+::
+
+  - 1
+
+* Channel #3 _MagSetting_
+
+::
+
+  - _MagNA_
+
+* cameraYChipOffset[45]
+
+::
+
+  - 0.0
+
+* creationDate[41]
+
+::
+
+  - 28/11/2005
+
+* zDistance[20]
+
+::
+
+  - 0.25
+  - 0.0
+
+* UIC1 absoluteZ[37]
+
+::
+
+  - 2.550029994727813E-5
+
+* Baseline Clamp Enabled
+
+::
+
+  - Yes
+
+* Gain
+
+::
+
+  - 3x
+  - Low 1x
+  - Gain 1 (1x)
+
+* stageX[07]
+
+::
+
+  - 0.0
+
+* absoluteZValid[27]
+
+::
+
+  - 1
+
+* UIC1 absoluteZ[10]
+
+::
+
+  - 5.21329320256077E-7
+  - 3.825296173556237E-6
+
+* threshold-low
+
+::
+
+  - 0
+
+* ThreshStateHi
+
+::
+
+  - 65535
+  - 255
+
+* zDistance[00]
+
+::
+
+  - 0.25
+  - 0.0
+
+* stage-position-y
+
+::
+
+  - 420
+
+* cameraYChipOffset[44]
+
+::
+
+  - 0.0
+
+* stage-position-x
+
+::
+
+  - 17724
+
+* UIC1 absoluteZ[38]
+
+::
+
+  - 1.7976931348623157E308
+
+* Channel #1 _MagSetting_
+
+::
+
+  - _MagNA_
+
+* creationDate[40]
+
+::
+
+  - 28/11/2005
+
+* absoluteZValid[24]
+
+::
+
+  - 1
+
+* ZStepSize
+
+::
+
+  - 2
+
+* zDistance[42]
+
+::
+
+  - 0.0
+
+* Camera Shutter
+
+::
+
+  - Always Open
+  - Open for Expose
+
+* StartTime1
+
+::
+
+  - 20090601 14:47:44
+
+* NZSteps
+
+::
+
+  - 3
+
+* stageLabel[0]
+
+::
+
+  -  
+
+* cameraYChipOffset[47]
+
+::
+
+  - 0.0
+
+* zDistance[01]
+
+::
+
+  - 0.25
+  - 0.0
+
+* UIC1 absoluteZ[35]
+
+::
+
+  - 2.422516140013783E-5
+
+* zDistance[22]
+
+::
+
+  - 0.0
+
+* Spectral LMM Shutter 561
+
+::
+
+  - Closed
+
+* DoZSeries
+
+::
+
+  - TRUE
+
+* zDistance[41]
+
+::
+
+  - 0.0
+
+* absoluteZValid[25]
+
+::
+
+  - 1
+
+* stageX[09]
+
+::
+
+  - 0.0
+
+* camera-binning-y
+
+::
+
+  - 1
+
+* camera-binning-x
+
+::
+
+  - 1
+
+* zDistance[02]
+
+::
+
+  - 0.25
+  - 0.0
+
+* UIC4 absoluteZ[40]
+
+::
+
+  - 0.0
+
+* Speed
+
+::
+
+  - 1MHz
+  - 10MHz
+
+* UIC4 absoluteZ[20]
+
+::
+
+  - 2.5
+  - 0.0
+
+* cameraYChipOffset[46]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[36]
+
+::
+
+  - 2.486253884771695E-5
+
+* zDistance[21]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[41]
+
+::
+
+  - 0.0
+
+* zDistance[03]
+
+::
+
+  - 0.25
+  - 0.0
+
+* zDistance[44]
+
+::
+
+  - 0.0
+
+* autoscale-max-percent
+
+::
+
+  - 0.05
+
+* UIC1 absoluteZ[13]
+
+::
+
+  - 0.03529411764705882
+
+* Multiplication Gain
+
+::
+
+  - 300
+
+* absoluteZValid[22]
+
+::
+
+  - 1
+
+* Wavelength [30]
+
+::
+
+  - 0.0
+
+* absoluteZValid[02]
+
+::
+
+  - 1
+
+* UIC1 absoluteZ[33]
+
+::
+
+  - 1.8488106409890244E-5
+
+* creationTime[4]
+
+::
+
+  - 11:19:46:279
+  - 13:29:13:577
+
+* stageLabel[2]
+
+::
+
+  -  
+
+* cameraXChipOffset[30]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[42]
+
+::
+
+  - 0.0
+
+* Channel #3 _IllumSetting_
+
+::
+
+  - GFP
+
+* zDistance[04]
+
+::
+
+  - 0.25
+  - 0.0
+
+* zDistance[43]
+
+::
+
+  - 0.0
+
+* absoluteZValid[23]
+
+::
+
+  - 1
+
+* UIC1 absoluteZ[14]
+
+::
+
+  - 1.7976931348623157E308
+
+* _MagRI_
+
+::
+
+  - 1.515
+
+* UIC1 absoluteZ[34]
+
+::
+
+  - 2.35879127884738E-5
+
+* creationTime[3]
+
+::
+
+  - 11:19:45:434
+  - 13:29:12:609
+
+* ThreshStateLo
+
+::
+
+  - 0
+
+* absoluteZValid[03]
+
+::
+
+  - 1
+
+* stageY[00]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[31]
+
+::
+
+  - 0.0
+
+* stageLabel[1]
+
+::
+
+  -  
+
+* UIC4 absoluteZ[43]
+
+::
+
+  - 0.0
+
+* zDistance[05]
+
+::
+
+  - 0.25
+  - 0.0
+
+* stageLabel[4]
+
+::
+
+  -  
+
+* UIC1 absoluteZ[11]
+
+::
+
+  - 6.082170646766731E-7
+  - 4.462819928403617E-6
+
+* absoluteZValid[20]
+
+::
+
+  - 1
+
+* stageY[42]
+
+::
+
+  - 0.0
+
+* creationTime[2]
+
+::
+
+  - 11:19:44:589
+  - 13:29:11:562
+
+* stageY[41]
+
+::
+
+  - 0.0
+
+* absoluteZValid[00]
+
+::
+
+  - 1
+
+* zDistance[46]
+
+::
+
+  - 0.0
+
+* plane-guid
+
+::
+
+  - {51732333-E053-4A25-AD69-5B170CB649BF}
+  - {2495BECD-6974-4F7D-B96D-69785DC590E0}
+  - {F5AFDD89-91FF-4229-A2E9-2D52F81CA7FB}
+  - {A6502EB8-E5FC-45CA-AD8C-9FA0E6E922F8}
+
+* Wavelength [32]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[32]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[31]
+
+::
+
+  - 1.7976931348623157E308
+
+* stageY[01]
+
+::
+
+  - 0.0
+
+* DoWave
+
+::
+
+  - TRUE
+
+* StagePosition
+
+::
+
+  - 11509094
+  - 359138
+  - 2521905
+  - 1568560
+
+* UIC4 absoluteZ[44]
+
+::
+
+  - 0.0
+
+* zDistance[06]
+
+::
+
+  - 0.25
+  - 0.0
+
+* stageLabel[3]
+
+::
+
+  -  
+
+* UIC1 absoluteZ[12]
+
+::
+
+  - 1.7976931348623157E308
+
+* absoluteZValid[21]
+
+::
+
+  - 1
+
+* zDistance[45]
+
+::
+
+  - 0.0
+
+* absoluteZValid[01]
+
+::
+
+  - 1
+
+* stageY[40]
+
+::
+
+  - 0.0
+
+* creationTime[1]
+
+::
+
+  - 11:19:43:742
+  - 13:29:10:562
+
+* modification-time-local
+
+::
+
+  - 20090601 14:47:53.430
+  - 20090601 14:47:53.789
+  - 20090601 14:48:02.789
+  - 20090601 14:48:03.164
+
+* Wavelength [31]
+
+::
+
+  - 0.0
+
+* stageY[02]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[33]
+
+::
+
+  - 0.0
+
+* UIC1 absoluteZ[32]
+
+::
+
+  - 1.785076758300607E-5
+
+* Channel #0 _IllumSetting_
+
+::
+
+  - GFP
+
+* UIC1 absoluteZ[30]
+
+::
+
+  - 1.7976931348623157E308
+
+* Wavelength [21]
+
+::
+
+  - 0.0
+
+* creationDate[36]
+
+::
+
+  - 28/11/2005
+
+* absoluteZValid[45]
+
+::
+
+  - 1
+
+* acquisition-time-local
+
+::
+
+  - 20090601 14:47:47.726
+  - 20090601 14:47:46.539
+  - 20090601 14:47:57.55
+  - 20090601 14:47:55.711
+
+* stageLabel[30]
+
+::
+
+  -  
+
+* creationDate[17]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* Wavelength [22]
+
+::
+
+  - 0.0
+
+* creationTime[0]
+
+::
+
+  - 11:19:42:896
+  - 13:29:09:562
+
+* Camera Bit Depth
+
+::
+
+  - 16
+
+* spatial-calibration-y
+
+::
+
+  - 0.239128
+
+* spatial-calibration-x
+
+::
+
+  - 0.239128
+
+* Illumination
+
+::
+
+  - 491-525-50-FITC
+  - DIC Confocal
+  - FITC
+  - GFP
+
+* creationDate[37]
+
+::
+
+  - 28/11/2005
+
+* absoluteZValid[44]
+
+::
+
+  - 1
+
+* creationDate[16]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* Wavelength [23]
+
+::
+
+  - 0.0
+
+* plane-type
+
+::
+
+  - plane
+
+* creationDate[34]
+
+::
+
+  - 28/11/2005
+
+* creationDate[15]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* Shading
+
+::
+
+  - Off
+
+* absoluteZValid[47]
+
+::
+
+  - 1
+
+* gray-calibration-max
+
+::
+
+  - -1
+
+* creationTime[09]
+
+::
+
+  - 01:30:25:210
+  - 17:12:57:518
+
+* Wavelength [24]
+
+::
+
+  - 0.0
+
+* creationDate[35]
+
+::
+
+  - 28/11/2005
+
+* creationTime[29]
+
+::
+
+  - 17:14:57:518
+
+* creationDate[14]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* absoluteZValid[46]
+
+::
+
+  - 1
+
+* Wavelength [25]
+
+::
+
+  - 0.0
+
+* creationDate[32]
+
+::
+
+  - 28/11/2005
+
+* Gamma
+
+::
+
+  - 11509159
+  - 359211
+  - 2521978
+  - 1568633
+
+* creationTime[08]
+
+::
+
+  - 01:30:23:210
+  - 17:12:51:518
+
+* creationTime[47]
+
+::
+
+  - 17:16:45:518
+
+* absoluteZValid[19]
+
+::
+
+  - 1
+
+* Wavelength [07]
+
+::
+
+  - 0.0
+
+* bits-per-pixel
+
+::
+
+  - 16
+
+* Exposure
+
+::
+
+  - 200 ms
+  - 70 ms
+  - 1 sec
+  - 500 ms
+  - 0.005 sec
+  - 100 ms
+
+* zDistance[2]
+
+::
+
+  - 1.5
+  - 0.75
+
+* Wavelength [45]
+
+::
+
+  - 0.0
+
+* Wavelength [26]
+
+::
+
+  - 0.0
+
+* creationTime[07]
+
+::
+
+  - 01:30:21:215
+  - 17:12:45:518
+
+* WaveName3
+
+::
+
+  - "DIC Confocal"
+
+* WaveName2
+
+::
+
+  - "561-620-60-TR"
+
+* WaveName1
+
+::
+
+  - "491-525-50-FITC"
+
+* absoluteZValid[18]
+
+::
+
+  - 1
+
+* Wavelength [06]
+
+::
+
+  - 0.0
+
+* zDistance[3]
+
+::
+
+  - 1.5
+  - 0.75
+
+* creationDate[33]
+
+::
+
+  - 28/11/2005
+
+* Wavelength [46]
+
+::
+
+  - 0.0
+
+* Wavelength [27]
+
+::
+
+  - 0.0
+
+* stageY[0]
+
+::
+
+  - 0.0
+  - -10316.0
+
+* creationDate[30]
+
+::
+
+  - 28/11/2005
+
+* creationTime[06]
+
+::
+
+  - 01:30:19:220
+  - 17:12:39:518
+
+* Digitizer
+
+::
+
+  - 16-bit (1 MHz, EM Gain)
+  - Fast
+  - 14-bit (10 MHz)
+
+* creationTime[45]
+
+::
+
+  - 17:16:33:518
+
+* absoluteZValid[17]
+
+::
+
+  - 1
+
+* Wavelength [09]
+
+::
+
+  - 0.0
+
+* Wavelength [28]
+
+::
+
+  - 0.0
+
+* Wavelength [47]
+
+::
+
+  - 0.0
+
+* creationDate[19]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* zDistance[4]
+
+::
+
+  - 1.5
+  - 0.75
+
+* creationDate[31]
+
+::
+
+  - 28/11/2005
+
+* MetaDataVersion
+
+::
+
+  - 1
+
+* stageY[1]
+
+::
+
+  - 0.0
+  - -10316.0
+
+* creationTime[05]
+
+::
+
+  - 01:30:17:225
+  - 17:12:33:518
+
+* Mosaic Physical Shutter
+
+::
+
+  - Closed
+
+* creationDate[18]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* absoluteZValid[16]
+
+::
+
+  - 1
+
+* scale-min
+
+::
+
+  - 96
+  - 632
+
+* creationTime[46]
+
+::
+
+  - 17:16:39:518
+
+* Wavelength [08]
+
+::
+
+  - 0.0
+
+* gray-calibration-curve-fit-algorithm
+
+::
+
+  - 4
+
+* Wavelength [29]
+
+::
+
+  - 0.0
+
+* Zeiss Trans Shutter
+
+::
+
+  - Closed
+
+* Channel #4 _MagRI_
+
+::
+
+  - -5.486124089231093E303
+
+* creationTime[24]
+
+::
+
+  - 17:14:27:518
+
+* stageLabel[38]
+
+::
+
+  -  
+
+* cameraXChipOffset[03]
+
+::
+
+  - 0.0
+
+* stageLabel[04]
+
+::
+
+  -  
+
+* stageX[29]
+
+::
+
+  - 0.0
+
+* stageY[39]
+
+::
+
+  - 0.0
+
+* Wavelength [02]
+
+::
+
+  - 0.0
+
+* DateTime
+
+::
+
+  - 20090601 14:47:57.55
+  - 2002:04:02 09:30:43
+  - 12/04/2002 01:30:47:225
+  - 2002:02:01 11:19:46
+  - 01/03/2002 11:19:46:279
+  - 2005:07:12 13:29:20
+  - 12/07/2005 13:29:13:577
+  - 2006:01:27 13:40:13
+  - 28/11/2005 17:12:33:518
+
+* stageY[19]
+
+::
+
+  - 0.0
+
+* creationTime[04]
+
+::
+
+  - 01:30:15:220
+  - 17:12:27:518
+
+* stageY[2]
+
+::
+
+  - 0.0
+  - -10316.0
+
+* YResolution
+
+::
+
+  - 72
+
+* Zeiss Fluor Shutter
+
+::
+
+  - Closed
+
+* UIC4 absoluteZ[00]
+
+::
+
+  - -2.5
+  - 0.0
+
+* Spectral LMM ND 644
+
+::
+
+  - 70.1
+
+* stageLabel[37]
+
+::
+
+  -  
+
+* zoom-percent
+
+::
+
+  - 140
+
+* creationTime[23]
+
+::
+
+  - 17:14:21:518
+
+* cameraXChipOffset[02]
+
+::
+
+  - 0.0
+
+* stageLabel[03]
+
+::
+
+  -  
+
+* Channel #2 _MagRI_
+
+::
+
+  - 3.131513074179815E-294
+
+* Wavelength [01]
+
+::
+
+  - 0.0
+
+* creationTime[03]
+
+::
+
+  - 01:30:13:225
+  - 17:12:21:518
+
+* stageY[3]
+
+::
+
+  - 0.0
+  - -10316.0
+
+* ResolutionUnit
+
+::
+
+  - Inch
+
+* DoStage
+
+::
+
+  - TRUE
+
+* creationTime[22]
+
+::
+
+  - 17:14:15:518
+
+* stageLabel[36]
+
+::
+
+  -  
+
+* zDistance[0]
+
+::
+
+  - 1.5
+  - 0.75
+
+* Wavelength [05]
+
+::
+
+  - 0.0
+
+* stageLabel[06]
+
+::
+
+  -  
+
+* stageX[27]
+
+::
+
+  - 0.0
+
+* Cooler On
+
+::
+
+  - 1
+
+* AutoScale
+
+::
+
+  - 0
+
+* stageX[47]
+
+::
+
+  - 0.0
+
+* creationTime[02]
+
+::
+
+  - 01:30:11:175
+  - 17:12:15:518
+
+* cameraXChipOffset[05]
+
+::
+
+  - 0.0
+
+* Channel #4 _IllumSetting_
+
+::
+
+  - GFP
+
+* stageY[4]
+
+::
+
+  - 0.0
+  - -10316.0
+
+* cameraXChipOffset[04]
+
+::
+
+  - 0.0
+
+* photonegative-mode
+
+::
+
+  - off
+
+* creationTime[21]
+
+::
+
+  - 17:14:09:518
+
+* stageLabel[35]
+
+::
+
+  -  
+
+* stageLabel[05]
+
+::
+
+  -  
+
+* Wavelength [04]
+
+::
+
+  - 0.0
+
+* zDistance[1]
+
+::
+
+  - 1.5
+  - 0.75
+
+* stageX[28]
+
+::
+
+  - 0.0
+
+* Wavelength [03]
+
+::
+
+  - 0.0
+
+* creationTime[01]
+
+::
+
+  - 01:30:09:170
+  - 17:12:09:518
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - Monochrome
+
+* Zeiss Filter Cube
+
+::
+
+  - [ 5 ]
+
+* creationDate[13]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* absoluteZValid[41]
+
+::
+
+  - 1
+
+* stageLabel[08]
+
+::
+
+  -  
+
+* cameraYChipOffset[1]
+
+::
+
+  - 2.0
+  - 0.0
+
+* cameraYChipOffset[17]
+
+::
+
+  - 0.0
+
+* creationTime[28]
+
+::
+
+  - 17:14:51:518
+
+* stageLabel[34]
+
+::
+
+  -  
+
+* zDistance[19]
+
+::
+
+  - 0.25
+  - 0.0
+
+* stageX[25]
+
+::
+
+  - 0.0
+
+* stageY[15]
+
+::
+
+  - 0.0
+
+* creationTime[00]
+
+::
+
+  - 01:30:07:115
+  - 17:12:03:518
+
+* cameraXChipOffset[19]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[3]
+
+::
+
+  - 1.5
+  - 3642.7
+
+* UIC4 absoluteZ[04]
+
+::
+
+  - -1.5
+  - 0.0
+
+* creationDate[12]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* cameraYChipOffset[2]
+
+::
+
+  - 2.0
+  - 0.0
+
+* stageLabel[33]
+
+::
+
+  -  
+
+* absoluteZValid[40]
+
+::
+
+  - 1
+
+* stageLabel[07]
+
+::
+
+  -  
+
+* creationTime[27]
+
+::
+
+  - 17:14:45:518
+
+* AutoScaleLoInfo
+
+::
+
+  - 0/1
+
+* stageX[26]
+
+::
+
+  - 0.0
+
+* stageY[16]
+
+::
+
+  - 0.0
+
+* StandardLUT
+
+::
+
+  - monochrome
+
+* UIC4 absoluteZ[29]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[16]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[18]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[03]
+
+::
+
+  - -1.75
+  - 0.0
+
+* UIC4 absoluteZ[4]
+
+::
+
+  - 3.0
+  - 3643.45
+
+* stageLabel[32]
+
+::
+
+  -  
+
+* absoluteZValid[43]
+
+::
+
+  - 1
+
+* UIC4 absoluteZ[0]
+
+::
+
+  - -3.0
+  - 3640.45
+
+* cameraYChipOffset[3]
+
+::
+
+  - 2.0
+  - 0.0
+
+* creationDate[11]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* stageX[23]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[01]
+
+::
+
+  - 0.0
+
+* creationDate[38]
+
+::
+
+  - 28/11/2005
+
+* scale-max
+
+::
+
+  - 7610
+  - 990
+  - 23071
+  - 2449
+
+* cameraYChipOffset[19]
+
+::
+
+  - 0.0
+
+* creationTime[26]
+
+::
+
+  - 17:14:39:518
+
+* XCalibration
+
+::
+
+  - 1/1
+
+* UIC4 absoluteZ[02]
+
+::
+
+  - -2.0
+  - 0.0
+
+* Intensifier Gain
+
+::
+
+  - 200
+
+* stageY[17]
+
+::
+
+  - 0.0
+
+* UIC4 absoluteZ[1]
+
+::
+
+  - -1.5
+  - 3641.2
+
+* Vertical Clock Voltage
+
+::
+
+  - Normal
+
+* Wavelength [00]
+
+::
+
+  - 0.0
+
+* stageLabel[31]
+
+::
+
+  -  
+
+* absoluteZValid[42]
+
+::
+
+  - 1
+
+* Multiplication Gain Enabled
+
+::
+
+  - Yes
+
+* stageX[10]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[4]
+
+::
+
+  - 2.0
+  - 0.0
+
+* creationDate[39]
+
+::
+
+  - 28/11/2005
+
+* stageX[24]
+
+::
+
+  - 0.0
+
+* cameraXChipOffset[00]
+
+::
+
+  - 0.0
+
+* cameraYChipOffset[18]
+
+::
+
+  - 0.0
+
+* creationTime[25]
+
+::
+
+  - 17:14:33:518
+
+* UIC4 absoluteZ[01]
+
+::
+
+  - -2.25
+  - 0.0
+
+* UIC4 absoluteZ[2]
+
+::
+
+  - 0.0
+  - 3641.95
+
+* stageY[18]
+
+::
+
+  - 0.0
+
+* spatial-calibration-units
+
+::
+
+  - um
+
+* creationDate[10]
+
+::
+
+  - 12/04/2002
+  - 28/11/2005
+
+* stageLabel[09]
+
+::
+
+  -  
+

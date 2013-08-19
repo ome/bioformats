@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`MetaMorph 7.5 TIFF <metamorph-75-tiff-metadata>`
 
+Original Metadata Support: :doc:`MetaMorph 7.5 TIFF <MetamorphTiffReader>`
 
 
 We currently have:

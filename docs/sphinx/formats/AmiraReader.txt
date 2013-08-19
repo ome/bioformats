@@ -1,0 +1,60 @@
+*******************************************************************************
+AmiraReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Amira format reader.
+
+Key/value pairs
+===============================================================================
+
+* Pixels per meter (Y)
+
+::
+
+  - 1000000.0
+
+* Image width
+
+::
+
+  - 471
+  - 319
+
+* Image height
+
+::
+
+  - 471
+  - 286
+
+* Pixels per meter (Z)
+
+::
+
+  - 1000000.0
+
+* Bits per pixel
+
+::
+
+  - 8
+
+* Compression
+
+::
+
+  - 2
+
+* Number of planes
+
+::
+
+  - 512
+  - 280
+
+* Pixels per meter (X)
+
+::
+
+  - 1000000.0
+

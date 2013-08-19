@@ -1,0 +1,1641 @@
+*******************************************************************************
+NikonTiffReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Nikon TIFF format reader.
+
+Key/value pairs
+===============================================================================
+
+* history Acquisition Acquire.Scanner.YPosition.DisplayString
+
+::
+
+  - 0.0  um
+
+* history Acquisition Acquire.TimeSeries.NumberOfGroups
+
+::
+
+  - 3
+
+* view1 AutoResize
+
+::
+
+  - 0
+
+* history Acquisition LaserBox.Lasers(6).IntensityControlChannel
+
+::
+
+  - 0
+
+* history step2 Channel 3
+
+::
+
+  - off
+
+* history step2 Channel 4
+
+::
+
+  - off
+
+* history Acquisition LaserBox.Lasers(5).IntensityControlChannel
+
+::
+
+  - 0
+
+* history step2 Channel 2
+
+::
+
+  - on
+
+* history Acquisition Acquire.TimeSeries.DelayAt(1)
+
+::
+
+  - 5
+
+* history step2 Channel 1
+
+::
+
+  - off
+
+* view4 ShowAll
+
+::
+
+  - 0
+
+* history Acquisition LaserBox.Lasers(3).IntensityControlChannel
+
+::
+
+  - 0
+
+* view2 Port
+
+::
+
+  - 2
+
+* view3 ShowCursor
+
+::
+
+  - 0
+
+* history objective Magnification
+
+::
+
+  - 40.0
+
+* view4 Port
+
+::
+
+  - 2
+
+* view3 ShowIndex
+
+::
+
+  - 1
+
+* sensor type
+
+::
+
+  - IncohConfMicr
+
+* sensor model
+
+::
+
+  - Nikon C1 Standard Detector
+
+* view2 scale
+
+::
+
+  - 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000
+
+* view3 Port
+
+::
+
+  - 2
+
+* sensor s_params NumAperture
+
+::
+
+  - 1.3
+
+* history objective Plan Fluor 40.0x/1.30/0.20 Oil spring-loaded, stopper
+
+::
+
+  - 
+
+* PhotometricInterpretation
+
+::
+
+  - RGB
+
+* view2 ShowCursor
+
+::
+
+  - 0
+
+* view3 Axis
+
+::
+
+  - 0 0
+
+* history laser2 wavelength
+
+::
+
+  - 488 nm
+
+* history laser3 name
+
+::
+
+  - 543
+
+* sensor s_params LambdaEx
+
+::
+
+  - 408 408 408 408
+
+* view4 Live
+
+::
+
+  - 1
+
+* view4 IgnoreAspect
+
+::
+
+  - 0
+
+* view2 Zoom
+
+::
+
+  - 1.000000
+
+* view1 Color
+
+::
+
+  - 2 0 2 1 0
+
+* history objective Type
+
+::
+
+  - Plan Fluor
+
+* view3 Saturation
+
+::
+
+  - 4095.000000 4095.000000 4095.000000 4095.000000
+
+* view1 ShowCursor
+
+::
+
+  - 0
+
+* history Acquisition Acquire.TimeSeries.DelayAt(3)
+
+::
+
+  - 20
+
+* history Acquisition Acquire.Stage.YPosition.DisplayString
+
+::
+
+  - 0.00  um
+
+* history Acquisition Modules("Confocal C1 Grabber").PixelTimeCorrection
+
+::
+
+  - True
+
+* view1 BlackLevel
+
+::
+
+  - 0.000000 0.000000 0.000000 0.000000
+
+* history laser3 wavelength
+
+::
+
+  - 543 nm
+
+* view1 Position
+
+::
+
+  - 0.000000 0.000000
+
+* history Acquisition Acquire.LineChannelSeries.PassCount
+
+::
+
+  - 0
+
+* view3 DimViewOption
+
+::
+
+  - 1 2 1 1 1 1
+
+* history laser2 name
+
+::
+
+  - 488
+
+* PlanarConfiguration
+
+::
+
+  - Chunky
+
+* Orientation
+
+::
+
+  - 1st row -> top; 1st column -> left
+
+* view1 ShowIndex
+
+::
+
+  - 1
+
+* history step3 Gain 4
+
+::
+
+  - 0
+
+* history Acquisition Acquire.Scanner.ClemMode
+
+::
+
+  - 0
+
+* view1 Zoom
+
+::
+
+  - 1.000000
+
+* history step3 Gain 3
+
+::
+
+  - 0
+
+* history step3 Gain 2
+
+::
+
+  - 100
+
+* history step3 Gain 1
+
+::
+
+  - 0
+
+* view3 BlackLevel
+
+::
+
+  - 0.000000 0.000000 0.000000 0.000000
+
+* sensor s_params LambdaEm
+
+::
+
+  - 450 515 605 0
+
+* SampleFormat
+
+::
+
+  - unsigned integer
+
+* history Acquisition Acquire.LineMode
+
+::
+
+  - False
+
+* history Acquisition Acquire.TimeSeries.DelayAt(2)
+
+::
+
+  - 10
+
+* history Acquisition Acquire.ZStack.Bottom.DisplayString
+
+::
+
+  - 0.00  um
+
+* history Acquisition LaserBox.Lasers(1).IntensityControlChannel
+
+::
+
+  - 0
+
+* sensor s_params PinholeRadius
+
+::
+
+  - 833 833 833 833
+
+* view4 Saturation
+
+::
+
+  - 4095.000000 4095.000000 4095.000000 4095.000000
+
+* view4 Cursor
+
+::
+
+  - 0.500000 0.892578 0.597656
+
+* view3 IntZoom
+
+::
+
+  - 1
+
+* history Acquisition Acquire.ZStack.Reference.DisplayString
+
+::
+
+  - 0.00  um
+
+* view1 IgnoreAspect
+
+::
+
+  - 0
+
+* view4 Position
+
+::
+
+  - 0.273438 0.418706
+
+* Software
+
+::
+
+  - EZ-C1
+
+* history Acquisition LaserBox.MountedLasers.Count
+
+::
+
+  - 3
+
+* view1 UseUnits
+
+::
+
+  - 1
+
+* history step2 Shutter 1
+
+::
+
+  - closed
+
+* view2 Order
+
+::
+
+  - 0 1 2 3 4 5
+
+* history Acquisition LaserBox.Lasers(7).IntensityControlChannel
+
+::
+
+  - 0
+
+* history step2 Shutter 2
+
+::
+
+  - automatic
+
+* view1 scale
+
+::
+
+  - 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000
+
+* history step2 Shutter 3
+
+::
+
+  - closed
+
+* view3 Size
+
+::
+
+  - 0.272917 0.480769
+
+* view2 DimViewOption
+
+::
+
+  - 1 2 1 1 1 1
+
+* history dateGMT
+
+::
+
+  - Thursday, July 02, 2009 21:23:04
+
+* history Acquisition LaserBox.Name
+
+::
+
+  - Confocal C1 LaserBox
+
+* view1 Order
+
+::
+
+  - 0 1 2 3 4 5
+
+* view count
+
+::
+
+  - 4
+
+* document scale
+
+::
+
+  - 1.000000 0.000000 318.250000 318.250000
+
+* FillOrder
+
+::
+
+  - Pixels with lower column values are stored in the higher order bits of a byte
+
+* view1 DimViewOption
+
+::
+
+  - 1 2 1 1 1 1
+
+* view4 ShowIndex
+
+::
+
+  - 1
+
+* history PassCount
+
+::
+
+  - 3
+
+* sensor s_params ExPhotonCnt
+
+::
+
+  - 1 1 1 1
+
+* history Acquisition Modules("Confocal C1 Grabber").BarrierFilter(3)
+
+::
+
+  - BA 515/30
+
+* history Acquisition Acquire.ZStack.StepSize.DisplayString
+
+::
+
+  - 0.15  um
+
+* history Acquisition Acquire.Average.StopAtQuality
+
+::
+
+  - False
+
+* history Acquisition Acquire.TimeSeries.Enable
+
+::
+
+  - False
+
+* view2 IgnoreAspect
+
+::
+
+  - 0
+
+* history step1 Pinhole
+
+::
+
+  - 30 um small
+
+* history Acquisition Acquire.Average.Enable
+
+::
+
+  - False
+
+* view4 Gamma
+
+::
+
+  - 1.000000 1.000000 1.000000 1.000000
+
+* history Acquisition Acquire.Scanner.XPosition.DisplayString
+
+::
+
+  - 0.0  um
+
+* view1 Live
+
+::
+
+  - 1
+
+* history dwell
+
+::
+
+  - 1.68 us
+
+* view3 Synchronize
+
+::
+
+  - 1
+
+* history Acquisition Acquire.TimeSeries.Delay
+
+::
+
+  - 5
+
+* view2 ShowAll
+
+::
+
+  - 0
+
+* history step3 Name
+
+::
+
+  - Pass 3
+
+* history Acquisition Modules("Confocal C1 Grabber").DichroicMirror(2)
+
+::
+
+  - DM 545
+
+* history Acquisition Acquire.Average.StopAtQualityLimit
+
+::
+
+  - 20
+
+* view3 AutoResize
+
+::
+
+  - 0
+
+* view2 ShowIndex
+
+::
+
+  - 1
+
+* sensor s_params RefrInxLensMedium
+
+::
+
+  - 1.515
+
+* view2 UseUnits
+
+::
+
+  - 1
+
+* view2 Color
+
+::
+
+  - 2 0 2 1 0
+
+* view4 Axis
+
+::
+
+  - 0 0
+
+* view1 Port
+
+::
+
+  - 2
+
+* history Acquisition LaserBox.Lasers(2).IntensityControlChannel
+
+::
+
+  - 0
+
+* history step1 Shutter 1
+
+::
+
+  - automatic
+
+* history step1 Shutter 2
+
+::
+
+  - closed
+
+* history step1 Shutter 3
+
+::
+
+  - closed
+
+* view4 Order
+
+::
+
+  - 0 1 2 3 4 5
+
+* view4 DimViewOption
+
+::
+
+  - 1 2 1 1 1 1
+
+* history detector
+
+::
+
+  - standard
+
+* history Acquisition Modules("Confocal C1 Grabber").DichroicMirror(1)
+
+::
+
+  - DM 480
+
+* view4 Color
+
+::
+
+  - 2 0 2 1 0
+
+* history date
+
+::
+
+  - Thursday, July 02, 2009 16:23:04 (-5:00)
+
+* history Acquisition Acquire.TimeSeries.Speed
+
+::
+
+  - 0
+
+* view2 Cursor
+
+::
+
+  - 0.250000 0.892578 0.597656
+
+* view3 Cursor
+
+::
+
+  - 0.250000 0.892578 0.597656
+
+* sensor s_params RefrInxMedium
+
+::
+
+  - 1.515
+
+* document label
+
+::
+
+  - intensity ch x y
+
+* view3 Live
+
+::
+
+  - 1
+
+* history step1 Channel 4
+
+::
+
+  - off
+
+* history step1 Channel 1
+
+::
+
+  - on
+
+* history step1 Channel 2
+
+::
+
+  - off
+
+* history step1 Channel 3
+
+::
+
+  - off
+
+* view2 Size
+
+::
+
+  - 0.272917 0.480769
+
+* history Acquisition Acquire.Scanner.TransmittedDetector
+
+::
+
+  - 2
+
+* Document Name
+
+::
+
+  - C:\Documents and Settings\Nikon C1\Desktop\2009-07-02\4VC-316-2 Slide 30\316 S30-2 B90 G120 R100 030.tif
+
+* view1 Gamma
+
+::
+
+  - 1.000000 1.000000 1.000000 1.000000
+
+* view2 Live
+
+::
+
+  - 1
+
+* document origin
+
+::
+
+  - 0.000000 1.000000 -159.125000 -159.125000
+
+* view4 ShowCursor
+
+::
+
+  - 0
+
+* history step3 Channel 3
+
+::
+
+  - on
+
+* history step3 Channel 2
+
+::
+
+  - off
+
+* history step3 Channel 4
+
+::
+
+  - off
+
+* history Acquisition Acquire.ZStack.Range.DisplayString
+
+::
+
+  - 0.15  um
+
+* history Acquisition Acquire.Scanner.XField.DisplayString
+
+::
+
+  - 318.3  um
+
+* view1 Size
+
+::
+
+  - 0.272917 0.480769
+
+* history Acquisition Modules("Confocal C1 Grabber").EnableChannel(3)
+
+::
+
+  - False
+
+* view4 AutoResize
+
+::
+
+  - 0
+
+* view1 IntZoom
+
+::
+
+  - 1
+
+* history Acquisition Modules("Confocal C1 Grabber").Offset(1)
+
+::
+
+  - 127
+
+* view2 Gamma
+
+::
+
+  - 1.000000 1.000000 1.000000 1.000000
+
+* view4 UseUnits
+
+::
+
+  - 1
+
+* view1 Saturation
+
+::
+
+  - 4095.000000 4095.000000 4095.000000 4095.000000
+
+* view3 Color
+
+::
+
+  - 2 0 2 1 0
+
+* DateTime
+
+::
+
+  - 2009:07:02 16:23:32
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* history Acquisition objective position
+
+::
+
+  - 5
+
+* history Acquisition Acquire.TimeSeries.BleachAt(2)
+
+::
+
+  - 0
+
+* history objective Immersion
+
+::
+
+  - Oil
+
+* view4 IntZoom
+
+::
+
+  - 1
+
+* view3 Tile
+
+::
+
+  - -1 -1
+
+* history step3 Channel 1
+
+::
+
+  - off
+
+* history objective NA
+
+::
+
+  - 1.300
+
+* history Acquisition Modules("Confocal C1 Grabber").EnableChannel(2)
+
+::
+
+  - False
+
+* document position
+
+::
+
+  - ch 450/35 515/30 605/75 Trans
+
+* history Acquisition Acquire.ZStack.Enable
+
+::
+
+  - False
+
+* sensor s_params Channels
+
+::
+
+  - 4
+
+* history step1 Gain 3
+
+::
+
+  - 0
+
+* history step1 Gain 2
+
+::
+
+  - 0
+
+* history step1 Gain 4
+
+::
+
+  - 0
+
+* view4 Zoom
+
+::
+
+  - 1.000000
+
+* history laser1 wavelength
+
+::
+
+  - 408 nm
+
+* history Acquisition Acquire.TimeSeries.BleachAt(3)
+
+::
+
+  - 0
+
+* document document average
+
+::
+
+  - 0 0 0
+
+* view4 Tile
+
+::
+
+  - -1 -1
+
+* view1 Synchronize
+
+::
+
+  - 1
+
+* history step1 Gain 1
+
+::
+
+  - 90
+
+* NumberOfChannels
+
+::
+
+  - 3
+
+* history Acquisition Acquire.Stage.XPosition.DisplayString
+
+::
+
+  - 0.00  um
+
+* view2 Position
+
+::
+
+  - 0.273438 0.000000
+
+* history Acquisition Acquire.Average.StopAtCount
+
+::
+
+  - True
+
+* history Acquisition Acquire.TimeSeries.DelayUnit
+
+::
+
+  - 2
+
+* history Acquisition Modules("Confocal C1 Grabber").Offset(3)
+
+::
+
+  - 127
+
+* history Acquisition Modules("Confocal C1 Grabber").EnableChannel(1)
+
+::
+
+  - True
+
+* document date
+
+::
+
+  - 12465697846360
+
+* history step3 Shutter 3
+
+::
+
+  - automatic
+
+* history step3 Shutter 2
+
+::
+
+  - closed
+
+* history step3 Shutter 1
+
+::
+
+  - closed
+
+* history laser power
+
+::
+
+  - not measured
+
+* history Acquisition Acquire.TimeSeries.NumberAt(2)
+
+::
+
+  - 10
+
+* history Acquisition Modules("Confocal C1 Grabber").BarrierFilter(2)
+
+::
+
+  - BA 605/75
+
+* history Acquisition Acquire.TimeSeries.NumberAt(3)
+
+::
+
+  - 10
+
+* history Acquisition Acquire.Stage.Name
+
+::
+
+  - Prior Proscan Stage
+
+* history shutter2
+
+::
+
+  - closed
+
+* history shutter1
+
+::
+
+  - automatic
+
+* view3 Order
+
+::
+
+  - 0 1 2 3 4 5
+
+* history shutter4
+
+::
+
+  - closed
+
+* history shutter3
+
+::
+
+  - closed
+
+* NewSubfileType
+
+::
+
+  - 0
+
+* history shutter6
+
+::
+
+  - closed
+
+* history shutter5
+
+::
+
+  - closed
+
+* history shutter7
+
+::
+
+  - closed
+
+* history Acquisition Modules("Confocal C1 Grabber").Offset(2)
+
+::
+
+  - 127
+
+* view1 ShowAll
+
+::
+
+  - 0
+
+* history Acquisition Acquire.TimeSeries.BleachAt(1)
+
+::
+
+  - 0
+
+* view2 Synchronize
+
+::
+
+  - 1
+
+* view4 Synchronize
+
+::
+
+  - 1
+
+* view2 IntZoom
+
+::
+
+  - 1
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - RGB
+
+* history software
+
+::
+
+  - EZ-C1
+
+* history Acquisition Modules("Confocal C1 Grabber").BarrierFilter(1)
+
+::
+
+  - BA 450/35
+
+* history Acquisition Modules("Confocal C1 Grabber").LinearGainMode
+
+::
+
+  - False
+
+* document depth
+
+::
+
+  - 1
+
+* history Acquisition Acquire.LineChannelSeries.Enable
+
+::
+
+  - False
+
+* view2 Saturation
+
+::
+
+  - 4095.000000 4095.000000 4095.000000 4095.000000
+
+* history step2 Name
+
+::
+
+  - Pass 2
+
+* view3 ShowAll
+
+::
+
+  - 0
+
+* view1 Tile
+
+::
+
+  - -1 -1
+
+* history Acquisition Acquire.TimeSeries.DelayUnitAt(3)
+
+::
+
+  - 2
+
+* view4 Size
+
+::
+
+  - 0.272917 0.480769
+
+* history Acquisition Acquire.TimeSeries.Number
+
+::
+
+  - 2
+
+* view2 BlackLevel
+
+::
+
+  - 0.000000 0.000000 0.000000 0.000000
+
+* view3 Position
+
+::
+
+  - -0.001042 0.416958
+
+* view2 AutoResize
+
+::
+
+  - 0
+
+* history pinhole
+
+::
+
+  - 33.3 um
+
+* history laser1 name
+
+::
+
+  - Laser 1
+
+* history Acquisition Acquire.TimeSeries.SaveToFile
+
+::
+
+  - 0
+
+* ImageLength
+
+::
+
+  - 512
+
+* history Acquisition Acquire.Scanner.ScanMode
+
+::
+
+  - 0
+
+* history step3 Pinhole
+
+::
+
+  - 30 um small
+
+* view2 Axis
+
+::
+
+  - 0 0
+
+* view4 BlackLevel
+
+::
+
+  - 0.000000 0.000000 0.000000 0.000000
+
+* document unit
+
+::
+
+  - ADC-units channels um um
+
+* view3 scale
+
+::
+
+  - 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000
+
+* history gain1
+
+::
+
+  - 90
+
+* history gain2
+
+::
+
+  - 0
+
+* view1 Axis
+
+::
+
+  - 0 0
+
+* history Acquisition Acquire.TimeSeries.NumberAt(1)
+
+::
+
+  - 10
+
+* SamplesPerPixel
+
+::
+
+  - 3
+
+* history gain3
+
+::
+
+  - 0
+
+* history Acquisition Acquire.Stage.Mounted
+
+::
+
+  - True
+
+* history gain4
+
+::
+
+  - 0
+
+* history objective Detail
+
+::
+
+  - spring-loaded, stopper
+
+* history Acquisition Modules("Confocal C1 Grabber").Offset(4)
+
+::
+
+  - 127
+
+* view3 Gamma
+
+::
+
+  - 1.000000 1.000000 1.000000 1.000000
+
+* history Acquisition LaserBox.Lasers(4).IntensityControlChannel
+
+::
+
+  - 0
+
+* document document profile
+
+::
+
+  - 1
+
+* view4 scale
+
+::
+
+  - 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000 0.000000 4095.000000 0.000000 0.000000 1.000000
+
+* view3 UseUnits
+
+::
+
+  - 1
+
+* history Acquisition Acquire.ZStack.Top.DisplayString
+
+::
+
+  - 0.00  um
+
+* history objective WorkingDistance
+
+::
+
+  - 0.20
+
+* history firmware
+
+::
+
+  - 2.00
+
+* history step2 Gain 2
+
+::
+
+  - 0
+
+* history step2 Gain 1
+
+::
+
+  - 0
+
+* view1 Cursor
+
+::
+
+  - 0.500000 0.892578 0.597656
+
+* history Acquisition Acquire.TimeSeries.DelayUnitAt(1)
+
+::
+
+  - 2
+
+* ImageWidth
+
+::
+
+  - 512
+
+* view2 Tile
+
+::
+
+  - -1 -1
+
+* history step2 Gain 4
+
+::
+
+  - 0
+
+* history step2 Gain 3
+
+::
+
+  - 120
+
+* history Acquisition Modules("Confocal C1 Grabber").EnableChannel(4)
+
+::
+
+  - False
+
+* history version
+
+::
+
+  - Gold Version 3.40 build 691
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* history Acquisition Acquire.Scanner.YField.DisplayString
+
+::
+
+  - 318.3  um
+
+* history Acquisition Acquire.Scanner.Angle
+
+::
+
+  - 0
+
+* history step2 Pinhole
+
+::
+
+  - 30 um small
+
+* history Acquisition Acquire.TimeSeries.DelayUnitAt(2)
+
+::
+
+  - 2
+
+* history Acquisition Acquire.Scanner.Name
+
+::
+
+  - Confocal C1 Scanner
+
+* history step1 Name
+
+::
+
+  - Pass 1
+
+* view3 IgnoreAspect
+
+::
+
+  - 0
+
+* history Acquisition Acquire.ChannelSeries.Enable
+
+::
+
+  - True
+
+* view3 Zoom
+
+::
+
+  - 1.000000
+

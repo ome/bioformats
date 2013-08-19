@@ -1,0 +1,15 @@
+*******************************************************************************
+NAFReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Hamamatsu Aquacosmos format reader.
+
+Key/value pairs
+===============================================================================
+
+* Description
+
+::
+
+  - atio Imaging ApplicationC:\Programmi\AQUACOSMOS25\Fura2.RPF 
+

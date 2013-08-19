@@ -1,0 +1,45 @@
+*******************************************************************************
+ARFReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats ARF format reader.
+
+Key/value pairs
+===============================================================================
+
+* Height
+
+::
+
+  - 100
+
+* Endianness
+
+::
+
+  - little
+
+* Image count
+
+::
+
+  - 3
+
+* Width
+
+::
+
+  - 120
+
+* Version
+
+::
+
+  - 2
+
+* Bits per pixel
+
+::
+
+  - 12
+

@@ -1,0 +1,1230 @@
+*******************************************************************************
+FEITiffReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats FEI TIFF format reader.
+
+Key/value pairs
+===============================================================================
+
+* [Vector] flStageYPosition
+
+::
+
+  - 3197100
+  - 2766667
+  - 5801007
+  - 5038399
+  - 6532355
+  - 2576346
+  - 5036564
+  - 4923289
+  - 3811314
+
+* [Vector.Video.Channel.0] MixFactor_Det_0
+
+::
+
+  - 0.000
+  - 100.000
+
+* [Vector.Video.Channel.0] MultiContrast
+
+::
+
+  - 8.913
+
+* [Vector.Video.Channel.0] MixFactor_Det_2
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.0] MixFactor_Det_1
+
+::
+
+  - 100.000
+  - 0.000
+
+* [DatabarData] lScanSpeed
+
+::
+
+  - 5
+  - 0
+
+* [Vector.Video.Channel.0] MixFactor_Det_4
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.0] MixFactor_Det_3
+
+::
+
+  - 0.000
+
+* [Vector.IonColumn] ImageType
+
+::
+
+  - 4113
+
+* [Vector.Video.Detectors] Detector_6_Contrast
+
+::
+
+  - 30.000
+
+* [Vector.Sysscan] PositionX
+
+::
+
+  - 0.00000
+
+* [DatabarData] iImageType
+
+::
+
+  - 1
+
+* [Vector.Sysscan] PositionY
+
+::
+
+  - 0.00000
+
+* [Vector.Sysscan] LineTimeIndex1
+
+::
+
+  - 5
+
+* [Vector] NrOfScanPresets
+
+::
+
+  - 5
+
+* [Vector.Sysscan] LineTimeIndex0
+
+::
+
+  - 4
+
+* [Vector.Sysscan] LineTimeIndex3
+
+::
+
+  - 9
+
+* [Vector.Sysscan] LineTimeIndex2
+
+::
+
+  - 7
+
+* [Vector.Sysscan] Application
+
+::
+
+  - 0
+
+* BitsPerSample
+
+::
+
+  - 8
+
+* [Vector.Video.Channel.0] MixFactor_Det_5
+
+::
+
+  - 0.000
+
+* [DatabarData] flIonSpot
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.0] MixFactor_Det_6
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.0] MixFactor_Det_7
+
+::
+
+  - 0.000
+
+* YResolution
+
+::
+
+  - 26
+  - 53
+
+* [Vector.Sysscan] Index
+
+::
+
+  - 5
+  - 0
+
+* [Vector] BeamShiftY
+
+::
+
+  - 0.00000
+
+* [Vector.Sysscan] TVPow2Frames
+
+::
+
+  - 3
+
+* [Vector] BeamShiftX
+
+::
+
+  - 0.00000
+
+* [Vector.Video.Channel.0] Contrast
+
+::
+
+  - 25.659
+  - 24.969
+
+* [Vector.Video.Detectors] Detector_2_Extra1
+
+::
+
+  - 300.000
+
+* [Vector.Video.Channel.1] MultiContrast
+
+::
+
+  - 8.913
+
+* [Vector.IonColumn] IonBright3
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.1] MixFactor_Det_7
+
+::
+
+  - 0.000
+
+* [Vector.IonColumn] IonBright2
+
+::
+
+  - 0.000
+
+* [Vector.IonColumn] IonBeamShiftX
+
+::
+
+  - 0.00000
+
+* [Vector.Video.Channel.1] MixFactor_Det_6
+
+::
+
+  - 0.000
+
+* [Vector.IonColumn] IonBright1
+
+::
+
+  - 0.000
+
+* [Vector.IonColumn] IonBeamShiftY
+
+::
+
+  - 0.00000
+
+* [Vector.Video.Channel.0] PrevMixFactor_Det_7
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.0] PrevMixFactor_Det_6
+
+::
+
+  - 0.000
+
+* XResolution
+
+::
+
+  - 29
+  - 59
+
+* [Vector.Video.Channel.0] PrevMixFactor_Det_5
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.0] PrevMixFactor_Det_4
+
+::
+
+  - 0.000
+
+* [MachineData] NrOfVectors
+
+::
+
+  - 1
+
+* [Vector.Video.Channel.0] PrevMixFactor_Det_3
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.0] PrevMixFactor_Det_2
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.0] MultiBrightness
+
+::
+
+  - 48.690
+
+* [Vector.Video.Channel.0] PrevMixFactor_Det_1
+
+::
+
+  - 0.000
+
+* [Vector.Sysscan] LineTimeIndex4
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.0] PrevMixFactor_Det_0
+
+::
+
+  - 0.000
+
+* [Vector.IonColumn] IonContr0
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.1] MixFactor_Det_4
+
+::
+
+  - 0.000
+
+* [Vector.Video.Detectors] ActualSelected
+
+::
+
+  - 1
+  - 0
+
+* [Vector.Video.Channel.1] MixFactor_Det_5
+
+::
+
+  - 0.000
+
+* [Vector] Magnification
+
+::
+
+  - 12800.000
+  - 144.156
+  - 16275.181
+  - 4622.165
+  - 9246.108
+  - 15590.841
+  - 1600.000
+  - 9237.855
+  - 200.000
+
+* [Vector.Video.Channel.1] MixFactor_Det_2
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.1] MixFactor_Det_3
+
+::
+
+  - 0.000
+
+* [Vector.Video.Detectors] Detector_0_Extra1
+
+::
+
+  - 5.000
+  - 110.000
+
+* [Vector.IonColumn] IonContr2
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.1] MixFactor_Det_0
+
+::
+
+  - 0.000
+
+* ResolutionUnit
+
+::
+
+  - Centimeter
+
+* PhotometricInterpretation
+
+::
+
+  - BlackIsZero
+
+* [Vector.IonColumn] IonContr1
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.1] MixFactor_Det_1
+
+::
+
+  - 0.000
+
+* [Vector] ScanRotation
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.0] Contents
+
+::
+
+  - 90
+  - 50
+
+* [Vector.IonColumn] IonContr3
+
+::
+
+  - 0.000
+
+* [Vector.Sysscan] Mode
+
+::
+
+  - 7
+
+* NumberOfChannels
+
+::
+
+  - 1
+
+* [Vector.Video.Detectors] Detector_4_Brightness
+
+::
+
+  - 50.000
+
+* [Vector.Video.Detectors] Detector_0_Brightness
+
+::
+
+  - 41.320
+  - 37.730
+
+* [MachineData] MachineNumber
+
+::
+
+  - 1287
+
+* [Vector.Video.Detectors] Detector_5_Extra1
+
+::
+
+  - 0.000
+
+* [ImageDevice] RatioXY
+
+::
+
+  - 1.33300
+
+* GrayResponseCurve
+
+::
+
+  - 2000
+
+* [Vector.Sysscan] TVResolution
+
+::
+
+  - 177
+
+* [Vector] FWD
+
+::
+
+  - 4.880
+  - 4.144
+  - 4.873
+  - 4.915
+  - 4.877
+  - 4.905
+  - 4.712
+  - 4.918
+  - 3.853
+
+* [Vector.IonColumn] IonAperPresetNo
+
+::
+
+  - 2
+
+* [DatabarData] flIonMagn
+
+::
+
+  - 0.00000
+
+* [Vector.IonColumn] IonMagn
+
+::
+
+  - 500.00000
+
+* [Vector.Video.Detectors] Detector_1_Name
+
+::
+
+  - 22
+
+* [Vector.Video.Detectors] Detector_3_Brightness
+
+::
+
+  - 50.000
+
+* [Vector.Video.Channel.1] Contents
+
+::
+
+  - 0
+
+* [Vector.Sysscan] SSResolution
+
+::
+
+  - 144
+
+* [MachineData] Magic
+
+::
+
+  - 19544
+
+* [DatabarData] Definition
+
+::
+
+  - 144
+
+* [Vector.Sysscan] SizeY
+
+::
+
+  - 25.00000
+
+* [Vector.Sysscan] SizeX
+
+::
+
+  - 25.00000
+
+* [Vector.Video.Detectors] Detector_1_Brightness
+
+::
+
+  - 40.671
+  - 39.416
+  - 37.133
+
+* GrayResponseUnit
+
+::
+
+  - 3
+
+* [MachineData] Version
+
+::
+
+  - 1360
+
+* [Vector] SpecimenTilt
+
+::
+
+  - 0
+
+* [Vector.Video.Detectors] Detector_5_Name
+
+::
+
+  - 0
+
+* [Vector.Sysscan] TVFilterMode
+
+::
+
+  - 136
+  - 107
+
+* [DatabarData] FilterMode
+
+::
+
+  - 136
+
+* NewSubfileType
+
+::
+
+  - 0
+
+* [Vector.Sysscan] SSPow2Frames
+
+::
+
+  - 0
+
+* [Vector.IonColumn] IonScanRot
+
+::
+
+  - 0.000
+
+* [Vector.Video] MaxNrNlimChannels
+
+::
+
+  - 2
+
+* [Vector.Video.Channel.1] MultiBrightness
+
+::
+
+  - 48.690
+
+* [Vector.Video.Detectors] Detector_3_Name
+
+::
+
+  - 0
+
+* [Vector.Sysscan] LinesPerFrameIndex3
+
+::
+
+  - 3
+
+* [Vector.Sysscan] LinesPerFrameIndex2
+
+::
+
+  - 3
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - Monochrome
+
+* [Vector.Sysscan] LinesPerFrameIndex1
+
+::
+
+  - 3
+
+* [Vector.Sysscan] LinesPerFrameIndex0
+
+::
+
+  - 3
+
+* [Vector.Video.Detectors] Detector_5_Brightness
+
+::
+
+  - 50.000
+
+* [Vector.Sysscan] LinesPerFrameIndex4
+
+::
+
+  - 2
+
+* [Vector.Video.Detectors] Detector_1_Contrast
+
+::
+
+  - 25.232
+  - 25.659
+  - 28.137
+
+* [Vector.Video.Detectors] Detector_0_Name
+
+::
+
+  - 12
+
+* Software
+
+::
+
+  - S-FEG
+
+* [Vector] HighTension
+
+::
+
+  - 3000.000
+
+* [Vector] ProbeCurrent
+
+::
+
+  - 3.000
+
+* [DatabarData] flWD
+
+::
+
+  - 4.880
+  - 4.144
+  - 4.873
+  - 4.915
+  - 4.877
+  - 4.905
+  - 4.712
+  - 4.918
+  - 3.853
+
+* [Vector.Video.Detectors] Detector_3_Contrast
+
+::
+
+  - 30.000
+
+* [ImageDevice] SizeY
+
+::
+
+  - 93.00000
+
+* [DatabarData] ImageName
+
+::
+
+  - VENU05.TIF
+  - VENU.TIF
+  - venu02.tif
+  - VENU06.TIF
+  - venu03.tif
+  - VENU07.TIF
+  - VENU04.TIF
+  - VENU08.TIF
+  - venu01.tif
+
+* [Vector.Sysscan] TvOver4
+
+::
+
+  - 1
+
+* [DatabarData] flMagn
+
+::
+
+  - 0.00363281253
+  - 0.32256633043
+  - 0.00285711116
+  - 0.01006022096
+  - 0.00502914283
+  - 0.00298252027
+  - 0.02906249836
+  - 0.00503363600
+  - 0.23250000179
+
+* [DatabarData] szUserText
+
+::
+
+  - S4
+
+* [Vector.Video.Detectors] Detector_2_Name
+
+::
+
+  - 32
+
+* [Vector.Video.Detectors] Detector_4_Extra1
+
+::
+
+  - 0.000
+
+* [Vector.Video.Detectors] Detector_6_Extra1
+
+::
+
+  - 0.000
+
+* [Vector.Video.Detectors] Detector_7_Brightness
+
+::
+
+  - 50.000
+
+* [DatabarData] flIonWD
+
+::
+
+  - 0.000
+
+* [Vector.Video.Detectors] Detector_7_Contrast
+
+::
+
+  - 30.000
+
+* [Vector] StigmatorX
+
+::
+
+  - -1.71184
+  - 5.90144
+
+* [Vector] StigmatorY
+
+::
+
+  - -9.13590
+  - 0.64146
+
+* [Vector.Video.Detectors] Detector_6_Brightness
+
+::
+
+  - 50.000
+
+* [Vector] flStageXPosition
+
+::
+
+  - 2218125
+  - 2506625
+  - 3710000
+  - 7419750
+  - 5148125
+  - 5626625
+  - 760250
+  - 4390875
+  - 4268000
+
+* ImageLength
+
+::
+
+  - 484
+  - 968
+
+* [Vector.Video.Channel.0] Selection_Det_6
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.0] Selection_Det_7
+
+::
+
+  - 0
+
+* [Vector.Video.Detectors] Detector_4_Name
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.0] Selection_Det_4
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.0] Selection_Det_5
+
+::
+
+  - 0
+
+* [Vector] SpecimenRotation
+
+::
+
+  - -1925
+  - -2888
+
+* [Vector.Video.Detectors] Detector_7_Extra1
+
+::
+
+  - 0.000
+
+* [Vector.Sysscan] SSFilterMode
+
+::
+
+  - 1
+  - 136
+
+* [Vector.Video.Channel.0] Selection_Det_3
+
+::
+
+  - 0
+
+* [Vector.IonColumn] IonWD
+
+::
+
+  - 100.00000
+
+* [Vector.Video.Channel.0] Selection_Det_2
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.0] Selection_Det_1
+
+::
+
+  - 1
+  - 0
+
+* [Vector.Video.Channel.0] Selection_Det_0
+
+::
+
+  - 0
+  - 1
+
+* [Vector.Video.Channel.1] Brightness
+
+::
+
+  - 0.000
+
+* SamplesPerPixel
+
+::
+
+  - 1
+
+* [Vector.Video.Detectors] NrDetectorsConnected
+
+::
+
+  - 3
+
+* [Vector.Video.Detectors] Detector_7_Name
+
+::
+
+  - 0
+
+* [Vector.IonColumn] IonBright0
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.1] PrevMixFactor_Det_0
+
+::
+
+  - 0.000
+
+* [Vector.Video.Detectors] Detector_4_Contrast
+
+::
+
+  - 30.000
+
+* [DatabarData] flIonAccV
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.1] PrevMixFactor_Det_3
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.1] PrevMixFactor_Det_4
+
+::
+
+  - 0.000
+
+* [MachineData] XLFileType
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.1] PrevMixFactor_Det_1
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.1] PrevMixFactor_Det_2
+
+::
+
+  - 0.000
+
+* [Vector.Video.Channel.1] PrevMixFactor_Det_7
+
+::
+
+  - 0.000
+
+* [DatabarData] lDetName
+
+::
+
+  - 1
+  - 0
+
+* [Vector.Video.Channel.1] PrevMixFactor_Det_5
+
+::
+
+  - 0.000
+
+* [Vector.Video.Detectors] Detector_2_Contrast
+
+::
+
+  - 7.000
+
+* [Vector.Video.Detectors] Detector_5_Contrast
+
+::
+
+  - 30.000
+
+* [Vector.IonColumn] IonStigY
+
+::
+
+  - 0.00000
+
+* [Vector.Video.Channel.1] PrevMixFactor_Det_6
+
+::
+
+  - 0.000
+
+* [DatabarData] flSpot
+
+::
+
+  - 3.000
+
+* [Vector.IonColumn] IonStigX
+
+::
+
+  - 0.00000
+
+* [Vector.Video.Channel.1] Contrast
+
+::
+
+  - 30.000
+
+* [Vector.Video.Detectors] Detector_6_Name
+
+::
+
+  - 0
+
+* [Vector.Video.Detectors] Detector_0_Contrast
+
+::
+
+  - 21.215
+  - 24.969
+
+* ImageWidth
+
+::
+
+  - 712
+  - 1424
+
+* [Vector.Video.Detectors] Detector_2_Brightness
+
+::
+
+  - 50.000
+
+* [MachineData] MachineType
+
+::
+
+  - 3
+
+* [DatabarData] flAccV
+
+::
+
+  - 3000.000
+
+* [Vector.Video.Channel.1] Selection_Det_7
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.1] Selection_Det_5
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.1] Selection_Det_6
+
+::
+
+  - 0
+
+* [Vector.Video.Detectors] Detector_1_Extra1
+
+::
+
+  - -25.000
+  - 5.000
+
+* [Vector.Video.Channel.0] Brightness
+
+::
+
+  - 40.671
+  - 40.486
+  - 40.256
+  - 39.416
+  - 37.730
+
+* [Vector.IonColumn] VectMask
+
+::
+
+  - 4
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* [Vector.Video.Channel.1] Selection_Det_0
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.1] Selection_Det_4
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.1] Selection_Det_3
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.1] Selection_Det_2
+
+::
+
+  - 0
+
+* [Vector.Video.Channel.1] Selection_Det_1
+
+::
+
+  - 0
+
+* [Vector.Video.Detectors] Detector_3_Extra1
+
+::
+
+  - 0.000
+
+* [Vector.Video] MaxNrDetectors
+
+::
+
+  - 8
+
+* [ImageDevice] DeviceName
+
+::
+
+  - 1
+

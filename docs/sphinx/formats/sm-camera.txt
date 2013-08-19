@@ -17,6 +17,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`SM Camera <sm-camera-metadata>`
 
+Original Metadata Support: :doc:`SM Camera <SMCameraReader>`
 
 
 We currently have:

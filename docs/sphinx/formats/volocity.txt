@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Volocity <volocity-metadata>`
 
+Original Metadata Support: :doc:`Volocity <VolocityReader>`
 
 Sample Datasets:
 

@@ -1,0 +1,531 @@
+*******************************************************************************
+MetamorphTiffReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Metamorph TIFF format reader.
+
+Key/value pairs
+===============================================================================
+
+* Clear Count
+
+::
+
+  - 2
+
+* Software
+
+::
+
+  - MetaSeries
+
+* _IllumSetting_
+
+::
+
+  - RED
+
+* Olympus Lamp Voltage
+
+::
+
+  - 10
+
+* timestamp #1
+
+::
+
+  - 1279824818088
+
+* Olympus Lamp Power
+
+::
+
+  - Open
+
+* autoscale-max-percent
+
+::
+
+  - 0.05
+
+* threshold-state
+
+::
+
+  - ThresholdOff
+
+* Trigger Mode
+
+::
+
+  - Normal (TIMED)
+
+* Xcite Shutter
+
+::
+
+  - Closed
+
+* gray-calibration-units
+
+::
+
+  - 
+
+* bits-per-pixel
+
+::
+
+  - 16
+
+* DateTime
+
+::
+
+  - 20100722 14:53:38.88
+
+* BitsPerSample
+
+::
+
+  - 16
+
+* Exposure
+
+::
+
+  - 30 ms
+
+* _MagNA_
+
+::
+
+  - 0.75
+
+* acquisition-time-local
+
+::
+
+  - 20100722 14:53:38.88
+
+* look-up-table-name
+
+::
+
+  - Set By Wavelength
+
+* zoom-percent
+
+::
+
+  - 79
+
+* Gain
+
+::
+
+  - Gain 2 (1x)
+
+* exposure time (ms) #1
+
+::
+
+  - 30.0
+
+* ImageLength
+
+::
+
+  - 520
+
+* threshold-low
+
+::
+
+  - 0
+
+* X position for position #1
+
+::
+
+  - 4244.1
+
+* Olympus Trans Shutter
+
+::
+
+  - Closed
+
+* pixel-size-x
+
+::
+
+  - 696
+
+* Camera Bit Depth
+
+::
+
+  - 12
+
+* wavelength
+
+::
+
+  - 0
+
+* spatial-calibration-y
+
+::
+
+  - 0.322
+
+* _MagRI_
+
+::
+
+  - 1
+
+* Olympus Fluor Shutter
+
+::
+
+  - Closed
+
+* spatial-calibration-x
+
+::
+
+  - 0.322
+
+* gray-calibration-min
+
+::
+
+  - -1
+
+* stage-position-y
+
+::
+
+  - -2472.8
+
+* autoscale-state
+
+::
+
+  - on
+
+* Illumination
+
+::
+
+  - RED
+
+* stage-position-x
+
+::
+
+  - 4244.1
+
+* pixel-size-y
+
+::
+
+  - 520
+
+* Olympus Filter Cube
+
+::
+
+  - 
+
+* SamplesPerPixel
+
+::
+
+  - 1
+
+* PhotometricInterpretation
+
+::
+
+  - BlackIsZero
+
+* ApplicationName
+
+::
+
+  - MetaMorph
+
+* NumberOfChannels
+
+::
+
+  - 1
+
+* z-position
+
+::
+
+  - 9587.94
+
+* Digitizer
+
+::
+
+  - 20 MHz
+
+* threshold-color
+
+::
+
+  - 4080ff
+
+* ApplicationVersion
+
+::
+
+  - 7.6.5.0
+
+* camera-chip-offset-y
+
+::
+
+  - 0
+
+* stage-label
+
+::
+
+  - Position1
+
+* camera-chip-offset-x
+
+::
+
+  - 0
+
+* Binning
+
+::
+
+  - 2 x 2
+
+* look-up-table-type
+
+::
+
+  - by-wavelength
+
+* Clear Mode
+
+::
+
+  - CLEAR PRE SEQUENCE
+
+* Subtract
+
+::
+
+  - Off
+
+* threshold-high
+
+::
+
+  - 65535
+
+* Y position for position #1
+
+::
+
+  - -2472.8
+
+* scale-max
+
+::
+
+  - 614
+
+* Camera Shutter
+
+::
+
+  - Always Open
+
+* spatial-calibration-state
+
+::
+
+  - on
+
+* _MagSetting_
+
+::
+
+  - 40x Ph2
+
+* Region
+
+::
+
+  - 1392 x 1040, offset at (0, 0)
+
+* gamma
+
+::
+
+  - 1
+
+* plane-guid
+
+::
+
+  - {1EEAF8FC-A40E-4E5D-B99E-28D455C57593}
+
+* number-of-planes
+
+::
+
+  - 1
+
+* plane-type
+
+::
+
+  - plane
+
+* Xcite Intensity
+
+::
+
+  - 25%
+
+* Frames to Average
+
+::
+
+  - 1
+
+* ImageWidth
+
+::
+
+  - 696
+
+* Shading
+
+::
+
+  - Off
+
+* gray-calibration-max
+
+::
+
+  - -1
+
+* photonegative-mode
+
+::
+
+  - off
+
+* image-name
+
+::
+
+  - RED
+
+* MetaDataVersion
+
+::
+
+  - 1
+
+* Olympus Observation Method
+
+::
+
+  - BF DIA
+
+* camera-binning-y
+
+::
+
+  - 2
+
+* camera-binning-x
+
+::
+
+  - 2
+
+* Temperature
+
+::
+
+  - -20.5
+
+* NewSubfileType
+
+::
+
+  - 2
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* scale-min
+
+::
+
+  - 484
+
+* Olympus Objective
+
+::
+
+  - 40x
+
+* modification-time-local
+
+::
+
+  - 20100722 14:53:40.183
+
+* gray-calibration-curve-fit-algorithm
+
+::
+
+  - 4
+
+* autoscale-min-percent
+
+::
+
+  - 0.05
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - Monochrome
+
+* spatial-calibration-units
+
+::
+
+  - um
+
+* gray-calibration-values
+
+::
+
+  - 
+

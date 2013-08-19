@@ -1,0 +1,861 @@
+*******************************************************************************
+NikonElementsTiffReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Nikon Elements TIFF format reader.
+
+Key/value pairs
+===============================================================================
+
+* sSpecSettings
+
+::
+
+  - 
+
+* wsCommandAfterLoop
+
+::
+
+  - 
+
+* dExposureBlue
+
+::
+
+  - -1.000000000000000
+
+* bFlippedUpDown
+
+::
+
+  - false
+
+* sLocation
+
+::
+
+  - 
+
+* AverageCH
+
+::
+
+  - 
+
+* uiWavelength
+
+::
+
+  - 0
+
+* bControlLight
+
+::
+
+  - false
+
+* iOffset
+
+::
+
+  - -1
+
+* wsNotes
+
+::
+
+  - 
+
+* BitsPerSample
+
+::
+
+  - 16
+
+* eType
+
+::
+
+  - 0
+
+* m_CompanyString
+
+::
+
+  - NIKON Corporation
+
+* Flip
+
+::
+
+  - 0
+
+* right
+
+::
+
+  - 0
+
+* uiRepeatCount
+
+::
+
+  - 1
+
+* dGainBlue
+
+::
+
+  - -1.000000000000000
+
+* m_CopyrightString
+
+::
+
+  - Copyright © 1991-2009  Laboratory Imaging,  http://www.lim.cz
+
+* CameraUniqueName
+
+::
+
+  - Camera 1: DS-Qi1Mc-U2 (Ver=400.1502.2917.080108)12bit
+
+* sConclusion
+
+::
+
+  - 
+
+* sCameraName
+
+::
+
+  - 
+
+* dGammaBlue
+
+::
+
+  - -1.000000000000000
+
+* dRange
+
+::
+
+  - 0.000000000000000
+
+* vGrabberCameraSettingsFQMode
+
+::
+
+  - 1
+
+* FlexibleHeight
+
+::
+
+  - -1
+
+* MaxSampleValue
+
+::
+
+  - 4095
+
+* bFlippedLeftRight
+
+::
+
+  - false
+
+* dCoeff_2
+
+::
+
+  - 0.000000000000000
+
+* dCamBinningY
+
+::
+
+  - 1.000000000000000
+
+* dCoeff_3
+
+::
+
+  - 0.000000000000000
+
+* dCamBinningX
+
+::
+
+  - 1.000000000000000
+
+* dTValue
+
+::
+
+  - 0.000000000000000
+
+* bottom
+
+::
+
+  - 0
+
+* dCoeff_0
+
+::
+
+  - 0.000000000000000
+
+* dCoeff_1
+
+::
+
+  - 0.000000000000000
+
+* m_VersionString
+
+::
+
+  - 3.00, SP7, Hotfix10 (Build 555)
+
+* PhotometricInterpretation
+
+::
+
+  - BlackIsZero
+
+* iOffsetGreen
+
+::
+
+  - -1
+
+* NumberOfChannels
+
+::
+
+  - 5
+
+* EnableLiveAccel
+
+::
+
+  - true
+
+* Unit
+
+::
+
+  - µm
+
+* m_ePlacement
+
+::
+
+  - 3
+
+* sCameraFormatName
+
+::
+
+  - 
+
+* dGammaRed
+
+::
+
+  - -1.000000000000000
+
+* sType
+
+::
+
+  - 
+
+* dGain
+
+::
+
+  - -1.000000000000000
+
+* Rotate
+
+::
+
+  - 0.000000000000000
+
+* left
+
+::
+
+  - 0
+
+* bPoints
+
+::
+
+  - false
+
+* Desc
+
+::
+
+  - Z coord
+
+* sSampling
+
+::
+
+  - 
+
+* AverageToQualityCH
+
+::
+
+  - 
+
+* dStep
+
+::
+
+  - 0.000000000000000
+
+* eModality
+
+::
+
+  - 0
+
+* PlanarConfiguration
+
+::
+
+  - Chunky
+
+* Orientation
+
+::
+
+  - 1st row -> top; 1st column -> left
+
+* m_uiCount
+
+::
+
+  - 1
+
+* wsCommandBeforeCapture
+
+::
+
+  - 
+
+* AETargetIntensity
+
+::
+
+  - 75%
+
+* uiCount
+
+::
+
+  - 1
+
+* dGainGreen
+
+::
+
+  - -1.000000000000000
+
+* LastSceneMode
+
+::
+
+  - 0
+
+* sOptics
+
+::
+
+  - Plan Fluor 10x DLL A
+
+* dPrecision
+
+::
+
+  - 0.000000000000000
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - Monochrome
+
+* uiColor
+
+::
+
+  - 30207
+
+* dAcqTime
+
+::
+
+  - 0.000000000000000
+
+* wsApplicationDesc
+
+::
+
+  - 
+
+* dGammaGreen
+
+::
+
+  - -1.000000000000000
+
+* m_wcTiName
+
+::
+
+  - 
+
+* m_uiColor
+
+::
+
+  - 27920152
+
+* sGroup
+
+::
+
+  - 
+
+* no_name
+
+::
+
+  - 
+
+* ExposureComp
+
+::
+
+  - -+0.0 EV
+
+* dFadingCorr
+
+::
+
+  - 0.000000000000000
+
+* m_NFRString
+
+::
+
+  - 
+
+* sAuthor
+
+::
+
+  - 
+
+* ExtraSamples
+
+::
+
+  - 2
+
+* wszUniqueName
+
+::
+
+  - 1280x1024x12bpp
+
+* m_eNature
+
+::
+
+  - 0
+
+* m_sName
+
+::
+
+  - G-2A
+
+* sOpticalConfigName
+
+::
+
+  - TRITC
+
+* m_GrabberString
+
+::
+
+  - DS-Qi1Mc-U2  12 bit
+
+* wsUserDesc
+
+::
+
+  - 
+
+* ID
+
+::
+
+  - Z
+
+* dSpeed
+
+::
+
+  - 0.000000000000000
+
+* sDate
+
+::
+
+  - 08/12/2010  10:37:36
+
+* dExposureGreen
+
+::
+
+  - -1.000000000000000
+
+* FillOrder
+
+::
+
+  - Pixels with lower column values are stored in the higher order bits of a byte
+
+* Size
+
+::
+
+  - 1
+
+* Integrate
+
+::
+
+  - 1
+
+* AEQuantilPixels
+
+::
+
+  - 100
+
+* aMeasProbesBase64
+
+::
+
+  - AAA=
+
+* ImageLength
+
+::
+
+  - 1024
+
+* Cooling
+
+::
+
+  - -5°
+
+* wsCommandAfterCapture
+
+::
+
+  - 
+
+* dLampVoltage
+
+::
+
+  - 0.000000000000000
+
+* iOffsetBlue
+
+::
+
+  - -1
+
+* sCapturing
+
+::
+
+  - DS-Qi1Mc-U2  12 bit #x000d; #x000a; #x000d; #x000a;Format: 1280x1024 no binning #x000d; #x000a;Exposure: ME 4 ms  #x000d; #x000a;Gain:  1.00x #x000d; #x000a;Noise Reduction: Off #x000d; #x000a;Offset: 0.00 #x000d; #x000a;Contrast: Linear #x000d; #x000a;
+
+* IntegrateCH
+
+::
+
+  - 
+
+* dExposureRed
+
+::
+
+  - -1.000000000000000
+
+* ExposureTime
+
+::
+
+  - 4.000000000000000
+
+* SamplesPerPixel
+
+::
+
+  - 5
+
+* AverageToQuality
+
+::
+
+  - 0.000000000000000
+
+* AEQuantilRelative
+
+::
+
+  - Relative
+
+* dExposure
+
+::
+
+  - -1.000000000000000
+
+* Type
+
+::
+
+  - 3
+
+* AnalogGain
+
+::
+
+  -  1.00x
+
+* _01
+
+::
+
+  - false
+
+* Binning
+
+::
+
+  - Normal
+
+* _02
+
+::
+
+  - true
+
+* _03
+
+::
+
+  - true
+
+* _04
+
+::
+
+  - true
+
+* _05
+
+::
+
+  - true
+
+* sInfo1
+
+::
+
+  - 
+
+* _06
+
+::
+
+  - false
+
+* wsCommandBeforeLoop
+
+::
+
+  - 
+
+* sInfo2
+
+::
+
+  - 
+
+* _07
+
+::
+
+  - false
+
+* Trigger
+
+::
+
+  - Timed_ReadOnly
+
+* _08
+
+::
+
+  - false
+
+* sImageID
+
+::
+
+  - 
+
+* iOffsetRed
+
+::
+
+  - -1
+
+* dWavelength
+
+::
+
+  - 565.000000000000000
+
+* Average
+
+::
+
+  - 1
+
+* ImageWidth
+
+::
+
+  - 1280
+
+* dGainRed
+
+::
+
+  - -1.000000000000000
+
+* top
+
+::
+
+  - 0
+
+* EasyExposureMode
+
+::
+
+  - Auto (Auto Exposure  #x003C;- !don't_translate!)
+
+* dGamma
+
+::
+
+  - -1.000000000000000
+
+* m_SWNameString
+
+::
+
+  - NIS-Elements BR
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* bUsePFS
+
+::
+
+  - false
+
+* IntegrateToQualityCH
+
+::
+
+  - 
+
+* bControlShutter
+
+::
+
+  - false
+
+* sSampleID
+
+::
+
+  - 
+
+* _00
+
+::
+
+  - true
+
+* dCamChipSizeX
+
+::
+
+  - -1.000000000000000
+
+* dCamChipSizeY
+
+::
+
+  - -1.000000000000000
+
+* m_sDescr
+
+::
+
+  - 
+
+* AEQuantilPromile
+
+::
+
+  - 0.100000001490116
+
+* m_eSpctType
+
+::
+
+  - 1
+

@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`InCell 3000 <incell-3000-metadata>`
 
+Original Metadata Support: :doc:`InCell 3000 <InCell3000Reader>`
 
 Sample Datasets:
 

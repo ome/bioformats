@@ -19,6 +19,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`INR <inr-metadata>`
 
+Original Metadata Support: :doc:`INR <INRReader>`
 
 
 We currently have:

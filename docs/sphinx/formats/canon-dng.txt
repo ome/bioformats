@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Canon DNG <canon-dng-metadata>`
 
+Original Metadata Support: :doc:`Canon DNG <DNGReader>`
 Freely Available Software:
 
 - `IrfanView <http://www.irfanview.com/>`_

@@ -20,6 +20,8 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`QuickTime Movie <quicktime-movie-metadata>`
 
+Original Metadata Support: :doc:`QuickTime Movie <QTReader>`
+
 Freely Available Software:
 
 - `QuickTime Player <http://www.apple.com/quicktime/download/>`_

@@ -1,0 +1,255 @@
+*******************************************************************************
+AIMReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats AIM format reader.
+
+Key/value pairs
+===============================================================================
+
+* Scanner ID
+
+::
+
+  - 5019
+
+* Parameter name
+
+::
+
+  - Linear Attenuation
+
+* Intensity [uA]
+
+::
+
+  - 109
+
+* Index Patient
+
+::
+
+  - 4953
+
+* Scanner type
+
+::
+
+  - 10
+
+* Average data value
+
+::
+
+  - 2294.81201
+
+* Scan Distance [um]
+
+::
+
+  - 35840
+
+* Density: slope
+
+::
+
+  - 2.56511993e+02
+
+* Maximum value
+
+::
+
+  - 7.99976
+
+* Average value
+
+::
+
+  - 0.56026
+
+* Mu_Scaling
+
+::
+
+  - 4096
+
+* Angle-Offset [mdeg]
+
+::
+
+  - 0
+
+* Time
+
+::
+
+  - 18-JUN-2010 11:12:56.54
+
+* Energy [V]
+
+::
+
+  - 55000
+
+* Reconstruction-Alg.
+
+::
+
+  - 3
+
+* Scaled by factor
+
+::
+
+  - 4096
+
+* Patient Name
+
+::
+
+  - BH_CC_AA0481
+
+* Original Creation-Date
+
+::
+
+  - 20-MAY-2010 19:08:56.57
+
+* Default-Eval
+
+::
+
+  - 0
+
+* Site
+
+::
+
+  - 4
+
+* Minimum data value
+
+::
+
+  - -7142.00000
+
+* Position Slice 1 [um]
+
+::
+
+  - 88566
+
+* Orig-ISQ-Dim-p
+
+::
+
+  - 1024       1024        547
+
+* HU: mu water
+
+::
+
+  - 0.61900
+
+* Standard data deviation
+
+::
+
+  - 2586.83936
+
+* No. projections per 180
+
+::
+
+  - 360
+
+* No. samples
+
+::
+
+  - 1024
+
+* Orig-ISQ-Dim-um
+
+::
+
+  - 35840      35840      19145
+
+* Original file
+
+::
+
+  - dk0:[microct.data.00004953.00011239]c0010349.isq
+
+* Density: intercept
+
+::
+
+  - -1.72990005e+02
+
+* Minimum value
+
+::
+
+  - -1.74365
+
+* Created by
+
+::
+
+  - ISQ_TO_AIM (IPL)
+
+* Reference line [um]
+
+::
+
+  - 0
+
+* Density: unit
+
+::
+
+  - mg HA/ccm
+
+* Integration time [us]
+
+::
+
+  - 200000
+
+* Parameter units
+
+::
+
+  - [1/cm]
+
+* Standard deviation
+
+::
+
+  - 0.63155
+
+* Maximum data value
+
+::
+
+  - 32767.00000
+
+* Calib. default unit type
+
+::
+
+  - 2 (Density)
+
+* Index Measurement
+
+::
+
+  - 11239
+
+* Calibration Data
+
+::
+
+  - 55 kVp, BH: 1200 mg HA/ccm, Scaling 4096
+

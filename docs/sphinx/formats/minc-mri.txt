@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`MINC MRI <minc-mri-metadata>`
 
+Original Metadata Support: :doc:`MINC MRI <MINCReader>`
 Freely Available Software:
 
 - `MINC <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_

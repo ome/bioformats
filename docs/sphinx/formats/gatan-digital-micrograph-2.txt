@@ -20,6 +20,7 @@ Officially Supported Versions: 2
 
 Supported Metadata Fields: :doc:`Gatan Digital Micrograph 2 <gatan-digital-micrograph-2-metadata>`
 
+Original Metadata Support: :doc:`Gatan Digital Micrograph 2 <GatanDM2Reader>`
 
 
 We currently have:

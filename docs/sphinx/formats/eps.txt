@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`EPS (Encapsulated PostScript) <eps-metadata>`
 
+Original Metadata Support: :doc:`EPS (Encapsulated PostScript) <EPSReader>`
 Freely Available Software:
 
 - `EPS Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_

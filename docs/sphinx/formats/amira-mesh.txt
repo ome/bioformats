@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Amira Mesh <amira-mesh-metadata>`
 
+Original Metadata Support: :doc:`Amira Mesh <AmiraReader>`
 
 
 We currently have:

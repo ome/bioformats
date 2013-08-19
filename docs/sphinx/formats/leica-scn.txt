@@ -20,6 +20,7 @@ Officially Supported Versions: 2012-03-10
 
 Supported Metadata Fields: :doc:`Leica SCN <leica-scn-metadata>`
 
+Original Metadata Support: :doc:`Leica SCN <LeicaSCNReader>`
 
 
 We currently have:

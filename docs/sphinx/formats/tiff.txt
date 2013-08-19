@@ -21,6 +21,8 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`TIFF (Tagged Image File Format) <tiff-metadata>`
 
+Original Metadata Support: :doc:`TIFF (Tagged Image File Format) <TiffDelegateReader>`
+
 
 Sample Datasets:
 

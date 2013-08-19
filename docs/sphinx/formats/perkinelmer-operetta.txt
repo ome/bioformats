@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`PerkinElmer Operetta <perkinelmer-operetta-metadata>`
 
+Original Metadata Support: :doc:`PerkinElmer Operetta <OperettaReader>`
 
 
 We currently have:

@@ -1,0 +1,16 @@
+*******************************************************************************
+OMEXMLReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats OME-XML format reader.
+
+Key/value pairs
+===============================================================================
+
+* Is SPW file
+
+::
+
+  - false
+  - true
+

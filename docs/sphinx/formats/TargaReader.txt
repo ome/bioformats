@@ -1,0 +1,83 @@
+*******************************************************************************
+TargaReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Truevision Targa format reader.
+
+Key/value pairs
+===============================================================================
+
+* Pixel offset
+
+::
+
+  - 18
+  - 44
+
+* Color map origin
+
+::
+
+  - 0
+
+* Image width
+
+::
+
+  - 124
+  - 1419
+  - 128
+
+* Image type
+
+::
+
+  - 2
+  - 11
+
+* Color map length
+
+::
+
+  - 0
+
+* Color map present
+
+::
+
+  - false
+
+* Image height
+
+::
+
+  - 124
+  - 1001
+  - 128
+
+* Bits per color map entry
+
+::
+
+  - 0
+
+* Image orientation
+
+::
+
+  - 0
+
+* Identification
+
+::
+
+  - 
+  - Truevision(R) Sample Image
+
+* Bits per pixel
+
+::
+
+  - 24
+  - 8
+

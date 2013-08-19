@@ -1,0 +1,195 @@
+*******************************************************************************
+SBIGReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats SBIG format reader.
+
+Key/value pairs
+===============================================================================
+
+* Y_pixel_size
+
+::
+
+  - 0.0180
+
+* User_4
+
+::
+
+  - Y2KYear = 2000
+
+* Background
+
+::
+
+  - 550
+
+* Observer
+
+::
+
+  - Steve Barrett
+
+* Focal_length
+
+::
+
+  - 78.740
+
+* Time
+
+::
+
+  - 22:03:23
+
+* Date
+
+::
+
+  - 03/30/00
+
+* History
+
+::
+
+  - R
+
+* Exposure
+
+::
+
+  - 4000
+
+* Data_version
+
+::
+
+  - 1
+
+* E_gain
+
+::
+
+  - 2.30
+
+* Readout_mode
+
+::
+
+  - 1
+
+* Width
+
+::
+
+  - 382
+
+* Sat_level
+
+::
+
+  - 65535
+
+* Range
+
+::
+
+  - 334
+
+* Track_time
+
+::
+
+  - 0
+
+* Temperature
+
+::
+
+  - -25.40
+
+* Height
+
+::
+
+  - 255
+
+* Response_factor
+
+::
+
+  - 300.000
+
+* Note
+
+::
+
+  - Image taken 03/30/00 at 22:03:23
+
+* X_pixel_size
+
+::
+
+  - 0.0180
+
+* Pedestal
+
+::
+
+  - 0
+
+* Filter
+
+::
+
+  - None
+
+* Number_exposures
+
+::
+
+  - 1
+
+* Exposure_state
+
+::
+
+  - 420
+
+* User_3
+
+::
+
+  - -
+
+* User_2
+
+::
+
+  - -
+
+* User_1
+
+::
+
+  - CCDOPS for Mac Version 3.82-PPC
+
+* Each_exposure
+
+::
+
+  - 4000
+
+* File_version
+
+::
+
+  - 3
+
+* Aperture
+
+::
+
+  - 43.4001
+

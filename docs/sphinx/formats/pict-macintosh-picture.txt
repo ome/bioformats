@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`PICT (Macintosh Picture) <pict-macintosh-picture-metadata>`
 
+Original Metadata Support: :doc:`PICT (Macintosh Picture) <PictReader>`
 
 
 We currently have:

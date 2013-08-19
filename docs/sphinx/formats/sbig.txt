@@ -18,6 +18,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`SBIG <sbig-metadata>`
 
+Original Metadata Support: :doc:`SBIG <SBIGReader>`
 
 
 We currently have:

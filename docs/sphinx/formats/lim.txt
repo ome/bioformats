@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`LIM (Laboratory Imaging/Nikon) <lim-metadata>`
 
+Original Metadata Support: :doc:`LIM (Laboratory Imaging/Nikon) <LIMReader>`
 
 
 We currently have:

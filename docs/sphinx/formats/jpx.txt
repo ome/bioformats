@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`JPX <jpx-metadata>`
 
+Original Metadata Support: :doc:`JPX <JPXReader>`
 
 
 We currently have:

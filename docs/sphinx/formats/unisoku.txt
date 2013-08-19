@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Unisoku <unisoku-metadata>`
 
+Original Metadata Support: :doc:`Unisoku <UnisokuReader>`
 
 
 We currently have:

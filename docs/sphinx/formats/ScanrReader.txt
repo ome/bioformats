@@ -1,0 +1,453 @@
+*******************************************************************************
+ScanrReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Olympus ScanR format reader.
+
+Key/value pairs
+===============================================================================
+
+* magnification for subpos representation
+
+::
+
+  - 10
+
+* lower
+
+::
+
+  - -12.00000
+
+* Objects
+
+::
+
+  - 0
+
+* How many slices
+
+::
+
+  - 19
+
+* own position file
+
+::
+
+  - 0
+
+* AF MT-20 excitation filter
+
+::
+
+  - 0
+
+* custom row spacer
+
+::
+
+  - 1125
+
+* conventional mic
+
+::
+
+  - 0
+
+* columns/well
+
+::
+
+  - 1
+
+* slices distance
+
+::
+
+  - 0.00000
+
+* timeloop count
+
+::
+
+  - 0
+
+* Min Size
+
+::
+
+  - 60
+
+* plate-id filename
+
+::
+
+  - D:\holger\h\experiment_descriptor.dat
+
+* HW AF thickness
+
+::
+
+  - 0
+
+* timeloop real
+
+::
+
+  - 0
+
+* excitation filter
+
+::
+
+  - 0
+
+* Min Object Size
+
+::
+
+  - 1
+
+* Max Object Size
+
+::
+
+  - 1
+
+* omit hardware af
+
+::
+
+  - 0
+
+* objective
+
+::
+
+  - 5
+
+* acquisition delay [s]
+
+::
+
+  - 0.00000
+
+* Max Size
+
+::
+
+  - 1600
+
+* Numeric
+
+::
+
+  - 572732.00000
+
+* z offset
+
+::
+
+  - 0.00000
+
+* settings version
+
+::
+
+  - 14
+
+* experiment binning
+
+::
+
+  - 0
+
+* light intensity
+
+::
+
+  - 0.00000
+
+* How many flexible slices?
+
+::
+
+  - 16
+
+* AF MT-20 attenuator
+
+::
+
+  - 1
+
+* AF objective
+
+::
+
+  - 5
+
+* String
+
+::
+
+  - UPLSAPO 10x
+
+* well#
+
+::
+
+  - 0
+
+* Reject Border
+
+::
+
+  - 0
+
+* AF Type
+
+::
+
+  - 4
+
+* interpolate af
+
+::
+
+  - 0
+
+* # slices
+
+::
+
+  - 1
+
+* custom column
+
+::
+
+  - 4
+
+* storage dir
+
+::
+
+  - D:\holger\h
+
+* AF exposure time [ms]
+
+::
+
+  - 120
+
+* plate#
+
+::
+
+  - 0
+
+* condenser
+
+::
+
+  - 0
+
+* slice hight
+
+::
+
+  - 1.50000
+
+* filename version
+
+::
+
+  - 104
+
+* timeloop delay
+
+::
+
+  - 0
+
+* remember z
+
+::
+
+  - 1
+
+* HW Objective Parameter
+
+::
+
+  - 0
+
+* well selection table + cDNA
+
+::
+
+  - L4
+
+* meander subpos
+
+::
+
+  - 0
+
+* upper
+
+::
+
+  - 12.00000
+
+* AF dichroic filter cube
+
+::
+
+  - 4
+
+* Threshold
+
+::
+
+  - 3000
+
+* fluorescence
+
+::
+
+  - 1
+
+* Fill Holes
+
+::
+
+  - 0
+
+* name
+
+::
+
+  - GFP
+
+* Show Center
+
+::
+
+  - 1
+
+* plate name
+
+::
+
+  - Maik
+
+* Show Bounding Box
+
+::
+
+  - 0
+
+* attenuator
+
+::
+
+  - 0.00000
+
+* custom row
+
+::
+
+  - 12
+
+* z drive steps
+
+::
+
+  - 0.00000
+
+* well diameter
+
+::
+
+  - 0
+
+* subposition
+
+::
+
+  - 0
+
+* Show Search Area
+
+::
+
+  - 0
+
+* custom column spacer
+
+::
+
+  - 1125
+
+* initial-z-pos
+
+::
+
+  - 572732
+
+* timeloop
+
+::
+
+  - 0
+
+* subpos spacer y
+
+::
+
+  - 2000
+
+* af binning
+
+::
+
+  - 1
+
+* subpos spacer x
+
+::
+
+  - 2000
+
+* meander wells
+
+::
+
+  - 0
+
+* slice
+
+::
+
+  - 0
+
+* filtercube
+
+::
+
+  - 0
+
+* exposure time
+
+::
+
+  - 500.00000
+
+* rows/well
+
+::
+
+  - 1
+

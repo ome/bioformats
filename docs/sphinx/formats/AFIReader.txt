@@ -1,0 +1,201 @@
+*******************************************************************************
+AFIReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Aperio AFI format reader.
+
+Key/value pairs
+===============================================================================
+
+* User
+
+::
+
+  - 9a5346aa-04bf-4b79-807a-88ebc0b89e96
+
+* 27200x31276 [0,100 26520x31176] (256x256) -> 1657x1948 J2K/KDU Q
+
+::
+
+  - 70
+
+* LineAreaXOffset
+
+::
+
+  - 0.000000
+
+* 27200x31276 [0,100 26520x31176] (256x256) -> 6630x7794 J2K/KDU Q
+
+::
+
+  - 70
+
+* Parmset
+
+::
+
+  - Gain Adjust Medium
+
+* OriginalHeight
+
+::
+
+  - 31276
+
+* Filename
+
+::
+
+  - 5400
+
+* AppMag
+
+::
+
+  - 20
+
+* Exposure Scale
+
+::
+
+  - 0.000001
+
+* Time
+
+::
+
+  - 11:56:14
+
+* Date
+
+::
+
+  - 08/31/12
+
+* Excitation Wavelength
+
+::
+
+  - 345
+
+* LineAreaYOffset
+
+::
+
+  - 0.000000
+
+* LineCameraSkew
+
+::
+
+  - -0.000214
+
+* Acquisition Bit Depth
+
+::
+
+  - 10
+
+* Emission Filter
+
+::
+
+  - FF01-440/521/607/700-25
+
+* Top
+
+::
+
+  - 18.195074
+
+* ImageID
+
+::
+
+  - 5400
+
+* Excitation Filter
+
+::
+
+  - FF01-387/11-25
+
+* Exposure Time
+
+::
+
+  - 320
+
+* Left
+
+::
+
+  - 29.174313
+
+* Time Zone
+
+::
+
+  - GMT-07:00
+
+* ScanScope ID
+
+::
+
+  - SS6149
+
+* 27200x31276 [0,100 26520x31176] (256x256) J2K/KDU Q
+
+::
+
+  - 70
+
+* StripeWidth
+
+::
+
+  - 1600
+
+* Emission Wavelength
+
+::
+
+  - 455
+
+* MPP
+
+::
+
+  - 0.4631
+
+* Dye
+
+::
+
+  - DAPI
+
+* Focus Offset
+
+::
+
+  - 0.000000
+
+* DisplayColor
+
+::
+
+  - 1279
+
+* OriginalWidth
+
+::
+
+  - 27200
+
+* DSR ID
+
+::
+
+  - 10.21.9.0
+

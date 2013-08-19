@@ -1,0 +1,321 @@
+*******************************************************************************
+VisitechReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Visitech XYS format reader.
+
+Key/value pairs
+===============================================================================
+
+* Microscope XY Increment(50, 50) [ View event report ] &nbsp;Document Title
+
+::
+
+  - No documents created by this event
+
+* Camera number
+
+::
+
+  - #1
+
+* XYStage Type
+
+::
+
+  - ASI - MS2000
+
+* Repetability
+
+::
+
+  - 0.7  m
+
+* Comments
+
+::
+
+  - No comment
+
+* Camera Setup '488-Cascade' [ View event report ] &nbsp;Document Title
+
+::
+
+  - No documents created by this event
+
+* Stack capture 'Current configuration' [ View event report ] &nbsp;Document Title
+
+::
+
+  - No documents created by this event
+
+* Select Filter Wheel '1' [ View event report ] &nbsp;Document Title
+
+::
+
+  - No documents created by this event
+
+* Settle time
+
+::
+
+  - 100 ms/ m
+
+* Experiment location
+
+::
+
+  - Z:\Grieshaber Lab\Visitech file format\2 chanel z 3x2 GRID.exp
+
+* Start position
+
+::
+
+  - 46.10  m
+
+* Horizontal shift (%)
+
+::
+
+  - -0.585938
+
+* Number of steps
+
+::
+
+  - 11
+
+* End position
+
+::
+
+  - 48.00  m
+
+* Channel #2, 561nm
+
+::
+
+  - 100%
+
+* Binning
+
+::
+
+  - (1, 1)
+
+* Creation date
+
+::
+
+  - 11:04:36, December 10, 2007
+
+* Accuracy
+
+::
+
+  - 3  m
+
+* Clear Mode
+
+::
+
+  - Pre-Exp
+
+* Software version
+
+::
+
+  - VoxCell Scan version VoxCell Scan v4.05.2.3
+
+* CCD Temperature target ( C)
+
+::
+
+  - -75
+
+* reference point #9
+
+::
+
+  - (-135179, 93413)
+
+* P Clocking
+
+::
+
+  - FT
+
+* reference point #8
+
+::
+
+  - (-132129, 93383)
+
+* reference point #7
+
+::
+
+  - (-129064, 93385)
+
+* reference point #6
+
+::
+
+  - (-126000, 93386)
+
+* Camera Setup '561-Cascade' [ View event report ] &nbsp;Document Title
+
+::
+
+  - No documents created by this event
+
+* reference point #1
+
+::
+
+  - (-106004, 69544)
+
+* Camera type
+
+::
+
+  - Cascade II:512
+
+* reference point #0
+
+::
+
+  - (-118435, -4539)
+
+* reference point #5
+
+::
+
+  - (-174378, 74137)
+
+* EM Gain
+
+::
+
+  - 3806
+
+* reference point #4
+
+::
+
+  - (-180390, 71974)
+
+* reference point #3
+
+::
+
+  - (-181174, 71974)
+
+* reference point #2
+
+::
+
+  - (-179906, 70332)
+
+* Size of steps
+
+::
+
+  - 0.20  m
+
+* External Trigger
+
+::
+
+  - No
+
+* PreAmp Gain
+
+::
+
+  - 2
+
+* Execution date
+
+::
+
+  - 16:09:23, December 10, 2007
+
+* Camera ID
+
+::
+
+  - Cascade II:512 1
+
+* Channel Selection [ View event report ] &nbsp;Document Title
+
+::
+
+  - No documents created by this event
+
+* Image dimensions
+
+::
+
+  - (512, 512)
+
+* Microscope XY Increment(50, 0) [ View event report ] &nbsp;Document Title
+
+::
+
+  - No documents created by this event
+
+* Exposure (ms)
+
+::
+
+  - 1000.000000
+
+* Microscope XY Increment(-50, 0) [ View event report ] &nbsp;Document Title
+
+::
+
+  - No documents created by this event
+
+* Image bit depth
+
+::
+
+  - 16
+
+* Channel #1, 491nm
+
+::
+
+  - 100%
+
+* Microscope XY Increment(0, -50) [ View event report ] &nbsp;Document Title
+
+::
+
+  - No documents created by this event
+
+* Select Filter Wheel '3' [ View event report ] &nbsp;Document Title
+
+::
+
+  - No documents created by this event
+
+* Vertical shift (%)
+
+::
+
+  - 0.390625
+
+* Channel #3, 638nm
+
+::
+
+  - 100%
+
+* Damping
+
+::
+
+  - Disabled
+

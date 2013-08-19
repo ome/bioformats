@@ -1,0 +1,157 @@
+*******************************************************************************
+VolocityReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Volocity Library format reader.
+
+Key/value pairs
+===============================================================================
+
+* Y Location
+
+::
+
+  - 0.0
+
+* Description
+
+::
+
+  - RAW-Rpre-GFP, Lact-red, overnight Chlamydia infection, draq5
+  - RAW, Lact-red, GFP-LpO2
+  - RAW- GFP LpO2, opsonized 1:125 w/ anti-LpO2 Ab, together with anti-R cy5.(2:500)
+  - RAW,Sec61-GFP, LpO2 with R anti legionella, D anti R cy5.   
+
+* Objective magnification
+
+::
+
+  - 100.0
+
+* Pixel height (in microns)
+
+::
+
+  - 0.06604443585497638
+  - 0.15060240963855423
+  - 0.071
+  - 0.13672676939289208
+
+* Name
+
+::
+
+  - Fig 5B
+  - Fig 5A
+  - Fig 5B (merged)
+  - Untitled Acquisition Protocol
+  - Untitled Acquisition Protocol 2
+  - Untitled Acquisition Protocol 3
+  - Untitled Acquisition Protocol 4
+  - Untitled Acquisition Protocol 5
+  - Untitled Acquisition Protocol 6
+  - Untitled Acquisition Protocol 7
+  - triple channel
+  - Untitled Acquisition Protocol 8
+  - Untitled Acquisition Protocol 8 (raw tile 1)
+  - Untitled Acquisition Protocol 8 (raw tile 2)
+  - Untitled Acquisition Protocol 8 (raw tile 3)
+  - Untitled Acquisition Protocol 8 (raw tile 4)
+  - Untitled Acquisition Protocol 8 (raw tile 5)
+  - Untitled Acquisition Protocol 8 (raw tile 6)
+  - Untitled Acquisition Protocol 8 (raw tile 7)
+  - Untitled Acquisition Protocol 8 (raw tile 8)
+  - Untitled Acquisition Protocol 8 (raw tile 9)
+  - Untitled Acquisition Protocol 8 (raw tile 10)
+  - Untitled Acquisition Protocol 8 (raw tile 11)
+  - Untitled Acquisition Protocol 8 (raw tile 12)
+  - Untitled Acquisition Protocol 8 (raw tile 13)
+  - Untitled Acquisition Protocol 8 (raw tile 14)
+  - Untitled Acquisition Protocol 8 (raw tile 15)
+  - Untitled Acquisition Protocol 8 (raw tile 16)
+  - Untitled Acquisition Protocol 9
+  - Untitled Acquisition Protocol 9 (raw tile 1)
+  - Untitled Acquisition Protocol 9 (raw tile 2)
+  - Untitled Acquisition Protocol 9 (raw tile 3)
+  - Untitled Acquisition Protocol 9 (raw tile 4)
+  - Untitled Acquisition Protocol 9 (raw tile 5)
+  - Untitled Acquisition Protocol 9 (raw tile 6)
+  - Untitled Acquisition Protocol 9 (raw tile 7)
+  - Untitled Acquisition Protocol 9 (raw tile 8)
+  - Untitled Acquisition Protocol 9 (raw tile 9)
+  - Untitled Acquisition Protocol 9 (raw tile 10)
+  - Untitled Acquisition Protocol 9 (raw tile 11)
+  - Untitled Acquisition Protocol 9 (raw tile 12)
+  - Untitled Acquisition Protocol 9 (raw tile 13)
+  - Untitled Acquisition Protocol 9 (raw tile 14)
+  - Untitled Acquisition Protocol 9 (raw tile 15)
+  - Untitled Acquisition Protocol 9 (raw tile 16)
+  - Untitled Acquisition Protocol 11
+  - Untitled Acquisition Protocol 12
+  - Untitled Acquisition Protocol 13
+  - Untitled Acquisition Protocol 14
+  - Fig 4B
+  - Fig 4C
+  - Fig 4A
+
+* Channel #1
+
+::
+
+  - Bright Field
+
+* Channel #2
+
+::
+
+  - rfp-confocal
+  - FRAP Template
+  - GFP/FITC
+  - TX2 Confocal
+  - Cy5 Confocal
+
+* Camera/Detector
+
+::
+
+  - Hamamatsu C7780-20
+
+* Channel #3
+
+::
+
+  - FITC Confocal
+
+* Channel #4
+
+::
+
+  - Cy5 Confocal
+
+* Z Location
+
+::
+
+  - 0.0
+
+* Z step (in microns)
+
+::
+
+  - 1.0
+
+* Pixel width (in microns)
+
+::
+
+  - 0.06604443585497638
+  - 0.15060240963855423
+  - 0.071
+  - 0.13672676939289208
+
+* X Location
+
+::
+
+  - 0.0
+

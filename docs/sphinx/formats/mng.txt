@@ -20,6 +20,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`MNG (Multiple-image Network Graphics) <mng-metadata>`
 
+Original Metadata Support: :doc:`MNG (Multiple-image Network Graphics) <MNGReader>`
 Freely Available Software:
 
 - `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_

@@ -1,0 +1,67 @@
+*******************************************************************************
+CellomicsReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Cellomics C01 format reader.
+
+Key/value pairs
+===============================================================================
+
+* Color important
+
+::
+
+  - 0
+
+* Pixels per meter (Y)
+
+::
+
+  - 3906976
+  - 488372
+
+* Image width
+
+::
+
+  - 1024
+  - 512
+
+* Image height
+
+::
+
+  - 1024
+  - 512
+
+* Bits per pixel
+
+::
+
+  - 16
+
+* Color used
+
+::
+
+  - 0
+
+* Compression
+
+::
+
+  - 0
+
+* Number of planes
+
+::
+
+  - 1
+
+* Pixels per meter (X)
+
+::
+
+  - 3906976
+  - 488372
+

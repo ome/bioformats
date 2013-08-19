@@ -1,0 +1,111 @@
+*******************************************************************************
+ImarisTiffReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Bitplane Imaris 3 (TIFF) format reader.
+
+Key/value pairs
+===============================================================================
+
+* PlanarConfiguration
+
+::
+
+  - Chunky
+
+* NumberOfChannels
+
+::
+
+  - 1
+
+* Orientation
+
+::
+
+  - 1st row -> bottom; 1st column -> left
+
+* ImageLength
+
+::
+
+  - 512
+
+* TileByteCounts
+
+::
+
+  - 524288
+
+* XResolution
+
+::
+
+  - 24154
+
+* TileLength
+
+::
+
+  - 512
+
+* Compression
+
+::
+
+  - Uncompressed
+
+* TileWidth
+
+::
+
+  - 512
+
+* SampleFormat
+
+::
+
+  - unsigned integer
+
+* BitsPerSample
+
+::
+
+  - 16
+
+* MetaDataPhotometricInterpretation
+
+::
+
+  - Monochrome
+
+* YResolution
+
+::
+
+  - 24154
+
+* ImageWidth
+
+::
+
+  - 512
+
+* PhotometricInterpretation
+
+::
+
+  - BlackIsZero
+
+* ResolutionUnit
+
+::
+
+  - Centimeter
+
+* TileOffsets
+
+::
+
+  - 94056
+

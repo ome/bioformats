@@ -21,6 +21,7 @@ Officially Supported Versions:
 
 Supported Metadata Fields: :doc:`Andor Bio-Imaging Division (ABD) TIFF <olympus-fluoview-tiff-metadata>`
 
+Original Metadata Support: :doc:`Andor Bio-Imaging Division (ABD) TIFF <FluoviewReader>`
 
 
 We currently have:

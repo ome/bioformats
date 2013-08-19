@@ -1,0 +1,15 @@
+*******************************************************************************
+PGMReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Portable Gray Map format reader.
+
+Key/value pairs
+===============================================================================
+
+* Black and white
+
+::
+
+  - false
+

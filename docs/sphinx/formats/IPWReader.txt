@@ -1,0 +1,99 @@
+*******************************************************************************
+IPWReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Image-Pro Workspace format reader.
+
+Key/value pairs
+===============================================================================
+
+* Image Description
+
+::
+
+  - ,   ,                   11/07/2005 03:45:21.159 PM
+
+* FrameInfo #8
+
+::
+
+  - 0
+
+* FrameInfo #6
+
+::
+
+  - 0
+
+* FrameInfo #7
+
+::
+
+  - 0
+
+* slices
+
+::
+
+  - 1
+
+* FrameInfo #4
+
+::
+
+  - 0
+
+* FrameInfo #5
+
+::
+
+  - 0
+
+* channels
+
+::
+
+  - 1
+
+* FrameInfo #2
+
+::
+
+  - 512
+
+* Frame Rate
+
+::
+
+  - 100
+
+* FrameInfo #3
+
+::
+
+  - 1
+
+* FrameInfo #1
+
+::
+
+  - 768
+
+* Timestamp
+
+::
+
+  - ,   ,                   11/07/2005 03:45:21.159 PM
+
+* frames
+
+::
+
+  - 33
+
+* Version
+
+::
+
+  - IPW Version 001.001             !
+

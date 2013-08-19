@@ -1,0 +1,39 @@
+*******************************************************************************
+HRDGDFReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats NOAA-HRD Gridded Data Format format reader.
+
+Key/value pairs
+===============================================================================
+
+* DX (kilometers)
+
+::
+
+  - 2.78320
+
+* Storm center (Longitude)
+
+::
+
+  - -88.333
+
+* Storm center (Latitude)
+
+::
+
+  - 16.41
+
+* Hurricane
+
+::
+
+  - al11.2001_1009_01_30
+
+* DY (kilometers)
+
+::
+
+  - 2.78320
+

@@ -1,0 +1,216 @@
+*******************************************************************************
+MRCReader
+*******************************************************************************
+
+This page lists original metadata key/value pairs for the Bio-Formats Medical Research Council format reader.
+
+Key/value pairs
+===============================================================================
+
+* Angle #1
+
+::
+
+  - 0.0
+
+* Angle #2
+
+::
+
+  - 0.0
+
+* Angle #3
+
+::
+
+  - 0.0
+
+* Lens
+
+::
+
+  - 0
+
+* Angle #4
+
+::
+
+  - 0.0
+
+* Angle #5
+
+::
+
+  - 0.0
+
+* Pixel size (X)
+
+::
+
+  - 3.5199999809265136E-4
+  - 1.0E-4
+
+* Mean pixel value
+
+::
+
+  - 4.084707E-6
+  - 83.733284
+
+* Gamma angle
+
+::
+
+  - 90.0
+
+* Label #10
+
+::
+
+  -                                                                                 
+
+* Pixel size (Z)
+
+::
+
+  - 3.5199999809265136E-4
+  - 1.0E-4
+
+* Maximum pixel value
+
+::
+
+  - 0.009374096989631653
+  - 195.0
+
+* Label #09
+
+::
+
+  -                                                                                 
+
+* Alpha angle
+
+::
+
+  - 90.0
+
+* Beta angle
+
+::
+
+  - 90.0
+
+* Label #04
+
+::
+
+  -                                                                                 
+  - FIXMONT: 120 sections replaced                          28-APR-93  13:11:58     
+
+* ND1
+
+::
+
+  - 0
+
+* Label #03
+
+::
+
+  -                                                                                 
+  - NEWSTACK: Images copied, transformed                    28-APR-93  11:16:27     
+
+* Label #02
+
+::
+
+  -                                                                                 
+  - NEWSTACK: Images copied, transformed                    22-APR-93  10:37:25     
+
+* Label #01
+
+::
+
+  - ::::EMDATABANK.org::::EMD-2225::::                                              
+  - CIDS: Digitized with Photometrics STAR1 CCD               21-APR-93  16:11:40   
+
+* Label #08
+
+::
+
+  -                                                                                 
+  - mrcbyte: Converted and scaled to byte mode.     Mon Aug 15 14:28:03 1994       
+
+* Angle #6
+
+::
+
+  - 0.0
+
+* Label #07
+
+::
+
+  -                                                                                 
+  - mrcbyte: Converted and scaled to byte mode.     Mon Aug 15 12:59:51 1994       
+
+* Label #06
+
+::
+
+  -                                                                                 
+  - 1 degree tilt reconstruction, parallel to tilt axis          28-APR-93  17:31:52
+
+* ND2
+
+::
+
+  - 0
+
+* Label #05
+
+::
+
+  -                                                                                 
+  - MRCFLOAT: Float to common mean                    28-APR-93  15:09:17           
+
+* Pixel size (Y)
+
+::
+
+  - 3.5199999809265136E-4
+  - 1.0E-4
+
+* VD2
+
+::
+
+  - 0
+
+* Number of useful labels
+
+::
+
+  - 1
+  - 8
+
+* Minimum pixel value
+
+::
+
+  - -0.017144544050097466
+  - 17.0
+
+* VD1
+
+::
+
+  - 0
+
+* Series type
+
+::
+
+  - mono
+
