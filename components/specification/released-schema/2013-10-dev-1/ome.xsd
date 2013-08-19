@@ -2222,15 +2222,6 @@
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="ConfigurationRef"> <!-- top level definition -->
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="ConfigurationID"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
 	<xsd:element name="LightSourceRef"> <!-- top level definition -->
 		<xsd:complexType>
 			<xsd:complexContent>
