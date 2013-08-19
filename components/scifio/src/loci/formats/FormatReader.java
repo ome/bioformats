@@ -757,7 +757,11 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
     FormatTools.assertId(currentId, true, 1);
-    if (core.get(getCoreIndex()).cLengths == null) {
+    int length = core.get(getCoreIndex()).moduloC.length();
+    if (length > 1) {
+      return new int[] {getSizeC() / length, length};
+    }
+    else if (core.get(getCoreIndex()).cLengths == null) {
       return new int[] {core.get(getCoreIndex()).sizeC};
      }
     return core.get(getCoreIndex()).cLengths;
@@ -766,7 +770,12 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getChannelDimTypes() */
   public String[] getChannelDimTypes() {
     FormatTools.assertId(currentId, true, 1);
-    if (core.get(getCoreIndex()).cTypes == null) {
+    int length = core.get(getCoreIndex()).moduloC.length();
+    if (length > 1) {
+      return new String[] {core.get(getCoreIndex()).moduloC.parentType,
+        core.get(getCoreIndex()).moduloC.type};
+    }
+    else if (core.get(getCoreIndex()).cTypes == null) {
       return new String[] {FormatTools.CHANNEL};
     }
     return core.get(getCoreIndex()).cTypes;
