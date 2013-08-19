@@ -1036,7 +1036,7 @@ public class ImageInfo {
     }
 
     int product = 1;
-    if (modulo.length() == 0) {
+    if (modulo.length() == 1) {
       product = size;
     }
     else {
