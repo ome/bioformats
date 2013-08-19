@@ -757,7 +757,11 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   public void addModuloAlong(OMEXMLMetadata meta, CoreMetadata core, int image)
   {
-    int annotationIndex = meta.getXMLAnnotationCount();
+    int annotationIndex = 0;
+    try {
+      annotationIndex = meta.getXMLAnnotationCount();
+    }
+    catch (NullPointerException e) { }
 
     if (annotationIndex > 0) {
      String lastAnnotationID = meta.getXMLAnnotationID(annotationIndex - 1);
