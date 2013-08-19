@@ -1401,8 +1401,7 @@ public class ICSReader extends FormatReader {
       if (newOrder != null) {
         m.dimensionOrder = newOrder;
         m.sizeC = binCount;
-        m.cLengths = new int[] {binCount};
-        m.cTypes = new String[] {FormatTools.LIFETIME};
+        m.moduloC.parentType = FormatTools.LIFETIME;
       }
     }
 
