@@ -953,8 +953,6 @@ public class FileStitcher extends ReaderWrapper {
       ms.imageCount = rr.getImageCount() * external.getFiles().length;
       ms.thumbSizeX = rr.getThumbSizeX();
       ms.thumbSizeY = rr.getThumbSizeY();
-      // NB: core.cLengths[i] populated in computeAxisLengths below
-      // NB: core.cTypes[i] populated in computeAxisLengths below
       ms.dimensionOrder = rr.getDimensionOrder();
       // NB: core.orderCertain[i] populated below
       ms.rgb = rr.isRGB();
@@ -1068,34 +1066,24 @@ public class FileStitcher extends ReaderWrapper {
     }
     else ms.imageCount *= reader.getEffectiveSizeC();
 
-    int[] cLengths = reader.getChannelDimLengths();
-    String[] cTypes = reader.getChannelDimTypes();
-    int cCount = 0;
-    for (int i=0; i<cLengths.length; i++) {
-      if (cLengths[i] > 1) cCount++;
+    ms.moduloC = reader.getModuloC();
+    ms.moduloZ = reader.getModuloZ();
+    ms.moduloT = reader.getModuloT();
+
+    if (ms.moduloC.length() % ms.sizeC != 0) {
+      ms.moduloC.start = 0;
+      ms.moduloC.step = 1;
+      ms.moduloC.end = 0;
     }
-    for (int i=1; i<lenC[sno].length; i++) {
-      if (lenC[sno][i] > 1) cCount++;
+    if (ms.moduloZ.length() % ms.sizeZ != 0) {
+      ms.moduloZ.start = 0;
+      ms.moduloZ.step = 1;
+      ms.moduloZ.end = 0;
     }
-    if (cCount == 0) {
-      ms.cLengths = new int[] {1};
-      ms.cTypes = new String[] {FormatTools.CHANNEL};
-    }
-    else {
-      ms.cLengths = new int[cCount];
-      ms.cTypes = new String[cCount];
-    }
-    int c = 0;
-    for (int i=0; i<cLengths.length; i++) {
-      if (cLengths[i] == 1) continue;
-      ms.cLengths[c] = cLengths[i];
-      ms.cTypes[c] = cTypes[i];
-      c++;
-    }
-    for (int i=1; i<lenC[sno].length; i++) {
-      if (lenC[sno][i] == 1) continue;
-      ms.cLengths[c] = lenC[sno][i];
-      ms.cTypes[c] = FormatTools.CHANNEL;
+    if (ms.moduloT.length() % ms.sizeT != 0) {
+      ms.moduloT.start = 0;
+      ms.moduloT.step = 1;
+      ms.moduloT.end = 0;
     }
   }
 
