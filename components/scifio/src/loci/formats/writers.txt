@@ -13,3 +13,6 @@ loci.formats.out.QTWriter       # mov
 loci.formats.out.EPSWriter      # eps
 loci.formats.out.ICSWriter      # ics
 loci.formats.out.JavaWriter     # java
+
+# writers requiring third-party libraries
+loci.formats.out.WlzWriter	# wlz

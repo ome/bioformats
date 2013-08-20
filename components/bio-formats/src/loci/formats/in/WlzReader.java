@@ -47,8 +47,8 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 
-import uk.ac.mrc.hgu.Wlz.WlzObjectType;
 import uk.ac.mrc.hgu.Wlz.WlzGreyType;
+import uk.ac.mrc.hgu.Wlz.WlzObjectType;
 import uk.ac.mrc.hgu.Wlz.WlzIBox2;
 import uk.ac.mrc.hgu.Wlz.WlzIBox3;
 import uk.ac.mrc.hgu.Wlz.WlzIVertex2;
@@ -80,14 +80,14 @@ public class WlzReader extends FormatReader {
   }
 
   // -- Woolz stuff --
-  int		objType = WlzObjectType.WLZ_NULL;
+  private int	objType = WlzObjectType.WLZ_NULL;
   /* objGType is the Woolz value type, but may be WLZ_GREY_ERROR to indicate
    * an object with no values, just a domain. */
-  int	 	objGType = WlzGreyType.WLZ_GREY_ERROR;
-  String	wlzVersion = new String("unknown");
-  WlzIBox3	bBox = new WlzIBox3();
-  WlzObject	wlzObj = null;
-  WlzFileStream wlzFP = null;
+  private int	objGType = WlzGreyType.WLZ_GREY_ERROR;
+  private 	String wlzVersion = new String("unknown");
+  private 	WlzIBox3 bBox = new WlzIBox3();
+  private 	WlzObject wlzObj = null;
+  private 	WlzFileStream wlzFP = null;
 
   // -- Constructor --
 
@@ -126,7 +126,7 @@ public class WlzReader extends FormatReader {
       }
       catch (WlzException e) {
         throw new FormatException(
-	    "Failed to copy bytes from Woolz object");
+	    "Failed to copy bytes from Woolz object (" + e + ")");
       }
     }
     return(buf);
@@ -150,13 +150,13 @@ public class WlzReader extends FormatReader {
       throw new MissingLibraryException(NO_WLZ_MSG, e);
     }
     catch (WlzException e) {
-      throw new IOException("Failed to read " + id, e);
+      throw new IOException("Failed to read " + id + " (" +  e + ")");
     }
     try {
       objType = WlzObject.WlzGetObjectType(wlzObj);
     }
     catch (WlzException e) {
-      throw new IOException("Unable to find Woolz object type");
+      throw new IOException("Unable to find Woolz object type (" + e + ")");
     }
     switch(objType) {
       case WlzObjectType.WLZ_2D_DOMAINOBJ:
@@ -171,20 +171,19 @@ public class WlzReader extends FormatReader {
 	  vSz = WlzObject.WlzGetVoxelSize(wlzObj);
 	}
 	catch (WlzException e) {
-	  throw new IOException("Unable to find Woolz voxel size");
+	  throw new IOException("Unable to find Woolz voxel size (" + e + ")");
 	}
-	store.setPixelsPhysicalSizeX(
-	    new ome.xml.model.primitives.PositiveFloat(Math.abs(vSz.vtX)), 0);
-	store.setPixelsPhysicalSizeY(
-	    new ome.xml.model.primitives.PositiveFloat(Math.abs(vSz.vtY)), 0);
-	store.setPixelsPhysicalSizeZ(
-	    new ome.xml.model.primitives.PositiveFloat(Math.abs(vSz.vtZ)), 0);
+	PositiveFloat x = new PositiveFloat(Math.abs(vSz.vtX));
+	PositiveFloat y = new PositiveFloat(Math.abs(vSz.vtY));
+	PositiveFloat z = new PositiveFloat(Math.abs(vSz.vtZ));
+	store.setPixelsPhysicalSizeX(x, 0);
+	store.setPixelsPhysicalSizeY(y, 0);
+	store.setPixelsPhysicalSizeZ(z, 0);
         break;
       default:
 	throw new IOException("Invalid Woolz object type (type = " +
 			      objType + ")");
     }
-    /* HACK */ System.out.println("HACK version = " + wlzVersion + "\r");
     store.setStageLabelName("WoolzOrigin", 0);
     store.setStageLabelX((double )(bBox.xMin), 0);
     store.setStageLabelY((double )(bBox.yMin), 0);
@@ -194,8 +193,13 @@ public class WlzReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if (wlzFP != null) {
+    if(wlzFP != null) {
       wlzFP.close();
+      wlzFP = null;
+    }
+    if(wlzObj != null) {
+      // Object is freed by garbage collection.
+      wlzObj = null;
     }
     super.close(fileOnly);
   }
@@ -412,7 +416,7 @@ public class WlzReader extends FormatReader {
     }
     catch (WlzException e) {
       throw new FormatException(
-	  "Unable to determine Woolz object value type.");
+	  "Unable to determine Woolz object value type (" + e + ")");
     }
     switch(objGType) {
       case WlzGreyType.WLZ_GREY_UBYTE:
@@ -451,7 +455,8 @@ public class WlzReader extends FormatReader {
       bBox2 = WlzObject.WlzBoundingBox2I(wlzObj);
     }
     catch (WlzException e) {
-      throw new FormatException("Inappropriate Woolz object domain");
+      throw new FormatException("Inappropriate Woolz object domain (" +
+                                e + ")");
     }
     bBox.xMin = bBox2.xMin;
     bBox.xMax = bBox2.xMax;
@@ -475,7 +480,8 @@ public class WlzReader extends FormatReader {
       bBox = WlzObject.WlzBoundingBox3I(wlzObj);
     }
     catch (WlzException e) {
-      throw new FormatException("Inappropriate Woolz object domain");
+      throw new FormatException("Inappropriate Woolz object domain (" +
+                                e + ")");
     }
     md.rgb = false;
     md.interleaved = false;
