@@ -110,8 +110,6 @@ BACK_REFERENCE_LINK_OVERRIDE = {'Pump': ['Laser'], 'AnnotationRef': ['Annotation
 # Back reference instance variable name overrides which will be used in place
 # of the standard name translation logic.
 BACK_REFERENCE_NAME_OVERRIDE = {
-    'FilterSet.ExcitationFilter': 'filterSetExcitationFilter',
-    'FilterSet.EmissionFilter': 'filterSetEmissionFilter',
     'LightPath.ExcitationFilter': 'lightPathExcitationFilter',
     'LightPath.EmissionFilter': 'lightPathEmissionFilter',
 }
@@ -119,8 +117,6 @@ BACK_REFERENCE_NAME_OVERRIDE = {
 # Back reference class name overrides which will be used when generating
 # fully qualified class names.
 BACK_REFERENCE_CLASS_NAME_OVERRIDE = {
-    'FilterSet.ExcitationFilter': 'FilterSetExcitationFilterLink',
-    'FilterSet.EmissionFilter': 'FilterSetEmissionFilterLink',
     'LightPath.ExcitationFilter': 'LightPathExcitationFilterLink',
     'LightPath.EmissionFilter': 'LightPathEmissionFilterLink',
 }
@@ -1041,6 +1037,17 @@ class OMEModelProperty(OMEModelEntity):
         return instance
     fromReference = classmethod(fromReference)
 
+    def _get_dumpStatus(self):
+        return 'Dump OMEModelProperty Status - %s Dict(%s)' % (self.__class__, self.__dict__)
+    dumpStatus = property(_get_dumpStatus)
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return '<"%s" OMEModelProperty instance at 0x%x>' % (self.name, id(self))
+
+
 class OMEModelObject(OMEModelEntity):
     """
     A single element of an OME data model.
@@ -1326,6 +1333,10 @@ class OMEModelObject(OMEModelEntity):
         Returns whether or not the model object has a "complex" content type.
         """
         return self.element.isComplex()
+
+    def _get_dumpStatus(self):
+        return 'Dump OMEModelObject Status - %s Dict(%s)' % (self.__class__, self.__dict__)
+    dumpStatus = property(_get_dumpStatus)
 
     def __str__(self):
         return self.__repr__()
