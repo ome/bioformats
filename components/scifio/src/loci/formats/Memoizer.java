@@ -78,6 +78,8 @@ public class Memoizer extends ReaderWrapper {
 
     Integer loadVersion() throws IOException;
 
+    String loadRevision() throws IOException;
+
     IFormatReader loadReader() throws IOException, ClassNotFoundException;
 
     void loadStop() throws IOException;
@@ -85,6 +87,8 @@ public class Memoizer extends ReaderWrapper {
     void saveStart(File tempFile) throws IOException;
 
     void saveVersion(Integer version) throws IOException;
+
+    void saveRevision(String revision) throws IOException;
 
     void saveReader(IFormatReader reader) throws IOException;
 
@@ -120,6 +124,10 @@ public class Memoizer extends ReaderWrapper {
         return kryo.readObject(input, Integer.class);
     }
 
+    public String loadRevision() {
+        return kryo.readObject(input, String.class);
+    }
+
     public IFormatReader loadReader() {
         Class<?> c = kryo.readObject(input, Class.class);
         return (IFormatReader) kryo.readObject(input, c);
@@ -147,6 +155,10 @@ public class Memoizer extends ReaderWrapper {
 
     public void saveVersion(Integer version) {
       kryo.writeObject(output, version);
+    }
+
+    public void saveRevision(String revision) {
+      kryo.writeObject(output, revision);
     }
 
    public void saveReader(IFormatReader reader) {
@@ -189,6 +201,11 @@ public class Memoizer extends ReaderWrapper {
         return loadStream.readInt();
     }
 
+    public String loadRevision() throws IOException {
+        int length = loadStream.readInt();
+        return loadStream.readString(length);
+    }
+
     public IFormatReader loadReader() throws IOException, ClassNotFoundException {
       int cSize = loadStream.readInt();
       byte[] cArr = new byte[cSize];
@@ -221,6 +238,11 @@ public class Memoizer extends ReaderWrapper {
       saveStream.writeInt(version);
     }
 
+    public void saveRevision(String revision) throws IOException {
+      saveStream.writeInt(revision.length());
+      saveStream.writeBytes(revision);
+    }
+
     public void saveReader(IFormatReader reader) throws IOException {
       byte[] cArr = reader.getClass().getName().getBytes(Constants.ENCODING);
       saveStream.write(cArr.length);
@@ -248,7 +270,7 @@ public class Memoizer extends ReaderWrapper {
    * cached items. This should happen when the order and type of objects stored
    * in the memo file changes.
    */
-  public static final Integer VERSION = 1;
+  public static final Integer VERSION = 2;
 
   /**
    * Default value for {@link #minimumElapsed} if none is provided in the
@@ -538,6 +560,14 @@ public class Memoizer extends ReaderWrapper {
         return null;
       }
 
+      // REVISION NUMBER
+      String revision = ser.loadRevision();
+      if (!FormatTools.VCS_REVISION.equals(revision)) {
+        LOGGER.info("Different Git version: {} not {}",
+          revision, FormatTools.VCS_REVISION);
+        return null;
+      }
+
       // CLASS & COPY
       try {
         copy = ser.loadReader();
@@ -593,6 +623,7 @@ public class Memoizer extends ReaderWrapper {
 
       // Save to temporary location.
       ser.saveVersion(VERSION);
+      ser.saveRevision(FormatTools.VCS_REVISION);
       ser.saveReader(reader);
       ser.saveStop();
       LOGGER.debug("saved to temp file: {}", tempFile);
