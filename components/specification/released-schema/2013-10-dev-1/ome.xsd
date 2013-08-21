@@ -461,6 +461,16 @@
 					</xsd:annotation>
 					<xsd:element name="HashSHA1" type="Hex40" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
+				<xsd:element ref="ConfigurationSettings" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>
+							This optional element is only used if the Configuration has to be
+							changed on a Plane by Plane basis, rather than the more usual
+							Channel by Channel. It should only be set if ConfigurationSettings
+							are not applied at the Channel level.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
@@ -545,7 +555,18 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="ConfigurationSettings" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="ConfigurationSettings" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>
+							This optional element is normal used to set the Configuration for
+							this Channel. If the configuration of the machine HAS to change on 
+							a Plane by Plane basis, then ConfigurationSettings can be set on Plane
+							instead.
+							It should be omitted if ConfigurationSettings are applied at
+							the Plane level.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
 						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
@@ -2423,7 +2444,8 @@
 			<xsd:appinfo><xsdfu><plural>ConfigurationSettingsCombinations</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This holds the setting applied to an instrument Configuration as well as a
-				reference to the Configuration.
+				reference to the Configuration. The optional Refs can be used to apply
+				restrictions to the chosen Configuration
 				The ID is the Configuration used in this case.
 			</xsd:documentation>
 		</xsd:annotation>
@@ -2434,21 +2456,24 @@
 					<xsd:attribute name="LightSourceRef" use="optional" type="LightSourceID">
 						<xsd:annotation>
 							<xsd:documentation>
-								An optional XXXXXX LightSource 
+								If set this identifies a single LightSource from the 
+								configuration that is the only one active.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="LightPathRef" use="optional" type="LightPathID">
 						<xsd:annotation>
 							<xsd:documentation>
-								An optional XXXXXX LightPath 
+								If set this identifies a single LightPath from the 
+								configuration that is the only one active.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="DetectorRef" use="optional" type="DetectorID">
 						<xsd:annotation>
 							<xsd:documentation>
-								An optional XXXXXX Detector 
+								If set this identifies a single Detector from the 
+								configuration that is the only one active.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
