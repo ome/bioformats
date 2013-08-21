@@ -172,18 +172,23 @@ public class FormatReaderTestFactory {
 
     // remove duplicates
     int index = 0;
+    FileStitcher reader = new FileStitcher();
     while (index < files.size()) {
       String file = (String) files.get(index);
       try {
-        FileStitcher reader = new FileStitcher();
         reader.setId(file);
         String[] usedFiles = reader.getUsedFiles();
         for (int q=1; q<usedFiles.length; q++) {
           files.remove(usedFiles[q]);
         }
-        reader.close();
       }
       catch (Exception e) { }
+      finally {
+        try {
+          reader.close();
+        }
+        catch (IOException e) { }
+      }
 
       index++;
     }
