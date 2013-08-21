@@ -179,8 +179,10 @@ public class FormatReaderTestFactory {
       try {
         reader.setId(file);
         String[] usedFiles = reader.getUsedFiles();
-        for (int q=1; q<usedFiles.length; q++) {
-          files.remove(usedFiles[q]);
+        for (int q=0; q<usedFiles.length; q++) {
+          if (files.indexOf(usedFiles[q]) > index) {
+            files.remove(usedFiles[q]);
+          }
         }
       }
       catch (Exception e) { }
