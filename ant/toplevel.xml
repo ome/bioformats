@@ -167,6 +167,7 @@ Type "ant -p" for a list of targets.
       classpath="${merged-docs.classpath}"
       destdir="${merged-docs.dir}/api"
       maxmemory="${merged-docs.memory}"
+      encoding="UTF-8"
       failonerror="true" author="true" version="true" use="true"
       nodeprecated="false" windowtitle="Bio-Formats API">
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
