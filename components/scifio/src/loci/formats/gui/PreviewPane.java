@@ -269,7 +269,7 @@ public class PreviewPane extends JPanel
           continue;
         }
 
-        icon = id == null ? null : new ImageIcon(makeImage("Loading..."));
+        icon = new ImageIcon(makeImage("Loading..."));
         iconText = "";
         String format = reader.getFormat();
         formatText = format;
