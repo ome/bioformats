@@ -49,10 +49,10 @@
  *
  * COPYRIGHT:
  *
- * This software module was originally developed by Rapha�l Grosbois and
+ * This software module was originally developed by Raphaël Grosbois and
  * Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); Joel
- * Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, David
- * Bouchard, F�lix Henry, Gerard Mozelle and Patrice Onno (Canon Research
+ * Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, David
+ * Bouchard, Félix Henry, Gerard Mozelle and Patrice Onno (Canon Research
  * Centre France S.A) in the course of development of the JPEG2000
  * standard as specified by ISO/IEC 15444 (JPEG 2000 Standard). This
  * software module is an implementation of a part of the JPEG 2000
@@ -94,10 +94,10 @@ public class JJ2KInfo {
      * Newlines should be respected when displaying the message.
      * */
     public static final String copyright =
-        "This software module was originally developed by Rapha�l Grosbois "+
+        "This software module was originally developed by Raphaël Grosbois "+
         "and Diego Santa Cruz (Swiss Federal Institute of Technology-EPFL); "+
-        "Joel Askel�f (Ericsson Radio Systems AB); and Bertrand Berthelot, "+
-        "David Bouchard, F�lix Henry, Gerard Mozelle and Patrice Onno (Canon"+
+        "Joel Askelöf (Ericsson Radio Systems AB); and Bertrand Berthelot, "+
+        "David Bouchard, Félix Henry, Gerard Mozelle and Patrice Onno (Canon"+
         " Research Centre "+
         "France S.A) in the course of development of the JPEG 2000 standard "+
         "as "+
