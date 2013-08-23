@@ -30,6 +30,7 @@ Type "ant -p" for a list of targets.
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
+      encoding="UTF-8"
       srcdir="${dest.dir}" destdir="${classes.dir}"
       classpath="${component.classpath}"
       includes="${component.source}">
@@ -43,6 +44,7 @@ Type "ant -p" for a list of targets.
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
+      encoding="UTF-8"
       srcdir="${test.dir}" destdir="${test-classes.dir}"
       classpath="${classes.dir}:${component.classpath}"
       includes="${component.source}"/>
@@ -174,6 +176,7 @@ your FindBugs installation's lib directory. E.g.:
     </delete>
     <javac debug="true" includeantruntime="false" fork="true"
       deprecation="true" source="1.6" target="1.6"
+      encoding="UTF-8"
       srcdir="${utils.dir}" includes="*.java"
       classpath="${component.classpath}:${artifact.dir}/${component.jar}">
       <!--<compilerarg value="-Xlint:unchecked"/>-->
