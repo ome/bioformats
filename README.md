@@ -54,7 +54,7 @@ following before submitting a pull request:
  * verify that the branch merges cleanly into ```develop```
  * verify that the branch compiles with the ```clean jars tools``` Ant targets
  * verify that the branch compiles using Maven
- * verify that the branch does not use syntax or API specific to Java 1.6+
+ * verify that the branch does not use syntax or API specific to Java 1.7+
  * if you are making any build system or packaging changes, verify that
    [OMERO](https://github.com/openmicroscopy/openmicroscopy) builds when the
    ```components/bioformats``` submodule is pointed to your branch
