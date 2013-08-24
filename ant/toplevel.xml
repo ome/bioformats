@@ -171,7 +171,7 @@ Type "ant -p" for a list of targets.
       nodeprecated="false" windowtitle="Bio-Formats API">
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
-      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
       <link href="http://hudson.openmicroscopy.org.uk/job/OMEJAVA/javadoc/"/>
       <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
       <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
