@@ -126,10 +126,10 @@ public final class LibraryChecker {
   public static boolean checkJava() {
     String version = System.getProperty("java.version");
     double ver = Double.parseDouble(version.substring(0, 3));
-    if (ver < 1.4) {
+    if (ver < 1.6) {
       IJ.error("LOCI Plugins",
-        "Sorry, the LOCI plugins require Java 1.4 or later." +
-        "\nYou can download ImageJ with JRE 5.0 from the ImageJ web site.");
+        "Sorry, the LOCI plugins require Java 1.6 or later." +
+        "\nYou can download ImageJ with JRE 1.6 from the ImageJ web site.");
       return false;
     }
     return true;
