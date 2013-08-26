@@ -5,7 +5,7 @@ Fiji
 can be described as a distribution of :doc:`/users/imagej/index`
 together with Java, Java 3D and a lot of plugins organized into a
 `coherent menu
-structure <http://fiji.sc/wiki/index.php/Plugins_Menu>`_.
+structure <http://fiji.sc/Plugins_Menu>`_.
 Fiji compares to ImageJ as Ubuntu compares to Linux.
 
 Fiji works with Bio-Formats out of the box, because it comes bundled
