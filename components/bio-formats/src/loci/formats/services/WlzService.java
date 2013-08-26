@@ -38,6 +38,7 @@ package loci.formats.services;
 import java.io.IOException;
 
 import loci.formats.FormatException;
+import loci.formats.MissingLibraryException;
 
 import loci.common.services.Service;
 
@@ -51,6 +52,16 @@ public interface WlzService extends Service {
    */
   public void open(String file, String rw)
     throws IOException, FormatException;
+
+  /**
+   * Gets the text string for when Woolz has not been found.
+   */
+  public String getNoWlzMsg();
+
+  /**
+   * Gets the text string used for the Woolz origin label.
+   */
+  public String getWlzOrgLabelName();
 
   /**
    * Gets width in pixels/voxels.
@@ -89,6 +100,54 @@ public interface WlzService extends Service {
   public boolean isRGB();
 
   /**
+   * Gets the image pixel type.
+   * @return			pixel type.
+   */
+  public int	 getPixelType();
+
+  /**
+   * Gets voxel width.
+   * @return			voxel width.
+   */
+  public double	getVoxSzX();
+
+  /**
+   * Gets voxel height.
+   * @return			voxel height.
+   */
+  public double	getVoxSzY();
+
+  /**
+   * Gets voxel depth.
+   * @return			voxel depth.
+   */
+  public double	getVoxSzZ();
+
+  /**
+   * Gets column origin.
+   * @return			column origin.
+   */
+  public double	getOrgX();
+
+  /**
+   * Gets line origin.
+   * @return			line origin.
+   */
+  public double	getOrgY();
+
+  /**
+   * Gets plane origin.
+   * @return			plane origin.
+   */
+  public double	getOrgZ();
+
+  /**
+   * Gets supported pixel types.
+   * @return			array of supported pixel types.
+   */
+  public int[] getSupPixelTypes();
+
+  /**
    * Sets up the service, which must have already been opened for writing.
    * @param	orgX		x origin.
    * @param	orgY		y origin.
@@ -107,7 +166,7 @@ public interface WlzService extends Service {
   public void setupWrite(int orgX, int orgY, int orgZ,
   			 int pixSzX, int pixSzY, int pixSzZ,
 			 int pixSzC, int pixSzT,
-			 int voxSzX, int voxSzY, int voxSzZ,
+			 double voxSzX, double voxSzY, double voxSzZ,
 			 int gType)
     throws FormatException;
 
@@ -143,9 +202,4 @@ public interface WlzService extends Service {
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException;
 
-  /**
-   * Gets the image pixel type.
-   * @return			pixel type.
-   */
-  public int	 getPixelType();
 }
