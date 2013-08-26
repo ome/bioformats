@@ -1,43 +1,19 @@
 FARSIGHT
 ========
 
-`FARSIGHT <http://www.farsight-toolkit.org/wiki/Main_Page>`_ is a
-collection of modules for image analysis created by LOCI's collaborators
-at the `Rensselaer Polytechnic Institute <http://www.rpi.edu/>`_. These
-open-source modules are built on the :doc:`/users/itk/index` libraries and thus
-can take advantage of LOCI's BF-ITK plugin for processing normally unsupported
-image types.
+`FARSIGHT <http://www.farsight-toolkit.org/>`_ is a collection of
+modules for image analysis created by LOCI's collaborators at the
+`University of Houston <http://www.uh.edu/>`_. These
+open source modules are built on the :doc:`/users/itk/index` library
+and thus can take advantage of ITK's support for Bio-Formats to process
+otherwise unsupported image formats.
 
-The principal FARSIGHT module that benefits from the BF-ITK plugin is
-the `Nucleus
-Editor <http://www.farsight-toolkit.org/wiki/NucleusEditor>`_. The
-Nucleus Editor has been shown to work well with BF-ITK on Mac and Linux
-operating systems, but unfortunately not on Windows. Note that both
-FARSIGHT and BF-ITK can work independently on Windows. 
+The principal FARSIGHT module that benefits from Bio-Formats is the
+`Nucleus Editor <http://www.farsight-toolkit.org/wiki/NucleusEditor>`_,
+though in principle any FARSIGHT-based code that reads image formats via
+the standard ITK mechanism will be able to leverage Bio-Formats.
 
-**Warning**: you will find links for downloading pre-built versions of both
-FARSIGHT and the BF-ITK plugin below. However, currently these have not
-been shown to work together on any operating system. 
+.. seealso::
+    `FARSIGHT Downloads page <http://www.farsight-toolkit.org/wiki/Special:FarsightDownloads>`_
 
-In summary, to use the Bio-Formats plugin with a FARSIGHT module, you will
-need to build the FARSIGHT module from source and should be using a Linux or
-Mac-based computer.
-
-To use FARSIGHT and BF-ITK together, there are several tutorials that will
-guide you through the process of downloading and building the source code for
-these projects:
-
--  `This
-   tutorial <http://www.farsight-toolkit.org/wiki/FARSIGHT_HowToBuild>`_
-   will guide you through building FARSIGHT exclusively. Once FARSIGHT
-   is built, you can follow the instructions on the :doc:`/users/itk/index`
-   page to download and install a pre-built version of BFTIK.
--  `The tutorials on this
-   page <http://www.farsight-toolkit.org/wiki/FARSIGHT_Tutorials/Building_Software/Bio-Formats>`_
-   provide platform-specific guides for building both FARSIGHT and the
-   BF-ITK plugin from source.
-
-If you are just interested in using FARSIGHT without going through the
-steps of compiling from source, you can visit `this downloads
-page <http://www.farsight-toolkit.org/wiki/Special:FarsightDownloads>`_
-and download stable releases of FARSIGHT.
+    `FARSIGHT HowToBuild tutorial <http://www.farsight-toolkit.org/wiki/FARSIGHT_HowToBuild>`_
