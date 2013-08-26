@@ -497,7 +497,7 @@ public class PrairieReader extends FormatReader {
 
     // populate required AcquisitionDate
     final String date = DateTools.formatDate(meta.getDate(), DATE_FORMAT);
-    final Timestamp acquisitionDate = new Timestamp(date);
+    final Timestamp acquisitionDate = Timestamp.valueOf(date);
     final int seriesCount = getSeriesCount();
     for (int s = 0; s < seriesCount; s++) {
       setSeries(s);

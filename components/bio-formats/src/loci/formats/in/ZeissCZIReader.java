@@ -2185,15 +2185,10 @@ public class ZeissCZIReader extends FormatReader {
         if (magnification == null) {
           magnification = getFirstNodeValue(objective, "Magnification");
         }
-        Double mag = magnification == null ? 0 : new Double(magnification);
+        Double mag = magnification == null ? null : new Double(magnification);
 
-        if (mag > 0) {
-          store.setObjectiveNominalMagnification(
-            new Double(mag.doubleValue()), 0, i);
-        }
-        else {
-          LOGGER.warn(
-            "Expected positive value for NominalMagnification; got {}", mag);
+        if (mag != null) {
+          store.setObjectiveNominalMagnification(mag, 0, i);
         }
         String calibratedMag =
           getFirstNodeValue(objective, "CalibratedMagnification");

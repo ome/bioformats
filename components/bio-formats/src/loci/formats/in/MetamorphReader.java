@@ -30,9 +30,10 @@ import java.io.IOException;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.TimeZone;
 import java.util.Vector;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1528,18 +1529,26 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         case 6:
         case 25:
-          in.seek(valOrOffset);
-          num = in.readInt();
-          if (num + in.getFilePointer() >= in.length()) {
-            num = (int) (in.length() - in.getFilePointer() - 1);
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            num = in.readInt();
+            if (num + in.getFilePointer() >= in.length()) {
+              num = (int) (in.length() - in.getFilePointer() - 1);
+            }
+            if (num >= 0) {
+              value = in.readString(num);
+            }
           }
-          value = in.readString(num);
           break;
         case 7:
-          in.seek(valOrOffset);
-          num = in.readInt();
-          imageName = in.readString(num);
-          value = imageName;
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            num = in.readInt();
+            if (num >= 0) {
+              imageName = in.readString(num);
+              value = imageName;
+            }
+          }
           break;
         case 8:
           if (valOrOffset == 1) value = "inside";
@@ -1547,69 +1556,79 @@ public class MetamorphReader extends BaseTiffReader {
           else value = "off";
           break;
         case 17: // oh how we hate you Julian format...
-          in.seek(valOrOffset);
-          thedate = decodeDate(in.readInt());
-          thetime = decodeTime(in.readInt());
-          imageCreationDate = thedate + " " + thetime;
-          value = imageCreationDate;
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            thedate = decodeDate(in.readInt());
+            thetime = decodeTime(in.readInt());
+            imageCreationDate = thedate + " " + thetime;
+            value = imageCreationDate;
+          }
           break;
         case 16:
-          in.seek(valOrOffset);
-          thedate = decodeDate(in.readInt());
-          thetime = decodeTime(in.readInt());
-          value = thedate + " " + thetime;
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            thedate = decodeDate(in.readInt());
+            thetime = decodeTime(in.readInt());
+            value = thedate + " " + thetime;
+          }
           break;
         case 26:
-          in.seek(valOrOffset);
-          int standardLUT = in.readInt();
-          switch (standardLUT) {
-            case 0:
-              value = "monochrome";
-              break;
-            case 1:
-              value = "pseudocolor";
-              break;
-            case 2:
-              value = "Red";
-              break;
-            case 3:
-              value = "Green";
-              break;
-            case 4:
-              value = "Blue";
-              break;
-            case 5:
-              value = "user-defined";
-              break;
-            default:
-              value = "monochrome";
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            int standardLUT = in.readInt();
+            switch (standardLUT) {
+              case 0:
+                value = "monochrome";
+                break;
+              case 1:
+                value = "pseudocolor";
+                break;
+              case 2:
+                value = "Red";
+                break;
+              case 3:
+                value = "Green";
+                break;
+              case 4:
+                value = "Blue";
+                break;
+              case 5:
+                value = "user-defined";
+                break;
+              default:
+                value = "monochrome";
+            }
           }
           break;
         case 34:
           value = String.valueOf(in.readInt());
           break;
         case 46:
-          in.seek(valOrOffset);
-          int xBin = in.readInt();
-          int yBin = in.readInt();
-          binning = xBin + "x" + yBin;
-          value = binning;
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            int xBin = in.readInt();
+            int yBin = in.readInt();
+            binning = xBin + "x" + yBin;
+            value = binning;
+          }
           break;
         case 40:
-          if (valOrOffset != 0) {
+          if (valOrOffset != 0 && valOrOffset < in.length()) {
             in.seek(valOrOffset);
             readRationals(new String[] {"UIC1 absoluteZ"});
           }
           break;
         case 41:
-          if (valOrOffset != 0) {
+          if (valOrOffset != 0 && valOrOffset < in.length()) {
             in.seek(valOrOffset);
             readAbsoluteZValid();
           }
           break;
         case 49:
-          in.seek(valOrOffset);
-          readPlaneData();
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            readPlaneData();
+          }
           break;
       }
       addSeriesMeta(key, value);
@@ -1666,12 +1685,12 @@ public class MetamorphReader extends BaseTiffReader {
 
   /** Converts a time value in milliseconds into a human-readable string. */
   public static String decodeTime(int millis) {
-    Calendar time = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-    time.setTimeInMillis(millis);
-    String hours = intFormat(time.get(Calendar.HOUR_OF_DAY), 2);
-    String minutes = intFormat(time.get(Calendar.MINUTE), 2);
-    String seconds = intFormat(time.get(Calendar.SECOND), 2);
-    String ms = intFormat(time.get(Calendar.MILLISECOND), 3);
+    DateTime tm = new DateTime(millis, DateTimeZone.UTC);
+    String hours = intFormat(tm.getHourOfDay(), 2);
+    String minutes = intFormat(tm.getMinuteOfHour(), 2);
+    String seconds = intFormat(tm.getSecondOfMinute(), 2);
+    String ms = intFormat(tm.getMillisOfSecond(), 3);
+
     return hours + ":" + minutes + ":" + seconds + ":" + ms;
   }
 
@@ -1715,6 +1734,9 @@ public class MetamorphReader extends BaseTiffReader {
   private TiffRational readRational(RandomAccessInputStream s, long offset)
     throws IOException
   {
+    if (offset >= s.length() - 8) {
+      return null;
+    }
     s.seek(offset);
     int num = s.readInt();
     int denom = s.readInt();

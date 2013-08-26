@@ -89,7 +89,7 @@
             <Value>
                 <TestData>
                     <key>foo</key>
-                    <value>bar</value>
+					<value>bar</value>
                 </TestData>
             </Value>
         </XMLAnnotation>

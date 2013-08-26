@@ -170,7 +170,7 @@ public class ZeissLSMReader extends FormatReader {
 
   private int nextLaser = 0, nextDetector = 0;
   private int nextFilter = 0, nextDichroicChannel = 0, nextDichroic = 0;
-  private int nextDataChannel = 0, nextIllumChannel = 0, nextDetectChannel = 0;
+  private int nextIllumChannel = 0, nextDetectChannel = 0;
   private boolean splitPlanes = false;
   private double zoom;
   private Vector<String> imageNames;
@@ -179,6 +179,7 @@ public class ZeissLSMReader extends FormatReader {
   private int dimensionM, dimensionP;
   private Hashtable<String, Integer> seriesCounts;
   private String userName;
+  private String[][] channelNames;
 
   private double originX, originY, originZ;
 
@@ -249,7 +250,7 @@ public class ZeissLSMReader extends FormatReader {
       tiffParser = null;
       nextLaser = nextDetector = 0;
       nextFilter = nextDichroicChannel = nextDichroic = 0;
-      nextDataChannel = nextIllumChannel = nextDetectChannel = 0;
+      nextIllumChannel = nextDetectChannel = 0;
       splitPlanes = false;
       zoom = 0;
       imageNames = null;
@@ -268,6 +269,7 @@ public class ZeissLSMReader extends FormatReader {
       originX = originY = originZ = 0d;
       userName = null;
       acquiredDate.clear();
+      channelNames = null;
     }
   }
 
@@ -438,6 +440,7 @@ public class ZeissLSMReader extends FormatReader {
       CoreMetadata ms = new CoreMetadata();
         core.add(ms);
     }
+    channelNames = new String[seriesCount][];
     ifdsList = new Vector<IFDList>();
     ifdsList.setSize(seriesCount);
 
@@ -1046,15 +1049,19 @@ public class ZeissLSMReader extends FormatReader {
         // read the name of each channel
 
         if (namesOffset > 0) {
-          in.seek(channelColorsOffset + namesOffset + 4);
+          in.seek(channelColorsOffset + namesOffset);
+
+          channelNames[series] = new String[getSizeC()];
 
           for (int i=0; i<getSizeC(); i++) {
             if (in.getFilePointer() >= in.length() - 1) break;
             // we want to read until we find a null char
-            String name = in.readCString();
+            int length = in.readInt();
+            String name = in.readString(length);
             if (name.length() <= 128) {
               addSeriesMetaList("ChannelName", name);
             }
+            channelNames[series][i] = name;
           }
         }
       }
@@ -1104,7 +1111,7 @@ public class ZeissLSMReader extends FormatReader {
 
         nextLaser = nextDetector = 0;
         nextFilter = nextDichroicChannel = nextDichroic = 0;
-        nextDataChannel = nextDetectChannel = nextIllumChannel = 0;
+        nextDetectChannel = nextIllumChannel = 0;
 
         Vector<SubBlock> blocks = new Vector<SubBlock>();
 
@@ -1229,6 +1236,9 @@ public class ZeissLSMReader extends FormatReader {
 
       for (int i=0; i<getSizeC(); i++) {
         store.setChannelColor(channelColor[i], series, i);
+        if (channelNames[series] != null) {
+          store.setChannelName(channelNames[series][i], series, i);
+        }
       }
 
       int stampIndex = 0;
@@ -1287,7 +1297,7 @@ public class ZeissLSMReader extends FormatReader {
         getImmersion(recording.immersion), instrument, 0);
       if (recording.magnification != null) {
         store.setObjectiveNominalMagnification(
-          new Double(recording.magnification), instrument, 0);
+          recording.magnification, instrument, 0);
       }
       store.setObjectiveLensNA(recording.lensNA, instrument, 0);
       store.setObjectiveIris(recording.iris, instrument, 0);
@@ -1314,14 +1324,6 @@ public class ZeissLSMReader extends FormatReader {
       Track track = (Track) block;
       if (track.acquire) {
         store.setPixelsTimeIncrement(track.timeIncrement, series);
-      }
-    }
-    else if (block instanceof DataChannel) {
-      DataChannel channel = (DataChannel) block;
-      if (channel.name != null && nextDataChannel < getSizeC() &&
-        channel.acquire)
-      {
-        store.setChannelName(channel.name, series, nextDataChannel++);
       }
     }
     else if (block instanceof DetectionChannel) {
@@ -2226,7 +2228,7 @@ public class ZeissLSMReader extends FormatReader {
     public String startTime;
     // Objective data
     public String correction, immersion;
-    public Integer magnification;
+    public Double magnification;
     public Double lensNA;
     public Boolean iris;
 
@@ -2264,7 +2266,7 @@ public class ZeissLSMReader extends FormatReader {
         int slash = p.indexOf("/");
         if (slash > 0) {
           try {
-            magnification = new Integer(p.substring(0, slash - 1));
+            magnification = new Double(p.substring(0, slash - 1));
           }
           catch (NumberFormatException e) { }
         }

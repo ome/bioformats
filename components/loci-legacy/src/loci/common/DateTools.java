@@ -65,8 +65,17 @@ public final class DateTools {
   public static final long ZVI_EPOCH = ome.scifio.common.DateTools.ZVI_EPOCH;
   public static final long ALT_ZVI_EPOCH = ome.scifio.common.DateTools.ALT_ZVI_EPOCH;
   
-  /** ISO 8601 date format string. */
-  public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+  /** ISO 8601 date output formatter with milliseconds. */
+  public static final String ISO8601_FORMAT_MS = ome.scifio.common.DateTools.ISO8601_FORMAT_MS;
+
+  /** ISO 8601 date output formatter without milliseconds. */
+  public static final String ISO8601_FORMAT = ome.scifio.common.DateTools.ISO8601_FORMAT_S;
+
+  /** Human readable timestamp string */
+  public static final String TIMESTAMP_FORMAT = ome.scifio.common.DateTools.TIMESTAMP_FORMAT;
+
+  /** Human readable timestamp filename string */
+  public static final String FILENAME_FORMAT = ome.scifio.common.DateTools.FILENAME_FORMAT;
   
   // -- Constructor --
 
@@ -159,6 +168,23 @@ public final class DateTools {
    */
   public static long getTime(String date, String format) {
     return ome.scifio.common.DateTools.getTime(date, format);
+  }
+
+  /**
+   * Returns a timestamp for the current timezone in a
+   * human-readable locale-independent format ("YYYY-MM-DD HH:MM:SS")
+   */
+  public static String getTimestamp() {
+    return ome.scifio.common.DateTools.getTimestamp();
+  }
+
+  /**
+   * Returns a timestamp for the current timezone in a format suitable
+   * for a filename in a locale-independent format
+   * ("YYYY-MM-DD_HH-MM-SS")
+   */
+  public static String getFileTimestamp() {
+    return ome.scifio.common.DateTools.getFileTimestamp();
   }
 
 }

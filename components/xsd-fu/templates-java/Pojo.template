@@ -490,7 +490,7 @@ ${customUpdatePropertyContent[prop.name]}
 		return asXMLElement(document, null);
 	}
 
-{% end %}\
+{% end if NOT AbstractProprietary %}\
 	protected Element asXMLElement(Document document, Element ${klass.name}_element)
 	{
 		// Creating XML block for ${klass.name}
@@ -504,7 +504,7 @@ ${customUpdatePropertyContent[prop.name]}
 			abstractElement.appendChild(${klass.name}_element);
 			${klass.name}_element = abstractElement;
 		}
-{% end %}\
+{% end if AbstractProprietary %}\
 		if (${klass.name}_element == null)
 		{
 			${klass.name}_element =
@@ -517,7 +517,12 @@ ${customUpdatePropertyContent[prop.name]}
 			${klass.name}_element.setTextContent(${klass.name}_value.toString());
 		}
 
-{% end %}\
+{% end if NOT Object %}\
+{% if klass.isAnnotation %}\
+		// Ensure any base annotations add their Elements first
+		${klass.name}_element = super.asXMLElement(document, ${klass.name}_element);
+{% end if isAnnotation %}\
+
 {% for prop in klass.properties.values() %}\
 {% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
 		if (${prop.instanceVariableName} != null)
@@ -527,7 +532,7 @@ ${customUpdatePropertyContent[prop.name]}
 			// -- BEGIN custom content from ${prop.name} property template --
 ${customAsXMLElementPropertyContent[prop.name]}
 			// -- END custom content from ${prop.name} property template --
-{% end %}\
+{% end when %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
 			// Reference property ${prop.name} which occurs more than once
 			for (${prop.langType} ${prop.instanceVariableName}_value : ${prop.instanceVariableName})
@@ -536,25 +541,25 @@ ${customAsXMLElementPropertyContent[prop.name]}
 				o.setID(${prop.instanceVariableName}_value.getID());
 				${klass.name}_element.appendChild(o.asXMLElement(document));
 			}
-{% end %}\
+{% end when %}\
 {% when prop.isReference %}\
 			// Reference property ${prop.name}
 			${prop.name} o = new ${prop.name}();
 			o.setID(${prop.instanceVariableName}.getID());
 			${klass.name}_element.appendChild(o.asXMLElement(document));
-{% end %}\
+{% end when %}\
 {% when prop.isBackReference %}\
 			// *** IGNORING *** Skipped back reference ${prop.name}
-{% end %}\
+{% end when %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
 			// Attribute property ${prop.name}
 			${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.toString());
-{% end %}\
+{% end when %}\
 {% when prop.maxOccurs == 1 and prop.isComplex() %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements)
 			${klass.name}_element.appendChild(${prop.instanceVariableName}.asXMLElement(document));
-{% end %}\
+{% end when %}\
 {% when prop.maxOccurs == 1 %}\
 			// Element property ${prop.name} which is not complex (has no
 			// sub-elements)
@@ -562,7 +567,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 					document.createElementNS(NAMESPACE, "${prop.name}");
 			${prop.instanceVariableName}_element.setTextContent(${prop.instanceVariableName}.toString());
 			${klass.name}_element.appendChild(${prop.instanceVariableName}_element);
-{% end %}\
+{% end when %}\
 {% when prop.maxOccurs > 1 and prop.isComplex() %}\
 			// Element property ${prop.name} which is complex (has
 			// sub-elements) and occurs more than once
@@ -570,7 +575,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 			{
 				${klass.name}_element.appendChild(${prop.instanceVariableName}_value.asXMLElement(document));
 			}
-{% end %}\
+{% end when %}\
 {% when prop.maxOccurs > 1 %}\
 			// Element property ${prop.name} which is not complex (has no
 			// sub-elements) which occurs more than once
@@ -581,14 +586,22 @@ ${customAsXMLElementPropertyContent[prop.name]}
 				${prop.instanceVariableName}_element.setTextContent(${prop.instanceVariableName}_value.toString());
 				${klass.name}_element.appendChild(${prop.instanceVariableName}_element);
 			}
-{% end %}\
+{% end when %}\
 {% otherwise %}\
 			// *** WARNING *** Unhandled or skipped property ${prop.name}
-{% end %}\
-{% end %}\
+{% end otherwise %}\
+{% end choose %}\
 		}
-{% end %}\
-{% end %}\
+{% end if %}\
+{% end for %}\
+
+{% choose %}\
+{% when klass.isAnnotation %}\
+		return ${klass.name}_element;
+{% end when isAnnotation %}\
+{% otherwise %}\
 		return super.asXMLElement(document, ${klass.name}_element);
+{% end otherwise %}\
+{% end choose %}\
 	}
 }

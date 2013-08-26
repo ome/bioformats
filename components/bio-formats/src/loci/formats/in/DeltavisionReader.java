@@ -1314,7 +1314,7 @@ public class DeltavisionReader extends FormatReader {
     Correction correction = getCorrection("Other");
     String manufacturer = null;
     String model = null;
-    int magnification = 0;
+    double magnification = 0;
     Double calibratedMagnification = null;
 
     if (lensID >= 10000 && lensID <= 32000) {
@@ -1334,7 +1334,7 @@ public class DeltavisionReader extends FormatReader {
         manufacturer = "APLLC";
       }
 
-      magnification = ((lensID % 1000) - (lensID % 100)) / 10;
+      magnification = ((lensID % 1000) - (lensID % 100)) / 10.0;
       if (magnification == 0) {
         magnification = 100;
       }
@@ -2212,8 +2212,7 @@ public class DeltavisionReader extends FormatReader {
     store.setObjectiveCorrection(correction, 0, 0);
     store.setObjectiveManufacturer(manufacturer, 0, 0);
     store.setObjectiveModel(model, 0, 0);
-    store.setObjectiveNominalMagnification(
-      new Double(magnification), 0, 0);
+    store.setObjectiveNominalMagnification(magnification, 0, 0);
     if (calibratedMagnification != null) {
       store.setObjectiveCalibratedMagnification(calibratedMagnification, 0, 0);
     }
@@ -2253,7 +2252,7 @@ public class DeltavisionReader extends FormatReader {
     /** Maxiumum intensity. */
     public float maxInten;
 
-    /** Exposure time in milliseconds. */
+    /** Exposure time in seconds. */
     public float expTime;
 
     /** Neutral density value. */
@@ -2318,7 +2317,7 @@ public class DeltavisionReader extends FormatReader {
         minInten = in.readFloat();
         maxInten = in.readFloat();
         in.skipBytes(4);
-        expTime = in.readFloat() / 1000;
+        expTime = in.readFloat();
 
         ndFilter = in.readFloat() / 100;
         exWavelen = in.readFloat();
