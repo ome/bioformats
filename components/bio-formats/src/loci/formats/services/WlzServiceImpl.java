@@ -67,13 +67,14 @@ import uk.ac.mrc.hgu.Wlz.WlzDVertex2;
 import uk.ac.mrc.hgu.Wlz.WlzDVertex3;
 import uk.ac.mrc.hgu.Wlz.WlzObject;
 
-
 public class WlzServiceImpl extends AbstractService
   implements WlzService {
 
   // -- Constants --
 
+  public static final String WLZ_ORG_LABEL = "WoolzOrigin";
   public static final String NO_WLZ_MSG =
+    "\n" +
     "Woolz is required to read and write Woolz objects.\n" +
     "Please obtain the necessary JAR and native library files from:\n" +
     "http://www.emouseatlas.org/emap/analysis_tools_resources/software/woolz.html.\n" +
@@ -89,7 +90,6 @@ public class WlzServiceImpl extends AbstractService
   */
 
   private int	state = WLZ_SERVICE_UNKNOWN;
-  private boolean rgb = true;
   private int	pixelType = FormatTools.UINT8;
   private int   objType = WlzObjectType.WLZ_NULL;
   /* objGType is the Woolz value type, but may be WLZ_GREY_ERROR to indicate
@@ -105,11 +105,25 @@ public class WlzServiceImpl extends AbstractService
   * Default constructor.
   */
   public WlzServiceImpl() {
+    checkClassDependency(WlzObject.class);
+  }
+
+  protected void checkClassDependency(Class<? extends Object> klass) {
+    String v[] = new String[1];
+    WlzObject.WlzGetVersion(v);
   }
 
   /*
   * Service methods
   */
+
+  public String getNoWlzMsg() {
+    return(new String(NO_WLZ_MSG));
+  }
+
+  public String getWlzOrgLabelName() {
+    return(new String(WLZ_ORG_LABEL));
+  }
 
   public void open(String file, String rw)
     throws FormatException, IOException {
@@ -119,7 +133,7 @@ public class WlzServiceImpl extends AbstractService
       wlzVersion = new String(v[0]);
     }
     catch (UnsatisfiedLinkError e) {
-      throw new MissingLibraryException(NO_WLZ_MSG, e);
+      throw new FormatException(NO_WLZ_MSG, e);
     }
     if(rw == "r") {
       openRead(file);
@@ -138,7 +152,7 @@ public class WlzServiceImpl extends AbstractService
       sz = 0;
     }
     else {
-      sz = bBox.xMax - bBox.xMin - 1;
+      sz = bBox.xMax - bBox.xMin + 1;
     }
     return(sz);
   }
@@ -149,7 +163,7 @@ public class WlzServiceImpl extends AbstractService
       sz = 0;
     }
     else {
-      sz = bBox.yMax - bBox.yMin - 1;
+      sz = bBox.yMax - bBox.yMin + 1;
     }                 
     return(sz);
   }
@@ -160,7 +174,7 @@ public class WlzServiceImpl extends AbstractService
       sz = 0;
     }
     else {
-      sz = bBox.zMax - bBox.zMin - 1;
+      sz = bBox.zMax - bBox.zMin + 1;
     }                 
     return(sz);
   }
@@ -173,7 +187,7 @@ public class WlzServiceImpl extends AbstractService
     else {
       sz = 1;
     }
-    return(1);
+    return(sz);
   }
 
   public int	getSizeT() {
@@ -189,6 +203,86 @@ public class WlzServiceImpl extends AbstractService
       rgb = false;
     }
     return(rgb);
+  }
+
+  public double	getVoxSzX() {
+    double sz;
+
+    if(voxSz == null) {
+      sz = 1.0;
+    }
+    else {
+      sz = voxSz.vtX;
+    }
+    return(sz);
+  }
+
+  public double	getVoxSzY() {
+    double sz;
+
+    if(voxSz == null) {
+      sz = 1.0;
+    }
+    else {
+      sz = voxSz.vtY;
+    }
+    return(sz);
+  }
+
+  public double	getVoxSzZ() {
+    double sz;
+
+    if(voxSz == null) {
+      sz = 1.0;
+    }
+    else {
+      sz = voxSz.vtZ;
+    }
+    return(sz);
+  }
+
+  public double	getOrgX() {
+    int og;
+
+    if(bBox == null) {
+      og = 0;
+    }
+    else {
+      og = bBox.xMin;
+    }
+    return(og);
+  }
+
+  public double	getOrgY() {
+    int og;
+
+    if(bBox == null) {
+      og = 0;
+    }
+    else {
+      og = bBox.yMin;
+    }
+    return(og);
+  }
+
+  public double	getOrgZ() {
+    int og;
+
+    if(bBox == null) {
+      og = 0;
+    }
+    else {
+      og = bBox.zMin;
+    }
+    return(og);
+  }
+
+  public int[] getSupPixelTypes() {
+    return new int[] {FormatTools.UINT8,
+    		      FormatTools.INT16,
+                      FormatTools.INT32,
+		      FormatTools.FLOAT,
+                      FormatTools.DOUBLE};
   }
 
   public int	getPixelType() {
@@ -216,19 +310,18 @@ public class WlzServiceImpl extends AbstractService
   public void setupWrite(int orgX, int orgY, int orgZ,
 			 int pixSzX, int pixSzY, int pixSzZ,
   			 int pixSzC, int pixSzT, 
-			 int voxSzX, int voxSzY, int voxSzZ,
+			 double voxSzX, double voxSzY, double voxSzZ,
 			 int gType)
     throws FormatException {
 
+    bBox = new WlzIBox3();
     bBox.xMin = orgX;
     bBox.yMin = orgY;
     bBox.zMin = orgZ;
     bBox.xMax = orgX + pixSzX - 1;
     bBox.yMax = orgY + pixSzY - 1;
     bBox.zMax = orgZ + pixSzZ - 1;
-    voxSz.vtX = voxSzX;
-    voxSz.vtY = voxSzY;
-    voxSz.vtZ = voxSzZ;
+    voxSz = new WlzDVertex3(voxSzX, voxSzY, voxSzZ);
     if((bBox.xMax < bBox.xMin) ||
        (bBox.yMax < bBox.yMin) ||
        (bBox.zMax < bBox.zMin) ||
@@ -350,21 +443,20 @@ public class WlzServiceImpl extends AbstractService
     throws FormatException, IOException {
     state = WLZ_SERVICE_READ;
     try {
-      bBox = new WlzIBox3();
-      voxSz = new WlzDVertex3(1.0, 1.0, 1.0);
       wlzFP = new WlzFileInputStream(file);
       wlzObj = WlzObject.WlzReadObj(wlzFP);
+      bBox = WlzObject.WlzBoundingBox3I(wlzObj);
+      objType = WlzObject.WlzGetObjectType(wlzObj);
+      if(objType == WlzObjectType.WLZ_3D_DOMAINOBJ) {
+        voxSz = WlzObject.WlzGetVoxelSize(wlzObj);
+      }
+      else {
+        voxSz = new WlzDVertex3(1.0, 1.0, 1.0);
+      }
     }
     catch (WlzException e) {
       throw new IOException("Failed to read Woolz object (" +
                             e + ")");
-    }
-    try {
-      objType = WlzObject.WlzGetObjectType(wlzObj);
-    }
-    catch (WlzException e) {
-      throw new FormatException("Unable to find Woolz object type (" +
-                                e + ")");
     }
     try {
       if(WlzObject.WlzObjectValuesIsNull(wlzObj) != 0) {
