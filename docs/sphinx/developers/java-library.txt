@@ -7,9 +7,7 @@ add **bio-formats.jar** to your CLASSPATH or build path. You will also need
 **loci-common.jar** for common I/O functions, **ome-xml.jar** for metadata 
 standardization, and `SLF4J <http://slf4j.org/>`_ for logging. 
 
-Beyond **bio-formats.jar**, **loci-common.jar**, **ome-xml.jar**, and
-`SLF4J <http://slf4j.org/>`_, no additional libraries are required.
-However, there are certain packages that if present will be utilized to
+There are also certain packages that if present will be utilized to
 provide additional functionality. To include one, just place it in the
 same folder.
 
