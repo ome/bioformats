@@ -38,6 +38,9 @@ package loci.formats.out;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
+
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
@@ -45,17 +48,8 @@ import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
-
-import uk.ac.mrc.hgu.Wlz.WlzException;
-import uk.ac.mrc.hgu.Wlz.WlzFileStream;
-import uk.ac.mrc.hgu.Wlz.WlzFileOutputStream;
-import uk.ac.mrc.hgu.Wlz.WlzIBox3;
-import uk.ac.mrc.hgu.Wlz.WlzIVertex2;
-import uk.ac.mrc.hgu.Wlz.WlzDVertex3;
-import uk.ac.mrc.hgu.Wlz.WlzIVertex3;
-import uk.ac.mrc.hgu.Wlz.WlzObject;
-import uk.ac.mrc.hgu.Wlz.WlzGreyType;
-import uk.ac.mrc.hgu.Wlz.WlzObjectType;
+import loci.formats.MissingLibraryException;
+import loci.formats.services.WlzService;
 
 /**
  * WlzWriter is the file format writer for Woolz files.
@@ -64,15 +58,15 @@ public class WlzWriter extends FormatWriter {
 
   // -- Fields --
 
-  private int           objType = WlzObjectType.WLZ_NULL;
-  /* objGType is the Woolz value type, but may be WLZ_GREY_ERROR to indicate
-   * an object with no values, just a domain. */
-  private int		objGType = WlzGreyType.WLZ_GREY_ERROR;
-  private String	wlzVersion = new String("unknown");
-  private WlzIBox3	bBox = null;
-  private WlzObject	wlzObj = null;
-  private WlzFileStream	wlzFP = null;
-  private WlzDVertex3 	voxSz = new WlzDVertex3(1.0, 1.0, 1.0);
+  private WlzService wlz = null;
+
+  public static final String NO_WLZ_MSG =
+    "\n" +
+    "Woolz is required to read and write Woolz objects.\n" +
+    "Please obtain the necessary JAR and native library files from:\n" +
+    "http://www.emouseatlas.org/emap/analysis_tools_resources/software/woolz.html.\n" +
+    "The source code for these is also available from:\n" +
+    "https://github.com/ma-tech/Woolz.";
 
   private String outputOrder = "XYZCT";
 
@@ -88,8 +82,6 @@ public class WlzWriter extends FormatWriter {
    * Set the order in which dimensions should be written to the file.
    * Valid values are specified in the documentation for
    * {@link loci.formats.IFormatReader#getDimensionOrder()}
-   *
-   * By default, the ordering is "XYZTC".
    */
   public void setOutputOrder(String outputOrder) {
     this.outputOrder = outputOrder;
@@ -103,17 +95,9 @@ public class WlzWriter extends FormatWriter {
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    WlzIVertex3 og = new WlzIVertex3(x + bBox.xMin, y + bBox.yMin,
-                                     no + bBox.zMin);
-    WlzIVertex2 sz = new WlzIVertex2(w, h);
-
-    checkParams(no, buf, x, y, w, h);
-    try {
-      wlzObj = WlzObject.WlzBuildObj3B(wlzObj, og, sz, objGType,
-                                       buf.length, buf);
-    }
-    catch (WlzException e) {
-      throw new FormatException("Failed save bytes to Woolz object", e);
+    if(wlz != null) {
+      checkParams(no, buf, x, y, w, h);
+      wlz.saveBytes(no, buf, x, y, w, h);
     }
   }
 
@@ -124,9 +108,14 @@ public class WlzWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String codec) {
-    return new int[] {FormatTools.UINT8, FormatTools.INT16,
-      	              FormatTools.INT32, FormatTools.FLOAT,
-		      FormatTools.DOUBLE};
+    int[] spt;
+    if(wlz != null) {
+      spt = wlz.getSupPixelTypes();
+    }
+    else {
+      spt  = new int[] {};
+    }
+    return(spt);
   }
 
   // -- IFormatHandler API methods --
@@ -134,105 +123,55 @@ public class WlzWriter extends FormatWriter {
   /* @see loci.formats.IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
-    MetadataRetrieve meta = getMetadataRetrieve();
-    MetadataTools.verifyMinimumPopulated(meta, series);
-
-    String v[] = new String[1];
-    WlzObject.WlzGetVersion(v);
-    wlzVersion = new String(v[0]);
-    bBox = new WlzIBox3();
-
-    /* TODO somehow set the bounding box using the WoolzOrigin stage
-     * label if it exists. */
-
-    bBox.xMax += meta.getPixelsSizeX(series).getValue().intValue() - 1;
-    bBox.yMax += meta.getPixelsSizeY(series).getValue().intValue() - 1;
-    bBox.zMax += meta.getPixelsSizeZ(series).getValue().intValue() - 1;
-    int nC = meta.getPixelsSizeC(series).getValue().intValue();
-    int nT = meta.getPixelsSizeT(series).getValue().intValue();
-    if((bBox.xMax < bBox.xMin) ||
-       (bBox.yMax < bBox.yMin) ||
-       (bBox.zMax < bBox.zMin) ||
-       (nC <= 0) ||
-       (nT <= 0)) {
-      throw new FormatException("Invalid image size (" +
-				(bBox.xMax - bBox.xMin + 1) + ", " +
-				(bBox.yMax - bBox.yMin + 1) + ", " +
-				(bBox.zMax - bBox.zMin + 1) + ", " +
-				nC + ", " +
-				nT + ")");
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      wlz = factory.getInstance(WlzService.class);
     }
-    int gType = FormatTools.pixelTypeFromString(
-		    meta.getPixelsType(series).toString());
-    switch(gType) {
-      case FormatTools.UINT8:
-	objGType = WlzGreyType.WLZ_GREY_UBYTE;
-	break;
-      case FormatTools.INT16:
-	objGType = WlzGreyType.WLZ_GREY_SHORT;
-	break;
-      case FormatTools.INT32:
-	objGType = WlzGreyType.WLZ_GREY_INT;
-	break;
-      case FormatTools.FLOAT:
-	objGType = WlzGreyType.WLZ_GREY_FLOAT;
-	break;
-      case FormatTools.DOUBLE:
-	objGType = WlzGreyType.WLZ_GREY_DOUBLE;
-	break;
-      default:
-	throw new FormatException("Invalid image value type");
+    catch (DependencyException e) {
+      throw new FormatException(NO_WLZ_MSG, e);
     }
-    if(bBox.zMax == bBox.zMin) {
-      objType = WlzObjectType.WLZ_2D_DOMAINOBJ;
-    }
-    else {
-      objType = WlzObjectType.WLZ_3D_DOMAINOBJ;
+    if(wlz != null) {
+      MetadataRetrieve meta = getMetadataRetrieve();
+      MetadataTools.verifyMinimumPopulated(meta, series);
+      wlz.open(id, "w");
+      String stageLabelName = meta.getStageLabelName(0);
+      int oX = 0;
+      int oY = 0;
+      int oZ = 0;
+      if((stageLabelName != null) &&
+         stageLabelName.equals(wlz.getWlzOrgLabelName())) {
+	oX = (int )Math.rint(meta.getStageLabelX(0));
+        oY = (int )Math.rint(meta.getStageLabelY(0));
+        oZ = (int )Math.rint(meta.getStageLabelZ(0));
+      }
+      int nX = meta.getPixelsSizeX(series).getValue().intValue();
+      int nY = meta.getPixelsSizeY(series).getValue().intValue();
+      int nZ = meta.getPixelsSizeZ(series).getValue().intValue();
+      int nC = meta.getPixelsSizeC(series).getValue().intValue();
+      int nT = meta.getPixelsSizeT(series).getValue().intValue();
+      double vX = 1.0;
+      double vY = 1.0;
+      double vZ = 1.0;
       if(meta.getPixelsPhysicalSizeX(0) != null) {
-        voxSz.vtX = meta.getPixelsPhysicalSizeX(0).getValue();
+        vX = meta.getPixelsPhysicalSizeX(0).getValue();
       }
       if(meta.getPixelsPhysicalSizeY(0) != null) {
-        voxSz.vtY = meta.getPixelsPhysicalSizeY(0).getValue();
+        vY = meta.getPixelsPhysicalSizeY(0).getValue();
       }
       if(meta.getPixelsPhysicalSizeZ(0) != null) {
-        voxSz.vtZ = meta.getPixelsPhysicalSizeZ(0).getValue();
+        vZ = meta.getPixelsPhysicalSizeZ(0).getValue();
       }
-    }
-    try {
-      wlzObj = WlzObject.WlzMakeEmpty();
-    }
-    catch (WlzException e) {
-      throw new FormatException("Failed to create Woolz object", e);
-    }
-    try {
-      wlzFP = new WlzFileOutputStream(id);
-    }
-    catch (IOException e) {
-      throw new IOException("Failed to write " + id +" (" + e + ")");
+      int gType = FormatTools.pixelTypeFromString(
+		  meta.getPixelsType(series).toString());
+      wlz.setupWrite(oX, oY, oZ, nX, nY, nZ, nC, nT, vX, vY, vZ, gType);
     }
   }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     super.close();
-    if((wlzFP != null) && (wlzObj != null)) {
-      try {
-	if(objType == WlzObjectType.WLZ_3D_DOMAINOBJ) {
-	  WlzObject.WlzSetVoxelSize(wlzObj, voxSz.vtX, voxSz.vtY, voxSz.vtZ);
-	}
-	WlzObject.WlzWriteObj(wlzFP, wlzObj);
-      }
-      catch(WlzException e) {
-	throw new IOException("Failed to write to Woolz object (" + e + ")");
-      }
-    }
-    if(wlzFP != null) {
-      wlzFP.close();
-      wlzFP = null;
-    }
-    if(wlzObj != null) {
-      // Object is freed by garbage collection.
-      wlzObj = null;
+    if(wlz != null) {
+      wlz.close();
     }
   }
 
