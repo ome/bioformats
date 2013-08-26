@@ -9,7 +9,6 @@ Ponti.
 -  Uses Bio-Formats to read files
 -  Open source software available under the Mozilla Public License
 
-See Also
-
-`Qu for MATLAB download
-page <http://www.scs2.net/home/index.php?option=com_content&view=article&id=46%3Aqu-for-matlab&catid=34%3Aqu&Itemid=55&limitstart=3>`_
+.. seealso::
+    `Qu for MATLAB download page
+    <http://www.scs2.net/home/index.php?option=com_content&view=article&id=46%3Aqu-for-matlab&catid=34%3Aqu&Itemid=55&limitstart=3>`_
