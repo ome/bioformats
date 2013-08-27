@@ -56,7 +56,7 @@
 
   <properties>
     <project.rootdir>${basedir}/../..</project.rootdir>
-    <xsdfu.basepath>../xsd-fu</xsdfu.basepath>
+    <xsdfu.script>../xsd-fu/xsd-fu</xsdfu.script>
     <xsdfu.modelpath>${basedir}/target/generated-sources</xsdfu.modelpath>
   </properties>
 
@@ -75,9 +75,8 @@
 	    </goals>
 	    <configuration>
 	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
 	      <arguments>
-		<argument>xsd-fu</argument>
+		<argument>${xsdfu.script}</argument>
 		<argument>java_classes</argument>
 		<argument>-p</argument>
 		<argument>ome.xml.model</argument>
@@ -100,9 +99,8 @@
 	    </goals>
 	    <configuration>
 	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
 	      <arguments>
-		<argument>xsd-fu</argument>
+		<argument>${xsdfu.script}</argument>
 		<argument>enum_types</argument>
 		<argument>-p</argument>
 		<argument>ome.xml.model.enums</argument>
@@ -125,9 +123,8 @@
 	    </goals>
 	    <configuration>
 	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
 	      <arguments>
-		<argument>xsd-fu</argument>
+		<argument>${xsdfu.script}</argument>
 		<argument>enum_handlers</argument>
 		<argument>-p</argument>
 		<argument>ome.xml.model.enums.handlers</argument>
