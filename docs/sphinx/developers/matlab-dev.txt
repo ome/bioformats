@@ -36,8 +36,8 @@ the dataset. If s is the series index between 1 and n:
 
 -  The ``data{s, 4}`` element contains a standardized OME metadata structure,
    which is the same regardless of the input file format, and contains common
-   metadata values such as physical pixel sizes—see
-   "Accessing OME metadata" below for examples.
+   metadata values such as physical pixel sizes - see
+   :ref:`accessing-ome-metadata` below for examples.
 
 Accessing planes
 ----------------
@@ -90,7 +90,7 @@ color maps associated with each image, simply comment out the calls to
 'colorMap'.
 
 Using the image processing toolbox
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you have the image processing toolbox, you could instead use:
 
@@ -99,7 +99,7 @@ If you have the image processing toolbox, you could instead use:
       imshow(series1_plane1, []);
 
 Displaying an animation
-~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^
 
 Here is an example that animates as a movie (assumes 8-bit unsigned
 data):
@@ -130,7 +130,7 @@ There are two kinds of metadata:
    details.
 
 Accessing original metadata
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To retrieve the metadata value for specific keys:
 
@@ -155,8 +155,11 @@ To print out all of the metadata key/value pairs for the first series:
         fprintf('%s = %s\n', key, value)
       end
 
+.. _accessing-ome-metadata:
+
 Accessing OME metadata
-~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^
+
 
 Conversion of metadata to the OME standard is one of Bio-Formats'
 primary features. The OME metadata is always stored the same way,
