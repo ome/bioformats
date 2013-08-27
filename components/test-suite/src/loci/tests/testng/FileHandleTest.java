@@ -93,6 +93,7 @@ public class FileHandleTest {
       String s = finalHandles.get(i);
       if (s.endsWith("libnio.so") || s.endsWith("resources.jar") ||
         s.startsWith("/usr/lib") || s.startsWith("/opt/") ||
+        s.startsWith("/usr/share/locale") ||
         s.indexOf("turbojpeg") > 0 || s.indexOf("/jre/") > 0)
       {
         finalHandles.remove(s);
