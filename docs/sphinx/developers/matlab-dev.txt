@@ -1,6 +1,8 @@
 Using Bio-Formats in Matlab
 ===========================
 
+.. highlight:: matlab
+
 This section assumes that you have installed the **bfopen.m script** and
 **loci_tools.jar**, as instructed :doc:`here </users/matlab/index>`.
 
