@@ -1,0 +1,66 @@
+#!/bin/sh
+# This script is used for testing the build, primarily for use
+# with travis, but may be used by hand as well.
+
+set -e
+
+# Clean up
+clean()
+{
+    mvn clean
+}
+
+# Test maven build
+maven()
+{
+    mvn
+    clean
+}
+
+# Test cppwrap
+cppwrap()
+{
+    (
+        cd components/scifio
+        mvn -DskipTests clean package cppwrap:wrap dependency:copy-dependencies
+        cd target/cppwrap
+        mkdir build
+        cd build
+        cmake ..
+        make
+    )
+}
+
+# Test sphinx docs build
+sphinx()
+{
+    (
+        export SPHINXOPTS="-W"
+        cd docs/sphinx
+        make clean
+        make html
+        make latexpdf
+    )
+}
+
+for arg in "$@"
+do
+    case $arg in
+        clean)
+            clean ;;
+        maven)
+            maven ;;
+        cppwrap)
+            cppwrap ;;
+        sphinx)
+            sphinx ;;
+        all)
+            clean && maven && cppwrap && sphinx ;;
+        *)
+            echo "Invalid argument: \"$arg\"" >&2
+            exit 1
+            ;;
+    esac
+done
+
+exit 0
