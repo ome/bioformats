@@ -37,13 +37,12 @@ the dataset. If s is the series index between 1 and n:
 -  The ``data{s, 4}`` element contains a standardized OME metadata structure,
    which is the same regardless of the input file format, and contains common
    metadata values such as physical pixel sizes - see
-   :ref:`accessing-ome-metadata` below for examples.
+   :ref:`ome-metadata` below for examples.
 
 Accessing planes
 ----------------
 
-Here is an example of how to unwrap specific image planes for easy
-access:
+Here is an example of how to unwrap specific image planes for easy access:
 
 ::
 
@@ -100,8 +99,7 @@ If you have the image processing toolbox, you could instead use:
 Displaying an animation
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Here is an example that animates as a movie (assumes 8-bit unsigned
-data):
+Here is an example that animates as a movie (assumes 8-bit unsigned data):
 
 ::
 
@@ -117,19 +115,21 @@ Retrieving metadata
 
 There are two kinds of metadata:
 
--  **Original metadata** is a set of key/value pairs specific to the
-   input format of the data. It is stored in the [s, 2] element of the
-   data structure returned by bfopen.
+-  :ref:`original-metadata` is a set of key/value pairs specific to the
+   input format of the data. It is stored in the ``data{s, 2}`` element of the
+   data structure returned by ``bfopen``.
 
--  **OME metadata** is a standardized metadata structure, which is the
-   same regardless of input file format. It is stored in the [s, 4]
-   element of the data structure returned by bfopen, and contains common
+-  :ref:`ome-metadata` is a standardized metadata structure, which is the
+   same regardless of input file format. It is stored in the ``data{s, 4}``
+   element of the data structure returned by ``bfopen``, and contains common
    metadata values such as physical pixel sizes, instrument settings,
    and much more. See the :model_doc:`OME Model and Formats <>` pages for full
    details.
 
-Accessing original metadata
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. _original-metadata:
+
+Original metadata
+^^^^^^^^^^^^^^^^^
 
 To retrieve the metadata value for specific keys:
 
@@ -154,11 +154,10 @@ To print out all of the metadata key/value pairs for the first series:
         fprintf('%s = %s\n', key, value)
       end
 
-.. _accessing-ome-metadata:
+.. _ome-metadata:
 
-Accessing OME metadata
-^^^^^^^^^^^^^^^^^^^^^^
-
+OME metadata
+^^^^^^^^^^^^
 
 Conversion of metadata to the OME standard is one of Bio-Formats'
 primary features. The OME metadata is always stored the same way,
