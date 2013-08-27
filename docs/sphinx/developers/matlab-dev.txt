@@ -3,34 +3,40 @@ Using Bio-Formats in Matlab
 
 .. highlight:: matlab
 
-This section assumes that you have installed the **bfopen.m script** and
-**loci_tools.jar**, as instructed :doc:`here </users/matlab/index>`.
+This section assumes that you have installed the M-files and
+**loci_tools.jar**, as instructed in the
+:doc:`Matlab user information page </users/matlab/index>`.
 
-The first thing to do is initialize a file:
+Opening an image file
+---------------------
+
+The first thing to do is initialize a file with the
+:source:`bfopen <components/bio-formats/matlab/bfsave.m>` function:
 
 ::
 
       data = bfopen('/path/to/data/file');
 
-'data' is an array whose structure is a bit complicated. It is an n-by-4
-array, where n is the number of series in the dataset:
+This function returns an n-by-4 cell array, where n is the number of series in
+the dataset. If s is the series index between 1 and n:
 
--  The {s, 1} element (if s is the series index between 1 and n) is an
-   m-by-2 array, where m is the number of planes in the series:
+-  The ``data{s, 1}`` element is an m-by-2 cell array, where m is the number
+   of planes in the series. If ``t`` is the plane index between 1 and m:
 
-   -  The {s, 1, t, 1} element (where t is the image index between 1 and
-      m) contains the pixel data for the t-th image in the s-th series.
-   -  The {s, 1, t, 2} element contains the label for said image.
+   -  The ``data{s, 1}{t, 1}`` element contains the pixel data for the t-th
+      plane in the s-th  series.
 
--  The {s, 2} element of 'data' contains original metadata key/value
-   pairs that apply to the s-th series.
+   -  The ``data{s, 1}{t, 2}`` element of contains the label for said image.
 
--  The {s, 3} element of 'data' contains color lookup tables for each
-   image in the series.
+-  The ``data{s, 2}`` element contains original metadata key/value pairs that
+   apply to the s-th series.
 
--  The {s, 4} element of 'data' contains a standardized OME metadata
-   structure, which is the same regardless of the input file format, and
-   contains common metadata values such as physical pixel sizes—see
+-  The ``data{s, 3}`` element contains color lookup tables for each image in
+   the series.
+
+-  The ``data{s, 4}`` element contains a standardized OME metadata structure,
+   which is the same regardless of the input file format, and contains common
+   metadata values such as physical pixel sizes—see
    "Accessing OME metadata" below for examples.
 
 Accessing planes
