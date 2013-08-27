@@ -78,16 +78,15 @@ If you want to display one of the images, you can do so as follows:
       series1_colorMaps = data{1, 3};
       figure('Name', series1_label1);
       if (isempty(series1_colorMaps{1}))
-        colorMap(gray);
+        colormap(gray);
       else
-        colorMap(series1_colorMaps{1});
+        colormap(series1_colorMaps{1});
       end
       imagesc(series1_plane1);
 
-This will display the first image of the first series with its
-associated color map (if present). If you would prefer not to apply the
-color maps associated with each image, simply comment out the calls to
-'colorMap'.
+This will display the first image of the first series with its associated
+color map (if present). If you would prefer not to apply the color maps
+associated with each image, simply comment out the calls to ``colormap``.
 
 Using the image processing toolbox
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
