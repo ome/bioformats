@@ -186,6 +186,12 @@ To access physical voxel and stack sizes of the data:
       voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).getValue(); % in µm
       voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).getValue(); % in µm
 
+.. seealso::
+
+	:javadoc:`loci.formats.ome.OMEXMLMetadataImpl <loci/formats/ome/OMEXMLMetadataImpl.html>`
+
+		Javadoc page listing the methods used to retrieve the OME metadata.
+
 To convert the OME metadata into a string, use the ``dumpXML()`` method:
 
 ::
