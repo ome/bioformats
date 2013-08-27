@@ -18,7 +18,8 @@ structure is of vital importance to the community. A brief `article on the
 benefits of
 standardization <http://www.thinkstandards.net/benefits.html>`_ from
 `thinkstandards.net <http://www.thinkstandards.net/>`_ provides an
-excellent summary.
+excellent summary. See also LOCI's article on `open source software in
+science <http://loci.wisc.edu/software/oss>`_.
 
 Bio-Formats metadata processing
 -------------------------------
