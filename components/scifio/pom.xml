@@ -138,7 +138,7 @@
 
   <properties>
     <project.rootdir>${basedir}/../..</project.rootdir>
-    <xsdfu.basepath>../xsd-fu</xsdfu.basepath>
+    <xsdfu.script>../xsd-fu/xsd-fu</xsdfu.script>
     <xsdfu.metadatapath>${basedir}/target/generated-sources</xsdfu.metadatapath>
     <xsdfu.omepath>${basedir}/target/generated-sources</xsdfu.omepath>
   </properties>
@@ -159,9 +159,8 @@
 	    </goals>
 	    <configuration>
 	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
 	      <arguments>
-		<argument>xsd-fu</argument>
+		<argument>${xsdfu.script}</argument>
 		<argument>metadata</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.metadatapath}/</argument>
@@ -182,9 +181,8 @@
 	    </goals>
 	    <configuration>
 	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
 	      <arguments>
-		<argument>xsd-fu</argument>
+		<argument>${xsdfu.script}</argument>
 		<argument>omexml_metadata</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.omepath}/</argument>
