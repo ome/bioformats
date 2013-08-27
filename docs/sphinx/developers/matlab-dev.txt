@@ -62,6 +62,16 @@ Here is an example of how to unwrap specific image planes for easy access:
       series1_label3 = series1{3, 2};
       % ...etc.
 
+To access individual planes without reading all the pixel data, use the
+:source:`bfGetReader.m <components/bio-formats/matlab/bfGetReader.m>`
+and :source:`bfGetPlane.m <components/bio-formats/matlab/bfGetPlane.m>`
+functions:
+
+::
+
+    reader = bfGetReader('path/to/data/file');
+    series1_plane1 = bfGetPlane(reader, 1);
+
 Displaying images
 -----------------
 
@@ -105,7 +115,7 @@ Here is an example that animates as a movie (assumes 8-bit unsigned data):
 
       v = linspace(0, 1, 256)';
       cmap = [v v v];
-      for p = 1:series1_numPlanes
+      for p = 1 : size(series1, 1)
         M(p) = im2frame(uint8(series1{p, 1}), cmap);
       end
       movie(M);
@@ -159,9 +169,9 @@ To print out all of the metadata key/value pairs for the first series:
 OME metadata
 ^^^^^^^^^^^^
 
-Conversion of metadata to the OME standard is one of Bio-Formats'
-primary features. The OME metadata is always stored the same way,
-regardless of input file format.
+Conversion of metadata to the OME standard is one of Bio-Formats primary
+features. The OME metadata is always stored the same way, regardless of input
+file format.
 
 To access physical voxel and stack sizes of the data:
 
@@ -175,6 +185,21 @@ To access physical voxel and stack sizes of the data:
       voxelSizeX = omeMeta.getPixelsPhysicalSizeX(0).getValue(); % in µm
       voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).getValue(); % in µm
       voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).getValue(); % in µm
+
+To convert the OME metadata into a string, use the ``dumpXML()`` method:
+
+::
+
+	omeXML = char(omeMeta.dumpXML());
+
+To access the OME metadata file without reading all the pixel data, use the
+:source:`bfGetReader.m <components/bio-formats/matlab/bfGetReader.m>`
+function:
+
+::
+
+    reader = bfGetReader('path/to/data/file');
+    omeMeta = reader.getMetadataStore();
 
 Saving files
 ------------
