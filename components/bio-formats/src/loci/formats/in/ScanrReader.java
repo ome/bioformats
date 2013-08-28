@@ -677,7 +677,7 @@ public class ScanrReader extends FormatReader {
   // -- Helper class --
 
   class ScanrHandler extends BaseHandler {
-    private String key, value;
+    private String key;
     private String qName;
 
     private String wellIndex;
@@ -699,7 +699,7 @@ public class ScanrReader extends FormatReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      currentValue.delete(0, currentValue.length());
+      currentValue.setLength(0);
       this.qName = qName;
       if (qName.equals("Array") || qName.equals("Cluster")) {
         validChannel = true;
@@ -726,51 +726,50 @@ public class ScanrReader extends FormatReader {
           fieldPositionX = new double[nPositions];
           fieldPositionY = new double[nPositions];
         }
-        else if (key != null && key.equals("Rows") && foundPlateLayout) {
+        else if ("Rows".equals(key) && foundPlateLayout) {
           wellRows = Integer.parseInt(v);
         }
-        else if (key != null && key.equals("Columns") && foundPlateLayout) {
+        else if ("Columns".equals(key) && foundPlateLayout) {
           wellColumns = Integer.parseInt(v);
           foundPlateLayout = false;
         }
         else if (qName.equals("Val")) {
           CoreMetadata ms0 = core.get(0);
 
-          value = v.trim();
-          addGlobalMeta(key, value);
+          addGlobalMeta(key, v);
 
           if (key.equals("columns/well")) {
-            fieldColumns = Integer.parseInt(value);
+            fieldColumns = Integer.parseInt(v);
           }
           else if (key.equals("rows/well")) {
-            fieldRows = Integer.parseInt(value);
+            fieldRows = Integer.parseInt(v);
           }
           else if (key.equals("# slices")) {
-            ms0.sizeZ = Integer.parseInt(value);
+            ms0.sizeZ = Integer.parseInt(v);
           }
           else if (key.equals("timeloop real")) {
-            ms0.sizeT = Integer.parseInt(value);
+            ms0.sizeT = Integer.parseInt(v);
           }
           else if (key.equals("timeloop count")) {
-            ms0.sizeT = Integer.parseInt(value) + 1;
+            ms0.sizeT = Integer.parseInt(v) + 1;
           }
           else if (key.equals("timeloop delay [ms]")) {
-            deltaT = Integer.parseInt(value) / 1000.0;
+            deltaT = Integer.parseInt(v) / 1000.0;
           }
           else if (key.equals("name") && validChannel) {
-            if (!channelNames.contains(value)) {
-              channelNames.add(value);
+            if (!channelNames.contains(v)) {
+              channelNames.add(v);
             }
           }
           else if (key.equals("plate name")) {
-            plateName = value;
+            plateName = v;
           }
           else if (key.equals("exposure time")) {
-            exposures.add(new Double(value));
+            exposures.add(new Double(v));
           }
           else if (key.equals("idle") && validChannel) {
             int lastIndex = channelNames.size() - 1;
-            if (value.equals("0") &&
+            if (v.equals("0") &&
               !channelNames.get(lastIndex).equals("Autofocus"))
             {
               ms0.sizeC++;
@@ -781,27 +780,27 @@ public class ScanrReader extends FormatReader {
             }
           }
           else if (key.equals("well selection table + cDNA")) {
-            if (Character.isDigit(value.charAt(0))) {
-              wellIndex = value;
-              wellNumbers.put(new Integer(wellCount), new Integer(value));
+            if (Character.isDigit(v.charAt(0))) {
+              wellIndex = v;
+              wellNumbers.put(new Integer(wellCount), new Integer(v));
               wellCount++;
             }
             else {
-              wellLabels.put(value, new Integer(wellIndex));
+              wellLabels.put(v, new Integer(wellIndex));
             }
           }
           else if (key.equals("conversion factor um/pixel")) {
-            pixelSize = new Double(value);
+            pixelSize = new Double(v);
           }
           else if (foundPositions) {
             if (nextXPos == nextYPos) {
               if (nextXPos < fieldPositionX.length) {
-                fieldPositionX[nextXPos++] = Double.parseDouble(value);
+                fieldPositionX[nextXPos++] = Double.parseDouble(v);
               }
             }
             else {
               if (nextYPos < fieldPositionY.length) {
-                fieldPositionY[nextYPos++] = Double.parseDouble(value);
+                fieldPositionY[nextYPos++] = Double.parseDouble(v);
               }
             }
           }

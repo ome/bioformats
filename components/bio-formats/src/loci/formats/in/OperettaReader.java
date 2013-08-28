@@ -440,7 +440,7 @@ public class OperettaReader extends FormatReader {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
-      currentValue.delete(0, currentValue.length());
+      currentValue.setLength(0);
       currentName = qName;
 
       if (qName.equals("Image") && attributes.getValue("id") == null) {
