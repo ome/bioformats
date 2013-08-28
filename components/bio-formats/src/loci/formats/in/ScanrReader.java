@@ -687,113 +687,19 @@ public class ScanrReader extends FormatReader {
     private int nextXPos = 0;
     private int nextYPos = 0;
 
+    private StringBuffer currentValue = new StringBuffer();
+
     // -- DefaultHandler API methods --
 
     public void characters(char[] ch, int start, int length) {
       String v = new String(ch, start, length);
-      if (v.trim().length() == 0) return;
-      if (qName.equals("Name")) {
-        key = v;
-
-        if (v.equals("subposition list")) {
-          foundPositions = true;
-        }
-        else if (v.equals("format typedef")) {
-          foundPlateLayout = true;
-        }
-      }
-      else if (qName.equals("Dimsize") && foundPositions &&
-        fieldPositionX == null)
-      {
-        int nPositions = Integer.parseInt(v);
-        fieldPositionX = new double[nPositions];
-        fieldPositionY = new double[nPositions];
-      }
-      else if (key != null && key.equals("Rows") && foundPlateLayout) {
-        wellRows = Integer.parseInt(v);
-      }
-      else if (key != null && key.equals("Columns") && foundPlateLayout) {
-        wellColumns = Integer.parseInt(v);
-        foundPlateLayout = false;
-      }
-      else if (qName.equals("Val")) {
-        CoreMetadata ms0 = core.get(0);
-
-        value = v.trim();
-        addGlobalMeta(key, value);
-
-        if (key.equals("columns/well")) {
-          fieldColumns = Integer.parseInt(value);
-        }
-        else if (key.equals("rows/well")) {
-          fieldRows = Integer.parseInt(value);
-        }
-        else if (key.equals("# slices")) {
-          ms0.sizeZ = Integer.parseInt(value);
-        }
-        else if (key.equals("timeloop real")) {
-          ms0.sizeT = Integer.parseInt(value);
-        }
-        else if (key.equals("timeloop count")) {
-          ms0.sizeT = Integer.parseInt(value) + 1;
-        }
-        else if (key.equals("timeloop delay [ms]")) {
-          deltaT = Integer.parseInt(value) / 1000.0;
-        }
-        else if (key.equals("name") && validChannel) {
-          if (!channelNames.contains(value)) {
-            channelNames.add(value);
-          }
-        }
-        else if (key.equals("plate name")) {
-          plateName = value;
-        }
-        else if (key.equals("exposure time")) {
-          exposures.add(new Double(value));
-        }
-        else if (key.equals("idle") && validChannel) {
-          int lastIndex = channelNames.size() - 1;
-          if (value.equals("0") &&
-            !channelNames.get(lastIndex).equals("Autofocus"))
-          {
-            ms0.sizeC++;
-          }
-          else {
-            channelNames.remove(lastIndex);
-            exposures.remove(lastIndex);
-          }
-        }
-        else if (key.equals("well selection table + cDNA")) {
-          if (Character.isDigit(value.charAt(0))) {
-            wellIndex = value;
-            wellNumbers.put(new Integer(wellCount), new Integer(value));
-            wellCount++;
-          }
-          else {
-            wellLabels.put(value, new Integer(wellIndex));
-          }
-        }
-        else if (key.equals("conversion factor um/pixel")) {
-          pixelSize = new Double(value);
-        }
-        else if (foundPositions) {
-          if (nextXPos == nextYPos) {
-            if (nextXPos < fieldPositionX.length) {
-              fieldPositionX[nextXPos++] = Double.parseDouble(value);
-            }
-          }
-          else {
-            if (nextYPos < fieldPositionY.length) {
-              fieldPositionY[nextYPos++] = Double.parseDouble(value);
-            }
-          }
-        }
-      }
+      currentValue.append(v);
     }
 
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
+      currentValue.delete(0, currentValue.length());
       this.qName = qName;
       if (qName.equals("Array") || qName.equals("Cluster")) {
         validChannel = true;
@@ -801,11 +707,111 @@ public class ScanrReader extends FormatReader {
     }
 
     public void endElement(String uri, String localName, String qName) {
+      String v = currentValue.toString().trim();
+      if (v.length() > 0) {
+        if (qName.equals("Name")) {
+          key = v;
+
+          if (v.equals("subposition list")) {
+            foundPositions = true;
+          }
+          else if (v.equals("format typedef")) {
+            foundPlateLayout = true;
+          }
+        }
+        else if (qName.equals("Dimsize") && foundPositions &&
+          fieldPositionX == null)
+        {
+          int nPositions = Integer.parseInt(v);
+          fieldPositionX = new double[nPositions];
+          fieldPositionY = new double[nPositions];
+        }
+        else if (key != null && key.equals("Rows") && foundPlateLayout) {
+          wellRows = Integer.parseInt(v);
+        }
+        else if (key != null && key.equals("Columns") && foundPlateLayout) {
+          wellColumns = Integer.parseInt(v);
+          foundPlateLayout = false;
+        }
+        else if (qName.equals("Val")) {
+          CoreMetadata ms0 = core.get(0);
+
+          value = v.trim();
+          addGlobalMeta(key, value);
+
+          if (key.equals("columns/well")) {
+            fieldColumns = Integer.parseInt(value);
+          }
+          else if (key.equals("rows/well")) {
+            fieldRows = Integer.parseInt(value);
+          }
+          else if (key.equals("# slices")) {
+            ms0.sizeZ = Integer.parseInt(value);
+          }
+          else if (key.equals("timeloop real")) {
+            ms0.sizeT = Integer.parseInt(value);
+          }
+          else if (key.equals("timeloop count")) {
+            ms0.sizeT = Integer.parseInt(value) + 1;
+          }
+          else if (key.equals("timeloop delay [ms]")) {
+            deltaT = Integer.parseInt(value) / 1000.0;
+          }
+          else if (key.equals("name") && validChannel) {
+            if (!channelNames.contains(value)) {
+              channelNames.add(value);
+            }
+          }
+          else if (key.equals("plate name")) {
+            plateName = value;
+          }
+          else if (key.equals("exposure time")) {
+            exposures.add(new Double(value));
+          }
+          else if (key.equals("idle") && validChannel) {
+            int lastIndex = channelNames.size() - 1;
+            if (value.equals("0") &&
+              !channelNames.get(lastIndex).equals("Autofocus"))
+            {
+              ms0.sizeC++;
+            }
+            else {
+              channelNames.remove(lastIndex);
+              exposures.remove(lastIndex);
+            }
+          }
+          else if (key.equals("well selection table + cDNA")) {
+            if (Character.isDigit(value.charAt(0))) {
+              wellIndex = value;
+              wellNumbers.put(new Integer(wellCount), new Integer(value));
+              wellCount++;
+            }
+            else {
+              wellLabels.put(value, new Integer(wellIndex));
+            }
+          }
+          else if (key.equals("conversion factor um/pixel")) {
+            pixelSize = new Double(value);
+          }
+          else if (foundPositions) {
+            if (nextXPos == nextYPos) {
+              if (nextXPos < fieldPositionX.length) {
+                fieldPositionX[nextXPos++] = Double.parseDouble(value);
+              }
+            }
+            else {
+              if (nextYPos < fieldPositionY.length) {
+                fieldPositionY[nextYPos++] = Double.parseDouble(value);
+              }
+            }
+          }
+        }
+      }
+
       if (qName.equals("Array") || qName.equals("Cluster")) {
         validChannel = false;
       }
     }
-
   }
 
   // -- Helper methods --
