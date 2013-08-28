@@ -20,6 +20,26 @@ standardization <http://www.thinkstandards.net/benefits.html>`_ from
 `thinkstandards.net <http://www.thinkstandards.net/>`_ provides an
 excellent summary.
 
+Why Java?
+---------
+
+From a practical perspective, Bio-Formats is written in Java because it is 
+cross-platform and widely used, with a vast array of libraries for handling 
+common programming tasks. Java is one of the easiest languages from which to 
+deploy cross-platform software. In contrast to C++, which has a large number 
+of complex platform issues to consider, and Python, which leans heavily on C 
+and C++ for many of its components (e.g., NumPy and SciPy), Java code is 
+compiled one time into platform-independent byte code, which can be deployed 
+as is to all supported platforms. And despite this enormous flexibility, Java 
+manages to provide time performance nearly equal to C++, often better in the 
+case of I/O operations.
+
+There are also historical reasons because the project grew out of work on the 
+`VisAD Java component library <http://visad.ssec.wisc.edu>`_. You can read 
+more about the origins of Bio-Formats on the `LOCI Bio-Formats home page 
+<http://loci.wisc.edu/software/bio-formats>`_.
+
+
 Bio-Formats metadata processing
 -------------------------------
 
