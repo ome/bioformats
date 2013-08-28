@@ -76,7 +76,7 @@
     <dependency>
       <groupId>woolz</groupId>
       <artifactId>JWlz</artifactId>
-      <version>1.3.2</version>
+      <version>1.4.0</version>
       <scope>system</scope>
       <systemPath>${basedir}/jar/JWlz.jar</systemPath>
     </dependency>
