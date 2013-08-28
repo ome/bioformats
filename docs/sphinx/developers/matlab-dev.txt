@@ -11,7 +11,7 @@ Opening an image file
 ---------------------
 
 The first thing to do is initialize a file with the
-:source:`bfopen <components/bio-formats/matlab/bfsave.m>` function:
+:source:`bfopen <components/bio-formats/matlab/bfopen.m>` function:
 
 ::
 
