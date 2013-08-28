@@ -394,6 +394,8 @@ public class OperettaReader extends FormatReader {
     private int plateRows, plateCols;
     private ArrayList<Plane> planes = new ArrayList<Plane>();
 
+    private StringBuffer currentValue = new StringBuffer();
+
     // -- OperettaHandler API methods --
 
     public ArrayList<Plane> getPlanes() {
@@ -432,7 +434,22 @@ public class OperettaReader extends FormatReader {
 
     public void characters(char[] ch, int start, int length) {
       String value = new String(ch, start, length);
+      currentValue.append(value);
+    }
 
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      currentValue.delete(0, currentValue.length());
+      currentName = qName;
+
+      if (qName.equals("Image") && attributes.getValue("id") == null) {
+        activePlane = new Plane();
+      }
+    }
+
+    public void endElement(String uri, String localName, String qName) {
+      String value = currentValue.toString();
       if ("User".equals(currentName)) {
         displayName = value;
       }
@@ -520,19 +537,7 @@ public class OperettaReader extends FormatReader {
           activePlane.exWavelength = Double.parseDouble(value);
         }
       }
-    }
 
-    public void startElement(String uri, String localName, String qName,
-      Attributes attributes)
-    {
-      currentName = qName;
-
-      if (qName.equals("Image") && attributes.getValue("id") == null) {
-        activePlane = new Plane();
-      }
-    }
-
-    public void endElement(String uri, String localName, String qName) {
       currentName = null;
 
       if (qName.equals("Image") && activePlane != null) {
