@@ -171,8 +171,9 @@ To access physical voxel and stack sizes of the data:
       voxelSizeY = omeMeta.getPixelsPhysicalSizeY(0).getValue(); % in µm
       voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).getValue(); % in µm
 
-For more information about the methods to access the metadata, see the
-:javadoc:`loci.formats.ome.OMEXMLMetadataImpl <loci/formats/ome/OMEXMLMetadataImpl.html>` Javadoc page.
+For more information about the methods to retrieve the metadata, see the
+:javadoc:`MetadataRetrieve <loci/formats/meta/MetadataRetrieve.html>` Javadoc
+page.
 
 To convert the OME metadata into a string, use the ``dumpXML()`` method:
 
@@ -227,3 +228,6 @@ And the following code snippet will produce an image of 64 pixels by
 
     plane = zeros(64, 64, 1, 2, 2, 'uint8');
     bfsave(plane, 'my-file.ome.tiff');
+
+For more information about the methods to store the metadata, see the
+:javadoc:`MetadataStore <loci/formats/meta/MetadataStore.html>` Javadoc page.
