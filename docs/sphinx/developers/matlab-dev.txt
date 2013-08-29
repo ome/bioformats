@@ -17,22 +17,24 @@ The first thing to do is initialize a file with the
 
       data = bfopen('/path/to/data/file');
 
-This function returns an n-by-4 cell array, where n is the number of series in
-the dataset. If s is the series index between 1 and n:
+This function returns an ``n``-by-4 cell array, where ``n`` is the number of
+series in the dataset. If ``s`` is the series index between 1 and ``n``:
 
--  The ``data{s, 1}`` element is an m-by-2 cell array, where m is the number
-   of planes in the series. If ``t`` is the plane index between 1 and m:
+-  The ``data{s, 1}`` element is an ``m``-by-2 cell array, where ``m`` is the
+   number of planes in the ``s``-th series. If ``t`` is the plane index
+   between 1 and ``m``:
 
-   -  The ``data{s, 1}{t, 1}`` element contains the pixel data for the t-th
-      plane in the s-th  series.
+   -  The ``data{s, 1}{t, 1}`` element contains the pixel data for the
+      ``t``-th plane in the ``s``-th  series.
 
-   -  The ``data{s, 1}{t, 2}`` element of contains the label for said image.
+   -  The ``data{s, 1}{t, 2}`` element contains the label for the ``t``-th
+      plane in the ``s``-th  series.
 
 -  The ``data{s, 2}`` element contains original metadata key/value pairs that
-   apply to the s-th series.
+   apply to the ``s``-th series.
 
--  The ``data{s, 3}`` element contains color lookup tables for each image in
-   the series.
+-  The ``data{s, 3}`` element contains color lookup tables for each plane in
+   the ``s``-th series.
 
 -  The ``data{s, 4}`` element contains a standardized OME metadata structure,
    which is the same regardless of the input file format, and contains common
