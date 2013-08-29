@@ -34,11 +34,11 @@ as is to all supported platforms. And despite this enormous flexibility, Java
 manages to provide time performance nearly equal to C++, often better in the 
 case of I/O operations.
 
-There are also historical reasons because the project grew out of work on the 
+There are also historical reasons associated with the fact that the project 
+grew out of work on the 
 `VisAD Java component library <http://visad.ssec.wisc.edu>`_. You can read 
-more about the origins of Bio-Formats on the `LOCI Bio-Formats home page 
-<http://loci.wisc.edu/software/bio-formats>`_.
-
+more about the origins of Bio-Formats on the 
+`LOCI Bio-Formats homepage <http://loci.wisc.edu/software/bio-formats>`_.
 
 Bio-Formats metadata processing
 -------------------------------
