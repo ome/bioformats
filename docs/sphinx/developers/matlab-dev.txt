@@ -112,18 +112,16 @@ Retrieving metadata
 
 There are two kinds of metadata:
 
--  :ref:`original-metadata` is a set of key/value pairs specific to the
-   input format of the data. It is stored in the ``data{s, 2}`` element of the
-   data structure returned by ``bfopen``.
+-  **Original metadata** is a set of key/value pairs specific to the input
+   format of the data. It is stored in the ``data{s, 2}`` element of the data
+   structure returned by ``bfopen``.
 
--  :ref:`ome-metadata` is a standardized metadata structure, which is the
+-  **OME metadata** is a standardized metadata structure, which is the
    same regardless of input file format. It is stored in the ``data{s, 4}``
    element of the data structure returned by ``bfopen``, and contains common
    metadata values such as physical pixel sizes, instrument settings,
-   and much more. See the :model_doc:`OME Model and Formats <>` pages for full
-   details.
-
-.. _original-metadata:
+   and much more. See the :model_doc:`OME Model and Formats <>` documentation
+   for full details.
 
 Original metadata
 """""""""""""""""
@@ -186,7 +184,9 @@ To convert the OME metadata into a string, use the ``dumpXML()`` method:
 Reading from an image file
 --------------------------
 
-The main inconvenience of the :source:`bfopen.m <components/bio-formats/matlab/bfopen.m>` function is that it loads all the content of an image independently of its size.
+The main inconvenience of the
+:source:`bfopen.m <components/bio-formats/matlab/bfopen.m>` function is that
+it loads all the content of an image regardless of its size.
 
 To access the file reader without loading all the data, use the low-level 
 :source:`bfGetReader.m <components/bio-formats/matlab/bfGetReader.m>` 
@@ -203,7 +203,8 @@ method:
 
     omeMeta = reader.getMetadataStore();
 
-Individual planes can be queried using the :source:`bfGetPlane.m <components/bio-formats/matlab/bfGetPlane.m>` function:
+Individual planes can be queried using the
+:source:`bfGetPlane.m <components/bio-formats/matlab/bfGetPlane.m>` function:
 
 ::
 
