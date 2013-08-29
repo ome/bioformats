@@ -154,7 +154,7 @@ To print out all of the metadata key/value pairs for the first series:
 OME metadata
 """"""""""""
 
-Conversion of metadata to the OME standard is one of Bio-Formats primary
+Conversion of metadata to the OME standard is one of Bio-Formats' primary
 features. The OME metadata is always stored the same way, regardless of input
 file format.
 
@@ -184,7 +184,7 @@ To convert the OME metadata into a string, use the ``dumpXML()`` method:
 Reading from an image file
 --------------------------
 
-The main inconvenient of the :source:`bfopen.m <components/bio-formats/matlab/bfopen.m>` function is that it loads all the content of an image independently of its size.
+The main inconvenience of the :source:`bfopen.m <components/bio-formats/matlab/bfopen.m>` function is that it loads all the content of an image independently of its size.
 
 To access the file reader without loading all the data, use the low-level 
 :source:`bfGetReader.m <components/bio-formats/matlab/bfGetReader.m>` 
