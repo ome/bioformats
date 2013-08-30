@@ -18,7 +18,8 @@ structure is of vital importance to the community. A brief `article on the
 benefits of
 standardization <http://www.thinkstandards.net/benefits.html>`_ from
 `thinkstandards.net <http://www.thinkstandards.net/>`_ provides an
-excellent summary.
+excellent summary. See also LOCI's article on `open source software in
+science <http://loci.wisc.edu/software/oss>`_.
 
 Bio-Formats metadata processing
 -------------------------------
@@ -99,10 +100,10 @@ For advanced users and developers, further information is available on the
 Bio-Formats versions
 --------------------
 
-Bio-Formats is updated whenever a significant bug fix is made, or whenever a
-new version of :omerodoc:`OMERO <>` is released. The version number is three 
-numbers separated by dots; e.g., 4.0.0. See the :doc:`version history <whats-new>` 
-for a list of major changes in each release.
+Bio-Formats is updated whenever a new version of :omerodoc:`OMERO <>` is
+released. The version number is three numbers separated by dots; e.g.,
+4.0.0. See the :doc:`version history <whats-new>` for a list of major
+changes in each release.
 
 The stable version of Bio-Formats is 4.4. For future
 development directions, see the
