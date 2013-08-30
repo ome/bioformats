@@ -14,6 +14,7 @@
 import sys, os
 import re
 import subprocess
+from datetime import datetime
 
 def popen(args, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
         copy = os.environ.copy()
@@ -53,9 +54,10 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Bio-Formats'
-title = project +u' Documentation'
+title = u'%s Documentation' % project
 author = u'The Open Microscopy Environment'
-copyright = u'2000-2012, ' + author
+now = datetime.now()
+copyright = u'2000-%d, %s ' % (now.year, author)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
