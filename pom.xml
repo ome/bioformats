@@ -98,6 +98,31 @@
     </testResources>
     <plugins>
       <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+          <version>2.4</version>
+          <!-- Always add classpath to JAR manifests. -->
+          <configuration>
+            <archive>
+              <manifest>
+                <addClasspath>true</addClasspath>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              </manifest>
+              <manifestEntries>
+                <Implementation-Build>${revision}</Implementation-Build>
+                <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.12</version>
+          <configuration>
+            <argLine>-Xms512m -Xmx512m</argLine>
+          </configuration>
+        </plugin>
+      <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
         <version>1.4</version>
@@ -288,6 +313,28 @@
       <id>imagej.snapshots</id>
       <url>http://maven.imagej.net/content/repositories/snapshots</url>
     </repository>
+    <repository>
+      <id>imagej.thirdparty</id>
+      <url>http://maven.imagej.net/content/repositories/thirdparty</url>
+    </repository>
   </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>imagej.releases</id>
+      <url>http://maven.imagej.net/content/repositories/releases</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>imagej.snapshots</id>
+      <url>http://maven.imagej.net/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>imagej.thirdparty</id>
+      <url>http://maven.imagej.net/content/repositories/thirdparty</url>
+    </pluginRepository>
+  </pluginRepositories>
 
 </project>
