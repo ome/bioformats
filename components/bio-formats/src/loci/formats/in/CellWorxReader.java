@@ -369,7 +369,22 @@ public class CellWorxReader extends FormatReader {
 
     int seriesCount = fieldCount * wellCount;
 
-    String file = getFile(0, 0);
+    int planeIndex = 0;
+    int seriesIndex = 0;
+    String file = getFile(seriesIndex, planeIndex);
+    while (!new Location(file).exists()) {
+      if (planeIndex <  nTimepoints * wavelengths.length) {
+        planeIndex++;
+      }
+      else if (seriesIndex < core.length) {
+        planeIndex = 0;
+        seriesIndex++;
+      }
+      else {
+        break;
+      }
+      file = getFile(seriesIndex, planeIndex);
+    }
     IFormatReader pnl = getReader(file);
 
     core.clear();
