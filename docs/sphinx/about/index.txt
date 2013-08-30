@@ -21,6 +21,27 @@ standardization <http://www.thinkstandards.net/benefits.html>`_ from
 excellent summary. See also LOCI's article on `open source software in
 science <http://loci.wisc.edu/software/oss>`_.
 
+Why Java?
+---------
+
+From a practical perspective, Bio-Formats is written in Java because it is 
+cross-platform and widely used, with a vast array of libraries for handling 
+common programming tasks. Java is one of the easiest languages from which to 
+deploy cross-platform software. In contrast to C++, which has a large number 
+of complex platform issues to consider, and Python, which leans heavily on C 
+and C++ for many of its components (e.g., NumPy and SciPy), Java code is 
+compiled one time into platform-independent byte code, which can be deployed 
+as is to all supported platforms. And despite this enormous flexibility, Java 
+manages to provide time performance nearly equal to C++, often better in the 
+case of I/O operations (see further discussion on the 
+`comparative speed of Java on the LOCI site <http://loci.wisc.edu/faq/isnt-java-too-slow>`_).
+
+There are also historical reasons associated with the fact that the project 
+grew out of work on the 
+`VisAD Java component library <http://visad.ssec.wisc.edu>`_. You can read 
+more about the origins of Bio-Formats on the 
+`LOCI Bio-Formats homepage <http://loci.wisc.edu/software/bio-formats>`_.
+
 Bio-Formats metadata processing
 -------------------------------
 
