@@ -32,7 +32,8 @@ and C++ for many of its components (e.g., NumPy and SciPy), Java code is
 compiled one time into platform-independent byte code, which can be deployed 
 as is to all supported platforms. And despite this enormous flexibility, Java 
 manages to provide time performance nearly equal to C++, often better in the 
-case of I/O operations.
+case of I/O operations (see further discussion on the 
+`comparative speed of Java on the LOCI site <http://loci.wisc.edu/faq/isnt-java-too-slow>`_).
 
 There are also historical reasons associated with the fact that the project 
 grew out of work on the 
