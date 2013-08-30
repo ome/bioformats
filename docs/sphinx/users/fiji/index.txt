@@ -26,9 +26,9 @@ are available.
     place.
 
 .. Fiji ships with the latest Bio-Formats stable release. Alternately, you
-can `enable the "Bio-Formats daily builds" update site
-<http://fiji.sc/Bio-Formats#Daily_builds>`_ to receive the latest
-Bio-Formats bugfixes and updates.
+   can `enable the "Bio-Formats daily builds" update site
+   <http://fiji.sc/Bio-Formats#Daily_builds>`_ to receive the latest
+   Bio-Formats bugfixes and updates.
 
 For further details on Bio-Formats in Fiji, see the
 `Bio-Formats Fiji wiki page <http://fiji.sc/Bio-Formats>`_.
