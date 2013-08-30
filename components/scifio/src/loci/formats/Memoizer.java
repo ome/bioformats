@@ -78,6 +78,8 @@ public class Memoizer extends ReaderWrapper {
 
     Integer loadVersion() throws IOException;
 
+    String loadReleaseVersion() throws IOException;
+
     String loadRevision() throws IOException;
 
     IFormatReader loadReader() throws IOException, ClassNotFoundException;
@@ -87,6 +89,8 @@ public class Memoizer extends ReaderWrapper {
     void saveStart(File tempFile) throws IOException;
 
     void saveVersion(Integer version) throws IOException;
+
+    void saveReleaseVersion(String version) throws IOException;
 
     void saveRevision(String revision) throws IOException;
 
@@ -124,6 +128,10 @@ public class Memoizer extends ReaderWrapper {
         return kryo.readObject(input, Integer.class);
     }
 
+    public String loadReleaseVersion() {
+        return kryo.readObject(input, String.class);
+    }
+
     public String loadRevision() {
         return kryo.readObject(input, String.class);
     }
@@ -154,6 +162,10 @@ public class Memoizer extends ReaderWrapper {
     }
 
     public void saveVersion(Integer version) {
+      kryo.writeObject(output, version);
+    }
+
+    public void saveReleaseVersion(String version) {
       kryo.writeObject(output, version);
     }
 
@@ -201,6 +213,11 @@ public class Memoizer extends ReaderWrapper {
         return loadStream.readInt();
     }
 
+    public String loadReleaseVersion() throws IOException {
+        int length = loadStream.readInt();
+        return loadStream.readString(length);
+    }
+
     public String loadRevision() throws IOException {
         int length = loadStream.readInt();
         return loadStream.readString(length);
@@ -238,6 +255,11 @@ public class Memoizer extends ReaderWrapper {
       saveStream.writeInt(version);
     }
 
+    public void saveReleaseVersion(String version) throws IOException {
+      saveStream.writeInt(version.length());
+      saveStream.writeBytes(version);
+    }
+
     public void saveRevision(String revision) throws IOException {
       saveStream.writeInt(revision.length());
       saveStream.writeBytes(revision);
@@ -270,7 +292,7 @@ public class Memoizer extends ReaderWrapper {
    * cached items. This should happen when the order and type of objects stored
    * in the memo file changes.
    */
-  public static final Integer VERSION = 2;
+  public static final Integer VERSION = 3;
 
   /**
    * Default value for {@link #minimumElapsed} if none is provided in the
@@ -309,6 +331,13 @@ public class Memoizer extends ReaderWrapper {
   private boolean skipLoad = false;
 
   private boolean skipSave = false;
+
+  /**
+   * Whether to invalidate the memo file based upon mismatched major/minor
+   * version numbers. By default, the Git commit hash is used to invalidate
+   * the memo file.
+   */
+  private boolean versionChecking = false;
 
   /**
    * Whether the {@link #reader} instance currently active was loaded from
@@ -380,6 +409,27 @@ public class Memoizer extends ReaderWrapper {
 
   public boolean isSavedToMemo() {
     return savedToMemo;
+  }
+
+  /**
+   * Returns whether or not version checking is done based upon major/minor
+   * version numbers.
+   */
+  public boolean isVersionChecking() {
+    return versionChecking;
+  }
+
+  /**
+   * Set whether version checking is done based upon major/minor version
+   * numbers.
+   * If 'true' is passed in, then a mismatch between the major/minor version
+   * of the calling code (e.g. 4.4) and the major/minor version saved in the
+   * memo file (e.g. 5.0) will result in the memo file being invalidated.
+   * By default, a mismatch in the Git commit hashes will invalidate the memo
+   * file; this method allows for less strict version checking.
+   */
+  public void setVersionChecking(boolean version) {
+    this.versionChecking = version;
   }
 
   protected void cleanup() {
@@ -560,9 +610,21 @@ public class Memoizer extends ReaderWrapper {
         return null;
       }
 
+      // RELEASE VERSION NUMBER
+      String releaseVersion = ser.loadReleaseVersion();
+      String minor = releaseVersion.substring(0,
+        releaseVersion.indexOf(".", releaseVersion.indexOf(".") + 1));
+      String currentMinor = FormatTools.VERSION.substring(0,
+        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf(".") + 1));
+      if (!currentMinor.equals(minor)) {
+        LOGGER.info("Different release version: {} not {}",
+          releaseVersion, FormatTools.VERSION);
+        return null;
+      }
+
       // REVISION NUMBER
       String revision = ser.loadRevision();
-      if (!FormatTools.VCS_REVISION.equals(revision)) {
+      if (!versionChecking && !FormatTools.VCS_REVISION.equals(revision)) {
         LOGGER.info("Different Git version: {} not {}",
           revision, FormatTools.VCS_REVISION);
         return null;
@@ -623,6 +685,7 @@ public class Memoizer extends ReaderWrapper {
 
       // Save to temporary location.
       ser.saveVersion(VERSION);
+      ser.saveReleaseVersion(FormatTools.VERSION);
       ser.saveRevision(FormatTools.VCS_REVISION);
       ser.saveReader(reader);
       ser.saveStop();
