@@ -79,9 +79,15 @@
         <directory>${project.basedir}/lib</directory>
       </resource>
       <resource>
-        <directory>${project.basedir}</directory>
+        <directory>${project.basedir}/src</directory>
         <includes>
           <include>**/*.properties</include>
+        </includes>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>${project.basedir}</directory>
+        <includes>
           <include>**/*.cpp</include>
         </includes>
         <filtering>true</filtering>
