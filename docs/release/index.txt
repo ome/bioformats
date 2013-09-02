@@ -2,19 +2,19 @@ Bio-Formats |release|
 =====================
 
 - :artifact:`LOCI Tools (loci_tools.jar) <loci_tools.jar>`: complete bundle
-(for end users) containing everything needed to read images into ImageJ using
-Bio-Formats. Instructions for installing Bio-Formats in ImageJ are available
-:html_doc:`in the user guide <users/imagej/installing.html>`
+  (for end users) containing everything needed to read images into ImageJ
+  using Bio-Formats. Instructions for installing Bio-Formats in ImageJ are
+  available :html_doc:`in the user guide <users/imagej/installing.html>`
 - :artifact:`Command line tools (bftools.zip) <bftools.zip>`: bundle of
-scripts for using Bio-Formats on the command line.
+  scripts for using Bio-Formats on the command line.
 
 Please note:
 
-* Internet Explorer sometimes renames JAR files to ZIP (e.g., loci_tools.jar
-becomes loci_tools.zip); if this happens to you, simply rename the file back
-to its original name after the download is complete.
-* For some browsers, you may need to right-click or control-click the link and
-choose "Save link as..." or a similar option to download the file.
+- Internet Explorer sometimes renames JAR files to ZIP (e.g., loci_tools.jar
+  becomes loci_tools.zip); if this happens to you, simply rename the file back
+  to its original name after the download is complete.
+- For some browsers, you may need to right-click or control-click the link and
+  choose "Save link as..." or a similar option to download the file.
 
 After downloading the relevant files, you may want to take a look at our
 Bio-Formats |release| :html_doc:`online documentation <>` page or at the
