@@ -345,7 +345,7 @@ Type "ant -p" for a list of targets.
 
   <!-- OME-XML Java library -->
 
-  <target name="deps-ome-xml" depends="ome-xml-src"/>
+  <target name="deps-ome-xml"/>
 
   <target name="compile-ome-xml" depends="deps-ome-xml"
     description="compile classes for OME-XML Java library">
@@ -419,8 +419,7 @@ Type "ant -p" for a list of targets.
       jar-lwf-stubs,
       jar-ome-xml,
       jar-specification,
-      jar-turbojpeg,
-      metadata-src"/>
+      jar-turbojpeg"/>
 
   <target name="compile-scifio" depends="deps-scifio"
     description="compile classes for SCIFIO">

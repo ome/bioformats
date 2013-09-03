@@ -6,13 +6,23 @@ language and interactive environment that facilitates rapid development
 of algorithms for performing computationally intensive tasks.
 
 Calling Bio-Formats from MATLAB is fairly straightforward, since MATLAB
-has built-in interoperability with Java. We have created a simple script
-for reading image files: |bfopen|.
+has built-in interoperability with Java. We have created a :source:`set
+of scripts <components/bio-formats/matlab>` for reading image files.
 
-We are not MATLAB experts—any comments on improving the script are
-welcome.
+Installation
+------------
 
-.. |bfopen| replace:: :source:`bfopen.m <components/bio-formats/matlab/bfopen.m>`
+Download the :source:`M files <components/bio-formats/matlab>` and
+:downloads:`loci_tools.jar <>` and place them in your MATLAB
+work directory.
+
+Usage
+-----
+
+Please see the :doc:`Bio-Formats MATLAB Guide </developers/matlab-dev>`
+for usage instructions. If you intend to extend the existing .m files,
+please also see the :doc:`developer page </developers/index>` for more
+information on how to use Bio-Formats in general.
 
 Performance
 -----------
@@ -22,19 +32,17 @@ approximately half the speed of our
 :doc:`showinf command line tool </users/comlinetools/index>`, due to
 overhead from copying arrays.
 
-Installation
-------------
-
-To use the script, download |bfopen| and :downloads:`loci_tools.jar <>` and place them in your MATLAB work directory.
-
 Upgrading
 ---------
 
 To use a newer version of Bio-Formats, overwrite **loci_tools.jar**
 with the :downloads:`newer version <>` and restart MATLAB.
 
-More information
-----------------
+Alternative scripts
+-------------------
 
-For further instructions on working with Bio-Formats from MATLAB, see
-the :doc:`Bio-Formats MATLAB Guide </developers/matlab-dev>`.
+Several other groups have developed their own MATLAB scripts that use
+Bio-Formats, including the following:
+
+- `<https://github.com/prakatmac/bf-tools/>`_
+- `<http://www.mathworks.com/matlabcentral/fileexchange/32920-imread-for-multiple-life-science-image-file-formats>`_

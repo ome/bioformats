@@ -5,9 +5,41 @@ jdk:
   - oraclejdk7
   - openjdk6
 
+python:
+  - "2.6"
+
+env:
+  - BUILD=maven
+  - BUILD=cppwrap
+  - BUILD=sphinx
+
 before_install:
-    - sudo apt-get -qq update
-    - sudo apt-get install -qq build-essential cmake libboost-all-dev python-genshi
+  - sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ raring main universe"
+  - sudo apt-get -qq update
+  - if [[ $BUILD != 'sphinx' ]]; then sudo apt-get install -qq python-genshi; fi
+  - if [[ $BUILD == 'cppwrap' ]]; then sudo apt-get install -qq build-essential cmake libboost-all-dev; fi
+  - if [[ $BUILD == 'sphinx' ]]; then sudo apt-get install -qq python-sphinx; fi
+  - if [[ $BUILD == 'sphinx' ]]; then sudo apt-get -y install texlive-latex-base texlive-latex-recommended texlive-xetex; fi
+  - if [[ $BUILD == 'sphinx' ]]; then sudo apt-get -y install texlive-latex-extra texlive-fonts-recommended tex-gyre; fi
+  - if [[ $BUILD == 'sphinx' ]]; then sudo fc-cache -rsfv; fi
+
+install:
+  - if [[ $BUILD == 'maven' ]]; then mvn install -DskipTests=true; fi
 
 script:
-  - ./tools/test-build
+  - ./tools/test-build $BUILD
+
+matrix:
+  exclude:
+    - jdk: openjdk7
+      python: "2.6"
+      env: BUILD=sphinx
+    - jdk: oraclejdk7
+      python: "2.6"
+      env: BUILD=sphinx
+    - jdk: openjdk7
+      python: "2.6"
+      env: BUILD=cppwrap
+    - jdk: oraclejdk7
+      python: "2.6"
+      env: BUILD=cppwrap
