@@ -94,7 +94,7 @@ Type "ant -p" for a list of targets.
         </if>
         <if>
           <or>
-            <equals arg1="0" arg2="git.describe.exact.rc"/>
+            <equals arg1="0" arg2="${git.describe.exact.rc}"/>
             <isset property="use.inexact.version"/>
           </or>
           <then>
