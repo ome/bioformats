@@ -620,7 +620,7 @@ public class FormatReaderTest {
         if (date != null && !date.equals(configDate)) {
           date = date.trim();
           long acquiredDate = new Timestamp(date).asInstant().getMillis();
-          long saneDate = new Timestamp(date).asInstant().getMillis();
+          long saneDate = new Timestamp("1990-01-01T00:00:00").asInstant().getMillis();
           long fileDate = new Location(
             reader.getCurrentFile()).getAbsoluteFile().lastModified();
           if (acquiredDate < saneDate && fileDate >= saneDate) {
