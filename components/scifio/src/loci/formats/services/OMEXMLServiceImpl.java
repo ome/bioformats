@@ -552,6 +552,10 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
           metadataNodes = annotationRoot.getDocumentElement().getChildNodes();
 
           for (int meta=0; meta<metadataNodes.getLength(); meta++) {
+            // Not all nodes will be instances of Element, particularly if
+            // the XML parsing was done by Xerces.  In particular, if a
+            // comment is found, it will be an instance of
+            // com.sun.org.apache.xerces.internal.dom.DeferredCommentImpl.
             if (metadataNodes.item(meta) instanceof Element) {
               Element node = (Element) metadataNodes.item(meta);
               String name = node.getNodeName();
