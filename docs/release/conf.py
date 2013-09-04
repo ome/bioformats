@@ -189,8 +189,7 @@ html_last_updated_fmt = '%b %d, %Y'
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = { '**' : ['globalbftoc.html', 'pagetoc.html',
-#'relations.html', 'searchbox.html', 'sourcelink.html'] }
+html_sidebars = { '**' : [] }
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -200,13 +199,13 @@ html_last_updated_fmt = '%b %d, %Y'
 #html_domain_indices = True
 
 # If false, no index is generated.
-#html_use_index = True
+html_use_index = False
 
 # If true, the index is split into individual pages for each letter.
 #html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 #html_show_sphinx = True
