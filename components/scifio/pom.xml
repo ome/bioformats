@@ -104,6 +104,23 @@
   </properties>
 
   <build>
+    <resources>
+    <resource>
+      <directory>${project.basedir}/src</directory>
+      <includes>
+        <include>**/*.properties</include>
+      </includes>
+      <filtering>true</filtering>
+    </resource>
+    <resource>
+      <directory>${project.basedir}</directory>
+      <includes>
+        <include>**/*.cpp</include>
+      </includes>
+      <filtering>true</filtering>
+    </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -121,7 +138,7 @@
           <headerFile>cppwrap/header.txt</headerFile>
           <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
           <coreFile>cppwrap/core.txt</coreFile>
-          <sourceDir>cppwrap</sourceDir>
+          <sourceDir>target/classes/cppwrap</sourceDir>
           <libraries>
             <library>${project.groupId}:loci-common:jar:${project.version}</library>
             <library>${project.groupId}:ome-xml:jar:${project.version}</library>
