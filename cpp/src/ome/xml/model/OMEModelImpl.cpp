@@ -37,8 +37,9 @@
  */
 
 #include <map>
-#include <memory>
 #include <string>
+
+#include <ome/compat/memory.h>
 
 #include <ome/xml/model/OMEModelImpl.h>
 #include <ome/xml/model/Reference.h>

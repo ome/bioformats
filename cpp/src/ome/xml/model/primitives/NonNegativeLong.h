@@ -39,7 +39,7 @@
 #ifndef OME_XML_MODEL_PRIMITIVES_NONNEGATIVELONG_H
 #define OME_XML_MODEL_PRIMITIVES_NONNEGATIVELONG_H
 
-#include <cstdint>
+#include <ome/compat/cstdint.h>
 
 #include <ome/xml/model/primitives/ConstrainedNumeric.h>
 #include <ome/xml/model/primitives/NumericConstraints.h>

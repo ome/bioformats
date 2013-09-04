@@ -41,9 +41,10 @@
 
 #include <algorithm>
 #include <map>
-#include <memory>
 #include <string>
 #include <vector>
+
+#include <ome/compat/memory.h>
 
 #include <ome/xerces/dom/element.h>
 #include <ome/xerces/dom/document.h>

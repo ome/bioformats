@@ -40,9 +40,10 @@
 #define OME_XML_MODEL_OMEMODEL_H
 
 #include <map>
-#include <memory>
 #include <string>
 #include <vector>
+
+#include <ome/compat/memory.h>
 
 #include <ome/xml/model/OMEModelObject.h>
 

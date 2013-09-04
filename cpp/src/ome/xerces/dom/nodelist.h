@@ -39,6 +39,8 @@
 #ifndef OME_XERCES_DOM_NODELIST_H
 #define OME_XERCES_DOM_NODELIST_H
 
+#include <ome/compat/config.h>
+
 #include <cassert>
 #include <string>
 #include <ostream>

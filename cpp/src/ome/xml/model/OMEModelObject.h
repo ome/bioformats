@@ -40,8 +40,9 @@
 #define OME_XML_MODEL_OMEMODELOBJECT_H
 
 #include <map>
-#include <memory>
 #include <string>
+
+#include <ome/compat/memory.h>
 
 #include <ome/xerces/dom/element.h>
 #include <ome/xerces/dom/document.h>
