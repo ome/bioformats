@@ -39,6 +39,8 @@
 #ifndef TEST_CONSTRAINED_NUMERIC_H
 #define TEST_CONSTRAINED_NUMERIC_H
 
+#include <iostream>
+
 template<typename T>
 struct constrained_numeric_test
 {
