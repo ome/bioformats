@@ -1,0 +1,13 @@
+// Configured features
+
+#cmakedefine OME_HAVE_MEMORY 1
+#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
+#cmakedefine OME_HAVE_TUPLE 1
+#cmakedefine OME_HAVE_TR1_TUPLE 1
+#cmakedefine OME_HAVE_BOOST_TUPLE 1
+#cmakedefine OME_HAVE_BOOST_FORMAT 1
+#cmakedefine OME_HAVE_NOEXCEPT 1
+
+#ifndef OME_HAVE_NOEXCEPT
+# define noexcept
+#endif
