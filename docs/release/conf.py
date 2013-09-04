@@ -142,7 +142,7 @@ extlinks = {
     'trunk_artifact': (trunk_artifact_root + '/%s', ''),
     'daily_artifact': (daily_artifact_root + '/%s', ''),
     'html_doc': (doc_root + '/%s', ''),
-    'pdf_doc': (doc_root + '/Bio-Formats-' + release +'.pdf%s', ''),
+    'pdf_artifact': (bf_artifacts_root + '/Bio-Formats-' + release +'.pdf%s', ''),
     }
 
 # -- Options for HTML output ---------------------------------------------------
