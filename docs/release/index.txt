@@ -71,26 +71,6 @@ Developers can access builds of individual JAR libraries below.
 		- :trunk_artifact:`ome-xml.jar`
 		- :daily_artifact:`ome-xml.jar`
 
-	*	- LOCI Legacy
-		- :artifact:`loci-legacy.jar`
-		- :trunk_artifact:`loci-legacy.jar`
-		- :daily_artifact:`loci-legacy.jar`
-
-	*	- SCIFIO Development library
-		- :artifact:`scifio-devel.jar`
-		- :trunk_artifact:`scifio-devel.jar`
-		- :daily_artifact:`scifio-devel.jar`
-
-	*	- SCIFIO Test library
-		- :artifact:`scifio-test.jar`
-		- :trunk_artifact:`scifio-test.jar`
-		- :daily_artifact:`scifio-test.jar`
-
-	*	- OME Model Specification
-		- :artifact:`specification.jar`
-		- :trunk_artifact:`specification.jar`
-		- :daily_artifact:`specification.jar`
-
 	*	- LOCI Plugins for ImageJ
 		- :artifact:`loci_plugins.jar`
 		- :trunk_artifact:`loci_plugins.jar`
@@ -140,11 +120,6 @@ Developers can access builds of individual JAR libraries below.
 		- :artifact:`poi-loci.jar`
 		- :trunk_artifact:`poi-loci.jar`
 		- :daily_artifact:`poi-loci.jar`
-
-	*	- TurboJPEG
-		- :artifact:`turbojpeg.jar`
-		- :trunk_artifact:`turbojpeg.jar`
-		- :daily_artifact:`turbojpeg.jar`
 
 	*	- Stubs
 		-
