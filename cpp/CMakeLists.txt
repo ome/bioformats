@@ -1,6 +1,49 @@
 cmake_minimum_required(VERSION 2.8)
+include(CheckIncludeFileCXX)
+include(CheckCXXCompilerFlag)
+include(CheckCXXSourceCompiles)
 
-set(GEN_DIR gen)
+CHECK_CXX_COMPILER_FLAG(-std=c++11 CXX_FLAG_CXX11)
+if (CXX_FLAG_CXX11)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+else(CXX_FLAG_CXX11)
+  CHECK_CXX_COMPILER_FLAG(-std=c++03 CXX_FLAG_CXX03)
+  if (CXX_FLAG_CXX03)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++03")
+  else(CXX_FLAG_CXX03)
+    CHECK_CXX_COMPILER_FLAG(-std=c++98 CXX_FLAG_CXX98)
+    if (CXX_FLAG_CXX98)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
+    else(CXX_FLAG_CXX98)
+    endif(CXX_FLAG_CXX98)
+  endif(CXX_FLAG_CXX03)
+endif(CXX_FLAG_CXX11)
+
+CHECK_INCLUDE_FILE_CXX(cstdint OME_HAVE_CSTDINT)
+
+CHECK_CXX_SOURCE_COMPILES("
+#include <memory>
+struct foo : public std::enable_shared_from_this<foo>
+{
+        foo() {}
+};
+int main() { std::shared_ptr<foo> f(new foo()); }
+" OME_HAVE_MEMORY)
+
+CHECK_INCLUDE_FILE_CXX(boost/shared_ptr.hpp OME_HAVE_BOOST_SHARED_PTR)
+CHECK_INCLUDE_FILE_CXX(tuple OME_HAVE_TUPLE)
+CHECK_INCLUDE_FILE_CXX(tr1/tuple OME_HAVE_TR1_TUPLE)
+CHECK_INCLUDE_FILE_CXX(boost/tuple/tuple.hpp OME_HAVE_BOOST_TUPLE)
+CHECK_INCLUDE_FILE_CXX(boost/format.hpp OME_HAVE_BOOST_FORMAT)
+
+CHECK_CXX_SOURCE_COMPILES("
+void foo() noexcept{}
+int main() { foo(); }
+" OME_HAVE_NOEXCEPT)
+
+set(GEN_DIR ${PROJECT_BINARY_DIR}/gen)
+
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/config.h.in ${GEN_DIR}/ome/compat/config.h)
 
 set(XSD_FU python ${PROJECT_SOURCE_DIR}/../components/xsd-fu/xsd-fu)
 set(MODEL_VERSION 2013-06)
@@ -102,8 +145,7 @@ set(OME_XML_STATIC_HEADERS
   ${PROJECT_SOURCE_DIR}/src/ome/xml/model/OMEModelImpl.h
   ${PROJECT_SOURCE_DIR}/src/ome/xml/model/OMEModelObject.h)
 
-include_directories(src gen)
-set(CMAKE_CXX_FLAGS "-std=c++11")
+include_directories(src ${GEN_DIR})
 
 add_library(ome-xml SHARED ${OME_XML_GENERATED_SOURCES} ${OME_XML_STATIC_SOURCES})
 target_link_libraries(ome-xml xerces-c)
@@ -126,14 +168,14 @@ add_executable(test/xerces ${PROJECT_SOURCE_DIR}/test/xerces.cpp)
 target_link_libraries(test/xerces ome-xml)
 
 set(test_headers_SOURCES "")
-file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/gen/test/headers)
+file(MAKE_DIRECTORY ${GEN_DIR}/test/headers)
 foreach(header ${MODEL_GENERATED_MODEL_HEADERS} ${MODEL_GENERATED_ENUM_HEADERS} ${OME_XML_STATIC_HEADERS})
   string(REPLACE "/" "_" genheader ${header})
   string(REGEX REPLACE "\\.h$" ".cpp" genheader ${genheader})
   string(REGEX REPLACE "^(gen|src)/" "" include ${header})
   string(CONFIGURE "#include <@include@>" src)
-  file(WRITE "${PROJECT_BINARY_DIR}/gen/test/headers/${genheader}" "${src}")
-  list(APPEND test_headers_SOURCES "${PROJECT_BINARY_DIR}/gen/test/headers/${genheader}")
+  file(WRITE "${GEN_DIR}/test/headers/${genheader}" "${src}")
+  list(APPEND test_headers_SOURCES "${GEN_DIR}/test/headers/${genheader}")
 #  set(test_headers_SOURCES ${test_headers_SOURCES} PARENT_SCOPE )
 endforeach(header)
 add_executable(test/headers ${PROJECT_SOURCE_DIR}/test/headers.cpp ${test_headers_SOURCES})
