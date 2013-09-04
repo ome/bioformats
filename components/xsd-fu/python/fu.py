@@ -128,7 +128,7 @@ BACK_REFERENCE_CLASS_NAME_OVERRIDE = {
 
 # Properties within abstract proprietary types that should be code generated
 # for.
-ABSTRACT_PROPRIETARY_OVERRIDE = ('Transform',)
+ABSTRACT_PROPRIETARY_OVERRIDE = ('Transform', 'AnnotationRef',)
 
 def updateTypeMaps(opts):
     """
@@ -1336,7 +1336,7 @@ class OMEModelObject(OMEModelEntity):
 
         if parents is not None:
             parent = self.model.getObjectByName(parents.keys()[0])
-            if parent is not None and parent.isAbstractProprietary:
+            if parent is not None and parent.isAbstractProprietary and not self.name in ABSTRACT_PROPRIETARY_OVERRIDE :
                 name = parent.name
 
         return name
