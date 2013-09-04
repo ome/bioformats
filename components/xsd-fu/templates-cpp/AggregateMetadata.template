@@ -232,7 +232,8 @@
 
 #include <list>
 #include <stdexcept>
-#include <memory>
+
+#include <ome/compat/memory.h>
 
 namespace ome
 {
