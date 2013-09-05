@@ -125,7 +125,7 @@ jenkins_job_root = jenkins_root + '/job'
 bf_job_root = jenkins_job_root + '/' + jenkins_job
 daily_job_root = jenkins_job_root + '/BIOFORMATS-daily'
 trunk_artifact_root = bf_job_root + '/lastSuccessfulBuild/artifact/artifacts'
-daily_artifact_root = bf_job_root + '/lastSuccessfulBuild/artifact/artifacts'
+daily_artifact_root = daily_job_root + '/lastSuccessfulBuild/artifact/artifacts'
 
 # Variables used to define other extlinks
 cvs_root = 'http://cvs.openmicroscopy.org.uk'
@@ -142,7 +142,7 @@ extlinks = {
     'trunk_artifact': (trunk_artifact_root + '/%s', ''),
     'daily_artifact': (daily_artifact_root + '/%s', ''),
     'html_doc': (doc_root + '/%s', ''),
-    'pdf_doc': (doc_root + '/Bio-Formats-' + release +'.pdf%s', ''),
+    'pdf_artifact': (bf_artifacts_root + '/Bio-Formats-' + release +'.pdf%s', ''),
     }
 
 # -- Options for HTML output ---------------------------------------------------
@@ -189,8 +189,7 @@ html_last_updated_fmt = '%b %d, %Y'
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = { '**' : ['globalbftoc.html', 'pagetoc.html',
-#'relations.html', 'searchbox.html', 'sourcelink.html'] }
+html_sidebars = { '**' : [] }
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -200,13 +199,13 @@ html_last_updated_fmt = '%b %d, %Y'
 #html_domain_indices = True
 
 # If false, no index is generated.
-#html_use_index = True
+html_use_index = False
 
 # If true, the index is split into individual pages for each letter.
 #html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 #html_show_sphinx = True
