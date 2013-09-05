@@ -17,6 +17,18 @@ maven()
     clean
 }
 
+cpp()
+{
+    (
+        cd cpp
+        mkdir build
+        cd build
+        cmake ..
+        make
+        make test
+    )
+}
+
 # Test cppwrap
 cppwrap()
 {
@@ -56,6 +68,8 @@ do
             clean ;;
         maven)
             maven ;;
+        cpp)
+            cpp ;;
         cppwrap)
             cppwrap ;;
         sphinx)
