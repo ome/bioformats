@@ -125,7 +125,7 @@ jenkins_job_root = jenkins_root + '/job'
 bf_job_root = jenkins_job_root + '/' + jenkins_job
 daily_job_root = jenkins_job_root + '/BIOFORMATS-daily'
 trunk_artifact_root = bf_job_root + '/lastSuccessfulBuild/artifact/artifacts'
-daily_artifact_root = bf_job_root + '/lastSuccessfulBuild/artifact/artifacts'
+daily_artifact_root = daily_job_root + '/lastSuccessfulBuild/artifact/artifacts'
 
 # Variables used to define other extlinks
 cvs_root = 'http://cvs.openmicroscopy.org.uk'
