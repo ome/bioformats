@@ -146,6 +146,9 @@ def main(opts):
     base, filename = os.path.split(opts.lang.templatepath('CLASS'))
     name, extension = os.path.splitext(filename)
     for obj in model.objects.values():
+        if obj.name in opts.lang.model_type_map.keys():
+            continue
+
         fu.SOURCE_TYPE = opts.filetype;
 
         CUSTOM_CLASS_TEMPLATE = os.path.join(

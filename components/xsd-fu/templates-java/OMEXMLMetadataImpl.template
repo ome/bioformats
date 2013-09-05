@@ -352,6 +352,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
     return root.getStructuredAnnotations().getLongAnnotation(longAnnotationIndex).sizeOfLinkedAnnotationList();
   }
 
+  public int getMapAnnotationAnnotationCount(int mapAnnotationIndex) {
+    return root.getStructuredAnnotations().getMapAnnotation(mapAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
   public int getTagAnnotationAnnotationCount(int tagAnnotationIndex) {
     return root.getStructuredAnnotations().getTagAnnotation(tagAnnotationIndex).sizeOfLinkedAnnotationList();
   }

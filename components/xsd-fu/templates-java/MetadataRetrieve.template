@@ -127,6 +127,8 @@ public interface MetadataRetrieve extends BaseMetadata {
 
   int getLongAnnotationAnnotationCount(int longAnnotationIndex);
 
+  int getMapAnnotationAnnotationCount(int mapAnnotationIndex);
+
   int getTagAnnotationAnnotationCount(int tagAnnotationIndex);
 
   int getTermAnnotationAnnotationCount(int termAnnotationIndex);

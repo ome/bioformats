@@ -64,6 +64,11 @@ class Language(object):
             namespace + 'dateTime': 'Timestamp'
             }
 
+        # A global type mapping from XSD Schema elements to language model
+        # object classes.  This will cause source code generation to be
+        # skipped for this type since it's implemented natively.
+        self.model_type_map = {}
+
         # A global type mapping from XSD Schema types to base classes
         # that is used to override places in the model where we do not
         # wish subclassing to take place.
@@ -86,6 +91,7 @@ class Language(object):
         self.type_map['Leader'] = 'Experimenter'
         self.type_map['Contact'] = 'Experimenter'
         self.type_map['Pump'] = 'LightSource'
+        self.type_map['MapPairs'] = 'AbstractOMEModelObject'
 
     def getDefaultModelBaseClass(self):
         return None
@@ -168,6 +174,9 @@ class Java(Language):
         self.primitive_type_map[namespace + 'double'] = 'Double'
         self.primitive_type_map[namespace + 'anyURI'] = 'String'
         self.primitive_type_map[namespace + 'hexBinary'] = 'String'
+        self.primitive_type_map['OME:Map'] = 'Map'
+
+        self.model_type_map['M'] = None
 
         self.type_map = copy.deepcopy(self.primitive_type_map)
         self._initTypeMap()
@@ -233,6 +242,10 @@ class CXX(Language):
         self.primitive_type_map[namespace + 'double'] = 'double'
         self.primitive_type_map[namespace + 'anyURI'] = 'std::string'
         self.primitive_type_map[namespace + 'hexBinary'] = 'std::string'
+        self.primitive_type_map['OME:Map'] = 'Map'
+
+        self.model_type_map['MapPairs'] = None
+        self.model_type_map['M'] = None
 
         self.type_map = copy.deepcopy(self.primitive_type_map)
         self._initTypeMap()
