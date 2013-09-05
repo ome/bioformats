@@ -121,15 +121,15 @@ Developers can access builds of individual JAR libraries below.
 		- :trunk_artifact:`poi-loci.jar`
 		- :daily_artifact:`poi-loci.jar`
 
-	*	- Stubs
+	*	- Legacy
 		-
 		-
 		-
 
-	*	- Luratech LuraWave stubs
-		- :artifact:`lwf-stubs.jar`
-		- :trunk_artifact:`lwf-stubs.jar`
-		- :daily_artifact:`lwf-stubs.jar`
+	*	- OME Metadata editor
+		- :artifact:`ome-editor.jar`
+		-
+		-
 
 Source code
 ===========
