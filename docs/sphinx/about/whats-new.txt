@@ -1,11 +1,6 @@
 Version history
 ===============
 
-4.4.9 (yyyy m dd)
------------------
-
-* All components now require Java 1.6.
-
 4.4.8 (2013 May 2)
 ------------------
 
