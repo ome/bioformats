@@ -1,11 +1,6 @@
 Version history
 ===============
 
-5.0.0-beta2 (yyyy m dd)
------------------------
-
-* All components now require Java 1.6.
-
 5.0.0-beta1 (2013 June 20)
 --------------------------
 
