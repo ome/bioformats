@@ -201,6 +201,10 @@ public class DummyMetadata implements IMetadata
     return -1;
   }
 
+  public int getMapAnnotationAnnotationCount(int mapAnnotationIndex) {
+    return -1;
+  }
+
   public int getTagAnnotationAnnotationCount(int tagAnnotationIndex) {
     return -1;
   }
