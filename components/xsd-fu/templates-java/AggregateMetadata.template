@@ -390,6 +390,19 @@ public class AggregateMetadata implements IMetadata
     return -1;
   }
 
+  public int getMapAnnotationAnnotationCount(int mapAnnotationIndex) {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();) {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve) {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        int result =
+          retrieve.getMapAnnotationAnnotationCount(mapAnnotationIndex);
+        if (result >= 0) return result;
+      }
+    }
+    return -1;
+  }
+
   public int getTagAnnotationAnnotationCount(int tagAnnotationIndex) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       Object o = iter.next();

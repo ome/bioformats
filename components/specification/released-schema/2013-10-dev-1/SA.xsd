@@ -388,13 +388,7 @@
 			<xsd:complexContent>
 				<xsd:extension base="TextAnnotation">
 					<xsd:sequence>
-						<xsd:element name="Value" minOccurs="1" maxOccurs="1">
-							<xsd:complexType>
-								<xsd:complexContent>
-									<xsd:extension base="OME:MapPairs"/>
-								</xsd:complexContent>
-							</xsd:complexType>
-						</xsd:element>
+						<xsd:element name="Value"  type="OME:MapPairs" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>
