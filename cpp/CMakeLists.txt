@@ -41,6 +41,9 @@ void foo() noexcept{}
 int main() { foo(); }
 " OME_HAVE_NOEXCEPT)
 
+find_package(Threads REQUIRED)
+find_package(GTest REQUIRED)
+
 set(GEN_DIR ${PROJECT_BINARY_DIR}/gen)
 
 CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/config.h.in ${GEN_DIR}/ome/compat/config.h)
@@ -154,7 +157,7 @@ file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/test)
 
 add_executable(test/color ${PROJECT_SOURCE_DIR}/test/color.cpp ${PROJECT_SOURCE_DIR}/test/main.cpp)
 target_link_libraries(test/color ome-xml)
-target_link_libraries(test/color gtest)
+target_link_libraries(test/color ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(test/enum test/enum.cpp)
 target_link_libraries(test/enum ome-xml)
