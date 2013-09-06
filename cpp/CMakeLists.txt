@@ -48,7 +48,8 @@ set(GEN_DIR ${PROJECT_BINARY_DIR}/gen)
 
 CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/config.h.in ${GEN_DIR}/ome/compat/config.h)
 
-set(XSD_FU python ${PROJECT_SOURCE_DIR}/../components/xsd-fu/xsd-fu)
+set(XSD_FU_SCRIPT ${PROJECT_SOURCE_DIR}/../components/xsd-fu/xsd-fu)
+set(XSD_FU python ${XSD_FU_SCRIPT})
 set(MODEL_VERSION 2013-06)
 set(MODEL_PATH ${PROJECT_SOURCE_DIR}/../components/specification/released-schema/${MODEL_VERSION})
 set(MODEL_FILES
@@ -59,45 +60,61 @@ set(MODEL_FILES
   ${MODEL_PATH}/SPW.xsd)
 set(XSD_FU_ARGS -p ome.xml.model -l C++ -o ${GEN_DIR} ${MODEL_FILES})
 
-execute_process(COMMAND ${XSD_FU} java_classes -f source ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} java_classes -d -f source ${XSD_FU_ARGS}
   OUTPUT_VARIABLE MODEL_GENERATED_MODEL_SOURCES)
 string(REPLACE "\n" ";" MODEL_GENERATED_MODEL_SOURCES "${MODEL_GENERATED_MODEL_SOURCES}")
 if(WIN32)
   string(REPLACE "\\" "/" MODEL_GENERATED_MODEL_SOURCES "${MODEL_GENERATED_MODEL_SOURCES}")
 endif(WIN32)
-execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_MODEL_SOURCES})
+add_custom_command(OUTPUT ${MODEL_GENERATED_MODEL_SOURCES}
+                   COMMAND ${XSD_FU} java_classes -q -f source ${XSD_FU_ARGS}
+                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
+#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_MODEL_SOURCES})
 
-execute_process(COMMAND ${XSD_FU} java_classes -f header ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} java_classes -d -f header ${XSD_FU_ARGS}
   OUTPUT_VARIABLE MODEL_GENERATED_MODEL_HEADERS)
 string(REPLACE "\n" ";" MODEL_GENERATED_MODEL_HEADERS "${MODEL_GENERATED_MODEL_HEADERS}")
 if(WIN32)
   string(REPLACE "\\" "/" MODEL_GENERATED_MODEL_HEADERS "${MODEL_GENERATED_MODEL_HEADERS}")
 endif(WIN32)
-execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_MODEL_HEADERS})
+add_custom_command(OUTPUT ${MODEL_GENERATED_MODEL_HEADERS}
+                   COMMAND ${XSD_FU} java_classes -q -f header ${XSD_FU_ARGS}
+                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
+#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_MODEL_HEADERS})
 
-execute_process(COMMAND ${XSD_FU} enum_types -f source ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} enum_types -d -f source ${XSD_FU_ARGS}
   OUTPUT_VARIABLE MODEL_GENERATED_ENUM_SOURCES)
 string(REPLACE "\n" ";" MODEL_GENERATED_ENUM_SOURCES "${MODEL_GENERATED_ENUM_SOURCES}")
 if(WIN32)
   string(REPLACE "\\" "/" MODEL_GENERATED_ENUM_SOURCES "${MODEL_GENERATED_ENUM_SOURCES}")
 endif(WIN32)
-execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_ENUM_SOURCES})
+add_custom_command(OUTPUT ${MODEL_GENERATED_ENUM_SOURCES}
+                   COMMAND ${XSD_FU} enum_types -q -f source ${XSD_FU_ARGS}
+                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
+#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_ENUM_SOURCES})
 
-execute_process(COMMAND ${XSD_FU} enum_types -f header ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} enum_types -d -f header ${XSD_FU_ARGS}
   OUTPUT_VARIABLE MODEL_GENERATED_ENUM_HEADERS)
 string(REPLACE "\n" ";" MODEL_GENERATED_ENUM_HEADERS "${MODEL_GENERATED_ENUM_HEADERS}")
 if(WIN32)
   string(REPLACE "\\" "/" MODEL_GENERATED_ENUM_HEADERS "${MODEL_GENERATED_ENUM_HEADERS}")
 endif(WIN32)
-execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_ENUM_HEADERS})
+add_custom_command(OUTPUT ${MODEL_GENERATED_ENUM_HEADERS}
+                   COMMAND ${XSD_FU} enum_types -q -f header ${XSD_FU_ARGS}
+                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
+#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_ENUM_HEADERS})
 
-execute_process(COMMAND ${XSD_FU} enum_includeall -f header ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} enum_includeall -d -f header ${XSD_FU_ARGS}
   OUTPUT_VARIABLE MODEL_GENERATED_ENUMINCLUDE_HEADERS)
 string(REPLACE "\n" ";" MODEL_GENERATED_ENUMINCLUDE_HEADERS ${MODEL_GENERATED_ENUMINCLUDE_HEADERS})
 if(WIN32)
   string(REPLACE "\\" "/" MODEL_GENERATED_ENUMINCLUDE_HEADERS ${MODEL_GENERATED_ENUMINCLUDE_HEADERS})
 endif(WIN32)
-execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_ENUMINCLUDE_HEADERS})
+#
+add_custom_command(OUTPUT ${MODEL_GENERATED_ENUMINCLUDE_HEADERS}
+                   COMMAND ${XSD_FU} enum_includeall -q -f header ${XSD_FU_ARGS}
+                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
+#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${MODEL_GENERATED_ENUMINCLUDE_HEADERS})
 
 set(OME_XML_GENERATED_SOURCES
   ${MODEL_GENERATED_MODEL_HEADERS}
