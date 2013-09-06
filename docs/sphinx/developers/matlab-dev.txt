@@ -1,11 +1,11 @@
-Using Bio-Formats in Matlab
+Using Bio-Formats in MATLAB
 ===========================
 
 .. highlight:: matlab
 
 This section assumes that you have installed the M-files and
 **loci_tools.jar**, as instructed in the
-:doc:`Matlab user information page </users/matlab/index>`.
+:doc:`MATLAB user information page </users/matlab/index>`.
 Note the minimum supported MATLAB version is R2007b (7.5).
 
 Opening an image file
