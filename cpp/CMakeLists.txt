@@ -152,8 +152,9 @@ target_link_libraries(ome-xml xerces-c)
 
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/test)
 
-add_executable(test/color ${PROJECT_SOURCE_DIR}/test/color.cpp)
+add_executable(test/color ${PROJECT_SOURCE_DIR}/test/color.cpp ${PROJECT_SOURCE_DIR}/test/main.cpp)
 target_link_libraries(test/color ome-xml)
+target_link_libraries(test/color gtest)
 
 add_executable(test/enum test/enum.cpp)
 target_link_libraries(test/enum ome-xml)
