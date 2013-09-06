@@ -176,8 +176,9 @@ add_executable(test/color ${PROJECT_SOURCE_DIR}/test/color.cpp ${PROJECT_SOURCE_
 target_link_libraries(test/color ome-xml)
 target_link_libraries(test/color ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
-add_executable(test/enum test/enum.cpp)
+add_executable(test/enum ${PROJECT_SOURCE_DIR}/test/enum.cpp ${PROJECT_SOURCE_DIR}/test/main.cpp)
 target_link_libraries(test/enum ome-xml)
+target_link_libraries(test/enum ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(test/positive-float ${PROJECT_SOURCE_DIR}/test/positive-float.cpp)
 target_link_libraries(test/positive-float ome-xml)

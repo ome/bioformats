@@ -2,14 +2,306 @@
 #include <ome/xml/model/enums/LaserType.h>
 #include <ome/xml/model/enums/PixelType.h>
 
-#include <cassert>
-#include <cstdlib>
 #include <sstream>
-#include <iostream>
+
+#include <gtest/gtest.h>
 
 using ome::xml::model::enums::LaserType;
 using ome::xml::model::enums::PixelType;
 using ome::xml::model::enums::EnumerationException;
+
+TEST(Enum, LaserTypeCreateMetalVapor)
+{
+  // Construction by value.
+  ASSERT_NO_THROW(LaserType lt(LaserType::METALVAPOR));
+}
+
+TEST(Enum, LaserTypeCreateExcimer)
+{
+  // Construction by value.
+  ASSERT_NO_THROW(LaserType lt(LaserType::EXCIMER));
+}
+
+TEST(Enum, LaserTypeCompareMetalVapor)
+{
+  LaserType lv1(LaserType::METALVAPOR);
+  LaserType lv2(LaserType::METALVAPOR);
+  ASSERT_EQ(lv1, lv2);
+}
+
+TEST(Enum, LaserTypeCompareMetalVaporExcimer)
+{
+  LaserType lv1(LaserType::METALVAPOR);
+  LaserType lv2(LaserType::EXCIMER);
+  ASSERT_NE(lv1, lv2);
+}
+
+TEST(Enum, LaserTypeAssign)
+{
+  LaserType lv1(LaserType::METALVAPOR);
+  LaserType lv2(LaserType::EXCIMER);
+  LaserType lv3(LaserType::EXCIMER);
+
+  ASSERT_NE(lv1, lv2);
+  ASSERT_NE(lv1, lv3);
+  ASSERT_EQ(lv2, lv3);
+
+  lv3=lv1;
+
+  ASSERT_NE(lv1, lv2);
+  ASSERT_EQ(lv1, lv3);
+  ASSERT_NE(lv2, lv3);
+}
+
+class EnumStringParameters
+{
+public:
+  std::string name;
+  bool        valid;
+  bool        insensitive;
+  bool        fallback;
+
+  EnumStringParameters(std::string const& name,
+                       bool               valid,
+                       bool               insensitive,
+                       bool               fallback):
+    name(name),
+    valid(valid),
+    insensitive(insensitive),
+    fallback(fallback)
+ {}
+};
+
+class EnumString : public ::testing::TestWithParam<EnumStringParameters>
+{
+};
+
+TEST_P(EnumString, Construct)
+{
+  const EnumStringParameters& params = GetParam();
+
+  if (params.valid)
+    {
+      ASSERT_NO_THROW(LaserType(params.name));
+    }
+  else if (params.insensitive || params.fallback)
+    {
+      ASSERT_THROW(LaserType(params.name), EnumerationException);
+
+      if (params.insensitive)
+        {
+          ASSERT_THROW(LaserType(params.name, true), EnumerationException);
+          ASSERT_NO_THROW(LaserType(params.name, false));
+        }
+      else
+        {
+          ASSERT_THROW(LaserType(params.name, true), EnumerationException);
+          // Classes with an "Other" enumeration will not throw.
+          ASSERT_NO_THROW(LaserType(params.name, false));
+        }
+    }
+  else
+    {
+      ASSERT_THROW(LaserType(params.name, true), EnumerationException);
+    }
+}
+
+TEST_P(EnumString, Compare)
+{
+  const EnumStringParameters& params = GetParam();
+
+  if (!params.valid && !params.insensitive && !params.fallback)
+    return;
+
+  LaserType lv1(LaserType::EXCIMER);
+  LaserType lv2(LaserType::SOLIDSTATE);
+  LaserType lv3(LaserType::OTHER);
+
+
+  LaserType ln(params.name, !(params.insensitive || params.fallback));
+
+  if (params.valid || params.insensitive)
+    {
+
+      ASSERT_NE(lv1, lv2);
+      ASSERT_NE(lv1, lv3);
+      ASSERT_NE(lv1, ln);
+      ASSERT_EQ(lv2, ln);
+      ASSERT_NE(lv3, ln);
+
+    }
+  else if (params.fallback)
+    {
+      ASSERT_NE(lv1, lv2);
+      ASSERT_NE(lv1, lv3);
+      ASSERT_NE(lv1, ln);
+      ASSERT_NE(lv2, ln);
+      ASSERT_EQ(lv3, ln);
+    }
+}
+
+EnumStringParameters string_params[] =
+  {
+    EnumStringParameters("SolidState",             true,  false, false),
+    EnumStringParameters("solidstate",             false, true,  false),
+    EnumStringParameters("soLidsTaTe",             false, true,  false),
+    EnumStringParameters("    \tsolidstate",       false, true,  false),
+    EnumStringParameters("SolidState      \n",     false, true,  false),
+    EnumStringParameters("\f\f  solidstate    \v", false, true,  false),
+    EnumStringParameters("InvalidName",            false, false, false),
+    EnumStringParameters("--invalid--",            false, false, true),
+    EnumStringParameters("invalid3",               false, false, true)
+  };
+
+INSTANTIATE_TEST_CASE_P(LaserTypeStringVariants, EnumString,
+                        ::testing::ValuesIn(string_params));
+
+TEST(Enum, LaserTypeCreateInvalidValue)
+{
+  ASSERT_THROW(LaserType(static_cast<LaserType::enum_value>(50)),
+               EnumerationException);
+}
+
+template<typename E>
+class EnumValueParameters
+{
+public:
+  typedef E enum_type;
+
+  enum_type                      value;
+  typename enum_type::enum_value valuepos;
+  typename enum_type::enum_value valueneg;
+  std::string                    namepos;
+  std::string                    nameneg;
+
+  EnumValueParameters(const enum_type&               value,
+                      typename enum_type::enum_value valuepos,
+                      typename enum_type::enum_value valueneg,
+                      const std::string&             namepos,
+                      const std::string&             nameneg):
+    value(value),
+    valuepos(valuepos),
+    valueneg(valueneg),
+    namepos(namepos),
+    nameneg(nameneg)
+ {}
+};
+
+class LaserTypeValue : public ::testing::TestWithParam<EnumValueParameters<LaserType> >
+{
+public:
+  typedef LaserType enum_type;
+  typedef EnumValueParameters<enum_type> param_type;
+};
+
+TEST_P(LaserTypeValue, ConstructValue)
+{
+  const param_type& params = GetParam();
+
+  ASSERT_NO_THROW(enum_type(params.valuepos));
+}
+
+TEST_P(LaserTypeValue, ConstructString)
+{
+  const param_type& params = GetParam();
+
+  ASSERT_NO_THROW(enum_type(params.namepos));
+}
+
+TEST_P(LaserTypeValue, CastValue)
+{
+  const param_type& params = GetParam();
+
+  ASSERT_EQ(static_cast<typename enum_type::enum_value>(params.value), params.valuepos);
+  ASSERT_NE(static_cast<typename enum_type::enum_value>(params.value), params.valueneg);
+}
+
+TEST_P(LaserTypeValue, CastName)
+{
+  const param_type& params = GetParam();
+
+  ASSERT_EQ(params.namepos, static_cast<const std::string&>(params.value));
+  ASSERT_NE(params.nameneg, static_cast<const std::string&>(params.value));
+}
+
+TEST_P(LaserTypeValue, Value)
+{
+  const param_type& params = GetParam();
+
+  typename enum_type::enum_value etv = params.value;
+  ASSERT_EQ(etv, static_cast<typename enum_type::enum_value>(params.value));
+  ASSERT_EQ(etv, params.valuepos);
+  ASSERT_NE(etv, params.valueneg);
+}
+
+TEST_P(LaserTypeValue, Name)
+{
+  const param_type& params = GetParam();
+
+  std::string ets = params.value;
+  ASSERT_EQ(ets, static_cast<const std::string&>(params.value));
+  ASSERT_EQ(ets, params.namepos);
+  ASSERT_NE(ets, params.nameneg);
+}
+
+TEST_P(LaserTypeValue, CompareValue)
+{
+  const param_type& params = GetParam();
+
+  ASSERT_EQ(params.value, params.valuepos);
+  ASSERT_NE(params.value, params.valueneg);
+  ASSERT_EQ(params.valuepos, params.value);
+  ASSERT_NE(params.valueneg, params.value);
+}
+
+TEST_P(LaserTypeValue, CompareName)
+{
+  const param_type& params = GetParam();
+
+  ASSERT_EQ(params.value, params.namepos);
+  ASSERT_NE(params.value, params.nameneg);
+  ASSERT_EQ(params.namepos, params.value);
+  ASSERT_NE(params.nameneg, params.value);
+}
+
+TEST_P(LaserTypeValue, StreamOutput)
+{
+  const param_type& params = GetParam();
+
+  std::ostringstream os;
+  os << params.value;
+  ASSERT_EQ(os.str(), params.namepos);
+  ASSERT_NE(os.str(), params.nameneg);
+}
+
+typedef EnumValueParameters<LaserType> lts_param;
+lts_param lt_value_params[] =
+  {
+    lts_param(LaserType(LaserType::METALVAPOR),
+              LaserType::METALVAPOR, LaserType::EXCIMER,
+              "MetalVapor", "Excimer"),
+    lts_param(LaserType(LaserType::EXCIMER),
+              LaserType::EXCIMER, LaserType::GAS,
+              "Excimer", "Gas"),
+    lts_param(LaserType(LaserType::SOLIDSTATE),
+              LaserType::SOLIDSTATE, LaserType::FREEELECTRON,
+              "SolidState", "FreeElectron"),
+    lts_param(LaserType(LaserType::OTHER),
+              LaserType::OTHER, LaserType::FREEELECTRON,
+              "Other", "FreeElectron"),
+    lts_param(LaserType("SolidState"),
+              LaserType::SOLIDSTATE, LaserType::FREEELECTRON,
+              "SolidState", "FreeElectron"),
+    lts_param(LaserType("SolidState", true),
+              LaserType::SOLIDSTATE, LaserType::FREEELECTRON,
+              "SolidState", "FreeElectron"),
+    lts_param(LaserType("\tSOLIDStaTe ", false),
+              LaserType::SOLIDSTATE, LaserType::FREEELECTRON,
+              "SolidState", "FreeElectron"),
+  };
+
+INSTANTIATE_TEST_CASE_P(LaserTypeValueVariants, LaserTypeValue,
+                        ::testing::ValuesIn(lt_value_params));
 
 template<typename E>
 void
@@ -19,230 +311,65 @@ verify (E&                     et,
 	const std::string&     namepos,
 	const std::string&     nameneg)
 {
-  assert (static_cast<typename E::enum_value>(et) == valuepos);
-  assert (static_cast<typename E::enum_value>(et) != valueneg);
+  ASSERT_EQ(static_cast<typename E::enum_value>(et), valuepos);
+  ASSERT_NE(static_cast<typename E::enum_value>(et), valueneg);
 
-  assert (namepos == static_cast<const std::string&>(et));
-  assert (nameneg != static_cast<const std::string&>(et));
+  ASSERT_EQ(namepos, static_cast<const std::string&>(et));
+  ASSERT_NE(nameneg, static_cast<const std::string&>(et));
 
   typename E::enum_value etv = et;
-  assert(etv == static_cast<typename E::enum_value>(et));
-  assert(etv == valuepos);
-  assert(etv != valueneg);
+  ASSERT_EQ(etv, static_cast<typename E::enum_value>(et));
+  ASSERT_EQ(etv, valuepos);
+  ASSERT_NE(etv, valueneg);
 
   std::string ets = et;
-  assert (ets == static_cast<const std::string&>(et));
-  assert (ets == namepos);
-  assert (ets != nameneg);
+  ASSERT_EQ(ets, static_cast<const std::string&>(et));
+  ASSERT_EQ(ets, namepos);
+  ASSERT_NE(ets, nameneg);
 
-  assert(et == valuepos);
-  assert(et != valueneg);
-  assert(valuepos == et);
-  assert(valueneg != et);
+  ASSERT_EQ(et, valuepos);
+  ASSERT_NE(et, valueneg);
+  ASSERT_EQ(valuepos, et);
+  ASSERT_NE(valueneg, et);
 
-  assert(et == namepos);
-  assert(et != nameneg);
-  assert(namepos == et);
-  assert(nameneg != et);
+  ASSERT_EQ(et, namepos);
+  ASSERT_NE(et, nameneg);
+  ASSERT_EQ(namepos, et);
+  ASSERT_NE(nameneg, et);
 
   std::ostringstream os;
   os << et;
-  assert(os.str() == namepos);
-  assert(os.str() != nameneg);
+  ASSERT_EQ(os.str(), namepos);
+  ASSERT_NE(os.str(), nameneg);
 }
 
-int
-main ()
+TEST(Enum, PixelType)
 {
-  // Construction by value.
-
-  LaserType lv(LaserType::METALVAPOR);
-
-  verify(lv, LaserType::METALVAPOR, LaserType::EXCIMER, "MetalVapor", "Excimer");
-
-  LaserType lv2(LaserType::METALVAPOR);
-  assert(lv == lv2);
-  verify(lv2, LaserType::METALVAPOR, LaserType::EXCIMER, "MetalVapor", "Excimer");
-
-  LaserType lv3(LaserType::EXCIMER);
-  assert(lv != lv3);
-  verify(lv3, LaserType::EXCIMER, LaserType::GAS, "Excimer", "Gas");
-  lv3=lv;
-  verify(lv3, LaserType::METALVAPOR, LaserType::EXCIMER, "MetalVapor", "Excimer");
-
-  // Construction by name, using correct, lower and mixed case.
-
-  LaserType ln("SolidState");
-  verify(ln, LaserType::SOLIDSTATE, LaserType::FREEELECTRON, "SolidState", "FreeElectron");
-
-  assert(lv == lv2);
-  assert(lv == lv3);
-  assert(lv != ln);
-
-  try
-    {
-      LaserType ln2("solidstate");
-      assert(0);
-    }
-  catch (const EnumerationException& e)
-    {
-      std::cout << "Caught expected exception: " << e.what() << std::endl;
-    }
-
-  try
-    {
-      LaserType ln2("solidstate", true);
-      assert(0);
-    }
-  catch (const EnumerationException& e)
-    {
-      std::cout << "Caught expected exception: " << e.what() << std::endl;
-    }
-
-  LaserType ln2("solidstate", false);
-  assert(ln == ln2);
-  assert(lv != ln2);
-  verify(ln2, LaserType::SOLIDSTATE, LaserType::FREEELECTRON, "SolidState", "FreeElectron");
-
-  try
-    {
-      LaserType ln3("soLidsTaTe");
-      assert(0);
-    }
-  catch (const EnumerationException& e)
-    {
-      std::cout << "Caught expected exception: " << e.what() << std::endl;
-    }
-
-  LaserType ln3("soLidsTaTe", false);
-  assert(ln == ln3);
-  assert(ln2 == ln3);
-  assert(lv != ln3);
-  verify(ln3, LaserType::SOLIDSTATE, LaserType::FREEELECTRON, "SolidState", "FreeElectron");
-
-  try
-    {
-      LaserType ln4("    \tsolidstate", true);
-      assert(0);
-    }
-  catch (const EnumerationException& e)
-    {
-      std::cout << "Caught expected exception: " << e.what() << std::endl;
-    }
-
-  LaserType ln4("    \tsolidstate", false);
-  assert(ln == ln4);
-  assert(ln2 == ln4);
-  assert(lv != ln4);
-  verify(ln4, LaserType::SOLIDSTATE, LaserType::FREEELECTRON, "SolidState", "FreeElectron");
-
-  try
-    {
-      LaserType ln5("SolidState      \n", true);
-      assert(0);
-    }
-  catch (const EnumerationException& e)
-    {
-      std::cout << "Caught expected exception: " << e.what() << std::endl;
-    }
-
-  LaserType ln5("SolidState      \n", false);
-  assert(ln == ln5);
-  assert(ln2 == ln5);
-  assert(lv != ln5);
-  verify(ln5, LaserType::SOLIDSTATE, LaserType::FREEELECTRON, "SolidState", "FreeElectron");
-
-  try
-    {
-      LaserType ln6("  \f\f  solidstate    \v", true);
-      assert(0);
-    }
-  catch (const EnumerationException& e)
-    {
-      std::cout << "Caught expected exception: " << e.what() << std::endl;
-    }
-
-  LaserType ln6("  \f\f  solidstate    \v", false);
-  assert(ln == ln6);
-  assert(ln2 == ln6);
-  assert(lv != ln6);
-  verify(ln6, LaserType::SOLIDSTATE, LaserType::FREEELECTRON, "SolidState", "FreeElectron");
-
-  lv2 = ln5;
-  assert(lv2 == ln5);
-  assert(lv2 != lv);
-  verify(lv2, LaserType::SOLIDSTATE, LaserType::FREEELECTRON, "SolidState", "FreeElectron");
-
-  // Fallback to other.
-
-  try
-    {
-      LaserType linv("--invalid--", true);
-      assert(0);
-    }
-  catch (const EnumerationException& e)
-    {
-      std::cout << "Caught expected exception: " << e.what() << std::endl;
-    }
-
-  LaserType linv("--invalid--", false);
-  assert(lv != linv);
-  verify(linv, LaserType::OTHER, LaserType::FREEELECTRON, "Other", "FreeElectron");
-
-  LaserType linv2("invalid 2", false);
-  assert(linv == linv2);
-  assert(lv != linv2);
-  verify(linv2, LaserType::OTHER, LaserType::FREEELECTRON, "Other", "FreeElectron");
-
-  try
-    {
-      LaserType linv(static_cast<LaserType::enum_value>(50));
-      assert(0);
-    }
-  catch (const EnumerationException& e)
-    {
-      std::cout << "Caught expected exception: " << e.what() << std::endl;
-    }
-
-
   PixelType p1(PixelType::UINT16);
   verify(p1, PixelType::UINT16, PixelType::DOUBLE, "uint16", "double");
 
   PixelType p2(PixelType::INT32);
-  assert(p2 != p1);
+  ASSERT_NE(p2, p1);
   verify(p2, PixelType::INT32, PixelType::DOUBLE, "int32", "double");
 
   PixelType p3("uint16");
-  assert(p1 == p3);
-  assert(p1 == p3);
-  assert(p2 != p3);
+  ASSERT_EQ(p1, p3);
+  ASSERT_EQ(p1, p3);
+  ASSERT_NE(p2, p3);
   verify(p3, PixelType::UINT16, PixelType::DOUBLE, "uint16", "double");
 
-  try
-    {
-      PixelType p4("UInt16");
-      assert(0);
-    }
-  catch (const EnumerationException& e)
-    {
-      std::cout << "Caught expected exception: " << e.what() << std::endl;
-    }
+  ASSERT_THROW(PixelType p4("UInt16"), EnumerationException);
+  ASSERT_THROW(PixelType p4("UInt16", true), EnumerationException);
+  ASSERT_NO_THROW(PixelType p4("UInt16", false));
 
   PixelType p4("UInt16", false);
-  assert(p1 == p4);
-  assert(p3 == p4);
+  ASSERT_EQ(p1, p4);
+  ASSERT_EQ(p3, p4);
   verify(p4, PixelType::UINT16, PixelType::DOUBLE, "uint16", "double");
+}
 
+TEST(Enum, PixelTypeInvalid)
+{
   // No fallback to other.
-  try
-    {
-      PixelType p5("Invalid");
-      assert(0);
-    }
-  catch (const EnumerationException& e)
-    {
-      std::cout << "Caught expected exception: " << e.what() << std::endl;
-    }
-
-  std::cout << "OK" << std::endl;
+  ASSERT_THROW(PixelType("Invalid"), EnumerationException);
 }
