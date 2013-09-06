@@ -23,7 +23,13 @@ cpp()
         cd cpp
         mkdir build
         cd build
-        cmake ..
+        (
+            mkdir gtest
+            cd gtest
+            cmake /usr/src/gtest
+            make
+        )
+        GTEST_ROOT=$(pwd)/gtest cmake ..
         make
         make test
     )
