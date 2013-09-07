@@ -1,7 +1,6 @@
 #include <ome/xml/model/primitives/Color.h>
 
 #include <sstream>
-#include <stdexcept>
 
 #include <gtest/gtest.h>
 
@@ -108,14 +107,14 @@ public:
 
   virtual void SetUp()
   {
-    const ColorTestParameters params = GetParam();
+    const ColorTestParameters& params = GetParam();
     c = Color(params.r, params.g, params.b, params.a);
   }
 };
 
 TEST_P(ColorTest, CompareUnsigned)
 {
-  const ColorTestParameters params = GetParam();
+  const ColorTestParameters& params = GetParam();
 
   ASSERT_EQ(c, params.uval);
   ASSERT_EQ(params.uval, c);
@@ -123,7 +122,7 @@ TEST_P(ColorTest, CompareUnsigned)
 
 TEST_P(ColorTest, CompareSigned)
 {
-  const ColorTestParameters params = GetParam();
+  const ColorTestParameters& params = GetParam();
 
   ASSERT_EQ(c, params.sval);
   ASSERT_EQ(params.sval, c);
@@ -131,14 +130,14 @@ TEST_P(ColorTest, CompareSigned)
 
 TEST_P(ColorTest, GetValue)
 {
-  const ColorTestParameters params = GetParam();
+  const ColorTestParameters& params = GetParam();
 
   ASSERT_EQ(c.getValue(), params.sval);
 }
 
 TEST_P(ColorTest, ComposedCast)
 {
-  const ColorTestParameters params = GetParam();
+  const ColorTestParameters& params = GetParam();
 
   Color::composed_type ct = c;
   ASSERT_EQ(ct, params.uval);
@@ -146,7 +145,7 @@ TEST_P(ColorTest, ComposedCast)
 
 TEST_P(ColorTest, SignedCast)
 {
-  const ColorTestParameters params = GetParam();
+  const ColorTestParameters& params = GetParam();
 
   Color::signed_type st = c;
   ASSERT_EQ(st, params.sval);
@@ -154,7 +153,7 @@ TEST_P(ColorTest, SignedCast)
 
 TEST_P(ColorTest, GetComponents)
 {
-  const ColorTestParameters params = GetParam();
+  const ColorTestParameters& params = GetParam();
 
   ASSERT_EQ(c.getRed(), params.r);
   ASSERT_EQ(c.getGreen(), params.g);
@@ -164,7 +163,7 @@ TEST_P(ColorTest, GetComponents)
 
 TEST_P(ColorTest, ConstructString)
 {
-  const ColorTestParameters params = GetParam();
+  const ColorTestParameters& params = GetParam();
 
   Color c2(params.str);
   ASSERT_EQ(c, c2);
@@ -172,7 +171,7 @@ TEST_P(ColorTest, ConstructString)
 
 TEST_P(ColorTest, ConstructUnsigned)
 {
-  const ColorTestParameters params = GetParam();
+  const ColorTestParameters& params = GetParam();
 
   Color c3(params.uval);
   ASSERT_EQ(c, c3);
@@ -180,7 +179,7 @@ TEST_P(ColorTest, ConstructUnsigned)
 
 TEST_P(ColorTest, ConstructSigned)
 {
-  const ColorTestParameters params = GetParam();
+  const ColorTestParameters& params = GetParam();
 
   Color c4(params.sval);
   ASSERT_EQ(c, c4);
@@ -188,7 +187,7 @@ TEST_P(ColorTest, ConstructSigned)
 
 TEST_P(ColorTest, StreamOutput)
 {
-  const ColorTestParameters params = GetParam();
+  const ColorTestParameters& params = GetParam();
 
   std::ostringstream os;
   os << c;
