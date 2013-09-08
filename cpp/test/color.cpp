@@ -39,17 +39,17 @@ TEST(ColorTest, Create3)
 
 TEST(ColorTest, CreateFail1)
 {
-  ASSERT_THROW(Color("4265839378"), std::invalid_argument);
+  ASSERT_THROW(Color c1("4265839378"), std::invalid_argument);
 }
 
 TEST(ColorTest, CreateFail2)
 {
-  ASSERT_THROW(Color("7453894265839378"), std::invalid_argument);
+  ASSERT_THROW(Color c1("7453894265839378"), std::invalid_argument);
 }
 
 TEST(ColorTest, CreateFail3)
 {
-  ASSERT_THROW(Color("invalid"), std::invalid_argument);
+  ASSERT_THROW(Color c1("invalid"), std::invalid_argument);
 }
 
 TEST(ColorTest, SetComponents)
