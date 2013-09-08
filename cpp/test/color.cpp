@@ -1,6 +1,7 @@
 #include <ome/xml/model/primitives/Color.h>
 
 #include <sstream>
+#include <stdexcept>
 
 #include <gtest/gtest.h>
 
