@@ -212,8 +212,8 @@ TEST_P(LaserTypeValue, CastValue)
 {
   const param_type& params = GetParam();
 
-  ASSERT_EQ(static_cast<typename enum_type::enum_value>(params.value), params.valuepos);
-  ASSERT_NE(static_cast<typename enum_type::enum_value>(params.value), params.valueneg);
+  ASSERT_EQ(static_cast<enum_type::enum_value>(params.value), params.valuepos);
+  ASSERT_NE(static_cast<enum_type::enum_value>(params.value), params.valueneg);
 }
 
 TEST_P(LaserTypeValue, CastName)
@@ -228,8 +228,8 @@ TEST_P(LaserTypeValue, Value)
 {
   const param_type& params = GetParam();
 
-  typename enum_type::enum_value etv = params.value;
-  ASSERT_EQ(etv, static_cast<typename enum_type::enum_value>(params.value));
+  enum_type::enum_value etv = params.value;
+  ASSERT_EQ(etv, static_cast<enum_type::enum_value>(params.value));
   ASSERT_EQ(etv, params.valuepos);
   ASSERT_NE(etv, params.valueneg);
 }
