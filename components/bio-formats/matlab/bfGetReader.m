@@ -58,7 +58,7 @@ if nargin == 0 || (~isFile && ~isFake)
     [file, path] = uigetfile(bfGetFileExtensions, 'Choose a file to open');
     id = [path file];
     if isequal(path, 0) || isequal(file, 0), return; end
-elseif isFile
+elseif isFile && ~verLessThan('matlab', '7.9')
     [~, f] = fileattrib(id);
     id = f.Name;
 end
