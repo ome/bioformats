@@ -376,7 +376,7 @@ public class CellWorxReader extends FormatReader {
       if (planeIndex <  nTimepoints * wavelengths.length) {
         planeIndex++;
       }
-      else if (seriesIndex < core.size()) {
+      else if (seriesIndex < seriesCount) {
         planeIndex = 0;
         seriesIndex++;
       }
