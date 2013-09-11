@@ -18,7 +18,7 @@ Please note:
 
 After downloading the relevant files, you may want to take a look at our
 Bio-Formats |release| :html_doc:`online documentation <>` page or at the
-:pdf_doc:`PDF documentation <>`.
+:pdf_artifact:`PDF documentation <>`.
 
 Bio-Formats trunk/daily builds
 ------------------------------
