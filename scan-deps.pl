@@ -454,7 +454,7 @@ my %omeroClient = (
   NOTES   => <<ZZ,
 used by OME I/O to connect to OMERO servers
 ZZ
-  VERSION => "4.3.1"
+  VERSION => "4.4.8p1"
 );
 
 my %slf4j_api = (
