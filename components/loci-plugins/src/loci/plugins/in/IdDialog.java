@@ -73,7 +73,7 @@ public class IdDialog extends ImporterDialog {
     }
     else if (options.isOMERO()) {
       gd = new GenericDialog("OMERO Server Credentials");
-      gd.addMessage("This plugin is not fully supported.\nPlease use the OMERO ImageJ plugin from http://openmicroscopy.org instead.");
+      gd.addMessage("This plugin is not fully supported.\nPlease use the OMERO ImageJ/Fiji plugin from https://openmicroscopy.org/site/products/omero/downloads instead.");
       gd.addStringField("Server: ", "", 80);
       gd.addStringField("Port: ", "4064", 80);
       gd.addStringField("Username: ", "", 80);
