@@ -1,4 +1,4 @@
-Copyright © 2005 Sun Microsystems, Inc., 4150 Network Circle, Santa 
+Copyright Â© 2005 Sun Microsystems, Inc., 4150 Network Circle, Santa 
 Clara, California 95054, U.S.A. All rights reserved.
 
 U.S. Government Rights - Commercial software.  Government users are 
@@ -22,29 +22,29 @@ to entities identified on U.S. export exclusion lists, including, but
 not limited to, the denied persons and specially designated nationals
 lists is strictly prohibited.
 
-Copyright © 2005 Sun Microsystems, Inc., 4150 Network Circle, Santa 
-Clara, California 95054, Etats-Unis. Tous droits réservés.
+Copyright Â© 2005 Sun Microsystems, Inc., 4150 Network Circle, Santa 
+Clara, California 95054, Etats-Unis. Tous droits rÃ©servÃ©s.
 
 L'utilisation est soumise aux termes de la Licence.
 
-Cette distribution peut comprendre des composants développés par des 
+Cette distribution peut comprendre des composants dÃ©veloppÃ©s par des 
 tierces parties.
 
 Sun, Sun Microsystems, le logo Sun et Java sont des marques de fabrique
-ou des marques déposées de Sun Microsystems, Inc. aux Etats-Unis et 
+ou des marques dÃ©posÃ©es de Sun Microsystems, Inc. aux Etats-Unis et 
 dans d'autres pays.
 
-Ce produit est soumis à la législation américaine en matière de 
-contrôle des exportations et peut être soumis à la règlementation en 
+Ce produit est soumis Ã  la lÃ©gislation amÃ©ricaine en matiÃ¨re de 
+contrÃ´le des exportations et peut Ãªtre soumis Ã  la rÃ¨glementation en 
 vigueur dans d'autres pays dans le domaine des exportations et 
 importations. Les utilisations, ou utilisateurs finaux, pour des armes 
-nucléaires,des missiles, des armes biologiques et chimiques ou du 
-nucléaire maritime, directement ou indirectement, sont strictement 
-interdites. Les exportations ou réexportations vers les pays sous 
-embargo américain, ou vers des entités figurant sur les listes 
-d'exclusion d'exportation américaines, y compris, mais de manière non 
+nuclÃ©aires,des missiles, des armes biologiques et chimiques ou du 
+nuclÃ©aire maritime, directement ou indirectement, sont strictement 
+interdites. Les exportations ou rÃ©exportations vers les pays sous 
+embargo amÃ©ricain, ou vers des entitÃ©s figurant sur les listes 
+d'exclusion d'exportation amÃ©ricaines, y compris, mais de maniÃ¨re non 
 exhaustive, la liste de personnes qui font objet d'un ordre de ne pas 
-participer, d'une façon directe ou indirecte, aux exportations des 
-produits ou des services qui sont régis  par la législation américaine 
-en matière de contrôle des exportations et la liste de ressortissants 
-spécifiquement désignés, sont rigoureusement interdites.
+participer, d'une faÃ§on directe ou indirecte, aux exportations des 
+produits ou des services qui sont rÃ©gis  par la lÃ©gislation amÃ©ricaine 
+en matiÃ¨re de contrÃ´le des exportations et la liste de ressortissants 
+spÃ©cifiquement dÃ©signÃ©s, sont rigoureusement interdites.
