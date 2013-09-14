@@ -107,6 +107,14 @@
     <resources>
     <resource>
       <directory>${project.basedir}/src</directory>
+      <excludes>
+        <exclude>**/*.java</exclude>
+        <exclude>**/package.html</exclude>
+        <exclude>**/*.properties</exclude>
+      </excludes>
+    </resource>
+    <resource>
+      <directory>${project.basedir}/src</directory>
       <includes>
         <include>**/*.properties</include>
       </includes>
