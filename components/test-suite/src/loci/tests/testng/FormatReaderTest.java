@@ -2206,7 +2206,6 @@ public class FormatReaderTest {
       }
     }
     catch (Throwable t) {
-      t.printStackTrace();
       LOGGER.error("", t);
       return false;
     }
