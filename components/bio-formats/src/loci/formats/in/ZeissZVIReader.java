@@ -422,6 +422,8 @@ public class ZeissZVIReader extends BaseZeissReader {
       case 13:
         s.skipBytes(16);
         return "";
+      case 11:
+        return String.valueOf(s.readShort()!=0);
       case 63:
       case 65:
         len = s.readInt();
