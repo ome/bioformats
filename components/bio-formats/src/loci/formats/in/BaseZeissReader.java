@@ -134,8 +134,8 @@ public abstract class BaseZeissReader extends FormatReader {
     fillMetadataPass5(store);
     fillMetadataPass6(store);
     MetadataTools.populatePixels(store, this, true);
-    fillMetadataPass7(store);
     storeROIs(store);
+    fillMetadataPass7(store);
   }
 
   protected void initVars(String id) throws FormatException, IOException {
