@@ -1557,6 +1557,8 @@ public class FormatReaderTest {
         MetadataStore store = reader.getMetadataStore();
         MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
         String xml = omexmlService.getOMEXML(retrieve);
+        // prevent issues due to thread-unsafeness of
+        // javax.xml.validation.Validator as used during XML validation
         synchronized (configTree) {
           success = xml != null && omexmlService.validateOMEXML(xml);
         }

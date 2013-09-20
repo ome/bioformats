@@ -46,6 +46,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Stores configuration data about files in a directory structure.
+ * This class is not designed to be thread safe, so should be synchronized
+ * externally for proper thread safety.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/ConfigurationTree.java">Trac</a>,
