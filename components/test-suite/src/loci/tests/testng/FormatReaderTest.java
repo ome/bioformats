@@ -60,6 +60,7 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -618,13 +619,12 @@ public class FormatReaderTest {
         String configDate = config.getDate();
         if (date != null && !date.equals(configDate)) {
           date = date.trim();
-          long acquiredDate = DateTools.getTime(date, DateTools.ISO8601_FORMAT);
-          long saneDate =
-            DateTools.getTime("1990-01-01T00:00:00", DateTools.ISO8601_FORMAT);
+          long acquiredDate = new Timestamp(date).asInstant().getMillis();
+          long saneDate = new Timestamp("1990-01-01T00:00:00").asInstant().getMillis();
           long fileDate = new Location(
             reader.getCurrentFile()).getAbsoluteFile().lastModified();
           if (acquiredDate < saneDate && fileDate >= saneDate) {
-            msg = "CreationDate";
+            msg = "CreationDate (date=" + date + " acquiredDate=" + acquiredDate + " fileDate=" + fileDate + " saneDate=" + saneDate + ")";
           }
         }
       }
