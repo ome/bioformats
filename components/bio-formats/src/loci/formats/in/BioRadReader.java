@@ -893,7 +893,12 @@ public class BioRadReader extends FormatReader {
                   String date = year + "-" + values[4] + "-" + values[3] + "T" +
                     values[2] + ":" + values[1] + ":" + values[0];
                   addGlobalMeta("Acquisition date", date);
-                  store.setImageAcquisitionDate(new Timestamp(date), 0);
+                  try {
+                    store.setImageAcquisitionDate(new Timestamp(date), 0);
+                  }
+                  catch (Exception e) {
+                    LOGGER.debug("Failed to parse acquisition date", e);
+                  }
                   break;
                 case 18:
                   addGlobalMeta("Mixer 3 - enhanced", values[0]);
