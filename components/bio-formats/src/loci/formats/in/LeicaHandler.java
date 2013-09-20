@@ -855,7 +855,8 @@ public class LeicaHandler extends BaseHandler {
       long ms = DateTools.getMillisFromTicks(high, low);
       if (count == 0) {
         String date = DateTools.convertDate(ms, DateTools.COBOL);
-        if (DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
+        Timestamp timestamp = Timestamp.valueOf(date);
+        if (timestamp != null && timestamp.asInstant().getMillis() <
           System.currentTimeMillis())
         {
           store.setImageAcquisitionDate(new Timestamp(date), numDatasets);

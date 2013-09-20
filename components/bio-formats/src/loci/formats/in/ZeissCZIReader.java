@@ -632,8 +632,9 @@ public class ZeissCZIReader extends FormatReader {
 
       Double startTime = null;
       if (acquiredDate != null) {
-        startTime =
-          DateTools.getTime(acquiredDate, DateTools.ISO8601_FORMAT) / 1000d;
+        Timestamp t = Timestamp.valueOf(acquiredDate);
+        if (t != null)
+          startTime = t.asInstant().getMillis() / 1000d;
       }
       for (int plane=0; plane<getImageCount(); plane++) {
         for (SubBlock p : planes) {
@@ -2441,8 +2442,9 @@ public class ZeissCZIReader extends FormatReader {
                   stageZ = new Double(text);
                 }
                 else if (tagNode.getNodeName().equals("AcquisitionTime")) {
-                  timestamp = DateTools.getTime(
-                    text, DateTools.ISO8601_FORMAT) / 1000d;
+                  Timestamp t = Timestamp.valueOf(text);
+                  if (t != null)
+                    timestamp = t.asInstant().getMillis() / 1000d;
                 }
                 else if (tagNode.getNodeName().equals("ExposureTime")) {
                   exposureTime = new Double(text);

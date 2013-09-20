@@ -56,6 +56,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * BDReader is the file format reader for BD Pathway datasets.
@@ -773,7 +774,8 @@ public class BDReader extends FormatReader {
         String stamp = parser.getIFDValue(timestamp).toString();
         s.close();
         stamp = DateTools.formatDate(stamp, BaseTiffReader.DATE_FORMATS);
-        return DateTools.getTime(stamp, DateTools.ISO8601_FORMAT);
+        Timestamp t = Timestamp.valueOf(stamp);
+        return t.asInstant().getMillis(); // NPE if invalid input.
       }
     }
     s.close();
