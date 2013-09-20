@@ -104,11 +104,17 @@ public class Location {
 
   public Location(String pathname) {
     LOGGER.trace("Location({})", pathname);
-    try {
-      url = new URL(getMappedId(pathname));
-    }
-    catch (MalformedURLException e) {
-      LOGGER.trace("Location is not a URL", e);
+    if (pathname.contains("://")) {
+      // Avoid expensive exception handling in case when path is obviously not an URL
+      try {
+        url = new URL(getMappedId(pathname));
+      }
+      catch (MalformedURLException e) {
+        LOGGER.trace("Location is not a URL", e);
+        isURL = false;
+      }
+    } else {
+      LOGGER.trace("Location is not a URL");
       isURL = false;
     }
     if (!isURL) file = new File(getMappedId(pathname));
