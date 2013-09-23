@@ -926,9 +926,7 @@ public class NativeND2Reader extends FormatReader {
         LOGGER.debug("Correcting SizeC: was {}", getSizeC());
         LOGGER.debug("plane size = {}", planeSize);
         LOGGER.debug("available bytes = {}", availableBytes);
-        if (isLossless) {
-          planeSize *= 2;
-        }
+
         core[0].sizeC = (int) (availableBytes / (planeSize / getSizeC()));
         if (getSizeC() == 0) {
           core[0].sizeC = 1;
