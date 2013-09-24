@@ -1322,7 +1322,8 @@ public class MetamorphReader extends BaseTiffReader {
     }
 
     if (firstSeriesChannels != null &&
-      (stageNames == null || stageNames.size() == 0))
+      (stageNames == null || stageNames.size() == 0 ||
+      stageNames.size() != getSeriesCount()))
     {
       if (name.length() > 0) {
         name += "; ";
