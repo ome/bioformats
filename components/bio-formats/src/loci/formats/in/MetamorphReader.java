@@ -1318,7 +1318,7 @@ public class MetamorphReader extends BaseTiffReader {
     String name = "";
     if (stageNames != null && stageNames.size() > 0) {
       int stagePosition = i / (getSeriesCount() / stageNames.size());
-      name += "Stage" + (i + 1) + " " + stageNames.get(stagePosition);
+      name += "Stage" + (stagePosition + 1) + " " + stageNames.get(stagePosition);
     }
 
     if (firstSeriesChannels != null &&
