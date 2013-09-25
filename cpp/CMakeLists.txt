@@ -180,11 +180,9 @@ add_executable(test/enum ${PROJECT_SOURCE_DIR}/test/enum.cpp ${PROJECT_SOURCE_DI
 target_link_libraries(test/enum ome-xml)
 target_link_libraries(test/enum ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
-add_executable(test/positive-float ${PROJECT_SOURCE_DIR}/test/positive-float.cpp)
-target_link_libraries(test/positive-float ome-xml)
-
-add_executable(test/positive-integer ${PROJECT_SOURCE_DIR}/test/positive-integer.cpp)
-target_link_libraries(test/positive-integer ome-xml)
+add_executable(test/constrained-numeric ${PROJECT_SOURCE_DIR}/test/positive-integer.cpp ${PROJECT_SOURCE_DIR}/test/positive-long.cpp ${PROJECT_SOURCE_DIR}/test/positive-float.cpp ${PROJECT_SOURCE_DIR}/test/non-negative-integer.cpp ${PROJECT_SOURCE_DIR}/test/non-negative-long.cpp ${PROJECT_SOURCE_DIR}/test/non-negative-float.cpp ${PROJECT_SOURCE_DIR}/test/percent-fraction.cpp ${PROJECT_SOURCE_DIR}/test/main.cpp)
+target_link_libraries(test/constrained-numeric ome-xml)
+target_link_libraries(test/constrained-numeric ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(test/xerces ${PROJECT_SOURCE_DIR}/test/xerces.cpp)
 target_link_libraries(test/xerces ome-xml)
@@ -218,6 +216,5 @@ enable_testing()
 add_test(enum test/enum)
 add_test(color test/color)
 add_test(headers test/headers)
-add_test(positive-float test/positive-float)
-add_test(positive-integer test/positive-integer)
+add_test(constrained-numeric test/constrained-numeric)
 add_test(xerces test/xerces "${PROJECT_SOURCE_DIR}/../components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome")

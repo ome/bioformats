@@ -1,26 +1,26 @@
-#include <ome/xml/model/primitives/PositiveInteger.h>
+#include <ome/xml/model/primitives/NonNegativeInteger.h>
 
 #include "constrained-numeric.h"
 
-using ome::xml::model::primitives::PositiveInteger;
+using ome::xml::model::primitives::NonNegativeInteger;
 
-INSTANTIATE_TYPED_TEST_CASE_P(PositiveInteger, NumericTest, PositiveInteger);
+INSTANTIATE_TYPED_TEST_CASE_P(NonNegativeInteger, NumericTest, NonNegativeInteger);
 
 namespace
 {
 
-  NumericTest<PositiveInteger>::test_str init_strings[] =
+  NumericTest<NonNegativeInteger>::test_str init_strings[] =
     { // str      pos  strpass pospass
       {"23",       23, true,   true},
+      {"-1",       -1, false,  false},
       {"-42",     -42, false,  false},
       {"1",       -53, true,   false},
       {"82",       82, true,   true},
-      {"0",         0, false,  false},
-      {"1",         0, true,   false},
-      {"invalid",   1, false,  true},
+      {"0",         0,  true,  true},
+      {"invalid",   1,  false, true},
     };
 
-  NumericTest<PositiveInteger>::test_op init_ops[] =
+  NumericTest<NonNegativeInteger>::test_op init_ops[] =
     { // v1   v2    expected    operation         pass   except rhsexcept
       {23,      23,          1, EQUAL,            true,  false, false},
       {23,     432,          0, EQUAL,            false, false, false},
@@ -55,13 +55,15 @@ namespace
       {432,    763, 432 -  763, SUBTRACT,         false, true,  false},
       {432,    285,          1, SUBTRACT,         false, false, false},
       {432,    431,          1, SUBTRACT,         true,  false, false},
-      {432,    432,          0, SUBTRACT,         false, true,  false},
+      {432,    432,          0, SUBTRACT,         true,  false, false},
+      {432,    433,         -1, SUBTRACT,         false, true,  false},
       {823,     93, 823 -   93, SUBTRACT_ASSIGN,  true,  false, false},
       {823,   -932, 823 +  932, SUBTRACT_ASSIGN,  true,  false, true},
       {823,   1393, 823 - 1393, SUBTRACT_ASSIGN,  false, true,  false},
       {823,     93,          1, SUBTRACT_ASSIGN,  false, false, false},
       {823,    822,          1, SUBTRACT_ASSIGN,  true,  false, false},
-      {823,    823,          0, SUBTRACT_ASSIGN,  false, true,  false},
+      {823,    823,          0, SUBTRACT_ASSIGN,  true,  false, false},
+      {823,    824,         -1, SUBTRACT_ASSIGN,  false, true,  false},
 
       {40,      12,  40 *   12, MULTIPLY,         true,  false, false},
       {23,      -8,  23 *   -8, MULTIPLY,         false, true,  true},
@@ -73,36 +75,36 @@ namespace
       {900,      5,  900 /   5, DIVIDE,           true,  false, false},
       {900,     -5,  900 /  -5, DIVIDE,           false, true,  true},
       {900,    900,  900 / 900, DIVIDE,           true,  false, false},
-      {900,    901,          0, DIVIDE,           false, true,  false},
+      {900,    901,          0, DIVIDE,           true,  false, false},
       {900,    900,          2, DIVIDE,           false, false, false},
       {480,     20,  480 /  20, DIVIDE_ASSIGN,    true,  false, false},
       {480,    -20,  480 / -20, DIVIDE_ASSIGN,    false, true,  true},
       {480,    480,  480 / 480, DIVIDE_ASSIGN,    true,  false, false},
-      {480,    481,          0, DIVIDE_ASSIGN,    false, true,  false},
+      {480,    481,          0, DIVIDE_ASSIGN,    true,  false, false},
       {480,    480,          2, DIVIDE_ASSIGN,    false, false, false},
 
       {901,    900,          1, MODULO,           true,  false, false},
       {901,    900,          2, MODULO,           false, false, false},
-      {43,      43,          0, MODULO,           false, true,  false},
+      {43,      43,          0, MODULO,           true,  false, false},
       {901,    900,          1, MODULO_ASSIGN,    true,  false, false},
       {901,    900,          2, MODULO_ASSIGN,    false, false, false},
-      {43,      43,          0, MODULO_ASSIGN,    false, true,  false}
+      {43,      43,          0, MODULO_ASSIGN,    true,  false, false}
     };
 
 }
 
 template<>
-const std::vector<NumericTest<PositiveInteger>::test_str>
-NumericTest<PositiveInteger>::strings(init_strings,
-                                      init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
+const std::vector<NumericTest<NonNegativeInteger>::test_str>
+NumericTest<NonNegativeInteger>::strings(init_strings,
+                                         init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
 
 template<>
-const std::vector<NumericTest<PositiveInteger>::test_op>
-NumericTest<PositiveInteger>::ops(init_ops,
-                                  init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
+const std::vector<NumericTest<NonNegativeInteger>::test_op>
+NumericTest<NonNegativeInteger>::ops(init_ops,
+                                     init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
 
 template<>
-const PositiveInteger::value_type NumericTest<PositiveInteger>::error(0);
+const NonNegativeInteger::value_type NumericTest<NonNegativeInteger>::error(0);
 
 template<>
-const PositiveInteger NumericTest<PositiveInteger>::safedefault(9999);
+const NonNegativeInteger NumericTest<NonNegativeInteger>::safedefault(9999);

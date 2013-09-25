@@ -82,7 +82,7 @@ namespace ome
          * check (a function object) and an error policy type to
          * handle errors when the constraint check fails (a function
          * object).  The default error policy is to throw an
-         * invalid_argument exception.
+         * std::invalid_argument exception.
          *
          * A ConstrainedNumeric instance should behave almost
          * identically to and be directly subsitutable for the
@@ -90,7 +90,7 @@ namespace ome
          * value type and implicitly castable to the value type.  It
          * is also constructable from the string representation of the
          * value type, and may be serialised to and from any stream.
-         * It also implements of the standard numeric operators, so
+         * It also implements the standard numeric operators, so
          * may be used as though it were the value type.
          */
         template<typename N,
@@ -200,7 +200,7 @@ namespace ome
           inline ConstrainedNumeric&
           operator+= (const ConstrainedNumeric& value)
           {
-            this->value += value;
+            this->value += value.value;
             check();
             return *this;
           }
@@ -208,7 +208,7 @@ namespace ome
           inline ConstrainedNumeric&
           operator-= (const ConstrainedNumeric& value)
           {
-            this->value -= value;
+            this->value -= value.value;
             check();
             return *this;
           }
@@ -216,7 +216,7 @@ namespace ome
           inline ConstrainedNumeric&
           operator*= (const ConstrainedNumeric& value)
           {
-            this->value *= value;
+            this->value *= value.value;
             check();
             return *this;
           }
@@ -224,7 +224,15 @@ namespace ome
           inline ConstrainedNumeric&
           operator/= (const ConstrainedNumeric& value)
           {
-            this->value /= value;
+            this->value /= value.value;
+            check();
+            return *this;
+          }
+
+          inline ConstrainedNumeric&
+          operator%= (const ConstrainedNumeric& value)
+          {
+            this->value %= value.value;
             check();
             return *this;
           }
@@ -261,10 +269,18 @@ namespace ome
             return *this;
           }
 
+          inline ConstrainedNumeric&
+          operator%= (const value_type& value)
+          {
+            this->value %= value;
+            check();
+            return *this;
+          }
+
           inline bool
           operator< (const ConstrainedNumeric& value) const
           {
-            return this->value < value;
+            return this->value < value.value;
           }
 
           inline bool
@@ -272,6 +288,9 @@ namespace ome
           {
             return this->value < value;
           }
+
+          // Note operator> (const ConstrainedNumeric& value) const is
+          // provided by Boost.Operators.
 
           inline bool
           operator> (const value_type& value) const
@@ -282,7 +301,7 @@ namespace ome
           inline bool
           operator== (const ConstrainedNumeric& value) const
           {
-            return this->value == value;
+            return this->value == value.value;
           }
 
           inline bool

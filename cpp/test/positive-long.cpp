@@ -1,26 +1,27 @@
-#include <ome/xml/model/primitives/PositiveInteger.h>
+#include <ome/xml/model/primitives/PositiveLong.h>
 
 #include "constrained-numeric.h"
 
-using ome::xml::model::primitives::PositiveInteger;
+using ome::xml::model::primitives::PositiveLong;
 
-INSTANTIATE_TYPED_TEST_CASE_P(PositiveInteger, NumericTest, PositiveInteger);
+INSTANTIATE_TYPED_TEST_CASE_P(PositiveLong, NumericTest, PositiveLong);
 
 namespace
 {
 
-  NumericTest<PositiveInteger>::test_str init_strings[] =
-    { // str      pos  strpass pospass
-      {"23",       23, true,   true},
-      {"-42",     -42, false,  false},
-      {"1",       -53, true,   false},
-      {"82",       82, true,   true},
-      {"0",         0, false,  false},
-      {"1",         0, true,   false},
-      {"invalid",   1, false,  true},
+  NumericTest<PositiveLong>::test_str init_strings[] =
+    { // str           pos           strpass pospass
+      {"743544628932", 743544628932, true,   true},
+      {"23",                     23, true,   true},
+      {"-42",                   -42, false,  false},
+      {"1",                     -53, true,   false},
+      {"82",                     82, true,   true},
+      {"0",                       0, false,  false},
+      {"1",                       0, true,   false},
+      {"invalid",                 1, false,  true},
     };
 
-  NumericTest<PositiveInteger>::test_op init_ops[] =
+  NumericTest<PositiveLong>::test_op init_ops[] =
     { // v1   v2    expected    operation         pass   except rhsexcept
       {23,      23,          1, EQUAL,            true,  false, false},
       {23,     432,          0, EQUAL,            false, false, false},
@@ -92,17 +93,17 @@ namespace
 }
 
 template<>
-const std::vector<NumericTest<PositiveInteger>::test_str>
-NumericTest<PositiveInteger>::strings(init_strings,
-                                      init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
+const std::vector<NumericTest<PositiveLong>::test_str>
+NumericTest<PositiveLong>::strings(init_strings,
+                                   init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
 
 template<>
-const std::vector<NumericTest<PositiveInteger>::test_op>
-NumericTest<PositiveInteger>::ops(init_ops,
-                                  init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
+const std::vector<NumericTest<PositiveLong>::test_op>
+NumericTest<PositiveLong>::ops(init_ops,
+                               init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
 
 template<>
-const PositiveInteger::value_type NumericTest<PositiveInteger>::error(0);
+const PositiveLong::value_type NumericTest<PositiveLong>::error(0);
 
 template<>
-const PositiveInteger NumericTest<PositiveInteger>::safedefault(9999);
+const PositiveLong NumericTest<PositiveLong>::safedefault(9999);

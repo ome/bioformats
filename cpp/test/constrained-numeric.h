@@ -39,206 +39,497 @@
 #ifndef TEST_CONSTRAINED_NUMERIC_H
 #define TEST_CONSTRAINED_NUMERIC_H
 
-#include <iostream>
+#include <gtest/gtest.h>
+
+#include <cmath>
+#include <sstream>
+#include <vector>
+
+enum operation
+  {
+    EQUAL,
+    NOT_EQUAL,
+    LESS,
+    LESS_OR_EQUAL,
+    GREATER,
+    GREATER_OR_EQUAL,
+    ADD,
+    ADD_ASSIGN,
+    SUBTRACT,
+    SUBTRACT_ASSIGN,
+    MULTIPLY,
+    MULTIPLY_ASSIGN,
+    DIVIDE,
+    DIVIDE_ASSIGN,
+    MODULO,
+    MODULO_ASSIGN
+  };
+
+template <typename T>
+class NumericTest : public ::testing::Test
+{
+public:
+  struct test_str
+  {
+    std::string v1;
+    typename T::value_type v2;
+    bool v1pass;
+    bool v2pass;
+  };
+
+  struct test_op
+  {
+    typedef T numeric_type;
+    typename T::value_type v1;
+    typename T::value_type v2;
+    typename T::value_type expected;
+    operation op;
+    bool pass;
+    bool except;
+    bool rhs_except;
+  };
+
+  static const std::vector<test_str>  strings;
+  static const std::vector<test_op>   ops;
+  static const typename T::value_type error;
+  static const T                      safedefault;
+};
+
+TYPED_TEST_CASE_P(NumericTest);
+
+TYPED_TEST_P(NumericTest, Stream)
+{
+  for (typename std::vector<typename TestFixture::test_str>::const_iterator i = this->strings.begin();
+       i != this->strings.end();
+       ++i)
+    {
+      if (i->v1pass)
+        ASSERT_NO_THROW(TypeParam(i->v1));
+      else
+        ASSERT_THROW(TypeParam(i->v1), std::invalid_argument);
+
+      if (i->v2pass)
+        ASSERT_NO_THROW(TypeParam(i->v2));
+      else
+        ASSERT_THROW(TypeParam(i->v2), std::invalid_argument);
+
+      if (!i->v1pass || !i->v2pass) // deliberate failure
+        continue;
+
+      TypeParam v1(i->v1);
+      TypeParam v2(i->v2);
+
+      ASSERT_EQ(v1, v2);
+      ASSERT_EQ(v2, v2);
+      ASSERT_EQ(v1, i->v2);
+      ASSERT_EQ(v2, i->v2);
+
+      std::istringstream is(i->v1);
+      TypeParam v3(TestFixture::safedefault);
+      ASSERT_NO_THROW(is >> v3);
+      ASSERT_EQ(i->v2, v3);
+      
+      std::ostringstream os;
+      ASSERT_NO_THROW(os << v1);
+      ASSERT_EQ(i->v1, os.str());
+    }
+}
 
 template<typename T>
-struct constrained_numeric_test
+struct Compare
 {
-  std::string string_val;
-  typename T::value_type pos_val;
-  typename T::value_type less_val;
-  typename T::value_type op_val;
-  typename T::value_type add_result;
-  typename T::value_type sub_result;
-  typename T::value_type mul_result;
-  typename T::value_type div_result;
-  bool exception_expected;
-  bool op_exception_expected;
-  bool exact;
+  virtual bool compare(T lhs, T rhs) = 0;
+  virtual bool compare(T lhs, typename T::value_type rhs) = 0;
+  virtual bool compare(typename T::value_type lhs, T rhs) = 0;
 };
 
 template<typename T>
-void
-verify(const constrained_numeric_test<T>& test)
+struct CompareEqual : public Compare<T>
 {
+  bool compare(T lhs, T rhs) { return lhs == rhs; }
+  bool compare(T lhs, typename T::value_type rhs) { return lhs == rhs; }
+  bool compare(typename T::value_type lhs, T rhs) { return lhs == rhs; }
+};
 
-  try{
-    T str_val(test.string_val);
-    T pos_val(test.pos_val);
-    T less_val(test.less_val);
-    T op_val(test.op_val);
+template<typename T>
+struct CompareNotEqual : public Compare<T>
+{
+  bool compare(T lhs, T rhs) { return lhs != rhs; }
+  bool compare(T lhs, typename T::value_type rhs) { return lhs != rhs; }
+  bool compare(typename T::value_type lhs, T rhs) { return lhs != rhs; }
+};
 
-    if (test.exception_expected)
-      assert(0);
+template<typename T>
+struct CompareLess : public Compare<T>
+{
+  bool compare(T lhs, T rhs) { return lhs < rhs; }
+  bool compare(T lhs, typename T::value_type rhs) { return lhs < rhs; }
+  bool compare(typename T::value_type lhs, T rhs) { return lhs < rhs; }
+};
 
-    try
-      {
-	// Test values
-	assert(str_val == test.pos_val);
-	assert(pos_val == test.pos_val);
-	assert(less_val == test.less_val);
-	assert(op_val == test.op_val);
-	assert(str_val == pos_val);
+template<typename T>
+struct CompareLessOrEqual : public Compare<T>
+{
+  bool compare(T lhs, T rhs) { return lhs <= rhs; }
+  bool compare(T lhs, typename T::value_type rhs) { return lhs <= rhs; }
+  bool compare(typename T::value_type lhs, T rhs) { return lhs <= rhs; }
+};
 
-	// Test operators
+template<typename T>
+struct CompareGreater : public Compare<T>
+{
+  bool compare(T lhs, T rhs) { return lhs > rhs; }
+  bool compare(T lhs, typename T::value_type rhs) { return lhs > rhs; }
+  bool compare(typename T::value_type lhs, T rhs) { return lhs > rhs; }
+};
 
-        // Note that exact equality comparisons should be avoided for
-        // floating point types.
+template<typename T>
+struct CompareGreaterOrEqual : public Compare<T>
+{
+  bool compare(T lhs, T rhs) { return lhs >= rhs; }
+  bool compare(T lhs, typename T::value_type rhs) { return lhs >= rhs; }
+  bool compare(typename T::value_type lhs, T rhs) { return lhs >= rhs; }
+};
 
-        if (pos_val != less_val)
-          {
-            assert(pos_val > less_val);
-            assert(pos_val >= less_val);
-            assert(pos_val > test.less_val);
-            assert(pos_val >= test.less_val);
+template<typename Comparison, typename Test>
+void
+compare_test(const Test&                   fixture,
+             const typename Test::test_op& test)
+{
+  typedef typename Test::test_op::numeric_type NumericType;
+  typedef typename Test::test_op::numeric_type::value_type ValueType;
 
-            assert(less_val < pos_val);
-            assert(less_val <= pos_val);
-            assert(less_val < test.pos_val);
-            assert(less_val <= test.pos_val);
-          }
+  Comparison c;
+  NumericType val(test.v1);
 
-        if (pos_val != less_val)
-          {
-            T plus_val(pos_val);
-            plus_val = pos_val + test.op_val;
-            assert(plus_val > pos_val);
-            T plus_val2(pos_val);
-            plus_val2 += test.op_val;
-            if (test.exact)
-              {
-                assert(plus_val == test.add_result);
-                assert(plus_val2 == test.add_result);
-                assert(plus_val == plus_val2);
-              }
-            T plus_val3(pos_val);
-            plus_val3 = pos_val + op_val;
-            assert(plus_val3 > pos_val);
-            T plus_val4(pos_val);
-            plus_val4 += op_val;
-            if (test.exact)
-              {
-                assert(plus_val3 == test.add_result);
-                assert(plus_val4 == test.add_result);
-                assert(plus_val == plus_val4);
-              }
-
-            T minus_val(pos_val);
-            minus_val = pos_val - test.op_val;
-           assert(minus_val < pos_val);
-           T minus_val2(pos_val);
-           minus_val2 -= test.op_val;
-           if (test.exact)
-              {
-                assert(minus_val == test.sub_result);
-                assert(minus_val2 == test.sub_result);
-                assert(minus_val == minus_val2);
-              }
-
-            T minus_val3(pos_val);
-            minus_val3 = pos_val - op_val;
-            assert(minus_val3 < pos_val);
-            T minus_val4(pos_val);
-            minus_val4 -= op_val;
-            if (test.exact)
-              {
-                assert(minus_val3 == test.sub_result);
-                assert(minus_val4 == test.sub_result);
-                assert(minus_val == minus_val4);
-              }
-          }
-
-	T mul_val(pos_val);
-	mul_val = pos_val * test.op_val;
-	T mul_val2(pos_val);
-	mul_val2 *= test.op_val;
-        if (test.exact)
-          {
-            assert(mul_val == test.mul_result);
-            assert(mul_val2 == test.mul_result);
-            assert(mul_val == mul_val2);
-          }
-
-	T mul_val3(pos_val);
-	mul_val3 = pos_val * op_val;
-	T mul_val4(pos_val);
-	mul_val4 *= op_val;
-        if (test.exact)
-          {
-            assert(mul_val3 == test.mul_result);
-            assert(mul_val4 == test.mul_result);
-            assert(mul_val == mul_val4);
-          }
-
-	T div_val(pos_val);
-	div_val = pos_val / test.op_val;
-	T div_val2(pos_val);
-	div_val2 /= test.op_val;
-        if (test.exact)
-          {
-            assert(div_val == test.div_result);
-            assert(div_val2 == test.div_result);
-            assert(div_val == div_val2);
-          }
-
-	T div_val3(pos_val);
-	div_val3 = pos_val / op_val;
-	T div_val4(pos_val);
-	div_val4 /= op_val;
-        if (test.exact)
-          {
-            assert(div_val3 == test.div_result);
-            assert(div_val4 == test.div_result);
-            assert(div_val == div_val4);
-          }
-
-        if (test.op_exception_expected)
-          assert(0);
-      }
-    catch(const std::invalid_argument& e)
-      {
-      if (test.op_exception_expected)
-	std::cout << "Caught expected exception (1): " << e.what() << std::endl;
-      else
-	assert(0);
-      }
-    catch(...)
-      {
-	std::cout << "Caught unexpected exception (1)" << std::endl;
-	assert(0);
-      }
-
-  }
-  catch (const std::invalid_argument& e)
+  if (test.pass)
     {
-      if (test.exception_expected)
-	std::cout << "Caught expected exception (2): " << e.what() << std::endl;
-      else
-	assert(0);
+      ASSERT_TRUE(c.compare(val, NumericType(test.v2)));
+      ASSERT_TRUE(c.compare(val, test.v2));
     }
-
-  try
+  else
     {
-      T pos_val(test.pos_val);
-      T less_val(test.less_val);
-
-      // Test serialisation (in)
-      std::istringstream is(test.string_val);
-      T istr_val(less_val);
-      is >> istr_val;
-      assert(pos_val == istr_val);
-
-      // Test serialisation (out)
-      std::ostringstream os;
-      os << pos_val;
-      assert(os.str() == test.string_val);
+      ASSERT_FALSE(c.compare(val, NumericType(test.v2)));
+      ASSERT_FALSE(c.compare(val, test.v2));
     }
-  catch (const std::invalid_argument& e)
-    {
-      std::cout << "Caught unexpected exception (2): " << e.what() << std::endl;
-    }
-
 }
+
+template<typename T>
+struct Operation
+{
+  virtual T eval(T lhs,                      T rhs) = 0;
+  virtual T eval(T lhs, typename T::value_type rhs) = 0;
+};
+
+template<typename T>
+struct OperationAdd : public Operation<T>
+{
+  T eval(T lhs,                      T rhs) { return lhs + rhs; }
+  T eval(T lhs, typename T::value_type rhs) { return lhs + rhs; }
+};
+
+template<typename T>
+struct OperationAddAssign : public Operation<T>
+{
+  T eval(T lhs,                      T rhs) { return lhs += rhs; }
+  T eval(T lhs, typename T::value_type rhs) { return lhs += rhs; }
+};
+
+template<typename T>
+struct OperationSubtract : public Operation<T>
+{
+  T eval(T lhs,                      T rhs) { return lhs - rhs; }
+  T eval(T lhs, typename T::value_type rhs) { return lhs - rhs; }
+};
+
+template<typename T>
+struct OperationSubtractAssign : public Operation<T>
+{
+  T eval(T lhs,                      T rhs) { return lhs -= rhs; }
+  T eval(T lhs, typename T::value_type rhs) { return lhs -= rhs; }
+};
+
+template<typename T>
+struct OperationMultiply : public Operation<T>
+{
+  T eval(T lhs,                      T rhs) { return lhs * rhs; }
+  T eval(T lhs, typename T::value_type rhs) { return lhs * rhs; }
+};
+
+template<typename T>
+struct OperationMultiplyAssign : public Operation<T>
+{
+  T eval(T lhs,                      T rhs) { return lhs *= rhs; }
+  T eval(T lhs, typename T::value_type rhs) { return lhs *= rhs; }
+};
+
+template<typename T>
+struct OperationDivide : public Operation<T>
+{
+  T eval(T lhs,                      T rhs) { return lhs / rhs; }
+  T eval(T lhs, typename T::value_type rhs) { return lhs / rhs; }
+};
+
+template<typename T>
+struct OperationDivideAssign : public Operation<T>
+{
+  T eval(T lhs, T rhs) { return lhs /= rhs; }
+  T eval(T lhs, typename T::value_type rhs) { return lhs /= rhs; }
+};
+
+template<typename T>
+struct OperationModulo : public Operation<T>
+{
+  T eval(T lhs,                      T rhs) { return lhs % rhs; }
+  T eval(T lhs, typename T::value_type rhs) { return lhs % rhs; }
+};
+
+template<typename T>
+struct OperationModuloAssign : public Operation<T>
+{
+  T eval(T lhs,                      T rhs) { return lhs %= rhs; }
+  T eval(T lhs, typename T::value_type rhs) { return lhs %= rhs; }
+};
+
+template<typename Operation, typename Test>
+void
+operation_test(const Test&                   fixture,
+               const typename Test::test_op& test)
+{
+  typedef typename Test::test_op::numeric_type NumericType;
+  typedef typename Test::test_op::numeric_type::value_type ValueType;
+
+  Operation op;
+  NumericType val(test.v1);
+
+  if (test.except)
+    {
+      if(!test.rhs_except)
+          ASSERT_THROW(op.eval(NumericType(test.v1), NumericType(test.v2)), std::invalid_argument);
+      ASSERT_THROW(op.eval(NumericType(test.v1), test.v2), std::invalid_argument);
+    }
+  else
+    {
+      if(!test.rhs_except)
+        ASSERT_NO_THROW(op.eval(NumericType(test.v1), NumericType(test.v2)));
+      ASSERT_NO_THROW(op.eval(NumericType(test.v1), test.v2));
+      if (test.pass)
+        {
+          if(!test.rhs_except)
+            {
+              if (Test::error > 0)
+                {
+                  ValueType val = op.eval(NumericType(test.v1), NumericType(test.v2));
+                  ASSERT_LT(std::abs(val - test.expected), Test::error);
+                }
+              else
+                {
+                  ASSERT_EQ(op.eval(NumericType(test.v1), NumericType(test.v2)), test.expected);
+                  ASSERT_EQ(op.eval(NumericType(test.v1), NumericType(test.v2)), NumericType(test.expected));
+                }
+            }
+          if (Test::error > 0)
+            {
+              ValueType val = op.eval(NumericType(test.v1), test.v2);
+              ASSERT_LT(std::abs(val - test.expected), Test::error);
+            }
+          else
+            {
+              ASSERT_EQ(op.eval(NumericType(test.v1), test.v2), test.expected);
+              ASSERT_EQ(op.eval(NumericType(test.v1), test.v2), NumericType(test.expected));
+            }
+        }
+      else
+        {
+          if(!test.rhs_except)
+            {
+              if (Test::error > 0)
+                {
+                  ValueType val = op.eval(NumericType(test.v1), NumericType(test.v2));
+                  ASSERT_GE(std::abs(val - test.expected), Test::error);
+                }
+              else
+                {
+                  ASSERT_NE(op.eval(NumericType(test.v1), NumericType(test.v2)), test.expected);
+                  ASSERT_NE(op.eval(NumericType(test.v1), NumericType(test.v2)), NumericType(test.expected));
+                }
+            }
+          if (Test::error > 0)
+            {
+              ValueType val = op.eval(NumericType(test.v1), test.v2);
+              ASSERT_GE(std::abs(val - test.expected), Test::error);
+            }
+          else
+            {
+              ASSERT_NE(op.eval(NumericType(test.v1), test.v2), test.expected);
+              ASSERT_NE(op.eval(NumericType(test.v1), test.v2), NumericType(test.expected));
+            }
+        }
+    }
+}
+
+TYPED_TEST_P(NumericTest, OperatorEqual)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == EQUAL)
+      compare_test<CompareEqual<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorNotEqual)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == NOT_EQUAL)
+      compare_test<CompareNotEqual<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorLess)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == LESS)
+      compare_test<CompareLess<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorLessOrEqual)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == LESS_OR_EQUAL)
+      compare_test<CompareLessOrEqual<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorGreater)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == GREATER)
+      compare_test<CompareGreater<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorGreaterOrEqual)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == GREATER_OR_EQUAL)
+      compare_test<CompareGreaterOrEqual<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorAdd)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == ADD)
+      operation_test<OperationAdd<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorAddAssign)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == ADD_ASSIGN)
+      operation_test<OperationAddAssign<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorSubtract)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == SUBTRACT)
+      operation_test<OperationSubtract<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorSubtractAssign)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == SUBTRACT_ASSIGN)
+      operation_test<OperationSubtractAssign<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorMultiply)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == MULTIPLY)
+      operation_test<OperationMultiply<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorMultiplyAssign)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == MULTIPLY_ASSIGN)
+      operation_test<OperationMultiplyAssign<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorDivide)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == DIVIDE)
+      operation_test<OperationDivide<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorDivideAssign)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == DIVIDE_ASSIGN)
+      operation_test<OperationDivideAssign<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorModulo)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == MODULO)
+      operation_test<OperationModulo<TypeParam> >(*this, *i);
+}
+
+TYPED_TEST_P(NumericTest, OperatorModuloAssign)
+{
+  for (typename std::vector<typename TestFixture::test_op>::const_iterator i = this->ops.begin();
+       i != this->ops.end();
+       ++i)
+    if (i->op == MODULO_ASSIGN)
+      operation_test<OperationModuloAssign<TypeParam> >(*this, *i);
+}
+
+REGISTER_TYPED_TEST_CASE_P(NumericTest,
+                           Stream,
+                           OperatorEqual,
+                           OperatorNotEqual,
+                           OperatorLess,
+                           OperatorLessOrEqual,
+                           OperatorGreater,
+                           OperatorGreaterOrEqual,
+                           OperatorAdd,
+                           OperatorAddAssign,
+                           OperatorSubtract,
+                           OperatorSubtractAssign,
+                           OperatorMultiply,
+                           OperatorMultiplyAssign,
+                           OperatorDivide,
+                           OperatorDivideAssign,
+                           OperatorModulo,
+                           OperatorModuloAssign);
 
 #endif // TEST_CONSTRAINED_NUMERIC_H
 

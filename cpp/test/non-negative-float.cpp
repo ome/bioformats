@@ -1,42 +1,42 @@
-#include <ome/xml/model/primitives/PositiveFloat.h>
+#include <ome/xml/model/primitives/NonNegativeFloat.h>
 
 #include "constrained-numeric.h"
 
-using ome::xml::model::primitives::PositiveFloat;
+using ome::xml::model::primitives::NonNegativeFloat;
 
 // Floating point types don't implement modulo, so make it a no-op.
 template<>
-struct OperationModulo<PositiveFloat> : public Operation<PositiveFloat>
+struct OperationModulo<NonNegativeFloat> : public Operation<NonNegativeFloat>
 {
-  PositiveFloat eval(PositiveFloat lhs,             PositiveFloat rhs) { return lhs; }
-  PositiveFloat eval(PositiveFloat lhs, PositiveFloat::value_type rhs) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat rhs) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type rhs) { return lhs; }
 };
 
 template<>
-struct OperationModuloAssign<PositiveFloat> : public Operation<PositiveFloat>
+struct OperationModuloAssign<NonNegativeFloat> : public Operation<NonNegativeFloat>
 {
-  PositiveFloat eval(PositiveFloat lhs,             PositiveFloat rhs) { return lhs; }
-  PositiveFloat eval(PositiveFloat lhs, PositiveFloat::value_type rhs) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat rhs) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type rhs) { return lhs; }
 };
 
 
-INSTANTIATE_TYPED_TEST_CASE_P(PositiveFloat, NumericTest, PositiveFloat);
+INSTANTIATE_TYPED_TEST_CASE_P(NonNegativeFloat, NumericTest, NonNegativeFloat);
 
 namespace
 {
 
-  NumericTest<PositiveFloat>::test_str init_strings[] =
-    { // str        pos    strpass pospass
+  NumericTest<NonNegativeFloat>::test_str init_strings[] =
+    { // str     pos     strpass pospass
       {"23",       23.0, true,   true},
-      {"-42.12",     -42.12, false,  false},
-      {"1.0",       -53.0, true,   false},
-      {"82.232",       82.232, true,   true},
-      {"0",        0,  false,  false},
-      {"1.0",        0.0,  true,   false},
-      {"invalid",    1.0,  false,  true},
+      {"-42.12", -42.12, false,  false},
+      {"1.0",     -53.0, true,   false},
+      {"82.232", 82.232, true,   true},
+      {"0",           0, true,   true},
+      {"1.0",      -0.1, true,   false},
+      {"invalid",   1.0, false,  true},
     };
 
-  NumericTest<PositiveFloat>::test_op init_ops[] =
+  NumericTest<NonNegativeFloat>::test_op init_ops[] =
     { // v1   v2        expected        operation         pass   except rhsexcept
       {23.0,      23.0,            1.0, EQUAL,            true,  false, false},
       {23.0,     432.0,            0.0, EQUAL,            false, false, false},
@@ -71,13 +71,13 @@ namespace
       {432.0,    763.0, 432.0 -  763.0, SUBTRACT,         false, true,  false},
       {432.0,    285.0,            1.0, SUBTRACT,         false, false, false},
       {432.0,    431.0,            1.0, SUBTRACT,         true,  false, false},
-      {432.0,    432.0,            0.0, SUBTRACT,         false, true,  false},
+      {432.0,    432.0,            0.0, SUBTRACT,         true,  false, false},
       {823.0,     93.0, 823.0 -   93.0, SUBTRACT_ASSIGN,  true,  false, false},
       {823.0,   -932.0, 823.0 +  932.0, SUBTRACT_ASSIGN,  true,  false, true},
       {823.0,   1393.0, 823.0 - 1393.0, SUBTRACT_ASSIGN,  false, true,  false},
       {823.0,     93.0,            1.0, SUBTRACT_ASSIGN,  false, false, false},
       {823.0,    822.0,            1.0, SUBTRACT_ASSIGN,  true,  false, false},
-      {823.0,    823.0,            0.0, SUBTRACT_ASSIGN,  false, true,  false},
+      {823.0,    823.0,            0.0, SUBTRACT_ASSIGN,  true,  false, false},
 
       {40.0,      12.0,  40.0 *   12.0, MULTIPLY,         true,  false, false},
       {23.0,      -8.0,  23.0 *   -8.0, MULTIPLY,         false, true,  true},
@@ -89,7 +89,7 @@ namespace
       {900.0,      5.0,  900.0 /   5.0, DIVIDE,           true,  false, false},
       {900.0,     -5.0,  900.0 /  -5.0, DIVIDE,           false, true,  true},
       {900.0,    900.0,  900.0 / 900.0, DIVIDE,           true,  false, false},
-      {900.0,    901.0,  900.1 / 901.0, DIVIDE,           true,  false, false},
+      {900.0,    901.0,  900.1 / 901.0, DIVIDE,           true,  false,  false},
       {900.0,    900.0,            2.0, DIVIDE,           false, false, false},
       {480.0,     20.0,  480.0 /  20.0, DIVIDE_ASSIGN,    true,  false, false},
       {480.0,    -20.0,  480.0 / -20.0, DIVIDE_ASSIGN,    false, true,  true},
@@ -102,17 +102,17 @@ namespace
 }
 
 template<>
-const std::vector<NumericTest<PositiveFloat>::test_str>
-NumericTest<PositiveFloat>::strings(init_strings,
-                                    init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
+const std::vector<NumericTest<NonNegativeFloat>::test_str>
+NumericTest<NonNegativeFloat>::strings(init_strings,
+                                       init_strings + (sizeof(init_strings) / sizeof(init_strings[0])));
 
 template<>
-const std::vector<NumericTest<PositiveFloat>::test_op>
-NumericTest<PositiveFloat>::ops(init_ops,
-                                init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
+const std::vector<NumericTest<NonNegativeFloat>::test_op>
+NumericTest<NonNegativeFloat>::ops(init_ops,
+                                   init_ops + (sizeof(init_ops) / sizeof(init_ops[0])));
 
 template<>
-const PositiveFloat::value_type NumericTest<PositiveFloat>::error(0.0005);
+const NonNegativeFloat::value_type NumericTest<NonNegativeFloat>::error(0.0005);
 
 template<>
-const PositiveFloat NumericTest<PositiveFloat>::safedefault(9999.0);
+const NonNegativeFloat NumericTest<NonNegativeFloat>::safedefault(9999.0);
