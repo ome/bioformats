@@ -49,9 +49,9 @@ public class Modulo {
   // -- Fields --
 
   public String parentDimension;
-  public int start = 0;
-  public int step = 1;
-  public int end = 0;
+  public double start = 0;
+  public double step = 1;
+  public double end = 0;
   public String parentType;
   public String type;
   public String typeDescription;
@@ -67,7 +67,7 @@ public class Modulo {
   // -- Methods --
 
   public int length() {
-    return (end - start + 1) / step;
+    return (int) ((end - start + 1) / step);
   }
 
   public String toXMLAnnotation() {
