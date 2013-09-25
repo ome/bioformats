@@ -223,11 +223,12 @@ public class SDTReader extends FormatReader {
       m.moduloT.parentType = FormatTools.SPECTRA;
     }
     else {
-      m.moduloT.parentType = FormatTools.LIFETIME;
-      m.moduloT.type = FormatTools.SPECTRA;
+      m.moduloT.type = FormatTools.LIFETIME;
+      m.moduloT.parentType = FormatTools.SPECTRA;
+      m.moduloT.typeDescription = "TCSPC";
       m.moduloT.start = 0;
-      m.moduloT.end = timeBins - 1;
-      m.moduloT.step = 1;
+      m.moduloT.end = m.imageCount - 1;
+      m.moduloT.step = timeBins;
     }
 
     MetadataStore store = makeFilterMetadata();
