@@ -199,7 +199,9 @@ public class SDTReader extends FormatReader {
     channels = info.channels;
     addGlobalMeta("time bins", timeBins);
     addGlobalMeta("channels", channels);
-    addGlobalMeta("time base", 1e9 * info.tacR / info.tacG);
+
+    double timeBase = 1e9 * info.tacR / info.tacG;
+    addGlobalMeta("time base", timeBase);
 
     LOGGER.info("Populating metadata");
 
@@ -227,8 +229,9 @@ public class SDTReader extends FormatReader {
       m.moduloT.parentType = FormatTools.SPECTRA;
       m.moduloT.typeDescription = "TCSPC";
       m.moduloT.start = 0;
-      m.moduloT.end = m.imageCount - 1;
-      m.moduloT.step = timeBins;
+      m.moduloT.end = timeBase * (m.imageCount - 1);
+      m.moduloT.step = timeBins * timeBase;
+      m.moduloT.unit = "ps";
     }
 
     MetadataStore store = makeFilterMetadata();
