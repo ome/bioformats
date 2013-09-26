@@ -18,10 +18,8 @@ design <http://en.wikipedia.org/wiki/Component-based_software_engineering>`_.
 It was decided, at this point, to forgo the usage of potentially more
 powerful but also more complicated solutions such as:
 
--  Spring
-   (`http://www.springsource.org/ <http://www.springsource.org/>`_)
--  Guice
-   (`http://code.google.com/p/google-guice/ <http://code.google.com/p/google-guice/>`_)
+-  Spring (http://spring.io)
+-  Guice (http://code.google.com/p/google-guice/)
 -  ...
 
 The Wikipedia page for `dependency
