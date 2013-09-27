@@ -33,6 +33,4 @@ add_subdirectory(src/ome/xerces)
 add_subdirectory(src/ome/xml)
 
 enable_testing()
-add_test(headers test/headers)
-
 add_subdirectory(test)
