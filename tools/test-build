@@ -32,6 +32,7 @@ cpp()
         GTEST_ROOT=$(pwd)/gtest cmake ..
         make
         make test
+        make DESTDIR=../install install
     )
 }
 
