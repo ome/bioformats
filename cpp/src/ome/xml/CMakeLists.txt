@@ -100,3 +100,7 @@ set(OME_XML_STATIC_HEADERS
 add_library(ome-xml SHARED ${OME_XML_GENERATED_SOURCES} ${OME_XML_STATIC_SOURCES})
 target_link_libraries(ome-xml ome-xerces)
 target_link_libraries(ome-xml ${Boost_DATE_TIME_LIBRARY_RELEASE})
+set_target_properties(ome-xml PROPERTIES VERSION ${OME_VERSION_SHORT})
+
+install(TARGETS ome-xml LIBRARY
+        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})

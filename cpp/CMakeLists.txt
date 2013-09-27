@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 2.8)
 
+
 project(bioformats)
+include(cmake/Version.cmake)
+
+if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+  message(FATAL_ERROR "In-tree builds are not supported; please run cmake from a separate build directory.")
+endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
 enable_language(CXX)
 
@@ -25,10 +31,6 @@ set(OME_TOPLEVEL_INCLUDES ${PROJECT_SOURCE_DIR}/src ${GEN_DIR})
 add_subdirectory(src/ome/compat)
 add_subdirectory(src/ome/xerces)
 add_subdirectory(src/ome/xml)
-
-#file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/test)
-
-
 
 set(test_headers_SOURCES "")
 file(MAKE_DIRECTORY ${GEN_DIR}/test/headers)
