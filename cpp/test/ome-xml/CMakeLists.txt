@@ -16,6 +16,9 @@ add_executable(timestamp timestamp.cpp ${TEST_MAIN})
 target_link_libraries(timestamp ome-xml)
 target_link_libraries(timestamp ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
+headers_test(ome-xml "${OME_XML_HEADERS}")
+target_link_libraries(headers ome-xml)
+add_test(headers headers)
 
 add_test(enum enum)
 add_test(color color)

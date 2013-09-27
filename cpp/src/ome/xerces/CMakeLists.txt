@@ -22,3 +22,11 @@ install(FILES ${ome_xerces_headers}
         DESTINATION ${ome_xerces_includedir})
 install(TARGETS ome-xerces LIBRARY
         DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+
+set(LIBRARY_PREFIX OME_XERCES)
+set(LIBRARY_NAME ome-xerces)
+set(LIBRARY_HEADER ome/xerces/platform.h)
+configure_file(${PROJECT_SOURCE_DIR}/cmake/TemplateConfig.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake
+        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
