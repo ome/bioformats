@@ -63,6 +63,9 @@ namespace ome
          */
         struct ConstrainedNumericError
         {
+          // ConstrainedNumericError() {}
+          // virtual ~ConstrainedNumericError() {}
+
           template<typename T>
           inline void
           operator() (const T&           value,

@@ -136,15 +136,7 @@ TYPED_TEST_P(NumericTest, Stream)
 }
 
 template<typename T>
-struct Compare
-{
-  virtual bool compare(T lhs, T rhs) = 0;
-  virtual bool compare(T lhs, typename T::value_type rhs) = 0;
-  virtual bool compare(typename T::value_type lhs, T rhs) = 0;
-};
-
-template<typename T>
-struct CompareEqual : public Compare<T>
+struct CompareEqual
 {
   bool compare(T lhs, T rhs) { return lhs == rhs; }
   bool compare(T lhs, typename T::value_type rhs) { return lhs == rhs; }
@@ -152,7 +144,7 @@ struct CompareEqual : public Compare<T>
 };
 
 template<typename T>
-struct CompareNotEqual : public Compare<T>
+struct CompareNotEqual
 {
   bool compare(T lhs, T rhs) { return lhs != rhs; }
   bool compare(T lhs, typename T::value_type rhs) { return lhs != rhs; }
@@ -160,7 +152,7 @@ struct CompareNotEqual : public Compare<T>
 };
 
 template<typename T>
-struct CompareLess : public Compare<T>
+struct CompareLess
 {
   bool compare(T lhs, T rhs) { return lhs < rhs; }
   bool compare(T lhs, typename T::value_type rhs) { return lhs < rhs; }
@@ -168,7 +160,7 @@ struct CompareLess : public Compare<T>
 };
 
 template<typename T>
-struct CompareLessOrEqual : public Compare<T>
+struct CompareLessOrEqual
 {
   bool compare(T lhs, T rhs) { return lhs <= rhs; }
   bool compare(T lhs, typename T::value_type rhs) { return lhs <= rhs; }
@@ -176,7 +168,7 @@ struct CompareLessOrEqual : public Compare<T>
 };
 
 template<typename T>
-struct CompareGreater : public Compare<T>
+struct CompareGreater
 {
   bool compare(T lhs, T rhs) { return lhs > rhs; }
   bool compare(T lhs, typename T::value_type rhs) { return lhs > rhs; }
@@ -184,7 +176,7 @@ struct CompareGreater : public Compare<T>
 };
 
 template<typename T>
-struct CompareGreaterOrEqual : public Compare<T>
+struct CompareGreaterOrEqual
 {
   bool compare(T lhs, T rhs) { return lhs >= rhs; }
   bool compare(T lhs, typename T::value_type rhs) { return lhs >= rhs; }
@@ -215,77 +207,70 @@ compare_test(const Test&                   fixture,
 }
 
 template<typename T>
-struct Operation
-{
-  virtual T eval(T lhs,                      T rhs) = 0;
-  virtual T eval(T lhs, typename T::value_type rhs) = 0;
-};
-
-template<typename T>
-struct OperationAdd : public Operation<T>
+struct OperationAdd
 {
   T eval(T lhs,                      T rhs) { return lhs + rhs; }
   T eval(T lhs, typename T::value_type rhs) { return lhs + rhs; }
 };
 
 template<typename T>
-struct OperationAddAssign : public Operation<T>
+struct OperationAddAssign
 {
   T eval(T lhs,                      T rhs) { return lhs += rhs; }
   T eval(T lhs, typename T::value_type rhs) { return lhs += rhs; }
 };
 
 template<typename T>
-struct OperationSubtract : public Operation<T>
+struct OperationSubtract
 {
   T eval(T lhs,                      T rhs) { return lhs - rhs; }
   T eval(T lhs, typename T::value_type rhs) { return lhs - rhs; }
 };
 
 template<typename T>
-struct OperationSubtractAssign : public Operation<T>
+struct OperationSubtractAssign
 {
   T eval(T lhs,                      T rhs) { return lhs -= rhs; }
   T eval(T lhs, typename T::value_type rhs) { return lhs -= rhs; }
 };
 
 template<typename T>
-struct OperationMultiply : public Operation<T>
+struct OperationMultiply
 {
   T eval(T lhs,                      T rhs) { return lhs * rhs; }
   T eval(T lhs, typename T::value_type rhs) { return lhs * rhs; }
 };
 
 template<typename T>
-struct OperationMultiplyAssign : public Operation<T>
+struct OperationMultiplyAssign
 {
   T eval(T lhs,                      T rhs) { return lhs *= rhs; }
   T eval(T lhs, typename T::value_type rhs) { return lhs *= rhs; }
 };
 
 template<typename T>
-struct OperationDivide : public Operation<T>
+struct OperationDivide
 {
   T eval(T lhs,                      T rhs) { return lhs / rhs; }
   T eval(T lhs, typename T::value_type rhs) { return lhs / rhs; }
 };
 
 template<typename T>
-struct OperationDivideAssign : public Operation<T>
+struct OperationDivideAssign
 {
   T eval(T lhs, T rhs) { return lhs /= rhs; }
   T eval(T lhs, typename T::value_type rhs) { return lhs /= rhs; }
 };
 
 template<typename T>
-struct OperationModulo : public Operation<T>
+struct OperationModulo
 {
   T eval(T lhs,                      T rhs) { return lhs % rhs; }
   T eval(T lhs, typename T::value_type rhs) { return lhs % rhs; }
 };
 
 template<typename T>
-struct OperationModuloAssign : public Operation<T>
+struct OperationModuloAssign
 {
   T eval(T lhs,                      T rhs) { return lhs %= rhs; }
   T eval(T lhs, typename T::value_type rhs) { return lhs %= rhs; }

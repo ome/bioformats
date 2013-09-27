@@ -6,14 +6,14 @@ using ome::xml::model::primitives::PercentFraction;
 
 // Floating point types don't implement modulo, so make it a no-op.
 template<>
-struct OperationModulo<PercentFraction> : public Operation<PercentFraction>
+struct OperationModulo<PercentFraction>
 {
   PercentFraction eval(PercentFraction lhs,             PercentFraction rhs) { return lhs; }
   PercentFraction eval(PercentFraction lhs, PercentFraction::value_type rhs) { return lhs; }
 };
 
 template<>
-struct OperationModuloAssign<PercentFraction> : public Operation<PercentFraction>
+struct OperationModuloAssign<PercentFraction>
 {
   PercentFraction eval(PercentFraction lhs,             PercentFraction rhs) { return lhs; }
   PercentFraction eval(PercentFraction lhs, PercentFraction::value_type rhs) { return lhs; }
