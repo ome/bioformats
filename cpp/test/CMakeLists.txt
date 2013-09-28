@@ -10,7 +10,6 @@ function(headers_test component path)
          "${dir}/${path}/*.h")
 
   foreach(header ${headers})
-message("HEADER: ${header}")
     string(REPLACE "/" "_" genheader ${header})
     string(REPLACE "${PROJECT_SOURCE_DIR}/src/" "" include ${header})
     string(REPLACE "${headerdir}/" "" include ${include})
