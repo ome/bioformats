@@ -1,9 +1,8 @@
 set(test_main_sources main.cpp)
 
-add_library(testmain SHARED ${test_main_sources})
-target_link_libraries(testmain ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+add_library(testmain STATIC ${test_main_sources})
 
-set(TEST_LIBS testmain)
+set(TEST_LIBS testmain ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 function(headers_test component path)
   set(headerdir ${PROJECT_BINARY_DIR}/test/${component}/headers)
