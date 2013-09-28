@@ -1,9 +1,14 @@
-set(TEST_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+set(test_main_sources main.cpp)
+
+add_library(testmain SHARED ${test_main_sources})
+target_link_libraries(testmain ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+set(TEST_LIBS testmain)
 
 function(headers_test component path)
-  set(headerdir ${GEN_DIR}/test/${component}/headers)
+  set(headerdir ${PROJECT_BINARY_DIR}/test/${component}/headers)
   file(MAKE_DIRECTORY ${headerdir})
-  set(dirs ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${PROJECT_BINARY_DIR}/gen)
+  set(dirs ${PROJECT_SOURCE_DIR}/lib ${PROJECT_BINARY_DIR}/lib)
   foreach(dir ${dirs})
     file(GLOB_RECURSE headers RELATIVE
          "${dir}"
@@ -28,8 +33,8 @@ TEST(Header, ${safeheader})
   endforeach(header)
   endforeach(dir)
 
-  add_executable(${component}-headers ${TEST_MAIN} ${test_headers_SOURCES})
-  target_link_libraries(${component}-headers ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+  add_executable(${component}-headers ${test_headers_SOURCES})
+  target_link_libraries(${component}-headers ${TEST_LIBS})
 endfunction(headers_test)
 
 add_subdirectory(ome-compat)

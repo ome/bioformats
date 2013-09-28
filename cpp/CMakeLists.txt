@@ -26,11 +26,11 @@ include(cmake/XsdFu.cmake)
 find_package(Threads REQUIRED)
 find_package(GTest REQUIRED)
 
-set(OME_TOPLEVEL_INCLUDES ${PROJECT_SOURCE_DIR}/src ${GEN_DIR})
+set(OME_TOPLEVEL_INCLUDES ${PROJECT_SOURCE_DIR}/lib ${PROJECT_BINARY_DIR}/lib)
 
-add_subdirectory(src/ome/compat)
-add_subdirectory(src/ome/xerces)
-add_subdirectory(src/ome/xml)
+add_subdirectory(lib/ome/compat)
+add_subdirectory(lib/ome/xerces)
+add_subdirectory(lib/ome/xml)
 
 enable_testing()
 add_subdirectory(test)

@@ -7,4 +7,4 @@ add_test(ome-xerces/xerces xerces "${PROJECT_SOURCE_DIR}/../components/specifica
 
 headers_test(ome-xerces ome/xerces)
 target_link_libraries(ome-xerces-headers ome-xerces)
-add_test(ome-xerces.headers ome-xerces-headers)
+add_test(ome-xerces/headers ome-xerces-headers)

@@ -8,5 +8,5 @@ set(MODEL_FILES
   ${MODEL_PATH}/ROI.xsd
   ${MODEL_PATH}/SA.xsd
   ${MODEL_PATH}/SPW.xsd)
-set(GEN_DIR ${PROJECT_BINARY_DIR}/gen)
+set(GEN_DIR ${PROJECT_BINARY_DIR}/lib)
 set(XSD_FU_ARGS -p ome.xml.model -l C++ -o ${GEN_DIR} ${MODEL_FILES})
