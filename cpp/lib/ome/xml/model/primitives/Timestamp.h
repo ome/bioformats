@@ -39,10 +39,9 @@
 #ifndef OME_XML_MODEL_PRIMITIVES_TIMESTAMP_H
 #define OME_XML_MODEL_PRIMITIVES_TIMESTAMP_H
 
-#include <limits>
 #include <string>
 #include <sstream>
-#include <iostream>
+#include <stdexcept>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -105,17 +104,83 @@ namespace ome
         operator>> (std::basic_istream<charT,traits>& is,
                     Timestamp& timestamp)
         {
-          std::locale iso8601_loc(std::locale::classic(),
-                                  new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S%F%q"));
-
-          is.exceptions(std::ios_base::failbit);
-          is.imbue(iso8601_loc);
-
           Timestamp::value_type value;
-          is >> value;
-          if (is)
-            timestamp = Timestamp(value);
 
+          // Save locale.
+          std::locale savedlocale = is.getloc();
+
+          try
+            {
+              boost::posix_time::time_input_facet *input_facet =
+                new boost::posix_time::time_input_facet();
+              input_facet->set_iso_extended_format();
+              std::locale iso8601_loc(std::locale::classic(), input_facet);
+
+              is.imbue(iso8601_loc);
+              is >> value;
+
+              if (is)
+                {
+                  // Check for zone offset
+                  char tztype = is.peek();
+                  if(tztype != EOF)
+                    {
+                      if (tztype == 'Z')
+                        {
+                          is.ignore(); // Drop above from istream
+                          // If Z, we're already using UTC, so don't apply numeric offsets
+                        }
+                      else if (tztype == '-' || tztype == '+')
+                        {
+                          is.ignore(); // Drop above from istream
+                          if (tztype == '-' || tztype == '+' && is.rdbuf()->in_avail() >= 4) // Need 4 numeric chars
+                            {
+                              // Check that the next 4 characters are only numeric
+                              char inchars[4];
+                              is.read(&inchars[0], 4);
+                              for (int i=0; i < 4; ++i)
+                                if (inchars[i] < '0' || inchars[i] > '9')
+                                  is.setstate(std::ios::failbit);
+
+                              if (is)
+                                {
+                                  // Get offset value
+                                  int offset;
+                                  std::istringstream valueis(inchars);
+                                  valueis >> offset;
+                                  if (valueis)
+                                    {
+                                      if (tztype == '+')
+                                        offset = -offset;
+                                      // Offset in                       hours,      minutes,    seconds
+                                      boost::posix_time::time_duration d(offset/100, offset%100, 0);
+                                      // Apply offset
+                                      value += d;
+                                    }
+                                  else
+                                    is.setstate(std::ios::failbit);
+                                }
+                            }
+                          else
+                            {
+                              is.setstate(std::ios::failbit);
+                            }
+                        }
+                    }
+                }
+
+              if (is)
+                timestamp = Timestamp(value);
+              else
+                throw std::runtime_error("Failed to parse timestamp");
+            }
+          catch (const std::exception& e)
+            {
+              is.imbue(savedlocale);
+              throw;
+            }
+
+          is.imbue(savedlocale);
           return is;
         }
 

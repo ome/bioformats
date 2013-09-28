@@ -53,38 +53,12 @@ namespace ome
         }
 
         Timestamp::Timestamp(const std::string& value):
-          value()//boost::posix_time::from_iso_string(value))
+          value()
         {
-          boost::posix_time::time_input_facet *input_facet =
-            new boost::posix_time::time_input_facet();
-          input_facet->set_iso_extended_format();
-          std::locale iso8601_loc(std::locale::classic(), input_facet);
-
           std::istringstream is(value);
-          //	    is.exceptions(std::ios_base::failbit);
-          is.imbue(iso8601_loc);
-          is >> this->value;
-
-          char tztype;
-          is.get(tztype);
-          if(is)
-            {
-              std::cout << "TZTYPE=" << tztype << std::endl;
-
-              if (tztype == 'Z' || tztype == '-' || tztype == '+')
-                is.ignore(); // Drop above from istream
-
-              if (tztype == '-' || tztype == '+')
-                {
-                  int offset;
-                  is >> offset;
-                  std::cout << "OFFSET=" << offset << std::endl;
-                }
-            }
-
-          std::string tmp;
-          is >> tmp;
-          std::cout << "REM: "<< tmp << std::endl;
+          is >> *this;
+          if (is.rdbuf()->in_avail() > 0) // Incomplete parsing of the string
+            throw std::runtime_error("Failed to parse timestamp: incomplete parsing of string");
         }
 
         Timestamp::Timestamp(value_type value):
