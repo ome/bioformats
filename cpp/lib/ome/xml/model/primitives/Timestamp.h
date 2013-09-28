@@ -133,7 +133,7 @@ namespace ome
                       else if (tztype == '-' || tztype == '+')
                         {
                           is.ignore(); // Drop above from istream
-                          if (tztype == '-' || tztype == '+' && is.rdbuf()->in_avail() >= 4) // Need 4 numeric chars
+                          if (is.rdbuf()->in_avail() >= 4) // Need 4 numeric chars
                             {
                               // Check that the next 4 characters are only numeric
                               char inchars[4];
