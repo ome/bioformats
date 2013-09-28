@@ -1,0 +1,31 @@
+Model issues:
+
+TimeIncrement
+- Units: seconds
+- Type: float
+Subject to floating point error (100ms?)
+Type is fixed
+
+Color
+- Type: signed int32
+Logically unsigned
+Poor external representation
+Not easily editable
+Not easily handled internally
+
+Timestamp
+- Unit: Date
+- Three unused conversions (Data, Calendar, SQL)
+- Doesn't handle timezones
+- Doesn't round trip without loss
+- No sub-second precision
+
+
+Windows
+-------
+
+MSVC
+cmake
+python (+ genshi)
+boost
+qt
