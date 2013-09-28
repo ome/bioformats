@@ -389,7 +389,13 @@ public class APNGReader extends FormatReader {
     int rowLen = width * getRGBChannelCount() * bpp;
 
     if (getBitsPerPixel() < bpp * 8) {
-      rowLen /= ((bpp * 8) / getBitsPerPixel());
+      int div = (bpp * 8) / getBitsPerPixel();
+      if (div < rowLen) {
+        rowLen /= div;
+      }
+      else {
+        rowLen = 1;
+      }
     }
 
     byte[] image = null;
