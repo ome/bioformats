@@ -93,18 +93,33 @@ public class AIMReader extends FormatReader {
     m.littleEndian = true;
     in.order(isLittleEndian());
 
-    in.seek(56);
+    // check for newer version of AIM format with wider offsets
 
-    m.sizeX = in.readInt();
-    m.sizeY = in.readInt();
-    m.sizeZ = in.readInt();
+    String version = in.readString(16);
+    boolean widerOffsets = version.startsWith("AIMDATA_V030");
+
+    if (widerOffsets) {
+      in.seek(96);
+
+      m.sizeX = (int) in.readLong();
+      m.sizeY = (int) in.readLong();
+      m.sizeZ = (int) in.readLong();
+      in.seek(280);
+    }
+    else {
+      in.seek(56);
+
+      m.sizeX = in.readInt();
+      m.sizeY = in.readInt();
+      m.sizeZ = in.readInt();
+      in.seek(160);
+    }
+
     m.sizeC = 1;
     m.sizeT = 1;
     m.imageCount = getSizeZ();
     m.pixelType = FormatTools.INT16;
     m.dimensionOrder = "XYZCT";
-
-    in.seek(160);
 
     String processingLog = in.readCString();
     pixelOffset = in.getFilePointer();
