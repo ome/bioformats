@@ -23,6 +23,9 @@ function(ome_version)
     endforeach(line)
   endif(NOT show_fail)
 
+message("show_output: ${show_output}")
+message("show_fail: ${show_fail}")
+
   set(OME_VCS_REVISION ${OME_VCS_REVISION} PARENT_SCOPE)
   set(OME_VCS_DATE ${OME_VCS_DATE} PARENT_SCOPE)
 
@@ -39,6 +42,11 @@ function(ome_version)
                   ERROR_QUIET
                   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   string(REPLACE "\n" "" describe_output "${describe_output}")
+
+message("describe_output: ${describe_output}")
+message("describe_fail: ${describe_fail}")
+message("describe_exact_output: ${describe_exact_output}")
+message("describe_exact_fail: ${describe_exact_fail}")
 
   if(NOT describe_exact_fail)
     set(OME_VERSION ${describe_exact_output})
