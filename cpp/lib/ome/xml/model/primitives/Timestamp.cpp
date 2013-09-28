@@ -36,17 +36,7 @@
  * #L%
  */
 
-#ifndef OME_XML_MODEL_PRIMITIVES_TIMESTAMP_H
-#define OME_XML_MODEL_PRIMITIVES_TIMESTAMP_H
-
-#include <limits>
-#include <string>
-#include <sstream>
-#include <iostream>
-
-#include <boost/date_time/posix_time/posix_time.hpp>
-
-#include <ome/compat/cstdint.h>
+#include <ome/xml/model/primitives/Timestamp.h>
 
 namespace ome
 {
@@ -57,77 +47,52 @@ namespace ome
       namespace primitives
       {
 
-	/**
-	 * An ISO-8601 timestamp.
-         *
-         * The timestamp will have at least microsecond precision and,
-	 * on systems where the Boost.Date_Time module has been
-	 * compiled with support enabled, nanosecond precision.
-	 */
-	class Timestamp {
-	public:
-          // Type used internally to represent time.
-	  typedef boost::posix_time::ptime value_type;
-
-          /**
-           * Default construct a timestamp (current UTC time).
-           */
-	  Timestamp();
-
-	  /**
-	   * Construct a timestamp from an ISO-8601-formatted string.
-	   */
-	  Timestamp(const std::string& value);
-
-	  Timestamp(value_type value);
-
-          inline
-          operator value_type () const
-          {
-            return this->value;
-          }
-
-	private:
-	  value_type value;
-	};
-
-        template<class charT, class traits>
-        inline std::basic_ostream<charT,traits>&
-        operator<< (std::basic_ostream<charT,traits>& os,
-                    const Timestamp& timestamp)
+        Timestamp::Timestamp():
+          value(boost::posix_time::microsec_clock::universal_time())
         {
-          return os << boost::posix_time::to_iso_extended_string(static_cast<Timestamp::value_type>(timestamp))
-                    << 'Z';
         }
 
-        template<class charT, class traits>
-        inline std::basic_istream<charT,traits>&
-        operator>> (std::basic_istream<charT,traits>& is,
-                    Timestamp& timestamp)
+        Timestamp::Timestamp(const std::string& value):
+          value()//boost::posix_time::from_iso_string(value))
         {
-          std::locale iso8601_loc(std::locale::classic(),
-                                  new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S%F%q"));
+          boost::posix_time::time_input_facet *input_facet =
+            new boost::posix_time::time_input_facet();
+          input_facet->set_iso_extended_format();
+          std::locale iso8601_loc(std::locale::classic(), input_facet);
 
-          is.exceptions(std::ios_base::failbit);
+          std::istringstream is(value);
+          //	    is.exceptions(std::ios_base::failbit);
           is.imbue(iso8601_loc);
+          is >> this->value;
 
-          Timestamp::value_type value;
-          is >> value;
-          if (is)
-            timestamp = Timestamp(value);
+          char tztype;
+          is.get(tztype);
+          if(is)
+            {
+              std::cout << "TZTYPE=" << tztype << std::endl;
 
-          return is;
+              if (tztype == 'Z' || tztype == '-' || tztype == '+')
+                is.ignore(); // Drop above from istream
+
+              if (tztype == '-' || tztype == '+')
+                {
+                  int offset;
+                  is >> offset;
+                  std::cout << "OFFSET=" << offset << std::endl;
+                }
+            }
+
+          std::string tmp;
+          is >> tmp;
+          std::cout << "REM: "<< tmp << std::endl;
+        }
+
+        Timestamp::Timestamp(value_type value):
+          value(value)
+        {
         }
 
       }
     }
   }
 }
-
-#endif // OME_XML_MODEL_PRIMITIVES_TIMESTAMP_H
-
-/*
- * Local Variables:
- * mode:C++
- * End:
- */
