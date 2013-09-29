@@ -34,61 +34,50 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-cmake_minimum_required(VERSION 2.8)
+include_directories(${OME_TOPLEVEL_INCLUDES})
 
+set(OME_BIOFORMATS_SOURCES)
+set(OME_BIOFORMATS_HEADERS)
 
-project(bioformats)
-include(cmake/Version.cmake)
+set(OME_BIOFORMATS_META_STATIC_SOURCES
+  meta/BaseMetadata.cpp)
 
-if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-  message(FATAL_ERROR "In-tree builds are not supported; please run cmake from a separate build directory.")
-endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+set(OME_BIOFORMATS_META_STATIC_HEADERS
+  meta/BaseMetadata.h)
 
-enable_language(CXX)
+set(OME_BIOFORMATS_META_GENERATED_SOURCES)
+set(OME_BIOFORMATS_META_GENERATED_HEADERS)
 
-include(GNUInstallDirs)
-include(CheckIncludeFileCXX)
-include(CheckCXXCompilerFlag)
-include(CheckCXXSourceCompiles)
+set(BIOFORMATS_SOURCES
+    ${OME_BIOFORMATS_SOURCES}
+    ${OME_BIOFORMATS_META_STATIC_SOURCES}
+    ${OME_BIOFORMATS_META_GENERATED_SOURCES})
 
-include(cmake/CompilerChecks.cmake)
-include(cmake/BoostChecks.cmake)
-include(cmake/RegexChecks.cmake)
-include(cmake/XercesChecks.cmake)
-include(cmake/XsdFu.cmake)
+set(BIOFORMATS_HEADERS
+    ${OME_BIOFORMATS_HEADERS}
+    ${OME_BIOFORMATS_META_STATIC_HEADERS}
+    ${OME_BIOFORMATS_META_GENERATED_HEADERS})
 
-find_package(Threads REQUIRED)
+add_library(ome-bioformats SHARED
+            ${BIOFORMATS_SOURCES}
+            ${BIOFORMATS_HEADERS})
+target_link_libraries(ome-bioformats ome-xml)
+set_target_properties(ome-bioformats PROPERTIES VERSION ${OME_VERSION_SHORT})
 
-# Unit tests
-find_package(GTest)
-set(BUILD_TESTS OFF)
-if(GTEST_FOUND)
-  set(BUILD_TESTS ON)
-endif(GTEST_FOUND)
-option(test "Enable unit tests (requires gtest)" ${BUILD_TESTS})
-set(BUILD_TESTS ${test})
+install(TARGETS ome-bioformats LIBRARY
+        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
-# Doxygen documentation
-include(FindDoxygen)
-find_package(Doxygen)
-set(DOXYGEN_DEFAULT OFF)
-if (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
-  set (DOXYGEN_DEFAULT ON)
-endif (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
-option(doxygen "Enable doxygen documentation" ${DOXYGEN_DEFAULT})
-set(BUILD_DOXYGEN ${doxygen})
+set(ome_bioformats_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/bioformats")
 
-set(OME_TOPLEVEL_INCLUDES ${PROJECT_SOURCE_DIR}/lib ${PROJECT_BINARY_DIR}/lib)
+install(FILES ${OME_BIOFORMATS_HEADERS}
+        DESTINATION ${ome_bioformats_includedir})
+install(FILES ${OME_BIOFORMATS_META_STATIC_HEADERS} ${OME_BIOFORMATS_META_GENERATED_HEADERS}
+        DESTINATION ${ome_bioformats_includedir}/meta)
 
-add_subdirectory(doc)
-add_subdirectory(lib/ome/compat)
-add_subdirectory(lib/ome/xerces)
-add_subdirectory(lib/ome/xml)
-add_subdirectory(lib/ome/bioformats)
-
-enable_testing()
-add_subdirectory(test)
-
-set(LIBRARY_PREFIX OME)
-configure_file(${PROJECT_SOURCE_DIR}/cmake/TemplateShellConfig.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/config)
+set(LIBRARY_PREFIX OME_BIOFORMATS)
+set(LIBRARY_NAME ome-bioformats)
+set(LIBRARY_HEADER ome/bioformats/meta/BaseMetadata.h)
+configure_file(${PROJECT_SOURCE_DIR}/cmake/TemplateConfig.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake
+        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
