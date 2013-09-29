@@ -36,6 +36,40 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES})
 
+execute_process(COMMAND ${XSD_FU} enum_types -d -f source ${XSD_FU_ARGS}
+  OUTPUT_VARIABLE OME_XML_GENERATED_ENUMS_SOURCES)
+string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMS_SOURCES "${OME_XML_GENERATED_ENUMS_SOURCES}")
+if(WIN32)
+  string(REPLACE "\\" "/" OME_XML_GENERATED_ENUMS_SOURCES "${OME_XML_GENERATED_ENUMS_SOURCES}")
+endif(WIN32)
+add_custom_command(OUTPUT ${OME_XML_GENERATED_ENUMS_SOURCES}
+                   COMMAND ${XSD_FU} enum_types -q -f source ${XSD_FU_ARGS}
+                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
+#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_ENUMS_SOURCES})
+
+execute_process(COMMAND ${XSD_FU} enum_types -d -f header ${XSD_FU_ARGS}
+  OUTPUT_VARIABLE OME_XML_GENERATED_ENUMS_HEADERS)
+string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMS_HEADERS "${OME_XML_GENERATED_ENUMS_HEADERS}")
+if(WIN32)
+  string(REPLACE "\\" "/" OME_XML_GENERATED_ENUMS_HEADERS "${OME_XML_GENERATED_ENUMS_HEADERS}")
+endif(WIN32)
+add_custom_command(OUTPUT ${OME_XML_GENERATED_ENUMS_HEADERS}
+                   COMMAND ${XSD_FU} enum_types -q -f header ${XSD_FU_ARGS}
+                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
+#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_ENUMS_HEADERS})
+
+execute_process(COMMAND ${XSD_FU} enum_includeall -d -f header ${XSD_FU_ARGS}
+  OUTPUT_VARIABLE OME_XML_GENERATED_ENUMINCLUDE_HEADERS)
+string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMINCLUDE_HEADERS ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
+if(WIN32)
+  string(REPLACE "\\" "/" OME_XML_GENERATED_ENUMINCLUDE_HEADERS ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
+endif(WIN32)
+#
+add_custom_command(OUTPUT ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
+                   COMMAND ${XSD_FU} enum_includeall -q -f header ${XSD_FU_ARGS}
+                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
+#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
+
 set(OME_XML_STATIC_SOURCES
   model/enums/Enumeration.cpp
   model/enums/EnumerationException.cpp
