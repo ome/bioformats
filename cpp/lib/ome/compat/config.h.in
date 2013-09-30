@@ -36,6 +36,9 @@
  * #L%
  */
 
+#ifndef OME_COMPAT_CONFIG_H
+#define OME_COMPAT_CONFIG_H
+
 // Configured features
 
 #cmakedefine OME_HAVE_MEMORY 1
@@ -49,3 +52,5 @@
 #ifndef OME_HAVE_NOEXCEPT
 # define noexcept
 #endif
+
+#endif // OME_COMPAT_CONFIG_H
