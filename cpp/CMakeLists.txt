@@ -54,6 +54,7 @@ include(CheckCXXSourceCompiles)
 include(cmake/CompilerChecks.cmake)
 include(cmake/BoostChecks.cmake)
 include(cmake/RegexChecks.cmake)
+include(cmake/XercesChecks.cmake)
 include(cmake/XsdFu.cmake)
 
 find_package(Threads REQUIRED)

@@ -34,39 +34,20 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+include(CheckCXXSourceRuns)
 
-set(ome_xerces_sources
-    error_reporter.cpp)
+# Xerces-C
+set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} xerces-c)
+check_cxx_source_runs(
+"#include <xercesc/util/PlatformUtils.hpp>
 
-set(ome_xerces_headers
-    error_reporter.h
-    platform.h
-    string.h)
-
-set(ome_xerces_dom_headers
-    dom/document.h
-    dom/element.h
-    dom/node.h
-    dom/nodelist.h)
-
-add_library(ome-xerces SHARED ${ome_xerces_sources} ${ome_xerces_headers} ${ome_xerces_dom_headers})
-target_link_libraries(ome-xerces ${XERCES_LIBRARY})
-set_target_properties(ome-xerces PROPERTIES VERSION ${OME_VERSION_SHORT})
-
-set(ome_xerces_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/xerces")
-
-install(FILES ${ome_xerces_headers}
-        DESTINATION ${ome_xerces_includedir})
-install(FILES ${ome_xerces_dom_headers}
-        DESTINATION ${ome_xerces_includedir}/dom)
-install(TARGETS ome-xerces LIBRARY
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
-
-set(LIBRARY_PREFIX OME_XERCES)
-set(LIBRARY_NAME ome-xerces)
-set(LIBRARY_HEADER ome/xerces/platform.h)
-configure_file(${PROJECT_SOURCE_DIR}/cmake/TemplateConfig.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+int main() {
+  xercesc::XMLPlatformUtils::Initialize();
+  xercesc::XMLPlatformUtils::Terminate();
+}"
+XERCES_LINK)
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+if(XERCES_LINK)
+  set(XERCES_LIBRARY xerces-c)
+endif(XERCES_LINK)
