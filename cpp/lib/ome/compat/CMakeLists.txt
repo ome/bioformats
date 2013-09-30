@@ -34,7 +34,6 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
