@@ -71,10 +71,10 @@ class NumericTest : public ::testing::Test
 public:
   struct test_str
   {
-    std::string v1;
+    std::string            v1;
     typename T::value_type v2;
-    bool v1pass;
-    bool v2pass;
+    bool                   v1pass;
+    bool                   v2pass;
   };
 
   struct test_op
@@ -83,10 +83,10 @@ public:
     typename T::value_type v1;
     typename T::value_type v2;
     typename T::value_type expected;
-    operation op;
-    bool pass;
-    bool except;
-    bool rhs_except;
+    operation              op;
+    bool                   pass;
+    bool                   except;
+    bool                   rhs_except;
   };
 
   static const std::vector<test_str>  strings;
