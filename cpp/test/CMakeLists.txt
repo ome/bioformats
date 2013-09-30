@@ -34,6 +34,8 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+include_directories(${GTEST_INCLUDE_DIR})
+
 set(test_main_sources main.cpp)
 
 add_library(testmain STATIC ${test_main_sources})
