@@ -62,4 +62,3 @@ add_test(ome-xml/timestamp timestamp)
 headers_test(ome-xml ome/xml)
 target_link_libraries(ome-xml-headers ome-xml)
 add_test(ome-xml/headers ome-xml-headers)
-
