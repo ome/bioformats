@@ -61,7 +61,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.5.10</version>
+      <version>${slf4j.version}</version>
     </dependency>
 
     <dependency>
