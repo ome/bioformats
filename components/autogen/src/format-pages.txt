@@ -732,7 +732,7 @@ scifio = yes
 export = yes
 versions = 1.0, 2.0
 software = `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ \n
-`ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ \n
+`ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enstuurman/IJplugins/Ics_Opener.html>`_ \n
 `IrfanView <http://www.irfanview.com/>`_
 weHave = * numerous ICS datasets
 pixelsRating = Outstanding
