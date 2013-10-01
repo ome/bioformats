@@ -312,7 +312,7 @@ public class PSDReader extends FormatReader {
 
     m.sizeZ = 1;
     m.sizeT = 1;
-    m.rgb = modeString.equals("RGB");
+    m.rgb = modeString.equals("RGB") || modeString.equals("CMYK");
     m.imageCount = getSizeC() / (isRGB() ? 3 : 1);
     m.indexed = modeString.equals("palette color");
     m.falseColor = false;
