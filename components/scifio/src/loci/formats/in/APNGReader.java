@@ -391,7 +391,11 @@ public class APNGReader extends FormatReader {
     if (getBitsPerPixel() < bpp * 8) {
       int div = (bpp * 8) / getBitsPerPixel();
       if (div < rowLen) {
+        int originalRowLen = rowLen;
         rowLen /= div;
+        if (rowLen * div < originalRowLen) {
+          rowLen++;
+        }
       }
       else {
         rowLen = 1;
@@ -520,8 +524,14 @@ public class APNGReader extends FormatReader {
       byte[] expandedImage = new byte[FormatTools.getPlaneSize(this)];
       BitBuffer bits = new BitBuffer(image);
 
-      for (int i=0; i<expandedImage.length; i++) {
-        expandedImage[i] = (byte) (bits.getBits(getBitsPerPixel()) & 0xff);
+      int skipBits = rowLen * 8 - getSizeX() * getBitsPerPixel();
+      for (int row=0; row<getSizeY(); row++) {
+        for (int col=0; col<getSizeX(); col++) {
+          int index = row * getSizeX() + col;
+          expandedImage[index] =
+            (byte) (bits.getBits(getBitsPerPixel()) & 0xff);
+        }
+        bits.skipBits(skipBits);
       }
 
       image = expandedImage;
