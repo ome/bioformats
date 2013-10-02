@@ -1085,7 +1085,13 @@ public class TiffParser {
               (photoInterp != PhotoInterp.CFA_ARRAY &&
               photoInterp != PhotoInterp.RGB_PALETTE))
             {
-              value = bb.getBits(bps0) & 0xffff;
+              try {
+                value = bb.getBits(bps0) & 0xffff;
+              }
+              catch (ArrayIndexOutOfBoundsException e) {
+                // leave the value at 0 if there aren't enough bytes
+                // to cover the total number of samples
+              }
               if ((ndx % imageWidth) == imageWidth - 1) {
                 bb.skipBits(skipBits);
               }
