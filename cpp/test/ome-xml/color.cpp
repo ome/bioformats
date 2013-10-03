@@ -224,6 +224,26 @@ TEST_P(ColorTest, ConstructSigned)
   ASSERT_EQ(c, c4);
 }
 
+TEST_P(ColorTest, StreamInput)
+{
+  const ColorTestParameters& params = GetParam();
+
+  std::istringstream is(params.str);
+  is >> c;
+  ASSERT_TRUE(is);
+  ASSERT_EQ(c, params.sval);
+}
+
+TEST_P(ColorTest, StreamInputFail)
+{
+  const ColorTestParameters& params = GetParam();
+
+  std::istringstream is("invalid");
+  is >> c;
+  ASSERT_FALSE(is);
+  ASSERT_EQ(c, params.sval); // Original value unchanged on failure
+}
+
 TEST_P(ColorTest, StreamOutput)
 {
   const ColorTestParameters& params = GetParam();

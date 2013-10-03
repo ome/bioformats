@@ -377,7 +377,7 @@ namespace ome
                     Color& color)
         {
           Color::signed_type c;
-          if (is >> c);
+          if (is >> c)
             color.setValue(c);
           return is;
         }
