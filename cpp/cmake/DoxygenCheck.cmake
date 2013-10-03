@@ -34,56 +34,16 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-cmake_minimum_required(VERSION 2.8)
+# Check doxygen build log and display any errors or warnings.
 
+message(STATUS "Checking for doxygen errors in ${logfile}")
 
-project(bioformats)
-include(cmake/Version.cmake)
+file(READ "${logfile}" LOG)
+string(LENGTH "${LOG}" LOGLEN)
 
-if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-  message(FATAL_ERROR "In-tree builds are not supported; please run cmake from a separate build directory.")
-endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-
-enable_language(CXX)
-
-include(GNUInstallDirs)
-include(CheckIncludeFileCXX)
-include(CheckCXXCompilerFlag)
-include(CheckCXXSourceCompiles)
-
-include(cmake/CompilerChecks.cmake)
-include(cmake/BoostChecks.cmake)
-include(cmake/RegexChecks.cmake)
-include(cmake/XercesChecks.cmake)
-include(cmake/XsdFu.cmake)
-
-find_package(Threads REQUIRED)
-
-# Unit tests
-find_package(GTest)
-set(BUILD_TESTS OFF)
-if(GTEST_FOUND)
-  set(BUILD_TESTS ON)
-endif(GTEST_FOUND)
-option(test "Enable unit tests (requires gtest)" ${BUILD_TESTS})
-set(BUILD_TESTS ${test})
-
-# Doxygen documentation
-include(FindDoxygen)
-find_package(Doxygen)
-set(DOXYGEN_DEFAULT OFF)
-if (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
-  set (DOXYGEN_DEFAULT ON)
-endif (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
-option(doxygen "Enable doxygen documentation" ${DOXYGEN_DEFAULT})
-set(BUILD_DOXYGEN ${doxygen})
-
-set(OME_TOPLEVEL_INCLUDES ${PROJECT_SOURCE_DIR}/lib ${PROJECT_BINARY_DIR}/lib)
-
-add_subdirectory(doc)
-add_subdirectory(lib/ome/compat)
-add_subdirectory(lib/ome/xerces)
-add_subdirectory(lib/ome/xml)
-
-enable_testing()
-add_subdirectory(test)
+if(LOGLEN GREATER 0)
+  message(WARNING "Doxygen encountered undocumented code or errors in ${logfile}")
+  message("══════════════════════════════ UNDOCUMENTED CODE ══════════════════════════════")
+  message("${LOG}")
+  message("═════════════════════════════ END UNDOCUMENTED CODE ═══════════════════════════")
+endif(LOGLEN GREATER 0)

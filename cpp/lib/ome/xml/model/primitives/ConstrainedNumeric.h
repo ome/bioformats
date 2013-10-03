@@ -63,6 +63,13 @@ namespace ome
          */
         struct ConstrainedNumericError
         {
+          /**
+           * Throw an exception.  The exception string includes the
+           * type name and the invalid value.
+           *
+           * @param value the invalid value.
+           * @param typestr the type name.
+           */
           template<typename T>
           inline void
           operator() (const T&           value,
@@ -92,6 +99,10 @@ namespace ome
          * value type, and may be serialised to and from any stream.
          * It also implements the standard numeric operators, so
          * may be used as though it were the value type.
+         *
+         * @tparam N the type to constrain.
+         * @tparam C the constraint to impose.
+         * @tparam E the error policy to apply on constraint violation.
          */
         template<typename N,
                  typename C,
@@ -110,8 +121,11 @@ namespace ome
                                            boost::multipliable<ConstrainedNumeric<N, C, E> > > > > > > > > > > > >
         {
         public:
+          /// The type to constrain.
           typedef N value_type;
+          /// The constraint to impose.
           typedef C constraint_type;
+          /// The error policy to apply on constraint violation.
           typedef E error_policy_type;
 
           /**
@@ -167,7 +181,7 @@ namespace ome
           /**
            * Copy constructor.
            *
-           * @param value the unconstrained value to copy.
+           * @param value the constrained value to copy.
            */
           ConstrainedNumeric(const ConstrainedNumeric& value):
             value(value)
@@ -175,12 +189,26 @@ namespace ome
             check();
           }
 
+          /**
+           * Obtain the constrained value as the unconstrained type.
+           *
+           * @returns the constrained value.
+           */
           inline
           operator value_type () const
           {
             return this->value;
           }
 
+          /**
+           * Assign the constrained value from a constrained value.
+           * While constraint checks are enforced, this should never
+           * cause an error due to the value having been previously
+           * checked.
+           *
+           * @param value the value to assign.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator= (const ConstrainedNumeric& value)
           {
@@ -189,6 +217,14 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Assign the constrained value from an unconstrained value.
+           * If the value fails the constraint check, this will cause
+           * an error.
+           *
+           * @param value the value to assign.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator= (const value_type& value)
           {
@@ -197,6 +233,14 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Add a constrained value to the constrained value.  If the
+           * new value fails the constraint check, this will cause an
+           * error.
+           *
+           * @param value the value to add.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator+= (const ConstrainedNumeric& value)
           {
@@ -205,6 +249,14 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Subtract a constrained value from the constrained value.
+           * If the new value fails the constraint check, this will
+           * cause an error.
+           *
+           * @param value the value to subtract.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator-= (const ConstrainedNumeric& value)
           {
@@ -213,6 +265,14 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Multiply the constrained value by a constrained value.
+           * If the new value fails the constraint check, this will
+           * cause an error.
+           *
+           * @param value the value to multiply.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator*= (const ConstrainedNumeric& value)
           {
@@ -221,6 +281,14 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Divide the constrained value by a constrained value.  If
+           * the new value fails the constraint check, this will cause
+           * an error.
+           *
+           * @param value the value to divide.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator/= (const ConstrainedNumeric& value)
           {
@@ -229,6 +297,14 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Modulo of the constrained value by a constrained value.
+           * If the new value fails the constraint check, this will
+           * cause an error.
+           *
+           * @param value the value to compute the modulus with.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator%= (const ConstrainedNumeric& value)
           {
@@ -237,6 +313,14 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Add an unconstrained value to the constrained value.  If
+           * the new value fails the constraint check, this will cause
+           * an error.
+           *
+           * @param value the value to add.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator+= (const value_type& value)
           {
@@ -245,6 +329,14 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Subtract an unconstrained value from the constrained
+           * value.  If the new value fails the constraint check, this
+           * will cause an error.
+           *
+           * @param value the value to subtract.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator-= (const value_type& value)
           {
@@ -253,6 +345,14 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Multiply the constrained value by an unconstrained value.
+           * If the new value fails the constraint check, this will
+           * cause an error.
+           *
+           * @param value the value to multiply.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator*= (const value_type& value)
           {
@@ -261,6 +361,14 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Divide the constrained value by an constrained value.  If
+           * the new value fails the constraint check, this will cause
+           * an error.
+           *
+           * @param value the value to divide.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator/= (const value_type& value)
           {
@@ -269,6 +377,14 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Modulo of the constrained value by an unconstrained value.
+           * If the new value fails the constraint check, this will
+           * cause an error.
+           *
+           * @param value the value to compute the modulus with.
+           * @returns the new value.
+           */
           inline ConstrainedNumeric&
           operator%= (const value_type& value)
           {
@@ -277,12 +393,26 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Check if the constrained value is less than a constrained
+           * value.
+           *
+           * @param value the value to compare with.
+           * @returns true if the condition is true, else false.
+           */
           inline bool
           operator< (const ConstrainedNumeric& value) const
           {
             return this->value < value.value;
           }
 
+          /**
+           * Check if the constrained value is less than an
+           * unconstrained value.
+           *
+           * @param value the value to compare with.
+           * @returns true if the condition is true, else false.
+           */
           inline bool
           operator< (const value_type& value) const
           {
@@ -292,18 +422,39 @@ namespace ome
           // Note operator> (const ConstrainedNumeric& value) const is
           // provided by Boost.Operators.
 
+          /**
+           * Check if the constrained value is greater than an
+           * unconstrained value.
+           *
+           * @param value the value to compare with.
+           * @returns true if the condition is true, else false.
+           */
           inline bool
           operator> (const value_type& value) const
           {
             return this->value > value;
           }
 
+          /**
+           * Check if the constrained value is equal to a constrained
+           * value.
+           *
+           * @param value the value to compare with.
+           * @returns true if the condition is true, else false.
+           */
           inline bool
           operator== (const ConstrainedNumeric& value) const
           {
             return this->value == value.value;
           }
 
+          /**
+           * Check if the constrained value is equal to an
+           * unconstrained value.
+           *
+           * @param value the value to compare with.
+           * @returns true if the condition is true, else false.
+           */
           inline bool
           operator== (const value_type& value) const
           {
@@ -333,6 +484,13 @@ namespace ome
           /// The name of the type.  Used for diagnostics only.
           static const std::string typestr;
 
+          /**
+           * Set constrained value from input stream.
+           *
+           * @param is the input stream.
+           * @param value the value to set.
+           * @returns the input stream.
+           */
           template<class _charT,
                    class _traits,
                    typename _N,
@@ -341,9 +499,16 @@ namespace ome
           friend
           std::basic_istream<_charT,_traits>&
           operator>> (std::basic_istream<_charT,_traits>& is,
-                      ConstrainedNumeric<_N, _C, _E>&      value);
+                      ConstrainedNumeric<_N, _C, _E>&     value);
         };
 
+        /**
+         * Set constrained value from input stream.
+         *
+         * @param is the input stream.
+         * @param value the value to set.
+         * @returns the input stream.
+         */
         template<class charT,
                  class traits,
                  typename N,
@@ -367,6 +532,13 @@ namespace ome
           return is;
         }
 
+        /**
+         * Output constrained value to output stream.
+         *
+         * @param os the output stream.
+         * @param value the value to output.
+         * @returns the output stream.
+         */
         template<class charT,
                  class traits,
                  typename N,

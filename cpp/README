@@ -1,25 +1,32 @@
 Bio-Formats C++ implementation
 ══════════════════════════════
 
+
 Prerequisites
 ─────────────
 
-┌──────────────┬──────────┬─────────────────┬────────────────┬──────────┐
-│ Dependency   │ Version  │ Debian/Ubuntu   │ RedHat/CentOS  │ Homebrew │
-├──────────────┼──────────┼─────────────────┼────────────────┼──────────┤
-│ Xerces-C 3.x │    3.x   │ libxerces-c-dev │ xerces-c-devel │ xerces-c │
-│ Boost        │ >= 1.44¹ │ libboost-dev    │ boost-devel    │ boost    │
-│ GTest        │ >= 1.5   │ libgtest-dev    │ gtest-devel    │ N/A²     │
-│ CMake        │ >= 2.8   │ cmake           │ cmake          │ cmake    │
-└──────────────┴──────────┴─────────────────┴────────────────┴──────────┘
+┌────────────┬──────────┬─────────────────┬────────────────┬──────────┐
+│ Dependency │ Version  │ Debian/Ubuntu   │ RedHat/CentOS  │ Homebrew │
+├────────────┼──────────┼─────────────────┼────────────────┼──────────┤
+│ CMake      │ >= 2.8   │ cmake           │ cmake          │ cmake    │
+│ Boost      │ >= 1.44¹ │ libboost-dev    │ boost-devel    │ boost    │
+│ Xerces-C   │    3.x   │ libxerces-c-dev │ xerces-c-devel │ xerces-c │
+│ GTest†     │ >= 1.5   │ libgtest-dev    │ gtest-devel    │ N/A²     │
+│ Doxygen‡   │ >= 1.6   │ doxygen         │ doxygen        │ doxygen  │
+│ Graphviz‡  │ any      │ graphviz        │ graphviz       │ graphviz │
+└────────────┴──────────┴─────────────────┴────────────────┴──────────┘
 
   1. 1.41 is known to not work nicely with cmake; 1.5x or later recommended
   2. http://answers.ros.org/question/42335/mac-os-x-install-error-no-available-formula-for-gtest/
+
+  † Optional, needed to run the unit tests
+  ‡ Optional, needed to build the API reference
 
 The C++ bindings use C++11 features such as std::shared_ptr when using
 a C++11 compiler.  When using an older compiler, the Boost equivalents
 will be used as fallbacks to provide the same functionality.  cmake
 will automatically detect and use C++11 features when available.
+
 
 Google Test
 ───────────
@@ -53,8 +60,9 @@ an "install" target; you'll have to "cp -r includes *.a destination".
   % ls /opt/gtest
   include         libgtest.a      libgtest_main.a
 
-Building
-────────
+
+Configuring
+───────────
 
 Create a temporary build directory.  The temporary build directory can
 be in any location inside or outside the bioformats source tree.
@@ -75,9 +83,11 @@ Run cmake from the temporary build directory:
 Run "cmake -LH" to see basic configurable options.  The following basic
 basic options are supported:
 
-  test=(ON|OFF)  Enable unit tests
+  doxygen=(ON|OFF)  Enable doxygen documentation
+  test=(ON|OFF)     Enable unit tests
 
-For example, to disable tests, run "cmake -Dtest=OFF".
+For example, to disable tests, run "cmake -Dtest=OFF".  Options will
+typically be enabled by default if the prerequisites are available.
 
 
 Building
@@ -98,6 +108,7 @@ To install the headers and libraries directly on the system:
 To install in a staging directory:
 
   make DESTDIR=/path/to/staging/directory install
+
 
 Testing
 ───────

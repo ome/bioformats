@@ -50,9 +50,20 @@ namespace ome
       namespace primitives
       {
 
+        /**
+         * Constraint for positive integer values.
+         *
+         * @tparam N the type to constrain.
+         */
         template<typename N>
         struct PositiveIntegerConstraint
         {
+          /**
+           * Check that value > 0.
+           *
+           * @param value the value to check.
+           * @returns true if the value is valid, false if invalid.
+           */
           inline bool
           operator() (const N& value) const
           {
@@ -60,9 +71,20 @@ namespace ome
           }
         };
 
+        /**
+         * Constraint for positive floating point values.
+         *
+         * @tparam N the type to constrain.
+         */
         template<typename N>
         struct PositiveFloatConstraint
         {
+          /**
+           * Check that value > 0.0
+           *
+           * @param value the value to check.
+           * @returns true if the value is valid, false if invalid.
+           */
           inline bool
           operator() (const N& value) const
           {
@@ -70,9 +92,20 @@ namespace ome
           }
         };
 
+        /**
+         * Constraint for non-negative integer values.
+         *
+         * @tparam N the type to constrain.
+         */
         template<typename N>
         struct NonNegativeIntegerConstraint
         {
+          /**
+           * Check that value >= 0
+           *
+           * @returns true if the value is valid, false if invalid.
+           * @param value the value to check.
+           */
           inline bool
           operator() (const N& value) const
           {
@@ -80,9 +113,20 @@ namespace ome
           }
         };
 
+        /**
+         * Constraint for non-negative floating point values.
+         *
+         * @tparam N the type to constrain.
+         */
         template<typename N>
         struct NonNegativeFloatConstraint
         {
+          /**
+           * Check that value >= 0.0
+           *
+           * @returns true if the value is valid, false if invalid.
+           * @param value the value to check.
+           */
           inline bool
           operator() (const N& value) const
           {
@@ -90,9 +134,20 @@ namespace ome
           }
         };
 
+        /**
+         * Constraint for fractional floating point values.
+         *
+         * @tparam N the type to constrain.
+         */
         template<typename N>
         struct PercentFractionConstraint
         {
+          /**
+           * Check that 0.0 <= value <= 1.0.
+           *
+           * @returns true if the value is valid, false if invalid.
+           * @param value the value to check.
+           */
           inline bool
           operator() (const N& value) const
           {

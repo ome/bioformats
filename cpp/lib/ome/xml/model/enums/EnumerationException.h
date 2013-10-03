@@ -58,8 +58,12 @@ namespace ome
         class EnumerationException : public std::runtime_error
         {
         public:
+          /**
+           * Construct an EnumerationException from a string.
+           */
           EnumerationException(std::string const& error);
 
+          /// Destructor.
           virtual
           ~EnumerationException() throw ();
         };

@@ -50,9 +50,36 @@ namespace ome
   namespace xerces
   {
 
+    /**
+     * Xerces string wrapper.  Xerces uses UTF-16 internally, which is
+     * incompatible with the standard library string and stream
+     * classes.  This class interconverts between std::string and
+     * XMLCh *, as well as managing the memory of XMLCh * objects.
+     * All Xerces functions and class methods which take XMLCh *
+     * inputs may be transparently called with instances of this
+     * class, and likewise functions and methods returning XMLCh * may
+     * directly construct instances of this class using the return
+     * value.
+     *
+     * This class does have an overhead of maintaining two copies of
+     * the string (char * and XMLCh *), as well as the cost of
+     * transcoding between the two forms upon initialisation.
+     *
+     * Assignment of std::string or XMLCh * is not supported.  This
+     * class is only intended to transiently transcode between the two
+     * types and manage the memory for this.
+     */
     class string
     {
     public:
+      /**
+       * Construct a string from an XMLCh * string.  The string
+       * content will be copied; no ownership is taken of the original
+       * string.  The string will also be transcoded to a
+       * NUL-terminated char * string.
+       *
+       * @param str an XMLCh *string.
+       */
       inline
       string(const XMLCh *str):
       narrow(xercesc::XMLString::transcode(str)),
@@ -62,6 +89,13 @@ namespace ome
         assert(this->narrow != 0);
       }
 
+      /**
+       * Construct a string from a NUL-terminated string.  The string
+       * content will be copied into a NUL-terminated char * string.
+       * The string will also be transcoded to an XMLCh * string.
+       *
+       * @param str a char * NUL-terminated string.
+       */
       inline
       string(const char *str):
       narrow(xercesc::XMLString::replicate(str)),
@@ -71,6 +105,13 @@ namespace ome
         assert(this->wide != 0);
       }
 
+      /**
+       * Construct a string from a std::string.  The string content
+       * will be copied into a NUL-terminated char * string.  The
+       * string will also be transcoded to an XMLCh * string.
+       *
+       * @param str a std::string.
+       */
       inline
       string(std::string const& str):
         narrow(xercesc::XMLString::replicate(str.c_str())),
@@ -80,6 +121,9 @@ namespace ome
         assert(this->wide != 0);
       }
 
+      /**
+       * Destructor.  The allocated char * and XMLCh * strings will be freed.
+       */
       inline
       ~string()
       {
@@ -89,6 +133,11 @@ namespace ome
           xercesc::XMLString::release(&wide);
       }
 
+      /**
+       * Cast string to XMLCh *.
+       *
+       * @returns a NUL-terminated XMLCh * string.
+       */
       inline
       operator const XMLCh *() const
       {
@@ -97,6 +146,11 @@ namespace ome
         return wide;
       }
 
+      /**
+       * Cast string to a std::string.
+       *
+       * @returns a std::string.
+       */
       inline
       operator ::std::string() const
       {
@@ -105,6 +159,11 @@ namespace ome
         return narrow;
       }
 
+      /**
+       * Get the string content as a std::string.
+       *
+       * @returns a std::string containing the string content.
+       */
       inline
       ::std::string
       str() const
@@ -115,10 +174,19 @@ namespace ome
       }
 
     private:
+      /// The char * string representation.
       char *narrow;
+      /// The XMLCh * string representation.
       XMLCh *wide;
     };
 
+    /**
+     * Output string to output stream.
+     *
+     * @param os the output stream.
+     * @param string the string to output.
+     * @returns the output stream.
+     */
     inline ::std::ostream&
     operator<< (::std::ostream& stream,
                 const string&   str)

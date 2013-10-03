@@ -71,8 +71,11 @@ namespace ome
         class Color
         {
         public:
+          /// The type of an individual color component (R, G, B, A).
           typedef uint8_t  component_type;
+          /// The type of all components composed as a single RGBA value (unsigned).
           typedef uint32_t composed_type;
+          /// The type of all components composed as a single RGBA value (signed).
           typedef int32_t  signed_type;
 
           /**

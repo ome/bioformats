@@ -56,20 +56,42 @@ namespace ome
     namespace dom
     {
 
+      /**
+       * DOM NodeList wrapper.  The wrapper behaves as though is the
+       * wrapped DOMNodeList; it can be dereferenced using the "*" or
+       * "->" operators to obtain a reference or pointer to the
+       * wrapped object.  It can also be cast to a pointer to the
+       * wrapped object, so can substitute for it directly.
+       */
       class nodelist
       {
       public:
+        /// The nodelist size type.
         typedef XMLSize_t size_type;
 
+        /**
+         * Iterator for a nodelist.
+         */
         class iterator
         {
         private:
+          /**
+           * Construct a null iterator.  This is used to refer to
+           * invalid positions such as past-the-end.
+           */
           iterator ():
             index(0),
             xmlnodelist(0),
             xmlnode(static_cast<xercesc::DOMNode *>(0))
           {}
 
+          /**
+           * Construct an iterator at the specified position for the
+           * specified list.
+           *
+           * @param xmlnodelist the nodelist to iterate over.
+           * @param index the index into the nodelist.
+           */
           iterator (xercesc::DOMNodeList *xmlnodelist,
                     size_type             index):
             index(index),
@@ -78,15 +100,26 @@ namespace ome
           {}
 
         public:
+          /**
+           * Copy construct an iterator.
+           *
+           * @param rhs the iterator to copy.
+           */
           iterator (const iterator& rhs):
             index(rhs.index),
             xmlnodelist(rhs.xmlnodelist),
             xmlnode(rhs.xmlnode)
           {}
 
+          /// Destructor.
           ~iterator ()
           {}
 
+          /**
+           * Dereference the iterator.
+           *
+           * @return a reference to the node at this position.
+           */
           node&
           operator* () noexcept
           {
@@ -94,6 +127,11 @@ namespace ome
             return xmlnode;
           }
 
+          /**
+           * Dereference the iterator.
+           *
+           * @return a pointer to the node at this position.
+           */
           node *
           operator-> () noexcept
           {
@@ -101,6 +139,11 @@ namespace ome
             return &xmlnode;
           }
 
+          /**
+           * Move the iterator backward one element.
+           *
+           * @returns the iterator at the new position.
+           */
           iterator&
           operator-- ()
           {
@@ -117,6 +160,11 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Move the iterator forward one element.
+           *
+           * @returns the iterator at the new position.
+           */
           iterator&
           operator++ ()
           {
@@ -128,6 +176,12 @@ namespace ome
             return *this;
           }
 
+          /**
+           * Check the equality of two iterators.
+           *
+           * @param rhs the iterator to compare with.
+           * @returns true if equal, otherwise false.
+           */
           bool
           operator == (const iterator& rhs) const noexcept
           {
@@ -138,6 +192,12 @@ namespace ome
             return index == rhs.index;
           }
 
+          /**
+           * Check the non-equality of two iterators.
+           *
+           * @param rhs the iterator to compare with.
+           * @returns true if not equal, otherwise false.
+           */
           bool
           operator != (const iterator& rhs) const noexcept
           {
@@ -147,30 +207,53 @@ namespace ome
           friend class nodelist;
 
         private:
+          /// Index into the list.
           size_type index;
+          /// List being iterated over.
           xercesc::DOMNodeList *xmlnodelist;
+          /// Node at current position.
           node xmlnode;
         };
 
+        /**
+         * Construct a NULL nodelist.
+         */
         nodelist ():
           xmlnodelist()
         {
         }
 
+        /**
+         * Copy construct a nodelist.
+         *
+         * @param nodelist the nodelist to copy.
+         */
         nodelist (const nodelist& nodelist):
           xmlnodelist(nodelist.xmlnodelist)
         {
         }
 
+        /**
+         * Construct a nodelist from a xercesc::DOMNodeList *.
+         *
+         * @param nodelist the nodelist to wrap.
+         */
         nodelist (xercesc::DOMNodeList *nodelist):
           xmlnodelist(nodelist)
         {
         }
 
+        /// Destructor.
         ~nodelist ()
         {
         }
 
+        /**
+         * Assign a nodelist.
+         *
+         * @param nodelist the nodelist to assign.
+         * @returns the nodelist.
+         */
         nodelist&
         operator= (nodelist& nodelist)
         {
@@ -178,6 +261,12 @@ namespace ome
           return *this;
         }
 
+        /**
+         * Assign a xercesc::DOMNodeList *.
+         *
+         * @param nodelist the nodelist to assign.
+         * @returns the nodelist.
+         */
         nodelist&
         operator= (xercesc::DOMNodeList *nodelist)
         {
@@ -185,6 +274,11 @@ namespace ome
           return *this;
         }
 
+        /**
+         * Dereference to xercesc::DOMNodeList.
+         *
+         * @returns the wrapped xercesc::DOMNodeList.
+         */
         xercesc::DOMNodeList&
         operator* () noexcept
         {
@@ -192,6 +286,11 @@ namespace ome
           return *xmlnodelist;
         }
 
+        /**
+         * Dereference to const xercesc::DOMNodeList.
+         *
+         * @returns the wrapped xercesc::DOMNodeList.
+         */
         const xercesc::DOMNodeList&
         operator* () const noexcept
         {
@@ -199,6 +298,11 @@ namespace ome
           return *xmlnodelist;
         }
 
+        /**
+         * Dereference to xercesc::DOMNodeList.
+         *
+         * @returns the wrapped xercesc::DOMNodeList.
+         */
         xercesc::DOMNodeList *
         operator-> () noexcept
         {
@@ -206,6 +310,11 @@ namespace ome
           return xmlnodelist;
         }
 
+        /**
+         * Dereference to const xercesc::DOMNodeList.
+         *
+         * @returns the wrapped xercesc::DOMNodeList.
+         */
         const xercesc::DOMNodeList *
         operator-> () const noexcept
         {
@@ -213,11 +322,21 @@ namespace ome
           return xmlnodelist;
         }
 
+        /**
+         * Check if the wrapped nodelist is NULL.
+         *
+         * @returns true if valid, false if NULL.
+         */
         operator bool () const
         {
           return xmlnodelist != 0;
         }
 
+        /**
+         * Get the size (length) of the nodelist.
+         *
+         * @returns the list size.
+         */
         size_type
         size() const
         {
@@ -229,12 +348,22 @@ namespace ome
           return ret;
         }
 
+        /**
+         * Get an iterator pointing to the first element in the nodelist.
+         *
+         * @returns an iterator pointing to the first element in the nodelist.
+         */
         iterator
         begin()
         {
           return iterator(xmlnodelist, 0);
         }
 
+        /**
+         * Get an iterator pointing to the past-the-end element in the nodelist.
+         *
+         * @returns an iterator pointing to the past-the-end element in the nodelist.
+         */
         iterator
         end()
         {
@@ -242,6 +371,7 @@ namespace ome
         }
 
       private:
+        /// The wrapped xercesc::DOMNodeList.
         xercesc::DOMNodeList *xmlnodelist;
       };
 
