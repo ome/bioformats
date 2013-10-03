@@ -36,29 +36,31 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES})
 
-add_executable(color color.cpp)
-target_link_libraries(color ome-xml)
-target_link_libraries(color ${TEST_LIBS})
+if(BUILD_TESTS)
+  add_executable(color color.cpp)
+  target_link_libraries(color ome-xml)
+  target_link_libraries(color ${TEST_LIBS})
 
-add_executable(constrained-numeric
-               non-negative-float.cpp
-               non-negative-integer.cpp
-               non-negative-long.cpp
-               percent-fraction.cpp
-               positive-float.cpp
-               positive-integer.cpp
-               positive-long.cpp)
-target_link_libraries(constrained-numeric ome-xml)
-target_link_libraries(constrained-numeric ${TEST_LIBS})
+  add_executable(constrained-numeric
+                 non-negative-float.cpp
+                 non-negative-integer.cpp
+                 non-negative-long.cpp
+                 percent-fraction.cpp
+                 positive-float.cpp
+                 positive-integer.cpp
+                 positive-long.cpp)
+  target_link_libraries(constrained-numeric ome-xml)
+  target_link_libraries(constrained-numeric ${TEST_LIBS})
 
-add_executable(timestamp timestamp.cpp)
-target_link_libraries(timestamp ome-xml)
-target_link_libraries(timestamp ${TEST_LIBS})
+  add_executable(timestamp timestamp.cpp)
+  target_link_libraries(timestamp ome-xml)
+  target_link_libraries(timestamp ${TEST_LIBS})
 
-add_test(ome-xml/color color)
-add_test(ome-xml/constrained-numeric constrained-numeric)
-add_test(ome-xml/timestamp timestamp)
+  add_test(ome-xml/color color)
+  add_test(ome-xml/constrained-numeric constrained-numeric)
+  add_test(ome-xml/timestamp timestamp)
 
-headers_test(ome-xml ome/xml)
-target_link_libraries(ome-xml-headers ome-xml)
-add_test(ome-xml/headers ome-xml-headers)
+  headers_test(ome-xml ome/xml)
+  target_link_libraries(ome-xml-headers ome-xml)
+  add_test(ome-xml/headers ome-xml-headers)
+endif(BUILD_TESTS)

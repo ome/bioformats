@@ -58,7 +58,13 @@ include(cmake/XercesChecks.cmake)
 include(cmake/XsdFu.cmake)
 
 find_package(Threads REQUIRED)
-find_package(GTest REQUIRED)
+find_package(GTest)
+set(BUILD_TESTS OFF)
+if(GTEST_FOUND)
+  set(BUILD_TESTS ON)
+endif(GTEST_FOUND)
+option(test "Enable unit tests (requires gtest)" ${BUILD_TESTS})
+set(BUILD_TESTS ${test})
 
 set(OME_TOPLEVEL_INCLUDES ${PROJECT_SOURCE_DIR}/lib ${PROJECT_BINARY_DIR}/lib)
 

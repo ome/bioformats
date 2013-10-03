@@ -34,7 +34,9 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+if(BUILD_TESTS)
+  include_directories(${OME_TOPLEVEL_INCLUDES})
 
-headers_test(ome-compat ome/compat)
-add_test(ome-compat/headers ome-compat-headers)
+  headers_test(ome-compat ome/compat)
+  add_test(ome-compat/headers ome-compat-headers)
+endif(BUILD_TESTS)
