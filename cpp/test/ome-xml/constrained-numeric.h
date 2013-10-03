@@ -189,7 +189,6 @@ compare_test(const Test&                   fixture,
              const typename Test::test_op& test)
 {
   typedef typename Test::test_op::numeric_type NumericType;
-  typedef typename Test::test_op::numeric_type::value_type ValueType;
 
   Comparison c;
   NumericType val(test.v1);
