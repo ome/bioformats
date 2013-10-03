@@ -17,6 +17,25 @@ maven()
     clean
 }
 
+cpp()
+{
+    (
+        cd cpp
+        mkdir build
+        cd build
+        (
+            mkdir gtest
+            cd gtest
+            cmake /usr/src/gtest
+            make
+        )
+        GTEST_ROOT=$(pwd)/gtest cmake ..
+        make
+        make test
+        make DESTDIR=../install install
+    )
+}
+
 # Test cppwrap
 cppwrap()
 {
@@ -56,6 +75,8 @@ do
             clean ;;
         maven)
             maven ;;
+        cpp)
+            cpp ;;
         cppwrap)
             cppwrap ;;
         sphinx)
