@@ -142,7 +142,8 @@ STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@/lib \
 # definition is used. Otherwise one should specify the include paths that
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    =
+STRIP_FROM_INC_PATH    = @PROJECT_SOURCE_DIR@/lib \
+                         @PROJECT_BINARY_DIR@/lib
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful if your file system
