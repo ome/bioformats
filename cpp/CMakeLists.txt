@@ -87,3 +87,7 @@ add_subdirectory(lib/ome/xml)
 
 enable_testing()
 add_subdirectory(test)
+
+set(LIBRARY_PREFIX OME)
+configure_file(${PROJECT_SOURCE_DIR}/cmake/TemplateShellConfig.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/config)
