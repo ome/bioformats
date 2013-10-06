@@ -305,6 +305,13 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
        };
 
+       /**
+        * Compare two ${klass.langType} objects for equality.
+        *
+        * @param lhs a ${klass.langType} object.
+        * @param rhs a ${klass.langType} object.
+        * @returns true if the enum values are the same, otherwise false.
+        */
        inline bool
        operator== (const ${klass.langType}& lhs,
                    const ${klass.langType}& rhs)
@@ -312,6 +319,13 @@ namespace ome
          return static_cast<${klass.langType}::enum_value>(lhs) == static_cast<${klass.langType}::enum_value>(rhs);
        }
 
+       /**
+        * Compare ${klass.langType} object and enum value for equality.
+        *
+        * @param lhs a ${klass.langType} object.
+        * @param rhs a ${klass.langType} enum value.
+        * @returns true if the enum values are the same, otherwise false.
+        */
        inline bool
        operator== (const ${klass.langType}& lhs,
                    const ${klass.langType}::enum_value& rhs)
@@ -319,6 +333,13 @@ namespace ome
          return static_cast<${klass.langType}::enum_value>(lhs) == rhs;
        }
 
+       /**
+        * Compare enum value and ${klass.langType} for equality.
+        *
+        * @param lhs a ${klass.langType} enum value.
+        * @param rhs a ${klass.langType} object.
+        * @returns true if the enum values are the same, otherwise false.
+        */
        inline bool
        operator== (const ${klass.langType}::enum_value& lhs,
                    const ${klass.langType}& rhs)
@@ -326,6 +347,13 @@ namespace ome
          return lhs == static_cast<${klass.langType}::enum_value>(rhs);
        }
 
+       /**
+        * Compare ${klass.langType} object and enum string value for equality.
+        *
+        * @param lhs a ${klass.langType} object.
+        * @param rhs a ${klass.langType} enum string value.
+        * @returns true if the enum values are the same, otherwise false.
+        */
        inline bool
        operator== (const ${klass.langType}& lhs,
                    const std::string& rhs)
@@ -333,6 +361,13 @@ namespace ome
          return static_cast<const std::string&>(lhs) == rhs;
        }
 
+       /**
+        * Compare enum string value and ${klass.langType} object for equality.
+        *
+        * @param lhs a ${klass.langType} enum string value.
+        * @param rhs a ${klass.langType} object.
+        * @returns true if the enum values are the same, otherwise false.
+        */
        inline bool
        operator== (const std::string& lhs,
                    const ${klass.langType}& rhs)
@@ -340,6 +375,13 @@ namespace ome
          return lhs == static_cast<const std::string&>(rhs);
        }
 
+       /**
+        * Compare two ${klass.langType} objects for non-equality.
+        *
+        * @param lhs a ${klass.langType} object.
+        * @param rhs a ${klass.langType} object.
+        * @returns true if the enum values are not the same, otherwise false.
+        */
        inline bool
        operator!= (const ${klass.langType}& lhs,
                    const ${klass.langType}& rhs)
@@ -347,6 +389,13 @@ namespace ome
          return static_cast<${klass.langType}::enum_value>(lhs) != static_cast<${klass.langType}::enum_value>(rhs);
        }
 
+       /**
+        * Compare ${klass.langType} object and enum value for non-equality.
+        *
+        * @param lhs a ${klass.langType} object.
+        * @param rhs a ${klass.langType} enum value.
+        * @returns true if the enum values are not the same, otherwise false.
+        */
        inline bool
        operator!= (const ${klass.langType}& lhs,
                    const ${klass.langType}::enum_value& rhs)
@@ -354,6 +403,13 @@ namespace ome
          return static_cast<${klass.langType}::enum_value>(lhs) != rhs;
        }
 
+       /**
+        * Compare enum value and ${klass.langType} object for non-equality.
+        *
+        * @param lhs a ${klass.langType} enum value.
+        * @param rhs a ${klass.langType} object.
+        * @returns true if the enum values are not the same, otherwise false.
+        */
        inline bool
        operator!= (const ${klass.langType}::enum_value& lhs,
                    const ${klass.langType}& rhs)
@@ -361,6 +417,13 @@ namespace ome
          return lhs != static_cast<${klass.langType}::enum_value>(rhs);
        }
 
+       /**
+        * Compare ${klass.langType} object and enum string value for non-equality.
+        *
+        * @param lhs a ${klass.langType} object.
+        * @param rhs a ${klass.langType} enum string value.
+        * @returns true if the enum values are not the same, otherwise false.
+        */
        inline bool
        operator!= (const ${klass.langType}& lhs,
                    const std::string& rhs)
@@ -368,6 +431,13 @@ namespace ome
          return static_cast<const std::string&>(lhs) != rhs;
        }
 
+       /**
+        * Compare enum string value and ${klass.langType} object for non-equality.
+        *
+        * @param lhs a ${klass.langType} enum string value.
+        * @param rhs a ${klass.langType} object.
+        * @returns true if the enum values are not the same, otherwise false.
+        */
        inline bool
        operator!= (const std::string& lhs,
                    const ${klass.langType}& rhs)
@@ -375,6 +445,13 @@ namespace ome
          return lhs != static_cast<const std::string&>(rhs);
        }
 
+        /**
+         * Output ${klass.langType} to output stream.
+         *
+         * @param os the output stream.
+         * @param enumeration the ${klass.langType} to output.
+         * @returns the output stream.
+         */
        template<class charT, class traits>
        inline std::basic_ostream<charT,traits>&
        operator<< (std::basic_ostream<charT,traits>& os,
