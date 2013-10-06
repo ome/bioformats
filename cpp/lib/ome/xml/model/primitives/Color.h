@@ -296,6 +296,13 @@ namespace ome
           composed_type value;
         };
 
+        /**
+         * Compare two Color objects for equality.
+         *
+         * @param lhs a Color object.
+         * @param rhs a Color object.
+         * @returns true if the colors are the same, otherwise false.
+         */
         inline bool
         operator== (const Color& lhs,
                     const Color& rhs)
@@ -303,6 +310,13 @@ namespace ome
           return static_cast<Color::composed_type>(lhs) == static_cast<Color::composed_type>(rhs);
         }
 
+        /**
+         * Compare a Color object with a composed color value for equality.
+         *
+         * @param lhs a Color object.
+         * @param rhs a composed color value.
+         * @returns true if the Color object is the same as the color value, otherwise false.
+         */
         inline bool
         operator== (const Color&         lhs,
                     Color::composed_type rhs)
@@ -310,6 +324,13 @@ namespace ome
           return static_cast<Color::composed_type>(lhs) == rhs;
         }
 
+        /**
+         * Compare a composed color value with a Color object for equality.
+         *
+         * @param lhs a composed color value.
+         * @param rhs a Color object.
+         * @returns true if the Color object is the same as the color value, otherwise false.
+         */
         inline bool
         operator== (Color::composed_type lhs,
                     const Color&         rhs)
@@ -317,6 +338,13 @@ namespace ome
           return lhs == static_cast<Color::composed_type>(rhs);
         }
 
+        /**
+         * Compare a Color object with a signed composed color value for equality.
+         *
+         * @param lhs a Color object.
+         * @param rhs a signed composed color value.
+         * @returns true if the Color object is the same as the color value, otherwise false.
+         */
         inline bool
         operator== (const Color&       lhs,
                     Color::signed_type rhs)
@@ -324,6 +352,13 @@ namespace ome
           return static_cast<Color::signed_type>(lhs) == rhs;
         }
 
+        /**
+         * Compare a signed composed color value with a Color object for equality.
+         *
+         * @param lhs a signed composed color value.
+         * @param rhs a Color object.
+         * @returns true if the Color object is the same as the color value, otherwise false.
+         */
         inline bool
         operator== (Color::signed_type lhs,
                     const Color&       rhs)
@@ -331,6 +366,13 @@ namespace ome
           return lhs == static_cast<Color::signed_type>(rhs);
         }
 
+        /**
+         * Compare two Color objects for non-equality.
+         *
+         * @param lhs a Color object.
+         * @param rhs a Color object.
+         * @returns true if the colors are the same, otherwise false.
+         */
         inline bool
         operator!= (const Color& lhs,
                     const Color& rhs)
@@ -338,6 +380,13 @@ namespace ome
           return static_cast<Color::composed_type>(lhs) != static_cast<Color::composed_type>(rhs);
         }
 
+        /**
+         * Compare a Color object with a composed color value for non-equality.
+         *
+         * @param lhs a Color object.
+         * @param rhs a composed color value.
+         * @returns true if the Color object is the same as the color value, otherwise false.
+         */
         inline bool
         operator!= (const Color&         lhs,
                     Color::composed_type rhs)
@@ -345,6 +394,13 @@ namespace ome
           return static_cast<Color::composed_type>(lhs) != rhs;
         }
 
+        /**
+         * Compare a composed color value with a Color object for non-equality.
+         *
+         * @param lhs a composed color value.
+         * @param rhs a Color object.
+         * @returns true if the Color object is the same as the color value, otherwise false.
+         */
         inline bool
         operator!= (Color::composed_type lhs,
                     const Color&         rhs)
@@ -352,6 +408,13 @@ namespace ome
           return lhs != static_cast<Color::composed_type>(rhs);
         }
 
+        /**
+         * Compare a Color object with a signed composed color value for non-equality.
+         *
+         * @param lhs a Color object.
+         * @param rhs a signed composed color value.
+         * @returns true if the Color object is the same as the color value, otherwise false.
+         */
         inline bool
         operator!= (const Color&       lhs,
                     Color::signed_type rhs)
@@ -359,6 +422,13 @@ namespace ome
           return static_cast<Color::signed_type>(lhs) != rhs;
         }
 
+        /**
+         * Compare a signed composed color value with a Color object for non-equality.
+         *
+         * @param lhs a signed composed color value.
+         * @param rhs a Color object.
+         * @returns true if the Color object is the same as the color value, otherwise false.
+         */
         inline bool
         operator!= (Color::signed_type lhs,
                     const Color&       rhs)
@@ -366,6 +436,13 @@ namespace ome
           return lhs != static_cast<Color::signed_type>(rhs);
         }
 
+        /**
+         * Output Color to output stream.
+         *
+         * @param os the output stream.
+         * @param color the Color to output.
+         * @returns the output stream.
+         */
         template<class charT, class traits>
         inline std::basic_ostream<charT,traits>&
         operator<< (std::basic_ostream<charT,traits>& os,
@@ -374,6 +451,13 @@ namespace ome
           return os << static_cast<Color::signed_type>(color);
         }
 
+        /**
+         * Set Color from input stream.
+         *
+         * @param is the input stream.
+         * @param color the Color to set.
+         * @returns the input stream.
+         */
         template<class charT, class traits>
         inline std::basic_istream<charT,traits>&
         operator>> (std::basic_istream<charT,traits>& is,

@@ -51,6 +51,9 @@ namespace ome
       namespace primitives
       {
 
+        /**
+         * Double-precision floating point value greater than or equal to zero.
+         */
         typedef ConstrainedNumeric<double, NonNegativeFloatConstraint<double> > NonNegativeFloat;
 
       }

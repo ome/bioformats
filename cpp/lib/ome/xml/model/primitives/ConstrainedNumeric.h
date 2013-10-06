@@ -54,6 +54,9 @@ namespace ome
   {
     namespace model
     {
+      /**
+       * Model primitives.
+       */
       namespace primitives
       {
 

@@ -43,6 +43,12 @@
 
 namespace ome
 {
+  /**
+   * Xerces-C modern C++ wrapper.  All classes in this namespace wrap
+   * the Xerces-C classes and functions to provide RAII and
+   * exception-safe equivalents, and which also handle memory
+   * management transparently.
+   */
   namespace xerces
   {
 

@@ -184,14 +184,14 @@ namespace ome
      * Output string to output stream.
      *
      * @param os the output stream.
-     * @param string the string to output.
+     * @param str the string to output.
      * @returns the output stream.
      */
     inline ::std::ostream&
-    operator<< (::std::ostream& stream,
+    operator<< (::std::ostream& os,
                 const string&   str)
     {
-      return stream << static_cast<std::string>(str);
+      return os << static_cast<std::string>(str);
     }
 
   }

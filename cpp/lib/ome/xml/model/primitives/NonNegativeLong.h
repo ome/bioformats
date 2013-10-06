@@ -53,6 +53,9 @@ namespace ome
       namespace primitives
       {
 
+        /**
+         * Long integer (signed 64-bit) value greater than or equal to zero.
+         */
         typedef ConstrainedNumeric<int64_t, NonNegativeIntegerConstraint<int64_t> > NonNegativeLong;
 
       }
