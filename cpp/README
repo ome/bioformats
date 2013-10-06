@@ -5,16 +5,16 @@ Bio-Formats C++ implementation
 Prerequisites
 ─────────────
 
-┌────────────┬──────────┬─────────────────┬────────────────┬──────────┐
-│ Dependency │ Version  │ Debian/Ubuntu   │ RedHat/CentOS  │ Homebrew │
-├────────────┼──────────┼─────────────────┼────────────────┼──────────┤
-│ CMake      │ >= 2.8   │ cmake           │ cmake          │ cmake    │
-│ Boost      │ >= 1.44¹ │ libboost-dev    │ boost-devel    │ boost    │
-│ Xerces-C   │    3.x   │ libxerces-c-dev │ xerces-c-devel │ xerces-c │
-│ GTest†     │ >= 1.5   │ libgtest-dev    │ gtest-devel    │ N/A²     │
-│ Doxygen‡   │ >= 1.6   │ doxygen         │ doxygen        │ doxygen  │
-│ Graphviz‡  │ any      │ graphviz        │ graphviz       │ graphviz │
-└────────────┴──────────┴─────────────────┴────────────────┴──────────┘
+┌────────────┬───────────┬─────────────────┬────────────────┬──────────┐
+│ Dependency │ Version   │ Debian/Ubuntu   │ RedHat/CentOS  │ Homebrew │
+├────────────┼───────────┼─────────────────┼────────────────┼──────────┤
+│ CMake      │ >= 2.8    │ cmake           │ cmake          │ cmake    │
+│ Boost      │ >= 1.44¹  │ libboost-dev    │ boost-devel    │ boost    │
+│ Xerces-C   │    3.x    │ libxerces-c-dev │ xerces-c-devel │ xerces-c │
+│ GTest†     │ >= 1.5    │ libgtest-dev    │ gtest-devel    │ N/A²     │
+│ Doxygen‡   │ >= 1.6    │ doxygen         │ doxygen        │ doxygen  │
+│ Graphviz‡  │ >= 1.8.10 │ graphviz        │ graphviz       │ graphviz │
+└────────────┴───────────┴─────────────────┴────────────────┴──────────┘
 
   1. 1.41 is known to not work nicely with cmake; 1.5x or later recommended
   2. http://answers.ros.org/question/42335/mac-os-x-install-error-no-available-formula-for-gtest/
