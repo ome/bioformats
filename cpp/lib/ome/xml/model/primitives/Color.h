@@ -371,7 +371,7 @@ namespace ome
          *
          * @param lhs a Color object.
          * @param rhs a Color object.
-         * @returns true if the colors are the same, otherwise false.
+         * @returns true if the colors are not the same, otherwise false.
          */
         inline bool
         operator!= (const Color& lhs,
@@ -385,7 +385,7 @@ namespace ome
          *
          * @param lhs a Color object.
          * @param rhs a composed color value.
-         * @returns true if the Color object is the same as the color value, otherwise false.
+         * @returns true if the Color object is not the same as the color value, otherwise false.
          */
         inline bool
         operator!= (const Color&         lhs,
@@ -399,7 +399,7 @@ namespace ome
          *
          * @param lhs a composed color value.
          * @param rhs a Color object.
-         * @returns true if the Color object is the same as the color value, otherwise false.
+         * @returns true if the Color object is not the same as the color value, otherwise false.
          */
         inline bool
         operator!= (Color::composed_type lhs,
@@ -413,7 +413,7 @@ namespace ome
          *
          * @param lhs a Color object.
          * @param rhs a signed composed color value.
-         * @returns true if the Color object is the same as the color value, otherwise false.
+         * @returns true if the Color object is not the same as the color value, otherwise false.
          */
         inline bool
         operator!= (const Color&       lhs,
@@ -427,7 +427,7 @@ namespace ome
          *
          * @param lhs a signed composed color value.
          * @param rhs a Color object.
-         * @returns true if the Color object is the same as the color value, otherwise false.
+         * @returns true if the Color object is not the same as the color value, otherwise false.
          */
         inline bool
         operator!= (Color::signed_type lhs,
