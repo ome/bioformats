@@ -71,7 +71,6 @@ add_custom_command(OUTPUT ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
 #execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
 
 set(OME_XML_STATIC_SOURCES
-  model/enums/Enumeration.cpp
   model/enums/EnumerationException.cpp
   model/primitives/Color.cpp
   model/primitives/NonNegativeFloat.cpp
@@ -86,7 +85,6 @@ set(OME_XML_STATIC_SOURCES
 set(OME_XML_STATIC_MODEL_HEADERS)
 
 set(OME_XML_STATIC_ENUMS_HEADERS
-    model/enums/Enumeration.h
     model/enums/EnumerationException.h)
 
 set(OME_XML_STATIC_PRIMITIVES_HEADERS

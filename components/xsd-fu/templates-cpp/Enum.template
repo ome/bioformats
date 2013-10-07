@@ -52,7 +52,6 @@
 #include <map>
 #include <string>
 
-#include <ome/xml/model/enums/Enumeration.h>
 {% end %}\
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <algorithm>
@@ -82,7 +81,7 @@ namespace ome
         /**
          * ${klass.langType} enumeration.
          */
-       class ${klass.langType} : public Enumeration
+       class ${klass.langType}
        {
        public:
 
