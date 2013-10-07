@@ -1365,7 +1365,7 @@ notes = .. seealso:: \n
 
 [Molecular Imaging]
 extensions = .stp
-owner = `Molecular Imaging <http://www.molecularimagingcorp.com>`_
+owner = Molecular Imaging Corp, San Diego CA (closed)
 scifio = no
 export = no
 weHave = * Pascal code that reads Molecular Imaging files (from ImageSXM) \n
