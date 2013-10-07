@@ -28,6 +28,7 @@ import logging
 import sys
 import os
 import re
+import codecs
 
 # Needed to import fu.py
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), 'python'))
@@ -124,7 +125,7 @@ def main(opts):
 
     model = parseXmlSchema(opts)
     fu = TemplateInfo(opts.outdir, opts.package)
-    template = NewTextTemplate(open(template_path(CLASS_TEMPLATE, opts)).read())
+    template = NewTextTemplate(codecs.open(template_path(CLASS_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
     base, filename = os.path.split(template_path(CLASS_TEMPLATE, opts))
     name, extension = os.path.splitext(filename)
     for obj in model.objects.values():
@@ -134,7 +135,7 @@ def main(opts):
             base, '%s_%s%s' % (name, obj.name, extension))
         customContent = ''
         if os.path.exists(CUSTOM_CLASS_TEMPLATE):
-            customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
+            customTemplate = NewTextTemplate(codecs.open(CUSTOM_CLASS_TEMPLATE, encoding='utf-8'), encoding='utf-8')
             customContent = customTemplate.generate(
                 fu=fu, klass=obj, parents=parents, model=model)
             customContent = customContent.render()
@@ -146,7 +147,7 @@ def main(opts):
             start = customTemplate.rfind("_") + 1
             end = customTemplate.rfind(".")
             propertyName = customTemplate[start:end]
-            customTemplate = NewTextTemplate(open(customTemplate))
+            customTemplate = NewTextTemplate(codecs.open(customTemplate, encoding='utf-8'), encoding='utf-8')
             content = customTemplate.generate(
                 fu=fu, klass=obj, parents=parents, model=model)
             content = content.render()
@@ -160,7 +161,7 @@ def main(opts):
             start = customTemplate.rfind("_") + 1
             end = customTemplate.rfind(".")
             propertyName = customTemplate[start:end]
-            customTemplate = NewTextTemplate(open(customTemplate))
+            customTemplate = NewTextTemplate(codecs.open(customTemplate, encoding='utf-8'), encoding='utf-8')
             content = customTemplate.generate(
                 fu=fu, klass=obj, parents=parents, model=model)
             content = content.render()
@@ -187,14 +188,14 @@ def main(opts):
         if not os.path.exists(outputDirectory):
             os.makedirs(outputDirectory)
 
-        f = open(fullname, "w")
+        f = codecs.open(fullname, "w", encoding='utf-8')
         classContent = template.generate(
             fu=fu, klass=obj, model=model,
             customContent=customContent,
             customUpdatePropertyContent=customUpdatePropertyContent,
             customAsXMLElementPropertyContent=customAsXMLElementPropertyContent)
         classContent = classContent.render()
-        f.write(classContent)
+        f.write(classContent.decode('utf-8'))
         f.close()
 
 def enum_value_name(value):
@@ -223,7 +224,7 @@ def enumTypesMain(opts):
 
     model = parseXmlSchema(opts)
     fu = TemplateInfo(opts.outdir, opts.package)
-    template = NewTextTemplate(open(template_path(ENUM_TEMPLATE, opts)).read())
+    template = NewTextTemplate(codecs.open(template_path(ENUM_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
     for obj in model.objects.values():
         for prop in obj.properties.values():
             if not prop.isEnumeration:
@@ -249,10 +250,10 @@ def enumTypesMain(opts):
             if not os.path.exists(outputDirectory):
                 os.makedirs(outputDirectory)
 
-            f = open(fullname, "w")
+            f = codecs.open(fullname, "w", encoding='utf-8')
             classContent = template.generate(fu=fu, klass=prop,
-                             enum_value_name=enum_value_name).render()
-            f.write(classContent)
+                                             enum_value_name=enum_value_name).render(encoding='utf-8')
+            f.write(classContent.decode('utf-8'))
             f.close()
 
 def enumTypesIncludeAll(opts):
@@ -262,7 +263,7 @@ def enumTypesIncludeAll(opts):
 
     model = parseXmlSchema(opts)
     fu = TemplateInfo(opts.outdir, opts.package)
-    template = NewTextTemplate(open(template_path(ENUM_INCLUDEALL_TEMPLATE, opts)).read())
+    template = NewTextTemplate(codecs.open(template_path(ENUM_INCLUDEALL_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
     headers = model.getEnumHeaders()
 
     fullname = generated_filename("enums", TYPE_HEADER, opts)
@@ -283,9 +284,9 @@ def enumTypesIncludeAll(opts):
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
 
-    f = open(fullname, "w")
+    f = codecs.open(fullname, "w", encoding='utf-8')
     classContent = template.generate(fu=fu).render()
-    f.write(classContent)
+    f.write(classContent.decode('utf-8'))
     f.close()
 
 def enumHandlersMain(opts):
@@ -298,7 +299,7 @@ def enumHandlersMain(opts):
     fu = TemplateInfo(opts.outdir, opts.package)
     base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
     config = ConfigObj(os.path.join(base, "enum_handler.cfg"))
-    template = NewTextTemplate(open(template_path(ENUM_HANDLER_TEMPLATE, opts)).read())
+    template = NewTextTemplate(codecs.open(template_path(ENUM_HANDLER_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
     for obj in model.objects.values():
         for prop in obj.properties.values():
             if not prop.isEnumeration:
@@ -324,10 +325,10 @@ def enumHandlersMain(opts):
             if not os.path.exists(outputDirectory):
                 os.makedirs(outputDirectory)
 
-            f = open(fullname, "w")
+            f = codecs.open(fullname, "w", encoding='utf-8')
             classContent = template.generate(fu=fu, klass=prop,
                              enum_value_name=enum_value_name, config=config).render()
-            f.write(classContent)
+            f.write(classContent.decode('utf-8'))
             f.close()
 
 def index_string(name, max_occurs, level):
@@ -407,14 +408,14 @@ def processMetadataTemplate(template, outputFilename, opts):
     fu.DEFAULT_BASE_CLASS = DEFAULT_BASE_CLASS
     base, filename = os.path.split(template)
     name, extension = os.path.splitext(filename)
-    template = NewTextTemplate(open(template).read())
+    template = NewTextTemplate(codecs.open(template, encoding='utf-8').read(), encoding='utf-8')
     from glob import glob
     customContent = dict()
     for customTemplate in glob(os.path.join(base, '%s_*' % (name))):
         filename = os.path.split(customTemplate)[1];
         filename = os.path.splitext(filename)[0]
         base, objectName, propertyName = filename.split("_")
-        customTemplate = NewTextTemplate(open(customTemplate).read())
+        customTemplate = NewTextTemplate(codecs.open(customTemplate, encoding='utf-8').read(), encoding='utf-8')
         customTemplate = customTemplate.generate(
             fu=fu, model=model, parents=parents, is_multi_path=is_multi_path,
             indexes=indexes)
@@ -441,8 +442,8 @@ def processMetadataTemplate(template, outputFilename, opts):
     content = template.generate(fu=fu, model=model, parents=parents,
                     is_multi_path=is_multi_path, indexes=indexes,
                     customContent=customContent).render()
-    f = open(fullname, "w")
-    f.write(content)
+    f = codecs.open(fullname, "w", encoding='utf-8')
+    f.write(content.decode('utf-8'))
     f.close()
 
 def omeXmlMetadataMain(opts):
@@ -519,7 +520,7 @@ def debugMain(opts):
 
     model = parseXmlSchema(opts)
     fu = TemplateInfo(opts.outdir, opts.package)
-    template = NewTextTemplate(open(template_path(CLASS_TEMPLATE, opts)).read())
+    template = NewTextTemplate(codecs.open(template_path(CLASS_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
     base, filename = os.path.split(template_path(CLASS_TEMPLATE, opts))
     name, extension = os.path.splitext(filename)
     for obj in model.objects.values():
@@ -528,7 +529,7 @@ def debugMain(opts):
             CUSTOM_CLASS_TEMPLATE = os.path.join(base, '%s_%s%s' % (name, obj.name, extension))
             customContent = ''
             if os.path.exists(CUSTOM_CLASS_TEMPLATE):
-                customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
+                customTemplate = NewTextTemplate(codecs.open(CUSTOM_CLASS_TEMPLATE, encoding='utf-8'), encoding='utf-8')
                 customContent = customTemplate.generate(
                     fu=fu, klass=obj, parents=parents, model=model)
                 customContent = customContent.render()
@@ -567,7 +568,7 @@ def docGenMain(opts):
         opts.args = [theSchemas[1]]
         model = parseXmlSchema(opts)
         fu = TemplateInfo(opts.outdir, opts.package)
-        template = NewTextTemplate(open(template_path(CLASS_TEMPLATE, opts)).read())
+        template = NewTextTemplate(codecs.open(template_path(CLASS_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
         print(" == `%s` ==" % (prefix))
         for obj in model.objects.values():
             print(" === %s%s ===" % (prefix, obj.name))
@@ -601,7 +602,7 @@ def tabGenMain(opts):
         opts.args = [theSchemas[1]]
         model = parseXmlSchema(opts)
         fu = TemplateInfo(opts.outdir, opts.package)
-        template = NewTextTemplate(open(template_path(CLASS_TEMPLATE, opts)).read())
+        template = NewTextTemplate(codecs.open(template_path(CLASS_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
         for theToplevelNode in theSchemas[2]:
             parentlist(model, theToplevelNode[0], theToplevelNode[1])
 
