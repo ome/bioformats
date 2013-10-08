@@ -39,27 +39,12 @@
 #ifndef OME_XML_MODEL_ENUMS_ENUMERATION_H
 #define OME_XML_MODEL_ENUMS_ENUMERATION_H
 
-/**
- * Open Microscopy Environment C++ implementation.
- */
 namespace ome
 {
-  /**
-   * OME-XML Data Model
-   */
   namespace xml
   {
-    /**
-     * Model objects.
-     */
     namespace model
     {
-      /**
-       * Model enumerations.  All the classes in this namespace are
-       * enum classes providing enum-like functionality.  They are not
-       * C++ enums, but each class contains a C++ enum together with
-       * the necessary logic for serialisation.
-       */
       namespace enums
       {
 

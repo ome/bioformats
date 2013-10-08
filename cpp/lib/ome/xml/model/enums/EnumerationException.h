@@ -42,12 +42,28 @@
 #include <exception>
 #include <stdexcept>
 
+/**
+ * Open Microscopy Environment C++ implementation.
+ */
 namespace ome
 {
+  /**
+   * OME-XML Data Model
+   */
   namespace xml
   {
+    /**
+     * Model objects.
+     */
     namespace model
     {
+      /**
+       * Model enumerations.  All the classes in this namespace are
+       * enum classes providing enum-like functionality.  They are not
+       * C++ enums, but each class contains a C++ enum together with
+       * the necessary logic for conversion to and from string and
+       * enum values.
+       */
       namespace enums
       {
 
