@@ -138,7 +138,7 @@ def main(opts):
             customTemplate = NewTextTemplate(codecs.open(CUSTOM_CLASS_TEMPLATE, encoding='utf-8'), encoding='utf-8')
             customContent = customTemplate.generate(
                 fu=fu, klass=obj, parents=parents, model=model)
-            customContent = customContent.render()
+            customContent = customContent.render(encoding='utf-8')
         customTemplates = glob(os.path.join(
                 base, "%s_%s_update_*%s" % (name, obj.name, extension)))
         # BEGIN Custom templates for update()
@@ -150,7 +150,7 @@ def main(opts):
             customTemplate = NewTextTemplate(codecs.open(customTemplate, encoding='utf-8'), encoding='utf-8')
             content = customTemplate.generate(
                 fu=fu, klass=obj, parents=parents, model=model)
-            content = content.render()
+            content = content.render(encoding='utf-8')
             customUpdatePropertyContent[propertyName] = content
         # END Custom templates for update()
         # BEGIN Custom templates for asXMLElement()
@@ -164,7 +164,7 @@ def main(opts):
             customTemplate = NewTextTemplate(codecs.open(customTemplate, encoding='utf-8'), encoding='utf-8')
             content = customTemplate.generate(
                 fu=fu, klass=obj, parents=parents, model=model)
-            content = content.render()
+            content = content.render(encoding='utf-8')
             customAsXMLElementPropertyContent[propertyName] = content
         # END Custom templates for asXMLElment()
         parents = resolve_parents(model, obj.name)
@@ -194,7 +194,7 @@ def main(opts):
             customContent=customContent,
             customUpdatePropertyContent=customUpdatePropertyContent,
             customAsXMLElementPropertyContent=customAsXMLElementPropertyContent)
-        classContent = classContent.render()
+        classContent = classContent.render(encoding='utf-8')
         f.write(classContent.decode('utf-8'))
         f.close()
 
@@ -285,7 +285,7 @@ def enumTypesIncludeAll(opts):
         os.makedirs(outputDirectory)
 
     f = codecs.open(fullname, "w", encoding='utf-8')
-    classContent = template.generate(fu=fu).render()
+    classContent = template.generate(fu=fu).render(encoding='utf-8')
     f.write(classContent.decode('utf-8'))
     f.close()
 
@@ -327,7 +327,7 @@ def enumHandlersMain(opts):
 
             f = codecs.open(fullname, "w", encoding='utf-8')
             classContent = template.generate(fu=fu, klass=prop,
-                             enum_value_name=enum_value_name, config=config).render()
+                             enum_value_name=enum_value_name, config=config).render(encoding='utf-8')
             f.write(classContent.decode('utf-8'))
             f.close()
 
@@ -421,7 +421,7 @@ def processMetadataTemplate(template, outputFilename, opts):
             indexes=indexes)
         if objectName not in customContent:
             customContent[objectName] = dict()
-        customContent[objectName][propertyName] = customTemplate.render()
+        customContent[objectName][propertyName] = customTemplate.render(encoding='utf-8')
 
     fullname = generated_filename(outputFilename, opts.filetype, opts)
 
@@ -441,7 +441,7 @@ def processMetadataTemplate(template, outputFilename, opts):
 
     content = template.generate(fu=fu, model=model, parents=parents,
                     is_multi_path=is_multi_path, indexes=indexes,
-                    customContent=customContent).render()
+                    customContent=customContent).render(encoding='utf-8')
     f = codecs.open(fullname, "w", encoding='utf-8')
     f.write(content.decode('utf-8'))
     f.close()
@@ -532,7 +532,7 @@ def debugMain(opts):
                 customTemplate = NewTextTemplate(codecs.open(CUSTOM_CLASS_TEMPLATE, encoding='utf-8'), encoding='utf-8')
                 customContent = customTemplate.generate(
                     fu=fu, klass=obj, parents=parents, model=model)
-                customContent = customContent.render()
+                customContent = customContent.render(encoding='utf-8')
             print("Dump: %s" % obj.__dict__)
             print("Element Dump: %s" % obj.element.__dict__)
             print(" +-- %s(base=%s, type=%s)" % (obj.name, obj.base, obj.type))
@@ -547,7 +547,7 @@ def debugMain(opts):
             fu.SOURCE_TYPE = opts.filetype;
 
             print(template.generate(
-                    fu=fu, klass=obj, parents=parents, model=model, customContent=customContent).render())
+                    fu=fu, klass=obj, parents=parents, model=model, customContent=customContent).render(encoding='utf-8'))
 
 def docGenMain(opts):
     """
