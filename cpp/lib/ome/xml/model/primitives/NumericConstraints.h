@@ -51,7 +51,7 @@ namespace ome
       {
 
         /**
-         * Constraint for positive integer values.
+         * Constraint for strictly positive integer values.
          *
          * @tparam N the type to constrain.
          */
@@ -72,7 +72,7 @@ namespace ome
         };
 
         /**
-         * Constraint for positive floating point values.
+         * Constraint for strictly positive floating point values.
          *
          * @tparam N the type to constrain.
          */
