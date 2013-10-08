@@ -36,39 +36,26 @@
  * #L%
  */
 
-#ifndef OME_XML_MODEL_ENUMS_ENUMERATION_H
-#define OME_XML_MODEL_ENUMS_ENUMERATION_H
+/*─────────────────────────────────────────────────────────────────────────────
+ *
+ * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
+ *
+ *─────────────────────────────────────────────────────────────────────────────
+ */
 
-namespace ome
-{
-  namespace xml
-  {
-    namespace model
-    {
-      namespace enums
-      {
+{% if fu.SOURCE_TYPE == "header" %}\
+#ifndef ${fu.GUARD}
+#define ${fu.GUARD}
 
-        /**
-         * Abstract superclass for all enumerations.
-         */
-        class Enumeration
-        {
-        protected:
-          Enumeration();
-        public:
-          virtual
-          ~Enumeration();
-        };
+{% for header in fu.HEADERS %}\
+#include <${header}>
+{% end %}\
 
-      }
-    }
-  }
-}
-
-#endif // OME_XML_MODEL_ENUMS_ENUMERATION_H
+#endif // ${fu.GUARD}
 
 /*
  * Local Variables:
  * mode:C++
  * End:
  */
+{% end %}\

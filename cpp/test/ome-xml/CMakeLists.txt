@@ -41,6 +41,10 @@ if(BUILD_TESTS)
   target_link_libraries(color ome-xml)
   target_link_libraries(color ${TEST_LIBS})
 
+  add_executable(enum enum.cpp)
+  target_link_libraries(enum ome-xml)
+  target_link_libraries(enum ${TEST_LIBS})
+
   add_executable(constrained-numeric
                  non-negative-float.cpp
                  non-negative-integer.cpp
@@ -57,6 +61,7 @@ if(BUILD_TESTS)
   target_link_libraries(timestamp ${TEST_LIBS})
 
   add_test(ome-xml/color color)
+  add_test(ome-xml/enum enum)
   add_test(ome-xml/constrained-numeric constrained-numeric)
   add_test(ome-xml/timestamp timestamp)
 
