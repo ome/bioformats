@@ -57,28 +57,56 @@ namespace ome
     namespace dom
     {
 
+      /**
+       * DOM Document wrapper.  The wrapper behaves as though is the
+       * wrapped DOMDocument; it can be dereferenced using the "*" or
+       * "->" operators to obtain a reference or pointer to the
+       * wrapped object.  It can also be cast to a pointer to the
+       * wrapped object, so can substitute for it directly.
+       */
       class document
       {
       public:
+        /**
+         * Construct a NULL document.
+         */
         document ():
           xmldoc()
         {
         }
 
+        /**
+         * Copy construct a document.
+         *
+         * @param document the document to copy.
+         */
         document (const document& document):
           xmldoc(document.xmldoc)
         {
         }
 
+        /**
+         * Construct a document from a xercesc::DOMDocument *.
+         *
+         * @param document the document to wrap.
+         */
         document (xercesc::DOMDocument *document):
           xmldoc(document)
         {
         }
 
+        /// Destructor.
         ~document ()
         {
         }
 
+        /**
+         * Create element with namespace.
+         *
+         * @param ns the namespace.
+         * @param name the element name.
+         * @returns the created element.
+         */
         element
         createElementNS(const std::string& ns,
                         const std::string& name)
@@ -89,6 +117,12 @@ namespace ome
           return xmldoc->createElementNS(xns, xname);
         }
 
+        /**
+         * Assign a document.
+         *
+         * @param document the document to assign.
+         * @returns the document.
+         */
         document&
         operator= (document& document)
         {
@@ -96,6 +130,12 @@ namespace ome
           return *this;
         }
 
+        /**
+         * Assign a xercesc::DOMDocument *.
+         *
+         * @param document the document to assign.
+         * @returns the document.
+         */
         document&
         operator= (xercesc::DOMDocument *document)
         {
@@ -103,6 +143,11 @@ namespace ome
           return *this;
         }
 
+        /**
+         * Dereference to xercesc::DOMDocument.
+         *
+         * @returns the wrapped xercesc::DOMDocument.
+         */
         xercesc::DOMDocument&
         operator* () noexcept
         {
@@ -110,6 +155,11 @@ namespace ome
           return *xmldoc;
         }
 
+        /**
+         * Dereference to const xercesc::DOMDocument.
+         *
+         * @returns the wrapped xercesc::DOMDocument.
+         */
         const xercesc::DOMDocument&
         operator* () const noexcept
         {
@@ -117,6 +167,11 @@ namespace ome
           return *xmldoc;
         }
 
+        /**
+         * Dereference to xercesc::DOMDocument.
+         *
+         * @returns the wrapped xercesc::DOMDocument.
+         */
         xercesc::DOMDocument *
         operator-> () noexcept
         {
@@ -124,6 +179,11 @@ namespace ome
           return xmldoc;
         }
 
+        /**
+         * Dereference to const xercesc::DOMDocument.
+         *
+         * @returns the wrapped xercesc::DOMDocument.
+         */
         const xercesc::DOMDocument *
         operator-> () const noexcept
         {
@@ -131,12 +191,18 @@ namespace ome
           return xmldoc;
         }
 
+        /**
+         * Check if the wrapped document is NULL.
+         *
+         * @returns true if valid, false if NULL.
+         */
         operator bool () const
         {
           return xmldoc != 0;
         }
 
       private:
+        /// The wrapped xercesc::DOMDocument.
         xercesc::DOMDocument *xmldoc;
       };
 

@@ -33,6 +33,7 @@ cpp()
         make
         make test
         make DESTDIR=../install install
+        make doc
     )
 }
 

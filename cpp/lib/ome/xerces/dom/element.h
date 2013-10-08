@@ -57,58 +57,113 @@ namespace ome
     namespace dom
     {
 
+      /**
+       * DOM Element wrapper.  The wrapper behaves as though is the
+       * wrapped DOMElement; it can be dereferenced using the "*" or
+       * "->" operators to obtain a reference or pointer to the
+       * wrapped object.  It can also be cast to a pointer to the
+       * wrapped object, so can substitute for it directly.
+       */
       class element : public node
       {
       public:
+        /**
+         * Construct a NULL element.
+         */
         element ():
           xmlelem()
         {
         }
 
+        /**
+         * Copy construct an element.
+         *
+         * @param element the element to copy.
+         */
         element (const element& element):
           xmlelem(element.xmlelem)
         {
         }
 
+        /**
+         * Construct an element from a node.
+         *
+         * @param node the node to copy.
+         */
         element (node& node):
           xmlelem()
         {
           *this = node;
         }
 
+        /**
+         * Construct an element from a xercesc::DOMElement *.
+         *
+         * @param element the element to wrap.
+         */
         element (xercesc::DOMElement *element):
           xmlelem(element)
         {
         }
 
+        /**
+         * Construct an element from a xercesc::DOMNode *.
+         *
+         * @param node the node to wrap.
+         */
         element (xercesc::DOMNode *node):
           xmlelem()
         {
           *this = node;
         }
 
+        /// Destructor.
         ~element()
         {
         }
 
+        /**
+         * Get element tag name.
+         *
+         * @returns the tag name.
+         */
         string
         getTagName () const
         {
           return xmlelem->getTagName();
         }
 
+        /**
+         * Check if the element has the specified attribute.
+         *
+         * @param attr the attribute to check.
+         * @returns true if the element has the attribute, otherwise
+         * false.
+         */
         bool
         hasAttribute (const std::string& attr) const
         {
           return xmlelem->hasAttribute(xerces::string(attr));
         }
 
+        /**
+         * Get the specified attribute value.
+         *
+         * @param attr the attribute to get.
+         * @returns the attribute value.
+         */
         string
         getAttribute (const std::string& attr) const
         {
           return xmlelem->getAttribute(xerces::string(attr));
         }
 
+        /**
+         * Set the specified attribute value.
+         *
+         * @param attr the attribute to set.
+         * @param val the value to set.
+         */
         void
         setAttribute (const std::string& attr,
                       const std::string& val)
@@ -117,18 +172,34 @@ namespace ome
                                        xerces::string(val));
         }
 
+        /**
+         * Get element text content.
+         *
+         * @returns the text content.
+         */
         string
         getTextContent () const
         {
           return xmlelem->getTextContent();
         }
 
+        /**
+         * Set element text content.
+         *
+         * @param val the text content to set.
+         */
         void
         setTextContent (const std::string& val)
         {
           return xmlelem->setTextContent(xerces::string(val));
         }
 
+        /**
+         * Assign an element.
+         *
+         * @param element the element to assign.
+         * @returns the element.
+         */
         element&
         operator= (element& element)
         {
@@ -136,6 +207,12 @@ namespace ome
           return *this;
         }
 
+        /**
+         * Assign a node.
+         *
+         * @param node the node to assign.
+         * @returns the element.
+         */
         element&
         operator= (node& node)
         {
@@ -144,6 +221,12 @@ namespace ome
           return *this;
         }
 
+        /**
+         * Assign a xercesc::DOMElement *.
+         *
+         * @param element the element to assign.
+         * @returns the element.
+         */
         element&
         operator= (xercesc::DOMElement *element)
         {
@@ -151,6 +234,12 @@ namespace ome
           return *this;
         }
 
+        /**
+         * Assign a xercesc::DOMNode *.
+         *
+         * @param node the node to assign.
+         * @returns the element.
+         */
         element&
         operator= (xercesc::DOMNode *node)
         {
@@ -158,6 +247,11 @@ namespace ome
           return *this;
         }
 
+        /**
+         * Dereference to xercesc::DOMElement.
+         *
+         * @returns the wrapped xercesc::DOMElement.
+         */
         xercesc::DOMElement&
         operator* () noexcept
         {
@@ -165,6 +259,11 @@ namespace ome
           return *xmlelem;
         }
 
+        /**
+         * Dereference to const xercesc::DOMElement.
+         *
+         * @returns the wrapped xercesc::DOMElement.
+         */
         const xercesc::DOMElement&
         operator* () const noexcept
         {
@@ -172,6 +271,11 @@ namespace ome
           return *xmlelem;
         }
 
+        /**
+         * Dereference to xercesc::DOMElement.
+         *
+         * @returns the wrapped xercesc::DOMElement.
+         */
         xercesc::DOMElement *
         operator-> () noexcept
         {
@@ -179,6 +283,11 @@ namespace ome
           return xmlelem;
         }
 
+        /**
+         * Dereference to const xercesc::DOMElement.
+         *
+         * @returns the wrapped xercesc::DOMElement.
+         */
         const xercesc::DOMElement *
         operator-> () const noexcept
         {
@@ -186,12 +295,18 @@ namespace ome
           return xmlelem;
         }
 
+        /**
+         * Check if the wrapped element is NULL.
+         *
+         * @returns true if valid, false if NULL.
+         */
         operator bool () const
         {
           return xmlelem != 0;
         }
 
       private:
+        /// The wrapped xercesc::DOMElement.
         xercesc::DOMElement *xmlelem;
       };
 

@@ -49,23 +49,68 @@ namespace ome
   namespace xerces
   {
 
+    /**
+     * Xerces error handler reporting errors to an ostream.
+     * Encountered Xerces xercesc::SAXParseException exceptions are
+     * logged to the specified ostream.  Xerces exceptions don't
+     * derive from any of the standard exception classes, and don't
+     * use standard strings, making them difficult to catch and
+     * process.  If an error is encountered, this class will evaluate
+     * to true.
+     */
     class error_reporter : public xercesc::ErrorHandler
     {
     public:
+      /**
+       * Construct an error_reporter.
+       *
+       * @param stream the stream to output exception details to.
+       */
       error_reporter(std::ostream& stream = std::cerr);
 
+      /// The destructor.
       ~error_reporter();
 
+      /**
+       * Log a warning.
+       *
+       * @param toCatch the exception to log.
+       */
       void warning(const xercesc::SAXParseException& toCatch);
+
+      /**
+       * Log an error.
+       *
+       * @param toCatch the exception to log.
+       */
       void error(const xercesc::SAXParseException& toCatch);
+
+      /**
+       * Log a fatal error.
+       *
+       * @param toCatch the exception to log.
+       */
       void fatalError(const xercesc::SAXParseException& toCatch);
+
+      /**
+       * Reset error status.  Forget any errors which have been
+       * previously encountered.  The class will subsequently evaluate
+       * to true.
+       */
       void resetErrors();
 
     private:
+      /// The output stream to use.
       std::ostream& stream;
+      /// Has an error been encountered?
       bool saw_error;
 
     public:
+      /**
+       * Has an error been encountered?
+       *
+       * @returns true if an error has been encountered, otherwise false.
+       */
       operator bool() const
       {
 	return saw_error;
