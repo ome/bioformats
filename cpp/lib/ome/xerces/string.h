@@ -63,7 +63,7 @@ namespace ome
      *
      * This class does have an overhead of maintaining two copies of
      * the string (char * and XMLCh *), as well as the cost of
-     * transcoding between the two forms upon initialisation.
+     * transcoding between the two forms upon construction.
      *
      * Assignment of std::string or XMLCh * is not supported.  This
      * class is only intended to transiently transcode between the two
