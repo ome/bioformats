@@ -65,21 +65,33 @@ namespace ome
          */
         class Timestamp {
         public:
-          // Type used internally to represent time.
+          /// POSIX time is the underlying time representation.
           typedef boost::posix_time::ptime value_type;
 
           /**
-           * Default construct a timestamp (current UTC time).
+           * Construct a Timestamp (defaults to current UTC time).
            */
           Timestamp();
 
           /**
-           * Construct a timestamp from an ISO-8601-formatted string.
+           * Construct a Timestamp from an ISO-8601 date string.
+           *
+           * @param value an ISO-8601-formatted string.
            */
           Timestamp(const std::string& value);
 
+          /**
+           * Construct a Timestamp from POSIX time.
+           *
+           * @param value the POSIX time.
+           */
           Timestamp(value_type value);
 
+          /**
+           * Get the wrapped POSIX time value.
+           *
+           * Returns the POSIX time.
+           */
           inline
           operator value_type () const
           {
@@ -87,9 +99,17 @@ namespace ome
           }
 
         private:
+          /// The POSIX time (at least microsecond precision).
           value_type value;
         };
 
+        /**
+         * Output Timestamp to output stream.
+         *
+         * @param os the output stream.
+         * @param timestamp the timestamp to output.
+         * @returns the output stream.
+         */
         template<class charT, class traits>
         inline std::basic_ostream<charT,traits>&
         operator<< (std::basic_ostream<charT,traits>& os,
@@ -99,6 +119,13 @@ namespace ome
                     << 'Z';
         }
 
+        /**
+         * Set Timestamp from input stream.
+         *
+         * @param is the input stream.
+         * @param timestamp the Timestamp to set.
+         * @returns the input stream.
+         */
         template<class charT, class traits>
         inline std::basic_istream<charT,traits>&
         operator>> (std::basic_istream<charT,traits>& is,

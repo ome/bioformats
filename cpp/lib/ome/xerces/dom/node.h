@@ -54,28 +54,55 @@ namespace ome
     namespace dom
     {
 
+      /**
+       * DOM Node wrapper.  The wrapper behaves as though is the
+       * wrapped DOMNode; it can be dereferenced using the "*" or "->"
+       * operators to obtain a reference or pointer to the wrapped
+       * object.  It can also be cast to a pointer to the wrapped
+       * object, so can substitute for it directly.
+       */
       class node
       {
       public:
+        /**
+         * Construct a NULL node.
+         */
         node ():
           xmlnode()
         {
         }
 
+        /**
+         * Copy construct a node.
+         *
+         * @param node the node to copy.
+         */
         node (const node& node):
           xmlnode(node.xmlnode)
         {
         }
 
+        /**
+         * Construct a node from a xercesc::DOMNode *.
+         *
+         * @param node the node to wrap.
+         */
         node (xercesc::DOMNode *node):
           xmlnode(node)
         {
         }
 
+        /// Destructor.
         ~node ()
         {
         }
 
+        /**
+         * Append a child node.
+         *
+         * @param node the child to append.
+         * @returns the appended node.
+         */
         node
         appendChild (const node& node)
         {
@@ -85,6 +112,12 @@ namespace ome
           return this->xmlnode->appendChild(node.xmlnode);
         }
 
+        /**
+         * Assign a node.
+         *
+         * @param node the node to assign.
+         * @returns the node.
+         */
         node&
         operator= (node& node)
         {
@@ -92,6 +125,12 @@ namespace ome
           return *this;
         }
 
+        /**
+         * Assign a xercesc::DOMNode *.
+         *
+         * @param node the node to assign.
+         * @returns the node.
+         */
         node&
         operator= (xercesc::DOMNode *node)
         {
@@ -99,6 +138,11 @@ namespace ome
           return *this;
         }
 
+        /**
+         * Dereference to xercesc::DOMNode.
+         *
+         * @returns the wrapped xercesc::DOMNode.
+         */
         xercesc::DOMNode&
         operator* () noexcept
         {
@@ -106,6 +150,11 @@ namespace ome
           return *xmlnode;
         }
 
+        /**
+         * Dereference to const xercesc::DOMNode.
+         *
+         * @returns the wrapped xercesc::DOMNode.
+         */
         const xercesc::DOMNode&
         operator* () const noexcept
         {
@@ -113,6 +162,11 @@ namespace ome
           return *xmlnode;
         }
 
+        /**
+         * Dereference to xercesc::DOMNode.
+         *
+         * @returns the wrapped xercesc::DOMNode.
+         */
         xercesc::DOMNode *
         operator-> () noexcept
         {
@@ -120,6 +174,11 @@ namespace ome
           return xmlnode;
         }
 
+        /**
+         * Dereference to const xercesc::DOMNode.
+         *
+         * @returns the wrapped xercesc::DOMNode.
+         */
         const xercesc::DOMNode *
         operator-> () const noexcept
         {
@@ -127,24 +186,40 @@ namespace ome
           return xmlnode;
         }
 
+        /**
+         * Cast to xercesc::DOMNode *.
+         *
+         * @returns the wrapped xercesc::DOMNode.
+         */
         inline
         operator xercesc::DOMNode* ()
         {
           return *this;
         }
 
+        /**
+         * Cast to const xercesc::DOMNode *.
+         *
+         * @returns the wrapped xercesc::DOMNode.
+         */
         inline
         operator const xercesc::DOMNode* () const
         {
           return *this;
         }
 
+        /**
+         * Check if the wrapped node is NULL.
+         *
+         * @returns true if valid, false if NULL.
+         */
         operator bool () const
         {
           return xmlnode != 0;
         }
 
       private:
+        /// The wrapped xercesc::DOMNode.
         xercesc::DOMNode *xmlnode;
       };
 
