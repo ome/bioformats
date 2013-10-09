@@ -7,7 +7,7 @@ Molecular Imaging
 Extensions: .stp 
 
 
-Owner: `Molecular Imaging <http://www.molecularimagingcorp.com>`_
+Owner: Molecular Imaging Corp, San Diego CA (closed)
 
 **Support**
 
