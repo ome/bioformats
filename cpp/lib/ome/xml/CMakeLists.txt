@@ -36,6 +36,28 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES})
 
+execute_process(COMMAND ${XSD_FU} java_classes -d -f source ${XSD_FU_ARGS}
+  OUTPUT_VARIABLE OME_XML_GENERATED_MODEL_SOURCES)
+string(REPLACE "\n" ";" OME_XML_GENERATED_MODEL_SOURCES "${OME_XML_GENERATED_MODEL_SOURCES}")
+if(WIN32)
+  string(REPLACE "\\" "/" OME_XML_GENERATED_MODEL_SOURCES "${OME_XML_GENERATED_MODEL_SOURCES}")
+endif(WIN32)
+add_custom_command(OUTPUT ${OME_XML_GENERATED_MODEL_SOURCES}
+                   COMMAND ${XSD_FU} java_classes -q -f source ${XSD_FU_ARGS}
+                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
+#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_MODEL_SOURCES})
+
+execute_process(COMMAND ${XSD_FU} java_classes -d -f header ${XSD_FU_ARGS}
+  OUTPUT_VARIABLE OME_XML_GENERATED_MODEL_HEADERS)
+string(REPLACE "\n" ";" OME_XML_GENERATED_MODEL_HEADERS "${OME_XML_GENERATED_MODEL_HEADERS}")
+if(WIN32)
+  string(REPLACE "\\" "/" OME_XML_GENERATED_MODEL_HEADERS "${OME_XML_GENERATED_MODEL_HEADERS}")
+endif(WIN32)
+add_custom_command(OUTPUT ${OME_XML_GENERATED_MODEL_HEADERS}
+                   COMMAND ${XSD_FU} java_classes -q -f header ${XSD_FU_ARGS}
+                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
+#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_MODEL_HEADERS})
+
 execute_process(COMMAND ${XSD_FU} enum_types -d -f source ${XSD_FU_ARGS}
   OUTPUT_VARIABLE OME_XML_GENERATED_ENUMS_SOURCES)
 string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMS_SOURCES "${OME_XML_GENERATED_ENUMS_SOURCES}")
@@ -80,9 +102,15 @@ set(OME_XML_STATIC_SOURCES
   model/primitives/PositiveFloat.cpp
   model/primitives/PositiveInteger.cpp
   model/primitives/PositiveLong.cpp
-  model/primitives/Timestamp.cpp)
+  model/primitives/Timestamp.cpp
+  model/OMEModel.cpp
+  model/OMEModelImpl.cpp
+  model/OMEModelObject.cpp)
 
-set(OME_XML_STATIC_MODEL_HEADERS)
+set(OME_XML_STATIC_MODEL_HEADERS
+    model/OMEModel.h
+    model/OMEModelImpl.h
+    model/OMEModelObject.h)
 
 set(OME_XML_STATIC_ENUMS_HEADERS
     model/enums/EnumerationException.h)
