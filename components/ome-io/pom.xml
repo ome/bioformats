@@ -6,9 +6,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>loci</groupId>
+    <groupId>ome</groupId>
     <artifactId>pom-scifio</artifactId>
-    <version>4.5-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 

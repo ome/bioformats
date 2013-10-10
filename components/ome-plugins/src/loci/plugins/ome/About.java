@@ -31,6 +31,7 @@ import ij.plugin.PlugIn;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import loci.formats.FormatTools;
 import loci.ome.io.OMEReader;
 
 /**
@@ -63,8 +64,10 @@ public final class About implements PlugIn {
 
   public static void about() {
     String msg = "<html>" +
-      "OME Plugins for ImageJ, revision @vcs.revision@, built @date@" +
-      "<br>Copyright (C) 2005 - @year@ Open Microscopy Environment:" +
+      "OME Plugins for ImageJ, revision " + FormatTools.VCS_REVISION +
+      ", built " + FormatTools.DATE +
+      "<br>Copyright (C) 2005 - " + FormatTools.YEAR +
+      " Open Microscopy Environment:" +
       "<ul>" +
       "<li>Board of Regents of the University of Wisconsin-Madison</li>" +
       "<li>Glencoe Software, Inc.</li>" +
