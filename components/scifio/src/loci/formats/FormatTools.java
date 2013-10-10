@@ -37,6 +37,8 @@
 package loci.formats;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.Vector;
 
 import loci.common.Constants;
@@ -170,21 +172,46 @@ public final class FormatTools {
 
   // -- Constants - versioning --
 
+  public static final Properties VERSION_PROPERTIES = loadProperties();
+
+  /** Current VCS revision. */
+  public static final String VCS_REVISION =
+    VERSION_PROPERTIES.getProperty("vcs.revision");
+
   /**
    * Current SVN revision.
    * @deprecated After Git move, deprecated in favour of {@link #VCS_REVISION}.
    */
   @Deprecated
-  public static final String SVN_REVISION = "@vcs.revision@";
-
-  /** Current VCS revision. */
-  public static final String VCS_REVISION = "@vcs.revision@";
+  public static final String SVN_REVISION = VCS_REVISION;
 
   /** Date on which this release was built. */
-  public static final String DATE = "@date@";
+  public static final String DATE = VERSION_PROPERTIES.getProperty("date");
+
+  /** Year in which this release was built. */
+  public static final String YEAR = VERSION_PROPERTIES.getProperty("year");
 
   /** Version number of this release. */
-  public static final String VERSION = "@release.version@";
+  public static final String VERSION =
+    VERSION_PROPERTIES.getProperty("release.version");
+
+  public static final String PROPERTY_FILE = "version.properties";
+
+  static Properties loadProperties() {
+    Properties properties = new Properties();
+    try {
+      InputStream propertyFile = Class.forName(
+        "loci.formats.FormatTools").getResourceAsStream(PROPERTY_FILE);
+      properties.load(propertyFile);
+    }
+    catch (ClassNotFoundException e) {
+      LOGGER.debug("Failed to load version properties", e);
+    }
+    catch (IOException e) {
+      LOGGER.debug("Failed to load version properties", e);
+    }
+    return properties;
+  }
 
   // -- Constants - domains --
 

@@ -69,6 +69,7 @@ import javax.swing.event.ListSelectionListener;
 
 import loci.common.Constants;
 import loci.common.DateTools;
+import loci.formats.FormatTools;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -324,7 +325,7 @@ public class ConfigWindow extends JFrame
     String javaVersion = System.getProperty("java.version") +
       " (" + System.getProperty("java.vendor") + ")";
 
-    String bfVersion = "@date@";
+    String bfVersion = FormatTools.DATE;
     // Ant replaces date token with datestamp of the build
     if (bfVersion.equals("@" + "date" + "@")) bfVersion = "Internal build";
 

@@ -41,6 +41,7 @@ cpp()
 cppwrap()
 {
     (
+        maven
         cd components/scifio
         mvn -DskipTests clean package cppwrap:wrap dependency:copy-dependencies
         cd target/cppwrap

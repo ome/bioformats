@@ -5,15 +5,9 @@
     http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.scijava</groupId>
-    <artifactId>pom-scijava</artifactId>
-    <version>1.28</version>
-  </parent>
-
-  <groupId>loci</groupId>
+  <groupId>ome</groupId>
   <artifactId>pom-scifio</artifactId>
-  <version>4.5-SNAPSHOT</version>
+  <version>5.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -47,6 +41,12 @@
   </modules>
 
   <properties>
+    <maven.build.timestamp.format>d MMMMM yyyy</maven.build.timestamp.format>
+
+    <vcs.revision>${revision}</vcs.revision>
+    <release.version>5.0.0-SNAPSHOT</release.version>
+    <date>${maven.build.timestamp}</date>
+    <year>2013</year>
     <project.rootdir>${basedir}</project.rootdir>
     <log4j.version>1.2.17</log4j.version>
     <slf4j.version>1.7.2</slf4j.version>
@@ -57,9 +57,14 @@
     <xsdfu.roi>${xsdfu.schemapath}/ROI.xsd</xsdfu.roi>
     <xsdfu.sa>${xsdfu.schemapath}/SA.xsd</xsdfu.sa>
     <xsdfu.spw>${xsdfu.schemapath}/SPW.xsd</xsdfu.spw>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <build>
+    <defaultGoal>install</defaultGoal>
+
     <sourceDirectory>${project.basedir}/src</sourceDirectory>
     <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
     <resources>
@@ -68,11 +73,26 @@
         <excludes>
           <exclude>**/*.java</exclude>
           <exclude>**/package.html</exclude>
+          <exclude>**/*.properties</exclude>
         </excludes>
       </resource>
       <resource>
         <targetPath>META-INF/lib</targetPath>
         <directory>${project.basedir}/lib</directory>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/src</directory>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>${project.basedir}</directory>
+        <includes>
+          <include>**/*.cpp</include>
+        </includes>
+        <filtering>true</filtering>
       </resource>
     </resources>
     <testResources>
@@ -85,6 +105,115 @@
       </testResource>
     </testResources>
     <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+          <version>2.4</version>
+          <!-- Always add classpath to JAR manifests. -->
+          <configuration>
+            <archive>
+              <manifest>
+                <addClasspath>true</addClasspath>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              </manifest>
+              <manifestEntries>
+                <Implementation-Build>${revision}</Implementation-Build>
+                <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.12</version>
+          <configuration>
+            <argLine>-Xms512m -Xmx512m</argLine>
+          </configuration>
+        </plugin>
+      <plugin>
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <defaults>
+                <default>UNKNOWN</default>
+              </defaults>
+              <source>
+                import java.util.regex.Pattern
+
+                def ant = new AntBuilder()
+                try {
+                  ant.exec(outputproperty:"revision",
+                    failifexecutionfails:"false",
+                    executable: 'git') {
+                      arg(line:"rev-parse --short HEAD")
+                  }
+                }
+                catch (Exception e) { }
+
+                try {
+                  ant.exec(outputproperty:"exactTag",
+                    resultproperty:"exactTagRC",
+                    failifexecutionfails:"true",
+                    failonerror:"false",
+                    executable: 'git') {
+                      arg(line:"describe --match=v[0-9]* --exact")
+                  }
+                }
+                catch (Exception e) {
+                  ant.project.properties.exactTagRC = ""
+                  ant.project.properties.exactTag = ""
+                }
+
+                try {
+                  ant.exec(outputproperty:"describe",
+                    failifexecutionfails:"true",
+                    executable: 'git') {
+                      arg(line:"describe --match=v[0-9]*")
+                  }
+                }
+                catch (Exception e) {
+                  ant.project.properties.describe = ""
+                }
+
+                println ant.project.properties.exactTagRC
+                println ant.project.properties.exactTag
+                println ant.project.properties.describe
+
+                if (ant.project.properties.exactTagRC == 0) {
+                  // if we're building from a tag, set the release name
+                  // to be the tag name, minus the leading 'v'
+                  project.properties.release = ant.project.properties.exactTag.substring(1)
+                }
+                else if (ant.project.properties.describe) {
+                  // if we're building within Git, but not from a tag,
+                  // then use the last known tag's number to set a snapshot
+                  // version
+                  def regex = Pattern.compile("v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)")
+                  def groups = regex.matcher(ant.project.properties.describe)
+                  groups.matches()
+                  def major = groups.group(1)
+                  def minor = groups.group(2)
+                  def patch = groups.group(3)
+                  project.properties.release = major + "." + minor + "." + patch + "-SNAPSHOT"
+                }
+                else {
+                  // if we're building outside of Git, set a default
+                  // version number
+                  project.properties.release = project.properties.default
+                }
+                project.properties.revision = ant.project.properties.revision
+              </source>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
@@ -192,6 +321,28 @@
       <id>imagej.snapshots</id>
       <url>http://maven.imagej.net/content/repositories/snapshots</url>
     </repository>
+    <repository>
+      <id>imagej.thirdparty</id>
+      <url>http://maven.imagej.net/content/repositories/thirdparty</url>
+    </repository>
   </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>imagej.releases</id>
+      <url>http://maven.imagej.net/content/repositories/releases</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>imagej.snapshots</id>
+      <url>http://maven.imagej.net/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>imagej.thirdparty</id>
+      <url>http://maven.imagej.net/content/repositories/thirdparty</url>
+    </pluginRepository>
+  </pluginRepositories>
 
 </project>
