@@ -210,8 +210,8 @@ public class SDTReader extends FormatReader {
     m.sizeX = info.width;
     m.sizeY = info.height;
     m.sizeZ = 1;
-    m.sizeT = intensity ? channels : timeBins * channels;
-    m.sizeC = 1;
+    m.sizeT = intensity ? info.timepoints : timeBins * info.timepoints;
+    m.sizeC = channels;
     m.dimensionOrder = "XYZTC";
     m.pixelType = FormatTools.UINT16;
     m.rgb = false;
@@ -229,8 +229,11 @@ public class SDTReader extends FormatReader {
       m.moduloT.parentType = FormatTools.SPECTRA;
       m.moduloT.typeDescription = "TCSPC";
       m.moduloT.start = 0;
-      m.moduloT.end = timeBase * (m.imageCount - 1);
-      m.moduloT.step = timeBins * timeBase;
+
+      timeBase *= 1000;
+
+      m.moduloT.step = timeBase / timeBins;
+      m.moduloT.end = m.moduloT.step * (m.sizeT - 1);
       m.moduloT.unit = "ps";
     }
 
