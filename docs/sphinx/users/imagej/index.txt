@@ -41,7 +41,7 @@ Upgrading
 ---------
 
 To upgrade, just overwrite the old **loci_tools.jar** with the 
-:downloads:`latest one <>`.
+:downloads:`latest 4.4 version <>`.
 Step-by-step upgrade instructions for Windows are available
 :doc:`here <upgrading-importer>`.
 
