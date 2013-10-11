@@ -22,4 +22,4 @@ Upgrading
 ---------
 
 To use a newer version of Bio-Formats, overwrite the requisite JAR files
-with the :bf_plone:`newer version <downloads>` and restart IDL.
+with the :downloads:`newer version <>` and restart IDL.
