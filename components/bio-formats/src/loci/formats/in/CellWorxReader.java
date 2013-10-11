@@ -503,7 +503,7 @@ public class CellWorxReader extends FormatReader {
       }
       for (int i=0; i<core.size(); i++) {
         for (int c=0; c<getSizeC(); c++) {
-          if (c < wavelengths.length) {
+          if (c < wavelengths.length && wavelengths[c] != null) {
             store.setChannelName(wavelengths[c], i, c);
           }
         }
@@ -769,7 +769,7 @@ public class CellWorxReader extends FormatReader {
       for (String f : list) {
         if (checkSuffix(f, new String [] {"tif", "tiff", "pnl"})) {
           String path = new Location(parent, f).getAbsolutePath();
-          if (path.startsWith(base)) {
+          if (path.startsWith(base) && path.indexOf("_thumb_") < 0) {
             files[nextFile++] = path;
           }
         }
