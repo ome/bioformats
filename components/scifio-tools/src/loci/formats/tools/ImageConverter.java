@@ -342,6 +342,7 @@ public final class ImageConverter {
 
     boolean dimensionsSet = true;
     if (width == 0 || height == 0) {
+      reader.setSeries(series);
       width = reader.getSizeX();
       height = reader.getSizeY();
       dimensionsSet = false;
