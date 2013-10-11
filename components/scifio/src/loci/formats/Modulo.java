@@ -67,7 +67,7 @@ public class Modulo {
   // -- Methods --
 
   public int length() {
-    return (int) Math.rint((end - start + 1) / step);
+    return (int) Math.rint((end - start) / step) + 1;
   }
 
   public String toXMLAnnotation() {
