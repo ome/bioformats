@@ -77,10 +77,10 @@ Format readers
      - 0
      - 454
    * - :doc:`BaseTiffReader <formats/windows-bitmap-metadata>`
-     - 25
+     - 26
      - 0
      - 0
-     - 448
+     - 447
    * - :doc:`BaseZeissReader <formats/windows-bitmap-metadata>`
      - 81
      - 0
@@ -2244,10 +2244,10 @@ Metadata fields
      - 0
      - 129
    * - :schema:`Plane - ExposureTime <OME-2012-06/ome_xsd.html#Plane_ExposureTime>`
-     - 25
+     - 26
      - 0
      - 0
-     - 126
+     - 125
    * - :schema:`Plane - HashSHA1 <OME-2012-06/ome_xsd.html#Plane_HashSHA1>`
      - 0
      - 0
