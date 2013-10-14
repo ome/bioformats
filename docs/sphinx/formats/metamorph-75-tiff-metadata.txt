@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 35 of them (7%).
-  * Of those, Bio-Formats fully or partially converts 35 (100%).
+  * The file format itself supports 36 of them (7%).
+  * Of those, Bio-Formats fully or partially converts 36 (100%).
 
 Supported fields
 ===============================================================================
@@ -30,6 +30,7 @@ These fields are fully supported by the Bio-Formats Metamorph TIFF format reader
   * :schema:`Pixels : ID <OME-2012-06/ome_xsd.html#Pixels_ID>`
   * :schema:`Pixels : PhysicalSizeX <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeX>`
   * :schema:`Pixels : PhysicalSizeY <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeY>`
+  * :schema:`Pixels : PhysicalSizeZ <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeZ>`
   * :schema:`Pixels : SizeC <OME-2012-06/ome_xsd.html#Pixels_SizeC>`
   * :schema:`Pixels : SizeT <OME-2012-06/ome_xsd.html#Pixels_SizeT>`
   * :schema:`Pixels : SizeX <OME-2012-06/ome_xsd.html#Pixels_SizeX>`
@@ -53,6 +54,6 @@ These fields are fully supported by the Bio-Formats Metamorph TIFF format reader
   * :schema:`WellSample : ImageRef <OME-2012-06/ome_xsd.html#ImageRef_ID>`
   * :schema:`WellSample : Index <OME-2012-06/SPW_xsd.html#WellSample_Index>`
 
-**Total supported: 35**
+**Total supported: 36**
 
-**Total unknown or missing: 438**
+**Total unknown or missing: 437**
