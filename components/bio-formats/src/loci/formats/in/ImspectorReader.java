@@ -415,7 +415,7 @@ public class ImspectorReader extends FormatReader {
 
     // correct the tile count if it doesn't make sense
     // the count may have been incorrectly recorded or parsed
-    if ((m.imageCount % tileCount) != 0) {
+    if (tileCount == 0 || (m.imageCount % tileCount) != 0) {
       tileCount = 1;
     }
 
