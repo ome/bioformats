@@ -74,7 +74,7 @@ public class Modulo {
     StringBuffer xml = new StringBuffer("<ModuloAlong");
     xml.append(parentDimension);
     xml.append(" Type=\"");
-    xml.append(type);
+    xml.append(type.toLowerCase());
     xml.append("\"");
     if (typeDescription != null) {
       xml.append(" TypeDescription=\"");
