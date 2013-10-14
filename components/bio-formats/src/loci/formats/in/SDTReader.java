@@ -207,10 +207,15 @@ public class SDTReader extends FormatReader {
 
     CoreMetadata m = core.get(0);
 
+    int timepoints = info.timepoints;
+    if (timepoints == 0) {
+      timepoints = 1;
+    }
+
     m.sizeX = info.width;
     m.sizeY = info.height;
     m.sizeZ = 1;
-    m.sizeT = intensity ? info.timepoints : timeBins * info.timepoints;
+    m.sizeT = intensity ? timepoints : timeBins * timepoints;
     m.sizeC = channels;
     m.dimensionOrder = "XYZTC";
     m.pixelType = FormatTools.UINT16;
