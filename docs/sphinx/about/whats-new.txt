@@ -22,7 +22,6 @@ Version history
 * Many bug fixes including improvements to support for ND2 format
 * Java 1.6 is now the minimum supported version; Java 1.5 is no longer 
   supported
-* Bfview command line tool deprecated
 
 4.4.8 (2013 May 2)
 ------------------
