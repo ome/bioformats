@@ -36,14 +36,14 @@
  * #L%
  */
 
-#include <ome/xerces/string.h>
-#include <ome/xerces/platform.h>
-#include <ome/xerces/error_reporter.h>
+#include <ome/xerces/String.h>
+#include <ome/xerces/Platform.h>
+#include <ome/xerces/ErrorReporter.h>
 
-// #include <ome/xerces/dom/document.h>
-// #include <ome/xerces/dom/node.h>
-// #include <ome/xerces/dom/element.h>
-// #include <ome/xerces/dom/node_list.h>
+// #include <ome/xerces/dom/Document.h>
+// #include <ome/xerces/dom/Node.h>
+// #include <ome/xerces/dom/Element.h>
+// #include <ome/xerces/dom/NodeList.h>
 
 #include <xercesc/dom/DOM.hpp>
 
@@ -80,7 +80,7 @@ int main (int argc, char *argv[])
 
   try
     {
-      xml::platform xmlplat;
+      xml::Platform xmlplat;
 
       try
 	{
@@ -99,7 +99,7 @@ int main (int argc, char *argv[])
 	  parser.setValidationSchemaFullChecking(do_fullcheck);
 	  parser.setCreateEntityReferenceNodes(do_create);
 
-	  xml::error_reporter er;
+	  xml::ErrorReporter er;
 	  parser.setErrorHandler(&er);
 
 	  std::cerr << "Set up parser\n";
@@ -115,7 +115,7 @@ int main (int argc, char *argv[])
 	}
       catch (const xercesc::XMLException &e)
 	{
-	  fatal("XML parse error", xml::string(e.getMessage()).str().c_str());
+	  fatal("XML parse error", xml::String(e.getMessage()).str().c_str());
 	}
       catch (const xercesc::DOMException &e)
 	{
@@ -123,7 +123,7 @@ int main (int argc, char *argv[])
 	  XMLCh error[maxc + 1];
 
 	  if (xercesc::DOMImplementation::loadDOMExceptionMsg(e.code, error, maxc))
-	    fatal("XML DOM parse error", xml::string(error).str().c_str());
+	    fatal("XML DOM parse error", xml::String(error).str().c_str());
 	  else
 	    fatal("XML DOM parse error (no error message)");
 	}
@@ -142,7 +142,7 @@ int main (int argc, char *argv[])
     }
   catch (const xercesc::XMLException &e)
     {
-      fatal("XML parse error", xml::string(e.getMessage()).str().c_str());
+      fatal("XML parse error", xml::String(e.getMessage()).str().c_str());
     }
   return 1;
 }

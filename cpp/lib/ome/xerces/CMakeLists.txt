@@ -37,18 +37,18 @@
 include_directories(${OME_TOPLEVEL_INCLUDES})
 
 set(ome_xerces_sources
-    error_reporter.cpp)
+    ErrorReporter.cpp)
 
 set(ome_xerces_headers
-    error_reporter.h
-    platform.h
-    string.h)
+    ErrorReporter.h
+    Platform.h
+    String.h)
 
 set(ome_xerces_dom_headers
-    dom/document.h
-    dom/element.h
-    dom/node.h
-    dom/nodelist.h)
+    dom/Document.h
+    dom/Element.h
+    dom/Node.h
+    dom/NodeList.h)
 
 add_library(ome-xerces SHARED ${ome_xerces_sources} ${ome_xerces_headers} ${ome_xerces_dom_headers})
 target_link_libraries(ome-xerces ${XERCES_LIBRARY})
@@ -65,7 +65,7 @@ install(TARGETS ome-xerces LIBRARY
 
 set(LIBRARY_PREFIX OME_XERCES)
 set(LIBRARY_NAME ome-xerces)
-set(LIBRARY_HEADER ome/xerces/platform.h)
+set(LIBRARY_HEADER ome/xerces/Platform.h)
 configure_file(${PROJECT_SOURCE_DIR}/cmake/TemplateConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake
