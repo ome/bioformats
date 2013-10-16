@@ -342,7 +342,11 @@ public final class ImageConverter {
 
     boolean dimensionsSet = true;
     if (width == 0 || height == 0) {
-      reader.setSeries(series);
+      // only switch series if the '-series' flag was used;
+      // otherwise default to series 0
+      if (series >= 0) {
+        reader.setSeries(series);
+      }
       width = reader.getSizeX();
       height = reader.getSizeY();
       dimensionsSet = false;
