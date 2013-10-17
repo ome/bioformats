@@ -36,8 +36,8 @@
  * #L%
  */
 
-#ifndef OME_XERCES_ERROR_REPORTER_H
-#define OME_XERCES_ERROR_REPORTER_H
+#ifndef OME_XERCES_ERRORREPORTER_H
+#define OME_XERCES_ERRORREPORTER_H
 
 #include <iostream>
 #include <ostream>
@@ -58,18 +58,18 @@ namespace ome
      * process.  If an error is encountered, this class will evaluate
      * to true.
      */
-    class error_reporter : public xercesc::ErrorHandler
+    class ErrorReporter : public xercesc::ErrorHandler
     {
     public:
       /**
-       * Construct an error_reporter.
+       * Construct an ErrorReporter.
        *
        * @param stream the stream to output exception details to.
        */
-      error_reporter(std::ostream& stream = std::cerr);
+      ErrorReporter(std::ostream& stream = std::cerr);
 
       /// The destructor.
-      ~error_reporter();
+      ~ErrorReporter();
 
       /**
        * Log a warning.
@@ -120,7 +120,7 @@ namespace ome
   }
 }
 
-#endif // OME_XERCES_ERROR_REPORTER_H
+#endif // OME_XERCES_ERRORREPORTER_H
 
 /*
  * Local Variables:
