@@ -36,8 +36,8 @@
  * #L%
  */
 
-#ifndef OME_XERCES_DOM_DOCUMENT_H
-#define OME_XERCES_DOM_DOCUMENT_H
+#ifndef OME_XERCES_DOM_NODE_H
+#define OME_XERCES_DOM_NODE_H
 
 #include <ome/compat/config.h>
 
@@ -45,10 +45,7 @@
 #include <string>
 #include <ostream>
 
-#include <xercesc/dom/DOMDocument.hpp>
-
-#include <ome/xerces/dom/element.h>
-#include <ome/xerces/string.h>
+#include <xercesc/dom/DOMNode.hpp>
 
 namespace ome
 {
@@ -58,159 +55,179 @@ namespace ome
     {
 
       /**
-       * DOM Document wrapper.  The wrapper behaves as though is the
-       * wrapped DOMDocument; it can be dereferenced using the "*" or
-       * "->" operators to obtain a reference or pointer to the
-       * wrapped object.  It can also be cast to a pointer to the
-       * wrapped object, so can substitute for it directly.
+       * DOM Node wrapper.  The wrapper behaves as though is the
+       * wrapped DOMNode; it can be dereferenced using the "*" or "->"
+       * operators to obtain a reference or pointer to the wrapped
+       * object.  It can also be cast to a pointer to the wrapped
+       * object, so can substitute for it directly.
        */
-      class document
+      class Node
       {
       public:
         /**
-         * Construct a NULL document.
+         * Construct a NULL Node.
          */
-        document ():
-          xmldoc()
+        Node ():
+          xmlnode()
         {
         }
 
         /**
-         * Copy construct a document.
+         * Copy construct a Node.
          *
-         * @param document the document to copy.
+         * @param node the Node to copy.
          */
-        document (const document& document):
-          xmldoc(document.xmldoc)
+        Node (const Node& node):
+          xmlnode(node.xmlnode)
         {
         }
 
         /**
-         * Construct a document from a xercesc::DOMDocument *.
+         * Construct a Node from a xercesc::DOMNode *.
          *
-         * @param document the document to wrap.
+         * @param node the Node to wrap.
          */
-        document (xercesc::DOMDocument *document):
-          xmldoc(document)
+        Node (xercesc::DOMNode *node):
+          xmlnode(node)
         {
         }
 
         /// Destructor.
-        ~document ()
+        ~Node ()
         {
         }
 
         /**
-         * Create element with namespace.
+         * Append a child Node.
          *
-         * @param ns the namespace.
-         * @param name the element name.
-         * @returns the created element.
+         * @param node the child Node to append.
+         * @returns the appended Node.
          */
-        element
-        createElementNS(const std::string& ns,
-                        const std::string& name)
+        Node
+        appendChild (const Node& node)
         {
-          xerces::string xns(ns);
-          xerces::string xname(name);
-
-          return xmldoc->createElementNS(xns, xname);
+          // TODO: Catch and rethrow xerces exceptions with the xerces
+          // errors converted to sane descriptions.  And additionally
+          // for all other xerces methods which throw.
+          return this->xmlnode->appendChild(node.xmlnode);
         }
 
         /**
-         * Assign a document.
+         * Assign a Node.
          *
-         * @param document the document to assign.
-         * @returns the document.
+         * @param node the Node to assign.
+         * @returns the Node.
          */
-        document&
-        operator= (document& document)
+        Node&
+        operator= (Node& node)
         {
-          this->xmldoc = document.xmldoc;
+          this->xmlnode = node.xmlnode;
           return *this;
         }
 
         /**
-         * Assign a xercesc::DOMDocument *.
+         * Assign a xercesc::DOMNode *.
          *
-         * @param document the document to assign.
-         * @returns the document.
+         * @param node the Node to assign.
+         * @returns the Node.
          */
-        document&
-        operator= (xercesc::DOMDocument *document)
+        Node&
+        operator= (xercesc::DOMNode *node)
         {
-          this->xmldoc = document;
+          this->xmlnode = node;
           return *this;
         }
 
         /**
-         * Dereference to xercesc::DOMDocument.
+         * Dereference to xercesc::DOMNode.
          *
-         * @returns the wrapped xercesc::DOMDocument.
+         * @returns the wrapped xercesc::DOMNode.
          */
-        xercesc::DOMDocument&
+        xercesc::DOMNode&
         operator* () noexcept
         {
-          assert(xmldoc != 0);
-          return *xmldoc;
+          assert(xmlnode != 0);
+          return *xmlnode;
         }
 
         /**
-         * Dereference to const xercesc::DOMDocument.
+         * Dereference to const xercesc::DOMNode.
          *
-         * @returns the wrapped xercesc::DOMDocument.
+         * @returns the wrapped xercesc::DOMNode.
          */
-        const xercesc::DOMDocument&
+        const xercesc::DOMNode&
         operator* () const noexcept
         {
-          assert(xmldoc != 0);
-          return *xmldoc;
+          assert(xmlnode != 0);
+          return *xmlnode;
         }
 
         /**
-         * Dereference to xercesc::DOMDocument.
+         * Dereference to xercesc::DOMNode.
          *
-         * @returns the wrapped xercesc::DOMDocument.
+         * @returns the wrapped xercesc::DOMNode.
          */
-        xercesc::DOMDocument *
+        xercesc::DOMNode *
         operator-> () noexcept
         {
-          assert(xmldoc != 0);
-          return xmldoc;
+          assert(xmlnode != 0);
+          return xmlnode;
         }
 
         /**
-         * Dereference to const xercesc::DOMDocument.
+         * Dereference to const xercesc::DOMNode.
          *
-         * @returns the wrapped xercesc::DOMDocument.
+         * @returns the wrapped xercesc::DOMNode.
          */
-        const xercesc::DOMDocument *
+        const xercesc::DOMNode *
         operator-> () const noexcept
         {
-          assert(xmldoc != 0);
-          return xmldoc;
+          assert(xmlnode != 0);
+          return xmlnode;
         }
 
         /**
-         * Check if the wrapped document is NULL.
+         * Cast to xercesc::DOMNode *.
+         *
+         * @returns the wrapped xercesc::DOMNode.
+         */
+        inline
+        operator xercesc::DOMNode* ()
+        {
+          return *this;
+        }
+
+        /**
+         * Cast to const xercesc::DOMNode *.
+         *
+         * @returns the wrapped xercesc::DOMNode.
+         */
+        inline
+        operator const xercesc::DOMNode* () const
+        {
+          return *this;
+        }
+
+        /**
+         * Check if the wrapped Node is NULL.
          *
          * @returns true if valid, false if NULL.
          */
         operator bool () const
         {
-          return xmldoc != 0;
+          return xmlnode != 0;
         }
 
       private:
-        /// The wrapped xercesc::DOMDocument.
-        xercesc::DOMDocument *xmldoc;
+        /// The wrapped xercesc::DOMNode.
+        xercesc::DOMNode *xmlnode;
       };
 
     }
   }
 }
 
-#endif // OME_XERCES_DOM_DOCUMENT_H
+#endif // OME_XERCES_DOM_NODE_H
 
 /*
  * Local Variables:

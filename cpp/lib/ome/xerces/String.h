@@ -69,11 +69,11 @@ namespace ome
      * class is only intended to transiently transcode between the two
      * types and manage the memory for this.
      */
-    class string
+    class String
     {
     public:
       /**
-       * Construct a string from an XMLCh * string.  The string
+       * Construct a String from an XMLCh * string.  The string
        * content will be copied; no ownership is taken of the original
        * string.  The string will also be transcoded to a
        * NUL-terminated char * string.
@@ -81,7 +81,7 @@ namespace ome
        * @param str an XMLCh *string.
        */
       inline
-      string(const XMLCh *str):
+      String(const XMLCh *str):
       narrow(xercesc::XMLString::transcode(str)),
       wide(xercesc::XMLString::replicate(str))
       {
@@ -90,14 +90,14 @@ namespace ome
       }
 
       /**
-       * Construct a string from a NUL-terminated string.  The string
+       * Construct a String from a NUL-terminated string.  The string
        * content will be copied into a NUL-terminated char * string.
        * The string will also be transcoded to an XMLCh * string.
        *
        * @param str a char * NUL-terminated string.
        */
       inline
-      string(const char *str):
+      String(const char *str):
       narrow(xercesc::XMLString::replicate(str)),
       wide(xercesc::XMLString::transcode(str))
       {
@@ -106,14 +106,14 @@ namespace ome
       }
 
       /**
-       * Construct a string from a std::string.  The string content
+       * Construct a String from a std::string.  The string content
        * will be copied into a NUL-terminated char * string.  The
        * string will also be transcoded to an XMLCh * string.
        *
        * @param str a std::string.
        */
       inline
-      string(std::string const& str):
+      String(std::string const& str):
         narrow(xercesc::XMLString::replicate(str.c_str())),
         wide(xercesc::XMLString::transcode(str.c_str()))
       {
@@ -125,7 +125,7 @@ namespace ome
        * Destructor.  The allocated char * and XMLCh * strings will be freed.
        */
       inline
-      ~string()
+      ~String()
       {
         if (narrow)
           xercesc::XMLString::release(&narrow);
@@ -134,7 +134,7 @@ namespace ome
       }
 
       /**
-       * Cast string to XMLCh *.
+       * Cast String to XMLCh *.
        *
        * @returns a NUL-terminated XMLCh * string.
        */
@@ -147,7 +147,7 @@ namespace ome
       }
 
       /**
-       * Cast string to a std::string.
+       * Cast String to a std::string.
        *
        * @returns a std::string.
        */
@@ -160,9 +160,9 @@ namespace ome
       }
 
       /**
-       * Get the string content as a std::string.
+       * Get the String content as a std::string.
        *
-       * @returns a std::string containing the string content.
+       * @returns a std::string containing the String content.
        */
       inline
       ::std::string
@@ -181,15 +181,15 @@ namespace ome
     };
 
     /**
-     * Output string to output stream.
+     * Output String to output stream.
      *
      * @param os the output stream.
-     * @param str the string to output.
+     * @param str the String to output.
      * @returns the output stream.
      */
     inline ::std::ostream&
     operator<< (::std::ostream& os,
-                const string&   str)
+                const String&   str)
     {
       return os << static_cast<std::string>(str);
     }

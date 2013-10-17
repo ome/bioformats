@@ -36,62 +36,62 @@
  * #L%
  */
 
-#ifndef OME_XERCES_PLATFORM_H
-#define OME_XERCES_PLATFORM_H
+#include <iostream>
 
-#include <xercesc/util/PlatformUtils.hpp>
+#include <ome/xerces/ErrorReporter.h>
+#include <ome/xerces/String.h>
+
+#include <xercesc/sax/SAXParseException.hpp>
 
 namespace ome
 {
-  /**
-   * Xerces-C modern C++ wrapper.  All classes in this namespace wrap
-   * the Xerces-C classes and functions to provide RAII and
-   * exception-safe equivalents, and which also handle memory
-   * management transparently.
-   */
   namespace xerces
   {
 
-    /**
-     * XML Platform.  This class wraps calls to the
-     * xercesc::XMLPlatformUtils Initialize() and Terminate()
-     * functions, to allow their use in an exception-safe manner.
-     * Create an instance of this class prior to performing any work
-     * with Xerces, and ensure it will remain in scope for all work to
-     * complete.  When the scope is exited, or an exception is thrown,
-     * Xerces will be automatically terminated.  Any number of
-     * instances of this class may be created; Xerces will only be
-     * terminated when the last instance is destroyed.
-     */
-    class platform
+    ErrorReporter::ErrorReporter(std::ostream& stream):
+      stream(stream),
+      saw_error(false)
     {
-    public:
-      inline
-      /**
-       * Construct a platform.  Calls xercesc::XMLPlatformUtils::Initialize().
-       */
-      platform()
-      {
-	xercesc::XMLPlatformUtils::Initialize();
-      }
+    }
 
-      /**
-       * Destructor. Calls xercesc::XMLPlatformUtils::Terminate().
-       */
-      inline
-      ~platform()
-      {
-	xercesc::XMLPlatformUtils::Terminate();
-      }
-    };
+    ErrorReporter::~ErrorReporter()
+    {
+    }
+
+    void
+    ErrorReporter::warning(const xercesc::SAXParseException& e)
+    {
+      stream << "Error at file \"" << String(e.getSystemId())
+	     << "\", line " << e.getLineNumber()
+	     << ", column " << e.getColumnNumber()
+	     << "\n   Message: " << String(e.getMessage()) << std::endl;
+    }
+
+    void
+    ErrorReporter::error(const xercesc::SAXParseException& e)
+    {
+      saw_error = true;
+      stream << "Error at file \"" << String(e.getSystemId())
+	     << "\", line " << e.getLineNumber()
+	     << ", column " << e.getColumnNumber()
+	     << "\n   Message: " << String(e.getMessage()) << std::endl;
+    }
+
+    void
+    ErrorReporter::fatalError(const xercesc::SAXParseException& e)
+    {
+      saw_error = true;
+      std::cerr << "Fatal Error at file \"" << String(e.getSystemId())
+	     << "\", line " << e.getLineNumber()
+	     << ", column " << e.getColumnNumber()
+	     << "\n   Message: " << String(e.getMessage()) << std::endl;
+    }
+
+    void
+    ErrorReporter::resetErrors()
+    {
+      saw_error = false;
+    }
 
   }
 }
-
-#endif // OME_XERCES_PLATFORM_H
-
-/*
- * Local Variables:
- * mode:C++
- * End:
- */
