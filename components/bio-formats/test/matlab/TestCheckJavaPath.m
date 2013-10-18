@@ -29,6 +29,7 @@ classdef TestCheckJavaPath < TestBfMatlab
     
     properties
         status
+        maxTime = .1
     end
     
     methods
@@ -58,11 +59,24 @@ classdef TestCheckJavaPath < TestBfMatlab
         end
         
         function testPerformance(self)
-            maxTime = .5;
-            tic;
-            self.status = bfCheckJavaPath();
-            totalCheckTime=toc;
-            assert(totalCheckTime<maxTime);
+            nCounts = 10;
+            times = zeros(nCounts);
+            for i = 1 : nCounts
+                tic;
+                bfCheckJavaPath();
+                times(i) = toc;
+            end
+            
+            % First call should be the longest as loci_tools.jar is added
+            % to the javaclasspath
+            assertTrue(times(1) > times(2));
+            % Second call should still be longer than all the following
+            % ones. Profiling reveals some amount of time is spent while
+            % computing javaclasspath.local_get_static_path
+            assertTrue(all(times(2) > times(3:end)));
+            % From the third call and onwards, javaclasspath and thus
+            % bfCheckJavaPath should return fast
+            assertTrue(mean(times(3:end)) < self.maxTime);
         end
     end
 end
