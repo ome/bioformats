@@ -145,6 +145,12 @@ public class TestTools {
   public static boolean canFitInMemory(long bufferSize) {
     Runtime r = Runtime.getRuntime();
     long mem = r.freeMemory() / 2;
+    int threadCount = 1;
+    try {
+      threadCount = Integer.parseInt(System.getProperty("testng.threadCount"));
+    }
+    catch (NumberFormatException e) { }
+    mem /= threadCount;
     return bufferSize < mem && bufferSize <= Integer.MAX_VALUE;
   }
 
@@ -171,7 +177,7 @@ public class TestTools {
       org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
       root.setLevel(Level.INFO);
       root.addAppender(new WriterAppender(
-        new PatternLayout("%p [%d{dd-MM-yyyy HH:mm:ss.SSS}] %m%n"),
+        new PatternLayout("%p [%t] [%d{dd-MM-yyyy HH:mm:ss.SSS}] %m%n"),
         new PrintWriter(logFile, Constants.ENCODING)));
     }
     catch (IOException e) { LOGGER.info("", e); }

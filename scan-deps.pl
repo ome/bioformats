@@ -394,14 +394,14 @@ ZZ
 my %log4j = (
   NAME    => "log4j",
   TITLE   => "Apache log4j",
-  JAR     => "log4j-1.2.15.jar",
+  JAR     => "log4j-1.2.17.jar",
   PACKAGE => "org.apache.log4j",
   LICENSE => "Apache",
   URL     => "http://logging.apache.org/log4j/",
   NOTES   => <<ZZ,
 required by SLF4J implementation
 ZZ
-  VERSION => "1.2.15"
+  VERSION => "1.2.17"
 );
 
 my %netcdf = (
@@ -446,27 +446,27 @@ ZZ
 my %slf4j_api = (
   NAME    => "slf4j-api",
   TITLE   => "Simple Logging Facade for Java API",
-  JAR     => "slf4j-api-1.5.10.jar",
+  JAR     => "slf4j-api-1.7.2.jar",
   PACKAGE => "org.slf4j",
   LICENSE => "BSD",
   URL     => "http://www.slf4j.org/",
   NOTES   => <<ZZ,
 used for all logging in loci.*
 ZZ
-  VERSION => "1.5.10"
+  VERSION => "1.7.2"
 );
 
 my %slf4j_impl = (
   NAME    => "slf4j-log4j",
   TITLE   => "Simple Logging Facade for Java log4j Binding",
-  JAR     => "slf4j-log4j12-1.5.10.jar",
+  JAR     => "slf4j-log4j12-1.7.2.jar",
   PACKAGE => "org.slf4j.impl",
   LICENSE => "BSD",
   URL     => "http://www.slf4j.org/",
   NOTES   => <<ZZ,
 used for all logging in loci.*
 ZZ
-  VERSION => "1.5.10"
+  VERSION => "1.7.2"
 );
 
 my %testng = (

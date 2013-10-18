@@ -138,7 +138,8 @@ public class OmeisImporter {
   /** Prints out the build date for the Bio-Formats OMEIS utility. */
   public void printVersion() {
     if (http) printHttpResponseHeader();
-    System.out.println("Bio-Formats OMEIS importer, built on @date@.");
+    System.out.println("Bio-Formats OMEIS importer, built on " +
+      FormatTools.DATE + ".");
   }
 
   /**

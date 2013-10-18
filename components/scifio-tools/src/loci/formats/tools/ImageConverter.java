@@ -342,6 +342,11 @@ public final class ImageConverter {
 
     boolean dimensionsSet = true;
     if (width == 0 || height == 0) {
+      // only switch series if the '-series' flag was used;
+      // otherwise default to series 0
+      if (series >= 0) {
+        reader.setSeries(series);
+      }
       width = reader.getSizeX();
       height = reader.getSizeY();
       dimensionsSet = false;
@@ -570,8 +575,8 @@ public final class ImageConverter {
       for (int x=0; x<nXTiles; x++) {
         int tileX = xCoordinate + x * w;
         int tileY = yCoordinate + y * h;
-        int tileWidth = x < nXTiles - 1 ? w : width % w;
-        int tileHeight = y < nYTiles - 1 ? h : height % h;
+        int tileWidth = x < nXTiles - 1 ? w : width - (w * x);
+        int tileHeight = y < nYTiles - 1 ? h : height - (h * y);
         byte[] buf =
           reader.openBytes(index, tileX, tileY, tileWidth, tileHeight);
 

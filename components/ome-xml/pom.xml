@@ -6,9 +6,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>loci</groupId>
+    <groupId>ome</groupId>
     <artifactId>pom-scifio</artifactId>
-    <version>4.5-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.5.10</version>
+      <version>${slf4j.version}</version>
     </dependency>
 
     <dependency>
@@ -49,14 +49,14 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.10</version>
+      <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <properties>
     <project.rootdir>${basedir}/../..</project.rootdir>
-    <xsdfu.basepath>../xsd-fu</xsdfu.basepath>
+    <xsdfu.script>../xsd-fu/xsd-fu</xsdfu.script>
     <xsdfu.modelpath>${basedir}/target/generated-sources</xsdfu.modelpath>
   </properties>
 
@@ -75,9 +75,8 @@
 	    </goals>
 	    <configuration>
 	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
 	      <arguments>
-		<argument>xsd-fu</argument>
+		<argument>${xsdfu.script}</argument>
 		<argument>java_classes</argument>
 		<argument>-p</argument>
 		<argument>ome.xml.model</argument>
@@ -100,9 +99,8 @@
 	    </goals>
 	    <configuration>
 	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
 	      <arguments>
-		<argument>xsd-fu</argument>
+		<argument>${xsdfu.script}</argument>
 		<argument>enum_types</argument>
 		<argument>-p</argument>
 		<argument>ome.xml.model.enums</argument>
@@ -125,9 +123,8 @@
 	    </goals>
 	    <configuration>
 	      <executable>python</executable>
-	      <workingDirectory>${xsdfu.basepath}</workingDirectory>
 	      <arguments>
-		<argument>xsd-fu</argument>
+		<argument>${xsdfu.script}</argument>
 		<argument>enum_handlers</argument>
 		<argument>-p</argument>
 		<argument>ome.xml.model.enums.handlers</argument>

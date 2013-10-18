@@ -20,10 +20,6 @@ Currently available tools include:
         Prints information about a given image file to the console, and
         displays the image itself in the Bio-Formats image viewer.
 
-    bfview
-        Launches the Bio-Formats image viewer, displaying the given file (if
-        any).
-
     ijview
         Displays the given image file in ImageJ using the Bio-Formats Importer
         plugin (requires **ij.jar**).

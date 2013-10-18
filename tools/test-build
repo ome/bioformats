@@ -4,20 +4,92 @@
 
 set -e
 
-# Test mvn build
-mvn
+# Clean up
+clean()
+{
+    mvn clean
+}
+
+# Test maven build
+maven()
+{
+    mvn
+    clean
+}
+
+cpp()
+{
+    (
+        cd cpp
+        mkdir build
+        cd build
+        (
+            mkdir gtest
+            cd gtest
+            cmake /usr/src/gtest
+            make
+        )
+        GTEST_ROOT=$(pwd)/gtest cmake ..
+        make
+        make test
+        make DESTDIR=../install install
+        make doc
+    )
+}
 
 # Test cppwrap
-(cd components/scifio
-mvn -DskipTests clean package cppwrap:wrap dependency:copy-dependencies
-cd target/cppwrap
-mkdir build
-cd build
-cmake ..
-make)
+cppwrap()
+{
+    (
+        maven
+        cd components/scifio
+        mvn -DskipTests clean package cppwrap:wrap dependency:copy-dependencies
+        cd target/cppwrap
+        mkdir build
+        cd build
+        cmake ..
+        make
+    )
+}
 
-# Clean up
-mvn clean
+# Test sphinx docs build
+sphinx()
+{
+    (
+        export SPHINXOPTS="-W"
+        cd docs/sphinx
+        make clean
+        make html
+        make latexpdf
+    )
+    (
+        export SPHINXOPTS="-W"
+        cd docs/release
+        make clean
+        make html
+    )
+}
 
+for arg in "$@"
+do
+    case $arg in
+        clean)
+            clean ;;
+        maven)
+            maven ;;
+        cpp)
+            cpp ;;
+        cppwrap)
+            cppwrap ;;
+        sphinx)
+            sphinx ;;
+        all)
+            clean && maven && cppwrap && sphinx ;;
+        *)
+            echo "Invalid argument: \"$arg\"" >&2
+            exit 1
+            ;;
+    esac
+done
 
 exit 0

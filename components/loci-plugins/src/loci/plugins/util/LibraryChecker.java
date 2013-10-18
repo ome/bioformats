@@ -80,10 +80,10 @@ public final class LibraryChecker {
   public static void checkLibrary(Library library, HashSet<String> missing) {
     switch (library) {
       case BIO_FORMATS:
-        checkLibrary("org.apache.log4j.Logger", "log4j1.2.15.jar", missing);
-        checkLibrary("org.slf4j.Logger", "slf4j-api-1.5.10.jar", missing);
+        checkLibrary("org.apache.log4j.Logger", "log4j-1.2.17.jar", missing);
+        checkLibrary("org.slf4j.Logger", "slf4j-api-1.7.2.jar", missing);
         checkLibrary("org.slf4j.impl.Log4jLoggerFactory",
-          "slf4j-log4j12-1.5.10.jar", missing);
+          "slf4j-log4j12-1.7.2.jar", missing);
         checkLibrary("ome.scifio.io.RandomAccessInputStream",
           "scifio.jar", missing);
         checkLibrary("loci.formats.FormatHandler", "bio-formats.jar", missing);
@@ -126,10 +126,10 @@ public final class LibraryChecker {
   public static boolean checkJava() {
     String version = System.getProperty("java.version");
     double ver = Double.parseDouble(version.substring(0, 3));
-    if (ver < 1.4) {
+    if (ver < 1.6) {
       IJ.error("LOCI Plugins",
-        "Sorry, the LOCI plugins require Java 1.4 or later." +
-        "\nYou can download ImageJ with JRE 5.0 from the ImageJ web site.");
+        "Sorry, the LOCI plugins require Java 1.6 or later." +
+        "\nYou can download ImageJ with JRE 1.6 from the ImageJ web site.");
       return false;
     }
     return true;

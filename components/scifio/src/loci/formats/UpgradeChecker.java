@@ -248,8 +248,8 @@ public class UpgradeChecker {
       String[] version = latestVersion.toString().split("\\.");
       String[] thisVersion = FormatTools.VERSION.split("\\.");
       for (int i=0; i<thisVersion.length; i++) {
-        int subVersion = Integer.parseInt(thisVersion[i]);
         try {
+          int subVersion = Integer.parseInt(thisVersion[i]);
           int registrySubVersion = Integer.parseInt(version[i]);
           if (registrySubVersion != subVersion) {
             return registrySubVersion > subVersion;

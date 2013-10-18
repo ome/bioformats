@@ -47,13 +47,47 @@ public class SchemaResolver implements LSResourceResolver
     public SchemaResolver() throws ClassNotFoundException, InstantiationException, IllegalAccessException
     {
         // Create the objects necessary to make the correct LSInput return types
-/*        System.setProperty(
-            DOMImplementationRegistry.PROPERTY,
-            "org.apache.xerces.dom.DOMImplementationSourceImpl");*/
-        DOMImplementationRegistry theDOMImplementationRegistry =
+        theDOMImplementationLS = null;
+        
+        // if version 7 ?
+        try {
+        DOMImplementationRegistry theDOMImplementationRegistryA =
             DOMImplementationRegistry.newInstance();
         theDOMImplementationLS =
-            (DOMImplementationLS) theDOMImplementationRegistry.getDOMImplementation("LS");
+            (DOMImplementationLS) theDOMImplementationRegistryA.getDOMImplementation("XML 3.0 LS 3.0");
+        } catch  (Exception e) {
+            // theDOMImplementationLS should still be null
+        }
+
+        // if version 6 ?
+        if (theDOMImplementationLS == null) {
+          try {
+            DOMImplementationRegistry theDOMImplementationRegistryB =
+                DOMImplementationRegistry.newInstance();
+            theDOMImplementationLS =
+                (DOMImplementationLS) theDOMImplementationRegistryB.getDOMImplementation("LS");
+          } catch (Exception e) {
+            // theDOMImplementationLS should still be null
+          }
+        }
+
+        // if verson 4 & 5 ?
+        if (theDOMImplementationLS == null) {
+          try {
+            System.setProperty(
+                DOMImplementationRegistry.PROPERTY,
+                "org.apache.xerces.dom.DOMImplementationSourceImpl");
+            DOMImplementationRegistry theDOMImplementationRegistryC =
+                DOMImplementationRegistry.newInstance();
+            theDOMImplementationLS =
+                (DOMImplementationLS) theDOMImplementationRegistryC.getDOMImplementation("LS");
+          } catch (Exception e) {
+            // theDOMImplementationLS should still be null
+          }
+        }
+        if (theDOMImplementationLS == null) {
+          throw new InstantiationException("SchemaResolver could not create suitable DOMImplementationLS");
+        }
     }
 
 

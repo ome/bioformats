@@ -202,7 +202,12 @@ public class OMETiffWriter extends TiffWriter {
 
     int index = no;
     while (imageLocations[series][index] != null) {
-      index++;
+      if (index < imageLocations[series].length - 1) {
+        index++;
+      }
+      else {
+        break;
+      }
     }
     imageLocations[series][index] = currentId;
   }

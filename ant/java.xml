@@ -30,6 +30,7 @@ Type "ant -p" for a list of targets.
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
+      encoding="UTF-8"
       srcdir="${dest.dir}" destdir="${classes.dir}"
       classpath="${component.classpath}"
       includes="${component.source}">
@@ -43,6 +44,7 @@ Type "ant -p" for a list of targets.
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
+      encoding="UTF-8"
       srcdir="${test.dir}" destdir="${test-classes.dir}"
       classpath="${classes.dir}:${component.classpath}"
       includes="${component.source}"/>
@@ -175,7 +177,8 @@ your FindBugs installation's lib directory. E.g.:
       <fileset dir="${utils.dir}" includes="*.class"/>
     </delete>
     <javac debug="true" includeantruntime="false" fork="true"
-      deprecation="true" source="1.5" target="1.5"
+      deprecation="true" source="1.6" target="1.6"
+      encoding="UTF-8"
       srcdir="${utils.dir}" includes="*.java"
       classpath="${component.classpath}:${artifact.dir}/${component.jar}">
       <!--<compilerarg value="-Xlint:unchecked"/>-->
@@ -186,12 +189,13 @@ your FindBugs installation's lib directory. E.g.:
     description="generate javadocs">
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
       classpath="${component.classpath}:${classes.dir}"
+      encoding="UTF-8"
       author="true" version="true" use="true"
       nodeprecated="false" windowtitle="Bio-Formats API">
       <packageset dir="${dest.dir}"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
-      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
       <link href="http://hudson.openmicroscopy.org.uk/job/OMEJAVA/javadoc/"/>
       <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
       <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/"/>
@@ -255,14 +259,14 @@ your FindBugs installation's lib directory. E.g.:
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}"
         includes="${component.source} ${component.resources-text}"/>
-      <filterset>
-        <filter token="date" value="${DATE}"/>
-        <filter token="year" value="${YEAR}"/>
-        <filter token="vcs.revision" value="${vcs.revision}"/>
-        <filter token="vcs.date" value="${vcs.date}"/>
-        <filter token="release.version" value="${release.version}"/>
-      </filterset>
     </copy>
+
+    <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
+    <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
+    <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
+    <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
+    <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>
+
     <!-- copy resources to classes folder -->
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${dest.dir}" excludes="${component.source}"/>
@@ -286,14 +290,13 @@ your FindBugs installation's lib directory. E.g.:
 	<copy todir="${dest.dir}" preservelastmodified="true">
 	  <fileset dir="${gensrc.dir}"
 		   includes="${component.source} ${component.resources-text}"/>
-	  <filterset>
-	    <filter token="date" value="${DATE}"/>
-	    <filter token="year" value="${YEAR}"/>
-	    <filter token="vcs.revision" value="${vcs.revision}"/>
-	    <filter token="vcs.date" value="${vcs.date}"/>
-	    <filter token="release.version" value="${release.version}"/>
-	  </filterset>
-	</copy>
+  </copy>
+
+  <replace dir="${dest.dir}" token="$${date}" value="${DATE}"/>
+  <replace dir="${dest.dir}" token="$${year}" value="${YEAR}"/>
+  <replace dir="${dest.dir}" token="$${vcs.revision}" value="${vcs.revision}"/>
+  <replace dir="${dest.dir}" token="$${vcs.date}" value="${vcs.date}"/>
+  <replace dir="${dest.dir}" token="$${release.version}" value="${release.version}"/>
 	<!-- copy resources to classes folder -->
 	<copy todir="${classes.dir}" preservelastmodified="true">
 	  <fileset dir="${dest.dir}" excludes="${component.source}"/>

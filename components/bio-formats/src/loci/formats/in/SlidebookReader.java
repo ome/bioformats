@@ -639,7 +639,7 @@ public class SlidebookReader extends FormatReader {
             in.seek(pointer + 214);
             int validBits = in.readShort();
             if (nextName >= 1 && core.get(nextName - 1).bitsPerPixel == 0 &&
-              validBits <= 16)
+              validBits <= 16 && validBits > 0)
             {
               core.get(nextName - 1).bitsPerPixel = validBits;
             }

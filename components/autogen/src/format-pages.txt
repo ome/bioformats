@@ -732,7 +732,7 @@ scifio = yes
 export = yes
 versions = 1.0, 2.0
 software = `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ \n
-`ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ \n
+`ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enstuurman/IJplugins/Ics_Opener.html>`_ \n
 `IrfanView <http://www.irfanview.com/>`_
 weHave = * numerous ICS datasets
 pixelsRating = Outstanding
@@ -1365,7 +1365,7 @@ notes = .. seealso:: \n
 
 [Molecular Imaging]
 extensions = .stp
-owner = `Molecular Imaging <http://www.molecularimagingcorp.com>`_
+owner = Molecular Imaging Corp, San Diego CA (closed)
 scifio = no
 export = no
 weHave = * Pascal code that reads Molecular Imaging files (from ImageSXM) \n
@@ -1942,7 +1942,7 @@ reader = SeikoReader.java
 
 [SimplePCI & HCImage TIFF]
 extensions = .tiff
-developer = `Hamamatsu <http://hcimage.com/simplepci.htm>`_
+developer = `Hamamatsu <http://hcimage.com/simple-pci-legacy/>`_
 scifio = no
 export = no
 weHave = * a few SimplePCI TIFF datasets
@@ -1970,7 +1970,7 @@ notes = Bio-Formats uses a modified version of the `Apache Jakarta \n
 POI library <http://jakarta.apache.org/poi/>`_ to read CXD files. \n
 \n
 .. seealso:: \n
-  `SimplePCI software overview <http://hcimage.com/simplepci.htm>`_
+  `SimplePCI software overview <http://hcimage.com/simple-pci-legacy/>`_
 
 [SM Camera]
 scifio = no

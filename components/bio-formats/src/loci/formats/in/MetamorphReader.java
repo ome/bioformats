@@ -1318,10 +1318,16 @@ public class MetamorphReader extends BaseTiffReader {
     String name = "";
     if (stageNames != null && stageNames.size() > 0) {
       int stagePosition = i / (getSeriesCount() / stageNames.size());
-      name += "Stage " + stageNames.get(stagePosition) + "; ";
+      name += "Stage" + (stagePosition + 1) + " " + stageNames.get(stagePosition);
     }
 
-    if (firstSeriesChannels != null) {
+    if (firstSeriesChannels != null &&
+      (stageNames == null || stageNames.size() == 0 ||
+      stageNames.size() != getSeriesCount()))
+    {
+      if (name.length() > 0) {
+        name += "; ";
+      }
       for (int c=0; c<firstSeriesChannels.length; c++) {
         if (firstSeriesChannels[c] == ((i % 2) == 0) && c < waveNames.size()) {
           name += waveNames.get(c) + "/";

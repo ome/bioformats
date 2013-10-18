@@ -1194,7 +1194,11 @@ public class LIFReader extends FormatReader {
       for (int i=0; i<getEffectiveSizeC(); i++) {
         int index = i + channels.size() - getEffectiveSizeC();
         if (index >= 0 && index < channels.size()) {
-          channelNames[image][i] = channels.get(index);
+          if (channelNames[image][i] == null ||
+            channelNames[image][i].trim().length() == 0)
+          {
+            channelNames[image][i] = channels.get(index);
+          }
         }
       }
     }
@@ -1435,6 +1439,8 @@ public class LIFReader extends FormatReader {
     filterModels[image] = new Vector<String>();
     detectorIndexes[image] = new HashMap<Integer, String>();
 
+    int nextChannel = 0;
+
     for (int i=0; i<filterSettings.getLength(); i++) {
       Element filterSetting = (Element) filterSettings.item(i);
 
@@ -1536,6 +1542,11 @@ public class LIFReader extends FormatReader {
             }
           }
         }
+        else if (attribute.equals("Stain")) {
+          if (nextChannel < channelNames[image].length) {
+            channelNames[image][nextChannel++] = variant;
+          }
+        }
       }
     }
   }
@@ -1608,7 +1619,11 @@ public class LIFReader extends FormatReader {
         }
         // NB: "UesrDefName" is not a typo.
         else if (id.endsWith("UesrDefName") && !value.equals("None")) {
-          channelNames[image][c] = value;
+          if (channelNames[image][c] == null ||
+            channelNames[image][c].trim().length() == 0)
+          {
+            channelNames[image][c] = value;
+          }
         }
       }
     }

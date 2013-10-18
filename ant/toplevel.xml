@@ -173,11 +173,12 @@ Type "ant -p" for a list of targets.
       classpath="${merged-docs.classpath}"
       destdir="${merged-docs.dir}/api"
       maxmemory="${merged-docs.memory}"
+      encoding="UTF-8"
       failonerror="true" author="true" version="true" use="true"
       nodeprecated="false" windowtitle="Bio-Formats API">
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
-      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
       <link href="http://hudson.openmicroscopy.org.uk/job/OMEJAVA/javadoc/"/>
       <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
       <!--<link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>-->
@@ -345,7 +346,7 @@ Type "ant -p" for a list of targets.
 
   <!-- OME-XML Java library -->
 
-  <target name="deps-ome-xml" depends="ome-xml-src"/>
+  <target name="deps-ome-xml"/>
 
   <target name="compile-ome-xml" depends="deps-ome-xml"
     description="compile classes for OME-XML Java library">
@@ -419,8 +420,7 @@ Type "ant -p" for a list of targets.
       jar-lwf-stubs,
       jar-ome-xml,
       jar-specification,
-      jar-turbojpeg,
-      metadata-src"/>
+      jar-turbojpeg"/>
 
   <target name="compile-scifio" depends="deps-scifio"
     description="compile classes for SCIFIO">

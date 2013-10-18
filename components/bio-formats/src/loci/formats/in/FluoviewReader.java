@@ -783,8 +783,9 @@ public class FluoviewReader extends BaseTiffReader {
       if (date != null) {
         date = DateTools.formatDate(date.trim(),
           new String[] {"MM/dd/yyyy hh:mm:ss a", "MM-dd-yyyy hh:mm:ss"}, true);
-        if (timeIndex >= 0 && date != null) {
-          long ms = DateTools.getTime(date, DateTools.ISO8601_FORMAT);
+        Timestamp timestamp = Timestamp.valueOf(date);
+        if (timeIndex >= 0 && timestamp != null) {
+          long ms = timestamp.asInstant().getMillis();
           int nChars = String.valueOf(getImageCount()).length();
           for (int i=0; i<getImageCount(); i++) {
             int[] zct = getZCTCoords(i);

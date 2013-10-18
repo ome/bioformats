@@ -48,6 +48,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.ReaderWrapper;
 import loci.formats.gui.AWTImageTools;
@@ -60,6 +61,7 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -618,13 +620,12 @@ public class FormatReaderTest {
         String configDate = config.getDate();
         if (date != null && !date.equals(configDate)) {
           date = date.trim();
-          long acquiredDate = DateTools.getTime(date, DateTools.ISO8601_FORMAT);
-          long saneDate =
-            DateTools.getTime("1990-01-01T00:00:00", DateTools.ISO8601_FORMAT);
+          long acquiredDate = new Timestamp(date).asInstant().getMillis();
+          long saneDate = new Timestamp("1990-01-01T00:00:00").asInstant().getMillis();
           long fileDate = new Location(
             reader.getCurrentFile()).getAbsoluteFile().lastModified();
           if (acquiredDate < saneDate && fileDate >= saneDate) {
-            msg = "CreationDate";
+            msg = "CreationDate (date=" + date + " acquiredDate=" + acquiredDate + " fileDate=" + fileDate + " saneDate=" + saneDate + ")";
           }
         }
       }
@@ -1570,7 +1571,11 @@ public class FormatReaderTest {
         MetadataStore store = reader.getMetadataStore();
         MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
         String xml = omexmlService.getOMEXML(retrieve);
-        success = xml != null && omexmlService.validateOMEXML(xml);
+        // prevent issues due to thread-unsafeness of
+        // javax.xml.validation.Validator as used during XML validation
+        synchronized (configTree) {
+          success = xml != null && omexmlService.validateOMEXML(xml);
+        }
       }
       catch (Throwable t) {
         LOGGER.info("", t);
@@ -1684,7 +1689,7 @@ public class FormatReaderTest {
         }
         if (!md5.equals(expected1) && !md5.equals(expected2)) {
           success = false;
-          msg = "series " + i;
+          msg = "series " + i + " (" + md5 + ")";
         }
       }
     }
@@ -1828,7 +1833,7 @@ public class FormatReaderTest {
           (expected1 != null || expected2 != null))
         {
           success = false;
-          msg = "series " + i;
+          msg = "series " + i + " (" + md5 + ")";
         }
       }
     }
@@ -2116,7 +2121,7 @@ public class FormatReaderTest {
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
-    reader = new BufferedImageReader(new FileStitcher());
+    reader = new BufferedImageReader(new FileStitcher(new Memoizer(Memoizer.DEFAULT_MINIMUM_ELAPSED, new File(""))));
     reader.setNormalized(true);
     reader.setOriginalMetadataPopulated(false);
     reader.setMetadataFiltered(true);
@@ -2141,7 +2146,9 @@ public class FormatReaderTest {
     // initialize configuration tree
     if (config == null) {
       try {
-        config = configTree.get(id);
+        synchronized (configTree) {
+          config = configTree.get(id);
+        }
       }
       catch (IOException e) { }
     }

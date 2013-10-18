@@ -929,9 +929,7 @@ public class NativeND2Reader extends FormatReader {
         LOGGER.debug("Correcting SizeC: was {}", getSizeC());
         LOGGER.debug("plane size = {}", planeSize);
         LOGGER.debug("available bytes = {}", availableBytes);
-        if (isLossless) {
-          planeSize *= 2;
-        }
+
         core.get(0).sizeC = (int) (availableBytes / (planeSize / getSizeC()));
         if (getSizeC() == 0) {
           core.get(0).sizeC = 1;
@@ -1657,7 +1655,12 @@ public class NativeND2Reader extends FormatReader {
         int green = (colors[c] & 0xff00) >> 8;
         int blue = (colors[c] & 0xff0000) >> 16;
         int alpha = (colors[c] & 0xff000000) >> 24;
-        store.setChannelColor(new Color(red, green, blue, alpha), i, c);
+
+        // do not set the channel color if the recorded color is black
+        // doing so can prevent the image from displaying correctly
+        if (red != 0 || green != 0 || blue != 0) {
+          store.setChannelColor(new Color(red, green, blue, alpha), i, c);
+        }
       }
     }
 
