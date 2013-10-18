@@ -14,6 +14,7 @@ loci.formats.in.APNGReader            # png [javax.imageio]
 loci.formats.in.JPEGReader            # jpg, jpeg [javax.imageio]
 
 # standalone readers with unique file extensions
+loci.formats.in.WlzReader  	      # wlz
 loci.formats.in.PGMReader             # pgm
 loci.formats.in.FitsReader            # fits
 loci.formats.in.PCXReader             # pcx
@@ -114,6 +115,8 @@ loci.formats.in.JPXReader             # jpx [JAI-ImageIO]
 loci.formats.in.ND2Reader             # nd2, jp2 [JAI-ImageIO]
 loci.formats.in.PCIReader             # cxd [POI]
 loci.formats.in.ImarisHDFReader       # ims [NetCDF]
+loci.formats.in.WlzReader	      # wlz [JWlz]
+
 
 # TIFF-based readers with unique file extensions
 loci.formats.in.ZeissLSMReader        # lsm, mdb [MDB Tools]
