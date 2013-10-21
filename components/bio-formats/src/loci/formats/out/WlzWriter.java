@@ -134,7 +134,12 @@ public class WlzWriter extends FormatWriter {
       MetadataRetrieve meta = getMetadataRetrieve();
       MetadataTools.verifyMinimumPopulated(meta, series);
       wlz.open(id, "w");
-      String stageLabelName = meta.getStageLabelName(0);
+
+      String stageLabelName = null;
+      try {
+        stageLabelName = meta.getStageLabelName(0);
+      }
+      catch (NullPointerException e) { }
       int oX = 0;
       int oY = 0;
       int oZ = 0;
