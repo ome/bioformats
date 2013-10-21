@@ -34,10 +34,19 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-set(OME_TOPLEVEL_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR}/lib)
+if(BUILD_DOXYGEN)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bioformats.dox.cmake
+                 ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox @ONLY)
 
-add_subdirectory(lib/ome/compat)
-add_subdirectory(lib/ome/xerces)
-add_subdirectory(lib/ome/xml)
-add_subdirectory(lib/ome/bioformats)
-add_subdirectory(test)
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log
+                     COMMAND ${CMAKE_COMMAND} -E remove_directory bioformats
+                     COMMAND ${CMAKE_COMMAND} -E make_directory bioformats
+                     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox
+                     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox)
+
+  add_custom_target(doc-check
+                    COMMAND ${CMAKE_COMMAND} -Dlogfile=${CMAKE_CURRENT_BINARY_DIR}/bioformats.log -P ${PROJECT_SOURCE_DIR}/cpp/cmake/DoxygenCheck.cmake
+                    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log)
+
+  add_custom_target(doc DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log doc-check)
+endif(BUILD_DOXYGEN)

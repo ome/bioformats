@@ -44,9 +44,9 @@ if(BUILD_TESTS)
   set(TEST_LIBS testmain ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
   function(headers_test component path)
-    set(headerdir ${PROJECT_BINARY_DIR}/test/${component}/headers)
+    set(headerdir ${PROJECT_BINARY_DIR}/cpp/test/${component}/headers)
     file(MAKE_DIRECTORY ${headerdir})
-    set(dirs ${PROJECT_SOURCE_DIR}/lib ${PROJECT_BINARY_DIR}/lib)
+    set(dirs ${PROJECT_SOURCE_DIR}/cpp/lib ${PROJECT_BINARY_DIR}/cpp/lib)
     foreach(dir ${dirs})
       file(GLOB_RECURSE headers RELATIVE
            "${dir}"
@@ -54,7 +54,7 @@ if(BUILD_TESTS)
 
     foreach(header ${headers})
       string(REPLACE "/" "_" genheader ${header})
-      string(REPLACE "${PROJECT_SOURCE_DIR}/src/" "" include ${header})
+      string(REPLACE "${PROJECT_SOURCE_DIR}/cpp/src/" "" include ${header})
       string(REPLACE "${headerdir}/" "" include ${include})
       string(REGEX REPLACE "\\.h$" ".cpp" genheader ${genheader})
       string(REGEX REPLACE "[/.]" "_" safeheader ${include})

@@ -34,10 +34,33 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-set(OME_TOPLEVEL_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR}/lib)
+cmake_minimum_required(VERSION 2.8)
 
-add_subdirectory(lib/ome/compat)
-add_subdirectory(lib/ome/xerces)
-add_subdirectory(lib/ome/xml)
-add_subdirectory(lib/ome/bioformats)
-add_subdirectory(test)
+project(bioformats)
+include(cpp/cmake/Version.cmake)
+
+if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+  message(FATAL_ERROR "In-tree builds are not supported; please run cmake from a separate build directory.")
+endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+
+enable_language(CXX)
+
+include(GNUInstallDirs)
+include(CheckIncludeFileCXX)
+include(CheckCXXCompilerFlag)
+include(CheckCXXSourceCompiles)
+
+include(cpp/cmake/CompilerChecks.cmake)
+include(cpp/cmake/BoostChecks.cmake)
+include(cpp/cmake/RegexChecks.cmake)
+include(cpp/cmake/XercesChecks.cmake)
+include(cpp/cmake/XsdFu.cmake)
+include(cpp/cmake/GTest.cmake)
+include(cpp/cmake/Doxygen.cmake)
+
+add_subdirectory(docs/doxygen)
+add_subdirectory(cpp)
+
+set(LIBRARY_PREFIX OME)
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
+               ${PROJECT_BINARY_DIR}/config)

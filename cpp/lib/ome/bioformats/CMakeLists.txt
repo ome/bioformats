@@ -77,7 +77,7 @@ install(FILES ${OME_BIOFORMATS_META_STATIC_HEADERS} ${OME_BIOFORMATS_META_GENERA
 set(LIBRARY_PREFIX OME_BIOFORMATS)
 set(LIBRARY_NAME ome-bioformats)
 set(LIBRARY_HEADER ome/bioformats/meta/BaseMetadata.h)
-configure_file(${PROJECT_SOURCE_DIR}/cmake/TemplateConfig.cmake.in
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake
         DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
