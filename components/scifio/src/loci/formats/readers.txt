@@ -14,7 +14,6 @@ loci.formats.in.APNGReader            # png [javax.imageio]
 loci.formats.in.JPEGReader            # jpg, jpeg [javax.imageio]
 
 # standalone readers with unique file extensions
-loci.formats.in.WlzReader  	      # wlz
 loci.formats.in.PGMReader             # pgm
 loci.formats.in.FitsReader            # fits
 loci.formats.in.PCXReader             # pcx

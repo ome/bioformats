@@ -135,10 +135,10 @@ public class WlzServiceImpl extends AbstractService
     catch (UnsatisfiedLinkError e) {
       throw new FormatException(NO_WLZ_MSG, e);
     }
-    if(rw == "r") {
+    if(rw.equals("r")) {
       openRead(file);
     }
-    else if(rw == "w") {
+    else if(rw.equals("w")) {
       openWrite(file);
     }
     else {
