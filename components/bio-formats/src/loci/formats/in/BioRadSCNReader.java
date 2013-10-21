@@ -39,6 +39,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -57,7 +60,15 @@ public class BioRadSCNReader extends FormatReader {
   // -- Fields --
 
   private long pixelsOffset;
-  private boolean invert = false;
+
+  private Double gain;
+  private Double exposureTime;
+  private String imageName;
+  private String serialNumber;
+  private String acquisitionDate;
+  private String binning;
+  private String model;
+  private Double physicalSizeX, physicalSizeY;
 
   // -- Constructor --
 
@@ -88,25 +99,6 @@ public class BioRadSCNReader extends FormatReader {
 
     in.seek(pixelsOffset);
     readPlane(in, x, y, w, h, buf);
-
-    if (invert) {
-      switch (getPixelType()) {
-        case FormatTools.UINT8:
-          for (int i=0; i<buf.length; i++) {
-            buf[i] = (byte) (255 - buf[i]);
-          }
-
-          break;
-        case FormatTools.UINT16:
-          for (int i=0; i<buf.length; i+=2) {
-            short v = DataTools.bytesToShort(buf, i, 2, isLittleEndian());
-            v = (short) (65535 - v);
-            DataTools.unpackBytes(v, buf, i, 2, isLittleEndian());
-          }
-          break;
-      }
-    }
-
     return buf;
   }
 
@@ -114,7 +106,15 @@ public class BioRadSCNReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     pixelsOffset = 0;
-    invert = false;
+    gain = null;
+    exposureTime = null;
+    imageName = null;
+    serialNumber = null;
+    acquisitionDate = null;
+    binning = null;
+    model = null;
+    physicalSizeX = null;
+    physicalSizeY = null;
   }
 
   // -- Internal FormatReader API methods --
@@ -176,7 +176,47 @@ public class BioRadSCNReader extends FormatReader {
     m.dimensionOrder = "XYCZT";
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, exposureTime != null);
+
+    store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
+
+    if (serialNumber != null) {
+      store.setMicroscopeSerialNumber(serialNumber, 0);
+    }
+    if (model != null) {
+      store.setMicroscopeModel(model, 0);
+    }
+
+    if (imageName != null) {
+      store.setImageName(imageName, 0);
+    }
+    if (acquisitionDate != null) {
+      store.setImageAcquisitionDate(new Timestamp(acquisitionDate), 0);
+    }
+
+    if (gain != null || binning != null) {
+      String detector = MetadataTools.createLSID("Detector", 0, 0);
+      store.setDetectorID(detector, 0, 0);
+      store.setDetectorSettingsID(detector, 0, 0);
+    }
+
+    if (gain != null) {
+      store.setDetectorSettingsGain(gain, 0, 0);
+    }
+    if (binning != null) {
+      store.setDetectorSettingsBinning(getBinning(binning), 0, 0);
+    }
+
+    if (exposureTime != null) {
+      store.setPlaneExposureTime(exposureTime, 0, 0);
+    }
+
+    if (physicalSizeX != null) {
+      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
+    }
+    if (physicalSizeY != null) {
+      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
+    }
   }
 
   class SCNHandler extends BaseHandler {
@@ -201,8 +241,14 @@ public class BioRadSCNReader extends FormatReader {
       else if ("channel_count".equals(key)) {
         core.get(0).sizeC = Integer.parseInt(value);
       }
-      else if ("application_blackIsZero".equals(key)) {
-        invert = !Boolean.parseBoolean(value);
+      else if ("application_gain".equals(key)) {
+        gain = new Double(value);
+      }
+      else if ("exposure_time".equals(key)) {
+        exposureTime = new Double(value);
+      }
+      else if ("name".equals(key)) {
+        imageName = value;
       }
     }
 
@@ -235,7 +281,36 @@ public class BioRadSCNReader extends FormatReader {
             }
           }
         }
-
+        else if (key.equals("size_mm")) {
+          if (attrKey.equals("width")) {
+            physicalSizeX = new Double(attrValue) / getSizeX();
+            physicalSizeX *= 1000; // convert from mm to um
+          }
+          else if (attrKey.equals("height")) {
+            physicalSizeY = new Double(attrValue) / getSizeY();
+            physicalSizeY *= 1000; // convert from mm to um
+          }
+        }
+        else if (key.equals("serial_number")) {
+          if (attrKey.equals("value")) {
+            serialNumber = attrValue;
+          }
+        }
+        else if (key.equals("binning")) {
+          if (attrKey.equals("value")) {
+            binning = attrValue;
+          }
+        }
+        else if (key.equals("image_date")) {
+          if (attrKey.equals("value")) {
+            acquisitionDate = attrValue;
+          }
+        }
+        else if (key.equals("imager")) {
+          if (attrKey.equals("value")) {
+            model = attrValue;
+          }
+        }
       }
     }
 
