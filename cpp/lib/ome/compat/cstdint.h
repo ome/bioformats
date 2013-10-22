@@ -44,8 +44,8 @@
  * used.
  */
 
-#ifndef OME_COMPAT_MEMORY_H
-# define OME_COMPAT_MEMORY_H
+#ifndef OME_COMPAT_CSTDINT_H
+# define OME_COMPAT_CSTDINT_H
 
 # include <ome/compat/config.h>
 
@@ -55,7 +55,7 @@
 #  include <stdint.h>
 # endif
 
-#endif /* OME_COMPAT_MEMORY_H */
+#endif /* OME_COMPAT_CSTDINT_H */
 
 /*
  * Local Variables:
