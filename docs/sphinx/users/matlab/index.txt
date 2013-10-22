@@ -13,9 +13,9 @@ the minimum supported MATLAB version is R2007b (7.5).
 Installation
 ------------
 
-Download the :source:`M files <components/bio-formats/matlab>` and
-:downloads:`loci_tools.jar <>` and place them in your MATLAB
-work directory.
+Download :downloads:`bfmatlab.zip <>`, unzip it into a new folder. Then
+download :downloads:`loci_tools.jar <>` and place it  in the same folder. Add
+this folder to your MATLAB path.
 
 Usage
 -----
