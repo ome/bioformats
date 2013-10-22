@@ -13,14 +13,15 @@ the minimum supported MATLAB version is R2007b (7.5).
 Installation
 ------------
 
-Download :downloads:`bfmatlab.zip <>`, unzip it into a new folder. Then
-download :downloads:`loci_tools.jar <>` and place it  in the same folder. Add
-this folder to your MATLAB path.
+Download **bfmatlab.zip** and **loci_tools.jar** from the Bio-Formats
+:downloads:`downloads page <>`. Unzip **bfmatlab.zip** into a new folder,
+move **loci_tools.jar**  into the same folder and add this folder to your
+MATLAB path.
 
 Usage
 -----
 
-Please see the :doc:`Bio-Formats MATLAB Guide </developers/matlab-dev>`
+Please see :doc:`/developers/matlab-dev`
 for usage instructions. If you intend to extend the existing .m files,
 please also see the :doc:`developer page </developers/index>` for more
 information on how to use Bio-Formats in general.
