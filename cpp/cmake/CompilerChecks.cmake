@@ -66,7 +66,11 @@ endforeach(flag ${test_flags})
 
 check_include_file_cxx(tuple OME_HAVE_TUPLE)
 check_include_file_cxx(tr1/tuple OME_HAVE_TR1_TUPLE)
-check_include_file_cxx(cstdint OME_HAVE_CSTDINT)
+
+check_cxx_source_compiles("
+#include <cstdint>
+int main() { uint16_t test(134); }
+" OME_HAVE_CSTDINT)
 
 check_cxx_source_compiles("
 #include <memory>

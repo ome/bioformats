@@ -41,6 +41,7 @@
 
 // Configured features
 
+#cmakedefine OME_HAVE_CSTDINT 1
 #cmakedefine OME_HAVE_MEMORY 1
 #cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
 #cmakedefine OME_HAVE_TUPLE 1
