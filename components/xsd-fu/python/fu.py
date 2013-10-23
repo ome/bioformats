@@ -50,7 +50,7 @@ except ImportError:
 # Types which should be ignored from metadata store, retrieve, etc. code
 # generation due either to their incompatibility or complexity as it applies
 # to these interfaces and implementations.
-METADATA_OBJECT_IGNORE = ('BinData', 'External')
+METADATA_OBJECT_IGNORE = ('BinData', 'External', 'M')
 
 # Type counts which should be ignored from metadata store, retrieve, etc. code
 # generation due either to their incompatibility or complexity as it applies
