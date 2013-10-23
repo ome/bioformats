@@ -21,6 +21,7 @@ an OME XML (http://www.ome-xml.org) XSD document.
 #  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
+
 import generateDS.generateDS
 import logging
 import copy
@@ -128,6 +129,74 @@ BACK_REFERENCE_CLASS_NAME_OVERRIDE = {
 # for.
 ABSTRACT_PROPRIETARY_OVERRIDE = ('Transform',)
 
+def updateTypeMaps(opts):
+    """
+    Updates the type maps with a new namespace. **Must** be executed at least
+    once, **before** node class file generation.
+    """
+
+    namespace = opts.namespace
+
+    global CURRENT_LANG
+    global DEFAULT_BASE_CLASS
+    global PRIMITIVE_TYPE_MAP
+    global TYPE_MAP
+    global BASE_TYPE_MAP
+
+    CURRENT_LANG = opts.lang
+
+    if (CURRENT_LANG == LANG_JAVA):
+        DEFAULT_BASE_CLASS = "AbstractOMEModelObject"
+    elif (CURRENT_LANG == LANG_CXX):
+        DEFAULT_BASE_CLASS = "OMEModelObject"
+
+    PRIMITIVE_TYPE_MAP = {
+        'PositiveInt': 'PositiveInteger',
+        'NonNegativeInt': 'NonNegativeInteger',
+        'PositiveLong': 'PositiveLong',
+        'NonNegativeLong': 'NonNegativeLong',
+        'PositiveFloat': 'PositiveFloat',
+        'PercentFraction': 'PercentFraction',
+        'Color': 'Color',
+        'Text': 'Text',
+        namespace + 'dateTime': 'Timestamp'
+    }
+
+    if (CURRENT_LANG == LANG_JAVA):
+        PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'Boolean'
+        PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'String'
+        PRIMITIVE_TYPE_MAP[namespace + 'integer'] = 'Integer'
+        PRIMITIVE_TYPE_MAP[namespace + 'int'] = 'Integer'
+        PRIMITIVE_TYPE_MAP[namespace + 'long'] = 'Long'
+        PRIMITIVE_TYPE_MAP[namespace + 'float'] = 'Double'
+        PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'Double'
+        PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'String'
+        PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'String'
+    elif (CURRENT_LANG == LANG_CXX):
+        PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'bool'
+        PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'std::string'
+        PRIMITIVE_TYPE_MAP[namespace + 'integer'] = 'int32_t'
+        PRIMITIVE_TYPE_MAP[namespace + 'int'] = 'int32_t'
+        PRIMITIVE_TYPE_MAP[namespace + 'long'] = 'int64_t'
+        PRIMITIVE_TYPE_MAP[namespace + 'float'] = 'double'
+        PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'double'
+        PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'std::string'
+        PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'std::string'
+
+    TYPE_MAP = copy.deepcopy(PRIMITIVE_TYPE_MAP)
+    TYPE_MAP['Leader'] = 'Experimenter'
+    TYPE_MAP['Contact'] = 'Experimenter'
+    TYPE_MAP['Pump'] = 'LightSource'
+
+    if (CURRENT_LANG == LANG_JAVA):
+        TYPE_MAP['MIMEtype'] = 'String'
+    elif (CURRENT_LANG == LANG_CXX):
+        TYPE_MAP['MIMEtype'] = 'std::string'
+
+    BASE_TYPE_MAP = {
+        'UniversallyUniqueIdentifier': DEFAULT_BASE_CLASS
+    }
+
 # The list of properties not to process.
 DO_NOT_PROCESS = [] #["ID"]
 
@@ -217,74 +286,6 @@ BACKREF_REGEX = re.compile(r'_BackReference')
 
 PREFIX_CASE_REGEX = re.compile(
         r'^([A-Z]{1})[a-z0-9]+|([A-Z0-9]+)[A-Z]{1}[a-z]+|([A-Z]+)[0-9]*|([a-z]+$)')
-
-def updateTypeMaps(opts):
-    """
-    Updates the type maps with a new namespace. **Must** be executed at least
-    once, **before** node class file generation.
-    """
-
-    namespace = opts.namespace
-
-    global CURRENT_LANG
-    global DEFAULT_BASE_CLASS
-    global PRIMITIVE_TYPE_MAP
-    global TYPE_MAP
-    global BASE_TYPE_MAP
-
-    CURRENT_LANG = opts.lang
-
-    if (CURRENT_LANG == LANG_JAVA):
-        DEFAULT_BASE_CLASS = "AbstractOMEModelObject"
-    elif (CURRENT_LANG == LANG_CXX):
-        DEFAULT_BASE_CLASS = "OMEModelObject"
-
-    PRIMITIVE_TYPE_MAP = {
-        'PositiveInt': 'PositiveInteger',
-        'NonNegativeInt': 'NonNegativeInteger',
-        'PositiveLong': 'PositiveLong',
-        'NonNegativeLong': 'NonNegativeLong',
-        'PositiveFloat': 'PositiveFloat',
-        'PercentFraction': 'PercentFraction',
-        'Color': 'Color',
-        'Text': 'Text',
-        namespace + 'dateTime': 'Timestamp'
-    }
-
-    if (CURRENT_LANG == LANG_JAVA):
-        PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'Boolean'
-        PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'String'
-        PRIMITIVE_TYPE_MAP[namespace + 'integer'] = 'Integer'
-        PRIMITIVE_TYPE_MAP[namespace + 'int'] = 'Integer'
-        PRIMITIVE_TYPE_MAP[namespace + 'long'] = 'Long'
-        PRIMITIVE_TYPE_MAP[namespace + 'float'] = 'Double'
-        PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'Double'
-        PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'String'
-        PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'String'
-    elif (CURRENT_LANG == LANG_CXX):
-        PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'bool'
-        PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'std::string'
-        PRIMITIVE_TYPE_MAP[namespace + 'integer'] = 'int32_t'
-        PRIMITIVE_TYPE_MAP[namespace + 'int'] = 'int32_t'
-        PRIMITIVE_TYPE_MAP[namespace + 'long'] = 'int64_t'
-        PRIMITIVE_TYPE_MAP[namespace + 'float'] = 'double'
-        PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'double'
-        PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'std::string'
-        PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'std::string'
-
-    TYPE_MAP = copy.deepcopy(PRIMITIVE_TYPE_MAP)
-    TYPE_MAP['Leader'] = 'Experimenter'
-    TYPE_MAP['Contact'] = 'Experimenter'
-    TYPE_MAP['Pump'] = 'LightSource'
-
-    if (CURRENT_LANG == LANG_JAVA):
-        TYPE_MAP['MIMEtype'] = 'String'
-    elif (CURRENT_LANG == LANG_CXX):
-        TYPE_MAP['MIMEtype'] = 'std::string'
-
-    BASE_TYPE_MAP = {
-        'UniversallyUniqueIdentifier': DEFAULT_BASE_CLASS
-    }
 
 def template_path(name, opts):
     if (opts.lang == LANG_JAVA):
