@@ -63,8 +63,13 @@ METADATA_COUNT_IGNORE = {'Annotation': ['AnnotationRef']}
 # types. It is a superset of PRIMITIVE_TYPE_MAP.
 TYPE_MAP = None
 
-# A global type mapping from XSD Schema types to language primitive base classes.
+# A global type mapping from XSD Schema types to language primitive classes.
 PRIMITIVE_TYPE_MAP = None
+
+# A global type mapping from XSD Schema elements to language model
+# object classes.  This will cause source code generation to be
+# skipped for this type since it's implemented natively.
+MODEL_TYPE_MAP = {}
 
 # A global type mapping from XSD Schema types to base classes that is used
 # to override places in the model where we do not wish subclassing to take
@@ -110,8 +115,6 @@ BACK_REFERENCE_LINK_OVERRIDE = {'Pump': ['Laser'], 'AnnotationRef': ['Annotation
 # Back reference instance variable name overrides which will be used in place
 # of the standard name translation logic.
 BACK_REFERENCE_NAME_OVERRIDE = {
-    'FilterSet.ExcitationFilter': 'filterSetExcitationFilter',
-    'FilterSet.EmissionFilter': 'filterSetEmissionFilter',
     'LightPath.ExcitationFilter': 'lightPathExcitationFilter',
     'LightPath.EmissionFilter': 'lightPathEmissionFilter',
 }
@@ -119,15 +122,13 @@ BACK_REFERENCE_NAME_OVERRIDE = {
 # Back reference class name overrides which will be used when generating
 # fully qualified class names.
 BACK_REFERENCE_CLASS_NAME_OVERRIDE = {
-    'FilterSet.ExcitationFilter': 'FilterSetExcitationFilterLink',
-    'FilterSet.EmissionFilter': 'FilterSetEmissionFilterLink',
     'LightPath.ExcitationFilter': 'LightPathExcitationFilterLink',
     'LightPath.EmissionFilter': 'LightPathEmissionFilterLink',
 }
 
 # Properties within abstract proprietary types that should be code generated
 # for.
-ABSTRACT_PROPRIETARY_OVERRIDE = ('Transform',)
+ABSTRACT_PROPRIETARY_OVERRIDE = ('Transform', 'AnnotationRef',)
 
 def updateTypeMaps(opts):
     """
@@ -139,6 +140,7 @@ def updateTypeMaps(opts):
 
     global CURRENT_LANG
     global PRIMITIVE_TYPE_MAP
+    global MODEL_TYPE_MAP
     global TYPE_MAP
     global BASE_TYPE_MAP
 
@@ -166,6 +168,11 @@ def updateTypeMaps(opts):
         PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'Double'
         PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'String'
         PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'String'
+        PRIMITIVE_TYPE_MAP['OME:MapPairs'] = 'MapPairs'
+
+        MODEL_TYPE_MAP['MapPairs'] = 'MapPairs'
+        MODEL_TYPE_MAP['M'] = None
+
     elif (CURRENT_LANG == LANG_CXX):
         PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'bool'
         PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'std::string'
@@ -176,6 +183,10 @@ def updateTypeMaps(opts):
         PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'double'
         PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'std::string'
         PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'std::string'
+        PRIMITIVE_TYPE_MAP['OME:MapPairs'] = 'MapPairs'
+
+        MODEL_TYPE_MAP['MapPairs'] = 'MapPairs'
+        MODEL_TYPE_MAP['M'] = None
 
     TYPE_MAP = copy.deepcopy(PRIMITIVE_TYPE_MAP)
     TYPE_MAP['Leader'] = 'Experimenter'
@@ -1041,6 +1052,17 @@ class OMEModelProperty(OMEModelEntity):
         return instance
     fromReference = classmethod(fromReference)
 
+    def _get_dumpStatus(self):
+        return 'Dump OMEModelProperty Status - %s Dict(%s)' % (self.__class__, self.__dict__)
+    dumpStatus = property(_get_dumpStatus)
+
+    def __str__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return '<"%s" OMEModelProperty instance at 0x%x>' % (self.name, id(self))
+
+
 class OMEModelObject(OMEModelEntity):
     """
     A single element of an OME data model.
@@ -1314,7 +1336,7 @@ class OMEModelObject(OMEModelEntity):
 
         if parents is not None:
             parent = self.model.getObjectByName(parents.keys()[0])
-            if parent is not None and parent.isAbstractProprietary:
+            if parent is not None and parent.isAbstractProprietary and not self.name in ABSTRACT_PROPRIETARY_OVERRIDE :
                 name = parent.name
 
         return name
@@ -1326,6 +1348,10 @@ class OMEModelObject(OMEModelEntity):
         Returns whether or not the model object has a "complex" content type.
         """
         return self.element.isComplex()
+
+    def _get_dumpStatus(self):
+        return 'Dump OMEModelObject Status - %s Dict(%s)' % (self.__class__, self.__dict__)
+    dumpStatus = property(_get_dumpStatus)
 
     def __str__(self):
         return self.__repr__()
