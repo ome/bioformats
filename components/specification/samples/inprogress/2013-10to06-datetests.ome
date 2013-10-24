@@ -177,6 +177,18 @@
 		<SA:TimestampAnnotation ID="Annotation:11" Namespace="sample.openmicroscopy.org/time/dinosaur">
 			<SA:Value>-231400000-01-01T00:00:00</SA:Value>
 		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:12" Namespace="sample.openmicroscopy.org/time/zone1paris">
+			<SA:Value>2013-10-24T11:52:33+01:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:13" Namespace="sample.openmicroscopy.org/time/zone2honolulu">
+			<SA:Value>2013-10-24T11:52:33-10:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:14" Namespace="sample.openmicroscopy.org/time/zone3gmt">
+			<SA:Value>2013-10-24T11:52:33Z</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:15" Namespace="sample.openmicroscopy.org/time/zone4nepal">
+			<SA:Value>2013-10-24T11:52:33+05:45</SA:Value>
+		</SA:TimestampAnnotation>
 	</SA:StructuredAnnotations>
 	<ROI:ROI ID="ROI:0">
 		<ROI:Union>
