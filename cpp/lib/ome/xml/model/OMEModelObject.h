@@ -72,65 +72,65 @@ namespace ome
       {
       public:
         /// Constructor.
-	OMEModelObject ();
+        OMEModelObject ();
 
         /// Destructor.
         virtual
         ~OMEModelObject ();
 
-	/**
+        /**
          * Transform the object hierarchy rooted at this element to
          * XML.
          *
-	 * @param document document for element creation
-	 * @returns an XML DOM tree root element for this model object.
-	 */
-	virtual xerces::dom::Element&
-	asXMLElement (xerces::dom::Document& document) const = 0;
+         * @param document document for element creation
+         * @returns an XML DOM tree root element for this model object.
+         */
+        virtual xerces::dom::Element&
+        asXMLElement (xerces::dom::Document& document) const = 0;
 
       protected:
-	/**
+        /**
          * Transform the object hierarchy rooted at this element to
          * XML.  This internal implementation of asXMLelement also
          * requires an XML element, which may be null, or may be
          * instantiated and passed from superclasses.
          *
-	 * @param document XML document for element creation.
-	 * @param element XML element for setting model data.
-	 * @returns an XML DOM tree root element for this model object.
-	 */
-	virtual xerces::dom::Element&
-	asXMLElementInternal (xerces::dom::Document& document,
+         * @param document XML document for element creation.
+         * @param element XML element for setting model data.
+         * @returns an XML DOM tree root element for this model object.
+         */
+        virtual xerces::dom::Element&
+        asXMLElementInternal (xerces::dom::Document& document,
                               xerces::dom::Element&  element) const = 0;
 
       public:
-	/**
-	 * Update the object hierarchy recursively from an XML DOM tree.
+        /**
+         * Update the object hierarchy recursively from an XML DOM tree.
          *
-	 * @note No properties are removed, only added or updated.
+         * @note No properties are removed, only added or updated.
          *
-	 * @param element root of the XML DOM tree to from which to
-	 * construct the model object graph.
-	 * @param model handler for the OME model used to track
-	 * instances and references seen during the update.
-	 * @throws EnumerationException if there is an error
-	 * instantiating an enumeration during model object creation.
-	 */
-	virtual void
-	update (const xerces::dom::Element& element,
-		OMEModel&                   model);
+         * @param element root of the XML DOM tree to from which to
+         * construct the model object graph.
+         * @param model handler for the OME model used to track
+         * instances and references seen during the update.
+         * @throws EnumerationException if there is an error
+         * instantiating an enumeration during model object creation.
+         */
+        virtual void
+        update (const xerces::dom::Element& element,
+                OMEModel&                   model);
 
-	/**
-	 * Link a given OME model object to this model object.
+        /**
+         * Link a given OME model object to this model object.
          *
-	 * @param reference type qualifier for the reference. This
-	 * should be the corresponding reference type for @a
-	 * object. If, for example, @a object is of type Image,
-	 * @a reference must be of type ImageRef.
+         * @param reference type qualifier for the reference. This
+         * should be the corresponding reference type for @a
+         * object. If, for example, @a object is of type Image,
+         * @a reference must be of type ImageRef.
          *
-	 * @param object Model object to link to.
-	 * @returns @c true if this model object was able to handle the
-	 * reference, otherwise @c false.
+         * @param object Model object to link to.
+         * @returns @c true if this model object was able to handle the
+         * reference, otherwise @c false.
          *
          * @todo the use of @a reference to provide type information
          * for the type of @a object is unconventional and quite
@@ -140,10 +140,10 @@ namespace ome
          * needs to do strict checking of the @a object type; it's not
          * currently failing if it's of the wrong type.  This applies
          * to all generated model objects implementing this interface.
-	 */
-	virtual bool
-	link (std::shared_ptr<Reference>&      reference,
-	      std::shared_ptr<OMEModelObject>& object);
+         */
+        virtual bool
+        link (std::shared_ptr<Reference>&      reference,
+              std::shared_ptr<OMEModelObject>& object);
 
         /**
          * Retrieves all the children of an element that have a given tag name. If a

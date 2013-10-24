@@ -52,8 +52,8 @@ namespace ome
     {
 
       OMEModelImpl::OMEModelImpl ():
-	modelObjects(),
-	references()
+        modelObjects(),
+        references()
       {
       }
 
@@ -63,11 +63,11 @@ namespace ome
 
       std::shared_ptr<OMEModelObject>
       OMEModelImpl::addModelObject(const std::string& id,
-				   std::shared_ptr<OMEModelObject>& object)
+                                   std::shared_ptr<OMEModelObject>& object)
       {
         // Don't store references.
         if (std::dynamic_pointer_cast<Reference>(object))
-	  return object;
+          return object;
 
         object_map_type::iterator i = modelObjects.find(id);
         if (i != modelObjects.end())
@@ -90,30 +90,30 @@ namespace ome
             modelObjects.erase(i);
           }
 
-	return ret;
+        return ret;
       }
 
       std::shared_ptr<OMEModelObject>
       OMEModelImpl::getModelObject(const std::string& id) const
-	{
+        {
           std::shared_ptr<OMEModelObject> ret;
 
           object_map_type::const_iterator i = modelObjects.find(id);
           if (i != modelObjects.end())
             ret = i->second;
 
-	  return ret;
-	}
+          return ret;
+        }
 
       const OMEModel::object_map_type&
       OMEModelImpl::getModelObjects () const
       {
-	return modelObjects;
+        return modelObjects;
       }
 
       bool
       OMEModelImpl::addReference (std::shared_ptr<OMEModelObject>& a,
-				  std::shared_ptr<Reference>& b)
+                                  std::shared_ptr<Reference>& b)
       {
         reference_map_type::iterator i = references.find(a);
 
@@ -130,13 +130,13 @@ namespace ome
       const OMEModel::reference_map_type&
       OMEModelImpl::getReferences () const
       {
-	return references;
+        return references;
       }
 
       OMEModel::size_type
       OMEModelImpl::resolveReferences ()
       {
-	int unhandledReferences = 0;
+        int unhandledReferences = 0;
 
         for (reference_map_type::iterator i = references.begin();
              i != references.end();
@@ -144,7 +144,7 @@ namespace ome
           {
             const std::shared_ptr<const OMEModelObject>& a(i->first);
 
-	    if (!a)
+            if (!a)
               {
                 const reference_list_type& references(i->second);
 

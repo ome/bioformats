@@ -56,46 +56,46 @@ namespace ome
       {
       private:
         /// Mapping of id to model object.
-	object_map_type modelObjects;
+        object_map_type modelObjects;
         /// Mapping of model object to reference.
-	reference_map_type references;
+        reference_map_type references;
 
       public:
         /// Constructor.
-	OMEModelImpl ();
+        OMEModelImpl ();
 
         /// Destructor.
         ~OMEModelImpl ();
 
         // Documented in parent.
-	std::shared_ptr<OMEModelObject>
-	addModelObject (const std::string&               id,
-		        std::shared_ptr<OMEModelObject>& object);
+        std::shared_ptr<OMEModelObject>
+        addModelObject (const std::string&               id,
+                        std::shared_ptr<OMEModelObject>& object);
 
         // Documented in parent.
-	std::shared_ptr<OMEModelObject>
-	removeModelObject (const std::string& id);
+        std::shared_ptr<OMEModelObject>
+        removeModelObject (const std::string& id);
 
         // Documented in parent.
-	std::shared_ptr<OMEModelObject>
-	getModelObject (const std::string& id) const;
+        std::shared_ptr<OMEModelObject>
+        getModelObject (const std::string& id) const;
 
         // Documented in parent.
-	const object_map_type&
-	getModelObjects () const;
+        const object_map_type&
+        getModelObjects () const;
 
         // Documented in parent.
-	bool
-	addReference (std::shared_ptr<OMEModelObject>& a,
-		      std::shared_ptr<Reference>&      b);
+        bool
+        addReference (std::shared_ptr<OMEModelObject>& a,
+                      std::shared_ptr<Reference>&      b);
 
         // Documented in parent.
-	const reference_map_type&
-	getReferences () const;
+        const reference_map_type&
+        getReferences () const;
 
         // Documented in parent.
-	size_type
-	resolveReferences ();
+        size_type
+        resolveReferences ();
 
       };
 

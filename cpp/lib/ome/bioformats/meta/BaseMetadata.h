@@ -48,11 +48,11 @@ namespace ome
       class BaseMetadata
       {
       protected:
-	BaseMetadata();
+        BaseMetadata();
 
       public:
-	virtual
-	~BaseMetadata();
+        virtual
+        ~BaseMetadata();
       };
 
     }

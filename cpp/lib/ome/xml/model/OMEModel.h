@@ -65,14 +65,14 @@ namespace ome
         /// A list of Reference objects.
         typedef std::vector<std::shared_ptr<Reference> > reference_list_type;
         /// A map of string model object identifiers to model objects.
-	typedef std::map<std::string, std::shared_ptr<OMEModelObject> > object_map_type;
+        typedef std::map<std::string, std::shared_ptr<OMEModelObject> > object_map_type;
         /// A map of model objects to list of Reference objects.
-	typedef std::map<std::shared_ptr<OMEModelObject>, reference_list_type> reference_map_type;
+        typedef std::map<std::shared_ptr<OMEModelObject>, reference_list_type> reference_map_type;
         /// Size type for reference map.
         typedef reference_map_type::size_type size_type;
 
         /// Constructor.
-	OMEModel ();
+        OMEModel ();
 
         /// Destructor.
         virtual
@@ -91,10 +91,10 @@ namespace ome
          * the object failed (e.g. if the object was a Reference).
          * Should it be possible to insert null objects?
          */
-	virtual
-	std::shared_ptr<OMEModelObject>
-	addModelObject (const std::string&               id,
-		        std::shared_ptr<OMEModelObject>& object) = 0;
+        virtual
+        std::shared_ptr<OMEModelObject>
+        addModelObject (const std::string&               id,
+                        std::shared_ptr<OMEModelObject>& object) = 0;
 
         /**
          * Remove a model object from the model.
@@ -104,9 +104,9 @@ namespace ome
          * @returns the model object or null if the identifier does
          * not exist.
          */
-	virtual
-	std::shared_ptr<OMEModelObject>
-	removeModelObject (const std::string& id) = 0;
+        virtual
+        std::shared_ptr<OMEModelObject>
+        removeModelObject (const std::string& id) = 0;
 
         /**
          * Retrieve a model object from the model.
@@ -118,18 +118,18 @@ namespace ome
          *
          * @todo: Would a const reference be better for the return?
          */
-	virtual
-	std::shared_ptr<OMEModelObject>
-	getModelObject (const std::string& id) const = 0;
+        virtual
+        std::shared_ptr<OMEModelObject>
+        getModelObject (const std::string& id) const = 0;
 
         /**
          * Retrieve all model objects from the model.
          *
          * @returns a reference to the object model map.
          */
-	virtual
-	const object_map_type&
-	getModelObjects () const = 0;
+        virtual
+        const object_map_type&
+        getModelObjects () const = 0;
 
         /**
          * Add a reference to a model object.
@@ -146,19 +146,19 @@ namespace ome
          * object map; or adding the object to the object map
          * implicitly and not throwing.
          */
-	virtual
-	bool
-	addReference (std::shared_ptr<OMEModelObject>& a,
-		      std::shared_ptr<Reference>&      b) = 0;
+        virtual
+        bool
+        addReference (std::shared_ptr<OMEModelObject>& a,
+                      std::shared_ptr<Reference>&      b) = 0;
 
         /**
          * Retrieve all references from the model.
          *
          * @returns a reference to the reference map.
          */
-	virtual
-	const reference_map_type&
-	getReferences () const = 0;
+        virtual
+        const reference_map_type&
+        getReferences () const = 0;
 
         /**
          * Resolve all references.  Check for invalid references and
@@ -170,9 +170,9 @@ namespace ome
          * model should not allow invalid references or insertion of
          * null model objects to begin with.
          */
-	virtual
-	size_type
-	resolveReferences () = 0;
+        virtual
+        size_type
+        resolveReferences () = 0;
 
       };
 

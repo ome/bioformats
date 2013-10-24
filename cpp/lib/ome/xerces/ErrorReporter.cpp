@@ -62,9 +62,9 @@ namespace ome
     ErrorReporter::warning(const xercesc::SAXParseException& e)
     {
       stream << "Error at file \"" << String(e.getSystemId())
-	     << "\", line " << e.getLineNumber()
-	     << ", column " << e.getColumnNumber()
-	     << "\n   Message: " << String(e.getMessage()) << std::endl;
+             << "\", line " << e.getLineNumber()
+             << ", column " << e.getColumnNumber()
+             << "\n   Message: " << String(e.getMessage()) << std::endl;
     }
 
     void
@@ -72,9 +72,9 @@ namespace ome
     {
       saw_error = true;
       stream << "Error at file \"" << String(e.getSystemId())
-	     << "\", line " << e.getLineNumber()
-	     << ", column " << e.getColumnNumber()
-	     << "\n   Message: " << String(e.getMessage()) << std::endl;
+             << "\", line " << e.getLineNumber()
+             << ", column " << e.getColumnNumber()
+             << "\n   Message: " << String(e.getMessage()) << std::endl;
     }
 
     void
@@ -82,9 +82,9 @@ namespace ome
     {
       saw_error = true;
       std::cerr << "Fatal Error at file \"" << String(e.getSystemId())
-	     << "\", line " << e.getLineNumber()
-	     << ", column " << e.getColumnNumber()
-	     << "\n   Message: " << String(e.getMessage()) << std::endl;
+             << "\", line " << e.getLineNumber()
+             << ", column " << e.getColumnNumber()
+             << "\n   Message: " << String(e.getMessage()) << std::endl;
     }
 
     void
