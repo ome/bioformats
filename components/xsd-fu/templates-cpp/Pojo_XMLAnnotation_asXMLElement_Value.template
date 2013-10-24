@@ -1,8 +1,8 @@
-	xerces::dom::Document Value_document = 0;
-//	try
-//	  {
+        xerces::dom::Document Value_document = 0;
+//        try
+//          {
             /// @todo Parse document from string value.
-//	  }
+//          }
         // TODO: Catch and/or rethrow actual xerces exceptions...
         xerces::dom::Element value_element = document.createElementNS(NAMESPACE, "Value");
         // TODO: Wrap in document
@@ -11,9 +11,9 @@
         for (xerces::dom::NodeList::iterator elem = Value_subNodes.begin();
              elem != Value_subNodes.end();
              ++elem)
-	  {
+          {
             // TODO: Wrap importNode in document.
-	    xerces::dom::Node Value_subNode = document->importNode(*elem, true);
-	    value_element.appendChild(Value_subNode);
-	  }
+            xerces::dom::Node Value_subNode = document->importNode(*elem, true);
+            value_element.appendChild(Value_subNode);
+          }
         element.appendChild(value_element);

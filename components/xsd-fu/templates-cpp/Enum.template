@@ -137,8 +137,8 @@ namespace ome
          operator=  (const ${klass.langType}& rhs)
          {
            this->value = rhs.value;
-	   this->name = rhs.name;
-	   return *this;
+           this->name = rhs.name;
+           return *this;
          }
 
          /**

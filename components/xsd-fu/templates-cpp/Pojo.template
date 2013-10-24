@@ -164,20 +164,20 @@ namespace ome
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-	/**
-	 * Construct a ${klass.name} recursively from an XML DOM tree.
+        /**
+         * Construct a ${klass.name} recursively from an XML DOM tree.
          *
-	 * @param element root of the XML DOM tree to from which to
-	 * construct the model object graph.
-	 * @param model handler for the OME model used to track
-	 * instances and references seen during the update.
-	 * @throws EnumerationException if there is an error
-	 * instantiating an enumeration during model object creation.
+         * @param element root of the XML DOM tree to from which to
+         * construct the model object graph.
+         * @param model handler for the OME model used to track
+         * instances and references seen during the update.
+         * @throws EnumerationException if there is an error
+         * instantiating an enumeration during model object creation.
          *
 {% if klass.parentName is not None %}\
          * @todo Pass constructor arguments to parent?
 {% end has parent %}\
-	 */
+         */
         ${klass.name} (xerces::dom::Element& element, OMEModel& model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -218,7 +218,7 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
         /// Destructor.
         virtual
-	~${klass.name} ();
+        ~${klass.name} ();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::~${klass.name} ()
@@ -227,18 +227,18 @@ namespace ome
 {% end source %}\
 {% if len(customContent) > 0 %}\
 
-	// -- Custom content from ${klass.name} specific template --
+        // -- Custom content from ${klass.name} specific template --
 
 ${customContent}\
 {% end custom content %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 
-	// -- OMEModelObject API methods --
+        // -- OMEModelObject API methods --
 
         // Documented in base class.
-	virtual void
+        virtual void
         update(const xerces::dom::Element& element,
-	       OMEModel&                   model);
+               OMEModel&                   model);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
 
@@ -453,12 +453,12 @@ ${prop.langTypeNS} attr;
 {% if fu.SOURCE_TYPE == "header" %}\
 
  public:
-	// -- ${klass.name} API methods --
+        // -- ${klass.name} API methods --
 
         // Documented in base class.
         bool
         link (std::shared_ptr<Reference>&      reference,
-	      std::shared_ptr<OMEModelObject>& object);
+              std::shared_ptr<OMEModelObject>& object);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
@@ -512,7 +512,7 @@ ${prop.langTypeNS} attr;
          *
          * @returns the ${klass.langType} value.
          */
-	const ${klass.langType}&
+        const ${klass.langType}&
         getValue () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -534,7 +534,7 @@ ${prop.langTypeNS} attr;
          * implementation, and makes the code generation more complex
          * than necessary.
          */
-	void
+        void
         setValue (const ${klass.langType}& ${klass.name}_value);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -629,7 +629,7 @@ ${prop.langTypeNS} attr;
          * @todo object isn't a great parameter name; use something
          * better.
          */
-	const std::weak_ptr<${prop.langTypeNS}>&
+        const std::weak_ptr<${prop.langTypeNS}>&
         setLinked${prop.methodName} (${prop.instanceVariableType}::size_type index,
                                      const std::shared_ptr<${prop.langTypeNS}>& object);
 {% end header %}\
@@ -653,7 +653,7 @@ ${prop.langTypeNS} attr;
          * @todo Why have a return value here; what is it used for?
          * Is this an artifact of the Java API?
          */
-	bool
+        bool
         link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -694,7 +694,7 @@ ${prop.langTypeNS} attr;
          * @todo Does the removal deal with multiple instances; we
          * aren't preventing duplicates on insertion.
          */
-	bool
+        bool
         unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -731,7 +731,7 @@ ${prop.langTypeNS} attr;
          * @returns the linked ${prop.methodName}.  The pointer may be
          * null.
          */
-	${prop.retType}
+        ${prop.retType}
         getLinked${prop.methodName} () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -791,7 +791,7 @@ ${prop.langTypeNS} attr;
          *
          * @returns the ${prop.methodName} property.
          */
-	${prop.retType}
+        ${prop.retType}
         get${prop.methodName} () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -812,7 +812,7 @@ ${prop.langTypeNS} attr;
          * @todo The ${prop.argumentName} argument name could simply
          * be @a value and make the code generation simpler.
          */
-	void
+        void
         set${prop.methodName} (${prop.argType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -875,7 +875,7 @@ ${prop.langTypeNS} attr;
          *
          * @todo Is this a value type under all circumstances?
          */
-	${prop.retType}
+        ${prop.retType}
         get${prop.methodName} (${prop.instanceVariableType}::size_type index) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -899,7 +899,7 @@ ${prop.langTypeNS} attr;
          * @todo Return type set to void since we can't return
          * abstract types by value.
          */
-	void
+        void
         set${prop.methodName} (${prop.instanceVariableType}::size_type index,
                                ${prop.argType} ${prop.argumentName});
 {% end header %}\
@@ -930,7 +930,7 @@ ${prop.langTypeNS} attr;
          * @todo Return list position?
          * @todo Detect and handle duplicates?
          */
-	void
+        void
         add${prop.methodName} (${prop.argType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -972,7 +972,7 @@ ${prop.langTypeNS} attr;
 {% end source %}\
 {% end %}\
 {% otherwise %}
-	// *** WARNING *** Unhandled or skipped property ${prop.name}
+        // *** WARNING *** Unhandled or skipped property ${prop.name}
 {% end %}\
 {% end %}\
 {% end %}\
@@ -998,7 +998,7 @@ ${prop.langTypeNS} attr;
  protected:
         // Documented in base class.
         virtual xerces::dom::Element&
-	asXMLElementInternal (xerces::dom::Document& document,
+        asXMLElementInternal (xerces::dom::Document& document,
                               xerces::dom::Element&  element) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -1024,7 +1024,7 @@ ${prop.langTypeNS} attr;
           }
 
 {% if klass.langType != 'Object' %}\
-	// Element's text data
+        // Element's text data
 //            if (!${klass.name}_value.empty()) {
         {
           std::ostringstream os;
