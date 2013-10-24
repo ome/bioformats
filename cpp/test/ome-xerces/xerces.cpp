@@ -83,62 +83,62 @@ int main (int argc, char *argv[])
       xml::Platform xmlplat;
 
       try
-	{
-	  xercesc::XercesDOMParser::ValSchemes vscheme = xercesc::XercesDOMParser::Val_Auto;  // Val_Always;
-	  bool do_ns = true;
-	  bool do_schema = true;
-	  //bool do_valid = false;
-	  bool do_fullcheck = true;
-	  bool do_create = true;
+        {
+          xercesc::XercesDOMParser::ValSchemes vscheme = xercesc::XercesDOMParser::Val_Auto;  // Val_Always;
+          bool do_ns = true;
+          bool do_schema = true;
+          //bool do_valid = false;
+          bool do_fullcheck = true;
+          bool do_create = true;
 
-	  xercesc::XercesDOMParser parser;
-	  parser.setValidationScheme(vscheme);
-	  parser.setDoNamespaces(do_ns);
-	  parser.setDoSchema(do_schema);
-	  parser.setHandleMultipleImports (true);
-	  parser.setValidationSchemaFullChecking(do_fullcheck);
-	  parser.setCreateEntityReferenceNodes(do_create);
+          xercesc::XercesDOMParser parser;
+          parser.setValidationScheme(vscheme);
+          parser.setDoNamespaces(do_ns);
+          parser.setDoSchema(do_schema);
+          parser.setHandleMultipleImports (true);
+          parser.setValidationSchemaFullChecking(do_fullcheck);
+          parser.setCreateEntityReferenceNodes(do_create);
 
-	  xml::ErrorReporter er;
-	  parser.setErrorHandler(&er);
+          xml::ErrorReporter er;
+          parser.setErrorHandler(&er);
 
-	  std::cerr << "Set up parser\n";
+          std::cerr << "Set up parser\n";
 
-	  parser.parse(filename);
+          parser.parse(filename);
 
-	  if (er)
-	    throw std::runtime_error("Parse error");
+          if (er)
+            throw std::runtime_error("Parse error");
 
-	  std::cerr << "Parsed " << filename << "\n";
+          std::cerr << "Parsed " << filename << "\n";
 
-	  return 0;
-	}
+          return 0;
+        }
       catch (const xercesc::XMLException &e)
-	{
-	  fatal("XML parse error", xml::String(e.getMessage()).str().c_str());
-	}
+        {
+          fatal("XML parse error", xml::String(e.getMessage()).str().c_str());
+        }
       catch (const xercesc::DOMException &e)
-	{
-	  const unsigned int maxc = 2047;
-	  XMLCh error[maxc + 1];
+        {
+          const unsigned int maxc = 2047;
+          XMLCh error[maxc + 1];
 
-	  if (xercesc::DOMImplementation::loadDOMExceptionMsg(e.code, error, maxc))
-	    fatal("XML DOM parse error", xml::String(error).str().c_str());
-	  else
-	    fatal("XML DOM parse error (no error message)");
-	}
+          if (xercesc::DOMImplementation::loadDOMExceptionMsg(e.code, error, maxc))
+            fatal("XML DOM parse error", xml::String(error).str().c_str());
+          else
+            fatal("XML DOM parse error (no error message)");
+        }
       catch (const xercesc::OutOfMemoryException&)
-	{
-	  fatal("Out of memory");
-	}
+        {
+          fatal("Out of memory");
+        }
       catch (const std::exception&e)
-	{
-	  fatal(e.what());
-	}
+        {
+          fatal(e.what());
+        }
       catch (...)
-	{
-	  fatal("Unknown exception");
-	}
+        {
+          fatal("Unknown exception");
+        }
     }
   catch (const xercesc::XMLException &e)
     {

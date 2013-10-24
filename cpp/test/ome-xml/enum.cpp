@@ -306,10 +306,10 @@ INSTANTIATE_TEST_CASE_P(LaserTypeValueVariants, LaserTypeValue,
 template<typename E>
 void
 verify (E&                     et,
-	typename E::enum_value valuepos,
+        typename E::enum_value valuepos,
         typename E::enum_value valueneg,
-	const std::string&     namepos,
-	const std::string&     nameneg)
+        const std::string&     namepos,
+        const std::string&     nameneg)
 {
   ASSERT_EQ(static_cast<typename E::enum_value>(et), valuepos);
   ASSERT_NE(static_cast<typename E::enum_value>(et), valueneg);

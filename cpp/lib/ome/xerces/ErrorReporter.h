@@ -113,7 +113,7 @@ namespace ome
        */
       operator bool() const
       {
-	return saw_error;
+        return saw_error;
       }
     };
 

@@ -138,11 +138,17 @@ def updateTypeMaps(opts):
     namespace = opts.namespace
 
     global CURRENT_LANG
+    global DEFAULT_BASE_CLASS
     global PRIMITIVE_TYPE_MAP
     global TYPE_MAP
     global BASE_TYPE_MAP
 
     CURRENT_LANG = opts.lang
+
+    if (CURRENT_LANG == LANG_JAVA):
+        DEFAULT_BASE_CLASS = "AbstractOMEModelObject"
+    elif (CURRENT_LANG == LANG_CXX):
+        DEFAULT_BASE_CLASS = "OMEModelObject"
 
     PRIMITIVE_TYPE_MAP = {
         'PositiveInt': 'PositiveInteger',
@@ -198,7 +204,7 @@ DO_NOT_PROCESS = [] #["ID"]
 DEFAULT_NAMESPACE = "xsd:"
 
 # The default base class for OME XML model objects.
-DEFAULT_BASE_CLASS = "AbstractOMEModelObject"
+DEFAULT_BASE_CLASS = None
 
 # The default Java package for OME XML model objects.
 DEFAULT_PACKAGE = "ome.xml.model"

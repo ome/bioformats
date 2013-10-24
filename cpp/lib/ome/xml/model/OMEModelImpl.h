@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-XERCES C++ library for working with Xerces C++.
+ * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
  * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,62 +36,77 @@
  * #L%
  */
 
-#include <iostream>
+#ifndef OME_XML_MODEL_OMEMODELIMPL_H
+#define OME_XML_MODEL_OMEMODELIMPL_H
 
-#include <ome/xerces/ErrorReporter.h>
-#include <ome/xerces/String.h>
-
-#include <xercesc/sax/SAXParseException.hpp>
+#include <ome/xml/model/OMEModel.h>
+#include <ome/xml/model/OMEModelObject.h>
 
 namespace ome
 {
-  namespace xerces
+  namespace xml
   {
-
-    ErrorReporter::ErrorReporter(std::ostream& stream):
-      stream(stream),
-      saw_error(false)
+    namespace model
     {
-    }
 
-    ErrorReporter::~ErrorReporter()
-    {
-    }
+      /**
+       * OME model (concrete implementation).
+       */
+      class OMEModelImpl : public OMEModel
+      {
+      private:
+        /// Mapping of id to model object.
+        object_map_type modelObjects;
+        /// Mapping of model object to reference.
+        reference_map_type references;
 
-    void
-    ErrorReporter::warning(const xercesc::SAXParseException& e)
-    {
-      stream << "Error at file \"" << String(e.getSystemId())
-             << "\", line " << e.getLineNumber()
-             << ", column " << e.getColumnNumber()
-             << "\n   Message: " << String(e.getMessage()) << std::endl;
-    }
+      public:
+        /// Constructor.
+        OMEModelImpl ();
 
-    void
-    ErrorReporter::error(const xercesc::SAXParseException& e)
-    {
-      saw_error = true;
-      stream << "Error at file \"" << String(e.getSystemId())
-             << "\", line " << e.getLineNumber()
-             << ", column " << e.getColumnNumber()
-             << "\n   Message: " << String(e.getMessage()) << std::endl;
-    }
+        /// Destructor.
+        ~OMEModelImpl ();
 
-    void
-    ErrorReporter::fatalError(const xercesc::SAXParseException& e)
-    {
-      saw_error = true;
-      std::cerr << "Fatal Error at file \"" << String(e.getSystemId())
-             << "\", line " << e.getLineNumber()
-             << ", column " << e.getColumnNumber()
-             << "\n   Message: " << String(e.getMessage()) << std::endl;
-    }
+        // Documented in parent.
+        std::shared_ptr<OMEModelObject>
+        addModelObject (const std::string&               id,
+                        std::shared_ptr<OMEModelObject>& object);
 
-    void
-    ErrorReporter::resetErrors()
-    {
-      saw_error = false;
-    }
+        // Documented in parent.
+        std::shared_ptr<OMEModelObject>
+        removeModelObject (const std::string& id);
 
+        // Documented in parent.
+        std::shared_ptr<OMEModelObject>
+        getModelObject (const std::string& id) const;
+
+        // Documented in parent.
+        const object_map_type&
+        getModelObjects () const;
+
+        // Documented in parent.
+        bool
+        addReference (std::shared_ptr<OMEModelObject>& a,
+                      std::shared_ptr<Reference>&      b);
+
+        // Documented in parent.
+        const reference_map_type&
+        getReferences () const;
+
+        // Documented in parent.
+        size_type
+        resolveReferences ();
+
+      };
+
+    }
   }
 }
+
+#endif // OME_XML_MODEL_OMEMODELIMPL_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

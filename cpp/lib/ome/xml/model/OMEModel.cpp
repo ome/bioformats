@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-XERCES C++ library for working with Xerces C++.
+ * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
  * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,62 +36,23 @@
  * #L%
  */
 
-#include <iostream>
-
-#include <ome/xerces/ErrorReporter.h>
-#include <ome/xerces/String.h>
-
-#include <xercesc/sax/SAXParseException.hpp>
+#include <ome/xml/model/OMEModel.h>
 
 namespace ome
 {
-  namespace xerces
+  namespace xml
   {
-
-    ErrorReporter::ErrorReporter(std::ostream& stream):
-      stream(stream),
-      saw_error(false)
+    namespace model
     {
-    }
 
-    ErrorReporter::~ErrorReporter()
-    {
-    }
+      OMEModel::OMEModel ()
+      {
+      }
 
-    void
-    ErrorReporter::warning(const xercesc::SAXParseException& e)
-    {
-      stream << "Error at file \"" << String(e.getSystemId())
-             << "\", line " << e.getLineNumber()
-             << ", column " << e.getColumnNumber()
-             << "\n   Message: " << String(e.getMessage()) << std::endl;
-    }
+      OMEModel::~OMEModel ()
+      {
+      }
 
-    void
-    ErrorReporter::error(const xercesc::SAXParseException& e)
-    {
-      saw_error = true;
-      stream << "Error at file \"" << String(e.getSystemId())
-             << "\", line " << e.getLineNumber()
-             << ", column " << e.getColumnNumber()
-             << "\n   Message: " << String(e.getMessage()) << std::endl;
     }
-
-    void
-    ErrorReporter::fatalError(const xercesc::SAXParseException& e)
-    {
-      saw_error = true;
-      std::cerr << "Fatal Error at file \"" << String(e.getSystemId())
-             << "\", line " << e.getLineNumber()
-             << ", column " << e.getColumnNumber()
-             << "\n   Message: " << String(e.getMessage()) << std::endl;
-    }
-
-    void
-    ErrorReporter::resetErrors()
-    {
-      saw_error = false;
-    }
-
   }
 }

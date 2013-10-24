@@ -72,7 +72,7 @@ namespace ome
        */
       Platform()
       {
-	xercesc::XMLPlatformUtils::Initialize();
+        xercesc::XMLPlatformUtils::Initialize();
       }
 
       /**
@@ -81,7 +81,7 @@ namespace ome
       inline
       ~Platform()
       {
-	xercesc::XMLPlatformUtils::Terminate();
+        xercesc::XMLPlatformUtils::Terminate();
       }
     };
 
