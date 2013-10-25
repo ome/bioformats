@@ -338,7 +338,11 @@ public class Colorizer {
               ome.xml.model.primitives.Color metaColor =
                 retrieve.getChannelColor(reader.getSeries(), c);
               if (metaColor != null) {
-                color = new Color(metaColor.getValue(), false);
+                int r = metaColor.getRed();
+                int g = metaColor.getGreen();
+                int b = metaColor.getBlue();
+                int a = metaColor.getAlpha();
+                color = new Color(r, g, b, a);
               }
               else {
                 PositiveInteger wavelength =
