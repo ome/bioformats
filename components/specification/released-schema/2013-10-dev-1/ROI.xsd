@@ -124,8 +124,9 @@
 			<xsd:attribute name="FillColor" use="optional" type="OME:Color">
 				<xsd:annotation>
 					<xsd:documentation>
-						The color of the fill - encoded as RGBA
-						The value "-1" is #FFFFFFFF so solid white (it is a signed 32 bit value)
+						The color of the fill - encoded as 4 values "R G B A"
+						The default value "1 1 1 1" is solid white.
+						Each color value is a float range 0 to 1.
 						NOTE: Prior to the 2012-06 schema the default value was incorrect and produced a transparent red not solid white.
 					</xsd:documentation>
 				</xsd:annotation>
@@ -147,8 +148,9 @@
 			<xsd:attribute name="StrokeColor" use="optional" type="OME:Color">
 				<xsd:annotation>
 					<xsd:documentation>
-						The color of the stroke  - encoded as RGBA
-						The value "-1" is #FFFFFFFF so solid white (it is a signed 32 bit value)
+						The color of the stroke - encoded as 4 values "R G B A"
+						The default value "1 1 1 1" is solid white.
+						Each color value is a float range 0 to 1.
 						NOTE: Prior to the 2012-06 schema the default value was incorrect and produced a transparent red not solid white.
 					</xsd:documentation>
 				</xsd:annotation>

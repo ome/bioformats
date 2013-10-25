@@ -687,11 +687,12 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Color" use="optional" type="Color" default="-1">
+			<xsd:attribute name="Color" use="optional" type="Color" default="1 1 1 1">
 				<xsd:annotation>
 					<xsd:documentation>
-						A color used to render this channel - encoded as RGBA
-						The default value "-1" is #FFFFFFFF so solid white (it is a signed 32 bit value)
+						A color used to render this channel - encoded as 4 values "R G B A"
+						The default value "1 1 1 1" is solid white.
+						Each color value is a float range 0 to 1.
 						NOTE: Prior to the 2012-06 schema the default value was incorrect and produced a transparent red not solid white.
 					</xsd:documentation>
 				</xsd:annotation>
@@ -1357,6 +1358,14 @@
 			<xsd:minInclusive value="0.0"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="PercentFractionList">
+		<xsd:annotation>
+			<xsd:documentation>
+				A space separated list of PercentFractions
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:list itemType="PercentFraction"></xsd:list>
+	</xsd:simpleType>
 	<xsd:simpleType name="UniversallyUniqueIdentifier">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1396,12 +1405,18 @@
 	<xsd:simpleType name="Color">
 		<xsd:annotation>
 			<xsd:documentation>
-				A simple type that identifies itself as a Color, the value is an integer between -2,147,483,648 and 2,147,483,647 (inclusive).
-				The value is a signed 32 bit encoding of RGBA so "-1" is #FFFFFFFF or solid white.
-				NOTE: Prior to the 2012-06 schema the default values were incorrect and produced a transparent red not solid white.
+				A simple type that identifies itself as a Color, the value is between "0 0 0 0" and "1 1 1 1" (inclusive).
+				The value is a list of four float values range 0 to 1.
+				The list is space separated and has the values arranged as "R G B A".
+				The move to using floats removes the restriction of colours to those of 8-bit images.
+				Not the full range of 16-bit and Float image types can be used.
+				e.g "1 0.4117 0.7059 1"     is solid bright pink
+				    "0.133 0.545 0.133 0.5" is 50% transparent forest green
+				NOTE: Prior to the 2012-06 schema the default values used across in the schema were incorrect and produced a transparent red not solid white.
 			</xsd:documentation>
 		</xsd:annotation>
-		<xsd:restriction base="xsd:int">
+		<xsd:restriction base="PercentFractionList">
+			<xsd:length value="4"></xsd:length>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<!-- Objective elements -->
