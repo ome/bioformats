@@ -1,6 +1,5 @@
 package loci.formats.in;
 
-import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,10 +37,11 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
-import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
+import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.PositiveFloat;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -272,74 +272,7 @@ public class CellVoyagerReader extends FormatReader
 		 * Extract channel Metadata from MeasurementSetting.xml & OME xml file
 		 */
 
-		channelInfos = readInfo( msDocument, omeDocument );
-		timePoints = readTimePoints( msDocument );
-
-		/*
-		 * Populate CORE metadata accordingly.
-		 */
-
-		final CoreMetadata coreMetadata = core.get( 0 );
-		ci = channelInfos.get( 0 ); // Get common data from first channel
-
-		// Bit depth.
-		final int inferredBD = Integer.parseInt( ci.bitDepth );
-		switch ( inferredBD )
-		{
-		case 8:
-			coreMetadata.pixelType = FormatTools.UINT8;
-			coreMetadata.bitsPerPixel = 8;
-			break;
-		case 16:
-			coreMetadata.pixelType = FormatTools.UINT16;
-			coreMetadata.bitsPerPixel = 16;
-			break;
-		case 32:
-			coreMetadata.pixelType = FormatTools.UINT32;
-			coreMetadata.bitsPerPixel = 32;
-			break;
-		default:
-			throw new FormatException( "Unknown bit-depth: " + ci.bitDepth );
-		}
-
-		// Sub Channel info? I don't understand that actually?
-		coreMetadata.cLengths = new int[] { coreMetadata.sizeC };
-		coreMetadata.cTypes = new String[] { FormatTools.CHANNEL };
-		coreMetadata.rgb = false; // 1 image = 1 color
-
-		// Channel order
-		coreMetadata.dimensionOrder = "XYCZT";
-		coreMetadata.orderCertain = true;
-
-		// Indexed color. I guess it's true since we can read the LUT
-		// separately.
-		coreMetadata.indexed = true;
-		coreMetadata.falseColor = true;
-
-		// Total number of images
-		int activeChannels = 0;
-		for ( final ChannelInfo channelInfo : channelInfos )
-		{
-			if ( channelInfo.isEnabled )
-			{
-				activeChannels++;
-			}
-		}
-		final int nImages = activeChannels * ci.nZSlices * timePoints.size();
-		coreMetadata.imageCount = nImages;
-
-		// Interleaved. Maybe irrelevant for us?
-		coreMetadata.interleaved = true;
-
-		// Dimensions
-		coreMetadata.sizeX = ci.width;
-		coreMetadata.sizeY = ci.height;
-		coreMetadata.sizeZ = ci.nZSlices;
-		coreMetadata.sizeC = activeChannels;
-		coreMetadata.sizeT = timePoints.size();
-
-		// Are we a thumbnail? No, we are the real thing.
-		coreMetadata.thumbnail = false;
+		readInfo( msDocument, omeDocument );
 
 		/*
 		 * Build image list
@@ -480,6 +413,14 @@ public class CellVoyagerReader extends FormatReader
 
 	private List< ChannelInfo > readInfo( final Document msDocument, final Document omeDocument )
 	{
+		/*
+		 * Magnification
+		 */
+
+		final Element msRoot = msDocument.getDocumentElement();
+		final double objectiveMagnification = Double.parseDouble( getChildText( msRoot, new String[] { "SelectedObjectiveLens", "Magnification" } ) );
+		final double zoomLensMagnification = Double.parseDouble( getChildText( msRoot, new String[] { "ZoomLens", "Magnification", "Value" } ) );
+		final double magnification = objectiveMagnification * zoomLensMagnification;
 
 		/*
 		 * Read the ome.xml file. Since it is malformed, we need to parse all
@@ -542,29 +483,18 @@ public class CellVoyagerReader extends FormatReader
 			}
 		}
 
-		// Pass it to the reader, populate the MetadataStore
-		final MetadataStore store = makeFilterMetadata();
-		MetadataTools.populatePixels( store, this, true );
-		service.convertMetadata( omeMD, store );
+		// Correct pixel size for magnification
+		omeMD.setPixelsPhysicalSizeX( new PositiveFloat( omeMD.getPixelsPhysicalSizeX( 0 ).getValue().doubleValue() / magnification ), 0 );
+		omeMD.setPixelsPhysicalSizeY( new PositiveFloat( omeMD.getPixelsPhysicalSizeY( 0 ).getValue().doubleValue() / magnification ), 0 );
 
-		System.out.println( prettyPrintXML( omeMD.dumpXML() ) );// DEBUG
-
+		// Time interval
+		omeMD.setPixelsTimeIncrement( Double.valueOf( readFrameInterval( msDocument ) ), 0 );
 
 		/*
 		 * The rest
 		 */
 
-		final List< ChannelInfo > channels = new ArrayList< ChannelInfo >();
-
-		final Element msRoot = msDocument.getDocumentElement();
-
-		/*
-		 * Magnification
-		 */
-
-		final double objectiveMagnification = Double.parseDouble( getChildText( msRoot, new String[] { "SelectedObjectiveLens", "Magnification" } ) );
-		final double zoomLensMagnification = Double.parseDouble( getChildText( msRoot, new String[] { "ZoomLens", "Magnification", "Value" } ) );
-		final double magnification = objectiveMagnification * zoomLensMagnification;
+		channelInfos = new ArrayList< ChannelInfo >();
 
 		/*
 		 * Channels
@@ -581,7 +511,7 @@ public class CellVoyagerReader extends FormatReader
 			}
 
 			final ChannelInfo ci = new ChannelInfo();
-			channels.add( ci );
+			channelInfos.add( ci );
 
 			ci.isEnabled = true;
 
@@ -601,106 +531,166 @@ public class CellVoyagerReader extends FormatReader
 			final int g = Integer.parseInt( getChildText( colorElement, "G" ) );
 			final int b = Integer.parseInt( getChildText( colorElement, "B" ) );
 			final int a = Integer.parseInt( getChildText( colorElement, "A" ) );
-			ci.channelColor = new Color( r, g, b, a );
+			final Color channelColor = new Color( r, g, b, a );
+			// 1-based vs 0-based..
+			omeMD.setChannelColor( channelColor, 0, ci.channelNumber - 1 );
 
-			ci.bitDepth = getChildText( channelElement, new String[] { "ContrastEnhanceParam", "BitDepth" } );
-			ci.pixelWidth = ci.unmagnifiedPixelWidth / magnification;
-			ci.pixelHeight = ci.unmagnifiedPixelWidth / magnification;
+			// Read pixel sizes from OME file.
+			ci.pixelWidth = omeMD.getPixelsPhysicalSizeX( 0 ).getValue().doubleValue();
+			ci.pixelHeight = omeMD.getPixelsPhysicalSizeY( 0 ).getValue().doubleValue();
+			ci.pixelDepth = omeMD.getPixelsPhysicalSizeZ( 0 ).getValue().doubleValue();
 
-			// Detector gain
-			final Element gainElement = getChild( acquisitionSettings, "Gain_percent" );
-			ci.gainPercent = Double.parseDouble( getChildText( gainElement, "Value" ) );
+			// TODO handles each well & area as a series here
+			final Element fieldsEl = getChild( msRoot, new String[] { "Wells", "Well", "Areas", "Area", "Fields" } );
+			final NodeList fieldElements = fieldsEl.getElementsByTagName( "Field" );
 
-			// // Camera key
-			ci.cameraKey = getChildText( acquisitionSettings, "CameraParameterKey" );
+			// Read field position in um
+			double xmin = Double.POSITIVE_INFINITY;
+			double ymin = Double.POSITIVE_INFINITY;
+			double xmax = Double.NEGATIVE_INFINITY;
+			double ymax = Double.NEGATIVE_INFINITY;
+			final ArrayList< double[] > offsetsUm = new ArrayList< double[] >();
 
-			/*
-			 * Fields, for each channel
-			 */
-
-			for ( final ChannelInfo channelInfo : channels )
+			for ( int j = 0; j < fieldElements.getLength(); j++ )
 			{
+				final Element fieldElement = ( Element ) fieldElements.item( j );
 
-				// TODO handles each well & area as a series here
-				final Element fieldsEl = getChild( msRoot, new String[] { "Wells", "Well", "Areas", "Area", "Fields" } );
-				final NodeList fieldElements = fieldsEl.getElementsByTagName( "Field" );
-
-				// Read field position in um
-				double xmin = Double.POSITIVE_INFINITY;
-				double ymin = Double.POSITIVE_INFINITY;
-				double xmax = Double.NEGATIVE_INFINITY;
-				double ymax = Double.NEGATIVE_INFINITY;
-				final ArrayList< double[] > offsetsUm = new ArrayList< double[] >();
-
-				for ( int j = 0; j < fieldElements.getLength(); j++ )
+				final double xum = Double.parseDouble( getChildText( fieldElement, "StageX_um" ) );
+				if ( xum < xmin )
 				{
-					final Element fieldElement = ( Element ) fieldElements.item( j );
-
-					final double xum = Double.parseDouble( getChildText( fieldElement, "StageX_um" ) );
-					if ( xum < xmin )
-					{
-						xmin = xum;
-					}
-					if ( xum > xmax )
-					{
-						xmax = xum;
-					}
-
-					/*
-					 * Careful! For the fields to be padded correctly, we need
-					 * to invert their Y position, so that it matches the pixel
-					 * orientation.
-					 */
-					final double yum = -Double.parseDouble( getChildText( fieldElement, "StageY_um" ) );
-					if ( yum < ymin )
-					{
-						ymin = yum;
-					}
-					if ( yum > ymax )
-					{
-						ymax = yum;
-					}
-
-					offsetsUm.add( new double[] { xum, yum } );
+					xmin = xum;
+				}
+				if ( xum > xmax )
+				{
+					xmax = xum;
 				}
 
-				// Convert in pixel position
-				final List< long[] > offsets = new ArrayList< long[] >();
-				for ( final double[] offsetUm : offsetsUm )
+				/*
+				 * Careful! For the fields to be padded correctly, we need to
+				 * invert their Y position, so that it matches the pixel
+				 * orientation.
+				 */
+				final double yum = -Double.parseDouble( getChildText( fieldElement, "StageY_um" ) );
+				if ( yum < ymin )
 				{
-					final long x = Math.round( ( offsetUm[ 0 ] - xmin ) / ( channelInfo.unmagnifiedPixelWidth / magnification ) );
-					final long y = Math.round( ( offsetUm[ 1 ] - ymin ) / ( channelInfo.unmagnifiedPixelHeight / magnification ) );
-
-					offsets.add( new long[] { x, y } );
+					ymin = yum;
+				}
+				if ( yum > ymax )
+				{
+					ymax = yum;
 				}
 
-				channelInfo.offsets = offsets;
-
-				final int width = 1 + ( int ) ( ( xmax - xmin ) / ( channelInfo.unmagnifiedPixelWidth / magnification ) );
-				final int height = 1 + ( int ) ( ( ymax - ymin ) / ( channelInfo.unmagnifiedPixelWidth / magnification ) );
-				channelInfo.width = width + channelInfo.tileWidth;
-				channelInfo.height = height + channelInfo.tileHeight;
-
+				offsetsUm.add( new double[] { xum, yum } );
 			}
 
-			/*
-			 * Z range
-			 */
-
-			final int nZSlices = Integer.parseInt( getChildText( msRoot, new String[] { "ZRange", "NumberOfSlices" } ) );
-			final double zStroke = Double.parseDouble( getChildText( msRoot, new String[] { "ZRange", "Stroke_um" } ) );
-			final double pixelDepth = zStroke / ( nZSlices - 1 );
-
-			for ( final ChannelInfo channelInfo : channels )
+			// Convert in pixel position
+			final List< long[] > offsets = new ArrayList< long[] >();
+			for ( final double[] offsetUm : offsetsUm )
 			{
-				channelInfo.nZSlices = nZSlices;
-				channelInfo.pixelDepth = pixelDepth;
-				channelInfo.spaceUnits = "µm";
+				final long x = Math.round( ( offsetUm[ 0 ] - xmin ) / ci.pixelWidth );
+				final long y = Math.round( ( offsetUm[ 1 ] - ymin ) / ci.pixelHeight );
+
+				offsets.add( new long[] { x, y } );
 			}
+
+			ci.offsets = offsets;
+
+			final int width = 1 + ( int ) ( ( xmax - xmin ) / ci.pixelWidth );
+			final int height = 1 + ( int ) ( ( ymax - ymin ) / ci.pixelHeight );
+			ci.width = width + ci.tileWidth;
+			ci.height = height + ci.tileHeight;
 
 		}
 
-		return channels;
+		/*
+		 * Z range
+		 */
+
+		final int nZSlices = Integer.parseInt( getChildText( msRoot, new String[] { "ZRange", "NumberOfSlices" } ) );
+		for ( final ChannelInfo channelInfo : channelInfos )
+		{
+			channelInfo.nZSlices = nZSlices;
+			channelInfo.spaceUnits = "µm";
+		}
+
+
+		/*
+		 * Populate CORE metadata accordingly.
+		 */
+
+		final CoreMetadata coreMetadata = core.get( 0 );
+		ci = channelInfos.get( 0 ); // Get common data from first channel
+
+		// Bit depth.
+		switch ( omeMD.getPixelsType( 0 ) )
+		{
+		case UINT8:
+			coreMetadata.pixelType = FormatTools.UINT8;
+			coreMetadata.bitsPerPixel = 8;
+			break;
+		case UINT16:
+			coreMetadata.pixelType = FormatTools.UINT16;
+			coreMetadata.bitsPerPixel = 16;
+			break;
+		case UINT32:
+			coreMetadata.pixelType = FormatTools.UINT32;
+			coreMetadata.bitsPerPixel = 32;
+			break;
+		default:
+			System.err.println( "Cannot read image with pixel type = " + omeMD.getPixelsType( 0 ) );
+			break;
+		}
+
+		coreMetadata.littleEndian = true;
+
+		// Sub Channel info? I don't understand that actually?
+		coreMetadata.cLengths = new int[] { coreMetadata.sizeC };
+		coreMetadata.cTypes = new String[] { FormatTools.CHANNEL };
+		coreMetadata.rgb = false; // 1 image = 1 color
+
+		// Channel order
+		coreMetadata.dimensionOrder = "XYCZT";
+		coreMetadata.orderCertain = true;
+
+		// Indexed color. I guess it's true since we can read the LUT
+		// separately.
+		coreMetadata.indexed = true;
+		coreMetadata.falseColor = true;
+
+		// Time points
+		timePoints = readTimePoints( msDocument );
+
+		// Total number of images
+		int activeChannels = 0;
+		for ( final ChannelInfo channelInfo : channelInfos )
+		{
+			if ( channelInfo.isEnabled )
+			{
+				activeChannels++;
+			}
+		}
+		final int nImages = activeChannels * ci.nZSlices * timePoints.size();
+		coreMetadata.imageCount = nImages;
+
+		// Interleaved. Maybe irrelevant for us?
+		coreMetadata.interleaved = true;
+
+		// Dimensions
+		coreMetadata.sizeX = ci.width;
+		coreMetadata.sizeY = ci.height;
+		coreMetadata.sizeZ = ci.nZSlices;
+		coreMetadata.sizeC = activeChannels;
+		coreMetadata.sizeT = timePoints.size();
+
+		// Are we a thumbnail? No, we are the real thing.
+		coreMetadata.thumbnail = false;
+
+		// Pass it to the reader, populate the MetadataStore
+		System.out.println( prettyPrintXML( omeMD.dumpXML() ) );// DEBUG
+		final MetadataStore store = makeFilterMetadata();
+		service.convertMetadata( omeMD, store );
+
+		return channelInfos;
 	}
 
 	private List< Integer > readTimePoints( final Document document )
@@ -716,7 +706,6 @@ public class CellVoyagerReader extends FormatReader
 		return timepoints;
 	}
 
-	@SuppressWarnings( "unused" )
 	private double readFrameInterval( final Document document )
 	{
 		final Element root = document.getDocumentElement();
@@ -730,10 +719,6 @@ public class CellVoyagerReader extends FormatReader
 
 	private static final class ChannelInfo
 	{
-
-		public String cameraKey;
-
-		public double gainPercent;
 
 		public int height;
 
@@ -752,10 +737,6 @@ public class CellVoyagerReader extends FormatReader
 		public List< long[] > offsets = Collections.emptyList();
 
 		public boolean isEnabled;
-
-		public String bitDepth;
-
-		public Color channelColor;
 
 		public double unmagnifiedPixelHeight;
 
@@ -780,10 +761,6 @@ public class CellVoyagerReader extends FormatReader
 			str.append( " - NZSlices: " + nZSlices + "\n" );
 			str.append( " - unmagnifiedPixelWidth: " + unmagnifiedPixelWidth + "\n" );
 			str.append( " - unmagnifiedPixelHeight: " + unmagnifiedPixelHeight + "\n" );
-			str.append( " - color: " + channelColor + "\n" );
-			str.append( " - camera: " + cameraKey + "\n" );
-			str.append( " - bitDepth: " + bitDepth + "\n" );
-			str.append( " - detectorGain: " + gainPercent + "%\n" );
 			str.append( " - has " + offsets.size() + " fields:\n" );
 			int index = 1;
 			for ( final long[] offset : offsets )
@@ -796,20 +773,6 @@ public class CellVoyagerReader extends FormatReader
 			str.append( "    dz = " + pixelDepth + " " + spaceUnits + "\n" );
 			return str.toString();
 		}
-
-	}
-
-	/*
-	 * MAIN METHOD
-	 */
-
-	public static void main( final String[] args ) throws IOException, FormatException
-	{
-		final String id = "/Users/tinevez/Projects/EArena/Data/30um sections at 40x - last round/1_3_1_2_1/20130731T133016/MeasurementSetting.xml";
-
-		final CellVoyagerReader r = new CellVoyagerReader();
-		r.setId( id );
-		r.close();
 
 	}
 
@@ -912,5 +875,13 @@ public class CellVoyagerReader extends FormatReader
 		}
 		final String xmlString = result.getWriter().toString();
 		return xmlString;
+	}
+
+	public static void main( final String[] args ) throws IOException, FormatException
+	{
+		final String id = "/Users/tinevez/Projects/EArena/Data/30um sections at 40x - last round/1_3_1_2_2/20130731T133622/MeasurementResult.xml";
+		final CellVoyagerReader importer = new CellVoyagerReader();
+		importer.setId( id );
+		importer.close();
 	}
 }
