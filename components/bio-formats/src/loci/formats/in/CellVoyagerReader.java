@@ -1,8 +1,11 @@
 package loci.formats.in;
 
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,23 +17,38 @@ import java.util.TreeMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 
 import loci.common.Location;
-import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import loci.formats.tiff.IFD;
-import loci.formats.tiff.TiffParser;
-import ome.xml.model.primitives.PositiveFloat;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLService;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class CellVoyagerReader extends FormatReader
@@ -82,6 +100,7 @@ public class CellVoyagerReader extends FormatReader
 		final Map< Integer, Map< Integer, Map< Integer, String >>> tFilenames = imageList.get( Integer.valueOf( targetTindex + 1 ) );
 		final Map< Integer, Map< Integer, String >> cFilenames = tFilenames.get( Integer.valueOf( targetCindex + 1 ) );
 		final Map< Integer, String > zFilenames = cFilenames.get( Integer.valueOf( targetZindex + 1 ) );
+		final MinimalTiffReader tiffReader = new MinimalTiffReader();
 		for ( final Integer fieldIndex : zFilenames.keySet() )
 		{
 			String filename = zFilenames.get( fieldIndex );
@@ -89,7 +108,6 @@ public class CellVoyagerReader extends FormatReader
 			final Location image = new Location( measurementFolder, filename );
 			if ( !image.exists() ) { throw new IOException( "Could not find required file: " + image ); }
 
-			final MinimalTiffReader tiffReader = new MinimalTiffReader();
 			tiffReader.setId( image.getAbsolutePath() );
 
 			final long[] offset = ci.offsets.get( fieldIndex - 1 );
@@ -207,6 +225,10 @@ public class CellVoyagerReader extends FormatReader
 		imageIndexFile = new Location( measurementFolder, "ImageIndex.xml" );
 		if ( !imageIndexFile.exists() ) { throw new IOException( "Could not find " + imageIndexFile + " in folder." ); }
 
+		/*
+		 * Open MeasurementSettings file
+		 */
+
 		final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = null;
 		try
@@ -217,24 +239,41 @@ public class CellVoyagerReader extends FormatReader
 		{
 			e.printStackTrace();
 		}
-		Document document = null;
+		Document msDocument = null;
 		try
 		{
-			document = dBuilder.parse( measurementSettingFile.getAbsolutePath() );
+			msDocument = dBuilder.parse( measurementSettingFile.getAbsolutePath() );
 		}
 		catch ( final SAXException e )
 		{
 			e.printStackTrace();
 		}
 
-		document.getDocumentElement().normalize();
+		msDocument.getDocumentElement().normalize();
 
 		/*
-		 * Extract channel Metadata from MeasurementSetting.xml
+		 * Open OME metadata file
 		 */
 
-		channelInfos = readInfo( document );
-		timePoints = readTimePoints( document );
+		final Location omeXmlFile = new Location( measurementFolder, "MeasurementResult.ome.xml" );
+		Document omeDocument = null;
+		try
+		{
+			omeDocument = dBuilder.parse( omeXmlFile.getAbsolutePath() );
+		}
+		catch ( final SAXException e )
+		{
+			e.printStackTrace();
+		}
+
+		omeDocument.getDocumentElement().normalize();
+
+		/*
+		 * Extract channel Metadata from MeasurementSetting.xml & OME xml file
+		 */
+
+		channelInfos = readInfo( msDocument, omeDocument );
+		timePoints = readTimePoints( msDocument );
 
 		/*
 		 * Populate CORE metadata accordingly.
@@ -303,57 +342,6 @@ public class CellVoyagerReader extends FormatReader
 		coreMetadata.thumbnail = false;
 
 		/*
-		 * Other metadata
-		 */
-
-		final MetadataStore store = makeFilterMetadata();
-		MetadataTools.populatePixels( store, this, true, true );
-
-		if ( getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM )
-		{
-
-			// link Instrument and Image
-			final String instrumentID = MetadataTools.createLSID( "Instrument", 0 );
-			store.setInstrumentID( instrumentID, 0 );
-			store.setImageInstrumentRef( instrumentID, 0 );
-
-			// populate Dimensions data
-
-			final PositiveFloat sizeX = FormatTools.getPhysicalSizeX( new Double( ci.pixelWidth ) );
-			final PositiveFloat sizeY = FormatTools.getPhysicalSizeY( new Double( ci.pixelHeight ) );
-			final PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ( new Double( ci.pixelDepth ) );
-
-			if ( sizeX != null )
-			{
-				store.setPixelsPhysicalSizeX( sizeX, 0 );
-			}
-			if ( sizeY != null )
-			{
-				store.setPixelsPhysicalSizeY( sizeY, 0 );
-			}
-			if ( sizeZ != null )
-			{
-				store.setPixelsPhysicalSizeZ( sizeZ, 0 );
-			}
-			store.setPixelsTimeIncrement( readFrameInterval( document ), 0 );
-
-			// populate Detector data
-
-			for ( int i = 0; i < getSizeC(); i++ )
-			{
-				store.setDetectorSettingsGain( Double.valueOf( channelInfos.get( i ).gainPercent ), 0, i );
-
-				// link DetectorSettings to an actual Detector
-				final String detectorID = MetadataTools.createLSID( "Detector", 0, i );
-				store.setDetectorID( detectorID, 0, i );
-				store.setDetectorType( getDetectorType( channelInfos.get( i ).cameraKey ), 0, i );
-				store.setDetectorSettingsID( detectorID, 0, i );
-			}
-		}
-
-		setSeries( 0 );
-
-		/*
 		 * Build image list
 		 */
 
@@ -381,17 +369,6 @@ public class CellVoyagerReader extends FormatReader
 		document2.getDocumentElement().normalize();
 		imageList = buildImageList( document2 );
 
-		/*
-		 * Determine endianess from tif files.
-		 */
-
-		final RandomAccessInputStream s = new RandomAccessInputStream( imageList.get( 0 ).get( 0 ).get( 0 ).get( 0 ) );
-		final TiffParser parser = new TiffParser( s );
-		parser.setDoCaching( false );
-
-		final IFD firstIFD = parser.getFirstIFD();
-		coreMetadata.littleEndian = firstIFD.isLittleEndian();
-		s.close();
 	}
 
 	@Override
@@ -501,25 +478,98 @@ public class CellVoyagerReader extends FormatReader
 		return allFilenames;
 	}
 
-	private List< ChannelInfo > readInfo( final Document document )
+	private List< ChannelInfo > readInfo( final Document msDocument, final Document omeDocument )
 	{
+
+		/*
+		 * Read the ome.xml file. Since it is malformed, we need to parse all
+		 * nodes, and add an "ID" attribute to those who do not have it.
+		 */
+
+		final NodeList nodeList = omeDocument.getElementsByTagName( "*" );
+		for ( int i = 0; i < nodeList.getLength(); i++ )
+		{
+			final Node node = nodeList.item( i );
+			if ( node.getNodeType() == Node.ELEMENT_NODE )
+			{
+				final NamedNodeMap atts = node.getAttributes();
+
+				final Node namedItem = atts.getNamedItem( "ID" );
+				if ( namedItem == null )
+				{
+					( ( Element ) node ).setAttribute( "ID", "none" );
+				}
+			}
+		}
+
+		/*
+		 * Now that the XML document is properly formed, we can build a metadata
+		 * object from it.
+		 */
+
+		OMEXMLService service = null;
+		String xml = null;
+		try
+		{
+			xml = XMLTools.getXML( omeDocument );
+		}
+		catch ( final TransformerConfigurationException e2 )
+		{
+			e2.printStackTrace();
+		}
+		catch ( final TransformerException e2 )
+		{
+			e2.printStackTrace();
+		}
+		try
+		{
+			service = new ServiceFactory().getInstance( OMEXMLService.class );
+		}
+		catch ( final DependencyException e1 )
+		{
+			e1.printStackTrace();
+		}
+		OMEXMLMetadata omeMD = null;
+		if ( service != null )
+		{
+			try
+			{
+				omeMD = service.createOMEXMLMetadata( xml );
+			}
+			catch ( final ServiceException e )
+			{
+				e.printStackTrace();
+			}
+		}
+
+		// Pass it to the reader, populate the MetadataStore
+		final MetadataStore store = makeFilterMetadata();
+		MetadataTools.populatePixels( store, this, true );
+		service.convertMetadata( omeMD, store );
+
+		System.out.println( prettyPrintXML( omeMD.dumpXML() ) );// DEBUG
+
+
+		/*
+		 * The rest
+		 */
 
 		final List< ChannelInfo > channels = new ArrayList< ChannelInfo >();
 
-		final Element root = document.getDocumentElement();
+		final Element msRoot = msDocument.getDocumentElement();
 
 		/*
 		 * Magnification
 		 */
 
-		final double objectiveMagnification = Double.parseDouble( getChildText( root, new String[] { "SelectedObjectiveLens", "Magnification" } ) );
-		final double zoomLensMagnification = Double.parseDouble( getChildText( root, new String[] { "ZoomLens", "Magnification", "Value" } ) );
+		final double objectiveMagnification = Double.parseDouble( getChildText( msRoot, new String[] { "SelectedObjectiveLens", "Magnification" } ) );
+		final double zoomLensMagnification = Double.parseDouble( getChildText( msRoot, new String[] { "ZoomLens", "Magnification", "Value" } ) );
 		final double magnification = objectiveMagnification * zoomLensMagnification;
 
 		/*
 		 * Channels
 		 */
-		final Element channelsEl = getChild( root, "Channels" );
+		final Element channelsEl = getChild( msRoot, "Channels" );
 		final NodeList channelElements = channelsEl.getElementsByTagName( "Channel" );
 		for ( int i = 0; i < channelElements.getLength(); i++ )
 		{
@@ -572,7 +622,7 @@ public class CellVoyagerReader extends FormatReader
 			{
 
 				// TODO handles each well & area as a series here
-				final Element fieldsEl = getChild( root, new String[] { "Wells", "Well", "Areas", "Area", "Fields" } );
+				final Element fieldsEl = getChild( msRoot, new String[] { "Wells", "Well", "Areas", "Area", "Fields" } );
 				final NodeList fieldElements = fieldsEl.getElementsByTagName( "Field" );
 
 				// Read field position in um
@@ -637,8 +687,8 @@ public class CellVoyagerReader extends FormatReader
 			 * Z range
 			 */
 
-			final int nZSlices = Integer.parseInt( getChildText( root, new String[] { "ZRange", "NumberOfSlices" } ) );
-			final double zStroke = Double.parseDouble( getChildText( root, new String[] { "ZRange", "Stroke_um" } ) );
+			final int nZSlices = Integer.parseInt( getChildText( msRoot, new String[] { "ZRange", "NumberOfSlices" } ) );
+			final double zStroke = Double.parseDouble( getChildText( msRoot, new String[] { "ZRange", "Stroke_um" } ) );
 			final double pixelDepth = zStroke / ( nZSlices - 1 );
 
 			for ( final ChannelInfo channelInfo : channels )
@@ -666,6 +716,7 @@ public class CellVoyagerReader extends FormatReader
 		return timepoints;
 	}
 
+	@SuppressWarnings( "unused" )
 	private double readFrameInterval( final Document document )
 	{
 		final Element root = document.getDocumentElement();
@@ -808,5 +859,58 @@ public class CellVoyagerReader extends FormatReader
 			if ( item.getNodeName().equals( childName ) ) { return item.getTextContent(); }
 		}
 		return null;
+	}
+
+	private static final String prettyPrintXML(final String xml) {
+		try
+		{
+			final Transformer serializer = SAXTransformerFactory.newInstance().newTransformer();
+
+			serializer.setOutputProperty( OutputKeys.INDENT, "yes" );
+
+			serializer.setOutputProperty( "{http://xml.apache.org/xslt}indent-amount", "2" );
+			final Source xmlSource = new SAXSource( new InputSource( new ByteArrayInputStream( xml.getBytes( "utf-8" ) ) ) );
+			final StreamResult res = new StreamResult( new ByteArrayOutputStream() );
+
+			serializer.transform( xmlSource, res );
+
+			return new String( ( ( ByteArrayOutputStream ) res.getOutputStream() ).toByteArray() );
+		}
+		catch ( final Exception e )
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@SuppressWarnings( "unused" )
+	private static final String prettyPrintXML( final Document doc )
+	{
+		Transformer transformer = null;
+		try
+		{
+			transformer = TransformerFactory.newInstance().newTransformer();
+		}
+		catch ( final TransformerConfigurationException e )
+		{
+			e.printStackTrace();
+		}
+		catch ( final TransformerFactoryConfigurationError e )
+		{
+			e.printStackTrace();
+		}
+		transformer.setOutputProperty( OutputKeys.INDENT, "yes" );
+		final StreamResult result = new StreamResult( new StringWriter() );
+		final DOMSource source = new DOMSource( doc );
+		try
+		{
+			transformer.transform( source, result );
+		}
+		catch ( final TransformerException e )
+		{
+			e.printStackTrace();
+		}
+		final String xmlString = result.getWriter().toString();
+		return xmlString;
 	}
 }
