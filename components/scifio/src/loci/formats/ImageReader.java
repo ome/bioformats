@@ -36,6 +36,7 @@
 
 package loci.formats;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -164,6 +165,9 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
    // HACK: skip file existence check for fake files
+   if (id.endsWith(File.separator)) {
+    id = id.substring(0, id.length() - 1);
+   }
    boolean fake = id != null && id.toLowerCase().endsWith(".fake");
    boolean omero = id != null && id.toLowerCase().startsWith("omero:") &&
     id.indexOf("\n") > 0;

@@ -39,6 +39,7 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -669,6 +670,7 @@ public class FakeReader extends FormatReader {
     File parent = new File(traversedDirectory);
     if (parent.isDirectory()) {
       File[] children = parent.listFiles();
+      Arrays.sort(children);
       if (children != null) {
         for (File child : children) {
           listFakeSeries(child.getAbsolutePath());
