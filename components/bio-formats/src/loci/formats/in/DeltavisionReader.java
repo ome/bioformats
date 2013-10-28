@@ -1121,7 +1121,11 @@ public class DeltavisionReader extends FormatReader {
             ndFilters[cIndex] = new Double(nd / 100);
           }
           catch (NumberFormatException exc) {
-            LOGGER.warn("Could not parse ND filter '{}'", value);
+            // "BLANK" is the default (e.g. for deconvolved data),
+            // so no need to log it explicitly
+            if (!value.equals("BLANK")) {
+              LOGGER.warn("Could not parse ND filter '{}'", value);
+            }
           }
           catch (IllegalArgumentException e) {
             LOGGER.debug("", e);
