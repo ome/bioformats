@@ -444,6 +444,19 @@ public class CellVoyagerReader extends FormatReader
 		}
 
 		/*
+		 * For single-slice image, the PhysicalSizeZ can be 0, which will make
+		 * the metadata read fail. Correct that.
+		 */
+
+		final Element pszEl = getChild( omeDocument.getDocumentElement(), new String[] { "Image", "Pixels" } );
+		final double physicalSizeZ = Double.parseDouble( pszEl.getAttribute( "PhysicalSizeZ" ) );
+		if ( physicalSizeZ <= 0 )
+		{
+			// default to 1 whatever
+			pszEl.setAttribute( "PhysicalSizeZ", "" + 1 );
+		}
+
+		/*
 		 * Now that the XML document is properly formed, we can build a metadata
 		 * object from it.
 		 */
@@ -471,6 +484,9 @@ public class CellVoyagerReader extends FormatReader
 			e1.printStackTrace();
 		}
 		OMEXMLMetadata omeMD = null;
+
+		System.out.println( xml );// DEBUG
+
 		if ( service != null )
 		{
 			try
@@ -879,7 +895,7 @@ public class CellVoyagerReader extends FormatReader
 
 	public static void main( final String[] args ) throws IOException, FormatException
 	{
-		final String id = "/Users/tinevez/Projects/EArena/Data/30um sections at 40x - last round/1_3_1_2_2/20130731T133622/MeasurementResult.xml";
+		final String id = "/Users/tinevez/Projects/EArena/Data/TestDataset/20131025T092701/MeasurementSetting.xml";
 		final CellVoyagerReader importer = new CellVoyagerReader();
 		importer.setId( id );
 		importer.close();
