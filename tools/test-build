@@ -29,7 +29,7 @@ cpp()
             cmake /usr/src/gtest
             make
         )
-        GTEST_ROOT=$(pwd)/gtest cmake ..
+        GTEST_ROOT=$(pwd)/gtest cmake ../..
         make
         make test
         make DESTDIR=../install install

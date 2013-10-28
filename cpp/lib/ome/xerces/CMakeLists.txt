@@ -66,7 +66,7 @@ install(TARGETS ome-xerces LIBRARY
 set(LIBRARY_PREFIX OME_XERCES)
 set(LIBRARY_NAME ome-xerces)
 set(LIBRARY_HEADER ome/xerces/Platform.h)
-configure_file(${PROJECT_SOURCE_DIR}/cmake/TemplateConfig.cmake.in
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake
         DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)

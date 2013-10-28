@@ -34,19 +34,12 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-if(BUILD_DOXYGEN)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/bioformats.dox.cmake
-                 ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox @ONLY)
-
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log
-                     COMMAND ${CMAKE_COMMAND} -E remove_directory bioformats
-                     COMMAND ${CMAKE_COMMAND} -E make_directory bioformats
-                     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox
-                     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox)
-
-  add_custom_target(doc-check
-                    COMMAND ${CMAKE_COMMAND} -Dlogfile=${CMAKE_CURRENT_BINARY_DIR}/bioformats.log -P ${PROJECT_SOURCE_DIR}/cmake/DoxygenCheck.cmake
-                    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log)
-
-  add_custom_target(doc DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.log doc-check)
-endif(BUILD_DOXYGEN)
+# Doxygen documentation
+include(FindDoxygen)
+find_package(Doxygen)
+set(DOXYGEN_DEFAULT OFF)
+if (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
+  set (DOXYGEN_DEFAULT ON)
+endif (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
+option(doxygen "Enable doxygen documentation" ${DOXYGEN_DEFAULT})
+set(BUILD_DOXYGEN ${doxygen})

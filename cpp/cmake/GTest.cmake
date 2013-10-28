@@ -34,10 +34,13 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-set(OME_TOPLEVEL_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR}/lib)
-
-add_subdirectory(lib/ome/compat)
-add_subdirectory(lib/ome/xerces)
-add_subdirectory(lib/ome/xml)
-add_subdirectory(lib/ome/bioformats)
-add_subdirectory(test)
+# Unit tests
+find_package(Threads REQUIRED)
+find_package(GTest)
+set(BUILD_TESTS OFF)
+if(GTEST_FOUND)
+  set(BUILD_TESTS ON)
+  enable_testing()
+endif(GTEST_FOUND)
+option(test "Enable unit tests (requires gtest)" ${BUILD_TESTS})
+set(BUILD_TESTS ${test})

@@ -132,8 +132,8 @@ FULL_PATH_NAMES        = YES
 # relative paths, which will be relative from the directory where doxygen is
 # started.
 
-STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@/lib \
-                         @PROJECT_BINARY_DIR@/lib
+STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@/cpp/lib \
+                         @PROJECT_BINARY_DIR@/cpp/lib
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
@@ -142,8 +142,8 @@ STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@/lib \
 # definition is used. Otherwise one should specify the include paths that
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    = @PROJECT_SOURCE_DIR@/lib \
-                         @PROJECT_BINARY_DIR@/lib
+STRIP_FROM_INC_PATH    = @PROJECT_SOURCE_DIR@/cpp/lib \
+                         @PROJECT_BINARY_DIR@/cpp/lib
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful if your file system
@@ -656,8 +656,8 @@ WARN_LOGFILE           = bioformats.log
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = @PROJECT_SOURCE_DIR@/lib \
-                         @PROJECT_BINARY_DIR@/lib
+INPUT                  = @PROJECT_SOURCE_DIR@/cpp/lib \
+                         @PROJECT_BINARY_DIR@/cpp/lib
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is

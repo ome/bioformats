@@ -45,12 +45,21 @@ namespace ome
     namespace meta
     {
 
+      /**
+       * Abstract base class for metadata storage and retrieval.  This
+       * class provides no functionality; its purpose is to provide a
+       * common base type for the metadata storage and retrieval
+       * interfaces so that both types may be stored together in
+       * containers.
+       */
       class BaseMetadata
       {
       protected:
+        /// Constructor.
         BaseMetadata();
 
       public:
+        /// Destructor.
         virtual
         ~BaseMetadata();
       };

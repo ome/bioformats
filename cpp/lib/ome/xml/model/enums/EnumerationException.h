@@ -48,7 +48,7 @@
 namespace ome
 {
   /**
-   * OME-XML Data Model
+   * OME-XML Data Model.
    */
   namespace xml
   {

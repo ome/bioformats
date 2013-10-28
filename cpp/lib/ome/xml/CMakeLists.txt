@@ -164,7 +164,7 @@ install(FILES ${OME_XML_STATIC_PRIMITIVES_HEADERS} ${OME_XML_GENERATED_PRIMITIVE
 set(LIBRARY_PREFIX OME_XML)
 set(LIBRARY_NAME ome-xml)
 set(LIBRARY_HEADER ome/xml/model/OME.h)
-configure_file(${PROJECT_SOURCE_DIR}/cmake/TemplateConfig.cmake.in
+configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/ome-xml-config.cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xml-config.cmake
         DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)

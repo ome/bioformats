@@ -54,6 +54,9 @@ namespace ome
 {
   namespace xerces
   {
+    /**
+     * Domain object model.
+     */
     namespace dom
     {
 
