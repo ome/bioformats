@@ -32,11 +32,11 @@
 -->
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10"
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10"
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-1"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-1"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	exclude-result-prefixes="OME Bin SPW SA ROI"
