@@ -7,8 +7,8 @@ Include this in components generating sources using xsd-fu.
 
 <project>
 
-  <property name="xsdfu.schemaver" value="2013-10"/>
-  <property name="xsdfu.schemapath" value="${root.dir}/components/specification/inprogress"/>
+  <property name="xsdfu.schemaver" value="2013-10-dev-1"/>
+  <property name="xsdfu.schemapath" value="${root.dir}/components/specification/released-schema/${xsdfu.schemaver}"/>
   <property name="xsdfu.templatepath" value="${root.dir}/components/xsd-fu"/>
   <property name="xsdfu.schema.ome" value="${xsdfu.schemapath}/ome.xsd"/>
   <property name="xsdfu.schema.binaryfile" value="${xsdfu.schemapath}/BinaryFile.xsd"/>

@@ -25,7 +25,7 @@
     description="Checks that all files used in the documentation are well formed using online schemas (very, very slow)">
     <xmlvalidate failonerror="false" warn="true">
       <fileset dir="${basedir}" includes="samples/**/*.ome"
-        excludes="samples/**/2008-09/*-metadata.ome, samples/inprogress/*.ome, samples/inprogress/**/*.ome"/>
+        excludes="samples/**/2008-09/*-metadata.ome, samples/develop/*.ome, samples/develop/**/*.ome"/>
       <attribute name="http://xml.org/sax/features/validation" value="true"/>
       <attribute name="http://apache.org/xml/features/validation/schema" value="true"/>
       <attribute name="http://xml.org/sax/features/namespaces" value="true"/>
@@ -37,7 +37,7 @@
     description="Checks that all files used in the documentation are well formed using local schemas (fast)">
     <schemavalidate failonerror="true" warn="true">
       <fileset dir="${basedir}" includes="samples/**/*.ome"
-        excludes="samples/**/2008-09/*-metadata.ome, samples/inprogress/*.ome"/>
+        excludes="samples/**/2008-09/*-metadata.ome, samples/develop/*.ome"/>
 
       <!-- Standard -->
       <schema namespace="http://www.w3.org/XML/1998/namespace"

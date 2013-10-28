@@ -1,4 +1,4 @@
-This folder contains the WORKING COPY of the schema and assorted test files that are used during the developing process.
+This folder contains the development copy the schema and assorted test files that are used during the developing process.
 
 This schema is in a state of flux and is where we try out new ideas and concepts.
 
