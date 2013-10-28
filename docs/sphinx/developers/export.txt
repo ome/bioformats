@@ -43,7 +43,7 @@ Now, we set up our writer:
       // initialize the writer
       writer.setId("/path/to/output/file");
 
-Note that the extension of the file name passed to 'writer.setId(...)'
+Note that the extension of the file name passed to 'writer.setId(…)'
 determines the file format of the exported file.
 
 Now that everything is set up, we can start writing planes:
