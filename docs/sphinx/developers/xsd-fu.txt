@@ -316,8 +316,10 @@ This work was completed as part of the Update XsdFu (:ticket:`8086`) story.
 
   $ cd components/xsd-fu
   $ ./xsd-fu omero_model -o where/to/place/output/ \
-    ../specification/inprogress/ome.xsd ../specification/inprogress/SPW.xsd \
-    ../specification/inprogress/SA.xsd ../specification/inprogress/ROI.xsd
+    ../specification/released-schema/[release name]/ome.xsd \
+    ../specification/released-schema/[release name]/SPW.xsd \
+    ../specification/released-schema/[release name]/SA.xsd \
+    ../specification/released-schema/[release name]/ROI.xsd
 
 Special Thanks
 --------------
