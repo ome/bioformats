@@ -31,6 +31,7 @@
     <module>components/bundles/loci-tools</module>
     <module>components/metakit</module>
     <module>components/bundles/ome-tools</module>
+    <module>components/ome-jpegxr</module>
     <module>components/ome-xml</module>
     <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
