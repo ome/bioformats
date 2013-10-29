@@ -48,7 +48,7 @@ output similar to this:
 
     init-timestamp:
 
-    init-version:
+    release-version:
 
     init-manifest-cp:
 
