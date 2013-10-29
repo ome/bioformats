@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,11 +36,15 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,7 +59,7 @@ public class CellVoyagerReader extends FormatReader
 
 	private static final String NAMESPACE = "http://www.yokogawa.co.jp/BTS/BTSSchema/1.0";
 
-	private static final String XML_FILE = "MeasurementSetting.xml";
+	private Location measurementFolder;
 
 	private Location measurementSettingFile;
 
@@ -66,11 +69,9 @@ public class CellVoyagerReader extends FormatReader
 
 	private List< ChannelInfo > channelInfos;
 
+	private List< WellInfo > wells;
+
 	private List< Integer > timePoints;
-
-	private Location measurementFolder;
-
-	private ChannelInfo ci;
 
 	public CellVoyagerReader()
 	{
@@ -87,7 +88,11 @@ public class CellVoyagerReader extends FormatReader
 	{
 		FormatTools.checkPlaneParameters( this, no, buf.length, x, y, w, h );
 
-		final CoreMetadata cm = core.get( 0 );
+		final CoreMetadata cm = core.get( getSeries() );
+
+		/*
+		 * TODO FIXME TODO BROKEN Waiting for the metadata to be properly set.
+		 */
 
 		final int nImagesPerTimepoint = cm.sizeC * cm.sizeZ;
 		final int targetTindex = no / nImagesPerTimepoint;
@@ -110,11 +115,11 @@ public class CellVoyagerReader extends FormatReader
 
 			tiffReader.setId( image.getAbsolutePath() );
 
-			final long[] offset = ci.offsets.get( fieldIndex - 1 );
+			final long[] offset = null; // ci.offsets.get( fieldIndex - 1 );
 
 			// Tile size
-			final int tw = ci.tileWidth;
-			final int th = ci.tileHeight;
+			final int tw = 0; // ci.tileWidth;
+			final int th = 0; // ci.tileHeight;
 
 			// Field bounds in full final image, full width, full height
 			// (referential named '0', as if x=0 and y=0).
@@ -196,12 +201,12 @@ public class CellVoyagerReader extends FormatReader
 	{
 		/*
 		 * We want to be pointed to any file in the directory that contains
-		 * 'MeasurementSetting.xml'.
+		 * 'MeasurementResult.xml'.
 		 */
 		final String localName = new Location( name ).getName();
-		if ( localName.equals( XML_FILE ) ) { return true; }
+		if ( localName.equals( "MeasurementResult.xml" ) ) { return true; }
 		final Location parent = new Location( name ).getAbsoluteFile().getParentFile();
-		final Location xml = new Location( parent, XML_FILE );
+		final Location xml = new Location( parent, "MeasurementResult.xml" );
 		if ( !xml.exists() ) { return false; }
 
 		return super.isThisType( name, open );
@@ -219,7 +224,7 @@ public class CellVoyagerReader extends FormatReader
 			measurementFolder = measurementFolder.getParentFile();
 		}
 
-		measurementSettingFile = new Location( measurementFolder, "MeasurementSetting.xml" );
+		measurementSettingFile = new Location( measurementFolder, "MeasurementResult.xml" );
 		if ( !measurementSettingFile.exists() ) { throw new IOException( "Could not find " + measurementSettingFile + " in folder." ); }
 
 		imageIndexFile = new Location( measurementFolder, "ImageIndex.xml" );
@@ -269,7 +274,8 @@ public class CellVoyagerReader extends FormatReader
 		omeDocument.getDocumentElement().normalize();
 
 		/*
-		 * Extract channel Metadata from MeasurementSetting.xml & OME xml file
+		 * Extract metadata from MeasurementSetting.xml & OME xml file. This is
+		 * where the core of parsing and fetching useful info happens
 		 */
 
 		readInfo( msDocument, omeDocument );
@@ -315,7 +321,11 @@ public class CellVoyagerReader extends FormatReader
 		}
 		else
 		{
-			final int nFields = channelInfos.get( 0 ).offsets.size();
+			final int[] indices = seriesToWellArea( getSeries() );
+			final int wellIndex = indices[ 0 ];
+			final int areaIndex = indices[ 1 ];
+			final AreaInfo area = wells.get( wellIndex ).areas.get( areaIndex );
+			final int nFields = area.fields.size();
 			final String[] images = new String[ getImageCount() * nFields + 2 ];
 			int index = 0;
 			images[ index++ ] = measurementSettingFile.getAbsolutePath();
@@ -350,6 +360,35 @@ public class CellVoyagerReader extends FormatReader
 	 */
 
 	/**
+	 * Returns the well index (in the field {@link #wells}) and the area index
+	 * (in the field {@link WellInfo#areas} corresponding to the specified
+	 * series.
+	 *
+	 * @param series
+	 *            the desired series.
+	 * @return the corresponding well index and area index, as a 2-element array
+	 *         of <code>int[] { well, area }</code>.
+	 */
+	private int[] seriesToWellArea( final int series )
+	{
+		int nWell = -1;
+		int seriesInc = -1;
+		for ( final WellInfo well : wells )
+		{
+			nWell++;
+			int nAreas = -1;
+			for ( @SuppressWarnings( "unused" )
+			final AreaInfo area : well.areas )
+			{
+				seriesInc++;
+				nAreas++;
+				if ( series == seriesInc ) { return new int[] { nWell, nAreas }; }
+			}
+		}
+		throw new IllegalStateException( "Cannot find a well for series " + series );
+	}
+
+	/**
 	 * @return a Map of
 	 *         <code>timepoint (int) -> channel (int) -> Z (index) -> field index (int) -> file name (String)</code>
 	 */
@@ -364,7 +403,6 @@ public class CellVoyagerReader extends FormatReader
 		for ( int i = 0; i < measurements.getLength(); i++ )
 		{
 			final Element element = ( Element ) measurements.item( i );
-
 
 			final int field = Integer.parseInt( element.getAttributeNS( NAMESPACE, "FieldIndex" ) );
 			final int timepoint = Integer.parseInt( element.getAttributeNS( NAMESPACE, "TimePoint" ) );
@@ -411,16 +449,25 @@ public class CellVoyagerReader extends FormatReader
 		return allFilenames;
 	}
 
-	private List< ChannelInfo > readInfo( final Document msDocument, final Document omeDocument )
+	private void readInfo( final Document msDocument, final Document omeDocument ) throws FormatException
 	{
 		/*
-		 * Magnification
+		 * Magnification.
+		 *
+		 * We need it early, because the file format reports only un-magnified
+		 * sizes. So if we are to put proper metadata, we need to make the
+		 * conversion to size measured at the sample level ourselves. I feel
+		 * like this is fragile and most likely to change in a future version of
+		 * the file format.
 		 */
 
 		final Element msRoot = msDocument.getDocumentElement();
-		final double objectiveMagnification = Double.parseDouble( getChildText( msRoot, new String[] { "SelectedObjectiveLens", "Magnification" } ) );
-		final double zoomLensMagnification = Double.parseDouble( getChildText( msRoot, new String[] { "ZoomLens", "Magnification", "Value" } ) );
-		final double magnification = objectiveMagnification * zoomLensMagnification;
+		final double objectiveMagnification = Double.parseDouble( getChildText( msRoot, new String[] { "ObjectiveLens", "Magnification" } ) );
+		// final double zoomLensMagnification = Double.parseDouble(
+		// getChildText( msRoot, new String[] { "ZoomLens", "Magnification",
+		// "Value" } ) );
+		final double magnification = objectiveMagnification; // *
+																// zoomLensMagnification;
 
 		/*
 		 * Read the ome.xml file. Since it is malformed, we need to parse all
@@ -485,8 +532,6 @@ public class CellVoyagerReader extends FormatReader
 		}
 		OMEXMLMetadata omeMD = null;
 
-		System.out.println( xml );// DEBUG
-
 		if ( service != null )
 		{
 			try
@@ -507,206 +552,328 @@ public class CellVoyagerReader extends FormatReader
 		omeMD.setPixelsTimeIncrement( Double.valueOf( readFrameInterval( msDocument ) ), 0 );
 
 		/*
-		 * The rest
-		 */
-
-		channelInfos = new ArrayList< ChannelInfo >();
-
-		/*
 		 * Channels
 		 */
+
 		final Element channelsEl = getChild( msRoot, "Channels" );
-		final NodeList channelElements = channelsEl.getElementsByTagName( "Channel" );
-		for ( int i = 0; i < channelElements.getLength(); i++ )
+		final List< Element > channelEls = getChildren( channelsEl, "Channel" );
+		channelInfos = new ArrayList< ChannelInfo >();
+		for ( final Element channelEl : channelEls )
 		{
-			final Element channelElement = ( Element ) channelElements.item( i );
-			final boolean isEnabled = Boolean.parseBoolean( getChildText( channelElement, "IsEnabled" ) );
+			final boolean isEnabled = Boolean.parseBoolean( getChildText( channelEl, "IsEnabled" ) );
 			if ( !isEnabled )
 			{
 				continue;
 			}
-
-			final ChannelInfo ci = new ChannelInfo();
+			final ChannelInfo ci = readChannel( channelEl );
 			channelInfos.add( ci );
 
-			ci.isEnabled = true;
+			// Pass color to OME metadata. 1-based vs 0-based..
+			omeMD.setChannelColor( ci.color, 0, ci.channelNumber - 1 );
+		}
 
-			ci.channelNumber = Integer.parseInt( getChildText( channelElement, "Number" ) );
+		// Read pixel sizes from OME metadata.
+		final double pixelWidth = omeMD.getPixelsPhysicalSizeX( 0 ).getValue().doubleValue();
+		final double pixelHeight = omeMD.getPixelsPhysicalSizeY( 0 ).getValue().doubleValue();
 
-			final Element acquisitionSettings = getChild( channelElement, "AcquisitionSetting" );
+		/*
+		 * Read tile size from channel info. This is weird, but it's like that.
+		 * Since we build a multi-C image, we have to assume that all channels
+		 * have the same dimension, even if the file format allows for changing
+		 * the size, binning, etc. from channel to channel. Failure to load
+		 * datasets that have this exoticity is to be sought here.
+		 */
 
-			final Element cameraEl = getChild( acquisitionSettings, "Camera" );
-			ci.tileWidth = Integer.parseInt( getChildText( cameraEl, "EffectiveHorizontalPixels_pixel" ) );
-			ci.tileHeight = Integer.parseInt( getChildText( cameraEl, "EffectiveVerticalPixels_pixel" ) );
+		final int tileWidth = channelInfos.get( 0 ).tileWidth;
+		final int tileHeight = channelInfos.get( 0 ).tileHeight;
 
-			ci.unmagnifiedPixelWidth = Double.parseDouble( getChildText( cameraEl, "HorizonalCellSize_um" ) );
-			ci.unmagnifiedPixelHeight = Double.parseDouble( getChildText( cameraEl, "VerticalCellSize_um" ) );
+		/*
+		 * Handle multiple wells.
+		 *
+		 * The same kind of remark apply: We assume that a channel setting can
+		 * be applied to ALL wells. So this file reader will fail for dataset
+		 * that have one well that has a different dimension that of others.
+		 */
 
-			final Element colorElement = getChild( channelElement, new String[] { "ContrastEnhanceParam", "Color" } );
-			final int r = Integer.parseInt( getChildText( colorElement, "R" ) );
-			final int g = Integer.parseInt( getChildText( colorElement, "G" ) );
-			final int b = Integer.parseInt( getChildText( colorElement, "B" ) );
-			final int a = Integer.parseInt( getChildText( colorElement, "A" ) );
-			final Color channelColor = new Color( r, g, b, a );
-			// 1-based vs 0-based..
-			omeMD.setChannelColor( channelColor, 0, ci.channelNumber - 1 );
-
-			// Read pixel sizes from OME file.
-			ci.pixelWidth = omeMD.getPixelsPhysicalSizeX( 0 ).getValue().doubleValue();
-			ci.pixelHeight = omeMD.getPixelsPhysicalSizeY( 0 ).getValue().doubleValue();
-			ci.pixelDepth = omeMD.getPixelsPhysicalSizeZ( 0 ).getValue().doubleValue();
-
-			// TODO handles each well & area as a series here
-			final Element fieldsEl = getChild( msRoot, new String[] { "Wells", "Well", "Areas", "Area", "Fields" } );
-			final NodeList fieldElements = fieldsEl.getElementsByTagName( "Field" );
-
-			// Read field position in um
-			double xmin = Double.POSITIVE_INFINITY;
-			double ymin = Double.POSITIVE_INFINITY;
-			double xmax = Double.NEGATIVE_INFINITY;
-			double ymax = Double.NEGATIVE_INFINITY;
-			final ArrayList< double[] > offsetsUm = new ArrayList< double[] >();
-
-			for ( int j = 0; j < fieldElements.getLength(); j++ )
+		final Element wellsEl = getChild( msRoot, "Wells" );
+		final List< Element > wellEls = getChildren( wellsEl, "Well" );
+		wells = new ArrayList< WellInfo >();
+		for ( final Element wellEl : wellEls )
+		{
+			final boolean isWellEnabled = Boolean.parseBoolean( getChild( wellEl, "IsEnabled" ).getTextContent() );
+			if ( isWellEnabled )
 			{
-				final Element fieldElement = ( Element ) fieldElements.item( j );
-
-				final double xum = Double.parseDouble( getChildText( fieldElement, "StageX_um" ) );
-				if ( xum < xmin )
-				{
-					xmin = xum;
-				}
-				if ( xum > xmax )
-				{
-					xmax = xum;
-				}
-
-				/*
-				 * Careful! For the fields to be padded correctly, we need to
-				 * invert their Y position, so that it matches the pixel
-				 * orientation.
-				 */
-				final double yum = -Double.parseDouble( getChildText( fieldElement, "StageY_um" ) );
-				if ( yum < ymin )
-				{
-					ymin = yum;
-				}
-				if ( yum > ymax )
-				{
-					ymax = yum;
-				}
-
-				offsetsUm.add( new double[] { xum, yum } );
+				final WellInfo wi = readWellInfo( wellEl, pixelWidth, pixelHeight, tileWidth, tileHeight );
+				wells.add( wi );
 			}
-
-			// Convert in pixel position
-			final List< long[] > offsets = new ArrayList< long[] >();
-			for ( final double[] offsetUm : offsetsUm )
-			{
-				final long x = Math.round( ( offsetUm[ 0 ] - xmin ) / ci.pixelWidth );
-				final long y = Math.round( ( offsetUm[ 1 ] - ymin ) / ci.pixelHeight );
-
-				offsets.add( new long[] { x, y } );
-			}
-
-			ci.offsets = offsets;
-
-			final int width = 1 + ( int ) ( ( xmax - xmin ) / ci.pixelWidth );
-			final int height = 1 + ( int ) ( ( ymax - ymin ) / ci.pixelHeight );
-			ci.width = width + ci.tileWidth;
-			ci.height = height + ci.tileHeight;
-
 		}
 
 		/*
-		 * Z range
+		 * Z range.
+		 *
+		 * In this file format, the Z range appears to be general: it applies to
+		 * all fields of all wells.
 		 */
 
-		final int nZSlices = Integer.parseInt( getChildText( msRoot, new String[] { "ZRange", "NumberOfSlices" } ) );
-		for ( final ChannelInfo channelInfo : channelInfos )
-		{
-			channelInfo.nZSlices = nZSlices;
-			channelInfo.spaceUnits = "µm";
-		}
-
+		final int nZSlices = Integer.parseInt( getChildText( msRoot, new String[] { "ZStackConditions", "NumberOfSlices" } ) );
 
 		/*
-		 * Populate CORE metadata accordingly.
+		 * Time points. They are general as well. Which just makes sense.
 		 */
 
-		final CoreMetadata coreMetadata = core.get( 0 );
-		ci = channelInfos.get( 0 ); // Get common data from first channel
-
-		// Bit depth.
-		switch ( omeMD.getPixelsType( 0 ) )
-		{
-		case UINT8:
-			coreMetadata.pixelType = FormatTools.UINT8;
-			coreMetadata.bitsPerPixel = 8;
-			break;
-		case UINT16:
-			coreMetadata.pixelType = FormatTools.UINT16;
-			coreMetadata.bitsPerPixel = 16;
-			break;
-		case UINT32:
-			coreMetadata.pixelType = FormatTools.UINT32;
-			coreMetadata.bitsPerPixel = 32;
-			break;
-		default:
-			System.err.println( "Cannot read image with pixel type = " + omeMD.getPixelsType( 0 ) );
-			break;
-		}
-
-		coreMetadata.littleEndian = true;
-
-		// Sub Channel info? I don't understand that actually?
-		coreMetadata.cLengths = new int[] { coreMetadata.sizeC };
-		coreMetadata.cTypes = new String[] { FormatTools.CHANNEL };
-		coreMetadata.rgb = false; // 1 image = 1 color
-
-		// Channel order
-		coreMetadata.dimensionOrder = "XYCZT";
-		coreMetadata.orderCertain = true;
-
-		// Indexed color. I guess it's true since we can read the LUT
-		// separately.
-		coreMetadata.indexed = true;
-		coreMetadata.falseColor = true;
-
-		// Time points
 		timePoints = readTimePoints( msDocument );
 
-		// Total number of images
-		int activeChannels = 0;
-		for ( final ChannelInfo channelInfo : channelInfos )
+		/*
+		 * Populate CORE metadata for each area.
+		 *
+		 * This reader takes to convention that state that 1 area = 1 series. So
+		 * if you have 10 wells with 2 areas in each well, and each area is made
+		 * of 20 fields, you will get 20 series, and each series will be
+		 * stitched from 20 fields.
+		 */
+
+		core.clear();
+		for ( final WellInfo well : wells )
 		{
-			if ( channelInfo.isEnabled )
+			for ( final AreaInfo area : well.areas )
 			{
-				activeChannels++;
+				final CoreMetadata ms = new CoreMetadata();
+				core.add( ms );
+
+				ms.sizeX = area.width;
+				ms.sizeY = area.height;
+				ms.sizeZ = nZSlices;
+				ms.sizeC = channelInfos.size();
+				ms.sizeT = timePoints.size();
+				ms.dimensionOrder = "XYCZT";
+				ms.rgb = false;
+				ms.imageCount = nZSlices * channelInfos.size() * timePoints.size();
+
+				// Bit depth.
+				switch ( omeMD.getPixelsType( 0 ) )
+				{
+				case UINT8:
+					ms.pixelType = FormatTools.UINT8;
+					ms.bitsPerPixel = 8;
+					break;
+				case UINT16:
+					ms.pixelType = FormatTools.UINT16;
+					ms.bitsPerPixel = 16;
+					break;
+				case UINT32:
+					ms.pixelType = FormatTools.UINT32;
+					ms.bitsPerPixel = 32;
+					break;
+				default:
+					throw new FormatException( "Cannot read image with pixel type = " + omeMD.getPixelsType( 0 ) );
+				}
+
+				// Determined manually on sample data. Check here is the image
+				// you get is weird.
+				ms.littleEndian = true;
 			}
 		}
-		final int nImages = activeChannels * ci.nZSlices * timePoints.size();
-		coreMetadata.imageCount = nImages;
 
-		// Interleaved. Maybe irrelevant for us?
-		coreMetadata.interleaved = true;
+		/*
+		 * Populate the MetadataStore.
+		 */
 
-		// Dimensions
-		coreMetadata.sizeX = ci.width;
-		coreMetadata.sizeY = ci.height;
-		coreMetadata.sizeZ = ci.nZSlices;
-		coreMetadata.sizeC = activeChannels;
-		coreMetadata.sizeT = timePoints.size();
-
-		// Are we a thumbnail? No, we are the real thing.
-		coreMetadata.thumbnail = false;
-
-		// Pass it to the reader, populate the MetadataStore
-		System.out.println( prettyPrintXML( omeMD.dumpXML() ) );// DEBUG
 		final MetadataStore store = makeFilterMetadata();
-		service.convertMetadata( omeMD, store );
+		MetadataTools.populatePixels( store, this, true );
 
-		return channelInfos;
+		/*
+		 * Pinhole disk
+		 */
+
+		final double pinholeSize = Double.parseDouble( getChildText( msRoot, new String[] { "PinholeDisk", "PinholeSize_um" } ) );
+
+
+		/*
+		 * MicroPlate specific stuff
+		 */
+
+		final Element containerEl = getChild( msRoot, new String[] { "Attachment", "HolderInfoList", "HolderInfo", "MountedSampleContainer" } );
+		final String type = containerEl.getAttribute( "xsi:type" );
+		if ( type.equals( "WellPlate" ) )
+		{
+			// I don't know an other case. I can just hope that if there is
+			// another name for microplate I will find out quickly.
+
+			store.setPlateID( MetadataTools.createLSID( "Plate", 0 ), 0 );
+
+			final int nrows = Integer.parseInt( getChildText( containerEl, "RowCount" ) );
+			final int ncols = Integer.parseInt( getChildText( containerEl, "ColumnCount" ) );
+			store.setPlateRows( new PositiveInteger( nrows ), 0 );
+			store.setPlateColumns( new PositiveInteger( ncols ), 0 );
+
+			final String plateAcqID = MetadataTools.createLSID( "PlateAcquisition", 0, 0 );
+			store.setPlateAcquisitionID( plateAcqID, 0, 0 );
+
+			final Element dimInfoEl = getChild( msRoot, "DimensionsInfo" );
+			final int maxNFields = Integer.parseInt( getChild( dimInfoEl, "F" ).getAttribute( "Max" ) );
+			final PositiveInteger fieldCount = FormatTools.getMaxFieldCount( maxNFields );
+			if ( fieldCount != null )
+			{
+				store.setPlateAcquisitionMaximumFieldCount( fieldCount, 0, 0 );
+			}
+
+			// Plate acquisition time
+			final String beginTime = getChildText( msRoot, "BeginTime" );
+			final String endTime = getChildText( msRoot, "EndTime" );
+			store.setPlateAcquisitionStartTime( new Timestamp( beginTime ), 0, 0 );
+			store.setPlateAcquisitionEndTime( new Timestamp( endTime ), 0, 0 );
+		}
+
+		// Wells position on the plate
+		int seriesIndex = -1;
+		for ( final WellInfo well : wells )
+		{
+			seriesIndex++;
+			final int wellIndex = well.number;
+			store.setWellRow( new NonNegativeInteger( well.row ), 0, wellIndex );
+			store.setWellColumn( new NonNegativeInteger( well.col ), 0, wellIndex );
+			store.setWellID( "" + well.UID, 0, wellIndex );
+			for ( final AreaInfo area : well.areas )
+			{
+				store.setWellSampleIndex( new NonNegativeInteger( area.index ), 0, wellIndex, area.index );
+				store.setWellSampleID( "" + area.UID, 0, wellIndex, area.index );
+				store.setWellSamplePositionX( Double.valueOf( well.centerX ), 0, wellIndex, area.index );
+				store.setWellSamplePositionY( Double.valueOf( well.centerY ), 0, wellIndex, area.index );
+
+				int channelIndex = 0;
+				for ( int i = 0; i < channelInfos.size(); i++ )
+				{
+					store.setChannelPinholeSize( pinholeSize, seriesIndex, channelIndex++ );
+				}
+			}
+
+		}
+
+
+
+
+	}
+
+	private ChannelInfo readChannel( final Element channelEl )
+	{
+		final ChannelInfo ci = new ChannelInfo();
+
+		ci.isEnabled = Boolean.parseBoolean( getChildText( channelEl, "IsEnabled" ) );
+
+		ci.channelNumber = Integer.parseInt( getChildText( channelEl, "Number" ) );
+
+		final Element acquisitionSettings = getChild( channelEl, "AcquisitionSetting" );
+
+		final Element cameraEl = getChild( acquisitionSettings, "Camera" );
+		ci.tileWidth = Integer.parseInt( getChildText( cameraEl, "EffectiveHorizontalPixels_pixel" ) );
+		ci.tileHeight = Integer.parseInt( getChildText( cameraEl, "EffectiveVerticalPixels_pixel" ) );
+
+		ci.unmagnifiedPixelWidth = Double.parseDouble( getChildText( cameraEl, "HorizonalCellSize_um" ) );
+		ci.unmagnifiedPixelHeight = Double.parseDouble( getChildText( cameraEl, "VerticalCellSize_um" ) );
+
+		final Element colorElement = getChild( channelEl, new String[] { "ContrastEnhanceParam", "Color" } );
+		final int r = Integer.parseInt( getChildText( colorElement, "R" ) );
+		final int g = Integer.parseInt( getChildText( colorElement, "G" ) );
+		final int b = Integer.parseInt( getChildText( colorElement, "B" ) );
+		final int a = Integer.parseInt( getChildText( colorElement, "A" ) );
+		final Color channelColor = new Color( r, g, b, a );
+
+		ci.color = channelColor;
+
+		return ci;
+
+	}
+
+	private WellInfo readWellInfo( final Element wellEl, final double pixelWidth, final double pixelHeight, final int tileWidth, final int tileHeight )
+	{
+		final WellInfo info = new WellInfo();
+		info.UID = Integer.parseInt( getChildText( wellEl, "UniqueID" ) );
+		info.number = Integer.parseInt( getChildText( wellEl, "Number" ) );
+		info.row = Integer.parseInt( getChildText( wellEl, "Row" ) );
+		info.col = Integer.parseInt( getChildText( wellEl, "Column" ) );
+		info.centerX = Double.parseDouble( getChildText( wellEl, new String[] { "CenterCoord_mm", "X" } ) );
+		info.centerY = Double.parseDouble( getChildText( wellEl, new String[] { "CenterCoord_mm", "Y" } ) );
+
+		final Element areasEl = getChild( wellEl, "Areas" );
+		final List< Element > areaEls = getChildren( areasEl, "Area" );
+		int areaIndex = 0;
+		for ( final Element areaEl : areaEls )
+		{
+			final AreaInfo area = readArea( areaEl, pixelWidth, pixelHeight, tileWidth, tileHeight );
+			area.index = areaIndex++;
+			info.areas.add( area );
+		}
+
+		return info;
+	}
+
+	private AreaInfo readArea( final Element areaEl, final double pixelWidth, final double pixelHeight, final int tileWidth, final int tileHeight )
+	{
+		final AreaInfo info = new AreaInfo();
+		info.UID = Integer.parseInt( getChildText( areaEl, "UniqueID" ) );
+
+		// Read field position in um
+		double xmin = Double.POSITIVE_INFINITY;
+		double ymin = Double.POSITIVE_INFINITY;
+		double xmax = Double.NEGATIVE_INFINITY;
+		double ymax = Double.NEGATIVE_INFINITY;
+
+		final Element fieldsEl = getChild( areaEl, "Fields" );
+		final List< Element > fieldEls = getChildren( fieldsEl, "Field" );
+
+		// Read basic info and get min & max.
+		for ( final Element fieldEl : fieldEls )
+		{
+			final FieldInfo finfo = readField( fieldEl );
+			info.fields.add( finfo );
+
+			final double xum = finfo.x;
+			if ( xum < xmin )
+			{
+				xmin = xum;
+			}
+			if ( xum > xmax )
+			{
+				xmax = xum;
+			}
+
+			final double yum = -finfo.y;
+			if ( yum < ymin )
+			{
+				ymin = yum;
+			}
+			if ( yum > ymax )
+			{
+				ymax = yum;
+			}
+		}
+		for ( final FieldInfo finfo : info.fields )
+		{
+			final long xpixels = Math.round( ( finfo.x - xmin ) / pixelWidth );
+			/*
+			 * Careful! For the fields to be padded correctly, we need to invert
+			 * their Y position, so that it matches the pixel orientation.
+			 */
+			final long ypixels = Math.round( ( -ymin - finfo.y ) / pixelHeight );
+			finfo.xpixels = xpixels;
+			finfo.ypixels = ypixels;
+
+			final int width = 1 + ( int ) ( ( xmax - xmin ) / pixelWidth );
+			final int height = 1 + ( int ) ( ( ymax - ymin ) / pixelHeight );
+			info.width = width + tileWidth;
+			info.height = height + tileHeight;
+		}
+		return info;
+	}
+
+	private FieldInfo readField( final Element fieldEl )
+	{
+		final FieldInfo info = new FieldInfo();
+		info.x = Double.parseDouble( getChildText( fieldEl, "StageX_um" ) );
+		info.y = Double.parseDouble( getChildText( fieldEl, "StageY_um" ) );
+		// I discarded the other info (BottomOffset & co) for I don't what to do
+		// with them.
+		return info;
 	}
 
 	private List< Integer > readTimePoints( final Document document )
@@ -733,24 +900,98 @@ public class CellVoyagerReader extends FormatReader
 	 * INNER CLASSES
 	 */
 
-	private static final class ChannelInfo
+	private static final class FieldInfo
 	{
+
+		public long ypixels;
+
+		public long xpixels;
+
+		public double y;
+
+		public double x;
+
+		@Override
+		public String toString()
+		{
+			return "\t\tField\n\t\t\tX = " + x + " µm\n\t\t\tY = " + y + " µm\n" + "\t\t\txi = " + xpixels + " pixels\n" + "\t\t\tyi = " + ypixels + " pixels\n";
+		}
+
+	}
+
+	private static final class AreaInfo
+	{
+
+		public int index;
 
 		public int height;
 
 		public int width;
 
-		public int nZSlices;
+		public List< FieldInfo > fields = new ArrayList< FieldInfo >();
 
-		public String spaceUnits;
+		public int UID;
 
-		public double pixelHeight;
+		@Override
+		public String toString()
+		{
+			final StringBuilder str = new StringBuilder();
+			str.append( "\tArea ID = " + UID + '\n' );
+			str.append( "\t\ttotal width = " + width + " pixels\n" );
+			str.append( "\t\ttotal height = " + height + " pixels\n" );
+			for ( final FieldInfo fieldInfo : fields )
+			{
+				str.append( fieldInfo.toString() );
+			}
+			return str.toString();
+		}
 
-		public double pixelWidth;
+	}
 
-		public double pixelDepth;
+	private static final class WellInfo
+	{
 
-		public List< long[] > offsets = Collections.emptyList();
+		public List< AreaInfo > areas = new ArrayList< AreaInfo >();
+
+		public double centerY;
+
+		public double centerX;
+
+		public int col;
+
+		public int row;
+
+		public int number;
+
+		public int UID;
+
+		@Override
+		public String toString()
+		{
+			final StringBuilder str = new StringBuilder();
+			str.append( "Well ID = " + UID + '\n' );
+			str.append( "\tnumber = " + number + '\n' );
+			str.append( "\trow = " + row + '\n' );
+			str.append( "\tcol = " + col + '\n' );
+			str.append( "\tcenter X = " + centerX + " mm\n" );
+			str.append( "\tcenter Y = " + centerY + " mm\n" );
+			for ( final AreaInfo areaInfo : areas )
+			{
+				str.append( areaInfo.toString() );
+			}
+			return str.toString();
+		}
+
+	}
+
+	private static final class ChannelInfo
+	{
+
+		public Color color;
+
+		public int height;
+
+		public int width;
 
 		public boolean isEnabled;
 
@@ -774,19 +1015,8 @@ public class CellVoyagerReader extends FormatReader
 			str.append( " - height: " + height + "\n" );
 			str.append( " - tile width: " + tileWidth + "\n" );
 			str.append( " - tile height: " + tileHeight + "\n" );
-			str.append( " - NZSlices: " + nZSlices + "\n" );
 			str.append( " - unmagnifiedPixelWidth: " + unmagnifiedPixelWidth + "\n" );
 			str.append( " - unmagnifiedPixelHeight: " + unmagnifiedPixelHeight + "\n" );
-			str.append( " - has " + offsets.size() + " fields:\n" );
-			int index = 1;
-			for ( final long[] offset : offsets )
-			{
-				str.append( "    " + index++ + ": x = " + offset[ 0 ] + ", y = " + offset[ 1 ] + "\n" );
-			}
-			str.append( " - spatial calibration:\n" );
-			str.append( "    dx = " + pixelWidth + " " + spaceUnits + "\n" );
-			str.append( "    dy = " + pixelHeight + " " + spaceUnits + "\n" );
-			str.append( "    dz = " + pixelDepth + " " + spaceUnits + "\n" );
 			return str.toString();
 		}
 
@@ -816,6 +1046,18 @@ public class CellVoyagerReader extends FormatReader
 		return null;
 	}
 
+	private static final List< Element > getChildren( final Element parent, final String name )
+	{
+		final NodeList nodeList = parent.getElementsByTagName( name );
+		final int nEls = nodeList.getLength();
+		final List< Element > children = new ArrayList< Element >( nEls );
+		for ( int i = 0; i < nEls; i++ )
+		{
+			children.add( ( Element ) nodeList.item( i ) );
+		}
+		return children;
+	}
+
 	private static final String getChildText( final Element parent, final String[] path )
 	{
 		if ( path.length == 1 ) { return getChildText( parent, path[ 0 ] ); }
@@ -840,7 +1082,9 @@ public class CellVoyagerReader extends FormatReader
 		return null;
 	}
 
-	private static final String prettyPrintXML(final String xml) {
+	@SuppressWarnings( "unused" )
+	private static final String prettyPrintXML( final String xml )
+	{
 		try
 		{
 			final Transformer serializer = SAXTransformerFactory.newInstance().newTransformer();
@@ -896,6 +1140,9 @@ public class CellVoyagerReader extends FormatReader
 	public static void main( final String[] args ) throws IOException, FormatException
 	{
 		final String id = "/Users/tinevez/Projects/EArena/Data/TestDataset/20131025T092701/MeasurementSetting.xml";
+		// final String id =
+		// "/Users/tinevez/Projects/EArena/Data/30um sections at 40x - last round/1_3_1_2_2/20130731T133622/MeasurementResult.xml";
+
 		final CellVoyagerReader importer = new CellVoyagerReader();
 		importer.setId( id );
 		importer.close();
