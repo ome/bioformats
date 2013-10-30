@@ -282,7 +282,6 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.isReference %}\
         // Element reference ${prop.name}
         std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
-        /// @todo Use C++11 for inherited from java template.  What is this referring to?
         for (std::vector<xerces::dom::Element>::iterator elem = ${prop.name}_nodeList.begin();
              elem != ${prop.name}_nodeList.end();
              ++elem)
