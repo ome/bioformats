@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -61,11 +59,7 @@ public class CellVoyagerReader extends FormatReader
 
 	private Location measurementFolder;
 
-	private Location measurementSettingFile;
-
-	private Location imageIndexFile;
-
-	private Map< Integer, Map< Integer, Map< Integer, Map< Integer, String >>> > imageList;
+	private List< String > imageList;
 
 	private List< ChannelInfo > channelInfos;
 
@@ -73,13 +67,19 @@ public class CellVoyagerReader extends FormatReader
 
 	private List< Integer > timePoints;
 
+	private Location measurementResultFile;
+
+	private Location imageIndexFile;
+
+	private Location omeMeasurementFile;
+
 	public CellVoyagerReader()
 	{
 		super( "CellVoyager", new String[] { "tif", "tiff", "xml" } );
 		this.suffixNecessary = false;
 		this.suffixSufficient = false;
 		this.hasCompanionFiles = true;
-		this.datasetDescription = "Directory with two master files 'MeasurementSetting.xml' and 'ImageIndex.xml' , used to stich together several tiff files.";
+		this.datasetDescription = "Directory with 3 master files 'MeasurementResult.xml', 'MeasurementResult.ome.xml' and 'ImageIndex.xml', used to stich together several tiff files.";
 		this.domains = new String[] { FormatTools.HISTOLOGY_DOMAIN, FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN };
 	}
 
@@ -101,14 +101,16 @@ public class CellVoyagerReader extends FormatReader
 		final int targetZindex = rem / cm.sizeC;
 		final int targetCindex = rem % cm.sizeC;
 
-		// Careful: everything is 1-based in the file format.
-		final Map< Integer, Map< Integer, Map< Integer, String >>> tFilenames = imageList.get( Integer.valueOf( targetTindex + 1 ) );
-		final Map< Integer, Map< Integer, String >> cFilenames = tFilenames.get( Integer.valueOf( targetCindex + 1 ) );
-		final Map< Integer, String > zFilenames = cFilenames.get( Integer.valueOf( targetZindex + 1 ) );
+		final int[] indices = seriesToWellArea( getSeries() );
+		final int wellIndex = indices[0];
+		final int areaIndex = indices[1];
+		final WellInfo well = wells.get( wellIndex );
+		final AreaInfo area = well.areas.get( areaIndex );
 		final MinimalTiffReader tiffReader = new MinimalTiffReader();
-		for ( final Integer fieldIndex : zFilenames.keySet() )
+		for ( final FieldInfo field : area.fields )
 		{
-			String filename = zFilenames.get( fieldIndex );
+			// final int fieldIndex = field. TODO
+			String filename = "Image/W7F001T0001Z01C1.tif"; // TODO
 			filename = filename.replace( '\\', File.separatorChar );
 			final Location image = new Location( measurementFolder, filename );
 			if ( !image.exists() ) { throw new IOException( "Could not find required file: " + image ); }
@@ -224,11 +226,14 @@ public class CellVoyagerReader extends FormatReader
 			measurementFolder = measurementFolder.getParentFile();
 		}
 
-		measurementSettingFile = new Location( measurementFolder, "MeasurementResult.xml" );
-		if ( !measurementSettingFile.exists() ) { throw new IOException( "Could not find " + measurementSettingFile + " in folder." ); }
+		measurementResultFile = new Location( measurementFolder, "MeasurementResult.xml" );
+		if ( !measurementResultFile.exists() ) { throw new IOException( "Could not find " + measurementResultFile + " in folder." ); }
 
 		imageIndexFile = new Location( measurementFolder, "ImageIndex.xml" );
 		if ( !imageIndexFile.exists() ) { throw new IOException( "Could not find " + imageIndexFile + " in folder." ); }
+
+		omeMeasurementFile = new Location( measurementFolder, "MeasurementResult.ome.xml" );
+		if ( !omeMeasurementFile.exists() ) { throw new IOException( "Could not find " + omeMeasurementFile + " in folder." ); }
 
 		/*
 		 * Open MeasurementSettings file
@@ -247,7 +252,7 @@ public class CellVoyagerReader extends FormatReader
 		Document msDocument = null;
 		try
 		{
-			msDocument = dBuilder.parse( measurementSettingFile.getAbsolutePath() );
+			msDocument = dBuilder.parse( measurementResultFile.getAbsolutePath() );
 		}
 		catch ( final SAXException e )
 		{
@@ -317,7 +322,7 @@ public class CellVoyagerReader extends FormatReader
 
 		if ( noPixels )
 		{
-			return new String[] { measurementSettingFile.getAbsolutePath(), imageIndexFile.getAbsolutePath() };
+			return new String[] { measurementResultFile.getAbsolutePath(), imageIndexFile.getAbsolutePath() };
 		}
 		else
 		{
@@ -328,28 +333,23 @@ public class CellVoyagerReader extends FormatReader
 			final int nFields = area.fields.size();
 			final String[] images = new String[ getImageCount() * nFields + 2 ];
 			int index = 0;
-			images[ index++ ] = measurementSettingFile.getAbsolutePath();
+			images[ index++ ] = measurementResultFile.getAbsolutePath();
 			images[ index++ ] = imageIndexFile.getAbsolutePath();
 
-			for ( final Integer timepoint : imageList.keySet() )
+			for ( final Integer timepoint : timePoints )
 			{
-				final Map< Integer, Map< Integer, Map< Integer, String >>> timeImages = imageList.get( timepoint );
-				for ( final Integer channel : timeImages.keySet() )
+				for ( int zslice = 1; zslice <= getSizeZ(); zslice++ )
 				{
-					final Map< Integer, Map< Integer, String >> channelImages = timeImages.get( channel );
-					for ( final Integer zindex : channelImages.keySet() )
+					for ( int channel = 1; channel <= getSizeC(); channel++ )
 					{
-						final Map< Integer, String > tilesAtZ = channelImages.get( zindex );
-						for ( final Integer fieldIndex : tilesAtZ.keySet() )
-						{
-							final String filename = tilesAtZ.get( fieldIndex );
-							images[ index++ ] = filename;
-						}
+						/*
+						 * Here we compose file names on the fly assuming they
+						 * follow the pattern below. Fragile I guess.
+						 */
+						images[ index++ ] = String.format( "Image/W%dF%3dT%4dZ%2dC%d", wellIndex, areaIndex, timepoint, zslice, channel );
 					}
 				}
-
 			}
-
 			return images;
 		}
 
@@ -388,17 +388,12 @@ public class CellVoyagerReader extends FormatReader
 		throw new IllegalStateException( "Cannot find a well for series " + series );
 	}
 
-	/**
-	 * @return a Map of
-	 *         <code>timepoint (int) -> channel (int) -> Z (index) -> field index (int) -> file name (String)</code>
-	 */
-	private Map< Integer, Map< Integer, Map< Integer, Map< Integer, String >>> > buildImageList( final Document document )
+	private List< String > buildImageList( final Document document )
 	{
-		final Map< Integer, Map< Integer, Map< Integer, Map< Integer, String > > > > allFilenames = new HashMap< Integer, Map< Integer, Map< Integer, Map< Integer, String > > > >();
-
 		final Element root = document.getDocumentElement();
 
 		final NodeList measurements = root.getElementsByTagNameNS( NAMESPACE, "MeasurementRecord" );
+		final List< String > allFilenames = new ArrayList< String >( measurements.getLength() );
 
 		for ( int i = 0; i < measurements.getLength(); i++ )
 		{
@@ -416,36 +411,8 @@ public class CellVoyagerReader extends FormatReader
 			}
 
 			final String filename = element.getTextContent();
-
-			// Extract time
-			Map< Integer, Map< Integer, Map< Integer, String >>> timeFilenames = allFilenames.get( Integer.valueOf( timepoint ) );
-			if ( null == timeFilenames )
-			{
-				timeFilenames = new TreeMap< Integer, Map< Integer, Map< Integer, String >>>();
-				allFilenames.put( Integer.valueOf( timepoint ), timeFilenames );
-			}
-
-			// Extract channel
-			Map< Integer, Map< Integer, String >> channelFilenames = timeFilenames.get( Integer.valueOf( channel ) );
-			if ( null == channelFilenames )
-			{
-				channelFilenames = new TreeMap< Integer, Map< Integer, String > >();
-				timeFilenames.put( Integer.valueOf( channel ), channelFilenames );
-			}
-
-			// Extract Z
-			Map< Integer, String > tilesAtZ = channelFilenames.get( Integer.valueOf( zindex ) );
-			if ( null == tilesAtZ )
-			{
-				tilesAtZ = new TreeMap< Integer, String >();
-				channelFilenames.put( Integer.valueOf( zindex ), tilesAtZ );
-			}
-
-			// Extract field
-			tilesAtZ.put( field, filename );
-
+			allFilenames.add( filename );
 		}
-
 		return allFilenames;
 	}
 
@@ -558,6 +525,7 @@ public class CellVoyagerReader extends FormatReader
 		final Element channelsEl = getChild( msRoot, "Channels" );
 		final List< Element > channelEls = getChildren( channelsEl, "Channel" );
 		channelInfos = new ArrayList< ChannelInfo >();
+		int channelIndex = 0;
 		for ( final Element channelEl : channelEls )
 		{
 			final boolean isEnabled = Boolean.parseBoolean( getChildText( channelEl, "IsEnabled" ) );
@@ -568,8 +536,7 @@ public class CellVoyagerReader extends FormatReader
 			final ChannelInfo ci = readChannel( channelEl );
 			channelInfos.add( ci );
 
-			// Pass color to OME metadata. 1-based vs 0-based..
-			omeMD.setChannelColor( ci.color, 0, ci.channelNumber - 1 );
+			omeMD.setChannelColor( ci.color, 0, channelIndex++ );
 		}
 
 		// Read pixel sizes from OME metadata.
@@ -595,6 +562,30 @@ public class CellVoyagerReader extends FormatReader
 		 * that have one well that has a different dimension that of others.
 		 */
 
+		/*
+		 * First remark: there can be two modes to store Areas in the xml file:
+		 * Either we define different areas for each well, and in that case, the
+		 * areas are found as a child element of the well element. Either the
+		 * definition of areas is common to all wells, and in that case they
+		 * area defined in a separate element.
+		 */
+
+		final boolean sameAreaPerWell = Boolean.parseBoolean( getChildText( msRoot, "UsesSameAreaParWell" ) );
+		List< AreaInfo > areas = null;
+		if ( sameAreaPerWell )
+		{
+			final Element areasEl = getChild( msRoot, new String[] { "SameAreaUsingWell", "Areas" } );
+			final List< Element > areaEls = getChildren( areasEl, "Area" );
+			int areaIndex = 0;
+			areas = new ArrayList< AreaInfo >( areaEls.size() );
+			for ( final Element areaEl : areaEls )
+			{
+				final AreaInfo area = readArea( areaEl, pixelWidth, pixelHeight, tileWidth, tileHeight );
+				area.index = areaIndex++;
+				areas.add( area );
+			}
+		}
+
 		final Element wellsEl = getChild( msRoot, "Wells" );
 		final List< Element > wellEls = getChildren( wellsEl, "Well" );
 		wells = new ArrayList< WellInfo >();
@@ -604,6 +595,11 @@ public class CellVoyagerReader extends FormatReader
 			if ( isWellEnabled )
 			{
 				final WellInfo wi = readWellInfo( wellEl, pixelWidth, pixelHeight, tileWidth, tileHeight );
+				if ( sameAreaPerWell )
+				{
+					wi.areas = areas;
+				}
+
 				wells.add( wi );
 			}
 		}
@@ -631,6 +627,7 @@ public class CellVoyagerReader extends FormatReader
 		 * of 20 fields, you will get 20 series, and each series will be
 		 * stitched from 20 fields.
 		 */
+
 
 		core.clear();
 		for ( final WellInfo well : wells )
@@ -733,17 +730,23 @@ public class CellVoyagerReader extends FormatReader
 			store.setWellRow( new NonNegativeInteger( well.row ), 0, wellIndex );
 			store.setWellColumn( new NonNegativeInteger( well.col ), 0, wellIndex );
 			store.setWellID( "" + well.UID, 0, wellIndex );
+			int areaIndex = -1;
 			for ( final AreaInfo area : well.areas )
 			{
+				areaIndex++;
+				final String imageName = "Well " + wellIndex + " (r = " + well.row + ", col = " + well.col + ") - Area " + areaIndex;
+				store.setImageName(imageName, seriesIndex );
+
 				store.setWellSampleIndex( new NonNegativeInteger( area.index ), 0, wellIndex, area.index );
 				store.setWellSampleID( "" + area.UID, 0, wellIndex, area.index );
 				store.setWellSamplePositionX( Double.valueOf( well.centerX ), 0, wellIndex, area.index );
 				store.setWellSamplePositionY( Double.valueOf( well.centerY ), 0, wellIndex, area.index );
 
-				int channelIndex = 0;
+				channelIndex = 0;
 				for ( int i = 0; i < channelInfos.size(); i++ )
 				{
 					store.setChannelPinholeSize( pinholeSize, seriesIndex, channelIndex++ );
+					store.setChannelName( channelInfos.get( i ).name, seriesIndex, i );
 				}
 			}
 
@@ -777,8 +780,19 @@ public class CellVoyagerReader extends FormatReader
 		final int b = Integer.parseInt( getChildText( colorElement, "B" ) );
 		final int a = Integer.parseInt( getChildText( colorElement, "A" ) );
 		final Color channelColor = new Color( r, g, b, a );
-
 		ci.color = channelColor;
+
+		// Build a channel name from excitation, emission and fluorophore name
+		final String excitationType = getChild( channelEl, "Excitation" ).getAttribute( "xsi:type" );
+		final String excitationName = getChildText( channelEl, new String[] { "Excitation", "Name", "Value" } );
+		final String emissionName = getChildText( channelEl, new String[] { "Emission", "Name", "Value" } );
+		String fluorophoreName = getChildText( channelEl, new String[] { "Emission", "FluorescentProbe", "Value" } );
+		if ( null == fluorophoreName )
+		{
+			fluorophoreName = "ø";
+		}
+		final String channelName = "Ex: " + excitationType + "(" + excitationName + ") / Em: " + emissionName + " / Fl: " + fluorophoreName;
+		ci.name = channelName;
 
 		return ci;
 
@@ -987,6 +1001,8 @@ public class CellVoyagerReader extends FormatReader
 	private static final class ChannelInfo
 	{
 
+		public String name;
+
 		public Color color;
 
 		public int height;
@@ -1010,6 +1026,7 @@ public class CellVoyagerReader extends FormatReader
 		{
 			final StringBuffer str = new StringBuffer();
 			str.append( "Channel " + channelNumber + ": \n" );
+			str.append( " - name: " + name + "\n" );
 			str.append( " - isEnabled: " + isEnabled + "\n" );
 			str.append( " - width: " + width + "\n" );
 			str.append( " - height: " + height + "\n" );
@@ -1137,14 +1154,31 @@ public class CellVoyagerReader extends FormatReader
 		return xmlString;
 	}
 
-	public static void main( final String[] args ) throws IOException, FormatException
+	public static void main( final String[] args ) throws IOException, FormatException, ServiceException
 	{
-		final String id = "/Users/tinevez/Projects/EArena/Data/TestDataset/20131025T092701/MeasurementSetting.xml";
+		// final String id =
+		// "/Users/tinevez/Projects/EArena/Data/TestDataset/20131025T092701/MeasurementSetting.xml";
 		// final String id =
 		// "/Users/tinevez/Projects/EArena/Data/30um sections at 40x - last round/1_3_1_2_2/20130731T133622/MeasurementResult.xml";
+		final String id = "/Users/tinevez/Projects/EArena/Data/TestDataset/20131030T142837";
 
 		final CellVoyagerReader importer = new CellVoyagerReader();
 		importer.setId( id );
+
+		final List< CoreMetadata > cms = importer.getCoreMetadataList();
+		for ( final CoreMetadata coreMetadata : cms )
+		{
+			System.out.println( coreMetadata );
+		}
+
+		final Hashtable< String, Object > meta = importer.getGlobalMetadata();
+		final String[] keys = MetadataTools.keys( meta );
+		for ( final String key : keys )
+		{
+			System.out.println( key + " = " + meta.get( key ) );
+		}
+
 		importer.close();
+
 	}
 }
