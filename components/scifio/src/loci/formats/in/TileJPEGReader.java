@@ -41,6 +41,7 @@ import java.util.Hashtable;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
+import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -48,6 +49,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.JPEGTurboService;
+import loci.formats.services.JPEGTurboServiceImpl;
 
 /**
  * Reader for decoding JPEG images using java.awt.Toolkit.
@@ -65,6 +68,7 @@ public class TileJPEGReader extends FormatReader {
   // -- Fields --
 
   private JPEGTileDecoder decoder;
+  private JPEGTurboService service;
 
   // -- Constructor --
 
@@ -83,15 +87,20 @@ public class TileJPEGReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int c = getRGBChannelCount();
+    if (service != null) {
+      service.getTile(buf, x, y, w, h);
+    }
+    else {
+      int c = getRGBChannelCount();
 
-    for (int ty=y; ty<y+h; ty++) {
-      byte[] scanline = decoder.getScanline(ty);
-      if (scanline == null) {
-        decoder.initialize(currentId, 0);
-        scanline = decoder.getScanline(ty);
+      for (int ty=y; ty<y+h; ty++) {
+        byte[] scanline = decoder.getScanline(ty);
+        if (scanline == null) {
+          decoder.initialize(currentId, 0);
+          scanline = decoder.getScanline(ty);
+        }
+        System.arraycopy(scanline, c * x, buf, (ty - y) * c * w, c * w);
       }
-      System.arraycopy(scanline, c * x, buf, (ty - y) * c * w, c * w);
     }
 
     return buf;
@@ -105,6 +114,10 @@ public class TileJPEGReader extends FormatReader {
         decoder.close();
       }
       decoder = null;
+      if (service != null) {
+        service.close();
+      }
+      service = null;
     }
   }
 
@@ -127,7 +140,22 @@ public class TileJPEGReader extends FormatReader {
     m.sizeY = decoder.getHeight();
     m.sizeZ = 1;
     m.sizeT = 1;
-    m.sizeC = decoder.getScanline(0).length / getSizeX();
+    try {
+      m.sizeC = decoder.getScanline(0).length / getSizeX();
+    }
+    catch (Exception e) {
+      decoder.close();
+      in = new RandomAccessInputStream(id);
+      in.seek(0);
+      service = new JPEGTurboServiceImpl();
+      try {
+        service.initialize(in, m.sizeX, m.sizeY);
+      }
+      catch (ServiceException se) {
+        throw new FormatException("Could not initialize JPEG service", se);
+      }
+      m.sizeC = 3;
+    }
     m.rgb = getSizeC() > 1;
     m.imageCount = 1;
     m.pixelType = FormatTools.UINT8;
