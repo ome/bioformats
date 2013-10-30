@@ -907,16 +907,12 @@ ${customUpdatePropertyContent[prop.name]}
 {% if fu.SOURCE_TYPE == "source" %}\
       void
       ${klass.name}::set${prop.methodName} (${prop.instanceVariableType}::size_type index,
-                             ${prop.argType} ${prop.argumentName})
+                                            ${prop.argType} ${prop.argumentName})
       {
 {% if klass.type != 'OME' %}\
         std::weak_ptr<${klass.type}> self(std::shared_ptr<${klass.type}>(this));
         ${prop.argumentName}->set${klass.type}(self);
 {% end %}\
-        /**
-         * @todo Check if the java arraylist.set would insert if at
-         * the end?  May need to push_back if 1 past the end.
-         */
         ${prop.instanceVariableName}.at(index) = ${prop.argumentName};
       }
 {% end source %}\
