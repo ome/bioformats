@@ -31,5 +31,6 @@
     <dependency org="bf-deps" name="perf4j" rev="0.9.13"/>
     <dependency org="bf-deps" name="kryo" rev="2.21-shaded"/>
     <dependency org="bf-deps" name="joda-time" rev="2.2"/>
+    <dependency org="bf-deps" name="JWlz" rev="1.4.0"/>
   </dependencies>
 </ivy-module>
