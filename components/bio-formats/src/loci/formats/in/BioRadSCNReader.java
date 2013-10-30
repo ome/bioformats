@@ -39,7 +39,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
-import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
@@ -258,22 +257,10 @@ public class BioRadSCNReader extends FormatReader {
     {
       key = qName;
 
-      String realKey = null;
-      String realValue = null;
-
       for (int i=0; i<attributes.getLength(); i++) {
         String attrKey = attributes.getQName(i);
         String attrValue = attributes.getValue(i);
-
-        if (attrKey.equals("name")) {
-          realKey = attrValue;
-        }
-        else if (attrKey.equals("value")) {
-          realValue = attrValue;
-        }
-        else {
-          addGlobalMeta(key + " " + attrKey, attrValue);
-        }
+        addGlobalMeta(key + " " + attrKey, attrValue);
 
         if (key.equals("size_pix")) {
           if (attrKey.equals("width")) {
@@ -324,10 +311,6 @@ public class BioRadSCNReader extends FormatReader {
             model = attrValue;
           }
         }
-      }
-
-      if (realKey != null) {
-        addGlobalMeta(key + " " + realKey, realValue);
       }
     }
 
