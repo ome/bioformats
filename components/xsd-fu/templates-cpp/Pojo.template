@@ -173,10 +173,6 @@ namespace ome
          * instances and references seen during the update.
          * @throws EnumerationException if there is an error
          * instantiating an enumeration during model object creation.
-         *
-{% if klass.parentName is not None %}\
-         * @todo Pass constructor arguments to parent?
-{% end has parent %}\
          */
         ${klass.name} (xerces::dom::Element& element, OMEModel& model);
 {% end header %}\
