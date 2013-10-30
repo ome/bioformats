@@ -1033,7 +1033,10 @@ ${customAsXMLElementPropertyContent[prop.name]}
                  i != ${prop.instanceVariableName}.end();
                  ++i)
               {
-                /// @todo: Does not need to be shared--no new required?
+                // Note that this doesn't strictly need to be a
+                // shared_ptr, but keep compatible with the rest of
+                // the API to allow consistency for future
+                // refactoring.
                 std::shared_ptr<${prop.name}> o(new ${prop.name}());
                 std::shared_ptr<${prop.langTypeNS}> is(*i);
                 if (is)
@@ -1047,7 +1050,9 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.isReference %}\
           {
             // Reference property ${prop.name}
-            /// @todo Does not need to be shared--no new required?
+            // Note that this doesn't strictly need to be a
+            // shared_ptr, but keep compatible with the rest of the
+            // API to allow consistency for future refactoring.
             std::shared_ptr<${prop.name}> o(new ${prop.name}());
             std::shared_ptr<${prop.langTypeNS}> sv(${prop.instanceVariableName});
             o->setID(sv->getID());
