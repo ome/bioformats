@@ -466,6 +466,12 @@ public class VolocityReader extends FormatReader {
     for (int i=0; i<stacks.size(); i++) {
       Stack stack = stacks.get(i);
 
+      if (!new Location(stack.pixelsFiles[0]).exists()) {
+        stacks.remove(i);
+        i--;
+        continue;
+      }
+
       RandomAccessInputStream base =
         new RandomAccessInputStream(stack.pixelsFiles[0]);
       long baseLength = base.length();
