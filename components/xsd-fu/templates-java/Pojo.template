@@ -157,9 +157,9 @@ ${customContent}\
 		super.update(element, model);
 {% if klass.langType != 'Object' %}\
 		// Element's text data
-		String ${klass.name}_value_textContent = element.getTextContent();
-		if (${klass.name}_value_textContent.trim().length() > 0) {
-			${klass.name}_value = ${klass.langType}.valueOf(${klass.name}_value_textContent);
+		String value_textContent = element.getTextContent();
+		if (value_textContent.trim().length() > 0) {
+			value = ${klass.langType}.valueOf(value_textContent);
 		}
 {% end %}\
 {% if not klass.isAbstractProprietary %}\
@@ -343,13 +343,13 @@ ${customUpdatePropertyContent[prop.name]}
 	// Element's text data getter
 	public ${klass.langType} getValue()
 	{
-		return ${klass.name}_value;
+		return this.value;
 	}
 
 	// Element's text data setter
-	public void setValue(${klass.langType} ${klass.name}_value)
+	public void setValue(${klass.langType} value)
 	{
-		this.${klass.name}_value = ${klass.name}_value;
+		this.value = value;
 	}
 {% end %}\
 \
@@ -513,8 +513,8 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if klass.langType != 'Object' %}\
 		// Element's text data
-		if (${klass.name}_value != null) {
-			${klass.name}_element.setTextContent(${klass.name}_value.toString());
+		if (this.value != null) {
+			${klass.name}_element.setTextContent(this.value.toString());
 		}
 
 {% end if NOT Object %}\

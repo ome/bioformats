@@ -1240,7 +1240,7 @@ class OMEModelObject(OMEModelEntity):
         props = list();
 
         if self.langType != 'Object':
-            props.append([self.langType, "%s_value" % self.name, None, "Element's text data"])
+            props.append([self.langType, "value", None, "Element's text data"])
         for prop in self.properties.values():
             props.append([prop.instanceVariableType, prop.instanceVariableName, prop.instanceVariableDefault, prop.instanceVariableComment])
         return props

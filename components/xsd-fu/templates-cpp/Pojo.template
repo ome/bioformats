@@ -255,10 +255,10 @@ ${customContent}\
           if (!text.empty())
             {
               std::istringstream is(text);
-              is >> ${klass.name}_value;
+              is >> this->value;
               /// @todo Properly format error.
               if (!is)
-                throw std::runtime_error("Failed to parse ${klass.name}_value");
+                throw std::runtime_error("Failed to parse ${klass.name} value");
             }
         }
 {% end %}\
@@ -311,7 +311,7 @@ ${customUpdatePropertyContent[prop.name]}
  //            std::istringstream is(element.getAttribute("${prop.name}"));
  //            is >> id;
  //            if (!is)
- //              throw std::runtime_error("Failed to parse ${klass.name}_value");
+ //              throw std::runtime_error("Failed to parse ${klass.name} value");
  //            set${prop.methodName}(id);
  //            // Adding this model object to the model handler
  //            model.addModelObject(getID(), this);
@@ -343,7 +343,7 @@ ${customUpdatePropertyContent[prop.name]}
               is >> attr;
 {% end %}\
               if (!is)
-                throw std::runtime_error("Failed to parse ${klass.name}_value");
+                throw std::runtime_error("Failed to parse ${klass.name} value");
 
               set${prop.methodName}(attr);
             }
@@ -519,7 +519,7 @@ ${prop.langTypeNS} attr;
       const ${klass.langType}&
       ${klass.name}::getValue () const
       {
-        return ${klass.name}_value;
+        return this->value;
       }
 {% end source %}\
 
@@ -527,21 +527,16 @@ ${prop.langTypeNS} attr;
         /**
          * Set element value.
          *
-         * @param ${klass.name}_value the ${klass.langType} value.
-         *
-         * @todo Prefixing the value with @c ${klass.name}_ is
-         * entirely pointless both here and in the Java
-         * implementation, and makes the code generation more complex
-         * than necessary.
+         * @param value the ${klass.langType} value.
          */
         void
-        setValue (const ${klass.langType}& ${klass.name}_value);
+        setValue (const ${klass.langType}& value);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::setValue (const ${klass.langType}& ${klass.name}_value)
+      ${klass.name}::setValue (const ${klass.langType}& value)
       {
-        this->${klass.name}_value = ${klass.name}_value;
+        this->value = value;
       }
 {% end source %}\
 {% end not object %}\
@@ -1016,13 +1011,17 @@ ${prop.langTypeNS} attr;
 
 {% if klass.langType != 'Object' %}\
         // Element's text data
-//            if (!${klass.name}_value.empty()) {
+//            if (!this->value.empty()) {
+{% if klass.langType != 'std::string' %}\
         {
           std::ostringstream os;
-          os << ${klass.name}_value;
+          os << this->value;
           element.setTextContent(os.str());
         }
-
+{% end %}\
+{% if klass.langType == 'std::string' %}\
+        element.setTextContent(this->value);
+{% end %}\
 {% end %}\
 {% for prop in klass.properties.values() %}\
 {% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() %}\
