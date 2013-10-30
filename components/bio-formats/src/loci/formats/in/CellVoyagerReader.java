@@ -57,11 +57,7 @@ public class CellVoyagerReader extends FormatReader
 
 	private static final String SINGLE_TIFF_PATH_BUILDER = "Image/W%dF%03dT%04dZ%02dC%d.tif";
 
-	private static final String NAMESPACE = "http://www.yokogawa.co.jp/BTS/BTSSchema/1.0";
-
 	private Location measurementFolder;
-
-	private List< String > imageList;
 
 	private List< ChannelInfo > channelInfos;
 
@@ -71,8 +67,6 @@ public class CellVoyagerReader extends FormatReader
 
 	private Location measurementResultFile;
 
-	private Location imageIndexFile;
-
 	private Location omeMeasurementFile;
 
 	public CellVoyagerReader()
@@ -81,7 +75,7 @@ public class CellVoyagerReader extends FormatReader
 		this.suffixNecessary = false;
 		this.suffixSufficient = false;
 		this.hasCompanionFiles = true;
-		this.datasetDescription = "Directory with 3 master files 'MeasurementResult.xml', 'MeasurementResult.ome.xml' and 'ImageIndex.xml', used to stich together several tiff files.";
+		this.datasetDescription = "Directory with 2 master files 'MeasurementResult.xml' and 'MeasurementResult.ome.xml', used to stich together several TIF files.";
 		this.domains = new String[] { FormatTools.HISTOLOGY_DOMAIN, FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN };
 	}
 
@@ -226,9 +220,6 @@ public class CellVoyagerReader extends FormatReader
 		measurementResultFile = new Location( measurementFolder, "MeasurementResult.xml" );
 		if ( !measurementResultFile.exists() ) { throw new IOException( "Could not find " + measurementResultFile + " in folder." ); }
 
-		imageIndexFile = new Location( measurementFolder, "ImageIndex.xml" );
-		if ( !imageIndexFile.exists() ) { throw new IOException( "Could not find " + imageIndexFile + " in folder." ); }
-
 		omeMeasurementFile = new Location( measurementFolder, "MeasurementResult.ome.xml" );
 		if ( !omeMeasurementFile.exists() ) { throw new IOException( "Could not find " + omeMeasurementFile + " in folder." ); }
 
@@ -262,11 +253,10 @@ public class CellVoyagerReader extends FormatReader
 		 * Open OME metadata file
 		 */
 
-		final Location omeXmlFile = new Location( measurementFolder, "MeasurementResult.ome.xml" );
 		Document omeDocument = null;
 		try
 		{
-			omeDocument = dBuilder.parse( omeXmlFile.getAbsolutePath() );
+			omeDocument = dBuilder.parse( omeMeasurementFile.getAbsolutePath() );
 		}
 		catch ( final SAXException e )
 		{
@@ -281,35 +271,6 @@ public class CellVoyagerReader extends FormatReader
 		 */
 
 		readInfo( msDocument, omeDocument );
-
-		/*
-		 * Build image list
-		 */
-
-		final DocumentBuilderFactory dbFactory2 = DocumentBuilderFactory.newInstance();
-		dbFactory2.setNamespaceAware( true );
-		DocumentBuilder dBuilder2 = null;
-		try
-		{
-			dBuilder2 = dbFactory2.newDocumentBuilder();
-		}
-		catch ( final ParserConfigurationException e )
-		{
-			e.printStackTrace();
-		}
-		Document document2 = null;
-		try
-		{
-			document2 = dBuilder2.parse( imageIndexFile.getAbsolutePath() );
-		}
-		catch ( final SAXException e )
-		{
-			e.printStackTrace();
-		}
-
-		document2.getDocumentElement().normalize();
-		imageList = buildImageList( document2 );
-
 	}
 
 	@Override
@@ -319,7 +280,7 @@ public class CellVoyagerReader extends FormatReader
 
 		if ( noPixels )
 		{
-			return new String[] { measurementResultFile.getAbsolutePath(), imageIndexFile.getAbsolutePath() };
+			return new String[] { measurementResultFile.getAbsolutePath(), omeMeasurementFile.getAbsolutePath() };
 		}
 		else
 		{
@@ -331,7 +292,7 @@ public class CellVoyagerReader extends FormatReader
 			final String[] images = new String[ getImageCount() * nFields + 2 ];
 			int index = 0;
 			images[ index++ ] = measurementResultFile.getAbsolutePath();
-			images[ index++ ] = imageIndexFile.getAbsolutePath();
+			images[ index++ ] = omeMeasurementFile.getAbsolutePath();
 
 			for ( final Integer timepoint : timePoints )
 			{
@@ -384,34 +345,6 @@ public class CellVoyagerReader extends FormatReader
 			}
 		}
 		throw new IllegalStateException( "Cannot find a well for series " + series );
-	}
-
-	private List< String > buildImageList( final Document document )
-	{
-		final Element root = document.getDocumentElement();
-
-		final NodeList measurements = root.getElementsByTagNameNS( NAMESPACE, "MeasurementRecord" );
-		final List< String > allFilenames = new ArrayList< String >( measurements.getLength() );
-
-		for ( int i = 0; i < measurements.getLength(); i++ )
-		{
-			final Element element = ( Element ) measurements.item( i );
-
-			final int field = Integer.parseInt( element.getAttributeNS( NAMESPACE, "FieldIndex" ) );
-			final int timepoint = Integer.parseInt( element.getAttributeNS( NAMESPACE, "TimePoint" ) );
-			final int zindex = Integer.parseInt( element.getAttributeNS( NAMESPACE, "ZIndex" ) );
-			final int channel = Integer.parseInt( element.getAttributeNS( NAMESPACE, "Ch" ) );
-			final boolean isMIP = Boolean.parseBoolean( element.getAttributeNS( NAMESPACE, "Mip" ) );
-
-			if ( isMIP )
-			{
-				continue;
-			}
-
-			final String filename = element.getTextContent();
-			allFilenames.add( filename );
-		}
-		return allFilenames;
 	}
 
 	private void readInfo( final Document msDocument, final Document omeDocument ) throws FormatException
