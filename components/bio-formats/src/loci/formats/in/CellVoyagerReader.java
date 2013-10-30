@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -300,12 +301,15 @@ public class CellVoyagerReader extends FormatReader
 				{
 					for ( int channel = 1; channel <= getSizeC(); channel++ )
 					{
-						/*
-						 * Here we compose file names on the fly assuming they
-						 * follow the pattern below. Fragile I guess.
-						 */
-						// FIXME this is NOT areaIndex
-						images[ index++ ] = String.format( SINGLE_TIFF_PATH_BUILDER, wellIndex + 1, areaIndex, timepoint, zslice, channel );
+						for ( final FieldInfo field : area.fields )
+						{
+							/*
+							 * Here we compose file names on the fly assuming
+							 * they follow the pattern below. Fragile I guess.
+							 */
+							images[ index++ ] = measurementFolder.getAbsolutePath() + String.format( SINGLE_TIFF_PATH_BUILDER, wellIndex + 1, field.index, timepoint, zslice, channel );
+						}
+
 					}
 				}
 			}
@@ -1126,21 +1130,27 @@ public class CellVoyagerReader extends FormatReader
 		final CellVoyagerReader importer = new CellVoyagerReader();
 		importer.setId( id );
 
-		// final List< CoreMetadata > cms = importer.getCoreMetadataList();
-		// for ( final CoreMetadata coreMetadata : cms )
-		// {
-		// System.out.println( coreMetadata );
-		// }
-		//
-		// final Hashtable< String, Object > meta =
-		// importer.getGlobalMetadata();
-		// final String[] keys = MetadataTools.keys( meta );
-		// for ( final String key : keys )
-		// {
-		// System.out.println( key + " = " + meta.get( key ) );
-		// }
+		final List< CoreMetadata > cms = importer.getCoreMetadataList();
+		for ( final CoreMetadata coreMetadata : cms )
+		{
+			System.out.println( coreMetadata );
+		}
+
+		final Hashtable< String, Object > meta = importer.getGlobalMetadata();
+		final String[] keys = MetadataTools.keys( meta );
+		for ( final String key : keys )
+		{
+			System.out.println( key + " = " + meta.get( key ) );
+		}
 
 		importer.openBytes( 0 );
+
+		importer.setSeries( 1 );
+		final String[] usedFiles = importer.getSeriesUsedFiles();
+		for ( final String file : usedFiles )
+		{
+			System.out.println( "  " + file );
+		}
 
 		importer.close();
 
