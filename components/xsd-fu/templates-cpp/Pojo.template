@@ -297,27 +297,33 @@ ${customUpdatePropertyContent[prop.name]}
         // *** IGNORING *** Skipped back reference ${prop.name}
 {% end %}\
 {% when prop.isAttribute and prop.name == "ID" %}\
-        /**
-         * @todo This should be validated when parsing the XML, so
-         * that the member does not need to be nullable.
-         */
- // if (!element.hasAttribute("ID") && getID() == null)
- //          {
- //            /// @todo Should be its own exception.
- //            throw new RuntimeException(String.format("${klass.name} missing required ID property."));
- //          }
- //        if (element.hasAttribute("ID"))
- //          {
- //            // ID property
- //            ${prop.langTypeNS} id;
- //            std::istringstream is(element.getAttribute("${prop.name}"));
- //            is >> id;
- //            if (!is)
- //              throw std::runtime_error("Failed to parse ${klass.name} value");
- //            set${prop.methodName}(id);
- //            // Adding this model object to the model handler
- //            model.addModelObject(getID(), this);
- //          }
+        if (!element.hasAttribute("ID") && getID().empty())
+          {
+            /// @todo Should be its own exception.
+            throw std::runtime_error("${klass.name} missing required ID property");
+          }
+        if (element.hasAttribute("ID"))
+           {
+             // ID property
+{% if klass.langType != 'std::string' %}\
+             ${prop.langTypeNS} id;
+             std::istringstream is(element.getAttribute("${prop.name}"));
+             is >> id;
+             if (!is)
+                {
+                  format fmt("Failed to parse ${klass.name} value ‘%1%’");
+                  fmt % is.str();
+                  throw std::runtime_error(fmt.str());
+                }
+             set${prop.methodName}(id);
+{% end %}\
+{% if klass.langType == 'std::string' %}\
+             set${prop.methodName}(element.getAttribute("${prop.name}"));
+{% end %}\
+             // Adding this model object to the model handler
+             std::shared_ptr<OMEModelObject> thisptr(shared_from_this());
+             model.addModelObject(getID(), thisptr);
+           }
 {% end %}\
 {% when prop.isAttribute %}\
         if (element.hasAttribute("${prop.name}"))
