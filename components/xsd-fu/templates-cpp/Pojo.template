@@ -613,10 +613,6 @@ ${customUpdatePropertyContent[prop.name]}
          * @param index the index number of the ${prop.methodName}.
          * @returns a weak pointer to the ${prop.methodName}.
          * @throws std::out_of_range if the index is invalid.
-         *
-         * @todo Should this be shared_ptr rather than weak_ptr for
-         * pointer types?  This would force a strong reference if
-         * another thread were to remove the object.
          */
         const std::weak_ptr<${prop.langTypeNS}>&
         getLinked${prop.methodName} (${prop.instanceVariableType}::size_type index) const;
@@ -640,9 +636,6 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns a weak pointer to the ${prop.methodName}.
          * @throws std::out_of_range if the index is invalid.
          *
-         * @todo Should this be shared_ptr rather than weak_ptr for
-         * pointer types?  This would force a strong reference if
-         * another thread were to remove the object.
          * @todo object isn't a great parameter name; use something
          * better.
          */
