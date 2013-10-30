@@ -1409,7 +1409,7 @@
 				The value is a list of four float values range 0 to 1.
 				The list is space separated and has the values arranged as "R G B A".
 				The move to using floats removes the restriction of colours to those of 8-bit images.
-				Not the full range of 16-bit and Float image types can be used.
+				Now the full range of 16-bit and Float image types can be used.
 				e.g "1 0.4117 0.7059 1"     is solid bright pink
 				    "0.133 0.545 0.133 0.5" is 50% transparent forest green
 				NOTE: Prior to the 2012-06 schema the default values used across in the schema were incorrect and produced a transparent red not solid white.
