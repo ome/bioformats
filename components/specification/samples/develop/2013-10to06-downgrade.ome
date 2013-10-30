@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10"
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10"
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10"
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10
-		/Users/andrew/Work/bioformats/components/specification/inprogress/ome.xsd">
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-1"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-1"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1
+		../../released-schema/2013-10-dev-1/ome.xsd">
 	
 	<OME:Project ID="Project:0">
 		<OME:DatasetRef ID="Dataset:0"/>
