@@ -101,7 +101,7 @@ public class BDReader extends FormatReader {
     hasCompanionFiles = true;
     suffixSufficient = false;
     suffixNecessary = false;
-    datasetDescription = "Multiple files (.exp, .dye, .ltp, ...) plus " +
+    datasetDescription = "Multiple files (.exp, .dye, .ltp, …) plus " +
       "one or more directories containing .tif and .bmp files";
   }
 
