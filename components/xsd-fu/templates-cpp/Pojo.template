@@ -678,8 +678,7 @@ ${customUpdatePropertyContent[prop.name]}
         object->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% end %}\
-        /// @todo should the logic be inverted here?
-        if (contains(${prop.instanceVariableName}, object))
+        if (!contains(${prop.instanceVariableName}, object))
           {
             ${prop.instanceVariableName}.push_back(object);
             return true;
