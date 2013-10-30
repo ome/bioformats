@@ -68,9 +68,13 @@
 
 #include <ome/xerces/String.h>
 
+#include <boost/format.hpp>
+
 {% for include in klass.source_dependencies %}\
 #include <${include}>
 {% end for%}\
+
+using boost::format;
 {% end source%}\
 
 namespace ome
@@ -252,9 +256,12 @@ ${customContent}\
             {
               std::istringstream is(text);
               is >> this->value;
-              /// @todo Properly format error.
               if (!is)
-                throw std::runtime_error("Failed to parse ${klass.name} value");
+                {
+                  format fmt("Failed to parse ${klass.name} value ‘%1%’");
+                  fmt % text;
+                  throw std::runtime_error(fmt.str());
+                }
             }
         }
 {% end %}\
@@ -339,7 +346,11 @@ ${customUpdatePropertyContent[prop.name]}
               is >> attr;
 {% end %}\
               if (!is)
-                throw std::runtime_error("Failed to parse ${klass.name} value");
+                {
+                  format fmt("Failed to parse ${klass.name} value ‘%1%’");
+                  fmt % is.str();
+                  throw std::runtime_error(fmt.str());
+                }
 
               set${prop.methodName}(attr);
             }
@@ -351,9 +362,9 @@ ${customUpdatePropertyContent[prop.name]}
         if (${prop.name}_nodeList.size() > 1)
           {
             /// @todo Should be its own Exception.
-            std::ostringstream os;
-            os << "${prop.name} node list size " << ${prop.name}_nodeList.size() << " != 1";
-            throw std::runtime_error(os.str());
+            format fmt("${prop.name} node list size %1% != 1");
+            fmt % ${prop.name}_nodeList.size();
+            throw std::runtime_error(fmt.str());
           }
         else if (${prop.name}_nodeList.size() != 0)
           {
