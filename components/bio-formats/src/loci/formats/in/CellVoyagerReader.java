@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -35,6 +34,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
@@ -54,6 +54,8 @@ import org.xml.sax.SAXException;
 
 public class CellVoyagerReader extends FormatReader
 {
+
+	private static final String SINGLE_TIFF_PATH_BUILDER = "Image/W%dF%03dT%04dZ%02dC%d.tif";
 
 	private static final String NAMESPACE = "http://www.yokogawa.co.jp/BTS/BTSSchema/1.0";
 
@@ -75,7 +77,7 @@ public class CellVoyagerReader extends FormatReader
 
 	public CellVoyagerReader()
 	{
-		super( "CellVoyager", new String[] { "tif", "tiff", "xml" } );
+		super( "CellVoyager", new String[] { "tif", "xml" } );
 		this.suffixNecessary = false;
 		this.suffixSufficient = false;
 		this.hasCompanionFiles = true;
@@ -90,10 +92,6 @@ public class CellVoyagerReader extends FormatReader
 
 		final CoreMetadata cm = core.get( getSeries() );
 
-		/*
-		 * TODO FIXME TODO BROKEN Waiting for the metadata to be properly set.
-		 */
-
 		final int nImagesPerTimepoint = cm.sizeC * cm.sizeZ;
 		final int targetTindex = no / nImagesPerTimepoint;
 
@@ -107,26 +105,25 @@ public class CellVoyagerReader extends FormatReader
 		final WellInfo well = wells.get( wellIndex );
 		final AreaInfo area = well.areas.get( areaIndex );
 		final MinimalTiffReader tiffReader = new MinimalTiffReader();
+
 		for ( final FieldInfo field : area.fields )
 		{
-			// final int fieldIndex = field. TODO
-			String filename = "Image/W7F001T0001Z01C1.tif"; // TODO
+
+			String filename = String.format( SINGLE_TIFF_PATH_BUILDER, wellIndex + 1, field.index, targetTindex + 1, targetZindex + 1, targetCindex + 1 );
 			filename = filename.replace( '\\', File.separatorChar );
 			final Location image = new Location( measurementFolder, filename );
 			if ( !image.exists() ) { throw new IOException( "Could not find required file: " + image ); }
 
 			tiffReader.setId( image.getAbsolutePath() );
 
-			final long[] offset = null; // ci.offsets.get( fieldIndex - 1 );
-
 			// Tile size
-			final int tw = 0; // ci.tileWidth;
-			final int th = 0; // ci.tileHeight;
+			final int tw = channelInfos.get( 0 ).tileWidth;
+			final int th = channelInfos.get( 0 ).tileHeight;
 
 			// Field bounds in full final image, full width, full height
 			// (referential named '0', as if x=0 and y=0).
-			final int xbs0 = ( int ) ( offset[ 0 ] );
-			final int ybs0 = ( int ) ( offset[ 1 ] );
+			final int xbs0 = ( int ) field.xpixels;
+			final int ybs0 = ( int ) field.ypixels;
 
 			// Subimage bounds in full final image is simply x, y, x+w, y+h
 
@@ -346,7 +343,8 @@ public class CellVoyagerReader extends FormatReader
 						 * Here we compose file names on the fly assuming they
 						 * follow the pattern below. Fragile I guess.
 						 */
-						images[ index++ ] = String.format( "Image/W%dF%3dT%4dZ%2dC%d", wellIndex, areaIndex, timepoint, zslice, channel );
+						// FIXME this is NOT areaIndex
+						images[ index++ ] = String.format( SINGLE_TIFF_PATH_BUILDER, wellIndex + 1, areaIndex, timepoint, zslice, channel );
 					}
 				}
 			}
@@ -578,11 +576,15 @@ public class CellVoyagerReader extends FormatReader
 			final List< Element > areaEls = getChildren( areasEl, "Area" );
 			int areaIndex = 0;
 			areas = new ArrayList< AreaInfo >( areaEls.size() );
+			int fieldIndex = 1;
 			for ( final Element areaEl : areaEls )
 			{
-				final AreaInfo area = readArea( areaEl, pixelWidth, pixelHeight, tileWidth, tileHeight );
+				final AreaInfo area = readArea( areaEl, fieldIndex, pixelWidth, pixelHeight, tileWidth, tileHeight );
 				area.index = areaIndex++;
 				areas.add( area );
+
+				// Continue incrementing field index across areas.
+				fieldIndex = area.fields.get( area.fields.size() - 1 ).index + 1;
 			}
 		}
 
@@ -677,6 +679,7 @@ public class CellVoyagerReader extends FormatReader
 
 		final MetadataStore store = makeFilterMetadata();
 		MetadataTools.populatePixels( store, this, true );
+		MetadataConverter.convertMetadata( omeMD, store );
 
 		/*
 		 * Pinhole disk
@@ -723,24 +726,26 @@ public class CellVoyagerReader extends FormatReader
 
 		// Wells position on the plate
 		int seriesIndex = -1;
+		int wellIndex = -1;
 		for ( final WellInfo well : wells )
 		{
-			seriesIndex++;
-			final int wellIndex = well.number;
+			wellIndex++;
+			final int wellNumber = well.number;
 			store.setWellRow( new NonNegativeInteger( well.row ), 0, wellIndex );
 			store.setWellColumn( new NonNegativeInteger( well.col ), 0, wellIndex );
 			store.setWellID( "" + well.UID, 0, wellIndex );
 			int areaIndex = -1;
 			for ( final AreaInfo area : well.areas )
 			{
+				seriesIndex++;
 				areaIndex++;
-				final String imageName = "Well " + wellIndex + " (r = " + well.row + ", col = " + well.col + ") - Area " + areaIndex;
+				final String imageName = "Well " + wellNumber + " (r=" + well.row + ", c=" + well.col + ") - Area " + areaIndex;
 				store.setImageName(imageName, seriesIndex );
 
-				store.setWellSampleIndex( new NonNegativeInteger( area.index ), 0, wellIndex, area.index );
-				store.setWellSampleID( "" + area.UID, 0, wellIndex, area.index );
-				store.setWellSamplePositionX( Double.valueOf( well.centerX ), 0, wellIndex, area.index );
-				store.setWellSamplePositionY( Double.valueOf( well.centerY ), 0, wellIndex, area.index );
+				store.setWellSampleIndex( new NonNegativeInteger( area.index ), 0, wellIndex, areaIndex );
+				store.setWellSampleID( "" + area.UID, 0, wellIndex, areaIndex );
+				store.setWellSamplePositionX( Double.valueOf( well.centerX ), 0, wellIndex, areaIndex );
+				store.setWellSamplePositionY( Double.valueOf( well.centerY ), 0, wellIndex, areaIndex );
 
 				channelIndex = 0;
 				for ( int i = 0; i < channelInfos.size(); i++ )
@@ -811,17 +816,21 @@ public class CellVoyagerReader extends FormatReader
 		final Element areasEl = getChild( wellEl, "Areas" );
 		final List< Element > areaEls = getChildren( areasEl, "Area" );
 		int areaIndex = 0;
+		int fieldIndex = 1;
 		for ( final Element areaEl : areaEls )
 		{
-			final AreaInfo area = readArea( areaEl, pixelWidth, pixelHeight, tileWidth, tileHeight );
+			final AreaInfo area = readArea( areaEl, fieldIndex, pixelWidth, pixelHeight, tileWidth, tileHeight );
 			area.index = areaIndex++;
 			info.areas.add( area );
+
+			// Continue incrementing field index across areas.
+			fieldIndex = area.fields.get( area.fields.size() - 1 ).index + 1;
 		}
 
 		return info;
 	}
 
-	private AreaInfo readArea( final Element areaEl, final double pixelWidth, final double pixelHeight, final int tileWidth, final int tileHeight )
+	private AreaInfo readArea( final Element areaEl, int startingFieldIndex, final double pixelWidth, final double pixelHeight, final int tileWidth, final int tileHeight )
 	{
 		final AreaInfo info = new AreaInfo();
 		info.UID = Integer.parseInt( getChildText( areaEl, "UniqueID" ) );
@@ -872,11 +881,28 @@ public class CellVoyagerReader extends FormatReader
 			finfo.xpixels = xpixels;
 			finfo.ypixels = ypixels;
 
-			final int width = 1 + ( int ) ( ( xmax - xmin ) / pixelWidth );
-			final int height = 1 + ( int ) ( ( ymax - ymin ) / pixelHeight );
-			info.width = width + tileWidth;
-			info.height = height + tileHeight;
+			/*
+			 * Field index.
+			 *
+			 * Now there is a complexity regarding the way fields (that is:
+			 * tiles in common meaning) are indexed in the 'ImageIndex.xml'
+			 * file. Even if for a well you have two areas made of 5 tiles each,
+			 * there is no indexing of the areas. The field index simply keeps
+			 * increasing when you go from one area to the next one, and this
+			 * index follows the appearance order of the 'Field' xml element in
+			 * the 'MeasurementResult.xml' file.
+			 */
+
+			finfo.index = startingFieldIndex++;
 		}
+
+		final int width = 1 + ( int ) ( ( xmax - xmin ) / pixelWidth );
+		final int height = 1 + ( int ) ( ( ymax - ymin ) / pixelHeight );
+		info.width = width + tileWidth;
+		info.height = height + tileHeight;
+
+
+
 		return info;
 	}
 
@@ -917,6 +943,8 @@ public class CellVoyagerReader extends FormatReader
 	private static final class FieldInfo
 	{
 
+		public int index;
+
 		public long ypixels;
 
 		public long xpixels;
@@ -928,7 +956,7 @@ public class CellVoyagerReader extends FormatReader
 		@Override
 		public String toString()
 		{
-			return "\t\tField\n\t\t\tX = " + x + " µm\n\t\t\tY = " + y + " µm\n" + "\t\t\txi = " + xpixels + " pixels\n" + "\t\t\tyi = " + ypixels + " pixels\n";
+			return "\t\tField index = " + index + "\n\t\t\tX = " + x + " µm\n\t\t\tY = " + y + " µm\n" + "\t\t\txi = " + xpixels + " pixels\n" + "\t\t\tyi = " + ypixels + " pixels\n";
 		}
 
 	}
@@ -1165,18 +1193,21 @@ public class CellVoyagerReader extends FormatReader
 		final CellVoyagerReader importer = new CellVoyagerReader();
 		importer.setId( id );
 
-		final List< CoreMetadata > cms = importer.getCoreMetadataList();
-		for ( final CoreMetadata coreMetadata : cms )
-		{
-			System.out.println( coreMetadata );
-		}
+		// final List< CoreMetadata > cms = importer.getCoreMetadataList();
+		// for ( final CoreMetadata coreMetadata : cms )
+		// {
+		// System.out.println( coreMetadata );
+		// }
+		//
+		// final Hashtable< String, Object > meta =
+		// importer.getGlobalMetadata();
+		// final String[] keys = MetadataTools.keys( meta );
+		// for ( final String key : keys )
+		// {
+		// System.out.println( key + " = " + meta.get( key ) );
+		// }
 
-		final Hashtable< String, Object > meta = importer.getGlobalMetadata();
-		final String[] keys = MetadataTools.keys( meta );
-		for ( final String key : keys )
-		{
-			System.out.println( key + " = " + meta.get( key ) );
-		}
+		importer.openBytes( 0 );
 
 		importer.close();
 
