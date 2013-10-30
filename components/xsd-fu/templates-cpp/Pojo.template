@@ -569,21 +569,16 @@ ${prop.langTypeNS} attr;
 
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
-         * Get a copy of the linked ${prop.methodName} list.
+         * Get the linked ${prop.methodName} list.
          *
-         * @returns a copy of the the list.
-         *
-         * @todo This method is from the Java implementation.  It
-         * doesn't make as much sense for C++.  It should just return
-         * a reference or else there will be two copies made.  The
-         * copy will happen on assignment as well as on return.
+         * @returns a reference to the list.
          */
         ${prop.instanceVariableType}
-        copyLinked${prop.methodName}List ();
+        getLinked${prop.methodName}List () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.instanceVariableType}
-      ${klass.name}::copyLinked${prop.methodName}List ()
+      ${klass.name}::getLinked${prop.methodName}List () const
       {
         return ${prop.instanceVariableName};
       }
@@ -845,21 +840,17 @@ ${prop.langTypeNS} attr;
 
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
-         * Copy ${prop.methodName} list.
+         * Get the ${prop.methodName} list.
          *
-         * @returns a copy of the list.
+         * @returns a reference to the list.
          *
-         * @todo This method is from the Java implementation.  It
-         * doesn't make as much sense for C++.  It should just return
-         * a reference or else there will be two copies made.  The
-         * copy will happen on assignment as well as on return.
          */
         const ${prop.instanceVariableType}&
-        copy${prop.methodName}List ();
+        get${prop.methodName}List () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const ${prop.instanceVariableType}&
-      ${klass.name}::copy${prop.methodName}List ()
+      ${klass.name}::get${prop.methodName}List () const
       {
         return ${prop.instanceVariableName};
       }
