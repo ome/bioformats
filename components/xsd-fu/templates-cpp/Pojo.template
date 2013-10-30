@@ -798,9 +798,6 @@ ${prop.langTypeNS} attr;
          * Set the ${prop.methodName} property.
          *
          * @param ${prop.argumentName} the value to set.
-         *
-         * @todo The ${prop.argumentName} argument name could simply
-         * be @a value and make the code generation simpler.
          */
         void
         set${prop.methodName} (${prop.argType} ${prop.argumentName});
@@ -880,7 +877,6 @@ ${prop.langTypeNS} attr;
          * @param ${prop.argumentName} the ${prop.methodName} to set.
          * @throws std::out_of_range if the index is invalid.
          *
-         * @todo Don't use @a ${prop.argumentName} as an argument name.
          * @todo Is this a value type under all circumstances?
          * @todo Return type set to void since we can't return
          * abstract types by value.
@@ -912,7 +908,6 @@ ${prop.langTypeNS} attr;
          *
          * @param ${prop.argumentName} the ${prop.methodName} to add.
          *
-         * @todo Don't use @a ${prop.argumentName} as an argument name.
          * @todo Return list position?
          * @todo Detect and handle duplicates?
          */
@@ -937,7 +932,6 @@ ${prop.langTypeNS} attr;
          *
          * @param ${prop.argumentName} the ${prop.methodName} to remove.
          *
-         * @todo Don't use @a ${prop.argumentName} as an argument name.
          * @todo Doesn't the removal break the indexing?
          * @todo Does the removal deal with multiple instances; we
          * aren't preventing duplicates on insertion.
