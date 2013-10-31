@@ -118,6 +118,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
@@ -178,6 +179,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
@@ -204,6 +206,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
@@ -230,6 +233,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
@@ -256,6 +260,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
@@ -282,6 +287,7 @@ Type "ant -p" for a list of targets.
       <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.configSuffix" value="${testng.configSuffix}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
       <sysproperty key="lurawave.license" value="${lurawave.license}"/>
       <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
