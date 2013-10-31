@@ -64,6 +64,7 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
+import loci.formats.Modulo;
 import loci.formats.UpgradeChecker;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
@@ -529,8 +530,9 @@ public class ImageInfo {
       boolean falseColor = reader.isFalseColor();
       byte[][] table8 = reader.get8BitLookupTable();
       short[][] table16 = reader.get16BitLookupTable();
-      int[] cLengths = reader.getChannelDimLengths();
-      String[] cTypes = reader.getChannelDimTypes();
+      Modulo moduloZ = reader.getModuloZ();
+      Modulo moduloC = reader.getModuloC();
+      Modulo moduloT = reader.getModuloT();
       int thumbSizeX = reader.getThumbSizeX();
       int thumbSizeY = reader.getThumbSizeY();
       boolean little = reader.isLittleEndian();
@@ -588,37 +590,11 @@ public class ImageInfo {
       }
       LOGGER.info("\tWidth = {}", sizeX);
       LOGGER.info("\tHeight = {}", sizeY);
-      LOGGER.info("\tSizeZ = {}", sizeZ);
-      LOGGER.info("\tSizeT = {}", sizeT);
 
-      sb.setLength(0);
-      sb.append("\tSizeC = ");
-      sb.append(sizeC);
-      if (sizeC != effSizeC) {
-        sb.append(" (effectively ");
-        sb.append(effSizeC);
-        sb.append(")");
-      }
-      int cProduct = 1;
-      if (cLengths.length == 1 && FormatTools.CHANNEL.equals(cTypes[0])) {
-        cProduct = cLengths[0];
-      }
-      else {
-        sb.append(" (");
-        for (int i=0; i<cLengths.length; i++) {
-          if (i > 0) sb.append(" x ");
-          sb.append(cLengths[i]);
-          sb.append(" ");
-          sb.append(cTypes[i]);
-          cProduct *= cLengths[i];
-        }
-        sb.append(")");
-      }
-      LOGGER.info(sb.toString());
+      printDimension("SizeZ", sizeZ, sizeZ, moduloZ);
+      printDimension("SizeT", sizeT, sizeT, moduloT);
+      printDimension("SizeC", sizeC, effSizeC, moduloC);
 
-      if (cLengths.length == 0 || cProduct != sizeC) {
-        LOGGER.warn("\t************ C dimension mismatch ************");
-      }
       if (imageCount != sizeZ * effSizeC * sizeT) {
         LOGGER.info("\t************ ZCT mismatch ************");
       }
@@ -1044,6 +1020,43 @@ public class ImageInfo {
     }
 
     return true;
+  }
+
+  private void printDimension(String dim, int size, int effectiveSize,
+    Modulo modulo)
+  {
+    StringBuffer sb = new StringBuffer("\t");
+    sb.append(dim);
+    sb.append(" = ");
+    sb.append(size);
+    if (size != effectiveSize) {
+      sb.append(" (effectively ");
+      sb.append(effectiveSize);
+      sb.append(")");
+    }
+
+    int product = 1;
+    if (modulo.length() == 1) {
+      product = size;
+    }
+    else {
+      sb.append(" (");
+      sb.append(size / modulo.length());
+      sb.append(" ");
+      sb.append(modulo.parentType);
+      sb.append(" x ");
+      sb.append(modulo.length());
+      sb.append(" ");
+      sb.append(modulo.type);
+      sb.append(")");
+
+      product = (size / modulo.length()) * modulo.length();
+    }
+    LOGGER.info(sb.toString());
+
+    if (product != size) {
+      LOGGER.warn("\t************ {} dimension mismatch ************", dim);
+    }
   }
 
   // -- Main method --

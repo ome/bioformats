@@ -40,6 +40,7 @@ import java.util.Hashtable;
 
 import loci.common.services.Service;
 import loci.common.services.ServiceException;
+import loci.formats.CoreMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
@@ -201,6 +202,18 @@ public interface OMEXMLService extends Service {
    */
   public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
     String key, String value);
+
+  /**
+   * Adds ModuloAlong* annotations to the given OME-XML metadata object,
+   * using the given CoreMetadata object to determine modulo dimensions.
+   *
+   * @param omexmlMeta An object of type {@link loci.formats.ome.OMEXMLMetadata}
+   * @param core A fully populated object of type
+   *   {@link loci.formats.CoreMetadata}
+   * @param image Index of the Image to which the annotation should be linked.
+   */
+  public void addModuloAlong(OMEXMLMetadata omexmlMeta, CoreMetadata core,
+    int image);
 
   /**
    * Converts information from an OME-XML string (source)

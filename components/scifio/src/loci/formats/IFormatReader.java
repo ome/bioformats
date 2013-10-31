@@ -169,9 +169,17 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    */
   short[][] get16BitLookupTable() throws FormatException, IOException;
 
+  Modulo getModuloZ();
+
+  Modulo getModuloC();
+
+  Modulo getModuloT();
+
   /**
    * Gets the lengths of each subdimension of C,
    * in fastest-to-slowest rasterization order.
+   *
+   * @deprecated
    */
   int[] getChannelDimLengths();
 
@@ -179,6 +187,8 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    * Gets the name of each subdimension of C,
    * in fastest-to-slowest rasterization order.
    * Common subdimensional types are enumerated in {@link FormatTools}.
+   *
+   * @deprecated
    */
   String[] getChannelDimTypes();
 

@@ -140,6 +140,11 @@ public class DimensionSwapper extends ReaderWrapper {
     dims[oldC] = getSizeC();
     dims[oldT] = getSizeT();
 
+    Modulo[] moduli = new Modulo[3];
+    moduli[oldZ - 2] = getModuloZ();
+    moduli[oldC - 2] = getModuloC();
+    moduli[oldT - 2] = getModuloT();
+
     SwappableMetadata ms = (SwappableMetadata) core.get(getCoreIndex());
 
     ms.sizeX = dims[newX];
@@ -148,13 +153,11 @@ public class DimensionSwapper extends ReaderWrapper {
     ms.sizeC = dims[newC];
     ms.sizeT = dims[newT];
 
-    ms.inputOrder = order;
+    ms.moduloZ = moduli[newZ - 2];
+    ms.moduloC = moduli[newC - 2];
+    ms.moduloT = moduli[newT - 2];
 
-    if (oldC != newC) {
-      // C was overridden; clear the sub-C dimensional metadata
-      ms.cLengths = new int[] {getSizeC()};
-      ms.cTypes = new String[] {FormatTools.CHANNEL};
-    }
+    ms.inputOrder = order;
 
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this);

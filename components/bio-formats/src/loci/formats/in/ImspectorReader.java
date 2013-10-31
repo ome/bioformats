@@ -193,7 +193,8 @@ public class ImspectorReader extends FormatReader {
       addGlobalMeta(values[i], values[i + 1]);
 
       if (values[i].equals("Instrument Mode")) {
-        isFLIM = values[i + 1].equals("TCSPC") || values[i + 1].equals("FLIM");
+        isFLIM =
+          values[i + 1].startsWith("TCSPC") || values[i + 1].startsWith("FLIM");
       }
     }
     m.pixelType = FormatTools.UINT16;
@@ -201,6 +202,7 @@ public class ImspectorReader extends FormatReader {
 
     int tileX = 1;
     int tileY = 1;
+    double timeBase = 1.0;
 
     // read through the file looking for metadata and pixels offsets
     // 0x8003 and 0xffff appear to be special markers for metadata sections
@@ -304,6 +306,7 @@ public class ImspectorReader extends FormatReader {
             break;
           case 2:
           case 9:
+          case 13:
           case 14:
             key = value;
             value = String.valueOf(in.readFloat());
@@ -381,6 +384,13 @@ public class ImspectorReader extends FormatReader {
 
         addGlobalMeta(key, value);
 
+        if (key.equals("TCSPC  Z Length")) {
+          try {
+            timeBase = Double.parseDouble(value);
+          }
+          catch (NumberFormatException e) { }
+        }
+
         if (check1 == 255 && check2 == 255) {
           in.seek(in.getFilePointer() - 2);
           break;
@@ -394,8 +404,20 @@ public class ImspectorReader extends FormatReader {
 
     if (isFLIM) {
       m.sizeZ = 1;
-      m.sizeC = m.imageCount;
-      m.cTypes = new String[] {FormatTools.LIFETIME};
+      m.sizeT = m.imageCount;
+      m.moduloT.parentType = FormatTools.SPECTRA;
+      m.moduloT.type = FormatTools.LIFETIME;
+      m.sizeC = m.imageCount / (m.sizeZ * m.sizeT);
+      m.dimensionOrder = "XYZTC";
+
+      // convert time base to picoseconds
+      if (timeBase > 1) {
+        timeBase *= 1000;
+      }
+
+      m.moduloT.step = timeBase / m.sizeT;
+      m.moduloT.end = m.moduloT.step * (m.sizeT - 1);
+      m.moduloT.unit = "ps";
     }
     else {
       if (uniquePMTs.size() <= pixelsOffsets.size()) {
@@ -405,15 +427,15 @@ public class ImspectorReader extends FormatReader {
         m.sizeC = 1;
       }
       m.sizeZ = m.imageCount / m.sizeC;
+      m.sizeT = m.imageCount / (m.sizeZ * m.sizeC);
+      m.dimensionOrder = "XYZCT";
     }
-    m.sizeT = m.imageCount / (m.sizeZ * m.sizeC);
-    m.dimensionOrder = "XYZCT";
 
     tileCount = tileX * tileY;
 
     // correct the tile count if it doesn't make sense
     // the count may have been incorrectly recorded or parsed
-    if ((m.imageCount % tileCount) != 0) {
+    if (tileCount == 0 || (m.imageCount % tileCount) != 0) {
       tileCount = 1;
     }
 

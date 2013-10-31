@@ -88,10 +88,22 @@ public class CoreMetadata implements Cloneable {
   /** Total number of images. */
   public int imageCount;
 
-  /** Length of each subdimension of C. */
+  public Modulo moduloZ = new Modulo("Z");
+  public Modulo moduloC = new Modulo("C");
+  public Modulo moduloT = new Modulo("T");
+
+  /**
+   * Length of each subdimension of C.
+   *
+   * @deprecated use {@link #moduloC} instead
+   */
   public int[] cLengths;
 
-  /** Name of each subdimension of C. */
+  /**
+   * Name of each subdimension of C.
+   *
+   * @deprecated use {@link #moduloC} instead
+   */
   public String[] cTypes;
 
   /**

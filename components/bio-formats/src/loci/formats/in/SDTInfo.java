@@ -82,7 +82,7 @@ public class SDTInfo {
 
   // -- Fields --
 
-  public int width, height, timeBins, channels;
+  public int width, height, timeBins, channels, timepoints;
 
   // -- Fields - File header --
 
@@ -604,6 +604,8 @@ public class SDTInfo {
         overflowCorrFactor = in.readFloat();
         adcZoom = in.readInt();
         cycles = in.readInt();
+
+        timepoints = stopt;
 
         // save MeasureInfo to metadata table
         if (meta != null) {

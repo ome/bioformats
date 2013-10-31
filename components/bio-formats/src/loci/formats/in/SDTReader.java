@@ -107,19 +107,6 @@ public class SDTReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#getChannelDimLengths() */
-  public int[] getChannelDimLengths() {
-    FormatTools.assertId(currentId, true, 1);
-    return intensity ? new int[] {channels} : new int[] {timeBins, channels};
-  }
-
-  /* @see loci.formats.IFormatReader#getChannelDimTypes() */
-  public String[] getChannelDimTypes() {
-    FormatTools.assertId(currentId, true, 1);
-    return intensity ? new String[] {FormatTools.SPECTRA} :
-      new String[] {FormatTools.LIFETIME, FormatTools.SPECTRA};
-  }
-
   /* @see loci.formats.IFormatReader#isInterleaved(int) */
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 1);
@@ -134,52 +121,53 @@ public class SDTReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    int channel = intensity ? no : no / timeBins;
+    int timeBin = intensity ? 0 : no % timeBins;
+
     int sizeX = getSizeX();
     int sizeY = getSizeY();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     boolean little = isLittleEndian();
 
-    // HACK
-    // adjust the number of time bins if DimensionSwapper was used
-    if (buf.length == sizeY * sizeX * bpp && timeBins > 1) {
-      timeBins = 1;
-    }
-
     int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
     int planeSize = paddedWidth * sizeY * timeBins * bpp;
 
-    boolean direct = !intensity;
-    byte[] b = direct ? buf : new byte[sizeY * sizeX * timeBins * bpp];
-    in.seek(off + no * planeSize + y * paddedWidth * bpp * timeBins);
+    byte[] b = !intensity ? buf : new byte[sizeY * sizeX * timeBins * bpp];
+    in.seek(off + channel * planeSize + y * paddedWidth * bpp * timeBins);
 
+    byte[] rowBuf = new byte[bpp * timeBins * w];
     for (int row=0; row<h; row++) {
       in.skipBytes(x * bpp * timeBins);
-      in.read(b, row * bpp * timeBins * w, w * timeBins * bpp);
+      in.read(rowBuf);
+      if (intensity) {
+        System.arraycopy(rowBuf, 0, b, row * bpp * timeBins * w, b.length);
+      }
+      else {
+        for (int col=0; col<w; col++) {
+          int output = (row * w + col) * bpp;
+          int input = (col * timeBins + timeBin) * bpp;
+          for (int bb=0; bb<bpp; bb++) {
+            b[output + bb] = rowBuf[input + bb];
+          }
+        }
+      }
       in.skipBytes(bpp * timeBins * (paddedWidth - x - w));
     }
 
-    if (direct) return buf; // no cropping required
-
-    int scan = intensity ? bpp : timeBins * bpp;
+    if (!intensity) return buf; // no cropping required
 
     for (int row=0; row<h; row++) {
       int yi = (y + row) * sizeX * timeBins * bpp;
-      int ri = row * w * scan;
+      int ri = row * w * bpp;
       for (int col=0; col<w; col++) {
         int xi = yi + (x + col) * timeBins * bpp;
-        int ci = ri + col * scan;
-        if (intensity) {
-          // combine all lifetime bins into single intensity value
-          short sum = 0;
-          for (int t=0; t<timeBins; t++) {
-            sum += DataTools.bytesToShort(b, xi + t * bpp, little);
-          }
-          DataTools.unpackBytes(sum, buf, ci, 2, little);
+        int ci = ri + col * bpp;
+        // combine all lifetime bins into single intensity value
+        short sum = 0;
+        for (int t=0; t<timeBins; t++) {
+          sum += DataTools.bytesToShort(b, xi + t * bpp, little);
         }
-        else {
-          // each lifetime bin is a separate interleaved "channel"
-          System.arraycopy(b, xi, buf, ci, scan);
-        }
+        DataTools.unpackBytes(sum, buf, ci, 2, little);
       }
     }
     return buf;
@@ -211,25 +199,48 @@ public class SDTReader extends FormatReader {
     channels = info.channels;
     addGlobalMeta("time bins", timeBins);
     addGlobalMeta("channels", channels);
-    addGlobalMeta("time base", 1e9 * info.tacR / info.tacG);
+
+    double timeBase = 1e9 * info.tacR / info.tacG;
+    addGlobalMeta("time base", timeBase);
 
     LOGGER.info("Populating metadata");
 
     CoreMetadata m = core.get(0);
 
+    int timepoints = info.timepoints;
+    if (timepoints == 0) {
+      timepoints = 1;
+    }
+
     m.sizeX = info.width;
     m.sizeY = info.height;
     m.sizeZ = 1;
-    m.sizeC = intensity ? channels : timeBins * channels;
-    m.sizeT = 1;
+    m.sizeT = intensity ? timepoints : timeBins * timepoints;
+    m.sizeC = channels;
     m.dimensionOrder = "XYZTC";
     m.pixelType = FormatTools.UINT16;
-    m.rgb = !intensity && getSizeC() > 1;
+    m.rgb = false;
     m.littleEndian = true;
-    m.imageCount = channels;
+    m.imageCount = m.sizeZ * m.sizeC * m.sizeT;
     m.indexed = false;
     m.falseColor = false;
     m.metadataComplete = true;
+
+    if (intensity) {
+      m.moduloT.parentType = FormatTools.SPECTRA;
+    }
+    else {
+      m.moduloT.type = FormatTools.LIFETIME;
+      m.moduloT.parentType = FormatTools.SPECTRA;
+      m.moduloT.typeDescription = "TCSPC";
+      m.moduloT.start = 0;
+
+      timeBase *= 1000;
+
+      m.moduloT.step = timeBase / timeBins;
+      m.moduloT.end = m.moduloT.step * (m.sizeT - 1);
+      m.moduloT.unit = "ps";
+    }
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

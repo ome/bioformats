@@ -50,6 +50,7 @@ import javax.xml.transform.TransformerException;
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
 import loci.common.xml.XMLTools;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
@@ -102,6 +103,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   private static final String ORIGINAL_METADATA_NS =
     "openmicroscopy.org/OriginalMetadata";
+
+  private static final String MODULO_NS =
+    "openmicroscopy.org/omero/dimension/modulo";
 
   // -- Stylesheet names --
 
@@ -755,6 +759,62 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     Element root2 = omeRoot2.asXMLElement(doc2);
 
     return equals(root1, root2);
+  }
+
+  public void addModuloAlong(OMEXMLMetadata meta, CoreMetadata core, int image)
+  {
+    int annotationIndex = 0;
+    try {
+      annotationIndex = meta.getXMLAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+
+    if (annotationIndex > 0) {
+     String lastAnnotationID = meta.getXMLAnnotationID(annotationIndex - 1);
+      String lastIndex =
+        lastAnnotationID.substring(lastAnnotationID.lastIndexOf(":") + 1);
+      try {
+        int index = Integer.parseInt(lastIndex);
+        while (index >= annotationIndex) {
+          annotationIndex++;
+        }
+      }
+      catch (NumberFormatException e) { }
+    }
+
+    int imageAnnotation = 0;
+
+    if (core.moduloZ.length() > 1) {
+      String zAnnotation = core.moduloZ.toXMLAnnotation();
+      String id = MetadataTools.createLSID("Annotation", annotationIndex);
+      meta.setXMLAnnotationID(id, annotationIndex);
+      meta.setXMLAnnotationNamespace(MODULO_NS, annotationIndex);
+      meta.setXMLAnnotationValue(zAnnotation, annotationIndex);
+      annotationIndex++;
+
+      meta.setImageAnnotationRef(id, image, imageAnnotation++);
+    }
+
+    if (core.moduloC.length() > 1) {
+      String cAnnotation = core.moduloC.toXMLAnnotation();
+      String id = MetadataTools.createLSID("Annotation", annotationIndex);
+      meta.setXMLAnnotationID(id, annotationIndex);
+      meta.setXMLAnnotationNamespace(MODULO_NS, annotationIndex);
+      meta.setXMLAnnotationValue(cAnnotation, annotationIndex);
+      annotationIndex++;
+
+      meta.setImageAnnotationRef(id, image, imageAnnotation++);
+    }
+
+    if (core.moduloT.length() > 1) {
+      String tAnnotation = core.moduloT.toXMLAnnotation();
+      String id = MetadataTools.createLSID("Annotation", annotationIndex);
+      meta.setXMLAnnotationID(id, annotationIndex);
+      meta.setXMLAnnotationNamespace(MODULO_NS, annotationIndex);
+      meta.setXMLAnnotationValue(tAnnotation, annotationIndex);
+
+      meta.setImageAnnotationRef(id, image, imageAnnotation);
+    }
   }
 
   // -- Utility methods - casting --

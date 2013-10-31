@@ -344,6 +344,21 @@ public class ImageReader implements IFormatReader {
     return getReader().get16BitLookupTable();
   }
 
+  /* @see IFormatReader#getModuloZ() */
+  public Modulo getModuloZ() {
+    return getReader().getModuloZ();
+  }
+
+  /* @see IFormatReader#getModuloC() */
+  public Modulo getModuloC() {
+    return getReader().getModuloC();
+  }
+
+  /* @see IFormatReader#getModuloT() */
+  public Modulo getModuloT() {
+    return getReader().getModuloT();
+  }
+
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
     return getReader().getChannelDimLengths();
