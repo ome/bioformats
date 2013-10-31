@@ -7,7 +7,7 @@
 	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
 	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1
-		../../released-schema/2013-10-dev-1/ome.xsd">
+	http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1/ome.xsd">
 	
 	<OME:Project ID="Project:0">
 		<OME:DatasetRef ID="Dataset:0"/>
@@ -111,8 +111,25 @@
 	</OME:ExperimenterGroup>
 	
 	<Instrument ID="Instrument:0">
+		<Microscope Type="Dissection"/>
+		<LightSource ID="LightSource:0">
+			<Arc Type="Hg"/>
+			<SA:AnnotationRef ID="Annotation:LightSource:0"/>
+		</LightSource>
+		<Detector ID="Detector:0">
+			<SA:AnnotationRef ID="Annotation:Detector:0"/>
+		</Detector>
 		<Objective ID="Objective:0" LotNumber="123" Manufacturer="OME-Labs"
-			NominalMagnification="20" CalibratedMagnification="20.34"/>
+			NominalMagnification="20" CalibratedMagnification="20.34">
+			<SA:AnnotationRef ID="Annotation:Objective:0"/>
+		</Objective>
+		<Filter ID="Filter:0">
+			<SA:AnnotationRef ID="Annotation:Filter:0"/>
+		</Filter>
+		<Dichroic ID="Dichroic:0">
+			<SA:AnnotationRef ID="Annotation:Dichroic:0"/>
+		</Dichroic>
+		<SA:AnnotationRef ID="Annotation:Instrument:0"/>
 	</Instrument>
 	<OME:Image ID="Image:0" Name="6x6x1x8-swatch.tif">
 		<OME:AcquisitionDate>2010-02-23T12:51:30</OME:AcquisitionDate>
@@ -120,7 +137,14 @@
 		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
 			PhysicalSizeY="10000.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
 			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1147483648"
-				ID="Channel:0"> </Channel>
+				ID="Channel:0">
+				<LightPath>
+					<ExcitationFilterRef ID="Filter:0"/>
+					<DichroicRef ID="Dichroic:0"/>
+					<EmissionFilterRef ID="Filter:0"/>
+					<SA:AnnotationRef ID="Annotation:LightPath:0"/>
+				</LightPath>
+			</Channel>
 			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1474836488"
 				ID="Channel:1"> </Channel>
 			<Channel AcquisitionMode="MultiPhotonMicroscopy" Color="-2144364811" ID="Channel:2"> </Channel>
@@ -146,6 +170,27 @@
 				<test2/>
 			</SA:Value>
 		</SA:XMLAnnotation>
+		<SA:LongAnnotation ID="Annotation:Detector:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:Dichroic:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:Filter:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:Instrument:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:LightPath:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:LightSource:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:Objective:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
 	</SA:StructuredAnnotations>
 	<ROI:ROI ID="ROI:0">
 		<ROI:Union>
