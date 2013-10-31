@@ -1557,7 +1557,11 @@ public class FormatReaderTest {
         MetadataStore store = reader.getMetadataStore();
         MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
         String xml = omexmlService.getOMEXML(retrieve);
-        success = xml != null && omexmlService.validateOMEXML(xml);
+        // prevent issues due to thread-unsafeness of
+        // javax.xml.validation.Validator as used during XML validation
+        synchronized (configTree) {
+          success = xml != null && omexmlService.validateOMEXML(xml);
+        }
       }
       catch (Throwable t) {
         LOGGER.info("", t);
@@ -1675,7 +1679,7 @@ public class FormatReaderTest {
         }
         if (!md5.equals(expected1) && !md5.equals(expected2)) {
           success = false;
-          msg = "series " + i;
+          msg = "series " + i + " (" + md5 + ")";
         }
       }
     }
@@ -1825,7 +1829,7 @@ public class FormatReaderTest {
           (expected1 != null || expected2 != null))
         {
           success = false;
-          msg = "series " + i;
+          msg = "series " + i + " (" + md5 + ")";
         }
       }
     }
@@ -2115,7 +2119,9 @@ public class FormatReaderTest {
     // initialize configuration tree
     if (config == null) {
       try {
-        config = configTree.get(id);
+        synchronized (configTree) {
+          config = configTree.get(id);
+        }
       }
       catch (IOException e) { }
     }
