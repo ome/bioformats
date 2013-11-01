@@ -815,6 +815,9 @@ public class ZeissCZIReader extends FormatReader {
             if (dimension.start >= getSizeZ()) {
               ms0.sizeZ = dimension.start + 1;
             }
+            else if (dimension.size > getSizeZ()) {
+              ms0.sizeZ = dimension.size;
+            }
             break;
           case 'T':
             if (dimension.start >= getSizeT()) {
