@@ -1,7 +1,7 @@
 <!--
 build.xml
 
-Ant build file for the JPEG XR codec library.
+Ant build file for the JPEG XR library.
 Download Apache Ant from http://ant.apache.org/.
 Type "ant -p"  for a list of targets.
 -->
