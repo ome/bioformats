@@ -472,7 +472,13 @@ public class FileStitcher extends ReaderWrapper {
     IFormatReader r = getReader(getCoreIndex(), pos[0]);
     int ino = pos[1];
 
-    if (ino < r.getImageCount()) return r.openBytes(ino, buf, x, y, w, h);
+    if (ino < r.getImageCount()) {
+      byte[] b = r.openBytes(ino, buf, x, y, w, h);
+      if (!noStitch && ino == r.getImageCount() - 1) {
+        r.close();
+      }
+      return b;
+    }
 
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
@@ -666,6 +672,7 @@ public class FileStitcher extends ReaderWrapper {
           for (String file : used) {
             if (!files.contains(file)) files.add(file);
           }
+          readers[i].close();
         }
         catch (FormatException e) {
           LOGGER.debug("", e);
