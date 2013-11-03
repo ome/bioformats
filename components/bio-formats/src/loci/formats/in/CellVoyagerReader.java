@@ -211,7 +211,7 @@ public class CellVoyagerReader extends FormatReader
 	{
 		super.initFile( id );
 
-		measurementFolder = new Location( id );
+		measurementFolder = new Location( id ).getAbsoluteFile();
 		if ( !measurementFolder.exists() ) { throw new IOException( "File " + id + " does not exist." ); }
 		if ( !measurementFolder.isDirectory() )
 		{
@@ -369,7 +369,7 @@ public class CellVoyagerReader extends FormatReader
 		// getChildText( msRoot, new String[] { "ZoomLens", "Magnification",
 		// "Value" } ) );
 		final double magnification = objectiveMagnification; // *
-																// zoomLensMagnification;
+		// zoomLensMagnification;
 
 		/*
 		 * Read the ome.xml file. Since it is malformed, we need to parse all
