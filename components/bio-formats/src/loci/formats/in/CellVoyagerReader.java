@@ -236,7 +236,7 @@ public class CellVoyagerReader extends FormatReader
 		}
 		catch ( final ParserConfigurationException e )
 		{
-			e.printStackTrace();
+			LOGGER.debug( "", e );
 		}
 		Document msDocument = null;
 		try
@@ -245,7 +245,7 @@ public class CellVoyagerReader extends FormatReader
 		}
 		catch ( final SAXException e )
 		{
-			e.printStackTrace();
+			LOGGER.debug( "", e );
 		}
 
 		msDocument.getDocumentElement().normalize();
@@ -261,7 +261,7 @@ public class CellVoyagerReader extends FormatReader
 		}
 		catch ( final SAXException e )
 		{
-			e.printStackTrace();
+			LOGGER.debug( "", e );
 		}
 
 		omeDocument.getDocumentElement().normalize();
@@ -418,7 +418,7 @@ public class CellVoyagerReader extends FormatReader
 		}
 		catch ( final TransformerConfigurationException e2 )
 		{
-			e2.printStackTrace();
+			LOGGER.debug( "", e2 );
 		}
 		catch ( final TransformerException e2 )
 		{
@@ -430,7 +430,7 @@ public class CellVoyagerReader extends FormatReader
 		}
 		catch ( final DependencyException e1 )
 		{
-			e1.printStackTrace();
+			LOGGER.debug( "", e1 );
 		}
 		OMEXMLMetadata omeMD = null;
 
@@ -442,7 +442,7 @@ public class CellVoyagerReader extends FormatReader
 			}
 			catch ( final ServiceException e )
 			{
-				e.printStackTrace();
+				LOGGER.debug( "", e );
 			}
 		}
 
