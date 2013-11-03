@@ -1,10 +1,7 @@
 package loci.formats.in;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -13,17 +10,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.stream.StreamResult;
 
 import loci.common.Location;
 import loci.common.services.DependencyException;
@@ -50,7 +38,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class CellVoyagerReader extends FormatReader
@@ -1062,61 +1049,6 @@ public class CellVoyagerReader extends FormatReader
 			if ( item.getNodeName().equals( childName ) ) { return item.getTextContent(); }
 		}
 		return null;
-	}
-
-	@SuppressWarnings( "unused" )
-	private static final String prettyPrintXML( final String xml )
-	{
-		try
-		{
-			final Transformer serializer = SAXTransformerFactory.newInstance().newTransformer();
-
-			serializer.setOutputProperty( OutputKeys.INDENT, "yes" );
-
-			serializer.setOutputProperty( "{http://xml.apache.org/xslt}indent-amount", "2" );
-			final Source xmlSource = new SAXSource( new InputSource( new ByteArrayInputStream( xml.getBytes( "utf-8" ) ) ) );
-			final StreamResult res = new StreamResult( new ByteArrayOutputStream() );
-
-			serializer.transform( xmlSource, res );
-
-			return new String( ( ( ByteArrayOutputStream ) res.getOutputStream() ).toByteArray() );
-		}
-		catch ( final Exception e )
-		{
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	@SuppressWarnings( "unused" )
-	private static final String prettyPrintXML( final Document doc )
-	{
-		Transformer transformer = null;
-		try
-		{
-			transformer = TransformerFactory.newInstance().newTransformer();
-		}
-		catch ( final TransformerConfigurationException e )
-		{
-			e.printStackTrace();
-		}
-		catch ( final TransformerFactoryConfigurationError e )
-		{
-			e.printStackTrace();
-		}
-		transformer.setOutputProperty( OutputKeys.INDENT, "yes" );
-		final StreamResult result = new StreamResult( new StringWriter() );
-		final DOMSource source = new DOMSource( doc );
-		try
-		{
-			transformer.transform( source, result );
-		}
-		catch ( final TransformerException e )
-		{
-			e.printStackTrace();
-		}
-		final String xmlString = result.getWriter().toString();
-		return xmlString;
 	}
 
 	public static void main( final String[] args ) throws IOException, FormatException, ServiceException
