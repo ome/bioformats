@@ -10,6 +10,7 @@ Type "ant -p" for a list of targets.
 <project>
   <property file="${root.dir}/ant/java.properties"/>
   <import file="${root.dir}/ant/common.xml"/>
+  <import file="${root.dir}/ant/version.xml"/>
 
   <taskdef name="testng" classpath="${testng.jar}"
     classname="org.testng.TestNGAntTask"/>
@@ -230,7 +231,7 @@ your FindBugs installation's lib directory. E.g.:
   <!-- Internal build targets -->
 
   <target name="init"
-    depends="init-title, init-timestamp, init-version, init-manifest-cp"/>
+    depends="init-title, init-timestamp, release-version, init-manifest-cp"/>
 
   <target name="init-manifest-cp">
     <!-- construct manifest classpath -->

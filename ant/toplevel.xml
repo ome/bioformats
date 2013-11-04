@@ -9,6 +9,7 @@ Type "ant -p" for a list of targets.
 <project>
   <property name="root.dir" location="${basedir}"/>
   <import file="${root.dir}/ant/global.xml"/>
+  <import file="${root.dir}/ant/version.xml"/>
   <property file="${root.dir}/ant/toplevel.properties"/>
 
   <!-- Global build targets -->
@@ -1041,5 +1042,19 @@ Type "ant -p" for a list of targets.
   <!-- Internal targets -->
 
   <target name="init"/>
+
+  <!-- Source release -->
+  <target name="release" description="Zip the git release as bioformats-${release.version}.zip" depends="release-version">
+    <mkdir dir="${artifact.dir}"/>
+    <exec executable="git" outputproperty="release-archive-command" failifexecutionfails="true">
+      <arg value="archive"/>
+      <arg value="--prefix=bioformats-${release.version}/"/>
+      <arg value="--format=zip"/>
+      <arg value="HEAD"/>
+      <arg value="-o"/>
+      <arg value="${artifact.dir}/bioformats-${release.version}.zip"/>
+    </exec>
+  </target>
+
 
 </project>
