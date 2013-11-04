@@ -150,7 +150,7 @@ public class FujiReader extends FormatReader {
       infFile = pixelsFile.substring(0, pixelsFile.lastIndexOf(".")) + ".inf";
     }
 
-    String[] lines = DataTools.readFile(infFile).split("\r\n");
+    String[] lines = DataTools.readFile(infFile).split("\r{0,1}\n");
 
     int bits = Integer.parseInt(lines[5]);
 
