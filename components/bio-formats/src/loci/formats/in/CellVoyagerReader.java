@@ -238,6 +238,18 @@ public class CellVoyagerReader extends FormatReader
 		msDocument.getDocumentElement().normalize();
 
 		/*
+		 * Check file version
+		 */
+
+		final String fileVersionMajor = getChildText( msDocument.getDocumentElement(), new String[] { "FileVersion", "Major" } );
+		// Note the typo here.
+		final String fileVersionMinor = getChildText( msDocument.getDocumentElement(), new String[] { "FileVersion", "Miner" } );
+		if ( !fileVersionMajor.equals( "1" ) || !fileVersionMinor.equals( "0" ) )
+		{
+			LOGGER.warn( "Detected a file version " + fileVersionMajor + "." + fileVersionMinor + ". This reader was built by reverse-engineering v1.0 files only. Errors might occur." );
+		}
+
+		/*
 		 * Open OME metadata file
 		 */
 
