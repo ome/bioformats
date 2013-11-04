@@ -6,7 +6,7 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p"  for a list of targets.
 -->
 
-<project name="ome-jpegxr" default="jar" basedir=".">
+<project name="ome-jxr" default="jar" basedir=".">
   <description>OME library for reading the JPEG XR file format</description>
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
