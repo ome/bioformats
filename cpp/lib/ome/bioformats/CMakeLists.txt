@@ -36,8 +36,13 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES})
 
-set(OME_BIOFORMATS_SOURCES)
-set(OME_BIOFORMATS_HEADERS)
+set(OME_BIOFORMATS_SOURCES
+    CoreMetadata.cpp
+    Modulo.cpp)
+
+set(OME_BIOFORMATS_HEADERS
+    CoreMetadata.h
+    Modulo.h)
 
 set(OME_BIOFORMATS_META_STATIC_SOURCES
   meta/BaseMetadata.cpp)
