@@ -473,6 +473,22 @@ public class CellVoyagerReader extends FormatReader
 			omeMD.setChannelColor( ci.color, 0, channelIndex++ );
 		}
 
+		/*
+		 * Fix missing IDs.
+		 *
+		 * Some IDs are missing in the malformed OME.XML file. We must put them
+		 * back manually. Some are fixed here
+		 */
+
+		omeMD.setProjectID( MetadataTools.createLSID( "Project", 0 ), 0 );
+		omeMD.setScreenID( MetadataTools.createLSID( "Screen", 0 ), 0 );
+		omeMD.setPlateID( MetadataTools.createLSID( "Plate", 0 ), 0 );
+		omeMD.setInstrumentID( MetadataTools.createLSID( "Instrument", 0 ), 0 );
+		for ( int i = 0; i < channelEls.size(); i++ )
+		{
+			omeMD.setLightEmittingDiodeID( MetadataTools.createLSID( "LightSource", 0 ), 0, i );
+		}
+
 		// Read pixel sizes from OME metadata.
 		final double pixelWidth = omeMD.getPixelsPhysicalSizeX( 0 ).getValue().doubleValue();
 		final double pixelHeight = omeMD.getPixelsPhysicalSizeY( 0 ).getValue().doubleValue();
@@ -623,7 +639,6 @@ public class CellVoyagerReader extends FormatReader
 
 		final double pinholeSize = Double.parseDouble( getChildText( msRoot, new String[] { "PinholeDisk", "PinholeSize_um" } ) );
 
-
 		/*
 		 * MicroPlate specific stuff
 		 */
@@ -634,8 +649,6 @@ public class CellVoyagerReader extends FormatReader
 		{
 			// I don't know an other case. I can just hope that if there is
 			// another name for microplate I will find out quickly.
-
-			store.setPlateID( MetadataTools.createLSID( "Plate", 0 ), 0 );
 
 			final int nrows = Integer.parseInt( getChildText( containerEl, "RowCount" ) );
 			final int ncols = Integer.parseInt( getChildText( containerEl, "ColumnCount" ) );
@@ -669,7 +682,7 @@ public class CellVoyagerReader extends FormatReader
 			final int wellNumber = well.number;
 			store.setWellRow( new NonNegativeInteger( well.row ), 0, wellIndex );
 			store.setWellColumn( new NonNegativeInteger( well.col ), 0, wellIndex );
-			store.setWellID( "" + well.UID, 0, wellIndex );
+			store.setWellID( MetadataTools.createLSID( "Well", well.UID ), 0, wellIndex );
 			int areaIndex = -1;
 			for ( final AreaInfo area : well.areas )
 			{
@@ -679,7 +692,7 @@ public class CellVoyagerReader extends FormatReader
 				store.setImageName(imageName, seriesIndex );
 
 				store.setWellSampleIndex( new NonNegativeInteger( area.index ), 0, wellIndex, areaIndex );
-				store.setWellSampleID( "" + area.UID, 0, wellIndex, areaIndex );
+				store.setWellSampleID( MetadataTools.createLSID( "WellSample", area.UID ), 0, wellIndex, areaIndex );
 				store.setWellSamplePositionX( Double.valueOf( well.centerX ), 0, wellIndex, areaIndex );
 				store.setWellSamplePositionY( Double.valueOf( well.centerY ), 0, wellIndex, areaIndex );
 
