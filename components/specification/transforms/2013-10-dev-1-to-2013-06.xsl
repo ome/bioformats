@@ -125,6 +125,16 @@
 		</xsl:element>
 	</xsl:template>
 
+	<!-- strip AnnotationRef on Shape -->
+	<xsl:template match="ROI:Shape">
+		<xsl:element name="{name()}" namespace="{$newROINS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">

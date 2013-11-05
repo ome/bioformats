@@ -120,6 +120,11 @@
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="FillColor" use="optional" type="OME:Color">
 				<xsd:annotation>
