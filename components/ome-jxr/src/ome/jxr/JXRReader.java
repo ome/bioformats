@@ -45,6 +45,8 @@ public class JXRReader {
 
   private boolean isLittleEndian;
 
+  private int encoderVersion;
+
   public JXRReader(String file) throws IOException, JXRException {
     this(new RandomAccessInputStream(file));
   }
@@ -62,14 +64,29 @@ public class JXRReader {
     return isLittleEndian;
   }
 
+  public int getEncoderVersion() {
+    return encoderVersion;
+  }
+
   private void initialize() throws IOException, JXRException {
     checkHeaderLength();
+    checkFileStructureVersion();
     checkHeaderBOM();
+    checkIfValidJpegXr();
   }
 
   private void checkHeaderLength() throws IOException, JXRException {
     if (stream.length() < 4) {
-      throw new JXRException("File header too short."); 
+      throw new JXRException("File header too short.");
+    }
+  }
+
+  private void checkFileStructureVersion() throws IOException, JXRException {
+    stream.seek(0);
+    stream.skipBytes(3);
+    byte version = stream.readByte();
+    if (version != JXRConstants.DECODER_VERSION) {
+      throw new JXRException("Wrong file format version. Found: " + version);
     }
   }
 
@@ -82,6 +99,17 @@ public class JXRReader {
           + "BOM found: " + Integer.toHexString(littleEndian));
     }
     isLittleEndian = true;
+  }
+
+  private void checkIfValidJpegXr() throws IOException, JXRException {
+    stream.seek(0);
+    stream.skipBytes(2);
+    byte magic = stream.readByte();
+    if (magic != JXRConstants.MAGIC_NUMBER) {
+      throw new JXRException("Invalid magic byte. Found: "
+          + Integer.toHexString(magic));
+    }
+    encoderVersion = stream.readByte();
   }
 
 }

@@ -47,10 +47,21 @@ public class JXRReaderTest {
   @BeforeClass
   public void setUp() throws IOException, JXRException {
     testFilePath = this.getClass().getResource(TEST_FILE).getPath();
+
+    /* Too short header */
     malformedHeaders.add(new byte[] {0x01, 0x02, 0x03});
+
+    /* Big-endian BOM or wrong BOM in header*/
     malformedHeaders.add(new byte[] {0x4d, 0x4d, 0xf, 0xf});
     malformedHeaders.add(new byte[] {0x49, 0x4d, 0xf, 0xf});
     malformedHeaders.add(new byte[] {0x4d, 0x49, 0xf, 0xf});
+
+    /* Wrong magic number*/
+    malformedHeaders.add(new byte[] {0x49, 0x49, 0xf, 0xf});
+
+    /* Wrong format version */
+    malformedHeaders.add(new byte[] {0x49, 0x49, 0x0, 0xf});
+    malformedHeaders.add(new byte[] {0x49, 0x49, 0x2, 0xf});
   }
 
   @Test(expectedExceptions = IOException.class)
@@ -59,18 +70,18 @@ public class JXRReaderTest {
     new JXRReader("");
   }
 
-  @Test
-  public void testCtorWithTestFileShouldSucceed()
-      throws IOException, JXRException {
-    new JXRReader(testFilePath);
-  }
-
   @Test(expectedExceptions = JXRException.class)
   public void testCtorWithMalformedHeadersShouldThrowJXRE()
       throws IOException, JXRException {
     for (byte[] header : malformedHeaders) {
       new JXRReader(new RandomAccessInputStream(header));
     }
+  }
+
+  @Test
+  public void testCtorWithTestFileShouldSucceed()
+      throws IOException, JXRException {
+    new JXRReader(testFilePath);
   }
 
 }
