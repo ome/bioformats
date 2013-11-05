@@ -386,7 +386,11 @@ public class CellVoyagerReader extends FormatReader
 				final Node namedItem = atts.getNamedItem( "ID" );
 				if ( namedItem == null )
 				{
-					( ( Element ) node ).setAttribute( "ID", "none" );
+          String name = node.getNodeName();
+          String id = name + ":" + i;
+          if (!node.getParentNode().getNodeName().equals("LightSource")) {
+					  ( ( Element ) node ).setAttribute( "ID", id );
+          }
 				}
 			}
 		}
@@ -484,10 +488,6 @@ public class CellVoyagerReader extends FormatReader
 		omeMD.setScreenID( MetadataTools.createLSID( "Screen", 0 ), 0 );
 		omeMD.setPlateID( MetadataTools.createLSID( "Plate", 0 ), 0 );
 		omeMD.setInstrumentID( MetadataTools.createLSID( "Instrument", 0 ), 0 );
-		for ( int i = 0; i < channelEls.size(); i++ )
-		{
-			omeMD.setLightEmittingDiodeID( MetadataTools.createLSID( "LightSource", 0 ), 0, i );
-		}
 
 		// Read pixel sizes from OME metadata.
 		final double pixelWidth = omeMD.getPixelsPhysicalSizeX( 0 ).getValue().doubleValue();
