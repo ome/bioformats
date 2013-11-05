@@ -27,7 +27,8 @@ package ome.jxr;
 
 public final class JXRConstants {
 
-  public static final int LITTLE_ENDIAN = 0x49;
+  public static final int MINIMAL_HEADER_LENGTH = 4;
+  public static final int LITTLE_ENDIAN = 0x4949;
   public static final int MAGIC_NUMBER = 0xbc;
 
 }

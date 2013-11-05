@@ -52,25 +52,36 @@ public class JXRReader {
   public JXRReader(RandomAccessInputStream stream) throws JXRException {
     this.stream = stream;
     try {
-      checkHeader();
-    }
-    catch (IOException ioe) {
+      initialize();
+    } catch (IOException ioe) {
       throw new JXRException(ioe);
     }
   }
 
-  private void checkHeader() throws IOException, JXRException {
+  public boolean isLittleEndian() {
+    return isLittleEndian;
+  }
+
+  private void initialize() throws IOException, JXRException {
+    checkHeaderLength();
+    checkHeaderBOM();
+  }
+
+  private void checkHeaderLength() throws IOException, JXRException {
     if (stream.length() < 4) {
       throw new JXRException("File header too short."); 
     }
+  }
 
+  private void checkHeaderBOM() throws IOException, JXRException {
     stream.seek(0);
     int littleEndian = stream.read();
-    littleEndian <<= 16 & stream.read();
-    if ((littleEndian & JXRConstants.LITTLE_ENDIAN) == 0) {
-      
+    littleEndian = littleEndian << Byte.SIZE | stream.read();
+    if (littleEndian != JXRConstants.LITTLE_ENDIAN) {
+      throw new JXRException("File not using little-endian byte order. "
+          + "BOM found: " + Integer.toHexString(littleEndian));
     }
-    
+    isLittleEndian = true;
   }
 
 }

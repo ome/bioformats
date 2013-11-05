@@ -26,22 +26,51 @@
 package ome.jxr.utests;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 import ome.jxr.JXRReader;
 
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class JXRReaderTest {
 
-  private JXRReader reader;
+  private static final String TEST_FILE = "test.jxr";
 
-  private static final String FILENAME = "test.jxr";
+  private final List<byte[]> malformedHeaders = new ArrayList<byte[]>();
+
+  private String testFilePath;
+
+  @BeforeClass
+  public void setUp() throws IOException, JXRException {
+    testFilePath = this.getClass().getResource(TEST_FILE).getPath();
+    malformedHeaders.add(new byte[] {0x01, 0x02, 0x03});
+    malformedHeaders.add(new byte[] {0x4d, 0x4d, 0xf, 0xf});
+    malformedHeaders.add(new byte[] {0x49, 0x4d, 0xf, 0xf});
+    malformedHeaders.add(new byte[] {0x4d, 0x49, 0xf, 0xf});
+  }
+
+  @Test(expectedExceptions = IOException.class)
+  public void testCtorWithEmptyStringShouldThrowIOE()
+      throws IOException, JXRException {
+    new JXRReader("");
+  }
 
   @Test
-  public void setUp() throws IOException, JXRException {
-    String defaultFile = this.getClass().getResource(FILENAME).getPath();
-    reader = new JXRReader(System.getProperty("filename", defaultFile));
+  public void testCtorWithTestFileShouldSucceed()
+      throws IOException, JXRException {
+    new JXRReader(testFilePath);
+  }
+
+  @Test(expectedExceptions = JXRException.class)
+  public void testCtorWithMalformedHeadersShouldThrowJXRE()
+      throws IOException, JXRException {
+    for (byte[] header : malformedHeaders) {
+      new JXRReader(new RandomAccessInputStream(header));
+    }
   }
 
 }
