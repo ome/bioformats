@@ -38,11 +38,17 @@ include_directories(${OME_TOPLEVEL_INCLUDES})
 
 set(OME_BIOFORMATS_SOURCES
     CoreMetadata.cpp
-    Modulo.cpp)
+    FormatException.cpp
+    Modulo.cpp
+    UnknownFormatException.cpp
+    UnsupportedCompressionException.cpp)
 
 set(OME_BIOFORMATS_HEADERS
     CoreMetadata.h
-    Modulo.h)
+    FormatException.h
+    Modulo.h
+    UnknownFormatException.h
+    UnsupportedCompressionException.h)
 
 set(OME_BIOFORMATS_META_STATIC_SOURCES
   meta/BaseMetadata.cpp)
