@@ -319,6 +319,10 @@ public class CellomicsReader extends FormatReader {
         int wellIndex = row * realCols + col;
         int fieldIndex = Integer.parseInt(field);
 
+        if (files.length == 1) {
+          fieldIndex = 0;
+        }
+
         String wellSampleID =
           MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
         store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
