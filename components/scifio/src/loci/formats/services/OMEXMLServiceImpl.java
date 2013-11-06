@@ -53,6 +53,7 @@ import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.Modulo;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataRetrieve;
@@ -68,6 +69,7 @@ import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;
 import ome.xml.model.Pixels;
+import ome.xml.model.Annotation;
 import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.XMLAnnotation;
 
@@ -506,6 +508,102 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       }
     }
     return XMLTools.validateXML(xml, "OME-XML");
+  }
+
+  /**
+   * @see OMEXMLService#getModuloAlongZ(OMEXMLMetadata, int)
+   */
+  public Modulo getModuloAlongZ(OMEXMLMetadata omexml, int image) {
+    return getModuloAlong(omexml, "ModuloAlongZ", image);
+  }
+
+  /**
+   * @see OMEXMLService#getModuloAlongC(OMEXMLMetadata, int)
+   */
+  public Modulo getModuloAlongC(OMEXMLMetadata omexml, int image) {
+    return getModuloAlong(omexml, "ModuloAlongC", image);
+  }
+
+  /**
+   * @see OMEXMLService#getModuloAlongT(OMEXMLMetadata, int)
+   */
+  public Modulo getModuloAlongT(OMEXMLMetadata omexml, int image) {
+    return getModuloAlong(omexml, "ModuloAlongT", image);
+  }
+
+  private Modulo getModuloAlong(OMEXMLMetadata omexml, String tag, int image) {
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexml.getRoot();
+    Image img = root.getImage(image);
+    if (img == null) {
+      return null;
+    }
+
+    for (int i=0; i<img.sizeOfLinkedAnnotationList(); i++) {
+      Annotation annotation = img.getLinkedAnnotation(i);
+      if (!(annotation instanceof XMLAnnotation)) {
+        continue;
+      }
+
+      String xml = ((XMLAnnotation) annotation).getValue();
+
+      try {
+        Document annotationRoot = XMLTools.parseDOM(xml);
+        NodeList nodes = annotationRoot.getElementsByTagName(tag);
+
+        if (nodes.getLength() > 0) {
+          Element modulo = (Element) nodes.item(0);
+          NamedNodeMap attrs = modulo.getAttributes();
+
+          Modulo m = new Modulo(tag.substring(tag.length() - 1));
+
+          Node start = attrs.getNamedItem("Start");
+          Node end = attrs.getNamedItem("End");
+          Node step = attrs.getNamedItem("Step");
+          Node type = attrs.getNamedItem("Type");
+          Node typeDescription = attrs.getNamedItem("TypeDescription");
+          Node unit = attrs.getNamedItem("Unit");
+
+          if (start != null) {
+            m.start = Integer.parseInt(start.getNodeValue());
+          }
+          if (end != null) {
+            m.end = Integer.parseInt(end.getNodeValue());
+          }
+          if (step != null) {
+            m.step = Integer.parseInt(step.getNodeValue());
+          }
+          if (type != null) {
+            m.type = type.getNodeValue();
+          }
+          if (typeDescription != null) {
+            m.typeDescription = typeDescription.getNodeValue();
+          }
+          if (unit != null) {
+            m.unit = unit.getNodeValue();
+          }
+
+          NodeList labels = modulo.getElementsByTagName("Label");
+          if (labels != null && labels.getLength() > 0) {
+            m.labels = new String[labels.getLength()];
+            for (int q=0; q<labels.getLength(); q++) {
+              m.labels[q] = labels.item(q).getTextContent();
+            }
+          }
+
+          return m;
+        }
+      }
+      catch (ParserConfigurationException e) {
+        LOGGER.debug("Failed to parse ModuloAlong", e);
+      }
+      catch (SAXException e) {
+        LOGGER.debug("Failed to parse ModuloAlong", e);
+      }
+      catch (IOException e) {
+        LOGGER.debug("Failed to parse ModuloAlong", e);
+      }
+    }
+    return null;
   }
 
   /**
