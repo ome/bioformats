@@ -491,10 +491,30 @@ public class ZeissCZIReader extends FormatReader {
       ms0.sizeT = 1;
     }
 
+    // set modulo annotations
+    // rotations -> modulo Z
+    // illuminations -> modulo C
+    // phases -> modulo T
+
+    ms0.moduloZ.step = ms0.sizeZ;
+    ms0.moduloZ.end = ms0.sizeZ * (rotations - 1);
+    ms0.moduloZ.type = FormatTools.ROTATION;
+    ms0.sizeZ *= rotations;
+
+    ms0.moduloC.step = ms0.sizeC;
+    ms0.moduloC.end = ms0.sizeC * (illuminations - 1);
+    ms0.moduloC.type = FormatTools.ILLUMINATION;
+    ms0.moduloC.parentType = FormatTools.CHANNEL;
+    ms0.sizeC *= illuminations;
+
+    ms0.moduloT.step = ms0.sizeT;
+    ms0.moduloT.end = ms0.sizeT * (phases - 1);
+    ms0.moduloT.type = FormatTools.PHASE;
+    ms0.sizeT *= phases;
+
     // finish populating the core metadata
 
-    int seriesCount = rotations * positions * illuminations * acquisitions *
-      mosaics * phases * angles;
+    int seriesCount = positions * acquisitions * mosaics * angles;
 
     ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
 

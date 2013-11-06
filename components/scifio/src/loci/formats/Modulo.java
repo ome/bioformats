@@ -74,7 +74,20 @@ public class Modulo {
     StringBuffer xml = new StringBuffer("<ModuloAlong");
     xml.append(parentDimension);
     xml.append(" Type=\"");
-    xml.append(type.toLowerCase());
+
+    if (type != null) {
+      type = type.toLowerCase();
+    }
+    if (type == null || (!type.equals("angle") && !type.equals("phase") &&
+      !type.equals("tile") && !type.equals("lifetime") &&
+      !type.equals("lambda")))
+    {
+      if (typeDescription == null) {
+        typeDescription = type;
+      }
+      type = "other";
+    }
+    xml.append(type);
     xml.append("\"");
     if (typeDescription != null) {
       xml.append(" TypeDescription=\"");
