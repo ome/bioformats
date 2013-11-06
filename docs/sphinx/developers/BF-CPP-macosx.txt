@@ -4,7 +4,7 @@ Building C++ bindings in Mac OS X
 Compile-time dependencies -- Mac OS X
 -------------------------------------
 
-To install dependencies on Mac OS X, we advise using `Homebrew <http://mxcl.github.com/homebrew/>`_:
+To install dependencies on Mac OS X, we advise using `Homebrew <https://github.com/mxcl/homebrew/>`_:
 
 ::
 
