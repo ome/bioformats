@@ -12,7 +12,7 @@
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>ome-jpegxr</artifactId>
+  <artifactId>ome-jxr</artifactId>
 
   <name>OME JPEG XR codec library</name>
   <description>OME library for reading the JPEG XR file format</description>
@@ -65,7 +65,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <suiteXmlFiles>
-            <suiteXmlFile>test/ome/jpegxr/utests/testng-template.xml</suiteXmlFile>
+            <suiteXmlFile>test/ome/jxr/utests/testng-template.xml</suiteXmlFile>
           </suiteXmlFiles>
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
