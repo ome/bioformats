@@ -92,8 +92,7 @@ public class JXRReader {
 
   private void checkHeaderBOM() throws IOException, JXRException {
     stream.seek(0);
-    int littleEndian = stream.read();
-    littleEndian = littleEndian << Byte.SIZE | stream.read();
+    short littleEndian = stream.readShort();
     if (littleEndian != JXRConstants.LITTLE_ENDIAN) {
       throw new JXRException("File not using little-endian byte order. "
           + "BOM found: " + Integer.toHexString(littleEndian));
