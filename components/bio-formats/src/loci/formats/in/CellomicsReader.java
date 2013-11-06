@@ -390,9 +390,6 @@ public class CellomicsReader extends FormatReader {
   private int getChannel(String filename) {
     String well = getWellName(filename);
     int start = well.indexOf(channelCharacter) + 1;
-    if (start == 0) {
-      start = well.indexOf(channelCharacter) + 1;
-    }
     int end = start + 1;
     if (start > 0) {
       return Integer.parseInt(well.substring(start, end));
