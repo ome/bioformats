@@ -149,6 +149,8 @@ public class ZeissCZIReader extends FormatReader {
   private boolean hasDetectorSettings = false;
   private int scanDim = 1;
 
+  private String[] rotationLabels, phaseLabels, illuminationLabels;
+
   // -- Constructor --
 
   /** Constructs a new Zeiss .czi reader. */
@@ -401,6 +403,10 @@ public class ZeissCZIReader extends FormatReader {
       imageName = null;
       hasDetectorSettings = false;
       scanDim = 1;
+
+      rotationLabels = null;
+      illuminationLabels = null;
+      phaseLabels = null;
     }
   }
 
@@ -577,6 +583,19 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
+    }
+
+    if (rotationLabels != null) {
+      ms0.moduloZ.labels = rotationLabels;
+      ms0.moduloZ.end = ms0.moduloZ.start;
+    }
+    if (illuminationLabels != null) {
+      ms0.moduloC.labels = illuminationLabels;
+      ms0.moduloC.end = ms0.moduloC.start;
+    }
+    if (phaseLabels != null) {
+      ms0.moduloT.labels = phaseLabels;
+      ms0.moduloT.end = ms0.moduloT.start;
     }
 
     assignPlaneIndices();
@@ -2044,6 +2063,16 @@ public class ZeissCZIReader extends FormatReader {
       String value = root.getTextContent();
       if (value != null && key.length() > 0) {
         addGlobalMetaList(key.toString(), value);
+
+        if (key.toString().endsWith("|Rotations|")) {
+          rotationLabels = value.split(" ");
+        }
+        else if (key.toString().endsWith("|Phases|")) {
+          phaseLabels = value.split(" ");
+        }
+        else if (key.toString().endsWith("|Illuminations|")) {
+          illuminationLabels = value.split(" ");
+        }
       }
     }
     NamedNodeMap attributes = root.getAttributes();
