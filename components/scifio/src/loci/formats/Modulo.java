@@ -67,6 +67,9 @@ public class Modulo {
   // -- Methods --
 
   public int length() {
+    if (labels != null) {
+      return labels.length;
+    }
     return (int) Math.rint((end - start) / step) + 1;
   }
 
