@@ -55,9 +55,11 @@ public class JXRReader {
 
   public JXRReader(RandomAccessInputStream stream) throws JXRException {
     this.stream = stream;
+    stream.order(true);
     try {
       initialize();
-    } catch (IOException ioe) {
+    }
+    catch (IOException ioe) {
       throw new JXRException(ioe);
     }
   }
