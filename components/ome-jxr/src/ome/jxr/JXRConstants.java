@@ -28,9 +28,10 @@ package ome.jxr;
 public final class JXRConstants {
 
   public static final int MINIMAL_HEADER_LENGTH = 4;
+  public static final long MAX_FILE_SIZE_BYTES = 4294967295L;
   public static final short LITTLE_ENDIAN = 0x4949;
   public static final byte MAGIC_NUMBER = (byte) 0xbc;
-  public static final int DECODER_VERSION = 1;
+  public static final int ENCODER_VERSION = 1;
   public static final String MAGIC_STRING = "WMPHOTO";
 
 }

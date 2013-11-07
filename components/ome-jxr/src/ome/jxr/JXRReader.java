@@ -47,6 +47,8 @@ public class JXRReader {
 
   private int encoderVersion;
 
+  private int IFDOffset;
+
   public JXRReader(String file) throws IOException, JXRException {
     this(new RandomAccessInputStream(file));
   }
@@ -68,11 +70,52 @@ public class JXRReader {
     return encoderVersion;
   }
 
+  public int getIFDOffset() {
+    return IFDOffset;
+  }
+
+  public byte[] getImageData() {
+    return null;
+  }
+
+  public byte[] getOptionalPlanarAlphaChannel() {
+    return null;
+  }
+
+  public Object getCoreMetadata() {
+    return null;
+  }
+
+  public Object getDescriptiveMetadata() {
+    return null;
+  }
+
+  public Object getXMPMetadata() {
+    return null;
+  }
+
+  public Object getEXIFMetadata() {
+    return null;
+  }
+
+  public Object getICCColorProfile() {
+    return null;
+  }
+
   private void initialize() throws IOException, JXRException {
+    checkFileSize();
     checkHeaderLength();
     checkFileStructureVersion();
     checkHeaderBOM();
     checkIfValidJpegXr();
+    calculateIFDOffset();
+  }
+
+  private void checkFileSize() throws IOException, JXRException {
+    if (stream.length() > JXRConstants.MAX_FILE_SIZE_BYTES) {
+      throw new JXRException("File size bigger than supported. Size: "
+          + stream.length());
+    }
   }
 
   private void checkHeaderLength() throws IOException, JXRException {
@@ -85,7 +128,7 @@ public class JXRReader {
     stream.seek(0);
     stream.skipBytes(3);
     byte version = stream.readByte();
-    if (version != JXRConstants.DECODER_VERSION) {
+    if (version != JXRConstants.ENCODER_VERSION) {
       throw new JXRException("Wrong file format version. Found: " + version);
     }
   }
@@ -109,6 +152,16 @@ public class JXRReader {
           + Integer.toHexString(magic));
     }
     encoderVersion = stream.readByte();
+  }
+
+  private void calculateIFDOffset() throws IOException, JXRException {
+    stream.seek(0);
+    stream.skipBytes(4);
+    int offset = stream.readInt();
+    if (offset == 0) {
+      throw new JXRException("IFD offset invalid. Found: " + offset);
+    }
+    IFDOffset = offset;
   }
 
 }
