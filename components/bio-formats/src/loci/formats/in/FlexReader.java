@@ -1489,9 +1489,12 @@ public class FlexReader extends FormatReader {
           binY = Integer.parseInt(value);
         }
         else if (qName.equals("ObjectiveRef")) {
-          String objectiveID = MetadataTools.createLSID(
-            "Objective", 0, objectiveIDs.indexOf(value));
-          objectiveRefs.add(objectiveID);
+          int index = objectiveIDs.indexOf(value);
+          if (index >= 0) {
+            String objectiveID =
+              MetadataTools.createLSID("Objective", 0, index);
+            objectiveRefs.add(objectiveID);
+          }
         }
         else if (qName.equals("CameraRef")) {
           int cameraIndex = cameraIDs.indexOf(value);
