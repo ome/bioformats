@@ -21,7 +21,7 @@ notified when new versions of Bio-Formats (or any other bundled plugin)
 are available.
 
 .. note:: Fiji currently ships with the latest 4.4.x Bio-Formats release.
-   Alternately, you can `enable the "Bio-Formats daily builds" update site
+   Alternately, you can `enable the "Bio-Formats 5" update site
    <http://fiji.sc/Bio-Formats#Daily_builds>`_ to receive the latest
    Bio-Formats 5 bugfixes and updates.
 
