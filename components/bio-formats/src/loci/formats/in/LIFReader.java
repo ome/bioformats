@@ -1736,8 +1736,8 @@ public class LIFReader extends FormatReader {
       switch (id) {
         case 1: // X axis
           ms.sizeX = len;
-          ms.rgb = (nBytes % 3) == 0;
-          if (ms.rgb) nBytes /= 3;
+          ms.rgb = nBytes == 3;
+          if (nBytes % 3 == 0) nBytes /= 3;
           ms.pixelType =
             FormatTools.pixelTypeFromBytes((int) nBytes, false, true);
           physicalSizeX = physicalLen;
