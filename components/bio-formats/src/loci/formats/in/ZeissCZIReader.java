@@ -907,14 +907,16 @@ public class ZeissCZIReader extends FormatReader {
 
   private void assignPlaneIndices() {
     // assign plane and series indices to each SubBlock
-    int[] extraLengths = {rotations, positions, illuminations, acquisitions,
-      mosaics, phases, angles};
+    int[] extraLengths = {positions, acquisitions, mosaics, angles};
     for (int p=0; p<planes.size(); p++) {
       SubBlock plane = planes.get(p);
       int z = 0;
       int c = 0;
       int t = 0;
-      int[] extra = new int[7];
+      int r = 0;
+      int i = 0;
+      int phase = 0;
+      int[] extra = new int[4];
 
       boolean noAngle = true;
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
@@ -938,32 +940,42 @@ public class ZeissCZIReader extends FormatReader {
             }
             break;
           case 'R':
-            extra[0] = dimension.start;
+            r = dimension.start;
             break;
           case 'S':
-            extra[1] = dimension.start;
+            extra[0] = dimension.start;
             break;
           case 'I':
-            extra[2] = dimension.start;
+            i = dimension.start;
             break;
           case 'B':
-            extra[3] = dimension.start;
+            extra[1] = dimension.start;
             break;
           case 'M':
-            extra[4] = dimension.start;
+            extra[2] = dimension.start;
             break;
           case 'H':
-            extra[5] = dimension.start;
+            phase = dimension.start;
             break;
           case 'V':
-            extra[6] = dimension.start;
+            extra[3] = dimension.start;
             noAngle = false;
             break;
         }
       }
 
       if (angles > 1 && noAngle) {
-        extra[6] = p / (getImageCount() * (getSeriesCount() / angles));
+        extra[3] = p / (getImageCount() * (getSeriesCount() / angles));
+      }
+
+      if (rotations > 0) {
+        z = r * (getSizeZ() / rotations) + z;
+      }
+      if (illuminations > 0) {
+        c = i * (getSizeC() / illuminations) + c;
+      }
+      if (phases > 0) {
+        t = phase * (getSizeT() / phases) + t;
       }
 
       plane.planeIndex = getIndex(z, c, t);
