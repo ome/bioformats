@@ -714,7 +714,9 @@ public class ZeissCZIReader extends FormatReader {
             }
             else {
               int channel = getZCTCoords(plane)[1];
-              if (channels.get(channel).exposure != null) {
+              if (channel < channels.size() &&
+                channels.get(channel).exposure != null)
+              {
                 store.setPlaneExposureTime(
                   channels.get(channel).exposure, i, plane);
               }
