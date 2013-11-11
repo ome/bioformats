@@ -613,15 +613,17 @@ public class FlexReader extends FormatReader {
             }
             if (index < filterSets.size()) {
               FilterGroup group = filterSetMap.get(filterSets.get(index));
-              if (group.emission != null) {
-                store.setLightPathEmissionFilterRef(group.emission, i, c, 0);
-              }
-              if (group.excitation != null) {
-                store.setLightPathExcitationFilterRef(
-                  group.excitation, i, c, 0);
-              }
-              if (group.dichroic != null) {
-                store.setLightPathDichroicRef(group.dichroic, i, c);
+              if (group != null) {
+                if (group.emission != null) {
+                  store.setLightPathEmissionFilterRef(group.emission, i, c, 0);
+                }
+                if (group.excitation != null) {
+                  store.setLightPathExcitationFilterRef(
+                    group.excitation, i, c, 0);
+                }
+                if (group.dichroic != null) {
+                  store.setLightPathDichroicRef(group.dichroic, i, c);
+                }
               }
             }
           }
@@ -1487,9 +1489,12 @@ public class FlexReader extends FormatReader {
           binY = Integer.parseInt(value);
         }
         else if (qName.equals("ObjectiveRef")) {
-          String objectiveID = MetadataTools.createLSID(
-            "Objective", 0, objectiveIDs.indexOf(value));
-          objectiveRefs.add(objectiveID);
+          int index = objectiveIDs.indexOf(value);
+          if (index >= 0) {
+            String objectiveID =
+              MetadataTools.createLSID("Objective", 0, index);
+            objectiveRefs.add(objectiveID);
+          }
         }
         else if (qName.equals("CameraRef")) {
           int cameraIndex = cameraIDs.indexOf(value);

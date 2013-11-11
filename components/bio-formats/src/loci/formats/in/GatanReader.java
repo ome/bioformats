@@ -79,6 +79,7 @@ public class GatanReader extends FormatReader {
 
   /** List of pixel sizes. */
   private Vector<Double> pixelSizes;
+  private String units;
 
   private int bytesPerPixel;
 
@@ -143,6 +144,7 @@ public class GatanReader extends FormatReader {
       version = 0;
       posX = posY = posZ = 0;
       sampleTime = 0;
+      units = null;
     }
   }
 
@@ -220,6 +222,15 @@ public class GatanReader extends FormatReader {
         Double x = pixelSizes.get(index);
         Double y = pixelSizes.get(index + 1);
         Double z = pixelSizes.get(index + 2);
+
+        if ("nm".equals(units)) {
+          x /= 1000;
+          y /= 1000;
+          z /= 1000;
+        }
+        else if (!"um".equals(units) && !"µm".equals(units) && units != null) {
+          LOGGER.warn("Not adjusting for unknown units: {}", units);
+        }
 
         PositiveFloat sizeX = FormatTools.getPhysicalSizeX(x);
         PositiveFloat sizeY = FormatTools.getPhysicalSizeY(y);
@@ -445,6 +456,9 @@ public class GatanReader extends FormatReader {
           if (value.indexOf(",") == -1) {
             pixelSizes.add(new Double(value));
           }
+        }
+        else if (labelString.equals("Units")) {
+          units = value;
         }
         else if (labelString.equals("LowLimit")) {
           signed = Double.parseDouble(value) < 0;

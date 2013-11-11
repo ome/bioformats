@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -60,6 +61,7 @@ public class CellomicsReader extends FormatReader {
   // -- Fields --
 
   private String[] files;
+  private String channelCharacter;
 
   // -- Constructor --
 
@@ -93,11 +95,13 @@ public class CellomicsReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    String file = files[getSeries()];
+    int[] zct = getZCTCoords(no);
+
+    String file = files[getSeries() * getSizeC() + zct[1]];
     RandomAccessInputStream s = getDecompressedStream(file);
 
     int planeSize = FormatTools.getPlaneSize(this);
-    s.seek(52 + no * planeSize);
+    s.seek(52 + zct[0] * planeSize);
     readPlane(s, x, y, w, h, buf);
     s.close();
 
@@ -109,6 +113,7 @@ public class CellomicsReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       files = null;
+      channelCharacter = null;
     }
   }
 
@@ -136,6 +141,11 @@ public class CellomicsReader extends FormatReader {
 
     String plateName = getPlateName(baseFile.getName());
 
+    channelCharacter = "d";
+    if (getChannel(id) < 0) {
+      channelCharacter = "o";
+    }
+
     if (plateName != null && isGroupFiles()) {
       String[] list = parent.list();
       for (String f : list) {
@@ -143,8 +153,9 @@ public class CellomicsReader extends FormatReader {
           (checkSuffix(f, "c01") || checkSuffix(f, "dib")))
         {
           Location loc = new Location(parent, f);
-          if (!f.startsWith(".") || !loc.isHidden())
+          if ((!f.startsWith(".") || !loc.isHidden()) && getChannel(f) >= 0) {
             pixelFiles.add(loc.getAbsolutePath());
+          }
         }
       }
     }
@@ -160,14 +171,17 @@ public class CellomicsReader extends FormatReader {
     ArrayList<String> uniqueRows = new ArrayList<String>();
     ArrayList<String> uniqueCols = new ArrayList<String>();
     ArrayList<String> uniqueFields = new ArrayList<String>();
+    ArrayList<Integer> uniqueChannels = new ArrayList<Integer>();
     for (String f : files) {
       String wellRow = getWellRow(f);
       String wellCol = getWellColumn(f);
       String field = getField(f);
+      int channel = getChannel(f);
 
       if (!uniqueRows.contains(wellRow)) uniqueRows.add(wellRow);
       if (!uniqueCols.contains(wellCol)) uniqueCols.add(wellCol);
       if (!uniqueFields.contains(field)) uniqueFields.add(field);
+      if (!uniqueChannels.contains(channel)) uniqueChannels.add(channel);
     }
 
     fields = uniqueFields.size();
@@ -179,7 +193,7 @@ public class CellomicsReader extends FormatReader {
     }
 
     core.clear();
-    for (int i=0; i<files.length; i++) {
+    for (int i=0; i<files.length/uniqueChannels.size(); i++) {
       core.add(new CoreMetadata());
     }
 
@@ -232,8 +246,8 @@ public class CellomicsReader extends FormatReader {
       ms.sizeY = y;
       ms.sizeZ = nPlanes;
       ms.sizeT = 1;
-      ms.sizeC = 1;
-      ms.imageCount = getSizeZ();
+      ms.sizeC = uniqueChannels.size();
+      ms.imageCount = getSizeZ() * getSizeT() * getSizeC();
       ms.littleEndian = true;
       ms.dimensionOrder = "XYCZT";
       ms.pixelType =
@@ -284,7 +298,7 @@ public class CellomicsReader extends FormatReader {
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      String file = files[i];
+      String file = files[i * getSizeC()];
 
       String field = getField(file);
       String wellRow = getWellRow(file);
@@ -303,7 +317,11 @@ public class CellomicsReader extends FormatReader {
       if (row < realRows && col < realCols) {
 
         int wellIndex = row * realCols + col;
-        int fieldIndex = i % fields;
+        int fieldIndex = Integer.parseInt(field);
+
+        if (files.length == 1) {
+          fieldIndex = 0;
+        }
 
         String wellSampleID =
           MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
@@ -367,6 +385,16 @@ public class CellomicsReader extends FormatReader {
     int start = well.indexOf("f") + 1;
     int end = start + 2;
     return well.substring(start, end);
+  }
+
+  private int getChannel(String filename) {
+    String well = getWellName(filename);
+    int start = well.indexOf(channelCharacter) + 1;
+    int end = start + 1;
+    if (start > 0) {
+      return Integer.parseInt(well.substring(start, end));
+    }
+    return -1;
   }
 
   private RandomAccessInputStream getDecompressedStream(String filename)
