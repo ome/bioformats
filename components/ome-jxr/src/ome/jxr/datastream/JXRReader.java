@@ -23,14 +23,22 @@
  * #L%
  */
 
-package ome.jxr;
+package ome.jxr.datastream;
 
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import ome.jxr.JXRConstants;
+import ome.jxr.JXRException;
+import ome.jxr.metadata.JXRCoreMetadata;
+import ome.jxr.metadata.JXRTextMetadata;
 
 /**
- * OME library for reading the JPEG XR file format.
+ * Reader for the JPEG XR image file format. Provides access decompressed image
+ * data and different types of metadata. This class only handles the initial
+ * file header and delegates to a {@link JXRDecoder} instance for more low-level
+ * operations. A successful instantiation of this class' instance guarantees
+ * validity of the image resource passed into the constructor.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
@@ -41,13 +49,15 @@ import loci.common.RandomAccessInputStream;
  */
 public class JXRReader {
 
+  private JXRDecoder decoder;
+
   private RandomAccessInputStream stream;
 
   private boolean isLittleEndian;
 
   private int encoderVersion;
 
-  private int IFDOffset;
+  private int firstIFDOffset;
 
   public JXRReader(String file) throws IOException, JXRException {
     this(new RandomAccessInputStream(file));
@@ -55,7 +65,6 @@ public class JXRReader {
 
   public JXRReader(RandomAccessInputStream stream) throws JXRException {
     this.stream = stream;
-    stream.order(true);
     try {
       initialize();
     }
@@ -64,47 +73,41 @@ public class JXRReader {
     }
   }
 
-  public boolean isLittleEndian() {
-    return isLittleEndian;
-  }
-
   public int getEncoderVersion() {
     return encoderVersion;
   }
 
-  public int getIFDOffset() {
-    return IFDOffset;
+  public int getFirstIFDOffset() {
+    return firstIFDOffset;
   }
 
-  public byte[] getImageData() {
-    return null;
+  public RandomAccessInputStream getDecompressedImageData() {
+    return decoder.decompressImage();
   }
 
-  public byte[] getOptionalPlanarAlphaChannel() {
-    return null;
+  RandomAccessInputStream getInputStream() {
+    return stream;
   }
 
-  public Object getCoreMetadata() {
-    return null;
+  public JXRCoreMetadata getJXRCoreMetadata() {
+    return decoder.extractCoreMetadata();
   }
 
-  public Object getDescriptiveMetadata() {
-    return null;
+  public JXRTextMetadata getJXRTextMetadata() {
+    return decoder.extractTextMetadata();
   }
 
-  public Object getXMPMetadata() {
-    return null;
+  public void setDecoder(JXRDecoder decoder) {
+    this.decoder = decoder;
   }
 
-  public Object getEXIFMetadata() {
-    return null;
-  }
-
-  public Object getICCColorProfile() {
-    return null;
+  public boolean isLittleEndian() {
+    return isLittleEndian;
   }
 
   private void initialize() throws IOException, JXRException {
+    // JPEG XR is expected to be little-endian
+    stream.order(true);
     checkFileSize();
     checkHeaderLength();
     checkFileStructureVersion();
@@ -163,7 +166,7 @@ public class JXRReader {
     if (offset == 0) {
       throw new JXRException("IFD offset invalid. Found: " + offset);
     }
-    IFDOffset = offset;
+    firstIFDOffset = offset;
   }
 
 }

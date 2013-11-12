@@ -26,24 +26,16 @@
 package ome.jxr;
 
 /**
- * Constants used by classes in the <tt>ome.jxr</tt> package.
+ * Represents a single IFD table structure, inside which a number of IFD Entries
+ * reside. Provides access methods to data stored inside the entries.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/JXRConstants.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/JXRConstants.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/JXRIFDTable.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/JXRIFDTable.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
-public final class JXRConstants {
-
-  public static final int MINIMAL_HEADER_LENGTH = 4;
-  public static final long MAX_FILE_SIZE_BYTES = 4294967295L;
-  public static final short IFD_ENTRY_SIZE = 12;
-  public static final short IFD_ENTRY_COUNT_SIZE = 2;
-  public static final short LITTLE_ENDIAN = 0x4949;
-  public static final byte MAGIC_NUMBER = (byte) 0xbc;
-  public static final int ENCODER_VERSION = 1;
-  public static final String MAGIC_STRING = "WMPHOTO";
+public class JXRIFDTable {
 
 }

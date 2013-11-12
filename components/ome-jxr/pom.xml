@@ -65,7 +65,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <suiteXmlFiles>
-            <suiteXmlFile>test/ome/jxr/utests/testng-template.xml</suiteXmlFile>
+            <suiteXmlFile>test/testng-template.xml</suiteXmlFile>
           </suiteXmlFiles>
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>

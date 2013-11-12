@@ -24,9 +24,14 @@
   -->
 
 <suite name="OME JXR Tests">
-    <test name="JXRReader">
-      <classes>
-        <class name="ome.jxr.utests.JXRReaderTest"/>
-      </classes>
-    </test>
+  <test name="JXRReader">
+    <classes>
+      <class name="ome.jxr.datastream.utests.JXRReaderTest"/>
+    </classes>
+  </test>
+  <test name="JXRDecoder">
+    <classes>
+      <class name="ome.jxr.datastream.utests.JXRDecoderTest"/>
+    </classes>
+  </test>
 </suite>
