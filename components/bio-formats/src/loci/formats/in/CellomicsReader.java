@@ -120,7 +120,11 @@ public class CellomicsReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    return files;
+
+    int nFiles = files.length / getSeriesCount();
+    String[] seriesFiles = new String[nFiles];
+    System.arraycopy(files, getSeries() * nFiles, seriesFiles, 0, nFiles);
+    return seriesFiles;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
