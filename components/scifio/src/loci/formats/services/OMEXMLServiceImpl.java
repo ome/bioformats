@@ -861,11 +861,12 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   public void addModuloAlong(OMEXMLMetadata meta, CoreMetadata core, int image)
   {
-    int annotationIndex = 0;
-    try {
-      annotationIndex = meta.getXMLAnnotationCount();
-    }
-    catch (NullPointerException e) { }
+    meta.resolveReferences();
+
+    OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) meta.getRoot();
+    StructuredAnnotations annotations = root.getStructuredAnnotations();
+    if (annotations == null) annotations = new StructuredAnnotations();
+    int annotationIndex = annotations.sizeOfXMLAnnotationList();
 
     if (annotationIndex > 0) {
      String lastAnnotationID = meta.getXMLAnnotationID(annotationIndex - 1);
@@ -883,36 +884,39 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     int imageAnnotation = 0;
 
     if (core.moduloZ.length() > 1) {
-      String zAnnotation = core.moduloZ.toXMLAnnotation();
+      ModuloAnnotation zAnnotation = new ModuloAnnotation();
+      zAnnotation.setModulo(core.moduloZ);
       String id = MetadataTools.createLSID("Annotation", annotationIndex);
-      meta.setXMLAnnotationID(id, annotationIndex);
-      meta.setXMLAnnotationNamespace(MODULO_NS, annotationIndex);
-      meta.setXMLAnnotationValue(zAnnotation, annotationIndex);
+      zAnnotation.setID(id);
+      annotations.addXMLAnnotation(zAnnotation);
       annotationIndex++;
 
       meta.setImageAnnotationRef(id, image, imageAnnotation++);
     }
 
     if (core.moduloC.length() > 1) {
-      String cAnnotation = core.moduloC.toXMLAnnotation();
+      ModuloAnnotation cAnnotation = new ModuloAnnotation();
+      cAnnotation.setModulo(core.moduloC);
       String id = MetadataTools.createLSID("Annotation", annotationIndex);
-      meta.setXMLAnnotationID(id, annotationIndex);
-      meta.setXMLAnnotationNamespace(MODULO_NS, annotationIndex);
-      meta.setXMLAnnotationValue(cAnnotation, annotationIndex);
+      cAnnotation.setID(id);
+      annotations.addXMLAnnotation(cAnnotation);
       annotationIndex++;
 
       meta.setImageAnnotationRef(id, image, imageAnnotation++);
     }
 
     if (core.moduloT.length() > 1) {
-      String tAnnotation = core.moduloT.toXMLAnnotation();
+      ModuloAnnotation tAnnotation = new ModuloAnnotation();
+      tAnnotation.setModulo(core.moduloT);
       String id = MetadataTools.createLSID("Annotation", annotationIndex);
-      meta.setXMLAnnotationID(id, annotationIndex);
-      meta.setXMLAnnotationNamespace(MODULO_NS, annotationIndex);
-      meta.setXMLAnnotationValue(tAnnotation, annotationIndex);
+      tAnnotation.setID(id);
+      annotations.addXMLAnnotation(tAnnotation);
 
       meta.setImageAnnotationRef(id, image, imageAnnotation);
     }
+
+    root.setStructuredAnnotations(annotations);
+    meta.setRoot(root);
   }
 
   // -- Utility methods - casting --
@@ -1085,7 +1089,66 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     return null;
   }
 
-  // -- Helper class --
+  // -- Helper classes --
+
+  class ModuloAnnotation extends XMLAnnotation {
+    private Modulo modulo;
+
+    public void setModulo(Modulo m) {
+      modulo = m;
+    }
+
+    protected Element asXMLElement(Document document, Element element) {
+      if (element == null) {
+        element = document.createElementNS(
+          XMLAnnotation.NAMESPACE, "XMLAnnotation");
+      }
+
+      Element m = document.createElementNS(
+        MODULO_NS, "ModuloAlong" + modulo.parentDimension);
+
+      String type = modulo.type;
+      String typeDescription = modulo.typeDescription;
+      if (type != null) {
+        type = type.toLowerCase();
+      }
+      if (type == null || (!type.equals("angle") && !type.equals("phase") &&
+        !type.equals("tile") && !type.equals("lifetime") &&
+        !type.equals("lambda")))
+      {
+        if (typeDescription == null) {
+          typeDescription = type;
+        }
+        type = "other";
+      }
+
+      m.setAttribute("Type", type);
+      m.setAttribute("TypeDescription", typeDescription);
+      if (modulo.unit != null) {
+        m.setAttribute("Unit", modulo.unit);
+      }
+      if (modulo.end > modulo.start) {
+        m.setAttribute("Start", String.valueOf(modulo.start));
+        m.setAttribute("Step", String.valueOf(modulo.step));
+        m.setAttribute("End", String.valueOf(modulo.end));
+      }
+      if (modulo.labels != null) {
+        for (String label : modulo.labels) {
+          Element labelNode = document.createElementNS(MODULO_NS, "Label");
+          labelNode.setTextContent(label);
+          m.appendChild(labelNode);
+        }
+      }
+
+      Element annotationValue =
+        document.createElementNS(XMLAnnotation.NAMESPACE, "Value");
+      annotationValue.appendChild(m);
+
+      element.appendChild(annotationValue);
+      return super.asXMLElement(document, element);
+    }
+
+  }
 
   class OriginalMetadataAnnotation extends XMLAnnotation {
     private String key, value;
