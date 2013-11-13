@@ -258,18 +258,19 @@ public class MetamorphReader extends BaseTiffReader {
     // for the constituent STK files
     stkReaders[getSeries()][ndx].setMetadataOptions(
         new DefaultMetadataOptions(MetadataLevel.MINIMUM));
-    stkReaders[getSeries()][ndx].setId(file);
-    int plane = stks[getSeries()].length == 1 ? no : coords[0];
+    try {
+      stkReaders[getSeries()][ndx].setId(file);
+      int plane = stks[getSeries()].length == 1 ? no : coords[0];
 
-    if (bizarreMultichannelAcquisition) {
-      int realX = getZCTCoords(no)[1] == 0 ? x : x + getSizeX();
-      stkReaders[getSeries()][ndx].openBytes(plane, buf, realX, y, w, h);
+      if (bizarreMultichannelAcquisition) {
+        int realX = getZCTCoords(no)[1] == 0 ? x : x + getSizeX();
+        stkReaders[getSeries()][ndx].openBytes(plane, buf, realX, y, w, h);
+      }
+      else {
+        stkReaders[getSeries()][ndx].openBytes(plane, buf, x, y, w, h);
+      }
     }
-    else {
-      stkReaders[getSeries()][ndx].openBytes(plane, buf, x, y, w, h);
-    }
-
-    if (plane == stkReaders[getSeries()][ndx].getImageCount() - 1) {
+    finally {
       stkReaders[getSeries()][ndx].close();
     }
 
