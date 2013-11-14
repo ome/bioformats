@@ -23,21 +23,26 @@
  * #L%
  */
 
-package ome.jxr.datastream.utests;
+package ome.jxr.constants;
 
-import java.io.IOException;
+/**
+ * Constants describing an IFD container and its entries. All sizes, if the name
+ * doesn't suggest otherwise, have been provided in bytes.
+ *
+ * <dl>
+ * <dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/constants/IFD.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/constants/IFD.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ */
+public final class IFD {
 
-import ome.jxr.datastream.JXRDecoder;
-import ome.jxr.datastream.JXRReader;
-
-import org.testng.annotations.Test;
-
-public class JXRDecoderTest {
-
-  @Test(dataProvider = "testFile", dataProviderClass = StaticDataProvider.class)
-  public void testCtorShouldNotThrow(JXRReader reader)
-      throws IOException {
-    reader.setDecoder(new JXRDecoder(reader));
-  }
+  public static final short ENTRY_SIZE = 12;
+  public static final int ENTRIES_COUNT_SIZE = 2;
+  public static final short ENTRY_TAG_SIZE = 2;
+  public static final short ENTRY_TYPE_SIZE = 2;
+  public static final short ENTRY_TYPE_COUNT_SIZE = 4;
+  public static final short ENTRY_VALUE_SIZE = 4;
 
 }

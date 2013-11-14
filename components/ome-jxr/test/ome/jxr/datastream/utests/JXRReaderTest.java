@@ -32,8 +32,9 @@ import static org.testng.AssertJUnit.assertTrue;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import ome.jxr.JXRConstants;
 import ome.jxr.JXRException;
+import ome.jxr.constants.File;
+import ome.jxr.datastream.JXRParser;
 import ome.jxr.datastream.JXRReader;
 
 import org.testng.annotations.Test;
@@ -54,26 +55,65 @@ public class JXRReaderTest {
     new JXRReader(new RandomAccessInputStream(malformedHeader));
   }
 
-  @Test(dataProvider = "testFile", dataProviderClass = StaticDataProvider.class)
-  public void testCtorWithTestFileShouldSucceed(JXRReader reader)
+  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
+  public void testCtorWithtestReaderShouldSucceed(JXRReader reader)
       throws IOException, JXRException {
     assertNotNull(reader);
   }
 
-  @Test(dataProvider = "testFile", dataProviderClass = StaticDataProvider.class)
+  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
   public void testGetEncoderVersionShouldReturnSupportedVersion(JXRReader reader) {
-    assertEquals(JXRConstants.ENCODER_VERSION, reader.getEncoderVersion());
+    assertEquals(File.ENCODER_VERSION, reader.getEncoderVersion());
   }
 
-  @Test(dataProvider = "testFile", dataProviderClass = StaticDataProvider.class)
+  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
   public void testIsLittleEndianShouldReturnTrue(JXRReader reader) {
     assertTrue(reader.isLittleEndian());
   }
 
-  @Test(dataProvider = "testFile", dataProviderClass = StaticDataProvider.class)
+  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
   public void testGetIFDOffsetShouldNotReturnZero(JXRReader reader) {
     int expectedOffset = 32;
-    assertEquals(expectedOffset, reader.getFirstIFDOffset());
+    assertEquals(expectedOffset, reader.getRootIFDOffset());
   }
+
+  @Test(dataProvider = "testReader",
+      dataProviderClass = StaticDataProvider.class,
+      expectedExceptions = IllegalStateException.class)
+  public void testSetParserWithNullObjectShouldThrowISE(JXRReader reader)
+      throws IOException, IllegalStateException {
+    reader.setParser(null);
+  }
+
+  @Test(dataProvider = "testReader",
+      dataProviderClass = StaticDataProvider.class,
+      expectedExceptions = IllegalStateException.class)
+  public void testGetMetadataWithoutParserShouldThrowISE(JXRReader reader)
+      throws IOException, IllegalStateException {
+    reader.getMetadata();
+  }
+
+  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
+  public void testGetMetadataWithParserShouldSucceed(JXRReader reader)
+      throws IOException {
+    reader.setParser(new JXRParser());
+    assertNotNull(reader.getMetadata());
+  }
+
+  @Test(dataProvider = "testReader",
+      dataProviderClass = StaticDataProvider.class,
+      expectedExceptions = IllegalStateException.class)
+  public void testGetDecompressedImageWithoutParserShouldThrowISE(JXRReader reader)
+      throws IOException, IllegalStateException {
+    reader.getDecompressedImage();
+  }
+
+  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
+  public void testGetDecompressedImageWithParserShouldSucceed(JXRReader reader)
+      throws IOException {
+    reader.setParser(new JXRParser());
+    assertNotNull(reader.getDecompressedImage());
+  }
+
 
 }

@@ -23,19 +23,43 @@
  * #L%
  */
 
-package ome.jxr;
+package ome.jxr.ifd;
 
 /**
- * Represents a single IFD table structure, inside which a number of IFD Entries
- * reside. Provides access methods to data stored inside the entries.
- *
- * <dl>
- * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/JXRIFDTable.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/JXRIFDTable.java;hb=HEAD">Gitweb</a></dd></dl>
+ * Enumeration of data types to which each IFD entry must conform. Naming of
+ * types follows Rec.ITU-T T.832 (01/2012) - table A.5.
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
-public class JXRIFDTable {
+enum IFDElementType {
+
+  BYTE(1, 1),
+  UTF8(2, 1),
+  USHORT(3, 2),
+  ULONG(4, 4),
+  URATIONAL(5, 2 * ULONG.getSize()),
+  SBYTE(6, 1),
+  UNDEFINED(7, 1),
+  SSHORT(8, 2),
+  SLONG(9, 4),
+  SRATIONAL(10, 2 * SLONG.getSize()),
+  FLOAT(11, 4),
+  DOUBLE(12, 8);
+
+  private final int typeCode;
+  private final int size;
+
+  private IFDElementType(int typeCode, int size) {
+    this.typeCode = typeCode;
+    this.size = size;
+  }
+
+  public int getTypeCode() {
+    return typeCode;
+  }
+
+  public int getSize() {
+    return size;
+  }
 
 }

@@ -23,8 +23,32 @@
  * #L%
  */
 
-package ome.jxr.metadata;
+package ome.jxr.ifd;
 
-public class JXRCoreMetadata {
+/**
+ * Enumeration of available IFD entries. Naming of entries follows
+ * Rec.ITU-T T.832 (01/2012) - table A.4. {@link Integer.MAX_VALUE} has been
+ * used to indicate variable number of entry elements.
+ *
+ * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ */
+public class IFDContainer {
+
+  private int offset;
+
+  private short numberOfEntries;
+
+  public IFDContainer(int offset, short numberOfEntries) {
+    this.offset = offset;
+    this.numberOfEntries = numberOfEntries;
+  }
+
+  public int getOffset() {
+    return offset;
+  }
+
+  public short getNumberOfEntries() {
+    return numberOfEntries;
+  }
 
 }

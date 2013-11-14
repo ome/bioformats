@@ -27,6 +27,7 @@ package ome.jxr.datastream.utests;
 
 import java.io.IOException;
 
+import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 import ome.jxr.datastream.JXRReader;
 
@@ -43,24 +44,32 @@ public class StaticDataProvider {
         {new byte[] {0x01, 0x02, 0x03}},
 
         /* Big-endian BOM or wrong BOM in header*/
-        {new byte[] {0x4d, 0x4d, 0xf, 0xf}},
-        {new byte[] {0x49, 0x4d, 0xf, 0xf}},
-        {new byte[] {0x4d, 0x49, 0xf, 0xf}},
+        {new byte[] {0x4D, 0x4D, 0xF, 0xF}},
+        {new byte[] {0x49, 0x4D, 0xF, 0xF}},
+        {new byte[] {0x4D, 0x49, 0xF, 0xF}},
 
         /* Wrong magic number*/
-        {new byte[] {0x49, 0x49, 0xf, 0xf}},
+        {new byte[] {0x49, 0x49, 0xF, 0xF}},
 
         /* Wrong format version */
-        {new byte[] {0x49, 0x49, 0x0, 0xf}},
-        {new byte[] {0x49, 0x49, 0x2, 0xf}},
+        {new byte[] {0x49, 0x49, 0x0, 0xF}},
+        {new byte[] {0x49, 0x49, 0x2, 0xF}},
 
         /* Wrong IFD offset */
-        {new byte[] {0x49, 0x49, (byte) 0xbc, 0x01, 0x00, 0x00, 0x00, 0x00}}
+        {new byte[] {0x49, 0x49, (byte) 0xBC, 0x01, 0x00, 0x00, 0x00, 0x00}}
     };
   }
 
-  @DataProvider(name = "testFile")
-  public static Object[][] testFileProvider() throws IOException, JXRException {
+  @DataProvider(name = "testStream")
+  public static Object[][] testStreamProvider() throws IOException, JXRException {
+    String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
+    return new Object[][] {
+        {new RandomAccessInputStream(testFilePath)}
+    };
+  }
+
+  @DataProvider(name = "testReader")
+  public static Object[][] testReaderProvider() throws IOException, JXRException {
     String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
     return new Object[][] {
         {new JXRReader(testFilePath)}

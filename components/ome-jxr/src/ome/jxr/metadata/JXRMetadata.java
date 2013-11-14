@@ -25,6 +25,21 @@
 
 package ome.jxr.metadata;
 
-public class JXRTextMetadata {
+public class JXRMetadata {
+
+  public int getBytesPerPixel() {
+    // TODO: Implement logic
+    return 0;
+  }
+
+  public int getBitsPerPixel() {
+    // TODO: Implement logic
+    return 0;
+  }
+
+  public int getNumberOfChannels() {
+    // TODO: Implement logic
+    return 0;
+  }
 
 }
