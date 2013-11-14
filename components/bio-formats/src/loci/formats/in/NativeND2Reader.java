@@ -926,9 +926,7 @@ public class NativeND2Reader extends FormatReader {
         LOGGER.debug("Correcting SizeC: was {}", getSizeC());
         LOGGER.debug("plane size = {}", planeSize);
         LOGGER.debug("available bytes = {}", availableBytes);
-        if (isLossless) {
-          planeSize *= 2;
-        }
+
         core[0].sizeC = (int) (availableBytes / (planeSize / getSizeC()));
         if (getSizeC() == 0) {
           core[0].sizeC = 1;
@@ -1647,7 +1645,12 @@ public class NativeND2Reader extends FormatReader {
         int green = (colors[c] & 0xff00) >> 8;
         int blue = (colors[c] & 0xff0000) >> 16;
         int alpha = (colors[c] & 0xff000000) >> 24;
-        store.setChannelColor(new Color(red, green, blue, alpha), i, c);
+
+        // do not set the channel color if the recorded color is black
+        // doing so can prevent the image from displaying correctly
+        if (red != 0 || green != 0 || blue != 0) {
+          store.setChannelColor(new Color(red, green, blue, alpha), i, c);
+        }
       }
     }
 
@@ -1661,32 +1664,29 @@ public class NativeND2Reader extends FormatReader {
         if (trueSizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(trueSizeX), i);
         }
-        else if (sizeX > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
-        }
         else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            sizeX);
+          PositiveFloat size = FormatTools.getPhysicalSizeX(sizeX);
+          if (size != null) {
+            store.setPixelsPhysicalSizeX(size, i);
+          }
         }
         if (trueSizeY > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(trueSizeY), i);
         }
-        else if (sizeY > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
-        }
         else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-            sizeY);
+          PositiveFloat size = FormatTools.getPhysicalSizeY(sizeY);
+          if (size != null) {
+            store.setPixelsPhysicalSizeY(size, i);
+          }
         }
         if (trueSizeZ > 0) {
           store.setPixelsPhysicalSizeZ(new PositiveFloat(trueSizeZ), i);
         }
-        else if (sizeZ > 0) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), i);
-        }
         else {
-          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-            sizeZ);
+          PositiveFloat size = FormatTools.getPhysicalSizeZ(sizeZ);
+          if (size != null) {
+            store.setPixelsPhysicalSizeZ(size, i);
+          }
         }
       }
     }
@@ -1801,27 +1801,19 @@ public class NativeND2Reader extends FormatReader {
         if (index < emWave.size() || index < textEmissionWavelengths.size()) {
           Integer value = index < emWave.size() ? emWave.get(index) :
             textEmissionWavelengths.get(index);
-          if (value > 0) {
-            store.setChannelEmissionWavelength(new PositiveInteger(value), i, c);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for EmissionWavelength; got {}",
-              emWave.get(index));
+          PositiveInteger emission = FormatTools.getEmissionWavelength(value);
+          if (emission != null) {
+            store.setChannelEmissionWavelength(emission, i, c);
           }
         }
         else if (emWave.size() > 0 || textEmissionWavelengths.size() > 0) {
           store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
         if (index < exWave.size()) {
-          if (exWave.get(index) > 0) {
-            store.setChannelExcitationWavelength(
-              new PositiveInteger(exWave.get(index)), i, c);
-          }
-          else {
-            LOGGER.warn(
-              "Expected positive value for ExcitationWavelength; got {}",
-              exWave.get(index));
+          PositiveInteger excitation =
+            FormatTools.getExcitationWavelength(exWave.get(index));
+          if (excitation != null) {
+            store.setChannelExcitationWavelength(excitation, i, c);
           }
         }
         if (index < binning.size()) {

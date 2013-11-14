@@ -147,6 +147,12 @@ public class TestTools {
   public static boolean canFitInMemory(long bufferSize) {
     Runtime r = Runtime.getRuntime();
     long mem = r.freeMemory() / 2;
+    int threadCount = 1;
+    try {
+      threadCount = Integer.parseInt(System.getProperty("testng.threadCount"));
+    }
+    catch (NumberFormatException e) { }
+    mem /= threadCount;
     return bufferSize < mem && bufferSize <= Integer.MAX_VALUE;
   }
 

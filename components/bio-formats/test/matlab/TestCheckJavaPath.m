@@ -25,56 +25,44 @@
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-classdef TestCheckJavaPath < TestCase
+classdef TestCheckJavaPath < TestBfMatlab
     
     properties
-        isStatic
+        status
     end
     
     methods
         function self = TestCheckJavaPath(name)
-            self = self@TestCase(name);
-        end
-        function setUp(self)
-            % Get path to loci_tools (assuming it is in Matlab path)
-            lociToolsPath = which('loci_tools.jar');
-            assert(~isempty(lociToolsPath));
-            
-            % Remove loci_tools from dynamic class path
-            if ismember(lociToolsPath,javaclasspath('-dynamic'))
-                javarmpath(lociToolsPath);
-            end
-            
-            % Check if loci_tools is in the static class path
-            self.isStatic = ismember(lociToolsPath,...
-                javaclasspath('-static'));
+            self = self@TestBfMatlab(name);
         end
         
         function testDefault(self)
-            status = bfCheckJavaPath();
-            assertTrue(status);
+            self.status = bfCheckJavaPath();
+            assertTrue(self.status);
         end
         
         function testAutoloadBioformats(self)
-            status = bfCheckJavaPath(true);
-            assertTrue(status);
+            self.status = bfCheckJavaPath(true);
+            assertTrue(self.status);
         end
         
         function testNoAutoloadBioformats(self)
-            status = bfCheckJavaPath(false);
-            if self.isStatic
-                assertTrue(status);
+            isStatic = ismember(self.lociToolsPath,...
+                javaclasspath('-static'));
+            self.status = bfCheckJavaPath(false);
+            if isStatic
+                assertTrue(self.status);
             else
-                assertFalse(status);
-            end            
+                assertFalse(self.status);
+            end
         end
         
-         function testPerformance(self)
-             maxTime = .5;
-             tic;
-             bfCheckJavaPath();
-             totalCheckTime=toc;
-             assert(totalCheckTime<maxTime);           
+        function testPerformance(self)
+            maxTime = .5;
+            tic;
+            self.status = bfCheckJavaPath();
+            totalCheckTime=toc;
+            assert(totalCheckTime<maxTime);
         end
-    end    
+    end
 end

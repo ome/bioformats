@@ -281,6 +281,12 @@ public class MetamorphTiffReader extends BaseTiffReader {
     if (getSizeZ() == 0) core[0].sizeZ = 1;
     core[0].sizeZ *= uniqueZ.size();
 
+    Double zRange = zPositions.get(zPositions.size() - 1) - zPositions.get(0);
+    Double physicalSizeZ = Math.abs(zRange);
+    if (core[0].sizeZ > 1) {
+      physicalSizeZ /= (core[0].sizeZ - 1);
+    }
+
     int totalPlanes = files.length * ifds.size();
     effectiveC = getSizeC() / samples;
     core[0].sizeT = totalPlanes /
@@ -425,21 +431,20 @@ public class MetamorphTiffReader extends BaseTiffReader {
         }
 
         store.setImagingEnvironmentTemperature(handler.getTemperature(), s);
-        if (handler.getPixelSizeX() > 0) {
-          store.setPixelsPhysicalSizeX(
-            new PositiveFloat(handler.getPixelSizeX()), s);
+
+        PositiveFloat sizeX =
+          FormatTools.getPhysicalSizeX(handler.getPixelSizeX());
+        PositiveFloat sizeY =
+          FormatTools.getPhysicalSizeY(handler.getPixelSizeY());
+
+        if (sizeX != null) {
+          store.setPixelsPhysicalSizeX(sizeX, s);
         }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            handler.getPixelSizeX());
+        if (sizeY != null) {
+          store.setPixelsPhysicalSizeY(sizeY, s);
         }
-        if (handler.getPixelSizeY() > 0) {
-          store.setPixelsPhysicalSizeY(
-            new PositiveFloat(handler.getPixelSizeY()), s);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-            handler.getPixelSizeY());
+        if (physicalSizeZ > 0) {
+          store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), s);
         }
 
         for (int c=0; c<getEffectiveSizeC(); c++) {

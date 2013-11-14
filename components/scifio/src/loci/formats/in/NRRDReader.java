@@ -50,6 +50,7 @@ import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -338,20 +339,23 @@ public class NRRDReader extends FormatReader {
           if (pixelSizes[i] == null) continue;
           try {
             Double d = new Double(pixelSizes[i].trim());
-            if (d > 0) {
-              if (i == 0) {
-                store.setPixelsPhysicalSizeX(new PositiveFloat(d), 0);
-              }
-              else if (i == 1) {
-                store.setPixelsPhysicalSizeY(new PositiveFloat(d), 0);
-              }
-              else if (i == 2) {
-                store.setPixelsPhysicalSizeZ(new PositiveFloat(d), 0);
+            if (i == 0) {
+              PositiveFloat x = FormatTools.getPhysicalSizeX(d);
+              if (x != null) {
+                store.setPixelsPhysicalSizeX(x, 0);
               }
             }
-            else {
-              LOGGER.warn(
-                "Expected positive value for PhysicalSize; got {}", d);
+            else if (i == 1) {
+              PositiveFloat y = FormatTools.getPhysicalSizeY(d);
+              if (y != null) {
+                store.setPixelsPhysicalSizeY(y, 0);
+              }
+            }
+            else if (i == 2) {
+              PositiveFloat z = FormatTools.getPhysicalSizeZ(d);
+              if (z != null) {
+                store.setPixelsPhysicalSizeZ(z, 0);
+              }
             }
           }
           catch (NumberFormatException e) { }

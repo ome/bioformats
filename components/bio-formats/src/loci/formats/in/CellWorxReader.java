@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -80,6 +81,9 @@ public class CellWorxReader extends FormatReader {
   private String lastFile;
   private IFormatReader lastReader;
 
+  private HashMap<Integer, Timestamp> timestamps =
+    new HashMap<Integer, Timestamp>();
+
   // -- Constructor --
 
   /** Constructs a new CellWorx reader. */
@@ -111,7 +115,7 @@ public class CellWorxReader extends FormatReader {
       if (new Location(parent, htdName + ".htd").exists() ||
         new Location(parent, htdName + ".HTD").exists())
       {
-        return true;
+        return checkSuffix(name, "log") || isGroupFiles();
       }
     }
     return false;
@@ -210,6 +214,7 @@ public class CellWorxReader extends FormatReader {
       }
       lastReader = null;
       doChannels = false;
+      timestamps.clear();
     }
   }
 
@@ -350,7 +355,22 @@ public class CellWorxReader extends FormatReader {
 
     core = new CoreMetadata[fieldCount * wellCount];
 
-    String file = getFile(0, 0);
+    int planeIndex = 0;
+    int seriesIndex = 0;
+    String file = getFile(seriesIndex, planeIndex);
+    while (!new Location(file).exists()) {
+      if (planeIndex <  nTimepoints * wavelengths.length) {
+        planeIndex++;
+      }
+      else if (seriesIndex < core.length) {
+        planeIndex = 0;
+        seriesIndex++;
+      }
+      else {
+        break;
+      }
+      file = getFile(seriesIndex, planeIndex);
+    }
     IFormatReader pnl = getReader(file);
 
     for (int i=0; i<core.length; i++) {
@@ -402,13 +422,12 @@ public class CellWorxReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    if (fieldMap.length * fieldMap[0].length > 0) {
-      store.setPlateAcquisitionMaximumFieldCount(
-        new PositiveInteger(fieldMap.length * fieldMap[0].length), 0, 0);
-    }
-    else {
-      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
-        fieldMap.length * fieldMap[0].length);
+
+    PositiveInteger fieldCount =
+      FormatTools.getMaxFieldCount(fieldMap.length * fieldMap[0].length);
+
+    if (fieldCount != null) {
+      store.setPlateAcquisitionMaximumFieldCount(fieldCount, 0, 0);
     }
 
     int nextImage = 0;
@@ -453,6 +472,11 @@ public class CellWorxReader extends FormatReader {
 
       for (int well=0; well<wellCount; well++) {
         parseWellLogFile(well, store);
+      }
+      if (timestamps.size() > 0) {
+        store.setPlateAcquisitionStartTime(timestamps.get(0), 0, 0);
+        store.setPlateAcquisitionEndTime(
+          timestamps.get(timestamps.size() - 1), 0, 0);
       }
       for (int i=0; i<core.length; i++) {
         for (int c=0; c<getSizeC(); c++) {
@@ -545,8 +569,10 @@ public class CellWorxReader extends FormatReader {
         String date = DateTools.formatDate(value, DATE_FORMAT);
         for (int field=0; field<fieldCount; field++) {
           if (date != null) {
+            int imageIndex = seriesIndex + field;
+            timestamps.put(imageIndex, new Timestamp(date));
             store.setImageAcquisitionDate(
-              new Timestamp(date), seriesIndex + field);
+              timestamps.get(imageIndex), imageIndex);
           }
         }
       }

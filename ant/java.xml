@@ -30,6 +30,7 @@ Type "ant -p" for a list of targets.
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
+      encoding="UTF-8"
       srcdir="${dest.dir}" destdir="${classes.dir}"
       classpath="${component.classpath}"
       includes="${component.source}">
@@ -43,6 +44,7 @@ Type "ant -p" for a list of targets.
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
+      encoding="UTF-8"
       srcdir="${test.dir}" destdir="${test-classes.dir}"
       classpath="${classes.dir}:${component.classpath}"
       includes="${component.source}"/>
@@ -173,7 +175,8 @@ your FindBugs installation's lib directory. E.g.:
       <fileset dir="${utils.dir}" includes="*.class"/>
     </delete>
     <javac debug="true" includeantruntime="false" fork="true"
-      deprecation="true" source="1.5" target="1.5"
+      deprecation="true" source="1.6" target="1.6"
+      encoding="UTF-8"
       srcdir="${utils.dir}" includes="*.java"
       classpath="${component.classpath}:${artifact.dir}/${component.jar}">
       <!--<compilerarg value="-Xlint:unchecked"/>-->
@@ -184,12 +187,13 @@ your FindBugs installation's lib directory. E.g.:
     description="generate javadocs">
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
       classpath="${component.classpath}:${classes.dir}"
+      encoding="UTF-8"
       author="true" version="true" use="true"
       nodeprecated="false" windowtitle="Bio-Formats API">
       <packageset dir="${dest.dir}"/>
       <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
-      <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
       <link href="http://hudson.openmicroscopy.org.uk/job/OMEJAVA/javadoc/"/>
       <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
       <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/"/>

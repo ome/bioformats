@@ -13,7 +13,7 @@
 
   <groupId>loci</groupId>
   <artifactId>pom-scifio</artifactId>
-  <version>4.4.7</version>
+  <version>4.4.9</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -45,6 +45,8 @@
 
   <properties>
     <project.rootdir>${basedir}</project.rootdir>
+    <log4j.version>1.2.17</log4j.version>
+    <slf4j.version>1.7.2</slf4j.version>
   </properties>
 
   <build>
@@ -72,9 +74,12 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
+          <source>1.6</source>
+          <target>1.6</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

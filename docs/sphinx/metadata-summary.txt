@@ -77,10 +77,10 @@ Format readers
      - 0
      - 454
    * - :doc:`BaseTiffReader <formats/windows-bitmap-metadata>`
-     - 25
+     - 26
      - 0
      - 0
-     - 448
+     - 447
    * - :doc:`BaseZeissReader <formats/windows-bitmap-metadata>`
      - 81
      - 0
@@ -117,10 +117,10 @@ Format readers
      - 0
      - 456
    * - :doc:`CellWorxReader <formats/applied-precision-cellworx-metadata>`
-     - 41
+     - 43
      - 0
      - 0
-     - 432
+     - 430
    * - :doc:`CellomicsReader <formats/cellomics-metadata>`
      - 29
      - 0
@@ -417,10 +417,10 @@ Format readers
      - 0
      - 432
    * - :doc:`MetamorphTiffReader <formats/metamorph-75-tiff-metadata>`
-     - 35
+     - 36
      - 0
      - 0
-     - 438
+     - 437
    * - :doc:`MicromanagerReader <formats/micro-manager-metadata>`
      - 36
      - 0
@@ -2194,10 +2194,10 @@ Metadata fields
      - 0
      - 72
    * - :schema:`Pixels - PhysicalSizeZ <OME-2012-06/ome_xsd.html#Pixels_PhysicalSizeZ>`
-     - 39
+     - 40
      - 0
      - 0
-     - 112
+     - 111
    * - :schema:`Pixels - SizeC <OME-2012-06/ome_xsd.html#Pixels_SizeC>`
      - 151
      - 0
@@ -2244,10 +2244,10 @@ Metadata fields
      - 0
      - 129
    * - :schema:`Plane - ExposureTime <OME-2012-06/ome_xsd.html#Plane_ExposureTime>`
-     - 25
+     - 26
      - 0
      - 0
-     - 126
+     - 125
    * - :schema:`Plane - HashSHA1 <OME-2012-06/ome_xsd.html#Plane_HashSHA1>`
      - 0
      - 0
@@ -2354,10 +2354,10 @@ Metadata fields
      - 0
      - 151
    * - :schema:`PlateAcquisition - EndTime <OME-2012-06/SPW_xsd.html#PlateAcquisition_EndTime>`
+     - 1
      - 0
      - 0
-     - 0
-     - 151
+     - 150
    * - :schema:`PlateAcquisition - ID <OME-2012-06/SPW_xsd.html#PlateAcquisition_ID>`
      - 7
      - 0
@@ -2374,10 +2374,10 @@ Metadata fields
      - 0
      - 151
    * - :schema:`PlateAcquisition - StartTime <OME-2012-06/SPW_xsd.html#PlateAcquisition_StartTime>`
-     - 1
+     - 2
      - 0
      - 0
-     - 150
+     - 149
    * - :schema:`PlateAcquisition - WellSampleRef <OME-2012-06/SPW_xsd.html#WellSampleRef_ID>`
      - 7
      - 0

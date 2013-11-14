@@ -1121,16 +1121,77 @@ public abstract class FormatReader extends FormatHandler
 
   // -- Sub-resolution API methods --
 
+  public int seriesToCoreIndex(int series)
+  {
+    if (hasFlattenedResolutions()) {
+      // coreIndex and series are identical
+      if (series < 0 || series >= core.length) {
+        throw new IllegalArgumentException("Invalid series: " + series);
+      }
+      return series;
+    }
+
+    // Use corresponding coreIndex
+    if (this.series == series) {
+      return getCoreIndex() - resolution;
+    }
+
+    int index = 0;
+    for (int i = 0; i < series && index < core.length; i++) {
+      if (core[i] != null)
+        index += core[index].resolutionCount;
+      else
+	throw new IllegalArgumentException("Invalid series (null core["+i+"]: " + series);
+    }
+
+    if (index < 0 || index >= core.length) {
+      throw new IllegalArgumentException("Invalid series: " + series + "  index="+index);
+    }
+
+    return index;
+  }
+
+  public int coreIndexToSeries(int index)
+  {
+    if (index < 0 || index >= core.length) {
+      throw new IllegalArgumentException("Invalid index: " + index);
+    }
+
+    if (hasFlattenedResolutions()) {
+      // coreIndex and series are identical
+      return index;
+    }
+
+    // Use corresponding series
+    if (getCoreIndex() == index) {
+      return series;
+    }
+
+    // Convert from non-flattened coreIndex to flattened series
+    int series = 0;
+    for (int i=0; i<index;) {
+      if (core[i] != null) {
+	  int nextSeries = i + core[i].resolutionCount;
+	  if (index < nextSeries)
+	      break;
+	  i = nextSeries;
+      } else {
+	throw new IllegalArgumentException("Invalid coreIndex (null core["+i+"]: " + index);
+      }
+      series++;
+    }
+    return series;
+  }
+
   /* @see IFormatReader#getResolutionCount() */
   public int getResolutionCount() {
     FormatTools.assertId(currentId, true, 1);
 
-    int index = 0;
-    for (int i=0; i<getSeries(); i++) {
-      index += core[index].resolutionCount;
+    if (hasFlattenedResolutions()) {
+      return 1;
     }
 
-    return core[index].resolutionCount;
+    return core[seriesToCoreIndex(getSeries())].resolutionCount;
   }
 
   /* @see IFormatReader#setResolution(int) */

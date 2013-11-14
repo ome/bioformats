@@ -257,9 +257,7 @@ public class ImarisHDFReader extends FormatReader {
         core[i] = new CoreMetadata();
       }
 
-      if (!hasFlattenedResolutions()) {
-        core[0].resolutionCount = seriesCount;
-      }
+      core[0].resolutionCount = seriesCount;
 
       for (int i=1; i<seriesCount; i++) {
         String groupPath =
@@ -327,23 +325,18 @@ public class ImarisHDFReader extends FormatReader {
       if (py == 1) py = (maxY - minY) / getSizeY();
       if (pz == 1) pz = (maxZ - minZ) / getSizeZ();
 
-      if (px > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(px), s);
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(px);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(py);
+      PositiveFloat sizeZ = FormatTools.getPhysicalSizeZ(pz);
+
+      if (sizeX != null) {
+        store.setPixelsPhysicalSizeX(sizeX, s);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", px);
+      if (sizeY != null) {
+        store.setPixelsPhysicalSizeY(sizeY, s);
       }
-      if (py > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(py), s);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", py);
-      }
-      if (pz > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), s);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", pz);
+      if (sizeZ != null) {
+        store.setPixelsPhysicalSizeZ(sizeZ, s);
       }
 
       for (int i=0; i<getSizeC(); i++, cIndex++) {

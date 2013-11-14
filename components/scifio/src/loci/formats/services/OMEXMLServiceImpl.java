@@ -58,7 +58,6 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
-import ome.xml.OMEXMLFactory;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
 import ome.xml.model.Image;
@@ -89,6 +88,9 @@ import org.xml.sax.SAXException;
  */
 public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 {
+
+  /** Latest OME-XML version namespace. */
+  public static final String LATEST_VERSION = "2012-06";
 
   public static final String NO_OME_XML_MSG =
     "ome-xml.jar is required to read OME-TIFF files.  " +
@@ -123,11 +125,16 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     XSLT_PATH + "2010-06-to-2011-06.xsl";
   private static final String XSLT_201106 =
     XSLT_PATH + "2011-06-to-2012-06.xsl";
+  private static final String XSLT_201306_DOWNGRADE =
+    XSLT_PATH + "2013-06-to-2012-06.xsl";
 
   // -- Cached stylesheets --
 
   /** Reordering stylesheet. */
   private static Templates reorderXSLT;
+
+  /** Stylesheets for downgrading from future schema releases. */
+  private static Templates downgrade201306;
 
   /** Stylesheets for updating from previous schema releases. */
   private static Templates update2003FC;
@@ -152,7 +159,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /** @see OMEXMLService#getLatestVersion() */
   public String getLatestVersion() {
-    return OMEXMLFactory.LATEST_VERSION;
+    return LATEST_VERSION;
   }
 
   /** @see OMEXMLService#transformToLatestVersion(String) */
@@ -164,6 +171,17 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
     String transformed = null;
     try {
+
+      if (version.equals("2013-06")) {
+        xml = verifyOMENamespace(xml);
+        LOGGER.debug("Running DOWNGRADE_201306 stylesheet.");
+        if (downgrade201306 == null) {
+          downgrade201306 =
+            XMLTools.getStylesheet(XSLT_201306_DOWNGRADE, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(xml, downgrade201306);
+      }
+
       if (version.equals("2003-FC")) {
         xml = verifyOMENamespace(xml);
         LOGGER.debug("Running UPDATE_2003FC stylesheet.");
@@ -353,7 +371,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public String getOMEXMLVersion(Object o) {
     if (o == null) return null;
     if (o instanceof OMEXMLMetadata || o instanceof OMEModelObject) {
-      return OMEXMLFactory.LATEST_VERSION;
+      return LATEST_VERSION;
     }
     else if (o instanceof String) {
       String xml = (String) o;
@@ -500,6 +518,14 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
     for (int i=0; i<annotations.sizeOfXMLAnnotationList(); i++) {
       XMLAnnotation annotation = annotations.getXMLAnnotation(i);
+
+      if (annotation instanceof OriginalMetadataAnnotation) {
+        OriginalMetadataAnnotation original =
+          (OriginalMetadataAnnotation) annotation;
+        metadata.put(original.getKey(), original.getValue());
+        continue;
+      }
+
       String xml = annotation.getValue();
 
       try {
@@ -557,7 +583,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
     Hashtable<String, Object> metadata)
   {
-    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.resolveReferences();
     OME root = (OME) omexmlMeta.getRoot();
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     if (annotations == null) annotations = new StructuredAnnotations();
@@ -582,7 +608,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
     String key, String value)
   {
-    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.resolveReferences();
     OME root = (OME) omexmlMeta.getRoot();
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     if (annotations == null) annotations = new StructuredAnnotations();
@@ -633,7 +659,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /** @see OMEXMLService#removeBinData(OMEXMLMetadata) */
   public void removeBinData(OMEXMLMetadata omexmlMeta) {
-    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.resolveReferences();
     OME root = (OME) omexmlMeta.getRoot();
     List<Image> images = root.copyImageList();
     for (Image img : images) {
@@ -648,7 +674,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /** @see OMEXMLService#removeChannels(OMEXMLMetadata, int, int) */
   public void removeChannels(OMEXMLMetadata omexmlMeta, int image, int sizeC) {
-    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.resolveReferences();
     OME root = (OME) omexmlMeta.getRoot();
     Pixels img = root.getImage(image).getPixels();
     List<Channel> channels = img.copyChannelList();
@@ -664,7 +690,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /** @see OMEXMLService#addMetadataOnly(OMEXMLMetadata, int) */
   public void addMetadataOnly(OMEXMLMetadata omexmlMeta, int image) {
-    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.resolveReferences();
     MetadataOnly meta = new MetadataOnly();
     OME root = (OME) omexmlMeta.getRoot();
     Pixels pix = root.getImage(image).getPixels();
@@ -674,8 +700,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /** @see OMEXMLService#isEqual(OMEXMLMetadata, OMEXMLMetadata) */
   public boolean isEqual(OMEXMLMetadata src1, OMEXMLMetadata src2) {
-    ((OMEXMLMetadataImpl) src1).resolveReferences();
-    ((OMEXMLMetadataImpl) src2).resolveReferences();
+    src1.resolveReferences();
+    src2.resolveReferences();
 
     OME omeRoot1 = (OME) src1.getRoot();
     OME omeRoot2 = (OME) src2.getRoot();
@@ -883,6 +909,14 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     }
 
     // -- XMLAnnotation methods --
+
+    public String getKey() {
+      return key;
+    }
+
+    public String getValue() {
+      return value;
+    }
 
     /* @see ome.xml.model.XMLAnnotation#asXMLElement(Document, Element) */
     protected Element asXMLElement(Document document, Element element) {

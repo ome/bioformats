@@ -99,6 +99,7 @@ public class MetaSupportAutogen {
             table.get(IniTable.HEADER_KEY), table.get("pagename"));
 
           supportList.setPageName(formatPage + "-metadata");
+          System.out.println(formatPage);
         }
       }
     }

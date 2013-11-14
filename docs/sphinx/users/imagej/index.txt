@@ -10,7 +10,7 @@ formats it supports.
 Installation
 ------------
 
-Download :bf_plone:`loci_tools.jar <downloads>` and drop it into your 
+Download :downloads:`loci_tools.jar <>` and drop it into your 
 **ImageJ/plugins** folder. Next time you run ImageJ, a new
 LOCI submenu with several plugins will appear in the Plugins menu,
 including the Bio-Formats Importer and Bio-Formats Exporter.
@@ -24,7 +24,7 @@ ways:
 -  In a standard ImageJ window (including as a hyperstack)
 -  Using the `LOCI Data Browser <http://loci.wisc.edu/software/data-browser>`_ plugin (included)
 -  With Joachim Walter's
-   `Image5D <http://rsb.info.nih.gov/ij/plugins/image5d.html>`_ plugin
+   `Image5D <http://developer.imagej.net/plugins/image5d>`_ plugin
    (if installed)
 -  With Rainer Heintzmann's
    `View5D <http://www.nanoimaging.de/View5D>`_ plugin (if installed)
@@ -35,14 +35,13 @@ within ImageJ—e.g., when using File/Open instead of explicitly choosing
 "Bio-Formats Importer" from the Plugins/LOCI menu.
 
 For a more detailed description of each plugin, see the `Bio-Formats
-page <http://fiji.sc/wiki/index.php/Bio-Formats>`_ of the
-Fiji wiki.
+page <http://fiji.sc/Bio-Formats>`_ of the Fiji wiki.
 
 Upgrading
 ---------
 
 To upgrade, just overwrite the old **loci_tools.jar** with the 
-:bf_plone:`latest one <downloads>`.
+:downloads:`latest 4.4 version <>`.
 Step-by-step upgrade instructions for Windows are available
 :doc:`here <upgrading-importer>`.
 

@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,7 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
@@ -39,6 +39,7 @@ package loci.formats;
 import java.io.IOException;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
@@ -52,6 +53,13 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A utility class for format reader and writer implementations.
  *
@@ -60,6 +68,9 @@ import loci.formats.services.OMEXMLServiceImpl;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/FormatTools.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public final class FormatTools {
+
+  protected static final Logger LOGGER =
+    LoggerFactory.getLogger(FormatTools.class);
 
   // -- Constants - pixel types --
 
@@ -173,7 +184,7 @@ public final class FormatTools {
   public static final String DATE = "@date@";
 
   /** Version number of this release. */
-  public static final String VERSION = "4.4.7";
+  public static final String VERSION = "@release.version@";
 
   // -- Constants - domains --
 
@@ -949,7 +960,7 @@ public final class FormatTools {
     if (bytes.length == 1) return bytes[0];
     int rgbChannelCount = reader.getRGBChannelCount();
     byte[] rtn = new byte[rgbChannelCount * bytes[0].length];
-    
+
     if (!reader.isInterleaved()) {
       for (int i=0; i<rgbChannelCount; i++) {
         System.arraycopy(bytes[i], 0, rtn, bytes[0].length * i, bytes[i].length);
@@ -1104,6 +1115,97 @@ public final class FormatTools {
 
     long[] values = {min, max};
     return values;
+  }
+
+  // -- OME-XML primitive type methods --
+
+  public static PositiveFloat getPhysicalSizeX(Double value) {
+    if (value != null && value - Constants.EPSILON > 0 &&
+      value < Double.POSITIVE_INFINITY)
+    {
+      return new PositiveFloat(value);
+    }
+    LOGGER.debug("Expected positive value for PhysicalSizeX; got {}", value);
+    return null;
+  }
+
+  public static PositiveFloat getPhysicalSizeY(Double value) {
+    if (value != null && value - Constants.EPSILON > 0 &&
+      value < Double.POSITIVE_INFINITY)
+    {
+      return new PositiveFloat(value);
+    }
+    LOGGER.debug("Expected positive value for PhysicalSizeY; got {}", value);
+    return null;
+  }
+
+  public static PositiveFloat getPhysicalSizeZ(Double value) {
+    if (value != null && value - Constants.EPSILON > 0 &&
+      value < Double.POSITIVE_INFINITY)
+    {
+      return new PositiveFloat(value);
+    }
+    LOGGER.debug("Expected positive value for PhysicalSizeZ; got {}", value);
+    return null;
+  }
+
+  public static PositiveInteger getEmissionWavelength(Integer value) {
+    if (value != null && value > 0) {
+      return new PositiveInteger(value);
+    }
+    LOGGER.debug("Expected positive value for EmissionWavelength; got {}",
+      value);
+    return null;
+  }
+
+  public static PositiveInteger getExcitationWavelength(Integer value) {
+    if (value != null && value > 0) {
+      return new PositiveInteger(value);
+    }
+    LOGGER.debug("Expected positive value for ExcitationWavelength; got {}",
+      value);
+    return null;
+  }
+
+  public static PositiveInteger getWavelength(Integer value) {
+    if (value != null && value > 0) {
+      return new PositiveInteger(value);
+    }
+    LOGGER.debug("Expected positive value for Wavelength; got {}", value);
+    return null;
+  }
+
+  public static PositiveInteger getMaxFieldCount(Integer value) {
+    if (value != null && value > 0) {
+      return new PositiveInteger(value);
+    }
+    LOGGER.debug(
+      "Expected positive value for MaximumFieldCount; got {}", value);
+    return null;
+  }
+
+  public static PositiveInteger getCutIn(Integer value) {
+    if (value != null && value > 0) {
+      return new PositiveInteger(value);
+    }
+    LOGGER.debug("Expected positive value for CutIn; got {}", value);
+    return null;
+  }
+
+  public static PositiveInteger getCutOut(Integer value) {
+    if (value != null && value > 0) {
+      return new PositiveInteger(value);
+    }
+    LOGGER.debug("Expected positive value for CutOut; got {}", value);
+    return null;
+  }
+
+  public static NonNegativeInteger getFontSize(Integer value) {
+    if (value != null && value >= 0) {
+      return new NonNegativeInteger(value);
+    }
+    LOGGER.debug("Expected non-negative value for FontSize; got {}", value);
+    return null;
   }
 
 }

@@ -14,6 +14,7 @@
 import sys, os
 import re
 import subprocess
+from datetime import datetime
 
 def popen(args, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
         copy = os.environ.copy()
@@ -53,9 +54,10 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Bio-Formats'
-title = project +u' Documentation'
+title = u'%s Documentation' % project
 author = u'The Open Microscopy Environment'
-copyright = u'2000-2012, ' + author
+now = datetime.now()
+copyright = u'2000-%d, %s ' % (now.year, author)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -143,6 +145,7 @@ trac_root = 'http://trac.openmicroscopy.org.uk/ome'
 oo_root = 'http://www.openmicroscopy.org'
 oo_site_root = oo_root + '/site'
 lists_root = 'http://lists.openmicroscopy.org.uk'
+downloads_root = 'http://downloads.openmicroscopy.org'
 if "OMERODOC_URI" in os.environ:
     omerodoc_uri = os.environ.get('OMERODOC_URI')
 else:
@@ -178,10 +181,10 @@ extlinks = {
     'team_plone' : (oo_site_root + '/team/%s', ''),
     'faq_plone' : (oo_site_root + '/support/faq/%s', ''),
     'training_plone' : (oo_site_root + '/support/training/%s', ''),
-    'omero_plone' : (oo_site_root + '/products/omero/%s/', ''),
-    'bf_plone' : (oo_site_root + '/products/bio-formats/%s/', ''),
     'bf_doc' : (oo_site_root + '/support/bio-formats/%s', ''),
     'omerodoc': (omerodoc_uri + '/%s', ''),
+    # Downloads
+    'downloads' : (downloads_root + '/bio-formats/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')
@@ -293,19 +296,19 @@ htmlhelp_basename = 'Bio-Formatsdoc'
 # -- Options for LaTeX output --------------------------------------------------
 
 latex_elements = {
-  'classoptions': ',oneside',
-  'babel': '\\usepackage[english]{babel}',
-  'printindex': '\\phantomsection \
-   \\addcontentsline{toc}{part}{\indexname} \
-   \\printindex'
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
-
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
-
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    'classoptions': ',oneside',
+    'pointsize': '10pt',
+    'inputenc': '%% Unused',
+    'utf8extra': '%% Unused',
+    'fontenc' : '%% Unused',
+    'fontpkg': '%% Unused',
+    'babel': '%% Unused',
+    'printindex': '''\\phantomsection
+\\addcontentsline{toc}{part}{\indexname}
+\\printindex''',
+    'preamble': '''
+\input{../../preamble.tex}
+''',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples

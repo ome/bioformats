@@ -241,11 +241,11 @@ public class AVIReader extends FormatReader {
     int pad = (bmpScanLineSize / getRGBChannelCount()) - getSizeX() * bytes;
     int scanline = w * bytes * (isInterleaved() ? getRGBChannelCount() : 1);
 
-    in.skipBytes((getSizeX() + pad) * bytes * (getSizeY() - h - y));
+    in.skipBytes((getSizeX() + pad) * (bmpBitsPerPixel / 8) * (getSizeY() - h - y));
 
     if (getSizeX() == w && pad == 0) {
-      for (int row=0; row<getSizeY(); row++) {
-        int outputRow = bmpCompression == Y8 ? row : getSizeY() - row - 1;
+      for (int row=0; row<h; row++) {
+        int outputRow = bmpCompression == Y8 ? row : h - row - 1;
         in.read(buf, outputRow * scanline, scanline);
       }
 
@@ -265,7 +265,7 @@ public class AVIReader extends FormatReader {
       }
       for (int i=h - 1; i>=0; i--) {
         in.skipBytes(x * (bmpBitsPerPixel / 8));
-        in.read(buf, (i - y)*scanline, scanline);
+        in.read(buf, i*scanline, scanline);
         if (bmpBitsPerPixel == 24) {
           for (int j=0; j<w; j++) {
             byte r = buf[i*scanline + j*3 + 2];
@@ -822,7 +822,7 @@ public class AVIReader extends FormatReader {
           if (size + 8 >= 0) in.skipBytes(8 + size);
         }
       }
-      else {
+      else if (in.getFilePointer() + 8 < in.length()) {
         // skipping unknown block
         readTypeAndSize();
         if (in.getFilePointer() + 8 < in.length() && !type.equals("idx1")) {
@@ -833,6 +833,9 @@ public class AVIReader extends FormatReader {
           in.skipBytes(size);
         }
         if (type.equals("idx1")) break;
+      }
+      else {
+        break;
       }
       pos = in.getFilePointer();
     }

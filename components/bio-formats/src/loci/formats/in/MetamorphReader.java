@@ -717,27 +717,20 @@ public class MetamorphReader extends BaseTiffReader {
       if (sizeX == null) sizeX = handler.getPixelSizeX();
       if (sizeY == null) sizeY = handler.getPixelSizeY();
 
-      if (sizeX > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
+      PositiveFloat physicalSizeX = FormatTools.getPhysicalSizeX(sizeX);
+      PositiveFloat physicalSizeY = FormatTools.getPhysicalSizeY(sizeY);
+      if (physicalSizeX != null) {
+        store.setPixelsPhysicalSizeX(physicalSizeX, i);
       }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", sizeX);
-      }
-      if (sizeY > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", sizeY);
+      if (physicalSizeY != null) {
+        store.setPixelsPhysicalSizeY(physicalSizeY, i);
       }
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
-      if (stepSize > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(stepSize), i);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          stepSize);
+      PositiveFloat physicalSizeZ = FormatTools.getPhysicalSizeZ(stepSize);
+      if (physicalSizeZ != null) {
+        store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
       }
 
       int waveIndex = 0;
@@ -777,10 +770,13 @@ public class MetamorphReader extends BaseTiffReader {
         store.setDetectorSettingsID(detectorID, i, c);
 
         if (wave != null && waveIndex < wave.length) {
-          if ((int) wave[waveIndex] >= 1) {
-            store.setChannelLightSourceSettingsWavelength(
-              new PositiveInteger((int) wave[waveIndex]), i, c);
+          PositiveInteger wavelength =
+            FormatTools.getWavelength((int) wave[waveIndex]);
+          if (wavelength != null) {
+            store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+          }
 
+          if ((int) wave[waveIndex] >= 1) {
             // link LightSource to Image
             String lightSourceID =
               MetadataTools.createLSID("LightSource", i, c);
@@ -788,10 +784,6 @@ public class MetamorphReader extends BaseTiffReader {
             store.setChannelLightSourceSettingsID(lightSourceID, i, c);
             store.setLaserType(getLaserType("Other"), i, c);
             store.setLaserLaserMedium(getLaserMedium("Other"), i, c);
-          }
-          else {
-            LOGGER.warn("Expected positive value for Wavelength; got {}",
-              wave[waveIndex]);
           }
         }
         waveIndex++;
@@ -875,7 +867,10 @@ public class MetamorphReader extends BaseTiffReader {
                 comment = (String) commentEntry;
               }
               else if (commentEntry instanceof TiffIFDEntry) {
-                comment = tp.getIFDValue((TiffIFDEntry) commentEntry).toString();
+                Object value = tp.getIFDValue((TiffIFDEntry) commentEntry);
+                if (value != null) {
+                  comment = value.toString();
+                }
               }
             }
             if (comment != null) comment = comment.trim();
@@ -1318,10 +1313,16 @@ public class MetamorphReader extends BaseTiffReader {
     String name = "";
     if (stageNames != null && stageNames.size() > 0) {
       int stagePosition = i / (getSeriesCount() / stageNames.size());
-      name += "Stage " + stageNames.get(stagePosition) + "; ";
+      name += "Stage" + (stagePosition + 1) + " " + stageNames.get(stagePosition);
     }
 
-    if (firstSeriesChannels != null) {
+    if (firstSeriesChannels != null &&
+      (stageNames == null || stageNames.size() == 0 ||
+      stageNames.size() != getSeriesCount()))
+    {
+      if (name.length() > 0) {
+        name += "; ";
+      }
       for (int c=0; c<firstSeriesChannels.length; c++) {
         if (firstSeriesChannels[c] == ((i % 2) == 0) && c < waveNames.size()) {
           name += waveNames.get(c) + "/";
@@ -1529,18 +1530,26 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         case 6:
         case 25:
-          in.seek(valOrOffset);
-          num = in.readInt();
-          if (num + in.getFilePointer() >= in.length()) {
-            num = (int) (in.length() - in.getFilePointer() - 1);
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            num = in.readInt();
+            if (num + in.getFilePointer() >= in.length()) {
+              num = (int) (in.length() - in.getFilePointer() - 1);
+            }
+            if (num >= 0) {
+              value = in.readString(num);
+            }
           }
-          value = in.readString(num);
           break;
         case 7:
-          in.seek(valOrOffset);
-          num = in.readInt();
-          imageName = in.readString(num);
-          value = imageName;
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            num = in.readInt();
+            if (num >= 0) {
+              imageName = in.readString(num);
+              value = imageName;
+            }
+          }
           break;
         case 8:
           if (valOrOffset == 1) value = "inside";
@@ -1548,69 +1557,79 @@ public class MetamorphReader extends BaseTiffReader {
           else value = "off";
           break;
         case 17: // oh how we hate you Julian format...
-          in.seek(valOrOffset);
-          thedate = decodeDate(in.readInt());
-          thetime = decodeTime(in.readInt());
-          imageCreationDate = thedate + " " + thetime;
-          value = imageCreationDate;
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            thedate = decodeDate(in.readInt());
+            thetime = decodeTime(in.readInt());
+            imageCreationDate = thedate + " " + thetime;
+            value = imageCreationDate;
+          }
           break;
         case 16:
-          in.seek(valOrOffset);
-          thedate = decodeDate(in.readInt());
-          thetime = decodeTime(in.readInt());
-          value = thedate + " " + thetime;
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            thedate = decodeDate(in.readInt());
+            thetime = decodeTime(in.readInt());
+            value = thedate + " " + thetime;
+          }
           break;
         case 26:
-          in.seek(valOrOffset);
-          int standardLUT = in.readInt();
-          switch (standardLUT) {
-            case 0:
-              value = "monochrome";
-              break;
-            case 1:
-              value = "pseudocolor";
-              break;
-            case 2:
-              value = "Red";
-              break;
-            case 3:
-              value = "Green";
-              break;
-            case 4:
-              value = "Blue";
-              break;
-            case 5:
-              value = "user-defined";
-              break;
-            default:
-              value = "monochrome";
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            int standardLUT = in.readInt();
+            switch (standardLUT) {
+              case 0:
+                value = "monochrome";
+                break;
+              case 1:
+                value = "pseudocolor";
+                break;
+              case 2:
+                value = "Red";
+                break;
+              case 3:
+                value = "Green";
+                break;
+              case 4:
+                value = "Blue";
+                break;
+              case 5:
+                value = "user-defined";
+                break;
+              default:
+                value = "monochrome";
+            }
           }
           break;
         case 34:
           value = String.valueOf(in.readInt());
           break;
         case 46:
-          in.seek(valOrOffset);
-          int xBin = in.readInt();
-          int yBin = in.readInt();
-          binning = xBin + "x" + yBin;
-          value = binning;
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            int xBin = in.readInt();
+            int yBin = in.readInt();
+            binning = xBin + "x" + yBin;
+            value = binning;
+          }
           break;
         case 40:
-          if (valOrOffset != 0) {
+          if (valOrOffset != 0 && valOrOffset < in.length()) {
             in.seek(valOrOffset);
             readRationals(new String[] {"UIC1 absoluteZ"});
           }
           break;
         case 41:
-          if (valOrOffset != 0) {
+          if (valOrOffset != 0 && valOrOffset < in.length()) {
             in.seek(valOrOffset);
             readAbsoluteZValid();
           }
           break;
         case 49:
-          in.seek(valOrOffset);
-          readPlaneData();
+          if (valOrOffset < in.length()) {
+            in.seek(valOrOffset);
+            readPlaneData();
+          }
           break;
       }
       addSeriesMeta(key, value);
@@ -1716,6 +1735,9 @@ public class MetamorphReader extends BaseTiffReader {
   private TiffRational readRational(RandomAccessInputStream s, long offset)
     throws IOException
   {
+    if (offset >= s.length() - 8) {
+      return null;
+    }
     s.seek(offset);
     int num = s.readInt();
     int denom = s.readInt();

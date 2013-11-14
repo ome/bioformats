@@ -24,31 +24,150 @@
 % with this program; if not, write to the Free Software Foundation, Inc.,
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-classdef TestBfGetPlane < TestCase
+classdef TestBfGetPlane < TestBfMatlab
     
     properties
         reader
+        sizeX
+        sizeY
+        iPlane = 1
+        x
+        y
+        width
+        height
     end
     
     methods
         function self = TestBfGetPlane(name)
-            self = self@TestCase(name);
+            self = self@TestBfMatlab(name);
         end
         
         function setUp(self)
+            setUp@TestBfMatlab(self)
             bfCheckJavaPath();
-            self.reader = loci.formats.ChannelSeparator(loci.formats.in.FakeReader());
+            self.reader = loci.formats.in.FakeReader();
+            self.reader.setId('test.fake');
+            self.sizeX = self.reader.DEFAULT_SIZE_X;
+            self.sizeY = self.reader.DEFAULT_SIZE_Y;
         end
         
         function tearDown(self)
-            self.reader.close();
+            self.reader.close()
             self.reader = [];
+            tearDown@TestBfMatlab(self)
+        end
+        
+        % Input check tests
+        function testReaderClass(self)
+            assertExceptionThrown(@() bfGetPlane(0, self.iPlane),...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function checkInvalidInput(self)
+            f = @() bfGetPlane(self.reader, self.iPlane);
+            assertExceptionThrown(f,...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+
+        function testInvalidReader(self)
+            self.reader.close();
+            self.checkInvalidInput();
+        end
+        
+        function testZeroPlane(self)
+            self.iPlane = 0;
+            self.checkInvalidInput();
+        end
+        
+        function testOversizedPlaneIndex(self)
+            self.iPlane = self.reader.getImageCount()+1;
+            self.checkInvalidInput();
+        end
+        
+        function testPlaneIndexArray(self)
+            self.iPlane = [1 1];
+            self.checkInvalidInput();
+        end
+        
+        function checkInvalidTileInput(self)
+            f = @() bfGetPlane(self.reader, 1, self.x, self.y,...
+                self.width, self.height);
+            assertExceptionThrown(f,...
+                'MATLAB:InputParser:ArgumentFailedValidation');
+        end
+        
+        function testZeroTileX(self)
+            self.x = 0;
+            self.checkInvalidTileInput()
+        end
+        
+        function testOversizedTileX(self)
+            self.x = self.sizeX + 1;
+            self.checkInvalidTileInput();
+        end
+        
+        function testZeroTileY(self)
+            self.x = 1;
+            self.y = 0;
+            self.checkInvalidTileInput();
+        end
+        
+        function testOversizedTileY(self)
+            self.x = 1;
+            self.y = self.sizeY + 1;
+            self.checkInvalidTileInput();
+        end
+        
+        
+        function testZeroTileWidth(self)
+            self.x = 1;
+            self.y = 1;
+            self.width = 0;
+            self.checkInvalidTileInput();
+        end
+        
+        function testOversizedTileWidth(self)
+            self.x = 1;
+            self.y = 1;
+            self.width = self.sizeX + 1;
+            self.checkInvalidTileInput();
+        end
+        
+        function testOversizedTileWidth2(self)
+            self.x = 2;
+            self.y = 1;
+            self.width = self.sizeX;
+            self.checkInvalidTileInput();
+        end
+        
+        function testZeroTileHeight(self)
+            self.x = 1;
+            self.y = 1;
+            self.width = self.sizeX;
+            self.height = 0;
+            self.checkInvalidTileInput();
+        end
+        
+        function testOversizedTileHeight(self)
+            self.x = 1;
+            self.y = 1;
+            self.width = self.sizeX;
+            self.height = self.sizeY + 1;
+            self.checkInvalidTileInput();
+        end
+        
+        function testOversizedTileHeight2(self)
+            self.x = 1;
+            self.y = 2;
+            self.width = self.sizeX;
+            self.height = self.sizeY;
+            self.checkInvalidTileInput();
         end
         
         % Pixel type tests
         function checkPixelsType(self, pixelsType)
             self.reader.setId([pixelsType '-test&pixelType=' pixelsType '.fake']);
-            I = bfGetPlane(self.reader, 1);
+            I = bfGetPlane(self.reader, self.iPlane);
             if strcmp(pixelsType, 'float')
                 assertEqual(class(I), 'single');
             else
@@ -83,45 +202,62 @@ classdef TestBfGetPlane < TestCase
         
         % Dimension size tests
         function testSizeX(self)
-            sizeX = 200;
-            self.reader = bfGetReader(['sizeX-test&sizeX=' num2str(sizeX) '.fake']);
-            I = bfGetPlane(self.reader, 1);
-            assertEqual(size(I, 2), sizeX);
+            self.sizeX = 200;
+            self.reader.setId(['sizeX-test&sizeX=' num2str(self.sizeX) '.fake']);
+            I = bfGetPlane(self.reader, self.iPlane);
+            assertEqual(size(I, 2), self.sizeX);
+            assertEqual(size(I, 1), self.sizeY);
         end
         
         function testSizeY(self)
-            sizeY = 200;
-            self.reader = bfGetReader(['sizeY-test&sizeY=' num2str(sizeY) '.fake']);
-            I = bfGetPlane(self.reader, 1);
-            assertEqual(size(I, 1), sizeY);
+            self.sizeY = 200;
+            self.reader.setId(['sizeY-test&sizeY=' num2str(self.sizeY) '.fake']);
+            I = bfGetPlane(self.reader, self.iPlane);
+            assertEqual(size(I, 2), self.sizeX);
+            assertEqual(size(I, 1), self.sizeY);
         end
         
         % Tile tests
-        function checkTile(self, x, y, w, h)
-            I = bfGetPlane(self.reader, 1);
-            I2 = bfGetPlane(self.reader, 1, x, y, w, h);
+        function checkTile(self)
+            % Retrieve full plane and tile
+            I = bfGetPlane(self.reader, self.iPlane);
+            I2 = bfGetPlane(self.reader, self.iPlane, self.x, self.y,...
+                self.width, self.height);
             
-            assertEqual(I2, I(y : y + h - 1, x : x + w - 1));
+            assertEqual(I2, I(self.y : self.y + self.height - 1,...
+                self.x : self.x + self.width - 1));
         end
         
         function testFullTile(self)
-            self.reader.setId('fulltile-test.fake')
-            self.checkTile(1, 1, self.reader.getSizeX(), self.reader.getSizeY())
+            self.x = 1;
+            self.y = 1;
+            self.width = self.sizeX;
+            self.height = self.sizeY;
+            self.checkTile()
         end
         
         function testSquareTile(self)
-            self.reader.setId('sqtile-test.fake')
-            self.checkTile(10, 10, 20, 20)
+            self.x = self.sizeX / 4;
+            self.y = self.sizeY / 4;
+            self.width = self.sizeX / 2;
+            self.height = self.sizeY / 2;
+            self.checkTile()
         end
         
         function testRectangularTile(self)
-            self.reader.setId('recttile-test.fake')
-            self.checkTile(20, 10, 40, 20);
+            self.x = 1;
+            self.y = self.sizeY / 4;
+            self.width = self.sizeX;
+            self.height = self.sizeY / 2;
+            self.checkTile()
         end
         
         function testSingleTile(self)
-            self.reader.setId('fulltile-test.fake')
-            self.checkTile(50, 50, 1, 1);
+            self.x = self.sizeX / 2;
+            self.y = self.sizeY / 4;
+            self.width = 1;
+            self.height = 1;
+            self.checkTile()
         end
     end
 end

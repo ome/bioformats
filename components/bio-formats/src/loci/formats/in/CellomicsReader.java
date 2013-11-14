@@ -137,12 +137,14 @@ public class CellomicsReader extends FormatReader {
     String plateName = getPlateName(baseFile.getName());
 
     if (plateName != null && isGroupFiles()) {
-      String[] list = parent.list(true);
+      String[] list = parent.list();
       for (String f : list) {
         if (plateName.equals(getPlateName(f)) &&
           (checkSuffix(f, "c01") || checkSuffix(f, "dib")))
         {
-          pixelFiles.add(new Location(parent, f).getAbsolutePath());
+          Location loc = new Location(parent, f);
+          if (!f.startsWith(".") || !loc.isHidden())
+            pixelFiles.add(loc.getAbsolutePath());
         }
       }
     }
@@ -321,20 +323,14 @@ public class CellomicsReader extends FormatReader {
       double width = pixelWidth == 0 ? 0.0 : 1000000.0 / pixelWidth;
       double height = pixelHeight == 0 ? 0.0 : 1000000.0 / pixelHeight;
 
+      PositiveFloat sizeX = FormatTools.getPhysicalSizeX(width);
+      PositiveFloat sizeY = FormatTools.getPhysicalSizeY(height);
       for (int i=0; i<getSeriesCount(); i++) {
-        if (width > 0) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
+        if (sizeX != null) {
+          store.setPixelsPhysicalSizeX(sizeX, 0);
         }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-            width);
-        }
-        if (height > 0) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
-        }
-        else {
-          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-            height);
+        if (sizeY != null) {
+          store.setPixelsPhysicalSizeY(sizeY, 0);
         }
       }
     }

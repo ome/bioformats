@@ -224,7 +224,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     int samples = ifd.getSamplesPerPixel();
     int r = s-i.imageNumStart; // subresolution
 
-    if (s == i.imageNumStart && !hasFlattenedResolutions()) {
+    if (s == i.imageNumStart) {
       core[s].resolutionCount = i.pixels.sizeR;
     }
 
@@ -329,7 +329,6 @@ public class LeicaSCNReader extends BaseTiffReader {
         objectiveIDs.put(i.devModel+":"+i.objMag, new Integer(objectiveidno));
         store.setObjectiveID(objectiveID, inst, objectiveidno);
 
-        // TODO: Current OME model only allows nominal magnification to be specified as an integer.
         Double mag = Double.parseDouble(i.objMag);
         store.setObjectiveNominalMagnification(new PositiveInteger((int) Math.round(mag)), inst, objectiveidno);
         store.setObjectiveCalibratedMagnification(mag, inst, objectiveidno);
@@ -346,7 +345,7 @@ public class LeicaSCNReader extends BaseTiffReader {
         store.setChannelIlluminationType(IlluminationType.TRANSMITTED, s, 0);
       } else {
         store.setChannelIlluminationType(IlluminationType.OTHER, s, 0);
-        System.out.println("Unknown illumination source " + i.illumSource + "; please report this");
+        LOGGER.debug("Unknown illumination source {}; please report this", i.illumSource);
       }
 
       for (int q=0; q<core[s].imageCount; q++) {

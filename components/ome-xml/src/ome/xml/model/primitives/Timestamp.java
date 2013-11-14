@@ -73,11 +73,15 @@ public class Timestamp extends PrimitiveType<String> {
     asDate = date;
   }
 
+  /** @deprecated In version 5.0, java.util.Date usage is replaced by org.joda.time.DateTime. */
+  @Deprecated
   public Timestamp(Date date) {
     asDate = date;
     value = dateFormat.format(date);
   }
 
+  /** @deprecated In version 5.0, java.util.Calendar usage is replaced by org.joda.time.DateTime. */
+  @Deprecated
   public Timestamp(Calendar calendar) {
     asDate = calendar.getTime();
     value = dateFormat.format(asDate);
@@ -96,7 +100,9 @@ public class Timestamp extends PrimitiveType<String> {
   /**
    * Returns the timestamp as a Java {@link java.util.Date} date type.
    * @return See above.
+   * @deprecated In version 5.0, java.util.Date usage is replaced by org.joda.time.DateTime.
    */
+  @Deprecated
   public Date asDate() {
     return asDate;
   }
@@ -104,7 +110,9 @@ public class Timestamp extends PrimitiveType<String> {
   /**
    * Returns the timestamp as a Java {@link java.util.Calendar} date type.
    * @return See above.
+   * @deprecated In version 5.0, java.util.Calendar usage is replaced by org.joda.time.DateTime.
    */
+  @Deprecated
   public Calendar asCalendar() {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(asDate);
@@ -114,7 +122,9 @@ public class Timestamp extends PrimitiveType<String> {
   /**
    * Returns the timesamp as a Java SQL {@link java.sql.Date} date type.
    * @return See above.
+   * @deprecated In version 5.0, java.sql.Date usage is replaced by org.joda.time.DateTime.
    */
+  @Deprecated
   public java.sql.Date asSqlDate() {
     return new java.sql.Date(asDate.getTime());
   }

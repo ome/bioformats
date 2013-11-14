@@ -162,8 +162,13 @@ for s = 1:numSeries
         % build an informative title for our figure
         label = id;
         if numSeries > 1
-            qs = int2str(s);
-            label = [label, '; series ', qs, '/', int2str(numSeries)];
+            seriesName = char(r.getMetadataStore().getImageName(s - 1));
+            if ~isempty(seriesName)
+                label = [label, '; ', seriesName];
+            else
+                qs = int2str(s);
+                label = [label, '; series ', qs, '/', int2str(numSeries)];
+            end
         end
         if numImages > 1
             qi = int2str(i);
@@ -200,12 +205,11 @@ for s = 1:numSeries
         imageList{i, 2} = label;
     end
 
-    % extract metadata table for this series
-    metadataList = r.getMetadata();
-
     % save images and metadata into our master series list
     result{s, 1} = imageList;
-    result{s, 2} = metadataList;
+
+    % extract metadata table for this series
+    result{s, 2} = r.getSeriesMetadata();
     result{s, 3} = colorMaps;
     result{s, 4} = r.getMetadataStore();
     fprintf('\n');
