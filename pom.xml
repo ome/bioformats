@@ -365,6 +365,10 @@
       <id>imagej.thirdparty</id>
       <url>http://maven.imagej.net/content/repositories/thirdparty</url>
     </repository>
+    <repository>
+      <id>unidata.releases</id>
+      <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
