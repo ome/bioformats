@@ -127,8 +127,7 @@ public class NetCDFServiceTest {
     {"PAL_COLORMODEL", "RGB"},
     {"PAL_TYPE", "STANDARD8"},
     {"PAL_VERSION", "1.2"},
-    {"_lastModified", "2003-07-09T18:33:39Z"},
-    {"_unsigned", "true"},
+    {"_Unsigned", "true"},
     },
     {
     {"CLASS", "IMAGE"},
@@ -140,8 +139,7 @@ public class NetCDFServiceTest {
     {"IMAGE_SUBCLASS", "IMAGE_INDEXED"},
     {"IMAGE_VERSION", "1.2"},
     {"PALETTE", "1680"},
-    {"_lastModified", "2003-07-09T18:33:39Z"},
-    {"_unsigned", "true"},
+    {"_Unsigned", "true"},
     }
   };
 
@@ -176,13 +174,13 @@ public class NetCDFServiceTest {
     Vector<String> variables = service.getVariableList();
     assertEquals(variables.size(), 2);
 
-    assertEquals(variables.get(0), "/Raster_Image_0");
+    assertEquals(variables.get(0), "/Raster_Image_#0");
     assertEquals(variables.get(1), "/HDF4_PALGROUP/HDF4_PALETTE_2");
 
     Hashtable<String, Object> var1 =
       service.getVariableAttributes("/HDF4_PALGROUP/HDF4_PALETTE_2");
     Hashtable<String, Object> var2 =
-      service.getVariableAttributes("/Raster_Image_0");
+      service.getVariableAttributes("/Raster_Image_#0");
 
     assertEquals(var1.size(), VARS[0].length);
     assertEquals(var2.size(), VARS[1].length);
