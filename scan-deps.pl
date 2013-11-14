@@ -407,14 +407,14 @@ ZZ
 my %netcdf = (
   NAME    => "netcdf",
   TITLE   => "NetCDF",
-  JAR     => "netcdf-4.0.jar",
+  JAR     => "netcdf-4.3.19.jar",
   PACKAGE => "ucar.nc2",
   LICENSE => "LGPL",
   URL     => "http://www.unidata.ucar.edu/software/netcdf-java/",
   NOTES   => <<ZZ,
 used by Bio-Formats via reflection for HDF support (Imaris 5.5)
 ZZ
-  VERSION => "4.0"
+  VERSION => "4.3.19"
 );
 
 my %omeJava = (
