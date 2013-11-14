@@ -158,7 +158,7 @@ public class ImarisHDFReader extends FormatReader {
 
     Object image = getImageData(no, x, y, w, h);
 
-    boolean big = !isLittleEndian();
+    boolean little = isLittleEndian();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     for (int row=0; row<h; row++) {
       int rowlen = w * bpp;
@@ -177,7 +177,7 @@ public class ImarisHDFReader extends FormatReader {
         short[] rowData = data[row + data.length - h];
         int index = rowData.length - w;
         for (int i=0; i<w; i++) {
-          DataTools.unpackBytes(rowData[i + index], buf, base + 2*i, 2, big);
+          DataTools.unpackBytes(rowData[i + index], buf, base + 2*i, 2, little);
         }
       }
       else if (image instanceof int[][]) {
@@ -185,7 +185,7 @@ public class ImarisHDFReader extends FormatReader {
         int[] rowData = data[row + data.length - h];
         int index = rowData.length - w;
         for (int i=0; i<w; i++) {
-          DataTools.unpackBytes(rowData[i + index], buf, base + i*4, 4, big);
+          DataTools.unpackBytes(rowData[i + index], buf, base + i*4, 4, little);
         }
       }
       else if (image instanceof float[][]) {
@@ -194,7 +194,7 @@ public class ImarisHDFReader extends FormatReader {
         int index = rowData.length - w;
         for (int i=0; i<w; i++) {
           int v = Float.floatToIntBits(rowData[i + index]);
-          DataTools.unpackBytes(v, buf, base + i*4, 4, big);
+          DataTools.unpackBytes(v, buf, base + i*4, 4, little);
         }
       }
       else if (image instanceof double[][]) {
@@ -203,7 +203,7 @@ public class ImarisHDFReader extends FormatReader {
         int index = rowData.length - w;
         for (int i=0; i<w; i++) {
           long v = Double.doubleToLongBits(rowData[i + index]);
-          DataTools.unpackBytes(v, buf, base + i * 8, 8, big);
+          DataTools.unpackBytes(v, buf, base + i * 8, 8, little);
         }
       }
     }
@@ -274,7 +274,7 @@ public class ImarisHDFReader extends FormatReader {
       for (int i=1; i<seriesCount; i++) {
         CoreMetadata ms = core.get(i);
         String groupPath =
-          "/DataSet/ResolutionLevel_" + i + "/TimePoint_0/Channel_0";
+          "/DataSet/ResolutionLevel " + i + "/TimePoint 0/Channel 0";
         ms.sizeX =
           Integer.parseInt(netcdf.getAttributeValue(groupPath + "/ImageSizeX"));
         ms.sizeY =
@@ -382,16 +382,6 @@ public class ImarisHDFReader extends FormatReader {
           catch (NumberFormatException e) { }
         }
 
-        // CHECK
-        /*
-        store.setLogicalChannelName((String) channelName.get(cIndex), s, i);
-        store.setDetectorSettingsGain(gainValue, s, i);
-        store.setLogicalChannelPinholeSize(pinholeValue, s, i);
-        store.setLogicalChannelMode((String) microscopyMode.get(cIndex), s, i);
-        store.setLogicalChannelEmWave(emWaveValue, s, i);
-        store.setLogicalChannelExWave(exWaveValue, s, i);
-        */
-
         Double minValue = null, maxValue = null;
 
         if (cIndex < channelMin.size()) {
@@ -430,8 +420,8 @@ public class ImarisHDFReader extends FormatReader {
     throws FormatException
   {
     int[] zct = getZCTCoords(no);
-    String path = "/DataSet/ResolutionLevel_" + getCoreIndex() + "/TimePoint_" +
-      zct[2] + "/Channel_" + zct[1] + "/Data";
+    String path = "/DataSet/ResolutionLevel " + getCoreIndex() + "/TimePoint " +
+      zct[2] + "/Channel " + zct[1] + "/Data";
     Object image = null;
 
     // the width and height cannot be 1, because then netCDF will give us a
@@ -530,14 +520,14 @@ public class ImarisHDFReader extends FormatReader {
       else if (name.equals("ExtMin1")) minY = Double.parseDouble(value);
       else if (name.equals("ExtMin2")) minZ = Double.parseDouble(value);
 
-      if (attr.startsWith("/DataSet/ResolutionLevel_")) {
-        int slash = attr.indexOf("/", 25);
-        int n = Integer.parseInt(attr.substring(25, slash == -1 ?
+      if (attr.startsWith("DataSet/ResolutionLevel ")) {
+        int slash = attr.indexOf("/", 24);
+        int n = Integer.parseInt(attr.substring(24, slash == -1 ?
           attr.length() : slash));
         if (n == seriesCount) seriesCount++;
       }
 
-      if (attr.startsWith("/DataSetInfo/Channel_")) {
+      if (attr.startsWith("DataSetInfo/Channel ")) {
         String originalValue = value;
         for (String d : DELIMITERS) {
           if (value.indexOf(d) != -1) {
@@ -545,7 +535,7 @@ public class ImarisHDFReader extends FormatReader {
           }
         }
 
-        int underscore = attr.indexOf("_") + 1;
+        int underscore = attr.indexOf(" ") + 1;
         int cIndex = Integer.parseInt(attr.substring(underscore,
           attr.indexOf("/", underscore)));
         if (cIndex == getSizeC()) ms0.sizeC++;

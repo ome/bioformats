@@ -67,7 +67,7 @@ public class NetCDFServiceImpl extends AbstractService
     "NetCDF is required to read NetCDF/HDF variants. " +
     "Please obtain the necessary JAR files from " +
     "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html.\n" +
-    "Required JAR files are netcdf-4.0.jar and slf4j-jdk14.jar.";
+    "Required JAR files are netcdf-4.3.19.jar and slf4j-jdk14.jar.";
 
   // -- Fields --
 
@@ -254,9 +254,14 @@ public class NetCDFServiceImpl extends AbstractService
     StringTokenizer tokens = new StringTokenizer(path, "/");
     Group parent = root;
     while (tokens.hasMoreTokens()) {
-      parent = parent.findGroup(tokens.nextToken());
+      String token = tokens.nextToken();
+      Group nextParent = parent.findGroup(token);
+      if (nextParent == null) {
+        break;
+      }
+      parent = nextParent;
     }
-    return parent == null? root : parent;
+    return parent == null ? root : parent;
   }
 
   private String getDirectory(String path) {
