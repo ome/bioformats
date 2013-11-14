@@ -154,6 +154,18 @@ public final class FormatTools {
    */
   public static final String FREQUENCY = "Frequency";
 
+  /**
+   * Identifies the <i>Rotation</i> dimensional type,
+   * representing a dimension consisting of rotations.
+   */
+  public static final String ROTATION = "Rotation";
+
+  /**
+   * Identifies the <i>Illumination</i> dimensional type,
+   * representing a dimension consisting of illuminations.
+   */
+  public static final String ILLUMINATION = "Illumination";
+
   // -- Constants - miscellaneous --
 
   /** File grouping options. */

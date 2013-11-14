@@ -149,6 +149,8 @@ public class ZeissCZIReader extends FormatReader {
   private boolean hasDetectorSettings = false;
   private int scanDim = 1;
 
+  private String[] rotationLabels, phaseLabels, illuminationLabels;
+
   // -- Constructor --
 
   /** Constructs a new Zeiss .czi reader. */
@@ -401,6 +403,10 @@ public class ZeissCZIReader extends FormatReader {
       imageName = null;
       hasDetectorSettings = false;
       scanDim = 1;
+
+      rotationLabels = null;
+      illuminationLabels = null;
+      phaseLabels = null;
     }
   }
 
@@ -491,10 +497,30 @@ public class ZeissCZIReader extends FormatReader {
       ms0.sizeT = 1;
     }
 
+    // set modulo annotations
+    // rotations -> modulo Z
+    // illuminations -> modulo C
+    // phases -> modulo T
+
+    ms0.moduloZ.step = ms0.sizeZ;
+    ms0.moduloZ.end = ms0.sizeZ * (rotations - 1);
+    ms0.moduloZ.type = FormatTools.ROTATION;
+    ms0.sizeZ *= rotations;
+
+    ms0.moduloC.step = ms0.sizeC;
+    ms0.moduloC.end = ms0.sizeC * (illuminations - 1);
+    ms0.moduloC.type = FormatTools.ILLUMINATION;
+    ms0.moduloC.parentType = FormatTools.CHANNEL;
+    ms0.sizeC *= illuminations;
+
+    ms0.moduloT.step = ms0.sizeT;
+    ms0.moduloT.end = ms0.sizeT * (phases - 1);
+    ms0.moduloT.type = FormatTools.PHASE;
+    ms0.sizeT *= phases;
+
     // finish populating the core metadata
 
-    int seriesCount = rotations * positions * illuminations * acquisitions *
-      mosaics * phases * angles;
+    int seriesCount = positions * acquisitions * mosaics * angles;
 
     ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
 
@@ -557,6 +583,19 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
+    }
+
+    if (rotationLabels != null) {
+      ms0.moduloZ.labels = rotationLabels;
+      ms0.moduloZ.end = ms0.moduloZ.start;
+    }
+    if (illuminationLabels != null) {
+      ms0.moduloC.labels = illuminationLabels;
+      ms0.moduloC.end = ms0.moduloC.start;
+    }
+    if (phaseLabels != null) {
+      ms0.moduloT.labels = phaseLabels;
+      ms0.moduloT.end = ms0.moduloT.start;
     }
 
     assignPlaneIndices();
@@ -675,7 +714,9 @@ public class ZeissCZIReader extends FormatReader {
             }
             else {
               int channel = getZCTCoords(plane)[1];
-              if (channels.get(channel).exposure != null) {
+              if (channel < channels.size() &&
+                channels.get(channel).exposure != null)
+              {
                 store.setPlaneExposureTime(
                   channels.get(channel).exposure, i, plane);
               }
@@ -871,14 +912,16 @@ public class ZeissCZIReader extends FormatReader {
 
   private void assignPlaneIndices() {
     // assign plane and series indices to each SubBlock
-    int[] extraLengths = {rotations, positions, illuminations, acquisitions,
-      mosaics, phases, angles};
+    int[] extraLengths = {positions, acquisitions, mosaics, angles};
     for (int p=0; p<planes.size(); p++) {
       SubBlock plane = planes.get(p);
       int z = 0;
       int c = 0;
       int t = 0;
-      int[] extra = new int[7];
+      int r = 0;
+      int i = 0;
+      int phase = 0;
+      int[] extra = new int[4];
 
       boolean noAngle = true;
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
@@ -902,32 +945,42 @@ public class ZeissCZIReader extends FormatReader {
             }
             break;
           case 'R':
-            extra[0] = dimension.start;
+            r = dimension.start;
             break;
           case 'S':
-            extra[1] = dimension.start;
+            extra[0] = dimension.start;
             break;
           case 'I':
-            extra[2] = dimension.start;
+            i = dimension.start;
             break;
           case 'B':
-            extra[3] = dimension.start;
+            extra[1] = dimension.start;
             break;
           case 'M':
-            extra[4] = dimension.start;
+            extra[2] = dimension.start;
             break;
           case 'H':
-            extra[5] = dimension.start;
+            phase = dimension.start;
             break;
           case 'V':
-            extra[6] = dimension.start;
+            extra[3] = dimension.start;
             noAngle = false;
             break;
         }
       }
 
       if (angles > 1 && noAngle) {
-        extra[6] = p / (getImageCount() * (getSeriesCount() / angles));
+        extra[3] = p / (getImageCount() * (getSeriesCount() / angles));
+      }
+
+      if (rotations > 0) {
+        z = r * (getSizeZ() / rotations) + z;
+      }
+      if (illuminations > 0) {
+        c = i * (getSizeC() / illuminations) + c;
+      }
+      if (phases > 0) {
+        t = phase * (getSizeT() / phases) + t;
       }
 
       plane.planeIndex = getIndex(z, c, t);
@@ -2027,6 +2080,16 @@ public class ZeissCZIReader extends FormatReader {
       String value = root.getTextContent();
       if (value != null && key.length() > 0) {
         addGlobalMetaList(key.toString(), value);
+
+        if (key.toString().endsWith("|Rotations|")) {
+          rotationLabels = value.split(" ");
+        }
+        else if (key.toString().endsWith("|Phases|")) {
+          phaseLabels = value.split(" ");
+        }
+        else if (key.toString().endsWith("|Illuminations|")) {
+          illuminationLabels = value.split(" ");
+        }
       }
     }
     NamedNodeMap attributes = root.getAttributes();

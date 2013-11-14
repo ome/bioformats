@@ -58,6 +58,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
+import loci.formats.Modulo;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
@@ -818,6 +819,22 @@ public class OMETiffReader extends FormatReader {
         ms0.sizeC = 1;
       }
       ms0.sizeT = 1;
+    }
+
+    for (int i=0; i<core.size(); i++) {
+      CoreMetadata m = core.get(i);
+      Modulo z = service.getModuloAlongZ(meta, i);
+      if (z != null) {
+        m.moduloZ = z;
+      }
+      Modulo c = service.getModuloAlongC(meta, i);
+      if (c != null) {
+        m.moduloC = c;
+      }
+      Modulo t = service.getModuloAlongT(meta, i);
+      if (t != null) {
+        m.moduloT = t;
+      }
     }
 
     MetadataTools.populatePixels(metadataStore, this, false, false);

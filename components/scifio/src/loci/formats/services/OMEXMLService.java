@@ -41,6 +41,7 @@ import java.util.Hashtable;
 import loci.common.services.Service;
 import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
+import loci.formats.Modulo;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
@@ -182,6 +183,39 @@ public interface OMEXMLService extends Service {
    */
   public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
     Hashtable<String, Object> metadata);
+
+  /**
+   * Retrieve the ModuloAlongZ annotation in the given Image in the given
+   * OME-XML metadata object.
+   * If no ModuloAlongZ annotation is present, return null.
+   *
+   * @param omexmlMeta An object of type
+   *  {@link loci.formats.ome.OMEXMLMetadata}
+   * @param image the index of the Image to which the Annotation is linked
+   */
+  public Modulo getModuloAlongZ(OMEXMLMetadata omexmlMeta, int image);
+
+  /**
+   * Retrieve the ModuloAlongC annotation in the given Image in the given
+   * OME-XML metadata object.
+   * If no ModuloAlongC annotation is present, return null.
+   *
+   * @param omexmlMeta An object of type
+   *  {@link loci.formats.ome.OMEXMLMetadata}
+   * @param image the index of the Image to which the Annotation is linked
+   */
+  public Modulo getModuloAlongC(OMEXMLMetadata omexmlMeta, int image);
+
+  /**
+   * Retrieve the ModuloAlongT annotation in the given Image in the given
+   * OME-XML metadata object.
+   * If no ModuloAlongT annotation is present, return null.
+   *
+   * @param omexmlMeta An object of type
+   *  {@link loci.formats.ome.OMEXMLMetadata}
+   * @param image the index of the Image to which the Annotation is linked
+   */
+  public Modulo getModuloAlongT(OMEXMLMetadata omexmlMeta, int image);
 
   /**
    * Parse any OriginalMetadata annotations from the given OME-XML metadata
