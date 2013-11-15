@@ -25,10 +25,12 @@
 
 package ome.jxr.ifd;
 
+import ome.jxr.constants.IFD;
+
 /**
- * Enumeration of available IFD entries. Naming of entries follows
- * Rec.ITU-T T.832 (01/2012) - table A.4. {@link Integer.MAX_VALUE} has been
- * used to indicate variable number of entry elements.
+ * Container defining a list of IFD Entries. Each individual IFD Container
+ * is a unique group of IFD Entries and the object of this class is aware of the
+ * count of entries in itself.
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
@@ -43,12 +45,34 @@ public class IFDContainer {
     this.numberOfEntries = numberOfEntries;
   }
 
+  /**
+   * Returns the offset from the start of a data stream to the address where
+   * this IFD Container begins.
+   *
+   * @return See above.
+   */
   public int getOffset() {
     return offset;
   }
 
+  /**
+   * Returns the offset from the start of a data stream to the address where
+   * this IFD Container begins, skipping {@link IFD.ENTRIES_COUNT_SIZE} bytes
+   * that hold the Entry count for this container.
+   * @return
+   */
+  public int getOffsetSkipEntryCount() {
+    return offset + IFD.ENTRIES_COUNT_SIZE;
+  }
+
   public short getNumberOfEntries() {
     return numberOfEntries;
+  }
+
+  @Override
+  public String toString() {
+    return "IFDContainer [offset=" + offset + ", numberOfEntries="
+        + numberOfEntries + "]";
   }
 
 }

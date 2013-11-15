@@ -23,35 +23,24 @@
  * #L%
  */
 
-package ome.jxr.metadata;
-
-import java.util.EnumMap;
-import java.util.Map;
+package ome.jxr.ifd.utests;
 
 import ome.jxr.ifd.IFDElement;
 
-public class JXRMetadata {
+import org.testng.annotations.Test;
 
-  private Map<IFDElement, Object> values =
-      new EnumMap<IFDElement, Object>(IFDElement.class);
+public class IFDElementTest {
 
-  public void put(IFDElement element, Object value) {
-    values.put(element, value);
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testValueOfWithInvalidTagShouldThrowIAE() {
+    short unspecifiedTag = (short) 0xffff;
+    IFDElement element = IFDElement.valueOf(unspecifiedTag);
   }
 
-  public int getBytesPerPixel() {
-    // TODO: Implement logic
-    return 0;
+  @Test
+  public void testValueOfWithValidTagShouldNotThrow() {
+    for (IFDElement element : IFDElement.values()) {
+      element.valueOf(element.getTag());
+    }
   }
-
-  public int getBitsPerPixel() {
-    // TODO: Implement logic
-    return 0;
-  }
-
-  public int getNumberOfChannels() {
-    // TODO: Implement logic
-    return 0;
-  }
-
 }

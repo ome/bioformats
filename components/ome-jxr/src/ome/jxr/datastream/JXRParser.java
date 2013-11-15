@@ -26,13 +26,16 @@
 package ome.jxr.datastream;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import loci.common.RandomAccessInputStream;
 import ome.jxr.constants.IFD;
 import ome.jxr.ifd.IFDContainer;
+import ome.jxr.ifd.IFDElement;
+import ome.jxr.ifd.IFDElementType;
+import ome.jxr.ifd.IFDElementTypeTranslator;
 import ome.jxr.metadata.JXRMetadata;
 
 /**
@@ -51,6 +54,8 @@ public class JXRParser {
   private int rootIFDOffset;
 
   private RandomAccessInputStream stream;
+
+  private IFDElementTypeTranslator translator = new IFDElementTypeTranslator();
 
   private List<IFDContainer> IFDContainers = new ArrayList<IFDContainer>();
 
@@ -72,20 +77,14 @@ public class JXRParser {
   }
 
   public JXRMetadata extractMetadata() throws IOException {
-    JXRMetadata metadata = new JXRMetadata();
     findAllIFDs();
+
+    JXRMetadata metadata = new JXRMetadata();
     for (IFDContainer container : IFDContainers) {
-      stream.seek(container.getOffset() + IFD.ENTRIES_COUNT_SIZE);
+      stream.seek(container.getOffsetSkipEntryCount());
       for (int i=0; i < container.getNumberOfEntries(); i++) {
-        // each iteration will handle 12 bytes of data (see
-        // IFD.ENTRY_SIZE).
-        
-        // read tag
-        // check how much data the tag contains and read approprietly
-        //   (see if stream.read(array, n) would help
-        // put the result into the metadata object
+        parseEntryInto(metadata);
       }
-      //metadata.put();
     }
     return metadata;
   }
@@ -101,7 +100,7 @@ public class JXRParser {
       IFDEntryCount = stream.readShort();
       IFDContainers.add(new IFDContainer(nextIFDOffset, IFDEntryCount));
       stream.seek(nextIFDOffset + IFD.ENTRIES_COUNT_SIZE +
-          IFDEntryCount * IFD.ENTRY_SIZE);
+          IFDEntryCount*IFD.ENTRY_SIZE);
       nextIFDOffset = stream.read();
     } while (nextIFDOffset != 0 && nextIFDOffset < stream.length());
   }
@@ -116,6 +115,35 @@ public class JXRParser {
           String.format("Invalid offset supplied. Stream length: %d, offset: %d.",
               stream.length(), rootIFDOffset));
     }
+  }
+
+  private void parseEntryInto(JXRMetadata metadata) throws IOException {
+    // TODO: This doesn't work yet. If the method returned from the translator
+    // is readByte(), then we don't end up reading 12 bytes, hence the
+    // stream pointer is still in the same entry...
+
+    IFDElement element = IFDElement.valueOf(stream.readShort());
+    IFDElementType elementType = IFDElementType.valueOf(stream.readShort());
+    int count = stream.readInt();
+
+    Object value = null;
+    try {
+      value = translator.toStreamMethod(elementType, RandomAccessInputStream.class).invoke(stream);
+    } catch (IllegalArgumentException e) {
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      e.printStackTrace();
+    }
+
+    metadata.put(element, value);
+  }
+
+  @Override
+  public String toString() {
+    return "JXRParser [rootIFDOffset=" + rootIFDOffset + ", "
+        + "IFDContainers.size()=" + IFDContainers.size() + "]";
   }
 
 }

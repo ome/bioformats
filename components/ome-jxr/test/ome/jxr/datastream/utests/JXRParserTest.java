@@ -25,9 +25,11 @@
 
 package ome.jxr.datastream.utests;
 
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+
 import java.io.IOException;
 
-import junit.framework.Assert;
 import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 import ome.jxr.datastream.JXRParser;
@@ -43,7 +45,7 @@ public class JXRParserTest {
     JXRParser parser = new JXRParser();
     int expectedCount = 0;
     int actualCount = parser.getIFDCount();
-    Assert.assertEquals(expectedCount, actualCount);
+    assertEquals(expectedCount, actualCount);
   }
 
   @Test(expectedExceptions = IllegalStateException.class)
@@ -92,7 +94,7 @@ public class JXRParserTest {
     int expectedIFDCount = 1;
     parser.findAllIFDs();
     int actualIFDCount = parser.getIFDCount();
-    Assert.assertEquals(expectedIFDCount, actualIFDCount);
+    assertEquals(expectedIFDCount, actualIFDCount);
   }
 
   @Test(dataProvider = "testStream",
@@ -105,7 +107,19 @@ public class JXRParserTest {
 
     int expectedIFDCount = 0;
     int actualIFDCount = parser.getIFDCount();
-    Assert.assertEquals(expectedIFDCount, actualIFDCount);
+    assertEquals(expectedIFDCount, actualIFDCount);
+  }
+
+  @Test(dataProvider = "testStream",
+      dataProviderClass = StaticDataProvider.class)
+  public void testExtractMetadataShouldReturnNonNullObject(RandomAccessInputStream stream)
+      throws IOException, JXRException {
+    JXRReader reader = new JXRReader(stream);
+    JXRParser parser = new JXRParser();
+    parser.setInputStream(stream);
+    parser.setRootIFDOffset(reader.getRootIFDOffset());
+
+    assertNotNull(parser.extractMetadata());
   }
 
 }

@@ -23,52 +23,24 @@
  * #L%
  */
 
-package ome.jxr.ifd;
+package ome.jxr.ifd.utests;
 
-/**
- * Enumeration of data types to which each IFD entry must conform. Naming of
- * types follows Rec.ITU-T T.832 (01/2012) - table A.5.
- *
- * @author Blazej Pindelski bpindelski at dundee.ac.uk
- */
-public enum IFDElementType {
+import ome.jxr.ifd.IFDElementType;
 
-  BYTE(1, 1),
-  UTF8(2, 1),
-  USHORT(3, 2),
-  ULONG(4, 4),
-  URATIONAL(5, 2 * ULONG.getSize()),
-  SBYTE(6, 1),
-  UNDEFINED(7, 1),
-  SSHORT(8, 2),
-  SLONG(9, 4),
-  SRATIONAL(10, 2 * SLONG.getSize()),
-  FLOAT(11, 4),
-  DOUBLE(12, 8);
+import org.testng.annotations.Test;
 
-  private final short typeCode;
-  private final int size;
+public class IFDElementTypeTest {
 
-  private IFDElementType(int typeCode, int size) {
-    this.typeCode = (short) typeCode;
-    this.size = size;
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testValueOfWithInvalidCodeShouldThrowIAE() {
+    short unspecifiedCode = 13;
+    IFDElementType type = IFDElementType.valueOf(unspecifiedCode);
   }
 
-  public short getTypeCode() {
-    return typeCode;
-  }
-
-  public int getSize() {
-    return size;
-  }
-
-  public static IFDElementType valueOf(short typeCode) {
+  @Test
+  public void testValueOfWithValidCodeShouldNotThrow() {
     for (IFDElementType type : IFDElementType.values()) {
-      if (type.getTypeCode() == typeCode) {
-        return type;
-      }
+      type.valueOf(type.getTypeCode());
     }
-    throw new IllegalArgumentException("Unspecified type code: " + typeCode);
   }
-
 }

@@ -185,4 +185,10 @@ public class JXRReader {
     }
   }
 
+  @Override
+  public String toString() {
+    return "JXRReader [isLittleEndian=" + isLittleEndian + ", encoderVersion="
+        + encoderVersion + ", rootIFDOffset=" + rootIFDOffset + "]";
+  }
+
 }

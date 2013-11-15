@@ -29,9 +29,19 @@
       <class name="ome.jxr.datastream.utests.JXRReaderTest"/>
     </classes>
   </test>
-  <test name="JXRDecoder">
+  <test name="JXRParser">
     <classes>
-      <class name="ome.jxr.datastream.utests.JXRDecoderTest"/>
+      <class name="ome.jxr.datastream.utests.JXRParserTest"/>
+    </classes>
+  </test>
+  <test name="IFDElement">
+    <classes>
+      <class name="ome.jxr.ifd.utests.IFDElementTest"/>
+    </classes>
+  </test>
+  <test name="IFDElementType">
+    <classes>
+      <class name="ome.jxr.ifd.utests.IFDElementTypeTest"/>
     </classes>
   </test>
 </suite>
