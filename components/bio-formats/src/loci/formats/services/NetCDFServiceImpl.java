@@ -187,10 +187,12 @@ public class NetCDFServiceImpl extends AbstractService
     Group group = getGroup(groupName);
 
     Variable variable = group.findVariable(variableName);
-    List<Attribute> attributes = variable.getAttributes();
     Hashtable<String, Object> toReturn = new Hashtable<String, Object>();
-    for (Attribute attribute: attributes) {
-      toReturn.put(attribute.getName(), arrayToString(attribute.getValues()));
+    if (variable != null) {
+      List<Attribute> attributes = variable.getAttributes();
+      for (Attribute attribute: attributes) {
+        toReturn.put(attribute.getName(), arrayToString(attribute.getValues()));
+      }
     }
     return toReturn;
   }
