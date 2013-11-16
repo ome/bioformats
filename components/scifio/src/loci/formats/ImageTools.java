@@ -763,8 +763,8 @@ public final class ImageTools {
       for (int i=0; i<buf.length; i+=bpp*c) {
         for (int b=0; b<bpp; b++) {
           byte tmp = buf[i + b];
-          buf[i + b] = buf[i + bpp * 2];
-          buf[i + bpp * 2] = tmp;
+          buf[i + b] = buf[i + b + bpp * 2];
+          buf[i + b + bpp * 2] = tmp;
         }
       }
     }
