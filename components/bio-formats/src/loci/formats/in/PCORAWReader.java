@@ -199,7 +199,7 @@ public class PCORAWReader extends FormatReader {
           StringBuffer description = new StringBuffer();
           for (int j=i + 1; j<lines.length; j++) {
             description.append(lines[j]);
-            description.append("\n");
+            description.append("; ");
           }
           store.setImageDescription(description.toString().trim(), 0);
           break;
