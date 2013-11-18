@@ -6,7 +6,7 @@ MIAS (Maia Scientific)
 
 Extensions: .tif 
 
-Developer: `Maia Scientific <http://www.maia-scientific.com/>`_
+Developer: `Maia Scientific <http://www.selectscience.net/supplier/maia-scientific/?compID=6088>`_
 
 
 **Support**
