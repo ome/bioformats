@@ -86,6 +86,7 @@ public class ZipHandle extends StreamHandle {
 
     // look for Zip entry with same prefix as the Zip file itself
     boolean matchFound = false;
+    length = 0;
     while (true) {
       ZipEntry ze = zip.getNextEntry();
       if (ze == null) break;
@@ -96,10 +97,13 @@ public class ZipHandle extends StreamHandle {
         matchFound = true;
       }
       entryCount++;
+      length += ze.getSize();
     }
     resetStream();
 
-    populateLength();
+    if (length <= 0) {
+      populateLength();
+    }
   }
 
   /**
@@ -119,7 +123,10 @@ public class ZipHandle extends StreamHandle {
 
     seekToEntry();
     resetStream();
-    populateLength();
+    length = entry.getSize();
+    if (length <= 0) {
+      populateLength();
+    }
   }
 
   // -- ZipHandle API methods --
