@@ -26,49 +26,35 @@
 package ome.jxr.ifd;
 
 /**
- * Enumeration of data types to which each IFD entry must conform. Naming of
- * types follows Rec.ITU-T T.832 (01/2012) - table A.5.
+ * Represents the native type implementation of the JPEG XR
+ * {@link IFDEntryType.URATIONAL} and {@link IFDEntryType.SRATIONAL} IFD Entry
+ * Types.
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
-public enum IFDElementType {
+public class JXRRational {
 
-  BYTE(1, 1),
-  UTF8(2, 1),
-  USHORT(3, 2),
-  ULONG(4, 4),
-  URATIONAL(5, 2 * ULONG.getSize()),
-  SBYTE(6, 1),
-  UNDEFINED(7, 1),
-  SSHORT(8, 2),
-  SLONG(9, 4),
-  SRATIONAL(10, 2 * SLONG.getSize()),
-  FLOAT(11, 4),
-  DOUBLE(12, 8);
+  private int numerator;
+  private int denominator;
 
-  private final short typeCode;
-  private final int size;
-
-  private IFDElementType(int typeCode, int size) {
-    this.typeCode = (short) typeCode;
-    this.size = size;
-  }
-
-  public short getTypeCode() {
-    return typeCode;
-  }
-
-  public int getSize() {
-    return size;
-  }
-
-  public static IFDElementType valueOf(short typeCode) {
-    for (IFDElementType type : IFDElementType.values()) {
-      if (type.getTypeCode() == typeCode) {
-        return type;
-      }
+  public JXRRational(int numerator, int denominator) {
+    this.numerator = numerator;
+    if (denominator == 0) {
+      throw new IllegalArgumentException("Denominator cannot be 0.");
     }
-    throw new IllegalArgumentException("Unspecified type code: " + typeCode);
+    this.denominator = denominator;
+  }
+
+  public int getNumerator() {
+    return numerator;
+  }
+
+  public int getDenominator() {
+    return denominator;
+  }
+
+  public double getDouble() {
+    return (double) numerator / denominator;
   }
 
 }

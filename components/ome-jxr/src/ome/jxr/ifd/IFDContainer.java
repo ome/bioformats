@@ -25,6 +25,9 @@
 
 package ome.jxr.ifd;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ome.jxr.constants.IFD;
 
 /**
@@ -40,9 +43,14 @@ public class IFDContainer {
 
   private short numberOfEntries;
 
+  private List<Integer> entryOffsets = new ArrayList<Integer>();
+
   public IFDContainer(int offset, short numberOfEntries) {
     this.offset = offset;
     this.numberOfEntries = numberOfEntries;
+    for (int i=0; i<numberOfEntries; i++) {
+      entryOffsets.add(getOffsetOfFirstEntry() + i*IFD.ENTRY_SIZE);
+    }
   }
 
   /**
@@ -51,7 +59,7 @@ public class IFDContainer {
    *
    * @return See above.
    */
-  public int getOffset() {
+  public int getOffsetOfContainer() {
     return offset;
   }
 
@@ -61,9 +69,19 @@ public class IFDContainer {
    * that hold the Entry count for this container.
    * @return
    */
-  public int getOffsetSkipEntryCount() {
+  public int getOffsetOfFirstEntry() {
     return offset + IFD.ENTRIES_COUNT_SIZE;
   }
+
+  /**
+   * Returns the list of offsets counted from the beginning of a data stream.
+   * Each offset points to an individual IFD Entry in this Container.
+   * @return See above.
+   */
+  public List<Integer> getEntryOffsets() {
+    return entryOffsets;
+  }
+
 
   public short getNumberOfEntries() {
     return numberOfEntries;

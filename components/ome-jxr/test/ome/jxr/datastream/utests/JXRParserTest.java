@@ -32,6 +32,7 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
+import ome.jxr.StaticDataProvider;
 import ome.jxr.datastream.JXRParser;
 import ome.jxr.datastream.JXRReader;
 

@@ -25,7 +25,7 @@
 
 package ome.jxr.ifd.utests;
 
-import ome.jxr.ifd.IFDElement;
+import ome.jxr.ifd.IFDEntry;
 
 import org.testng.annotations.Test;
 
@@ -34,13 +34,13 @@ public class IFDElementTest {
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testValueOfWithInvalidTagShouldThrowIAE() {
     short unspecifiedTag = (short) 0xffff;
-    IFDElement element = IFDElement.valueOf(unspecifiedTag);
+    IFDEntry element = IFDEntry.findByTag(unspecifiedTag);
   }
 
   @Test
   public void testValueOfWithValidTagShouldNotThrow() {
-    for (IFDElement element : IFDElement.values()) {
-      element.valueOf(element.getTag());
+    for (IFDEntry element : IFDEntry.values()) {
+      element.findByTag(element.getTag());
     }
   }
 }

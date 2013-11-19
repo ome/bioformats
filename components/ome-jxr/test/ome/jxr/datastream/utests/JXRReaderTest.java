@@ -33,6 +33,7 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
+import ome.jxr.StaticDataProvider;
 import ome.jxr.constants.File;
 import ome.jxr.datastream.JXRParser;
 import ome.jxr.datastream.JXRReader;
@@ -89,13 +90,13 @@ public class JXRReaderTest {
       dataProviderClass = StaticDataProvider.class,
       expectedExceptions = IllegalStateException.class)
   public void testGetMetadataWithoutParserShouldThrowISE(JXRReader reader)
-      throws IOException, IllegalStateException {
+      throws IllegalStateException, IOException, JXRException {
     reader.getMetadata();
   }
 
   @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
   public void testGetMetadataWithParserShouldSucceed(JXRReader reader)
-      throws IOException {
+      throws IllegalStateException, IOException, JXRException {
     reader.setParser(new JXRParser());
     assertNotNull(reader.getMetadata());
   }

@@ -25,33 +25,42 @@
 
 package ome.jxr.metadata;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
-import ome.jxr.ifd.IFDElement;
+import ome.jxr.JXRException;
+import ome.jxr.ifd.IFDEntry;
+import ome.jxr.ifd.PixelFormat;
 
 public class JXRMetadata {
 
-  private Map<IFDElement, Object> values =
-      new EnumMap<IFDElement, Object>(IFDElement.class);
+  private Map<IFDEntry, Object> values =
+      new EnumMap<IFDEntry, Object>(IFDEntry.class);
 
-  public void put(IFDElement element, Object value) {
+  public void put(IFDEntry element, Object value) {
     values.put(element, value);
   }
 
-  public int getBytesPerPixel() {
-    // TODO: Implement logic
-    return 0;
+  public void verifyRequiredElements() throws JXRException {
+    if (!values.isEmpty()) {
+      if (!values.keySet().containsAll(IFDEntry.getRequiredElements())) {
+        throw new JXRException("Metadata object is missing entries for required"
+            + " IFD elements.");
+      }
+    }
   }
 
   public int getBitsPerPixel() {
-    // TODO: Implement logic
     return 0;
   }
 
   public int getNumberOfChannels() {
-    // TODO: Implement logic
+    //if (!values.containsKey(IFDEntry.PIXEL_FORMAT)) {
     return 0;
+    //}
+    //String id = new String((byte[]) values.get(IFDEntry.PIXEL_FORMAT));
+    //return PixelFormat.findById(id).getNumberOfChannels();
   }
 
 }

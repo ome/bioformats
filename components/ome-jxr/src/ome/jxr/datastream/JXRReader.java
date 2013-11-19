@@ -93,7 +93,8 @@ public class JXRReader {
     return parser.getDecompressedImage();
   }
 
-  public JXRMetadata getMetadata() throws IOException, IllegalStateException {
+  public JXRMetadata getMetadata()
+      throws IllegalStateException, IOException, JXRException {
     checkForParser();
     if (metadata == null) {
       metadata = parser.extractMetadata();

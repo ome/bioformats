@@ -31,11 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import loci.common.RandomAccessInputStream;
+import ome.jxr.JXRException;
 import ome.jxr.constants.IFD;
 import ome.jxr.ifd.IFDContainer;
-import ome.jxr.ifd.IFDElement;
-import ome.jxr.ifd.IFDElementType;
-import ome.jxr.ifd.IFDElementTypeTranslator;
+import ome.jxr.ifd.IFDEntry;
+import ome.jxr.ifd.IFDEntryType;
+import ome.jxr.ifd.IFDEntryTypeTranslator;
 import ome.jxr.metadata.JXRMetadata;
 
 /**
@@ -55,7 +56,7 @@ public class JXRParser {
 
   private RandomAccessInputStream stream;
 
-  private IFDElementTypeTranslator translator = new IFDElementTypeTranslator();
+  private IFDEntryTypeTranslator translator = new IFDEntryTypeTranslator();
 
   private List<IFDContainer> IFDContainers = new ArrayList<IFDContainer>();
 
@@ -76,16 +77,18 @@ public class JXRParser {
     return null;
   }
 
-  public JXRMetadata extractMetadata() throws IOException {
+  public JXRMetadata extractMetadata() throws IOException, JXRException {
     findAllIFDs();
 
     JXRMetadata metadata = new JXRMetadata();
     for (IFDContainer container : IFDContainers) {
-      stream.seek(container.getOffsetSkipEntryCount());
-      for (int i=0; i < container.getNumberOfEntries(); i++) {
+      for (int entryOffset : container.getEntryOffsets()) {
+        stream.seek(entryOffset);
         parseEntryInto(metadata);
       }
     }
+
+    metadata.verifyRequiredElements();
     return metadata;
   }
 
@@ -118,26 +121,21 @@ public class JXRParser {
   }
 
   private void parseEntryInto(JXRMetadata metadata) throws IOException {
-    // TODO: This doesn't work yet. If the method returned from the translator
-    // is readByte(), then we don't end up reading 12 bytes, hence the
-    // stream pointer is still in the same entry...
+    IFDEntry element = IFDEntry.findByTag(stream.readShort());
+    IFDEntryType elementType = IFDEntryType.findByTypeCode(stream.readShort());
+    int elementCount = stream.readInt();
+    int rawDataSize = elementCount*elementType.getSize();
 
-    IFDElement element = IFDElement.valueOf(stream.readShort());
-    IFDElementType elementType = IFDElementType.valueOf(stream.readShort());
-    int count = stream.readInt();
-
-    Object value = null;
-    try {
-      value = translator.toStreamMethod(elementType, RandomAccessInputStream.class).invoke(stream);
-    } catch (IllegalArgumentException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    } catch (InvocationTargetException e) {
-      e.printStackTrace();
+    byte[] value = new byte[rawDataSize];
+    if (rawDataSize > IFD.ENTRY_VALUE_SIZE) {
+      int offset = stream.readInt();
+      if (offset < stream.length()) {
+        stream.seek(offset);
+      }
     }
+    stream.read(value, 0, elementCount);
 
-    metadata.put(element, value);
+    metadata.put(element, translator.toPrimitiveType(elementType, value));
   }
 
   @Override

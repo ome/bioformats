@@ -23,24 +23,39 @@
  * #L%
  */
 
-package ome.jxr.ifd.utests;
+package ome.jxr.ifd;
 
-import ome.jxr.ifd.IFDEntryType;
+/**
+ * Possible data types for pixels in an image.
+ *
+ * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ *
+ */
+public enum PixelType {
 
-import org.testng.annotations.Test;
+  UINT8("uint", 8),
+  UINT10("uint", 10),
+  UINT16("uint", 16),
+  SINT16("sint", 16),
+  SINT32("sint", 32),
+  FLOAT8("float", 8),
+  FLOAT16("float", 16),
+  FLOAT32("float", 32);
 
-public class IFDElementTypeTest {
+  private String datatype;
+  private int bits;
 
-  @Test(expectedExceptions = IllegalArgumentException.class)
-  public void testValueOfWithInvalidCodeShouldThrowIAE() {
-    short unspecifiedCode = 13;
-    IFDEntryType type = IFDEntryType.findByTypeCode(unspecifiedCode);
+  private PixelType(String datatype, int bits) {
+    this.datatype = datatype;
+    this.bits = bits;
   }
 
-  @Test
-  public void testValueOfWithValidCodeShouldNotThrow() {
-    for (IFDEntryType type : IFDEntryType.values()) {
-      type.findByTypeCode(type.getTypeCode());
-    }
+  public String getDatatype() {
+    return datatype;
   }
+
+  public int getBits() {
+    return bits;
+  }
+
 }

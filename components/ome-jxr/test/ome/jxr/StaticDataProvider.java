@@ -23,7 +23,7 @@
  * #L%
  */
 
-package ome.jxr.datastream.utests;
+package ome.jxr;
 
 import java.io.IOException;
 
