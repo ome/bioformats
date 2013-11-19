@@ -87,6 +87,9 @@ public class FakeReader extends FormatReader {
 
   // -- Fields --
 
+  /** whether or not to generate planeInfo elements **/
+  private boolean planeInfo = false;
+
   /** Scale factor for gradient, if any. */
   private double scaleFactor = 1;
 
@@ -304,6 +307,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("series")) seriesCount = intValue;
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
+      else if (key.equals("planeInfo")) planeInfo = boolValue;
     }
 
     // do some sanity checks
@@ -361,7 +365,7 @@ public class FakeReader extends FormatReader {
 
     // populate OME metadata
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, planeInfo);
     for (int s=0; s<seriesCount; s++) {
       String imageName = s > 0 ? name + " " + (s + 1) : name;
       store.setImageName(imageName, s);
