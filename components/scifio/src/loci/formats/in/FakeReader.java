@@ -66,6 +66,7 @@ import ome.scifio.common.IniParser;
 import ome.scifio.common.IniTable;
 import ome.specification.XMLMockObjects;
 import ome.xml.model.OME;
+import ome.xml.model.primitives.Color;
 
 /**
  * FakeReader is the file format reader for faking input data.
@@ -390,6 +391,8 @@ public class FakeReader extends FormatReader {
     int fields = 0;
     int plateAcqs = 0;
 
+    Integer color = null;
+
     // add properties file values to list of tokens.
     if (iniFile != null) {
       IniParser parser = new IniParser();
@@ -465,6 +468,22 @@ public class FakeReader extends FormatReader {
       else if (key.equals("plateCols")) plateCols = intValue;
       else if (key.equals("fields")) fields = intValue;
       else if (key.equals("plateAcqs")) plateAcqs = intValue;
+      else if (key.equals("color")) {
+        // parse colors as longs so that unsigned values can be specified,
+        // e.g. 0xff0000ff for red with opaque alpha
+        if (value.startsWith("0x") || value.startsWith("0X")) {
+          value = value.substring(2);
+        }
+        try {
+          color = (int) Long.parseLong(value);
+        }
+        catch (NumberFormatException e) {
+          try {
+            color = (int) Long.parseLong(value, 16);
+          }
+          catch (NumberFormatException ex) { }
+        }
+      }
     }
 
     // do some sanity checks
@@ -538,6 +557,12 @@ public class FakeReader extends FormatReader {
     for (int s=0; s<seriesCount; s++) {
       String imageName = s > 0 ? name + " " + (s + 1) : name;
       store.setImageName(imageName, s);
+
+      for (int c=0; c<sizeC; c++) {
+        if (color != null) {
+          store.setChannelColor(new Color(color), s, c);
+        }
+      }
     }
 
     // for indexed color images, create lookup tables
