@@ -183,7 +183,8 @@ extlinks = {
     'faq_plone' : (oo_site_root + '/support/faq/%s', ''),
     'training_plone' : (oo_site_root + '/support/training/%s', ''),
     'bf_doc' : (oo_site_root + '/support/bio-formats/%s', ''),
-    'omerodoc': (omerodoc_uri + '/%s', ''),
+    'omerodoc' : (omerodoc_uri + '/%s', ''),
+    'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
     'downloads' : (downloads_root + '/bio-formats/%s', ''),
     # Miscellaneous links
