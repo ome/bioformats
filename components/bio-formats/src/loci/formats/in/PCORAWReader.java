@@ -198,8 +198,11 @@ public class PCORAWReader extends FormatReader {
         else if (key.equals("Comment")) {
           StringBuffer description = new StringBuffer();
           for (int j=i + 1; j<lines.length; j++) {
-            description.append(lines[j]);
-            description.append("; ");
+            lines[j] = lines[j].trim();
+            if (lines[j].length() > 0) {
+              description.append(lines[j]);
+              description.append(" ");
+            }
           }
           store.setImageDescription(description.toString().trim(), 0);
           break;
