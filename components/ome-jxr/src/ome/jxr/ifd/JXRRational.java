@@ -30,6 +30,11 @@ package ome.jxr.ifd;
  * {@link IFDEntryType.URATIONAL} and {@link IFDEntryType.SRATIONAL} IFD Entry
  * Types.
  *
+ * <dl>
+ * <dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/ifd/JXRRational.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/ifd/JXRRational.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
 public class JXRRational {

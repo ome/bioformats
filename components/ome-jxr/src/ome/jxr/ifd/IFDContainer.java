@@ -35,6 +35,11 @@ import ome.jxr.constants.IFD;
  * is a unique group of IFD Entries and the object of this class is aware of the
  * count of entries in itself.
  *
+ * <dl>
+ * <dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/ifd/IFDContainer.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/ifd/IFDContainer.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
 public class IFDContainer {
@@ -67,7 +72,8 @@ public class IFDContainer {
    * Returns the offset from the start of a data stream to the address where
    * this IFD Container begins, skipping {@link IFD.ENTRIES_COUNT_SIZE} bytes
    * that hold the Entry count for this container.
-   * @return
+   *
+   * @return See above.
    */
   public int getOffsetOfFirstEntry() {
     return offset + IFD.ENTRIES_COUNT_SIZE;
@@ -76,13 +82,18 @@ public class IFDContainer {
   /**
    * Returns the list of offsets counted from the beginning of a data stream.
    * Each offset points to an individual IFD Entry in this Container.
+   *
    * @return See above.
    */
   public List<Integer> getEntryOffsets() {
     return entryOffsets;
   }
 
-
+  /**
+   * Returns the number of entries in this IFD Container.
+   *
+   * @return See above.
+   */
   public short getNumberOfEntries() {
     return numberOfEntries;
   }

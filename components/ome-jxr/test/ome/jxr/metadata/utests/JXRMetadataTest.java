@@ -29,7 +29,6 @@ import java.io.IOException;
 
 import ome.jxr.JXRException;
 import ome.jxr.StaticDataProvider;
-import ome.jxr.datastream.JXRParser;
 import ome.jxr.datastream.JXRReader;
 import ome.jxr.metadata.JXRMetadata;
 
@@ -37,13 +36,11 @@ import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.assertEquals;
 
-
 public class JXRMetadataTest {
   
   @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
   public void testGetBitsPerPixelReturnsExpectedValue(JXRReader reader)
       throws IllegalStateException, IOException, JXRException {
-    reader.setParser(new JXRParser());
     JXRMetadata metadata = reader.getMetadata();
 
     int expected = 8;

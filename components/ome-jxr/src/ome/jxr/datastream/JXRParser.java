@@ -26,9 +26,11 @@
 package ome.jxr.datastream;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
@@ -41,7 +43,7 @@ import ome.jxr.metadata.JXRMetadata;
 
 /**
  * Parses a JPEG XR data stream and allows for extraction of metadata and
- * image data.
+ * uncompressed image data.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
@@ -51,6 +53,9 @@ import ome.jxr.metadata.JXRMetadata;
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
 public class JXRParser {
+
+  protected static final Logger LOGGER = LoggerFactory
+      .getLogger(JXRParser.class);
 
   private int rootIFDOffset;
 
@@ -136,6 +141,14 @@ public class JXRParser {
     stream.read(value, 0, elementCount);
 
     metadata.put(element, translator.toPrimitiveType(elementType, value));
+  }
+
+  public void close() {
+    try {
+      stream.close();
+    } catch (IOException ioe) {
+      LOGGER.debug("Cannot close stream.", ioe);
+    }
   }
 
   @Override

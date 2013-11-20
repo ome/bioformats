@@ -25,14 +25,23 @@
 
 package ome.jxr.metadata;
 
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
 import ome.jxr.JXRException;
 import ome.jxr.ifd.IFDEntry;
-import ome.jxr.ifd.PixelFormat;
 
+/**
+ * Provides access to metadata extracted from a JPEG XR file.
+ *
+ * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ *
+ * <dl>
+ * <dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/metadata/PixelType.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/metadata/PixelType.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ */
 public class JXRMetadata {
 
   private Map<IFDEntry, Object> values =

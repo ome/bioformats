@@ -26,7 +26,7 @@
 package ome.jxr.constants;
 
 /**
- * Constants describing an IFD container and its entries. All sizes, if the name
+ * Constants describing an IFD Container and its Entries. All sizes, if the name
  * doesn't suggest otherwise, have been provided in bytes.
  *
  * <dl>

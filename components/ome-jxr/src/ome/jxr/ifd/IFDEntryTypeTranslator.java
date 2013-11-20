@@ -32,6 +32,11 @@ import loci.common.DataTools;
  * type representation. Used to convert JPEG XR IFD Entry Type values into
  * a language-specific format.
  *
+ * <dl>
+ * <dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/ifd/IFDEntryTypeTranslator.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/ifd/IFDEntryTypeTranslator.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
 public class IFDEntryTypeTranslator {

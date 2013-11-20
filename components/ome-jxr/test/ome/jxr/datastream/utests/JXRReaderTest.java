@@ -35,7 +35,6 @@ import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 import ome.jxr.StaticDataProvider;
 import ome.jxr.constants.File;
-import ome.jxr.datastream.JXRParser;
 import ome.jxr.datastream.JXRReader;
 
 import org.testng.annotations.Test;
@@ -57,64 +56,43 @@ public class JXRReaderTest {
   }
 
   @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
-  public void testCtorWithtestReaderShouldSucceed(JXRReader reader)
+  public void testCtorWithtestReaderShouldNotReturnNull(JXRReader reader)
       throws IOException, JXRException {
     assertNotNull(reader);
+    reader.close();
   }
 
   @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
   public void testGetEncoderVersionShouldReturnSupportedVersion(JXRReader reader) {
     assertEquals(File.ENCODER_VERSION, reader.getEncoderVersion());
+    reader.close();
   }
 
   @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
   public void testIsLittleEndianShouldReturnTrue(JXRReader reader) {
     assertTrue(reader.isLittleEndian());
+    reader.close();
   }
 
   @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
   public void testGetIFDOffsetShouldNotReturnZero(JXRReader reader) {
     int expectedOffset = 32;
     assertEquals(expectedOffset, reader.getRootIFDOffset());
-  }
-
-  @Test(dataProvider = "testReader",
-      dataProviderClass = StaticDataProvider.class,
-      expectedExceptions = IllegalStateException.class)
-  public void testSetParserWithNullObjectShouldThrowISE(JXRReader reader)
-      throws IOException, IllegalStateException {
-    reader.setParser(null);
-  }
-
-  @Test(dataProvider = "testReader",
-      dataProviderClass = StaticDataProvider.class,
-      expectedExceptions = IllegalStateException.class)
-  public void testGetMetadataWithoutParserShouldThrowISE(JXRReader reader)
-      throws IllegalStateException, IOException, JXRException {
-    reader.getMetadata();
+    reader.close();
   }
 
   @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
-  public void testGetMetadataWithParserShouldSucceed(JXRReader reader)
+  public void testGetMetadataShouldNotReturnNull(JXRReader reader)
       throws IllegalStateException, IOException, JXRException {
-    reader.setParser(new JXRParser());
     assertNotNull(reader.getMetadata());
-  }
-
-  @Test(dataProvider = "testReader",
-      dataProviderClass = StaticDataProvider.class,
-      expectedExceptions = IllegalStateException.class)
-  public void testGetDecompressedImageWithoutParserShouldThrowISE(JXRReader reader)
-      throws IOException, IllegalStateException {
-    reader.getDecompressedImage();
+    reader.close();
   }
 
   @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
-  public void testGetDecompressedImageWithParserShouldSucceed(JXRReader reader)
+  public void testGetDecompressedImageShouldNotReturnNull(JXRReader reader)
       throws IOException {
-    reader.setParser(new JXRParser());
     assertNotNull(reader.getDecompressedImage());
+    reader.close();
   }
-
 
 }

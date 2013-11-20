@@ -74,6 +74,9 @@ public class JXRReader {
     this.stream = stream;
     try {
       initialize();
+      parser = new JXRParser();
+      parser.setInputStream(this.stream);
+      parser.setRootIFDOffset(rootIFDOffset);
     } catch (IOException ioe) {
       throw new JXRException(ioe);
     }
@@ -87,15 +90,11 @@ public class JXRReader {
     return rootIFDOffset;
   }
 
-  public RandomAccessInputStream getDecompressedImage() throws IOException,
-    IllegalStateException {
-    checkForParser();
+  public RandomAccessInputStream getDecompressedImage() throws IOException {
     return parser.getDecompressedImage();
   }
 
-  public JXRMetadata getMetadata()
-      throws IllegalStateException, IOException, JXRException {
-    checkForParser();
+  public JXRMetadata getMetadata() throws IOException, JXRException {
     if (metadata == null) {
       metadata = parser.extractMetadata();
     }
@@ -104,13 +103,6 @@ public class JXRReader {
 
   public boolean isLittleEndian() {
     return isLittleEndian;
-  }
-
-  public void setParser(JXRParser parser) {
-    this.parser = parser;
-    checkForParser();
-    this.parser.setInputStream(stream);
-    this.parser.setRootIFDOffset(rootIFDOffset);
   }
 
   private void initialize() throws IOException, JXRException {
@@ -180,9 +172,11 @@ public class JXRReader {
     rootIFDOffset = offset;
   }
 
-  private void checkForParser() throws IllegalStateException {
-    if (parser == null) {
-      throw new IllegalStateException("Cannot invoke parser, set it first.");
+  public void close() {
+    try {
+      stream.close();
+    } catch (IOException ioe) {
+      LOGGER.debug("Cannot close stream.", ioe);
     }
   }
 
