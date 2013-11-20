@@ -61,8 +61,6 @@ public class JXRParser {
 
   private RandomAccessInputStream stream;
 
-  private IFDEntryTypeTranslator translator = new IFDEntryTypeTranslator();
-
   private List<IFDContainer> IFDContainers = new ArrayList<IFDContainer>();
 
   public int getIFDCount() {
@@ -126,21 +124,21 @@ public class JXRParser {
   }
 
   private void parseEntryInto(JXRMetadata metadata) throws IOException {
-    IFDEntry element = IFDEntry.findByTag(stream.readShort());
-    IFDEntryType elementType = IFDEntryType.findByTypeCode(stream.readShort());
-    int elementCount = stream.readInt();
-    int rawDataSize = elementCount*elementType.getSize();
+    IFDEntry entry = IFDEntry.findByTag(stream.readShort());
+    IFDEntryType entryType = IFDEntryType.findByTypeCode(stream.readShort());
+    int entryDataCount = stream.readInt();
+    int entryValueSize = entryDataCount*entryType.getSize();
 
-    byte[] value = new byte[rawDataSize];
-    if (rawDataSize > IFD.ENTRY_VALUE_SIZE) {
+    byte[] value = new byte[entryValueSize];
+    if (entryValueSize > IFD.ENTRY_VALUE_SIZE) {
       int offset = stream.readInt();
       if (offset < stream.length()) {
         stream.seek(offset);
       }
     }
-    stream.read(value, 0, elementCount);
+    stream.read(value, 0, entryValueSize);
 
-    metadata.put(element, translator.toPrimitiveType(elementType, value));
+    metadata.put(entry, value);
   }
 
   public void close() {

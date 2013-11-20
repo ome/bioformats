@@ -28,8 +28,11 @@ package ome.jxr.metadata;
 import java.util.EnumMap;
 import java.util.Map;
 
+import loci.common.DataTools;
 import ome.jxr.JXRException;
 import ome.jxr.ifd.IFDEntry;
+import ome.jxr.ifd.IFDEntryTypeTranslator;
+import ome.jxr.ifd.PixelFormat;
 
 /**
  * Provides access to metadata extracted from a JPEG XR file.
@@ -44,18 +47,17 @@ import ome.jxr.ifd.IFDEntry;
  */
 public class JXRMetadata {
 
-  private Map<IFDEntry, Object> values =
-      new EnumMap<IFDEntry, Object>(IFDEntry.class);
+  private Map<IFDEntry, byte[]> values =
+      new EnumMap<IFDEntry, byte[]>(IFDEntry.class);
 
-  public void put(IFDEntry element, Object value) {
-    values.put(element, value);
+  public void put(IFDEntry entry, byte[] value) {
+    values.put(entry, value);
   }
 
   public void verifyRequiredElements() throws JXRException {
     if (!values.isEmpty()) {
-      if (!values.keySet().containsAll(IFDEntry.getRequiredElements())) {
-        throw new JXRException("Metadata object is missing entries for required"
-            + " IFD elements.");
+      if (!values.keySet().containsAll(IFDEntry.getRequiredEntries())) {
+        throw new JXRException("Metadata object is missing required IFD entries.");
       }
     }
   }
@@ -65,11 +67,12 @@ public class JXRMetadata {
   }
 
   public int getNumberOfChannels() {
-    //if (!values.containsKey(IFDEntry.PIXEL_FORMAT)) {
-    return 0;
-    //}
-    //String id = new String((byte[]) values.get(IFDEntry.PIXEL_FORMAT));
-    //return PixelFormat.findById(id).getNumberOfChannels();
+    if (!values.containsKey(IFDEntry.PIXEL_FORMAT)) {
+      return 0;
+    }
+    
+    //Think over type translation here...
+    return PixelFormat.findById(values.get(IFDEntry.PIXEL_FORMAT)).getNumberOfChannels();
   }
 
 }

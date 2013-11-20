@@ -47,4 +47,14 @@ public class JXRMetadataTest {
     int actual = metadata.getBitsPerPixel();
     assertEquals(expected, actual);
   }
+
+  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
+  public void testGetNumberOfChannelsReturnsExpectedValue(JXRReader reader)
+      throws IllegalStateException, IOException, JXRException {
+    JXRMetadata metadata = reader.getMetadata();
+
+    int expected = 3;
+    int actual = metadata.getNumberOfChannels();
+    assertEquals(expected, actual);
+  }
 }

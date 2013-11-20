@@ -23,24 +23,30 @@
  * #L%
  */
 
-package ome.jxr.ifd.utests;
+package ome.jxr.ifd;
 
-import ome.jxr.ifd.IFDEntry;
+/**
+ * Enumeration of available Color Format entries. Naming of entries follows
+ * Rec.ITU-T T.832 (01/2012) - table 22.
+ *
+ * <dl>
+ * <dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/ifd/ColorFormat.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/ifd/ColorFormat.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ */
+public enum ColorFormat {
 
-import org.testng.annotations.Test;
+  YONLY,
+  YUV420,
+  YUV422,
+  YUV444,
+  CMYK,
+  CMYKDIRECT,
+  NCOMPONENT,
+  RGB,
+  RGBE,
+  RESERVED;
 
-public class IFDElementTest {
-
-  @Test(expectedExceptions = IllegalArgumentException.class)
-  public void testValueOfWithInvalidTagShouldThrowIAE() {
-    short unspecifiedTag = (short) 0xffff;
-    IFDEntry entry = IFDEntry.findByTag(unspecifiedTag);
-  }
-
-  @Test
-  public void testValueOfWithValidTagShouldNotThrow() {
-    for (IFDEntry entry : IFDEntry.values()) {
-      entry.findByTag(entry.getTag());
-    }
-  }
 }

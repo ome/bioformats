@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Enumeration of available IFD entries. Naming of entries follows
  * Rec.ITU-T T.832 (01/2012) - table A.4. {@link Integer.MAX_VALUE} has been
- * used to indicate a variable number of entry elements.
+ * used to indicate a variable number of entry values.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
@@ -72,18 +72,18 @@ public enum IFDEntry {
   PADDING_DATA(0xEA1C, IFDEntryType.UNDEFINED, Integer.MAX_VALUE);
 
   private final short tag;
-  private final IFDEntryType elementType;
+  private final IFDEntryType entryType;
   private final short count;
   private final boolean required;
 
-  private IFDEntry(int tag, IFDEntryType elementType, int count) {
-    this(tag, elementType, count, false);
+  private IFDEntry(int tag, IFDEntryType entryType, int count) {
+    this(tag, entryType, count, false);
   }
 
-  private IFDEntry(int tag, IFDEntryType elementType, int count,
+  private IFDEntry(int tag, IFDEntryType entryType, int count,
       boolean required) {
     this.tag = (short) tag;
-    this.elementType = elementType;
+    this.entryType = entryType;
     this.count = (short) count;
     this.required = required;
   }
@@ -92,8 +92,8 @@ public enum IFDEntry {
     return tag;
   }
 
-  public IFDEntryType getElementType() {
-    return elementType;
+  public IFDEntryType getEntryType() {
+    return entryType;
   }
 
   public int getCount() {
@@ -104,22 +104,22 @@ public enum IFDEntry {
     return required;
   }
 
-  public static List<IFDEntry> getRequiredElements() {
-    List<IFDEntry> requiredElements = new ArrayList<IFDEntry>();
-    for (IFDEntry element : IFDEntry.values()) {
-      if (element.required) {
-        requiredElements.add(element);
+  public static List<IFDEntry> getRequiredEntries() {
+    List<IFDEntry> requiredEntries = new ArrayList<IFDEntry>();
+    for (IFDEntry entry : IFDEntry.values()) {
+      if (entry.required) {
+        requiredEntries.add(entry);
       }
     }
-    return requiredElements;
+    return requiredEntries;
   }
 
   public static IFDEntry findByTag(short tag) {
-    for (IFDEntry element : IFDEntry.values()) {
-      if (element.getTag() == tag) {
-        return element;
+    for (IFDEntry entry : IFDEntry.values()) {
+      if (entry.getTag() == tag) {
+        return entry;
       }
     }
-    throw new IllegalArgumentException(String.format("Unspecified element tag: %X", tag));
+    throw new IllegalArgumentException(String.format("Unspecified entry tag: %X", tag));
   }
 }

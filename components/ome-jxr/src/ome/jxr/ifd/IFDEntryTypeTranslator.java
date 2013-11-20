@@ -41,39 +41,41 @@ import loci.common.DataTools;
  */
 public class IFDEntryTypeTranslator {
 
-  public Object toPrimitiveType(IFDEntryType type, byte[] value) {
+//  public Object toPrimitiveType(IFDEntryType type, byte[] value) {
+//
+//    switch (type) {
+//      case BYTE:
+//        return value;
+//      case DOUBLE:
+//        return DataTools.bytesToDouble(value, true);
+//      case FLOAT:
+//        return DataTools.bytesToFloat(value, true);
+//      case SBYTE:
+//        return DataTools.makeSigned(value);
+//      case SLONG:
+//      case ULONG:
+//        return DataTools.bytesToLong(value, true);
+//      case SRATIONAL:
+//      case URATIONAL:
+//        if (value.length == 8) {
+//          return new JXRRational(DataTools.bytesToInt(value, 0, true),
+//              DataTools.bytesToInt(value, 4, true));
+//        } else {
+//          throw new IllegalArgumentException("Not enough value bytes for: "
+//              + type.name());
+//        }
+//      case SSHORT:
+//      case USHORT:
+//        return DataTools.bytesToShort(value, true);
+//      case UNDEFINED:
+//        return value;
+//      case UTF8:
+//        return new String(value);
+//      default:
+//        return value;
+//    }
+//  }
 
-    switch (type) {
-      case BYTE:
-        return value;
-      case DOUBLE:
-        return DataTools.bytesToDouble(value, true);
-      case FLOAT:
-        return DataTools.bytesToFloat(value, true);
-      case SBYTE:
-        return DataTools.makeSigned(value);
-      case SLONG:
-      case ULONG:
-        return DataTools.bytesToLong(value, true);
-      case SRATIONAL:
-      case URATIONAL:
-        if (value.length == 8) {
-          return new JXRRational(DataTools.bytesToInt(value, 0, true),
-              DataTools.bytesToInt(value, 4, true));
-        } else {
-          throw new IllegalArgumentException("Not enough value bytes for: "
-              + type.name());
-        }
-      case SSHORT:
-      case USHORT:
-        return DataTools.bytesToShort(value, true);
-      case UNDEFINED:
-        return value;
-      case UTF8:
-        return new String(value);
-      default:
-        return value;
-    }
-  }
+  
 
 }

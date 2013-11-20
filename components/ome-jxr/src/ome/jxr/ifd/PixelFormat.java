@@ -38,49 +38,52 @@ package ome.jxr.ifd;
  */
 public enum PixelFormat {
 
-  RGB24(PixelFormat.COMMON_PART + "0D", 3, PixelType.UINT8),
-  BGR24(PixelFormat.COMMON_PART + "0C", 3, PixelType.UINT8),
-  BGR32(PixelFormat.COMMON_PART + "0E", 3, PixelType.UINT8),
-  RGB48(PixelFormat.COMMON_PART + "15", 3, PixelType.UINT16),
-  RGB48FixedPoint(PixelFormat.COMMON_PART + "12", 3, PixelType.SINT16),
-  RGB48Half(PixelFormat.COMMON_PART + "3B", 3, PixelType.FLOAT16),
-  RGB96FixedPoint(PixelFormat.COMMON_PART + "18", 3, PixelType.SINT32),
-  RGB64FixedPoint(PixelFormat.COMMON_PART + "40", 3, PixelType.SINT16),
-  RGB64Half(PixelFormat.COMMON_PART + "42", 3, PixelType.FLOAT16),
-  RGB128FixedPoint(PixelFormat.COMMON_PART + "41", 3, PixelType.SINT32),
-  RGB128BFloat(PixelFormat.COMMON_PART + "1B", 3, PixelType.FLOAT32),
-  BGRA32(PixelFormat.COMMON_PART + "0F", 4, true, PixelType.UINT8),
-  RGBA64(PixelFormat.COMMON_PART + "16", 4, true, PixelType.UINT16),
-  RGBA64FixedPoint(PixelFormat.COMMON_PART + "1D", 4, true, PixelType.SINT16),
-  RGBA64Half(PixelFormat.COMMON_PART + "3A", 4, true, PixelType.FLOAT16),
-  RGBA128FixedPoint(PixelFormat.COMMON_PART + "1E", 4, true, PixelType.SINT32),
-  RGBA128Float(PixelFormat.COMMON_PART + "19", 4, true, PixelType.FLOAT32),
-  PBGRA32(PixelFormat.COMMON_PART + "10", 4, true, PixelType.UINT8),
-  PRGBA64(PixelFormat.COMMON_PART + "17", 4, true, PixelType.UINT8),
-  PRGBA128Float(PixelFormat.COMMON_PART + "1A", 4, true, PixelType.FLOAT32);
+  RGB24(0x0D, 3, PixelType.UINT8, ColorFormat.RGB),
+  BGR24(0x0C, 3, PixelType.UINT8, ColorFormat.RGB),
+  BGR32(0x0E, 3, PixelType.UINT8, ColorFormat.RGB),
+  RGB48(0x15, 3, PixelType.UINT16, ColorFormat.RGB),
+  RGB48FixedPoint(0x12, 3, PixelType.SINT16, ColorFormat.RGB),
+  RGB48Half(0x3B, 3, PixelType.FLOAT16, ColorFormat.RGB),
+  RGB96FixedPoint(0x18, 3, PixelType.SINT32, ColorFormat.RGB),
+  RGB64FixedPoint(0x40, 3, PixelType.SINT16, ColorFormat.RGB),
+  RGB64Half(0x42, 3, PixelType.FLOAT16, ColorFormat.RGB),
+  RGB128FixedPoint(0x41, 3, PixelType.SINT32, ColorFormat.RGB),
+  RGB128BFloat(0x1B, 3, PixelType.FLOAT32, ColorFormat.RGB),
+  BGRA32(0x0F, 4, true, PixelType.UINT8, ColorFormat.RGB),
+  RGBA64(0x16, 4, true, PixelType.UINT16, ColorFormat.RGB),
+  RGBA64FixedPoint(0x1D, 4, true, PixelType.SINT16, ColorFormat.RGB),
+  RGBA64Half(0x3A, 4, true, PixelType.FLOAT16, ColorFormat.RGB),
+  RGBA128FixedPoint(0x1E, 4, true, PixelType.SINT32, ColorFormat.RGB),
+  RGBA128Float(0x19, 4, true, PixelType.FLOAT32, ColorFormat.RGB),
+  PBGRA32(0x10, 4, true, PixelType.UINT8, ColorFormat.RGB),
+  PRGBA64(0x17, 4, true, PixelType.UINT8, ColorFormat.RGB),
+  PRGBA128Float(0x1A, 4, true, PixelType.FLOAT32, ColorFormat.RGB);
 
   public final static String COMMON_PART = "24C3DD6F034EFE4BB1853D77768DC9"; 
 
-  private String id;
+  private int id;
   private int numberOfChannels;
   private boolean alphaChannel;
   private PixelType pixelType;
+  private ColorFormat colorFormat;
 
-  private PixelFormat(String id, int numberOfChannels, PixelType pixelType) {
-    this(id, numberOfChannels, false, pixelType);
+  private PixelFormat(int id, int numberOfChannels, PixelType pixelType,
+      ColorFormat colorFormat) {
+    this(id, numberOfChannels, false, pixelType, colorFormat);
   }
 
-  private PixelFormat(String id, int numberOfChannels, boolean alphaChannel,
-      PixelType pixelType) {
+  private PixelFormat(int id, int numberOfChannels, boolean alphaChannel,
+      PixelType pixelType, ColorFormat colorFormat) {
     this.id = id;
     this.numberOfChannels = numberOfChannels;
     this.alphaChannel = alphaChannel;
     this.pixelType = pixelType;
+    this.colorFormat = colorFormat;
   }
 
-  public static PixelFormat findById(String id) {
+  public static PixelFormat findById(int id) {
     for (PixelFormat format : PixelFormat.values()) {
-      if (format.getId().equals(id)) {
+      if (format.getId() == id) {
         return format;
       }
     }
@@ -88,7 +91,7 @@ public enum PixelFormat {
         + PixelFormat.COMMON_PART + id);
   }
 
-  public String getId() {
+  public int getId() {
     return id;
   }
 
@@ -102,6 +105,10 @@ public enum PixelFormat {
 
   public PixelType getPixelType() {
     return pixelType;
+  }
+
+  public ColorFormat getColorFormat() {
+    return colorFormat;
   }
 
 }
