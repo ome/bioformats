@@ -55,7 +55,7 @@ Source Code: :scifioreader:`APNGReader.java`
 Notes:
 
 
-Bio-Formats uses the `Java Image I/O <http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html>`_  
+Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/>`_  
 API to read and write PNG files. 
 
 .. seealso:: 
