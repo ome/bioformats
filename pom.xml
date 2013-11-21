@@ -354,16 +354,16 @@
   <!-- NB: for parent project -->
   <repositories>
     <repository>
-      <id>imagej.releases</id>
-      <url>http://maven.imagej.net/content/repositories/releases</url>
+      <id>ome.external</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </repository>
     <repository>
-      <id>imagej.snapshots</id>
-      <url>http://maven.imagej.net/content/repositories/snapshots</url>
+      <id>ome.releases</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
     <repository>
-      <id>imagej.thirdparty</id>
-      <url>http://maven.imagej.net/content/repositories/thirdparty</url>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </repository>
     <repository>
       <id>unidata.releases</id>
@@ -373,32 +373,28 @@
 
   <pluginRepositories>
     <pluginRepository>
-      <id>imagej.releases</id>
-      <url>http://maven.imagej.net/content/repositories/releases</url>
+      <id>ome.releases</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </pluginRepository>
     <pluginRepository>
-      <id>imagej.snapshots</id>
-      <url>http://maven.imagej.net/content/repositories/snapshots</url>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>imagej.thirdparty</id>
-      <url>http://maven.imagej.net/content/repositories/thirdparty</url>
     </pluginRepository>
   </pluginRepositories>
 
   <distributionManagement>
     <repository>
-      <id>imagej.releases</id>
-      <name>ImageJ Releases Repository</name>
-      <url>dav:http://maven.imagej.net/content/repositories/releases</url>
+      <id>ome.releases</id>
+      <name>OME Releases Repository</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
     <snapshotRepository>
-      <id>imagej.snapshots</id>
-      <name>ImageJ Snapshots Repository</name>
-      <url>dav:http://maven.imagej.net/content/repositories/snapshots</url>
+      <id>ome.snapshots</id>
+      <name>OME Snapshots Repository</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </snapshotRepository>
   </distributionManagement>
 
