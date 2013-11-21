@@ -293,20 +293,28 @@ public class ZeissCZIReader extends FormatReader {
 
     int outputRow = 0, outputCol = 0;
 
+    boolean validScanDim =
+      scanDim == (getImageCount() / getSizeC()) && scanDim > 1;
+
     for (SubBlock plane : planes) {
       if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
-        (scanDim == getImageCount() && scanDim > 1))
+        (plane.planeIndex == previousChannel && validScanDim))
       {
         byte[] rawData = plane.readPixelData();
 
-        if (prestitched != null && prestitched) {
+        if ((prestitched != null && prestitched) || validScanDim) {
           int realX = plane.x;
           int realY = plane.y;
 
+          if (prestitched == null) {
+            currentY = 0;
+          }
+
           Region tile =
             new Region(currentX, getSizeY() - currentY - realY, realX, realY);
-          if (scanDim > 1) {
-            tile.y += no;
+          if (validScanDim) {
+            tile.y += (no / getSizeC());
+            image.height = scanDim;
           }
 
           if (tile.intersects(image)) {
@@ -321,6 +329,9 @@ public class ZeissCZIReader extends FormatReader {
             int outputOffset = outputRow * outputRowLen + outputCol;
             for (int trow=0; trow<intersection.height; trow++) {
               int realRow = trow + intersection.y - tile.y;
+              if (validScanDim) {
+                realRow += tile.y;
+              }
               int inputOffset = pixel * (realRow * realX + intersectionX);
               System.arraycopy(
                 rawData, inputOffset, buf, outputOffset, rowLen);
