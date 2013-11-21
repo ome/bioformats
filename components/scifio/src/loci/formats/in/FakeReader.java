@@ -471,18 +471,15 @@ public class FakeReader extends FormatReader {
       else if (key.equals("color")) {
         // parse colors as longs so that unsigned values can be specified,
         // e.g. 0xff0000ff for red with opaque alpha
+        int base = 10;
         if (value.startsWith("0x") || value.startsWith("0X")) {
           value = value.substring(2);
+          base = 16;
         }
         try {
-          color = (int) Long.parseLong(value);
+          color = (int) Long.parseLong(value, base);
         }
-        catch (NumberFormatException e) {
-          try {
-            color = (int) Long.parseLong(value, 16);
-          }
-          catch (NumberFormatException ex) { }
-        }
+        catch (NumberFormatException e) { }
       }
     }
 
@@ -558,8 +555,8 @@ public class FakeReader extends FormatReader {
       String imageName = s > 0 ? name + " " + (s + 1) : name;
       store.setImageName(imageName, s);
 
-      for (int c=0; c<sizeC; c++) {
-        if (color != null) {
+      if (color != null) {
+        for (int c=0; c<sizeC; c++) {
           store.setChannelColor(new Color(color), s, c);
         }
       }
