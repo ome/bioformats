@@ -44,5 +44,6 @@ public final class IFD {
   public static final short ENTRY_TYPE_SIZE = 2;
   public static final short ENTRY_TYPE_COUNT_SIZE = 4;
   public static final short ENTRY_VALUE_SIZE = 4;
+  public static final short PIXEL_FORMAT_SIZE = 16;
 
 }

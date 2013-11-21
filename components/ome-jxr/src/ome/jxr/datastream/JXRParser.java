@@ -26,6 +26,7 @@
 package ome.jxr.datastream;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,6 @@ import ome.jxr.constants.IFD;
 import ome.jxr.ifd.IFDContainer;
 import ome.jxr.ifd.IFDEntry;
 import ome.jxr.ifd.IFDEntryType;
-import ome.jxr.ifd.IFDEntryTypeTranslator;
 import ome.jxr.metadata.JXRMetadata;
 
 /**
@@ -80,7 +80,7 @@ public class JXRParser {
     return null;
   }
 
-  public JXRMetadata extractMetadata() throws IOException, JXRException {
+  public JXRMetadata extractMetadata() throws IOException {
     findAllIFDs();
 
     JXRMetadata metadata = new JXRMetadata();
@@ -91,7 +91,6 @@ public class JXRParser {
       }
     }
 
-    metadata.verifyRequiredElements();
     return metadata;
   }
 
@@ -141,12 +140,8 @@ public class JXRParser {
     metadata.put(entry, value);
   }
 
-  public void close() {
-    try {
-      stream.close();
-    } catch (IOException ioe) {
-      LOGGER.debug("Cannot close stream.", ioe);
-    }
+  public void close() throws IOException {
+    stream.close();
   }
 
   @Override

@@ -94,7 +94,7 @@ public class JXRReader {
     return parser.getDecompressedImage();
   }
 
-  public JXRMetadata getMetadata() throws IOException, JXRException {
+  public JXRMetadata getMetadata() throws IOException {
     if (metadata == null) {
       metadata = parser.extractMetadata();
     }
@@ -172,12 +172,8 @@ public class JXRReader {
     rootIFDOffset = offset;
   }
 
-  public void close() {
-    try {
-      stream.close();
-    } catch (IOException ioe) {
-      LOGGER.debug("Cannot close stream.", ioe);
-    }
+  public void close() throws IOException {
+    stream.close();
   }
 
   @Override

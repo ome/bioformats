@@ -63,19 +63,22 @@ public class JXRReaderTest {
   }
 
   @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
-  public void testGetEncoderVersionShouldReturnSupportedVersion(JXRReader reader) {
+  public void testGetEncoderVersionShouldReturnSupportedVersion(JXRReader reader)
+      throws IOException {
     assertEquals(File.ENCODER_VERSION, reader.getEncoderVersion());
     reader.close();
   }
 
   @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
-  public void testIsLittleEndianShouldReturnTrue(JXRReader reader) {
+  public void testIsLittleEndianShouldReturnTrue(JXRReader reader)
+      throws IOException {
     assertTrue(reader.isLittleEndian());
     reader.close();
   }
 
   @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
-  public void testGetIFDOffsetShouldNotReturnZero(JXRReader reader) {
+  public void testGetIFDOffsetShouldNotReturnZero(JXRReader reader)
+      throws IOException {
     int expectedOffset = 32;
     assertEquals(expectedOffset, reader.getRootIFDOffset());
     reader.close();

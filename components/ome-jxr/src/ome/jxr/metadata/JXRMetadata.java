@@ -28,14 +28,14 @@ package ome.jxr.metadata;
 import java.util.EnumMap;
 import java.util.Map;
 
-import loci.common.DataTools;
 import ome.jxr.JXRException;
 import ome.jxr.ifd.IFDEntry;
-import ome.jxr.ifd.IFDEntryTypeTranslator;
 import ome.jxr.ifd.PixelFormat;
+import ome.scifio.common.DataTools;
 
 /**
- * Provides access to metadata extracted from a JPEG XR file.
+ * Provides access to metadata extracted from a JPEG XR file. Adds simple logic
+ * to translate the raw byte data into primitive data types.
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  *
@@ -54,25 +54,46 @@ public class JXRMetadata {
     values.put(entry, value);
   }
 
-  public void verifyRequiredElements() throws JXRException {
+  public int getBitsPerPixel() throws JXRException {
+    verifyRequiredElements();
+    PixelFormat pixelFormat = PixelFormat.findById(values
+        .get(IFDEntry.PIXEL_FORMAT));
+    return pixelFormat.getPixelType().getBits();
+  }
+
+  public int getNumberOfChannels() throws JXRException {
+    verifyRequiredElements();
+    PixelFormat pixelFormat = PixelFormat.findById(values
+        .get(IFDEntry.PIXEL_FORMAT));
+    return pixelFormat.getNumberOfChannels();
+  }
+
+  public long getImageWidth() throws JXRException {
+    verifyRequiredElements();
+    return DataTools.bytesToLong(values.get(IFDEntry.IMAGE_WIDTH), true);
+  }
+
+  public long getImageHeight() throws JXRException {
+    verifyRequiredElements();
+    return DataTools.bytesToLong(values.get(IFDEntry.IMAGE_HEIGHT), true);
+  }
+
+  public long getImageImageOffset() throws JXRException {
+    verifyRequiredElements();
+    return DataTools.bytesToLong(values.get(IFDEntry.IMAGE_OFFSET), true);
+  }
+
+  public long getImageByteCount() throws JXRException {
+    verifyRequiredElements();
+    return DataTools.bytesToLong(values.get(IFDEntry.IMAGE_BYTE_COUNT), true);
+  }
+
+  private void verifyRequiredElements() throws JXRException {
     if (!values.isEmpty()) {
       if (!values.keySet().containsAll(IFDEntry.getRequiredEntries())) {
         throw new JXRException("Metadata object is missing required IFD entries.");
       }
     }
-  }
-
-  public int getBitsPerPixel() {
-    return 0;
-  }
-
-  public int getNumberOfChannels() {
-    if (!values.containsKey(IFDEntry.PIXEL_FORMAT)) {
-      return 0;
-    }
-    
-    //Think over type translation here...
-    return PixelFormat.findById(values.get(IFDEntry.PIXEL_FORMAT)).getNumberOfChannels();
   }
 
 }

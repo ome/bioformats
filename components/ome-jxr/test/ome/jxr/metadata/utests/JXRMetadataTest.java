@@ -53,7 +53,7 @@ public class JXRMetadataTest {
       throws IllegalStateException, IOException, JXRException {
     JXRMetadata metadata = reader.getMetadata();
 
-    int expected = 3;
+    int expected = 4;
     int actual = metadata.getNumberOfChannels();
     assertEquals(expected, actual);
   }

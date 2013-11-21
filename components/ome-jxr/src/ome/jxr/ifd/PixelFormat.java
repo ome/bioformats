@@ -25,9 +25,13 @@
 
 package ome.jxr.ifd;
 
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+
 /**
  * Enumeration of available Pixel Format entries. Naming of entries follows
- * Rec.ITU-T T.832 (01/2012) - table A.6.
+ * Rec.ITU-T T.832 (01/2012) - table A.6. Internally, the identifier for each
+ * entry omits the {@link PixelFormat#COMMON_PART}.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
@@ -59,9 +63,11 @@ public enum PixelFormat {
   PRGBA64(0x17, 4, true, PixelType.UINT8, ColorFormat.RGB),
   PRGBA128Float(0x1A, 4, true, PixelType.FLOAT32, ColorFormat.RGB);
 
-  public final static String COMMON_PART = "24C3DD6F034EFE4BB1853D77768DC9"; 
+  public final static byte[] COMMON_PART = {0x24, (byte) 0xC3, (byte) 0xDD, 0x6F, 0x03, 0x4E,
+    (byte) 0xFE, 0x4B, (byte) 0xB1, (byte) 0x85, 0x3D, 0x77, 0x76, (byte) 0x8D,
+    (byte) 0xC9};
 
-  private int id;
+  private byte id;
   private int numberOfChannels;
   private boolean alphaChannel;
   private PixelType pixelType;
@@ -74,25 +80,22 @@ public enum PixelFormat {
 
   private PixelFormat(int id, int numberOfChannels, boolean alphaChannel,
       PixelType pixelType, ColorFormat colorFormat) {
-    this.id = id;
+    this.id = (byte) id;
     this.numberOfChannels = numberOfChannels;
     this.alphaChannel = alphaChannel;
     this.pixelType = pixelType;
     this.colorFormat = colorFormat;
   }
 
-  public static PixelFormat findById(int id) {
-    for (PixelFormat format : PixelFormat.values()) {
-      if (format.getId() == id) {
-        return format;
-      }
-    }
-    throw new IllegalArgumentException("Unspecified pixel type id: "
-        + PixelFormat.COMMON_PART + id);
+  public byte getId() {
+    return id;
   }
 
-  public int getId() {
-    return id;
+  public byte[] getCanonicalId() {
+    ByteBuffer bb = ByteBuffer.allocate(COMMON_PART.length+1);
+    bb.put(COMMON_PART);
+    bb.put(id);
+    return bb.array();
   }
 
   public int getNumberOfChannels() {
@@ -109,6 +112,16 @@ public enum PixelFormat {
 
   public ColorFormat getColorFormat() {
     return colorFormat;
+  }
+
+  public static PixelFormat findById(byte[] id) {
+    for (PixelFormat format : PixelFormat.values()) {
+      if (Arrays.equals(format.getCanonicalId(), id)) {
+        return format;
+      }
+    }
+    throw new IllegalArgumentException("Unspecified pixel type id: "
+        + PixelFormat.COMMON_PART + id);
   }
 
 }
