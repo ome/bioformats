@@ -1055,7 +1055,7 @@ utilityRating = Poor
 reader = JPEGReader.java
 writer = JPEGWriter.java
 notes = Bio-Formats can save individual planes as JPEG. \n
-Bio-Formats uses the `Java Image I/O <http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html>`_ API to read and write JPEG files. \n
+Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/>`_ API to read and write JPEG files. \n
 JPEG stands for "Joint Photographic Experts Group". \n
 \n
 .. seealso:: \n
@@ -1809,7 +1809,7 @@ opennessRating = Outstanding
 presenceRating = Outstanding
 utilityRating = Poor
 reader = APNGReader.java
-notes = Bio-Formats uses the `Java Image I/O <http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html>`_  \n
+notes = Bio-Formats uses the `Java Image I/O <http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/>`_  \n
 API to read and write PNG files. \n
 \n
 .. seealso:: \n
