@@ -261,6 +261,18 @@ public class TiffWriter extends FormatWriter {
       }
       ifd.putIFDValue(IFD.COLOR_MAP, colorMap);
     }
+    else {
+      short[][] lut16 = AWTImageTools.getLookupTable(cm);
+      if (lut16 != null) {
+        int[] colorMap = new int[lut16.length * lut16[0].length];
+        for (int i=0; i<lut16.length; i++) {
+          for (int j=0; j<lut16[0].length; j++) {
+            colorMap[i * lut16[0].length + j] = (int) (lut16[i][j] & 0xffff);
+          }
+        }
+        ifd.putIFDValue(IFD.COLOR_MAP, colorMap);
+      }
+    }
 
     int width = retrieve.getPixelsSizeX(series).getValue().intValue();
     int height = retrieve.getPixelsSizeY(series).getValue().intValue();
