@@ -25,9 +25,11 @@
 
 package ome.jxr.metadata;
 
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 
+import loci.common.ByteArrayHandle;
 import ome.jxr.JXRException;
 import ome.jxr.ifd.IFDEntry;
 import ome.jxr.ifd.PixelFormat;
@@ -47,50 +49,167 @@ import ome.scifio.common.DataTools;
  */
 public class JXRMetadata {
 
-  private Map<IFDEntry, byte[]> values =
+  // TODO: PTM_COLOR_INFO
+  // TODO: PROFILE_LEVEL_CONTAINER
+  // TODO: Verify that default values are returned where needed if tag not
+  //       present. See spec.
+
+  private Map<IFDEntry, byte[]> entries =
       new EnumMap<IFDEntry, byte[]>(IFDEntry.class);
 
   public void put(IFDEntry entry, byte[] value) {
-    values.put(entry, value);
+    entries.put(entry, value);
   }
 
-  public int getBitsPerPixel() throws JXRException {
+  public Integer getBitsPerPixel() throws JXRException {
     verifyRequiredElements();
-    PixelFormat pixelFormat = PixelFormat.findById(values
+    PixelFormat pixelFormat = PixelFormat.findById(entries
         .get(IFDEntry.PIXEL_FORMAT));
     return pixelFormat.getPixelType().getBits();
   }
 
-  public int getNumberOfChannels() throws JXRException {
+  public Integer getNumberOfChannels() throws JXRException {
     verifyRequiredElements();
-    PixelFormat pixelFormat = PixelFormat.findById(values
+    PixelFormat pixelFormat = PixelFormat.findById(entries
         .get(IFDEntry.PIXEL_FORMAT));
     return pixelFormat.getNumberOfChannels();
   }
 
-  public long getImageWidth() throws JXRException {
+  public Long getImageWidth() throws JXRException {
     verifyRequiredElements();
-    return DataTools.bytesToLong(values.get(IFDEntry.IMAGE_WIDTH), true);
+    return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_WIDTH), true);
   }
 
-  public long getImageHeight() throws JXRException {
+  public Long getImageHeight() throws JXRException {
     verifyRequiredElements();
-    return DataTools.bytesToLong(values.get(IFDEntry.IMAGE_HEIGHT), true);
+    return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_HEIGHT), true);
   }
 
-  public long getImageImageOffset() throws JXRException {
+  public Long getImageImageOffset() throws JXRException {
     verifyRequiredElements();
-    return DataTools.bytesToLong(values.get(IFDEntry.IMAGE_OFFSET), true);
+    return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_OFFSET), true);
   }
 
-  public long getImageByteCount() throws JXRException {
+  public Long getImageByteCount() throws JXRException {
     verifyRequiredElements();
-    return DataTools.bytesToLong(values.get(IFDEntry.IMAGE_BYTE_COUNT), true);
+    return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_BYTE_COUNT), true);
+  }
+
+  public String getDocumentName() throws IOException {
+    return nullOrString(entries.get(IFDEntry.DOCUMENT_NAME));
+  }
+
+  public String getImageDescription() throws IOException {
+    return nullOrString(entries.get(IFDEntry.IMAGE_DESCRIPTION));
+  }
+
+  public String getEquipmentMake() throws IOException {
+    return nullOrString(entries.get(IFDEntry.EQUIPMENT_MAKE));
+  }
+
+  public String getEquipmentModel() throws IOException {
+    return nullOrString(entries.get(IFDEntry.EQUIPMENT_MODEL));
+  }
+
+  public String getPageName() throws IOException {
+    return nullOrString(entries.get(IFDEntry.PAGE_NAME));
+  }
+
+  public Short getPageNumber() {
+    return nullOrShort(entries.get(IFDEntry.PAGE_NUMBER));
+  }
+
+  public String getSoftwareNameVersion() throws IOException {
+    return nullOrString(entries.get(IFDEntry.SOFTWARE_NAME_VERSION));
+  }
+
+  public String getDateTime() throws IOException {
+    return nullOrString(entries.get(IFDEntry.DATE_TIME));
+  }
+
+  public String getArtistName() throws IOException {
+    return nullOrString(entries.get(IFDEntry.ARTIST_NAME));
+  }
+
+  public String getHostComputer() throws IOException {
+    return nullOrString(entries.get(IFDEntry.HOST_COMPUTER));
+  }
+
+  public String getCopyrightNotice() throws IOException {
+    return nullOrString(entries.get(IFDEntry.COPYRIGHT_NOTICE));
+  }
+
+  public Short getColorSpace() {
+    return nullOrShort(entries.get(IFDEntry.COLOR_SPACE));
+  }
+
+  public Long getPrefferedSpatialTransformation() {
+    return nullOrLong(entries.get(IFDEntry.SPATIAL_XFRM_PRIMARY));
+  }
+
+  public Long getImageType() {
+    return nullOrLong(entries.get(IFDEntry.IMAGE_TYPE));
+  }
+
+  public Float getWidthResoulution() {
+    return nullOrFloat(entries.get(IFDEntry.WIDTH_RESOLUTION));
+  }
+
+  public Float getHeightResoulution() {
+    return nullOrFloat(entries.get(IFDEntry.HEIGHT_RESOLUTION));
+  }
+
+  public Long getAlphaOffset() {
+    return nullOrLong(entries.get(IFDEntry.ALPHA_OFFSET));
+  }
+
+  public Long getAlphaByteCount() {
+    return nullOrLong(entries.get(IFDEntry.ALPHA_BYTE_COUNT));
+  }
+
+  public Short getImageBandPresence() {
+    return nullOrShort(entries.get(IFDEntry.IMAGE_BAND_PRESENCE));
+  }
+
+  public Short getAlphaBandPresence() {
+    return nullOrShort(entries.get(IFDEntry.ALPHA_BAND_PRESENCE));
+  }
+
+  private String nullOrString(byte[] value) throws IOException {
+    if (value != null) {
+      return new ByteArrayHandle(value).readUTF();
+    } else {
+      return null;
+    }
+  }
+
+  private Short nullOrShort(byte[] value) {
+    if (value != null) {
+      return DataTools.bytesToShort(value, true);
+    } else {
+      return null;
+    }
+  }
+
+  private Long nullOrLong(byte[] value) {
+    if (value != null) {
+      return DataTools.bytesToLong(value, true);
+    } else {
+      return null;
+    }
+  }
+
+  private Float nullOrFloat(byte[] value) {
+    if (value != null) {
+      return DataTools.bytesToFloat(value, true);
+    } else {
+      return null;
+    }
   }
 
   private void verifyRequiredElements() throws JXRException {
-    if (!values.isEmpty()) {
-      if (!values.keySet().containsAll(IFDEntry.getRequiredEntries())) {
+    if (!entries.isEmpty()) {
+      if (!entries.keySet().containsAll(IFDEntry.getRequiredEntries())) {
         throw new JXRException("Metadata object is missing required IFD entries.");
       }
     }

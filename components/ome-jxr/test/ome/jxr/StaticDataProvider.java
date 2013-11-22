@@ -28,7 +28,6 @@ package ome.jxr;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import ome.jxr.JXRException;
 import ome.jxr.datastream.JXRReader;
 
 import org.testng.annotations.DataProvider;
@@ -73,6 +72,14 @@ public class StaticDataProvider {
     String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
     return new Object[][] {
         {new JXRReader(testFilePath)}
+    };
+  }
+
+  @DataProvider(name = "testMetadata")
+  public static Object[][] testMetadataProvider() throws IOException, JXRException {
+    String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
+    return new Object[][] {
+        {new JXRReader(testFilePath).getMetadata()}
     };
   }
 
