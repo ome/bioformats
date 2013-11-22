@@ -98,7 +98,7 @@ public class MinimalTiffReader extends FormatReader {
 
   protected boolean use64Bit = false;
 
-  private int lastPlane = 0;
+  protected int lastPlane = 0;
 
   protected boolean noSubresolutions = false;
 
