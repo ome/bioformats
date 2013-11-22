@@ -66,6 +66,7 @@ import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
 import loci.formats.ReaderWrapper;
 import loci.formats.UpgradeChecker;
+import loci.formats.gui.Index16ColorModel;
 import loci.formats.in.OMETiffReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
@@ -652,6 +653,14 @@ public final class ImageConverter {
       IndexColorModel model = new IndexColorModel(8, lut[0].length,
         lut[0], lut[1], lut[2]);
       writer.setColorModel(model);
+    }
+    else {
+      short[][] lut16 = reader.get16BitLookupTable();
+      if (lut16 != null) {
+        Index16ColorModel model = new Index16ColorModel(16, lut16[0].length,
+          lut16, reader.isLittleEndian());
+        writer.setColorModel(model);
+      }
     }
   }
 
