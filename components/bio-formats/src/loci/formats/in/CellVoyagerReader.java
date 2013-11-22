@@ -99,7 +99,7 @@ import org.xml.sax.SAXException;
  * subsequent versions of the CellVoyager format will fix these problems, alas
  * incapacitating this reader. Should it happen, mail the author to help them
  * update this reader.
- * 
+ *
  * @author Jean-Yves Tinevez <jeanyves.tinevez@gmail.com> Oct-Nov 2013
  * @author Melissa Linkert
  */
@@ -500,17 +500,18 @@ public class CellVoyagerReader extends FormatReader
 			LOGGER.debug( "", e1 );
 		}
 		OMEXMLMetadata omeMD = null;
-
-		if ( service != null )
+		try
 		{
-			try
-			{
-				omeMD = service.createOMEXMLMetadata( xml );
-			}
-			catch ( final ServiceException e )
-			{
-				LOGGER.debug( "", e );
-			}
+			omeMD = service.createOMEXMLMetadata( xml );
+		}
+		catch ( final ServiceException e )
+		{
+			LOGGER.debug( "", e );
+		}
+		catch ( final NullPointerException npe )
+		{
+			LOGGER.debug( "", npe );
+			throw npe;
 		}
 
 		// Correct pixel size for magnification
