@@ -1,7 +1,7 @@
 language: java
 
 jdk:
-  - openjdk8
+  - oraclejdk8
   - openjdk7
   - oraclejdk7
   - openjdk6
@@ -34,7 +34,7 @@ script:
 
 matrix:
   exclude:
-    - jdk: openjdk8
+    - jdk: oraclejdk8
       python: "2.6"
       env: BUILD=sphinx
     - jdk: openjdk7
@@ -43,7 +43,7 @@ matrix:
     - jdk: oraclejdk7
       python: "2.6"
       env: BUILD=sphinx
-    - jdk: openjdk8
+    - jdk: oraclejdk8
       python: "2.6"
       env: BUILD=cpp
     - jdk: openjdk7
@@ -52,7 +52,7 @@ matrix:
     - jdk: oraclejdk7
       python: "2.6"
       env: BUILD=cpp
-    - jdk: openjdk8
+    - jdk: oraclejdk8
       python: "2.6"
       env: BUILD=cppwrap
     - jdk: openjdk7
