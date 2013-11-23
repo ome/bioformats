@@ -129,6 +129,7 @@ loci.formats.in.ImaconReader          # fff
 loci.formats.in.LEOReader             # sxm
 loci.formats.in.JPKReader             # jpk
 loci.formats.in.NDPIReader            # ndpi
+loci.formats.in.PCORAWReader          # pcoraw
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.OMETiffReader         # tif
