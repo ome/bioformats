@@ -127,7 +127,10 @@ public class ZipReader extends FormatReader {
     reader.setNormalized(isNormalized());
     reader.setMetadataStore(getMetadataStore());
 
-    String innerFile = id.substring(0, id.length() - 4);
+    String innerFile = id;
+    if (checkSuffix(id, "zip")) {
+      innerFile = id.substring(0, id.length() - 4);
+    }
     int sep = innerFile.lastIndexOf(File.separator);
     if (sep < 0) {
       sep = innerFile.lastIndexOf("/");
@@ -160,6 +163,10 @@ public class ZipReader extends FormatReader {
       ZipHandle handle = new ZipHandle(id, ze);
       Location.mapFile(ze.getName(), handle);
       mappedFiles.add(ze.getName());
+    }
+
+    if (entryName == null) {
+      throw new FormatException("Zip file does not contain any valid files");
     }
 
     reader.setId(entryName);
