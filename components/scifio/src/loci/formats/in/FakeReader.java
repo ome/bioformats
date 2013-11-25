@@ -108,6 +108,9 @@ public class FakeReader extends FormatReader {
 
   // -- Fields --
 
+  /** exposure time per plane info */
+  private Float exposureTime = null;
+
   /** Scale factor for gradient, if any. */
   private double scaleFactor = 1;
 
@@ -463,6 +466,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("series")) seriesCount = intValue;
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
+      else if (key.equals("exposureTime")) exposureTime = (float) doubleValue;
       else if (key.equals("plates")) plates = intValue;
       else if (key.equals("plateRows")) plateRows = intValue;
       else if (key.equals("plateCols")) plateCols = intValue;
@@ -550,7 +554,9 @@ public class FakeReader extends FormatReader {
     }
 
     // populate OME metadata
-    MetadataTools.populatePixels(store, this);
+    boolean planeInfo = (exposureTime != null);
+    MetadataTools.populatePixels(store, this, planeInfo);
+    fillExposureTime(store);
     for (int s=0; s<seriesCount; s++) {
       String imageName = s > 0 ? name + " " + (s + 1) : name;
       store.setImageName(imageName, s);
@@ -596,7 +602,19 @@ public class FakeReader extends FormatReader {
     }
   }
 
-  // -- Helper methods --
+  private void fillExposureTime(MetadataStore store) {
+    if (exposureTime == null) return;
+    int oldSeries = getSeries();
+    for (int s=0; s<getSeriesCount(); s++) {
+      setSeries(s);
+      for (int i=0; i<getImageCount(); i++) {
+        store.setPlaneExposureTime(exposureTime.doubleValue(), s, i);
+      }
+      setSeries(oldSeries);
+    }
+  }
+
+// -- Helper methods --
 
   private String[] extractTokensFromFakeSeries(String path) {
     List<String> tokens = new ArrayList<String>();
