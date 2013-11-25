@@ -67,7 +67,7 @@ public class NetCDFServiceImpl extends AbstractService
     "NetCDF is required to read NetCDF/HDF variants. " +
     "Please obtain the necessary JAR files from " +
     "http://www.openmicroscopy.org/site/support/bio-formats/developers/java-library.html.\n" +
-    "Required JAR files are netcdf-4.0.jar and slf4j-jdk14.jar.";
+    "Required JAR files are netcdf-4.3.19.jar and slf4j-jdk14.jar.";
 
   // -- Fields --
 
@@ -187,10 +187,12 @@ public class NetCDFServiceImpl extends AbstractService
     Group group = getGroup(groupName);
 
     Variable variable = group.findVariable(variableName);
-    List<Attribute> attributes = variable.getAttributes();
     Hashtable<String, Object> toReturn = new Hashtable<String, Object>();
-    for (Attribute attribute: attributes) {
-      toReturn.put(attribute.getName(), arrayToString(attribute.getValues()));
+    if (variable != null) {
+      List<Attribute> attributes = variable.getAttributes();
+      for (Attribute attribute: attributes) {
+        toReturn.put(attribute.getName(), arrayToString(attribute.getValues()));
+      }
     }
     return toReturn;
   }
@@ -254,9 +256,14 @@ public class NetCDFServiceImpl extends AbstractService
     StringTokenizer tokens = new StringTokenizer(path, "/");
     Group parent = root;
     while (tokens.hasMoreTokens()) {
-      parent = parent.findGroup(tokens.nextToken());
+      String token = tokens.nextToken();
+      Group nextParent = parent.findGroup(token);
+      if (nextParent == null) {
+        break;
+      }
+      parent = nextParent;
     }
-    return parent == null? root : parent;
+    return parent == null ? root : parent;
   }
 
   private String getDirectory(String path) {

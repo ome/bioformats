@@ -150,7 +150,7 @@ public class MINCReader extends FormatReader {
     try {
       Object pixels = netcdf.getVariableValue("/image");
       if (pixels == null) {
-        pixels = netcdf.getVariableValue("/minc-2.0/image/N0/image");
+        pixels = netcdf.getVariableValue("/minc-2.0/image/0/image");
         isMINC2 = true;
       }
 
