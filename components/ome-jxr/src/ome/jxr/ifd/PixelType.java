@@ -38,6 +38,7 @@ package ome.jxr.ifd;
  */
 public enum PixelType {
 
+  UINT1("uint", 1),
   UINT8("uint", 8),
   UINT10("uint", 10),
   UINT16("uint", 16),
