@@ -28,6 +28,7 @@
 package loci.plugins;
 
 import ij.IJ;
+import ij.ImageJ;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 
@@ -53,9 +54,6 @@ public class Updater implements PlugIn {
   private static final String STABLE =
     "Stable build (" + UpgradeChecker.STABLE_VERSION + ")";
 
-  private static final boolean IS_FIJI =
-    IJ.getInstance().getTitle().indexOf("Fiji") >= 0;
-
   // -- Fields --
 
   /** Flag indicating whether last operation was canceled. */
@@ -67,7 +65,7 @@ public class Updater implements PlugIn {
   // -- PlugIn API methods --
 
   public void run(String arg) {
-    if (IS_FIJI) {
+    if (isFiji()) {
       IJ.showMessage("Please use 'Help > Update Fiji' to update.");
       return;
     }
@@ -98,18 +96,32 @@ public class Updater implements PlugIn {
   }
 
   /**
+   * Returns true if the current ImageJ instance is actually a Fiji instance.
+   */
+  public static boolean isFiji() {
+    ImageJ ij = IJ.getInstance();
+    if (ij != null) {
+      String title = ij.getTitle();
+      if (title != null) {
+        return title.indexOf("Fiji") >= 0;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Install the tools bundle which can be retrieved from the specified path.
    */
   public static void install(String urlPath) {
     String pluginsDirectory = IJ.getDirectory("plugins");
     String jarPath = pluginsDirectory;
-    if (!IS_FIJI) {
+    if (!isFiji()) {
       jarPath += UpgradeChecker.TOOLS;
     }
 
     BF.status(false, "Downloading...");
     boolean success = false;
-    if (IS_FIJI) {
+    if (isFiji()) {
       return;
     }
     else {
