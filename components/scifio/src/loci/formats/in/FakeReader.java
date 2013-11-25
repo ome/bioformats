@@ -467,7 +467,6 @@ public class FakeReader extends FormatReader {
       else if (key.equals("lutLength")) lutLength = intValue;
       else if (key.equals("scaleFactor")) scaleFactor = doubleValue;
       else if (key.equals("exposureTime")) exposureTime = (float) doubleValue;
-      else if (key.equals("planeInfo")) planeInfo = boolValue;
       else if (key.equals("plates")) plates = intValue;
       else if (key.equals("plateRows")) plateRows = intValue;
       else if (key.equals("plateCols")) plateCols = intValue;
