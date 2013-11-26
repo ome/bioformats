@@ -27,6 +27,8 @@ package loci.formats.in;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -36,6 +38,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * VolocityClippingReader is the file format reader for Volocity library
@@ -51,10 +56,13 @@ public class VolocityClippingReader extends FormatReader {
 
   private static final String CLIPPING_MAGIC_STRING = "FFCA";
   private static final int AISF = 0x46534941;
+  private static final int FSIA = 0x41495346;
 
   // -- Fields --
 
-  private long pixelOffset;
+  private List<Long> pixelOffsets = new ArrayList<Long>();
+  private List<String> channelNames = new ArrayList<String>();
+  private boolean aisf = false;
 
   // -- Constructor --
 
@@ -79,7 +87,9 @@ public class VolocityClippingReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(pixelOffset);
+    int[] zct = getZCTCoords(no);
+    int index = getIndex(zct[0], 0, zct[2]);
+    in.seek(pixelOffsets.get(zct[1]) + index * FormatTools.getPlaneSize(this));
 
     if (FormatTools.getPlaneSize(this) * 2 + in.getFilePointer() < in.length())
     {
@@ -101,7 +111,9 @@ public class VolocityClippingReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      pixelOffset = 0;
+      pixelOffsets.clear();
+      channelNames.clear();
+      aisf = false;
     }
   }
 
@@ -124,16 +136,68 @@ public class VolocityClippingReader extends FormatReader {
       throw new FormatException("Found invalid magic string: " + magicString);
     }
 
-    int check = in.readInt();
-    while (check != 0x208 && check != AISF) {
-      in.seek(in.getFilePointer() - 3);
-      check = in.readInt();
+    in.skipBytes(12);
+    int len = in.readInt();
+
+    String imageName = in.readString(len);
+
+    Double physicalX = null;
+    Double physicalY = null;
+    Double physicalZ = null;
+
+    String key = null;
+    Object value = null;
+    while (true) {
+      if (in.readInt() == 0x258) {
+        if (key == null) {
+          len = in.readInt();
+          key = in.readString(len);
+        }
+        else {
+          int type = in.readInt();
+
+          switch (type) {
+            case 0x1f9:
+              value = in.readLong();
+              break;
+            case 0x1f4:
+              value = in.readDouble();
+              break;
+            case 0x1f8:
+              len = in.readInt();
+              value = in.readString(len);
+              break;
+          }
+
+          if (value == null) {
+            if (key.equals("Channels")) {
+              len = type;
+              channelNames.add(in.readString(len));
+            }
+            break;
+          }
+
+          if (key.equals("um/pixel (X)")) {
+            physicalX = new Double(value.toString());
+          }
+          else if (key.equals("um/pixel (Y)")) {
+            physicalY = new Double(value.toString());
+          }
+          else if (key.equals("um/pixel (Z)")) {
+            physicalZ = new Double(value.toString());
+          }
+
+          addGlobalMeta(key, value);
+          key = null;
+          value = null;
+        }
+      }
+      else {
+        in.seek(in.getFilePointer() - 3);
+      }
     }
-    if (check == AISF) {
-      m.littleEndian = false;
-      in.order(isLittleEndian());
-      in.skipBytes(28);
-    }
+
+    long firstOffset = findDimensions(0);
 
     m.sizeX = in.readInt();
     m.sizeY = in.readInt();
@@ -142,10 +206,15 @@ public class VolocityClippingReader extends FormatReader {
 
     m.sizeT = 1;
     m.imageCount = getSizeZ() * getSizeT();
-    m.dimensionOrder = "XYCZT";
-    m.pixelType = FormatTools.UINT8;
+    m.dimensionOrder = "XYZTC";
+    m.pixelType = aisf ? FormatTools.UINT16 : FormatTools.UINT8;
 
-    pixelOffset = in.getFilePointer() + 65;
+    if (firstOffset == 0) {
+      firstOffset = in.getFilePointer() + 65;
+    }
+    else {
+      firstOffset -= 59;
+    }
 
     if (getSizeX() * getSizeY() * 100 >= in.length()) {
       while (in.getFilePointer() < in.length()) {
@@ -159,13 +228,113 @@ public class VolocityClippingReader extends FormatReader {
           }
         }
         catch (EOFException e) { }
-        pixelOffset++;
-        in.seek(pixelOffset);
+        firstOffset++;
+        in.seek(firstOffset);
       }
     }
 
+    pixelOffsets.add(firstOffset);
+
+    in.seek(firstOffset);
+    long length = (long) getImageCount() * FormatTools.getPlaneSize(this);
+    while (in.getFilePointer() < in.length()) {
+      long newOffset = in.getFilePointer() + length;
+      if (newOffset < 0 || newOffset >= in.length()) {
+        break;
+      }
+      in.seek(newOffset);
+      long base = in.getFilePointer();
+      in.skipBytes(30);
+      String check = in.readString(2);
+      if (!check.equals("I1")) {
+        break;
+      }
+
+      in.skipBytes(3);
+      check = in.readString(4);
+      if (!check.equals("xIIA")) {
+        break;
+      }
+
+      try {
+        findDimensions(base);
+      }
+      catch (EOFException e) {
+        break;
+      }
+      long offset = in.getFilePointer() + 12 + 65;
+      in.seek(offset);
+      while (in.read() == 0);
+      offset = in.getFilePointer() - 1;
+
+      pixelOffsets.add(offset);
+      in.seek(offset);
+    }
+
+    m.sizeC = pixelOffsets.size();
+    m.imageCount *= m.sizeC;
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
+
+    store.setImageName(imageName, 0);
+
+    for (int c=0; c<getSizeC(); c++) {
+      if (c < channelNames.size()) {
+        String name = channelNames.get(c);
+        store.setChannelName(name, 0, c);
+
+        name = name.toLowerCase();
+
+        if (name.startsWith("red")) {
+          store.setChannelColor(new Color(255, 0, 0, 255), 0, c);
+        }
+        else if (name.startsWith("green")) {
+          store.setChannelColor(new Color(0, 255, 0, 255), 0, c);
+        }
+        else if (name.startsWith("blue")) {
+          store.setChannelColor(new Color(0, 0, 255, 255), 0, c);
+        }
+      }
+    }
+
+    if (physicalX != null) {
+      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX), 0);
+    }
+    if (physicalY != null) {
+      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY), 0);
+    }
+    if (physicalZ != null) {
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ), 0);
+    }
+  }
+
+  private long findDimensions(long base) throws IOException {
+    long firstOffset = 0;
+
+    if (base > 0) {
+      in.skipBytes(32);
+      while (in.read() == 0);
+      in.skipBytes(11);
+      int len = in.readInt();
+      String channelName = in.readString(len);
+      channelNames.add(channelName);
+    }
+
+    int check = in.readInt();
+    while (check != 0x208 && check != AISF && check != FSIA) {
+      in.seek(in.getFilePointer() - 3);
+      check = in.readInt();
+    }
+    if (check == AISF || check == FSIA) {
+      aisf = true;
+      core.get(0).littleEndian = check == FSIA;
+      in.order(isLittleEndian());
+      firstOffset = in.readInt() + base;
+      in.skipBytes(24);
+    }
+
+    return firstOffset;
   }
 
 }
