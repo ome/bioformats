@@ -27,6 +27,7 @@
 
 package loci.plugins.out;
 
+import ij.CompositeImage;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -41,6 +42,7 @@ import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
+import ij.process.LUT;
 import ij.process.ShortProcessor;
 
 import java.awt.Image;
@@ -66,6 +68,7 @@ import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.ExtensionFileFilter;
 import loci.formats.gui.GUITools;
+import loci.formats.gui.Index16ColorModel;
 import loci.formats.meta.IMetadata;
 import loci.formats.ome.OMEXMLMetadataRoot;
 import loci.formats.services.OMEXMLService;
@@ -356,12 +359,18 @@ public class Exporter {
         catch (EnumerationException e) { }
       }
 
+      LUT[] luts = new LUT[imp.getNChannels()];
+
       for (int c=0; c<imp.getNChannels(); c++) {
         if (c >= store.getChannelCount(0) || store.getChannelID(0, c) == null) {
           String lsid = MetadataTools.createLSID("Channel", 0, c);
           store.setChannelID(lsid, 0, c);
         }
         store.setChannelSamplesPerPixel(new PositiveInteger(channels), 0, 0);
+
+        if (imp instanceof CompositeImage) {
+          luts[c] = ((CompositeImage) imp).getChannelLut(c + 1);
+        }
       }
 
       Calibration cal = imp.getCalibration();
@@ -481,9 +490,8 @@ public class Exporter {
       if (proc instanceof ColorProcessor) {
         thisType = FormatTools.UINT8;
       }
-
-      if (!proc.isDefaultLut()) {
-        w.setColorModel(proc.getColorModel());
+      else if (proc instanceof ShortProcessor) {
+        thisType = FormatTools.UINT16;
       }
 
       boolean notSupportedType = !w.isSupportedType(thisType);
@@ -580,6 +588,40 @@ public class Exporter {
         }
         else {
           w.changeOutputFile(outputFiles[fileIndex]);
+
+          int currentChannel = FormatTools.getZCTCoords(
+            ORDER, sizeZ, sizeC, sizeT, imp.getStackSize(), i)[1];
+
+          if (luts[currentChannel] != null) {
+            // expand to 16-bit LUT if necessary
+
+            int bpp = FormatTools.getBytesPerPixel(thisType);
+            if (bpp == 1) {
+              w.setColorModel(luts[currentChannel]);
+            }
+            else if (bpp == 2) {
+              int lutSize = luts[currentChannel].getMapSize();
+              byte[][] lut = new byte[3][lutSize];
+              luts[currentChannel].getReds(lut[0]);
+              luts[currentChannel].getGreens(lut[1]);
+              luts[currentChannel].getBlues(lut[2]);
+
+              short[][] newLut = new short[3][65536];
+              int bins = newLut[0].length / lut[0].length;
+              for (int c=0; c<newLut.length; c++) {
+                for (int q=0; q<newLut[c].length; q++) {
+                  int index = q / bins;
+                  newLut[c][q] = (short) ((lut[c][index] * lut[0].length) + (q % bins));
+                }
+              }
+
+              w.setColorModel(new Index16ColorModel(16, newLut[0].length,
+                newLut, littleEndian));
+            }
+          }
+          else if (!proc.isDefaultLut()) {
+            w.setColorModel(proc.getColorModel());
+          }
           w.saveBytes(no[fileIndex]++, plane);
         }
       }
