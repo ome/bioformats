@@ -15,11 +15,7 @@ Type "ant -p"  for a list of targets.
   <target name="test" depends="jar, compile-tests" description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml"
-      file="${testng.xml.template}" overwrite="true">
-      <filterset>
-        <filter token="PARALLEL" value=""/> <!-- Disable parallelization -->
-      </filterset>
-    </copy>
+      file="${testng.xml.template}" overwrite="true"/>
     <testng failureProperty="failedTest">
       <classpath>
         <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
@@ -34,11 +30,7 @@ Type "ant -p"  for a list of targets.
 
   <target name="test-file" depends="jar, compile-tests" description="run tests">
     <copy tofile="${build.dir}/testng.xml"
-      file="${testng.xml.template}" overwrite="true">
-      <filterset>
-        <filter token="PARALLEL" value=""/> <!-- Disable parallelization -->
-      </filterset>
-    </copy>
+      file="${testng.xml.template}" overwrite="true"/>
     <testng failureProperty="failedTest">
       <classpath>
         <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
