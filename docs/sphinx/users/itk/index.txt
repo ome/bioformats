@@ -34,7 +34,7 @@ will need `Git <http://git-scm.com/>`_ as well.
 Installation
 ------------
 
-Simply download ITK from the 
+Simply download ITK from the
 `Kitware software page <http://www.itk.org/ITK/resources/software.html>`_.
 Using CMake, set the following configuration flag::
 
@@ -94,5 +94,5 @@ For example, to convert a .czi image to a .tif, you would use::
 Troubleshooting
 ---------------
 
-Please send any issues, suggestions or requests to the 
+Please send any issues, suggestions or requests to the
 `insight users mailing list <http://www.itk.org/ITK/help/mailing.html>`_.
