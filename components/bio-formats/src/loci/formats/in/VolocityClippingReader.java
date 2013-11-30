@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import loci.common.RandomAccessInputStream;
@@ -91,8 +92,19 @@ public class VolocityClippingReader extends FormatReader {
     int index = getIndex(zct[0], 0, zct[2]);
     in.seek(pixelOffsets.get(zct[1]) + index * FormatTools.getPlaneSize(this));
 
-    if (FormatTools.getPlaneSize(this) * 2 + in.getFilePointer() < in.length())
-    {
+    int planeSize = FormatTools.getPlaneSize(this);
+    if (getSizeC() == 1) {
+      planeSize *= 2;
+    }
+
+    if (getSizeC() > 1 && in.getFilePointer() + planeSize >= in.length()) {
+      if (zct[1] == 0) {
+        Arrays.fill(buf, (byte) 0);
+        return buf;
+      }
+      return openBytes(getIndex(0, zct[1], 0));
+    }
+    else if (planeSize + in.getFilePointer() < in.length()) {
       readPlane(in, x, y, w, h, buf);
       return buf;
     }
