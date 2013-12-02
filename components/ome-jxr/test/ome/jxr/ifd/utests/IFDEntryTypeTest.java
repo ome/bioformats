@@ -25,22 +25,22 @@
 
 package ome.jxr.ifd.utests;
 
-import ome.jxr.ifd.IFDEntry;
+import ome.jxr.ifd.IFDEntryType;
 
 import org.testng.annotations.Test;
 
-public class IFDElementTest {
+public class IFDEntryTypeTest {
 
   @Test(expectedExceptions = IllegalArgumentException.class)
-  public void testValueOfWithInvalidTagShouldThrowIAE() {
-    short unspecifiedTag = (short) 0xffff;
-    IFDEntry entry = IFDEntry.findByTag(unspecifiedTag);
+  public void testValueOfWithInvalidCodeShouldThrowIAE() {
+    short unspecifiedCode = 13;
+    IFDEntryType type = IFDEntryType.findByTypeCode(unspecifiedCode);
   }
 
   @Test
-  public void testValueOfWithValidTagShouldNotThrow() {
-    for (IFDEntry entry : IFDEntry.values()) {
-      entry.findByTag(entry.getTag());
+  public void testValueOfWithValidCodeShouldNotThrow() {
+    for (IFDEntryType type : IFDEntryType.values()) {
+      type.findByTypeCode(type.getTypeCode());
     }
   }
 }
