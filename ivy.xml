@@ -9,6 +9,7 @@
     <artifact name="bio-formats"/>
     <artifact name="jai_imageio"/>
     <artifact name="loci-common"/>
+    <artifact name="lwf-stubs"/>
     <artifact name="mdbtools-java"/>
     <artifact name="metakit"/>
     <artifact name="ome-io"/>
