@@ -81,7 +81,7 @@ public class JXRParser {
   public JXRMetadata extractMetadata() throws IOException {
     findAllIFDs();
 
-    JXRMetadata metadata = new JXRMetadata();
+    JXRMetadata metadata = new JXRMetadata(stream.length());
     for (IFDContainer container : IFDContainers) {
       for (int entryOffset : container.getEntryOffsets()) {
         stream.seek(entryOffset);

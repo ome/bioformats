@@ -37,7 +37,12 @@ import ome.scifio.common.DataTools;
 
 /**
  * Provides access to metadata extracted from a JPEG XR file. Adds simple logic
- * to translate the raw byte data into primitive data types.
+ * to translate the raw byte data into primitive data types. The returned data
+ * types are not primitive types, so as to allow returning <code>null</code>.
+ * That value indicates a missing metadata element and cannot be confused with
+ * a numerical value (e.g. 0). This class also verifies value validity on a very
+ * basic level (no inferring of metadata value combination meanings), and where
+ * needed - returns a default as dictated by the ITU-T specification.
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  *
@@ -51,11 +56,15 @@ public class JXRMetadata {
 
   // TODO: PTM_COLOR_INFO
   // TODO: PROFILE_LEVEL_CONTAINER
-  // TODO: Verify that default values are returned where needed if tag not
-  //       present. See spec.
+
+  private long fileSizeInBytes;
 
   private Map<IFDEntry, byte[]> entries =
       new EnumMap<IFDEntry, byte[]>(IFDEntry.class);
+
+  public JXRMetadata(long fileSizeInBytes) {
+    this.fileSizeInBytes = fileSizeInBytes;
+  }
 
   public void put(IFDEntry entry, byte[] value) {
     entries.put(entry, value);
@@ -85,14 +94,15 @@ public class JXRMetadata {
     return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_HEIGHT), true);
   }
 
-  public Long getImageImageOffset() throws JXRException {
+  public Long getImageOffset() throws JXRException {
     verifyRequiredElements();
     return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_OFFSET), true);
   }
 
   public Long getImageByteCount() throws JXRException {
     verifyRequiredElements();
-    return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_BYTE_COUNT), true);
+    Long value = DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_BYTE_COUNT), true);
+    return value != 0 ? value : fileSizeInBytes-getImageOffset();
   }
 
   public String getDocumentName() throws IOException {
@@ -124,7 +134,7 @@ public class JXRMetadata {
   }
 
   public String getDateTime() throws IOException {
-    return nullOrString(entries.get(IFDEntry.DATE_TIME));
+    return parseDateTime(entries.get(IFDEntry.DATE_TIME));
   }
 
   public String getArtistName() throws IOException {
@@ -144,7 +154,8 @@ public class JXRMetadata {
   }
 
   public Long getPrefferedSpatialTransformation() {
-    return nullOrLong(entries.get(IFDEntry.SPATIAL_XFRM_PRIMARY));
+    Long value = nullOrLong(entries.get(IFDEntry.SPATIAL_XFRM_PRIMARY));
+    return value != null ? value : 0;
   }
 
   public Long getImageType() {
@@ -152,11 +163,13 @@ public class JXRMetadata {
   }
 
   public Float getWidthResoulution() {
-    return nullOrFloat(entries.get(IFDEntry.WIDTH_RESOLUTION));
+    Float value = nullOrFloat(entries.get(IFDEntry.WIDTH_RESOLUTION));
+    return (value == null || value == 0) ? 96 : value;
   }
 
   public Float getHeightResoulution() {
-    return nullOrFloat(entries.get(IFDEntry.HEIGHT_RESOLUTION));
+    Float value = nullOrFloat(entries.get(IFDEntry.HEIGHT_RESOLUTION));
+    return (value == null || value == 0) ? 96 : value;
   }
 
   public Long getAlphaOffset() {
@@ -173,6 +186,16 @@ public class JXRMetadata {
 
   public Short getAlphaBandPresence() {
     return nullOrShort(entries.get(IFDEntry.ALPHA_BAND_PRESENCE));
+  }
+
+  private String parseDateTime(byte[] value) throws IOException {
+    String date = nullOrString(value);
+    String unknownDate = "[0 ]{4}:[0 ]{2}:[0 ]{2} [0 ]{2}:[0 ]{2}:[0 ]{2}";
+    if (date == null || date.matches(unknownDate)) {
+      return null;
+    } else {
+      return date;
+    }
   }
 
   private String nullOrString(byte[] value) throws IOException {

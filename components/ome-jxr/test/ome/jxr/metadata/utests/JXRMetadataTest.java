@@ -74,7 +74,7 @@ public class JXRMetadataTest {
   public void testGetImageOffset(JXRMetadata metadata)
       throws JXRException {
     long expected = 158;
-    long actual = metadata.getImageImageOffset();
+    long actual = metadata.getImageOffset();
     assertEquals(expected, actual);
   }
 
