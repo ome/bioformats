@@ -50,7 +50,7 @@ except ImportError:
 # Types which should be ignored from metadata store, retrieve, etc. code
 # generation due either to their incompatibility or complexity as it applies
 # to these interfaces and implementations.
-METADATA_OBJECT_IGNORE = ('BinData', 'External')
+METADATA_OBJECT_IGNORE = ('BinData', 'External', 'M')
 
 # Type counts which should be ignored from metadata store, retrieve, etc. code
 # generation due either to their incompatibility or complexity as it applies
@@ -63,8 +63,13 @@ METADATA_COUNT_IGNORE = {'Annotation': ['AnnotationRef']}
 # types. It is a superset of PRIMITIVE_TYPE_MAP.
 TYPE_MAP = None
 
-# A global type mapping from XSD Schema types to language primitive base classes.
+# A global type mapping from XSD Schema types to language primitive classes.
 PRIMITIVE_TYPE_MAP = None
+
+# A global type mapping from XSD Schema elements to language model
+# object classes.  This will cause source code generation to be
+# skipped for this type since it's implemented natively.
+MODEL_TYPE_MAP = {}
 
 # A global type mapping from XSD Schema types to base classes that is used
 # to override places in the model where we do not wish subclassing to take
@@ -140,6 +145,7 @@ def updateTypeMaps(opts):
     global CURRENT_LANG
     global DEFAULT_BASE_CLASS
     global PRIMITIVE_TYPE_MAP
+    global MODEL_TYPE_MAP
     global TYPE_MAP
     global BASE_TYPE_MAP
 
@@ -172,6 +178,11 @@ def updateTypeMaps(opts):
         PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'Double'
         PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'String'
         PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'String'
+        PRIMITIVE_TYPE_MAP['OME:MapPairs'] = 'MapPairs'
+
+        MODEL_TYPE_MAP['MapPairs'] = 'MapPairs'
+        MODEL_TYPE_MAP['M'] = None
+
     elif (CURRENT_LANG == LANG_CXX):
         PRIMITIVE_TYPE_MAP[namespace + 'boolean'] = 'bool'
         PRIMITIVE_TYPE_MAP[namespace + 'string'] = 'std::string'
@@ -182,6 +193,10 @@ def updateTypeMaps(opts):
         PRIMITIVE_TYPE_MAP[namespace + 'double'] = 'double'
         PRIMITIVE_TYPE_MAP[namespace + 'anyURI'] = 'std::string'
         PRIMITIVE_TYPE_MAP[namespace + 'hexBinary'] = 'std::string'
+        PRIMITIVE_TYPE_MAP['OME:MapPairs'] = 'MapPairs'
+
+        MODEL_TYPE_MAP['MapPairs'] = 'MapPairs'
+        MODEL_TYPE_MAP['M'] = None
 
     TYPE_MAP = copy.deepcopy(PRIMITIVE_TYPE_MAP)
     TYPE_MAP['Leader'] = 'Experimenter'
