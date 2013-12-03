@@ -121,6 +121,10 @@
                 <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
               </manifestEntries>
             </archive>
+            <excludes>
+              <exclude>**/*.cpp</exclude>
+              <exclude>**/*.h</exclude>
+            </excludes>
           </configuration>
         </plugin>
         <plugin>

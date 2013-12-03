@@ -157,21 +157,6 @@
               </sources>
             </configuration>
           </execution>
-	  <execution>
-	    <id>add-wsdl-resource</id>
-	    <phase>generate-resources</phase>
-	    <goals>
-	      <goal>add-resource</goal>
-	    </goals>
-	    <configuration>
-	      <resources>
-		<resource>
-		  <directory>target/generated-sources</directory>
-		  <targetPath>target/classes</targetPath>
-		</resource>
-	      </resources>
-	    </configuration>
-	  </execution>
         </executions>
       </plugin>
       <plugin>
