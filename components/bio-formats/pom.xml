@@ -77,8 +77,6 @@
       <groupId>woolz</groupId>
       <artifactId>JWlz</artifactId>
       <version>1.4.0</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/../../jar/JWlz-1.4.0.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
