@@ -131,7 +131,7 @@
 				>AP+rzuv/AAB5n8Pi/wBHbJO3//8dPGCF</Bin:BinData>
 			<Bin:BinData BigEndian="false" Length="32"
 				>//+szuv/AP95n8PiAABHbZO3AP8dPF+G</Bin:BinData>
-			<SA:AnnotationRef ID="Annotation:P0:0"/>
+			<SA:AnnotationRef ID="Annotation:P:0:0"/>
 		</Pixels>
 		<ROI:ROIRef ID="ROI:0"/>
 		<ROI:ROIRef ID="ROI:1"/>
@@ -153,9 +153,9 @@
 				<test3/>
 			</SA:Value>
 		</SA:XMLAnnotation>
-		<SA:XMLAnnotation ID="Annotation:P0:0">
+		<SA:XMLAnnotation ID="Annotation:P:0:0">
 			<SA:Value>
-				<test4/>
+				<test3/>
 			</SA:Value>
 		</SA:XMLAnnotation>
 	</SA:StructuredAnnotations>
