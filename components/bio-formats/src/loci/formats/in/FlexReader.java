@@ -137,6 +137,9 @@ public class FlexReader extends FormatReader {
   private int nFiles = 0;
   private int effectiveFieldCount = 0;
 
+  private HashMap<String, String> reverseFileMapping =
+    new HashMap<String, String>();
+
   /** Specifies the row and column index into 'flexFiles' for a given well. */
   private int[][] wellNumber;
 
@@ -170,11 +173,17 @@ public class FlexReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
     files.addAll(measurementFiles);
+
     if (!noPixels) {
       if (fieldCount > 0 && wellCount > 0 && plateCount > 0) {
         FlexFile file = lookupFile(getSeries());
         if (file != null && file.file != null) {
-          files.add(file.file);
+          if (reverseFileMapping.containsKey(file.file)) {
+            files.add(reverseFileMapping.get(file.file));
+          }
+          else {
+            files.add(file.file);
+          }
         }
       }
     }
@@ -309,6 +318,7 @@ public class FlexReader extends FormatReader {
       planeExposureTime.clear();
       planeDeltaT.clear();
       acquisitionDates = null;
+      reverseFileMapping.clear();
     }
   }
 
@@ -1741,7 +1751,15 @@ public class FlexReader extends FormatReader {
           int numberOfFlexFiles = flex.size();
           for (String hostname : hostnames) {
             String filename = hostname + File.separator + path;
-            if (new Location(filename).exists()) {
+            Location flexFile = new Location(filename);
+            if (flexFile.exists()) {
+              Location parent =
+                new Location(currentId).getAbsoluteFile().getParentFile();
+              String mapName =
+                new Location(parent, flexFile.getName()).getAbsolutePath();
+              Location.mapId(mapName, filename);
+              reverseFileMapping.put(filename, mapName);
+
               flex.add(filename);
             }
           }
@@ -1817,7 +1835,7 @@ public class FlexReader extends FormatReader {
    * If other paths were mapped to 'alias', they will be overwritten.
    */
   public static void mapServer(String alias, String realName) {
-    LOGGER.debug("mapSever({}, {})", alias, realName);
+    LOGGER.debug("mapServer({}, {})", alias, realName);
     if (alias != null) {
       if (realName == null) {
         LOGGER.debug("removing mapping for {}", alias);
