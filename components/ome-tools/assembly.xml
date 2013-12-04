@@ -10,10 +10,61 @@
   <dependencySets>
     <dependencySet>
       <excludes>
-        <exclude>imagej:ij</exclude>
-        <exclude>loci:bio-formats</exclude>
-        <exclude>loci:loci_plugins</exclude>
-        <exclude>loci:ome-xml</exclude>
+        <!-- exclude things included in loci_tools.jar -->
+        <exclude>ome:bio-formats</exclude>
+        <exclude>ome:loci_plugins</exclude>
+        <exclude>ome:ome-xml</exclude>
+        <exclude>ome:loci-legacy</exclude>
+        <exclude>ome:scifio</exclude>
+        <exclude>ome:lwf-stubs</exclude>
+        <exclude>net.imagej:ij</exclude>
+        <exclude>com.esotericsoftware.kryo:kryo</exclude>
+        <exclude>com.jgoodies:forms</exclude>
+        <exclude>ome:jai_imageio</exclude>
+        <exclude>ome:poi-loci</exclude>
+        <exclude>ome:mdbtools-java</exclude>
+        <exclude>ome:turbojpeg</exclude>
+        <exclude>ome:metakit</exclude>
+        <exclude>ome:scifio-devel</exclude>
+        <exclude>ome:specification</exclude>
+        <exclude>xalan:xalan</exclude>
+        <exclude>xalan:serializer</exclude>
+        <exclude>xerces:xercesImpl</exclude>
+        <exclude>joda-time:joda-time</exclude>
+        <exclude>org.perf4j:perf4j</exclude>
+        <exclude>org.scijava:native-lib-loader</exclude>
+        <exclude>org.slf4j:slf4j-api</exclude>
+        <exclude>edu.ucar:netcdf</exclude>
+        <exclude>woolz:JWlz</exclude>
+        <exclude>org.springframework:spring*</exclude>
+        <exclude>aopalliance:aopalliance</exclude>
+        <exclude>org.aspectj:aspectj*</exclude>
+        <exclude>org.slf4j:slf4j-log4j12</exclude>
+        <exclude>log4j:log4j</exclude>
+        <!-- exclude testing dependencies -->
+        <exclude>org.testng:testng</exclude>
+        <exclude>junit:junit</exclude>
+        <exclude>com.beust:jcommander</exclude>
+        <exclude>org.yaml:snakeyaml</exclude>
+        <exclude>org.beanshell:bsh</exclude>
+        <exclude>edu.princeton.cup:java-cup</exclude>
+        <exclude>org.apache.bcel:bcel</exclude>
+        <exclude>commons-codec:commons-codec</exclude>
+        <exclude>regexp:regexp</exclude>
+        <exclude>org.apache.ant:ant-trax</exclude>
+        <exclude>edu.ucar:udunits</exclude>
+        <exclude>javax.servlet:servlet-api</exclude>
+        <!-- exclude optional libraries pulled in by netCDF -->
+        <exclude>com.sleepycat:je</exclude>
+        <exclude>net.sf.ehcache:ehcache-core</exclude>
+        <exclude>com.google.protobuf:protobuf-java</exclude>
+        <exclude>org.quartz-scheduler:quartz</exclude>
+        <exclude>c3p0:c3p0</exclude>
+        <exclude>com.sun.jna:jna</exclude>
+        <exclude>net.jcip:jcip-annotations</exclude>
+        <exclude>org.jdom:jdom2</exclude>
+        <exclude>jaxen:jaxen</exclude>
+        <exclude>org.slf4j:jcl-over-slf4j</exclude>
       </excludes>
       <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>
