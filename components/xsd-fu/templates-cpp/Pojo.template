@@ -247,7 +247,7 @@ ${customContent}\
                             OMEModel& model)
       {
         ${klass.parentName}::update(element, model);
-{% if klass.langType != 'Object' %}\
+{% if klass.langType is not None %}\
 
         {
           // Element's text data
@@ -531,7 +531,7 @@ ${customUpdatePropertyContent[prop.name]}
         return false;
       }
 {% end source %}\
-{% if klass.langType != 'Object' %}\
+{% if klass.langType is not None %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
@@ -1018,7 +1018,7 @@ ${customUpdatePropertyContent[prop.name]}
             element = document.createElementNS(NAMESPACE, "${klass.name}");
           }
 
-{% if klass.langType != 'Object' %}\
+{% if klass.langType is not None %}\
         // Element's text data
 //            if (!this->value.empty()) {
 {% if klass.langType != 'std::string' %}\

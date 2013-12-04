@@ -28,11 +28,14 @@ import logging
 import sys
 import os
 
-from fu import *
+# Needed to import modeltools
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), 'python'))
+
+from ome.modeltools import config
+from ome.modeltools import generateds
 
 from configobj import ConfigObj
 from getopt import getopt, GetoptError
-
 
 def usage(error):
 	"""
@@ -60,9 +63,20 @@ Examples:
   %s -d cfg/example.cfg
 
 Report bugs to OME-Devel <ome-devel@lists.openmicroscopy.org.uk""" % \
-	(error, cmd, DEFAULT_NAMESPACE, cmd, cmd, cmd)
+	(error, cmd, config.DEFAULT_NAMESPACE, cmd, cmd, cmd)
 	sys.exit(2)
 
+def resolve_paths(paths, level, names):
+    """
+    Resolves a set of ASCII art graphics for a given hierarchical tree
+    structure of element names.
+    """
+    if names is None:
+        return
+    for name in names.keys():
+        path = "+-- %s" % name
+        paths.insert(0, path)
+        resolve_paths(paths, level + 1, names[name])
 
 def dump(model):
 	"""Dumps enumerations to STDOUT."""
@@ -72,7 +86,7 @@ def dump(model):
 		for prop in obj.properties.values():
 			if prop.isEnumeration:
 				count += 1
-				parents = resolve_parents(model, obj.name)
+				parents = model.resolve_parents(obj.name)
 				paths = list()
 				resolve_paths(paths, 0, parents)
 				for path in paths:
@@ -105,7 +119,7 @@ def build_xpaths(model):
 	for obj in model.objects.values():
 		for prop in obj.properties.values():
 			if prop.isEnumeration:
-				parents = resolve_parents(model, obj.name)
+				parents = model.resolve_parents(obj.name)
 				parents = {obj.name: parents}
 				obj_xpaths = list()
 				resolve_xpaths(obj_xpaths, None, parents)
@@ -127,10 +141,10 @@ def dump_xpath(model):
 
 def diff_enumerations(old, old_ns, new, new_ns, xpaths):
 	"""Diffs all enumerations from two XSD files."""
-	old_model = parseXmlSchema(old, old_ns)
+	old_model = generateds.parse(old, old_ns)
 	old_xpaths = build_xpaths(old_model)
-	resetGenerateDS()
-	new_model = parseXmlSchema(new, new_ns)
+	generateds.reset()
+	new_model = generateds.parse(new, new_ns)
 	new_xpaths = build_xpaths(new_model)
 	for old_xpath, new_xpath in xpaths.items():
 		old_values = old_xpaths[old_xpath]['property'].possibleValues
@@ -145,7 +159,7 @@ if __name__ == '__main__':
 	except GetoptError, (msg, opt):
 		usage(msg)
 
-	namespace = DEFAULT_NAMESPACE
+	namespace = config.DEFAULT_NAMESPACE
 	do_tree = False
 	do_xpath = False
 	config = None
@@ -165,12 +179,12 @@ if __name__ == '__main__':
 		try:
 			old_ns = config['schemas']['oldNS']
 		except KeyError:
-			old_ns = DEFAULT_NAMESPACE
+			old_ns = config.DEFAULT_NAMESPACE
 		new = config['schemas']['new']
 		try:
 			new_ns = config['schemas']['newNS']
 		except KeyError:
-			new_ns = DEFAULT_NAMESPACE
+			new_ns = config.DEFAULT_NAMESPACE
 		xpaths = config['xpaths']
 		diff_enumerations(old, old_ns, new, new_ns, xpaths)
 		sys.exit(0)
@@ -180,7 +194,7 @@ if __name__ == '__main__':
 	elif not do_tree and not do_xpath:
 		usage("Must select at least one option!")
 
-	model = parseXmlSchema(args[0], namespace)
+	model = generateds.parse(args[0], namespace)
 	if do_tree:
 		dump(model)
 	if do_xpath:
