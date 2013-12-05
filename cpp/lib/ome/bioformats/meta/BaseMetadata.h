@@ -38,6 +38,8 @@
 #ifndef OME_BIOFORMATS_META_BASEMETADATA_H
 #define OME_BIOFORMATS_META_BASEMETADATA_H
 
+#include <ome/compat/cstdint.h>
+
 namespace ome
 {
   namespace bioformats
@@ -54,6 +56,10 @@ namespace ome
        */
       class BaseMetadata
       {
+      public:
+        /// Index into an array
+        typedef uint32_t index_type;
+
       protected:
         /// Constructor.
         BaseMetadata();
