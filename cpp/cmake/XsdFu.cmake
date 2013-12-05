@@ -45,4 +45,4 @@ set(MODEL_FILES
     ${MODEL_PATH}/SA.xsd
     ${MODEL_PATH}/SPW.xsd)
 set(GEN_DIR ${PROJECT_BINARY_DIR}/cpp/lib)
-set(XSD_FU_ARGS -p ome.xml.model -l C++ -o ${GEN_DIR} ${MODEL_FILES})
+set(XSD_FU_ARGS -l C++ -o ${GEN_DIR} ${MODEL_FILES})
