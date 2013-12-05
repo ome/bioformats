@@ -36,6 +36,9 @@
 
 package loci.formats.ome;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import loci.formats.meta.IMetadata;
 
 /**
@@ -55,6 +58,10 @@ public interface OMEXMLMetadata extends IMetadata {
    */
   String dumpXML();
 
+  String dumpXML(Document doc, Element e);
+
   int resolveReferences();
+
+  public Document createNewDocument();
 
 }

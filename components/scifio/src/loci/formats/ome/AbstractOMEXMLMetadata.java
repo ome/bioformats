@@ -107,14 +107,22 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
    * @return OME-XML as a string.
    */
   public String dumpXML() {
+    Document doc = createNewDocument();
+    Element r = root.asXMLElement(doc);
+    return dumpXML(doc, r);
+  }
+
+  /**
+   * Dumps the given OME-XML DOM tree to a string.
+   * @return OME-XML as a string.
+   */
+  public String dumpXML(Document doc, Element r) {
     if (root == null) {
       root = (OMEModelObject) getRoot();
       if (root == null) return null;
     }
     try {
       ByteArrayOutputStream os = new ByteArrayOutputStream();
-      Document doc = createNewDocument();
-      Element r = root.asXMLElement(doc);
       r.setAttribute("xmlns:xsi", XSI_NS);
       r.setAttribute("xsi:schemaLocation", OME.NAMESPACE + " " + SCHEMA);
       doc.appendChild(r);
@@ -133,7 +141,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   // -- Helper methods --
 
-  private Document createNewDocument() {
+  public Document createNewDocument() {
     if (builder == null) {
       try {
         builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();

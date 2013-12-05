@@ -65,6 +65,7 @@ import ome.xml.model.BinData;
 import ome.xml.model.Channel;
 import ome.xml.model.Image;
 import ome.xml.model.MetadataOnly;
+import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;
@@ -1101,8 +1102,12 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   class ModuloAnnotation extends XMLAnnotation {
     private Modulo modulo;
 
-    public void setModulo(Modulo m) {
+    public void setModulo(OMEXMLMetadata meta, Modulo m) {
       modulo = m;
+      setNamespace(MODULO_NS);
+      Document doc = meta.createNewDocument();
+      Element r = asXMLElement(doc);
+      setValue(meta.dumpXML(doc, r));
     }
 
     protected Element asXMLElement(Document document, Element element) {
