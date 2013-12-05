@@ -859,11 +859,12 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     return equals(root1, root2);
   }
 
-  public void addModuloAlong(OMEXMLMetadata meta, CoreMetadata core, int image)
+  public void addModuloAlong(OMEXMLMetadata meta, CoreMetadata core, int imageIdx)
   {
     meta.resolveReferences();
 
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) meta.getRoot();
+    Image image = root.getImage(imageIdx);
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     if (annotations == null) annotations = new StructuredAnnotations();
     int annotationIndex = annotations.sizeOfXMLAnnotationList();
@@ -884,39 +885,45 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     int imageAnnotation = 0;
 
     if (core.moduloZ.length() > 1) {
-      ModuloAnnotation zAnnotation = new ModuloAnnotation();
-      zAnnotation.setModulo(core.moduloZ);
-      String id = MetadataTools.createLSID("Annotation", annotationIndex);
-      zAnnotation.setID(id);
-      annotations.addXMLAnnotation(zAnnotation);
+      createModulo(meta, core.moduloZ,
+        annotations, image, imageIdx, annotationIndex, imageAnnotation);
       annotationIndex++;
-
-      meta.setImageAnnotationRef(id, image, imageAnnotation++);
+      imageAnnotation++;
     }
 
     if (core.moduloC.length() > 1) {
-      ModuloAnnotation cAnnotation = new ModuloAnnotation();
-      cAnnotation.setModulo(core.moduloC);
-      String id = MetadataTools.createLSID("Annotation", annotationIndex);
-      cAnnotation.setID(id);
-      annotations.addXMLAnnotation(cAnnotation);
-      annotationIndex++;
-
-      meta.setImageAnnotationRef(id, image, imageAnnotation++);
+        createModulo(meta, core.moduloC,
+          annotations, image, imageIdx, annotationIndex, imageAnnotation);
+        annotationIndex++;
+        imageAnnotation++;
     }
 
     if (core.moduloT.length() > 1) {
-      ModuloAnnotation tAnnotation = new ModuloAnnotation();
-      tAnnotation.setModulo(core.moduloT);
-      String id = MetadataTools.createLSID("Annotation", annotationIndex);
-      tAnnotation.setID(id);
-      annotations.addXMLAnnotation(tAnnotation);
-
-      meta.setImageAnnotationRef(id, image, imageAnnotation);
+      createModulo(meta, core.moduloT,
+        annotations, image, imageIdx, annotationIndex, imageAnnotation);
+      annotationIndex++;
+      imageAnnotation++;
     }
 
     root.setStructuredAnnotations(annotations);
     meta.setRoot(root);
+  }
+
+  private void createModulo(
+          final OMEXMLMetadata meta,
+          final Modulo modulo,
+          final StructuredAnnotations annotations,
+          final Image image,
+          final int imageIdx,
+          final int annotationIndex,
+          final int imageAnnotation) {
+    ModuloAnnotation annotation = new ModuloAnnotation();
+    annotation.setModulo(meta, modulo);
+    String id = MetadataTools.createLSID("Annotation", annotationIndex);
+    annotation.setID(id);
+    annotations.addXMLAnnotation(annotation);
+    meta.setImageAnnotationRef(id, imageIdx, imageAnnotation);
+    image.linkAnnotation(annotation);
   }
 
   // -- Utility methods - casting --
