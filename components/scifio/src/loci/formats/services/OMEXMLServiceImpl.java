@@ -1105,22 +1105,13 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     public void setModulo(OMEXMLMetadata meta, Modulo m) {
       modulo = m;
       setNamespace(MODULO_NS);
-      /*
-      // TODO: schemaLocation is copied; where should it be defined?
-      String schemaLocation = OME.NAMESPACE + " " +
-        loci.formats.ome.AbstractOMEXMLMetadata.SCHEMA;
       Document doc = XMLTools.createDocument();
-      Element r = asXMLElement(doc);
-      setValue(XMLTools.dumpXML(schemaLocation, doc, r));
-      */
+      Element r = makeModuloElement(doc);
+      setValue(XMLTools.dumpXML(null, doc, r, false));
+      System.out.println(getValue());
     }
 
-    protected Element asXMLElement(Document document, Element element) {
-      if (element == null) {
-        element = document.createElementNS(
-          XMLAnnotation.NAMESPACE, "XMLAnnotation");
-      }
-
+    protected Element makeModuloElement(Document document) {
       Element m = document.createElement("ModuloAlong" + modulo.parentDimension);
 
       String type = modulo.type;
@@ -1155,15 +1146,22 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
           m.appendChild(labelNode);
         }
       }
+      return m;
+    }
+
+    protected Element asXMLElement(Document document, Element element) {
+      if (element == null) {
+        element = document.createElementNS(
+          XMLAnnotation.NAMESPACE, "XMLAnnotation");
+      }
 
       Element annotationValue =
         document.createElementNS(XMLAnnotation.NAMESPACE, "Value");
-      annotationValue.appendChild(m);
+      annotationValue.appendChild(makeModuloElement(document));
 
       element.appendChild(annotationValue);
       return super.asXMLElement(document, element);
     }
-
   }
 
   class OriginalMetadataAnnotation extends XMLAnnotation {

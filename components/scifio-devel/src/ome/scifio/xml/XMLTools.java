@@ -64,6 +64,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.ErrorListener;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -214,15 +215,28 @@ public final class XMLTools {
 
   /**
    * Dumps the given OME-XML DOM tree to a string.
+   * @param schemaLocation if null, no xmlns attribute will be added.
    * @return OME-XML as a string.
    */
   public static String dumpXML(String schemaLocation, Document doc, Element r) {
+    return dumpXML(schemaLocation, doc, r, true);
+  }
+
+  /**
+   * Dumps the given OME-XML DOM tree to a string.
+   * @param schemaLocation if null, no xmlns attribute will be added.
+   * @return OME-XML as a string.
+   */
+  public static String dumpXML(String schemaLocation, Document doc, Element r,
+    boolean includeXMLDeclaration) {
     try {
       ByteArrayOutputStream os = new ByteArrayOutputStream();
-      r.setAttribute("xmlns:xsi", XSI_NS);
-      r.setAttribute("xsi:schemaLocation", schemaLocation);
+      if (schemaLocation != null) {
+        r.setAttribute("xmlns:xsi", XSI_NS);
+        r.setAttribute("xsi:schemaLocation", schemaLocation);
+      }
       doc.appendChild(r);
-      writeXML(os, doc);
+      writeXML(os, doc, includeXMLDeclaration);
       return os.toString(Constants.ENCODING);
     }
     catch (TransformerException exc) {
@@ -435,8 +449,19 @@ public final class XMLTools {
   public static void writeXML(OutputStream os, Document doc)
     throws TransformerException
   {
+    writeXML(os, doc, true);
+  }
+
+  /** Writes the specified DOM to the given output stream. */
+  public static void writeXML(OutputStream os, Document doc,
+    boolean includeXMLDeclaration)
+    throws TransformerException
+  {
     TransformerFactory transformFactory = TransformerFactory.newInstance();
     Transformer idTransform = transformFactory.newTransformer();
+    if (!includeXMLDeclaration) {
+      idTransform.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+    }
     Source input = new DOMSource(doc);
     Result output = new StreamResult(os);
     idTransform.transform(input, output);
