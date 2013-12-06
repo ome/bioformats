@@ -1112,7 +1112,11 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     }
 
     protected Element makeModuloElement(Document document) {
+      Element mtop = document.createElement("Modulo");
+      mtop.setAttribute("namespace", "http://www.openmicroscopy.org/Schemas/Additions/2011-09");
+      // TODO: the above should likely NOT be hard-coded
       Element m = document.createElement("ModuloAlong" + modulo.parentDimension);
+      mtop.appendChild(m);
 
       String type = modulo.type;
       String typeDescription = modulo.typeDescription;
@@ -1146,7 +1150,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
           m.appendChild(labelNode);
         }
       }
-      return m;
+      return mtop;
     }
   }
 
