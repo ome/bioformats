@@ -91,11 +91,4 @@ public class JXRReaderTest {
     reader.close();
   }
 
-  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
-  public void testGetDecompressedImageShouldNotReturnNull(JXRReader reader)
-      throws IOException {
-    assertNotNull(reader.getDecompressedImage());
-    reader.close();
-  }
-
 }

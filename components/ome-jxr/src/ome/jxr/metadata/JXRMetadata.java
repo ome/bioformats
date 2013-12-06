@@ -48,8 +48,8 @@ import ome.scifio.common.DataTools;
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/metadata/PixelType.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/metadata/PixelType.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/metadata/JXRMetadata.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/metadata/JXRMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  */
 public class JXRMetadata {
@@ -71,36 +71,36 @@ public class JXRMetadata {
   }
 
   public Integer getBitsPerPixel() throws JXRException {
-    verifyRequiredElements();
+    verifyRequiredEntries();
     PixelFormat pixelFormat = PixelFormat.findById(entries
         .get(IFDEntry.PIXEL_FORMAT));
     return pixelFormat.getPixelType().getBits();
   }
 
   public Integer getNumberOfChannels() throws JXRException {
-    verifyRequiredElements();
+    verifyRequiredEntries();
     PixelFormat pixelFormat = PixelFormat.findById(entries
         .get(IFDEntry.PIXEL_FORMAT));
     return pixelFormat.getNumberOfChannels();
   }
 
   public Long getImageWidth() throws JXRException {
-    verifyRequiredElements();
+    verifyRequiredEntries();
     return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_WIDTH), true);
   }
 
   public Long getImageHeight() throws JXRException {
-    verifyRequiredElements();
+    verifyRequiredEntries();
     return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_HEIGHT), true);
   }
 
   public Long getImageOffset() throws JXRException {
-    verifyRequiredElements();
+    verifyRequiredEntries();
     return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_OFFSET), true);
   }
 
   public Long getImageByteCount() throws JXRException {
-    verifyRequiredElements();
+    verifyRequiredEntries();
     Long value = DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_BYTE_COUNT), true);
     return value != 0 ? value : fileSizeInBytes-getImageOffset();
   }
@@ -150,7 +150,7 @@ public class JXRMetadata {
   }
 
   public Short getColorSpace() {
-    return nullOrShort(entries.get(IFDEntry.COLOR_SPACE));
+    return parseColorSpace(entries.get(IFDEntry.COLOR_SPACE));
   }
 
   public Long getPrefferedSpatialTransformation() {
@@ -198,6 +198,15 @@ public class JXRMetadata {
     }
   }
 
+  private Short parseColorSpace(byte[] value) {
+    Short colorSpace = nullOrShort(value);
+    if (colorSpace == null) {
+      return null;
+    } else {
+      return colorSpace.equals(1) || colorSpace.equals(0xffff) ? colorSpace : 1;
+    }
+  }
+
   private String nullOrString(byte[] value) throws IOException {
     if (value != null) {
       return new ByteArrayHandle(value).readUTF();
@@ -230,11 +239,9 @@ public class JXRMetadata {
     }
   }
 
-  private void verifyRequiredElements() throws JXRException {
-    if (!entries.isEmpty()) {
-      if (!entries.keySet().containsAll(IFDEntry.getRequiredEntries())) {
+  private void verifyRequiredEntries() throws JXRException {
+    if (entries.isEmpty() || !entries.keySet().containsAll(IFDEntry.getRequiredEntries())) {
         throw new JXRException("Metadata object is missing required IFD entries.");
-      }
     }
   }
 

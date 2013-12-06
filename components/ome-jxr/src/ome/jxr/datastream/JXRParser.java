@@ -73,11 +73,6 @@ public class JXRParser {
     this.rootIFDOffset = rootIFDOffset;
   }
 
-  public RandomAccessInputStream getDecompressedImage(){
-    // TODO Fill in logic
-    return null;
-  }
-
   public JXRMetadata extractMetadata() throws IOException {
     findAllIFDs();
 

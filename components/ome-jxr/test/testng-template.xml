@@ -24,9 +24,9 @@
   -->
 
 <suite name="OME JXR Tests">
-  <test name="JXRReader">
+  <test name="JXRDecoder">
     <classes>
-      <class name="ome.jxr.datastream.utests.JXRReaderTest"/>
+      <class name="ome.jxr.datastream.utests.JXRDecoderTest"/>
     </classes>
   </test>
   <test name="JXRParser">
@@ -34,14 +34,34 @@
       <class name="ome.jxr.datastream.utests.JXRParserTest"/>
     </classes>
   </test>
-  <test name="IFDElement">
+  <test name="JXRReader">
     <classes>
-      <class name="ome.jxr.ifd.utests.IFDElementTest"/>
+      <class name="ome.jxr.datastream.utests.JXRReaderTest"/>
     </classes>
   </test>
-  <test name="IFDElementType">
+  <test name="IFDContainer">
     <classes>
-      <class name="ome.jxr.ifd.utests.IFDElementTypeTest"/>
+      <class name="ome.jxr.ifd.utests.IFDContainerTest"/>
+    </classes>
+  </test>
+  <test name="IFDEntry">
+    <classes>
+      <class name="ome.jxr.ifd.utests.IFDEntryTest"/>
+    </classes>
+  </test>
+  <test name="IFDEntryType">
+    <classes>
+      <class name="ome.jxr.ifd.utests.IFDEntryTypeTest"/>
+    </classes>
+  </test>
+  <test name="JXRRational">
+    <classes>
+      <class name="ome.jxr.ifd.utests.JXRRationalTest"/>
+    </classes>
+  </test>
+  <test name="JXRMetadata">
+    <classes>
+      <class name="ome.jxr.metadata.utests.JXRMetadataTest"/>
     </classes>
   </test>
 </suite>

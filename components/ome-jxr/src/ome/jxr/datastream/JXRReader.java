@@ -58,6 +58,8 @@ public class JXRReader {
 
   private JXRParser parser;
 
+  private JXRDecoder decoder;
+
   private RandomAccessInputStream stream;
 
   private boolean isLittleEndian;
@@ -77,6 +79,7 @@ public class JXRReader {
       parser = new JXRParser();
       parser.setInputStream(this.stream);
       parser.setRootIFDOffset(rootIFDOffset);
+      decoder = new JXRDecoder(this.stream);
     } catch (IOException ioe) {
       throw new JXRException(ioe);
     }
@@ -90,8 +93,9 @@ public class JXRReader {
     return rootIFDOffset;
   }
 
-  public RandomAccessInputStream getDecompressedImage() throws IOException {
-    return parser.getDecompressedImage();
+  public RandomAccessInputStream getDecompressedImage() throws IOException,
+      JXRException {
+    return decoder.decode(getMetadata());
   }
 
   public JXRMetadata getMetadata() throws IOException {
