@@ -715,8 +715,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     for (String key : metadata.keySet()) {
       OriginalMetadataAnnotation annotation = new OriginalMetadataAnnotation();
       annotation.setID(MetadataTools.createLSID("Annotation", annotationIndex));
-      annotation.setKey(key);
-      annotation.setValue(metadata.get(key).toString());
+      annotation.setKeyValue(key, metadata.get(key).toString());
       annotations.addXMLAnnotation(annotation);
       annotationIndex++;
     }
@@ -753,8 +752,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
     OriginalMetadataAnnotation annotation = new OriginalMetadataAnnotation();
     annotation.setID(MetadataTools.createLSID("Annotation", annotationIndex));
-    annotation.setKey(key);
-    annotation.setValue(value);
+    annotation.setKeyValue(key, value);
     annotations.addXMLAnnotation(annotation);
 
     root.setStructuredAnnotations(annotations);
@@ -1108,7 +1106,6 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       Document doc = XMLTools.createDocument();
       Element r = makeModuloElement(doc);
       setValue(XMLTools.dumpXML(null, doc, r, false));
-      System.out.println(getValue());
     }
 
     protected Element makeModuloElement(Document document) {
@@ -1159,12 +1156,13 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
     // -- OriginalMetadataAnnotation methods --
 
-    public void setKey(String key) {
+    public void setKeyValue(String key, String value) {
+      setNamespace(ORIGINAL_METADATA_NS);
       this.key = key;
-    }
-
-    public void setValue(String value) {
-      this.value = value;
+      this.value = value; // Not XML value
+      Document doc = XMLTools.createDocument();
+      Element r = makeOriginalMetadata(doc);
+      super.setValue(XMLTools.dumpXML(null,  doc, r, false));
     }
 
     // -- XMLAnnotation methods --
@@ -1173,35 +1171,21 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       return key;
     }
 
-    public String getValue() {
-      return value;
-    }
-
-    /* @see ome.xml.model.XMLAnnotation#asXMLElement(Document, Element) */
-    protected Element asXMLElement(Document document, Element element) {
-      if (element == null) {
-        element =
-          document.createElementNS(XMLAnnotation.NAMESPACE, "XMLAnnotation");
-      }
+    protected Element makeOriginalMetadata(Document document) {
 
       Element keyElement =
-        document.createElementNS(ORIGINAL_METADATA_NS, "Key");
+        document.createElement("Key");
       Element valueElement =
-        document.createElementNS(ORIGINAL_METADATA_NS, "Value");
+        document.createElement("Value");
       keyElement.setTextContent(key);
       valueElement.setTextContent(value);
 
       Element originalMetadata =
-        document.createElementNS(ORIGINAL_METADATA_NS, "OriginalMetadata");
+        document.createElement("OriginalMetadata");
       originalMetadata.appendChild(keyElement);
       originalMetadata.appendChild(valueElement);
 
-      Element annotationValue =
-        document.createElementNS(XMLAnnotation.NAMESPACE, "Value");
-      annotationValue.appendChild(originalMetadata);
-
-      element.appendChild(annotationValue);
-      return super.asXMLElement(document, element);
+      return originalMetadata;
     }
 
   }
