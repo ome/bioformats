@@ -1148,20 +1148,6 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       }
       return m;
     }
-
-    protected Element asXMLElement(Document document, Element element) {
-      if (element == null) {
-        element = document.createElementNS(
-          XMLAnnotation.NAMESPACE, "XMLAnnotation");
-      }
-
-      Element annotationValue =
-        document.createElementNS(XMLAnnotation.NAMESPACE, "Value");
-      annotationValue.appendChild(makeModuloElement(document));
-
-      element.appendChild(annotationValue);
-      return super.asXMLElement(document, element);
-    }
   }
 
   class OriginalMetadataAnnotation extends XMLAnnotation {
