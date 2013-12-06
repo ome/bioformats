@@ -38,6 +38,7 @@ package ome.scifio.xml;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -45,6 +46,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -80,10 +82,12 @@ import javax.xml.validation.Validator;
 
 import ome.scifio.common.Constants;
 import ome.scifio.io.RandomAccessInputStream;
+import ome.xml.model.OME;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -104,6 +108,9 @@ public final class XMLTools {
   // -- Constants --
 
   static final Logger LOGGER = LoggerFactory.getLogger(XMLTools.class);
+
+  private static final String XSI_NS =
+    "http://www.w3.org/2001/XMLSchema-instance";
 
   private static final String XML_SCHEMA_PATH =
     "http://www.w3.org/2001/XMLSchema";
@@ -126,6 +133,28 @@ public final class XMLTools {
   private XMLTools() { }
 
   // -- XML to/from DOM --
+
+  /**
+   * Creates a new {@link DocumentBuilder} via {@link DocumentBuilderFactory}
+   * or logs and throws a {@link RuntimeException}.
+   */
+  public static DocumentBuilder createBuilder() {
+    try {
+      return DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    }
+    catch (ParserConfigurationException e) {
+      LOGGER.error("Cannot create DocumentBuilder", e);
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Calls {@link DocumentBuilder#newDocument()} on a
+   * {@link #createBuilder() new builder}.
+   */
+  public static Document createDocument() {
+    return createBuilder().newDocument();
+  }
 
   /** Parses a DOM from the given XML file on disk. */
   public static Document parseDOM(File file)
@@ -182,6 +211,29 @@ public final class XMLTools {
     Transformer transformer = factory.newTransformer();
     transformer.transform(source, result);
     return stringWriter.getBuffer().toString();
+  }
+
+  /**
+   * Dumps the given OME-XML DOM tree to a string.
+   * @return OME-XML as a string.
+   */
+  public static String dumpXML(String schemaLocation, Document doc, Element r) {
+    try {
+      ByteArrayOutputStream os = new ByteArrayOutputStream();
+      r.setAttribute("xmlns:xsi", XSI_NS);
+      r.setAttribute("xsi:schemaLocation", schemaLocation);
+      doc.appendChild(r);
+      writeXML(os, doc);
+      return os.toString(Constants.ENCODING);
+    }
+    catch (TransformerException exc) {
+      LOGGER.warn("Failed to create XML", exc);
+      throw new RuntimeException(exc);
+    }
+    catch (UnsupportedEncodingException exc) {
+      LOGGER.warn("Failed to create XML", exc);
+      throw new RuntimeException(exc);
+    }
   }
 
   // -- Filtering --

@@ -49,7 +49,6 @@ import javax.xml.transform.TransformerException;
 
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
-import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -61,6 +60,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
 import loci.formats.ome.OMEXMLMetadataRoot;
+import ome.scifio.xml.XMLTools;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
 import ome.xml.model.Image;
@@ -1105,9 +1105,12 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     public void setModulo(OMEXMLMetadata meta, Modulo m) {
       modulo = m;
       setNamespace(MODULO_NS);
-      Document doc = meta.createNewDocument();
+      // TODO: schemaLocation is copied; where should it be defined?
+      String schemaLocation = OME.NAMESPACE + " " +
+        loci.formats.ome.AbstractOMEXMLMetadata.SCHEMA;
+      Document doc = XMLTools.createDocument();
       Element r = asXMLElement(doc);
-      setValue(meta.dumpXML(doc, r));
+      setValue(XMLTools.dumpXML(schemaLocation, doc, r));
     }
 
     protected Element asXMLElement(Document document, Element element) {

@@ -58,10 +58,6 @@ public interface OMEXMLMetadata extends IMetadata {
    */
   String dumpXML();
 
-  String dumpXML(Document doc, Element e);
-
   int resolveReferences();
-
-  public Document createNewDocument();
 
 }
