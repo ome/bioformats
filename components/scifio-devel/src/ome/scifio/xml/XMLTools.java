@@ -82,7 +82,6 @@ import javax.xml.validation.Validator;
 
 import ome.scifio.common.Constants;
 import ome.scifio.io.RandomAccessInputStream;
-import ome.xml.model.OME;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

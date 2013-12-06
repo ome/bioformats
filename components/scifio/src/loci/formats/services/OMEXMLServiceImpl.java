@@ -1105,12 +1105,14 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     public void setModulo(OMEXMLMetadata meta, Modulo m) {
       modulo = m;
       setNamespace(MODULO_NS);
+      /*
       // TODO: schemaLocation is copied; where should it be defined?
       String schemaLocation = OME.NAMESPACE + " " +
         loci.formats.ome.AbstractOMEXMLMetadata.SCHEMA;
       Document doc = XMLTools.createDocument();
       Element r = asXMLElement(doc);
       setValue(XMLTools.dumpXML(schemaLocation, doc, r));
+      */
     }
 
     protected Element asXMLElement(Document document, Element element) {
@@ -1119,8 +1121,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
           XMLAnnotation.NAMESPACE, "XMLAnnotation");
       }
 
-      Element m = document.createElementNS(
-        MODULO_NS, "ModuloAlong" + modulo.parentDimension);
+      Element m = document.createElement("ModuloAlong" + modulo.parentDimension);
 
       String type = modulo.type;
       String typeDescription = modulo.typeDescription;
@@ -1149,7 +1150,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       }
       if (modulo.labels != null) {
         for (String label : modulo.labels) {
-          Element labelNode = document.createElementNS(MODULO_NS, "Label");
+          Element labelNode = document.createElement("Label");
           labelNode.setTextContent(label);
           m.appendChild(labelNode);
         }
