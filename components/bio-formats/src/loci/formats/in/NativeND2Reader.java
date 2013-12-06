@@ -1654,12 +1654,12 @@ public class NativeND2Reader extends FormatReader {
         int red = colors[c] & 0xff;
         int green = (colors[c] & 0xff00) >> 8;
         int blue = (colors[c] & 0xff0000) >> 16;
-        int alpha = (colors[c] & 0xff000000) >> 24;
 
         // do not set the channel color if the recorded color is black
         // doing so can prevent the image from displaying correctly
         if (red != 0 || green != 0 || blue != 0) {
-          store.setChannelColor(new Color(red, green, blue, alpha), i, c);
+          // always set the alpha to 255, otherwise the colors may not appear
+          store.setChannelColor(new Color(red, green, blue, 255), i, c);
         }
       }
     }
