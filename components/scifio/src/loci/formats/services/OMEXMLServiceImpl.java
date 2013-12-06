@@ -625,7 +625,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       if (annotation instanceof OriginalMetadataAnnotation) {
         OriginalMetadataAnnotation original =
           (OriginalMetadataAnnotation) annotation;
-        metadata.put(original.getKey(), original.getValue());
+        metadata.put(original.getKey(), original.getValueForKey());
         continue;
       }
 
@@ -1169,6 +1169,14 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
     public String getKey() {
       return key;
+    }
+
+    /**
+     * Return just the value (i.e. v in k=v) as opposed to the XML
+     * value which contains the entire block (e.g. &lt;originalmetadata&gt;...)
+     */
+    public String getValueForKey() {
+      return value;
     }
 
     protected Element makeOriginalMetadata(Document document) {

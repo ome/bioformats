@@ -81,6 +81,7 @@ public class OMEXMLServiceTest {
     OME root = (OME) metadata.getRoot();
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     assertEquals(annotations.sizeOfXMLAnnotationList(), 1);
-    assertTrue("testValue".equals(annotations.getXMLAnnotation(0).getValue()));
+    String txt = "<OriginalMetadata><Key>testKey</Key><Value>testValue</Value></OriginalMetadata>";
+    assertEquals(txt, annotations.getXMLAnnotation(0).getValue());
   }
 }
