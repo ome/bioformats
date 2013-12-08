@@ -53,12 +53,14 @@ set(OME_BIOFORMATS_HEADERS
     UnsupportedCompressionException.h)
 
 set(OME_BIOFORMATS_META_STATIC_SOURCES
-  meta/BaseMetadata.cpp
-  meta/Metadata.cpp)
+    meta/BaseMetadata.cpp
+    meta/Metadata.cpp
+    meta/MetadataRoot.cpp)
 
 set(OME_BIOFORMATS_META_STATIC_HEADERS
-  meta/BaseMetadata.h
-  meta/Metadata.h)
+    meta/BaseMetadata.h
+    meta/Metadata.h
+    meta/MetadataRoot.h)
 
 set(OME_BIOFORMATS_META_GENERATED_SOURCES)
 set(OME_BIOFORMATS_META_GENERATED_HEADERS)
