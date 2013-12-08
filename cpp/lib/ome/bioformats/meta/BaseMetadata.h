@@ -38,6 +38,8 @@
 #ifndef OME_BIOFORMATS_META_BASEMETADATA_H
 #define OME_BIOFORMATS_META_BASEMETADATA_H
 
+#include <vector>
+
 #include <ome/compat/cstdint.h>
 
 namespace ome
@@ -59,6 +61,7 @@ namespace ome
       public:
         /// Index into an array
         typedef uint32_t index_type;
+        typedef std::vector<uint8_t> byte_array;
 
       protected:
         /// Constructor.
