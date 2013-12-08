@@ -187,6 +187,8 @@
 	      <arguments>
 		<argument>${xsdfu.script}</argument>
 		<argument>metadata</argument>
+		<argument>-p</argument>
+		<argument>loci.formats.meta</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.metadatapath}/</argument>
 		<argument>${project.rootdir}/${xsdfu.ome}</argument>
@@ -209,6 +211,8 @@
 	      <arguments>
 		<argument>${xsdfu.script}</argument>
 		<argument>omexml_metadata</argument>
+		<argument>-p</argument>
+		<argument>loci.formats.ome</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.omepath}/</argument>
 		<argument>${project.rootdir}/${xsdfu.ome}</argument>

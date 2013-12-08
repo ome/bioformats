@@ -106,7 +106,7 @@ Examples:
   %s -n 'xs:' -p ome.xml -o ome/xml schemas/ome.xsd
 
 Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
-    (error, cmd, config.DEFAULT_PACKAGE, config.DEFAULT_NAMESPACE, cmd))
+    (error, cmd, config.DEFAULT_JAVA_OMEXML_PACKAGE, config.DEFAULT_NAMESPACE, cmd))
     sys.exit(2)
 
 def metadataUsage(error):
@@ -462,11 +462,14 @@ def omeXmlMetadataMain(opts):
     MetadataStore and MetadataRetrieve implementation.
     """
 
-    relpath = None
     if isinstance(opts.lang, language.Java):
-        relpath = os.path.join("loci", "formats", "ome")
+        if opts.package is None:
+            opts.package = config.DEFAULT_JAVA_OMEXMLMETADATA_PACKAGE
     elif isinstance(opts.lang, language.CXX):
-        relpath = os.path.join("ome", "bioformats", "ome")
+        if opts.package is None:
+            opts.package = config.DEFAULT_CXX_OMEXMLMETADATA_PACKAGE
+    relpath = os.path.join(*opts.package.split(opts.lang.package_separator))
+
 
     processMetadataTemplate(config.OMEXML_METADATA_TEMPLATE,
                 os.path.join(relpath, "OMEXMLMetadataImpl"),
@@ -496,11 +499,13 @@ def metadataMain(opts):
     MetadataStore implementation.
     """
 
-    relpath = None
     if isinstance(opts.lang, language.Java):
-        relpath = os.path.join("loci", "formats", "meta")
+        if opts.package is None:
+            opts.package = config.DEFAULT_JAVA_METADATA_PACKAGE
     elif isinstance(opts.lang, language.CXX):
-        relpath = os.path.join("ome", "bioformats", "meta")
+        if opts.package is None:
+            opts.package = config.DEFAULT_CXX_METADATA_PACKAGE
+    relpath = os.path.join(*opts.package.split(opts.lang.package_separator))
 
     processMetadataTemplate(config.METADATA_STORE_TEMPLATE,
                 os.path.join(relpath, "MetadataStore"),
@@ -640,7 +645,7 @@ class options:
             mainUsage(msg)
 
         self.outdir = None
-        self.package = config.DEFAULT_PACKAGE
+        self.package = None
         self.namespace = config.DEFAULT_NAMESPACE
         self.lang = "Java"
         self.filetype = language.TYPE_SOURCE
@@ -680,7 +685,6 @@ class options:
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
-
 if __name__ == '__main__':
     opts = options(sys.argv)
 
@@ -692,6 +696,12 @@ if __name__ == '__main__':
 
     if (a != "doc_gen" and a != "tab_gen") and len(opts.args) < 1:
         mainUsage("Expecting at least one XSD file path!")
+
+    if opts.package is None and a != "metadata" and a != "omexml_metadata":
+        if isinstance(opts.lang, language.Java):
+            opts.package = config.DEFAULT_JAVA_OMEXML_PACKAGE
+        elif isinstance(opts.lang, language.CXX):
+            opts.package = config.DEFAULT_CXX_OMEXML_PACKAGE
 
     if a == "java_classes":
         main(opts)

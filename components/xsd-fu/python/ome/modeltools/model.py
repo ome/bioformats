@@ -28,6 +28,7 @@ from ome.modeltools.object import OMEModelObject
 from ome.modeltools.property import OMEModelProperty
 
 from ome.modeltools import config
+from ome.modeltools import language
 
 
 class ReferenceDelegate(object):
@@ -290,7 +291,7 @@ class OMEModel(object):
         deps = set()
 
         for o in self.objects.values():
-            if o.langType != "std::string" and o.langType != "Object":
+            if o.langType != self.opts.lang.base_class and o.langType != "std::string":
                 if isinstance(self.opts.lang, language.Java):
                     inc = "ome.xml.model.%s" % o.langType
                 elif isinstance(self.opts.lang, language.CXX):

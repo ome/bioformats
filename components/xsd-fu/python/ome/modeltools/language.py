@@ -16,8 +16,11 @@ class Language(object):
         self.modelNamespace = namespace
         self._templatepath = templatepath
 
+        # Separator for package/namespace
+        self.package_separator = None
+
         # The default base class for OME XML model objects.
-        default_base_class = None
+        self.default_base_class = None
 
         # A global mapping from XSD Schema types and language types
         # that is used to inform and override type mappings for OME
@@ -125,6 +128,8 @@ class Java(Language):
     def __init__(self, namespace, templatepath):
         super(Java, self).__init__(namespace, templatepath)
 
+        self.package_separator = '.'
+
         self.base_class = "Object"
 
         self.primitive_type_map[namespace + 'boolean'] = 'Boolean'
@@ -153,6 +158,8 @@ class Java(Language):
 class CXX(Language):
     def __init__(self, namespace, templatepath):
         super(CXX, self).__init__(namespace, templatepath)
+
+        self.package_separator = '::'
 
         self.fundamental_types = set(["bool",
                                       "char", "signed char", "unsigned char",

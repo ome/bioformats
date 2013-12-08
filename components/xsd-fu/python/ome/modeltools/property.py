@@ -159,6 +159,8 @@ class OMEModelProperty(OMEModelEntity):
                 name = "enums::%s" % name
             if self.model.opts.lang.hasPrimitiveType(name) and not self.model.opts.lang.hasFundamentalType(name) and name != "std::string":
                 name = "primitives::%s" % name
+            if name != self.langType and self.model.opts.package != "ome::xml::model":
+                name = "ome::xml::model::" + name
         return name
     langTypeNS = property(_get_langTypeNS, doc="""The property's type with namespace.""")
 
@@ -169,7 +171,9 @@ class OMEModelProperty(OMEModelEntity):
                 mstype = "AffineTransform"
             elif isinstance(self.model.opts.lang, language.CXX):
                 # TODO: Handle different arg/mstype = types
-                mstype = "std::shared_ptr<AffineTransform>"
+                # TODO: Allow the model namespace to be configured
+                # independently of the metadata namespace.
+                mstype = "std::shared_ptr<ome::xml::model::AffineTransform>"
 
         if mstype is None and not self.isPrimitive and not self.isEnumeration:
             if isinstance(self.model.opts.lang, language.Java):
@@ -413,7 +417,9 @@ class OMEModelProperty(OMEModelEntity):
 
     def _get_header(self):
         header = None
-        if isinstance(self.model.opts.lang, language.Java):
+        if self.langType is None:
+            pass
+        elif isinstance(self.model.opts.lang, language.Java):
             if not self.model.opts.lang.hasPrimitiveType(self.langType):
                 if self.isEnumeration:
                     header = "ome.xml.model.%s" % self.langType
@@ -451,7 +457,9 @@ class OMEModelProperty(OMEModelEntity):
 
     def _get_source_deps(self):
         deps = set()
-        if isinstance(self.model.opts.lang, language.Java):
+        if self.langType is None:
+            pass
+        elif isinstance(self.model.opts.lang, language.Java):
             if not self.model.opts.lang.hasPrimitiveType(self.langType):
                 if self.isEnumeration:
                     deps.add("ome.xml.model.%s" % self.langType)

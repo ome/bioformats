@@ -220,7 +220,7 @@ class OMEModelObject(OMEModelEntity):
                 deps.add("ome.xml.model.%s" % self.parentName);
         elif isinstance(self.model.opts.lang, language.CXX):
             myself = "ome/xml/model/%s.h" % self.langType
-            if self.parentName is not None:
+            if self.parentName is not None and self.parentName != self.model.opts.lang.base_class:
                 deps.add("ome/xml/model/%s.h" % self.parentName);
 
         for prop in self.properties.values():
