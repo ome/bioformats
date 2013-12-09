@@ -124,6 +124,9 @@ class Language(object):
         except KeyError:
             return None
 
+    def index_string(self, name, max_occurs, level):
+        raise ModelProcessingError("Must be implemented by specific language")
+
 class Java(Language):
     def __init__(self, namespace, templatepath):
         super(Java, self).__init__(namespace, templatepath)
@@ -154,6 +157,12 @@ class Java(Language):
     def getDefaultModelBaseClass(self):
         return "AbstractOMEModelObject"
 
+    def index_string(self, name, max_occurs, level):
+        """Makes a Java method signature string from an index name."""
+        if name[:2].isupper():
+            return "int %sIndex" % name
+        else:
+            return "int %s%sIndex" % (name[:1].lower(), name[1:])
 
 class CXX(Language):
     def __init__(self, namespace, templatepath):
@@ -205,6 +214,12 @@ class CXX(Language):
     def getDefaultModelBaseClass(self):
         return "OMEModelObject"
 
+    def index_string(self, name, max_occurs, level):
+        """Makes a C++ method signature string from an index name."""
+        if name[:2].isupper():
+            return "index_type %sIndex" % name
+        else:
+            return "index_type %s%sIndex" % (name[:1].lower(), name[1:])
 
 def create(language, namespace, templatepath):
     """

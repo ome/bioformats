@@ -341,13 +341,6 @@ def enumHandlersMain(opts):
             f.write(classContent.decode('utf-8'))
             f.close()
 
-def index_string(name, max_occurs, level):
-    """Makes a Java method signature string from an index name."""
-    if name[:2].isupper():
-        return "int %sIndex" % name
-    else:
-        return "int %s%sIndex" % (name[:1].lower(), name[1:])
-
 def max_occurs_under_parent(model, parent, name):
     """
     Returns the maximum occurrances of a given object under its current
@@ -406,7 +399,7 @@ def processMetadataTemplate(template, outputFilename, opts):
         parents[name] = model.resolve_parents(name)
         is_multi_path[name] = resolve_hierarchy(indexes[name], model,
                             {name: parents[name]},
-                            index_string)
+                            opts.lang.index_string)
 
     fu = TemplateInfo(None, None)
     fu.max_occurs_under_parent = max_occurs_under_parent
