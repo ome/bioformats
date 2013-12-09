@@ -57,6 +57,8 @@ import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.meta.ModuloAnnotation;
+import loci.formats.meta.OriginalMetadataAnnotation;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
 import loci.formats.ome.OMEXMLMetadataRoot;
@@ -103,12 +105,6 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   /** Logger for this class. */
   private static final Logger LOGGER =
     LoggerFactory.getLogger(OMEXMLService.class);
-
-  private static final String ORIGINAL_METADATA_NS =
-    "openmicroscopy.org/OriginalMetadata";
-
-  private static final String MODULO_NS =
-    "openmicroscopy.org/omero/dimension/modulo";
 
   // -- Stylesheet names --
 
@@ -1101,109 +1097,6 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     }
 
     return null;
-  }
-
-  // -- Helper classes --
-
-  class ModuloAnnotation extends XMLAnnotation {
-    private Modulo modulo;
-
-    public void setModulo(OMEXMLMetadata meta, Modulo m) {
-      modulo = m;
-      setNamespace(MODULO_NS);
-      Document doc = XMLTools.createDocument();
-      Element r = makeModuloElement(doc);
-      setValue(XMLTools.dumpXML(null, doc, r, false));
-    }
-
-    protected Element makeModuloElement(Document document) {
-      Element mtop = document.createElement("Modulo");
-      mtop.setAttribute("namespace", "http://www.openmicroscopy.org/Schemas/Additions/2011-09");
-      // TODO: the above should likely NOT be hard-coded
-      Element m = document.createElement("ModuloAlong" + modulo.parentDimension);
-      mtop.appendChild(m);
-
-      String type = modulo.type;
-      String typeDescription = modulo.typeDescription;
-      if (type != null) {
-        type = type.toLowerCase();
-      }
-      if (type == null || (!type.equals("angle") && !type.equals("phase") &&
-        !type.equals("tile") && !type.equals("lifetime") &&
-        !type.equals("lambda")))
-      {
-        if (typeDescription == null) {
-          typeDescription = type;
-        }
-        type = "other";
-      }
-
-      m.setAttribute("Type", type);
-      m.setAttribute("TypeDescription", typeDescription);
-      if (modulo.unit != null) {
-        m.setAttribute("Unit", modulo.unit);
-      }
-      if (modulo.end > modulo.start) {
-        m.setAttribute("Start", String.valueOf(modulo.start));
-        m.setAttribute("Step", String.valueOf(modulo.step));
-        m.setAttribute("End", String.valueOf(modulo.end));
-      }
-      if (modulo.labels != null) {
-        for (String label : modulo.labels) {
-          Element labelNode = document.createElement("Label");
-          labelNode.setTextContent(label);
-          m.appendChild(labelNode);
-        }
-      }
-      return mtop;
-    }
-  }
-
-  class OriginalMetadataAnnotation extends XMLAnnotation {
-    private String key, value;
-
-    // -- OriginalMetadataAnnotation methods --
-
-    public void setKeyValue(String key, String value) {
-      setNamespace(ORIGINAL_METADATA_NS);
-      this.key = key;
-      this.value = value; // Not XML value
-      Document doc = XMLTools.createDocument();
-      Element r = makeOriginalMetadata(doc);
-      super.setValue(XMLTools.dumpXML(null,  doc, r, false));
-    }
-
-    // -- XMLAnnotation methods --
-
-    public String getKey() {
-      return key;
-    }
-
-    /**
-     * Return just the value (i.e. v in k=v) as opposed to the XML
-     * value which contains the entire block (e.g. &lt;originalmetadata&gt;...)
-     */
-    public String getValueForKey() {
-      return value;
-    }
-
-    protected Element makeOriginalMetadata(Document document) {
-
-      Element keyElement =
-        document.createElement("Key");
-      Element valueElement =
-        document.createElement("Value");
-      keyElement.setTextContent(key);
-      valueElement.setTextContent(value);
-
-      Element originalMetadata =
-        document.createElement("OriginalMetadata");
-      originalMetadata.appendChild(keyElement);
-      originalMetadata.appendChild(valueElement);
-
-      return originalMetadata;
-    }
-
   }
 
 }

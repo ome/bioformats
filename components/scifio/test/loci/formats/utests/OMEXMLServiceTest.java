@@ -44,11 +44,13 @@ import java.util.Hashtable;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.meta.OriginalMetadataAnnotation;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.OME;
 import ome.xml.model.StructuredAnnotations;
+import ome.xml.model.XMLAnnotation;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -81,7 +83,10 @@ public class OMEXMLServiceTest {
     OME root = (OME) metadata.getRoot();
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     assertEquals(annotations.sizeOfXMLAnnotationList(), 1);
+    XMLAnnotation xmlAnn = annotations.getXMLAnnotation(0);
     String txt = "<OriginalMetadata><Key>testKey</Key><Value>testValue</Value></OriginalMetadata>";
-    assertEquals(txt, annotations.getXMLAnnotation(0).getValue());
+    assertEquals(txt, xmlAnn.getValue());
+    OriginalMetadataAnnotation omAnn = (OriginalMetadataAnnotation) xmlAnn;
+    assertEquals("testValue", omAnn.getValueForKey());
   }
 }
