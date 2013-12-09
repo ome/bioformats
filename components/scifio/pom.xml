@@ -372,4 +372,11 @@
     </repository>
   </repositories>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>imagej.releases</id>
+      <url>http://maven.imagej.net/content/repositories/releases</url>
+    </pluginRepository>
+  </pluginRepositories>
+
 </project>
