@@ -30,11 +30,15 @@ import os
 import re
 import codecs
 
-# Needed to import fu.py
+# Needed to import modeltools
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), 'python'))
 
-from fu import *
 from util import odict
+
+from ome.modeltools.template import TemplateInfo
+from ome.modeltools import config
+from ome.modeltools import language
+from ome.modeltools import generateds
 
 try:
     from genshi.template import NewTextTemplate
@@ -50,6 +54,12 @@ from configobj import ConfigObj
 from getopt import gnu_getopt, GetoptError
 from glob import glob
 from xml import sax
+
+def guard(filename):
+    filename = "_".join(filename.split(os.path.sep))
+    filename = filename.upper()
+    filename = re.sub("[^A-Z0-9]", "_", filename)
+    return filename
 
 def baseUsage(error):
     """
@@ -96,7 +106,7 @@ Examples:
   %s -n 'xs:' -p ome.xml -o ome/xml schemas/ome.xsd
 
 Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
-    (error, cmd, DEFAULT_PACKAGE, DEFAULT_NAMESPACE, cmd))
+    (error, cmd, config.DEFAULT_JAVA_OMEXML_PACKAGE, config.DEFAULT_NAMESPACE, cmd))
     sys.exit(2)
 
 def metadataUsage(error):
@@ -114,7 +124,7 @@ Examples:
   %s -n 'xs:' ome.xsd ROI.xsd SPW.xsd
 
 Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
-    (error, cmd, DEFAULT_NAMESPACE, cmd))
+    (error, cmd, config.DEFAULT_NAMESPACE, cmd))
     sys.exit(2)
 
 def main(opts):
@@ -123,10 +133,10 @@ def main(opts):
     classes in the output directory.
     """
 
-    model = parseXmlSchema(opts)
+    model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.package)
-    template = NewTextTemplate(codecs.open(template_path(CLASS_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
-    base, filename = os.path.split(template_path(CLASS_TEMPLATE, opts))
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
+    base, filename = os.path.split(opts.lang.templatepath(config.CLASS_TEMPLATE))
     name, extension = os.path.splitext(filename)
     for obj in model.objects.values():
         fu.SOURCE_TYPE = opts.filetype;
@@ -167,10 +177,10 @@ def main(opts):
             content = content.render(encoding='utf-8')
             customAsXMLElementPropertyContent[propertyName] = content
         # END Custom templates for asXMLElment()
-        parents = resolve_parents(model, obj.name)
+        parents = model.resolve_parents(obj.name)
 
         try:
-            fullname = generated_filename(obj.name, opts.filetype, opts)
+            fullname = opts.lang.generatedFilename(obj.name, opts.filetype)
             fullname = os.path.join("ome", "xml", "model", fullname)
         except ModelProcessingError:
             continue
@@ -222,16 +232,16 @@ def enumTypesMain(opts):
     classes for enumeration types in an output directory.
     """
 
-    model = parseXmlSchema(opts)
+    model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.package)
-    template = NewTextTemplate(codecs.open(template_path(ENUM_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
     for obj in model.objects.values():
         for prop in obj.properties.values():
             if not prop.isEnumeration:
                 continue
 
             try:
-                fullname = generated_filename(prop.langType, opts.filetype, opts)
+                fullname = opts.lang.generatedFilename(prop.langType, opts.filetype)
                 fullname = os.path.join("ome", "xml", "model", "enums", fullname)
             except ModelProcessingError:
                 continue
@@ -261,16 +271,16 @@ def enumTypesIncludeAll(opts):
     Generate header to include all enum headers.
     """
 
-    model = parseXmlSchema(opts)
+    model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.package)
-    template = NewTextTemplate(codecs.open(template_path(ENUM_INCLUDEALL_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_INCLUDEALL_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
     headers = model.getEnumHeaders()
 
-    fullname = generated_filename("enums", TYPE_HEADER, opts)
+    fullname = opts.lang.generatedFilename("enums", language.TYPE_HEADER)
     fullname = os.path.join("ome", "xml", "model", fullname)
 
     fu.GUARD = guard(fullname)
-    fu.SOURCE_TYPE = TYPE_HEADER;
+    fu.SOURCE_TYPE = language.TYPE_HEADER;
     fu.HEADERS = sorted(headers);
 
     fullname = os.path.join(opts.outdir, fullname)
@@ -295,18 +305,18 @@ def enumHandlersMain(opts):
     classes for enumeration handlers in an output directory.
     """
 
-    model = parseXmlSchema(opts)
+    model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.package)
     base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
-    config = ConfigObj(os.path.join(base, "enum_handler.cfg"))
-    template = NewTextTemplate(codecs.open(template_path(ENUM_HANDLER_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
+    configobj = ConfigObj(os.path.join(base, "enum_handler.cfg"))
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_HANDLER_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
     for obj in model.objects.values():
         for prop in obj.properties.values():
             if not prop.isEnumeration:
                 continue
 
             try:
-                fullname = generated_filename(prop.langType + "EnumHandler", opts.filetype, opts)
+                fullname = opts.lang.generatedFilename(prop.langType + "EnumHandler", opts.filetype)
                 fullname = os.path.join("ome", "xml", "model", "enums", "handlers", fullname)
             except ModelProcessingError:
                 continue
@@ -327,7 +337,7 @@ def enumHandlersMain(opts):
 
             f = codecs.open(fullname, "w", encoding='utf-8')
             classContent = template.generate(fu=fu, klass=prop,
-                             enum_value_name=enum_value_name, config=config).render(encoding='utf-8')
+                             enum_value_name=enum_value_name, config=configobj).render(encoding='utf-8')
             f.write(classContent.decode('utf-8'))
             f.close()
 
@@ -384,16 +394,16 @@ def processMetadataTemplate(template, outputFilename, opts):
     generation.
     """
     args = opts.args
-    template = template_path(template, opts)
+    template = opts.lang.templatepath(template)
 
-    model = parseXmlSchema(opts)
+    model = generateds.parse(opts)
     indexes = dict()
     parents = dict()
     is_multi_path = dict()
     for obj in model.objects.values():
         name = obj.name
         indexes[name] = odict()
-        parents[name] = resolve_parents(model, name)
+        parents[name] = model.resolve_parents(name)
         is_multi_path[name] = resolve_hierarchy(indexes[name], model,
                             {name: parents[name]},
                             index_string)
@@ -401,11 +411,11 @@ def processMetadataTemplate(template, outputFilename, opts):
     fu = TemplateInfo(None, None)
     fu.max_occurs_under_parent = max_occurs_under_parent
     fu.resolve_hierarchy = resolve_hierarchy
-    fu.METADATA_OBJECT_IGNORE = METADATA_OBJECT_IGNORE
-    fu.METADATA_COUNT_IGNORE = METADATA_COUNT_IGNORE
-    fu.BACK_REFERENCE_CLASS_NAME_OVERRIDE = BACK_REFERENCE_CLASS_NAME_OVERRIDE
-    fu.ABSTRACT_PROPRIETARY_OVERRIDE = ABSTRACT_PROPRIETARY_OVERRIDE
-    fu.DEFAULT_BASE_CLASS = DEFAULT_BASE_CLASS
+    fu.METADATA_OBJECT_IGNORE = config.METADATA_OBJECT_IGNORE
+    fu.METADATA_COUNT_IGNORE = config.METADATA_COUNT_IGNORE
+    fu.BACK_REFERENCE_CLASS_NAME_OVERRIDE = config.BACK_REFERENCE_CLASS_NAME_OVERRIDE
+    fu.ABSTRACT_PROPRIETARY_OVERRIDE = config.ABSTRACT_PROPRIETARY_OVERRIDE
+    fu.DEFAULT_BASE_CLASS = model.opts.lang.getDefaultModelBaseClass()
     base, filename = os.path.split(template)
     name, extension = os.path.splitext(filename)
     template = NewTextTemplate(codecs.open(template, encoding='utf-8').read(), encoding='utf-8')
@@ -423,7 +433,7 @@ def processMetadataTemplate(template, outputFilename, opts):
             customContent[objectName] = dict()
         customContent[objectName][propertyName] = customTemplate.render(encoding='utf-8')
 
-    fullname = generated_filename(outputFilename, opts.filetype, opts)
+    fullname = opts.lang.generatedFilename(outputFilename, opts.filetype)
 
     fu.GUARD = guard(fullname)
     fu.SOURCE_TYPE = opts.filetype;
@@ -452,13 +462,16 @@ def omeXmlMetadataMain(opts):
     MetadataStore and MetadataRetrieve implementation.
     """
 
-    relpath = None
-    if opts.lang == LANG_JAVA:
-        relpath = os.path.join("loci", "formats", "ome")
-    elif opts.lang == LANG_CXX:
-        relpath = os.path.join("ome", "bioformats", "ome")
+    if isinstance(opts.lang, language.Java):
+        if opts.package is None:
+            opts.package = config.DEFAULT_JAVA_OMEXMLMETADATA_PACKAGE
+    elif isinstance(opts.lang, language.CXX):
+        if opts.package is None:
+            opts.package = config.DEFAULT_CXX_OMEXMLMETADATA_PACKAGE
+    relpath = os.path.join(*opts.package.split(opts.lang.package_separator))
 
-    processMetadataTemplate(OMEXML_METADATA_TEMPLATE,
+
+    processMetadataTemplate(config.OMEXML_METADATA_TEMPLATE,
                 os.path.join(relpath, "OMEXMLMetadataImpl"),
                 opts)
 
@@ -468,7 +481,7 @@ def omeroMetadataMain(opts):
     MetadataRetrieve implementation.
     """
 
-    processMetadataTemplate(OMERO_METADATA_TEMPLATE, "OmeroMetadata",
+    processMetadataTemplate(config.OMERO_METADATA_TEMPLATE, "OmeroMetadata",
                 opts)
 
 def omeroModelMain(opts):
@@ -477,7 +490,7 @@ def omeroModelMain(opts):
     MetadataRetrieve implementation.
     """
 
-    processMetadataTemplate(OMERO_MODEL_TEMPLATE, "OmeroModel.xml",
+    processMetadataTemplate(config.OMERO_MODEL_TEMPLATE, "OmeroModel.xml",
                 opts)
 
 def metadataMain(opts):
@@ -486,29 +499,31 @@ def metadataMain(opts):
     MetadataStore implementation.
     """
 
-    relpath = None
-    if opts.lang == LANG_JAVA:
-        relpath = os.path.join("loci", "formats", "meta")
-    elif opts.lang == LANG_CXX:
-        relpath = os.path.join("ome", "bioformats", "meta")
+    if isinstance(opts.lang, language.Java):
+        if opts.package is None:
+            opts.package = config.DEFAULT_JAVA_METADATA_PACKAGE
+    elif isinstance(opts.lang, language.CXX):
+        if opts.package is None:
+            opts.package = config.DEFAULT_CXX_METADATA_PACKAGE
+    relpath = os.path.join(*opts.package.split(opts.lang.package_separator))
 
-    processMetadataTemplate(METADATA_STORE_TEMPLATE,
+    processMetadataTemplate(config.METADATA_STORE_TEMPLATE,
                 os.path.join(relpath, "MetadataStore"),
                 opts)
 
-    processMetadataTemplate(METADATA_RETRIEVE_TEMPLATE,
+    processMetadataTemplate(config.METADATA_RETRIEVE_TEMPLATE,
                 os.path.join(relpath, "MetadataRetrieve"),
                 opts)
 
-    processMetadataTemplate(METADATA_AGGREGATE_TEMPLATE,
+    processMetadataTemplate(config.METADATA_AGGREGATE_TEMPLATE,
                 os.path.join(relpath, "AggregateMetadata"),
                 opts)
 
-    processMetadataTemplate(FILTER_METADATA_TEMPLATE,
+    processMetadataTemplate(config.FILTER_METADATA_TEMPLATE,
                 os.path.join(relpath, "FilterMetadata"),
                 opts)
 
-    processMetadataTemplate(DUMMY_METADATA_TEMPLATE,
+    processMetadataTemplate(config.DUMMY_METADATA_TEMPLATE,
                 os.path.join(relpath, "DummyMetadata"),
                 opts)
 
@@ -518,13 +533,13 @@ def debugMain(opts):
     generated data to STDOUT.
     """
 
-    model = parseXmlSchema(opts)
+    model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.package)
-    template = NewTextTemplate(codecs.open(template_path(CLASS_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
-    base, filename = os.path.split(template_path(CLASS_TEMPLATE, opts))
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
+    base, filename = os.path.split(opts.lang.templatepath(config.CLASS_TEMPLATE))
     name, extension = os.path.splitext(filename)
     for obj in model.objects.values():
-        parents = resolve_parents(model, obj.name)
+        parents = model.resolve_parents(obj.name)
         if obj.name in ["StructuredAnnotations"]:
             CUSTOM_CLASS_TEMPLATE = os.path.join(base, '%s_%s%s' % (name, obj.name, extension))
             customContent = ''
@@ -566,9 +581,9 @@ def docGenMain(opts):
     ]:
         prefix = theSchemas[0] + ":"
         opts.args = [theSchemas[1]]
-        model = parseXmlSchema(opts)
+        model = generateds.parse(opts)
         fu = TemplateInfo(opts.outdir, opts.package)
-        template = NewTextTemplate(codecs.open(template_path(CLASS_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
+        template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
         print(" == `%s` ==" % (prefix))
         for obj in model.objects.values():
             print(" === %s%s ===" % (prefix, obj.name))
@@ -600,9 +615,9 @@ def tabGenMain(opts):
         ]:
         prefix = theSchemas[0] + ":"
         opts.args = [theSchemas[1]]
-        model = parseXmlSchema(opts)
+        model = generateds.parse(opts)
         fu = TemplateInfo(opts.outdir, opts.package)
-        template = NewTextTemplate(codecs.open(template_path(CLASS_TEMPLATE, opts), encoding='utf-8').read(), encoding='utf-8')
+        template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
         for theToplevelNode in theSchemas[2]:
             parentlist(model, theToplevelNode[0], theToplevelNode[1])
 
@@ -630,30 +645,24 @@ class options:
             mainUsage(msg)
 
         self.outdir = None
-        self.package = DEFAULT_PACKAGE
-        self.namespace = DEFAULT_NAMESPACE
-        self.lang = LANG_JAVA
-        self.filetype = TYPE_SOURCE
+        self.package = None
+        self.namespace = config.DEFAULT_NAMESPACE
+        self.lang = "Java"
+        self.filetype = language.TYPE_SOURCE
         self.templatepath = os.path.dirname(os.path.realpath(__file__))
         self.verbose = True
         self.dryrun = False
         for option, argument in self.options:
             if option == "-f":
-                if argument == TYPE_SOURCE:
-                    self.filetype = TYPE_SOURCE
-                elif argument == TYPE_HEADER:
-                    self.filetype = TYPE_HEADER
+                if argument == language.TYPE_SOURCE:
+                    self.filetype = language.TYPE_SOURCE
+                elif argument == language.TYPE_HEADER:
+                    self.filetype = language.TYPE_HEADER
                 else:
                     mainUsage("Invalid filetype; source and header are the only valid options")
                     sys.exit(1)
             if option == "-l":
-                if argument == LANG_JAVA:
-                    self.lang = LANG_JAVA
-                elif argument == LANG_CXX:
-                    self.lang = LANG_CXX
-                else:
-                    mainUsage("Invalid language; Java and C++ are the only valid options")
-                    sys.exit(1)
+                self.lang = argument
             if option == "-o":
                 self.outdir = argument
             if option == "-p":
@@ -668,12 +677,13 @@ class options:
                 self.verbose = True
             if options == "-d":
                 self.dryrun = True
+        # Create language object
+        self.lang = language.create(self.lang, self.namespace, self.templatepath)
         if self.outdir is None:
             mainUsage("Output directory must be specified!")
             sys.exit(1)
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
-
 
 if __name__ == '__main__':
     opts = options(sys.argv)
@@ -686,6 +696,12 @@ if __name__ == '__main__':
 
     if (a != "doc_gen" and a != "tab_gen") and len(opts.args) < 1:
         mainUsage("Expecting at least one XSD file path!")
+
+    if opts.package is None and a != "metadata" and a != "omexml_metadata":
+        if isinstance(opts.lang, language.Java):
+            opts.package = config.DEFAULT_JAVA_OMEXML_PACKAGE
+        elif isinstance(opts.lang, language.CXX):
+            opts.package = config.DEFAULT_CXX_OMEXML_PACKAGE
 
     if a == "java_classes":
         main(opts)
