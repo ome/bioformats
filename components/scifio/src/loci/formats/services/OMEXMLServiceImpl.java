@@ -863,7 +863,15 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     meta.resolveReferences();
 
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) meta.getRoot();
-    Image image = root.getImage(imageIdx);
+    Image image;
+    try {
+      image = root.getImage(imageIdx);
+    } catch (IndexOutOfBoundsException ieeb) {
+      // If there is no image of the given index,
+      // then we are considering the metadata corrupt,
+      // and exiting without doing anything.
+      return;
+    }
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     if (annotations == null) annotations = new StructuredAnnotations();
     int annotationIndex = annotations.sizeOfXMLAnnotationList();
