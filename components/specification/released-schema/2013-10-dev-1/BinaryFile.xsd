@@ -26,18 +26,15 @@
 -->
 <xsd:schema
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
-	targetNamespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
-	xmlns:Bin = "http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
-	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2013-06"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
+	xmlns:Bin = "http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
+	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version = "1"
 	elementFormDefault = "qualified">
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
-	<!-- Using the svn location for import
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ome.xsd"/>
-	 Using the local directory location for import -->
-		<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-06" schemaLocation="ome.xsd"/>
-	<!-- -->
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1/ome.xsd"/>
 	<xsd:annotation>
 		<xsd:documentation>
 			The elements in this file are not yet represented by classes in the EA diagrams - ajp

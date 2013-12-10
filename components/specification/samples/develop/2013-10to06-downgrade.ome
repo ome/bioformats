@@ -1,14 +1,14 @@
-<?xml version = "1.0" encoding = "UTF-8"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
+<?xml version="1.0" encoding="UTF-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06
-		http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd">
-
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-1"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-1"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1
+		../../released-schema/2013-10-dev-1/ome.xsd">
+	
 	<OME:Project ID="Project:0">
 		<OME:DatasetRef ID="Dataset:0"/>
 		<SA:AnnotationRef ID="Annotation:0"/>
@@ -39,7 +39,7 @@
 		<SPW:PlateRef ID="Plate:0"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
-
+	
 	<SPW:Screen ID="Screen:1" Name="ScreenName1" ProtocolDescription="Protocol Description Test1"
 		ProtocolIdentifier="ProtocolTest1ID" ReagentSetDescription="Reagents Set PQR"
 		ReagentSetIdentifier="ReagentsPQR-ID" Type="ScreenType1">
@@ -49,7 +49,7 @@
 		<SPW:PlateRef ID="Plate:0"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
-
+	
 	<SPW:Screen ID="Screen:2" Name="ScreenName2" ProtocolDescription="Protocol Description Test2"
 		ProtocolIdentifier="ProtocolTest2ID" ReagentSetDescription="Reagents Set IJK"
 		ReagentSetIdentifier="ReagentsIJK-ID" Type="ScreenType2">
@@ -57,7 +57,7 @@
 		<SPW:Reagent ID="Reagent:2"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
-
+	
 	<SPW:Screen ID="Screen:3" Name="ScreenName3" ProtocolDescription="Protocol Description Test3"
 		ProtocolIdentifier="ProtocolTest3ID" ReagentSetDescription="Reagents Set AJP"
 		ReagentSetIdentifier="ReagentsAJP-ID" Type="ScreenType3">
@@ -66,7 +66,7 @@
 		<SPW:PlateRef ID="Plate:0"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
-
+	
 	<OME:Experimenter ID="Experimenter:0"/>
 	<OME:Experimenter ID="Experimenter:1" FirstName="John" MiddleName="Andrew" LastName="Smith"
 		Email="john@example.org"> </OME:Experimenter>
@@ -75,41 +75,41 @@
 	<OME:Experimenter ID="Experimenter:4"/>
 	<OME:Experimenter ID="Experimenter:5"/>
 	<OME:Experimenter ID="Experimenter:6"/>
-
+	
 	<OME:ExperimenterGroup Name="MyGroup - Leader+Contact match" ID="ExperimenterGroup:Group:0">
-		<Description>A description for my group 0.
-			Complete with basic formatting, like new lines.</Description>
+		<Description>A description for my group 0. Complete with basic formatting, like new
+			lines.</Description>
 		<OME:ExperimenterRef ID="Experimenter:5"/>
 		<Leader ID="Experimenter:0"/>
 	</OME:ExperimenterGroup>
-
+	
 	<OME:ExperimenterGroup Name="MyOtherGroup" ID="ExperimenterGroup:Group:1">
-		<Description>A description for my group 1.
-			Complete with basic formatting, like new lines.</Description>
+		<Description>A description for my group 1. Complete with basic formatting, like new
+			lines.</Description>
 		<OME:ExperimenterRef ID="Experimenter:2"/>
 		<OME:ExperimenterRef ID="Experimenter:3"/>
 		<Leader ID="Experimenter:0"/>
 		<OME:Leader ID="Experimenter:1"/>
 	</OME:ExperimenterGroup>
-
+	
 	<OME:ExperimenterGroup Name="NoMatch" ID="ExperimenterGroup:Group:2">
-		<Description>A description for my group 2.
-			Complete with basic formatting, like new lines.</Description>
+		<Description>A description for my group 2. Complete with basic formatting, like new
+			lines.</Description>
 		<OME:ExperimenterRef ID="Experimenter:4"/>
 		<Leader ID="Experimenter:6"/>
 	</OME:ExperimenterGroup>
-
+	
 	<OME:ExperimenterGroup Name="LeaderMatch" ID="ExperimenterGroup:Group:3">
-		<Description>A description for my group 3.
-			Complete with basic formatting, like new lines.</Description>
+		<Description>A description for my group 3. Complete with basic formatting, like new
+			lines.</Description>
 		<Leader ID="Experimenter:0"/>
 	</OME:ExperimenterGroup>
 	<OME:ExperimenterGroup Name="ContactMatch" ID="ExperimenterGroup:Group:4">
-		<Description>A description for my group 4.
-			Complete with basic formatting, like new lines.</Description>
+		<Description>A description for my group 4. Complete with basic formatting, like new
+			lines.</Description>
 		<OME:Leader ID="Experimenter:0"/>
 	</OME:ExperimenterGroup>
-
+	
 	<Instrument ID="Instrument:0">
 		<Objective ID="Objective:0" LotNumber="123" Manufacturer="OME-Labs"
 			NominalMagnification="20" CalibratedMagnification="20.34"/>
@@ -194,7 +194,7 @@
 			<ROI:Shape ID="Shape:9" StrokeWidth="2" StrokeColor="172">
 				<ROI:Line X1="1.72" Y1="2.72" X2="3.72" Y2="4.72" MarkerEnd="Circle"/>
 			</ROI:Shape>
-
+			
 		</ROI:Union>
 	</ROI:ROI>
 	<ROI:ROI ID="ROI:3">
