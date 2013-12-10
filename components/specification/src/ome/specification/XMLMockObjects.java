@@ -49,7 +49,6 @@ import ome.xml.model.Experimenter;
 import ome.xml.model.Filament;
 import ome.xml.model.FileAnnotation;
 import ome.xml.model.Filter;
-import ome.xml.model.FilterSet;
 import ome.xml.model.Image;
 import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Instrument;
@@ -302,23 +301,6 @@ public class XMLMockObjects
   }
 
   /**
-   * Creates a filter set.
-   *
-   * @param index The index of the filter set in the file.
-   * @return See above.
-   */
-  public FilterSet createFilterSet(int index)
-  {
-    FilterSet set = new FilterSet();
-    set.setID("FilterSet:"+index);
-    set.setModel(COMPONENT_MODEL);
-    set.setManufacturer(COMPONENT_MANUFACTURER);
-    set.setSerialNumber(COMPONENT_SERIAL_NUMBER);
-    set.setLotNumber(COMPONENT_LOT_NUMBER);
-    return set;
-  }
-
-  /**
    * Creates a microscope.
    *
    * @return See above.
@@ -536,7 +518,7 @@ public class XMLMockObjects
     settings.setID("LightSource:"+ref);
     settings.setAttenuation(new PercentFraction(1.0f));
     settings.setWavelength(new PositiveInteger(200));
-    settings.setLightSource(instrument.copyLightSourceList().get(0));
+    settings.linkLightSource(instrument.copyLightSourceList().get(0));
     return settings;
   }
 
@@ -1035,9 +1017,9 @@ public class XMLMockObjects
       channel.setID("Channel:" + index + ":" + i);
       if (metadata) {
         if (j == n) j = 0;
-        channel.setLightSourceSettings(createLightSourceSettings(j));
-        channel.setLightPath(createLightPath());
-        channel.setDetectorSettings(ds);
+// TODO - update for new Light model        channel.setLightSourceSettings(createLightSourceSettings(j));
+// TODO - update for new Light model        channel.setLightPath(createLightPath());
+// TODO - update for new Light model        channel.setDetectorSettings(ds);
         //link the channel to the OTF
         //if (otf != null) otf.linkChannel(channel);
         j++;
@@ -1105,10 +1087,6 @@ public class XMLMockObjects
       }
       for (int i = 0; i < NUMBER_OF_DECTECTORS; i++) {
         instrument.addDetector(createDetector(i));
-      }
-      instrument.addFilterSet(createFilterSet(index));
-      for (int i = 0; i < NUMBER_OF_FILTERS; i++) {
-        instrument.addFilter(createFilter(i, CUT_IN, CUT_OUT));
       }
       for (int i = 0; i < NUMBER_OF_DICHROICS; i++) {
         instrument.addDichroic(createDichroic(i));
