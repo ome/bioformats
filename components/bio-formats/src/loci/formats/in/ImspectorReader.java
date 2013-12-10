@@ -418,6 +418,7 @@ public class ImspectorReader extends FormatReader {
       m.moduloT.step = timeBase / m.sizeT;
       m.moduloT.end = m.moduloT.step * (m.sizeT - 1);
       m.moduloT.unit = "ps";
+      m.moduloT.typeDescription = "TCSPC";
     }
     else {
       if (uniquePMTs.size() <= pixelsOffsets.size()) {
