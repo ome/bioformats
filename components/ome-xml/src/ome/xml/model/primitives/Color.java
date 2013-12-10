@@ -38,6 +38,9 @@
 
 package ome.xml.model.primitives;
 
+import java.util.Scanner;
+import java.util.InputMismatchException;
+
 /**
  * Primitive type that represents an RGBA color.
  *
@@ -45,14 +48,43 @@ package ome.xml.model.primitives;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/src/ome/xml/model/primitives/Color.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/src/ome/xml/model/primitives/Color.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class Color extends PrimitiveType<Integer> {
+public class Color {
 
-  public Color(Integer value) {
-    super(value);
+  private float red;
+  private float green;
+  private float blue;
+  private float alpha;
+
+  public Color() {
+    this(1.0f, 1.0f, 1.0f, 1.0f);
   }
 
-  public Color(int r, int g, int b, int a) {
-    this(r << 24 | g << 16 | b << 8 | a);
+  public Color(float red, float green, float blue, float alpha) {
+    this.red = red;
+    this.green = green;
+    this.blue = blue;
+    this.alpha = alpha;
+
+    if (this.red < 0.0f) this.red = 0.0f;
+    if (this.red > 1.0f) this.red = 1.0f;
+    if (this.green < 0.0f) this.green = 0.0f;
+    if (this.green > 1.0f) this.green = 1.0f;
+    if (this.blue < 0.0f) this.blue = 0.0f;
+    if (this.blue > 1.0f) this.blue = 1.0f;
+    if (this.alpha < 0.0f) this.alpha = 0.0f;
+    if (this.alpha > 1.0f) this.alpha = 1.0f;
+  }
+
+  public Color(float red, float green, float blue) {
+    this(red, green, blue, 1.0f);
+  }
+
+  public Color(int red, int green, int blue) {
+    this(red, green, blue, 255);
+  }
+
+  public Color(int red, int green, int blue, int alpha) {
+    this(red/255.0f, green/255.0f, blue/255.0f, alpha/255.0f);
   }
 
   /**
@@ -62,7 +94,19 @@ public class Color extends PrimitiveType<Integer> {
    * @return See above.
    */
   public static Color valueOf(String s) {
-    return new Color(Integer.valueOf(s));
+    Scanner scanner = new Scanner(s);
+    float[] f = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
+    try {
+      for (int i = 0; i < 4; i++) {
+        if (scanner.hasNext())
+          f[i] = scanner.nextFloat();
+        else
+          break;
+      }
+    }
+    catch (InputMismatchException e) {}
+
+    return new Color(f[0], f[1], f[2], f[3]);
   }
 
   /**
@@ -70,8 +114,8 @@ public class Color extends PrimitiveType<Integer> {
    *
    * @return See above.
    */
-  public int getRed() {
-    return (getValue() >> 24) & 0xff;
+  public float getRed() {
+    return red;
   }
 
   /**
@@ -79,8 +123,8 @@ public class Color extends PrimitiveType<Integer> {
    *
    * @return See above.
    */
-  public int getGreen() {
-    return (getValue() >> 16) & 0xff;
+  public float getGreen() {
+    return green;
   }
 
   /**
@@ -88,8 +132,8 @@ public class Color extends PrimitiveType<Integer> {
    *
    * @return See above.
    */
-  public int getBlue() {
-    return (getValue() >> 8) & 0xff;
+  public float getBlue() {
+    return blue;
   }
 
   /**
@@ -97,8 +141,81 @@ public class Color extends PrimitiveType<Integer> {
    *
    * @return See above.
    */
-  public int getAlpha() {
-    return getValue() & 0xff;
+  public float getAlpha() {
+    return alpha;
   }
+
+  /**
+   * Returns the red component of this color as an 8-bit color.
+   *
+   * @return See above.
+   */
+  public int getRed8Bit() {
+    return (int) Math.round(red * 255.0f);
+  }
+
+  /**
+   * Returns the red component of this color as a 16-bit color.
+   *
+   * @return See above.
+   */
+  public int getRed16Bit() {
+    return (int) Math.round(red * 65535.0f);
+  }
+
+  /**
+   * Returns the green component of this color as an 8-bit color.
+   *
+   * @return See above.
+   */
+  public int getGreen8Bit() {
+    return (int) Math.round(green * 255.0f);
+  }
+
+  /**
+   * Returns the green component of this color as a 16-bit color.
+   *
+   * @return See above.
+   */
+  public int getGreen16Bit() {
+    return (int) Math.round(green * 65535.0f);
+  }
+
+  /**
+   * Returns the blue component of this color as an 8-bit color.
+   *
+   * @return See above.
+   */
+  public int getBlue8Bit() {
+    return (int) Math.round(blue * 255.0f);
+  }
+
+  /**
+   * Returns the blue component of this color as a 16-bit color.
+   *
+   * @return See above.
+   */
+  public int getBlue16Bit() {
+    return (int) Math.round(blue * 65535.0f);
+  }
+
+  /**
+   * Returns the alpha component of this color as an 8-bit color.
+   *
+   * @return See above.
+   */
+  public int getAlpha8Bit() {
+    return (int) Math.round(alpha * 255.0f);
+  }
+
+  /**
+   * Returns the alpha component of this color as a 16-bit color.
+   *
+   * @return See above.
+   */
+  public int getAlpha16Bit() {
+    return (int) Math.round(alpha * 65535.0f);
+  }
+
 
 }

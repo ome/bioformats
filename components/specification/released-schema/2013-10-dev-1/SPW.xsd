@@ -24,22 +24,18 @@
 	# Written by:  Andrew Patterson <ajpatterson@lifesci.dundee.ac.uk>
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
-	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-1"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-1"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-1"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	version="1"
 	elementFormDefault="qualified">
-	<!-- Using the svn location for import
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
-
-	Using the local directory location for import -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-06" schemaLocation="ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-06" schemaLocation="SA.xsd"/>
-	<!-- -->
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1/SA.xsd"/>
 
 	<xsd:annotation>
 		<xsd:documentation>
@@ -531,11 +527,12 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Color" use="optional" type="OME:Color" default="-1">
+			<xsd:attribute name="Color" use="optional" type="OME:Color" default="1 1 1 1">
 				<xsd:annotation>
 					<xsd:documentation>
-						A marker color used to highlight the well - encoded as RGBA
-						The default value "-1" is #FFFFFFFF so solid white (it is a signed 32 bit value)
+						A marker color used to highlight the well - encoded as 4 values "R G B A"
+						The default value "1 1 1 1" is solid white.
+						Each color value is a float range 0 to 1.
 						NOTE: Prior to the 2012-06 schema the default value was incorrect and produced a transparent red not solid white.
 					</xsd:documentation>
 				</xsd:annotation>

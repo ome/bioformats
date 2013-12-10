@@ -15,9 +15,9 @@
 	# Written by: Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<CustomTag xmlns="http://www.openmicroscopy.org/Schemas/SampleThirdPartyPieces/2011-06"
+<CustomTag xmlns="http://www.openmicroscopy.org/Schemas/SampleThirdParty/2011-06"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/SampleThirdPartyPieces/2011-06 file:/Users/andrew/Work/ome/components/specification/InProgress/sample-third-party-pieces.xsd">
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/SampleThirdParty/2011-06 sample-third-party.xsd">
 	<!--
 		Open Microscopy Environment
 		OME Sample Third Party
@@ -27,22 +27,18 @@
 	<YourNodes>
 		<With your="attributes"/>
 	</YourNodes>
-	<LightSource xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06"
+	<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06"
 		xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"
-		ID="LightSource:1">
-		<Laser Type="Dye" FrequencyMultiplication="2" LaserMedium="CoumarinC30"
-			PockelCell="true" Pulse="Single" RepetitionRate="1.3" Tuneable="true"
-			Wavelength="640">
-			<Pump ID="LightSource:4"/>
-		</Laser>
-	</LightSource>
+	>
+		<Image ID="Image:1">
+			<AcquiredDate>2010-02-23T12:51:30</AcquiredDate>
+			<Pixels ID="Pixels:1" DimensionOrder="XYZCT" Type="uint8" SizeX="1" SizeY="1" SizeZ="1"
+				SizeT="1" SizeC="1">
+				<MetadataOnly/>
+			</Pixels>
+		</Image>
+	</OME>
 	<MoreOfYourNodes></MoreOfYourNodes>
-	<Objective xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06"
-		xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"
-		ID="Objective:1" CalibratedMagnification="0.3" Correction="UV" Immersion="Air"
-		Iris="true" LensNA="1.3" NominalMagnification="2" WorkingDistance="2.3"
-		Manufacturer="OME-Sample" Model="Mk II" SerialNumber="sn-234567"/>
-	<EvenMoreOfYourNodes></EvenMoreOfYourNodes>
 
 	<Image xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06"
 		xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd"
