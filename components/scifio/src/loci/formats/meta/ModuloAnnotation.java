@@ -73,6 +73,11 @@ public class ModuloAnnotation extends XMLAnnotation {
     if (type != null) {
       type = type.toLowerCase();
     }
+    // Handle CZI files for the moment.
+    // TODO: see http://trac.openmicroscopy.org.uk/ome/ticket/11720
+    if (type.equals("rotation")) {
+      type = "angle";
+    }
     if (type == null || (!type.equals("angle") && !type.equals("phase") &&
       !type.equals("tile") && !type.equals("lifetime") &&
       !type.equals("lambda")))
