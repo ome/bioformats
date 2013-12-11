@@ -561,13 +561,13 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
           Node unit = attrs.getNamedItem("Unit");
 
           if (start != null) {
-            m.start = Integer.parseInt(start.getNodeValue());
+            m.start = Double.parseDouble(start.getNodeValue());
           }
           if (end != null) {
-            m.end = Integer.parseInt(end.getNodeValue());
+            m.end = Double.parseDouble(end.getNodeValue());
           }
           if (step != null) {
-            m.step = Integer.parseInt(step.getNodeValue());
+            m.step = Double.parseDouble(step.getNodeValue());
           }
           if (type != null) {
             m.type = type.getNodeValue();
