@@ -295,6 +295,7 @@ public class ZeissCZIReader extends FormatReader {
 
     boolean validScanDim =
       scanDim == (getImageCount() / getSizeC()) && scanDim > 1;
+    int previousHeight = 0;
 
     for (SubBlock plane : planes) {
       if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
@@ -310,8 +311,7 @@ public class ZeissCZIReader extends FormatReader {
             currentY = 0;
           }
 
-          Region tile =
-            new Region(currentX, getSizeY() - currentY - realY, realX, realY);
+          Region tile = new Region(plane.col, plane.row, realX, realY);
           if (validScanDim) {
             tile.y += (no / getSizeC());
             image.height = scanDim;
@@ -323,6 +323,11 @@ public class ZeissCZIReader extends FormatReader {
 
             if (tile.x < image.x) {
               intersectionX = image.x - tile.x;
+            }
+
+            if (tile.x == 0 && outputCol > 0) {
+              outputCol = 0;
+              outputRow += previousHeight;
             }
 
             int rowLen = pixel * (int) Math.min(intersection.width, realX);
@@ -343,6 +348,7 @@ public class ZeissCZIReader extends FormatReader {
               outputCol = 0;
               outputRow += intersection.height;
             }
+            previousHeight = intersection.height;
           }
 
           currentX += realX;
@@ -867,6 +873,7 @@ public class ZeissCZIReader extends FormatReader {
         switch (dimension.dimension.charAt(0)) {
           case 'X':
             plane.x = dimension.size;
+            plane.col = dimension.start;
             if ((prestitched == null || prestitched) &&
               getSizeX() > 0 && dimension.size != getSizeX())
             {
@@ -877,6 +884,7 @@ public class ZeissCZIReader extends FormatReader {
             break;
           case 'Y':
             plane.y = dimension.size;
+            plane.row = dimension.start;
             if ((prestitched == null || prestitched) &&
               getSizeY() > 0 && dimension.size != getSizeY())
             {
@@ -2468,6 +2476,7 @@ public class ZeissCZIReader extends FormatReader {
     private Double stageX, stageY, timestamp, exposureTime, stageZ;
 
     public int x, y;
+    public int row, col;
 
     public SubBlock() {
       super();
