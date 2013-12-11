@@ -37,8 +37,10 @@
 package loci.formats.services;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -872,7 +874,32 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     if (annotations == null) annotations = new StructuredAnnotations();
     int annotationIndex = annotations.sizeOfXMLAnnotationList();
 
+    final Set<String> knownModulos = new HashSet<String>();
     if (annotationIndex > 0) {
+     // Check which modulo annotations are already present.
+     for (int idx = 0; idx < annotationIndex; idx++) {
+       if (ModuloAnnotation.MODULO_NS.equals(
+         meta.getXMLAnnotationNamespace(idx))) {
+         String value = meta.getXMLAnnotationValue(idx);
+         try {
+           Document doc = XMLTools.parseDOM(value);
+           NodeList modulos = doc.getElementsByTagName("Modulo");
+           for (int m = 0; m < modulos.getLength(); m++) {
+             Node modulo = modulos.item(m);
+             NodeList children = modulo.getChildNodes();
+             for (int c = 0; c < children.getLength(); c++) {
+               Node child = children.item(c);
+               String name = child.getNodeName();
+               knownModulos.add(name);
+             }
+           }
+         } catch (Exception e) {
+           LOGGER.warn("Could not parse XML from annotation: {}", value, e);
+         }
+       }
+     }
+
+     // Calculate the next annotation ID that should be used.
      String lastAnnotationID = meta.getXMLAnnotationID(annotationIndex - 1);
       String lastIndex =
         lastAnnotationID.substring(lastAnnotationID.lastIndexOf(":") + 1);
@@ -887,21 +914,21 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
     int imageAnnotation = 0;
 
-    if (core.moduloZ.length() > 1) {
+    if (core.moduloZ.length() > 1 && !knownModulos.contains("ModuloAlongZ")) {
       createModulo(meta, core.moduloZ,
         annotations, image, imageIdx, annotationIndex, imageAnnotation);
       annotationIndex++;
       imageAnnotation++;
     }
 
-    if (core.moduloC.length() > 1) {
+    if (core.moduloC.length() > 1 && !knownModulos.contains("ModuloAlongC")) {
         createModulo(meta, core.moduloC,
           annotations, image, imageIdx, annotationIndex, imageAnnotation);
         annotationIndex++;
         imageAnnotation++;
     }
 
-    if (core.moduloT.length() > 1) {
+    if (core.moduloT.length() > 1 && !knownModulos.contains("ModuloAlongT")) {
       createModulo(meta, core.moduloT,
         annotations, image, imageIdx, annotationIndex, imageAnnotation);
       annotationIndex++;
