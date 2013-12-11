@@ -209,7 +209,7 @@ for s = 1:numSeries
     result{s, 1} = imageList;
 
     % extract metadata table for this series
-    result{s, 2} = r.getSeriesMetadata();
+    result{s, 2} = loci.formats.MetadataTools.merge(r.getGlobalMetadata(), r.getSeriesMetadata(), 'Global ');
     result{s, 3} = colorMaps;
     result{s, 4} = r.getMetadataStore();
     fprintf('\n');
