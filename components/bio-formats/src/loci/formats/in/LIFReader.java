@@ -1821,6 +1821,9 @@ public class LIFReader extends FormatReader {
     Long[] bytes = bytesPerAxis.keySet().toArray(new Long[0]);
     Arrays.sort(bytes);
     ms.dimensionOrder = "XY";
+    if (getSizeC() > 1 && getSizeT() > 1) {
+      ms.dimensionOrder += "C";
+    }
     for (Long nBytes : bytes) {
       String axis = bytesPerAxis.get(nBytes);
       if (ms.dimensionOrder.indexOf(axis) == -1) {
