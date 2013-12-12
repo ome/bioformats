@@ -923,7 +923,15 @@ public class ZeissCZIReader extends FormatReader {
 
   private void assignPlaneIndices() {
     // assign plane and series indices to each SubBlock
+
+    if (getSeriesCount() == mosaics) {
+      positions = 1;
+      acquisitions = 1;
+      angles = 1;
+    }
+
     int[] extraLengths = {positions, acquisitions, mosaics, angles};
+
     for (int p=0; p<planes.size(); p++) {
       SubBlock plane = planes.get(p);
       int z = 0;
@@ -960,21 +968,33 @@ public class ZeissCZIReader extends FormatReader {
             break;
           case 'S':
             extra[0] = dimension.start;
+            if (extra[0] >= extraLengths[0]) {
+              extra[0] = 0;
+            }
             break;
           case 'I':
             i = dimension.start;
             break;
           case 'B':
             extra[1] = dimension.start;
+            if (extra[1] >= extraLengths[1]) {
+              extra[1] = 0;
+            }
             break;
           case 'M':
             extra[2] = dimension.start;
+            if (extra[2] >= extraLengths[2]) {
+              extra[2] = 0;
+            }
             break;
           case 'H':
             phase = dimension.start;
             break;
           case 'V':
             extra[3] = dimension.start;
+            if (extra[3] >= extraLengths[3]) {
+              extra[3] = 0;
+            }
             noAngle = false;
             break;
         }
