@@ -1,0 +1,53 @@
+.. index:: PCORAW
+.. index:: .pcoraw, .rec
+
+PCORAW
+===============================================================================
+
+Extensions: .pcoraw, .rec 
+
+Developer: `PCO <http://www.pco.de/>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`PCORAW <pcoraw-metadata>`
+
+
+
+We currently have:
+
+* a few example datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Good|
+
+Openness: |Very good|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`PCORAWReader.java`
+
+Notes:
+
+

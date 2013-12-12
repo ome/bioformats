@@ -178,6 +178,15 @@ Supported Formats
      - |Very good|
      - |no|
      - |no|
+   * - :doc:`formats/bio-rad-scn`
+     - .scn
+     - |Very good|
+     - |Fair|
+     - |Fair|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
    * - :doc:`formats/bitplane-imaris`
      - .ims
      - |Very good|
@@ -230,6 +239,15 @@ Supported Formats
      - |Fair|
      - |Fair|
      - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/cellvoyager`
+     - .xml, .tif
+     - |Very good|
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Good|
      - |no|
      - |no|
    * - :doc:`formats/deltavision`
@@ -592,6 +610,15 @@ Supported Formats
      - |Good|
      - |no|
      - |no|
+   * - :doc:`formats/lavision-imspector`
+     - .msr
+     - |Fair|
+     - |Fair|
+     - |Poor|
+     - |Poor|
+     - |Fair|
+     - |no|
+     - |no|
    * - :doc:`formats/leica-lcs-lei`
      - .lei, .tif
      - |Outstanding|
@@ -851,6 +878,15 @@ Supported Formats
      - |Fair|
      - |Fair|
      - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`formats/pcoraw`
+     - .pcoraw, .rec
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |Fair|
+     - |Good|
      - |no|
      - |no|
    * - :doc:`formats/pcx-pc-paintbrush`
@@ -1159,6 +1195,15 @@ Supported Formats
      - |Poor|
      - |no|
      - |yes|
+   * - :doc:`formats/woolz`
+     - .wlz
+     - |Very good|
+     - |Fair|
+     - |Very good|
+     - |Poor|
+     - |Fair|
+     - |yes|
+     - |no|
    * - :doc:`formats/zeiss-axiovision-tiff`
      - .xml, .tiff
      - |Very good|
@@ -1196,7 +1241,7 @@ Supported Formats
      - |no|
      - |no|
 
-Bio-Formats currently supports **130** formats
+Bio-Formats currently supports **135** formats
 
 .. glossary::
     Ratings legend and definitions
@@ -1276,12 +1321,14 @@ Bio-Formats currently supports **130** formats
     formats/becker-hickl-spcimage
     formats/bio-rad-gel
     formats/bio-rad-pic
+    formats/bio-rad-scn
     formats/bitplane-imaris
     formats/bruker-mri
     formats/burleigh
     formats/canon-dng
     formats/cellomics
     formats/cellsens-vsi
+    formats/cellvoyager
     formats/deltavision
     formats/dicom
     formats/ecat7
@@ -1322,6 +1369,7 @@ Bio-Formats currently supports **130** formats
     formats/khoros-viff-bitmap
     formats/kodak-bip
     formats/lambert-instruments-flim
+    formats/lavision-imspector
     formats/leica-lcs-lei
     formats/leica-lif
     formats/leica-scn
@@ -1351,6 +1399,7 @@ Bio-Formats currently supports **130** formats
     formats/ome-tiff
     formats/ome-xml
     formats/oxford-instruments
+    formats/pcoraw
     formats/pcx-pc-paintbrush
     formats/perkin-elmer-densitometer
     formats/perkinelmer-operetta
@@ -1385,6 +1434,7 @@ Bio-Formats currently supports **130** formats
     formats/volocity-library-clipping
     formats/wa-top
     formats/windows-bitmap
+    formats/woolz
     formats/zeiss-axiovision-tiff
     formats/zeiss-axiovision-zvi
     formats/zeiss-czi

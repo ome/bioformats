@@ -1,0 +1,54 @@
+.. index:: Bio-Rad SCN
+.. index:: .scn
+
+Bio-Rad SCN
+===============================================================================
+
+Extensions: .scn 
+
+Developer: Bio-Rad
+
+Owner: `Bio-Rad <http://www.bio-rad.com>`_
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |no|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Bio-Rad SCN <bio-rad-scn-metadata>`
+
+
+
+We currently have:
+
+* a few Bio-Rad .scn files
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Fair|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`BioRadSCNReader.java`
+
+Notes:
+
+

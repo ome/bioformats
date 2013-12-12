@@ -329,6 +329,20 @@ notes = * Commercial applications that support this format include: \n
   * `Bitplane Imaris <http://www.bitplane.com/>`_ \n
   * `SVI Huygens <http://svi.nl/>`_
 
+[Bio-Rad SCN]
+extensions = .scn
+owner = `Bio-Rad <http://www.bio-rad.com>`_
+developer = Bio-Rad
+scifio = no
+export = no
+weHave = * a few Bio-Rad .scn files
+pixelsRating = Very good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Fair
+reader = BioRadSCNReader.java
+
 [Bitplane Imaris]
 extensions = .ims
 owner = `Bitplane <http://www.bitplane.com/>`_
@@ -441,6 +455,19 @@ opennessRating = Fair
 presenceRating = Fair
 utilityRating = Fair
 reader = CellSensReader.java
+
+[CellVoyager]
+extensions = .xml, .tif
+owner = `Yokogawa <http://www.yokogawa.com/>`_
+scifio = no
+export = no
+weHave = * a few example datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Good
+reader = CellVoyagerReader.java
 
 [DeltaVision]
 extensions = .dv, .r3d
@@ -1167,6 +1194,19 @@ Commercial applications that support LIF include: \n
 * `SVI Huygens <http://svi.nl/>`_ \n
 * `Amira <http://www.amira.com/>`_
 
+[LaVision Imspector]
+extensions = .msr
+developer = `LaVision BioTec <http://www.lavisionbiotec.com/>`_
+scifio = no
+export = no
+weHave = * a few .msr files
+pixelsRating = Fair
+metadataRating = Fair
+opennessRating = Poor
+presenceRating = Poor
+utilityRating = Fair
+reader = ImspectorReader.java
+
 [Leica LCS LEI]
 extensions = .lei, .tif
 owner = `Leica <http://www.leica.com/>`_
@@ -1302,7 +1342,7 @@ notes = Commercial applications that support STK include: \n
 
 [MIAS (Maia Scientific)]
 extensions = .tif
-developer = `Maia Scientific <http://www.maia-scientific.com/>`_
+developer = `Maia Scientific <http://www.selectscience.net/supplier/maia-scientific/?compID=6088>`_
 scifio = no
 export = no
 weHave = * several MIAS datasets
@@ -1689,6 +1729,19 @@ presenceRating = Poor
 utilityRating = Fair
 reader = PCXReader.java
 notes = Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_.
+
+[PCORAW]
+extensions = .pcoraw, .rec
+developer = `PCO <http://www.pco.de/>`_
+scifio = no
+export = no
+weHave = * a few example datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Very good
+presenceRating = Fair
+utilityRating = Good
+reader = PCORAWReader.java
 
 [Perkin Elmer Densitometer]
 extensions = .pds
@@ -2239,6 +2292,21 @@ notes = Compressed BMP files are currently not supported. \n
 .. seealso:: \n
   `Technical Overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-18.html>`_ \n
   `General Resources <http://people.sc.fsu.edu/~burkardt/data/bmp/bmp.html>`_
+
+[Woolz]
+extensions = .wlz
+developer = `MRC Human Genetics Unit <http://www.emouseatlas.org/emap/analysis_tools_resources/software/woolz.html>`_
+scifio = no
+export = yes
+software = `Woolz <http://www.emouseatlas.org/emap/analysis_tools_resources/software/woolz.html>`_
+weHave = * a few Woolz datasets
+pixelsRating = Very good
+metadataRating = Fair
+opennessRating = Very good
+presenceRating = Poor
+utilityRating = Fair
+reader = WlzReader.java
+writer = WlzWriter.java
 
 [Zeiss AxioVision TIFF]
 extensions = .xml, .tiff
