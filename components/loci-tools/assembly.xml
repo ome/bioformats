@@ -10,8 +10,34 @@
   <dependencySets>
     <dependencySet>
       <excludes>
-        <exclude>loci:lwf-stubs</exclude>
+        <exclude>ome:lwf-stubs</exclude>
         <exclude>net.imagej:ij</exclude>
+        <!-- exclude testing dependencies -->
+        <exclude>org.testng:testng</exclude>
+        <exclude>junit:junit</exclude>
+        <exclude>com.beust:jcommander</exclude>
+        <exclude>org.yaml:snakeyaml</exclude>
+        <exclude>org.beanshell:bsh</exclude>
+        <exclude>edu.princeton.cup:java-cup</exclude>
+        <exclude>org.apache.bcel:bcel</exclude>
+        <exclude>commons-codec:commons-codec</exclude>
+        <exclude>commons-logging:commons-logging</exclude>
+        <exclude>regexp:regexp</exclude>
+        <exclude>org.apache.ant:ant-trax</exclude>
+        <exclude>edu.ucar:udunits</exclude>
+        <exclude>javax.servlet:servlet-api</exclude>
+        <!-- exclude optional libraries pulled in by netCDF -->
+        <exclude>com.sleepycat:je</exclude>
+        <exclude>net.sf.ehcache:ehcache-core</exclude>
+        <exclude>com.google.protobuf:protobuf-java</exclude>
+        <exclude>org.quartz-scheduler:quartz</exclude>
+        <exclude>c3p0:c3p0</exclude>
+        <exclude>com.sun.jna:jna</exclude>
+        <exclude>net.jcip:jcip-annotations</exclude>
+        <exclude>org.jdom:jdom2</exclude>
+        <exclude>jaxen:jaxen</exclude>
+        <exclude>org.slf4j:jcl-over-slf4j</exclude>
+        <exclude>commons-httpclient:commons-httpclient</exclude>
       </excludes>
       <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>

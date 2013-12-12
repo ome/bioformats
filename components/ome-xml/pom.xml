@@ -157,21 +157,6 @@
               </sources>
             </configuration>
           </execution>
-	  <execution>
-	    <id>add-wsdl-resource</id>
-	    <phase>generate-resources</phase>
-	    <goals>
-	      <goal>add-resource</goal>
-	    </goals>
-	    <configuration>
-	      <resources>
-		<resource>
-		  <directory>target/generated-sources</directory>
-		  <targetPath>target/classes</targetPath>
-		</resource>
-	      </resources>
-	    </configuration>
-	  </execution>
         </executions>
       </plugin>
       <plugin>
@@ -296,12 +281,12 @@
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
-      <id>imagej.releases</id>
-      <url>http://maven.imagej.net/content/repositories/releases</url>
+      <id>ome.releases</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
     <repository>
-      <id>imagej.snapshots</id>
-      <url>http://maven.imagej.net/content/repositories/snapshots</url>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </repository>
   </repositories>
 

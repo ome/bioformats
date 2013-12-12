@@ -34,7 +34,7 @@
   #L%
   -->
 
-<suite name="IO_Tests" parallel="@PARALLEL@">
+<suite name="IO_Tests">
     <test name="ByteArrayHandle">
         <parameter name="provider" value="ByteArrayHandle"/>
         <groups>

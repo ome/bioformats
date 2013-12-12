@@ -46,12 +46,12 @@
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
-      <id>imagej.releases</id>
-      <url>http://maven.imagej.net/content/repositories/releases</url>
+      <id>ome.releases</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
     <repository>
-      <id>imagej.snapshots</id>
-      <url>http://maven.imagej.net/content/repositories/snapshots</url>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </repository>
   </repositories>
 

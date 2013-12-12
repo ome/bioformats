@@ -77,8 +77,6 @@
       <groupId>woolz</groupId>
       <artifactId>JWlz</artifactId>
       <version>1.4.0</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/../../jar/JWlz-1.4.0.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
@@ -129,14 +127,77 @@
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>test/loci/formats/utests/testng.xml</suiteXmlFile>
-          </suiteXmlFiles>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
-          </additionalClasspathElements>
-        </configuration>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <suiteXmlFiles>
+                <suiteXmlFile>test/loci/formats/utests/testng.xml</suiteXmlFile>
+              </suiteXmlFiles>
+              <additionalClasspathElements>
+                <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
+              </additionalClasspathElements>
+            </configuration>
+          </execution>
+          <execution>
+            <id>missing-mdb-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <suiteXmlFiles>
+                <suiteXmlFile>test/loci/formats/utests/testng-no-mdb.xml</suiteXmlFile>
+              </suiteXmlFiles>
+              <additionalClasspathElements>
+                <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
+              </additionalClasspathElements>
+              <classpathDependencyExcludes>
+                <classpathDependencyExclude>${project.groupId}:mdbtools-java</classpathDependencyExclude>
+              </classpathDependencyExcludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>missing-poi-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <suiteXmlFiles>
+                <suiteXmlFile>test/loci/formats/utests/testng-no-poi.xml</suiteXmlFile>
+              </suiteXmlFiles>
+              <additionalClasspathElements>
+                <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
+              </additionalClasspathElements>
+              <classpathDependencyExcludes>
+                <classpathDependencyExclude>${project.groupId}:poi-loci</classpathDependencyExclude>
+              </classpathDependencyExcludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>missing-netcdf-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <suiteXmlFiles>
+                <suiteXmlFile>test/loci/formats/utests/testng-no-netcdf.xml</suiteXmlFile>
+              </suiteXmlFiles>
+              <additionalClasspathElements>
+                <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
+              </additionalClasspathElements>
+              <classpathDependencyExcludes>
+                <classpathDependencyExclude>edu.ucar:netcdf</classpathDependencyExclude>
+              </classpathDependencyExcludes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -258,12 +319,12 @@
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
-      <id>imagej.releases</id>
-      <url>http://maven.imagej.net/content/repositories/releases</url>
+      <id>ome.releases</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
     <repository>
-      <id>imagej.snapshots</id>
-      <url>http://maven.imagej.net/content/repositories/snapshots</url>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </repository>
     <repository>
       <id>unidata.releases</id>
