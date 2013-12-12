@@ -38,6 +38,7 @@ package ome.scifio.xml;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -45,6 +46,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -62,6 +64,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.ErrorListener;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -84,6 +87,7 @@ import ome.scifio.io.RandomAccessInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -104,6 +108,9 @@ public final class XMLTools {
   // -- Constants --
 
   static final Logger LOGGER = LoggerFactory.getLogger(XMLTools.class);
+
+  private static final String XSI_NS =
+    "http://www.w3.org/2001/XMLSchema-instance";
 
   private static final String XML_SCHEMA_PATH =
     "http://www.w3.org/2001/XMLSchema";
@@ -126,6 +133,28 @@ public final class XMLTools {
   private XMLTools() { }
 
   // -- XML to/from DOM --
+
+  /**
+   * Creates a new {@link DocumentBuilder} via {@link DocumentBuilderFactory}
+   * or logs and throws a {@link RuntimeException}.
+   */
+  public static DocumentBuilder createBuilder() {
+    try {
+      return DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    }
+    catch (ParserConfigurationException e) {
+      LOGGER.error("Cannot create DocumentBuilder", e);
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Calls {@link DocumentBuilder#newDocument()} on a
+   * {@link #createBuilder() new builder}.
+   */
+  public static Document createDocument() {
+    return createBuilder().newDocument();
+  }
 
   /** Parses a DOM from the given XML file on disk. */
   public static Document parseDOM(File file)
@@ -182,6 +211,42 @@ public final class XMLTools {
     Transformer transformer = factory.newTransformer();
     transformer.transform(source, result);
     return stringWriter.getBuffer().toString();
+  }
+
+  /**
+   * Dumps the given OME-XML DOM tree to a string.
+   * @param schemaLocation if null, no xmlns attribute will be added.
+   * @return OME-XML as a string.
+   */
+  public static String dumpXML(String schemaLocation, Document doc, Element r) {
+    return dumpXML(schemaLocation, doc, r, true);
+  }
+
+  /**
+   * Dumps the given OME-XML DOM tree to a string.
+   * @param schemaLocation if null, no xmlns attribute will be added.
+   * @return OME-XML as a string.
+   */
+  public static String dumpXML(String schemaLocation, Document doc, Element r,
+    boolean includeXMLDeclaration) {
+    try {
+      ByteArrayOutputStream os = new ByteArrayOutputStream();
+      if (schemaLocation != null) {
+        r.setAttribute("xmlns:xsi", XSI_NS);
+        r.setAttribute("xsi:schemaLocation", schemaLocation);
+      }
+      doc.appendChild(r);
+      writeXML(os, doc, includeXMLDeclaration);
+      return os.toString(Constants.ENCODING);
+    }
+    catch (TransformerException exc) {
+      LOGGER.warn("Failed to create XML", exc);
+      throw new RuntimeException(exc);
+    }
+    catch (UnsupportedEncodingException exc) {
+      LOGGER.warn("Failed to create XML", exc);
+      throw new RuntimeException(exc);
+    }
   }
 
   // -- Filtering --
@@ -384,8 +449,19 @@ public final class XMLTools {
   public static void writeXML(OutputStream os, Document doc)
     throws TransformerException
   {
+    writeXML(os, doc, true);
+  }
+
+  /** Writes the specified DOM to the given output stream. */
+  public static void writeXML(OutputStream os, Document doc,
+    boolean includeXMLDeclaration)
+    throws TransformerException
+  {
     TransformerFactory transformFactory = TransformerFactory.newInstance();
     Transformer idTransform = transformFactory.newTransformer();
+    if (!includeXMLDeclaration) {
+      idTransform.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+    }
     Source input = new DOMSource(doc);
     Result output = new StreamResult(os);
     idTransform.transform(input, output);

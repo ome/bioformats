@@ -111,34 +111,18 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
       root = (OMEModelObject) getRoot();
       if (root == null) return null;
     }
-    try {
-      ByteArrayOutputStream os = new ByteArrayOutputStream();
-      Document doc = createNewDocument();
-      Element r = root.asXMLElement(doc);
-      r.setAttribute("xmlns:xsi", XSI_NS);
-      r.setAttribute("xsi:schemaLocation", OME.NAMESPACE + " " + SCHEMA);
-      doc.appendChild(r);
-      XMLTools.writeXML(os, doc);
-
-      return os.toString(Constants.ENCODING);
-    }
-    catch (TransformerException exc) {
-      LOGGER.warn("Failed to create OME-XML", exc);
-    }
-    catch (UnsupportedEncodingException exc) {
-      LOGGER.warn("Failed to create OME-XML", exc);
-    }
-    return null;
+    Document doc = createNewDocument();
+    Element r = root.asXMLElement(doc);
+    String schemaLocation = OME.NAMESPACE + " " + SCHEMA;
+    return XMLTools.dumpXML(schemaLocation, doc, r);
   }
+
 
   // -- Helper methods --
 
-  private Document createNewDocument() {
+  public Document createNewDocument() {
     if (builder == null) {
-      try {
-        builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-      }
-      catch (ParserConfigurationException e) { }
+      builder = XMLTools.createBuilder();
     }
     return builder.newDocument();
   }
