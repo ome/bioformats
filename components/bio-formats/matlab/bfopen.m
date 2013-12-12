@@ -127,6 +127,9 @@ end
 
 numSeries = r.getSeriesCount();
 result = cell(numSeries, 2);
+
+globalMetadata = r.getGlobalMetadata();
+
 for s = 1:numSeries
     fprintf('Reading series #%d', s);
     r.setSeries(s - 1);
@@ -209,7 +212,9 @@ for s = 1:numSeries
     result{s, 1} = imageList;
 
     % extract metadata table for this series
-    result{s, 2} = loci.formats.MetadataTools.merge(r.getGlobalMetadata(), r.getSeriesMetadata(), 'Global ');
+    seriesMetadata = r.getSeriesMetadata();
+    loci.formats.MetadataTools.merge(globalMetadata, seriesMetadata, 'Global ');
+    result{s, 2} = seriesMetadata;
     result{s, 3} = colorMaps;
     result{s, 4} = r.getMetadataStore();
     fprintf('\n');
