@@ -36,6 +36,7 @@
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
@@ -126,28 +127,53 @@ public class ZipReader extends FormatReader {
     reader.setNormalized(isNormalized());
     reader.setMetadataStore(getMetadataStore());
 
+    String innerFile = id;
+    if (checkSuffix(id, "zip")) {
+      innerFile = id.substring(0, id.length() - 4);
+    }
+    int sep = innerFile.lastIndexOf(File.separator);
+    if (sep < 0) {
+      sep = innerFile.lastIndexOf("/");
+    }
+    if (sep >= 0) {
+      innerFile = innerFile.substring(sep + 1);
+    }
+
     // NB: We need a raw handle on the ZIP data itself, not a ZipHandle.
     IRandomAccess rawHandle = Location.getHandle(id, false, false);
     in = new RandomAccessInputStream(rawHandle, id);
 
     ZipInputStream zip = new ZipInputStream(in);
     ZipEntry ze = null;
+    String entryName = null;
+    boolean matchFound = false;
     while (true) {
       ze = zip.getNextEntry();
       if (ze == null) break;
+
+      if (entryName == null) {
+        entryName = ze.getName();
+      }
+
+      if (!matchFound && ze.getName().startsWith(innerFile)) {
+        entryName = ze.getName();
+        matchFound = true;
+      }
+
       ZipHandle handle = new ZipHandle(id, ze);
       Location.mapFile(ze.getName(), handle);
       mappedFiles.add(ze.getName());
     }
 
-    ZipHandle base = new ZipHandle(id);
-    reader.setId(base.getEntryName());
+    if (entryName == null) {
+      throw new FormatException("Zip file does not contain any valid files");
+    }
+
+    reader.setId(entryName);
 
     metadataStore = reader.getMetadataStore();
     core = new ArrayList<CoreMetadata>(reader.getCoreMetadataList());
     metadata = reader.getGlobalMetadata();
-
-    base.close();
   }
 
 }
