@@ -768,9 +768,13 @@ public final class DataTools {
     if (s == null) return null;
     StringBuffer buf = new StringBuffer(s);
     for (int i=0; i<buf.length(); i++) {
-      char c = buf.charAt(i);
-      if (c != '\t' && c != '\n' && Character.isISOControl(c)) {
-        buf = buf.deleteCharAt(i--);
+      int c = buf.codePointAt(i);
+      if (c != '\t' && c != '\n' && (Character.isISOControl(c) ||
+        !Character.isDefined(c) || Character.isSupplementaryCodePoint(c)))
+      {
+        int count = Character.charCount(c);
+        buf = buf.delete(i, i + count);
+        i--;
       }
     }
     return buf.toString();

@@ -306,6 +306,20 @@ public abstract class FormatReader extends FormatHandler
         }
       }
 
+      String[] escapes = new String[] { "[", "]", "=" };
+      for (int i=0; i<escapes.length; i++) {
+        if (key.indexOf(escapes[i]) >= 0) {
+          key = key.replaceAll(escapes[i], " ");
+        }
+        if (string && val.indexOf(escapes[i]) >= 0) {
+          val = val.replaceAll(escapes[i], " ");
+        }
+        key = key.replace('\\', ' ');
+        if (string) {
+          val = val.replace('\\', ' ');
+        }
+      }
+
       // verify key & value are not empty
       if (key.length() == 0) return;
       if (string && val.trim().length() == 0) return;
