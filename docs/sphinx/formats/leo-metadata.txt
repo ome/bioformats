@@ -9,9 +9,9 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 25 of them (5%).
-  * Of those, Bio-Formats fully or partially converts 25 (100%).
+Of the 475 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 27 of them (5%).
+  * Of those, Bio-Formats fully or partially converts 27 (100%).
 
 Supported fields
 ===============================================================================
@@ -28,11 +28,13 @@ These fields are fully supported by the Bio-Formats LEO format reader:
   * :schema:`Objective : ID <OME-2013-06/ome_xsd.html#Objective_ID>`
   * :schema:`Objective : Immersion <OME-2013-06/ome_xsd.html#Objective_Immersion>`
   * :schema:`Objective : WorkingDistance <OME-2013-06/ome_xsd.html#Objective_WorkingDistance>`
-  * :schema:`Pixels : BinDataBigEndian <OME-2013-06/BinaryFile_xsd.html#BinData_BigEndian>`
+  * :schema:`Pixels : BigEndian <OME-2013-06/ome_xsd.html#Pixels_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2013-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2013-06/ome_xsd.html#Pixels_ID>`
+  * :schema:`Pixels : Interleaved <OME-2013-06/ome_xsd.html#Pixels_Interleaved>`
   * :schema:`Pixels : PhysicalSizeX <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeX>`
   * :schema:`Pixels : PhysicalSizeY <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeY>`
+  * :schema:`Pixels : SignificantBits <OME-2013-06/ome_xsd.html#Pixels_SignificantBits>`
   * :schema:`Pixels : SizeC <OME-2013-06/ome_xsd.html#Pixels_SizeC>`
   * :schema:`Pixels : SizeT <OME-2013-06/ome_xsd.html#Pixels_SizeT>`
   * :schema:`Pixels : SizeX <OME-2013-06/ome_xsd.html#Pixels_SizeX>`
@@ -43,6 +45,6 @@ These fields are fully supported by the Bio-Formats LEO format reader:
   * :schema:`Plane : TheT <OME-2013-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2013-06/ome_xsd.html#Plane_TheZ>`
 
-**Total supported: 25**
+**Total supported: 27**
 
 **Total unknown or missing: 448**
