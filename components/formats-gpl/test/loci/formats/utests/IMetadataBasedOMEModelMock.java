@@ -144,6 +144,11 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     // Create <Dichroic/> under <Instrument/>
     store.setDichroicID(InOutCurrentTest.DICHROIC_ID, 0, 0);
     store.setDichroicSerialNumber(InOutCurrentTest.DICHROIC_SN, 0, 0);
+    // Create <Annotation/> under <Dichroic/>
+    store.setCommentAnnotationID(InOutCurrentTest.DICHROIC_ANNOTATION_ID, 1);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 1);
+    store.setCommentAnnotationValue(InOutCurrentTest.DICHROIC_ANNOTATION_VALUE, 1);
+    store.setDichroicAnnotationRef(InOutCurrentTest.DICHROIC_ANNOTATION_ID, 0, 0, 0);
 
     // Create <FilterSet/> under <Instrument/>
     store.setFilterSetID(InOutCurrentTest.FILTERSET_ID, 0, 0);
@@ -155,6 +160,11 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     // Create <Filter/>s under <Instrument/>
     store.setFilterID(InOutCurrentTest.EM_FILTER_ID, 0, 0);
     store.setFilterType(InOutCurrentTest.EM_FILTER_TYPE, 0, 0);
+    // Create <Annotation/> under first <Filter/>
+    store.setCommentAnnotationID(InOutCurrentTest.EM_FILTER_ANNOTATION_ID, 2);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 2);
+    store.setCommentAnnotationValue(InOutCurrentTest.EM_FILTER_ANNOTATION_VALUE, 2);
+    store.setFilterAnnotationRef(InOutCurrentTest.EM_FILTER_ANNOTATION_ID, 0, 0, 0);
 
     store.setFilterID(InOutCurrentTest.EX_FILTER_ID, 0, 1);
     store.setFilterType(InOutCurrentTest.EX_FILTER_TYPE, 0, 1);
@@ -163,15 +173,15 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setObjectiveID(InOutCurrentTest.OBJECTIVE_ID, 0, 0);
     store.setObjectiveModel(InOutCurrentTest.OBJECTIVE_MODEL, 0, 0);
     // Create <Annotation/> under <Objective/>
-    store.setCommentAnnotationID(InOutCurrentTest.OBJECTIVE_ANNOTATION_ID, 1);
-    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 1);
-    store.setCommentAnnotationValue(InOutCurrentTest.OBJECTIVE_ANNOTATION_VALUE, 1);
+    store.setCommentAnnotationID(InOutCurrentTest.OBJECTIVE_ANNOTATION_ID, 3);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 3);
+    store.setCommentAnnotationValue(InOutCurrentTest.OBJECTIVE_ANNOTATION_VALUE, 3);
     store.setObjectiveAnnotationRef(InOutCurrentTest.OBJECTIVE_ANNOTATION_ID, 0, 0, 0);
 
     // Create <Annotation/> under <Instrument/>
-    store.setCommentAnnotationID(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID, 2);
-    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 2);
-    store.setCommentAnnotationValue(InOutCurrentTest.INSTRUMENT_ANNOTATION_VALUE, 2);
+    store.setCommentAnnotationID(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID, 4);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 4);
+    store.setCommentAnnotationValue(InOutCurrentTest.INSTRUMENT_ANNOTATION_VALUE, 4);
 
     store.setInstrumentAnnotationRef(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID, 0, 0);
 
@@ -221,9 +231,9 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
   private void makeROI() {
     store.setROIID(InOutCurrentTest.ROI_ID, 0);
 
-    store.setCommentAnnotationID(InOutCurrentTest.ROI_ANNOTATION_ID, 3);
-    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 3);
-    store.setCommentAnnotationValue(InOutCurrentTest.ROI_ANNOTATION_VALUE, 3);
+    store.setCommentAnnotationID(InOutCurrentTest.ROI_ANNOTATION_ID, 5);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 5);
+    store.setCommentAnnotationValue(InOutCurrentTest.ROI_ANNOTATION_VALUE, 5);
 
     store.setROIAnnotationRef(InOutCurrentTest.ROI_ANNOTATION_ID, 0, 0);
 

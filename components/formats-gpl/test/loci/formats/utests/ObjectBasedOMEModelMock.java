@@ -199,6 +199,12 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     Dichroic dichroic = new Dichroic();
     dichroic.setID(InOutCurrentTest.DICHROIC_ID);
     dichroic.setSerialNumber(InOutCurrentTest.DICHROIC_SN);
+    CommentAnnotation dichroicAnnotation = new CommentAnnotation();
+    dichroicAnnotation.setID(InOutCurrentTest.DICHROIC_ANNOTATION_ID);
+    dichroicAnnotation.setValue(InOutCurrentTest.DICHROIC_ANNOTATION_VALUE);
+    dichroicAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    dichroic.linkAnnotation(dichroicAnnotation);
+    annotations.addCommentAnnotation(dichroicAnnotation);
     // Create <FilterSet/> under <Dichroic/>
     FilterSet filterSet = new FilterSet();
     filterSet.setID(InOutCurrentTest.FILTERSET_ID);
@@ -217,11 +223,17 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     objectiveAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
     objective.linkAnnotation(objectiveAnnotation);
     annotations.addCommentAnnotation(objectiveAnnotation);
- 
+
     emFilter.setID(InOutCurrentTest.EM_FILTER_ID);
     emFilter.setType(InOutCurrentTest.EM_FILTER_TYPE);
     exFilter.setID(InOutCurrentTest.EX_FILTER_ID);
     exFilter.setType(InOutCurrentTest.EX_FILTER_TYPE);
+    CommentAnnotation emFilterAnnotation = new CommentAnnotation();
+    emFilterAnnotation.setID(InOutCurrentTest.EM_FILTER_ANNOTATION_ID);
+    emFilterAnnotation.setValue(InOutCurrentTest.EM_FILTER_ANNOTATION_VALUE);
+    emFilterAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    emFilter.linkAnnotation(emFilterAnnotation);
+    annotations.addCommentAnnotation(emFilterAnnotation);
 
     instrument.addFilter(emFilter);
     instrument.addFilter(exFilter);

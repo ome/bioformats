@@ -602,6 +602,17 @@ public class InOutCurrentTest {
     assertEquals(DICHROIC_SN, dichroic.getSerialNumber());
   }
 
+  @Test(dependsOnMethods={"testValidDichroicNode"})
+  public void testValidDichroicAnnotation() {
+    Annotation n = ome.getInstrument(0).getDichroic(0).getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertEquals(DICHROIC_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
+    assertTrue(n instanceof CommentAnnotation);
+    CommentAnnotation string = (CommentAnnotation) n;
+    assertEquals(DICHROIC_ANNOTATION_VALUE, string.getValue());
+  }
+
   @Test(dependsOnMethods={"testValidInstrumentNode"})
   public void testValidObjectiveNode()
   {
@@ -634,7 +645,7 @@ public class InOutCurrentTest {
   }
 
   @Test(dependsOnMethods={"testValidFilterSetNode"})
-  public void testValidEmissionFilter() {
+  public void testValidEmissionFilterNode() {
     Filter emFilter = ome.getInstrument(0).getFilter(0);
     assertNotNull(emFilter);
     assertEquals(EM_FILTER_ID, emFilter.getID());
@@ -643,6 +654,16 @@ public class InOutCurrentTest {
     assertEquals(EM_FILTER_ID, filterSet.getLinkedEmissionFilter(0).getID());
   }
 
+  @Test(dependsOnMethods={"testValidEmissionFilterNode"})
+  public void testValidEmissionFilterAnnotation() {
+    Annotation n = ome.getInstrument(0).getFilter(0).getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertEquals(EM_FILTER_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
+    assertTrue(n instanceof CommentAnnotation);
+    CommentAnnotation string = (CommentAnnotation) n;
+    assertEquals(EM_FILTER_ANNOTATION_VALUE, string.getValue());
+  }
   @Test(dependsOnMethods={"testValidFilterSetNode"})
   public void testValidExcitationFilter() {
     Filter exFilter = ome.getInstrument(0).getFilter(1);
