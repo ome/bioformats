@@ -254,6 +254,7 @@ public class OMETiffReader extends FormatReader {
     if (r.getCurrentFile() == null) {
       r.setId(info[series][no].id);
     }
+    r.lastPlane = i;
     IFDList ifdList = r.getIFDs();
     if (i >= ifdList.size()) {
       LOGGER.warn("Error untangling IFDs; the OME-TIFF file may be malformed.");
