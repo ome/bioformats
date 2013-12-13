@@ -1,0 +1,57 @@
+.. index:: Woolz
+.. index:: .wlz
+
+Woolz
+===============================================================================
+
+Extensions: .wlz 
+
+Developer: `MRC Human Genetics Unit <http://www.emouseatlas.org/emap/analysis_tools_resources/software/woolz.html>`_
+
+
+**Support**
+
+
+SCIFIO: |no|
+
+Export: |yes|
+
+Officially Supported Versions: 
+
+Supported Metadata Fields: :doc:`Woolz <woolz-metadata>`
+
+Freely Available Software:
+
+- `Woolz <http://www.emouseatlas.org/emap/analysis_tools_resources/software/woolz.html>`_
+
+
+We currently have:
+
+* a few Woolz datasets
+
+We would like to have:
+
+
+**Ratings**
+
+
+Pixels: |Very good|
+
+Metadata: |Fair|
+
+Openness: |Very good|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+
+**Additional Information**
+
+
+Source Code: :bfreader:`WlzReader.java`
+Source Code: :bfwriter:`WlzWriter.java`
+
+Notes:
+
+

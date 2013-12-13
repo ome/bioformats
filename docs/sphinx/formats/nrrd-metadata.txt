@@ -9,9 +9,9 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 20 of them (4%).
-  * Of those, Bio-Formats fully or partially converts 20 (100%).
+Of the 475 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 22 of them (4%).
+  * Of those, Bio-Formats fully or partially converts 22 (100%).
 
 Supported fields
 ===============================================================================
@@ -22,12 +22,14 @@ These fields are fully supported by the Bio-Formats NRRD format reader:
   * :schema:`Image : AcquisitionDate <OME-2013-06/ome_xsd.html#Image_AcquisitionDate>`
   * :schema:`Image : ID <OME-2013-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : Name <OME-2013-06/ome_xsd.html#Image_Name>`
-  * :schema:`Pixels : BinDataBigEndian <OME-2013-06/BinaryFile_xsd.html#BinData_BigEndian>`
+  * :schema:`Pixels : BigEndian <OME-2013-06/ome_xsd.html#Pixels_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2013-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2013-06/ome_xsd.html#Pixels_ID>`
+  * :schema:`Pixels : Interleaved <OME-2013-06/ome_xsd.html#Pixels_Interleaved>`
   * :schema:`Pixels : PhysicalSizeX <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeX>`
   * :schema:`Pixels : PhysicalSizeY <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeY>`
   * :schema:`Pixels : PhysicalSizeZ <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeZ>`
+  * :schema:`Pixels : SignificantBits <OME-2013-06/ome_xsd.html#Pixels_SignificantBits>`
   * :schema:`Pixels : SizeC <OME-2013-06/ome_xsd.html#Pixels_SizeC>`
   * :schema:`Pixels : SizeT <OME-2013-06/ome_xsd.html#Pixels_SizeT>`
   * :schema:`Pixels : SizeX <OME-2013-06/ome_xsd.html#Pixels_SizeX>`
@@ -38,6 +40,6 @@ These fields are fully supported by the Bio-Formats NRRD format reader:
   * :schema:`Plane : TheT <OME-2013-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2013-06/ome_xsd.html#Plane_TheZ>`
 
-**Total supported: 20**
+**Total supported: 22**
 
 **Total unknown or missing: 453**

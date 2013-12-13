@@ -1203,6 +1203,9 @@ type = DimensionOrder
 [Pixels ID]
 type = String
 
+[Pixels Interleaved]
+type = Boolean
+
 [Pixels PhysicalSizeX]
 type = PositiveFloat
 
@@ -1211,6 +1214,9 @@ type = PositiveFloat
 
 [Pixels PhysicalSizeZ]
 type = PositiveFloat
+
+[Pixels SignificantBits]
+type = PositiveInteger
 
 [Pixels SizeC]
 type = PositiveInteger
@@ -1233,12 +1239,8 @@ type = Double
 [Pixels Type]
 type = PixelType
 
-[Pixels BinDataBigEndian]
-countable = true
-path = Image+/Pixels/BinData+
+[Pixels BigEndian]
 type = Boolean
-schema = BinaryFile_xsd.html
-anchor = BinData_BigEndian
 
 [Plane]
 countable = true

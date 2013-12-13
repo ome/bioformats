@@ -9,9 +9,9 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 149 of them (31%).
-  * Of those, Bio-Formats fully or partially converts 149 (100%).
+Of the 475 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 157 of them (33%).
+  * Of those, Bio-Formats fully or partially converts 157 (100%).
 
 Supported fields
 ===============================================================================
@@ -22,10 +22,13 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`Arc : Model <OME-2013-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`Arc : Power <OME-2013-06/ome_xsd.html#LightSource_Power>`
   * :schema:`Arc : SerialNumber <OME-2013-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
+  * :schema:`Channel : AcquisitionMode <OME-2013-06/ome_xsd.html#Channel_AcquisitionMode>`
   * :schema:`Channel : Color <OME-2013-06/ome_xsd.html#Channel_Color>`
   * :schema:`Channel : EmissionWavelength <OME-2013-06/ome_xsd.html#Channel_EmissionWavelength>`
   * :schema:`Channel : ExcitationWavelength <OME-2013-06/ome_xsd.html#Channel_ExcitationWavelength>`
+  * :schema:`Channel : Fluor <OME-2013-06/ome_xsd.html#Channel_Fluor>`
   * :schema:`Channel : ID <OME-2013-06/ome_xsd.html#Channel_ID>`
+  * :schema:`Channel : IlluminationType <OME-2013-06/ome_xsd.html#Channel_IlluminationType>`
   * :schema:`Channel : Name <OME-2013-06/ome_xsd.html#Channel_Name>`
   * :schema:`Channel : PinholeSize <OME-2013-06/ome_xsd.html#Channel_PinholeSize>`
   * :schema:`Channel : SamplesPerPixel <OME-2013-06/ome_xsd.html#Channel_SamplesPerPixel>`
@@ -40,6 +43,7 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`Detector : Type <OME-2013-06/ome_xsd.html#Detector_Type>`
   * :schema:`Detector : Zoom <OME-2013-06/ome_xsd.html#Detector_Zoom>`
   * :schema:`DetectorSettings : Binning <OME-2013-06/ome_xsd.html#DetectorSettings_Binning>`
+  * :schema:`DetectorSettings : Gain <OME-2013-06/ome_xsd.html#DetectorSettings_Gain>`
   * :schema:`DetectorSettings : ID <OME-2013-06/ome_xsd.html#DetectorSettings_ID>`
   * :schema:`Dichroic : ID <OME-2013-06/ome_xsd.html#Dichroic_ID>`
   * :schema:`Dichroic : LotNumber <OME-2013-06/ome_xsd.html#ManufacturerSpec_LotNumber>`
@@ -80,8 +84,10 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`FilterSet : Model <OME-2013-06/ome_xsd.html#ManufacturerSpec_Model>`
   * :schema:`FilterSet : SerialNumber <OME-2013-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
   * :schema:`Image : AcquisitionDate <OME-2013-06/ome_xsd.html#Image_AcquisitionDate>`
+  * :schema:`Image : Description <OME-2013-06/ome_xsd.html#Image_Description>`
   * :schema:`Image : ExperimenterRef <OME-2013-06/ome_xsd.html#ExperimenterRef_ID>`
   * :schema:`Image : ID <OME-2013-06/ome_xsd.html#Image_ID>`
+  * :schema:`Image : InstrumentRef <OME-2013-06/ome_xsd.html#InstrumentRef_ID>`
   * :schema:`Image : Name <OME-2013-06/ome_xsd.html#Image_Name>`
   * :schema:`Image : ROIRef <OME-2013-06/ROI_xsd.html#ROIRef_ID>`
   * :schema:`ImagingEnvironment : AirPressure <OME-2013-06/ome_xsd.html#ImagingEnvironment_AirPressure>`
@@ -126,12 +132,14 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`ObjectiveSettings : ID <OME-2013-06/ome_xsd.html#ObjectiveSettings_ID>`
   * :schema:`ObjectiveSettings : Medium <OME-2013-06/ome_xsd.html#ObjectiveSettings_Medium>`
   * :schema:`ObjectiveSettings : RefractiveIndex <OME-2013-06/ome_xsd.html#ObjectiveSettings_RefractiveIndex>`
-  * :schema:`Pixels : BinDataBigEndian <OME-2013-06/BinaryFile_xsd.html#BinData_BigEndian>`
+  * :schema:`Pixels : BigEndian <OME-2013-06/ome_xsd.html#Pixels_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2013-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2013-06/ome_xsd.html#Pixels_ID>`
+  * :schema:`Pixels : Interleaved <OME-2013-06/ome_xsd.html#Pixels_Interleaved>`
   * :schema:`Pixels : PhysicalSizeX <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeX>`
   * :schema:`Pixels : PhysicalSizeY <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeY>`
   * :schema:`Pixels : PhysicalSizeZ <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeZ>`
+  * :schema:`Pixels : SignificantBits <OME-2013-06/ome_xsd.html#Pixels_SignificantBits>`
   * :schema:`Pixels : SizeC <OME-2013-06/ome_xsd.html#Pixels_SizeC>`
   * :schema:`Pixels : SizeT <OME-2013-06/ome_xsd.html#Pixels_SizeT>`
   * :schema:`Pixels : SizeX <OME-2013-06/ome_xsd.html#Pixels_SizeX>`
@@ -167,6 +175,6 @@ These fields are fully supported by the Bio-Formats Zeiss CZI format reader:
   * :schema:`TransmittanceRange : CutOutTolerance <OME-2013-06/ome_xsd.html#TransmittanceRange_CutOutTolerance>`
   * :schema:`TransmittanceRange : Transmittance <OME-2013-06/ome_xsd.html#TransmittanceRange_Transmittance>`
 
-**Total supported: 149**
+**Total supported: 157**
 
-**Total unknown or missing: 324**
+**Total unknown or missing: 318**

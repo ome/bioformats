@@ -9,9 +9,9 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 29 of them (6%).
-  * Of those, Bio-Formats fully or partially converts 29 (100%).
+Of the 475 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 31 of them (6%).
+  * Of those, Bio-Formats fully or partially converts 31 (100%).
 
 Supported fields
 ===============================================================================
@@ -24,11 +24,13 @@ These fields are fully supported by the Bio-Formats IPLab format reader:
   * :schema:`Image : ID <OME-2013-06/ome_xsd.html#Image_ID>`
   * :schema:`Image : Name <OME-2013-06/ome_xsd.html#Image_Name>`
   * :schema:`Image : ROIRef <OME-2013-06/ROI_xsd.html#ROIRef_ID>`
-  * :schema:`Pixels : BinDataBigEndian <OME-2013-06/BinaryFile_xsd.html#BinData_BigEndian>`
+  * :schema:`Pixels : BigEndian <OME-2013-06/ome_xsd.html#Pixels_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2013-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2013-06/ome_xsd.html#Pixels_ID>`
+  * :schema:`Pixels : Interleaved <OME-2013-06/ome_xsd.html#Pixels_Interleaved>`
   * :schema:`Pixels : PhysicalSizeX <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeX>`
   * :schema:`Pixels : PhysicalSizeY <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeY>`
+  * :schema:`Pixels : SignificantBits <OME-2013-06/ome_xsd.html#Pixels_SignificantBits>`
   * :schema:`Pixels : SizeC <OME-2013-06/ome_xsd.html#Pixels_SizeC>`
   * :schema:`Pixels : SizeT <OME-2013-06/ome_xsd.html#Pixels_SizeT>`
   * :schema:`Pixels : SizeX <OME-2013-06/ome_xsd.html#Pixels_SizeX>`
@@ -47,6 +49,6 @@ These fields are fully supported by the Bio-Formats IPLab format reader:
   * :schema:`Rectangle : X <OME-2013-06/ROI_xsd.html#Rectangle_X>`
   * :schema:`Rectangle : Y <OME-2013-06/ROI_xsd.html#Rectangle_Y>`
 
-**Total supported: 29**
+**Total supported: 31**
 
 **Total unknown or missing: 444**

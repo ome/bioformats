@@ -9,9 +9,9 @@ Bio-Formats standardizes each format's original metadata to and from the OME
 data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
-Of the 473 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 99 of them (20%).
-  * Of those, Bio-Formats fully or partially converts 99 (100%).
+Of the 475 fields documented in the :doc:`metadata summary table </metadata-summary>`:
+  * The file format itself supports 101 of them (21%).
+  * Of those, Bio-Formats fully or partially converts 101 (100%).
 
 Supported fields
 ===============================================================================
@@ -78,12 +78,14 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * :schema:`Objective : LensNA <OME-2013-06/ome_xsd.html#Objective_LensNA>`
   * :schema:`Objective : NominalMagnification <OME-2013-06/ome_xsd.html#Objective_NominalMagnification>`
   * :schema:`ObjectiveSettings : ID <OME-2013-06/ome_xsd.html#ObjectiveSettings_ID>`
-  * :schema:`Pixels : BinDataBigEndian <OME-2013-06/BinaryFile_xsd.html#BinData_BigEndian>`
+  * :schema:`Pixels : BigEndian <OME-2013-06/ome_xsd.html#Pixels_BigEndian>`
   * :schema:`Pixels : DimensionOrder <OME-2013-06/ome_xsd.html#Pixels_DimensionOrder>`
   * :schema:`Pixels : ID <OME-2013-06/ome_xsd.html#Pixels_ID>`
+  * :schema:`Pixels : Interleaved <OME-2013-06/ome_xsd.html#Pixels_Interleaved>`
   * :schema:`Pixels : PhysicalSizeX <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeX>`
   * :schema:`Pixels : PhysicalSizeY <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeY>`
   * :schema:`Pixels : PhysicalSizeZ <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeZ>`
+  * :schema:`Pixels : SignificantBits <OME-2013-06/ome_xsd.html#Pixels_SignificantBits>`
   * :schema:`Pixels : SizeC <OME-2013-06/ome_xsd.html#Pixels_SizeC>`
   * :schema:`Pixels : SizeT <OME-2013-06/ome_xsd.html#Pixels_SizeT>`
   * :schema:`Pixels : SizeX <OME-2013-06/ome_xsd.html#Pixels_SizeX>`
@@ -117,6 +119,6 @@ These fields are fully supported by the Bio-Formats Zeiss Laser-Scanning Microsc
   * :schema:`TransmittanceRange : CutIn <OME-2013-06/ome_xsd.html#TransmittanceRange_CutIn>`
   * :schema:`TransmittanceRange : CutOut <OME-2013-06/ome_xsd.html#TransmittanceRange_CutOut>`
 
-**Total supported: 99**
+**Total supported: 101**
 
 **Total unknown or missing: 374**
