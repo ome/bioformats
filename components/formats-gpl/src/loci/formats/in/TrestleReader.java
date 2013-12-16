@@ -28,6 +28,8 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import ome.scifio.io.BitWriter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +41,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
-import loci.formats.codec.BitWriter;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.tiff.IFD;

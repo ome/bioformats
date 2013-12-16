@@ -39,6 +39,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Vector;
 
+import ome.scifio.io.BitBuffer;
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -48,7 +49,6 @@ import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
-import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.MSRLECodec;

@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.Vector;
 import java.util.zip.InflaterInputStream;
 
+import ome.scifio.io.BitBuffer;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -49,7 +50,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
-import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
 
 /**
