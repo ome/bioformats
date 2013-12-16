@@ -23,22 +23,22 @@
  * #L%
  */
 
-package ome.jxr.datastream.utests;
+package ome.jxr.constants;
 
-import java.io.IOException;
+/**
+ * Constants describing the JPEG XR file structure and initial header metadata.
+ * All sizes, if the name doesn't suggest otherwise, have been provided in
+ * bytes.
+ *
+ * <dl>
+ * <dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/constants/File.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/constants/File.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ */
+public final class Image {
 
-import ome.jxr.JXRException;
-import ome.jxr.StaticDataProvider;
-import ome.jxr.datastream.JXRDecoder;
+  public static final String GDI_SIGNATURE = "WMPHOTO";
 
-import org.testng.annotations.Test;
-
-public class JXRDecoderTest {
-
-  @Test(dataProvider = "testDecoder",
-      dataProviderClass = StaticDataProvider.class)
-  public void testDecode(JXRDecoder decoder)
-      throws IOException, JXRException {
-    decoder.decode();
-  }
 }

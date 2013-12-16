@@ -37,7 +37,7 @@ import ome.jxr.constants.IFD;
 import ome.jxr.ifd.IFDContainer;
 import ome.jxr.ifd.IFDEntry;
 import ome.jxr.ifd.IFDEntryType;
-import ome.jxr.metadata.JXRMetadata;
+import ome.jxr.metadata.IFDMetadata;
 
 /**
  * Parses a JPEG XR data stream and allows for extraction of metadata and
@@ -73,10 +73,10 @@ public class JXRParser {
     this.rootIFDOffset = rootIFDOffset;
   }
 
-  public JXRMetadata extractMetadata() throws IOException {
+  public IFDMetadata extractMetadata() throws IOException {
     findAllIFDs();
 
-    JXRMetadata metadata = new JXRMetadata(stream.length());
+    IFDMetadata metadata = new IFDMetadata(stream.length());
     for (IFDContainer container : IFDContainers) {
       for (int entryOffset : container.getEntryOffsets()) {
         stream.seek(entryOffset);
@@ -115,7 +115,7 @@ public class JXRParser {
     }
   }
 
-  private void parseEntryInto(JXRMetadata metadata) throws IOException {
+  private void parseEntryInto(IFDMetadata metadata) throws IOException {
     IFDEntry entry = IFDEntry.findByTag(stream.readShort());
     IFDEntryType entryType = IFDEntryType.findByTypeCode(stream.readShort());
     int entryDataCount = stream.readInt();

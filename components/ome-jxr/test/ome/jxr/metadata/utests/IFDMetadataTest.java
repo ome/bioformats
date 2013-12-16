@@ -29,17 +29,17 @@ import java.io.IOException;
 
 import ome.jxr.JXRException;
 import ome.jxr.StaticDataProvider;
-import ome.jxr.metadata.JXRMetadata;
+import ome.jxr.metadata.IFDMetadata;
 
 import org.testng.annotations.Test;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNull;
 
-public class JXRMetadataTest {
+public class IFDMetadataTest {
   
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetBitsPerPixel(JXRMetadata metadata)
+  public void testGetBitsPerPixel(IFDMetadata metadata)
       throws JXRException {
     int expected = 8;
     int actual = metadata.getBitsPerPixel();
@@ -47,7 +47,7 @@ public class JXRMetadataTest {
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetNumberOfChannels(JXRMetadata metadata)
+  public void testGetNumberOfChannels(IFDMetadata metadata)
       throws JXRException {
     int expected = 4;
     int actual = metadata.getNumberOfChannels();
@@ -55,7 +55,7 @@ public class JXRMetadataTest {
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetImageWidth(JXRMetadata metadata)
+  public void testGetImageWidth(IFDMetadata metadata)
       throws JXRException {
     long expected = 64;
     long actual = metadata.getImageWidth();
@@ -63,7 +63,7 @@ public class JXRMetadataTest {
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetImageHeight(JXRMetadata metadata)
+  public void testGetImageHeight(IFDMetadata metadata)
       throws JXRException {
     long expected = 64;
     long actual = metadata.getImageHeight();
@@ -71,7 +71,7 @@ public class JXRMetadataTest {
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetImageOffset(JXRMetadata metadata)
+  public void testGetImageOffset(IFDMetadata metadata)
       throws JXRException {
     long expected = 158;
     long actual = metadata.getImageOffset();
@@ -79,7 +79,7 @@ public class JXRMetadataTest {
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetImageByteCount(JXRMetadata metadata)
+  public void testGetImageByteCount(IFDMetadata metadata)
       throws JXRException {
     long expected = 3487;
     long actual = metadata.getImageByteCount();
@@ -87,79 +87,79 @@ public class JXRMetadataTest {
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetDocumentName(JXRMetadata metadata)
+  public void testGetDocumentName(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getDocumentName());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetImageDescription(JXRMetadata metadata)
+  public void testGetImageDescription(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getImageDescription());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetEquipmentMake(JXRMetadata metadata)
+  public void testGetEquipmentMake(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getEquipmentMake());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetEquipmentModel(JXRMetadata metadata)
+  public void testGetEquipmentModel(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getEquipmentModel());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetPageName(JXRMetadata metadata)
+  public void testGetPageName(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getPageName());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetPageNumber(JXRMetadata metadata)
+  public void testGetPageNumber(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getPageNumber());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetSoftwareNameVersion(JXRMetadata metadata)
+  public void testGetSoftwareNameVersion(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getSoftwareNameVersion());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetDateTime(JXRMetadata metadata)
+  public void testGetDateTime(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getDateTime());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetArtistName(JXRMetadata metadata)
+  public void testGetArtistName(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getArtistName());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetHostComputer(JXRMetadata metadata)
+  public void testGetHostComputer(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getHostComputer());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetCopyrightNotice(JXRMetadata metadata)
+  public void testGetCopyrightNotice(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getCopyrightNotice());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetColorSpace(JXRMetadata metadata)
+  public void testGetColorSpace(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getColorSpace());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetPrefferedSpatialTransformation(JXRMetadata metadata)
+  public void testGetPrefferedSpatialTransformation(IFDMetadata metadata)
       throws IOException, JXRException {
     long expected = 0;
     long actual = metadata.getPrefferedSpatialTransformation();
@@ -167,13 +167,13 @@ public class JXRMetadataTest {
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetImageType(JXRMetadata metadata)
+  public void testGetImageType(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getImageType());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetWidthResolution(JXRMetadata metadata)
+  public void testGetWidthResolution(IFDMetadata metadata)
       throws IOException, JXRException {
     float expected = 71.9836f;
     float actual = metadata.getWidthResoulution();
@@ -181,7 +181,7 @@ public class JXRMetadataTest {
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetHeightResolution(JXRMetadata metadata)
+  public void testGetHeightResolution(IFDMetadata metadata)
       throws IOException, JXRException {
     float expected = 71.9836f;
     float actual = metadata.getHeightResoulution();
@@ -189,7 +189,7 @@ public class JXRMetadataTest {
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetAlphaOffset(JXRMetadata metadata)
+  public void testGetAlphaOffset(IFDMetadata metadata)
       throws IOException, JXRException {
     long expected = 0;
     long actual = metadata.getAlphaOffset();
@@ -197,7 +197,7 @@ public class JXRMetadataTest {
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetAlphaByteCount(JXRMetadata metadata)
+  public void testGetAlphaByteCount(IFDMetadata metadata)
       throws IOException, JXRException {
     long expected = 0;
     long actual = metadata.getAlphaByteCount();
@@ -205,13 +205,13 @@ public class JXRMetadataTest {
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetImageBandPresence(JXRMetadata metadata)
+  public void testGetImageBandPresence(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getImageBandPresence());
   }
 
   @Test(dataProvider = "testMetadata", dataProviderClass = StaticDataProvider.class)
-  public void testGetAlphaBandPresence(JXRMetadata metadata)
+  public void testGetAlphaBandPresence(IFDMetadata metadata)
       throws IOException, JXRException {
     assertNull(metadata.getAlphaBandPresence());
   }

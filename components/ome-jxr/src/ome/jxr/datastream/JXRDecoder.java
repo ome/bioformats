@@ -27,9 +27,10 @@ package ome.jxr.datastream;
 
 import java.io.IOException;
 
-import ome.jxr.JXRException;
-import ome.jxr.metadata.JXRMetadata;
 import loci.common.RandomAccessInputStream;
+import ome.jxr.JXRException;
+import ome.jxr.constants.Image;
+import ome.jxr.metadata.IFDMetadata;
 
 /**
  * Decodes the image data from a JPEG XR image file. The data has to be in the
@@ -47,18 +48,34 @@ public class JXRDecoder {
 
   private RandomAccessInputStream stream;
 
-  public JXRDecoder(RandomAccessInputStream stream) {
+  private IFDMetadata metadata;
+
+  public JXRDecoder(RandomAccessInputStream stream, IFDMetadata metadata) {
+    if (stream == null || metadata == null) {
+      throw new IllegalArgumentException("Cannot create decoder without "
+          + "data stream and metadata.");
+    }
     this.stream = stream;
+    this.metadata = metadata;
   }
 
-  public RandomAccessInputStream decode(JXRMetadata metadata)
+  public byte[] decode()
       throws IOException, JXRException {
-    if (metadata == null ) {
-      return null;
-    }
-
     stream.seek(metadata.getImageOffset());
 
-    return stream;
+    parseImageLayer();
+
+    return null;
+  }
+
+  private void parseImageLayer() throws IOException, JXRException {
+    checkIfGDISignaturePresent();
+  }
+
+  private void checkIfGDISignaturePresent() throws IOException, JXRException {
+    String signature = stream.readString(Image.GDI_SIGNATURE.length());
+    if (!Image.GDI_SIGNATURE.equals(signature)) {
+      throw new JXRException("Missing image signature.");
+    }
   }
 }

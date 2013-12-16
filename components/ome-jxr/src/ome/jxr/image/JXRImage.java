@@ -23,22 +23,8 @@
  * #L%
  */
 
-package ome.jxr.datastream.utests;
+package ome.jxr.image;
 
-import java.io.IOException;
+public class JXRImage {
 
-import ome.jxr.JXRException;
-import ome.jxr.StaticDataProvider;
-import ome.jxr.datastream.JXRDecoder;
-
-import org.testng.annotations.Test;
-
-public class JXRDecoderTest {
-
-  @Test(dataProvider = "testDecoder",
-      dataProviderClass = StaticDataProvider.class)
-  public void testDecode(JXRDecoder decoder)
-      throws IOException, JXRException {
-    decoder.decode();
-  }
 }

@@ -23,22 +23,14 @@
  * #L%
  */
 
-package ome.jxr.datastream.utests;
+package ome.jxr.image;
 
-import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
-import ome.jxr.JXRException;
-import ome.jxr.StaticDataProvider;
-import ome.jxr.datastream.JXRDecoder;
+public class JXRImagePlane {
 
-import org.testng.annotations.Test;
+  // TODO: Should this be a byte array?
+  Set<byte[][]> components = new HashSet<byte[][]>();
 
-public class JXRDecoderTest {
-
-  @Test(dataProvider = "testDecoder",
-      dataProviderClass = StaticDataProvider.class)
-  public void testDecode(JXRDecoder decoder)
-      throws IOException, JXRException {
-    decoder.decode();
-  }
 }

@@ -30,7 +30,7 @@ import java.io.IOException;
 import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 import ome.jxr.constants.File;
-import ome.jxr.metadata.JXRMetadata;
+import ome.jxr.metadata.IFDMetadata;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public class JXRReader {
   protected static final Logger LOGGER = LoggerFactory
       .getLogger(JXRReader.class);
 
-  private JXRMetadata metadata;
+  private IFDMetadata metadata;
 
   private JXRParser parser;
 
@@ -79,7 +79,6 @@ public class JXRReader {
       parser = new JXRParser();
       parser.setInputStream(this.stream);
       parser.setRootIFDOffset(rootIFDOffset);
-      decoder = new JXRDecoder(this.stream);
     } catch (IOException ioe) {
       throw new JXRException(ioe);
     }
@@ -93,12 +92,15 @@ public class JXRReader {
     return rootIFDOffset;
   }
 
-  public RandomAccessInputStream getDecompressedImage() throws IOException,
+  public byte[] getDecompressedImage() throws IOException,
       JXRException {
-    return decoder.decode(getMetadata());
+    if (decoder == null) {
+      decoder = new JXRDecoder(this.stream, getMetadata());
+    }
+    return decoder.decode();
   }
 
-  public JXRMetadata getMetadata() throws IOException {
+  public IFDMetadata getMetadata() throws IOException {
     if (metadata == null) {
       metadata = parser.extractMetadata();
     }

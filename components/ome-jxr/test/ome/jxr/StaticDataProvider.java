@@ -88,7 +88,8 @@ public class StaticDataProvider {
   public static Object[][] testDecoderProvider() throws IOException, JXRException {
     String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
     return new Object[][] {
-        {new JXRDecoder(new RandomAccessInputStream(testFilePath))}
+        {new JXRDecoder(new RandomAccessInputStream(
+        testFilePath), new JXRReader(testFilePath).getMetadata())}
     };
   }
 
