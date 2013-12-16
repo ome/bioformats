@@ -59,9 +59,9 @@
       <class name="ome.jxr.ifd.utests.JXRRationalTest"/>
     </classes>
   </test>
-  <test name="JXRMetadata">
+  <test name="IFDMetadata">
     <classes>
-      <class name="ome.jxr.metadata.utests.JXRMetadataTest"/>
+      <class name="ome.jxr.metadata.utests.IFDMetadataTest"/>
     </classes>
   </test>
 </suite>

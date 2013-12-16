@@ -36,23 +36,24 @@ import ome.jxr.ifd.PixelFormat;
 import ome.scifio.common.DataTools;
 
 /**
- * Provides access to metadata extracted from a JPEG XR file. Adds simple logic
- * to translate the raw byte data into primitive data types. The returned data
- * types are not primitive types, so as to allow returning <code>null</code>.
- * That value indicates a missing metadata element and cannot be confused with
- * a numerical value (e.g. 0). This class also verifies value validity on a very
- * basic level (no inferring of metadata value combination meanings), and where
- * needed - returns a default as dictated by the ITU-T specification.
+ * Provides access to metadata extracted from the IFD part of a JPEG XR file.
+ * Adds simple logic to translate the raw byte data into primitive data types.
+ * The returned data types are not primitive types, so as to allow returning
+ * <code>null</code>. That value indicates a missing metadata element and cannot
+ * be confused with a numerical value (e.g. 0). This class also verifies value
+ * validity on a very basic level (no inferring of metadata value combination
+ * meanings), and where needed - returns a default as dictated by the ITU-T
+ * specification.
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/metadata/JXRMetadata.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/metadata/JXRMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/metadata/IFDMetadata.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/metadata/IFDMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  */
-public class JXRMetadata {
+public class IFDMetadata {
 
   // TODO: PTM_COLOR_INFO
   // TODO: PROFILE_LEVEL_CONTAINER
@@ -62,7 +63,7 @@ public class JXRMetadata {
   private Map<IFDEntry, byte[]> entries =
       new EnumMap<IFDEntry, byte[]>(IFDEntry.class);
 
-  public JXRMetadata(long fileSizeInBytes) {
+  public IFDMetadata(long fileSizeInBytes) {
     this.fileSizeInBytes = fileSizeInBytes;
   }
 
