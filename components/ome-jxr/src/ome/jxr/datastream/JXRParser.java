@@ -61,16 +61,22 @@ public class JXRParser {
 
   private List<IFDContainer> IFDContainers = new ArrayList<IFDContainer>();
 
+  public JXRParser(RandomAccessInputStream stream, int rootIFDOffset)
+      throws IOException {
+    if (stream == null) {
+      throw new IllegalArgumentException("Input stream has not been set.");
+    }
+    if (rootIFDOffset == 0 || rootIFDOffset > stream.length()) {
+      throw new IllegalArgumentException(
+          String.format("Invalid offset supplied. Stream length: %d, offset: %d.",
+              stream.length(), rootIFDOffset));
+    }
+    this.stream = stream;
+    this.rootIFDOffset = rootIFDOffset;
+  }
+
   public int getIFDCount() {
     return IFDContainers.size();
-  }
-
-  public void setInputStream(RandomAccessInputStream stream) {
-    this.stream = stream;
-  }
-
-  public void setRootIFDOffset(int rootIFDOffset) {
-    this.rootIFDOffset = rootIFDOffset;
   }
 
   public IFDMetadata extractMetadata() throws IOException {
@@ -88,8 +94,6 @@ public class JXRParser {
   }
 
   public void findAllIFDs() throws IOException {
-    checkStreamAndOffset();
-
     short IFDEntryCount = 0;
     int nextIFDOffset = rootIFDOffset;
 
@@ -101,18 +105,6 @@ public class JXRParser {
           IFDEntryCount*IFD.ENTRY_SIZE);
       nextIFDOffset = stream.read();
     } while (nextIFDOffset != 0 && nextIFDOffset < stream.length());
-  }
-
-  private void checkStreamAndOffset()
-      throws IOException, IllegalStateException {
-    if (stream == null) {
-      throw new IllegalStateException("Input stream has not been set.");
-    }
-    if (rootIFDOffset == 0 || rootIFDOffset > stream.length()) {
-      throw new IllegalStateException(
-          String.format("Invalid offset supplied. Stream length: %d, offset: %d.",
-              stream.length(), rootIFDOffset));
-    }
   }
 
   private void parseEntryInto(IFDMetadata metadata) throws IOException {

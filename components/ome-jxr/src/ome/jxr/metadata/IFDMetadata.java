@@ -102,7 +102,8 @@ public class IFDMetadata {
 
   public Long getImageByteCount() throws JXRException {
     verifyRequiredEntries();
-    Long value = DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_BYTE_COUNT), true);
+    Long value = DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_BYTE_COUNT),
+        true);
     return value != 0 ? value : fileSizeInBytes-getImageOffset();
   }
 
@@ -241,8 +242,9 @@ public class IFDMetadata {
   }
 
   private void verifyRequiredEntries() throws JXRException {
-    if (entries.isEmpty() || !entries.keySet().containsAll(IFDEntry.getRequiredEntries())) {
-        throw new JXRException("Metadata object is missing required IFD entries.");
+    if (entries.isEmpty()
+        || !entries.keySet().containsAll(IFDEntry.getRequiredEntries())) {
+      throw new JXRException("Metadata object is missing required IFD entries.");
     }
   }
 

@@ -30,6 +30,7 @@ import java.io.IOException;
 import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 import ome.jxr.constants.Image;
+import ome.jxr.image.JXRImagePlane;
 import ome.jxr.metadata.IFDMetadata;
 
 /**
@@ -50,10 +51,11 @@ public class JXRDecoder {
 
   private IFDMetadata metadata;
 
-  public JXRDecoder(RandomAccessInputStream stream, IFDMetadata metadata) {
+  public JXRDecoder(RandomAccessInputStream stream, IFDMetadata metadata)
+      throws IOException {
     if (stream == null || metadata == null) {
-      throw new IllegalArgumentException("Cannot create decoder without "
-          + "data stream and metadata.");
+      throw new IllegalArgumentException("Input stream or metadata has not "
+          + "been set.");
     }
     this.stream = stream;
     this.metadata = metadata;
@@ -61,15 +63,24 @@ public class JXRDecoder {
 
   public byte[] decode()
       throws IOException, JXRException {
-    stream.seek(metadata.getImageOffset());
-
     parseImageLayer();
 
     return null;
   }
 
   private void parseImageLayer() throws IOException, JXRException {
+    stream.seek(metadata.getImageOffset());
     checkIfGDISignaturePresent();
+    JXRImagePlane primaryImagePlane = extractPrimaryImagePlane();
+    if (metadata.getAlphaOffset() != null) {
+      //JXRImagePlane alphaImagePlane = extractAlphaImagePlane();
+    }
+  }
+
+  private JXRImagePlane extractPrimaryImagePlane() throws IOException {
+    stream.skipBytes(1);
+    byte value = stream.readByte();
+    return new JXRImagePlane();
   }
 
   private void checkIfGDISignaturePresent() throws IOException, JXRException {
@@ -77,5 +88,9 @@ public class JXRDecoder {
     if (!Image.GDI_SIGNATURE.equals(signature)) {
       throw new JXRException("Missing image signature.");
     }
+  }
+
+  public void close() throws IOException {
+    stream.close();
   }
 }

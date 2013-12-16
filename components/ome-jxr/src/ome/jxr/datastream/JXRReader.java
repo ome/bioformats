@@ -40,7 +40,8 @@ import org.slf4j.LoggerFactory;
  * image data and image metadata. This class only validates the file header and
  * is a facade to a {@link JXRParser} instance that handles low-level data
  * stream operations. A successful instantiation of this class' instance
- * guarantees validity of the image resource passed into the constructor.
+ * guarantees initial validity of the image resource passed into the
+ * constructor.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
@@ -76,9 +77,6 @@ public class JXRReader {
     this.stream = stream;
     try {
       initialize();
-      parser = new JXRParser();
-      parser.setInputStream(this.stream);
-      parser.setRootIFDOffset(rootIFDOffset);
     } catch (IOException ioe) {
       throw new JXRException(ioe);
     }
@@ -101,6 +99,9 @@ public class JXRReader {
   }
 
   public IFDMetadata getMetadata() throws IOException {
+    if (parser == null) {
+      parser = new JXRParser(this.stream, rootIFDOffset);
+    }
     if (metadata == null) {
       metadata = parser.extractMetadata();
     }

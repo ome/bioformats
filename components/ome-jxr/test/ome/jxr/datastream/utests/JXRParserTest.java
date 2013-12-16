@@ -40,48 +40,24 @@ import org.testng.annotations.Test;
 
 public class JXRParserTest {
 
-  @Test
-  public void testGetIFDCountShouldReturnZeroForEmptyObject() 
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testCtorShouldThrowIfStreamAndOffsetNotSet()
       throws IOException {
-    JXRParser parser = new JXRParser();
-    int expectedCount = 0;
-    int actualCount = parser.getIFDCount();
-
-    assertEquals(expectedCount, actualCount);
-  }
-
-  @Test(expectedExceptions = IllegalStateException.class)
-  public void testFindAllIFDsShouldThrowIfStreamAndOffsetNotSet()
-      throws IllegalStateException, IOException {
-    JXRParser parser = new JXRParser();
-    parser.findAllIFDs();
+    new JXRParser(null, 0);
   }
 
   @Test(dataProvider = "testStream", dataProviderClass = StaticDataProvider.class,
-      expectedExceptions = IllegalStateException.class)
-  public void testFindAllIFDsShouldThrowIfOffsetTooBig(RandomAccessInputStream stream)
+      expectedExceptions = IllegalArgumentException.class)
+  public void testCtorShouldThrowIfOffsetTooBig(RandomAccessInputStream stream)
       throws IllegalStateException, IOException {
-    JXRParser parser = new JXRParser();
-    parser.setInputStream(stream);
-    parser.setRootIFDOffset((int) stream.length() + 1);
-    parser.findAllIFDs();
-  }
-
-  @Test(expectedExceptions = IllegalStateException.class)
-  public void testFindAllIFDsShouldThrowIfOnlyOffsetSet()
-      throws IllegalStateException, IOException {
-    JXRParser parser = new JXRParser();
-    parser.setRootIFDOffset(10);
-    parser.findAllIFDs();
+    new JXRParser(stream, (int) stream.length() + 1);
   }
 
   @Test(dataProvider = "testStream", dataProviderClass = StaticDataProvider.class,
-      expectedExceptions = IllegalStateException.class)
-  public void testFindAllIFDsShouldThrowIfOnlyStreamSet(RandomAccessInputStream stream)
+      expectedExceptions = IllegalArgumentException.class)
+  public void testCtorShouldThrowIfOffsetTooSmall(RandomAccessInputStream stream)
       throws IllegalStateException, IOException {
-    JXRParser parser = new JXRParser();
-    parser.setInputStream(stream);
-    parser.findAllIFDs();
+    new JXRParser(stream, (int) 0);
   }
 
   @Test(dataProvider = "testStream",
@@ -89,25 +65,9 @@ public class JXRParserTest {
   public void testGetIFDCountShouldReturnOneForTestImage(RandomAccessInputStream stream)
       throws IOException, JXRException {
     JXRReader reader = new JXRReader(stream);
-    JXRParser parser = new JXRParser();
-    parser.setInputStream(stream);
-    parser.setRootIFDOffset(reader.getRootIFDOffset());
+    JXRParser parser = new JXRParser(stream, reader.getRootIFDOffset());
     int expectedIFDCount = 1;
     parser.findAllIFDs();
-    int actualIFDCount = parser.getIFDCount();
-    parser.close();
-
-    assertEquals(expectedIFDCount, actualIFDCount);
-  }
-
-  @Test(dataProvider = "testStream",
-      dataProviderClass = StaticDataProvider.class)
-  public void testGetIFDCountShouldReturnZeroForOffsetOutsideOfStream(RandomAccessInputStream stream)
-      throws IOException, JXRException {
-    JXRParser parser = new JXRParser();
-    parser.setInputStream(stream);
-    parser.setRootIFDOffset((int) stream.length() + 1);
-    int expectedIFDCount = 0;
     int actualIFDCount = parser.getIFDCount();
     parser.close();
 
@@ -119,9 +79,7 @@ public class JXRParserTest {
   public void testExtractMetadataShouldNotReturnNull(RandomAccessInputStream stream)
       throws IOException, JXRException {
     JXRReader reader = new JXRReader(stream);
-    JXRParser parser = new JXRParser();
-    parser.setInputStream(stream);
-    parser.setRootIFDOffset(reader.getRootIFDOffset());
+    JXRParser parser = new JXRParser(stream, reader.getRootIFDOffset());
     assertNotNull(parser.extractMetadata());
     parser.close();
   }
