@@ -61,80 +61,80 @@ def guard(filename):
     filename = re.sub("[^A-Z0-9]", "_", filename)
     return filename
 
-def baseUsage(error):
+def usage(error):
     """
     Prints usage so that we don't have to. :)
     """
+    java = language.create("Java", config.DEFAULT_NAMESPACE, "/path/to/schemas")
+    cpp = language.create("C++", config.DEFAULT_NAMESPACE, "/path/to/schemas")
+
     cmd = sys.argv[0]
-    print("""%s
-Usage: %s <subcommand> ...
-Executes an OME-XML Schema definition parsing and code generation subcommand.
+    print("""Error: %s
+
+xsd-fu: Generate classes from an OME-XML schema definition
+Usage: %s command [options…] -o output_dir schema_files…
+
+Options:
+  -d, --dry-run                              Do not create output files
+  -l, --language=lang                        Generated language
+  --metadata-package=pkg                     Metadata package
+  --ome-xml-metadata-package=pkg             OME-XML metadata class package
+  --ome-xml-model-package=pkg                OME-XML model package
+  --ome-xml-model-enums-package=pkg          OME-XML model enum package
+  --ome-xml-model-enum-handlers-package=pkg  OME-XML model enum handler package
+  -o, --output-directory=dir                 Generated output directory
+  -q, --quiet                                Do not output file names
+  -t, --template-path=path                   Genshi template path
+  -v, --verbose                              Output generated file names
+  -n, --xsd-namespace                        XML schema namespace
 
 Available subcommands:
+  debug
+  doc_gen
+  enum_handlers
+  enum_types
   java_classes
-  omexml_metadata
+  metadata
   omero_metadata
   omero_model
-  metadata_store
-  metadata_retrieve
-  metadata_aggregate
-  dummy_metadata
-  filter_metadata
-  enum_types
-  enum_handlers
-  doc_gen
+  omexml_metadata
   tab_gen
-  debug
 
-Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
-    (error, cmd))
-    sys.exit(2)
+Default XSD namespace: "%s"
 
-def mainUsage(error):
-    """
-    Prints usage so that we don't have to. :)
-    """
-    cmd = sys.argv[0]
-    print("""%s
-Usage: %s [-n xsd_namespace] [-p package] -o <output_dir> -l <lang> <path/to/ome.xsd...>
-Generates Java classes from an OME XML Schema definition.
+Default Java OME-XML package: "%s"
+Default Java OME-XML enum package: "%s"
+Default Java OME-XML enum handler package: "%s"
+Default Java metadata package: "%s"
+Default Java OME-XML metadata package: "%s"
 
-Default package: "%s"
-Default namespace: "%s"
+Default C++ OME-XML package: "%s"
+Default C++ OME-XML enum package: "%s"
+Default C++ metadata package: "%s"
+Default C++ OME-XML metadata package: "%s"
 
 Examples:
-  %s -n 'xs:' -p ome.xml -o ome/xml schemas/ome.xsd
+  %s -l Java -n '%s' --ome-xml-model-package=%s -o omexml /path/to/schemas/ome.xsd
+  %s -l C++ -n '%s' --ome-xml-model-package=%s -o omexml /path/to/schemas/ome.xsd
 
 Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
-    (error, cmd, config.DEFAULT_JAVA_OMEXML_PACKAGE, config.DEFAULT_NAMESPACE, cmd))
-    sys.exit(2)
-
-def metadataUsage(error):
-    """
-    Prints usage so that we don't have to. :)
-    """
-    cmd = sys.argv[0]
-    print("""%s
-Usage: %s [-n xsd_namespace] <path/to/ome.xsd...>
-Generates a metadata interface from one or multiple OME schema definitions.
-
-Default namespace: "%s"
-
-Examples:
-  %s -n 'xs:' ome.xsd ROI.xsd SPW.xsd
-
-Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
-    (error, cmd, config.DEFAULT_NAMESPACE, cmd))
+    (error,
+     cmd,
+     java.modelNamespace,
+     java.omexml_model_package, java.omexml_model_enums_package, java.omexml_model_enum_handlers_package, java.metadata_package, java.omexml_metadata_package,
+     cpp.omexml_model_package, cpp.omexml_model_enums_package, cpp.metadata_package, cpp.omexml_metadata_package,
+     cmd, java.modelNamespace, java.omexml_model_package,
+     cmd, cpp.modelNamespace, cpp.omexml_model_package))
     sys.exit(2)
 
 def main(opts):
     """
-    Default main() that parses command line options and generates Java
+    Default main() that parses command line options and generates
     classes in the output directory.
     """
 
     model = generateds.parse(opts)
-    fu = TemplateInfo(opts.outdir, opts.package)
+    fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
     template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
     base, filename = os.path.split(opts.lang.templatepath(config.CLASS_TEMPLATE))
     name, extension = os.path.splitext(filename)
@@ -210,7 +210,7 @@ def main(opts):
 
 def enum_value_name(value):
     """
-    Returns a valid Java enumeration name for an OME XML enumeration value.
+    Returns a valid Java enumeration name for an OME-XML enumeration value.
     """
     if re.match(r'^\d+', value):
         value = value.replace("0", "zero")
@@ -233,7 +233,7 @@ def enumTypesMain(opts):
     """
 
     model = generateds.parse(opts)
-    fu = TemplateInfo(opts.outdir, opts.package)
+    fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enums_package)
     template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
     for obj in model.objects.values():
         for prop in obj.properties.values():
@@ -272,7 +272,7 @@ def enumTypesIncludeAll(opts):
     """
 
     model = generateds.parse(opts)
-    fu = TemplateInfo(opts.outdir, opts.package)
+    fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enums_package)
     template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_INCLUDEALL_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
     headers = model.getEnumHeaders()
 
@@ -301,12 +301,12 @@ def enumTypesIncludeAll(opts):
 
 def enumHandlersMain(opts):
     """
-    Default main() that parses command line options and generates Java
+    Default main() that parses command line options and generates
     classes for enumeration handlers in an output directory.
     """
 
     model = generateds.parse(opts)
-    fu = TemplateInfo(opts.outdir, opts.package)
+    fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enum_handlers_package)
     base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
     configobj = ConfigObj(os.path.join(base, "enum_handler.cfg"))
     template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_HANDLER_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
@@ -455,14 +455,7 @@ def omeXmlMetadataMain(opts):
     MetadataStore and MetadataRetrieve implementation.
     """
 
-    if isinstance(opts.lang, language.Java):
-        if opts.package is None:
-            opts.package = config.DEFAULT_JAVA_OMEXMLMETADATA_PACKAGE
-    elif isinstance(opts.lang, language.CXX):
-        if opts.package is None:
-            opts.package = config.DEFAULT_CXX_OMEXMLMETADATA_PACKAGE
-    relpath = os.path.join(*opts.package.split(opts.lang.package_separator))
-
+    relpath = os.path.join(*opts.lang.omexml_metadata_package.split(opts.lang.package_separator))
 
     processMetadataTemplate(config.OMEXML_METADATA_TEMPLATE,
                 os.path.join(relpath, "OMEXMLMetadataImpl"),
@@ -492,13 +485,7 @@ def metadataMain(opts):
     MetadataStore implementation.
     """
 
-    if isinstance(opts.lang, language.Java):
-        if opts.package is None:
-            opts.package = config.DEFAULT_JAVA_METADATA_PACKAGE
-    elif isinstance(opts.lang, language.CXX):
-        if opts.package is None:
-            opts.package = config.DEFAULT_CXX_METADATA_PACKAGE
-    relpath = os.path.join(*opts.package.split(opts.lang.package_separator))
+    relpath = os.path.join(*opts.lang.metadata_package.split(opts.lang.package_separator))
 
     processMetadataTemplate(config.METADATA_STORE_TEMPLATE,
                 os.path.join(relpath, "MetadataStore"),
@@ -527,7 +514,7 @@ def debugMain(opts):
     """
 
     model = generateds.parse(opts)
-    fu = TemplateInfo(opts.outdir, opts.package)
+    fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
     template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
     base, filename = os.path.split(opts.lang.templatepath(config.CLASS_TEMPLATE))
     name, extension = os.path.splitext(filename)
@@ -575,7 +562,7 @@ def docGenMain(opts):
         prefix = theSchemas[0] + ":"
         opts.args = [theSchemas[1]]
         model = generateds.parse(opts)
-        fu = TemplateInfo(opts.outdir, opts.package)
+        fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
         template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
         print(" == `%s` ==" % (prefix))
         for obj in model.objects.values():
@@ -609,7 +596,7 @@ def tabGenMain(opts):
         prefix = theSchemas[0] + ":"
         opts.args = [theSchemas[1]]
         model = generateds.parse(opts)
-        fu = TemplateInfo(opts.outdir, opts.package)
+        fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
         template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
         for theToplevelNode in theSchemas[2]:
             parentlist(model, theToplevelNode[0], theToplevelNode[1])
@@ -633,12 +620,31 @@ def parentlist(model, name, pre):
 class options:
     def __init__(self, args):
         try:
-            self.options, self.args = gnu_getopt(args[1:], "df:l:o:p:n:t:qv")
-        except GetoptError(msg, opt):
-            mainUsage(msg)
+            self.options, self.args = gnu_getopt(args[1:], "df:l:o:p:n:t:qv",
+                                                 ['dry-run',
+                                                  'file-type=',
+                                                  'language=',
+                                                  'output-directory=',
+                                                  'ome-xml-model-package=',
+                                                  'ome-xml-model-enums-package=',
+                                                  'ome-xml-model-enum-handlers-package=',
+                                                  'metadata-package=',
+                                                  'ome-xml-metadata-package=',
+                                                  'xsd-namespace=',
+                                                  'template-path=',
+                                                  'quiet',
+                                                  'verbose'])
+        except GetoptError as err:
+            usage(err)
+
+        omexml_model_package = None
+        omexml_model_enums_package = None
+        omexml_model_enum_handlers_package = None
+        metadata_package = None
+        omexml_metadata_package = None
 
         self.outdir = None
-        self.package = None
+        self.package = None # Used for output classes only
         self.namespace = config.DEFAULT_NAMESPACE
         self.lang = "Java"
         self.filetype = language.TYPE_SOURCE
@@ -652,71 +658,94 @@ class options:
                 elif argument == language.TYPE_HEADER:
                     self.filetype = language.TYPE_HEADER
                 else:
-                    mainUsage("Invalid filetype; source and header are the only valid options")
+                    usage("Invalid filetype; source and header are the only valid options")
                     sys.exit(1)
-            if option == "-l":
+            if option in ('-l', '--language'):
                 self.lang = argument
-            if option == "-o":
+            if option in ('-o', '--output-directory'):
                 self.outdir = argument
-            if option == "-p":
-                self.package = argument
-            if option == "-n":
+            if option in ('--ome-xml-model-package'):
+                omexml_model_package = argument
+            if option in ('--ome-xml-model-enums-package'):
+                omexml_model_enums_package = argument
+            if option in ('--ome-xml-model-enum-handlers-package'):
+                omexml_model_enum_handlers_package = argument
+            if option in ('--metadata-package'):
+                metadata_package = argument
+            if option in ('--ome-xml-metadata-package'):
+                omexml_metadata_package = argument
+            if option in ('-n', '--xsd-namespace'):
                 self.namespace = argument
-            if option == "-t":
+            if option in ('-t', '--template-path'):
                 self.templatepath = argument
-            if option == "-q":
+            if option in ('-q', '--quiet'):
                 self.verbose = False
-            if option == "-v":
+            if option in ('-v', '--verbose'):
                 self.verbose = True
-            if options == "-d":
+            if option in ('-d', '--dry-run'):
                 self.dryrun = True
         # Create language object
         self.lang = language.create(self.lang, self.namespace, self.templatepath)
+        if omexml_model_package is not None:
+            self.lang.omexml_model_package = omexml_model_package
+        if omexml_model_enums_package is not None:
+            self.lang.omexml_model_enums_package = omexml_model_enums_package
+        if omexml_model_enum_handlers_package is not None:
+            self.lang.omexml_model_enum_handlers_package = omexml_model_enum_handlers_package
+        if metadata_package is not None:
+            self.lang.metadata_package = metadata_package
+        if omexml_metadata_package is not None:
+            self.lang.omexml_metadata_package = omexml_metadata_package
+
+        if len(self.args) < 1:
+            usage('Missing subcommand')
+
         if self.outdir is None:
-            mainUsage("Output directory must be specified!")
+            usage("Output directory must be specified")
             sys.exit(1)
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
+        self.command = self.args[0]
+        self.args = self.args[1:]
+
+        if (self.command != "doc_gen" and self.command != "tab_gen") and len(self.args) < 1:
+            usage("No schema files specified")
+
 if __name__ == '__main__':
     opts = options(sys.argv)
 
-    if len(opts.args) < 1:
-        baseUsage('Missing subcommand!')
+    opts.package = opts.lang.omexml_model_package
+    if opts.command == "enum_types":
+        opts.package = opts.lang.omexml_model_enums_package
+    elif opts.command == "enum_handlers":
+        opts.package = opts.lang.omexml_model_enum_handlers_package
+    elif opts.command == "metadata":
+        opts.package = opts.lang.metadata_package
+    elif opts.command == "omexml_metadata":
+        opts.package = opts.lang.omexml_metadata_package
 
-    a = opts.args[0]
-    opts.args = opts.args[1:]
-
-    if (a != "doc_gen" and a != "tab_gen") and len(opts.args) < 1:
-        mainUsage("Expecting at least one XSD file path!")
-
-    if opts.package is None and a != "metadata" and a != "omexml_metadata":
-        if isinstance(opts.lang, language.Java):
-            opts.package = config.DEFAULT_JAVA_OMEXML_PACKAGE
-        elif isinstance(opts.lang, language.CXX):
-            opts.package = config.DEFAULT_CXX_OMEXML_PACKAGE
-
-    if a == "java_classes":
+    if opts.command == "java_classes":
         main(opts)
-    elif a == "omexml_metadata":
+    elif opts.command == "omexml_metadata":
         omeXmlMetadataMain(opts)
-    elif a == "omero_metadata":
+    elif opts.command == "omero_metadata":
         omeroMetadataMain(opts)
-    elif a == "omero_model":
+    elif opts.command == "omero_model":
         omeroModelMain(opts)
-    elif a == "metadata":
+    elif opts.command == "metadata":
         metadataMain(opts)
-    elif a == "enum_types":
+    elif opts.command == "enum_types":
         enumTypesMain(opts)
-    elif a == "enum_includeall":
+    elif opts.command == "enum_includeall":
         enumTypesIncludeAll(opts)
-    elif a == "enum_handlers":
+    elif opts.command == "enum_handlers":
         enumHandlersMain(opts)
-    elif a == "doc_gen":
+    elif opts.command == "doc_gen":
         docGenMain(opts)
-    elif a == "tab_gen":
+    elif opts.command == "tab_gen":
         tabGenMain(opts)
-    elif a == "debug":
+    elif opts.command == "debug":
         debugMain(opts)
     else:
-        baseUsage('Unrecognized subcommand: %s' % a)
+        usage('Unrecognized subcommand: %s' % opts.command)

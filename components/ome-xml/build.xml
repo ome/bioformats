@@ -19,17 +19,17 @@ Type "ant -p" for a list of targets.
     <delete dir="${xsdfu.modelpath}"/>
 
     <!-- Generate the OME model object classes -->
-    <xsd_fu package="ome.xml.model" lang="Java" output="${xsdfu.modelpath}">
+    <xsd_fu lang="Java" output="${xsdfu.modelpath}">
       <arg value="java_classes"/>
     </xsd_fu>
 
     <!-- Generate the OME model enumeration classes -->
-    <xsd_fu package="ome.xml.model.enums" lang="Java" output="${xsdfu.modelpath}">
+    <xsd_fu lang="Java" output="${xsdfu.modelpath}">
       <arg value="enum_types"/>
     </xsd_fu>
 
     <!-- Generate the handlers for the OME model enumeration classes -->
-    <xsd_fu package="ome.xml.model.enums.handlers" lang="Java" output="${xsdfu.modelpath}">
+    <xsd_fu lang="Java" output="${xsdfu.modelpath}">
       <arg value="enum_handlers"/>
     </xsd_fu>
   </target>
