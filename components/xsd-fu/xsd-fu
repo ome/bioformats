@@ -210,22 +210,22 @@ def main(opts):
 
         if opts.verbose:
             print(fullname)
-        if opts.dryrun:
-            continue
 
         outputDirectory = os.path.dirname(fullname)
-        if not os.path.exists(outputDirectory):
+        if not opts.dryrun and not os.path.exists(outputDirectory):
             os.makedirs(outputDirectory)
 
-        f = codecs.open(fullname, "w", encoding='utf-8')
         classContent = template.generate(
             fu=fu, klass=obj, model=model, opts=opts, lang=opts.lang, debug=opts.debug,
             customContent=customContent,
             customUpdatePropertyContent=customUpdatePropertyContent,
             customAsXMLElementPropertyContent=customAsXMLElementPropertyContent)
         classContent = classContent.render(encoding='utf-8')
-        f.write(classContent.decode('utf-8'))
-        f.close()
+
+        if not opts.dryrun:
+            f = codecs.open(fullname, "w", encoding='utf-8')
+            f.write(classContent.decode('utf-8'))
+            f.close()
 
         if opts.debug:
             print(classContent)
@@ -275,18 +275,18 @@ def enumTypesMain(opts):
 
             if opts.verbose:
                 print(fullname)
-            if opts.dryrun:
-                continue
 
             outputDirectory = os.path.dirname(fullname)
-            if not os.path.exists(outputDirectory):
+            if not opts.dryrun and not os.path.exists(outputDirectory):
                 os.makedirs(outputDirectory)
 
-            f = codecs.open(fullname, "w", encoding='utf-8')
             classContent = template.generate(fu=fu, klass=prop, opts=opts, lang=opts.lang, debug=opts.debug,
                                              enum_value_name=enum_value_name).render(encoding='utf-8')
-            f.write(classContent.decode('utf-8'))
-            f.close()
+
+            if not opts.dryrun:
+                f = codecs.open(fullname, "w", encoding='utf-8')
+                f.write(classContent.decode('utf-8'))
+                f.close()
 
 def enumTypesIncludeAll(opts):
     """
@@ -309,17 +309,17 @@ def enumTypesIncludeAll(opts):
 
     if opts.verbose:
         print(fullname)
-    if opts.dryrun:
-        return
 
     outputDirectory = os.path.dirname(fullname)
-    if not os.path.exists(outputDirectory):
+    if not opts.dryrun and not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
 
-    f = codecs.open(fullname, "w", encoding='utf-8')
     classContent = template.generate(fu=fu, model=model, opts=opts, lang=opts.lang, debug=opts.debug).render(encoding='utf-8')
-    f.write(classContent.decode('utf-8'))
-    f.close()
+
+    if not opts.dryrun:
+        f = codecs.open(fullname, "w", encoding='utf-8')
+        f.write(classContent.decode('utf-8'))
+        f.close()
 
 def enumHandlersMain(opts):
     """
@@ -350,18 +350,18 @@ def enumHandlersMain(opts):
 
             if opts.verbose:
                 print(fullname)
-            if opts.dryrun:
-                continue
 
             outputDirectory = os.path.dirname(fullname)
-            if not os.path.exists(outputDirectory):
+            if not opts.dryrun and not os.path.exists(outputDirectory):
                 os.makedirs(outputDirectory)
 
-            f = codecs.open(fullname, "w", encoding='utf-8')
             classContent = template.generate(fu=fu, klass=prop, model=model, opts=opts, lang=opts.lang, debug=opts.debug,
                              enum_value_name=enum_value_name, config=configobj).render(encoding='utf-8')
-            f.write(classContent.decode('utf-8'))
-            f.close()
+
+            if not opts.dryrun:
+                f = codecs.open(fullname, "w", encoding='utf-8')
+                f.write(classContent.decode('utf-8'))
+                f.close()
 
 def max_occurs_under_parent(model, parent, name):
     """
@@ -457,20 +457,19 @@ def processMetadataTemplate(template, outputFilename, opts):
 
     if opts.verbose:
         print(fullname)
-    if opts.dryrun:
-        return
 
     outputDirectory = os.path.dirname(fullname)
-    if not os.path.exists(outputDirectory):
+    if not opts.dryrun and not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
 
     content = template.generate(fu=fu, model=model, parents=parents,
-                    is_multi_path=is_multi_path, indexes=indexes,
-                    customContent=customContent,
-                    opts=opts, lang=opts.lang, debug=opts.debug).render(encoding='utf-8')
-    f = codecs.open(fullname, "w", encoding='utf-8')
-    f.write(content.decode('utf-8'))
-    f.close()
+                                is_multi_path=is_multi_path, indexes=indexes,
+                                customContent=customContent,
+                                opts=opts, lang=opts.lang, debug=opts.debug).render(encoding='utf-8')
+    if not opts.dryrun:
+        f = codecs.open(fullname, "w", encoding='utf-8')
+        f.write(content.decode('utf-8'))
+        f.close()
 
 def omeXmlMetadataMain(opts):
     """
@@ -696,7 +695,7 @@ class options:
         if self.outdir is None:
             usage("Output directory must be specified")
             sys.exit(1)
-        if not os.path.exists(self.outdir):
+        if not self.dryrun and not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
         self.command = self.args[0]
