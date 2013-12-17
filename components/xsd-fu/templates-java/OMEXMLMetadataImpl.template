@@ -159,7 +159,9 @@
 {% end %}\
 {% end %}\
 {% if obj.name in customContent and prop.name in customContent[obj.name] %}\
+{% if debug %}\
 		// Custom content from ${obj.name} ${prop.name} template
+{% end debug %}\
 ${customContent[obj.name][prop.name]}
 {% end %}\
 	}
@@ -480,7 +482,9 @@ ${counter(k, o, v)}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
@@ -499,10 +503,14 @@ ${getter(k, o, prop, v)}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
@@ -576,7 +584,9 @@ ${getter(k, o, prop, v)}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
@@ -595,10 +605,14 @@ ${setter(k, o, prop, v)}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\

@@ -541,9 +541,13 @@ ${customUpdatePropertyContent[prop.name]}
 		{
 {% choose %}\
 {% when prop.name in customAsXMLElementPropertyContent %}\
+{% if debug %}\
 			// -- BEGIN custom content from ${prop.name} property template --
+{% end debug %}\
 ${customAsXMLElementPropertyContent[prop.name]}
+{% if debug %}\
 			// -- END custom content from ${prop.name} property template --
+{% end debug %}\
 {% end when %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
 			// Reference property ${prop.name} which occurs more than once
