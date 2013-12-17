@@ -84,7 +84,9 @@ Options:
   --ome-xml-model-enums-package=pkg          OME-XML model enum package
   --ome-xml-model-enum-handlers-package=pkg  OME-XML model enum handler package
   -o, --output-directory=dir                 Generated output directory
-  -q, --quiet                                Do not output file names
+  --print-depends                            Output command dependencies
+  --print-generated                          Output generated file names
+  -q, --quiet                                Do not output any messages
   -t, --template-path=path                   Genshi template path
   -v, --verbose                              Output generated file names
   -n, --xsd-namespace                        XML schema namespace
@@ -132,10 +134,14 @@ def main(opts):
     Default main() that parses command line options and generates
     classes in the output directory.
     """
+    used_files = set()
+    for file in opts.args:
+        used_files.add(os.path.realpath(file))
 
     model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
     template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
+    used_files.add(os.path.realpath(opts.lang.templatepath(config.CLASS_TEMPLATE)))
     base, filename = os.path.split(opts.lang.templatepath(config.CLASS_TEMPLATE))
     name, extension = os.path.splitext(filename)
     for obj in model.objects.values():
@@ -146,6 +152,7 @@ def main(opts):
         customContent = ''
         if os.path.exists(CUSTOM_CLASS_TEMPLATE):
             customTemplate = NewTextTemplate(codecs.open(CUSTOM_CLASS_TEMPLATE, encoding='utf-8'), encoding='utf-8')
+            used_files.add(os.path.realpath(CUSTOM_CLASS_TEMPLATE))
             customContent = customTemplate.generate(
                 fu=fu, klass=obj, parents=parents, model=model, opts=opts, lang=opts.lang, debug=opts.debug)
             customContent = customContent.render(encoding='utf-8')
@@ -157,6 +164,7 @@ def main(opts):
             start = customTemplate.rfind("_") + 1
             end = customTemplate.rfind(".")
             propertyName = customTemplate[start:end]
+            used_files.add(os.path.realpath(customTemplate))
             customTemplate = NewTextTemplate(codecs.open(customTemplate, encoding='utf-8'), encoding='utf-8')
             content = customTemplate.generate(
                 fu=fu, klass=obj, parents=parents, model=model, opts=opts, lang=opts.lang, debug=opts.debug)
@@ -171,6 +179,7 @@ def main(opts):
             start = customTemplate.rfind("_") + 1
             end = customTemplate.rfind(".")
             propertyName = customTemplate[start:end]
+            used_files.add(os.path.realpath(customTemplate))
             customTemplate = NewTextTemplate(codecs.open(customTemplate, encoding='utf-8'), encoding='utf-8')
             content = customTemplate.generate(
                 fu=fu, klass=obj, parents=parents, model=model, opts=opts, lang=opts.lang, debug=opts.debug)
@@ -208,7 +217,7 @@ def main(opts):
 
         fullname = os.path.join(opts.outdir, fullname)
 
-        if opts.verbose:
+        if opts.print_generated:
             print(fullname)
 
         outputDirectory = os.path.dirname(fullname)
@@ -229,6 +238,11 @@ def main(opts):
 
         if opts.debug:
             print(classContent)
+
+    if opts.print_depends:
+        for file in sorted(used_files):
+            print(file)
+
 
 def enum_value_name(value):
     """
@@ -254,9 +268,14 @@ def enumTypesMain(opts):
     classes for enumeration types in an output directory.
     """
 
+    used_files = set()
+    for file in opts.args:
+        used_files.add(os.path.realpath(file))
+
     model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enums_package)
     template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
+    used_files.add(os.path.realpath(opts.lang.templatepath(config.ENUM_TEMPLATE)))
     for obj in model.objects.values():
         for prop in obj.properties.values():
             if not prop.isEnumeration:
@@ -273,7 +292,7 @@ def enumTypesMain(opts):
 
             fullname = os.path.join(opts.outdir, fullname)
 
-            if opts.verbose:
+            if opts.print_generated:
                 print(fullname)
 
             outputDirectory = os.path.dirname(fullname)
@@ -288,14 +307,23 @@ def enumTypesMain(opts):
                 f.write(classContent.decode('utf-8'))
                 f.close()
 
+    if opts.print_depends:
+        for file in sorted(used_files):
+            print(file)
+
 def enumTypesIncludeAll(opts):
     """
     Generate header to include all enum headers.
     """
 
+    used_files = set()
+    for file in opts.args:
+        used_files.add(os.path.realpath(file))
+
     model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enums_package)
     template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_INCLUDEALL_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
+    used_files.add(os.path.realpath(opts.lang.templatepath(config.ENUM_INCLUDEALL_TEMPLATE)))
     headers = model.getEnumHeaders()
 
     fullname = opts.lang.generatedFilename("enums", language.TYPE_HEADER)
@@ -307,7 +335,7 @@ def enumTypesIncludeAll(opts):
 
     fullname = os.path.join(opts.outdir, fullname)
 
-    if opts.verbose:
+    if opts.print_generated:
         print(fullname)
 
     outputDirectory = os.path.dirname(fullname)
@@ -321,17 +349,26 @@ def enumTypesIncludeAll(opts):
         f.write(classContent.decode('utf-8'))
         f.close()
 
+    if opts.print_depends:
+        for file in sorted(used_files):
+            print(file)
+
 def enumHandlersMain(opts):
     """
     Default main() that parses command line options and generates
     classes for enumeration handlers in an output directory.
     """
 
+    used_files = set()
+    for file in opts.args:
+        used_files.add(os.path.realpath(file))
+
     model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enum_handlers_package)
     base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
     configobj = ConfigObj(os.path.join(base, "enum_handler.cfg"))
     template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_HANDLER_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
+    used_files.add(os.path.realpath(opts.lang.templatepath(config.ENUM_HANDLER_TEMPLATE)))
     for obj in model.objects.values():
         for prop in obj.properties.values():
             if not prop.isEnumeration:
@@ -348,7 +385,7 @@ def enumHandlersMain(opts):
 
             fullname = os.path.join(opts.outdir, fullname)
 
-            if opts.verbose:
+            if opts.print_generated:
                 print(fullname)
 
             outputDirectory = os.path.dirname(fullname)
@@ -362,6 +399,10 @@ def enumHandlersMain(opts):
                 f = codecs.open(fullname, "w", encoding='utf-8')
                 f.write(classContent.decode('utf-8'))
                 f.close()
+
+    if opts.print_depends:
+        for file in sorted(used_files):
+            print(file)
 
 def max_occurs_under_parent(model, parent, name):
     """
@@ -411,6 +452,10 @@ def processMetadataTemplate(template, outputFilename, opts):
     args = opts.args
     template = opts.lang.templatepath(template)
 
+    used_files = set()
+    for file in opts.args:
+        used_files.add(os.path.realpath(file))
+
     model = generateds.parse(opts)
     indexes = dict()
     parents = dict()
@@ -433,6 +478,7 @@ def processMetadataTemplate(template, outputFilename, opts):
     fu.DEFAULT_BASE_CLASS = model.opts.lang.getDefaultModelBaseClass()
     base, filename = os.path.split(template)
     name, extension = os.path.splitext(filename)
+    used_files.add(os.path.realpath(template))
     template = NewTextTemplate(codecs.open(template, encoding='utf-8').read(), encoding='utf-8')
     from glob import glob
     customContent = dict()
@@ -440,6 +486,7 @@ def processMetadataTemplate(template, outputFilename, opts):
         filename = os.path.split(customTemplate)[1];
         filename = os.path.splitext(filename)[0]
         base, objectName, propertyName = filename.split("_")
+        used_files.add(os.path.realpath(customTemplate))
         customTemplate = NewTextTemplate(codecs.open(customTemplate, encoding='utf-8').read(), encoding='utf-8')
         customTemplate = customTemplate.generate(
             fu=fu, model=model, parents=parents, is_multi_path=is_multi_path,
@@ -455,7 +502,7 @@ def processMetadataTemplate(template, outputFilename, opts):
 
     fullname = os.path.join(opts.outdir, fullname)
 
-    if opts.verbose:
+    if opts.print_generated:
         print(fullname)
 
     outputDirectory = os.path.dirname(fullname)
@@ -470,6 +517,10 @@ def processMetadataTemplate(template, outputFilename, opts):
         f = codecs.open(fullname, "w", encoding='utf-8')
         f.write(content.decode('utf-8'))
         f.close()
+
+    if opts.print_depends:
+        for file in sorted(used_files):
+            print(file)
 
 def omeXmlMetadataMain(opts):
     """
@@ -616,6 +667,8 @@ class options:
                                                   'ome-xml-model-enum-handlers-package=',
                                                   'metadata-package=',
                                                   'ome-xml-metadata-package=',
+                                                  'print-depends',
+                                                  'print-generated',
                                                   'xsd-namespace=',
                                                   'template-path=',
                                                   'quiet',
@@ -638,8 +691,11 @@ class options:
         self.verbose = True
         self.dryrun = False
         self.debug = False
+        self.print_generated = False
+        self.print_depends = False
+        self.print_generated = False
         for option, argument in self.options:
-            if option == "-f":
+            if option in ('-f', '--file-type'):
                 if argument == language.TYPE_SOURCE:
                     self.filetype = language.TYPE_SOURCE
                 elif argument == language.TYPE_HEADER:
@@ -647,7 +703,7 @@ class options:
                 else:
                     usage("Invalid filetype; source and header are the only valid options")
                     sys.exit(1)
-            if option in ('-l', '--language'):
+            elif option in ('-l', '--language'):
                 self.lang = argument
             elif option in ('-o', '--output-directory'):
                 self.outdir = argument
@@ -667,8 +723,12 @@ class options:
                 self.templatepath = argument
             elif option in ('-q', '--quiet'):
                 self.verbose = False
+                self.print_depends = False
+                self.print_generated = False
             elif option in ('-v', '--verbose'):
                 self.verbose = True
+                self.print_depends = False
+                self.print_generated = True
             elif option in ('-d', '--dry-run'):
                 self.dryrun = True
             elif option in ('--debug'):
@@ -676,6 +736,10 @@ class options:
                 # after -d or else -d is treated as being equivalent
                 # to --debug.
                 self.debug = True
+            elif option in ('--print-depends'):
+                self.print_depends = True
+            elif option in ('--print-generated'):
+                self.print_generated = True
         # Create language object
         self.lang = language.create(self.lang, self.namespace, self.templatepath)
         if omexml_model_package is not None:

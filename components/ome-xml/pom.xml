@@ -79,6 +79,7 @@
 		<argument>${xsdfu.script}</argument>
 		<argument>java_classes</argument>
 		<argument>--output-directory=${xsdfu.modelpath}/</argument>
+		<argument>--print-generated</argument>
 		<argument>${project.rootdir}/${xsdfu.ome}</argument>
 		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
 		<argument>${project.rootdir}/${xsdfu.roi}</argument>
@@ -100,6 +101,7 @@
 		<argument>${xsdfu.script}</argument>
 		<argument>enum_types</argument>
 		<argument>--output-directory=${xsdfu.modelpath}/</argument>
+		<argument>--print-generated</argument>
 		<argument>${project.rootdir}/${xsdfu.ome}</argument>
 		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
 		<argument>${project.rootdir}/${xsdfu.roi}</argument>
@@ -121,6 +123,7 @@
 		<argument>${xsdfu.script}</argument>
 		<argument>enum_handlers</argument>
 		<argument>--output-directory=${xsdfu.modelpath}/</argument>
+		<argument>--print-generated</argument>
 		<argument>${project.rootdir}/${xsdfu.ome}</argument>
 		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
 		<argument>${project.rootdir}/${xsdfu.roi}</argument>

@@ -37,6 +37,7 @@ Include this in components generating sources using xsd-fu.
 	<arg value="--language=@{lang}"/>
 	<arg value="--template-path=${xsdfu.templatepath}"/>
 	<arg value="--output-directory=@{output}/"/>
+	<arg value="--print-generated"/>
 	<arg value="${xsdfu.schema.ome}"/>
 	<arg value="${xsdfu.schema.binaryfile}"/>
 	<arg value="${xsdfu.schema.roi}"/>

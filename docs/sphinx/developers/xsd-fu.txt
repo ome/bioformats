@@ -44,9 +44,10 @@ Available options
 .. cmdoption:: -d, --dry-run
 
   Run all source generation processing, but don't write output files.
-  In combination with `-v`, this option may be used to dynamically
-  introspect source generation to create build rules on the fly for
-  e.g. :program:`cmake`.
+  In combination with :option:`--print-depends` or
+  :option:`--print-generated`, this option may be used to dynamically
+  introspect command dependencies and output to create build rules on
+  the fly for e.g. :program:`cmake`.
 
 .. cmdoption:: --debug
 
@@ -88,6 +89,19 @@ Available options
   directory is the root of the source tree; generated classes will be
   placed into the appropriate module-specific locations under this
   root.
+
+.. cmdoption:: --print-depends
+
+  Print a list of the files required during template processing,
+  including schema files, templates and custom template fragments.
+  Particularly useful with :option:`--dry-run` to introspect command
+  dependencies.
+
+.. cmdoption:: --print-generated
+
+  Print a list of the files generated during template processing.
+  Particularly useful with :option:`--dry-run` to determine what a
+  given command would generate.
 
 .. cmdoption:: -q, --quiet
 
