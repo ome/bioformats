@@ -562,7 +562,7 @@ class Section(dict):
         except AttributeError:
             # not yet: first time running _interpolate(), so pick the engine
             name = self.main.interpolation
-            if name == True:  # note that "if name:" would be incorrect here
+            if name:  # note that "if name:" would be incorrect here
                 # backwards-compatibility: interpolation=True means use default
                 name = DEFAULT_INTERPOLATION
             name = name.lower()  # so that "Template", "template", etc. all work
@@ -969,9 +969,9 @@ class Section(dict):
         0
         """
         val = self[key]
-        if val == True:
+        if val:
             return True
-        elif val == False:
+        elif not val:
             return False
         else:
             try:
@@ -2252,9 +2252,9 @@ class ConfigObj(Section):
                 section.inline_comments[entry] = configspec.inline_comments.get(entry, '')
             check = self.validate(validator, preserve_errors=preserve_errors, copy=copy, section=section[entry])
             out[entry] = check
-            if check == False:
+            if not check:
                 ret_true = False
-            elif check == True:
+            elif check:
                 ret_false = False
             else:
                 ret_true = False
@@ -2436,7 +2436,7 @@ def flatten_errors(cfg, res, levels=None, results=None):
             levels.pop()
         return results
     for (key, val) in res.items():
-        if val == True:
+        if val:
             continue
         if isinstance(cfg.get(key), dict):
             # Go down one level
