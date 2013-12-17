@@ -36,17 +36,31 @@
 
 cmake_policy(SET CMP0007 NEW)
 
+# The xsd-fu script
 set(XSD_FU_SCRIPT ${PROJECT_SOURCE_DIR}/components/xsd-fu/xsd-fu)
+
+# Command to invoke xsd-fu; python used explicitly to allow it to
+# function on windows
 set(XSD_FU python ${XSD_FU_SCRIPT})
+
+# Version of the OME-XML model to use
 set(MODEL_VERSION 2013-06)
+
+# Path to the model within the source tree
 set(MODEL_PATH ${PROJECT_SOURCE_DIR}/components/specification/released-schema/${MODEL_VERSION})
+
+# Files to use within the model directory
 set(MODEL_FILES
     ${MODEL_PATH}/ome.xsd
     ${MODEL_PATH}/BinaryFile.xsd
     ${MODEL_PATH}/ROI.xsd
     ${MODEL_PATH}/SA.xsd
     ${MODEL_PATH}/SPW.xsd)
+
+# Output directory for source generation
 set(GEN_DIR ${PROJECT_BINARY_DIR}/cpp/lib)
+
+# Default arguments to use when running xsd-fu
 set(XSD_FU_ARGS --language=C++ --output-directory=${GEN_DIR} ${MODEL_FILES})
 
 # xsd_fu_single: Run xsd-fu for a single filetype
