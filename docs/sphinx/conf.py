@@ -192,10 +192,6 @@ extlinks = {
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')
     }
 
-rst_prolog = """
-**This documentation is in transition. Please refer to the** :products_plone:`OME5 <ome5>` **products page for more information**.
-"""
-
 rst_epilog = """
 .. _Hibernate: http://www.hibernate.org
 .. _ZeroC: http://www.zeroc.com
