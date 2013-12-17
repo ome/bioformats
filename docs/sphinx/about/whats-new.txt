@@ -1,6 +1,26 @@
 Version history
 ===============
 
+5.0.0-RC1 (2013 Dec 19)
+-----------------------
+
+* Updated Maven build system and launched new Artifactory repository
+  (http://artifacts.openmicroscopy.org)
+* Added support for:
+   - :doc:`Bio-Rad SCN </formats/bio-rad-scn>`
+   - :doc:`Yokogawa CellVoyager </formats/cellvoyager>` (thanks to
+     Jean-Yves Tinevez)
+   - :doc:`LaVision Imspector </formats/lavision-imspector>`
+   - :doc:`PCORAW </formats/pcoraw>`
+   - :doc:`Woolz </formats/woolz>` (thanks to Bill Hill)
+* Added support for populating and parsing ModuloAlong{Z, C, T} annotations
+  for FLIM/SPIM data
+* Updated netCDF and slf4j version requirements - netCDF 4.3.19 and
+  slf4j 1.7.2 are now required
+* Updated and improved :doc:`MATLAB users </users/matlab/index>` and
+  :doc:`developers </developers/matlab-dev>` documentation
+* Many bug fixes including for Nikon ND2, Zeiss CZI, and CellWorX formats
+
 5.0.0-beta1 (2013 June 20)
 --------------------------
 
