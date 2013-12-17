@@ -81,16 +81,16 @@ OMERO_NAMED_OPTIONAL = (
 
 
 # The default template for enum class processing.
-ENUM_TEMPLATE = 'Enum.template'
+ENUM_TEMPLATE = 'OMEXMLModelEnum.template'
 
 # The default template for enum inclusion.
-ENUM_INCLUDEALL_TEMPLATE = 'Enums.template'
+ENUM_INCLUDEALL_TEMPLATE = 'OMEXMLModelAllEnums.template'
 
 # The default template for enum handler class processing.
-ENUM_HANDLER_TEMPLATE = 'EnumHandler.template'
+ENUM_HANDLER_TEMPLATE = 'OMEXMLModelEnumHandler.template'
 
 # The default template for class processing.
-CLASS_TEMPLATE = 'Pojo.template'
+CLASS_TEMPLATE = 'OMEXMLModelObject.template'
 
 # The default template for MetadataStore processing.
 METADATA_STORE_TEMPLATE = 'MetadataStore.template'
