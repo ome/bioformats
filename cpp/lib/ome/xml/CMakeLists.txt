@@ -36,13 +36,13 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES})
 
-execute_process(COMMAND ${XSD_FU} java_classes --dry-run --file-type=source --print-generated ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} omexml_model --dry-run --file-type=source --print-generated ${XSD_FU_ARGS}
   OUTPUT_VARIABLE OME_XML_GENERATED_MODEL_SOURCES)
 string(REPLACE "\n" ";" OME_XML_GENERATED_MODEL_SOURCES "${OME_XML_GENERATED_MODEL_SOURCES}")
 if(WIN32)
   string(REPLACE "\\" "/" OME_XML_GENERATED_MODEL_SOURCES "${OME_XML_GENERATED_MODEL_SOURCES}")
 endif(WIN32)
-execute_process(COMMAND ${XSD_FU} java_classes --dry-run --file-type=source --print-depends ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} omexml_model --dry-run --file-type=source --print-depends ${XSD_FU_ARGS}
   OUTPUT_VARIABLE OME_XML_GENERATED_MODEL_SOURCE_DEPENDENCIES)
 string(REPLACE "\n" ";" OME_XML_GENERATED_MODEL_SOURCE_DEPENDENCIES "${OME_XML_GENERATED_MODEL_SOURCE_DEPENDENCIES}")
 if(WIN32)
@@ -50,17 +50,17 @@ if(WIN32)
 endif(WIN32)
 
 add_custom_command(OUTPUT ${OME_XML_GENERATED_MODEL_SOURCES}
-                   COMMAND ${XSD_FU} java_classes --quiet --file-type=source ${XSD_FU_ARGS}
+                   COMMAND ${XSD_FU} omexml_model --quiet --file-type=source ${XSD_FU_ARGS}
                    DEPENDS ${OME_XML_GENERATED_MODEL_SOURCE_DEPENDENCIES} ${XSD_FU_SCRIPT})
 #execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_MODEL_SOURCES})
 
-execute_process(COMMAND ${XSD_FU} java_classes --dry-run --file-type=header --print-generated ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} omexml_model --dry-run --file-type=header --print-generated ${XSD_FU_ARGS}
   OUTPUT_VARIABLE OME_XML_GENERATED_MODEL_HEADERS)
 string(REPLACE "\n" ";" OME_XML_GENERATED_MODEL_HEADERS "${OME_XML_GENERATED_MODEL_HEADERS}")
 if(WIN32)
   string(REPLACE "\\" "/" OME_XML_GENERATED_MODEL_HEADERS "${OME_XML_GENERATED_MODEL_HEADERS}")
 endif(WIN32)
-execute_process(COMMAND ${XSD_FU} java_classes --dry-run --file-type=header --print-depends ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} omexml_model --dry-run --file-type=header --print-depends ${XSD_FU_ARGS}
   OUTPUT_VARIABLE OME_XML_GENERATED_MODEL_HEADER_DEPENDENCIES)
 string(REPLACE "\n" ";" OME_XML_GENERATED_MODEL_HEADER_DEPENDENCIES "${OME_XML_GENERATED_MODEL_HEADER_DEPENDENCIES}")
 if(WIN32)
@@ -68,17 +68,17 @@ if(WIN32)
 endif(WIN32)
 
 add_custom_command(OUTPUT ${OME_XML_GENERATED_MODEL_HEADERS}
-                   COMMAND ${XSD_FU} java_classes --quiet --file-type=header ${XSD_FU_ARGS}
+                   COMMAND ${XSD_FU} omexml_model --quiet --file-type=header ${XSD_FU_ARGS}
                    DEPENDS ${OME_XML_GENERATED_MODEL_HEADER_DEPENDENCIES} ${XSD_FU_SCRIPT})
 #execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_MODEL_HEADERS})
 
-execute_process(COMMAND ${XSD_FU} enum_types --dry-run --file-type=source --print-generated ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} omexml_model_enums --dry-run --file-type=source --print-generated ${XSD_FU_ARGS}
   OUTPUT_VARIABLE OME_XML_GENERATED_ENUMS_SOURCES)
 string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMS_SOURCES "${OME_XML_GENERATED_ENUMS_SOURCES}")
 if(WIN32)
   string(REPLACE "\\" "/" OME_XML_GENERATED_ENUMS_SOURCES "${OME_XML_GENERATED_ENUMS_SOURCES}")
 endif(WIN32)
-execute_process(COMMAND ${XSD_FU} enum_types --dry-run --file-type=source --print-depends ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} omexml_model_enums --dry-run --file-type=source --print-depends ${XSD_FU_ARGS}
   OUTPUT_VARIABLE OME_XML_GENERATED_ENUMS_SOURCE_DEPENDENCIES)
 string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMS_SOURCE_DEPENDENCIES "${OME_XML_GENERATED_ENUMS_SOURCE_DEPENDENCIES}")
 if(WIN32)
@@ -86,17 +86,17 @@ if(WIN32)
 endif(WIN32)
 
 add_custom_command(OUTPUT ${OME_XML_GENERATED_ENUMS_SOURCES}
-                   COMMAND ${XSD_FU} enum_types --quiet --file-type=source ${XSD_FU_ARGS}
+                   COMMAND ${XSD_FU} omexml_model_enums --quiet --file-type=source ${XSD_FU_ARGS}
                    DEPENDS ${OME_XML_GENERATED_ENUMS_SOURCE_DEPENDENCIES} ${XSD_FU_SCRIPT})
 #execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_ENUMS_SOURCES})
 
-execute_process(COMMAND ${XSD_FU} enum_types --dry-run --file-type=header --print-generated ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} omexml_model_enums --dry-run --file-type=header --print-generated ${XSD_FU_ARGS}
   OUTPUT_VARIABLE OME_XML_GENERATED_ENUMS_HEADERS)
 string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMS_HEADERS "${OME_XML_GENERATED_ENUMS_HEADERS}")
 if(WIN32)
   string(REPLACE "\\" "/" OME_XML_GENERATED_ENUMS_HEADERS "${OME_XML_GENERATED_ENUMS_HEADERS}")
 endif(WIN32)
-execute_process(COMMAND ${XSD_FU} enum_types --dry-run --file-type=header --print-depends ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} omexml_model_enums --dry-run --file-type=header --print-depends ${XSD_FU_ARGS}
   OUTPUT_VARIABLE OME_XML_GENERATED_ENUMS_HEADER_DEPENDENCIES)
 string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMS_HEADER_DEPENDENCIES "${OME_XML_GENERATED_ENUMS_HEADER_DEPENDENCIES}")
 if(WIN32)
@@ -104,17 +104,17 @@ if(WIN32)
 endif(WIN32)
 
 add_custom_command(OUTPUT ${OME_XML_GENERATED_ENUMS_HEADERS}
-                   COMMAND ${XSD_FU} enum_types --quiet --file-type=header ${XSD_FU_ARGS}
+                   COMMAND ${XSD_FU} omexml_model_enums --quiet --file-type=header ${XSD_FU_ARGS}
                    DEPENDS ${OME_XML_GENERATED_ENUMS_HEADER_DEPENDENCIES} ${XSD_FU_SCRIPT})
 #execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_ENUMS_HEADERS})
 
-execute_process(COMMAND ${XSD_FU} enum_includeall --dry-run --file-type=header --print-generated ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} omexml_model_enum_includeall --dry-run --file-type=header --print-generated ${XSD_FU_ARGS}
   OUTPUT_VARIABLE OME_XML_GENERATED_ENUMINCLUDE_HEADERS)
 string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMINCLUDE_HEADERS ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
 if(WIN32)
   string(REPLACE "\\" "/" OME_XML_GENERATED_ENUMINCLUDE_HEADERS ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
 endif(WIN32)
-execute_process(COMMAND ${XSD_FU} enum_includeall --dry-run --file-type=header --print-depends ${XSD_FU_ARGS}
+execute_process(COMMAND ${XSD_FU} omexml_model_enum_includeall --dry-run --file-type=header --print-depends ${XSD_FU_ARGS}
   OUTPUT_VARIABLE OME_XML_GENERATED_ENUMINCLUDE_HEADER_DEPENDENCIES)
 string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMINCLUDE_HEADER_DEPENDENCIES ${OME_XML_GENERATED_ENUMINCLUDE_HEADER_DEPENDENCIES})
 if(WIN32)
@@ -122,7 +122,7 @@ if(WIN32)
 endif(WIN32)
 
 add_custom_command(OUTPUT ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
-                   COMMAND ${XSD_FU} enum_includeall --quiet --file-type=header ${XSD_FU_ARGS}
+                   COMMAND ${XSD_FU} omexml_model_enum_includeall --quiet --file-type=header ${XSD_FU_ARGS}
                    DEPENDS ${OME_XML_GENERATED_ENUMINCLUDE_HEADER_DEPENDENCIES} ${XSD_FU_SCRIPT})
 #execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
 

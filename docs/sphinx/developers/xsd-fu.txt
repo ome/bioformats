@@ -124,13 +124,14 @@ Available commands
 ------------------
 
 * doc_gen
-* enum_handlers
-* enum_types
-* java_classes
 * metadata
 * omero_metadata
 * omero_model
 * omexml_metadata
+* omexml_model
+* omexml_model_enums
+* omexml_model_enum_handlers
+* omexml_model_enum_includeall
 * tab_gen
 
 Running the code generator
@@ -162,9 +163,9 @@ Run xsd-fu script with no arguments to examine the syntax::
   Available subcommands:
     debug
     doc_gen
-    enum_handlers
-    enum_types
-    java_classes
+    omexml_model_enum_handlers
+    omexml_model_enums
+    omexml_model
     metadata
     omero_metadata
     omero_model
@@ -226,7 +227,7 @@ Java classes for OME model objects
 
 ::
 
-  $ ./xsd-fu java_classes -o \
+  $ ./xsd-fu omexml_model -o \
     ../ome-xml/target/generated-sources/ \
     ../specification/released-schema/2013-06/ome.xsd \
     ../specification/released-schema/2013-06/BinaryFile.xsd \
@@ -239,7 +240,7 @@ Enumeration classes for OME model properties
 
 ::
 
-  $ ./xsd-fu enum_types -o \
+  $ ./xsd-fu omexml_model_enums -o \
     ../ome-xml/target/generated-sources/ \
     ../specification/released-schema/2013-06/ome.xsd \
     ../specification/released-schema/2013-06/BinaryFile.xsd \
@@ -252,7 +253,7 @@ Enumeration handlers for OME model properties
 
 ::
 
-  $ ./xsd-fu enum_handlers -o \
+  $ ./xsd-fu omexml_model_enum_handlers -o \
     ../ome-xml/target/generated-sources/ \
     ../specification/released-schema/2013-06/ome.xsd \
     ../specification/released-schema/2013-06/BinaryFile.xsd \

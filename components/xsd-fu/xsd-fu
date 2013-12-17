@@ -93,13 +93,14 @@ Options:
 
 Available subcommands:
   doc_gen
-  enum_handlers
-  enum_types
-  java_classes
   metadata
   omero_metadata
   omero_model
   omexml_metadata
+  omexml_model
+  omexml_model_enums
+  omexml_model_enum_handlers
+  omexml_model_enum_includeall
   tab_gen
 
 Default XSD namespace: "%s"
@@ -123,7 +124,7 @@ Report bugs to OME Devel <ome-devel@lists.openmicroscopy.org.uk>""" % \
     (error,
      cmd,
      java.modelNamespace,
-     java.omexml_model_package, java.omexml_model_enums_package, java.omexml_model_enum_handlers_package, java.metadata_package, java.omexml_metadata_package,
+     java.omexml_model_package, java.omexml_model_enums_package, java.omexml_model_omexml_model_enum_handlers_package, java.metadata_package, java.omexml_metadata_package,
      cpp.omexml_model_package, cpp.omexml_model_enums_package, cpp.metadata_package, cpp.omexml_metadata_package,
      cmd, java.modelNamespace, java.omexml_model_package,
      cmd, cpp.modelNamespace, cpp.omexml_model_package))
@@ -364,7 +365,7 @@ def enumHandlersMain(opts):
         used_files.add(os.path.realpath(file))
 
     model = generateds.parse(opts)
-    fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enum_handlers_package)
+    fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_omexml_model_enum_handlers_package)
     base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
     configobj = ConfigObj(os.path.join(base, "enum_handler.cfg"))
     template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_HANDLER_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
@@ -678,7 +679,7 @@ class options:
 
         omexml_model_package = None
         omexml_model_enums_package = None
-        omexml_model_enum_handlers_package = None
+        omexml_model_omexml_model_enum_handlers_package = None
         metadata_package = None
         omexml_metadata_package = None
 
@@ -712,7 +713,7 @@ class options:
             elif option in ('--ome-xml-model-enums-package'):
                 omexml_model_enums_package = argument
             elif option in ('--ome-xml-model-enum-handlers-package'):
-                omexml_model_enum_handlers_package = argument
+                omexml_model_omexml_model_enum_handlers_package = argument
             elif option in ('--metadata-package'):
                 metadata_package = argument
             elif option in ('--ome-xml-metadata-package'):
@@ -746,8 +747,8 @@ class options:
             self.lang.omexml_model_package = omexml_model_package
         if omexml_model_enums_package is not None:
             self.lang.omexml_model_enums_package = omexml_model_enums_package
-        if omexml_model_enum_handlers_package is not None:
-            self.lang.omexml_model_enum_handlers_package = omexml_model_enum_handlers_package
+        if omexml_model_omexml_model_enum_handlers_package is not None:
+            self.lang.omexml_model_omexml_model_enum_handlers_package = omexml_model_omexml_model_enum_handlers_package
         if metadata_package is not None:
             self.lang.metadata_package = metadata_package
         if omexml_metadata_package is not None:
@@ -772,16 +773,16 @@ if __name__ == '__main__':
     opts = options(sys.argv)
 
     opts.package = opts.lang.omexml_model_package
-    if opts.command == "enum_types":
+    if opts.command == "omexml_model_enums":
         opts.package = opts.lang.omexml_model_enums_package
-    elif opts.command == "enum_handlers":
-        opts.package = opts.lang.omexml_model_enum_handlers_package
+    elif opts.command == "omexml_model_enum_handlers":
+        opts.package = opts.lang.omexml_model_omexml_model_enum_handlers_package
     elif opts.command == "metadata":
         opts.package = opts.lang.metadata_package
     elif opts.command == "omexml_metadata":
         opts.package = opts.lang.omexml_metadata_package
 
-    if opts.command == "java_classes":
+    if opts.command == "omexml_model":
         main(opts)
     elif opts.command == "omexml_metadata":
         omeXmlMetadataMain(opts)
@@ -791,11 +792,11 @@ if __name__ == '__main__':
         omeroModelMain(opts)
     elif opts.command == "metadata":
         metadataMain(opts)
-    elif opts.command == "enum_types":
+    elif opts.command == "omexml_model_enums":
         enumTypesMain(opts)
-    elif opts.command == "enum_includeall":
+    elif opts.command == "omexml_model_enum_includeall":
         enumTypesIncludeAll(opts)
-    elif opts.command == "enum_handlers":
+    elif opts.command == "omexml_model_enum_handlers":
         enumHandlersMain(opts)
     elif opts.command == "doc_gen":
         docGenMain(opts)

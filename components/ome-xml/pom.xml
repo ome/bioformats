@@ -77,7 +77,7 @@
 	      <executable>python</executable>
 	      <arguments>
 		<argument>${xsdfu.script}</argument>
-		<argument>java_classes</argument>
+		<argument>omexml_model</argument>
 		<argument>--output-directory=${xsdfu.modelpath}/</argument>
 		<argument>--print-generated</argument>
 		<argument>${project.rootdir}/${xsdfu.ome}</argument>
@@ -99,7 +99,7 @@
 	      <executable>python</executable>
 	      <arguments>
 		<argument>${xsdfu.script}</argument>
-		<argument>enum_types</argument>
+		<argument>omexml_model_enums</argument>
 		<argument>--output-directory=${xsdfu.modelpath}/</argument>
 		<argument>--print-generated</argument>
 		<argument>${project.rootdir}/${xsdfu.ome}</argument>
@@ -121,7 +121,7 @@
 	      <executable>python</executable>
 	      <arguments>
 		<argument>${xsdfu.script}</argument>
-		<argument>enum_handlers</argument>
+		<argument>omexml_model_enum_handlers</argument>
 		<argument>--output-directory=${xsdfu.modelpath}/</argument>
 		<argument>--print-generated</argument>
 		<argument>${project.rootdir}/${xsdfu.ome}</argument>
