@@ -48,6 +48,14 @@ Available options
   introspect source generation to create build rules on the fly for
   e.g. :program:`cmake`.
 
+.. cmdoption:: --debug
+
+  Enable xsd-fu debugging messages and template debugging.  The code
+  templates contain diagnostic messages to debug the template
+  processing, which are normally suppressed in the code output;
+  enabling debugging will add these diagnostic messages to the
+  generated code.
+
 .. cmdoption:: -l language, --language=language
 
   Generate code for the specified language.  Currently supported
@@ -101,7 +109,6 @@ Available options
 Available commands
 ------------------
 
-* debug
 * doc_gen
 * enum_handlers
 * enum_types
@@ -125,6 +132,7 @@ Run xsd-fu script with no arguments to examine the syntax::
 
   Options:
     -d, --dry-run                              Do not create output files
+    --debug                                    Enable xsd-fu and template debugging
     -l, --language=lang                        Generated language
     --metadata-package=pkg                     Metadata package
     --ome-xml-metadata-package=pkg             OME-XML metadata class package

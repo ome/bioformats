@@ -76,6 +76,7 @@ Usage: %s command [options…] -o output_dir schema_files…
 
 Options:
   -d, --dry-run                              Do not create output files
+  --debug                                    Enable xsd-fu and template debugging
   -l, --language=lang                        Generated language
   --metadata-package=pkg                     Metadata package
   --ome-xml-metadata-package=pkg             OME-XML metadata class package
@@ -89,7 +90,6 @@ Options:
   -n, --xsd-namespace                        XML schema namespace
 
 Available subcommands:
-  debug
   doc_gen
   enum_handlers
   enum_types
@@ -179,6 +179,25 @@ def main(opts):
         # END Custom templates for asXMLElment()
         parents = model.resolve_parents(obj.name)
 
+        if opts.debug:
+            if obj.name in ["StructuredAnnotations"]:
+                CUSTOM_CLASS_TEMPLATE = os.path.join(base, '%s_%s%s' % (name, obj.name, extension))
+                customContent = ''
+                if os.path.exists(CUSTOM_CLASS_TEMPLATE):
+                    customTemplate = NewTextTemplate(codecs.open(CUSTOM_CLASS_TEMPLATE, encoding='utf-8'), encoding='utf-8')
+                    customContent = customTemplate.generate(
+                        fu=fu, klass=obj, parents=parents, model=model)
+                    customContent = customContent.render(encoding='utf-8')
+                print("Dump: %s" % obj.__dict__)
+                print("Element Dump: %s" % obj.element.__dict__)
+                print(" +-- %s(base=%s, type=%s)" % (obj.name, obj.base, obj.type))
+                for prop in obj.properties.values():
+                    print("Dump: %s" % prop.__dict__)
+                    print("Delegate Dump: %s" % prop.delegate.__dict__)
+                    print(" +---- %s(%s) [%d:%d]" % \
+                        (prop.name, prop.type, prop.minOccurs, prop.maxOccurs))
+                print("\n")
+
         try:
             fullname = opts.lang.generatedFilename(obj.name, opts.filetype)
             fullname = os.path.join("ome", "xml", "model", fullname)
@@ -207,6 +226,9 @@ def main(opts):
         classContent = classContent.render(encoding='utf-8')
         f.write(classContent.decode('utf-8'))
         f.close()
+
+        if opts.debug:
+            print(classContent)
 
 def enum_value_name(value):
     """
@@ -507,43 +529,6 @@ def metadataMain(opts):
                 os.path.join(relpath, "DummyMetadata"),
                 opts)
 
-def debugMain(opts):
-    """
-    Debugging main() that does not parse the command line and spits
-    generated data to STDOUT.
-    """
-
-    model = generateds.parse(opts)
-    fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
-    template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
-    base, filename = os.path.split(opts.lang.templatepath(config.CLASS_TEMPLATE))
-    name, extension = os.path.splitext(filename)
-    for obj in model.objects.values():
-        parents = model.resolve_parents(obj.name)
-        if obj.name in ["StructuredAnnotations"]:
-            CUSTOM_CLASS_TEMPLATE = os.path.join(base, '%s_%s%s' % (name, obj.name, extension))
-            customContent = ''
-            if os.path.exists(CUSTOM_CLASS_TEMPLATE):
-                customTemplate = NewTextTemplate(codecs.open(CUSTOM_CLASS_TEMPLATE, encoding='utf-8'), encoding='utf-8')
-                customContent = customTemplate.generate(
-                    fu=fu, klass=obj, parents=parents, model=model)
-                customContent = customContent.render(encoding='utf-8')
-            print("Dump: %s" % obj.__dict__)
-            print("Element Dump: %s" % obj.element.__dict__)
-            print(" +-- %s(base=%s, type=%s)" % (obj.name, obj.base, obj.type))
-            for prop in obj.properties.values():
-                print("Dump: %s" % prop.__dict__)
-                print("Delegate Dump: %s" % prop.delegate.__dict__)
-                print(" +---- %s(%s) [%d:%d]" % \
-                    (prop.name, prop.type, prop.minOccurs, prop.maxOccurs))
-            print("\n")
-
-            fu.GUARD = guard(fullname)
-            fu.SOURCE_TYPE = opts.filetype;
-
-            print(template.generate(
-                    fu=fu, klass=obj, parents=parents, model=model, customContent=customContent).render(encoding='utf-8'))
-
 def docGenMain(opts):
     """
     Documentation main() that does not parse the command line and spits
@@ -622,6 +607,7 @@ class options:
         try:
             self.options, self.args = gnu_getopt(args[1:], "df:l:o:p:n:t:qv",
                                                  ['dry-run',
+                                                  'debug',
                                                   'file-type=',
                                                   'language=',
                                                   'output-directory=',
@@ -651,6 +637,7 @@ class options:
         self.templatepath = os.path.dirname(os.path.realpath(__file__))
         self.verbose = True
         self.dryrun = False
+        self.debug = False
         for option, argument in self.options:
             if option == "-f":
                 if argument == language.TYPE_SOURCE:
@@ -662,28 +649,33 @@ class options:
                     sys.exit(1)
             if option in ('-l', '--language'):
                 self.lang = argument
-            if option in ('-o', '--output-directory'):
+            elif option in ('-o', '--output-directory'):
                 self.outdir = argument
-            if option in ('--ome-xml-model-package'):
+            elif option in ('--ome-xml-model-package'):
                 omexml_model_package = argument
-            if option in ('--ome-xml-model-enums-package'):
+            elif option in ('--ome-xml-model-enums-package'):
                 omexml_model_enums_package = argument
-            if option in ('--ome-xml-model-enum-handlers-package'):
+            elif option in ('--ome-xml-model-enum-handlers-package'):
                 omexml_model_enum_handlers_package = argument
-            if option in ('--metadata-package'):
+            elif option in ('--metadata-package'):
                 metadata_package = argument
-            if option in ('--ome-xml-metadata-package'):
+            elif option in ('--ome-xml-metadata-package'):
                 omexml_metadata_package = argument
-            if option in ('-n', '--xsd-namespace'):
+            elif option in ('-n', '--xsd-namespace'):
                 self.namespace = argument
-            if option in ('-t', '--template-path'):
+            elif option in ('-t', '--template-path'):
                 self.templatepath = argument
-            if option in ('-q', '--quiet'):
+            elif option in ('-q', '--quiet'):
                 self.verbose = False
-            if option in ('-v', '--verbose'):
+            elif option in ('-v', '--verbose'):
                 self.verbose = True
-            if option in ('-d', '--dry-run'):
+            elif option in ('-d', '--dry-run'):
                 self.dryrun = True
+            elif option in ('--debug'):
+                # Note due to gnu_getopt bug, this must be placed
+                # after -d or else -d is treated as being equivalent
+                # to --debug.
+                self.debug = True
         # Create language object
         self.lang = language.create(self.lang, self.namespace, self.templatepath)
         if omexml_model_package is not None:
@@ -745,7 +737,5 @@ if __name__ == '__main__':
         docGenMain(opts)
     elif opts.command == "tab_gen":
         tabGenMain(opts)
-    elif opts.command == "debug":
-        debugMain(opts)
     else:
         usage('Unrecognized subcommand: %s' % opts.command)
