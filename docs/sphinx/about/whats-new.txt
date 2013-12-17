@@ -1,8 +1,8 @@
 Version history
 ===============
 
-5.0.0-beta2 (TBD)
------------------
+5.0.0-RC1 (2013 Dec 19)
+-----------------------
 
 * Updated Maven build system and launched new Artifactory repository
   (http://artifacts.openmicroscopy.org)
