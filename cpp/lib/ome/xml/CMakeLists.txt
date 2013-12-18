@@ -38,7 +38,7 @@ include_directories(${OME_TOPLEVEL_INCLUDES})
 
 xsd_fu(omexml_model OME_XML_GENERATED_MODEL_HEADERS OME_XML_GENERATED_MODEL_SOURCES)
 xsd_fu(omexml_model_enums OME_XML_GENERATED_ENUMS_HEADERS OME_XML_GENERATED_ENUMS_SOURCES)
-xsd_fu_header(omexml_model_enum_includeall {OME_XML_GENERATED_ENUMINCLUDE_HEADERS)
+xsd_fu_header(omexml_model_enum_includeall OME_XML_GENERATED_ENUMINCLUDE_HEADERS)
 
 set(OME_XML_STATIC_SOURCES
   model/enums/EnumerationException.cpp
