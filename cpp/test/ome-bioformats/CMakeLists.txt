@@ -37,6 +37,6 @@
 if(BUILD_TESTS)
   include_directories(${OME_TOPLEVEL_INCLUDES})
 
-  headers_test(ome-bioformats ome/bioformats)
+  header_test_from_file(ome-bioformats ome/bioformats)
   add_test(ome-bioformats/headers ome-bioformats-headers)
 endif(BUILD_TESTS)

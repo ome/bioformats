@@ -34,48 +34,49 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-include_directories(${OME_TOPLEVEL_INCLUDES})
+cmake_policy(SET CMP0007 NEW)
 
-set(ome_xerces_sources
-    ErrorReporter.cpp)
+# Dump headers
+function(header_include_list_write source_headers binary_headers source_prefix test_dir)
+  set(TEST_FILE ${test_dir}/Headers.cmake)
+  file(WRITE "${TEST_FILE}" "set(TEST_HEADERS\n")
 
-set(ome_xerces_static_headers
-    ErrorReporter.h
-    Platform.h
-    String.h)
+  foreach(header ${${source_headers}})
+    file(APPEND "${TEST_FILE}" "    ${source_prefix}/${header}\n")
+  endforeach(header)
 
-set(ome_xerces_generated_headers)
+  foreach(header ${${binary_headers}})
+    file(RELATIVE_PATH header ${PROJECT_BINARY_DIR}/cpp/lib ${header})
+    file(APPEND "${TEST_FILE}" "    ${header}\n")
+  endforeach(header)
 
-set(ome_xerces_headers
-    ${ome_xerces_static_headers}
-    ${ome_xerces_generated_headers})
+  file(APPEND "${TEST_FILE}" ")\n")
+  file(APPEND "${TEST_FILE}" "list(SORT TEST_HEADERS)\n")
+endfunction(header_include_list_write)
 
-set(ome_xerces_dom_headers
-    dom/Document.h
-    dom/Element.h
-    dom/Node.h
-    dom/NodeList.h)
+function(header_test_from_file component path)
+  include(${CMAKE_CURRENT_BINARY_DIR}/Headers.cmake)
+  set(headerdir ${PROJECT_BINARY_DIR}/cpp/test/${component}/headers)
+  file(MAKE_DIRECTORY ${headerdir})
 
-add_library(ome-xerces SHARED ${ome_xerces_sources} ${ome_xerces_headers} ${ome_xerces_dom_headers})
-target_link_libraries(ome-xerces ${XERCES_LIBRARY})
-set_target_properties(ome-xerces PROPERTIES VERSION ${OME_VERSION_SHORT})
+  foreach(header ${TEST_HEADERS})
+    string(REPLACE "/" "_" genheader ${header})
+    string(REPLACE "${PROJECT_SOURCE_DIR}/cpp/src/" "" include ${header})
+    string(REPLACE "${headerdir}/" "" include ${include})
+    string(REGEX REPLACE "\\.h$" ".cpp" genheader ${genheader})
+    string(REGEX REPLACE "[/.]" "_" safeheader ${include})
+    string(CONFIGURE "#include <@include@>
 
-set(ome_xerces_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/xerces")
+#include <gtest/gtest.h>
 
-install(FILES ${ome_xerces_headers}
-        DESTINATION ${ome_xerces_includedir})
-install(FILES ${ome_xerces_dom_headers}
-        DESTINATION ${ome_xerces_includedir}/dom)
-install(TARGETS ome-xerces LIBRARY
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+TEST(Header, ${safeheader})
+{
+}
+" src)
+    file(WRITE "${headerdir}/${genheader}" "${src}")
+    list(APPEND test_headers_SOURCES "${headerdir}/${genheader}")
+  endforeach(header)
 
-set(LIBRARY_PREFIX OME_XERCES)
-set(LIBRARY_NAME ome-xerces)
-set(LIBRARY_HEADER ome/xerces/Platform.h)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake
-        DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
-
-# Dump header list for testing
-header_include_list_write(ome_xerces_static_headers ome_xerces_generated_headers ome/xerces ${PROJECT_BINARY_DIR}/cpp/test/ome-xerces)
+  add_executable(${component}-headers ${test_headers_SOURCES})
+  target_link_libraries(${component}-headers ${TEST_LIBS})
+endfunction(header_test_from_file)

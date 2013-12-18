@@ -76,19 +76,24 @@ set(OME_XML_STATIC_PRIMITIVES_HEADERS
     model/primitives/NumericConstraints.h
     model/primitives/Timestamp.h)
 
-set(OME_XML_HEADERS
+set(OME_XML_STATIC_HEADERS
     ${OME_XML_STATIC_MODEL_HEADERS}
     ${OME_XML_STATIC_PRIMITIVES_HEADERS}
-    ${OME_XML_STATIC_ENUMS_HEADERS}
+    ${OME_XML_STATIC_ENUMS_HEADERS})
+
+set(OME_XML_GENERATED_HEADERS
     ${OME_XML_GENERATED_MODEL_HEADERS}
     ${OME_XML_GENERATED_ENUMS_HEADERS}
     ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
+
+set(OME_XML_HEADERS
+    ${OME_XML_STATIC_HEADERS}
+    ${OME_XML_GENERATED_HEADERS})
 
 set(OME_XML_SOURCES
     ${OME_XML_STATIC_SOURCES}
     ${OME_XML_GENERATED_MODEL_SOURCES}
     ${OME_XML_GENERATED_ENUMS_SOURCES})
-
 
 add_library(ome-xml SHARED
             ${OME_XML_SOURCES}
@@ -116,3 +121,6 @@ configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/ome-xml-config.cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xml-config.cmake
         DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+
+# Dump header list for testing
+header_include_list_write(OME_XML_STATIC_HEADERS OME_XML_GENERATED_HEADERS ome/xml ${PROJECT_BINARY_DIR}/cpp/test/ome-xml)

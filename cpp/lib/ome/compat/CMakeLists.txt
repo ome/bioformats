@@ -50,3 +50,5 @@ set(ome_compat_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/compat")
 install(FILES ${ome_compat_static_headers} ${ome_compat_generated_headers}
         DESTINATION ${ome_compat_includedir})
 
+# Dump header list for testing
+header_include_list_write(ome_compat_static_headers ome_compat_generated_headers ome/compat ${PROJECT_BINARY_DIR}/cpp/test/ome-compat)

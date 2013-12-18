@@ -57,6 +57,7 @@ include(cpp/cmake/XercesChecks.cmake)
 include(cpp/cmake/XsdFu.cmake)
 include(cpp/cmake/GTest.cmake)
 include(cpp/cmake/Doxygen.cmake)
+include(cpp/cmake/HeaderTest.cmake)
 
 add_subdirectory(docs/doxygen)
 add_subdirectory(cpp)
