@@ -39,22 +39,26 @@ include_directories(${OME_TOPLEVEL_INCLUDES})
 set(ome_xerces_sources
     ErrorReporter.cpp)
 
-set(ome_xerces_static_headers
+set(ome_xerces_base_headers
     ErrorReporter.h
     Platform.h
     String.h)
-
-set(ome_xerces_generated_headers)
-
-set(ome_xerces_headers
-    ${ome_xerces_static_headers}
-    ${ome_xerces_generated_headers})
 
 set(ome_xerces_dom_headers
     dom/Document.h
     dom/Element.h
     dom/Node.h
     dom/NodeList.h)
+
+set(ome_xerces_static_headers
+    ${ome_xerces_base_headers}
+    ${ome_xerces_dom_headers})
+
+set(ome_xerces_generated_headers)
+
+set(ome_xerces_headers
+    ${ome_xerces_static_headers}
+    ${ome_xerces_generated_headers})
 
 add_library(ome-xerces SHARED ${ome_xerces_sources} ${ome_xerces_headers} ${ome_xerces_dom_headers})
 target_link_libraries(ome-xerces ${XERCES_LIBRARY})
