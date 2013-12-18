@@ -7,7 +7,7 @@
 
   <groupId>ome</groupId>
   <artifactId>pom-scifio</artifactId>
-  <version>5.0.0-rc1</version>
+  <version>5.0.0-RC1</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
@@ -44,7 +44,7 @@
     <maven.build.timestamp.format>d MMMMM yyyy</maven.build.timestamp.format>
 
     <vcs.revision>${revision}</vcs.revision>
-    <release.version>5.0.0-rc1</release.version>
+    <release.version>5.0.0-RC1</release.version>
     <date>${maven.build.timestamp}</date>
     <year>2013</year>
     <project.rootdir>${basedir}</project.rootdir>
@@ -169,7 +169,8 @@
                     executable: 'git') {
                       arg(line:"describe --match=v[0-9]* --exact")
                   }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                   ant.project.properties.exactTagRC = ""
                   ant.project.properties.exactTag = ""
                 }
