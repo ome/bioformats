@@ -11,6 +11,11 @@ env:
   - BUILD=cppwrap
   - BUILD=sphinx
 
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: "BUILD=cppwrap"
+
 before_install:
   - sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ raring main universe"
   - sudo apt-get -qq update
