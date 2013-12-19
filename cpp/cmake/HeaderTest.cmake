@@ -71,7 +71,7 @@ function(header_include_list_write source_headers binary_headers source_prefix t
   file(APPEND "${TEST_FILE}" ")\n")
 endfunction(header_include_list_write)
 
-function(header_test_from_file component path)
+function(header_test_from_file component library path)
   include(${CMAKE_CURRENT_BINARY_DIR}/Headers.cmake)
   set(headerdir ${PROJECT_BINARY_DIR}/cpp/test/${component}/headers)
   file(MAKE_DIRECTORY ${headerdir})
@@ -95,6 +95,5 @@ TEST(Header, ${safeheader})
   endforeach(header)
 
   add_executable(${component}-headers ${test_headers_SOURCES})
-  target_link_libraries(${component}-headers ${TEST_LIBS})
-  add_dependencies(${component}-headers ${TEST_FILES})
+  target_link_libraries(${component}-headers ${TEST_LIBS} ${library})
 endfunction(header_test_from_file)
