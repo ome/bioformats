@@ -1863,8 +1863,7 @@ public class ZeissCZIReader extends FormatReader {
         store.setRectangleID(
           MetadataTools.createLSID("Shape", roi, shape), roi, shape);
         store.setRectangleX(new Double(left), roi, shape);
-        store.setRectangleY(
-          new Double(getSizeY() - Double.parseDouble(top)), roi, shape);
+        store.setRectangleY(new Double(top), roi, shape);
         store.setRectangleWidth(new Double(width), roi, shape);
         store.setRectangleHeight(new Double(height), roi, shape);
 
