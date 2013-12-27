@@ -287,14 +287,17 @@ public class ZeissCZIReader extends FormatReader {
     int currentX = 0;
     int currentY = 0;
 
-    int pixel =
-      getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+    int pixel = getRGBChannelCount() * bpp;
     int outputRowLen = w * pixel;
 
     int outputRow = 0, outputCol = 0;
 
     boolean validScanDim =
       scanDim == (getImageCount() / getSizeC()) && scanDim > 1;
+    if (planes.size() == getImageCount()) {
+      validScanDim = false;
+    }
     int previousHeight = 0;
 
     for (SubBlock plane : planes) {
@@ -369,6 +372,20 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     }
+
+    if (isRGB()) {
+      // channels are stored in BGR order; red and blue channels need switching
+      for (int i=0; i<buf.length/(getRGBChannelCount()*bpp); i++) {
+        for (int b=0; b<bpp; b++) {
+          int blueIndex = i * getRGBChannelCount() * bpp + b;
+          int redIndex = i * getRGBChannelCount() * bpp + bpp * 2 + b;
+          byte red = buf[redIndex];
+          buf[redIndex] = buf[blueIndex];
+          buf[blueIndex] = red;
+        }
+      }
+    }
+
     return buf;
   }
 
@@ -475,6 +492,11 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     calculateDimensions();
+
+    if (getSizeC() == 0) {
+      ms0.sizeC = 1;
+    }
+
     convertPixelType(planes.get(0).directoryEntry.pixelType);
 
     // remove any invalid SubBlocks
@@ -2262,21 +2284,25 @@ public class ZeissCZIReader extends FormatReader {
         ms0.pixelType = FormatTools.UINT8;
         ms0.sizeC *= 3;
         ms0.rgb = true;
+        ms0.interleaved = true;
         break;
       case BGR_48:
         ms0.pixelType = FormatTools.UINT16;
         ms0.sizeC *= 3;
         ms0.rgb = true;
+        ms0.interleaved = true;
         break;
       case BGRA_8:
         ms0.pixelType = FormatTools.UINT8;
         ms0.sizeC *= 4;
         ms0.rgb = true;
+        ms0.interleaved = true;
         break;
       case BGR_FLOAT:
         ms0.pixelType = FormatTools.FLOAT;
         ms0.sizeC *= 3;
         ms0.rgb = true;
+        ms0.interleaved = true;
         break;
       case COMPLEX:
       case COMPLEX_FLOAT:
