@@ -690,6 +690,10 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
     Hashtable<String, Object> metadata)
   {
+    if (metadata.size() == 0) {
+      return;
+    }
+
     omexmlMeta.resolveReferences();
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
     StructuredAnnotations annotations = root.getStructuredAnnotations();
@@ -858,6 +862,13 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   public void addModuloAlong(OMEXMLMetadata meta, CoreMetadata core, int imageIdx)
   {
+    if (core.moduloZ.length() == 1 && core.moduloC.length() == 1 &&
+      core.moduloT.length() == 1)
+    {
+      // nothing to populate
+      return;
+    }
+
     meta.resolveReferences();
 
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) meta.getRoot();
