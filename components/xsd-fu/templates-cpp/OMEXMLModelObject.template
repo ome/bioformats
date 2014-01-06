@@ -741,6 +741,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 {% end %}\
 {% when prop.isReference %}
+{% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get linked ${prop.methodName}.
@@ -748,18 +749,19 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns the linked ${prop.methodName}.  The pointer may be
          * null.
          */
-        ${prop.retType}
-        getLinked${prop.methodName} () const;
+        ${prop.retType[qualifier]}
+        getLinked${prop.methodName} ()${qualifier};
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       // Reference
-      ${prop.retType}
-      ${klass.name}::getLinked${prop.methodName} () const
+      ${prop.retType[qualifier]}
+      ${klass.name}::getLinked${prop.methodName} ()${qualifier}
       {
         return ${prop.instanceVariableName};
       }
-
 {% end source %}\
+
+{% end qualifier %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Link ${prop.methodName}.
@@ -802,24 +804,26 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+{% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get the ${prop.methodName} property.
          *
          * @returns the ${prop.methodName} property.
          */
-        ${prop.retType}
-        get${prop.methodName} () const;
+        ${prop.retType[qualifier]}
+        get${prop.methodName} ()${qualifier};
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       // Property
-      ${prop.retType}
-      ${klass.name}::get${prop.methodName} () const
+      ${prop.retType[qualifier]}
+      ${klass.name}::get${prop.methodName} ()${qualifier}
       {
         return ${prop.instanceVariableName};
       }
 {% end source %}\
 
+{% end qualifier %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Set the ${prop.methodName} property.
@@ -875,6 +879,7 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 
+{% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get ${prop.methodName}.
@@ -885,17 +890,18 @@ ${customUpdatePropertyContent[prop.name]}
          *
          * @todo Is this a value type under all circumstances?
          */
-        ${prop.retType}
-        get${prop.methodName} (${prop.instanceVariableType}::size_type index) const;
+        ${prop.retType[qualifier]}
+        get${prop.methodName} (${prop.instanceVariableType}::size_type index)${qualifier};
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.retType}
-      ${klass.name}::get${prop.methodName} (${prop.instanceVariableType}::size_type index) const
+      ${prop.retType[qualifier]}
+      ${klass.name}::get${prop.methodName} (${prop.instanceVariableType}::size_type index)${qualifier}
       {
         return ${prop.instanceVariableName}.at(index);
       }
 {% end source %}\
 
+{% end qualifier %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Set ${prop.methodName}.

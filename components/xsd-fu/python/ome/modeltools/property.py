@@ -260,27 +260,39 @@ class OMEModelProperty(OMEModelEntity):
     argType = property(_get_argType, doc="""The property's argument type.""")
 
     def _get_retType(self):
+        """
+        Get the return type(s) of a property.  For Java only a single
+        value is returned.  For C++, the return value is a map of
+        qualifier (const or non-const) to return type.
+        """
+
         itype = None
 
         if isinstance(self.model.opts.lang, language.Java):
             itype = self.langType
         elif isinstance(self.model.opts.lang, language.CXX):
             if self.model.opts.lang.hasFundamentalType(self.langType) and self.minOccurs > 0:
-                itype = self.langTypeNS
+                itype = {' const': self.langTypeNS}
             elif self.isEnumeration:
                 if self.minOccurs == 0:
-                    itype = "std::shared_ptr<const %s>" % self.langTypeNS
+                    itype = {' const': "std::shared_ptr<const %s>" % self.langTypeNS,
+                             '':       "std::shared_ptr<%s>" % self.langTypeNS}
                 else:
-                    itype = "const %s&" % self.langTypeNS
+                    itype = {' const': "const %s&" % self.langTypeNS,
+                             '':       "%s&" % self.langTypeNS}
             elif self.isReference or self.isBackReference:
-                itype = "std::weak_ptr<const %s>" % self.langTypeNS
+                itype = {' const': "std::weak_ptr<const %s>" % self.langTypeNS,
+                         '':       "std::weak_ptr<%s>" % self.langTypeNS}
             elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
                 if self.minOccurs == 0 or (not self.model.opts.lang.hasPrimitiveType(self.langType) and not self.isEnumeration):
-                    itype = "std::shared_ptr<const %s>" % self.langTypeNS
+                    itype = {' const': "std::shared_ptr<const %s>" % self.langTypeNS,
+                             '':       "std::shared_ptr<%s>" % self.langTypeNS}
                 else:
-                    itype = "const %s&" % self.langTypeNS
+                    itype = {' const': "const %s&" % self.langTypeNS,
+                             '':       "%s&" % self.langTypeNS}
             elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
-                itype = "std::shared_ptr<const %s>" % self.langTypeNS
+                itype = {' const': "std::shared_ptr<const %s>" % self.langTypeNS,
+                         '':      "std::shared_ptr<%s>" % self.langTypeNS}
 
         return itype
     retType = property(_get_retType, doc="""The property's return type.""")
