@@ -43,8 +43,7 @@
 
 // for Bio-Formats C++ bindings
 #include "scifio-${release.version}.h"
-#include "loci-legacy-${release.version}.h"
-#include "scifio-devel-${release.version}.h"
+#include "loci-common-${release.version}.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Object;
