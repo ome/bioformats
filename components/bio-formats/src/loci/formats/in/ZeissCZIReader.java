@@ -1707,8 +1707,11 @@ public class ZeissCZIReader extends FormatReader {
 
           if (magnification != null) {
             try {
-              store.setObjectiveNominalMagnification(
-                new PositiveInteger(Integer.parseInt(magnification)), 0, i);
+              Integer mag = Integer.parseInt(magnification);
+              if (mag > 0) {
+                store.setObjectiveNominalMagnification(
+                  new PositiveInteger(mag), 0, i);
+              }
             }
             catch (NumberFormatException e) {
               LOGGER.debug("Could not parse magnification", e);
