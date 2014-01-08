@@ -73,22 +73,42 @@ public class JXRDecoder {
     stream.seek(metadata.getImageOffset());
     checkIfGDISignaturePresent();
     JXRImagePlane primaryImagePlane = extractPrimaryImagePlane();
-    if (metadata.getAlphaOffset() != null) {
-      //JXRImagePlane alphaImagePlane = extractAlphaImagePlane();
-    }
   }
 
   private JXRImagePlane extractPrimaryImagePlane() throws IOException {
-    stream.skipBytes(1);
-    byte value = stream.readByte();
+    byte[] bytes = new byte[4];
+
+    stream.readFully(bytes);
+    BitBuffer bits = new BitBuffer(bytes);
+
+    int reservedB = bits.getBits(4);
+    int hardTilingFlag = bits.getBits(1);
+    int reservedC = bits.getBits(3);
+    int tilingFlag = bits.getBits(1);
+    int frequencyModeCodestreamFlag = bits.getBits(1);
+    int spatialXfrmSubordinate = bits.getBits(3);
+    int indexTablePresentFlag = bits.getBits(1);
+    int overlapMode = bits.getBits(2);
+    int shortHeaderFlag = bits.getBits(1);
+    int longWordFlag = bits.getBits(1);
+    int windowingFlag = bits.getBits(1);
+    int trimFlexbitsFlag = bits.getBits(1);
+    int reservedD = bits.getBits(1);
+    int redBlueNotSwappedFlag = bits.getBits(1);
+    int premultipliedAlphaFlag = bits.getBits(1);
+    int alphaImagePlaneFlag = bits.getBits(1);
+    int outputClrFmt = bits.getBits(4);
+    int outputBitdepth = bits.getBits(4);
+
     return new JXRImagePlane();
   }
 
   private void checkIfGDISignaturePresent() throws IOException, JXRException {
     String signature = stream.readString(Image.GDI_SIGNATURE.length());
     if (!Image.GDI_SIGNATURE.equals(signature)) {
-      throw new JXRException("Missing image signature.");
+      throw new JXRException("Missing required image signature.");
     }
+    stream.skipBytes(1);
   }
 
   public void close() throws IOException {
