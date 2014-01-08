@@ -1,4 +1,7 @@
+from __future__ import print_function
+
 import logging
+import sys
 
 from xml.etree import ElementTree
 
@@ -159,13 +162,14 @@ class OMEModelProperty(OMEModelEntity):
                 name = "enums::%s" % name
             if self.model.opts.lang.hasPrimitiveType(name) and not self.model.opts.lang.hasFundamentalType(name) and name != "std::string":
                 name = "primitives::%s" % name
-            if name != self.langType and self.model.opts.package != "ome::xml::model":
+            if (name != self.langType or self.model.getObjectByName(self.langType) is not None) and self.model.opts.package != "ome::xml::model":
                 name = "::ome::xml::model::" + name
         return name
     langTypeNS = property(_get_langTypeNS, doc="""The property's type with namespace.""")
 
     def _get_metadataStoreType(self):
         mstype = None
+
         if self.name == "Transform":
             if isinstance(self.model.opts.lang, language.Java):
                 mstype = "AffineTransform"
@@ -175,13 +179,18 @@ class OMEModelProperty(OMEModelEntity):
                 # independently of the metadata namespace.
                 mstype = "std::shared_ptr< ::ome::xml::model::AffineTransform>"
 
-        if mstype is None and not self.isPrimitive and not self.isEnumeration:
-            if isinstance(self.model.opts.lang, language.Java):
+        if isinstance(self.model.opts.lang, language.Java):
+            if mstype is None and not self.isPrimitive and not self.isEnumeration:
                 mstype = "String"
-            elif isinstance(self.model.opts.lang, language.CXX):
-                mstype = "const std::string&"
-        if mstype is None:
-            mstype = self.langTypeNS
+            if mstype is None:
+                mstype = self.langType
+        elif isinstance(self.model.opts.lang, language.CXX):
+            if mstype is None and not self.isPrimitive and not self.isEnumeration:
+                mstype = "std::string" # TODO: could it be a const reference?
+            if mstype is None:
+                mstype = self.langTypeNS
+            #mstype = self.retType
+            #print("Store: %s = %s" % (self.name, mstype), file=sys.stderr)
         return mstype
     metadataStoreType = property(_get_metadataStoreType,
         doc="""The property's MetadataStore type.""")
@@ -274,6 +283,7 @@ class OMEModelProperty(OMEModelEntity):
         if isinstance(self.model.opts.lang, language.Java):
             itype = self.langType
         elif isinstance(self.model.opts.lang, language.CXX):
+            itype = self.langTypeNS
             ns_sep = self.langTypeNS
             if ns_sep.startswith('::'):
                 ns_sep = ' ' + ns_sep
