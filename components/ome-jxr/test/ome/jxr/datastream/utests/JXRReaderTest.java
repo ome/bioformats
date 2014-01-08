@@ -31,11 +31,11 @@ import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.IOException;
 
-import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 import ome.jxr.StaticDataProvider;
 import ome.jxr.constants.File;
 import ome.jxr.datastream.JXRReader;
+import ome.scifio.io.RandomAccessInputStream;
 
 import org.testng.annotations.Test;
 

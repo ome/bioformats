@@ -32,12 +32,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import loci.common.RandomAccessInputStream;
 import ome.jxr.constants.IFD;
 import ome.jxr.ifd.IFDContainer;
 import ome.jxr.ifd.IFDEntry;
 import ome.jxr.ifd.IFDEntryType;
 import ome.jxr.metadata.IFDMetadata;
+import ome.scifio.io.RandomAccessInputStream;
 
 /**
  * Parses a JPEG XR data stream and allows for extraction of metadata and

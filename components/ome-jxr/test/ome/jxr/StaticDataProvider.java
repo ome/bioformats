@@ -27,9 +27,9 @@ package ome.jxr;
 
 import java.io.IOException;
 
-import loci.common.RandomAccessInputStream;
 import ome.jxr.datastream.JXRDecoder;
 import ome.jxr.datastream.JXRReader;
+import ome.scifio.io.RandomAccessInputStream;
 
 import org.testng.annotations.DataProvider;
 

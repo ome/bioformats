@@ -27,10 +27,10 @@ package ome.jxr.datastream;
 
 import java.io.IOException;
 
-import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 import ome.jxr.constants.File;
 import ome.jxr.metadata.IFDMetadata;
+import ome.scifio.io.RandomAccessInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
