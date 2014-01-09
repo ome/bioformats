@@ -50,7 +50,7 @@ public class JXRImagePlane {
   private boolean alphaImagePlaneFlag;
   private int outputClrFmt;
   private int outputBitdepth;
-  
+
   public JXRImagePlane(byte[] headerBytes)
       throws JXRException {
     BitBuffer bits = new BitBuffer(headerBytes);
