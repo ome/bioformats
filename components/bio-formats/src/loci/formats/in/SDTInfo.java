@@ -405,6 +405,9 @@ public class SDTInfo {
   /** Offset to the data block header of the next data block. */
   public int nextBlockOffs;
 
+  public long[] allBlockOffsets;
+  public long[] allBlockLengths;
+
   /** See blockType defines below. */
   public int blockType;
 
@@ -804,27 +807,39 @@ public class SDTInfo {
 
     in.seek(dataBlockOffs);
 
-    // read BHFileBlockHeader
-    blockNo = in.readShort();
-    dataOffs = in.readInt();
-    nextBlockOffs = in.readInt();
-    blockType = in.readUnsignedShort();
-    measDescBlockNo = in.readShort();
-    lblockNo = (0xffffffffL & in.readInt()); // unsigned
-    blockLength = (0xffffffffL & in.readInt()); // unsigned
+    allBlockOffsets = new long[noOfDataBlocks];
+    allBlockLengths = new long[noOfDataBlocks];
 
-    // save BHFileBlockHeader to metadata table
-    if (meta != null) {
-      final String bhFileBlockHeader = "BHFileBlockHeader.";
-      meta.put(bhFileBlockHeader + "blockNo", new Short(blockNo));
-      meta.put(bhFileBlockHeader + "dataOffs", new Integer(dataOffs));
-      meta.put(bhFileBlockHeader + "nextBlockOffs",
-        new Integer(nextBlockOffs));
-      meta.put(bhFileBlockHeader + "blockType", new Integer(blockType));
-      meta.put(bhFileBlockHeader + "measDescBlockNo",
-        new Short(measDescBlockNo));
-      meta.put(bhFileBlockHeader + "lblockNo", new Long(lblockNo));
-      meta.put(bhFileBlockHeader + "blockLength", new Long(blockLength));
+    for (int i=0; i<noOfDataBlocks; i++) {
+      allBlockOffsets[i] = in.getFilePointer();
+
+      // read BHFileBlockHeader
+      blockNo = in.readShort();
+      dataOffs = in.readInt();
+      nextBlockOffs = in.readInt();
+      blockType = in.readUnsignedShort();
+      measDescBlockNo = in.readShort();
+      lblockNo = (0xffffffffL & in.readInt()); // unsigned
+      int len = in.readInt();
+      blockLength = (0xffffffffL & len); // unsigned
+
+      allBlockLengths[i] = blockLength;
+
+      // save BHFileBlockHeader to metadata table
+      if (meta != null) {
+        final String bhFileBlockHeader = "BHFileBlockHeader.";
+        meta.put(bhFileBlockHeader + "blockNo", new Short(blockNo));
+        meta.put(bhFileBlockHeader + "dataOffs", new Integer(dataOffs));
+        meta.put(bhFileBlockHeader + "nextBlockOffs",
+          new Integer(nextBlockOffs));
+        meta.put(bhFileBlockHeader + "blockType", new Integer(blockType));
+        meta.put(bhFileBlockHeader + "measDescBlockNo",
+          new Short(measDescBlockNo));
+        meta.put(bhFileBlockHeader + "lblockNo", new Long(lblockNo));
+        meta.put(bhFileBlockHeader + "blockLength", new Long(blockLength));
+      }
+
+      in.skipBytes(len);
     }
   }
 
