@@ -321,7 +321,7 @@
 
   <ciManagement>
     <system>Jenkins</system>
-    <url>http://hudson.openmicroscopy.org.uk/</url>
+    <url>http://ci.openmicroscopy.org/</url>
   </ciManagement>
 
   <mailingLists>
