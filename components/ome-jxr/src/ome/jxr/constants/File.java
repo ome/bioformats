@@ -26,7 +26,7 @@
 package ome.jxr.constants;
 
 /**
- * Constants describing the JPEG XR file structure and initial header metadata.
+ * Constants found in the JPEG XR file header structure.
  * All sizes, if the name doesn't suggest otherwise, have been provided in
  * bytes.
  *
