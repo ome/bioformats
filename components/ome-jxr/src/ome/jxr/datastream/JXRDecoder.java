@@ -31,7 +31,6 @@ import ome.jxr.JXRException;
 import ome.jxr.constants.Image;
 import ome.jxr.image.JXRImagePlane;
 import ome.jxr.metadata.IFDMetadata;
-import ome.scifio.io.BitBuffer;
 import ome.scifio.io.RandomAccessInputStream;
 
 /**
@@ -46,7 +45,7 @@ import ome.scifio.io.RandomAccessInputStream;
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
-public class JXRDecoder {
+public final class JXRDecoder {
 
   private RandomAccessInputStream stream;
 
@@ -55,15 +54,13 @@ public class JXRDecoder {
   public JXRDecoder(RandomAccessInputStream stream, IFDMetadata metadata)
       throws IOException {
     if (stream == null || metadata == null) {
-      throw new IllegalArgumentException("Input stream or metadata has not "
-          + "been set.");
+      throw new IllegalArgumentException("Missing input stream or metadata.");
     }
     this.stream = stream;
     this.metadata = metadata;
   }
 
-  public byte[] decode()
-      throws IOException, JXRException {
+  public byte[] decode() throws IOException, JXRException {
     parseImageLayer();
 
     return null;
@@ -72,35 +69,16 @@ public class JXRDecoder {
   private void parseImageLayer() throws IOException, JXRException {
     stream.seek(metadata.getImageOffset());
     checkIfGDISignaturePresent();
-    JXRImagePlane primaryImagePlane = extractPrimaryImagePlane();
+    parseImageHeader();
   }
 
-  private JXRImagePlane extractPrimaryImagePlane() throws IOException {
-    byte[] bytes = new byte[4];
-
-    stream.readFully(bytes);
-    BitBuffer bits = new BitBuffer(bytes);
-
-    int reservedB = bits.getBits(4);
-    int hardTilingFlag = bits.getBits(1);
-    int reservedC = bits.getBits(3);
-    int tilingFlag = bits.getBits(1);
-    int frequencyModeCodestreamFlag = bits.getBits(1);
-    int spatialXfrmSubordinate = bits.getBits(3);
-    int indexTablePresentFlag = bits.getBits(1);
-    int overlapMode = bits.getBits(2);
-    int shortHeaderFlag = bits.getBits(1);
-    int longWordFlag = bits.getBits(1);
-    int windowingFlag = bits.getBits(1);
-    int trimFlexbitsFlag = bits.getBits(1);
-    int reservedD = bits.getBits(1);
-    int redBlueNotSwappedFlag = bits.getBits(1);
-    int premultipliedAlphaFlag = bits.getBits(1);
-    int alphaImagePlaneFlag = bits.getBits(1);
-    int outputClrFmt = bits.getBits(4);
-    int outputBitdepth = bits.getBits(4);
-
-    return new JXRImagePlane();
+  private void parseImageHeader() throws IOException, JXRException {
+    byte[] headerBytes = new byte[4];
+    stream.readFully(headerBytes);
+    JXRImagePlane primaryImagePlane = new JXRImagePlane(headerBytes);
+//    if (primaryImagePlane.isAlphaPlanePresent()) {
+//      JXRImagePlane alphaImagePlane = new JXRImagePlane(some bytes);
+//    }
   }
 
   private void checkIfGDISignaturePresent() throws IOException, JXRException {
@@ -108,7 +86,6 @@ public class JXRDecoder {
     if (!Image.GDI_SIGNATURE.equals(signature)) {
       throw new JXRException("Missing required image signature.");
     }
-    stream.skipBytes(1);
   }
 
   public void close() throws IOException {

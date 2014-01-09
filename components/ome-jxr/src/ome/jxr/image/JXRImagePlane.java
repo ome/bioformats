@@ -25,12 +25,74 @@
 
 package ome.jxr.image;
 
-import java.util.HashSet;
-import java.util.Set;
+import ome.jxr.JXRException;
+import ome.jxr.constants.File;
+import ome.jxr.constants.Image;
+import ome.scifio.io.BitBuffer;
 
 public class JXRImagePlane {
 
-  // TODO: Should this be a byte array?
-  Set<byte[][]> components = new HashSet<byte[][]>();
+  private int reservedB;
+  private boolean hardTilingFlag;
+  private int reservedC;
+  private boolean tilingFlag;
+  private boolean frequencyModeCodestreamFlag;
+  private int spatialXfrmSubordinate;
+  private boolean indexTablePresentFlag;
+  private int overlapMode;
+  private boolean shortHeaderFlag;
+  private boolean longWordFlag;
+  private boolean windowingFlag;
+  private boolean trimFlexbitsFlag;
+  private int reservedD;
+  private boolean redBlueNotSwappedFlag;
+  private boolean premultipliedAlphaFlag;
+  private boolean alphaImagePlaneFlag;
+  private int outputClrFmt;
+  private int outputBitdepth;
+  
+  public JXRImagePlane(byte[] headerBytes)
+      throws JXRException {
+    BitBuffer bits = new BitBuffer(headerBytes);
+
+    reservedB = bits.getBits(4);
+    if (reservedB != Image.RESERVED_B) {
+      throw new JXRException("Image codestream doesn't conform to"
+          + "specification version: " + File.ENCODER_VERSION);
+    }
+
+    hardTilingFlag = (bits.getBits(1) == 1);
+
+    // TODO: Refactor
+    //if (encoderVersion != File.ENCODER_VERSION) {
+      reservedC = bits.getBits(3);
+    //} else {
+    //  bits.skipBits(3);
+    //}
+
+    tilingFlag = (bits.getBits(1) == 1);
+    frequencyModeCodestreamFlag = (bits.getBits(1) == 1);
+    spatialXfrmSubordinate = bits.getBits(3);
+
+    indexTablePresentFlag = (bits.getBits(1) == 1);
+    if (frequencyModeCodestreamFlag && !indexTablePresentFlag) {
+      throw new JXRException("Image codestream doesn't conform to"
+          + "specification version: " + File.ENCODER_VERSION);
+    }
+
+    overlapMode = bits.getBits(2);
+    shortHeaderFlag = (bits.getBits(1) == 1);
+    longWordFlag = (bits.getBits(1) == 1);
+    windowingFlag = (bits.getBits(1) == 1);
+    trimFlexbitsFlag = (bits.getBits(1) == 1);
+
+    reservedD = bits.getBits(1);
+
+    redBlueNotSwappedFlag = (bits.getBits(1) == 1);
+    premultipliedAlphaFlag = (bits.getBits(1) == 1);
+    alphaImagePlaneFlag = (bits.getBits(1) == 1);
+    outputClrFmt = bits.getBits(4);
+    outputBitdepth = bits.getBits(4);
+  }
 
 }

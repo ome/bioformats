@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
-public class JXRReader {
+public final class JXRReader {
 
   protected static final Logger LOGGER = LoggerFactory
       .getLogger(JXRReader.class);

@@ -50,7 +50,7 @@ import ome.scifio.io.RandomAccessInputStream;
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
-public class JXRParser {
+public final class JXRParser {
 
   protected static final Logger LOGGER = LoggerFactory
       .getLogger(JXRParser.class);

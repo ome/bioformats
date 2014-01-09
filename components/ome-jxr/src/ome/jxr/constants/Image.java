@@ -37,6 +37,9 @@ package ome.jxr.constants;
  */
 public final class Image {
 
-  public static final String GDI_SIGNATURE = "WMPHOTO";
+  public static final String GDI_SIGNATURE = "WMPHOTO\0";
+  public static final int RESERVED_B = 1;
+  public static final int RESERVED_C = 1;
+  public static final int RESERVED_D = 0;
 
 }
