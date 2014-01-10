@@ -34,15 +34,104 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+cmake_policy(SET CMP0007 NEW)
+
+# The xsd-fu script
 set(XSD_FU_SCRIPT ${PROJECT_SOURCE_DIR}/components/xsd-fu/xsd-fu)
+
+# Command to invoke xsd-fu; python used explicitly to allow it to
+# function on windows
 set(XSD_FU python ${XSD_FU_SCRIPT})
+
+# Version of the OME-XML model to use
 set(MODEL_VERSION 2013-06)
+
+# Path to the model within the source tree
 set(MODEL_PATH ${PROJECT_SOURCE_DIR}/components/specification/released-schema/${MODEL_VERSION})
+
+# Files to use within the model directory
 set(MODEL_FILES
     ${MODEL_PATH}/ome.xsd
     ${MODEL_PATH}/BinaryFile.xsd
     ${MODEL_PATH}/ROI.xsd
     ${MODEL_PATH}/SA.xsd
     ${MODEL_PATH}/SPW.xsd)
+
+# Output directory for source generation
 set(GEN_DIR ${PROJECT_BINARY_DIR}/cpp/lib)
-set(XSD_FU_ARGS -p ome.xml.model -l C++ -o ${GEN_DIR} ${MODEL_FILES})
+
+# Default arguments to use when running xsd-fu
+set(XSD_FU_ARGS --language=C++ --output-directory=${GEN_DIR} ${MODEL_FILES})
+
+# xsd_fu_single: Run xsd-fu for a single filetype
+#
+# xsd-fu will be run to determine the files which this action will
+# generate and the file dependencies for this action.  A cmake custom
+# command will then be created to generate these files from these
+# dependencies.  The caller must provide a variable to store the
+# output file list in, for use elsewhere by cmake.
+#
+# filetype: the type of file to generate (header or source)
+# command: the xsd-fu command to invoke
+# outvar: variable to store generated file list in
+function(xsd_fu_single filetype command outvar)
+  execute_process(COMMAND ${XSD_FU} ${command} --dry-run --file-type=${filetype} --print-generated ${XSD_FU_ARGS}
+    OUTPUT_VARIABLE genfiles)
+  string(REPLACE "\n" ";" genfiles "${genfiles}")
+  if(WIN32)
+    string(REPLACE "\\" "/" genfiles "${genfiles}")
+  endif(WIN32)
+  execute_process(COMMAND ${XSD_FU} ${command} --dry-run --file-type=${filetype} --print-depends ${XSD_FU_ARGS}
+    OUTPUT_VARIABLE gendeps)
+  string(REPLACE "\n" ";" gendeps "${gendeps}")
+  if(WIN32)
+    string(REPLACE "\\" "/" gendeps "${gendeps}")
+  endif(WIN32)
+
+  add_custom_command(OUTPUT ${genfiles}
+                     COMMAND ${XSD_FU} ${command} --quiet --file-type=${filetype} ${XSD_FU_ARGS}
+                     DEPENDS ${gendeps} ${XSD_FU_SCRIPT})
+  #execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${genfiles})
+
+  set(${outvar} ${genfiles} PARENT_SCOPE)
+endfunction(xsd_fu_single)
+
+# xsd_fu_header: Run xsd-fu for header generation
+#
+# Invokes xsd_fu_single in header generation mode.
+#
+# command: the xsd-fu command to invoke
+# headers: variable to store generated header file list in
+function(xsd_fu_header command headers)
+  xsd_fu_single(header ${command} gen_headers)
+
+  set(${headers} ${gen_headers} PARENT_SCOPE)
+endfunction(xsd_fu_header)
+
+# xsd_fu_source: Run xsd-fu for source generation
+#
+# Invokes xsd_fu_single in source generation mode.
+#
+# command: the xsd-fu command to invoke
+# sources: variable to store generated source file list in
+function(xsd_fu_source command sources)
+  xsd_fu_single(source ${command} gen_sources)
+
+  set(${sources} ${gen_sources} PARENT_SCOPE)
+endfunction(xsd_fu_source)
+
+# xsd_fu: Run xsd-fu for a source generation
+#
+# Invokes xsd_fu_header and xsd_fu_source to generate headers and
+# sources.
+#
+# command: the xsd-fu command to invoke
+# headers: variable to store generated header file list in
+# sources: variable to store generated source file list in
+function(xsd_fu command headers sources)
+  xsd_fu_header(${command} gen_headers)
+  xsd_fu_source(${command} gen_sources)
+
+  set(${headers} ${gen_headers} PARENT_SCOPE)
+  set(${sources} ${gen_sources} PARENT_SCOPE)
+endfunction(xsd_fu)

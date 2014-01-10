@@ -35,12 +35,11 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_META_BASEMETADATA_H
-#define OME_BIOFORMATS_META_BASEMETADATA_H
+#ifndef OME_BIOFORMATS_META_METADATA_H
+#define OME_BIOFORMATS_META_METADATA_H
 
-#include <vector>
-
-#include <ome/compat/cstdint.h>
+#include <ome/bioformats/meta/MetadataRetrieve.h>
+#include <ome/bioformats/meta/MetadataStore.h>
 
 namespace ome
 {
@@ -50,34 +49,29 @@ namespace ome
     {
 
       /**
-       * Abstract base class for metadata storage and retrieval.  This
-       * class provides no functionality; its purpose is to provide a
-       * common base type for the metadata storage and retrieval
-       * interfaces so that both types may be stored together in
-       * containers.
+       * Abstract class for metadata storage and retrieval.  This
+       * class provides no functionality; it simply derives from both
+       * the MetadataRetrieve and MetadataStore interfaces for use by
+       * stores which provide both interfaces.
        */
-      class BaseMetadata
+      class Metadata : public MetadataRetrieve,
+                       public MetadataStore
       {
-      public:
-        /// Index into an array
-        typedef uint32_t index_type;
-        typedef std::vector<uint8_t> byte_array;
-
       protected:
         /// Constructor.
-        BaseMetadata();
+        Metadata();
 
       public:
         /// Destructor.
         virtual
-        ~BaseMetadata();
+        ~Metadata();
       };
 
     }
   }
 }
 
-#endif // OME_BIOFORMATS_META_BASEMETADATA_H
+#endif // OME_BIOFORMATS_META_METADATA_H
 
 /*
  * Local Variables:

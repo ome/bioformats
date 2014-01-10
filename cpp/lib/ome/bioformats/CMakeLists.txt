@@ -36,27 +36,49 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES})
 
-set(OME_BIOFORMATS_SOURCES)
-set(OME_BIOFORMATS_HEADERS)
+xsd_fu(metadata OME_BIOFORMATS_META_GENERATED_HEADERS OME_BIOFORMATS_META_GENERATED_SOURCES)
+
+set(OME_BIOFORMATS_SOURCES
+    CoreMetadata.cpp
+    FormatException.cpp
+    MetadataOptions.cpp
+    Modulo.cpp
+    UnknownFormatException.cpp
+    UnsupportedCompressionException.cpp)
+
+set(OME_BIOFORMATS_HEADERS
+    CoreMetadata.h
+    FormatException.h
+    MetadataOptions.h
+    Modulo.h
+    UnknownFormatException.h
+    UnsupportedCompressionException.h)
 
 set(OME_BIOFORMATS_META_STATIC_SOURCES
-  meta/BaseMetadata.cpp)
+    meta/BaseMetadata.cpp
+    meta/Metadata.cpp
+    meta/MetadataRoot.cpp)
 
 set(OME_BIOFORMATS_META_STATIC_HEADERS
-  meta/BaseMetadata.h)
-
-set(OME_BIOFORMATS_META_GENERATED_SOURCES)
-set(OME_BIOFORMATS_META_GENERATED_HEADERS)
+    meta/BaseMetadata.h
+    meta/Metadata.h
+    meta/MetadataRoot.h)
 
 set(BIOFORMATS_SOURCES
     ${OME_BIOFORMATS_SOURCES}
     ${OME_BIOFORMATS_META_STATIC_SOURCES}
     ${OME_BIOFORMATS_META_GENERATED_SOURCES})
 
-set(BIOFORMATS_HEADERS
+set(BIOFORMATS_STATIC_HEADERS
     ${OME_BIOFORMATS_HEADERS}
-    ${OME_BIOFORMATS_META_STATIC_HEADERS}
+    ${OME_BIOFORMATS_META_STATIC_HEADERS})
+
+set(BIOFORMATS_GENERATED_HEADERS
     ${OME_BIOFORMATS_META_GENERATED_HEADERS})
+
+set(BIOFORMATS_HEADERS
+    ${BIOFORMATS_STATIC_HEADERS}
+    ${BIOFORMATS_GENERATED_HEADERS})
 
 add_library(ome-bioformats SHARED
             ${BIOFORMATS_SOURCES}
@@ -81,3 +103,6 @@ configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake
         DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+
+# Dump header list for testing
+header_include_list_write(BIOFORMATS_STATIC_HEADERS BIOFORMATS_GENERATED_HEADERS ome/bioformats ${PROJECT_BINARY_DIR}/cpp/test/ome-bioformats)

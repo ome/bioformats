@@ -130,7 +130,9 @@ public class ${klass.name} extends ${klass.parentName}
 		${prop[1]} = orig.${prop[1]};
 {% end %}\
 {% if prop[0] is None %}\
+{% if debug %}\
 		// *** WARNING *** Unhandled or skipped property ${prop[1]}
+{% end debug %}\
 {% end %}\
 {% end %}\
 	}
@@ -172,9 +174,13 @@ ${customContent}\
 {% for prop in klass.properties.values() %}\
 {% choose %}\
 {% when prop.name in customUpdatePropertyContent %}\
+{% if debug %}\
 		// -- BEGIN custom content from ${prop.name} property template --
+{% end debug %}\
 ${customUpdatePropertyContent[prop.name]}
+{% if debug %}\
 		// -- END custom content from ${prop.name} property template --
+{% end debug %}\
 {% end %}\
 {% when prop.isReference %}\
 		// Element reference ${prop.name}
@@ -188,7 +194,9 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 {% end %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 		// *** IGNORING *** Skipped back reference ${prop.name}
+{% end debug %}\
 {% end %}\
 {% when prop.isAttribute and prop.name == "ID" %}\
 		if (!element.hasAttribute("ID") && getID() == null)
@@ -295,7 +303,9 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 {% end %}\
 {% otherwise %}\
+{% if debug %}\
 		// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end debug %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -479,7 +489,9 @@ ${customUpdatePropertyContent[prop.name]}
 	}
 {% end %}\
 {% otherwise %}
+{% if debug %}\
 	// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end debug %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -529,9 +541,13 @@ ${customUpdatePropertyContent[prop.name]}
 		{
 {% choose %}\
 {% when prop.name in customAsXMLElementPropertyContent %}\
+{% if debug %}\
 			// -- BEGIN custom content from ${prop.name} property template --
+{% end debug %}\
 ${customAsXMLElementPropertyContent[prop.name]}
+{% if debug %}\
 			// -- END custom content from ${prop.name} property template --
+{% end debug %}\
 {% end when %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
 			// Reference property ${prop.name} which occurs more than once
@@ -588,7 +604,9 @@ ${customAsXMLElementPropertyContent[prop.name]}
 			}
 {% end when %}\
 {% otherwise %}\
+{% if debug %}\
 			// *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end debug %}\
 {% end otherwise %}\
 {% end choose %}\
 		}

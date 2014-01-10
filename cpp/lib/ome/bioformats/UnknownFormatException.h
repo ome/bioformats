@@ -35,49 +35,39 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_META_BASEMETADATA_H
-#define OME_BIOFORMATS_META_BASEMETADATA_H
+#ifndef OME_BIOFORMATS_UNKNOWNFORMATEXCEPTION_H
+#define OME_BIOFORMATS_UNKNOWNFORMATEXCEPTION_H
 
-#include <vector>
-
-#include <ome/compat/cstdint.h>
+#include <ome/bioformats/FormatException.h>
 
 namespace ome
 {
   namespace bioformats
   {
-    namespace meta
+
+    /**
+     * Exception thrown for unrecognized or unsupported data streams or filenames.
+     */
+    class UnknownFormatException : public FormatException
     {
-
+    public:
       /**
-       * Abstract base class for metadata storage and retrieval.  This
-       * class provides no functionality; its purpose is to provide a
-       * common base type for the metadata storage and retrieval
-       * interfaces so that both types may be stored together in
-       * containers.
+       * Constructor.
+       *
+       * @param what the exception message.
        */
-      class BaseMetadata
-      {
-      public:
-        /// Index into an array
-        typedef uint32_t index_type;
-        typedef std::vector<uint8_t> byte_array;
+      explicit
+      UnknownFormatException (const std::string& what);
 
-      protected:
-        /// Constructor.
-        BaseMetadata();
+      /// Destructor.
+      virtual
+      ~UnknownFormatException () throw();
+    };
 
-      public:
-        /// Destructor.
-        virtual
-        ~BaseMetadata();
-      };
-
-    }
   }
 }
 
-#endif // OME_BIOFORMATS_META_BASEMETADATA_H
+#endif // OME_BIOFORMATS_UNKNOWNFORMATEXCEPTION_H
 
 /*
  * Local Variables:

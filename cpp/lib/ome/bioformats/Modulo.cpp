@@ -35,52 +35,69 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_META_BASEMETADATA_H
-#define OME_BIOFORMATS_META_BASEMETADATA_H
+#include <algorithm>
+#include <cmath>
 
-#include <vector>
-
-#include <ome/compat/cstdint.h>
+#include <ome/bioformats/Modulo.h>
 
 namespace ome
 {
   namespace bioformats
   {
-    namespace meta
+
+    Modulo::Modulo(std::string dimension):
+      parentDimension(dimension)
     {
-
-      /**
-       * Abstract base class for metadata storage and retrieval.  This
-       * class provides no functionality; its purpose is to provide a
-       * common base type for the metadata storage and retrieval
-       * interfaces so that both types may be stored together in
-       * containers.
-       */
-      class BaseMetadata
-      {
-      public:
-        /// Index into an array
-        typedef uint32_t index_type;
-        typedef std::vector<uint8_t> byte_array;
-
-      protected:
-        /// Constructor.
-        BaseMetadata();
-
-      public:
-        /// Destructor.
-        virtual
-        ~BaseMetadata();
-      };
-
     }
+
+    Modulo::size_type
+    Modulo::size() const
+    {
+      /**
+       * @todo Use proper rounding (compat function for round(3)).
+       */
+      return static_cast<int>(floor(((end - start) / step) + 0.5) + 1.0);
+    }
+
+   std::string
+   Modulo::toXMLAnnotation() const
+   {
+     std::ostringstream os;
+
+     // NOTE: This lowercasing operation only works with 7-bit ASCII, not UTF-8.
+     std::string ltype(type);
+     std::transform(ltype.begin(), ltype.end(), ltype.begin(), std::ptr_fun(::tolower));
+
+     os << "<ModuloAlong" << parentDimension
+        << " Type=\"" << ltype << "\"";
+     if (!typeDescription.empty())
+       os << " TypeDescription=\"" << typeDescription << "\"";
+     if (!unit.empty())
+       os << " Unit=\"" << unit << "\"";
+     if (end > start)
+       {
+         os << " Start=\"" << start
+            << "\" Step=\"" << step
+               << "\" End=\"" << end << "\"";
+       }
+     if (labels.size() > 0)
+       {
+         os << ">";
+         for (std::vector<std::string>::const_iterator label = labels.begin();
+              label != labels.end();
+              ++label)
+           {
+             os << "\n<Label>" << *label << "</Label>";
+           }
+         os << "\n</ModuloAlong" << parentDimension << ">";
+       }
+     else
+       {
+         os << "/>";
+       }
+
+     return os.str();
+   }
+
   }
 }
-
-#endif // OME_BIOFORMATS_META_BASEMETADATA_H
-
-/*
- * Local Variables:
- * mode:C++
- * End:
- */

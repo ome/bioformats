@@ -51,9 +51,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ${'.'.join(fu.package.split('.')[:-1])}.Enumeration;
-import ${'.'.join(fu.package.split('.')[:-1])}.EnumerationException;
-import ${'.'.join(fu.package.split('.')[:-1])}.${klass.langType};
+import ${lang.omexml_model_enums_package}.Enumeration;
+import ${lang.omexml_model_enums_package}.EnumerationException;
+import ${lang.omexml_model_enums_package}.${klass.langType};
 
 /**
  * Enumeration handler for ${klass.langType}.

@@ -35,10 +35,12 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_META_BASEMETADATA_H
-#define OME_BIOFORMATS_META_BASEMETADATA_H
+#ifndef OME_BIOFORMATS_MODULO_H
+#define OME_BIOFORMATS_MODULO_H
 
+#include <string>
 #include <vector>
+#include <sstream>
 
 #include <ome/compat/cstdint.h>
 
@@ -46,38 +48,47 @@ namespace ome
 {
   namespace bioformats
   {
-    namespace meta
-    {
+
+    /**
+     * A subdimension of Z, C, or T.  Needed to support Modulo
+     * annotations.  See
+     * http://www.openmicroscopy.org/site/support/ome-model/developers/6d-7d-and-8d-storage.html
+     */
+    class Modulo {
+    public:
+      typedef uint32_t size_type;
+
+      std::string parentDimension;
+      double start;
+      double step;
+      double end;
+      std::string parentType;
+      std::string type;
+      std::string typeDescription;
+      std::string unit;
+      std::vector<std::string> labels;
 
       /**
-       * Abstract base class for metadata storage and retrieval.  This
-       * class provides no functionality; its purpose is to provide a
-       * common base type for the metadata storage and retrieval
-       * interfaces so that both types may be stored together in
-       * containers.
+       * Constructor.
+       *
+       * @param dimension the parent dimension.
        */
-      class BaseMetadata
-      {
-      public:
-        /// Index into an array
-        typedef uint32_t index_type;
-        typedef std::vector<uint8_t> byte_array;
+      Modulo(std::string dimension);
 
-      protected:
-        /// Constructor.
-        BaseMetadata();
+      /**
+       * Get the size of this subdimension.
+       */
+      size_type
+      size() const;
 
-      public:
-        /// Destructor.
-        virtual
-        ~BaseMetadata();
-      };
+      std::string
+      toXMLAnnotation() const;
+    };
 
-    }
   }
 }
 
-#endif // OME_BIOFORMATS_META_BASEMETADATA_H
+#endif // OME_BIOFORMATS_MODULO_H
 
 /*
  * Local Variables:

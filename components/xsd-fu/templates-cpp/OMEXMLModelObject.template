@@ -279,9 +279,13 @@ ${customContent}\
 {% for prop in klass.properties.values() %}\
 {% choose %}\
 {% when prop.name in customUpdatePropertyContent %}\
+{% if debug %}\
         // -- BEGIN custom content from ${prop.name} property template --
+{% end debug %}\
 ${customUpdatePropertyContent[prop.name]}
+{% if debug %}\
         // -- END custom content from ${prop.name} property template --
+{% end debug %}\
 {% end %}\
 {% when prop.isReference %}\
         // Element reference ${prop.name}
@@ -298,7 +302,9 @@ ${customUpdatePropertyContent[prop.name]}
           }
 {% end %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
         // *** IGNORING *** Skipped back reference ${prop.name}
+{% end debug %}\
 {% end %}\
 {% when prop.isAttribute and prop.name == "ID" %}\
         if (!element.hasAttribute("ID") && getID().empty())
@@ -471,7 +477,9 @@ ${customUpdatePropertyContent[prop.name]}
           }
 {% end %}\
 {% otherwise %}\
+{% if debug %}\
         // *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end debug %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -967,7 +975,9 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 {% end %}\
 {% otherwise %}
+{% if debug %}\
         // *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end debug %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -1037,9 +1047,13 @@ ${customUpdatePropertyContent[prop.name]}
         {
 {% choose %}\
 {% when prop.name in customAsXMLElementPropertyContent %}\
+{% if debug %}\
           // -- BEGIN custom content from ${prop.name} property template --
+{% end debug %}\
 ${customAsXMLElementPropertyContent[prop.name]}
+{% if debug %}\
           // -- END custom content from ${prop.name} property template --
+{% end debug %}\
 {% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
           {
@@ -1075,7 +1089,9 @@ ${customAsXMLElementPropertyContent[prop.name]}
           }
 {% end %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
           // *** IGNORING *** Skipped back reference ${prop.name}
+{% end debug %}\
 {% end %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
           // Attribute property ${prop.name}
@@ -1138,7 +1154,9 @@ ${customAsXMLElementPropertyContent[prop.name]}
           }
 {% end %}\
 {% otherwise %}\
+{% if debug %}\
           // *** WARNING *** Unhandled or skipped property ${prop.name}
+{% end debug %}\
 {% end %}\
 {% end %}\
         }

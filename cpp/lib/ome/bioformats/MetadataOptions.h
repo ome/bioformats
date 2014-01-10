@@ -35,10 +35,12 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_META_BASEMETADATA_H
-#define OME_BIOFORMATS_META_BASEMETADATA_H
+#ifndef OME_BIOFORMATS_METADATAOPTIONS_H
+#define OME_BIOFORMATS_METADATAOPTIONS_H
 
+#include <string>
 #include <vector>
+#include <sstream>
 
 #include <ome/compat/cstdint.h>
 
@@ -46,38 +48,64 @@ namespace ome
 {
   namespace bioformats
   {
-    namespace meta
+
+    /**
+     * Metadata options.
+     */
+    class MetadataOptions
     {
+    public:
+      /// Amount of metadata to store.
+      enum MetadataLevel
+        {
+          MINIMUM,     ///< Store a minimal amount of metadata.
+          NO_OVERLAYS, ///< Store all metadata except overlays.
+          ALL          ///< Store all metadata.
+        };
+
+    private:
+      /// Amount of metadata to store.
+      MetadataLevel level;
+
+    public:
+      /**
+       * Constructor.  Default to storing all metadata.
+       */
+      MetadataOptions();
+
+      /***
+       * Constructor.
+       *
+       * @param level the amount of metadata to store.
+       */
+      MetadataOptions(MetadataLevel level);
+
+      /// Destructor.
+      virtual
+      ~MetadataOptions();
 
       /**
-       * Abstract base class for metadata storage and retrieval.  This
-       * class provides no functionality; its purpose is to provide a
-       * common base type for the metadata storage and retrieval
-       * interfaces so that both types may be stored together in
-       * containers.
+       * Get the metadata level.
+       *
+       * @returns the metadata level.
        */
-      class BaseMetadata
-      {
-      public:
-        /// Index into an array
-        typedef uint32_t index_type;
-        typedef std::vector<uint8_t> byte_array;
+      MetadataLevel
+      getMetadataLevel() const;
 
-      protected:
-        /// Constructor.
-        BaseMetadata();
+      /**
+       * Set the metadata level.
+       *
+       * @param level the metadata level to set.
+       */
+      void
+      setMetadataLevel(MetadataLevel level);
+    };
 
-      public:
-        /// Destructor.
-        virtual
-        ~BaseMetadata();
-      };
-
-    }
   }
 }
 
-#endif // OME_BIOFORMATS_META_BASEMETADATA_H
+
+#endif // OME_BIOFORMATS_METADATAOPTIONS_H
 
 /*
  * Local Variables:

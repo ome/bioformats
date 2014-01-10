@@ -35,52 +35,38 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_META_BASEMETADATA_H
-#define OME_BIOFORMATS_META_BASEMETADATA_H
-
-#include <vector>
-
-#include <ome/compat/cstdint.h>
+#include <ome/bioformats/MetadataOptions.h>
 
 namespace ome
 {
   namespace bioformats
   {
-    namespace meta
+
+    MetadataOptions::MetadataOptions():
+      level(ALL)
     {
-
-      /**
-       * Abstract base class for metadata storage and retrieval.  This
-       * class provides no functionality; its purpose is to provide a
-       * common base type for the metadata storage and retrieval
-       * interfaces so that both types may be stored together in
-       * containers.
-       */
-      class BaseMetadata
-      {
-      public:
-        /// Index into an array
-        typedef uint32_t index_type;
-        typedef std::vector<uint8_t> byte_array;
-
-      protected:
-        /// Constructor.
-        BaseMetadata();
-
-      public:
-        /// Destructor.
-        virtual
-        ~BaseMetadata();
-      };
-
     }
+
+    MetadataOptions::MetadataOptions(MetadataLevel level):
+      level(level)
+    {
+    }
+
+    MetadataOptions::~MetadataOptions()
+    {
+    }
+
+    MetadataOptions::MetadataLevel
+    MetadataOptions::getMetadataLevel() const
+    {
+      return this->level;
+    }
+
+    void
+    MetadataOptions::setMetadataLevel(MetadataLevel level)
+    {
+      this->level = level;
+    }
+
   }
 }
-
-#endif // OME_BIOFORMATS_META_BASEMETADATA_H
-
-/*
- * Local Variables:
- * mode:C++
- * End:
- */
