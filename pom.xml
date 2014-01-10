@@ -44,9 +44,15 @@
   </modules>
 
   <properties>
-    <project.rootdir>${basedir}</project.rootdir>
+    <maven.build.timestamp.format>d MMMMM yyyy</maven.build.timestamp.format>
+
     <log4j.version>1.2.17</log4j.version>
     <slf4j.version>1.7.2</slf4j.version>
+    <vcs.revision>${revision}</vcs.revision>
+    <release.version>${project.version}</release.version>
+    <date>${maven.build.timestamp}</date>
+    <year>2013</year>
+    <project.rootdir>${basedir}</project.rootdir>
   </properties>
 
   <build>
@@ -58,7 +64,26 @@
         <excludes>
           <exclude>**/*.java</exclude>
           <exclude>**/package.html</exclude>
+          <exclude>**/*.properties</exclude>
         </excludes>
+      </resource>
+      <resource>
+        <targetPath>META-INF/lib</targetPath>
+        <directory>${project.basedir}/lib</directory>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/src</directory>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>${project.basedir}</directory>
+        <includes>
+          <include>**/*.cpp</include>
+        </includes>
+        <filtering>true</filtering>
       </resource>
     </resources>
     <testResources>
@@ -71,6 +96,90 @@
       </testResource>
     </testResources>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <defaults>
+                <default>UNKNOWN</default>
+              </defaults>
+              <source>
+                import java.util.regex.Pattern
+
+                def ant = new AntBuilder()
+                try {
+                  ant.exec(outputproperty:"revision",
+                    failifexecutionfails:"false",
+                    executable: 'git') {
+                      arg(line:"rev-parse --short HEAD")
+                  }
+                }
+                catch (Exception e) { }
+
+                try {
+                  ant.exec(outputproperty:"exactTag",
+                    resultproperty:"exactTagRC",
+                    failifexecutionfails:"true",
+                    failonerror:"false",
+                    executable: 'git') {
+                      arg(line:"describe --match=v[0-9]* --exact")
+                  }
+                }
+                catch (Exception e) {
+                  ant.project.properties.exactTagRC = ""
+                  ant.project.properties.exactTag = ""
+                }
+
+                try {
+                  ant.exec(outputproperty:"describe",
+                    failifexecutionfails:"true",
+                    executable: 'git') {
+                      arg(line:"describe --match=v[0-9]*")
+                  }
+                }
+                catch (Exception e) {
+                  ant.project.properties.describe = ""
+                }
+
+                println ant.project.properties.exactTagRC
+                println ant.project.properties.exactTag
+                println ant.project.properties.describe
+
+                if (ant.project.properties.exactTagRC == 0) {
+                  // if we're building from a tag, set the release name
+                  // to be the tag name, minus the leading 'v'
+                  project.properties.release = ant.project.properties.exactTag.substring(1)
+                }
+                else if (ant.project.properties.describe) {
+                  // if we're building within Git, but not from a tag,
+                  // then use the last known tag's number to set a snapshot
+                  // version
+                  def regex = Pattern.compile("v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)")
+                  def groups = regex.matcher(ant.project.properties.describe)
+                  groups.matches()
+                  def major = groups.group(1)
+                  def minor = groups.group(2)
+                  def patch = groups.group(3)
+                  project.properties.release = major + "." + minor + "." + patch + "-SNAPSHOT"
+                }
+                else {
+                  // if we're building outside of Git, set a default
+                  // version number
+                  project.properties.release = project.properties.default
+                }
+                project.properties.revision = ant.project.properties.revision
+              </source>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
@@ -171,13 +280,56 @@
   <!-- NB: for parent project -->
   <repositories>
     <repository>
+      <id>ome.external</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
+    </repository>
+    <repository>
+      <id>ome.releases</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
+    </repository>
+    <repository>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </repository>
+    <repository>
+      <id>unidata.releases</id>
+      <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
+    </repository>
+    <repository>
       <id>imagej.releases</id>
       <url>http://maven.imagej.net/content/repositories/releases</url>
     </repository>
-    <repository>
-      <id>imagej.snapshots</id>
-      <url>http://maven.imagej.net/content/repositories/snapshots</url>
-    </repository>
   </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>ome.releases</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>imagej.releases</id>
+      <url>http://maven.imagej.net/content/repositories/releases</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <distributionManagement>
+    <repository>
+      <id>ome.releases</id>
+      <name>OME Releases Repository</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>ome.snapshots</id>
+      <name>OME Snapshots Repository</name>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 
 </project>
