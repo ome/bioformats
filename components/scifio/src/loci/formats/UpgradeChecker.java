@@ -74,7 +74,7 @@ public class UpgradeChecker {
   public static final String STABLE_VERSION = "4.4.5";
 
   /** Location of the OME continuous integration server. */
-  public static final String CI_SERVER = "http://hudson.openmicroscopy.org.uk";
+  public static final String CI_SERVER = "http://ci.openmicroscopy.org";
 
   /**
    * Location of the JAR artifacts for Bio-Formats' trunk build.
