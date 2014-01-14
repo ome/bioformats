@@ -658,16 +658,16 @@ namespace ome
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType is not None %}\
+{% if o.langBaseType is not None %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Element's text data
         // ${repr(indexes[o.name])}
         void
-        set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])});
+        set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+      AggregateMetadata::set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
       {
         for (delegate_list_type::iterator i = delegates.begin();
              i != delegates.end();
@@ -682,11 +682,11 @@ namespace ome
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-        ${o.langType}
+        ${o.langBaseType}
         get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${o.langType}
+      ${o.langBaseType}
       AggregateMetadata::get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])}) const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();

@@ -247,11 +247,11 @@ ${customContent}\
                             OMEModel& model)
       {
         ${klass.parentName}::update(element, model);
-{% if klass.langType is not None %}\
+{% if klass.langBaseType is not None %}\
 
         {
           // Element's text data
-{% if klass.langType != 'std::string' %}\
+{% if klass.langBaseType != 'std::string' %}\
           std::string text(element.getTextContent());
           if (!text.empty())
             {
@@ -264,7 +264,7 @@ ${customContent}\
                 }
             }
 {% end %}\
-{% if klass.langType == 'std::string' %}\
+{% if klass.langBaseType == 'std::string' %}\
           this->value = element.getTextContent();
 {% end %}\
         }
@@ -315,7 +315,7 @@ ${customUpdatePropertyContent[prop.name]}
         if (element.hasAttribute("ID"))
            {
              // ID property
-{% if klass.langType != 'std::string' %}\
+{% if klass.langBaseType != 'std::string' %}\
              ${prop.langTypeNS} id;
              std::istringstream is(element.getAttribute("${prop.name}"));
              is >> id;
@@ -327,7 +327,7 @@ ${customUpdatePropertyContent[prop.name]}
                 }
              set${prop.methodName}(id);
 {% end %}\
-{% if klass.langType == 'std::string' %}\
+{% if klass.langBaseType == 'std::string' %}\
              set${prop.methodName}(element.getAttribute("${prop.name}"));
 {% end %}\
              // Adding this model object to the model handler
@@ -539,19 +539,19 @@ ${customUpdatePropertyContent[prop.name]}
         return false;
       }
 {% end source %}\
-{% if klass.langType is not None %}\
+{% if klass.langBaseType is not None %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get element value.
          *
-         * @returns the ${klass.langType} value.
+         * @returns the ${klass.langBaseType} value.
          */
-        const ${klass.langType}&
+        const ${klass.langBaseType}&
         getValue () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const ${klass.langType}&
+      const ${klass.langBaseType}&
       ${klass.name}::getValue () const
       {
         return this->value;
@@ -562,14 +562,14 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Set element value.
          *
-         * @param value the ${klass.langType} value.
+         * @param value the ${klass.langBaseType} value.
          */
         void
-        setValue (const ${klass.langType}& value);
+        setValue (const ${klass.langBaseType}& value);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::setValue (const ${klass.langType}& value)
+      ${klass.name}::setValue (const ${klass.langBaseType}& value)
       {
         this->value = value;
       }
@@ -1075,17 +1075,17 @@ ${customUpdatePropertyContent[prop.name]}
             element = document.createElementNS(NAMESPACE, "${klass.name}");
           }
 
-{% if klass.langType is not None %}\
+{% if klass.langBaseType is not None %}\
         // Element's text data
 //            if (!this->value.empty()) {
-{% if klass.langType != 'std::string' %}\
+{% if klass.langBaseType != 'std::string' %}\
         {
           std::ostringstream os;
           os << this->value;
           element.setTextContent(os.str());
         }
 {% end %}\
-{% if klass.langType == 'std::string' %}\
+{% if klass.langBaseType == 'std::string' %}\
         element.setTextContent(this->value);
 {% end %}\
 {% end %}\

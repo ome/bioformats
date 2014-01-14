@@ -209,12 +209,12 @@ namespace ome
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType is not None %}\
+{% if o.langBaseType is not None %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
 	virtual void
-        set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])}) = 0;
+        set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])}) = 0;
 {% end header%}\
 
 {% end %}\

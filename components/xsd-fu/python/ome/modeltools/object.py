@@ -124,7 +124,10 @@ class OMEModelObject(OMEModelEntity):
     isDescribed = property(_get_isDescribed,
         doc="""Whether or not the model object is described.""")
 
-    def _get_langBaseType(self):
+    def _get_modelBaseType(self):
+        """
+        The base type is Object or String (Java) or None or std::string (C++).
+        """
         base = self.element.getBase()
         if self.model.opts.lang.hasBaseType(base):
             base = self.model.opts.lang.baseType(base)
@@ -133,7 +136,7 @@ class OMEModelObject(OMEModelEntity):
         if base is None:
             base = self.model.opts.lang.getDefaultModelBaseClass()
         return base
-    langBaseType = property(_get_langBaseType,
+    modelBaseType = property(_get_modelBaseType,
         doc="""The model object's base class.""")
 
     def _get_namespace(self):
@@ -160,7 +163,7 @@ class OMEModelObject(OMEModelEntity):
     refNodeName = property(_get_refNodeName,
         doc="""The name of this node's reference node; None otherwise.""")
 
-    def _get_langType(self):
+    def _get_langBaseType(self):
         if self.model.opts.lang.hasType(self.base):
             return self.model.opts.lang.type(self.base)
         else:
@@ -170,9 +173,9 @@ class OMEModelObject(OMEModelEntity):
                 if simpleType is not None:
                     return self.resolveLangTypeFromSimpleType(self.base)
                 if parent is not None:
-                    return parent.langType
+                    return parent.langBaseType
             return self.model.opts.lang.base_class
-    langType = property(_get_langType, doc="""The property's type.""")
+    langBaseType = property(_get_langBaseType, doc="""The property's type.""")
 
     def _get_instanceVariableName(self):
         name = None
@@ -201,8 +204,8 @@ class OMEModelObject(OMEModelEntity):
     def _get_instanceVariables(self):
         props = list();
 
-        if self.langType != self.model.opts.lang.base_class:
-            props.append([self.langType, "value", None, "Element's text data"])
+        if self.langBaseType != self.model.opts.lang.base_class:
+            props.append([self.langBaseType, "value", None, "Element's text data"])
         for prop in self.properties.values():
             props.append([prop.instanceVariableType, prop.instanceVariableName, prop.instanceVariableDefault, prop.instanceVariableComment])
         return props
@@ -225,11 +228,11 @@ class OMEModelObject(OMEModelEntity):
         myself = None
 
         if isinstance(self.model.opts.lang, language.Java):
-            myself = "ome.xml.model.%s" % self.langType
+            myself = "ome.xml.model.%s" % self.langBaseType
             if self.parentName is not None:
                 deps.add("ome.xml.model.%s" % self.parentName);
         elif isinstance(self.model.opts.lang, language.CXX):
-            myself = "ome/xml/model/%s.h" % self.langType
+            myself = "ome/xml/model/%s.h" % self.langBaseType
             if self.parentName is not None and self.parentName != self.model.opts.lang.base_class:
                 deps.add("ome/xml/model/%s.h" % self.parentName);
 
@@ -288,7 +291,7 @@ class OMEModelObject(OMEModelEntity):
     def _get_parentName(self):
         parents = self.model.resolve_parents(self.name)
 
-        name = self.langBaseType
+        name = self.modelBaseType
 
         if parents is not None:
             parent = self.model.getObjectByName(parents.keys()[0])
