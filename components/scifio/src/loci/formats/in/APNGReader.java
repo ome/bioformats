@@ -371,7 +371,7 @@ public class APNGReader extends FormatReader {
     m.sizeT = getImageCount();
 
     m.dimensionOrder = "XYCTZ";
-    m.interleaved = false;
+    m.interleaved = isRGB();
     m.falseColor = false;
 
     MetadataStore store = makeFilterMetadata();
@@ -537,27 +537,7 @@ public class APNGReader extends FormatReader {
       image = expandedImage;
     }
 
-    byte[] deinterleave = new byte[image.length];
-
-    for (int c=0; c<getRGBChannelCount(); c++) {
-      int plane = c * width * height * bpp;
-      for (int row=0; row<height; row++) {
-        int srcRow = row * width * getRGBChannelCount() * bpp;
-        int destRow = row * width * bpp;
-
-        for (int col=0; col<width; col++) {
-          int srcCol = col * getRGBChannelCount() * bpp;
-          int destCol = col * bpp;
-
-          for (int b=0; b<bpp; b++) {
-            deinterleave[plane + destRow + destCol + b] =
-              image[srcRow + srcCol + c * bpp + b];
-          }
-        }
-      }
-    }
-
-    return deinterleave;
+    return image;
   }
 
   /** See http://www.w3.org/TR/PNG/#9Filters. */
