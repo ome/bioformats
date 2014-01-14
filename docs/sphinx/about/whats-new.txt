@@ -1,6 +1,12 @@
 Version history
 ===============
 
+4.4.10 (2014 Jan 15)
+--------------------
+
+* Bug fixes including CellWorx, Metamorph and Zeiss CZI
+* Updates to MATLAB documentation
+
 4.4.9 (2013 Oct 16)
 -------------------
 
