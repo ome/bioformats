@@ -38,11 +38,11 @@
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        ${prop.metadataStoreType}
+        ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.metadataStoreType}
+      ${prop.metadataStoreRetType}
       AggregateMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
@@ -59,11 +59,11 @@
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        ${prop.metadataStoreType}
+        ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.metadataStoreType}
+      ${prop.metadataStoreRetType}
       AggregateMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
@@ -80,11 +80,11 @@
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        ${prop.metadataStoreType}
+        ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.metadataStoreType}
+      ${prop.metadataStoreRetType}
       AggregateMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
@@ -107,11 +107,11 @@
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
       {
         for (delegate_list_type::iterator i = delegates.begin();
              i != delegates.end();
@@ -128,11 +128,11 @@
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
+      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
       {
         for (delegate_list_type::iterator i = delegates.begin();
              i != delegates.end();
@@ -149,11 +149,11 @@
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
+      AggregateMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
       {
         for (delegate_list_type::iterator i = delegates.begin();
              i != delegates.end();

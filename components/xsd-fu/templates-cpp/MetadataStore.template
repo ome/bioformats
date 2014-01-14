@@ -12,17 +12,17 @@
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	virtual void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)}) = 0;\
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)}) = 0;\
 {% end header%}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	virtual void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}) = 0;\
+	virtual void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}) = 0;\
 {% end header%}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	virtual void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}) = 0;\
+	virtual void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}) = 0;\
 {% end header%}\
 {% end %}\
 {% end %}\

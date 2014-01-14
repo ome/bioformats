@@ -35,13 +35,13 @@
 {% def getter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-    public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
+    public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
-    public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
+    public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-    public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
+    public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
 {% end %}\
 {% end %}\
     {

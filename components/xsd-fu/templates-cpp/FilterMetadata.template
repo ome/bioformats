@@ -16,11 +16,11 @@
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
 {% if prop.langType == "String" %}\
            // TODO: Implement DataTools.sanitize if needed for C++
@@ -33,11 +33,11 @@
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
+      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
       {
 {% if prop.langType == "String" %}\
         // TODO: Implement DataTools.sanitize if needed for C++
@@ -50,11 +50,11 @@
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
+      FilterMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
       {
 {% if prop.langType == "String" %}\
         // TODO: Implement DataTools.sanitize if needed for C++

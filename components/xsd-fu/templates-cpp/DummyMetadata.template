@@ -29,31 +29,31 @@
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        ${prop.metadataStoreType}
+        ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.metadataStoreType}
+      ${prop.metadataStoreRetType}
       DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const
 {% end source %}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        ${prop.metadataStoreType}
+        ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.metadataStoreType}
+      ${prop.metadataStoreRetType}
       DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const
 {% end source %}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        ${prop.metadataStoreType}
+        ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.metadataStoreType}
+      ${prop.metadataStoreRetType}
       DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const
 {% end source %}\
 {% end %}\
@@ -70,31 +70,31 @@
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end source %}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 {% end source %}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
 {% end source %}\
 {% end %}\
 {% end %}\

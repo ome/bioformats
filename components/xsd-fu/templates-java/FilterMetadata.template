@@ -14,7 +14,7 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
 {% if prop.langType == "String" %}\
 		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
@@ -23,7 +23,7 @@
 	}
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 	{
 {% if prop.langType == "String" %}\
 		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
@@ -32,7 +32,7 @@
 	}
 {% end %}\
 {% otherwise %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
 	{
 {% if prop.langType == "String" %}\
 		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};

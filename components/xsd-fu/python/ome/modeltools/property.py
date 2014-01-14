@@ -1,7 +1,4 @@
-from __future__ import print_function
-
 import logging
-import sys
 
 from xml.etree import ElementTree
 
@@ -167,7 +164,33 @@ class OMEModelProperty(OMEModelEntity):
         return name
     langTypeNS = property(_get_langTypeNS, doc="""The property's type with namespace.""")
 
-    def _get_metadataStoreType(self):
+    def _get_metadataStoreArgType(self):
+        mstype = None
+
+        if self.name == "Transform":
+            if isinstance(self.model.opts.lang, language.Java):
+                mstype = "AffineTransform"
+            elif isinstance(self.model.opts.lang, language.CXX):
+                # TODO: Handle different arg/mstype = types
+                # TODO: Allow the model namespace to be configured
+                # independently of the metadata namespace.
+                mstype = "const ::ome::xml::model::AffineTransform&"
+
+        if isinstance(self.model.opts.lang, language.Java):
+            if mstype is None and not self.isPrimitive and not self.isEnumeration:
+                mstype = "String"
+            if mstype is None:
+                mstype = self.langType
+        elif isinstance(self.model.opts.lang, language.CXX):
+            if mstype is None and not self.isPrimitive and not self.isEnumeration:
+                mstype = "const std::string&"
+            if mstype is None:
+                mstype = self.langTypeNS
+        return mstype
+    metadataStoreArgType = property(_get_metadataStoreArgType,
+        doc="""The property's MetadataStore argument type.""")
+
+    def _get_metadataStoreRetType(self):
         mstype = None
 
         if self.name == "Transform":
@@ -189,11 +212,9 @@ class OMEModelProperty(OMEModelEntity):
                 mstype = "std::string" # TODO: could it be a const reference?
             if mstype is None:
                 mstype = self.langTypeNS
-            #mstype = self.retType
-            #print("Store: %s = %s" % (self.name, mstype), file=sys.stderr)
         return mstype
-    metadataStoreType = property(_get_metadataStoreType,
-        doc="""The property's MetadataStore type.""")
+    metadataStoreRetType = property(_get_metadataStoreRetType,
+        doc="""The property's MetadataStore return type.""")
 
     def _get_isAnnotation(self):
         if self.isReference:

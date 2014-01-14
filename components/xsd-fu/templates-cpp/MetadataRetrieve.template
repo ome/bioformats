@@ -11,19 +11,19 @@
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	virtual ${prop.metadataStoreType}
+	virtual ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const = 0;\
 {% end header%}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	virtual ${prop.metadataStoreType}
+	virtual ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const = 0;\
 {% end header%}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	virtual ${prop.metadataStoreType}
+	virtual ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const = 0;\
 {% end header%}\
 {% end %}\
