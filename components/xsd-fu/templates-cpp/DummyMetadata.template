@@ -417,12 +417,12 @@ namespace ome
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-        std::string
+        const std::string&
         getLightSourceType(index_type instrumentIndex,
                            index_type lightSourceIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       DummyMetadata::getLightSourceType(index_type instrumentIndex,
                                         index_type lightSourceIndex) const
       {
@@ -431,12 +431,12 @@ namespace ome
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-        std::string
+        const std::string&
         getShapeType(index_type roiIndex,
                      index_type shapeIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       DummyMetadata::getShapeType(index_type roiIndex,
                                   index_type shapeIndex) const
       {

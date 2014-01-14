@@ -487,7 +487,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 
- public:
+      public:
         // -- ${klass.name} API methods --
 
         // Documented in base class.
@@ -981,6 +981,47 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% end %}\
+
+{% if klass.name == "LightSource" %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        virtual const std::string&
+        getLightSourceType() const = 0;
+{% end header %}\
+{% end light source%}\
+{% if klass.parents is not None and "LightSource" in klass.parents.keys() %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        const std::string&
+        getLightSourceType() const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      ${klass.name}::getLightSourceType() const
+      {
+	static const std::string type("${klass.name}");
+	return type;
+      }
+{% end source %}\
+{% end has parent light source %}\
+{% if klass.name == "Shape" %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        virtual const std::string&
+        getShapeType() const = 0;
+{% end header %}\
+{% end shape%}\
+{% if klass.parents is not None and "Shape" in klass.parents.keys() %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        const std::string&
+        getShapeType() const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      ${klass.name}::getShapeType() const
+      {
+	static const std::string type("${klass.name}");
+	return type;
+      }
+{% end source %}\
+{% end has parent shape %}\
 
 {% if not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\

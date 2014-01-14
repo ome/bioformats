@@ -203,14 +203,14 @@ namespace ome
          /**
           * @todo Can this be a const reference?
           */
-	virtual std::string
+	virtual const std::string&
         getLightSourceType(index_type instrumentIndex,
                            index_type lightSourceIndex) const = 0;
 
          /**
           * @todo Can this be a const reference?
           */
-        virtual std::string
+        virtual const std::string&
         getShapeType(index_type roiIndex,
                      index_type shapeIndex) const = 0;
 {% end header%}\
