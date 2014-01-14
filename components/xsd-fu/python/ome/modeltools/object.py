@@ -163,6 +163,19 @@ class OMEModelObject(OMEModelEntity):
     refNodeName = property(_get_refNodeName,
         doc="""The name of this node's reference node; None otherwise.""")
 
+    def _get_langType(self):
+        return self.name
+    langType = property(_get_langType, doc="""The model object's type.""")
+
+    def _get_langTypeNS(self):
+        name = self.langType
+        if isinstance(self.model.opts.lang, language.Java):
+            name = "ome.xml.model.%s" % self.langType
+        if isinstance(self.model.opts.lang, language.CXX):
+            name = "::ome::xml::model::%s" % self.langType
+        return name
+    langTypeNS = property(_get_langTypeNS, doc="""The model object's type with namespace.""")
+
     def _get_langBaseType(self):
         if self.model.opts.lang.hasType(self.base):
             return self.model.opts.lang.type(self.base)
@@ -175,7 +188,16 @@ class OMEModelObject(OMEModelEntity):
                 if parent is not None:
                     return parent.langBaseType
             return self.model.opts.lang.base_class
-    langBaseType = property(_get_langBaseType, doc="""The property's type.""")
+    langBaseType = property(_get_langBaseType, doc="""The model object's base type.""")
+
+    def _get_langBaseTypeNS(self):
+        name = self.langBaseType
+        if isinstance(self.model.opts.lang, language.Java):
+            name = "ome.xml.model.%s" % self.langBaseType
+        if isinstance(self.model.opts.lang, language.CXX):
+            name = "::ome::xml::model::%s" % self.langBaseType
+        return name
+    langBaseTypeNS = property(_get_langBaseTypeNS, doc="""The model object's type with namespace.""")
 
     def _get_instanceVariableName(self):
         name = None
