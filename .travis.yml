@@ -5,9 +5,6 @@ jdk:
   - oraclejdk7
   - openjdk6
 
-python:
-  - "2.6"
-
 env:
   - BUILD=maven
   - BUILD=cpp
@@ -34,20 +31,14 @@ script:
 matrix:
   exclude:
     - jdk: openjdk7
-      python: "2.6"
       env: BUILD=sphinx
     - jdk: oraclejdk7
-      python: "2.6"
       env: BUILD=sphinx
     - jdk: openjdk7
-      python: "2.6"
       env: BUILD=cpp
     - jdk: oraclejdk7
-      python: "2.6"
       env: BUILD=cpp
     - jdk: openjdk7
-      python: "2.6"
       env: BUILD=cppwrap
     - jdk: oraclejdk7
-      python: "2.6"
       env: BUILD=cppwrap
