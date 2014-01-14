@@ -261,11 +261,11 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         std::shared_ptr<MetadataRoot>&
-        getRoot() const;
+        getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       std::shared_ptr<MetadataRoot>&
-      DummyMetadata::getRoot() const
+      DummyMetadata::getRoot()
       {
         throw std::runtime_error("DummyMetadata: No metadata methods implemented");
       }

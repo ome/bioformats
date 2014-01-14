@@ -357,11 +357,11 @@ namespace ome
          * @throws RuntimeException Always.
          */
         std::shared_ptr<MetadataRoot>&
-        getRoot() const;
+        getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
         std::shared_ptr<MetadataRoot>&
-        AggregateMetadata::getRoot() const
+        AggregateMetadata::getRoot()
         {
           throw std::runtime_error("getRoot() unsupported by AggregateMetadata.  "
                                    "Use getDelegates() and getRoot().");

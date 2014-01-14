@@ -103,8 +103,6 @@ install(FILES ${OME_BIOFORMATS_HEADERS}
         DESTINATION ${ome_bioformats_includedir})
 install(FILES ${OME_BIOFORMATS_META_STATIC_HEADERS} ${OME_BIOFORMATS_META_GENERATED_HEADERS}
         DESTINATION ${ome_bioformats_includedir}/meta)
-install(FILES ${OME_BIOFORMATS_OME_STATIC_HEADERS} ${OME_BIOFORMATS_OME_GENERATED_HEADERS}
-        DESTINATION ${ome_bioformats_includedir}/ome)
 
 set(LIBRARY_PREFIX OME_BIOFORMATS)
 set(LIBRARY_NAME ome-bioformats)

@@ -181,7 +181,7 @@ namespace ome
 
         /// @todo should this be a reference or shared_ptr?
         virtual std::shared_ptr<MetadataRoot>&
-        getRoot() const = 0;
+        getRoot() = 0;
 
         /// @todo should this be a reference or shared_ptr?
         virtual void

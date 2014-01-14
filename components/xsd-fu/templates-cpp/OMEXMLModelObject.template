@@ -586,12 +586,12 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns the size of the list.
          */
         ${prop.instanceVariableType}::size_type
-        sizeOfLinked${prop.methodName}List ();
+        sizeOfLinked${prop.methodName}List () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       // Reference which occurs more than once
       ${prop.instanceVariableType}::size_type
-      ${klass.name}::sizeOfLinked${prop.methodName}List ()
+      ${klass.name}::sizeOfLinked${prop.methodName}List () const
       {
         return ${prop.instanceVariableName}.size();
       }
@@ -846,12 +846,12 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns the size of the list.
          */
         ${prop.instanceVariableType}::size_type
-        sizeOf${prop.methodName}List ();
+        sizeOf${prop.methodName}List () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       // Property which occurs more than once
       ${prop.instanceVariableType}::size_type
-      ${klass.name}::sizeOf${prop.methodName}List ()
+      ${klass.name}::sizeOf${prop.methodName}List () const
       {
         return ${prop.instanceVariableName}.size();
       }

@@ -241,11 +241,11 @@ namespace ome
 {% if fu.SOURCE_TYPE == "header" %}\
 	/* @see MetadataStore#getRoot() */
         std::shared_ptr<MetadataRoot>&
-	getRoot() const;
+	getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       std::shared_ptr<MetadataRoot>&
-      FilterMetadata::getRoot() const
+      FilterMetadata::getRoot()
       {
         return store->getRoot();
       }

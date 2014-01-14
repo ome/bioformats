@@ -160,7 +160,7 @@ class OMEModelProperty(OMEModelEntity):
             if self.model.opts.lang.hasPrimitiveType(name) and not self.model.opts.lang.hasFundamentalType(name) and name != "std::string":
                 name = "primitives::%s" % name
             if name != self.langType and self.model.opts.package != "ome::xml::model":
-                name = "ome::xml::model::" + name
+                name = "::ome::xml::model::" + name
         return name
     langTypeNS = property(_get_langTypeNS, doc="""The property's type with namespace.""")
 
@@ -173,7 +173,7 @@ class OMEModelProperty(OMEModelEntity):
                 # TODO: Handle different arg/mstype = types
                 # TODO: Allow the model namespace to be configured
                 # independently of the metadata namespace.
-                mstype = "std::shared_ptr<ome::xml::model::AffineTransform>"
+                mstype = "std::shared_ptr<::ome::xml::model::AffineTransform>"
 
         if mstype is None and not self.isPrimitive and not self.isEnumeration:
             if isinstance(self.model.opts.lang, language.Java):
