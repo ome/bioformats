@@ -200,7 +200,7 @@ class OMEModelProperty(OMEModelEntity):
                 # TODO: Handle different arg/mstype = types
                 # TODO: Allow the model namespace to be configured
                 # independently of the metadata namespace.
-                mstype = "std::shared_ptr< ::ome::xml::model::AffineTransform>"
+                mstype = "const ::ome::xml::model::AffineTransform&"
 
         if isinstance(self.model.opts.lang, language.Java):
             if mstype is None and not self.isPrimitive and not self.isEnumeration:
@@ -333,6 +333,51 @@ class OMEModelProperty(OMEModelEntity):
 
         return itype
     retType = property(_get_retType, doc="""The property's return type.""")
+
+    def _get_assignableType(self):
+        """
+        Get the assignable type(s) of a property.  For Java only a
+        single value is returned.  For C++, the return value is a map
+        of qualifier (const or non-const) to assignable type.  The
+        assignable type is a type which may be assigned to which is
+        compatible with the property return type.  In the case of weak
+        references, the assignment will convert to a strong reference.
+        """
+
+        itype = None
+
+        if isinstance(self.model.opts.lang, language.Java):
+            itype = self.langType
+        elif isinstance(self.model.opts.lang, language.CXX):
+            itype = self.langTypeNS
+            ns_sep = self.langTypeNS
+            if ns_sep.startswith('::'):
+                ns_sep = ' ' + ns_sep
+            if self.model.opts.lang.hasFundamentalType(self.langType) and self.minOccurs > 0:
+                itype = {' const': self.langTypeNS}
+            elif self.isEnumeration:
+                if self.minOccurs == 0:
+                    itype = {' const': "std::shared_ptr<const %s>" % ns_sep,
+                             '':       "std::shared_ptr<%s>" % ns_sep}
+                else:
+                    itype = {' const': "const %s&" % self.langTypeNS,
+                             '':       "%s&" % self.langTypeNS}
+            elif self.isReference or self.isBackReference:
+                itype = {' const': "std::shared_ptr<const %s>" % ns_sep,
+                         '':       "std::shared_ptr<%s>" % ns_sep}
+            elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
+                if self.minOccurs == 0 or (not self.model.opts.lang.hasPrimitiveType(self.langType) and not self.isEnumeration):
+                    itype = {' const': "std::shared_ptr<const %s>" % ns_sep,
+                             '':       "std::shared_ptr<%s>" % ns_sep}
+                else:
+                    itype = {' const': "const %s&" % self.langTypeNS,
+                             '':       "%s&" % self.langTypeNS}
+            elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
+                itype = {' const': "std::shared_ptr<const %s>" % ns_sep,
+                         '':      "std::shared_ptr<%s>" % ns_sep}
+
+        return itype
+    assignableType = property(_get_assignableType, doc="""The property's assignable type.""")
 
     def _get_instanceVariableName(self):
         finalName = None
