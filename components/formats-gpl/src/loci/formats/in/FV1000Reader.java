@@ -900,7 +900,7 @@ public class FV1000Reader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
 
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     if (creationDate != null) {
       creationDate = creationDate.replaceAll("'", "");
@@ -961,6 +961,10 @@ public class FV1000Reader extends FormatReader {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
       store.setPixelsTimeIncrement(pixelSizeT, i);
+
+      for (int p=0; p<core.get(i).imageCount; p++) {
+        store.setPlaneDeltaT(pixelSizeT * p, i, p);
+      }
 
       // populate LogicalChannel data
 
