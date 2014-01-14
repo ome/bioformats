@@ -248,7 +248,7 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 itype = "std::weak_ptr<%s>&" % self.langTypeNS
             elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
-                if self.minOccurs == 0:
+                if self.minOccurs == 0 or (not self.model.opts.lang.hasPrimitiveType(self.langType) and not self.isEnumeration):
                     itype = "std::shared_ptr<%s>&" % self.langTypeNS
                 else:
                     itype = "const %s&" % self.langTypeNS
@@ -275,7 +275,7 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isReference or self.isBackReference:
                 itype = "std::weak_ptr<const %s>" % self.langTypeNS
             elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
-                if self.minOccurs == 0:
+                if self.minOccurs == 0 or (not self.model.opts.lang.hasPrimitiveType(self.langType) and not self.isEnumeration):
                     itype = "std::shared_ptr<const %s>" % self.langTypeNS
                 else:
                     itype = "const %s&" % self.langTypeNS
@@ -341,7 +341,7 @@ class OMEModelProperty(OMEModelEntity):
             elif self.isBackReference:
                 itype = "std::weak_ptr<%s>" % self.langTypeNS
             elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
-                if self.minOccurs == 0:
+                if self.minOccurs == 0 or (not self.model.opts.lang.hasPrimitiveType(self.langType) and not self.isEnumeration):
                     itype = "std::shared_ptr<%s>" % self.langTypeNS
                 else:
                     itype = self.langTypeNS
