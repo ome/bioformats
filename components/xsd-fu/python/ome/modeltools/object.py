@@ -209,6 +209,16 @@ class OMEModelObject(OMEModelEntity):
     instanceVariables = property(_get_instanceVariables,
         doc="""The instance variables of this class.""")
 
+    def _get_header(self):
+        header = None
+        if isinstance(self.model.opts.lang, language.Java):
+            header = "ome.xml.model.%s" % self.name
+        elif isinstance(self.model.opts.lang, language.CXX):
+            header = "ome/xml/model/%s.h" % self.name
+        return header
+    header = property(_get_header,
+        doc="""The model object's include/import name.  Does not include dependent headers.""")
+
     def _get_header_deps(self):
         deps = set()
 
