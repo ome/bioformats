@@ -141,9 +141,9 @@ def main(opts):
 
     model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
-    template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
-    used_files.add(os.path.realpath(opts.lang.templatepath(config.CLASS_TEMPLATE)))
-    base, filename = os.path.split(opts.lang.templatepath(config.CLASS_TEMPLATE))
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath('CLASS'), encoding='utf-8').read(), encoding='utf-8')
+    used_files.add(os.path.realpath(opts.lang.templatepath('CLASS')))
+    base, filename = os.path.split(opts.lang.templatepath('CLASS'))
     name, extension = os.path.splitext(filename)
     for obj in model.objects.values():
         fu.SOURCE_TYPE = opts.filetype;
@@ -275,8 +275,8 @@ def enumTypesMain(opts):
 
     model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enums_package)
-    template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
-    used_files.add(os.path.realpath(opts.lang.templatepath(config.ENUM_TEMPLATE)))
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath('ENUM'), encoding='utf-8').read(), encoding='utf-8')
+    used_files.add(os.path.realpath(opts.lang.templatepath('ENUM')))
     for obj in model.objects.values():
         for prop in obj.properties.values():
             if not prop.isEnumeration:
@@ -323,8 +323,8 @@ def enumTypesIncludeAll(opts):
 
     model = generateds.parse(opts)
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_enums_package)
-    template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_INCLUDEALL_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
-    used_files.add(os.path.realpath(opts.lang.templatepath(config.ENUM_INCLUDEALL_TEMPLATE)))
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath('ENUM_INCLUDEALL'), encoding='utf-8').read(), encoding='utf-8')
+    used_files.add(os.path.realpath(opts.lang.templatepath('ENUM_INCLUDEALL')))
     headers = model.getEnumHeaders()
 
     fullname = opts.lang.generatedFilename("enums", language.TYPE_HEADER)
@@ -368,8 +368,8 @@ def enumHandlersMain(opts):
     fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_omexml_model_enum_handlers_package)
     base = os.path.join(os.path.split(os.path.abspath(__file__))[0], "cfg")
     configobj = ConfigObj(os.path.join(base, "enum_handler.cfg"))
-    template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.ENUM_HANDLER_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
-    used_files.add(os.path.realpath(opts.lang.templatepath(config.ENUM_HANDLER_TEMPLATE)))
+    template = NewTextTemplate(codecs.open(opts.lang.templatepath('ENUM_HANDLER'), encoding='utf-8').read(), encoding='utf-8')
+    used_files.add(os.path.realpath(opts.lang.templatepath('ENUM_HANDLER')))
     for obj in model.objects.values():
         for prop in obj.properties.values():
             if not prop.isEnumeration:
@@ -535,9 +535,9 @@ def omeXmlMetadataMain(opts):
 
     relpath = os.path.join(*opts.lang.omexml_metadata_package.split(opts.lang.package_separator))
 
-    processMetadataTemplate(config.OMEXML_METADATA_TEMPLATE,
-                os.path.join(relpath, "OMEXMLMetadataImpl"),
-                opts)
+    processMetadataTemplate('OMEXML_METADATA',
+                            os.path.join(relpath, os.path.basename(os.path.splitext(opts.lang.getTemplate('OMEXML_METADATA'))[0])),
+                            opts)
 
 def omeroMetadataMain(opts):
     """
@@ -545,7 +545,7 @@ def omeroMetadataMain(opts):
     MetadataRetrieve implementation.
     """
 
-    processMetadataTemplate(config.OMERO_METADATA_TEMPLATE, "OmeroMetadata",
+    processMetadataTemplate('OMERO_METADATA', "OmeroMetadata",
                 opts)
 
 def omeroModelMain(opts):
@@ -554,7 +554,7 @@ def omeroModelMain(opts):
     MetadataRetrieve implementation.
     """
 
-    processMetadataTemplate(config.OMERO_MODEL_TEMPLATE, "OmeroModel.xml",
+    processMetadataTemplate('OMERO_MODEL', "OmeroModel.xml",
                 opts)
 
 def metadataMain(opts):
@@ -565,23 +565,23 @@ def metadataMain(opts):
 
     relpath = os.path.join(*opts.lang.metadata_package.split(opts.lang.package_separator))
 
-    processMetadataTemplate(config.METADATA_STORE_TEMPLATE,
+    processMetadataTemplate('METADATA_STORE',
                 os.path.join(relpath, "MetadataStore"),
                 opts)
 
-    processMetadataTemplate(config.METADATA_RETRIEVE_TEMPLATE,
+    processMetadataTemplate('METADATA_RETRIEVE',
                 os.path.join(relpath, "MetadataRetrieve"),
                 opts)
 
-    processMetadataTemplate(config.METADATA_AGGREGATE_TEMPLATE,
+    processMetadataTemplate('METADATA_AGGREGATE',
                 os.path.join(relpath, "AggregateMetadata"),
                 opts)
 
-    processMetadataTemplate(config.FILTER_METADATA_TEMPLATE,
+    processMetadataTemplate('FILTER_METADATA',
                 os.path.join(relpath, "FilterMetadata"),
                 opts)
 
-    processMetadataTemplate(config.DUMMY_METADATA_TEMPLATE,
+    processMetadataTemplate('DUMMY_METADATA',
                 os.path.join(relpath, "DummyMetadata"),
                 opts)
 
@@ -604,7 +604,7 @@ def docGenMain(opts):
         opts.args = [theSchemas[1]]
         model = generateds.parse(opts)
         fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
-        template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
+        template = NewTextTemplate(codecs.open(opts.lang.templatepath('CLASS'), encoding='utf-8').read(), encoding='utf-8')
         print(" == `%s` ==" % (prefix))
         for obj in model.objects.values():
             print(" === %s%s ===" % (prefix, obj.name))
@@ -638,7 +638,7 @@ def tabGenMain(opts):
         opts.args = [theSchemas[1]]
         model = generateds.parse(opts)
         fu = TemplateInfo(opts.outdir, opts.lang.omexml_model_package)
-        template = NewTextTemplate(codecs.open(opts.lang.templatepath(config.CLASS_TEMPLATE), encoding='utf-8').read(), encoding='utf-8')
+        template = NewTextTemplate(codecs.open(opts.lang.templatepath('CLASS'), encoding='utf-8').read(), encoding='utf-8')
         for theToplevelNode in theSchemas[2]:
             parentlist(model, theToplevelNode[0], theToplevelNode[1])
 
