@@ -94,7 +94,7 @@ public class MakeDatasetStructureTable {
     out.println();
     out.println("::");
     out.println();
-    out.println("    ...");
+    out.println("    …");
     out.println("    [FlexReaderServerMaps]");
     out.println("    CIA-1 = \\\\\\\\hostname1\\\\mount;\\\\\\\\archivehost1\\\\mount");
     out.println("    CIA-2 = \\\\\\\\hostname2\\\\mount;\\\\\\\\archivehost2\\\\mount");

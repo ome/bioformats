@@ -61,7 +61,7 @@ to open/import a dataset in a particular format.
      - Single file
    * - BD Pathway
      - .exp, .tif
-     - Multiple files (.exp, .dye, .ltp, ...) plus one or more directories containing .tif and .bmp files
+     - Multiple files (.exp, .dye, .ltp, …) plus one or more directories containing .tif and .bmp files
    * - Bio-Rad GEL
      - .1sc
      - Single file
@@ -331,7 +331,7 @@ to open/import a dataset in a particular format.
      - One .hdr file and a similarly-named .img file
    * - PerkinElmer
      - .ano, .cfg, .csv, .htm, .rec, .tim, .zpo, .tif
-     - One .htm file, several other metadata files (.tim, .ano, .csv, ...) and either .tif files or .2, .3, .4, etc. files
+     - One .htm file, several other metadata files (.tim, .ano, .csv, …) and either .tif files or .2, .3, .4, etc. files
    * - PerkinElmer Operetta
      - .tif, .tiff, .xml
      - Directory with XML file and one .tif/.tiff file per plane
@@ -451,7 +451,7 @@ section of the INI file as follows:
 
 ::
 
-    ...
+    …
     [FlexReaderServerMaps]
     CIA-1 = \\\\hostname1\\mount;\\\\archivehost1\\mount
     CIA-2 = \\\\hostname2\\mount;\\\\archivehost2\\mount

@@ -320,7 +320,7 @@ public class DataConverter extends JFrame implements
 
     row6.add(Box.createHorizontalStrut(8));
 
-    JLabel version = new JLabel("Built on @date@");
+    JLabel version = new JLabel("Built on " + FormatTools.DATE);
     version.setFont(version.getFont().deriveFont(Font.ITALIC));
     row6.add(version);
 

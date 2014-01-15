@@ -71,10 +71,10 @@ public class UpgradeChecker {
   // -- Constants --
 
   /** Version number of the latest stable release. */
-  public static final String STABLE_VERSION = "4.4.9";
+  public static final String STABLE_VERSION = "4.4.10";
 
   /** Location of the OME continuous integration server. */
-  public static final String CI_SERVER = "http://hudson.openmicroscopy.org.uk";
+  public static final String CI_SERVER = "http://ci.openmicroscopy.org";
 
   /**
    * Location of the JAR artifacts for Bio-Formats' trunk build.
@@ -248,8 +248,8 @@ public class UpgradeChecker {
       String[] version = latestVersion.toString().split("\\.");
       String[] thisVersion = FormatTools.VERSION.split("\\.");
       for (int i=0; i<thisVersion.length; i++) {
-        int subVersion = Integer.parseInt(thisVersion[i]);
         try {
+          int subVersion = Integer.parseInt(thisVersion[i]);
           int registrySubVersion = Integer.parseInt(version[i]);
           if (registrySubVersion != subVersion) {
             return registrySubVersion > subVersion;

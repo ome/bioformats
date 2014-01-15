@@ -181,7 +181,7 @@ public class TestTools {
       org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
       root.setLevel(Level.INFO);
       root.addAppender(new WriterAppender(
-        new PatternLayout("%p [%d{dd-MM-yyyy HH:mm:ss.SSS}] %m%n"),
+        new PatternLayout("%p [%t] [%d{dd-MM-yyyy HH:mm:ss.SSS}] %m%n"),
         new PrintWriter(logFile, Constants.ENCODING)));
     }
     catch (IOException e) { LOGGER.info("", e); }
@@ -206,6 +206,22 @@ public class TestTools {
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig, String[] subdirs)
   {
+    getFiles(root, files, config, toplevelConfig, subdirs, "");
+  }
+
+
+  /** Recursively generate a list of files to test. */
+  public static void getFiles(String root, List files,
+    final ConfigurationTree config, String toplevelConfig, String[] subdirs,
+    String configFileSuffix)
+  {
+    String configName = ".bioformats";
+    String baseConfigName = configName;
+    if (configFileSuffix.length() > 0) {
+      configName += ".";
+      configName += configFileSuffix;
+    }
+
     Location f = new Location(root);
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
@@ -216,28 +232,34 @@ public class TestTools {
     boolean isToplevel =
      toplevelConfig != null && new File(toplevelConfig).exists();
 
+    Arrays.sort(subs);
+
     // make sure that if a config file exists, it is first on the list
     for (int i=0; i<subs.length; i++) {
       Location file = new Location(root, subs[i]);
       subs[i] = file.getAbsolutePath();
-      if ((!isToplevel && file.getName().equals(".bioformats")) ||
+
+      String filename = file.getName();
+
+      if ((!isToplevel && (filename.equals(configName) ||
+        filename.equals(baseConfigName))) ||
         (isToplevel && subs[i].equals(toplevelConfig)))
       {
         String tmp = subs[0];
         subs[0] = subs[i];
         subs[i] = tmp;
-
-        // special config file for the test suite
-        LOGGER.info("\tconfig file");
-        try {
-          config.parseConfigFile(subs[0]);
-        }
-        catch (IOException exc) {
-          LOGGER.info("", exc);
-        }
-        catch (Exception e) { }
       }
     }
+
+    // special config file for the test suite
+    LOGGER.info("\tconfig file");
+    try {
+      config.parseConfigFile(subs[0]);
+    }
+    catch (IOException exc) {
+      LOGGER.info("", exc);
+    }
+    catch (Exception e) { }
 
     Arrays.sort(subs, new Comparator() {
       public int compare(Object o1, Object o2) {
@@ -273,7 +295,9 @@ public class TestTools {
       Location file = new Location(subs[i]);
       LOGGER.info("Checking {}:", subs[i]);
 
-      if (file.getName().equals(".bioformats")) {
+      String filename = file.getName();
+
+      if (filename.equals(configName) || filename.equals(baseConfigName)) {
         continue;
       }
       else if (isIgnoredFile(subs[i], config)) {

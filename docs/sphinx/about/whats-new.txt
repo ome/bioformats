@@ -1,6 +1,19 @@
 Version history
 ===============
 
+4.4.10 (2014 Jan 15)
+--------------------
+
+* Bug fixes including CellWorx, Metamorph and Zeiss CZI
+* Updates to MATLAB documentation
+
+4.4.9 (2013 Oct 16)
+-------------------
+
+* Many bug fixes including improvements to support for ND2 format
+* Java 1.6 is now the minimum supported version; Java 1.5 is no longer 
+  supported
+
 4.4.8 (2013 May 2)
 ------------------
 

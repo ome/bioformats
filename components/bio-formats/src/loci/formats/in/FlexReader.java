@@ -227,64 +227,58 @@ public class FlexReader extends FormatReader {
       new int[] {fieldCount / effectiveFieldCount, wellCount, plateCount};
     int[] pos = FormatTools.rasterToPosition(lengths, getSeries());
 
-    int wellRow = wellNumber[pos[1]][0];
-    int wellCol = wellNumber[pos[1]][1];
-    if (wellCount == 1) {
-      wellRow = 0;
-      wellCol = 0;
-    }
-
     int imageNumber = file.offsets == null ? getImageCount() * pos[0] + no : 0;
-    IFD ifd = file.offsets == null ?
-      file.ifds.get(imageNumber) : firstFile.ifds.get(0);
 
-    boolean useFirstStream = wellRow == 0 && wellCol == 0 && file.field == 0;
-    RandomAccessInputStream s = useFirstStream ? firstStream :
+    RandomAccessInputStream s =
       new RandomAccessInputStream(getFileHandle(file.file));
 
+    IFD ifd;
+    double factor;
+    if (file.offsets == null) {
+    	ifd = file.ifds.get(imageNumber);
+    	factor = 1d;
+    } else {
+    	// Only the first IFD was read. Hack the IFD to adjust the offset.
+    	final IFD firstIFD = firstFile.ifds.get(0);
+    	ifd = new IFD(firstIFD);
+    	int tag = IFD.STRIP_OFFSETS;
+    	if (firstIFD.isTiled() && firstIFD.getIFDLongArray(IFD.TILE_OFFSETS) != null)
+    		tag =  IFD.TILE_OFFSETS;
+    	long [] offsets = ifd.getIFDLongArray(tag);
+
+    	final int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() *
+    	ifd.getBitsPerSample()[0] / 8;
+    	final int index = getImageCount() * pos[0] + no;
+    	long offset = (index == file.offsets.length - 1 ?
+    			s.length() : file.offsets[index + 1]) - offsets[0] - planeSize;
+
+    	for (int i = 0; i < offsets.length; i++) {
+    		offsets[i] += offset;  
+    	}
+    	ifd.putIFDValue(tag, offsets);
+    }
     int nBytes = ifd.getBitsPerSample()[0] / 8;
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int planeSize = getSizeX() * getSizeY() * getRGBChannelCount() * nBytes;
-    double factor = 1d;
 
     // read pixels from the file
-    if (ifd.getCompression() != TiffCompression.UNCOMPRESSED || nBytes != bpp ||
-      file.offsets == null)
-    {
-      TiffParser tp = new TiffParser(s);
-      tp.getSamples(ifd, buf, x, y, w, h);
-      factor = file.factors[imageNumber];
-      if (!useFirstStream) {
-        tp.getStream().close();
-      }
-    }
-    else {
-      int index = getImageCount() * pos[0] + no;
-      long offset = index == file.offsets.length - 1 ?
-        s.length() : file.offsets[index + 1];
-      s.seek(offset - planeSize);
-      readPlane(s, x, y, w, h, buf);
-      factor = firstFile.factors[index];
-    }
-    if (wellRow != 0 || wellCol != 0) s.close();
+    TiffParser tp = new TiffParser(s);
+    tp.getSamples(ifd, buf, x, y, w, h);
+    factor = file.factors[imageNumber];
+    tp.getStream().close();
 
     // expand pixel values with multiplication by factor[no]
     int num = buf.length / bpp;
 
     if (factor != 1d || nBytes != bpp) {
-      for (int i=num-1; i>=0; i--) {
-        int q = nBytes == 1 ? buf[i] & 0xff :
-          DataTools.bytesToInt(buf, i * bpp, bpp, isLittleEndian());
-        if (q != 0) {
-          q = (int) (q * factor);
-          DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
-        }
-      }
+    	for (int i=num-1; i>=0; i--) {
+    		int q = nBytes == 1 ? buf[i] & 0xff :
+    			DataTools.bytesToInt(buf, i * nBytes, nBytes, isLittleEndian());
+    		q = (int) (q * factor);
+    		DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
+    	}
     }
 
-    if (!useFirstStream) {
-      s.close();
-    }
+    s.close();
 
     return buf;
   }
@@ -622,15 +616,17 @@ public class FlexReader extends FormatReader {
             }
             if (index < filterSets.size()) {
               FilterGroup group = filterSetMap.get(filterSets.get(index));
-              if (group.emission != null) {
-                store.setLightPathEmissionFilterRef(group.emission, i, c, 0);
-              }
-              if (group.excitation != null) {
-                store.setLightPathExcitationFilterRef(
-                  group.excitation, i, c, 0);
-              }
-              if (group.dichroic != null) {
-                store.setLightPathDichroicRef(group.dichroic, i, c);
+              if (group != null) {
+                if (group.emission != null) {
+                  store.setLightPathEmissionFilterRef(group.emission, i, c, 0);
+                }
+                if (group.excitation != null) {
+                  store.setLightPathExcitationFilterRef(
+                    group.excitation, i, c, 0);
+                }
+                if (group.dichroic != null) {
+                  store.setLightPathDichroicRef(group.dichroic, i, c);
+                }
               }
             }
           }
@@ -1491,9 +1487,12 @@ public class FlexReader extends FormatReader {
           binY = Integer.parseInt(value);
         }
         else if (qName.equals("ObjectiveRef")) {
-          String objectiveID = MetadataTools.createLSID(
-            "Objective", 0, objectiveIDs.indexOf(value));
-          objectiveRefs.add(objectiveID);
+          int index = objectiveIDs.indexOf(value);
+          if (index >= 0) {
+            String objectiveID =
+              MetadataTools.createLSID("Objective", 0, index);
+            objectiveRefs.add(objectiveID);
+          }
         }
         else if (qName.equals("CameraRef")) {
           int cameraIndex = cameraIDs.indexOf(value);
