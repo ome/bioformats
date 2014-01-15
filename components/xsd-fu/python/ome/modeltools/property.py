@@ -102,6 +102,28 @@ class OMEModelProperty(OMEModelEntity):
     namespace = property(_get_namespace,
         doc="""The root namespace of the property.""")
 
+    def _get_instanceType(self):
+        """
+        Type for creating a real concrete instance of this specific
+        element, without any additional type overrides.  Normally,
+        this won't be needed.  Use only where it's essential not to
+        have any implicit overrides substituted for the real type.
+        """
+        return self.name
+    instanceType = property(_get_instanceType, doc="""The property's instance type.""")
+
+    def _get_instanceTypeNS(self):
+        name = self.instanceType
+        if isinstance(self.model.opts.lang, language.CXX):
+            if self.isEnumeration:
+                name = "enums::%s" % name
+            if self.model.opts.lang.hasPrimitiveType(name) and not self.model.opts.lang.hasFundamentalType(name) and name != "std::string":
+                name = "primitives::%s" % name
+            if (name != self.instanceType or self.model.getObjectByName(self.instanceType) is not None) and self.model.opts.package != "ome::xml::model":
+                name = "::ome::xml::model::" + name
+        return name
+    instanceTypeNS = property(_get_instanceTypeNS, doc="""The property's type with namespace.""")
+
     def _get_langType(self):
         name = None
 
