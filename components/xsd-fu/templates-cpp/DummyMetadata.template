@@ -29,31 +29,31 @@
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        ${prop.metadataStoreType}
+        ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.metadataStoreType}
+      ${prop.metadataStoreRetType}
       DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const
 {% end source %}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        ${prop.metadataStoreType}
+        ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.metadataStoreType}
+      ${prop.metadataStoreRetType}
       DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const
 {% end source %}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-        ${prop.metadataStoreType}
+        ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.metadataStoreType}
+      ${prop.metadataStoreRetType}
       DummyMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const
 {% end source %}\
 {% end %}\
@@ -70,31 +70,31 @@
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end source %}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 {% end source %}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName});
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
+      DummyMetadata::set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
 {% end source %}\
 {% end %}\
 {% end %}\
@@ -261,11 +261,11 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         std::shared_ptr<MetadataRoot>&
-        getRoot() const;
+        getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       std::shared_ptr<MetadataRoot>&
-      DummyMetadata::getRoot() const
+      DummyMetadata::getRoot()
       {
         throw std::runtime_error("DummyMetadata: No metadata methods implemented");
       }
@@ -417,12 +417,12 @@ namespace ome
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-        std::string
+        const std::string&
         getLightSourceType(index_type instrumentIndex,
                            index_type lightSourceIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       DummyMetadata::getLightSourceType(index_type instrumentIndex,
                                         index_type lightSourceIndex) const
       {
@@ -431,12 +431,12 @@ namespace ome
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-        std::string
+        const std::string&
         getShapeType(index_type roiIndex,
                      index_type shapeIndex) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::string
+      const std::string&
       DummyMetadata::getShapeType(index_type roiIndex,
                                   index_type shapeIndex) const
       {
@@ -448,26 +448,26 @@ namespace ome
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType is not None %}\
+{% if o.langBaseType is not None %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Element's text data
         // ${repr(indexes[o.name])}
         void
-        set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])});
+        set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      DummyMetadata::set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+      DummyMetadata::set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
       {
       }
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
-        ${o.langType}
+        ${o.langBaseType}
         get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])}) const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${o.langType}
+      ${o.langBaseType}
       DummyMetadata::get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])}) const
       {
         throw std::runtime_error("DummyMetadata: No metadata methods implemented");

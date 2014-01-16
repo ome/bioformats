@@ -11,19 +11,19 @@
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	virtual ${prop.metadataStoreType}
+	virtual ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)}) const = 0;\
 {% end header%}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	virtual ${prop.metadataStoreType}
+	virtual ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}) const = 0;\
 {% end header%}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	virtual ${prop.metadataStoreType}
+	virtual ${prop.metadataStoreRetType}
         get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const = 0;\
 {% end header%}\
 {% end %}\
@@ -203,14 +203,14 @@ namespace ome
          /**
           * @todo Can this be a const reference?
           */
-	virtual std::string
+	virtual const std::string&
         getLightSourceType(index_type instrumentIndex,
                            index_type lightSourceIndex) const = 0;
 
          /**
           * @todo Can this be a const reference?
           */
-        virtual std::string
+        virtual const std::string&
         getShapeType(index_type roiIndex,
                      index_type shapeIndex) const = 0;
 {% end header%}\
@@ -219,11 +219,11 @@ namespace ome
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType is not None %}\
+{% if o.langBaseType is not None %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	virtual ${o.langType}
+	virtual ${o.langBaseType}
         get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])}) const = 0;
 {% end header%}\
 

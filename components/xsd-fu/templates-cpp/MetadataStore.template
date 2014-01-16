@@ -12,17 +12,17 @@
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	virtual void
-        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)}) = 0;\
+        set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)}) = 0;\
 {% end header%}\
 {% end %}\
 {% when len(indexes) > 0 %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	virtual void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}) = 0;\
+	virtual void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}) = 0;\
 {% end header%}\
 {% end %}\
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
-	virtual void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}) = 0;\
+	virtual void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}) = 0;\
 {% end header%}\
 {% end %}\
 {% end %}\
@@ -181,7 +181,7 @@ namespace ome
 
         /// @todo should this be a reference or shared_ptr?
         virtual std::shared_ptr<MetadataRoot>&
-        getRoot() const = 0;
+        getRoot() = 0;
 
         /// @todo should this be a reference or shared_ptr?
         virtual void
@@ -209,12 +209,12 @@ namespace ome
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType is not None %}\
+{% if o.langBaseType is not None %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
 	virtual void
-        set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])}) = 0;
+        set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])}) = 0;
 {% end header%}\
 
 {% end %}\

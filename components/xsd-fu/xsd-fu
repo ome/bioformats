@@ -469,6 +469,8 @@ def processMetadataTemplate(template, outputFilename, opts):
                             {name: parents[name]},
                             opts.lang.index_string)
 
+    object_headers = model.getObjectHeaders()
+
     fu = TemplateInfo(None, None)
     fu.max_occurs_under_parent = max_occurs_under_parent
     fu.resolve_hierarchy = resolve_hierarchy
@@ -477,6 +479,8 @@ def processMetadataTemplate(template, outputFilename, opts):
     fu.BACK_REFERENCE_CLASS_NAME_OVERRIDE = config.BACK_REFERENCE_CLASS_NAME_OVERRIDE
     fu.ABSTRACT_PROPRIETARY_OVERRIDE = config.ABSTRACT_PROPRIETARY_OVERRIDE
     fu.DEFAULT_BASE_CLASS = model.opts.lang.getDefaultModelBaseClass()
+    fu.OBJECT_HEADERS = sorted(object_headers);
+
     base, filename = os.path.split(template)
     name, extension = os.path.splitext(filename)
     used_files.add(os.path.realpath(template))

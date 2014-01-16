@@ -31,7 +31,7 @@
 {% def getter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -39,7 +39,7 @@
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				${prop.metadataStoreType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
+				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)}, ${index_name_string(prop.name)});
 				if (result != null) return result;
 			}
 		}
@@ -47,7 +47,7 @@
 	}
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -55,7 +55,7 @@
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				${prop.metadataStoreType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)});
+				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_name_string(indexes)});
 				if (result != null) return result;
 			}
 		}
@@ -63,7 +63,7 @@
 	}
 {% end %}\
 {% otherwise %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -71,7 +71,7 @@
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				${prop.metadataStoreType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_name_string(prop.name)});
+				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_name_string(prop.name)});
 				if (result != null) return result;
 			}
 		}
@@ -84,7 +84,7 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -98,7 +98,7 @@
 	}
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -112,7 +112,7 @@
 	}
 {% end %}\
 {% otherwise %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -475,10 +475,10 @@ public class AggregateMetadata implements IMetadata
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType != 'Object' %}\
+{% if o.langBaseType != 'Object' %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	public void set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+	public void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -490,14 +490,14 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public ${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
+	public ${o.langBaseType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
 			Object o = iter.next();
 			if (o instanceof MetadataRetrieve)
 			{
-				${o.langType} result = ((MetadataRetrieve) o).get${o.name}Value(${indexes_name_string(indexes[o.name].items()[0][1])});
+				${o.langBaseType} result = ((MetadataRetrieve) o).get${o.name}Value(${indexes_name_string(indexes[o.name].items()[0][1])});
 				if (result != null)
 				{
 					return result;

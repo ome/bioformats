@@ -247,11 +247,11 @@ ${customContent}\
                             OMEModel& model)
       {
         ${klass.parentName}::update(element, model);
-{% if klass.langType is not None %}\
+{% if klass.langBaseType is not None %}\
 
         {
           // Element's text data
-{% if klass.langType != 'std::string' %}\
+{% if klass.langBaseType != 'std::string' %}\
           std::string text(element.getTextContent());
           if (!text.empty())
             {
@@ -264,7 +264,7 @@ ${customContent}\
                 }
             }
 {% end %}\
-{% if klass.langType == 'std::string' %}\
+{% if klass.langBaseType == 'std::string' %}\
           this->value = element.getTextContent();
 {% end %}\
         }
@@ -315,7 +315,7 @@ ${customUpdatePropertyContent[prop.name]}
         if (element.hasAttribute("ID"))
            {
              // ID property
-{% if klass.langType != 'std::string' %}\
+{% if klass.langBaseType != 'std::string' %}\
              ${prop.langTypeNS} id;
              std::istringstream is(element.getAttribute("${prop.name}"));
              is >> id;
@@ -327,7 +327,7 @@ ${customUpdatePropertyContent[prop.name]}
                 }
              set${prop.methodName}(id);
 {% end %}\
-{% if klass.langType == 'std::string' %}\
+{% if klass.langBaseType == 'std::string' %}\
              set${prop.methodName}(element.getAttribute("${prop.name}"));
 {% end %}\
              // Adding this model object to the model handler
@@ -390,10 +390,10 @@ ${customUpdatePropertyContent[prop.name]}
           {
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
             // Element property ${prop.name} which is complex (has sub-elements)
-{% if prop.minOccurs == 0 %}\
+{% if prop.minOccurs == 0 or (not lang.hasPrimitiveType(prop.langType) and not prop.isEnumeration) %} \
             ${prop.instanceVariableType} p(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0), model));
 {% end %}\
-{% if prop.minOccurs > 0 %}\
+{% if prop.minOccurs > 0 and (lang.hasPrimitiveType(prop.langType) or prop.isEnumeration) %} \
             ${prop.langTypeNS} p(${prop.name}_nodeList.at(0), model);
 {% end %}\
             set${prop.methodName}(p);
@@ -487,7 +487,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 
- public:
+      public:
         // -- ${klass.name} API methods --
 
         // Documented in base class.
@@ -539,19 +539,19 @@ ${customUpdatePropertyContent[prop.name]}
         return false;
       }
 {% end source %}\
-{% if klass.langType is not None %}\
+{% if klass.langBaseType is not None %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get element value.
          *
-         * @returns the ${klass.langType} value.
+         * @returns the ${klass.langBaseType} value.
          */
-        const ${klass.langType}&
+        const ${klass.langBaseType}&
         getValue () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      const ${klass.langType}&
+      const ${klass.langBaseType}&
       ${klass.name}::getValue () const
       {
         return this->value;
@@ -562,14 +562,14 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Set element value.
          *
-         * @param value the ${klass.langType} value.
+         * @param value the ${klass.langBaseType} value.
          */
         void
-        setValue (const ${klass.langType}& value);
+        setValue (const ${klass.langBaseType}& value);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::setValue (const ${klass.langType}& value)
+      ${klass.name}::setValue (const ${klass.langBaseType}& value)
       {
         this->value = value;
       }
@@ -586,12 +586,12 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns the size of the list.
          */
         ${prop.instanceVariableType}::size_type
-        sizeOfLinked${prop.methodName}List ();
+        sizeOfLinked${prop.methodName}List () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       // Reference which occurs more than once
       ${prop.instanceVariableType}::size_type
-      ${klass.name}::sizeOfLinked${prop.methodName}List ()
+      ${klass.name}::sizeOfLinked${prop.methodName}List () const
       {
         return ${prop.instanceVariableName}.size();
       }
@@ -741,6 +741,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 {% end %}\
 {% when prop.isReference %}
+{% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get linked ${prop.methodName}.
@@ -748,18 +749,19 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns the linked ${prop.methodName}.  The pointer may be
          * null.
          */
-        ${prop.retType}
-        getLinked${prop.methodName} () const;
+        ${prop.retType[qualifier]}
+        getLinked${prop.methodName} ()${qualifier};
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       // Reference
-      ${prop.retType}
-      ${klass.name}::getLinked${prop.methodName} () const
+      ${prop.retType[qualifier]}
+      ${klass.name}::getLinked${prop.methodName} ()${qualifier}
       {
         return ${prop.instanceVariableName};
       }
-
 {% end source %}\
+
+{% end qualifier %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Link ${prop.methodName}.
@@ -802,24 +804,26 @@ ${customUpdatePropertyContent[prop.name]}
 {% end source %}\
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+{% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get the ${prop.methodName} property.
          *
          * @returns the ${prop.methodName} property.
          */
-        ${prop.retType}
-        get${prop.methodName} () const;
+        ${prop.retType[qualifier]}
+        get${prop.methodName} ()${qualifier};
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       // Property
-      ${prop.retType}
-      ${klass.name}::get${prop.methodName} () const
+      ${prop.retType[qualifier]}
+      ${klass.name}::get${prop.methodName} ()${qualifier}
       {
         return ${prop.instanceVariableName};
       }
 {% end source %}\
 
+{% end qualifier %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Set the ${prop.methodName} property.
@@ -846,12 +850,12 @@ ${customUpdatePropertyContent[prop.name]}
          * @returns the size of the list.
          */
         ${prop.instanceVariableType}::size_type
-        sizeOf${prop.methodName}List ();
+        sizeOf${prop.methodName}List () const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       // Property which occurs more than once
       ${prop.instanceVariableType}::size_type
-      ${klass.name}::sizeOf${prop.methodName}List ()
+      ${klass.name}::sizeOf${prop.methodName}List () const
       {
         return ${prop.instanceVariableName}.size();
       }
@@ -875,6 +879,7 @@ ${customUpdatePropertyContent[prop.name]}
       }
 {% end source %}\
 
+{% for qualifier in prop.retType.keys() %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get ${prop.methodName}.
@@ -885,17 +890,18 @@ ${customUpdatePropertyContent[prop.name]}
          *
          * @todo Is this a value type under all circumstances?
          */
-        ${prop.retType}
-        get${prop.methodName} (${prop.instanceVariableType}::size_type index) const;
+        ${prop.retType[qualifier]}
+        get${prop.methodName} (${prop.instanceVariableType}::size_type index)${qualifier};
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      ${prop.retType}
-      ${klass.name}::get${prop.methodName} (${prop.instanceVariableType}::size_type index) const
+      ${prop.retType[qualifier]}
+      ${klass.name}::get${prop.methodName} (${prop.instanceVariableType}::size_type index)${qualifier}
       {
         return ${prop.instanceVariableName}.at(index);
       }
 {% end source %}\
 
+{% end qualifier %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Set ${prop.methodName}.
@@ -982,6 +988,47 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 
+{% if klass.name == "LightSource" %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        virtual const std::string&
+        getLightSourceType() const = 0;
+{% end header %}\
+{% end light source%}\
+{% if klass.parents is not None and "LightSource" in klass.parents.keys() %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        const std::string&
+        getLightSourceType() const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      ${klass.name}::getLightSourceType() const
+      {
+	static const std::string type("${klass.name}");
+	return type;
+      }
+{% end source %}\
+{% end has parent light source %}\
+{% if klass.name == "Shape" %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        virtual const std::string&
+        getShapeType() const = 0;
+{% end header %}\
+{% end shape%}\
+{% if klass.parents is not None and "Shape" in klass.parents.keys() %}\
+{% if fu.SOURCE_TYPE == "header" %}\
+        const std::string&
+        getShapeType() const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const std::string&
+      ${klass.name}::getShapeType() const
+      {
+	static const std::string type("${klass.name}");
+	return type;
+      }
+{% end source %}\
+{% end has parent shape %}\
+
 {% if not klass.isAbstractProprietary %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
@@ -1028,17 +1075,17 @@ ${customUpdatePropertyContent[prop.name]}
             element = document.createElementNS(NAMESPACE, "${klass.name}");
           }
 
-{% if klass.langType is not None %}\
+{% if klass.langBaseType is not None %}\
         // Element's text data
 //            if (!this->value.empty()) {
-{% if klass.langType != 'std::string' %}\
+{% if klass.langBaseType != 'std::string' %}\
         {
           std::ostringstream os;
           os << this->value;
           element.setTextContent(os.str());
         }
 {% end %}\
-{% if klass.langType == 'std::string' %}\
+{% if klass.langBaseType == 'std::string' %}\
         element.setTextContent(this->value);
 {% end %}\
 {% end %}\
@@ -1104,13 +1151,8 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% when prop.maxOccurs == 1 and prop.isComplex() %}\
           // Element property ${prop.name} which is complex (has
           // sub-elements)
-{% if prop.minOccurs == 0 %}\
           if (${prop.instanceVariableName})
             element.appendChild(${prop.instanceVariableName}->asXMLElement(document));
-{% end %}\
-{% if prop.minOccurs > 0 %}\
-          element.appendChild(${prop.instanceVariableName}.asXMLElement(document));
-{% end %}\
 {% end %}\
 {% when prop.maxOccurs == 1 %}\
           // Element property ${prop.name} which is not complex (has no
