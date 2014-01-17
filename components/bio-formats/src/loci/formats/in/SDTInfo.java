@@ -811,8 +811,6 @@ public class SDTInfo {
     allBlockLengths = new long[noOfDataBlocks];
 
     for (int i=0; i<noOfDataBlocks; i++) {
-      allBlockOffsets[i] = in.getFilePointer();
-
       // read BHFileBlockHeader
       blockNo = in.readShort();
       dataOffs = in.readInt();
@@ -823,6 +821,7 @@ public class SDTInfo {
       int len = in.readInt();
       blockLength = (0xffffffffL & len); // unsigned
 
+      allBlockOffsets[i] = dataOffs;
       allBlockLengths[i] = blockLength;
 
       // save BHFileBlockHeader to metadata table
