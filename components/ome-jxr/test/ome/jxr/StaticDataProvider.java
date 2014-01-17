@@ -27,8 +27,8 @@ package ome.jxr;
 
 import java.io.IOException;
 
-import ome.jxr.datastream.JXRDecoder;
-import ome.jxr.datastream.JXRReader;
+import ome.jxr.parser.FileParser;
+import ome.jxr.parser.IFDParser;
 import ome.scifio.io.RandomAccessInputStream;
 
 import org.testng.annotations.DataProvider;
@@ -68,29 +68,37 @@ public class StaticDataProvider {
     };
   }
 
-  @DataProvider(name = "testReader")
-  public static Object[][] testReaderProvider() throws IOException, JXRException {
+  @DataProvider(name = "testFileParser")
+  public static Object[][] testFileParserProvider() throws IOException, JXRException {
     String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
     return new Object[][] {
-        {new JXRReader(testFilePath)}
+        {new FileParser(new RandomAccessInputStream(testFilePath))}
+    };
+  }
+
+  @DataProvider(name = "testIFDParser")
+  public static Object[][] testIFDParserProvider() throws IOException, JXRException {
+    String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
+    RandomAccessInputStream stream = new RandomAccessInputStream(testFilePath);
+    FileParser fileParser = new FileParser(stream);
+    fileParser.parse();
+    return new Object[][] {
+        {new IFDParser(stream, fileParser.getRootIFDOffset())}
     };
   }
 
   @DataProvider(name = "testMetadata")
   public static Object[][] testMetadataProvider() throws IOException, JXRException {
     String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
+    RandomAccessInputStream stream = new RandomAccessInputStream(testFilePath);
+    FileParser fileParser = new FileParser(stream);
+    fileParser.parse();
+    IFDParser ifdParser = new IFDParser(stream, fileParser.getRootIFDOffset());
+    ifdParser.parse();
     return new Object[][] {
-        {new JXRReader(testFilePath).getMetadata()}
+        {ifdParser.getIFDMetadata()}
     };
   }
 
-  @DataProvider(name = "testDecoder")
-  public static Object[][] testDecoderProvider() throws IOException, JXRException {
-    String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
-    return new Object[][] {
-        {new JXRDecoder(new RandomAccessInputStream(
-        testFilePath), new JXRReader(testFilePath).getMetadata())}
-    };
-  }
 
 }

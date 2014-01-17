@@ -23,23 +23,18 @@
  * #L%
  */
 
-package ome.jxr.datastream.utests;
+package ome.jxr;
 
-import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.IOException;
 
 import ome.jxr.JXRException;
-import ome.jxr.StaticDataProvider;
-import ome.jxr.constants.File;
-import ome.jxr.datastream.JXRReader;
 import ome.scifio.io.RandomAccessInputStream;
 
 import org.testng.annotations.Test;
 
-public class JXRReaderTest {
+public class JXRReaderTest extends StaticDataProvider {
 
   @Test(expectedExceptions = IOException.class)
   public void testCtorWithEmptyStringShouldThrowIOE() throws IOException,
@@ -48,43 +43,20 @@ public class JXRReaderTest {
   }
 
   @Test(dataProvider = "malformedHeaders",
-      dataProviderClass = StaticDataProvider.class,
       expectedExceptions = JXRException.class)
   public void testCtorWithMalformedHeadersShouldThrowJXRE(byte[] malformedHeader)
       throws IOException, JXRException {
     new JXRReader(new RandomAccessInputStream(malformedHeader));
   }
 
-  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
+  @Test(dataProvider = "testReader")
   public void testCtorWithtestReaderShouldNotReturnNull(JXRReader reader)
       throws IOException, JXRException {
     assertNotNull(reader);
     reader.close();
   }
 
-  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
-  public void testGetEncoderVersionShouldReturnSupportedVersion(JXRReader reader)
-      throws IOException {
-    assertEquals(File.ENCODER_VERSION, reader.getEncoderVersion());
-    reader.close();
-  }
-
-  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
-  public void testIsLittleEndianShouldReturnTrue(JXRReader reader)
-      throws IOException {
-    assertTrue(reader.isLittleEndian());
-    reader.close();
-  }
-
-  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
-  public void testGetIFDOffsetShouldNotReturnZero(JXRReader reader)
-      throws IOException {
-    int expectedOffset = 32;
-    assertEquals(expectedOffset, reader.getRootIFDOffset());
-    reader.close();
-  }
-
-  @Test(dataProvider = "testReader", dataProviderClass = StaticDataProvider.class)
+  @Test(dataProvider = "testReader")
   public void testGetMetadataShouldNotReturnNull(JXRReader reader)
       throws IllegalStateException, IOException, JXRException {
     assertNotNull(reader.getMetadata());

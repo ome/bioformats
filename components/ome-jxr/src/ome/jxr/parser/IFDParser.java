@@ -11,27 +11,25 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 2 of the 
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public 
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
  */
 
-package ome.jxr.datastream;
+package ome.jxr.parser;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import ome.jxr.JXRException;
 import ome.jxr.constants.IFD;
 import ome.jxr.ifd.IFDContainer;
 import ome.jxr.ifd.IFDEntry;
@@ -40,8 +38,7 @@ import ome.jxr.metadata.IFDMetadata;
 import ome.scifio.io.RandomAccessInputStream;
 
 /**
- * Parses a JPEG XR data stream and allows for extraction of metadata and
- * uncompressed image data.
+ * Parses a JPEG XR data stream and extracts metadata from the IFD.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
@@ -50,52 +47,45 @@ import ome.scifio.io.RandomAccessInputStream;
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
-public final class JXRParser {
-
-  protected static final Logger LOGGER = LoggerFactory
-      .getLogger(JXRParser.class);
-
-  private int rootIFDOffset;
-
-  private RandomAccessInputStream stream;
+public final class IFDParser extends Parser {
 
   private List<IFDContainer> IFDContainers = new ArrayList<IFDContainer>();
 
-  public JXRParser(RandomAccessInputStream stream, int rootIFDOffset)
-      throws IOException {
-    if (stream == null) {
-      throw new IllegalArgumentException("Input stream has not been set.");
-    }
-    if (rootIFDOffset == 0 || rootIFDOffset > stream.length()) {
-      throw new IllegalArgumentException(
-          String.format("Invalid offset supplied. Stream length: %d, offset: %d.",
-              stream.length(), rootIFDOffset));
-    }
-    this.stream = stream;
-    this.rootIFDOffset = rootIFDOffset;
+  private IFDMetadata IFDMetadata;
+
+  public IFDParser(RandomAccessInputStream stream, int parsingOffset)
+      throws JXRException {
+    super(stream, parsingOffset);
   }
 
   public int getIFDCount() {
     return IFDContainers.size();
   }
 
-  public IFDMetadata extractMetadata() throws IOException {
-    findAllIFDs();
-
-    IFDMetadata metadata = new IFDMetadata(stream.length());
-    for (IFDContainer container : IFDContainers) {
-      for (int entryOffset : container.getEntryOffsets()) {
-        stream.seek(entryOffset);
-        parseEntryInto(metadata);
-      }
-    }
-
-    return metadata;
+  public IFDMetadata getIFDMetadata() {
+    return IFDMetadata;
   }
 
-  public void findAllIFDs() throws IOException {
+  public void parse() throws JXRException {
+    try {
+      IFDMetadata = new IFDMetadata(stream.length());
+      findAllIFDs();
+
+      for (IFDContainer container : IFDContainers) {
+        for (int entryOffset : container.getEntryOffsets()) {
+          stream.seek(entryOffset);
+          parseEntryInto(IFDMetadata);
+        }
+      }
+    } catch (IOException ioe) {
+      throw new JXRException(ioe);
+    }
+
+  }
+
+  private void findAllIFDs() throws IOException {
     short IFDEntryCount = 0;
-    int nextIFDOffset = rootIFDOffset;
+    int nextIFDOffset = parsingOffset;
 
     do {
       stream.seek(nextIFDOffset);
@@ -126,13 +116,14 @@ public final class JXRParser {
   }
 
   public void close() throws IOException {
-    stream.close();
+    super.close();
+    IFDContainers = null;
+    IFDMetadata = null;
   }
 
   @Override
   public String toString() {
-    return "JXRParser [rootIFDOffset=" + rootIFDOffset + ", "
-        + "IFDContainers.size()=" + IFDContainers.size() + "]";
+    return "IFDParser [rootIFDOffset=" + parsingOffset + "]";
   }
 
 }

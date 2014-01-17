@@ -95,9 +95,9 @@ public class IFDMetadata {
     return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_HEIGHT), true);
   }
 
-  public Long getImageOffset() throws JXRException {
+  public Integer getImageOffset() throws JXRException {
     verifyRequiredEntries();
-    return DataTools.bytesToLong(entries.get(IFDEntry.IMAGE_OFFSET), true);
+    return DataTools.bytesToInt(entries.get(IFDEntry.IMAGE_OFFSET), true);
   }
 
   public Long getImageByteCount() throws JXRException {

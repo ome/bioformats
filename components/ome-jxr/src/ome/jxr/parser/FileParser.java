@@ -9,121 +9,65 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
  */
 
-package ome.jxr.datastream;
+package ome.jxr.parser;
 
 import java.io.IOException;
 
 import ome.jxr.JXRException;
 import ome.jxr.constants.File;
-import ome.jxr.metadata.IFDMetadata;
 import ome.scifio.io.RandomAccessInputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-/**
- * Reader for the JPEG XR image file format. Provides access to uncompressed
- * image data and image metadata. This class only validates the file header and
- * is a facade to a {@link JXRParser} instance that handles low-level data
- * stream operations. A successful instantiation of this class' instance
- * guarantees initial validity of the image resource passed into the
- * constructor.
- *
- * <dl>
- * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/datastream/JXRReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/datastream/JXRReader.java;hb=HEAD">Gitweb</a></dd></dl>
- *
- * @author Blazej Pindelski bpindelski at dundee.ac.uk
- */
-public final class JXRReader {
-
-  protected static final Logger LOGGER = LoggerFactory
-      .getLogger(JXRReader.class);
-
-  private IFDMetadata metadata;
-
-  private JXRParser parser;
-
-  private JXRDecoder decoder;
-
-  private RandomAccessInputStream stream;
-
-  private boolean isLittleEndian;
+public final class FileParser extends Parser {
 
   private int encoderVersion;
 
+  private boolean isLittleEndian;
+
   private int rootIFDOffset;
 
-  public JXRReader(String file) throws IOException, JXRException {
-    this(new RandomAccessInputStream(file));
-  }
-
-  public JXRReader(RandomAccessInputStream stream) throws JXRException {
-    this.stream = stream;
-    try {
-      initialize();
-    } catch (IOException ioe) {
-      throw new JXRException(ioe);
-    }
+  public FileParser(RandomAccessInputStream stream) throws JXRException {
+    super(stream);
   }
 
   public int getEncoderVersion() {
     return encoderVersion;
   }
 
-  public int getRootIFDOffset() {
-    return rootIFDOffset;
-  }
-
-  public byte[] getDecompressedImage() throws IOException,
-      JXRException {
-    if (decoder == null) {
-      decoder = new JXRDecoder(this.stream, getMetadata());
-    }
-    return decoder.decode();
-  }
-
-  public IFDMetadata getMetadata() throws IOException {
-    if (parser == null) {
-      parser = new JXRParser(this.stream, rootIFDOffset);
-    }
-    if (metadata == null) {
-      metadata = parser.extractMetadata();
-    }
-    return metadata;
-  }
-
   public boolean isLittleEndian() {
     return isLittleEndian;
   }
 
-  private void initialize() throws IOException, JXRException {
-    // JPEG XR is expected to be little-endian
-    LOGGER.info("Initializing JPEG XR reader.");
-    stream.order(true);
-    checkFileSize();
-    checkHeaderLength();
-    checkFileStructureVersion();
-    checkHeaderBOM();
+  public int getRootIFDOffset() {
+    return rootIFDOffset;
+  }
 
-    LOGGER.info("Validating JPEG XR header.");
-    checkIfValidJpegXr();
-    calculateIFDOffset();
+  public void parse() throws JXRException {
+    // Set the byte order to little-endian by default
+    stream.order(true);
+    try {
+      checkFileSize();
+      checkHeaderLength();
+      checkFileStructureVersion();
+      checkHeaderBOM();
+      checkIfValidJpegXr();
+      calculateIFDOffset();
+    } catch (IOException ioe) {
+      throw new JXRException(ioe);
+    }
   }
 
   private void checkFileSize() throws IOException, JXRException {
@@ -177,16 +121,6 @@ public final class JXRReader {
       throw new JXRException("IFD offset invalid. Found: " + offset);
     }
     rootIFDOffset = offset;
-  }
-
-  public void close() throws IOException {
-    stream.close();
-  }
-
-  @Override
-  public String toString() {
-    return "JXRReader [isLittleEndian=" + isLittleEndian + ", encoderVersion="
-        + encoderVersion + ", rootIFDOffset=" + rootIFDOffset + "]";
   }
 
 }

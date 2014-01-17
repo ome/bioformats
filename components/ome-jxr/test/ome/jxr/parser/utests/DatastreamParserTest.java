@@ -23,22 +23,26 @@
  * #L%
  */
 
-package ome.jxr.datastream.utests;
+package ome.jxr.parser.utests;
 
 import java.io.IOException;
 
 import ome.jxr.JXRException;
 import ome.jxr.StaticDataProvider;
-import ome.jxr.datastream.JXRDecoder;
+import ome.jxr.parser.DatastreamParser;
+import ome.scifio.io.RandomAccessInputStream;
 
 import org.testng.annotations.Test;
 
-public class JXRDecoderTest {
+public class DatastreamParserTest extends StaticDataProvider {
 
-  @Test(dataProvider = "testDecoder",
-      dataProviderClass = StaticDataProvider.class)
-  public void testDecode(JXRDecoder decoder)
+  private int actualParsingOffset = 32;
+
+  @Test(dataProvider = "testStream")
+  public void testParse(RandomAccessInputStream stream)
       throws IOException, JXRException {
-    decoder.decode();
+    DatastreamParser parser = new DatastreamParser(stream, actualParsingOffset);
+    parser.parse();
+    parser.close();
   }
 }

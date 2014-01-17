@@ -24,19 +24,19 @@
   -->
 
 <suite name="OME JXR Tests">
-  <test name="JXRDecoder">
+  <test name="DatastreamParserTest">
     <classes>
-      <class name="ome.jxr.datastream.utests.JXRDecoderTest"/>
+      <class name="ome.jxr.parser.utests.DatastreamParserTest"/>
     </classes>
   </test>
-  <test name="JXRParser">
+  <test name="FileParserTest">
     <classes>
-      <class name="ome.jxr.datastream.utests.JXRParserTest"/>
+      <class name="ome.jxr.parser.utests.FileParserTest"/>
     </classes>
   </test>
-  <test name="JXRReader">
+  <test name="IFDParserTest">
     <classes>
-      <class name="ome.jxr.datastream.utests.JXRReaderTest"/>
+      <class name="ome.jxr.parser.utests.IFDParserTest"/>
     </classes>
   </test>
   <test name="IFDContainer">

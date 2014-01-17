@@ -11,26 +11,24 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 2 of the 
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public 
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
  */
 
-package ome.jxr.datastream;
+package ome.jxr.parser;
 
 import java.io.IOException;
 
 import ome.jxr.JXRException;
 import ome.jxr.constants.Image;
-import ome.jxr.image.JXRImagePlane;
-import ome.jxr.metadata.IFDMetadata;
 import ome.scifio.io.RandomAccessInputStream;
 
 /**
@@ -45,37 +43,29 @@ import ome.scifio.io.RandomAccessInputStream;
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
-public final class JXRDecoder {
+public final class DatastreamParser extends Parser {
 
-  private RandomAccessInputStream stream;
-
-  private IFDMetadata metadata;
-
-  public JXRDecoder(RandomAccessInputStream stream, IFDMetadata metadata)
-      throws IOException {
-    if (stream == null || metadata == null) {
-      throw new IllegalArgumentException("Missing input stream or metadata.");
-    }
-    this.stream = stream;
-    this.metadata = metadata;
+  public DatastreamParser(RandomAccessInputStream stream, int parsingOffset)
+      throws JXRException {
+    super(stream, parsingOffset);
   }
 
-  public byte[] decode() throws IOException, JXRException {
-    parseImageLayer();
+  public byte[] parse() throws JXRException {
+    try {
+      stream.seek(parsingOffset);
+      checkIfGDISignaturePresent();
+      parseImageHeader();
+    } catch (IOException ioe) {
+      throw new JXRException(ioe);
+    }
 
     return null;
   }
 
-  private void parseImageLayer() throws IOException, JXRException {
-    stream.seek(metadata.getImageOffset());
-    checkIfGDISignaturePresent();
-    parseImageHeader();
-  }
-
-  private void parseImageHeader() throws IOException, JXRException {
+  private void parseImageHeader() throws IOException {
     byte[] headerBytes = new byte[4];
     stream.readFully(headerBytes);
-    JXRImagePlane primaryImagePlane = new JXRImagePlane(headerBytes);
+//    JXRImagePlane primaryImagePlane = new JXRImagePlane(headerBytes);
 //    if (primaryImagePlane.isAlphaPlanePresent()) {
 //      JXRImagePlane alphaImagePlane = new JXRImagePlane(some bytes);
 //    }
