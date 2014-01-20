@@ -57,11 +57,11 @@
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.metadataStoreRetType}
-      OMEXMLMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const
+      OMEXMLMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}() const
 {% end source %}\
 {% end %}\
 {% end %}\

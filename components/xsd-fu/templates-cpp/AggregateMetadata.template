@@ -81,11 +81,11 @@
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const;
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}() const;
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${prop.metadataStoreRetType}
-      AggregateMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const
+      AggregateMetadata::get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}() const
       {
         for (delegate_list_type::const_iterator i = delegates.begin();
              i != delegates.end();
@@ -93,7 +93,7 @@
           {
             std::shared_ptr<MetadataRetrieve> retrieve = std::dynamic_pointer_cast<MetadataRetrieve>(*i);
             if (retrieve)
-              return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_name_string(prop.name)});
+              return retrieve->get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}();
           }
         throw std::runtime_error("AggregateMetadata: No delegate MetadataRetrieve implementation");
       }

@@ -24,7 +24,7 @@
 {% otherwise %}\
 {% if fu.SOURCE_TYPE == "header" %}\
 	virtual ${prop.metadataStoreRetType}
-        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)}) const = 0;\
+        get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}() const = 0;\
 {% end header%}\
 {% end %}\
 {% end %}\

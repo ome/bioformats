@@ -27,7 +27,7 @@
 	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}()
 {% end %}\
 {% end %}\
 	{

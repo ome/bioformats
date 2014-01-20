@@ -16,7 +16,7 @@
 	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
-	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)});\
+	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}();\
 {% end %}\
 {% end %}\
 {% end %}\

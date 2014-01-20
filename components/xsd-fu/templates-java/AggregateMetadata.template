@@ -63,7 +63,7 @@
 	}
 {% end %}\
 {% otherwise %}\
-	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}()
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -71,7 +71,7 @@
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_name_string(prop.name)});
+				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}();
 				if (result != null) return result;
 			}
 		}
