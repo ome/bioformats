@@ -261,7 +261,7 @@ MARKDOWN_SUPPORT       = YES
 # be prevented in individual cases by by putting a % sign in front of the word
 # or globally by setting AUTOLINK_SUPPORT to NO.
 
-AUTOLINK_SUPPORT       = NO
+AUTOLINK_SUPPORT       = YES
 
 # If you use STL classes (i.e. std::string, std::vector, etc.) but do not want
 # to include (a tag file for) the STL sources as input, then you should

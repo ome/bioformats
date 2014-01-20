@@ -227,7 +227,6 @@
 {% end %}\
 {% when prop.isReference %}\
         // ${prop.name} is reference and occurs more than once
-                
         std::shared_ptr< ${prop.instanceTypeNS}> ${prop.instanceVariableName}_reference(new ${prop.instanceTypeNS}());
         ${prop.instanceVariableName}_reference->setID(${prop.argumentName});
         std::shared_ptr< ::ome::xml::model::OMEModelObject> modelObject
