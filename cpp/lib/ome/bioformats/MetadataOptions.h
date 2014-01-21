@@ -73,7 +73,7 @@ namespace ome
        */
       MetadataOptions();
 
-      /***
+      /**
        * Constructor.
        *
        * @param level the amount of metadata to store.
