@@ -35,6 +35,21 @@ class Language(object):
 
         self.base_class = None
 
+        self.template_map = {
+            'ENUM': 'OMEXMLModelEnum.template',
+            'ENUM_INCLUDEALL': 'OMEXMLModelAllEnums.template',
+            'ENUM_HANDLER': 'OMEXMLModelEnumHandler.template',
+            'CLASS': 'OMEXMLModelObject.template',
+            'METADATA_STORE': 'MetadataStore.template',
+            'METADATA_RETRIEVE': 'MetadataRetrieve.template',
+            'METADATA_AGGREGATE': 'AggregateMetadata.template',
+            'OMEXML_METADATA': 'OMEXMLMetadataImpl.template',
+            'DUMMY_METADATA': 'DummyMetadata.template',
+            'FILTER_METADATA': 'FilterMetadata.template',
+            'OMERO_METADATA': 'OmeroMetadata.template',
+            'OMERO_MODEL': 'OmeroModel.template'
+            }
+
         # A global type mapping from XSD Schema types to language
         # primitive base classes.
         self.primitive_type_map = {
@@ -75,11 +90,14 @@ class Language(object):
     def getDefaultModelBaseClass(self):
         return None
 
+    def getTemplate(self, name):
+        return self.template_map[name]
+
     def getTemplateDirectory(self):
         return self.template_dir
 
     def templatepath(self, template):
-        return os.path.join(self._templatepath, self.getTemplateDirectory(), template)
+        return os.path.join(self._templatepath, self.getTemplateDirectory(), self.getTemplate(template))
 
     def generatedFilename(self, name, type):
         gen_name = None
@@ -181,6 +199,8 @@ class CXX(Language):
         super(CXX, self).__init__(namespace, templatepath)
 
         self.package_separator = '::'
+
+        self.template_map['OMEXML_METADATA'] = 'OMEXMLMetadata.template'
 
         self.fundamental_types = set(["bool",
                                       "char", "signed char", "unsigned char",
