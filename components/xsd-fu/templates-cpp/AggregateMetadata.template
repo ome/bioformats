@@ -360,12 +360,11 @@ namespace ome
         getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-        std::shared_ptr<MetadataRoot>&
-        AggregateMetadata::getRoot()
-        {
-          throw std::runtime_error("getRoot() unsupported by AggregateMetadata.  "
-                                   "Use getDelegates() and getRoot().");
-        }
+      std::shared_ptr<MetadataRoot>&
+      AggregateMetadata::getRoot()
+      {
+        throw std::runtime_error("getRoot() unsupported by AggregateMetadata.");
+      }
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -380,8 +379,7 @@ namespace ome
       void
       AggregateMetadata::setRoot(std::shared_ptr<MetadataRoot>& root)
       {
-        throw std::runtime_error("setRoot unsupported by AggregateMetadata.  "
-                                 "Use getDelegates() and setRoot().");
+        throw std::runtime_error("setRoot unsupported by AggregateMetadata.");
       }
 {% end source %}\
 

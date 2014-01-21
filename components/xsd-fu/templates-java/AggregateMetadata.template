@@ -267,8 +267,7 @@ public class AggregateMetadata implements IMetadata
 	 */
 	public MetadataRoot getRoot()
 	{
-		throw new RuntimeException("Unsupported with AggregateMetadata. " +
-		                           "Use getDelegates() and getRoot().");
+		throw new RuntimeException("Unsupported by AggregateMetadata");
 	}
 
 	/**
@@ -277,8 +276,7 @@ public class AggregateMetadata implements IMetadata
 	 */
 	public void setRoot(MetadataRoot root)
 	{
-		throw new RuntimeException("Unsupported with AggregateMetadata. " +
-	                               "Use getDelegates() and setRoot().");
+		throw new RuntimeException("Unsupported by AggregateMetadata");
 	}
 
 	/**
@@ -288,8 +286,7 @@ public class AggregateMetadata implements IMetadata
 	@Deprecated
 	public void setRoot(Object root)
 	{
-		throw new RuntimeException("Unsupported with AggregateMetadata. " +
-	                               "Use getDelegates() and setRoot().");
+		throw new RuntimeException("Unsupported by AggregateMetadata");
 	}
 
 	// -- AggregateMetadata API methods --
