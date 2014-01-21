@@ -98,10 +98,23 @@
 
 #include <ome/bioformats/meta/BaseMetadata.h>
 
-{% for include in model.header_dependencies %}\
+#include <ome/xml/model/AffineTransform.h>
+
+{% for include in model.getEnumHeaders() %}\
 #include <${include}>
 {% end for%}\
 
+#include <ome/xml/model/primitives/Color.h>
+#include <ome/xml/model/primitives/ConstrainedNumeric.h>
+#include <ome/xml/model/primitives/NonNegativeFloat.h>
+#include <ome/xml/model/primitives/NonNegativeInteger.h>
+#include <ome/xml/model/primitives/NonNegativeLong.h>
+#include <ome/xml/model/primitives/NumericConstraints.h>
+#include <ome/xml/model/primitives/PercentFraction.h>
+#include <ome/xml/model/primitives/PositiveFloat.h>
+#include <ome/xml/model/primitives/PositiveInteger.h>
+#include <ome/xml/model/primitives/PositiveLong.h>
+#include <ome/xml/model/primitives/Timestamp.h>
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
 #include <ome/bioformats/meta/MetadataRetrieve.h>
