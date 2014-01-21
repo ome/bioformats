@@ -46,6 +46,9 @@ ip.addOptional('stitchFiles', false, @isscalar);
 ip.parse(varargin{:});
 id = ip.Results.id;
 
+% verify that enough memory is allocated
+bfCheckJavaMemory();
+
 % load the Bio-Formats library into the MATLAB environment
 status = bfCheckJavaPath();
 assert(status, ['Missing Bio-Formats library. Either add loci_tools.jar '...
