@@ -990,6 +990,11 @@ ${customUpdatePropertyContent[prop.name]}
 
 {% if klass.name == "LightSource" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
+        /**
+         * Get the LightSource type.
+         *
+         * @returns the concrete type of the LightSource.
+         */
         virtual const std::string&
         getLightSourceType() const = 0;
 {% end header %}\
@@ -1010,6 +1015,11 @@ ${customUpdatePropertyContent[prop.name]}
 {% end has parent light source %}\
 {% if klass.name == "Shape" %}\
 {% if fu.SOURCE_TYPE == "header" %}\
+        /**
+         * Get the Shape type.
+         *
+         * @returns the concrete type of the Shape.
+         */
         virtual const std::string&
         getShapeType() const = 0;
 {% end header %}\
