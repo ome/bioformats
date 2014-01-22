@@ -1,11 +1,12 @@
-function [] = bfCheckJavaMemory()
+function [] = bfCheckJavaMemory(varags)
 % bfCheckJavaMemory warn if too little memory is allocated to Java
 % 
 % SYNOPSIS  bfCheckJavaMemory()
 %
 % Input 
 %
-%    n/a
+%   minMemory - (Optional) The minimum suggested memory setting in MB.
+%   Default: 512
 %
 % Output
 %
@@ -35,10 +36,15 @@ function [] = bfCheckJavaMemory()
 runtime = java.lang.Runtime.getRuntime();
 maxMemory = runtime.maxMemory() / (1024 * 1024);
 
-if maxMemory < 512
+ip = inputParser;
+ip.addOptional('minMemory', 512, @isscalar);
+ip.parse(varargin{:});
+minMemory = ip.Results.minMemory;
+
+if maxMemory < minMemory
   fprintf('*** Insufficient memory detected. ***\n');
   fprintf('*** %dm found ***\n', maxMemory);
-  fprintf('*** 512m or greater is recommended ***\n');
+  fprintf('*** %dm or greater is recommended ***\n', minMemory);
   fprintf('*** See http://www.mathworks.com/matlabcentral/answers/92813 ***\n');
   fprintf('*** for instructions on increasing memory allocation. ***\n');
 end
