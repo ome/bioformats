@@ -227,11 +227,21 @@ public class APNGReader extends FormatReader {
     int len = coords[2] * bpp;
     int plane = getSizeX() * getSizeY() * bpp;
     int newPlane = len * coords[3];
-    for (int c=0; c<getRGBChannelCount(); c++) {
+    if (!isInterleaved()) {
+      for (int c=0; c<getRGBChannelCount(); c++) {
+        for (int row=0; row<coords[3]; row++) {
+          System.arraycopy(newImage, c * newPlane + row * len, lastImage,
+            c * plane + (coords[1] + row) * getSizeX() * bpp + coords[0] * bpp,
+            len);
+        }
+      }
+    }
+    else {
+      len *= getRGBChannelCount();
       for (int row=0; row<coords[3]; row++) {
-        System.arraycopy(newImage, c * newPlane + row * len, lastImage,
-          c * plane + (coords[1] + row) * getSizeX() * bpp + coords[0] * bpp,
-          len);
+        System.arraycopy(newImage, row * len, lastImage,
+          (coords[1] + row) * getSizeX() * bpp * getRGBChannelCount() +
+          coords[0] * bpp * getRGBChannelCount(), len);
       }
     }
 
