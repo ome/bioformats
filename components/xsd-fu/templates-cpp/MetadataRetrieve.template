@@ -218,7 +218,10 @@ namespace ome
         getPixelsBinDataCount(index_type imageIndex) const = 0;
 
         /**
-         * Get the number of BooleanAnnotation links.
+         * Get the number of links to a BooleanAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified BooleanAnnotation held by all model objects.
          *
          * @param booleanAnnotationIndex the BooleanAnnotation index.
          * @returns the number of BooleanAnnotation links.
@@ -227,7 +230,10 @@ namespace ome
         getBooleanAnnotationAnnotationCount(index_type booleanAnnotationIndex) const = 0;
 
         /**
-         * Get the number of CommentAnnotation links.
+         * Get the number of links to a CommentAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified CommentAnnotation held by all model objects.
          *
          * @param commentAnnotationIndex the CommentAnnotation index.
          * @returns the number of CommentAnnotation links.
@@ -236,7 +242,10 @@ namespace ome
         getCommentAnnotationAnnotationCount(index_type commentAnnotationIndex) const = 0;
 
         /**
-         * Get the number of DoubleAnnotation links.
+         * Get the number of links to a DoubleAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified DoubleAnnotation held by all model objects.
          *
          * @param doubleAnnotationIndex the DoubleAnnotation index.
          * @returns the number of DoubleAnnotation links.
@@ -245,7 +254,10 @@ namespace ome
         getDoubleAnnotationAnnotationCount(index_type doubleAnnotationIndex) const = 0;
 
         /**
-         * Get the number of FileAnnotation links.
+         * Get the number of links to a FileAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified FileAnnotation held by all model objects.
          *
          * @param fileAnnotationIndex the FileAnnotation index.
          * @returns the number of FileAnnotation links.
@@ -254,7 +266,10 @@ namespace ome
         getFileAnnotationAnnotationCount(index_type fileAnnotationIndex) const = 0;
 
         /**
-         * Get the number of ListAnnotation links.
+         * Get the number of links to a ListAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified ListAnnotation held by all model objects.
          *
          * @param listAnnotationIndex the ListAnnotation index.
          * @returns the number of ListAnnotation links.
@@ -263,7 +278,10 @@ namespace ome
         getListAnnotationAnnotationCount(index_type listAnnotationIndex) const = 0;
 
         /**
-         * Get the number of LongAnnotation links.
+         * Get the number of links to a LongAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified LongAnnotation held by all model objects.
          *
          * @param longAnnotationIndex the LongAnnotation index.
          * @returns the number of LongAnnotation links.
@@ -272,7 +290,10 @@ namespace ome
         getLongAnnotationAnnotationCount(index_type longAnnotationIndex) const = 0;
 
         /**
-         * Get the number of TagAnnotation links.
+         * Get the number of links to a TagAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified TagAnnotation held by all model objects.
          *
          * @param tagAnnotationIndex the TagAnnotation index.
          * @returns the number of TagAnnotation links.
@@ -281,7 +302,10 @@ namespace ome
         getTagAnnotationAnnotationCount(index_type tagAnnotationIndex) const = 0;
 
         /**
-         * Get the number of TermAnnotation links.
+         * Get the number of links to a TermAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified TermAnnotation held by all model objects.
          *
          * @param termAnnotationIndex the TermAnnotation index.
          * @returns the number of TermAnnotation links.
@@ -290,7 +314,10 @@ namespace ome
         getTermAnnotationAnnotationCount(index_type termAnnotationIndex) const = 0;
 
         /**
-         * Get the number of TimestampAnnotation links.
+         * Get the number of links to a TimestampAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified TimestampAnnotation held by all model objects.
          *
          * @param timestampAnnotationIndex the TimestampAnnotation index.
          * @returns the number of TimestampAnnotation links.
@@ -299,7 +326,10 @@ namespace ome
         getTimestampAnnotationAnnotationCount(index_type timestampAnnotationIndex) const = 0;
 
         /**
-         * Get the number of XMLAnnotation links.
+         * Get the number of links to an XMLAnnotation.
+         *
+         * This method returns the number of references to the
+         * specified XMLAnnotation held by all model objects.
          *
          * @param xmlAnnotationIndex the XMLAnnotation index.
          * @returns the number of XMLAnnotation links.
