@@ -62,12 +62,6 @@ sphinx()
         make html
         make latexpdf
     )
-    (
-        export SPHINXOPTS="-W"
-        cd docs/release
-        make clean
-        make html
-    )
 }
 
 for arg in "$@"
