@@ -202,7 +202,7 @@ namespace ome
      * Output CoreMetadata to output stream.
      *
      * @param os the output stream.
-     * @param color the CoreMetadata to output.
+     * @param core the CoreMetadata to output.
      * @returns the output stream.
      */
     template<class charT, class traits>

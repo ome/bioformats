@@ -47,6 +47,10 @@ namespace ome
 {
   namespace bioformats
   {
+    /**
+     * OME-XML metadata storage and retrieval.  This implementation is
+     * generated from the OME Data Model.
+     */
     namespace ome
     {
 

@@ -45,6 +45,10 @@ namespace ome
 {
   namespace bioformats
   {
+    /**
+     * Metadata storage and retrieval.  These interfaces and
+     * implementations are generated from the OME Data Model.
+     */
     namespace meta
     {
 
