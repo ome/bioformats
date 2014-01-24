@@ -1,4 +1,4 @@
-function [] = bfCheckJavaMemory(varags)
+function [] = bfCheckJavaMemory(varargin)
 % bfCheckJavaMemory warn if too little memory is allocated to Java
 % 
 % SYNOPSIS  bfCheckJavaMemory()
