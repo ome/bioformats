@@ -302,7 +302,7 @@ public class TestTools {
       }
       else if (file.isDirectory()) {
         LOGGER.info("\tdirectory");
-        getFiles(subs[i], files, config, null);
+        getFiles(subs[i], files, config, null, null, configFileSuffix);
       }
       else if (!subs[i].endsWith("readme.txt")) {
         if (typeTester.isThisType(subs[i])) {
