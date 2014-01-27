@@ -341,7 +341,7 @@ public class TiffSaver {
                     off = ndx * nChannels + c * bytesPerPixel + n;
                     if (row >= h || col >= w) {
                       stripOut[strip].writeByte(0);
-                    } else {
+                    } else if (off < buf.length) {
                       stripOut[strip].writeByte(buf[off]);
                     }
                   }
@@ -349,7 +349,7 @@ public class TiffSaver {
                     off = c * blockSize + ndx + n;
                     if (row >= h || col >= w) {
                       stripOut[strip].writeByte(0);
-                    } else {
+                    } else if (off < buf.length) {
                       stripOut[c * (nStrips / nChannels) + strip].writeByte(
                           buf[off]);
                     }
@@ -934,7 +934,9 @@ public class TiffSaver {
     if (ifd.get(IFD.SOFTWARE) == null) {
       ifd.putIFDValue(IFD.SOFTWARE, "OME Bio-Formats");
     }
-    if (ifd.get(IFD.ROWS_PER_STRIP) == null) {
+    if (ifd.get(IFD.ROWS_PER_STRIP) == null &&
+      ifd.get(IFD.TILE_WIDTH) == null && ifd.get(IFD.TILE_LENGTH) == null)
+    {
       ifd.putIFDValue(IFD.ROWS_PER_STRIP, new long[] {1});
     }
     if (ifd.get(IFD.IMAGE_DESCRIPTION) == null) {
