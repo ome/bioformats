@@ -132,7 +132,7 @@ bf_github_branch = bf_github_root + 'blob/' + source_branch + '/'
 if "JENKINS_JOB" in os.environ:
     jenkins_job = os.environ.get('JENKINS_JOB')
 else:
-    jenkins_job = 'BIOFORMATS-trunk'
+    jenkins_job = 'BIOFORMATS-5.1-latest'
 
 jenkins_root = 'http://ci.openmicroscopy.org'
 jenkins_job_root = jenkins_root + '/job'

@@ -80,13 +80,13 @@ public class UpgradeChecker {
    * Location of the JAR artifacts for Bio-Formats' trunk build.
    */
   public static final String TRUNK_BUILD =
-    CI_SERVER + "/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/";
+    CI_SERVER + "/job/BIOFORMATS-5.1-latest/lastSuccessfulBuild/artifact/artifacts/";
 
   /**
    * Location of the JAR artifacts for Bio-Formats' daily build.
    */
   public static final String DAILY_BUILD =
-    CI_SERVER + "/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/";
+    CI_SERVER + "/job/BIOFORMATS-5.1-daily/lastSuccessfulBuild/artifact/artifacts/";
 
   /**
    * Location of the JAR artifacts for the stable releases.
