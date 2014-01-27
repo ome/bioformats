@@ -91,7 +91,6 @@ class Language(object):
         self.type_map['Leader'] = 'Experimenter'
         self.type_map['Contact'] = 'Experimenter'
         self.type_map['Pump'] = 'LightSource'
-        self.type_map['MapPairs'] = 'AbstractOMEModelObject'
 
     def getDefaultModelBaseClass(self):
         return None
@@ -176,6 +175,7 @@ class Java(Language):
         self.primitive_type_map[namespace + 'hexBinary'] = 'String'
         self.primitive_type_map['OME:Map'] = 'Map'
 
+        self.model_type_map['MapPairs'] = None
         self.model_type_map['M'] = None
 
         self.type_map = copy.deepcopy(self.primitive_type_map)
