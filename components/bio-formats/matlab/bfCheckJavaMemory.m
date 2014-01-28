@@ -41,10 +41,12 @@ ip.addOptional('minMemory', 512, @isscalar);
 ip.parse(varargin{:});
 minMemory = ip.Results.minMemory;
 
+warningID = 'bf';
+
 if maxMemory < minMemory
-  fprintf('*** Insufficient memory detected. ***\n');
-  fprintf('*** %dm found ***\n', maxMemory);
-  fprintf('*** %dm or greater is recommended ***\n', minMemory);
-  fprintf('*** See http://www.mathworks.com/matlabcentral/answers/92813 ***\n');
-  fprintf('*** for instructions on increasing memory allocation. ***\n');
+  warning(warningID, '*** Insufficient memory detected. ***\n');
+  warning(warningID, '*** %dm found ***\n', round(maxMemory));
+  warning(warningID, '*** %dm or greater is recommended ***\n', minMemory);
+  warning(warningID, '*** See http://www.mathworks.com/matlabcentral/answers/92813 ***\n');
+  warning(warningID, '*** for instructions on increasing memory allocation. ***\n');
 end
