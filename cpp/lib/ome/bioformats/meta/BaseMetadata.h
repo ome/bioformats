@@ -59,8 +59,9 @@ namespace ome
       class BaseMetadata
       {
       public:
-        /// Index into an array
+        /// Index into an array.
         typedef uint32_t index_type;
+        /// An array of bytes for binary image data.
         typedef std::vector<uint8_t> byte_array;
 
       protected:
