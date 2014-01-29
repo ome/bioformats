@@ -1237,27 +1237,27 @@ public final class FormatTools {
     return null;
   }
 
-  public static PositiveInteger getEmissionWavelength(Integer value) {
+  public static PositiveFloat getEmissionWavelength(Double value) {
     if (value != null && value > 0) {
-      return new PositiveInteger(value);
+      return new PositiveFloat(value);
     }
     LOGGER.debug("Expected positive value for EmissionWavelength; got {}",
       value);
     return null;
   }
 
-  public static PositiveInteger getExcitationWavelength(Integer value) {
+  public static PositiveFloat getExcitationWavelength(Double value) {
     if (value != null && value > 0) {
-      return new PositiveInteger(value);
+      return new PositiveFloat(value);
     }
     LOGGER.debug("Expected positive value for ExcitationWavelength; got {}",
       value);
     return null;
   }
 
-  public static PositiveInteger getWavelength(Integer value) {
+  public static PositiveFloat getWavelength(Double value) {
     if (value != null && value > 0) {
-      return new PositiveInteger(value);
+      return new PositiveFloat(value);
     }
     LOGGER.debug("Expected positive value for Wavelength; got {}", value);
     return null;

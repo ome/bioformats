@@ -110,6 +110,7 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -535,7 +536,7 @@ public class XMLMockObjects
     LightSourceSettings settings = new LightSourceSettings();
     settings.setID("LightSource:"+ref);
     settings.setAttenuation(new PercentFraction(1.0f));
-    settings.setWavelength(new PositiveInteger(200));
+    settings.setWavelength(new PositiveFloat(200.2));
     settings.setLightSource(instrument.copyLightSourceList().get(0));
     return settings;
   }
@@ -1067,8 +1068,8 @@ public class XMLMockObjects
     channel.setIlluminationType(IlluminationType.OBLIQUE);
     channel.setPinholeSize(0.5);
     channel.setContrastMethod(ContrastMethod.BRIGHTFIELD);
-    channel.setEmissionWavelength(new PositiveInteger(300));
-    channel.setExcitationWavelength(new PositiveInteger(400));
+    channel.setEmissionWavelength(new PositiveFloat(300.3));
+    channel.setExcitationWavelength(new PositiveFloat(400.4));
     channel.setFluor("Fluor");
     channel.setNDFilter(1.0);
     channel.setPockelCellSetting(0);
