@@ -1,9 +1,9 @@
 function [] = bfCheckJavaMemory(varargin)
 % bfCheckJavaMemory warn if too little memory is allocated to Java
-% 
+%
 % SYNOPSIS  bfCheckJavaMemory()
 %
-% Input 
+% Input
 %
 %   minMemory - (Optional) The minimum suggested memory setting in MB.
 %   Default: 512
@@ -44,9 +44,11 @@ minMemory = ip.Results.minMemory;
 warningID = 'BF:lowJavaMemory';
 
 if maxMemory < minMemory
-  warning(warningID, '*** Insufficient memory detected. ***\n');
-  warning(warningID, '*** %dm found ***\n', round(maxMemory));
-  warning(warningID, '*** %dm or greater is recommended ***\n', minMemory);
-  warning(warningID, '*** See http://www.mathworks.com/matlabcentral/answers/92813 ***\n');
-  warning(warningID, '*** for instructions on increasing memory allocation. ***\n');
+    warning_msg = [...
+        '*** Insufficient memory detected. ***\n'...
+        '*** %dm found ***\n'...
+        '*** %dm or greater is recommended ***\n'...
+        '*** See http://www.mathworks.com/matlabcentral/answers/92813 ***\n'...
+        '*** for instructions on increasing memory allocation. ***\n'];
+    warning(warningID, warning_msg, round(maxMemory), minMemory);
 end
