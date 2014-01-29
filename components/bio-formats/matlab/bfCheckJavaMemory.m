@@ -41,7 +41,7 @@ ip.addOptional('minMemory', 512, @isscalar);
 ip.parse(varargin{:});
 minMemory = ip.Results.minMemory;
 
-warningID = 'bf';
+warningID = 'BF:lowJavaMemory';
 
 if maxMemory < minMemory
   warning(warningID, '*** Insufficient memory detected. ***\n');
