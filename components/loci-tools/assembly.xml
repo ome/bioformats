@@ -11,7 +11,7 @@
     <dependencySet>
       <excludes>
         <exclude>ome:lwf-stubs</exclude>
-        <exclude>net.imagej:ij</exclude>
+        <exclude>gov.nih.imagej:imagej</exclude>
         <!-- exclude testing dependencies -->
         <exclude>org.testng:testng</exclude>
         <exclude>junit:junit</exclude>
