@@ -1021,7 +1021,8 @@ Type "ant -p" for a list of targets.
   <target name="dist-matlab" if="isUnix" description="zip the Matlab functions bundle">
     <echo>----------=========== bfmatlab ===========----------</echo>
     <zip destfile="${artifact.dir}/bfmatlab.zip">
-      <zipfileset dir="${root.dir}/components/bio-formats/matlab" includes="**/*"/>
+      <zipfileset dir="${root.dir}/components/bio-formats/matlab" includes="**/*" prefix="bfmatlab"/>
+      <zipfileset file="${artifact.dir}/loci_tools.jar" prefix="bfmatlab"/>
     </zip>
   </target>
 
