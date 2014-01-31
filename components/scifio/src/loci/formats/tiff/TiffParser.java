@@ -814,7 +814,8 @@ public class TiffParser {
       (ifd.getBitsPerSample()[0] % 8) == 0 &&
       photoInterp != PhotoInterp.WHITE_IS_ZERO &&
       photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
-      compression == TiffCompression.UNCOMPRESSED)
+      compression == TiffCompression.UNCOMPRESSED &&
+      numTileRows * numTileCols == 1)
     {
       long[] stripOffsets = ifd.getStripOffsets();
       long[] stripByteCounts = ifd.getStripByteCounts();
