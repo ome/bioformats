@@ -11,7 +11,7 @@
 *               Western General Hospital,
 *               Edinburgh, EH4 2XU, UK.
 * \par
-* Copyright (C), [2013],
+* Copyright (C), [2013 - 2014],
 * The University Court of the University of Edinburgh,
 * Old College, Edinburgh, UK.
 * 
