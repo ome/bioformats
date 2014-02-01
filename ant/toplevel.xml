@@ -922,7 +922,46 @@ Type "ant -p" for a list of targets.
       jar-scifio,
       jar-scifio-tools,
       jar-specification"
-    description="create JAR file encompassing several LOCI tools">
+    description="create JAR file bundles of Bio-Formats and dependencies">
+
+    <echo>----------=========== bioformats_all ===========----------</echo>
+    <for list="${all.libraries}" param="jar" delimiter=" " trim="true">
+      <sequential>
+        <unjar src="${artifact.dir}/@{jar}" dest="${all.dir}">
+          <patternset>
+            <exclude name="META-INF/*"/>
+            <exclude name="META-INF/maven/**"/>
+            <exclude name="META-INF/services/**"/>
+          </patternset>
+        </unjar>
+      </sequential>
+    </for>
+    <jar jarfile="${all.jar}" basedir="${all.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${all.main}"/>
+      </manifest>
+    </jar>
+    <delete dir="${all.dir}"/>
+
+    <echo>----------=========== bioformats_nolog ===========----------</echo>
+    <for list="${nolog.libraries}" param="jar" delimiter=" " trim="true">
+      <sequential>
+        <unjar src="${artifact.dir}/@{jar}" dest="${nolog.dir}">
+          <patternset>
+            <exclude name="META-INF/*"/>
+            <exclude name="META-INF/maven/**"/>
+            <exclude name="META-INF/services/**"/>
+          </patternset>
+        </unjar>
+      </sequential>
+    </for>
+    <jar jarfile="${nolog.jar}" basedir="${nolog.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${nolog.main}"/>
+      </manifest>
+    </jar>
+    <delete dir="${nolog.dir}"/>
+
     <echo>----------=========== loci_tools ===========----------</echo>
     <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
