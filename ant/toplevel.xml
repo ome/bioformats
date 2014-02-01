@@ -917,6 +917,8 @@ Type "ant -p" for a list of targets.
       jar-loci-plugins,
       jar-mdbtools,
       jar-metakit,
+      jar-ome-io,
+      jar-ome-plugins,
       jar-ome-xml,
       jar-poi-loci,
       jar-scifio,
