@@ -195,6 +195,9 @@ public class CoreMetadata implements Cloneable {
     seriesMetadata = r.getSeriesMetadata();
     thumbnail = r.isThumbnailSeries();
     resolutionCount = r.getResolutionCount();
+    moduloZ = r.getModuloZ();
+    moduloC = r.getModuloC();
+    moduloT = r.getModuloT();
 
     r.setCoreIndex(currentIndex);
   }
@@ -223,6 +226,9 @@ public class CoreMetadata implements Cloneable {
     seriesMetadata = c.seriesMetadata;
     thumbnail = c.thumbnail;
     resolutionCount = c.resolutionCount;
+    moduloZ = c.moduloZ;
+    moduloC = c.moduloC;
+    moduloT = c.moduloT;
   }
 
   // -- Object methods --
