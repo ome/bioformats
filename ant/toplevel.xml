@@ -1045,13 +1045,14 @@ Type "ant -p" for a list of targets.
   <!-- Source release -->
   <target name="release" description="Zip the git release as bioformats-${release.version}.zip" depends="release-version">
     <mkdir dir="${artifact.dir}"/>
-    <exec executable="git" outputproperty="release-archive-command" failifexecutionfails="true">
-      <arg value="archive"/>
-      <arg value="--prefix=bioformats-${release.version}/"/>
-      <arg value="--format=zip"/>
-      <arg value="HEAD"/>
-      <arg value="-o"/>
-      <arg value="${artifact.dir}/bioformats-${release.version}.zip"/>
+    <exec executable="python" failonerror="true">
+      <arg value="${root.dir}/tools/source-archive"/>
+      <arg value="bioformats"/>
+      <arg value="${release.shortversion}"/>
+      <arg value="${release.version}"/>
+      <arg value="${vcs.revision}"/>
+      <arg value="${vcs.date}"/>
+      <arg value="${artifact.dir}"/>
     </exec>
   </target>
 
