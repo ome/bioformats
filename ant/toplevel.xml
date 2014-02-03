@@ -926,10 +926,10 @@ Type "ant -p" for a list of targets.
       jar-specification"
     description="create JAR file bundles of Bio-Formats and dependencies">
 
-    <echo>----------=========== bioformats_nolog ===========----------</echo>
-    <for list="${nolog.libraries}" param="jar" delimiter=" " trim="true">
+    <echo>----------=========== bioformats_package ===========----------</echo>
+    <for list="${package.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
-        <unjar src="${artifact.dir}/@{jar}" dest="${nolog.dir}">
+        <unjar src="${artifact.dir}/@{jar}" dest="${package.dir}">
           <patternset>
             <exclude name="META-INF/*"/>
             <exclude name="META-INF/maven/**"/>
@@ -938,12 +938,12 @@ Type "ant -p" for a list of targets.
         </unjar>
       </sequential>
     </for>
-    <jar jarfile="${nolog.jar}" basedir="${nolog.dir}">
+    <jar jarfile="${package.jar}" basedir="${package.dir}">
       <manifest>
-        <attribute name="Main-Class" value="${nolog.main}"/>
+        <attribute name="Main-Class" value="${package.main}"/>
       </manifest>
     </jar>
-    <delete dir="${nolog.dir}"/>
+    <delete dir="${package.dir}"/>
 
     <echo>----------=========== loci_tools ===========----------</echo>
     <for list="${loci-tools.libraries}" param="jar" delimiter=" " trim="true">

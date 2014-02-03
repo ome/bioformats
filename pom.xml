@@ -22,8 +22,7 @@
     <module>components/forks/poi</module>
     <module>components/autogen</module>
     <module>components/bio-formats</module>
-    <module>components/bioformats_all</module>
-    <module>components/bioformats_nolog</module>
+    <module>components/bioformats_package</module>
     <module>components/loci-legacy</module>
     <module>components/loci-common</module>
     <module>components/loci-plugins</module>
