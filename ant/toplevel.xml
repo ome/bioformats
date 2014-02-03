@@ -1044,7 +1044,7 @@ Type "ant -p" for a list of targets.
     <echo>----------=========== bfmatlab ===========----------</echo>
     <zip destfile="${artifact.dir}/bfmatlab.zip">
       <zipfileset dir="${root.dir}/components/bio-formats/matlab" includes="**/*" prefix="bfmatlab"/>
-      <zipfileset file="${artifact.dir}/loci_tools.jar" prefix="bfmatlab"/>
+      <zipfileset file="${package.jar}" prefix="bfmatlab"/>
     </zip>
   </target>
 
