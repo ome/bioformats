@@ -53,9 +53,6 @@ public class SDTReader extends FormatReader {
   /** Object containing SDT header information. */
   protected SDTInfo info;
 
-  /** Offset to binary data. */
-  protected int off;
-
   /** Number of time bins in lifetime histogram. */
   protected int timeBins;
 
@@ -133,7 +130,8 @@ public class SDTReader extends FormatReader {
     int planeSize = paddedWidth * sizeY * timeBins * bpp;
 
     byte[] b = !intensity ? buf : new byte[sizeY * sizeX * timeBins * bpp];
-    in.seek(off + channel * planeSize + y * paddedWidth * bpp * timeBins);
+    in.seek(info.allBlockOffsets[getSeries()] +
+      channel * planeSize + y * paddedWidth * bpp * timeBins);
 
     byte[] rowBuf = new byte[bpp * timeBins * w];
     for (int row=0; row<h; row++) {
@@ -177,7 +175,7 @@ public class SDTReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      off = timeBins = channels = 0;
+      timeBins = channels = 0;
       info = null;
     }
   }
@@ -194,7 +192,6 @@ public class SDTReader extends FormatReader {
 
     // read file header information
     info = new SDTInfo(in, metadata);
-    off = info.dataBlockOffs + 22;
     timeBins = info.timeBins;
     channels = info.channels;
     addGlobalMeta("time bins", timeBins);
@@ -240,6 +237,10 @@ public class SDTReader extends FormatReader {
       m.moduloT.step = timeBase / timeBins;
       m.moduloT.end = m.moduloT.step * (m.sizeT - 1);
       m.moduloT.unit = "ps";
+    }
+
+    for (int i=1; i<info.allBlockOffsets.length; i++) {
+      core.add(m);
     }
 
     MetadataStore store = makeFilterMetadata();
