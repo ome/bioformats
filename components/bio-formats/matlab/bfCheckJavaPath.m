@@ -54,7 +54,7 @@ bfJarFiles = {'bioformats_package.jar', 'loci_tools.jar'};
 hasBFJar =  false(numel(bfJarFiles), 1);
 for i = 1: numel(bfJarFiles);
     isBFJar =  @(x) ~isempty(regexp(x, ['.*' bfJarFiles{i} '$'], 'once'));
-    hasBFJar(i) = any(cellfun(isBFJar), jPath);
+    hasBFJar(i) = any(cellfun(isBFJar, jPath));
 end
 
 % Check conflicting JARs are not loaded

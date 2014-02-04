@@ -42,7 +42,8 @@ function [result] = bfopen(id, varargin)
 %     * Jimmy Fong
 %
 % NB: Internet Explorer sometimes erroneously renames the Bio-Formats library
-%     to loci_tools.zip. If this happens, rename it back to loci_tools.jar.
+%     to bioformats_package.zip. If this happens, rename it back to
+%     bioformats_package.jar.
 %
 % For many examples of how to use the bfopen function, please see:
 %     http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Matlab
@@ -76,7 +77,7 @@ function [result] = bfopen(id, varargin)
 % For static loading, you can add the library to MATLAB's class path:
 %     1. Type "edit classpath.txt" at the MATLAB prompt.
 %     2. Go to the end of the file, and add the path to your JAR file
-%        (e.g., C:/Program Files/MATLAB/work/loci_tools.jar).
+%        (e.g., C:/Program Files/MATLAB/work/bioformats_package.jar).
 %     3. Save the file and restart MATLAB.
 %
 % There are advantages to using the static approach over javaaddpath:
@@ -96,7 +97,7 @@ stitchFiles = 0;
 
 % load the Bio-Formats library into the MATLAB environment
 status = bfCheckJavaPath(autoloadBioFormats);
-assert(status, ['Missing Bio-Formats library. Either add loci_tools.jar '...
+assert(status, ['Missing Bio-Formats library. Either add bioformats_package.jar '...
     'to the static Java path or add it to the Matlab path.']);
 
 % Prompt for a file if not input
