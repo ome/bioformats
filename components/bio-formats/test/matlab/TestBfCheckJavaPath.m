@@ -1,11 +1,11 @@
-% TestCheckJavaPath define test cases for bfCheckJavaPath utility function
+% TestBfCheckJavaPath define test cases for bfCheckJavaPath utility function
 %
 % Require MATLAB xUnit Test Framework to be installed
 % http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2012 - 2013 Open Microscopy Environment:
+% Copyright (C) 2012 - 2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -25,7 +25,7 @@
 % 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-classdef TestCheckJavaPath < TestBfMatlab
+classdef TestBfCheckJavaPath < TestBfMatlab
     
     properties
         status
@@ -33,7 +33,7 @@ classdef TestCheckJavaPath < TestBfMatlab
     end
     
     methods
-        function self = TestCheckJavaPath(name)
+        function self = TestBfCheckJavaPath(name)
             self = self@TestBfMatlab(name);
         end
         
@@ -48,7 +48,7 @@ classdef TestCheckJavaPath < TestBfMatlab
         end
         
         function testNoAutoloadBioformats(self)
-            isStatic = ismember(self.lociToolsPath,...
+            isStatic = ismember(self.jarPath,...
                 javaclasspath('-static'));
             self.status = bfCheckJavaPath(false);
             if isStatic
