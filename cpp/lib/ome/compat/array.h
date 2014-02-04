@@ -36,24 +36,33 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+/**
+ * @file array.h Array type substitution.  This header substitutes
+ * Boost types for the same types in the std namespace when not using
+ * a conforming C++11 compiler.  This permits all code to use the
+ * C++11 standard types irrespective of the compiler being used.
+ */
 
-// Configured features
+#ifndef OME_COMPAT_ARRAY_H
+# define OME_COMPAT_ARRAY_H
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+# include <ome/compat/config.h>
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+# ifdef OME_HAVE_ARRAY
+#  include <array>
+# elif OME_HAVE_BOOST_ARRAY
+#  include <boost/array.hpp>
+namespace std {
+    using boost::array;
+}
+# else
+#  error An array implementation is not available
+# endif
 
-#endif // OME_COMPAT_CONFIG_H
+#endif // OME_COMPAT_ARRAY_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

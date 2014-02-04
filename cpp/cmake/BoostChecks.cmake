@@ -40,6 +40,7 @@ find_package(Boost REQUIRED COMPONENTS date_time filesystem system iostreams pro
 include(CheckIncludeFileCXX)
 include(CheckCXXSourceCompiles)
 
+check_include_file_cxx(boost/array.hpp OME_HAVE_BOOST_ARRAY)
 check_include_file_cxx(boost/format.hpp OME_HAVE_BOOST_FORMAT)
 check_include_file_cxx(boost/shared_ptr.hpp OME_HAVE_BOOST_SHARED_PTR)
 check_include_file_cxx(boost/tuple/tuple.hpp OME_HAVE_BOOST_TUPLE)

@@ -38,6 +38,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 set(ome_compat_static_headers
+    array.h
     cstdint.h
     memory.h
     tuple.h
