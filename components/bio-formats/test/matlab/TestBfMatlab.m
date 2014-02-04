@@ -27,7 +27,7 @@
 classdef TestBfMatlab < TestCase
     
     properties
-        lociToolsPath
+        jarPath
     end
     
     methods
@@ -37,19 +37,19 @@ classdef TestBfMatlab < TestCase
         
         function setUp(self)
             % Get path to loci_tools (assuming it is in Matlab path)
-            self.lociToolsPath = which('loci_tools.jar');
-            assert(~isempty(self.lociToolsPath));
+            self.jarPath = which('bioformats_package.jar');
+            assert(~isempty(self.jarPath));
             
             % Remove loci_tools from dynamic class path
-            if ismember(self.lociToolsPath,javaclasspath('-dynamic'))
-                javarmpath(self.lociToolsPath);
+            if ismember(self.jarPath,javaclasspath('-dynamic'))
+                javarmpath(self.jarPath);
             end
         end
         
         function tearDown(self)
             % Remove loci_tools from dynamic class path
-            if ismember(self.lociToolsPath,javaclasspath('-dynamic'))
-                javarmpath(self.lociToolsPath);
+            if ismember(self.jarPath,javaclasspath('-dynamic'))
+                javarmpath(self.jarPath);
             end
         end
     end

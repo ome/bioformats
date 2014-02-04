@@ -37,7 +37,7 @@ function volume = bfOpen3DVolume(filename)
 
 % load the Bio-Formats library into the MATLAB environment
 status = bfCheckJavaPath();
-assert(status, ['Missing Bio-Formats library. Either add loci_tools.jar '...
+assert(status, ['Missing Bio-Formats library. Either add bioformats_package.jar '...
     'to the static Java path or add it to the Matlab path.']);
 
 % Prompt for a file if not input
