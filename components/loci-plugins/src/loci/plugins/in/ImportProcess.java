@@ -34,13 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.slf4j.ILoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
-
 import loci.common.Location;
 import loci.common.ReflectedUniverse;
 import loci.common.Region;
@@ -54,7 +47,6 @@ import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
 import loci.formats.ClassList;
 import loci.formats.DimensionSwapper;
-import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -65,12 +57,12 @@ import loci.formats.TileStitcher;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
-import loci.plugins.util.IJStatusEchoer;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 import loci.plugins.util.LuraWave;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
+import ome.scifio.common.DebugTools;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 
@@ -656,22 +648,7 @@ public class ImportProcess implements StatusReporter {
     baseReader.setMetadataStore(meta);
 
     BF.status(options.isQuiet(), "");
-
-    try {
-
-      ch.qos.logback.classic.Logger root =
-        (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(
-          Logger.ROOT_LOGGER_NAME);
-
-      if (IJ.debugMode) {
-          root.setLevel(Level.DEBUG);
-        } else {
-          root.setLevel(Level.INFO);
-        }
-        root.addAppender(new IJStatusEchoer());
-    } catch (ClassCastException cce) {
-      // ignore.
-    }
+    DebugTools.enableIJLogging(IJ.debugMode);
   }
 
   // -- Helper methods - ImportStep.FILE --

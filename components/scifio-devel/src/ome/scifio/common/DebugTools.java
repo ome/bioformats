@@ -91,6 +91,21 @@ public final class DebugTools {
     return true;
   }
 
+  public static synchronized boolean enableIJLogging(boolean debug) {
+    ReflectedUniverse r = new ReflectedUniverse();
+    try {
+      r.exec("import ome.scifio.common.LogbackTools");
+      r.exec("import loci.plugins.util.IJStatusEchoer");
+      r.exec("appender = new IJStatusEchoer()");
+      r.setVar("debug", debug);
+      r.exec("LogbackTools.enableIJLogging(debug, appender)");
+    }
+    catch (ReflectException exc) {
+      return false;
+    }
+    return true;
+  }
+
   /**
    * This method uses reflection to scan the values of the given class's
    * static fields, returning the first matching field's name.
