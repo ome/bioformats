@@ -40,7 +40,8 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.PatternLayout;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
@@ -70,13 +71,37 @@ public final class LogbackTools {
    */
   public static synchronized boolean enableLogging(String level) {
     Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    LoggerContext context = root.getLoggerContext();
     if (!root.iteratorForAppenders().hasNext()) {
-      PatternLayout layout = new PatternLayout();
+      context.reset();
+      PatternLayoutEncoder layout = new PatternLayoutEncoder();
+      layout.setContext(context);
       layout.setPattern("%m%n");
+      layout.start();
+
       ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<ILoggingEvent>();
-      appender.setLayout(layout);
+      appender.setContext(context);
+      appender.setEncoder(layout);
+      appender.start();
       root.addAppender(appender);
     }
+    else {
+      Appender defaultAppender = root.iteratorForAppenders().next();
+      if (defaultAppender instanceof ConsoleAppender) {
+        context.reset();
+        PatternLayoutEncoder layout = new PatternLayoutEncoder();
+        layout.setContext(context);
+        layout.setPattern("%m%n");
+        layout.start();
+
+        defaultAppender.setContext(context);
+        ((ConsoleAppender) defaultAppender).setEncoder(layout);
+        defaultAppender.start();
+        root.addAppender(defaultAppender);
+      }
+    }
+    root.setLevel(Level.toLevel(level));
+
     return true;
   }
 
@@ -84,15 +109,14 @@ public final class LogbackTools {
     Appender<ILoggingEvent> appender) {
     try {
 
-      ch.qos.logback.classic.Logger root =
-        (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(
-          Logger.ROOT_LOGGER_NAME);
+      Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 
       if (debug) {
         root.setLevel(Level.DEBUG);
       } else {
         root.setLevel(Level.INFO);
       }
+      appender.setContext(root.getLoggerContext());
       root.addAppender(appender);
     } catch (Exception e) {
       e.printStackTrace();
