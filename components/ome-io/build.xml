@@ -18,7 +18,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/ome/utests/testng.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
-        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
+        <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
@@ -34,7 +34,7 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/loci/ome/utests/testng-no-ome-io.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
-        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
+        <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.classpath-no-omeio}"/>

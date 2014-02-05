@@ -59,7 +59,7 @@ public final class DebugTools {
   }
 
   /**
-   * Attempts to enable SLF4J logging via log4j
+   * Attempts to enable SLF4J logging via Logback
    * without an external configuration file.
    *
    * @param level A string indicating the desired level

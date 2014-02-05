@@ -391,19 +391,6 @@ ZZ
   VERSION => "4.8.2"
 );
 
-my %log4j = (
-  NAME    => "log4j",
-  TITLE   => "Apache log4j",
-  JAR     => "log4j-1.2.17.jar",
-  PACKAGE => "org.apache.log4j",
-  LICENSE => "Apache",
-  URL     => "http://logging.apache.org/log4j/",
-  NOTES   => <<ZZ,
-required by SLF4J implementation
-ZZ
-  VERSION => "1.2.17"
-);
-
 my %netcdf = (
   NAME    => "netcdf",
   TITLE   => "NetCDF",
@@ -448,19 +435,6 @@ my %slf4j_api = (
   TITLE   => "Simple Logging Facade for Java API",
   JAR     => "slf4j-api-1.7.2.jar",
   PACKAGE => "org.slf4j",
-  LICENSE => "BSD",
-  URL     => "http://www.slf4j.org/",
-  NOTES   => <<ZZ,
-used for all logging in loci.*
-ZZ
-  VERSION => "1.7.2"
-);
-
-my %slf4j_impl = (
-  NAME    => "slf4j-log4j",
-  TITLE   => "Simple Logging Facade for Java log4j Binding",
-  JAR     => "slf4j-log4j12-1.7.2.jar",
-  PACKAGE => "org.slf4j.impl",
   LICENSE => "BSD",
   URL     => "http://www.slf4j.org/",
   NOTES   => <<ZZ,
@@ -590,10 +564,8 @@ my @libs = (
   \%ij,
   \%jodatime,
   \%junit,
-  \%log4j,
   \%netcdf,
   \%slf4j_api,
-  \%slf4j_impl,
   \%omeJava,
   \%omeroClient,
   \%serializer,

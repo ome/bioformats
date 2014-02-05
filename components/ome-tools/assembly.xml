@@ -39,8 +39,8 @@
         <exclude>org.springframework:spring*</exclude>
         <exclude>aopalliance:aopalliance</exclude>
         <exclude>org.aspectj:aspectj*</exclude>
-        <exclude>org.slf4j:slf4j-log4j12</exclude>
-        <exclude>log4j:log4j</exclude>
+        <exclude>ch.qos.logback:logback-core</exclude>
+        <exclude>ch.qos.logback:logback-classic</exclude>
         <!-- exclude testing dependencies -->
         <exclude>org.testng:testng</exclude>
         <exclude>junit:junit</exclude>
