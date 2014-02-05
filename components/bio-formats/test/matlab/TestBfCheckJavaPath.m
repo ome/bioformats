@@ -67,8 +67,8 @@ classdef TestBfCheckJavaPath < TestBfMatlab
                 times(i) = toc;
             end
             
-            % First call should be the longest as loci_tools.jar is added
-            % to the javaclasspath
+            % First call should be the longest as the Bio-Formats JAR file is
+            % added to the javaclasspath
             assertTrue(times(1) > times(2));
             % Second call should still be longer than all the following
             % ones. Profiling reveals some amount of time is spent while

@@ -5,7 +5,7 @@
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
-% Copyright (C) 2013 Open Microscopy Environment:
+% Copyright (C) 2013-2014 Open Microscopy Environment:
 %   - Board of Regents of the University of Wisconsin-Madison
 %   - Glencoe Software, Inc.
 %   - University of Dundee
@@ -36,18 +36,18 @@ classdef TestBfMatlab < TestCase
         end
         
         function setUp(self)
-            % Get path to loci_tools (assuming it is in Matlab path)
+            % Get path to Bio-Formats JAR file (assuming it is in Matlab path)
             self.jarPath = which('bioformats_package.jar');
             assert(~isempty(self.jarPath));
             
-            % Remove loci_tools from dynamic class path
+            % Remove Bio-Formats JAR file from dynamic class path
             if ismember(self.jarPath,javaclasspath('-dynamic'))
                 javarmpath(self.jarPath);
             end
         end
         
         function tearDown(self)
-            % Remove loci_tools from dynamic class path
+            % Remove  Bio-Formats JAR file from dynamic class path
             if ismember(self.jarPath,javaclasspath('-dynamic'))
                 javarmpath(self.jarPath);
             end
