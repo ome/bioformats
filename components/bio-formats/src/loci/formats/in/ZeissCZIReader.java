@@ -300,7 +300,7 @@ public class ZeissCZIReader extends FormatReader {
       if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
         (plane.planeIndex == previousChannel && validScanDim))
       {
-        byte[] rawData = plane.readPixelData();
+        byte[] rawData = new SubBlock(plane).readPixelData();
 
         if ((prestitched != null && prestitched) || validScanDim) {
           int realX = plane.x;
@@ -2242,6 +2242,7 @@ public class ZeissCZIReader extends FormatReader {
       default:
         throw new FormatException("Unknown pixel type: " + pixelType);
     }
+    ms0.interleaved = ms0.rgb;
   }
 
   private void parseObjectives(NodeList objectives) throws FormatException {
@@ -2315,6 +2316,23 @@ public class ZeissCZIReader extends FormatReader {
     public String id;
     public long allocatedSize;
     public long usedSize;
+
+    public Segment() {
+      filename = null;
+      startingPosition = 0;
+      id = null;
+      allocatedSize = 0;
+      usedSize = 0;
+    }
+
+    public Segment(Segment model) {
+      super();
+      this.filename = model.filename;
+      this.startingPosition = model.startingPosition;
+      this.id = model.id;
+      this.allocatedSize = model.allocatedSize;
+      this.usedSize = model.usedSize;
+    }
 
     public void fillInData() throws IOException {
       RandomAccessInputStream s = new RandomAccessInputStream(filename);
@@ -2416,6 +2434,29 @@ public class ZeissCZIReader extends FormatReader {
     private Double stageX, stageY, timestamp, exposureTime, stageZ;
 
     public int x, y;
+
+    public SubBlock() {
+      super();
+    }
+
+    public SubBlock(SubBlock model) {
+      super(model);
+      this.metadataSize = model.metadataSize;
+      this.attachmentSize = model.attachmentSize;
+      this.dataSize = model.dataSize;
+      this.directoryEntry = model.directoryEntry;
+      this.metadata = model.metadata;
+      this.seriesIndex = model.seriesIndex;
+      this.planeIndex = model.planeIndex;
+      this.dataOffset = model.dataOffset;
+      this.stageX = model.stageX;
+      this.stageY = model.stageY;
+      this.timestamp = model.timestamp;
+      this.exposureTime = model.exposureTime;
+      this.stageZ = model.stageZ;
+      this.x = model.x;
+      this.y = model.y;
+    }
 
     public void fillInData() throws IOException {
       super.fillInData();
