@@ -34,6 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+
 import loci.common.Location;
 import loci.common.ReflectedUniverse;
 import loci.common.Region;
@@ -67,8 +74,6 @@ import loci.plugins.util.WindowTools;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 /**
  * Manages the import preparation process.
@@ -652,12 +657,21 @@ public class ImportProcess implements StatusReporter {
 
     BF.status(options.isQuiet(), "");
 
-    Logger root = Logger.getRootLogger();
-    if (IJ.debugMode) {
-      root.setLevel(Level.DEBUG);
+    try {
+
+      ch.qos.logback.classic.Logger root =
+        (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(
+          Logger.ROOT_LOGGER_NAME);
+
+      if (IJ.debugMode) {
+          root.setLevel(Level.DEBUG);
+        } else {
+          root.setLevel(Level.INFO);
+        }
+        root.addAppender(new IJStatusEchoer());
+    } catch (ClassCastException cce) {
+      // ignore.
     }
-    else root.setLevel(Level.INFO);
-    root.addAppender(new IJStatusEchoer());
   }
 
   // -- Helper methods - ImportStep.FILE --
