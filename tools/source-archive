@@ -35,7 +35,7 @@ if __name__ == "__main__":
     target = os.path.abspath(sys.argv[6])
     prefix = "%s-%s" % (release,version)
 
-    if not os.path.isdir('.git'):
+    if not os.path.exists('.git'):
         raise Exception('Releasing is only possible from a git repository')
 
     print("Releasing %s" % (prefix))
