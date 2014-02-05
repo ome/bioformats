@@ -757,8 +757,8 @@ public class ZeissCZIReader extends FormatReader {
           String emWave = channels.get(c).emission;
           if (emWave != null) {
             Double wave = new Double(emWave);
-            PositiveInteger em =
-              FormatTools.getEmissionWavelength(wave.intValue());
+            PositiveFloat em =
+              FormatTools.getEmissionWavelength(wave);
             if (em != null) {
               store.setChannelEmissionWavelength(em, i, c);
             }
@@ -766,8 +766,8 @@ public class ZeissCZIReader extends FormatReader {
           String exWave = channels.get(c).excitation;
           if (exWave != null) {
             Double wave = new Double(exWave);
-            PositiveInteger ex =
-              FormatTools.getExcitationWavelength(wave.intValue());
+            PositiveFloat ex =
+              FormatTools.getExcitationWavelength(wave);
             if (ex != null) {
               store.setChannelExcitationWavelength(ex, i, c);
             }

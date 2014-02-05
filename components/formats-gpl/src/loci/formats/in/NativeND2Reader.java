@@ -111,7 +111,7 @@ public class NativeND2Reader extends FormatReader {
   private double trueSizeZ = 0;
 
   private ArrayList<String> textChannelNames = new ArrayList<String>();
-  private ArrayList<Integer> textEmissionWavelengths = new ArrayList<Integer>();
+  private ArrayList<Double> textEmissionWavelengths = new ArrayList<Double>();
 
   // -- Constructor --
 
@@ -572,7 +572,7 @@ public class NativeND2Reader extends FormatReader {
                   int first = key.lastIndexOf(":") + 1;
                   int last = key.lastIndexOf(";");
                   textEmissionWavelengths.add(
-                    new Integer(key.substring(first, last)) + 20);
+                    new Double(key.substring(first, last)) + 20);
                 }
               }
 
@@ -1776,8 +1776,8 @@ public class NativeND2Reader extends FormatReader {
     ArrayList<Double> speed = handler.getSpeeds();
     ArrayList<Double> gain = handler.getGains();
     ArrayList<Double> temperature = handler.getTemperatures();
-    ArrayList<Integer> exWave = handler.getExcitationWavelengths();
-    ArrayList<Integer> emWave = handler.getEmissionWavelengths();
+    ArrayList<Double> exWave = handler.getExcitationWavelengths();
+    ArrayList<Double> emWave = handler.getEmissionWavelengths();
     ArrayList<Integer> power = handler.getPowers();
     ArrayList<Hashtable<String, String>> rois = handler.getROIs();
 
@@ -1809,9 +1809,9 @@ public class NativeND2Reader extends FormatReader {
             getAcquisitionMode(modality.get(index)), i, c);
         }
         if (index < emWave.size() || index < textEmissionWavelengths.size()) {
-          Integer value = index < emWave.size() ? emWave.get(index) :
+          Double value = index < emWave.size() ? emWave.get(index) :
             textEmissionWavelengths.get(index);
-          PositiveInteger emission = FormatTools.getEmissionWavelength(value);
+          PositiveFloat emission = FormatTools.getEmissionWavelength(value);
           if (emission != null) {
             store.setChannelEmissionWavelength(emission, i, c);
           }
@@ -1820,7 +1820,7 @@ public class NativeND2Reader extends FormatReader {
           store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
         if (index < exWave.size()) {
-          PositiveInteger excitation =
+          PositiveFloat excitation =
             FormatTools.getExcitationWavelength(exWave.get(index));
           if (excitation != null) {
             store.setChannelExcitationWavelength(excitation, i, c);

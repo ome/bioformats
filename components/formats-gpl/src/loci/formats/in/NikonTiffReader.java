@@ -64,7 +64,7 @@ public class NikonTiffReader extends BaseTiffReader {
   private double lensNA, workingDistance, pinholeSize;
   private String correction, immersion;
   private Vector<Double> gain;
-  private Vector<Integer> wavelength, emWave, exWave;
+  private Vector<Double> wavelength, emWave, exWave;
 
   // -- Constructor --
 
@@ -113,9 +113,9 @@ public class NikonTiffReader extends BaseTiffReader {
     dichroicModels = new Vector<String>();
     laserIDs = new Vector<String>();
     gain = new Vector<Double>();
-    wavelength = new Vector<Integer>();
-    emWave = new Vector<Integer>();
-    exWave = new Vector<Integer>();
+    wavelength = new Vector<Double>();
+    emWave = new Vector<Double>();
+    exWave = new Vector<Double>();
 
     // parse key/value pairs in the comment
     String comment = ifds.get(0).getComment();
@@ -187,19 +187,19 @@ public class NikonTiffReader extends BaseTiffReader {
         pinholeSize = new Double(value.substring(0, value.indexOf(" ")));
       }
       else if (key.startsWith("history laser") && key.endsWith("wavelength")) {
-        wavelength.add(new Integer(value.replaceAll("\\D", "")));
+        wavelength.add(new Double(value.replaceAll("\\D", "")));
       }
       else if (key.startsWith("history laser") && key.endsWith("name")) {
         laserIDs.add(value);
       }
       else if (key.equals("sensor s_params LambdaEx")) {
         for (int i=nTokensInKey; i<tokens.length; i++) {
-          exWave.add(new Integer(tokens[i]));
+          exWave.add(new Double(tokens[i]));
         }
       }
       else if (key.equals("sensor s_params LambdaEm")) {
         for (int i=nTokensInKey; i<tokens.length; i++) {
-          emWave.add(new Integer(tokens[i]));
+          emWave.add(new Double(tokens[i]));
         }
       }
 
@@ -253,7 +253,7 @@ public class NikonTiffReader extends BaseTiffReader {
         store.setLaserID(laser, 0, i);
         store.setLaserModel(laserIDs.get(i), 0, i);
 
-        PositiveInteger wave = FormatTools.getWavelength(wavelength.get(i));
+        PositiveFloat wave = FormatTools.getWavelength(wavelength.get(i));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, i);
         }
@@ -270,14 +270,14 @@ public class NikonTiffReader extends BaseTiffReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         store.setChannelPinholeSize(pinholeSize, 0, c);
         if (c < exWave.size()) {
-          PositiveInteger wave =
+          PositiveFloat wave =
             FormatTools.getExcitationWavelength(exWave.get(c));
           if (wave != null) {
             store.setChannelExcitationWavelength(wave, 0, c);
           }
         }
         if (c < emWave.size()) {
-          PositiveInteger wave =
+          PositiveFloat wave =
             FormatTools.getEmissionWavelength(emWave.get(c));
           if (wave != null) {
             store.setChannelEmissionWavelength(wave, 0, c);

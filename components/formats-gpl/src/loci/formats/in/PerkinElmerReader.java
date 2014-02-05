@@ -461,8 +461,8 @@ public class PerkinElmerReader extends FormatReader {
 
     Vector<Double> exposureTimes = new Vector<Double>();
     Vector<Double> zPositions = new Vector<Double>();
-    Vector<Integer> emWaves = new Vector<Integer>();
-    Vector<Integer> exWaves = new Vector<Integer>();
+    Vector<Double> emWaves = new Vector<Double>();
+    Vector<Double> exWaves = new Vector<Double>();
 
     if (htmFile != null) {
       String[] tokens = DataTools.readFile(htmFile).split(HTML_REGEX);
@@ -489,14 +489,14 @@ public class PerkinElmerReader extends FormatReader {
             int slash = tokens[j].lastIndexOf("/", nmIndex);
             if (slash == -1) slash = nmIndex;
             emWaves.add(
-              new Integer(tokens[j].substring(paren + 1, slash).trim()));
+              new Double(tokens[j].substring(paren + 1, slash).trim()));
             if (tokens[j].indexOf("nm", nmIndex + 3) != -1) {
               nmIndex = tokens[j].indexOf("nm", nmIndex + 3);
               paren = tokens[j].lastIndexOf(" ", nmIndex);
               slash = tokens[j].lastIndexOf("/", nmIndex);
               if (slash == -1) slash = nmIndex + 2;
               exWaves.add(
-                new Integer(tokens[j].substring(paren + 1, slash).trim()));
+                new Double(tokens[j].substring(paren + 1, slash).trim()));
             }
           }
 
@@ -620,13 +620,13 @@ public class PerkinElmerReader extends FormatReader {
       // populate LogicalChannel element
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (i < emWaves.size()) {
-          PositiveInteger em = FormatTools.getEmissionWavelength(emWaves.get(i));
+          PositiveFloat em = FormatTools.getEmissionWavelength(emWaves.get(i));
           if (em != null) {
             store.setChannelEmissionWavelength(em, 0, i);
           }
         }
         if (i < exWaves.size()) {
-          PositiveInteger ex =
+          PositiveFloat ex =
             FormatTools.getExcitationWavelength(exWaves.get(i));
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, 0, i);

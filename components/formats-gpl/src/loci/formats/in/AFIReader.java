@@ -41,6 +41,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -236,8 +237,8 @@ public class AFIReader extends FormatReader {
     }
 
     if (!minimalMetadata) {
-      PositiveInteger[] emission = new PositiveInteger[pixels.size()];
-      PositiveInteger[] excitation = new PositiveInteger[pixels.size()];
+      PositiveFloat[] emission = new PositiveFloat[pixels.size()];
+      PositiveFloat[] excitation = new PositiveFloat[pixels.size()];
       Double[] exposure = new Double[pixels.size()];
       Timestamp[] datestamp = new Timestamp[pixels.size()];
 

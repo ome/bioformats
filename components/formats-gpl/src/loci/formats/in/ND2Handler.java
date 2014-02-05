@@ -86,8 +86,8 @@ public class ND2Handler extends BaseHandler {
   private ArrayList<Double> gain = new ArrayList<Double>();
   private ArrayList<Double> temperature = new ArrayList<Double>();
   private ArrayList<Double> exposureTime = new ArrayList<Double>();
-  private ArrayList<Integer> exWave = new ArrayList<Integer>();
-  private ArrayList<Integer> emWave = new ArrayList<Integer>();
+  private ArrayList<Double> exWave = new ArrayList<Double>();
+  private ArrayList<Double> emWave = new ArrayList<Double>();
   private ArrayList<Integer> power = new ArrayList<Integer>();
   private ArrayList<Hashtable<String, String>> rois =
     new ArrayList<Hashtable<String, String>>();
@@ -294,11 +294,11 @@ public class ND2Handler extends BaseHandler {
     return exposureTime;
   }
 
-  public ArrayList<Integer> getExcitationWavelengths() {
+  public ArrayList<Double> getExcitationWavelengths() {
     return exWave;
   }
 
-  public ArrayList<Integer> getEmissionWavelengths() {
+  public ArrayList<Double> getEmissionWavelengths() {
     return emWave;
   }
 
@@ -848,10 +848,10 @@ public class ND2Handler extends BaseHandler {
                   String nextKey = values[q].substring(0, colon).trim();
                   String nextValue = values[q].substring(colon + 1).trim();
                   if (nextKey.equals("Emission wavelength")) {
-                    emWave.add(new Integer(nextValue));
+                    emWave.add(new Double(nextValue));
                   }
                   else if (nextKey.equals("Excitation wavelength")) {
-                    exWave.add(new Integer(nextValue));
+                    exWave.add(new Double(nextValue));
                   }
                   else if (nextKey.equals("Power")) {
                     nextValue = DataTools.sanitizeDouble(nextValue);

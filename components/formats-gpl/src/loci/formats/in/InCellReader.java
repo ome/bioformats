@@ -77,7 +77,7 @@ public class InCellReader extends FormatReader {
 
   private Image[][][][] imageFiles;
   private MinimalTiffReader tiffReader;
-  private Vector<Integer> emWaves, exWaves;
+  private Vector<Double> emWaves, exWaves;
   private Vector<String> channelNames;
   private int totalImages;
   private int imageWidth, imageHeight;
@@ -332,8 +332,8 @@ public class InCellReader extends FormatReader {
     in = new RandomAccessInputStream(id);
 
     channelNames = new Vector<String>();
-    emWaves = new Vector<Integer>();
-    exWaves = new Vector<Integer>();
+    emWaves = new Vector<Double>();
+    exWaves = new Vector<Double>();
     channelsPerTimepoint = new Vector<Integer>();
     metadataFiles = new Vector<String>();
 
@@ -600,15 +600,15 @@ public class InCellReader extends FormatReader {
             store.setChannelName(channelNames.get(q), i, q);
           }
           if (q < emWaves.size()) {
-            int wave = emWaves.get(q).intValue();
-            PositiveInteger emission = FormatTools.getEmissionWavelength(wave);
+            Double wave = emWaves.get(q);
+            PositiveFloat emission = FormatTools.getEmissionWavelength(wave);
             if (emission != null) {
               store.setChannelEmissionWavelength(emission, i, q);
             }
           }
           if (q < exWaves.size()) {
-            int wave = exWaves.get(q).intValue();
-            PositiveInteger excitation =
+            Double wave = exWaves.get(q);
+            PositiveFloat excitation =
               FormatTools.getExcitationWavelength(wave);
             if (excitation != null) {
               store.setChannelExcitationWavelength(excitation, i, q);
@@ -927,11 +927,11 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("ExcitationFilter")) {
         String wave = attributes.getValue("wavelength");
-        if (wave != null) exWaves.add(new Integer(wave));
+        if (wave != null) exWaves.add(new Double(wave));
       }
       else if (qName.equals("EmissionFilter")) {
         String wave = attributes.getValue("wavelength");
-        if (wave != null) emWaves.add(new Integer(wave));
+        if (wave != null) emWaves.add(new Double(wave));
         channelNames.add(attributes.getValue("name"));
       }
       else if (qName.equals("Camera")) {

@@ -778,8 +778,8 @@ public class MetamorphReader extends BaseTiffReader {
         store.setDetectorSettingsID(detectorID, i, c);
 
         if (wave != null && waveIndex < wave.length) {
-          PositiveInteger wavelength =
-            FormatTools.getWavelength((int) wave[waveIndex]);
+          PositiveFloat wavelength =
+            FormatTools.getWavelength(wave[waveIndex]);
           if (wavelength != null) {
             store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
           }

@@ -1449,8 +1449,8 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Wavelength")) {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
         store.setLaserID(lsid, 0, nextLaser);
-        Integer wavelength = new Integer(value);
-        PositiveInteger wave = FormatTools.getWavelength(wavelength);
+        Double wavelength = new Double(value);
+        PositiveFloat wave = FormatTools.getWavelength(wavelength);
         if (wave != null) {
           store.setLaserWavelength(wave, 0, nextLaser);
         }

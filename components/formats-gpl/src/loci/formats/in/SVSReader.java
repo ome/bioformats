@@ -44,6 +44,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -396,16 +397,16 @@ public class SVSReader extends BaseTiffReader {
     }
   }
 
-  protected PositiveInteger getEmission() {
-    if ((int) emissionWavelength > 0) {
-      return new PositiveInteger((int) emissionWavelength);
+  protected PositiveFloat getEmission() {
+    if (emissionWavelength > 0) {
+      return new PositiveFloat(emissionWavelength);
     }
     return null;
   }
 
-  protected PositiveInteger getExcitation() {
-    if ((int) excitationWavelength > 0) {
-      return new PositiveInteger((int) excitationWavelength);
+  protected PositiveFloat getExcitation() {
+    if (excitationWavelength > 0) {
+      return new PositiveFloat(excitationWavelength);
     }
     return null;
   }

@@ -675,12 +675,12 @@ public class CellWorxReader extends FormatReader {
                 }
               }
 
-              Integer emission = new Integer(em);
-              Integer excitation = new Integer(ex);
+              Double emission = new Double(em);
+              Double excitation = new Double(ex);
 
-              PositiveInteger exWave =
+              PositiveFloat exWave =
                 FormatTools.getExcitationWavelength(excitation);
-              PositiveInteger emWave =
+              PositiveFloat emWave =
                 FormatTools.getEmissionWavelength(emission);
 
               for (int field=0; field<fieldCount; field++) {
