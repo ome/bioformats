@@ -32,11 +32,6 @@ import java.io.InputStreamReader;
 import loci.common.Constants;
 import loci.ome.io.OmeroReader;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-
 /**
  * A class for testing the OMERO implementation of
  * {@link loci.formats.IFormatReader}, for obtaining
@@ -59,10 +54,6 @@ public class OmeroReaderTest {
   }
 
   public static void main(String[] args) throws Exception {
-    // configure logging
-    Logger root = Logger.getRootLogger();
-    root.setLevel(Level.INFO);
-    root.addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
 
     // get credentials from stdin
     BufferedReader in = new BufferedReader(
