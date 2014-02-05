@@ -197,8 +197,7 @@ protected int storedSeries = -1;
       }  // chanStore loaded
                 
       // copy 2D plane  from chanStore  into buf
-      //
-      
+    
       int iLineSize = paddedWidth * bpp;
       int oLineSize = w * bpp;
       // offset to correct timebin yth line and xth pixel
