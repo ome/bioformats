@@ -76,6 +76,11 @@ protected byte[] chanStore = null;
  */
 protected int storedChannel = -1;
 
+/*
+ * Currently stored series
+ */
+protected int storedSeries = -1;
+
   
   // -- Constructor --
 
@@ -149,97 +154,111 @@ protected int storedChannel = -1;
     int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
     int planeSize = paddedWidth * sizeY * timeBins * bpp;
     
-     byte[] rowBuf = new byte[bpp * timeBins * w];
+    
+     int channel = intensity ? no : no / timeBins;
+     int timeBin = intensity ? 0 : no % timeBins;
     
      
-    if (preLoad && w == sizeX && h == sizeY  && !intensity)  {
-        
-        int channel =  no / timeBins;
-        int timeBin = no % timeBins;
-                
-        int binSize = paddedWidth * sizeY  * bpp;
+    if (preLoad  && !intensity)  {
+      
+      byte[] rowBuf = new byte[bpp * timeBins * paddedWidth];
+              
+      int binSize = paddedWidth * sizeY  * bpp;
 
-        if (chanStore == null || storedChannel != channel)  {  
-            chanStore = new byte[planeSize];
-                    
-                 in.seek(info.allBlockOffsets[getSeries()] + channel * planeSize);
+      if (chanStore == null || storedChannel != channel  || storedSeries != getSeries() )  {  
+        
+        // The whole plane (all timebins) is  copied into storage 
+        // to allow different sub-plane sizes to be used for different timebins
+        chanStore = new byte[planeSize];    
+        in.seek(info.allBlockOffsets[getSeries()] + channel * planeSize);
  
-                 for (int row = 0; row < h  ; row++) {
-               
-                    in.read(rowBuf);
-               
-                    int input = 0;
-                         
-                    for (int col = 0; col < paddedWidth; col++) {
-                        // first pixel of this row in 2D plane correspoding to zeroth timeBin
-                        int output = (row * paddedWidth + col) * bpp;
-                           
-                        for (int t = 0; t < timeBins; t++)  {
-                            for (int bb = 0; bb < bpp; bb++) {
-                                chanStore[output + bb] = rowBuf[input + bb];
-                            } 
-                            output += binSize;
-                            input += bpp;
-                            }
-                        }
-                    }
-                    
-                    storedChannel = channel;
+        for (int row = 0; row < sizeY  ; row++)  {
+          in.read(rowBuf);
+            
+          int input = 0;          
+          for (int col = 0; col < paddedWidth; col++) {   
+            
+            //  set output to  first pixel of this row in 2D plane corresponding to zeroth timeBin
+            int output = (row * paddedWidth + col) * bpp;
+
+            for (int t = 0; t < timeBins; t++)  {
+              for (int bb = 0; bb < bpp; bb++) {
+                chanStore[output + bb] = rowBuf[input + bb];
+              } 
+            output += binSize;
+            input += bpp;
+            }
+          }
+        }    // end row loop
+        
+        storedChannel = channel;
+        storedSeries = getSeries();
                   
-                }  // chanStore loaded
+      }  // chanStore loaded
                 
-                // copy 2D plane  from chanStore  into buf
-                System.arraycopy(chanStore, binSize * timeBin, buf, 0, binSize);
-                
-                return buf;
+      // copy 2D plane  from chanStore  into buf
+      //
+      
+      int iLineSize = paddedWidth * bpp;
+      int oLineSize = w * bpp;
+      // offset to correct timebin yth line and xth pixel
+      int input = (binSize * timeBin) + (y * iLineSize) + (x * bpp);
+      int output = 0;
+      
+      for (int row = 0; row < h; row++) {
+        System.arraycopy(chanStore, input, buf, output , oLineSize);
+        input += iLineSize;
+        output += oLineSize;
+      }
+    
+      
+      return buf;
         
     } 
     else {
     
-        byte[] b = !intensity ? buf : new byte[sizeY * sizeX * timeBins * bpp];
+      byte[] b = !intensity ? buf : new byte[sizeY * sizeX * timeBins * bpp];
+      
+      byte[] rowBuf = new byte[bpp * timeBins * w];
 
-        int channel = intensity ? no : no / timeBins;
-        int timeBin = intensity ? 0 : no % timeBins;
+      in.seek(info.allBlockOffsets[getSeries()]
+              + channel * planeSize + y * paddedWidth * bpp * timeBins);
 
-
-        in.seek(info.allBlockOffsets[getSeries()] +
-          channel * planeSize + y * paddedWidth * bpp * timeBins);
-
-        for (int row=0; row<h; row++) {
-          in.skipBytes(x * bpp * timeBins);
-          in.read(rowBuf);
-          if (intensity) {
-            System.arraycopy(rowBuf, 0, b, row * bpp * timeBins * w, b.length);
-          }
-          else {
-            for (int col=0; col<w; col++) {
-              int output = (row * w + col) * bpp;
-              int input = (col * timeBins + timeBin) * bpp;
-              for (int bb=0; bb<bpp; bb++) {
-                b[output + bb] = rowBuf[input + bb];
-              }
+      for (int row = 0; row < h; row++) {
+        in.skipBytes(x * bpp * timeBins);
+        in.read(rowBuf);
+        if (intensity) {
+          System.arraycopy(rowBuf, 0, b, row * bpp * timeBins * w, b.length);
+        } else {
+          for (int col = 0; col < w; col++) {
+            int output = (row * w + col) * bpp;
+            int input = (col * timeBins + timeBin) * bpp;
+            for (int bb = 0; bb < bpp; bb++) {
+              b[output + bb] = rowBuf[input + bb];
             }
           }
-          in.skipBytes(bpp * timeBins * (paddedWidth - x - w));
         }
+        in.skipBytes(bpp * timeBins * (paddedWidth - x - w));
+      }
 
-        if (!intensity) return buf; // no cropping required
-
-        for (int row=0; row<h; row++) {
-          int yi = (y + row) * sizeX * timeBins * bpp;
-          int ri = row * w * bpp;
-          for (int col=0; col<w; col++) {
-            int xi = yi + (x + col) * timeBins * bpp;
-            int ci = ri + col * bpp;
-            // combine all lifetime bins into single intensity value
-            short sum = 0;
-            for (int t=0; t<timeBins; t++) {
-              sum += DataTools.bytesToShort(b, xi + t * bpp, little);
-            }
-            DataTools.unpackBytes(sum, buf, ci, 2, little);
+      if (!intensity) {
+        return buf; // no cropping required
+      }
+      for (int row = 0; row < h; row++) {
+        int yi = (y + row) * sizeX * timeBins * bpp;
+        int ri = row * w * bpp;
+        for (int col = 0; col < w; col++) {
+          int xi = yi + (x + col) * timeBins * bpp;
+          int ci = ri + col * bpp;
+          // combine all lifetime bins into single intensity value
+          short sum = 0;
+          for (int t = 0; t < timeBins; t++) {
+            sum += DataTools.bytesToShort(b, xi + t * bpp, little);
           }
+          DataTools.unpackBytes(sum, buf, ci, 2, little);
         }
-        return buf;
+      }
+      return buf;
     }
   }
 
@@ -247,6 +266,13 @@ protected int storedChannel = -1;
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      
+      // init preLoading 
+      preLoad = false;
+      chanStore = null;
+      storedChannel = -1;
+      storedSeries = -1;
+      
       timeBins = channels = 0;
       info = null;
     }
@@ -262,12 +288,6 @@ protected int storedChannel = -1;
 
     LOGGER.info("Reading header");
     
-    // init preLoading 
-    preLoad = false;
-    chanStore = null;
-    storedChannel = -1;
-    
-
     // read file header information
     info = new SDTInfo(in, metadata);
     timeBins = info.timeBins;
