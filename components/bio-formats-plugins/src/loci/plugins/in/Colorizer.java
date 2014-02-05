@@ -53,7 +53,7 @@ import loci.plugins.BF;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.VirtualImagePlus;
 
-import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * Logic for colorizing images.
@@ -70,10 +70,8 @@ public class Colorizer {
   // -- Constants --
 
   private static final int BLUE_MIN = 400;
-  private static final int BLUE_MAX = 500;
-  private static final int GREEN_MIN = 501;
-  private static final int GREEN_MAX = 559;
-  private static final int RED_MIN = 560;
+  private static final int BLUE_TO_GREEN_MIN = 500;
+  private static final int GREEN_TO_RED_MIN = 560;
   private static final int RED_MAX = 700;
 
   // -- Fields --
@@ -345,17 +343,17 @@ public class Colorizer {
                 color = new Color(r, g, b, a);
               }
               else {
-                PositiveInteger wavelength =
+                PositiveFloat wavelength =
                   retrieve.getChannelEmissionWavelength(reader.getSeries(), c);
                 if (wavelength != null) {
-                  int wave = wavelength.getValue();
-                  if (wave >= BLUE_MIN && wave <= BLUE_MAX) {
+                  double wave = wavelength.getValue();
+                  if (wave >= BLUE_MIN && wave < BLUE_TO_GREEN_MIN) {
                     color = Color.BLUE;
                   }
-                  else if (wave >= GREEN_MIN && wave <= GREEN_MAX) {
+                  else if (wave >= BLUE_TO_GREEN_MIN && wave < GREEN_TO_RED_MIN) {
                     color = Color.GREEN;
                   }
-                  else if (wave >= RED_MIN && wave <= RED_MAX) {
+                  else if (wave >= GREEN_TO_RED_MIN && wave <= RED_MAX) {
                     color = Color.RED;
                   }
                 }
