@@ -34,11 +34,13 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-set(OME_TOPLEVEL_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR}/lib)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
-add_subdirectory(lib/ome/compat)
-add_subdirectory(lib/ome/internal)
-add_subdirectory(lib/ome/xerces)
-add_subdirectory(lib/ome/xml)
-add_subdirectory(lib/ome/bioformats)
-add_subdirectory(test)
+set(ome_internal_static_headers)
+
+set(ome_internal_generated_headers
+   ${CMAKE_CURRENT_BINARY_DIR}/version.h)
+
+# Dump header list for testing
+header_include_list_write(ome_internal_static_headers ome_internal_generated_headers ome/internal ${PROJECT_BINARY_DIR}/cpp/test/ome-internal)
