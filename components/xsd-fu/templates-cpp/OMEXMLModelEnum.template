@@ -84,7 +84,6 @@ namespace ome
        class ${klass.langType}
        {
        public:
-
          /// Enumeration values.
          enum enum_value
          {
@@ -163,6 +162,11 @@ namespace ome
            return *this->name;
          }
 
+         /// String map type.
+         typedef std::map<std::string, ${klass.langType}::enum_value> string_map_type;
+         /// Value map type.
+         typedef std::map<${klass.langType}::enum_value, std::string> value_map_type;
+
         private:
           /// Enumeration value.
           enum_value         value;
@@ -170,11 +174,11 @@ namespace ome
           const std::string *name;
 
           /// Mapping of enumeration name to value.
-          static std::map<std::string, ${klass.langType}::enum_value> string_map;
+          static const string_map_type string_map;
           /// Mapping of lowercase enumeration name to value.
-          static std::map<std::string, ${klass.langType}::enum_value> lowercase_string_map;
+          static const string_map_type lowercase_string_map;
           /// Mapping of enumeration value to name.
-          static std::map<${klass.langType}::enum_value, std::string> value_map;
+          static const value_map_type value_map;
 {% end %}\
 {% if fu.SOURCE_TYPE == "source" %}\
          namespace
@@ -221,17 +225,17 @@ namespace ome
 
          }
 
-         std::map<std::string, ${klass.langType}::enum_value>
+         const ${klass.langType}::string_map_type
          ${klass.langType}::string_map
          (init_string_values,
           init_string_values + (sizeof(init_string_values) / sizeof(init_string_values[0])));
 
-         std::map<std::string, ${klass.langType}::enum_value>
+         const ${klass.langType}::string_map_type
          ${klass.langType}::lowercase_string_map
          (init_lcase_string_values,
           init_lcase_string_values + (sizeof(init_lcase_string_values) / sizeof(init_lcase_string_values[0])));
 
-         std::map<${klass.langType}::enum_value, std::string>
+         const ${klass.langType}::value_map_type
          ${klass.langType}::value_map
          (init_value_values,
           init_value_values + (sizeof(init_value_values) / sizeof(init_value_values[0])));
