@@ -46,4 +46,10 @@ if(BUILD_TESTS)
 
   add_test(ome-bioformats/metadatamap metadatamap)
 
+  add_executable(version version.cpp)
+  target_link_libraries(version ome-bioformats)
+  target_link_libraries(version ${TEST_LIBS})
+
+  add_test(ome-bioformats/version version)
+
 endif(BUILD_TESTS)

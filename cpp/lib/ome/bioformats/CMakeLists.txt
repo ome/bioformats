@@ -43,7 +43,8 @@ set(OME_BIOFORMATS_SOURCES
     MetadataOptions.cpp
     Modulo.cpp
     UnknownFormatException.cpp
-    UnsupportedCompressionException.cpp)
+    UnsupportedCompressionException.cpp
+    Version.cpp)
 
 set(OME_BIOFORMATS_HEADERS
     CoreMetadata.h
@@ -53,7 +54,8 @@ set(OME_BIOFORMATS_HEADERS
     MetadataOptions.h
     Modulo.h
     UnknownFormatException.h
-    UnsupportedCompressionException.h)
+    UnsupportedCompressionException.h
+    Version.h)
 
 set(BIOFORMATS_SOURCES
     ${OME_BIOFORMATS_SOURCES})
