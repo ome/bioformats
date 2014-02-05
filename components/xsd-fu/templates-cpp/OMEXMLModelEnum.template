@@ -167,6 +167,40 @@ namespace ome
          /// Value map type.
          typedef std::map<${klass.langType}::enum_value, std::string> value_map_type;
 
+         /**
+          * Get a map of valid string names and enum values.
+          *
+          * @returns a map of string names to enum values.
+          */
+         static const string_map_type&
+         strings();
+{% end header%}\
+{% if fu.SOURCE_TYPE == "source" %}\
+       const ${klass.langType}::string_map_type&
+       ${klass.langType}::strings()
+       {
+         return string_map;
+       }
+{% end source%}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+         /**
+          * Get a map of valid enum values and string names.
+          *
+          * @returns a map of enum values to string names.
+          */
+         static const value_map_type&
+         values();
+{% end header%}\
+{% if fu.SOURCE_TYPE == "source" %}\
+       const ${klass.langType}::value_map_type&
+       ${klass.langType}::values()
+       {
+         return value_map;
+       }
+{% end source%}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
         private:
           /// Enumeration value.
           enum_value         value;
