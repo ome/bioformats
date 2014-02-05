@@ -3,10 +3,9 @@ Using Bio-Formats in MATLAB
 
 .. highlight:: matlab
 
-This section assumes that you have installed the M-files and
-**loci_tools.jar**, as instructed in the
-:doc:`MATLAB user information page </users/matlab/index>`.
-Note the minimum supported MATLAB version is R2007b (7.5).
+This section assumes that you have installed the MATLAB toolbox as instructed
+in the :doc:`MATLAB user information page </users/matlab/index>`. Note the
+minimum supported MATLAB version is R2007b (7.5).
 
 Increasing JVM memory settings
 ------------------------------
