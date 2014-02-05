@@ -46,7 +46,7 @@ import loci.common.adapter.IRandomAccessAdapter;
 import loci.legacy.adapter.AdapterTools;
 
 // HACK: for scan-deps.pl: The following packages are not actually "optional":
-// optional org.apache.log4j, optional org.slf4j.impl
+// optional ch.qos.logback.core, optional org.slf4j.impl
 
 /**
  * A legacy delegator class for ome.scifio.io.Location.
