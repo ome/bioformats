@@ -38,9 +38,11 @@ package ome.scifio.common;
 
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 
 
@@ -78,4 +80,22 @@ public final class LogbackTools {
     return true;
   }
 
+  public static synchronized void enableIJLogging(boolean debug,
+    Appender<ILoggingEvent> appender) {
+    try {
+
+      ch.qos.logback.classic.Logger root =
+        (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(
+          Logger.ROOT_LOGGER_NAME);
+
+      if (debug) {
+        root.setLevel(Level.DEBUG);
+      } else {
+        root.setLevel(Level.INFO);
+      }
+      root.addAppender(appender);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 }
