@@ -80,10 +80,7 @@ public final class LibraryChecker {
   public static void checkLibrary(Library library, HashSet<String> missing) {
     switch (library) {
       case BIO_FORMATS:
-        checkLibrary("org.apache.log4j.Logger", "log4j-1.2.17.jar", missing);
         checkLibrary("org.slf4j.Logger", "slf4j-api-1.7.2.jar", missing);
-        checkLibrary("org.slf4j.impl.Log4jLoggerFactory",
-          "slf4j-log4j12-1.7.2.jar", missing);
         checkLibrary("ome.scifio.io.RandomAccessInputStream",
           "scifio.jar", missing);
         checkLibrary("loci.formats.FormatHandler", "bio-formats.jar", missing);
