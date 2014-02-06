@@ -46,6 +46,12 @@ if(BUILD_TESTS)
 
   add_test(ome-bioformats/metadatamap metadatamap)
 
+  add_executable(pixelbuffer pixelbuffer.cpp)
+  target_link_libraries(pixelbuffer ome-bioformats)
+  target_link_libraries(pixelbuffer ${TEST_LIBS})
+
+  add_test(ome-bioformats/pixelbuffer pixelbuffer)
+
   add_executable(version version.cpp)
   target_link_libraries(version ome-bioformats)
   target_link_libraries(version ${TEST_LIBS})
