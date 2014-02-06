@@ -2,7 +2,7 @@
 
 rem formatlist.bat: a batch file for listing supported formats in Bio-Formats
 
-rem Required JARs: loci_tools.jar
+rem Required JARs: loci_tools.jar or bioformats_package.jar
 
 setlocal
 set SCIFIO_DIR=%~dp0

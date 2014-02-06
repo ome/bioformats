@@ -2,7 +2,7 @@
 
 # domainlist: a script for listing supported domains in Bio-Formats
 
-# Required JARs: loci_tools.jar
+# Required JARs: loci_tools.jar or bioformats_package.jar
 
 SCIFIO_DIR=`dirname "$0"`
 
