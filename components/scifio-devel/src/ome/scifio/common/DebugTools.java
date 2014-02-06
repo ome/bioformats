@@ -40,7 +40,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 
 /**
  * A utility class with convenience methods for debugging.
@@ -79,16 +81,24 @@ public final class DebugTools {
    * @return true iff logging was successfully enabled
    */
   public static synchronized boolean enableLogging(String level) {
-    ReflectedUniverse r = new ReflectedUniverse();
-    try {
-      r.exec("import ome.scifio.common.LogbackTools");
-      r.setVar("level", level);
-      r.exec("LogbackTools.enableLogging(level)");
+
+    final String[][] toolClasses = new String[][] {
+      new String[]{"ome.scifio.common.", "LogbackTools"},
+      new String[]{"ome.scifio.common.", "Log4jTools"}
+    };
+
+    for (String[] toolClass : toolClasses) {
+      try {
+        Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
+        Method m = k.getMethod("enableLogging", String.class);
+        m.invoke(null, level);
+        return true;
+      }
+      catch (Throwable t) {
+        // no-op. Ignore error and try the next class.
+      }
     }
-    catch (ReflectException exc) {
-      return false;
-    }
-    return true;
+    return false;
   }
 
   public static synchronized boolean enableIJLogging(boolean debug) {
