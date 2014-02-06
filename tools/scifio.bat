@@ -40,12 +40,14 @@ if not "%SCIFIO_DEVEL%" == "" (
 rem Developer environment variable unset; add JAR libraries to classpath.
 if exist "%SCIFIO_JAR_DIR%\bio-formats.jar" (
   set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\bio-formats.jar";"%SCIFIO_JAR_DIR%\scifio-tools.jar"
+) else if exist "%SCIFIO_JAR_DIR%\bioformats_package.jar" (
+  set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\bioformats_package.jar"
 ) else if exist "%SCIFIO_JAR_DIR%\loci_tools.jar" (
   set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\loci_tools.jar"
 ) else (
   rem Libraries not found; issue an error.
   echo Required JAR libraries not found. Please download:
-  echo   loci_tools.jar
+  echo   bioformats_package.jar
   echo from:
   echo   http://www.openmicroscopy.org/site/products/bio-formats/downloads
   echo and place in the same directory as the command line tools.

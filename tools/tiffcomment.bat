@@ -3,7 +3,7 @@
 rem tiffcomment.bat: a batch file for extracting the comment
 rem                  (OME-XML block or otherwise) from a TIFF file
 
-rem Required JARs: loci_tools.jar
+rem Required JARs: loci_tools.jar or bioformats_package.jar
 
 setlocal
 set SCIFIO_DIR=%~dp0

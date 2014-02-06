@@ -2,7 +2,7 @@
 
 # xmlvalid: a script for validating XML files
 
-# Required JARs: loci_tools.jar
+# Required JARs: loci_tools.jar or bioformats_package.jar
 
 SCIFIO_DIR=`dirname "$0"`
 

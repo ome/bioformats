@@ -3,7 +3,7 @@
 # mkfake: a script for creating a fake file / directory structures
 #         on the file system
 
-# Required JARs: loci_tools.jar
+# Required JARs: loci_tools.jar or bioformats_package.jar
 
 SCIFIO_DIR=`dirname "$0"`
 
