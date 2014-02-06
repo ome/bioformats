@@ -155,11 +155,10 @@ protected int storedSeries = -1;
     int planeSize = paddedWidth * sizeY * timeBins * bpp;
     
     
-     int channel = intensity ? no : no / timeBins;
-     int timeBin = intensity ? 0 : no % timeBins;
-    
-     
     if (preLoad  && !intensity)  {
+      
+      int channel =  no / timeBins;
+      int timeBin = no % timeBins;
       
       byte[] rowBuf = new byte[bpp * timeBins * paddedWidth];
               
@@ -215,6 +214,9 @@ protected int storedSeries = -1;
         
     } 
     else {
+      
+      int channel = intensity ? no : no / timeBins;
+      int timeBin = intensity ? 0 : no % timeBins;
     
       byte[] b = !intensity ? buf : new byte[sizeY * sizeX * timeBins * bpp];
       
