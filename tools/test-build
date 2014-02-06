@@ -64,6 +64,31 @@ sphinx()
     )
 }
 
+# Test Ant build targets
+ant()
+{
+    (
+      ant clean compile
+      ant clean compile-autogen
+      ant clean compile-formats
+      ant clean compile-jai
+      ant clean compile-loci-legacy
+      ant clean compile-loci-plugins
+      ant clean compile-lwf-stubs
+      ant clean compile-mdbtools
+      ant clean compile-metakit
+      ant clean compile-ome-io
+      ant clean compile-ome-plugins
+      ant clean compile-ome-xml
+      ant clean compile-poi-loci
+      ant clean compile-scifio
+      ant clean compile-scifio-devel
+      ant clean compile-scifio-tools
+      ant clean compile-tests
+      ant clean compile-turbojpeg
+    )
+}
+
 for arg in "$@"
 do
     case $arg in
@@ -77,6 +102,8 @@ do
             cppwrap ;;
         sphinx)
             sphinx ;;
+        ant)
+            ant ;;
         all)
             clean && maven && cppwrap && sphinx ;;
         *)
