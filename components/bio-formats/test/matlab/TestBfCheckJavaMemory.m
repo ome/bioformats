@@ -56,7 +56,7 @@ classdef TestBfCheckJavaMemory < TestBfMatlab
         end
         
         function testLowMemory(self)
-            self.minMemory = round(self.getRuntime() + 1);
+            self.minMemory = round(self.getRuntime() + 100);
             self.warning_id = 'BF:lowJavaMemory';
             self.runJavaMemoryCheck()
         end

@@ -13,10 +13,9 @@ the minimum supported MATLAB version is R2007b (7.5).
 Installation
 ------------
 
-Download **bfmatlab.zip** and **loci_tools.jar** from the Bio-Formats
-:downloads:`downloads page <>`. Unzip **bfmatlab.zip** into a new folder,
-move **loci_tools.jar**  into the same folder and add this folder to your
-MATLAB path.
+Download the MATLAB toolbox from the Bio-Formats
+:downloads:`downloads page <>`. Unzip :file:`bfmatlab.zip` and add the
+unzipped :file:`bfmatlab` folder to your MATLAB path.
 
 Usage
 -----
@@ -37,8 +36,9 @@ overhead from copying arrays.
 Upgrading
 ---------
 
-To use a newer version of Bio-Formats, overwrite **loci_tools.jar**
-with the :downloads:`newer version <>` and restart MATLAB.
+To use a newer version of Bio-Formats, overwrite the content of the
+:file:`bfmatlab` folder with the :downloads:`newer version <>` of the
+toolbox and restart MATLAB.
 
 Alternative scripts
 -------------------
