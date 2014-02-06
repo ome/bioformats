@@ -1097,9 +1097,9 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        PositiveInteger realWavelength =
+        PositiveFloat realWavelength =
           retrieve.getChannelEmissionWavelength(i, c);
-        Integer expectedWavelength = config.getEmissionWavelength(c);
+        Double expectedWavelength = config.getEmissionWavelength(c);
 
         if (realWavelength == null && expectedWavelength == null) {
           continue;
@@ -1126,9 +1126,9 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        PositiveInteger realWavelength =
+        PositiveFloat realWavelength =
           retrieve.getChannelExcitationWavelength(i, c);
-        Integer expectedWavelength = config.getExcitationWavelength(c);
+        Double expectedWavelength = config.getExcitationWavelength(c);
 
         if (realWavelength == null && expectedWavelength == null) {
           continue;
