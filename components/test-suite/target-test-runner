@@ -178,7 +178,7 @@ if __name__ == '__main__':
     log_props = 'logback-target-test-runner.xml'
     log_props = os.path.join(os.path.dirname(__file__), log_props)
     log_props = os.path.abspath(log_props)
-    log_props = '-Dlogback.configuration=file:///%s' % log_props
+    log_props = '-Dlogback.configurationFile=file:///%s' % log_props
     cmd = 'java %s -cp "%s" %s %s %s' % (JAVA_ARGS, classpath, log_props, \
                                          START_CLASS, xml_file.name)
     print cmd
