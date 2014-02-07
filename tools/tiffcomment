@@ -3,7 +3,7 @@
 # tiffcomment: a script for extracting the comment
 #              (OME-XML block or otherwise) from a TIFF file
 
-# Required JARs: loci_tools.jar
+# Required JARs: loci_tools.jar or bioformats_package.jar
 
 SCIFIO_DIR=`dirname "$0"`
 

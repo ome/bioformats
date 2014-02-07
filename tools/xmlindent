@@ -2,7 +2,7 @@
 
 # xmlindent: a script for prettifying blocks of XML
 
-# Required JARs: loci_tools.jar
+# Required JARs: loci_tools.jar or bioformats_package.jar
 
 SCIFIO_DIR=`dirname "$0"`
 

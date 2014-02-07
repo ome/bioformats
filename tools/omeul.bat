@@ -5,7 +5,7 @@ rem omeul.bat: a command-line client-side import tool for the OME Perl server
 rem Please note that omeul is legacy software
 rem that has been discontinued. Use at your own risk.
 
-rem Required JARs: loci_tools.jar, ome_tools.jar
+rem Required JARs: loci_tools.jar or bioformats_package.jar, ome_tools.jar
 
 setlocal
 set SCIFIO_DIR=%~dp0

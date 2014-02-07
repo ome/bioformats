@@ -30,10 +30,9 @@ Bio-Formats
     Project deps:  LOCI Common, OME-XML Java library, JAI Image I/O Tools,
                    MDB Tools (Java port), Apache Jakarta POI,
                    Luratech LuraWave stubs
-    Library deps:  JGoodies Forms, Apache log4j, NetCDF,
+    Library deps:  JGoodies Forms, Logback, NetCDF,
                    Simple Logging Facade for Java API, TestNG
-    Optional:      Simple Logging Facade for Java log4j Binding,
-                   Xalan Serializer, Xalan
+    Optional:      Xalan Serializer, Xalan
     License:       GPL
 
 LOCI Common
@@ -43,7 +42,7 @@ LOCI Common
     Path:          components/common
     Project deps:  (none)
     Library deps:  Simple Logging Facade for Java API, TestNG
-    Optional:      Apache log4j, Simple Logging Facade for Java log4j Binding
+    Optional:      Logback
     License:       GPL
 
 LOCI Plugins for ImageJ
@@ -54,7 +53,7 @@ LOCI Plugins for ImageJ
     JAR file:      loci_plugins.jar
     Path:          components/loci-plugins
     Project deps:  Bio-Formats, LOCI Common, OME-XML Java library
-    Library deps:  JGoodies Forms, ImageJ, JUnit, Apache log4j
+    Library deps:  JGoodies Forms, ImageJ, JUnit, Logback
     Optional:      (none)
     License:       GPL
 
@@ -64,7 +63,7 @@ OME I/O
     JAR file:      ome-io.jar
     Path:          components/ome-io
     Project deps:  Bio-Formats, LOCI Common
-    Library deps:  Apache log4j, Simple Logging Facade for Java API, TestNG
+    Library deps:  Logback, Simple Logging Facade for Java API, TestNG
     Optional:      OME-Java, OMERO Client, OMERO Common
     License:       GPL
 
@@ -87,7 +86,7 @@ OME-XML Java library
     Path:          components/ome-xml
     Project deps:  (none)
     Library deps:  Simple Logging Facade for Java API, TestNG
-    Optional:      Apache log4j, Simple Logging Facade for Java log4j Binding
+    Optional:      Logback
     License:       GPL
 
 LOCI testing framework
@@ -96,7 +95,7 @@ LOCI testing framework
     JAR file:      loci-testing-framework.jar
     Path:          components/test-suite
     Project deps:  Bio-Formats, LOCI Common, OME I/O
-    Library deps:  Apache log4j, Simple Logging Facade for Java API, TestNG
+    Library deps:  Logback, Simple Logging Facade for Java API, TestNG
     Optional:      (none)
     License:       BSD
 
@@ -209,11 +208,11 @@ JUnit
     Notes:     unit testing framework used for a few unit tests
     License:   Common Public License
 
-Apache log4j
-    JAR file:  log4j-1.2.17.jar
-    URL:       http://logging.apache.org/log4j/
-    Notes:     required by SLF4J implementation
-    License:   Apache
+Logback
+    JAR file:  logback-core-1.0.9.jar, logback-classic-1.0.9.jar
+    URL:       http://logback.qos.ch
+    Notes:     (none)
+    License:   EPL v1.0 and LGPL 2.1
 
 Native library loader
     JAR file:  native-lib-loader-2.0-SNAPSHOT.jar
@@ -229,12 +228,6 @@ NetCDF
 
 Simple Logging Facade for Java API
     JAR file:  slf4j-api-1.7.2.jar
-    URL:       http://www.slf4j.org/
-    Notes:     used for all logging in loci.*
-    License:   BSD
-
-Simple Logging Facade for Java log4j Binding
-    JAR file:  slf4j-log4j12-1.7.2.jar
     URL:       http://www.slf4j.org/
     Notes:     used for all logging in loci.*
     License:   BSD

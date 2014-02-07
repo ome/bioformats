@@ -27,11 +27,11 @@
 
 package loci.plugins.util;
 
-import loci.plugins.BF;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.AppenderBase;
 
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Level;
-import org.apache.log4j.spi.LoggingEvent;
+import loci.plugins.BF;
 
 /**
  * Echoes status messages to the ImageJ status bar.
@@ -40,11 +40,11 @@ import org.apache.log4j.spi.LoggingEvent;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/util/IJStatusEchoer.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/loci-plugins/src/loci/plugins/util/IJStatusEchoer.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class IJStatusEchoer extends AppenderSkeleton {
+public class IJStatusEchoer extends AppenderBase<ILoggingEvent> {
 
   // -- AppenderSkeleton API methods --
 
-  protected void append(LoggingEvent event) {
+  protected void append(ILoggingEvent event) {
     if (event.getLevel().isGreaterOrEqual(Level.INFO)) {
       BF.status(false, event.getMessage().toString());
     }
@@ -53,11 +53,4 @@ public class IJStatusEchoer extends AppenderSkeleton {
     }
   }
 
-  public boolean requiresLayout() {
-    return false;
-  }
-
-  public void close() { }
-
 }
-

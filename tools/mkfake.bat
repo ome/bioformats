@@ -3,7 +3,7 @@
 rem mkfake: a script for creating a fake file / directory structures
 rem         on the file system
 
-rem Required JARs: loci_tools.jar
+rem Required JARs: loci_tools.jar or bioformats_package.jar
 
 setlocal
 set SCIFIO_DIR=%~dp0
