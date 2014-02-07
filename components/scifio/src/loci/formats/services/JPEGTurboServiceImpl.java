@@ -232,11 +232,11 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     Region tileBoundary = new Region(0, 0, 0, 0);
     byte[] tile = null;
     for (int row=0; row<yTiles; row++) {
-      tileBoundary.height = row < yTiles - 1 ? tileDim : imageHeight % tileDim;
+      tileBoundary.height = row < yTiles - 1 ? tileDim : imageHeight - (tileDim*row);
       tileBoundary.y = row * tileDim;
       for (int col=0; col<xTiles; col++) {
         tileBoundary.x = col * tileDim;
-        tileBoundary.width = col < xTiles - 1 ? tileDim : imageWidth % tileDim;
+        tileBoundary.width = col < xTiles - 1 ? tileDim : imageWidth - (tileDim*col);
         if (tileBoundary.intersects(image)) {
           intersection = image.intersection(tileBoundary);
           tile = getTile(col, row);
