@@ -37,7 +37,7 @@ import java.io.File;
 import loci.formats.UpgradeChecker;
 
 /**
- * A plugin for updating the LOCI plugins.
+ * A plugin for updating the Bio-Formats plugins.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/Updater.java">Trac</a>,
@@ -70,7 +70,7 @@ public class Updater implements PlugIn {
       return;
     }
 
-    GenericDialog upgradeDialog = new GenericDialog("Update LOCI Plugins");
+    GenericDialog upgradeDialog = new GenericDialog("Update Bio-Formats Plugins");
     String[] options = new String[] {TRUNK, DAILY, STABLE};
     upgradeDialog.addChoice("Release", options, options[0]);
     upgradeDialog.showDialog();
@@ -130,10 +130,10 @@ public class Updater implements PlugIn {
 
     BF.status(false, "");
     if (!success) {
-      IJ.showMessage("An error occurred while downloading the LOCI plugins");
+      IJ.showMessage("An error occurred while downloading the Bio-Formats plugins");
     }
     else {
-      IJ.showMessage("The LOCI plugins have been downloaded.\n" +
+      IJ.showMessage("The Bio-Formats plugins have been downloaded.\n" +
         "Please restart ImageJ to complete the upgrade process.");
     }
   }
