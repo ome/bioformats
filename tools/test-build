@@ -3,6 +3,7 @@
 # with travis, but may be used by hand as well.
 
 set -e
+set -x
 
 # Clean up
 clean()
