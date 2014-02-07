@@ -83,8 +83,7 @@ public class InstallWizard extends JFrame
     // download and install latest ij.jar
     // don't launch ImageJ updater plugin because it might not exist
 
-    // check whether LOCI plugins are running as loci_tools.jar or as separate
-    // JARs
+    // check whether LOCI plugins are running from a ueber jar or as separate JARs
 
     // check for conflicting JARs -- i.e., duplicate classes
 
