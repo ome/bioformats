@@ -47,7 +47,7 @@ function bfsave(I, outputPath, varargin)
 % verify that enough memory is allocated
 bfCheckJavaMemory();
 
-% Check loci-tools jar is in the Java path
+% Check for required jars in the Java path
 bfCheckJavaPath();
 
 % Not using the inputParser for first argument as it copies data

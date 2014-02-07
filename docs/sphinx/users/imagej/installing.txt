@@ -9,7 +9,7 @@ Once you `download <http://rsbweb.nih.gov/ij/download.html>`__ and
 install ImageJ, you can install the Bio-Formats plugin by going to the
 Bio-Formats :downloads:`download page <>`.
 
-For most end-users, we recommend downloading the **loci_tools.jar** complete 
+For most end-users, we recommend downloading the **bioformats\_package.jar** complete 
 bundle.
 
 However, you must decide which version of it you want to install. There
@@ -18,7 +18,7 @@ builds, and the Stable Release. Which version you should download
 depends on your needs:
 
 - The **trunk build** is automatically updated every time any change is
-  made to the source code on the main "trunk" branch in Git, LOCI's
+  made to the source code on the main "trunk" branch in Git, Bio-Formats's
   software version control system. This build has the latest bug fixes,
   but it is not well tested and may have also introduced new bugs.
 
@@ -47,7 +47,7 @@ requires you to upgrade and reproduce it, why not just use the trunk
 build to begin with?
 
 Once you decide which version you need, go to the Bio-Formats 
-:downloads:`download page <>` and save the appropriate **loci\_tools.jar** 
+:downloads:`download page <>` and save the appropriate **bioformats\_package.jar** 
 to the Plugins directory within ImageJ.
 
 .. figure:: /images/PluginDirectory.png

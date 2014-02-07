@@ -8,7 +8,7 @@ version 4.2 and later.
 
    Working example code is provided in    
    :download:`FileExport.java <FileExport.java>` - code from that class is
-   referenced here in part. You will need to have loci_tools.jar in your Java
+   referenced here in part. You will need to have bioformats_package.jar in your Java
    CLASSPATH in order to compile FileExport.java.
 
 The first thing that must happen is we must create the object that stores

@@ -9,15 +9,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -67,9 +67,12 @@ Depending on your flavor of 64-bit Linux, you may also need to execute:
   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/amd64/server
 
 -------------------------------------------------------------------------------
-Finally, copy loci_tools.jar to the same folder and run one of:
+Finally, copy bioformats_package.jar to the same folder and
+run one of:
+
   ./showinfJNI
   showinfJNI.exe
+
 */
 
 #include <iostream>
@@ -92,11 +95,11 @@ int main(int argc, char* argv[]) {
   JavaVM *jvm;
   JNIEnv *env;
 
-  // NB: This program requires loci_tools.jar in the same directory.
+  // NB: This program requires bioformats_package.jar in the same directory.
   string classpath = "-Djava.class.path";
   const int numJars = 1;
   string jars[numJars] = {
-    "loci_tools.jar"
+    "bioformats_package.jar"
   };
   for (int i=0; i<numJars; i++) {
     classpath += i == 0 ? "=" : PATHSEP;
