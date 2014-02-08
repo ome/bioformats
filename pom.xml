@@ -200,13 +200,18 @@
                   // if we're building within Git, but not from a tag,
                   // then use the last known tag's number to set a snapshot
                   // version
-                  def regex = Pattern.compile("v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)")
-                  def groups = regex.matcher(ant.project.properties.describe)
-                  groups.matches()
-                  def major = groups.group(1)
-                  def minor = groups.group(2)
-                  def patch = groups.group(3)
-                  project.properties.release = major + "." + minor + "." + patch + "-SNAPSHOT"
+                  try {
+                    def regex = Pattern.compile("v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)")
+                    def groups = regex.matcher(ant.project.properties.describe)
+                    groups.matches()
+                    def major = groups.group(1)
+                    def minor = groups.group(2)
+                    def patch = groups.group(3)
+                    project.properties.release = major + "." + minor + "." + patch + "-SNAPSHOT"
+                  }
+                  catch (IllegalStateException e) {
+                    project.properties.release = ""
+                  }
                 }
                 else {
                   // if we're building outside of Git, set a default
@@ -214,6 +219,26 @@
                   project.properties.release = project.properties.default
                 }
                 project.properties.revision = ant.project.properties.revision
+
+                if (!project.properties.release) {
+                  // assume this is a source package outside of Git
+                  // there should be a ant/gitversion.xml file with the
+                  // version information used when the package was created
+
+                  def xml = new XmlParser().parse("./ant/gitversion.xml")
+                  for (property in xml.property) {
+                    println "parsing " + property.'@name'
+                    if ('release.version' == property.'@name') {
+                      project.properties.release = property.'@value'
+                    }
+                    else if ('vcs.revision' == property.'@name') {
+                      project.properties.revision = property.'@value'
+                    }
+                  }
+                }
+
+                println "revision = " + project.properties.revision
+                println "release = " + project.properties.release
               </source>
             </configuration>
           </execution>
