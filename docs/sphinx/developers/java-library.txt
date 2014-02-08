@@ -110,7 +110,7 @@ without them.
 
 When deploying a JNLP-based application, using **bioformats\_package.jar**
 directly is not the best approach, since every time Bio-Formats is
-updated, the server would need to feed another 8+ MB JAR file to the
+updated, the server would need to feed another 15+ MB JAR file to the
 client. Rather, Web Start is a case where you should keep the JARs
 separate, since JNLP was designed to make management of JAR dependencies
 trivial for the end user. By keeping **bio-formats.jar** and the

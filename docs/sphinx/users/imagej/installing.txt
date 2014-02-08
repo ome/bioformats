@@ -18,7 +18,7 @@ builds, and the Stable Release. Which version you should download
 depends on your needs:
 
 - The **trunk build** is automatically updated every time any change is
-  made to the source code on the main "trunk" branch in Git, Bio-Formats's
+  made to the source code on the main "trunk" branch in Git, Bio-Formats'
   software version control system. This build has the latest bug fixes,
   but it is not well tested and may have also introduced new bugs.
 
