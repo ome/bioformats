@@ -54,8 +54,8 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.imagej</groupId>
-      <artifactId>ij</artifactId>
+      <groupId>gov.nih.imagej</groupId>
+      <artifactId>imagej</artifactId>
       <version>[1.45s,1.47o),[1.47q,)</version>
     </dependency>
   </dependencies>

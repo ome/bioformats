@@ -17,7 +17,7 @@
         <exclude>ome:loci-legacy</exclude>
         <exclude>ome:scifio</exclude>
         <exclude>ome:lwf-stubs</exclude>
-        <exclude>net.imagej:ij</exclude>
+        <exclude>gov.nih.imagej:imagej</exclude>
         <exclude>com.esotericsoftware.kryo:kryo</exclude>
         <exclude>com.jgoodies:forms</exclude>
         <exclude>ome:jai_imageio</exclude>
