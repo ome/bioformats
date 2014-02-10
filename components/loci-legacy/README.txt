@@ -1,1 +1,2 @@
-  Contains common I/O, date parsing, and XML processing classes.
+This provides loci-legacy.jar, which is an alternate and deprecated name for
+loci-common.jar

@@ -73,7 +73,7 @@ antbuild()
       ant clean compile-autogen
       ant clean compile-formats
       ant clean compile-jai
-      ant clean compile-loci-legacy
+      ant clean compile-loci-common
       ant clean compile-loci-plugins
       ant clean compile-lwf-stubs
       ant clean compile-mdbtools
