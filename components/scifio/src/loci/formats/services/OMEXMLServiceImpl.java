@@ -51,6 +51,7 @@ import javax.xml.transform.TransformerException;
 
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -64,7 +65,6 @@ import loci.formats.meta.OriginalMetadataAnnotation;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
 import loci.formats.ome.OMEXMLMetadataRoot;
-import ome.scifio.xml.XMLTools;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
 import ome.xml.model.Image;

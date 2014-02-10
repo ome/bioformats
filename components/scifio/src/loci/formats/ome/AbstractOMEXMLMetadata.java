@@ -46,8 +46,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import loci.common.Constants;
+import loci.common.xml.XMLTools;
 
-import ome.scifio.xml.XMLTools;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModelObject;
 

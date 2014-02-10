@@ -81,8 +81,8 @@ public final class LibraryChecker {
     switch (library) {
       case BIO_FORMATS:
         checkLibrary("org.slf4j.Logger", "slf4j-api-1.7.2.jar", missing);
-        checkLibrary("ome.scifio.io.RandomAccessInputStream",
-          "scifio.jar", missing);
+        checkLibrary("loci.common.RandomAccessInputStream",
+          "loci-common.jar", missing);
         checkLibrary("loci.formats.FormatHandler", "bio-formats.jar", missing);
         checkLibrary("loci.poi.poifs.filesystem.POIFSDocument",
           "poi-loci.jar", missing);
