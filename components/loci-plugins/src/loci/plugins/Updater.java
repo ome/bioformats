@@ -11,15 +11,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -37,7 +37,7 @@ import java.io.File;
 import loci.formats.UpgradeChecker;
 
 /**
- * A plugin for updating the LOCI plugins.
+ * A plugin for updating the Bio-Formats plugins.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/Updater.java">Trac</a>,
@@ -59,7 +59,7 @@ public class Updater implements PlugIn {
   /** Flag indicating whether last operation was canceled. */
   public boolean canceled;
 
-  /** Path to loci_tools.jar. */
+  /** Path to ueber-jar whether bioformats_package.jar or loci_tools.jar. */
   private String urlPath;
 
   // -- PlugIn API methods --
@@ -70,7 +70,7 @@ public class Updater implements PlugIn {
       return;
     }
 
-    GenericDialog upgradeDialog = new GenericDialog("Update LOCI Plugins");
+    GenericDialog upgradeDialog = new GenericDialog("Update Bio-Formats Plugins");
     String[] options = new String[] {TRUNK, DAILY, STABLE};
     upgradeDialog.addChoice("Release", options, options[0]);
     upgradeDialog.showDialog();
@@ -130,10 +130,10 @@ public class Updater implements PlugIn {
 
     BF.status(false, "");
     if (!success) {
-      IJ.showMessage("An error occurred while downloading the LOCI plugins");
+      IJ.showMessage("An error occurred while downloading the Bio-Formats plugins");
     }
     else {
-      IJ.showMessage("The LOCI plugins have been downloaded.\n" +
+      IJ.showMessage("The Bio-Formats plugins have been downloaded.\n" +
         "Please restart ImageJ to complete the upgrade process.");
     }
   }
