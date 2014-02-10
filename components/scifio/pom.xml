@@ -36,7 +36,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci-legacy</artifactId>
+      <artifactId>loci-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -47,11 +47,6 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>ome-xml</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>scifio-devel</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -267,8 +262,7 @@
           <sourceDir>target/classes/cppwrap</sourceDir>
           <libraries>
             <library>${project.groupId}:ome-xml:jar:${project.version}</library>
-            <library>${project.groupId}:loci-legacy:jar:${project.version}</library>
-            <library>${project.groupId}:scifio-devel:jar:${project.version}</library>
+            <library>${project.groupId}:loci-common:jar:${project.version}</library>
           </libraries>
         </configuration>
       </plugin>

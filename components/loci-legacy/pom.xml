@@ -13,11 +13,13 @@
   </parent>
 
   <artifactId>loci-legacy</artifactId>
+  <packaging>pom</packaging>
 
-  <name>Loci-Legacy</name>
-  <description>Contains common I/O, date parsing, and XML processing classes.</description>
-  <url>http://loci.wisc.edu/software</url>
-  <inceptionYear>2005</inceptionYear>
+  <name>LOCI Legacy compatibility JAR</name>
+  <description>This provides loci-legacy.jar, which is an alternate and deprecated name for loci-common.jar
+  </description>
+  <url>http://loci.wisc.edu/software/bio-formats</url>
+  <inceptionYear>2006</inceptionYear>
 
   <licenses>
     <license>
@@ -29,45 +31,8 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>scifio-devel</artifactId>
+      <artifactId>loci-common</artifactId>
       <version>${project.version}</version>
-    </dependency>
-
-    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
-
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-core</artifactId>
-      <version>${logback.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <!-- NB: We want this, despite warning from dependency:analyze. -->
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>${logback.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <!-- NB: We want this, despite warning from dependency:analyze. -->
-      <groupId>xalan</groupId>
-      <artifactId>serializer</artifactId>
-      <version>2.7.1</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <!-- NB: We want this, despite warning from dependency:analyze. -->
-      <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
-      <version>2.7.1</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>5.12.1</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -78,60 +43,27 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
+        <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>test/loci/common/utests/testng-template.xml</suiteXmlFile>
-          </suiteXmlFiles>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
-          </additionalClasspathElements>
+          <appendAssemblyId>false</appendAssemblyId>
+          <descriptors>
+            <descriptor>assembly.xml</descriptor>
+          </descriptors>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <configuration>
-          <licenseName>loci-legacy</licenseName>
-          <projectName>Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.</projectName>
-        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
 
   <developers>
-    <developer>
-      <id>hinerm</id>
-      <name>Mark Hiner</name>
-      <email>hinerm@gmail.edu</email>
-      <url>http://developer.imagej.net/users/hinerm</url>
-      <organization>UW-Madison LOCI</organization>
-      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>-6</timezone>
-      <properties>
-        <picUrl>http://developer.imagej.net/files/imagej/profile-pictures/Mark.jpg?1305649677</picUrl>
-      </properties>
-    </developer>
-    <developer>
-      <id>melissa</id>
-      <name>Melissa Linkert</name>
-      <email>melissa.linkert@glencoesoftware.com</email>
-      <url>http://openmicroscopy.org/site/about/development-teams/glencoe-software</url>
-      <organization>Glencoe Software</organization>
-      <organizationUrl>http://glencoesoftware.com/</organizationUrl>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-      <timezone>-6</timezone>
-      <properties>
-        <picUrl>http://openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
-      </properties>
-    </developer>
     <developer>
       <id>curtis</id>
       <name>Curtis Rueden</name>
@@ -144,9 +76,6 @@
         <role>developer</role>
       </roles>
       <timezone>-6</timezone>
-      <properties>
-        <picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
-      </properties>
     </developer>
   </developers>
 
@@ -161,4 +90,5 @@
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
     </repository>
   </repositories>
+
 </project>

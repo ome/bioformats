@@ -18,7 +18,7 @@ Type "ant -p" for a list of targets.
     depends="compile-autogen,
       compile-formats,
       compile-jai,
-      compile-loci-legacy,
+      compile-loci-common,
       compile-loci-plugins,
       compile-lwf-stubs,
       compile-mdbtools,
@@ -37,10 +37,10 @@ Type "ant -p" for a list of targets.
   <target name="jars"
     depends="copy-jars,
       jar-autogen,
-      jar-common,
+      jar-legacy,
       jar-formats,
       jar-jai,
-      jar-loci-legacy,
+      jar-loci-common,
       jar-loci-plugins,
       jar-lwf-stubs,
       jar-mdbtools,
@@ -63,7 +63,7 @@ Type "ant -p" for a list of targets.
       osgi-autogen,
       osgi-formats,
       osgi-jai,
-      osgi-loci-legacy,
+      osgi-loci-common,
       osgi-loci-plugins,
       osgi-lwf-stubs,
       osgi-mdbtools,
@@ -90,7 +90,7 @@ Type "ant -p" for a list of targets.
   <target name="findbugs"
     depends="findbugs-autogen,
       findbugs-formats,
-      findbugs-loci-legacy,
+      findbugs-loci-common,
       findbugs-loci-plugins,
       findbugs-metakit,
       findbugs-ome-io,
@@ -105,9 +105,9 @@ Type "ant -p" for a list of targets.
     depends="
       clean-autogen,
       clean-formats,
-      clean-common,
+      clean-legacy,
       clean-jai,
-      clean-loci-legacy,
+      clean-loci-common,
       clean-loci-plugins,
       clean-lwf-stubs,
       clean-mdbtools,
@@ -132,7 +132,7 @@ Type "ant -p" for a list of targets.
     depends="test-autogen,
       test-formats,
       test-jai,
-      test-loci-legacy,
+      test-loci-common,
       test-loci-plugins,
       test-lwf-stubs,
       test-mdbtools,
@@ -241,7 +241,7 @@ Type "ant -p" for a list of targets.
   <!-- Apache POI Java library -->
 
   <target name="deps-poi-loci"
-    depends="jar-loci-legacy"/>
+    depends="jar-loci-common"/>
 
   <target name="compile-poi-loci" depends="deps-poi-loci"
     description="compile classes for Apache POI library">
@@ -264,7 +264,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-poi-loci"
-    depends="clean-loci-legacy"
+    depends="clean-loci-common"
     description="remove build files for Apache POI library">
     <ant dir="components/forks/poi" target="poi-loci.clean"/>
   </target>
@@ -311,7 +311,7 @@ Type "ant -p" for a list of targets.
   <!-- Metakit library -->
 
   <target name="deps-metakit"
-    depends="jar-loci-legacy"/>
+    depends="jar-loci-common"/>
 
   <target name="compile-metakit" depends="deps-metakit"
     description="compile classes for Metakit Java library">
@@ -334,7 +334,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-metakit"
-    depends="clean-loci-legacy"
+    depends="clean-loci-common"
     description="remove build files for Metakit Java library">
     <ant dir="components/metakit" target="metakit.clean"/>
   </target>
@@ -416,7 +416,7 @@ Type "ant -p" for a list of targets.
 
   <target name="deps-scifio"
     depends="jar-jai,
-      jar-loci-legacy,
+      jar-loci-common,
       jar-lwf-stubs,
       jar-ome-xml,
       jar-specification,
@@ -444,7 +444,7 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-scifio"
     depends="clean-jai,
-      clean-loci-legacy,
+      clean-loci-common,
       clean-lwf-stubs,
       clean-ome-xml"
     description="remove build files for SCIFIO">
@@ -505,7 +505,7 @@ Type "ant -p" for a list of targets.
   <!-- SCIFIO tools -->
 
   <target name="deps-scifio-tools"
-    depends="jar-common,
+    depends="jar-legacy,
       jar-jai,
       jar-lwf-stubs,
       jar-ome-xml,
@@ -533,7 +533,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-scifio-tools"
-    depends="clean-common,
+    depends="clean-legacy,
       clean-jai,
       clean-lwf-stubs,
       clean-ome-xml,
@@ -556,7 +556,7 @@ Type "ant -p" for a list of targets.
   <!-- Bio-Formats -->
 
   <target name="deps-formats"
-    depends="jar-loci-legacy,
+    depends="jar-loci-common,
       jar-mdbtools,
       jar-metakit,
       jar-ome-xml,
@@ -584,7 +584,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-formats"
-    depends="clean-loci-legacy,
+    depends="clean-loci-common,
       clean-mdbtools,
       clean-metakit,
       clean-ome-xml,
@@ -604,48 +604,48 @@ Type "ant -p" for a list of targets.
     <ant dir="components/bio-formats" target="test"/>
   </target>
 
-  <!-- Loci-Legacy  -->
+  <!-- Common  -->
 
-  <target name="deps-loci-legacy"
+  <target name="deps-loci-common"
     depends="jar-scifio-devel"/>
 
-  <target name="compile-loci-legacy" depends="deps-loci-legacy"
-    description="compile classes for Loci-Legacy ">
-    <ant dir="components/loci-legacy" target="loci-legacy.compile"/>
+  <target name="compile-loci-common" depends="deps-loci-common"
+    description="compile classes for Common ">
+    <ant dir="components/loci-common" target="loci-common.compile"/>
   </target>
 
-  <target name="jar-loci-legacy" depends="deps-loci-legacy"
-    description="generate JAR file for Loci-Legacy ">
-    <ant dir="components/loci-legacy" target="loci-legacy.jar"/>
+  <target name="jar-loci-common" depends="deps-loci-common"
+    description="generate JAR file for Common ">
+    <ant dir="components/loci-common" target="loci-common.jar"/>
   </target>
 
-  <target name="osgi-loci-legacy" depends="jar-loci-legacy"
-    description="generate OSGi bundle for Loci-Legacy ">
-    <ant dir="components/loci-legacy" target="loci-legacy.osgi"/>
+  <target name="osgi-loci-common" depends="jar-loci-common"
+    description="generate OSGi bundle for Common ">
+    <ant dir="components/loci-common" target="loci-common.osgi"/>
   </target>
 
-  <target name="findbugs-loci-legacy" depends="jar-loci-legacy"
-    description="run findbugs on Loci-Legacy ">
-    <ant dir="components/loci-legacy" target="loci-legacy.findbugs"/>
+  <target name="findbugs-loci-common" depends="jar-loci-common"
+    description="run findbugs on Common ">
+    <ant dir="components/loci-common" target="loci-common.findbugs"/>
   </target>
 
-  <target name="clean-loci-legacy"
+  <target name="clean-loci-common"
     depends="clean-scifio-devel"
-    description="remove build files for Loci-Legacy ">
-    <ant dir="components/loci-legacy" target="loci-legacy.clean"/>
+    description="remove build files for Common ">
+    <ant dir="components/loci-common" target="loci-common.clean"/>
   </target>
 
-  <target name="test-loci-legacy" depends="jar-loci-legacy"
-    description="compile and run tests for Loci-Legacy ">
-    <ant dir="components/loci-legacy" target="test"/>
+  <target name="test-loci-common" depends="jar-loci-common"
+    description="compile and run tests for Common ">
+    <ant dir="components/loci-common" target="test"/>
   </target>
 
-  <!-- LOCI common (mirrors Loci Legacy) -->
+  <!-- LOCI legacy -->
 
-  <target name="jar-common"
-    depends="jar-loci-legacy,
+  <target name="jar-legacy"
+    depends="jar-loci-common,
              jar-scifio-devel"
-    description="generate JAR file for LOCI Common">
+    description="generate JAR file for LOCI Legacy">
     <for list="${loci-common.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
         <unjar src="${artifact.dir}/@{jar}" dest="${loci-common.dir}">
@@ -659,16 +659,16 @@ Type "ant -p" for a list of targets.
     <delete dir="${loci-common.dir}"/>
   </target>
 
-  <target name="clean-common"
-    depends="clean-loci-legacy"
+  <target name="clean-legacy"
+    depends="clean-loci-common"
     description="remove build files for LOCI Common">
-    <delete file="${artifact.dir}/loci-common.jar"/>
+    <delete file="${artifact.dir}/loci-legacy.jar"/>
   </target>
 
   <!-- LOCI autogen -->
 
   <target name="deps-autogen"
-    depends="jar-loci-legacy,
+    depends="jar-legacy,
              jar-scifio"/>
 
   <target name="compile-autogen" depends="deps-autogen"
@@ -692,7 +692,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-autogen"
-    depends="clean-loci-legacy,
+    depends="clean-legacy,
              clean-scifio"
     description="remove build files for LOCI autogen">
     <ant dir="components/autogen" target="autogen.clean"/>
@@ -707,7 +707,7 @@ Type "ant -p" for a list of targets.
 
   <target name="deps-loci-plugins"
     depends="jar-formats,
-      jar-loci-legacy,
+      jar-legacy,
       jar-ome-xml,
       jar-scifio"/>
 
@@ -733,7 +733,7 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-loci-plugins"
     depends="clean-formats,
-      clean-loci-legacy,
+      clean-legacy,
       clean-ome-xml,
       clean-scifio"
     description="remove build files for LOCI Plugins for ImageJ">
@@ -753,7 +753,7 @@ Type "ant -p" for a list of targets.
   <!-- OME I/O -->
 
   <target name="deps-ome-io"
-    depends="copy-jars,jar-loci-legacy,
+    depends="copy-jars,jar-legacy,
       jar-ome-xml,
       jar-scifio"/>
 
@@ -778,7 +778,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-ome-io"
-    depends="clean-loci-legacy,
+    depends="clean-legacy,
       clean-ome-xml,
       clean-scifio"
     description="remove build files for OME I/O">
@@ -793,7 +793,7 @@ Type "ant -p" for a list of targets.
   <!-- OME Plugins for ImageJ -->
 
   <target name="deps-ome-plugins"
-    depends="jar-loci-legacy,
+    depends="jar-legacy,
       jar-loci-plugins,
       jar-ome-io,
       jar-scifio"/>
@@ -819,7 +819,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-ome-plugins"
-    depends="clean-loci-legacy,
+    depends="clean-legacy,
       clean-loci-plugins,
       clean-ome-io,
       clean-scifio"
@@ -836,7 +836,7 @@ Type "ant -p" for a list of targets.
 
   <target name="deps-tests"
     depends="jar-formats,
-      jar-loci-legacy,
+      jar-legacy,
       jar-ome-io,
       jar-ome-xml,
       jar-scifio,
@@ -864,7 +864,7 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-tests"
     depends="clean-formats,
-      clean-loci-legacy,
+      clean-legacy,
       clean-ome-io,
       clean-ome-xml,
       clean-scifio,
@@ -911,9 +911,8 @@ Type "ant -p" for a list of targets.
 
   <target name="tools"
     depends="copy-jars,
-      jar-common,
       jar-jai,
-      jar-loci-legacy,
+      jar-legacy,
       jar-loci-plugins,
       jar-mdbtools,
       jar-metakit,
