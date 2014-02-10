@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -39,7 +39,7 @@ package loci.common;
 import java.io.IOException;
 
 /**
- * A legacy delegator to ome.scifio.io.AbstractNIOHandle.
+ * A wrapper for buffered NIO logic that implements the IRandomAccess interface.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/AbstractNIOHandle.java">Trac</a>,
@@ -60,8 +60,6 @@ public abstract class AbstractNIOHandle implements IRandomAccess {
 
   // -- Fields --
 
-  protected ome.scifio.io.AbstractNIOHandle handle;
-  
   // -- Constructors --
 
   // -- AbstractNIOHandle methods --
@@ -100,20 +98,5 @@ public abstract class AbstractNIOHandle implements IRandomAccess {
    * @throws IOException If there is an error changing the handle's length.
    */
   protected abstract void setLength(long length) throws IOException;
-  
-  // -- Object Delegators --
-  
-  @Override
-  public boolean equals(Object obj) {
-    return handle.equals(obj);
-  }
 
-  @Override
-  public int hashCode() {
-    return handle.hashCode();
-  }
-  @Override
-  public String toString() {
-    return handle.toString();
-  }
 }

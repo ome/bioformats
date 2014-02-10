@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -36,16 +36,10 @@
 
 package loci.common;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
- * A legacy delegator class for ome.scifio.common.IniTable.
- * 
- * Uses an "isa" relationship to preserve the inherited methods
- * of IniTable from HashMap.
+ * A data structure containing a parsed list of INI key/value tables.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/IniTable.java">Trac</a>,
@@ -55,94 +49,12 @@ import java.util.Set;
  */
 public class IniTable extends HashMap<String, String> {
 
-  // -- Fields --
-  
-  private ome.scifio.common.IniTable table;
-  
   // -- Constants --
-  
+
   /** Key to use for storing header value (in brackets). */
-  public static final String HEADER_KEY = ome.scifio.common.IniTable.HEADER_KEY;
-  
-  // -- Constructor --
-  
-  public IniTable() {
-    table = new ome.scifio.common.IniTable();
-  }
-  
-  // -- Accessors --
+  public static final String HEADER_KEY = "header";
 
-  public ome.scifio.common.IniTable getTable() {
-    return table;
-  }
+  /** Default header name when no header is available. */
+  public static final String DEFAULT_HEADER = "DEFAULT_HEADER";
 
-  public void setTable(ome.scifio.common.IniTable table) {
-    this.table = table;
-  }
-  
-  // -- Delegators --
-
-  public void clear() {
-    table.clear();
-  }
-
-  public Object clone() {
-    return table.clone();
-  }
-
-  public boolean containsKey(Object arg0) {
-    return table.containsKey(arg0);
-  }
-
-  public boolean containsValue(Object arg0) {
-    return table.containsValue(arg0);
-  }
-
-  public Set<java.util.Map.Entry<String, String>> entrySet() {
-    return table.entrySet();
-  }
-
-  public boolean equals(Object arg0) {
-    return table.equals(arg0);
-  }
-
-  public String get(Object arg0) {
-    return table.get(arg0);
-  }
-
-  public int hashCode() {
-    return table.hashCode();
-  }
-
-  public boolean isEmpty() {
-    return table.isEmpty();
-  }
-
-  public Set<String> keySet() {
-    return table.keySet();
-  }
-
-  public String put(String arg0, String arg1) {
-    return table.put(arg0, arg1);
-  }
-
-  public void putAll(Map<? extends String, ? extends String> arg0) {
-    table.putAll(arg0);
-  }
-
-  public String remove(Object arg0) {
-    return table.remove(arg0);
-  }
-
-  public int size() {
-    return table.size();
-  }
-
-  public String toString() {
-    return table.toString();
-  }
-
-  public Collection<String> values() {
-    return table.values();
-  }
 }

@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -38,18 +38,24 @@ package loci.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
-import loci.common.adapter.IRandomAccessAdapter;
-import loci.legacy.adapter.AdapterTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // HACK: for scan-deps.pl: The following packages are not actually "optional":
 // optional ch.qos.logback.core, optional org.slf4j.impl
 
 /**
- * A legacy delegator class for ome.scifio.io.Location.
+ * Pseudo-extension of java.io.File that supports reading over HTTP (among
+ * other things).
+ * It is strongly recommended to use this instead of java.io.File.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/Location.java">Trac</a>,
@@ -59,37 +65,73 @@ public class Location {
 
   // -- Constants --
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(Location.class);
+
   // -- Static fields --
+
+  /** Map from given filenames to actual filenames. */
+  private static ThreadLocal<HashMap<String, Object>> idMap =
+    new ThreadLocal<HashMap<String, Object>>() {
+      protected HashMap<String, Object> initialValue() {
+        return new HashMap<String, Object>();
+      }
+  };
+
+  private static volatile boolean cacheListings = false;
+
+  // By default, cache for one hour.
+  private static volatile long cacheNanos = 60L * 60L * 1000L * 1000L * 1000L;
+
+  protected class ListingsResult {
+    public final String [] listing;
+    public final long time;
+    ListingsResult(String [] listing, long time) {
+      this.listing = listing;
+      this.time = time;
+    }
+  }
+  private static ConcurrentHashMap<String, ListingsResult> fileListings =
+    new ConcurrentHashMap<String, ListingsResult>();
 
   // -- Fields --
 
-  protected ome.scifio.io.Location loc;
+  private boolean isURL = true;
+  private URL url;
+  private File file;
 
   // -- Constructors --
 
   public Location(String pathname) {
-    loc = new ome.scifio.io.Location(pathname);
+    LOGGER.trace("Location({})", pathname);
+    if (pathname.contains("://")) {
+      // Avoid expensive exception handling in case when path is
+      // obviously not an URL
+      try {
+        url = new URL(getMappedId(pathname));
+      }
+      catch (MalformedURLException e) {
+        LOGGER.trace("Location is not a URL", e);
+        isURL = false;
+      }
+    } else {
+      LOGGER.trace("Location is not a URL");
+      isURL = false;
+    }
+    if (!isURL) file = new File(getMappedId(pathname));
   }
 
   public Location(File file) {
-    loc = new ome.scifio.io.Location(file);
+    LOGGER.trace("Location({})", file);
+    isURL = false;
+    this.file = file;
   }
 
   public Location(String parent, String child) {
-    loc = new ome.scifio.io.Location(parent, child);
+    this(parent + File.separator + child);
   }
 
   public Location(Location parent, String child) {
-    loc = new ome.scifio.io.Location(parent.getAbsolutePath(), child);
-  }
-  
-  // Private constructor for directly wrapping ome.scifio.io.Location
-  private Location(ome.scifio.io.Location location) {
-    loc = location;
-  }
-  
-  // Explicit zero-param protected constructor for extending delegator classes
-  protected Location() {
+    this(parent.getAbsolutePath(), child);
   }
 
   // -- Location API methods --
@@ -99,7 +141,10 @@ public class Location {
    * original values.
    */
   public static void reset() {
-    ome.scifio.io.Location.reset();
+    cacheListings = false;
+    cacheNanos = 60L * 60L * 1000L * 1000L * 1000L;
+    fileListings.clear();
+    getIdMap().clear();
   }
 
   /**
@@ -119,7 +164,7 @@ public class Location {
    * @param cache - true to turn cacheing on, false to leave it off.
    */
   public static void cacheDirectoryListings(boolean cache) {
-    ome.scifio.io.Location.cacheDirectoryListings(cache);
+    cacheListings = cache;
   }
 
   /**
@@ -129,7 +174,7 @@ public class Location {
    * seconds.
    */
   public static void setCacheDirectoryTimeout(double sec) {
-    ome.scifio.io.Location.setCacheDirectoryTimeout(sec);
+    cacheNanos = (long) (sec * 1000. * 1000. * 1000.);
   }
 
   /**
@@ -138,14 +183,23 @@ public class Location {
    * Do this if directory contents might have changed in a significant way.
    */
   public static void clearDirectoryListingsCache() {
-    ome.scifio.io.Location.clearDirectoryListingsCache();
+    fileListings = new ConcurrentHashMap<String, ListingsResult>();
   }
 
   /**
    * Remove any cached directory listings that have expired.
    */
   public static void cleanStaleCacheEntries() {
-    ome.scifio.io.Location.cleanStaleCacheEntries();
+    long t = System.nanoTime() - cacheNanos;
+    ArrayList<String> staleKeys = new ArrayList();
+    for (String key : fileListings.keySet()) {
+      if (fileListings.get(key).time < t) {
+        staleKeys.add(key);
+      }
+    }
+    for (String key : staleKeys) {
+      fileListings.remove(key);
+    }
   }
 
   /**
@@ -159,12 +213,18 @@ public class Location {
    * @see #getMappedId(String)
    */
   public static void mapId(String id, String filename) {
-    ome.scifio.io.Location.mapId(id, filename);
+    if (id == null) return;
+    if (filename == null) getIdMap().remove(id);
+    else getIdMap().put(id, filename);
+    LOGGER.debug("Location.mapId: {} -> {}", id, filename);
   }
 
   /** Maps the given id to the given IRandomAccess object. */
   public static void mapFile(String id, IRandomAccess ira) {
-    ome.scifio.io.Location.mapFile(id, AdapterTools.getAdapter(IRandomAccessAdapter.class).getModern(ira));
+    if (id == null) return;
+    if (ira == null) getIdMap().remove(id);
+    else getIdMap().put(id, ira);
+    LOGGER.debug("Location.mapFile: {} -> {}", id, ira);
   }
 
   /**
@@ -177,18 +237,27 @@ public class Location {
    * @see #mapId(String, String)
    */
   public static String getMappedId(String id) {
-    return ome.scifio.io.Location.getMappedId(id);
+    if (getIdMap() == null) return id;
+    String filename = null;
+    if (id != null && (getIdMap().get(id) instanceof String)) {
+      filename = (String) getIdMap().get(id);
+    }
+    return filename == null ? id : filename;
   }
 
   /** Gets the random access handle for the given id. */
   public static IRandomAccess getMappedFile(String id) {
-    return AdapterTools.getAdapter(IRandomAccessAdapter.class).getLegacy(
-        ome.scifio.io.Location.getMappedFile(id));
+    if (getIdMap() == null) return null;
+    IRandomAccess ira = null;
+    if (id != null && (getIdMap().get(id) instanceof IRandomAccess)) {
+      ira = (IRandomAccess) getIdMap().get(id);
+    }
+    return ira;
   }
 
   /** Return the id mapping. */
-  public static HashMap<String, Object> getIdMap() { 
-    return ome.scifio.io.Location.getIdMap();
+  public static HashMap<String, Object> getIdMap() {
+    return idMap.get();
   }
 
   /**
@@ -197,7 +266,8 @@ public class Location {
    * @throws IllegalArgumentException if the given HashMap is null.
    */
   public static void setIdMap(HashMap<String, Object> map) {
-    ome.scifio.io.Location.setIdMap(map);
+    if (map == null) throw new IllegalArgumentException("map cannot be null");
+    idMap.set(map);
   }
 
   /**
@@ -205,8 +275,7 @@ public class Location {
    * @see IRandomAccess
    */
   public static IRandomAccess getHandle(String id) throws IOException {
-    return AdapterTools.getAdapter(IRandomAccessAdapter.class).getLegacy(
-        ome.scifio.io.Location.getHandle(id));
+    return getHandle(id, false);
   }
 
   /**
@@ -216,8 +285,7 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable)
     throws IOException
   {
-    return AdapterTools.getAdapter(IRandomAccessAdapter.class).getLegacy(
-        ome.scifio.io.Location.getHandle(id, writable, true));
+    return getHandle(id, writable, true);
   }
 
   /**
@@ -227,20 +295,50 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable,
     boolean allowArchiveHandles) throws IOException
   {
-    return AdapterTools.getAdapter(IRandomAccessAdapter.class).getLegacy(
-        ome.scifio.io.Location.getHandle(id, writable, allowArchiveHandles));
+    LOGGER.trace("getHandle(id = {}, writable = {})", id, writable);
+    IRandomAccess handle = getMappedFile(id);
+    if (handle == null) {
+      LOGGER.trace("no handle was mapped for this ID");
+      String mapId = getMappedId(id);
+
+      if (id.startsWith("http://")) {
+        handle = new URLHandle(mapId);
+      }
+      else if (allowArchiveHandles && ZipHandle.isZipFile(id)) {
+        handle = new ZipHandle(mapId);
+      }
+      else if (allowArchiveHandles && GZipHandle.isGZipFile(id)) {
+        handle = new GZipHandle(mapId);
+      }
+      else if (allowArchiveHandles && BZip2Handle.isBZip2File(id)) {
+        handle = new BZip2Handle(mapId);
+      }
+      else {
+        handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
+      }
+    }
+    LOGGER.trace("Location.getHandle: {} -> {}", id, handle);
+    return handle;
   }
-  
+
   /**
    * Checks that the given id points at a valid data stream.
-   * 
+   *
    * @param id
    *          The id string to validate.
    * @throws IOException
    *           if the id is not valid.
    */
   public static void checkValidId(String id) throws IOException {
-    ome.scifio.io.Location.checkValidId(id);
+    if (getMappedFile(id) != null) {
+      // NB: The id maps directly to an IRandomAccess handle, so is valid. Do
+      // not destroy an existing mapped IRandomAccess handle by closing it.
+      return;
+    }
+    // NB: Try to actually open a handle to make sure it is valid. Close it
+    // afterward so we don't leave it dangling. The process of doing this will
+    // throw IOException if something goes wrong.
+    Location.getHandle(id).close();
   }
 
   /**
@@ -250,7 +348,67 @@ public class Location {
    * @see java.io.File#list()
    */
   public String[] list(boolean noHiddenFiles) {
-    return loc.list(noHiddenFiles);
+    String key = getAbsolutePath() + Boolean.toString(noHiddenFiles);
+    String [] result = null;
+    if (cacheListings) {
+      cleanStaleCacheEntries();
+      ListingsResult listingsResult = fileListings.get(key);
+      if (listingsResult != null) {
+        return listingsResult.listing;
+      }
+    }
+    ArrayList<String> files = new ArrayList<String>();
+    if (isURL) {
+      try {
+        URLConnection c = url.openConnection();
+        InputStream is = c.getInputStream();
+        boolean foundEnd = false;
+
+        while (!foundEnd) {
+          byte[] b = new byte[is.available()];
+          is.read(b);
+          String s = new String(b, Constants.ENCODING);
+          if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
+
+          while (s.indexOf("a href") != -1) {
+            int ndx = s.indexOf("a href") + 8;
+            int idx = s.indexOf("\"", ndx);
+            if (idx < 0) break;
+            String f = s.substring(ndx, idx);
+            if (files.size() > 0 && f.startsWith("/")) {
+              return null;
+            }
+            s = s.substring(idx + 1);
+            if (f.startsWith("?")) continue;
+            Location check = new Location(getAbsolutePath(), f);
+            if (check.exists() && (!noHiddenFiles || !check.isHidden())) {
+              files.add(check.getName());
+            }
+          }
+        }
+      }
+      catch (IOException e) {
+        LOGGER.trace("Could not retrieve directory listing", e);
+        return null;
+      }
+    }
+    else {
+      if (file == null) return null;
+      String[] f = file.list();
+      if (f == null) return null;
+      for (String name : f) {
+        if (!noHiddenFiles || !(name.startsWith(".") ||
+          new Location(file.getAbsolutePath(), name).isHidden()))
+        {
+          files.add(name);
+        }
+      }
+    }
+    result = files.toArray(new String[files.size()]);
+    if (cacheListings) {
+      fileListings.put(key, new ListingsResult(result, System.nanoTime()));
+    }
+    return result;
   }
 
   // -- File API methods --
@@ -263,7 +421,7 @@ public class Location {
    * @see java.io.File#canRead()
    */
   public boolean canRead() {
-    return loc.canRead();
+    return isURL ? (isDirectory() || isFile()) : file.canRead();
   }
 
   /**
@@ -273,7 +431,7 @@ public class Location {
    * @see java.io.File#canWrite()
    */
   public boolean canWrite() {
-    return loc.canWrite();
+    return isURL ? false : file.canWrite();
   }
 
   /**
@@ -288,14 +446,23 @@ public class Location {
    * @see java.io.File#createNewFile()
    */
   public boolean createNewFile() throws IOException {
-    return loc.createNewFile();
+    if (isURL) throw new IOException("Unimplemented");
+    return file.createNewFile();
   }
 
   /**
-   * @see ome.scifio.io.Location#mkdirs()
+   * Creates a directory structures described by this Location's internal
+   * {@link File} instance.
+   *
+   * @return <code>true</code> if the directory structure was created
+   *   successfully.
+   * @see File#mkdirs()
    */
   public boolean mkdirs() {
-      return loc.mkdirs();
+    if (file == null) {
+      return false;
+    }
+    return file.mkdirs();
   }
 
   /**
@@ -306,7 +473,7 @@ public class Location {
    * @see java.io.File#delete()
    */
   public boolean delete() {
-    return loc.delete();
+    return isURL ? false : file.delete();
   }
 
   /**
@@ -316,7 +483,7 @@ public class Location {
    * @see java.io.File#deleteOnExit()
    */
   public void deleteOnExit() {
-    loc.deleteOnExit();
+    if (!isURL) file.deleteOnExit();
   }
 
   /**
@@ -324,11 +491,21 @@ public class Location {
    * @see java.net.URL#equals(Object)
    */
   public boolean equals(Object obj) {
-    return loc.equals(obj);
+    String absPath = getAbsolutePath();
+    String thatPath = null;
+
+    if (obj instanceof Location) {
+      thatPath = ((Location) obj).getAbsolutePath();
+    }
+    else {
+      thatPath = obj.toString();
+    }
+
+    return absPath.equals(thatPath);
   }
 
   public int hashCode() {
-    return loc.hashCode();
+    return getAbsolutePath().hashCode();
   }
 
   /**
@@ -339,7 +516,21 @@ public class Location {
    * @see java.io.File#exists()
    */
   public boolean exists() {
-    return loc.exists();
+    if (isURL) {
+      try {
+        url.getContent();
+        return true;
+      }
+      catch (IOException e) {
+        LOGGER.trace("Failed to retrieve content from URL", e);
+        return false;
+      }
+    }
+    if (file.exists()) return true;
+    if (getMappedFile(file.getPath()) != null) return true;
+
+    String mappedId = getMappedId(file.getPath());
+    return mappedId != null && new File(mappedId).exists();
   }
 
   /* @see java.io.File#getAbsoluteFile() */
@@ -349,12 +540,12 @@ public class Location {
 
   /* @see java.io.File#getAbsolutePath() */
   public String getAbsolutePath() {
-    return loc.getAbsolutePath();
+    return isURL ? url.toExternalForm() : file.getAbsolutePath();
   }
 
   /* @see java.io.File#getCanonicalFile() */
   public Location getCanonicalFile() throws IOException {
-    return new Location(loc.getCanonicalFile().getCanonicalPath());
+    return isURL ? getAbsoluteFile() : new Location(file.getCanonicalFile());
   }
 
   /**
@@ -364,7 +555,7 @@ public class Location {
    * will delegate to {@link java.io.File#getCanonicalPath()}.
    */
   public String getCanonicalPath() throws IOException {
-    return loc.getCanonicalPath();
+    return isURL ? getAbsolutePath() : file.getCanonicalPath();
   }
 
   /**
@@ -374,7 +565,12 @@ public class Location {
    * @see java.io.File#getName()
    */
   public String getName() {
-    return loc.getName();
+    if (isURL) {
+      String name = url.getFile();
+      name = name.substring(name.lastIndexOf("/") + 1);
+      return name;
+    }
+    return file.getName();
   }
 
   /**
@@ -385,7 +581,12 @@ public class Location {
    * @see java.io.File#getParent()
    */
   public String getParent() {
-    return loc.getParent();
+    if (isURL) {
+      String absPath = getAbsolutePath();
+      absPath = absPath.substring(0, absPath.lastIndexOf("/"));
+      return absPath;
+    }
+    return file.getParent();
   }
 
   /* @see java.io.File#getParentFile() */
@@ -395,7 +596,7 @@ public class Location {
 
   /* @see java.io.File#getPath() */
   public String getPath() {
-    return loc.getPath();
+    return isURL ? url.getHost() + url.getPath() : file.getPath();
   }
 
   /**
@@ -405,7 +606,7 @@ public class Location {
    * @see java.io.File#isAbsolute()
    */
   public boolean isAbsolute() {
-    return loc.isAbsolute();
+    return isURL ? true : file.isAbsolute();
   }
 
   /**
@@ -414,7 +615,11 @@ public class Location {
    * @see java.io.File#isDirectory()
    */
   public boolean isDirectory() {
-    return loc.isDirectory();
+    if (isURL) {
+      String[] list = list();
+      return list != null;
+    }
+    return file.isDirectory();
   }
 
   /**
@@ -423,7 +628,7 @@ public class Location {
    * @see java.io.File#exists()
    */
   public boolean isFile() {
-    return loc.isFile();
+    return isURL ? (!isDirectory() && exists()) : file.isFile();
   }
 
   /**
@@ -433,7 +638,7 @@ public class Location {
    * @see java.io.File#isHidden()
    */
   public boolean isHidden() {
-    return loc.isHidden();
+    return isURL ? false : file.isHidden();
   }
 
   /**
@@ -445,7 +650,16 @@ public class Location {
    * @see java.net.URLConnection#getLastModified()
    */
   public long lastModified() {
-    return loc.lastModified();
+    if (isURL) {
+      try {
+        return url.openConnection().getLastModified();
+      }
+      catch (IOException e) {
+        LOGGER.trace("Could not determine URL's last modification time", e);
+        return 0;
+      }
+    }
+    return file.lastModified();
   }
 
   /**
@@ -453,7 +667,16 @@ public class Location {
    * @see java.net.URLConnection#getContentLength()
    */
   public long length() {
-    return loc.length();
+    if (isURL) {
+      try {
+        return url.openConnection().getContentLength();
+      }
+      catch (IOException e) {
+        LOGGER.trace("Could not determine URL's content length", e);
+        return 0;
+      }
+    }
+    return file.length();
   }
 
   /**
@@ -462,7 +685,7 @@ public class Location {
    * If this is not a directory, return null.
    */
   public String[] list() {
-    return loc.list();
+    return list(false);
   }
 
   /**
@@ -471,16 +694,14 @@ public class Location {
    * If this is not a directory, return null.
    */
   public Location[] listFiles() {
-    ome.scifio.io.Location[] locs = loc.listFiles();
-    if(locs == null) return null;
-    
-    Location[] files = new Location[locs.length];
-    
-    for(int i = 0; i < locs.length; i++) {
-      files[i] = new Location(locs[i]);
+    String[] s = list();
+    if (s == null) return null;
+    Location[] f = new Location[s.length];
+    for (int i=0; i<f.length; i++) {
+      f[i] = new Location(getAbsolutePath(), s[i]);
+      f[i] = f[i].getAbsoluteFile();
     }
-    
-    return files;
+    return f;
   }
 
   /**
@@ -489,14 +710,15 @@ public class Location {
    * @see java.io.File#toURL()
    */
   public URL toURL() throws MalformedURLException {
-    return loc.toURL();
+    return isURL ? url : file.toURI().toURL();
   }
-  
+
   /**
    * @see java.io.File#toString()
    * @see java.net.URL#toString()
    */
   public String toString() {
-    return loc.toString();
+    return isURL ? url.toString() : file.toString();
   }
+
 }

@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -37,7 +37,7 @@
 package loci.common;
 
 /**
- * A legacy wrapper for ome.scifio.common.StatusReporter
+ * A simple interface for objects wishing to report their status to listeners.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/StatusReporter.java">Trac</a>,

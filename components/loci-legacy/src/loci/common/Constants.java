@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -37,7 +37,7 @@
 package loci.common;
 
 /**
- * Legacy delegator class for ome.scifio.common.Constants.
+ * Constants that are used within many classes in loci.common.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/Constants.java">Trac</a>,
@@ -45,7 +45,7 @@ package loci.common;
  */
 public final class Constants {
 
-  public static final String ENCODING = ome.scifio.common.Constants.ENCODING;
- 
-  public static final double EPSILON = ome.scifio.common.Constants.EPSILON;
+  public static final String ENCODING = "UTF-8";
+
+  public static final double EPSILON = 0.000001;
 }

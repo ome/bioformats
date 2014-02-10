@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -38,12 +38,15 @@ package loci.common.xml;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * A legacy delegator class for ome.scifio.xml.BaseHandler.
+ * Top-level SAX handler.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/BaseHandler.java">Trac</a>,
@@ -53,32 +56,16 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class BaseHandler extends DefaultHandler {
 
-  // -- Fields --
-  
-  protected ome.scifio.xml.BaseHandler handler = new ome.scifio.xml.BaseHandler();
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(BaseHandler.class);
 
   // -- DefaultHandler API methods --
 
   public InputSource resolveEntity(String publicId, String systemId)
     throws IOException, SAXException
   {
-    return handler.resolveEntity(publicId, systemId);
+    LOGGER.debug("Ignoring: {}, {}", publicId, systemId);
+    return new InputSource(new java.io.StringReader(""));
   }
 
-  // -- Object delegators --
-
-  @Override
-  public boolean equals(Object obj) {
-    return handler.equals(obj);
-  }
-  
-  @Override
-  public int hashCode() {
-    return handler.hashCode();
-  }
-  
-  @Override
-  public String toString() {
-    return handler.toString();
-  }
 }

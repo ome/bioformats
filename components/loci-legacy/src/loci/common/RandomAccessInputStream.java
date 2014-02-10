@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -38,16 +38,25 @@ package loci.common;
 
 import java.io.Closeable;
 import java.io.DataInput;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
-import loci.common.adapter.IRandomAccessAdapter;
-import loci.legacy.adapter.AdapterTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 /**
- * A legacy delegator class for ome.scifio.io.RandomAccessInputStream
- * 
+ * Top-level class for reading from various data sources.
+ *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/RandomAccessInputStream.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/RandomAccessInputStream.java;hb=HEAD">Gitweb</a></dd></dl>
@@ -59,9 +68,33 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
 
   // -- Constants --
 
+  /** Maximum size of the buffer used by the DataInputStream. */
+  protected static final int MAX_OVERHEAD = 1048576;
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(RandomAccessInputStream.class);
+
+  /**
+   * Block size to use when searching through the stream.
+   */
+  protected static final int DEFAULT_BLOCK_SIZE = 256 * 1024; // 256 KB
+
+  /** Maximum number of bytes to search when searching through the stream. */
+  protected static final int MAX_SEARCH_SIZE = 512 * 1024 * 1024; // 512 MB
+
   // -- Fields --
 
-  private ome.scifio.io.RandomAccessInputStream rais;
+  protected IRandomAccess raf;
+
+  /** The file name. */
+  protected String file;
+
+  protected long length = -1;
+
+  protected long markedPos = -1;
+
+  protected String encoding = Constants.ENCODING;
 
   // -- Constructors --
 
@@ -70,12 +103,12 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
    * around the given file.
    */
   public RandomAccessInputStream(String file) throws IOException {
-    rais = new ome.scifio.io.RandomAccessInputStream(file);
+    this(Location.getHandle(file), file);
   }
 
   /** Constructs a random access stream around the given handle. */
   public RandomAccessInputStream(IRandomAccess handle) throws IOException {
-    rais = new ome.scifio.io.RandomAccessInputStream(AdapterTools.getAdapter(IRandomAccessAdapter.class).getModern(handle));
+    this(handle, null);
   }
 
   /**
@@ -85,12 +118,19 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   public RandomAccessInputStream(IRandomAccess handle, String file)
     throws IOException
   {
-    rais = new ome.scifio.io.RandomAccessInputStream(AdapterTools.getAdapter(IRandomAccessAdapter.class).getModern(handle), file);
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("RandomAccessInputStream {} OPEN", hashCode());
+    }
+    raf = handle;
+    raf.setOrder(ByteOrder.BIG_ENDIAN);
+    this.file = file;
+    seek(0);
+    length = -1;
   }
 
   /** Constructs a random access stream around the given byte array. */
   public RandomAccessInputStream(byte[] array) throws IOException {
-    rais = new ome.scifio.io.RandomAccessInputStream(array);
+    this(new ByteArrayHandle(array));
   }
 
   // -- RandomAccessInputStream API methods --
@@ -101,17 +141,17 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
    * @see loci.common.Constants#ENCODING
    */
   public void setEncoding(String encoding) {
-    rais.setEncoding(encoding);
+    this.encoding = encoding;
   }
 
   /** Seeks to the given offset within the stream. */
   public void seek(long pos) throws IOException {
-    rais.seek(pos);
+    raf.seek(pos);
   }
 
   /** Gets the number of bytes in the file. */
   public long length() throws IOException {
-    return rais.length();
+    return length < 0 ? raf.length() : length;
   }
 
   /**
@@ -123,27 +163,37 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
    * Passing in a negative value will reset the length to the stream's real length.
    */
   public void setLength(long newLength) throws IOException {
-    rais.setLength(newLength);
+    if (newLength < length()) {
+      this.length = length();
+    }
   }
 
   /** Gets the current (absolute) file pointer. */
   public long getFilePointer() throws IOException {
-    return rais.getFilePointer();
+    return raf.getFilePointer();
   }
 
   /** Closes the streams. */
   public void close() throws IOException {
-    rais.close();
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("RandomAccessInputStream {} CLOSE", hashCode());
+    }
+    if (Location.getMappedFile(file) != null) return;
+    if (raf != null) raf.close();
+    raf = null;
+    markedPos = -1;
   }
 
   /** Sets the endianness of the stream. */
   public void order(boolean little) {
-    rais.order(little);
+    if (raf != null) {
+      raf.setOrder(little ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
+    }
   }
 
   /** Gets the endianness of the stream. */
   public boolean isLittleEndian() {
-    return rais.isLittleEndian();
+    return raf.getOrder() == ByteOrder.LITTLE_ENDIAN;
   }
 
   /**
@@ -152,7 +202,12 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
    * @see #findString(String...)
    */
   public String readString(String lastChars) throws IOException {
-    return rais.readString(lastChars);
+    if (lastChars.length() == 1) return findString(lastChars);
+    String[] terminators = new String[lastChars.length()];
+    for (int i=0; i<terminators.length; i++) {
+      terminators[i] = lastChars.substring(i, i + 1);
+    }
+    return findString(terminators);
   }
 
   /**
@@ -165,7 +220,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
    *   terminating sequence is found.
    */
   public String findString(String... terminators) throws IOException {
-    return rais.findString(terminators);
+    return findString(true, DEFAULT_BLOCK_SIZE, terminators);
   }
 
   /**
@@ -186,7 +241,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   public String findString(boolean saveString, String... terminators)
     throws IOException
   {
-    return rais.findString(saveString, terminators);
+    return findString(saveString, DEFAULT_BLOCK_SIZE, terminators);
   }
 
   /**
@@ -203,7 +258,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   public String findString(int blockSize, String... terminators)
     throws IOException
   {
-    return rais.findString(blockSize, terminators);
+    return findString(true, blockSize, terminators);
   }
 
   /**
@@ -225,158 +280,255 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
   public String findString(boolean saveString, int blockSize,
     String... terminators) throws IOException
   {
-    return rais.findString(saveString, blockSize, terminators);
+    StringBuilder out = new StringBuilder();
+    long startPos = getFilePointer();
+    long bytesDropped = 0;
+    long inputLen = length();
+    long maxLen = inputLen - startPos;
+    boolean tooLong = saveString && maxLen > MAX_SEARCH_SIZE;
+    if (tooLong) maxLen = MAX_SEARCH_SIZE;
+    boolean match = false;
+    int maxTermLen = 0;
+    for (String term : terminators) {
+      int len = term.length();
+      if (len > maxTermLen) maxTermLen = len;
+    }
+
+    InputStreamReader in = new InputStreamReader(this, encoding);
+    char[] buf = new char[blockSize];
+    long loc = 0;
+    while (loc < maxLen && getFilePointer() < length() - 1) {
+      // if we're not saving the string, drop any old, unnecessary output
+      if (!saveString) {
+        int outLen = out.length();
+        if (outLen >= maxTermLen) {
+          int dropIndex = outLen - maxTermLen + 1;
+          String last = out.substring(dropIndex, outLen);
+          out.setLength(0);
+          out.append(last);
+          bytesDropped += dropIndex;
+        }
+      }
+
+      // read block from stream
+      int r = in.read(buf, 0, blockSize);
+      if (r <= 0) throw new IOException("Cannot read from stream: " + r);
+
+      // append block to output
+      out.append(buf, 0, r);
+
+      // check output, returning smallest possible string
+      int min = Integer.MAX_VALUE, tagLen = 0;
+      for (String t : terminators) {
+        int len = t.length();
+        int start = (int) (loc - bytesDropped - len);
+        int value = out.indexOf(t, start < 0 ? 0 : start);
+        if (value >= 0 && value < min) {
+          match = true;
+          min = value;
+          tagLen = len;
+        }
+      }
+
+      if (match) {
+        // reset stream to proper location
+        seek(startPos + bytesDropped + min + tagLen);
+
+        // trim output string
+        if (saveString) {
+          out.setLength(min + tagLen);
+          return out.toString();
+        }
+        return null;
+      }
+
+      loc += r;
+    }
+
+    // no match
+    if (tooLong) throw new IOException("Maximum search length reached.");
+    return saveString ? out.toString() : null;
   }
 
   // -- DataInput API methods --
 
   /** Read an input byte and return true if the byte is nonzero. */
   public boolean readBoolean() throws IOException {
-    return rais.readBoolean();
+    return raf.readBoolean();
   }
 
   /** Read one byte and return it. */
   public byte readByte() throws IOException {
-    return rais.readByte();
+    return raf.readByte();
   }
 
   /** Read an input char. */
   public char readChar() throws IOException {
-    return rais.readChar();
+    return raf.readChar();
   }
 
   /** Read eight bytes and return a double value. */
   public double readDouble() throws IOException {
-    return rais.readDouble();
+    return raf.readDouble();
   }
 
   /** Read four bytes and return a float value. */
   public float readFloat() throws IOException {
-    return rais.readFloat();
+    return raf.readFloat();
   }
 
   /** Read four input bytes and return an int value. */
   public int readInt() throws IOException {
-    return rais.readInt();
+    return raf.readInt();
   }
 
   /** Read the next line of text from the input stream. */
   public String readLine() throws IOException {
-    return rais.readLine();
+    String line = findString("\n");
+    return line.length() == 0 ? null : line;
   }
 
   /** Read a string of arbitrary length, terminated by a null char. */
   public String readCString() throws IOException {
-    return rais.readCString();
+    String line = findString("\0");
+    return line.length() == 0 ? null : line;
   }
 
   /** Read a string of up to length n. */
   public String readString(int n) throws IOException {
-    return rais.readString(n);
+    int avail = available();
+    if (n > avail) n = avail;
+    byte[] b = new byte[n];
+    readFully(b);
+    return new String(b, encoding);
   }
 
   /** Read eight input bytes and return a long value. */
   public long readLong() throws IOException {
-    return rais.readLong();
+    return raf.readLong();
   }
 
   /** Read two input bytes and return a short value. */
   public short readShort() throws IOException {
-    return rais.readShort();
+    return raf.readShort();
   }
 
   /** Read an input byte and zero extend it appropriately. */
   public int readUnsignedByte() throws IOException {
-    return rais.readUnsignedByte();
+    return raf.readUnsignedByte();
   }
 
   /** Read two bytes and return an int in the range 0 through 65535. */
   public int readUnsignedShort() throws IOException {
-    return rais.readUnsignedShort();
+    return raf.readUnsignedShort();
   }
 
   /** Read a string that has been encoded using a modified UTF-8 format. */
   public String readUTF() throws IOException {
-    return rais.readUTF();
+    return raf.readUTF();
   }
 
   /** Skip n bytes within the stream. */
   public int skipBytes(int n) throws IOException {
-    return rais.skipBytes(n);
+    return raf.skipBytes(n);
   }
 
   /** Read bytes from the stream into the given array. */
   public int read(byte[] array) throws IOException {
-    return rais.read(array);
+    int rtn = raf.read(array);
+    if (rtn == 0 && raf.getFilePointer() >= raf.length() - 1) rtn = -1;
+    return rtn;
   }
 
   /**
    * Read n bytes from the stream into the given array at the specified offset.
    */
   public int read(byte[] array, int offset, int n) throws IOException {
-    return rais.read(array, offset, n);
+    int rtn = raf.read(array, offset, n);
+    if (rtn == 0 && raf.getFilePointer() >= raf.length() - 1) rtn = -1;
+    return rtn;
   }
 
   /** Read bytes from the stream into the given buffer. */
   public int read(ByteBuffer buf) throws IOException {
-    return rais.read(buf);
+    return raf.read(buf);
   }
 
   /**
    * Read n bytes from the stream into the given buffer at the specified offset.
    */
   public int read(ByteBuffer buf, int offset, int n) throws IOException {
-    return rais.read(buf, offset, n);
+    return raf.read(buf, offset, n);
   }
 
   /** Read bytes from the stream into the given array. */
   public void readFully(byte[] array) throws IOException {
-    rais.readFully(array);
+    raf.readFully(array);
   }
 
   /**
    * Read n bytes from the stream into the given array at the specified offset.
    */
   public void readFully(byte[] array, int offset, int n) throws IOException {
-    rais.readFully(array, offset, n);
+    raf.readFully(array, offset, n);
   }
 
   // -- InputStream API methods --
 
   public int read() throws IOException {
-    return rais.read();
+    int b = readByte();
+    if (b == -1 && (getFilePointer() >= length())) return 0;
+    return b;
   }
 
   public int available() throws IOException {
-    return rais.available();
+    long remain = length() - getFilePointer();
+    if (remain > Integer.MAX_VALUE) remain = Integer.MAX_VALUE;
+    return (int) remain;
   }
 
   public void mark(int readLimit) {
-    rais.mark(readLimit);
+    try {
+      markedPos = getFilePointer();
+    }
+    catch (IOException exc) {
+      LOGGER.warn("Cannot set mark", exc);
+    }
   }
 
   public boolean markSupported() {
-    return rais.markSupported();
+    return true;
   }
 
   public void reset() throws IOException {
-    rais.reset();
+    if (markedPos < 0) throw new IOException("No mark set");
+    seek(markedPos);
   }
 
-  // -- Object delegators --
+  // -- Externalizable API methods --
 
-  @Override
-  public boolean equals(Object obj) {
-    return rais.equals(obj);
+  public void read(Kryo kryo, Input in) {
+    raf = (IRandomAccess) kryo.readClassAndObject(in);
+    file = kryo.readObjectOrNull(in, String.class);
+    if (file != null) {
+      try {
+        raf = Location.getHandle(file);
+      }
+      catch (IOException e) {
+        LOGGER.warn("Failed to reopen file", e);
+      }
+    }
+    length = kryo.readObject(in, Long.class);
+    markedPos = kryo.readObject(in, Long.class);
+    encoding = kryo.readObject(in, String.class);
   }
-  
-  @Override
-  public int hashCode() {
-    return rais.hashCode();
+
+  public void write(Kryo kryo, Output out) {
+    kryo.writeClassAndObject(out, raf);
+    kryo.writeObjectOrNull(out, file, String.class);
+    kryo.writeObject(out, length);
+    kryo.writeObject(out, markedPos);
+    kryo.writeObject(out, encoding);
   }
-  
-  @Override
-  public String toString() {
-    return rais.toString();
-  }
+
 }

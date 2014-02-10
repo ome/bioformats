@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -36,15 +36,20 @@
 
 package loci.common;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * A legacy delegator class for ome.scifio.io.NIOFileHandle.
+ * A wrapper for buffered NIO logic that implements the IRandomAccess interface.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/NIOFileHandle.java">Trac</a>,
@@ -59,10 +64,51 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   // -- Constants --
 
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(NIOFileHandle.class);
+
   //-- Static fields --
+
+  /** Default NIO buffer size to facilitate buffered I/O. */
+  protected static int defaultBufferSize = 1048576;
+
+  /**
+   * Default NIO buffer size to facilitate buffered I/O for read/write streams.
+   */
+  protected static int defaultRWBufferSize = 8192;
 
   // -- Fields --
 
+  /** The random access file object backing this FileHandle. */
+  protected RandomAccessFile raf;
+
+  /** The file channel backed by the random access file. */
+  protected FileChannel channel;
+
+  /** The absolute position within the file. */
+  protected long position = 0;
+
+  /** The absolute position of the start of the buffer. */
+  protected long bufferStartPosition = 0;
+
+  /** The buffer size. */
+  protected int bufferSize;
+
+  /** The buffer itself. */
+  protected ByteBuffer buffer;
+
+  /** Whether or not the file is opened read/write. */
+  protected boolean isReadWrite = false;
+
+  /** The default map mode for the file. */
+  protected FileChannel.MapMode mapMode = FileChannel.MapMode.READ_ONLY;
+
+  /** The buffer's byte ordering. */
+  protected ByteOrder order;
+
+  /** Provider class for NIO byte buffers, allocated or memory mapped. */
+  protected NIOByteBufferProvider byteBufferProvider;
 
   // -- Constructors --
 
@@ -70,9 +116,19 @@ public class NIOFileHandle extends AbstractNIOHandle {
    * Creates a random access file stream to read from, and
    * optionally to write to, the file specified by the File argument.
    */
-  public NIOFileHandle(File file, String mode, int bufferSize) 
-    throws IOException {
-    handle = new ome.scifio.io.NIOFileHandle(file, mode, bufferSize);
+  public NIOFileHandle(File file, String mode, int bufferSize)
+    throws IOException
+  {
+    this.bufferSize = bufferSize;
+    validateMode(mode);
+    if (mode.equals("rw")) {
+      isReadWrite = true;
+      mapMode = FileChannel.MapMode.READ_WRITE;
+    }
+    raf = new RandomAccessFile(file, mode);
+    channel = raf.getChannel();
+    byteBufferProvider = new NIOByteBufferProvider(channel, mapMode);
+    buffer(position, 0);
   }
 
   /**
@@ -80,7 +136,8 @@ public class NIOFileHandle extends AbstractNIOHandle {
    * optionally to write to, the file specified by the File argument.
    */
   public NIOFileHandle(File file, String mode) throws IOException {
-    handle = new ome.scifio.io.NIOFileHandle(file, mode);
+    this(file, mode,
+      mode.equals("rw") ? defaultRWBufferSize : defaultBufferSize);
   }
 
   /**
@@ -88,7 +145,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
    * optionally to write to, a file with the specified name.
    */
   public NIOFileHandle(String name, String mode) throws IOException {
-    handle = new ome.scifio.io.NIOFileHandle(name, mode);
+    this(new File(name), mode);
   }
 
   // -- NIOFileHandle API methods --
@@ -100,7 +157,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
    * NIOFileHandle(File, String) constructors will use this buffer size.
    */
   public static void setDefaultBufferSize(int size) {
-    ome.scifio.io.NIOFileHandle.setDefaultBufferSize(size);
+    defaultBufferSize = size;
   }
 
   /**
@@ -110,234 +167,395 @@ public class NIOFileHandle extends AbstractNIOHandle {
    * NIOFileHandle(File, String) constructors will use this buffer size.
    */
   public static void setDefaultReadWriteBufferSize(int size) {
-    ome.scifio.io.NIOFileHandle.setDefaultReadWriteBufferSize(size);
+    defaultRWBufferSize = size;
   }
 
   // -- FileHandle and Channel API methods --
 
   /** Gets the random access file object backing this FileHandle. */
-  public RandomAccessFile getRandomAccessFile() { return ((ome.scifio.io.NIOFileHandle)handle).getRandomAccessFile(); }
+  public RandomAccessFile getRandomAccessFile() {
+    return raf;
+  }
 
   /** Gets the FileChannel from this FileHandle. */
-  public FileChannel getFileChannel() { return ((ome.scifio.io.NIOFileHandle)handle).getFileChannel(); }
+  public FileChannel getFileChannel() {
+    return channel;
+  }
 
   /** Gets the current buffer size. */
-  public int getBufferSize() { return ((ome.scifio.io.NIOFileHandle)handle).getBufferSize(); }
+  public int getBufferSize() {
+    return bufferSize;
+  }
 
   // -- AbstractNIOHandle API methods --
 
   /* @see AbstractNIOHandle.setLength(long) */
   public void setLength(long length) throws IOException {
-    ((ome.scifio.io.NIOFileHandle)handle).setLength(length);
+    raf.seek(length - 1);
+    raf.write((byte) 0);
+    buffer = null;
   }
 
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess.close() */
   public void close() throws IOException {
-    handle.close();
+    raf.close();
   }
 
   /* @see IRandomAccess.getFilePointer() */
   public long getFilePointer() throws IOException {
-    return handle.getFilePointer();
+    return position;
   }
 
   /* @see IRandomAccess.length() */
   public long length() throws IOException {
-    return handle.length();
+    return raf.length();
   }
 
   /* @see IRandomAccess.getOrder() */
   public ByteOrder getOrder() {
-    return handle.getOrder();
+    return buffer == null ? order : buffer.order();
   }
 
   /* @see IRandomAccess.setOrder(ByteOrder) */
   public void setOrder(ByteOrder order) {
-    handle.setOrder(order);
+    this.order = order;
+    if (buffer != null) {
+      buffer.order(order);
+    }
   }
 
   /* @see IRandomAccess.read(byte[]) */
   public int read(byte[] b) throws IOException {
-    return handle.read(b);
+    return read(ByteBuffer.wrap(b));
   }
 
   /* @see IRandomAccess.read(byte[], int, int) */
   public int read(byte[] b, int off, int len) throws IOException {
-    return handle.read(b, off, len);
+    return read(ByteBuffer.wrap(b), off, len);
   }
 
   /* @see IRandomAccess.read(ByteBuffer) */
   public int read(ByteBuffer buf) throws IOException {
-    return handle.read(buf);
+    return read(buf, 0, buf.capacity());
   }
 
   /* @see IRandomAccess.read(ByteBuffer, int, int) */
   public int read(ByteBuffer buf, int off, int len) throws IOException {
-    return handle.read(buf, off, len);
+    buf.position(off);
+    buf.limit(off + len);
+    channel.position(position);
+    int readLength = channel.read(buf);
+    buffer(position + readLength, 0);
+    // Return value of NIO channel's is -1 when zero bytes are read at the end
+    // of the file.
+    return readLength == -1? 0 : readLength;
   }
 
   /* @see IRandomAccess.seek(long) */
   public void seek(long pos) throws IOException {
-    handle.seek(pos);
+    if (mapMode == FileChannel.MapMode.READ_WRITE && pos > length()) {
+      setLength(pos);
+    }
+    buffer(pos, 0);
   }
 
   /* @see java.io.DataInput.readBoolean() */
   public boolean readBoolean() throws IOException {
-    return handle.readBoolean();
+    return readByte() == 1;
   }
 
   /* @see java.io.DataInput.readByte() */
   public byte readByte() throws IOException {
-    return handle.readByte();
+    buffer(position, 1);
+    position += 1;
+    try {
+      return buffer.get();
+    } catch (BufferUnderflowException e) {
+      EOFException eof = new EOFException(EOF_ERROR_MSG);
+      eof.initCause(e);
+      throw eof;
+    }
   }
 
   /* @see java.io.DataInput.readChar() */
   public char readChar() throws IOException {
-    return handle.readChar();
+    buffer(position, 2);
+    position += 2;
+    try {
+      return buffer.getChar();
+    } catch (BufferUnderflowException e) {
+      EOFException eof = new EOFException(EOF_ERROR_MSG);
+      eof.initCause(e);
+      throw eof;
+    }
   }
 
   /* @see java.io.DataInput.readDouble() */
   public double readDouble() throws IOException {
-    return handle.readDouble();
+    buffer(position, 8);
+    position += 8;
+    try {
+      return buffer.getDouble();
+    } catch (BufferUnderflowException e) {
+      EOFException eof = new EOFException(EOF_ERROR_MSG);
+      eof.initCause(e);
+      throw eof;
+    }
   }
 
   /* @see java.io.DataInput.readFloat() */
   public float readFloat() throws IOException {
-    return handle.readFloat();
+    buffer(position, 4);
+    position += 4;
+    try {
+      return buffer.getFloat();
+    } catch (BufferUnderflowException e) {
+      EOFException eof = new EOFException(EOF_ERROR_MSG);
+      eof.initCause(e);
+      throw eof;
+    }
   }
 
   /* @see java.io.DataInput.readFully(byte[]) */
   public void readFully(byte[] b) throws IOException {
-    handle.readFully(b);
+    read(b);
   }
 
   /* @see java.io.DataInput.readFully(byte[], int, int) */
   public void readFully(byte[] b, int off, int len) throws IOException {
-    handle.readFully(b, off, len);
+    read(b, off, len);
   }
 
   /* @see java.io.DataInput.readInt() */
   public int readInt() throws IOException {
-    return handle.readInt();
+    buffer(position, 4);
+    position += 4;
+    try {
+      return buffer.getInt();
+    } catch (BufferUnderflowException e) {
+      EOFException eof = new EOFException(EOF_ERROR_MSG);
+      eof.initCause(e);
+      throw eof;
+    }
   }
 
   /* @see java.io.DataInput.readLine() */
   public String readLine() throws IOException {
-    return handle.readLine();
+    raf.seek(position);
+    String line = raf.readLine();
+    buffer(raf.getFilePointer(), 0);
+    return line;
   }
 
   /* @see java.io.DataInput.readLong() */
   public long readLong() throws IOException {
-    return handle.readLong();
+    buffer(position, 8);
+    position += 8;
+    try {
+      return buffer.getLong();
+    } catch (BufferUnderflowException e) {
+      EOFException eof = new EOFException(EOF_ERROR_MSG);
+      eof.initCause(e);
+      throw eof;
+    }
   }
 
   /* @see java.io.DataInput.readShort() */
   public short readShort() throws IOException {
-    return handle.readShort();
+    buffer(position, 2);
+    position += 2;
+    try {
+      return buffer.getShort();
+    } catch (BufferUnderflowException e) {
+      EOFException eof = new EOFException(EOF_ERROR_MSG);
+      eof.initCause(e);
+      throw eof;
+    }
   }
 
   /* @see java.io.DataInput.readUnsignedByte() */
   public int readUnsignedByte() throws IOException {
-    return handle.readUnsignedByte();
+    return readByte() & 0xFF;
   }
 
   /* @see java.io.DataInput.readUnsignedShort() */
   public int readUnsignedShort() throws IOException {
-    return handle.readUnsignedShort();
+    return readShort() & 0xFFFF;
   }
 
   /* @see java.io.DataInput.readUTF() */
   public String readUTF() throws IOException {
-    return handle.readUTF();
+    raf.seek(position);
+    String utf8 = raf.readUTF();
+    buffer(raf.getFilePointer(), 0);
+    return utf8;
   }
 
   /* @see java.io.DataInput.skipBytes(int) */
   public int skipBytes(int n) throws IOException {
-    return handle.skipBytes(n);
+    if (n < 1) {
+      return 0;
+    }
+    long oldPosition = position;
+    long newPosition = oldPosition + Math.min(n, length());
+
+    buffer(newPosition, 0);
+    return (int) (position - oldPosition);
   }
 
   // -- DataOutput API methods --
 
   /* @see java.io.DataOutput.write(byte[]) */
   public void write(byte[] b) throws IOException {
-    handle.write(b);
+    write(ByteBuffer.wrap(b));
   }
 
   /* @see java.io.DataOutput.write(byte[], int, int) */
   public void write(byte[] b, int off, int len) throws IOException {
-    handle.write(b, off, len);
+    write(ByteBuffer.wrap(b), off, len);
   }
 
   /* @see IRandomAccess.write(ByteBuffer) */
   public void write(ByteBuffer buf) throws IOException {
-    handle.write(buf);
+    write(buf, 0, buf.capacity());
   }
 
   /* @see IRandomAccess.write(ByteBuffer, int, int) */
   public void write(ByteBuffer buf, int off, int len) throws IOException {
-    handle.write(buf, off, len);
+    writeSetup(len);
+    buf.limit(off + len);
+    buf.position(off);
+    position += channel.write(buf, position);
+    buffer = null;
   }
 
   /* @see java.io.DataOutput.write(int b) */
   public void write(int b) throws IOException {
-    handle.write(b);
+    writeByte(b);
   }
 
   /* @see java.io.DataOutput.writeBoolean(boolean) */
   public void writeBoolean(boolean v) throws IOException {
-    handle.writeBoolean(v);
+    writeByte(v ? 1 : 0);
   }
 
   /* @see java.io.DataOutput.writeByte(int) */
   public void writeByte(int v) throws IOException {
-    handle.writeByte(v);
+    writeSetup(1);
+    buffer.put((byte) v);
+    doWrite(1);
   }
 
   /* @see java.io.DataOutput.writeBytes(String) */
   public void writeBytes(String s) throws IOException {
-    handle.writeBytes(s);
+    write(s.getBytes(Constants.ENCODING));
   }
 
   /* @see java.io.DataOutput.writeChar(int) */
   public void writeChar(int v) throws IOException {
-    handle.writeChar(v);
+    writeSetup(2);
+    buffer.putChar((char) v);
+    doWrite(2);
   }
 
   /* @see java.io.DataOutput.writeChars(String) */
   public void writeChars(String s) throws IOException {
-    handle.writeChars(s);
+    write(s.getBytes("UTF-16BE"));
   }
 
   /* @see java.io.DataOutput.writeDouble(double) */
   public void writeDouble(double v) throws IOException {
-    handle.writeDouble(v);
+    writeSetup(8);
+    buffer.putDouble(v);
+    doWrite(8);
   }
 
   /* @see java.io.DataOutput.writeFloat(float) */
   public void writeFloat(float v) throws IOException {
-    handle.writeFloat(v);
+    writeSetup(4);
+    buffer.putFloat(v);
+    doWrite(4);
   }
 
   /* @see java.io.DataOutput.writeInt(int) */
   public void writeInt(int v) throws IOException {
-    handle.writeInt(v);
+    writeSetup(4);
+    buffer.putInt(v);
+    doWrite(4);
   }
 
   /* @see java.io.DataOutput.writeLong(long) */
   public void writeLong(long v) throws IOException {
-    handle.writeLong(v);
+    writeSetup(8);
+    buffer.putLong(v);
+    doWrite(8);
   }
 
   /* @see java.io.DataOutput.writeShort(int) */
   public void writeShort(int v) throws IOException {
-    handle.writeShort(v);
+    writeSetup(2);
+    buffer.putShort((short) v);
+    doWrite(2);
   }
 
   /* @see java.io.DataOutput.writeUTF(String)  */
   public void writeUTF(String str) throws IOException {
-    handle.writeUTF(str);
+    // NB: number of bytes written is greater than the length of the string
+    int strlen = str.getBytes(Constants.ENCODING).length + 2;
+    writeSetup(strlen);
+    raf.seek(position);
+    raf.writeUTF(str);
+    position += strlen;
+    buffer = null;
+  }
+
+  /**
+   * Aligns the NIO buffer, maps it if it is not currently and sets all
+   * relevant positions and offsets.
+   * @param offset The location within the file to read from.
+   * @param size The requested read length.
+   * @throws IOException If there is an issue mapping, aligning or allocating
+   * the buffer.
+   */
+  private void buffer(long offset, int size) throws IOException {
+    position = offset;
+    long newPosition = offset + size;
+    if (newPosition < bufferStartPosition ||
+      newPosition > bufferStartPosition + bufferSize || buffer == null)
+    {
+      bufferStartPosition = offset;
+      if (length() > 0 && length() - 1 < bufferStartPosition) {
+        bufferStartPosition = length() - 1;
+      }
+      long newSize = Math.min(length() - bufferStartPosition, bufferSize);
+      if (newSize < size && newSize == bufferSize) newSize = size;
+      if (newSize + bufferStartPosition > length()) {
+        newSize = length() - bufferStartPosition;
+      }
+      offset = bufferStartPosition;
+      ByteOrder byteOrder = buffer == null ? order : getOrder();
+      buffer = byteBufferProvider.allocate(bufferStartPosition, (int) newSize);
+      if (byteOrder != null) setOrder(byteOrder);
+    }
+    buffer.position((int) (offset - bufferStartPosition));
+    if (buffer.position() + size > buffer.limit() &&
+      mapMode == FileChannel.MapMode.READ_WRITE)
+    {
+      buffer.limit(buffer.position() + size);
+    }
+  }
+
+  private void writeSetup(int length) throws IOException {
+    validateLength(length);
+    buffer(position, length);
+  }
+
+  private void doWrite(int length) throws IOException {
+    buffer.position(buffer.position() - length);
+    channel.write(buffer, position);
+    position += length;
   }
 
 }

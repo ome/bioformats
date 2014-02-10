@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -37,8 +37,8 @@
 package loci.common;
 
 /**
- * A legacy delegator class for ome.scifio.common.StatusEvent.
- * 
+ * An event indicating a status update.
+ *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/StatusEvent.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/StatusEvent.java;hb=HEAD">Gitweb</a></dd></dl>
@@ -47,68 +47,76 @@ public class StatusEvent {
 
   // -- Fields --
 
-  private ome.scifio.common.StatusEvent event;
+  /** Current progress value. */
+  protected int progress;
+
+  /** Current progress maximum. */
+  protected int maximum;
+
+  /** Current status message. */
+  protected String status;
+
+  /** Whether or not this is a warning event. */
+  protected boolean warning;
 
   // -- Constructor --
 
   /** Constructs a status event. */
   public StatusEvent(String message) {
-    event = new ome.scifio.common.StatusEvent(message);
+    this(-1, -1, message);
   }
 
   /** Constructs a status event. */
   public StatusEvent(String message, boolean warn) {
-    event = new ome.scifio.common.StatusEvent(message, warn);
+    this(-1, -1, message, warn);
   }
 
   /** Constructs a status event. */
   public StatusEvent(int progress, int maximum, String message) {
-    event = new ome.scifio.common.StatusEvent(progress, maximum, message);
+    this(progress, maximum, message, false);
   }
 
   /** Constructs a status event. */
   public StatusEvent(int progress, int maximum, String message, boolean warn) {
-    event = new ome.scifio.common.StatusEvent(progress, maximum, message, warn);
-  }
-  
-  /** Constructs a loci.common.StatusEvent from an ome.scifio.common.StatusEvent */
-  public StatusEvent(ome.scifio.common.StatusEvent e) {
-    this.event = e;
+    this.progress = progress;
+    this.maximum = maximum;
+    status = message;
+    warning = warn;
   }
 
   // -- StatusEvent API methods --
 
   /** Gets progress value. Returns -1 if progress is unknown. */
-  public int getProgressValue() { 
-    return event.getProgressValue();
+  public int getProgressValue() {
+    return progress;
   }
 
   /** Gets progress maximum. Returns -1 if progress is unknown. */
-  public int getProgressMaximum() { 
-    return event.getProgressMaximum();
+  public int getProgressMaximum() {
+    return maximum;
   }
 
   /** Gets status message. */
   public String getStatusMessage() {
-    return event.getStatusMessage();
+    return status;
   }
 
   /** Returns whether or not this is a warning event. */
-  public boolean isWarning() { 
-    return event.isWarning();
+  public boolean isWarning() {
+    return warning;
   }
 
   // -- Object API methods --
 
   @Override
   public String toString() {
-    return event.toString();
-  }
-  
-  // -- Delegate Getter-
-  
-  public ome.scifio.common.StatusEvent getEvent() {
-    return event;
+    StringBuilder sb = new StringBuilder();
+    sb.append("Status");
+    sb.append(": progress=" + progress);
+    sb.append(", maximum=" + maximum);
+    sb.append(", warning=" + warning);
+    sb.append(", status='" + status + "'");
+    return sb.toString();
   }
 
 }

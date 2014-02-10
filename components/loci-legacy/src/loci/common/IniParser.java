@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -37,10 +37,17 @@
 package loci.common;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * A legacy delegator class for ome.scifio.common.IniParser.
+ * A simple parser for INI configuration files.  Supports pound (#) as comments,
+ * and backslash (\) to continue values across multiple lines.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/IniParser.java">Trac</a>,
@@ -51,14 +58,13 @@ import java.io.IOException;
 public class IniParser {
 
   // -- Fields --
-  
-  private ome.scifio.common.IniParser parser;
-  
-  // -- Constructor --
-  
-  public IniParser() {
-    parser = new ome.scifio.common.IniParser();
-  }
+
+  /** Logger for this class. */
+  private static final Logger LOGGER = LoggerFactory.getLogger(IniParser.class);
+
+  private String commentDelimiter = "#";
+
+  private boolean slashContinues = true;
 
   // -- IniParser API methods --
 
@@ -66,7 +72,7 @@ public class IniParser {
    * Set the String that identifies a comment.  Defaults to "#".
    */
   public void setCommentDelimiter(String delimiter) {
-    parser.setCommentDelimiter(delimiter);
+    commentDelimiter = delimiter;
   }
 
   /**
@@ -76,7 +82,7 @@ public class IniParser {
    * By default, a '\' does continue the line.
    */
   public void setBackslashContinuesLine(boolean slashContinues) {
-    parser.setBackslashContinuesLine(slashContinues);
+    this.slashContinues = slashContinues;
   }
 
   /** Parses the INI-style configuration data from the given resource. */
@@ -93,46 +99,162 @@ public class IniParser {
   public IniList parseINI(String path, Class<?> c)
     throws IOException
   {
-    IniList iList = new IniList();
-    iList.list =  parser.parseINI(path, c);
-    return iList;
+    return parseINI(openTextResource(path, c));
+  }
+
+  /**
+   * Parses the INI-style wrapping the given file in a {@link BufferedReader}
+   */
+  public IniList parseINI(File file)
+    throws IOException
+  {
+    FileInputStream fis = null;
+    InputStreamReader isr = null;
+    BufferedReader br = null;
+    try {
+      fis = new FileInputStream(file);
+      isr = new InputStreamReader(fis, Constants.ENCODING);
+      br = new BufferedReader(isr);
+      return parseINI(br);
+    } finally {
+      if (br != null) {
+        br.close();
+      }
+      if (isr != null) {
+        isr.close();
+      }
+      if (fis != null) {
+        fis.close();
+      }
+    }
   }
 
   /** Parses the INI-style configuration data from the given input stream. */
   public IniList parseINI(BufferedReader in)
     throws IOException
   {
-    IniList iList = new IniList();
-    iList.list =  parser.parseINI(in);
-    return iList;
+    IniList list = new IniList();
+    IniTable attrs = null;
+    String chapter = null;
+    int no = 1;
+    StringBuffer sb = new StringBuffer();
+    while (true) {
+      int num = readLine(in, sb);
+      if (num == 0) break; // eof
+      String line = sb.toString();
+      LOGGER.debug("Line {}: {}", no, line);
+
+      // ignore blank lines
+      if (line.equals("")) {
+        no += num;
+        continue;
+      }
+
+      // check for chapter header
+      if (line.startsWith("{")) {
+        // strip curly braces
+        int end = line.length();
+        if (line.endsWith("}")) end--;
+        chapter = line.substring(1, end);
+        continue;
+      }
+
+      // check for section header
+      if (line.startsWith("[")) {
+        attrs = new IniTable();
+        list.add(attrs);
+
+        // strip brackets
+        int end = line.length();
+        if (line.endsWith("]")) end--;
+        String header = line.substring(1, end);
+        if (chapter != null) header = chapter + ": " + header;
+
+        attrs.put(IniTable.HEADER_KEY, header);
+        no += num;
+        continue;
+      }
+
+      // if we still haven't found a header, then this is the default
+      // section (more similar to a properties file)
+      if (attrs == null) {
+          attrs = new IniTable();
+          attrs.put(IniTable.HEADER_KEY, IniTable.DEFAULT_HEADER);
+          list.add(attrs);
+      }
+
+      // parse key/value pair
+      int equals = line.indexOf("=");
+      if (equals < 0) throw new IOException(no + ": bad line");
+      String key = line.substring(0, equals).trim();
+      String value = line.substring(equals + 1).trim();
+      attrs.put(key, value);
+      no += num;
+    }
+    return list;
   }
 
   // -- Utility methods --
 
   /** Opens a buffered reader for the given resource. */
   public static BufferedReader openTextResource(String path) {
-    return ome.scifio.common.IniParser.openTextResource(path, IniParser.class);
+    return openTextResource(path, IniParser.class);
   }
 
   /** Opens a buffered reader for the given resource. */
   public static BufferedReader openTextResource(String path, Class<?> c) {
-    return ome.scifio.common.IniParser.openTextResource(path, c);
+    try {
+      return new BufferedReader(new InputStreamReader(
+        c.getResourceAsStream(path), Constants.ENCODING));
+    }
+    catch (IOException e) {
+      LOGGER.error("Could not open BufferedReader", e);
+    }
+    return null;
   }
-  
-  // -- Object delegators --
 
-  @Override
-  public boolean equals(Object obj) {
-    return parser.equals(obj);
+  // -- Helper methods --
+
+  /**
+   * Reads (at least) one line from the given input stream
+   * into the specified string buffer.
+   *
+   * @return number of lines read
+   */
+  private int readLine(BufferedReader in, StringBuffer sb) throws IOException {
+    int no = 0;
+    sb.setLength(0);
+    boolean blockText = false;
+    while (true) {
+      String line = in.readLine();
+      if (line == null) break;
+      no++;
+
+      // strip comments
+      if (commentDelimiter != null) {
+        int comment = line.indexOf(commentDelimiter);
+        if (comment >= 0) line = line.substring(0, comment);
+      }
+
+      // kill whitespace
+      if (!blockText) {
+        line = line.trim();
+      }
+
+      // backslash signifies data continues to next line
+      boolean slash = slashContinues && line.trim().endsWith("\\");
+      blockText = slashContinues && line.trim().endsWith("\\n");
+
+      if (blockText) {
+        line = line.substring(0, line.length() - 2) + "\n";
+      }
+      else if (slash) {
+        line = line.substring(0, line.length() - 1).trim() + " ";
+      }
+      sb.append(line);
+      if (!slash && !blockText) break;
+    }
+    return no;
   }
-  
-  @Override
-  public int hashCode() {
-    return parser.hashCode();
-  }
-  
-  @Override
-  public String toString() {
-    return parser.toString();
-  }
+
 }

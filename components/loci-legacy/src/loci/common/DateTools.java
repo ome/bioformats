@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -36,8 +36,21 @@
 
 package loci.common;
 
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.IllegalInstantException;
+import org.joda.time.Instant;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * A legacy delegator class for ome.scifio.common.DateTools.
+ * A utility class with convenience methods for working with dates.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/DateTools.java">Trac</a>,
@@ -52,31 +65,50 @@ public final class DateTools {
   // -- Constants --
 
   /** Timestamp formats. */
-  public static final int UNIX = ome.scifio.common.DateTools.UNIX;
-  public static final int COBOL = ome.scifio.common.DateTools.COBOL; 
-  public static final int MICROSOFT = ome.scifio.common.DateTools.MICROSOFT;
-  public static final int ZVI = ome.scifio.common.DateTools.ZVI;
-  public static final int ALT_ZVI = ome.scifio.common.DateTools.ALT_ZVI;
+  public static final int UNIX = 0;      // January 1, 1970
+  public static final int COBOL = 1;     // January 1, 1601
+  public static final int MICROSOFT = 2; // December 30, 1899
+  public static final int ZVI = 3;
+  public static final int ALT_ZVI = 4;
 
   /** Milliseconds until UNIX epoch. */
-  public static final long UNIX_EPOCH = ome.scifio.common.DateTools.UNIX_EPOCH;
-  public static final long COBOL_EPOCH = ome.scifio.common.DateTools.COBOL_EPOCH;
-  public static final long MICROSOFT_EPOCH = ome.scifio.common.DateTools.MICROSOFT_EPOCH;
-  public static final long ZVI_EPOCH = ome.scifio.common.DateTools.ZVI_EPOCH;
-  public static final long ALT_ZVI_EPOCH = ome.scifio.common.DateTools.ALT_ZVI_EPOCH;
-  
+  public static final long UNIX_EPOCH = 0;
+  public static final long COBOL_EPOCH = 11644473600000L;
+  public static final long MICROSOFT_EPOCH = 2209143600000L;
+  public static final long ZVI_EPOCH = 2921084975759000L;
+  public static final long ALT_ZVI_EPOCH = 2921084284761000L;
+
   /** ISO 8601 date output formatter with milliseconds. */
-  public static final String ISO8601_FORMAT_MS = ome.scifio.common.DateTools.ISO8601_FORMAT_MS;
+  public static final String ISO8601_FORMAT_MS = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
   /** ISO 8601 date output formatter without milliseconds. */
-  public static final String ISO8601_FORMAT = ome.scifio.common.DateTools.ISO8601_FORMAT_S;
+  public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
   /** Human readable timestamp string */
-  public static final String TIMESTAMP_FORMAT = ome.scifio.common.DateTools.TIMESTAMP_FORMAT;
+  public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
   /** Human readable timestamp filename string */
-  public static final String FILENAME_FORMAT = ome.scifio.common.DateTools.FILENAME_FORMAT;
-  
+  public static final String FILENAME_FORMAT = "yyyy-MM-dd_HH-mm-ss";
+
+  /** ISO 8601 date formatter with milliseconds. */
+  private static final DateTimeFormatter ISO8601_FORMATTER_MS =
+    DateTimeFormat.forPattern(ISO8601_FORMAT_MS);
+
+  /** ISO 8601 date formatter without milliseconds. */
+  private static final DateTimeFormatter ISO8601_FORMATTER =
+    DateTimeFormat.forPattern(ISO8601_FORMAT);
+
+  /** Human readable timestamp formatter. */
+  private static final DateTimeFormatter TIMESTAMP_FORMATTER =
+    DateTimeFormat.forPattern(TIMESTAMP_FORMAT);
+
+  /** Human readable timestamp filename formatter. */
+  private static final DateTimeFormatter FILENAME_FORMATTER =
+    DateTimeFormat.forPattern(FILENAME_FORMAT);
+
+  /** Logger for this class. */
+  private static final Logger LOGGER = LoggerFactory.getLogger(DateTools.class);
+
   // -- Constructor --
 
   private DateTools() { }
@@ -88,18 +120,19 @@ public final class DateTools {
    * Mainly useful in conjunction with COBOL date conversion.
    */
   public static long getMillisFromTicks(long hi, long lo) {
-    return ome.scifio.common.DateTools.getMillisFromTicks(hi, lo);
+    long ticks = ((hi << 32) | lo);
+    return ticks / 10000; // 100 ns = 0.0001 ms
   }
 
   /** Converts the given timestamp into an ISO8601 date. */
   public static String convertDate(long stamp, int format) {
-    return ome.scifio.common.DateTools.convertDate(stamp, format);
+    return convertDate(stamp, format, ISO8601_FORMAT);
   }
 
   /** Converts the given timestamp into a date string with the given format. */
   public static String convertDate(long stamp, int format, String outputFormat)
   {
-    return ome.scifio.common.DateTools.convertDate(stamp, format, outputFormat);
+    return convertDate(stamp, format, outputFormat, false);
   }
 
   /**
@@ -111,7 +144,43 @@ public final class DateTools {
   public static String convertDate(long stamp, int format, String outputFormat,
     boolean correctTimeZoneForGMT)
   {
-    return ome.scifio.common.DateTools.convertDate(stamp, format, outputFormat, correctTimeZoneForGMT);
+    // see http://www.merlyn.demon.co.uk/critdate.htm for more information on
+    // dates than you will ever need (or want)
+
+    long ms = stamp;
+
+    switch (format) {
+      case UNIX:
+        ms -= UNIX_EPOCH;
+        break;
+      case COBOL:
+        ms -= COBOL_EPOCH;
+        break;
+      case MICROSOFT:
+        ms -= MICROSOFT_EPOCH;
+        break;
+      case ZVI:
+        ms -= ZVI_EPOCH;
+        break;
+      case ALT_ZVI:
+        ms -= ALT_ZVI_EPOCH;
+        break;
+    }
+
+    final DateTimeFormatter fmt = DateTimeFormat.forPattern(outputFormat);
+
+    try {
+      if (correctTimeZoneForGMT) {
+        DateTimeZone tz = DateTimeZone.getDefault();
+        ms = tz.convertLocalToUTC(ms, false);
+      }
+    }
+    catch (ArithmeticException e) {}
+    catch (IllegalInstantException e) {}
+
+    DateTime d = new DateTime(ms, DateTimeZone.UTC);
+
+    return fmt.print(d);
   }
 
   /**
@@ -123,7 +192,7 @@ public final class DateTools {
    * @param format The date's input format.
    */
   public static String formatDate(String date, String format) {
-    return ome.scifio.common.DateTools.formatDate(date, format);
+    return formatDate(date, format, false);
   }
 
   /**
@@ -134,7 +203,34 @@ public final class DateTools {
    * @param lenient Whether or not to leniently parse the date.
    */
   public static String formatDate(String date, String format, boolean lenient) {
-    return ome.scifio.common.DateTools.formatDate(date, format, lenient);
+    if (date == null) return null;
+    final DateTimeFormatter parser =
+      DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
+    Instant timestamp = null;
+
+    try {
+      timestamp = Instant.parse(date, parser);
+    }
+    catch (IllegalArgumentException e) {
+      LOGGER.debug("Invalid timestamp '{}'", date);
+    }
+    catch (UnsupportedOperationException e) {
+      LOGGER.debug("Error parsing timestamp '{}'", date, e);
+    }
+
+    if (timestamp == null) {
+      return null;
+    }
+
+    final DateTimeFormatter isoformat;
+    if ((timestamp.getMillis() % 1000) != 0) {
+      isoformat = ISO8601_FORMATTER_MS;
+    }
+    else {
+      isoformat = ISO8601_FORMATTER;
+    }
+
+    return isoformat.print(timestamp);
   }
 
   /**
@@ -146,7 +242,7 @@ public final class DateTools {
    * @param formats The date's possible input formats.
    */
   public static String formatDate(String date, String[] formats) {
-    return ome.scifio.common.DateTools.formatDate(date, formats);
+    return formatDate(date, formats, false);
   }
 
   /**
@@ -159,7 +255,11 @@ public final class DateTools {
   public static String formatDate(String date, String[] formats,
     boolean lenient)
   {
-    return ome.scifio.common.DateTools.formatDate(date, formats, lenient);
+    for (int i=0; i<formats.length; i++) {
+      String result = formatDate(date, formats[i], lenient);
+      if (result != null) return result;
+    }
+    return null;
   }
 
   /**
@@ -167,7 +267,20 @@ public final class DateTools {
    * (in Unix format: milliseconds since January 1, 1970).
    */
   public static long getTime(String date, String format) {
-    return ome.scifio.common.DateTools.getTime(date, format);
+    final DateTimeFormatter parser =
+      DateTimeFormat.forPattern(format).withZone(DateTimeZone.UTC);
+    Instant timestamp = null;
+    try {
+      timestamp = Instant.parse(date, parser);
+    }
+    catch (IllegalArgumentException e) {
+      LOGGER.debug("Invalid timestamp '{}'", date);
+    }
+    catch (UnsupportedOperationException e) {
+      LOGGER.debug("Error parsing timestamp '{}'", date, e);
+    }
+    if (timestamp == null) return -1;
+    return timestamp.getMillis();
   }
 
   /**
@@ -175,7 +288,7 @@ public final class DateTools {
    * human-readable locale-independent format ("YYYY-MM-DD HH:MM:SS")
    */
   public static String getTimestamp() {
-    return ome.scifio.common.DateTools.getTimestamp();
+    return TIMESTAMP_FORMATTER.print(new DateTime());
   }
 
   /**
@@ -184,7 +297,7 @@ public final class DateTools {
    * ("YYYY-MM-DD_HH-MM-SS")
    */
   public static String getFileTimestamp() {
-    return ome.scifio.common.DateTools.getFileTimestamp();
+    return FILENAME_FORMATTER.print(new DateTime());
   }
 
 }

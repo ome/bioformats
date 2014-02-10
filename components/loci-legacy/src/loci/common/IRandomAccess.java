@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -43,7 +43,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * Legacy extension of ome.scifio.io.IRandomAccess.
+ * Interface for random access into structures (e.g., files or arrays).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/IRandomAccess.java">Trac</a>,

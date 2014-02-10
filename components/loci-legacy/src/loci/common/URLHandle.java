@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -36,13 +36,15 @@
 
 package loci.common;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-
-import loci.utils.ProtectedMethodInvoker;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
- * A legacy delegator class for ome.scifio.io.URLHandle.
+ * Provides random access to URLs using the IRandomAccess interface.
+ * Instances of URLHandle are read-only.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/URLHandle.java">Trac</a>,
@@ -57,8 +59,12 @@ import loci.utils.ProtectedMethodInvoker;
 public class URLHandle extends StreamHandle {
 
   // -- Fields --
-  
-  private ProtectedMethodInvoker pmi = new ProtectedMethodInvoker();
+
+  /** URL of open socket */
+  private String url;
+
+  /** Socket underlying this stream */
+  private URLConnection conn;
 
   // -- Constructors --
 
@@ -66,31 +72,51 @@ public class URLHandle extends StreamHandle {
    * Constructs a new URLHandle using the given URL.
    */
   public URLHandle(String url) throws IOException {
-    sHandle = new ome.scifio.io.URLHandle(url);
+    if (!url.startsWith("http") && !url.startsWith("file:")) {
+      url = "http://" + url;
+    }
+    this.url = url;
+    resetStream();
   }
 
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess#seek(long) */
   public void seek(long pos) throws IOException {
-    sHandle.seek(pos);
+    if (pos < fp && pos >= mark) {
+      stream.reset();
+      fp = mark;
+      skip(pos - fp);
+    }
+    else super.seek(pos);
   }
 
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
   protected void resetStream() throws IOException {
-    Class<?>[] c = null;
-    Object[] o = null;
-    
-    try {
-      pmi.invokeProtected(sHandle, "resetStream", c, o);
-    }
-    catch (InvocationTargetException e) {
-      pmi.unwrapException(e, IOException.class);
-      throw new IllegalStateException(e);
-    }
+    conn = (new URL(url)).openConnection();
+    stream = new DataInputStream(new BufferedInputStream(
+      conn.getInputStream(), RandomAccessInputStream.MAX_OVERHEAD));
+    fp = 0;
+    mark = 0;
+    length = conn.getContentLength();
+    if (stream != null) stream.mark(RandomAccessInputStream.MAX_OVERHEAD);
   }
 
   // -- Helper methods --
+
+  /** Skip over the given number of bytes. */
+  private void skip(long bytes) throws IOException {
+    while (bytes >= Integer.MAX_VALUE) {
+      bytes -= skipBytes(Integer.MAX_VALUE);
+    }
+    int skipped = skipBytes((int) bytes);
+    while (skipped < bytes) {
+      int n = skipBytes((int) (bytes - skipped));
+      if (n == 0) break;
+      skipped += n;
+    }
+  }
+
 }

@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -36,13 +36,15 @@
 
 package loci.common;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-
-import loci.utils.ProtectedMethodInvoker;
+import java.util.zip.GZIPInputStream;
 
 /**
- * A legacy delegator class for ome.scifio.io.GZipHandle.
+ * StreamHandle implementation for reading from gzip-compressed files
+ * or byte arrays.  Instances of GZipHandle are read-only.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/GZipHandle.java">Trac</a>,
@@ -54,10 +56,6 @@ import loci.utils.ProtectedMethodInvoker;
  */
 public class GZipHandle extends StreamHandle {
 
-  // -- Fields --
-  
-  private ProtectedMethodInvoker pmi = new ProtectedMethodInvoker();
-  
   // -- Constructor --
 
   /**
@@ -66,30 +64,45 @@ public class GZipHandle extends StreamHandle {
    * @throws HandleException if the given file name is not a GZip file.
    */
   public GZipHandle(String file) throws IOException {
-    sHandle = new ome.scifio.io.GZipHandle(file);
+    super();
+    this.file = file;
+    if (!isGZipFile(file)) {
+      throw new HandleException(file + " is not a gzip file.");
+    }
+
+    resetStream();
+
+    length = 0;
+    while (true) {
+      int skip = stream.skipBytes(1024);
+      if (skip <= 0) break;
+      length += skip;
+    }
+
+    resetStream();
   }
 
   // -- GZipHandle API methods --
 
   /** Returns true if the given filename is a gzip file. */
   public static boolean isGZipFile(String file) throws IOException {
-    return ome.scifio.io.GZipHandle.isGZipFile(file);
+    if (!file.toLowerCase().endsWith(".gz")) return false;
+
+    FileInputStream s = new FileInputStream(file);
+    byte[] b = new byte[2];
+    s.read(b);
+    s.close();
+    return DataTools.bytesToInt(b, true) == GZIPInputStream.GZIP_MAGIC;
   }
 
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
   protected void resetStream() throws IOException {
-    Class<?>[] c = null;
-    Object[] o = null;
-    
-    try {
-      pmi.invokeProtected(sHandle, "resetStream", c, o);
-    }
-    catch (InvocationTargetException e) {
-      pmi.unwrapException(e, IOException.class);
-      throw new IllegalStateException(e);
-    }
+    if (stream != null) stream.close();
+    BufferedInputStream bis = new BufferedInputStream(
+      new FileInputStream(file), RandomAccessInputStream.MAX_OVERHEAD);
+    stream = new DataInputStream(new GZIPInputStream(bis));
   }
 
 }

@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -37,34 +37,19 @@
 package loci.common;
 
 /**
- * Legacy wrapper class for ome.scifio.common.ReflectException.
+ * ReflectException is the exception thrown when something
+ * goes wrong performing a reflected operation with ReflectedUniverse.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/ReflectException.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/ReflectException.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class ReflectException extends ome.scifio.common.ReflectException {
-  
+public class ReflectException extends Exception {
+
   public ReflectException() { super(); }
   public ReflectException(String s) { super(s); }
   public ReflectException(String s, Throwable cause) { super(s, cause); }
   public ReflectException(Throwable cause) { super(cause); }
-  
-  // -- Object delegators --
 
-  @Override
-  public boolean equals(Object obj) {
-    return super.equals(obj);
-  }
-  
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-  
-  @Override
-  public String toString() {
-    return super.toString();
-  }
 }
 

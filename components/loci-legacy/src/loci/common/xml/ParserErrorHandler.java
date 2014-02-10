@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -40,7 +40,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
 /**
- * A legacy delegator class for ome.scifio.xml.ParserErrorHandler
+ * Used by various XMLTools methods to handle XML parsing errors.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/ParserErrorHandler.java">Trac</a>,
@@ -50,39 +50,16 @@ import org.xml.sax.SAXParseException;
  */
 public class ParserErrorHandler implements ErrorHandler {
 
-  // -- Fields --
-  
-  private ome.scifio.xml.ParserErrorHandler eHandler = new ome.scifio.xml.ParserErrorHandler ();
-  
-  // -- Methods --
-  
   public void error(SAXParseException e) {
-    eHandler.error(e);
+    XMLTools.LOGGER.debug(e.getMessage());
   }
 
   public void fatalError(SAXParseException e) {
-    eHandler.fatalError(e);
+    XMLTools.LOGGER.debug(e.getMessage());
   }
 
   public void warning(SAXParseException e) {
-    eHandler.warning(e);
-  }
-  
-  // -- Object delegators --
-
-  @Override
-  public boolean equals(Object obj) {
-    return eHandler.equals(obj);
-  }
-  
-  @Override
-  public int hashCode() {
-    return eHandler.hashCode();
-  }
-  
-  @Override
-  public String toString() {
-    return eHandler.toString();
+    XMLTools.LOGGER.debug(e.getMessage());
   }
 
 }

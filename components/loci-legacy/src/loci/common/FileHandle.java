@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -44,7 +44,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * A legacy delegator class for ome.scifio.io.FileHandle.
+ * A wrapper for RandomAccessFile that implements the IRandomAccess interface.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/FileHandle.java">Trac</a>,
@@ -59,7 +59,8 @@ public class FileHandle implements IRandomAccess {
 
   // -- Fields --
 
-  private ome.scifio.io.FileHandle handle;
+  /** The random access file object backing this FileHandle. */
+  protected RandomAccessFile raf;
 
   // -- Constructors --
 
@@ -68,7 +69,7 @@ public class FileHandle implements IRandomAccess {
    * optionally to write to, the file specified by the File argument.
    */
   public FileHandle(File file, String mode) throws FileNotFoundException {
-    handle = new ome.scifio.io.FileHandle(file, mode);
+    raf = new RandomAccessFile(file, mode);
   }
 
   /**
@@ -76,237 +77,223 @@ public class FileHandle implements IRandomAccess {
    * optionally to write to, a file with the specified name.
    */
   public FileHandle(String name, String mode) throws FileNotFoundException {
-    handle = new ome.scifio.io.FileHandle(name, mode);
+    raf = new RandomAccessFile(name, mode);
   }
 
   // -- FileHandle API methods --
 
   /** Gets the random access file object backing this FileHandle. */
-  public RandomAccessFile getRandomAccessFile() { return handle.getRandomAccessFile(); }
+  public RandomAccessFile getRandomAccessFile() { return raf; }
 
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess.close() */
   public void close() throws IOException {
-    handle.close();
+    raf.close();
   }
 
   /* @see IRandomAccess.getFilePointer() */
   public long getFilePointer() throws IOException {
-    return handle.getFilePointer();
+    return raf.getFilePointer();
   }
 
   /* @see IRandomAccess.length() */
   public long length() throws IOException {
-    return handle.length();
+    return raf.length();
   }
 
   /* @see IRandomAccess.read(byte[]) */
   public int read(byte[] b) throws IOException {
-    return handle.read(b);
+    return raf.read(b);
   }
 
   /* @see IRandomAccess.read(byte[], int, int) */
   public int read(byte[] b, int off, int len) throws IOException {
-    return handle.read(b, off, len);
+    return raf.read(b, off, len);
   }
 
   /* @see IRandomAccess.read(ByteBuffer) */
   public int read(ByteBuffer buffer) throws IOException {
-    return handle.read(buffer);
+    return read(buffer, 0, buffer.capacity());
   }
 
   /* @see IRandomAccess.read(ByteBuffer, int, int) */
   public int read(ByteBuffer buffer, int off, int len) throws IOException {
-    return handle.read(buffer, off, len);
+    byte[] b = new byte[len];
+    int n = read(b);
+    buffer.put(b, off, len);
+    return n;
   }
 
   /* @see IRandomAccess.seek(long) */
   public void seek(long pos) throws IOException {
-    handle.seek(pos);
+    raf.seek(pos);
   }
 
   /* @see IRandomAccess.write(ByteBuffer) */
   public void write(ByteBuffer buf) throws IOException {
-    handle.write(buf);
+    write(buf, 0, buf.capacity());
   }
 
   /* @see IRandomAccess.write(ByteBuffer, int, int) */
   public void write(ByteBuffer buf, int off, int len) throws IOException {
-    handle.write(buf, off, len);
+    // TODO
   }
 
   // -- DataInput API methods --
 
   /* @see java.io.DataInput.readBoolean() */
   public boolean readBoolean() throws IOException {
-    return handle.readBoolean();
+    return raf.readBoolean();
   }
 
   /* @see java.io.DataInput.readByte() */
   public byte readByte() throws IOException {
-    return handle.readByte();
+    return raf.readByte();
   }
 
   /* @see java.io.DataInput.readChar() */
   public char readChar() throws IOException {
-    return handle.readChar();
+    return raf.readChar();
   }
 
   /* @see java.io.DataInput.readDouble() */
   public double readDouble() throws IOException {
-    return handle.readDouble();
+    return raf.readDouble();
   }
 
   /* @see java.io.DataInput.readFloat() */
   public float readFloat() throws IOException {
-    return handle.readFloat();
+    return raf.readFloat();
   }
 
   /* @see java.io.DataInput.readFully(byte[]) */
   public void readFully(byte[] b) throws IOException {
-    handle.readFully(b);
+    raf.readFully(b);
   }
 
   /* @see java.io.DataInput.readFully(byte[], int, int) */
   public void readFully(byte[] b, int off, int len) throws IOException {
-    handle.readFully(b, off, len);
+    raf.readFully(b, off, len);
   }
 
   /* @see java.io.DataInput.readInt() */
   public int readInt() throws IOException {
-    return handle.readInt();
+    return raf.readInt();
   }
 
   /* @see java.io.DataInput.readLine() */
   public String readLine() throws IOException {
-    return handle.readLine();
+    return raf.readLine();
   }
 
   /* @see java.io.DataInput.readLong() */
   public long readLong() throws IOException {
-    return handle.readLong();
+    return raf.readLong();
   }
 
   /* @see java.io.DataInput.readShort() */
   public short readShort() throws IOException {
-    return handle.readShort();
+    return raf.readShort();
   }
 
   /* @see java.io.DataInput.readUnsignedByte() */
   public int readUnsignedByte() throws IOException {
-    return handle.readUnsignedByte();
+    return raf.readUnsignedByte();
   }
 
   /* @see java.io.DataInput.readUnsignedShort() */
   public int readUnsignedShort() throws IOException {
-    return handle.readUnsignedShort();
+    return raf.readUnsignedShort();
   }
 
   /* @see java.io.DataInput.readUTF() */
   public String readUTF() throws IOException {
-    return handle.readUTF();
+    return raf.readUTF();
   }
 
   /* @see java.io.DataInput.skipBytes(int) */
   public int skipBytes(int n) throws IOException {
-    return handle.skipBytes(n);
+    return raf.skipBytes(n);
   }
 
   // -- DataOutput API metthods --
 
   /* @see java.io.DataOutput.write(byte[]) */
   public void write(byte[] b) throws IOException {
-    handle.write(b);
+    raf.write(b);
   }
 
   /* @see java.io.DataOutput.write(byte[], int, int) */
   public void write(byte[] b, int off, int len) throws IOException {
-    handle.write(b, off, len);
+    raf.write(b, off, len);
   }
 
   /* @see java.io.DataOutput.write(int b) */
   public void write(int b) throws IOException {
-    handle.write(b);
+    raf.write(b);
   }
 
   /* @see java.io.DataOutput.writeBoolean(boolean) */
   public void writeBoolean(boolean v) throws IOException {
-    handle.writeBoolean(v);
+    raf.writeBoolean(v);
   }
 
   /* @see java.io.DataOutput.writeByte(int) */
   public void writeByte(int v) throws IOException {
-    handle.writeByte(v);
+    raf.writeByte(v);
   }
 
   /* @see java.io.DataOutput.writeBytes(String) */
   public void writeBytes(String s) throws IOException {
-    handle.writeBytes(s);
+    raf.writeBytes(s);
   }
 
   /* @see java.io.DataOutput.writeChar(int) */
   public void writeChar(int v) throws IOException {
-    handle.writeChar(v);
+    raf.writeChar(v);
   }
 
   /* @see java.io.DataOutput.writeChars(String) */
   public void writeChars(String s) throws IOException {
-    handle.writeChars(s);
+    raf.writeChars(s);
   }
 
   /* @see java.io.DataOutput.writeDouble(double) */
   public void writeDouble(double v) throws IOException {
-    handle.writeDouble(v);
+    raf.writeDouble(v);
   }
 
   /* @see java.io.DataOutput.writeFloat(float) */
   public void writeFloat(float v) throws IOException {
-    handle.writeFloat(v);
+    raf.writeFloat(v);
   }
 
   /* @see java.io.DataOutput.writeInt(int) */
   public void writeInt(int v) throws IOException {
-    handle.writeInt(v);
+    raf.writeInt(v);
   }
 
   /* @see java.io.DataOutput.writeLong(long) */
   public void writeLong(long v) throws IOException {
-    handle.writeLong(v);
+    raf.writeLong(v);
   }
 
   /* @see java.io.DataOutput.writeShort(int) */
   public void writeShort(int v) throws IOException {
-    handle.writeShort(v);
+    raf.writeShort(v);
   }
 
   /* @see java.io.DataOutput.writeUTF(String)  */
   public void writeUTF(String str) throws IOException {
-    handle.writeUTF(str);
+    raf.writeUTF(str);
   }
 
   public ByteOrder getOrder() {
-    return handle.getOrder();
+    return null;
   }
 
   public void setOrder(ByteOrder order) {
-    handle.setOrder(order);
   }
-  
-  // -- Object delegators --
 
-  @Override
-  public boolean equals(Object obj) {
-    return handle.equals(obj);
-  }
-  
-  @Override
-  public int hashCode() {
-    return handle.hashCode();
-  }
-  
-  @Override
-  public String toString() {
-    return handle.toString();
-  }
 }

@@ -36,49 +36,46 @@
 
 package loci.common.xml;
 
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXParseException;
+import java.util.Hashtable;
+
+import org.xml.sax.Attributes;
 
 /**
- * Used by validateXML to handle XML validation errors.
+ * Used to retrieve key/value pairs from XML.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/ValidationErrorHandler.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/xml/ValidationErrorHandler.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/MetadataHandler.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/xml/MetadataHandler.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class ValidationErrorHandler implements ErrorHandler {
+class MetadataHandler extends BaseHandler {
+  private String currentQName;
+  private Hashtable<String, String> metadata =
+    new Hashtable<String, String>();
 
-  // -- Fields --
+  // -- MetadataHandler API methods --
 
-  private int errors = 0;
-
-  // -- ValidatorErrorHandler API --
-
-  public boolean ok() {
-    return errors == 0;
+  public Hashtable<String, String> getMetadata() {
+    return metadata;
   }
 
-  public int getErrorCount() {
-    return errors;
+  // -- DefaultHandler API methods --
+
+  public void characters(char[] data, int start, int len) {
+    metadata.put(currentQName, new String(data, start, len));
   }
 
-  public void error(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage());
-    errors++;
+  public void startElement(String uri, String localName, String qName,
+    Attributes attributes)
+  {
+    if (attributes.getLength() == 0) currentQName += " - " + qName;
+    else currentQName = qName;
+    for (int i=0; i<attributes.getLength(); i++) {
+      metadata.put(qName + " - " + attributes.getQName(i),
+        attributes.getValue(i));
+    }
   }
-
-  public void fatalError(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage());
-    errors++;
-  }
-
-  public void warning(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage());
-    errors++;
-  }
-
 }

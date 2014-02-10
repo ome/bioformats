@@ -36,49 +36,58 @@
 
 package loci.common.xml;
 
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXParseException;
+import java.util.StringTokenizer;
+
+import org.xml.sax.Attributes;
+
 
 /**
- * Used by validateXML to handle XML validation errors.
+ * Used by validateXML to parse the XML block's schema path using SAX.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/ValidationErrorHandler.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/xml/ValidationErrorHandler.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/ValidationSAXHandler.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/xml/ValidationSAXHandler.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class ValidationErrorHandler implements ErrorHandler {
-
-  // -- Fields --
-
-  private int errors = 0;
-
-  // -- ValidatorErrorHandler API --
-
-  public boolean ok() {
-    return errors == 0;
+/**  */
+class ValidationSAXHandler extends BaseHandler {
+  private String schemaPath;
+  private boolean first;
+  public String getSchemaPath() { return schemaPath; }
+  public void startDocument() {
+    schemaPath = null;
+    first = true;
   }
+  public void startElement(String uri,
+    String localName, String qName, Attributes attributes)
+  {
+    if (!first) return;
+    first = false;
 
-  public int getErrorCount() {
-    return errors;
+    int len = attributes.getLength();
+    String xmlns = null, xsiSchemaLocation = null;
+    for (int i=0; i<len; i++) {
+      String name = attributes.getQName(i);
+      if (name.equals("xmlns")) xmlns = attributes.getValue(i);
+      else if (name.equals("schemaLocation") ||
+        name.endsWith(":schemaLocation"))
+      {
+        xsiSchemaLocation = attributes.getValue(i);
+      }
+    }
+    if (xmlns == null || xsiSchemaLocation == null) return; // not found
+
+    StringTokenizer st = new StringTokenizer(xsiSchemaLocation);
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken();
+      if (xmlns.equals(token)) {
+        // next token is the actual schema path
+        if (st.hasMoreTokens()) schemaPath = st.nextToken();
+        break;
+      }
+    }
   }
-
-  public void error(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage());
-    errors++;
-  }
-
-  public void fatalError(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage());
-    errors++;
-  }
-
-  public void warning(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage());
-    errors++;
-  }
-
 }

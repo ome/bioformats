@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -37,68 +37,98 @@
 package loci.common;
 
 /**
- * A legacy delegator class for ome.scifio.common.Region.
+ * A class for representing a rectangular region.
+ * This class is very similar to {@link java.awt.Rectangle};
+ * it mainly exists to avoid problems with AWT, JNI and headless operation.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/Region.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/Region.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class Region extends ome.scifio.common.Region {
+public class Region {
+
+  // -- Fields --
+
+  public int x;
+  public int y;
+  public int width;
+  public int height;
 
   // -- Constructors --
-  
-  public Region() {
-    super();
-  }
-  
-  public Region(int x, int y, int w, int h) {
-    super(x,y,w,h);
-  }
-  
-  // -- Wrapper API --
-  
-  public Region intersection(Region r) {
-    return convertRegion(super.intersection(r));
-  }
-  
-  // -- Object delegators --
 
-  @Override
-  public boolean equals(Object obj) {
-    return super.equals(obj);
+  public Region() {
   }
-  
-  @Override
-  public int hashCode() {
-    return super.hashCode();
+
+  public Region(int x, int y, int w, int h) {
+    this.x = x;
+    this.y = y;
+    this.width = w;
+    this.height = h;
   }
-  
-  @Override
-  public String toString() {
-    return super.toString();
+
+  // -- Region API --
+
+  /** Returns true if this region intersects the given region. */
+  public boolean intersects(Region r) {
+    int tw = this.width;
+    int th = this.height;
+    int rw = r.width;
+    int rh = r.height;
+    if (rw <= 0 || rh <= 0 || tw <= 0 || th <= 0) {
+      return false;
+    }
+    int tx = this.x;
+    int ty = this.y;
+    int rx = r.x;
+    int ry = r.y;
+    rw += rx;
+    rh += ry;
+    tw += tx;
+    th += ty;
+    boolean rtn = ((rw < rx || rw > tx) && (rh < ry || rh > ty) &&
+      (tw < tx || tw > rx) && (th < ty || th > ry));
+    return rtn;
   }
-  
-  // -- Helper Methods --
-  
-  /*
-   * ---HACK---
-   * Returns a loci.common Region based on the provided
-   *  {@link ome.scifio.common.Region}.
-   *  
-   *  This is necessary because loci.common.Region has to directly
-   *  extend ome.scifio.common.Region, because of the public field
-   *  contract that was established in this class.
-   *  
-   *  Extension was not sufficient for full backwards compatibility,
-   *  as ome.scifio.common.Region#intersection always returns an
-   *  ome.scifio.common.Region which can not be safely cast to a loci.common
-   *  Region.
-   *  
-   *  Thus this method constructs a loci.common Region assuming the base
-   *  ome.scifio.common.Region was provided.
+
+  /**
+   * Returns a Region representing the intersection of this Region with the
+   * given Region.  If the two Regions do not intersect, the result is an
+   * empty Region.
    */
-  private Region convertRegion(ome.scifio.common.Region r) {
-    return new Region(r.x, r.y, r.width, r.height);
+  public Region intersection(Region r) {
+    int x = Math.max(this.x, r.x);
+    int y = Math.max(this.y, r.y);
+    int w = Math.min(this.x + this.width, r.x + r.width) - x;
+    int h = Math.min(this.y + this.height, r.y + r.height) - y;
+
+    if (w < 0) w = 0;
+    if (h < 0) h = 0;
+
+    return new Region(x, y, w, h);
+  }
+
+  /**
+   * Returns true if the point specified by the given X and Y coordinates
+   * is contained within this region.
+   */
+  public boolean containsPoint(int xc, int yc) {
+    return intersects(new Region(xc, yc, 1, 1));
+  }
+
+  public String toString() {
+    return "x=" + x + ", y=" + y + ", w=" + width + ", h=" + height;
+  }
+
+  public boolean equals(Object o) {
+    if (!(o instanceof Region)) return false;
+
+    Region that = (Region) o;
+    return this.x == that.x && this.y == that.y && this.width == that.width &&
+      this.height == that.height;
+  }
+
+  public int hashCode() {
+    return toString().hashCode();
   }
 
 }

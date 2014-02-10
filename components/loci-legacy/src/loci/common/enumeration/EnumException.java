@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * Common package for I/O and related utilities
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -37,37 +37,20 @@
 package loci.common.enumeration;
 
 /**
- * A legacy wrapper class for ome.scifio.enumeration.EnumException.
- * 
+ *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/enumeration/EnumException.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/enumeration/EnumException.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author callan
  */
-public class EnumException extends ome.scifio.enumeration.EnumException {
+public class EnumException extends RuntimeException {
 
   private static final long serialVersionUID = -4969429871517178079L;
-  
+
   public EnumException() { super(); }
   public EnumException(String s) { super(s); }
   public EnumException(String s, Throwable cause) { super(s, cause); }
   public EnumException(Throwable cause) { super(cause); }
-  
-  // -- Object delegators --
 
-  @Override
-  public boolean equals(Object obj) {
-    return super.equals(obj);
-  }
-  
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-  
-  @Override
-  public String toString() {
-    return super.toString();
-  }
 }
