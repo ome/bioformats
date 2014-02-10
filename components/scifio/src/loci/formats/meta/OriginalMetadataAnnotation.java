@@ -36,7 +36,7 @@
 
 package loci.formats.meta;
 
-import ome.scifio.xml.XMLTools;
+import loci.common.xml.XMLTools;
 import ome.xml.model.XMLAnnotation;
 
 import org.w3c.dom.Document;

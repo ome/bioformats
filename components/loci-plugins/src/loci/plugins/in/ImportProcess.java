@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import loci.common.DebugTools;
 import loci.common.Location;
 import loci.common.ReflectedUniverse;
 import loci.common.Region;
@@ -62,7 +63,6 @@ import loci.plugins.util.LociPrefs;
 import loci.plugins.util.LuraWave;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
-import ome.scifio.common.DebugTools;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 

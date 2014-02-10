@@ -35,7 +35,11 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import loci.common.Constants;
+import loci.common.DateTools;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -47,10 +51,6 @@ import loci.formats.in.PrairieMetadata.Sequence;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-import ome.scifio.common.Constants;
-import ome.scifio.common.DateTools;
-import ome.scifio.io.Location;
-import ome.scifio.xml.XMLTools;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;

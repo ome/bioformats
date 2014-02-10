@@ -53,6 +53,7 @@ import loci.common.Location;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.common.xml.XMLTools;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
 import loci.formats.FileStitcher;
@@ -61,7 +62,6 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.services.OMEXMLService;
-import ome.scifio.xml.XMLTools;
 import ome.xml.model.OME;
 import ome.xml.model.Pixels;
 
