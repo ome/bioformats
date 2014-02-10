@@ -56,6 +56,7 @@ import ome.scifio.common.Constants;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/NIOInputStream.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  */
+@Deprecated
 public class NIOInputStream extends InputStream implements DataInput {
 
   // -- Constants --

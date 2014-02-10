@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
+@Deprecated
 public class IniParser {
 
   /** Logger for this class. */

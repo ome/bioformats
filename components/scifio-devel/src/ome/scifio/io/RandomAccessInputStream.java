@@ -66,6 +66,7 @@ import com.esotericsoftware.kryo.io.Output;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */
+@Deprecated
 public class RandomAccessInputStream extends InputStream implements DataInput, Closeable, KryoSerializable {
 
   // -- Constants --

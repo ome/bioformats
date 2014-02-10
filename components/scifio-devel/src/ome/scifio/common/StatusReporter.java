@@ -45,6 +45,7 @@ package ome.scifio.common;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
+@Deprecated
 public interface StatusReporter {
 
   void addStatusListener(StatusListener l);

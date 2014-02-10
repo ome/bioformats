@@ -54,6 +54,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 public class BaseHandler extends DefaultHandler {
 
   private static final Logger LOGGER =

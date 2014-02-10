@@ -43,6 +43,7 @@ package ome.scifio.enumeration;
  *
  * @author callan
  */
+@Deprecated
 public class EnumException extends RuntimeException {
 
   private static final long serialVersionUID = -4969429871517178079L;

@@ -59,6 +59,7 @@ import org.slf4j.LoggerFactory;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/ReflectedUniverse.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/ReflectedUniverse.java;hb=HEAD">Gitweb</a></dd></dl>
  */
+@Deprecated
 public class ReflectedUniverse {
 
   // -- Constants --

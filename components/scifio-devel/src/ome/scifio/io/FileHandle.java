@@ -55,6 +55,7 @@ import java.nio.ByteOrder;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
+@Deprecated
 public class FileHandle implements IRandomAccess {
 
   // -- Fields --

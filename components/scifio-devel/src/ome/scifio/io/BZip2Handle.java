@@ -56,6 +56,7 @@ import ome.scifio.common.Constants;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 public class BZip2Handle extends StreamHandle {
 
   // -- Constructor --

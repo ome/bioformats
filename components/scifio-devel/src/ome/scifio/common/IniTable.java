@@ -47,6 +47,7 @@ import java.util.HashMap;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
+@Deprecated
 public class IniTable extends HashMap<String, String> {
 
   // -- Constants --

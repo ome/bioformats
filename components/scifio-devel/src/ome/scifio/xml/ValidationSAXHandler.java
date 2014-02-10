@@ -53,6 +53,7 @@ import org.xml.sax.Attributes;
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 /**  */
+@Deprecated
 class ValidationSAXHandler extends BaseHandler {
   private String schemaPath;
   private boolean first;

@@ -53,6 +53,7 @@ import java.util.Arrays;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
+@Deprecated
 public final class DebugTools {
 
   // -- Constructor --

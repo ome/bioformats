@@ -53,6 +53,7 @@ import java.nio.ByteOrder;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/RandomAccessOutputStream.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/RandomAccessOutputStream.java;hb=HEAD">Gitweb</a></dd></dl>
  */
+@Deprecated
 public class RandomAccessOutputStream extends OutputStream implements DataOutput, Closeable
 {
   // -- Fields --

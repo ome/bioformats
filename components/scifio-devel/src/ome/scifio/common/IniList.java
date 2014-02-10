@@ -49,6 +49,7 @@ import java.util.List;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
+@Deprecated
 public class IniList extends ArrayList<IniTable> {
 
   // -- IniList methods --
