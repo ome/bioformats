@@ -708,7 +708,7 @@ public final class DataTools {
   }
 
   public static int swap(int x) {
-    return (swap((short) x << 16) | (swap((short) x >> 16)) & 0xFFFF);
+    return (swap((short) x) << 16) | (swap((short) (x >> 16)) & 0xFFFF);
   }
 
   public static long swap(long x) {
