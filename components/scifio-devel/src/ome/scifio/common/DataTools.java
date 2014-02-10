@@ -54,6 +54,7 @@ import ome.scifio.io.RandomAccessInputStream;
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 public final class DataTools {
 
   // -- Constants --

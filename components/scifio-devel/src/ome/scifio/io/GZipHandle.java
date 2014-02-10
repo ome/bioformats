@@ -57,6 +57,7 @@ import ome.scifio.common.DataTools;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 public class GZipHandle extends StreamHandle {
 
   // -- Constructor --

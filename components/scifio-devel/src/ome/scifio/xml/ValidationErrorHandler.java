@@ -50,6 +50,7 @@ import org.xml.sax.SAXParseException;
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 public class ValidationErrorHandler implements ErrorHandler {
 
   private int errors = 0;

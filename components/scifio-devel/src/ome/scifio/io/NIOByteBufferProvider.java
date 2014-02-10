@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
+@Deprecated
 public class NIOByteBufferProvider {
 
   // -- Constants --

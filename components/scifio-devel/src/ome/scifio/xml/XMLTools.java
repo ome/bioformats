@@ -103,6 +103,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 public final class XMLTools {
 
   // -- Constants --

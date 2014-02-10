@@ -50,6 +50,7 @@ import java.io.IOException;
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
+@Deprecated
 public abstract class AbstractNIOHandle implements IRandomAccess {
 
   /** Error message to be used when instantiating an EOFException. */

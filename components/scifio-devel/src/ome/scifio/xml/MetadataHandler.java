@@ -51,6 +51,7 @@ import org.xml.sax.Attributes;
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 class MetadataHandler extends BaseHandler {
   private String currentQName;
   private Hashtable<String, String> metadata =

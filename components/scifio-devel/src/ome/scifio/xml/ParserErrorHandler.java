@@ -48,6 +48,7 @@ import org.xml.sax.SAXParseException;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 public class ParserErrorHandler implements ErrorHandler {
 
   public void error(SAXParseException e) {

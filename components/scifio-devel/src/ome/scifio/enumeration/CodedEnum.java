@@ -43,6 +43,7 @@ package ome.scifio.enumeration;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/enumeration/CodedEnum.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/enumeration/CodedEnum.java;hb=HEAD">Gitweb</a></dd></dl>
  */
+@Deprecated
 public interface CodedEnum {
 
   /**

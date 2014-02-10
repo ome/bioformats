@@ -44,7 +44,6 @@ import java.nio.ByteOrder;
 
 import ome.scifio.common.Constants;
 
-
 /**
  * A wrapper for a byte array that implements the IRandomAccess interface.
  *
@@ -54,6 +53,7 @@ import ome.scifio.common.Constants;
  *
  * @see IRandomAccess
  */
+@Deprecated
 public class ByteArrayHandle extends AbstractNIOHandle {
 
   // -- Constants --

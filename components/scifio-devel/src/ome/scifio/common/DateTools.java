@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 public final class DateTools {
 
   // -- Constants --

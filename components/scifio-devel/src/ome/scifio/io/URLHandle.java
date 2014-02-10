@@ -56,6 +56,7 @@ import java.net.URLConnection;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 public class URLHandle extends StreamHandle {
 
   // -- Fields --

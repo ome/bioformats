@@ -58,6 +58,7 @@ import ome.scifio.common.DataTools;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 public abstract class StreamHandle implements IRandomAccess {
 
   // -- Fields --

@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
+@Deprecated
 public class IniWriter {
 
   /** Logger for this class. */

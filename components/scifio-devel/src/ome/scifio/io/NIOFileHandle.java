@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
+@Deprecated
 public class NIOFileHandle extends AbstractNIOHandle {
 
   // -- Constants --

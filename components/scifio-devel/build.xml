@@ -7,7 +7,7 @@ Type "ant -p" for a list of targets.
 -->
 
 <project name="scifio-devel" default="jar" basedir=".">
-  <description>Build file for SCIFIO project</description>
+  <description>Build file for SCIFIO project (deprecated)</description>
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
