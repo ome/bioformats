@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,57 +34,60 @@
  * #L%
  */
 
-package loci.common;
+package loci.common.xml;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.StringTokenizer;
+
+import org.xml.sax.Attributes;
+
 
 /**
- * A data structure containing a parsed list of INI key/value tables.
+ * Used by validateXML to parse the XML block's schema path using SAX.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/IniList.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/IniList.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/ValidationSAXHandler.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/xml/ValidationSAXHandler.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Chris Allan callan at blackcat.ca
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class IniList extends ArrayList<IniTable> {
-
-  /** Gets the table names (headers) in the list. */
-  public List<String> getHeaders() {
-    List<String> headers = new ArrayList<String>();
-    for (IniTable table : this) {
-      String header = table.get(IniTable.HEADER_KEY);
-      headers.add(header);
-    }
-    return headers;
+/**  */
+class ValidationSAXHandler extends BaseHandler {
+  private String schemaPath;
+  private boolean first;
+  public String getSchemaPath() { return schemaPath; }
+  public void startDocument() {
+    schemaPath = null;
+    first = true;
   }
+  public void startElement(String uri,
+    String localName, String qName, Attributes attributes)
+  {
+    if (!first) return;
+    first = false;
 
-  /** Gets the table with the given name (header). */
-  public IniTable getTable(String tableName) {
-    for (IniTable table : this) {
-      String header = table.get(IniTable.HEADER_KEY);
-      if (tableName.equals(header)) return table;
-    }
-    return null;
-  }
-
-  /**
-   * Flattens all of the INI tables into a single HashMap whose keys are
-   * of the format "[table name] table key".
-   */
-  public HashMap<String, String> flattenIntoHashMap() {
-    HashMap<String, String> h = new HashMap<String, String>();
-    for (IniTable table : this) {
-      String tableName = table.get(IniTable.HEADER_KEY);
-      for (String key : table.keySet()) {
-        if (!key.equals(IniTable.HEADER_KEY)) {
-          h.put("[" + tableName + "] " + key, table.get(key));
-        }
+    int len = attributes.getLength();
+    String xmlns = null, xsiSchemaLocation = null;
+    for (int i=0; i<len; i++) {
+      String name = attributes.getQName(i);
+      if (name.equals("xmlns")) xmlns = attributes.getValue(i);
+      else if (name.equals("schemaLocation") ||
+        name.endsWith(":schemaLocation"))
+      {
+        xsiSchemaLocation = attributes.getValue(i);
       }
     }
-    return h;
-  }
+    if (xmlns == null || xsiSchemaLocation == null) return; // not found
 
+    StringTokenizer st = new StringTokenizer(xsiSchemaLocation);
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken();
+      if (xmlns.equals(token)) {
+        // next token is the actual schema path
+        if (st.hasMoreTokens()) schemaPath = st.nextToken();
+        break;
+      }
+    }
+  }
 }

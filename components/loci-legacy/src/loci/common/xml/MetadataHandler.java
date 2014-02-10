@@ -2,7 +2,7 @@
  * #%L
  * Common package for I/O and related utilities
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -34,30 +34,48 @@
  * #L%
  */
 
-package loci.common;
+package loci.common.xml;
 
-import java.io.IOException;
+import java.util.Hashtable;
+
+import org.xml.sax.Attributes;
 
 /**
- * HandleException is the exception thrown when something goes wrong in
- * one of the custom I/O classes.
+ * Used to retrieve key/value pairs from XML.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/HandleException.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/HandleException.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/MetadataHandler.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/xml/MetadataHandler.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Chris Allan callan at blackcat.ca
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class HandleException extends IOException {
+class MetadataHandler extends BaseHandler {
+  private String currentQName;
+  private Hashtable<String, String> metadata =
+    new Hashtable<String, String>();
 
-  public HandleException() { super(); }
-  public HandleException(String s) { super(s); }
-  public HandleException(String s, Throwable cause) {
-    super(s);
-    initCause(cause);
-  }
-  public HandleException(Throwable cause) {
-    super();
-    initCause(cause);
+  // -- MetadataHandler API methods --
+
+  public Hashtable<String, String> getMetadata() {
+    return metadata;
   }
 
+  // -- DefaultHandler API methods --
+
+  public void characters(char[] data, int start, int len) {
+    metadata.put(currentQName, new String(data, start, len));
+  }
+
+  public void startElement(String uri, String localName, String qName,
+    Attributes attributes)
+  {
+    if (attributes.getLength() == 0) currentQName += " - " + qName;
+    else currentQName = qName;
+    for (int i=0; i<attributes.getLength(); i++) {
+      metadata.put(qName + " - " + attributes.getQName(i),
+        attributes.getValue(i));
+    }
+  }
 }
-
