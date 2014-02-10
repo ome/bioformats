@@ -51,6 +51,7 @@ set(OME_BIOFORMATS_HEADERS
     FileInfo.h
     FormatException.h
     MetadataMap.h
+    FormatHandler.h
     MetadataConfigurable.h
     MetadataOptions.h
     Modulo.h
