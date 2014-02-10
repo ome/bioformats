@@ -48,6 +48,7 @@ set(OME_BIOFORMATS_SOURCES
 
 set(OME_BIOFORMATS_HEADERS
     CoreMetadata.h
+    FileInfo.h
     FormatException.h
     MetadataMap.h
     MetadataConfigurable.h
