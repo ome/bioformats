@@ -98,7 +98,7 @@ there is no need to change or delete it. If you click OK at this point,
 you will load all 85 files.
 
 However, you can specify which files you want to open by adjusting the “axis
-information”, the file “name contains,” or the “pattern” sections. Even
+information”, the file “name contains”, or the “pattern” sections. Even
 though there are three options, you only need to need to make changes to
 one of them. Since Bio-Format’s precedence for processing data is from
 top to bottom, only the uppermost section that you made changes to will
@@ -128,12 +128,13 @@ files are not numbered. For example, if you have "Image\_Red.tif",
 "Image\_Green.tif", and "Image\_Blue.tif" you could enter "Image\_" in
 the box to group them all.
 
-To continue the example involving the dub data set, you cannot use the **file name contains** box to open every fifth image. However, if you
+To continue the example involving the dub data set, you cannot use the
+**file name contains** box to open every fifth image. However, if you
 only wanted to open dub10 thorough dub19, you could enter “dub1” in the
 **file name contains** box.
 
 The **pattern** box can be used to do either of the options listed above
-or much more. This box can accept a single file name like “dub01.pic.” 
+or much more. This box can accept a single file name like “dub01.pic”.
 It can also contain a pattern that use “<” and “>” to specify what
 numbers or text the file names contain.
 
@@ -150,8 +151,9 @@ There are three basic forms to the “< >” blocks:
 -  Number range with step - "dub<1-85:5>.pic" is the pattern for
    "dub1.pic", "dub6.pic", "dub11.pic", "dub11.pic" . . . "dub85.pic".
 
-It can also accept a `Java regular
-expression <http://download.oracle.com/javase/1.5.0/docs/api/java/util/regex/Pattern.html>`_.
+It can also accept a
+`Java regular expression
+<http://download.oracle.com/javase/1.5.0/docs/api/java/util/regex/Pattern.html>`_.
 
 
 Autoscale

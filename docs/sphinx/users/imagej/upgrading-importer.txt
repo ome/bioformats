@@ -1,7 +1,7 @@
-Upgrading the Bio-Formats importer for ImageJ to the latest trunk build
-=======================================================================
+Upgrading the Bio-Formats importer for ImageJ to the latest build
+=================================================================
 
-1) Download the latest trunk build of **bioformats\_package.jar** from 
+1) Download the latest build of **bioformats\_package.jar** from
 :downloads:`Bio-Formats downloads <>`
 
 .. image:: /images/imagej-upgrade_01.png
@@ -54,5 +54,5 @@ window.
 
 11) Open ImageJ.
 
-12) ImageJ now recognizes the latest trunk build of the Bio-Formats
+12) ImageJ now recognizes the latest build of the Bio-Formats
 importer.
