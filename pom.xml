@@ -20,6 +20,7 @@
     <module>components/forks/jai</module>
     <module>components/forks/mdbtools</module>
     <module>components/forks/poi</module>
+    <module>components/forks/turbojpeg</module>
     <module>components/autogen</module>
     <module>components/bio-formats</module>
     <module>components/bioformats_package</module>
@@ -35,7 +36,6 @@
     <module>components/scifio-tools</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
-    <module>components/turbojpeg</module>
     <module>components/xsd-fu</module>
   </modules>
 
