@@ -39,15 +39,10 @@
 package loci.formats.meta;
 
 /**
- * Abstract metadata root node.
- *
- * <p>The <code>MetadataRoot</code> interface is implemented by the
- * root node of metadata storage implementations.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/MetadataRoot.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/meta/MetadataRoot.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/MetadataRetrieve.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/meta/MetadataRetrieve.java;hb=HEAD">Gitweb</a></dd></dl>
  *
- * @author Roger Leigh r.leigh at dundee.ac.uk
  */
-public interface MetadataRoot { }
+public interface MetadataRetrieve extends ome.xml.meta.MetadataRetrieve { }

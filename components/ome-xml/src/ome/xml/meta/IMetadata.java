@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
+ * OME-XML Java library for working with OME-XML metadata structures.
  * %%
  * Copyright (C) 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,9 +36,17 @@
  * #L%
  */
 
-package loci.formats.meta;
+package ome.xml.meta;
 
 /**
+ * A proxy capable of bidirectional communication of biological image data to
+ * and from a particular storage medium.
+ *
+ * <p>The <code>IMetadata</code> interface is a shorthand for a metadata
+ * storage implementation that handles both storage (see {@link MetadataStore})
+ * and retrieval (see {@link MetadataRetrieve}) of metadata fields. It exists
+ * mainly to reduce the need to cast between <code>MetadataStore</code> and
+ * <code>MetadataRetrieve</code> object types.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/IMetadata.java">Trac</a>,
@@ -46,4 +54,4 @@ package loci.formats.meta;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public interface IMetadata extends ome.xml.meta.IMetadata, MetadataStore, MetadataRetrieve { }
+public interface IMetadata extends MetadataRetrieve, MetadataStore { }

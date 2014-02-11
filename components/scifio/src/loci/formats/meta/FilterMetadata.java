@@ -41,9 +41,14 @@ package loci.formats.meta;
 /**
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/IMetadata.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/meta/IMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/FilterMetadata.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/meta/FilterMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
  *
- * @author Curtis Rueden ctrueden at wisc.edu
  */
-public interface IMetadata extends ome.xml.meta.IMetadata, MetadataStore, MetadataRetrieve { }
+public class FilterMetadata extends ome.xml.meta.FilterMetadata implements MetadataStore {
+
+  public FilterMetadata(MetadataStore store, boolean filter) {
+    super(store, filter);
+  }
+
+}

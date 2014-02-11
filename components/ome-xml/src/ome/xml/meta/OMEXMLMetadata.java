@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
+ * OME-XML Java library for working with OME-XML metadata structures.
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -34,55 +34,25 @@
  * #L%
  */
 
-package loci.formats.ome;
-
-import org.w3c.dom.Element;
-
-import loci.formats.meta.MetadataRoot;
-import ome.xml.model.OME;
-import ome.xml.model.OMEModel;
-import ome.xml.model.enums.EnumerationException;
+package ome.xml.meta;
 
 /**
  * A utility class for constructing and manipulating OME-XML DOMs.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ome/OMEXMLMetadataRoot.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/ome/OMEXMLMetadataRoot.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/src/ome/xml/meta/OMEXMLMetadata.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/src/ome/xml/meta/OMEXMLMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
  *
- * @author Roger Leigh rleigh at dundee.ac.uk
+ * @author Chris Allan callan at blackcat dot ca
  */
-public class OMEXMLMetadataRoot extends OME implements MetadataRoot {
-
-  /** Default constructor. */
-  public OMEXMLMetadataRoot()
-  {
-    super();
-  }
+public interface OMEXMLMetadata extends IMetadata {
 
   /**
-   * Constructs OME recursively from an XML DOM tree.
-   * @param element Root of the XML DOM tree to construct a model object
-   * graph from.
-   * @param model Handler for the OME model which keeps track of instances
-   * and references seen during object population.
-   * @throws EnumerationException If there is an error instantiating an
-   * enumeration during model object creation.
+   * Dumps the given OME-XML DOM tree to a string.
+   * @return OME-XML as a string.
    */
-  public OMEXMLMetadataRoot(Element element, OMEModel model)
-    throws EnumerationException
-  {
-    super(element, model);
-  }
+  String dumpXML();
 
-  /**
-   * Construct from existing OME instance.
-   *
-   * @param ome the OME instance to copy.
-   */
-  public OMEXMLMetadataRoot(OME ome)
-  {
-    super(ome);
-  }
+  int resolveReferences();
 
 }

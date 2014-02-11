@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
+ * OME-XML Java library for working with OME-XML metadata structures.
  * %%
  * Copyright (C) 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,14 +36,18 @@
  * #L%
  */
 
-package loci.formats.meta;
+package ome.xml.meta;
 
 /**
+ * Abstract metadata root node.
+ *
+ * <p>The <code>MetadataRoot</code> interface is implemented by the
+ * root node of metadata storage implementations.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/IMetadata.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/meta/IMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/src/ome/xml/meta/MetadataRoot.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/src/ome/xml/meta/MetadataRoot.java;hb=HEAD">Gitweb</a></dd></dl>
  *
- * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Roger Leigh r.leigh at dundee.ac.uk
  */
-public interface IMetadata extends ome.xml.meta.IMetadata, MetadataStore, MetadataRetrieve { }
+public interface MetadataRoot { }

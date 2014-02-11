@@ -36,31 +36,7 @@
 
 package loci.formats.ome;
 
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Hashtable;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
-import loci.common.Constants;
-import loci.common.xml.XMLTools;
-
-import ome.xml.model.OME;
-import ome.xml.model.OMEModelObject;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * A utility class for constructing and manipulating OME-XML DOMs.
- * It is the superclass for all versions of OME-XML. It requires the
- * ome.xml package to compile (part of ome-xml.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ome/AbstractOMEXMLMetadata.java">Trac</a>,
@@ -69,62 +45,6 @@ import org.slf4j.LoggerFactory;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
-
-  // -- Constants --
-
-  /** XSI namespace. */
-  public static final String XSI_NS =
-    "http://www.w3.org/2001/XMLSchema-instance";
-
-  /** OME-XML schema location. */
-  public static final String SCHEMA =
-    "http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd";
-
-  protected static final Logger LOGGER =
-    LoggerFactory.getLogger(AbstractOMEXMLMetadata.class);
-
-  // -- Fields --
-
-  /** The root element of OME-XML. */
-  protected OMEModelObject root;
-
-  /** DOM element that backs the first Image's CustomAttributes node. */
-  private Element imageCA;
-
-  private DocumentBuilder builder;
-
-  // -- Constructors --
-
-  /** Creates a new OME-XML metadata object. */
-  public AbstractOMEXMLMetadata() {
-  }
-
-  // -- OMEXMLMetadata API methods --
-
-  /**
-   * Dumps the given OME-XML DOM tree to a string.
-   * @return OME-XML as a string.
-   */
-  public String dumpXML() {
-    if (root == null) {
-      root = (OMEModelObject) getRoot();
-      if (root == null) return null;
-    }
-    Document doc = createNewDocument();
-    Element r = root.asXMLElement(doc);
-    String schemaLocation = OME.NAMESPACE + " " + SCHEMA;
-    return XMLTools.dumpXML(schemaLocation, doc, r);
-  }
-
-
-  // -- Helper methods --
-
-  public Document createNewDocument() {
-    if (builder == null) {
-      builder = XMLTools.createBuilder();
-    }
-    return builder.newDocument();
-  }
+public abstract class AbstractOMEXMLMetadata extends ome.xml.meta.AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
 }
