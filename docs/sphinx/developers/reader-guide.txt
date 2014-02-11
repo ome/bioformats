@@ -94,8 +94,8 @@ should populate the fields in CoreMetadata, which are essential to reading
 image planes.
 
 If you read from a file using something other than
-:source:`RandomAccessInputStream <components/loci-common/src/loci/common/RandomAccessInputStream.java>` or 
-:source:`Location <components/loci-common/src/loci/common/io/Location.java>`, 
+:source:`RandomAccessInputStream <components/common/src/loci/common/RandomAccessInputStream.java>` or 
+:source:`Location <components/common/src/loci/common/io/Location.java>`, 
 you *must* use the file name returned by ``Location.getMappedId(String)``, not 
 the file name passed to the reader.
 Thus, a stub for ``initFile(String)`` might look like this:
@@ -149,18 +149,18 @@ Other useful things
 -------------------
 
 - :source:`loci.common.RandomAccessInputStream
-  <components/loci-common/src/loci/common/RandomAccessInputStream.java>` is a 
+  <components/common/src/loci/common/RandomAccessInputStream.java>` is a 
   hybrid RandomAccessFile/InputStream
   class that is generally more efficient than either RandomAccessFile or
   InputStream, and implements the DataInput interface.  It is recommended that
   you use this for reading files.
 
-- :source:`loci.common.Location <components/loci-common/src/loci/common/Location.java>` provides an API 
+- :source:`loci.common.Location <components/common/src/loci/common/Location.java>` provides an API 
   similar to java.io.File, and supports
   File-like operations on URLs.  It is highly recommended that you use this
   instead of File.  See the :javadoc:`Javadocs <>` for additional information.
 
-- :source:`loci.common.DataTools <components/loci-common/src/loci/common/DataTools.java>` provides a 
+- :source:`loci.common.DataTools <components/common/src/loci/common/DataTools.java>` provides a 
   number of methods for converting bytes to
   shorts, ints, longs, etc.  It also supports reading most primitive types
   directly from a RandomAccessInputStream (or other DataInput implementation).

@@ -36,7 +36,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci-common</artifactId>
+      <artifactId>common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -204,7 +204,7 @@
           <sourceDir>target/classes/cppwrap</sourceDir>
           <libraries>
             <library>${project.groupId}:ome-xml:jar:${project.version}</library>
-            <library>${project.groupId}:loci-common:jar:${project.version}</library>
+            <library>${project.groupId}:common:jar:${project.version}</library>
           </libraries>
         </configuration>
       </plugin>

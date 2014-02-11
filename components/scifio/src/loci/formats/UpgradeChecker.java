@@ -102,7 +102,7 @@ public class UpgradeChecker {
 
   /** Names of the individual JARs. */
   public static final String[] INDIVIDUAL_JARS = new String[] {
-    "bio-formats.jar", "jai_imageio.jar", "loci-common.jar",
+    "bio-formats.jar", "jai_imageio.jar", "common.jar",
     "mdbtools-java.jar", "metakit.jar", "ome-io.jar", "ome-xml.jar",
     "poi-loci.jar", "scifio.jar"
   };

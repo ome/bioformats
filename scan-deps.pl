@@ -63,7 +63,7 @@ my %lociCommon = (
   NAME    => "common",
   TITLE   => "LOCI Common",
   PATH    => "components/common",
-  JAR     => "loci-common.jar",
+  JAR     => "common.jar",
   PACKAGE => "loci.common",
   DESC    => <<ZZ,
 A library containing common I/O and reflection classes

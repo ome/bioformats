@@ -82,7 +82,7 @@ public final class LibraryChecker {
       case BIO_FORMATS:
         checkLibrary("org.slf4j.Logger", "slf4j-api-1.7.2.jar", missing);
         checkLibrary("loci.common.RandomAccessInputStream",
-          "loci-common.jar", missing);
+          "common.jar", missing);
         checkLibrary("loci.formats.FormatHandler", "bio-formats.jar", missing);
         checkLibrary("loci.poi.poifs.filesystem.POIFSDocument",
           "poi-loci.jar", missing);
