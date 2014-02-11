@@ -45,10 +45,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import loci.formats.ome.OMEXMLMetadataImpl;
-import loci.formats.ome.OMEXMLMetadataRoot;
 
 import static org.testng.AssertJUnit.*;
 
+import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Annotation;
 import ome.xml.model.Arc;
 import ome.xml.model.BinaryFile;
