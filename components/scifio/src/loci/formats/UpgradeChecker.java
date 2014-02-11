@@ -71,7 +71,7 @@ public class UpgradeChecker {
   // -- Constants --
 
   /** Version number of the latest stable release. */
-  public static final String STABLE_VERSION = "5.0.0-rc2";
+  public static final String STABLE_VERSION = "5.0.0-rc1";
 
   /** Location of the OME continuous integration server. */
   public static final String CI_SERVER = "http://ci.openmicroscopy.org";
