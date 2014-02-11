@@ -6,15 +6,15 @@ rem             using the Bio-Formats Importer plugin
 rem Required JARs: loci_tools.jar or bioformats_package.jar, ij.jar
 
 setlocal
-set SCIFIO_DIR=%~dp0
-if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%
+set BF_DIR=%~dp0
+if "%BF_DIR:~-1%" == "\" set BF_DIR=%BF_DIR:~0,-1%
 
-call "%SCIFIO_DIR%\config.bat"
+call "%BF_DIR%\config.bat"
 
-if "%SCIFIO_DEVEL%" == "" (
+if "%BF_DEVEL%" == "" (
   rem Developer environment variable unset; add JAR libraries to classpath.
-  if exist "%SCIFIO_JAR_DIR%\ij.jar" (
-    set SCIFIO_CP="%SCIFIO_JAR_DIR%\ij.jar"
+  if exist "%BF_JAR_DIR%\ij.jar" (
+    set BF_CP="%BF_JAR_DIR%\ij.jar"
   ) else (
     rem Libraries not found; issue an error.
     echo Required JAR libraries not found. Please download:
@@ -24,9 +24,9 @@ if "%SCIFIO_DEVEL%" == "" (
     echo and place in the same directory as the command line tools.
     goto end
   )
-  if exist "%SCIFIO_JAR_DIR%\loci_plugins.jar" (
-    set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\loci_plugins.jar"
-  ) else if not exist "%SCIFIO_JAR_DIR%\bioformats_package.jar" (
+  if exist "%BF_JAR_DIR%\loci_plugins.jar" (
+    set BF_CP=%BF_CP%;"%BF_JAR_DIR%\loci_plugins.jar"
+  ) else if not exist "%BF_JAR_DIR%\bioformats_package.jar" (
     rem Libraries not found; issue an error.
     echo Required JAR libraries not found. Please download:
     echo   bioformats_package.jar
@@ -37,7 +37,7 @@ if "%SCIFIO_DEVEL%" == "" (
   )
 )
 
-set SCIFIO_PROG=loci.plugins.in.Importer
-call "%SCIFIO_DIR%\scifio.bat" %*
+set BF_PROG=loci.plugins.in.Importer
+call "%BF_DIR%\bf.bat" %*
 
 :end

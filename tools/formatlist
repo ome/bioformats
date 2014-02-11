@@ -4,6 +4,6 @@
 
 # Required JARs: loci_tools.jar or bioformats_package.jar
 
-SCIFIO_DIR=`dirname "$0"`
+BF_DIR=`dirname "$0"`
 
-SCIFIO_PROG=loci.formats.tools.PrintFormatTable "$SCIFIO_DIR/scifio.sh" "$@"
+BF_PROG=loci.formats.tools.PrintFormatTable "$BF_DIR/bf.sh" "$@"
