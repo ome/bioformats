@@ -14,9 +14,9 @@
 
   <artifactId>test-suite</artifactId>
 
-  <name>LOCI testing framework</name>
+  <name>Bio-Formats testing framework</name>
   <description>A framework for manual and automated testing of LOCI projects, particularly data-driven Bio-Formats testing.</description>
-  <url>http://loci.wisc.edu/software/bio-formats</url>
+  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2006</inceptionYear>
 
   <licenses>
@@ -132,7 +132,7 @@
     <developer>
       <id>melissa</id>
       <name>Melissa Linkert</name>
-      <email>melissa.linkert@glencoesoftware.com</email>
+      <email>melissa@glencoesoftware.com</email>
       <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>

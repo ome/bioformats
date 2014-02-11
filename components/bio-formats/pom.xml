@@ -16,7 +16,7 @@
 
   <name>Bio-Formats library</name>
   <description>A library for reading and writing popular microscopy file formats.</description>
-  <url>http://loci.wisc.edu/software/bio-formats</url>
+  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
   <licenses>
@@ -214,7 +214,7 @@
     <developer>
       <id>melissa</id>
       <name>Melissa Linkert</name>
-      <email>melissa.linkert@glencoesoftware.com</email>
+      <email>melissa@glencoesoftware.com</email>
       <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>

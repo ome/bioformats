@@ -49,7 +49,7 @@ public final class OMEUtils {
 
   /** URL of OMERO JAR downloads. */
   public static final String URL_OMERO_JARS =
-    "http://dev.loci.wisc.edu/svn/java/trunk/jar/";
+    "http://openmicroscopy.org";
 
   /** URL of OME-Java web page. */
   public static final String URL_OME_JAVA = "http://www.openmicroscopy.org/" +
