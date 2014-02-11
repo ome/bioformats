@@ -753,7 +753,7 @@ Type "ant -p" for a list of targets.
   <!-- OME I/O -->
 
   <target name="deps-ome-io"
-    depends="jar-loci-legacy,
+    depends="copy-jars,jar-loci-legacy,
       jar-ome-xml,
       jar-scifio"/>
 
