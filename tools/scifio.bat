@@ -39,7 +39,7 @@ if not "%SCIFIO_DEVEL%" == "" (
 
 rem Developer environment variable unset; add JAR libraries to classpath.
 if exist "%SCIFIO_JAR_DIR%\bio-formats.jar" (
-  set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\bio-formats.jar";"%SCIFIO_JAR_DIR%\scifio-tools.jar"
+  set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\bio-formats.jar";"%SCIFIO_JAR_DIR%\bio-formats-tools.jar"
 ) else if exist "%SCIFIO_JAR_DIR%\bioformats_package.jar" (
   set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\bioformats_package.jar"
 ) else if exist "%SCIFIO_JAR_DIR%\loci_tools.jar" (
