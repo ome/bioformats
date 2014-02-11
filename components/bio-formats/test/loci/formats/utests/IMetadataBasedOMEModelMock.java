@@ -25,8 +25,8 @@
 
 package loci.formats.utests;
 
-import loci.formats.meta.MetadataRoot;
 import loci.formats.ome.OMEXMLMetadataImpl;
+import ome.xml.meta.MetadataRoot;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;

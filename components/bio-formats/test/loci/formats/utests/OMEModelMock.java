@@ -25,7 +25,7 @@
 
 package loci.formats.utests;
 
-import loci.formats.meta.MetadataRoot;
+import ome.xml.meta.MetadataRoot;
 
 /**
  * <dl><dt><b>Source code:</b></dt>

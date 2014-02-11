@@ -25,8 +25,7 @@
 
 package loci.formats.utests;
 
-import loci.formats.ome.OMEXMLMetadataRoot;
-
+import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Arc;
 import ome.xml.model.BinaryFile;
 import ome.xml.model.BooleanAnnotation;

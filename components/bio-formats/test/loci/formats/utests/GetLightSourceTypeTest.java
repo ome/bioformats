@@ -29,8 +29,8 @@ import static org.testng.AssertJUnit.assertEquals;
 
 import loci.formats.meta.IMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
-import loci.formats.ome.OMEXMLMetadataRoot;
 
+import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Arc;
 import ome.xml.model.Filament;
 import ome.xml.model.Instrument;
