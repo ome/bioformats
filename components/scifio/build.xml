@@ -10,25 +10,7 @@ Type "ant -p" for a list of targets.
   <description>Build file for SCIFIO project</description>
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
-  <import file="${root.dir}/ant/xsd-fu.xml"/>
   <property file="build.properties"/>
-
-  <target name="generate-source" depends="init-title">
-    <property name="xsdfu.metadatapath" value="${gensrc.dir}"/>
-    <property name="xsdfu.omepath" value="${gensrc.dir}"/>
-
-    <delete dir="${xsdfu.metadatapath}"/>
-    <delete dir="${xsdfu.omepath}"/>
-
-    <!-- Generate the metadata interfaces -->
-    <xsd_fu package="loci.formats.meta" lang="Java" output="${xsdfu.metadatapath}">
-      <arg value="metadata"/>
-    </xsd_fu>
-    <!-- Generate the OME XML metadata interface -->
-    <xsd_fu package="loci.formats.ome" lang="Java" output="${xsdfu.omepath}">
-      <arg value="omexml_metadata"/>
-    </xsd_fu>
-  </target>
 
   <target name="test" depends="jar,compile-tests,test-no-ome-xml,
     test-no-lurawave, test-no-jai, test-spec"

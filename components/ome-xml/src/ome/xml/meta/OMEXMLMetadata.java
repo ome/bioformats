@@ -1,13 +1,11 @@
 /*
  * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
+ * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
- *   - Massachusetts Institute of Technology
- *   - National Institutes of Health
- *   - University of Dundee
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
+ *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -36,14 +34,25 @@
  * #L%
  */
 
-package loci.formats.meta;
+package ome.xml.meta;
 
 /**
+ * A utility class for constructing and manipulating OME-XML DOMs.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/IMetadata.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/meta/IMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/src/ome/xml/meta/OMEXMLMetadata.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/src/ome/xml/meta/OMEXMLMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
  *
- * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Chris Allan callan at blackcat dot ca
  */
-public interface IMetadata extends ome.xml.meta.IMetadata, MetadataStore, MetadataRetrieve { }
+public interface OMEXMLMetadata extends IMetadata {
+
+  /**
+   * Dumps the given OME-XML DOM tree to a string.
+   * @return OME-XML as a string.
+   */
+  String dumpXML();
+
+  int resolveReferences();
+
+}

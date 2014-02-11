@@ -62,9 +62,9 @@ import loci.formats.MetadataTools;
 import loci.formats.ResourceNamer;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.ome.OMEXMLMetadataRoot;
 import loci.formats.services.OMEXMLService;
 import ome.specification.XMLMockObjects;
+import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.OME;
 import ome.xml.model.primitives.Color;
 

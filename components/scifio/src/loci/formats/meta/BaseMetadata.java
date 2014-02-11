@@ -39,15 +39,6 @@
 package loci.formats.meta;
 
 /**
- * A proxy capable of bidirectional communication of biological image data to
- * and from a particular storage medium.
- *
- * <p>The <code>BaseMetadata</code> interface is implemented by
- * metadata storage implementations that handles both storage (see
- * {@link MetadataStore}) and retrieval (see {@link MetadataRetrieve})
- * of metadata fields. It exists mainly to store
- * <code>MetadataStore</code> and <code>MetadataRetrieve</code> object
- * types within the same container.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/BaseMetadata.java">Trac</a>,
@@ -55,4 +46,4 @@ package loci.formats.meta;
  *
  * @author Roger Leigh r.leigh at dundee.ac.uk
  */
-public interface BaseMetadata { }
+public interface BaseMetadata extends ome.xml.meta.BaseMetadata { }

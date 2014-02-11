@@ -15,8 +15,12 @@ Type "ant -p" for a list of targets.
 
   <target name="generate-source" depends="init-title">
     <property name="xsdfu.modelpath" value="${gensrc.dir}"/>
+    <property name="xsdfu.metadatapath" value="${gensrc.dir}"/>
+    <property name="xsdfu.omepath" value="${gensrc.dir}"/>
 
     <delete dir="${xsdfu.modelpath}"/>
+    <delete dir="${xsdfu.metadatapath}"/>
+    <delete dir="${xsdfu.omepath}"/>
 
     <!-- Generate the OME model object classes -->
     <xsd_fu package="ome.xml.model" lang="Java" output="${xsdfu.modelpath}">
@@ -31,6 +35,15 @@ Type "ant -p" for a list of targets.
     <!-- Generate the handlers for the OME model enumeration classes -->
     <xsd_fu package="ome.xml.model.enums.handlers" lang="Java" output="${xsdfu.modelpath}">
       <arg value="enum_handlers"/>
+    </xsd_fu>
+
+    <!-- Generate the metadata interfaces -->
+    <xsd_fu package="ome.xml.meta" lang="Java" output="${xsdfu.metadatapath}">
+      <arg value="metadata"/>
+    </xsd_fu>
+    <!-- Generate the OME XML metadata interface -->
+    <xsd_fu package="ome.xml.meta" lang="Java" output="${xsdfu.omepath}">
+      <arg value="omexml_metadata"/>
     </xsd_fu>
   </target>
 
