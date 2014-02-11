@@ -3,7 +3,7 @@
  * OME SCIFIO package for reading and converting scientific file formats.
  * %%
  * Copyright (C) Max Planck Institute for Biophysical Chemistry, 
- * Goettingen, 2013
+ * Goettingen, 2013 - 2014
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

@@ -83,7 +83,6 @@ end
 
 function path = getJarPath(files)
 
-
 % Assume the jar is either in the Matlab path or under the same folder as
 % this file
 for i = 1 : numel(files)
