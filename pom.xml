@@ -24,7 +24,7 @@
     <module>components/autogen</module>
     <module>components/bio-formats</module>
     <module>components/bioformats_package</module>
-    <module>components/loci-common</module>
+    <module>components/common</module>
     <module>components/loci-plugins</module>
     <module>components/loci-tools</module>
     <module>components/metakit</module>

@@ -12,7 +12,7 @@
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>loci-common</artifactId>
+  <artifactId>common</artifactId>
 
   <name>Common</name>
   <description>Contains common I/O, date parsing, and XML processing classes.</description>
@@ -111,7 +111,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <licenseName>loci-common</licenseName>
+          <licenseName>common</licenseName>
           <projectName>Common package for I/O and related utilities</projectName>
         </configuration>
       </plugin>

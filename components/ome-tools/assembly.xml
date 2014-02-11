@@ -14,7 +14,7 @@
         <exclude>ome:bio-formats</exclude>
         <exclude>ome:loci_plugins</exclude>
         <exclude>ome:ome-xml</exclude>
-        <exclude>ome:loci-common</exclude>
+        <exclude>ome:common</exclude>
         <exclude>ome:scifio</exclude>
         <exclude>ome:lwf-stubs</exclude>
         <exclude>gov.nih.imagej:imagej</exclude>
