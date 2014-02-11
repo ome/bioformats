@@ -265,43 +265,13 @@ public abstract class WriterWrapper implements IFormatWriter {
   public void setCodecOptions(CodecOptions options) {
     writer.setCodecOptions(options);
   }
-  
+
   public String getCompression() {
     return writer.getCompression();
   }
 
   public void setWriteSequentially(boolean sequential) {
     writer.setWriteSequentially(sequential);
-  }
-
-  // -- Deprecated IFormatWriter methods --
-
-  /** @deprecated */
-  public void saveBytes(byte[] bytes, boolean last)
-    throws FormatException, IOException
-  {
-    writer.saveBytes(bytes, last);
-  }
-
-  /** @deprecated */
-  public void saveBytes(byte[] bytes, int series,
-    boolean lastInSeries, boolean last) throws FormatException, IOException
-  {
-    writer.saveBytes(bytes, series, lastInSeries, last);
-  }
-
-  /** @deprecated */
-  public void savePlane(Object plane, boolean last)
-    throws FormatException, IOException
-  {
-    writer.savePlane(plane, last);
-  }
-
-  /** @deprecated */
-  public void savePlane(Object plane, int series,
-    boolean lastInSeries, boolean last) throws FormatException, IOException
-  {
-    writer.savePlane(plane, series, lastInSeries, last);
   }
 
   // -- IFormatHandler API methods --

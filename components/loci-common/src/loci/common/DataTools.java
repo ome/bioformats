@@ -514,14 +514,6 @@ public final class DataTools {
     return v;
   }
 
-  /** @deprecated Use {@link #unpackBytes(long, byte[], int, int, boolean) */
-  @Deprecated
-  public static void unpackShort(short value, byte[] buf, int ndx,
-    boolean little)
-  {
-    unpackBytes(value, buf, ndx, 2, little);
-  }
-
   /**
    * Translates nBytes of the given long and places the result in the
    * given byte array.
@@ -599,18 +591,6 @@ public final class DataTools {
       return l;
     }
     return null;
-  }
-
-  /**
-   * @param signed The signed parameter is ignored.
-   * @deprecated Use {@link #makeDataArray(byte[], int, boolean, boolean)}
-   *   regardless of signedness.
-   */
-  @Deprecated
-  public static Object makeDataArray(byte[] b,
-    int bpp, boolean fp, boolean little, boolean signed)
-  {
-    return makeDataArray(b, bpp, fp, little);
   }
 
   /**
@@ -724,15 +704,6 @@ public final class DataTools {
   }
 
   // -- Strings --
-
-  /**
-   * Convert byte array to a hexadecimal string.
-   * @deprecated Use {@link bytesToHex(byte[])} instead.
-   */
-  @Deprecated
-  public static String getHexString(byte[] b) {
-    return bytesToHex(b);
-  }
 
   /** Remove null bytes from a string. */
   public static String stripString(String toStrip) {

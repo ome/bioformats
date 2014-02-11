@@ -310,16 +310,6 @@ public class LociFunctions extends MacroFunctions {
     normalize[0] = new Boolean(r.isNormalized());
   }
 
-  @SuppressWarnings("deprecation")
-  public void setMetadataCollected(Boolean collect) {
-    r.setMetadataCollected(collect.booleanValue());
-  }
-
-  @SuppressWarnings("deprecation")
-  public void isMetadataCollected(Boolean[] collect) {
-    collect[0] = new Boolean(r.isMetadataCollected());
-  }
-
   public void setOriginalMetadataPopulated(Boolean populate) {
     r.setOriginalMetadataPopulated(populate.booleanValue());
   }
@@ -583,10 +573,6 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("-- Sets whether to normalize floating point data to [0-1].");
       IJ.log("Ext.isNormalized(normalize)");
       IJ.log("-- Gets whether float data is being normalized to [0-1].");
-      IJ.log("Ext.setMetadataCollected(collect)");
-      IJ.log("-- Sets whether Bio-Formats should extract metadata at all.");
-      IJ.log("Ext.isMetadataCollected(collect)");
-      IJ.log("-- Gets whether Bio-Formats is supposed to extract metadata.");
       IJ.log("Ext.setOriginalMetadataPopulated(populate)");
       IJ.log("-- Sets whether Bio-Formats should save proprietary metadata");
       IJ.log("-- to the OME metadata store as custom attributes.");

@@ -102,12 +102,6 @@ public abstract class FormatWriter extends FormatHandler
    */
   protected MetadataRetrieve metadataRetrieve = new DummyMetadata();
 
-  /**
-   * Next plane index for each series.  This is only used by deprecated methods.
-   */
-  private HashMap<Integer, Integer> planeIndices =
-    new HashMap<Integer, Integer>();
-
   /** Current file. */
   protected RandomAccessOutputStream out;
 
@@ -279,57 +273,6 @@ public abstract class FormatWriter extends FormatHandler
   /* @see IFormatWriter#setWriteSequentially(boolean) */
   public void setWriteSequentially(boolean sequential) {
     this.sequential = sequential;
-  }
-
-  // -- Deprecated IFormatWriter API methods --
-
-  /**
-   * @deprecated
-   * @see IFormatWriter#saveBytes(byte[], boolean)
-   */
-  public void saveBytes(byte[] bytes, boolean last)
-    throws FormatException, IOException
-  {
-    saveBytes(bytes, 0, last, last);
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatWriter#saveBytes(byte[], int, boolean, boolean)
-   */
-  public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
-  {
-    setSeries(series);
-    Integer planeIndex = planeIndices.get(series);
-    if (planeIndex == null) planeIndex = 0;
-    saveBytes(planeIndex, bytes);
-    planeIndex++;
-    planeIndices.put(series, planeIndex);
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatWriter#savePlane(Object, boolean)
-   */
-  public void savePlane(Object plane, boolean last)
-    throws FormatException, IOException
-  {
-    savePlane(plane, 0, last, last);
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatWriter#savePlane(Object, int, boolean, boolean)
-   */
-  public void savePlane(Object plane, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
-  {
-    // NB: Writers use byte arrays by default as the native type.
-    if (!(plane instanceof byte[])) {
-      throw new IllegalArgumentException("Object to save must be a byte[]");
-    }
-    saveBytes((byte[]) plane, series, lastInSeries, last);
   }
 
   // -- IFormatHandler API methods --
