@@ -265,7 +265,7 @@ install(FILES
 # has been generated using "ant tools" from the Bio-Formats base folder.
 
 set(BF_ARTIFACT_DIR "${PROJECT_SOURCE_DIR}/../../../artifacts")
-set(BF_PACKAGE_JAR"${BF_ARTIFACT_DIR}/bioformats_package.jar")
+set(BF_PACKAGE_JAR "${BF_ARTIFACT_DIR}/bioformats_package.jar")
 
 # --------------------------------------------------------------------------
 # Copy bioformats_package.jar to the distribution folder (dist/bf-itk).
