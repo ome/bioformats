@@ -25,7 +25,6 @@
         <exclude>ome:mdbtools-java</exclude>
         <exclude>ome:turbojpeg</exclude>
         <exclude>ome:metakit</exclude>
-        <exclude>ome:scifio-devel</exclude>
         <exclude>ome:specification</exclude>
         <exclude>xalan:xalan</exclude>
         <exclude>xalan:serializer</exclude>
