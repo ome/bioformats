@@ -69,6 +69,7 @@
     <project.rootdir>${basedir}/../..</project.rootdir>
     <xsdfu.script>../xsd-fu/xsd-fu</xsdfu.script>
     <xsdfu.modelpath>${basedir}/target/generated-sources</xsdfu.modelpath>
+    <xsdfu.metadatapath>${basedir}/target/generated-sources</xsdfu.metadatapath>
   </properties>
 
   <build>
@@ -141,6 +142,55 @@
 		<argument>ome.xml.model.enums.handlers</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.modelpath}/</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
+	      </arguments>
+	    </configuration>
+	  </execution>
+
+	  <!-- Generate the metadata interfaces -->
+	  <execution>
+	    <id>xsd-fu-metadata-store</id>
+	    <phase>generate-sources</phase>
+	    <goals>
+	      <goal>exec</goal>
+	    </goals>
+	    <configuration>
+	      <executable>python</executable>
+	      <arguments>
+		<argument>${xsdfu.script}</argument>
+		<argument>metadata</argument>
+		<argument>-p</argument>
+		<argument>ome.xml.meta</argument>
+		<argument>-o</argument>
+		<argument>${xsdfu.metadatapath}/</argument>
+		<argument>${project.rootdir}/${xsdfu.ome}</argument>
+		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
+		<argument>${project.rootdir}/${xsdfu.roi}</argument>
+		<argument>${project.rootdir}/${xsdfu.sa}</argument>
+		<argument>${project.rootdir}/${xsdfu.spw}</argument>
+	      </arguments>
+	    </configuration>
+	  </execution>
+
+	  <execution>
+	    <id>xsd-fu-omexml-metadata</id>
+	    <phase>generate-sources</phase>
+	    <goals>
+	      <goal>exec</goal>
+	    </goals>
+	    <configuration>
+	      <executable>python</executable>
+	      <arguments>
+		<argument>${xsdfu.script}</argument>
+		<argument>omexml_metadata</argument>
+		<argument>-p</argument>
+		<argument>ome.xml.ome</argument>
+		<argument>-o</argument>
+		<argument>${xsdfu.metadatapath}/</argument>
 		<argument>${project.rootdir}/${xsdfu.ome}</argument>
 		<argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
 		<argument>${project.rootdir}/${xsdfu.roi}</argument>
