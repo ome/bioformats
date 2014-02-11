@@ -5,16 +5,16 @@
 
 # Required JARs: loci_tools.jar or bioformats_package.jar, ij.jar
 
-SCIFIO_DIR=`dirname "$0"`
+BF_DIR=`dirname "$0"`
 
-source "$SCIFIO_DIR/config.sh"
+source "$BF_DIR/config.sh"
 
-if [ -z "$SCIFIO_DEVEL" ]
+if [ -z "$BF_DEVEL" ]
 then
   # Developer environment variable unset; add JAR libraries to classpath.
-  if [ -e "$SCIFIO_JAR_DIR/ij.jar" ]
+  if [ -e "$BF_JAR_DIR/ij.jar" ]
   then
-    SCIFIO_CP="$SCIFIO_JAR_DIR/ij.jar"
+    BF_CP="$BF_JAR_DIR/ij.jar"
   else
     # Libraries not found; issue an error
     echo "Required JAR libraries not found. Please download:"
@@ -25,10 +25,10 @@ then
     echo ""
     exit 3
   fi
-  if [ -e "$SCIFIO_JAR_DIR/loci_plugins.jar" ]
+  if [ -e "$BF_JAR_DIR/loci_plugins.jar" ]
   then
-    SCIFIO_CP="$SCIFIO_CP:$SCIFIO_JAR_DIR/loci_plugins.jar"
-  elif [ ! -e "$SCIFIO_JAR_DIR/loci_tools.jar" -a ! -e bioformats_package.jar ]
+    BF_CP="$BF_CP:$BF_JAR_DIR/loci_plugins.jar"
+  elif [ ! -e "$BF_JAR_DIR/loci_tools.jar" -a ! -e bioformats_package.jar ]
   then
     # Libraries not found; issue an error
     echo "Required JAR libraries not found. Please download:"
@@ -41,5 +41,5 @@ then
   fi
 fi
 
-SCIFIO_PROG=loci.plugins.in.Importer \
-  SCIFIO_CP="$SCIFIO_CP" "$SCIFIO_DIR/scifio.sh" "$@"
+BF_PROG=loci.plugins.in.Importer \
+  BF_CP="$BF_CP" "$BF_DIR/bf.sh" "$@"
