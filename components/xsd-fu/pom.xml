@@ -16,7 +16,7 @@
 
   <name>XSD-FU</name>
   <description>Model code generation from XML schema</description>
-  <url>http://loci.wisc.edu/software</url>
+  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
   <licenses>

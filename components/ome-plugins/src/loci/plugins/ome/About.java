@@ -45,9 +45,9 @@ public final class About implements PlugIn {
 
   // -- Constants --
 
-  /** URL of LOCI Software web page. */
-  public static final String URL_LOCI_SOFTWARE =
-    "http://loci.wisc.edu/software";
+  /** URL of Bio-Formats web page. */
+  public static final String URL_BF_SOFTWARE =
+    "http://www.openmicroscopy.org/site/products/bio-formats";
 
   /** URL of OME Plugins web page. */
   public static final String URL_OME_PLUGINS =
@@ -73,7 +73,7 @@ public final class About implements PlugIn {
       "<li>Glencoe Software, Inc.</li>" +
       "<li>University of Dundee</li>" +
       "</ul>" +
-      "<i>" + URL_LOCI_SOFTWARE + "</i>" +
+      "<i>" + URL_BF_SOFTWARE + "</i>" +
       "<br>" +
       "<br><b>Download from OME</b> and <b>Upload to OME</b>" +
       "<br>Authors: Melissa Linkert, Philip Huettl" +

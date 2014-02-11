@@ -48,7 +48,7 @@ public final class About implements PlugIn {
 
   /** URL of LOCI Software web page. */
   public static final String URL_LOCI_SOFTWARE =
-    "http://loci.wisc.edu/software";
+    "http://www.openmicroscopy.org/site/products/bio-formats";
 
   /** URL of Bio-Formats ImageJ web page. */
   public static final String URL_BIO_FORMATS_IMAGEJ =
