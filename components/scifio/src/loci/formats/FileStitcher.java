@@ -618,22 +618,6 @@ public class FileStitcher extends ReaderWrapper {
     }
   }
 
-  /**
-   * @deprecated
-   * @see IFormatReader#setMetadataCollected(boolean)
-   */
-  public void setMetadataCollected(boolean collect) {
-    FormatTools.assertId(getCurrentFile(), false, 2);
-    if (externals == null) reader.setMetadataCollected(collect);
-    else {
-      for (ExternalSeries s : externals) {
-        for (DimensionSwapper r : s.getReaders()) {
-          r.setMetadataCollected(collect);
-        }
-      }
-    }
-  }
-
   /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */
   public void setOriginalMetadataPopulated(boolean populate) {
     FormatTools.assertId(getCurrentFile(), false, 1);

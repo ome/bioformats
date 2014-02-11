@@ -522,11 +522,6 @@ public class ImageReader implements IFormatReader {
     return getReader().getSeriesMetadata();
   }
 
-  /** @deprecated */
-  public Hashtable<String, Object> getMetadata() {
-    return getReader().getMetadata();
-  }
-
   /**
    * @deprecated
    * @see IFormatReader#getCoreMetadata()
@@ -578,25 +573,6 @@ public class ImageReader implements IFormatReader {
   public boolean isNormalized() {
     // NB: all readers should have the same normalization setting
     return readers[0].isNormalized();
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatReader#setMetadataCollected(boolean)
-   */
-  public void setMetadataCollected(boolean collect) {
-    FormatTools.assertId(currentId, false, 2);
-    for (int i=0; i<readers.length; i++) {
-      readers[i].setMetadataCollected(collect);
-    }
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatReader#isMetadataCollected()
-   */
-  public boolean isMetadataCollected() {
-    return readers[0].isMetadataCollected();
   }
 
   /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */

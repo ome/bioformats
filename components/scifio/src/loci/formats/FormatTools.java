@@ -190,13 +190,6 @@ public final class FormatTools {
   public static final String VCS_REVISION =
     VERSION_PROPERTIES.getProperty("vcs.revision");
 
-  /**
-   * Current SVN revision.
-   * @deprecated After Git move, deprecated in favour of {@link #VCS_REVISION}.
-   */
-  @Deprecated
-  public static final String SVN_REVISION = VCS_REVISION;
-
   /** Date on which this release was built. */
   public static final String DATE = VERSION_PROPERTIES.getProperty("date");
 

@@ -148,16 +148,6 @@ public abstract class DelegateReader extends FormatReader {
     legacyReader.setNormalized(normalize);
   }
 
-  /**
-   * @deprecated
-   * @see IFormatReader#setMetadataCollected(boolean)
-   */
-  public void setMetadataCollected(boolean collect) {
-    super.setMetadataCollected(collect);
-    nativeReader.setMetadataCollected(collect);
-    legacyReader.setMetadataCollected(collect);
-  }
-
   /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */
   public void setOriginalMetadataPopulated(boolean populate) {
     super.setOriginalMetadataPopulated(populate);

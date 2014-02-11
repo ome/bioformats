@@ -1099,21 +1099,6 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.xor(value);
   }
 
-  // -- Deprecated methods --
-
-  /** @deprecated */
-  public void drawDot2(int x, int y) {
-    record("drawDot2", new Object[] {new Integer(x), new Integer(y)},
-      new Class[] {int.class, int.class});
-    proc.drawDot2(x, y);
-  }
-
-  /** @deprecated */
-  public boolean isKillable() {
-    record("isKillable");
-    return proc.isKillable();
-  }
-
   // -- Helper methods --
 
   private void record(String method) {

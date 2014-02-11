@@ -365,52 +365,10 @@ public class ImageWriter implements IFormatWriter {
       writer.setWriteSequentially(sequential);
     }
   }
-  
+
   /* @see IFormatWriter#setCodecOptions(CodecOptions) */
   public void setCodecOptions(CodecOptions options) {
     getWriter().setCodecOptions(options);
-  }
-
-  // -- Deprecated IFormatWriter API methods --
-
-  /**
-   * @deprecated
-   * @see IFormatWriter#saveBytes(byte[], boolean)
-   */
-  public void saveBytes(byte[] bytes, boolean last)
-    throws FormatException, IOException
-  {
-    getWriter().saveBytes(bytes, last);
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatWriter#saveBytes(byte[], int, boolean, boolean)
-   */
-  public void saveBytes(byte[] bytes, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
-  {
-    getWriter().saveBytes(bytes, series, lastInSeries, last);
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatWriter#savePlane(Object, boolean)
-   */
-  public void savePlane(Object plane, boolean last)
-    throws FormatException, IOException
-  {
-    getWriter().savePlane(plane, last);
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatWriter#savePlane(Object, int, boolean, boolean)
-   */
-  public void savePlane(Object plane, int series, boolean lastInSeries,
-    boolean last) throws FormatException, IOException
-  {
-    getWriter().savePlane(plane, series, lastInSeries, last);
   }
 
   // -- IFormatHandler API methods --

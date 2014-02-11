@@ -575,27 +575,6 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   // -- Deprecated methods --
 
-  /**
-   * Specifies whether or not to collect metadata.
-   * @deprecated Use {@link #setMetadataOptions(MetadataOptions)} instead.
-   */
-  void setMetadataCollected(boolean collect);
-
-  /**
-   * Returns true if we should collect metadata.
-   * @deprecated Use {@link #getMetadataOptions()} instead.
-   */
-  boolean isMetadataCollected();
-
-  /**
-   * Returns a hashtable containing the union of all of the field/value pairs
-   * in getGlobalMetadata() and getSeriesMetadata(). The series name is
-   * prepended to fields in the getSeriesMetadata() hashtable.
-   *
-   * @deprecated Use #getGlobalMetadata() or #getSeriesMetadata() instead.
-   */
-  Hashtable<String, Object> getMetadata();
-
   /** Obtains the core metadata values for the current file.
    * @deprecated Use #getCoreMetadataList instead.
    */

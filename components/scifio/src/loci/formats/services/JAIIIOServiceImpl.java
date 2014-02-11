@@ -140,21 +140,6 @@ public class JAIIIOServiceImpl extends AbstractService
     ios.close();
   }
 
-  /**
-   * @deprecated
-   * @see JAIIIOService#writeImage(OutputStream, BufferedImage)
-   */
-  public void writeImage(OutputStream out, BufferedImage img, boolean lossless,
-    int[] codeBlockSize, double quality) throws IOException, ServiceException
-  {
-    JPEG2000CodecOptions options =
-      JPEG2000CodecOptions.getDefaultOptions();
-    options.lossless = lossless;
-    options.codeBlockSize = codeBlockSize;
-    options.quality = quality;
-    writeImage(out, img, options);
-  }
-
   /* @see JAIIIOService#readImage(InputStream, JPEG2000CodecOptions) */
   public BufferedImage readImage(InputStream in, JPEG2000CodecOptions options)
     throws IOException, ServiceException

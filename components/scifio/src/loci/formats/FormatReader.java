@@ -261,7 +261,9 @@ public abstract class FormatReader extends FormatHandler
   protected void addMeta(String key, Object value,
     Hashtable<String, Object> meta)
   {
-    if (key == null || value == null || !isMetadataCollected()) {
+    if (key == null || value == null ||
+      getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM)
+    {
       return;
     }
 
@@ -969,24 +971,6 @@ public abstract class FormatReader extends FormatHandler
     return normalizeData;
   }
 
-  /**
-   * @deprecated
-   * @see IFormatReader#setMetadataCollected(boolean)
-   */
-  public void setMetadataCollected(boolean collect) {
-    FormatTools.assertId(currentId, false, 1);
-    MetadataLevel level = collect ? MetadataLevel.ALL : MetadataLevel.MINIMUM;
-    setMetadataOptions(new DefaultMetadataOptions(level));
-  }
-
-  /**
-   * @deprecated
-   * @see IFormatReader#isMetadataCollected()
-   */
-  public boolean isMetadataCollected() {
-    return getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL;
-  }
-
   /* @see IFormatReader#setOriginalMetadataPopulated(boolean) */
   public void setOriginalMetadataPopulated(boolean populate) {
     FormatTools.assertId(currentId, false, 1);
@@ -1103,31 +1087,6 @@ public abstract class FormatReader extends FormatHandler
     FormatTools.assertId(currentId, true, 1);
     flattenHashtables();
     return core.get(getCoreIndex()).seriesMetadata;
-  }
-
-  /** @deprecated */
-  public Hashtable<String, Object> getMetadata() {
-    FormatTools.assertId(currentId, true, 1);
-    Hashtable<String, Object> h =
-      new Hashtable<String, Object>(getGlobalMetadata());
-    int oldSeries = getSeries();
-
-    IMetadata meta = getMetadataStore() instanceof IMetadata ?
-      (IMetadata) getMetadataStore() : null;
-
-    for (int series=0; series<getSeriesCount(); series++) {
-      String name = "Series " + series;
-      if (meta != null) {
-        String realName = meta.getImageName(series);
-        if (realName != null && realName.trim().length() != 0) {
-          name = realName;
-        }
-      }
-      setSeries(series);
-      MetadataTools.merge(getSeriesMetadata(), h, name + " ");
-    }
-    setSeries(oldSeries);
-    return h;
   }
 
   /**

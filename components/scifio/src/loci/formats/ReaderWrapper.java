@@ -132,7 +132,6 @@ public abstract class ReaderWrapper implements IFormatReader {
    * Most of the reader state is preserved as well, including:<ul>
    *   <li>{@link #isNormalized()}</li>
    *   <li>{@link #isMetadataFiltered()}</li>
-   *   <li>{@link #isMetadataCollected()}</li>
    *   <li>{@link DelegateReader#isLegacy()}</li>
    * </ul>
    *
@@ -148,10 +147,8 @@ public abstract class ReaderWrapper implements IFormatReader {
     // sync top-level configuration with original reader
     boolean normalized = isNormalized();
     boolean metadataFiltered = isMetadataFiltered();
-    boolean metadataCollected = isMetadataCollected();
     wrapperCopy.setNormalized(normalized);
     wrapperCopy.setMetadataFiltered(metadataFiltered);
-    wrapperCopy.setMetadataCollected(metadataCollected);
     return wrapperCopy;
   }
 
@@ -627,22 +624,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     catch (InvocationTargetException exc) { throw new FormatException(exc); }
 
     return wrapperCopy;
-  }
-
-  // -- Deprecated methods --
-
-
-  /** @deprecated */
-  public void setMetadataCollected(boolean collect) {
-    reader.setMetadataCollected(collect);
-  }
-
-  /** @deprecated */
-  public boolean isMetadataCollected() { return reader.isMetadataCollected(); }
-
-  /** @deprecated */
-  public Hashtable<String, Object> getMetadata() {
-    return reader.getMetadata();
   }
 
 }

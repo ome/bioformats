@@ -195,7 +195,7 @@ public interface IFormatWriter extends IFormatHandler {
    * @param options The options to set.
    */
   void setCodecOptions(CodecOptions options) ;
-  
+
   /** Gets the current compression type. */
   String getCompression();
 
@@ -208,27 +208,5 @@ public interface IFormatWriter extends IFormatHandler {
    * will be slightly improved.
    */
   void setWriteSequentially(boolean sequential);
-
-  // -- Deprecated methods --
-
-  /** @deprecated Please use saveBytes(int, byte[]) instead. */
-  void saveBytes(byte[] bytes, boolean last)
-    throws FormatException, IOException;
-
-  /**
-   * @deprecated Please use saveBytes(int, byte[]) and setSeries(int) instead.
-   */
-  void saveBytes(byte[] bytes, int series, boolean lastInSeries, boolean last)
-    throws FormatException, IOException;
-
-  /** @deprecated Please use savePlane(int, Object) instead. */
-  void savePlane(Object plane, boolean last)
-    throws FormatException, IOException;
-
-  /**
-   * @deprecated Please use savePlane(int, Object) and setSeries(int) instead.
-   */
-  void savePlane(Object plane, int series, boolean lastInSeries, boolean last)
-    throws FormatException, IOException;
 
 }

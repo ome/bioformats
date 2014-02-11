@@ -54,13 +54,6 @@ import loci.formats.meta.MetadataRetrieve;
  */
 public class BufferedImageWriter extends WriterWrapper {
 
-  // -- Fields --
-
-  /**
-   * Number of planes written.  Only required by deprecated saveImage method.
-   */
-  private int numWritten = 0;
-
   // -- Utility methods --
 
   /**
@@ -118,45 +111,6 @@ public class BufferedImageWriter extends WriterWrapper {
 
       saveBytes(no, buf, x, y, w, h);
     }
-  }
-
-  // -- IFormatHandler API methods --
-
-  /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
-    super.close();
-    numWritten = 0;
-  }
-
-  // -- deprecated BufferedImageWriter methods --
-
-  /**
-   * @deprecated Please use saveImage(int, BufferedImage) instead.
-   * Saves the given BufferedImage to the current file.
-   * Note that this method will append the image plane to the file; it will not
-   * overwrite previously saved image planes.
-   * If this image plane is the last one in the file, the last flag must be set.
-   */
-  public void saveImage(BufferedImage image, boolean last)
-    throws FormatException, IOException
-  {
-    saveImage(image, 0, last, last);
-  }
-
-  /**
-   * @deprecated Please use saveImage(int, BufferedImage) instead.
-   * Saves the given BufferedImage to the given series in the current file.
-   * Note that this method will append the image plane to the file; it will not
-   * overwrite previously saved image planes.
-   * If this image plane is the last one in the series, the lastInSeries flag
-   * must be set.
-   * If this image plane is the last one in the file, the last flag must be set.
-   */
-  public void saveImage(BufferedImage image, int series,
-    boolean lastInSeries, boolean last) throws FormatException, IOException
-  {
-    setSeries(series);
-    saveImage(numWritten++, image);
   }
 
   // -- Utility methods --
