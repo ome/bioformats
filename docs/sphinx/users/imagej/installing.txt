@@ -2,8 +2,12 @@ Installing Bio-Formats in ImageJ
 ================================
 
 
-*(Since FIJI is essentially ImageJ with plugins like Bio-Formats already
-built in, people who install Fiji can skip this section.)*
+.. note:: Since FIJI is essentially ImageJ with plugins like Bio-Formats
+    already built in, people who install Fiji can skip this section.
+    
+    If you are also using the OMERO plugin for ImageJ, you may find the set-up
+    guide on the new `user help site <http://help.openmicroscopy.org>`_ useful
+    for getting you started with both plugins at the same time.
 
 Once you `download <http://rsbweb.nih.gov/ij/download.html>`__ and
 install ImageJ, you can install the Bio-Formats plugin by going to the
@@ -23,7 +27,7 @@ depends on your needs:
   but it is not well tested and may have also introduced new bugs.
 
 - The **daily build** is a compilation of that day's changes that occurs
-  daily around midnight. It is not any better tested than the trunk build;
+  daily around midnight. It is not any better tested than the latest build;
   but if you download it multiple times in a day, you can be sure you will
   get the same version each time.
 
