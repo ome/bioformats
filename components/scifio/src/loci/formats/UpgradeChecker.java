@@ -97,6 +97,9 @@ public class UpgradeChecker {
   /** Name of the ueber tools JAR. */
   public static final String TOOLS = "bioformats_package.jar";
 
+  /** Name of the previous versions' tools JAR. */
+  public static final String OLD_TOOLS = "loci_tools.jar";
+
   /** Name of the OME tools JAR. */
   public static final String OME_TOOLS = "ome_tools.jar";
 
@@ -338,7 +341,15 @@ public class UpgradeChecker {
       out.write(buf);
       out.close();
 
-      boolean success = jar.renameTo(new File(downloadPath));
+      // remove the old bundle jar if the new bundle jar was downloaded
+
+      File downloadFile = new File(downloadPath);
+      File oldFile = new File(downloadFile.getParent(), OLD_TOOLS);
+      if (oldFile.exists() && downloadFile.getName().equals(TOOLS)) {
+        oldFile.delete();
+      }
+
+      boolean success = jar.renameTo(downloadFile);
       if (!success) {
         LOGGER.warn("Failed to rename '{}' to '{}'", jar.getAbsolutePath(),
           downloadPath);
