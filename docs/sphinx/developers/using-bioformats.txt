@@ -156,7 +156,7 @@ the same writer and output settings (compression, frames per second, etc.),
 and is especially useful for formats that do not support multiple images per
 file.
 
-Please see :source:`loci.formats.tools.ImageConverter <components/scifio-tools/src/loci/formats/tools/ImageConverter.java>` and 
+Please see :source:`loci.formats.tools.ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>` and 
 :doc:`this guide to exporting to OME-TIFF files <export2>` for examples of how 
 to write files.
 

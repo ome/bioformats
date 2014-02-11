@@ -60,10 +60,10 @@ all be found in our :source:`Git repository <jar>`.
 Examples of usage
 -----------------
 
-:source:`ImageConverter <components/scifio-tools/src/loci/formats/tools/ImageConverter.java>` - 
+:source:`ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>` - 
 A simple command line tool for converting between formats.
 
-:source:`ImageInfo <components/scifio-tools/src/loci/formats/tools/ImageInfo.java>` - 
+:source:`ImageInfo <components/bio-formats-tools/src/loci/formats/tools/ImageInfo.java>` - 
 A more involved command line utility for thoroughly reading an input file, 
 printing some information about it, and displaying the pixels
 onscreen using the Bio-Formats viewer.

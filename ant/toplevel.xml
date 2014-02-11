@@ -28,7 +28,7 @@ Type "ant -p" for a list of targets.
       compile-ome-xml,
       compile-poi-loci,
       compile-scifio,
-      compile-scifio-tools,
+      compile-bio-formats-tools,
       compile-tests,
       compile-turbojpeg"
     description="compile LOCI software packages"/>
@@ -49,7 +49,7 @@ Type "ant -p" for a list of targets.
       jar-poi-loci,
       jar-scifio,
       jar-scifio-tests,
-      jar-scifio-tools,
+      jar-bio-formats-tools,
       jar-specification,
       jar-tests,
       jar-turbojpeg"
@@ -70,7 +70,7 @@ Type "ant -p" for a list of targets.
       osgi-ome-xml,
       osgi-poi-loci,
       osgi-scifio,
-      osgi-scifio-tools,
+      osgi-bio-formats-tools,
       osgi-tests,
       osgi-turbojpeg"
     description="generate OSGi bundles for LOCI software packages"/>
@@ -92,7 +92,7 @@ Type "ant -p" for a list of targets.
       findbugs-ome-io,
       findbugs-ome-plugins,
       findbugs-scifio,
-      findbugs-scifio-tools,
+      findbugs-bio-formats-tools,
       findbugs-tests"
     description="run findbugs on most components"/>
 
@@ -111,7 +111,7 @@ Type "ant -p" for a list of targets.
       clean-ome-xml,
       clean-poi-loci,
       clean-scifio,
-      clean-scifio-tools,
+      clean-bio-formats-tools,
       clean-specification,
       clean-tests,
       clean-turbojpeg,
@@ -135,7 +135,7 @@ Type "ant -p" for a list of targets.
       test-ome-xml,
       test-poi-loci,
       test-scifio,
-      test-scifio-tools,
+      test-bio-formats-tools,
       test-tests,
       test-turbojpeg"
     description="test all components">
@@ -452,48 +452,48 @@ Type "ant -p" for a list of targets.
     <ant dir="components/scifio" target="test"/>
   </target>
 
-  <!-- SCIFIO tools -->
+  <!-- Bio-Formats command line tools -->
 
-  <target name="deps-scifio-tools"
+  <target name="deps-bio-formats-tools"
     depends="jar-jai,
       jar-lwf-stubs,
       jar-ome-xml,
       jar-formats,
       jar-scifio"/>
 
-  <target name="compile-scifio-tools" depends="deps-scifio-tools"
-    description="compile classes for SCIFIO tools">
-    <ant dir="components/scifio-tools" target="scifio-tools.compile"/>
+  <target name="compile-bio-formats-tools" depends="deps-bio-formats-tools"
+    description="compile classes for Bio-Formats tools">
+    <ant dir="components/bio-formats-tools" target="bio-formats-tools.compile"/>
   </target>
 
-  <target name="jar-scifio-tools" depends="deps-scifio-tools"
-    description="generate JAR file for SCIFIO tools">
-    <ant dir="components/scifio-tools" target="scifio-tools.jar"/>
+  <target name="jar-bio-formats-tools" depends="deps-bio-formats-tools"
+    description="generate JAR file for Bio-Formats tools">
+    <ant dir="components/bio-formats-tools" target="bio-formats-tools.jar"/>
   </target>
 
-  <target name="osgi-scifio-tools" depends="jar-scifio-tools"
-    description="generate OSGi bundle for SCIFIO tools">
-    <ant dir="components/scifio-tools" target="scifio-tools.osgi"/>
+  <target name="osgi-bio-formats-tools" depends="jar-bio-formats-tools"
+    description="generate OSGi bundle for Bio-Formats tools">
+    <ant dir="components/bio-formats-tools" target="bio-formats-tools.osgi"/>
   </target>
 
-  <target name="findbugs-scifio-tools" depends="jar-scifio-tools"
-    description="run findbugs on SCIFIO tools">
-    <ant dir="components/scifio-tools" target="scifio-tools.findbugs"/>
+  <target name="findbugs-bio-formats-tools" depends="jar-bio-formats-tools"
+    description="run findbugs on Bio-Formats tools">
+    <ant dir="components/bio-formats-tools" target="bio-formats-tools.findbugs"/>
   </target>
 
-  <target name="clean-scifio-tools"
+  <target name="clean-bio-formats-tools"
     depends="clean-jai,
       clean-lwf-stubs,
       clean-ome-xml,
       clean-scifio,
       clean-formats"
-    description="remove build files for SCIFIO tools">
-    <ant dir="components/scifio-tools" target="scifio-tools.clean"/>
+    description="remove build files for Bio-Formats tools">
+    <ant dir="components/bio-formats-tools" target="bio-formats-tools.clean"/>
   </target>
 
-  <target name="test-scifio-tools" depends="jar-scifio-tools, testing-deps"
-    description="compile and run tests for SCIFIO tools">
-    <ant dir="components/scifio-tools" target="test"/>
+  <target name="test-bio-formats-tools" depends="jar-bio-formats-tools, testing-deps"
+    description="compile and run tests for Bio-Formats tools">
+    <ant dir="components/bio-formats-tools" target="test"/>
   </target>
 
   <target name="jar-scifio-tests"
@@ -830,7 +830,7 @@ Type "ant -p" for a list of targets.
       jar-ome-xml,
       jar-poi-loci,
       jar-scifio,
-      jar-scifio-tools,
+      jar-bio-formats-tools,
       jar-specification"
     description="create JAR file bundles of Bio-Formats and dependencies">
 

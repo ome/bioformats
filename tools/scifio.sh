@@ -40,7 +40,7 @@ else
   # Developer environment variable unset; add JAR libraries to classpath.
   if [ -e "$SCIFIO_JAR_DIR/bio-formats.jar" ]
   then
-    SCIFIO_CP="$SCIFIO_JAR_DIR/bio-formats.jar:$SCIFIO_JAR_DIR/scifio-tools.jar:$SCIFIO_CP"
+    SCIFIO_CP="$SCIFIO_JAR_DIR/bio-formats.jar:$SCIFIO_JAR_DIR/bio-formats-tools.jar:$SCIFIO_CP"
   elif [ -e "$SCIFIO_JAR_DIR/bioformats_package.jar" ]
   then
     SCIFIO_CP="$SCIFIO_JAR_DIR/bioformats_package.jar:$SCIFIO_CP"

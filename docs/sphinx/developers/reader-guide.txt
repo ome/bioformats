@@ -200,7 +200,7 @@ Other useful things
   the images in the file.  :source:`ImageReader <components/scifio/src/loci/formats/ImageReader.java>` can take additional 
   parameters; a brief listing is provided below for reference, but it is  
   recommended that you take a look at the contents of 
-  :source:`loci.formats.tools.ImageInfo <components/scifio-tools/src/loci/formats/tools/ImageInfo.java>` to see 
+  :source:`loci.formats.tools.ImageInfo <components/bio-formats-tools/src/loci/formats/tools/ImageInfo.java>` to see 
   exactly what each one does.
 
 +--------------+----------------------------------------------------------+

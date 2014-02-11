@@ -36,7 +36,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>scifio-tools</artifactId>
+      <artifactId>bio-formats-tools</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
