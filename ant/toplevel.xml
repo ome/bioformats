@@ -794,27 +794,27 @@ Type "ant -p" for a list of targets.
 
   <target name="compile-turbojpeg" depends="deps-turbojpeg"
     description="compile classes for Turbojpeg Java bindings">
-    <ant dir="components/turbojpeg" target="turbojpeg.compile"/>
+    <ant dir="components/forks/turbojpeg" target="turbojpeg.compile"/>
   </target>
 
   <target name="jar-turbojpeg" depends="deps-turbojpeg"
     description="generate JAR file for Turbojpeg Java bindings">
-    <ant dir="components/turbojpeg" target="jar"/>
+    <ant dir="components/forks/turbojpeg" target="jar"/>
   </target>
 
   <target name="osgi-turbojpeg" depends="jar-turbojpeg"
     description="generate OSGi bundle for Turbojpeg Java bindings">
-    <ant dir="components/turbojpeg" target="turbojpeg.osgi"/>
+    <ant dir="components/forks/turbojpeg" target="turbojpeg.osgi"/>
   </target>
 
   <target name="clean-turbojpeg"
     description="remove build files for Turbojpeg Java bindings">
-    <ant dir="components/turbojpeg" target="turbojpeg.clean"/>
+    <ant dir="components/forks/turbojpeg" target="turbojpeg.clean"/>
   </target>
 
   <target name="test-turbojpeg" depends="jar-turbojpeg, testing-deps"
     description="compile and run tests for Turbojpeg Java bindings">
-    <ant dir="components/turbojpeg" target="test"/>
+    <ant dir="components/forks/turbojpeg" target="test"/>
   </target>
 
   <!-- Tool collections -->
