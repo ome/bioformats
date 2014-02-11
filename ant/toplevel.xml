@@ -36,7 +36,6 @@ Type "ant -p" for a list of targets.
   <target name="jars"
     depends="copy-jars,
       jar-autogen,
-      jar-legacy,
       jar-formats,
       jar-jai,
       jar-loci-common,
@@ -101,7 +100,6 @@ Type "ant -p" for a list of targets.
     depends="
       clean-autogen,
       clean-formats,
-      clean-legacy,
       clean-jai,
       clean-loci-common,
       clean-loci-plugins,
@@ -457,8 +455,7 @@ Type "ant -p" for a list of targets.
   <!-- SCIFIO tools -->
 
   <target name="deps-scifio-tools"
-    depends="jar-legacy,
-      jar-jai,
+    depends="jar-jai,
       jar-lwf-stubs,
       jar-ome-xml,
       jar-formats,
@@ -485,8 +482,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-scifio-tools"
-    depends="clean-legacy,
-      clean-jai,
+    depends="clean-jai,
       clean-lwf-stubs,
       clean-ome-xml,
       clean-scifio,
@@ -590,35 +586,10 @@ Type "ant -p" for a list of targets.
     <ant dir="components/loci-common" target="test"/>
   </target>
 
-  <!-- LOCI legacy -->
-
-  <target name="jar-legacy"
-    depends="jar-loci-common"
-    description="generate JAR file for LOCI Legacy">
-    <for list="${loci-common.libraries}" param="jar" delimiter=" " trim="true">
-      <sequential>
-        <unjar src="${artifact.dir}/@{jar}" dest="${loci-common.dir}">
-          <patternset>
-            <exclude name="META-INF/**"/>
-          </patternset>
-        </unjar>
-      </sequential>
-    </for>
-    <jar jarfile="${loci-common.jar}" basedir="${loci-common.dir}"/>
-    <delete dir="${loci-common.dir}"/>
-  </target>
-
-  <target name="clean-legacy"
-    depends="clean-loci-common"
-    description="remove build files for LOCI Common">
-    <delete file="${artifact.dir}/loci-legacy.jar"/>
-  </target>
-
   <!-- LOCI autogen -->
 
   <target name="deps-autogen"
-    depends="jar-legacy,
-             jar-scifio"/>
+    depends="jar-scifio"/>
 
   <target name="compile-autogen" depends="deps-autogen"
     description="compile classes for LOCI autogen">
@@ -641,8 +612,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-autogen"
-    depends="clean-legacy,
-             clean-scifio"
+    depends="clean-scifio"
     description="remove build files for LOCI autogen">
     <ant dir="components/autogen" target="autogen.clean"/>
   </target>
@@ -656,7 +626,6 @@ Type "ant -p" for a list of targets.
 
   <target name="deps-loci-plugins"
     depends="jar-formats,
-      jar-legacy,
       jar-ome-xml,
       jar-scifio"/>
 
@@ -682,7 +651,6 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-loci-plugins"
     depends="clean-formats,
-      clean-legacy,
       clean-ome-xml,
       clean-scifio"
     description="remove build files for LOCI Plugins for ImageJ">
@@ -702,7 +670,7 @@ Type "ant -p" for a list of targets.
   <!-- OME I/O -->
 
   <target name="deps-ome-io"
-    depends="copy-jars,jar-legacy,
+    depends="copy-jars,
       jar-ome-xml,
       jar-scifio"/>
 
@@ -727,8 +695,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-ome-io"
-    depends="clean-legacy,
-      clean-ome-xml,
+    depends="clean-ome-xml,
       clean-scifio"
     description="remove build files for OME I/O">
     <ant dir="components/ome-io" target="ome-io.clean"/>
@@ -742,8 +709,7 @@ Type "ant -p" for a list of targets.
   <!-- OME Plugins for ImageJ -->
 
   <target name="deps-ome-plugins"
-    depends="jar-legacy,
-      jar-loci-plugins,
+    depends="jar-loci-plugins,
       jar-ome-io,
       jar-scifio"/>
 
@@ -768,8 +734,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-ome-plugins"
-    depends="clean-legacy,
-      clean-loci-plugins,
+    depends="clean-loci-plugins,
       clean-ome-io,
       clean-scifio"
     description="remove build files for OME Plugins for ImageJ">
@@ -785,7 +750,6 @@ Type "ant -p" for a list of targets.
 
   <target name="deps-tests"
     depends="jar-formats,
-      jar-legacy,
       jar-ome-io,
       jar-ome-xml,
       jar-scifio"/>
@@ -812,7 +776,6 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-tests"
     depends="clean-formats,
-      clean-legacy,
       clean-ome-io,
       clean-ome-xml,
       clean-scifio"
@@ -859,7 +822,6 @@ Type "ant -p" for a list of targets.
   <target name="tools"
     depends="copy-jars,
       jar-jai,
-      jar-legacy,
       jar-loci-plugins,
       jar-mdbtools,
       jar-metakit,
