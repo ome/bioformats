@@ -63,7 +63,7 @@ OME I/O
     Path:          components/ome-io
     Project deps:  Bio-Formats, LOCI Common
     Library deps:  Logback, Simple Logging Facade for Java API, TestNG
-    Optional:      OME-Java, OMERO Client, OMERO Common
+    Optional:      OME-Java, OMERO Common
     License:       GPL
 
 OME-XML Java library
@@ -218,18 +218,6 @@ Simple Logging Facade for Java API
     URL:       http://www.slf4j.org/
     Notes:     used for all logging in loci.*
     License:   BSD
-
-OMERO Client
-    JAR file:  omero-client-4.2.0.jar
-    URL:       http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads
-    Notes:     used by OME I/O to connect to OMERO servers
-    License:   GPL
-
-OMERO Common
-    JAR file:  omero-common-4.2.0.jar
-    URL:       http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads
-    Notes:     used by OME I/O to connect to OMERO servers
-    License:   GPL
 
 Xalan Serializer
     JAR file:  serializer-2.7.1.jar
