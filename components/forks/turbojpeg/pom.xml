@@ -9,7 +9,7 @@
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
     <version>5.0.0-SNAPSHOT</version>
-    <relativePath>../..</relativePath>
+    <relativePath>../../../</relativePath>
   </parent>
 
   <artifactId>turbojpeg</artifactId>

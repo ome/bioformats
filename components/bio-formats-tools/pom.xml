@@ -22,7 +22,7 @@
   <licenses>
     <license>
       <name>Simplified BSD License</name>
-      <url>${license.server}/scifio/license.txt</url>
+      <url>${license.server}/formats-bsd/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -50,12 +50,12 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>scifio</artifactId>
+      <artifactId>formats-bsd</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>bio-formats</artifactId>
+      <artifactId>formats-gpl</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
