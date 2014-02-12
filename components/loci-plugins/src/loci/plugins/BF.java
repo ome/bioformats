@@ -1,6 +1,6 @@
 /*
  * #%L
- * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -39,7 +39,7 @@ import loci.plugins.in.ImporterOptions;
 import loci.plugins.in.ImporterPrompter;
 
 /**
- * Miscellaneous LOCI plugins utility methods.
+ * Miscellaneous plugins utility methods.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/BF.java">Trac</a>,
@@ -54,7 +54,7 @@ public final class BF {
   // -- Utility methods --
 
   public static void debug(String msg) {
-    if (IJ.debugMode) IJ.log("LOCI: " + msg);
+    if (IJ.debugMode) IJ.log("Bio-Formats: " + msg);
   }
 
   public static void status(boolean quiet, String msg) {

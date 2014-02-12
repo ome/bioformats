@@ -1,6 +1,6 @@
 /*
  * #%L
- * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -73,7 +73,7 @@ import loci.formats.FormatTools;
 import loci.plugins.util.WindowTools;
 
 /**
- * A window for managing configuration of the LOCI plugins.
+ * A window for managing configuration of the Bio-Formats plugins.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/config/ConfigWindow.java">Trac</a>,
@@ -108,7 +108,7 @@ public class ConfigWindow extends JFrame
   // -- Constructor --
 
   public ConfigWindow() {
-    setTitle("LOCI Plugins Configuration");
+    setTitle("Bio-Formats Plugins Configuration");
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
     // build UI
@@ -168,7 +168,7 @@ public class ConfigWindow extends JFrame
     libInfo.add(version);
 
     // TODO: install/upgrade button, if applicable
-    // - can upgrade any JAR from LOCI repository
+    // - can upgrade any JAR from the repository
     //   + upgrade button for "ImageJ" just launches ImageJ upgrade plugin
     // - can install native libs by downloading installer from its web site
     //   + QuickTime for Java
@@ -202,7 +202,7 @@ public class ConfigWindow extends JFrame
     upgradePanel.setLayout(new SpringLayout());
 
     JLabel upgradeLabel =
-      new JLabel("Automatically check for new versions of the LOCI plugins");
+      new JLabel("Automatically check for new versions of the Bio-Formats plugins");
     upgradePanel.add(upgradeLabel);
 
     final boolean checkForUpgrades = Prefs.get(UPGRADE_CHECK_KEY, true);
@@ -289,7 +289,7 @@ public class ConfigWindow extends JFrame
 
   /** Populate configuration information in a separate thread. */
   public void run() {
-    log.println("LOCI Plugins configuration - " + DateTools.getTimestamp());
+    log.println("Bio-Formats Plugins configuration - " + DateTools.getTimestamp());
 
     // list system properties
     log.println();

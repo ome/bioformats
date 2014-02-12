@@ -1,6 +1,6 @@
 /*
  * #%L
- * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -52,12 +52,12 @@ public final class LibraryChecker {
     FORMS         // JGoodies Forms
   }
 
-  /** Minimum version of ImageJ necessary for LOCI plugins. */
+  /** Minimum version of ImageJ necessary for Bio-Formats plugins. */
   public static final String IMAGEJ_VERSION = "1.43";
 
-  /** Message to be displayed if ImageJ is too old for LOCI plugins. */
+  /** Message to be displayed if ImageJ is too old for Bio-Formats plugins. */
   public static final String IMAGEJ_MSG =
-    "Sorry, the LOCI plugins require ImageJ v" + IMAGEJ_VERSION + " or later.";
+    "Sorry, the Bio-Formats plugins require ImageJ v" + IMAGEJ_VERSION + " or later.";
 
   /** URL for Bio-Formats web page. */
   public static final String URL_BF_SOFTWARE =
@@ -124,15 +124,15 @@ public final class LibraryChecker {
     String version = System.getProperty("java.version");
     double ver = Double.parseDouble(version.substring(0, 3));
     if (ver < 1.6) {
-      IJ.error("LOCI Plugins",
-        "Sorry, the LOCI plugins require Java 1.6 or later." +
+      IJ.error("Bio-Formats Plugins",
+        "Sorry, the Bio-Formats plugins require Java 1.6 or later." +
         "\nYou can download ImageJ with JRE 1.6 from the ImageJ web site.");
       return false;
     }
     return true;
   }
 
-  /** Checks whether ImageJ is new enough for the LOCI plugins. */
+  /** Checks whether ImageJ is new enough for the Bio-Formats plugins. */
   public static boolean checkImageJ() {
     return checkImageJ(IMAGEJ_VERSION, IMAGEJ_MSG);
   }
@@ -143,7 +143,7 @@ public final class LibraryChecker {
    * version is too old.
    */
   public static boolean checkImageJ(String target, String msg) {
-    return checkImageJ(target, msg, "LOCI Plugins");
+    return checkImageJ(target, msg, "Bio-Formats Plugins");
   }
 
   /**
@@ -185,7 +185,7 @@ public final class LibraryChecker {
     sb.append("\nand place ");
     sb.append(them);
     sb.append(" in the ImageJ plugins folder.");
-    IJ.error("LOCI Plugins", sb.toString());
+    IJ.error("Bio-Formats Plugins", sb.toString());
     return false;
   }
 

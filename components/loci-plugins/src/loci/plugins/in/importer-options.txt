@@ -241,7 +241,7 @@ info = <b>View stack with</b> - \
   instead.</li>                                                       \
   <li><b>Hyperstack</b> - Display the pixels in ImageJ's              \
   built-in 5D viewer.</li>                                            \
-  <li><b>Data Browser</b> - Display the pixels in LOCI's              \
+  <li><b>Data Browser</b> - Display the pixels in the                 \
   multidimensional Data Browser viewer. The Data Browser has some     \
   additional features on top of the normal ImageJ hyperstack.</li>    \
   <li><b>Image5D</b> - Display the pixels in                          \
@@ -309,7 +309,7 @@ default = false
 
 [upgradeCheck]
 type = boolean
-label = Check_for_upgrades to the LOCI plugins
+label = Check_for_upgrades to the Bio-Formats plugins
 default = true
 
 [virtual]

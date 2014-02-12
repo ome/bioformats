@@ -1,6 +1,6 @@
 /*
  * #%L
- * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -57,8 +57,8 @@ import loci.plugins.util.LociPrefs;
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
- * This class provides macro extensions for ImageJ for Bio-Formats and other
- * LOCI tools. Currently, it is a fairly tight mirror to the
+ * This class provides macro extensions in ImageJ for Bio-Formats.
+ * Currently, it is a fairly tight mirror to the
  * {@link loci.formats.IFormatReader} interface, with some additional
  * functions to control the type of format reader used.
  *
@@ -72,8 +72,8 @@ public class LociFunctions extends MacroFunctions {
 
   // -- Constants --
 
-  /** URL for LOCI Software Javadocs. */
-  public static final String URL_LOCI_SOFTWARE_JAVADOCS =
+  /** URL for Javadocs. */
+  public static final String URL_JAVADOCS =
     "http://ci.openmicroscopy.org/job/BIOFORMATS-5.1-latest/javadoc/";
 
   // -- Fields --
@@ -517,7 +517,7 @@ public class LociFunctions extends MacroFunctions {
   public void run(String arg) {
     if (IJ.macroRunning()) super.run(arg);
     else {
-      IJ.showMessage("LOCI Plugins for ImageJ",
+      IJ.showMessage("Bio-Formats Plugins for ImageJ",
         "The macro extensions are designed to be used within a macro.\n" +
         "Instructions on doing so will be printed to the Results window.");
 
@@ -721,7 +721,7 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("For more information, see the online Javadocs");
       IJ.log("for the loci.formats.IFormatReader and ");
       IJ.log("loci.formats.meta.MetadataRetrieve interfaces:");
-      IJ.log(URL_LOCI_SOFTWARE_JAVADOCS);
+      IJ.log(URL_JAVADOCS);
     }
   }
 

@@ -1,6 +1,6 @@
 /*
  * #%L
- * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -30,7 +30,7 @@ package loci.plugins.prefs;
 import loci.common.IniTable;
 
 /**
- * Base class for an option for one of the LOCI plugins.
+ * Base class for an option for one of the plugins.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/prefs/Option.java">Trac</a>,
@@ -40,7 +40,7 @@ public abstract class Option {
 
   // -- Constants --
 
-  /** Prefix to use for all LOCI plugins preferences. */
+  /** Prefix to use for all plugins preferences. */
   public static final String KEY_PREFIX = "bioformats.";
 
   /** INI key indicating option's key. */

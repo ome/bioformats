@@ -1,6 +1,6 @@
 /*
  * #%L
- * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -43,7 +43,7 @@ import javax.swing.TransferHandler;
 import loci.common.Constants;
 
 /**
- * Drag and drop transfer handler for LOCI Plugins Shortcut Window.
+ * Drag and drop transfer handler for Bio-Formats Plugins Shortcut Window.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/shortcut/ShortcutTransferHandler.java">Trac</a>,
