@@ -1,13 +1,13 @@
 <!--
 build.xml
 
-Ant build file for SCIFIO project.
+Ant build file for BSD implementations of Bio-Formats readers and writers.
 Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project name="scifio" default="jar" basedir=".">
-  <description>Build file for SCIFIO project</description>
+<project name="formats-bsd" default="jar" basedir=".">
+  <description>Build file for BSD Bio-Formats readers and writers</description>
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
@@ -80,7 +80,7 @@ Type "ant -p" for a list of targets.
     </testng>
     <fail if="failedTest"/>
   </target>
-  
+
     <target name="test-spec" depends="jar,compile-tests"
     description="run specification tests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
@@ -96,8 +96,8 @@ Type "ant -p" for a list of targets.
     </testng>
   </target>
 
-  <target name="jar-scifio-tests" depends="compile, compile-tests, copy-test-source"
-    description="generate jar of scifio spec test classes" if="doTests">
+  <target name="jar-formats-bsd-tests" depends="compile, compile-tests, copy-test-source"
+    description="generate jar of spec test classes" if="doTests">
     <echo>About to compile tests</echo>
     <mkdir dir="${artifact.dir}"/>
     <jar jarfile="${artifact.dir}/${test-component.jar}" basedir="${test-classes.dir}"/>

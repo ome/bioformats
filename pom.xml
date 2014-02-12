@@ -22,7 +22,8 @@
     <module>components/forks/poi</module>
     <module>components/forks/turbojpeg</module>
     <module>components/autogen</module>
-    <module>components/bio-formats</module>
+    <module>components/formats-bsd</module>
+    <module>components/formats-gpl</module>
     <module>components/bundles/bioformats_package</module>
     <module>components/common</module>
     <module>components/loci-plugins</module>
@@ -32,7 +33,6 @@
     <module>components/ome-plugins</module>
     <module>components/bundles/ome-tools</module>
     <module>components/ome-xml</module>
-    <module>components/scifio</module>
     <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>

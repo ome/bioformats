@@ -16,7 +16,7 @@ Type "ant -p" for a list of targets.
 
   <target name="compile"
     depends="compile-autogen,
-      compile-formats,
+      compile-formats-gpl,
       compile-jai,
       compile-common,
       compile-loci-plugins,
@@ -27,7 +27,7 @@ Type "ant -p" for a list of targets.
       compile-ome-plugins,
       compile-ome-xml,
       compile-poi-loci,
-      compile-scifio,
+      compile-formats-bsd,
       compile-bio-formats-tools,
       compile-tests,
       compile-turbojpeg"
@@ -36,7 +36,7 @@ Type "ant -p" for a list of targets.
   <target name="jars"
     depends="copy-jars,
       jar-autogen,
-      jar-formats,
+      jar-formats-gpl,
       jar-jai,
       jar-common,
       jar-loci-plugins,
@@ -47,8 +47,8 @@ Type "ant -p" for a list of targets.
       jar-ome-plugins,
       jar-ome-xml,
       jar-poi-loci,
-      jar-impl-bsd,
-      jar-impl-bsd-tests,
+      jar-formats-bsd,
+      jar-formats-bsd-tests,
       jar-bio-formats-tools,
       jar-specification,
       jar-tests,
@@ -58,7 +58,7 @@ Type "ant -p" for a list of targets.
   <target name="osgi"
     depends="copy-jars,
       osgi-autogen,
-      osgi-formats,
+      osgi-formats-gpl,
       osgi-jai,
       osgi-common,
       osgi-loci-plugins,
@@ -69,7 +69,7 @@ Type "ant -p" for a list of targets.
       osgi-ome-plugins,
       osgi-ome-xml,
       osgi-poi-loci,
-      osgi-impl-bsd,
+      osgi-formats-bsd,
       osgi-bio-formats-tools,
       osgi-tests,
       osgi-turbojpeg"
@@ -85,13 +85,13 @@ Type "ant -p" for a list of targets.
   -->
   <target name="findbugs"
     depends="findbugs-autogen,
-      findbugs-formats,
+      findbugs-formats-gpl,
       findbugs-common,
       findbugs-loci-plugins,
       findbugs-metakit,
       findbugs-ome-io,
       findbugs-ome-plugins,
-      findbugs-impl-bsd,
+      findbugs-formats-bsd,
       findbugs-bio-formats-tools,
       findbugs-tests"
     description="run findbugs on most components"/>
@@ -99,7 +99,7 @@ Type "ant -p" for a list of targets.
   <target name="clean"
     depends="
       clean-autogen,
-      clean-formats,
+      clean-formats-gpl,
       clean-jai,
       clean-common,
       clean-loci-plugins,
@@ -110,7 +110,7 @@ Type "ant -p" for a list of targets.
       clean-ome-plugins,
       clean-ome-xml,
       clean-poi-loci,
-      clean-impl-bsd,
+      clean-formats-bsd,
       clean-bio-formats-tools,
       clean-specification,
       clean-tests,
@@ -123,7 +123,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test"
     depends="test-autogen,
-      test-formats,
+      test-formats-gpl,
       test-jai,
       test-common,
       test-loci-plugins,
@@ -134,7 +134,7 @@ Type "ant -p" for a list of targets.
       test-ome-plugins,
       test-ome-xml,
       test-poi-loci,
-      test-impl-bsd,
+      test-formats-bsd,
       test-bio-formats-tools,
       test-tests,
       test-turbojpeg"
@@ -150,9 +150,9 @@ Type "ant -p" for a list of targets.
 
   <target name="utils"
     depends="jars,
-      utils-formats,
+      utils-formats-gpl,
       utils-loci-plugins,
-      utils-impl-bsd"
+      utils-formats-bsd"
     description="compile all extra utilities"/>
 
   <target name="docs" depends="jars"
@@ -405,7 +405,7 @@ Type "ant -p" for a list of targets.
 
   <!-- BSD Implentation -->
 
-  <target name="deps-impl-bsd"
+  <target name="deps-formats-bsd"
     depends="jar-jai,
       jar-common,
       jar-lwf-stubs,
@@ -413,43 +413,43 @@ Type "ant -p" for a list of targets.
       jar-specification,
       jar-turbojpeg"/>
 
-  <target name="compile-scifio" depends="deps-scifio"
-    description="compile classes for SCIFIO">
-    <ant dir="components/scifio" target="scifio.compile"/>
+  <target name="compile-formats-bsd" depends="deps-formats-bsd"
+    description="compile classes for BSD format implementations">
+    <ant dir="components/formats-bsd" target="formats-bsd.compile"/>
   </target>
 
-  <target name="jar-scifio" depends="deps-scifio"
-    description="generate JAR file for SCIFIO">
-    <ant dir="components/scifio" target="scifio.jar"/>
+  <target name="jar-formats-bsd" depends="deps-formats-bsd"
+    description="generate JAR file for BSD format implementations">
+    <ant dir="components/formats-bsd" target="formats-bsd.jar"/>
   </target>
 
-  <target name="osgi-scifio" depends="jar-scifio"
-    description="generate OSGi bundle for SCIFIO">
-    <ant dir="components/scifio" target="scifio.osgi"/>
+  <target name="osgi-formats-bsd" depends="jar-formats-bsd"
+    description="generate OSGi bundle for BSD format implementations">
+    <ant dir="components/formats-bsd" target="formats-bsd.osgi"/>
   </target>
 
-  <target name="findbugs-scifio" depends="jar-scifio"
-    description="run findbugs on SCIFIO">
-    <ant dir="components/scifio" target="scifio.findbugs"/>
+  <target name="findbugs-formats-bsd" depends="jar-formats-bsd"
+    description="run findbugs on BSD format implementations">
+    <ant dir="components/formats-bsd" target="formats-bsd.findbugs"/>
   </target>
 
-  <target name="clean-scifio"
+  <target name="clean-formats-bsd"
     depends="clean-jai,
       clean-common,
       clean-lwf-stubs,
       clean-ome-xml"
-    description="remove build files for SCIFIO">
-    <ant dir="components/scifio" target="scifio.clean"/>
+    description="remove build files for BSD format implementations">
+    <ant dir="components/formats-bsd" target="formats-bsd.clean"/>
   </target>
 
-  <target name="utils-scifio" depends="jar-scifio"
-    description="compile extra utilities for SCIFIO">
-    <ant dir="components/scifio" target="scifio.utils"/>
+  <target name="utils-formats-bsd" depends="jar-formats-bsd"
+    description="compile extra utilities for BSD format implementations">
+    <ant dir="components/formats-bsd" target="formats-bsd.utils"/>
   </target>
 
-  <target name="test-scifio" depends="jar-scifio, testing-deps"
-    description="compile and run tests for SCIFIO">
-    <ant dir="components/scifio" target="test"/>
+  <target name="test-formats-bsd" depends="jar-formats-bsd, testing-deps"
+    description="compile and run tests for BSD format implementations">
+    <ant dir="components/formats-bsd" target="test"/>
   </target>
 
   <!-- Bio-Formats command line tools -->
@@ -458,8 +458,8 @@ Type "ant -p" for a list of targets.
     depends="jar-jai,
       jar-lwf-stubs,
       jar-ome-xml,
-      jar-formats,
-      jar-scifio"/>
+      jar-formats-gpl,
+      jar-formats-bsd"/>
 
   <target name="compile-bio-formats-tools" depends="deps-bio-formats-tools"
     description="compile classes for Bio-Formats tools">
@@ -485,8 +485,8 @@ Type "ant -p" for a list of targets.
     depends="clean-jai,
       clean-lwf-stubs,
       clean-ome-xml,
-      clean-scifio,
-      clean-formats"
+      clean-formats-bsd,
+      clean-formats-gpl"
     description="remove build files for Bio-Formats tools">
     <ant dir="components/bio-formats-tools" target="bio-formats-tools.clean"/>
   </target>
@@ -496,60 +496,60 @@ Type "ant -p" for a list of targets.
     <ant dir="components/bio-formats-tools" target="test"/>
   </target>
 
-  <target name="jar-scifio-tests"
-    description="generate jar of scifio spec tests">
-      <ant dir="components/scifio" target="jar-scifio-tests"/>
+  <target name="jar-formats-bsd-tests"
+    description="generate jar of BSD format spec tests">
+      <ant dir="components/formats-bsd" target="jar-formats-bsd-tests"/>
   </target>
 
   <!-- Bio-Formats -->
 
-  <target name="deps-formats"
+  <target name="deps-formats-gpl"
     depends="jar-common,
       jar-mdbtools,
       jar-metakit,
       jar-ome-xml,
       jar-poi-loci,
-      jar-scifio"/>
+      jar-formats-bsd"/>
 
-  <target name="compile-formats" depends="deps-formats"
+  <target name="compile-formats-gpl" depends="deps-formats-gpl"
     description="compile classes for Bio-Formats">
-    <ant dir="components/bio-formats" target="formats.compile"/>
+    <ant dir="components/formats-gpl" target="formats-gpl.compile"/>
   </target>
 
-  <target name="jar-formats" depends="deps-formats"
+  <target name="jar-formats-gpl" depends="deps-formats-gpl"
     description="generate JAR file for Bio-Formats">
-    <ant dir="components/bio-formats" target="formats.jar"/>
+    <ant dir="components/formats-gpl" target="formats-gpl.jar"/>
   </target>
 
-  <target name="osgi-formats" depends="jar-formats"
+  <target name="osgi-formats-gpl" depends="jar-formats-gpl"
     description="generate OSGi bundle for Bio-Formats">
-    <ant dir="components/bio-formats" target="formats.osgi"/>
+    <ant dir="components/formats-gpl" target="formats-gpl.osgi"/>
   </target>
 
-  <target name="findbugs-formats" depends="jar-formats"
+  <target name="findbugs-formats-gpl" depends="jar-formats-gpl"
     description="run findbugs on Bio-Formats">
-    <ant dir="components/bio-formats" target="formats.findbugs"/>
+    <ant dir="components/formats-gpl" target="formats-gpl.findbugs"/>
   </target>
 
-  <target name="clean-formats"
+  <target name="clean-formats-gpl"
     depends="clean-common,
       clean-mdbtools,
       clean-metakit,
       clean-ome-xml,
       clean-poi-loci,
-      clean-scifio"
+      clean-formats-bsd"
     description="remove build files for Bio-Formats">
-    <ant dir="components/bio-formats" target="formats.clean"/>
+    <ant dir="components/formats-gpl" target="formats-gpl.clean"/>
   </target>
 
-  <target name="utils-formats" depends="jar-formats"
+  <target name="utils-formats-gpl" depends="jar-formats-gpl"
     description="compile extra utilities for Bio-Formats">
-    <ant dir="components/bio-formats" target="formats.utils"/>
+    <ant dir="components/formats-gpl" target="formats-gpl.utils"/>
   </target>
 
-  <target name="test-formats" depends="jar-formats, testing-deps"
+  <target name="test-formats-gpl" depends="jar-formats-gpl, testing-deps"
     description="compile and run tests for Bio-Formats">
-    <ant dir="components/bio-formats" target="test"/>
+    <ant dir="components/formats-gpl" target="test"/>
   </target>
 
   <!-- Common  -->
@@ -589,7 +589,7 @@ Type "ant -p" for a list of targets.
   <!-- LOCI autogen -->
 
   <target name="deps-autogen"
-    depends="jar-scifio"/>
+    depends="jar-formats-bsd"/>
 
   <target name="compile-autogen" depends="deps-autogen"
     description="compile classes for LOCI autogen">
@@ -612,7 +612,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-autogen"
-    depends="clean-scifio"
+    depends="clean-formats-bsd"
     description="remove build files for LOCI autogen">
     <ant dir="components/autogen" target="autogen.clean"/>
   </target>
@@ -625,9 +625,9 @@ Type "ant -p" for a list of targets.
   <!-- LOCI Plugins for ImageJ -->
 
   <target name="deps-loci-plugins"
-    depends="jar-formats,
+    depends="jar-formats-gpl,
       jar-ome-xml,
-      jar-scifio"/>
+      jar-formats-bsd"/>
 
   <target name="compile-loci-plugins" depends="deps-loci-plugins"
     description="compile classes for LOCI Plugins for ImageJ">
@@ -650,9 +650,9 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-loci-plugins"
-    depends="clean-formats,
+    depends="clean-formats-gpl,
       clean-ome-xml,
-      clean-scifio"
+      clean-formats-bsd"
     description="remove build files for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.clean"/>
   </target>
@@ -672,7 +672,7 @@ Type "ant -p" for a list of targets.
   <target name="deps-ome-io"
     depends="copy-jars,
       jar-ome-xml,
-      jar-scifio"/>
+      jar-formats-bsd"/>
 
   <target name="compile-ome-io" depends="deps-ome-io"
     description="compile classes for OME I/O">
@@ -696,7 +696,7 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-ome-io"
     depends="clean-ome-xml,
-      clean-scifio"
+      clean-formats-bsd"
     description="remove build files for OME I/O">
     <ant dir="components/ome-io" target="ome-io.clean"/>
   </target>
@@ -711,7 +711,7 @@ Type "ant -p" for a list of targets.
   <target name="deps-ome-plugins"
     depends="jar-loci-plugins,
       jar-ome-io,
-      jar-scifio"/>
+      jar-formats-bsd"/>
 
   <target name="compile-ome-plugins" depends="deps-ome-plugins"
     description="compile classes for OME Plugins for ImageJ">
@@ -736,7 +736,7 @@ Type "ant -p" for a list of targets.
   <target name="clean-ome-plugins"
     depends="clean-loci-plugins,
       clean-ome-io,
-      clean-scifio"
+      clean-formats-bsd"
     description="remove build files for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.clean"/>
   </target>
@@ -749,10 +749,10 @@ Type "ant -p" for a list of targets.
   <!-- LOCI testing framework -->
 
   <target name="deps-tests"
-    depends="jar-formats,
+    depends="jar-formats-gpl,
       jar-ome-io,
       jar-ome-xml,
-      jar-scifio"/>
+      jar-formats-bsd"/>
 
   <target name="compile-tests" depends="deps-tests"
     description="compile classes for LOCI testing framework">
@@ -775,10 +775,10 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-tests"
-    depends="clean-formats,
+    depends="clean-formats-gpl,
       clean-ome-io,
       clean-ome-xml,
-      clean-scifio"
+      clean-formats-bsd"
     description="remove build files for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.clean"/>
   </target>
@@ -829,7 +829,7 @@ Type "ant -p" for a list of targets.
       jar-ome-plugins,
       jar-ome-xml,
       jar-poi-loci,
-      jar-scifio,
+      jar-formats-bsd,
       jar-bio-formats-tools,
       jar-specification"
     description="create JAR file bundles of Bio-Formats and dependencies">
@@ -911,7 +911,7 @@ Type "ant -p" for a list of targets.
 
   <target name="metadata-src"
     description="Generate sources using Xsd-Fu">
-    <ant dir="components/scifio" target="generate-source"/>
+    <ant dir="components/formats-bsd" target="generate-source"/>
   </target>
 
   <!-- Specification -->
@@ -951,7 +951,7 @@ Type "ant -p" for a list of targets.
   <target name="dist-matlab" if="isUnix" description="zip the Matlab functions bundle" depends="tools">
     <echo>----------=========== bfmatlab ===========----------</echo>
     <zip destfile="${artifact.dir}/bfmatlab.zip">
-      <zipfileset dir="${root.dir}/components/bio-formats/matlab" includes="**/*" prefix="bfmatlab"/>
+      <zipfileset dir="${root.dir}/components/formats-gpl/matlab" includes="**/*" prefix="bfmatlab"/>
       <zipfileset file="${package.jar}" prefix="bfmatlab"/>
     </zip>
   </target>
@@ -961,11 +961,11 @@ Type "ant -p" for a list of targets.
 
     <property environment="env"/>
     <exec executable="matlab">
-      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/bio-formats/matlab:${artifact.dir}"/>
+      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/formats-gpl/matlab:${artifact.dir}"/>
       <arg value="-nodesktop"/>
       <arg value="-nosplash"/>
       <arg value="-r"/>
-      <arg value="runtests ${root.dir}/components/bio-formats/test/matlab"/>
+      <arg value="runtests ${root.dir}/components/formats-gpl/test/matlab"/>
     </exec>
   </target>
 

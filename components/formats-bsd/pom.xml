@@ -12,12 +12,10 @@
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>scifio</artifactId>
+  <artifactId>formats-bsd</artifactId>
 
-  <name>SCIFIO</name>
-  <description>SCientific Image Format Input and Output: an open source
-    framework for reading and writing scientific image file formats, and
-    converting metadata between standards.</description>
+  <name>BSD Bio-Formats readers and writers</name>
+  <description>Reader and writer implementations that are BSD-licensed.</description>
   <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
@@ -212,8 +210,8 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <licenseName>scifio</licenseName>
-          <projectName>OME SCIFIO package for reading and converting scientific file formats.</projectName>
+          <licenseName>formats-bsd</licenseName>
+          <projectName>BSD implementations of Bio-Formats readers and writers</projectName>
         </configuration>
       </plugin>
     </plugins>
