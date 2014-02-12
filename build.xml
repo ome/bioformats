@@ -192,7 +192,7 @@ FindBugs Ant task
 JGoodies Forms
     JAR file:  forms-1.3.0.jar
     URL:       http://www.jgoodies.com/freeware/forms/index.html
-    Notes:     used for layout by SciFIO, Data Browser and OME Notes
+    Notes:     used for layout by Data Browser and OME Notes
     License:   BSD
 
 ImageJ
@@ -297,7 +297,7 @@ Apache XML-RPC
   <target name="dist" description="OME hook: build and publish Bio-Formats dist">
     <ant target="tools"/>
     <ant target="tools-ome"/>
-    <ant target="jar-scifio-tests"/>
+    <ant target="jar-formats-bsd-tests"/>
     <ant antfile="ome.xml" inheritRefs="false" inheritAll="false"/>
   </target>
 

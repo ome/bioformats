@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
+ * OME Bio-Formats package for BSD-licensed readers and writers.
  * %%
  * Copyright (C) Max Planck Institute for Biophysical Chemistry, 
  * Goettingen, 2013 - 2014

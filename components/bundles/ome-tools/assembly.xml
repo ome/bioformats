@@ -11,11 +11,12 @@
     <dependencySet>
       <excludes>
         <!-- exclude things included in loci_tools.jar -->
-        <exclude>ome:bio-formats</exclude>
         <exclude>ome:loci_plugins</exclude>
         <exclude>ome:ome-xml</exclude>
         <exclude>ome:common</exclude>
-        <exclude>ome:scifio</exclude>
+        <exclude>ome:formats-api</exclude>
+        <exclude>ome:formats-bsd</exclude>
+        <exclude>ome:formats-gpl</exclude>
         <exclude>ome:lwf-stubs</exclude>
         <exclude>gov.nih.imagej:imagej</exclude>
         <exclude>com.esotericsoftware.kryo:kryo</exclude>
