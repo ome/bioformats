@@ -6,12 +6,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ome</groupId>
-  <artifactId>pom-scifio</artifactId>
-  <version>5.1.0-SNAPSHOT</version>
+  <artifactId>pom-bio-formats</artifactId>
+  <version>5.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
-  <description>Umbrella project for SCIFIO and Bio-Formats software projects.</description>
+  <description>Umbrella project for the Bio-Formats software project.</description>
   <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
