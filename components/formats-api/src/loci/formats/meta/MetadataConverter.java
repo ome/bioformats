@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
+ * OME Bio-Formats API for reading and writing file formats.
  * %%
  * Copyright (C) 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology

@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
+ * OME Bio-Formats package for BSD-licensed readers and writers.
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -105,9 +105,9 @@ public class UpgradeChecker {
 
   /** Names of the individual JARs. */
   public static final String[] INDIVIDUAL_JARS = new String[] {
-    "bio-formats.jar", "jai_imageio.jar", "common.jar",
-    "mdbtools-java.jar", "metakit.jar", "ome-io.jar", "ome-xml.jar",
-    "poi-loci.jar", "scifio.jar"
+    "formats-api.jar", "formats-bsd.jar", "formats-gpl.jar",
+    "jai_imageio.jar", "common.jar", "mdbtools-java.jar", "metakit.jar",
+    "ome-io.jar", "ome-xml.jar", "poi-loci.jar"
   };
 
   /** Location of the OME registry. */

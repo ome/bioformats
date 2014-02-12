@@ -77,13 +77,13 @@ If all goes well, the build system will:
 
 Please be patient, as the build may require several minutes to complete.
 
-Afterwards, the dist/scifio subdirectory will contain the following files:
+Afterwards, the dist/formats-bsd subdirectory will contain the following files:
 
 1) libjace.so / libjace.jnilib / jace.dll :
      Jace shared library
 
-2) libscifio.so / libscifio.dylib / scifio.dll :
-     SCIFIO C++ shared library
+2) libformats-bsd.so / libformats-bsd.dylib / formats-bsd.dll :
+     C++ shared library for BSD-licensed readers and writers
 
 3) jace-runtime.jar :
      Jace Java classes needed at runtime

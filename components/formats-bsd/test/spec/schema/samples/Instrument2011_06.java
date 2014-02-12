@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
+ * Tests for OME-XML specification classes.
  * %%
  * Copyright (C) 2012 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison

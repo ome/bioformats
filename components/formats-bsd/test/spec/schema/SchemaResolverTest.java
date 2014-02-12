@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
+ * Tests for OME-XML specification classes.
  * %%
  * Copyright (C) 2010-2013 Glencoe Software, Inc.
  * %%

@@ -1,4 +1,4 @@
-OME SCIFIO package for reading and converting scientific file formats.
+OME Bio-Formats package for BSD-licensed readers and writers.
 
 Copyright (C) 2005 - 2013 Open Microscopy Environment:
   - Board of Regents of the University of Wisconsin-Madison
