@@ -56,16 +56,6 @@ LOCI Plugins for ImageJ
     Optional:      (none)
     License:       GPL
 
-OME I/O
-    A library for OME database import, upload and download
-    -=-
-    JAR file:      ome-io.jar
-    Path:          components/ome-io
-    Project deps:  Bio-Formats, LOCI Common
-    Library deps:  Logback, Simple Logging Facade for Java API, TestNG
-    Optional:      OME-Java, OMERO Common
-    License:       GPL
-
 OME-XML Java library
     A library for working with OME-XML metadata structures
     -=-

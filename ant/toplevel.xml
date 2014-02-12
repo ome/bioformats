@@ -23,7 +23,6 @@ Type "ant -p" for a list of targets.
       compile-lwf-stubs,
       compile-mdbtools,
       compile-metakit,
-      compile-ome-io,
       compile-ome-xml,
       compile-poi-loci,
       compile-formats-api,
@@ -43,7 +42,6 @@ Type "ant -p" for a list of targets.
       jar-lwf-stubs,
       jar-mdbtools,
       jar-metakit,
-      jar-ome-io,
       jar-ome-xml,
       jar-poi-loci,
       jar-formats-api,
@@ -65,7 +63,6 @@ Type "ant -p" for a list of targets.
       osgi-lwf-stubs,
       osgi-mdbtools,
       osgi-metakit,
-      osgi-ome-io,
       osgi-ome-xml,
       osgi-poi-loci,
       osgi-formats-api,
@@ -89,7 +86,6 @@ Type "ant -p" for a list of targets.
       findbugs-common,
       findbugs-loci-plugins,
       findbugs-metakit,
-      findbugs-ome-io,
       findbugs-formats-api,
       findbugs-formats-bsd,
       findbugs-bio-formats-tools,
@@ -106,7 +102,6 @@ Type "ant -p" for a list of targets.
       clean-lwf-stubs,
       clean-mdbtools,
       clean-metakit,
-      clean-ome-io,
       clean-ome-xml,
       clean-poi-loci,
       clean-formats-api,
@@ -130,7 +125,6 @@ Type "ant -p" for a list of targets.
       test-lwf-stubs,
       test-mdbtools,
       test-metakit,
-      test-ome-io,
       test-ome-xml,
       test-poi-loci,
       test-formats-api,
@@ -711,52 +705,10 @@ Type "ant -p" for a list of targets.
     <ant dir="components/loci-plugins" target="test"/>
   </target>
 
-  <!-- OME I/O -->
-
-  <target name="deps-ome-io"
-    depends="copy-jars,
-      jar-ome-xml,
-      jar-formats-api,
-      jar-formats-bsd"/>
-
-  <target name="compile-ome-io" depends="deps-ome-io"
-    description="compile classes for OME I/O">
-    <ant dir="components/ome-io" target="ome-io.compile"/>
-  </target>
-
-  <target name="jar-ome-io" depends="deps-ome-io"
-    description="generate JAR file for OME I/O">
-    <ant dir="components/ome-io" target="ome-io.jar"/>
-  </target>
-
-  <target name="osgi-ome-io" depends="jar-ome-io"
-    description="generate OSGi bundle for OME I/O">
-    <ant dir="components/ome-io" target="ome-io.osgi"/>
-  </target>
-
-  <target name="findbugs-ome-io" depends="jar-ome-io"
-    description="run findbugs on OME I/O">
-    <ant dir="components/ome-io" target="ome-io.findbugs"/>
-  </target>
-
-  <target name="clean-ome-io"
-    depends="clean-ome-xml,
-      clean-formats-api,
-      clean-formats-bsd"
-    description="remove build files for OME I/O">
-    <ant dir="components/ome-io" target="ome-io.clean"/>
-  </target>
-
-  <target name="test-ome-io" depends="jar-ome-io, testing-deps"
-    description="compile and run tests for OME I/O">
-    <ant dir="components/ome-io" target="test"/>
-  </target>
-
   <!-- LOCI testing framework -->
 
   <target name="deps-tests"
-    depends="jar-formats-gpl,
-      jar-ome-io,
+    depends="jar-formats-gpl"
       jar-ome-xml,
       jar-formats-api,
       jar-formats-bsd"/>
@@ -782,8 +734,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-tests"
-    depends="clean-formats-gpl,
-      clean-ome-io,
+    depends="clean-formats-gpl"
       clean-ome-xml,
       clean-formats-api,
       clean-formats-bsd"
@@ -833,7 +784,6 @@ Type "ant -p" for a list of targets.
       jar-loci-plugins,
       jar-mdbtools,
       jar-metakit,
-      jar-ome-io,
       jar-ome-xml,
       jar-poi-loci,
       jar-formats-api,
@@ -882,8 +832,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="tools-ome"
-    depends="copy-jars,
-      jar-ome-io"
+    depends="copy-jars"
     description="create JAR file encompassing several OME tools">
     <echo>----------=========== ome_tools ===========----------</echo>
     <for list="${ome-tools.libraries}" param="jar" delimiter=" " trim="true">

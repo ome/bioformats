@@ -104,7 +104,7 @@ public class UpgradeChecker {
   public static final String[] INDIVIDUAL_JARS = new String[] {
     "formats-api.jar", "formats-bsd.jar", "formats-gpl.jar",
     "jai_imageio.jar", "common.jar", "mdbtools-java.jar", "metakit.jar",
-    "ome-io.jar", "ome-xml.jar", "poi-loci.jar"
+    "ome-xml.jar", "poi-loci.jar"
   };
 
   /** Location of the OME registry. */
