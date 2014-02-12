@@ -231,18 +231,6 @@ Simple Logging Facade for Java API
     Notes:     used for all logging in loci.*
     License:   BSD
 
-OME-Java
-    JAR file:  ome-java.jar
-    URL:       http://www.openmicroscopy.org/site/documents/data-management/ome-server/developer/java-api
-    Notes:     used by OME I/O to connect to OME servers
-    License:   LGPL
-
-OME-Java deprecated classes
-    JAR file:  ome-java-deprecated.jar
-    URL:       http://www.openmicroscopy.org/site/documents/data-management/ome-server/developer/java-api
-    Notes:     used by OME Notes and OME Metadata Editor to work with OME-XML
-    License:   LGPL
-
 OMERO Client
     JAR file:  omero-client-4.2.0.jar
     URL:       http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads
