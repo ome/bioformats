@@ -36,13 +36,14 @@
 
 // A C++ version of the Bio-Formats MinimumWriter example.
 // For the original Java version, see:
-//   components/scifio/utils/MinimumWriter.java
+//   components/formats-bsd/utils/MinimumWriter.java
 
 // for JVM initialization
 #include "javaTools.h"
 
 // for Bio-Formats C++ bindings
-#include "scifio-${release.version}.h"
+#include "formats-api-${release.version}.h"
+#include "formats-bsd-${release.version}.h"
 #include "ome-xml-${release.version}.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;

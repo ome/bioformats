@@ -36,13 +36,14 @@
 
 // A partial C++ version of the Bio-Formats showinf command line utility.
 // For the original Java version, see:
-//   components/scifio/src/loci/formats/tools/ImageInfo.java
+//   components/bio-formats-tools/src/loci/formats/tools/ImageInfo.java
 
 // for JVM initialization
 #include "javaTools.h"
 
 // for Bio-Formats C++ bindings
-#include "scifio-${release.version}.h"
+#include "formats-api-${release.version}.h"
+#include "formats-bsd-${release.version}.h"
 #include "common-${release.version}.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;

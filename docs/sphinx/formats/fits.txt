@@ -12,7 +12,7 @@ Developer: `National Radio Astronomy Observatory <http://www.nrao.edu/>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |no|
 
@@ -47,7 +47,7 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :scifioreader:`FitsReader.java`
+Source Code: :bsd-reader:`FitsReader.java`
 
 Notes:
 

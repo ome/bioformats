@@ -23,7 +23,7 @@ Supported Formats
      - .. image:: images/header-presence.png
      - .. image:: images/header-utility.png
      - .. image:: images/header-export.png
-     - .. image:: images/header-scifio.png
+     - .. image:: images/header-bsd.png
 
 #foreach ($format in $formats)
 #set ($pagename = $format.get("pagename"))
@@ -34,7 +34,7 @@ Supported Formats
 #set ($presence = $format.get("presenceRating"))
 #set ($utility = $format.get("utilityRating"))
 #set ($export = $format.get("export"))
-#set ($scifio = $format.get("scifio"))
+#set ($bsd = $format.get("bsd"))
    * - :doc:`$pagename`
      - $extensions
      - |$pixels|
@@ -43,7 +43,7 @@ Supported Formats
      - |$presence|
      - |$utility|
      - |$export|
-     - |$scifio|
+     - |$bsd|
 #end
 
 Bio-Formats currently supports **$count** formats
@@ -99,10 +99,9 @@ Bio-Formats currently supports **$count** formats
         This indicates whether Bio-Formats is capable of writing the format 
         (Bio-Formats can read every format on this list).
 
-    SCIFIO 
-        This indicates whether format is supported by the
-        :doc:`SCIFIO <developers/scifio>` core library (see the SCIFIO
-        section of the :about_plone:`licensing page <licensing-attribution>`).
+    BSD
+        This indicates whether format is BSD-licensed.  By default,
+        format readers and writers are GPL-licensed.
 
 .. toctree::
     :maxdepth: 1

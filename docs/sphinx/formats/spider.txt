@@ -12,7 +12,7 @@ Developer: `Wadsworth Center <http://www.wadsworth.org/spider_doc/spider/docs/sp
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

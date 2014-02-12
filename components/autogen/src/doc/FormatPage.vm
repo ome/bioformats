@@ -21,7 +21,7 @@ Owner: $owner
 **Support**
 
 
-SCIFIO: |$scifio|
+BSD-licensed: |$bsd|
 
 Export: |$export|
 

@@ -12,7 +12,7 @@ Developer: ZSoft Corporation
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |no|
 
@@ -47,7 +47,7 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :scifioreader:`PCXReader.java`
+Source Code: :bsd-reader:`PCXReader.java`
 
 Notes:
 

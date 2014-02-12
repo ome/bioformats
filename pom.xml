@@ -22,6 +22,7 @@
     <module>components/forks/poi</module>
     <module>components/forks/turbojpeg</module>
     <module>components/autogen</module>
+    <module>components/formats-api</module>
     <module>components/formats-bsd</module>
     <module>components/formats-gpl</module>
     <module>components/bundles/bioformats_package</module>
