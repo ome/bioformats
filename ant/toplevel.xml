@@ -961,7 +961,7 @@ Type "ant -p" for a list of targets.
 
     <property environment="env"/>
     <exec executable="matlab">
-      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/bio-formats/matlab:${artifact.dir}"/>  
+      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/bio-formats/matlab:${artifact.dir}"/>
       <arg value="-nodesktop"/>
       <arg value="-nosplash"/>
       <arg value="-r"/>
