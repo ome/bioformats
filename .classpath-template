@@ -23,8 +23,8 @@
         <classpathentry kind="src" path="components/ome-plugins/src"/>
         <classpathentry kind="src" path="components/ome-xml/build/src"/>
         <classpathentry kind="src" path="components/ome-xml/src"/>
-        <classpathentry kind="src" path="components/scifio/build/src"/>
-        <classpathentry kind="src" path="components/scifio/src"/>
+        <classpathentry kind="src" path="components/impl-bsd/build/src"/>
+        <classpathentry kind="src" path="components/impl-bsd/src"/>
         <classpathentry kind="src" path="components/stubs/lwf-stubs/build/src"/>
         <classpathentry kind="src" path="components/stubs/lwf-stubs/src"/>
         <classpathentry kind="src" path="components/test-suite/build/src"/>
@@ -35,7 +35,7 @@
         <classpathentry kind="src" path="components/metakit/test"/>
         <classpathentry kind="src" path="components/ome-io/test"/>
         <classpathentry kind="src" path="components/ome-xml/test"/>
-        <classpathentry kind="src" path="components/scifio/test"/>
+        <classpathentry kind="src" path="components/impl-bsd/test"/>
         <classpathentry kind="src" path="target/generated/src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="target/eclipse-bin"/>
