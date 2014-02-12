@@ -19,8 +19,6 @@
         <classpathentry kind="src" path="components/metakit/src"/>
         <classpathentry kind="src" path="components/ome-io/build/src"/>
         <classpathentry kind="src" path="components/ome-io/src"/>
-        <classpathentry kind="src" path="components/ome-plugins/build/src"/>
-        <classpathentry kind="src" path="components/ome-plugins/src"/>
         <classpathentry kind="src" path="components/ome-xml/build/src"/>
         <classpathentry kind="src" path="components/ome-xml/src"/>
         <classpathentry kind="src" path="components/impl-bsd/build/src"/>
