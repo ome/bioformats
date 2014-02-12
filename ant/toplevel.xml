@@ -47,8 +47,8 @@ Type "ant -p" for a list of targets.
       jar-ome-plugins,
       jar-ome-xml,
       jar-poi-loci,
-      jar-scifio,
-      jar-scifio-tests,
+      jar-impl-bsd,
+      jar-impl-bsd-tests,
       jar-bio-formats-tools,
       jar-specification,
       jar-tests,
@@ -69,7 +69,7 @@ Type "ant -p" for a list of targets.
       osgi-ome-plugins,
       osgi-ome-xml,
       osgi-poi-loci,
-      osgi-scifio,
+      osgi-impl-bsd,
       osgi-bio-formats-tools,
       osgi-tests,
       osgi-turbojpeg"
@@ -91,7 +91,7 @@ Type "ant -p" for a list of targets.
       findbugs-metakit,
       findbugs-ome-io,
       findbugs-ome-plugins,
-      findbugs-scifio,
+      findbugs-impl-bsd,
       findbugs-bio-formats-tools,
       findbugs-tests"
     description="run findbugs on most components"/>
@@ -110,7 +110,7 @@ Type "ant -p" for a list of targets.
       clean-ome-plugins,
       clean-ome-xml,
       clean-poi-loci,
-      clean-scifio,
+      clean-impl-bsd,
       clean-bio-formats-tools,
       clean-specification,
       clean-tests,
@@ -134,7 +134,7 @@ Type "ant -p" for a list of targets.
       test-ome-plugins,
       test-ome-xml,
       test-poi-loci,
-      test-scifio,
+      test-impl-bsd,
       test-bio-formats-tools,
       test-tests,
       test-turbojpeg"
@@ -152,7 +152,7 @@ Type "ant -p" for a list of targets.
     depends="jars,
       utils-formats,
       utils-loci-plugins,
-      utils-scifio"
+      utils-impl-bsd"
     description="compile all extra utilities"/>
 
   <target name="docs" depends="jars"
@@ -403,9 +403,9 @@ Type "ant -p" for a list of targets.
     <ant dir="components/stubs/lwf-stubs" target="test"/>
   </target>
 
-  <!-- SCIFIO -->
+  <!-- BSD Implentation -->
 
-  <target name="deps-scifio"
+  <target name="deps-impl-bsd"
     depends="jar-jai,
       jar-common,
       jar-lwf-stubs,
