@@ -1,6 +1,6 @@
 /*
  * #%L
- * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -80,10 +80,10 @@ public class UpgradeDialog extends ImporterDialog {
     if (!options.isQuiet() && options.isFirstTime()) {
       // present user with one-time dialog box
       gd = new GenericDialog("Bio-Formats Upgrade Checker");
-      gd.addMessage("One-time notice: The LOCI plugins for ImageJ can " +
+      gd.addMessage("One-time notice: The Bio-Formats plugins for ImageJ can " +
         "automatically check for upgrades\neach time they are run. If you " +
         "wish to disable this feature, uncheck the box below.\nYou can " +
-        "toggle this behavior later in the LOCI Plugins Configuration's " +
+        "toggle this behavior later in the Bio-Formats Plugins Configuration's " +
         "\"Upgrade\" tab.");
       addCheckbox(gd, ImporterOptions.KEY_UPGRADE_CHECK);
       gd.showDialog();

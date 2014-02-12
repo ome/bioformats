@@ -1,5 +1,5 @@
 # This document is a configuration file identifying binary libraries to list
-# in the LOCI plugins configuration dialog's Libraries tab. Edit with caution.
+# in the plugins configuration dialog's Libraries tab. Edit with caution.
 
 # core libraries
 
@@ -89,13 +89,13 @@ notes = Optional plugin. If you have Nikon's ND2 plugin installed, you can
 
 # ImageJ plugins
 
-[LOCI plugins]
+[Bio-Formats plugins]
 type = ImageJ plugin
 class = loci.plugins.About
 version = bfVersion
 url = http://www.openmicroscopy.org/site/support/bio-formats/users/imagej/index.html
 license = GPL
-notes = LOCI Plugins for ImageJ: a collection of ImageJ plugins including
+notes = Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including
         the Bio-Formats Importer, Bio-Formats Exporter,
         Bio-Formats Macro Extensions, Data Browser,
         Stack Colorizer and Stack Slicer.
@@ -188,7 +188,7 @@ url = http://www.unidata.ucar.edu/software/netcdf-java/
 license = LGPL
 notes = Used by Bio-Formats for HDF support (Imaris 5.5).
 
-[Apache Jakarta POI (LOCI version)]
+[Apache Jakarta POI (OME version)]
 type = Java library
 class = loci.poi.poifs.filesystem.POIFSDocument
 url = http://jakarta.apache.org/poi/

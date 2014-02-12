@@ -1,6 +1,6 @@
 /*
  * #%L
- * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -36,7 +36,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatHandler;
 
 /**
- * Displays a small information dialog about the LOCI Plugins package.
+ * Displays a small information dialog about the Bio-Formats Plugins package.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/About.java">Trac</a>,
@@ -46,8 +46,8 @@ public final class About implements PlugIn {
 
   // -- Constants --
 
-  /** URL of LOCI Software web page. */
-  public static final String URL_LOCI_SOFTWARE =
+  /** URL of the Bio-Formats web page. */
+  public static final String URL_SOFTWARE =
     "http://www.openmicroscopy.org/site/products/bio-formats";
 
   /** URL of Bio-Formats ImageJ web page. */
@@ -68,7 +68,7 @@ public final class About implements PlugIn {
 
   public static void about() {
     String msg = "<html>" +
-      "LOCI Plugins for ImageJ, revision " + FormatTools.VCS_REVISION +
+      "Bio-Formats Plugins for ImageJ, revision " + FormatTools.VCS_REVISION +
       ", built " + FormatTools.DATE + "<br>Release: " + FormatTools.VERSION +
       "<br>Copyright (C) 2005 - " + FormatTools.YEAR +
       " Open Microscopy Environment:" +
@@ -77,7 +77,7 @@ public final class About implements PlugIn {
       "<li>Glencoe Software, Inc.</li>" +
       "<li>University of Dundee</li>" +
       "</ul>" +
-      "<i>" + URL_LOCI_SOFTWARE + "</i>" +
+      "<i>" + URL_SOFTWARE + "</i>" +
       "<br>" +
       "<br><b>Bio-Formats Importer</b>, <b>Bio-Formats Exporter</b> " +
       "and <b>Stack Slicer</b>" +
@@ -89,7 +89,7 @@ public final class About implements PlugIn {
       "<br><i>" + URL_DATA_BROWSER + "</i>";
     ImageIcon bioFormatsLogo = new ImageIcon(
       IFormatHandler.class.getResource("bio-formats-logo.png"));
-    JOptionPane.showMessageDialog(null, msg, "LOCI Plugins for ImageJ",
+    JOptionPane.showMessageDialog(null, msg, "Bio-Formats Plugins for ImageJ",
       JOptionPane.INFORMATION_MESSAGE, bioFormatsLogo);
   }
 

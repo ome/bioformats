@@ -14,7 +14,7 @@
 
   <artifactId>loci_plugins</artifactId>
 
-  <name>LOCI Plugins for ImageJ</name>
+  <name>Bio-Formats Plugins for ImageJ</name>
   <description>A collection of plugins for ImageJ, including the Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser and Stack Slicer.</description>
   <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2006</inceptionYear>
@@ -109,7 +109,7 @@
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
           <licenseName>gpl_v2</licenseName>
-          <projectName>LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+          <projectName>Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including the
 Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
 Data Browser and Stack Slicer.</projectName>
         </configuration>

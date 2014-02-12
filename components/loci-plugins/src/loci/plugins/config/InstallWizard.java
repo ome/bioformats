@@ -1,6 +1,6 @@
 /*
  * #%L
- * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -42,7 +42,7 @@ import loci.common.Constants;
 
 /**
  * A wizard for walking users through installation of third party
- * libraries and plugins used by the LOCI plugins.
+ * libraries and plugins used by the Bio-Formats plugins.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/config/InstallWizard.java">Trac</a>,
@@ -58,7 +58,7 @@ public class InstallWizard extends JFrame
   // -- Constructor --
 
   public InstallWizard() {
-    setTitle("LOCI Plugins Library Installer");
+    setTitle("Bio-Formats Plugins Library Installer");
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
     /*
@@ -83,7 +83,7 @@ public class InstallWizard extends JFrame
     // download and install latest ij.jar
     // don't launch ImageJ updater plugin because it might not exist
 
-    // check whether LOCI plugins are running from a ueber jar or as separate JARs
+    // check whether plugins are running from a ueber jar or as separate JARs
 
     // check for conflicting JARs -- i.e., duplicate classes
 

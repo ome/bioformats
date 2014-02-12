@@ -1,6 +1,6 @@
 /*
  * #%L
- * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -39,7 +39,7 @@ import loci.formats.in.SDTReader;
 import loci.formats.in.TiffDelegateReader;
 
 /**
- * Utility methods for ImageJ preferences for LOCI plugins.
+ * Utility methods for ImageJ preferences for Bio-Formats plugins.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/util/LociPrefs.java">Trac</a>,

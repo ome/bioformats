@@ -1,6 +1,6 @@
 /*
  * #%L
- * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -50,7 +50,7 @@ import loci.common.Constants;
 import loci.plugins.util.WindowTools;
 
 /**
- * A plugin that displays a small window containing shortcuts to the LOCI
+ * A plugin that displays a small window containing shortcuts to the
  * plugins, including the Bio-Formats Importer, Bio-Formats Exporter,
  * Stack Colorizer and Stack Slicer.
  *
@@ -72,10 +72,10 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
 
   /** Name of this plugin, ignored when parsing the plugins list. */
   protected static final String SHORTCUT_PLUGIN =
-    "LOCI Plugins Shortcut Window";
+    "Bio-Formats Plugins Shortcut Window";
 
-  /** Name of the 'LOCI' submenu. */
-  protected static final String NORMAL_MENU = "Plugins>LOCI";
+  /** Name of the 'Bio-Formats' submenu. */
+  protected static final String NORMAL_MENU = "Plugins>Bio-Formats";
 
   /** Name of the 'About Plugins' submenu. */
   protected static final String HELP_MENU = "Help>About Plugins";
@@ -88,11 +88,11 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
   /** Index of plugin to use to open dropped files. */
   protected static int openerIndex;
 
-  /** Details for installed LOCI plugins. */
+  /** Details for installed plugins. */
   protected static String[] names, plugins, args;
 
   static {
-    // load list of LOCI plugins
+    // load list of plugins
     int index = -1;
     ArrayList<String> vNames = new ArrayList<String>();
     ArrayList<String> vPlugins = new ArrayList<String>();
@@ -216,7 +216,7 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
 
   /** Executes the plugin. */
   public void run(String arg) {
-    JFrame frame = new JFrame("LOCI Plugins Shortcut Window");
+    JFrame frame = new JFrame("Bio-Formats Plugins Shortcut Window");
     frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     frame.setContentPane(new ShortcutPanel());
     frame.pack();
