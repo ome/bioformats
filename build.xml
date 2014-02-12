@@ -9,7 +9,6 @@ Type "ant -p" for a list of targets.
 This build file handles the following components.
 For more information on a component, see the
 build.properties file in that component's subtree.
-Run ./scan-deps.pl to programmatically generate this list.
 
 LOCI code generator
     Package for generating other code, including the Bio-Formats metadata API,

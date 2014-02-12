@@ -49,9 +49,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// HACK: for scan-deps.pl: The following packages are not actually "optional":
-// optional ch.qos.logback.core, optional org.slf4j.impl
-
 /**
  * Pseudo-extension of java.io.File that supports reading over HTTP (among
  * other things).
