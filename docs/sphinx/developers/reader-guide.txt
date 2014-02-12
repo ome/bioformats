@@ -176,7 +176,8 @@ Other useful things
 - If your reader relies on third-party code which may not be available to all
   users, it is strongly suggested that you make a corresponding service class
   that interfaces with the third-party code.  Please see :doc:`service` for a 
-  description of the service infrastructure, as well as the :source:`loci.formats.services package <components/bio-formats/src/loci/formats/services/>`.
+  description of the service infrastructure, as well as the
+  :source:`loci.formats.services package <components/formats-gpl/src/loci/formats/services/>`.
 
 - Several common image compression types are supported through subclasses of 
   :source:`loci.formats.codec.BaseCodec <components/formats-bsd/src/loci/formats/codec/BaseCodec.java>`. These include JPEG, LZW, LZO, Base64, ZIP and RLE (PackBits).
