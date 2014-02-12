@@ -147,13 +147,6 @@ Type "ant -p" for a list of targets.
     description="test all components">
   </target>
 
-  <target name="scan-deps">
-    <exec dir="${root.dir}" executable="perl" failonerror="true">
-      <arg value="scan-deps.pl"/>
-      <arg value="-nosummary"/>
-    </exec>
-  </target>
-
   <target name="utils"
     depends="jars,
       utils-formats-gpl,

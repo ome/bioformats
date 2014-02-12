@@ -39,10 +39,6 @@ package loci.formats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// HACK: for scan-deps.pl: The following packages are not actually "optional":
-// optional ch.qos.logback.core, ch.qos.logback.classic, optional org.slf4j.impl,
-// optional org.apache.xalan, optional org.apache.xml.serializer
-
 /**
  * Abstract superclass of all biological file format readers and writers.
  *
