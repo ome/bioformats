@@ -66,18 +66,6 @@ OME I/O
     Optional:      OME-Java, OMERO Client, OMERO Common
     License:       GPL
 
-OME Plugins for ImageJ
-    A collection of plugins for ImageJ, including the Download from OME and
-    Upload to OME plugins
-    -=-
-    JAR file:      ome_plugins.jar
-    Path:          components/ome-plugins
-    Project deps:  Bio-Formats, LOCI Common, LOCI Plugins for ImageJ, OME I/O,
-                   OME-XML Java library
-    Library deps:  ImageJ
-    Optional:      (none)
-    License:       GPL
-
 OME-XML Java library
     A library for working with OME-XML metadata structures
     -=-

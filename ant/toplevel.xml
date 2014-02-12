@@ -24,7 +24,6 @@ Type "ant -p" for a list of targets.
       compile-mdbtools,
       compile-metakit,
       compile-ome-io,
-      compile-ome-plugins,
       compile-ome-xml,
       compile-poi-loci,
       compile-formats-api,
@@ -45,7 +44,6 @@ Type "ant -p" for a list of targets.
       jar-mdbtools,
       jar-metakit,
       jar-ome-io,
-      jar-ome-plugins,
       jar-ome-xml,
       jar-poi-loci,
       jar-formats-api,
@@ -68,7 +66,6 @@ Type "ant -p" for a list of targets.
       osgi-mdbtools,
       osgi-metakit,
       osgi-ome-io,
-      osgi-ome-plugins,
       osgi-ome-xml,
       osgi-poi-loci,
       osgi-formats-api,
@@ -93,7 +90,6 @@ Type "ant -p" for a list of targets.
       findbugs-loci-plugins,
       findbugs-metakit,
       findbugs-ome-io,
-      findbugs-ome-plugins,
       findbugs-formats-api,
       findbugs-formats-bsd,
       findbugs-bio-formats-tools,
@@ -111,7 +107,6 @@ Type "ant -p" for a list of targets.
       clean-mdbtools,
       clean-metakit,
       clean-ome-io,
-      clean-ome-plugins,
       clean-ome-xml,
       clean-poi-loci,
       clean-formats-api,
@@ -136,7 +131,6 @@ Type "ant -p" for a list of targets.
       test-mdbtools,
       test-metakit,
       test-ome-io,
-      test-ome-plugins,
       test-ome-xml,
       test-poi-loci,
       test-formats-api,
@@ -758,48 +752,6 @@ Type "ant -p" for a list of targets.
     <ant dir="components/ome-io" target="test"/>
   </target>
 
-  <!-- OME Plugins for ImageJ -->
-
-  <target name="deps-ome-plugins"
-    depends="jar-loci-plugins,
-      jar-ome-io,
-      jar-formats-api,
-      jar-formats-bsd"/>
-
-  <target name="compile-ome-plugins" depends="deps-ome-plugins"
-    description="compile classes for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.compile"/>
-  </target>
-
-  <target name="jar-ome-plugins" depends="deps-ome-plugins"
-    description="generate JAR file for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.jar"/>
-  </target>
-
-  <target name="osgi-ome-plugins" depends="jar-ome-plugins"
-    description="generate OSGi bundle for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.osgi"/>
-  </target>
-
-  <target name="findbugs-ome-plugins" depends="jar-ome-plugins"
-    description="run findbugs on OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.findbugs"/>
-  </target>
-
-  <target name="clean-ome-plugins"
-    depends="clean-loci-plugins,
-      clean-ome-io,
-      clean-formats-api,
-      clean-formats-bsd"
-    description="remove build files for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.clean"/>
-  </target>
-
-  <target name="test-ome-plugins" depends="jar-ome-plugins, testing-deps"
-    description="compile and run tests for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="test"/>
-  </target>
-
   <!-- LOCI testing framework -->
 
   <target name="deps-tests"
@@ -882,7 +834,6 @@ Type "ant -p" for a list of targets.
       jar-mdbtools,
       jar-metakit,
       jar-ome-io,
-      jar-ome-plugins,
       jar-ome-xml,
       jar-poi-loci,
       jar-formats-api,
@@ -932,8 +883,7 @@ Type "ant -p" for a list of targets.
 
   <target name="tools-ome"
     depends="copy-jars,
-      jar-ome-io,
-      jar-ome-plugins"
+      jar-ome-io"
     description="create JAR file encompassing several OME tools">
     <echo>----------=========== ome_tools ===========----------</echo>
     <for list="${ome-tools.libraries}" param="jar" delimiter=" " trim="true">
@@ -1018,7 +968,7 @@ Type "ant -p" for a list of targets.
 
     <property environment="env"/>
     <exec executable="matlab">
-      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/formats-gpl/matlab:${artifact.dir}"/>
+      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/bio-formats/matlab:${artifact.dir}"/>
       <arg value="-nodesktop"/>
       <arg value="-nosplash"/>
       <arg value="-r"/>
