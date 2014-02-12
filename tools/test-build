@@ -43,7 +43,7 @@ cppwrap()
 {
     (
         maven
-        cd components/scifio
+        cd components/formats-bsd
         mvn -DskipTests clean package cppwrap:wrap dependency:copy-dependencies
         cd target/cppwrap
         mkdir build
@@ -71,7 +71,7 @@ antbuild()
     (
       ant clean compile
       ant clean compile-autogen
-      ant clean compile-formats
+      ant clean compile-formats-api
       ant clean compile-jai
       ant clean compile-common
       ant clean compile-loci-plugins
@@ -82,7 +82,8 @@ antbuild()
       ant clean compile-ome-plugins
       ant clean compile-ome-xml
       ant clean compile-poi-loci
-      ant clean compile-scifio
+      ant clean compile-formats-bsd
+      ant clean compile-formats-gpl
       ant clean compile-bio-formats-tools
       ant clean compile-tests
       ant clean compile-turbojpeg

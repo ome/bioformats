@@ -12,7 +12,7 @@ Developer: `Apple Computer <http://www.apple.com>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |no|
 
@@ -46,7 +46,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :scifioreader:`PictReader.java`
+Source Code: :bsd-reader:`PictReader.java`
 
 Notes:
 

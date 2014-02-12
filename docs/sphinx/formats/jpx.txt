@@ -12,7 +12,7 @@ Developer: `JPEG Committee <http://www.jpeg.org/jpeg2000/>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

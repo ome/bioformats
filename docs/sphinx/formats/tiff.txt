@@ -13,7 +13,7 @@ Owner: `Adobe <http://www.adobe.com>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |yes|
 
@@ -53,8 +53,8 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :scifioreader:`TiffReader.java`
-Source Code: :scifiowriter:`TiffWriter.java`
+Source Code: :bsd-reader:`TiffReader.java`
+Source Code: :bsd-writer:`TiffWriter.java`
 
 Notes:
 

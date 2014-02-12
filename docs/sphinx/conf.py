@@ -158,10 +158,10 @@ extlinks = {
     'report' : (trac_root + '/report/%s', ''),
     # Github links
     'source' : (bf_github_branch + '%s', ''),
-    'bfreader' : (bf_github_branch + 'components/bio-formats/src/loci/formats/in/%s', ''),
-    'scifioreader' : (bf_github_branch + 'components/scifio/src/loci/formats/in/%s', ''),
-    'bfwriter' : (bf_github_branch + 'components/bio-formats/src/loci/formats/out/' + '%s', ''),
-    'scifiowriter' : (bf_github_branch + 'components/scifio/src/loci/formats/out/' + '%s', ''),
+    'bfreader' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/in/%s', ''),
+    'bsd-reader' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/in/%s', ''),
+    'bfwriter' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/out/' + '%s', ''),
+    'bsd-writer' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/out/' + '%s', ''),
     # Jenkins links
     'jenkins' : (jenkins_root + '/%s', ''),
     'jenkinsjob' : (jenkins_job_root + '/%s', ''),

@@ -13,7 +13,7 @@ Owner: was `BD Biosystems <http://www.bdbiosciences.com/>`_, now `BioVision Tech
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

@@ -12,7 +12,7 @@ Owner: `Media Cybernetics <http://www.mediacy.com/>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 
