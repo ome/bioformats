@@ -49,8 +49,8 @@ Plugins for ImageJ
     Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser, Stack
     Colorizer and Stack Slicer
     -=-
-    JAR file:      loci_plugins.jar
-    Path:          components/loci-plugins
+    JAR file:      bio-formats_plugins.jar
+    Path:          components/bio-formats-plugins
     Project deps:  Bio-Formats, Formats Common, OME-XML Java library
     Library deps:  JGoodies Forms, ImageJ, JUnit, Logback
     Optional:      (none)

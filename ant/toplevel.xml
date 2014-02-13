@@ -19,7 +19,7 @@ Type "ant -p" for a list of targets.
       compile-formats-gpl,
       compile-jai,
       compile-formats-common,
-      compile-loci-plugins,
+      compile-bio-formats-plugins,
       compile-lwf-stubs,
       compile-mdbtools,
       compile-metakit,
@@ -38,7 +38,7 @@ Type "ant -p" for a list of targets.
       jar-formats-gpl,
       jar-jai,
       jar-formats-common,
-      jar-loci-plugins,
+      jar-bio-formats-plugins,
       jar-lwf-stubs,
       jar-mdbtools,
       jar-metakit,
@@ -59,7 +59,7 @@ Type "ant -p" for a list of targets.
       osgi-formats-gpl,
       osgi-jai,
       osgi-formats-common,
-      osgi-loci-plugins,
+      osgi-bio-formats-plugins,
       osgi-lwf-stubs,
       osgi-mdbtools,
       osgi-metakit,
@@ -84,7 +84,7 @@ Type "ant -p" for a list of targets.
     depends="findbugs-autogen,
       findbugs-formats-gpl,
       findbugs-formats-common,
-      findbugs-loci-plugins,
+      findbugs-bio-formats-plugins,
       findbugs-metakit,
       findbugs-formats-api,
       findbugs-formats-bsd,
@@ -98,7 +98,7 @@ Type "ant -p" for a list of targets.
       clean-formats-gpl,
       clean-jai,
       clean-formats-common,
-      clean-loci-plugins,
+      clean-bio-formats-plugins,
       clean-lwf-stubs,
       clean-mdbtools,
       clean-metakit,
@@ -121,7 +121,7 @@ Type "ant -p" for a list of targets.
       test-formats-gpl,
       test-jai,
       test-formats-common,
-      test-loci-plugins,
+      test-bio-formats-plugins,
       test-lwf-stubs,
       test-mdbtools,
       test-metakit,
@@ -138,7 +138,7 @@ Type "ant -p" for a list of targets.
   <target name="utils"
     depends="jars,
       utils-formats-gpl,
-      utils-loci-plugins,
+      utils-bio-formats-plugins,
       utils-formats-bsd"
     description="compile all extra utilities"/>
 
@@ -622,90 +622,90 @@ Type "ant -p" for a list of targets.
     <ant dir="components/formats-common" target="test"/>
   </target>
 
-  <!-- LOCI autogen -->
+  <!-- Bio-Formats autogen -->
 
   <target name="deps-autogen"
     depends="copy-jars, jar-formats-api,jar-formats-bsd"/>
 
   <target name="compile-autogen" depends="deps-autogen"
-    description="compile classes for LOCI autogen">
+    description="compile classes for Bio-Formats autogen">
     <ant dir="components/autogen" target="autogen.compile"/>
   </target>
 
   <target name="jar-autogen" depends="deps-autogen"
-    description="generate JAR file for LOCI autogen">
+    description="generate JAR file for Bio-Formats autogen">
     <ant dir="components/autogen" target="autogen.jar"/>
   </target>
 
   <target name="osgi-autogen" depends="jar-autogen"
-    description="generate OSGi bundle for LOCI autogen">
+    description="generate OSGi bundle for Bio-Formats autogen">
     <ant dir="components/autogen" target="autogen.osgi"/>
   </target>
 
   <target name="findbugs-autogen" depends="jar-autogen"
-    description="run findbugs on LOCI autogen">
+    description="run findbugs on Bio-Formats autogen">
     <ant dir="components/autogen" target="autogen.findbugs"/>
   </target>
 
   <target name="clean-autogen"
     depends="clean-formats-api,clean-formats-bsd"
-    description="remove build files for LOCI autogen">
+    description="remove build files for Bio-Formats autogen">
     <ant dir="components/autogen" target="autogen.clean"/>
   </target>
 
   <target name="test-autogen" depends="jar-autogen, testing-deps"
-    description="compile and run tests for LOCI autogen">
+    description="compile and run tests for Bio-Formats autogen">
     <ant dir="components/autogen" target="test"/>
   </target>
 
-  <!-- LOCI Plugins for ImageJ -->
+  <!-- Bio-Formats Plugins for ImageJ -->
 
-  <target name="deps-loci-plugins"
+  <target name="deps-bio-formats-plugins"
     depends="copy-jars, jar-formats-gpl,
       jar-ome-xml,
       jar-formats-api,
       jar-formats-bsd"/>
 
-  <target name="compile-loci-plugins" depends="deps-loci-plugins"
-    description="compile classes for LOCI Plugins for ImageJ">
-    <ant dir="components/loci-plugins" target="loci-plugins.compile"/>
+  <target name="compile-bio-formats-plugins" depends="deps-bio-formats-plugins"
+    description="compile classes for Bio-Formats Plugins for ImageJ">
+    <ant dir="components/bio-formats-plugins" target="bio-formats-plugins.compile"/>
   </target>
 
-  <target name="jar-loci-plugins" depends="deps-loci-plugins"
-    description="generate JAR file for LOCI Plugins for ImageJ">
-    <ant dir="components/loci-plugins" target="loci-plugins.jar"/>
+  <target name="jar-bio-formats-plugins" depends="deps-bio-formats-plugins"
+    description="generate JAR file for Bio-Formats Plugins for ImageJ">
+    <ant dir="components/bio-formats-plugins" target="bio-formats-plugins.jar"/>
   </target>
 
-  <target name="osgi-loci-plugins" depends="jar-loci-plugins"
-    description="generate OSGi bundle for LOCI Plugins for ImageJ">
-    <ant dir="components/loci-plugins" target="loci-plugins.osgi"/>
+  <target name="osgi-bio-formats-plugins" depends="jar-bio-formats-plugins"
+    description="generate OSGi bundle for Bio-Formats Plugins for ImageJ">
+    <ant dir="components/bio-formats-plugins" target="bio-formats-plugins.osgi"/>
   </target>
 
-  <target name="findbugs-loci-plugins" depends="jar-loci-plugins"
-    description="run findbugs on LOCI Plugins for ImageJ">
-    <ant dir="components/loci-plugins" target="loci-plugins.findbugs"/>
+  <target name="findbugs-bio-formats-plugins" depends="jar-bio-formats-plugins"
+    description="run findbugs on Bio-Formats Plugins for ImageJ">
+    <ant dir="components/bio-formats-plugins" target="bio-formats-plugins.findbugs"/>
   </target>
 
-  <target name="clean-loci-plugins"
+  <target name="clean-bio-formats-plugins"
     depends="clean-formats-gpl,
       clean-ome-xml,
       clean-formats-api,
       clean-formats-bsd"
-    description="remove build files for LOCI Plugins for ImageJ">
-    <ant dir="components/loci-plugins" target="loci-plugins.clean"/>
+    description="remove build files for Bio-Formats Plugins for ImageJ">
+    <ant dir="components/bio-formats-plugins" target="bio-formats-plugins.clean"/>
   </target>
 
-  <target name="utils-loci-plugins" depends="jar-loci-plugins"
-    description="compile extra utilities for LOCI Plugins for ImageJ">
-    <ant dir="components/loci-plugins" target="loci-plugins.utils"/>
+  <target name="utils-bio-formats-plugins" depends="jar-bio-formats-plugins"
+    description="compile extra utilities for Bio-Formats Plugins for ImageJ">
+    <ant dir="components/bio-formats-plugins" target="bio-formats-plugins.utils"/>
   </target>
 
-  <target name="test-loci-plugins" depends="jar-loci-plugins, testing-deps"
-    description="compile and run tests for LOCI Plugins for ImageJ">
-    <ant dir="components/loci-plugins" target="test"/>
+  <target name="test-bio-formats-plugins" depends="jar-bio-formats-plugins, testing-deps"
+    description="compile and run tests for Bio-Formats Plugins for ImageJ">
+    <ant dir="components/bio-formats-plugins" target="test"/>
   </target>
 
-  <!-- LOCI testing framework -->
+  <!-- Testing framework -->
 
   <target name="deps-tests"
     depends="copy-jars, jar-formats-gpl,
@@ -714,22 +714,22 @@ Type "ant -p" for a list of targets.
       jar-formats-bsd"/>
 
   <target name="compile-tests" depends="deps-tests"
-    description="compile classes for LOCI testing framework">
+    description="compile classes for Bio-Formats testing framework">
     <ant dir="components/test-suite" target="tests.compile"/>
   </target>
 
   <target name="jar-tests" depends="deps-tests"
-    description="generate JAR file for LOCI testing framework">
+    description="generate JAR file for Bio-Formats testing framework">
     <ant dir="components/test-suite" target="tests.jar"/>
   </target>
 
   <target name="osgi-tests" depends="jar-tests"
-    description="generate OSGi bundle for LOCI testing framework">
+    description="generate OSGi bundle for Bio-Formats testing framework">
     <ant dir="components/test-suite" target="tests.osgi"/>
   </target>
 
   <target name="findbugs-tests" depends="jar-tests"
-    description="run findbugs on LOCI testing framework">
+    description="run findbugs on Bio-Formats testing framework">
     <ant dir="components/test-suite" target="tests.findbugs"/>
   </target>
 
@@ -738,12 +738,12 @@ Type "ant -p" for a list of targets.
       clean-ome-xml,
       clean-formats-api,
       clean-formats-bsd"
-    description="remove build files for LOCI testing framework">
+    description="remove build files for Bio-Formats testing framework">
     <ant dir="components/test-suite" target="tests.clean"/>
   </target>
 
   <target name="test-tests" depends="jar-tests, testing-deps"
-    description="compile and run tests for LOCI testing framework">
+    description="compile and run tests for Bio-Formats testing framework">
     <ant dir="components/test-suite" target="test"/>
   </target>
 
@@ -781,7 +781,7 @@ Type "ant -p" for a list of targets.
   <target name="tools"
     depends="copy-jars,
       jar-jai,
-      jar-loci-plugins,
+      jar-bio-formats-plugins,
       jar-mdbtools,
       jar-metakit,
       jar-ome-xml,

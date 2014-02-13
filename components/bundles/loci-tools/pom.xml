@@ -31,7 +31,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci_plugins</artifactId>
+      <artifactId>bio-formats_plugins</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
