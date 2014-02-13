@@ -184,7 +184,7 @@ Type "ant -p" for a list of targets.
 
   <!-- JAI Image I/O Tools library -->
 
-  <target name="deps-jai"/>
+  <target name="deps-jai" depends="copy-jars" />
 
   <target name="compile-jai" depends="deps-jai"
     description="compile classes for JAI Image I/O Tools library">
@@ -219,7 +219,7 @@ Type "ant -p" for a list of targets.
   <!-- Apache POI Java library -->
 
   <target name="deps-poi-loci"
-    depends="jar-formats-common"/>
+    depends="copy-jars, jar-formats-common"/>
 
   <target name="compile-poi-loci" depends="deps-poi-loci"
     description="compile classes for Apache POI library">
@@ -254,7 +254,7 @@ Type "ant -p" for a list of targets.
 
   <!-- MDB Tools Java library -->
 
-  <target name="deps-mdbtools"/>
+  <target name="deps-mdbtools" depends="copy-jars" />
 
   <target name="compile-mdbtools" depends="deps-mdbtools"
     description="compile classes for MDB Tools Java library">
@@ -289,7 +289,7 @@ Type "ant -p" for a list of targets.
   <!-- Metakit library -->
 
   <target name="deps-metakit"
-    depends="jar-formats-common"/>
+    depends="copy-jars, jar-formats-common"/>
 
   <target name="compile-metakit" depends="deps-metakit"
     description="compile classes for Metakit Java library">
@@ -324,7 +324,7 @@ Type "ant -p" for a list of targets.
 
   <!-- OME-XML Java library -->
 
-  <target name="deps-ome-xml"/>
+  <target name="deps-ome-xml" depends="copy-jars, jar-formats-common" />
 
   <target name="compile-ome-xml" depends="deps-ome-xml"
     description="compile classes for OME-XML Java library">
@@ -358,7 +358,7 @@ Type "ant -p" for a list of targets.
 
   <!-- LWF stubs -->
 
-  <target name="deps-lwf-stubs"/>
+  <target name="deps-lwf-stubs" depends="copy-jars" />
 
   <target name="compile-lwf-stubs" depends="deps-lwf-stubs"
     description="compile classes for LWF stubs">
@@ -393,7 +393,7 @@ Type "ant -p" for a list of targets.
   <!-- API -->
 
   <target name="deps-formats-api"
-    depends="jar-formats-common,
+    depends="copy-jars, jar-formats-common,
       jar-ome-xml,
       jar-specification"/>
 
@@ -437,7 +437,7 @@ Type "ant -p" for a list of targets.
   <!-- BSD Implentation -->
 
   <target name="deps-formats-bsd"
-    depends="jar-jai,
+    depends="copy-jars, jar-jai,
       jar-formats-common,
       jar-formats-api,
       jar-lwf-stubs,
@@ -487,7 +487,7 @@ Type "ant -p" for a list of targets.
   <!-- Bio-Formats command line tools -->
 
   <target name="deps-bio-formats-tools"
-    depends="jar-jai,
+    depends="copy-jars, jar-jai,
       jar-lwf-stubs,
       jar-ome-xml,
       jar-formats-api,
@@ -538,7 +538,7 @@ Type "ant -p" for a list of targets.
   <!-- Bio-Formats -->
 
   <target name="deps-formats-gpl"
-    depends="jar-formats-common,
+    depends="copy-jars, jar-formats-common,
       jar-mdbtools,
       jar-metakit,
       jar-ome-xml,
@@ -590,7 +590,7 @@ Type "ant -p" for a list of targets.
 
   <!-- Formats Common  -->
 
-  <target name="deps-formats-common" />
+  <target name="deps-formats-common" depends="copy-jars" />
 
   <target name="compile-formats-common" depends="deps-formats-common"
     description="compile classes for Formats Common ">
@@ -625,7 +625,7 @@ Type "ant -p" for a list of targets.
   <!-- LOCI autogen -->
 
   <target name="deps-autogen"
-    depends="jar-formats-api,jar-formats-bsd"/>
+    depends="copy-jars, jar-formats-api,jar-formats-bsd"/>
 
   <target name="compile-autogen" depends="deps-autogen"
     description="compile classes for LOCI autogen">
@@ -661,7 +661,7 @@ Type "ant -p" for a list of targets.
   <!-- LOCI Plugins for ImageJ -->
 
   <target name="deps-loci-plugins"
-    depends="jar-formats-gpl,
+    depends="copy-jars, jar-formats-gpl,
       jar-ome-xml,
       jar-formats-api,
       jar-formats-bsd"/>
@@ -708,7 +708,7 @@ Type "ant -p" for a list of targets.
   <!-- LOCI testing framework -->
 
   <target name="deps-tests"
-    depends="jar-formats-gpl,
+    depends="copy-jars, jar-formats-gpl,
       jar-ome-xml,
       jar-formats-api,
       jar-formats-bsd"/>
@@ -749,7 +749,7 @@ Type "ant -p" for a list of targets.
 
   <!-- Turbojpeg -->
 
-  <target name="deps-turbojpeg" depends=""/>
+  <target name="deps-turbojpeg" depends="copy-jars"/>
 
   <target name="compile-turbojpeg" depends="deps-turbojpeg"
     description="compile classes for Turbojpeg Java bindings">
