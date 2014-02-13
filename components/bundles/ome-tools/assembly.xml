@@ -11,7 +11,7 @@
     <dependencySet>
       <excludes>
         <!-- exclude things included in loci_tools.jar -->
-        <exclude>ome:loci_plugins</exclude>
+        <exclude>ome:bio-formats_plugins</exclude>
         <exclude>ome:ome-xml</exclude>
         <exclude>ome:common</exclude>
         <exclude>ome:formats-api</exclude>
@@ -22,7 +22,7 @@
         <exclude>com.esotericsoftware.kryo:kryo</exclude>
         <exclude>com.jgoodies:forms</exclude>
         <exclude>ome:jai_imageio</exclude>
-        <exclude>ome:poi-loci</exclude>
+        <exclude>ome:ome-poi</exclude>
         <exclude>ome:mdbtools-java</exclude>
         <exclude>ome:turbojpeg</exclude>
         <exclude>ome:metakit</exclude>

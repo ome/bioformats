@@ -50,7 +50,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>poi-loci</artifactId>
+      <artifactId>ome-poi</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -175,7 +175,7 @@
                 <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
               </additionalClasspathElements>
               <classpathDependencyExcludes>
-                <classpathDependencyExclude>${project.groupId}:poi-loci</classpathDependencyExclude>
+                <classpathDependencyExclude>${project.groupId}:ome-poi</classpathDependencyExclude>
               </classpathDependencyExcludes>
             </configuration>
           </execution>

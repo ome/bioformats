@@ -27,7 +27,7 @@
     <module>components/formats-gpl</module>
     <module>components/bundles/bioformats_package</module>
     <module>components/formats-common</module>
-    <module>components/loci-plugins</module>
+    <module>components/bio-formats-plugins</module>
     <module>components/bundles/loci-tools</module>
     <module>components/metakit</module>
     <module>components/bundles/ome-tools</module>
@@ -349,13 +349,6 @@
   </ciManagement>
 
   <mailingLists>
-    <mailingList>
-      <name>LOCI Software</name>
-      <subscribe>https://lists.wisc.edu/read/all_forums/subscribe?name=locisoftware</subscribe>
-      <unsubscribe>https://lists.wisc.edu/read/?forum=locisoftware</unsubscribe>
-      <post>locisoftware@lists.wisc.edu</post>
-      <archive>https://lists.wisc.edu/read/?forum=locisoftware</archive>
-    </mailingList>
     <mailingList>
       <name>OME-users</name>
       <subscribe>http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/</subscribe>
