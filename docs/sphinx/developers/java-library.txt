@@ -24,19 +24,21 @@ same folder.
     - Notes
 
   *
-    - `Apache Jakarta POI <http://jakarta.apache.org/poi/>`_ library, LOCI fork
+    - `Apache Jakarta POI <http://jakarta.apache.org/poi/>`_ library, OME fork
     - :bfjob:`ome-poi.jar <lastSuccessfulBuild/artifact/artifacts/ome-poi.jar>`
     - Apache
     - For OLE-based formats (zvi, oib, ipw, cxd)
 
   *
-    - `MDB Tools project <http://sourceforge.net/projects/mdbtools>`_ Java port, LOCI fork
+    - `MDB Tools project <http://sourceforge.net/projects/mdbtools>`_ Java
+      port, OME fork
     - :bfjob:`mdbtools-java.jar <lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`
     - LGPL
     - For Olympus CellR and Zeiss LSM metadata (mdb)
 
   *
-    - `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ pure Java implementation, LOCI fork
+    - `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ pure Java
+      implementation, OME fork
     - :bfjob:`jai_imageio.jar <lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`
     - BSD
     - For JPEG2000-based formats (nd2, jp2)
