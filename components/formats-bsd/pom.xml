@@ -39,7 +39,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>common</artifactId>
+      <artifactId>formats-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -207,7 +207,7 @@
           <sourceDir>target/classes/cppwrap</sourceDir>
           <libraries>
             <library>${project.groupId}:ome-xml:jar:${project.version}</library>
-            <library>${project.groupId}:common:jar:${project.version}</library>
+            <library>${project.groupId}:formats-common:jar:${project.version}</library>
           </libraries>
         </configuration>
       </plugin>
