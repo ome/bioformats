@@ -75,7 +75,7 @@ Type "ant -p" for a list of targets.
     description="run automated tests on writers">
     <testng groups="all" testname="Writer tests"
       listener="loci.tests.testng.DotTestListener"
-      suitename="LOCI software test suite"
+      suitename="Bio-Formats test suite"
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${basedir}"/><!-- logback.xml -->

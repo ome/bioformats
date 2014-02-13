@@ -60,7 +60,7 @@ output similar to this:
 
     test-automated:
        [testng] [Parser] Running:
-       [testng]   LOCI software test suite
+       [testng]   Bio-Formats software test suite
        [testng] 
        [testng] Scanning for files...
        [testng] Building list of tests...
