@@ -374,8 +374,8 @@
 
   <pluginRepositories>
     <pluginRepository>
-      <id>imagej.releases</id>
-      <url>http://maven.imagej.net/content/repositories/releases</url>
+      <id>ome.external</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </pluginRepository>
   </pluginRepositories>
 
