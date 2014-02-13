@@ -14,7 +14,7 @@ Formats code generator
     Package for generating other code, including the Bio-Formats metadata API,
     related documentation, Ice bindings, and Bio-Formats C++ bindings headers
     -=-
-    JAR file:      loci-autogen.jar
+    JAR file:      bf-autogen.jar
     Path:          components/autogen
     Project deps:  Bio-Formats, Formats Common
     Library deps:  Apache Velocity
@@ -69,7 +69,7 @@ OME-XML Java library
 Testing framework
     Framework for automated and manual testing of software components
     -=-
-    JAR file:      loci-testing-framework.jar
+    JAR file:      bio-formats-testing-framework.jar
     Path:          components/test-suite
     Project deps:  Bio-Formats, Formats Common, OME I/O
     Library deps:  Logback, Simple Logging Facade for Java API, TestNG

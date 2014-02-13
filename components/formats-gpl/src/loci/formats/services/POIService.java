@@ -34,7 +34,7 @@ import loci.common.services.Service;
 
 /**
  * Interface defining methods for reading Microsoft OLE2 documents using
- * LOCI's fork of Apache POI.
+ * OME's fork of Apache POI.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/POIService.java">Trac</a>,

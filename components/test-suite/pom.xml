@@ -15,7 +15,7 @@
   <artifactId>test-suite</artifactId>
 
   <name>Bio-Formats testing framework</name>
-  <description>A framework for manual and automated testing of LOCI projects, particularly data-driven Bio-Formats testing.</description>
+  <description>A framework for manual and automated testing, in particular data-driven Bio-Formats testing.</description>
   <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2006</inceptionYear>
 
