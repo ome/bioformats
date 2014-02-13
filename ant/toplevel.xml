@@ -708,7 +708,7 @@ Type "ant -p" for a list of targets.
   <!-- LOCI testing framework -->
 
   <target name="deps-tests"
-    depends="jar-formats-gpl"
+    depends="jar-formats-gpl,
       jar-ome-xml,
       jar-formats-api,
       jar-formats-bsd"/>
@@ -734,7 +734,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-tests"
-    depends="clean-formats-gpl"
+    depends="clean-formats-gpl,
       clean-ome-xml,
       clean-formats-api,
       clean-formats-bsd"
