@@ -11,7 +11,7 @@
     <dependencySet>
       <excludes>
         <!-- exclude things included in loci_tools.jar -->
-        <exclude>ome:loci_plugins</exclude>
+        <exclude>ome:bio-formats_plugins</exclude>
         <exclude>ome:ome-xml</exclude>
         <exclude>ome:common</exclude>
         <exclude>ome:formats-api</exclude>

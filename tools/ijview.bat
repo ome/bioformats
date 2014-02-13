@@ -24,8 +24,8 @@ if "%BF_DEVEL%" == "" (
     echo and place in the same directory as the command line tools.
     goto end
   )
-  if exist "%BF_JAR_DIR%\loci_plugins.jar" (
-    set BF_CP=%BF_CP%;"%BF_JAR_DIR%\loci_plugins.jar"
+  if exist "%BF_JAR_DIR%\bio-formats_plugins.jar" (
+    set BF_CP=%BF_CP%;"%BF_JAR_DIR%\bio-formats_plugins.jar"
   ) else if not exist "%BF_JAR_DIR%\bioformats_package.jar" (
     rem Libraries not found; issue an error.
     echo Required JAR libraries not found. Please download:
