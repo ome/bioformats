@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
         <classpathentry kind="src" path="components/autogen/src"/>
-        <classpathentry kind="src" path="components/bio-formats/build/src"/>
-        <classpathentry kind="src" path="components/bio-formats/src"/>
-        <classpathentry kind="src" path="components/common/build/src"/>
-        <classpathentry kind="src" path="components/common/src"/>
+        <classpathentry kind="src" path="components/formats-api/build/src"/>
+        <classpathentry kind="src" path="components/formats-api/src"/>
+        <classpathentry kind="src" path="components/formats-bsd/build/src"/>
+        <classpathentry kind="src" path="components/formats-bsd/src"/>
+        <classpathentry kind="src" path="components/formats-common/build/src"/>
+        <classpathentry kind="src" path="components/formats-common/src"/>
+        <classpathentry kind="src" path="components/formats-gpl/build/src"/>
+        <classpathentry kind="src" path="components/formats-gpl/src"/>
         <classpathentry kind="src" path="components/forks/jai/build/src"/>
         <classpathentry kind="src" path="components/forks/jai/src"/>
         <classpathentry kind="src" path="components/forks/mdbtools/build/src"/>
@@ -25,8 +29,10 @@
         <classpathentry kind="src" path="components/stubs/lwf-stubs/src"/>
         <classpathentry kind="src" path="components/test-suite/build/src"/>
         <classpathentry kind="src" path="components/test-suite/src"/>
-        <classpathentry kind="src" path="components/bio-formats/test"/>
-        <classpathentry kind="src" path="components/common/test"/>
+        <classpathentry kind="src" path="components/formats-api/test"/>
+        <classpathentry kind="src" path="components/formats-bsd/test"/>
+        <classpathentry kind="src" path="components/formats-common/test"/>
+        <classpathentry kind="src" path="components/formats-gpl/test"/>
         <classpathentry kind="src" path="components/loci-plugins/test"/>
         <classpathentry kind="src" path="components/metakit/test"/>
         <classpathentry kind="src" path="components/ome-xml/test"/>

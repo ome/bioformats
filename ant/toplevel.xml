@@ -18,7 +18,7 @@ Type "ant -p" for a list of targets.
     depends="compile-autogen,
       compile-formats-gpl,
       compile-jai,
-      compile-common,
+      compile-formats-common,
       compile-loci-plugins,
       compile-lwf-stubs,
       compile-mdbtools,
@@ -37,7 +37,7 @@ Type "ant -p" for a list of targets.
       jar-autogen,
       jar-formats-gpl,
       jar-jai,
-      jar-common,
+      jar-formats-common,
       jar-loci-plugins,
       jar-lwf-stubs,
       jar-mdbtools,
@@ -58,7 +58,7 @@ Type "ant -p" for a list of targets.
       osgi-autogen,
       osgi-formats-gpl,
       osgi-jai,
-      osgi-common,
+      osgi-formats-common,
       osgi-loci-plugins,
       osgi-lwf-stubs,
       osgi-mdbtools,
@@ -83,7 +83,7 @@ Type "ant -p" for a list of targets.
   <target name="findbugs"
     depends="findbugs-autogen,
       findbugs-formats-gpl,
-      findbugs-common,
+      findbugs-formats-common,
       findbugs-loci-plugins,
       findbugs-metakit,
       findbugs-formats-api,
@@ -97,7 +97,7 @@ Type "ant -p" for a list of targets.
       clean-autogen,
       clean-formats-gpl,
       clean-jai,
-      clean-common,
+      clean-formats-common,
       clean-loci-plugins,
       clean-lwf-stubs,
       clean-mdbtools,
@@ -120,7 +120,7 @@ Type "ant -p" for a list of targets.
     depends="test-autogen,
       test-formats-gpl,
       test-jai,
-      test-common,
+      test-formats-common,
       test-loci-plugins,
       test-lwf-stubs,
       test-mdbtools,
@@ -219,7 +219,7 @@ Type "ant -p" for a list of targets.
   <!-- Apache POI Java library -->
 
   <target name="deps-poi-loci"
-    depends="jar-common"/>
+    depends="jar-formats-common"/>
 
   <target name="compile-poi-loci" depends="deps-poi-loci"
     description="compile classes for Apache POI library">
@@ -242,7 +242,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-poi-loci"
-    depends="clean-common"
+    depends="clean-formats-common"
     description="remove build files for Apache POI library">
     <ant dir="components/forks/poi" target="poi-loci.clean"/>
   </target>
@@ -289,7 +289,7 @@ Type "ant -p" for a list of targets.
   <!-- Metakit library -->
 
   <target name="deps-metakit"
-    depends="jar-common"/>
+    depends="jar-formats-common"/>
 
   <target name="compile-metakit" depends="deps-metakit"
     description="compile classes for Metakit Java library">
@@ -312,7 +312,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-metakit"
-    depends="clean-common"
+    depends="clean-formats-common"
     description="remove build files for Metakit Java library">
     <ant dir="components/metakit" target="metakit.clean"/>
   </target>
@@ -393,7 +393,7 @@ Type "ant -p" for a list of targets.
   <!-- API -->
 
   <target name="deps-formats-api"
-    depends="jar-common,
+    depends="jar-formats-common,
       jar-ome-xml,
       jar-specification"/>
 
@@ -418,7 +418,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-formats-api"
-    depends="clean-common,
+    depends="clean-formats-common,
       clean-ome-xml"
     description="remove build files for reader and writer APIs">
     <ant dir="components/formats-api" target="formats-api.clean"/>
@@ -438,7 +438,7 @@ Type "ant -p" for a list of targets.
 
   <target name="deps-formats-bsd"
     depends="jar-jai,
-      jar-common,
+      jar-formats-common,
       jar-formats-api,
       jar-lwf-stubs,
       jar-ome-xml,
@@ -467,7 +467,7 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-formats-bsd"
     depends="clean-jai,
-      clean-common,
+      clean-formats-common,
       clean-lwf-stubs,
       clean-ome-xml"
     description="remove build files for BSD format implementations">
@@ -538,7 +538,7 @@ Type "ant -p" for a list of targets.
   <!-- Bio-Formats -->
 
   <target name="deps-formats-gpl"
-    depends="jar-common,
+    depends="jar-formats-common,
       jar-mdbtools,
       jar-metakit,
       jar-ome-xml,
@@ -567,7 +567,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-formats-gpl"
-    depends="clean-common,
+    depends="clean-formats-common,
       clean-mdbtools,
       clean-metakit,
       clean-ome-xml,
@@ -588,38 +588,38 @@ Type "ant -p" for a list of targets.
     <ant dir="components/formats-gpl" target="test"/>
   </target>
 
-  <!-- Common  -->
+  <!-- Formats Common  -->
 
-  <target name="deps-common" />
+  <target name="deps-formats-common" />
 
-  <target name="compile-common" depends="deps-common"
-    description="compile classes for Common ">
-    <ant dir="components/common" target="common.compile"/>
+  <target name="compile-formats-common" depends="deps-formats-common"
+    description="compile classes for Formats Common ">
+    <ant dir="components/formats-common" target="formats-common.compile"/>
   </target>
 
-  <target name="jar-common" depends="deps-common"
-    description="generate JAR file for Common ">
-    <ant dir="components/common" target="common.jar"/>
+  <target name="jar-formats-common" depends="deps-formats-common"
+    description="generate JAR file for Formats Common ">
+    <ant dir="components/formats-common" target="formats-common.jar"/>
   </target>
 
-  <target name="osgi-common" depends="jar-common"
-    description="generate OSGi bundle for Common ">
-    <ant dir="components/common" target="common.osgi"/>
+  <target name="osgi-formats-common" depends="jar-formats-common"
+    description="generate OSGi bundle for Formats Common ">
+    <ant dir="components/formats-common" target="formats-common.osgi"/>
   </target>
 
-  <target name="findbugs-common" depends="jar-common"
-    description="run findbugs on Common ">
-    <ant dir="components/common" target="common.findbugs"/>
+  <target name="findbugs-formats-common" depends="jar-formats-common"
+    description="run findbugs on Formats Common ">
+    <ant dir="components/formats-common" target="formats-common.findbugs"/>
   </target>
 
-  <target name="clean-common"
-    description="remove build files for Common ">
-    <ant dir="components/common" target="common.clean"/>
+  <target name="clean-formats-common"
+    description="remove build files for Formats Common ">
+    <ant dir="components/formats-common" target="formats-common.clean"/>
   </target>
 
-  <target name="test-common" depends="jar-common"
-    description="compile and run tests for Common ">
-    <ant dir="components/common" target="test"/>
+  <target name="test-formats-common" depends="jar-formats-common"
+    description="compile and run tests for Formats Common ">
+    <ant dir="components/formats-common" target="test"/>
   </target>
 
   <!-- LOCI autogen -->
