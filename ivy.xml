@@ -11,7 +11,7 @@
     <artifact name="mdbtools-java"/>
     <artifact name="metakit"/>
     <artifact name="ome-xml"/>
-    <artifact name="poi-loci"/>
+    <artifact name="ome-poi"/>
     <artifact name="formats-api"/>
     <artifact name="formats-bsd"/>
     <artifact name="formats-common"/>

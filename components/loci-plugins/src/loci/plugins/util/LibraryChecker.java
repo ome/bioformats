@@ -84,7 +84,7 @@ public final class LibraryChecker {
           "common.jar", missing);
         checkLibrary("loci.formats.FormatHandler", "bio-formats.jar", missing);
         checkLibrary("loci.poi.poifs.filesystem.POIFSDocument",
-          "poi-loci.jar", missing);
+          "ome-poi.jar", missing);
         checkLibrary("mdbtools.libmdb.MdbFile", "mdbtools-java.jar", missing);
         break;
       case OME_JAVA_XML:

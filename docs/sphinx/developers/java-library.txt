@@ -25,7 +25,7 @@ same folder.
 
   *
     - `Apache Jakarta POI <http://jakarta.apache.org/poi/>`_ library, LOCI fork
-    - :bfjob:`poi-loci.jar <lastSuccessfulBuild/artifact/artifacts/poi-loci.jar>`
+    - :bfjob:`ome-poi.jar <lastSuccessfulBuild/artifact/artifacts/ome-poi.jar>`
     - Apache
     - For OLE-based formats (zvi, oib, ipw, cxd)
 
