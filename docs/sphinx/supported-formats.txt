@@ -23,6 +23,7 @@ Supported Formats
      - .. image:: images/header-presence.png
      - .. image:: images/header-utility.png
      - .. image:: images/header-export.png
+     - BSD
 
    * - :doc:`formats/3i-slidebook`
      - .sld
