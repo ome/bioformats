@@ -24,7 +24,7 @@ Type "ant -p" for a list of targets.
       compile-mdbtools,
       compile-metakit,
       compile-ome-xml,
-      compile-poi-loci,
+      compile-ome-poi,
       compile-formats-api,
       compile-formats-bsd,
       compile-bio-formats-tools,
@@ -43,7 +43,7 @@ Type "ant -p" for a list of targets.
       jar-mdbtools,
       jar-metakit,
       jar-ome-xml,
-      jar-poi-loci,
+      jar-ome-poi,
       jar-formats-api,
       jar-formats-bsd,
       jar-formats-bsd-tests,
@@ -64,7 +64,7 @@ Type "ant -p" for a list of targets.
       osgi-mdbtools,
       osgi-metakit,
       osgi-ome-xml,
-      osgi-poi-loci,
+      osgi-ome-poi,
       osgi-formats-api,
       osgi-formats-bsd,
       osgi-bio-formats-tools,
@@ -78,7 +78,7 @@ Type "ant -p" for a list of targets.
     findbugs-lwf-stubs
     findbugs-mdbtools
     findbugs-ome-xml
-    findbugs-poi-loci
+    findbugs-ome-poi
   -->
   <target name="findbugs"
     depends="findbugs-autogen,
@@ -103,7 +103,7 @@ Type "ant -p" for a list of targets.
       clean-mdbtools,
       clean-metakit,
       clean-ome-xml,
-      clean-poi-loci,
+      clean-ome-poi,
       clean-formats-api,
       clean-formats-bsd,
       clean-bio-formats-tools,
@@ -126,7 +126,7 @@ Type "ant -p" for a list of targets.
       test-mdbtools,
       test-metakit,
       test-ome-xml,
-      test-poi-loci,
+      test-ome-poi,
       test-formats-api,
       test-formats-bsd,
       test-bio-formats-tools,
@@ -218,36 +218,36 @@ Type "ant -p" for a list of targets.
 
   <!-- Apache POI Java library -->
 
-  <target name="deps-poi-loci"
+  <target name="deps-ome-poi"
     depends="copy-jars, jar-formats-common"/>
 
-  <target name="compile-poi-loci" depends="deps-poi-loci"
+  <target name="compile-ome-poi" depends="deps-ome-poi"
     description="compile classes for Apache POI library">
-    <ant dir="components/forks/poi" target="poi-loci.compile"/>
+    <ant dir="components/forks/poi" target="ome-poi.compile"/>
   </target>
 
-  <target name="jar-poi-loci" depends="deps-poi-loci"
+  <target name="jar-ome-poi" depends="deps-ome-poi"
     description="generate JAR file for Apache POI library">
-    <ant dir="components/forks/poi" target="poi-loci.jar"/>
+    <ant dir="components/forks/poi" target="ome-poi.jar"/>
   </target>
 
-  <target name="osgi-poi-loci" depends="jar-poi-loci"
+  <target name="osgi-ome-poi" depends="jar-ome-poi"
     description="generate OSGi bundle for Apache POI library">
-    <ant dir="components/forks/poi" target="poi-loci.osgi"/>
+    <ant dir="components/forks/poi" target="ome-poi.osgi"/>
   </target>
 
-  <target name="findbugs-poi-loci" depends="jar-poi-loci"
+  <target name="findbugs-ome-poi" depends="jar-ome-poi"
     description="run findbugs on Apache POI library">
-    <ant dir="components/forks/poi" target="poi-loci.findbugs"/>
+    <ant dir="components/forks/poi" target="ome-poi.findbugs"/>
   </target>
 
-  <target name="clean-poi-loci"
+  <target name="clean-ome-poi"
     depends="clean-formats-common"
     description="remove build files for Apache POI library">
-    <ant dir="components/forks/poi" target="poi-loci.clean"/>
+    <ant dir="components/forks/poi" target="ome-poi.clean"/>
   </target>
 
-  <target name="test-poi-loci" depends="jar-poi-loci, testing-deps"
+  <target name="test-ome-poi" depends="jar-ome-poi, testing-deps"
     description="compile and run tests for Apache POI library">
     <ant dir="components/forks/poi" target="test"/>
   </target>
@@ -542,7 +542,7 @@ Type "ant -p" for a list of targets.
       jar-mdbtools,
       jar-metakit,
       jar-ome-xml,
-      jar-poi-loci,
+      jar-ome-poi,
       jar-formats-api,
       jar-formats-bsd"/>
 
@@ -571,7 +571,7 @@ Type "ant -p" for a list of targets.
       clean-mdbtools,
       clean-metakit,
       clean-ome-xml,
-      clean-poi-loci,
+      clean-ome-poi,
       clean-formats-api,
       clean-formats-bsd"
     description="remove build files for Bio-Formats">
@@ -785,7 +785,7 @@ Type "ant -p" for a list of targets.
       jar-mdbtools,
       jar-metakit,
       jar-ome-xml,
-      jar-poi-loci,
+      jar-ome-poi,
       jar-formats-api,
       jar-formats-bsd,
       jar-bio-formats-tools,

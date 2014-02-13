@@ -110,7 +110,7 @@ MDB Tools (Java port)
 Apache Jakarta POI
     Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel)
     -=-
-    JAR file:      poi-loci.jar
+    JAR file:      ome-poi.jar
     Path:          components/forks/poi
     Project deps:  Formats Common
     Optional:      (none)

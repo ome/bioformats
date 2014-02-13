@@ -22,7 +22,7 @@
         <exclude>com.esotericsoftware.kryo:kryo</exclude>
         <exclude>com.jgoodies:forms</exclude>
         <exclude>ome:jai_imageio</exclude>
-        <exclude>ome:poi-loci</exclude>
+        <exclude>ome:ome-poi</exclude>
         <exclude>ome:mdbtools-java</exclude>
         <exclude>ome:turbojpeg</exclude>
         <exclude>ome:metakit</exclude>
