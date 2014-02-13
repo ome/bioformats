@@ -7,15 +7,14 @@
   </configurations>
   <publications defaultconf="build,runtime">
     <artifact name="jai_imageio"/>
-    <artifact name="common"/>
     <artifact name="lwf-stubs"/>
     <artifact name="mdbtools-java"/>
     <artifact name="metakit"/>
-    <artifact name="ome-io"/>
     <artifact name="ome-xml"/>
     <artifact name="poi-loci"/>
     <artifact name="formats-api"/>
     <artifact name="formats-bsd"/>
+    <artifact name="formats-common"/>
     <artifact name="formats-gpl"/>
     <artifact name="formats-bsd-test" conf="test"/>
     <artifact name="specification"/>

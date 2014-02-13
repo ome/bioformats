@@ -10,13 +10,13 @@ This build file handles the following components.
 For more information on a component, see the
 build.properties file in that component's subtree.
 
-LOCI code generator
+Formats code generator
     Package for generating other code, including the Bio-Formats metadata API,
     related documentation, Ice bindings, and Bio-Formats C++ bindings headers
     -=-
     JAR file:      loci-autogen.jar
     Path:          components/autogen
-    Project deps:  Bio-Formats, LOCI Common
+    Project deps:  Bio-Formats, Formats Common
     Library deps:  Apache Velocity
     Optional:      (none)
     License:       GPL
@@ -26,7 +26,7 @@ Bio-Formats
     -=-
     JAR file:      bio-formats.jar
     Path:          components/bio-formats
-    Project deps:  LOCI Common, OME-XML Java library, JAI Image I/O Tools,
+    Project deps:  Formats Common, OME-XML Java library, JAI Image I/O Tools,
                    MDB Tools (Java port), Apache Jakarta POI,
                    Luratech LuraWave stubs
     Library deps:  JGoodies Forms, Logback, NetCDF,
@@ -34,47 +34,25 @@ Bio-Formats
     Optional:      Xalan Serializer, Xalan
     License:       GPL
 
-Common
+Formats Common
     A library containing common I/O and reflection classes
     -=-
-    JAR file:      common.jar
-    Path:          components/common
+    JAR file:      formats-common.jar
+    Path:          components/formats-common
     Project deps:  (none)
     Library deps:  Simple Logging Facade for Java API, TestNG
     Optional:      Logback
     License:       GPL
 
-LOCI Plugins for ImageJ
+Plugins for ImageJ
     A collection of plugins for ImageJ, including the Bio-Formats Importer,
     Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser, Stack
     Colorizer and Stack Slicer
     -=-
     JAR file:      loci_plugins.jar
     Path:          components/loci-plugins
-    Project deps:  Bio-Formats, LOCI Common, OME-XML Java library
+    Project deps:  Bio-Formats, Formats Common, OME-XML Java library
     Library deps:  JGoodies Forms, ImageJ, JUnit, Logback
-    Optional:      (none)
-    License:       GPL
-
-OME I/O
-    A library for OME database import, upload and download
-    -=-
-    JAR file:      ome-io.jar
-    Path:          components/ome-io
-    Project deps:  Bio-Formats, LOCI Common
-    Library deps:  Logback, Simple Logging Facade for Java API, TestNG
-    Optional:      OME-Java, OMERO Client, OMERO Common
-    License:       GPL
-
-OME Plugins for ImageJ
-    A collection of plugins for ImageJ, including the Download from OME and
-    Upload to OME plugins
-    -=-
-    JAR file:      ome_plugins.jar
-    Path:          components/ome-plugins
-    Project deps:  Bio-Formats, LOCI Common, LOCI Plugins for ImageJ, OME I/O,
-                   OME-XML Java library
-    Library deps:  ImageJ
     Optional:      (none)
     License:       GPL
 
@@ -88,12 +66,12 @@ OME-XML Java library
     Optional:      Logback
     License:       GPL
 
-LOCI testing framework
-    Framework for automated and manual testing of the LOCI software packages
+Testing framework
+    Framework for automated and manual testing of software components
     -=-
     JAR file:      loci-testing-framework.jar
     Path:          components/test-suite
-    Project deps:  Bio-Formats, LOCI Common, OME I/O
+    Project deps:  Bio-Formats, Formats Common, OME I/O
     Library deps:  Logback, Simple Logging Facade for Java API, TestNG
     Optional:      (none)
     License:       BSD
@@ -134,7 +112,7 @@ Apache Jakarta POI
     -=-
     JAR file:      poi-loci.jar
     Path:          components/forks/poi
-    Project deps:  LOCI Common
+    Project deps:  Formats Common
     Optional:      (none)
     License:       Apache
     Project URL:   http://jakarta.apache.org/poi/
@@ -198,7 +176,7 @@ JGoodies Forms
 ImageJ
     JAR file:  ij.jar
     URL:       http://rsb.info.nih.gov/ij/
-    Notes:     used by LOCI plugins for ImageJ and OME plugins for ImageJ
+    Notes:     used by plugins for ImageJ and OME plugins for ImageJ
     License:   Public domain
 
 JUnit
@@ -231,30 +209,6 @@ Simple Logging Facade for Java API
     Notes:     used for all logging in loci.*
     License:   BSD
 
-OME-Java
-    JAR file:  ome-java.jar
-    URL:       http://www.openmicroscopy.org/site/documents/data-management/ome-server/developer/java-api
-    Notes:     used by OME I/O to connect to OME servers
-    License:   LGPL
-
-OME-Java deprecated classes
-    JAR file:  ome-java-deprecated.jar
-    URL:       http://www.openmicroscopy.org/site/documents/data-management/ome-server/developer/java-api
-    Notes:     used by OME Notes and OME Metadata Editor to work with OME-XML
-    License:   LGPL
-
-OMERO Client
-    JAR file:  omero-client-4.2.0.jar
-    URL:       http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads
-    Notes:     used by OME I/O to connect to OMERO servers
-    License:   GPL
-
-OMERO Common
-    JAR file:  omero-common-4.2.0.jar
-    URL:       http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads
-    Notes:     used by OME I/O to connect to OMERO servers
-    License:   GPL
-
 Xalan Serializer
     JAR file:  serializer-2.7.1.jar
     URL:       http://xml.apache.org/xalan-j/
@@ -264,7 +218,7 @@ Xalan Serializer
 TestNG
     JAR file:  testng-6.8.jar
     URL:       http://testng.org/
-    Notes:     testing framework used for LOCI software automated test suite
+    Notes:     testing framework used for the automated test suite
     License:   Apache
 
 Apache Velocity
@@ -289,7 +243,7 @@ Apache XML-RPC
 
 <project name="Bio-Formats" default="jars" basedir=".">
   <description>
-    Master build file for all Java software projects at LOCI
+    Master build file for all Bio-Formats software components
   </description>
   <import file="ant/toplevel.xml"/>
 

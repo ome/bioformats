@@ -78,8 +78,6 @@ antbuild()
       ant clean compile-lwf-stubs
       ant clean compile-mdbtools
       ant clean compile-metakit
-      ant clean compile-ome-io
-      ant clean compile-ome-plugins
       ant clean compile-ome-xml
       ant clean compile-poi-loci
       ant clean compile-formats-bsd

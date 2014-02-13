@@ -28,14 +28,6 @@
     </license>
   </licenses>
 
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>ome_plugins</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
-
   <properties>
     <project.rootdir>${basedir}/../..</project.rootdir>
   </properties>

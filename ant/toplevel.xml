@@ -18,13 +18,11 @@ Type "ant -p" for a list of targets.
     depends="compile-autogen,
       compile-formats-gpl,
       compile-jai,
-      compile-common,
+      compile-formats-common,
       compile-loci-plugins,
       compile-lwf-stubs,
       compile-mdbtools,
       compile-metakit,
-      compile-ome-io,
-      compile-ome-plugins,
       compile-ome-xml,
       compile-poi-loci,
       compile-formats-api,
@@ -39,13 +37,11 @@ Type "ant -p" for a list of targets.
       jar-autogen,
       jar-formats-gpl,
       jar-jai,
-      jar-common,
+      jar-formats-common,
       jar-loci-plugins,
       jar-lwf-stubs,
       jar-mdbtools,
       jar-metakit,
-      jar-ome-io,
-      jar-ome-plugins,
       jar-ome-xml,
       jar-poi-loci,
       jar-formats-api,
@@ -62,13 +58,11 @@ Type "ant -p" for a list of targets.
       osgi-autogen,
       osgi-formats-gpl,
       osgi-jai,
-      osgi-common,
+      osgi-formats-common,
       osgi-loci-plugins,
       osgi-lwf-stubs,
       osgi-mdbtools,
       osgi-metakit,
-      osgi-ome-io,
-      osgi-ome-plugins,
       osgi-ome-xml,
       osgi-poi-loci,
       osgi-formats-api,
@@ -89,11 +83,9 @@ Type "ant -p" for a list of targets.
   <target name="findbugs"
     depends="findbugs-autogen,
       findbugs-formats-gpl,
-      findbugs-common,
+      findbugs-formats-common,
       findbugs-loci-plugins,
       findbugs-metakit,
-      findbugs-ome-io,
-      findbugs-ome-plugins,
       findbugs-formats-api,
       findbugs-formats-bsd,
       findbugs-bio-formats-tools,
@@ -105,13 +97,11 @@ Type "ant -p" for a list of targets.
       clean-autogen,
       clean-formats-gpl,
       clean-jai,
-      clean-common,
+      clean-formats-common,
       clean-loci-plugins,
       clean-lwf-stubs,
       clean-mdbtools,
       clean-metakit,
-      clean-ome-io,
-      clean-ome-plugins,
       clean-ome-xml,
       clean-poi-loci,
       clean-formats-api,
@@ -130,13 +120,11 @@ Type "ant -p" for a list of targets.
     depends="test-autogen,
       test-formats-gpl,
       test-jai,
-      test-common,
+      test-formats-common,
       test-loci-plugins,
       test-lwf-stubs,
       test-mdbtools,
       test-metakit,
-      test-ome-io,
-      test-ome-plugins,
       test-ome-xml,
       test-poi-loci,
       test-formats-api,
@@ -231,7 +219,7 @@ Type "ant -p" for a list of targets.
   <!-- Apache POI Java library -->
 
   <target name="deps-poi-loci"
-    depends="jar-common"/>
+    depends="jar-formats-common"/>
 
   <target name="compile-poi-loci" depends="deps-poi-loci"
     description="compile classes for Apache POI library">
@@ -254,7 +242,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-poi-loci"
-    depends="clean-common"
+    depends="clean-formats-common"
     description="remove build files for Apache POI library">
     <ant dir="components/forks/poi" target="poi-loci.clean"/>
   </target>
@@ -301,7 +289,7 @@ Type "ant -p" for a list of targets.
   <!-- Metakit library -->
 
   <target name="deps-metakit"
-    depends="jar-common"/>
+    depends="jar-formats-common"/>
 
   <target name="compile-metakit" depends="deps-metakit"
     description="compile classes for Metakit Java library">
@@ -324,7 +312,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-metakit"
-    depends="clean-common"
+    depends="clean-formats-common"
     description="remove build files for Metakit Java library">
     <ant dir="components/metakit" target="metakit.clean"/>
   </target>
@@ -405,7 +393,7 @@ Type "ant -p" for a list of targets.
   <!-- API -->
 
   <target name="deps-formats-api"
-    depends="jar-common,
+    depends="jar-formats-common,
       jar-ome-xml,
       jar-specification"/>
 
@@ -430,7 +418,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-formats-api"
-    depends="clean-common,
+    depends="clean-formats-common,
       clean-ome-xml"
     description="remove build files for reader and writer APIs">
     <ant dir="components/formats-api" target="formats-api.clean"/>
@@ -450,7 +438,7 @@ Type "ant -p" for a list of targets.
 
   <target name="deps-formats-bsd"
     depends="jar-jai,
-      jar-common,
+      jar-formats-common,
       jar-formats-api,
       jar-lwf-stubs,
       jar-ome-xml,
@@ -479,7 +467,7 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-formats-bsd"
     depends="clean-jai,
-      clean-common,
+      clean-formats-common,
       clean-lwf-stubs,
       clean-ome-xml"
     description="remove build files for BSD format implementations">
@@ -550,7 +538,7 @@ Type "ant -p" for a list of targets.
   <!-- Bio-Formats -->
 
   <target name="deps-formats-gpl"
-    depends="jar-common,
+    depends="jar-formats-common,
       jar-mdbtools,
       jar-metakit,
       jar-ome-xml,
@@ -579,7 +567,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-formats-gpl"
-    depends="clean-common,
+    depends="clean-formats-common,
       clean-mdbtools,
       clean-metakit,
       clean-ome-xml,
@@ -600,38 +588,38 @@ Type "ant -p" for a list of targets.
     <ant dir="components/formats-gpl" target="test"/>
   </target>
 
-  <!-- Common  -->
+  <!-- Formats Common  -->
 
-  <target name="deps-common" />
+  <target name="deps-formats-common" />
 
-  <target name="compile-common" depends="deps-common"
-    description="compile classes for Common ">
-    <ant dir="components/common" target="common.compile"/>
+  <target name="compile-formats-common" depends="deps-formats-common"
+    description="compile classes for Formats Common ">
+    <ant dir="components/formats-common" target="formats-common.compile"/>
   </target>
 
-  <target name="jar-common" depends="deps-common"
-    description="generate JAR file for Common ">
-    <ant dir="components/common" target="common.jar"/>
+  <target name="jar-formats-common" depends="deps-formats-common"
+    description="generate JAR file for Formats Common ">
+    <ant dir="components/formats-common" target="formats-common.jar"/>
   </target>
 
-  <target name="osgi-common" depends="jar-common"
-    description="generate OSGi bundle for Common ">
-    <ant dir="components/common" target="common.osgi"/>
+  <target name="osgi-formats-common" depends="jar-formats-common"
+    description="generate OSGi bundle for Formats Common ">
+    <ant dir="components/formats-common" target="formats-common.osgi"/>
   </target>
 
-  <target name="findbugs-common" depends="jar-common"
-    description="run findbugs on Common ">
-    <ant dir="components/common" target="common.findbugs"/>
+  <target name="findbugs-formats-common" depends="jar-formats-common"
+    description="run findbugs on Formats Common ">
+    <ant dir="components/formats-common" target="formats-common.findbugs"/>
   </target>
 
-  <target name="clean-common"
-    description="remove build files for Common ">
-    <ant dir="components/common" target="common.clean"/>
+  <target name="clean-formats-common"
+    description="remove build files for Formats Common ">
+    <ant dir="components/formats-common" target="formats-common.clean"/>
   </target>
 
-  <target name="test-common" depends="jar-common"
-    description="compile and run tests for Common ">
-    <ant dir="components/common" target="test"/>
+  <target name="test-formats-common" depends="jar-formats-common"
+    description="compile and run tests for Formats Common ">
+    <ant dir="components/formats-common" target="test"/>
   </target>
 
   <!-- LOCI autogen -->
@@ -717,94 +705,10 @@ Type "ant -p" for a list of targets.
     <ant dir="components/loci-plugins" target="test"/>
   </target>
 
-  <!-- OME I/O -->
-
-  <target name="deps-ome-io"
-    depends="copy-jars,
-      jar-ome-xml,
-      jar-formats-api,
-      jar-formats-bsd"/>
-
-  <target name="compile-ome-io" depends="deps-ome-io"
-    description="compile classes for OME I/O">
-    <ant dir="components/ome-io" target="ome-io.compile"/>
-  </target>
-
-  <target name="jar-ome-io" depends="deps-ome-io"
-    description="generate JAR file for OME I/O">
-    <ant dir="components/ome-io" target="ome-io.jar"/>
-  </target>
-
-  <target name="osgi-ome-io" depends="jar-ome-io"
-    description="generate OSGi bundle for OME I/O">
-    <ant dir="components/ome-io" target="ome-io.osgi"/>
-  </target>
-
-  <target name="findbugs-ome-io" depends="jar-ome-io"
-    description="run findbugs on OME I/O">
-    <ant dir="components/ome-io" target="ome-io.findbugs"/>
-  </target>
-
-  <target name="clean-ome-io"
-    depends="clean-ome-xml,
-      clean-formats-api,
-      clean-formats-bsd"
-    description="remove build files for OME I/O">
-    <ant dir="components/ome-io" target="ome-io.clean"/>
-  </target>
-
-  <target name="test-ome-io" depends="jar-ome-io, testing-deps"
-    description="compile and run tests for OME I/O">
-    <ant dir="components/ome-io" target="test"/>
-  </target>
-
-  <!-- OME Plugins for ImageJ -->
-
-  <target name="deps-ome-plugins"
-    depends="jar-loci-plugins,
-      jar-ome-io,
-      jar-formats-api,
-      jar-formats-bsd"/>
-
-  <target name="compile-ome-plugins" depends="deps-ome-plugins"
-    description="compile classes for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.compile"/>
-  </target>
-
-  <target name="jar-ome-plugins" depends="deps-ome-plugins"
-    description="generate JAR file for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.jar"/>
-  </target>
-
-  <target name="osgi-ome-plugins" depends="jar-ome-plugins"
-    description="generate OSGi bundle for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.osgi"/>
-  </target>
-
-  <target name="findbugs-ome-plugins" depends="jar-ome-plugins"
-    description="run findbugs on OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.findbugs"/>
-  </target>
-
-  <target name="clean-ome-plugins"
-    depends="clean-loci-plugins,
-      clean-ome-io,
-      clean-formats-api,
-      clean-formats-bsd"
-    description="remove build files for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.clean"/>
-  </target>
-
-  <target name="test-ome-plugins" depends="jar-ome-plugins, testing-deps"
-    description="compile and run tests for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="test"/>
-  </target>
-
   <!-- LOCI testing framework -->
 
   <target name="deps-tests"
     depends="jar-formats-gpl,
-      jar-ome-io,
       jar-ome-xml,
       jar-formats-api,
       jar-formats-bsd"/>
@@ -831,7 +735,6 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-tests"
     depends="clean-formats-gpl,
-      clean-ome-io,
       clean-ome-xml,
       clean-formats-api,
       clean-formats-bsd"
@@ -881,8 +784,6 @@ Type "ant -p" for a list of targets.
       jar-loci-plugins,
       jar-mdbtools,
       jar-metakit,
-      jar-ome-io,
-      jar-ome-plugins,
       jar-ome-xml,
       jar-poi-loci,
       jar-formats-api,
@@ -931,9 +832,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="tools-ome"
-    depends="copy-jars,
-      jar-ome-io,
-      jar-ome-plugins"
+    depends="copy-jars"
     description="create JAR file encompassing several OME tools">
     <echo>----------=========== ome_tools ===========----------</echo>
     <for list="${ome-tools.libraries}" param="jar" delimiter=" " trim="true">
@@ -1018,7 +917,7 @@ Type "ant -p" for a list of targets.
 
     <property environment="env"/>
     <exec executable="matlab">
-      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/formats-gpl/matlab:${artifact.dir}"/>
+      <env key="MATLABPATH" value="${env.MATLABPATH}:${root.dir}/components/bio-formats/matlab:${artifact.dir}"/>
       <arg value="-nodesktop"/>
       <arg value="-nosplash"/>
       <arg value="-r"/>
