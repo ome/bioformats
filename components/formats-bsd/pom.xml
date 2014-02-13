@@ -207,6 +207,7 @@
           <sourceDir>target/classes/cppwrap</sourceDir>
           <libraries>
             <library>${project.groupId}:ome-xml:jar:${project.version}</library>
+            <library>${project.groupId}:formats-api:jar:${project.version}</library>
             <library>${project.groupId}:formats-common:jar:${project.version}</library>
           </libraries>
         </configuration>
