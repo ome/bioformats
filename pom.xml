@@ -26,7 +26,7 @@
     <module>components/formats-bsd</module>
     <module>components/formats-gpl</module>
     <module>components/bundles/bioformats_package</module>
-    <module>components/common</module>
+    <module>components/formats-common</module>
     <module>components/loci-plugins</module>
     <module>components/bundles/loci-tools</module>
     <module>components/metakit</module>
