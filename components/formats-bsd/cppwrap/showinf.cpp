@@ -44,7 +44,7 @@
 // for Bio-Formats C++ bindings
 #include "formats-api-${release.version}.h"
 #include "formats-bsd-${release.version}.h"
-#include "common-${release.version}.h"
+#include "formats-common-${release.version}.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Object;
