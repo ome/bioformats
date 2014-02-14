@@ -56,7 +56,7 @@ public class SumPlanes {
     BufferedImageWriter w = new BufferedImageWriter();
     System.out.print("Writing " + outId);
     w.setId(outId);
-    w.saveImage(sum(images), true);
+    w.saveImage(0, sum(images));
     w.close();
     System.out.println(" [done]");
   }
