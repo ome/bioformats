@@ -11,7 +11,7 @@ Extensions: .txt
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |no|
 
@@ -44,7 +44,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :scifioreader:`TextReader.java`
+Source Code: :bsd-reader:`TextReader.java`
 
 Notes:
 

@@ -11,7 +11,7 @@ Extensions: .tif, .sld, .jpg
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

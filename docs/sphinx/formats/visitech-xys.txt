@@ -12,7 +12,7 @@ Developer: `VisiTech International <http://www.visitech.co.uk/>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

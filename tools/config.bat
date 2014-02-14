@@ -7,7 +7,7 @@ rem but you can tweak the settings to your liking.
 
 rem Set the amount of RAM available to the command line tools.
 rem Use "m" suffix for megabytes, "g" for gigabytes; e.g., 2g = 2GB.
-rem set SCIFIO_MAX_MEM=1g
+rem set BF_MAX_MEM=1g
 
 rem Set the NO_UPDATE_CHECK flag to skip the update check.
 rem set NO_UPDATE_CHECK=1
@@ -17,19 +17,19 @@ rem set PROXY_HOST=
 rem set PROXY_PORT=
 
 rem If your CLASSPATH already includes the needed classes,
-rem you can set the SCIFIO_DEVEL environment variable to
+rem you can set the BF_DEVEL environment variable to
 rem disable the required JAR library checks.
-rem set SCIFIO_DEVEL=1
+rem set BF_DEVEL=1
 
 rem Set the directory containing the JAR libraries.
-if "%SCIFIO_JAR_DIR%" == "" (
-  if exist "%SCIFIO_DIR%\..\artifacts" (
+if "%BF_JAR_DIR%" == "" (
+  if exist "%BF_DIR%\..\artifacts" (
     rem Batch files reside in a git working copy.
     rem Look for JARs in the artifacts directory.
-    set SCIFIO_JAR_DIR=%SCIFIO_DIR%\..\artifacts
+    set BF_JAR_DIR=%BF_DIR%\..\artifacts
   ) else (
     rem Batch files reside in a standalone distribution.
     rem Look for JARs in the same directory as the batch files.
-    set SCIFIO_JAR_DIR=%SCIFIO_DIR%
+    set BF_JAR_DIR=%BF_DIR%
   )
 )

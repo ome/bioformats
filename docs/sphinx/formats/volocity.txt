@@ -12,7 +12,7 @@ Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/pr
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

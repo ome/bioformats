@@ -31,7 +31,7 @@ Opening an image file
 ---------------------
 
 The first thing to do is initialize a file with the
-:source:`bfopen <components/bio-formats/matlab/bfopen.m>` function:
+:source:`bfopen <components/formats-gpl/matlab/bfopen.m>` function:
 
 ::
 
@@ -205,11 +205,11 @@ Reading from an image file
 --------------------------
 
 The main inconvenience of the
-:source:`bfopen.m <components/bio-formats/matlab/bfopen.m>` function is that
+:source:`bfopen.m <components/formats-gpl/matlab/bfopen.m>` function is that
 it loads all the content of an image regardless of its size.
 
 To access the file reader without loading all the data, use the low-level 
-:source:`bfGetReader.m <components/bio-formats/matlab/bfGetReader.m>` 
+:source:`bfGetReader.m <components/formats-gpl/matlab/bfGetReader.m>` 
 function:
 
 ::
@@ -224,7 +224,7 @@ method:
     omeMeta = reader.getMetadataStore();
 
 Individual planes can be queried using the
-:source:`bfGetPlane.m <components/bio-formats/matlab/bfGetPlane.m>` function:
+:source:`bfGetPlane.m <components/formats-gpl/matlab/bfGetPlane.m>` function:
 
 ::
 
@@ -234,7 +234,7 @@ Saving files
 ------------
 
 The basic code for saving a 5D array into an OME-TIFF file is located in the
-:source:`bfsave.m <components/bio-formats/matlab/bfsave.m>` function.
+:source:`bfsave.m <components/formats-gpl/matlab/bfsave.m>` function.
 
 For instance, the following code will save a single image of 64 pixels by 64
 pixels with 8 unsigned bits per pixels:

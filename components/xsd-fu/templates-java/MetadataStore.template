@@ -79,9 +79,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.meta;
-
-import loci.formats.meta.MetadataRoot;
+package ome.xml.meta;
 
 import ome.xml.model.*;
 import ome.xml.model.enums.*;
@@ -105,7 +103,7 @@ import ome.xml.model.primitives.*;
  * both <code>MetadataStore</code> and <code>MetadataRetrieve</code>, which
  * reduces the need to cast between object types.
  *
- * <p>See {@link loci.formats.ome.OMEXMLMetadata} for an example
+ * <p>See {@link ome.xml.meta.OMEXMLMetadata} for an example
  * implementation.
  *
  * <p><b>Important note:</b> It is strongly recommended that applications
@@ -118,7 +116,7 @@ import ome.xml.model.primitives.*;
  * <code>imageIndex</code>, an inner loop should iterate across
  * <code>pixelsIndex</code>, and an innermost loop should handle
  * <code>planeIndex</code>. For an illustration of the ideal traversal order,
- * see {@link loci.formats.meta.MetadataConverter#convertMetadata}.</p>
+ * see {@link ome.xml.meta.MetadataConverter#convertMetadata}.</p>
  *
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
