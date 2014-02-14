@@ -110,12 +110,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   // -- Stylesheet names --
 
-  private static final String XSLT_PATH = "/loci/formats/meta/";
-  private static final String XSLT_REORDER = XSLT_PATH + "reorder-2008-09.xsl";
+  private static final String XSLT_PATH = "/transforms/";
   private static final String XSLT_2003FC =
     XSLT_PATH + "2003-FC-to-2008-09.xsl";
-  private static final String XSLT_2006LO =
-    XSLT_PATH + "2006-LO-to-2008-09.xsl";
   private static final String XSLT_200706 =
     XSLT_PATH + "2007-06-to-2008-09.xsl";
   private static final String XSLT_200802 =
@@ -142,7 +139,6 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
   /** Stylesheets for updating from previous schema releases. */
   private static Templates update2003FC;
-  private static Templates update2006LO;
   private static Templates update200706;
   private static Templates update200802;
   private static Templates update200809;
@@ -184,15 +180,6 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
             XMLTools.getStylesheet(XSLT_2003FC, OMEXMLServiceImpl.class);
         }
         transformed = XMLTools.transformXML(xml, update2003FC);
-      }
-      else if (version.equals("2006-LO")) {
-        xml = verifyOMENamespace(xml);
-        LOGGER.debug("Running UPDATE_2006LO stylesheet.");
-        if (update2006LO == null) {
-          update2006LO =
-            XMLTools.getStylesheet(XSLT_2006LO, OMEXMLServiceImpl.class);
-        }
-        transformed = XMLTools.transformXML(xml, update2006LO);
       }
       else if (version.equals("2007-06")) {
         xml = verifyOMENamespace(xml);
