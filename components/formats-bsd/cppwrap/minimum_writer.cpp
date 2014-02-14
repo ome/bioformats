@@ -123,7 +123,7 @@ bool minWrite(int argc, const char *argv[]) {
   ImageWriter writer;
   writer.setMetadataRetrieve(meta);
   writer.setId(id);
-  writer.saveBytes(img, true);
+  writer.saveBytes(0, img);
   writer.close();
 
   cout << "Done." << endl;
