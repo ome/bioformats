@@ -939,12 +939,12 @@ Type "ant -p" for a list of targets.
     <mkdir dir="${artifact.dir}"/>
     <exec executable="python" failonerror="true">
       <arg value="${root.dir}/tools/source-archive"/>
-      <arg value="bioformats"/>
-      <arg value="${release.shortversion}"/>
-      <arg value="${release.version}"/>
-      <arg value="${vcs.revision}"/>
-      <arg value="${vcs.date}"/>
-      <arg value="${artifact.dir}"/>
+      <arg value="--release=bioformats"/>
+      <arg value="--shortversion=${release.shortversion}"/>
+      <arg value="--version=${release.version}"/>
+      <arg value="--vcsrevision=${vcs.revision}"/>
+      <arg value="--vcsdate=${vcs.date}"/>
+      <arg value="--target=${artifact.dir}"/>
     </exec>
   </target>
 
