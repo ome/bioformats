@@ -234,7 +234,6 @@ void configureReaderPreInit() {
   ((IFormatHandler*) reader)->close();
   reader->setNormalized(normalize);
   reader->setMetadataFiltered(filter);
-  reader->setMetadataCollected(doMeta);
 }
 
 void configureReaderPostInit() {
