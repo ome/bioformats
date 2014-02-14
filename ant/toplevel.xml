@@ -1079,5 +1079,12 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
+  <target name="version" description="Print version information" depends="release-version">
+    <echo>VERSION=${release.version}
+SHORTVERSION=${release.version}
+VCS_DATE=${vcs.date}
+VCS_REVISION=${vcs.revision}
+</echo>
+  </target>
 
 </project>
