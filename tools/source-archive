@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 
+from optparse import OptionParser
 import os
 from subprocess import call, Popen, PIPE
 import sys
@@ -24,16 +25,19 @@ import zipfile
 # polluting the release with version control files.
 
 if __name__ == "__main__":
-    if len(sys.argv) != 7:
-        raise Exception('Usage: %s releasename shortversion fullversion vcsrevision vcsdate targetdir')
 
-    release = sys.argv[1]
-    shortversion = sys.argv[2]
-    version = sys.argv[3]
-    vcsrevision = sys.argv[4]
-    vcsdate = sys.argv[5]
-    target = os.path.abspath(sys.argv[6])
-    prefix = "%s-%s" % (release,version)
+    parser = OptionParser()
+    parser.add_option("--release", action="store", type="string", dest="release")
+    parser.add_option("--version", action="store", type="string", dest="version")
+    parser.add_option("--shortversion", action="store", type="string", dest="shortversion")
+    parser.add_option("--vcsrevision", action="store", type="string", dest="vcsrevision")
+    parser.add_option("--vcsdate", action="store", type="string", dest="vcsdate")
+    parser.add_option("--target", action="store", type="string", dest="target")
+
+    (options,args) = parser.parse_args(sys.argv)
+
+    options.target = os.path.abspath(options.target)
+    prefix = "%s-%s" % (options.release,options.version)
 
     if not os.path.exists('.git'):
         raise Exception('Releasing is only possible from a git repository')
@@ -44,19 +48,19 @@ if __name__ == "__main__":
     # Create base archive
     base_archive_status = call(['git', 'archive', '--format', 'zip',
                                 '--prefix', "%s/" % (prefix),
-                                '--output', "%s/%s-base.zip" % (target, prefix),
+                                '--output', "%s/%s-base.zip" % (options.target, prefix),
                                 'HEAD'])
     if base_archive_status != 0:
         raise Exception('Failed to create git base archive')
 
-    zips = list(["%s/%s-base.zip" % (target, prefix)])
+    zips = list(["%s/%s-base.zip" % (options.target, prefix)])
 
     # Create submodule archives
     submodule_archive = Popen(['git', 'submodule', 'foreach', '--quiet', '--recursive',
                                "npath=\"$(echo \"$path\" | tr / _)\"; \
                                 zip=\"%s/%s-submod-${npath}.zip\"; \
                                 git archive --format zip --prefix \"%s/${path}/\" --output \"${zip}\" HEAD || exit 1; \
-                                echo \"${zip}\"" % (target, prefix, prefix)],
+                                echo \"${zip}\"" % (options.target, prefix, prefix)],
                               stdout=PIPE)
     submodule_zips = submodule_archive.communicate()[0]
     if submodule_archive.returncode != 0:
@@ -65,9 +69,9 @@ if __name__ == "__main__":
     zips.extend(submodule_zips.splitlines())
 
     # Create destination zip file
-    print("  - creating %s/%s.zip" % (target, prefix))
+    print("  - creating %s/%s.zip" % (options.target, prefix))
     sys.stdout.flush()
-    basezip = zipfile.ZipFile("%s/%s.zip" % (target, prefix), 'w')
+    basezip = zipfile.ZipFile("%s/%s.zip" % (options.target, prefix), 'w')
 
     # Repack each of the separate zips into the destination zip
     for name in zips:
@@ -89,15 +93,15 @@ if __name__ == "__main__":
         os.remove(name)
 
     # Embed release number
-    if release == 'openmicroscopy':
+    if options.release == 'openmicroscopy':
         basezip.writestr("%s/components/antlib/resources/gitversion.xml" % (prefix),
 """<?xml version="1.0" encoding="utf-8"?>
 <project name="gitversion" basedir=".">
         <property name="omero.shortversion" value="%s"/>
         <property name="omero.plainversion" value="%s"/>
 </project>
-""" % (shortversion, version))
-    elif release == 'bioformats':
+""" % (options.shortversion, options.version))
+    elif options.release == 'bioformats':
         basezip.writestr("%s/ant/gitversion.xml" % (prefix),
 """<?xml version="1.0" encoding="utf-8"?>
 <project name="gitversion" basedir=".">
@@ -106,10 +110,10 @@ if __name__ == "__main__":
         <property name="vcs.revision" value="%s"/>
         <property name="vcs.date" value="%s"/>
 </project>
-""" % (version, shortversion, vcsrevision, vcsdate))
+""" % (options.version, options.shortversion, options.vcsrevision, options.vcsdate))
         basezip.writestr("%s/cpp/cmake/GitVersion.cmake" % (prefix),
 """set(OME_VERSION "%s")
 set(OME_VERSION_SHORT "%s")
 set(OME_VCS_REVISION "%s")
 set(OME_VCS_DATE "%s")
-""" % (version, shortversion, vcsrevision, vcsdate))
+""" % (options.version, options.shortversion, options.vcsrevision, options.vcsdate))
