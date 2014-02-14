@@ -1037,6 +1037,11 @@ Type "ant -p" for a list of targets.
       <arg value="${artifact.dir}/bftools.zip"/>
       <arg line="${bftools.files}"/>
     </exec>
+    <exec executable="zip" dir="${artifact.dir}">
+      <arg value="-r9"/>
+      <arg value="${artifact.dir}/bftools.zip"/>
+      <arg value="bioformats_package.jar"/>
+    </exec>
   </target>
 
   <!-- Matlab -->
