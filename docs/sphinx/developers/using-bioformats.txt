@@ -16,8 +16,7 @@ For a complete list of supported formats, see the Bio-Formats
 :doc:`supported formats table </supported-formats>`.
 
 For a few working examples of how to use Bio-Formats, see 
-`these Github pages
-<http://github.com/openmicroscopy/bioformats/tree/develop/components/formats-gpl/utils>`_
+:source:`these Github pages <components/formats-gpl/utils>`_
 
 Basic file reading
 ------------------
@@ -84,8 +83,6 @@ is stored internally in a **java.util.Hashtable**, and can be accessed in one of
 two ways: individual values can be retrieved by calling
 :javadoc:`getMetadataValue(String)
 <loci/formats/IFormatReader.html#getMetadataValue(java.lang.String)>`, which gets the value of the specified key.
-Alternatively, :javadoc:`getMetadata()
-<loci/formats/IFormatReader.html#getMetadata()>` will return the entire Hashtable.
 Note that the keys in this Hashtable are different for each format, hence the
 name "format-specific metadata".
 
