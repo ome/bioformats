@@ -12,7 +12,7 @@ Owner: `Laboratory Imaging <http://www.lim.cz/>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

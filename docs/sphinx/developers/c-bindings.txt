@@ -12,8 +12,8 @@ the image support of Bio-Formats.
 BF-CPP comes with some standalone examples which you can use as a
 starting point in your own project:
 
--  :source:`showinf <components/scifio/cppwrap/showinf.cpp>`
--  :source:`minimum_writer <components/scifio/cppwrap/minimum_writer.cpp>`
+-  :source:`showinf <components/formats-bsd/cppwrap/showinf.cpp>`
+-  :source:`minimum_writer <components/formats-bsd/cppwrap/minimum_writer.cpp>`
 
 Other projects using BF-CPP include:
 

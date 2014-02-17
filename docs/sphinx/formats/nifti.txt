@@ -12,7 +12,7 @@ Developer: `National Institutes of Health <http://www.nih.gov/>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

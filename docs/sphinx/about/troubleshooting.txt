@@ -52,22 +52,22 @@ Tips for ImageJ/Fiji
 --------------------
 
 -  The Bio-Formats version being used can be found by selecting "Help >
-   About Plugins > LOCI Plugins".
+   About Plugins > Bio-Formats Plugins".
 -  "How do I make the options window go away?" is a common question.
    There are a few ways to do this:
 
    -  To disable the options window only for files in a specific format,
-      select "Plugins > LOCI > LOCI Plugins Configuration", then pick
-      the format from the list and make sure the "Windowless" option is
-      checked.
-   -  To avoid the options window entirely, use the "Plugins > LOCI >
+      select "Plugins > Bio-Formats > Bio-Formats Plugins Configuration",
+      then pick the format from the list and make sure the "Windowless"
+      option is checked.
+   -  To avoid the options window entirely, use the "Plugins > Bio-Formats >
       Bio-Formats Windowless Importer" menu item to import files.
    -  Open files by calling the Bio-Formats importer plugin from a
       macro.
 
 -  A not uncommon cause of problems is that the user has multiple copies
    of loci\_tools.jar in their ImageJ plugins folder, or has a copy of
-   loci\_tools.jar and a copy of bio-formats.jar. It is often difficult
+   loci\_tools.jar and a copy of formats-gpl.jar. It is often difficult
    to determine for sure that this is the problem - the only error
    message that pretty much guarantees it is a "NoSuchMethodException".
    If the user maintains that they downloaded the latest version and
@@ -113,5 +113,5 @@ ZVI
 -  If the ZVI reader plugin is installed in ImageJ/Fiji, then it will be
    used instead of Bio-Formats to read ZVI files. To check if this is
    the cause of the problem, make sure that the file opens correctly
-   using "Plugins > LOCI > Bio-Formats Importer"; if that works, then
+   using "Plugins > Bio-Formats > Bio-Formats Importer"; if that works, then
    just remove ZVI\_Reader.class from the plugins folder.

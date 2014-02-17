@@ -7,7 +7,7 @@ of algorithms for performing computationally intensive tasks.
 
 Calling Bio-Formats from MATLAB is fairly straightforward, since MATLAB
 has built-in interoperability with Java. We have created a :source:`set
-of scripts <components/bio-formats/matlab>` for reading image files. Note
+of scripts <components/formats-gpl/matlab>` for reading image files. Note
 the minimum supported MATLAB version is R2007b (7.5).
 
 Installation
