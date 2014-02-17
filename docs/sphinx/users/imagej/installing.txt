@@ -43,8 +43,11 @@ Bio-Formats' behavior will not be changing "out from under them" as they
 continue developing their own programs.
 
 .. note:: There are currently **two** release version of Bio-Formats as we
-    maintain the 4.4.x series while only actively developing the new 5.x
-    series.
+    are maintaining support for the 4.4.x series while only actively
+    developing the new 5.x series. Unless you are using Bio-Formats with the
+    OMERO ImageJ plugin and an OMERO 4.4.x server, we recommend you
+    use Bio-Formats 5. A new 4.4.x version will only be released if a major
+    bug fix is required.
 
 We often **recommend that most people simply use the latest build** for
 two reasons. First, it may contain bug-fixes or new features you want
@@ -68,7 +71,7 @@ to the Plugins directory within ImageJ.
 You may have to quit and restart ImageJ.  Once you restart it, you will
 find Bio-Formats in the Bio-Formats option under the Plugins menu:
 
-.. image:: /images/PluginsMenu.jpg
+.. image:: /images/PluginsMenu.png
     :align: center
     :alt: ImageJ's Plugin Menu.
 

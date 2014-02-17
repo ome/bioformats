@@ -6,26 +6,19 @@ User Information
 Using Bio-Formats with ImageJ and Fiji
 ======================================
 
-The following sections explain the features of Bio-Formats and how to use 
-it within :doc:`imagej/index` and :doc:`fiji/index`:
-
-.. toctree::
-    :maxdepth: 1
-    :hidden:
-
-    imagej/index
-    fiji/index
-
+The following sections explain the features of Bio-Formats and how to use
+it within ImageJ and Fiji:
 
 .. toctree::
     :maxdepth: 1
     :titlesonly:
 
+    imagej/index
+    fiji/index
     imagej/features
     imagej/installing
     imagej/load-images
     imagej/managing-memory
-    imagej/upgrading-importer
 
 
 OMERO
@@ -123,7 +116,4 @@ Visualization and analysis applications
     vaa3d/index
     visbio/index
     xuvtools/index
-
-
-
 
