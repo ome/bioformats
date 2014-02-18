@@ -6,7 +6,8 @@ Installing Bio-Formats in ImageJ
     already built in, people who install Fiji can skip this section.
     
     If you are also using the OMERO plugin for ImageJ, you may find the set-up
-    guide on the new `user help site <http://help.openmicroscopy.org>`_ useful
+    guide on the new `user help site
+    <http://help.openmicroscopy.org/imagej.html>`_ useful
     for getting you started with both plugins at the same time.
 
 Once you `download <http://rsbweb.nih.gov/ij/download.html>`__ and
