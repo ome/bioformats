@@ -204,7 +204,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   }
 
   /* @see IRandomAccess.getFilePointer() */
-  public long getFilePointer() throws IOException {
+  public long getFilePointer() {
     return position;
   }
 

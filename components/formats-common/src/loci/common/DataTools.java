@@ -464,7 +464,7 @@ public final class DataTools {
 
   /** Translates the double value into an array of eight bytes. */
   public static byte[] doubleToBytes(double value, boolean little) {
-    byte[] v = new byte[9];
+    byte[] v = new byte[8];
     unpackBytes(Double.doubleToLongBits(value), v, 0, 8, little);
     return v;
   }
