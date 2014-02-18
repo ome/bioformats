@@ -141,12 +141,6 @@ public class NIOInputStream extends InputStream implements DataInput {
 
   /** Closes the streams. */
   public void close() throws IOException {
-    if (raf != null) {
-      raf.close();
-    }
-    if (channel != null) {
-      channel.close();
-    }
   }
 
   /** Sets the endianness of the stream. */
