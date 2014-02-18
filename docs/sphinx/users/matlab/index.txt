@@ -17,6 +17,10 @@ Download the MATLAB toolbox from the Bio-Formats
 :downloads:`downloads page <>`. Unzip :file:`bfmatlab.zip` and add the
 unzipped :file:`bfmatlab` folder to your MATLAB path.
 
+.. note:: As of Bio-Formats 5.0.0, this zip now contains the bundled jar
+    and you no longer need to download loci_tools.jar or the new
+    bioformats_package.jar separately.
+
 Usage
 -----
 
