@@ -255,7 +255,7 @@ public class InOut201004Test {
 
   /** XML schema location. */
   public static final String SCHEMA_LOCATION =
-    "http://svn.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd";
 
   private Document document;
 
