@@ -64,7 +64,7 @@ import com.esotericsoftware.kryo.io.Output;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class RandomAccessInputStream extends InputStream implements DataInput, Closeable {
+public class RandomAccessInputStream extends InputStream implements DataInput, Closeable, KryoSerializable {
 
   // -- Constants --
 
@@ -164,7 +164,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput, C
    */
   public void setLength(long newLength) throws IOException {
     if (newLength < length()) {
-      this.length = length();
+      this.length = newLength;
     }
   }
 
