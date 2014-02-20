@@ -16,7 +16,7 @@ For a complete list of supported formats, see the Bio-Formats
 :doc:`supported formats table </supported-formats>`.
 
 For a few working examples of how to use Bio-Formats, see 
-`these Github pages <http://github.com/openmicroscopy/bioformats/tree/dev_5_0/components/formats-gpl/utils>`_
+:source:`these Github pages <components/formats-gpl/utils>`.
 
 Basic file reading
 ------------------
