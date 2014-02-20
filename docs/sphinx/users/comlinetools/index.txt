@@ -41,9 +41,6 @@ Currently available tools include:
         A command-line XML validation tool, useful for checking an OME-XML
         document for compliance with the OME-XML schema.
 
-    omeul
-        A command-line client-side import tool for OME.
-
     tiffcomment
         Dumps the comment from the given TIFF file's first IFD entry; useful
         for examining the OME-XML block in an OME-TIFF file.
@@ -51,12 +48,12 @@ Currently available tools include:
 All scripts require **bioformats\_package.jar** in the same directory as the
 command line tools.
 
-Tutorial
---------
+Tutorials
+---------
 
-There is a `Bio-Formats command line tools
-tutorial <http://www.farsight-toolkit.org/wiki/FARSIGHT_Tutorials/Bio-Formats>`_
-on the FARSIGHT web site.
+:doc:`Displaying images and metadata <display>`
+:doc:`Converting a file <conversion>`
+:doc:`Validating XML in an OME-TIFF <xml-validation>`
 
 Using the tools directly from source
 ------------------------------------
