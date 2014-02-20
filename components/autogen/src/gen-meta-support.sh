@@ -34,7 +34,9 @@ HEADER='# This file documents the metadata support for each file format that\n# 
 rm $outputFile
 echo -e $HEADER >> $outputFile
 
-for reader in $baseDir/**/src/loci/formats/in/*Reader.java
+readers=`ls $baseDir/formats-gpl/**/src/loci/formats/in/*Reader.java && ls $baseDir/formats-bsd/**/src/loci/formats/in/*Reader.java`
+
+for reader in $readers
 do
   readername=$(echo $reader | sed -e 's/.*\///' -e 's/\.java//')
   echo "Parsing $readername"

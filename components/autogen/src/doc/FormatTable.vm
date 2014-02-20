@@ -23,7 +23,7 @@ Supported Formats
      - .. image:: images/header-presence.png
      - .. image:: images/header-utility.png
      - .. image:: images/header-export.png
-     - .. image:: images/header-bsd.png
+     - BSD
 
 #foreach ($format in $formats)
 #set ($pagename = $format.get("pagename"))
