@@ -51,9 +51,9 @@ command line tools.
 Tutorials
 ---------
 
-:doc:`Displaying images and metadata <display>`
-:doc:`Converting a file <conversion>`
-:doc:`Validating XML in an OME-TIFF <xml-validation>`
+* :doc:`Displaying images and metadata <display>`
+* :doc:`Converting a file <conversion>`
+* :doc:`Validating XML in an OME-TIFF <xml-validation>`
 
 Using the tools directly from source
 ------------------------------------
