@@ -31,8 +31,10 @@ ways:
 
 ImageJ v1.37 and later automatically (via ``HandleExtraFileTypes``) calls
 the Bio-Formats logic, if installed, as needed when a file is opened
-within ImageJ, i.e. when using File/Open instead of explicitly choosing
-:menuselection:`Bio-Formats Importer` from the Plugins/Bio-Formats menu.
+within ImageJ, i.e. when using :menuselection:`File --> Open` instead of
+explicitly choosing 
+:menuselection:`Plugins --> Bio-Formats --> Bio-Formats Importer` from the
+menu.
 
 For a more detailed description of each plugin, see the `Bio-Formats
 page <http://fiji.sc/Bio-Formats>`_ of the Fiji wiki.
@@ -48,7 +50,7 @@ advantage of new features and bug-fixes.
 
 As of the 4.0.0 release, you can also upgrade the Bio-Formats plugin
 directly from ImageJ. Select
-:menuselection:`Plugins>Bio-Formats>Update Bio-Formats Plugins`
+:menuselection:`Plugins --> Bio-Formats --> Update Bio-Formats Plugins`
 from the ImageJ menu, then select which release you would like to use. You
 will then need to restart ImageJ to complete the upgrade process.
 
