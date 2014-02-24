@@ -68,10 +68,9 @@ public final class JXRReader {
   }
 
   public byte[] getDecompressedImage() throws JXRException {
-    // TODO : I might need the metadata here to push the decoder version
     if (datastreamParser == null) {
-      datastreamParser = new DatastreamParser(this.stream,
-          getMetadata().getImageOffset());
+      datastreamParser = new DatastreamParser(this.stream, getMetadata(),
+          fileParser.getEncoderVersion());
     }
     return datastreamParser.parse();
   }

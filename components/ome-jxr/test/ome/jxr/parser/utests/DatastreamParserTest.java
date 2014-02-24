@@ -29,19 +29,36 @@ import java.io.IOException;
 
 import ome.jxr.JXRException;
 import ome.jxr.StaticDataProvider;
+import ome.jxr.metadata.IFDMetadata;
 import ome.jxr.parser.DatastreamParser;
+import ome.jxr.parser.FileParser;
+import ome.jxr.parser.IFDParser;
 import ome.scifio.io.RandomAccessInputStream;
 
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class DatastreamParserTest extends StaticDataProvider {
 
-  private int actualParsingOffset = 32;
+  private int actualParsingOffset = 158;
+
+  private IFDMetadata metadataStub;
+
+  @BeforeClass
+  public void setUp() {
+    // set up a stub here for testing alpha plane presence conditions
+    this.metadataStub = new IFDMetadata(0);
+  }
 
   @Test(dataProvider = "testStream")
   public void testParse(RandomAccessInputStream stream)
       throws IOException, JXRException {
-    DatastreamParser parser = new DatastreamParser(stream, actualParsingOffset);
+    FileParser fileParser = new FileParser(stream);
+    fileParser.parse();
+    IFDParser ifdParser = new IFDParser(stream, fileParser.getRootIFDOffset());
+    ifdParser.parse();
+    DatastreamParser parser = new DatastreamParser(stream,
+        ifdParser.getIFDMetadata(), fileParser.getEncoderVersion());
     parser.parse();
     parser.close();
   }

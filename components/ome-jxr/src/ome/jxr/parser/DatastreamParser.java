@@ -28,7 +28,11 @@ package ome.jxr.parser;
 import java.io.IOException;
 
 import ome.jxr.JXRException;
+import ome.jxr.constants.File;
 import ome.jxr.constants.Image;
+import ome.jxr.image.ImagePlane;
+import ome.jxr.metadata.IFDMetadata;
+import ome.scifio.io.BitBuffer;
 import ome.scifio.io.RandomAccessInputStream;
 
 /**
@@ -45,16 +49,61 @@ import ome.scifio.io.RandomAccessInputStream;
  */
 public final class DatastreamParser extends Parser {
 
-  public DatastreamParser(RandomAccessInputStream stream, int parsingOffset)
-      throws JXRException {
-    super(stream, parsingOffset);
+  private IFDMetadata metadata;
+
+  private int encoderVersion;
+
+  private int reservedB;
+
+  private boolean hardTilingFlag;
+
+  private int reservedC;
+
+  private boolean tilingFlag;
+
+  private boolean frequencyModeCodestreamFlag;
+
+  private int spatialXfrmSubordinate;
+
+  private boolean indexTablePresentFlag;
+
+  private int overlapMode;
+
+  private boolean shortHeaderFlag;
+
+  private boolean longWordFlag;
+
+  private boolean windowingFlag;
+
+  private boolean trimFlexbitsFlag;
+
+  private int reservedD;
+
+  private boolean redBlueNotSwappedFlag;
+
+  private boolean premultipliedAlphaFlag;
+
+  private boolean alphaImagePlaneFlag;
+
+  private int outputClrFmt;
+
+  private int outputBitdepth;
+
+  public DatastreamParser(RandomAccessInputStream stream, IFDMetadata metadata,
+      int encoderVersion) throws JXRException {
+    super(stream, metadata.getImageOffset());
+    this.metadata = metadata;
+    this.encoderVersion = encoderVersion;
   }
 
   public byte[] parse() throws JXRException {
     try {
-      stream.seek(parsingOffset);
-      checkIfGDISignaturePresent();
+      // parse image header
       parseImageHeader();
+      //ImagePlane primaryImagePlane = new ImagePlane();
+      // for each image plane:
+      //   parse image plane header
+      // parse coded tiles
     } catch (IOException ioe) {
       throw new JXRException(ioe);
     }
@@ -62,20 +111,61 @@ public final class DatastreamParser extends Parser {
     return null;
   }
 
-  private void parseImageHeader() throws IOException {
-    byte[] headerBytes = new byte[4];
-    stream.readFully(headerBytes);
-//    JXRImagePlane primaryImagePlane = new JXRImagePlane(headerBytes);
-//    if (primaryImagePlane.isAlphaPlanePresent()) {
-//      JXRImagePlane alphaImagePlane = new JXRImagePlane(some bytes);
-//    }
+  private void parseImageHeader() throws IOException, JXRException {
+    checkIfGDISignaturePresent();
+    extractImageHeaderMetadata();
   }
 
   private void checkIfGDISignaturePresent() throws IOException, JXRException {
+    stream.seek(parsingOffset);
     String signature = stream.readString(Image.GDI_SIGNATURE.length());
     if (!Image.GDI_SIGNATURE.equals(signature)) {
       throw new JXRException("Missing required image signature.");
     }
+  }
+
+  private void extractImageHeaderMetadata() throws IOException, JXRException {
+    byte[] headerBytes = new byte[4];
+    stream.readFully(headerBytes);
+    BitBuffer bits = new BitBuffer(headerBytes);
+
+    reservedB = bits.getBits(4);
+    if (reservedB != Image.RESERVED_B) {
+      throw new JXRException("Codestream version mismatch! Decoder supports"
+          + " only version: " + File.CODESTREAM_VERSION);
+    }
+
+    hardTilingFlag = (bits.getBits(1) == 1);
+
+    if (encoderVersion != File.CODESTREAM_VERSION) {
+      reservedC = bits.getBits(3);
+    } else {
+      bits.skipBits(3);
+    }
+
+    tilingFlag = (bits.getBits(1) == 1);
+    frequencyModeCodestreamFlag = (bits.getBits(1) == 1);
+    spatialXfrmSubordinate = bits.getBits(3);
+
+    indexTablePresentFlag = (bits.getBits(1) == 1);
+    if (frequencyModeCodestreamFlag && !indexTablePresentFlag) {
+      throw new JXRException("Codestream version mismatch! Decoder supports"
+          + " only version: " + File.CODESTREAM_VERSION);
+    }
+
+    overlapMode = bits.getBits(2);
+    shortHeaderFlag = (bits.getBits(1) == 1);
+    longWordFlag = (bits.getBits(1) == 1);
+    windowingFlag = (bits.getBits(1) == 1);
+    trimFlexbitsFlag = (bits.getBits(1) == 1);
+
+    reservedD = bits.getBits(1);
+
+    redBlueNotSwappedFlag = (bits.getBits(1) == 1);
+    premultipliedAlphaFlag = (bits.getBits(1) == 1);
+    alphaImagePlaneFlag = (bits.getBits(1) == 1);
+    outputClrFmt = bits.getBits(4);
+    outputBitdepth = bits.getBits(4);
   }
 
   public void close() throws IOException {
