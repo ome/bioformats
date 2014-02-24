@@ -1,12 +1,16 @@
 Version history
 ===============
 
-5.0.0 (2014 Feb XX)
+5.0.0 (2014 Feb 25)
 -------------------
 
 * New bundled 'bioformats_package.jar' for ImageJ
 * Now uses logback as the slf4j binding by default
-
+* Updated component names, .jar file names, and Maven artifact names
+* Fixed support for Becker & Hickl .sdt files with multiple blocks
+* Fixed tiling support for TIFF, Hamamatsu .ndpi, JPEG, and Zeiss .czi files
+* Improved continuous integration testing
+* Updated :doc:`command line documentation </users/comlinetools/index>`
 
 5.0.0-RC1 (2013 Dec 19)
 -----------------------
