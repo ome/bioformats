@@ -44,7 +44,7 @@ public class FileParserTest extends StaticDataProvider {
       FileParser fileParser) throws IOException, JXRException {
     fileParser.parse();
     fileParser.close();
-    assertEquals(File.ENCODER_VERSION, fileParser.getEncoderVersion());
+    assertEquals(File.CODESTREAM_VERSION, fileParser.getEncoderVersion());
   }
 
   @Test(dataProvider = "testFileParser")

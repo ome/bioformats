@@ -87,7 +87,7 @@ public final class FileParser extends Parser {
     stream.seek(0);
     stream.skipBytes(3);
     byte version = stream.readByte();
-    if (version != File.ENCODER_VERSION) {
+    if (version != File.CODESTREAM_VERSION) {
       throw new JXRException("Wrong file format version. Found: " + version);
     }
   }
