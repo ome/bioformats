@@ -50,6 +50,7 @@ set(OME_BIOFORMATS_SOURCES
 set(OME_BIOFORMATS_HEADERS
     CoreMetadata.h
     FormatException.h
+    MetadataMap.h
     MetadataOptions.h
     Modulo.h
     UnknownFormatException.h
