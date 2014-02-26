@@ -5,7 +5,7 @@
 # Please note that omeul is legacy software
 # that has been discontinued. Use at your own risk.
 
-# Required JARs: loci_tools.jar, ome_tools.jar
+# Required JARs: loci_tools.jar or bioformats_package.jar, ome_tools.jar
 
 SCIFIO_DIR=`dirname "$0"`
 

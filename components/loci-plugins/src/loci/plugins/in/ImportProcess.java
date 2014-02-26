@@ -47,7 +47,6 @@ import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
 import loci.formats.ClassList;
 import loci.formats.DimensionSwapper;
-import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -58,17 +57,15 @@ import loci.formats.TileStitcher;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
-import loci.plugins.util.IJStatusEchoer;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 import loci.plugins.util.LuraWave;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
+import ome.scifio.common.DebugTools;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 /**
  * Manages the import preparation process.
@@ -651,13 +648,7 @@ public class ImportProcess implements StatusReporter {
     baseReader.setMetadataStore(meta);
 
     BF.status(options.isQuiet(), "");
-
-    Logger root = Logger.getRootLogger();
-    if (IJ.debugMode) {
-      root.setLevel(Level.DEBUG);
-    }
-    else root.setLevel(Level.INFO);
-    root.addAppender(new IJStatusEchoer());
+    DebugTools.enableIJLogging(IJ.debugMode);
   }
 
   // -- Helper methods - ImportStep.FILE --

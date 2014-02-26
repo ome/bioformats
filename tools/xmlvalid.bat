@@ -2,7 +2,7 @@
 
 rem xmlvalid.bat: a batch file for validating XML files
 
-rem Required JARs: loci_tools.jar
+rem Required JARs: loci_tools.jar or bioformats_package.jar
 
 setlocal
 set SCIFIO_DIR=%~dp0

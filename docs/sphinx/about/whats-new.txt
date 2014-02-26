@@ -1,6 +1,11 @@
 Version history
 ===============
 
+5.0.0 (2014 Jan XX)
+-----------------------
+
+* Now uses logback as the slf4j binding by default.
+
 5.0.0-RC1 (2013 Dec 19)
 -----------------------
 

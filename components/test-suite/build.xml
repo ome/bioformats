@@ -49,7 +49,7 @@ Type "ant -p" for a list of targets.
     <testng testname="TIFF compression tests"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -62,7 +62,7 @@ Type "ant -p" for a list of targets.
     description="run conversion tests with fixed input data">
     <testng testname="Minimal conversion tests" failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -78,7 +78,7 @@ Type "ant -p" for a list of targets.
       suitename="LOCI software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -98,7 +98,7 @@ Type "ant -p" for a list of targets.
       suitename="LOCI software test suite"
       failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -125,7 +125,7 @@ Type "ant -p" for a list of targets.
       suitename="LOCI software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -159,7 +159,7 @@ Type "ant -p" for a list of targets.
       parallel="instances" threadCount="${testng.threadCount}"
       failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -186,7 +186,7 @@ Type "ant -p" for a list of targets.
       suitename="LOCI software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -213,7 +213,7 @@ Type "ant -p" for a list of targets.
       suitename="LOCI software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -240,7 +240,7 @@ Type "ant -p" for a list of targets.
       suitename="LOCI software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -267,7 +267,7 @@ Type "ant -p" for a list of targets.
       suitename="LOCI software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -294,7 +294,7 @@ Type "ant -p" for a list of targets.
       suitename="LOCI software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>

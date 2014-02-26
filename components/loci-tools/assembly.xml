@@ -37,6 +37,8 @@
         <exclude>org.jdom:jdom2</exclude>
         <exclude>jaxen:jaxen</exclude>
         <exclude>org.slf4j:jcl-over-slf4j</exclude>
+        <exclude>ch.qos.logback:logback-core</exclude>
+        <exclude>ch.qos.logback:logback-classic</exclude>
         <exclude>commons-httpclient:commons-httpclient</exclude>
       </excludes>
       <outputDirectory>/</outputDirectory>

@@ -40,9 +40,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Enumeration;
-
+import java.util.Arrays;
 
 /**
  * A utility class with convenience methods for debugging.
@@ -73,7 +73,7 @@ public final class DebugTools {
   }
 
   /**
-   * Attempts to enable SLF4J logging via log4j
+   * Attempts to enable SLF4J logging via logback
    * without an external configuration file.
    *
    * @param level A string indicating the desired level
@@ -81,22 +81,34 @@ public final class DebugTools {
    * @return true iff logging was successfully enabled
    */
   public static synchronized boolean enableLogging(String level) {
+
+    final String[][] toolClasses = new String[][] {
+      new String[]{"ome.scifio.common.", "LogbackTools"},
+      new String[]{"ome.scifio.common.", "Log4jTools"}
+    };
+
+    for (String[] toolClass : toolClasses) {
+      try {
+        Class<?> k = Class.forName(toolClass[0] + toolClass[1]);
+        Method m = k.getMethod("enableLogging", String.class);
+        m.invoke(null, level);
+        return true;
+      }
+      catch (Throwable t) {
+        // no-op. Ignore error and try the next class.
+      }
+    }
+    return false;
+  }
+
+  public static synchronized boolean enableIJLogging(boolean debug) {
     ReflectedUniverse r = new ReflectedUniverse();
     try {
-      r.exec("import org.apache.log4j.Level");
-      r.exec("import org.apache.log4j.Logger");
-      r.exec("root = Logger.getRootLogger()");
-      r.exec("root.setLevel(Level." + level + ")");
-      Enumeration en = (Enumeration) r.exec("root.getAllAppenders()");
-      if (!en.hasMoreElements()) {
-        // no appenders yet; attach a simple console appender
-        r.exec("import org.apache.log4j.ConsoleAppender");
-        r.exec("import org.apache.log4j.PatternLayout");
-        r.setVar("pattern", "%m%n");
-        r.exec("layout = new PatternLayout(pattern)");
-        r.exec("appender = new ConsoleAppender(layout)");
-        r.exec("root.addAppender(appender)");
-      }
+      r.exec("import ome.scifio.common.LogbackTools");
+      r.exec("import loci.plugins.util.IJStatusEchoer");
+      r.exec("appender = new IJStatusEchoer()");
+      r.setVar("debug", debug);
+      r.exec("LogbackTools.enableIJLogging(debug, appender)");
     }
     catch (ReflectException exc) {
       return false;

@@ -1,6 +1,6 @@
 /*
  * #%L
- * Legacy layer preserving compatibility between legacy Bio-Formats and SCIFIO.
+ * OME SCIFIO package for reading and converting scientific file formats.
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,39 +27,32 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
  * #L%
  */
 
-package loci.common;
+package ome.scifio.common;
+
+import java.util.Enumeration;
 
 /**
- * A legacy delegator class for ome.scifio.common.DebugTools.
+ * A utility class with convenience methods for log4j.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/DebugTools.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/DebugTools.java;hb=HEAD">Gitweb</a></dd></dl>
- *
- * @author Curtis Rueden ctrueden at wisc.edu
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/Log4jTools.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/Log4jTools.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public final class DebugTools {
+public final class Log4jTools {
 
   // -- Constructor --
 
-  private DebugTools() { }
-
-  // -- DebugTools methods --
-
-  /** Extracts the given exception's corresponding stack trace to a string. */
-  public static String getStackTrace(Throwable t) {
-    return ome.scifio.common.DebugTools.getStackTrace(t);
-  }
+  private Log4jTools() { }
 
   /**
-   * Attempts to enable SLF4J logging via Logback
+   * Attempts to enable SLF4J logging via log4j
    * without an external configuration file.
    *
    * @param level A string indicating the desired level
@@ -67,15 +60,25 @@ public final class DebugTools {
    * @return true iff logging was successfully enabled
    */
   public static synchronized boolean enableLogging(String level) {
-    return ome.scifio.common.DebugTools.enableLogging(level);
+    try {
+      ReflectedUniverse r = new ReflectedUniverse();
+      r.exec("import org.apache.log4j.Level");
+      r.exec("import org.apache.log4j.Logger");
+      r.exec("root = Logger.getRootLogger()");
+      r.exec("root.setLevel(Level." + level + ")");
+      Enumeration en = (Enumeration) r.exec("root.getAllAppenders()");
+      if (!en.hasMoreElements()) {
+        // no appenders yet; attach a simple console appender
+        r.exec("import org.apache.log4j.ConsoleAppender");
+        r.exec("import org.apache.log4j.PatternLayout");
+        r.setVar("pattern", "%m%n");
+        r.exec("layout = new PatternLayout(pattern)");
+        r.exec("appender = new ConsoleAppender(layout)");
+        r.exec("root.addAppender(appender)");
+      }
+    } catch (ReflectException exc) {
+      return false;
+    }
+    return true;
   }
-  
-  /**
-   * This method uses reflection to scan the values of the given class's
-   * static fields, returning the first matching field's name.
-   */
-  public static String getFieldName(Class<?> c, int value) {
-    return ome.scifio.common.DebugTools.getFieldName(c, value);
-  }
-
 }
