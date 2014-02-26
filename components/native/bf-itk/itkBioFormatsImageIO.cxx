@@ -10,13 +10,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,17 +28,17 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
- * 
+ *
  * ----------------------------------------------------------------
  * Adapted from the Slicer3 project: http://www.slicer.org/
  * http://viewvc.slicer.org/viewcvs.cgi/trunk/Libs/MGHImageIO/
- * 
+ *
  * See slicer-license.txt for Slicer3's licensing information.
- * 
+ *
  * For more information about the ITK Plugin IO mechanism, see:
  * http://www.itk.org/Wiki/Plugin_IO_mechanisms
  * #L%
@@ -81,7 +81,7 @@
 //
 
 namespace itk {
- 
+
   template <typename ReturnType>
   ReturnType valueOfString( const std::string &s )
   {
@@ -142,17 +142,17 @@ BioFormatsImageIO::BioFormatsImageIO()
     {
     itkExceptionMacro("ITK_AUTOLOAD_PATH is not set, you must set this environment variable and point it to the directory containing the bio-formats.jar file");
     }
-  
+
 
   dir.assign(path);
   if( dir.at(dir.length() - 1) != SLASH )
     {
     dir.append(1,SLASH);
     }
-  std::string classpath = dir+"loci_tools.jar";
+  std::string classpath = dir+"bioformats_package.jar";
   classpath += PATHSTEP+dir;
 
-  
+
 
 #ifdef WIN32
   std::string javaCommand = "java";
@@ -192,11 +192,11 @@ void BioFormatsImageIO::CreateJavaProcess()
     }
 
 #ifdef WIN32
-   SECURITY_ATTRIBUTES saAttr; 
-   saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); 
-   saAttr.bInheritHandle = TRUE; 
+   SECURITY_ATTRIBUTES saAttr;
+   saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
+   saAttr.bInheritHandle = TRUE;
    saAttr.lpSecurityDescriptor = NULL;
-  
+
   if( !CreatePipe( &(m_Pipe[0]), &(m_Pipe[1]), &saAttr, 0) )
 	itkExceptionMacro(<<"createpipe() failed");
   if ( ! SetHandleInformation(m_Pipe[1], HANDLE_FLAG_INHERIT, 0) )
@@ -208,7 +208,7 @@ void BioFormatsImageIO::CreateJavaProcess()
   m_Process = itksysProcess_New();
   itksysProcess_SetCommand( m_Process, m_Argv );
   itksysProcess_SetPipeNative( m_Process, itksysProcess_Pipe_STDIN, m_Pipe);
-  
+
   itksysProcess_Execute( m_Process );
 
   int state = itksysProcess_GetState( m_Process );
@@ -309,8 +309,8 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
   command += "\n";
   itkDebugMacro("BioFormatsImageIO::CanRead command: " << command);
 
-  
- 
+
+
 #ifdef WIN32
   DWORD bytesWritten;
   bool r = WriteFile( m_Pipe[1], command.c_str(), command.size(), &bytesWritten, NULL );
@@ -333,7 +333,7 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
     // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
     if( retcode == itksysProcess_Pipe_STDOUT )
       {
-	  
+
       imgInfo += std::string( pipedata, pipedatalength );
       // if the two last char are "\n\n", then we're done
 #ifdef WIN32
@@ -370,7 +370,7 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
 
 void BioFormatsImageIO::ReadImageInformation()
 {
- 
+
   itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: m_FileName = " << m_FileName);
 
   CreateJavaProcess();
@@ -381,7 +381,7 @@ void BioFormatsImageIO::ReadImageInformation()
   command += "\n";
   itkDebugMacro("BioFormatsImageIO::ReadImageInformation command: " << command);
 
-  
+
 
 #ifdef WIN32
   DWORD bytesWritten;
@@ -402,7 +402,7 @@ void BioFormatsImageIO::ReadImageInformation()
     int retcode = itksysProcess_WaitForData( m_Process, &pipedata, &pipedatalength, NULL );
     //itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
 
-	
+
     if( retcode == itksysProcess_Pipe_STDOUT )
       {
       imgInfo += std::string( pipedata, pipedatalength );
@@ -430,7 +430,7 @@ void BioFormatsImageIO::ReadImageInformation()
   itkDebugMacro("BioFormatsImageIO::ReadImageInformation error output: " << errorMessage);
 
   this->SetNumberOfDimensions(5);
-   
+
   // fill the metadata dictionary
   MetaDataDictionary & dict = this->GetMetaDataDictionary();
 
@@ -441,7 +441,7 @@ void BioFormatsImageIO::ReadImageInformation()
 
   while( p0 < imgInfo.size() )
     {
-	
+
     // get the key line
 #ifdef WIN32
     p1 = imgInfo.find("\r\n", p0);
@@ -479,7 +479,7 @@ void BioFormatsImageIO::ReadImageInformation()
 #endif
 
     line = imgInfo.substr( p0, p1-p0 );
-	
+
     // ignore the empty lines
 #ifdef WIN32
     if( line == "\r" )
@@ -498,7 +498,7 @@ void BioFormatsImageIO::ReadImageInformation()
 
     std::string value = line;
     //itkDebugMacro("=== " << key << " = " << value << " ===");
-    
+
     // store the values in the dictionary
     if( dict.HasKey(key) )
       {
@@ -510,7 +510,7 @@ void BioFormatsImageIO::ReadImageInformation()
         // we have to unescape \\ and \n
         size_t lp0 = 0;
         size_t lp1 = 0;
-		
+
         while( lp0 < value.size() )
           {
           lp1 = value.find( "\\", lp0 );
@@ -518,7 +518,7 @@ void BioFormatsImageIO::ReadImageInformation()
             {
             tmp += value.substr( lp0, value.size()-lp0 );
             lp0 = value.size();
-			
+
             }
           else
             {
@@ -536,7 +536,7 @@ void BioFormatsImageIO::ReadImageInformation()
               }
             lp0 = lp1 + 2;
             }
-		    
+
           }
         itkDebugMacro("Storing metadata: " << key << " ---> " << tmp);
         EncapsulateMetaData< std::string >( dict, key, tmp );
@@ -548,7 +548,7 @@ void BioFormatsImageIO::ReadImageInformation()
 #else
       p0 = p1+1;
 #endif
-	
+
     }
 
   // save the dicitonary

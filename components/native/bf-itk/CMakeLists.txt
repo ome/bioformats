@@ -261,26 +261,26 @@ install(FILES
 )
 
 # --------------------------------------------------------------------------
-# Define location of loci_tools.jar file. It is assumed that loci_tools.jar
+# Define location of bioformats_package.jar file. It is assumed that bioformats_package.jar
 # has been generated using "ant tools" from the Bio-Formats base folder.
 
 set(BF_ARTIFACT_DIR "${PROJECT_SOURCE_DIR}/../../../artifacts")
-set(BF_LOCI_TOOLS_JAR "${BF_ARTIFACT_DIR}/loci_tools.jar")
+set(BF_PACKAGE_JAR "${BF_ARTIFACT_DIR}/bioformats_package.jar")
 
 # --------------------------------------------------------------------------
-# Copy loci_tools.jar to the distribution folder (dist/bf-itk).
+# Copy bioformats_package.jar to the distribution folder (dist/bf-itk).
 
 add_custom_command(
   TARGET BioFormatsIOPlugin
-  DEPENDS "${BF_LOCI_TOOLS_JAR}"
+  DEPENDS "${BF_PACKAGE_JAR}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-  "${BF_LOCI_TOOLS_JAR}"
-  "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/loci_tools.jar"
+  "${BF_PACKAGE_JAR}"
+  "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/bioformats_package.jar"
   VERBATIM
 )
 install(FILES
-  "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/loci_tools.jar"
+  "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/bioformats_package.jar"
   DESTINATION "."
 )
 
@@ -290,9 +290,9 @@ install(FILES
 
 add_custom_command(
   TARGET BioFormatsIOPlugin
-  DEPENDS "${BF_LOCI_TOOLS_JAR}"
+  DEPENDS "${BF_PACKAGE_JAR}"
   POST_BUILD
-  COMMAND "${JAVA_RUNTIME}" -cp "${BF_LOCI_TOOLS_JAR}"
+  COMMAND "${JAVA_RUNTIME}" -cp "${BF_PACKAGE_JAR}"
   "loci.formats.tools.BioFormatsExtensionPrinter"
   VERBATIM
 )

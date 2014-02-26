@@ -11,15 +11,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -83,8 +83,7 @@ public class InstallWizard extends JFrame
     // download and install latest ij.jar
     // don't launch ImageJ updater plugin because it might not exist
 
-    // check whether LOCI plugins are running as loci_tools.jar or as separate
-    // JARs
+    // check whether LOCI plugins are running from a ueber jar or as separate JARs
 
     // check for conflicting JARs -- i.e., duplicate classes
 

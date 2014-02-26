@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,7 +27,7 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * The views and conclusions contained in the software and documentation are
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of any organization.
@@ -92,10 +92,13 @@ public class UpgradeChecker {
    * Location of the JAR artifacts for the stable releases.
    */
   public static final String STABLE_BUILD =
-    "http://cvs.openmicroscopy.org.uk/snapshots/bioformats/" +  STABLE_VERSION + "/";
+    "http://downloads.openmicroscopy.org/bioformats/" +  STABLE_VERSION + "/";
 
-  /** Name of the LOCI tools JAR. */
-  public static final String TOOLS = "loci_tools.jar";
+  /** Name of the ueber tools JAR. */
+  public static final String TOOLS = "bioformats_package.jar";
+
+  /** Name of the previous versions' tools JAR. */
+  public static final String OLD_TOOLS = "loci_tools.jar";
 
   /** Name of the OME tools JAR. */
   public static final String OME_TOOLS = "ome_tools.jar";
@@ -338,7 +341,15 @@ public class UpgradeChecker {
       out.write(buf);
       out.close();
 
-      boolean success = jar.renameTo(new File(downloadPath));
+      // remove the old bundle jar if the new bundle jar was downloaded
+
+      File downloadFile = new File(downloadPath);
+      File oldFile = new File(downloadFile.getParent(), OLD_TOOLS);
+      if (oldFile.exists() && downloadFile.getName().equals(TOOLS)) {
+        oldFile.delete();
+      }
+
+      boolean success = jar.renameTo(downloadFile);
       if (!success) {
         LOGGER.warn("Failed to rename '{}' to '{}'", jar.getAbsolutePath(),
           downloadPath);
