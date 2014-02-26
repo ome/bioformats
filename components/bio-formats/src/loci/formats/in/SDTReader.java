@@ -62,6 +62,26 @@ public class SDTReader extends FormatReader {
   /** Whether to combine lifetime bins into single intensity image planes. */
   protected boolean intensity = false;
 
+  /** Whether to pre-load all lifetime bins for faster loading. */
+  protected boolean preLoad = false;
+  
+  
+/*
+ * Array to hold re-ordered data for all the timeBins in one channel
+ */
+protected byte[] chanStore = null;
+
+/*
+ * Currently stored channel
+ */
+protected int storedChannel = -1;
+
+/*
+ * Currently stored series
+ */
+protected int storedSeries = -1;
+
+  
   // -- Constructor --
 
   /** Constructs a new SDT reader. */
@@ -79,6 +99,14 @@ public class SDTReader extends FormatReader {
   public void setIntensity(boolean intensity) {
     FormatTools.assertId(currentId, false, 1);
     this.intensity = intensity;
+  }
+  
+  /**
+   * Toggles whether the reader should pre-load
+   * data for increased performance.
+   */
+  public void setPreLoad(boolean preLoad) {
+    this.preLoad = preLoad;
   }
 
   /**
@@ -117,10 +145,7 @@ public class SDTReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
-    int channel = intensity ? no : no / timeBins;
-    int timeBin = intensity ? 0 : no % timeBins;
-
+    
     int sizeX = getSizeX();
     int sizeY = getSizeY();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -128,53 +153,127 @@ public class SDTReader extends FormatReader {
 
     int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
     int planeSize = paddedWidth * sizeY * timeBins * bpp;
+    
+    
+    if (preLoad  && !intensity)  {
+      
+      int channel =  no / timeBins;
+      int timeBin = no % timeBins;
+      
+      byte[] rowBuf = new byte[bpp * timeBins * paddedWidth];
+              
+      int binSize = paddedWidth * sizeY  * bpp;
 
-    byte[] b = !intensity ? buf : new byte[sizeY * sizeX * timeBins * bpp];
-    in.seek(info.allBlockOffsets[getSeries()] +
-      channel * planeSize + y * paddedWidth * bpp * timeBins);
+      if (chanStore == null || storedChannel != channel  || storedSeries != getSeries() )  {  
+        
+        // The whole plane (all timebins) is  copied into storage 
+        // to allow different sub-plane sizes to be used for different timebins
+        chanStore = new byte[planeSize];    
+        in.seek(info.allBlockOffsets[getSeries()] + channel * planeSize);
+ 
+        for (int row = 0; row < sizeY  ; row++)  {
+          in.read(rowBuf);
+            
+          int input = 0;          
+          for (int col = 0; col < paddedWidth; col++) {   
+            
+            //  set output to  first pixel of this row in 2D plane corresponding to zeroth timeBin
+            int output = (row * paddedWidth + col) * bpp;
 
-    byte[] rowBuf = new byte[bpp * timeBins * w];
-    for (int row=0; row<h; row++) {
-      in.skipBytes(x * bpp * timeBins);
-      in.read(rowBuf);
-      if (intensity) {
-        System.arraycopy(rowBuf, 0, b, row * bpp * timeBins * w, b.length);
+            for (int t = 0; t < timeBins; t++)  {
+              for (int bb = 0; bb < bpp; bb++) {
+                chanStore[output + bb] = rowBuf[input + bb];
+              } 
+            output += binSize;
+            input += bpp;
+            }
+          }
+        }    // end row loop
+        
+        storedChannel = channel;
+        storedSeries = getSeries();
+                  
+      }  // chanStore loaded
+                
+      // copy 2D plane  from chanStore  into buf
+    
+      int iLineSize = paddedWidth * bpp;
+      int oLineSize = w * bpp;
+      // offset to correct timebin yth line and xth pixel
+      int input = (binSize * timeBin) + (y * iLineSize) + (x * bpp);
+      int output = 0;
+      
+      for (int row = 0; row < h; row++) {
+        System.arraycopy(chanStore, input, buf, output , oLineSize);
+        input += iLineSize;
+        output += oLineSize;
       }
-      else {
-        for (int col=0; col<w; col++) {
-          int output = (row * w + col) * bpp;
-          int input = (col * timeBins + timeBin) * bpp;
-          for (int bb=0; bb<bpp; bb++) {
-            b[output + bb] = rowBuf[input + bb];
+    
+      
+      return buf;
+        
+    } 
+    else {
+      
+      int channel = intensity ? no : no / timeBins;
+      int timeBin = intensity ? 0 : no % timeBins;
+    
+      byte[] b = !intensity ? buf : new byte[sizeY * sizeX * timeBins * bpp];
+      
+      byte[] rowBuf = new byte[bpp * timeBins * w];
+
+      in.seek(info.allBlockOffsets[getSeries()]
+              + channel * planeSize + y * paddedWidth * bpp * timeBins);
+
+      for (int row = 0; row < h; row++) {
+        in.skipBytes(x * bpp * timeBins);
+        in.read(rowBuf);
+        if (intensity) {
+          System.arraycopy(rowBuf, 0, b, row * bpp * timeBins * w, b.length);
+        } else {
+          for (int col = 0; col < w; col++) {
+            int output = (row * w + col) * bpp;
+            int input = (col * timeBins + timeBin) * bpp;
+            for (int bb = 0; bb < bpp; bb++) {
+              b[output + bb] = rowBuf[input + bb];
+            }
           }
         }
+        in.skipBytes(bpp * timeBins * (paddedWidth - x - w));
       }
-      in.skipBytes(bpp * timeBins * (paddedWidth - x - w));
-    }
 
-    if (!intensity) return buf; // no cropping required
-
-    for (int row=0; row<h; row++) {
-      int yi = (y + row) * sizeX * timeBins * bpp;
-      int ri = row * w * bpp;
-      for (int col=0; col<w; col++) {
-        int xi = yi + (x + col) * timeBins * bpp;
-        int ci = ri + col * bpp;
-        // combine all lifetime bins into single intensity value
-        short sum = 0;
-        for (int t=0; t<timeBins; t++) {
-          sum += DataTools.bytesToShort(b, xi + t * bpp, little);
+      if (!intensity) {
+        return buf; // no cropping required
+      }
+      for (int row = 0; row < h; row++) {
+        int yi = (y + row) * sizeX * timeBins * bpp;
+        int ri = row * w * bpp;
+        for (int col = 0; col < w; col++) {
+          int xi = yi + (x + col) * timeBins * bpp;
+          int ci = ri + col * bpp;
+          // combine all lifetime bins into single intensity value
+          short sum = 0;
+          for (int t = 0; t < timeBins; t++) {
+            sum += DataTools.bytesToShort(b, xi + t * bpp, little);
+          }
+          DataTools.unpackBytes(sum, buf, ci, 2, little);
         }
-        DataTools.unpackBytes(sum, buf, ci, 2, little);
       }
+      return buf;
     }
-    return buf;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      
+      // init preLoading 
+      preLoad = false;
+      chanStore = null;
+      storedChannel = -1;
+      storedSeries = -1;
+      
       timeBins = channels = 0;
       info = null;
     }
@@ -189,7 +288,7 @@ public class SDTReader extends FormatReader {
     in.order(true);
 
     LOGGER.info("Reading header");
-
+    
     // read file header information
     info = new SDTInfo(in, metadata);
     timeBins = info.timeBins;
