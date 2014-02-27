@@ -406,6 +406,12 @@ public class CellSensReader extends FormatReader {
         ms.littleEndian = compressionType.get(index) == RAW;
         ms.interleaved = ms.rgb;
 
+        for (int q=1; q<ms.resolutionCount; q++) {
+          int res = core.size() - ms.resolutionCount + q;
+          core.get(res).littleEndian = ms.littleEndian;
+          core.get(res).interleaved = ms.interleaved;
+        }
+
         if (s == 0 && exifs.size() > 0) {
           IFD exif = exifs.get(0);
 
