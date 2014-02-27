@@ -49,7 +49,6 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.Memoizer;
-import loci.formats.MetadataTools;
 import loci.formats.ReaderWrapper;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
@@ -2105,8 +2104,8 @@ public class FormatReaderTest {
       OutputStreamWriter writer =
         new OutputStreamWriter(new FileOutputStream(f), Constants.ENCODING);
       MetadataStore store = reader.getMetadataStore();
-      MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
-      String xml = MetadataTools.getOMEXML(retrieve);
+      MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
+      String xml = omexmlService.getOMEXML(retrieve);
       writer.write(xml);
       writer.close();
       reader.close();

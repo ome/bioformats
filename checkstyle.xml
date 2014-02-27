@@ -1,7 +1,7 @@
 <!--
 checkstyle.xml
 
-Checkstyle configuration file for use with SciFIO.
+Checkstyle configuration file.
 Run "ant style" to check for source code style deviations.
 -->
 

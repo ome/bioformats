@@ -1,8 +1,8 @@
-Fiji
-====
+Fiji overview
+=============
 
 `Fiji <http://fiji.sc/>`_ is an image processing package. It
-can be described as a distribution of :doc:`/users/imagej/index`
+can be described as a distribution of :doc:`ImageJ </users/imagej/index>`
 together with Java, Java 3D and a lot of plugins organized into a
 `coherent menu
 structure <http://fiji.sc/Plugins_Menu>`_.

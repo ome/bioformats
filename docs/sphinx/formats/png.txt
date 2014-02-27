@@ -12,7 +12,7 @@ Developer: `PNG Development Group <http://www.libpng.org/pub/png/pngnews.html>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |yes|
 
@@ -50,7 +50,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :scifioreader:`APNGReader.java`
+Source Code: :bsd-reader:`APNGReader.java`
 
 Notes:
 

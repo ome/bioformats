@@ -12,7 +12,7 @@ Developer: `Maia Scientific <http://www.selectscience.net/supplier/maia-scientif
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

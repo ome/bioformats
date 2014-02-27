@@ -65,13 +65,13 @@ DEFAULT_JAVA_OMEXML_PACKAGE = "ome.xml.model"
 DEFAULT_CXX_OMEXML_PACKAGE = "ome::xml::model"
 
 # The default Java package for metadata store.
-DEFAULT_JAVA_METADATA_PACKAGE = "loci.formats.meta"
+DEFAULT_JAVA_METADATA_PACKAGE = "ome.xml.meta"
 
 # The default C++ package for metadata store.
 DEFAULT_CXX_METADATA_PACKAGE = "ome::bioformats::meta"
 
 # The default Java package for OME XML metadata store.
-DEFAULT_JAVA_OMEXMLMETADATA_PACKAGE = "loci.formats.ome"
+DEFAULT_JAVA_OMEXMLMETADATA_PACKAGE = "ome.xml.meta"
 
 # The default C++ package for OME XML metadata store.
 DEFAULT_CXX_OMEXMLMETADATA_PACKAGE = "ome::bioformats::ome"

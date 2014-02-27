@@ -79,7 +79,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.meta;
+package ome.xml.meta;
 
 import ome.xml.model.*;
 import ome.xml.model.enums.*;
@@ -103,7 +103,7 @@ import ome.xml.model.primitives.*;
  * both <code>MetadataStore</code> and <code>MetadataRetrieve</code>, which
  * reduces the need to cast between object types.
  *
- * <p>See {@link loci.formats.ome.OMEXMLMetadata} for an example
+ * <p>See {@link ome.xml.OMEXMLMetadata} for an example
  * implementation.
  *
  * @author Melissa Linkert linkert at wisc.edu

@@ -5,8 +5,8 @@ rem formatlist.bat: a batch file for listing supported formats in Bio-Formats
 rem Required JARs: loci_tools.jar or bioformats_package.jar
 
 setlocal
-set SCIFIO_DIR=%~dp0
-if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%
+set BF_DIR=%~dp0
+if "%BF_DIR:~-1%" == "\" set BF_DIR=%BF_DIR:~0,-1%
 
-set SCIFIO_PROG=loci.formats.tools.PrintFormatTable
-call "%SCIFIO_DIR%\scifio.bat" %*
+set BF_PROG=loci.formats.tools.PrintFormatTable
+call "%BF_DIR%\bf.bat" %*

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>ome</groupId>
+    <artifactId>pom-bio-formats</artifactId>
+    <version>5.0.1-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <artifactId>bio-formats-tools</artifactId>
+
+  <name>Bio-Formats command line tools</name>
+  <description>Classes implementing Bio-Formats command line tools for reading and converting files</description>
+  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
+  <inceptionYear>2005</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>Simplified BSD License</name>
+      <url>${license.server}/formats-bsd/license.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jai_imageio</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>lwf-stubs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>ome-xml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-bsd</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-gpl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jgoodies</groupId>
+      <artifactId>forms</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>${logback.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>xalan</groupId>
+      <artifactId>serializer</artifactId>
+      <version>2.7.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.1</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.12.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <developers>
+    <developer>
+      <id>hinerm</id>
+      <name>Mark Hiner</name>
+      <email>hinerm@gmail.edu</email>
+      <url>http://developer.imagej.net/users/hinerm</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://developer.imagej.net/files/imagej/profile-pictures/Mark.jpg?1305649677</picUrl>
+      </properties>
+    </developer>
+    <developer>
+      <id>melissa</id>
+      <name>Melissa Linkert</name>
+      <email>melissa@glencoesoftware.com</email>
+      <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <organization>Glencoe Software</organization>
+      <organizationUrl>http://glencoesoftware.com/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
+      </properties>
+    </developer>
+    <developer>
+      <id>curtis</id>
+      <name>Curtis Rueden</name>
+      <email>ctrueden@wisc.edu</email>
+      <url>http://loci.wisc.edu/people/curtis-rueden</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
+      </properties>
+    </developer>
+  </developers>
+
+  <!-- NB: for project parent, in case of partial checkout -->
+  <repositories>
+    <repository>
+      <id>ome.releases</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
+    </repository>
+    <repository>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </repository>
+  </repositories>
+
+</project>

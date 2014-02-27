@@ -12,7 +12,7 @@ Owner: `Zeiss <http://www.zeiss.de>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

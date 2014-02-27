@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>ome</groupId>
+    <artifactId>pom-bio-formats</artifactId>
+    <version>5.0.1-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <artifactId>bio-formats_plugins</artifactId>
+
+  <name>Bio-Formats Plugins for ImageJ</name>
+  <description>A collection of plugins for ImageJ, including the Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions, Data Browser and Stack Slicer.</description>
+  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
+  <inceptionYear>2006</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>GPL 2 or later</name>
+      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-gpl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>ome-xml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-bsd</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jgoodies</groupId>
+      <artifactId>forms</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.nih.imagej</groupId>
+      <artifactId>imagej</artifactId>
+      <version>[1.45s,1.47o),[1.47q,)</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>${logback.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+    </dependency>
+
+    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <properties>
+    <project.rootdir>${basedir}/../..</project.rootdir>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${basedir}/../../ant/</additionalClasspathElement>
+          </additionalClasspathElements>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>loci.plugins.About</mainClass>
+              <packageName>loci.plugins</packageName>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including the
+Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
+Data Browser and Stack Slicer.</projectName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <developers>
+    <developer>
+      <id>curtis</id>
+      <name>Curtis Rueden</name>
+      <email>ctrueden@wisc.edu</email>
+      <url>http://loci.wisc.edu/people/curtis-rueden</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
+      </properties>
+    </developer>
+    <developer>
+      <id>melissa</id>
+      <name>Melissa Linkert</name>
+      <email>melissa@glencoesoftware.com</email>
+      <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <organization>Glencoe Software</organization>
+      <organizationUrl>http://glencoesoftware.com/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
+      </properties>
+    </developer>
+  </developers>
+
+  <!-- NB: for project parent, in case of partial checkout -->
+  <repositories>
+    <repository>
+      <id>ome.releases</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
+    </repository>
+    <repository>
+      <id>ome.snapshots</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.snapshots</url>
+    </repository>
+  </repositories>
+
+</project>
