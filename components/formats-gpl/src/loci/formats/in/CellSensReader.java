@@ -800,7 +800,7 @@ public class CellSensReader extends FormatReader {
           rows.add(1);
         }
         newResolution.sizeZ = maxZ[i] + 1;
-        if (maxC[i] > 0) {
+        if (maxC[i] > 0 && newResolution.sizeC != (maxC[i] + 1)) {
           newResolution.sizeC *= (maxC[i] + 1);
         }
         newResolution.sizeT = maxT[i] + 1;
