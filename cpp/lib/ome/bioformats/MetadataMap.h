@@ -835,43 +835,6 @@ namespace ome
     }
 
     /**
-     * Output MetadataMap::value_type to output stream.
-     *
-     * @param os the output stream.
-     * @param vt the MetadataMap::value_type to output.
-     * @returns the output stream.
-     */
-    template<class charT, class traits>
-    inline std::basic_ostream<charT,traits>&
-    operator<< (std::basic_ostream<charT,traits>& os,
-                const MetadataMap::value_type& vt)
-    {
-      boost::apply_visitor(detail::MetadataMapValueTypeOStreamVisitor(os), vt);
-      return os;
-    }
-
-    /**
-     * Output MetadataMap to output stream.
-     *
-     * @param os the output stream.
-     * @param map the MetadataMap to output.
-     * @returns the output stream.
-     */
-    template<class charT, class traits>
-    inline std::basic_ostream<charT,traits>&
-    operator<< (std::basic_ostream<charT,traits>& os,
-                const MetadataMap& map)
-    {
-      for (MetadataMap::const_iterator i = map.begin();
-           i != map.end();
-           ++i)
-        {
-          boost::apply_visitor(detail::MetadataMapOStreamVisitor(os, i->first), i->second);
-        }
-      return os;
-    }
-
-    /**
      * Get a reference to the value of a particular key from the map.
      *
      * If the key was not found, or the type of @p value does not
@@ -930,6 +893,48 @@ namespace ome
     }
 
   }
+}
+
+namespace std
+{
+
+    /**
+     * Output MetadataMap::value_type to output stream.
+     *
+     * @param os the output stream.
+     * @param vt the MetadataMap::value_type to output.
+     * @returns the output stream.
+     */
+    template<class charT, class traits>
+    inline basic_ostream<charT,traits>&
+    operator<< (basic_ostream<charT,traits>& os,
+                const ::ome::bioformats::MetadataMap::value_type& vt)
+    {
+      boost::apply_visitor(::ome::bioformats::detail::MetadataMapValueTypeOStreamVisitor(os), vt);
+      return os;
+    }
+
+    /**
+     * Output MetadataMap to output stream.
+     *
+     * @param os the output stream.
+     * @param map the MetadataMap to output.
+     * @returns the output stream.
+     */
+    template<class charT, class traits>
+    inline basic_ostream<charT,traits>&
+    operator<< (basic_ostream<charT,traits>& os,
+                const ::ome::bioformats::MetadataMap& map)
+    {
+      for (::ome::bioformats::MetadataMap::const_iterator i = map.begin();
+           i != map.end();
+           ++i)
+        {
+          boost::apply_visitor(::ome::bioformats::detail::MetadataMapOStreamVisitor(os, i->first), i->second);
+        }
+      return os;
+    }
+
 }
 
 #endif // OME_BIOFORMATS_METADATAMAP_H
