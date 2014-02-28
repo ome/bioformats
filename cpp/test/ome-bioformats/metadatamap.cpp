@@ -46,7 +46,6 @@
 
 #include <gtest/gtest.h>
 
-using namespace ome::bioformats; // Needed for ADL of value_type stream output operator
 using ome::bioformats::MetadataMap;
 using boost::lexical_cast;
 
@@ -237,8 +236,8 @@ TEST_F(MetadataMapTest, GetConstReference)
 
 TEST_F(MetadataMapTest, GetReferenceFail)
 {
-  ASSERT_THROW(int32_t v1 = m.get<int32_t>("invalid"), boost::bad_get);
-  ASSERT_THROW(double v2 = m.get<double>("int1"), boost::bad_get);
+  ASSERT_THROW(m.get<int32_t>("invalid"), boost::bad_get);
+  ASSERT_THROW(m.get<double>("int1"), boost::bad_get);
 }
 
 TEST_F(MetadataMapTest, Append)
