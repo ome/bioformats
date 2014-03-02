@@ -36,23 +36,43 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+/**
+ * @file variant.h Variant type limit workaround.  This header
+ * increases the Boost MPL size limits, if required.  Some older
+ * versions of Boost.Variant throw runtime exceptions when using
+ * Variant and MPL with a number of types over a compile-time limit.
+ */
 
-// Configured features
+#ifndef OME_COMPAT_VARIANT_H
+# define OME_COMPAT_VARIANT_H
 
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+# include <ome/compat/config.h>
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
+#ifndef OME_VARIANT_LIMIT
+# ifndef BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+#  define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
+# endif
+# ifndef BOOST_MPL_LIMIT_VECTOR_SIZE
+#  define BOOST_MPL_LIMIT_VECTOR_SIZE 30
+# endif
+# ifndef BOOST_MPL_LIMIT_LIST_SIZE
+#  define BOOST_MPL_LIMIT_LIST_SIZE 30
+# endif
 #endif
 
-#endif // OME_COMPAT_CONFIG_H
+#include <boost/mpl/insert_range.hpp>
+#include <boost/mpl/joint_view.hpp>
+#include <boost/mpl/transform_view.hpp>
+#include <boost/mpl/vector.hpp>
+
+#include <boost/variant/apply_visitor.hpp>
+#include <boost/variant/get.hpp>
+#include <boost/variant/variant.hpp>
+
+#endif // OME_COMPAT_VARIANT_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

@@ -46,16 +46,8 @@
 #include <string>
 #include <vector>
 
-#include <boost/mpl/insert_range.hpp>
-#include <boost/mpl/joint_view.hpp>
-#include <boost/mpl/transform_view.hpp>
-#include <boost/mpl/vector.hpp>
-
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/get.hpp>
-#include <boost/variant/variant.hpp>
-
 #include <ome/compat/cstdint.h>
+#include <ome/compat/variant.h>
 
 namespace ome
 {

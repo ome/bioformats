@@ -121,3 +121,66 @@ int main() {
 }"
 BOOST_FILESYSTEM_LINK)
 SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+
+# boost::filesystem in -lboost_filesystem
+check_cxx_source_compiles("
+#include <boost/mpl/insert_range.hpp>
+#include <boost/mpl/joint_view.hpp>
+#include <boost/mpl/transform_view.hpp>
+#include <boost/mpl/vector.hpp>
+
+#include <boost/variant/apply_visitor.hpp>
+#include <boost/variant/get.hpp>
+#include <boost/variant/variant.hpp>
+
+struct s1 {};
+struct s2 {};
+struct s3 {};
+struct s4 {};
+struct s5 {};
+struct s6 {};
+struct s7 {};
+struct s8 {};
+struct s9 {};
+struct s10 {};
+struct s11 {};
+struct s12 {};
+struct s13 {};
+struct s14 {};
+struct s15 {};
+struct s16 {};
+struct s17 {};
+struct s18 {};
+struct s19 {};
+struct s21 {};
+struct s20 {};
+struct s22 {};
+struct s23 {};
+struct s24 {};
+struct s25 {};
+struct s26 {};
+
+typedef boost::mpl::vector<s1, s2, s3, s4, s5, s6, s7, s8, s9> v1;
+typedef boost::mpl::vector<s10, s11, s12, s13, s14, s15, s16, s17, s18> v2;
+typedef boost::mpl::vector<s19, s20, s21, s22, s23, s24, s25, s26> v3;
+
+typedef boost::mpl::joint_view<v1, v2>::type v4;
+typedef boost::mpl::joint_view<v3, v4>::type v5;
+
+typedef boost::mpl::vector<> empty_types;
+
+typedef boost::mpl::insert_range<empty_types, boost::mpl::end<empty_types>::type, v4>::type type_list;
+
+typedef boost::make_variant_over<type_list>::type vt;
+
+void
+set (const vt& value)
+{
+  vt v = value;
+}
+
+int main() {
+  set(s5());
+  set(s25());
+}"
+OME_VARIANT_LIMIT)
