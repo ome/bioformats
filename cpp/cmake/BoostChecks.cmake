@@ -122,7 +122,7 @@ int main() {
 BOOST_FILESYSTEM_LINK)
 SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
 
-# boost::filesystem in -lboost_filesystem
+# boost::variant/boost::mpl list size limits
 check_cxx_source_compiles("
 #include <boost/mpl/insert_range.hpp>
 #include <boost/mpl/joint_view.hpp>
