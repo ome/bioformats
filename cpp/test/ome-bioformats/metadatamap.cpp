@@ -306,7 +306,7 @@ TEST_F(MetadataMapTest, Insert)
   MetadataMap::map_type::value_type i2("int3", int32_t(7823));
   std::pair<MetadataMap::iterator, bool> r2 = m.insert(i2);
 
-  ASSERT_NE(r2.first, m.end());
+  ASSERT_TRUE(r2.first != m.end());
   ASSERT_TRUE(r2.second);
   ASSERT_EQ(m.get<int32_t>("int3"), 7823);
 }
