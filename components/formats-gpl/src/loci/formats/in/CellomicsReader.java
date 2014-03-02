@@ -77,7 +77,7 @@ public class CellomicsReader extends FormatReader {
   // The well name in group 2
   // The field, optionally, in group 3
   // The channel, optionally, in group 4
-  private static final Pattern cellomicsPattern = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2})?([od]\\d+)?[^_]+$");
+  private static final Pattern cellomicsPattern = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?([od]\\d+)?[^_]+$");
   private String[] files;
 
   // -- Constructor --
@@ -208,7 +208,13 @@ public class CellomicsReader extends FormatReader {
     }
 
     core.clear();
-    for (int i=0; i<files.length/uniqueChannels.size(); i++) {
+
+    int seriesCount = files.length;
+    if (uniqueChannels.size() > 0) {
+      seriesCount /= uniqueChannels.size();
+    }
+
+    for (int i=0; i<seriesCount; i++) {
       core.add(new CoreMetadata());
     }
 
@@ -317,6 +323,11 @@ public class CellomicsReader extends FormatReader {
       int row = getWellRow(file);
       int col = getWellColumn(file);
 
+      store.setImageName(
+        String.format("Well %s%02d, Field #%02d",
+                      new String(Character.toChars(row+'A')),
+                      col, fieldIndex), i);
+
       if (files.length == 1) {
         row = 0;
         col = 0;
@@ -340,10 +351,6 @@ public class CellomicsReader extends FormatReader {
 
         store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
       }
-      store.setImageName(
-        String.format("Well %s%02d, Field #%02d", 
-                      new String(Character.toChars(row+'A')), 
-                      col, fieldIndex), i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
