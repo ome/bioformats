@@ -63,14 +63,9 @@
     <xsdfu.roi>${xsdfu.schemapath}/ROI.xsd</xsdfu.roi>
     <xsdfu.sa>${xsdfu.schemapath}/SA.xsd</xsdfu.sa>
     <xsdfu.spw>${xsdfu.schemapath}/SPW.xsd</xsdfu.spw>
-
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <build>
-    <defaultGoal>install</defaultGoal>
-
     <sourceDirectory>${project.basedir}/src</sourceDirectory>
     <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
     <resources>
@@ -113,33 +108,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
-          <version>2.4</version>
-          <!-- Always add classpath to JAR manifests. -->
-          <configuration>
-            <archive>
-              <manifest>
-                <addClasspath>true</addClasspath>
-                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-              </manifest>
-              <manifestEntries>
-                <Implementation-Build>${revision}</Implementation-Build>
-                <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
-              </manifestEntries>
-            </archive>
-            <excludes>
-              <exclude>**/*.cpp</exclude>
-              <exclude>**/*.h</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.12</version>
-          <configuration>
-            <argLine>-Xms512m -Xmx512m</argLine>
-          </configuration>
-        </plugin>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
@@ -251,10 +220,6 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
@@ -287,20 +252,12 @@
         </configuration>
       </plugin>
     </plugins>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-webdav-jackrabbit</artifactId>
-        <version>1.0</version>
-      </extension>
-    </extensions>
     <pluginManagement>
       <plugins>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
           <configuration>
             <lifecycleMappingMetadata>
               <pluginExecutions>
