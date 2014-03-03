@@ -263,19 +263,15 @@
               <pluginExecutions>
                 <pluginExecution>
                   <pluginExecutionFilter>
-                    <groupId>
-                      org.codehaus.gmaven
-                    </groupId>
-                    <artifactId>
-                      gmaven-plugin
-                    </artifactId>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>gmaven-plugin</artifactId>
                     <versionRange>[1.4,)</versionRange>
                     <goals>
                       <goal>execute</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
