@@ -111,7 +111,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <licenseName>formats-common</licenseName>
+          <licenseName>bsd_2</licenseName>
           <projectName>Common package for I/O and related utilities</projectName>
         </configuration>
       </plugin>

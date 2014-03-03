@@ -245,7 +245,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <licenseName>ome-xml</licenseName>
+          <licenseName>bsd_2</licenseName>
           <organizationName>Open Microscopy Environment:
   - Massachusetts Institute of Technology
   - National Institutes of Health
