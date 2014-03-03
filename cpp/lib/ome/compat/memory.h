@@ -52,6 +52,7 @@
 #  include <memory>
 # elif OME_HAVE_BOOST_SHARED_PTR
 #  include <boost/enable_shared_from_this.hpp>
+#  include <boost/make_shared.hpp>
 #  include <boost/shared_ptr.hpp>
 namespace std {
     using boost::shared_ptr;
