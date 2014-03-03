@@ -383,7 +383,7 @@ public class CellomicsReader extends FormatReader {
     final String name = new Location(filename).getName();
     if (cellomicsPattern == null) {
       Matcher m = PATTERN_O.matcher(name);
-      if (m.matches()) {
+      if (m.matches() && m.group(4) != null) {
         cellomicsPattern = PATTERN_O;
         return m;
       }
