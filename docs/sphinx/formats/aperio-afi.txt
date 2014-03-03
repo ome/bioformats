@@ -52,4 +52,4 @@ Notes:
 
 
 .. seealso:: 
-  `Aperio ImageScope <http://www.aperio.com/#imagescope-request>`_
+  `Aperio ImageScope <http://www.leicabiosystems.com/index.php?id=8991>`_
