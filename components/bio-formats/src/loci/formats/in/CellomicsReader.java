@@ -77,7 +77,11 @@ public class CellomicsReader extends FormatReader {
   // The well name in group 2
   // The field, optionally, in group 3
   // The channel, optionally, in group 4
-  private static final Pattern cellomicsPattern = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?([od]\\d+)?[^_]+$");
+
+  private static final Pattern PATTERN_O = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?(o\\d+)?[^_]+$");
+  private static final Pattern PATTERN_D = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?(d\\d+)?[^_]+$");
+
+  private Pattern cellomicsPattern;
   private String[] files;
 
   // -- Constructor --
@@ -130,6 +134,7 @@ public class CellomicsReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       files = null;
+      cellomicsPattern = null;
     }
   }
 
@@ -374,8 +379,18 @@ public class CellomicsReader extends FormatReader {
 
   // -- Helper methods --
 
-  static private Matcher matchFilename(final String filename) {
+  private Matcher matchFilename(final String filename) {
     final String name = new Location(filename).getName();
+    if (cellomicsPattern == null) {
+      Matcher m = PATTERN_O.matcher(name);
+      if (m.matches()) {
+        cellomicsPattern = PATTERN_O;
+        return m;
+      }
+      else {
+        cellomicsPattern = PATTERN_D;
+      }
+    }
     return cellomicsPattern.matcher(name);
   }
   private String getPlateName(final String filename) {
