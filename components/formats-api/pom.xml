@@ -183,7 +183,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <licenseName>formats-bsd</licenseName>
+          <licenseName>bsd_2</licenseName>
           <projectName>BSD implementations of Bio-Formats readers and writers</projectName>
         </configuration>
       </plugin>
