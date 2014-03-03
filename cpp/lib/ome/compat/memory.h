@@ -60,6 +60,7 @@ namespace std {
     using boost::const_pointer_cast;
     using boost::dynamic_pointer_cast;
     using boost::enable_shared_from_this;
+    using boost::make_shared;
 }
 # else
 #  error A shared_ptr implementation is not available
