@@ -66,7 +66,7 @@ public class WlzReader extends FormatReader {
 
   // -- Fields --
 
-  private	WlzService wlz = null;
+  private transient WlzService wlz = null;
 
   public static final String NO_WLZ_MSG =
     "\n" +
