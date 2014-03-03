@@ -178,7 +178,7 @@ utilityRating = Good
 privateSpecification = true
 reader = SVSReader.java
 notes = .. seealso:: \n
-  `Aperio ImageScope <http://www.aperio.com/#imagescope-request>`_
+  `Aperio ImageScope <http://www.leicabiosystems.com/index.php?id=8991>`_
 
 [Applied Precision CellWorX]
 extensions = .htd, .pnl
