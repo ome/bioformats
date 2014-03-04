@@ -49,8 +49,6 @@ import ome.scifio.io.RandomAccessInputStream;
  */
 public final class DatastreamParser extends Parser {
 
-  private IFDMetadata metadata;
-
   private int encoderVersion;
 
   private int reservedB;
@@ -89,14 +87,19 @@ public final class DatastreamParser extends Parser {
 
   private int outputBitdepth;
 
-  public DatastreamParser(RandomAccessInputStream stream, IFDMetadata metadata,
-      int encoderVersion) throws JXRException {
-    super(stream, metadata.getImageOffset());
-    this.metadata = metadata;
-    this.encoderVersion = encoderVersion;
+  public DatastreamParser(Parser parentParser, RandomAccessInputStream stream)
+      throws JXRException {
+    super(parentParser, stream);
+    IFDParser ifdParser = (IFDParser) getParentParser();
+    FileParser fileParser = (FileParser) ifdParser.getParentParser();
+
+    parsingOffset = ifdParser.getIFDMetadata().getImageOffset();
+    encoderVersion = fileParser.getEncoderVersion();
   }
 
-  public byte[] parse() throws JXRException {
+  @Override
+  public void parse() throws JXRException {
+    super.parse(parsingOffset);
     try {
       // parse image header
       parseImageHeader();
@@ -108,7 +111,6 @@ public final class DatastreamParser extends Parser {
       throw new JXRException(ioe);
     }
 
-    return null;
   }
 
   private void parseImageHeader() throws IOException, JXRException {
@@ -169,6 +171,6 @@ public final class DatastreamParser extends Parser {
   }
 
   public void close() throws IOException {
-    stream.close();
+    super.close();
   }
 }

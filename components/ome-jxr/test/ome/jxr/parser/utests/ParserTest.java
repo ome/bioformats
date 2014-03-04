@@ -39,25 +39,29 @@ public class ParserTest extends StaticDataProvider {
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testCtorShouldThrowIfNullStream()
       throws JXRException {
-    new Parser(null, 1);
+    new Parser(null, null);
   }
 
   @Test(dataProvider = "testStream", expectedExceptions = IllegalArgumentException.class)
-  public void testCtorShouldThrowIfOffsetTooBig(RandomAccessInputStream stream)
+  public void testParseShouldThrowIfOffsetTooBig(RandomAccessInputStream stream)
       throws IllegalStateException, IOException, JXRException {
-    new Parser(stream, (int) stream.length() + 1);
+    Parser parser = new Parser(null, stream);
+    parser.parse(stream.length() + 1);
   }
 
   @Test(dataProvider = "testStream", expectedExceptions = IllegalArgumentException.class)
   public void testCtorShouldThrowIfOffsetTooSmall(RandomAccessInputStream stream)
       throws IllegalStateException, JXRException {
-    new Parser(stream, -1);
+    Parser parser = new Parser(null, stream);
+    parser.parse(-1);
   }
 
   @Test(dataProvider = "testStream")
   public void testCtorAndClose(RandomAccessInputStream stream)
       throws JXRException, IOException {
-    Parser parser = new Parser(stream, 32);
+    long safeParsingOffset = 32;
+    Parser parser = new Parser(null, stream);
+    parser.parse(safeParsingOffset);
     parser.close();
   }
 }

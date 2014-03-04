@@ -44,13 +44,13 @@ import ome.jxr.constants.IFD;
  */
 public class IFDContainer {
 
-  private int offset;
+  private long offset;
 
   private short numberOfEntries;
 
-  private List<Integer> entryOffsets = new ArrayList<Integer>();
+  private List<Long> entryOffsets = new ArrayList<Long>();
 
-  public IFDContainer(int offset, short numberOfEntries) {
+  public IFDContainer(long offset, short numberOfEntries) {
     this.offset = offset;
     this.numberOfEntries = numberOfEntries;
     for (int i=0; i<numberOfEntries; i++) {
@@ -64,7 +64,7 @@ public class IFDContainer {
    *
    * @return See above.
    */
-  public int getOffsetOfContainer() {
+  public long getOffsetOfContainer() {
     return offset;
   }
 
@@ -75,7 +75,7 @@ public class IFDContainer {
    *
    * @return See above.
    */
-  public int getOffsetOfFirstEntry() {
+  public long getOffsetOfFirstEntry() {
     return offset + IFD.ENTRIES_COUNT_SIZE;
   }
 
@@ -85,7 +85,7 @@ public class IFDContainer {
    *
    * @return See above.
    */
-  public List<Integer> getEntryOffsets() {
+  public List<Long> getEntryOffsets() {
     return entryOffsets;
   }
 

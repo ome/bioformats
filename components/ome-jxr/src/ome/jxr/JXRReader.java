@@ -55,42 +55,40 @@ public final class JXRReader {
 
   private IFDParser ifdParser;
 
-  private RandomAccessInputStream stream;
+  private String filename;
 
-  public JXRReader(String file) throws IOException, JXRException {
-    this(new RandomAccessInputStream(file));
+  public JXRReader(String filename) throws IOException, JXRException {
+    this(new RandomAccessInputStream(filename));
+    this.filename = filename;
   }
 
   public JXRReader(RandomAccessInputStream stream) throws JXRException {
     fileParser = new FileParser(stream);
     fileParser.parse();
-    this.stream = stream;
+
+    ifdParser = new IFDParser(fileParser, stream);
+    datastreamParser = new DatastreamParser(ifdParser, stream);
   }
 
   public byte[] getDecompressedImage() throws JXRException {
-    if (datastreamParser == null) {
-      datastreamParser = new DatastreamParser(this.stream, getMetadata(),
-          fileParser.getEncoderVersion());
-    }
-    return datastreamParser.parse();
+    datastreamParser.parse();
+    return null;
   }
 
   public IFDMetadata getMetadata() throws JXRException {
-    if (ifdParser == null) {
-      ifdParser = new IFDParser(this.stream, fileParser.getRootIFDOffset());
-      ifdParser.parse();
-    }
+    ifdParser.parse();
     return ifdParser.getIFDMetadata();
   }
 
   public void close() throws IOException {
     fileParser.close();
     ifdParser.close();
+    datastreamParser.close();
   }
 
   @Override
   public String toString() {
-    return "JXRReader [stream=" + stream + "]";
+    return "JXRReader [filename=" + filename + "]";
   }
 
 }

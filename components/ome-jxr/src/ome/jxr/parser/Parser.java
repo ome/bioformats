@@ -32,20 +32,26 @@ import ome.scifio.io.RandomAccessInputStream;
 
 public class Parser {
 
-  protected int parsingOffset;
+  long parsingOffset;
 
-  protected RandomAccessInputStream stream;
+  RandomAccessInputStream stream;
 
-  public Parser(RandomAccessInputStream stream) throws JXRException {
-    this(stream, 0);
-  }
+  private Parser parentParser;
 
-  public Parser(RandomAccessInputStream stream, int parsingOffset)
-      throws JXRException {
+  public Parser(Parser parentParser, RandomAccessInputStream stream) {
     if (stream == null) {
-      throw new IllegalArgumentException("Input stream cannot be null.");
+      throw new NullPointerException("Input stream cannot be null.");
     }
 
+    this.parentParser = parentParser;
+    this.stream = stream;
+  }
+
+  public void parse() throws JXRException {
+    parse(0);
+  }
+
+  public void parse(long parsingOffset) throws JXRException {
     if (parsingOffset != 0) {
       try {
         if (parsingOffset < 0 || parsingOffset > stream.length()) {
@@ -58,8 +64,13 @@ public class Parser {
       }
     }
 
-    this.stream = stream;
+    // Set the byte order to little-endian by default
+    this.stream.order(true);
     this.parsingOffset = parsingOffset;
+  }
+
+  Parser getParentParser() {
+    return parentParser;
   }
 
   public void close() throws IOException {

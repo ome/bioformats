@@ -50,16 +50,10 @@ public class DatastreamParserTest extends StaticDataProvider {
     this.metadataStub = new IFDMetadata(0);
   }
 
-  @Test(dataProvider = "testStream")
-  public void testParse(RandomAccessInputStream stream)
+  @Test(dataProvider = "testDatastreamParser")
+  public void testParse(DatastreamParser datastreamParser)
       throws IOException, JXRException {
-    FileParser fileParser = new FileParser(stream);
-    fileParser.parse();
-    IFDParser ifdParser = new IFDParser(stream, fileParser.getRootIFDOffset());
-    ifdParser.parse();
-    DatastreamParser parser = new DatastreamParser(stream,
-        ifdParser.getIFDMetadata(), fileParser.getEncoderVersion());
-    parser.parse();
-    parser.close();
+    datastreamParser.parse(actualParsingOffset);
+    datastreamParser.close();
   }
 }

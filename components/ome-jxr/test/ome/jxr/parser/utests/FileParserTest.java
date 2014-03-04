@@ -27,6 +27,7 @@ package ome.jxr.parser.utests;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 
@@ -40,15 +41,15 @@ import org.testng.annotations.Test;
 public class FileParserTest extends StaticDataProvider {
 
   @Test(dataProvider = "testFileParser")
-  public void testGetEncoderVersionShouldReturnSupportedVersion(
-      FileParser fileParser) throws IOException, JXRException {
+  public void testGetEncoderVersion(FileParser fileParser)
+      throws IOException, JXRException {
     fileParser.parse();
     fileParser.close();
     assertEquals(File.CODESTREAM_VERSION, fileParser.getEncoderVersion());
   }
 
   @Test(dataProvider = "testFileParser")
-  public void testIsLittleEndianShouldReturnTrue(FileParser fileParser)
+  public void testIsLittleEndian(FileParser fileParser)
       throws IOException, JXRException {
     fileParser.parse();
     fileParser.close();
@@ -56,11 +57,21 @@ public class FileParserTest extends StaticDataProvider {
   }
 
   @Test(dataProvider = "testFileParser")
-  public void testGetRootIFDOffsetShouldNotReturnZero(FileParser fileParser)
+  public void testGetRootIFDOffset(FileParser fileParser)
       throws IOException, JXRException {
-    int expectedOffset = 32;
+    int expectedIFDOffset = 32;
     fileParser.parse();
     fileParser.close();
-    assertEquals(expectedOffset, fileParser.getRootIFDOffset());
+    assertEquals(expectedIFDOffset, fileParser.getRootIFDOffset());
   }
+
+  @Test(dataProvider = "testFileParser")
+  public void testGetFileSize(FileParser fileParser)
+      throws IOException, JXRException {
+    long expectedFileSize = 3645;
+    fileParser.parse();
+    fileParser.close();
+    assertEquals(expectedFileSize, fileParser.getFileSize());
+  }
+
 }

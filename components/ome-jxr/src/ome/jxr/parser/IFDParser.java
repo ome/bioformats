@@ -53,9 +53,8 @@ public final class IFDParser extends Parser {
 
   private IFDMetadata IFDMetadata;
 
-  public IFDParser(RandomAccessInputStream stream, int parsingOffset)
-      throws JXRException {
-    super(stream, parsingOffset);
+  public IFDParser(Parser parentParser, RandomAccessInputStream stream) {
+    super(parentParser, stream);
   }
 
   public int getIFDCount() {
@@ -66,26 +65,21 @@ public final class IFDParser extends Parser {
     return IFDMetadata;
   }
 
+  @Override
   public void parse() throws JXRException {
+    super.parse(((FileParser) getParentParser()).getRootIFDOffset());
     try {
-      IFDMetadata = new IFDMetadata(stream.length());
       findAllIFDs();
-
-      for (IFDContainer container : IFDContainers) {
-        for (int entryOffset : container.getEntryOffsets()) {
-          stream.seek(entryOffset);
-          parseEntryInto(IFDMetadata);
-        }
-      }
+      parseIFDEntries();
     } catch (IOException ioe) {
       throw new JXRException(ioe);
     }
-
   }
 
   private void findAllIFDs() throws IOException {
+    IFDMetadata = new IFDMetadata(stream.length());
     short IFDEntryCount = 0;
-    int nextIFDOffset = parsingOffset;
+    long nextIFDOffset = parsingOffset;
 
     do {
       stream.seek(nextIFDOffset);
@@ -95,6 +89,15 @@ public final class IFDParser extends Parser {
           IFDEntryCount*IFD.ENTRY_SIZE);
       nextIFDOffset = stream.read();
     } while (nextIFDOffset != 0 && nextIFDOffset < stream.length());
+  }
+
+  private void parseIFDEntries() throws IOException {
+    for (IFDContainer container : IFDContainers) {
+      for (long entryOffset : container.getEntryOffsets()) {
+        stream.seek(entryOffset);
+        parseEntryInto(IFDMetadata);
+      }
+    }
   }
 
   private void parseEntryInto(IFDMetadata metadata) throws IOException {

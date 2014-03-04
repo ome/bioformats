@@ -60,8 +60,8 @@ public class IFDContainerTest {
 
   @Test
   public void testGetEntryOffsets() throws Exception {
-    List<Integer> actualOffsets = container.getEntryOffsets();
-    Integer lastEntryOffset = expectedNumberOfEntries*IFD.ENTRY_SIZE;
+    List<Long> actualOffsets = container.getEntryOffsets();
+    Long lastEntryOffset = new Long(expectedNumberOfEntries*IFD.ENTRY_SIZE);
     assertEquals(expectedNumberOfEntries, actualOffsets.size());
     assertEquals(lastEntryOffset, actualOffsets.get(actualOffsets.size() - 1));
   }

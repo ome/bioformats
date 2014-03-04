@@ -27,6 +27,7 @@ package ome.jxr;
 
 import java.io.IOException;
 
+import ome.jxr.parser.DatastreamParser;
 import ome.jxr.parser.FileParser;
 import ome.jxr.parser.IFDParser;
 import ome.scifio.io.RandomAccessInputStream;
@@ -61,44 +62,62 @@ public class StaticDataProvider {
   }
 
   @DataProvider(name = "testStream")
-  public static Object[][] testStreamProvider() throws IOException, JXRException {
-    String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
+  public static Object[][] testStreamProvider()
+      throws IOException, JXRException {
     return new Object[][] {
-        {new RandomAccessInputStream(testFilePath)}
+        {streamFromFilename(TEST_FILE)}
     };
   }
 
   @DataProvider(name = "testFileParser")
-  public static Object[][] testFileParserProvider() throws IOException, JXRException {
-    String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
+  public static Object[][] testFileParserProvider()
+      throws IOException, JXRException {
     return new Object[][] {
-        {new FileParser(new RandomAccessInputStream(testFilePath))}
+        {new FileParser(streamFromFilename(TEST_FILE))}
     };
   }
 
   @DataProvider(name = "testIFDParser")
-  public static Object[][] testIFDParserProvider() throws IOException, JXRException {
-    String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
-    RandomAccessInputStream stream = new RandomAccessInputStream(testFilePath);
+  public static Object[][] testIFDParserProvider()
+      throws IOException, JXRException {
+    RandomAccessInputStream stream = streamFromFilename(TEST_FILE);
     FileParser fileParser = new FileParser(stream);
     fileParser.parse();
     return new Object[][] {
-        {new IFDParser(stream, fileParser.getRootIFDOffset())}
+        {new IFDParser(fileParser, stream)}
     };
   }
 
   @DataProvider(name = "testMetadata")
-  public static Object[][] testMetadataProvider() throws IOException, JXRException {
-    String testFilePath = StaticDataProvider.class.getResource(TEST_FILE).getPath();
-    RandomAccessInputStream stream = new RandomAccessInputStream(testFilePath);
+  public static Object[][] testMetadataProvider()
+      throws IOException, JXRException {
+    RandomAccessInputStream stream = streamFromFilename(TEST_FILE);
     FileParser fileParser = new FileParser(stream);
     fileParser.parse();
-    IFDParser ifdParser = new IFDParser(stream, fileParser.getRootIFDOffset());
+    IFDParser ifdParser = new IFDParser(fileParser, stream);
     ifdParser.parse();
     return new Object[][] {
         {ifdParser.getIFDMetadata()}
     };
   }
 
+  @DataProvider(name = "testDatastreamParser")
+  public static Object[][] testDatastreamParserProvider()
+      throws IOException, JXRException {
+    RandomAccessInputStream stream = streamFromFilename(TEST_FILE);
+    FileParser fileParser = new FileParser(stream);
+    fileParser.parse();
+    IFDParser ifdParser = new IFDParser(fileParser, stream);
+    ifdParser.parse();
+    return new Object[][] {
+        {new DatastreamParser(ifdParser, stream)}
+    };
+  }
+
+  private static RandomAccessInputStream streamFromFilename(String filename)
+      throws IOException {
+    String filePath = StaticDataProvider.class.getResource(filename).getPath();
+    return new RandomAccessInputStream(filePath);
+  }
 
 }

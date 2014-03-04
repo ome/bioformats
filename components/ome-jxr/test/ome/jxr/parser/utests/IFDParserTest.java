@@ -40,29 +40,28 @@ import org.testng.annotations.Test;
 public class IFDParserTest extends StaticDataProvider {
 
   @Test(dataProvider = "testIFDParser")
-  public void testGetIFDCountShouldReturnOne(IFDParser parser)
+  public void testGetIFDCount(IFDParser ifdParser)
       throws IOException, JXRException {
     int expectedIFDCount = 1;
-    parser.parse();
-    int actualIFDCount = parser.getIFDCount();
-    parser.close();
+    ifdParser.parse();
+    int actualIFDCount = ifdParser.getIFDCount();
+    ifdParser.close();
     assertEquals(expectedIFDCount, actualIFDCount);
   }
 
   @Test(dataProvider = "testIFDParser")
-  public void testGetIFDMetadataShouldNotReturnNull(IFDParser parser)
+  public void testGetIFDMetadata(IFDParser ifdParser)
       throws IOException, JXRException {
-    parser.parse();
-    assertNotNull(parser.getIFDMetadata());
-    parser.close();
+    ifdParser.parse();
+    assertNotNull(ifdParser.getIFDMetadata());
+    ifdParser.close();
   }
 
   @Test(dataProvider = "testIFDParser")
-  public void testClose(IFDParser parser)
-      throws IOException, JXRException {
-    parser.parse();
-    parser.close();
-    assertNull(parser.getIFDMetadata());
+  public void testClose(IFDParser ifdParser) throws IOException, JXRException {
+    ifdParser.parse();
+    ifdParser.close();
+    assertNull(ifdParser.getIFDMetadata());
   }
 
 }

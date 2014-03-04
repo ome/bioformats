@@ -39,12 +39,14 @@ public final class FileParser extends Parser {
 
   private int rootIFDOffset;
 
-  public FileParser(RandomAccessInputStream stream) throws JXRException {
-    super(stream);
-  }
+  private long fileSize;
 
   public int getEncoderVersion() {
     return encoderVersion;
+  }
+
+  public long getFileSize() {
+    return fileSize;
   }
 
   public boolean isLittleEndian() {
@@ -55,9 +57,13 @@ public final class FileParser extends Parser {
     return rootIFDOffset;
   }
 
-  public void parse() throws JXRException {
-    // Set the byte order to little-endian by default
-    stream.order(true);
+  public FileParser(RandomAccessInputStream stream) {
+    super(null, stream);
+  }
+
+  @Override
+  public void parse(long parsingOffset) throws JXRException {
+    super.parse(parsingOffset);
     try {
       checkFileSize();
       checkHeaderLength();
@@ -75,6 +81,7 @@ public final class FileParser extends Parser {
       throw new JXRException("File size bigger than supported. Size: "
           + stream.length());
     }
+    fileSize = stream.length();
   }
 
   private void checkHeaderLength() throws IOException, JXRException {
@@ -123,4 +130,7 @@ public final class FileParser extends Parser {
     rootIFDOffset = offset;
   }
 
+  public void close() throws IOException {
+    super.close();
+  }
 }
