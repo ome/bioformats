@@ -58,24 +58,6 @@ DO_NOT_PROCESS = [] #["ID"]
 # Default root XML Schema namespace
 DEFAULT_NAMESPACE = "xsd:"
 
-# The default Java package for OME XML model objects.
-DEFAULT_JAVA_OMEXML_PACKAGE = "ome.xml.model"
-
-# The default C++ package for OME XML model objects.
-DEFAULT_CXX_OMEXML_PACKAGE = "ome::xml::model"
-
-# The default Java package for metadata store.
-DEFAULT_JAVA_METADATA_PACKAGE = "ome.xml.meta"
-
-# The default C++ package for metadata store.
-DEFAULT_CXX_METADATA_PACKAGE = "ome::bioformats::meta"
-
-# The default Java package for OME XML metadata store.
-DEFAULT_JAVA_OMEXMLMETADATA_PACKAGE = "ome.xml.meta"
-
-# The default C++ package for OME XML metadata store.
-DEFAULT_CXX_OMEXMLMETADATA_PACKAGE = "ome::bioformats::ome"
-
 # The package regular expression for OME namespaces.
 PACKAGE_NAMESPACE_RE = re.compile(
         r'http://www.openmicroscopy.org/Schemas/(\w+)/\d+-\w+')

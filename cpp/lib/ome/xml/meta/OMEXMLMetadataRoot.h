@@ -35,41 +35,62 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_META_METADATAROOT_H
-#define OME_BIOFORMATS_META_METADATAROOT_H
+#ifndef OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
+#define OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
 
 #include <ome/compat/cstdint.h>
 
+#include <ome/xml/meta/MetadataRoot.h>
+#include <ome/xml/model/OME.h>
+
+
 namespace ome
 {
-  namespace bioformats
+  namespace xml
   {
     namespace meta
     {
 
       /**
-       * Abstract base class for metadata root node.  This class
-       * provides no functionality; its purpose is to provide a common
-       * base type for the root node type of metadata storage
-       * implementations.
+       * OME-XML metadata root node.
        */
-      class MetadataRoot
+      class OMEXMLMetadataRoot : public ::ome::xml::model::OME,
+				 public ::ome::xml::meta::MetadataRoot
       {
-      protected:
+      public:
         /// Constructor.
-        MetadataRoot();
+        OMEXMLMetadataRoot();
+
+	/**
+         * Construct OME-XML model recursively from an XML DOM tree.
+         *
+         * @param element root of the XML DOM tree to from which to
+         * construct the model object graph.
+         * @param model handler for the OME model used to track
+         * instances and references seen during the update.
+         * @throws EnumerationException if there is an error
+         * instantiating an enumeration during model object creation.
+         */
+        OMEXMLMetadataRoot(::ome::xerces::dom::Element& element,
+			   ::ome::xml::model::OMEModel& model);
+
+	/// Copy constructor.
+	OMEXMLMetadataRoot(const OMEXMLMetadataRoot& copy);
+
+	/// Copy constructor.
+	OMEXMLMetadataRoot(const xml::model::OME& copy);
 
       public:
         /// Destructor.
         virtual
-        ~MetadataRoot();
+        ~OMEXMLMetadataRoot();
       };
 
     }
   }
 }
 
-#endif // OME_BIOFORMATS_META_METADATAROOT_H
+#endif // OME_BIOFORMATS_OME_OMEXMLMETADATAROOT_H
 
 /*
  * Local Variables:
