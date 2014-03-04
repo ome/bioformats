@@ -198,15 +198,15 @@
 #ifndef ${fu.GUARD}
 #define ${fu.GUARD}
 
-#include <ome/bioformats/meta/Metadata.h>
+#include <ome/xml/meta/Metadata.h>
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
-#include <ome/bioformats/meta/DummyMetadata.h>
+#include <ome/xml/meta/DummyMetadata.h>
 {% end source%}\
 
 namespace ome
 {
-  namespace bioformats
+  namespace xml
   {
     namespace meta
     {

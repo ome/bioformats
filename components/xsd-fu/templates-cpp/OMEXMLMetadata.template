@@ -387,14 +387,13 @@ ${customContent[obj.name][prop.name]}
 #ifndef ${fu.GUARD}
 #define ${fu.GUARD}
 
-#include <ome/bioformats/meta/Metadata.h>
-#include <ome/bioformats/ome/OMEXMLMetadataRoot.h>
-
+#include <ome/xml/meta/Metadata.h>
+#include <ome/xml/meta/OMEXMLMetadataRoot.h>
 #include <ome/xml/model/OMEModelImpl.h>
 
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
-#include <ome/bioformats/ome/OMEXMLMetadata.h>
+#include <ome/xml/meta/OMEXMLMetadata.h>
 
 {% for header in fu.OBJECT_HEADERS %}\
 #include <${header}>
@@ -403,9 +402,9 @@ ${customContent[obj.name][prop.name]}
 
 namespace ome
 {
-  namespace bioformats
+  namespace xml
   {
-    namespace ome
+    namespace meta
     {
 
 {% if fu.SOURCE_TYPE == "header" %}\
@@ -414,13 +413,13 @@ namespace ome
        * manipulating OME-XML DOMs for the current version of the
        * OME-XML schema.
        */
-      class OMEXMLMetadata : public ::ome::bioformats::meta::Metadata
+      class OMEXMLMetadata : public ::ome::xml::meta::Metadata
       {
       private:
         /// OME-XML root node.
         std::shared_ptr<OMEXMLMetadataRoot> root; // OME
         /// Generic root node.
-        std::shared_ptr< ::ome::bioformats::meta::MetadataRoot> genericRoot; // OME
+        std::shared_ptr< ::ome::xml::meta::MetadataRoot> genericRoot; // OME
         /// OME-XML model.
         std::shared_ptr< ::ome::xml::model::OMEModel> model;
 
@@ -458,18 +457,18 @@ namespace ome
       void
       OMEXMLMetadata::createRoot()
       {
-        std::shared_ptr< ::ome::bioformats::meta::MetadataRoot> newroot(std::make_shared<OMEXMLMetadataRoot>());
+        std::shared_ptr< ::ome::xml::meta::MetadataRoot> newroot(std::make_shared<OMEXMLMetadataRoot>());
         setRoot(newroot);
       }
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        std::shared_ptr< ::ome::bioformats::meta::MetadataRoot>&
+        std::shared_ptr< ::ome::xml::meta::MetadataRoot>&
         getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::shared_ptr< ::ome::bioformats::meta::MetadataRoot>&
+      std::shared_ptr< ::ome::xml::meta::MetadataRoot>&
       OMEXMLMetadata::getRoot()
       {
         return this->genericRoot;
@@ -482,14 +481,14 @@ namespace ome
         // automatically inherit base method documentation.
 {% end debug %}\
         /**
-         * @copydoc ome::bioformats::meta::MetadataStore::setRoot()
+         * @copydoc ome::xml::meta::MetadataStore::setRoot()
          */
         void
-        setRoot(std::shared_ptr< ::ome::bioformats::meta::MetadataRoot>& root);
+        setRoot(std::shared_ptr< ::ome::xml::meta::MetadataRoot>& root);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      OMEXMLMetadata::setRoot(std::shared_ptr< ::ome::bioformats::meta::MetadataRoot>& root)
+      OMEXMLMetadata::setRoot(std::shared_ptr< ::ome::xml::meta::MetadataRoot>& root)
       {
         std::shared_ptr<OMEXMLMetadataRoot> newroot =
           std::dynamic_pointer_cast<OMEXMLMetadataRoot>(root);
@@ -498,7 +497,7 @@ namespace ome
           throw std::logic_error("OMEXMLMetadata root must be of type OMEXMLMetadataRoot");
 
         this->root = newroot;
-        this->genericRoot = std::static_pointer_cast< ::ome::bioformats::meta::MetadataRoot>(this->root);
+        this->genericRoot = std::static_pointer_cast< ::ome::xml::meta::MetadataRoot>(this->root);
         model = std::shared_ptr< ::ome::xml::model::OMEModel>(new ::ome::xml::model::OMEModelImpl());
       }
 {% end source %}\

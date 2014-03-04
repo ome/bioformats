@@ -12,7 +12,7 @@ Developer: Netpbm developers
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |no|
 
@@ -50,7 +50,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :scifioreader:`PGMReader.java`
+Source Code: :bsd-reader:`PGMReader.java`
 
 Notes:
 

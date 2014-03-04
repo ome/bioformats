@@ -12,7 +12,7 @@ Owner: Burleigh Instruments
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

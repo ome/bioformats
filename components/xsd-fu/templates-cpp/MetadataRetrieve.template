@@ -121,8 +121,7 @@
 
 #include <ome/compat/memory.h>
 
-#include <ome/bioformats/meta/BaseMetadata.h>
-
+#include <ome/xml/meta/BaseMetadata.h>
 #include <ome/xml/model/AffineTransform.h>
 
 {% for include in model.getEnumHeaders() %}\
@@ -142,12 +141,12 @@
 #include <ome/xml/model/primitives/Timestamp.h>
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
-#include <ome/bioformats/meta/MetadataRetrieve.h>
+#include <ome/xml/meta/MetadataRetrieve.h>
 {% end source%}\
 
 namespace ome
 {
-  namespace bioformats
+  namespace xml
   {
     namespace meta
     {
@@ -171,11 +170,11 @@ namespace ome
        * both MetadataStore and MetadataRetrieve, which reduces the
        * need to cast between object types.
        *
-       * See ome::bioformats::ome::OMEXMLMetadata for an
+       * See ome::xml::meta::OMEXMLMetadata for an
        * example implementation.
        *
        * @sa MetadataStore, Metadata,
-       * ome::bioformats::ome::OMEXMLMetadata.
+       * ome::xml::meta::OMEXMLMetadata.
        */
       class MetadataRetrieve : public BaseMetadata
       {

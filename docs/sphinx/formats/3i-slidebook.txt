@@ -13,7 +13,7 @@ Owner: `Intelligent Imaging Innovations`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

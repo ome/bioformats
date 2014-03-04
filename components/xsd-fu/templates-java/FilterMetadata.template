@@ -126,7 +126,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.meta;
+package ome.xml.meta;
 
 import loci.common.DataTools;
 

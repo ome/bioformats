@@ -1,0 +1,108 @@
+<!--
+build.xml
+
+Ant build file for BSD implementations of Bio-Formats readers and writers.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="formats-bsd" default="jar" basedir=".">
+  <description>Build file for BSD Bio-Formats readers and writers</description>
+  <property name="root.dir" location="../.."/>
+  <import file="${root.dir}/ant/java.xml"/>
+  <property file="build.properties"/>
+
+  <target name="test" depends="jar,compile-tests,test-no-ome-xml,
+    test-no-lurawave, test-no-jai, test-spec"
+    description="run tests">
+    <!-- NOTE: Overrides default "test" target from java.xml -->
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng.xml"/>
+    <testng haltonfailure="true" testname="${component.name}">
+      <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.runtime-cp}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-Dlurawave.license=XXX"/>
+    </testng>
+  </target>
+
+  <target name="test-no-lurawave" depends="compile-tests"
+    description="run missing LuraWave JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-lurawave.xml"/>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-lurawave}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
+
+  <target name="test-no-jai" depends="compile-tests"
+    description="run missing JAI ImageIO JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-jai.xml"/>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-jai}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
+
+  <target name="test-no-ome-xml" depends="compile-tests"
+    description="run missing OME-XML JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-ome-xml.xml"/>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-xml}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
+
+    <target name="test-spec" depends="jar,compile-tests"
+    description="run specification tests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/spec/testng.xml"/>
+    <testng haltonfailure="true" testname="${component.name}">
+      <classpath>
+        <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.runtime-cp}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+    </testng>
+  </target>
+
+  <target name="jar-formats-bsd-tests" depends="compile, compile-tests, copy-test-source"
+    description="generate jar of spec test classes" if="doTests">
+    <echo>About to compile tests</echo>
+    <mkdir dir="${artifact.dir}"/>
+    <jar jarfile="${artifact.dir}/${test-component.jar}" basedir="${test-classes.dir}"/>
+    <echo>After test to build *-test.jar</echo>
+  </target>
+
+
+</project>

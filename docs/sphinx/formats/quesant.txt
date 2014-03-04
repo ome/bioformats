@@ -13,7 +13,7 @@ Owner: `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-a
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

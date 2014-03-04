@@ -13,7 +13,7 @@ Owner: `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <http:
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

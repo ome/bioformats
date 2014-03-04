@@ -12,7 +12,7 @@ Owner: Molecular Imaging Corp, San Diego CA (closed)
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 
