@@ -12,7 +12,7 @@ Owner: `Seiko <http://www.seiko.co.jp/en/index.php>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

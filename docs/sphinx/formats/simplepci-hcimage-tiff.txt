@@ -12,7 +12,7 @@ Developer: `Hamamatsu <http://hcimage.com/simple-pci-legacy/>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

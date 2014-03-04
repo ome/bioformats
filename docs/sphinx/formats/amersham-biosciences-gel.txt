@@ -13,7 +13,7 @@ Owner: `GE Healthcare Life Sciences <http://www.gelifesciences.com/>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

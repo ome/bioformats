@@ -7,7 +7,7 @@
 
   <parent>
     <groupId>ome</groupId>
-    <artifactId>pom-scifio</artifactId>
+    <artifactId>pom-bio-formats</artifactId>
     <version>5.1.0-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
@@ -16,7 +16,7 @@
 
   <name>XSD-FU</name>
   <description>Model code generation from XML schema</description>
-  <url>http://loci.wisc.edu/software</url>
+  <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
   <licenses>

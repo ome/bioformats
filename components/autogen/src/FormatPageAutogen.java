@@ -103,7 +103,7 @@ public class FormatPageAutogen {
       }
       context.put("owner", table.get("owner"));
       context.put("developer", table.get("developer"));
-      context.put("scifio", table.get("scifio"));
+      context.put("bsd", table.get("bsd"));
       context.put("export", table.get("export"));
 
       if (table.containsKey("versions")) {
@@ -123,9 +123,9 @@ public class FormatPageAutogen {
       context.put("notes", table.get("notes"));
       context.put("privateSpecification", table.get("privateSpecification"));
       context.put("readerextlink",
-        table.get("scifio").equals("no") ? "bfreader" : "scifioreader");
+        table.get("bsd").equals("no") ? "bfreader" : "bsd-reader");
       context.put("writerextlink",
-        table.get("scifio").equals("no") ? "bfwriter" : "scifiowriter");
+        table.get("bsd").equals("no") ? "bfwriter" : "bsd-writer");
 
       if (table.containsKey("software")) {
         String[] software = table.get("software").split("\n");

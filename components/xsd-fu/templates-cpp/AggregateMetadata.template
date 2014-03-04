@@ -264,11 +264,11 @@
 #ifndef ${fu.GUARD}
 #define ${fu.GUARD}
 
-#include <ome/bioformats/meta/BaseMetadata.h>
-#include <ome/bioformats/meta/Metadata.h>
+#include <ome/xml/meta/BaseMetadata.h>
+#include <ome/xml/meta/Metadata.h>
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
-#include <ome/bioformats/meta/AggregateMetadata.h>
+#include <ome/xml/meta/AggregateMetadata.h>
 
 {% for include in model.header_dependencies %}\
 #include <${include}>
@@ -277,7 +277,7 @@
 
 namespace ome
 {
-  namespace bioformats
+  namespace xml
   {
     namespace meta
     {
