@@ -17,7 +17,6 @@
         <exclude>ome:formats-api</exclude>
         <exclude>ome:formats-bsd</exclude>
         <exclude>ome:formats-gpl</exclude>
-        <exclude>ome:lwf-stubs</exclude>
         <exclude>gov.nih.imagej:imagej</exclude>
         <exclude>com.esotericsoftware.kryo:kryo</exclude>
         <exclude>com.jgoodies:forms</exclude>
