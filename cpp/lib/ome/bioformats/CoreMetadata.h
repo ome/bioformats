@@ -45,8 +45,8 @@
 #include <ome/compat/cstdint.h>
 
 #include <ome/bioformats/Modulo.h>
-#include <ome/bioformats/meta/BaseMetadata.h>
 
+#include <ome/xml/meta/BaseMetadata.h>
 #include <ome/xml/model/enums/DimensionOrder.h>
 #include <ome/xml/model/enums/PixelType.h>
 

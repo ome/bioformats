@@ -182,8 +182,8 @@ Run xsd-fu script with no arguments to examine the syntax::
 
   Default C++ OME-XML package: "ome::xml::model"
   Default C++ OME-XML enum package: "ome::xml::model::enums"
-  Default C++ metadata package: "ome::bioformats::meta"
-  Default C++ OME-XML metadata package: "ome::bioformats::ome"
+  Default C++ metadata package: "ome::xml::meta"
+  Default C++ OME-XML metadata package: "ome::xml::meta"
 
   Examples:
     ./components/xsd-fu/xsd-fu -l Java -n 'xsd:' --ome-xml-model-package=ome.xml.model -o omexml /path/to/schemas/ome.xsd

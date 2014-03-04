@@ -262,8 +262,8 @@ class CXX(Language):
         self.omexml_model_package = "ome::xml::model"
         self.omexml_model_enums_package = "ome::xml::model::enums"
         self.omexml_model_omexml_model_enum_handlers_package = "ome::xml::model::enums::handlers"
-        self.metadata_package = "ome::bioformats::meta"
-        self.omexml_metadata_package = "ome::bioformats::meta"
+        self.metadata_package = "ome::xml::meta"
+        self.omexml_metadata_package = "ome::xml::meta"
 
     def getDefaultModelBaseClass(self):
         return "OMEModelObject"

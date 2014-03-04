@@ -36,44 +36,20 @@
  * #L%
  */
 
-#include <ome/bioformats/meta/OMEXMLMetadataRoot.h>
-
-using ome::xml::model::OME;
-using ome::bioformats::meta::MetadataRoot;
+#include <ome/xml/meta/BaseMetadata.h>
 
 namespace ome
 {
-  namespace bioformats
+  namespace xml
   {
-    namespace ome
+    namespace meta
     {
 
-      OMEXMLMetadataRoot::OMEXMLMetadataRoot():
-	OME(),
-	MetadataRoot()
+      BaseMetadata::BaseMetadata()
       {
       }
 
-      OMEXMLMetadataRoot::OMEXMLMetadataRoot(::ome::xerces::dom::Element& element,
-					     ::ome::xml::model::OMEModel& model):
-	OME(element, model),
-	MetadataRoot()
-      {
-      }
-
-      OMEXMLMetadataRoot::~OMEXMLMetadataRoot()
-      {
-      }
-
-      OMEXMLMetadataRoot::OMEXMLMetadataRoot(const OMEXMLMetadataRoot& copy):
-	OME(copy),
-	MetadataRoot()
-      {
-      }
-
-      OMEXMLMetadataRoot::OMEXMLMetadataRoot(const xml::model::OME& copy):
-	OME(copy),
-	MetadataRoot()
+      BaseMetadata::~BaseMetadata()
       {
       }
 

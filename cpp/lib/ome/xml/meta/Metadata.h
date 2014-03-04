@@ -1,7 +1,6 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * %%
  * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -36,23 +35,50 @@
  * #L%
  */
 
-#include <ome/bioformats/meta/Metadata.h>
+#ifndef OME_BIOFORMATS_META_METADATA_H
+#define OME_BIOFORMATS_META_METADATA_H
+
+#include <ome/xml/meta/MetadataRetrieve.h>
+#include <ome/xml/meta/MetadataStore.h>
 
 namespace ome
 {
-  namespace bioformats
+  namespace xml
   {
+    /**
+     * Metadata storage and retrieval.  These interfaces and
+     * implementations are generated from the OME Data Model.
+     */
     namespace meta
     {
 
-      Metadata::Metadata()
+      /**
+       * Abstract class for metadata storage and retrieval.  This
+       * class provides no functionality; it simply derives from both
+       * the MetadataRetrieve and MetadataStore interfaces for use by
+       * stores which provide both interfaces.
+       */
+      class Metadata : public MetadataRetrieve,
+                       public MetadataStore
       {
-      }
+      protected:
+        /// Constructor.
+        Metadata();
 
-      Metadata::~Metadata()
-      {
-      }
+      public:
+        /// Destructor.
+        virtual
+        ~Metadata();
+      };
 
     }
   }
 }
+
+#endif // OME_BIOFORMATS_META_METADATA_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */
