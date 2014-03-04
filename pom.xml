@@ -53,6 +53,7 @@
     <date>${maven.build.timestamp}</date>
     <year>2013</year>
     <project.rootdir>${basedir}</project.rootdir>
+    <jgoodies-forms.version>1.7.2</jgoodies-forms.version>
     <log4j.version>1.2.17</log4j.version>
     <logback.version>1.1.1</logback.version>
     <slf4j.version>1.7.6</slf4j.version>
