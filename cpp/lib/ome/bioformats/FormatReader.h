@@ -46,6 +46,7 @@
 #include <ome/bioformats/FileInfo.h>
 #include <ome/bioformats/FormatHandler.h>
 #include <ome/bioformats/MetadataConfigurable.h>
+#include <ome/bioformats/MetadataMap.h>
 #include <ome/bioformats/PixelBuffer.h>
 
 #include <ome/xml/meta/MetadataStore.h>
@@ -80,9 +81,6 @@ namespace ome
        * @todo Note that this could be switched for a pair of pointers to allow zero-copy access.
        */
       typedef std::vector<uint8_t> byte_array;
-
-      /// Metadata map type for key-value data.
-      typedef std::map<std::string, std::string> metadata_map;
 
     protected:
       /// Constructor.
@@ -803,7 +801,7 @@ namespace ome
        * @returns the global metadata map.
        */
       virtual
-      const metadata_map&
+      const MetadataMap&
       getGlobalMetadata() const = 0;
 
       /**
@@ -815,7 +813,7 @@ namespace ome
        * @returns the series metadata map.
        */
       virtual
-      const metadata_map&
+      const MetadataMap&
       getSeriesMetadata() const = 0;
 
       /**
