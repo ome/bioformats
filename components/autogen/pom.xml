@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>formats-bsd</artifactId>
+      <artifactId>formats-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -55,13 +55,6 @@
       <artifactId>logback-classic</artifactId>
       <version>${logback.version}</version>
       <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>5.12.1</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
