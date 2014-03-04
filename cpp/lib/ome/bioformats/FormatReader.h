@@ -46,8 +46,6 @@
 #include <ome/bioformats/FileInfo.h>
 #include <ome/bioformats/FormatHandler.h>
 #include <ome/bioformats/MetadataConfigurable.h>
-#include <ome/bioformats/MetadataMap.h>
-#include <ome/bioformats/PixelBuffer.h>
 
 #include <ome/xml/meta/MetadataStore.h>
 
@@ -55,6 +53,10 @@ namespace ome
 {
   namespace bioformats
   {
+
+    class MetadataMap;
+    class PixelBuffer;
+    class PixelBufferRaw;
 
     /**
      * Interface for all biological file format readers.
