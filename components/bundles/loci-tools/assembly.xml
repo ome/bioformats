@@ -10,7 +10,6 @@
   <dependencySets>
     <dependencySet>
       <excludes>
-        <exclude>ome:lwf-stubs</exclude>
         <exclude>gov.nih.imagej:imagej</exclude>
         <!-- exclude testing dependencies -->
         <exclude>org.testng:testng</exclude>
