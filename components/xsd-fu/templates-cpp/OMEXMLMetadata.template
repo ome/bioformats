@@ -388,13 +388,13 @@ ${customContent[obj.name][prop.name]}
 #define ${fu.GUARD}
 
 #include <ome/bioformats/meta/Metadata.h>
-#include <ome/bioformats/ome/OMEXMLMetadataRoot.h>
+#include <ome/bioformats/meta/OMEXMLMetadataRoot.h>
 
 #include <ome/xml/model/OMEModelImpl.h>
 
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
-#include <ome/bioformats/ome/OMEXMLMetadata.h>
+#include <ome/bioformats/meta/OMEXMLMetadata.h>
 
 {% for header in fu.OBJECT_HEADERS %}\
 #include <${header}>

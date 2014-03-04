@@ -36,7 +36,7 @@
  * #L%
  */
 
-#include <ome/bioformats/ome/OMEXMLMetadataRoot.h>
+#include <ome/bioformats/meta/OMEXMLMetadataRoot.h>
 
 using ome::xml::model::OME;
 using ome::bioformats::meta::MetadataRoot;
