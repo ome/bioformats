@@ -692,7 +692,8 @@ namespace ome
          * @param v the value to output.
          */
         template <typename T>
-        void operator() (const T& v) const
+        void
+        operator() (const T& v) const
         {
           os << v;
         }
@@ -754,7 +755,8 @@ namespace ome
          * @param v the value to output.
          */
         template <typename T>
-        void operator() (const T& v) const
+        void
+        operator() (const T& v) const
         {
           os << key << " = " << v << '\n';
         }
@@ -818,7 +820,8 @@ namespace ome
          * @param v the value to output.
          */
         template <typename T>
-        void operator() (const T& v) const
+        void
+        operator() (const T& v) const
         {
           map.set(key, v);
         }
@@ -838,7 +841,7 @@ namespace ome
      * if the type did not match the stored value type.
      */
     template<>
-    MetadataMap::value_type&
+    inline MetadataMap::value_type&
     MetadataMap::get<MetadataMap::value_type>(const key_type& key)
     {
       map_type::iterator i = discriminating_map.find(key);
@@ -860,7 +863,7 @@ namespace ome
      * if the type did not match the stored value type.
      */
     template<>
-    const MetadataMap::value_type&
+    inline const MetadataMap::value_type&
     MetadataMap::get<MetadataMap::value_type>(const key_type& key) const
     {
       map_type::const_iterator i = discriminating_map.find(key);
