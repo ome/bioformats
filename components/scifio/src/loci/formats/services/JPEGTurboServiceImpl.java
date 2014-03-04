@@ -104,6 +104,9 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   private static boolean libraryLoaded = false;
 
+  private byte[] lastTile = null;
+  private int lastTileIndex = -1;
+
   // -- Constructor --
 
   public JPEGTurboServiceImpl() {
@@ -239,7 +242,15 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
         tileBoundary.width = col < xTiles - 1 ? tileDim : imageWidth - (tileDim*col);
         if (tileBoundary.intersects(image)) {
           intersection = image.intersection(tileBoundary);
-          tile = getTile(col, row);
+
+          if (lastTile != null && lastTileIndex == row * xTiles + col) {
+            tile = lastTile;
+          }
+          else {
+            tile = getTile(col, row);
+            lastTile = tile;
+            lastTileIndex = row * xTiles + col;
+          }
 
           int rowLen =
             3 * (int) Math.min(tileBoundary.width, intersection.width);
@@ -355,6 +366,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     xTiles = 0;
     yTiles = 0;
     header = null;
+    lastTile = null;
+    lastTileIndex = -1;
   }
 
   // -- Helper methods --

@@ -250,13 +250,13 @@ public class NDPIReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    return 1024;
+    return 256;
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return 1024;
+    return 256;
   }
 
   // -- Internal FormatReader API methods --
