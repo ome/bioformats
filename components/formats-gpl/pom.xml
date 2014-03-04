@@ -64,11 +64,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>turbojpeg</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>edu.ucar</groupId>
       <artifactId>netcdf</artifactId>
       <version>4.3.19</version>
