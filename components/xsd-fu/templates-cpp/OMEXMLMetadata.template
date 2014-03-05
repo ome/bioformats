@@ -457,7 +457,7 @@ namespace ome
       void
       OMEXMLMetadata::createRoot()
       {
-        std::shared_ptr< ::ome::xml::meta::MetadataRoot> newroot(new OMEXMLMetadataRoot());
+        std::shared_ptr< ::ome::xml::meta::MetadataRoot> newroot(std::make_shared<OMEXMLMetadataRoot>());
         setRoot(newroot);
       }
 {% end source %}\
