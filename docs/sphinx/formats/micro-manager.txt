@@ -12,7 +12,7 @@ Developer: `Vale Lab <http://valelab.ucsf.edu/>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |no|
 
@@ -49,7 +49,7 @@ Utility: |Good|
 **Additional Information**
 
 
-Source Code: :scifioreader:`MicromanagerReader.java`
+Source Code: :bsd-reader:`MicromanagerReader.java`
 
 Notes:
 

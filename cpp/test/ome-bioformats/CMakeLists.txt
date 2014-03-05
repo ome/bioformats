@@ -34,9 +34,16 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-if(BUILD_TESTS)
-  include_directories(${OME_TOPLEVEL_INCLUDES})
+include_directories(${OME_TOPLEVEL_INCLUDES})
 
-  headers_test(ome-bioformats ome/bioformats)
+if(BUILD_TESTS)
+  header_test_from_file(ome-bioformats ome-bioformats ome/bioformats)
   add_test(ome-bioformats/headers ome-bioformats-headers)
+
+  add_executable(metadatamap metadatamap.cpp)
+  target_link_libraries(metadatamap ome-bioformats)
+  target_link_libraries(metadatamap ${TEST_LIBS})
+
+  add_test(ome-bioformats/metadatamap metadatamap)
+
 endif(BUILD_TESTS)

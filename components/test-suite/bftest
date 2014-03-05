@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# bftest: a script for running the LOCI Tools automated test suite
+# bftest: a script for running the Bio-Formats automated test suite
 
 if [ -z "$1" ]
 then

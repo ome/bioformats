@@ -45,11 +45,11 @@ endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 
 enable_language(CXX)
 
-include(GNUInstallDirs)
 include(CheckIncludeFileCXX)
 include(CheckCXXCompilerFlag)
 include(CheckCXXSourceCompiles)
 
+include(cpp/cmake/GNUInstallDirs.cmake)
 include(cpp/cmake/CompilerChecks.cmake)
 include(cpp/cmake/BoostChecks.cmake)
 include(cpp/cmake/RegexChecks.cmake)
@@ -57,6 +57,7 @@ include(cpp/cmake/XercesChecks.cmake)
 include(cpp/cmake/XsdFu.cmake)
 include(cpp/cmake/GTest.cmake)
 include(cpp/cmake/Doxygen.cmake)
+include(cpp/cmake/HeaderTest.cmake)
 
 add_subdirectory(docs/doxygen)
 add_subdirectory(cpp)

@@ -12,7 +12,7 @@ Developer: `MRC Laboratory of Molecular Biology <http://www2.mrc-lmb.cam.ac.uk/>
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

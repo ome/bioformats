@@ -12,7 +12,7 @@ Owner: `Molecular Devices <http://www.moleculardevices.com/>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

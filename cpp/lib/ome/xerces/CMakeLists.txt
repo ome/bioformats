@@ -39,7 +39,7 @@ include_directories(${OME_TOPLEVEL_INCLUDES})
 set(ome_xerces_sources
     ErrorReporter.cpp)
 
-set(ome_xerces_headers
+set(ome_xerces_base_headers
     ErrorReporter.h
     Platform.h
     String.h)
@@ -49,6 +49,16 @@ set(ome_xerces_dom_headers
     dom/Element.h
     dom/Node.h
     dom/NodeList.h)
+
+set(ome_xerces_static_headers
+    ${ome_xerces_base_headers}
+    ${ome_xerces_dom_headers})
+
+set(ome_xerces_generated_headers)
+
+set(ome_xerces_headers
+    ${ome_xerces_static_headers}
+    ${ome_xerces_generated_headers})
 
 add_library(ome-xerces SHARED ${ome_xerces_sources} ${ome_xerces_headers} ${ome_xerces_dom_headers})
 target_link_libraries(ome-xerces ${XERCES_LIBRARY})
@@ -70,3 +80,6 @@ configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xerces-config.cmake
         DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+
+# Dump header list for testing
+header_include_list_write(ome_xerces_static_headers ome_xerces_generated_headers ome/xerces ${PROJECT_BINARY_DIR}/cpp/test/ome-xerces)

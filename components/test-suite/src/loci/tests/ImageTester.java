@@ -38,10 +38,6 @@ import javax.swing.JPanel;
 
 import loci.formats.gui.AWTImageTools;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.PatternLayout;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,12 +115,6 @@ public class ImageTester extends JPanel implements WindowListener {
   // -- Main method --
 
   public static void main(String[] args) {
-    org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
-    root.setLevel(Level.INFO);
-    PatternLayout originalLayout = new PatternLayout("%m%n");
-    ConsoleAppender appender = new ConsoleAppender(originalLayout);
-    root.addAppender(appender);
-
     int[] chan = {1, 3, 4};
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     int wpad = 50, hpad = 100;
@@ -202,13 +192,14 @@ public class ImageTester extends JPanel implements WindowListener {
     LOGGER.info("  short[][], short[] (interleaved), short[] (sequential)");
 //    LOGGER.info("  int[][], int[] (interleaved), int[] (sequential)\n");
 
-    appender.setLayout(new PatternLayout("%m"));
+    // TODO: This should use a second LOGGER2 instance if a different
+    // layout is needed.
     LOGGER.info("Columns are:");
     for (int q=0; q<chan.length; q++) {
       if (q > 0) LOGGER.info(",");
       LOGGER.info(" c={}", chan[q]);
     }
-    appender.setLayout(originalLayout);
+    // END USE OF LOGGER2
     LOGGER.info("");
 
     JFrame frame = new JFrame("ImageTester");

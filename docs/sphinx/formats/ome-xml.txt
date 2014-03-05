@@ -12,7 +12,7 @@ Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |yes|
 
@@ -48,8 +48,8 @@ Utility: |Outstanding|
 **Additional Information**
 
 
-Source Code: :scifioreader:`OMEXMLReader.java`
-Source Code: :scifiowriter:`OMEXMLWriter.java`
+Source Code: :bsd-reader:`OMEXMLReader.java`
+Source Code: :bsd-writer:`OMEXMLWriter.java`
 
 Notes:
 

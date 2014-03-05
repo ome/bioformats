@@ -12,7 +12,7 @@ Developer: `Image Science <http://www.imagescience.de>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

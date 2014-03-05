@@ -230,7 +230,7 @@ TEST_P(ColorTest, StreamInput)
 
   std::istringstream is(params.str);
   is >> c;
-  ASSERT_TRUE(is);
+  ASSERT_FALSE(!is);
   ASSERT_EQ(c, params.sval);
 }
 

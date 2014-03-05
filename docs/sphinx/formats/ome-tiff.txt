@@ -12,7 +12,7 @@ Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |yes|
 
@@ -48,8 +48,8 @@ Utility: |Outstanding|
 **Additional Information**
 
 
-Source Code: :scifioreader:`OMETiffReader.java`
-Source Code: :scifiowriter:`OMETiffWriter.java`
+Source Code: :bsd-reader:`OMETiffReader.java`
+Source Code: :bsd-writer:`OMETiffWriter.java`
 
 Notes:
 

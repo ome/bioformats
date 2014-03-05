@@ -14,6 +14,14 @@
     <Class name="~loci\.common\..*"/>
     <Bug pattern="EQ_CHECK_FOR_OPERAND_NOT_COMPATIBLE_WITH_THIS,NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
   </Match>
+  <Match>
+    <Class name="~loci\.formats\.meta\..*"/>
+    <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+  </Match>
+  <Match>
+    <Class name="~loci\.formats\.ome\..*"/>
+    <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+  </Match>
 </FindBugsFilter>
 
 

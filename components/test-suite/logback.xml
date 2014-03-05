@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>[%d] [%t] %m%n</pattern>
+    </encoder>
+  </appender>
+  <appender name="logfile" class="loci.tests.testng.TimestampedLogFileAppender">
+    <File>bio-formats-test.log</File>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>[%d] [%t] %m%n</pattern>
+    </layout>
+  </appender>
+  <root level="INFO">
+    <appender-ref ref="stdout"/>
+    <appender-ref ref="logfile"/>
+  </root>
+</configuration>

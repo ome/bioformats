@@ -50,6 +50,12 @@ namespace ome
   {
     namespace model
     {
+      /**
+       * Model primitive data types.  All the classes in this
+       * namespace are fundamental data types used by the OME model
+       * objects, but are not themselves model objects.  They map to
+       * types defined in the OME-XML schema.
+       */
       namespace primitives
       {
 

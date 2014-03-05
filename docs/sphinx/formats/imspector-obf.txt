@@ -13,7 +13,7 @@ Owner: `MPI-BPC <http://www.mpibpc.mpg.de/>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |no|
 
@@ -48,7 +48,7 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :scifioreader:`OBFReader.java`
+Source Code: :bsd-reader:`OBFReader.java`
 
 Notes:
 

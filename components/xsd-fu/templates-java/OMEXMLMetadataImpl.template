@@ -1,4 +1,4 @@
-{% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
+{% def indexes_string(indexes) %}${", ".join(map(lambda x: lang.index_string(x),indexes))}{% end %}\
 \
 {% def index_name_string(name) %}\
 {% choose %}\
@@ -27,13 +27,13 @@
 {% def getter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}()
 {% end %}\
 {% end %}\
 	{
@@ -68,13 +68,13 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
 {% end %}\
 {% end %}\
 	{
@@ -159,7 +159,9 @@
 {% end %}\
 {% end %}\
 {% if obj.name in customContent and prop.name in customContent[obj.name] %}\
+{% if debug %}\
 		// Custom content from ${obj.name} ${prop.name} template
+{% end debug %}\
 ${customContent[obj.name][prop.name]}
 {% end %}\
 	}
@@ -248,10 +250,7 @@ ${customContent[obj.name][prop.name]}
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.ome;
-
-import loci.formats.meta.MetadataRoot;
-import loci.formats.ome.OMEXMLMetadataRoot;
+package ome.xml.meta;
 
 import ome.xml.model.*;
 import ome.xml.model.enums.*;
@@ -387,10 +386,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType != 'Object' %}\
+{% if o.langBaseType != 'Object' %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	public void set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+	public void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		OME o0 = root;
 		if (o0.sizeOfImageList() == imageIndex)
@@ -416,7 +415,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o4.setValue(value);
 	}
 
-	public ${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
+	public ${o.langBaseType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		return root.getImage(imageIndex).getPixels().getTiffData(tiffDataIndex).getUUID().getValue();
 	}
@@ -480,7 +479,9 @@ ${counter(k, o, v)}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
@@ -499,10 +500,14 @@ ${getter(k, o, prop, v)}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
@@ -576,7 +581,9 @@ ${getter(k, o, prop, v)}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
@@ -595,10 +602,14 @@ ${setter(k, o, prop, v)}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\

@@ -36,63 +36,17 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES})
 
-execute_process(COMMAND ${XSD_FU} java_classes -d -f source ${XSD_FU_ARGS}
-  OUTPUT_VARIABLE OME_XML_GENERATED_MODEL_SOURCES)
-string(REPLACE "\n" ";" OME_XML_GENERATED_MODEL_SOURCES "${OME_XML_GENERATED_MODEL_SOURCES}")
-if(WIN32)
-  string(REPLACE "\\" "/" OME_XML_GENERATED_MODEL_SOURCES "${OME_XML_GENERATED_MODEL_SOURCES}")
-endif(WIN32)
-add_custom_command(OUTPUT ${OME_XML_GENERATED_MODEL_SOURCES}
-                   COMMAND ${XSD_FU} java_classes -q -f source ${XSD_FU_ARGS}
-                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
-#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_MODEL_SOURCES})
-
-execute_process(COMMAND ${XSD_FU} java_classes -d -f header ${XSD_FU_ARGS}
-  OUTPUT_VARIABLE OME_XML_GENERATED_MODEL_HEADERS)
-string(REPLACE "\n" ";" OME_XML_GENERATED_MODEL_HEADERS "${OME_XML_GENERATED_MODEL_HEADERS}")
-if(WIN32)
-  string(REPLACE "\\" "/" OME_XML_GENERATED_MODEL_HEADERS "${OME_XML_GENERATED_MODEL_HEADERS}")
-endif(WIN32)
-add_custom_command(OUTPUT ${OME_XML_GENERATED_MODEL_HEADERS}
-                   COMMAND ${XSD_FU} java_classes -q -f header ${XSD_FU_ARGS}
-                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
-#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_MODEL_HEADERS})
-
-execute_process(COMMAND ${XSD_FU} enum_types -d -f source ${XSD_FU_ARGS}
-  OUTPUT_VARIABLE OME_XML_GENERATED_ENUMS_SOURCES)
-string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMS_SOURCES "${OME_XML_GENERATED_ENUMS_SOURCES}")
-if(WIN32)
-  string(REPLACE "\\" "/" OME_XML_GENERATED_ENUMS_SOURCES "${OME_XML_GENERATED_ENUMS_SOURCES}")
-endif(WIN32)
-add_custom_command(OUTPUT ${OME_XML_GENERATED_ENUMS_SOURCES}
-                   COMMAND ${XSD_FU} enum_types -q -f source ${XSD_FU_ARGS}
-                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
-#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_ENUMS_SOURCES})
-
-execute_process(COMMAND ${XSD_FU} enum_types -d -f header ${XSD_FU_ARGS}
-  OUTPUT_VARIABLE OME_XML_GENERATED_ENUMS_HEADERS)
-string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMS_HEADERS "${OME_XML_GENERATED_ENUMS_HEADERS}")
-if(WIN32)
-  string(REPLACE "\\" "/" OME_XML_GENERATED_ENUMS_HEADERS "${OME_XML_GENERATED_ENUMS_HEADERS}")
-endif(WIN32)
-add_custom_command(OUTPUT ${OME_XML_GENERATED_ENUMS_HEADERS}
-                   COMMAND ${XSD_FU} enum_types -q -f header ${XSD_FU_ARGS}
-                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
-#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_ENUMS_HEADERS})
-
-execute_process(COMMAND ${XSD_FU} enum_includeall -d -f header ${XSD_FU_ARGS}
-  OUTPUT_VARIABLE OME_XML_GENERATED_ENUMINCLUDE_HEADERS)
-string(REPLACE "\n" ";" OME_XML_GENERATED_ENUMINCLUDE_HEADERS ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
-if(WIN32)
-  string(REPLACE "\\" "/" OME_XML_GENERATED_ENUMINCLUDE_HEADERS ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
-endif(WIN32)
-#
-add_custom_command(OUTPUT ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
-                   COMMAND ${XSD_FU} enum_includeall -q -f header ${XSD_FU_ARGS}
-                   DEPENDS ${MODEL_FILES} ${XSD_FU_SCRIPT})
-#execute_process(COMMAND ${CMAKE_COMMAND} -E echo Generated ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
+xsd_fu(omexml_model OME_XML_GENERATED_MODEL_HEADERS OME_XML_GENERATED_MODEL_SOURCES)
+xsd_fu(omexml_model_enums OME_XML_GENERATED_ENUMS_HEADERS OME_XML_GENERATED_ENUMS_SOURCES)
+xsd_fu_header(omexml_model_enum_includeall OME_XML_GENERATED_ENUMINCLUDE_HEADERS)
+xsd_fu(metadata OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META_SOURCES)
+xsd_fu(omexml_metadata OME_XML_GENERATED_METAOME_HEADERS OME_XML_GENERATED_METAOME_SOURCES)
 
 set(OME_XML_STATIC_SOURCES
+  meta/BaseMetadata.cpp
+  meta/Metadata.cpp
+  meta/MetadataRoot.cpp
+  meta/OMEXMLMetadataRoot.cpp
   model/enums/EnumerationException.cpp
   model/primitives/Color.cpp
   model/primitives/NonNegativeFloat.cpp
@@ -106,6 +60,12 @@ set(OME_XML_STATIC_SOURCES
   model/OMEModel.cpp
   model/OMEModelImpl.cpp
   model/OMEModelObject.cpp)
+
+set(OME_BIOFORMATS_META_STATIC_HEADERS
+    meta/BaseMetadata.h
+    meta/Metadata.h
+    meta/MetadataRoot.h
+    meta/OMEXMLMetadataRoot.h)
 
 set(OME_XML_STATIC_MODEL_HEADERS
     model/OMEModel.h
@@ -128,19 +88,28 @@ set(OME_XML_STATIC_PRIMITIVES_HEADERS
     model/primitives/NumericConstraints.h
     model/primitives/Timestamp.h)
 
-set(OME_XML_HEADERS
+set(OME_XML_STATIC_HEADERS
     ${OME_XML_STATIC_MODEL_HEADERS}
     ${OME_XML_STATIC_PRIMITIVES_HEADERS}
-    ${OME_XML_STATIC_ENUMS_HEADERS}
+    ${OME_XML_STATIC_ENUMS_HEADERS})
+
+set(OME_XML_GENERATED_HEADERS
+    ${OME_XML_GENERATED_META_HEADERS}
+    ${OME_XML_GENERATED_METAOME_HEADERS}
     ${OME_XML_GENERATED_MODEL_HEADERS}
     ${OME_XML_GENERATED_ENUMS_HEADERS}
     ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS})
 
+set(OME_XML_HEADERS
+    ${OME_XML_STATIC_HEADERS}
+    ${OME_XML_GENERATED_HEADERS})
+
 set(OME_XML_SOURCES
     ${OME_XML_STATIC_SOURCES}
+    ${OME_XML_GENERATED_META_SOURCES}
+    ${OME_XML_GENERATED_METAOME_SOURCES}
     ${OME_XML_GENERATED_MODEL_SOURCES}
     ${OME_XML_GENERATED_ENUMS_SOURCES})
-
 
 add_library(ome-xml SHARED
             ${OME_XML_SOURCES}
@@ -154,6 +123,8 @@ install(TARGETS ome-xml LIBRARY
 
 set(ome_xml_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/xml")
 
+install(FILES ${OME_BIOFORMATS_META_STATIC_HEADERS} ${OME_XML_GENERATED_META_HEADERS} ${OME_XML_GENERATED_METAOME_HEADERS}
+        DESTINATION ${ome_xml_includedir}/meta)
 install(FILES ${OME_XML_STATIC_MODEL_HEADERS} ${OME_XML_GENERATED_MODEL_HEADERS} ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
         DESTINATION ${ome_xml_includedir}/model)
 install(FILES ${OME_XML_STATIC_ENUMS_HEADERS} ${OME_XML_GENERATED_ENUMS_HEADERS}
@@ -168,3 +139,6 @@ configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/ome-xml-config.cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xml-config.cmake
         DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/cmake)
+
+# Dump header list for testing
+header_include_list_write(OME_XML_STATIC_HEADERS OME_XML_GENERATED_HEADERS ome/xml ${PROJECT_BINARY_DIR}/cpp/test/ome-xml)

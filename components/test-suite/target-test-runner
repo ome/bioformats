@@ -175,11 +175,11 @@ if __name__ == '__main__':
 
     xml_file = create_testng_xml_file(test_class, targets, revision,
                                       hudson, thread_count, in_memory)
-    l4j_props = 'log4j-target-test-runner.properties'
-    l4j_props = os.path.join(os.path.dirname(__file__), l4j_props)
-    l4j_props = os.path.abspath(l4j_props)
-    l4j_props = '-Dlog4j.configuration=file:///%s' % l4j_props
-    cmd = 'java %s -cp "%s" %s %s %s' % (JAVA_ARGS, classpath, l4j_props, \
+    log_props = 'logback-target-test-runner.xml'
+    log_props = os.path.join(os.path.dirname(__file__), log_props)
+    log_props = os.path.abspath(log_props)
+    log_props = '-Dlogback.configurationFile=file:///%s' % log_props
+    cmd = 'java %s -cp "%s" %s %s %s' % (JAVA_ARGS, classpath, log_props, \
                                          START_CLASS, xml_file.name)
     print cmd
     os.system(cmd)

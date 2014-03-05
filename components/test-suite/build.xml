@@ -1,13 +1,13 @@
 <!--
 build.xml
 
-Ant build file for LOCI testing framework project.
+Ant build file for Bio-Formats testing framework project.
 Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
 <project name="tests" default="jar" basedir=".">
-  <description>Build file for LOCI testing framework project</description>
+  <description>Build file for Bio-Formats testing framework project</description>
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
@@ -49,7 +49,7 @@ Type "ant -p" for a list of targets.
     <testng testname="TIFF compression tests"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -62,7 +62,7 @@ Type "ant -p" for a list of targets.
     description="run conversion tests with fixed input data">
     <testng testname="Minimal conversion tests" failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -75,10 +75,10 @@ Type "ant -p" for a list of targets.
     description="run automated tests on writers">
     <testng groups="all" testname="Writer tests"
       listener="loci.tests.testng.DotTestListener"
-      suitename="LOCI software test suite"
+      suitename="Bio-Formats test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -95,10 +95,10 @@ Type "ant -p" for a list of targets.
     description="run all automated tests">
     <testng groups="all" testname="All tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
-      suitename="LOCI software test suite"
+      suitename="Bio-Formats software test suite"
       failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -122,10 +122,10 @@ Type "ant -p" for a list of targets.
     description="generate config files for automated test suite">
     <testng groups="config" testname="Config generation"
       listener="loci.tests.testng.DotTestListener"
-      suitename="LOCI software test suite"
+      suitename="Bio-Formats software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -155,11 +155,11 @@ Type "ant -p" for a list of targets.
 
     <testng groups="automated" testname="Automated tests"
       listeners="loci.tests.testng.OrderingListener"
-      suitename="LOCI software test suite"
+      suitename="Bio-Formats software test suite"
       parallel="instances" threadCount="${testng.threadCount}"
       failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -183,10 +183,10 @@ Type "ant -p" for a list of targets.
     description="run automated tests in group 'fast'">
     <testng groups="fast" testname="Fast tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
-      suitename="LOCI software test suite"
+      suitename="Bio-Formats software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -210,10 +210,10 @@ Type "ant -p" for a list of targets.
     description="run automated tests in group 'pixels'">
     <testng groups="pixels" testname="Pixels tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
-      suitename="LOCI software test suite"
+      suitename="Bio-Formats software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -237,10 +237,10 @@ Type "ant -p" for a list of targets.
     description="run automated tests in group 'xml'">
     <testng groups="xml" testname="XML tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
-      suitename="LOCI software test suite"
+      suitename="Bio-Formats software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -264,10 +264,10 @@ Type "ant -p" for a list of targets.
     description="run automated tests in group 'type'">
     <testng groups="type" testname="Type tests"
       listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
-      suitename="LOCI software test suite"
+      suitename="Bio-Formats software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
@@ -291,10 +291,10 @@ Type "ant -p" for a list of targets.
     description="generate OME-XML files for automated test suite">
     <testng groups="config-xml" testname="OME-XML generation"
       listener="loci.tests.testng.DotTestListener"
-      suitename="LOCI software test suite"
+      suitename="Bio-Formats software test suite"
       failureProperty="failedTest">
       <classpath>
-        <pathelement location="${basedir}"/><!-- log4j.properties -->
+        <pathelement location="${basedir}"/><!-- logback.xml -->
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
