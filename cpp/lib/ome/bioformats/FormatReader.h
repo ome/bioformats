@@ -46,6 +46,7 @@
 #include <ome/bioformats/FileInfo.h>
 #include <ome/bioformats/FormatHandler.h>
 #include <ome/bioformats/MetadataConfigurable.h>
+#include <ome/bioformats/MetadataMap.h>
 
 #include <ome/xml/meta/MetadataStore.h>
 
@@ -54,7 +55,6 @@ namespace ome
   namespace bioformats
   {
 
-    class MetadataMap;
     class PixelBuffer;
     class PixelBufferRaw;
 
@@ -791,8 +791,8 @@ namespace ome
        * @todo throw exception if missing.
        */
       virtual
-      const std::string&
-      getSeriesMetadataValue(const std::string& field) = 0;
+      const MetadataMap::value_type&
+      getSeriesMetadataValue(const MetadataMap::key_type& field) = 0;
 
       /**
        * Get global metadata map.
