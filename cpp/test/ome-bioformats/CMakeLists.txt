@@ -39,4 +39,11 @@ include_directories(${OME_TOPLEVEL_INCLUDES})
 if(BUILD_TESTS)
   header_test_from_file(ome-bioformats ome-bioformats ome/bioformats)
   add_test(ome-bioformats/headers ome-bioformats-headers)
+
+  add_executable(metadatamap metadatamap.cpp)
+  target_link_libraries(metadatamap ome-bioformats)
+  target_link_libraries(metadatamap ${TEST_LIBS})
+
+  add_test(ome-bioformats/metadatamap metadatamap)
+
 endif(BUILD_TESTS)

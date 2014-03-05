@@ -40,7 +40,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 set(ome_compat_static_headers
     cstdint.h
     memory.h
-    tuple.h)
+    tuple.h
+    variant.h)
 
 set(ome_compat_generated_headers
    ${CMAKE_CURRENT_BINARY_DIR}/config.h)
