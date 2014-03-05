@@ -12,7 +12,7 @@ Developer: `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

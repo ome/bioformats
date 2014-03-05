@@ -41,7 +41,7 @@ import nl.javadude.assumeng.Assumption;
 import nl.javadude.assumeng.AssumptionListener;
 
 import org.perf4j.StopWatch;
-import org.perf4j.log4j.Log4JStopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
@@ -239,7 +239,7 @@ public class OpenBytesPerformanceTest
       TestTools.mapFile(id);
     }
 
-    StopWatch stopWatch = new Log4JStopWatch();
+    StopWatch stopWatch = new Slf4JStopWatch();
     reader.setId(id);
     stopWatch.stop(String.format("%s.setId.%s",
             ((ReaderWrapper) reader).unwrap().getClass().getName(), filename));
@@ -271,7 +271,7 @@ public class OpenBytesPerformanceTest
               (int) Math.min(optimalTileHeight, reader.getSizeY() - y);
 
             LOGGER.info("Reading tile at {}x{}", x, y);
-            stopWatch = new Log4JStopWatch(String.format(
+            stopWatch = new Slf4JStopWatch(String.format(
                 "%s.alloc_tile.%s.[%d:%d]",
                 ((ReaderWrapper) reader).unwrap().getClass().getName(),
                 filename, series, image));
@@ -312,7 +312,7 @@ public class OpenBytesPerformanceTest
               (int) Math.min(optimalTileHeight, reader.getSizeY() - y);
 
             LOGGER.info("Reading tile at {}x{}", x, y);
-            stopWatch = new Log4JStopWatch(String.format(
+            stopWatch = new Slf4JStopWatch(String.format(
                 "%s.prealloc_tile.%s.[%d:%d]",
                 ((ReaderWrapper) reader).unwrap().getClass().getName(),
                 filename, series, image));

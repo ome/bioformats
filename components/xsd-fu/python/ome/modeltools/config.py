@@ -79,43 +79,6 @@ OMERO_NAMED_OPTIONAL = (
         "RenderingDef",
 )
 
-
-# The default template for enum class processing.
-ENUM_TEMPLATE = 'OMEXMLModelEnum.template'
-
-# The default template for enum inclusion.
-ENUM_INCLUDEALL_TEMPLATE = 'OMEXMLModelAllEnums.template'
-
-# The default template for enum handler class processing.
-ENUM_HANDLER_TEMPLATE = 'OMEXMLModelEnumHandler.template'
-
-# The default template for class processing.
-CLASS_TEMPLATE = 'OMEXMLModelObject.template'
-
-# The default template for MetadataStore processing.
-METADATA_STORE_TEMPLATE = 'MetadataStore.template'
-
-# The default template for MetadataRetrieve processing.
-METADATA_RETRIEVE_TEMPLATE = 'MetadataRetrieve.template'
-
-# The default template for AggregateMetadata processing.
-METADATA_AGGREGATE_TEMPLATE = 'AggregateMetadata.template'
-
-# The default template for OME XML metadata processing.
-OMEXML_METADATA_TEMPLATE = 'OMEXMLMetadataImpl.template'
-
-# The default template for DummyMetadata processing.
-DUMMY_METADATA_TEMPLATE = 'DummyMetadata.template'
-
-# The default template for FilterMetadata processing.
-FILTER_METADATA_TEMPLATE = 'FilterMetadata.template'
-
-# The default template for OMERO metadata processing.
-OMERO_METADATA_TEMPLATE = 'OmeroMetadata.template'
-
-# The default template for OMERO metadata processing.
-OMERO_MODEL_TEMPLATE = 'OmeroModel.template'
-
 REF_REGEX = re.compile(r'Ref$|RefNode$')
 
 BACKREF_REGEX = re.compile(r'_BackReference')

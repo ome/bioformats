@@ -30,10 +30,6 @@ import java.io.IOException;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.PatternLayout;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +51,6 @@ public class SingularityTest {
   private static ImageReader reader = new ImageReader();
 
   public static void main(String[] args) throws FormatException, IOException {
-    org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
-    root.setLevel(Level.INFO);
-    root.addAppender(new ConsoleAppender(new PatternLayout("%m%n")));
 
     if (args.length < 1) {
       LOGGER.info("Usage: java.loci.tests.SingularityTest /path/to/input-file");

@@ -12,7 +12,7 @@ Developer: `PerkinElmer <http://www.perkinelmer.com/>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

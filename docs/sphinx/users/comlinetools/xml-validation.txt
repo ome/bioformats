@@ -1,0 +1,31 @@
+Validating XML in an OME-TIFF
+=============================
+
+The XML stored in an OME-TIFF file can be validated using the
+:doc:`command line tools <index>`.
+
+Both the ``tiffcomment`` and ``xmlvalid`` commands are used; ``tiffcomment``
+extracts the XML from the file and ``xmlvalid`` validates the XML and prints
+any errors to the console.
+
+For example:
+
+::
+
+  tiffcomment /path/to/file.ome.tiff | xmlvalid -
+
+will perform the extraction and validation all at once.
+
+If the XML is found to have validation errors, the ``tiffcomment`` command can
+be used to overwrite the XML in the OME-TIFF file with corrected XML.
+The XML can be displayed in an editor window:
+
+::
+
+  tiffcomment -edit /path/to/file.ome.tiff
+
+or the new XML can be read from a file:
+
+::
+
+  tiffcomment -set new-comment.xml /path/to/file.ome.tiff

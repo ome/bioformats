@@ -61,6 +61,19 @@ Image server applications
     ome-server/index
 
 
+Command line tools
+==================
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    comlinetools/index
+    comlinetools/display
+    comlinetools/conversion
+    comlinetools/xml-validation
+
+
 Libraries and scripting applications
 ====================================
 
@@ -68,7 +81,6 @@ Libraries and scripting applications
     :maxdepth: 1
     :titlesonly:
 
-    comlinetools/index
     farsight/index
     i3dcore/index
     imglib/index

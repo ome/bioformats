@@ -9,7 +9,7 @@ SM Camera
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

@@ -56,16 +56,26 @@ namespace ome
      */
     class Modulo {
     public:
+      /// Size of the subdimension.
       typedef uint32_t size_type;
 
+      /// Parent dimension being subdivided.
       std::string parentDimension;
+      /// Start value.
       double start;
+      /// Step size.
       double step;
+      /// End value.
       double end;
+      /// Type of the parent dimension.
       std::string parentType;
+      /// Type of the subdimension.
       std::string type;
+      /// Type description of the subdimension.
       std::string typeDescription;
+      /// Unit of the subdimension.
       std::string unit;
+      /// Labels along the subdimension.
       std::vector<std::string> labels;
 
       /**
@@ -77,10 +87,26 @@ namespace ome
 
       /**
        * Get the size of this subdimension.
+       *
+       * This is the number of discrete samples along this dimension,
+       * between the start and end points, separated by step size
+       * increments.
+       *
+       * @returns the subdimension size.
        */
       size_type
       size() const;
 
+      /**
+         * Convert to XML string.
+         *
+         * The object is serialised to an XML text representation.
+         * This is suitable for embedding in an
+         * ome::xml::model::XMLAnnotation, for example.
+         *
+         * @returns a string containing the XML.
+       * @copydoc ome::OMEXMLMetadata::dumpXML()
+       */
       std::string
       toXMLAnnotation() const;
     };

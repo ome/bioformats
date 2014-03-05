@@ -132,7 +132,7 @@ bf_github_branch = bf_github_root + 'blob/' + source_branch + '/'
 if "JENKINS_JOB" in os.environ:
     jenkins_job = os.environ.get('JENKINS_JOB')
 else:
-    jenkins_job = 'BIOFORMATS-trunk'
+    jenkins_job = 'BIOFORMATS-5.1-latest'
 
 jenkins_root = 'http://ci.openmicroscopy.org'
 jenkins_job_root = jenkins_root + '/job'
@@ -158,10 +158,10 @@ extlinks = {
     'report' : (trac_root + '/report/%s', ''),
     # Github links
     'source' : (bf_github_branch + '%s', ''),
-    'bfreader' : (bf_github_branch + 'components/bio-formats/src/loci/formats/in/%s', ''),
-    'scifioreader' : (bf_github_branch + 'components/scifio/src/loci/formats/in/%s', ''),
-    'bfwriter' : (bf_github_branch + 'components/bio-formats/src/loci/formats/out/' + '%s', ''),
-    'scifiowriter' : (bf_github_branch + 'components/scifio/src/loci/formats/out/' + '%s', ''),
+    'bfreader' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/in/%s', ''),
+    'bsd-reader' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/in/%s', ''),
+    'bfwriter' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/out/' + '%s', ''),
+    'bsd-writer' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/out/' + '%s', ''),
     # Jenkins links
     'jenkins' : (jenkins_root + '/%s', ''),
     'jenkinsjob' : (jenkins_job_root + '/%s', ''),
@@ -186,7 +186,7 @@ extlinks = {
     'omerodoc' : (omerodoc_uri + '/%s', ''),
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
-    'downloads' : (downloads_root + '/bio-formats/%s', ''),
+    'downloads' : (downloads_root + '/latest/bio-formats5/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')

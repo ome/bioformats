@@ -113,9 +113,9 @@ class OMEModel(object):
     def getAllHeaders(self):
         headers = set()
         for o in self.objects.values():
-            h = o.header
+            h = o.header_dependencies
             if h is not None:
-                headers.add(h)
+                headers.union(h)
         return sorted(headers)
 
     def getEnumHeaders(self):
@@ -127,6 +127,14 @@ class OMEModel(object):
                 h = prop.header
                 if h is not None:
                     headers.add(h)
+        return sorted(headers)
+
+    def getObjectHeaders(self):
+        headers = set()
+        for obj in self.objects.values():
+            h = obj.header
+            if h is not None:
+                headers.add(h)
         return sorted(headers)
 
     def processAttributes(self, element):
@@ -291,15 +299,9 @@ class OMEModel(object):
         deps = set()
 
         for o in self.objects.values():
-            if o.langType != self.opts.lang.base_class and o.langType != "std::string":
-                if isinstance(self.opts.lang, language.Java):
-                    inc = "ome.xml.model.%s" % o.langType
-                elif isinstance(self.opts.lang, language.CXX):
-                    inc = "ome/xml/model/%s.h" % o.langType
-                    # Only add if it's a model type.  Also, add language mapping of
-                    # type to header; will also work for system types like
-                    # std::string.
-                deps.add(inc)
+            dep = o.header
+            if dep is not None:
+                deps.add(dep)
 
             deps.update(o.header_dependencies)
 

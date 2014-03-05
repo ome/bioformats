@@ -42,6 +42,9 @@
 
 namespace ome
 {
+  /**
+   * Bio-Formats image reading and writing.
+   */
   namespace bioformats
   {
 

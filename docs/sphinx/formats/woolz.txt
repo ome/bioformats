@@ -12,7 +12,7 @@ Developer: `MRC Human Genetics Unit <http://www.emouseatlas.org/emap/analysis_to
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |yes|
 

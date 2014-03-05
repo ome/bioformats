@@ -12,7 +12,7 @@ Developer: `Independent JPEG Group <http://www.ijg.org/>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |yes|
 
@@ -48,8 +48,8 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :scifioreader:`JPEGReader.java`
-Source Code: :scifiowriter:`JPEGWriter.java`
+Source Code: :bsd-reader:`JPEGReader.java`
+Source Code: :bsd-writer:`JPEGWriter.java`
 
 Notes:
 

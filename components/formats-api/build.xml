@@ -1,0 +1,14 @@
+<!--
+build.xml
+
+Ant build file for top-level reader and writer APIs.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="formats-api" default="jar" basedir=".">
+  <description>Build file for top-level reader and writer APIs</description>
+  <property name="root.dir" location="../.."/>
+  <import file="${root.dir}/ant/java.xml"/>
+  <property file="build.properties"/>
+</project>

@@ -45,8 +45,8 @@
 #include <ome/compat/cstdint.h>
 
 #include <ome/bioformats/Modulo.h>
-#include <ome/bioformats/meta/BaseMetadata.h>
 
+#include <ome/xml/meta/BaseMetadata.h>
 #include <ome/xml/model/enums/DimensionOrder.h>
 #include <ome/xml/model/enums/PixelType.h>
 
@@ -59,7 +59,7 @@ namespace ome
      * Core metadata values.
      *
      * @todo We may want to consider refactoring the FormatReader
-     * getter methods that populate missing CoreMetadata fields on the
+     * getter methods that fill in missing CoreMetadata fields on the
      * fly (getChannelDimLengths, getChannelDimTypes, getThumbSizeX,
      * getThumbSizeY) to avoid doing so -- one alternate approach
      * would be to have this class use getter methods instead of
@@ -195,14 +195,14 @@ namespace ome
        *
        * @param copy the CoreMetadata to copy.
        */
-      CoreMetadata(const CoreMetadata& c);
+      CoreMetadata(const CoreMetadata& copy);
     };
 
     /**
      * Output CoreMetadata to output stream.
      *
      * @param os the output stream.
-     * @param color the CoreMetadata to output.
+     * @param core the CoreMetadata to output.
      * @returns the output stream.
      */
     template<class charT, class traits>

@@ -2,7 +2,7 @@
 extensions = .sld
 owner = `Intelligent Imaging Innovations`_
 developer = `Intelligent Imaging Innovations`_
-scifio = no
+bsd = no
 export = no
 versions = 4.1, 4.2
 weHave = * Numerous SlideBook datasets
@@ -29,7 +29,7 @@ preserved. \n
 pagename = photoshop-psd
 extensions = .psd
 developer = `Adobe <http://www.adobe.com/>`_
-scifio = no
+bsd = no
 export = no
 versions = 1.0
 weHave = * a PSD specification document (v3.0.4, 16 July 1995) \n
@@ -45,7 +45,7 @@ reader = PSDReader.java
 [AIM]
 extensions = .aim
 developer = `SCANCO Medical AG <http://www.scanco.ch>`_
-scifio = no
+bsd = no
 export = no
 weHave = * one .aim file
 weWant = * an .aim specification document \n
@@ -60,7 +60,7 @@ reader = AIMReader.java
 [Alicona 3D]
 extensions = .al3d
 owner = `Alicona Imaging <http://www.alicona.com/>`_
-scifio = no
+bsd = no
 export = no
 versions = 1.0
 weHave = * an `AL3D specification document <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) \n
@@ -81,7 +81,7 @@ notes = Known deficiencies: \n
 extensions = .gel
 owner = `GE Healthcare Life Sciences <http://www.gelifesciences.com/>`_
 developer = Molecular Dynamics
-scifio = no
+bsd = no
 export = no
 weHave = * a GEL specification document (Revision 2, from 2001 Mar 15, in PDF) \n
 * a few GEL datasets
@@ -98,7 +98,7 @@ notes = .. seealso:: \n
 [Amira Mesh]
 extensions = .am, .amiramesh, .grey, .hx, .labels
 developer = `Visage Imaging <http://www.amiravis.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few Amira Mesh datasets
 weWant = * more Amira Mesh datasets
@@ -112,7 +112,7 @@ reader = AmiraReader.java
 [Analyze 7.5]
 extensions = .img, .hdr
 developer = `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir>`_
-scifio = no
+bsd = no
 export = no
 weHave = * `an Analyze 7.5 specification document <http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf>`_ \n
 * several Analyze 7.5 datasets
@@ -129,7 +129,7 @@ pagename = abd-tiff
 extensions = .tif
 owner = `Andor Technology <http://www.andor.com/>`_
 developer = Andor Bioimaging Department
-scifio = no
+bsd = no
 export = no
 weHave = * an ABD-TIFF specification document (from 2005 November, in PDF) \n
 * a few ABD-TIFF datasets
@@ -147,7 +147,7 @@ Fluoview TIFF format.
 metadataPage = png-metadata
 extensions = .png
 developer = `The Animated PNG Project <http://www.animatedpng.com/>`_
-scifio = yes
+bsd = yes
 export = yes
 software = `Firefox 3+ <http://www.mozilla.com/firefox>`_ \n
 `Opera 9.5+ <http://www.opera.com/download>`_ \n
@@ -164,7 +164,7 @@ reader = APNGReader.java
 [Aperio AFI]
 extensions = .afi, .svs
 owner = `Aperio <http://www.aperio.com/>`_
-scifio = no
+bsd = no
 export = no
 versions =
 weHave = * several AFI datasets
@@ -180,7 +180,7 @@ notes = .. seealso:: \n
 [Aperio SVS TIFF]
 extensions = .svs
 owner = `Aperio <http://www.aperio.com/>`_
-scifio = no
+bsd = no
 export = no
 versions = 8.0, 8.2, 9.0
 weHave = * many SVS datasets \n
@@ -199,7 +199,7 @@ notes = .. seealso:: \n
 [Applied Precision CellWorX]
 extensions = .htd, .pnl
 developer = `Applied Precision <http://www.api.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few CellWorX datasets
 weWant = * a CellWorX specification document \n
@@ -215,7 +215,7 @@ reader = CellWorxReader.java
 pagename = avi
 extensions = .avi
 developer = `Microsoft <http://www.microsoft.com/>`_
-scifio = yes
+bsd = yes
 export = yes
 software = `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_ \n
 `AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
@@ -246,7 +246,7 @@ notes = * Bio-Formats can save image stacks as AVI (uncompressed). \n
 [Axon Raw Format]
 extensions = .arf
 owner = `INDEC BioSystems <http://www.indecbiosystems.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * one ARF dataset \n
 * a `specification document <http://www.indecbiosystems.com/imagingworkbench/ApplicationNotes/IWAppNote11-ARF_File_Format.pdf>`_
@@ -261,7 +261,7 @@ reader = ARFReader.java
 [BD Pathway]
 extensions = .exp, .tif
 owner = `BD Biosciences <http://www.bdbiosciences.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few BD Pathway datasets
 weWant = * more BD Pathway datasets
@@ -275,7 +275,7 @@ reader = BDReader.java
 [Becker & Hickl SPCImage]
 extensions = .sdt
 owner = `Becker-Hickl <http://www.becker-hickl.de/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * an SDT specification document (from 2008 April, in PDF) \n
 * an SDT specification document (from 2006 June, in PDF) \n
@@ -293,7 +293,7 @@ reader = SDTReader.java
 [Bio-Rad Gel]
 extensions = .1sc
 owner = `Bio-Rad <http://www.bio-rad.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * software that can read Bio-Rad Gel files \n
 * several Bio-Rad Gel files
@@ -310,7 +310,7 @@ reader = BioRadGelReader.java
 extensions = .pic, .raw, .xml
 owner = `Carl Zeiss, Inc. <http://www.zeiss.com/>`_
 developer = Bio-Rad
-scifio = no
+bsd = no
 export = no
 software = `Bio-Rad PIC reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/biorad.html>`_
 weHave = * a PIC specification document (v4.5, in PDF) \n
@@ -333,7 +333,7 @@ notes = * Commercial applications that support this format include: \n
 extensions = .scn
 owner = `Bio-Rad <http://www.bio-rad.com>`_
 developer = Bio-Rad
-scifio = no
+bsd = no
 export = no
 weHave = * a few Bio-Rad .scn files
 pixelsRating = Very good
@@ -346,7 +346,7 @@ reader = BioRadSCNReader.java
 [Bitplane Imaris]
 extensions = .ims
 owner = `Bitplane <http://www.bitplane.com/>`_
-scifio = no
+bsd = no
 export = no
 versions = 2.7, 3.0, 5.5
 weHave = * an `Imaris (RAW) specification document <http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104>`_ (from no later than 1997 November 11, in HTML) \n
@@ -370,7 +370,7 @@ notes = - There are three distinct Imaris formats: \n
 
 [Bruker MRI]
 developer = `Bruker <http://www.bruker.com/>`_
-scifio = no
+bsd = no
 export = no
 software = `Bruker plugin for ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_
 weHave = * a few Bruker MRI datasets
@@ -385,7 +385,7 @@ reader = BrukerReader.java
 [Burleigh]
 extensions = .img
 owner = Burleigh Instruments
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read Burleigh files (from ImageSXM) \n
 * a few Burleigh files
@@ -401,7 +401,7 @@ reader = BurleighReader.java
 [Canon DNG]
 extensions = .cr2, .crw
 developer = `Canon <http://canon.com>`_
-scifio = no
+bsd = no
 export = no
 software = `IrfanView <http://www.irfanview.com/>`_
 weHave = * a few example datasets
@@ -416,7 +416,7 @@ reader = DNGReader.java
 [Micro-Manager]
 extensions = .tif, .txt, .xml
 developer = `Vale Lab <http://valelab.ucsf.edu/>`_
-scifio = yes
+bsd = yes
 export = no
 software = `Micro-Manager <http://micro-manager.org/>`_
 weHave = * many Micro-manager datasets
@@ -430,7 +430,7 @@ reader = MicromanagerReader.java
 [Cellomics]
 extensions = .c01
 developer = `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few Cellomics .c01 datasets
 weWant = * a Cellomics .c01 specification document \n
@@ -445,7 +445,7 @@ reader = CellomicsReader.java
 [cellSens VSI]
 extensions = .vsi
 developer = `Olympus <http://www.olympus.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few example datasets
 weWant = * an official specification document
@@ -459,7 +459,7 @@ reader = CellSensReader.java
 [CellVoyager]
 extensions = .xml, .tif
 owner = `Yokogawa <http://www.yokogawa.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few example datasets
 pixelsRating = Very good
@@ -472,7 +472,7 @@ reader = CellVoyagerReader.java
 [DeltaVision]
 extensions = .dv, .r3d
 owner = `Applied Precision <http://www.api.com/>`_
-scifio = no
+bsd = no
 export = no
 software = `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
 samples = `Applied Precision Datasets <http://www.api.com/downloads/software/softworxexplorer2.0/SampleImages.zip>`_
@@ -498,7 +498,7 @@ notes = - The Deltavision format is based on the Medical Research Council (MRC) 
 [DICOM]
 extensions = .dcm, .dicom
 developer = `National Electrical Manufacturers Association <http://www.nema.org/>`_
-scifio = yes
+bsd = yes
 export = no
 software = `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_ \n
 `ezDICOM <http://www.sph.sc.edu/comd/rorden/ezdicom.html>`_ \n
@@ -523,7 +523,7 @@ notes = * DICOM stands for "Digital Imaging and Communication in Medicine". \n
 [ECAT7]
 extensions = .v
 developer = `Siemens <http://www.siemens.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few ECAT7 files
 weWant = * an ECAT7 specification document \n
@@ -539,7 +539,7 @@ reader = Ecat7Reader.java
 pagename = eps
 extensions = .eps, .epsi, .ps
 developer = `Adobe <http://www.adobe.com/>`_
-scifio = yes
+bsd = yes
 export = yes
 software = `EPS Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_
 weHave = * a few EPS datasets \n
@@ -557,7 +557,7 @@ notes = * Bio-Formats can save individual planes as EPS. \n
 [Evotec/PerkinElmer Opera Flex]
 extensions = .flex, .mea, .res
 developer = `Evotec Technologies, now PerkinElmer <http://www.perkinelmer.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * many Flex datasets
 weWant = * a freely redistributable LuraWave LWF decoder
@@ -576,7 +576,7 @@ license code is required to decode wavelet-compressed Flex files. \n
 [FEI TIFF]
 extensions = .tiff
 developer = `FEI <http://www.fei.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few FEI TIFF datasets
 pixelsRating = Very good
@@ -589,7 +589,7 @@ reader = FEITiffReader.java
 [FEI]
 extensions = .img
 developer = `FEI <http://www.fei.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few FEI files
 weWant = * a specification document \n
@@ -605,7 +605,7 @@ reader = FEIReader.java
 pagename = fits
 extensions = .fits
 developer = `National Radio Astronomy Observatory <http://www.nrao.edu/>`_
-scifio = yes
+bsd = yes
 export = no
 weHave = * a `FITS specification document <http://archive.stsci.edu/fits/fits_standard/>`_ (NOST 100-2.0, from 1999 March 29, in HTML) \n
 * several FITS datasets
@@ -622,7 +622,7 @@ notes = .. seealso:: \n
 [Gatan Digital Micrograph 2]
 extensions = .dm2
 developer = `Gatan <http://www.gatan.com>`_
-scifio = no
+bsd = no
 export = no
 versions = 2
 weHave = * Pascal code that can read DM2 files (from ImageSXM) \n
@@ -639,7 +639,7 @@ reader = GatanDM2Reader.java
 [Gatan Digital Micrograph]
 extensions = .dm3
 owner = `Gatan <http://www.gatan.com/>`_
-scifio = no
+bsd = no
 export = no
 versions = 3
 software = `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_ \n
@@ -660,7 +660,7 @@ pagename = gif
 extensions = .gif
 owner = `Unisys <http://www.unisys.com/>`_
 developer = `CompuServe <http://www.compuserve.com/>`_
-scifio = yes
+bsd = yes
 export = no
 software = `Animated GIF Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/agr.html>`_ \n
 `GIF Stack Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/gif-stack-writer.html>`_
@@ -677,7 +677,7 @@ reader = GIFReader.java
 [Hamamatsu Aquacosmos NAF]
 extensions = .naf
 developer = `Hamamatsu <http://www.hamamatsu.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few NAF files
 weWant = * a specification document \n
@@ -692,7 +692,7 @@ reader = NAFReader.java
 [Hamamatsu HIS]
 extensions = .his
 owner = `Hamamatsu <http://www.hamamatsu.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read HIS files (from ImageSXM) \n
 * several HIS files
@@ -708,7 +708,7 @@ reader = HISReader.java
 [Hamamatsu ndpi]
 extensions = .ndpi
 developer = `Hamamatsu <http://www.hamamatsu.com>`_
-scifio = no
+bsd = no
 export = no
 software = `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
 samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu/>`_
@@ -724,7 +724,7 @@ reader = NDPIReader.java
 [Hamamatsu VMS]
 extensions = .vms
 developer = `Hamamatsu <http://www.hamamatsu.com>`_
-scifio = no
+bsd = no
 export = no
 samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 weHave = * a few example datasets \n
@@ -741,7 +741,7 @@ reader = HamamatsuVMSReader.java
 [Hitachi S-4800]
 extensions = .txt, .tif, .bmp, .jpg
 developer = `Hitachi <http://www.hitachi-hta.com/sites/default/files/technotes/Hitachi_4800_STEM.pdf>`_
-scifio = no
+bsd = no
 export = no
 weHave = * several Hitachi S-4800 datasets
 pixelsRating = Very good
@@ -755,7 +755,7 @@ reader = HitachiReader.java
 pagename = ics
 extensions = .ics, .ids
 developer = P. Dean et al.
-scifio = yes
+bsd = yes
 export = yes
 versions = 1.0, 2.0
 software = `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ \n
@@ -783,7 +783,7 @@ Commercial applications that can support ICS include: \n
 [Imacon]
 extensions = .fff
 owner = `Hasselblad <http://www.hasselbladusa.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * one Imacon file
 weWant = * more Imacon files
@@ -797,7 +797,7 @@ reader = ImaconReader.java
 [ImagePro Sequence]
 extensions = .seq
 owner = `Media Cybernetics <http://www.mediacy.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software \n
 * a few SEQ datasets \n
@@ -813,7 +813,7 @@ reader = SEQReader.java
 [ImagePro Workspace]
 extensions = .ipw
 owner = `Media Cybernetics <http://www.mediacy.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software \n
 * a few IPW datasets \n
@@ -835,7 +835,7 @@ POI <http://jakarta.apache.org/poi/>`_ library to read IPW files.
 [IMAGIC]
 extensions = .hed, .img
 developer = `Image Science <http://www.imagescience.de>`_
-scifio = no
+bsd = no
 export = no
 software = `em2em <http://www.imagescience.de/em2em.html>`_
 weHave = * one example dataset \n
@@ -854,7 +854,7 @@ notes = .. seealso:: \n
 extensions = .mod
 owner = `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <http://bio3d.colorado.edu>`_
 developer = `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <http://bio3d.colorado.edu>`_
-scifio = no
+bsd = no
 export = no
 software = `IMOD <http://bio3d.colorado.edu/imod/>`_
 weHave = * a few sample datasets \n
@@ -870,7 +870,7 @@ reader = IMODReader.java
 extensions = .liff
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 developer = `Improvision <http://www.improvision.com/>`_
-scifio = no
+bsd = no
 export = no
 versions = 2.0, 5.0
 weHave = * an Openlab specification document (from 2000 February 8, in DOC) \n
@@ -891,7 +891,7 @@ notes = .. seealso:: \n
 extensions = .raw
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 developer = `Improvision <http://www.improvision.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * an `Openlab Raw specification document <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) \n
 * a few Openlab Raw datasets
@@ -908,7 +908,7 @@ notes = .. seealso:: \n
 extensions = .tif
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 developer = `Improvision <http://www.improvision.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * an Improvision TIFF specification document \n
 * a few Improvision TIFF datasets
@@ -926,7 +926,7 @@ notes = .. seealso:: \n
 extensions = .obf, .msr
 owner = `MPI-BPC <http://www.mpibpc.mpg.de/>`_
 developer = `Department of NanoBiophotonics, MPI-BPC <https://imspector.mpibpc.mpg.de/index.html>`_
-scifio = yes
+bsd = yes
 export = no
 weHave = * a few .msr datasets \n
 * `a specification document <https://imspector.mpibpc.mpg.de/documentation/fileformat.html>`_
@@ -940,7 +940,7 @@ reader = OBFReader.java
 [InCell 1000]
 extensions = .xdce, .tif
 developer = `GE <http://gelifesciences.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few InCell 1000 datasets
 weWant = * an InCell 1000 specification document \n
@@ -955,7 +955,7 @@ reader = InCellReader.java
 [InCell 3000]
 extensions = .frm
 developer = `GE <http://gelifesciences.com/>`_
-scifio = no
+bsd = no
 export = no
 samples = `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
 weHave = * a few example datasets
@@ -969,7 +969,7 @@ reader = InCell3000Reader.java
 
 [INR]
 extensions = .inr
-scifio = no
+bsd = no
 export = no
 weHave = * several sample .inr datasets
 pixelsRating = Very good
@@ -981,7 +981,7 @@ reader = INRReader.java
 
 [Inveon]
 extensions = .hdr
-scifio = no
+bsd = no
 export = no
 weHave = a few Inveon datasets
 pixelsRating = Very good
@@ -994,7 +994,7 @@ reader = InveonReader.java
 [IPLab-Mac]
 extensions = .ipm
 owner = `BioVision Technologies <http://biovis.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few IPLab-Mac datasets \n
 * a specification document
@@ -1011,7 +1011,7 @@ reader = IvisionReader.java
 extensions = .ipl
 owner = was `BD Biosystems <http://www.bdbiosciences.com/>`_, now `BioVision Technologies <http://www.biovis.com/iplab.htm>`_
 developer = Scanalytics
-scifio = no
+bsd = no
 export = no
 software = `IPLab Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/iplab-reader.html>`_
 weHave = * an IPLab specification document (v3.6.5, from 2004 December 1, in PDF) \n
@@ -1035,7 +1035,7 @@ notes = Commercial applications that support IPLab include: \n
 [JEOL]
 extensions = .dat, .img, .par
 owner = `JEOL <http://www.jeol.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that reads JEOL files (from ImageSXM) \n
 * a few JEOL files
@@ -1051,7 +1051,7 @@ reader = JEOLReader.java
 [JPEG 2000]
 extensions = .jp2
 developer = `Independent JPEG Group <http://www.ijg.org/>`_
-scifio = yes
+bsd = yes
 export = yes
 software = `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
 weHave = * a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) \n
@@ -1069,7 +1069,7 @@ JPEG stands for "Joint Photographic Experts Group".
 [JPEG]
 extensions = .jpg
 developer = `Independent JPEG Group <http://www.ijg.org/>`_
-scifio = yes
+bsd = yes
 export = yes
 weHave = * a `JPEG specification document <http://www.w3.org/Graphics/JPEG/jfif3.pdf>`_ (v1.04, from 1992 September 1, in PDF) \n
 * numerous JPEG datasets \n
@@ -1091,7 +1091,7 @@ JPEG stands for "Joint Photographic Experts Group". \n
 [JPK]
 extensions = .jpk
 developer = `JPK Instruments <http://www.jpk.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read JPK files (from ImageSXM) \n
 * a few JPK files
@@ -1107,7 +1107,7 @@ reader = JPKReader.java
 [JPX]
 extensions = .jpx
 developer = `JPEG Committee <http://www.jpeg.org/jpeg2000/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few .jpx files
 pixelsRating = Very good
@@ -1122,7 +1122,7 @@ pagename = khoros-viff-bitmap
 extensions = .xv
 owner = `AccuSoft <http://www.accusoft.com/company/>`_
 developer = `Khoral <http://www.khoral.com/company/>`_
-scifio = no
+bsd = no
 export = no
 samples = `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 weHave = * several VIFF datasets
@@ -1138,7 +1138,7 @@ notes = .. seealso:: \n
 [Kodak BIP]
 extensions = .bip
 developer = `Kodak/Carestream <http://carestream.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few .bip datasets
 weWant = * an official specification document
@@ -1154,7 +1154,7 @@ notes = .. seealso:: \n
 [Lambert Instruments FLIM]
 extensions = .fli
 developer = `Lambert Instruments <http://www.lambert-instruments.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * an LI-FLIM specification document \n
 * several example LI-FLIM datasets
@@ -1171,7 +1171,7 @@ pagename = leica-lif
 extensions = .lif
 owner = `Leica <http://www.leica.com/>`_
 developer = `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
-scifio = no
+bsd = no
 export = no
 versions = 1.0, 2.0
 software = `Leica LAS AF Lite <http://www.leica-microsystems.com/products/microscope-imaging-software/life-sciences/las-af-advanced-fluorescence/>`_ (links at bottom of page)
@@ -1197,7 +1197,7 @@ Commercial applications that support LIF include: \n
 [LaVision Imspector]
 extensions = .msr
 developer = `LaVision BioTec <http://www.lavisionbiotec.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few .msr files
 pixelsRating = Fair
@@ -1211,7 +1211,7 @@ reader = ImspectorReader.java
 extensions = .lei, .tif
 owner = `Leica <http://www.leica.com/>`_
 developer = `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
-scifio = no
+bsd = no
 export = no
 software = `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
 weHave = * an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF) \n
@@ -1235,7 +1235,7 @@ Commercial applications that support LEI include: \n
 [Leica SCN]
 extensions = .scn
 developer = `Leica Microsystems <http://www.leica-microsystems.com/>`_
-scifio = no
+bsd = no
 export = no
 versions = 2012-03-10
 weHave = * a few sample datasets
@@ -1251,7 +1251,7 @@ reader = LeicaSCNReader.java
 [LEO]
 extensions = .sxm
 owner = `Zeiss <http://www.zeiss.de>`_
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read LEO files (from ImageSXM) \n
 * a few LEO files
@@ -1267,7 +1267,7 @@ reader = LEOReader.java
 [Li-Cor L2D]
 extensions = .l2d, .tif, .scn
 owner = `LiCor Biosciences <http://www.licor.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few L2D datasets
 weWant = * an official specification document \n
@@ -1285,7 +1285,7 @@ They can, however, be imported from ImageJ, or using the omeul utility.
 pagename = lim
 extensions = .lim
 owner = `Laboratory Imaging <http://www.lim.cz/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * several LIM files \n
 * the ability to produce more LIM files
@@ -1305,7 +1305,7 @@ Commercial applications that support LIM include: \n
 [MetaMorph 7.5 TIFF]
 extensions = .tiff
 owner = `Molecular Devices <http://www.moleculardevices.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few Metamorph 7.5 TIFF datasets
 pixelsRating = Very good
@@ -1318,7 +1318,7 @@ reader = MetamorphTiffReader.java
 [MetaMorph Stack (STK)]
 extensions = .stk, .nd
 owner = `Molecular Devices <http://www.moleculardevices.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * an STK specification document (from 2006 November 21, in DOC) \n
 * an older STK specification document (from 2005 March 25, in DOC) \n
@@ -1343,7 +1343,7 @@ notes = Commercial applications that support STK include: \n
 [MIAS (Maia Scientific)]
 extensions = .tif
 developer = `Maia Scientific <http://www.selectscience.net/supplier/maia-scientific/?compID=6088>`_
-scifio = no
+bsd = no
 export = no
 weHave = * several MIAS datasets
 pixelsRating = Very good
@@ -1356,7 +1356,7 @@ reader = MIASReader.java
 [MINC MRI]
 extensions = .mnc
 developer = `McGill University <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
-scifio = no
+bsd = no
 export = no
 software = `MINC <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
 weHave = * a few MINC files
@@ -1370,7 +1370,7 @@ reader = MINCReader.java
 [Minolta MRW]
 extensions = .mrw
 developer = `Minolta <http://www.konicaminolta.com/>`_
-scifio = no
+bsd = no
 export = no
 software = `dcraw <http://www.cybercom.net/%7Edcoffin/dcraw/>`_
 weHave = * several .mrw files
@@ -1387,7 +1387,7 @@ notes = .. seealso:: \n
 pagename = mng
 extensions = .mng
 developer = `MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
-scifio = yes
+bsd = yes
 export = no
 software = `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
 samples = `MNG sample files <http://sourceforge.net/projects/libmng/files/libmng-testsuites/MNGsuite-1.0/MNGsuite.zip/download>`_
@@ -1406,7 +1406,7 @@ notes = .. seealso:: \n
 [Molecular Imaging]
 extensions = .stp
 owner = Molecular Imaging Corp, San Diego CA (closed)
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that reads Molecular Imaging files (from ImageSXM) \n
 * a few Molecular Imaging files
@@ -1423,7 +1423,7 @@ reader = MolecularImagingReader.java
 pagename = mrc
 extensions = .mrc
 developer = `MRC Laboratory of Molecular Biology <http://www2.mrc-lmb.cam.ac.uk/>`_
-scifio = no
+bsd = no
 export = no
 samples = `golgi.mrc <http://bio3d.colorado.edu/imod/files/imod_data.tar.gz>`_
 weHave = * an `MRC specification document <http://ami.scripps.edu/software/mrctools/mrc_specification.php>`_ (in HTML) \n
@@ -1446,7 +1446,7 @@ notes = Commercial applications that support MRC include: \n
 pagename = nef
 extensions = .nef, .tif
 developer = `Nikon <http://www.nikon.com/>`_
-scifio = no
+bsd = no
 export = no
 samples = `neffile1.zip <http://www.outbackphoto.com/workshop/NEF_conversion/neffile1.zip>`_ \n
 `Sample NEF images <http://www.nikondigital.org/articles/library/nikon_d2x_first_impressions.htm>`_
@@ -1465,7 +1465,7 @@ notes = .. seealso:: \n
 [NIfTI]
 extensions = .img, .hdr
 developer = `National Institutes of Health <http://www.nih.gov/>`_
-scifio = no
+bsd = no
 export = no
 samples = `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
 weHave = * `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_ \n
@@ -1480,7 +1480,7 @@ reader = NiftiReader.java
 [Nikon Elements TIFF]
 extensions = .tiff
 developer = `Nikon <http://www.nikon.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few Nikon Elements TIFF files
 weWant = * more Nikon Elements TIFF files
@@ -1494,7 +1494,7 @@ reader = NikonElementsTiffReader.java
 [Nikon EZ-C1 TIFF]
 extensions = .tiff
 developer = `Nikon <http://www.nikon.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few Nikon EZ-C1 TIFF files
 pixelsRating = Very good
@@ -1507,7 +1507,7 @@ reader = NikonTiffReader.java
 [Nikon NIS-Elements ND2]
 extensions = .nd2
 developer = `Nikon USA <http://www.nikonusa.com/>`_
-scifio = no
+bsd = no
 export = no
 software = `NIS-Elements Viewer from Nikon <http://www.nis-elements.com/resources-downloads.html>`_
 weHave = * many ND2 datasets
@@ -1537,7 +1537,7 @@ and place it in your ImageJ plugin folder.
 pagename = nrrd
 extensions = .nrrd, .nhdr, .raw, .txt
 developer = `Teem developers <http://teem.sourceforge.net/>`_
-scifio = yes
+bsd = yes
 export = no
 software = `nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
 samples = `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
@@ -1553,7 +1553,7 @@ reader = NRRDReader.java
 [Olympus CellR/APL]
 extensions = .apl, .mtb, .tnb, .tif, .obsep
 owner = `Olympus <http://www.olympus.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few CellR datasets
 weWant = * more Cellr datasets \n
@@ -1568,7 +1568,7 @@ reader = APLReader.java
 [Olympus FluoView FV1000]
 extensions = .oib, .oif
 owner = `Olympus <http://www.olympus.com/>`_
-scifio = no
+bsd = no
 export = no
 versions = 1.0, 2.0
 software = `FV-Viewer from Olympus <http://www.olympus.co.uk/microscopy/22_FluoView_FV1000__Confocal_Microscope.htm>`_
@@ -1604,7 +1604,7 @@ Commercial applications that support this format include: \n
 [Olympus FluoView TIFF]
 extensions = .tif
 owner = `Olympus <http://www.olympus.com/>`_
-scifio = no
+bsd = no
 export = no
 software = `DIMIN <http://www.dimin.net/>`_
 weHave = * a FluoView specification document (from 2002 November 14, in DOC) \n
@@ -1626,7 +1626,7 @@ notes = Commercial applications that support this format include: \n
 extensions = .xml, .dat, .tif
 owner = `Olympus <http://www.olympus.com/>`_
 developer = `Olympus <http://www.olympus.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * several ScanR datasets
 pixelsRating = Very good
@@ -1639,7 +1639,7 @@ reader = ScanrReader.java
 [Olympus SIS TIFF]
 extensions = .tiff
 developer = `Olympus <http://www.olympus-sis.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few example SIS TIFF files
 pixelsRating = Good
@@ -1652,7 +1652,7 @@ reader = SISReader.java
 [OME-TIFF]
 extensions = .ome.tiff
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
-scifio = yes
+bsd = yes
 export = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06
 weHave = * an :model_doc:`OME-TIFF specification document <ome-tiff/specification.html>` (from 2006 October 19, in HTML) \n
@@ -1678,7 +1678,7 @@ Commercial applications that support OME-TIFF include: \n
 [OME-XML]
 extensions = .ome
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
-scifio = yes
+bsd = yes
 export = yes
 versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06, 2013-06
 weHave = * `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ \n
@@ -1702,7 +1702,7 @@ Commercial applications that support OME-XML include: \n
 [Oxford Instruments]
 extensions = .top
 owner = `Oxford Instruments <http://www.oxinst.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read Oxford Instruments files (from ImageSXM) \n
 * a few Oxford Instruments files
@@ -1718,7 +1718,7 @@ reader = OxfordInstrumentsReader.java
 [PCX (PC Paintbrush)]
 extensions = .pcx
 developer = ZSoft Corporation
-scifio = yes
+bsd = yes
 export = no
 weHave = * several .pcx files \n
 * the ability to generate additional .pcx filse
@@ -1733,7 +1733,7 @@ notes = Commercial applications that support PCX include `Zeiss LSM Image Browse
 [PCORAW]
 extensions = .pcoraw, .rec
 developer = `PCO <http://www.pco.de/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few example datasets
 pixelsRating = Very good
@@ -1746,7 +1746,7 @@ reader = PCORAWReader.java
 [Perkin Elmer Densitometer]
 extensions = .pds
 developer = `Perkin Elmer <http://www.perkinelmer.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few PDS datasets
 weWant = * an official specification document \n
@@ -1761,7 +1761,7 @@ reader = PDSReader.java
 [PerkinElmer Operetta]
 extensions = .tiff, .xml
 developer = `PerkinElmer <http://www.perkinelmer.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few sample datasets
 weWant = * an official specification document \n
@@ -1777,7 +1777,7 @@ reader = OperettaReader.java
 extensions = .tif, .2, .3, .4
 unindexedExtensions = etc.
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * several UltraView datasets
 pixelsRating = Very good
@@ -1801,7 +1801,7 @@ Commercial applications that support this format include: \n
 pagename = pgm
 extensions = .pgm
 developer = Netpbm developers
-scifio = yes
+bsd = yes
 export = no
 software = `Netpbm graphics filter <http://netpbm.sourceforge.net/>`_
 weHave = * a `PGM specification document <http://netpbm.sourceforge.net/doc/pgm.html>`_ (from 2003 October 3, in HTML) \n
@@ -1816,7 +1816,7 @@ reader = PGMReader.java
 [Photoshop TIFF]
 extensions = .tif, .tiff
 developer = `Adobe <http://www.adobe.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a Photoshop TIFF specification document \n
 * a few Photoshop TIFF files
@@ -1830,7 +1830,7 @@ reader = PhotoshopTiffReader.java
 [PICT (Macintosh Picture)]
 extensions = .pict
 developer = `Apple Computer <http://www.apple.com>`_
-scifio = yes
+bsd = yes
 export = no
 weHave = * many PICT datasets
 pixelsRating = Very good
@@ -1851,7 +1851,7 @@ for reading vector files and some compressed files. \n
 pagename = png
 extensions = .png
 developer = `PNG Development Group <http://www.libpng.org/pub/png/pngnews.html>`_
-scifio = yes
+bsd = yes
 export = yes
 software = `PNG Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/png-writer.html>`_
 weHave = * a `PNG specification document <http://www.libpng.org/pub/png/spec/iso/>`_ (W3C/ISO/IEC version, from 2003 November 10, in HTML) \n
@@ -1872,7 +1872,7 @@ API to read and write PNG files. \n
 pagename = prairie-tech-tiff
 extensions = .tif, .xml, .cfg
 developer = `Prairie Technologies <http://www.prairie-technologies.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * many Prairie datasets
 pixelsRating = Very good
@@ -1886,7 +1886,7 @@ reader = PrairieReader.java
 extensions = .afm
 owner = `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
 developer = Quesant Instrument Corporation
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read Quesant files (from ImageSXM) \n
 * several Quesant files
@@ -1902,7 +1902,7 @@ reader = QuesantReader.java
 [QuickTime Movie]
 extensions = .mov
 owner = `Apple Computer <http://www.apple.com/>`_
-scifio = yes
+bsd = yes
 export = yes
 software = `QuickTime Player <http://www.apple.com/quicktime/download/>`_
 weHave = * a `QuickTime specification document <http://developer.apple.com/documentation/Quicktime/QTFF/>`_ (from 2001 March 1, in HTML) \n
@@ -1950,7 +1950,7 @@ h263   H.263                               -                  read & write \n
 [RHK]
 extensions = .sm2, .sm3
 owner = `RHK Technologies <http://www.rhk-tech.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read RHK files (from ImageSXM) \n
 * a few RHK files
@@ -1965,7 +1965,7 @@ reader = RHKReader.java
 
 [SBIG]
 owner = `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_ \n
 * a few SBIG files
@@ -1980,7 +1980,7 @@ reader = SBIGReader.java
 [Seiko]
 extensions = .xqd, .xqf
 owner = `Seiko <http://www.seiko.co.jp/en/index.php>`_
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read Seiko files (from ImageSXM) \n
 * a few Seiko files
@@ -1996,7 +1996,7 @@ reader = SeikoReader.java
 [SimplePCI & HCImage TIFF]
 extensions = .tiff
 developer = `Hamamatsu <http://hcimage.com/simple-pci-legacy/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few SimplePCI TIFF datasets
 weWant = * more SimplePCI TIFF datasets
@@ -2010,7 +2010,7 @@ reader = SimplePCITiffReader.java
 [SimplePCI & HCImage]
 extensions = .cxd
 developer = `Compix <http://hcimage.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * several SimplePCI files
 pixelsRating = Outstanding
@@ -2026,7 +2026,7 @@ POI library <http://jakarta.apache.org/poi/>`_ to read CXD files. \n
   `SimplePCI software overview <http://hcimage.com/simple-pci-legacy/>`_
 
 [SM Camera]
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read SM-Camera files (from ImageSXM) \n
 * a few SM-Camera files
@@ -2042,7 +2042,7 @@ reader = SMCameraReader.java
 [SPIDER]
 extensions = .spi, .stk
 developer = `Wadsworth Center <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
-scifio = no
+bsd = no
 export = no
 software = `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 weHave = * a few example datasets \n
@@ -2057,7 +2057,7 @@ reader = SpiderReader.java
 [Targa]
 extensions = .tga
 developer = `Truevision <http://www.truevision.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a Targa specification document \n
 * a few Targa files
@@ -2070,7 +2070,7 @@ reader = TargaReader.java
 
 [Text]
 extensions = .txt
-scifio = yes
+bsd = yes
 export = no
 pixelsRating = Good
 metadataRating = Poor
@@ -2085,7 +2085,7 @@ pagename = tiff
 extensions = .tif
 owner = `Adobe <http://www.adobe.com>`_
 developer = Aldus and Microsoft
-scifio = yes
+bsd = yes
 export = yes
 samples = `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ \n
 `Big TIFF <http://tiffcentral.com/>`_
@@ -2109,7 +2109,7 @@ Bio-Formats can save image stacks as TIFF or BigTIFF. \n
 [TillPhotonics TillVision]
 extensions = .vws
 developer = `TILL Photonics <http://www.till-photonics.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * several TillVision datasets
 weWant = * an official specification document
@@ -2123,7 +2123,7 @@ reader = TillVisionReader.java
 [Topometrix]
 extensions = .tfr, .ffr, .zfr, .zfp, .2fl
 owner = `TopoMetrix (now Veeco) <http://www.veeco.com/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that reads Topometrix files (from ImageSXM) \n
 * a few Topometrix files
@@ -2138,7 +2138,7 @@ reader = TopometrixReader.java
 
 [Trestle]
 extensions = .tif, .sld, .jpg
-scifio = no
+bsd = no
 export = no
 samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
 weHave = * a few example datasets \n
@@ -2152,7 +2152,7 @@ reader = TrestleReader.java
 
 [UBM]
 extensions = .pr3
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read UBM files (from ImageSXM) \n
 * one UBM file
@@ -2168,7 +2168,7 @@ reader = UBMReader.java
 [Unisoku]
 extensions = .dat, .hdr
 owner = `Unisoku <http://www.unisoku.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read Unisoku files (from ImageSXM) \n
 * a few Unisoku files
@@ -2184,7 +2184,7 @@ reader = UnisokuReader.java
 [Varian FDF]
 extensions = .fdf
 developer = `Varian, Inc. <http://www.varianinc.com>`_
-scifio = no
+bsd = no
 export = no
 weHave = * a few Varian FDF datasets
 weWant = * an official specification document \n
@@ -2198,7 +2198,7 @@ reader = VarianFDFReader.java
 
 [VG SAM]
 extensions = .dti
-scifio = no
+bsd = no
 export = no
 weHave = * a few VG-SAM files
 weWant = * an official specification document \n
@@ -2213,7 +2213,7 @@ reader = VGSAMReader.java
 [VisiTech XYS]
 extensions = .xys, .html
 developer = `VisiTech International <http://www.visitech.co.uk/>`_
-scifio = no
+bsd = no
 export = no
 weHave = * several VisiTech datasets
 weWant = * an official specification document
@@ -2227,7 +2227,7 @@ reader = VisitechReader.java
 [Volocity Library Clipping]
 extensions = .acff
 developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
-scifio = no
+bsd = no
 export = no
 weHave = * several Volocity library clipping datasets
 weWant = * any datasets that do not open correctly \n
@@ -2243,7 +2243,7 @@ notes = RGB .acff files are not yet supported.  See :ticket:`6413`.
 [Volocity]
 extensions = .mvd2
 developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
-scifio = no
+bsd = no
 export = no
 samples = `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
 weHave = * many example Volocity datasets
@@ -2261,7 +2261,7 @@ notes = .mvd2 files are `Metakit database files <http://equi4.com/metakit/>`_.
 extensions = .wat
 owner = `Oxford Instruments <http://www.oxinst.com>`_
 developer = WA Technology
-scifio = no
+bsd = no
 export = no
 weHave = * Pascal code that can read WA-TOP files (from ImageSXM) \n
 * a few WA-TOP files
@@ -2277,7 +2277,7 @@ reader = WATOPReader.java
 [Windows Bitmap]
 extensions = .bmp
 developer = Microsoft and IBM
-scifio = yes
+bsd = yes
 export = no
 software = `BMP Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html>`_
 weHave = * many BMP datasets
@@ -2296,7 +2296,7 @@ notes = Compressed BMP files are currently not supported. \n
 [Woolz]
 extensions = .wlz
 developer = `MRC Human Genetics Unit <http://www.emouseatlas.org/emap/analysis_tools_resources/software/woolz.html>`_
-scifio = no
+bsd = no
 export = yes
 software = `Woolz <http://www.emouseatlas.org/emap/analysis_tools_resources/software/woolz.html>`_
 weHave = * a few Woolz datasets
@@ -2312,7 +2312,7 @@ writer = WlzWriter.java
 extensions = .xml, .tiff
 owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
-scifio = no
+bsd = no
 export = no
 software = `Zeiss ZEN Lite <http://microscopy.zeiss.com/microscopy/en_de/downloads/zen.html>`_
 weHave = * many example datasets
@@ -2329,7 +2329,7 @@ pagename = zeiss-axiovision-zvi
 extensions = .zvi
 owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 developer = `Carl Zeiss MicroImaging GmbH (AxioVision) <http://www.zeiss.com/axiovision>`_
-scifio = no
+bsd = no
 export = no
 versions = 1.0, 2.0
 software = `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
@@ -2356,7 +2356,7 @@ Commercial applications that support ZVI include `Bitplane Imaris <http://www.bi
 [Zeiss CZI]
 extensions = .czi
 developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
-scifio = no
+bsd = no
 export = no
 software = `Zeiss ZEN 2011 <http://www.zeiss.de/C12567BE0045ACF1/Contents-Frame/A57B6AE510CE8FF1C12578FE002A725D>`_
 weHave = * many example datasets \n
@@ -2373,7 +2373,7 @@ reader = ZeissCZIReader.java
 pagename = zeiss-lsm
 extensions = .lsm, .mdb
 owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
-scifio = no
+bsd = no
 export = no
 software = `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_ \n
 `LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_ \n

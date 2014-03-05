@@ -1,0 +1,50 @@
+<assembly
+  xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.1 http://maven.apache.org/xsd/assembly-1.1.1.xsd">
+  <id>loci_tools</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <excludes>
+        <exclude>ome:lwf-stubs</exclude>
+        <exclude>gov.nih.imagej:imagej</exclude>
+        <!-- exclude testing dependencies -->
+        <exclude>org.testng:testng</exclude>
+        <exclude>junit:junit</exclude>
+        <exclude>com.beust:jcommander</exclude>
+        <exclude>org.yaml:snakeyaml</exclude>
+        <exclude>org.beanshell:bsh</exclude>
+        <exclude>edu.princeton.cup:java-cup</exclude>
+        <exclude>org.apache.bcel:bcel</exclude>
+        <exclude>commons-codec:commons-codec</exclude>
+        <exclude>commons-logging:commons-logging</exclude>
+        <exclude>regexp:regexp</exclude>
+        <exclude>org.apache.ant:ant-trax</exclude>
+        <exclude>edu.ucar:udunits</exclude>
+        <exclude>javax.servlet:servlet-api</exclude>
+        <!-- exclude optional libraries pulled in by netCDF -->
+        <exclude>com.sleepycat:je</exclude>
+        <exclude>net.sf.ehcache:ehcache-core</exclude>
+        <exclude>com.google.protobuf:protobuf-java</exclude>
+        <exclude>org.quartz-scheduler:quartz</exclude>
+        <exclude>c3p0:c3p0</exclude>
+        <exclude>com.sun.jna:jna</exclude>
+        <exclude>net.jcip:jcip-annotations</exclude>
+        <exclude>org.jdom:jdom2</exclude>
+        <exclude>jaxen:jaxen</exclude>
+        <exclude>org.slf4j:jcl-over-slf4j</exclude>
+        <exclude>ch.qos.logback:logback-core</exclude>
+        <exclude>ch.qos.logback:logback-classic</exclude>
+        <exclude>commons-httpclient:commons-httpclient</exclude>
+      </excludes>
+      <outputDirectory>/</outputDirectory>
+      <unpack>true</unpack>
+      <scope>runtime</scope>
+      <useProjectArtifact>false</useProjectArtifact>
+    </dependencySet>
+  </dependencySets>
+</assembly>

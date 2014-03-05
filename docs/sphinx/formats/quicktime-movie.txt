@@ -12,7 +12,7 @@ Owner: `Apple Computer <http://www.apple.com/>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |yes|
 
@@ -55,8 +55,8 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :scifioreader:`NativeQTReader.java`
-Source Code: :scifiowriter:`QTWriter.java`
+Source Code: :bsd-reader:`NativeQTReader.java`
+Source Code: :bsd-writer:`QTWriter.java`
 
 Notes:
 

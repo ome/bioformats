@@ -35,6 +35,21 @@ class Language(object):
 
         self.base_class = None
 
+        self.template_map = {
+            'ENUM': 'OMEXMLModelEnum.template',
+            'ENUM_INCLUDEALL': 'OMEXMLModelAllEnums.template',
+            'ENUM_HANDLER': 'OMEXMLModelEnumHandler.template',
+            'CLASS': 'OMEXMLModelObject.template',
+            'METADATA_STORE': 'MetadataStore.template',
+            'METADATA_RETRIEVE': 'MetadataRetrieve.template',
+            'METADATA_AGGREGATE': 'AggregateMetadata.template',
+            'OMEXML_METADATA': 'OMEXMLMetadataImpl.template',
+            'DUMMY_METADATA': 'DummyMetadata.template',
+            'FILTER_METADATA': 'FilterMetadata.template',
+            'OMERO_METADATA': 'OmeroMetadata.template',
+            'OMERO_MODEL': 'OmeroModel.template'
+            }
+
         # A global type mapping from XSD Schema types to language
         # primitive base classes.
         self.primitive_type_map = {
@@ -75,11 +90,14 @@ class Language(object):
     def getDefaultModelBaseClass(self):
         return None
 
+    def getTemplate(self, name):
+        return self.template_map[name]
+
     def getTemplateDirectory(self):
         return self.template_dir
 
     def templatepath(self, template):
-        return os.path.join(self._templatepath, self.getTemplateDirectory(), template)
+        return os.path.join(self._templatepath, self.getTemplateDirectory(), self.getTemplate(template))
 
     def generatedFilename(self, name, type):
         gen_name = None
@@ -130,8 +148,23 @@ class Language(object):
         except KeyError:
             return None
 
-    def index_string(self, name, max_occurs, level):
-        raise ModelProcessingError("Must be implemented by specific language")
+    def index_signature(self, name, max_occurs, level):
+        sig = {
+            'type': name,
+            }
+
+        if name[:2].isupper():
+            sig['argname'] = "%sIndex" % name
+        else:
+            sig['argname'] = "%s%sIndex" % (name[:1].lower(), name[1:])
+
+        return sig
+
+    def index_string(self, signature):
+        return "%s %s" % (signature['argtype'], signature['argname'])
+
+    def index_argname(self, signature):
+        return signature['argname']
 
 class Java(Language):
     def __init__(self, namespace, templatepath):
@@ -163,24 +196,27 @@ class Java(Language):
         self.omexml_model_package = "ome.xml.model"
         self.omexml_model_enums_package = "ome.xml.model.enums"
         self.omexml_model_omexml_model_enum_handlers_package = "ome.xml.model.enums.handlers"
-        self.metadata_package = "loci.formats.meta"
-        self.omexml_metadata_package = "loci.formats.ome"
+        self.metadata_package = "ome.xml.meta"
+        self.omexml_metadata_package = "ome.xml.meta"
 
     def getDefaultModelBaseClass(self):
         return "AbstractOMEModelObject"
 
-    def index_string(self, name, max_occurs, level):
-        """Makes a Java method signature string from an index name."""
-        if name[:2].isupper():
-            return "int %sIndex" % name
-        else:
-            return "int %s%sIndex" % (name[:1].lower(), name[1:])
+    def index_signature(self, name, max_occurs, level):
+        """Makes a Java method signature dictionary from an index name."""
+
+        sig = super(Java, self).index_signature(name, max_occurs, level)
+        sig['argtype'] = 'int'
+
+        return sig
 
 class CXX(Language):
     def __init__(self, namespace, templatepath):
         super(CXX, self).__init__(namespace, templatepath)
 
         self.package_separator = '::'
+
+        self.template_map['OMEXML_METADATA'] = 'OMEXMLMetadata.template'
 
         self.fundamental_types = set(["bool",
                                       "char", "signed char", "unsigned char",
@@ -226,18 +262,19 @@ class CXX(Language):
         self.omexml_model_package = "ome::xml::model"
         self.omexml_model_enums_package = "ome::xml::model::enums"
         self.omexml_model_omexml_model_enum_handlers_package = "ome::xml::model::enums::handlers"
-        self.metadata_package = "ome::bioformats::meta"
-        self.omexml_metadata_package = "ome::bioformats::ome"
+        self.metadata_package = "ome::xml::meta"
+        self.omexml_metadata_package = "ome::xml::meta"
 
     def getDefaultModelBaseClass(self):
         return "OMEModelObject"
 
-    def index_string(self, name, max_occurs, level):
-        """Makes a C++ method signature string from an index name."""
-        if name[:2].isupper():
-            return "index_type %sIndex" % name
-        else:
-            return "index_type %s%sIndex" % (name[:1].lower(), name[1:])
+    def index_signature(self, name, max_occurs, level):
+        """Makes a C++ method signature dictionary from an index name."""
+
+        sig = super(CXX, self).index_signature(name, max_occurs, level)
+        sig['argtype'] = 'index_type'
+
+        return sig
 
 def create(language, namespace, templatepath):
     """

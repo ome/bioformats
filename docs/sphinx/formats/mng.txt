@@ -12,7 +12,7 @@ Developer: `MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |no|
 
@@ -53,7 +53,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :scifioreader:`MNGReader.java`
+Source Code: :bsd-reader:`MNGReader.java`
 
 Notes:
 

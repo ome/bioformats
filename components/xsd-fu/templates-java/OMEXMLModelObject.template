@@ -68,7 +68,7 @@ public class ${klass.name} extends ${klass.parentName}
 {% end %}\
 {% end %}\
 {
-	// Base: ${klass.base} -- Name: ${klass.name} -- Type: ${klass.type} -- langBaseType: ${klass.langBaseType} -- langType: ${klass.langType}
+	// Base: ${klass.base} -- Name: ${klass.name} -- Type: ${klass.type} -- modelBaseType: ${klass.modelBaseType} -- langBaseType: ${klass.langBaseType}
 
 	// -- Constants --
 
@@ -157,11 +157,11 @@ ${customContent}\
 	    throws EnumerationException
 	{
 		super.update(element, model);
-{% if klass.langType != 'Object' %}\
+{% if klass.langBaseType != 'Object' %}\
 		// Element's text data
 		String value_textContent = element.getTextContent();
 		if (value_textContent.trim().length() > 0) {
-			value = ${klass.langType}.valueOf(value_textContent);
+			value = ${klass.langBaseType}.valueOf(value_textContent);
 		}
 {% end %}\
 {% if not klass.isAbstractProprietary %}\
@@ -349,15 +349,15 @@ ${customUpdatePropertyContent[prop.name]}
 		return false;
 	}
 
-{% if klass.langType != 'Object' %}\
+{% if klass.langBaseType != 'Object' %}\
 	// Element's text data getter
-	public ${klass.langType} getValue()
+	public ${klass.langBaseType} getValue()
 	{
 		return this.value;
 	}
 
 	// Element's text data setter
-	public void setValue(${klass.langType} value)
+	public void setValue(${klass.langBaseType} value)
 	{
 		this.value = value;
 	}
@@ -523,7 +523,7 @@ ${customUpdatePropertyContent[prop.name]}
 					document.createElementNS(NAMESPACE, "${klass.name}");
 		}
 
-{% if klass.langType != 'Object' %}\
+{% if klass.langBaseType != 'Object' %}\
 		// Element's text data
 		if (this.value != null) {
 			${klass.name}_element.setTextContent(this.value.toString());
