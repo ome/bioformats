@@ -48,6 +48,8 @@
 #include <ome/bioformats/MetadataConfigurable.h>
 #include <ome/bioformats/MetadataMap.h>
 
+#include <ome/compat/array.h>
+
 #include <ome/xml/meta/MetadataStore.h>
 
 namespace ome
