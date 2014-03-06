@@ -39,4 +39,41 @@ if(BUILD_TESTS)
 
   header_test_from_file(ome-compat "" ome/compat)
   add_test(ome-compat/headers ome-compat-headers)
+
+  add_executable(array array.cpp)
+  target_link_libraries(array ome-compat)
+  target_link_libraries(array ${TEST_LIBS})
+
+  add_test(ome-compat/array array)
+
+  add_executable(cstdint cstdint.cpp)
+  target_link_libraries(cstdint ome-compat)
+  target_link_libraries(cstdint ${TEST_LIBS})
+
+  add_test(ome-compat/cstdint cstdint)
+
+  add_executable(memory memory.cpp)
+  target_link_libraries(memory ome-compat)
+  target_link_libraries(memory ${TEST_LIBS})
+
+  add_test(ome-compat/memory memory)
+
+  add_executable(regex regex.cpp)
+  target_link_libraries(regex ome-compat)
+  target_link_libraries(regex ${TEST_LIBS})
+
+  add_test(ome-compat/regex regex)
+
+  add_executable(tuple tuple.cpp)
+  target_link_libraries(tuple ome-compat)
+  target_link_libraries(tuple ${TEST_LIBS})
+
+  add_test(ome-compat/tuple tuple)
+
+  add_executable(variant variant.cpp)
+  target_link_libraries(variant ome-compat)
+  target_link_libraries(variant ${TEST_LIBS})
+
+  add_test(ome-compat/variant variant)
+
 endif(BUILD_TESTS)
