@@ -67,13 +67,15 @@ set(BIOFORMATS_SOURCES
 set(BIOFORMATS_STATIC_HEADERS
     ${OME_BIOFORMATS_HEADERS})
 
+set(BIOFORMATS_GENERATED_HEADERS)
+
 set(BIOFORMATS_HEADERS
     ${BIOFORMATS_STATIC_HEADERS})
 
 add_library(ome-bioformats SHARED
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
-target_link_libraries(ome-bioformats ome-xml)
+target_link_libraries(ome-bioformats ome-compat ome-xml)
 set_target_properties(ome-bioformats PROPERTIES VERSION ${OME_VERSION_SHORT})
 
 install(TARGETS ome-bioformats LIBRARY
