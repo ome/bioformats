@@ -85,7 +85,7 @@ namespace ome
     {
       return os << "filename = " << info.filename
                 << "\nreader = " << info.reader
-                << "\nused to initialize = " + info.usedToInitialize;
+                << "\nused to initialize = " << info.usedToInitialize;
     }
 
   }
