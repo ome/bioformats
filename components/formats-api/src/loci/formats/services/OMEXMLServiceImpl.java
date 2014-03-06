@@ -147,6 +147,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static Templates update201006;
   private static Templates update201106;
   private static Templates update201206;
+  private static Templates update201306;
 
   private static final String SCHEMA_PATH =
     "http://www.openmicroscopy.org/Schemas/OME/";
@@ -281,11 +282,11 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         !version.equals("2013-10-dev-1") ) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201206 stylesheet.");
-        if (update201106 == null) {
-          update201106 =
+        if (update201206 == null) {
+          update201206 =
             XMLTools.getStylesheet(XSLT_201206, OMEXMLServiceImpl.class);
         }
-        transformed = XMLTools.transformXML(transformed, update201106);
+        transformed = XMLTools.transformXML(transformed, update201206);
       }
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2013-06");
@@ -293,11 +294,11 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       if (!version.equals("2013-10-dev-1") ) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201306 stylesheet.");
-        if (update201206 == null) {
-          update201206 =
+        if (update201306 == null) {
+          update201306 =
             XMLTools.getStylesheet(XSLT_201306, OMEXMLServiceImpl.class);
         }
-        transformed = XMLTools.transformXML(transformed, update201206);
+        transformed = XMLTools.transformXML(transformed, update201306);
       }
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2013-10-dev-1");
