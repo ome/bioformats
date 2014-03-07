@@ -52,6 +52,12 @@ if(BUILD_TESTS)
 
   add_test(ome-bioformats/fileinfo fileinfo)
 
+  add_executable(pixel pixel.cpp)
+  target_link_libraries(pixel ome-bioformats)
+  target_link_libraries(pixel ${TEST_LIBS})
+
+  add_test(ome-bioformats/pixel pixel)
+
   add_executable(pixelbuffer pixelbuffer.cpp)
   target_link_libraries(pixelbuffer ome-bioformats)
   target_link_libraries(pixelbuffer ${TEST_LIBS})
