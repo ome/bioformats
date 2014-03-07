@@ -38,8 +38,14 @@
 #ifndef OME_BIOFORMATS_FORMATHANDLER_H
 #define OME_BIOFORMATS_FORMATHANDLER_H
 
+#include <algorithm>
+#include <iterator>
+#include <stdexcept>
 #include <string>
 #include <vector>
+
+#include <boost/format.hpp>
+#include <boost/optional.hpp>
 
 namespace ome
 {
@@ -72,7 +78,7 @@ namespace ome
        */
       virtual
       bool
-      isThisType(const std::string& name);
+      isThisType(const std::string& name) = 0;
 
       /**
        * Get the name of this file format.
@@ -81,7 +87,7 @@ namespace ome
        */
       virtual
       const std::string&
-      getFormat() const;
+      getFormat() const = 0;
 
       /**
        * Get the description of this file format.
@@ -90,7 +96,7 @@ namespace ome
        */
       virtual
       const std::string&
-      getFormatDescription() const;
+      getFormatDescription() const = 0;
 
       /**
        * Get the default file suffixes for this file format.
@@ -99,7 +105,7 @@ namespace ome
        */
       virtual
       const std::vector<std::string>&
-      getSuffixes() const;
+      getSuffixes() const = 0;
 
       /**
        * Get the default compression suffixes for this file format.
@@ -108,7 +114,7 @@ namespace ome
        */
       virtual
       const std::vector<std::string>&
-      getCompressionSuffixes() const;
+      getCompressionSuffixes() const = 0;
 
       /**
        * Set the current file name.
@@ -118,8 +124,8 @@ namespace ome
        *
        * @param id the filename to open.
        */
-      void
-      setId(const std::string& id);
+      virtual void
+      setId(const std::string& id) = 0;
 
       /**
        * Close the currently open file.
@@ -131,56 +137,89 @@ namespace ome
       void
       close(bool fileOnly = false) = 0;
 
-        // -- Utility methods --
+      // -- Utility methods --
 
-        /**
-         * Perform suffix matching for the given filename.
-         */
-        static bool
-        checkSuffix(const std::string& name,
-                    const std::string& suffix)
-        {
-          std::vector<std::string> suffixes;
-          suffixes.push_back(suffix);
+      /**
+       * Perform suffix matching for the given filename.
+       */
+      static bool
+      checkSuffix(const std::string& name,
+                  const std::string& suffix)
+      {
+        std::vector<std::string> suffixes;
+        std::vector<std::string> compression_suffixes;
+        suffixes.push_back(suffix);
 
-          return checkSuffix(name, suffixes);
-        }
+        return checkSuffix(name, suffixes, compression_suffixes);
+      }
 
-        /** Performs suffix matching for the given filename. */
-        static boolean checkSuffix(const std::string&              name,
-                                   const std::vector<std::string>& suffixes)
-        {
-          std::string lname;
-          std::transform(name.begin(), name.end(), std::back_inserter(lname), std::tolower);
+      /** Performs suffix matching for the given filename. */
+      static bool
+      checkSuffix(const std::string&              name,
+                  const std::vector<std::string>& suffixes,
+                  const std::vector<std::string>& compression_suffixes)
+      {
+        std::string lname;
+        std::transform(name.begin(), name.end(),
+                       std::back_inserter(lname),
+                       static_cast<int (*)(int)>(std::tolower));
 
-          for (std::vector<std::string>::const_iterator si = detail.suffixes.begin();
-               si != detail.suffixes.end();
-               ++si)
-            {
-              std::string suffix(".");
-              suffix += *si;
-              if (name >= suffix &&
-                  name.compare(name.size()-suffix.size(), suffix.size(), suffix) == 0)
-                return true;
+        for (std::vector<std::string>::const_iterator si = suffixes.begin();
+             si != suffixes.end();
+             ++si)
+          {
+            std::string suffix(".");
+            suffix += *si;
+            if (name >= suffix &&
+                name.compare(name.size()-suffix.size(), suffix.size(), suffix) == 0)
+              return true;
 
-              for (std::vector<std::string>::const_iterator csi = detail.compression_suffixes.begin();
-                   csi != detail.compression_suffixes.end();
-                   ++csi)
-                {
-                  std::string csuffix(suffix);
-                  csuffix += "." + *csi;
+            for (std::vector<std::string>::const_iterator csi = compression_suffixes.begin();
+                 csi != compression_suffixes.end();
+                 ++csi)
+              {
+                std::string csuffix(suffix);
+                csuffix += "." + *csi;
 
-                  if (name >= csuffix &&
-                      name.compare(name.size()-csuffix.size(), csuffix.size(), csuffix) == 0)
-                    return false;
-                  /**
-                   * @todo Should return true when compression suffixes are supported.
-                   */
-                }
-            }
-          return false;
-        }
+                if (name >= csuffix &&
+                    name.compare(name.size()-csuffix.size(), csuffix.size(), csuffix) == 0)
+                  return false;
+                /**
+                 * @todo Should return true when compression suffixes are supported.
+                 */
+              }
+          }
+        return false;
+      }
+
+      /**
+       * Assert that the current file is valid.
+       *
+       * Assert if the current file is null, or not, according to the
+       * given flag. If the assertion fails, an exception is thrown.
+       *
+       * @param id Filename to test.
+       * @param notNull true if @c id should be non-null, @c false if @c
+       * id should be null.
+       * @throws std::logic_error if the assertion fails.
+       */
+      static void
+      assertId(const boost::optional<std::string>& id,
+               bool                                notNull = true)
+      {
+        if (!id && notNull)
+          {
+            throw std::logic_error("Current file should not be null; call setId(String) first");
+          }
+        else if (id && !notNull)
+          {
+            boost::format fmt("Current file should be null, but is '%1%'; call close() first");
+            fmt % id;
+            throw std::logic_error(fmt.str());
+          }
+      }
     };
+
 
   }
 }
