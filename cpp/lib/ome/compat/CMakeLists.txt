@@ -41,6 +41,7 @@ set(ome_compat_static_headers
     array.h
     cstdint.h
     memory.h
+    mstream.h
     tuple.h
     variant.h)
 

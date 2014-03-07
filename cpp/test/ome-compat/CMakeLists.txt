@@ -58,6 +58,12 @@ if(BUILD_TESTS)
 
   add_test(ome-compat/memory memory)
 
+  add_executable(mstream mstream.cpp)
+  target_link_libraries(mstream ome-compat)
+  target_link_libraries(mstream ${TEST_LIBS})
+
+  add_test(ome-compat/mstream mstream)
+
   add_executable(regex regex.cpp)
   target_link_libraries(regex ome-compat)
   target_link_libraries(regex ${TEST_LIBS})
