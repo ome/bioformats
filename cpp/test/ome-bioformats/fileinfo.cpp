@@ -57,5 +57,5 @@ TEST(FileInfo, StreamOutput)
   info.usedToInitialize = true;
   os << info;
 
-  ASSERT_TRUE(os);
+  ASSERT_FALSE(!os);
 }
