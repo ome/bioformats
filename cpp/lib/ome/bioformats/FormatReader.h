@@ -68,7 +68,8 @@ namespace ome
      * @note Metadata values can't be Object in C++; initially
      * restricted to std::string only.
      */
-    class FormatReader : public FormatHandler, MetadataConfigurable
+    class FormatReader : virtual public FormatHandler,
+                         virtual public MetadataConfigurable
     {
     public:
       /// File grouping options.
@@ -79,12 +80,14 @@ namespace ome
           CANNOT_GROUP ///< Files can not be grouped.
         };
 
-      /**
-       * An array of bytes.
-       *
-       * @todo Note that this could be switched for a pair of pointers to allow zero-copy access.
-       */
-      typedef std::vector<uint8_t> byte_array;
+      /// @copydoc CoreMetadata::dimension_size_type
+      typedef CoreMetadata::dimension_size_type dimension_size_type;
+
+      /// @copydoc CoreMetadata::image_size_type
+      typedef CoreMetadata::image_size_type image_size_type;
+
+      /// @copydoc CoreMetadata::pixel_size_type
+      typedef CoreMetadata::pixel_size_type pixel_size_type;
 
     protected:
       /// Constructor.
@@ -94,6 +97,11 @@ namespace ome
       /// Destructor.
       virtual
       ~FormatReader();
+
+      // Documented in superclass.
+      virtual
+      bool
+      isThisType(const std::string& name) = 0;
 
       /**
        * Check if the given file is a valid instance of this file format.
@@ -112,19 +120,42 @@ namespace ome
       virtual
       bool
       isThisType(const std::string& name,
-                 bool               open = true) = 0;
+                 bool               open) = 0;
 
       /**
-       * Check if the given block is a valid header for this file format.
+       * Check if the given buffer is a valid header for this file format.
        *
-       * @param block the block to check.
+       * The buffer is defined as a half-open range using two
+       * iterators.
+       *
+       * @param begin the start of the buffer.
+       * @param end one past the end of the buffer.
        * @returns @c true if the file is valid, @c false otherwise.
        *
        * @todo Could this method be static and/or const?
        */
       virtual
       bool
-      isThisType(const byte_array& block) = 0;
+      isThisType(const uint8_t *begin,
+                 const uint8_t *end) = 0;
+
+      /**
+       * Check if the given buffer is a valid header for this file format.
+       *
+       * The buffer is defined as a half-open range using two
+       * iterators.
+       *
+       * @param begin the start of the buffer.
+       * @param length the buffer length.
+       * @returns @c true if the file is valid, @c false otherwise.
+       *
+       * @todo Could this method be static and/or const?
+       */
+      virtual
+      bool
+      isThisType(const uint8_t *begin,
+                 std::size_t    length) = 0;
+
 
       /**
        * Check if the given input stream is a valid stream for this file format.
@@ -156,8 +187,8 @@ namespace ome
        * @returns the number of image planes.
        */
       virtual
-      CoreMetadata::image_size_type
-      getImageCount() = 0;
+      image_size_type
+      getImageCount() const = 0;
 
       /**
        * Check if the image planes in the file have more than one channel per
@@ -176,7 +207,7 @@ namespace ome
        * @returns the X dimension size.
        */
       virtual
-      CoreMetadata::dimension_size_type
+      dimension_size_type
       getSizeX() const = 0;
 
       /**
@@ -185,7 +216,7 @@ namespace ome
        * @returns the Y dimension size.
        */
       virtual
-      CoreMetadata::dimension_size_type
+      dimension_size_type
       getSizeY() const = 0;
 
       /**
@@ -194,7 +225,7 @@ namespace ome
        * @returns the Z dimension size.
        */
       virtual
-      CoreMetadata::dimension_size_type
+      dimension_size_type
       getSizeZ() const = 0;
 
       /**
@@ -203,7 +234,7 @@ namespace ome
        * @returns the T dimension size.
        */
       virtual
-      CoreMetadata::dimension_size_type
+      dimension_size_type
       getSizeT() const = 0;
 
       /**
@@ -212,7 +243,7 @@ namespace ome
        * @returns the C dimension size.
        */
       virtual
-      CoreMetadata::dimension_size_type
+      dimension_size_type
       getSizeC() const = 0;
 
       /**
@@ -234,7 +265,7 @@ namespace ome
        * @returns the number of valid bits per pixel.
        */
       virtual
-      CoreMetadata::pixel_size_type
+      pixel_size_type
       getBitsPerPixel() const = 0;
 
       /**
@@ -249,7 +280,7 @@ namespace ome
        * @returns the effective C dimension size.
        */
       virtual
-      CoreMetadata::dimension_size_type
+      dimension_size_type
       getEffectiveSizeC() const = 0;
 
       /**
@@ -263,7 +294,7 @@ namespace ome
        * @returns the number of channels.
        */
       virtual
-      CoreMetadata::dimension_size_type
+      dimension_size_type
       getRGBChannelCount() const = 0;
 
       /**
@@ -392,7 +423,7 @@ namespace ome
        * @returns the X dimension thumbnail size.
        */
       virtual
-      CoreMetadata::dimension_size_type
+      dimension_size_type
       getThumbSizeX() const = 0;
 
       /**
@@ -401,7 +432,7 @@ namespace ome
        * @returns the Y dimension thumbnail size.
        */
       virtual
-      CoreMetadata::dimension_size_type
+      dimension_size_type
       getThumbSizeY() const = 0;
 
       /**
@@ -491,7 +522,7 @@ namespace ome
        */
       virtual
       bool
-      isInterleaved(CoreMetadata::dimension_size_type subC) const = 0;
+      isInterleaved(dimension_size_type subC) const = 0;
 
       /**
        * Obtain an image plane.
@@ -510,7 +541,7 @@ namespace ome
        */
       virtual
       void
-      openBytes(CoreMetadata::image_size_type no, PixelBufferRaw& buf) const = 0;
+      openBytes(image_size_type no, PixelBufferRaw& buf) const = 0;
 
       /**
        * Obtain a sub-image of an image plane.
@@ -533,12 +564,12 @@ namespace ome
        */
       virtual
       void
-      openBytes(CoreMetadata::image_size_type     no,
-                PixelBufferRaw&                   buf,
-                CoreMetadata::dimension_size_type x,
-                CoreMetadata::dimension_size_type y,
-                CoreMetadata::dimension_size_type w,
-                CoreMetadata::dimension_size_type h) const = 0;
+      openBytes(image_size_type     no,
+                PixelBufferRaw&     buf,
+                dimension_size_type x,
+                dimension_size_type y,
+                dimension_size_type w,
+                dimension_size_type h) const = 0;
 
       /**
        * Obtain a thumbnail of an image plane.
@@ -551,13 +582,13 @@ namespace ome
        */
       virtual
       void
-      openThumbBytes(CoreMetadata::image_size_type no,
-                     PixelBufferRaw&               buf) const = 0;
+      openThumbBytes(image_size_type no,
+                     PixelBufferRaw& buf) const = 0;
 
       // Documented in superclass.
-      virtual
-      void
-      close(bool fileOnly) = 0;
+      //virtual
+      //void
+      //close(bool fileOnly) = 0;
 
       /**
        * Get the number of image series in this file.
@@ -565,7 +596,7 @@ namespace ome
        * @returns the number of image series.
        */
       virtual
-      CoreMetadata::image_size_type
+      image_size_type
       getSeriesCount() const = 0;
 
       /**
@@ -577,7 +608,7 @@ namespace ome
        */
       virtual
       void
-      setSeries(CoreMetadata::image_size_type no) = 0;
+      setSeries(image_size_type no) = 0;
 
       /**
        * Get the active series.
@@ -585,7 +616,7 @@ namespace ome
        * @returns the active series.
        */
       virtual
-      CoreMetadata::image_size_type
+      image_size_type
       getSeries() const = 0;
 
       /**
@@ -732,7 +763,7 @@ namespace ome
        */
       virtual
       const std::vector<std::string>&
-      getDomains() = 0;
+      getDomains() const = 0;
 
       /**
        * Get the linear index of a @c Z, @c C and @c T coordinate.
@@ -750,9 +781,9 @@ namespace ome
        */
       virtual
       int
-      getIndex(CoreMetadata::dimension_size_type z,
-               CoreMetadata::dimension_size_type c,
-               CoreMetadata::dimension_size_type t) = 0;
+      getIndex(dimension_size_type z,
+               dimension_size_type c,
+               dimension_size_type t) = 0;
 
       /**
        * Get the @c Z, @c C and @c T coordinate of a linear index.
@@ -778,7 +809,7 @@ namespace ome
        * @todo throw exception if missing.
        */
       virtual
-      const std::string&
+      const MetadataMap::value_type&
       getMetadataValue(const std::string& field) = 0;
 
       /**
@@ -854,7 +885,7 @@ namespace ome
        */
       virtual
       bool
-      isMetadataFiltered() = 0;
+      isMetadataFiltered() const = 0;
 
       /**
        * Set the default metadata store for this reader.
@@ -950,7 +981,7 @@ namespace ome
        */
       virtual
       const std::string&
-      getDatasetStructureDescription() = 0;
+      getDatasetStructureDescription() const = 0;
 
       /**
        * Get the possible domains represented in which this format is used.
@@ -984,7 +1015,7 @@ namespace ome
        **/
       virtual
       int
-      getOptimalTileWidth() = 0;
+      getOptimalTileWidth() const = 0;
 
       /**
        * Get the optimal sub-image height.
@@ -994,7 +1025,7 @@ namespace ome
        **/
       virtual
       int
-      getOptimalTileHeight() = 0;
+      getOptimalTileHeight() const = 0;
 
       // Sub-resolution API methods
 
@@ -1005,8 +1036,8 @@ namespace ome
        * @returns the first for index for the series.
        */
       virtual
-      CoreMetadata::image_size_type
-      seriesToCoreIndex(CoreMetadata::image_size_type series) = 0;
+      image_size_type
+      seriesToCoreIndex(image_size_type series) const = 0;
 
       /**
        * Get the series corresponding to the specified core index.
@@ -1015,8 +1046,8 @@ namespace ome
        * @returns the series for the index.
        */
       virtual
-      CoreMetadata::image_size_type
-      coreIndexToSeries(CoreMetadata::image_size_type index) = 0;
+      image_size_type
+      coreIndexToSeries(image_size_type index) const = 0;
 
       /**
        * Get the CoreMetadata index of the current resolution/series.
@@ -1024,8 +1055,8 @@ namespace ome
        * @returns the index.
        */
       virtual
-      CoreMetadata::image_size_type
-      getCoreIndex() = 0;
+      image_size_type
+      getCoreIndex() const = 0;
 
       /**
        * Set the current resolution/series (ignoring subresolutions).
@@ -1037,7 +1068,7 @@ namespace ome
        */
       virtual
       void
-      setCoreIndex(CoreMetadata::image_size_type no) = 0;
+      setCoreIndex(image_size_type no) = 0;
 
       /**
        * Get the number of resolutions for the current series.
@@ -1049,8 +1080,8 @@ namespace ome
        * @returns the number of resolutions.
        */
       virtual
-      CoreMetadata::image_size_type
-      getResolutionCount() = 0;
+      image_size_type
+      getResolutionCount() const = 0;
 
       /**
        * Set the active resolution level.
@@ -1061,7 +1092,7 @@ namespace ome
        */
       virtual
       void
-      setResolution(CoreMetadata::image_size_type resolution) = 0;
+      setResolution(image_size_type resolution) = 0;
 
       /**
        * Get the active resolution level.
@@ -1071,17 +1102,17 @@ namespace ome
        * @see getResolutionCount()
        */
       virtual
-      CoreMetadata::image_size_type
-      getResolution() = 0;
+      image_size_type
+      getResolution() const = 0;
 
       /**
        * Get resolution flattening.
        *
-       * @returns @c true if flattening is enabled, @c false otherwise. 
+       * @returns @c true if flattening is enabled, @c false otherwise.
        */
       virtual
       bool
-      hasFlattenedResolutions() = 0;
+      hasFlattenedResolutions() const = 0;
 
       /**
        * Set resolution flattening.
