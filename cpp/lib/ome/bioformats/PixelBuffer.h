@@ -217,7 +217,7 @@ namespace ome
         if (bytes.empty())
           return 0;
         return &bytes.front();
-      } 
+      }
 
       /**
        * Get buffer location.
@@ -236,6 +236,21 @@ namespace ome
       /// Backing storage.
       std::vector<uint8_t> bytes;
     };
+
+    /**
+     * Output PixelBufferRaw to output stream.
+     *
+     * @param os the output stream.
+     * @param buf the PixelBuffer to output.
+     * @returns the output stream.
+     */
+    template<class charT, class traits>
+    inline std::basic_ostream<charT,traits>&
+    operator<< (std::basic_ostream<charT,traits>& os,
+                const PixelBufferRaw& buf)
+    {
+      return os << "PixelBufferRaw size = " << buf.size();
+    }
 
   }
 }

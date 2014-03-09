@@ -149,3 +149,13 @@ TEST(PixelBufferRaw, SetIndex)
   ASSERT_THROW(buf.at(400) = 4, std::out_of_range);
   ASSERT_THROW(cbuf.at(400), std::out_of_range);
 }
+
+TEST(PixelBufferRaw, StreamOutput)
+{
+  PixelBufferRaw buf(0);
+
+  std::ostringstream os;
+  os << buf;
+
+  ASSERT_EQ(os.str(), "PixelBufferRaw size = 0");
+}
