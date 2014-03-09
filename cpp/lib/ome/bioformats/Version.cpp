@@ -39,11 +39,11 @@
 
 #include <ome/internal/version.h>
 
-// Work around glibc bug in sysmacros.h
-#if defined(__GLIBC__) && defined(major)
+// Work around glibc bug in sysmacros.h and FreeBSD bug in sys/types.h.
+#if defined(major)
 #undef major
 #endif
-#if defined(__GLIBC__) && defined(minor)
+#if defined(minor)
 #undef minor
 #endif
 
