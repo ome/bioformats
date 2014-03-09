@@ -70,6 +70,7 @@ namespace ome
        * @param name the filename to check.
        * @returns @c true if valid, @c false otherwise.
        */
+      virtual
       bool
       isThisType(const std::string& name);
 
@@ -78,16 +79,36 @@ namespace ome
        *
        * @returns the file format name.
        */
+      virtual
       const std::string&
       getFormat() const;
+
+      /**
+       * Get the description of this file format.
+       *
+       * @returns the file format description.
+       */
+      virtual
+      const std::string&
+      getFormatDescription() const;
 
       /**
        * Get the default file suffixes for this file format.
        *
        * @returns a list of file suffixes.
        */
+      virtual
       const std::vector<std::string>&
       getSuffixes() const;
+
+      /**
+       * Get the default compression suffixes for this file format.
+       *
+       * @returns a list of file suffixes.
+       */
+      virtual
+      const std::vector<std::string>&
+      getCompressionSuffixes() const;
 
       /**
        * Set the current file name.
@@ -109,6 +130,56 @@ namespace ome
       virtual
       void
       close(bool fileOnly = false) = 0;
+
+        // -- Utility methods --
+
+        /**
+         * Perform suffix matching for the given filename.
+         */
+        static bool
+        checkSuffix(const std::string& name,
+                    const std::string& suffix)
+        {
+          std::vector<std::string> suffixes;
+          suffixes.push_back(suffix);
+
+          return checkSuffix(name, suffixes);
+        }
+
+        /** Performs suffix matching for the given filename. */
+        static boolean checkSuffix(const std::string&              name,
+                                   const std::vector<std::string>& suffixes)
+        {
+          std::string lname;
+          std::transform(name.begin(), name.end(), std::back_inserter(lname), std::tolower);
+
+          for (std::vector<std::string>::const_iterator si = detail.suffixes.begin();
+               si != detail.suffixes.end();
+               ++si)
+            {
+              std::string suffix(".");
+              suffix += *si;
+              if (name >= suffix &&
+                  name.compare(name.size()-suffix.size(), suffix.size(), suffix) == 0)
+                return true;
+
+              for (std::vector<std::string>::const_iterator csi = detail.compression_suffixes.begin();
+                   csi != detail.compression_suffixes.end();
+                   ++csi)
+                {
+                  std::string csuffix(suffix);
+                  csuffix += "." + *csi;
+
+                  if (name >= csuffix &&
+                      name.compare(name.size()-csuffix.size(), csuffix.size(), csuffix) == 0)
+                    return false;
+                  /**
+                   * @todo Should return true when compression suffixes are supported.
+                   */
+                }
+            }
+          return false;
+        }
     };
 
   }
