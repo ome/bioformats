@@ -51,7 +51,8 @@ set(ome_compat_headers
     ${ome_compat_static_headers}
     ${ome_compat_generated_headers})
 
-set(ome_compat_sources)
+set(ome_compat_sources
+    dummy.cpp)
 
 add_library(ome-compat STATIC ${ome_compat_sources} ${ome_compat_headers})
 target_link_libraries(ome-compat ${REGEX_LIBRARY})
