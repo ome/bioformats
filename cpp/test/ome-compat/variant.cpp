@@ -44,7 +44,7 @@ typedef boost::variant<int,double,std::string> var;
 
 TEST(Variant, Create)
 {
-  var v();
+  var v;
 }
 
 TEST(Variant, SetInt)
