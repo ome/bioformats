@@ -605,10 +605,13 @@ namespace ome
        * @note This also resets the resolution to 0.
        *
        * @param no the series to activate.
+       *
+       * @todo Remove use of stateful API which requires use of
+       * series switching in const methods.
        */
       virtual
       void
-      setSeries(image_size_type no) = 0;
+      setSeries(image_size_type no) const = 0;
 
       /**
        * Get the active series.
@@ -1065,10 +1068,13 @@ namespace ome
        * set to @c false.
        *
        * @param no the core index to set.
+       *
+       * @todo Remove use of stateful API which requires use of
+       * series switching in const methods.
        */
       virtual
       void
-      setCoreIndex(image_size_type no) = 0;
+      setCoreIndex(image_size_type no) const = 0;
 
       /**
        * Get the number of resolutions for the current series.
@@ -1089,10 +1095,13 @@ namespace ome
        * @param resolution the resolution to set.
        *
        * @see getResolutionCount()
+       *
+       * @todo Remove use of stateful API which requires use of
+       * series switching in const methods.
        */
       virtual
       void
-      setResolution(image_size_type resolution) = 0;
+      setResolution(image_size_type resolution) const = 0;
 
       /**
        * Get the active resolution level.
