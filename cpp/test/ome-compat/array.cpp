@@ -40,11 +40,14 @@
 
 #include <gtest/gtest.h>
 
-TEST(Array, Construct)
+TEST(Array, DefaultConstruct)
 {
   std::array<int, 10> a;
+  // We're not explicitly testing here, but it squashed an unused
+  // variable compiler warning.
+  a[0] = 0;
+  ASSERT_EQ(a[0], 0);
 }
-
 
 TEST(Array, Assign)
 {
