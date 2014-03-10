@@ -38,8 +38,10 @@
 #ifndef OME_BIOFORMATS_PIXEL_H
 #define OME_BIOFORMATS_PIXEL_H
 
-#include <ome/xml/model/enums/PixelType.h>
 #include <ome/compat/array.h>
+#include <ome/compat/cstdint.h>
+
+#include <ome/xml/model/enums/PixelType.h>
 
 namespace ome
 {
