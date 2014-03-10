@@ -90,6 +90,47 @@ namespace ome
       typedef CoreMetadata::pixel_size_type pixel_size_type;
 
     protected:
+      /**
+       * Sentry for saving and restoring reader series state.
+       *
+       * For any FormatReader method or subclass method which needs to
+       * set and later restore the series/coreIndex/resolution as part
+       * of its operation, this class exists to manage the safe
+       * restoration of the state.  Create an instance of this class
+       * with the reader set to @c *this.  When the instance goes out
+       * of scope, e.g. at the end of a block or method, or when an
+       * exception is thrown, the saved state will be transparently
+       * restored.
+       */
+      class SaveSeries
+      {
+      private:
+        /// Reader for which the state will be saved and restored.
+        const FormatReader& reader;
+        /// Saved state.
+        image_size_type coreIndex;
+      public:
+        /**
+         * Constructor.
+         *
+         * @param reader the reader to manage.
+         */
+        SaveSeries(const FormatReader& reader):
+          reader(reader),
+          coreIndex(reader.getCoreIndex())
+        {}
+
+        /**
+         * Destructor.
+         *
+         * Saved state will be restored when run.
+         */
+        ~SaveSeries()
+        {
+          reader.setCoreIndex(coreIndex);
+        }
+      };
+
       /// Constructor.
       FormatReader();
 
