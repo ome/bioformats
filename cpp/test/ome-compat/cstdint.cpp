@@ -42,13 +42,13 @@
 
 TEST(Cstdint, Types)
 {
-  uint8_t a();
-  uint16_t b();
-  uint32_t c();
-  uint64_t d();
+  uint8_t a;
+  uint16_t b;
+  uint32_t c;
+  uint64_t d;
 
-  int8_t e();
-  int16_t f();
-  int32_t g();
-  int64_t h();
+  int8_t e;
+  int16_t f;
+  int32_t g;
+  int64_t h;
 }

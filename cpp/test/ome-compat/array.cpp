@@ -42,7 +42,7 @@
 
 TEST(Array, Construct)
 {
-  std::array<int, 10> a();
+  std::array<int, 10> a;
 }
 
 
