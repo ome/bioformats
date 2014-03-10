@@ -141,6 +141,11 @@ namespace ome
 
       /**
        * Perform suffix matching for the given filename.
+       *
+       * @param name the name to check.
+       * @param suffix the suffix to match.
+       *
+       * @returns @c true if the suffix is suppored, @c false otherwise.
        */
       static bool
       checkSuffix(const std::string& name,
@@ -153,7 +158,15 @@ namespace ome
         return checkSuffix(name, suffixes, compression_suffixes);
       }
 
-      /** Performs suffix matching for the given filename. */
+      /**
+       * Perform suffix matching for the given filename.
+       *
+       * @param name the name to check.
+       * @param suffixes the suffixes to match.
+       * @param compression_suffixes the compression suffixes to match.
+       *
+       * @returns @c true if the suffix is suppored, @c false otherwise.
+       */
       static bool
       checkSuffix(const std::string&              name,
                   const std::vector<std::string>& suffixes,
