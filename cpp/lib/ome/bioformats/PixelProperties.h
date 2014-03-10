@@ -54,15 +54,26 @@ namespace ome
     template<int>
     struct PixelProperties;
 
+    /**
+     * Properties common to all pixel types.
+     */
     template<class P>
     struct PixelPropertiesBase
     {
+      /**
+       * Get size of pixel type, in bytes.
+       * @returns pixel size, in bytes.
+       */
       static uint32_t
       pixel_byte_size()
       {
         return sizeof(typename P::type);
       }
 
+      /**
+       * Get size of pixel type, in bits.
+       * @returns pixel size, in bits.
+       */
       static uint32_t
       pixel_bit_size()
       {
@@ -70,83 +81,112 @@ namespace ome
       }
     };
 
+    /// Properties of INT8 pixels.
     template<>
     struct PixelProperties< ::ome::xml::model::enums::PixelType::INT8> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT8> >
     {
+      /// INT8 native pixel type.
       typedef int8_t type;
     };
 
+    /// Properties of INT16 pixels.
     template<>
     struct PixelProperties< ::ome::xml::model::enums::PixelType::INT16> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT16> >
     {
+      /// INT16 native pixel type.
       typedef int16_t type;
     };
 
+    /// Properties of INT32 pixels.
     template<>
     struct PixelProperties< ::ome::xml::model::enums::PixelType::INT32> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT32> >
     {
+      /// INT32 native pixel type.
       typedef int32_t type;
     };
 
+    /// Properties of UINT8 pixels.
     template<>
     struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT8> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::UINT8> >
     {
+      /// UINT8 native pixel type.
       typedef uint8_t type;
     };
 
+    /// Properties of UINT16 pixels.
     template<>
     struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT16> :
       public PixelPropertiesBase<struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT16> >
     {
+      /// UINT16 native pixel type.
       typedef uint16_t type;
     };
 
+    /// Properties of UINT32 pixels.
     template<>
     struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT32> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::UINT32> >
     {
+      /// UINT32 native pixel type.
       typedef uint32_t type;
     };
 
+    /// Properties of FLOAT pixels.
     template<>
     struct PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT> >
     {
+      /// FLOAT native pixel type.
       typedef float type;
     };
 
+    /// Properties of DOUBLE pixels.
     template<>
     struct PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE> >
     {
+      /// DOUBLE native pixel type.
       typedef double type;
     };
 
+    /// Properties of BIT pixels.
     template<>
     struct PixelProperties< ::ome::xml::model::enums::PixelType::BIT> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::BIT> >
     {
+      /// BIT native pixel type.
       typedef bool type;
     };
 
+    /// Properties of COMPLEX pixels.
     template<>
     struct PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX> >
     {
+      /// COMPLEX native pixel type.
       typedef std::array<float,2> type;
     };
 
+    /// Properties of DOUBLECOMPLEX pixels.
     template<>
     struct PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> >
     {
+      /// DOUBLECOMPLEX native pixel type.
       typedef std::array<double,2> type;
     };
 
+    /**
+     * Get the size of a PixelType, in bytes.
+     *
+     * @param pixeltype the PixelType to query.
+     *
+     * @returns the size, in bytes
+     */
     inline uint32_t
     bytesPerPixelProperties(::ome::xml::model::enums::PixelType pixeltype)
     {
@@ -192,6 +232,13 @@ namespace ome
       return size;
     }
 
+    /**
+     * Get the size of a PixelType, in bits.
+     *
+     * @param pixeltype the PixelType to query.
+     *
+     * @returns the size, in bits
+     */
     inline uint32_t
     bitsPerPixelProperties(::ome::xml::model::enums::PixelType pixeltype)
     {
