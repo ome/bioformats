@@ -35,8 +35,8 @@
  * #L%
  */
 
-#ifndef OME_BIOFORMATS_PIXEL_H
-#define OME_BIOFORMATS_PIXEL_H
+#ifndef OME_BIOFORMATS_PIXELPROPERTIES_H
+#define OME_BIOFORMATS_PIXELPROPERTIES_H
 
 #include <ome/compat/array.h>
 #include <ome/compat/cstdint.h>
@@ -49,13 +49,13 @@ namespace ome
   {
 
     /**
-     * Map a given PixelType enum to the corresponding language type.
+     * Map a given PixelPropertiesType enum to the corresponding language type.
      */
     template<int>
-    struct Pixel;
+    struct PixelProperties;
 
     template<class P>
-    struct PixelBase
+    struct PixelPropertiesBase
     {
       static uint32_t
       pixel_byte_size()
@@ -71,120 +71,120 @@ namespace ome
     };
 
     template<>
-    struct Pixel< ::ome::xml::model::enums::PixelType::INT8> :
-      public PixelBase<Pixel< ::ome::xml::model::enums::PixelType::INT8> >
+    struct PixelProperties< ::ome::xml::model::enums::PixelType::INT8> :
+      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT8> >
     {
       typedef int8_t type;
     };
 
     template<>
-    struct Pixel< ::ome::xml::model::enums::PixelType::INT16> :
-      public PixelBase<Pixel< ::ome::xml::model::enums::PixelType::INT16> >
+    struct PixelProperties< ::ome::xml::model::enums::PixelType::INT16> :
+      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT16> >
     {
       typedef int16_t type;
     };
 
     template<>
-    struct Pixel< ::ome::xml::model::enums::PixelType::INT32> :
-      public PixelBase<Pixel< ::ome::xml::model::enums::PixelType::INT32> >
+    struct PixelProperties< ::ome::xml::model::enums::PixelType::INT32> :
+      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT32> >
     {
       typedef int32_t type;
     };
 
     template<>
-    struct Pixel< ::ome::xml::model::enums::PixelType::UINT8> :
-      public PixelBase<Pixel< ::ome::xml::model::enums::PixelType::UINT8> >
+    struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT8> :
+      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::UINT8> >
     {
       typedef uint8_t type;
     };
 
     template<>
-    struct Pixel< ::ome::xml::model::enums::PixelType::UINT16> :
-      public PixelBase<struct Pixel< ::ome::xml::model::enums::PixelType::UINT16> >
+    struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT16> :
+      public PixelPropertiesBase<struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT16> >
     {
       typedef uint16_t type;
     };
 
     template<>
-    struct Pixel< ::ome::xml::model::enums::PixelType::UINT32> :
-      public PixelBase<Pixel< ::ome::xml::model::enums::PixelType::UINT32> >
+    struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT32> :
+      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::UINT32> >
     {
       typedef uint32_t type;
     };
 
     template<>
-    struct Pixel< ::ome::xml::model::enums::PixelType::FLOAT> :
-      public PixelBase<Pixel< ::ome::xml::model::enums::PixelType::FLOAT> >
+    struct PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT> :
+      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT> >
     {
       typedef float type;
     };
 
     template<>
-    struct Pixel< ::ome::xml::model::enums::PixelType::DOUBLE> :
-      public PixelBase<Pixel< ::ome::xml::model::enums::PixelType::DOUBLE> >
+    struct PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE> :
+      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE> >
     {
       typedef double type;
     };
 
     template<>
-    struct Pixel< ::ome::xml::model::enums::PixelType::BIT> :
-      public PixelBase<Pixel< ::ome::xml::model::enums::PixelType::BIT> >
+    struct PixelProperties< ::ome::xml::model::enums::PixelType::BIT> :
+      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::BIT> >
     {
       typedef bool type;
     };
 
     template<>
-    struct Pixel< ::ome::xml::model::enums::PixelType::COMPLEX> :
-      public PixelBase<Pixel< ::ome::xml::model::enums::PixelType::COMPLEX> >
+    struct PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX> :
+      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX> >
     {
       typedef std::array<float,2> type;
     };
 
     template<>
-    struct Pixel< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> :
-      public PixelBase<Pixel< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> >
+    struct PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> :
+      public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> >
     {
       typedef std::array<double,2> type;
     };
 
     inline uint32_t
-    bytesPerPixel(::ome::xml::model::enums::PixelType pixeltype)
+    bytesPerPixelProperties(::ome::xml::model::enums::PixelType pixeltype)
     {
       uint32_t size = 0;
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
-          size = Pixel< ::ome::xml::model::enums::PixelType::INT8>::pixel_byte_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::pixel_byte_size();
           break;
         case ::ome::xml::model::enums::PixelType::INT16:
-          size = Pixel< ::ome::xml::model::enums::PixelType::INT16>::pixel_byte_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::pixel_byte_size();
           break;
         case ::ome::xml::model::enums::PixelType::INT32:
-          size = Pixel< ::ome::xml::model::enums::PixelType::INT32>::pixel_byte_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::pixel_byte_size();
           break;
         case ::ome::xml::model::enums::PixelType::UINT8:
-          size = Pixel< ::ome::xml::model::enums::PixelType::UINT8>::pixel_byte_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::pixel_byte_size();
           break;
         case ::ome::xml::model::enums::PixelType::UINT16:
-          size = Pixel< ::ome::xml::model::enums::PixelType::UINT16>::pixel_byte_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::pixel_byte_size();
           break;
         case ::ome::xml::model::enums::PixelType::UINT32:
-          size = Pixel< ::ome::xml::model::enums::PixelType::UINT32>::pixel_byte_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::pixel_byte_size();
           break;
         case ::ome::xml::model::enums::PixelType::FLOAT:
-          size = Pixel< ::ome::xml::model::enums::PixelType::FLOAT>::pixel_byte_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::pixel_byte_size();
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLE:
-          size = Pixel< ::ome::xml::model::enums::PixelType::DOUBLE>::pixel_byte_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::pixel_byte_size();
           break;
         case ::ome::xml::model::enums::PixelType::BIT:
-          size = Pixel< ::ome::xml::model::enums::PixelType::BIT>::pixel_byte_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::pixel_byte_size();
           break;
         case ::ome::xml::model::enums::PixelType::COMPLEX:
-          size = Pixel< ::ome::xml::model::enums::PixelType::COMPLEX>::pixel_byte_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::pixel_byte_size();
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          size = Pixel< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_byte_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_byte_size();
           break;
         default:
           break;
@@ -193,43 +193,43 @@ namespace ome
     }
 
     inline uint32_t
-    bitsPerPixel(::ome::xml::model::enums::PixelType pixeltype)
+    bitsPerPixelProperties(::ome::xml::model::enums::PixelType pixeltype)
     {
       uint32_t size = 0;
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
-          size = Pixel< ::ome::xml::model::enums::PixelType::INT8>::pixel_bit_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::pixel_bit_size();
           break;
         case ::ome::xml::model::enums::PixelType::INT16:
-          size = Pixel< ::ome::xml::model::enums::PixelType::INT16>::pixel_bit_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::pixel_bit_size();
           break;
         case ::ome::xml::model::enums::PixelType::INT32:
-          size = Pixel< ::ome::xml::model::enums::PixelType::INT32>::pixel_bit_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::pixel_bit_size();
           break;
         case ::ome::xml::model::enums::PixelType::UINT8:
-          size = Pixel< ::ome::xml::model::enums::PixelType::UINT8>::pixel_bit_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::pixel_bit_size();
           break;
         case ::ome::xml::model::enums::PixelType::UINT16:
-          size = Pixel< ::ome::xml::model::enums::PixelType::UINT16>::pixel_bit_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::pixel_bit_size();
           break;
         case ::ome::xml::model::enums::PixelType::UINT32:
-          size = Pixel< ::ome::xml::model::enums::PixelType::UINT32>::pixel_bit_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::pixel_bit_size();
           break;
         case ::ome::xml::model::enums::PixelType::FLOAT:
-          size = Pixel< ::ome::xml::model::enums::PixelType::FLOAT>::pixel_bit_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::pixel_bit_size();
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLE:
-          size = Pixel< ::ome::xml::model::enums::PixelType::DOUBLE>::pixel_bit_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::pixel_bit_size();
           break;
         case ::ome::xml::model::enums::PixelType::BIT:
-          size = Pixel< ::ome::xml::model::enums::PixelType::BIT>::pixel_bit_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::pixel_bit_size();
           break;
         case ::ome::xml::model::enums::PixelType::COMPLEX:
-          size = Pixel< ::ome::xml::model::enums::PixelType::COMPLEX>::pixel_bit_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::pixel_bit_size();
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          size = Pixel< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_bit_size();
+          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_bit_size();
           break;
         default:
           break;
@@ -240,7 +240,7 @@ namespace ome
   }
 }
 
-#endif // OME_BIOFORMATS_PIXEL_H
+#endif // OME_BIOFORMATS_PIXELPROPERTIES_H
 
 /*
  * Local Variables:

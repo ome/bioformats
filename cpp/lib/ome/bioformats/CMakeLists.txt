@@ -56,8 +56,8 @@ set(OME_BIOFORMATS_HEADERS
     MetadataConfigurable.h
     MetadataOptions.h
     Modulo.h
-    Pixel.h
     PixelBuffer.h
+    PixelProperties.h
     UnknownFormatException.h
     UnsupportedCompressionException.h
     Version.h)
