@@ -96,11 +96,24 @@ public class WlzReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if(wlz != null) {
-      FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    if (wlz != null) {
       buf = wlz.readBytes(no, buf, x, y, w, h);
     }
-    return(buf);
+    else {
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        wlz = factory.getInstance(WlzService.class);
+      }
+      catch (DependencyException e) {
+        throw new FormatException(NO_WLZ_MSG, e);
+      }
+      if (wlz != null) {
+        wlz.open(currentId, "r");
+        buf = wlz.readBytes(no, buf, x, y, w, h);
+      }
+    }
+    return buf;
   }
 
   // -- Internal FormatReader API methods --
@@ -115,7 +128,7 @@ public class WlzReader extends FormatReader {
     catch (DependencyException e) {
       throw new FormatException(NO_WLZ_MSG, e);
     }
-    if(wlz != null) {
+    if (wlz != null) {
       wlz.open(id, "r");
       CoreMetadata md = core.get(0);
       MetadataStore store = makeFilterMetadata();
@@ -146,10 +159,13 @@ public class WlzReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if(wlz != null) {
-      wlz.close();
-    }
     super.close(fileOnly);
+    if (!fileOnly) {
+      if (wlz != null) {
+        wlz.close();
+        wlz = null;
+      }
+    }
   }
 
   // -- Helper methods --
