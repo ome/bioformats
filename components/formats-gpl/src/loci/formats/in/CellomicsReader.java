@@ -28,7 +28,8 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -60,8 +61,24 @@ public class CellomicsReader extends FormatReader {
 
   // -- Fields --
 
+  // A typical Cellomics file name is
+  // WHICA-VTI1_090915160001_A01f00o1.DIB
+  // The plate name is:
+  // WHICA-VTI1_090915160001
+  // The well name is A01
+  // The site / field is 00
+  // the channel is 1
+  //
+  // The channel prefix can be "o" or "d"
+  // Both site and channel are optional.
+  //
+  // The pattern greedily captures:
+  // The plate name in group 1
+  // The well name in group 2
+  // The field, optionally, in group 3
+  // The channel, optionally, in group 4
+  private static final Pattern cellomicsPattern = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2})?([od]\\d+)?[^_]+$");
   private String[] files;
-  private String channelCharacter;
 
   // -- Constructor --
 
@@ -113,7 +130,6 @@ public class CellomicsReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       files = null;
-      channelCharacter = null;
     }
   }
 
@@ -145,11 +161,6 @@ public class CellomicsReader extends FormatReader {
 
     String plateName = getPlateName(baseFile.getName());
 
-    channelCharacter = "d";
-    if (getChannel(id) < 0) {
-      channelCharacter = "o";
-    }
-
     if (plateName != null && isGroupFiles()) {
       String[] list = parent.list();
       for (String f : list) {
@@ -172,14 +183,14 @@ public class CellomicsReader extends FormatReader {
     int wellColumns = 0;
     int fields = 0;
 
-    ArrayList<String> uniqueRows = new ArrayList<String>();
-    ArrayList<String> uniqueCols = new ArrayList<String>();
-    ArrayList<String> uniqueFields = new ArrayList<String>();
+    ArrayList<Integer> uniqueRows = new ArrayList<Integer>();
+    ArrayList<Integer> uniqueCols = new ArrayList<Integer>();
+    ArrayList<Integer> uniqueFields = new ArrayList<Integer>();
     ArrayList<Integer> uniqueChannels = new ArrayList<Integer>();
     for (String f : files) {
-      String wellRow = getWellRow(f);
-      String wellCol = getWellColumn(f);
-      String field = getField(f);
+      int wellRow = getWellRow(f);
+      int wellCol = getWellColumn(f);
+      int field = getField(f);
       int channel = getChannel(f);
 
       if (!uniqueRows.contains(wellRow)) uniqueRows.add(wellRow);
@@ -289,10 +300,8 @@ public class CellomicsReader extends FormatReader {
         int well = row * realCols + col;
 
         if (files.length == 1) {
-          String wellRow = getWellRow(files[0]);
-          String wellColumn = getWellColumn(files[0]);
-          row = wellRow.toUpperCase().charAt(0) - 'A';
-          col = Integer.parseInt(wellColumn) - 1;
+          row = getWellRow(files[0]);
+          col = getWellColumn(files[0]);
         }
 
         store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
@@ -304,12 +313,9 @@ public class CellomicsReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       String file = files[i * getSizeC()];
 
-      String field = getField(file);
-      String wellRow = getWellRow(file);
-      String wellColumn = getWellColumn(file);
-
-      int row = wellRow.toUpperCase().charAt(0) - 'A';
-      int col = Integer.parseInt(wellColumn) - 1;
+      int fieldIndex = getField(file);
+      int row = getWellRow(file);
+      int col = getWellColumn(file);
 
       if (files.length == 1) {
         row = 0;
@@ -321,7 +327,6 @@ public class CellomicsReader extends FormatReader {
       if (row < realRows && col < realCols) {
 
         int wellIndex = row * realCols + col;
-        int fieldIndex = Integer.parseInt(field);
 
         if (files.length == 1) {
           fieldIndex = 0;
@@ -336,7 +341,9 @@ public class CellomicsReader extends FormatReader {
         store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
       }
       store.setImageName(
-        "Well " + wellRow + wellColumn + ", Field #" + field, i);
+        String.format("Well %s%02d, Field #%02d", 
+                      new String(Character.toChars(row+'A')), 
+                      col, fieldIndex), i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -360,43 +367,54 @@ public class CellomicsReader extends FormatReader {
 
   // -- Helper methods --
 
-  private String getPlateName(String filename) {
-    int underscore = filename.lastIndexOf("_");
-    if (underscore < 0) return null;
-    return filename.substring(0, underscore);
+  static private Matcher matchFilename(final String filename) {
+    final String name = new Location(filename).getName();
+    return cellomicsPattern.matcher(name);
+  }
+  private String getPlateName(final String filename) {
+    Matcher m = matchFilename(filename);
+    if (m.matches()) {
+      return m.group(1);
+    }
+    return null;
   }
 
   private String getWellName(String filename) {
-    String wellName = filename.substring(filename.lastIndexOf("_") + 1);
-    while (!Character.isLetter(wellName.charAt(0)) ||
-      !Character.isDigit(wellName.charAt(1)))
-    {
-      wellName = wellName.substring(1, wellName.length());
+    Matcher m = matchFilename(filename);
+    if (m.matches()) {
+        return m.group(2);
     }
-    return wellName;
+    return null;
   }
 
-  private String getWellRow(String filename) {
-    return getWellName(filename).substring(0, 1);
+  private int getWellRow(String filename) {
+    String wellName = getWellName(filename);
+    if ((wellName == null) || (wellName.length() < 1) ) return 0;
+    int ord = wellName.toUpperCase().charAt(0) - 'A';
+    if ((ord < 0) || (ord >= 26)) return 0;
+    return ord;
   }
 
-  private String getWellColumn(String filename) {
-    return getWellName(filename).substring(1, 3);
+  private int getWellColumn(String filename) {
+    String wellName = getWellName(filename);
+    if ((wellName == null) || (wellName.length() <= 2)) return 0;
+    if (! Character.isDigit(wellName.charAt(1))) return 0;
+    if (! Character.isDigit(wellName.charAt(2))) return 0;
+    return Integer.parseInt(wellName.substring(1, 3));
   }
 
-  private String getField(String filename) {
-    String well = getWellName(filename);
-    int start = well.indexOf("f") + 1;
-    int end = start + 2;
-    return well.substring(start, end);
+  private int getField(String filename) {
+    Matcher m = matchFilename(filename);
+    if (m.matches() && (m.group(3) != null)) {
+      return Integer.parseInt(m.group(3).substring(1));
+    }
+    return 0;
   }
 
   private int getChannel(String filename) {
-    String well = getWellName(filename);
-    int start = well.indexOf(channelCharacter) + 1;
-    int end = start + 1;
-    if (start > 0) {
-      return Integer.parseInt(well.substring(start, end));
+    Matcher m = matchFilename(filename);
+    if (m.matches() && (m.group(4) != null)) {
+      return Integer.parseInt(m.group(4).substring(1));
     }
     return -1;
   }
