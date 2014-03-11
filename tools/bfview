@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# bfview: a script for displaying an image file in the image viewer
-
-SCIFIO_DIR=`dirname "$0"`
-
-echo "The 'bfview' command is deprecated. Please use 'showinf' instead."
-
-"$SCIFIO_DIR/showinf" "$@"

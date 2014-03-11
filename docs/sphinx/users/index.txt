@@ -6,26 +6,19 @@ User Information
 Using Bio-Formats with ImageJ and Fiji
 ======================================
 
-The following sections explain the features of Bio-Formats and how to use 
-it within :doc:`imagej/index` and :doc:`fiji/index`:
-
-.. toctree::
-    :maxdepth: 1
-    :hidden:
-
-    imagej/index
-    fiji/index
-
+The following sections explain the features of Bio-Formats and how to use
+it within ImageJ and Fiji:
 
 .. toctree::
     :maxdepth: 1
     :titlesonly:
 
+    imagej/index
+    fiji/index
     imagej/features
     imagej/installing
     imagej/load-images
     imagej/managing-memory
-    imagej/upgrading-importer
 
 
 OMERO
@@ -61,6 +54,19 @@ Image server applications
     ome-server/index
 
 
+Command line tools
+==================
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    comlinetools/index
+    comlinetools/display
+    comlinetools/conversion
+    comlinetools/xml-validation
+
+
 Libraries and scripting applications
 ====================================
 
@@ -68,7 +74,6 @@ Libraries and scripting applications
     :maxdepth: 1
     :titlesonly:
 
-    comlinetools/index
     farsight/index
     i3dcore/index
     imglib/index
@@ -111,7 +116,4 @@ Visualization and analysis applications
     vaa3d/index
     visbio/index
     xuvtools/index
-
-
-
 

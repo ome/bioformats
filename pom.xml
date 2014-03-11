@@ -6,12 +6,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ome</groupId>
-  <artifactId>pom-scifio</artifactId>
+  <artifactId>pom-bio-formats</artifactId>
   <version>5.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
-  <description>Umbrella project for SCIFIO and Bio-Formats software projects.</description>
+  <description>Umbrella project for the Bio-Formats software project.</description>
   <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
@@ -20,24 +20,21 @@
     <module>components/forks/jai</module>
     <module>components/forks/mdbtools</module>
     <module>components/forks/poi</module>
+    <module>components/forks/turbojpeg</module>
     <module>components/autogen</module>
-    <module>components/bio-formats</module>
-    <module>components/bioformats_package</module>
-    <module>components/loci-legacy</module>
-    <module>components/loci-common</module>
-    <module>components/loci-plugins</module>
-    <module>components/loci-tools</module>
+    <module>components/formats-api</module>
+    <module>components/formats-bsd</module>
+    <module>components/formats-gpl</module>
+    <module>components/bundles/bioformats_package</module>
+    <module>components/formats-common</module>
+    <module>components/bio-formats-plugins</module>
+    <module>components/bundles/loci-tools</module>
     <module>components/metakit</module>
-    <module>components/ome-io</module>
-    <module>components/ome-plugins</module>
-    <module>components/ome-tools</module>
+    <module>components/bundles/ome-tools</module>
     <module>components/ome-xml</module>
-    <module>components/scifio</module>
-    <module>components/scifio-devel</module>
-    <module>components/scifio-tools</module>
+    <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
-    <module>components/turbojpeg</module>
     <module>components/xsd-fu</module>
   </modules>
 
@@ -352,13 +349,6 @@
   </ciManagement>
 
   <mailingLists>
-    <mailingList>
-      <name>LOCI Software</name>
-      <subscribe>https://lists.wisc.edu/read/all_forums/subscribe?name=locisoftware</subscribe>
-      <unsubscribe>https://lists.wisc.edu/read/?forum=locisoftware</unsubscribe>
-      <post>locisoftware@lists.wisc.edu</post>
-      <archive>https://lists.wisc.edu/read/?forum=locisoftware</archive>
-    </mailingList>
     <mailingList>
       <name>OME-users</name>
       <subscribe>http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/</subscribe>

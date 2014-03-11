@@ -8,7 +8,7 @@ Type "ant -p"  for a list of targets.
 
 <project name="mdbtools" default="jar" basedir=".">
   <description>
-    LOCI's fork of the Java MDB Tools project
+    OME's fork of the Java MDB Tools project
   </description>
   <property name="root.dir" location="../../.."/>
   <import file="${root.dir}/ant/java.xml"/>

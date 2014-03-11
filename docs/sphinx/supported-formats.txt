@@ -23,7 +23,7 @@ Supported Formats
      - .. image:: images/header-presence.png
      - .. image:: images/header-utility.png
      - .. image:: images/header-export.png
-     - .. image:: images/header-scifio.png
+     - BSD
 
    * - :doc:`formats/3i-slidebook`
      - .sld
@@ -1294,10 +1294,9 @@ Bio-Formats currently supports **135** formats
         This indicates whether Bio-Formats is capable of writing the format 
         (Bio-Formats can read every format on this list).
 
-    SCIFIO 
-        This indicates whether format is supported by the
-        :doc:`SCIFIO <developers/scifio>` core library (see the SCIFIO
-        section of the :about_plone:`licensing page <licensing-attribution>`).
+    BSD
+        This indicates whether format is BSD-licensed.  By default,
+        format readers and writers are GPL-licensed.
 
 .. toctree::
     :maxdepth: 1

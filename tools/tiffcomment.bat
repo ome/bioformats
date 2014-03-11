@@ -6,8 +6,8 @@ rem                  (OME-XML block or otherwise) from a TIFF file
 rem Required JARs: loci_tools.jar or bioformats_package.jar
 
 setlocal
-set SCIFIO_DIR=%~dp0
-if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%
+set BF_DIR=%~dp0
+if "%BF_DIR:~-1%" == "\" set BF_DIR=%BF_DIR:~0,-1%
 
-set SCIFIO_PROG=loci.formats.tools.TiffComment
-call "%SCIFIO_DIR%\scifio.bat" %*
+set BF_PROG=loci.formats.tools.TiffComment
+call "%BF_DIR%\bf.bat" %*

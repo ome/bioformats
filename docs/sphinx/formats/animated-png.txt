@@ -12,7 +12,7 @@ Developer: `The Animated PNG Project <http://www.animatedpng.com/>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |yes|
 
@@ -52,7 +52,7 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :scifioreader:`APNGReader.java`
+Source Code: :bsd-reader:`APNGReader.java`
 
 Notes:
 

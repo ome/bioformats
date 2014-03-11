@@ -12,7 +12,7 @@ Developer: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

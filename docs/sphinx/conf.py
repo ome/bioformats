@@ -158,10 +158,10 @@ extlinks = {
     'report' : (trac_root + '/report/%s', ''),
     # Github links
     'source' : (bf_github_branch + '%s', ''),
-    'bfreader' : (bf_github_branch + 'components/bio-formats/src/loci/formats/in/%s', ''),
-    'scifioreader' : (bf_github_branch + 'components/scifio/src/loci/formats/in/%s', ''),
-    'bfwriter' : (bf_github_branch + 'components/bio-formats/src/loci/formats/out/' + '%s', ''),
-    'scifiowriter' : (bf_github_branch + 'components/scifio/src/loci/formats/out/' + '%s', ''),
+    'bfreader' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/in/%s', ''),
+    'bsd-reader' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/in/%s', ''),
+    'bfwriter' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/out/' + '%s', ''),
+    'bsd-writer' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/out/' + '%s', ''),
     # Jenkins links
     'jenkins' : (jenkins_root + '/%s', ''),
     'jenkinsjob' : (jenkins_job_root + '/%s', ''),
@@ -175,14 +175,12 @@ extlinks = {
     # suffixes during testing.
     'community_plone' : (oo_site_root + '/community/%s', ''),
     'products_plone' : (oo_site_root + '/products/%s', ''),
-    'feature_plone' : (oo_site_root + '/products/feature-list/%s', ''),
     'model_doc' : (oo_site_root + '/support/ome-model/%s', ''),
     'legacy_plone' : (oo_site_root + '/support/legacy/%s', ''),
     'about_plone' : (oo_site_root + '/about/%s', ''),
     'team_plone' : (oo_site_root + '/team/%s', ''),
     'faq_plone' : (oo_site_root + '/support/faq/%s', ''),
-    'training_plone' : (oo_site_root + '/support/training/%s', ''),
-    'bf_doc' : (oo_site_root + '/support/bio-formats/%s', ''),
+    'bf_doc' : (oo_site_root + '/support/bio-formats5/%s', ''),
     'omerodoc' : (omerodoc_uri + '/%s', ''),
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads

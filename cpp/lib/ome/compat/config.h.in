@@ -49,6 +49,7 @@
 #cmakedefine OME_HAVE_BOOST_TUPLE 1
 #cmakedefine OME_HAVE_BOOST_FORMAT 1
 #cmakedefine OME_HAVE_NOEXCEPT 1
+#cmakedefine OME_VARIANT_LIMIT 1
 
 #ifndef OME_HAVE_NOEXCEPT
 # define noexcept

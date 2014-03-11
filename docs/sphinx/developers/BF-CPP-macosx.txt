@@ -21,7 +21,7 @@ The following commands will generate and build the Bio-Formats C++ bindings:
 ::
 
     # generate the C++ bindings
-    cd components/scifio
+    cd components/formats-bsd
     mvn -DskipTests package dependency:copy-dependencies cppwrap:wrap
     
     # compile the C++ bindings

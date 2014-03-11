@@ -158,10 +158,10 @@
 #ifndef ${fu.GUARD}
 #define ${fu.GUARD}
 
-#include <ome/bioformats/meta/MetadataStore.h>
+#include <ome/xml/meta/MetadataStore.h>
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
-#include <ome/bioformats/meta/FilterMetadata.h>
+#include <ome/xml/meta/FilterMetadata.h>
 
 {% for include in model.header_dependencies %}\
 #include <${include}>
@@ -170,7 +170,7 @@
 
 namespace ome
 {
-  namespace bioformats
+  namespace xml
   {
     namespace meta
     {
