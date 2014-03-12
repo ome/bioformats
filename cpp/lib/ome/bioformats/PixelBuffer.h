@@ -252,6 +252,21 @@ namespace ome
       return os << "PixelBufferRaw size = " << buf.size();
     }
 
+        /**
+         * Set PixelBufferRaw from input stream.
+         *
+         * @param is the input stream.
+         * @param buf the PixelBufferRaw to set.
+         * @returns the input stream.
+         */
+        template<class charT, class traits>
+        inline std::basic_istream<charT,traits>&
+        operator>> (std::basic_istream<charT,traits>& is,
+                    PixelBufferRaw& buf)
+        {
+          return is.read(reinterpret_cast<char *>(buf.buffer()), buf.size());
+        }
+
   }
 }
 
