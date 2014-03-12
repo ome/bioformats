@@ -188,7 +188,7 @@ namespace ome
      * @returns the size, in bytes
      */
     inline uint32_t
-    bytesPerPixelProperties(::ome::xml::model::enums::PixelType pixeltype)
+    bytesPerPixel(::ome::xml::model::enums::PixelType pixeltype)
     {
       uint32_t size = 0;
       switch(pixeltype)
@@ -240,7 +240,7 @@ namespace ome
      * @returns the size, in bits
      */
     inline uint32_t
-    bitsPerPixelProperties(::ome::xml::model::enums::PixelType pixeltype)
+    bitsPerPixel(::ome::xml::model::enums::PixelType pixeltype)
     {
       uint32_t size = 0;
       switch(pixeltype)

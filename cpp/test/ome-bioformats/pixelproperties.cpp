@@ -41,8 +41,8 @@
 #include <gtest/gtest.h>
 
 using ome::bioformats::PixelProperties;
-using ome::bioformats::bytesPerPixelProperties;
-using ome::bioformats::bitsPerPixelProperties;
+using ome::bioformats::bytesPerPixel;
+using ome::bioformats::bitsPerPixel;
 typedef ome::xml::model::enums::PixelType PT;
 
 TEST(PixelProperties, ConstructSignedInt8)
@@ -113,66 +113,66 @@ TEST(PixelProperties, ConstructDoubleComplex)
 
 TEST(PixelProperties, SizeSignedInt8)
 {
-  ASSERT_EQ(bytesPerPixelProperties(PT::INT8), sizeof(int8_t));
-  ASSERT_EQ(bitsPerPixelProperties(PT::INT8), sizeof(int8_t) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::INT8), sizeof(int8_t));
+  ASSERT_EQ(bitsPerPixel(PT::INT8), sizeof(int8_t) * 8);
 }
 
 TEST(PixelProperties, SizeSignedInt16)
 {
-  ASSERT_EQ(bytesPerPixelProperties(PT::INT16), sizeof(int16_t));
-  ASSERT_EQ(bitsPerPixelProperties(PT::INT16), sizeof(int16_t) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::INT16), sizeof(int16_t));
+  ASSERT_EQ(bitsPerPixel(PT::INT16), sizeof(int16_t) * 8);
 }
 
 TEST(PixelProperties, SizeSignedInt32)
 {
-  ASSERT_EQ(bytesPerPixelProperties(PT::INT32), sizeof(int32_t));
-  ASSERT_EQ(bitsPerPixelProperties(PT::INT32), sizeof(int32_t) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::INT32), sizeof(int32_t));
+  ASSERT_EQ(bitsPerPixel(PT::INT32), sizeof(int32_t) * 8);
 }
 
 TEST(PixelProperties, SizeUnsignedInt8)
 {
-  ASSERT_EQ(bytesPerPixelProperties(PT::UINT8), sizeof(uint8_t));
-  ASSERT_EQ(bitsPerPixelProperties(PT::UINT8), sizeof(uint8_t) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::UINT8), sizeof(uint8_t));
+  ASSERT_EQ(bitsPerPixel(PT::UINT8), sizeof(uint8_t) * 8);
 }
 
 TEST(PixelProperties, SizeUnsignedInt16)
 {
-  ASSERT_EQ(bytesPerPixelProperties(PT::UINT16), sizeof(uint16_t));
-  ASSERT_EQ(bitsPerPixelProperties(PT::UINT16), sizeof(uint16_t) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::UINT16), sizeof(uint16_t));
+  ASSERT_EQ(bitsPerPixel(PT::UINT16), sizeof(uint16_t) * 8);
 }
 
 TEST(PixelProperties, SizeUnsignedInt32)
 {
-  ASSERT_EQ(bytesPerPixelProperties(PT::UINT32), sizeof(uint32_t));
-  ASSERT_EQ(bitsPerPixelProperties(PT::UINT32), sizeof(uint32_t) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::UINT32), sizeof(uint32_t));
+  ASSERT_EQ(bitsPerPixel(PT::UINT32), sizeof(uint32_t) * 8);
 }
 
 TEST(PixelProperties, SizeFloat)
 {
-  ASSERT_EQ(bytesPerPixelProperties(PT::FLOAT), sizeof(float));
-  ASSERT_EQ(bitsPerPixelProperties(PT::FLOAT), sizeof(float) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::FLOAT), sizeof(float));
+  ASSERT_EQ(bitsPerPixel(PT::FLOAT), sizeof(float) * 8);
 }
 
 TEST(PixelProperties, SizeDouble)
 {
-  ASSERT_EQ(bytesPerPixelProperties(PT::DOUBLE), sizeof(double));
-  ASSERT_EQ(bitsPerPixelProperties(PT::DOUBLE), sizeof(double) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::DOUBLE), sizeof(double));
+  ASSERT_EQ(bitsPerPixel(PT::DOUBLE), sizeof(double) * 8);
 }
 
 TEST(PixelProperties, SizeBit)
 {
-  ASSERT_EQ(bytesPerPixelProperties(PT::BIT), sizeof(bool));
-  ASSERT_EQ(bitsPerPixelProperties(PT::BIT), sizeof(bool) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::BIT), sizeof(bool));
+  ASSERT_EQ(bitsPerPixel(PT::BIT), sizeof(bool) * 8);
 }
 
 TEST(PixelProperties, SizeComplex)
 {
-  ASSERT_EQ(bytesPerPixelProperties(PT::COMPLEX), sizeof(std::array<float,2>));
-  ASSERT_EQ(bitsPerPixelProperties(PT::COMPLEX), sizeof(std::array<float,2>) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::COMPLEX), sizeof(std::array<float,2>));
+  ASSERT_EQ(bitsPerPixel(PT::COMPLEX), sizeof(std::array<float,2>) * 8);
 }
 
 TEST(PixelProperties, SizeDoubleComplex)
 {
-  ASSERT_EQ(bytesPerPixelProperties(PT::DOUBLECOMPLEX), sizeof(std::array<double,2>));
-  ASSERT_EQ(bitsPerPixelProperties(PT::DOUBLECOMPLEX), sizeof(std::array<double,2>) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::DOUBLECOMPLEX), sizeof(std::array<double,2>));
+  ASSERT_EQ(bitsPerPixel(PT::DOUBLECOMPLEX), sizeof(std::array<double,2>) * 8);
 }
