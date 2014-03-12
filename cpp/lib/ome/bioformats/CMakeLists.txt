@@ -39,6 +39,7 @@ include_directories(${OME_TOPLEVEL_INCLUDES})
 set(OME_BIOFORMATS_SOURCES
     CoreMetadata.cpp
     FormatException.cpp
+    FormatTools.cpp
     MetadataConfigurable.cpp
     MetadataOptions.cpp
     Modulo.cpp
@@ -53,6 +54,7 @@ set(OME_BIOFORMATS_HEADERS
     MetadataMap.h
     FormatHandler.h
     FormatReader.h
+    FormatTools.h
     MetadataConfigurable.h
     MetadataOptions.h
     Modulo.h
