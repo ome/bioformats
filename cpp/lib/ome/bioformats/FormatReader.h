@@ -830,8 +830,8 @@ namespace ome
        * @todo unify with the pixel buffer dimension indexes.
        */
       virtual
-      std::array<int, 3>
-      getZCTCoords(int index) = 0;
+      std::array<dimension_size_type, 3>
+      getZCTCoords(dimension_size_type index) = 0;
 
       /**
        * Get a global metadata value.
