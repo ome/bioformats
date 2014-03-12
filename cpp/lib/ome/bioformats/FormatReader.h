@@ -42,6 +42,8 @@
 #include <vector>
 #include <map>
 
+#include <boost/optional.hpp>
+
 #include <ome/bioformats/CoreMetadata.h>
 #include <ome/bioformats/FileInfo.h>
 #include <ome/bioformats/FormatHandler.h>
@@ -124,32 +126,16 @@ namespace ome
       };
 
       /// Constructor.
-      FormatReader();
+      FormatReader()
+      {}
 
     public:
       /// Destructor.
       virtual
-      ~FormatReader();
+      ~FormatReader()
+      {}
 
       // Documented in superclass.
-      virtual
-      bool
-      isThisType(const std::string& name) = 0;
-
-      /**
-       * Check if the given file is a valid instance of this file format.
-       *
-       * @param name the file to open for checking.
-       * @param open If @c true, and the file extension is
-       *   insufficient to determine the file type, the file may be
-       *   opened for further analysis, or other relatively expensive
-       *   file system operations (such as file existence tests and
-       *   directory listings) may be performed.  If @c false, file
-       *   system access is not allowed.
-       * @returns @c true if the file is valid, @c false otherwise.
-       *
-       * @todo Could this method be static and/or const?
-       */
       virtual
       bool
       isThisType(const std::string& name,
@@ -201,18 +187,6 @@ namespace ome
       virtual
       bool
       isThisType(std::istream& stream) = 0;
-
-      /**
-       * Check if the given input stream is a valid stream for this file format.
-       *
-       * @param stream the input stream to check.
-       * @returns @c true if the file is valid, @c false otherwise.
-       *
-       * @todo Could this method be static and/or const?
-       */
-      virtual
-      bool
-      isThisType(std::FILE *stream) = 0;
 
       /**
        * Determine the number of image planes in the current file.
@@ -757,7 +731,7 @@ namespace ome
        */
       virtual
       const std::vector<std::string>
-      getSeriesUsedFiles(bool noPixels = false) = 0;
+      getSeriesUsedFiles(bool noPixels = false) const = 0;
 
       /**
        * Get the files used by this dataset.
@@ -769,7 +743,7 @@ namespace ome
        */
       virtual
       std::vector<FileInfo>
-      getAdvancedUsedFiles(bool noPixels) = 0;
+      getAdvancedUsedFiles(bool noPixels) const = 0;
 
       /**
        * Get the files used by the active series.
@@ -781,7 +755,7 @@ namespace ome
        */
       virtual
       std::vector<FileInfo>
-      getAdvancedSeriesUsedFiles(bool noPixels) = 0;
+      getAdvancedSeriesUsedFiles(bool noPixels) const = 0;
 
       /**
        * Get the currently open file.
@@ -789,8 +763,8 @@ namespace ome
        * @returns the filename.
        */
       virtual
-      const std::string&
-      getCurrentFile() = 0;
+      const boost::optional<std::string>&
+      getCurrentFile() const = 0;
 
       /**
        * Get the domains represented by the current file.
@@ -816,7 +790,7 @@ namespace ome
        * getZCTCoords.
        */
       virtual
-      int
+      dimension_size_type
       getIndex(dimension_size_type z,
                dimension_size_type c,
                dimension_size_type t) = 0;
@@ -896,7 +870,7 @@ namespace ome
        * @returns a const reference to the core metadata.
        */
       virtual
-      const std::vector<CoreMetadata>&
+      const std::vector<std::shared_ptr<CoreMetadata> >&
       getCoreMetadataList() const = 0;
 
       /**
@@ -974,7 +948,7 @@ namespace ome
        */
       virtual
       bool
-      isSingleFile(const std::string& id) = 0;
+      isSingleFile(const std::string& id) const = 0;
 
       /**
        * Get required parent directories.
@@ -1008,7 +982,7 @@ namespace ome
        */
       virtual
       uint32_t
-      getRequiredDirectories(const std::vector<std::string>& files) = 0;
+      getRequiredDirectories(const std::vector<std::string>& files) const = 0;
 
       /**
        * Get a short description of the dataset structure.
@@ -1030,8 +1004,8 @@ namespace ome
        * @todo can this be a reference to static data?
        */
       virtual
-      const std::vector<std::string>
-      getPossibleDomains(const std::string& id) = 0;
+      const std::vector<std::string>&
+      getPossibleDomains(const std::string& id) const = 0;
 
       /**
        * Does this format support multi-file datasets?
@@ -1041,7 +1015,7 @@ namespace ome
        */
       virtual
       bool
-      hasCompanionFiles() = 0;
+      hasCompanionFiles() const = 0;
 
       /**
        * Get the optimal sub-image width.
@@ -1050,7 +1024,7 @@ namespace ome
        * @returns the optimal width.
        **/
       virtual
-      int
+      dimension_size_type
       getOptimalTileWidth() const = 0;
 
       /**
@@ -1060,7 +1034,7 @@ namespace ome
        * @returns the optimal height.
        **/
       virtual
-      int
+      dimension_size_type
       getOptimalTileHeight() const = 0;
 
       // Sub-resolution API methods
@@ -1100,14 +1074,14 @@ namespace ome
        * Equivalent to setSeries(), but with flattened resolutions always
        * set to @c false.
        *
-       * @param no the core index to set.
+       * @param index the core index to set.
        *
        * @todo Remove use of stateful API which requires use of
        * series switching in const methods.
        */
       virtual
       void
-      setCoreIndex(image_size_type no) const = 0;
+      setCoreIndex(image_size_type index) const = 0;
 
       /**
        * Get the number of resolutions for the current series.
