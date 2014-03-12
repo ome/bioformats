@@ -65,11 +65,19 @@ set(OME_BIOFORMATS_HEADERS
     UnsupportedCompressionException.h
     Version.h)
 
+set(OME_BIOFORMATS_DETAIL_SOURCES
+    detail/FormatReader.cpp)
+
+set(OME_BIOFORMATS_DETAIL_HEADERS
+    detail/FormatReader.h)
+
 set(BIOFORMATS_SOURCES
-    ${OME_BIOFORMATS_SOURCES})
+    ${OME_BIOFORMATS_SOURCES}
+    ${OME_BIOFORMATS_DETAIL_SOURCES})
 
 set(BIOFORMATS_STATIC_HEADERS
-    ${OME_BIOFORMATS_HEADERS})
+    ${OME_BIOFORMATS_HEADERS}
+    ${OME_BIOFORMATS_DETAIL_HEADERS})
 
 set(BIOFORMATS_GENERATED_HEADERS)
 
@@ -89,6 +97,9 @@ set(ome_bioformats_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/bioformats")
 
 install(FILES ${OME_BIOFORMATS_HEADERS}
         DESTINATION ${ome_bioformats_includedir})
+install(FILES ${OME_BIOFORMATS_DETAIL_HEADERS}
+        DESTINATION ${ome_bioformats_includedir}/detail)
+
 
 set(LIBRARY_PREFIX OME_BIOFORMATS)
 set(LIBRARY_NAME ome-bioformats)
