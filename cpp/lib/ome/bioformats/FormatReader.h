@@ -139,7 +139,7 @@ namespace ome
       virtual
       bool
       isThisType(const std::string& name,
-                 bool               open) = 0;
+                 bool               open = true) = 0;
 
       /**
        * Check if the given buffer is a valid header for this file format.

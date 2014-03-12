@@ -87,7 +87,7 @@ namespace ome
       virtual
       bool
       isThisType(const std::string& name,
-                 bool               open) = 0;
+                 bool               open = true) = 0;
 
       /**
        * Get the name of this file format.
