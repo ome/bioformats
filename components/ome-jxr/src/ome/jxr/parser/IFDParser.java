@@ -29,13 +29,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 import ome.jxr.constants.IFD;
 import ome.jxr.ifd.IFDContainer;
 import ome.jxr.ifd.IFDEntry;
 import ome.jxr.ifd.IFDEntryType;
 import ome.jxr.metadata.IFDMetadata;
-import ome.scifio.io.RandomAccessInputStream;
 
 /**
  * Parses a JPEG XR data stream and extracts metadata from the IFD.

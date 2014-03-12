@@ -39,7 +39,6 @@ package loci.formats.codec;
 import java.io.IOException;
 import java.util.Vector;
 
-import ome.scifio.io.BitBuffer;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;

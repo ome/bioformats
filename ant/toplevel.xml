@@ -331,7 +331,7 @@ Type "ant -p" for a list of targets.
   <!-- OME JPEG XR library -->
 
   <target name="deps-ome-jxr"
-    depends="jar-loci-legacy"/>
+    depends="jar-formats-common"/>
 
   <target name="compile-ome-jxr" depends="deps-ome-jxr"
     description="compile classes for OME JPEG XR Java library">
@@ -354,7 +354,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-ome-jxr"
-    depends="clean-loci-legacy"
+    depends="clean-formats-common"
     description="remove build files for OME JPEG XR Java library">
     <ant dir="components/ome-jxr" target="ome-jxr.clean"/>
   </target>

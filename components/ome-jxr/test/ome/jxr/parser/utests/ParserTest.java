@@ -27,10 +27,10 @@ package ome.jxr.parser.utests;
 
 import java.io.IOException;
 
+import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 import ome.jxr.StaticDataProvider;
 import ome.jxr.parser.Parser;
-import ome.scifio.io.RandomAccessInputStream;
 
 import org.testng.annotations.Test;
 

@@ -29,8 +29,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.IOException;
 
-import ome.jxr.JXRException;
-import ome.scifio.io.RandomAccessInputStream;
+import loci.common.RandomAccessInputStream;
 
 import org.testng.annotations.Test;
 

@@ -46,8 +46,9 @@ import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
+import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
-import ome.scifio.io.BitBuffer;
+
 import ome.xml.model.primitives.PositiveFloat;
 
 /**

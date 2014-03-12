@@ -39,8 +39,6 @@ package loci.formats.codec;
 import java.io.IOException;
 import java.util.Arrays;
 
-import ome.scifio.io.BitBuffer;
-import ome.scifio.io.BitWriter;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.UnsupportedCompressionException;

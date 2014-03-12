@@ -31,9 +31,6 @@ import ome.jxr.JXRException;
 import ome.jxr.StaticDataProvider;
 import ome.jxr.metadata.IFDMetadata;
 import ome.jxr.parser.DatastreamParser;
-import ome.jxr.parser.FileParser;
-import ome.jxr.parser.IFDParser;
-import ome.scifio.io.RandomAccessInputStream;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

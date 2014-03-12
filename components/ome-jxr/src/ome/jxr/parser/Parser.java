@@ -27,8 +27,8 @@ package ome.jxr.parser;
 
 import java.io.IOException;
 
+import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
-import ome.scifio.io.RandomAccessInputStream;
 
 public class Parser {
 

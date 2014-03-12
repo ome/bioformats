@@ -29,11 +29,11 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 
+import loci.common.ByteArrayHandle;
+import loci.common.DataTools;
 import ome.jxr.JXRException;
 import ome.jxr.ifd.IFDEntry;
 import ome.jxr.ifd.PixelFormat;
-import ome.scifio.common.DataTools;
-import ome.scifio.io.ByteArrayHandle;
 
 /**
  * Provides access to metadata extracted from the IFD part of a JPEG XR file.

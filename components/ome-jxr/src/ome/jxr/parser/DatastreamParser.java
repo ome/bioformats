@@ -27,13 +27,13 @@ package ome.jxr.parser;
 
 import java.io.IOException;
 
+import loci.common.RandomAccessInputStream;
+import loci.formats.codec.BitBuffer;
 import ome.jxr.JXRException;
 import ome.jxr.constants.File;
 import ome.jxr.constants.Image;
 import ome.jxr.image.ImagePlane;
 import ome.jxr.metadata.IFDMetadata;
-import ome.scifio.io.BitBuffer;
-import ome.scifio.io.RandomAccessInputStream;
 
 /**
  * Decodes the image data from a JPEG XR image file. The data has to be in the

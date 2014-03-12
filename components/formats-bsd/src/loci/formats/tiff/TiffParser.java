@@ -47,8 +47,8 @@ import loci.common.RandomAccessInputStream;
 import loci.common.Region;
 import loci.common.enumeration.EnumException;
 import loci.formats.FormatException;
+import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
-import ome.scifio.io.BitBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
