@@ -168,7 +168,7 @@ FindBugs Ant task
     License:   LGPL
 
 JGoodies Forms
-    JAR file:  forms-1.3.0.jar
+    JAR file:  jgoodies-forms-1.7.2.jar
     URL:       http://www.jgoodies.com/freeware/forms/index.html
     Notes:     used for layout by Data Browser and OME Notes
     License:   BSD
