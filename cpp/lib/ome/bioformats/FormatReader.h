@@ -47,6 +47,7 @@
 #include <ome/bioformats/FormatHandler.h>
 #include <ome/bioformats/MetadataConfigurable.h>
 #include <ome/bioformats/MetadataMap.h>
+#include <ome/bioformats/Types.h>
 
 #include <ome/compat/array.h>
 
@@ -79,15 +80,6 @@ namespace ome
           CAN_GROUP,   ///< Files may be grouped.
           CANNOT_GROUP ///< Files can not be grouped.
         };
-
-      /// @copydoc CoreMetadata::dimension_size_type
-      typedef CoreMetadata::dimension_size_type dimension_size_type;
-
-      /// @copydoc CoreMetadata::image_size_type
-      typedef CoreMetadata::image_size_type image_size_type;
-
-      /// @copydoc CoreMetadata::pixel_size_type
-      typedef CoreMetadata::pixel_size_type pixel_size_type;
 
     protected:
       /**
