@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-INTERNAL C++ headers for internal use only
  * %%
  * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,28 +36,32 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#ifndef OME_INTERNAL_VERSION_H
+#define OME_INTERNAL_VERSION_H
 
-// Configured features
+// Version metadata as integers
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+#define OME_VERSION_MAJOR ${OME_VERSION_MAJOR}
+#define OME_VERSION_MINOR ${OME_VERSION_MINOR}
+#define OME_VERSION_PATCH ${OME_VERSION_PATCH}
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
+// Version metadata as strings
+
+#define OME_VERSION_MAJOR_S "${OME_VERSION_MAJOR}"
+#define OME_VERSION_MINOR_S "${OME_VERSION_MINOR}"
+#define OME_VERSION_PATCH_S "${OME_VERSION_PATCH}"
+#define OME_VERSION_EXTRA_S "${OME_VERSION_EXTRA}"
+#ifndef OME_VERSION_EXTRA_S
+# define OME_VERSION_EXTRA_S ""
 #endif
 
-#endif // OME_COMPAT_CONFIG_H
+// Revision number in version control
+#define OME_VCS_REVISION "${OME_VCS_REVISION}"
+
+// Release date (seconds since the UNIX epoch)
+#define OME_VCS_DATE ${OME_VCS_DATE}
+
+// Release date as ISO-8601 string
+#define OME_VCS_DATE_S "${OME_VCS_DATE_S}"
+
+#endif // OME_INTERNAL_VERSION_H

@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,28 +36,38 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/compat/mstream.h>
 
-// Configured features
+#include <gtest/gtest.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+using ome::imstream;
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+TEST(Imstream, CreateFromIterator)
+{
+  std::string src("43 992.82 objective");
+  imstream is(&*src.begin(), &*src.end());
 
-#endif // OME_COMPAT_CONFIG_H
+  int i;
+  double d;
+  std::string s;
+
+  is >> i >> d >> s;
+  ASSERT_FALSE(!is);
+  ASSERT_EQ(i, 43);
+  ASSERT_EQ(s, "objective");
+}
+
+TEST(Imstream, CreateFromExtent)
+{
+  const std::string src("95 982.642 reflector");
+  imstream is(src.c_str(), src.size());
+
+  int i;
+  double d;
+  std::string s;
+
+  is >> i >> d >> s;
+  ASSERT_FALSE(!is);
+  ASSERT_EQ(i, 95);
+  ASSERT_EQ(s, "reflector");
+}

@@ -1,7 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
- * %%
+ * OME-BIOFORMATS C++ library for image IO.
  * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -36,28 +35,73 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#ifndef OME_BIOFORMATS_METADATACONFIGURABLE_H
+#define OME_BIOFORMATS_METADATACONFIGURABLE_H
 
-// Configured features
+#include <set>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+#include <ome/bioformats/MetadataOptions.h>
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+namespace ome
+{
+  namespace bioformats
+  {
 
-#endif // OME_COMPAT_CONFIG_H
+    /**
+     * Metadata configuration interface.
+     */
+    class MetadataConfigurable
+    {
+    protected:
+      /// Constructor.
+      MetadataConfigurable();
+
+    public:
+      /// Destructor.
+      virtual
+      ~MetadataConfigurable();
+
+      /**
+       * Get the supported metadata levels.
+       *
+       * @returns a set of supported metadata levels.
+       */
+      virtual const std::set<MetadataOptions::MetadataLevel>&
+      getSupportedMetadataLevels() = 0;
+
+      /**
+       * Set metadata options.
+       *
+       * @param options the options to set.
+       */
+      virtual void
+      setMetadataOptions(const MetadataOptions& options) = 0;
+
+      /**
+       * Get metadata options.
+       *
+       * @returns the current options.
+       */
+      virtual const MetadataOptions&
+      getMetadataOptions() const = 0;
+
+      /**
+       * Get metadata options.
+       *
+       * @returns the current options.
+       */
+      virtual MetadataOptions&
+      getMetadataOptions() = 0;
+
+    };
+
+  }
+}
+
+#endif // OME_BIOFORMATS_METADATACONFIGURABLE_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

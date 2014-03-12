@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,28 +36,43 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/compat/cstdint.h>
 
-// Configured features
+#include <gtest/gtest.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+TEST(Cstdint, Types)
+{
+  // Note assignments are purely to squash compiler warnings
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+  uint8_t a;
+  a = 1;
+  ASSERT_EQ(a, 1);
 
-#endif // OME_COMPAT_CONFIG_H
+  uint16_t b;
+  b = 2;
+  ASSERT_EQ(b, 2);
+
+  uint32_t c;
+  c = 3;
+  ASSERT_EQ(c, 3);
+
+  uint64_t d;
+  d = 4;
+  ASSERT_EQ(d, 4);
+
+  int8_t e;
+  e = 5;
+  ASSERT_EQ(e, 5);
+
+  int16_t f;
+  f = 6;
+  ASSERT_EQ(f, 6);
+
+  int32_t g;
+  g = 7;
+  ASSERT_EQ(g, 7);
+
+  int64_t h;
+  h = 8;
+  ASSERT_EQ(h, 8);
+}

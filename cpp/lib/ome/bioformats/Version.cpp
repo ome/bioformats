@@ -1,7 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
- * %%
+ * OME-BIOFORMATS C++ library for image IO.
  * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -36,28 +35,46 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/bioformats/Version.h>
 
-// Configured features
+#include <ome/internal/version.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
-
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
+// Work around glibc bug in sysmacros.h and FreeBSD bug in sys/types.h.
+#if defined(major)
+#undef major
+#endif
+#if defined(minor)
+#undef minor
 #endif
 
-#endif // OME_COMPAT_CONFIG_H
+namespace ome
+{
+  namespace bioformats
+  {
+
+    namespace
+    {
+      boost::posix_time::ptime
+      posix_release_date()
+      {
+        return boost::posix_time::from_time_t(OME_VCS_DATE);
+      }
+    }
+
+    Version::Version(uint32_t           major,
+                     uint32_t           minor,
+                     uint32_t           patch,
+                     const std::string& extra):
+      major(major),
+      minor(minor),
+      patch(patch),
+      extra(extra)
+    {
+    }
+
+    const Version release_version(OME_VERSION_MAJOR, OME_VERSION_MINOR, OME_VERSION_PATCH, OME_VERSION_EXTRA_S);
+
+    const ::ome::xml::model::primitives::Timestamp release_date(posix_release_date());
+
+  }
+}

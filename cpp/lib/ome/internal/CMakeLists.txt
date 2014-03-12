@@ -34,35 +34,13 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
-               ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in
+               ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
-set(ome_compat_static_headers
-    array.h
-    cstdint.h
-    memory.h
-    mstream.h
-    tuple.h
-    variant.h)
+set(ome_internal_static_headers)
 
-set(ome_compat_generated_headers
-   ${CMAKE_CURRENT_BINARY_DIR}/config.h)
-
-set(ome_compat_headers
-    ${ome_compat_static_headers}
-    ${ome_compat_generated_headers})
-
-set(ome_compat_sources
-    dummy.cpp)
-
-add_library(ome-compat STATIC ${ome_compat_sources} ${ome_compat_headers})
-target_link_libraries(ome-compat ${REGEX_LIBRARY})
-set_target_properties(ome-compat PROPERTIES LINKER_LANGUAGE CXX)
-
-set(ome_compat_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/compat")
-
-install(FILES ${ome_compat_static_headers} ${ome_compat_generated_headers}
-        DESTINATION ${ome_compat_includedir})
+set(ome_internal_generated_headers
+   ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
 # Dump header list for testing
-header_include_list_write(ome_compat_static_headers ome_compat_generated_headers ome/compat ${PROJECT_BINARY_DIR}/cpp/test/ome-compat)
+header_include_list_write(ome_internal_static_headers ome_internal_generated_headers ome/internal ${PROJECT_BINARY_DIR}/cpp/test/ome-internal)

@@ -1,7 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
- * %%
+ * OME-BIOFORMATS C++ library for image IO.
  * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -36,43 +35,82 @@
  * #L%
  */
 
-/**
- * @file variant.h Variant type limit workaround.  This header
- * increases the Boost MPL size limits, if required.  Some older
- * versions of Boost.Variant throw runtime exceptions when using
- * Variant and MPL with a number of types over a compile-time limit.
- */
+#ifndef OME_BIOFORMATS_VERSION_H
+#define OME_BIOFORMATS_VERSION_H
 
-#ifndef OME_COMPAT_VARIANT_H
-# define OME_COMPAT_VARIANT_H
+#include <string>
 
-# include <ome/compat/config.h>
+#include <ome/compat/cstdint.h>
+#include <ome/compat/tuple.h>
 
-#ifndef OME_VARIANT_LIMIT
-# ifndef BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
-/// Disable MPL header preprocessing (to allow the following macros to be modified).
-#  define BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS
-# endif
-# ifndef BOOST_MPL_LIMIT_VECTOR_SIZE
-/// MPL vector size limit increase.
-#  define BOOST_MPL_LIMIT_VECTOR_SIZE 30
-# endif
-# ifndef BOOST_MPL_LIMIT_LIST_SIZE
-/// MPL list size limit increase.
-#  define BOOST_MPL_LIMIT_LIST_SIZE 30
-# endif
-#endif
+#include <ome/xml/model/primitives/Timestamp.h>
 
-#include <boost/mpl/insert_range.hpp>
-#include <boost/mpl/joint_view.hpp>
-#include <boost/mpl/transform_view.hpp>
-#include <boost/mpl/vector.hpp>
+namespace ome
+{
+  namespace bioformats
+  {
 
-#include <boost/variant/apply_visitor.hpp>
-#include <boost/variant/get.hpp>
-#include <boost/variant/variant.hpp>
+    /**
+     * Release version.
+     */
+    struct Version
+    {
+      /**
+       * Constructor.
+       *
+       * @param major the major version.
+       * @param minor the minor version.
+       * @param patch the patchlevel version.
+       * @param extra the version suffix.
+       */
+      Version(uint32_t           major,
+              uint32_t           minor,
+              uint32_t           patch,
+              const std::string& extra);
 
-#endif // OME_COMPAT_VARIANT_H
+      /// Major version number.
+      uint32_t major;
+      /// Minor version number.
+      uint32_t minor;
+      /// Patchlevel version number.
+      uint32_t patch;
+      /// Version suffix.
+      std::string extra;
+    };
+
+    /**
+     * Output Version to output stream.
+     *
+     * @param os the output stream.
+     * @param version the Version to output.
+     * @returns the output stream.
+     */
+    template<class charT, class traits>
+    inline std::basic_ostream<charT,traits>&
+    operator<< (std::basic_ostream<charT,traits>& os,
+                const Version& version)
+    {
+      return os << version.major << '.'
+                << version.minor << '.'
+                << version.patch
+                << version.extra;
+    }
+
+    /**
+     * The release version number of the library currently being
+     * linked against.
+     */
+    extern const Version release_version;
+
+    /**
+     * The release date of the library currently being linked against.
+     */
+    extern const ::ome::xml::model::primitives::Timestamp release_date;
+
+  }
+}
+
+#endif // OME_BIOFORMATS_VERSION_H
 
 /*
  * Local Variables:

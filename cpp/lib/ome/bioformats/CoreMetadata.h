@@ -44,6 +44,7 @@
 
 #include <ome/compat/cstdint.h>
 
+#include <ome/bioformats/MetadataMap.h>
 #include <ome/bioformats/Modulo.h>
 
 #include <ome/xml/meta/BaseMetadata.h>
@@ -142,10 +143,7 @@ namespace ome
       bool metadataComplete;
 
       /// Non-core metadata associated with this series.
-      std::map<std::string,std::string> seriesMetadata;
-
-      /// Non-core metadata associated with this series.
-      std::map<std::string,std::vector<std::string> > seriesMetadataList;
+      MetadataMap seriesMetadata;
 
       /// Is this series is a lower-resolution copy of another series?
       bool thumbnail;

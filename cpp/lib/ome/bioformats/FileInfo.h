@@ -1,7 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
- * %%
+ * OME-BIOFORMATS C++ library for image IO.
  * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -36,28 +35,67 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#ifndef OME_BIOFORMATS_FILEINFO_H
+#define OME_BIOFORMATS_FILEINFO_H
 
-// Configured features
+#include <string>
+#include <ostream>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+namespace ome
+{
+  namespace bioformats
+  {
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+    /**
+     * Basic metadata for a file.
+     */
+    struct FileInfo
+    {
+      /// Absolute path to this file.
+      std::string filename;
 
-#endif // OME_COMPAT_CONFIG_H
+      /**
+       * FormatReader implementation used to read this file.
+       *
+       * @note In the Java implementation this returned a class.  In
+       * the C++ implementation this is the name of the reader which
+       * may be used to construct a reader via a factory.
+       * @todo Document factory function to create reader.
+       */
+      std::string reader;
+
+      /**
+       * @c true if this file can be passed to the appropriate reader's
+       * FormatReader::setId() method; @c false if otherwise.
+       */
+      bool usedToInitialize;
+    };
+
+    /**
+     * Output FileInfo to output stream.
+     *
+     * @param os the output stream.
+     * @param info the FileInfo to output.
+     * @returns the output stream.
+     */
+    template<class charT, class traits>
+    inline std::basic_ostream<charT,traits>&
+    operator<< (std::basic_ostream<charT,traits>& os,
+                const FileInfo& info)
+    {
+      return os << "filename = " << info.filename
+                << "\nreader = " << info.reader
+                << "\nused to initialize = " << info.usedToInitialize;
+    }
+
+  }
+}
+
+#endif // OME_BIOFORMATS_FILEINFO_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */
+

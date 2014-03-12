@@ -36,28 +36,45 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+/**
+ * @file regex.h Regular expression type substitution.  This header
+ * substitutes Boost types for the same types in the std namespace
+ * when not using a conforming C++11 compiler.  This permits all code
+ * to use the C++11 standard types irrespective of the compiler being
+ * used.
+ */
 
-// Configured features
+#ifndef OME_COMPAT_REGEX_H
+# define OME_COMPAT_REGEX_H
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+# include <ome/compat/config.h>
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+# ifdef OME_HAVE_REGEX
+#  include <regex>
+# elif OME_HAVE_TR1_REGEX
+#  include <tr1/regex.hpp>
+namespace std {
+  using std::tr1::regex;
+  using std::tr1::regex_error;
+  using std::tr1::regex_match;
+  using std::tr1::regex_search;
+}
+# elif OME_HAVE_BOOST_REGEX
+#  include <boost/regex.hpp>
+namespace std {
+  using boost::regex;
+  using boost::regex_error;
+  using boost::regex_match;
+  using boost::regex_search;
+}
+# else
+#  error An regex implementation is not available
+# endif
 
-#endif // OME_COMPAT_CONFIG_H
+#endif // OME_COMPAT_REGEX_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

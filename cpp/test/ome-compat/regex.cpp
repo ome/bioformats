@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,28 +36,47 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/compat/regex.h>
 
-// Configured features
+#include <gtest/gtest.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+TEST(Regex, Construct)
+{
+  std::regex foo("^foo[bar]$");
+  std::regex bar("^foo[bar]$", std::regex::extended);
+  std::regex chk("^[^:/,.][^:/,]*$", std::regex::extended);
+}
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+TEST(Regex, Search)
+{
+  std::regex foo("^foo[bar]$");
+  std::regex bar("^foo[bar]$", std::regex::extended);
+  std::regex chk("^[^:/,.][^:/,]*$", std::regex::extended);
 
-#endif // OME_COMPAT_CONFIG_H
+  std::string test("foob");
+  std::string fail("fail:");
+
+  ASSERT_TRUE(std::regex_search(test, foo));
+  ASSERT_TRUE(std::regex_search(test, bar));
+  ASSERT_TRUE(std::regex_search(test, chk));
+  ASSERT_FALSE(std::regex_search(fail, foo));
+  ASSERT_FALSE(std::regex_search(fail, bar));
+  ASSERT_FALSE(std::regex_search(fail, chk));
+}
+
+TEST(Regex, Match)
+{
+  std::regex foo("^foo[bar]$");
+  std::regex bar("^foo[bar]$", std::regex::extended);
+  std::regex chk("^[^:/,.][^:/,]*$", std::regex::extended);
+
+  std::string test("foob");
+  std::string fail("fail:");
+
+  ASSERT_TRUE(std::regex_match(test, foo));
+  ASSERT_TRUE(std::regex_match(test, bar));
+  ASSERT_TRUE(std::regex_match(test, chk));
+  ASSERT_FALSE(std::regex_match(fail, foo));
+  ASSERT_FALSE(std::regex_match(fail, bar));
+  ASSERT_FALSE(std::regex_match(fail, chk));
+}

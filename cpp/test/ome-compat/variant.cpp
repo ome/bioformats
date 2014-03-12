@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,28 +36,33 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/compat/variant.h>
 
-// Configured features
+#include <gtest/gtest.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+typedef boost::variant<int,double,std::string> var;
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+TEST(Variant, Create)
+{
+  var v;
+}
 
-#endif // OME_COMPAT_CONFIG_H
+TEST(Variant, SetInt)
+{
+  var v1(int(32354));
+  ASSERT_EQ(boost::get<int>(v1), 32354);
+
+  var v2;
+  v2 = int(32354);
+  ASSERT_EQ(boost::get<int>(v2), 32354);
+}
+
+TEST(Variant, SetString)
+{
+  var v1(std::string("test"));
+  ASSERT_EQ(boost::get<std::string>(v1), "test");
+
+  var v2;
+  v2 = std::string("test");
+  ASSERT_EQ(boost::get<std::string>(v2), "test");
+}

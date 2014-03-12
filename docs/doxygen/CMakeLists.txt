@@ -42,7 +42,7 @@ if(BUILD_DOXYGEN)
                      COMMAND ${CMAKE_COMMAND} -E remove_directory bioformats
                      COMMAND ${CMAKE_COMMAND} -E make_directory bioformats
                      COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox
-                     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox)
+                     DEPENDS gensrc ${CMAKE_CURRENT_BINARY_DIR}/bioformats.dox)
 
   add_custom_target(doc-check
                     COMMAND ${CMAKE_COMMAND} -Dlogfile=${CMAKE_CURRENT_BINARY_DIR}/bioformats.log -P ${PROJECT_SOURCE_DIR}/cpp/cmake/DoxygenCheck.cmake

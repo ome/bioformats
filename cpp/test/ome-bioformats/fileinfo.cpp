@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
  * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,28 +36,26 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/bioformats/FileInfo.h>
 
-// Configured features
+#include <gtest/gtest.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+TEST(FileInfo, Construct)
+{
+  ome::bioformats::FileInfo info;
+  info.filename = "/tmp/test.tiff";
+  info.reader = "TiffReader";
+  info.usedToInitialize = true;
+}
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+TEST(FileInfo, StreamOutput)
+{
+  std::ostringstream os;
+  ome::bioformats::FileInfo info;
+  info.filename = "/tmp/test.png";
+  info.reader = "PngReader";
+  info.usedToInitialize = true;
+  os << info;
 
-#endif // OME_COMPAT_CONFIG_H
+  ASSERT_FALSE(!os);
+}

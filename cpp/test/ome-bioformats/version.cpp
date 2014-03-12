@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
  * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,28 +36,45 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/bioformats/Version.h>
 
-// Configured features
+#include <ome/internal/version.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+#include <sstream>
+#include <stdexcept>
+#include <iostream>
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+#include <gtest/gtest.h>
 
-#endif // OME_COMPAT_CONFIG_H
+TEST(Version, CorrectVersion)
+{
+  ASSERT_EQ(ome::bioformats::release_version.major, OME_VERSION_MAJOR);
+  ASSERT_EQ(ome::bioformats::release_version.minor, OME_VERSION_MINOR);
+  ASSERT_EQ(ome::bioformats::release_version.patch, OME_VERSION_PATCH);
+  ASSERT_EQ(ome::bioformats::release_version.extra, OME_VERSION_EXTRA_S);
+}
+
+TEST(Version, VersionStreamOutput)
+{
+  std::ostringstream os;
+  os << ome::bioformats::release_version;
+  std::string expected(OME_VERSION_MAJOR_S "." OME_VERSION_MINOR_S "." OME_VERSION_PATCH_S OME_VERSION_EXTRA_S);
+
+  ASSERT_EQ(os.str(), expected);
+}
+
+TEST(Version, CorrectDate)
+{
+  ASSERT_EQ(static_cast<boost::posix_time::ptime>(ome::bioformats::release_date), boost::posix_time::from_time_t(OME_VCS_DATE));
+}
+
+TEST(Version, DateStreamOutput)
+{
+  std::ostringstream os;
+  os << ome::bioformats::release_date;
+
+  std::ostringstream expected;
+  expected << ome::xml::model::primitives::Timestamp(boost::posix_time::from_time_t(OME_VCS_DATE));
+
+  ASSERT_EQ(os.str(), expected.str());
+}

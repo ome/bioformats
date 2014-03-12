@@ -36,28 +36,34 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+/**
+ * @file mstream.h Memory streams.  Similar to @c ifstream, this
+ * header defines imstream.
+ */
 
-// Configured features
+#ifndef OME_COMPAT_MSTREAM_H
+#define OME_COMPAT_MSTREAM_H
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+#include <ome/compat/config.h>
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+#include <boost/iostreams/device/array.hpp>
+#include <boost/iostreams/stream.hpp>
 
-#endif // OME_COMPAT_CONFIG_H
+namespace ome
+{
+
+  /// Character array stream source.
+  typedef boost::iostreams::basic_array_source<char> mstream_source;
+
+  /// Input memory stream.
+  typedef boost::iostreams::stream<mstream_source> imstream;
+
+}
+
+#endif // OME_COMPAT_MSTREAM_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */

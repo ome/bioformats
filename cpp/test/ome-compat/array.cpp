@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,28 +36,22 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/compat/array.h>
 
-// Configured features
+#include <gtest/gtest.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+TEST(Array, DefaultConstruct)
+{
+  std::array<int, 10> a;
+  // We're not explicitly testing here, but it squashed an unused
+  // variable compiler warning.
+  a[0] = 0;
+  ASSERT_EQ(a[0], 0);
+}
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
-
-#endif // OME_COMPAT_CONFIG_H
+TEST(Array, Assign)
+{
+  std::array<int, 10> a;
+  a[4] = 453;
+  ASSERT_EQ(a[4], 453);
+}

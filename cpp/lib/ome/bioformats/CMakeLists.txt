@@ -39,19 +39,28 @@ include_directories(${OME_TOPLEVEL_INCLUDES})
 set(OME_BIOFORMATS_SOURCES
     CoreMetadata.cpp
     FormatException.cpp
+    MetadataConfigurable.cpp
     MetadataOptions.cpp
     Modulo.cpp
     UnknownFormatException.cpp
-    UnsupportedCompressionException.cpp)
+    UnsupportedCompressionException.cpp
+    Version.cpp)
 
 set(OME_BIOFORMATS_HEADERS
     CoreMetadata.h
+    FileInfo.h
     FormatException.h
     MetadataMap.h
+    FormatHandler.h
+    FormatReader.h
+    MetadataConfigurable.h
     MetadataOptions.h
     Modulo.h
+    PixelBuffer.h
+    PixelProperties.h
     UnknownFormatException.h
-    UnsupportedCompressionException.h)
+    UnsupportedCompressionException.h
+    Version.h)
 
 set(BIOFORMATS_SOURCES
     ${OME_BIOFORMATS_SOURCES})
@@ -59,13 +68,15 @@ set(BIOFORMATS_SOURCES
 set(BIOFORMATS_STATIC_HEADERS
     ${OME_BIOFORMATS_HEADERS})
 
+set(BIOFORMATS_GENERATED_HEADERS)
+
 set(BIOFORMATS_HEADERS
     ${BIOFORMATS_STATIC_HEADERS})
 
 add_library(ome-bioformats SHARED
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
-target_link_libraries(ome-bioformats ome-xml)
+target_link_libraries(ome-bioformats ome-compat ome-xml)
 set_target_properties(ome-bioformats PROPERTIES VERSION ${OME_VERSION_SHORT})
 
 install(TARGETS ome-bioformats LIBRARY
