@@ -1215,7 +1215,7 @@ namespace ome
                           getModuloT().size() > 0)
                         {
                           /**
-                           * @todoImplement addModuloAlong.  Requires bits of MetadataTools OMEXMLServiceImpl.
+                           * @todo Implement addModuloAlong.  Requires bits of MetadataTools OMEXMLServiceImpl.
                            */
                           // addModuloAlong(store, core.get(series), series);
                         }

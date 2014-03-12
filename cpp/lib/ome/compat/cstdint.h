@@ -37,11 +37,12 @@
  */
 
 /**
- * @file cstdint.h Standard integer types.  This header substitutes
- * C++ cstdint types for the same types in the C99 stdint.h header
- * when not using a conforming C++11 compiler.  This permits all code
- * to use the C++11 standard types irrespective of the compiler being
- * used.
+ * @file ome/compat/cstdint.h Standard integer types.
+ *
+ * This header substitutes C++ cstdint types for the same types in the
+ * C99 stdint.h header when not using a conforming C++11 compiler.
+ * This permits all code to use the C++11 standard types irrespective
+ * of the compiler being used.
  */
 
 #ifndef OME_COMPAT_CSTDINT_H

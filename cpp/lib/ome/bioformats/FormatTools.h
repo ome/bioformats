@@ -62,6 +62,7 @@ namespace ome
      * @param z Z coordinate of ZCT coordinate triple to convert to 1D index.
      * @param c C coordinate of ZCT coordinate triple to convert to 1D index.
      * @param t T coordinate of ZCT coordinate triple to convert to 1D index.
+     * @returns the 1D index.
      */
     dimension_size_type
     getIndex(const std::string& order,
@@ -84,6 +85,7 @@ namespace ome
      * @param num total number of image planes (zSize * cSize * tSize),
      *   specified as a consistency check.
      * @param index 1D (rasterized) index to convert to ZCT coordinates.
+     * @returns an array containing the ZCT coordinates (in that order).
      */
     std::array<dimension_size_type, 3>
     getZCTCoords(const std::string& order,

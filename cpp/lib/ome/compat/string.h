@@ -37,7 +37,7 @@
  */
 
 /**
- * @file string.h String utility methods.
+ * @file ome/compat/string.h String utility methods.
  */
 
 #ifndef OME_COMPAT_STRING_H
@@ -50,8 +50,17 @@
 namespace ome
 {
 
+  /**
+   * Trim leading whitespace from a string.
+   *
+   * Space, newline, carriage return and horizontal and vertical tabs
+   * are removed from the left-hand side of the string.
+   *
+   * @param str the string to trim.
+   * @returns the left-trimmed string.
+   */
   inline std::string
-    ltrim(const std::string& str)
+  ltrim(const std::string& str)
   {
     std::string::size_type pos = str.find_first_not_of(" \r\n\t\v");
     if (pos == std::string::npos)
@@ -60,8 +69,17 @@ namespace ome
     return str.substr(pos, std::string::npos);
   }
 
+  /**
+   * Trim trailing whitespace from a string.
+   *
+   * Space, newline, carriage return and horizontal and vertical tabs
+   * are removed from the right-hand side of the string.
+   *
+   * @param str the string to trim.
+   * @returns the right-trimmed string.
+   */
   inline std::string
-    rtrim(const std::string& str)
+  rtrim(const std::string& str)
   {
     std::string::size_type pos = str.find_last_not_of(" \r\n\t\v");
     if (pos == std::string::npos)
@@ -70,8 +88,17 @@ namespace ome
     return str.substr(0, pos + 1);
   }
 
+  /**
+   * Trim leading and trailing whitespace from a string.
+   *
+   * Space, newline, carriage return and horizontal and vertical tabs
+   * are removed from the left- and right-hand sides of the string.
+   *
+   * @param str the string to trim.
+   * @returns the trimmed string.
+   */
   inline std::string
-    trim(const std::string& str)
+  trim(const std::string& str)
   {
     std::string::size_type fpos = str.find_first_not_of(" \r\n\t\v");
     if (fpos == std::string::npos)

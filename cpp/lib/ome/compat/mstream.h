@@ -37,8 +37,9 @@
  */
 
 /**
- * @file mstream.h Memory streams.  Similar to @c ifstream, this
- * header defines imstream.
+ * @file ome/compat/mstream.h Memory streams.
+ *
+ * Similar to @c ifstream, this header defines imstream.
  */
 
 #ifndef OME_COMPAT_MSTREAM_H

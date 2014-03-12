@@ -87,6 +87,7 @@ namespace ome
                            virtual public ::ome::bioformats::FormatHandler
       {
       protected:
+        /// List type for storing CoreMetadata.
         typedef std::vector<std::shared_ptr<::ome::bioformats::CoreMetadata> > coremetadata_list_type;
 
         /// Reader properties specific to the derived file format.
@@ -193,8 +194,12 @@ namespace ome
          * setId.  Most subclasses should override this method to
          * perform initialization operations such as parsing metadata.
          *
+         * @param id the filename to open.
+         *
          * @throws FormatException if a parsing error occurs
          * processing the file.
+         *
+         * @sa ome::bioformats::FormatHandler::setId.
          */
         virtual
         void
@@ -202,12 +207,27 @@ namespace ome
 
         /**
          * Check if a file is in the used files list.
+         *
+         * @param file the file to check.
+         * @returns @c true if the file is used, @c false if not used.
          */
         virtual
         bool
         isUsedFile(const std::string& file);
 
-        /** Read a raw plane. */
+        /**
+         * Read a raw plane.
+         *
+         * Note that the pixel buffer must be of the correct size to
+         * store the pixel data.
+         *
+         * @param source the stream to read the plane from.
+         * @param dest the pixel buffer in which to store the plane.
+         * @param x the left edge of the plane.
+         * @param y the top edge of the plane.
+         * @param w the width of the plane.
+         * @param h the height of the plane.
+         */
         virtual
         void
         readPlane(std::istream& source,
@@ -217,7 +237,20 @@ namespace ome
                   dimension_size_type w,
                   dimension_size_type h);
 
-        /** Read a raw plane with scanline padding. */
+        /**
+         * Read a raw plane with scanline padding.
+         *
+         * Note that the pixel buffer must be of the correct size to
+         * store the pixel data.
+         *
+         * @param source the stream to read the plane from.
+         * @param dest the pixel buffer in which to store the plane.
+         * @param x the left edge of the plane.
+         * @param y the top edge of the plane.
+         * @param w the width of the plane.
+         * @param h the height of the plane.
+         * @param scanlinePad the scanline padding.
+         */
         virtual
         void
         readPlane(std::istream& source,
@@ -228,7 +261,14 @@ namespace ome
                   dimension_size_type h,
                   dimension_size_type scanlinePad);
 
-        /** Return a properly configured loci.formats.meta.FilterMetadata. */
+        /**
+         * Create a configured FilterMetadata instance.
+         *
+         * This creates, configures and returns an instance of
+         * ome::xml::meta::FilterMetadata.
+         *
+         * @returns a FilterMetadata instance.
+         */
         virtual
         std::shared_ptr< ::ome::xml::meta::MetadataStore>
         makeFilterMetadata();
@@ -402,15 +442,21 @@ namespace ome
         const Modulo&
         getModuloC() const;
 
-        // Documented in superclass.
-        dimension_size_type
-        getThumbSizeX() const;
-
       protected:
+        /**
+         * Get the thumbnail size of the X and Y dimensions.
+         *
+         * @returns an array containing the X and Y dimension
+         * thumbnail size (in that order).
+         */
         std::array<dimension_size_type, 2>
         getThumbSize() const;
 
       public:
+        // Documented in superclass.
+        dimension_size_type
+        getThumbSizeX() const;
+
         // Documented in superclass.
         dimension_size_type
         getThumbSizeY() const;
