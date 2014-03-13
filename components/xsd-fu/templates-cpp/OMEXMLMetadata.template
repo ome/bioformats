@@ -413,13 +413,13 @@ namespace ome
        * manipulating OME-XML DOMs for the current version of the
        * OME-XML schema.
        */
-      class OMEXMLMetadata : public ::ome::xml::meta::Metadata
+      class OMEXMLMetadata : virtual public Metadata
       {
       private:
         /// OME-XML root node.
         std::shared_ptr<OMEXMLMetadataRoot> root; // OME
         /// Generic root node.
-        std::shared_ptr< ::ome::xml::meta::MetadataRoot> genericRoot; // OME
+        std::shared_ptr<MetadataRoot> genericRoot; // OME
         /// OME-XML model.
         std::shared_ptr< ::ome::xml::model::OMEModel> model;
 
@@ -440,7 +440,8 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         /// Destructor.
-        virtual ~OMEXMLMetadata();
+        virtual
+        ~OMEXMLMetadata();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       OMEXMLMetadata::~OMEXMLMetadata()
@@ -457,18 +458,18 @@ namespace ome
       void
       OMEXMLMetadata::createRoot()
       {
-        std::shared_ptr< ::ome::xml::meta::MetadataRoot> newroot(std::make_shared<OMEXMLMetadataRoot>());
+        std::shared_ptr<MetadataRoot> newroot(std::make_shared<OMEXMLMetadataRoot>());
         setRoot(newroot);
       }
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
-        std::shared_ptr< ::ome::xml::meta::MetadataRoot>&
+        std::shared_ptr<MetadataRoot>&
         getRoot();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
-      std::shared_ptr< ::ome::xml::meta::MetadataRoot>&
+      std::shared_ptr<MetadataRoot>&
       OMEXMLMetadata::getRoot()
       {
         return this->genericRoot;
@@ -484,11 +485,11 @@ namespace ome
          * @copydoc ome::xml::meta::MetadataStore::setRoot()
          */
         void
-        setRoot(std::shared_ptr< ::ome::xml::meta::MetadataRoot>& root);
+        setRoot(std::shared_ptr<MetadataRoot>& root);
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      OMEXMLMetadata::setRoot(std::shared_ptr< ::ome::xml::meta::MetadataRoot>& root)
+      OMEXMLMetadata::setRoot(std::shared_ptr<MetadataRoot>& root)
       {
         std::shared_ptr<OMEXMLMetadataRoot> newroot =
           std::dynamic_pointer_cast<OMEXMLMetadataRoot>(root);
@@ -497,7 +498,7 @@ namespace ome
           throw std::logic_error("OMEXMLMetadata root must be of type OMEXMLMetadataRoot");
 
         this->root = newroot;
-        this->genericRoot = std::static_pointer_cast< ::ome::xml::meta::MetadataRoot>(this->root);
+        this->genericRoot = std::static_pointer_cast<MetadataRoot>(this->root);
         model = std::make_shared< ::ome::xml::model::detail::OMEModel>();
       }
 {% end source %}\

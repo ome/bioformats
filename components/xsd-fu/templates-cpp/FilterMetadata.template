@@ -183,7 +183,7 @@ namespace ome
        * characters from metadata values before storing them in a delegate
        * MetadataStore.
        */
-      class FilterMetadata : public MetadataStore
+      class FilterMetadata : virtual public MetadataStore
       {
       private:
         /// The wrapped metadata store.
@@ -213,6 +213,7 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         /// Destructor.
+        virtual
         ~FilterMetadata();
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\

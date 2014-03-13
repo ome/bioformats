@@ -43,8 +43,6 @@ xsd_fu(metadata OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META_SOURCES)
 xsd_fu(omexml_metadata OME_XML_GENERATED_METAOME_HEADERS OME_XML_GENERATED_METAOME_SOURCES)
 
 set(OME_XML_STATIC_SOURCES
-  meta/BaseMetadata.cpp
-  meta/Metadata.cpp
   meta/OMEXMLMetadataRoot.cpp
   model/detail/OMEModel.cpp
   model/detail/OMEModelObject.cpp

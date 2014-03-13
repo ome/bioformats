@@ -66,12 +66,22 @@ namespace ome
 
       protected:
         /// Constructor.
-        BaseMetadata();
+        BaseMetadata()
+        {}
 
       public:
         /// Destructor.
         virtual
-        ~BaseMetadata();
+        ~BaseMetadata()
+        {}
+
+      private:
+        /// Copy constructor (deleted).
+        BaseMetadata (const BaseMetadata&);
+
+        /// Assignment operator (deleted).
+        BaseMetadata&
+        operator= (const BaseMetadata&);
       };
 
     }
