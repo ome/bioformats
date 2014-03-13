@@ -1,0 +1,69 @@
+Converting a file to different format
+=====================================
+
+The ``bfconvert`` :doc:`command line tool <index>` can be used to convert
+files between :doc:`supported formats </supported-formats>`.
+
+``bfconvert`` with no options displays a summary of available options.
+
+To convert a file to single output file (e.g. TIFF):
+
+::
+
+  bfconvert /path/to/input output.tiff
+
+The output file format is determined by the extension of the output file, e.g.
+.tiff for TIFF files, .ome.tiff for OME-TIFF, .png for PNG.
+
+All images in the input file are converted by default.  To convert only one
+series:
+
+::
+
+  bfconvert -series 0 /path/to/input output-first-series.tiff
+
+To convert only one timepoint:
+
+::
+
+  bfconvert -timepoint 0 /path/to/input output-first-timepoint.tiff
+
+To convert only one channel:
+
+::
+
+  bfconvert -channel 0 /path/to/input output-first-channel.tiff
+
+To convert only one Z section:
+
+::
+
+  bfconvert -z 0 /path/to/input output-first-z.tiff
+
+To convert images between certain indices (inclusive):
+
+::
+
+  bfconvert -range 0 2 /path/to/input output-first-3-images.tiff
+
+
+Images can also be written to multiple files by specifying a pattern string
+in the output file.  For example, to write one series, timepoint, channel, and
+Z section per file:
+
+::
+
+  bfconvert /path/to/input output_series_%s_Z%z_C%c_T%t.tiff
+
+``%s`` is the series index, ``%z`` is the Z section index, ``%c`` is the
+channel index, and ``%t`` is the timepoint index (all indices begin at 0).
+
+By default, all images will be written uncompressed.  Supported compression
+modes vary based upon the output format, but when multiple modes are available
+the compression can be changed using the ``-compression`` option.  For
+example, to use LZW compression in a TIFF file:
+
+::
+
+  bfconvert -compression LZW /path/to/input output-lzw.tiff
+

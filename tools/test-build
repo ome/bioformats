@@ -3,6 +3,7 @@
 # with travis, but may be used by hand as well.
 
 set -e
+set -x
 
 # Clean up
 clean()
@@ -42,7 +43,7 @@ cppwrap()
 {
     (
         maven
-        cd components/scifio
+        cd components/formats-bsd
         mvn -DskipTests clean package cppwrap:wrap dependency:copy-dependencies
         cd target/cppwrap
         mkdir build
@@ -62,11 +63,28 @@ sphinx()
         make html
         make latexpdf
     )
+}
+
+# Test Ant build targets
+antbuild()
+{
     (
-        export SPHINXOPTS="-W"
-        cd docs/release
-        make clean
-        make html
+      ant clean compile
+      ant clean compile-autogen
+      ant clean compile-formats-api
+      ant clean compile-jai
+      ant clean compile-formats-common
+      ant clean compile-bio-formats-plugins
+      ant clean compile-lwf-stubs
+      ant clean compile-mdbtools
+      ant clean compile-metakit
+      ant clean compile-ome-xml
+      ant clean compile-ome-poi
+      ant clean compile-formats-bsd
+      ant clean compile-formats-gpl
+      ant clean compile-bio-formats-tools
+      ant clean compile-tests
+      ant clean compile-turbojpeg
     )
 }
 
@@ -83,8 +101,10 @@ do
             cppwrap ;;
         sphinx)
             sphinx ;;
+        ant)
+            antbuild ;;
         all)
-            clean && maven && cppwrap && sphinx ;;
+            clean && maven && cppwrap && sphinx && antbuild;;
         *)
             echo "Invalid argument: \"$arg\"" >&2
             exit 1

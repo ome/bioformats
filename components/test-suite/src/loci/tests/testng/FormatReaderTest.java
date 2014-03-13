@@ -49,7 +49,6 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.Memoizer;
-import loci.formats.MetadataTools;
 import loci.formats.ReaderWrapper;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
@@ -659,7 +658,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.getSizeX() != config.getSizeX()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.getSizeX() + ", actual " + reader.getSizeX() + ")");
       }
     }
     result(testName, true);
@@ -676,7 +675,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.getSizeY() != config.getSizeY()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.getSizeY() + ", actual " + reader.getSizeY() + ")");
       }
     }
     result(testName, true);
@@ -693,7 +692,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.getSizeZ() != config.getSizeZ()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.getSizeZ() + ", actual " + reader.getSizeZ() + ")");
       }
     }
     result(testName, true);
@@ -710,7 +709,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.getSizeC() != config.getSizeC()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.getSizeC() + ", actual " + reader.getSizeC() + ")");
       }
     }
     result(testName, true);
@@ -727,7 +726,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.getSizeT() != config.getSizeT()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.getSizeT() + ", actual " + reader.getSizeT() + ")");
       }
     }
     result(testName, true);
@@ -765,7 +764,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.isInterleaved() != config.isInterleaved()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.isInterleaved() + ", actual " + reader.isInterleaved() + ")");
       }
     }
     result(testName, true);
@@ -782,7 +781,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.isIndexed() != config.isIndexed()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.isIndexed() + ", actual " + reader.isIndexed() + ")");
       }
     }
     result(testName, true);
@@ -799,7 +798,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.isFalseColor() != config.isFalseColor()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.isFalseColor() + ", actual " + reader.isFalseColor() + ")");
       }
     }
     result(testName, true);
@@ -816,7 +815,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.isRGB() != config.isRGB()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.isRGB() + ", actual " + reader.isRGB() + ")");
       }
     }
     result(testName, true);
@@ -833,7 +832,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.getThumbSizeX() != config.getThumbSizeX()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.getThumbSizeX() + ", actual " + reader.getThumbSizeX() + ")");
       }
     }
     result(testName, true);
@@ -850,7 +849,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.getThumbSizeY() != config.getThumbSizeY()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.getThumbSizeY() + ", actual " + reader.getThumbSizeY() + ")");
       }
     }
     result(testName, true);
@@ -869,7 +868,7 @@ public class FormatReaderTest {
       if (reader.getPixelType() !=
         FormatTools.pixelTypeFromString(config.getPixelType()))
       {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.getPixelType() + ", actual " + reader.getPixelType() + ")");
       }
     }
     result(testName, true);
@@ -886,7 +885,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       if (reader.isLittleEndian() != config.isLittleEndian()) {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + config.isLittleEndian() + ", actual " + reader.isLittleEndian() + ")");
       }
     }
     result(testName, true);
@@ -912,7 +911,7 @@ public class FormatReaderTest {
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
       {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
     }
     result(testName, true);
@@ -937,7 +936,7 @@ public class FormatReaderTest {
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
       {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
     }
     result(testName, true);
@@ -963,7 +962,7 @@ public class FormatReaderTest {
       if (!(expectedSize == null && realSize == null) &&
         (expectedSize == null || !expectedSize.equals(size)))
       {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + expectedSize + ", actual " + realSize + ")");
       }
     }
     result(testName, true);
@@ -985,7 +984,7 @@ public class FormatReaderTest {
       if (!(expectedIncrement == null && realIncrement == null) &&
         !expectedIncrement.equals(realIncrement))
       {
-        result(testName, false, "Series " + i);
+        result(testName, false, "Series " + i + " (expected " + expectedIncrement + ", actual " + realIncrement + ")");
       }
     }
     result(testName, true);
@@ -1012,7 +1011,7 @@ public class FormatReaderTest {
         if (!(expectedLightSource == null && realLightSource == null) &&
           !expectedLightSource.equals(realLightSource))
         {
-          result(testName, false, "Series " + i + " channel " + c);
+          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedLightSource + ", actual " + realLightSource + ")");
         }
       }
     }
@@ -1109,7 +1108,7 @@ public class FormatReaderTest {
         if (realWavelength == null || expectedWavelength == null ||
           !expectedWavelength.equals(realWavelength.getValue()))
         {
-          result(testName, false, "Series " + i + " channel " + c);
+          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
         }
       }
     }
@@ -1138,7 +1137,7 @@ public class FormatReaderTest {
         if (realWavelength == null || expectedWavelength == null ||
           !expectedWavelength.equals(realWavelength.getValue()))
         {
-          result(testName, false, "Series " + i + " channel " + c);
+          result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
         }
       }
     }
@@ -1169,7 +1168,7 @@ public class FormatReaderTest {
             !expectedDetector.equals(realDetector)) && (realDetector == null ||
             !realDetector.equals(expectedDetector)))
           {
-            result(testName, false, "Series " + i + " channel " + c);
+            result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedDetector + ", actual " + realDetector + ")");
           }
         }
       }
@@ -2105,8 +2104,8 @@ public class FormatReaderTest {
       OutputStreamWriter writer =
         new OutputStreamWriter(new FileOutputStream(f), Constants.ENCODING);
       MetadataStore store = reader.getMetadataStore();
-      MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
-      String xml = MetadataTools.getOMEXML(retrieve);
+      MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
+      String xml = omexmlService.getOMEXML(retrieve);
       writer.write(xml);
       writer.close();
       reader.close();

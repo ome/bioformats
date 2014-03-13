@@ -1,6 +1,6 @@
-{% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
+{% def indexes_string(indexes) %}${", ".join(map(lambda x: lang.index_string(x),indexes))}{% end %}\
 \
-{% def indexes_name_string(indexes) %}${", ".join([v.replace('int ', '') for v in indexes])}{% end %}\
+{% def indexes_name_string(indexes) %}${", ".join(map(lambda x: lang.index_argname(x),indexes))}{% end %}\
 \
 {% def index_name_string(name) %}\
 {% choose %}\
@@ -21,13 +21,13 @@
 {% def getter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-	public ${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}()
 {% end %}\
 {% end %}\
 	{
@@ -38,13 +38,13 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
 {% end %}\
 {% end %}\
 	{
@@ -134,7 +134,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.meta;
+package ome.xml.meta;
 
 import ome.xml.model.*;
 import ome.xml.model.enums.*;
@@ -232,14 +232,14 @@ public class DummyMetadata implements IMetadata
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType != 'Object' %}\
+{% if o.langBaseType != 'Object' %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	public void set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+	public void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
 	{
 	}
 
-	public ${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
+	public ${o.langBaseType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])})
 	{
 		return null;
 	}
@@ -286,10 +286,12 @@ ${counter(k, o, v)}\
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% if debug %}\
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
 	// Ignoring ${prop.name} property of reference ${o.name}
 
+{% end debug %}\
 {% end %}\
 {% end %}\
 {% otherwise %}\
@@ -299,7 +301,9 @@ ${counter(k, o, v)}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
@@ -318,10 +322,14 @@ ${getter(k, o, prop, v)}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
@@ -366,10 +374,12 @@ ${getter(k, o, prop, v)}\
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% if debug %}\
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
 	// Ignoring ${prop.name} property of reference ${o.name}
 
+{% end debug %}\
 {% end %}\
 {% end %}\
 {% otherwise %}\
@@ -379,13 +389,17 @@ ${getter(k, o, prop, v)}\
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
+{% if not prop.isBackReference %}\
 	// ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}\
 
+{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -396,10 +410,14 @@ ${setter(k, o, prop, v)}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\

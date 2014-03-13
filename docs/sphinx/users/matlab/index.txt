@@ -7,16 +7,19 @@ of algorithms for performing computationally intensive tasks.
 
 Calling Bio-Formats from MATLAB is fairly straightforward, since MATLAB
 has built-in interoperability with Java. We have created a :source:`set
-of scripts <components/bio-formats/matlab>` for reading image files. Note
+of scripts <components/formats-gpl/matlab>` for reading image files. Note
 the minimum supported MATLAB version is R2007b (7.5).
 
 Installation
 ------------
 
-Download **bfmatlab.zip** and **loci_tools.jar** from the Bio-Formats
-:downloads:`downloads page <>`. Unzip **bfmatlab.zip** into a new folder,
-move **loci_tools.jar**  into the same folder and add this folder to your
-MATLAB path.
+Download the MATLAB toolbox from the Bio-Formats
+:downloads:`downloads page <>`. Unzip :file:`bfmatlab.zip` and add the
+unzipped :file:`bfmatlab` folder to your MATLAB path.
+
+.. note:: As of Bio-Formats 5.0.0, this zip now contains the bundled jar
+    and you no longer need to download :file:`loci_tools.jar` or the new
+    :file:`bioformats_package.jar` separately.
 
 Usage
 -----
@@ -37,8 +40,9 @@ overhead from copying arrays.
 Upgrading
 ---------
 
-To use a newer version of Bio-Formats, overwrite **loci_tools.jar**
-with the :downloads:`newer version <>` and restart MATLAB.
+To use a newer version of Bio-Formats, overwrite the content of the
+:file:`bfmatlab` folder with the :downloads:`newer version <>` of the
+toolbox and restart MATLAB.
 
 Alternative scripts
 -------------------

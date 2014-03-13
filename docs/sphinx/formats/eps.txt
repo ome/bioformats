@@ -12,7 +12,7 @@ Developer: `Adobe <http://www.adobe.com/>`_
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |yes|
 
@@ -50,8 +50,8 @@ Utility: |Poor|
 **Additional Information**
 
 
-Source Code: :scifioreader:`EPSReader.java`
-Source Code: :scifiowriter:`EPSWriter.java`
+Source Code: :bsd-reader:`EPSReader.java`
+Source Code: :bsd-writer:`EPSWriter.java`
 
 Notes:
 

@@ -1,6 +1,6 @@
-{% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
+{% def indexes_string(indexes) %}${", ".join(map(lambda x: lang.index_string(x),indexes))}{% end %}\
 \
-{% def indexes_name_string(indexes) %}${", ".join([v.replace('int ', '') for v in indexes])}{% end %}\
+{% def indexes_name_string(indexes) %}${", ".join(map(lambda x: lang.index_argname(x),indexes))}{% end %}\
 \
 {% def index_name_string(name) %}\
 {% choose %}\
@@ -14,7 +14,7 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 	{
 {% if prop.langType == "String" %}\
 		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
@@ -23,7 +23,7 @@
 	}
 {% end %}\
 {% when len(indexes) > 0 %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName}, ${indexes_string(indexes)})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 	{
 {% if prop.langType == "String" %}\
 		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
@@ -32,7 +32,7 @@
 	}
 {% end %}\
 {% otherwise %}\
-	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreType} ${prop.argumentName})
+	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
 	{
 {% if prop.langType == "String" %}\
 		${prop.argumentName} = filter? DataTools.sanitize(${prop.argumentName}) : ${prop.argumentName};
@@ -126,7 +126,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.meta;
+package ome.xml.meta;
 
 import loci.common.DataTools;
 
@@ -208,12 +208,12 @@ public class FilterMetadata implements MetadataStore
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType != 'Object' %}\
+{% if o.langBaseType != 'Object' %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	public void set${o.name}Value(${o.langType} value, ${indexes_string(indexes[o.name].items()[0][1])})
+	public void set${o.name}Value(${o.langBaseType} value, ${indexes_string(indexes[o.name].items()[0][1])})
 	{
-{% if o.langType == "String" %}\
+{% if o.langBaseType == "String" %}\
 		value = filter? DataTools.sanitize(value) : value;
 {% end %}\
 		store.set${o.name}Value(value, ${indexes_name_string(indexes[o.name].items()[0][1])});
@@ -230,10 +230,12 @@ public class FilterMetadata implements MetadataStore
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% if debug %}\
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
 	// Ignoring ${prop.name} property of reference ${o.name}
 
+{% end debug %}\
 {% end %}\
 {% end %}\
 {% otherwise %}\
@@ -243,7 +245,9 @@ public class FilterMetadata implements MetadataStore
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
@@ -262,10 +266,14 @@ ${setter(k, o, prop, v)}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\

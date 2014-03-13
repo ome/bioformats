@@ -2,14 +2,15 @@
 Bio-Formats Documentation
 #########################
 
-The following documentation is split into four parts. :doc:`about/index` explains 
-the goal of the software, discusses how it processes metadata, and provides other useful information such as version history and how to report bugs. 
-:doc:`users/index` focuses on how to use Bio-Formats as a plugin for 
-ImageJ and Fiji, and also gives details of other software packages which can 
-use Bio-Formats to read and write microscopy formats. 
-:doc:`developers/index` covers more indepth information on using 
-Bio-Formats as a Java library and how to interface from non-Java codes. 
-Finally, :doc:`formats/index` is a guide to all the file formats currently 
+The following documentation is split into four parts. :doc:`about/index`
+explains the goal of the software, discusses how it processes metadata, and
+provides other useful information such as version history and how to report
+bugs. :doc:`users/index` focuses on how to use Bio-Formats as a plugin for
+ImageJ and Fiji, and also gives details of other software packages which can
+use Bio-Formats to read and write microscopy formats.
+:doc:`developers/index` covers more indepth information on using
+Bio-Formats as a Java library and how to interface from non-Java codes.
+Finally, :doc:`formats/index` is a guide to all the file formats currently
 supported by Bio-Formats.
 
 .. only:: html
@@ -29,4 +30,5 @@ supported by Bio-Formats.
     developers/index
     formats/index
 
-The version *5* releases use the *June 2013* release of the :model_doc:`OME-Model <>`
+The version *5* releases use the *June 2013* release of the
+:model_doc:`OME-Model <>`.

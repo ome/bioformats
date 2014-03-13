@@ -1,4 +1,4 @@
-{% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
+{% def indexes_string(indexes) %}${", ".join(map(lambda x: lang.index_string(x),indexes))}{% end %}\
 \
 {% def index_string(name) %}\
 {% choose %}\
@@ -10,13 +10,13 @@
 {% def getter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
-	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)});\
+	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)}, ${index_string(prop.name)});\
 {% end %}\
 {% when len(indexes) > 0 %}\
-	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)});\
+	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${indexes_string(indexes)});\
 {% end %}\
 {% otherwise %}\
-	${prop.metadataStoreType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)});\
+	${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}();\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -79,7 +79,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.meta;
+package ome.xml.meta;
 
 import ome.xml.model.*;
 import ome.xml.model.enums.*;
@@ -103,7 +103,7 @@ import ome.xml.model.primitives.*;
  * both <code>MetadataStore</code> and <code>MetadataRetrieve</code>, which
  * reduces the need to cast between object types.
  *
- * <p>See {@link loci.formats.ome.OMEXMLMetadata} for an example
+ * <p>See {@link ome.xml.OMEXMLMetadata} for an example
  * implementation.
  *
  * @author Melissa Linkert linkert at wisc.edu
@@ -143,10 +143,10 @@ public interface MetadataRetrieve extends BaseMetadata {
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
-{% if o.langType != 'Object' %}\
+{% if o.langBaseType != 'Object' %}\
 	// Element's text data
 	// ${repr(indexes[o.name])}
-	${o.langType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])});
+	${o.langBaseType} get${o.name}Value(${indexes_string(indexes[o.name].items()[0][1])});
 
 {% end %}\
 {% if parents[o.name] is not None and not o.isAbstract %}\
@@ -183,10 +183,12 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% choose %}\
 {% when o.isReference %}\
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
+{% if debug %}\
 	// ${prop.minOccurs}:${prop.maxOccurs}
 	// Is multi path? ${is_multi_path[o.name]}
 	// Ignoring ${prop.name} property of reference ${o.name}
 
+{% end debug %}\
 {% end %}\
 {% end %}\
 {% otherwise %}\
@@ -196,7 +198,9 @@ public interface MetadataRetrieve extends BaseMetadata {
 {% for prop in sorted_properties(model.getObjectByName(k)) %}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
@@ -215,10 +219,14 @@ ${getter(k, o, prop, v)}
 {% for prop in sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name)) %}\
 {% choose %}\
 {% when prop.isBackReference %}\
+{% if debug %}\
 	// Ignoring ${prop.name} back reference
+{% end debug %}\
 {% end %}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
+{% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\

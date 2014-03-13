@@ -12,7 +12,7 @@ Owner: `Aperio <http://www.aperio.com/>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 
@@ -56,4 +56,4 @@ Notes:
 format, we are not able to distribute them to third parties.**
 
 .. seealso:: 
-  `Aperio ImageScope <http://www.aperio.com/#imagescope-request>`_
+  `Aperio ImageScope <http://www.leicabiosystems.com/index.php?id=8991>`_

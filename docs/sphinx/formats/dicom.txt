@@ -12,7 +12,7 @@ Developer: `National Electrical Manufacturers Association <http://www.nema.org/>
 **Support**
 
 
-SCIFIO: |yes|
+BSD-licensed: |yes|
 
 Export: |no|
 
@@ -57,7 +57,7 @@ Utility: |Fair|
 **Additional Information**
 
 
-Source Code: :scifioreader:`DicomReader.java`
+Source Code: :bsd-reader:`DicomReader.java`
 
 Notes:
 

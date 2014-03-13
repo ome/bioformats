@@ -50,11 +50,11 @@ There are a few other keys that can be added as well:
 You can often work with the .fake file directly, but in some cases
 support for those files is disabled and so you will need to convert the
 file to something else. Make sure that you have Bio-Formats built and
-the JARs in your :envvar:`CLASSPATH` (individual JARs or just loci_tools.jar):
+the JARs in your :envvar:`CLASSPATH` (individual JARs or just bioformats_package.jar):
 
 ::
 
     bfconvert test&pixelType=uint8&sizeX=8192&sizeY=8192.fake test.tiff
 
 If you do not have the command line tools installed, substitute
-:source:`loci.formats.tools.ImageConverter <components/scifio-tools/src/loci/formats/tools/ImageConverter.java>` for `bfconvert`.
+:source:`loci.formats.tools.ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>` for `bfconvert`.
