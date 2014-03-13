@@ -88,7 +88,7 @@ namespace ome
       {
       protected:
         /// List type for storing CoreMetadata.
-        typedef std::vector<std::shared_ptr<::ome::bioformats::CoreMetadata> > coremetadata_list_type;
+        typedef std::vector<std::shared_ptr< ::ome::bioformats::CoreMetadata> > coremetadata_list_type;
 
         /// Reader properties specific to the derived file format.
         const ReaderProperties& readerProperties;
