@@ -294,7 +294,7 @@ ${customUpdatePropertyContent[prop.name]}
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
-            std::shared_ptr<${prop.name}> rcptr(new ${prop.name}());
+            std::shared_ptr<${prop.name}> rcptr(std::make_shared< ${prop.name}>());
             rcptr->setID(elem->getAttribute("ID"));
             std::shared_ptr<Reference> rptr(std::static_pointer_cast<Reference>(rcptr));
             std::shared_ptr<OMEModelObject> optr(this);
@@ -341,7 +341,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isEnumeration %}\
             // Attribute property which is an enumeration ${prop.name}
 {% if prop.minOccurs == 0 %}\
-            ${prop.instanceVariableType} nattr(new ${prop.langTypeNS}(element.getAttribute("${prop.name}")));
+            ${prop.instanceVariableType} nattr(std::make_shared< ${prop.langTypeNS}>(element.getAttribute("${prop.name}")));
             set${prop.methodName}(nattr);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -354,7 +354,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.instanceVariableType != 'std::string' %}\
               std::istringstream is(element.getAttribute("${prop.name}"));
 {% if prop.minOccurs == 0 %}\
-              ${prop.instanceVariableType} attr(new ${prop.langTypeNS}());
+              ${prop.instanceVariableType} attr(std::make_shared< ${prop.langTypeNS}>());
               is >> *attr;
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -391,6 +391,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
             // Element property ${prop.name} which is complex (has sub-elements)
 {% if prop.minOccurs == 0 or (not lang.hasPrimitiveType(prop.langType) and not prop.isEnumeration) %} \
+            // While std::make_shared<> works, here,
+            // boost::make_shared<> does not, so use new directly.
             ${prop.instanceVariableType} p(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0), model));
 {% end %}\
 {% if prop.minOccurs > 0 and (lang.hasPrimitiveType(prop.langType) or prop.isEnumeration) %} \
@@ -402,7 +404,7 @@ ${customUpdatePropertyContent[prop.name]}
             // Element property ${prop.name} which is not complex (has no
             // sub-elements)
 {% if prop.minOccurs == 0 %}\
-            ${prop.instanceVariableType} ns(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0).getTextContent()));
+            ${prop.instanceVariableType} ns(std::make_shared< ${prop.langTypeNS}>(${prop.name}_nodeList.at(0).getTextContent()));
             set${prop.methodName}(ns);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -443,6 +445,9 @@ ${customUpdatePropertyContent[prop.name]}
                  inner_elem != ${inner_prop.name}_nodeList.end();
                  ++inner_elem)
                    {
+                     // While std::make_shared<> works, here,
+                     // boost::make_shared<> does not, so use new
+                     // directly.
                      std::shared_ptr<${prop.methodName}> object(new ${inner_prop.langTypeNS}(*elem, model));
                      object->update(*inner_elem, model);
                      add${prop.methodName}(object);
@@ -459,6 +464,8 @@ ${customUpdatePropertyContent[prop.name]}
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
+            // While std::make_shared<> works, here,
+            // boost::make_shared<> does not, so use new directly.
             std::shared_ptr<${prop.methodName}> object(new ${prop.langTypeNS}(*elem, model));
             add${prop.methodName}(object);
           }
@@ -472,7 +479,7 @@ ${customUpdatePropertyContent[prop.name]}
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
-            std::shared_ptr<${prop.methodName}> object(new ${prop.langTypeNS}(elem->getTextContent(), model));
+            std::shared_ptr<${prop.methodName}> object(std::make_shared< ${prop.langTypeNS}>(elem->getTextContent(), model));
             add${prop.methodName}(object);
           }
 {% end %}\
@@ -1123,7 +1130,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
                 // shared_ptr, but keep compatible with the rest of
                 // the API to allow consistency for future
                 // refactoring.
-                std::shared_ptr<${prop.name}> o(new ${prop.name}());
+                std::shared_ptr<${prop.name}> o(std::make_shared< ${prop.name}>());
                 std::shared_ptr<${prop.langTypeNS}> is(*i);
                 if (is)
                   {
@@ -1139,7 +1146,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
             // Note that this doesn't strictly need to be a
             // shared_ptr, but keep compatible with the rest of the
             // API to allow consistency for future refactoring.
-            std::shared_ptr<${prop.name}> o(new ${prop.name}());
+            std::shared_ptr<${prop.name}> o(std::make_shared< ${prop.name}>());
             std::shared_ptr<${prop.langTypeNS}> sv(${prop.instanceVariableName});
             o->setID(sv->getID());
             element.appendChild(o->asXMLElement(document));
