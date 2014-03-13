@@ -98,14 +98,14 @@ namespace ome
       size() const;
 
       /**
-         * Convert to XML string.
-         *
-         * The object is serialised to an XML text representation.
-         * This is suitable for embedding in an
-         * ome::xml::model::XMLAnnotation, for example.
-         *
-         * @returns a string containing the XML.
-       * @copydoc ome::OMEXMLMetadata::dumpXML()
+       * Convert to XML string.
+       *
+       * The object is serialised to an XML text representation.
+       * This is suitable for embedding in an
+       * ome::xml::model::XMLAnnotation, for example.
+       *
+       * @returns a string containing the XML.
+       * @copydoc ome::xml::meta::OMEXMLMetadata::dumpXML()
        */
       std::string
       toXMLAnnotation() const;
