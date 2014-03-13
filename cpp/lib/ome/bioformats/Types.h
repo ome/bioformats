@@ -47,6 +47,8 @@
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
 
+#include <ome/compat/cstdint.h>
+
 namespace ome
 {
   namespace bioformats
