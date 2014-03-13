@@ -345,7 +345,7 @@ namespace ome
         if (!open)
           return false; // not allowed to open any files
 
-        std::ifstream ifs(name);
+        std::ifstream ifs(name.c_str());
         if (!ifs)
           return false;
 
