@@ -45,9 +45,9 @@ xsd_fu(omexml_metadata OME_XML_GENERATED_METAOME_HEADERS OME_XML_GENERATED_METAO
 set(OME_XML_STATIC_SOURCES
   meta/BaseMetadata.cpp
   meta/Metadata.cpp
-  meta/MetadataRoot.cpp
   meta/OMEXMLMetadataRoot.cpp
   model/detail/OMEModel.cpp
+  model/detail/OMEModelObject.cpp
   model/enums/EnumerationException.cpp
   model/primitives/Color.cpp
   model/primitives/NonNegativeFloat.cpp
@@ -57,8 +57,7 @@ set(OME_XML_STATIC_SOURCES
   model/primitives/PositiveFloat.cpp
   model/primitives/PositiveInteger.cpp
   model/primitives/PositiveLong.cpp
-  model/primitives/Timestamp.cpp
-  model/OMEModelObject.cpp)
+  model/primitives/Timestamp.cpp)
 
 set(OME_XML_META_STATIC_HEADERS
     meta/BaseMetadata.h
@@ -71,7 +70,8 @@ set(OME_XML_STATIC_MODEL_HEADERS
     model/OMEModelObject.h)
 
 set(OME_XML_STATIC_MODEL_DETAIL_HEADERS
-    model/detail/OMEModel.h)
+    model/detail/OMEModel.h
+    model/detail/OMEModelObject.h)
 
 set(OME_XML_STATIC_ENUMS_HEADERS
     model/enums/EnumerationException.h)

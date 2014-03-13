@@ -69,27 +69,27 @@ namespace ome
           /// Destructor.
           ~OMEModel ();
 
-          // Documented in parent.
-          std::shared_ptr<OMEModelObject>
-          addModelObject (const std::string&               id,
-                          std::shared_ptr<OMEModelObject>& object);
+          /// @copydoc ome::xml::model::OMEModel::addModelObject
+          std::shared_ptr< ::ome::xml::model::OMEModelObject>
+          addModelObject (const std::string&                                   id,
+                          std::shared_ptr< ::ome::xml::model::OMEModelObject>& object);
 
           // Documented in parent.
-          std::shared_ptr<OMEModelObject>
+          std::shared_ptr< ::ome::xml::model::OMEModelObject>
           removeModelObject (const std::string& id);
 
           // Documented in parent.
-          std::shared_ptr<OMEModelObject>
+          std::shared_ptr< ::ome::xml::model::OMEModelObject>
           getModelObject (const std::string& id) const;
 
           // Documented in parent.
           const object_map_type&
           getModelObjects () const;
 
-          // Documented in parent.
+          /// @copydoc ome::xml::model::OMEModel::addReference
           bool
-          addReference (std::shared_ptr<OMEModelObject>& a,
-                        std::shared_ptr<Reference>&      b);
+          addReference (std::shared_ptr< ::ome::xml::model::OMEModelObject>& a,
+                        std::shared_ptr<Reference>&                          b);
 
           // Documented in parent.
           const reference_map_type&

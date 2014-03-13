@@ -84,6 +84,11 @@ namespace ome
         /// Destructor.
         virtual
         ~OMEXMLMetadataRoot();
+
+      private:
+        /// Assignment operator (deleted).
+        OMEXMLMetadataRoot&
+        operator= (const OMEXMLMetadataRoot&);
       };
 
     }
