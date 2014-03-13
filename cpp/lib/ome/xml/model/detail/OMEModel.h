@@ -54,7 +54,7 @@ namespace ome
         /**
          * OME model (concrete implementation).
          */
-        class OMEModel : public ::ome::xml::model::OMEModel
+        class OMEModel : virtual public ::ome::xml::model::OMEModel
         {
         private:
           /// Mapping of id to model object.
