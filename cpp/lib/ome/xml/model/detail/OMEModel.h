@@ -36,8 +36,8 @@
  * #L%
  */
 
-#ifndef OME_XML_MODEL_OMEMODELIMPL_H
-#define OME_XML_MODEL_OMEMODELIMPL_H
+#ifndef OME_XML_MODEL_DETAIL_OMEMODEL_H
+#define OME_XML_MODEL_DETAIL_OMEMODEL_H
 
 #include <ome/xml/model/OMEModel.h>
 #include <ome/xml/model/OMEModelObject.h>
@@ -48,62 +48,65 @@ namespace ome
   {
     namespace model
     {
-
-      /**
-       * OME model (concrete implementation).
-       */
-      class OMEModelImpl : public OMEModel
+      namespace detail
       {
-      private:
-        /// Mapping of id to model object.
-        object_map_type modelObjects;
-        /// Mapping of model object to reference.
-        reference_map_type references;
 
-      public:
-        /// Constructor.
-        OMEModelImpl ();
+        /**
+         * OME model (concrete implementation).
+         */
+        class OMEModel : public ::ome::xml::model::OMEModel
+        {
+        private:
+          /// Mapping of id to model object.
+          object_map_type modelObjects;
+          /// Mapping of model object to reference.
+          reference_map_type references;
 
-        /// Destructor.
-        ~OMEModelImpl ();
+        public:
+          /// Constructor.
+          OMEModel ();
 
-        // Documented in parent.
-        std::shared_ptr<OMEModelObject>
-        addModelObject (const std::string&               id,
-                        std::shared_ptr<OMEModelObject>& object);
+          /// Destructor.
+          ~OMEModel ();
 
-        // Documented in parent.
-        std::shared_ptr<OMEModelObject>
-        removeModelObject (const std::string& id);
+          // Documented in parent.
+          std::shared_ptr<OMEModelObject>
+          addModelObject (const std::string&               id,
+                          std::shared_ptr<OMEModelObject>& object);
 
-        // Documented in parent.
-        std::shared_ptr<OMEModelObject>
-        getModelObject (const std::string& id) const;
+          // Documented in parent.
+          std::shared_ptr<OMEModelObject>
+          removeModelObject (const std::string& id);
 
-        // Documented in parent.
-        const object_map_type&
-        getModelObjects () const;
+          // Documented in parent.
+          std::shared_ptr<OMEModelObject>
+          getModelObject (const std::string& id) const;
 
-        // Documented in parent.
-        bool
-        addReference (std::shared_ptr<OMEModelObject>& a,
-                      std::shared_ptr<Reference>&      b);
+          // Documented in parent.
+          const object_map_type&
+          getModelObjects () const;
 
-        // Documented in parent.
-        const reference_map_type&
-        getReferences () const;
+          // Documented in parent.
+          bool
+          addReference (std::shared_ptr<OMEModelObject>& a,
+                        std::shared_ptr<Reference>&      b);
 
-        // Documented in parent.
-        size_type
-        resolveReferences ();
+          // Documented in parent.
+          const reference_map_type&
+          getReferences () const;
 
-      };
+          // Documented in parent.
+          size_type
+          resolveReferences ();
 
+        };
+
+      }
     }
   }
 }
 
-#endif // OME_XML_MODEL_OMEMODELIMPL_H
+#endif // OME_XML_MODEL_DETAIL_OMEMODEL_H
 
 /*
  * Local Variables:

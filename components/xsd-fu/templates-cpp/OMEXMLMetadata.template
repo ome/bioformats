@@ -389,7 +389,7 @@ ${customContent[obj.name][prop.name]}
 
 #include <ome/xml/meta/Metadata.h>
 #include <ome/xml/meta/OMEXMLMetadataRoot.h>
-#include <ome/xml/model/OMEModelImpl.h>
+#include <ome/xml/model/detail/OMEModel.h>
 
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
@@ -498,7 +498,7 @@ namespace ome
 
         this->root = newroot;
         this->genericRoot = std::static_pointer_cast< ::ome::xml::meta::MetadataRoot>(this->root);
-        model = std::shared_ptr< ::ome::xml::model::OMEModel>(new ::ome::xml::model::OMEModelImpl());
+        model = std::make_shared< ::ome::xml::model::detail::OMEModel>();
       }
 {% end source %}\
 

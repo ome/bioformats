@@ -47,6 +47,7 @@ set(OME_XML_STATIC_SOURCES
   meta/Metadata.cpp
   meta/MetadataRoot.cpp
   meta/OMEXMLMetadataRoot.cpp
+  model/detail/OMEModel.cpp
   model/enums/EnumerationException.cpp
   model/primitives/Color.cpp
   model/primitives/NonNegativeFloat.cpp
@@ -58,7 +59,6 @@ set(OME_XML_STATIC_SOURCES
   model/primitives/PositiveLong.cpp
   model/primitives/Timestamp.cpp
   model/OMEModel.cpp
-  model/OMEModelImpl.cpp
   model/OMEModelObject.cpp)
 
 set(OME_BIOFORMATS_META_STATIC_HEADERS
@@ -69,8 +69,10 @@ set(OME_BIOFORMATS_META_STATIC_HEADERS
 
 set(OME_XML_STATIC_MODEL_HEADERS
     model/OMEModel.h
-    model/OMEModelImpl.h
     model/OMEModelObject.h)
+
+set(OME_XML_STATIC_MODEL_DETAIL_HEADERS
+    model/detail/OMEModel.h)
 
 set(OME_XML_STATIC_ENUMS_HEADERS
     model/enums/EnumerationException.h)
@@ -90,6 +92,7 @@ set(OME_XML_STATIC_PRIMITIVES_HEADERS
 
 set(OME_XML_STATIC_HEADERS
     ${OME_XML_STATIC_MODEL_HEADERS}
+    ${OME_XML_STATIC_MODEL_DETAIL_HEADERS}
     ${OME_XML_STATIC_PRIMITIVES_HEADERS}
     ${OME_XML_STATIC_ENUMS_HEADERS})
 
@@ -127,6 +130,8 @@ install(FILES ${OME_BIOFORMATS_META_STATIC_HEADERS} ${OME_XML_GENERATED_META_HEA
         DESTINATION ${ome_xml_includedir}/meta)
 install(FILES ${OME_XML_STATIC_MODEL_HEADERS} ${OME_XML_GENERATED_MODEL_HEADERS} ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
         DESTINATION ${ome_xml_includedir}/model)
+install(FILES ${OME_XML_STATIC_MODEL_DETAIL_HEADERS}
+        DESTINATION ${ome_xml_includedir}/model/detail)
 install(FILES ${OME_XML_STATIC_ENUMS_HEADERS} ${OME_XML_GENERATED_ENUMS_HEADERS}
         DESTINATION ${ome_xml_includedir}/model/enums)
 install(FILES ${OME_XML_STATIC_PRIMITIVES_HEADERS} ${OME_XML_GENERATED_PRIMITIVES_HEADERS}
