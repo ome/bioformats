@@ -100,7 +100,7 @@ namespace ome
       /**
        * Convert to XML string.
        *
-       * The object is serialised to an XML text representation.
+       * The object is serialized to an XML text representation.
        * This is suitable for embedding in an
        * ome::xml::model::XMLAnnotation, for example.
        *
