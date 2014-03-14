@@ -175,7 +175,7 @@ namespace ome
            * comparison.
            *
            * @param container the container to check.
-           ]         * @param element the element to check for.
+           * @param element the element to check for.
            * @returns @c true if the element was found, otherwise @c false.
            */
           template<class C, typename T>
