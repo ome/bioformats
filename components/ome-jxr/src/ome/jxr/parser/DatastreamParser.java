@@ -32,8 +32,7 @@ import loci.formats.codec.BitBuffer;
 import ome.jxr.JXRException;
 import ome.jxr.constants.File;
 import ome.jxr.constants.Image;
-import ome.jxr.image.ImagePlane;
-import ome.jxr.metadata.IFDMetadata;
+import ome.jxr.image.ColorFormat;
 
 /**
  * Decodes the image data from a JPEG XR image file. The data has to be in the
