@@ -23,7 +23,7 @@
  * #L%
  */
 
-package ome.jxr.ifd;
+package ome.jxr.image;
 
 /**
  * Enumeration of available Color Format entries. Naming of entries follows
@@ -38,15 +38,33 @@ package ome.jxr.ifd;
  */
 public enum ColorFormat {
 
-  YONLY,
-  YUV420,
-  YUV422,
-  YUV444,
-  CMYK,
-  CMYKDIRECT,
-  NCOMPONENT,
-  RGB,
-  RGBE,
-  RESERVED;
+  YONLY(0),
+  YUV420(1),
+  YUV422(2),
+  YUV444(3),
+  CMYK(4),
+  CMYKDIRECT(5),
+  NCOMPONENT(6),
+  RGB(7),
+  RGBE(8),
+  RESERVED(9);
 
+  private int id;
+
+  private ColorFormat(int id) {
+    this.id = id;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public static ColorFormat findById(int id) {
+    for (ColorFormat format : ColorFormat.values()) {
+      if (format.getId() == id) {
+        return format;
+      }
+    }
+    throw new IllegalArgumentException("Unspecified color format id: " + id);
+  }
 }

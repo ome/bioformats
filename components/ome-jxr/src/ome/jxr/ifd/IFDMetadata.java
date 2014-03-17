@@ -23,7 +23,7 @@
  * #L%
  */
 
-package ome.jxr.metadata;
+package ome.jxr.ifd;
 
 import java.io.IOException;
 import java.util.EnumMap;
@@ -32,8 +32,6 @@ import java.util.Map;
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import ome.jxr.JXRException;
-import ome.jxr.ifd.IFDEntry;
-import ome.jxr.ifd.PixelFormat;
 
 /**
  * Provides access to metadata extracted from the IFD part of a JPEG XR file.

@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import ome.jxr.JXRException;
 import ome.jxr.StaticDataProvider;
-import ome.jxr.metadata.IFDMetadata;
+import ome.jxr.ifd.IFDMetadata;
 import ome.jxr.parser.DatastreamParser;
 
 import org.testng.annotations.BeforeClass;

@@ -28,6 +28,8 @@ package ome.jxr.ifd;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import ome.jxr.image.ColorFormat;
+
 /**
  * Enumeration of available Pixel Format entries. Naming of entries follows
  * Rec.ITU-T T.832 (01/2012) - table A.6. Internally, the identifier for each

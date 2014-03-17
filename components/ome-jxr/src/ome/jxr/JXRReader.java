@@ -28,7 +28,7 @@ package ome.jxr;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import ome.jxr.metadata.IFDMetadata;
+import ome.jxr.ifd.IFDMetadata;
 import ome.jxr.parser.FileParser;
 import ome.jxr.parser.IFDParser;
 import ome.jxr.parser.DatastreamParser;

@@ -35,7 +35,7 @@ import ome.jxr.constants.IFD;
 import ome.jxr.ifd.IFDContainer;
 import ome.jxr.ifd.IFDEntry;
 import ome.jxr.ifd.IFDEntryType;
-import ome.jxr.metadata.IFDMetadata;
+import ome.jxr.ifd.IFDMetadata;
 
 /**
  * Parses a JPEG XR data stream and extracts metadata from the IFD.
