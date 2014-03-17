@@ -77,7 +77,11 @@ public class CellomicsReader extends FormatReader {
   // The well name in group 2
   // The field, optionally, in group 3
   // The channel, optionally, in group 4
-  private static final Pattern cellomicsPattern = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2})?([od]\\d+)?[^_]+$");
+
+  private static final Pattern PATTERN_O = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?(o\\d+)?[^_]+$");
+  private static final Pattern PATTERN_D = Pattern.compile("(.*)_(\\p{Alpha}\\d{2})(f\\d{2,3})?(d\\d+)?[^_]+$");
+
+  private Pattern cellomicsPattern;
   private String[] files;
 
   // -- Constructor --
@@ -130,6 +134,7 @@ public class CellomicsReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       files = null;
+      cellomicsPattern = null;
     }
   }
 
@@ -208,7 +213,13 @@ public class CellomicsReader extends FormatReader {
     }
 
     core.clear();
-    for (int i=0; i<files.length/uniqueChannels.size(); i++) {
+
+    int seriesCount = files.length;
+    if (uniqueChannels.size() > 0) {
+      seriesCount /= uniqueChannels.size();
+    }
+
+    for (int i=0; i<seriesCount; i++) {
       core.add(new CoreMetadata());
     }
 
@@ -317,6 +328,11 @@ public class CellomicsReader extends FormatReader {
       int row = getWellRow(file);
       int col = getWellColumn(file);
 
+      store.setImageName(
+        String.format("Well %s%02d, Field #%02d",
+                      new String(Character.toChars(row+'A')),
+                      col, fieldIndex), i);
+
       if (files.length == 1) {
         row = 0;
         col = 0;
@@ -340,10 +356,6 @@ public class CellomicsReader extends FormatReader {
 
         store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
       }
-      store.setImageName(
-        String.format("Well %s%02d, Field #%02d", 
-                      new String(Character.toChars(row+'A')), 
-                      col, fieldIndex), i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -367,8 +379,18 @@ public class CellomicsReader extends FormatReader {
 
   // -- Helper methods --
 
-  static private Matcher matchFilename(final String filename) {
+  private Matcher matchFilename(final String filename) {
     final String name = new Location(filename).getName();
+    if (cellomicsPattern == null) {
+      Matcher m = PATTERN_O.matcher(name);
+      if (m.matches() && m.group(4) != null) {
+        cellomicsPattern = PATTERN_O;
+        return m;
+      }
+      else {
+        cellomicsPattern = PATTERN_D;
+      }
+    }
     return cellomicsPattern.matcher(name);
   }
   private String getPlateName(final String filename) {
