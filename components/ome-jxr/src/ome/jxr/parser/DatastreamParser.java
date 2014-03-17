@@ -55,8 +55,6 @@ public final class DatastreamParser extends Parser {
 
   private boolean hardTilingFlag;
 
-  private int reservedC;
-
   private boolean tilingFlag;
 
   private boolean frequencyModeCodestreamFlag;
@@ -87,6 +85,14 @@ public final class DatastreamParser extends Parser {
 
   private int outputBitdepth;
 
+  private int widthMinus1, heightMinus1;
+
+  private int numVerTilesMinus1, numHorTilesMinus1;
+
+  private short[] tileWidthInMB, tileHeightInMB;
+
+  private int topMargin, leftMargin, bottomMargin, rightMargin;
+
   public DatastreamParser(Parser parentParser, RandomAccessInputStream stream)
       throws JXRException {
     super(parentParser, stream);
@@ -101,21 +107,17 @@ public final class DatastreamParser extends Parser {
   public void parse() throws JXRException {
     super.parse(parsingOffset);
     try {
-      // parse image header
-      parseImageHeader();
-      //ImagePlane primaryImagePlane = new ImagePlane();
+      checkIfGDISignaturePresent();
+      extractImageHeaderMetadata();
+      verifyCodestreamConformance();
+      // ImagePlane primaryImagePlane = new ImagePlane();
       // for each image plane:
-      //   parse image plane header
+      // parse image plane header
       // parse coded tiles
     } catch (IOException ioe) {
       throw new JXRException(ioe);
     }
 
-  }
-
-  private void parseImageHeader() throws IOException, JXRException {
-    checkIfGDISignaturePresent();
-    extractImageHeaderMetadata();
   }
 
   private void checkIfGDISignaturePresent() throws IOException, JXRException {
@@ -126,48 +128,111 @@ public final class DatastreamParser extends Parser {
     }
   }
 
-  private void extractImageHeaderMetadata() throws IOException, JXRException {
-    byte[] headerBytes = new byte[4];
-    stream.readFully(headerBytes);
-    BitBuffer bits = new BitBuffer(headerBytes);
+  private void extractImageHeaderMetadata() throws IOException {
+    byte[] bytes = new byte[4];
+    stream.readFully(bytes);
+    BitBuffer bits = new BitBuffer(bytes);
 
     reservedB = bits.getBits(4);
-    if (reservedB != Image.RESERVED_B) {
-      throw new JXRException("Codestream version mismatch! Decoder supports"
-          + " only version: " + File.CODESTREAM_VERSION);
-    }
-
     hardTilingFlag = (bits.getBits(1) == 1);
 
-    if (encoderVersion != File.CODESTREAM_VERSION) {
-      reservedC = bits.getBits(3);
-    } else {
-      bits.skipBits(3);
-    }
+    // Skip RESERVED_C in this version of the decoder
+    bits.skipBits(3);
 
     tilingFlag = (bits.getBits(1) == 1);
     frequencyModeCodestreamFlag = (bits.getBits(1) == 1);
     spatialXfrmSubordinate = bits.getBits(3);
-
     indexTablePresentFlag = (bits.getBits(1) == 1);
-    if (frequencyModeCodestreamFlag && !indexTablePresentFlag) {
-      throw new JXRException("Codestream version mismatch! Decoder supports"
-          + " only version: " + File.CODESTREAM_VERSION);
-    }
-
     overlapMode = bits.getBits(2);
     shortHeaderFlag = (bits.getBits(1) == 1);
     longWordFlag = (bits.getBits(1) == 1);
     windowingFlag = (bits.getBits(1) == 1);
     trimFlexbitsFlag = (bits.getBits(1) == 1);
 
-    reservedD = bits.getBits(1);
+    // Skip RESERVED_D in this version of the decoder
+    bits.skipBits(1);
 
     redBlueNotSwappedFlag = (bits.getBits(1) == 1);
     premultipliedAlphaFlag = (bits.getBits(1) == 1);
     alphaImagePlaneFlag = (bits.getBits(1) == 1);
     outputClrFmt = bits.getBits(4);
     outputBitdepth = bits.getBits(4);
+
+    if (shortHeaderFlag) {
+      widthMinus1 = stream.readUnsignedShort();
+      heightMinus1 = stream.readUnsignedShort();
+    } else {
+      widthMinus1 = stream.readInt();
+      heightMinus1 = stream.readInt();
+    }
+
+    if (tilingFlag) {
+      bytes = new byte[3];
+      stream.readFully(bytes);
+      bits = new BitBuffer(bytes);
+      numVerTilesMinus1 = bits.getBits(12);
+      numHorTilesMinus1 = bits.getBits(12);
+    }
+
+    if (shortHeaderFlag) {
+      for (int i = 0; i < numVerTilesMinus1; i++) {
+        tileWidthInMB[i] = stream.readByte();
+      }
+      for (int i = 0; i < numHorTilesMinus1; i++) {
+        tileHeightInMB[i] = stream.readByte();
+      }
+    } else {
+      for (int i = 0; i < numVerTilesMinus1; i++) {
+        tileWidthInMB[i] = stream.readShort();
+      }
+      for (int i = 0; i < numHorTilesMinus1; i++) {
+        tileHeightInMB[i] = stream.readShort();
+      }
+    }
+
+    if (windowingFlag) {
+      bytes = new byte[3];
+      stream.readFully(bytes);
+      bits = new BitBuffer(bytes);
+      topMargin = bits.getBits(6);
+      leftMargin = bits.getBits(6);
+      bottomMargin = bits.getBits(6);
+      rightMargin = bits.getBits(6);
+    }
+  }
+
+  private void verifyCodestreamConformance() throws JXRException {
+    if (reservedB != Image.RESERVED_B) {
+      throw new JXRException("Wrong value of RESERVED_B. " + "Expected: "
+          + Image.RESERVED_B + ", found: " + reservedB);
+    }
+    if (spatialXfrmSubordinate > Image.SPATIAL_XFRM_SUBORDINATE_MAX) {
+      throw new JXRException("Wrong value of SPATIAL_XFRM_SUBORDINATE. "
+          + "Expected [0.." + Image.SPATIAL_XFRM_SUBORDINATE_MAX + "], "
+          + "found: " + spatialXfrmSubordinate);
+    }
+    if ((frequencyModeCodestreamFlag || numVerTilesMinus1 > 0 || numHorTilesMinus1 > 0)
+        && !indexTablePresentFlag) {
+      throw new JXRException(
+          "FREQUENCY_MODE_CODESTREAM_FLAG missing required values.");
+    }
+    if (overlapMode == Image.OVERLAP_MODE_RESERVED) {
+      throw new JXRException("Reserved value of OVERLAP_MODE: " + overlapMode);
+    }
+    if (outputClrFmt > Image.OUTPUT_CLR_FMT_MAX) {
+      throw new JXRException("Wrong value of OUTPUT_CLR_FMT. "
+          + "Expected [0.." + Image.OUTPUT_CLR_FMT_MAX + "], "
+          + "found: " + outputClrFmt);
+    }
+    if (!ColorFormat.RGB.equals(ColorFormat.findById(outputClrFmt))
+        && redBlueNotSwappedFlag) {
+      throw new JXRException("Wrong value of RED_BLUE_NOT_SWAPPED_FLAG.");
+    }
+    if ((ColorFormat.YUV420.equals(ColorFormat.findById(outputClrFmt))
+        || ColorFormat.YUV422.equals(ColorFormat.findById(outputClrFmt)))
+        && (widthMinus1 + 1) % 2 != 0) {
+      throw new JXRException("Wrong value of WIDTH_MINUS1.");
+    }
   }
 
   public void close() throws IOException {

@@ -27,8 +27,4 @@ package ome.jxr.image;
 
 public class ImagePlane {
 
-  public ImagePlane(byte[] imagePlaneBytes) {
-
-  }
-
 }

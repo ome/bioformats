@@ -39,7 +39,8 @@ public final class Image {
 
   public static final String GDI_SIGNATURE = "WMPHOTO\0";
   public static final int RESERVED_B = 1;
-  public static final int RESERVED_C = 1;
-  public static final int RESERVED_D = 0;
+  public static final int SPATIAL_XFRM_SUBORDINATE_MAX = 7;
+  public static final int OVERLAP_MODE_RESERVED = 3;
+  public static final int OUTPUT_CLR_FMT_MAX = 15;
 
 }

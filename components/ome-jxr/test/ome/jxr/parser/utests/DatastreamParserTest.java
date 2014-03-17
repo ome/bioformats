@@ -37,20 +37,10 @@ import org.testng.annotations.Test;
 
 public class DatastreamParserTest extends StaticDataProvider {
 
-  private int actualParsingOffset = 158;
-
-  private IFDMetadata metadataStub;
-
-  @BeforeClass
-  public void setUp() {
-    // set up a stub here for testing alpha plane presence conditions
-    this.metadataStub = new IFDMetadata(0);
-  }
-
   @Test(dataProvider = "testDatastreamParser")
   public void testParse(DatastreamParser datastreamParser)
       throws IOException, JXRException {
-    datastreamParser.parse(actualParsingOffset);
+    datastreamParser.parse();
     datastreamParser.close();
   }
 }

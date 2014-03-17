@@ -73,7 +73,7 @@ public enum IFDEntryType {
         return type;
       }
     }
-    throw new IllegalArgumentException("Unspecified type code: " + typeCode);
+    throw new IllegalArgumentException("Unspecified IFD entry type code: " + typeCode);
   }
 
 }
