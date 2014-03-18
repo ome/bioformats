@@ -124,10 +124,11 @@ public class JAIIIOServiceImpl extends AbstractService
       (J2KImageWriteParam) writer.getDefaultWriteParam();
     param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
     param.setCompressionType("JPEG2000");
+    param.setEncodingRate(options.quality);
     param.setLossless(options.lossless);
     param.setFilter(filter);
     param.setCodeBlockSize(options.codeBlockSize);
-    param.setEncodingRate(options.quality);
+    param.setComponentTransformation(false);
     if (options.tileWidth > 0 && options.tileHeight > 0) {
       param.setTiling(options.tileWidth, options.tileHeight,
                       options.tileGridXOffset, options.tileGridYOffset);

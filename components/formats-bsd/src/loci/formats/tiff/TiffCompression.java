@@ -99,17 +99,21 @@ public enum TiffCompression implements CodedEnum {
     public CodecOptions getCompressionCodecOptions(IFD ifd, CodecOptions opt)
     throws FormatException {
       CodecOptions options = super.getCompressionCodecOptions(ifd, opt);
-      options.lossless = true;
       JPEG2000CodecOptions j2k = JPEG2000CodecOptions.getDefaultOptions(options);
       if (opt instanceof JPEG2000CodecOptions) {
         JPEG2000CodecOptions o = (JPEG2000CodecOptions) opt;
         j2k.numDecompositionLevels = o.numDecompositionLevels;
         j2k.resolution = o.resolution;
-        if (o.codeBlockSize != null)
+        if (o.codeBlockSize != null) {
           j2k.codeBlockSize = o.codeBlockSize;
-        if (o.quality > 0)
+        }
+        if (o.quality > 0) {
           j2k.quality = o.quality;
+        }
       }
+      j2k.writeBox = false;
+      j2k.lossless = false;
+      j2k.quality = 10;
       return j2k;
     }
   },
@@ -119,7 +123,7 @@ public enum TiffCompression implements CodedEnum {
         throws FormatException {
       return getCompressionCodecOptions(ifd, null);
     }
-    
+
     @Override
     public CodecOptions getCompressionCodecOptions(IFD ifd, CodecOptions opt)
     throws FormatException {
@@ -130,11 +134,14 @@ public enum TiffCompression implements CodedEnum {
         JPEG2000CodecOptions o = (JPEG2000CodecOptions) opt;
         j2k.numDecompositionLevels = o.numDecompositionLevels;
         j2k.resolution = o.resolution;
-        if (o.codeBlockSize != null)
+        if (o.codeBlockSize != null) {
           j2k.codeBlockSize = o.codeBlockSize;
-        if (o.quality > 0)
+        }
+        if (o.quality > 0) {
           j2k.quality = o.quality;
+        }
       }
+      j2k.writeBox = false;
       return j2k;
     }
   },
@@ -161,6 +168,9 @@ public enum TiffCompression implements CodedEnum {
         if (o.quality > 0)
           j2k.quality = o.quality;
       }
+      j2k.writeBox = false;
+      j2k.lossless = false;
+      j2k.quality = 10;
       return j2k;
     }
   },
