@@ -2,7 +2,7 @@
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
-    # Copyright (C) 2002-2011 Open Microscopy Environment
+    # Copyright (C) 2002 - 2014 Open Microscopy Environment
     #       Massachusetts Institute of Technology,
     #       National Institutes of Health,
     #       University of Dundee,
@@ -44,7 +44,7 @@
 			Open Microscopy Environment
 			OME XML Schema June 2007 - Update Version 2 September 2007
 			Author:  Ilya G. Goldberg, Andrew J Patterson
-			Copyright (C) 2002-2011 Open Microscopy Environment
+			Copyright (C) 2002 - 2014 Open Microscopy Environment
 		</xsd:documentation>
 	</xsd:annotation>
 	<xsd:element name="OME">

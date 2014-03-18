@@ -2,7 +2,7 @@
  * #%L
  * Tests for OME-XML specification classes.
  * %%
- * Copyright (C) 2012 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2012 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
