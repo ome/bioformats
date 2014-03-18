@@ -193,8 +193,12 @@ public class ForwCompTransfSpec extends CompTransfSpec implements FilterTypes {
             return;
         }
 
-        if (param.equalsIgnoreCase("true"))
+        if (param.equalsIgnoreCase("true")) {
             param = "on";
+        }
+        else if (param.equalsIgnoreCase("false")) {
+            param = "off";
+        }
         // Parse argument
         StringTokenizer stk = new StringTokenizer(param);
         String word; // current word
