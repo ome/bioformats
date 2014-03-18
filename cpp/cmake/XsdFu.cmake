@@ -75,6 +75,7 @@ set(XSD_FU_ARGS --language=C++ --output-directory=${GEN_DIR} ${MODEL_FILES})
 # command: the xsd-fu command to invoke
 # outvar: variable to store generated file list in
 function(xsd_fu_single filetype command outvar)
+  message(STATUS "Determining xsd-fu dependencies and outputs for target ${command} (${filetype}s)")
   execute_process(COMMAND ${XSD_FU} ${command} --dry-run --file-type=${filetype} --print-generated ${XSD_FU_ARGS}
     OUTPUT_VARIABLE genfiles)
   string(REPLACE "\n" ";" genfiles "${genfiles}")

@@ -114,7 +114,7 @@ set(OME_XML_SOURCES
 add_library(ome-xml SHARED
             ${OME_XML_SOURCES}
             ${OME_XML_HEADERS})
-target_link_libraries(ome-xml ome-xerces)
+target_link_libraries(ome-xml ome-compat ome-xerces)
 target_link_libraries(ome-xml ${Boost_DATE_TIME_LIBRARY_RELEASE})
 set_target_properties(ome-xml PROPERTIES VERSION ${OME_VERSION_SHORT})
 
@@ -142,3 +142,15 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-xml-config.cmake
 
 # Dump header list for testing
 header_include_list_write(OME_XML_STATIC_HEADERS OME_XML_GENERATED_HEADERS ome/xml ${PROJECT_BINARY_DIR}/cpp/test/ome-xml)
+
+# Add target to generate all xsd-fu sources
+add_custom_target(gensrc DEPENDS
+  ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
+  ${OME_XML_GENERATED_ENUMS_HEADERS}
+  ${OME_XML_GENERATED_ENUMS_SOURCES}
+  ${OME_XML_GENERATED_METAOME_HEADERS}
+  ${OME_XML_GENERATED_METAOME_SOURCES}
+  ${OME_XML_GENERATED_META_HEADERS}
+  ${OME_XML_GENERATED_META_SOURCES}
+  ${OME_XML_GENERATED_MODEL_HEADERS}
+  ${OME_XML_GENERATED_MODEL_SOURCES})

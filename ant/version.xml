@@ -15,17 +15,27 @@ Ant build file for release version numbering.
     <if>
       <isset property="git.present"/>
       <then>
-        <exec executable="git" outputproperty="git.info"
-          failifexecutionfails="false">
-          <arg value="show"/>
-          <arg value="-s"/>
-          <arg value="--abbrev-commit"/>
+        <exec executable="git" outputproperty="vcs.revision"
+          failifexecutionfails="true">
+          <arg value="log"/>
+          <arg value="-1"/>
           <arg value="HEAD"/>
+          <arg value="--pretty=%h"/>
         </exec>
-        <propertyregex property="vcs.revision" input="${git.info}"
-          regexp="commit ([a-f0-9]+)" select="\1"/>
-        <propertyregex property="vcs.date"
-          input="${git.info}" regexp="Date: +([^\n]*)" select="\1"/>
+        <exec executable="git" outputproperty="vcs.date"
+              failifexecutionfails="true">
+          <arg value="log"/>
+          <arg value="-1"/>
+          <arg value="${vcs.revision}"/>
+          <arg value="--pretty=%ai"/>
+        </exec>
+        <exec executable="git" outputproperty="vcs.date_unix"
+              failifexecutionfails="true">
+          <arg value="log"/>
+          <arg value="-1"/>
+          <arg value="${vcs.revision}"/>
+          <arg value="--pretty=%at"/>
+        </exec>
 
         <!-- Check git describe twice: first to see if this is an exact
              match and once to get the full string for parsing major,

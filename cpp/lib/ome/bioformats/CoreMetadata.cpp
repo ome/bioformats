@@ -65,7 +65,6 @@ namespace ome
       falseColor(false),
       metadataComplete(true),
       seriesMetadata(),
-      seriesMetadataList(),
       thumbnail(false),
       resolutionCount(1)
     {
@@ -123,7 +122,6 @@ namespace ome
       falseColor(copy.falseColor),
       metadataComplete(copy.metadataComplete),
       seriesMetadata(copy.seriesMetadata),
-      seriesMetadataList(copy.seriesMetadataList),
       thumbnail(copy.thumbnail),
       resolutionCount(copy.resolutionCount)
     {
@@ -155,7 +153,7 @@ namespace ome
          << "indexed = " << core.indexed << '\n'
          << "falseColor = " << core.falseColor << '\n'
          << "metadataComplete = " << core.metadataComplete << '\n'
-         << "seriesMetadata = " << core.seriesMetadata.size() + core.seriesMetadataList.size() << " keys" << '\n'
+         << "seriesMetadata = " << core.seriesMetadata.size() << " keys" << '\n'
          << "thumbnail = " << core.thumbnail << '\n'
          << "resolutionCount = " << core.resolutionCount << '\n';
       return os;
