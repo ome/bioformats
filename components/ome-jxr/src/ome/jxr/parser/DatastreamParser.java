@@ -30,7 +30,6 @@ import java.io.IOException;
 import loci.common.RandomAccessInputStream;
 import loci.formats.codec.BitBuffer;
 import ome.jxr.JXRException;
-import ome.jxr.constants.File;
 import ome.jxr.constants.Image;
 import ome.jxr.image.ColorFormat;
 
@@ -86,7 +85,7 @@ public final class DatastreamParser extends Parser {
 
   private int widthMinus1, heightMinus1;
 
-  private int numVerTilesMinus1, numHorTilesMinus1;
+  private int numVerTilesMinus1 = 1, numHorTilesMinus1 = 1;
 
   private short[] tileWidthInMB, tileHeightInMB;
 
@@ -116,7 +115,6 @@ public final class DatastreamParser extends Parser {
     } catch (IOException ioe) {
       throw new JXRException(ioe);
     }
-
   }
 
   private void checkIfGDISignaturePresent() throws IOException, JXRException {
@@ -171,21 +169,24 @@ public final class DatastreamParser extends Parser {
       bits = new BitBuffer(bytes);
       numVerTilesMinus1 = bits.getBits(12);
       numHorTilesMinus1 = bits.getBits(12);
-    }
 
-    if (shortHeaderFlag) {
-      for (int i = 0; i < numVerTilesMinus1; i++) {
-        tileWidthInMB[i] = stream.readByte();
-      }
-      for (int i = 0; i < numHorTilesMinus1; i++) {
-        tileHeightInMB[i] = stream.readByte();
-      }
-    } else {
-      for (int i = 0; i < numVerTilesMinus1; i++) {
-        tileWidthInMB[i] = stream.readShort();
-      }
-      for (int i = 0; i < numHorTilesMinus1; i++) {
-        tileHeightInMB[i] = stream.readShort();
+      tileWidthInMB = new short[numVerTilesMinus1];
+      tileHeightInMB = new short[numHorTilesMinus1];
+
+      if (shortHeaderFlag) {
+        for (int i = 0; i < numVerTilesMinus1; i++) {
+          tileWidthInMB[i] = stream.readByte();
+        }
+        for (int i = 0; i < numHorTilesMinus1; i++) {
+          tileHeightInMB[i] = stream.readByte();
+        }
+      } else {
+        for (int i = 0; i < numVerTilesMinus1; i++) {
+          tileWidthInMB[i] = stream.readShort();
+        }
+        for (int i = 0; i < numHorTilesMinus1; i++) {
+          tileHeightInMB[i] = stream.readShort();
+        }
       }
     }
 
@@ -220,15 +221,15 @@ public final class DatastreamParser extends Parser {
     }
     if (outputClrFmt > Image.OUTPUT_CLR_FMT_MAX) {
       throw new JXRException("Wrong value of OUTPUT_CLR_FMT. "
-          + "Expected [0.." + Image.OUTPUT_CLR_FMT_MAX + "], "
-          + "found: " + outputClrFmt);
+          + "Expected [0.." + Image.OUTPUT_CLR_FMT_MAX + "], " + "found: "
+          + outputClrFmt);
     }
     if (!ColorFormat.RGB.equals(ColorFormat.findById(outputClrFmt))
         && redBlueNotSwappedFlag) {
       throw new JXRException("Wrong value of RED_BLUE_NOT_SWAPPED_FLAG.");
     }
-    if ((ColorFormat.YUV420.equals(ColorFormat.findById(outputClrFmt))
-        || ColorFormat.YUV422.equals(ColorFormat.findById(outputClrFmt)))
+    if ((ColorFormat.YUV420.equals(ColorFormat.findById(outputClrFmt)) || ColorFormat.YUV422
+        .equals(ColorFormat.findById(outputClrFmt)))
         && (widthMinus1 + 1) % 2 != 0) {
       throw new JXRException("Wrong value of WIDTH_MINUS1.");
     }
