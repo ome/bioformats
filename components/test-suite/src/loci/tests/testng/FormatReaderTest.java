@@ -1106,7 +1106,7 @@ public class FormatReaderTest {
         }
 
         if (realWavelength == null || expectedWavelength == null ||
-          !expectedWavelength.equals(realWavelength.getValue()))
+          Math.abs(expectedWavelength - realWavelength.getValue()) > Constants.EPSILON)
         {
           result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
         }
@@ -1135,7 +1135,7 @@ public class FormatReaderTest {
         }
 
         if (realWavelength == null || expectedWavelength == null ||
-          !expectedWavelength.equals(realWavelength.getValue()))
+          Math.abs(expectedWavelength - realWavelength.getValue()) > Constants.EPSILON)
         {
           result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
         }
