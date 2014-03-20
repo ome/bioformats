@@ -780,9 +780,6 @@ public class MetamorphReader extends BaseTiffReader {
         if (wave != null && waveIndex < wave.length) {
           PositiveFloat wavelength =
             FormatTools.getWavelength(wave[waveIndex]);
-          if (wavelength != null) {
-            store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
-          }
 
           if ((int) wave[waveIndex] >= 1) {
             // link LightSource to Image
@@ -792,6 +789,10 @@ public class MetamorphReader extends BaseTiffReader {
             store.setChannelLightSourceSettingsID(lightSourceID, i, c);
             store.setLaserType(getLaserType("Other"), i, c);
             store.setLaserLaserMedium(getLaserMedium("Other"), i, c);
+
+            if (wavelength != null) {
+              store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+            }
           }
         }
         waveIndex++;
