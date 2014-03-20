@@ -89,7 +89,7 @@ public class TiffWriter extends FormatWriter {
   protected RandomAccessInputStream in;
 
   /** Whether or not to check the parameters passed to saveBytes. */
-  private boolean checkParams = true;
+  protected boolean checkParams = true;
 
   /**
    * Sets the compression code for the specified IFD.
