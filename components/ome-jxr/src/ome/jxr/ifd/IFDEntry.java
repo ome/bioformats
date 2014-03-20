@@ -2,7 +2,7 @@
  * #%L
  * OME library for reading the JPEG XR file format.
  * %%
- * Copyright (C) 2013 Open Microscopy Environment:
+ * Copyright (C) 2013 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -30,8 +30,10 @@ import java.util.List;
 
 /**
  * Enumeration of available IFD entries. Naming of entries follows
- * Rec.ITU-T T.832 (01/2012) - table A.4. {@link Integer.MAX_VALUE} has been
- * used to indicate a variable number of entry values.
+ * Rec.ITU-T T.832 (01/2012) - table A.4. {@link Integer#MAX_VALUE} has been
+ * used to indicate a variable number of entry values. Some entries are required
+ * in an image conforming to the specification. Such entries can be retrieved
+ * using the {@link #getRequiredEntries() getRequiredEntries} method.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>

@@ -2,7 +2,7 @@
  * #%L
  * OME library for reading the JPEG XR file format.
  * %%
- * Copyright (C) 2013 Open Microscopy Environment:
+ * Copyright (C) 2013 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,7 +26,8 @@
 package ome.jxr;
 
 /**
- * JXRException is thrown on error when parsing a JPEG XR image file.
+ * JXRException is thrown when an error is encountered during the broadly
+ * understood parsing of a JPEG XR image file.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/JXRException.java">Trac</a>,

@@ -2,7 +2,7 @@
  * #%L
  * OME library for reading the JPEG XR file format.
  * %%
- * Copyright (C) 2013 Open Microscopy Environment:
+ * Copyright (C) 2013 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -27,8 +27,8 @@ package ome.jxr.ifd;
 
 /**
  * Represents the native type implementation of the JPEG XR
- * {@link IFDEntryType.URATIONAL} and {@link IFDEntryType.SRATIONAL} IFD Entry
- * Types.
+ * {@link IFDEntryType#URATIONAL} and {@link IFDEntryType#SRATIONAL} IFD entry
+ * types.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>

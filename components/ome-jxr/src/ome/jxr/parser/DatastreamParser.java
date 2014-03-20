@@ -34,14 +34,14 @@ import ome.jxr.constants.Image;
 import ome.jxr.image.ColorFormat;
 
 /**
- * Decodes the image data from a JPEG XR image file. The data has to be in the
- * form of an input stream and accompanying metadata has to be present to aid
- * the decompression process.
+ * Parses the initial elements (image header, image plane headers(-s)) of the
+ * image codestream. Conducts validation of values according to the file format
+ * specification.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/datastream/JXRDecoder.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/datastream/JXRDecoder.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/parser/DatastreamParser.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/parser/DatastreamParser.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */

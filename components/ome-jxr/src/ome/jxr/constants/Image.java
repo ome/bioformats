@@ -2,7 +2,7 @@
  * #%L
  * OME library for reading the JPEG XR file format.
  * %%
- * Copyright (C) 2013 Open Microscopy Environment:
+ * Copyright (C) 2013 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -26,7 +26,7 @@
 package ome.jxr.constants;
 
 /**
- * Constants describing the JPEG XR codestream header constants.
+ * Constants found in the codestream header structure.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>

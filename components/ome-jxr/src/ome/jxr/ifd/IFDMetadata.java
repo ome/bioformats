@@ -36,7 +36,7 @@ import ome.jxr.JXRException;
 /**
  * Provides access to metadata extracted from the IFD part of a JPEG XR file.
  * Adds simple logic to translate the raw byte data into primitive data types.
- * The returned data types are not primitive types, so as to allow returning
+ * The getters don't return primitive language types, so as to allow returning
  * <code>null</code>. That value indicates a missing metadata element and cannot
  * be confused with a numerical value (e.g. 0). This class also verifies value
  * validity on a very basic level (no inferring of metadata value combination
@@ -47,8 +47,8 @@ import ome.jxr.JXRException;
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/metadata/IFDMetadata.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/metadata/IFDMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/ifd/IFDMetadata.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/ifd/IFDMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  */
 public class IFDMetadata {

@@ -2,7 +2,7 @@
  * #%L
  * OME library for reading the JPEG XR file format.
  * %%
- * Copyright (C) 2013 Open Microscopy Environment:
+ * Copyright (C) 2013 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -31,9 +31,9 @@ import java.util.List;
 import ome.jxr.constants.IFD;
 
 /**
- * Container defining a list of IFD Entries. Each individual IFD Container
- * is a unique group of IFD Entries and the object of this class is aware of the
- * count of entries in itself.
+ * Container holding information about IFD entries. Each individual IFD
+ * container is a unique group of IFD entries and the object of this class is
+ * aware of the count of entries in itself.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
@@ -70,7 +70,7 @@ public class IFDContainer {
 
   /**
    * Returns the offset from the start of a data stream to the address where
-   * this IFD Container begins, skipping {@link IFD.ENTRIES_COUNT_SIZE} bytes
+   * this IFD Container begins, skipping {@link IFD#ENTRIES_COUNT_SIZE} bytes
    * that hold the Entry count for this container.
    *
    * @return See above.

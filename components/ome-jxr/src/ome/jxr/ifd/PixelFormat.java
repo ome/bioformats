@@ -2,7 +2,7 @@
  * #%L
  * OME library for reading the JPEG XR file format.
  * %%
- * Copyright (C) 2013 Open Microscopy Environment:
+ * Copyright (C) 2013 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -31,7 +31,7 @@ import java.util.Arrays;
 import ome.jxr.image.ColorFormat;
 
 /**
- * Enumeration of available Pixel Format entries. Naming of entries follows
+ * Enumeration of available pixel format entries. Naming of entries follows
  * Rec.ITU-T T.832 (01/2012) - table A.6. Internally, the identifier for each
  * entry omits the {@link PixelFormat#COMMON_PART}.
  *

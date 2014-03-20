@@ -30,6 +30,20 @@ import java.io.IOException;
 import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 
+/**
+ * Base class for all parsers of a JPEG XR data stream. Implementation of
+ * a chain-of-responsibility pattern, where each child class can be part of
+ * a singly linked list where each element besides the first one is aware of
+ * its parent element. Such a design allows for avoiding the existance and
+ * passing of a context between parsers.
+ *
+ * <dl>
+ * <dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/parser/Parser.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/parser/Parser.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ */
 public class Parser {
 
   long parsingOffset;

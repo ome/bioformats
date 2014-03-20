@@ -31,6 +31,18 @@ import loci.common.RandomAccessInputStream;
 import ome.jxr.JXRException;
 import ome.jxr.constants.File;
 
+/**
+ * Parses the first bytes of the image file and validates the extracted values
+ * for conformance with the file format specification. Throws exceptions early,
+ * so that further and more expensive operation can be avoided.
+ *
+ * <dl>
+ * <dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/parser/FileParser.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/parser/FileParser.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author Blazej Pindelski bpindelski at dundee.ac.uk
+ */
 public final class FileParser extends Parser {
 
   private int encoderVersion;
