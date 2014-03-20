@@ -1238,7 +1238,9 @@ public final class FormatTools {
   }
 
   public static PositiveFloat getEmissionWavelength(Double value) {
-    if (value != null && value > 0) {
+    if (value != null && value - Constants.EPSILON > 0 &&
+      value < Double.POSITIVE_INFINITY)
+    {
       return new PositiveFloat(value);
     }
     LOGGER.debug("Expected positive value for EmissionWavelength; got {}",
@@ -1247,7 +1249,9 @@ public final class FormatTools {
   }
 
   public static PositiveFloat getExcitationWavelength(Double value) {
-    if (value != null && value > 0) {
+    if (value != null && value - Constants.EPSILON > 0 &&
+      value < Double.POSITIVE_INFINITY)
+    {
       return new PositiveFloat(value);
     }
     LOGGER.debug("Expected positive value for ExcitationWavelength; got {}",
