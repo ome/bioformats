@@ -94,16 +94,18 @@ public final class DatastreamParser extends Parser {
   public DatastreamParser(Parser parentParser, RandomAccessInputStream stream)
       throws JXRException {
     super(parentParser, stream);
-    IFDParser ifdParser = (IFDParser) getParentParser();
-    FileParser fileParser = (FileParser) ifdParser.getParentParser();
-
-    parsingOffset = ifdParser.getIFDMetadata().getImageOffset();
-    encoderVersion = fileParser.getEncoderVersion();
   }
 
   @Override
   public void parse() throws JXRException {
     super.parse(parsingOffset);
+
+    IFDParser ifdParser = (IFDParser) getParentParser();
+    FileParser fileParser = (FileParser) ifdParser.getParentParser();
+
+    parsingOffset = ifdParser.getIFDMetadata().getImageOffset();
+    encoderVersion = fileParser.getEncoderVersion();
+
     try {
       checkIfGDISignaturePresent();
       extractImageHeaderMetadata();

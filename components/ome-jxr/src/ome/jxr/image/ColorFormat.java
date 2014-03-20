@@ -25,14 +25,18 @@
 
 package ome.jxr.image;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * Enumeration of available Color Format entries. Naming of entries follows
+ * Enumeration of available color format entries. Naming of entries follows
  * Rec.ITU-T T.832 (01/2012) - table 22.
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/ifd/ColorFormat.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/ifd/ColorFormat.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/image/ColorFormat.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/image/ColorFormat.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
@@ -47,21 +51,21 @@ public enum ColorFormat {
   NCOMPONENT(6),
   RGB(7),
   RGBE(8),
-  RESERVED(9);
+  RESERVED(9,10,11,12,13,14,15);
 
-  private int id;
+  private List<Integer> ids = new ArrayList<Integer>();
 
-  private ColorFormat(int id) {
-    this.id = id;
+  private ColorFormat(Integer... ids) {
+    this.ids.addAll(Arrays.asList(ids));
   }
 
-  public int getId() {
-    return id;
+  public List<Integer> getId() {
+    return ids;
   }
 
   public static ColorFormat findById(int id) {
     for (ColorFormat format : ColorFormat.values()) {
-      if (format.getId() == id) {
+      if (format.getId().contains(id)) {
         return format;
       }
     }

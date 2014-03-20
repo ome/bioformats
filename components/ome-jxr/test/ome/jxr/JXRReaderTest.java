@@ -41,23 +41,24 @@ public class JXRReaderTest extends StaticDataProvider {
     new JXRReader("");
   }
 
-  @Test(dataProvider = "malformedHeaders",
-      expectedExceptions = JXRException.class)
+  @Test(dataProvider = "malformedHeaders", expectedExceptions = JXRException.class)
   public void testCtorWithMalformedHeadersShouldThrowJXRE(byte[] malformedHeader)
       throws IOException, JXRException {
     new JXRReader(new RandomAccessInputStream(malformedHeader));
   }
 
-  @Test(dataProvider = "testReader")
-  public void testCtorWithtestReaderShouldNotReturnNull(JXRReader reader)
-      throws IOException, JXRException {
+  @Test(dataProvider = "testStream")
+  public void testCtor(RandomAccessInputStream stream) throws IOException,
+      JXRException {
+    JXRReader reader = new JXRReader(stream);
     assertNotNull(reader);
     reader.close();
   }
 
-  @Test(dataProvider = "testReader")
-  public void testGetMetadataShouldNotReturnNull(JXRReader reader)
+  @Test(dataProvider = "testStream")
+  public void testGetMetadata(RandomAccessInputStream stream)
       throws IllegalStateException, IOException, JXRException {
+    JXRReader reader = new JXRReader(stream);
     assertNotNull(reader.getMetadata());
     reader.close();
   }

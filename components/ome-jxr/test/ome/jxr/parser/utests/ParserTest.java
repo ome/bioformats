@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 
 public class ParserTest extends StaticDataProvider {
 
-  @Test(expectedExceptions = IllegalArgumentException.class)
+  @Test(expectedExceptions = NullPointerException.class)
   public void testCtorShouldThrowIfNullStream()
       throws JXRException {
     new Parser(null, null);

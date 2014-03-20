@@ -24,21 +24,6 @@
   -->
 
 <suite name="OME JXR Tests">
-  <test name="DatastreamParserTest">
-    <classes>
-      <class name="ome.jxr.parser.utests.DatastreamParserTest"/>
-    </classes>
-  </test>
-  <test name="FileParserTest">
-    <classes>
-      <class name="ome.jxr.parser.utests.FileParserTest"/>
-    </classes>
-  </test>
-  <test name="IFDParserTest">
-    <classes>
-      <class name="ome.jxr.parser.utests.IFDParserTest"/>
-    </classes>
-  </test>
   <test name="IFDContainer">
     <classes>
       <class name="ome.jxr.ifd.utests.IFDContainerTest"/>
@@ -62,6 +47,31 @@
   <test name="IFDMetadata">
     <classes>
       <class name="ome.jxr.metadata.utests.IFDMetadataTest"/>
+    </classes>
+  </test>
+    <test name="DatastreamParser">
+    <classes>
+      <class name="ome.jxr.parser.utests.DatastreamParserTest"/>
+    </classes>
+  </test>
+  <test name="FileParser">
+    <classes>
+      <class name="ome.jxr.parser.utests.FileParserTest"/>
+    </classes>
+  </test>
+  <test name="IFDParser">
+    <classes>
+      <class name="ome.jxr.parser.utests.IFDParserTest"/>
+    </classes>
+  </test>
+  <test name="Parser">
+    <classes>
+      <class name="ome.jxr.parser.utests.ParserTest"/>
+    </classes>
+  </test>
+  <test name="JXRReader">
+    <classes>
+      <class name="ome.jxr.JXRReaderTest"/>
     </classes>
   </test>
 </suite>
