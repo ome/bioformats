@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -182,8 +182,8 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     ArrayList<Double> speed = handler.getSpeeds();
     ArrayList<Double> gain = handler.getGains();
     ArrayList<Double> temperature = handler.getTemperatures();
-    ArrayList<Integer> exWave = handler.getExcitationWavelengths();
-    ArrayList<Integer> emWave = handler.getEmissionWavelengths();
+    ArrayList<Double> exWave = handler.getExcitationWavelengths();
+    ArrayList<Double> emWave = handler.getEmissionWavelengths();
     ArrayList<Integer> power = handler.getPowers();
     ArrayList<Hashtable<String, String>> rois = handler.getROIs();
     Double pinholeSize = handler.getPinholeSize();
@@ -200,13 +200,13 @@ public class NikonElementsTiffReader extends BaseTiffReader {
           getAcquisitionMode(modality.get(c)), 0, c);
       }
       if (c < emWave.size()) {
-        PositiveInteger em = FormatTools.getEmissionWavelength(emWave.get(c));
+        PositiveFloat em = FormatTools.getEmissionWavelength(emWave.get(c));
         if (em != null) {
           store.setChannelEmissionWavelength(em, 0, c);
         }
       }
       if (c < exWave.size()) {
-        PositiveInteger ex = FormatTools.getExcitationWavelength(exWave.get(c));
+        PositiveFloat ex = FormatTools.getExcitationWavelength(exWave.get(c));
         if (ex != null) {
           store.setChannelExcitationWavelength(ex, 0, c);
         }

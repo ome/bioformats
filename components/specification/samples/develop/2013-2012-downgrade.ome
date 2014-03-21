@@ -9,7 +9,7 @@
 	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06    /Users/andrew/Work/bioformats/components/specification/inprogress/ome.xsd">
 	<Rights>
 		<RightsHolder>
-			Copyright (C) 2002-2013 Open Microscopy Environment
+			Copyright (C) 2002 - 2014 Open Microscopy Environment
 			      Massachusetts Institute of Technology,
 			      National Institutes of Health,
 			      University of Dundee,

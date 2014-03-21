@@ -2,7 +2,7 @@
  * #%L
  * Tests for OME-XML specification classes.
  * %%
- * Copyright (C) 2012 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2012 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -51,6 +51,7 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PercentFraction;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -147,7 +148,7 @@ public class Instrument2011_06
         public static final NonNegativeLong Image0Pixels0_0Bindata0Length = NonNegativeLong.valueOf("32");
         public static final Boolean Image0Pixels0_0Bindata0BigEndian = Boolean.FALSE;
         public static final PercentFraction Image0LightSourceSettings0Attenuation = PercentFraction.valueOf("0.8");
-        public static final PositiveInteger Image0LightSourceSettings0Wavelength = PositiveInteger.valueOf("510");
+        public static final PositiveFloat Image0LightSourceSettings0Wavelength = PositiveFloat.valueOf("510");
         public static final Binning Image0DetectorSettings0Binning = Binning.TWOXTWO;
         public static final Double Image0DetectorSettings0Gain = Double.valueOf("1.2");
         public static final Double Image0DetectorSettings0Offset = Double.valueOf("0.7");

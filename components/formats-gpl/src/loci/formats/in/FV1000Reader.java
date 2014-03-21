@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -132,7 +132,7 @@ public class FV1000Reader extends FormatReader {
   private String pixelSizeX, pixelSizeY;
   private int validBits;
   private Vector<String> illuminations;
-  private Vector<Integer> wavelengths;
+  private Vector<Double> wavelengths;
   private String pinholeSize;
   private String magnification, lensNA, objectiveName, workingDistance;
   private String creationDate;
@@ -380,7 +380,7 @@ public class FV1000Reader extends FormatReader {
     // list of associated files.
     boolean mappedOIF = !isOIB && !new File(id).getAbsoluteFile().exists();
 
-    wavelengths = new Vector<Integer>();
+    wavelengths = new Vector<Double>();
     illuminations = new Vector<String>();
     channels = new Vector<ChannelData>();
     planes = new Vector<PlaneData>();
@@ -497,7 +497,7 @@ public class FV1000Reader extends FormatReader {
     while (laser != null) {
       laserEnabled = laser.get("Laser Enable").equals("1");
       if (laserEnabled) {
-        wavelengths.add(new Integer(laser.get("LaserWavelength")));
+        wavelengths.add(new Double(laser.get("LaserWavelength")));
       }
 
       creationDate = laser.get("ImageCaputreDate");
@@ -523,9 +523,9 @@ public class FV1000Reader extends FormatReader {
         channel.name = guiChannel.get("CH Name");
         channel.dyeName = guiChannel.get("DyeName");
         channel.emissionFilter = guiChannel.get("EmissionDM Name");
-        channel.emWave = new Integer(guiChannel.get("EmissionWavelength"));
+        channel.emWave = new Double(guiChannel.get("EmissionWavelength"));
         channel.excitationFilter = guiChannel.get("ExcitationDM Name");
-        channel.exWave = new Integer(guiChannel.get("ExcitationWavelength"));
+        channel.exWave = new Double(guiChannel.get("ExcitationWavelength"));
         channels.add(channel);
         index++;
         guiChannel = f.getTable("GUI Channel " + index + " Parameters");
@@ -1023,11 +1023,11 @@ public class FV1000Reader extends FormatReader {
         MetadataTools.createLSID("LightSource", 0, channelIndex);
       store.setChannelLightSourceSettingsID(lightSourceID, 0, channelIndex);
 
-      PositiveInteger emission =
+      PositiveFloat emission =
         FormatTools.getEmissionWavelength(channel.emWave);
-      PositiveInteger excitation =
+      PositiveFloat excitation =
         FormatTools.getExcitationWavelength(channel.exWave);
-      PositiveInteger wavelength = FormatTools.getWavelength(channel.exWave);
+      PositiveFloat wavelength = FormatTools.getWavelength(channel.exWave);
 
       if (emission != null) {
         store.setChannelEmissionWavelength(emission, 0, channelIndex);
@@ -1090,7 +1090,7 @@ public class FV1000Reader extends FormatReader {
       store.setLaserLaserMedium(getLaserMedium(channel.dyeName),
         0, channelIndex);
       if (channelIndex < wavelengths.size()) {
-        PositiveInteger wave =
+        PositiveFloat wave =
           FormatTools.getWavelength(wavelengths.get(channelIndex));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, channelIndex);
@@ -1690,8 +1690,8 @@ public class FV1000Reader extends FormatReader {
     public String name;
     public String emissionFilter;
     public String excitationFilter;
-    public Integer emWave;
-    public Integer exWave;
+    public Double emWave;
+    public Double exWave;
     public String dyeName;
     public String barrierFilter;
   }

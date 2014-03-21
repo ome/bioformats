@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for BSD-licensed readers and writers.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -819,14 +819,14 @@ public class ICSReader extends FormatReader {
     StringBuffer textBlock = new StringBuffer();
     double[] sizes = null;
 
-    Integer[] emWaves = null, exWaves = null;
+    Double[] emWaves = null, exWaves = null;
     Double[] stagePos = null;
     String imageName = null, date = null, description = null;
     Double magnification = null, lensNA = null, workingDistance = null;
     String objectiveModel = null, immersion = null, lastName = null;
     Hashtable<Integer, Double> gains = new Hashtable<Integer, Double>();
     Hashtable<Integer, Double> pinholes = new Hashtable<Integer, Double>();
-    Hashtable<Integer, Integer> wavelengths = new Hashtable<Integer, Integer>();
+    Hashtable<Integer, Double> wavelengths = new Hashtable<Integer, Double>();
     Hashtable<Integer, String> channelNames = new Hashtable<Integer, String>();
 
     String laserModel = null;
@@ -1019,7 +1019,7 @@ public class ICSReader extends FormatReader {
                 Integer.parseInt(key.substring(13, key.indexOf(" ", 13))) - 1;
               value = value.replaceAll("nm", "").trim();
               try {
-                wavelengths.put(new Integer(laser), new Integer(value));
+                wavelengths.put(new Integer(laser), new Double(value));
               }
               catch (NumberFormatException e) {
                 LOGGER.debug("Could not parse wavelength", e);
@@ -1028,7 +1028,7 @@ public class ICSReader extends FormatReader {
             else if (key.equalsIgnoreCase("history Wavelength*")) {
               String[] waves = value.split(" ");
               for (int i=0; i<waves.length; i++) {
-                wavelengths.put(new Integer(i), new Integer(waves[i]));
+                wavelengths.put(new Integer(i), new Double(waves[i]));
               }
             }
             else if (key.equalsIgnoreCase("history laser manufacturer")) {
@@ -1135,15 +1135,15 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("history cube emm nm")) {
               if (emWaves == null) {
-                emWaves = new Integer[1];
+                emWaves = new Double[1];
               }
-              emWaves[0] = new Integer(value.split(" ")[1].trim());
+              emWaves[0] = new Double(value.split(" ")[1].trim());
             }
             else if (key.equalsIgnoreCase("history cube exc nm")) {
               if (exWaves == null) {
-                exWaves = new Integer[1];
+                exWaves = new Double[1];
               }
-              exWaves[0] = new Integer(value.split(" ")[1].trim());
+              exWaves[0] = new Double(value.split(" ")[1].trim());
             }
             else if (key.equalsIgnoreCase("history microscope")) {
               microscopeModel = value;
@@ -1192,10 +1192,10 @@ public class ICSReader extends FormatReader {
           {
             if (key.equalsIgnoreCase("sensor s_params LambdaEm")) {
               String[] waves = value.split(" ");
-              emWaves = new Integer[waves.length];
+              emWaves = new Double[waves.length];
               for (int n=0; n<emWaves.length; n++) {
                 try {
-                  emWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
+                  emWaves[n] = new Double(Double.parseDouble(waves[n]));
                 }
                 catch (NumberFormatException e) {
                   LOGGER.debug("Could not parse emission wavelength", e);
@@ -1204,10 +1204,10 @@ public class ICSReader extends FormatReader {
             }
             else if (key.equalsIgnoreCase("sensor s_params LambdaEx")) {
               String[] waves = value.split(" ");
-              exWaves = new Integer[waves.length];
+              exWaves = new Double[waves.length];
               for (int n=0; n<exWaves.length; n++) {
                 try {
-                  exWaves[n] = new Integer((int) Double.parseDouble(waves[n]));
+                  exWaves[n] = new Double(Double.parseDouble(waves[n]));
                 }
                 catch (NumberFormatException e) {
                   LOGGER.debug("Could not parse excitation wavelength", e);
@@ -1562,13 +1562,13 @@ public class ICSReader extends FormatReader {
           store.setChannelPinholeSize(pinholes.get(i), 0, i);
         }
         if (emWaves != null && i < emWaves.length) {
-          PositiveInteger em = FormatTools.getEmissionWavelength(emWaves[i]);
+          PositiveFloat em = FormatTools.getEmissionWavelength(emWaves[i]);
           if (em != null) {
             store.setChannelEmissionWavelength(em, 0, i);
           }
         }
         if (exWaves != null && i < exWaves.length) {
-          PositiveInteger ex = FormatTools.getExcitationWavelength(exWaves[i]);
+          PositiveFloat ex = FormatTools.getExcitationWavelength(exWaves[i]);
           if (ex != null) {
             store.setChannelExcitationWavelength(ex, 0, i);
           }
@@ -1582,7 +1582,7 @@ public class ICSReader extends FormatReader {
       for (int i=0; i<lasers.length; i++) {
         store.setLaserID(MetadataTools.createLSID("LightSource", 0, i), 0, i);
 
-        PositiveInteger wave =
+        PositiveFloat wave =
           FormatTools.getWavelength(wavelengths.get(lasers[i]));
         if (wave != null) {
           store.setLaserWavelength(wave, 0, i);

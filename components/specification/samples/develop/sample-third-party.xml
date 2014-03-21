@@ -2,7 +2,7 @@
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2011 Open Microscopy Environment
+	# Copyright (C) 2011 - 2014 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
@@ -17,7 +17,7 @@
 -->
 <CustomTag xmlns="http://www.openmicroscopy.org/Schemas/SampleThirdParty/2011-06"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/SampleThirdParty/2011-06 file:/Users/andrew/Work/ome/components/specification/InProgress/sample-third-party.xsd">
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/SampleThirdParty/2011-06 sample-third-party.xsd">
 	<!--
 		Open Microscopy Environment
 		OME Sample Third Party

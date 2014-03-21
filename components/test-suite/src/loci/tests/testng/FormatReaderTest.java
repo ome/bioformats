@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -1097,16 +1097,16 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        PositiveInteger realWavelength =
+        PositiveFloat realWavelength =
           retrieve.getChannelEmissionWavelength(i, c);
-        Integer expectedWavelength = config.getEmissionWavelength(c);
+        Double expectedWavelength = config.getEmissionWavelength(c);
 
         if (realWavelength == null && expectedWavelength == null) {
           continue;
         }
 
         if (realWavelength == null || expectedWavelength == null ||
-          !expectedWavelength.equals(realWavelength.getValue()))
+          Math.abs(expectedWavelength - realWavelength.getValue()) > Constants.EPSILON)
         {
           result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
         }
@@ -1126,16 +1126,16 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        PositiveInteger realWavelength =
+        PositiveFloat realWavelength =
           retrieve.getChannelExcitationWavelength(i, c);
-        Integer expectedWavelength = config.getExcitationWavelength(c);
+        Double expectedWavelength = config.getExcitationWavelength(c);
 
         if (realWavelength == null && expectedWavelength == null) {
           continue;
         }
 
         if (realWavelength == null || expectedWavelength == null ||
-          !expectedWavelength.equals(realWavelength.getValue()))
+          Math.abs(expectedWavelength - realWavelength.getValue()) > Constants.EPSILON)
         {
           result(testName, false, "Series " + i + " channel " + c + " (expected " + expectedWavelength + ", actual " + realWavelength + ")");
         }

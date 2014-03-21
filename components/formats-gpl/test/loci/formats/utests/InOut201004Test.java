@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -255,7 +255,7 @@ public class InOut201004Test {
 
   /** XML schema location. */
   public static final String SCHEMA_LOCATION =
-    "http://svn.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd";
 
   private Document document;
 

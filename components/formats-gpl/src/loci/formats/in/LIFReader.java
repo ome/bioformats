@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -128,7 +128,7 @@ public class LIFReader extends FormatReader {
   private Double[][] expTimes, gains, detectorOffsets;
   private String[][] channelNames;
   private Vector[] detectorModels;
-  private Integer[][] exWaves;
+  private Double[][] exWaves;
   private Vector[] activeDetector;
   private HashMap[] detectorIndexes;
 
@@ -602,7 +602,7 @@ public class LIFReader extends FormatReader {
       if (lasers != null) {
         int laserIndex = 0;
         while (laserIndex < lasers.size()) {
-          if ((Integer) lasers.get(laserIndex) == 0) {
+          if ((Double) lasers.get(laserIndex) == 0) {
             lasers.removeElementAt(laserIndex);
           }
           else {
@@ -615,8 +615,8 @@ public class LIFReader extends FormatReader {
           store.setLaserID(id, i, laser);
           store.setLaserType(LaserType.OTHER, i, laser);
           store.setLaserLaserMedium(LaserMedium.OTHER, i, laser);
-          Integer wavelength = (Integer) lasers.get(laser);
-          PositiveInteger wave = FormatTools.getWavelength(wavelength);
+          Double wavelength = (Double) lasers.get(laser);
+          PositiveFloat wave = FormatTools.getWavelength(wavelength);
           if (wave != null) {
             store.setLaserWavelength(wave, i, laser);
           }
@@ -655,7 +655,7 @@ public class LIFReader extends FormatReader {
           int laserArrayIndex = validIntensities.get(k);
           double intensity = (Double) laserIntensities.get(laserArrayIndex);
           int laser = laserArrayIndex % lasers.size();
-          Integer wavelength = (Integer) lasers.get(laser);
+          Double wavelength = (Double) lasers.get(laser);
           if (wavelength != 0) {
             while (channelNames != null && nextChannel < getEffectiveSizeC() &&
               channelNames[index] != null &&
@@ -670,7 +670,7 @@ public class LIFReader extends FormatReader {
               store.setChannelLightSourceSettingsAttenuation(
                 new PercentFraction((float) intensity / 100f), i, nextChannel);
 
-              PositiveInteger ex =
+              PositiveFloat ex =
                 FormatTools.getExcitationWavelength(wavelength);
               if (ex != null) {
                 store.setChannelExcitationWavelength(ex, i, nextChannel);
@@ -820,7 +820,7 @@ public class LIFReader extends FormatReader {
         store.setChannelPinholeSize(pinholes[index], i, c);
         if (exWaves[index] != null) {
           if (exWaves[index][c] != null && exWaves[index][c] > 1) {
-            PositiveInteger ex =
+            PositiveFloat ex =
               FormatTools.getExcitationWavelength(exWaves[index][c]);
             if (ex != null) {
               store.setChannelExcitationWavelength(ex, i, c);
@@ -972,7 +972,7 @@ public class LIFReader extends FormatReader {
     gains = new Double[imageNodes.getLength()][];
     detectorOffsets = new Double[imageNodes.getLength()][];
     channelNames = new String[imageNodes.getLength()][];
-    exWaves = new Integer[imageNodes.getLength()][];
+    exWaves = new Double[imageNodes.getLength()][];
     imageROIs = new ROI[imageNodes.getLength()][];
     imageNames = new String[imageNodes.getLength()];
 
@@ -1337,7 +1337,7 @@ public class LIFReader extends FormatReader {
     NodeList aotfLists = getNodes(imageNode, "AotfList");
     if (aotfLists == null) return;
 
-    laserWavelength[image] = new Vector<Integer>();
+    laserWavelength[image] = new Vector<Double>();
     laserIntensity[image] = new Vector<Double>();
 
     int baseIntensityIndex = 0;
@@ -1358,13 +1358,13 @@ public class LIFReader extends FormatReader {
         index += (2 - (qualifier / 10));
         if (index < 0) index = 0;
 
-        Integer wavelength = new Integer(laserLine.getAttribute("LaserLine"));
+        Double wavelength = new Double(laserLine.getAttribute("LaserLine"));
         if (index < laserWavelength[image].size()) {
           laserWavelength[image].setElementAt(wavelength, index);
         }
         else {
           for (int i=laserWavelength[image].size(); i<index; i++) {
-            laserWavelength[image].add(new Integer(0));
+            laserWavelength[image].add(new Double(0));
           }
           laserWavelength[image].add(wavelength);
         }
@@ -1561,7 +1561,7 @@ public class LIFReader extends FormatReader {
     gains[image] = new Double[getEffectiveSizeC()];
     detectorOffsets[image] = new Double[getEffectiveSizeC()];
     channelNames[image] = new String[getEffectiveSizeC()];
-    exWaves[image] = new Integer[getEffectiveSizeC()];
+    exWaves[image] = new Double[getEffectiveSizeC()];
     detectorModels[image] = new Vector<String>();
 
     for (int i=0; i<scannerSettings.getLength(); i++) {
@@ -1612,7 +1612,7 @@ public class LIFReader extends FormatReader {
           gains[image][c] = new Double(value);
         }
         else if (id.endsWith("WaveLength")) {
-          Integer exWave = new Integer(value);
+          Double exWave = new Double(value);
           if (exWave > 0) {
             exWaves[image][c] = exWave;
           }

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -553,8 +553,8 @@ public class LeicaHandler extends BaseHandler {
           store.setDetectorType(DetectorType.CCD, numDatasets, 0);
         }
         else if (id.endsWith("WaveLength")) {
-          Integer exWave = new Integer(value);
-          PositiveInteger ex = FormatTools.getExcitationWavelength(exWave);
+          Double exWave = new Double(value);
+          PositiveFloat ex = FormatTools.getExcitationWavelength(exWave);
           if (ex != null) {
             channel.exWave = ex;
           }
@@ -800,7 +800,7 @@ public class LeicaHandler extends BaseHandler {
             new PercentFraction((float) laser.intensity / 100f),
             numDatasets, nextChannel);
 
-          PositiveInteger wavelength =
+          PositiveFloat wavelength =
             FormatTools.getExcitationWavelength(laser.wavelength);
           if (wavelength != null) {
             store.setChannelExcitationWavelength(wavelength,
@@ -821,7 +821,7 @@ public class LeicaHandler extends BaseHandler {
       l.index += (2 - (qualifier / 10));
       if (l.index < 0) l.index = 0;
       l.id = MetadataTools.createLSID("LightSource", numDatasets, l.index);
-      l.wavelength = new Integer(attributes.getValue("LaserLine"));
+      l.wavelength = new Double(attributes.getValue("LaserLine"));
       while (l.index > laserCount) {
         String lsid =
           MetadataTools.createLSID("LightSource", numDatasets, laserCount);
@@ -831,7 +831,7 @@ public class LeicaHandler extends BaseHandler {
       store.setLaserID(l.id, numDatasets, l.index);
       laserCount++;
 
-      PositiveInteger wavelength = FormatTools.getWavelength(l.wavelength);
+      PositiveFloat wavelength = FormatTools.getWavelength(l.wavelength);
       if (wavelength != null) {
         store.setLaserWavelength(wavelength, numDatasets, l.index);
       }
@@ -1166,7 +1166,7 @@ public class LeicaHandler extends BaseHandler {
   }
 
   class Laser {
-    public Integer wavelength;
+    public Double wavelength;
     public double intensity;
     public String id;
     public int index;
@@ -1175,7 +1175,7 @@ public class LeicaHandler extends BaseHandler {
   class Channel {
     public String detector;
     public Double gain;
-    public PositiveInteger exWave;
+    public PositiveFloat exWave;
     public String name;
   }
 

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -88,10 +88,10 @@ public abstract class BaseZeissReader extends FormatReader {
       new Hashtable<Integer, Double>();
   protected Hashtable<Integer, Double> detectorOffset =
       new Hashtable<Integer, Double>();
-  protected Hashtable<Integer, PositiveInteger> emWavelength =
-      new Hashtable<Integer, PositiveInteger>();
-  protected Hashtable<Integer, PositiveInteger> exWavelength =
-      new Hashtable<Integer, PositiveInteger>();
+  protected Hashtable<Integer, PositiveFloat> emWavelength =
+      new Hashtable<Integer, PositiveFloat>();
+  protected Hashtable<Integer, PositiveFloat> exWavelength =
+      new Hashtable<Integer, PositiveFloat>();
   protected Hashtable<Integer, String> channelName =
       new Hashtable<Integer, String>();
   protected Double physicalSizeX, physicalSizeY, physicalSizeZ;
@@ -862,8 +862,8 @@ public abstract class BaseZeissReader extends FormatReader {
         }
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1) {
-            Integer wave = new Integer(value);
-            PositiveInteger emission = FormatTools.getEmissionWavelength(wave);
+            Double wave = new Double(value);
+            PositiveFloat emission = FormatTools.getEmissionWavelength(wave);
             if (emission != null) {
               emWavelength.put(cIndex, emission);
             }
@@ -871,8 +871,8 @@ public abstract class BaseZeissReader extends FormatReader {
         }
         else if (key.startsWith("Excitation Wavelength")) {
           if (cIndex != -1) {
-            Integer wave = new Integer((int) Double.parseDouble(value));
-            PositiveInteger excitation =
+            Double wave = new Double(Double.parseDouble(value));
+            PositiveFloat excitation =
               FormatTools.getExcitationWavelength(wave);
             if (excitation != null) {
               exWavelength.put(cIndex, excitation);

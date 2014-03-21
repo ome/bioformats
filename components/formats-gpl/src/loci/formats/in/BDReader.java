@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Vanderbilt Integrative Cancer Center, and
+ * Copyright (C) 2005 - 2014 Vanderbilt Integrative Cancer Center, and
  * Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
@@ -55,6 +55,7 @@ import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -84,7 +85,7 @@ public class BDReader extends FormatReader {
   private MinimalTiffReader reader;
 
   private String roiFile;
-  private int[] emWave, exWave;
+  private double[] emWave, exWave;
   private double[] gain, offset, exposure;
   private String binning, objective;
 
@@ -442,9 +443,9 @@ public class BDReader extends FormatReader {
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
 
-          PositiveInteger emission =
+          PositiveFloat emission =
             FormatTools.getEmissionWavelength(emWave[c]);
-          PositiveInteger excitation =
+          PositiveFloat excitation =
             FormatTools.getExcitationWavelength(exWave[c]);
 
           if (emission != null) {
@@ -648,8 +649,8 @@ public class BDReader extends FormatReader {
   }
 
   private void parseChannelData(Location dir) throws IOException {
-    emWave = new int[channelNames.size()];
-    exWave = new int[channelNames.size()];
+    emWave = new double[channelNames.size()];
+    exWave = new double[channelNames.size()];
     exposure = new double[channelNames.size()];
     gain = new double[channelNames.size()];
     offset = new double[channelNames.size()];
@@ -663,14 +664,14 @@ public class BDReader extends FormatReader {
       IniTable numerator = dye.getTable("Numerator");
       String em = numerator.get("Emission");
       em = em.substring(0, em.indexOf(" "));
-      emWave[c] = Integer.parseInt(em);
+      emWave[c] = Double.parseDouble(em);
 
       String ex = numerator.get("Excitation");
       ex = ex.substring(0, ex.lastIndexOf(" "));
       if (ex.indexOf(" ") != -1) {
         ex = ex.substring(ex.lastIndexOf(" ") + 1);
       }
-      exWave[c] = Integer.parseInt(ex);
+      exWave[c] = Double.parseDouble(ex);
 
       exposure[c] = Double.parseDouble(numerator.get("Exposure"));
       gain[c] = Double.parseDouble(numerator.get("Gain"));

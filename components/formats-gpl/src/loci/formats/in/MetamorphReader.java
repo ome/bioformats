@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -778,11 +778,8 @@ public class MetamorphReader extends BaseTiffReader {
         store.setDetectorSettingsID(detectorID, i, c);
 
         if (wave != null && waveIndex < wave.length) {
-          PositiveInteger wavelength =
-            FormatTools.getWavelength((int) wave[waveIndex]);
-          if (wavelength != null) {
-            store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
-          }
+          PositiveFloat wavelength =
+            FormatTools.getWavelength(wave[waveIndex]);
 
           if ((int) wave[waveIndex] >= 1) {
             // link LightSource to Image
@@ -792,6 +789,10 @@ public class MetamorphReader extends BaseTiffReader {
             store.setChannelLightSourceSettingsID(lightSourceID, i, c);
             store.setLaserType(getLaserType("Other"), i, c);
             store.setLaserLaserMedium(getLaserMedium("Other"), i, c);
+
+            if (wavelength != null) {
+              store.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+            }
           }
         }
         waveIndex++;

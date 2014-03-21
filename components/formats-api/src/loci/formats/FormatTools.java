@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats API for reading and writing file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -1237,27 +1237,31 @@ public final class FormatTools {
     return null;
   }
 
-  public static PositiveInteger getEmissionWavelength(Integer value) {
-    if (value != null && value > 0) {
-      return new PositiveInteger(value);
+  public static PositiveFloat getEmissionWavelength(Double value) {
+    if (value != null && value - Constants.EPSILON > 0 &&
+      value < Double.POSITIVE_INFINITY)
+    {
+      return new PositiveFloat(value);
     }
     LOGGER.debug("Expected positive value for EmissionWavelength; got {}",
       value);
     return null;
   }
 
-  public static PositiveInteger getExcitationWavelength(Integer value) {
-    if (value != null && value > 0) {
-      return new PositiveInteger(value);
+  public static PositiveFloat getExcitationWavelength(Double value) {
+    if (value != null && value - Constants.EPSILON > 0 &&
+      value < Double.POSITIVE_INFINITY)
+    {
+      return new PositiveFloat(value);
     }
     LOGGER.debug("Expected positive value for ExcitationWavelength; got {}",
       value);
     return null;
   }
 
-  public static PositiveInteger getWavelength(Integer value) {
+  public static PositiveFloat getWavelength(Double value) {
     if (value != null && value > 0) {
-      return new PositiveInteger(value);
+      return new PositiveFloat(value);
     }
     LOGGER.debug("Expected positive value for Wavelength; got {}", value);
     return null;

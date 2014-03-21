@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats API for reading and writing file formats.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -396,7 +396,7 @@ public final class MetadataConverter {
             catch (NullPointerException e) { }
 
             try {
-              PositiveInteger wavelength = src.getMicrobeamManipulationLightSourceSettingsWavelength(i, q, p);
+              PositiveFloat wavelength = src.getMicrobeamManipulationLightSourceSettingsWavelength(i, q, p);
               dest.setMicrobeamManipulationLightSourceSettingsWavelength(wavelength, i, q, p);
             }
             catch (NullPointerException e) { }
@@ -914,13 +914,13 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          PositiveInteger emWave = src.getChannelEmissionWavelength(i, c);
+          PositiveFloat emWave = src.getChannelEmissionWavelength(i, c);
           dest.setChannelEmissionWavelength(emWave, i, c);
         }
         catch (NullPointerException e) { }
 
         try {
-          PositiveInteger exWave = src.getChannelExcitationWavelength(i, c);
+          PositiveFloat exWave = src.getChannelExcitationWavelength(i, c);
           dest.setChannelExcitationWavelength(exWave, i, c);
         }
         catch (NullPointerException e) { }
@@ -1030,7 +1030,7 @@ public final class MetadataConverter {
             catch (NullPointerException e) { }
 
             try {
-              PositiveInteger wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
+              PositiveFloat wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
               dest.setChannelLightSourceSettingsWavelength(wavelength, i, c);
             }
             catch (NullPointerException e) { }
@@ -3739,7 +3739,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          PositiveInteger wavelength =
+          PositiveFloat wavelength =
             src.getLaserWavelength(instrumentIndex, lightSource);
           if (wavelength != null) {
             dest.setLaserWavelength(wavelength, instrumentIndex, lightSource);

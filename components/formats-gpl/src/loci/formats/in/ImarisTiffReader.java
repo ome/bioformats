@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,6 +40,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -127,8 +128,8 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String description = null, creationDate = null;
-      Vector<Integer> emWave = new Vector<Integer>();
-      Vector<Integer> exWave = new Vector<Integer>();
+      Vector<Double> emWave = new Vector<Double>();
+      Vector<Double> exWave = new Vector<Double>();
       Vector<String> channelNames = new Vector<String>();
 
       if (comment != null && comment.startsWith("[")) {
@@ -146,11 +147,11 @@ public class ImarisTiffReader extends BaseTiffReader {
             description = value;
           }
           else if (key.equals("LSMEmissionWavelength") && !value.equals("0")) {
-            emWave.add(new Integer(value));
+            emWave.add(new Double(value));
           }
           else if (key.equals("LSMExcitationWavelength") && !value.equals("0"))
           {
-            exWave.add(new Integer(value));
+            exWave.add(new Double(value));
           }
           else if (key.equals("Name") && !currentId.endsWith(value)) {
             channelNames.add(value);
@@ -171,9 +172,9 @@ public class ImarisTiffReader extends BaseTiffReader {
 
       // populate LogicalChannel data
       for (int i=0; i<emWave.size(); i++) {
-        PositiveInteger emission =
+        PositiveFloat emission =
           FormatTools.getEmissionWavelength(emWave.get(i));
-        PositiveInteger excitation =
+        PositiveFloat excitation =
           FormatTools.getExcitationWavelength(exWave.get(i));
 
         if (emission != null) {

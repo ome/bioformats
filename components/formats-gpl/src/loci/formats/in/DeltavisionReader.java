@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -726,10 +726,10 @@ public class DeltavisionReader extends FormatReader {
       for (int w=0; w<getSizeC(); w++) {
         DVExtHdrFields hdrC = extHdrFields[0][w][series];
 
-        PositiveInteger emission =
-          FormatTools.getEmissionWavelength((int) waves[w]);
-        PositiveInteger excitation =
-          FormatTools.getExcitationWavelength((int) hdrC.exWavelen);
+        PositiveFloat emission =
+          FormatTools.getEmissionWavelength(new Double(waves[w]));
+        PositiveFloat excitation =
+          FormatTools.getExcitationWavelength(new Double(hdrC.exWavelen));
 
         if (emission != null) {
           store.setChannelEmissionWavelength(emission, series, w);

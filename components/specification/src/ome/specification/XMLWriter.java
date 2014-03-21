@@ -2,7 +2,7 @@
  * integration.XMLWriter
  *
  *------------------------------------------------------------------------------
- *  Copyright (C) 2006-2013 University of Dundee. All rights reserved.
+ *  Copyright (C) 2006 - 2014 University of Dundee. All rights reserved.
  *
  *
  * 	This program is free software; you can redistribute it and/or modify
@@ -120,15 +120,15 @@ public class XMLWriter
 
 	/** The schemas. */
 	private static final String[] SCHEMAS = {
-	    "http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd"};
+	    "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1/ome.xsd"};
 
 	/** The XML namespace. */
 	private static final String XML_NS =
-		"http://www.openmicroscopy.org/Schemas/OME/2013-06";
+		"http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1";
 
 	/** The XML namespace. */
 	private static final String BIN_NS =
-		"http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06";
+		"http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1";
 
 	/** The XSI namespace. */
 	private static final String XSI_NS =
@@ -136,7 +136,7 @@ public class XMLWriter
 
 	/** The schema location. */
 	private static final String SCHEMA_LOCATION =
-		"http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd";
+		"http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1/ome.xsd";
 
 	/** A default plane. */
 	private static final String PLANE =

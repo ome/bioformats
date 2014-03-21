@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -1417,7 +1417,7 @@ public class ZeissLSMReader extends FormatReader {
       if (channel.acquire && channel.wavelength != null &&
         channel.wavelength > 0)
       {
-        PositiveInteger wave = FormatTools.getWavelength(channel.wavelength);
+        PositiveFloat wave = FormatTools.getWavelength(channel.wavelength);
         if (wave != null) {
           store.setLaserWavelength(wave, instrument, nextIllumChannel);
         }
@@ -2359,19 +2359,19 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   class IlluminationChannel extends SubBlock {
-    public Integer wavelength;
+    public Double wavelength;
     public Double attenuation;
     public String name;
 
     protected void read() throws IOException {
       super.read();
-      wavelength = new Integer(getIntValue(ILLUM_CHANNEL_WAVELENGTH));
+      wavelength = new Double(getDoubleValue(ILLUM_CHANNEL_WAVELENGTH));
       attenuation = new Double(getDoubleValue(ILLUM_CHANNEL_ATTENUATION));
       acquire = getIntValue(ILLUM_CHANNEL_ACQUIRE) != 0;
 
       name = getStringValue(ILLUM_CHANNEL_NAME);
       try {
-        wavelength = new Integer(name);
+        wavelength = new Double(name);
       }
       catch (NumberFormatException e) { }
     }

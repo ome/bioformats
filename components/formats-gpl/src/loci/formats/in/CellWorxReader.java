@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -675,12 +675,12 @@ public class CellWorxReader extends FormatReader {
                 }
               }
 
-              Integer emission = new Integer(em);
-              Integer excitation = new Integer(ex);
+              Double emission = new Double(em);
+              Double excitation = new Double(ex);
 
-              PositiveInteger exWave =
+              PositiveFloat exWave =
                 FormatTools.getExcitationWavelength(excitation);
-              PositiveInteger emWave =
+              PositiveFloat emWave =
                 FormatTools.getEmissionWavelength(emission);
 
               for (int field=0; field<fieldCount; field++) {

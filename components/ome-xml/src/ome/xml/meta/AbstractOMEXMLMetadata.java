@@ -2,7 +2,7 @@
  * #%L
  * OME-XML Java library for working with OME-XML metadata structures.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -79,7 +79,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /** OME-XML schema location. */
   public static final String SCHEMA =
-    "http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1/ome.xsd";
 
   protected static final Logger LOGGER =
     LoggerFactory.getLogger(AbstractOMEXMLMetadata.class);
