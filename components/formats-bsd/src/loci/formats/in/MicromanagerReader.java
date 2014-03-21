@@ -748,6 +748,39 @@ public class MicromanagerReader extends FormatReader {
         }
       }
     }
+
+    // adjust timepoint count, if needed
+    // acquisitions can be stopped part-way through, but this isn't always
+    // noted in the metadata
+    int firstEmptyTimepoint = -1;
+    int nextFile = 0;
+    for (int t=0; t<getSizeT(); t++) {
+      boolean emptyTimepoint = true;
+      for (int c=0; c<getSizeC(); c++) {
+        for (int z=0; z<getSizeZ(); z++) {
+          String file = p.tiffs.get(nextFile++);
+          if (new Location(file).exists()) {
+            emptyTimepoint = false;
+            break;
+          }
+        }
+        if (!emptyTimepoint) {
+          break;
+        }
+      }
+      if (emptyTimepoint && firstEmptyTimepoint < 0) {
+        firstEmptyTimepoint = t;
+      }
+      else if (!emptyTimepoint && firstEmptyTimepoint >= 0) {
+        firstEmptyTimepoint = -1;
+      }
+    }
+
+    if (firstEmptyTimepoint >= 0) {
+      int imageCount = getImageCount() / getSizeT();
+      core.get(posIndex).sizeT = firstEmptyTimepoint;
+      core.get(posIndex).imageCount = imageCount * getSizeT();
+    }
   }
 
   /** Parse metadata values from the Acqusition.xml file. */
