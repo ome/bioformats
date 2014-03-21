@@ -686,6 +686,7 @@ public class MicromanagerReader extends FormatReader {
 
     String[] blocks = baseTiff.split("_");
     StringBuffer filename = new StringBuffer();
+
     for (int t=0; t<getSizeT(); t++) {
       for (int c=0; c<getSizeC(); c++) {
         for (int z=0; z<getSizeZ(); z++) {
@@ -707,6 +708,8 @@ public class MicromanagerReader extends FormatReader {
           filename.append(t);
           filename.append("_");
 
+          String prechannel = filename.toString();
+
           if (blocks[2].length() > 0) {
             String channel = p.channels[c];
             if (channel.indexOf("-") != -1) {
@@ -722,6 +725,23 @@ public class MicromanagerReader extends FormatReader {
           }
           filename.append(z);
           filename.append(".tif");
+
+          if (!new Location(filename.toString()).exists() &&
+            blocks[2].length() > 0)
+          {
+            // rewind and try using the full channel name
+
+            filename = new StringBuffer(prechannel);
+            String channel = p.channels[c];
+            filename.append(channel);
+            filename.append("_");
+            zeros = blocks[3].length() - String.valueOf(z).length() - 4;
+            for (int q=0; q<zeros; q++) {
+              filename.append("0");
+            }
+            filename.append(z);
+            filename.append(".tif");
+          }
 
           p.tiffs.add(filename.toString());
           filename.delete(0, filename.length());
