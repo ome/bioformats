@@ -7,7 +7,7 @@
 
 # Set the amount of RAM available to the command line tools.
 # Use "m" suffix for megabytes, "g" for gigabytes; e.g., 2g = 2 GB.
-#SCIFIO_MAX_MEM=1g
+#BF_MAX_MEM=1g
 
 # Set the NO_UPDATE_CHECK flag to skip the update check.
 #NO_UPDATE_CHECK=1
@@ -17,21 +17,21 @@
 #PROXY_PORT=
 
 # If your CLASSPATH already includes the needed classes,
-# you can set the SCIFIO_DEVEL environment variable to
+# you can set the BF_DEVEL environment variable to
 # disable the required JAR library checks.
-#SCIFIO_DEVEL=1
+#BF_DEVEL=1
 
 # Set the directory containing the JAR libraries.
-if [ -z "$SCIFIO_JAR_DIR" ]
+if [ -z "$BF_JAR_DIR" ]
 then
-  if [ -d "$SCIFIO_DIR/../artifacts" ]
+  if [ -d "$BF_DIR/../artifacts" ]
   then
     # Scripts reside in a git working copy.
     # Look for JARs in the artifacts directory.
-    SCIFIO_JAR_DIR="$SCIFIO_DIR/../artifacts"
+    BF_JAR_DIR="$BF_DIR/../artifacts"
   else
     # Scripts reside in a standalone distribution.
     # Look for JARs in the same directory as the scripts.
-    SCIFIO_JAR_DIR="$SCIFIO_DIR"
+    BF_JAR_DIR="$BF_DIR"
   fi
 fi

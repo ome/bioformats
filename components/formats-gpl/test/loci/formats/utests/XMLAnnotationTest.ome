@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2010-04" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd">
+    <Plate xmlns="http://www.openmicroscopy.org/Schemas/SPW/2010-06" ColumnNamingConvention="number" Columns="2" ID="Plate:0" RowNamingConvention="letter" Rows="3">
+        <Well Column="0" ID="Well:0_0" Row="0">
+            <WellSample ID="WellSample:0_0" Index="0">
+                <ImageRef ID="Image:0"/>
+            </WellSample>
+            <AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2010-06" ID="Annotation:Long0"/>
+        </Well>
+        <Well Column="1" ID="Well:0_1" Row="0">
+            <WellSample ID="WellSample:0_1" Index="1">
+                <ImageRef ID="Image:0"/>
+            </WellSample>
+        </Well>
+        <Well Column="0" ID="Well:1_0" Row="1">
+            <WellSample ID="WellSample:1_0" Index="2">
+                <ImageRef ID="Image:0"/>
+            </WellSample>
+        </Well>
+        <Well Column="1" ID="Well:1_1" Row="1">
+            <WellSample ID="WellSample:1_1" Index="3">
+                <ImageRef ID="Image:0"/>
+            </WellSample>
+        </Well>
+        <Well Column="0" ID="Well:2_0" Row="2">
+            <WellSample ID="WellSample:2_0" Index="4">
+                <ImageRef ID="Image:0"/>
+            </WellSample>
+        </Well>
+        <Well Column="1" ID="Well:2_1" Row="2">
+            <WellSample ID="WellSample:2_1" Index="5">
+                <ImageRef ID="Image:0"/>
+            </WellSample>
+        </Well>
+        <AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2010-06" ID="Annotation:Timestamp0"/>
+    </Plate>
+    <Instrument ID="Instrument:0">
+        <LightSource ID="LightSource:0" Model="ReallyBrightLaser!" Power="1000.0">
+            <Laser Type="Dye">
+                <Pump ID="LightSource:1"/>
+            </Laser>
+        </LightSource>
+        <LightSource ID="LightSource:1" Model="ReallyBrightPump!" Power="100.0">
+            <Laser Type="Dye"/>
+        </LightSource>
+        <LightSource ID="LightSource:2" Model="ReallyBrightArc!" Power="500.0">
+            <Arc Type="HgXe"/>
+        </LightSource>
+        <LightSource ID="LightSource:3" Model="ReallyBrightFilament!" Power="200.0">
+            <Filament Type="Halogen"/>
+        </LightSource>
+        <LightSource ID="LightSource:4" Model="ReallyBrightLED!" Power="10.0">
+            <LightEmittingDiode/>
+        </LightSource>
+        <Detector ID="Detector:0" Model="ReallySensitive!"/>
+        <Objective ID="Objective:0" Model="ReallyClear!"/>
+        <FilterSet ID="FilterSet:0" LotNumber="RandomLot">
+            <ExcitationFilterRef ID="Filter:1"/>
+            <DichroicRef ID="Dichroic:0"/>
+            <EmissionFilterRef ID="Filter:0"/>
+        </FilterSet>
+        <Filter ID="Filter:0" Type="LongPass"/>
+        <Filter ID="Filter:1" Type="NeutralDensity"/>
+        <Dichroic ID="Dichroic:0" SerialNumber="0123456789"/>
+        <OTF ID="OTF:0" OpticalAxisAveraged="false" SizeX="512" SizeY="512" Type="float">
+            <ObjectiveSettings ID="Objective:0"/>
+            <FilterSetRef ID="FilterSet:0"/>
+            <BinaryFile xmlns="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06" FileName="abc.bin" Size="64">
+                <External SHA1="1234567890123456789012345678901234567890" href="file:///abc.bin"/>
+            </BinaryFile>
+        </OTF>
+    </Instrument>
+    <Image ID="Image:0">
+        <InstrumentRef ID="Instrument:0"/>
+        <Pixels DimensionOrder="XYZCT" ID="Pixels:0" SizeC="3" SizeT="50" SizeX="512" SizeY="512" SizeZ="64" Type="uint16">
+            <Channel ID="Channel:0">
+                <AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2010-06" ID="Annotation:XML0"/>
+            </Channel>
+            <Channel ID="Channel:1"/>
+            <Channel ID="Channel:2"/>
+            <TiffData>
+                <UUID>6DFA2954-FA9B-4447-A26C-82F9580D9425</UUID>
+            </TiffData>
+            <AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2010-06" ID="Annotation:Double0"/>
+        </Pixels>
+        <AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2010-06" ID="Annotation:List0"/>
+    </Image>
+    <StructuredAnnotations xmlns="http://www.openmicroscopy.org/Schemas/SA/2010-06">
+        <XMLAnnotation ID="Annotation:XML0" Namespace="test-ome-InOut201004-namespace">
+            <Value>
+                <TestData>
+                    <key>foo</key>
+					<value>bar</value>
+                </TestData>
+            </Value>
+        </XMLAnnotation>
+        <ListAnnotation ID="Annotation:List0" Namespace="test-ome-InOut201004-namespace">
+            <AnnotationRef ID="Annotation:Boolean0"/>
+        </ListAnnotation>
+        <LongAnnotation ID="Annotation:Long0" Namespace="test-ome-InOut201004-namespace">
+            <Value>262144</Value>
+        </LongAnnotation>
+        <DoubleAnnotation ID="Annotation:Double0" Namespace="test-ome-InOut201004-namespace">
+            <Value>3.14</Value>
+        </DoubleAnnotation>
+        <CommentAnnotation ID="Annotation:String0" Namespace="test-ome-InOut201004-namespace">
+            <Value>Some extra ROI data</Value>
+        </CommentAnnotation>
+        <BooleanAnnotation ID="Annotation:Boolean0" Namespace="test-ome-InOut201004-namespace">
+            <Value>false</Value>
+        </BooleanAnnotation>
+        <TimestampAnnotation ID="Annotation:Timestamp0" Namespace="test-ome-InOut201004-namespace">
+            <Value>1970-01-01T00:00:00</Value>
+        </TimestampAnnotation>
+    </StructuredAnnotations>
+    <ROI xmlns="http://www.openmicroscopy.org/Schemas/ROI/2010-06" ID="ROI:5">
+        <Union>
+            <Shape ID="Shape:0">
+                <Rectangle Height="256.0" Width="128.0" X="10.0" Y="20.0"/>
+            </Shape>
+        </Union>
+        <AnnotationRef xmlns="http://www.openmicroscopy.org/Schemas/SA/2010-06" ID="Annotation:String0"/>
+    </ROI>
+</OME>

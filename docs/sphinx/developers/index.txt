@@ -56,25 +56,6 @@ Interfacing from non-Java code
 .. _bfapplications:
 
 
-SCIFIO
-======
-
-SCIFIO provides the core architecture of the Bio-Formats library and also 
-includes reader and writer implementations for open file formats. The more 
-permissive BSD license enables non-GPL third party software to read and write 
-OME-TIFF using SCIFIO alone. 
-
-.. only:: html
-
-    For more information see:
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    scifio
-
-
 Writing new Bio-Formats file format readers
 ===========================================
 

@@ -7,12 +7,12 @@
 
   <parent>
     <groupId>ome</groupId>
-    <artifactId>pom-scifio</artifactId>
+    <artifactId>pom-bio-formats</artifactId>
     <version>5.1.0-SNAPSHOT</version>
     <relativePath>../../..</relativePath>
   </parent>
 
-  <artifactId>poi-loci</artifactId>
+  <artifactId>ome-poi</artifactId>
 
   <name>Apache Jakarta POI</name>
   <description>Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel). Based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE v2 and memory efficiency improvements. Used by Bio-Formats for OLE support (cxd, ipw, oib, zvi). Used by VisBio overlays logic for XLS export feature.</description>
@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci-legacy</artifactId>
+      <artifactId>formats-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -61,7 +61,7 @@
     <developer>
       <id>melissa</id>
       <name>Melissa Linkert</name>
-      <email>melissa.linkert@glencoesoftware.com</email>
+      <email>melissa@glencoesoftware.com</email>
       <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>

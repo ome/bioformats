@@ -12,7 +12,7 @@ Developer: `McGill University <http://www.bic.mni.mcgill.ca/ServicesSoftware/MIN
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

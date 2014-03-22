@@ -442,9 +442,7 @@ def resolve_hierarchy(results, model, names, func, child=None, key=None, level=0
         if is_child_multi_path:
             is_multi_path = True
         if child is not None and max_occurs >= min_occurs:
-            to_append = func(child, max_occurs, level)
-            if to_append is not None:
-                results[key].append(to_append)
+            results[key].append(func(child, max_occurs, level))
     return is_multi_path
 
 def processMetadataTemplate(template, outputFilename, opts):
@@ -470,7 +468,7 @@ def processMetadataTemplate(template, outputFilename, opts):
         parents[name] = model.resolve_parents(name)
         is_multi_path[name] = resolve_hierarchy(indexes[name], model,
                             {name: parents[name]},
-                            opts.lang.index_string)
+                            opts.lang.index_signature)
 
     object_headers = model.getObjectHeaders()
 

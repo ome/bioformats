@@ -94,6 +94,9 @@ public class ConfigurationTree {
 
   public void parseConfigFile(String configFile) throws IOException {
     File file = new File(configFile);
+    if (file.isDirectory()) {
+      return;
+    }
     configFile = file.getAbsolutePath();
     String dir = file.getParentFile().getAbsolutePath();
 

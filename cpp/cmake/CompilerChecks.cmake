@@ -85,3 +85,8 @@ check_cxx_source_compiles("
 void foo() noexcept{}
 int main() { foo(); }
 " OME_HAVE_NOEXCEPT)
+
+check_cxx_source_compiles("
+#include <array>
+int main() { std::array<int,3> a; a[0] = 5; }
+" OME_HAVE_ARRAY)

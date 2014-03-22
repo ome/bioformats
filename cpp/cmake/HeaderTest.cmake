@@ -77,21 +77,23 @@ function(header_test_from_file component library path)
   file(MAKE_DIRECTORY ${headerdir})
 
   foreach(header ${TEST_INCLUDES})
+    foreach(repeat 1 2)
     string(REPLACE "/" "_" genheader ${header})
-    string(REPLACE "${PROJECT_SOURCE_DIR}/cpp/src/" "" include ${header})
-    string(REPLACE "${headerdir}/" "" include ${include})
-    string(REGEX REPLACE "\\.h$" ".cpp" genheader ${genheader})
-    string(REGEX REPLACE "[/.]" "_" safeheader ${include})
-    string(CONFIGURE "#include <@include@>
+      string(REPLACE "${PROJECT_SOURCE_DIR}/cpp/src/" "" include ${header})
+      string(REPLACE "${headerdir}/" "" include ${include})
+      string(REGEX REPLACE "\\.h$" "-${repeat}.cpp" genheader ${genheader})
+      string(REGEX REPLACE "[/.]" "_" safeheader ${include})
+      string(CONFIGURE "#include <@include@>
 
 #include <gtest/gtest.h>
 
-TEST(Header, ${safeheader})
+TEST(Header, ${safeheader}_${repeat})
 {
 }
 " src)
-    file(WRITE "${headerdir}/${genheader}" "${src}")
-    list(APPEND test_headers_SOURCES "${headerdir}/${genheader}")
+      file(WRITE "${headerdir}/${genheader}" "${src}")
+      list(APPEND test_headers_SOURCES "${headerdir}/${genheader}")
+    endforeach(repeat)
   endforeach(header)
 
   add_executable(${component}-headers ${test_headers_SOURCES})

@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats manual and automated test suite.
  * %%
- * Copyright (C) 2006 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2006 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -291,14 +291,14 @@ public class Configuration {
     return exposure == null ? null : new Double(exposure);
   }
 
-  public Integer getEmissionWavelength(int channel) {
+  public Double getEmissionWavelength(int channel) {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
-    return wavelength == null ? null : new Integer(wavelength);
+    return wavelength == null ? null : new Double(wavelength);
   }
 
-  public Integer getExcitationWavelength(int channel) {
+  public Double getExcitationWavelength(int channel) {
     String wavelength = currentTable.get(EXCITATION_WAVELENGTH + channel);
-    return wavelength == null ? null : new Integer(wavelength);
+    return wavelength == null ? null : new Double(wavelength);
   }
 
   public String getDetector(int channel) {
@@ -501,12 +501,12 @@ public class Configuration {
         }
         catch (NullPointerException e) { }
 
-        PositiveInteger emWavelength =
+        PositiveFloat emWavelength =
           retrieve.getChannelEmissionWavelength(series, c);
         if (emWavelength != null) {
           seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.toString());
         }
-        PositiveInteger exWavelength =
+        PositiveFloat exWavelength =
           retrieve.getChannelExcitationWavelength(series, c);
         if (exWavelength != null) {
           seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.toString());

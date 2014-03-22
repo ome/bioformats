@@ -14,18 +14,18 @@ Installation
 
 Follow these steps to install the Bio-Formats plugin for MIPAV:
 
-#. Download :downloads:`loci_tools.jar <>`
+#. Download :downloads:`bioformats_package.jar <>`
    and drop it into your MIPAV folder.
-#. Download the :source:`plugin source code <components/scifio/utils/mipav/PlugInBioFormatsImporter.java>`
+#. Download the :source:`plugin source code <components/formats-bsd/utils/mipav/PlugInBioFormatsImporter.java>`
    into your user ``mipav/plugins`` folder.
 #. From the command line, compile the plugin with::
 
        cd mipav/plugins
-       javac -cp $MIPAV:$MIPAV/loci\_tools.jar \\
+       javac -cp $MIPAV:$MIPAV/bioformats\_package.jar \\
          PlugInBioFormatsImporter.java
 
 #. where $MIPAV is the location of your MIPAV installation.
-#. Add **loci\_tools.jar** to MIPAV's class path:
+#. Add **bioformats\_package.jar** to MIPAV's class path:
 
    -  How to do so depends on your platform.
    -  E.g., in Mac OS X, edit the ``mipav.app/Contents/Info.plist``
@@ -34,9 +34,9 @@ Follow these steps to install the Bio-Formats plugin for MIPAV:
 #. Run MIPAV and a new "BioFormatsImporter - read image" menu item will
    appear in the Plugins > File submenu.
 
-See the :source:`readme file <components/scifio/utils/mipav/readme.txt>`
+See the :source:`readme file <components/formats-bsd/utils/mipav/readme.txt>`
 for more information.
 
-To upgrade, just overwrite the old **loci\_tools.jar** with the 
+To upgrade, just overwrite the old **bioformats\_package.jar** with the 
 :downloads:`latest one <>`. You may want to download the latest version of MIPAV first, to take advantage of new
 features and bug-fixes.

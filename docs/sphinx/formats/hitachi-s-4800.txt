@@ -12,7 +12,7 @@ Developer: `Hitachi <http://www.hitachi-hta.com/sites/default/files/technotes/Hi
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

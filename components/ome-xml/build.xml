@@ -15,8 +15,12 @@ Type "ant -p" for a list of targets.
 
   <target name="generate-source" depends="init-title">
     <property name="xsdfu.modelpath" value="${gensrc.dir}"/>
+    <property name="xsdfu.metadatapath" value="${gensrc.dir}"/>
+    <property name="xsdfu.omepath" value="${gensrc.dir}"/>
 
     <delete dir="${xsdfu.modelpath}"/>
+    <delete dir="${xsdfu.metadatapath}"/>
+    <delete dir="${xsdfu.omepath}"/>
 
     <!-- Generate the OME model object classes -->
     <xsd_fu lang="Java" output="${xsdfu.modelpath}">
@@ -32,6 +36,15 @@ Type "ant -p" for a list of targets.
     <xsd_fu lang="Java" output="${xsdfu.modelpath}">
       <arg value="omexml_model_enum_handlers"/>
     </xsd_fu>
+
+    <!-- Generate the metadata interfaces -->
+    <xsd_fu lang="Java" output="${xsdfu.metadatapath}">
+      <arg value="metadata"/>
+    </xsd_fu>
+    <!-- Generate the OME XML metadata interface -->
+    <xsd_fu lang="Java" output="${xsdfu.omepath}">
+      <arg value="omexml_metadata"/>
+    </xsd_fu>
   </target>
 
   <target name="test" depends="jar,compile-tests" description="run tests">
@@ -40,12 +53,12 @@ Type "ant -p" for a list of targets.
       file="${tests.dir}/ome/xml/utests/testng.xml"/>
     <testng failureProperty="failedTest">
       <classpath>
-        <pathelement location="${root.dir}/tools/"/><!-- log4j.properties -->
+        <pathelement location="${root.dir}/tools/"/><!-- logback.xml -->
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.runtime-cp}"/>
-        <pathelement path="${lib.dir}/slf4j-log4j12-${slf4j.version}.jar"/>
-        <pathelement path="${lib.dir}/log4j-${log4j.version}.jar"/>
+        <pathelement path="${lib.dir}/logback-core-${logback.version}.jar"/>
+        <pathelement path="${lib.dir}/logback-classic-${logback.version}.jar"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>

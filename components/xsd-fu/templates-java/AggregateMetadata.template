@@ -1,6 +1,6 @@
-{% def indexes_string(indexes) %}${", ".join(indexes)}{% end %}\
+{% def indexes_string(indexes) %}${", ".join(map(lambda x: lang.index_string(x),indexes))}{% end %}\
 \
-{% def indexes_name_string(indexes) %}${", ".join([v.replace('int ', '') for v in indexes])}{% end %}\
+{% def indexes_name_string(indexes) %}${", ".join(map(lambda x: lang.index_argname(x),indexes))}{% end %}\
 \
 {% def index_name_string(name) %}\
 {% choose %}\
@@ -63,7 +63,7 @@
 	}
 {% end %}\
 {% otherwise %}\
-	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_string(prop.name)})
+	public ${prop.metadataStoreRetType} get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}()
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -71,7 +71,7 @@
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${index_name_string(prop.name)});
+				${prop.metadataStoreRetType} result = retrieve.get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}();
 				if (result != null) return result;
 			}
 		}
@@ -211,7 +211,7 @@
  *-----------------------------------------------------------------------------
  */
 
-package loci.formats.meta;
+package ome.xml.meta;
 
 import java.util.Iterator;
 import java.util.List;
@@ -267,8 +267,7 @@ public class AggregateMetadata implements IMetadata
 	 */
 	public MetadataRoot getRoot()
 	{
-		throw new RuntimeException("Unsupported with AggregateMetadata. " +
-		                           "Use getDelegates() and getRoot().");
+		throw new RuntimeException("Unsupported by AggregateMetadata");
 	}
 
 	/**
@@ -277,8 +276,7 @@ public class AggregateMetadata implements IMetadata
 	 */
 	public void setRoot(MetadataRoot root)
 	{
-		throw new RuntimeException("Unsupported with AggregateMetadata. " +
-	                               "Use getDelegates() and setRoot().");
+		throw new RuntimeException("Unsupported by AggregateMetadata");
 	}
 
 	/**
@@ -288,8 +286,7 @@ public class AggregateMetadata implements IMetadata
 	@Deprecated
 	public void setRoot(Object root)
 	{
-		throw new RuntimeException("Unsupported with AggregateMetadata. " +
-	                               "Use getDelegates() and setRoot().");
+		throw new RuntimeException("Unsupported by AggregateMetadata");
 	}
 
 	// -- AggregateMetadata API methods --

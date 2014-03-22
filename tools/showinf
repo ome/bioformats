@@ -3,8 +3,8 @@
 # showinf: a script for displaying information about a given
 #          image file, while displaying it in the image viewer
 
-# Required JARs: loci_tools.jar
+# Required JARs: loci_tools.jar or bioformats_package.jar
 
-SCIFIO_DIR=`dirname "$0"`
+BF_DIR=`dirname "$0"`
 
-SCIFIO_PROG=loci.formats.tools.ImageInfo "$SCIFIO_DIR/scifio.sh" "$@"
+BF_PROG=loci.formats.tools.ImageInfo "$BF_DIR/bf.sh" "$@"

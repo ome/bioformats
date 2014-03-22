@@ -6,12 +6,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ome</groupId>
-  <artifactId>pom-scifio</artifactId>
+  <artifactId>pom-bio-formats</artifactId>
   <version>5.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
-  <description>Umbrella project for SCIFIO and Bio-Formats software projects.</description>
+  <description>Umbrella project for the Bio-Formats software project.</description>
   <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
@@ -20,23 +20,21 @@
     <module>components/forks/jai</module>
     <module>components/forks/mdbtools</module>
     <module>components/forks/poi</module>
+    <module>components/forks/turbojpeg</module>
     <module>components/autogen</module>
-    <module>components/bio-formats</module>
-    <module>components/loci-legacy</module>
-    <module>components/loci-common</module>
-    <module>components/loci-plugins</module>
-    <module>components/loci-tools</module>
+    <module>components/formats-api</module>
+    <module>components/formats-bsd</module>
+    <module>components/formats-gpl</module>
+    <module>components/bundles/bioformats_package</module>
+    <module>components/formats-common</module>
+    <module>components/bio-formats-plugins</module>
+    <module>components/bundles/loci-tools</module>
     <module>components/metakit</module>
-    <module>components/ome-io</module>
-    <module>components/ome-plugins</module>
-    <module>components/ome-tools</module>
+    <module>components/bundles/ome-tools</module>
     <module>components/ome-xml</module>
-    <module>components/scifio</module>
-    <module>components/scifio-devel</module>
-    <module>components/scifio-tools</module>
+    <module>components/bio-formats-tools</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
-    <module>components/turbojpeg</module>
     <module>components/xsd-fu</module>
   </modules>
 
@@ -49,8 +47,8 @@
     <year>2013</year>
     <project.rootdir>${basedir}</project.rootdir>
     <log4j.version>1.2.17</log4j.version>
-    <slf4j.version>1.7.2</slf4j.version>
-
+    <logback.version>1.1.1</logback.version>
+    <slf4j.version>1.7.6</slf4j.version>
     <xsdfu.schemaver>2013-10-dev-1</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
@@ -200,13 +198,18 @@
                   // if we're building within Git, but not from a tag,
                   // then use the last known tag's number to set a snapshot
                   // version
-                  def regex = Pattern.compile("v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)")
-                  def groups = regex.matcher(ant.project.properties.describe)
-                  groups.matches()
-                  def major = groups.group(1)
-                  def minor = groups.group(2)
-                  def patch = groups.group(3)
-                  project.properties.release = major + "." + minor + "." + patch + "-SNAPSHOT"
+                  try {
+                    def regex = Pattern.compile("v([0-9]+)[.]([0-9]+)[.]([0-9]+)(.*)")
+                    def groups = regex.matcher(ant.project.properties.describe)
+                    groups.matches()
+                    def major = groups.group(1)
+                    def minor = groups.group(2)
+                    def patch = groups.group(3)
+                    project.properties.release = major + "." + minor + "." + patch + "-SNAPSHOT"
+                  }
+                  catch (IllegalStateException e) {
+                    project.properties.release = ""
+                  }
                 }
                 else {
                   // if we're building outside of Git, set a default
@@ -214,6 +217,26 @@
                   project.properties.release = project.properties.default
                 }
                 project.properties.revision = ant.project.properties.revision
+
+                if (!project.properties.release) {
+                  // assume this is a source package outside of Git
+                  // there should be a ant/gitversion.xml file with the
+                  // version information used when the package was created
+
+                  def xml = new XmlParser().parse("./ant/gitversion.xml")
+                  for (property in xml.property) {
+                    println "parsing " + property.'@name'
+                    if ('release.version' == property.'@name') {
+                      project.properties.release = property.'@value'
+                    }
+                    else if ('vcs.revision' == property.'@name') {
+                      project.properties.revision = property.'@value'
+                    }
+                  }
+                }
+
+                println "revision = " + project.properties.revision
+                println "release = " + project.properties.release
               </source>
             </configuration>
           </execution>
@@ -327,13 +350,6 @@
 
   <mailingLists>
     <mailingList>
-      <name>LOCI Software</name>
-      <subscribe>https://lists.wisc.edu/read/all_forums/subscribe?name=locisoftware</subscribe>
-      <unsubscribe>https://lists.wisc.edu/read/?forum=locisoftware</unsubscribe>
-      <post>locisoftware@lists.wisc.edu</post>
-      <archive>https://lists.wisc.edu/read/?forum=locisoftware</archive>
-    </mailingList>
-    <mailingList>
       <name>OME-users</name>
       <subscribe>http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/</subscribe>
       <unsubscribe>http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/</unsubscribe>
@@ -389,8 +405,8 @@
       </snapshots>
     </pluginRepository>
     <pluginRepository>
-      <id>imagej.releases</id>
-      <url>http://maven.imagej.net/content/repositories/releases</url>
+      <id>ome.external</id>
+      <url>http://artifacts.openmicroscopy.org/artifactory/ome.external</url>
     </pluginRepository>
   </pluginRepositories>
 

@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -44,7 +44,7 @@ set(XSD_FU_SCRIPT ${PROJECT_SOURCE_DIR}/components/xsd-fu/xsd-fu)
 set(XSD_FU python ${XSD_FU_SCRIPT})
 
 # Version of the OME-XML model to use
-set(MODEL_VERSION 2013-06)
+set(MODEL_VERSION 2013-10-dev-1)
 
 # Path to the model within the source tree
 set(MODEL_PATH ${PROJECT_SOURCE_DIR}/components/specification/released-schema/${MODEL_VERSION})
@@ -75,6 +75,7 @@ set(XSD_FU_ARGS --language=C++ --output-directory=${GEN_DIR} ${MODEL_FILES})
 # command: the xsd-fu command to invoke
 # outvar: variable to store generated file list in
 function(xsd_fu_single filetype command outvar)
+  message(STATUS "Determining xsd-fu dependencies and outputs for target ${command} (${filetype}s)")
   execute_process(COMMAND ${XSD_FU} ${command} --dry-run --file-type=${filetype} --print-generated ${XSD_FU_ARGS}
     OUTPUT_VARIABLE genfiles)
   string(REPLACE "\n" ";" genfiles "${genfiles}")
