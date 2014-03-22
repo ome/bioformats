@@ -46,15 +46,15 @@ using ome::xml::model::primitives::PercentFraction;
 template<>
 struct OperationModulo<PercentFraction>
 {
-  PercentFraction eval(PercentFraction lhs,             PercentFraction rhs) { return lhs; }
-  PercentFraction eval(PercentFraction lhs, PercentFraction::value_type rhs) { return lhs; }
+  PercentFraction eval(PercentFraction lhs,             PercentFraction /* rhs */) { return lhs; }
+  PercentFraction eval(PercentFraction lhs, PercentFraction::value_type /* rhs */) { return lhs; }
 };
 
 template<>
 struct OperationModuloAssign<PercentFraction>
 {
-  PercentFraction eval(PercentFraction lhs,             PercentFraction rhs) { return lhs; }
-  PercentFraction eval(PercentFraction lhs, PercentFraction::value_type rhs) { return lhs; }
+  PercentFraction eval(PercentFraction lhs,             PercentFraction /* rhs */) { return lhs; }
+  PercentFraction eval(PercentFraction lhs, PercentFraction::value_type /* rhs */) { return lhs; }
 };
 
 

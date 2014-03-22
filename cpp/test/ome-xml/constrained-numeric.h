@@ -185,7 +185,7 @@ struct CompareGreaterOrEqual
 
 template<typename Comparison, typename Test>
 void
-compare_test(const Test&                   fixture,
+compare_test(const Test&                   /* fixture */,
              const typename Test::test_op& test)
 {
   typedef typename Test::test_op::numeric_type NumericType;
@@ -277,7 +277,7 @@ struct OperationModuloAssign
 
 template<typename Operation, typename Test>
 void
-operation_test(const Test&                   fixture,
+operation_test(const Test&                   /* fixture */,
                const typename Test::test_op& test)
 {
   typedef typename Test::test_op::numeric_type NumericType;

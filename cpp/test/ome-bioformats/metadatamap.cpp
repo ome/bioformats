@@ -75,7 +75,7 @@ public:
     vs.push_back("s3");
     m.set("vector<string>1", vs);
 
-    ASSERT_EQ(m.size(), 3);
+    ASSERT_EQ(m.size(), 3U);
   }
 };
 
@@ -164,7 +164,7 @@ TEST_F(MetadataMapTest, SetOperator)
 
   v = 0;
   ASSERT_TRUE(m.get("uint32", v));
-  ASSERT_EQ(v, 2342);
+  ASSERT_EQ(v, 2342U);
 }
 
 TEST_F(MetadataMapTest, Get)
@@ -249,12 +249,12 @@ TEST_F(MetadataMapTest, Append)
 
   std::vector<int8_t> iget;
   ASSERT_TRUE(m.get("neg", iget));
-  ASSERT_EQ(iget.size(), 1);
+  ASSERT_EQ(iget.size(), 1U);
 
   v = 2;
   m.append("neg", v);
   ASSERT_TRUE(m.get("neg", iget));
-  ASSERT_EQ(iget.size(), 2);
+  ASSERT_EQ(iget.size(), 2U);
 }
 
 TEST_F(MetadataMapTest, GetInvalidFail)
@@ -314,20 +314,20 @@ TEST_F(MetadataMapTest, Insert)
 TEST_F(MetadataMapTest, EraseKey)
 {
   m.erase("int1");
-  ASSERT_EQ(m.size(), 2);
+  ASSERT_EQ(m.size(), 2U);
   m.erase("int2");
-  ASSERT_EQ(m.size(), 1);
+  ASSERT_EQ(m.size(), 1U);
 }
 
 TEST_F(MetadataMapTest, EraseIter)
 {
   MetadataMap::iterator i1 = m.find("int1");
   m.erase(i1);
-  ASSERT_EQ(m.size(), 2);
+  ASSERT_EQ(m.size(), 2U);
 
   MetadataMap::iterator i2 = m.find("int2");
   m.erase(i2);
-  ASSERT_EQ(m.size(), 1);
+  ASSERT_EQ(m.size(), 1U);
 }
 
 TEST_F(MetadataMapTest, Flatten)
@@ -337,10 +337,10 @@ TEST_F(MetadataMapTest, Flatten)
   for (uint32_t i = 40; i >= 24; --i)
     m.append("padtest", i);
 
-  ASSERT_EQ(m.size(), 4);
+  ASSERT_EQ(m.size(), 4U);
 
   MetadataMap flat = m.flatten();
-  ASSERT_EQ(flat.size(), 22);
+  ASSERT_EQ(flat.size(), 22U);
 
   std::ostringstream os;
   os << flat;
@@ -373,12 +373,12 @@ TEST_F(MetadataMapTest, Flatten)
 
 TEST_F(MetadataMapTest, Size)
 {
-  ASSERT_EQ(m.size(), 3);
+  ASSERT_EQ(m.size(), 3U);
 
-  for (uint32_t i = 0; i < 20; ++i)
+  for (uint32_t i = 0U; i < 20U; ++i)
     m[std::string("label-") + lexical_cast<std::string>(i)] = i;
 
-  ASSERT_EQ(m.size(), 23);
+  ASSERT_EQ(m.size(), 23U);
 }
 
 TEST_F(MetadataMapTest, Empty)
@@ -390,9 +390,9 @@ TEST_F(MetadataMapTest, Empty)
 
 TEST_F(MetadataMapTest, Clear)
 {
-  ASSERT_EQ(m.size(), 3);
+  ASSERT_EQ(m.size(), 3U);
   m.clear();
-  ASSERT_EQ(m.size(), 0);
+  ASSERT_EQ(m.size(), 0U);
 }
 
 TEST_F(MetadataMapTest, OperatorEquals)

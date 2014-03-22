@@ -46,15 +46,15 @@ using ome::xml::model::primitives::NonNegativeFloat;
 template<>
 struct OperationModulo<NonNegativeFloat>
 {
-  NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat rhs) { return lhs; }
-  NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type rhs) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat /* rhs */) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type /* rhs */) { return lhs; }
 };
 
 template<>
 struct OperationModuloAssign<NonNegativeFloat>
 {
-  NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat rhs) { return lhs; }
-  NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type rhs) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs,             NonNegativeFloat /* rhs */) { return lhs; }
+  NonNegativeFloat eval(NonNegativeFloat lhs, NonNegativeFloat::value_type /* rhs */) { return lhs; }
 };
 
 

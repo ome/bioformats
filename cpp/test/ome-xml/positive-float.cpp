@@ -46,15 +46,15 @@ using ome::xml::model::primitives::PositiveFloat;
 template<>
 struct OperationModulo<PositiveFloat>
 {
-  PositiveFloat eval(PositiveFloat lhs,             PositiveFloat rhs) { return lhs; }
-  PositiveFloat eval(PositiveFloat lhs, PositiveFloat::value_type rhs) { return lhs; }
+  PositiveFloat eval(PositiveFloat lhs,             PositiveFloat /* rhs */) { return lhs; }
+  PositiveFloat eval(PositiveFloat lhs, PositiveFloat::value_type /* rhs */) { return lhs; }
 };
 
 template<>
 struct OperationModuloAssign<PositiveFloat>
 {
-  PositiveFloat eval(PositiveFloat lhs,             PositiveFloat rhs) { return lhs; }
-  PositiveFloat eval(PositiveFloat lhs, PositiveFloat::value_type rhs) { return lhs; }
+  PositiveFloat eval(PositiveFloat lhs,             PositiveFloat /* rhs */) { return lhs; }
+  PositiveFloat eval(PositiveFloat lhs, PositiveFloat::value_type /* rhs */) { return lhs; }
 };
 
 

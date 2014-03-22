@@ -377,7 +377,7 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::setRoot(std::shared_ptr<MetadataRoot>& root)
+      AggregateMetadata::setRoot(std::shared_ptr<MetadataRoot>&)
       {
         throw std::runtime_error("setRoot unsupported by AggregateMetadata.");
       }

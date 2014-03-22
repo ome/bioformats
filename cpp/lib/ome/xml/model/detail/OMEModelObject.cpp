@@ -59,26 +59,27 @@ namespace ome
         {
         }
 
-        OMEModelObject::OMEModelObject (const OMEModelObject& copy)
+        OMEModelObject::OMEModelObject (const OMEModelObject& /* copy */)
         {
+          // Nothing to copy.
         }
 
         xerces::dom::Element&
-        OMEModelObject::asXMLElementInternal (xerces::dom::Document& document,
+        OMEModelObject::asXMLElementInternal (xerces::dom::Document& /* document */,
                                               xerces::dom::Element&  element) const
         {
           return element;
         }
 
         void
-        OMEModelObject::update (const xerces::dom::Element&  element,
-                                ::ome::xml::model::OMEModel& model)
+        OMEModelObject::update (const xerces::dom::Element&  /* element */,
+                                ::ome::xml::model::OMEModel& /* model */)
         {
         }
 
         bool
-        OMEModelObject::link (std::shared_ptr<Reference>&                          reference,
-                              std::shared_ptr< ::ome::xml::model::OMEModelObject>& object)
+        OMEModelObject::link (std::shared_ptr<Reference>&                          /* reference */,
+                              std::shared_ptr< ::ome::xml::model::OMEModelObject>& /* object */)
         {
           return false;
         }

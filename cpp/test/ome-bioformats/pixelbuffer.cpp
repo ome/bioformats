@@ -52,31 +52,31 @@ using ome::bioformats::PixelBufferRaw;
 
 TEST(PixelBufferRaw, ConstructSize)
 {
-  PixelBufferRaw buf(10);
+  PixelBufferRaw buf(10U);
 
-  ASSERT_EQ(buf.size(), 10);
+  ASSERT_EQ(buf.size(), 10U);
   ASSERT_TRUE(buf.buffer());
 }
 
 TEST(PixelBufferRaw, ConstructEmpty)
 {
-  PixelBufferRaw buf(0);
+  PixelBufferRaw buf(0U);
 
-  ASSERT_EQ(buf.size(), 0);
+  ASSERT_EQ(buf.size(), 0U);
   ASSERT_FALSE(buf.buffer());
 }
 
 TEST(PixelBufferRaw, ConstructRange)
 {
   std::vector<uint8_t> source;
-  for (uint8_t i = 0; i < 10; ++i)
+  for (uint8_t i = 0U; i < 10U; ++i)
     source.push_back(i);
 
   PixelBufferRaw buf(source.begin(), source.end());
 
-  ASSERT_EQ(buf.size(), 10);
+  ASSERT_EQ(buf.size(), 10U);
   ASSERT_TRUE(buf.buffer());
-  for (uint8_t i = 0; i < 10; ++i)
+  for (uint8_t i = 0U; i < 10U; ++i)
     {
       ASSERT_EQ(*(buf.buffer()+i), i);
     }
@@ -85,11 +85,11 @@ TEST(PixelBufferRaw, ConstructRange)
 TEST(PixelBufferRaw, ConstructCopy)
 {
   std::vector<uint8_t> source1;
-  for (uint8_t i = 0; i < 10; ++i)
+  for (uint8_t i = 0U; i < 10U; ++i)
     source1.push_back(i);
 
   std::vector<uint8_t> source2;
-  for (uint8_t i = 10; i < 20; ++i)
+  for (uint8_t i = 10U; i < 20U; ++i)
     source2.push_back(i);
 
   PixelBufferRaw buf1(source1.begin(), source1.end());
@@ -107,15 +107,15 @@ TEST(PixelBufferRaw, ConstructCopy)
 TEST(PixelBufferRaw, GetIndex)
 {
   std::vector<uint8_t> source;
-  for (uint8_t i = 0; i < 100; ++i)
+  for (uint8_t i = 0U; i < 100U; ++i)
     source.push_back(i);
 
   PixelBufferRaw buf(source.begin(), source.end());
   const PixelBufferRaw& cbuf(buf);
 
-  ASSERT_EQ(buf.size(), 100);
+  ASSERT_EQ(buf.size(), 100U);
   ASSERT_TRUE(buf.buffer());
-  for (uint8_t i = 0; i < 100; ++i)
+  for (uint8_t i = 0U; i < 100U; ++i)
     {
       ASSERT_EQ(cbuf[i], i);
       ASSERT_EQ(cbuf.at(i), i);
@@ -125,15 +125,15 @@ TEST(PixelBufferRaw, GetIndex)
 TEST(PixelBufferRaw, SetIndex)
 {
   std::vector<uint8_t> source;
-  for (uint8_t i = 0; i < 100; ++i)
+  for (uint8_t i = 0U; i < 100U; ++i)
     source.push_back(i);
 
-  PixelBufferRaw buf(100);
+  PixelBufferRaw buf(100U);
   const PixelBufferRaw& cbuf(buf);
 
-  ASSERT_EQ(buf.size(), 100);
+  ASSERT_EQ(buf.size(), 100U);
   ASSERT_TRUE(buf.buffer());
-  for (uint8_t i = 0; i < 100; ++i)
+  for (uint8_t i = 0U; i < 100U; ++i)
     {
       buf[i] = i;
 
@@ -146,8 +146,8 @@ TEST(PixelBufferRaw, SetIndex)
       ASSERT_EQ(cbuf.at(i), i);
     }
 
-  ASSERT_THROW(buf.at(400) = 4, std::out_of_range);
-  ASSERT_THROW(cbuf.at(400), std::out_of_range);
+  ASSERT_THROW(buf.at(400U) = 4U, std::out_of_range);
+  ASSERT_THROW(cbuf.at(400U), std::out_of_range);
 }
 
 TEST(PixelBufferRaw, StreamOutput)
