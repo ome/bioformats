@@ -79,9 +79,19 @@ endif (${test_cxx_flag})
 # the quality of the build by checking for a number of common
 # problems, some of which are quite serious.
 set(test_flags
-    -Wall -Wcast-align -Wwrite-strings -Wswitch-default Wcast-qual
-    -Wunused-variable -Wredundant-decls Wctor-dtor-privacy
-    -Wnon-virtual-dtor -Wreorder -Wold-style-cast Woverloaded-virtual
+    -Wall
+    -Wcast-align
+    -Wcast-qual
+    -Wctor-dtor-privacy
+    -Wdocumentation
+    -Wnon-virtual-dtor
+    -Wold-style-cast
+    -Woverloaded-virtual
+    -Wredundant-decls
+    -Wreorder
+    -Wswitch-default
+    -Wunused-variable
+    -Wwrite-strings
     -fstrict-aliasing)
 
 foreach(flag ${test_flags})
