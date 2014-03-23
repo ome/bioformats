@@ -63,7 +63,7 @@ public class SDTReader extends FormatReader {
   protected boolean intensity = false;
 
   /** Whether to pre-load all lifetime bins for faster loading. */
-  protected boolean preLoad = false;
+  protected boolean preLoad = true;
   
   
 /*
@@ -269,7 +269,7 @@ protected int storedSeries = -1;
     if (!fileOnly) {
       
       // init preLoading 
-      preLoad = false;
+      preLoad = true;
       chanStore = null;
       storedChannel = -1;
       storedSeries = -1;
