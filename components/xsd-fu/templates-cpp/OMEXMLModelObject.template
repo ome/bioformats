@@ -135,6 +135,7 @@ namespace ome
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::${klass.name} ():
+        ::ome::xml::model::OMEModelObject(),
 {% if klass.parentName is not None %}\
 {% if len(klass.instanceVariables) == 0 %}\
         ${klass.parentName}()
@@ -177,6 +178,7 @@ namespace ome
 {% end header%}\
 {% if fu.SOURCE_TYPE == "source" %}\
       ${klass.name}::${klass.name} (const ${klass.name}& copy):
+        ::ome::xml::model::OMEModelObject(),
 {% if klass.parentName is not None %}\
 {% if len(klass.instanceVariables) == 0 %}\
         ${klass.parentName}(copy)

@@ -59,7 +59,8 @@ namespace ome
         {
         }
 
-        OMEModelObject::OMEModelObject (const OMEModelObject& /* copy */)
+        OMEModelObject::OMEModelObject (const OMEModelObject& /* copy */):
+          ::ome::xml::model::OMEModelObject()
         {
           // Nothing to copy.
         }
