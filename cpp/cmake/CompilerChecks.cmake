@@ -86,6 +86,7 @@ set(test_flags
     -Wctor-dtor-privacy
     -Wdocumentation
     -Wextra
+    -Wfloat-equal
     -Wnon-virtual-dtor
     -Wold-style-cast
     -Woverloaded-virtual

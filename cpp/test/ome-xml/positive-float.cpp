@@ -42,6 +42,62 @@
 
 using ome::xml::model::primitives::PositiveFloat;
 
+// Direct equality comparisons are not safe for floating point types.
+// The tests here use an allowed error of 0.05.
+
+template<>
+struct CompareEqual<PositiveFloat>
+{
+  bool compare(PositiveFloat lhs, PositiveFloat rhs)
+  { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05 && lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(PositiveFloat lhs, typename PositiveFloat::value_type rhs)
+  { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05 && lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(typename PositiveFloat::value_type lhs, PositiveFloat rhs)
+  { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05 && lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
+};
+
+template<>
+struct CompareNotEqual<PositiveFloat>
+{
+  bool compare(PositiveFloat lhs, PositiveFloat rhs)
+  { return lhs < static_cast<PositiveFloat::value_type>(rhs) - 0.05 || lhs > static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(PositiveFloat lhs, typename PositiveFloat::value_type rhs)
+  { return lhs < static_cast<PositiveFloat::value_type>(rhs) - 0.05 || lhs > static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(typename PositiveFloat::value_type lhs, PositiveFloat rhs)
+  { return lhs < static_cast<PositiveFloat::value_type>(rhs) - 0.05 || lhs > static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
+};
+
+template<>
+struct CompareLessOrEqual<PositiveFloat>
+{
+  bool compare(PositiveFloat lhs, PositiveFloat rhs)
+  { return lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(PositiveFloat lhs, typename PositiveFloat::value_type rhs)
+  { return lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(typename PositiveFloat::value_type lhs, PositiveFloat rhs)
+  { return lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
+};
+
+template<>
+struct CompareGreaterOrEqual<PositiveFloat>
+{
+  bool compare(PositiveFloat lhs, PositiveFloat rhs)
+  { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05; }
+
+  bool compare(PositiveFloat lhs, typename PositiveFloat::value_type rhs)
+  { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05; }
+
+  bool compare(typename PositiveFloat::value_type lhs, PositiveFloat rhs)
+  { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05; }
+};
+
+
 // Floating point types don't implement modulo, so make it a no-op.
 template<>
 struct OperationModulo<PositiveFloat>

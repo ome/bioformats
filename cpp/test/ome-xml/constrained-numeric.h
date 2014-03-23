@@ -97,44 +97,6 @@ public:
 
 TYPED_TEST_CASE_P(NumericTest);
 
-TYPED_TEST_P(NumericTest, Stream)
-{
-  for (typename std::vector<typename TestFixture::test_str>::const_iterator i = this->strings.begin();
-       i != this->strings.end();
-       ++i)
-    {
-      if (i->v1pass)
-        ASSERT_NO_THROW(TypeParam(i->v1));
-      else
-        ASSERT_THROW(TypeParam(i->v1), std::invalid_argument);
-
-      if (i->v2pass)
-        ASSERT_NO_THROW(TypeParam(i->v2));
-      else
-        ASSERT_THROW(TypeParam(i->v2), std::invalid_argument);
-
-      if (!i->v1pass || !i->v2pass) // deliberate failure
-        continue;
-
-      TypeParam v1(i->v1);
-      TypeParam v2(i->v2);
-
-      ASSERT_EQ(v1, v2);
-      ASSERT_EQ(v2, v2);
-      ASSERT_EQ(v1, i->v2);
-      ASSERT_EQ(v2, i->v2);
-
-      std::istringstream is(i->v1);
-      TypeParam v3(TestFixture::safedefault);
-      ASSERT_NO_THROW(is >> v3);
-      ASSERT_EQ(i->v2, v3);
-
-      std::ostringstream os;
-      ASSERT_NO_THROW(os << v1);
-      ASSERT_EQ(i->v1, os.str());
-    }
-}
-
 template<typename T>
 struct CompareEqual
 {
@@ -285,6 +247,8 @@ operation_test(const Test&                   /* fixture */,
 
   Operation op;
   NumericType val(test.v1);
+  CompareEqual<NumericType> eq;
+  CompareNotEqual<NumericType> ne;
 
   if (test.except)
     {
@@ -308,8 +272,8 @@ operation_test(const Test&                   /* fixture */,
                 }
               else
                 {
-                  ASSERT_EQ(op.eval(NumericType(test.v1), NumericType(test.v2)), test.expected);
-                  ASSERT_EQ(op.eval(NumericType(test.v1), NumericType(test.v2)), NumericType(test.expected));
+                  ASSERT_TRUE(eq.compare(op.eval(NumericType(test.v1), NumericType(test.v2)), test.expected));
+                  ASSERT_TRUE(eq.compare(op.eval(NumericType(test.v1), NumericType(test.v2)), NumericType(test.expected)));
                 }
             }
           if (Test::error > 0)
@@ -319,8 +283,8 @@ operation_test(const Test&                   /* fixture */,
             }
           else
             {
-              ASSERT_EQ(op.eval(NumericType(test.v1), test.v2), test.expected);
-              ASSERT_EQ(op.eval(NumericType(test.v1), test.v2), NumericType(test.expected));
+              ASSERT_TRUE(eq.compare(op.eval(NumericType(test.v1), test.v2), test.expected));
+              ASSERT_TRUE(eq.compare(op.eval(NumericType(test.v1), test.v2), NumericType(test.expected)));
             }
         }
       else
@@ -334,8 +298,8 @@ operation_test(const Test&                   /* fixture */,
                 }
               else
                 {
-                  ASSERT_NE(op.eval(NumericType(test.v1), NumericType(test.v2)), test.expected);
-                  ASSERT_NE(op.eval(NumericType(test.v1), NumericType(test.v2)), NumericType(test.expected));
+                  ASSERT_TRUE(ne.compare(op.eval(NumericType(test.v1), NumericType(test.v2)), test.expected));
+                  ASSERT_TRUE(ne.compare(op.eval(NumericType(test.v1), NumericType(test.v2)), NumericType(test.expected)));
                 }
             }
           if (Test::error > 0)
@@ -345,10 +309,50 @@ operation_test(const Test&                   /* fixture */,
             }
           else
             {
-              ASSERT_NE(op.eval(NumericType(test.v1), test.v2), test.expected);
-              ASSERT_NE(op.eval(NumericType(test.v1), test.v2), NumericType(test.expected));
+              ASSERT_TRUE(ne.compare(op.eval(NumericType(test.v1), test.v2), test.expected));
+              ASSERT_TRUE(ne.compare(op.eval(NumericType(test.v1), test.v2), NumericType(test.expected)));
             }
         }
+    }
+}
+
+TYPED_TEST_P(NumericTest, Stream)
+{
+  for (typename std::vector<typename TestFixture::test_str>::const_iterator i = this->strings.begin();
+       i != this->strings.end();
+       ++i)
+    {
+      if (i->v1pass)
+        ASSERT_NO_THROW(TypeParam(i->v1));
+      else
+        ASSERT_THROW(TypeParam(i->v1), std::invalid_argument);
+
+      if (i->v2pass)
+        ASSERT_NO_THROW(TypeParam(i->v2));
+      else
+        ASSERT_THROW(TypeParam(i->v2), std::invalid_argument);
+
+      if (!i->v1pass || !i->v2pass) // deliberate failure
+        continue;
+
+      TypeParam v1(i->v1);
+      TypeParam v2(i->v2);
+
+      CompareEqual<TypeParam> c;
+
+      ASSERT_TRUE(c.compare(v1, v2));
+      ASSERT_TRUE(c.compare(v2, v2));
+      ASSERT_TRUE(c.compare(v1, i->v2));
+      ASSERT_TRUE(c.compare(v2, i->v2));
+
+      std::istringstream is(i->v1);
+      TypeParam v3(TestFixture::safedefault);
+      ASSERT_NO_THROW(is >> v3);
+      ASSERT_TRUE(c.compare(i->v2, v3));
+
+      std::ostringstream os;
+      ASSERT_NO_THROW(os << v1);
+      ASSERT_EQ(i->v1, os.str());
     }
 }
 

@@ -42,6 +42,61 @@
 
 using ome::xml::model::primitives::PercentFraction;
 
+// Direct equality comparisons are not safe for floating point types.
+// The tests here use an allowed error of 0.05.
+
+template<>
+struct CompareEqual<PercentFraction>
+{
+  bool compare(PercentFraction lhs, PercentFraction rhs)
+  { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F && lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
+
+  bool compare(PercentFraction lhs, typename PercentFraction::value_type rhs)
+  { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F && lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
+
+  bool compare(typename PercentFraction::value_type lhs, PercentFraction rhs)
+  { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F && lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
+};
+
+template<>
+struct CompareNotEqual<PercentFraction>
+{
+  bool compare(PercentFraction lhs, PercentFraction rhs)
+  { return lhs < static_cast<PercentFraction::value_type>(rhs) - 0.05F || lhs > static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
+
+  bool compare(PercentFraction lhs, typename PercentFraction::value_type rhs)
+  { return lhs < static_cast<PercentFraction::value_type>(rhs) - 0.05F || lhs > static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
+
+  bool compare(typename PercentFraction::value_type lhs, PercentFraction rhs)
+  { return lhs < static_cast<PercentFraction::value_type>(rhs) - 0.05F || lhs > static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
+};
+
+template<>
+struct CompareLessOrEqual<PercentFraction>
+{
+  bool compare(PercentFraction lhs, PercentFraction rhs)
+  { return lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
+
+  bool compare(PercentFraction lhs, typename PercentFraction::value_type rhs)
+  { return lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
+
+  bool compare(typename PercentFraction::value_type lhs, PercentFraction rhs)
+  { return lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
+};
+
+template<>
+struct CompareGreaterOrEqual<PercentFraction>
+{
+  bool compare(PercentFraction lhs, PercentFraction rhs)
+  { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F; }
+
+  bool compare(PercentFraction lhs, typename PercentFraction::value_type rhs)
+  { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F; }
+
+  bool compare(typename PercentFraction::value_type lhs, PercentFraction rhs)
+  { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F; }
+};
+
 // Floating point types don't implement modulo, so make it a no-op.
 template<>
 struct OperationModulo<PercentFraction>

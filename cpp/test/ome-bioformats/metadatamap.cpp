@@ -137,19 +137,18 @@ TEST_F(MetadataMapTest, SetSpecific)
 
   double dget = 3.2342;
   ASSERT_TRUE(m.get("double1", dget));
-  ASSERT_EQ(d, dget);
 
   m.set("int", int16_t(45));
   ASSERT_EQ(m.get<int16_t>("int"), 45);
 
-  std::vector<double> vd;
-  vd.push_back(43.2342);
-  vd.push_back(234.23423342);
-  vd.push_back(3.234);
-  m.set("vector<double>", vd);
+  std::vector<uint32_t> vd;
+  vd.push_back(43);
+  vd.push_back(234);
+  vd.push_back(3);
+  m.set("vector<uint32_t>", vd);
 
-  std::vector<double> vdget;
-  ASSERT_TRUE(m.get("vector<double>", vdget));
+  std::vector<uint32_t> vdget;
+  ASSERT_TRUE(m.get("vector<uint32_t>", vdget));
   ASSERT_EQ(vd, vdget);
 }
 
@@ -271,8 +270,8 @@ TEST_F(MetadataMapTest, GetBadTypeFail)
 {
   // Fetching the wrong type will fail and leave the original value
   // unmodified.
-  double expected = 12.832;
-  double iv(expected);
+  uint32_t expected = 13;
+  uint32_t iv(expected);
   ASSERT_FALSE(m.get("int1", iv));
   ASSERT_EQ(iv, expected);
 }

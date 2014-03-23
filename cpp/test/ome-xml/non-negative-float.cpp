@@ -42,6 +42,62 @@
 
 using ome::xml::model::primitives::NonNegativeFloat;
 
+// Direct equality comparisons are not safe for floating point types.
+// The tests here use an allowed error of 0.05.
+
+template<>
+struct CompareEqual<NonNegativeFloat>
+{
+  bool compare(NonNegativeFloat lhs, NonNegativeFloat rhs)
+  { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 && lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(NonNegativeFloat lhs, typename NonNegativeFloat::value_type rhs)
+  { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 && lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(typename NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
+  { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 && lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
+};
+
+template<>
+struct CompareNotEqual<NonNegativeFloat>
+{
+  bool compare(NonNegativeFloat lhs, NonNegativeFloat rhs)
+  { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 || lhs > static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(NonNegativeFloat lhs, typename NonNegativeFloat::value_type rhs)
+  { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 || lhs > static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(typename NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
+  { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 || lhs > static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
+};
+
+template<>
+struct CompareLessOrEqual<NonNegativeFloat>
+{
+  bool compare(NonNegativeFloat lhs, NonNegativeFloat rhs)
+  { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(NonNegativeFloat lhs, typename NonNegativeFloat::value_type rhs)
+  { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
+
+  bool compare(typename NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
+  { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
+};
+
+template<>
+struct CompareGreaterOrEqual<NonNegativeFloat>
+{
+  bool compare(NonNegativeFloat lhs, NonNegativeFloat rhs)
+  { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05; }
+
+  bool compare(NonNegativeFloat lhs, typename NonNegativeFloat::value_type rhs)
+  { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05; }
+
+  bool compare(typename NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
+  { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05; }
+};
+
+
 // Floating point types don't implement modulo, so make it a no-op.
 template<>
 struct OperationModulo<NonNegativeFloat>
