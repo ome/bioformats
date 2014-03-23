@@ -249,6 +249,32 @@ namespace ome
         }
 
         /**
+         * Get wrapped xercesc::DOMNodeList *.
+         *
+         * @note May be null.
+         *
+         * @returns the wrapped xercesc::DOMNodeList.
+         */
+        xercesc::DOMNodeList*
+        get()
+        {
+          return xmlnodelist;
+        }
+
+        /**
+         * Get wrapped xercesc::DOMNodeList *.
+         *
+         * @note May be null.
+         *
+         * @returns the wrapped xercesc::DOMNodeList.
+         */
+        const xercesc::DOMNodeList*
+        get() const
+        {
+          return xmlnodelist;
+        }
+
+        /**
          * Assign a NodeList.
          *
          * @param nodelist the NodeList to assign.
