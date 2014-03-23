@@ -100,6 +100,7 @@ set(test_flags
     -Wstrict-selector-match
     -Wswitch-default
     -Wundeclared-selector
+    -Wunreachable-code
     -Wunused-variable
     -Wwrite-strings
     -fstrict-aliasing)

@@ -228,8 +228,6 @@ namespace ome
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
           size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_byte_size();
           break;
-        default:
-          break;
         }
       return size;
     }
@@ -279,8 +277,6 @@ namespace ome
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
           size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_bit_size();
-          break;
-        default:
           break;
         }
       return size;
