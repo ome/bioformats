@@ -89,6 +89,8 @@ set(test_flags
     -Wfloat-equal
     -Wformat=2
     -Wimplicit-atomic-properties
+    -Wmissing-declarations
+    -Wmissing-prototypes
     -Wnon-virtual-dtor
     -Wold-style-cast
     -Woverloaded-virtual

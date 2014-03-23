@@ -187,8 +187,6 @@ EnumStringParameters string_params[] =
     EnumStringParameters("invalid3",               false, false, true)
   };
 
-INSTANTIATE_TEST_CASE_P(LaserTypeStringVariants, EnumString,
-                        ::testing::ValuesIn(string_params));
 
 TEST(Enum, LaserTypeCreateInvalidValue)
 {
@@ -334,8 +332,6 @@ lts_param lt_value_params[] =
               "SolidState", "FreeElectron"),
   };
 
-INSTANTIATE_TEST_CASE_P(LaserTypeValueVariants, LaserTypeValue,
-                        ::testing::ValuesIn(lt_value_params));
 
 template<typename E>
 void
@@ -407,3 +403,17 @@ TEST(Enum, PixelTypeInvalid)
   // No fallback to other.
   ASSERT_THROW(PixelType("Invalid"), EnumerationException);
 }
+
+// Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
+// this is solely to work around a missing prototype in gtest.
+#ifdef __GNUC__
+#  if defined __clang__ || defined __APPLE__
+#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#  endif
+#endif
+
+INSTANTIATE_TEST_CASE_P(LaserTypeStringVariants, EnumString,
+                        ::testing::ValuesIn(string_params));
+
+INSTANTIATE_TEST_CASE_P(LaserTypeValueVariants, LaserTypeValue,
+                        ::testing::ValuesIn(lt_value_params));

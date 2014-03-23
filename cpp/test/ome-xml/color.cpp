@@ -267,4 +267,12 @@ ColorTestParameters params[] =
     ColorTestParameters(127, 127, 127, 127, 0x7F7F7F7FU, 2139062143, "2139062143"), // Grey
   };
 
+// Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
+// this is solely to work around a missing prototype in gtest.
+#ifdef __GNUC__
+#  if defined __clang__ || defined __APPLE__
+#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#  endif
+#endif
+
 INSTANTIATE_TEST_CASE_P(ColorVariants, ColorTest, ::testing::ValuesIn(params));
