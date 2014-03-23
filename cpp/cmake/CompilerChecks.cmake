@@ -87,6 +87,7 @@ set(test_flags
     -Wdocumentation
     -Wextra
     -Wfloat-equal
+    -Wformat=2
     -Wnon-virtual-dtor
     -Wold-style-cast
     -Woverloaded-virtual
