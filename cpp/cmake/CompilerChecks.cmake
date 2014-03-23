@@ -97,6 +97,7 @@ set(test_flags
     -Woverloaded-virtual
     -Wredundant-decls
     -Wreorder
+    -Wstrict-selector-match
     -Wswitch-default
     -Wunused-variable
     -Wwrite-strings
