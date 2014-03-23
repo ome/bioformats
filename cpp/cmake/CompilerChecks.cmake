@@ -99,6 +99,7 @@ set(test_flags
     -Wreorder
     -Wstrict-selector-match
     -Wswitch-default
+    -Wundeclared-selector
     -Wunused-variable
     -Wwrite-strings
     -fstrict-aliasing)
