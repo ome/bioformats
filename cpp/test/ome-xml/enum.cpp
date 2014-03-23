@@ -188,11 +188,20 @@ EnumStringParameters string_params[] =
   };
 
 
+// This enum test is intentionally setting an invalid value, so don't
+// warn about it.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wconversion"
+#endif
 TEST(Enum, LaserTypeCreateInvalidValue)
 {
   ASSERT_THROW(LaserType(static_cast<LaserType::enum_value>(50)),
                EnumerationException);
 }
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
 
 template<typename E>
 class EnumValueParameters
