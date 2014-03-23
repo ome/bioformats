@@ -82,6 +82,7 @@ set(test_flags
     -Wall
     -Wcast-align
     -Wcast-qual
+    -Wconversion
     -Wctor-dtor-privacy
     -Wdocumentation
     -Wextra

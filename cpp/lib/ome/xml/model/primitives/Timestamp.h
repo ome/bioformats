@@ -149,7 +149,7 @@ namespace ome
               if (is)
                 {
                   // Check for zone offset
-                  char tztype = is.peek();
+                  std::char_traits<char>::int_type tztype = is.peek();
                   if(tztype != std::char_traits<char>::eof())
                     {
                       if (tztype == 'Z')
