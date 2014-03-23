@@ -93,6 +93,7 @@ set(test_flags
     -Wmissing-prototypes
     -Wnon-virtual-dtor
     -Wold-style-cast
+    -Woverlength-strings
     -Woverloaded-virtual
     -Wredundant-decls
     -Wreorder
