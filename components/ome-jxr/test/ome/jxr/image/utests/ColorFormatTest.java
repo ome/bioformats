@@ -23,24 +23,32 @@
  * #L%
  */
 
-package ome.jxr.ifd.utests;
+package ome.jxr.image.utests;
 
-import ome.jxr.ifd.IFDEntry;
+import static org.testng.AssertJUnit.assertTrue;
+import ome.jxr.image.ColorFormat;
 
 import org.testng.annotations.Test;
 
-public class IFDEntryTest {
-
-  @Test(expectedExceptions = IllegalArgumentException.class)
-  public void testFindByTagWithInvalidTagShouldThrowIAE() {
-    short unspecifiedTag = (short) 0xffff;
-    IFDEntry entry = IFDEntry.findByTag(unspecifiedTag);
-  }
+public class ColorFormatTest {
 
   @Test
-  public void testFindByTag() {
-    for (IFDEntry entry : IFDEntry.values()) {
-      entry.findByTag(entry.getTag());
+  public void testFindByIdForReservedIds() {
+    int[] reservedIds = {9,10,11,12,13,14,15};
+    for (Integer id : reservedIds) {
+      assertTrue(ColorFormat.RESERVED.equals(ColorFormat.findById(id)));
     }
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testFindByIdWithNegativeIdShouldThrowIAE() {
+    int invalidId = -1;
+    ColorFormat.findById(invalidId);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testFindByIdWithOutOfRangeIdShouldThrowIAE() {
+    int invalidId = 16;
+    ColorFormat.findById(invalidId);
   }
 }
