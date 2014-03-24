@@ -110,6 +110,10 @@ public final class DatastreamParser extends Parser {
       checkIfGDISignaturePresent();
       extractImageHeaderMetadata();
       verifyCodestreamConformance();
+      parsePrimaryImagePlaneHeader();
+      if (alphaImagePlaneFlag) {
+        parseAlphaImagePlaneHeader();
+      }
       // ImagePlane primaryImagePlane = new ImagePlane();
       // for each image plane:
       // parse image plane header
@@ -235,6 +239,14 @@ public final class DatastreamParser extends Parser {
         && (widthMinus1 + 1) % 2 != 0) {
       throw new JXRException("Wrong value of WIDTH_MINUS1.");
     }
+  }
+
+  private void parsePrimaryImagePlaneHeader() {
+    // TODO Auto-generated method stub
+  }
+
+  private void parseAlphaImagePlaneHeader() {
+    // TODO Auto-generated method stub
   }
 
   public void close() throws IOException {
