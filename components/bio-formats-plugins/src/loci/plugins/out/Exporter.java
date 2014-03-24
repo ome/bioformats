@@ -224,9 +224,9 @@ public class Exporter {
 
       GenericDialog multiFile =
         new GenericDialog("Bio-Formats Exporter - Multiple Files");
-      multiFile.addCheckbox("Write each Z section to a separate file", false);
-      multiFile.addCheckbox("Write each timepoint to a separate file", false);
-      multiFile.addCheckbox("Write each channel to a separate file", false);
+      multiFile.addCheckbox("Write_each_Z_section to a separate file", false);
+      multiFile.addCheckbox("Write_each_timepoint to a separate file", false);
+      multiFile.addCheckbox("Write_each_channel to a separate file", false);
       multiFile.showDialog();
 
       splitZ = multiFile.getNextBoolean();
