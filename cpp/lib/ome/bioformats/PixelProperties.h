@@ -182,6 +182,14 @@ namespace ome
       typedef std::array<double,2> type;
     };
 
+    // No switch default to avoid -Wunreachable-code errors.
+    // However, this then makes -Wswitch-default complain.  Disable
+    // temporarily.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
+
     /**
      * Get the size of a PixelType, in bytes.
      *
@@ -194,13 +202,6 @@ namespace ome
     {
       pixel_size_type size = 0;
 
-      // No switch default to avoid -Wunreachable-code errors.
-      // However, this then makes -Wswitch-default complain.  Disable
-      // temporarily.
-#ifdef __GNUC__
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wswitch-default"
-#endif
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
@@ -237,9 +238,6 @@ namespace ome
           size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_byte_size();
           break;
         }
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
 
       return size;
     }
@@ -256,13 +254,6 @@ namespace ome
     {
       pixel_size_type size = 0;
 
-      // No switch default to avoid -Wunreachable-code errors.
-      // However, this then makes -Wswitch-default complain.  Disable
-      // temporarily.
-#ifdef __GNUC__
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wswitch-default"
-#endif
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
@@ -299,12 +290,13 @@ namespace ome
           size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_bit_size();
           break;
         }
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
 
       return size;
     }
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
 
   }
 }
