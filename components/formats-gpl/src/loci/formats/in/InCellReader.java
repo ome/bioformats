@@ -883,7 +883,9 @@ public class InCellReader extends FormatReader {
         currentPlane = z * getSizeC() + c;
         int well = currentRow * wellCols + currentCol;
         Image img = imageFiles[well][currentField][currentImage][currentPlane];
-        img.zPosition = zPosition;
+        if (img != null) {
+          img.zPosition = zPosition;
+        }
       }
       else if (qName.equals("FocusPosition")) {
         zPosition = new Double(attributes.getValue("z"));
