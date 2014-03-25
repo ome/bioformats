@@ -58,9 +58,9 @@ namespace ome
       /// Amount of metadata to store.
       enum MetadataLevel
         {
-          MINIMUM,     ///< Store a minimal amount of metadata.
-          NO_OVERLAYS, ///< Store all metadata except overlays.
-          ALL          ///< Store all metadata.
+          METADATA_MINIMUM,     ///< Store a minimal amount of metadata.
+          METADATA_NO_OVERLAYS, ///< Store all metadata except overlays.
+          METADATA_ALL          ///< Store all metadata.
         };
 
     private:

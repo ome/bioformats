@@ -1,8 +1,8 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,30 +36,46 @@
  * #L%
  */
 
-/**
- * @file ome/compat/cstdint.h Standard integer types.
- *
- * This header substitutes C++ cstdint types for the same types in the
- * C99 stdint.h header when not using a conforming C++11 compiler.
- * This permits all code to use the C++11 standard types irrespective
- * of the compiler being used.
- */
+#include <ome/compat/string.h>
 
-#ifndef OME_COMPAT_CSTDINT_H
-# define OME_COMPAT_CSTDINT_H
+#include <gtest/gtest.h>
 
-# include <ome/compat/config.h>
+using ome::ltrim;
+using ome::rtrim;
+using ome::trim;
 
-# ifdef OME_HAVE_CSTDINT
-#  include <cstdint>
-# else
-#  include <stdint.h>
-# endif
+TEST(String, LeftTrim)
+{
+  std::string s1(" left ");
+  ASSERT_EQ(ltrim(s1), "left ");
 
-#endif /* OME_COMPAT_CSTDINT_H */
+  std::string s2("none");
+  ASSERT_EQ(ltrim(s2), "none");
 
-/*
- * Local Variables:
- * mode:C++
- * End:
- */
+  std::string s3("");
+  ASSERT_EQ(ltrim(s3), "");
+}
+
+TEST(String, RightTrim)
+{
+  std::string s1(" right\n");
+  ASSERT_EQ(rtrim(s1), " right");
+
+  std::string s2("none");
+  ASSERT_EQ(rtrim(s2), "none");
+
+  std::string s3("");
+  ASSERT_EQ(rtrim(s3), "");
+}
+
+TEST(String, FullTrim)
+{
+  std::string s1("  \tfull \v ");
+  ASSERT_EQ(trim(s1), "full");
+
+  std::string s2("none");
+  ASSERT_EQ(trim(s2), "none");
+
+  std::string s3("");
+  ASSERT_EQ(trim(s3), "");
+}

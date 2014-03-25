@@ -42,11 +42,14 @@
 #include <vector>
 #include <map>
 
+#include <boost/optional.hpp>
+
 #include <ome/bioformats/CoreMetadata.h>
 #include <ome/bioformats/FileInfo.h>
 #include <ome/bioformats/FormatHandler.h>
 #include <ome/bioformats/MetadataConfigurable.h>
 #include <ome/bioformats/MetadataMap.h>
+#include <ome/bioformats/Types.h>
 
 #include <ome/compat/array.h>
 
@@ -80,47 +83,63 @@ namespace ome
           CANNOT_GROUP ///< Files can not be grouped.
         };
 
-      /// @copydoc CoreMetadata::dimension_size_type
-      typedef CoreMetadata::dimension_size_type dimension_size_type;
-
-      /// @copydoc CoreMetadata::image_size_type
-      typedef CoreMetadata::image_size_type image_size_type;
-
-      /// @copydoc CoreMetadata::pixel_size_type
-      typedef CoreMetadata::pixel_size_type pixel_size_type;
-
     protected:
+      /**
+       * Sentry for saving and restoring reader series state.
+       *
+       * For any FormatReader method or subclass method which needs to
+       * set and later restore the series/coreIndex/resolution as part
+       * of its operation, this class exists to manage the safe
+       * restoration of the state.  Create an instance of this class
+       * with the reader set to @c *this.  When the instance goes out
+       * of scope, e.g. at the end of a block or method, or when an
+       * exception is thrown, the saved state will be transparently
+       * restored.
+       */
+      class SaveSeries
+      {
+      private:
+        /// Reader for which the state will be saved and restored.
+        const FormatReader& reader;
+        /// Saved state.
+        image_size_type coreIndex;
+      public:
+        /**
+         * Constructor.
+         *
+         * @param reader the reader to manage.
+         */
+        SaveSeries(const FormatReader& reader):
+          reader(reader),
+          coreIndex(reader.getCoreIndex())
+        {}
+
+        /**
+         * Destructor.
+         *
+         * Saved state will be restored when run.
+         */
+        ~SaveSeries()
+        {
+          reader.setCoreIndex(coreIndex);
+        }
+      };
+
       /// Constructor.
-      FormatReader();
+      FormatReader()
+      {}
 
     public:
       /// Destructor.
       virtual
-      ~FormatReader();
+      ~FormatReader()
+      {}
 
       // Documented in superclass.
       virtual
       bool
-      isThisType(const std::string& name) = 0;
-
-      /**
-       * Check if the given file is a valid instance of this file format.
-       *
-       * @param name the file to open for checking.
-       * @param open If @c true, and the file extension is
-       *   insufficient to determine the file type, the file may be
-       *   opened for further analysis, or other relatively expensive
-       *   file system operations (such as file existence tests and
-       *   directory listings) may be performed.  If @c false, file
-       *   system access is not allowed.
-       * @returns @c true if the file is valid, @c false otherwise.
-       *
-       * @todo Could this method be static and/or const?
-       */
-      virtual
-      bool
       isThisType(const std::string& name,
-                 bool               open) = 0;
+                 bool               open = true) = 0;
 
       /**
        * Check if the given buffer is a valid header for this file format.
@@ -168,18 +187,6 @@ namespace ome
       virtual
       bool
       isThisType(std::istream& stream) = 0;
-
-      /**
-       * Check if the given input stream is a valid stream for this file format.
-       *
-       * @param stream the input stream to check.
-       * @returns @c true if the file is valid, @c false otherwise.
-       *
-       * @todo Could this method be static and/or const?
-       */
-      virtual
-      bool
-      isThisType(std::FILE *stream) = 0;
 
       /**
        * Determine the number of image planes in the current file.
@@ -605,10 +612,13 @@ namespace ome
        * @note This also resets the resolution to 0.
        *
        * @param no the series to activate.
+       *
+       * @todo Remove use of stateful API which requires use of
+       * series switching in const methods.
        */
       virtual
       void
-      setSeries(image_size_type no) = 0;
+      setSeries(image_size_type no) const = 0;
 
       /**
        * Get the active series.
@@ -721,7 +731,7 @@ namespace ome
        */
       virtual
       const std::vector<std::string>
-      getSeriesUsedFiles(bool noPixels = false) = 0;
+      getSeriesUsedFiles(bool noPixels = false) const = 0;
 
       /**
        * Get the files used by this dataset.
@@ -733,7 +743,7 @@ namespace ome
        */
       virtual
       std::vector<FileInfo>
-      getAdvancedUsedFiles(bool noPixels) = 0;
+      getAdvancedUsedFiles(bool noPixels) const = 0;
 
       /**
        * Get the files used by the active series.
@@ -745,7 +755,7 @@ namespace ome
        */
       virtual
       std::vector<FileInfo>
-      getAdvancedSeriesUsedFiles(bool noPixels) = 0;
+      getAdvancedSeriesUsedFiles(bool noPixels) const = 0;
 
       /**
        * Get the currently open file.
@@ -753,8 +763,8 @@ namespace ome
        * @returns the filename.
        */
       virtual
-      const std::string&
-      getCurrentFile() = 0;
+      const boost::optional<std::string>&
+      getCurrentFile() const = 0;
 
       /**
        * Get the domains represented by the current file.
@@ -780,7 +790,7 @@ namespace ome
        * getZCTCoords.
        */
       virtual
-      int
+      dimension_size_type
       getIndex(dimension_size_type z,
                dimension_size_type c,
                dimension_size_type t) = 0;
@@ -794,8 +804,8 @@ namespace ome
        * @todo unify with the pixel buffer dimension indexes.
        */
       virtual
-      std::array<int, 3>
-      getZCTCoords(int index) = 0;
+      std::array<dimension_size_type, 3>
+      getZCTCoords(dimension_size_type index) = 0;
 
       /**
        * Get a global metadata value.
@@ -860,7 +870,7 @@ namespace ome
        * @returns a const reference to the core metadata.
        */
       virtual
-      const std::vector<CoreMetadata>&
+      const std::vector<std::shared_ptr<CoreMetadata> >&
       getCoreMetadataList() const = 0;
 
       /**
@@ -938,7 +948,7 @@ namespace ome
        */
       virtual
       bool
-      isSingleFile(const std::string& id) = 0;
+      isSingleFile(const std::string& id) const = 0;
 
       /**
        * Get required parent directories.
@@ -972,7 +982,7 @@ namespace ome
        */
       virtual
       uint32_t
-      getRequiredDirectories(const std::vector<std::string>& files) = 0;
+      getRequiredDirectories(const std::vector<std::string>& files) const = 0;
 
       /**
        * Get a short description of the dataset structure.
@@ -994,8 +1004,8 @@ namespace ome
        * @todo can this be a reference to static data?
        */
       virtual
-      const std::vector<std::string>
-      getPossibleDomains(const std::string& id) = 0;
+      const std::vector<std::string>&
+      getPossibleDomains(const std::string& id) const = 0;
 
       /**
        * Does this format support multi-file datasets?
@@ -1005,7 +1015,7 @@ namespace ome
        */
       virtual
       bool
-      hasCompanionFiles() = 0;
+      hasCompanionFiles() const = 0;
 
       /**
        * Get the optimal sub-image width.
@@ -1014,7 +1024,7 @@ namespace ome
        * @returns the optimal width.
        **/
       virtual
-      int
+      dimension_size_type
       getOptimalTileWidth() const = 0;
 
       /**
@@ -1024,7 +1034,7 @@ namespace ome
        * @returns the optimal height.
        **/
       virtual
-      int
+      dimension_size_type
       getOptimalTileHeight() const = 0;
 
       // Sub-resolution API methods
@@ -1064,11 +1074,14 @@ namespace ome
        * Equivalent to setSeries(), but with flattened resolutions always
        * set to @c false.
        *
-       * @param no the core index to set.
+       * @param index the core index to set.
+       *
+       * @todo Remove use of stateful API which requires use of
+       * series switching in const methods.
        */
       virtual
       void
-      setCoreIndex(image_size_type no) = 0;
+      setCoreIndex(image_size_type index) const = 0;
 
       /**
        * Get the number of resolutions for the current series.
@@ -1089,10 +1102,13 @@ namespace ome
        * @param resolution the resolution to set.
        *
        * @see getResolutionCount()
+       *
+       * @todo Remove use of stateful API which requires use of
+       * series switching in const methods.
        */
       virtual
       void
-      setResolution(image_size_type resolution) = 0;
+      setResolution(image_size_type resolution) const = 0;
 
       /**
        * Get the active resolution level.

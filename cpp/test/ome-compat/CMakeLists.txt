@@ -70,6 +70,12 @@ if(BUILD_TESTS)
 
   add_test(ome-compat/regex regex)
 
+  add_executable(string string.cpp)
+  target_link_libraries(string ome-compat)
+  target_link_libraries(string ${TEST_LIBS})
+
+  add_test(ome-compat/string string)
+
   add_executable(tuple tuple.cpp)
   target_link_libraries(tuple ome-compat)
   target_link_libraries(tuple ${TEST_LIBS})

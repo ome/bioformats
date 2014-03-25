@@ -37,9 +37,10 @@
  */
 
 /**
- * @file variant.h Variant type limit workaround.  This header
- * increases the Boost MPL size limits, if required.  Some older
- * versions of Boost.Variant throw runtime exceptions when using
+ * @file ome/compat/variant.h Variant type limit workaround.
+ *
+ * This header increases the Boost MPL size limits, if required.  Some
+ * older versions of Boost.Variant throw runtime exceptions when using
  * Variant and MPL with a number of types over a compile-time limit.
  */
 

@@ -71,14 +71,23 @@ namespace ome
       {}
 
       /**
-       * Check if the given string is a valid filename for this file format.
+       * Check if the given file is a valid instance of this file format.
        *
-       * @param name the filename to check.
-       * @returns @c true if valid, @c false otherwise.
+       * @param name the file to open for checking.
+       * @param open If @c true, and the file extension is
+       *   insufficient to determine the file type, the file may be
+       *   opened for further analysis, or other relatively expensive
+       *   file system operations (such as file existence tests and
+       *   directory listings) may be performed.  If @c false, file
+       *   system access is not allowed.
+       * @returns @c true if the file is valid, @c false otherwise.
+       *
+       * @todo Could this method be static and/or const?
        */
       virtual
       bool
-      isThisType(const std::string& name) = 0;
+      isThisType(const std::string& name,
+                 bool               open = true) = 0;
 
       /**
        * Get the name of this file format.

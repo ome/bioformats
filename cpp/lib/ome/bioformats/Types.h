@@ -1,7 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
- * %%
+ * OME-BIOFORMATS C++ library for image IO.
  * Copyright © 2006 - 2013 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
@@ -36,30 +35,40 @@
  * #L%
  */
 
-/**
- * @file ome/compat/cstdint.h Standard integer types.
- *
- * This header substitutes C++ cstdint types for the same types in the
- * C99 stdint.h header when not using a conforming C++11 compiler.
- * This permits all code to use the C++11 standard types irrespective
- * of the compiler being used.
- */
+#ifndef OME_BIOFORMATS_TYPES_H
+#define OME_BIOFORMATS_TYPES_H
 
-#ifndef OME_COMPAT_CSTDINT_H
-# define OME_COMPAT_CSTDINT_H
+#include <algorithm>
+#include <iterator>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
-# include <ome/compat/config.h>
+#include <boost/format.hpp>
+#include <boost/optional.hpp>
 
-# ifdef OME_HAVE_CSTDINT
-#  include <cstdint>
-# else
-#  include <stdint.h>
-# endif
+#include <ome/compat/cstdint.h>
 
-#endif /* OME_COMPAT_CSTDINT_H */
+namespace ome
+{
+  namespace bioformats
+  {
+
+    /// Size type for image dimensions.
+    typedef uint32_t dimension_size_type;
+    /// Size type for image counts.
+    typedef uint32_t image_size_type;
+    /// Size type for pixel bit depths.
+    typedef uint8_t pixel_size_type;
+
+  }
+}
+
+#endif // OME_BIOFORMATS_TYPES_H
 
 /*
  * Local Variables:
  * mode:C++
  * End:
  */
+

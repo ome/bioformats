@@ -37,10 +37,12 @@
  */
 
 /**
- * @file array.h Array type substitution.  This header substitutes
- * Boost types for the same types in the std namespace when not using
- * a conforming C++11 compiler.  This permits all code to use the
- * C++11 standard types irrespective of the compiler being used.
+ * @file ome/compat/array.h Array type substitution.
+ *
+ * This header substitutes Boost types for the same types in the std
+ * namespace when not using a conforming C++11 compiler.  This permits
+ * all code to use the C++11 standard types irrespective of the
+ * compiler being used.
  */
 
 #ifndef OME_COMPAT_ARRAY_H

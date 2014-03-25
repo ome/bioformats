@@ -43,7 +43,7 @@ namespace ome
   {
 
     MetadataOptions::MetadataOptions():
-      level(ALL)
+      level(METADATA_ALL)
     {
     }
 

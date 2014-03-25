@@ -46,6 +46,7 @@
 
 #include <ome/bioformats/MetadataMap.h>
 #include <ome/bioformats/Modulo.h>
+#include <ome/bioformats/Types.h>
 
 #include <ome/xml/meta/BaseMetadata.h>
 #include <ome/xml/model/enums/DimensionOrder.h>
@@ -69,13 +70,6 @@ namespace ome
     class CoreMetadata
     {
     public:
-      /// Size type for image dimensions.
-      typedef uint32_t dimension_size_type;
-      /// Size type for image counts.
-      typedef uint32_t image_size_type;
-      /// Size type for pixel bit depths.
-      typedef uint8_t pixel_size_type;
-
       /// Width (in pixels) of images in this series.
       dimension_size_type sizeX;
 
