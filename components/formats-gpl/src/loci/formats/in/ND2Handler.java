@@ -60,6 +60,8 @@ public class ND2Handler extends BaseHandler {
     LoggerFactory.getLogger(ND2Handler.class);
   private static final String DATE_FORMAT = "dd/MM/yyyy  HH:mm:ss";
 
+  private static final int FIELD_INDEX = 2;
+
   // -- Fields --
 
   private String prefix = null;
@@ -97,7 +99,6 @@ public class ND2Handler extends BaseHandler {
   private ArrayList<String> posNames = new ArrayList<String>();
 
   private String cameraModel;
-  private int fieldIndex = 0;
   private String date;
 
   private Hashtable<String, Integer> colors = new Hashtable<String, Integer>();
@@ -123,9 +124,6 @@ public class ND2Handler extends BaseHandler {
     this.populateXY = populateXY;
     this.nImages = nImages;
     this.core = new ArrayList<CoreMetadata>(core);
-    if (this.core.size() > 1) {
-      fieldIndex = 2;
-    }
   }
 
   // -- ND2Handler API methods --
@@ -331,7 +329,7 @@ public class ND2Handler extends BaseHandler {
   }
 
   public int getFieldIndex() {
-    return fieldIndex;
+    return FIELD_INDEX;
   }
 
   public Hashtable<String, Integer> getChannelColors() {
@@ -417,7 +415,6 @@ public class ND2Handler extends BaseHandler {
           for (int q=0; q<v; q++) {
             core.add(ms0);
           }
-          fieldIndex = 2;
         }
         else if (ms0.sizeZ == 0) {
           ms0.sizeZ = v;
@@ -502,13 +499,7 @@ public class ND2Handler extends BaseHandler {
       else if (qName.startsWith("item_")) {
         int v = Integer.parseInt(qName.substring(qName.indexOf("_") + 1));
         if (v == numSeries) {
-          fieldIndex = 2;
-          //fieldIndex = ms0.dimensionOrder.length();
           numSeries++;
-        }
-        else if (v < numSeries && fieldIndex < ms0.dimensionOrder.length()) {
-          fieldIndex = 2;
-          //fieldIndex = ms0.dimensionOrder.length();
         }
       }
       else if (qName.equals("uiCompCount")) {
