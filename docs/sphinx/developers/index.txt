@@ -52,6 +52,7 @@ Interfacing from non-Java code
     BF-CPP-windows
     BF-CPP-macosx
     BF-CPP-linux
+    cpp
 
 .. _bfapplications:
 
