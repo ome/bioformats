@@ -34,6 +34,9 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+# Try to put the compiler into the most recent standard mode.  This
+# will generally have the most features, and will remove the need for
+# Boost fallbacks if native implementations are available.
 check_cxx_compiler_flag(-std=c++11 CXX_FLAG_CXX11)
 if (CXX_FLAG_CXX11)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -50,11 +53,36 @@ else(CXX_FLAG_CXX11)
   endif(CXX_FLAG_CXX03)
 endif(CXX_FLAG_CXX11)
 
+# Try to enable the -pedantic flag.  This one needs special casing
+# since it may break building with older compilers where int64_t (long
+# long) isn't available in pedantic mode because it's not part of the
+# C++98 standard.  Newer compilers support long long properly.
+set(flag -pedantic)
+set(test_cxx_flag "CXX_FLAG${flag}")
+CHECK_CXX_COMPILER_FLAG(${flag} "${test_cxx_flag}")
+if (${test_cxx_flag})
+  SET(CMAKE_CXX_FLAGS_SAVE ${CMAKE_CXX_FLAGS})
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
+  check_cxx_source_compiles(
+"int main() {
+  long long l;
+}"
+CXX_PEDANTIC_LONG_LONG)
+  SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_SAVE})
+  if (${CXX_PEDANTIC_LONG_LONG})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
+  endif (${CXX_PEDANTIC_LONG_LONG})
+endif (${test_cxx_flag})
+
+# Check if the compiler supports each of the following additional
+# warning flags, and enable them if supported.  This greatly improves
+# the quality of the build by checking for a number of common
+# problems, some of which are quite serious.
 set(test_flags
-    -pedantic -Wall -Wcast-align -Wwrite-strings -Wswitch-default
-    -Wcast-qual -Wunused-variable -Wredundant-decls
-    -Wctor-dtor-privacy -Wnon-virtual-dtor -Wreorder -Wold-style-cast
-    -Woverloaded-virtual -fstrict-aliasing)
+    -Wall -Wcast-align -Wwrite-strings -Wswitch-default Wcast-qual
+    -Wunused-variable -Wredundant-decls Wctor-dtor-privacy
+    -Wnon-virtual-dtor -Wreorder -Wold-style-cast Woverloaded-virtual
+    -fstrict-aliasing)
 
 foreach(flag ${test_flags})
   set(test_cxx_flag "CXX_FLAG${flag}")

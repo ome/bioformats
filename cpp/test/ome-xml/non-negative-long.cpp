@@ -48,15 +48,15 @@ namespace
 {
 
   NumericTest<NonNegativeLong>::test_str init_strings[] =
-    { // str           pos           strpass pospass
-      {"743544628932", 743544628932, true,   true},
-      {"23",                     23, true,   true},
-      {"-1",                     -1, false,  false},
-      {"-42",                   -42, false,  false},
-      {"1",                     -53, true,   false},
-      {"82",                     82, true,   true},
-      {"0",                       0,  true,  true},
-      {"invalid",                 1,  false, true},
+    { // str        pos         strpass pospass
+      {"743544628", 743544628L, true,   true},
+      {"23",                23, true,   true},
+      {"-1",                -1, false,  false},
+      {"-42",              -42, false,  false},
+      {"1",                -53, true,   false},
+      {"82",                82, true,   true},
+      {"0",                  0,  true,  true},
+      {"invalid",            1,  false, true},
     };
 
   NumericTest<NonNegativeLong>::test_op init_ops[] =
