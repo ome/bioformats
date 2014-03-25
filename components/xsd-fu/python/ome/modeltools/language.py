@@ -266,7 +266,7 @@ class CXX(Language):
         self.omexml_metadata_package = "ome::xml::meta"
 
     def getDefaultModelBaseClass(self):
-        return "OMEModelObject"
+        return "detail::OMEModelObject"
 
     def index_signature(self, name, max_occurs, level):
         """Makes a C++ method signature dictionary from an index name."""

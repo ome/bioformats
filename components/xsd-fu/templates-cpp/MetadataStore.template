@@ -182,33 +182,28 @@ namespace ome
        * @sa MetadataRetrieve, Metadata,
        * ome::xml::meta::OMEXMLMetadata.
        */
-      class MetadataStore : public BaseMetadata
+      class MetadataStore : virtual public BaseMetadata
       {
       protected:
-{% end header%}\
-{% if fu.SOURCE_TYPE == "header" %}\
         /// Constructor.
-        MetadataStore();
-{% end header%}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      MetadataStore::MetadataStore()
-      {
-      }
-{% end source%}\
+        MetadataStore()
+        {}
 
-{% if fu.SOURCE_TYPE == "header" %}\
       public:
         /// Destructor.
         virtual
-        ~MetadataStore();
-{% end header%}\
-{% if fu.SOURCE_TYPE == "source" %}\
-      MetadataStore::~MetadataStore()
-      {
-      }
-{% end source%}\
-{% if fu.SOURCE_TYPE == "header" %}\
+        ~MetadataStore()
+        {}
 
+      private:
+        /// Copy constructor (deleted).
+        MetadataStore (const MetadataStore&);
+
+        /// Assignment operator (deleted).
+        MetadataStore&
+        operator= (const MetadataStore&);
+
+      public:
         /**
          * Create root node.  The action taken here is specific to the
          * concrete metadata implementation.

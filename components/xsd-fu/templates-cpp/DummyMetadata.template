@@ -221,7 +221,7 @@ namespace ome
        * All get methods will throw an exception, since no valid data
        * exists to return.
        */
-      class DummyMetadata : public Metadata
+      class DummyMetadata : virtual public Metadata
       {
       public:
 {% end header %}\

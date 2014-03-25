@@ -290,7 +290,7 @@ namespace ome
        * delegates the storage and retrieval to one or more
        * sub-stores.
        */
-      class AggregateMetadata : public Metadata
+      class AggregateMetadata : virtual public Metadata
       {
       public:
         /// A list of MetadataStore and MetadataRetrieve instances.

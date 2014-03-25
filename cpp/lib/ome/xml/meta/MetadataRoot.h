@@ -48,21 +48,30 @@ namespace ome
     {
 
       /**
-       * Abstract base class for metadata root node.  This class
-       * provides no functionality; its purpose is to provide a common
-       * base type for the root node type of metadata storage
-       * implementations.
+       * Metadata root node interface.  This class provides no
+       * functionality; its purpose is to provide a common base type
+       * for the root node type of metadata storage implementations.
        */
       class MetadataRoot
       {
       protected:
         /// Constructor.
-        MetadataRoot();
+        MetadataRoot()
+        {}
 
       public:
         /// Destructor.
         virtual
-        ~MetadataRoot();
+        ~MetadataRoot()
+        {}
+
+      private:
+        /// Copy constructor (deleted).
+        MetadataRoot (const MetadataRoot&);
+
+        /// Assignment operator (deleted).
+        MetadataRoot&
+        operator= (const MetadataRoot&);
       };
 
     }
