@@ -51,10 +51,10 @@ struct CompareEqual<PercentFraction>
   bool compare(PercentFraction lhs, PercentFraction rhs)
   { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F && lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
 
-  bool compare(PercentFraction lhs, typename PercentFraction::value_type rhs)
+  bool compare(PercentFraction lhs, PercentFraction::value_type rhs)
   { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F && lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
 
-  bool compare(typename PercentFraction::value_type lhs, PercentFraction rhs)
+  bool compare(PercentFraction::value_type lhs, PercentFraction rhs)
   { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F && lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
 };
 
@@ -64,10 +64,10 @@ struct CompareNotEqual<PercentFraction>
   bool compare(PercentFraction lhs, PercentFraction rhs)
   { return lhs < static_cast<PercentFraction::value_type>(rhs) - 0.05F || lhs > static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
 
-  bool compare(PercentFraction lhs, typename PercentFraction::value_type rhs)
+  bool compare(PercentFraction lhs, PercentFraction::value_type rhs)
   { return lhs < static_cast<PercentFraction::value_type>(rhs) - 0.05F || lhs > static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
 
-  bool compare(typename PercentFraction::value_type lhs, PercentFraction rhs)
+  bool compare(PercentFraction::value_type lhs, PercentFraction rhs)
   { return lhs < static_cast<PercentFraction::value_type>(rhs) - 0.05F || lhs > static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
 };
 
@@ -77,10 +77,10 @@ struct CompareLessOrEqual<PercentFraction>
   bool compare(PercentFraction lhs, PercentFraction rhs)
   { return lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
 
-  bool compare(PercentFraction lhs, typename PercentFraction::value_type rhs)
+  bool compare(PercentFraction lhs, PercentFraction::value_type rhs)
   { return lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
 
-  bool compare(typename PercentFraction::value_type lhs, PercentFraction rhs)
+  bool compare(PercentFraction::value_type lhs, PercentFraction rhs)
   { return lhs < static_cast<PercentFraction::value_type>(rhs) + 0.05F; }
 };
 
@@ -90,10 +90,10 @@ struct CompareGreaterOrEqual<PercentFraction>
   bool compare(PercentFraction lhs, PercentFraction rhs)
   { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F; }
 
-  bool compare(PercentFraction lhs, typename PercentFraction::value_type rhs)
+  bool compare(PercentFraction lhs, PercentFraction::value_type rhs)
   { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F; }
 
-  bool compare(typename PercentFraction::value_type lhs, PercentFraction rhs)
+  bool compare(PercentFraction::value_type lhs, PercentFraction rhs)
   { return lhs > static_cast<PercentFraction::value_type>(rhs) - 0.05F; }
 };
 

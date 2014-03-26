@@ -51,10 +51,10 @@ struct CompareEqual<PositiveFloat>
   bool compare(PositiveFloat lhs, PositiveFloat rhs)
   { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05 && lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(PositiveFloat lhs, typename PositiveFloat::value_type rhs)
+  bool compare(PositiveFloat lhs, PositiveFloat::value_type rhs)
   { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05 && lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(typename PositiveFloat::value_type lhs, PositiveFloat rhs)
+  bool compare(PositiveFloat::value_type lhs, PositiveFloat rhs)
   { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05 && lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
 };
 
@@ -64,10 +64,10 @@ struct CompareNotEqual<PositiveFloat>
   bool compare(PositiveFloat lhs, PositiveFloat rhs)
   { return lhs < static_cast<PositiveFloat::value_type>(rhs) - 0.05 || lhs > static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(PositiveFloat lhs, typename PositiveFloat::value_type rhs)
+  bool compare(PositiveFloat lhs, PositiveFloat::value_type rhs)
   { return lhs < static_cast<PositiveFloat::value_type>(rhs) - 0.05 || lhs > static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(typename PositiveFloat::value_type lhs, PositiveFloat rhs)
+  bool compare(PositiveFloat::value_type lhs, PositiveFloat rhs)
   { return lhs < static_cast<PositiveFloat::value_type>(rhs) - 0.05 || lhs > static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
 };
 
@@ -77,10 +77,10 @@ struct CompareLessOrEqual<PositiveFloat>
   bool compare(PositiveFloat lhs, PositiveFloat rhs)
   { return lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(PositiveFloat lhs, typename PositiveFloat::value_type rhs)
+  bool compare(PositiveFloat lhs, PositiveFloat::value_type rhs)
   { return lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(typename PositiveFloat::value_type lhs, PositiveFloat rhs)
+  bool compare(PositiveFloat::value_type lhs, PositiveFloat rhs)
   { return lhs < static_cast<PositiveFloat::value_type>(rhs) + 0.05; }
 };
 
@@ -90,10 +90,10 @@ struct CompareGreaterOrEqual<PositiveFloat>
   bool compare(PositiveFloat lhs, PositiveFloat rhs)
   { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05; }
 
-  bool compare(PositiveFloat lhs, typename PositiveFloat::value_type rhs)
+  bool compare(PositiveFloat lhs, PositiveFloat::value_type rhs)
   { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05; }
 
-  bool compare(typename PositiveFloat::value_type lhs, PositiveFloat rhs)
+  bool compare(PositiveFloat::value_type lhs, PositiveFloat rhs)
   { return lhs > static_cast<PositiveFloat::value_type>(rhs) - 0.05; }
 };
 

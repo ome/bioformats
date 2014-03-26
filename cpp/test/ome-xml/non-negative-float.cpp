@@ -51,10 +51,10 @@ struct CompareEqual<NonNegativeFloat>
   bool compare(NonNegativeFloat lhs, NonNegativeFloat rhs)
   { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 && lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(NonNegativeFloat lhs, typename NonNegativeFloat::value_type rhs)
+  bool compare(NonNegativeFloat lhs, NonNegativeFloat::value_type rhs)
   { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 && lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(typename NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
+  bool compare(NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
   { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 && lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
 };
 
@@ -64,10 +64,10 @@ struct CompareNotEqual<NonNegativeFloat>
   bool compare(NonNegativeFloat lhs, NonNegativeFloat rhs)
   { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 || lhs > static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(NonNegativeFloat lhs, typename NonNegativeFloat::value_type rhs)
+  bool compare(NonNegativeFloat lhs, NonNegativeFloat::value_type rhs)
   { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 || lhs > static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(typename NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
+  bool compare(NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
   { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) - 0.05 || lhs > static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
 };
 
@@ -77,10 +77,10 @@ struct CompareLessOrEqual<NonNegativeFloat>
   bool compare(NonNegativeFloat lhs, NonNegativeFloat rhs)
   { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(NonNegativeFloat lhs, typename NonNegativeFloat::value_type rhs)
+  bool compare(NonNegativeFloat lhs, NonNegativeFloat::value_type rhs)
   { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
 
-  bool compare(typename NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
+  bool compare(NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
   { return lhs < static_cast<NonNegativeFloat::value_type>(rhs) + 0.05; }
 };
 
@@ -90,10 +90,10 @@ struct CompareGreaterOrEqual<NonNegativeFloat>
   bool compare(NonNegativeFloat lhs, NonNegativeFloat rhs)
   { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05; }
 
-  bool compare(NonNegativeFloat lhs, typename NonNegativeFloat::value_type rhs)
+  bool compare(NonNegativeFloat lhs, NonNegativeFloat::value_type rhs)
   { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05; }
 
-  bool compare(typename NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
+  bool compare(NonNegativeFloat::value_type lhs, NonNegativeFloat rhs)
   { return lhs > static_cast<NonNegativeFloat::value_type>(rhs) - 0.05; }
 };
 
