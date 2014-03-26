@@ -37,8 +37,9 @@ Eclipse
 Eclipse uses the "Maven Integration for Eclipse" (m2e) plugin to work with
 Maven projects. It is more flexible than Eclipse's built-in project
 management because m2e transparently converts between project dependencies
-and JAR dependencies (stored in the Maven repository in :file:`~/.m2/repository`) on the build path, depending on which projects are currently
-open.
+and JAR dependencies (stored in the Maven repository in
+:file:`~/.m2/repository`) on the build path, depending on which projects are
+currently open.
 
 We recommend using Eclipse 4.3 (Kepler), specifically -
 "Eclipse IDE for Java developers". It comes with m2e installed (http://eclipse.org/downloads/compare.php?release=kepler).
