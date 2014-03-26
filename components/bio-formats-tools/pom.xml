@@ -15,7 +15,7 @@
   <artifactId>bio-formats-tools</artifactId>
 
   <name>Bio-Formats command line tools</name>
-  <description>Classes implementing Bio-Formats command line tools for reading and converting files</description>
+  <description>Bio-Formats command line tools for reading and converting files</description>
   <url>http://www.openmicroscopy.org/site/products/bio-formats</url>
   <inceptionYear>2005</inceptionYear>
 
@@ -89,6 +89,18 @@
       <scope>runtime</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>bsd_2</licenseName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <developers>
     <developer>
