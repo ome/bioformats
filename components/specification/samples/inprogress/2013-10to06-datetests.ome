@@ -189,6 +189,9 @@
 		<SA:TimestampAnnotation ID="Annotation:15" Namespace="sample.openmicroscopy.org/time/zone4nepal">
 			<SA:Value>2013-10-24T11:52:33+05:45</SA:Value>
 		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:16" Namespace="sample.openmicroscopy.org/time/millisecond">
+			<SA:Value>2014-03-26T13:46:07.487</SA:Value>
+		</SA:TimestampAnnotation>
 	</SA:StructuredAnnotations>
 	<ROI:ROI ID="ROI:0">
 		<ROI:Union>
