@@ -996,7 +996,7 @@ public abstract class FormatReader extends FormatHandler
       String[] s = getSeriesUsedFiles(noPixels);
       if (s != null) {
         for (String file : s) {
-          if (!files.contains(file)) {
+          if (getSeriesCount() == 1 || !files.contains(file)) {
             files.add(file);
           }
         }
