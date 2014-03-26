@@ -7,7 +7,7 @@
 	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
 	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1
-		../../released-schema/2013-10-dev-1/ome.xsd">
+		http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1/ome.xsd">
 	
 	<OME:Project ID="Project:0">
 		<OME:DatasetRef ID="Dataset:0"/>

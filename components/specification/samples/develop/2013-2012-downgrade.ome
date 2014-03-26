@@ -6,7 +6,9 @@
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
 	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06    /Users/andrew/Work/bioformats/components/specification/inprogress/ome.xsd">
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06
+		http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd">
+		
 	<Rights>
 		<RightsHolder>
 			Copyright (C) 2002 - 2014 Open Microscopy Environment
