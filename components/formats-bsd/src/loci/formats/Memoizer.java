@@ -608,8 +608,16 @@ public class Memoizer extends ReaderWrapper {
 
       // RELEASE VERSION NUMBER
       String releaseVersion = ser.loadReleaseVersion();
-      String minor = releaseVersion.substring(0,
-        releaseVersion.indexOf(".", releaseVersion.indexOf(".") + 1));
+
+      String minor = releaseVersion;
+      int firstDot = minor.indexOf(".");
+      if (firstDot >= 0) {
+        int secondDot = minor.indexOf(".", firstDot + 1);
+        if (secondDot >= 0) {
+          minor = minor.substring(0, secondDot);
+        }
+      }
+
       String currentMinor = FormatTools.VERSION.substring(0,
         FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf(".") + 1));
       if (!currentMinor.equals(minor)) {

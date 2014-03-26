@@ -186,7 +186,7 @@ JUnit
     License:   Common Public License
 
 Logback
-    JAR file:  logback-core-1.0.9.jar, logback-classic-1.0.9.jar
+    JAR file:  logback-core-1.1.1.jar, logback-classic-1.1.1.jar
     URL:       http://logback.qos.ch
     Notes:     (none)
     License:   EPL v1.0 and LGPL 2.1
@@ -204,7 +204,7 @@ NetCDF
     License:   LGPL
 
 Simple Logging Facade for Java API
-    JAR file:  slf4j-api-1.7.2.jar
+    JAR file:  slf4j-api-1.7.6.jar
     URL:       http://www.slf4j.org/
     Notes:     used for all logging in loci.*
     License:   BSD

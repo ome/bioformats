@@ -876,6 +876,21 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
      for (int idx = 0; idx < annotationIndex; idx++) {
        if (ModuloAnnotation.MODULO_NS.equals(
          meta.getXMLAnnotationNamespace(idx))) {
+
+         // ignore this annotation if it is not linked to the current Image
+         boolean ignore = true;
+         String xmlID = meta.getXMLAnnotationID(idx);
+         for (int link=0; link<image.sizeOfLinkedAnnotationList(); link++) {
+           if (xmlID.equals(image.getLinkedAnnotation(link).getID()))
+           {
+             ignore = false;
+             break;
+           }
+         }
+         if (ignore) {
+           continue;
+         }
+
          String value = meta.getXMLAnnotationValue(idx);
          try {
            Document doc = XMLTools.parseDOM(value);
