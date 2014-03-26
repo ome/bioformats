@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -60,7 +60,7 @@ namespace ome
       class Reference;
 
       /**
-       * OME model object.
+       * OME model object interface.
        *
        * @todo Check constness and reference type for params/return types.
        * @todo Consider dropping redundant parts of typenames which
@@ -70,14 +70,26 @@ namespace ome
        */
       class OMEModelObject : public std::enable_shared_from_this<OMEModelObject>
       {
-      public:
+      protected:
         /// Constructor.
-        OMEModelObject ();
+        OMEModelObject ()
+        {}
 
+      public:
         /// Destructor.
         virtual
-        ~OMEModelObject ();
+        ~OMEModelObject ()
+        {}
 
+      private:
+        /// Copy constructor (deleted).
+        OMEModelObject (const OMEModelObject&);
+
+        /// Assignment operator (deleted).
+        OMEModelObject&
+        operator= (const OMEModelObject&);
+
+      public:
         /**
          * Transform the object hierarchy rooted at this element to
          * XML.
@@ -88,22 +100,6 @@ namespace ome
         virtual xerces::dom::Element&
         asXMLElement (xerces::dom::Document& document) const = 0;
 
-      protected:
-        /**
-         * Transform the object hierarchy rooted at this element to
-         * XML.  This internal implementation of asXMLelement also
-         * requires an XML element, which may be null, or may be
-         * instantiated and passed from superclasses.
-         *
-         * @param document XML document for element creation.
-         * @param element XML element for setting model data.
-         * @returns an XML DOM tree root element for this model object.
-         */
-        virtual xerces::dom::Element&
-        asXMLElementInternal (xerces::dom::Document& document,
-                              xerces::dom::Element&  element) const = 0;
-
-      public:
         /**
          * Update the object hierarchy recursively from an XML DOM tree.
          *
@@ -118,7 +114,7 @@ namespace ome
          */
         virtual void
         update (const xerces::dom::Element& element,
-                OMEModel&                   model);
+                OMEModel&                   model) = 0;
 
         /**
          * Link a given OME model object to this model object.
@@ -143,93 +139,7 @@ namespace ome
          */
         virtual bool
         link (std::shared_ptr<Reference>&      reference,
-              std::shared_ptr<OMEModelObject>& object);
-
-        /**
-         * Retrieves all the children of an element that have a given tag name. If a
-         * tag has a namespace prefix it will be stripped prior to attempting a
-         * name match.
-         * @param parent DOM element to retrieve tags based upon.
-         * @param name Name of the tags to retrieve.
-         * @return List of elements which have the tag <code>name</code>.
-         */
-        static std::vector<xerces::dom::Element>
-        getChildrenByTagName (const xerces::dom::Element& parent,
-                              const std::string&          name);
-
-        /**
-         * Strip the namespace prefix from a tag name.
-         *
-         * @param value tag name
-         * @returns @a value with the namespace prefix stripped or @a
-         * value if it does not have a namespace prefix.
-         */
-        static std::string
-        stripNamespacePrefix (const std::string& value);
-
-      protected:
-        /**
-         * Comparison functor.  Compares the referenced object with
-         * the object reference passed by the function operator.  All
-         * objects must be shared_ptr or weak_ptr of the same type (or
-         * castable to the same type).
-         *
-         * @todo: Use of strict const since this is nonmodifying.
-         */
-        template<typename T>
-        class compare_element
-        {
-        private:
-          /// The element to compare other elements with.
-          std::shared_ptr<const T> cmp;
-
-        public:
-          /**
-           * Constructor.
-           *
-           * @param cmp the element to compare other elements with.
-           */
-          compare_element(const std::shared_ptr<const T>& cmp):
-            cmp(cmp)
-          {}
-
-          /**
-           * Compare element with another element.
-           *
-           * @note This is a shared_ptr comparison, not a value
-           * comparison.
-           *
-           * @param element the element to compare the original element with.
-           * @returns @c true if the elements are the same, otherwise @c false.
-           */
-          bool
-          operator () (std::weak_ptr<const T> element)
-          {
-            std::shared_ptr<const T> shared_element(element);
-            return cmp && shared_element && cmp == shared_element;
-          }
-        };
-
-        /**
-         * Check if a container contains a particular element.
-         *
-         * @note This is a shared_ptr comparison, not an element value
-         * comparison.
-         *
-         * @param container the container to check.
-         * @param element the element to check for.
-         * @returns @c true if the element was found, otherwise @c false.
-         */
-        template<class C, typename T>
-        bool
-        contains(const C&                  container,
-                 const std::shared_ptr<T>& element)
-        {
-          return (std::find_if(container.begin(),
-                               container.end(),
-                               compare_element<T>(element)) != container.end());
-        }
-
+              std::shared_ptr<OMEModelObject>& object) = 0;
       };
 
     }

@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -37,6 +37,7 @@
 set(OME_TOPLEVEL_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 add_subdirectory(lib/ome/compat)
+add_subdirectory(lib/ome/internal)
 add_subdirectory(lib/ome/xerces)
 add_subdirectory(lib/ome/xml)
 add_subdirectory(lib/ome/bioformats)

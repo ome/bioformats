@@ -111,6 +111,12 @@
 	</OME:ExperimenterGroup>
 	
 	<Instrument ID="Instrument:0">
+		<LightSource ID="LightSource:1" Manufacturer="OME-Inc">
+			<Laser Wavelength="655.3" Tuneable="false"/>
+		</LightSource>
+		<LightSource ID="LightSource:2" Power="2.3">
+			<Laser Wavelength="755" LaserMedium="Alexandrite"/>
+		</LightSource>
 		<Objective ID="Objective:0" LotNumber="123" Manufacturer="OME-Labs"
 			NominalMagnification="20" CalibratedMagnification="20.34"/>
 	</Instrument>
@@ -120,9 +126,15 @@
 		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
 			PhysicalSizeY="10000.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
 			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1147483648"
-				ID="Channel:0"> </Channel>
+				EmissionWavelength="577.2" ExcitationWavelength="655.8"
+				ID="Channel:0">
+				<LightSourceSettings ID="LightSource:1" Wavelength="655.4"/>
+			</Channel>
 			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1474836488"
-				ID="Channel:1"> </Channel>
+				EmissionWavelength="477.0" ExcitationWavelength="755"
+				ID="Channel:1">
+				<LightSourceSettings ID="LightSource:1" Wavelength="755.0"/>
+			</Channel>
 			<Channel AcquisitionMode="MultiPhotonMicroscopy" Color="-2144364811" ID="Channel:2"> </Channel>
 			<Bin:BinData BigEndian="false" Length="32"
 				>/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>

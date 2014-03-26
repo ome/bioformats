@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -36,65 +36,58 @@
 
 include_directories(${OME_TOPLEVEL_INCLUDES})
 
-xsd_fu(metadata OME_BIOFORMATS_META_GENERATED_HEADERS OME_BIOFORMATS_META_GENERATED_SOURCES)
-xsd_fu(omexml_metadata OME_BIOFORMATS_OME_GENERATED_HEADERS OME_BIOFORMATS_OME_GENERATED_SOURCES)
-
 set(OME_BIOFORMATS_SOURCES
     CoreMetadata.cpp
     FormatException.cpp
+    FormatTools.cpp
+    MetadataConfigurable.cpp
     MetadataOptions.cpp
     Modulo.cpp
     UnknownFormatException.cpp
-    UnsupportedCompressionException.cpp)
+    UnsupportedCompressionException.cpp
+    Version.cpp)
 
 set(OME_BIOFORMATS_HEADERS
     CoreMetadata.h
+    FileInfo.h
     FormatException.h
+    MetadataMap.h
+    FormatHandler.h
+    FormatReader.h
+    FormatTools.h
+    MetadataConfigurable.h
     MetadataOptions.h
     Modulo.h
+    PixelBuffer.h
+    PixelProperties.h
+    Types.h
     UnknownFormatException.h
-    UnsupportedCompressionException.h)
+    UnsupportedCompressionException.h
+    Version.h)
 
-set(OME_BIOFORMATS_META_STATIC_SOURCES
-    meta/BaseMetadata.cpp
-    meta/Metadata.cpp
-    meta/MetadataRoot.cpp)
+set(OME_BIOFORMATS_DETAIL_SOURCES
+    detail/FormatReader.cpp)
 
-set(OME_BIOFORMATS_META_STATIC_HEADERS
-    meta/BaseMetadata.h
-    meta/Metadata.h
-    meta/MetadataRoot.h)
-
-set(OME_BIOFORMATS_OME_STATIC_SOURCES
-    ome/OMEXMLMetadataRoot.cpp)
-
-set(OME_BIOFORMATS_OME_STATIC_HEADERS
-    ome/OMEXMLMetadataRoot.h)
+set(OME_BIOFORMATS_DETAIL_HEADERS
+    detail/FormatReader.h)
 
 set(BIOFORMATS_SOURCES
     ${OME_BIOFORMATS_SOURCES}
-    ${OME_BIOFORMATS_META_STATIC_SOURCES}
-    ${OME_BIOFORMATS_META_GENERATED_SOURCES}
-    ${OME_BIOFORMATS_OME_STATIC_SOURCES}
-    ${OME_BIOFORMATS_OME_GENERATED_SOURCES})
+    ${OME_BIOFORMATS_DETAIL_SOURCES})
 
 set(BIOFORMATS_STATIC_HEADERS
     ${OME_BIOFORMATS_HEADERS}
-    ${OME_BIOFORMATS_META_STATIC_HEADERS}
-    ${OME_BIOFORMATS_OME_STATIC_HEADERS})
+    ${OME_BIOFORMATS_DETAIL_HEADERS})
 
-set(BIOFORMATS_GENERATED_HEADERS
-    ${OME_BIOFORMATS_META_GENERATED_HEADERS}
-    ${OME_BIOFORMATS_OME_GENERATED_HEADERS})
+set(BIOFORMATS_GENERATED_HEADERS)
 
 set(BIOFORMATS_HEADERS
-    ${BIOFORMATS_STATIC_HEADERS}
-    ${BIOFORMATS_GENERATED_HEADERS})
+    ${BIOFORMATS_STATIC_HEADERS})
 
 add_library(ome-bioformats SHARED
             ${BIOFORMATS_SOURCES}
             ${BIOFORMATS_HEADERS})
-target_link_libraries(ome-bioformats ome-xml)
+target_link_libraries(ome-bioformats ome-compat ome-xml ${Boost_FILESYSTEM_LIBRARY_RELEASE} ${Boost_SYSTEM_LIBRARY_RELEASE})
 set_target_properties(ome-bioformats PROPERTIES VERSION ${OME_VERSION_SHORT})
 
 install(TARGETS ome-bioformats LIBRARY
@@ -104,14 +97,13 @@ set(ome_bioformats_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/bioformats")
 
 install(FILES ${OME_BIOFORMATS_HEADERS}
         DESTINATION ${ome_bioformats_includedir})
-install(FILES ${OME_BIOFORMATS_META_STATIC_HEADERS} ${OME_BIOFORMATS_META_GENERATED_HEADERS}
-        DESTINATION ${ome_bioformats_includedir}/meta)
-install(FILES ${OME_BIOFORMATS_OME_STATIC_HEADERS} ${OME_BIOFORMATS_OME_GENERATED_HEADERS}
-        DESTINATION ${ome_bioformats_includedir}/ome)
+install(FILES ${OME_BIOFORMATS_DETAIL_HEADERS}
+        DESTINATION ${ome_bioformats_includedir}/detail)
+
 
 set(LIBRARY_PREFIX OME_BIOFORMATS)
 set(LIBRARY_NAME ome-bioformats)
-set(LIBRARY_HEADER ome/bioformats/meta/BaseMetadata.h)
+set(LIBRARY_HEADER ome/bioformats/CoreMetadata.h)
 configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateConfig.cmake.in
                ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ome-bioformats-config.cmake

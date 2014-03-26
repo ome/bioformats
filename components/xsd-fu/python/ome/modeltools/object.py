@@ -1,5 +1,6 @@
 from util import odict
 import logging
+import re
 
 from xml.etree import ElementTree
 
@@ -239,7 +240,8 @@ class OMEModelObject(OMEModelEntity):
         if isinstance(self.model.opts.lang, language.Java):
             header = "ome.xml.model.%s" % self.name
         elif isinstance(self.model.opts.lang, language.CXX):
-            header = "ome/xml/model/%s.h" % self.name
+            path = re.sub("::", "/", self.name)
+            header = "ome/xml/model/%s.h" % path
         return header
     header = property(_get_header,
         doc="""The model object's include/import name.  Does not include dependent headers.""")
@@ -254,9 +256,12 @@ class OMEModelObject(OMEModelEntity):
             if self.parentName is not None:
                 deps.add("ome.xml.model.%s" % self.parentName);
         elif isinstance(self.model.opts.lang, language.CXX):
-            myself = "ome/xml/model/%s.h" % self.langBaseType
+            if self.langBaseType is not None:
+                path = re.sub("::", "/", self.langBaseType)
+                myself = "ome/xml/model/%s.h" % path
             if self.parentName is not None and self.parentName != self.model.opts.lang.base_class:
-                deps.add("ome/xml/model/%s.h" % self.parentName);
+                path = re.sub("::", "/", self.parentName)
+                deps.add("ome/xml/model/%s.h" % path);
 
         for prop in self.properties.values():
             for dep in prop.header_dependencies:
@@ -277,7 +282,8 @@ class OMEModelObject(OMEModelEntity):
         if isinstance(self.model.opts.lang, language.Java):
             pass
         elif isinstance(self.model.opts.lang, language.CXX):
-            deps.add("ome/xml/model/%s.h" % self.name)
+            path = re.sub("::", "/", self.name)
+            deps.add("ome/xml/model/%s.h" % path)
             deps.add("ome/xml/model/OMEModel.h")
 
         for prop in self.properties.values():

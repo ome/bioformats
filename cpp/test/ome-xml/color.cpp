@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -230,7 +230,7 @@ TEST_P(ColorTest, StreamInput)
 
   std::istringstream is(params.str);
   is >> c;
-  ASSERT_TRUE(is);
+  ASSERT_FALSE(!is);
   ASSERT_EQ(c, params.sval);
 }
 

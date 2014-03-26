@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -44,9 +44,11 @@
 
 #include <ome/compat/cstdint.h>
 
+#include <ome/bioformats/MetadataMap.h>
 #include <ome/bioformats/Modulo.h>
-#include <ome/bioformats/meta/BaseMetadata.h>
+#include <ome/bioformats/Types.h>
 
+#include <ome/xml/meta/BaseMetadata.h>
 #include <ome/xml/model/enums/DimensionOrder.h>
 #include <ome/xml/model/enums/PixelType.h>
 
@@ -59,7 +61,7 @@ namespace ome
      * Core metadata values.
      *
      * @todo We may want to consider refactoring the FormatReader
-     * getter methods that populate missing CoreMetadata fields on the
+     * getter methods that fill in missing CoreMetadata fields on the
      * fly (getChannelDimLengths, getChannelDimTypes, getThumbSizeX,
      * getThumbSizeY) to avoid doing so -- one alternate approach
      * would be to have this class use getter methods instead of
@@ -68,13 +70,6 @@ namespace ome
     class CoreMetadata
     {
     public:
-      /// Size type for image dimensions.
-      typedef uint32_t dimension_size_type;
-      /// Size type for image counts.
-      typedef uint32_t image_size_type;
-      /// Size type for pixel bit depths.
-      typedef uint8_t pixel_size_type;
-
       /// Width (in pixels) of images in this series.
       dimension_size_type sizeX;
 
@@ -142,10 +137,7 @@ namespace ome
       bool metadataComplete;
 
       /// Non-core metadata associated with this series.
-      std::map<std::string,std::string> seriesMetadata;
-
-      /// Non-core metadata associated with this series.
-      std::map<std::string,std::vector<std::string> > seriesMetadataList;
+      MetadataMap seriesMetadata;
 
       /// Is this series is a lower-resolution copy of another series?
       bool thumbnail;
@@ -195,14 +187,14 @@ namespace ome
        *
        * @param copy the CoreMetadata to copy.
        */
-      CoreMetadata(const CoreMetadata& c);
+      CoreMetadata(const CoreMetadata& copy);
     };
 
     /**
      * Output CoreMetadata to output stream.
      *
      * @param os the output stream.
-     * @param color the CoreMetadata to output.
+     * @param core the CoreMetadata to output.
      * @returns the output stream.
      */
     template<class charT, class traits>

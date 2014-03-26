@@ -53,6 +53,40 @@ TEST(Enum, LaserTypeAssign)
   ASSERT_NE(lv2, lv3);
 }
 
+TEST(Enum, LaserStrings)
+{
+  const LaserType::string_map_type& strings = LaserType::strings();
+  for(LaserType::string_map_type::const_iterator i = strings.begin();
+      i != strings.end();
+      ++i)
+    {
+      LaserType l1(i->first);
+      LaserType l2(i->second);
+      ASSERT_EQ(l1, l2);
+      ASSERT_EQ(l1, i->first);
+      ASSERT_EQ(l1, i->second);
+      ASSERT_EQ(l2, i->first);
+      ASSERT_EQ(l2, i->second);
+    }
+}
+
+TEST(Enum, LaserValues)
+{
+  const LaserType::value_map_type& values = LaserType::values();
+  for(LaserType::value_map_type::const_iterator i = values.begin();
+      i != values.end();
+      ++i)
+    {
+      LaserType l1(i->first);
+      LaserType l2(i->second);
+      ASSERT_EQ(l1, l2);
+      ASSERT_EQ(l1, i->first);
+      ASSERT_EQ(l1, i->second);
+      ASSERT_EQ(l2, i->first);
+      ASSERT_EQ(l2, i->second);
+    }
+}
+
 class EnumStringParameters
 {
 public:

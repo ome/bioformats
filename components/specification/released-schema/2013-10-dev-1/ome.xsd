@@ -2,7 +2,7 @@
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
-    # Copyright (C) 2002-2013 Open Microscopy Environment
+    # Copyright (C) 2002 - 2014 Open Microscopy Environment
     #       Massachusetts Institute of Technology,
     #       National Institutes of Health,
     #       University of Dundee,
@@ -678,14 +678,14 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="ExcitationWavelength" use="optional" type="PositiveInt">
+			<xsd:attribute name="ExcitationWavelength" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>
 						Excitation wavelength of excitation for a particular channel, in nanometres[nm].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="EmissionWavelength" use="optional" type="PositiveInt">
+			<xsd:attribute name="EmissionWavelength" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>
 						Emission wavelength of excitation for a particular channel, in nanometres[nm].
@@ -1929,7 +1929,7 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="Wavelength" use="optional" type="PositiveInt">
+			<xsd:attribute name="Wavelength" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>
 						The Wavelength of the laser in nanometres[nm]
@@ -2099,7 +2099,7 @@
 				<xsd:element name="RightsHolder" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation> The rights holder for this data. [plane text multi-line string]
-							e.g. "Copyright (C) 2002-2013 Open Microscopy Environment"
+							e.g. "Copyright (C) 2002 - 2014 Open Microscopy Environment"
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:simpleType>
@@ -2299,7 +2299,7 @@
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-					<xsd:attribute name="Wavelength" use="optional" type="PositiveInt">
+					<xsd:attribute name="Wavelength" use="optional" type="PositiveFloat">
 						<xsd:annotation>
 							<xsd:documentation>
 								The Wavelength of the light source. nanometres[nm]

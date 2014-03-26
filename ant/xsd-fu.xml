@@ -20,8 +20,8 @@ Include this in components generating sources using xsd-fu.
     <attribute name="omexml-model-package" default="ome.xml.model"/>
     <attribute name="omexml-model-enums-package" default="ome.xml.model.enums"/>
     <attribute name="omexml-model-enum-handlers-package" default="ome.xml.model.enums.handlers"/>
-    <attribute name="metadata-package" default="loci.formats.meta"/>
-    <attribute name="omexml-metadata-package" default="loci.formats.ome"/>
+    <attribute name="metadata-package" default="ome.xml.meta"/>
+    <attribute name="omexml-metadata-package" default="ome.xml.meta"/>
     <attribute name="lang" default="Java"/>
     <attribute name="output"/>
     <element name="args" implicit="yes"/>

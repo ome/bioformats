@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -58,9 +58,9 @@ namespace ome
       /// Amount of metadata to store.
       enum MetadataLevel
         {
-          MINIMUM,     ///< Store a minimal amount of metadata.
-          NO_OVERLAYS, ///< Store all metadata except overlays.
-          ALL          ///< Store all metadata.
+          METADATA_MINIMUM,     ///< Store a minimal amount of metadata.
+          METADATA_NO_OVERLAYS, ///< Store all metadata except overlays.
+          METADATA_ALL          ///< Store all metadata.
         };
 
     private:
@@ -73,7 +73,7 @@ namespace ome
        */
       MetadataOptions();
 
-      /***
+      /**
        * Constructor.
        *
        * @param level the amount of metadata to store.

@@ -13,7 +13,7 @@ Owner: `Carl Zeiss, Inc. <http://www.zeiss.com/>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 

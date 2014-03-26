@@ -12,7 +12,7 @@ Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 **Support**
 
 
-SCIFIO: |no|
+BSD-licensed: |no|
 
 Export: |no|
 
@@ -22,7 +22,7 @@ Supported Metadata Fields: :doc:`Zeiss LSM (Laser Scanning Microscope) 510/710 <
 
 Freely Available Software:
 
-- `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_ 
+- `Zeiss LSM Image Browser <http://www.zeiss.com.au/microscopy/en_au/downloads/lsm-5-series.html>`_ 
 - `LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_ 
 - `LSM Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/lsm-reader.html>`_ 
 - `DIMIN <http://www.dimin.net/>`_

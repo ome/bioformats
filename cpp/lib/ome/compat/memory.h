@@ -2,7 +2,7 @@
  * #%L
  * OME-COMPAT C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -37,10 +37,12 @@
  */
 
 /**
- * @file memory.h Memory type substitution.  This header substitutes
- * Boost types for the same types in the std namespace when not using
- * a conforming C++11 compiler.  This permits all code to use the
- * C++11 standard types irrespective of the compiler being used.
+ * @file ome/compat/memory.h Memory type substitution.
+ *
+ * This header substitutes Boost types for the same types in the std
+ * namespace when not using a conforming C++11 compiler.  This permits
+ * all code to use the C++11 standard types irrespective of the
+ * compiler being used.
  */
 
 #ifndef OME_COMPAT_MEMORY_H
@@ -52,6 +54,7 @@
 #  include <memory>
 # elif OME_HAVE_BOOST_SHARED_PTR
 #  include <boost/enable_shared_from_this.hpp>
+#  include <boost/make_shared.hpp>
 #  include <boost/shared_ptr.hpp>
 namespace std {
     using boost::shared_ptr;
@@ -60,6 +63,7 @@ namespace std {
     using boost::const_pointer_cast;
     using boost::dynamic_pointer_cast;
     using boost::enable_shared_from_this;
+    using boost::make_shared;
 }
 # else
 #  error A shared_ptr implementation is not available

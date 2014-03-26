@@ -1,4 +1,5 @@
 import logging
+import re
 
 from xml.etree import ElementTree
 
@@ -584,22 +585,23 @@ class OMEModelProperty(OMEModelEntity):
                 else:
                     header = "ome.xml.model.enums.%s" % self.langType
         elif isinstance(self.model.opts.lang, language.CXX):
+            path = re.sub("::", "/", self.langType)
             if not self.model.opts.lang.hasPrimitiveType(self.langType) and not self.model.opts.lang.hasFundamentalType(self.langType) and self.langType != "std::string":
                 if self.isEnumeration:
-                    header = "ome/xml/model/enums/%s.h" % self.langType
+                    header = "ome/xml/model/enums/%s.h" % path
                 else:
                     if self.isReference and self.maxOccurs > 1:
                         pass
                     elif self.isBackReference and self.maxOccurs > 1:
                         pass
                     elif self.isBackReference:
-                        header = "ome/xml/model/%s.h" % self.langType
+                        header = "ome/xml/model/%s.h" % path
                     elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
-                        header = "ome/xml/model/%s.h" % self.langType
+                        header = "ome/xml/model/%s.h" % path
                     elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
                         pass
             elif self.model.opts.lang.hasPrimitiveType(self.langType) and not self.model.opts.lang.hasFundamentalType(self.langType) and self.langType != "std::string":
-                header = "ome/xml/model/primitives/%s.h" % self.langType
+                header = "ome/xml/model/primitives/%s.h" % path
         return header
     header = property(_get_header,
         doc="""The property's include/import name.  Does not include dependent headers.""")
@@ -624,28 +626,30 @@ class OMEModelProperty(OMEModelEntity):
                 else:
                     deps.add("ome.xml.model.enums.%s" % self.langType)
         elif isinstance(self.model.opts.lang, language.CXX):
+            path = re.sub("::", "/", self.langType)
             if not self.model.opts.lang.hasPrimitiveType(self.langType):
                 if self.isEnumeration:
-                    deps.add("ome/xml/model/enums/%s.h" % self.langType)
+                    deps.add("ome/xml/model/enums/%s.h" % path)
                 else:
                     if self.isReference and self.maxOccurs > 1:
-                        deps.add("ome/xml/model/%s.h" % self.langType)
+                        deps.add("ome/xml/model/%s.h" % path)
                     elif self.isBackReference and self.maxOccurs > 1:
-                        deps.add("ome/xml/model/%s.h" % self.langType)
+                        deps.add("ome/xml/model/%s.h" % path)
                     elif self.isBackReference:
-                        deps.add("ome/xml/model/%s.h" % self.langType)
+                        deps.add("ome/xml/model/%s.h" % path)
                     elif self.maxOccurs == 1 and (not self.parent.isAbstractProprietary or self.isAttribute or not self.isComplex() or not self.isChoice):
-                        deps.add("ome/xml/model/%s.h" % self.langType)
+                        deps.add("ome/xml/model/%s.h" % path)
                     elif self.maxOccurs > 1 and not self.parent.isAbstractProprietary:
-                        deps.add("ome/xml/model/%s.h" % self.langType)
+                        deps.add("ome/xml/model/%s.h" % path)
                 if self.isReference:
                     # Make sure that the reference is a real generated object.
-                    o = self.model.getObjectByName("%sRef" % self.langType)
+                    o = self.model.getObjectByName("%sRef" % path)
                     if o is not None and o in self.model.objects.values():
-                        deps.add("ome/xml/model/%sRef.h" % self.langType)
+                        deps.add("ome/xml/model/%sRef.h" % path)
             o = self.model.getObjectByName(self.name)
             if o is not None:
-                deps.add("ome/xml/model/%s.h" % self.name)
+                path = re.sub("::", "/", self.name)
+                deps.add("ome/xml/model/%s.h" % path)
                 for prop in o.properties.values():
                     deps.update(prop.source_dependencies)
 
