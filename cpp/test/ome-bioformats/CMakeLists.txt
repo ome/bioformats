@@ -42,31 +42,31 @@ if(BUILD_TESTS)
 
   add_executable(metadatamap metadatamap.cpp)
   target_link_libraries(metadatamap ome-bioformats)
-  target_link_libraries(metadatamap ${TEST_LIBS})
+  target_link_libraries(metadatamap ome-test)
 
   add_test(ome-bioformats/metadatamap metadatamap)
 
   add_executable(fileinfo fileinfo.cpp)
   target_link_libraries(fileinfo ome-bioformats)
-  target_link_libraries(fileinfo ${TEST_LIBS})
+  target_link_libraries(fileinfo ome-test)
 
   add_test(ome-bioformats/fileinfo fileinfo)
 
   add_executable(pixelbuffer pixelbuffer.cpp)
   target_link_libraries(pixelbuffer ome-bioformats)
-  target_link_libraries(pixelbuffer ${TEST_LIBS})
+  target_link_libraries(pixelbuffer ome-test)
 
   add_test(ome-bioformats/pixelbuffer pixelbuffer)
 
   add_executable(pixelproperties pixelproperties.cpp)
   target_link_libraries(pixelproperties ome-bioformats)
-  target_link_libraries(pixelproperties ${TEST_LIBS})
+  target_link_libraries(pixelproperties ome-test)
 
   add_test(ome-bioformats/pixelproperties pixelproperties)
 
   add_executable(version version.cpp)
   target_link_libraries(version ome-bioformats)
-  target_link_libraries(version ${TEST_LIBS})
+  target_link_libraries(version ome-test)
 
   add_test(ome-bioformats/version version)
 

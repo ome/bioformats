@@ -97,5 +97,5 @@ TEST(Header, ${safeheader}_${repeat})
   endforeach(header)
 
   add_executable(${component}-headers ${test_headers_SOURCES})
-  target_link_libraries(${component}-headers ${TEST_LIBS} ${library})
+  target_link_libraries(${component}-headers ${library} ome-test)
 endfunction(header_test_from_file)
