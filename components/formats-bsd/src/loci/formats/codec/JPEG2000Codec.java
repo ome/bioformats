@@ -207,16 +207,21 @@ public class JPEG2000Codec extends BaseCodec {
 
     try {
       RandomAccessInputStream is = new RandomAccessInputStream(handle);
-      is.seek(0);
-      if (!j2kOptions.writeBox) {
-        while ((is.readShort() & 0xffff) != 0xff4f) {
-          is.seek(is.getFilePointer() - 1);
+      try {
+        is.seek(0);
+        if (!j2kOptions.writeBox) {
+          while ((is.readShort() & 0xffff) != 0xff4f) {
+            is.seek(is.getFilePointer() - 1);
+          }
+          is.seek(is.getFilePointer() - 2);
         }
-        is.seek(is.getFilePointer() - 2);
+        byte[] buf = new byte[(int) (is.length() - is.getFilePointer())];
+        is.readFully(buf);
+        return buf;
       }
-      byte[] buf = new byte[(int) (is.length() - is.getFilePointer())];
-      is.readFully(buf);
-      return buf;
+      finally {
+        is.close();
+      }
     }
     catch (IOException e) {
     }
