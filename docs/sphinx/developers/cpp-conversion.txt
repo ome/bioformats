@@ -131,10 +131,10 @@ The unsafe example above, rewritten to use
   this is useful for cycle breaking and is used by the OME XML model
   objects for references
 
-Resource Acquisition Is Initialisation
+Resource Acquisition Is Initialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Resource Acquisition Is Initialisation (RAII) is a programming idiom
+Resource Acquisition Is Initialization (RAII) is a programming idiom
 used throughout modern C++ libraries and applications, including the
 Standard Library,
 
@@ -229,7 +229,7 @@ modifying the object, also making it clear that there is no transfer
 of ownership.  Passing using a :cpp:class:`std::shared_ptr` is
 possible but not recommended---the copy will involve reference
 counting overhead which can kill multi-threaded performance since it
-requires synchronisation between all threads; use a :c:type:`const`
+requires synchronization between all threads; use a :c:type:`const`
 reference to a :cpp:class:`std::shared_ptr` to avoid the overhead.  If
 ownership should be transferred or shared with the callee, use a
 non-:c:type:`const` reference.
@@ -411,7 +411,7 @@ C++ classes implementing interfaces:
 - Use :c:type:`virtual public` inheritance for implemented interfaces
 - Have a :cpp:type:`virtual` destructor
 
-When compiled with optimisation enabled, the interface classes should
+When compiled with optimization enabled, the interface classes should
 have zero storage overhead.  If implementing classes don't use
 :c:type:`virtual public` inheritance, compilation will fail as soon as
 a second class in the inheritance hierarchy also implements the
