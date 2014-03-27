@@ -263,7 +263,7 @@ Again, to be absolutely clear, plain pointers are never used and are
 not acceptable for ownership transfer.  A plain reference also makes
 it clear there is no ownership transfer.
 
-- Safety: References can not be :cpp:class:`null`
+- Safety: References cannot be :cpp:class:`null`
 - Storing polymorphic types requires use of a
   :cpp:class:`shared_ptr`
 - Referencing polymorphic types *may* require use of a
@@ -372,7 +372,7 @@ Arbitrary types
 
 This is the most flexible solution, but in order to get a value back
 out, it requires casting to its specific type.  This can mean a
-situation could arise where values are stored of types which can not
+situation could arise where values are stored of types which cannot
 be handled since it's not possible to write the code to handle every
 single possibility ahead of time.  This can't arise with
 :cpp:class:`boost::variant` since the scope is limited to a set of
