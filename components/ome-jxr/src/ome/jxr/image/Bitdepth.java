@@ -2,7 +2,7 @@
  * #%L
  * OME library for reading the JPEG XR file format.
  * %%
- * Copyright (C) 2013 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -40,7 +40,7 @@ import java.util.List;
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
-public enum OutputBitdepth {
+public enum Bitdepth {
 
   BD1WHITE1(0),
   BD8(1),
@@ -52,12 +52,12 @@ public enum OutputBitdepth {
   BD5(8),
   BD10(9),
   BD565(10),
-  RESERVED(5,11,12,13,14),
+  RESERVED(5, 11, 12, 13, 14),
   BD1BLACK1(15);
 
   private List<Integer> ids = new ArrayList<Integer>();
 
-  private OutputBitdepth(Integer... ids) {
+  private Bitdepth(Integer... ids) {
     this.ids.addAll(Arrays.asList(ids));
   }
 
@@ -65,12 +65,12 @@ public enum OutputBitdepth {
     return ids;
   }
 
-  public static OutputBitdepth findById(int id) {
-    for (OutputBitdepth bitdepth : OutputBitdepth.values()) {
+  public static Bitdepth findById(int id) {
+    for (Bitdepth bitdepth : Bitdepth.values()) {
       if (bitdepth.getId().contains(id)) {
         return bitdepth;
       }
     }
-    throw new IllegalArgumentException("Unspecified output bitdepth format id: " + id);
+    throw new IllegalArgumentException("Unspecified bitdepth format id: " + id);
   }
 }

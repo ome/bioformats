@@ -49,9 +49,9 @@
       <class name="ome.jxr.image.utests.ColorFormatTest"/>
     </classes>
   </test>
-  <test name="OutputBitdepth">
+  <test name="Bitdepth">
     <classes>
-      <class name="ome.jxr.image.utests.OutputBitdepthTest"/>
+      <class name="ome.jxr.image.utests.BitdepthTest"/>
     </classes>
   </test>
   <test name="IFDMetadata">
