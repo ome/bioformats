@@ -113,7 +113,6 @@ public enum TiffCompression implements CodedEnum {
       }
       j2k.writeBox = false;
       j2k.lossless = false;
-      j2k.quality = 10;
       return j2k;
     }
   },
@@ -170,7 +169,6 @@ public enum TiffCompression implements CodedEnum {
       }
       j2k.writeBox = false;
       j2k.lossless = false;
-      j2k.quality = 10;
       return j2k;
     }
   },

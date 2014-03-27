@@ -124,7 +124,9 @@ public class JAIIIOServiceImpl extends AbstractService
       (J2KImageWriteParam) writer.getDefaultWriteParam();
     param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
     param.setCompressionType("JPEG2000");
-    param.setEncodingRate(options.quality);
+    if (!options.lossless) {
+      param.setEncodingRate(options.quality);
+    }
     param.setLossless(options.lossless);
     param.setFilter(filter);
     param.setCodeBlockSize(options.codeBlockSize);
