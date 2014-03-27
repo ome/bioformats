@@ -172,7 +172,7 @@ If using ``Unix Makefiles``, simply run::
   % make
 
 with any additional options required, for example ``-j`` to enable
-parallelisation.
+parallel building.
 
 If using an IDE, open the generated project file and proceed using the
 IDE to build the project.
@@ -225,7 +225,7 @@ or to run verbosely::
   % ctest -V
 
 Additional flags allow specification of the build configuration to
-use, logging, parallelisation and other options.  Please see the
+use, logging, parallel building and other options.  Please see the
 :program:`ctest` documentation for further details.
 
 Individual test programs may be run by hand if required.
