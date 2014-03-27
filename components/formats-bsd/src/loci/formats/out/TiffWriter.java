@@ -89,7 +89,7 @@ public class TiffWriter extends FormatWriter {
   protected RandomAccessInputStream in;
 
   /** Whether or not to check the parameters passed to saveBytes. */
-  private boolean checkParams = true;
+  protected boolean checkParams = true;
 
   /**
    * Sets the compression code for the specified IFD.
@@ -197,7 +197,7 @@ public class TiffWriter extends FormatWriter {
    * This method is factored out from <code>saveBytes()</code> in an attempt to
    * ensure thread safety.
    */
-  private int prepareToWriteImage(
+  protected int prepareToWriteImage(
       int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
   throws IOException, FormatException {
     MetadataRetrieve retrieve = getMetadataRetrieve();
@@ -422,7 +422,7 @@ public class TiffWriter extends FormatWriter {
 
   // -- Helper methods --
 
-  private void setupTiffSaver() throws IOException {
+  protected void setupTiffSaver() throws IOException {
     out.close();
     out = new RandomAccessOutputStream(currentId);
     tiffSaver = new TiffSaver(out, currentId);
