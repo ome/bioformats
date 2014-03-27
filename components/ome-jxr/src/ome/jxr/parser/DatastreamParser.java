@@ -32,6 +32,8 @@ import loci.formats.codec.BitBuffer;
 import ome.jxr.JXRException;
 import ome.jxr.constants.Image;
 import ome.jxr.image.ColorFormat;
+import ome.jxr.image.FrequencyBand;
+import ome.jxr.image.Bitdepth;
 
 /**
  * Parses the initial elements (image header, image plane headers(-s)) of the
@@ -47,49 +49,39 @@ import ome.jxr.image.ColorFormat;
  */
 public final class DatastreamParser extends Parser {
 
+  // Image header fields
   private int encoderVersion;
-
   private int reservedB;
-
   private boolean hardTilingFlag;
-
   private boolean tilingFlag;
-
   private boolean frequencyModeCodestreamFlag;
-
   private int spatialXfrmSubordinate;
-
   private boolean indexTablePresentFlag;
-
   private int overlapMode;
-
   private boolean shortHeaderFlag;
-
   private boolean longWordFlag;
-
   private boolean windowingFlag;
-
   private boolean trimFlexbitsFlag;
-
   private int reservedD;
-
   private boolean redBlueNotSwappedFlag;
-
   private boolean premultipliedAlphaFlag;
-
   private boolean alphaImagePlaneFlag;
-
-  private int outputClrFmt;
-
-  private int outputBitdepth;
-
+  private ColorFormat outputClrFmt;
+  private Bitdepth outputBitdepth;
   private int widthMinus1, heightMinus1;
-
   private int numVerTilesMinus1 = 1, numHorTilesMinus1 = 1;
-
   private short[] tileWidthInMB, tileHeightInMB;
-
   private int topMargin, leftMargin, bottomMargin, rightMargin;
+
+  // Image plane header fields
+  private ColorFormat internalClrFormat;
+  private boolean scaledFlag;
+  private FrequencyBand bandsPresent;
+  private int chromaCenteringX, chromaCenteringY;
+  private int numComponentsMinus1, numComponentsExtendedMinus16;
+  private int shiftBits;
+  private int lenMantissa, expBias;
+  private boolean lpImagePlaneUniformFlag, hpImagePlaneUniformFlag;
 
   public DatastreamParser(Parser parentParser, RandomAccessInputStream stream)
       throws JXRException {
@@ -111,13 +103,6 @@ public final class DatastreamParser extends Parser {
       extractImageHeaderMetadata();
       verifyCodestreamConformance();
       parsePrimaryImagePlaneHeader();
-      if (alphaImagePlaneFlag) {
-        parseAlphaImagePlaneHeader();
-      }
-      // ImagePlane primaryImagePlane = new ImagePlane();
-      // for each image plane:
-      // parse image plane header
-      // parse coded tiles
     } catch (IOException ioe) {
       throw new JXRException(ioe);
     }
@@ -132,9 +117,7 @@ public final class DatastreamParser extends Parser {
   }
 
   private void extractImageHeaderMetadata() throws IOException {
-    byte[] bytes = new byte[4];
-    stream.readFully(bytes);
-    BitBuffer bits = new BitBuffer(bytes);
+    BitBuffer bits = streamBytesToBits(4);
 
     reservedB = bits.getBits(4);
     hardTilingFlag = (bits.getBits(1) == 1);
@@ -158,8 +141,8 @@ public final class DatastreamParser extends Parser {
     redBlueNotSwappedFlag = (bits.getBits(1) == 1);
     premultipliedAlphaFlag = (bits.getBits(1) == 1);
     alphaImagePlaneFlag = (bits.getBits(1) == 1);
-    outputClrFmt = bits.getBits(4);
-    outputBitdepth = bits.getBits(4);
+    outputClrFmt = ColorFormat.findById(bits.getBits(4));
+    outputBitdepth = Bitdepth.findById(bits.getBits(4));
 
     if (shortHeaderFlag) {
       widthMinus1 = stream.readUnsignedShort();
@@ -170,9 +153,7 @@ public final class DatastreamParser extends Parser {
     }
 
     if (tilingFlag) {
-      bytes = new byte[3];
-      stream.readFully(bytes);
-      bits = new BitBuffer(bytes);
+      bits = streamBytesToBits(3);
       numVerTilesMinus1 = bits.getBits(12);
       numHorTilesMinus1 = bits.getBits(12);
 
@@ -197,9 +178,7 @@ public final class DatastreamParser extends Parser {
     }
 
     if (windowingFlag) {
-      bytes = new byte[3];
-      stream.readFully(bytes);
-      bits = new BitBuffer(bytes);
+      bits = streamBytesToBits(3);
       topMargin = bits.getBits(6);
       leftMargin = bits.getBits(6);
       bottomMargin = bits.getBits(6);
@@ -225,28 +204,101 @@ public final class DatastreamParser extends Parser {
     if (overlapMode == Image.OVERLAP_MODE_RESERVED) {
       throw new JXRException("Reserved value of OVERLAP_MODE: " + overlapMode);
     }
-    if (outputClrFmt > Image.OUTPUT_CLR_FMT_MAX) {
-      throw new JXRException("Wrong value of OUTPUT_CLR_FMT. "
-          + "Expected [0.." + Image.OUTPUT_CLR_FMT_MAX + "], " + "found: "
-          + outputClrFmt);
-    }
-    if (!ColorFormat.RGB.equals(ColorFormat.findById(outputClrFmt))
-        && redBlueNotSwappedFlag) {
+    if (!ColorFormat.RGB.equals(outputClrFmt) && redBlueNotSwappedFlag) {
       throw new JXRException("Wrong value of RED_BLUE_NOT_SWAPPED_FLAG.");
     }
-    if ((ColorFormat.YUV420.equals(ColorFormat.findById(outputClrFmt)) || ColorFormat.YUV422
-        .equals(ColorFormat.findById(outputClrFmt)))
-        && (widthMinus1 + 1) % 2 != 0) {
+    if ((ColorFormat.YUV420.equals(outputClrFmt) || ColorFormat.YUV422
+        .equals(outputClrFmt)) && (widthMinus1 + 1) % 2 != 0) {
       throw new JXRException("Wrong value of WIDTH_MINUS1.");
     }
   }
 
-  private void parsePrimaryImagePlaneHeader() {
-    // TODO Auto-generated method stub
+  private void parsePrimaryImagePlaneHeader() throws IOException {
+    BitBuffer bits = streamBytesToBits(1);
+
+    ColorFormat internalClrFmt = ColorFormat.findById(bits.getBits(3));
+    scaledFlag = (bits.getBits(1) == 1);
+    bandsPresent = FrequencyBand.findById(bits.getBits(4));
+
+    if (ColorFormat.YUV444.equals(internalClrFmt)
+        || ColorFormat.YUV420.equals(internalClrFmt)
+        || ColorFormat.YUV422.equals(internalClrFmt)) {
+      bits = streamBytesToBits(1);
+      if (ColorFormat.YUV420.equals(internalClrFmt)
+          || ColorFormat.YUV422.equals(internalClrFmt)) {
+        // Skip RESERVED_E_BIT in this version of the decoder
+        bits.skipBits(1);
+        chromaCenteringX = bits.getBits(3);
+      } else {
+        // Skip RESERVED_F in this version of the decoder
+        bits.skipBits(4);
+      }
+      if (ColorFormat.YUV420.equals(internalClrFmt)) {
+        // Skip RESERVED_G_BIT in this version of the decoder
+        bits.skipBits(1);
+        chromaCenteringY = bits.getBits(3);
+      } else {
+        // Skip RESERVED_H in this version of the decoder
+        bits.skipBits(4);
+      }
+    } else if (ColorFormat.NCOMPONENT.equals(internalClrFmt)) {
+      bits = streamBytesToBits(2);
+      numComponentsMinus1 = bits.getBits(4);
+      if (numComponentsMinus1 == 0xf) {
+        numComponentsExtendedMinus16 = bits.getBits(12);
+      } else {
+        // Skip RESERVED_H in this version of the decoder
+        bits.skipBits(4);
+        stream.seek(stream.getFilePointer() - 1);
+      }
+    }
+
+    if (Bitdepth.BD16.equals(outputBitdepth)
+        || Bitdepth.BD16S.equals(outputBitdepth)
+        || Bitdepth.BD32S.equals(outputBitdepth)) {
+      bits = streamBytesToBits(1);
+      int shiftBits = bits.getBits(8);
+    }
+    if (Bitdepth.BD32F.equals(outputBitdepth)) {
+      bits = streamBytesToBits(2);
+      lenMantissa = bits.getBits(8);
+      expBias = bits.getBits(8);
+    }
+
+    bits = streamBytesToBits(1);
+    boolean dcImagePlaneUniformFlag = (bits.getBits(1) == 1);
+    if (dcImagePlaneUniformFlag) {
+      // DC_QP()
+    }
+
+    if (!FrequencyBand.DCONLY.equals(bandsPresent)) {
+      // Skip RESERVED_I_BIT in this version of the decoder
+      bits.skipBits(1);
+      lpImagePlaneUniformFlag = (bits.getBits(1) == 1);
+      if (lpImagePlaneUniformFlag) {
+        // NumLPQPs = 1
+        // LP_QP()
+      }
+      if (!FrequencyBand.NOHIGHPASS.equals(bandsPresent)) {
+        // Skip RESERVED_J_BIT in this version of the decoder
+        bits.skipBits(1);
+        hpImagePlaneUniformFlag = (bits.getBits(1) == 1);
+        if (hpImagePlaneUniformFlag) {
+          // NumHPQPs = 1
+          // HP_QP()
+        }
+      }
+    }
+
+    while (!bits.isBitOnByteBoundary()) {
+      bits.skipBits(1);
+    }
   }
 
-  private void parseAlphaImagePlaneHeader() {
-    // TODO Auto-generated method stub
+  private BitBuffer streamBytesToBits(int numberOfBytes) throws IOException {
+    byte[] bytes = new byte[numberOfBytes];
+    stream.readFully(bytes);
+    return new BitBuffer(bytes);
   }
 
   public void close() throws IOException {
