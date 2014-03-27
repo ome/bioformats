@@ -1,4 +1,4 @@
-C++ Implementation
+C++ implementation
 ==================
 
 A completely native C++ interface is currently in development.  Unlike

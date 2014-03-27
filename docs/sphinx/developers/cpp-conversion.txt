@@ -1,4 +1,4 @@
-C++ Conversion Details
+C++ conversion details
 ======================
 
 The C++ codebase has been primarily a conversion of the original Java
