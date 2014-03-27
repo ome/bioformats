@@ -5,7 +5,7 @@ The C++ codebase has been primarily a conversion of the original Java
 codebase, with some additional helper functions and classes added
 where needed.  The intention is that the basic interfaces and classes
 should be identical between the two languages unless this is prevented
-by fundamental differences between the languages which prevent it.
+by fundamental differences between the languages.
 
 This section is intended to be useful for
 
@@ -235,8 +235,8 @@ ownership should be transferred or shared with the callee, use a
 non-:c:type:`const` reference.
 
 To be absolutely clear, plain pointers are never used and are not
-acceptable for use for ownership transfer.  A plain reference also
-makes it clear there is no ownership transfer.
+acceptable for ownership transfer.  A plain reference also makes it
+clear there is no ownership transfer.
 
 Return types:
 
@@ -249,19 +249,19 @@ Return types:
 
 If the callee does not retain a copy of the original object, it can't
 pass by reference since it can't guarantee the object remaining in
-scope after it returns, hence it must create a temporary and pass by
-value.  If the callee does retain a copy, it has the option of passing
-by reference.  Passing by reference is preferred when possible.
-Passing by value implies ownership transfer.  Passing by reference
-implies ownership retention.  Passing a :cpp:class:`std::shared_ptr`
-by value or reference implies sharing ownership since the caller can
-retain a reference; if passing by value ownership *may* be transferred
-since this implies the callee is not retaining a reference to it (but
-this isn't guaranteed).
+scope after it returns, hence it must create a temporary value and
+pass by value.  If the callee does retain a copy, it has the option of
+passing by reference.  Passing by reference is preferred when
+possible.  Passing by value implies ownership transfer.  Passing by
+reference implies ownership retention.  Passing a
+:cpp:class:`std::shared_ptr` by value or reference implies sharing
+ownership since the caller can retain a reference; if passing by value
+ownership *may* be transferred since this implies the callee is not
+retaining a reference to it (but this isn't guaranteed).
 
 Again, to be absolutely clear, plain pointers are never used and are
-not acceptable for use for ownership transfer.  A plain reference also
-makes it clear there is no ownership transfer.
+not acceptable for ownership transfer.  A plain reference also makes
+it clear there is no ownership transfer.
 
 - Safety: References can not be :cpp:class:`null`
 - Storing polymorphic types requires use of a
@@ -307,7 +307,7 @@ feature; older compilers use :cpp:class:`boost::array` as a fallback.
 - C (C++) arrays essentially decay to plain pointers
 - Plain pointers have no associated size information
 - :cpp:class:`std::array` is a class which behaves like an array
-- :cpp:class:`std::array` size defined in the template
+- :cpp:class:`std::array` size is defined in the template
 - :cpp:class:`std::array` can be passed like any object
 
 Storing and passing different types
@@ -345,7 +345,7 @@ different types:
   typedef boost::variant<int, std::string> variants;
   std::vector<variants> v;
   v.push_back(43);
-  v.push_back("ATTO 647N")
+  v.push_back("ATTO 647N");
 
 - Store a set of discriminated types
 - Used to store original metadata
@@ -354,9 +354,10 @@ This is not an alternative to a common root object.  Instead, this is
 a discriminated union, which can store one of a defined set of
 "variant" types.  A static visitor pattern may be used to generate
 code to operate on all of the supported types.  The variant type may
-be used as a class member, passed by value or reference and stored in
-containers like any other type.  Due to the way it's implemented, it
-doesn't necessarily need wrapping in a :cpp:class:`std::shared_ptr`
+be used as a class member, passed by value, passed by reference or
+stored in a containers like any other type.  Due to the way it is
+implemented to store values, it doesn not necessarily need wrapping in
+a :cpp:class:`std::shared_ptr` since it can behave as a value type
 (depending upon the context).
 
 Arbitrary types
@@ -371,11 +372,13 @@ Arbitrary types
 
 This is the most flexible solution, but in order to get a value back
 out, it requires casting to its specific type.  This can mean a
-situation could arise where values are stored of types which can't be
-handled.  This can't arise with :cpp:class:`boost::variant` since the
-scope is limited to a set of allowed types, and the static visitor can
-ensure that all types are supported by the code at compile time.
-However, if the open-ended flexibility is needed, this is available.
+situation could arise where values are stored of types which can not
+be handled since it's not possible to write the code to handle every
+single possibility ahead of time.  This can't arise with
+:cpp:class:`boost::variant` since the scope is limited to a set of
+allowed types, and the static visitor can ensure that all types are
+supported by the code at compile time.  However, if the open-ended
+flexibility is needed, this is available.
 
 Java uses polymorphism to store and pass the root :cpp:class:`Object`
 around.  The :cpp:class:`boost::variant` and :cpp:class:`boost::any`
@@ -441,6 +444,8 @@ Source layout::
       ├── ome-xerces
       └── ome-xml
 
+:file:`bioformats`
+  Bio-Formats reader and writer interfaces and implementations
 :file:`compat`
   Compatibility workarounds
 :file:`internal`
@@ -449,8 +454,6 @@ Source layout::
   Xerces-C XML DOM wrappers
 :file:`xml`
   OME XML model and metadata
-:file:`bioformats`
-  Bio-Formats reader and writer interfaces and implementations
 
 Configuring and building with :program:`cmake`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
