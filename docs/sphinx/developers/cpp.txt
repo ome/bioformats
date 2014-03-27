@@ -53,9 +53,9 @@ and for different versions.
 RedHat and CentOS
 ^^^^^^^^^^^^^^^^^
 
-Install the :file:`gtest` package.  Future versions might require
-doing similar things to the Debian version, but currently the library
-is prebuilt and installed ready for use.
+Install the :file:`gtest` package.  Future versions might require an
+extra build step as for the Debian version, below, but currently the
+library is prebuilt and installed ready for use.
 
 Debian and Ubuntu
 ^^^^^^^^^^^^^^^^^
