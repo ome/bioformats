@@ -42,10 +42,12 @@ and JAR dependencies (stored in the Maven repository in
 currently open.
 
 We recommend using Eclipse 4.3 (Kepler), specifically -
-"Eclipse IDE for Java developers". It comes with m2e installed (http://eclipse.org/downloads/compare.php?release=kepler).
+"Eclipse IDE for Java developers". It comes with m2e installed
+(http://eclipse.org/downloads/compare.php?release=kepler).
 
-You can then import the Bio-Formats source by choosing :menuselection:`File --> Import --> Existing Maven Projects` from the menu and browsing to the
-top-level folder of your Bio-Formats working copy.
+You can then import the Bio-Formats source by choosing
+:menuselection:`File --> Import --> Existing Maven Projects` from the menu
+and browsing to the top-level folder of your Bio-Formats working copy.
 
 Command line
 ------------
