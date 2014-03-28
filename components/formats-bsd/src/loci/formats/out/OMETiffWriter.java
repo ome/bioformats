@@ -74,10 +74,10 @@ public class OMETiffWriter extends TiffWriter {
   // -- Fields --
 
   private List<Integer> seriesMap;
-  private String[][] imageLocations;
-  private OMEXMLMetadata omeMeta;
-  private OMEXMLService service;
-  private Map<String, Integer> ifdCounts = new HashMap<String, Integer>();
+  protected String[][] imageLocations;
+  protected OMEXMLMetadata omeMeta;
+  protected OMEXMLService service;
+  protected Map<String, Integer> ifdCounts = new HashMap<String, Integer>();
 
   private Map<String, String> uuids = new HashMap<String, String>();
 
@@ -228,7 +228,7 @@ public class OMETiffWriter extends TiffWriter {
   // -- Helper methods --
 
   /** Gets the UUID corresponding to the given filename. */
-  private String getUUID(String filename) {
+  protected String getUUID(String filename) {
     String uuid = uuids.get(filename);
     if (uuid == null) {
       uuid = UUID.randomUUID().toString();
@@ -237,7 +237,7 @@ public class OMETiffWriter extends TiffWriter {
     return uuid;
   }
 
-  private void setupServiceAndMetadata()
+  protected void setupServiceAndMetadata()
     throws DependencyException, ServiceException
   {
     // extract OME-XML string from metadata object
@@ -252,7 +252,7 @@ public class OMETiffWriter extends TiffWriter {
     omeMeta = service.createOMEXMLMetadata(omexml);
   }
 
-  private String getOMEXML(String file) throws FormatException, IOException {
+  protected String getOMEXML(String file) throws FormatException, IOException {
     // generate UUID and add to OME element
     String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
     omeMeta.setUUID(uuid);
@@ -271,7 +271,7 @@ public class OMETiffWriter extends TiffWriter {
     return prefix + WARNING_COMMENT + suffix;
   }
 
-  private void saveComment(String file, String xml) throws IOException {
+  protected void saveComment(String file, String xml) throws IOException {
     if (out != null) out.close();
     out = new RandomAccessOutputStream(file);
     RandomAccessInputStream in = null;
@@ -304,7 +304,7 @@ public class OMETiffWriter extends TiffWriter {
     omeMeta.setTiffDataPlaneCount(new NonNegativeInteger(1), series, plane);
   }
 
-  private void populateImage(OMEXMLMetadata omeMeta, int series) {
+  protected void populateImage(OMEXMLMetadata omeMeta, int series) {
     String dimensionOrder = omeMeta.getPixelsDimensionOrder(series).toString();
     int sizeZ = omeMeta.getPixelsSizeZ(series).getValue().intValue();
     int sizeC = omeMeta.getPixelsSizeC(series).getValue().intValue();
@@ -369,4 +369,9 @@ public class OMETiffWriter extends TiffWriter {
     return z * c * t;
   }
 
+  public void closeParentWorkaroundToFix() throws IOException {
+	  super.close();
+  }
+
+  
 }
