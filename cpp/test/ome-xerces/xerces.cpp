@@ -58,14 +58,18 @@
 #include <cstdlib>
 #include <stdexcept>
 
-
-void fatal(const char *err, const char *reason = 0)
+namespace
 {
-  std::cerr << "E: " << err;
-  if (reason)
-    std::cerr << ": " << reason;
-  std::cerr << std::endl;
-  std::exit(1);
+
+  void fatal(const char *err, const char *reason = 0)
+  {
+    std::cerr << "E: " << err;
+    if (reason)
+      std::cerr << ": " << reason;
+    std::cerr << std::endl;
+    std::exit(1);
+  }
+
 }
 
 namespace xml = ome::xerces;

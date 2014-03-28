@@ -38,6 +38,7 @@
 #ifndef OME_BIOFORMATS_META_BASEMETADATA_H
 #define OME_BIOFORMATS_META_BASEMETADATA_H
 
+#include <cstddef>
 #include <vector>
 
 #include <ome/compat/cstdint.h>
@@ -60,7 +61,7 @@ namespace ome
       {
       public:
         /// Index into an array.
-        typedef uint32_t index_type;
+        typedef std::size_t index_type;
         /// An array of bytes for binary image data.
         typedef std::vector<uint8_t> byte_array;
 

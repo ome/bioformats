@@ -41,6 +41,8 @@
 #include <ome/compat/array.h>
 #include <ome/compat/cstdint.h>
 
+#include <ome/bioformats/Types.h>
+
 #include <ome/xml/model/enums/PixelType.h>
 
 namespace ome
@@ -64,7 +66,7 @@ namespace ome
        * Get size of pixel type, in bytes.
        * @returns pixel size, in bytes.
        */
-      static uint32_t
+      static pixel_size_type
       pixel_byte_size()
       {
         return sizeof(typename P::type);
@@ -74,7 +76,7 @@ namespace ome
        * Get size of pixel type, in bits.
        * @returns pixel size, in bits.
        */
-      static uint32_t
+      static pixel_size_type
       pixel_bit_size()
       {
         return pixel_byte_size() * 8;
@@ -180,6 +182,14 @@ namespace ome
       typedef std::array<double,2> type;
     };
 
+    // No switch default to avoid -Wunreachable-code errors.
+    // However, this then makes -Wswitch-default complain.  Disable
+    // temporarily.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
+
     /**
      * Get the size of a PixelType, in bytes.
      *
@@ -187,10 +197,11 @@ namespace ome
      *
      * @returns the size, in bytes
      */
-    inline uint32_t
+    inline pixel_size_type
     bytesPerPixel(::ome::xml::model::enums::PixelType pixeltype)
     {
-      uint32_t size = 0;
+      pixel_size_type size = 0;
+
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
@@ -226,9 +237,8 @@ namespace ome
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
           size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_byte_size();
           break;
-        default:
-          break;
         }
+
       return size;
     }
 
@@ -239,10 +249,11 @@ namespace ome
      *
      * @returns the size, in bits
      */
-    inline uint32_t
+    inline pixel_size_type
     bitsPerPixel(::ome::xml::model::enums::PixelType pixeltype)
     {
-      uint32_t size = 0;
+      pixel_size_type size = 0;
+
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
@@ -278,11 +289,14 @@ namespace ome
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
           size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_bit_size();
           break;
-        default:
-          break;
         }
+
       return size;
     }
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
 
   }
 }

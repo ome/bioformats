@@ -104,6 +104,32 @@ namespace ome
         }
 
         /**
+         * Get wrapped xercesc::DOMDocument *.
+         *
+         * @note May be null.
+         *
+         * @returns the wrapped xercesc::DOMDocument.
+         */
+        xercesc::DOMDocument*
+        get()
+        {
+          return xmldoc;
+        }
+
+        /**
+         * Get wrapped xercesc::DOMDocument *.
+         *
+         * @note May be null.
+         *
+         * @returns the wrapped xercesc::DOMDocument.
+         */
+        const xercesc::DOMDocument*
+        get() const
+        {
+          return xmldoc;
+        }
+
+        /**
          * Create Element with namespace.
          *
          * @param ns the namespace.

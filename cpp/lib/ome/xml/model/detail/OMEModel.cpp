@@ -139,7 +139,7 @@ namespace ome
         OMEModel::size_type
         OMEModel::resolveReferences ()
         {
-          int unhandledReferences = 0;
+          size_type unhandledReferences = 0;
 
           for (reference_map_type::iterator i = references.begin();
                i != references.end();

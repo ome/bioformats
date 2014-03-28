@@ -39,6 +39,7 @@
 #define OME_BIOFORMATS_TYPES_H
 
 #include <algorithm>
+#include <cstddef>
 #include <iterator>
 #include <stdexcept>
 #include <string>
@@ -55,11 +56,11 @@ namespace ome
   {
 
     /// Size type for image dimensions.
-    typedef uint32_t dimension_size_type;
+    typedef std::size_t dimension_size_type;
     /// Size type for image counts.
-    typedef uint32_t image_size_type;
+    typedef std::size_t image_size_type;
     /// Size type for pixel bit depths.
-    typedef uint8_t pixel_size_type;
+    typedef uint32_t pixel_size_type;
 
   }
 }

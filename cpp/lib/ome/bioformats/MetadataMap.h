@@ -737,7 +737,7 @@ namespace ome
         {
           typename std::vector<T>::size_type idx = 1;
           // Determine the optimal padding based on the maximum digit count.
-          uint32_t sf = static_cast<uint32_t>(std::log10(static_cast<float>(c.size()))) + 1;
+          int sf = static_cast<int>(std::log10(static_cast<float>(c.size()))) + 1;
           for (typename std::vector<T>::const_iterator i = c.begin();
                i != c.end();
                ++i, ++idx)
@@ -800,7 +800,7 @@ namespace ome
         {
           typename std::vector<T>::size_type idx = 1;
           // Determine the optimal padding based on the maximum digit count.
-          uint32_t sf = static_cast<uint32_t>(std::log10(static_cast<float>(c.size()))) + 1;
+          int sf = static_cast<int>(std::log10(static_cast<float>(c.size()))) + 1;
           for (typename std::vector<T>::const_iterator i = c.begin();
                i != c.end();
                ++i, ++idx)

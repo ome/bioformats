@@ -148,7 +148,7 @@ class Language(object):
         except KeyError:
             return None
 
-    def index_signature(self, name, max_occurs, level):
+    def index_signature(self, name, max_occurs, level, dummy=False):
         sig = {
             'type': name,
             }
@@ -160,10 +160,13 @@ class Language(object):
 
         return sig
 
-    def index_string(self, signature):
-        return "%s %s" % (signature['argtype'], signature['argname'])
+    def index_string(self, signature, dummy=False):
+        if dummy is False:
+            return "%s %s" % (signature['argtype'], signature['argname'])
+        else:
+            return "%s /* %s */" % (signature['argtype'], signature['argname'])
 
-    def index_argname(self, signature):
+    def index_argname(self, signature, dummy=False):
         return signature['argname']
 
 class Java(Language):
@@ -202,10 +205,10 @@ class Java(Language):
     def getDefaultModelBaseClass(self):
         return "AbstractOMEModelObject"
 
-    def index_signature(self, name, max_occurs, level):
+    def index_signature(self, name, max_occurs, level, dummy=False):
         """Makes a Java method signature dictionary from an index name."""
 
-        sig = super(Java, self).index_signature(name, max_occurs, level)
+        sig = super(Java, self).index_signature(name, max_occurs, level, dummy)
         sig['argtype'] = 'int'
 
         return sig
@@ -268,10 +271,10 @@ class CXX(Language):
     def getDefaultModelBaseClass(self):
         return "detail::OMEModelObject"
 
-    def index_signature(self, name, max_occurs, level):
+    def index_signature(self, name, max_occurs, level, dummy = False):
         """Makes a C++ method signature dictionary from an index name."""
 
-        sig = super(CXX, self).index_signature(name, max_occurs, level)
+        sig = super(CXX, self).index_signature(name, max_occurs, level, dummy)
         sig['argtype'] = 'index_type'
 
         return sig

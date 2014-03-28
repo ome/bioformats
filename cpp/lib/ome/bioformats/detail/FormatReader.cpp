@@ -230,22 +230,22 @@ namespace ome
           {
             if (isInterleaved())
               {
-                source.seekg(y * w * bpp * c, std::ios::cur);
+                source.seekg(static_cast<std::istream::off_type>(y * w * bpp * c), std::ios::cur);
                 source.read(reinterpret_cast<char *>(dest.buffer()),
-                            h * w * bpp * c);
+                            static_cast<std::streamsize>(h * w * bpp * c));
               }
             else
               {
                 dimension_size_type rowLen = w * bpp;
                 for (dimension_size_type channel = 0; channel < c; ++channel)
                   {
-                    source.seekg(y * rowLen, std::ios::cur);
+                    source.seekg(static_cast<std::istream::off_type>(y * rowLen), std::ios::cur);
                     source.read(reinterpret_cast<char *>(dest.buffer())
                                 + (channel * h * rowLen),
-                                h * rowLen);
+                                static_cast<std::streamsize>(h * rowLen));
                     // no need to skip bytes after reading final channel
                     if (channel < c - 1)
-                      source.seekg((getSizeY() - y - h) * rowLen, std::ios::cur);
+                      source.seekg(static_cast<std::istream::off_type>((getSizeY() - y - h) * rowLen), std::ios::cur);
                   }
               }
           }
@@ -254,36 +254,36 @@ namespace ome
             dimension_size_type scanlineWidth = getSizeX() + scanlinePad;
             if (isInterleaved())
               {
-                source.seekg(y * scanlineWidth * bpp * c, std::ios::cur);
+                source.seekg(static_cast<std::istream::off_type>(y * scanlineWidth * bpp * c), std::ios::cur);
                 for (dimension_size_type row = 0; row < h; ++row)
                   {
-                    source.seekg(x * bpp * c, std::ios::cur);
+                    source.seekg(static_cast<std::istream::off_type>(x * bpp * c), std::ios::cur);
                     source.read(reinterpret_cast<char *>(dest.buffer())
                                 + (row * w * bpp * c),
-                                w * bpp * c);
+                                static_cast<std::streamsize>(w * bpp * c));
                       // no need to skip bytes after reading final row
                     if (row < h - 1)
-                      source.seekg(bpp * c * (scanlineWidth - w - x), std::ios::cur);
+                      source.seekg(static_cast<std::istream::off_type>(bpp * c * (scanlineWidth - w - x)), std::ios::cur);
                   }
               }
             else
               {
                 for (dimension_size_type channel = 0; channel < c; ++channel)
                   {
-                    source.seekg(y * scanlineWidth * bpp, std::ios::cur);
+                    source.seekg(static_cast<std::istream::off_type>(y * scanlineWidth * bpp), std::ios::cur);
                     for (dimension_size_type row = 0; row < h; ++row)
                       {
-                        source.seekg(x * bpp, std::ios::cur);
+                        source.seekg(static_cast<std::istream::off_type>(x * bpp), std::ios::cur);
                         source.read(reinterpret_cast<char *>(dest.buffer())
                                     + (channel * w * h * bpp + row * w * bpp),
-                                    w * bpp);
+                                    static_cast<std::streamsize>(w * bpp));
                         // no need to skip bytes after reading final row of final channel
                         if (row < h - 1 || channel < c - 1)
-                          source.seekg(bpp * (scanlineWidth - w - x), std::ios::cur);
+                          source.seekg(static_cast<std::istream::off_type>(bpp * (scanlineWidth - w - x)), std::ios::cur);
                       }
                     if (channel < c - 1)
                       // no need to skip bytes after reading final channel
-                      source.seekg(scanlineWidth * bpp * (getSizeY() - y - h), std::ios::cur);
+                      source.seekg(static_cast<std::istream::off_type>(scanlineWidth * bpp * (getSizeY() - y - h)), std::ios::cur);
                   }
               }
           }
@@ -370,7 +370,7 @@ namespace ome
       }
 
       bool
-      FormatReader::isThisType(std::istream& stream)
+      FormatReader::isThisType(std::istream& /* stream */)
       {
         return false;
       }
@@ -488,13 +488,13 @@ namespace ome
       }
 
       void
-      FormatReader::get8BitLookupTable(PixelBufferRaw& buf) const
+      FormatReader::get8BitLookupTable(PixelBufferRaw& /* buf */) const
       {
         throw std::runtime_error("Reader does not implement 8-bit lookup tables");
       }
 
       void
-      FormatReader::get16BitLookupTable(PixelBufferRaw& buf) const
+      FormatReader::get16BitLookupTable(PixelBufferRaw& /* buf */) const
       {
         throw std::runtime_error("Reader does not implement 16-bit lookup tables");
       }
@@ -626,7 +626,7 @@ namespace ome
       }
 
       bool
-      FormatReader::isInterleaved(dimension_size_type subC) const
+      FormatReader::isInterleaved(dimension_size_type /* subC */) const
       {
         assertId(currentId.get(), true);
         return getCoreMetadata(getCoreIndex()).interleaved;
@@ -640,8 +640,8 @@ namespace ome
       }
 
       void
-      FormatReader::openThumbBytes(image_size_type no,
-                                   PixelBufferRaw& buf) const
+      FormatReader::openThumbBytes(image_size_type /* no */,
+                                   PixelBufferRaw& /* buf */) const
       {
         assertId(currentId.get(), true);
         /**
@@ -703,7 +703,7 @@ namespace ome
       }
 
       FormatReader::FileGroupOption
-      FormatReader::fileGroupOption(const std::string& id)
+      FormatReader::fileGroupOption(const std::string& /* id */)
       {
         return CANNOT_GROUP;
       }
@@ -937,13 +937,13 @@ namespace ome
       }
 
       bool
-      FormatReader::isSingleFile(const std::string& id) const
+      FormatReader::isSingleFile(const std::string& /* id */) const
       {
         return true;
       }
 
       uint32_t
-      FormatReader::getRequiredDirectories(const std::vector<std::string>& files) const
+      FormatReader::getRequiredDirectories(const std::vector<std::string>& /* files */) const
       {
         return 0;
       }
@@ -961,7 +961,7 @@ namespace ome
       }
 
       const std::vector<std::string>&
-      FormatReader::getPossibleDomains(const std::string& id) const
+      FormatReader::getPossibleDomains(const std::string& /* id */) const
       {
         return domains;
       }

@@ -41,9 +41,9 @@
 
 // Version metadata as integers
 
-#define OME_VERSION_MAJOR ${OME_VERSION_MAJOR}
-#define OME_VERSION_MINOR ${OME_VERSION_MINOR}
-#define OME_VERSION_PATCH ${OME_VERSION_PATCH}
+#define OME_VERSION_MAJOR ${OME_VERSION_MAJOR}U
+#define OME_VERSION_MINOR ${OME_VERSION_MINOR}U
+#define OME_VERSION_PATCH ${OME_VERSION_PATCH}U
 
 // Version metadata as strings
 

@@ -71,6 +71,7 @@ namespace ome
          * Construct a NULL Element.
          */
         Element ():
+          Node(),
           xmlelem()
         {
         }
@@ -81,6 +82,7 @@ namespace ome
          * @param element the Element to copy.
          */
         Element (const Element& element):
+          Node(element),
           xmlelem(element.xmlelem)
         {
         }
@@ -91,9 +93,11 @@ namespace ome
          * @param node the node to copy.
          */
         Element (Node& node):
-          xmlelem()
+          Node(node),
+          xmlelem(dynamic_cast<xercesc::DOMElement *>(&*node))
         {
-          *this = node;
+          if (!xmlelem)
+            static_cast<Node>(*this) = static_cast<xercesc::DOMNode *>(0);
         }
 
         /**
@@ -120,6 +124,32 @@ namespace ome
         /// Destructor.
         ~Element()
         {
+        }
+
+        /**
+         * Get wrapped xercesc::DOMElement *.
+         *
+         * @note May be null.
+         *
+         * @returns the wrapped xercesc::DOMElement.
+         */
+        xercesc::DOMElement*
+        get()
+        {
+          return xmlelem;
+        }
+
+        /**
+         * Get wrapped xercesc::DOMElement *.
+         *
+         * @note May be null.
+         *
+         * @returns the wrapped xercesc::DOMElement.
+         */
+        const xercesc::DOMElement*
+        get() const
+        {
+          return xmlelem;
         }
 
         /**
@@ -203,6 +233,7 @@ namespace ome
         Element&
         operator= (Element& element)
         {
+          static_cast<Node>(*this) = element;
           this->xmlelem = element.xmlelem;
           return *this;
         }
@@ -216,8 +247,10 @@ namespace ome
         Element&
         operator= (Node& node)
         {
-          xercesc::DOMNode *xnode = static_cast<xercesc::DOMNode *>(node);
+          xercesc::DOMNode *xnode = node.Node::get();
           this->xmlelem = dynamic_cast<xercesc::DOMElement*>(xnode);
+          if (this->xmlelem)
+            static_cast<Node>(*this) = node;
           return *this;
         }
 
