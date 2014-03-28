@@ -221,10 +221,21 @@ public class DicomReader extends FormatReader {
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
     Vector<String> files = fileList.get(keys[getSeries()]);
-    for (String f : companionFiles) {
-      files.add(f);
+    if (files == null) {
+      return null;
     }
-    return files == null ? null : files.toArray(new String[files.size()]);
+    Vector<String> uniqueFiles = new Vector<String>();
+    for (String f : files) {
+      if (!uniqueFiles.contains(f)) {
+        uniqueFiles.add(f);
+      }
+    }
+    for (String f : companionFiles) {
+      if (!uniqueFiles.contains(f)) {
+        uniqueFiles.add(f);
+      }
+    }
+    return uniqueFiles.toArray(new String[uniqueFiles.size()]);
   }
 
   public int fileGroupOption(String id) throws FormatException, IOException {
