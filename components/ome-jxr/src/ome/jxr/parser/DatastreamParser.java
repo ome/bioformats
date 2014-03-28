@@ -31,9 +31,10 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.codec.BitBuffer;
 import ome.jxr.JXRException;
 import ome.jxr.constants.Image;
-import ome.jxr.image.ColorFormat;
+import ome.jxr.image.BitDepth;
 import ome.jxr.image.FrequencyBand;
-import ome.jxr.image.Bitdepth;
+import ome.jxr.image.InternalColorFormat;
+import ome.jxr.image.OutputColorFormat;
 
 /**
  * Parses the initial elements (image header, image plane headers(-s)) of the
@@ -50,7 +51,6 @@ import ome.jxr.image.Bitdepth;
 public final class DatastreamParser extends Parser {
 
   // Image header fields
-  private int encoderVersion;
   private int reservedB;
   private boolean hardTilingFlag;
   private boolean tilingFlag;
@@ -66,19 +66,20 @@ public final class DatastreamParser extends Parser {
   private boolean redBlueNotSwappedFlag;
   private boolean premultipliedAlphaFlag;
   private boolean alphaImagePlaneFlag;
-  private ColorFormat outputClrFmt;
-  private Bitdepth outputBitdepth;
+  private OutputColorFormat outputClrFmt;
+  private BitDepth outputBitdepth;
   private int widthMinus1, heightMinus1;
   private int numVerTilesMinus1 = 1, numHorTilesMinus1 = 1;
   private short[] tileWidthInMB, tileHeightInMB;
   private int topMargin, leftMargin, bottomMargin, rightMargin;
 
   // Image plane header fields
-  private ColorFormat internalClrFormat;
+  private InternalColorFormat internalClrFmt;
   private boolean scaledFlag;
   private FrequencyBand bandsPresent;
   private int chromaCenteringX, chromaCenteringY;
   private int numComponentsMinus1, numComponentsExtendedMinus16;
+  private int numComponents;
   private int shiftBits;
   private int lenMantissa, expBias;
   private boolean lpImagePlaneUniformFlag, hpImagePlaneUniformFlag;
@@ -93,10 +94,7 @@ public final class DatastreamParser extends Parser {
     super.parse(parsingOffset);
 
     IFDParser ifdParser = (IFDParser) getParentParser();
-    FileParser fileParser = (FileParser) ifdParser.getParentParser();
-
     parsingOffset = ifdParser.getIFDMetadata().getImageOffset();
-    encoderVersion = fileParser.getEncoderVersion();
 
     try {
       checkIfGDISignaturePresent();
@@ -141,8 +139,8 @@ public final class DatastreamParser extends Parser {
     redBlueNotSwappedFlag = (bits.getBits(1) == 1);
     premultipliedAlphaFlag = (bits.getBits(1) == 1);
     alphaImagePlaneFlag = (bits.getBits(1) == 1);
-    outputClrFmt = ColorFormat.findById(bits.getBits(4));
-    outputBitdepth = Bitdepth.findById(bits.getBits(4));
+    outputClrFmt = OutputColorFormat.findById(bits.getBits(4));
+    outputBitdepth = BitDepth.findById(bits.getBits(4));
 
     if (shortHeaderFlag) {
       widthMinus1 = stream.readUnsignedShort();
@@ -204,10 +202,10 @@ public final class DatastreamParser extends Parser {
     if (overlapMode == Image.OVERLAP_MODE_RESERVED) {
       throw new JXRException("Reserved value of OVERLAP_MODE: " + overlapMode);
     }
-    if (!ColorFormat.RGB.equals(outputClrFmt) && redBlueNotSwappedFlag) {
+    if (!OutputColorFormat.RGB.equals(outputClrFmt) && redBlueNotSwappedFlag) {
       throw new JXRException("Wrong value of RED_BLUE_NOT_SWAPPED_FLAG.");
     }
-    if ((ColorFormat.YUV420.equals(outputClrFmt) || ColorFormat.YUV422
+    if ((OutputColorFormat.YUV420.equals(outputClrFmt) || OutputColorFormat.YUV422
         .equals(outputClrFmt)) && (widthMinus1 + 1) % 2 != 0) {
       throw new JXRException("Wrong value of WIDTH_MINUS1.");
     }
@@ -216,16 +214,16 @@ public final class DatastreamParser extends Parser {
   private void parsePrimaryImagePlaneHeader() throws IOException {
     BitBuffer bits = streamBytesToBits(1);
 
-    ColorFormat internalClrFmt = ColorFormat.findById(bits.getBits(3));
+    internalClrFmt = InternalColorFormat.findById(bits.getBits(3));
     scaledFlag = (bits.getBits(1) == 1);
     bandsPresent = FrequencyBand.findById(bits.getBits(4));
 
-    if (ColorFormat.YUV444.equals(internalClrFmt)
-        || ColorFormat.YUV420.equals(internalClrFmt)
-        || ColorFormat.YUV422.equals(internalClrFmt)) {
+    if (InternalColorFormat.YUV444.equals(internalClrFmt)
+        || InternalColorFormat.YUV420.equals(internalClrFmt)
+        || InternalColorFormat.YUV422.equals(internalClrFmt)) {
       bits = streamBytesToBits(1);
-      if (ColorFormat.YUV420.equals(internalClrFmt)
-          || ColorFormat.YUV422.equals(internalClrFmt)) {
+      if (InternalColorFormat.YUV420.equals(internalClrFmt)
+          || InternalColorFormat.YUV422.equals(internalClrFmt)) {
         // Skip RESERVED_E_BIT in this version of the decoder
         bits.skipBits(1);
         chromaCenteringX = bits.getBits(3);
@@ -233,7 +231,7 @@ public final class DatastreamParser extends Parser {
         // Skip RESERVED_F in this version of the decoder
         bits.skipBits(4);
       }
-      if (ColorFormat.YUV420.equals(internalClrFmt)) {
+      if (InternalColorFormat.YUV420.equals(internalClrFmt)) {
         // Skip RESERVED_G_BIT in this version of the decoder
         bits.skipBits(1);
         chromaCenteringY = bits.getBits(3);
@@ -241,7 +239,7 @@ public final class DatastreamParser extends Parser {
         // Skip RESERVED_H in this version of the decoder
         bits.skipBits(4);
       }
-    } else if (ColorFormat.NCOMPONENT.equals(internalClrFmt)) {
+    } else if (InternalColorFormat.NCOMPONENT.equals(internalClrFmt)) {
       bits = streamBytesToBits(2);
       numComponentsMinus1 = bits.getBits(4);
       if (numComponentsMinus1 == 0xf) {
@@ -253,13 +251,29 @@ public final class DatastreamParser extends Parser {
       }
     }
 
-    if (Bitdepth.BD16.equals(outputBitdepth)
-        || Bitdepth.BD16S.equals(outputBitdepth)
-        || Bitdepth.BD32S.equals(outputBitdepth)) {
+    if (InternalColorFormat.NCOMPONENT.equals(internalClrFmt)) {
+      if (numComponentsMinus1 == 0xf) {
+        numComponents = numComponentsExtendedMinus16 + 16;
+      } else {
+        numComponents = numComponentsMinus1 + 1;
+      }
+    } else if (InternalColorFormat.YONLY.equals(internalClrFmt)) {
+      numComponents = 1;
+    } else if (InternalColorFormat.YUV420.equals(internalClrFmt) ||
+        InternalColorFormat.YUV422.equals(internalClrFmt) ||
+        InternalColorFormat.YUV444.equals(internalClrFmt)) {
+      numComponents = 3;
+    } else if (InternalColorFormat.YUVK.equals(internalClrFmt)) {
+      numComponents = 4;
+    }
+
+    if (BitDepth.BD16.equals(outputBitdepth)
+        || BitDepth.BD16S.equals(outputBitdepth)
+        || BitDepth.BD32S.equals(outputBitdepth)) {
       bits = streamBytesToBits(1);
       int shiftBits = bits.getBits(8);
     }
-    if (Bitdepth.BD32F.equals(outputBitdepth)) {
+    if (BitDepth.BD32F.equals(outputBitdepth)) {
       bits = streamBytesToBits(2);
       lenMantissa = bits.getBits(8);
       expBias = bits.getBits(8);
