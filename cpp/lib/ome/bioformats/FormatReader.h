@@ -121,7 +121,15 @@ namespace ome
          */
         ~SaveSeries()
         {
-          reader.setCoreIndex(coreIndex);
+          try
+            {
+              if (coreIndex != reader.getCoreIndex())
+                reader.setCoreIndex(coreIndex);
+            }
+          catch (...)
+            {
+              // We can't throw in a destructor.
+            }
         }
       };
 
