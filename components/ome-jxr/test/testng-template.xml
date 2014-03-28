@@ -44,14 +44,19 @@
       <class name="ome.jxr.ifd.utests.JXRRationalTest"/>
     </classes>
   </test>
-  <test name="ColorFormat">
+  <test name="BitDepth">
     <classes>
-      <class name="ome.jxr.image.utests.ColorFormatTest"/>
+      <class name="ome.jxr.image.utests.BitDepthTest"/>
     </classes>
   </test>
-  <test name="Bitdepth">
+  <test name="InternalColorFormat">
     <classes>
-      <class name="ome.jxr.image.utests.BitdepthTest"/>
+      <class name="ome.jxr.image.utests.InternalColorFormatTest"/>
+    </classes>
+  </test>
+  <test name="OutputColorFormat">
+    <classes>
+      <class name="ome.jxr.image.utests.OutputColorFormatTest"/>
     </classes>
   </test>
   <test name="IFDMetadata">

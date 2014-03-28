@@ -35,12 +35,12 @@ import java.util.List;
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/image/OutputBitdepth.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/image/OutputBitdepth.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/image/BitDepth.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/image/BitDepth.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
-public enum Bitdepth {
+public enum BitDepth {
 
   BD1WHITE1(0),
   BD8(1),
@@ -57,7 +57,7 @@ public enum Bitdepth {
 
   private List<Integer> ids = new ArrayList<Integer>();
 
-  private Bitdepth(Integer... ids) {
+  private BitDepth(Integer... ids) {
     this.ids.addAll(Arrays.asList(ids));
   }
 
@@ -65,8 +65,8 @@ public enum Bitdepth {
     return ids;
   }
 
-  public static Bitdepth findById(int id) {
-    for (Bitdepth bitdepth : Bitdepth.values()) {
+  public static BitDepth findById(int id) {
+    for (BitDepth bitdepth : BitDepth.values()) {
       if (bitdepth.getId().contains(id)) {
         return bitdepth;
       }

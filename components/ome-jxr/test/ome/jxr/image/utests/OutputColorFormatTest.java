@@ -26,29 +26,29 @@
 package ome.jxr.image.utests;
 
 import static org.testng.AssertJUnit.assertTrue;
-import ome.jxr.image.ColorFormat;
+import ome.jxr.image.OutputColorFormat;
 
 import org.testng.annotations.Test;
 
-public class ColorFormatTest {
+public class OutputColorFormatTest {
 
   @Test
   public void testFindByIdForReservedIds() {
     int[] reservedIds = {9,10,11,12,13,14,15};
     for (Integer id : reservedIds) {
-      assertTrue(ColorFormat.RESERVED.equals(ColorFormat.findById(id)));
+      assertTrue(OutputColorFormat.RESERVED.equals(OutputColorFormat.findById(id)));
     }
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testFindByIdWithNegativeIdShouldThrowIAE() {
     int invalidId = -1;
-    ColorFormat.findById(invalidId);
+    OutputColorFormat.findById(invalidId);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testFindByIdWithOutOfRangeIdShouldThrowIAE() {
     int invalidId = 16;
-    ColorFormat.findById(invalidId);
+    OutputColorFormat.findById(invalidId);
   }
 }

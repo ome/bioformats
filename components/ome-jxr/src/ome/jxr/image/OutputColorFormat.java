@@ -35,12 +35,12 @@ import java.util.List;
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/image/ColorFormat.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/image/ColorFormat.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/image/OutputColorFormat.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/image/OutputColorFormat.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Blazej Pindelski bpindelski at dundee.ac.uk
  */
-public enum ColorFormat {
+public enum OutputColorFormat {
 
   YONLY(0),
   YUV420(1),
@@ -55,7 +55,7 @@ public enum ColorFormat {
 
   private List<Integer> ids = new ArrayList<Integer>();
 
-  private ColorFormat(Integer... ids) {
+  private OutputColorFormat(Integer... ids) {
     this.ids.addAll(Arrays.asList(ids));
   }
 
@@ -63,8 +63,8 @@ public enum ColorFormat {
     return ids;
   }
 
-  public static ColorFormat findById(int id) {
-    for (ColorFormat format : ColorFormat.values()) {
+  public static OutputColorFormat findById(int id) {
+    for (OutputColorFormat format : OutputColorFormat.values()) {
       if (format.getId().contains(id)) {
         return format;
       }
