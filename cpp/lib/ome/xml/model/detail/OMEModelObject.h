@@ -126,14 +126,15 @@ namespace ome
            * objects must be shared_ptr or weak_ptr of the same type (or
            * castable to the same type).
            *
-           * @todo: Use of strict const since this is nonmodifying.
+           * @note This is a shared_ptr comparison, not a value
+           * comparison.
            */
           template<typename T>
           class compare_element
           {
           private:
             /// The element to compare other elements with.
-            std::shared_ptr<const T> cmp;
+            const std::shared_ptr<const T>& cmp;
 
           public:
             /**
@@ -148,14 +149,49 @@ namespace ome
             /**
              * Compare element with another element.
              *
-             * @note This is a shared_ptr comparison, not a value
-             * comparison.
              *
              * @param element the element to compare the original element with.
              * @returns @c true if the elements are the same, otherwise @c false.
              */
             bool
-            operator () (std::weak_ptr<const T> element)
+            operator () (const std::shared_ptr<T>& element)
+            {
+              return cmp && element && cmp == element;
+            }
+
+            /**
+             * Compare element with another element.
+             *
+             * @param element the element to compare the original element with.
+             * @returns @c true if the elements are the same, otherwise @c false.
+             */
+            bool
+            operator () (const std::shared_ptr<const T>& element)
+            {
+              return cmp && element && cmp == element;
+            }
+
+            /**
+             * Compare element with another element.
+             *
+             * @param element the element to compare the original element with.
+             * @returns @c true if the elements are the same, otherwise @c false.
+             */
+            bool
+            operator () (const std::weak_ptr<T>& element)
+            {
+              std::shared_ptr<const T> shared_element(element);
+              return cmp && shared_element && cmp == shared_element;
+            }
+
+            /**
+             * Compare element with another element.
+             *
+             * @param element the element to compare the original element with.
+             * @returns @c true if the elements are the same, otherwise @c false.
+             */
+            bool
+            operator () (const std::weak_ptr<const T>& element)
             {
               std::shared_ptr<const T> shared_element(element);
               return cmp && shared_element && cmp == shared_element;
