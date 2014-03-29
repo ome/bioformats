@@ -110,7 +110,9 @@ namespace ome
          * @param model handler for the OME model used to track
          * instances and references seen during the update.
          * @throws EnumerationException if there is an error
-         * instantiating an enumeration during model object creation.
+         * instantiating an enumeration during model object creation,
+         * or ModelException if there are any consistency or validity
+         * errors found during processing.
          */
         virtual void
         update (const xerces::dom::Element& element,

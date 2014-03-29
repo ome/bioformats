@@ -68,6 +68,8 @@
 
 #include <ome/xerces/String.h>
 
+#include <ome/xml/model/ModelException.h>
+
 #include <boost/format.hpp>
 
 {% for include in klass.source_dependencies %}\
@@ -313,7 +315,7 @@ ${customContent}\
                 {
                   format fmt("Failed to parse ${klass.name} value ‘%1%’");
                   fmt % text;
-                  throw std::runtime_error(fmt.str());
+                  throw ModelException(fmt.str());
                 }
             }
 {% end %}\
@@ -362,8 +364,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.isAttribute and prop.name == "ID" %}\
         if (!element.hasAttribute("ID") && getID().empty())
           {
-            /// @todo Should be its own exception.
-            throw std::runtime_error("${klass.name} missing required ID property");
+            throw ModelException("${klass.name} missing required ID property");
           }
         if (element.hasAttribute("ID"))
            {
@@ -376,7 +377,7 @@ ${customUpdatePropertyContent[prop.name]}
                 {
                   format fmt("Failed to parse ${klass.name} value ‘%1%’");
                   fmt % is.str();
-                  throw std::runtime_error(fmt.str());
+                  throw ModelException(fmt.str());
                 }
              set${prop.methodName}(id);
 {% end %}\
@@ -419,7 +420,7 @@ ${customUpdatePropertyContent[prop.name]}
                 {
                   format fmt("Failed to parse ${klass.name} value ‘%1%’");
                   fmt % is.str();
-                  throw std::runtime_error(fmt.str());
+                  throw ModelException(fmt.str());
                 }
 
               set${prop.methodName}(attr);
@@ -435,10 +436,9 @@ ${customUpdatePropertyContent[prop.name]}
         std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         if (${prop.name}_nodeList.size() > 1)
           {
-            /// @todo Should be its own Exception.
             format fmt("${prop.name} node list size %1% != 1");
             fmt % ${prop.name}_nodeList.size();
-            throw std::runtime_error(fmt.str());
+            throw ModelException(fmt.str());
           }
         else if (${prop.name}_nodeList.size() != 0)
           {
@@ -474,7 +474,7 @@ ${customUpdatePropertyContent[prop.name]}
               {
                 format fmt("Failed to parse ${klass.name} ${prop.name} property value ‘%1%’");
                 fmt % is.str();
-                throw std::runtime_error(fmt.str());
+                throw ModelException(fmt.str());
               }
 {% end %}\
 {% if prop.langTypeNS == 'std::string' %}\
