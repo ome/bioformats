@@ -304,8 +304,8 @@ ${customContent}\
 
         {
           // Element's text data
-{% if klass.langBaseType != 'std::string' %}\
           std::string text(element.getTextContent());
+{% if klass.langBaseType != 'std::string' %}\
           if (!text.empty())
             {
               std::istringstream is(text);
@@ -318,7 +318,7 @@ ${customContent}\
             }
 {% end %}\
 {% if klass.langBaseType == 'std::string' %}\
-          this->value = element.getTextContent();
+          this->value = text;
 {% end %}\
         }
 {% end %}\
@@ -394,7 +394,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isEnumeration %}\
             // Attribute property which is an enumeration ${prop.name}
 {% if prop.minOccurs == 0 %}\
-            ${prop.instanceVariableType} nattr(std::make_shared< ${prop.langTypeNS}>(element.getAttribute("${prop.name}")));
+            std::string text(element.getAttribute("${prop.name}"));
+            ${prop.instanceVariableType} nattr(std::make_shared< ${prop.langTypeNS}>(text));
             set${prop.methodName}(nattr);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -443,10 +444,11 @@ ${customUpdatePropertyContent[prop.name]}
           {
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
             // Element property ${prop.name} which is complex (has sub-elements)
-{% if prop.minOccurs == 0 or (not lang.hasPrimitiveType(prop.langType) and not prop.isEnumeration) %} \
+{% if prop.minOccurs == 0 or (not lang.hasPrimitiveType(prop.langType) and not prop.isEnumeration) %}\
+            xerces::dom::Element elem(${prop.name}_nodeList.at(0));
             // While std::make_shared<> works, here,
             // boost::make_shared<> does not, so use new directly.
-            ${prop.instanceVariableType} p(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0), model));
+            ${prop.instanceVariableType} p(new ${prop.langTypeNS}(elem, model));
 {% end %}\
 {% if prop.minOccurs > 0 and (lang.hasPrimitiveType(prop.langType) or prop.isEnumeration) %} \
             ${prop.langTypeNS} p(${prop.name}_nodeList.at(0), model);
@@ -456,14 +458,16 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not prop.isComplex() %}\
             // Element property ${prop.name} which is not complex (has no
             // sub-elements)
+            std::string text(${prop.name}_nodeList.at(0).getTextContent());
 {% if prop.minOccurs == 0 %}\
-            ${prop.instanceVariableType} ns(std::make_shared< ${prop.langTypeNS}>(${prop.name}_nodeList.at(0).getTextContent()));
+            ${prop.instanceVariableType} ns(std::make_shared< ${prop.langTypeNS}>(text));
             set${prop.methodName}(ns);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
 {% if prop.langTypeNS != 'std::string' %}\
             ${prop.langTypeNS} attr;
-            std::istringstream is(${prop.name}_nodeList.at(0).getTextContent());
+
+            std::istringstream is(text);
             if (is >> attr)
               set${prop.methodName}(attr);
             else
@@ -474,7 +478,7 @@ ${customUpdatePropertyContent[prop.name]}
               }
 {% end %}\
 {% if prop.langTypeNS == 'std::string' %}\
-            set${prop.methodName}(${prop.name}_nodeList.at(0).getTextContent());
+            set${prop.methodName}(text);
 {% end %}\
 {% end %}\
 {% end %}\
@@ -532,7 +536,8 @@ ${customUpdatePropertyContent[prop.name]}
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
-            std::shared_ptr<${prop.methodName}> object(std::make_shared< ${prop.langTypeNS}>(elem->getTextContent(), model));
+            std::string text(element.getTextContent());
+            std::shared_ptr<${prop.methodName}> object(std::make_shared< ${prop.langTypeNS}>(text, model));
             add${prop.methodName}(object);
           }
 {% end %}\
