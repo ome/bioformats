@@ -174,7 +174,7 @@ namespace ome
         /**
          * Copy constructor.
          *
-         * @param copy the object to copy.
+         * @param copy the ${klass.name} to copy.
          */
         ${klass.name} (const ${klass.name}& copy);
 {% end header%}\
@@ -705,23 +705,20 @@ ${customUpdatePropertyContent[prop.name]}
          * @note The index must be valid.
          *
          * @param index the index number of the ${prop.methodName}.
-         * @param object the object to set.
+         * @param ${prop.argumentName} the ${prop.methodName} to set.
          * @returns a weak pointer to the ${prop.methodName}.
          * @throws std::out_of_range if the index is invalid.
-         *
-         * @todo object isn't a great parameter name; use something
-         * better.
          */
         const std::weak_ptr<${prop.langTypeNS}>&
         setLinked${prop.methodName} (${prop.instanceVariableType}::size_type index,
-                                     const std::shared_ptr<${prop.langTypeNS}>& object);
+                                     const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::weak_ptr<${prop.langTypeNS}>&
       ${klass.name}::setLinked${prop.methodName}(${prop.instanceVariableType}::size_type index,
-                                                 const std::shared_ptr<${prop.langTypeNS}>& object)
+                                                 const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        return ${prop.instanceVariableName}.at(index) = object;
+        return this->${prop.instanceVariableName}.at(index) = ${prop.argumentName};
       }
 {% end source %}\
 
@@ -729,7 +726,7 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Link ${prop.methodName}.
          *
-         * @param object the object to link.
+         * @param ${prop.argumentName} the ${prop.methodName} to link.
          * @returns @c true if the object was added to the internal
          * ${prop.instanceVariableName} list, otherwise @c false.
          *
@@ -737,23 +734,23 @@ ${customUpdatePropertyContent[prop.name]}
          * Is this an artifact of the Java API?
          */
         bool
-        link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object);
+        link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        object->link${klass.type}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->link${klass.type}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        object->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% end %}\
-        if (!contains(${prop.instanceVariableName}, object))
+        if (!contains(this->${prop.instanceVariableName}, ${prop.argumentName}))
           {
-            ${prop.instanceVariableName}.push_back(object);
+            this->${prop.instanceVariableName}.push_back(${prop.argumentName});
             return true;
           }
         return false;
@@ -764,10 +761,10 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Unlink ${prop.methodName}.
          *
-         * @param object the object to unlink.
+         * @param ${prop.argumentName} the ${prop.methodName} to unlink.
          *
-         * @returns @c true if the object was unlinked, otherwise
-         * @c false if the object was not linked and could hence not be
+         * @returns @c true if the ${prop.methodName} was unlinked, otherwise
+         * @c false if the ${prop.methodName} was not linked and could hence not be
          * unlinked.
          *
          * @todo Does the return value serve any useful purpose?  Is
@@ -777,29 +774,29 @@ ${customUpdatePropertyContent[prop.name]}
          * aren't preventing duplicates on insertion.
          */
         bool
-        unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object);
+        unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        object->unlink${klass.type}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->unlink${klass.type}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        object->unlink${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->unlink${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% end %}\
         bool found = false;
         ${prop.instanceVariableType}::iterator i =
-          std::find_if(${prop.instanceVariableName}.begin(),
-                       ${prop.instanceVariableName}.end(),
-                       compare_element<${prop.langTypeNS}>(object));
-        if (i != ${prop.instanceVariableName}.end())
+          std::find_if(this->${prop.instanceVariableName}.begin(),
+                       this->${prop.instanceVariableName}.end(),
+                       compare_element<${prop.langTypeNS}>(${prop.argumentName}));
+        if (i != this->${prop.instanceVariableName}.end())
           {
             found = true;
-            ${prop.instanceVariableName}.erase(i);
+            this->${prop.instanceVariableName}.erase(i);
           }
         return found;
       }
@@ -831,16 +828,16 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Link ${prop.methodName}.
          *
-         * @param object the ${prop.methodName} to link.
+         * @param ${prop.argumentName} the ${prop.methodName} to link.
          */
         void
-        link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object);
+        link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        ${prop.instanceVariableName} = object;
+        this->${prop.instanceVariableName} = ${prop.argumentName};
       }
 {% end source %}\
 
@@ -848,22 +845,22 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Unlink ${prop.methodName}.
          *
-         * @param object the object to unlink.
+         * @param ${prop.argumentName} the ${prop.methodName} to unlink.
          *
          * @todo This method is fairly pointless since it's equivalent
          * to linking a null pointer.  It could call @c link(0)
          * internally.
          */
         void
-        unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object);
+        unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        if (std::shared_ptr<${prop.langTypeNS}>(${prop.instanceVariableName}) == object)
+        if (std::shared_ptr<${prop.langTypeNS}>(this->${prop.instanceVariableName}) == ${prop.argumentName})
           {
-            ${prop.instanceVariableName} = std::shared_ptr<${prop.langTypeNS}>();
+            this->${prop.instanceVariableName} = std::shared_ptr<${prop.langTypeNS}>();
           }
       }
 {% end source %}\
