@@ -47,6 +47,12 @@ namespace ome
   {
     namespace model
     {
+      /**
+       * Implementation details.
+       *
+       * Default concrete implementations of interfaces in the parent
+       * namespace.
+       */
       namespace detail
       {
 
