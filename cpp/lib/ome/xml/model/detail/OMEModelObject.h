@@ -52,12 +52,6 @@ namespace ome
 
         /**
          * OME model object (concrete implementation).
-         *
-         * @todo Check constness and reference type for params/return types.
-         * @todo Consider dropping redundant parts of typenames which
-         * are duplicated in the namespace.  For example, OMEModelObject
-         * could just be Object, since it's really an
-         * ome::xml::model::Object.
          */
         class OMEModelObject : virtual public ::ome::xml::model::OMEModelObject
         {

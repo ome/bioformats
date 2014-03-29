@@ -586,7 +586,6 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
-                /// @todo Use of const since this is nonmodifying.
                 if (contains(${prop.instanceVariableName}, o_casted))
                   {
                     ${prop.instanceVariableName}.push_back(o_casted);
