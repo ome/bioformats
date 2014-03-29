@@ -949,8 +949,6 @@ ${customUpdatePropertyContent[prop.name]}
          * @param index the index number of the ${prop.methodName}.
          * @returns the ${prop.methodName}.
          * @throws std::out_of_range if the index is invalid.
-         *
-         * @todo Is this a value type under all circumstances?
          */
         ${prop.retType[qualifier]}
         get${prop.methodName} (${prop.instanceVariableType}::size_type index)${qualifier};
@@ -971,10 +969,6 @@ ${customUpdatePropertyContent[prop.name]}
          * @param index the index number of the ${prop.methodName}.
          * @param ${prop.argumentName} the ${prop.methodName} to set.
          * @throws std::out_of_range if the index is invalid.
-         *
-         * @todo Is this a value type under all circumstances?
-         * @todo Return type set to void since we can't return
-         * abstract types by value.
          */
         void
         set${prop.methodName} (${prop.instanceVariableType}::size_type index,
