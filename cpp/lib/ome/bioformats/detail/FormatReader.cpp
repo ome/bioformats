@@ -376,7 +376,7 @@ namespace ome
         return false;
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getImageCount() const
       {
         assertId(currentId, true);
@@ -634,15 +634,15 @@ namespace ome
       }
 
       void
-      FormatReader::openBytes(image_size_type no,
-                              PixelBufferRaw& buf) const
+      FormatReader::openBytes(dimension_size_type no,
+                              PixelBufferRaw&     buf) const
       {
         openBytes(no, buf, 0, 0, getSizeX(), getSizeY());
       }
 
       void
-      FormatReader::openThumbBytes(image_size_type /* no */,
-                                   PixelBufferRaw& /* buf */) const
+      FormatReader::openThumbBytes(dimension_size_type /* no */,
+                                   PixelBufferRaw&     /* buf */) const
       {
         assertId(currentId, true);
         /**
@@ -665,11 +665,11 @@ namespace ome
           }
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getSeriesCount() const
       {
         assertId(currentId, true);
-        image_size_type size = core.size();
+        dimension_size_type size = core.size();
         if (!hasFlattenedResolutions()) {
           size = coreIndexToSeries(core.size() - 1) + 1;
         }
@@ -677,14 +677,14 @@ namespace ome
       }
 
       void
-      FormatReader::setSeries(image_size_type no) const
+      FormatReader::setSeries(dimension_size_type no) const
       {
         coreIndex = seriesToCoreIndex(no);
         series = no;
         resolution = 0;
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getSeries() const
       {
         return series;
@@ -746,9 +746,9 @@ namespace ome
       FormatReader::getUsedFiles(bool noPixels) const
       {
         SaveSeries sentry(*this);
-        image_size_type oldSeries = getSeries();
+        dimension_size_type oldSeries = getSeries();
         std::set<std::string> files;
-        for (image_size_type i = 0; i < getSeriesCount(); ++i)
+        for (dimension_size_type i = 0; i < getSeriesCount(); ++i)
           {
             setSeries(i);
             std::vector<std::string> s = getSeriesUsedFiles(noPixels);
@@ -990,10 +990,10 @@ namespace ome
         return std::min(maxHeight, getSizeY());
       }
 
-      image_size_type
-      FormatReader::seriesToCoreIndex(image_size_type series) const
+      dimension_size_type
+      FormatReader::seriesToCoreIndex(dimension_size_type series) const
       {
-        image_size_type index = 0;
+        dimension_size_type index = 0;
 
         if (hasFlattenedResolutions())
           {
@@ -1013,7 +1013,7 @@ namespace ome
           }
         else
           {
-            image_size_type idx = 0;
+            dimension_size_type idx = 0;
             for (coremetadata_list_type::const_iterator i = core.begin();
                  i != core.end();
                  ++i, ++idx)
@@ -1039,10 +1039,10 @@ namespace ome
         return index;
       }
 
-      image_size_type
-      FormatReader::coreIndexToSeries(image_size_type index) const
+      dimension_size_type
+      FormatReader::coreIndexToSeries(dimension_size_type index) const
       {
-        image_size_type series = 0;
+        dimension_size_type series = 0;
 
         if (index >= core.size())
           {
@@ -1064,14 +1064,14 @@ namespace ome
         else
           {
             // Convert from non-flattened coreIndex to flattened series
-            image_size_type idx = 0;
+            dimension_size_type idx = 0;
 
             for (coremetadata_list_type::size_type i = 0; i < index;)
               {
                 const coremetadata_list_type::value_type& v(core.at(i));
                 if (v)
                   {
-                    image_size_type nextSeries = i + v->resolutionCount;
+                    dimension_size_type nextSeries = i + v->resolutionCount;
                     if (index < nextSeries)
                       break;
                     i = nextSeries;
@@ -1088,12 +1088,12 @@ namespace ome
         return series;
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getResolutionCount() const
       {
         assertId(currentId, true);
 
-        image_size_type count = 1;
+        dimension_size_type count = 1;
         if (!hasFlattenedResolutions())
           count = core.at(seriesToCoreIndex(getSeries()))->resolutionCount;
 
@@ -1101,7 +1101,7 @@ namespace ome
       }
 
       void
-      FormatReader::setResolution(image_size_type resolution) const
+      FormatReader::setResolution(dimension_size_type resolution) const
       {
         if (resolution >= getResolutionCount())
           {
@@ -1114,7 +1114,7 @@ namespace ome
         this->resolution = resolution;
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getResolution() const
       {
         return resolution;
@@ -1133,14 +1133,14 @@ namespace ome
         flattenedResolutions = flatten;
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getCoreIndex() const
       {
         return coreIndex;
       }
 
       void
-      FormatReader::setCoreIndex(image_size_type index) const
+      FormatReader::setCoreIndex(dimension_size_type index) const
       {
         if (index >= core.size())
           {
@@ -1172,7 +1172,7 @@ namespace ome
                     setSeries(0);
                     {
                       SaveSeries(*this);
-                      for (image_size_type series = 0;
+                      for (dimension_size_type series = 0;
                            series < getSeriesCount();
                            ++series)
                         {
@@ -1208,7 +1208,7 @@ namespace ome
                 {
                   SaveSeries(*this);
 
-                  for (image_size_type series = 0;
+                  for (dimension_size_type series = 0;
                        series < getSeriesCount();
                        ++series)
                     {

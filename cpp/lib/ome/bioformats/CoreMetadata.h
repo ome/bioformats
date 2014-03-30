@@ -98,7 +98,7 @@ namespace ome
       pixel_size_type bitsPerPixel;
 
       /// Total number of images.
-      image_size_type imageCount;
+      dimension_size_type imageCount;
 
       /// Modulo Z dimension.
       Modulo moduloZ;
@@ -148,7 +148,7 @@ namespace ome
        *  image.  The count includes this image, so an image with two
        *  following sub-resolution images will have a count of @c 3 .
        */
-      image_size_type resolutionCount;
+      dimension_size_type resolutionCount;
 
       /// Constructor.
       CoreMetadata();
