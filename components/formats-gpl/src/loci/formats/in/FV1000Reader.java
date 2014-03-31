@@ -143,6 +143,7 @@ public class FV1000Reader extends FormatReader {
     new Hashtable<Integer, String>();
   private Hashtable<Integer, String> roiFilenames =
     new Hashtable<Integer, String>();
+  private Vector<PlaneData> planes;
 
   private POIService poi;
 
@@ -342,6 +343,7 @@ public class FV1000Reader extends FormatReader {
       creationDate = null;
       lut = null;
       channels = null;
+      planes = null;
       if (lutNames != null) {
         lutNames.clear();
       }
@@ -381,6 +383,7 @@ public class FV1000Reader extends FormatReader {
     wavelengths = new Vector<Integer>();
     illuminations = new Vector<String>();
     channels = new Vector<ChannelData>();
+    planes = new Vector<PlaneData>();
 
     String oifName = null;
 
@@ -665,6 +668,7 @@ public class FV1000Reader extends FormatReader {
         tiffs.add(ii, file);
       }
 
+      PlaneData plane = new PlaneData();
       for (int dim=0; dim<NUM_DIMENSIONS; dim++) {
         IniTable axis = pty.getTable("Axis " + dim + " Parameters");
         if (axis == null) break;
@@ -678,14 +682,36 @@ public class FV1000Reader extends FormatReader {
           if (addAxis && getDimensionOrder().indexOf("Z") == -1) {
             ms0.dimensionOrder += "Z";
           }
+          plane.positionZ = Double.parseDouble(axis.get("AbsPositionValue"));
         }
         else if (dim == 4) {
           if (addAxis && getDimensionOrder().indexOf("T") == -1) {
             ms0.dimensionOrder += "T";
           }
+          // divide by 1000, as the position is in milliseconds
+          // and DeltaT is in seconds
+          plane.deltaT =
+            Double.parseDouble(axis.get("AbsPositionValue")) / 1000;
+        }
+        else if (dim == 7) {
+          try {
+            String xPos = axis.get("AbsPositionValueX");
+            if (xPos != null) {
+              plane.positionX = Double.parseDouble(xPos);
+            }
+          }
+          catch (NumberFormatException e) { }
+          try {
+            String yPos = axis.get("AbsPositionValueY");
+            if (yPos != null) {
+              plane.positionY = Double.parseDouble(yPos);
+            }
+          }
+          catch (NumberFormatException e) { }
         }
       }
       ms0.bitsPerPixel = validBits;
+      planes.add(plane);
 
       IniTable acquisition = pty.getTable("Acquisition Parameters Common");
       if (acquisition != null) {
@@ -900,7 +926,7 @@ public class FV1000Reader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
 
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     if (creationDate != null) {
       creationDate = creationDate.replaceAll("'", "");
@@ -961,6 +987,10 @@ public class FV1000Reader extends FormatReader {
         store.setPixelsPhysicalSizeZ(sizeZ, i);
       }
       store.setPixelsTimeIncrement(pixelSizeT, i);
+
+      for (int p=0; p<core.get(i).imageCount; p++) {
+        store.setPlaneDeltaT(pixelSizeT * p, i, p);
+      }
 
       // populate LogicalChannel data
 
@@ -1100,6 +1130,15 @@ public class FV1000Reader extends FormatReader {
         filename = sanitizeFile(filename, path);
         nextROI = parseROIFile(filename, store, nextROI, i);
       }
+    }
+
+    // Populate metadata for the planes
+    for (int i=0; i<planes.size(); i++) {
+      PlaneData plane = planes.get(i);
+      store.setPlaneDeltaT(plane.deltaT, 0, i);
+      store.setPlanePositionX(plane.positionX, 0, i);
+      store.setPlanePositionY(plane.positionY, 0, i);
+      store.setPlanePositionZ(plane.positionZ, 0, i);
     }
   }
 
@@ -1616,6 +1655,7 @@ public class FV1000Reader extends FormatReader {
   private IniList getIniFile(String filename)
     throws FormatException, IOException
   {
+    LOGGER.debug("getIniFile procession: {}", filename);
     RandomAccessInputStream stream = getFile(filename);
     String data = stream.readString((int) stream.length());
     if (!data.startsWith("[")) {
@@ -1656,4 +1696,12 @@ public class FV1000Reader extends FormatReader {
     public String barrierFilter;
   }
 
+  class PlaneData {
+    public Double deltaT;
+    public Double positionX;
+    public Double positionY;
+    public Double positionZ;
+  }
+
 }
+

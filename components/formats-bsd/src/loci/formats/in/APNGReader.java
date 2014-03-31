@@ -227,11 +227,21 @@ public class APNGReader extends FormatReader {
     int len = coords[2] * bpp;
     int plane = getSizeX() * getSizeY() * bpp;
     int newPlane = len * coords[3];
-    for (int c=0; c<getRGBChannelCount(); c++) {
+    if (!isInterleaved()) {
+      for (int c=0; c<getRGBChannelCount(); c++) {
+        for (int row=0; row<coords[3]; row++) {
+          System.arraycopy(newImage, c * newPlane + row * len, lastImage,
+            c * plane + (coords[1] + row) * getSizeX() * bpp + coords[0] * bpp,
+            len);
+        }
+      }
+    }
+    else {
+      len *= getRGBChannelCount();
       for (int row=0; row<coords[3]; row++) {
-        System.arraycopy(newImage, c * newPlane + row * len, lastImage,
-          c * plane + (coords[1] + row) * getSizeX() * bpp + coords[0] * bpp,
-          len);
+        System.arraycopy(newImage, row * len, lastImage,
+          (coords[1] + row) * getSizeX() * bpp * getRGBChannelCount() +
+          coords[0] * bpp * getRGBChannelCount(), len);
       }
     }
 
@@ -371,7 +381,7 @@ public class APNGReader extends FormatReader {
     m.sizeT = getImageCount();
 
     m.dimensionOrder = "XYCTZ";
-    m.interleaved = false;
+    m.interleaved = isRGB();
     m.falseColor = false;
 
     MetadataStore store = makeFilterMetadata();
@@ -537,27 +547,7 @@ public class APNGReader extends FormatReader {
       image = expandedImage;
     }
 
-    byte[] deinterleave = new byte[image.length];
-
-    for (int c=0; c<getRGBChannelCount(); c++) {
-      int plane = c * width * height * bpp;
-      for (int row=0; row<height; row++) {
-        int srcRow = row * width * getRGBChannelCount() * bpp;
-        int destRow = row * width * bpp;
-
-        for (int col=0; col<width; col++) {
-          int srcCol = col * getRGBChannelCount() * bpp;
-          int destCol = col * bpp;
-
-          for (int b=0; b<bpp; b++) {
-            deinterleave[plane + destRow + destCol + b] =
-              image[srcRow + srcCol + c * bpp + b];
-          }
-        }
-      }
-    }
-
-    return deinterleave;
+    return image;
   }
 
   /** See http://www.w3.org/TR/PNG/#9Filters. */
