@@ -45,7 +45,6 @@ import java.util.UUID;
 
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
-
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
@@ -97,7 +96,11 @@ public class OMETiffWriter extends TiffWriter {
 
   // -- IFormatHandler API methods --
 
-  /* @see loci.formats.IFormatHandler#close() */
+  public OMETiffWriter(String readerName, String[] extensions) {
+	    super(readerName, extensions);
+}
+
+/* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     try {
       if (currentId != null) {
