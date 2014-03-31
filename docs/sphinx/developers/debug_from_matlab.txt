@@ -1,0 +1,22 @@
+Hints on debugging Bio-Formats when invoked from Matlab.
+============================================================= 
+
+A few notes on how to setup to debit Bio-Formats code when invoked from Matlab.
+
+Steps are as follows (NB Currently only tested using Netbeans & OSX.)
+
+1) Invoke Matlab from the command line with the -jdb option.
+
+	On OSX :
+	/Applications/MATLAB_R2013b.app/bin/matlab -jdb
+
+2) Find pid for matlab 
+	On OSX : ps -ax | grep LAB
+
+2) In Netbeans select the required project (e.g. bioformats_package bundle)
+    Set breakpoints then Debug->Attach Debugger.
+	Change Connector field to ProcessAttach(Attaches to debuggee by process-id (pid).
+    & Process ID field to PID from 2 (above)
+
+3) Call java process from Matlab window as normal.
+ 
