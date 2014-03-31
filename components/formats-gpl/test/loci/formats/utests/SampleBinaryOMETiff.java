@@ -102,8 +102,6 @@ import ome.xml.model.enums.EnumerationException;
  */
 public class SampleBinaryOMETiff {
 
-	private OMEXMLMetadataRoot ome;
-
 	public int sizeZsub;
 	public int sizeTsub;
 	public int sizeCsub;
@@ -342,7 +340,7 @@ public class SampleBinaryOMETiff {
 	private static void makeBinaryOmeTiff(String filename, int x,
 			int y, int z, int c, int t,
 			String order) throws FormatException, IOException {
-		final String name = "multi-channel-4D-series";
+		final String name = filename;
 		final CoreMetadata info = new CoreMetadata();
 		info.sizeX = x;
 		info.sizeY = y;
