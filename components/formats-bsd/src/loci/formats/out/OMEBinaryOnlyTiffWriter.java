@@ -95,7 +95,7 @@ public class OMEBinaryOnlyTiffWriter extends OMETiffWriter {
   // -- Constructor --
 
   public OMEBinaryOnlyTiffWriter() {
-    super();
+    super("COME-TIFF", new String[] {"come.tif", "come.tiff"});
   }
 
   // -- IFormatHandler API methods --

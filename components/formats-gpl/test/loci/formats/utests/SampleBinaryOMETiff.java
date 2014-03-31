@@ -130,8 +130,8 @@ public class SampleBinaryOMETiff {
 		}
 
 		final String id;
-		if (filename.toLowerCase().endsWith(".ome.tif")) id = filename;
-		else id = filename + ".ome.tif";
+		if (filename.toLowerCase().endsWith(".come.tif")) id = filename;
+		else id = filename + ".come.tif";
 
 		final OMEBinaryOnlyTiffWriter out = new OMEBinaryOnlyTiffWriter();
 		try {
@@ -332,6 +332,7 @@ public class SampleBinaryOMETiff {
 		makeBinaryOmeTiff("multi-channel", 439, 167, 1, 3, 1, "XYZCT");
 		makeBinaryOmeTiff("z-series", 439, 167, 5, 1, 1, "XYZCT");
 		makeBinaryOmeTiff("multi-channel-z-series", 439, 167, 5, 3, 1, "XYZCT");
+		makeBinaryOmeTiff("multi-channel-z-series-Z%z", 439, 167, 5, 3, 1, "XYZCT");
 		makeBinaryOmeTiff("time-series", 439, 167, 1, 1, 7, "XYZCT");
 		makeBinaryOmeTiff("multi-channel-time-series", 439, 167, 1, 3, 7, "XYZCT");
 		makeBinaryOmeTiff("4D-series", 439, 167, 5, 1, 7, "XYZCT");
