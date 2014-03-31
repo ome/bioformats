@@ -100,18 +100,16 @@ import ome.xml.model.enums.EnumerationException;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/SampleTiffOMEModelMock.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/SampleTiffOMEModelMock.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class SampleTiffOMEModelMock implements OMEModelMock {
+public class SampleBinaryOMETiff {
 
 	private OMEXMLMetadataRoot ome;
-
-	private StructuredAnnotations annotations;
 
 	public int sizeZsub;
 	public int sizeTsub;
 	public int sizeCsub;
 	public boolean isModulo;
 
-	public SampleTiffOMEModelMock(String filename, CoreMetadata coreInfo) throws FormatException, IOException {
+	public SampleBinaryOMETiff(String filename, CoreMetadata coreInfo) throws FormatException, IOException {
 
 		//TODO: Move to using Modulo directly from core data
 		isModulo = false;
@@ -160,10 +158,6 @@ public class SampleTiffOMEModelMock implements OMEModelMock {
 		}
 		out.close();
 
-	}
-
-	public OMEXMLMetadataRoot getRoot() {
-		return ome;
 	}
 
 	private IMetadata createMetadata(final String name, final CoreMetadata info)
@@ -333,50 +327,46 @@ public class SampleTiffOMEModelMock implements OMEModelMock {
 
 	}
 
-	@SuppressWarnings("unused")
-	public static void main(String[] args) throws Exception {
+	public static void makeSamples() throws FormatException, IOException {
+		makeBinaryOmeTiff("single-channel", 439, 167, 1, 1, 1, "XYZCT");
+		makeBinaryOmeTiff("multi-channel", 439, 167, 1, 3, 1, "XYZCT");
+		makeBinaryOmeTiff("z-series", 439, 167, 5, 1, 1, "XYZCT");
+		makeBinaryOmeTiff("multi-channel-z-series", 439, 167, 5, 3, 1, "XYZCT");
+		makeBinaryOmeTiff("time-series", 439, 167, 1, 1, 7, "XYZCT");
+		makeBinaryOmeTiff("multi-channel-time-series", 439, 167, 1, 3, 7, "XYZCT");
+		makeBinaryOmeTiff("4D-series", 439, 167, 5, 1, 7, "XYZCT");
+		makeBinaryOmeTiff("multi-channel-4D-series", 439, 167, 5, 3, 7, "XYZCT");
+	}
+	
+	private static void makeBinaryOmeTiff(String filename, int x,
+			int y, int z, int c, int t,
+			String order) throws FormatException, IOException {
 		final String name = "multi-channel-4D-series";
 		final CoreMetadata info = new CoreMetadata();
-		info.sizeX = 439;
-		info.sizeY = 167;
-		info.sizeZ = 5;
-		info.sizeC = 3;
-		info.sizeT = 7;
+		info.sizeX = x;
+		info.sizeY = y;
+		info.sizeZ = z;
+		info.sizeC = c;
+		info.sizeT = t;
 		info.imageCount = info.sizeZ * info.sizeC * info.sizeT;
-		info.dimensionOrder = "XYZCT";
-		if (false) {
-			info.moduloZ.start = 0;
-			info.moduloZ.step = 1;
-			info.moduloZ.end = 3;
-			info.moduloC.start = 4;
-			info.moduloC.step = 0.5;
-			info.moduloC.end = 6;
-			info.moduloT.start = 100;
-			info.moduloT.step = 10;
-			info.moduloT.end = 150;
-		}
-		SampleTiffOMEModelMock mock = new SampleTiffOMEModelMock(name, info);
-		
-//		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//		DocumentBuilder parser = factory.newDocumentBuilder();
-//		Document document = parser.newDocument();
-//		// Produce a valid OME DOM element hierarchy
-//		Element root = mock.ome.asXMLElement(document);
-//		SampleTiffOMEModelMock.postProcess(root, document, true);
-		// Produce string XML
-//		OutputStream outputStream = new FileOutputStream(args[0]);
-//		outputStream.write(SampleTiffOMEModelMock.asString(document).getBytes());
-//		outputStream.close();
+		info.dimensionOrder = order;
+
+		new SampleBinaryOMETiff(name, info);
 	}
 
-	private static String asString(Document document) {
-		// TODO Auto-generated method stub
-		return null;
+/*
+	info.moduloZ.start = 0;
+	info.moduloZ.step = 1;
+	info.moduloZ.end = 3;
+	info.moduloC.start = 4;
+	info.moduloC.step = 0.5;
+	info.moduloC.end = 6;
+	info.moduloT.start = 100;
+	info.moduloT.step = 10;
+	info.moduloT.end = 150;
+*/
+	
+	public static void main(String[] args) throws Exception {
+		makeSamples();
 	}
-
-	private static void postProcess(Element root, Document document, boolean b) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
