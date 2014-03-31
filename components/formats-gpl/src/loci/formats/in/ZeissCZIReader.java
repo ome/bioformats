@@ -550,14 +550,11 @@ public class ZeissCZIReader extends FormatReader {
       if ((planes.size() % (seriesCount * getSizeZ())) == 0) {
         ms0.sizeT = 1;
       }
-      ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
-
-      int newCount = planes.size() / ms0.imageCount;
-      if (planes.size() - (ms0.imageCount * newCount) <
-        ms0.imageCount * seriesCount - planes.size() && (planes.size() % seriesCount) != 0)
-      {
-        seriesCount = newCount;
+      else if ((planes.size() % (seriesCount * getSizeT())) == 0) {
+        ms0.sizeZ = 1;
       }
+      ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
+      seriesCount = planes.size() / ms0.imageCount;
     }
 
     if (seriesCount > 1) {
