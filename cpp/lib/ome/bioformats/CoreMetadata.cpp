@@ -70,35 +70,6 @@ namespace ome
     {
     }
 
-      /* CoreMetadata(IFormatReader r, int coreIndex) { */
-      /*   int currentIndex = r.getCoreIndex(); */
-      /*   r.setCoreIndex(coreIndex); */
-
-      /*   sizeX = r.getSizeX(); */
-      /*   sizeY = r.getSizeY(); */
-      /*   sizeZ = r.getSizeZ(); */
-      /*   sizeC = r.getSizeC(); */
-      /*   sizeT = r.getSizeT(); */
-      /*   thumbSizeX = r.getThumbSizeX(); */
-      /*   thumbSizeY = r.getThumbSizeY(); */
-      /*   pixelType = r.getPixelType(); */
-      /*   bitsPerPixel = r.getBitsPerPixel(); */
-      /*   imageCount = r.getImageCount(); */
-      /*   dimensionOrder = r.getDimensionOrder(); */
-      /*   orderCertain = r.isOrderCertain(); */
-      /*   rgb = r.isRGB(); */
-      /*   littleEndian = r.isLittleEndian(); */
-      /*   interleaved = r.isInterleaved(); */
-      /*   indexed = r.isIndexed(); */
-      /*   falseColor = r.isFalseColor(); */
-      /*   metadataComplete = r.isMetadataComplete(); */
-      /*   seriesMetadata = r.getSeriesMetadata(); */
-      /*   thumbnail = r.isThumbnailSeries(); */
-      /*   resolutionCount = r.getResolutionCount(); */
-
-      /*   r.setCoreIndex(currentIndex); */
-      /* } */
-
     CoreMetadata::CoreMetadata(const CoreMetadata &copy):
       sizeX(copy.sizeX),
       sizeY(copy.sizeY),

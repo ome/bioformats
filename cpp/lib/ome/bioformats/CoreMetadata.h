@@ -60,6 +60,14 @@ namespace ome
     /**
      * Core metadata values.
      *
+     * @note The Java implementation had a constructor to construct by
+     * copying the core metadata from a series of an existing reader.
+     * This is not duplicated here.  Use this instead:
+     *
+     * CoreMetadata copy(reader.getCoreMetadataList().at(index));
+     *
+     * Where @c reader is a FormatReader and @c index is the core index.
+     *
      * @todo We may want to consider refactoring the FormatReader
      * getter methods that fill in missing CoreMetadata fields on the
      * fly (getChannelDimLengths, getChannelDimTypes, getThumbSizeX,
@@ -152,35 +160,6 @@ namespace ome
 
       /// Constructor.
       CoreMetadata();
-
-      /* CoreMetadata(IFormatReader r, int coreIndex) { */
-      /*   int currentIndex = r.getCoreIndex(); */
-      /*   r.setCoreIndex(coreIndex); */
-
-      /*   sizeX = r.getSizeX(); */
-      /*   sizeY = r.getSizeY(); */
-      /*   sizeZ = r.getSizeZ(); */
-      /*   sizeC = r.getSizeC(); */
-      /*   sizeT = r.getSizeT(); */
-      /*   thumbSizeX = r.getThumbSizeX(); */
-      /*   thumbSizeY = r.getThumbSizeY(); */
-      /*   pixelType = r.getPixelType(); */
-      /*   bitsPerPixel = r.getBitsPerPixel(); */
-      /*   imageCount = r.getImageCount(); */
-      /*   dimensionOrder = r.getDimensionOrder(); */
-      /*   orderCertain = r.isOrderCertain(); */
-      /*   rgb = r.isRGB(); */
-      /*   littleEndian = r.isLittleEndian(); */
-      /*   interleaved = r.isInterleaved(); */
-      /*   indexed = r.isIndexed(); */
-      /*   falseColor = r.isFalseColor(); */
-      /*   metadataComplete = r.isMetadataComplete(); */
-      /*   seriesMetadata = r.getSeriesMetadata(); */
-      /*   thumbnail = r.isThumbnailSeries(); */
-      /*   resolutionCount = r.getResolutionCount(); */
-
-      /*   r.setCoreIndex(currentIndex); */
-      /* } */
 
       /**
        * Copy constructor.
