@@ -44,11 +44,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>lwf-stubs</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>ome-xml</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -69,13 +64,8 @@
     </dependency>
     <dependency>
       <groupId>com.jgoodies</groupId>
-      <artifactId>forms</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.2</version>
+      <artifactId>jgoodies-forms</artifactId>
+      <version>${jgoodies-forms.version}</version>
     </dependency>
     <dependency>
      <groupId>com.esotericsoftware.kryo</groupId>
@@ -106,6 +96,13 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>lwf-stubs</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
@@ -216,7 +213,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <licenseName>formats-bsd</licenseName>
+          <licenseName>bsd_2</licenseName>
           <projectName>BSD implementations of Bio-Formats readers and writers</projectName>
         </configuration>
       </plugin>

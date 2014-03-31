@@ -21,7 +21,7 @@
 
   <licenses>
     <license>
-      <name>GPL 2 or later</name>
+      <name>GNU General Public License v2+</name>
       <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>formats-bsd</artifactId>
+      <artifactId>formats-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -55,13 +55,6 @@
       <artifactId>logback-classic</artifactId>
       <version>${logback.version}</version>
       <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>5.12.1</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
