@@ -32,6 +32,7 @@ import loci.formats.codec.BitBuffer;
 import ome.jxr.JXRException;
 import ome.jxr.constants.Image;
 import ome.jxr.image.BitDepth;
+import ome.jxr.image.ComponentMode;
 import ome.jxr.image.FrequencyBand;
 import ome.jxr.image.InternalColorFormat;
 import ome.jxr.image.OutputColorFormat;
@@ -77,7 +78,7 @@ public final class DatastreamParser extends Parser {
   private InternalColorFormat internalClrFmt;
   private boolean scaledFlag;
   private FrequencyBand bandsPresent;
-  private int chromaCenteringX, chromaCenteringY;
+  private int chromaCenteringX = 0, chromaCenteringY = 0;
   private int numComponentsMinus1, numComponentsExtendedMinus16;
   private int numComponents;
   private int shiftBits;
@@ -97,16 +98,18 @@ public final class DatastreamParser extends Parser {
     parsingOffset = ifdParser.getIFDMetadata().getImageOffset();
 
     try {
-      checkIfGDISignaturePresent();
-      extractImageHeaderMetadata();
-      verifyCodestreamConformance();
+      checkGDISignaturePresence();
+      parseImageHeader();
+      verifyImageHeaderConformance();
+
       parsePrimaryImagePlaneHeader();
+      verifyPrimaryImagePlaneHeaderConformance();
     } catch (IOException ioe) {
       throw new JXRException(ioe);
     }
   }
 
-  private void checkIfGDISignaturePresent() throws IOException, JXRException {
+  private void checkGDISignaturePresence() throws IOException, JXRException {
     stream.seek(parsingOffset);
     String signature = stream.readString(Image.GDI_SIGNATURE.length());
     if (!Image.GDI_SIGNATURE.equals(signature)) {
@@ -114,7 +117,7 @@ public final class DatastreamParser extends Parser {
     }
   }
 
-  private void extractImageHeaderMetadata() throws IOException {
+  private void parseImageHeader() throws IOException {
     BitBuffer bits = streamBytesToBits(4);
 
     reservedB = bits.getBits(4);
@@ -184,7 +187,7 @@ public final class DatastreamParser extends Parser {
     }
   }
 
-  private void verifyCodestreamConformance() throws JXRException {
+  private void verifyImageHeaderConformance() throws JXRException {
     if (reservedB != Image.RESERVED_B) {
       throw new JXRException("Wrong value of RESERVED_B. " + "Expected: "
           + Image.RESERVED_B + ", found: " + reservedB);
@@ -279,10 +282,30 @@ public final class DatastreamParser extends Parser {
       expBias = bits.getBits(8);
     }
 
+    // TODO: This needs refactoring with a class allowing
+    // for reading bits and bytes. How to skip a bit using
+    // a byte pointer?
     bits = streamBytesToBits(1);
     boolean dcImagePlaneUniformFlag = (bits.getBits(1) == 1);
     if (dcImagePlaneUniformFlag) {
-      // DC_QP()
+      stream.seek(stream.getFilePointer() - 1);
+      bits = streamBytesToBits(1);
+      bits.skipBits(2);
+      ComponentMode componentMode = ComponentMode.UNIFORM;
+      if (numComponents != 1) {
+        componentMode = ComponentMode.findById(bits.getBits(2));
+      }
+      if (ComponentMode.UNIFORM.equals(componentMode)) {
+        int dcQuant = bits.getBits(8);
+      } else if (ComponentMode.SEPARATE.equals(componentMode)) {
+        int dcQuantLuma = bits.getBits(8);
+        int dcQuantChroma = bits.getBits(8);
+      } else if (ComponentMode.INDEPENDENT.equals(componentMode)) {
+        int[] dcQuantCh = new int[numComponents];
+        for (int i = 0; i < numComponents; i++) {
+          dcQuantCh[i] = bits.getBits(8);
+        }
+      }
     }
 
     if (!FrequencyBand.DCONLY.equals(bandsPresent)) {
@@ -306,6 +329,18 @@ public final class DatastreamParser extends Parser {
 
     while (!bits.isBitOnByteBoundary()) {
       bits.skipBits(1);
+    }
+  }
+
+  private void verifyPrimaryImagePlaneHeaderConformance() throws JXRException {
+    if (chromaCenteringX == 5 || chromaCenteringX == 6) {
+      chromaCenteringX = 7;
+    }
+    if (chromaCenteringY == 5 || chromaCenteringY == 6) {
+      chromaCenteringX = 7;
+    }
+    if (FrequencyBand.RESERVED.equals(bandsPresent)) {
+      throw new JXRException("Reserved value of BANDS_PRESENT.");
     }
   }
 

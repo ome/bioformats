@@ -49,6 +49,16 @@
       <class name="ome.jxr.image.utests.BitDepthTest"/>
     </classes>
   </test>
+  <test name="ComponentMode">
+    <classes>
+      <class name="ome.jxr.image.utests.ComponentModeTest"/>
+    </classes>
+  </test>
+  <test name="FrequencyBand">
+    <classes>
+      <class name="ome.jxr.image.utests.FrequencyBandTest"/>
+    </classes>
+  </test>
   <test name="InternalColorFormat">
     <classes>
       <class name="ome.jxr.image.utests.InternalColorFormatTest"/>

@@ -23,20 +23,33 @@
  * #L%
  */
 
-package ome.jxr.image;
+package ome.jxr.image.utests;
+import static org.testng.AssertJUnit.assertTrue;
+import ome.jxr.image.FrequencyBand;
 
-/**
- * Represents the image plane structure. A coded JPEG XR image can have up to
- * two image planes - the primary image plane and the alpha image plane.
- * An instance field will indicate which type of plane is being used.
- *
- * <dl>
- * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-jxr/src/ome/jxr/image/ImagePlane.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-jxr/src/ome/jxr/image/ImagePlane.java;hb=HEAD">Gitweb</a></dd></dl>
- *
- * @author Blazej Pindelski bpindelski at dundee.ac.uk
- */
-public class ImagePlane {
+import org.testng.annotations.Test;
+
+
+public class FrequencyBandTest {
+
+  @Test
+  public void testFindByIdForReservedIds() {
+    int[] reservedIds = {4,5,6,7,8,9,10,11,12,13,14,15};
+    for (Integer id : reservedIds) {
+      assertTrue(FrequencyBand.RESERVED.equals(FrequencyBand.findById(id)));
+    }
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testFindByIdWithNegativeIdShouldThrowIAE() {
+    int invalidId = -1;
+    FrequencyBand.findById(invalidId);
+  }
+
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testFindByIdWithOutOfRangeIdShouldThrowIAE() {
+    int invalidId = 16;
+    FrequencyBand.findById(invalidId);
+  }
 
 }
