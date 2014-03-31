@@ -36,7 +36,9 @@
 
 package loci.formats.out;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,15 +63,17 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffSaver;
 
 /**
- * OMETiffWriter is the file format writer for OME-TIFF files.
+ * OMEBinaryOnlyTiffWriter is the file format writer for OME-TIFF files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/OMETiffWriter.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/OMETiffWriter.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/OMEBinaryOnlyTiffWriter.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/out/OMEBinaryOnlyTiffWriter.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class OMEBinaryOnlyTiffWriter extends OMETiffWriter {
 
   // -- Constants --
+
+	private static final String COMPANION_EXTENSION = ".companion.ome";
 
 	private static final String BINARY_ONLY_WARNING_COMMENT =
 		    "<!-- Warning: this comment is an OME-XML binary only metadata block, " +
@@ -92,8 +96,6 @@ public class OMEBinaryOnlyTiffWriter extends OMETiffWriter {
 
   public OMEBinaryOnlyTiffWriter() {
     super();
-	companionFilename = "companion.ome";
-	companionUUID = "urn:uuid:" + getUUID(companionFilename);
   }
 
   // -- IFormatHandler API methods --
@@ -118,13 +120,17 @@ public class OMEBinaryOnlyTiffWriter extends OMETiffWriter {
             if (!files.contains(f) && f != null) {
               files.add(f);
 
-              String xml = getBinaryOnlyOMEXML(f);
+              String xmlBinaryOnly = getBinaryOnlyOMEXML(f);
 
               // write OME-XML to the first IFD's comment
-              saveComment(f, xml);
+              saveComment(f, xmlBinaryOnly);
             }
           }
         }
+        String xmlCompanion = getOMEXML(companionFilename);
+		OutputStream outputStream = new FileOutputStream(companionFilename);
+		outputStream.write(xmlCompanion.getBytes());
+		outputStream.close();
       }
     }
     catch (DependencyException de) {
@@ -174,6 +180,16 @@ public class OMEBinaryOnlyTiffWriter extends OMETiffWriter {
         ifdCounts.put(k, 0);
       }
     }
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    if (id.equals(currentId)) return;
+    super.setId(id);
+	companionFilename = id + COMPANION_EXTENSION;
+	companionUUID = "urn:uuid:" + getUUID(companionFilename);
   }
 
   // -- Helper methods --
