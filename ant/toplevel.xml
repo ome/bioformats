@@ -331,7 +331,7 @@ Type "ant -p" for a list of targets.
   <!-- OME JPEG XR library -->
 
   <target name="deps-ome-jxr"
-    depends="jar-formats-common"/>
+    depends="jar-formats-common, jar-formats-bsd"/>
 
   <target name="compile-ome-jxr" depends="deps-ome-jxr"
     description="compile classes for OME JPEG XR Java library">
