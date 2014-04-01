@@ -182,7 +182,7 @@
 		<argument>${xsdfu.script}</argument>
 		<argument>omexml_metadata</argument>
 		<argument>-p</argument>
-		<argument>ome.xml.ome</argument>
+		<argument>ome.xml.meta</argument>
 		<argument>-o</argument>
 		<argument>${xsdfu.metadatapath}/</argument>
 		<argument>${project.rootdir}/${xsdfu.ome}</argument>
