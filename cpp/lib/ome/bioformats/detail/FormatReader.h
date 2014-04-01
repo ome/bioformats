@@ -568,11 +568,11 @@ namespace ome
 
         // Documented in superclass.
         std::vector<FileInfo>
-        getAdvancedUsedFiles(bool noPixels) const;
+        getAdvancedUsedFiles(bool noPixels = false) const;
 
         // Documented in superclass.
         std::vector<FileInfo>
-        getAdvancedSeriesUsedFiles(bool noPixels) const;
+        getAdvancedSeriesUsedFiles(bool noPixels = false) const;
 
         // Documented in superclass.
         const boost::optional<std::string>&

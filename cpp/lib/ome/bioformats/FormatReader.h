@@ -184,7 +184,6 @@ namespace ome
       isThisType(const uint8_t *begin,
                  std::size_t    length) = 0;
 
-
       /**
        * Check if the given input stream is a valid stream for this file format.
        *
@@ -753,7 +752,7 @@ namespace ome
        */
       virtual
       std::vector<FileInfo>
-      getAdvancedUsedFiles(bool noPixels) const = 0;
+      getAdvancedUsedFiles(bool noPixels = false) const = 0;
 
       /**
        * Get the files used by the active series.
@@ -765,7 +764,7 @@ namespace ome
        */
       virtual
       std::vector<FileInfo>
-      getAdvancedSeriesUsedFiles(bool noPixels) const = 0;
+      getAdvancedSeriesUsedFiles(bool noPixels = false) const = 0;
 
       /**
        * Get the currently open file.
@@ -826,7 +825,7 @@ namespace ome
        * @param field the name associated with the metadata field.
        * @returns the value.
        *
-       * @todo throw exception if missing.
+       * @throws boost::bad_get on failure if the key was not found.
        */
       virtual
       const MetadataMap::value_type&
@@ -841,7 +840,7 @@ namespace ome
        * @param field the name associated with the metadata field.
        * @returns the value.
        *
-       * @todo throw exception if missing.
+       * @throws boost::bad_get on failure if the key was not found.
        */
       virtual
       const MetadataMap::value_type&
