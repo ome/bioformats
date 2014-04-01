@@ -165,20 +165,33 @@ namespace ome
       FormatReader::isUsedFile(const std::string& file)
       {
         bool used = false;
-        path thisfile = boost::filesystem::canonical(path(file));
 
-        /// @todo: Use a set rather than a list?
-        const std::vector<std::string>& s = getUsedFiles();
-        for (std::vector<std::string>::const_iterator i = s.begin();
-             i != s.end();
-             ++i)
+        try
           {
-            path usedfile = boost::filesystem::canonical(path(*i));
-            if (thisfile == usedfile)
+            path thisfile = boost::filesystem::canonical(path(file));
+
+            /// @todo: Use a set rather than a list?
+            const std::vector<std::string>& s = getUsedFiles();
+            for (std::vector<std::string>::const_iterator i = s.begin();
+                 i != s.end();
+                 ++i)
               {
-                used = true;
-                break;
+                try
+                  {
+                    path usedfile = boost::filesystem::canonical(path(*i));
+                    if (thisfile == usedfile)
+                      {
+                        used = true;
+                        break;
+                      }
+                  }
+                catch (const boost::filesystem::filesystem_error& e)
+                  {
+                  }
               }
+          }
+        catch (const boost::filesystem::filesystem_error& e)
+          {
           }
 
         return used;
