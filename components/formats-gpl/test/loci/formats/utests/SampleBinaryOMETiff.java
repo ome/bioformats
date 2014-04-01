@@ -151,7 +151,10 @@ public class SampleBinaryOMETiff {
 		out.setId(id);
 
 		for (int i = 0; i < coreInfo.imageCount; i++) {
-			final BufferedImage plane = createPlane(filename, coreInfo, i);
+	          // for each plane get the ZCT location
+	        StringBuilder planeFilenameBuilder = new StringBuilder();
+			final BufferedImage plane = createPlane(filename, coreInfo, i, planeFilenameBuilder);
+	        out.setId(planeFilenameBuilder.toString());
 			out.saveBytes(i, BufferedImageWriter.toBytes(plane, out));
 		}
 		out.close();
@@ -198,7 +201,7 @@ public class SampleBinaryOMETiff {
 	}
 
 
-	private BufferedImage createPlane(final String name, final CoreMetadata info, final int no)
+	private BufferedImage createPlane(final String name, final CoreMetadata info, final int no, StringBuilder planeFilenameBuilder)
 	{
 		final int[] zct =
 				FormatTools.getZCTCoords(info.dimensionOrder, info.sizeZ, info.sizeC,
@@ -225,6 +228,11 @@ public class SampleBinaryOMETiff {
 		lines.add(new TextLine(info.dimensionOrder, font.deriveFont(Font.ITALIC,
 				14f), 30, 5));
 		int space = 5;
+		
+		String planeFilename = new String(name);
+	    planeFilename = planeFilename.replaceAll(FormatTools.Z_NUM, String.valueOf(zct[0] + 1));
+	    planeFilename = planeFilename.replaceAll(FormatTools.T_NUM, String.valueOf(zct[1] + 1));
+	    planeFilename = planeFilename.replaceAll(FormatTools.CHANNEL_NUM, String.valueOf(zct[2] + 1));
 		if (info.sizeZ > 1) {
 			lines.add(new TextLine(
 					"Focal plane = " + (zct[0] + 1) + "/" + info.sizeZ, font, 20, space));
@@ -286,6 +294,8 @@ public class SampleBinaryOMETiff {
 		}
 		g.dispose();
 
+		// Fill the "out" parameter with the new filename
+		planeFilenameBuilder.append(planeFilename); 
 		return plane;
 	}
 
