@@ -102,6 +102,7 @@ import ome.xml.model.enums.EnumerationException;
  */
 public class SampleBinaryOMETiff {
 
+	private static final String OME_TIFF_EXTENSION = ".ome.tif";
 	public int sizeZsub;
 	public int sizeTsub;
 	public int sizeCsub;
@@ -128,8 +129,11 @@ public class SampleBinaryOMETiff {
 		}
 
 		final String id;
-		if (filename.toLowerCase().endsWith(".come.tif")) id = filename;
-		else id = filename + ".come.tif";
+		if (filename.toLowerCase().endsWith(OME_TIFF_EXTENSION)) id = filename;
+		else id = filename + OME_TIFF_EXTENSION;
+		filename = filename.replaceAll(FormatTools.Z_NUM, "#");
+		filename = filename.replaceAll(FormatTools.T_NUM, "#");
+		filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "#");
 
 		final OMEBinaryOnlyTiffWriter out = new OMEBinaryOnlyTiffWriter();
 		try {
@@ -148,8 +152,6 @@ public class SampleBinaryOMETiff {
 			throw new FormatException(e);
 		}
 
-		out.setId(id);
-
 		for (int i = 0; i < coreInfo.imageCount; i++) {
 	          // for each plane get the ZCT location
 	        StringBuilder planeFilenameBuilder = new StringBuilder();
@@ -157,6 +159,7 @@ public class SampleBinaryOMETiff {
 	        out.setId(planeFilenameBuilder.toString());
 			out.saveBytes(i, BufferedImageWriter.toBytes(plane, out));
 		}
+		out.setId(id);
 		out.close();
 
 	}
@@ -295,7 +298,9 @@ public class SampleBinaryOMETiff {
 		g.dispose();
 
 		// Fill the "out" parameter with the new filename
-		planeFilenameBuilder.append(planeFilename); 
+		planeFilenameBuilder.append(planeFilename);
+		planeFilenameBuilder.append(OME_TIFF_EXTENSION);
+		
 		return plane;
 	}
 
@@ -339,12 +344,13 @@ public class SampleBinaryOMETiff {
 		makeBinaryOmeTiff("single-channel", 439, 167, 1, 1, 1, "XYZCT");
 		makeBinaryOmeTiff("multi-channel", 439, 167, 1, 3, 1, "XYZCT");
 		makeBinaryOmeTiff("z-series", 439, 167, 5, 1, 1, "XYZCT");
-		makeBinaryOmeTiff("multi-channel-z-series", 439, 167, 5, 3, 1, "XYZCT");
-		makeBinaryOmeTiff("multi-channel-z-series-Z%z", 460, 167, 5, 3, 1, "XYZCT");
+		makeBinaryOmeTiff("multi-channel-z-series-single", 700, 167, 5, 3, 1, "XYZCT");
+		makeBinaryOmeTiff("multi-channel-z-series-Z%z", 700, 167, 5, 3, 1, "XYZCT");
 		makeBinaryOmeTiff("time-series", 439, 167, 1, 1, 7, "XYZCT");
 		makeBinaryOmeTiff("multi-channel-time-series", 439, 167, 1, 3, 7, "XYZCT");
 		makeBinaryOmeTiff("4D-series", 439, 167, 5, 1, 7, "XYZCT");
-		makeBinaryOmeTiff("multi-channel-4D-series", 439, 167, 5, 3, 7, "XYZCT");
+		makeBinaryOmeTiff("multi-channel-4D-series-single", 700, 167, 5, 3, 7, "XYZCT");
+		makeBinaryOmeTiff("multi-channel-4D-series-Z%z-C%c-T%t", 700, 167, 5, 3, 7, "XYZCT");
 	}
 	
 	private static void makeBinaryOmeTiff(String filename, int x,
