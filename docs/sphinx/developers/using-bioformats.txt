@@ -15,9 +15,6 @@ more sense when you see the API.
 For a complete list of supported formats, see the Bio-Formats 
 :doc:`supported formats table </supported-formats>`.
 
-For a few working examples of how to use Bio-Formats, see 
-`these Github pages <http://github.com/openmicroscopy/bioformats/tree/develop/components/bio-formats/utils>`_
-
 Basic file reading
 ------------------
 
