@@ -25,73 +25,27 @@
 
 package loci.formats.utests;
 
-import ome.xml.meta.OMEXMLMetadataRoot;
-import ome.xml.model.Arc;
-import ome.xml.model.BinaryFile;
-import ome.xml.model.BooleanAnnotation;
-import ome.xml.model.Channel;
-import ome.xml.model.CommentAnnotation;
-import ome.xml.model.Detector;
-import ome.xml.model.Dichroic;
-import ome.xml.model.DoubleAnnotation;
-import ome.xml.model.External;
-import ome.xml.model.Filament;
-import ome.xml.model.Filter;
-import ome.xml.model.FilterSet;
-import ome.xml.model.Image;
-import ome.xml.model.Instrument;
-import ome.xml.model.Laser;
-import ome.xml.model.LightEmittingDiode;
-import ome.xml.model.ListAnnotation;
-import ome.xml.model.LongAnnotation;
-import ome.xml.model.Objective;
-import ome.xml.model.ObjectiveSettings;
-import ome.xml.model.Pixels;
-import ome.xml.model.Plate;
-import ome.xml.model.ROI;
-import ome.xml.model.Rectangle;
-import ome.xml.model.StructuredAnnotations;
-import ome.xml.model.TiffData;
-import ome.xml.model.TimestampAnnotation;
-import ome.xml.model.UUID;
-import ome.xml.model.Union;
-import ome.xml.model.Well;
-import ome.xml.model.WellSample;
-import ome.xml.model.XMLAnnotation;
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
-import ome.xml.model.primitives.Timestamp;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
-import loci.formats.Modulo;
 import loci.formats.gui.BufferedImageWriter;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.OMEBinaryOnlyTiffWriter;
-import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
+
 import ome.xml.model.enums.EnumerationException;
 
 
@@ -129,15 +83,28 @@ public class SampleBinaryOMETiff {
 		}
 
 		final String id;
-		if (filename.toLowerCase().endsWith(OME_TIFF_EXTENSION)) id = filename;
-		else id = filename + OME_TIFF_EXTENSION;
-		filename = filename.replaceAll(FormatTools.Z_NUM, "#");
-		filename = filename.replaceAll(FormatTools.T_NUM, "#");
-		filename = filename.replaceAll(FormatTools.CHANNEL_NUM, "#");
+		String justFilename;
+		String metaFilename;
+		if (filename.toLowerCase().endsWith(OME_TIFF_EXTENSION)) {
+			id = filename;
+			justFilename = new String(filename);
+			justFilename = justFilename.substring(0, justFilename.length() - OME_TIFF_EXTENSION.length());
+
+		}
+		else {
+			id = filename + OME_TIFF_EXTENSION;
+			justFilename = new String(filename);
+		}
+
+		metaFilename = new String(justFilename);
+
+		metaFilename = metaFilename.replaceAll(FormatTools.Z_NUM, "#");
+		metaFilename = metaFilename.replaceAll(FormatTools.T_NUM, "#");
+		metaFilename = metaFilename.replaceAll(FormatTools.CHANNEL_NUM, "#");
 
 		final OMEBinaryOnlyTiffWriter out = new OMEBinaryOnlyTiffWriter();
 		try {
-			out.setMetadataRetrieve(createMetadata(filename, coreInfo));
+			out.setMetadataRetrieve(createMetadata(id, coreInfo));
 		}
 		catch (final DependencyException e) {
 			out.close();
@@ -159,7 +126,7 @@ public class SampleBinaryOMETiff {
 	        out.setId(planeFilenameBuilder.toString());
 			out.saveBytes(i, BufferedImageWriter.toBytes(plane, out));
 		}
-		out.setId(id);
+		out.setId(metaFilename);
 		out.close();
 
 	}
@@ -234,8 +201,8 @@ public class SampleBinaryOMETiff {
 		
 		String planeFilename = new String(name);
 	    planeFilename = planeFilename.replaceAll(FormatTools.Z_NUM, String.valueOf(zct[0] + 1));
-	    planeFilename = planeFilename.replaceAll(FormatTools.T_NUM, String.valueOf(zct[1] + 1));
-	    planeFilename = planeFilename.replaceAll(FormatTools.CHANNEL_NUM, String.valueOf(zct[2] + 1));
+	    planeFilename = planeFilename.replaceAll(FormatTools.CHANNEL_NUM, String.valueOf(zct[1] + 1));
+	    planeFilename = planeFilename.replaceAll(FormatTools.T_NUM, String.valueOf(zct[2] + 1));
 		if (info.sizeZ > 1) {
 			lines.add(new TextLine(
 					"Focal plane = " + (zct[0] + 1) + "/" + info.sizeZ, font, 20, space));
