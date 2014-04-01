@@ -98,37 +98,5 @@ namespace ome
     {
     }
 
-    template<class charT, class traits>
-    inline std::basic_ostream<charT,traits>&
-    operator<< (std::basic_ostream<charT,traits>& os,
-                const CoreMetadata& core)
-    {
-      os << "sizeX = " << core.sizeX << '\n'
-         << "sizeY = " << core.sizeY << '\n'
-         << "sizeZ = " << core.sizeZ << '\n'
-         << "sizeC = " << core.sizeC << '\n'
-         << "sizeT = " << core.sizeT << '\n'
-         << "thumbSizeX = " << core.thumbSizeX << '\n'
-         << "thumbSizeY = " << core.thumbSizeY << '\n'
-         << "pixelType = " << core.pixelType << '\n'
-         << "bitsPerPixel = " << core.bitsPerPixel << '\n'
-         << "imageCount = " << core.imageCount << '\n'
-         << "moduloZ" << core.moduloZ << '\n'
-         << "moduloT" << core.moduloT << '\n'
-         << "moduloC" << core.moduloC << '\n'
-         << "dimensionOrder = " << core.dimensionOrder << '\n'
-         << "orderCertain = " << core.orderCertain << '\n'
-         << "rgb = " << core.rgb << '\n'
-         << "littleEndian = " << core.littleEndian << '\n'
-         << "interleaved = " << core.interleaved << '\n'
-         << "indexed = " << core.indexed << '\n'
-         << "falseColor = " << core.falseColor << '\n'
-         << "metadataComplete = " << core.metadataComplete << '\n'
-         << "seriesMetadata = " << core.seriesMetadata.size() << " keys" << '\n'
-         << "thumbnail = " << core.thumbnail << '\n'
-         << "resolutionCount = " << core.resolutionCount << '\n';
-      return os;
-    }
-
   }
 }

@@ -64,7 +64,7 @@ namespace ome
      * copying the core metadata from a series of an existing reader.
      * This is not duplicated here.  Use this instead:
      *
-     * CoreMetadata copy(reader.getCoreMetadataList().at(index));
+     * `CoreMetadata copy(reader.getCoreMetadataList().at(index));`
      *
      * Where @c reader is a FormatReader and @c index is the core index.
      *
@@ -177,9 +177,36 @@ namespace ome
      * @returns the output stream.
      */
     template<class charT, class traits>
-      inline std::basic_ostream<charT,traits>&
-      operator<< (std::basic_ostream<charT,traits>& os,
-                  const CoreMetadata& core);
+    inline std::basic_ostream<charT,traits>&
+    operator<< (std::basic_ostream<charT,traits>& os,
+                const CoreMetadata& core)
+    {
+      os << "sizeX = " << core.sizeX << '\n'
+         << "sizeY = " << core.sizeY << '\n'
+         << "sizeZ = " << core.sizeZ << '\n'
+         << "sizeC = " << core.sizeC << '\n'
+         << "sizeT = " << core.sizeT << '\n'
+         << "thumbSizeX = " << core.thumbSizeX << '\n'
+         << "thumbSizeY = " << core.thumbSizeY << '\n'
+         << "pixelType = " << core.pixelType << '\n'
+         << "bitsPerPixel = " << core.bitsPerPixel << '\n'
+         << "imageCount = " << core.imageCount << '\n'
+         << "moduloZ = {\n" << core.moduloZ
+         << "}\nmoduloT = {\n" << core.moduloT
+         << "}\nmoduloC = {\n" << core.moduloC
+         << "}\ndimensionOrder = " << core.dimensionOrder << '\n'
+         << "orderCertain = " << core.orderCertain << '\n'
+         << "rgb = " << core.rgb << '\n'
+         << "littleEndian = " << core.littleEndian << '\n'
+         << "interleaved = " << core.interleaved << '\n'
+         << "indexed = " << core.indexed << '\n'
+         << "falseColor = " << core.falseColor << '\n'
+         << "metadataComplete = " << core.metadataComplete << '\n'
+         << "seriesMetadata = " << core.seriesMetadata.size() << " keys" << '\n'
+         << "thumbnail = " << core.thumbnail << '\n'
+         << "resolutionCount = " << core.resolutionCount << '\n';
+      return os;
+    }
 
   }
 }
