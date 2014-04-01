@@ -40,6 +40,12 @@ if(BUILD_TESTS)
   header_test_from_file(ome-bioformats ome-bioformats ome/bioformats)
   add_test(ome-bioformats/headers ome-bioformats-headers)
 
+  add_executable(formatreader formatreader.cpp)
+  target_link_libraries(formatreader ome-bioformats)
+  target_link_libraries(formatreader ome-test)
+
+  add_test(ome-bioformats/formatreader formatreader)
+
   add_executable(metadatamap metadatamap.cpp)
   target_link_libraries(metadatamap ome-bioformats)
   target_link_libraries(metadatamap ome-test)
