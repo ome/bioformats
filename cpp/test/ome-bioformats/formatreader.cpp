@@ -453,6 +453,28 @@ TEST_F(FormatReaderTest, DefaultSeries)
   EXPECT_THROW(r.getZCTCoords(0U), std::logic_error);
 }
 
+struct dims
+{
+  dimension_size_type z;
+  dimension_size_type t;
+  dimension_size_type c;
+
+  dims(dimension_size_type z,
+       dimension_size_type t,
+       dimension_size_type c):
+    z(z), t(t), c(c)
+  {}
+
+  operator std::array<dimension_size_type, 3>() const
+  {
+    std::array<dimension_size_type, 3> ret;
+    ret[0] = z;
+    ret[1] = c;
+    ret[2] = t;
+    return ret;
+  }
+};
+
 TEST_F(FormatReaderTest, FlatSeries)
 {
   r.setId("flat");
@@ -468,10 +490,35 @@ TEST_F(FormatReaderTest, FlatSeries)
   EXPECT_EQ(0U, r.getResolution());
   EXPECT_NO_THROW(r.setResolution(0));
 
-  EXPECT_EQ(0U, r.getIndex(0U, 0U, 0U));
-  std::array<dimension_size_type, 3> coords;
-  coords[0] = coords[1] = coords[2] = 0;
-  EXPECT_EQ(coords, r.getZCTCoords(0U));
+  dims coords[] =
+    {
+      dims(0,  0, 0),
+      dims(1,  0, 0),
+      dims(0,  1, 0),
+      dims(0,  0, 1),
+      dims(1,  1, 0),
+      dims(1,  0, 1),
+      dims(0,  1, 1),
+      dims(1,  1, 1),
+      dims(3,  2, 1),
+      dims(12, 3, 0),
+      dims(8,  2, 1),
+      dims(19, 3, 1)
+    };
+
+  dimension_size_type indexes[] =
+    { 0, 1, 20, 80, 21, 81, 100, 101, 123, 72, 128, 159 };
+
+  for (unsigned int i = 0;
+       i < sizeof(coords)/sizeof(coords[0]);
+       ++i)
+    {
+      typedef std::array<dimension_size_type, 3> dim;
+      const dim coord(static_cast<std::array<dimension_size_type, 3> >(coords[i]));
+
+      EXPECT_EQ(indexes[i], r.getIndex(coord[0], coord[1], coord[2]));
+      EXPECT_EQ(coord, r.getZCTCoords(indexes[i]));
+    }
 }
 
 TEST_F(FormatReaderTest, SubresolutionFlattenedSeries)
