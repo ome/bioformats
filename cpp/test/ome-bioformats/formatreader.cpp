@@ -581,7 +581,7 @@ TEST_F(FormatReaderTest, FlatProperties)
   EXPECT_TRUE(r.hasFlattenedResolutions());
 }
 
-TEST_F(FormatReaderTest, DefaultSubresolutionFlattenedProperties)
+TEST_F(FormatReaderTest, SubresolutionFlattenedProperties)
 {
   EXPECT_NO_THROW(r.setNormalized(true));
   EXPECT_NO_THROW(r.setOriginalMetadataPopulated(true));
@@ -601,7 +601,7 @@ TEST_F(FormatReaderTest, DefaultSubresolutionFlattenedProperties)
   EXPECT_TRUE(r.hasFlattenedResolutions());
 }
 
-TEST_F(FormatReaderTest, DefaultSubresolutionUnflattenedProperties)
+TEST_F(FormatReaderTest, SubresolutionUnflattenedProperties)
 {
   EXPECT_NO_THROW(r.setNormalized(false));
   EXPECT_NO_THROW(r.setOriginalMetadataPopulated(false));
@@ -621,7 +621,7 @@ TEST_F(FormatReaderTest, DefaultSubresolutionUnflattenedProperties)
   EXPECT_FALSE(r.hasFlattenedResolutions());
 }
 
-TEST_F(FormatReaderTest, DefaultUsedFiles)
+TEST_F(FormatReaderTest, UsedFiles)
 {
   EXPECT_THROW(r.getUsedFiles(), std::logic_error);
   EXPECT_THROW(r.getUsedFiles(true), std::logic_error);
