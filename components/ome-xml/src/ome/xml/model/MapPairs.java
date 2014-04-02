@@ -60,11 +60,13 @@ import org.w3c.dom.Element;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MapPairs.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MapPairs.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class MapPairs extends java.util.HashMap<String, String> implements OMEModelObject {
+public class MapPairs implements OMEModelObject {
 
     // -- Constants --
 
     public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2013-10";
+
+    private Map<String, String> map;
 
     /** Logger for this class. */
     private static final Logger LOGGER =
@@ -73,30 +75,19 @@ public class MapPairs extends java.util.HashMap<String, String> implements OMEMo
     /** Default constructor. */
     public MapPairs()
     {
-    }
-
-    /** Construct with initial HashMap capacity. */
-    public MapPairs(int initialCapacity)
-    {
-        super(initialCapacity);        
-    }
-
-    /** Construct with initial HashMap capacity and load factor. */
-    public MapPairs(int initialCapacity, float loadFactor)
-    {
-        super(initialCapacity, loadFactor);        
+        map = new HashMap<String, String>();
     }
 
     /** Construct from an existing Map. */
     public MapPairs(Map<String, String> m)
     {
-        super(m);        
+       map = new HashMap<String, String>(m);
     }
 
     /** Copy constructor. */
     public MapPairs(MapPairs orig)
     {
-        super(orig);
+        map = new HashMap<String, String>(orig.getMap());
     }
 
     /**
@@ -114,6 +105,11 @@ public class MapPairs extends java.util.HashMap<String, String> implements OMEMo
         update(element, model);
     }
 
+    public Map getMap()
+    {
+        return map;
+    }
+
     public Element asXMLElement(Document document)
     {
         return asXMLElement(document, null);
@@ -125,7 +121,7 @@ public class MapPairs extends java.util.HashMap<String, String> implements OMEMo
             pairs = document.createElementNS(NAMESPACE, "MapPairs");
         }
 
-        Iterator<Map.Entry<String, String>> entries = entrySet().iterator();
+        Iterator<Map.Entry<String, String>> entries = map.entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry<String, String> entry = entries.next();
 
@@ -148,7 +144,7 @@ public class MapPairs extends java.util.HashMap<String, String> implements OMEMo
             if (child.hasAttribute("K")) {
                 String key = child.getAttribute("K");
                 String value = child.getTextContent();
-                put(key, value);
+                map.put(key, value);
             } else {
                 LOGGER.debug("MapPairs entry M does not contain key attribute K");
             }
