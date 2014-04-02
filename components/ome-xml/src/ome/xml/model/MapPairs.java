@@ -62,18 +62,18 @@ import org.w3c.dom.Element;
  */
 public class MapPairs extends java.util.HashMap<String, String> implements OMEModelObject {
 
-	// -- Constants --
+    // -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2013-10";
+    public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2013-10";
 
-	/** Logger for this class. */
-	private static final Logger LOGGER =
-		LoggerFactory.getLogger(MapPairs.class);
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(MapPairs.class);
 
-	/** Default constructor. */
-	public MapPairs()
-	{
-	}
+    /** Default constructor. */
+    public MapPairs()
+    {
+    }
 
     /** Construct with initial HashMap capacity. */
     public MapPairs(int initialCapacity)
@@ -93,30 +93,30 @@ public class MapPairs extends java.util.HashMap<String, String> implements OMEMo
         super(m);        
     }
 
-	/** Copy constructor. */
-	public MapPairs(MapPairs orig)
-	{
+    /** Copy constructor. */
+    public MapPairs(MapPairs orig)
+    {
         super(orig);
-	}
+    }
 
-	/**
-	 * Constructs MapPairs recursively from an XML DOM tree.
-	 * @param element Root of the XML DOM tree to construct a model object
-	 * graph from.
-	 * @param model Handler for the OME model which keeps track of instances
-	 * and references seen during object population.
-	 * @throws EnumerationException If there is an error instantiating an
-	 * enumeration during model object creation.
-	 */
-	public MapPairs(Element element, OMEModel model)
-	    throws EnumerationException
-	{
-		update(element, model);
-	}
+    /**
+     * Constructs MapPairs recursively from an XML DOM tree.
+     * @param element Root of the XML DOM tree to construct a model object
+     * graph from.
+     * @param model Handler for the OME model which keeps track of instances
+     * and references seen during object population.
+     * @throws EnumerationException If there is an error instantiating an
+     * enumeration during model object creation.
+     */
+    public MapPairs(Element element, OMEModel model)
+        throws EnumerationException
+    {
+        update(element, model);
+    }
 
     public Element asXMLElement(Document document)
     {
-		return asXMLElement(document, null);
+        return asXMLElement(document, null);
     }
 
     protected Element asXMLElement(Document document, Element pairs)
@@ -139,10 +139,10 @@ public class MapPairs extends java.util.HashMap<String, String> implements OMEMo
 
     public void update(Element element, OMEModel model) throws EnumerationException
     {
-		String tagName = element.getTagName();
-		if (!"MapPairs".equals(tagName)) {
-			LOGGER.debug("Expecting node name of TextAnnotation got {}", tagName);
-		}
+        String tagName = element.getTagName();
+        if (!"MapPairs".equals(tagName)) {
+            LOGGER.debug("Expecting node name of TextAnnotation got {}", tagName);
+        }
 
         for(Element child : AbstractOMEModelObject.getChildrenByTagName(element, "M")) {
             if (child.hasAttribute("K")) {
