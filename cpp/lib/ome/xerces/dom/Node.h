@@ -2,7 +2,7 @@
  * #%L
  * OME-XERCES C++ library for working with Xerces C++.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -98,6 +98,32 @@ namespace ome
         }
 
         /**
+         * Get wrapped xercesc::DOMNode *.
+         *
+         * @note May be null.
+         *
+         * @returns the wrapped xercesc::DOMNode.
+         */
+        xercesc::DOMNode*
+        get()
+        {
+          return xmlnode;
+        }
+
+        /**
+         * Get wrapped xercesc::DOMNode *.
+         *
+         * @note May be null.
+         *
+         * @returns the wrapped xercesc::DOMNode.
+         */
+        const xercesc::DOMNode*
+        get() const
+        {
+          return xmlnode;
+        }
+
+        /**
          * Append a child Node.
          *
          * @param node the child Node to append.
@@ -184,28 +210,6 @@ namespace ome
         {
           assert(xmlnode != 0);
           return xmlnode;
-        }
-
-        /**
-         * Cast to xercesc::DOMNode *.
-         *
-         * @returns the wrapped xercesc::DOMNode.
-         */
-        inline
-        operator xercesc::DOMNode* ()
-        {
-          return *this;
-        }
-
-        /**
-         * Cast to const xercesc::DOMNode *.
-         *
-         * @returns the wrapped xercesc::DOMNode.
-         */
-        inline
-        operator const xercesc::DOMNode* () const
-        {
-          return *this;
         }
 
         /**

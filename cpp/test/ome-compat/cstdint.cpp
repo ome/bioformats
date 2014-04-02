@@ -46,19 +46,19 @@ TEST(Cstdint, Types)
 
   uint8_t a;
   a = 1;
-  ASSERT_EQ(a, 1);
+  ASSERT_EQ(a, 1U);
 
   uint16_t b;
   b = 2;
-  ASSERT_EQ(b, 2);
+  ASSERT_EQ(b, 2U);
 
   uint32_t c;
   c = 3;
-  ASSERT_EQ(c, 3);
+  ASSERT_EQ(c, 3U);
 
   uint64_t d;
   d = 4;
-  ASSERT_EQ(d, 4);
+  ASSERT_EQ(d, 4U);
 
   int8_t e;
   e = 5;

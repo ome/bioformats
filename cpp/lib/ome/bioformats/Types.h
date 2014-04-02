@@ -1,8 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,23 +35,41 @@
  * #L%
  */
 
-#include <ome/xml/meta/Metadata.h>
+#ifndef OME_BIOFORMATS_TYPES_H
+#define OME_BIOFORMATS_TYPES_H
+
+#include <algorithm>
+#include <cstddef>
+#include <iterator>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+#include <boost/format.hpp>
+#include <boost/optional.hpp>
+
+#include <ome/compat/cstdint.h>
 
 namespace ome
 {
-  namespace xml
+  namespace bioformats
   {
-    namespace meta
-    {
 
-      Metadata::Metadata()
-      {
-      }
+    /// Size type for image dimensions.
+    typedef std::size_t dimension_size_type;
+    /// Size type for image counts.
+    typedef std::size_t image_size_type;
+    /// Size type for pixel bit depths.
+    typedef uint32_t pixel_size_type;
 
-      Metadata::~Metadata()
-      {
-      }
-
-    }
   }
 }
+
+#endif // OME_BIOFORMATS_TYPES_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */
+

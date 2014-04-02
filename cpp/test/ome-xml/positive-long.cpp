@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -48,15 +48,15 @@ namespace
 {
 
   NumericTest<PositiveLong>::test_str init_strings[] =
-    { // str           pos           strpass pospass
-      {"743544628932", 743544628932, true,   true},
-      {"23",                     23, true,   true},
-      {"-42",                   -42, false,  false},
-      {"1",                     -53, true,   false},
-      {"82",                     82, true,   true},
-      {"0",                       0, false,  false},
-      {"1",                       0, true,   false},
-      {"invalid",                 1, false,  true},
+    { // str        pos         strpass pospass
+      {"743544628", 743544628L, true,   true},
+      {"23",                23, true,   true},
+      {"-42",              -42, false,  false},
+      {"1",                -53, true,   false},
+      {"82",                82, true,   true},
+      {"0",                  0, false,  false},
+      {"1",                  0, true,   false},
+      {"invalid",            1, false,  true},
     };
 
   NumericTest<PositiveLong>::test_op init_ops[] =

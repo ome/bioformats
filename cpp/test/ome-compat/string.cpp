@@ -2,7 +2,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -36,23 +36,46 @@
  * #L%
  */
 
-#include <ome/xml/meta/BaseMetadata.h>
+#include <ome/compat/string.h>
 
-namespace ome
+#include <gtest/gtest.h>
+
+using ome::ltrim;
+using ome::rtrim;
+using ome::trim;
+
+TEST(String, LeftTrim)
 {
-  namespace xml
-  {
-    namespace meta
-    {
+  std::string s1(" left ");
+  ASSERT_EQ(ltrim(s1), "left ");
 
-      BaseMetadata::BaseMetadata()
-      {
-      }
+  std::string s2("none");
+  ASSERT_EQ(ltrim(s2), "none");
 
-      BaseMetadata::~BaseMetadata()
-      {
-      }
+  std::string s3("");
+  ASSERT_EQ(ltrim(s3), "");
+}
 
-    }
-  }
+TEST(String, RightTrim)
+{
+  std::string s1(" right\n");
+  ASSERT_EQ(rtrim(s1), " right");
+
+  std::string s2("none");
+  ASSERT_EQ(rtrim(s2), "none");
+
+  std::string s3("");
+  ASSERT_EQ(rtrim(s3), "");
+}
+
+TEST(String, FullTrim)
+{
+  std::string s1("  \tfull \v ");
+  ASSERT_EQ(trim(s1), "full");
+
+  std::string s2("none");
+  ASSERT_EQ(trim(s2), "none");
+
+  std::string s3("");
+  ASSERT_EQ(trim(s3), "");
 }

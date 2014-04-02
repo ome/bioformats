@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -149,7 +149,7 @@ namespace ome
               if (is)
                 {
                   // Check for zone offset
-                  char tztype = is.peek();
+                  std::char_traits<char>::int_type tztype = is.peek();
                   if(tztype != std::char_traits<char>::eof())
                     {
                       if (tztype == 'Z')

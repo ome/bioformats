@@ -2,7 +2,7 @@
  * #%L
  * OME-XERCES C++ library for working with Xerces C++.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -246,6 +246,32 @@ namespace ome
         /// Destructor.
         ~NodeList ()
         {
+        }
+
+        /**
+         * Get wrapped xercesc::DOMNodeList *.
+         *
+         * @note May be null.
+         *
+         * @returns the wrapped xercesc::DOMNodeList.
+         */
+        xercesc::DOMNodeList*
+        get()
+        {
+          return xmlnodelist;
+        }
+
+        /**
+         * Get wrapped xercesc::DOMNodeList *.
+         *
+         * @note May be null.
+         *
+         * @returns the wrapped xercesc::DOMNodeList.
+         */
+        const xercesc::DOMNodeList*
+        get() const
+        {
+          return xmlnodelist;
         }
 
         /**

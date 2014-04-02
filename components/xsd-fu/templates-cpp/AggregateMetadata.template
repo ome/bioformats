@@ -219,7 +219,7 @@
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -290,7 +290,7 @@ namespace ome
        * delegates the storage and retrieval to one or more
        * sub-stores.
        */
-      class AggregateMetadata : public Metadata
+      class AggregateMetadata : virtual public Metadata
       {
       public:
         /// A list of MetadataStore and MetadataRetrieve instances.
@@ -377,7 +377,7 @@ namespace ome
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      AggregateMetadata::setRoot(std::shared_ptr<MetadataRoot>& root)
+      AggregateMetadata::setRoot(std::shared_ptr<MetadataRoot>& /* root */)
       {
         throw std::runtime_error("setRoot unsupported by AggregateMetadata.");
       }

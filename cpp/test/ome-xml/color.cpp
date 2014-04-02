@@ -2,7 +2,7 @@
  * #%L
  * OME-XML C++ library for working with OME-XML metadata structures.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -266,5 +266,13 @@ ColorTestParameters params[] =
     ColorTestParameters(  0,   0,   0, 127, 0x0000007FU,        127,        "127"), // Transparent black
     ColorTestParameters(127, 127, 127, 127, 0x7F7F7F7FU, 2139062143, "2139062143"), // Grey
   };
+
+// Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
+// this is solely to work around a missing prototype in gtest.
+#ifdef __GNUC__
+#  if defined __clang__ || defined __APPLE__
+#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#  endif
+#endif
 
 INSTANTIATE_TEST_CASE_P(ColorVariants, ColorTest, ::testing::ValuesIn(params));
