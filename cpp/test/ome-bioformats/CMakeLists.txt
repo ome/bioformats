@@ -46,6 +46,12 @@ if(BUILD_TESTS)
 
   add_test(ome-bioformats/formatreader formatreader)
 
+  add_executable(formattools formattools.cpp)
+  target_link_libraries(formattools ome-bioformats)
+  target_link_libraries(formattools ome-test)
+
+  add_test(ome-bioformats/formattools formattools)
+
   add_executable(metadatamap metadatamap.cpp)
   target_link_libraries(metadatamap ome-bioformats)
   target_link_libraries(metadatamap ome-test)
