@@ -102,9 +102,9 @@ namespace ome
             throw new std::logic_error(fmt.str());
           }
 
-        iz = sz;
-        it = st;
-        ic = sc;
+        iz = sz - 2;
+        it = st - 2;
+        ic = sc - 2;
 
         // check SizeZ
         if (!zSize)
