@@ -712,7 +712,16 @@ TEST_F(FormatReaderTest, DefaultMetadataStore)
   EXPECT_EQ(store, std::dynamic_pointer_cast<OMEXMLMetadata>(r.getMetadataStore()));
 }
 
-TEST_F(FormatReaderTest, DefaultReaders)
+TEST_F(FormatReaderTest, FlatMetadataStore)
+{
+  r.setId("flat");
+
+  std::shared_ptr<MetadataStore> store(std::make_shared<OMEXMLMetadata>());
+
+  EXPECT_THROW(r.setMetadataStore(store), std::logic_error);
+}
+
+TEST_F(FormatReaderTest, Readers)
 {
   EXPECT_TRUE(r.getUnderlyingReaders().empty());
 }
