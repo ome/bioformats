@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.StringTokenizer;
+import java.util.UUID;
 
 import loci.common.DataTools;
 import loci.common.IniList;
@@ -567,6 +568,23 @@ public class FakeReader extends FormatReader {
         }
       }
     }
+    
+    int annotationCount = 0;
+    String nextAnnotationID;
+    
+    nextAnnotationID = "Annotation:" + UUID.randomUUID().toString();
+    store.setLongAnnotationID(nextAnnotationID, annotationCount);
+    store.setLongAnnotationNamespace("fake-reader-namespace", annotationCount);
+    store.setLongAnnotationValue((long) 365, annotationCount);
+    store.setImageAnnotationRef(nextAnnotationID, 0, annotationCount);
+    annotationCount++;
+    
+    nextAnnotationID = "Annotation:" + UUID.randomUUID().toString();
+    store.setLongAnnotationID(nextAnnotationID, annotationCount);
+    store.setLongAnnotationNamespace("fake-reader-namespace", annotationCount);
+    store.setLongAnnotationValue((long) 365, annotationCount);
+    store.setImageAnnotationRef(nextAnnotationID, 0, annotationCount);
+    annotationCount++;
 
     // for indexed color images, create lookup tables
     if (indexed) {
