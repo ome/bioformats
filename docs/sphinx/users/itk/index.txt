@@ -38,7 +38,7 @@ Simply download ITK from the
 `Kitware software page <http://www.itk.org/ITK/resources/software.html>`_.
 Using CMake, set the following configuration flag::
 
-    Fetch_SCIFIO = ON
+    Module_SCIFIO = ON
 
 .. note:: This flag is only visible in "advanced" mode within CMake
 
@@ -59,12 +59,12 @@ supported by ITK.
 
 To use the SCIFIO test utility, run::
 
-   ITKIOSCIFIOTestDriver
+   SCIFIOTestDriver
 
 from your ``${ITK_BUILD}/bin`` directory. This program has four separate
 applications that can be directly invoked using the syntax::
 
-   ITKIOSCIFIOTestDriver [Program to run] [Program arguments]
+   SCIFIOTestDriver [Program to run] [Program arguments]
 
 The programs are as follows:
 
@@ -89,7 +89,7 @@ The programs are as follows:
 
 For example, to convert a .czi image to a .tif, you would use::
 
-   ITKIOSCIFIOTestDriver itkSCIFIOImageIOTest in.czi out.tif
+   SCIFIOTestDriver itkSCIFIOImageIOTest in.czi out.tif
 
 Troubleshooting
 ---------------
