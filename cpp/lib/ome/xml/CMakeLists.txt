@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -43,10 +43,9 @@ xsd_fu(metadata OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META_SOURCES)
 xsd_fu(omexml_metadata OME_XML_GENERATED_METAOME_HEADERS OME_XML_GENERATED_METAOME_SOURCES)
 
 set(OME_XML_STATIC_SOURCES
-  meta/BaseMetadata.cpp
-  meta/Metadata.cpp
-  meta/MetadataRoot.cpp
   meta/OMEXMLMetadataRoot.cpp
+  model/detail/OMEModel.cpp
+  model/detail/OMEModelObject.cpp
   model/enums/EnumerationException.cpp
   model/primitives/Color.cpp
   model/primitives/NonNegativeFloat.cpp
@@ -56,12 +55,9 @@ set(OME_XML_STATIC_SOURCES
   model/primitives/PositiveFloat.cpp
   model/primitives/PositiveInteger.cpp
   model/primitives/PositiveLong.cpp
-  model/primitives/Timestamp.cpp
-  model/OMEModel.cpp
-  model/OMEModelImpl.cpp
-  model/OMEModelObject.cpp)
+  model/primitives/Timestamp.cpp)
 
-set(OME_BIOFORMATS_META_STATIC_HEADERS
+set(OME_XML_META_STATIC_HEADERS
     meta/BaseMetadata.h
     meta/Metadata.h
     meta/MetadataRoot.h
@@ -69,8 +65,11 @@ set(OME_BIOFORMATS_META_STATIC_HEADERS
 
 set(OME_XML_STATIC_MODEL_HEADERS
     model/OMEModel.h
-    model/OMEModelImpl.h
     model/OMEModelObject.h)
+
+set(OME_XML_STATIC_MODEL_DETAIL_HEADERS
+    model/detail/OMEModel.h
+    model/detail/OMEModelObject.h)
 
 set(OME_XML_STATIC_ENUMS_HEADERS
     model/enums/EnumerationException.h)
@@ -90,6 +89,7 @@ set(OME_XML_STATIC_PRIMITIVES_HEADERS
 
 set(OME_XML_STATIC_HEADERS
     ${OME_XML_STATIC_MODEL_HEADERS}
+    ${OME_XML_STATIC_MODEL_DETAIL_HEADERS}
     ${OME_XML_STATIC_PRIMITIVES_HEADERS}
     ${OME_XML_STATIC_ENUMS_HEADERS})
 
@@ -123,10 +123,12 @@ install(TARGETS ome-xml LIBRARY
 
 set(ome_xml_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/xml")
 
-install(FILES ${OME_BIOFORMATS_META_STATIC_HEADERS} ${OME_XML_GENERATED_META_HEADERS} ${OME_XML_GENERATED_METAOME_HEADERS}
+install(FILES ${OME_XML_META_STATIC_HEADERS} ${OME_XML_GENERATED_META_HEADERS} ${OME_XML_GENERATED_METAOME_HEADERS}
         DESTINATION ${ome_xml_includedir}/meta)
 install(FILES ${OME_XML_STATIC_MODEL_HEADERS} ${OME_XML_GENERATED_MODEL_HEADERS} ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
         DESTINATION ${ome_xml_includedir}/model)
+install(FILES ${OME_XML_STATIC_MODEL_DETAIL_HEADERS}
+        DESTINATION ${ome_xml_includedir}/model/detail)
 install(FILES ${OME_XML_STATIC_ENUMS_HEADERS} ${OME_XML_GENERATED_ENUMS_HEADERS}
         DESTINATION ${ome_xml_includedir}/model/enums)
 install(FILES ${OME_XML_STATIC_PRIMITIVES_HEADERS} ${OME_XML_GENERATED_PRIMITIVES_HEADERS}

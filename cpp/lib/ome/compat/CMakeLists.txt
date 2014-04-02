@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -42,6 +42,7 @@ set(ome_compat_static_headers
     cstdint.h
     memory.h
     mstream.h
+    string.h
     tuple.h
     variant.h)
 

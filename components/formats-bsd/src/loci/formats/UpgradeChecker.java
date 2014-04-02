@@ -92,7 +92,7 @@ public class UpgradeChecker {
    * Location of the JAR artifacts for the stable releases.
    */
   public static final String STABLE_BUILD =
-    "http://downloads.openmicroscopy.org/bioformats/" +  STABLE_VERSION + "/";
+    "http://downloads.openmicroscopy.org/bio-formats/" +  STABLE_VERSION + "/artifacts/";
 
   /** Name of the ueber tools JAR. */
   public static final String TOOLS = "bioformats_package.jar";
@@ -304,6 +304,7 @@ public class UpgradeChecker {
 
     File jar = new File(downloadPath + ".tmp");
     if (jar.exists()) {
+      LOGGER.debug("Removing {}", jar.getAbsolutePath());
       if (!jar.delete()) {
         LOGGER.warn("Failed to delete '{}'", jar.getAbsolutePath());
         return false;
@@ -313,10 +314,13 @@ public class UpgradeChecker {
     // download new version
 
     try {
+      LOGGER.debug("Attempting to download {}", urlPath);
       URL url = new URL(urlPath);
       URLConnection urlConn = url.openConnection();
       int total = urlConn.getContentLength();
       byte[] buf = new byte[total];
+
+      LOGGER.debug("File length: {} bytes", total);
 
       DataInputStream in = new DataInputStream(
         new BufferedInputStream(urlConn.getInputStream()));
@@ -337,6 +341,7 @@ public class UpgradeChecker {
       in.close();
 
       // write the downloaded JAR to a file on disk
+      LOGGER.debug("Writing downloaded bytes to {}", jar.getAbsolutePath());
       FileOutputStream out = new FileOutputStream(jar);
       out.write(buf);
       out.close();
@@ -346,9 +351,11 @@ public class UpgradeChecker {
       File downloadFile = new File(downloadPath);
       File oldFile = new File(downloadFile.getParent(), OLD_TOOLS);
       if (oldFile.exists() && downloadFile.getName().equals(TOOLS)) {
+        LOGGER.debug("Deleting {}", oldFile.getAbsolutePath());
         oldFile.delete();
       }
 
+      LOGGER.debug("Renaming {} to {}", jar.getAbsolutePath(), downloadPath);
       boolean success = jar.renameTo(downloadFile);
       if (!success) {
         LOGGER.warn("Failed to rename '{}' to '{}'", jar.getAbsolutePath(),

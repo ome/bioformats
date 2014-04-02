@@ -1,7 +1,7 @@
 /*
  * #%L
  * OME-BIOFORMATS C++ library for image IO.
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -38,6 +38,8 @@
 #ifndef OME_BIOFORMATS_PIXELBUFFER_H
 #define OME_BIOFORMATS_PIXELBUFFER_H
 
+#include <limits>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -250,6 +252,26 @@ namespace ome
                 const PixelBufferRaw& buf)
     {
       return os << "PixelBufferRaw size = " << buf.size();
+    }
+
+    /**
+     * Set PixelBufferRaw from input stream.
+     *
+     * @param is the input stream.
+     * @param buf the PixelBufferRaw to set.
+     * @returns the input stream.
+     */
+    template<class charT, class traits>
+    inline std::basic_istream<charT,traits>&
+    operator>> (std::basic_istream<charT,traits>& is,
+                PixelBufferRaw& buf)
+    {
+      if (std::numeric_limits<std::streamsize>::max() < std::numeric_limits<PixelBufferRaw::size_type>::max() &&
+          buf.size() < std::numeric_limits<std::streamsize>::max())
+        throw std::range_error("PixelBuffer size is greater than maximum stream buffer size");
+          
+      return is.read(reinterpret_cast<char *>(buf.buffer()),
+                     static_cast<std::streamsize>(buf.size()));
     }
 
   }

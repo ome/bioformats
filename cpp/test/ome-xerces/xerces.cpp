@@ -2,7 +2,7 @@
  * #%L
  * OME-XERCES C++ library for working with Xerces C++.
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -58,14 +58,18 @@
 #include <cstdlib>
 #include <stdexcept>
 
-
-void fatal(const char *err, const char *reason = 0)
+namespace
 {
-  std::cerr << "E: " << err;
-  if (reason)
-    std::cerr << ": " << reason;
-  std::cerr << std::endl;
-  std::exit(1);
+
+  void fatal(const char *err, const char *reason = 0)
+  {
+    std::cerr << "E: " << err;
+    if (reason)
+      std::cerr << ": " << reason;
+    std::cerr << std::endl;
+    std::exit(1);
+  }
+
 }
 
 namespace xml = ome::xerces;

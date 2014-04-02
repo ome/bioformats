@@ -2,7 +2,7 @@
  * #%L
  * OME-COMPAT C++ library for C++ compatibility/portability
  * %%
- * Copyright © 2006 - 2013 Open Microscopy Environment:
+ * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
  *   - National Institutes of Health
  *   - University of Dundee
@@ -37,8 +37,9 @@
  */
 
 /**
- * @file mstream.h Memory streams.  Similar to @c ifstream, this
- * header defines imstream.
+ * @file ome/compat/mstream.h Memory streams.
+ *
+ * Similar to @c ifstream, this header defines imstream.
  */
 
 #ifndef OME_COMPAT_MSTREAM_H

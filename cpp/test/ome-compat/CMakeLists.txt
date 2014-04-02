@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -69,6 +69,12 @@ if(BUILD_TESTS)
   target_link_libraries(regex ${TEST_LIBS})
 
   add_test(ome-compat/regex regex)
+
+  add_executable(string string.cpp)
+  target_link_libraries(string ome-compat)
+  target_link_libraries(string ${TEST_LIBS})
+
+  add_test(ome-compat/string string)
 
   add_executable(tuple tuple.cpp)
   target_link_libraries(tuple ome-compat)
