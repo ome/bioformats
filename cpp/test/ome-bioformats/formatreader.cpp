@@ -537,7 +537,7 @@ TEST_F(FormatReaderTest, SubresolutionFlattenedSeries)
   EXPECT_EQ(0U, r.getResolution());
   EXPECT_NO_THROW(r.setResolution(0));
 
-  EXPECT_EQ(0U, r.getIndex(0U, 0U, 0U));
+  EXPECT_EQ(0U, r.getIndex(0, 0, 0));
   std::array<dimension_size_type, 3> coords;
   coords[0] = coords[1] = coords[2] = 0;
   EXPECT_EQ(coords, r.getZCTCoords(0U));
@@ -559,7 +559,7 @@ TEST_F(FormatReaderTest, SubresolutionUnflattenedSeries)
   EXPECT_EQ(0U, r.getResolution());
   EXPECT_NO_THROW(r.setResolution(0));
 
-  EXPECT_EQ(0U, r.getIndex(0U, 0U, 0));
+  EXPECT_EQ(0U, r.getIndex(0, 0, 0));
   std::array<dimension_size_type, 3> coords;
   coords[0] = coords[1] = coords[2] = 0;
   EXPECT_EQ(coords, r.getZCTCoords(0U));
