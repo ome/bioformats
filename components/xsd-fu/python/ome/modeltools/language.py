@@ -194,6 +194,8 @@ class Java(Language):
 
         self.model_type_map['MapPairs'] = None
         self.model_type_map['M'] = None
+        self.model_type_map['K'] = None
+        self.model_type_map['V'] = None
 
         self.type_map = copy.deepcopy(self.primitive_type_map)
         self._initTypeMap()
@@ -263,6 +265,8 @@ class CXX(Language):
 
         self.model_type_map['MapPairs'] = None
         self.model_type_map['M'] = None
+        self.model_type_map['K'] = None
+        self.model_type_map['V'] = None
 
         self.type_map = copy.deepcopy(self.primitive_type_map)
         self._initTypeMap()

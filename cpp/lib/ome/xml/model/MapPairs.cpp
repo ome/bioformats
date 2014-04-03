@@ -90,7 +90,28 @@ namespace ome
                        ::ome::xml::model::OMEModel& model)
       {
         detail::OMEModelObject::update(element, model);
+        std::string tagName(element.getTagName());
+        if (tagName != "MapPairs")
+          {
+            std::clog << "Expecting node name of MapPairs got " << tagName << std::endl;
+          }
 
+        std::vector<xerces::dom::Element> M_nodeList(getChildrenByTagName(element, "M"));
+        for (std::vector<xerces::dom::Element>::iterator elem = M_nodeList.begin();
+             elem != M_nodeList.end();
+             ++elem)
+          {
+            if (elem->hasAttribute("K"))
+              {
+                std::string key(elem->getAttribute("K"));
+                std::string value(elem->getTextContent());
+                map.insert(std::make_pair(key, value));
+              }
+            else
+              {
+                std::clog << "MapPairs entry M does not contain key attribute K";
+              }
+          }
       }
 
       bool
@@ -103,6 +124,38 @@ namespace ome
           }
         std::clog << "Unable to handle reference of type: " << typeid(reference).name() << std::endl;
         return false;
+      }
+
+      xerces::dom::Element&
+      MapPairs::asXMLElement (xerces::dom::Document& document) const
+      {
+        xerces::dom::Element nullelem;
+        return asXMLElementInternal(document, nullelem);
+      }
+
+      xerces::dom::Element&
+      MapPairs::asXMLElementInternal (xerces::dom::Document& document,
+                                      xerces::dom::Element&  element) const
+      {
+        // Creating XML block for Line
+
+        if (!element)
+          {
+            xerces::dom::Element newElement = document.createElementNS(NAMESPACE, "Line");
+            element = newElement;
+          }
+
+        for (map_type::const_iterator i = map.begin();
+             i != map.end();
+             ++i)
+          {
+            xerces::dom::Element pair = document.createElementNS(NAMESPACE, "M");
+            pair.setAttribute("K", i->first);
+            pair.setTextContent(i->second);
+            element.appendChild(pair);
+          }
+
+        return detail::OMEModelObject::asXMLElementInternal(document, element);
       }
 
     }
