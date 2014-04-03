@@ -128,6 +128,7 @@ public class MapPairs implements OMEModelObject {
             Element pair = document.createElementNS(NAMESPACE, "M");
             pair.setAttribute("K", entry.getKey());
             pair.setTextContent(entry.getValue());
+            pairs.appendChild(pair);
         }
 
         return pairs;
