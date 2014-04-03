@@ -13,7 +13,7 @@ Version history
   - Zeiss .czi dimension detection for SPIM datasets
 * Performance improvements for Becker & Hickl .sdt file reading
   (thanks to Ian Munro)
-* Some performance improvements to directory listing over NFS
+* Performance improvements to directory listing over NFS
 * Update slf4j and logback versions (to 1.7.6 and 1.1.1 respectively)
 * Update jgoodies-forms version (to 1.7.2)
 
