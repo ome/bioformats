@@ -60,63 +60,59 @@ import org.w3c.dom.Element;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MapPairs.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MapPairs.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class MapPairs extends java.util.HashMap<String, String> implements OMEModelObject {
+public class MapPairs implements OMEModelObject {
 
-	// -- Constants --
+    // -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2013-10";
+    public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2013-10";
 
-	/** Logger for this class. */
-	private static final Logger LOGGER =
-		LoggerFactory.getLogger(MapPairs.class);
+    private Map<String, String> map;
 
-	/** Default constructor. */
-	public MapPairs()
-	{
-	}
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(MapPairs.class);
 
-    /** Construct with initial HashMap capacity. */
-    public MapPairs(int initialCapacity)
+    /** Default constructor. */
+    public MapPairs()
     {
-        super(initialCapacity);        
-    }
-
-    /** Construct with initial HashMap capacity and load factor. */
-    public MapPairs(int initialCapacity, float loadFactor)
-    {
-        super(initialCapacity, loadFactor);        
+        map = new HashMap<String, String>();
     }
 
     /** Construct from an existing Map. */
     public MapPairs(Map<String, String> m)
     {
-        super(m);        
+       map = new HashMap<String, String>(m);
     }
 
-	/** Copy constructor. */
-	public MapPairs(MapPairs orig)
-	{
-        super(orig);
-	}
+    /** Copy constructor. */
+    public MapPairs(MapPairs orig)
+    {
+        map = new HashMap<String, String>(orig.getMap());
+    }
 
-	/**
-	 * Constructs MapPairs recursively from an XML DOM tree.
-	 * @param element Root of the XML DOM tree to construct a model object
-	 * graph from.
-	 * @param model Handler for the OME model which keeps track of instances
-	 * and references seen during object population.
-	 * @throws EnumerationException If there is an error instantiating an
-	 * enumeration during model object creation.
-	 */
-	public MapPairs(Element element, OMEModel model)
-	    throws EnumerationException
-	{
-		update(element, model);
-	}
+    /**
+     * Constructs MapPairs recursively from an XML DOM tree.
+     * @param element Root of the XML DOM tree to construct a model object
+     * graph from.
+     * @param model Handler for the OME model which keeps track of instances
+     * and references seen during object population.
+     * @throws EnumerationException If there is an error instantiating an
+     * enumeration during model object creation.
+     */
+    public MapPairs(Element element, OMEModel model)
+        throws EnumerationException
+    {
+        update(element, model);
+    }
+
+    public Map getMap()
+    {
+        return map;
+    }
 
     public Element asXMLElement(Document document)
     {
-		return asXMLElement(document, null);
+        return asXMLElement(document, null);
     }
 
     protected Element asXMLElement(Document document, Element pairs)
@@ -125,7 +121,7 @@ public class MapPairs extends java.util.HashMap<String, String> implements OMEMo
             pairs = document.createElementNS(NAMESPACE, "MapPairs");
         }
 
-        Iterator<Map.Entry<String, String>> entries = entrySet().iterator();
+        Iterator<Map.Entry<String, String>> entries = map.entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry<String, String> entry = entries.next();
 
@@ -139,16 +135,16 @@ public class MapPairs extends java.util.HashMap<String, String> implements OMEMo
 
     public void update(Element element, OMEModel model) throws EnumerationException
     {
-		String tagName = element.getTagName();
-		if (!"MapPairs".equals(tagName)) {
-			LOGGER.debug("Expecting node name of TextAnnotation got {}", tagName);
-		}
+        String tagName = element.getTagName();
+        if (!"MapPairs".equals(tagName)) {
+            LOGGER.debug("Expecting node name of TextAnnotation got {}", tagName);
+        }
 
         for(Element child : AbstractOMEModelObject.getChildrenByTagName(element, "M")) {
             if (child.hasAttribute("K")) {
                 String key = child.getAttribute("K");
                 String value = child.getTextContent();
-                put(key, value);
+                map.put(key, value);
             } else {
                 LOGGER.debug("MapPairs entry M does not contain key attribute K");
             }
