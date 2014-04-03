@@ -91,7 +91,14 @@ import ome.xml.model.primitives.Color;
  */
 public class FakeReader extends FormatReader {
 
-  // -- Constants --
+	private static final long ANN_LONG_VALUE = 365;
+	private static final Double ANN_DOUBLE_VALUE = 0.111;
+
+private static final String ANNOTATION_PREFIX = "Annotation:";
+
+private static final String ANNOTATION_NAMESPACE = "fake-reader";
+
+// -- Constants --
 
   public static final int BOX_SIZE = 10;
 
@@ -394,6 +401,23 @@ public class FakeReader extends FormatReader {
     int plateCols = 0;
     int fields = 0;
     int plateAcqs = 0;
+    
+/*
+    int annXml = 0;
+    int annFile = 0;
+    int annList = 0;
+ */
+    int annLong = 0;
+    int annDouble = 0;
+/*
+    int annComment = 0;
+    int annBool = 0;
+    int annTime = 0;
+    int annTag = 0;
+    int annTerm = 0;
+ */
+    int annMap = 0;
+
 
     Integer color = null;
 
@@ -473,6 +497,9 @@ public class FakeReader extends FormatReader {
       else if (key.equals("plateCols")) plateCols = intValue;
       else if (key.equals("fields")) fields = intValue;
       else if (key.equals("plateAcqs")) plateAcqs = intValue;
+      else if (key.equals("annLong")) annLong = intValue;
+      else if (key.equals("annDouble")) annDouble = intValue;
+      else if (key.equals("annMap")) annMap = intValue;
       else if (key.equals("color")) {
         // parse colors as longs so that unsigned values can be specified,
         // e.g. 0xff0000ff for red with opaque alpha
@@ -556,36 +583,51 @@ public class FakeReader extends FormatReader {
 
     // populate OME metadata
     boolean planeInfo = (exposureTime != null);
+    // per file counts
+    int annotationCount = 0;
+    int annotationDoubleCount = 0;
+    int annotationLongCount = 0;
+    int annotationMapCount = 0;
+    // per image count
+    int annotationRefCount = 0;
+    
+    String nextAnnotationID;
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
-    for (int s=0; s<seriesCount; s++) {
-      String imageName = s > 0 ? name + " " + (s + 1) : name;
-      store.setImageName(imageName, s);
+    for (int currentImakeIndex=0; currentImakeIndex<seriesCount; currentImakeIndex++) {
+      String imageName = currentImakeIndex > 0 ? name + " " + (currentImakeIndex + 1) : name;
+      store.setImageName(imageName, currentImakeIndex);
 
       if (color != null) {
         for (int c=0; c<sizeC; c++) {
-          store.setChannelColor(new Color(color), s, c);
+          store.setChannelColor(new Color(color), currentImakeIndex, c);
         }
+      }
+      // new image so reset annotationRefCount
+      annotationRefCount = 0;
+      for (int currentAnnotation=0; currentAnnotation<annLong; currentAnnotation++) {
+  	    nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
+  	    store.setLongAnnotationID(nextAnnotationID, annotationLongCount);
+  	    store.setLongAnnotationNamespace(ANNOTATION_NAMESPACE, annotationLongCount);
+  	    store.setLongAnnotationValue(ANN_LONG_VALUE+annotationCount, annotationLongCount);
+  	    store.setImageAnnotationRef(nextAnnotationID, currentImakeIndex, annotationRefCount);
+  	    annotationLongCount++;
+  	    annotationCount++;
+  	    annotationRefCount++;
+      }
+
+      for (int currentAnnotation=0; currentAnnotation<annDouble; currentAnnotation++) {
+  	    nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
+  	    store.setDoubleAnnotationID(nextAnnotationID, annotationDoubleCount);
+  	    store.setDoubleAnnotationNamespace(ANNOTATION_NAMESPACE, annotationDoubleCount);
+  	    store.setDoubleAnnotationValue(ANN_DOUBLE_VALUE*(annotationCount+1), annotationDoubleCount);
+  	    store.setImageAnnotationRef(nextAnnotationID, currentImakeIndex, annotationRefCount);
+  	    annotationDoubleCount++;
+  	    annotationCount++;
+  	    annotationRefCount++;
       }
     }
     
-    int annotationCount = 0;
-    String nextAnnotationID;
-    
-    nextAnnotationID = "Annotation:" + UUID.randomUUID().toString();
-    store.setLongAnnotationID(nextAnnotationID, annotationCount);
-    store.setLongAnnotationNamespace("fake-reader-namespace", annotationCount);
-    store.setLongAnnotationValue((long) 365, annotationCount);
-    store.setImageAnnotationRef(nextAnnotationID, 0, annotationCount);
-    annotationCount++;
-    
-    nextAnnotationID = "Annotation:" + UUID.randomUUID().toString();
-    store.setLongAnnotationID(nextAnnotationID, annotationCount);
-    store.setLongAnnotationNamespace("fake-reader-namespace", annotationCount);
-    store.setLongAnnotationValue((long) 365, annotationCount);
-    store.setImageAnnotationRef(nextAnnotationID, 0, annotationCount);
-    annotationCount++;
-
     // for indexed color images, create lookup tables
     if (indexed) {
       if (pixelType == FormatTools.UINT8) {
