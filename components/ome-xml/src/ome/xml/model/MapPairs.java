@@ -38,9 +38,12 @@
 
 package ome.xml.model;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import ome.xml.model.AbstractOMEModelObject;
 import ome.xml.model.OMEModelObject;
@@ -62,9 +65,33 @@ import org.w3c.dom.Element;
  */
 public class MapPairs implements OMEModelObject {
 
+    public static final Properties VERSION_PROPERTIES = loadProperties();
+
+    /** Version number of this schema release. */
+    public static final String VERSION =
+    VERSION_PROPERTIES.getProperty("schema.version");
+
+    public static final String PROPERTY_FILE = "omemodel.properties";
+
+    static Properties loadProperties() {
+        Properties properties = new Properties();
+        try {
+            InputStream propertyFile = Class.forName(
+                "loci.formats.FormatTools").getResourceAsStream(PROPERTY_FILE);
+            properties.load(propertyFile);
+        }
+        catch (ClassNotFoundException e) {
+            LOGGER.debug("Failed to load version properties", e);
+        }
+        catch (IOException e) {
+            LOGGER.debug("Failed to load version properties", e);
+        }
+        return properties;
+    }
+
     // -- Constants --
 
-    public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2013-10";
+    public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/" + VERSION;
 
     private Map<String, String> map;
 
