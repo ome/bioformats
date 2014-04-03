@@ -203,7 +203,8 @@ public class IFDMetadata {
     if (colorSpace == null) {
       return null;
     } else {
-      return colorSpace.equals(1) || colorSpace.equals(0xffff) ? colorSpace : 1;
+      return colorSpace == 1 || colorSpace == 0xffff ? colorSpace
+          : (short) 0xffff;
     }
   }
 
