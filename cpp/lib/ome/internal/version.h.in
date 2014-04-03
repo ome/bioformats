@@ -64,4 +64,7 @@
 // Release date as ISO-8601 string
 #define OME_VCS_DATE_S "${OME_VCS_DATE_S}"
 
+// Current OME model version used by xsd-fu
+#define OME_MODEL_VERSION "${MODEL_VERSION}"
+
 #endif // OME_INTERNAL_VERSION_H
