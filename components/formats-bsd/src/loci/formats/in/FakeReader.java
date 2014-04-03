@@ -591,13 +591,13 @@ public class FakeReader extends FormatReader {
     String nextAnnotationID;
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
-    for (int currentImakeIndex=0; currentImakeIndex<seriesCount; currentImakeIndex++) {
-      String imageName = currentImakeIndex > 0 ? name + " " + (currentImakeIndex + 1) : name;
-      store.setImageName(imageName, currentImakeIndex);
+    for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
+      String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
+      store.setImageName(imageName, currentImageIndex);
 
       if (color != null) {
         for (int c=0; c<sizeC; c++) {
-          store.setChannelColor(new Color(color), currentImakeIndex, c);
+          store.setChannelColor(new Color(color), currentImageIndex, c);
         }
       }
       // new image so reset annotationRefCount
@@ -607,7 +607,7 @@ public class FakeReader extends FormatReader {
         store.setLongAnnotationID(nextAnnotationID, annotationLongCount);
         store.setLongAnnotationNamespace(ANNOTATION_NAMESPACE, annotationLongCount);
         store.setLongAnnotationValue(ANN_LONG_VALUE+annotationCount, annotationLongCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImakeIndex, annotationRefCount);
+        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
         annotationLongCount++;
         annotationCount++;
         annotationRefCount++;
@@ -618,11 +618,36 @@ public class FakeReader extends FormatReader {
         store.setDoubleAnnotationID(nextAnnotationID, annotationDoubleCount);
         store.setDoubleAnnotationNamespace(ANNOTATION_NAMESPACE, annotationDoubleCount);
         store.setDoubleAnnotationValue(ANN_DOUBLE_VALUE*(annotationCount+1), annotationDoubleCount);
-        store.setImageAnnotationRef(nextAnnotationID, currentImakeIndex, annotationRefCount);
+        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
         annotationDoubleCount++;
         annotationCount++;
         annotationRefCount++;
       }
+
+      for (int currentAnnotation=0; currentAnnotation<annMap; currentAnnotation++) {
+        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
+/* */
+        store.setCommentAnnotationID(nextAnnotationID, annotationMapCount);
+        store.setCommentAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
+/*
+        store.setMapAnnotationID(nextAnnotationID, annotationMapCount);
+        store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
+*/
+        Map<String, String> mapValue = new HashMap<String,String>();
+        for (int keyNum=0; keyNum<10; keyNum++) {
+          mapValue.put("keyS" + currentImageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1));
+        }
+/* */
+        store.setCommentAnnotationValue(mapValue.toString(), annotationMapCount);
+/*
+        store.setMapAnnotationValue(mapValue, annotationMapCount);
+*/
+        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
+        annotationMapCount++;
+        annotationCount++;
+        annotationRefCount++;
+      }
+
     }
     
     // for indexed color images, create lookup tables
