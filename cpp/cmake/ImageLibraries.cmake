@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2013 Open Microscopy Environment:
+# Copyright © 2006 - 2014 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,36 +34,8 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-cmake_minimum_required(VERSION 2.8)
+include(FindTIFF)
 
-project(bioformats)
-include(cpp/cmake/Version.cmake)
-
-if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-  message(FATAL_ERROR "In-tree builds are not supported; please run cmake from a separate build directory.")
-endif("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
-
-enable_language(CXX)
-
-include(CheckIncludeFileCXX)
-include(CheckCXXCompilerFlag)
-include(CheckCXXSourceCompiles)
-
-include(cpp/cmake/GNUInstallDirs.cmake)
-include(cpp/cmake/CompilerChecks.cmake)
-include(cpp/cmake/BoostChecks.cmake)
-include(cpp/cmake/RegexChecks.cmake)
-include(cpp/cmake/ThreadChecks.cmake)
-include(cpp/cmake/XercesChecks.cmake)
-include(cpp/cmake/ImageLibraries.cmake)
-include(cpp/cmake/XsdFu.cmake)
-include(cpp/cmake/GTest.cmake)
-include(cpp/cmake/Doxygen.cmake)
-include(cpp/cmake/HeaderTest.cmake)
-
-add_subdirectory(docs/doxygen)
-add_subdirectory(cpp)
-
-set(LIBRARY_PREFIX OME)
-configure_file(${PROJECT_SOURCE_DIR}/cpp/cmake/TemplateShellConfig.cmake.in
-               ${PROJECT_BINARY_DIR}/config)
+if(NOT TIFF_FOUND)
+  message(FATAL_ERROR "libtiff is required")
+endif(NOT TIFF_FOUND)
