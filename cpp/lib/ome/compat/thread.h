@@ -36,29 +36,32 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+/**
+ * @file ome/compat/thread.h Thread type.
+ *
+ * This header uses Boost threads as the thread type.  Note that
+ * unlike for other compatibility headers, the C++11 std::thread and
+ * older boost::thread implementations are too different to map from
+ * one to the other, so we have made the deliberate choice to use
+ * Boost threads in all cases.  Once C++11 threads are available on
+ * all supported platforms, this decision may be revisted.
+ */
 
-// Configured features
+#ifndef OME_COMPAT_THREAD_H
+# define OME_COMPAT_THREAD_H
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_THREAD 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+# include <ome/compat/config.h>
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+# if OME_HAVE_BOOST_THREAD
+#  include <boost/thread.hpp>
+# else
+#  error A thread implementation is not available
+# endif
 
-#endif // OME_COMPAT_CONFIG_H
+#endif // OME_COMPAT_THREAD_H
+
+/*
+ * Local Variables:
+ * mode:C++
+ * End:
+ */
