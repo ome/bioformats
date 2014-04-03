@@ -6,11 +6,11 @@ Version history
 
 * Added image pyramid support for CellSens .vsi data
 * Several bug fixes, including:
-  - Woolz import into OMERO
-  - Cellomics file name parsing (thanks to Lee Kamentsky)
-  - Olympus FV1000 timestamp support (thanks to Lewis Kraft and Patrick Riley)
-  - (A)PNG large image support
-  - Zeiss .czi dimension detection for SPIM datasets
+    - Woolz import into OMERO
+    - Cellomics file name parsing (thanks to Lee Kamentsky)
+    - Olympus FV1000 timestamp support (thanks to Lewis Kraft and Patrick Riley)
+    - (A)PNG large image support
+    - Zeiss .czi dimension detection for SPIM datasets
 * Performance improvements for Becker & Hickl .sdt file reading
   (thanks to Ian Munro)
 * Performance improvements to directory listing over NFS
