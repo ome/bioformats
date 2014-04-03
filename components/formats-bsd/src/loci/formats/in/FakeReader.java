@@ -91,14 +91,11 @@ import ome.xml.model.primitives.Color;
  */
 public class FakeReader extends FormatReader {
 
+  // -- Constants --
   private static final long ANN_LONG_VALUE = 365;
   private static final Double ANN_DOUBLE_VALUE = 0.111;
-
   private static final String ANNOTATION_PREFIX = "Annotation:";
-
   private static final String ANNOTATION_NAMESPACE = "fake-reader";
-
-// -- Constants --
 
   public static final int BOX_SIZE = 10;
 
