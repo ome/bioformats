@@ -38,6 +38,8 @@
 
 #include <iostream>
 
+#include <ome/internal/version.h>
+
 #include <ome/xml/model/MapPairs.h>
 
 namespace ome
@@ -49,7 +51,7 @@ namespace ome
 
       namespace
       {
-        const std::string NAMESPACE("http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-1");
+        const std::string NAMESPACE("http://www.openmicroscopy.org/Schemas/ROI/" OME_MODEL_VERSION);
       }
 
       MapPairs::MapPairs ():
