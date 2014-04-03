@@ -576,7 +576,9 @@ class OMEModelProperty(OMEModelEntity):
 
     def _get_header(self):
         header = None
-        if self.langType is None:
+        if self.name in self.model.opts.lang.model_type_map.keys():
+            pass
+        elif self.langType is None:
             pass
         elif isinstance(self.model.opts.lang, language.Java):
             if not self.model.opts.lang.hasPrimitiveType(self.langType):
@@ -617,7 +619,9 @@ class OMEModelProperty(OMEModelEntity):
 
     def _get_source_deps(self):
         deps = set()
-        if self.langType is None:
+        if self.name in self.model.opts.lang.model_type_map.keys():
+            pass
+        elif self.langType is None:
             pass
         elif isinstance(self.model.opts.lang, language.Java):
             if not self.model.opts.lang.hasPrimitiveType(self.langType):
@@ -659,7 +663,9 @@ class OMEModelProperty(OMEModelEntity):
 
     def _get_fwd(self):
         fwd = set()
-        if isinstance(self.model.opts.lang, language.CXX):
+        if self.name in self.model.opts.lang.model_type_map.keys():
+            pass
+        elif isinstance(self.model.opts.lang, language.CXX):
             if not self.model.opts.lang.hasPrimitiveType(self.langType):
                 if not self.isEnumeration:
                     if self.isReference and self.maxOccurs > 1:
