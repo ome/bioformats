@@ -91,12 +91,12 @@ import ome.xml.model.primitives.Color;
  */
 public class FakeReader extends FormatReader {
 
-	private static final long ANN_LONG_VALUE = 365;
-	private static final Double ANN_DOUBLE_VALUE = 0.111;
+  private static final long ANN_LONG_VALUE = 365;
+  private static final Double ANN_DOUBLE_VALUE = 0.111;
 
-private static final String ANNOTATION_PREFIX = "Annotation:";
+  private static final String ANNOTATION_PREFIX = "Annotation:";
 
-private static final String ANNOTATION_NAMESPACE = "fake-reader";
+  private static final String ANNOTATION_NAMESPACE = "fake-reader";
 
 // -- Constants --
 
@@ -590,7 +590,7 @@ private static final String ANNOTATION_NAMESPACE = "fake-reader";
     int annotationMapCount = 0;
     // per image count
     int annotationRefCount = 0;
-    
+
     String nextAnnotationID;
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
@@ -606,25 +606,25 @@ private static final String ANNOTATION_NAMESPACE = "fake-reader";
       // new image so reset annotationRefCount
       annotationRefCount = 0;
       for (int currentAnnotation=0; currentAnnotation<annLong; currentAnnotation++) {
-  	    nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-  	    store.setLongAnnotationID(nextAnnotationID, annotationLongCount);
-  	    store.setLongAnnotationNamespace(ANNOTATION_NAMESPACE, annotationLongCount);
-  	    store.setLongAnnotationValue(ANN_LONG_VALUE+annotationCount, annotationLongCount);
-  	    store.setImageAnnotationRef(nextAnnotationID, currentImakeIndex, annotationRefCount);
-  	    annotationLongCount++;
-  	    annotationCount++;
-  	    annotationRefCount++;
+        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
+        store.setLongAnnotationID(nextAnnotationID, annotationLongCount);
+        store.setLongAnnotationNamespace(ANNOTATION_NAMESPACE, annotationLongCount);
+        store.setLongAnnotationValue(ANN_LONG_VALUE+annotationCount, annotationLongCount);
+        store.setImageAnnotationRef(nextAnnotationID, currentImakeIndex, annotationRefCount);
+        annotationLongCount++;
+        	annotationCount++;
+        annotationRefCount++;
       }
 
       for (int currentAnnotation=0; currentAnnotation<annDouble; currentAnnotation++) {
-  	    nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-  	    store.setDoubleAnnotationID(nextAnnotationID, annotationDoubleCount);
-  	    store.setDoubleAnnotationNamespace(ANNOTATION_NAMESPACE, annotationDoubleCount);
-  	    store.setDoubleAnnotationValue(ANN_DOUBLE_VALUE*(annotationCount+1), annotationDoubleCount);
-  	    store.setImageAnnotationRef(nextAnnotationID, currentImakeIndex, annotationRefCount);
-  	    annotationDoubleCount++;
-  	    annotationCount++;
-  	    annotationRefCount++;
+        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
+        store.setDoubleAnnotationID(nextAnnotationID, annotationDoubleCount);
+        store.setDoubleAnnotationNamespace(ANNOTATION_NAMESPACE, annotationDoubleCount);
+        store.setDoubleAnnotationValue(ANN_DOUBLE_VALUE*(annotationCount+1), annotationDoubleCount);
+        store.setImageAnnotationRef(nextAnnotationID, currentImakeIndex, annotationRefCount);
+        annotationDoubleCount++;
+        annotationCount++;
+        annotationRefCount++;
       }
     }
     
