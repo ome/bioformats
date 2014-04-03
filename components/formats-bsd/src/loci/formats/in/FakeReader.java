@@ -612,7 +612,7 @@ public class FakeReader extends FormatReader {
         store.setLongAnnotationValue(ANN_LONG_VALUE+annotationCount, annotationLongCount);
         store.setImageAnnotationRef(nextAnnotationID, currentImakeIndex, annotationRefCount);
         annotationLongCount++;
-        	annotationCount++;
+        annotationCount++;
         annotationRefCount++;
       }
 
