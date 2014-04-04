@@ -204,6 +204,12 @@ public class FilterMetadata implements MetadataStore
 		store.setMaskBinData(binData, ROIIndex, shapeIndex);
 	}
 
+	/** Sets the Map value associated with this annotation */
+	public void setMapAnnotationValue(java.util.Map<String, String> value, int mapAnnotationIndex)
+	{
+        // TODO: To implement
+	}
+
 	// -- Entity storage (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\

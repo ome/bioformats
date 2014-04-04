@@ -85,6 +85,8 @@ import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
+import java.util.Map;
+
 /**
  * A proxy whose responsibility it is to extract biological image data from a
  * particular storage medium.
@@ -167,6 +169,8 @@ public interface MetadataRetrieve extends BaseMetadata {
 	// -- Entity retrieval (manual definitions) --
 
 	Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex);
+
+	java.util.Map<String, String> getMapAnnotationValue(int mapAnnotationIndex);
 
 	// -- Entity retrieval (code generated definitions) --
 
