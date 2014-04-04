@@ -462,6 +462,13 @@ ${counter(k, o, v)}\
 		return null;
 	}
 
+	/** Gets the Map value associated with this generic light source */
+	public java.util.Map<String, String> getGenericSourceMap(int instrumentIndex, int lightSourceIndex)
+	{
+        // TODO: To implement
+		return null;
+	}
+
 	// -- Entity retrieval (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
@@ -567,6 +574,12 @@ ${getter(k, o, prop, v)}\
 
 	/** Sets the Map value associated with this annotation */
 	public void setMapAnnotationValue(java.util.Map<String, String> value, int mapAnnotationIndex)
+	{
+        // TODO: To implement
+	}
+
+	/** Sets the Map value associated with this generic light source */
+	public void setGenericSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
 	{
         // TODO: To implement
 	}

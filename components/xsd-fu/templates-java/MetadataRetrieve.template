@@ -172,10 +172,12 @@ public interface MetadataRetrieve extends BaseMetadata {
 
 	java.util.Map<String, String> getMapAnnotationValue(int mapAnnotationIndex);
 
-	// -- Entity retrieval (code generated definitions) --
+    java.util.Map<String, String> getGenericSourceMap(int instrumentIndex, int lightSourceIndex);
 
 	/** Gets the UUID associated with this collection of metadata. */
 	String getUUID();
+
+	// -- Entity retrieval (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\

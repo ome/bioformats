@@ -210,6 +210,12 @@ public class FilterMetadata implements MetadataStore
         // TODO: To implement
 	}
 
+	/** Sets the Map value associated with this generic light source */
+	public void setGenericSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
+	{
+        // TODO: To implement
+	}
+
 	// -- Entity storage (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
