@@ -626,22 +626,13 @@ public class FakeReader extends FormatReader {
 
       for (int currentAnnotation=0; currentAnnotation<annMap; currentAnnotation++) {
         nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
-/* */
-        store.setCommentAnnotationID(nextAnnotationID, annotationMapCount);
-        store.setCommentAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
-/*
         store.setMapAnnotationID(nextAnnotationID, annotationMapCount);
         store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
-*/
         Map<String, String> mapValue = new HashMap<String,String>();
         for (int keyNum=0; keyNum<10; keyNum++) {
           mapValue.put("keyS" + currentImageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1));
         }
-/* */
-        store.setCommentAnnotationValue(mapValue.toString(), annotationMapCount);
-/*
         store.setMapAnnotationValue(mapValue, annotationMapCount);
-*/
         store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
         annotationMapCount++;
         annotationCount++;

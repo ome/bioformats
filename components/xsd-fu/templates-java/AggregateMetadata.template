@@ -220,6 +220,9 @@ import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A metadata store which delegates the actual storage to one or more <i>sub</i>
  * metadata stores.
@@ -697,6 +700,9 @@ ${getter(k, o, prop, v)}\
 	public void setMapAnnotationValue(java.util.Map<String, String> value, int mapAnnotationIndex)
 	{
         // TODO: To implement
+        Logger LOGGER = LoggerFactory.getLogger(AggregateMetadata.class);
+        LOGGER.info("Agg: setMapAnnotationValue [{}] value '{}' ", mapAnnotationIndex, value.toString());
+
 	}
 
 	/** Sets the Map value associated with this generic light source */

@@ -134,6 +134,9 @@ import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * An implementation of {@link MetadataStore} that removes unprintable
  * characters from metadata values before storing them in a delegate
@@ -207,13 +210,15 @@ public class FilterMetadata implements MetadataStore
 	/** Sets the Map value associated with this annotation */
 	public void setMapAnnotationValue(java.util.Map<String, String> value, int mapAnnotationIndex)
 	{
-        // TODO: To implement
+        store.setMapAnnotationValue(value, mapAnnotationIndex);
+        Logger LOGGER = LoggerFactory.getLogger(FilterMetadata.class);
+        LOGGER.info("Fil: setMapAnnotationValue [{}] value '{}' ", mapAnnotationIndex, value.toString());
 	}
 
 	/** Sets the Map value associated with this generic light source */
 	public void setGenericSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
 	{
-        // TODO: To implement
+        store.setGenericSourceMap(map, instrumentIndex, lightSourceIndex);
 	}
 
 	// -- Entity storage (code generated definitions) --
