@@ -65,26 +65,29 @@ import org.w3c.dom.Element;
  */
 public class MapPairs implements OMEModelObject {
 
+    /** Logger for this class. */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(MapPairs.class);
+
+    public static final String PROPERTY_FILE = "omemodel.properties";
+
     public static final Properties VERSION_PROPERTIES = loadProperties();
 
     /** Version number of this schema release. */
-    public static final String VERSION =
-    VERSION_PROPERTIES.getProperty("schema.version");
-
-    public static final String PROPERTY_FILE = "omemodel.properties";
+    public static final String VERSION = VERSION_PROPERTIES.getProperty("schema.version");
 
     static Properties loadProperties() {
         Properties properties = new Properties();
         try {
             InputStream propertyFile = Class.forName(
-                "loci.formats.FormatTools").getResourceAsStream(PROPERTY_FILE);
+                "ome.xml.model.MapPairs").getResourceAsStream(PROPERTY_FILE);
             properties.load(propertyFile);
         }
         catch (ClassNotFoundException e) {
-            LOGGER.debug("Failed to load version properties", e);
+            LOGGER.debug("Failed to load model properties", e);
         }
         catch (IOException e) {
-            LOGGER.debug("Failed to load version properties", e);
+            LOGGER.debug("Failed to load model properties", e);
         }
         return properties;
     }
@@ -94,10 +97,6 @@ public class MapPairs implements OMEModelObject {
     public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/" + VERSION;
 
     private Map<String, String> map;
-
-    /** Logger for this class. */
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(MapPairs.class);
 
     /** Default constructor. */
     public MapPairs()
