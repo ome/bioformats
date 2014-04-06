@@ -40,6 +40,8 @@
 #include <ome/xerces/Platform.h>
 #include <ome/xerces/ErrorReporter.h>
 
+#include <ome/test/config.h>
+
 // #include <ome/xerces/dom/Document.h>
 // #include <ome/xerces/dom/Node.h>
 // #include <ome/xerces/dom/Element.h>
@@ -53,100 +55,38 @@
 #include <xercesc/util/OutOfMemoryException.hpp>
 #include <xercesc/util/XMLException.hpp>
 
-#include <iostream>
-#include <cstring>
-#include <cstdlib>
 #include <stdexcept>
 
-namespace
-{
-
-  void fatal(const char *err, const char *reason = 0)
-  {
-    std::cerr << "E: " << err;
-    if (reason)
-      std::cerr << ": " << reason;
-    std::cerr << std::endl;
-    std::exit(1);
-  }
-
-}
+#include <gtest/gtest.h>
 
 namespace xml = ome::xerces;
 
-
-int main (int argc, char *argv[])
+TEST(Xerces, ValidateOMEXML)
 {
-  if (argc != 2)
-    fatal("Usage: testx file.xml");
+  const char *filename = PROJECT_SOURCE_DIR "/components/specification/samples/2012-06/18x24y5z5t2c8b-text.ome";
 
-  const char *filename = argv[1];
+  xml::Platform xmlplat;
 
-  try
-    {
-      xml::Platform xmlplat;
+  xercesc::XercesDOMParser::ValSchemes vscheme = xercesc::XercesDOMParser::Val_Auto;  // Val_Always;
+  bool do_ns = true;
+  bool do_schema = true;
+  //bool do_valid = false;
+  bool do_fullcheck = true;
+  bool do_create = true;
 
-      try
-        {
-          xercesc::XercesDOMParser::ValSchemes vscheme = xercesc::XercesDOMParser::Val_Auto;  // Val_Always;
-          bool do_ns = true;
-          bool do_schema = true;
-          //bool do_valid = false;
-          bool do_fullcheck = true;
-          bool do_create = true;
+  xercesc::XercesDOMParser parser;
+  parser.setValidationScheme(vscheme);
+  parser.setDoNamespaces(do_ns);
+  parser.setDoSchema(do_schema);
+  parser.setHandleMultipleImports (true);
+  parser.setValidationSchemaFullChecking(do_fullcheck);
+  parser.setCreateEntityReferenceNodes(do_create);
 
-          xercesc::XercesDOMParser parser;
-          parser.setValidationScheme(vscheme);
-          parser.setDoNamespaces(do_ns);
-          parser.setDoSchema(do_schema);
-          parser.setHandleMultipleImports (true);
-          parser.setValidationSchemaFullChecking(do_fullcheck);
-          parser.setCreateEntityReferenceNodes(do_create);
+  xml::ErrorReporter er;
+  parser.setErrorHandler(&er);
 
-          xml::ErrorReporter er;
-          parser.setErrorHandler(&er);
+  parser.parse(filename);
 
-          std::cerr << "Set up parser\n";
-
-          parser.parse(filename);
-
-          if (er)
-            throw std::runtime_error("Parse error");
-
-          std::cerr << "Parsed " << filename << "\n";
-
-          return 0;
-        }
-      catch (const xercesc::XMLException &e)
-        {
-          fatal("XML parse error", xml::String(e.getMessage()).str().c_str());
-        }
-      catch (const xercesc::DOMException &e)
-        {
-          const unsigned int maxc = 2047;
-          XMLCh error[maxc + 1];
-
-          if (xercesc::DOMImplementation::loadDOMExceptionMsg(e.code, error, maxc))
-            fatal("XML DOM parse error", xml::String(error).str().c_str());
-          else
-            fatal("XML DOM parse error (no error message)");
-        }
-      catch (const xercesc::OutOfMemoryException&)
-        {
-          fatal("Out of memory");
-        }
-      catch (const std::exception&e)
-        {
-          fatal(e.what());
-        }
-      catch (...)
-        {
-          fatal("Unknown exception");
-        }
-    }
-  catch (const xercesc::XMLException &e)
-    {
-      fatal("XML parse error", xml::String(e.getMessage()).str().c_str());
-    }
-  return 1;
+  if (er)
+    throw std::runtime_error("Parse error");
 }

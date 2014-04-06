@@ -82,11 +82,8 @@ set(test_flags
     -Wall
     -Wcast-align
     -Wcast-qual
-    -Wconversion
     -Wctor-dtor-privacy
-    -Wdocumentation
     -Wextra
-    -Wfloat-equal
     -Wformat=2
     -Wimplicit-atomic-properties
     -Wmissing-declarations
@@ -100,10 +97,19 @@ set(test_flags
     -Wstrict-selector-match
     -Wswitch-default
     -Wundeclared-selector
-    -Wunreachable-code
     -Wunused-variable
     -Wwrite-strings
     -fstrict-aliasing)
+
+option(extra-warnings "Enable extra compiler warnings" OFF)
+if (extra-warnings)
+list(APPEND test_flags
+    -Wconversion
+    -Wdocumentation
+    -Wfloat-equal
+    -Wunreachable-code)
+endif (extra-warnings)
+
 
 foreach(flag ${test_flags})
   set(test_cxx_flag "CXX_FLAG${flag}")

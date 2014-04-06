@@ -1,7 +1,7 @@
 # #%L
 # Bio-Formats C++ libraries (cmake build infrastructure)
 # %%
-# Copyright © 2006 - 2014 Open Microscopy Environment:
+# Copyright © 2006 - 2013 Open Microscopy Environment:
 #   - Massachusetts Institute of Technology
 #   - National Institutes of Health
 #   - University of Dundee
@@ -34,58 +34,24 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+include_directories(${GTEST_INCLUDE_DIR})
+
 if(BUILD_TESTS)
-  include_directories(${OME_TOPLEVEL_INCLUDES})
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
+                 ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-  header_test_from_file(ome-compat "" ome/compat)
-  add_test(ome-compat/headers ome-compat-headers)
+  set(ome_test_static_headers)
 
-  add_executable(array array.cpp)
-  target_link_libraries(array ome-compat)
-  target_link_libraries(array ome-test)
+  set(ome_test_generated_headers
+     ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-  add_test(ome-compat/array array)
+  set(ome_test_sources main.cpp)
 
-  add_executable(cstdint cstdint.cpp)
-  target_link_libraries(cstdint ome-compat)
-  target_link_libraries(cstdint ome-test)
+  add_library(ome-test STATIC ${ome_test_sources})
 
-  add_test(ome-compat/cstdint cstdint)
+  target_link_libraries(ome-test ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+  set_target_properties(ome-test PROPERTIES LINKER_LANGUAGE CXX)
 
-  add_executable(memory memory.cpp)
-  target_link_libraries(memory ome-compat)
-  target_link_libraries(memory ome-test)
-
-  add_test(ome-compat/memory memory)
-
-  add_executable(mstream mstream.cpp)
-  target_link_libraries(mstream ome-compat)
-  target_link_libraries(mstream ome-test)
-
-  add_test(ome-compat/mstream mstream)
-
-  add_executable(regex regex.cpp)
-  target_link_libraries(regex ome-compat)
-  target_link_libraries(regex ome-test)
-
-  add_test(ome-compat/regex regex)
-
-  add_executable(string string.cpp)
-  target_link_libraries(string ome-compat)
-  target_link_libraries(string ome-test)
-
-  add_test(ome-compat/string string)
-
-  add_executable(tuple tuple.cpp)
-  target_link_libraries(tuple ome-compat)
-  target_link_libraries(tuple ome-test)
-
-  add_test(ome-compat/tuple tuple)
-
-  add_executable(variant variant.cpp)
-  target_link_libraries(variant ome-compat)
-  target_link_libraries(variant ome-test)
-
-  add_test(ome-compat/variant variant)
-
+  # Dump header list for testing
+  header_include_list_write(ome_test_static_headers ome_test_generated_headers ome/test ${PROJECT_BINARY_DIR}/cpp/test/ome-test)
 endif(BUILD_TESTS)
