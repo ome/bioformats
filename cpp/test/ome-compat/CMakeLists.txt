@@ -37,7 +37,7 @@
 if(BUILD_TESTS)
   include_directories(${OME_TOPLEVEL_INCLUDES})
 
-  header_test_from_file(ome-compat "" ome/compat)
+  header_test_from_file(ome-compat ome-compat ome/compat)
   add_test(ome-compat/headers ome-compat-headers)
 
   add_executable(array array.cpp)
@@ -69,6 +69,12 @@ if(BUILD_TESTS)
   target_link_libraries(regex ome-test)
 
   add_test(ome-compat/regex regex)
+
+  add_executable(thread thread.cpp)
+  target_link_libraries(thread ome-compat)
+  target_link_libraries(thread ome-test)
+
+  add_test(ome-compat/thread thread)
 
   add_executable(string string.cpp)
   target_link_libraries(string ome-compat)

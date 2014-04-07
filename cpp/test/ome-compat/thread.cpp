@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME-COMPAT C++ library for C++ compatibility/portability
+ * OME-BIOFORMATS C++ library for image IO.
  * %%
  * Copyright © 2006 - 2014 Open Microscopy Environment:
  *   - Massachusetts Institute of Technology
@@ -36,29 +36,72 @@
  * #L%
  */
 
-#ifndef OME_COMPAT_CONFIG_H
-#define OME_COMPAT_CONFIG_H
+#include <ome/compat/thread.h>
 
-// Configured features
+#include <gtest/gtest.h>
 
-#cmakedefine OME_HAVE_ARRAY 1
-#cmakedefine OME_HAVE_BOOST_ARRAY 1
-#cmakedefine OME_HAVE_CSTDINT 1
-#cmakedefine OME_HAVE_MEMORY 1
-#cmakedefine OME_HAVE_BOOST_SHARED_PTR 1
-#cmakedefine OME_HAVE_TUPLE 1
-#cmakedefine OME_HAVE_TR1_TUPLE 1
-#cmakedefine OME_HAVE_BOOST_TUPLE 1
-#cmakedefine OME_HAVE_REGEX 1
-#cmakedefine OME_HAVE_TR1_REGEX 1
-#cmakedefine OME_HAVE_BOOST_REGEX 1
-#cmakedefine OME_HAVE_BOOST_THREAD 1
-#cmakedefine OME_HAVE_BOOST_FORMAT 1
-#cmakedefine OME_HAVE_NOEXCEPT 1
-#cmakedefine OME_VARIANT_LIMIT 1
+namespace
+{
 
-#ifndef OME_HAVE_NOEXCEPT
-# define noexcept
-#endif
+  void
+  threadtest1()
+  {
+  }
 
-#endif // OME_COMPAT_CONFIG_H
+  class threadtest2
+  {
+  private:
+    int a;
+    int b;
+    int value;
+    boost::mutex value_guard;
+
+  public:
+    threadtest2(int a, int b):
+      a(a),
+      b(b),
+      value(0),
+      value_guard()
+    {}
+
+    void operator() ()
+    {
+      boost::lock_guard<boost::mutex> lock(value_guard);
+      value = a + b;
+    }
+
+    int result()
+    {
+      boost::lock_guard<boost::mutex> lock(value_guard);
+      return value;
+    }
+  };
+
+}
+
+TEST(Mutex, LockGuard)
+{
+  boost::mutex m;
+  boost::lock_guard<boost::mutex> lock(m);
+}
+
+// Create thread from bare function.  Note: Could also have been a
+// static class method.
+TEST(Thread, Function)
+{
+  boost::thread foo(threadtest1);
+}
+
+// Create thread from function object.  Check state after join and use
+// mutexes for testing purposes.
+TEST(Thread, Object)
+{
+  threadtest2 t(4,55);
+
+  // Note that boost::ref avoids a copy of the functor so the result
+  // is set in the same object.
+  boost::thread foo(boost::ref(t));
+  foo.join();
+
+  ASSERT_EQ(59, t.result());
+}
