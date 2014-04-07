@@ -231,7 +231,7 @@ namespace ome
       {
         if (!id && notNull)
           {
-            throw std::logic_error("Current file should not be null; call setId(String) first");
+            throw std::logic_error("Current file should not be null; call setId() first");
           }
         else if (id && !notNull)
           {

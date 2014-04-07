@@ -111,6 +111,40 @@ namespace ome
       toXMLAnnotation() const;
     };
 
+    /**
+     * Output Modulo to output stream.
+     *
+     * @param os the output stream.
+     * @param modulo the Modulo to output.
+     * @returns the output stream.
+     */
+    template<class charT, class traits>
+    inline std::basic_ostream<charT,traits>&
+    operator<< (std::basic_ostream<charT,traits>& os,
+                const Modulo& modulo)
+    {
+      os << "parentDimension = " << modulo.parentDimension << '\n'
+         << "start = " << modulo.start << '\n'
+         << "step = " << modulo.step << '\n'
+         << "end = " << modulo.end << '\n'
+         << "parentType = " << modulo.parentType << '\n'
+         << "type = " << modulo.type << '\n'
+         << "typeDescription = " << modulo.typeDescription << '\n'
+         << "unit = " << modulo.unit << '\n'
+         << "labels = ";
+      for (std::vector<std::string>::const_iterator i = modulo.labels.begin();
+           i != modulo.labels.end();
+           ++i)
+        {
+          os << *i;
+          if (i + 1 != modulo.labels.end())
+            os << ", ";
+        }
+      os << '\n';
+
+      return os;
+    }
+
   }
 }
 

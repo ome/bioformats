@@ -246,7 +246,34 @@
 					<xsd:annotation>
 						<xsd:documentation>
 							The acquisition date of the Image.
-							The element contains a string in the ISO 8601 dateTime format (i.e. 1988-04-07T18:39:09)
+							The element contains an xsd:dateTime string based on the ISO 8601 format (i.e. 1988-04-07T18:39:09.359)
+
+							YYYY-MM-DDTHH:mm:SS.sssZ
+							Y - Year
+							M - Month
+							D - Day
+							H - Hour
+							m - minutes
+							S - Seconds
+							s - sub-seconds (optional)
+							Z - Zone (optional) +HH:mm or -HH:mm or Z for UTC
+
+							Note: xsd:dataTime supports a very wide date range with unlimited precision. The full date range
+								and precision are not typically supported by platform- and language-specific libraries.
+								Where the supported time precision is less than the precision used by the xsd:dateTime
+								timestamp there will be loss of precision; this will typically occur via direct truncation
+								or (less commonly) rounding.
+
+								The year value can be large and/or negative. Any value covering the current or last century
+								should be correctly processed, but some systems cannot process earlier dates.
+
+								The sub-second value is defined as an unlimited number of digits after the decimal point.
+								In Java a minimum of millisecond precision is guaranteed.
+								In C++ microsecond precision is guaranteed, with nanosecond precision being available on 
+								some platforms.
+
+								Time zones are supported, eg '2013-10-24T11:52:33+01:00' for Paris, but in most cases it will
+								be converted to UTC when the timestamp is written.
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>

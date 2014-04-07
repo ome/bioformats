@@ -75,7 +75,7 @@ namespace ome
 
       FormatReader::FormatReader(const ReaderProperties& readerProperties):
         readerProperties(readerProperties),
-        currentId(),
+        currentId(boost::none),
         in(),
         metadata(),
         coreIndex(0),
@@ -96,6 +96,7 @@ namespace ome
         metadataStore(std::make_shared<DummyMetadata>()),
         metadataOptions()
       {
+        assertId(currentId, false);
       }
 
       FormatReader::~FormatReader()
@@ -164,20 +165,33 @@ namespace ome
       FormatReader::isUsedFile(const std::string& file)
       {
         bool used = false;
-        path thisfile = boost::filesystem::canonical(path(file));
 
-        /// @todo: Use a set rather than a list?
-        const std::vector<std::string>& s = getUsedFiles();
-        for (std::vector<std::string>::const_iterator i = s.begin();
-             i != s.end();
-             ++i)
+        try
           {
-            path usedfile = boost::filesystem::canonical(path(*i));
-            if (thisfile == usedfile)
+            path thisfile = boost::filesystem::canonical(path(file));
+
+            /// @todo: Use a set rather than a list?
+            const std::vector<std::string>& s = getUsedFiles();
+            for (std::vector<std::string>::const_iterator i = s.begin();
+                 i != s.end();
+                 ++i)
               {
-                used = true;
-                break;
+                try
+                  {
+                    path usedfile = boost::filesystem::canonical(path(*i));
+                    if (thisfile == usedfile)
+                      {
+                        used = true;
+                        break;
+                      }
+                  }
+                catch (const boost::filesystem::filesystem_error& e)
+                  {
+                  }
               }
+          }
+        catch (const boost::filesystem::filesystem_error& e)
+          {
           }
 
         return used;
@@ -375,66 +389,66 @@ namespace ome
         return false;
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getImageCount() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).imageCount;
       }
 
       bool
       FormatReader::isRGB() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).rgb;
       }
 
       dimension_size_type
       FormatReader::getSizeX() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).sizeX;
       }
 
       dimension_size_type
       FormatReader::getSizeY() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).sizeY;
       }
 
       dimension_size_type
       FormatReader::getSizeZ() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).sizeZ;
       }
 
       dimension_size_type
       FormatReader::getSizeT() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).sizeT;
       }
 
       dimension_size_type
       FormatReader::getSizeC() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).sizeC;
       }
 
       ome::xml::model::enums::PixelType
       FormatReader::getPixelType() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).pixelType;
       }
 
       pixel_size_type
       FormatReader::getBitsPerPixel() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         if (getCoreMetadata(getCoreIndex()).bitsPerPixel == 0) {
           return bitsPerPixel(getPixelType());
           /**
@@ -476,14 +490,14 @@ namespace ome
       bool
       FormatReader::isIndexed() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).indexed;
       }
 
       bool
       FormatReader::isFalseColor() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).falseColor;
       }
 
@@ -538,7 +552,7 @@ namespace ome
       std::array<dimension_size_type, 2>
       FormatReader::getThumbSize() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
 
         std::array<dimension_size_type, 2> ret;
         ret[0] = getCoreMetadata(getCoreIndex()).thumbSizeX;
@@ -594,28 +608,28 @@ namespace ome
       bool
       FormatReader::isLittleEndian() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).littleEndian;
       }
 
       const std::string&
       FormatReader::getDimensionOrder() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).dimensionOrder;
       }
 
       bool
       FormatReader::isOrderCertain() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).orderCertain;
       }
 
       bool
       FormatReader::isThumbnailSeries() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).thumbnail;
       }
 
@@ -628,22 +642,22 @@ namespace ome
       bool
       FormatReader::isInterleaved(dimension_size_type /* subC */) const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).interleaved;
       }
 
       void
-      FormatReader::openBytes(image_size_type no,
-                              PixelBufferRaw& buf) const
+      FormatReader::openBytes(dimension_size_type no,
+                              PixelBufferRaw&     buf) const
       {
         openBytes(no, buf, 0, 0, getSizeX(), getSizeY());
       }
 
       void
-      FormatReader::openThumbBytes(image_size_type /* no */,
-                                   PixelBufferRaw& /* buf */) const
+      FormatReader::openThumbBytes(dimension_size_type /* no */,
+                                   PixelBufferRaw&     /* buf */) const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         /**
          * @todo Implement openThumbBytes.  This requires implementing
          * image rescaling/resampling.
@@ -664,11 +678,11 @@ namespace ome
           }
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getSeriesCount() const
       {
-        assertId(currentId.get(), true);
-        image_size_type size = core.size();
+        assertId(currentId, true);
+        dimension_size_type size = core.size();
         if (!hasFlattenedResolutions()) {
           size = coreIndexToSeries(core.size() - 1) + 1;
         }
@@ -676,14 +690,14 @@ namespace ome
       }
 
       void
-      FormatReader::setSeries(image_size_type no) const
+      FormatReader::setSeries(dimension_size_type no) const
       {
         coreIndex = seriesToCoreIndex(no);
         series = no;
         resolution = 0;
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getSeries() const
       {
         return series;
@@ -692,7 +706,7 @@ namespace ome
       void
       FormatReader::setGroupFiles(bool group)
       {
-        assertId(currentId.get(), false);
+        assertId(currentId, false);
         this->group = group;
       }
 
@@ -711,14 +725,14 @@ namespace ome
       bool
       FormatReader::isMetadataComplete() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).metadataComplete;
       }
 
       void
       FormatReader::setNormalized(bool normalize)
       {
-        assertId(currentId.get(), false);
+        assertId(currentId, false);
         normalizeData = normalize;
       }
 
@@ -731,7 +745,7 @@ namespace ome
       void
       FormatReader::setOriginalMetadataPopulated(bool populate)
       {
-        assertId(currentId.get(), false);
+        assertId(currentId, false);
         saveOriginalMetadata = populate;
       }
 
@@ -745,9 +759,9 @@ namespace ome
       FormatReader::getUsedFiles(bool noPixels) const
       {
         SaveSeries sentry(*this);
-        image_size_type oldSeries = getSeries();
+        dimension_size_type oldSeries = getSeries();
         std::set<std::string> files;
-        for (image_size_type i = 0; i < getSeriesCount(); ++i)
+        for (dimension_size_type i = 0; i < getSeriesCount(); ++i)
           {
             setSeries(i);
             std::vector<std::string> s = getSeriesUsedFiles(noPixels);
@@ -766,7 +780,7 @@ namespace ome
       FormatReader::getSeriesUsedFiles(bool noPixels) const
       {
         std::vector<std::string> ret;
-        if (!noPixels)
+        if (!noPixels && currentId)
           ret.push_back(currentId.get());
         return ret;
       }
@@ -840,7 +854,7 @@ namespace ome
                              dimension_size_type c,
                              dimension_size_type t)
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return ome::bioformats::getIndex(getDimensionOrder(),
                                          getSizeZ(),
                                          getEffectiveSizeC(),
@@ -852,7 +866,7 @@ namespace ome
       std::array<dimension_size_type, 3>
       FormatReader::getZCTCoords(dimension_size_type index)
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return ome::bioformats::getZCTCoords(getDimensionOrder(),
                                              getSizeZ(),
                                              getEffectiveSizeC(),
@@ -870,7 +884,7 @@ namespace ome
       const MetadataMap::value_type&
       FormatReader::getSeriesMetadataValue(const MetadataMap::key_type& field)
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getSeriesMetadata().get<MetadataMap::value_type>(field);
       }
 
@@ -883,7 +897,7 @@ namespace ome
       const MetadataMap&
       FormatReader::getSeriesMetadata() const
       {
-        assertId(currentId.get(), true);
+        assertId(currentId, true);
         return getCoreMetadata(getCoreIndex()).seriesMetadata;
       }
 
@@ -989,10 +1003,10 @@ namespace ome
         return std::min(maxHeight, getSizeY());
       }
 
-      image_size_type
-      FormatReader::seriesToCoreIndex(image_size_type series) const
+      dimension_size_type
+      FormatReader::seriesToCoreIndex(dimension_size_type series) const
       {
-        image_size_type index = 0;
+        dimension_size_type index = 0;
 
         if (hasFlattenedResolutions())
           {
@@ -1012,7 +1026,7 @@ namespace ome
           }
         else
           {
-            image_size_type idx = 0;
+            dimension_size_type idx = 0;
             for (coremetadata_list_type::const_iterator i = core.begin();
                  i != core.end();
                  ++i, ++idx)
@@ -1038,10 +1052,10 @@ namespace ome
         return index;
       }
 
-      image_size_type
-      FormatReader::coreIndexToSeries(image_size_type index) const
+      dimension_size_type
+      FormatReader::coreIndexToSeries(dimension_size_type index) const
       {
-        image_size_type series = 0;
+        dimension_size_type series = 0;
 
         if (index >= core.size())
           {
@@ -1063,14 +1077,14 @@ namespace ome
         else
           {
             // Convert from non-flattened coreIndex to flattened series
-            image_size_type idx = 0;
+            dimension_size_type idx = 0;
 
             for (coremetadata_list_type::size_type i = 0; i < index;)
               {
                 const coremetadata_list_type::value_type& v(core.at(i));
                 if (v)
                   {
-                    image_size_type nextSeries = i + v->resolutionCount;
+                    dimension_size_type nextSeries = i + v->resolutionCount;
                     if (index < nextSeries)
                       break;
                     i = nextSeries;
@@ -1087,12 +1101,12 @@ namespace ome
         return series;
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getResolutionCount() const
       {
         assertId(currentId, true);
 
-        image_size_type count = 1;
+        dimension_size_type count = 1;
         if (!hasFlattenedResolutions())
           count = core.at(seriesToCoreIndex(getSeries()))->resolutionCount;
 
@@ -1100,7 +1114,7 @@ namespace ome
       }
 
       void
-      FormatReader::setResolution(image_size_type resolution) const
+      FormatReader::setResolution(dimension_size_type resolution) const
       {
         if (resolution >= getResolutionCount())
           {
@@ -1113,7 +1127,7 @@ namespace ome
         this->resolution = resolution;
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getResolution() const
       {
         return resolution;
@@ -1132,14 +1146,14 @@ namespace ome
         flattenedResolutions = flatten;
       }
 
-      image_size_type
+      dimension_size_type
       FormatReader::getCoreIndex() const
       {
         return coreIndex;
       }
 
       void
-      FormatReader::setCoreIndex(image_size_type index) const
+      FormatReader::setCoreIndex(dimension_size_type index) const
       {
         if (index >= core.size())
           {
@@ -1156,7 +1170,7 @@ namespace ome
       FormatReader::setId(const std::string& id)
       {
         //    LOGGER.debug("{} initializing {}", getFormat(), id);
-        if (id != currentId.get())
+        if (!currentId || id != currentId.get())
           {
             initFile(id);
 
@@ -1171,7 +1185,7 @@ namespace ome
                     setSeries(0);
                     {
                       SaveSeries(*this);
-                      for (image_size_type series = 0;
+                      for (dimension_size_type series = 0;
                            series < getSeriesCount();
                            ++series)
                         {
@@ -1207,7 +1221,7 @@ namespace ome
                 {
                   SaveSeries(*this);
 
-                  for (image_size_type series = 0;
+                  for (dimension_size_type series = 0;
                        series < getSeriesCount();
                        ++series)
                     {

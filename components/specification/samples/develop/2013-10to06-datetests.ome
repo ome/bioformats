@@ -111,17 +111,6 @@
 	</OME:ExperimenterGroup>
 	
 	<Instrument ID="Instrument:0">
-		<LightSource ID="LightSource:0">
-			<GenericSource>
-				<Map><M K="a">1</M><M K="b">2</M><M K="c">3</M></Map>
-			</GenericSource>
-		</LightSource>
-		<LightSource ID="LightSource:1" Manufacturer="OME-Inc">
-			<Laser Wavelength="655.3" Tuneable="false"/>
-		</LightSource>
-		<LightSource ID="LightSource:2" Power="2.3">
-			<Laser Wavelength="755" LaserMedium="Alexandrite"/>
-		</LightSource>
 		<Objective ID="Objective:0" LotNumber="123" Manufacturer="OME-Labs"
 			NominalMagnification="20" CalibratedMagnification="20.34"/>
 	</Instrument>
@@ -131,15 +120,9 @@
 		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
 			PhysicalSizeY="10000.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
 			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1147483648"
-				EmissionWavelength="577.2" ExcitationWavelength="655.8"
-				ID="Channel:0">
-				<LightSourceSettings ID="LightSource:1" Wavelength="655.4"/>
-			</Channel>
+				ID="Channel:0"> </Channel>
 			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1474836488"
-				EmissionWavelength="477.0" ExcitationWavelength="755"
-				ID="Channel:1">
-				<LightSourceSettings ID="LightSource:1" Wavelength="755.0"/>
-			</Channel>
+				ID="Channel:1"> </Channel>
 			<Channel AcquisitionMode="MultiPhotonMicroscopy" Color="-2144364811" ID="Channel:2"> </Channel>
 			<Bin:BinData BigEndian="false" Length="32"
 				>/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
@@ -163,11 +146,52 @@
 				<test2/>
 			</SA:Value>
 		</SA:XMLAnnotation>
-		<SA:MapAnnotation ID="Annotation:2">
-			<SA:Value>
-				<M K="a">1</M><M K="b">2</M><M K="c">3</M>
-			</SA:Value>
-		</SA:MapAnnotation>
+		<!-- A range of dates, valid in the schema designed to test/stretch/break the model API -->
+		<SA:TimestampAnnotation ID="Annotation:2" Namespace="sample.openmicroscopy.org/time/retirement">
+			<SA:Value>2037-12-15T17:30:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:3" Namespace="sample.openmicroscopy.org/time/post1972">
+			<SA:Value>1996-03-23T14:45:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:4" Namespace="sample.openmicroscopy.org/time/1070-1972">
+			<SA:Value>1971-05-06T18:34:59</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:5" Namespace="sample.openmicroscopy.org/time/oldestlivingDOB">
+			<SA:Value>1898-03-05T02:48:38</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:6" Namespace="sample.openmicroscopy.org/time/houseofstewart">
+			<SA:Value>1714-08-01T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:7" Namespace="sample.openmicroscopy.org/time/gregorian-start">
+			<SA:Value>1582-10-15T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:8" Namespace="sample.openmicroscopy.org/time/kingjohn">
+			<SA:Value>1199-05-27T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:9" Namespace="sample.openmicroscopy.org/time/fire">
+			<SA:Value>0066-07-18T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:10" Namespace="sample.openmicroscopy.org/time/birthday">
+			<SA:Value>-0005-12-25T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:11" Namespace="sample.openmicroscopy.org/time/dinosaur">
+			<SA:Value>-231400000-01-01T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:12" Namespace="sample.openmicroscopy.org/time/zone1paris">
+			<SA:Value>2013-10-24T11:52:33+01:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:13" Namespace="sample.openmicroscopy.org/time/zone2honolulu">
+			<SA:Value>2013-10-24T11:52:33-10:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:14" Namespace="sample.openmicroscopy.org/time/zone3gmt">
+			<SA:Value>2013-10-24T11:52:33Z</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:15" Namespace="sample.openmicroscopy.org/time/zone4nepal">
+			<SA:Value>2013-10-24T11:52:33+05:45</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:16" Namespace="sample.openmicroscopy.org/time/millisecond">
+			<SA:Value>2014-03-26T13:46:07.487</SA:Value>
+		</SA:TimestampAnnotation>
 	</SA:StructuredAnnotations>
 	<ROI:ROI ID="ROI:0">
 		<ROI:Union>

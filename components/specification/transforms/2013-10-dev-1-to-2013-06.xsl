@@ -2,11 +2,7 @@
 <!--
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-<<<<<<< HEAD
-# Copyright (C) 2009-2013 Open Microscopy Environment
-=======
 # Copyright (C) 2009 - 2014 Open Microscopy Environment
->>>>>>> origin/develop
 #       Massachusetts Institute of Technology,
 #       National Institutes of Health,
 #       University of Dundee,
@@ -58,8 +54,6 @@
 	<xsl:preserve-space elements="*"/>
 
 	<!-- Actual schema changes -->
-<<<<<<< HEAD
-=======
 	
 	<!-- strip EmissionWavelength and ExcitationWavelength ONLY if it is not an integer -->
 	<xsl:template match="OME:Channel">
@@ -128,7 +122,6 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
->>>>>>> origin/develop
 
 	<!-- Rewriting all namespaces -->
 

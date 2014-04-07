@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
+<OME:OME xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-06"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-1"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-1"
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
-	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1
-		http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1/ome.xsd">
-	
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-06"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-06"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-06"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
+	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06    http://www.openmicroscopy.org/Schemas/OME/2013-06/ome.xsd">
+
 	<OME:Project ID="Project:0">
 		<OME:DatasetRef ID="Dataset:0"/>
 		<SA:AnnotationRef ID="Annotation:0"/>
@@ -39,7 +37,7 @@
 		<SPW:PlateRef ID="Plate:0"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
-	
+
 	<SPW:Screen ID="Screen:1" Name="ScreenName1" ProtocolDescription="Protocol Description Test1"
 		ProtocolIdentifier="ProtocolTest1ID" ReagentSetDescription="Reagents Set PQR"
 		ReagentSetIdentifier="ReagentsPQR-ID" Type="ScreenType1">
@@ -49,7 +47,7 @@
 		<SPW:PlateRef ID="Plate:0"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
-	
+
 	<SPW:Screen ID="Screen:2" Name="ScreenName2" ProtocolDescription="Protocol Description Test2"
 		ProtocolIdentifier="ProtocolTest2ID" ReagentSetDescription="Reagents Set IJK"
 		ReagentSetIdentifier="ReagentsIJK-ID" Type="ScreenType2">
@@ -57,7 +55,7 @@
 		<SPW:Reagent ID="Reagent:2"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
-	
+
 	<SPW:Screen ID="Screen:3" Name="ScreenName3" ProtocolDescription="Protocol Description Test3"
 		ProtocolIdentifier="ProtocolTest3ID" ReagentSetDescription="Reagents Set AJP"
 		ReagentSetIdentifier="ReagentsAJP-ID" Type="ScreenType3">
@@ -66,7 +64,7 @@
 		<SPW:PlateRef ID="Plate:0"/>
 		<SA:AnnotationRef ID="Annotation:1"/>
 	</SPW:Screen>
-	
+
 	<OME:Experimenter ID="Experimenter:0"/>
 	<OME:Experimenter ID="Experimenter:1" FirstName="John" MiddleName="Andrew" LastName="Smith"
 		Email="john@example.org"> </OME:Experimenter>
@@ -75,71 +73,56 @@
 	<OME:Experimenter ID="Experimenter:4"/>
 	<OME:Experimenter ID="Experimenter:5"/>
 	<OME:Experimenter ID="Experimenter:6"/>
-	
+
 	<OME:ExperimenterGroup Name="MyGroup - Leader+Contact match" ID="ExperimenterGroup:Group:0">
-		<Description>A description for my group 0. Complete with basic formatting, like new
+		<Description xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06">A description for my group 0. Complete with basic formatting, like new
 			lines.</Description>
 		<OME:ExperimenterRef ID="Experimenter:5"/>
-		<Leader ID="Experimenter:0"/>
+		<Leader xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06" ID="Experimenter:0"/>
 	</OME:ExperimenterGroup>
-	
+
 	<OME:ExperimenterGroup Name="MyOtherGroup" ID="ExperimenterGroup:Group:1">
-		<Description>A description for my group 1. Complete with basic formatting, like new
+		<Description xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06">A description for my group 1. Complete with basic formatting, like new
 			lines.</Description>
 		<OME:ExperimenterRef ID="Experimenter:2"/>
 		<OME:ExperimenterRef ID="Experimenter:3"/>
-		<Leader ID="Experimenter:0"/>
+		<Leader xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06" ID="Experimenter:0"/>
 		<OME:Leader ID="Experimenter:1"/>
 	</OME:ExperimenterGroup>
-	
+
 	<OME:ExperimenterGroup Name="NoMatch" ID="ExperimenterGroup:Group:2">
-		<Description>A description for my group 2. Complete with basic formatting, like new
+		<Description xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06">A description for my group 2. Complete with basic formatting, like new
 			lines.</Description>
 		<OME:ExperimenterRef ID="Experimenter:4"/>
-		<Leader ID="Experimenter:6"/>
+		<Leader xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06" ID="Experimenter:6"/>
 	</OME:ExperimenterGroup>
-	
+
 	<OME:ExperimenterGroup Name="LeaderMatch" ID="ExperimenterGroup:Group:3">
-		<Description>A description for my group 3. Complete with basic formatting, like new
+		<Description xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06">A description for my group 3. Complete with basic formatting, like new
 			lines.</Description>
-		<Leader ID="Experimenter:0"/>
+		<Leader xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06" ID="Experimenter:0"/>
 	</OME:ExperimenterGroup>
 	<OME:ExperimenterGroup Name="ContactMatch" ID="ExperimenterGroup:Group:4">
-		<Description>A description for my group 4. Complete with basic formatting, like new
+		<Description xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06">A description for my group 4. Complete with basic formatting, like new
 			lines.</Description>
 		<OME:Leader ID="Experimenter:0"/>
 	</OME:ExperimenterGroup>
-	
-	<Instrument ID="Instrument:0">
-		<LightSource ID="LightSource:0">
-			<GenericSource>
-				<Map><M K="a">1</M><M K="b">2</M><M K="c">3</M></Map>
-			</GenericSource>
-		</LightSource>
-		<LightSource ID="LightSource:1" Manufacturer="OME-Inc">
-			<Laser Wavelength="655.3" Tuneable="false"/>
-		</LightSource>
-		<LightSource ID="LightSource:2" Power="2.3">
-			<Laser Wavelength="755" LaserMedium="Alexandrite"/>
-		</LightSource>
+
+	<Instrument xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06" ID="Instrument:0">
 		<Objective ID="Objective:0" LotNumber="123" Manufacturer="OME-Labs"
 			NominalMagnification="20" CalibratedMagnification="20.34"/>
 	</Instrument>
 	<OME:Image ID="Image:0" Name="6x6x1x8-swatch.tif">
-		<OME:AcquisitionDate>2010-02-23T12:51:30</OME:AcquisitionDate>
-		<ExperimenterRef ID="Experimenter:1"/>
-		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
-			PhysicalSizeY="10000.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+		<OME:AcquisitionDate>2012-03-05T02:48:38</OME:AcquisitionDate>
+		<ExperimenterRef xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06"
+			ID="Experimenter:1"/>
+		<Pixels xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06" DimensionOrder="XYCZT"
+			ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="3"
+			SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
 			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1147483648"
-				EmissionWavelength="577.2" ExcitationWavelength="655.8"
-				ID="Channel:0">
-				<LightSourceSettings ID="LightSource:1" Wavelength="655.4"/>
-			</Channel>
+				ID="Channel:0"> </Channel>
 			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1474836488"
-				EmissionWavelength="477.0" ExcitationWavelength="755"
-				ID="Channel:1">
-				<LightSourceSettings ID="LightSource:1" Wavelength="755.0"/>
-			</Channel>
+				ID="Channel:1"> </Channel>
 			<Channel AcquisitionMode="MultiPhotonMicroscopy" Color="-2144364811" ID="Channel:2"> </Channel>
 			<Bin:BinData BigEndian="false" Length="32"
 				>/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
@@ -155,19 +138,54 @@
 	<SA:StructuredAnnotations>
 		<SA:XMLAnnotation ID="Annotation:0">
 			<SA:Value>
-				<test1/>
+				<test1 xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06"/>
 			</SA:Value>
 		</SA:XMLAnnotation>
 		<SA:XMLAnnotation ID="Annotation:1">
 			<SA:Value>
-				<test2/>
+				<test2 xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-06"/>
 			</SA:Value>
 		</SA:XMLAnnotation>
-		<SA:MapAnnotation ID="Annotation:2">
-			<SA:Value>
-				<M K="a">1</M><M K="b">2</M><M K="c">3</M>
-			</SA:Value>
-		</SA:MapAnnotation>
+		<!-- A range of dates, valid in the schema designed to test/stretch/break the model API -->
+		<SA:TimestampAnnotation ID="Annotation:2"
+			Namespace="sample.openmicroscopy.org/time/retirement">
+			<SA:Value>2037-12-15T17:30:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:3"
+			Namespace="sample.openmicroscopy.org/time/post1972">
+			<SA:Value>1996-03-23T14:45:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:4"
+			Namespace="sample.openmicroscopy.org/time/1970-1972">
+			<SA:Value>1971-05-06T18:34:59</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:5"
+			Namespace="sample.openmicroscopy.org/time/oldestlivingDOB">
+			<SA:Value>1898-03-05T02:48:38+03:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:6"
+			Namespace="sample.openmicroscopy.org/time/houseofstewart">
+			<SA:Value>1714-08-01T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:7"
+			Namespace="sample.openmicroscopy.org/time/gregorian-start">
+			<SA:Value>1582-10-15T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:8"
+			Namespace="sample.openmicroscopy.org/time/kingjohn">
+			<SA:Value>1199-05-27T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:9" Namespace="sample.openmicroscopy.org/time/romefire">
+			<SA:Value>0066-07-18T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:10"
+			Namespace="sample.openmicroscopy.org/time/birthday">
+			<SA:Value>-0005-12-25T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
+		<SA:TimestampAnnotation ID="Annotation:11"
+			Namespace="sample.openmicroscopy.org/time/dinosaur">
+			<SA:Value>-231400000-01-01T00:00:00</SA:Value>
+		</SA:TimestampAnnotation>
 	</SA:StructuredAnnotations>
 	<ROI:ROI ID="ROI:0">
 		<ROI:Union>
@@ -216,7 +234,7 @@
 			<ROI:Shape ID="Shape:9" StrokeWidth="2" StrokeColor="172">
 				<ROI:Line X1="1.72" Y1="2.72" X2="3.72" Y2="4.72" MarkerEnd="Circle"/>
 			</ROI:Shape>
-			
+
 		</ROI:Union>
 	</ROI:ROI>
 	<ROI:ROI ID="ROI:3">
@@ -236,4 +254,4 @@
 			</ROI:Shape>
 		</ROI:Union>
 	</ROI:ROI>
-</OME>
+</OME:OME>

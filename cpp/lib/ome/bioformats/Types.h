@@ -57,8 +57,7 @@ namespace ome
 
     /// Size type for image dimensions.
     typedef std::size_t dimension_size_type;
-    /// Size type for image counts.
-    typedef std::size_t image_size_type;
+
     /// Size type for pixel bit depths.
     typedef uint32_t pixel_size_type;
 
