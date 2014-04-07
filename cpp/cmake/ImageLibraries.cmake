@@ -37,5 +37,5 @@
 include(FindTIFF)
 
 if(NOT TIFF_FOUND)
-  message(FATAL_ERROR "libtiff is required")
+  message(FATAL_ERROR "libtiff is required (tiff >= 4.0.0 from ftp://ftp.remotesensing.org/pub/libtiff/)")
 endif(NOT TIFF_FOUND)
