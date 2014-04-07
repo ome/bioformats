@@ -570,14 +570,32 @@ ${counter(k, o, v)}\
 	/** Gets the Map value associated with this annotation */
 	public java.util.Map<String, String> getMapAnnotationValue(int mapAnnotationIndex)
 	{
-        // TODO: To implement
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				java.util.Map<String, String> result = retrieve.getMapAnnotationValue(mapAnnotationIndex);
+				if (result != null) return result;
+			}
+		}
 		return null;
 	}
 
 	/** Gets the Map value associated with this generic light source */
 	public java.util.Map<String, String> getGenericSourceMap(int instrumentIndex, int lightSourceIndex)
 	{
-        // TODO: To implement
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				java.util.Map<String, String> result = retrieve.getGenericSourceMap(instrumentIndex, lightSourceIndex);
+				if (result != null) return result;
+			}
+		}
 		return null;
 	}
 
@@ -699,16 +717,29 @@ ${getter(k, o, prop, v)}\
 	/** Sets the Map value associated with this annotation */
 	public void setMapAnnotationValue(java.util.Map<String, String> value, int mapAnnotationIndex)
 	{
-        // TODO: To implement
-        Logger LOGGER = LoggerFactory.getLogger(AggregateMetadata.class);
-        LOGGER.info("Agg: setMapAnnotationValue [{}] value '{}' ", mapAnnotationIndex, value.toString());
-
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMapAnnotationValue(value, mapAnnotationIndex);
+			}
+		}
 	}
 
 	/** Sets the Map value associated with this generic light source */
 	public void setGenericSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
 	{
-        // TODO: To implement
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setGenericSourceMap(map, instrumentIndex, lightSourceIndex);
+			}
+		}
 	}
 
 	// -- Entity storage (code generated definitions) --
