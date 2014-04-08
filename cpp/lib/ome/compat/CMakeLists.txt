@@ -40,6 +40,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 set(ome_compat_static_headers
     array.h
     cstdint.h
+    filesystem.h
     memory.h
     mstream.h
     regex.h
