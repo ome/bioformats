@@ -1,6 +1,22 @@
 Version history
 ===============
 
+5.0.1 (2014 Apr 7)
+------------------
+
+* Added image pyramid support for CellSens .vsi data
+* Several bug fixes, including:
+    - Woolz import into OMERO
+    - Cellomics file name parsing (thanks to Lee Kamentsky)
+    - Olympus FV1000 timestamp support (thanks to Lewis Kraft and Patrick Riley)
+    - (A)PNG large image support
+    - Zeiss .czi dimension detection for SPIM datasets
+* Performance improvements for Becker & Hickl .sdt file reading
+  (thanks to Ian Munro)
+* Performance improvements to directory listing over NFS
+* Update slf4j and logback versions (to 1.7.6 and 1.1.1 respectively)
+* Update jgoodies-forms version (to 1.7.2)
+
 5.0.0 (2014 Feb 25)
 -------------------
 
