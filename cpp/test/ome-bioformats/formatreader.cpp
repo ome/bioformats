@@ -63,6 +63,8 @@ using ome::xml::meta::MetadataStore;
 using ome::xml::meta::OMEXMLMetadata;
 using ome::xml::model::enums::PixelType;
 
+typedef std::array<dimension_size_type, 3> dim;
+
 namespace
 {
 
@@ -513,11 +515,14 @@ TEST_F(FormatReaderTest, FlatSeries)
        i < sizeof(coords)/sizeof(coords[0]);
        ++i)
     {
-      typedef std::array<dimension_size_type, 3> dim;
-      const dim coord(static_cast<std::array<dimension_size_type, 3> >(coords[i]));
+      const dim coord(static_cast<dim>(coords[i]));
 
       EXPECT_EQ(indexes[i], r.getIndex(coord[0], coord[1], coord[2]));
-      EXPECT_EQ(coord, r.getZCTCoords(indexes[i]));
+
+      dim ncoord = r.getZCTCoords(indexes[i]);
+      // EXPECT_EQ should work here, but fails for Boost 1.42; works
+      // in 1.46.
+      EXPECT_TRUE(coord == ncoord);
     }
 }
 
@@ -540,7 +545,11 @@ TEST_F(FormatReaderTest, SubresolutionFlattenedSeries)
   EXPECT_EQ(0U, r.getIndex(0, 0, 0));
   std::array<dimension_size_type, 3> coords;
   coords[0] = coords[1] = coords[2] = 0;
-  EXPECT_EQ(coords, r.getZCTCoords(0U));
+
+  // EXPECT_EQ should work here, but fails for Boost 1.42; works
+  // in 1.46.
+  dim ncoords = r.getZCTCoords(0U);
+  EXPECT_TRUE(coords == ncoords);
 }
 
 TEST_F(FormatReaderTest, SubresolutionUnflattenedSeries)
@@ -562,7 +571,11 @@ TEST_F(FormatReaderTest, SubresolutionUnflattenedSeries)
   EXPECT_EQ(0U, r.getIndex(0, 0, 0));
   std::array<dimension_size_type, 3> coords;
   coords[0] = coords[1] = coords[2] = 0;
-  EXPECT_EQ(coords, r.getZCTCoords(0U));
+
+  // EXPECT_EQ should work here, but fails for Boost 1.42; works
+  // in 1.46.
+  dim ncoords = r.getZCTCoords(0U);
+  EXPECT_TRUE(coords == ncoords);
 }
 
 TEST_F(FormatReaderTest, DefaultGroupFiles)
