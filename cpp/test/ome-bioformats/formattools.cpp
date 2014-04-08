@@ -52,6 +52,15 @@ using ome::xml::model::enums::DimensionOrder;
 
 typedef std::array<dimension_size_type, 3> dims;
 
+template<class charT, class traits>
+inline std::basic_ostream<charT,traits>&
+operator<< (std::basic_ostream<charT,traits>& os,
+            const dims& d)
+{
+  return os << '(' << d[0] << ',' << d[1] << ',' << d[2] << ')';
+}
+
+
 class DimensionTestParameters
 {
 public:
