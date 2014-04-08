@@ -440,12 +440,15 @@ public final class ImageConverter {
       new Object[] {reader.getFormat(), out, format});
     long mid = System.currentTimeMillis();
 
+    // if the writer type supports stacks setup the variables for
+    //    the first and last series in the file
     int total = 0;
     int num = writer.canDoStacks() ? reader.getSeriesCount() : 1;
     long read = 0, write = 0;
     int first = series == -1 ? 0 : series;
     int last = series == -1 ? num : series + 1;
     long timeLastLogged = System.currentTimeMillis();
+    // for each series in the current file
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
 
@@ -477,16 +480,24 @@ public final class ImageConverter {
       total += numImages;
 
       int count = 0;
+
       HashMap<String, Integer> nextOutputIndex = new HashMap<String, Integer>();
+
+      // loop through each of the planes in the current series
       for (int i=startPlane; i<endPlane; i++) {
+          // for each plane get the ZCT location
         int[] coords = reader.getZCTCoords(i);
 
+        //
         if ((zSection >= 0 && coords[0] != zSection) || (channel >= 0 &&
           coords[1] != channel) || (timepoint >= 0 && coords[2] != timepoint))
         {
+            // Skip the rest of this loop
           continue;
         }
 
+        // Set the current filename that the writer should use for the
+        //    current plane and sceries
         String outputName = FormatTools.getFilename(q, i, reader, out);
         writer.setId(outputName);
         if (compression != null) writer.setCompression(compression);
@@ -497,6 +508,9 @@ public final class ImageConverter {
         }
 
         long s = System.currentTimeMillis();
+
+        // convertPlane actualy does the work,
+        //    the other lines are handeling the logging and timekeeping
         long m = convertPlane(writer, i, outputIndex);
         long e = System.currentTimeMillis();
         read += m - s;
