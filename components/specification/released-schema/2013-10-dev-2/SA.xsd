@@ -24,17 +24,17 @@
 	# Written by:  Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1"
-	targetNamespace = "http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1"
-	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
-	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
+<xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2"
+	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
+	xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2"
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1/ome.xsd"/>
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
-		schemaLocation = "http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2/ome.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2"
+		schemaLocation = "http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2/BinaryFile.xsd"/>
 
 	<!-- Annotatable objects
 		Annotation
@@ -81,6 +81,7 @@
 				<xsd:element ref="TimestampAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="TagAnnotation" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="TermAnnotation" minOccurs="1" maxOccurs="1"/>
+				<xsd:element ref="MapAnnotation" minOccurs="1" maxOccurs="1"/>
 			</xsd:choice>
 		</xsd:complexType>
 	</xsd:element>
@@ -371,6 +372,23 @@
 				<xsd:extension base="BasicAnnotation">
 					<xsd:sequence>
 						<xsd:element name="Value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+					</xsd:sequence>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="MapAnnotation"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>MapAnnotations</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				An map annotation. The contents of this is a list of key/value pairs.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="TextAnnotation">
+					<xsd:sequence>
+						<xsd:element name="Value"  type="OME:MapPairs" minOccurs="1" maxOccurs="1"/>
 					</xsd:sequence>
 				</xsd:extension>
 			</xsd:complexContent>

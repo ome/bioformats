@@ -24,25 +24,25 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-1"
-	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-1"
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1"
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-1"
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2"
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-2"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-2"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1"
 	elementFormDefault="qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-1/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-1"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-1/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-1/SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-1"
-		schemaLocation="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-1/ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-2"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-2/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-2"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-2/ROI.xsd"/>
 
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 
@@ -973,6 +973,9 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Map" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
 			<xsd:attribute name="Temperature" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
@@ -1400,6 +1403,45 @@
 			<xsd:pattern value="(urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+
+	<xsd:element name="Map">
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Maps</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				This is a Mapping of key/value pairs.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="OME:MapPairs"/>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="MapPairs">
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>MapPairsCollection</plural></xsdfu></xsd:appinfo>
+		</xsd:annotation>
+		<xsd:sequence minOccurs="1" maxOccurs="1">
+			<xsd:element name="M" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:appinfo><xsdfu><plural>Ms</plural></xsdfu></xsd:appinfo>
+					<xsd:documentation> This is a key/value pair used to build up a Mapping. The
+						Element and Attribute name are kept to single letters to minimize the
+						length at the expense of readability as they are likely to occur many
+						times. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="xsd:string">
+							<xsd:attribute name="K" type="xsd:string"/>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
 	<xsd:simpleType name="PixelType">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1818,6 +1860,7 @@
 						<xsd:element ref="Filament" minOccurs="1" maxOccurs="1"/>
 						<xsd:element ref="Arc" minOccurs="1" maxOccurs="1"/>
 						<xsd:element ref="LightEmittingDiode" minOccurs="1" maxOccurs="1"/>
+						<xsd:element ref="GenericSource" minOccurs="1" maxOccurs="1"/>
 					</xsd:choice>
 					<xsd:attribute name="ID" use="required" type="LightSourceID">
 						<xsd:annotation>
@@ -2070,6 +2113,22 @@
 				this topic.
 			</xsd:documentation>
 		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="GenericSource"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>GenericSources</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				The GenericSource element is used to represent
+				a source as a collection of key/value pairs, stored
+				in a Map. The other lightsource objects should
+				always be used in preference to this if possible.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Map" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
+		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Pump"> <!-- top level definition -->
 		<xsd:annotation>

@@ -49,7 +49,7 @@
     <log4j.version>1.2.17</log4j.version>
     <logback.version>1.1.1</logback.version>
     <slf4j.version>1.7.6</slf4j.version>
-    <xsdfu.schemaver>2013-10-dev-1</xsdfu.schemaver>
+    <xsdfu.schemaver>2013-10-dev-2</xsdfu.schemaver>
     <xsdfu.schemapath>components/specification/released-schema/${xsdfu.schemaver}</xsdfu.schemapath>
     <xsdfu.ome>${xsdfu.schemapath}/ome.xsd</xsdfu.ome>
     <xsdfu.binaryfile>${xsdfu.schemapath}/BinaryFile.xsd</xsdfu.binaryfile>
