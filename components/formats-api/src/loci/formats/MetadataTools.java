@@ -153,7 +153,9 @@ public final class MetadataTools {
             OMEXMLMetadata omeMeta;
             try {
               omeMeta = service.getOMEMetadata(service.asRetrieve(baseStore));
-              service.addMetadataOnly(omeMeta, i);
+              if (omeMeta.getTiffDataCount(i) == 0) {
+                service.addMetadataOnly(omeMeta, i);
+              }
             }
             catch (ServiceException e) {
               LOGGER.warn("Failed to add MetadataOnly", e);
