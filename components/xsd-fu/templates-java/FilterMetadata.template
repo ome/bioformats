@@ -216,6 +216,12 @@ public class FilterMetadata implements MetadataStore
 		store.setGenericSourceMap(map, instrumentIndex, lightSourceIndex);
 	}
 
+	/** Sets the Map value associated with this imaging environment */
+	public void setImagingEnvironmentMap(java.util.Map<String, String> map, int imageIndex)
+	{
+		store.setImagingEnvironmentMap(map, imageIndex);
+	}
+
 	// -- Entity storage (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
