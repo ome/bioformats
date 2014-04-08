@@ -34,38 +34,51 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
-               ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+include(CheckCXXSourceRuns)
 
-set(ome_compat_static_headers
-    array.h
-    cstdint.h
-    memory.h
-    mstream.h
-    regex.h
-    string.h
-    thread.h
-    tuple.h
-    variant.h)
+find_package(Threads REQUIRED)
 
-set(ome_compat_generated_headers
-   ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+function(thread_test namespace header library outvar outlib)
+  set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
+  set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${library} ${CMAKE_THREAD_LIBS_INIT})
+  check_cxx_source_runs(
+"#include <${header}>
+#include <iostream>
 
-set(ome_compat_headers
-    ${ome_compat_static_headers}
-    ${ome_compat_generated_headers})
+namespace
+{
 
-set(ome_compat_sources
-    dummy.cpp)
+  boost::mutex m1;
+  boost::recursive_mutex m2;
 
-add_library(ome-compat STATIC ${ome_compat_sources} ${ome_compat_headers})
-target_link_libraries(ome-compat ${REGEX_LIBRARY} ${THREAD_LIBRARY})
-set_target_properties(ome-compat PROPERTIES LINKER_LANGUAGE CXX)
+  void
+  threadmain()
+  {
+    boost::lock_guard<boost::mutex> lock1(m1);
+    boost::lock_guard<boost::recursive_mutex> lock2(m2);
+    std::cout << \"In thread\" << std::endl;
+  }
 
-set(ome_compat_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/compat")
+}
 
-install(FILES ${ome_compat_static_headers} ${ome_compat_generated_headers}
-        DESTINATION ${ome_compat_includedir})
+int main() {
+  ${namespace} foo(threadmain);
+  foo.join();
 
-# Dump header list for testing
-header_include_list_write(ome_compat_static_headers ome_compat_generated_headers ome/compat ${PROJECT_BINARY_DIR}/cpp/test/ome-compat)
+  return 0;
+}"
+${outvar})
+
+  set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+
+  set(${outvar} ${${outvar}} PARENT_SCOPE)
+  if (${outvar})
+    set(${outlib} ${library} PARENT_SCOPE)
+  endif(${outvar})
+endfunction(thread_test)
+
+
+thread_test(boost::thread boost/thread.hpp "${Boost_SYSTEM_LIBRARY_RELEASE};${Boost_THREAD_LIBRARY_RELEASE}" OME_HAVE_BOOST_THREAD THREAD_LIBRARY)
+if(NOT OME_HAVE_BOOST_THREAD)
+  message(FATAL_ERROR "No working thread or mutex implementation found")
+endif(NOT OME_HAVE_BOOST_THREAD)

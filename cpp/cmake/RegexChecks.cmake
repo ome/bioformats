@@ -38,7 +38,7 @@ include(CheckCXXSourceRuns)
 
 function(regex_test namespace header library outvar outlib)
   set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
-  set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_REGEX_LIBRARY_RELEASE})
+  set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${library})
   check_cxx_source_runs(
 "#include <${header}>
 #include <iostream>

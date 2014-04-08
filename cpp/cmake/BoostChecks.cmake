@@ -35,7 +35,7 @@
 # #L%
 
 include(FindBoost)
-find_package(Boost REQUIRED COMPONENTS date_time filesystem system iostreams program_options regex)
+find_package(Boost REQUIRED COMPONENTS date_time filesystem system iostreams program_options regex thread)
 
 include(CheckIncludeFileCXX)
 include(CheckCXXSourceCompiles)
