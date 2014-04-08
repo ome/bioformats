@@ -22,36 +22,32 @@ NetBeans
 NetBeans comes with Maven support built in. To import the Bio-Formats
 source, perform the following steps:
 
-#. Choose File > Open Project from the menu
+#. Choose :menuselection:`File --> Open Project` from the menu
 #. Select the top-level folder of your Bio-Formats working copy
 #. Expand the Modules folder and double-click desired project(s) to work
    with them
 
 Alternately, you can clone the source directly from NetBeans into a
-project by selecting "Team > Git > Clone Other..." from the menu.
+project by selecting :menuselection:`Team --> Git --> Clone Other...` from
+the menu.
 
 Eclipse
 -------
 
-Eclipse uses the M2E plugin to work with Maven projects. It is more
-flexible than Eclipse's built-in project management because M2E
-transparently converts between project dependencies and JAR dependencies
-(stored in the Maven repository in ~/.m2/repository) on the build path,
-depending which projects are currently open.
+Eclipse uses the "Maven Integration for Eclipse" (m2e) plugin to work with
+Maven projects. It is more flexible than Eclipse's built-in project
+management because m2e transparently converts between project dependencies
+and JAR dependencies (stored in the Maven repository in
+:file:`~/.m2/repository`) on the build path, depending on which projects are
+currently open.
 
-To import the Bio-Formats source into Eclipse 3.7 (Indigo), you must
-first install the M2E plugin:
+We recommend using Eclipse 4.3 (Kepler), specifically -
+"Eclipse IDE for Java developers". It comes with m2e installed
+(http://eclipse.org/downloads/compare.php?release=kepler).
 
-#. From the Eclipse menu, choose Help > Install New Software...
-#. In the "Work with:" dropdown, choose "--All Available Sites--"
-#. In the filter box, type "m2e"
-#. Check the box next to "m2e - Maven Integration for Eclipse" under
-   "Collaboration"
-#. Click Next, then Finish
-
-You can then import the Bio-Formats source by choosing "File > Import >
-Existing Maven Projects" from the menu and browsing to the top-level
-folder of your Bio-Formats working copy.
+You can then import the Bio-Formats source by choosing
+:menuselection:`File --> Import --> Existing Maven Projects` from the menu
+and browsing to the top-level folder of your Bio-Formats working copy.
 
 Command line
 ------------
