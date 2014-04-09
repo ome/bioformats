@@ -69,6 +69,7 @@ namespace ome
       class MapPairs : public detail::OMEModelObject
       {
       public:
+        /// Type of map stored internally.
         typedef std::map<std::string, std::string> map_type;
 
       private:
@@ -137,6 +138,14 @@ namespace ome
          */
         const map_type&
         getMap () const;
+
+        /**
+         * Set the key-value pair mappings.
+         *
+         * @param map the map to set.
+         */
+        void
+        setMap (const map_type& map);
 
         /// @copydoc ome::xml::model::OMEModelObject::asXMLElement
         virtual xerces::dom::Element&
