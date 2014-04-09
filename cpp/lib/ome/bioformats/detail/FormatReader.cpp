@@ -41,6 +41,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
+#include <ome/compat/filesystem.h>
 #include <ome/compat/mstream.h>
 #include <ome/compat/regex.h>
 #include <ome/compat/string.h>
@@ -168,7 +169,7 @@ namespace ome
 
         try
           {
-            path thisfile = boost::filesystem::canonical(path(file));
+            path thisfile = ome::compat::canonical(path(file));
 
             /// @todo: Use a set rather than a list?
             const std::vector<std::string>& s = getUsedFiles();
@@ -178,7 +179,7 @@ namespace ome
               {
                 try
                   {
-                    path usedfile = boost::filesystem::canonical(path(*i));
+                    path usedfile = ome::compat::canonical(path(*i));
                     if (thisfile == usedfile)
                       {
                         used = true;
@@ -803,8 +804,8 @@ namespace ome
             const boost::optional<std::string> currentid = getCurrentFile();
             if (currentid)
               {
-                path current = boost::filesystem::canonical(path(currentid.get()));
-                path thisfile = boost::filesystem::canonical(path(*file));
+                path current = ome::compat::canonical(path(currentid.get()));
+                path thisfile = ome::compat::canonical(path(*file));
 
                 info.usedToInitialize = (thisfile == current);
               }
@@ -832,8 +833,8 @@ namespace ome
             const boost::optional<std::string> currentid = getCurrentFile();
             if (currentid)
               {
-                path current = boost::filesystem::canonical(path(currentid.get()));
-                path thisfile = boost::filesystem::canonical(path(*file));
+                path current = ome::compat::canonical(path(currentid.get()));
+                path thisfile = ome::compat::canonical(path(*file));
 
                 info.usedToInitialize = (thisfile == current);
               }
