@@ -464,9 +464,9 @@ ${counter(k, o, v)}\
 	}
 
 	/** Gets the Map value associated with this generic light source */
-	public java.util.Map<String, String> getGenericSourceMap(int instrumentIndex, int lightSourceIndex)
+	public java.util.Map<String, String> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex)
 	{
-		GenericSource o = (GenericSource) root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
+		GenericExcitationSource o = (GenericExcitationSource) root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
 		// The first getMap returns an ome.xml.model.Map which
 		// extends ome.xml.model.MapPairs, the second getMap returns
 		// the java.util.Map holding the MapPairs
@@ -605,7 +605,7 @@ ${getter(k, o, prop, v)}\
 	}
 
 	/** Sets the Map value associated with this generic light source */
-	public void setGenericSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
+	public void setGenericExcitationSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
 	{
 		OME o0 = root;
 		if (o0.sizeOfInstrumentList() == instrumentIndex)
@@ -615,12 +615,12 @@ ${getter(k, o, prop, v)}\
 		Instrument o1 = o0.getInstrument(instrumentIndex);
 		if (o1.sizeOfLightSourceList() == lightSourceIndex)
 		{
-			o1.addLightSource(new GenericSource());
+			o1.addLightSource(new GenericExcitationSource());
 		}
 		LightSource o2 = o1.getLightSource(lightSourceIndex);
 		ome.xml.model.Map mapAsOmeMap = new ome.xml.model.Map();
 		mapAsOmeMap.setMap(map);
-		((GenericSource)o2).setMap(mapAsOmeMap);
+		((GenericExcitationSource)o2).setMap(mapAsOmeMap);
 	}
 
 	/** Sets the Map value associated with this imaging environment */

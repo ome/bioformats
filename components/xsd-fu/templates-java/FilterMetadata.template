@@ -211,9 +211,9 @@ public class FilterMetadata implements MetadataStore
 	}
 
 	/** Sets the Map value associated with this generic light source */
-	public void setGenericSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
+	public void setGenericExcitationSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
 	{
-		store.setGenericSourceMap(map, instrumentIndex, lightSourceIndex);
+		store.setGenericExcitationSourceMap(map, instrumentIndex, lightSourceIndex);
 	}
 
 	/** Sets the Map value associated with this imaging environment */

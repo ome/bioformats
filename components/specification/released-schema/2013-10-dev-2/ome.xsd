@@ -1860,7 +1860,7 @@
 						<xsd:element ref="Filament" minOccurs="1" maxOccurs="1"/>
 						<xsd:element ref="Arc" minOccurs="1" maxOccurs="1"/>
 						<xsd:element ref="LightEmittingDiode" minOccurs="1" maxOccurs="1"/>
-						<xsd:element ref="GenericSource" minOccurs="1" maxOccurs="1"/>
+						<xsd:element ref="GenericExcitationSource" minOccurs="1" maxOccurs="1"/>
 					</xsd:choice>
 					<xsd:attribute name="ID" use="required" type="LightSourceID">
 						<xsd:annotation>
@@ -2114,11 +2114,11 @@
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:element>
-	<xsd:element name="GenericSource"> <!-- top level definition -->
+	<xsd:element name="GenericExcitationSource"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:appinfo><xsdfu><plural>GenericSources</plural></xsdfu></xsd:appinfo>
+			<xsd:appinfo><xsdfu><plural>GenericExcitationSources</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				The GenericSource element is used to represent
+				The GenericExcitationSource element is used to represent
 				a source as a collection of key/value pairs, stored
 				in a Map. The other lightsource objects should
 				always be used in preference to this if possible.

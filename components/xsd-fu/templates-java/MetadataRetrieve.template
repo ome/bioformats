@@ -172,7 +172,7 @@ public interface MetadataRetrieve extends BaseMetadata {
 
 	java.util.Map<String, String> getMapAnnotationValue(int mapAnnotationIndex);
 
-	java.util.Map<String, String> getGenericSourceMap(int instrumentIndex, int lightSourceIndex);
+	java.util.Map<String, String> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex);
 
 	java.util.Map<String, String> getImagingEnvironmentMap(int imageIndex);
 
