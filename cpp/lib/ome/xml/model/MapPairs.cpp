@@ -160,6 +160,24 @@ namespace ome
         return detail::OMEModelObject::asXMLElementInternal(document, element);
       }
 
+      MapPairs::map_type&
+      MapPairs::getMap ()
+      {
+        return map;
+      }
+
+      const MapPairs::map_type&
+      MapPairs::getMap () const
+      {
+        return map;
+      }
+
+      void
+      MapPairs::setMap (const map_type& map)
+      {
+        this->map = map;
+      }
+
     }
   }
 }
