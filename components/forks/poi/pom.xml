@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.1</version>
     <relativePath>../../..</relativePath>
   </parent>
 
@@ -21,7 +21,7 @@
 
   <licenses>
     <license>
-      <name>Apache 2</name>
+			<name>Apache License, Version 2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0</url>
       <distribution>repo</distribution>
     </license>

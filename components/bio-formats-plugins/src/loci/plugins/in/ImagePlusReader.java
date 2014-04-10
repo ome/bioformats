@@ -1,6 +1,6 @@
 /*
  * #%L
- * Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -512,13 +512,7 @@ public class ImagePlusReader implements StatusReporter {
     fi.directory = idDir;
 
     // dump OME-XML to ImageJ's description field, if available
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      OMEXMLService service = factory.getInstance(OMEXMLService.class);
-      fi.description = service.getOMEXML(process.getOMEMetadata());
-    }
-    catch (DependencyException de) { }
-    catch (ServiceException se) { }
+    fi.description = process.getOMEXML();
 
     return fi;
   }

@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -45,8 +41,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -101,7 +99,8 @@ public class JPEG2000Codec extends BaseCodec {
         JPEG2000CodecOptions.getDefaultOptions(options);
     }
 
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    ByteArrayHandle handle = new ByteArrayHandle();
+    RandomAccessOutputStream out = new RandomAccessOutputStream(handle);
     BufferedImage img = null;
 
     int next = 0;
@@ -120,7 +119,12 @@ public class JPEG2000Codec extends BaseCodec {
       if (j2kOptions.interleaved) {
         for (int q=0; q<plane; q++) {
           for (int c=0; c<j2kOptions.channels; c++) {
-            b[c][q] = data[next++];
+            if (next < data.length) {
+              b[c][q] = data[next++];
+            }
+            else {
+              break;
+            }
           }
         }
       }
@@ -188,6 +192,7 @@ public class JPEG2000Codec extends BaseCodec {
 
     try {
       service.writeImage(out, img, j2kOptions);
+      out.close();
     }
     catch (IOException e) {
       throw new FormatException("Could not compress JPEG-2000 data.", e);
@@ -196,7 +201,27 @@ public class JPEG2000Codec extends BaseCodec {
       throw new FormatException("Could not compress JPEG-2000 data.", e);
     }
 
-    return out.toByteArray();
+    try {
+      RandomAccessInputStream is = new RandomAccessInputStream(handle);
+      try {
+        is.seek(0);
+        if (!j2kOptions.writeBox) {
+          while ((is.readShort() & 0xffff) != 0xff4f) {
+            is.seek(is.getFilePointer() - 1);
+          }
+          is.seek(is.getFilePointer() - 2);
+        }
+        byte[] buf = new byte[(int) (is.length() - is.getFilePointer())];
+        is.readFully(buf);
+        return buf;
+      }
+      finally {
+        is.close();
+      }
+    }
+    catch (IOException e) {
+    }
+    return null;
   }
 
   /**

@@ -1,3 +1,27 @@
+/*
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 /*!
 * \file         WlzReader.java
 * \author       Bill Hill
@@ -66,7 +90,7 @@ public class WlzReader extends FormatReader {
 
   // -- Fields --
 
-  private	WlzService wlz = null;
+  private transient WlzService wlz = null;
 
   public static final String NO_WLZ_MSG =
     "\n" +
@@ -96,11 +120,24 @@ public class WlzReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if(wlz != null) {
-      FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    if (wlz != null) {
       buf = wlz.readBytes(no, buf, x, y, w, h);
     }
-    return(buf);
+    else {
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        wlz = factory.getInstance(WlzService.class);
+      }
+      catch (DependencyException e) {
+        throw new FormatException(NO_WLZ_MSG, e);
+      }
+      if (wlz != null) {
+        wlz.open(currentId, "r");
+        buf = wlz.readBytes(no, buf, x, y, w, h);
+      }
+    }
+    return buf;
   }
 
   // -- Internal FormatReader API methods --
@@ -115,7 +152,7 @@ public class WlzReader extends FormatReader {
     catch (DependencyException e) {
       throw new FormatException(NO_WLZ_MSG, e);
     }
-    if(wlz != null) {
+    if (wlz != null) {
       wlz.open(id, "r");
       CoreMetadata md = core.get(0);
       MetadataStore store = makeFilterMetadata();
@@ -146,10 +183,13 @@ public class WlzReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if(wlz != null) {
-      wlz.close();
-    }
     super.close(fileOnly);
+    if (!fileOnly) {
+      if (wlz != null) {
+        wlz.close();
+        wlz = null;
+      }
+    }
   }
 
   // -- Helper methods --

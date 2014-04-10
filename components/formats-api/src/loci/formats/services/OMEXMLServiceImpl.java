@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME Bio-Formats API for reading and writing file formats.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -691,6 +687,11 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     Hashtable<String, Object> metadata)
   {
     omexmlMeta.resolveReferences();
+
+    if (metadata.size() == 0) {
+      return;
+    }
+
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) omexmlMeta.getRoot();
     StructuredAnnotations annotations = root.getStructuredAnnotations();
     if (annotations == null) annotations = new StructuredAnnotations();
@@ -860,6 +861,13 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   {
     meta.resolveReferences();
 
+    if (core.moduloZ.length() == 1 && core.moduloC.length() == 1 &&
+      core.moduloT.length() == 1)
+    {
+      // nothing to populate
+      return;
+    }
+
     OMEXMLMetadataRoot root = (OMEXMLMetadataRoot) meta.getRoot();
     Image image;
     try {
@@ -880,6 +888,21 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
      for (int idx = 0; idx < annotationIndex; idx++) {
        if (ModuloAnnotation.MODULO_NS.equals(
          meta.getXMLAnnotationNamespace(idx))) {
+
+         // ignore this annotation if it is not linked to the current Image
+         boolean ignore = true;
+         String xmlID = meta.getXMLAnnotationID(idx);
+         for (int link=0; link<image.sizeOfLinkedAnnotationList(); link++) {
+           if (xmlID.equals(image.getLinkedAnnotation(link).getID()))
+           {
+             ignore = false;
+             break;
+           }
+         }
+         if (ignore) {
+           continue;
+         }
+
          String value = meta.getXMLAnnotationValue(idx);
          try {
            Document doc = XMLTools.parseDOM(value);

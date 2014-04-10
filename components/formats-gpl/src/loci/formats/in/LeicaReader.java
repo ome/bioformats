@@ -511,8 +511,10 @@ public class LeicaReader extends FormatReader {
     core.clear();
     for (int i=0; i<numSeries; i++) {
       CoreMetadata ms = new CoreMetadata();
-      core.add(ms);
-      while (!valid[index]) index++;
+      while (index < valid.length && !valid[index]) index++;
+      if (index >= valid.length) {
+        break;
+      }
       ms.imageCount = count[index];
       files[i] = tempFiles[index];
       Object[] sorted = files[i].toArray();
@@ -522,6 +524,7 @@ public class LeicaReader extends FormatReader {
 
       headerIFDs.add(tempIFDs.get(index));
       index++;
+      core.add(ms);
     }
 
     tiff = new MinimalTiffReader();
@@ -605,7 +608,7 @@ public class LeicaReader extends FormatReader {
       }
     }
 
-    for (int i=0; i<numSeries; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
       CoreMetadata ms = core.get(i);
       if (getSizeZ() == 0) ms.sizeZ = 1;
@@ -641,12 +644,12 @@ public class LeicaReader extends FormatReader {
 
     // Ensure we populate Image names before returning due to a possible
     // minimum metadata level.
-    for (int i=0; i<numSeries;i ++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName(seriesNames.get(i), i);
     }
     if (metadataLevel == MetadataLevel.MINIMUM) return;
 
-    for (int i=0; i<numSeries; i++) {
+    for (int i=0; i<getSeriesCount(); i++) {
       CoreMetadata ms = core.get(i);
       IFD ifd = headerIFDs.get(i);
       long firstPlane = 0;
@@ -947,7 +950,21 @@ public class LeicaReader extends FormatReader {
         }
       }
     }
-    else files[seriesIndex] = f;
+    else {
+      files[seriesIndex] = f;
+
+      // invalidate any previous series that tried to use this set of files
+
+      for (int s=0; s<seriesIndex; s++) {
+        if (files[s] != null) {
+          if (files[s].get(0).equals(f.get(0))) {
+            valid[s] = false;
+            files[s] = null;
+          }
+        }
+      }
+    }
+
     if (files[seriesIndex] == null) valid[seriesIndex] = false;
     else {
       ms.imageCount = files[seriesIndex].size();

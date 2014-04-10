@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.1</version>
     <relativePath>../../..</relativePath>
   </parent>
 
@@ -36,7 +36,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <licenseName>jai_imageio</licenseName>
+          <licenseName>bsd_2</licenseName>
           <projectName>Fork of JAI Image I/O Tools.</projectName>
         </configuration>
       </plugin>

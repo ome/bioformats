@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -124,10 +120,13 @@ public class JAIIIOServiceImpl extends AbstractService
       (J2KImageWriteParam) writer.getDefaultWriteParam();
     param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
     param.setCompressionType("JPEG2000");
+    if (!options.lossless) {
+      param.setEncodingRate(options.quality);
+    }
     param.setLossless(options.lossless);
     param.setFilter(filter);
     param.setCodeBlockSize(options.codeBlockSize);
-    param.setEncodingRate(options.quality);
+    param.setComponentTransformation(false);
     if (options.tileWidth > 0 && options.tileHeight > 0) {
       param.setTiling(options.tileWidth, options.tileHeight,
                       options.tileGridXOffset, options.tileGridYOffset);

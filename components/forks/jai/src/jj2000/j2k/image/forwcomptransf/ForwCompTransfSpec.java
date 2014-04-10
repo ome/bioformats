@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -193,8 +189,12 @@ public class ForwCompTransfSpec extends CompTransfSpec implements FilterTypes {
             return;
         }
 
-        if (param.equalsIgnoreCase("true"))
+        if (param.equalsIgnoreCase("true")) {
             param = "on";
+        }
+        else if (param.equalsIgnoreCase("false")) {
+            param = "off";
+        }
         // Parse argument
         StringTokenizer stk = new StringTokenizer(param);
         String word; // current word

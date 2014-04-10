@@ -1,6 +1,6 @@
 /*
  * #%L
- * Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -109,6 +109,7 @@ public class ImportProcess implements StatusReporter {
   protected Location idLoc;
 
   protected IMetadata meta;
+  private String omeXML;
 
   private ImporterMetadata metadata;
 
@@ -254,6 +255,20 @@ public class ImportProcess implements StatusReporter {
   public IMetadata getOMEMetadata() {
     assertStep(ImportStep.READER);
     return meta;
+  }
+  /** Valid only after {@link ImportStep#READER}. */
+  public String getOMEXML() {
+    if (omeXML == null) {
+      // NB: Extract the OME-XML once, then keep it cached.
+      try {
+        ServiceFactory factory = new ServiceFactory();
+        OMEXMLService service = factory.getInstance(OMEXMLService.class);
+        omeXML = service.getOMEXML(getOMEMetadata());
+      }
+      catch (DependencyException de) { }
+      catch (ServiceException se) { }
+    }
+    return omeXML;
   }
 
   // -- ImportProcess methods - post-STACK --
@@ -637,6 +652,7 @@ public class ImportProcess implements StatusReporter {
       ServiceFactory factory = new ServiceFactory();
       OMEXMLService service = factory.getInstance(OMEXMLService.class);
       meta = service.createOMEXMLMetadata();
+      omeXML = null;
     }
     catch (DependencyException de) { exc = de; }
     catch (ServiceException se) { exc = se; }

@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.1</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -21,7 +21,7 @@
 
   <licenses>
     <license>
-      <name>GPL 2 or later</name>
+      <name>GNU General Public License v2+</name>
       <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
       <distribution>repo</distribution>
     </license>

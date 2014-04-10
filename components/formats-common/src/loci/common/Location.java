@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -63,6 +59,8 @@ public class Location {
   // -- Constants --
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Location.class);
+  private static final boolean IS_WINDOWS =
+    System.getProperty("os.name").startsWith("Windows");
 
   // -- Static fields --
 
@@ -393,9 +391,10 @@ public class Location {
       if (file == null) return null;
       String[] f = file.list();
       if (f == null) return null;
+      String path = file.getAbsolutePath();
       for (String name : f) {
         if (!noHiddenFiles || !(name.startsWith(".") ||
-          new Location(file.getAbsolutePath(), name).isHidden()))
+          new Location(path, name).isHidden()))
         {
           files.add(name);
         }
@@ -635,7 +634,13 @@ public class Location {
    * @see java.io.File#isHidden()
    */
   public boolean isHidden() {
-    return isURL ? false : file.isHidden();
+    if (isURL) {
+      return false;
+    }
+    if (IS_WINDOWS) {
+      return file.isHidden();
+    }
+    return file.getName().startsWith(".");
   }
 
   /**

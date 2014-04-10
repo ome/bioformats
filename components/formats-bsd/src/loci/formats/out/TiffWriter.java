@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -89,7 +85,7 @@ public class TiffWriter extends FormatWriter {
   protected RandomAccessInputStream in;
 
   /** Whether or not to check the parameters passed to saveBytes. */
-  private boolean checkParams = true;
+  protected boolean checkParams = true;
 
   /**
    * Sets the compression code for the specified IFD.
@@ -197,7 +193,7 @@ public class TiffWriter extends FormatWriter {
    * This method is factored out from <code>saveBytes()</code> in an attempt to
    * ensure thread safety.
    */
-  private int prepareToWriteImage(
+  protected int prepareToWriteImage(
       int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
   throws IOException, FormatException {
     MetadataRetrieve retrieve = getMetadataRetrieve();
@@ -422,7 +418,7 @@ public class TiffWriter extends FormatWriter {
 
   // -- Helper methods --
 
-  private void setupTiffSaver() throws IOException {
+  protected void setupTiffSaver() throws IOException {
     out.close();
     out = new RandomAccessOutputStream(currentId);
     tiffSaver = new TiffSaver(out, currentId);

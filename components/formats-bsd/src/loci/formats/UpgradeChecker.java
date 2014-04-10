@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -71,7 +67,7 @@ public class UpgradeChecker {
   // -- Constants --
 
   /** Version number of the latest stable release. */
-  public static final String STABLE_VERSION = "5.0.0";
+  public static final String STABLE_VERSION = "5.0.1";
 
   /** Location of the OME continuous integration server. */
   public static final String CI_SERVER = "http://ci.openmicroscopy.org";
@@ -92,7 +88,7 @@ public class UpgradeChecker {
    * Location of the JAR artifacts for the stable releases.
    */
   public static final String STABLE_BUILD =
-    "http://downloads.openmicroscopy.org/bioformats/" +  STABLE_VERSION + "/";
+    "http://downloads.openmicroscopy.org/bio-formats/" +  STABLE_VERSION + "/artifacts/";
 
   /** Name of the ueber tools JAR. */
   public static final String TOOLS = "bioformats_package.jar";
@@ -304,6 +300,7 @@ public class UpgradeChecker {
 
     File jar = new File(downloadPath + ".tmp");
     if (jar.exists()) {
+      LOGGER.debug("Removing {}", jar.getAbsolutePath());
       if (!jar.delete()) {
         LOGGER.warn("Failed to delete '{}'", jar.getAbsolutePath());
         return false;
@@ -313,10 +310,13 @@ public class UpgradeChecker {
     // download new version
 
     try {
+      LOGGER.debug("Attempting to download {}", urlPath);
       URL url = new URL(urlPath);
       URLConnection urlConn = url.openConnection();
       int total = urlConn.getContentLength();
       byte[] buf = new byte[total];
+
+      LOGGER.debug("File length: {} bytes", total);
 
       DataInputStream in = new DataInputStream(
         new BufferedInputStream(urlConn.getInputStream()));
@@ -337,6 +337,7 @@ public class UpgradeChecker {
       in.close();
 
       // write the downloaded JAR to a file on disk
+      LOGGER.debug("Writing downloaded bytes to {}", jar.getAbsolutePath());
       FileOutputStream out = new FileOutputStream(jar);
       out.write(buf);
       out.close();
@@ -346,9 +347,11 @@ public class UpgradeChecker {
       File downloadFile = new File(downloadPath);
       File oldFile = new File(downloadFile.getParent(), OLD_TOOLS);
       if (oldFile.exists() && downloadFile.getName().equals(TOOLS)) {
+        LOGGER.debug("Deleting {}", oldFile.getAbsolutePath());
         oldFile.delete();
       }
 
+      LOGGER.debug("Renaming {} to {}", jar.getAbsolutePath(), downloadPath);
       boolean success = jar.renameTo(downloadFile);
       if (!success) {
         LOGGER.warn("Failed to rename '{}' to '{}'", jar.getAbsolutePath(),

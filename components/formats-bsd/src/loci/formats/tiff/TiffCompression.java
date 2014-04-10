@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -99,17 +95,20 @@ public enum TiffCompression implements CodedEnum {
     public CodecOptions getCompressionCodecOptions(IFD ifd, CodecOptions opt)
     throws FormatException {
       CodecOptions options = super.getCompressionCodecOptions(ifd, opt);
-      options.lossless = true;
       JPEG2000CodecOptions j2k = JPEG2000CodecOptions.getDefaultOptions(options);
       if (opt instanceof JPEG2000CodecOptions) {
         JPEG2000CodecOptions o = (JPEG2000CodecOptions) opt;
         j2k.numDecompositionLevels = o.numDecompositionLevels;
         j2k.resolution = o.resolution;
-        if (o.codeBlockSize != null)
+        if (o.codeBlockSize != null) {
           j2k.codeBlockSize = o.codeBlockSize;
-        if (o.quality > 0)
+        }
+        if (o.quality > 0) {
           j2k.quality = o.quality;
+        }
       }
+      j2k.writeBox = false;
+      j2k.lossless = false;
       return j2k;
     }
   },
@@ -119,7 +118,7 @@ public enum TiffCompression implements CodedEnum {
         throws FormatException {
       return getCompressionCodecOptions(ifd, null);
     }
-    
+
     @Override
     public CodecOptions getCompressionCodecOptions(IFD ifd, CodecOptions opt)
     throws FormatException {
@@ -130,11 +129,14 @@ public enum TiffCompression implements CodedEnum {
         JPEG2000CodecOptions o = (JPEG2000CodecOptions) opt;
         j2k.numDecompositionLevels = o.numDecompositionLevels;
         j2k.resolution = o.resolution;
-        if (o.codeBlockSize != null)
+        if (o.codeBlockSize != null) {
           j2k.codeBlockSize = o.codeBlockSize;
-        if (o.quality > 0)
+        }
+        if (o.quality > 0) {
           j2k.quality = o.quality;
+        }
       }
+      j2k.writeBox = false;
       return j2k;
     }
   },
@@ -161,6 +163,8 @@ public enum TiffCompression implements CodedEnum {
         if (o.quality > 0)
           j2k.quality = o.quality;
       }
+      j2k.writeBox = false;
+      j2k.lossless = false;
       return j2k;
     }
   },

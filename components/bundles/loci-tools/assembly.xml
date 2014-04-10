@@ -10,7 +10,6 @@
   <dependencySets>
     <dependencySet>
       <excludes>
-        <exclude>ome:lwf-stubs</exclude>
         <exclude>gov.nih.imagej:imagej</exclude>
         <!-- exclude testing dependencies -->
         <exclude>org.testng:testng</exclude>
@@ -26,20 +25,6 @@
         <exclude>org.apache.ant:ant-trax</exclude>
         <exclude>edu.ucar:udunits</exclude>
         <exclude>javax.servlet:servlet-api</exclude>
-        <!-- exclude optional libraries pulled in by netCDF -->
-        <exclude>com.sleepycat:je</exclude>
-        <exclude>net.sf.ehcache:ehcache-core</exclude>
-        <exclude>com.google.protobuf:protobuf-java</exclude>
-        <exclude>org.quartz-scheduler:quartz</exclude>
-        <exclude>c3p0:c3p0</exclude>
-        <exclude>com.sun.jna:jna</exclude>
-        <exclude>net.jcip:jcip-annotations</exclude>
-        <exclude>org.jdom:jdom2</exclude>
-        <exclude>jaxen:jaxen</exclude>
-        <exclude>org.slf4j:jcl-over-slf4j</exclude>
-        <exclude>ch.qos.logback:logback-core</exclude>
-        <exclude>ch.qos.logback:logback-classic</exclude>
-        <exclude>commons-httpclient:commons-httpclient</exclude>
       </excludes>
       <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>

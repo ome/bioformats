@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -221,10 +217,21 @@ public class DicomReader extends FormatReader {
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
     Vector<String> files = fileList.get(keys[getSeries()]);
-    for (String f : companionFiles) {
-      files.add(f);
+    if (files == null) {
+      return null;
     }
-    return files == null ? null : files.toArray(new String[files.size()]);
+    Vector<String> uniqueFiles = new Vector<String>();
+    for (String f : files) {
+      if (!uniqueFiles.contains(f)) {
+        uniqueFiles.add(f);
+      }
+    }
+    for (String f : companionFiles) {
+      if (!uniqueFiles.contains(f)) {
+        uniqueFiles.add(f);
+      }
+    }
+    return uniqueFiles.toArray(new String[uniqueFiles.size()]);
   }
 
   public int fileGroupOption(String id) throws FormatException, IOException {

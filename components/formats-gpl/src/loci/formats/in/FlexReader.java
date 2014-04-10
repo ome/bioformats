@@ -270,6 +270,7 @@ public class FlexReader extends FormatReader {
 
     // read pixels from the file
     TiffParser tp = new TiffParser(s);
+    tp.fillInIFD(ifd);
     tp.getSamples(ifd, buf, x, y, w, h);
     factor = file.factors[imageNumber];
     tp.getStream().close();
@@ -800,6 +801,13 @@ public class FlexReader extends FormatReader {
     DefaultHandler handler =
       new FlexHandler(n, f, store, firstFile, currentWell);
     LOGGER.info("Parsing XML in .flex file");
+
+    xml = xml.trim();
+    // some files have a trailing ">", which needs to be removed
+    if (xml.endsWith(">>")) {
+      xml = xml.substring(0, xml.length() - 1);
+    }
+
     XMLTools.parseXML(xml.getBytes(Constants.ENCODING), handler);
 
     channelNames = n.toArray(new String[n.size()]);
@@ -1249,7 +1257,7 @@ public class FlexReader extends FormatReader {
             compressed =
               firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
 
-            if (compressed) {
+            if (compressed || firstIFD.getStripOffsets()[0] == 16) {
               tp.setDoCaching(false);
               file.ifds = tp.getIFDs();
               file.ifds.set(0, firstIFD);
@@ -1257,7 +1265,8 @@ public class FlexReader extends FormatReader {
               parseFlexFile(currentWell, row, col, field, firstFile, store);
             }
             else {
-              // if the pixel data is uncompressed, we can assume that
+              // if the pixel data is uncompressed and the IFD is stored
+              // before the image, we can assume that
               // the pixel data for image #0 is located immediately before
               // IFD #1; as a result, we only need to parse the first IFD
               file.offsets = tp.getIFDOffsets();

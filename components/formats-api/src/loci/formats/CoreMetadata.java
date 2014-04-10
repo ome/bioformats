@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME Bio-Formats API for reading and writing file formats.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -195,6 +191,9 @@ public class CoreMetadata implements Cloneable {
     seriesMetadata = r.getSeriesMetadata();
     thumbnail = r.isThumbnailSeries();
     resolutionCount = r.getResolutionCount();
+    moduloZ = r.getModuloZ();
+    moduloC = r.getModuloC();
+    moduloT = r.getModuloT();
 
     r.setCoreIndex(currentIndex);
   }
@@ -223,6 +222,9 @@ public class CoreMetadata implements Cloneable {
     seriesMetadata = c.seriesMetadata;
     thumbnail = c.thumbnail;
     resolutionCount = c.resolutionCount;
+    moduloZ = c.moduloZ;
+    moduloC = c.moduloC;
+    moduloT = c.moduloT;
   }
 
   // -- Object methods --
