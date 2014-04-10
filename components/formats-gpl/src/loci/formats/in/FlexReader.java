@@ -597,6 +597,9 @@ public class FlexReader extends FormatReader {
 
         for (int c=0; c<getEffectiveSizeC(); c++) {
           int channelIndex = seriesIndex + c;
+          if (seriesIndex > 0 && channelNames.length == getEffectiveSizeC() * getSeriesCount()) {
+            channelIndex = i * getEffectiveSizeC() + c;
+          }
           if (channelNames != null && channelIndex < channelNames.length) {
             store.setChannelName(channelNames[channelIndex], i, c);
           }
