@@ -8,7 +8,7 @@
   <parent>
     <groupId>ome</groupId>
     <artifactId>pom-bio-formats</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.0.2-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -188,7 +188,7 @@
                 <argument>${xsdfu.script}</argument>
                 <argument>omexml_metadata</argument>
                 <argument>-p</argument>
-                <argument>ome.xml.ome</argument>
+                <argument>ome.xml.meta</argument>
                 <argument>-o</argument>
                 <argument>${xsdfu.metadatapath}/</argument>
                 <argument>${project.rootdir}/${xsdfu.ome}</argument>
