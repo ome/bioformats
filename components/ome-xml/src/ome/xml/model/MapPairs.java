@@ -94,7 +94,8 @@ public class MapPairs implements OMEModelObject {
 
     // -- Constants --
 
-    public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/" + VERSION;
+    public static final String MAPNAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/" + VERSION;
+    public static final String PAIRSNAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/" + VERSION;
 
     private Map<String, String> map;
 
@@ -150,14 +151,18 @@ public class MapPairs implements OMEModelObject {
     protected Element asXMLElement(Document document, Element pairs)
     {
         if (pairs == null) {
-            pairs = document.createElementNS(NAMESPACE, "MapPairs");
+            if (true/*document.getParentNode().getNodeName().equals("MapAnnotation")*/) {
+                pairs = document.createElementNS(MAPNAMESPACE, "Value");
+            } else {
+                pairs = document.createElementNS(MAPNAMESPACE, "Map");
+            }
         }
 
         Iterator<Map.Entry<String, String>> entries = map.entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry<String, String> entry = entries.next();
 
-            Element pair = document.createElementNS(NAMESPACE, "M");
+            Element pair = document.createElementNS(PAIRSNAMESPACE, "M");
             pair.setAttribute("K", entry.getKey());
             pair.setTextContent(entry.getValue());
             pairs.appendChild(pair);
@@ -169,8 +174,8 @@ public class MapPairs implements OMEModelObject {
     public void update(Element element, OMEModel model) throws EnumerationException
     {
         String tagName = element.getTagName();
-        if (!"MapPairs".equals(tagName)) {
-            LOGGER.debug("Expecting node name of TextAnnotation got {}", tagName);
+        if (!("Map".equals(tagName) || "Value".equals(tagName))) {
+            LOGGER.debug("Expecting node name of Map or Value, got {}", tagName);
         }
 
         for(Element child : AbstractOMEModelObject.getChildrenByTagName(element, "M")) {

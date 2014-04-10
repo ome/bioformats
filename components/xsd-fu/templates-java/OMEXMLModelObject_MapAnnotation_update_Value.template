@@ -1,0 +1,19 @@
+		List<Element> Value_nodeList =
+				getChildrenByTagName(element, "Value");
+		if (Value_nodeList.size() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Value node list size %d != 1",
+					Value_nodeList.size()));
+		}
+		else if (Value_nodeList.size() != 0)
+		{
+			try {
+				value.update(Value_nodeList.get(0));
+			}
+			catch (Exception e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
