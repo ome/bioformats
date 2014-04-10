@@ -932,17 +932,17 @@ public class FlexReader extends FormatReader {
     // if the calculated image count is the same as the number of planes
     // in the file, then we can assume one field per file
     // otherwise assume that fields are stored within the files
-    if (getImageCount() * fieldCount != nPlanes && getImageCount() != nPlanes) {
-      if (nFiles > 1) {
-        ms0.imageCount = nPlanes / fieldCount;
-        ms0.sizeZ = 1;
-        ms0.sizeT = nPlanes / fieldCount;
-        if (getSizeT() % getSizeC() == 0) {
-          ms0.sizeT /= getSizeC();
-        }
-        else {
-          ms0.sizeC = 1;
-        }
+    if (getImageCount() * fieldCount != nPlanes &&
+      ((getImageCount() != nPlanes && nFiles > 1) || nFiles == 1))
+    {
+      ms0.imageCount = nPlanes / fieldCount;
+      ms0.sizeZ = 1;
+      ms0.sizeT = nPlanes / fieldCount;
+      if (getSizeT() % getSizeC() == 0) {
+        ms0.sizeT /= getSizeC();
+      }
+      else {
+        ms0.sizeC = 1;
       }
     }
     ms0.sizeX = (int) ifd.getImageWidth();
