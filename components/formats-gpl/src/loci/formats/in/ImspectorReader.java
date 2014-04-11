@@ -183,9 +183,11 @@ public class ImspectorReader extends FormatReader {
     in.skipBytes(6);
     m.sizeX = in.readInt();
     m.sizeY = in.readInt();
-    planesPerBlock.add(in.readInt());
+    m.sizeT = in.readInt();
+    m.sizeZ = in.readInt();
+    planesPerBlock.add(m.sizeT);
 
-    in.skipBytes(20);
+    in.skipBytes(16);
     for (int i=0; i<4; i++) {
       int len = in.read();
       String pmtSetting = in.readString(len);
@@ -199,6 +201,8 @@ public class ImspectorReader extends FormatReader {
       if (values[i].equals("Instrument Mode")) {
         isFLIM =
           values[i + 1].startsWith("TCSPC") || values[i + 1].startsWith("FLIM");
+         LOGGER.info("forcing isFLIM");
+          isFLIM = true;
       }
     }
     m.pixelType = FormatTools.UINT16;
@@ -407,10 +411,12 @@ public class ImspectorReader extends FormatReader {
     }
 
     if (isFLIM) {
-      m.sizeZ = 1;
-      m.sizeT = m.imageCount;
+      //m.sizeZ = 1;
+      //m.sizeT = m.imageCount;
+       LOGGER.info("m.imageCount = {}",m.imageCount);
       m.moduloT.parentType = FormatTools.SPECTRA;
       m.moduloT.type = FormatTools.LIFETIME;
+      
       m.sizeC = m.imageCount / (m.sizeZ * m.sizeT);
       m.dimensionOrder = "XYZTC";
 
