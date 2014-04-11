@@ -390,8 +390,7 @@ namespace ome
         // ${o.name} entity counting
 {% end debug %}\
 {% for k, v in indexes[o.name].items() %}\
-{% if fu.max_occurs_under_parent(model, k, o.name) > 1 \
-      and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
+{% if fu.max_occurs_under_parent(model, k, o.name) > 1 and (k not in fu.METADATA_COUNT_IGNORE or o.type not in fu.METADATA_COUNT_IGNORE[k]) %}\
 {% if fu.SOURCE_TYPE == "header" %}\
         /**
          * Get the number of ${o.name} elements{% if is_multi_path[o.name] %} in ${k}{% end %}.
