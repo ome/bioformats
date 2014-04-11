@@ -179,7 +179,9 @@ public class MicromanagerReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    String file = positions.get(getSeries()).getFile(no);
+    String file = positions.get(getSeries()).getFile(
+      getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
+      getImageCount(), no);
 
     if (file != null && new Location(file).exists()) {
       tiffReader.setId(file);
@@ -842,7 +844,13 @@ public class MicromanagerReader extends FormatReader {
     public String cameraMode;
 
     public String getFile(int no) {
-      int[] zct = getZCTCoords(no);
+      return getFile(getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
+        getImageCount(), no);
+    }
+
+    public String getFile(String order, int z, int c, int t, int count, int no)
+    {
+      int[] zct = FormatTools.getZCTCoords(order, z, c, t, count, no);
       for (Index key : fileNameMap.keySet()) {
         if (key.z == zct[0] && key.c == zct[1] && key.t == zct[2]) {
           String file = fileNameMap.get(key);
