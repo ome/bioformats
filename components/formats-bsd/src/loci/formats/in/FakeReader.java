@@ -640,7 +640,7 @@ public class FakeReader extends FormatReader {
       }
 
     }
-    
+
     // for indexed color images, create lookup tables
     if (indexed) {
       if (pixelType == FormatTools.UINT8) {

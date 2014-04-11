@@ -4009,30 +4009,45 @@ public final class MetadataConverter {
 
   private static void convertRootAttributes(MetadataRetrieve src, MetadataStore dest)
   {
-    String uuid = src.getUUID();
-    if (uuid != null) {
-      dest.setUUID(uuid);
+    try {
+      String uuid = src.getUUID();
+      if (uuid != null) {
+        dest.setUUID(uuid);
+      }
     }
+    catch (NullPointerException e) { }
 
-    String rightsHeld = src.getRightsRightsHeld();
-    if (rightsHeld != null) {
-      dest.setRightsRightsHeld(rightsHeld);
+    try {
+      String rightsHeld = src.getRightsRightsHeld();
+      if (rightsHeld != null) {
+        dest.setRightsRightsHeld(rightsHeld);
+      }
     }
+    catch (NullPointerException e) { }
 
-    String rightsHolder = src.getRightsRightsHolder();
-    if (rightsHolder != null) {
-      dest.setRightsRightsHolder(rightsHolder);
+    try {
+      String rightsHolder = src.getRightsRightsHolder();
+      if (rightsHolder != null) {
+        dest.setRightsRightsHolder(rightsHolder);
+      }
     }
+    catch (NullPointerException e) { }
 
-    String metadataFile = src.getBinaryOnlyMetadataFile();
-    if (metadataFile != null) {
-      dest.setBinaryOnlyMetadataFile(metadataFile);
+    try {
+      String metadataFile = src.getBinaryOnlyMetadataFile();
+      if (metadataFile != null) {
+        dest.setBinaryOnlyMetadataFile(metadataFile);
+      }
     }
+    catch (NullPointerException e) { }
 
-    uuid = src.getBinaryOnlyUUID();
-    if (uuid != null) {
-      dest.setBinaryOnlyUUID(uuid);
+    try {
+      String uuid = src.getBinaryOnlyUUID();
+      if (uuid != null) {
+        dest.setBinaryOnlyUUID(uuid);
+      }
     }
+    catch (NullPointerException e) { }
   }
 
 }

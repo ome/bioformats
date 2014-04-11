@@ -151,11 +151,11 @@ public class MapPairs implements OMEModelObject {
     protected Element asXMLElement(Document document, Element pairs)
     {
         if (pairs == null) {
-            if (true/*document.getParentNode().getNodeName().equals("MapAnnotation")*/) {
-                pairs = document.createElementNS(MAPNAMESPACE, "Value");
-            } else {
-                pairs = document.createElementNS(MAPNAMESPACE, "Map");
-            }
+            // a node named "Map" is only desired if we are working with an
+            // instance of Map (a subclass of MapPairs), in which case it
+            // is the subclass' responsibility to ensure that 'pairs' is
+            // a node of the correct name/type
+            pairs = document.createElementNS(MAPNAMESPACE, "Value");
         }
 
         Iterator<Map.Entry<String, String>> entries = map.entrySet().iterator();

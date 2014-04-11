@@ -10,7 +10,18 @@
 		else if (Value_nodeList.size() != 0)
 		{
 			try {
-				value.update(Value_nodeList.get(0));
+        java.util.Map<String, String> map = new java.util.HashMap<String, String>();
+        NodeList children = Value_nodeList.get(0).getChildNodes();
+
+        for (int i=0; i<children.getLength(); i++) {
+          Node child = children.item(i);
+          if (child.getNodeType() == Node.ELEMENT_NODE) {
+            map.put(
+              ((Element) child).getAttribute("K"), child.getTextContent());
+          }
+        }
+        MapPairs mapPairs = new MapPairs(map);
+        setValue(mapPairs);
 			}
 			catch (Exception e)
 			{
