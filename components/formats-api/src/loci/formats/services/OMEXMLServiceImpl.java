@@ -816,6 +816,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       for (BinData bin : binData) {
         pix.removeBinData(bin);
       }
+      pix.setMetadataOnly(null);
     }
     omexmlMeta.setRoot(root);
   }
