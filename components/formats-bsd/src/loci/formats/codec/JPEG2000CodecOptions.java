@@ -73,6 +73,12 @@ public class JPEG2000CodecOptions extends CodecOptions {
    */
   public Integer resolution;
 
+  /**
+   * Whether or not to write a boxed stream, i.e. with SOC and SIZ markers.
+   * By default, a raw code stream is written.
+   */
+  public boolean writeBox = true;
+
   // -- Constructors --
 
   /** Creates a new instance. */
@@ -113,6 +119,7 @@ public class JPEG2000CodecOptions extends CodecOptions {
 
     j2kOptions.quality = j2kOptions.lossless ? Double.MAX_VALUE : 10;
     j2kOptions.codeBlockSize = new int[] {64, 64};
+    j2kOptions.writeBox = true;
 
     return j2kOptions;
   }

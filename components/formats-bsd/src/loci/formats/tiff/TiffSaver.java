@@ -344,6 +344,9 @@ public class TiffSaver {
                     } else if (off < buf.length) {
                       stripOut[strip].writeByte(buf[off]);
                     }
+                    else {
+                      stripOut[strip].writeByte(0);
+                    }
                   }
                   else {
                     off = c * blockSize + ndx + n;
@@ -352,6 +355,9 @@ public class TiffSaver {
                     } else if (off < buf.length) {
                       stripOut[c * (nStrips / nChannels) + strip].writeByte(
                           buf[off]);
+                    }
+                    else {
+                      stripOut[strip].writeByte(0);
                     }
                   }
                 }
