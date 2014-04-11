@@ -1,6 +1,11 @@
 Version history
 ===============
 
+4.4.11 (2014 April 14)
+------------------
+
+* No changes - release to keep version numbers in sync with OMERO
+
 4.4.10 (2014 Jan 15)
 --------------------
 
