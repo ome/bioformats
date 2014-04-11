@@ -108,7 +108,6 @@ public class MapPairs implements OMEModelObject {
     /** Construct from an existing Map. */
     public MapPairs(Map<String, String> m)
     {
-        LOGGER.info("MapPairs: constructor m = '{}' ", m.toString());
        map = new HashMap<String, String>(m);
     }
 

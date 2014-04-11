@@ -667,9 +667,6 @@ public final class ImageConverter {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-	String[] fakeArgs = {"dummy&series=1&sizeZ=1&annLong=2&annDouble=3&annMap=3.fake", "fake2.ome"};
-	args = fakeArgs;
-	
     if (DataTools.indexOf(args, NO_UPGRADE_CHECK) == -1) {
       UpgradeChecker checker = new UpgradeChecker();
       boolean canUpgrade =
