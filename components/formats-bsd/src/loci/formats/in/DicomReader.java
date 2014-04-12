@@ -1129,6 +1129,14 @@ public class DicomReader extends FormatReader {
     String[] patternFiles = pattern.getFiles();
     if (patternFiles == null) patternFiles = new String[0];
     Arrays.sort(patternFiles);
+
+    // make sure that the file names are normalized
+    // this prevents files from being missed on Windows if the
+    // path separator normalization is inconsistent
+    for (int i=0; i<patternFiles.length; i++) {
+      patternFiles[i] = new Location(patternFiles[i]).getAbsolutePath();
+    }
+
     String[] files = dir.list(true);
     if (files == null) return;
     Arrays.sort(files);
