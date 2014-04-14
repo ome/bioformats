@@ -1078,7 +1078,7 @@ ${getter(k, o, prop, v)}\
                                                     index_type lightSourceIndex)
       {
         std::shared_ptr<OMEXMLMetadataRoot>& o0(root);
-        if (!o0->sizeOfInstrumentList() == instrumentIndex)
+        if (o0->sizeOfInstrumentList() == instrumentIndex)
           {
             std::shared_ptr<ome::xml::model::Instrument> i(std::make_shared<ome::xml::model::Instrument>());
             o0->addInstrument(i);
@@ -1113,7 +1113,7 @@ ${getter(k, o, prop, v)}\
                                                index_type imageIndex)
       {
         std::shared_ptr<OMEXMLMetadataRoot>& o0(root);
-        if (!o0->sizeOfImageList() == imageIndex)
+        if (o0->sizeOfImageList() == imageIndex)
           {
             std::shared_ptr<ome::xml::model::Image> i(std::make_shared<ome::xml::model::Image>());
             o0->addImage(i);
