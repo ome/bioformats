@@ -51,7 +51,8 @@ namespace ome
 
       namespace
       {
-        const std::string NAMESPACE("http://www.openmicroscopy.org/Schemas/ROI/" OME_MODEL_VERSION);
+        const std::string MAP_NAMESPACE("http://www.openmicroscopy.org/Schemas/SA/" OME_MODEL_VERSION);
+        const std::string PAIRS_NAMESPACE("http://www.openmicroscopy.org/Schemas/OME/" OME_MODEL_VERSION);
       }
 
       MapPairs::MapPairs ():
@@ -93,9 +94,10 @@ namespace ome
       {
         detail::OMEModelObject::update(element, model);
         std::string tagName(element.getTagName());
-        if (tagName != "MapPairs")
+        //+        if (!("Map".equals(tagName) || "Value".equals(tagName))) {
+        if (tagName != "Map" && tagName != "Value")
           {
-            std::clog << "Expecting node name of MapPairs got " << tagName << std::endl;
+            std::clog << "Expecting node name of Map or Value, got " << tagName << std::endl;
           }
 
         std::vector<xerces::dom::Element> M_nodeList(getChildrenByTagName(element, "M"));
@@ -143,7 +145,11 @@ namespace ome
 
         if (!element)
           {
-            xerces::dom::Element newElement = document.createElementNS(NAMESPACE, "Line");
+            // A node named "Map" is only desired if we are working
+            // with an instance of Map (a subclass of MapPairs), in
+            // which case it is the subclass' responsibility to ensure
+            // that 'pairs' is a node of the correct name and type.
+            xerces::dom::Element newElement = document.createElementNS(MAP_NAMESPACE, "Line");
             element = newElement;
           }
 
@@ -151,7 +157,7 @@ namespace ome
              i != map.end();
              ++i)
           {
-            xerces::dom::Element pair = document.createElementNS(NAMESPACE, "M");
+            xerces::dom::Element pair = document.createElementNS(PAIRS_NAMESPACE, "M");
             pair.setAttribute("K", i->first);
             pair.setTextContent(i->second);
             element.appendChild(pair);
