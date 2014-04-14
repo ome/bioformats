@@ -132,7 +132,7 @@ public class MapPairs implements OMEModelObject {
         update(element, model);
     }
 
-    public Map getMap()
+    public Map<String, String> getMap()
     {
         return map;
     }

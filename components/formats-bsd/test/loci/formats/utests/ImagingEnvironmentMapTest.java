@@ -44,11 +44,8 @@ import static org.testng.AssertJUnit.assertNotNull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import ome.xml.model.Channel;
 import ome.xml.model.Image;
-import ome.xml.model.Instrument;
-import ome.xml.model.LightSourceSettings;
-import ome.xml.model.GenericExcitationSource;
+import ome.xml.model.ImagingEnvironment;
 import ome.xml.model.Map;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
@@ -61,48 +58,40 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Test case for GenericExcitationSource Map values
+ * Test case for ImagingEnvironment Map values
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/GenericExcitationMapTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/GenericExcitationMapTest.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/ImagingEnvironmentMapTest.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/ImagingEnvironmentMapTest.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Andrew Patterson
  */
-public class GenericExcitationMapTest {
+public class ImagingEnvironmentMapTest {
 
   private OME ome = new OME();
 
   @BeforeClass
   public void setUp() throws Exception {
-    Instrument instrument = new Instrument();
-    instrument.setID("Instrument:0");
-    // Add a GenericExcitationSource with an Map
-    GenericExcitationSource geSource = new GenericExcitationSource();
-    geSource.setID("LightSource:0");
+    // Add an Image/Pixels
+    Image image = new Image();
+    image.setID("Image:0");
+    Pixels pixels = new Pixels();
+    pixels.setID("Pixels:0");
+    image.setPixels(pixels);
+
+    // Add an ImagingEnvironment with an Map
+    ImagingEnvironment imagingEnvironment = new ImagingEnvironment();
+
     Map dataMap = new Map();
     dataMap.getMap().put("a","1");
     dataMap.getMap().put("b","2");
     dataMap.getMap().put("c","3");
     dataMap.getMap().put("d","4");
     dataMap.getMap().put("e","5");
-    geSource.setMap(dataMap);
+    imagingEnvironment.setMap(dataMap);
 
-    instrument.addLightSource(geSource);
-    ome.addInstrument(instrument);
-    // Add an Image/Pixels with a LightSourceSettings reference to the
-    // GenericExcitationSource on one of its channels.
-    Image image = new Image();
-    image.setID("Image:0");
-    Pixels pixels = new Pixels();
-    pixels.setID("Pixels:0");
-    Channel channel = new Channel();
-    channel.setID("Channel:0");
-    LightSourceSettings settings = new LightSourceSettings();
-    settings.setID("LightSource:0");
-    channel.setLightSourceSettings(settings);
-    pixels.addChannel(channel);
-    image.setPixels(pixels);
+    image.setImagingEnvironment(imagingEnvironment);
+
     ome.addImage(image);
   }
 
@@ -132,11 +121,11 @@ public class GenericExcitationMapTest {
     model.resolveReferences();
 
     assertNotNull(ome); 
-    assertEquals(ome.getImage(0).getPixels().getChannel(0).getLightSourceSettings().getID(), "LightSource:0"); 
+    assertEquals(ome.getImage(0).getPixels().getID(), "Pixels:0"); 
+    assertNotNull(ome.getImage(0).getImagingEnvironment()); 
 
-    assertNotNull(ome.getInstrument(0).getLightSource(0));
-    GenericExcitationSource geSource = (GenericExcitationSource) ome.getInstrument(0).getLightSource(0); 
-    Map dataMap = geSource.getMap();
+    ImagingEnvironment imagingEnvironment = ome.getImage(0).getImagingEnvironment(); 
+    Map dataMap = imagingEnvironment.getMap();
 
     assertTrue(dataMap.getMap().containsKey("a"));
     assertTrue(dataMap.getMap().containsKey("b"));
