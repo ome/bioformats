@@ -935,6 +935,11 @@
 				<xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Filter" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Dichroic" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="InstrumentID"/>
 		</xsd:complexType>
@@ -1499,6 +1504,13 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="ManufacturerSpec">
+					<xsd:sequence>
+						<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
 					<xsd:attribute name="ID" use="required" type="ObjectiveID"/>
 					<xsd:attribute name="Correction" use="optional">
 						<xsd:annotation>
@@ -1599,6 +1611,13 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="ManufacturerSpec">
+					<xsd:sequence>
+						<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
@@ -1718,6 +1737,11 @@
 				<xsd:extension base="ManufacturerSpec">
 					<xsd:sequence>
 						<xsd:element ref="TransmittanceRange" minOccurs="0" maxOccurs="1"/>
+						<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
 					</xsd:sequence>
 					<xsd:attribute name="Type" use="optional">
 						<xsd:simpleType>
@@ -1799,6 +1823,13 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="ManufacturerSpec">
+					<xsd:sequence>
+						<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
 					<xsd:attribute name="ID" use="required" type="DichroicID"/>
 				</xsd:extension>
 			</xsd:complexContent>
@@ -1828,6 +1859,11 @@
 						</xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -1855,13 +1891,20 @@
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="ManufacturerSpec">
-					<xsd:choice minOccurs="1" maxOccurs="1">
-						<xsd:element ref="Laser" minOccurs="1" maxOccurs="1"/>
-						<xsd:element ref="Filament" minOccurs="1" maxOccurs="1"/>
-						<xsd:element ref="Arc" minOccurs="1" maxOccurs="1"/>
-						<xsd:element ref="LightEmittingDiode" minOccurs="1" maxOccurs="1"/>
-						<xsd:element ref="GenericExcitationSource" minOccurs="1" maxOccurs="1"/>
-					</xsd:choice>
+					<xsd:sequence>
+						<xsd:choice minOccurs="1" maxOccurs="1">
+							<xsd:element ref="Laser" minOccurs="1" maxOccurs="1"/>
+							<xsd:element ref="Filament" minOccurs="1" maxOccurs="1"/>
+							<xsd:element ref="Arc" minOccurs="1" maxOccurs="1"/>
+							<xsd:element ref="LightEmittingDiode" minOccurs="1" maxOccurs="1"/>
+							<xsd:element ref="GenericExcitationSource" minOccurs="1" maxOccurs="1"/>
+						</xsd:choice>
+						<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+							<xsd:annotation>
+								<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+							</xsd:annotation>
+						</xsd:element>
+					</xsd:sequence>
 					<xsd:attribute name="ID" use="required" type="LightSourceID">
 						<xsd:annotation>
 							<xsd:documentation>
