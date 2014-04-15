@@ -360,11 +360,6 @@
 					<xsd:element ref="MetadataOnly" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
 				<xsd:element ref="Plane" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
-					<xsd:annotation>
-						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
-					</xsd:annotation>
-				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PixelsID"/>
 			<xsd:attribute name="DimensionOrder" use="required">
