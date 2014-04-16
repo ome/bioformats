@@ -903,19 +903,6 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
       }
 
-      int pixelsAnnotationRefCount = 0;
-      try {
-        pixelsAnnotationRefCount = src.getPixelsAnnotationRefCount(i);
-      }
-      catch (NullPointerException e) { }
-      for (int q=0; q<pixelsAnnotationRefCount; q++) {
-        try {
-          String pixelsAnnotationRef = src.getPixelsAnnotationRef(i, q);
-          dest.setPixelsAnnotationRef(pixelsAnnotationRef, i, q);
-        }
-        catch (NullPointerException e) { }
-      }
-
       int channelCount = 0;
       try {
         channelCount = src.getChannelCount(i);
@@ -2036,18 +2023,6 @@ public final class MetadataConverter {
           }
           catch (NullPointerException e) { }
 
-          int wellSampleAnnotationRefCount = 0;
-          try {
-            wellSampleAnnotationRefCount = src.getWellSampleAnnotationRefCount(i, q, w);
-          }
-          catch (NullPointerException e) { }
-          for (int a=0; a<wellSampleAnnotationRefCount; a++) {
-            try {
-              String wellSampleAnnotationRef = src.getWellSampleAnnotationRef(i, q, w, a);
-              dest.setWellSampleAnnotationRef(wellSampleAnnotationRef, i, q, w, a);
-            }
-            catch (NullPointerException e) { }
-          }
         }
       }
 
