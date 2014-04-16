@@ -85,6 +85,8 @@ import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
+import java.util.Map;
+
 /**
  * A proxy whose responsibility it is to extract biological image data from a
  * particular storage medium.
@@ -127,6 +129,8 @@ public interface MetadataRetrieve extends BaseMetadata {
 
   int getLongAnnotationAnnotationCount(int longAnnotationIndex);
 
+  int getMapAnnotationAnnotationCount(int mapAnnotationIndex);
+
   int getTagAnnotationAnnotationCount(int tagAnnotationIndex);
 
   int getTermAnnotationAnnotationCount(int termAnnotationIndex);
@@ -165,10 +169,16 @@ public interface MetadataRetrieve extends BaseMetadata {
 
 	Boolean getPixelsBinDataBigEndian(int imageIndex, int binDataIndex);
 
-	// -- Entity retrieval (code generated definitions) --
+	java.util.Map<String, String> getMapAnnotationValue(int mapAnnotationIndex);
+
+	java.util.Map<String, String> getGenericExcitationSourceMap(int instrumentIndex, int lightSourceIndex);
+
+	java.util.Map<String, String> getImagingEnvironmentMap(int imageIndex);
 
 	/** Gets the UUID associated with this collection of metadata. */
 	String getUUID();
+
+	// -- Entity retrieval (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\

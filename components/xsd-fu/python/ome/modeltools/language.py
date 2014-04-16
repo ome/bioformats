@@ -64,6 +64,11 @@ class Language(object):
             namespace + 'dateTime': 'Timestamp'
             }
 
+        # A global type mapping from XSD Schema elements to language model
+        # object classes.  This will cause source code generation to be
+        # skipped for this type since it's implemented natively.
+        self.model_type_map = {}
+
         # A global type mapping from XSD Schema types to base classes
         # that is used to override places in the model where we do not
         # wish subclassing to take place.
@@ -187,6 +192,11 @@ class Java(Language):
         self.primitive_type_map[namespace + 'anyURI'] = 'String'
         self.primitive_type_map[namespace + 'hexBinary'] = 'String'
 
+        self.model_type_map['MapPairs'] = None
+        self.model_type_map['M'] = None
+        self.model_type_map['K'] = None
+        self.model_type_map['V'] = None
+
         self.type_map = copy.deepcopy(self.primitive_type_map)
         self._initTypeMap()
         self.type_map['MIMEtype'] = 'String'
@@ -252,6 +262,11 @@ class CXX(Language):
         self.primitive_type_map[namespace + 'double'] = 'double'
         self.primitive_type_map[namespace + 'anyURI'] = 'std::string'
         self.primitive_type_map[namespace + 'hexBinary'] = 'std::string'
+
+        self.model_type_map['MapPairs'] = None
+        self.model_type_map['M'] = None
+        self.model_type_map['K'] = None
+        self.model_type_map['V'] = None
 
         self.type_map = copy.deepcopy(self.primitive_type_map)
         self._initTypeMap()

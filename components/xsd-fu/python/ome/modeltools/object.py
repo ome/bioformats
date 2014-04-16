@@ -237,7 +237,9 @@ class OMEModelObject(OMEModelEntity):
 
     def _get_header(self):
         header = None
-        if isinstance(self.model.opts.lang, language.Java):
+        if self.name in self.model.opts.lang.model_type_map.keys():
+            pass
+        elif isinstance(self.model.opts.lang, language.Java):
             header = "ome.xml.model.%s" % self.name
         elif isinstance(self.model.opts.lang, language.CXX):
             path = re.sub("::", "/", self.name)
@@ -279,7 +281,9 @@ class OMEModelObject(OMEModelEntity):
 
         myself = None
 
-        if isinstance(self.model.opts.lang, language.Java):
+        if self.name in self.model.opts.lang.model_type_map.keys():
+            pass
+        elif isinstance(self.model.opts.lang, language.Java):
             pass
         elif isinstance(self.model.opts.lang, language.CXX):
             path = re.sub("::", "/", self.name)
@@ -296,7 +300,9 @@ class OMEModelObject(OMEModelEntity):
     def _get_fwd(self):
         fwd = set()
 
-        if isinstance(self.model.opts.lang, language.Java):
+        if self.name in self.model.opts.lang.model_type_map.keys():
+            pass
+        elif isinstance(self.model.opts.lang, language.Java):
             pass
         elif isinstance(self.model.opts.lang, language.CXX):
             fwd.add("OMEModel")
