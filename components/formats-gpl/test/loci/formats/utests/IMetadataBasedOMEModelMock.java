@@ -146,18 +146,25 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setFilterSetDichroicRef(InOutCurrentTest.DICHROIC_ID, 0, 0);
     store.setFilterSetEmissionFilterRef(InOutCurrentTest.EM_FILTER_ID, 0, 0, 0);
     store.setFilterSetExcitationFilterRef(InOutCurrentTest.EX_FILTER_ID, 0, 0, 0);
-    
+
     // Create <Filter/>s under <Instrument/>
     store.setFilterID(InOutCurrentTest.EM_FILTER_ID, 0, 0);
     store.setFilterType(InOutCurrentTest.EM_FILTER_TYPE, 0, 0);
-    
+
     store.setFilterID(InOutCurrentTest.EX_FILTER_ID, 0, 1);
     store.setFilterType(InOutCurrentTest.EX_FILTER_TYPE, 0, 1);
 
     // Create <Objective/> under <Instrument/>
     store.setObjectiveID(InOutCurrentTest.OBJECTIVE_ID, 0, 0);
     store.setObjectiveModel(InOutCurrentTest.OBJECTIVE_MODEL, 0, 0);
-    
+
+    // Create <Annotation/> under <Instrument/>
+    store.setCommentAnnotationID(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID, 0);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setCommentAnnotationValue(InOutCurrentTest.INSTRUMENT_ANNOTATION_VALUE, 0);
+
+    store.setInstrumentAnnotationRef(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID, 0, 0);
+
     // link Instrument to the first Image
     store.setImageInstrumentRef(InOutCurrentTest.INSTRUMENT_ID, 0);
   }
@@ -168,7 +175,7 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setPlateColumns(InOutCurrentTest.WELL_COLS, 0);
     store.setPlateRowNamingConvention(InOutCurrentTest.WELL_ROW, 0);
     store.setPlateColumnNamingConvention(InOutCurrentTest.WELL_COL, 0);
-    
+
     store.setPlateAnnotationRef(InOutCurrentTest.PLATE_ANNOTATION_ID, 0, 0);
 
     store.setTimestampAnnotationID(InOutCurrentTest.PLATE_ANNOTATION_ID, 0);
@@ -204,10 +211,10 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
   private void makeROI() {
     store.setROIID(InOutCurrentTest.ROI_ID, 0);
 
-    store.setCommentAnnotationID(InOutCurrentTest.ROI_ANNOTATION_ID, 0);
-    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setCommentAnnotationValue(InOutCurrentTest.ROI_ANNOTATION_VALUE, 0);
-    
+    store.setCommentAnnotationID(InOutCurrentTest.ROI_ANNOTATION_ID, 1);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 1);
+    store.setCommentAnnotationValue(InOutCurrentTest.ROI_ANNOTATION_VALUE, 1);
+
     store.setROIAnnotationRef(InOutCurrentTest.ROI_ANNOTATION_ID, 0, 0);
 
     store.setRectangleID(InOutCurrentTest.SHAPE_ID, 0, 0);
@@ -215,7 +222,5 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setRectangleY(InOutCurrentTest.RECTANGLE_Y, 0, 0);
     store.setRectangleWidth(InOutCurrentTest.RECTANGLE_WIDTH, 0, 0);
     store.setRectangleHeight(InOutCurrentTest.RECTANGLE_HEIGHT, 0, 0);
-    
-    
   }
 }

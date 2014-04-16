@@ -125,27 +125,63 @@ public class InOutCurrentTest {
 
   public static final String INSTRUMENT_ID = "Instrument:0";
 
+  public static final String INSTRUMENT_ANNOTATION_ID = "Annotation:String1";
+
+  public static final String INSTRUMENT_ANNOTATION_VALUE = "Value:String1";
+
   public static final String DETECTOR_ID = "Detector:0";
 
+  public static final String DETECTOR_ANNOTATION_ID = "Annotation:String2";
+
+  public static final String DETECTOR_ANNOTATION_VALUE = "Value:String2";
+
   public static final String LIGHTSOURCE_LASER_ID = "LightSource:0";
+
+  public static final String LIGHTSOURCE_LASER_ANNOTATION_ID = "Annotation:String3";
+
+  public static final String LIGHTSOURCE_LASER_ANNOTATION_VALUE = "Value:String3";
 
   public static final String LIGHTSOURCE_PUMP_ID = "LightSource:1";
 
   public static final String LIGHTSOURCE_ARC_ID = "LightSource:2";
 
+  public static final String LIGHTSOURCE_ARC_ANNOTATION_ID = "Annotation:String4";
+
+  public static final String LIGHTSOURCE_ARC_ANNOTATION_VALUE = "Value:String4";
+
   public static final String LIGHTSOURCE_FILAMENT_ID = "LightSource:3";
+
+  public static final String LIGHTSOURCE_FILAMENT_ANNOTATION_ID = "Annotation:String5";
+
+  public static final String LIGHTSOURCE_FILAMENT_ANNOTATION_VALUE = "Value:String5";
 
   public static final String LIGHTSOURCE_LED_ID = "LightSource:4";
 
+  public static final String LIGHTSOURCE_LED_ANNOTATION_ID = "Annotation:String6";
+
+  public static final String LIGHTSOURCE_LED_ANNOTATION_VALUE = "Value:String6";
+
   public static final String DICHROIC_ID = "Dichroic:0";
+
+  public static final String DICHROIC_ANNOTATION_ID = "Annotation:String7";
+
+  public static final String DICHROIC_ANNOTATION_VALUE = "Value:String7";
 
   public static final String FILTERSET_ID = "FilterSet:0";
 
   public static final String EM_FILTER_ID = "Filter:0";
 
+  public static final String EM_FILTER_ANNOTATION_ID = "Annotation:String8";
+
+  public static final String EM_FILTER_ANNOTATION_VALUE = "Value:String8";
+
   public static final String EX_FILTER_ID = "Filter:1";
 
   public static final String OBJECTIVE_ID = "Objective:0";
+
+  public static final String OBJECTIVE_ID_ANNOTATION_ID = "Annotation:String9";
+
+  public static final String OBJECTIVE_ID_ANNOTATION_VALUE = "Value:String9";
 
   public static final String PLATE_ID = "Plate:0";
 
@@ -158,6 +194,10 @@ public class InOutCurrentTest {
   public static final String ROI_ANNOTATION_ID = "Annotation:String0";
 
   public static final String SHAPE_ID = "Shape:0";
+
+  public static final String SHAPE_ANNOTATION_ID = "Annotation:String10";
+
+  public static final String SHAPE_ANNOTATION_VALUE = "Value:String10";
 
   public static final DimensionOrder DIMENSION_ORDER = DimensionOrder.XYZCT;
 
@@ -426,6 +466,17 @@ public class InOutCurrentTest {
     assertEquals(5, metadata.getLightSourceCount(0));
     assertEquals(1, metadata.getDetectorCount(0));
     assertEquals(2, metadata.getFilterCount(0));
+  }
+
+  @Test(dependsOnMethods={"testValidInstrumentNode"})
+  public void testValidInstrumentAnnotation() {
+    Annotation n = ome.getInstrument(0).getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertEquals(INSTRUMENT_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
+    assertTrue(n instanceof CommentAnnotation);
+    CommentAnnotation string = (CommentAnnotation) n;
+    assertEquals(INSTRUMENT_ANNOTATION_VALUE, string.getValue());
   }
 
   @Test(dependsOnMethods={"testValidInstrumentNode"})

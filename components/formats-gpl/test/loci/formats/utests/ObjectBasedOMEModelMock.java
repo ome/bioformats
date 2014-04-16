@@ -220,6 +220,13 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     instrument.addFilterSet(filterSet);
     instrument.addDichroic(dichroic);
 
+    CommentAnnotation instrumentAnnotation = new CommentAnnotation();
+    instrumentAnnotation.setID(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID);
+    instrumentAnnotation.setValue(InOutCurrentTest.INSTRUMENT_ANNOTATION_VALUE);
+    instrumentAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    instrument.linkAnnotation(instrumentAnnotation);
+    annotations.addCommentAnnotation(instrumentAnnotation);
+
     // link Instrument to the first Image
     Image image = ome.getImage(0);
     image.linkInstrument(instrument);
