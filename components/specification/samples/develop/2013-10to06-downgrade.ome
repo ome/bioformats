@@ -212,6 +212,9 @@
 		<SA:LongAnnotation ID="Annotation:Objective:0">
 			<SA:Value>1</SA:Value>
 		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:Shape:1">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
 	</SA:StructuredAnnotations>
 	<ROI:ROI ID="ROI:0">
 		<ROI:Union>
@@ -226,6 +229,7 @@
 				FontStyle="Bold" LineCap="Butt" StrokeDashArray="1" StrokeWidth="1" TheC="2"
 				FillColor="1" StrokeColor="1" Text="Hello">
 				<ROI:Point X="1" Y="1"/>
+				<SA:AnnotationRef ID="Annotation:Shape:1"/>
 			</ROI:Shape>
 		</ROI:Union>
 		<ROI:Description>ROI 1 Upgradable description.</ROI:Description>
