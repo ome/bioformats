@@ -111,6 +111,7 @@
 	</OME:ExperimenterGroup>
 	
 	<Instrument ID="Instrument:0">
+		<Microscope Type="Dissection"/>
 		<LightSource ID="LightSource:0">
 			<GenericExcitationSource>
 				<Map><M K="a">1</M><M K="b">2</M><M K="c">3</M></Map>
@@ -122,8 +123,24 @@
 		<LightSource ID="LightSource:2" Power="2.3">
 			<Laser Wavelength="755" LaserMedium="Alexandrite"/>
 		</LightSource>
+		<LightSource ID="LightSource:3">
+			<Arc Type="Hg"/>
+			<SA:AnnotationRef ID="Annotation:LightSource:3"/>
+		</LightSource>
+		<Detector ID="Detector:0">
+			<SA:AnnotationRef ID="Annotation:Detector:0"/>
+		</Detector>
 		<Objective ID="Objective:0" LotNumber="123" Manufacturer="OME-Labs"
-			NominalMagnification="20" CalibratedMagnification="20.34"/>
+			NominalMagnification="20" CalibratedMagnification="20.34">
+			<SA:AnnotationRef ID="Annotation:Objective:0"/>
+		</Objective>
+		<Filter ID="Filter:0">
+			<SA:AnnotationRef ID="Annotation:Filter:0"/>
+		</Filter>
+		<Dichroic ID="Dichroic:0">
+			<SA:AnnotationRef ID="Annotation:Dichroic:0"/>
+		</Dichroic>
+		<SA:AnnotationRef ID="Annotation:Instrument:0"/>
 	</Instrument>
 	<OME:Image ID="Image:0" Name="6x6x1x8-swatch.tif">
 		<OME:AcquisitionDate>2010-02-23T12:51:30</OME:AcquisitionDate>
@@ -134,6 +151,12 @@
 				EmissionWavelength="577.2" ExcitationWavelength="655.8"
 				ID="Channel:0">
 				<LightSourceSettings ID="LightSource:1" Wavelength="655.4"/>
+				<LightPath>
+					<ExcitationFilterRef ID="Filter:0"/>
+					<DichroicRef ID="Dichroic:0"/>
+					<EmissionFilterRef ID="Filter:0"/>
+					<SA:AnnotationRef ID="Annotation:LightPath:0"/>
+				</LightPath>
 			</Channel>
 			<Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="-1474836488"
 				EmissionWavelength="477.0" ExcitationWavelength="755"
@@ -168,6 +191,27 @@
 				<M K="a">1</M><M K="b">2</M><M K="c">3</M>
 			</SA:Value>
 		</SA:MapAnnotation>
+		<SA:LongAnnotation ID="Annotation:Detector:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:Dichroic:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:Filter:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:Instrument:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:LightPath:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:LightSource:3">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
+		<SA:LongAnnotation ID="Annotation:Objective:0">
+			<SA:Value>1</SA:Value>
+		</SA:LongAnnotation>
 	</SA:StructuredAnnotations>
 	<ROI:ROI ID="ROI:0">
 		<ROI:Union>

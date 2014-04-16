@@ -123,6 +123,76 @@
 		</xsl:element>
 	</xsl:template>
 
+	<!-- strip AnnotationRef on Instrument -->
+	<xsl:template match="OME:Instrument">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- strip AnnotationRef on Objective -->
+	<xsl:template match="OME:Objective">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- strip AnnotationRef on Detector -->
+	<xsl:template match="OME:Detector">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- strip AnnotationRef on Filter -->
+	<xsl:template match="OME:Filter">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- strip AnnotationRef on Dichroic -->
+	<xsl:template match="OME:Dichroic">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- strip AnnotationRef on LightPath -->
+	<xsl:template match="OME:LightPath">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- strip AnnotationRef on LightSource -->
+	<xsl:template match="OME:LightSource">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
