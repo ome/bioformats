@@ -89,11 +89,9 @@
               <executable>python</executable>
               <arguments>
                 <argument>${xsdfu.script}</argument>
-                <argument>java_classes</argument>
-                <argument>-p</argument>
-                <argument>ome.xml.model</argument>
-                <argument>-o</argument>
-                <argument>${xsdfu.modelpath}/</argument>
+                <argument>omexml_model</argument>
+                <argument>--output-directory=${xsdfu.modelpath}/</argument>
+                <argument>--print-generated</argument>
                 <argument>${project.rootdir}/${xsdfu.ome}</argument>
                 <argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
                 <argument>${project.rootdir}/${xsdfu.roi}</argument>
@@ -113,11 +111,9 @@
               <executable>python</executable>
               <arguments>
                 <argument>${xsdfu.script}</argument>
-                <argument>enum_types</argument>
-                <argument>-p</argument>
-                <argument>ome.xml.model.enums</argument>
-                <argument>-o</argument>
-                <argument>${xsdfu.modelpath}/</argument>
+                <argument>omexml_model_enums</argument>
+                <argument>--output-directory=${xsdfu.modelpath}/</argument>
+                <argument>--print-generated</argument>
                 <argument>${project.rootdir}/${xsdfu.ome}</argument>
                 <argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
                 <argument>${project.rootdir}/${xsdfu.roi}</argument>
@@ -137,11 +133,9 @@
               <executable>python</executable>
               <arguments>
                 <argument>${xsdfu.script}</argument>
-                <argument>enum_handlers</argument>
-                <argument>-p</argument>
-                <argument>ome.xml.model.enums.handlers</argument>
-                <argument>-o</argument>
-                <argument>${xsdfu.modelpath}/</argument>
+                <argument>omexml_model_enum_handlers</argument>
+                <argument>--output-directory=${xsdfu.modelpath}/</argument>
+                <argument>--print-generated</argument>
                 <argument>${project.rootdir}/${xsdfu.ome}</argument>
                 <argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
                 <argument>${project.rootdir}/${xsdfu.roi}</argument>
@@ -163,10 +157,8 @@
               <arguments>
                 <argument>${xsdfu.script}</argument>
                 <argument>metadata</argument>
-                <argument>-p</argument>
-                <argument>ome.xml.meta</argument>
-                <argument>-o</argument>
-                <argument>${xsdfu.metadatapath}/</argument>
+                <argument>--output-directory=${xsdfu.metadatapath}/</argument>
+                <argument>--print-generated</argument>
                 <argument>${project.rootdir}/${xsdfu.ome}</argument>
                 <argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
                 <argument>${project.rootdir}/${xsdfu.roi}</argument>
@@ -187,10 +179,8 @@
               <arguments>
                 <argument>${xsdfu.script}</argument>
                 <argument>omexml_metadata</argument>
-                <argument>-p</argument>
-                <argument>ome.xml.ome</argument>
-                <argument>-o</argument>
-                <argument>${xsdfu.metadatapath}/</argument>
+                <argument>--output-directory=${xsdfu.metadatapath}/</argument>
+                <argument>--print-generated</argument>
                 <argument>${project.rootdir}/${xsdfu.ome}</argument>
                 <argument>${project.rootdir}/${xsdfu.binaryfile}</argument>
                 <argument>${project.rootdir}/${xsdfu.roi}</argument>
