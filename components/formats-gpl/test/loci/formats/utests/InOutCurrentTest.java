@@ -179,9 +179,9 @@ public class InOutCurrentTest {
 
   public static final String OBJECTIVE_ID = "Objective:0";
 
-  public static final String OBJECTIVE_ID_ANNOTATION_ID = "Annotation:String9";
+  public static final String OBJECTIVE_ANNOTATION_ID = "Annotation:String9";
 
-  public static final String OBJECTIVE_ID_ANNOTATION_VALUE = "Value:String9";
+  public static final String OBJECTIVE_ANNOTATION_VALUE = "Value:String9";
 
   public static final String PLATE_ID = "Plate:0";
 
@@ -609,6 +609,17 @@ public class InOutCurrentTest {
     assertNotNull(objective);
     assertEquals(OBJECTIVE_ID, objective.getID());
     assertEquals(OBJECTIVE_MODEL, objective.getModel());
+  }
+
+  @Test(dependsOnMethods={"testValidObjectiveNode"})
+  public void testValidObjectiveAnnotation() {
+    Annotation n = ome.getInstrument(0).getObjective(0).getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertEquals(OBJECTIVE_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
+    assertTrue(n instanceof CommentAnnotation);
+    CommentAnnotation string = (CommentAnnotation) n;
+    assertEquals(OBJECTIVE_ANNOTATION_VALUE, string.getValue());
   }
 
   @Test(dependsOnMethods={"testValidDichroicNode"})

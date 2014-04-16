@@ -211,7 +211,13 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     Objective objective = new Objective();
     objective.setID(InOutCurrentTest.OBJECTIVE_ID);
     objective.setModel(InOutCurrentTest.OBJECTIVE_MODEL);
-
+    CommentAnnotation objectiveAnnotation = new CommentAnnotation();
+    objectiveAnnotation.setID(InOutCurrentTest.OBJECTIVE_ANNOTATION_ID);
+    objectiveAnnotation.setValue(InOutCurrentTest.OBJECTIVE_ANNOTATION_VALUE);
+    objectiveAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    objective.linkAnnotation(objectiveAnnotation);
+    annotations.addCommentAnnotation(objectiveAnnotation);
+ 
     emFilter.setID(InOutCurrentTest.EM_FILTER_ID);
     emFilter.setType(InOutCurrentTest.EM_FILTER_TYPE);
     exFilter.setID(InOutCurrentTest.EX_FILTER_ID);
