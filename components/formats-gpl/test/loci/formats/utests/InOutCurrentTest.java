@@ -487,11 +487,22 @@ public class InOutCurrentTest {
     assertEquals(DETECTOR_MODEL, detector.getModel());
   }
 
-  @Test(dependsOnMethods={"testValidInstrumentMetadata"})
+  @Test(dependsOnMethods={"testValidDetectorNode"})
   public void testValidDetectorMetadata() {
     assertEquals(1, metadata.getDetectorCount(0));
     assertEquals(DETECTOR_ID, metadata.getDetectorID(0, 0));
     assertEquals(DETECTOR_MODEL, metadata.getDetectorModel(0, 0));
+  }
+
+  @Test(dependsOnMethods={"testValidDetectorNode"})
+  public void testValidDetectorAnnotation() {
+    Annotation n = ome.getInstrument(0).getDetector(0).getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertEquals(DETECTOR_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
+    assertTrue(n instanceof CommentAnnotation);
+    CommentAnnotation string = (CommentAnnotation) n;
+    assertEquals(DETECTOR_ANNOTATION_VALUE, string.getValue());
   }
 
   @Test(dependsOnMethods={"testValidInstrumentNode"})

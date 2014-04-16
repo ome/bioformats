@@ -104,6 +104,11 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     // Create <Detector/> under <Instrument/>
     store.setDetectorID(InOutCurrentTest.DETECTOR_ID, 0, 0);
     store.setDetectorModel(InOutCurrentTest.DETECTOR_MODEL, 0, 0);
+    // Create <Annotation/> under <Detector/>
+    store.setCommentAnnotationID(InOutCurrentTest.DETECTOR_ANNOTATION_ID, 0);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setCommentAnnotationValue(InOutCurrentTest.DETECTOR_ANNOTATION_VALUE, 0);
+    store.setDetectorAnnotationRef(InOutCurrentTest.DETECTOR_ANNOTATION_ID, 0, 0, 0);
 
     // Create <Laser/> under <Instrument/>
     store.setLaserID(InOutCurrentTest.LIGHTSOURCE_LASER_ID, 0, 0);
@@ -159,9 +164,9 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setObjectiveModel(InOutCurrentTest.OBJECTIVE_MODEL, 0, 0);
 
     // Create <Annotation/> under <Instrument/>
-    store.setCommentAnnotationID(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID, 0);
-    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setCommentAnnotationValue(InOutCurrentTest.INSTRUMENT_ANNOTATION_VALUE, 0);
+    store.setCommentAnnotationID(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID, 1);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 1);
+    store.setCommentAnnotationValue(InOutCurrentTest.INSTRUMENT_ANNOTATION_VALUE, 1);
 
     store.setInstrumentAnnotationRef(InOutCurrentTest.INSTRUMENT_ANNOTATION_ID, 0, 0);
 
@@ -211,9 +216,9 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
   private void makeROI() {
     store.setROIID(InOutCurrentTest.ROI_ID, 0);
 
-    store.setCommentAnnotationID(InOutCurrentTest.ROI_ANNOTATION_ID, 1);
-    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 1);
-    store.setCommentAnnotationValue(InOutCurrentTest.ROI_ANNOTATION_VALUE, 1);
+    store.setCommentAnnotationID(InOutCurrentTest.ROI_ANNOTATION_ID, 2);
+    store.setCommentAnnotationNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE, 2);
+    store.setCommentAnnotationValue(InOutCurrentTest.ROI_ANNOTATION_VALUE, 2);
 
     store.setROIAnnotationRef(InOutCurrentTest.ROI_ANNOTATION_ID, 0, 0);
 

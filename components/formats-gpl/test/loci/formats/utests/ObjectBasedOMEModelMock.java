@@ -146,7 +146,14 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     Detector detector = new Detector();
     detector.setID(InOutCurrentTest.DETECTOR_ID);
     detector.setModel(InOutCurrentTest.DETECTOR_MODEL);
+    CommentAnnotation detectorAnnotation = new CommentAnnotation();
+    detectorAnnotation.setID(InOutCurrentTest.DETECTOR_ANNOTATION_ID);
+    detectorAnnotation.setValue(InOutCurrentTest.DETECTOR_ANNOTATION_VALUE);
+    detectorAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    detector.linkAnnotation(detectorAnnotation);
+    annotations.addCommentAnnotation(detectorAnnotation);
     instrument.addDetector(detector);
+
     // Create <Laser/> under <Instrument/>
     Laser laser = new Laser();
     laser.setID(InOutCurrentTest.LIGHTSOURCE_LASER_ID);
