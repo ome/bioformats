@@ -115,29 +115,29 @@ public class InOutCurrentTest {
 
   public static final String GENERAL_ANNOTATION_NAMESPACE = "test-ome-InOutCurrent-namespace";
 
-  public static final String IMAGE_ANNOTATION_ID = "Annotation:Boolean0";
+  public static final String IMAGE_ANNOTATION_ID = "Annotation:ImageBoolean0";
 
-  public static final String IMAGE_LIST_ANNOTATION_ID = "Annotation:List0";
+  public static final String IMAGE_LIST_ANNOTATION_ID = "Annotation:ImageList0";
 
   public static final String PIXELS_ID = "Pixels:0";
 
-  public static final String CHANNEL_ANNOTATION_ID = "Annotation:XML0";
+  public static final String CHANNEL_ANNOTATION_ID = "Annotation:ChannelXML0";
 
   public static final String INSTRUMENT_ID = "Instrument:0";
 
-  public static final String INSTRUMENT_ANNOTATION_ID = "Annotation:String1";
+  public static final String INSTRUMENT_ANNOTATION_ID = "Annotation:InstrumentString1";
 
   public static final String INSTRUMENT_ANNOTATION_VALUE = "Value:String1";
 
   public static final String DETECTOR_ID = "Detector:0";
 
-  public static final String DETECTOR_ANNOTATION_ID = "Annotation:String2";
+  public static final String DETECTOR_ANNOTATION_ID = "Annotation:DetectorString2";
 
   public static final String DETECTOR_ANNOTATION_VALUE = "Value:String2";
 
   public static final String LIGHTSOURCE_LASER_ID = "LightSource:0";
 
-  public static final String LIGHTSOURCE_LASER_ANNOTATION_ID = "Annotation:String3";
+  public static final String LIGHTSOURCE_LASER_ANNOTATION_ID = "Annotation:LightSourceLaserString3";
 
   public static final String LIGHTSOURCE_LASER_ANNOTATION_VALUE = "Value:String3";
 
@@ -145,25 +145,25 @@ public class InOutCurrentTest {
 
   public static final String LIGHTSOURCE_ARC_ID = "LightSource:2";
 
-  public static final String LIGHTSOURCE_ARC_ANNOTATION_ID = "Annotation:String4";
+  public static final String LIGHTSOURCE_ARC_ANNOTATION_ID = "Annotation:LightSourceArcString4";
 
   public static final String LIGHTSOURCE_ARC_ANNOTATION_VALUE = "Value:String4";
 
   public static final String LIGHTSOURCE_FILAMENT_ID = "LightSource:3";
 
-  public static final String LIGHTSOURCE_FILAMENT_ANNOTATION_ID = "Annotation:String5";
+  public static final String LIGHTSOURCE_FILAMENT_ANNOTATION_ID = "Annotation:LightSourceFilamentString5";
 
   public static final String LIGHTSOURCE_FILAMENT_ANNOTATION_VALUE = "Value:String5";
 
   public static final String LIGHTSOURCE_LED_ID = "LightSource:4";
 
-  public static final String LIGHTSOURCE_LED_ANNOTATION_ID = "Annotation:String6";
+  public static final String LIGHTSOURCE_LED_ANNOTATION_ID = "Annotation:LightSourceLEDString6";
 
   public static final String LIGHTSOURCE_LED_ANNOTATION_VALUE = "Value:String6";
 
   public static final String DICHROIC_ID = "Dichroic:0";
 
-  public static final String DICHROIC_ANNOTATION_ID = "Annotation:String7";
+  public static final String DICHROIC_ANNOTATION_ID = "Annotation:DichroicString7";
 
   public static final String DICHROIC_ANNOTATION_VALUE = "Value:String7";
 
@@ -171,7 +171,7 @@ public class InOutCurrentTest {
 
   public static final String EM_FILTER_ID = "Filter:0";
 
-  public static final String EM_FILTER_ANNOTATION_ID = "Annotation:String8";
+  public static final String EM_FILTER_ANNOTATION_ID = "Annotation:EmFilterString8";
 
   public static final String EM_FILTER_ANNOTATION_VALUE = "Value:String8";
 
@@ -179,23 +179,23 @@ public class InOutCurrentTest {
 
   public static final String OBJECTIVE_ID = "Objective:0";
 
-  public static final String OBJECTIVE_ANNOTATION_ID = "Annotation:String9";
+  public static final String OBJECTIVE_ANNOTATION_ID = "Annotation:ObjectiveString9";
 
   public static final String OBJECTIVE_ANNOTATION_VALUE = "Value:String9";
 
   public static final String PLATE_ID = "Plate:0";
 
-  public static final String PLATE_ANNOTATION_ID = "Annotation:Timestamp0";
+  public static final String PLATE_ANNOTATION_ID = "Annotation:PlateTimestamp0";
 
-  public static final String WELL_ANNOTATION_ID = "Annotation:Long0";
+  public static final String WELL_ANNOTATION_ID = "Annotation:WellLong0";
 
   public static final String ROI_ID = "ROI:5";
 
-  public static final String ROI_ANNOTATION_ID = "Annotation:String0";
+  public static final String ROI_ANNOTATION_ID = "Annotation:ROIString0";
 
   public static final String SHAPE_ID = "Shape:0";
 
-  public static final String SHAPE_ANNOTATION_ID = "Annotation:String10";
+  public static final String SHAPE_ANNOTATION_ID = "Annotation:ShapeString10";
 
   public static final String SHAPE_ANNOTATION_VALUE = "Value:String10";
 
@@ -515,12 +515,23 @@ public class InOutCurrentTest {
     assertEquals(LASER_TYPE, laser.getType());
   }
 
-  @Test(dependsOnMethods={"testValidInstrumentMetadata"})
+  @Test(dependsOnMethods={"testValidLaserNode"})
   public void testValidLaserMetadata() {
     assertEquals(LIGHTSOURCE_LASER_ID, metadata.getLaserID(0, 0));
     assertEquals(LIGHTSOURCE_LASER_MODEL, metadata.getLaserModel(0, 0));
     assertEquals(LIGHTSOURCE_LASER_POWER, metadata.getLaserPower(0, 0));
     assertEquals(LASER_TYPE, metadata.getLaserType(0, 0));
+  }
+
+  @Test(dependsOnMethods={"testValidLaserMetadata"})
+  public void testValidLaserAnnotation() {
+    Annotation n = ome.getInstrument(0).getLightSource(0).getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertEquals(LIGHTSOURCE_LASER_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
+    assertTrue(n instanceof CommentAnnotation);
+    CommentAnnotation string = (CommentAnnotation) n;
+    assertEquals(LIGHTSOURCE_LASER_ANNOTATION_VALUE, string.getValue());
   }
 
   @Test(dependsOnMethods={"testValidLaserNode"})
@@ -555,12 +566,23 @@ public class InOutCurrentTest {
     assertEquals(ARC_TYPE, arc.getType());
   }
 
-  @Test(dependsOnMethods={"testValidInstrumentMetadata"})
+  @Test(dependsOnMethods={"testValidArcNode"})
   public void testValidArcMetadata() {
     assertEquals(LIGHTSOURCE_ARC_ID, metadata.getArcID(0, 2));
     assertEquals(LIGHTSOURCE_ARC_MODEL, metadata.getArcModel(0, 2));
     assertEquals(LIGHTSOURCE_ARC_POWER, metadata.getArcPower(0, 2));
     assertEquals(ARC_TYPE, metadata.getArcType(0, 2));
+  }
+
+  @Test(dependsOnMethods={"testValidArcNode"})
+  public void testValidArcAnnotation() {
+    Annotation n = ome.getInstrument(0).getLightSource(2).getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertEquals(LIGHTSOURCE_ARC_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
+    assertTrue(n instanceof CommentAnnotation);
+    CommentAnnotation string = (CommentAnnotation) n;
+    assertEquals(LIGHTSOURCE_ARC_ANNOTATION_VALUE, string.getValue());
   }
 
   // Create <Filament/> under <Instrument/>
@@ -575,12 +597,23 @@ public class InOutCurrentTest {
   }
 
   // Create <Filament/> under <Instrument/>
-  @Test(dependsOnMethods={"testValidInstrumentMetadata"})
+  @Test(dependsOnMethods={"testValidFilamentNode"})
   public void testValidFilamentMetadata() {
     assertEquals(LIGHTSOURCE_FILAMENT_ID, metadata.getFilamentID(0, 3));
     assertEquals(LIGHTSOURCE_FILAMENT_MODEL, metadata.getFilamentModel(0, 3));
     assertEquals(LIGHTSOURCE_FILAMENT_POWER, metadata.getFilamentPower(0, 3));
     assertEquals(FILAMENT_TYPE, metadata.getFilamentType(0, 3));
+  }
+
+  @Test(dependsOnMethods={"testValidFilamentNode"})
+  public void testValidFilamentAnnotation() {
+    Annotation n = ome.getInstrument(0).getLightSource(3).getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertEquals(LIGHTSOURCE_FILAMENT_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
+    assertTrue(n instanceof CommentAnnotation);
+    CommentAnnotation string = (CommentAnnotation) n;
+    assertEquals(LIGHTSOURCE_FILAMENT_ANNOTATION_VALUE, string.getValue());
   }
 
   // Create <LightEmittingDiode/> under <Instrument/>
@@ -593,7 +626,18 @@ public class InOutCurrentTest {
     assertEquals(LIGHTSOURCE_LED_POWER, led.getPower());
   }
 
-  
+  @Test(dependsOnMethods={"testValidLightEmittingDiodeNode"})
+  public void testValidLightEmittingDiodeAnnotation() {
+    LightEmittingDiode led = (LightEmittingDiode) ome.getInstrument(0).getLightSource(4);
+    Annotation n = led.getLinkedAnnotation(0);
+    assertNotNull(n);
+    assertEquals(LIGHTSOURCE_LED_ANNOTATION_ID, n.getID());
+    assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
+    assertTrue(n instanceof CommentAnnotation);
+    CommentAnnotation string = (CommentAnnotation) n;
+    assertEquals(LIGHTSOURCE_LED_ANNOTATION_VALUE, string.getValue());
+  }
+
   @Test(dependsOnMethods={"testValidInstrumentNode"})
   public void testValidDichroicNode() {
     Dichroic dichroic = ome.getInstrument(0).getDichroic(0);

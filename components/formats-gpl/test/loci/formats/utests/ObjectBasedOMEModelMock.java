@@ -160,6 +160,12 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     laser.setModel(InOutCurrentTest.LIGHTSOURCE_LASER_MODEL);
     laser.setType(InOutCurrentTest.LASER_TYPE);
     laser.setPower(InOutCurrentTest.LIGHTSOURCE_LASER_POWER);
+    CommentAnnotation laserAnnotation = new CommentAnnotation();
+    laserAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_ID);
+    laserAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_LASER_ANNOTATION_VALUE);
+    laserAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    laser.linkAnnotation(laserAnnotation);
+    annotations.addCommentAnnotation(laserAnnotation);
     // with a <Pump/>
     Laser laserPump = new Laser();
     laserPump.setID(InOutCurrentTest.LIGHTSOURCE_PUMP_ID);
@@ -178,6 +184,12 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     arc.setModel(InOutCurrentTest.LIGHTSOURCE_ARC_MODEL);
     arc.setType(InOutCurrentTest.ARC_TYPE);
     arc.setPower(InOutCurrentTest.LIGHTSOURCE_ARC_POWER);
+    CommentAnnotation arcAnnotation = new CommentAnnotation();
+    arcAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_ID);
+    arcAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_ARC_ANNOTATION_VALUE);
+    arcAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    arc.linkAnnotation(arcAnnotation);
+    annotations.addCommentAnnotation(arcAnnotation);
     instrument.addLightSource(arc);
     
     // Create <Filament/> under <Instrument/>
@@ -186,6 +198,12 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     filament.setModel(InOutCurrentTest.LIGHTSOURCE_FILAMENT_MODEL);
     filament.setType(InOutCurrentTest.FILAMENT_TYPE);
     filament.setPower(InOutCurrentTest.LIGHTSOURCE_FILAMENT_POWER);
+    CommentAnnotation filamentAnnotation = new CommentAnnotation();
+    filamentAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_ID);
+    filamentAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_FILAMENT_ANNOTATION_VALUE);
+    filamentAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    filament.linkAnnotation(filamentAnnotation);
+    annotations.addCommentAnnotation(filamentAnnotation);
     instrument.addLightSource(filament);
 
     // Create <LightEmittingDiode/> under <Instrument/>
@@ -193,6 +211,12 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     led.setID(InOutCurrentTest.LIGHTSOURCE_LED_ID);
     led.setModel(InOutCurrentTest.LIGHTSOURCE_LED_MODEL);
     led.setPower(InOutCurrentTest.LIGHTSOURCE_LED_POWER);
+    CommentAnnotation ledAnnotation = new CommentAnnotation();
+    ledAnnotation.setID(InOutCurrentTest.LIGHTSOURCE_LED_ANNOTATION_ID);
+    ledAnnotation.setValue(InOutCurrentTest.LIGHTSOURCE_LED_ANNOTATION_VALUE);
+    ledAnnotation.setNamespace(InOutCurrentTest.GENERAL_ANNOTATION_NAMESPACE);
+    led.linkAnnotation(ledAnnotation);
+    annotations.addCommentAnnotation(ledAnnotation);
     instrument.addLightSource(led);
 
     // Create <Dichroic/> under <Instrument/>
