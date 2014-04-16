@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for reading and converting biological file formats.
  * %%
- * Copyright (C) 2005 - 2014 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -45,10 +45,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import loci.formats.ome.OMEXMLMetadataImpl;
+import loci.formats.ome.OMEXMLMetadataRoot;
 
 import static org.testng.AssertJUnit.*;
 
-import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Annotation;
 import ome.xml.model.Arc;
 import ome.xml.model.BinaryFile;
@@ -106,14 +106,14 @@ import org.w3c.dom.Element;
 
 /**
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/InOut201004Test.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/InOut201004Test.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/InOutCurrentTest.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/InOutCurrentTest.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 @Test(groups={"inOutTests"})
-public class InOut201004Test {
+public class InOutCurrentTest {
   public static final String IMAGE_ID = "Image:0";
 
-  public static final String GENERAL_ANNOTATION_NAMESPACE = "test-ome-InOut201004-namespace";
+  public static final String GENERAL_ANNOTATION_NAMESPACE = "test-ome-InOutCurrent-namespace";
 
   public static final String IMAGE_ANNOTATION_ID = "Annotation:Boolean0";
 
@@ -245,7 +245,7 @@ public class InOut201004Test {
 
   /** XML namespace. */
   public static final String XML_NS =
-    "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+    "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-3";
 
   /** XSI namespace. */
   public static final String XSI_NS =
@@ -253,7 +253,7 @@ public class InOut201004Test {
 
   /** XML schema location. */
   public static final String SCHEMA_LOCATION =
-    "http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-3/ome.xsd";
 
   private Document document;
 
@@ -709,7 +709,7 @@ public class InOut201004Test {
 
   @Test(groups={"disabled"})
   public static void main(String[] args) throws Exception {
-    InOut201004Test t = new InOut201004Test();
+    InOutCurrentTest t = new InOutCurrentTest();
     t.setUp("loci.formats.utests.ObjectBasedOMEModelMock");
     System.out.println("###\n### XML\n###");
     System.out.println(t.asString);
