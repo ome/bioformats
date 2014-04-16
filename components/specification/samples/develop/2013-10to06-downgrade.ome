@@ -22,6 +22,7 @@
 		<SPW:Well ID="Well:0" Column="1" Row="1" Color="-2147483648" Type="TheWell0Status">
 			<SPW:WellSample ID="WellSample:0" Index="1">
 				<OME:ImageRef ID="Image:0"/>
+				<SA:AnnotationRef ID="Annotation:WS0"/>
 			</SPW:WellSample>
 		</SPW:Well>
 		<SA:AnnotationRef ID="Annotation:0"/>
@@ -215,6 +216,11 @@
 		<SA:LongAnnotation ID="Annotation:Shape:1">
 			<SA:Value>1</SA:Value>
 		</SA:LongAnnotation>
+		<SA:XMLAnnotation ID="Annotation:WS0">
+			<SA:Value>
+				<test3/>
+			</SA:Value>
+		</SA:XMLAnnotation>
 	</SA:StructuredAnnotations>
 	<ROI:ROI ID="ROI:0">
 		<ROI:Union>
