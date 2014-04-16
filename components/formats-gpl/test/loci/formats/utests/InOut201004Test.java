@@ -121,8 +121,6 @@ public class InOut201004Test {
 
   public static final String PIXELS_ID = "Pixels:0";
 
-  public static final String PIXELS_ANNOTATION_ID = "Annotation:Double0";
-
   public static final String CHANNEL_ANNOTATION_ID = "Annotation:XML0";
 
   public static final String INSTRUMENT_ID = "Instrument:0";
@@ -412,28 +410,6 @@ public class InOut201004Test {
     assertEquals(CHANNEL_ANNOTATION_ID, n.getID());
     assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
     assertEquals(CHANNEL_ANNOTATION_VALUE, ((XMLAnnotation)n).getValue());
-  }
-
-  @Test(dependsOnMethods={"testValidPixelsNode"})
-  public void testValidPixelsAnnotation() {
-    Annotation n = ome.getImage(0).getPixels().getLinkedAnnotation(0);
-    assertNotNull(n);
-    assertTrue(n instanceof DoubleAnnotation);
-    DoubleAnnotation b = (DoubleAnnotation) n;
-    assertEquals(b.getValue(), PIXELS_ANNOTATION_VALUE);
-    assertEquals(b.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
-    assertEquals(b.getID(), PIXELS_ANNOTATION_ID);
-  }
-
-  @Test(dependsOnMethods={"testValidPixelsMetadata"})
-  public void testValidPixelsAnnotationMetadata() {
-    assertEquals(1, metadata.getDoubleAnnotationCount());
-    assertEquals(1, metadata.getPixelsAnnotationRefCount(0));
-    assertEquals(PIXELS_ANNOTATION_VALUE,
-                 metadata.getDoubleAnnotationValue(0));
-    assertEquals(GENERAL_ANNOTATION_NAMESPACE,
-                 metadata.getDoubleAnnotationNamespace(0));
-    assertEquals(PIXELS_ANNOTATION_ID, metadata.getDoubleAnnotationID(0));
   }
 
   @Test(dependsOnMethods={"testValidOMENode"})

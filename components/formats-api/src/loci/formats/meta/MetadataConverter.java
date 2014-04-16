@@ -757,6 +757,7 @@ public final class MetadataConverter {
             dest.setObjectiveSettingsRefractiveIndex(refractiveIndex, i);
           }
           catch (NullPointerException e) { }
+
         }
       }
       catch (NullPointerException e) { }
@@ -1384,6 +1385,19 @@ public final class MetadataConverter {
           dest.setDetectorZoom(zoom, i, q);
         }
         catch (NullPointerException e) { }
+
+        int detectorAnnotationRefCount = 0;
+        try {
+          detectorAnnotationRefCount = src.getDetectorAnnotationRefCount(i, q);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<detectorAnnotationRefCount; r++) {
+          try {
+            String detectorAnnotationRef = src.getDetectorAnnotationRef(i, q, r);
+            dest.setDetectorAnnotationRef(detectorAnnotationRef, i, q, r);
+          }
+          catch (NullPointerException e) { }
+        }
       }
 
       int dichroicCount = 0;
@@ -1423,6 +1437,19 @@ public final class MetadataConverter {
           dest.setDichroicSerialNumber(serialNumber, i, q);
         }
         catch (NullPointerException e) { }
+
+        int dichroicAnnotationRefCount = 0;
+        try {
+          dichroicAnnotationRefCount = src.getDichroicAnnotationRefCount(i,q);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<dichroicAnnotationRefCount; r++) {
+          try {
+            String dichroicAnnotationRef = src.getDichroicAnnotationRef(i, q, r);
+            dest.setDichroicAnnotationRef(dichroicAnnotationRef, i, q, r);
+          }
+          catch (NullPointerException e) { }
+        }
       }
 
       int filterCount = 0;
@@ -1504,6 +1531,19 @@ public final class MetadataConverter {
           dest.setTransmittanceRangeTransmittance(transmittance, i, q);
         }
         catch (NullPointerException e) { }
+
+        int filterAnnotationRefCount = 0;
+        try {
+          filterAnnotationRefCount = src.getFilterAnnotationRefCount(i, q);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<filterAnnotationRefCount; r++) {
+          try {
+            String filterAnnotationRef = src.getFilterAnnotationRef(i, q, r);
+            dest.setFilterAnnotationRef(filterAnnotationRef, i, q, r);
+          }
+          catch (NullPointerException e) { }
+        }
       }
 
       int objectiveCount = 0;
@@ -1585,6 +1625,20 @@ public final class MetadataConverter {
           dest.setObjectiveWorkingDistance(workingDistance, i, q);
         }
         catch (NullPointerException e) { }
+
+        int objectiveAnnotationRefCount = 0;
+        try {
+          objectiveAnnotationRefCount = src.getObjectiveAnnotationRefCount(i, q);
+        }
+        catch (NullPointerException e) { }
+
+        for (int r=0; r<objectiveAnnotationRefCount; r++) {
+          try {
+            String objectiveAnnotationRef = src.getObjectiveAnnotationRef(i, q, r);
+            dest.setObjectiveAnnotationRef(objectiveAnnotationRef, i, q, r);
+          }
+          catch (NullPointerException e) { }
+        }
       }
 
       int filterSetCount = 0;
@@ -1657,7 +1711,6 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
         }
       }
-
       convertLightSources(src, dest, i);
     }
   }
@@ -2023,6 +2076,18 @@ public final class MetadataConverter {
           }
           catch (NullPointerException e) { }
 
+          int wellSampleAnnotationRefCount = 0;
+          try {
+            wellSampleAnnotationRefCount = src.getWellSampleAnnotationRefCount(i, q, w);
+          }
+          catch (NullPointerException e) { }
+          for (int a=0; a<wellSampleAnnotationRefCount; a++) {
+            try {
+              String wellSampleAnnotationRef = src.getWellSampleAnnotationRef(i, q, w, a);
+              dest.setWellSampleAnnotationRef(wellSampleAnnotationRef, i, q, w, a);
+            }
+            catch (NullPointerException e) { }
+          }
         }
       }
 
@@ -2349,6 +2414,19 @@ public final class MetadataConverter {
             dest.setEllipseY(y, i, q);
           }
           catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getEllipseAnnotationRef(i, q, r);
+              dest.setEllipseAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
         }
         else if (type.equals("Label")) {
           try {
@@ -2466,6 +2544,19 @@ public final class MetadataConverter {
             dest.setLabelY(y, i, q);
           }
           catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getLabelAnnotationRef(i, q, r);
+              dest.setLabelAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
         }
         else if (type.equals("Line")) {
           try {
@@ -2607,6 +2698,19 @@ public final class MetadataConverter {
             dest.setLineY2(y2, i, q);
           }
           catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getLineAnnotationRef(i, q, r);
+              dest.setLineAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
         }
         else if (type.equals("Mask")) {
           try {
@@ -2736,6 +2840,19 @@ public final class MetadataConverter {
             dest.setMaskY(y, i, q);
           }
           catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getMaskAnnotationRef(i, q, r);
+              dest.setMaskAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
         }
         else if (type.equals("Point")) {
           try {
@@ -2853,6 +2970,19 @@ public final class MetadataConverter {
             dest.setPointY(y, i, q);
           }
           catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getPointAnnotationRef(i, q, r);
+              dest.setPointAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
         }
         else if (type.equals("Polygon")) {
           try {
@@ -2964,6 +3094,19 @@ public final class MetadataConverter {
             dest.setPolygonPoints(points, i, q);
           }
           catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getPolygonAnnotationRef(i, q, r);
+              dest.setPolygonAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
         }
         else if (type.equals("Polyline")) {
           try {
@@ -3087,6 +3230,19 @@ public final class MetadataConverter {
             dest.setPolylinePoints(points, i, q);
           }
           catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getPolylineAnnotationRef(i, q, r);
+              dest.setPolylineAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
         }
         else if (type.equals("Rectangle")) {
           try {
@@ -3216,6 +3372,19 @@ public final class MetadataConverter {
             dest.setRectangleY(y, i, q);
           }
           catch (NullPointerException e) { }
+
+          int shapeAnnotationRefCount = 0;
+          try {
+            shapeAnnotationRefCount = src.getShapeAnnotationRefCount(i, q);
+          }
+          catch (NullPointerException e) { }
+          for (int r=0; r<shapeAnnotationRefCount; r++) {
+            try {
+              String shapeAnnotationRef = src.getRectangleAnnotationRef(i, q, r);
+              dest.setRectangleAnnotationRef(shapeAnnotationRef, i, q, r);
+            }
+            catch (NullPointerException e) { }
+          }
         }
       }
 
@@ -3664,6 +3833,19 @@ public final class MetadataConverter {
           }
         }
         catch (NullPointerException e) { }
+
+        int lightSourceAnnotationRefCount = 0;
+        try {
+          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+          try {
+            String lightSourceAnnotationRef = src.getArcAnnotationRef(instrumentIndex, lightSource, r);
+            dest.setArcAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          }
+          catch (NullPointerException e) { }
+        }
       }
       else if (type.equals("Filament")) {
         try {
@@ -3727,6 +3909,19 @@ public final class MetadataConverter {
           }
         }
         catch (NullPointerException e) { }
+
+        int lightSourceAnnotationRefCount = 0;
+        try {
+          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+          try {
+            String lightSourceAnnotationRef = src.getFilamentAnnotationRef(instrumentIndex, lightSource, r);
+            dest.setFilamentAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          }
+          catch (NullPointerException e) { }
+        }
       }
       else if (type.equals("GenericExcitationSource")) {
         try {
@@ -3917,6 +4112,19 @@ public final class MetadataConverter {
           }
         }
         catch (NullPointerException e) { }
+
+        int lightSourceAnnotationRefCount = 0;
+        try {
+          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+          try {
+            String lightSourceAnnotationRef = src.getLaserAnnotationRef(instrumentIndex, lightSource, r);
+            dest.setLaserAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          }
+          catch (NullPointerException e) { }
+        }
       }
       else if (type.equals("LightEmittingDiode")) {
         try {
@@ -3978,6 +4186,19 @@ public final class MetadataConverter {
           }
         }
         catch (NullPointerException e) { }
+
+        int lightSourceAnnotationRefCount = 0;
+        try {
+          lightSourceAnnotationRefCount = src.getLightSourceAnnotationRefCount(instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<lightSourceAnnotationRefCount; r++) {
+          try {
+            String lightSourceAnnotationRef = src.getLightEmittingDiodeAnnotationRef(instrumentIndex, lightSource, r);
+            dest.setLightEmittingDiodeAnnotationRef(lightSourceAnnotationRef, instrumentIndex, lightSource, r);
+          }
+          catch (NullPointerException e) { }
+        }
       }
     }
   }

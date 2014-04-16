@@ -95,16 +95,6 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
             InOut201004Test.CHANNEL_ANNOTATION_ID, 0, i, 0);
       }
     }
-    // create Annotation for Pixels
-    store.setDoubleAnnotationID(
-        InOut201004Test.PIXELS_ANNOTATION_ID, 0);
-    store.setDoubleAnnotationNamespace(
-        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setDoubleAnnotationValue(
-        InOut201004Test.PIXELS_ANNOTATION_VALUE, 0);
-    store.setDoubleAnnotationNamespace(
-        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setPixelsAnnotationRef(InOut201004Test.PIXELS_ANNOTATION_ID, 0, 0);
   }
 
   private void makeInstrument() {

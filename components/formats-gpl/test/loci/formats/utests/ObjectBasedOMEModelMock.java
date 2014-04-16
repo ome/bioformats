@@ -133,13 +133,6 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
       }
       pixels.addChannel(channel);
     }
-    // create Annotation for Pixels
-    DoubleAnnotation pixelsAnnotation = new DoubleAnnotation();
-    pixelsAnnotation.setID(InOut201004Test.PIXELS_ANNOTATION_ID);
-    pixelsAnnotation.setValue(InOut201004Test.PIXELS_ANNOTATION_VALUE);
-    pixelsAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
-    pixels.linkAnnotation(pixelsAnnotation);
-    annotations.addDoubleAnnotation(pixelsAnnotation);
     // Put <Pixels/> under <Image/>
     image.setPixels(pixels);
     return image;
