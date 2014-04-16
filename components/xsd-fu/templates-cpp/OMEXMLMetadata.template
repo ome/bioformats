@@ -645,6 +645,19 @@ namespace ome
 
 {% if fu.SOURCE_TYPE == "header" %}\
         // Documented in base class.
+        OMEXMLMetadata::index_type
+        getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      OMEXMLMetadata::index_type
+      OMEXMLMetadata::getMapAnnotationAnnotationCount(index_type mapAnnotationIndex) const
+      {
+        return root->getStructuredAnnotations()->getMapAnnotation(mapAnnotationIndex)->sizeOfLinkedAnnotationList();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
         index_type
         getTagAnnotationAnnotationCount(index_type tagAnnotationIndex) const;
 {% end header %}\
@@ -825,6 +838,52 @@ ${counter(k, o, v)}\
 {% end source %}\
 
 {% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::MapPairs::map_type&
+        getMapAnnotationValue(index_type mapAnnotationIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::MapPairs::map_type&
+      OMEXMLMetadata::getMapAnnotationValue(index_type mapAnnotationIndex) const
+      {
+        return root->getStructuredAnnotations()->getMapAnnotation(mapAnnotationIndex)->getValue()->getMap();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::MapPairs::map_type&
+        getGenericExcitationSourceMap(index_type instrumentIndex,
+                                      index_type lightSourceIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::MapPairs::map_type&
+      OMEXMLMetadata::getGenericExcitationSourceMap(index_type instrumentIndex,
+                                                    index_type lightSourceIndex) const
+      {
+        std::shared_ptr<const ::ome::xml::model::LightSource> o = root->getInstrument(instrumentIndex)->getLightSource(lightSourceIndex);
+        std::shared_ptr<const ::ome::xml::model::GenericExcitationSource> o_mostderived = std::dynamic_pointer_cast<const ::ome::xml::model::GenericExcitationSource>(o);
+        if (!o_mostderived)
+          throw(std::runtime_error("Internal metadata store inconsistency: LightSource is not a GenericExcitationSource"));
+
+        return o_mostderived->getMap()->getMap();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        const ome::xml::model::MapPairs::map_type&
+        getImagingEnvironmentMap(index_type imageIndex) const;
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      const ome::xml::model::MapPairs::map_type&
+      OMEXMLMetadata::getImagingEnvironmentMap(index_type imageIndex) const
+      {
+        return root->getImage(imageIndex)->getImagingEnvironment()->getMap()->getMap();
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
 {% if debug %}\
         // -- Entity retrieval (code generated definitions) --
 
@@ -972,6 +1031,103 @@ ${getter(k, o, prop, v)}\
                                      index_type        /* shapeIndex */)
       {
         // @todo To implement
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setMapAnnotationValue(ome::xml::model::MapPairs::map_type map,
+                              index_type mapAnnotationIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      OMEXMLMetadata::setMapAnnotationValue(ome::xml::model::MapPairs::map_type map,
+                                            index_type mapAnnotationIndex)
+      {
+        std::shared_ptr<OMEXMLMetadataRoot>& o0(root);
+        if (!o0->getStructuredAnnotations())
+          {
+            std::shared_ptr<ome::xml::model::StructuredAnnotations> sa(std::make_shared<ome::xml::model::StructuredAnnotations>());
+            o0->setStructuredAnnotations(sa);
+          }
+        std::shared_ptr<ome::xml::model::StructuredAnnotations> o1(o0->getStructuredAnnotations());
+        if (o1->sizeOfMapAnnotationList() == mapAnnotationIndex)
+          {
+            std::shared_ptr<ome::xml::model::MapAnnotation> ma(std::make_shared<ome::xml::model::MapAnnotation>());
+            o1->addMapAnnotation(ma);
+          }
+        std::shared_ptr<ome::xml::model::MapAnnotation> o2(o1->getMapAnnotation(mapAnnotationIndex));
+        std::shared_ptr<ome::xml::model::MapPairs> valueAsPairs(std::make_shared<ome::xml::model::MapPairs>());
+        valueAsPairs->setMap(map);
+        o2->setValue(valueAsPairs);
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setGenericExcitationSourceMap(ome::xml::model::MapPairs::map_type map,
+                                      index_type instrumentIndex,
+                                      index_type lightSourceIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      OMEXMLMetadata::setGenericExcitationSourceMap(ome::xml::model::MapPairs::map_type map,
+                                                    index_type instrumentIndex,
+                                                    index_type lightSourceIndex)
+      {
+        std::shared_ptr<OMEXMLMetadataRoot>& o0(root);
+        if (o0->sizeOfInstrumentList() == instrumentIndex)
+          {
+            std::shared_ptr<ome::xml::model::Instrument> i(std::make_shared<ome::xml::model::Instrument>());
+            o0->addInstrument(i);
+          }
+        std::shared_ptr<ome::xml::model::Instrument> o1(o0->getInstrument(instrumentIndex));
+        if (o1->sizeOfLightSourceList() == lightSourceIndex)
+          {
+            std::shared_ptr<ome::xml::model::LightSource> ls(std::make_shared<ome::xml::model::GenericExcitationSource>());
+            o1->addLightSource(ls);
+          }
+        std::shared_ptr<ome::xml::model::LightSource> o2(o1->getLightSource(lightSourceIndex));
+        std::shared_ptr<ome::xml::model::Map> newmap(std::make_shared<ome::xml::model::Map>());
+        newmap->setMap(map);
+
+        std::shared_ptr<ome::xml::model::GenericExcitationSource> o2_mostderived(std::static_pointer_cast<ome::xml::model::GenericExcitationSource>(o2));
+        if (!o2_mostderived)
+          throw(std::runtime_error("Internal metadata store inconsistency: "));
+
+        o2_mostderived->setMap(newmap);
+      }
+{% end source %}\
+
+{% if fu.SOURCE_TYPE == "header" %}\
+        // Documented in base class.
+        void
+        setImagingEnvironmentMap(ome::xml::model::MapPairs::map_type map,
+                                 index_type imageIndex);
+{% end header %}\
+{% if fu.SOURCE_TYPE == "source" %}\
+      void
+      OMEXMLMetadata::setImagingEnvironmentMap(ome::xml::model::MapPairs::map_type map,
+                                               index_type imageIndex)
+      {
+        std::shared_ptr<OMEXMLMetadataRoot>& o0(root);
+        if (o0->sizeOfImageList() == imageIndex)
+          {
+            std::shared_ptr<ome::xml::model::Image> i(std::make_shared<ome::xml::model::Image>());
+            o0->addImage(i);
+          }
+        std::shared_ptr<ome::xml::model::Image> o1(o0->getImage(imageIndex));
+        if (!o1->getImagingEnvironment())
+          {
+            std::shared_ptr<ome::xml::model::ImagingEnvironment> ie(std::make_shared<ome::xml::model::ImagingEnvironment>());
+            o1->setImagingEnvironment(ie);
+          }
+        std::shared_ptr<ome::xml::model::ImagingEnvironment> o2(o1->getImagingEnvironment());
+        std::shared_ptr<ome::xml::model::Map> newmap(std::make_shared<ome::xml::model::Map>());
+        newmap->setMap(map);
+        o2->setMap(newmap);
       }
 {% end source %}\
 

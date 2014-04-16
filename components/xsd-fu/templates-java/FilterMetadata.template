@@ -204,6 +204,24 @@ public class FilterMetadata implements MetadataStore
 		store.setMaskBinData(binData, ROIIndex, shapeIndex);
 	}
 
+	/** Sets the Map value associated with this annotation */
+	public void setMapAnnotationValue(java.util.Map<String, String> value, int mapAnnotationIndex)
+	{
+		store.setMapAnnotationValue(value, mapAnnotationIndex);
+	}
+
+	/** Sets the Map value associated with this generic light source */
+	public void setGenericExcitationSourceMap(java.util.Map<String, String> map, int instrumentIndex, int lightSourceIndex)
+	{
+		store.setGenericExcitationSourceMap(map, instrumentIndex, lightSourceIndex);
+	}
+
+	/** Sets the Map value associated with this imaging environment */
+	public void setImagingEnvironmentMap(java.util.Map<String, String> map, int imageIndex)
+	{
+		store.setImagingEnvironmentMap(map, imageIndex);
+	}
+
 	// -- Entity storage (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
