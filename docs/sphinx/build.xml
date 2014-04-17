@@ -89,6 +89,16 @@ Type "ant -p" for a list of targets.
 
   <target name="pdf" depends="latexpdf"/>
 
+  <target name="linkcheck">
+    <exec executable="${sphinx.build}" failonerror="true">
+        <arg value="-b"/>
+        <arg value="linkcheck"/>
+        <arg line="${sphinx.opts}"/>
+        <arg value="."/>
+        <arg value="${sphinx.builddir}/linkcheck"/>
+      </exec>
+  </target>
+
   <target name="clean">
     <delete dir="${sphinx.builddir}"/>
   </target>
