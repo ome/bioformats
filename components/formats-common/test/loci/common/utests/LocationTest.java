@@ -60,6 +60,8 @@ import org.testng.annotations.Test;
  */
 public class LocationTest {
 
+  private static final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
+
   // -- Fields --
 
   private Location[] files;
@@ -174,7 +176,7 @@ public class LocationTest {
   @Test
   public void testIsHidden() {
     for (int i=0; i<files.length; i++) {
-      assertEquals(files[i].getName(), files[i].isHidden(), isHidden[i]);
+      assertEquals(files[i].getName(), files[i].isHidden() || IS_WINDOWS, isHidden[i] || IS_WINDOWS);
     }
   }
 
@@ -213,7 +215,12 @@ public class LocationTest {
     for (Location file : files) {
       String path = file.getAbsolutePath();
       if (path.indexOf("://") == -1) {
-        path = "file://" + path;
+        if (IS_WINDOWS) {
+          path = "file:/" + path;
+        }
+        else {
+          path = "file://" + path;
+        }
       }
       if (file.isDirectory() && !path.endsWith(File.separator)) {
         path += File.separator;
