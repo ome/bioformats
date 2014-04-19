@@ -105,6 +105,9 @@ if __name__ == "__main__":
             # recompression rather than a direct copy)
             basezip.writestr(info, subzip.open(info.filename).read())
 
+        # Close zip or else the remove will fail on Windows
+        subzip.close()
+
         # Remove repacked zip
         os.remove(name)
 
