@@ -34,6 +34,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -71,7 +72,7 @@ public class SVSReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private float[] pixelSize;
+  private double[] pixelSize;
   private String[] comments;
   private int[] ifdmap;
 
@@ -245,7 +246,7 @@ public class SVSReader extends BaseTiffReader {
 
     int seriesCount = ifds.size();
 
-    pixelSize = new float[seriesCount];
+    pixelSize = new double[seriesCount];
     comments = new String[seriesCount];
 
     core.clear();
@@ -278,7 +279,7 @@ public class SVSReader extends BaseTiffReader {
               value = t.substring(t.indexOf("=") + 1).trim();
               addSeriesMeta(key, value);
               if (key.equals("MPP")) {
-                pixelSize[i] = Float.parseFloat(value);
+                pixelSize[i] = Double.parseDouble(value);
               }
               else if (key.equals("Date")) {
                 date = value;
@@ -374,6 +375,10 @@ public class SVSReader extends BaseTiffReader {
         }
       }
 
+      if (i < pixelSize.length && pixelSize[i] - Constants.EPSILON > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize[i]), i);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize[i]), i);
+      }
     }
   }
 
