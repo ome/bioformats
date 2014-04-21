@@ -34,7 +34,7 @@ HEADER='# This file documents the metadata support for each file format that\n# 
 rm $outputFile
 echo -e $HEADER >> $outputFile
 
-readers=`ls $baseDir/formats-gpl/**/src/loci/formats/in/*Reader.java && ls $baseDir/formats-bsd/**/src/loci/formats/in/*Reader.java`
+readers=`ls $baseDir/formats-gpl/**/src/loci/formats/in/*Reader.java | sort -f && ls $baseDir/formats-bsd/**/src/loci/formats/in/*Reader.java | sort -f`
 
 for reader in $readers
 do
