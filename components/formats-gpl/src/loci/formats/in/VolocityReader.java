@@ -74,6 +74,8 @@ public class VolocityReader extends FormatReader {
   private Object[][] sampleTable, stringTable;
   private Location dir = null;
 
+  private ArrayList<Double[]> timestamps = new ArrayList<Double[]>();
+
   // -- Constructor --
 
   /** Constructs a new Volocity reader. */
@@ -223,6 +225,7 @@ public class VolocityReader extends FormatReader {
       sampleTable = null;
       stringTable = null;
       dir = null;
+      timestamps.clear();
       Location.mapFile(EMBEDDED_STREAM, null);
     }
   }
@@ -269,6 +272,7 @@ public class VolocityReader extends FormatReader {
       reader.initialize(id);
       sampleTable = reader.getTableData(1);
       stringTable = reader.getTableData(2);
+
       reader.close();
     }
     catch (DependencyException e) {
@@ -405,6 +409,13 @@ public class VolocityReader extends FormatReader {
         data = getStream(zIndex);
         data.seek(SIGNATURE_SIZE);
         stack.physicalZ = data.readDouble();
+        data.close();
+      }
+
+      timestampIndex = getChildIndex(parent, "TimepointTimes");
+      if (timestampIndex >= 0) {
+        data = getStream(timestampIndex);
+        data.seek(SIGNATURE_SIZE);
         data.close();
       }
 
@@ -545,6 +556,19 @@ public class VolocityReader extends FormatReader {
         s.seek(17);
         s.order(isLittleEndian());
         ms.sizeT = s.readInt();
+
+        Double firstStamp = null;
+        Double[] stamps = new Double[ms.sizeT];
+        for (int t=0; t<ms.sizeT; t++) {
+          // timestamps are stored in microseconds
+          double timestamp = s.readLong() / 1000000.0;
+          if (firstStamp == null) {
+            firstStamp = timestamp;
+          }
+          stamps[t] = timestamp - firstStamp;
+        }
+        timestamps.add(stamps);
+
         s.close();
       }
       else {
@@ -736,12 +760,17 @@ public class VolocityReader extends FormatReader {
       }
 
       for (int img=0; img<getImageCount(); img++) {
-        int z = getZCTCoords(img)[0];
+        int[] coords = getZCTCoords(img);
+        int z = coords[0];
         store.setPlanePositionX(stack.xLocation, i, img);
         store.setPlanePositionY(stack.yLocation, i, img);
         if (stack.physicalZ != null) {
           store.setPlanePositionZ(
             stack.zLocation + z * stack.physicalZ, i, img);
+        }
+
+        if (i < timestamps.size() && coords[2] < timestamps.get(i).length) {
+          store.setPlaneDeltaT(timestamps.get(i)[coords[2]], i, img);
         }
       }
     }
