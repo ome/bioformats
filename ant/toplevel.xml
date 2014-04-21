@@ -110,7 +110,8 @@ Type "ant -p" for a list of targets.
       clean-specification,
       clean-tests,
       clean-turbojpeg,
-      clean-xsd-fu"
+      clean-xsd-fu,
+      clean-docs-sphinx"
     description="remove all build files">
     <delete dir="${artifact.dir}"/>
     <delete dir="build"/>
@@ -168,6 +169,18 @@ Type "ant -p" for a list of targets.
     description="generate a Zip containing the Javadocs">
     <zip destfile="${artifact.dir}/bio-formats-javadocs.zip"
       basedir="${merged-docs.dir}"/>
+  </target>
+
+  <target name="docs-sphinx"
+    description="generate Sphinx HTML and PDF documentation">
+    <echo>----------=========== Sphinx HTML ===========----------</echo>
+    <ant dir="docs/sphinx" target="html"/>
+    <echo>----------=========== Sphinx PDF ===========----------</echo>
+    <ant dir="docs/sphinx" target="pdf"/>
+  </target>
+
+  <target name="clean-docs-sphinx">
+    <ant dir="docs/sphinx" target="clean"/>
   </target>
 
   <target name="copy-jars">
