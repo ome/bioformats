@@ -393,7 +393,9 @@ public class MinimalTiffReader extends FormatReader {
       {
         return super.getOptimalTileHeight();
       }
-      return height;
+      if (height > 1) {
+        return height;
+      }
     }
     catch (FormatException e) {
       LOGGER.debug("Could not retrieve tile height", e);

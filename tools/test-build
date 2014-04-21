@@ -58,10 +58,8 @@ sphinx()
 {
     (
         export SPHINXOPTS="-W"
-        cd docs/sphinx
-        make clean
-        make html
-        make latexpdf
+        ant clean-docs-sphinx
+        ant docs-sphinx
     )
 }
 
