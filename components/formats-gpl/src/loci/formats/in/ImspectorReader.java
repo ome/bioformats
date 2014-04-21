@@ -165,6 +165,10 @@ public class ImspectorReader extends FormatReader {
 
     String metadata = in.readString(length);
     String[] values = metadata.split("::");
+    // Correct alignment when length is an even number of bytes
+    if (length % 2 == 0)  {
+      in.skipBytes(1);
+    }
 
     int check = in.readShort();
     while (check != 3 && check != 2) {
