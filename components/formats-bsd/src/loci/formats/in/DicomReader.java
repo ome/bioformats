@@ -1045,7 +1045,9 @@ public class DicomReader extends FormatReader {
 
     // "Undefined" element length.
     // This is a sort of bracket that encloses a sequence of elements.
-    if (elementLength == -1) {
+    if (elementLength == -1 || (TYPES.containsKey(tag) &&
+      TYPES.get(tag).endsWith("Sequence")))
+    {
       elementLength = 0;
       inSequence = true;
     }
