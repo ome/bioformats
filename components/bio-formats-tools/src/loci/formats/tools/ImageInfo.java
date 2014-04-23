@@ -206,6 +206,9 @@ public class ImageInfo {
         else if (args[i].equals("-debug")) {
           DebugTools.enableLogging("DEBUG");
         }
+        else if (args[i].equals("-trace")) {
+          DebugTools.enableLogging("TRACE");
+        }
         else if (args[i].equals("-omexml-only")) {
           omexmlOnly = true;
           omexml = true;
