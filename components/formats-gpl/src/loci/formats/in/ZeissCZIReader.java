@@ -479,6 +479,9 @@ public class ZeissCZIReader extends FormatReader {
       if (planes.get(i).directoryEntry.compression == UNCOMPRESSED) {
         long size = planes.get(i).dataSize;
         if (size < planeSize || planeSize >= Integer.MAX_VALUE || size < 0) {
+          LOGGER.trace(
+            "removing block #{}; calculated size = {}, recorded size = {}",
+            i, planeSize, size);
           planes.remove(i);
           i--;
         }
@@ -489,6 +492,9 @@ public class ZeissCZIReader extends FormatReader {
       else {
         byte[] pixels = planes.get(i).readPixelData();
         if (pixels.length < planeSize || planeSize >= Integer.MAX_VALUE) {
+          LOGGER.trace(
+            "removing block #{}; calculated size = {}, decoded size = {}",
+            i, planeSize, pixels.length);
           planes.remove(i);
           i--;
         }
@@ -513,6 +519,15 @@ public class ZeissCZIReader extends FormatReader {
     // illuminations -> modulo C
     // phases -> modulo T
 
+    LOGGER.trace("rotations = {}", rotations);
+    LOGGER.trace("illuminations = {}", illuminations);
+    LOGGER.trace("phases = {}", phases);
+
+    LOGGER.trace("positions = {}", positions);
+    LOGGER.trace("acquisitions = {}", acquisitions);
+    LOGGER.trace("mosaics = {}", mosaics);
+    LOGGER.trace("angles = {}", angles);
+
     ms0.moduloZ.step = ms0.sizeZ;
     ms0.moduloZ.end = ms0.sizeZ * (rotations - 1);
     ms0.moduloZ.type = FormatTools.ROTATION;
@@ -534,6 +549,15 @@ public class ZeissCZIReader extends FormatReader {
     int seriesCount = positions * acquisitions * mosaics * angles;
 
     ms0.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
+
+    LOGGER.trace("Size Z = {}", getSizeZ());
+    LOGGER.trace("Size C = {}", getSizeC());
+    LOGGER.trace("Size T = {}", getSizeT());
+    LOGGER.trace("is RGB = {}", isRGB());
+    LOGGER.trace("calculated image count = {}", ms0.imageCount);
+    LOGGER.trace("number of available planes = {}", planes.size());
+    LOGGER.trace("prestitched = {}", prestitched);
+    LOGGER.trace("scanDim = {}", scanDim);
 
     if (mosaics == seriesCount &&
       seriesCount == (planes.size() / getImageCount()) &&
@@ -925,9 +949,11 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   private void assignPlaneIndices() {
+    LOGGER.trace("assignPlaneIndices:");
     // assign plane and series indices to each SubBlock
 
     if (getSeriesCount() == mosaics) {
+      LOGGER.trace("  reset position, acquisition, and angle count");
       positions = 1;
       acquisitions = 1;
       angles = 1;
@@ -936,6 +962,7 @@ public class ZeissCZIReader extends FormatReader {
     int[] extraLengths = {positions, acquisitions, mosaics, angles};
 
     for (int p=0; p<planes.size(); p++) {
+      LOGGER.trace("  processing plane #{} of {}", p, planes.size());
       SubBlock plane = planes.get(p);
       int z = 0;
       int c = 0;
@@ -947,6 +974,9 @@ public class ZeissCZIReader extends FormatReader {
 
       boolean noAngle = true;
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
+        LOGGER.trace("    procession dimension '{}'", dimension.dimension);
+        LOGGER.trace("      dimension size = {}", dimension.size);
+        LOGGER.trace("      dimension start = {}", dimension.start);
         if (dimension == null) {
           continue;
         }
@@ -1019,6 +1049,8 @@ public class ZeissCZIReader extends FormatReader {
 
       plane.planeIndex = getIndex(z, c, t);
       plane.seriesIndex = FormatTools.positionToRaster(extraLengths, extra);
+      LOGGER.trace("    assigned plane index = {}; series index = {}",
+        plane.planeIndex, plane.seriesIndex);
     }
   }
 
