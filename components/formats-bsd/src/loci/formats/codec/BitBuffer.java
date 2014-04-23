@@ -191,6 +191,16 @@ public class BitBuffer {
   }
 
   /**
+   * Checks if the current position is on a byte boundary, that is the next
+   * bit in the byte array is the first bit in a byte.
+   *
+   * @return true if bit is on byte boundary, false otherwise.
+   */
+  public boolean isBitOnByteBoundary() {
+    return currentBit % 8 == 0 ? true : false;
+  }
+
+  /**
    * Testing method.
    * @param args Ignored.
    */
@@ -239,6 +249,7 @@ public class BitBuffer {
         bb.skipBits(len[i]);
       }
     }
+
     // Test reading past end of buffer.
     LOGGER.info("Testing end of buffer");
     bb = new BitBuffer(bw.toByteArray());
@@ -247,6 +258,21 @@ public class BitBuffer {
     int read = bb.getBits(1);
     if (-1 != read) {
       LOGGER.info("-1 expected at end of buffer, {} received.", read);
+    }
+
+    // Test byte boundary detection
+    LOGGER.info("Testing byte boundary detection");
+    bb = new BitBuffer(bw.toByteArray());
+    for (int i = 0; i < trials; i++) {
+      int c = r.nextInt(100);
+      if (c > 50) {
+        if (len[i] > 8) {
+          bb.getBits(8);
+          if (!bb.isBitOnByteBoundary()){
+            LOGGER.info("Bit on byte boundary expected, but not returned.");
+          }
+        }
+      }
     }
   }
 }
