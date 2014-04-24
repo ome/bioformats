@@ -29,6 +29,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Vector;
@@ -54,7 +55,7 @@ public class POIServiceTest {
 
   private static final String TEST_XLS = "test.xls";
 
-  private static final String WORKBOOK_DOCUMENT = "Root Entry/Workbook";
+  private static final String WORKBOOK_DOCUMENT = "Root Entry" + File.separator + "Workbook";
 
   private static final int WORKBOOK_LENGTH = 9604;
 
