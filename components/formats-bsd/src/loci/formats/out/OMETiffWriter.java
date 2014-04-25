@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for BSD-licensed readers and writers.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -97,8 +97,8 @@ public class OMETiffWriter extends TiffWriter {
   // -- IFormatHandler API methods --
 
   public OMETiffWriter(String readerName, String[] extensions) {
-	    super(readerName, extensions);
-}
+    super(readerName, extensions);
+  }
 
 /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
@@ -260,6 +260,11 @@ public class OMETiffWriter extends TiffWriter {
   }
 
   protected String getOMEXML(String file) throws FormatException, IOException {
+    return getOMEXML(file, WARNING_COMMENT);
+  }
+
+  protected String getOMEXML(String file, String warningComment)
+      throws FormatException, IOException {
     // generate UUID and add to OME element
     String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
     omeMeta.setUUID(uuid);
@@ -275,7 +280,7 @@ public class OMETiffWriter extends TiffWriter {
     // insert warning comment
     String prefix = xml.substring(0, xml.indexOf(">") + 1);
     String suffix = xml.substring(xml.indexOf(">") + 1);
-    return prefix + WARNING_COMMENT + suffix;
+    return prefix + warningComment + suffix;
   }
 
   protected void saveComment(String file, String xml) throws IOException {
@@ -376,9 +381,8 @@ public class OMETiffWriter extends TiffWriter {
     return z * c * t;
   }
 
-  public void closeParentWorkaroundToFix() throws IOException {
-	  super.close();
+  public void closeParentWriter() throws IOException {
+    super.close();
   }
 
-  
 }

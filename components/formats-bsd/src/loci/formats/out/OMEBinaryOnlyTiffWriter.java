@@ -2,7 +2,7 @@
  * #%L
  * OME Bio-Formats package for BSD-licensed readers and writers.
  * %%
- * Copyright (C) 2005 - 2013 Open Microscopy Environment:
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
  *   - University of Dundee
@@ -73,24 +73,24 @@ public class OMEBinaryOnlyTiffWriter extends OMETiffWriter {
 
   // -- Constants --
 
-	private static final String COMPANION_EXTENSION = ".companion.ome";
+  private static final String COMPANION_EXTENSION = ".companion.ome";
 
-	private static final String BINARY_ONLY_WARNING_COMMENT =
-		    "<!-- Warning: this comment is an OME-XML binary only metadata block, " +
-		    "points to other important metadata. " +
-		    "Please edit cautiously (if at all), and back up the original data " +
-		    "before doing so. For more information, see the OME-TIFF web site: " +
-		    FormatTools.URL_OME_TIFF + ". -->";
+  private static final String BINARY_ONLY_WARNING_COMMENT =
+    "<!-- Warning: this comment is an OME-XML binary only metadata block, " +
+    "points to other important metadata. " +
+    "Please edit cautiously (if at all), and back up the original data " +
+    "before doing so. For more information, see the OME-TIFF web site: " +
+    FormatTools.URL_OME_TIFF + ". -->";
 
-	private static final String COMPANION_WARNING_COMMENT =
-		    "<!-- Warning: this is an OME-XML companion metadata file, " +
-		    "and points to pixel data in other files. " +
-		    "Please edit cautiously (if at all), and back up the original data " +
-		    "before doing so. For more information, see the OME-TIFF web site: " +
-		    FormatTools.URL_OME_TIFF + ". -->";
+  private static final String COMPANION_WARNING_COMMENT =
+    "<!-- Warning: this is an OME-XML companion metadata file, " +
+    "and points to pixel data in other files. " +
+    "Please edit cautiously (if at all), and back up the original data " +
+    "before doing so. For more information, see the OME-TIFF web site: " +
+    FormatTools.URL_OME_TIFF + ". -->";
 
-	private String companionFilename;
-	private String companionUUID;
+  private String companionFilename;
+  private String companionUUID;
 
   // -- Constructor --
 
@@ -127,10 +127,10 @@ public class OMEBinaryOnlyTiffWriter extends OMETiffWriter {
             }
           }
         }
-        String xmlCompanion = getOMEXML(companionFilename);
-		OutputStream outputStream = new FileOutputStream(companionFilename);
-		outputStream.write(xmlCompanion.getBytes());
-		outputStream.close();
+        String xmlCompanion = getOMEXML(companionFilename, COMPANION_WARNING_COMMENT);
+        OutputStream outputStream = new FileOutputStream(companionFilename);
+        outputStream.write(xmlCompanion.getBytes());
+        outputStream.close();
       }
     }
     catch (DependencyException de) {
@@ -146,7 +146,7 @@ public class OMEBinaryOnlyTiffWriter extends OMETiffWriter {
       throw new RuntimeException(iae);
     }
     finally {
-      super.closeParentWorkaroundToFix();
+      super.closeParentWriter();
 
       boolean canReallyClose =
         omeMeta == null || ifdCounts.size() == omeMeta.getImageCount();
@@ -188,37 +188,25 @@ public class OMEBinaryOnlyTiffWriter extends OMETiffWriter {
   public void setId(String id) throws FormatException, IOException {
     if (id.equals(currentId)) return;
     super.setId(id);
-	companionFilename = id + COMPANION_EXTENSION;
-	companionUUID = "urn:uuid:" + getUUID(companionFilename);
+    companionFilename = id + COMPANION_EXTENSION;
+    companionUUID = "urn:uuid:" + getUUID(companionFilename);
   }
 
   // -- Helper methods --
 
-  @Override
-  protected void setupServiceAndMetadata()
-    throws DependencyException, ServiceException
-  {
-    // extract OME-XML string from metadata object
-    MetadataRetrieve retrieve = getMetadataRetrieve();
-
-    ServiceFactory factory = new ServiceFactory();
-    service = factory.getInstance(OMEXMLService.class);
-    OMEXMLMetadata originalOMEMeta = service.getOMEMetadata(retrieve);
-    originalOMEMeta.resolveReferences();
-
-    String omexml = service.getOMEXML(originalOMEMeta);
-    omeMeta = service.createOMEXMLMetadata(omexml);
-  }
-
-  @Override
-  protected String getOMEXML(String file) throws FormatException, IOException {
+  protected String getBinaryOnlyOMEXML(String file) throws FormatException, IOException, DependencyException, ServiceException {
     // generate UUID and add to OME element
     String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
-    omeMeta.setUUID(uuid);
+    ServiceFactory factory = new ServiceFactory();
+    service = factory.getInstance(OMEXMLService.class);
+    OMEXMLMetadata omeBinaryMeta = service.createOMEXMLMetadata();
+    omeBinaryMeta.setUUID(uuid);
+    omeBinaryMeta.setBinaryOnlyMetadataFile(companionFilename);
+    omeBinaryMeta.setBinaryOnlyUUID(companionUUID);
 
     String xml;
     try {
-      xml = service.getOMEXML(omeMeta);
+      xml = service.getOMEXML(omeBinaryMeta);
     }
     catch (ServiceException se) {
       throw new FormatException(se);
@@ -227,32 +215,6 @@ public class OMEBinaryOnlyTiffWriter extends OMETiffWriter {
     // insert warning comment
     String prefix = xml.substring(0, xml.indexOf(">") + 1);
     String suffix = xml.substring(xml.indexOf(">") + 1);
-    return prefix + COMPANION_WARNING_COMMENT + suffix;
+    return prefix + BINARY_ONLY_WARNING_COMMENT + suffix;
   }
-
-  protected String getBinaryOnlyOMEXML(String file) throws FormatException, IOException, DependencyException, ServiceException {
-	    // generate UUID and add to OME element
-	    String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
-	    ServiceFactory factory = new ServiceFactory();
-	    service = factory.getInstance(OMEXMLService.class);
-	    OMEXMLMetadata omeBinaryMeta = service.createOMEXMLMetadata();
-		omeBinaryMeta.setUUID(uuid);
-	    omeBinaryMeta.setBinaryOnlyMetadataFile(companionFilename);
-	    omeBinaryMeta.setBinaryOnlyUUID(companionUUID);
-	    
-	    String xml;
-	    try {
-	      xml = service.getOMEXML(omeBinaryMeta);
-	    }
-	    catch (ServiceException se) {
-	      throw new FormatException(se);
-	    }
-
-	    // insert warning comment
-	    String prefix = xml.substring(0, xml.indexOf(">") + 1);
-	    String suffix = xml.substring(xml.indexOf(">") + 1);
-	    return prefix + BINARY_ONLY_WARNING_COMMENT + suffix;
-	  }
-
-  
 }
