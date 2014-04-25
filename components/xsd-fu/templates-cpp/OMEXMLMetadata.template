@@ -76,6 +76,17 @@
       {
         // Parents: ${repr(parents[obj.name])}
 {% choose %}\
+{% when is_abstract(parent) and prop.isReference and prop.maxOccurs > 1 %}\
+        // ${parent} is abstract proprietary, is reference and occurs more than once
+        // ${obj.name} o = (${obj.name}) root.${".".join(accessor(obj.name, parent, prop)[:-1])};
+        // return o.getLinked${prop.methodName}(${index_name_string(prop.name)}).getID();
+        // DUMMYLINE
+        std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(root->${"->".join(accessor(obj.name, parent, prop)[:-1])});
+        ${prop.assignableType[' const']} ret(o->getLinked${prop.methodName}(${index_name_string(prop.name)}));
+        if (ret)
+          return ret->getID();
+        throw(std::runtime_error("Internal metadata store inconsistency: null object"));
+{% end %}\
 {% when is_abstract(parent) and prop.isReference %}\
         // ${parent} is abstract proprietary
         std::shared_ptr< ${obj.langTypeNS}> o = std::dynamic_pointer_cast< ${obj.langTypeNS}>(root->${"->".join(accessor(obj.name, parent, prop)[:-1])});
