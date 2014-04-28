@@ -10,6 +10,7 @@
     <artifact name="lwf-stubs"/>
     <artifact name="mdbtools-java"/>
     <artifact name="metakit"/>
+    <artifact name="ome-jxr"/>
     <artifact name="ome-xml"/>
     <artifact name="ome-poi"/>
     <artifact name="formats-api"/>

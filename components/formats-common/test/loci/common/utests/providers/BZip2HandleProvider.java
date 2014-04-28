@@ -42,6 +42,7 @@ import java.io.IOException;
 
 import loci.common.BZip2Handle;
 import loci.common.IRandomAccess;
+import loci.common.NIOFileHandle;
 
 /**
  * Implementation of IRandomAccessProvider that produces instances of
@@ -64,17 +65,24 @@ class BZip2HandleProvider implements IRandomAccessProvider {
     out.write(page);
     out.close();
 
-    Runtime rt = Runtime.getRuntime();
-    Process p = rt.exec(new String[] {"bzip2", pageFile.getAbsolutePath()});
     try {
-      p.waitFor();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      Runtime rt = Runtime.getRuntime();
+      Process p = rt.exec(new String[] {"bzip2", pageFile.getAbsolutePath()});
+      try {
+        p.waitFor();
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+
+      pageFile = new File(pageFile.getAbsolutePath() + ".bz2");
+      pageFile.deleteOnExit();
+      return new BZip2Handle(pageFile.getAbsolutePath());
+    }
+    catch (IOException e) {
+      // bzip2 is likely not installed; this is typically the case on Windows
     }
 
-    pageFile = new File(pageFile.getAbsolutePath() + ".bz2");
-    pageFile.deleteOnExit();
-    return new BZip2Handle(pageFile.getAbsolutePath());
+    return new NIOFileHandle(pageFile, "r");
   }
 
 }
