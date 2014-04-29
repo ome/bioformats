@@ -804,6 +804,7 @@ public class ZeissCZIReader extends FormatReader {
         if (c < channels.size()) {
           store.setChannelName(channels.get(c).name, i, c);
           store.setChannelFluor(channels.get(c).fluor, i, c);
+          store.setChannelFilterSetRef(channels.get(c).filterSetRef, i, c);
 
           String color = channels.get(c).color;
           if (color != null) {
@@ -1170,6 +1171,9 @@ public class ZeissCZIReader extends FormatReader {
       Element dimensions = getFirstNode(image, "Dimensions");
 
       NodeList channelNodes = getGrandchildren(dimensions, "Channel");
+      if (channelNodes == null) {
+        channelNodes = image.getElementsByTagName("Channel");
+      }
 
       if (channelNodes != null) {
         for (int i=0; i<channelNodes.getLength(); i++) {
@@ -1220,6 +1224,11 @@ public class ZeissCZIReader extends FormatReader {
               detectorID = "Detector:" + detectorID;
             }
             detectorRefs.add(detectorID);
+          }
+
+          Element filterSet = getFirstNode(channel, "FilterSetRef");
+          if (filterSet != null) {
+            channels.get(i).filterSetRef = filterSet.getAttribute("Id");
           }
         }
       }
@@ -1395,25 +1404,44 @@ public class ZeissCZIReader extends FormatReader {
             getFirstNodeValue(manufacturerNode, "SerialNumber");
           String lotNumber = getFirstNodeValue(manufacturerNode, "LotNumber");
 
-          store.setFilterSetID(filterSet.getAttribute("Id"), 0, i);
-          store.setFilterSetManufacturer(manufacturer, 0, i);
-          store.setFilterSetModel(model, 0, i);
-          store.setFilterSetSerialNumber(serialNumber, 0, i);
-          store.setFilterSetLotNumber(lotNumber, 0, i);
-
           String dichroicRef = getFirstNodeValue(filterSet, "DichroicRef");
-          if (dichroicRef != null && dichroicRef.length() > 0) {
-            store.setFilterSetDichroicRef(dichroicRef, 0, i);
-          }
-
           NodeList excitations = getGrandchildren(
             filterSet, "ExcitationFilters", "ExcitationFilterRef");
           NodeList emissions = getGrandchildren(filterSet, "EmissionFilters",
             "EmissionFilterRef");
 
+          if (dichroicRef == null || dichroicRef.length() <= 0) {
+            dichroicRef =
+              getFirstNode(filterSet, "DichroicRef").getAttribute("Id");
+          }
+
+          if (excitations == null) {
+            excitations = filterSet.getElementsByTagName("ExcitationFilterRef");
+          }
+
+          if (emissions == null) {
+            emissions = filterSet.getElementsByTagName("EmissionFilterRef");
+          }
+
+          if (dichroicRef != null || excitations != null || emissions != null) {
+            store.setFilterSetID(filterSet.getAttribute("Id"), 0, i);
+            store.setFilterSetManufacturer(manufacturer, 0, i);
+            store.setFilterSetModel(model, 0, i);
+            store.setFilterSetSerialNumber(serialNumber, 0, i);
+            store.setFilterSetLotNumber(lotNumber, 0, i);
+          }
+
+          if (dichroicRef != null && dichroicRef.length() > 0) {
+            store.setFilterSetDichroicRef(dichroicRef, 0, i);
+          }
+
           if (excitations != null) {
             for (int ex=0; ex<excitations.getLength(); ex++) {
-              String ref = excitations.item(ex).getTextContent();
+              Element excitation = (Element) excitations.item(ex);
+              String ref = excitation.getTextContent();
+              if (ref == null || ref.length() <= 0) {
+                ref = excitation.getAttribute("Id");
+              }
               if (ref != null && ref.length() > 0) {
                 store.setFilterSetExcitationFilterRef(ref, 0, i, ex);
               }
@@ -1421,7 +1449,11 @@ public class ZeissCZIReader extends FormatReader {
           }
           if (emissions != null) {
             for (int em=0; em<emissions.getLength(); em++) {
-              String ref = emissions.item(em).getTextContent();
+              Element emission = (Element) emissions.item(em);
+              String ref = emission.getTextContent();
+              if (ref == null || ref.length() <= 0) {
+                ref = emission.getAttribute("Id");
+              }
               if (ref != null && ref.length() > 0) {
                 store.setFilterSetEmissionFilterRef(ref, 0, i, em);
               }
@@ -2860,6 +2892,7 @@ public class ZeissCZIReader extends FormatReader {
     public Double exposure;
     public Double gain;
     public String fluor;
+    public String filterSetRef;
   }
 
 }
