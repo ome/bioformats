@@ -29,17 +29,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jai_imageio</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>formats-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>lwf-stubs</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -47,56 +37,7 @@
       <artifactId>ome-xml</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>specification</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>turbojpeg</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.scijava</groupId>
-      <artifactId>native-lib-loader</artifactId>
-      <version>2.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.jgoodies</groupId>
-      <artifactId>forms</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>joda-time</groupId>
-      <artifactId>joda-time</artifactId>
-      <version>2.2</version>
-    </dependency>
-    <dependency>
-     <groupId>com.esotericsoftware.kryo</groupId>
-     <artifactId>kryo</artifactId>
-     <version>2.21</version>
-     <classifier>shaded</classifier>
-       <exclusions>
-         <exclusion>
-           <groupId>com.esotericsoftware.reflectasm</groupId>
-           <artifactId>reflectasm</artifactId>
-         </exclusion>
-         <exclusion>
-           <groupId>com.esotericsoftware.minlog</groupId>
-           <artifactId>minlog</artifactId>
-         </exclusion>
-         <exclusion>
-           <groupId>org.objenesis</groupId>
-           <artifactId>objenesis</artifactId>
-         </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.perf4j</groupId>
-      <artifactId>perf4j</artifactId>
-      <version>0.9.13</version>
-    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -119,14 +60,6 @@
       <version>2.7.1</version>
       <scope>runtime</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>6.8</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <properties>
@@ -183,7 +116,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <licenseName>formats-bsd</licenseName>
+          <licenseName>bsd_2</licenseName>
           <projectName>BSD implementations of Bio-Formats readers and writers</projectName>
         </configuration>
       </plugin>

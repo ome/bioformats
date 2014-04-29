@@ -1,6 +1,6 @@
 /*
  * #%L
- * Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
