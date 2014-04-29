@@ -2051,6 +2051,32 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     }
+    else {
+      Element regionsSetup = getFirstNode(acquisition, "RegionsSetup");
+
+      if (regionsSetup != null) {
+        Element sampleHolder = getFirstNode(regionsSetup, "SampleHolder");
+        if (sampleHolder != null) {
+          NodeList regions = getGrandchildren(sampleHolder,
+            "SingleTileRegionArray", "SingleTileRegion");
+          if (regions != null) {
+            for (int i=0; i<regions.getLength(); i++) {
+              Element region = (Element) regions.item(i);
+
+              String x = getFirstNode(region, "X").getTextContent();
+              String y = getFirstNode(region, "Y").getTextContent();
+              String z = getFirstNode(region, "Z").getTextContent();
+
+              positionsX[i] = x == null ? null : new Double(x);
+              positionsY[i] = y == null ? null : new Double(y);
+              positionsZ[i] = z == null ? null : new Double(z);
+            }
+          }
+        }
+      }
+
+
+    }
 
     NodeList detectors = getGrandchildren(acquisition, "Detector");
 
