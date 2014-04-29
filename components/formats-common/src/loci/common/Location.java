@@ -381,6 +381,10 @@ public class Location {
             }
           }
         }
+        is.close();
+        if (files.size() == 0) {
+          return null;
+        }
       }
       catch (IOException e) {
         LOGGER.trace("Could not retrieve directory listing", e);
@@ -400,6 +404,7 @@ public class Location {
         }
       }
     }
+
     result = files.toArray(new String[files.size()]);
     if (cacheListings) {
       fileListings.put(key, new ListingsResult(result, System.nanoTime()));
@@ -417,7 +422,7 @@ public class Location {
    * @see java.io.File#canRead()
    */
   public boolean canRead() {
-    return isURL ? (isDirectory() || isFile()) : file.canRead();
+    return isURL ? (isDirectory() || isFile() || exists()) : file.canRead();
   }
 
   /**
