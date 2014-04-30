@@ -47,6 +47,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
+import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.LZWCodec;
@@ -495,6 +496,15 @@ public class ZeissCZIReader extends FormatReader {
 
     if (getSizeC() == 0) {
       ms0.sizeC = 1;
+    }
+    if (getSizeZ() == 0) {
+      ms0.sizeZ = 1;
+    }
+    if (getSizeT() == 0) {
+      ms0.sizeT = 1;
+    }
+    if (getImageCount() == 0) {
+      ms0.imageCount = ms0.sizeZ * ms0.sizeT;
     }
 
     convertPixelType(planes.get(0).directoryEntry.pixelType);
@@ -2638,6 +2648,8 @@ public class ZeissCZIReader extends FormatReader {
           FormatTools.getBytesPerPixel(getPixelType());
 
         switch (directoryEntry.compression) {
+          case UNCOMPRESSED:
+            break;
           case JPEG:
             data = new JPEGCodec().decompress(data, options);
             break;
@@ -2647,6 +2659,29 @@ public class ZeissCZIReader extends FormatReader {
           case JPEGXR:
             throw new UnsupportedCompressionException(
               "JPEG-XR not yet supported");
+          case 104: // camera-specific packed pixels
+            data = decode12BitCamera(data, options.maxBytes);
+            // reverse column ordering
+            for (int row=0; row<getSizeY(); row++) {
+              for (int col=0; col<getSizeX()/2; col++) {
+                int left = row * getSizeX() * 2 + col * 2;
+                int right = row * getSizeX() * 2 + (getSizeX() - col - 1) * 2;
+                byte left1 = data[left];
+                byte left2 = data[left + 1];
+                data[left] = data[right];
+                data[left + 1] = data[right + 1];
+                data[right] = left1;
+                data[right + 1] = left2;
+              }
+            }
+
+            break;
+          case 504: // camera-specific packed pixels
+            data = decode12BitCamera(data, options.maxBytes);
+            break;
+          default:
+            throw new UnsupportedCompressionException("Compression type " +
+              directoryEntry.compression + " not supported");
         }
       }
       finally {
@@ -2729,6 +2764,44 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     }
+  }
+
+  private byte[] decode12BitCamera(byte[] data, int maxBytes) {
+    byte[] decoded = new byte[maxBytes];
+
+    BitBuffer bb = new BitBuffer(data);
+    byte[] fourBits = new byte[(maxBytes / 2) * 3];
+    int pt = 0;
+    while (pt < fourBits.length) {
+      fourBits[pt++] = (byte) bb.getBits(4);
+    }
+    for (int index=0; index<fourBits.length-1; index++) {
+      if ((index - 3) % 6 == 0) {
+        byte middle = fourBits[index];
+        byte last = fourBits[index + 1];
+        byte first = fourBits[index - 1];
+        fourBits[index + 1] = middle;
+        fourBits[index] = first;
+        fourBits[index - 1] = last;
+      }
+    }
+
+    int currentByte = 0;
+    for (int index=0; index<fourBits.length;) {
+      if (index % 3 == 0) {
+        decoded[currentByte++] = fourBits[index++];
+      }
+      else {
+        decoded[currentByte++] =
+          (byte) (fourBits[index++] << 4 | fourBits[index++]);
+      }
+    }
+
+    if (isLittleEndian()) {
+      core.get(0).littleEndian = false;
+    }
+
+    return decoded;
   }
 
   /** Segment with ID "ZISRAWDIRECTORY". */
