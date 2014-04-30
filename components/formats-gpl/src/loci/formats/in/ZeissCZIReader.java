@@ -179,7 +179,7 @@ public class ZeissCZIReader extends FormatReader {
    */
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    if (pixels.size() == 0 && noPixels) {
+    if (pixels == null || pixels.size() == 0 && noPixels) {
       return null;
     }
     else if (noPixels) {
@@ -450,6 +450,17 @@ public class ZeissCZIReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+
+    // switch to the master file if this is part of a multi-file dataset
+    String base = id.substring(0, id.lastIndexOf("."));
+    if (base.endsWith(")") && isGroupFiles()) {
+      base = base.substring(0, base.lastIndexOf(" ")) + ".czi";
+      if (new Location(base).exists()) {
+        initFile(base);
+        return;
+      }
+    }
+
     CoreMetadata ms0 = core.get(0);
 
     ms0.littleEndian = true;
@@ -473,7 +484,7 @@ public class ZeissCZIReader extends FormatReader {
     // for all files with a matching name
 
     Location file = new Location(id).getAbsoluteFile();
-    String base = file.getName();
+    base = file.getName();
     base = base.substring(0, base.lastIndexOf("."));
 
     Location parent = file.getParentFile();
