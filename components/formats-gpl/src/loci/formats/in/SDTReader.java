@@ -209,7 +209,10 @@ public class SDTReader extends FormatReader {
         output += oLineSize;
       }
       
-      // allow for non-zero count increments
+      // allow for >1 count increments
+      // the count increment is the amount by which the data is incremented for each event detected
+      // normally this is 1 so each bit represents a photon
+      // where it is >1 then divide the 16 bit data to get an answer in photon units
       if (info.incr > 1) {
         short incr = info.incr;
        
