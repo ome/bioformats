@@ -288,6 +288,12 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable,
     boolean allowArchiveHandles) throws IOException
   {
+    return getHandle(id, writable, allowArchiveHandles, 0);
+  }
+
+  public static IRandomAccess getHandle(String id, boolean writable,
+    boolean allowArchiveHandles, int bufferSize) throws IOException
+  {
     LOGGER.trace("getHandle(id = {}, writable = {})", id, writable);
     IRandomAccess handle = getMappedFile(id);
     if (handle == null) {
@@ -307,7 +313,13 @@ public class Location {
         handle = new BZip2Handle(mapId);
       }
       else {
-        handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
+        if (bufferSize > 0) {
+          handle = new NIOFileHandle(
+            new File(mapId), writable ? "rw" : "r", bufferSize);
+        }
+        else {
+          handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
+        }
       }
     }
     LOGGER.trace("Location.getHandle: {} -> {}", id, handle);
