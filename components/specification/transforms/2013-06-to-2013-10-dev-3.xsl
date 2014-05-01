@@ -55,6 +55,16 @@
 
 	<!-- Actual schema changes -->
 
+	<!-- strip AnnotationRef on WellSample -->
+	<xsl:template match="SPW:WellSample">
+		<xsl:element name="{name()}" namespace="{$newSPWNS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [not(local-name() = 'AnnotationRef')]">
+				<xsl:apply-templates select="."/>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
 	<!-- strip AnnotationRef on Pixels -->
 	<xsl:template match="OME:Pixels">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
@@ -65,11 +75,17 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- add any AnnotationRef to Image that are on Pixels -->
+	<!-- add any AnnotationRef to Image that are on Pixels and WellSample -->
 	<xsl:template match="OME:Image">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:apply-templates select="@*"/>
 			<xsl:apply-templates select="*"/>
+			<xsl:variable name="theImageID"><xsl:value-of select="@ID"/></xsl:variable>
+			<xsl:for-each select="//SPW:WellSample/OME:ImageRef [@ID=$theImageID]">
+			<xsl:for-each select="parent::* [local-name() = 'AnnotationRef']">
+				<xsl:apply-templates select="."/>
+				</xsl:for-each>
+			</xsl:for-each>
 			<xsl:for-each select="* [local-name() = 'Pixels']">
 				<xsl:for-each select="* [local-name() = 'AnnotationRef']">
 					<xsl:apply-templates select="."/>
