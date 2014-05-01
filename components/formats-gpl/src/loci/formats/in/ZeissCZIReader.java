@@ -26,6 +26,7 @@
 package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,6 +86,7 @@ public class ZeissCZIReader extends FormatReader {
   private static final int ALIGNMENT = 32;
   private static final int HEADER_SIZE = 32;
   private static final String CZI_MAGIC_STRING = "ZISRAWFILE";
+  private static final int BUFFER_SIZE = 1024;
 
   /** Compression constants. */
   private static final int UNCOMPRESSED = 0;
@@ -902,7 +904,7 @@ public class ZeissCZIReader extends FormatReader {
     if (in != null) {
       in.close();
     }
-    in = new RandomAccessInputStream(id);
+    in = new RandomAccessInputStream(id, 1024);
     in.order(isLittleEndian());
     while (in.getFilePointer() < in.length()) {
       Segment segment = readSegment(id);
@@ -2491,7 +2493,7 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     public void fillInData() throws IOException {
-      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      RandomAccessInputStream s = getStream();
       try {
         s.order(isLittleEndian());
         s.seek(startingPosition + 16);
@@ -2506,6 +2508,10 @@ public class ZeissCZIReader extends FormatReader {
       finally {
         s.close();
       }
+    }
+
+    public RandomAccessInputStream getStream() throws IOException {
+      return new RandomAccessInputStream(filename, BUFFER_SIZE);
     }
   }
 
@@ -2524,7 +2530,7 @@ public class ZeissCZIReader extends FormatReader {
     public void fillInData() throws IOException {
       super.fillInData();
 
-      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      RandomAccessInputStream s = getStream();
       try {
         s.order(isLittleEndian());
         s.seek(startingPosition + HEADER_SIZE);
@@ -2555,7 +2561,7 @@ public class ZeissCZIReader extends FormatReader {
     public void fillInData() throws IOException {
       super.fillInData();
 
-      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      RandomAccessInputStream s = getStream();
       try {
         s.order(isLittleEndian());
         s.seek(startingPosition + HEADER_SIZE);
@@ -2618,7 +2624,7 @@ public class ZeissCZIReader extends FormatReader {
     public void fillInData() throws IOException {
       super.fillInData();
 
-      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      RandomAccessInputStream s = getStream();
       try {
         s.order(isLittleEndian());
         s.seek(startingPosition + HEADER_SIZE);
@@ -2822,7 +2828,7 @@ public class ZeissCZIReader extends FormatReader {
     public void fillInData() throws IOException {
       super.fillInData();
 
-      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      RandomAccessInputStream s = getStream();
       try {
         s.order(isLittleEndian());
         s.seek(startingPosition + HEADER_SIZE);
@@ -2847,7 +2853,7 @@ public class ZeissCZIReader extends FormatReader {
     public void fillInData() throws IOException {
       super.fillInData();
 
-      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      RandomAccessInputStream s = getStream();
       try {
         s.order(isLittleEndian());
         s.seek(startingPosition + HEADER_SIZE);
@@ -2874,7 +2880,7 @@ public class ZeissCZIReader extends FormatReader {
     public void fillInData() throws IOException {
       super.fillInData();
 
-      RandomAccessInputStream s = new RandomAccessInputStream(filename);
+      RandomAccessInputStream s = getStream();
       try {
         s.order(isLittleEndian());
         s.seek(startingPosition + HEADER_SIZE);
