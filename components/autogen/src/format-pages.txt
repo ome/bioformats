@@ -2291,7 +2291,6 @@ notes = Compressed BMP files are currently not supported. \n
 \n
 .. seealso:: \n
   `Technical Overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-18.html>`_ \n
-  `General Resources <http://people.sc.fsu.edu/~burkardt/data/bmp/bmp.html>`_
 
 [Woolz]
 extensions = .wlz
