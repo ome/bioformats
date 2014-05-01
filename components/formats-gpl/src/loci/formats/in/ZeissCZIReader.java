@@ -2700,9 +2700,6 @@ public class ZeissCZIReader extends FormatReader {
           case 504: // camera-specific packed pixels
             data = decode12BitCamera(data, options.maxBytes);
             break;
-          default:
-            throw new UnsupportedCompressionException("Compression type " +
-              directoryEntry.compression + " not supported");
         }
       }
       finally {
