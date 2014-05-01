@@ -21,13 +21,18 @@
 
   <licenses>
     <license>
-      <name>GPL 2 or later</name>
+      <name>GNU General Public License v2+</name>
       <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
 
   <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>formats-gpl</artifactId>
@@ -50,13 +55,18 @@
     </dependency>
     <dependency>
       <groupId>com.jgoodies</groupId>
-      <artifactId>forms</artifactId>
-      <version>1.2.1</version>
+      <artifactId>jgoodies-forms</artifactId>
+      <version>${jgoodies-forms.version}</version>
     </dependency>
     <dependency>
-      <groupId>gov.nih.imagej</groupId>
-      <artifactId>imagej</artifactId>
-      <version>[1.45s,1.47o),[1.47q,)</version>
+      <groupId>net.imagej</groupId>
+      <artifactId>ij</artifactId>
+      <version>${imagej1.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
