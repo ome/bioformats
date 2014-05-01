@@ -2069,19 +2069,6 @@ public final class MetadataConverter {
             dest.setWellSampleTimepoint(timepoint, i, q, w);
           }
           catch (NullPointerException e) { }
-
-          int wellSampleAnnotationRefCount = 0;
-          try {
-            wellSampleAnnotationRefCount = src.getWellSampleAnnotationRefCount(i, q, w);
-          }
-          catch (NullPointerException e) { }
-          for (int a=0; a<wellSampleAnnotationRefCount; a++) {
-            try {
-              String wellSampleAnnotationRef = src.getWellSampleAnnotationRef(i, q, w, a);
-              dest.setWellSampleAnnotationRef(wellSampleAnnotationRef, i, q, w, a);
-            }
-            catch (NullPointerException e) { }
-          }
         }
       }
 
