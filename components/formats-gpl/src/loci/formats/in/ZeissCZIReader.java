@@ -456,10 +456,14 @@ public class ZeissCZIReader extends FormatReader {
     // switch to the master file if this is part of a multi-file dataset
     String base = id.substring(0, id.lastIndexOf("."));
     if (base.endsWith(")") && isGroupFiles()) {
-      base = base.substring(0, base.lastIndexOf(" ")) + ".czi";
-      if (new Location(base).exists()) {
-        initFile(base);
-        return;
+      int lastFileSeparator = base.lastIndexOf(File.separator);
+      int end = base.lastIndexOf(" (");
+      if (end > 0 && end > lastFileSeparator) {
+        base = base.substring(0, end) + ".czi";
+        if (new Location(base).exists()) {
+          initFile(base);
+          return;
+        }
       }
     }
 
