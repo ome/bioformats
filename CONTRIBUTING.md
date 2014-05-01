@@ -24,7 +24,7 @@ please ensure you read these.
   [mailing list](http://www.openmicroscopy.org/site/community/mailing-lists)
   and we will get back to you with secure upload details.
 
-We aim to review all PRs within 2 working days. Someone will comment whether
+We review all PRs as soon as we are able. Someone will comment whether
 the change is fine as-is or request you make changes before we merge it.
 
 ## Contributing to Bio-Formats Documentation
