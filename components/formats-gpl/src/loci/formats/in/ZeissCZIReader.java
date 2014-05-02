@@ -1438,8 +1438,10 @@ public class ZeissCZIReader extends FormatReader {
             "EmissionFilterRef");
 
           if (dichroicRef == null || dichroicRef.length() <= 0) {
-            dichroicRef =
-              getFirstNode(filterSet, "DichroicRef").getAttribute("Id");
+            Element ref = getFirstNode(filterSet, "DichroicRef");
+            if (ref != null) {
+              dichroicRef = ref.getAttribute("Id");
+            }
           }
 
           if (excitations == null) {
