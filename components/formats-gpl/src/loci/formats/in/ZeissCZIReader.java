@@ -86,7 +86,7 @@ public class ZeissCZIReader extends FormatReader {
   private static final int ALIGNMENT = 32;
   private static final int HEADER_SIZE = 32;
   private static final String CZI_MAGIC_STRING = "ZISRAWFILE";
-  private static final int BUFFER_SIZE = 1024;
+  private static final int BUFFER_SIZE = 512;
 
   /** Compression constants. */
   private static final int UNCOMPRESSED = 0;
@@ -456,11 +456,16 @@ public class ZeissCZIReader extends FormatReader {
     // switch to the master file if this is part of a multi-file dataset
     String base = id.substring(0, id.lastIndexOf("."));
     if (base.endsWith(")") && isGroupFiles()) {
+      LOGGER.info("Checking for master file");
       int lastFileSeparator = base.lastIndexOf(File.separator);
       int end = base.lastIndexOf(" (");
+      if (end < 0 || end < lastFileSeparator) {
+        end = base.lastIndexOf("(");
+      }
       if (end > 0 && end > lastFileSeparator) {
         base = base.substring(0, end) + ".czi";
         if (new Location(base).exists()) {
+          LOGGER.info("Initializing master file {}", base);
           initFile(base);
           return;
         }
@@ -661,11 +666,26 @@ public class ZeissCZIReader extends FormatReader {
 
     store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
+
+    String firstXML = null;
+    boolean canSkipXML = true;
+    String currentPath = new Location(currentId).getAbsolutePath();
     for (Segment segment : segments) {
-      if (segment instanceof Metadata) {
+      String path = new Location(segment.filename).getAbsolutePath();
+      if (currentPath.equals(path) && segment instanceof Metadata) {
+        segment.fillInData();
         String xml = ((Metadata) segment).xml;
         xml = XMLTools.sanitizeXML(xml);
-        translateMetadata(xml);
+        if (firstXML == null && canSkipXML) {
+          firstXML = xml;
+        }
+        if (canSkipXML && firstXML.equals(xml)) {
+          translateMetadata(xml);
+        }
+        else if (!firstXML.equals(xml)) {
+          canSkipXML = false;
+        }
+        ((Metadata) segment).clearXML();
       }
       else if (segment instanceof Attachment) {
         AttachmentEntry entry = ((Attachment) segment).attachment;
@@ -900,6 +920,9 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
     }
+
+    // not needed by further calls on the reader
+    segments = null;
   }
 
   // -- Helper methods --
@@ -2346,7 +2369,12 @@ public class ZeissCZIReader extends FormatReader {
     segment.id = segmentID;
     segment.filename = filename;
 
-    segment.fillInData();
+    if (!(segment instanceof Metadata)) {
+      segment.fillInData();
+    }
+    else {
+      ((Metadata) segment).skipData(); 
+    }
 
     long pos = segment.startingPosition + segment.allocatedSize + HEADER_SIZE;
     if (pos < in.length()) {
@@ -2564,12 +2592,16 @@ public class ZeissCZIReader extends FormatReader {
     public String xml;
     public byte[] attachment;
 
+    public void skipData() throws IOException {
+      super.fillInData();
+    }
+
     public void fillInData() throws IOException {
       super.fillInData();
 
       RandomAccessInputStream s = getStream();
       try {
-        s.order(isLittleEndian());
+        s.order(true);
         s.seek(startingPosition + HEADER_SIZE);
         int xmlSize = s.readInt();
         int attachmentSize = s.readInt();
@@ -2583,6 +2615,10 @@ public class ZeissCZIReader extends FormatReader {
       finally {
         s.close();
       }
+    }
+
+    public void clearXML() {
+      xml = null;
     }
   }
 
@@ -2728,19 +2764,23 @@ public class ZeissCZIReader extends FormatReader {
         s.close();
       }
       catch (ParserConfigurationException e) {
+        metadata = null;
         return;
       }
       catch (SAXException e) {
+        metadata = null;
         return;
       }
 
       if (root == null) {
+        metadata = null;
         return;
       }
 
       NodeList children = root.getChildNodes();
 
       if (children == null) {
+        metadata = null;
         return;
       }
 
@@ -2783,6 +2823,7 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
+      metadata = null;
     }
   }
 
