@@ -223,9 +223,9 @@ public class GatanReader extends FormatReader {
         Double x = pixelSizes.get(index);
         Double y = pixelSizes.get(index + 1);
         Double z = pixelSizes.get(index + 2);
-        String xUnits = units.get(index);
-        String yUnits = units.get(index + 1);
-        String zUnits = units.get(index + 2);
+        String xUnits = index < units.size() ? units.get(index) : "";
+        String yUnits = index + 1 < units.size() ? units.get(index + 1) : "";
+        String zUnits = index + 2 < units.size() ? units.get(index + 2) : "";
 
         x = correctForUnits(x, xUnits);
         y = correctForUnits(y, yUnits);
@@ -503,7 +503,10 @@ public class GatanReader extends FormatReader {
         return in.readShort();
       case INT:
       case UINT:
-        return in.readInt();
+        if (adjustEndianness) in.order(!in.isLittleEndian());
+        int i = in.readInt();
+        if (adjustEndianness) in.order(!in.isLittleEndian());
+        return i;
       case FLOAT:
         if (adjustEndianness) in.order(!in.isLittleEndian());
         float f = in.readFloat();
