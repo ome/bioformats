@@ -26,6 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
@@ -148,7 +150,9 @@ public class SDTReader extends FormatReader {
     int sizeY = getSizeY();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     boolean little = isLittleEndian();
-
+    
+   
+   
     int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
     int planeSize = paddedWidth * sizeY * timeBins * bpp;
 
@@ -203,6 +207,23 @@ public class SDTReader extends FormatReader {
         System.arraycopy(chanStore, input, buf, output , oLineSize);
         input += iLineSize;
         output += oLineSize;
+      }
+      
+      // allow for >1 count increments
+      // the count increment is the amount by which the data is incremented for each event detected
+      // normally this is 1 so each bit represents a photon
+      // where it is >1 then divide the 16 bit data to get an answer in photon units
+      if (info.incr > 1) {
+        short incr = info.incr;
+       
+        ByteBuffer bb = ByteBuffer.wrap(buf); // Wrapper around underlying byte[].
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        short s;
+        
+        for (int i = 0; i < buf.length ; i+=2) {
+          s = bb.getShort(i);
+          bb.putShort(i,(short) (s/incr) );
+        }  
       }
 
       return buf;
