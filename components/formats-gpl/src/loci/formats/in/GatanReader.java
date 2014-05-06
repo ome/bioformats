@@ -79,7 +79,7 @@ public class GatanReader extends FormatReader {
 
   /** List of pixel sizes. */
   private Vector<Double> pixelSizes;
-  private String units;
+  private Vector<String> units;
 
   private int bytesPerPixel;
 
@@ -161,6 +161,7 @@ public class GatanReader extends FormatReader {
 
     m.littleEndian = false;
     pixelSizes = new Vector<Double>();
+    units = new Vector<String>();
 
     in.order(isLittleEndian());
 
@@ -222,15 +223,13 @@ public class GatanReader extends FormatReader {
         Double x = pixelSizes.get(index);
         Double y = pixelSizes.get(index + 1);
         Double z = pixelSizes.get(index + 2);
+        String xUnits = units.get(index);
+        String yUnits = units.get(index + 1);
+        String zUnits = units.get(index + 2);
 
-        if ("nm".equals(units)) {
-          x /= 1000;
-          y /= 1000;
-          z /= 1000;
-        }
-        else if (!"um".equals(units) && !"µm".equals(units) && units != null) {
-          LOGGER.warn("Not adjusting for unknown units: {}", units);
-        }
+        x = correctForUnits(x, xUnits);
+        y = correctForUnits(y, yUnits);
+        z = correctForUnits(z, zUnits);
 
         PositiveFloat sizeX = FormatTools.getPhysicalSizeX(x);
         PositiveFloat sizeY = FormatTools.getPhysicalSizeY(y);
@@ -458,7 +457,10 @@ public class GatanReader extends FormatReader {
           }
         }
         else if (labelString.equals("Units")) {
-          units = value;
+          // make sure that we don't add more units than sizes
+          if (pixelSizes.size() == units.size() + 1) {
+            units.add(value);
+          }
         }
         else if (labelString.equals("LowLimit")) {
           signed = Double.parseDouble(value) < 0;
@@ -563,6 +565,18 @@ public class GatanReader extends FormatReader {
       }
     }
     return newString.toString();
+  }
+
+  private Double correctForUnits(Double value, String units) {
+    Double newValue = value;
+    if ("nm".equals(units)) {
+      newValue /= 1000;
+    }
+    else if (!"um".equals(units) && !"µm".equals(units) && units != null) {
+      LOGGER.warn("Not adjusting for unknown units: {}", units);
+    }
+
+    return newValue;
   }
 
 }
