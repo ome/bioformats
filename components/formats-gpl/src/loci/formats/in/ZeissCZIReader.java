@@ -2280,6 +2280,9 @@ public class ZeissCZIReader extends FormatReader {
 
   private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
     String name = root.getNodeName();
+    if (name.equals("DisplaySetting")) {
+      return;
+    }
     nameStack.push(name);
 
     StringBuffer key = new StringBuffer();
