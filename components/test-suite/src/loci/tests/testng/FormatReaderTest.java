@@ -1370,7 +1370,10 @@ public class FormatReaderTest {
 
         int maxFiles = (int) Math.min(base.length, 100);
 
-        if (DataTools.indexOf(reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0) {
+        if (DataTools.indexOf(
+	  reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0 ||
+	  file.toLowerCase().endsWith(".czi"))
+	{
           maxFiles = (int) Math.min(maxFiles, 10);
         }
 
