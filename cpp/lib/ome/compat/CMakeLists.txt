@@ -80,7 +80,7 @@ set(ome_compat_includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}/ome/compat")
 
 install(FILES ${ome_compat_static_headers} ${ome_compat_generated_headers}
         DESTINATION ${ome_compat_includedir})
-install(FILES ${ome_compat_endian_static_headers}}
+install(FILES ${ome_compat_endian_static_headers}
         DESTINATION ${ome_compat_includedir}/endian)
 install(FILES ${ome_compat_endian_detail_static_headers}
         DESTINATION ${ome_compat_includedir}/endian/detail)
