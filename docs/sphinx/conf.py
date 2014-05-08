@@ -64,7 +64,7 @@ copyright = u'2000-%d, %s ' % (now.year, author)
 # built documents.
 #
 try:
-    if "BF_RELEASE" in os.environ:
+    if "BF_RELEASE" in os.environ and len(os.environ.get('BF_RELEASE')) > 0:
         release = os.environ.get('BF_RELEASE')
     else:
         p = popen(['git','describe'])
@@ -114,12 +114,12 @@ pygments_style = 'sphinx'
 #modindex_common_prefix = []
 
 # Variables used to define Github extlinks
-if "SOURCE_BRANCH" in os.environ:
+if "SOURCE_BRANCH" in os.environ and len(os.environ.get('SOURCE_BRANCH')) > 0:
     source_branch = os.environ.get('SOURCE_BRANCH')
 else:
     source_branch = 'develop'
 
-if "SOURCE_USER" in os.environ:
+if "SOURCE_USER" in os.environ and len(os.environ.get('SOURCE_USER')) > 0:
     user = os.environ.get('SOURCE_USER')
 else:
     user = 'openmicroscopy'
@@ -129,7 +129,7 @@ bf_github_root = github_root + user + '/bioformats/'
 bf_github_branch = bf_github_root + 'blob/' + source_branch + '/'
 
 # Variables used to define Jenkins extlinks
-if "JENKINS_JOB" in os.environ:
+if "JENKINS_JOB" in os.environ and len(os.environ.get('JENKINS_JOB')) > 0:
     jenkins_job = os.environ.get('JENKINS_JOB')
 else:
     jenkins_job = 'BIOFORMATS-5.0-latest'
@@ -146,7 +146,7 @@ oo_root = 'http://www.openmicroscopy.org'
 oo_site_root = oo_root + '/site'
 lists_root = 'http://lists.openmicroscopy.org.uk'
 downloads_root = 'http://downloads.openmicroscopy.org'
-if "OMERODOC_URI" in os.environ:
+if "OMERODOC_URI" in os.environ and len(os.environ.get('OMERODOC_URI')) > 0:
     omerodoc_uri = os.environ.get('OMERODOC_URI')
 else:
     omerodoc_uri = oo_site_root + '/support/omero5'

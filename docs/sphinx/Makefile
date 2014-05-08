@@ -4,12 +4,8 @@ ifdef SPHINXOPTS
 ANT_SPHINXOPTS := -Dsphinx.opts="$(SPHINXOPTS)"
 endif
 
-ifdef FORMATS_RELEASE
-ANT_FORMATS_RELEASE := -Dformats.release="$(FORMATS_RELEASE)"
-endif
-
-ifdef OMERO_RELEASE
-ANT_OMERO_RELEASE := -Domero.release="$(OMERO_RELEASE)"
+ifdef BF_RELEASE
+ANT_BF_RELEASE := -Dbf.release="$(BF_RELEASE)"
 endif
 
 ifdef SOURCE_BRANCH
@@ -20,9 +16,21 @@ ifdef SOURCE_USER
 ANT_SOURCE_USER := -Dsource.user="$(SOURCE_USER)"
 endif
 
+ifdef JENKINS_JOB
+ANT_JENKINS_JOB := -Djenkins.job="$(JENKINS_JOB)"
+endif
+
+ifdef JENKINS_CPP_JOB
+ANT_JENKINS_CPP_JOB := -Djenkins.cpp.job="$(JENKINS_CPP_JOB)"
+endif
+
+ifdef OMERODOC_URI_JOB
+ANT_OMERODOC_URI_JOB := -Domerodoc.uri="$(OMERODOC_URI_JOB)"
+endif
+
 default: html
 
 %:
-	ant $@ $(ANT_SPHINXOPTS) $(ANT_FORMATS_RELEASE) $(ANT_OMERO_RELEASE) $(ANT_SOURCE_BRANCH) $(ANT_SOURCE_USER)
+	ant $@ $(ANT_SPHINXOPTS) $(ANT_BF_RELEASE) $(ANT_SOURCE_BRANCH) $(ANT_SOURCE_USER) $(ANT_JENKINS_JOB) $(ANT_JENKINS_CPP_JOB) $(ANT_OMERODOC_URI_JOB)
 
 .PHONY: default

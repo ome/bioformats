@@ -15,17 +15,28 @@ Type "ant -p" for a list of targets.
   <property name="sphinx.opts" value=""/>
   <property name="sphinx.builddir" location="_build"/>
   <property name="latex.opts" value=""/>
+  <property name="source.branch" value=""/>
+  <property name="source.user" value="openmicroscopy"/>
+  <property name="jenkins.job" value=""/>
+  <property name="jenkins.cpp.job" value=""/>
+  <property name="omerodoc.uri" value=""/>
 
   <target name="init"/>
 
   <target name="html">
     <exec executable="${sphinx.build}" failonerror="true">
-        <arg value="-b"/>
-        <arg value="html"/>
-        <arg line="${sphinx.opts}"/>
-        <arg value="."/>
-        <arg value="${sphinx.builddir}/html"/>
-      </exec>
+      <env key="SOURCE_BRANCH" value="${source.branch}"/>
+      <env key="SOURCE_USER" value="${source.user}"/>
+      <env key="BF_RELEASE" value="${bf.release}"/>
+      <env key="JENKINS_JOB" value="${jenkins.job}"/>
+      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
+      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
+      <arg value="-b"/>
+      <arg value="html"/>
+      <arg line="${sphinx.opts}"/>
+      <arg value="."/>
+      <arg value="${sphinx.builddir}/html"/>
+    </exec>
   </target>
 
   <macrodef name="xelatex" description="Run XeLaTeX">
@@ -70,6 +81,12 @@ Type "ant -p" for a list of targets.
 
   <target name="latexpdf">
     <exec executable="${sphinx.build}" failonerror="true">
+      <env key="SOURCE_BRANCH" value="${source.branch}"/>
+      <env key="SOURCE_USER" value="${source.user}"/>
+      <env key="BF_RELEASE" value="${bf.release}"/>
+      <env key="JENKINS_JOB" value="${jenkins.job}"/>
+      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
+      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
       <arg value="-b"/>
       <arg value="latex"/>
       <arg line="${sphinx.opts}"/>
@@ -91,12 +108,18 @@ Type "ant -p" for a list of targets.
 
   <target name="linkcheck">
     <exec executable="${sphinx.build}" failonerror="true">
-        <arg value="-b"/>
-        <arg value="linkcheck"/>
-        <arg line="${sphinx.opts}"/>
-        <arg value="."/>
-        <arg value="${sphinx.builddir}/linkcheck"/>
-      </exec>
+      <env key="SOURCE_BRANCH" value="${source.branch}"/>
+      <env key="SOURCE_USER" value="${source.user}"/>
+      <env key="BF_RELEASE" value="${bf.release}"/>
+      <env key="JENKINS_JOB" value="${jenkins.job}"/>
+      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
+      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
+      <arg value="-b"/>
+      <arg value="linkcheck"/>
+      <arg line="${sphinx.opts}"/>
+      <arg value="."/>
+      <arg value="${sphinx.builddir}/linkcheck"/>
+    </exec>
   </target>
 
   <target name="clean">
