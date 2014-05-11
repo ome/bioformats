@@ -103,6 +103,15 @@ public class OMEXMLReader extends FormatReader {
     return xml.startsWith("<?xml") && xml.indexOf("<OME") >= 0;
   }
 
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "companion.ome")) {
+      // pass binary-only files along to the OME-TIFF reader
+      return false;
+    }
+    return super.isThisType(name, open);
+  }
+
   /* @see loci.formats.IFormatReader#getDomains() */
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
