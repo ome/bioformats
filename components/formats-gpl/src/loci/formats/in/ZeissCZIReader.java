@@ -634,7 +634,13 @@ public class ZeissCZIReader extends FormatReader {
       if (planes.size() != ms0.sizeT &&
         (planes.size() % (seriesCount * getSizeZ())) == 0)
       {
-        ms0.sizeT = 1;
+        if (!isGroupFiles() && planes.size() == (ms0.imageCount * seriesCount) / positions) {
+          seriesCount /= positions;
+          positions = 1;
+        }
+        else {
+          ms0.sizeT = 1;
+        }
       }
       else if (planes.size() == ms0.sizeT) {
         positions = 1;
