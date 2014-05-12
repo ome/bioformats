@@ -134,6 +134,8 @@ public class MetamorphReader extends BaseTiffReader {
 
   private boolean bizarreMultichannelAcquisition = false;
 
+  private int openFiles = 0;
+
   // -- Constructor --
 
   /** Constructs a new Metamorph reader. */
@@ -258,9 +260,12 @@ public class MetamorphReader extends BaseTiffReader {
     // for the constituent STK files
     stkReaders[getSeries()][ndx].setMetadataOptions(
         new DefaultMetadataOptions(MetadataLevel.MINIMUM));
+    int plane = stks[getSeries()].length == 1 ? no : coords[0];
     try {
+      if (!file.equals(stkReaders[getSeries()][ndx].getCurrentFile())) {
+        openFiles++;
+      }
       stkReaders[getSeries()][ndx].setId(file);
-      int plane = stks[getSeries()].length == 1 ? no : coords[0];
 
       if (bizarreMultichannelAcquisition) {
         int realX = getZCTCoords(no)[1] == 0 ? x : x + getSizeX();
@@ -271,7 +276,11 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
     finally {
-      stkReaders[getSeries()][ndx].close();
+      int count = stkReaders[getSeries()][ndx].getImageCount();
+      if (plane == count - 1 || openFiles > 128) {
+        stkReaders[getSeries()][ndx].close();
+        openFiles--;
+      }
     }
 
     return buf;
@@ -309,6 +318,7 @@ public class MetamorphReader extends BaseTiffReader {
       stkReaders = null;
       gain = null;
       bizarreMultichannelAcquisition = false;
+      openFiles = 0;
     }
   }
 
