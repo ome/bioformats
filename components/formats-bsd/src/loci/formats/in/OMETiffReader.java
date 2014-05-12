@@ -199,8 +199,12 @@ public class OMETiffReader extends FormatReader {
       if (service == null) setupService();
       IMetadata meta = service.createOMEXMLMetadata(comment);
 
-      if (meta.getBinaryOnlyMetadataFile(0) != null) {
-        return true;
+      try {
+        if (meta.getBinaryOnlyMetadataFile(0) != null) {
+          return true;
+        }
+      }
+      catch (NullPointerException e) {
       }
 
       for (int i=0; i<meta.getImageCount(); i++) {
@@ -407,11 +411,17 @@ public class OMETiffReader extends FormatReader {
       throw new FormatException(se);
     }
 
-    if (meta.getBinaryOnlyMetadataFile(0) != null) {
+    String metadataPath = null;
+    try {
+      metadataPath = meta.getBinaryOnlyMetadataFile(0);
+    }
+    catch (NullPointerException e) {
+    }
+
+    if (metadataPath != null) {
       // this is a binary-only file
       // overwrite XML with what is in the companion OME-XML file
-      String file = meta.getBinaryOnlyMetadataFile(0);
-      Location path = new Location(dir, file);
+      Location path = new Location(dir, metadataPath);
       if (path.exists()) {
         metadataFile = path.getAbsolutePath();
         xml = DataTools.readFile(metadataFile);
