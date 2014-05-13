@@ -34,8 +34,34 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+include(CheckCSourceCompiles)
 include(FindTIFF)
 
 if(NOT TIFF_FOUND)
   message(FATAL_ERROR "libtiff is required (tiff >= 4.0.0 from ftp://ftp.remotesensing.org/pub/libtiff/)")
 endif(NOT TIFF_FOUND)
+
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+set(CMAKE_REQUIRED_LIBRARIES ${TIFF_LIBRARIES})
+check_c_source_compiles("#include <tiffio.h>
+
+int main(void)
+{
+  TIFF *tiff = TIFFOpen(\"foo\", \"r\");
+}
+" TIFF_HAVE_OPEN)
+
+if(NOT TIFF_HAVE_OPEN)
+  message(FATAL_ERROR "libtiff does not appear to be functional (failed to include and link TIFFOpen)")
+endif(NOT TIFF_HAVE_OPEN)
+
+check_c_source_compiles("#include <tiffio.h>
+
+int main(void)
+{
+  TIFFFieldInfo *info;
+  TIFF *tiff;
+  TIFFMergeFieldInfo(tiff, info, 0);
+}
+" TIFF_HAVE_MERGEFIELDINFO)
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
