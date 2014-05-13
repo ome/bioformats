@@ -560,6 +560,10 @@ public class Memoizer extends ReaderWrapper {
         LOGGER.debug("skipping memo: directory not writeable - {}", directory);
         return null;
       }
+
+      // this serves to strip off the drive letter on Windows
+      id = id.substring(id.indexOf(File.separator) + 1);
+
       f = new File(directory, id);
       f.getParentFile().mkdirs();
     }
@@ -679,7 +683,6 @@ public class Memoizer extends ReaderWrapper {
     final StopWatch sw = stopWatch();
     boolean rv = true;
     try {
-
       // Create temporary location for output
       // Note: can't rename tempfile until resources are closed.
       tempFile = File.createTempFile(
