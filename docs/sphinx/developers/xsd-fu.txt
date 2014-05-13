@@ -8,7 +8,7 @@ Requirements:
 
 - `Python <http://python.org>`_ 2.4+
 - `Genshi <http://genshi.edgewall.org>`_ 0.5
-- Complete checkout of the `Bio-Formats repository <http://github.com/openmicroscopy/bioformats>`_
+- Complete checkout of the `Bio-Formats repository <https://github.com/openmicroscopy/bioformats>`_
 
 .. note::
 
