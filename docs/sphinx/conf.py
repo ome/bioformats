@@ -129,20 +129,9 @@ bf_github_root = github_root + user + '/bioformats/'
 bf_github_branch = bf_github_root + 'blob/' + source_branch + '/'
 
 # Variables used to define Jenkins extlinks
-if "JENKINS_JOB" in os.environ and len(os.environ.get('JENKINS_JOB')) > 0:
-    jenkins_job = os.environ.get('JENKINS_JOB')
-else:
-    jenkins_job = 'BIOFORMATS-5.1-latest'
-if "JENKINS_CPP_JOB" in os.environ and len(os.environ.get('JENKINS_CPP_JOB')) > 0:
-    jenkins_cpp_job = os.environ.get('JENKINS_CPP_JOB')
-else:
-    jenkins_cpp_job = 'BIOFORMATS-5.1-latest-cpp'
-
 jenkins_root = 'http://ci.openmicroscopy.org'
 jenkins_job_root = jenkins_root + '/job'
 jenkins_view_root = jenkins_root + '/view'
-bf_job_root = jenkins_job_root + '/' + jenkins_job
-bf_cpp_job_root = jenkins_job_root + '/' + jenkins_cpp_job
 
 # Variables used to define other extlinks
 cvs_root = 'http://cvs.openmicroscopy.org.uk'
@@ -171,10 +160,6 @@ extlinks = {
     'jenkins' : (jenkins_root + '/%s', ''),
     'jenkinsjob' : (jenkins_job_root + '/%s', ''),
     'jenkinsview' : (jenkins_view_root + '/%s', ''),
-    'bfjob' : (bf_job_root + '/%s', ''),
-    'bfcppjob' : (bf_cpp_job_root + '/%s', ''),
-    'bfcppdoxygen' : (bf_cpp_job_root + '/doxygen/%s', ''),
-    'javadoc' : (bf_job_root + '/javadoc/%s', ''),
     # Mailing list/forum links
     'mailinglist' : (lists_root + '/mailman/listinfo/%s', ''),
     'forum' : (oo_root + '/community/%s', ''),
@@ -192,6 +177,8 @@ extlinks = {
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
     'downloads' : (downloads_root + '/latest/bio-formats5/%s', ''),
+    'download_components' : (downloads_root + '/latest/bio-formats5/artifacts/%s', ''),
+    'javadoc' : (downloads_root + '/latest/bio-formats5/api/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')
