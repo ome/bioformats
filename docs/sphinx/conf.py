@@ -126,7 +126,10 @@ else:
 
 github_root = 'https://github.com/'
 bf_github_root = github_root + user + '/bioformats/'
-bf_github_branch = bf_github_root + 'blob/' + source_branch + '/'
+bf_github_tree = bf_github_root + 'tree/' + source_branch + '/'
+bf_github_blob = bf_github_root + 'blob/' + source_branch + '/'
+gpl_formats = bf_github_blob + 'components/formats-gpl/src/loci/formats/'
+bsd_formats = bf_github_blob + 'components/formats-bsd/src/loci/formats/'
 
 # Variables used to define Jenkins extlinks
 jenkins_root = 'http://ci.openmicroscopy.org'
@@ -151,11 +154,12 @@ extlinks = {
     'milestone' : (trac_root + '/milestone/%s', ''),
     'report' : (trac_root + '/report/%s', ''),
     # Github links
-    'source' : (bf_github_branch + '%s', ''),
-    'bfreader' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/in/%s', ''),
-    'bsd-reader' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/in/%s', ''),
-    'bfwriter' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/out/' + '%s', ''),
-    'bsd-writer' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/out/' + '%s', ''),
+    'source' : (bf_github_blob + '%s', ''),
+    'sourcedir' : (bf_github_tree + '%s', ''),
+    'bfreader' : (gpl_formats + 'in/%s', ''),
+    'bsd-reader' : (bsd_formats + 'in/%s', ''),
+    'bfwriter' : (gpl_formats + 'out/' + '%s', ''),
+    'bsd-writer' : (bsd_formats + 'out/' + '%s', ''),
     # Jenkins links
     'jenkins' : (jenkins_root + '/%s', ''),
     'jenkinsjob' : (jenkins_job_root + '/%s', ''),

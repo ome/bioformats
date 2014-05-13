@@ -57,7 +57,7 @@ same folder.
 
 See the list in the :source:`Bio-Formats toplevel build file <build.xml>`
 for a complete and up-to-date list of all optional libraries, which can
-all be found in our :source:`Git repository <jar>`.
+all be found in our :sourcedir:`Git repository <jar>`.
 
 Examples of usage
 -----------------
