@@ -25,27 +25,27 @@ same folder.
 
   *
     - `Apache Jakarta POI <http://jakarta.apache.org/poi/>`_ library, OME fork
-    - :bfjob:`ome-poi.jar <lastSuccessfulBuild/artifact/artifacts/ome-poi.jar>`
+    - :download_components:`ome-poi.jar`
     - Apache
     - For OLE-based formats (zvi, oib, ipw, cxd)
 
   *
     - `MDB Tools project <http://sourceforge.net/projects/mdbtools>`_ Java
       port, OME fork
-    - :bfjob:`mdbtools-java.jar <lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`
+    - :download_components:`mdbtools-java.jar`
     - LGPL
     - For Olympus CellR and Zeiss LSM metadata (mdb)
 
   *
     - `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ pure Java
       implementation, OME fork
-    - :bfjob:`jai_imageio.jar <lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`
+    - :download_components:`jai_imageio.jar`
     - BSD
     - For JPEG2000-based formats (nd2, jp2)
 
   *
     - `NetCDF Java library <http://www.unidata.ucar.edu/software/netcdf-java/>`_
-    - :bfjob:`netcdf-4.3.19.jar <lastSuccessfulBuild/artifact/artifacts/netcdf-4.3.19.jar>`
+    - :download_components:`netcdf-4.3.19.jar`
     - LGPL
     - For HDF5-based formats (Imaris 5.5, MINC MRI)
 
