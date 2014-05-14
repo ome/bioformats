@@ -2,10 +2,10 @@ Using Bio-Formats as a Java library
 ===================================
 
 If you wish to make use of Bio-Formats within your own software, you can
-:downloads:`download formats-gpl.jar <>` to use it as a library. Just 
-add **formats-gpl.jar** to your CLASSPATH or build path. You will also need 
-**common.jar** for common I/O functions, **ome-xml.jar** for metadata 
-standardization, and `SLF4J <http://slf4j.org/>`_ for logging. 
+:downloads:`download formats-gpl.jar <artifacts/formats-gpl.jar>` to use it as
+a library. Just add **formats-gpl.jar** to your CLASSPATH or build path. You
+will also need **common.jar** for common I/O functions, **ome-xml.jar** for
+metadata standardization, and `SLF4J <http://slf4j.org/>`_ for logging. 
 
 There are also certain packages that if present will be utilized to
 provide additional functionality. To include one, just place it in the
@@ -62,32 +62,32 @@ all be found in our :sourcedir:`Git repository <jar>`.
 Examples of usage
 -----------------
 
-:source:`ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>` - 
+:source:`ImageConverter <components/bio-formats-tools/src/loci/formats/tools/ImageConverter.java>` -
 A simple command line tool for converting between formats.
 
-:source:`ImageInfo <components/bio-formats-tools/src/loci/formats/tools/ImageInfo.java>` - 
-A more involved command line utility for thoroughly reading an input file, 
+:source:`ImageInfo <components/bio-formats-tools/src/loci/formats/tools/ImageInfo.java>` -
+A more involved command line utility for thoroughly reading an input file,
 printing some information about it, and displaying the pixels
 onscreen using the Bio-Formats viewer.
 
-:source:`MinimumWriter <components/formats-gpl/utils/MinimumWriter.java>` - 
-A command line utility demonstrating the minimum amount of metadata needed to 
+:source:`MinimumWriter <components/formats-gpl/utils/MinimumWriter.java>` -
+A command line utility demonstrating the minimum amount of metadata needed to
 write a file.
 
-:source:`PrintTimestamps <components/formats-gpl/utils/PrintTimestamps.java>` - 
+:source:`PrintTimestamps <components/formats-gpl/utils/PrintTimestamps.java>` -
 A command line example demonstrating how to extract timestamps from a file.
 
-:source:`Simple_Read <components/bio-formats-plugins/utils/Simple_Read.java>` - 
-A simple ImageJ plugin demonstrating how to use Bio-Formats to read files into 
+:source:`Simple_Read <components/bio-formats-plugins/utils/Simple_Read.java>` -
+A simple ImageJ plugin demonstrating how to use Bio-Formats to read files into
 ImageJ (see :doc:`/users/imagej/index`).
 
-:source:`Read_Image <components/bio-formats-plugins/utils/Read_Image.java>` - 
-An ImageJ plugin that uses Bio-Formats to build up an image stack, reading 
+:source:`Read_Image <components/bio-formats-plugins/utils/Read_Image.java>` -
+An ImageJ plugin that uses Bio-Formats to build up an image stack, reading
 image planes one by one (see :doc:`/users/imagej/index`).
 
-:source:`Mass_Importer <components/bio-formats-plugins/utils/Mass_Importer.java>` - 
-A simple plugin for ImageJ that demonstrates how to open all image files in a 
-directory using Bio-Formats, grouping files with similar names to avoiding 
+:source:`Mass_Importer <components/bio-formats-plugins/utils/Mass_Importer.java>` -
+A simple plugin for ImageJ that demonstrates how to open all image files in a
+directory using Bio-Formats, grouping files with similar names to avoiding
 opening the same dataset more than once (see :doc:`/users/imagej/index`).
 
 
