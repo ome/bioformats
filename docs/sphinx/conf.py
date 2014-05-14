@@ -181,7 +181,6 @@ extlinks = {
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
     'downloads' : (downloads_root + '/latest/bio-formats5/%s', ''),
-    'download_components' : (downloads_root + '/latest/bio-formats5/artifacts/%s', ''),
     'javadoc' : (downloads_root + '/latest/bio-formats5/api/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
