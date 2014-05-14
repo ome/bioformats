@@ -200,8 +200,9 @@ public class OMETiffReader extends FormatReader {
       IMetadata meta = service.createOMEXMLMetadata(comment);
 
       try {
-        if (meta.getBinaryOnlyMetadataFile(0) != null) {
-          return true;
+        String metadataFile = meta.getBinaryOnlyMetadataFile(0);
+        if (metadataFile != null) {
+          return !checkSuffix(metadataFile, "tif") && !checkSuffix(metadataFile, "tiff");
         }
       }
       catch (NullPointerException e) {
@@ -414,6 +415,9 @@ public class OMETiffReader extends FormatReader {
     String metadataPath = null;
     try {
       metadataPath = meta.getBinaryOnlyMetadataFile(0);
+      if (checkSuffix(metadataPath, "tif") || checkSuffix(metadataPath, "tiff")) {
+        metadataPath = null;
+      }
     }
     catch (NullPointerException e) {
     }
@@ -431,6 +435,10 @@ public class OMETiffReader extends FormatReader {
         }
         catch (ServiceException se) {
           throw new FormatException(se);
+        }
+        catch (NullPointerException e) {
+          metadataFile = null;
+          metadataPath = null;
         }
       }
     }
