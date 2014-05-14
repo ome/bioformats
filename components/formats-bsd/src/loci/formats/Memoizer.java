@@ -562,6 +562,9 @@ public class Memoizer extends ReaderWrapper {
       }
 
       // this serves to strip off the drive letter on Windows
+      // since we're using the absolute path, 'id' will either start with
+      // File.separator (as on UNIX), or a drive letter (as on Windows)
+      id = new File(id).getAbsolutePath();
       id = id.substring(id.indexOf(File.separator) + 1);
 
       f = new File(directory, id);
