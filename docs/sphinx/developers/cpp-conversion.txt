@@ -506,8 +506,3 @@ Installed libraries (on Linux)::
       ├── libome-xerces.so.5.1.0
       ├── libome-xml.so -> libome-xml.so.5.1.0
       └── libome-xml.so.5.1.0
-
-API Reference
--------------
-
-:bfcppdoxygen:`Doxygen <annotated.html>` is used to document all APIs.
