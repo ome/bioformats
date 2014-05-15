@@ -263,52 +263,9 @@
 		<SA:TagAnnotation ID="Annotation:23" Namespace="org.ome-xml.sample:dummy">
 			<SA:Value>Tag:24</SA:Value>
 		</SA:TagAnnotation>
-		<SA:TagAnnotation ID="Annotation:24" Namespace="org.ome-xml.sample:dummy">
-			<SA:Value>Tag:25</SA:Value>
+		<SA:TagAnnotation ID="Annotation:35" Namespace="org.ome-xml.sample:dummy">
+			<SA:Value>Tag:36</SA:Value>
 		</SA:TagAnnotation>
-		<SA:TagAnnotation ID="Annotation:25" Namespace="org.ome-xml.sample:dummy">
-			<SA:Value>Tag:26</SA:Value>
-		</SA:TagAnnotation>
-		<SA:TagAnnotation ID="Annotation:26" Namespace="org.ome-xml.sample:dummy">
-			<SA:Value>Tag:27</SA:Value>
-		</SA:TagAnnotation>
-		<SA:TagAnnotation ID="Annotation:27" Namespace="org.ome-xml.sample:dummy">
-			<SA:Value>Tag:28</SA:Value>
-		</SA:TagAnnotation>
-		<SA:TagAnnotation ID="Annotation:28" Namespace="org.ome-xml.sample:dummy">
-			<SA:Value>Tag:29</SA:Value>
-		</SA:TagAnnotation>
-		<SA:TagAnnotation ID="Annotation:29" Namespace="org.ome-xml.sample:dummy">
-			<SA:Value>Tag:30</SA:Value>
-		</SA:TagAnnotation>
-		<SA:TagAnnotation ID="Annotation:30" Namespace="org.ome-xml.sample:dummy">
-			<SA:Value>Tag:31</SA:Value>
-		</SA:TagAnnotation>
-		<SA:TagAnnotation ID="Annotation:31" Namespace="org.ome-xml.sample:dummy">
-			<SA:Value>Tag:32</SA:Value>
-		</SA:TagAnnotation>
-		<SA:TagAnnotation ID="Annotation:32" Namespace="org.ome-xml.sample:dummy">
-			<SA:Value>Tag:33</SA:Value>
-		</SA:TagAnnotation>
-		<SA:TagAnnotation ID="Annotation:33" Namespace="org.ome-xml.sample:dummy">
-			<SA:Value>Tag:34</SA:Value>
-		</SA:TagAnnotation>
-		<SA:TagAnnotation ID="Annotation:34" Namespace="org.ome-xml.sample:dummy">
-			<SA:Value>Tag:35</SA:Value>
-		</SA:TagAnnotation>
-		<SA:ListAnnotation ID="Annotation:35" Namespace="org.ome-xml.sample:dummy">
-			<SA:AnnotationRef ID="Annotation:24"/>
-			<SA:AnnotationRef ID="Annotation:25"/>
-			<SA:AnnotationRef ID="Annotation:26"/>
-			<SA:AnnotationRef ID="Annotation:27"/>
-			<SA:AnnotationRef ID="Annotation:28"/>
-			<SA:AnnotationRef ID="Annotation:29"/>
-			<SA:AnnotationRef ID="Annotation:30"/>
-			<SA:AnnotationRef ID="Annotation:31"/>
-			<SA:AnnotationRef ID="Annotation:32"/>
-			<SA:AnnotationRef ID="Annotation:33"/>
-			<SA:AnnotationRef ID="Annotation:34"/>
-		</SA:ListAnnotation>
 		<SA:TagAnnotation ID="Annotation:36" Namespace="org.ome-xml.sample:dummy">
 			<SA:Value>Tag:37</SA:Value>
 		</SA:TagAnnotation>
