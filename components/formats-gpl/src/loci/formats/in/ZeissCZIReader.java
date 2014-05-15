@@ -631,7 +631,7 @@ public class ZeissCZIReader extends FormatReader {
     if (ms0.imageCount * seriesCount > planes.size() * scanDim &&
       planes.size() > 0)
     {
-      if (planes.size() != ms0.sizeT &&
+      if (planes.size() != ms0.imageCount && planes.size() != ms0.sizeT &&
         (planes.size() % (seriesCount * getSizeZ())) == 0)
       {
         if (!isGroupFiles() && planes.size() == (ms0.imageCount * seriesCount) / positions) {
@@ -642,7 +642,9 @@ public class ZeissCZIReader extends FormatReader {
           ms0.sizeT = 1;
         }
       }
-      else if (planes.size() == ms0.sizeT) {
+      else if (planes.size() == ms0.sizeT || planes.size() == ms0.imageCount ||
+        (!isGroupFiles() && positions > 1))
+      {
         positions = 1;
         acquisitions = 1;
         mosaics = 1;
