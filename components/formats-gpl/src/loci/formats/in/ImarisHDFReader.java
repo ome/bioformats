@@ -269,8 +269,6 @@ public class ImarisHDFReader extends FormatReader {
         core.add(new CoreMetadata());
       }
 
-      ms0.resolutionCount = seriesCount;
-
       for (int i=1; i<seriesCount; i++) {
         CoreMetadata ms = core.get(i);
         String groupPath =
@@ -285,6 +283,15 @@ public class ImarisHDFReader extends FormatReader {
         ms.sizeC = getSizeC();
         ms.sizeT = getSizeT();
         ms.thumbnail = true;
+
+	if (ms.sizeZ == ms0.sizeZ && ms.sizeC == ms0.sizeC &&
+	  ms.sizeT == ms0.sizeT)
+	{
+	  // do not assume that all series will have the same dimensions
+	  // if the Z, C or T size is different, then it cannot
+	  // be a subresolution
+          ms0.resolutionCount++;
+	}
       }
     }
     ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
