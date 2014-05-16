@@ -5,22 +5,27 @@ Before filing a bug report
 --------------------------
 
 If you think you have found a bug in Bio-Formats, the first thing to do is
-update your version of Bio-Formats to the latest trunk version. It is
-possible that the problem has already been addressed. For both Fiji and
-ImageJ users, select Update Bio-Formats Plugins under the Bio-Formats menu.
-Select Trunk Build.
+update your version of Bio-Formats to the latest version to check if the
+problem has already been addressed. The Fiji updater will automatically do
+this for you, while in ImageJ you can select
+:menuselection:`Plugins --> Bio-Formats --> Update Bio-Formats Plugins`.
 
-You can also download the :downloads:`newest version of Bio-Formats <>`. 
-If you are not sure which version you need, select the Trunk Build under LOCI 
-Tools complete bundle.
+You can also download the :downloads:`latest version of Bio-Formats <>`.
+If you are not sure which version you need, select the latest build of the
+Bio-Formats package bundle from the components table.
 
 Sending a bug report
 --------------------
 
-If you can still reproduce the bug after updating to the newest version
-of Bio-Formats, please send us a bug report. To ensure that any
-inquiries you make are resolved promptly, please include the following
-information:
+If you can still reproduce the bug after updating to the latest version
+of Bio-Formats, please send a bug report to the
+:mailinglist:`OME Users mailing list <ome-users>`. You can upload files to our
+`QA system <http://qa.openmicroscopy.org.uk/qa/upload/>`_ or for large files
+(>2 GB), we can provide you with an FTP server address if you write to the
+mailing list.
+
+To ensure that any inquiries you make are resolved promptly, please include
+the following information:
 
 -  **Exact error message**. Copy and paste any error messages into the
    text of your email. Alternatively, attach a screenshot of the
@@ -29,8 +34,7 @@ information:
    operating system, and which version of Java you are using.
 -  **Non-working data**. If possible, please send a non-working file.
    This helps us ensure that the problem is fixed for next release and
-   will not reappear in later releases. We can provide you with an FTP
-   server for uploading your file(s) if needed. Note that any data
+   will not reappear in later releases. Note that any data
    provided is used for internal testing only; we do not make images
    publicly available unless given explicit permission to do so.
 -  **Metadata and screenshots**. If possible, include any additional
@@ -43,9 +47,6 @@ information:
    (sample files, specifications, vendor/manufacturer information,
    etc.). This helps us to better support the format and ensures future
    versions of the format are also supported.
-
-Once you have gathered all the relevant information, send it as an
-e-mail to the `OME Users mailing list <http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/>`_.
 
 **Please be patient** - it may be a few days until you receive a
 response, but we reply to *every* email inquiry we receive.
