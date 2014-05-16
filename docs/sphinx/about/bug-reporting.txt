@@ -6,9 +6,8 @@ Before filing a bug report
 
 If you think you have found a bug in Bio-Formats, the first thing to do is
 update your version of Bio-Formats to the latest version to check if the
-problem has already been addressed. The Fiji updater will automatically update
-Bio-Formats for you if you have the Bio-Formats update site enabled, while in
-ImageJ, you can select
+problem has already been addressed. The Fiji updater will automatically do
+this for you, while in ImageJ you can select
 :menuselection:`Plugins --> Bio-Formats --> Update Bio-Formats Plugins`.
 
 You can also download the :downloads:`latest version of Bio-Formats <>`.
@@ -19,7 +18,7 @@ Sending a bug report
 --------------------
 
 If you can still reproduce the bug after updating to the latest version
-of Bio-Formats, please send us a bug report to the
+of Bio-Formats, please send a bug report to the
 :mailinglist:`OME Users mailing list <ome-users>`. You can upload files to our
 `QA system <http://qa.openmicroscopy.org.uk/qa/upload/>`_ or for large files
 (>2 GB), we can provide you with an FTP server address if you write to the
