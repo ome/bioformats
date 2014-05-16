@@ -1370,7 +1370,10 @@ public class FormatReaderTest {
 
         int maxFiles = (int) Math.min(base.length, 100);
 
-        if (DataTools.indexOf(reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0) {
+        if (DataTools.indexOf(
+	  reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0 ||
+	  file.toLowerCase().endsWith(".czi"))
+	{
           maxFiles = (int) Math.min(maxFiles, 10);
         }
 
@@ -1433,12 +1436,6 @@ public class FormatReaderTest {
           if (reader.getFormat().equals("Hamamatsu VMS") &&
             !base[i].toLowerCase().endsWith(".vms"))
           {
-            continue;
-          }
-
-          // multi-file Zeiss CZI datasets are only detected when the
-          // "master" file is chosen
-          if (reader.getFormat().equals("Zeiss CZI")) {
             continue;
           }
 
