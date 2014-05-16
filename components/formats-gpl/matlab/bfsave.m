@@ -57,49 +57,16 @@ assert(isnumeric(I), 'First argument must be numeric');
 ip = inputParser;
 ip.addRequired('outputPath', @ischar);
 ip.addOptional('dimensionOrder', 'XYZCT', @(x) ismember(x, getDimensionOrders()));
+ip.addParamValue('metadata', [], @(x) isa(x, 'loci.formats.ome.OMEXMLMetadata'));
 ip.addParamValue('Compression', '',  @(x) ismember(x, getCompressionTypes()));
 ip.addParamValue('BigTiff', false , @islogical);
 ip.parse(outputPath, varargin{:});
 
 % Create metadata
-toInt = @(x) ome.xml.model.primitives.PositiveInteger(java.lang.Integer(x));
-OMEXMLService = loci.formats.services.OMEXMLServiceImpl();
-metadata = OMEXMLService.createOMEXMLMetadata();
-metadata.createRoot();
-metadata.setImageID('Image:0', 0);
-metadata.setPixelsID('Pixels:0', 0);
-metadata.setPixelsBinDataBigEndian(java.lang.Boolean.TRUE, 0, 0);
-
-% Set dimension order
-dimensionOrderEnumHandler = ome.xml.model.enums.handlers.DimensionOrderEnumHandler();
-dimensionOrder = dimensionOrderEnumHandler.getEnumeration(ip.Results.dimensionOrder);
-metadata.setPixelsDimensionOrder(dimensionOrder, 0);
-
-% Set pixels type
-pixelTypeEnumHandler = ome.xml.model.enums.handlers.PixelTypeEnumHandler();
-if strcmp(class(I), 'single')
-    pixelsType = pixelTypeEnumHandler.getEnumeration('float');
+if isempty(ip.Results.metadata)
+    metadata = createMinimalMetadata(I, dimensionOrder);
 else
-    pixelsType = pixelTypeEnumHandler.getEnumeration(class(I));
-end
-metadata.setPixelsType(pixelsType, 0);
-
-% Read pixels size from image and set it to the metadat
-sizeX = size(I, 2);
-sizeY = size(I, 1);
-sizeZ = size(I, find(ip.Results.dimensionOrder == 'Z'));
-sizeC = size(I, find(ip.Results.dimensionOrder == 'C'));
-sizeT = size(I, find(ip.Results.dimensionOrder == 'T'));
-metadata.setPixelsSizeX(toInt(sizeX), 0);
-metadata.setPixelsSizeY(toInt(sizeY), 0);
-metadata.setPixelsSizeZ(toInt(sizeZ), 0);
-metadata.setPixelsSizeC(toInt(sizeC), 0);
-metadata.setPixelsSizeT(toInt(sizeT), 0);
-
-% Set channels ID and samples per pixel
-for i = 1: sizeC
-    metadata.setChannelID(['Channel:0:' num2str(i-1)], 0, i-1);
-    metadata.setChannelSamplesPerPixel(toInt(1), 0, i-1);
+    metadata = ip.Results.metadata;
 end
 
 % Here you can edit the function and pass metadata using the adequate set methods, e.g.
