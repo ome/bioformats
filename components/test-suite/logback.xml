@@ -12,7 +12,7 @@
       <appender name="logfile-${threadName}" class="loci.tests.testng.TimestampedLogFileAppender">
 	    <File>target/bio-formats-test-${threadName}.log</File>
 	    <layout class="ch.qos.logback.classic.PatternLayout">
-	      <pattern>[%d] %level %m%n</pattern>
+	      <pattern>[%d] %level  %m%n</pattern>
 	    </layout>
 	  </appender>
 	</sift>
