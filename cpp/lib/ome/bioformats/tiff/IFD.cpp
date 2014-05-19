@@ -130,7 +130,7 @@ namespace ome
       IFD::openIndex(std::shared_ptr<TIFF>& tiff,
                      directory_index_type   index)
       {
-        ::TIFF *tiffraw = reinterpret_cast<::TIFF *>(tiff->getWrapped());
+        ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
         Sentry sentry;
 
@@ -155,7 +155,7 @@ namespace ome
       IFD::makeCurrent() const
       {
         std::shared_ptr<TIFF>& tiff = getTIFF();
-        ::TIFF *tiffraw = reinterpret_cast<::TIFF *>(tiff->getWrapped());
+        ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
         Sentry sentry;
 
@@ -183,7 +183,7 @@ namespace ome
                     ...) const
       {
         std::shared_ptr<TIFF>& tiff = getTIFF();
-        ::TIFF *tiffraw = reinterpret_cast<::TIFF *>(tiff->getWrapped());
+        ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
         Sentry sentry;
 
@@ -204,7 +204,7 @@ namespace ome
                     ...)
       {
         std::shared_ptr<TIFF>& tiff = getTIFF();
-        ::TIFF *tiffraw = reinterpret_cast<::TIFF *>(tiff->getWrapped());
+        ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
         Sentry sentry;
 
@@ -226,7 +226,7 @@ namespace ome
         std::shared_ptr<IFD> ret;
 
         std::shared_ptr<TIFF>& tiff = getTIFF();
-        ::TIFF *tiffraw = reinterpret_cast<::TIFF *>(tiff->getWrapped());
+        ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
         Sentry sentry;
 
@@ -245,7 +245,7 @@ namespace ome
       IFD::last() const
       {
         std::shared_ptr<TIFF>& tiff = getTIFF();
-        ::TIFF *tiffraw = reinterpret_cast<::TIFF *>(tiff->getWrapped());
+        ::TIFF *tiffraw = reinterpret_cast< ::TIFF *>(tiff->getWrapped());
 
         Sentry sentry;
 

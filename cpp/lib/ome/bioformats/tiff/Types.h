@@ -103,7 +103,7 @@ namespace ome
           LEFT_TOP     = 5, ///< Row 0 lhs, column 0 top.
           RIGH_TTOP    = 6, ///< Row 0 rhs, column 0 top.
           RIGHT_BOTTOM = 7, ///< Row 0 rhs, column 0 bottom.
-          LEFT_BOTTOM  = 8, ///< Row 0 lhs, column 0 bottom.
+          LEFT_BOTTOM  = 8  ///< Row 0 lhs, column 0 bottom.
         };
 
       /// Photometric interpretation of pixel data.
@@ -120,7 +120,7 @@ namespace ome
           ICCLAB = 9,       ///< ICC L*a*b*.
           ITULAB = 10,      ///< ITU L*a*b*.
           LOGL = 32844,     ///< CIE log2(L).
-          LOGLUV = 32845,   ///< CIE log2(L) (u',v').
+          LOGLUV = 32845    ///< CIE log2(L) (u',v').
         };
 
       /// Prediction scheme.
@@ -154,7 +154,7 @@ namespace ome
       enum YCbCrPosition
         {
           CENTERED = 1, ///< Centered.
-          COSITED = 2,  ///< Co-sited.
+          COSITED = 2   ///< Co-sited.
         };
 
     }
