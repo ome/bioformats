@@ -112,7 +112,7 @@ namespace ome
         getTIFF()
         {
           getIFD()->makeCurrent();
-          ::TIFF *tiff = reinterpret_cast<::TIFF *>(getIFD()->getTIFF()->getWrapped());
+          ::TIFF *tiff = reinterpret_cast< ::TIFF *>(getIFD()->getTIFF()->getWrapped());
           return tiff;
         }
 
