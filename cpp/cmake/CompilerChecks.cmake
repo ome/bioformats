@@ -143,3 +143,17 @@ check_cxx_source_compiles("
 #include <array>
 int main() { std::array<int,3> a; a[0] = 5; }
 " OME_HAVE_ARRAY)
+
+check_cxx_source_compiles("
+#include <cstdarg>
+
+void print(const char *fmt, ...)
+{
+  va_list va1, va2;
+  va_start(va1, fmt);
+  va_copy(va2, va1);
+  va_end(va1);
+}
+
+int main() { print(\"%d %s\", 43, \"test\"); }
+" OME_HAVE_CSTDARG)

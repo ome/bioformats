@@ -35,7 +35,13 @@
  * #L%
  */
 
-#include <cstdarg>
+#include <ome/internal/config.h>
+
+#ifdef OME_HAVE_CSTDARG
+# include <cstdarg>
+#else
+# include "stdarg.h"
+#endif
 
 #include <ome/bioformats/tiff/Sentry.h>
 #include <ome/bioformats/tiff/Exception.h>
