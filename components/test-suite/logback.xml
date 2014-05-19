@@ -6,6 +6,7 @@
     </encoder>
   </appender>
   <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+    <timeout>60 minutes</timeout>
     <discriminator class="loci.tests.testng.ThreadNameBasedDiscriminator"/>
     <sift>
       <appender name="logfile-${threadName}" class="loci.tests.testng.TimestampedLogFileAppender">
