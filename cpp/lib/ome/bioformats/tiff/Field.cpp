@@ -876,6 +876,32 @@ namespace ome
       /// @copydoc Field::get()
       template<>
       void
+      Field<UInt32Tag1>::get(value_type& value) const
+      {
+        if (type() != TYPE_LONG &&
+            passCount() != false &&
+            readCount() != 1)
+          throw Exception("FieldInfo mismatch with Field handler");
+
+        generic_get1(getIFD(), impl->tag, passCount(), readCount(), value);
+      }
+
+      /// @copydoc Field::set()
+      template<>
+      void
+      Field<UInt32Tag1>::set(const value_type& value)
+      {
+        if (type() != TYPE_LONG &&
+            passCount() != false &&
+            writeCount() != 1)
+          throw Exception("FieldInfo mismatch with Field handler");
+
+        generic_set1(getIFD(), impl->tag, passCount(), writeCount(), value);
+      }
+
+      /// @copydoc Field::get()
+      template<>
+      void
       Field<FloatTag1>::get(value_type& value) const
       {
         if (type() != TYPE_RATIONAL &&
