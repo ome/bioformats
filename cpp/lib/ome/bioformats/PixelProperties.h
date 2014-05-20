@@ -38,7 +38,8 @@
 #ifndef OME_BIOFORMATS_PIXELPROPERTIES_H
 #define OME_BIOFORMATS_PIXELPROPERTIES_H
 
-#include <ome/compat/array.h>
+#include <complex>
+
 #include <ome/compat/cstdint.h>
 
 #include <ome/bioformats/Types.h>
@@ -170,7 +171,7 @@ namespace ome
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX> >
     {
       /// COMPLEX native pixel type.
-      typedef std::array<float,2> type;
+      typedef std::complex<float> type;
     };
 
     /// Properties of DOUBLECOMPLEX pixels.
@@ -179,7 +180,7 @@ namespace ome
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> >
     {
       /// DOUBLECOMPLEX native pixel type.
-      typedef std::array<double,2> type;
+      typedef std::complex<double> type;
     };
 
     // No switch default to avoid -Wunreachable-code errors.
