@@ -80,7 +80,7 @@ public class Upgrade201106Test {
 
   @Test
   public void getOMEXMLVersion() throws ServiceException {
-    assertEquals("2013-10-dev-3", service.getOMEXMLVersion(metadata));
+    assertEquals("2013-10-dev-4", service.getOMEXMLVersion(metadata));
   }
 
   @Test

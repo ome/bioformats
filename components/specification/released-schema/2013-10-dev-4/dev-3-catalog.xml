@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE catalog PUBLIC "-//OASIS//DTD XML Catalogs V1.0//EN" "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+	<uri name="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4/ome.xsd"
+		uri="ome.xsd"/>
+	<uri name="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-4"
+		uri="ome.xsd"/>
+	<uri name="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-4/BinaryFile.xsd"
+		uri="BinaryFile.xsd"/>
+	<uri name="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-4/SPW.xsd"
+		uri="SPW.xsd"/>
+	<uri name="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-4/SA.xsd"
+		uri="SA.xsd"/>
+	<uri name="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-4/ROI.xsd"
+		uri="ROI.xsd"/>
+</catalog>
