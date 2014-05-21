@@ -234,7 +234,7 @@ public class TestTools {
     }
 
     // special config file for the test suite
-    LOGGER.info("\tconfig file");
+    LOGGER.debug("\tconfig file");
     try {
       config.parseConfigFile(subs[0]);
     }
@@ -275,7 +275,7 @@ public class TestTools {
 
     for (int i=0; i<subs.length; i++) {
       Location file = new Location(subs[i]);
-      LOGGER.info("Checking {}:", subs[i]);
+      LOGGER.debug("Checking {}:", subs[i]);
 
       String filename = file.getName();
 
@@ -283,19 +283,19 @@ public class TestTools {
         continue;
       }
       else if (isIgnoredFile(subs[i], config)) {
-        LOGGER.info("\tignored");
+        LOGGER.debug("\tignored");
         continue;
       }
       else if (file.isDirectory()) {
-        LOGGER.info("\tdirectory");
+        LOGGER.debug("\tdirectory");
         getFiles(subs[i], files, config, null, null, configFileSuffix);
       }
       else if (!subs[i].endsWith("readme.txt")) {
         if (typeTester.isThisType(subs[i])) {
-          LOGGER.info("\tOK");
+          LOGGER.debug("\tOK");
           files.add(file.getAbsolutePath());
         }
-        else LOGGER.info("\tunknown type");
+        else LOGGER.debug("\tunknown type");
       }
       file = null;
     }
