@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="true">
   <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+  <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+       <level>INFO</level>
+   </filter>
     <encoder>
       <pattern>[%d] [%t] %m%n</pattern>
     </encoder>
@@ -17,8 +20,11 @@
 	  </appender>
 	</sift>
   </appender>
+  <logger name="loci.tests.testng" level="DEBUG"/>
   <root level="INFO">
-    <appender-ref ref="stdout"/>
     <appender-ref ref="SIFT"/>
   </root>
+  <logger name="loci.tests.testng">
+    <appender-ref ref="stdout"/>
+  </logger>
 </configuration>
