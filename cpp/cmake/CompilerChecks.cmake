@@ -37,8 +37,8 @@
 # Try to put the compiler into the most recent standard mode.  This
 # will generally have the most features, and will remove the need for
 # Boost fallbacks if native implementations are available.
-option(compiler-autodetect "Enable C++11 features if possible, otherwise fall back to C++03 and C++98" ON)
-if (compiler-autodetect)
+option(cxxstd-autodetect "Enable C++11 features if possible, otherwise fall back to C++03 and C++98" ON)
+if (cxxstd-autodetect)
   check_cxx_compiler_flag(-std=c++11 CXX_FLAG_CXX11)
   if (CXX_FLAG_CXX11)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -54,7 +54,7 @@ if (compiler-autodetect)
       endif(CXX_FLAG_CXX98)
     endif(CXX_FLAG_CXX03)
   endif(CXX_FLAG_CXX11)
-endif (compiler-autodetect)
+endif (cxxstd-autodetect)
 
 # Try to enable the -pedantic flag.  This one needs special casing
 # since it may break building with older compilers where int64_t (long
