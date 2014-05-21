@@ -2200,7 +2200,7 @@ public class FormatReaderTest {
         }
       }
       boolean single = used.length == 1;
-      if (single && base) LOGGER.info("OK");
+      if (single && base) LOGGER.debug("OK");
       else LOGGER.info("{} {}", used.length, single ? "file" : "files");
       if (!base) {
         LOGGER.error("Used files list does not include base file");
@@ -2225,7 +2225,7 @@ public class FormatReaderTest {
    */
   private static void result(String testName, boolean success, String msg) {
     if (success) {
-      LOGGER.info("\t{}: PASSED ({})", new Object[] {testName,
+      LOGGER.debug("\t{}: PASSED ({})", new Object[] {testName,
         msg == null ? "" : msg});
     }
     else {
