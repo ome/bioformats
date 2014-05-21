@@ -19,9 +19,11 @@ to be installed:
 +------------+-----------+------------------+----------------+----------+
 | Boost      | >= 1.42¹  | libboost-all-dev | boost-devel    | boost    |
 +------------+-----------+------------------+----------------+----------+
+| TIFF       | >= 4.0²   | libtiff5-dev     | libtiff4-devel | libtiff  |
++------------+-----------+------------------+----------------+----------+
 | Xerces-C   | 3.x       | libxerces-c-dev  | xerces-c-devel | xerces-c |
 +------------+-----------+------------------+----------------+----------+
-| GTest†     | >= 1.5    | libgtest-dev     | gtest-devel    | N/A²     |
+| GTest†     | >= 1.5    | libgtest-dev     | gtest-devel    | N/A³     |
 +------------+-----------+------------------+----------------+----------+
 | Doxygen‡   | >= 1.6    | doxygen          | doxygen        | doxygen  |
 +------------+-----------+------------------+----------------+----------+
@@ -29,7 +31,8 @@ to be installed:
 +------------+-----------+------------------+----------------+----------+
 
 1. 1.41 is known to not work nicely with :program:`cmake`; 1.5x or later recommended
-2. `gtest not available in homebrew <http://answers.ros.org/question/42335/mac-os-x-install-error-no-available-formula-for-gtest/>`_
+2. 4.0.2 and earlier do not have TIFFField accessor functions; 4.0.3 or later recommended
+3. `gtest not available in homebrew <http://answers.ros.org/question/42335/mac-os-x-install-error-no-available-formula-for-gtest/>`_
 
 †
   Optional, needed to run the unit tests
