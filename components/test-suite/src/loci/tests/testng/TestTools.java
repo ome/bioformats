@@ -165,6 +165,7 @@ public class TestTools {
   }
 
   /** Creates a new log file. */
+  @Deprecated
   public static void createLogFile() {
     LOGGER.info("Start test suite");
 
