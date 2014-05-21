@@ -43,6 +43,8 @@
 #include <ome/bioformats/tiff/TIFF.h>
 #include <ome/bioformats/detail/tiff/Tags.h>
 
+#include <ome/internal/config.h>
+
 #include <tiffio.h>
 
 #include <boost/algorithm/string.hpp>
@@ -154,9 +156,10 @@ namespace ome
       std::string
       FieldBase::name() const
       {
-        Sentry sentry;
+        std::string ret("Unknown");
 
-        std::string ret;
+#ifdef TIFF_HAVE_FIELDINFO
+        Sentry sentry;
 
         const ::TIFFField *field = impl->getFieldInfo();
         if (field)
@@ -169,6 +172,7 @@ namespace ome
             os << impl->tag;
             ret = os.str();
           }
+#endif
 
         return ret;
       }
@@ -176,13 +180,15 @@ namespace ome
       Type
       FieldBase::type() const
       {
-        Sentry sentry;
-
         Type ret = TYPE_UNDEFINED;
+
+#ifdef TIFF_HAVE_FIELDINFO
+        Sentry sentry;
 
         const ::TIFFField *field = impl->getFieldInfo();
         if (field)
           ret = static_cast<Type>(TIFFFieldDataType(field));
+#endif
 
         return ret;
       }
@@ -190,13 +196,15 @@ namespace ome
       bool
       FieldBase::passCount() const
       {
-        Sentry sentry;
-
         bool ret = false;
+
+#ifdef TIFF_HAVE_FIELDINFO
+        Sentry sentry;
 
         const ::TIFFField *field = impl->getFieldInfo();
         if (field)
           ret = (TIFFFieldPassCount(field));
+#endif
 
         return ret;
       }
@@ -204,13 +212,15 @@ namespace ome
       int
       FieldBase::readCount() const
       {
-        Sentry sentry;
-
         int ret = 1;
+
+#ifdef TIFF_HAVE_FIELDINFO
+        Sentry sentry;
 
         const ::TIFFField *field = impl->getFieldInfo();
         if (field)
           ret = TIFFFieldReadCount(field);
+#endif
 
         return ret;
       }
@@ -218,13 +228,15 @@ namespace ome
       int
       FieldBase::writeCount() const
       {
-        Sentry sentry;
-
         int ret = 1;
+
+#ifdef TIFF_HAVE_FIELDINFO
+        Sentry sentry;
 
         const ::TIFFField *field = impl->getFieldInfo();
         if (field)
           ret = TIFFFieldWriteCount(field);
+#endif
 
         return ret;
       }
