@@ -59,6 +59,24 @@ check_c_source_compiles("#include <tiffio.h>
 
 int main(void)
 {
+  TIFF *tiff = TIFFOpen(\"foo\", \"r\");
+  TIFFFieldInfo *info = TIFFFindField(tiff, TIFFTAG_IMAGEDESCRIPTION, TIFF_ANY);
+  const char *name = TIFFFieldName(info);
+  TIFFDataType type = TIFFFieldDataType(info);
+  int pc = TIFFFieldPassCount(info);
+  int rc = TIFFFieldReadCount(info);
+  int wc = TIFFFieldWriteCount(info);
+}
+" TIFF_HAVE_FIELDINFO)
+
+if(NOT TIFF_HAVE_FIELDINFO)
+  message(WARNING "libtiff does not have TIFFFieldInfo (probably libtiff <= 4.0.2)")
+endif(NOT TIFF_HAVE_FIELDINFO)
+
+check_c_source_compiles("#include <tiffio.h>
+
+int main(void)
+{
   TIFFFieldInfo *info;
   TIFF *tiff;
   TIFFMergeFieldInfo(tiff, info, 0);
