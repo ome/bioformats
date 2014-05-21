@@ -239,7 +239,7 @@ public class TestTools {
       config.parseConfigFile(subs[0]);
     }
     catch (IOException exc) {
-      LOGGER.info("", exc);
+      LOGGER.debug("", exc);
     }
     catch (Exception e) { }
 
