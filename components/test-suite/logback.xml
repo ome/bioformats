@@ -14,9 +14,9 @@
     <sift>
       <appender name="logfile-${threadName}" class="loci.tests.testng.TimestampedLogFileAppender">
 	    <File>target/bio-formats-test-${threadName}.log</File>
-	    <layout class="ch.qos.logback.classic.PatternLayout">
+	    <encoder>
 	      <pattern>[%d] %level  %m%n</pattern>
-	    </layout>
+	    </encoder>
 	  </appender>
 	</sift>
   </appender>
