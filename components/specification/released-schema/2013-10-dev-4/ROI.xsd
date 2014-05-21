@@ -126,6 +126,20 @@
 					</xsd:annotation>
 				</xsd:element>
 			</xsd:sequence>
+			<xsd:attribute name="PhysicalXUnit" use="optional" type="OME:UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>
+						The units used for the X dimension of the shape. [UnitsLength]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PhysicalYUnit" use="optional" type="OME:UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>
+						The units used for the Y dimensions of the shape. [UnitsLength]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 			<xsd:attribute name="FillColor" use="optional" type="OME:Color">
 				<xsd:annotation>
 					<xsd:documentation>
