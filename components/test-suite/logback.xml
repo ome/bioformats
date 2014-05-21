@@ -4,7 +4,7 @@
   <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
        <level>INFO</level>
    </filter>
-    <encoder>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <pattern>[%d] [%t] %m%n</pattern>
     </encoder>
   </appender>
@@ -14,7 +14,7 @@
     <sift>
       <appender name="logfile-${threadName}" class="loci.tests.testng.TimestampedLogFileAppender">
 	    <File>target/bio-formats-test-${threadName}.log</File>
-	    <encoder>
+	    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 	      <pattern>[%d] %level  %m%n</pattern>
 	    </encoder>
 	  </appender>
