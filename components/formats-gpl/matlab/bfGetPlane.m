@@ -50,7 +50,7 @@ ip.addRequired('iPlane', isValidPlane);
 
 % Optional tile arguments check
 isValidX = @(x) isscalar(x) && ismember(x, 1 : r.getSizeX());
-isValidY = @(x) isscalar(x) && ismember(x, 1 : r.getSizeX());
+isValidY = @(x) isscalar(x) && ismember(x, 1 : r.getSizeY());
 ip.addOptional('x', 1, isValidX);
 ip.addOptional('y', 1, isValidY);
 ip.addOptional('width', r.getSizeX(), isValidX);

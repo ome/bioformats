@@ -49,6 +49,10 @@ classdef TestBfGetPlane < TestBfMatlab
             self.reader.setId('test.fake');
             self.sizeX = self.reader.DEFAULT_SIZE_X;
             self.sizeY = self.reader.DEFAULT_SIZE_Y;
+            self.x = 1;
+            self.y = 1;
+            self.width = self.sizeX;
+            self.height = self.sizeY;
         end
         
         function tearDown(self)
@@ -89,81 +93,65 @@ classdef TestBfGetPlane < TestBfMatlab
             self.checkInvalidInput();
         end
         
-        function checkInvalidTileInput(self)
-            f = @() bfGetPlane(self.reader, 1, self.x, self.y,...
-                self.width, self.height);
+        %% Tile input tests
+        function checkInvalidTileInput(self, varargin)
+            f = @() bfGetPlane(self.reader, 1, varargin{:});
             assertExceptionThrown(f,...
                 'MATLAB:InputParser:ArgumentFailedValidation');
         end
         
         function testZeroTileX(self)
             self.x = 0;
-            self.checkInvalidTileInput()
+            self.checkInvalidTileInput(self.x)
         end
         
         function testOversizedTileX(self)
             self.x = self.sizeX + 1;
-            self.checkInvalidTileInput();
+            self.checkInvalidTileInput(self.x);
         end
         
         function testZeroTileY(self)
-            self.x = 1;
             self.y = 0;
-            self.checkInvalidTileInput();
+            self.checkInvalidTileInput(self.x, self.y);
         end
         
         function testOversizedTileY(self)
-            self.x = 1;
             self.y = self.sizeY + 1;
-            self.checkInvalidTileInput();
+            self.checkInvalidTileInput(self.x, self.y);
         end
         
-        
         function testZeroTileWidth(self)
-            self.x = 1;
-            self.y = 1;
             self.width = 0;
-            self.checkInvalidTileInput();
+            self.checkInvalidTileInput(self.x, self.y, self.width);
         end
         
         function testOversizedTileWidth(self)
-            self.x = 1;
-            self.y = 1;
             self.width = self.sizeX + 1;
-            self.checkInvalidTileInput();
+            self.checkInvalidTileInput(self.x, self.y, self.width);
         end
         
         function testOversizedTileWidth2(self)
             self.x = 2;
-            self.y = 1;
             self.width = self.sizeX;
-            self.checkInvalidTileInput();
+            self.checkInvalidTileInput(self.x, self.y, self.width);
         end
         
         function testZeroTileHeight(self)
-            self.x = 1;
-            self.y = 1;
-            self.width = self.sizeX;
             self.height = 0;
-            self.checkInvalidTileInput();
+            self.checkInvalidTileInput(self.x, self.y, self.width, self.height);
         end
         
         function testOversizedTileHeight(self)
-            self.x = 1;
-            self.y = 1;
-            self.width = self.sizeX;
             self.height = self.sizeY + 1;
-            self.checkInvalidTileInput();
+            self.checkInvalidTileInput(self.x, self.y, self.width, self.height);
         end
         
         function testOversizedTileHeight2(self)
-            self.x = 1;
             self.y = 2;
-            self.width = self.sizeX;
             self.height = self.sizeY;
-            self.checkInvalidTileInput();
+            self.checkInvalidTileInput(self.x, self.y, self.width, self.height);
         end
-        
+
         % Pixel type tests
         function checkPixelsType(self, pixelsType)
             self.reader.setId([pixelsType '-test&pixelType=' pixelsType '.fake']);
@@ -229,10 +217,6 @@ classdef TestBfGetPlane < TestBfMatlab
         end
         
         function testFullTile(self)
-            self.x = 1;
-            self.y = 1;
-            self.width = self.sizeX;
-            self.height = self.sizeY;
             self.checkTile()
         end
         
@@ -259,5 +243,24 @@ classdef TestBfGetPlane < TestBfMatlab
             self.height = 1;
             self.checkTile()
         end
+        
+        function testRectangularImageTile(self)
+            self.sizeX = 100;
+            self.reader.setId(['test&sizeX=' num2str(self.sizeX) '.fake']);
+            self.y = 101;
+            self.height = 1;
+            self.width = 100;
+            self.checkTile()
+        end
+        
+        function testRectangularImageTile2(self)
+            self.sizeY = 100;
+            self.reader.setId(['test&sizeY=' num2str(self.sizeY) '.fake']);
+            self.x = 101;
+            self.width = 1;
+            self.height = 100;
+            self.checkTile()
+        end
+
     end
 end
