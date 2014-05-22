@@ -255,10 +255,6 @@ public class FilePatternReader extends FormatReader {
     return helper.isGroupFiles();
   }
 
-  public int fileGroupOption(String id) throws FormatException, IOException {
-    return helper.fileGroupOption(id);
-  }
-
   public boolean isMetadataComplete() {
     return helper.isMetadataComplete();
   }
@@ -277,31 +273,16 @@ public class FilePatternReader extends FormatReader {
     return helper.isOriginalMetadataPopulated();
   }
 
-  public String[] getUsedFiles() {
-    return helper.getUsedFiles();
-  }
-
-  public String[] getUsedFiles(boolean noPixels) {
-    return helper.getUsedFiles(noPixels);
-  }
-
-  public String[] getSeriesUsedFiles() {
-    return helper.getSeriesUsedFiles();
-  }
-
   public String[] getSeriesUsedFiles(boolean noPixels) {
-    return helper.getSeriesUsedFiles(noPixels);
+    if (noPixels) {
+      return new String[] {currentId};
+    }
+    String[] helperFiles = helper.getSeriesUsedFiles(noPixels);
+    String[] allFiles = new String[helperFiles.length + 1];
+    allFiles[0] = currentId;
+    System.arraycopy(helperFiles, 0, allFiles, 1, helperFiles.length);
+    return allFiles;
   }
-
-  public FileInfo[] getAdvancedUsedFiles(boolean noPixels) {
-    return helper.getAdvancedUsedFiles(noPixels);
-  }
-
-  public FileInfo[] getAdvancedSeriesUsedFiles(boolean noPixels) {
-    return helper.getAdvancedSeriesUsedFiles(noPixels);
-  }
-
-  public String getCurrentFile() { return helper.getCurrentFile(); }
 
   public int getIndex(int z, int c, int t) {
     return helper.getIndex(z, c, t);
@@ -364,7 +345,7 @@ public class FilePatternReader extends FormatReader {
   }
 
   public boolean isSingleFile(String id) throws FormatException, IOException {
-    return helper.isSingleFile(id);
+    return false;
   }
 
   public int getRequiredDirectories(String[] files)
@@ -378,7 +359,7 @@ public class FilePatternReader extends FormatReader {
   }
 
   public boolean hasCompanionFiles() {
-    return helper.hasCompanionFiles();
+    return true;
   }
 
   public String[] getPossibleDomains(String id)
@@ -455,6 +436,7 @@ public class FilePatternReader extends FormatReader {
     // the file should just contain a single line with the relative or
     // absolute file pattern
 
+    currentId = new Location(id).getAbsolutePath();
     String pattern = DataTools.readFile(id).trim();
     String dir = new Location(id).getAbsoluteFile().getParent();
     if (new Location(pattern).getParent() == null) {
@@ -462,6 +444,7 @@ public class FilePatternReader extends FormatReader {
     }
 
     helper.setId(pattern);
+    core = helper.getCoreMetadataList();
   }
 
 }
