@@ -44,6 +44,8 @@
 #include <ome/bioformats/tiff/Field.h>
 #include <ome/bioformats/tiff/Exception.h>
 
+#include <ome/internal/config.h>
+
 #include <ome/test/config.h>
 
 #include <gtest/gtest.h>
@@ -472,7 +474,11 @@ TEST(TIFFTest, FieldName)
   std::string name;
   name = ifd->getField(ome::bioformats::tiff::IMAGEDESCRIPTION).name();
 
+#ifdef TIFF_HAVE_FIELDINFO
   ASSERT_EQ(std::string("ImageDescription"), name);
+#else
+  ASSERT_EQ(std::string("Unknown"), name);
+#endif
 }
 
 TEST(TIFFTest, FieldCount)
