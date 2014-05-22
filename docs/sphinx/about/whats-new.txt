@@ -1,6 +1,17 @@
 Version history
 ===============
 
+5.0.2 (2014 May 28)
+-------------------
+
+* Many bug fixes for Zeiss .czi files
+* Several other bug fixes, including:
+    - Gatan .dm3 units and step count parsing
+    - Imspector .msr 5D image support
+    - DICOM reading of nested tags
+* Update native-lib-loader version (to 2.0.1)
+* Updates and improvements to user documentation
+
 5.0.1 (2014 Apr 7)
 ------------------
 
