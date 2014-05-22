@@ -1,7 +1,7 @@
 Version history
 ===============
 
-5.0.2 (2014 June 2)
+5.0.2 (2014 May 28)
 -------------------
 
 * Many bug fixes for Zeiss .czi files
