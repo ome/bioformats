@@ -41,8 +41,8 @@
 
 // Configuration of source and build trees
 
-#define PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR}
-#define PROJECT_BINARY_DIR ${PROJECT_BINARY_DIR}
+#define PROJECT_SOURCE_DIR "${PROJECT_SOURCE_DIR}"
+#define PROJECT_BINARY_DIR "${PROJECT_BINARY_DIR}"
 
 #cmakedefine OME_HAVE_CSTDARG 1
 #cmakedefine TIFF_HAVE_FIELDINFO 1
