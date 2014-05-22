@@ -1442,6 +1442,11 @@ public class FormatReaderTest {
             continue;
           }
 
+          // pattern datasets can only be detected with the pattern file
+          if (reader.getFormat().equals("File pattern")) {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -2042,6 +2047,13 @@ public class FormatReaderTest {
             // the Hamamatsu VMS reader only picks up its .vms file
             if (!result && !used[i].toLowerCase().endsWith(".vms") &&
               r instanceof HamamatsuVMSReader)
+            {
+              continue;
+            }
+
+            // the pattern reader only picks up pattern files
+            if (!result && !used[i].toLowerCase().endsWith(".pattern") &&
+              r instanceof FilePatternReader)
             {
               continue;
             }
