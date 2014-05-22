@@ -58,4 +58,3 @@ Compressed BMP files are currently not supported.
 
 .. seealso:: 
   `Technical Overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-18.html>`_
-

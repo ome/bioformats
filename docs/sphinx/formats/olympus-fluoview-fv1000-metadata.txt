@@ -10,8 +10,8 @@ data model so that you can work with a particular piece of metadata (e.g.
 physical width of the image in microns) in a format-independent way.
 
 Of the 475 fields documented in the :doc:`metadata summary table </metadata-summary>`:
-  * The file format itself supports 109 of them (22%).
-  * Of those, Bio-Formats fully or partially converts 109 (100%).
+  * The file format itself supports 113 of them (23%).
+  * Of those, Bio-Formats fully or partially converts 113 (100%).
 
 Supported fields
 ===============================================================================
@@ -89,6 +89,10 @@ These fields are fully supported by the Bio-Formats Olympus FV1000 format reader
   * :schema:`Pixels : SizeZ <OME-2013-06/ome_xsd.html#Pixels_SizeZ>`
   * :schema:`Pixels : TimeIncrement <OME-2013-06/ome_xsd.html#Pixels_TimeIncrement>`
   * :schema:`Pixels : Type <OME-2013-06/ome_xsd.html#Pixels_Type>`
+  * :schema:`Plane : DeltaT <OME-2013-06/ome_xsd.html#Plane_DeltaT>`
+  * :schema:`Plane : PositionX <OME-2013-06/ome_xsd.html#Plane_PositionX>`
+  * :schema:`Plane : PositionY <OME-2013-06/ome_xsd.html#Plane_PositionY>`
+  * :schema:`Plane : PositionZ <OME-2013-06/ome_xsd.html#Plane_PositionZ>`
   * :schema:`Plane : TheC <OME-2013-06/ome_xsd.html#Plane_TheC>`
   * :schema:`Plane : TheT <OME-2013-06/ome_xsd.html#Plane_TheT>`
   * :schema:`Plane : TheZ <OME-2013-06/ome_xsd.html#Plane_TheZ>`
@@ -127,6 +131,6 @@ These fields are fully supported by the Bio-Formats Olympus FV1000 format reader
   * :schema:`TransmittanceRange : CutIn <OME-2013-06/ome_xsd.html#TransmittanceRange_CutIn>`
   * :schema:`TransmittanceRange : CutOut <OME-2013-06/ome_xsd.html#TransmittanceRange_CutOut>`
 
-**Total supported: 109**
+**Total supported: 113**
 
-**Total unknown or missing: 366**
+**Total unknown or missing: 362**
