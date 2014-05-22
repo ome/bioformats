@@ -50,6 +50,13 @@
 #ifndef OME_COMPAT_ENDIAN_H
 # define OME_COMPAT_ENDIAN_H
 
+#include <ome/compat/config.h>
+
+// Work around missing BOOST_NOEXCEPT in older Boost versions (e.g. 1.46)
+#if defined(noexcept) and !defined(BOOST_NOEXCEPT)
+# define BOOST_NOEXCEPT
+#endif
+
 #include <ome/compat/endian/types.hpp>
 
 namespace ome
