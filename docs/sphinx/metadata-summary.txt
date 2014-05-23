@@ -657,10 +657,10 @@ Format readers
      - 0
      - 456
    * - :doc:`SVSReader <formats/aperio-svs-tiff-metadata>`
-     - 27
+     - 29
      - 0
      - 0
-     - 448
+     - 446
    * - :doc:`ScanrReader <formats/olympus-scanr-metadata>`
      - 43
      - 0
@@ -792,10 +792,10 @@ Format readers
      - 0
      - 449
    * - :doc:`ZeissCZIReader <formats/zeiss-czi-metadata>`
-     - 157
+     - 158
      - 0
      - 0
-     - 318
+     - 317
    * - :doc:`ZeissLSMReader <formats/zeiss-lsm-metadata>`
      - 101
      - 0
@@ -929,10 +929,10 @@ Metadata fields
      - 0
      - 142
    * - :schema:`Channel - FilterSetRef <OME-2013-06/ome_xsd.html#FilterSetRef_ID>`
+     - 1
      - 0
      - 0
-     - 0
-     - 159
+     - 158
    * - :schema:`Channel - Fluor <OME-2013-06/ome_xsd.html#Channel_Fluor>`
      - 1
      - 0
@@ -2229,15 +2229,15 @@ Metadata fields
      - 0
      - 0
    * - :schema:`Pixels - PhysicalSizeX <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeX>`
-     - 82
+     - 83
      - 0
      - 0
-     - 77
+     - 76
    * - :schema:`Pixels - PhysicalSizeY <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeY>`
-     - 82
+     - 83
      - 0
      - 0
-     - 77
+     - 76
    * - :schema:`Pixels - PhysicalSizeZ <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeZ>`
      - 42
      - 0
