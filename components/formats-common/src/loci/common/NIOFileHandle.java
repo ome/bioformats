@@ -183,6 +183,12 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /** Gets the FileChannel from this FileHandle. */
   public FileChannel getFileChannel() {
+    try {
+      channel.position(position);
+    }
+    catch (IOException e) {
+      LOGGER.warn("FileChannel.position failed", e);
+    }
     return channel;
   }
 
@@ -252,8 +258,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   public int read(ByteBuffer buf, int off, int len) throws IOException {
     buf.position(off);
     buf.limit(off + len);
-    channel.position(position);
-    int readLength = channel.read(buf);
+    int readLength = channel.read(buf, position);
     buffer(position + readLength, 0);
     // Return value of NIO channel's is -1 when zero bytes are read at the end
     // of the file.
