@@ -713,6 +713,7 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
+      segment.close();
     }
 
     if (rotationLabels != null) {
@@ -939,15 +940,19 @@ public class ZeissCZIReader extends FormatReader {
     if (in != null) {
       in.close();
     }
-    in = new RandomAccessInputStream(id, 1024);
+    in = new RandomAccessInputStream(id, BUFFER_SIZE);
     in.order(isLittleEndian());
     while (in.getFilePointer() < in.length()) {
       Segment segment = readSegment(id);
+      if (segment == null) {
+        continue;
+      }
       segments.add(segment);
 
       if (segment instanceof SubBlock) {
         planes.add((SubBlock) segment);
       }
+      segment.close();
     }
   }
 
@@ -2350,6 +2355,7 @@ public class ZeissCZIReader extends FormatReader {
     // instantiate a Segment subclass based upon the segment ID
     String segmentID = in.readString(16).trim();
     Segment segment = null;
+    boolean skipData = false;
 
     if (segmentID.equals("ZISRAWFILE")) {
       segment = new FileHeader();
@@ -2371,14 +2377,19 @@ public class ZeissCZIReader extends FormatReader {
     }
     else if (segmentID.equals("DELETED")) {
       segment = new Segment();
+      skipData = true;
     }
     else {
-      LOGGER.info("Unknown segment type: " + segmentID);
+      if (segmentID.trim().length() > 0) {
+        LOGGER.info("Unknown segment type: {}", segmentID);
+      }
       segment = new Segment();
+      skipData = true;
     }
     segment.startingPosition = startingPosition;
     segment.id = segmentID;
     segment.filename = filename;
+    segment.stream = in;
 
     if (!(segment instanceof Metadata)) {
       segment.fillInData();
@@ -2393,6 +2404,11 @@ public class ZeissCZIReader extends FormatReader {
     }
     else {
       in.seek(in.length());
+    }
+
+    if (skipData) {
+      segment.close();
+      return null;
     }
     return segment;
   }
@@ -2519,6 +2535,7 @@ public class ZeissCZIReader extends FormatReader {
     public String id;
     public long allocatedSize;
     public long usedSize;
+    public RandomAccessInputStream stream;
 
     public Segment() {
       filename = null;
@@ -2526,6 +2543,7 @@ public class ZeissCZIReader extends FormatReader {
       id = null;
       allocatedSize = 0;
       usedSize = 0;
+      stream = null;
     }
 
     public Segment(Segment model) {
@@ -2551,11 +2569,22 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+	}
       }
     }
 
+    public void close() throws IOException {
+      // whatever created the Segment is responsible for closing the stream
+      // we just need to remove the reference
+      stream = null;
+    }
+
     public RandomAccessInputStream getStream() throws IOException {
+      if (stream != null) {
+        return stream;
+      }
       return new RandomAccessInputStream(filename, BUFFER_SIZE);
     }
   }
@@ -2593,7 +2622,9 @@ public class ZeissCZIReader extends FormatReader {
         attachmentDirectoryPosition = s.readLong();
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+	}
       }
     }
   }
@@ -2624,7 +2655,9 @@ public class ZeissCZIReader extends FormatReader {
         s.read(attachment);
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+	}
       }
     }
 
@@ -2697,7 +2730,9 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+	}
       }
     }
 
@@ -2896,7 +2931,9 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+	}
       }
     }
   }
@@ -2921,7 +2958,9 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
       finally {
-        s.close();
+        if (s == null) {
+          s.close();
+	}
       }
     }
   }
@@ -2947,7 +2986,9 @@ public class ZeissCZIReader extends FormatReader {
         s.read(attachmentData);
       }
       finally {
-        s.close();
+        if (s == null) {
+          s.close();
+	}
       }
     }
   }
