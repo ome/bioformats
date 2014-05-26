@@ -106,6 +106,9 @@ public class NIOFileHandle extends AbstractNIOHandle {
   /** Provider class for NIO byte buffers, allocated or memory mapped. */
   protected NIOByteBufferProvider byteBufferProvider;
 
+  /** The original length of the file. */
+  private Long defaultLength;
+
   // -- Constructors --
 
   /**
@@ -125,6 +128,11 @@ public class NIOFileHandle extends AbstractNIOHandle {
     channel = raf.getChannel();
     byteBufferProvider = new NIOByteBufferProvider(channel, mapMode);
     buffer(position, 0);
+
+    // if we know the length won't change, cache the original length
+    if (mode.equals("r")) {
+      defaultLength = raf.length();
+    }
   }
 
   /**
@@ -206,6 +214,9 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /* @see IRandomAccess.length() */
   public long length() throws IOException {
+    if (defaultLength != null) {
+      return defaultLength;
+    }
     return raf.length();
   }
 
