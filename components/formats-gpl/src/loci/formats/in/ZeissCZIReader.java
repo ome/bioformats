@@ -115,6 +115,8 @@ public class ZeissCZIReader extends FormatReader {
 
   private ArrayList<Segment> segments;
   private ArrayList<SubBlock> planes;
+  private HashMap<Coordinate, ArrayList<Integer>> indexIntoPlanes =
+    new HashMap<Coordinate, ArrayList<Integer>>();
   private int rotations = 1;
   private int positions = 1;
   private int illuminations = 1;
@@ -444,6 +446,7 @@ public class ZeissCZIReader extends FormatReader {
       rotationLabels = null;
       illuminationLabels = null;
       phaseLabels = null;
+      indexIntoPlanes.clear();
     }
   }
 
@@ -731,6 +734,17 @@ public class ZeissCZIReader extends FormatReader {
 
     assignPlaneIndices();
 
+    for (int i=0; i<planes.size(); i++) {
+      SubBlock p = planes.get(i);
+      Coordinate c = new Coordinate(p.seriesIndex, p.planeIndex);
+      ArrayList<Integer> indices = new ArrayList<Integer>();
+      if (indexIntoPlanes.containsKey(c)) {
+        indices = indexIntoPlanes.get(c);
+      }
+      indices.add(i);
+      indexIntoPlanes.put(c, indices);
+    }
+
     if (channels.size() > 0 && channels.get(0).color != null) {
       for (int i=0; i<seriesCount; i++) {
         core.get(i).indexed = true;
@@ -806,52 +820,56 @@ public class ZeissCZIReader extends FormatReader {
         if (t != null)
           startTime = t.asInstant().getMillis() / 1000d;
       }
+
       for (int plane=0; plane<getImageCount(); plane++) {
-        for (SubBlock p : planes) {
-          if (p.seriesIndex == i && p.planeIndex == plane) {
-            if (startTime == null) {
-              startTime = p.timestamp;
-            }
+        Coordinate coordinate = new Coordinate(i, plane);
+	ArrayList<Integer> index = indexIntoPlanes.get(coordinate);
+	if (index == null) {
+          continue;
+	}
 
-            if (p.stageX != null) {
-              store.setPlanePositionX(p.stageX, i, plane);
-            }
-            else if (positionsX != null && i < positionsX.length) {
-              store.setPlanePositionX(positionsX[i], i, plane);
-            }
+        SubBlock p = planes.get(index.get(0));
+        if (startTime == null) {
+          startTime = p.timestamp;
+        }
 
-            if (p.stageY != null) {
-              store.setPlanePositionY(p.stageY, i, plane);
-            }
-            else if (positionsY != null && i < positionsY.length) {
-              store.setPlanePositionY(positionsY[i], i, plane);
-            }
+        if (p.stageX != null) {
+          store.setPlanePositionX(p.stageX, i, plane);
+        }
+        else if (positionsX != null && i < positionsX.length) {
+          store.setPlanePositionX(positionsX[i], i, plane);
+        }
 
-            if (p.stageZ != null) {
-              store.setPlanePositionZ(p.stageZ, i, plane);
-            }
-            else if (positionsZ != null && i < positionsZ.length) {
-              store.setPlanePositionZ(positionsZ[i], i, plane);
-            }
+        if (p.stageY != null) {
+          store.setPlanePositionY(p.stageY, i, plane);
+        }
+        else if (positionsY != null && i < positionsY.length) {
+          store.setPlanePositionY(positionsY[i], i, plane);
+        }
 
-            if (p.timestamp != null) {
-              store.setPlaneDeltaT(p.timestamp - startTime, i, plane);
-            }
-            else if (plane < timestamps.size()) {
-              store.setPlaneDeltaT(timestamps.get(plane), i, plane);
-            }
-            if (p.exposureTime != null) {
-              store.setPlaneExposureTime(p.exposureTime, i, plane);
-            }
-            else {
-              int channel = getZCTCoords(plane)[1];
-              if (channel < channels.size() &&
-                channels.get(channel).exposure != null)
-              {
-                store.setPlaneExposureTime(
-                  channels.get(channel).exposure, i, plane);
-              }
-            }
+        if (p.stageZ != null) {
+          store.setPlanePositionZ(p.stageZ, i, plane);
+        }
+        else if (positionsZ != null && i < positionsZ.length) {
+          store.setPlanePositionZ(positionsZ[i], i, plane);
+        }
+
+        if (p.timestamp != null) {
+          store.setPlaneDeltaT(p.timestamp - startTime, i, plane);
+        }
+        else if (plane < timestamps.size()) {
+          store.setPlaneDeltaT(timestamps.get(plane), i, plane);
+        }
+        if (p.exposureTime != null) {
+          store.setPlaneExposureTime(p.exposureTime, i, plane);
+        }
+        else {
+          int channel = getZCTCoords(plane)[1];
+          if (channel < channels.size() &&
+            channels.get(channel).exposure != null)
+          {
+            store.setPlaneExposureTime(
+              channels.get(channel).exposure, i, plane);
           }
         }
       }
@@ -3079,6 +3097,32 @@ public class ZeissCZIReader extends FormatReader {
     public Double gain;
     public String fluor;
     public String filterSetRef;
+  }
+
+  class Coordinate {
+    public int series;
+    public int plane;
+
+    public Coordinate(int series, int plane) {
+      this.series = series;
+      this.plane = plane;
+    }
+
+    public boolean equals(Object o) {
+	if (o == null || !(o instanceof Coordinate)) {
+		return false;
+	}
+	return ((Coordinate) o).series == this.series &&
+	  ((Coordinate) o).plane == this.plane;
+    }
+
+    public int hashCode() {
+      return series * getImageCount() + plane;
+    }
+
+    public String toString() {
+      return "[series = " + series + ", plane = " + plane + "]";
+    }
   }
 
 }
