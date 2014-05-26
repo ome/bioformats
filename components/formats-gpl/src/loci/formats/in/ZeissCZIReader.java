@@ -823,10 +823,10 @@ public class ZeissCZIReader extends FormatReader {
 
       for (int plane=0; plane<getImageCount(); plane++) {
         Coordinate coordinate = new Coordinate(i, plane);
-	ArrayList<Integer> index = indexIntoPlanes.get(coordinate);
-	if (index == null) {
+        ArrayList<Integer> index = indexIntoPlanes.get(coordinate);
+        if (index == null) {
           continue;
-	}
+        }
 
         SubBlock p = planes.get(index.get(0));
         if (startTime == null) {
@@ -2589,7 +2589,7 @@ public class ZeissCZIReader extends FormatReader {
       finally {
         if (stream == null) {
           s.close();
-	}
+        }
       }
     }
 
@@ -2642,7 +2642,7 @@ public class ZeissCZIReader extends FormatReader {
       finally {
         if (stream == null) {
           s.close();
-	}
+        }
       }
     }
   }
@@ -2675,7 +2675,7 @@ public class ZeissCZIReader extends FormatReader {
       finally {
         if (stream == null) {
           s.close();
-	}
+        }
       }
     }
 
@@ -2750,7 +2750,7 @@ public class ZeissCZIReader extends FormatReader {
       finally {
         if (stream == null) {
           s.close();
-	}
+        }
       }
     }
 
@@ -2951,7 +2951,7 @@ public class ZeissCZIReader extends FormatReader {
       finally {
         if (stream == null) {
           s.close();
-	}
+        }
       }
     }
   }
@@ -2978,7 +2978,7 @@ public class ZeissCZIReader extends FormatReader {
       finally {
         if (stream == null) {
           s.close();
-	}
+        }
       }
     }
   }
@@ -3006,7 +3006,7 @@ public class ZeissCZIReader extends FormatReader {
       finally {
         if (stream == null) {
           s.close();
-	}
+        }
       }
     }
   }
@@ -3109,11 +3109,11 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     public boolean equals(Object o) {
-	if (o == null || !(o instanceof Coordinate)) {
-		return false;
-	}
-	return ((Coordinate) o).series == this.series &&
-	  ((Coordinate) o).plane == this.plane;
+      if (o == null || !(o instanceof Coordinate)) {
+        return false;
+      }
+      return ((Coordinate) o).series == this.series &&
+        ((Coordinate) o).plane == this.plane;
     }
 
     public int hashCode() {
