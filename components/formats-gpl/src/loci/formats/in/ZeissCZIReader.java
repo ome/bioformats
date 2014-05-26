@@ -2958,7 +2958,7 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
       finally {
-        if (s == null) {
+        if (stream == null) {
           s.close();
 	}
       }
@@ -2986,7 +2986,7 @@ public class ZeissCZIReader extends FormatReader {
         s.read(attachmentData);
       }
       finally {
-        if (s == null) {
+        if (stream == null) {
           s.close();
 	}
       }
