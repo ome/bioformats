@@ -1,5 +1,5 @@
-Command line tools
-==================
+Command line tools introduction
+===============================
 
 There are several scripts for using Bio-Formats on the command
 line.
@@ -15,22 +15,27 @@ Download :downloads:`bftools.zip <>`, unzip it into a new folder.
 
 
 The zip file contains both Unix scripts and Windows batch files.
+
+Tools available
+---------------
+
 Currently available tools include:
 
 .. glossary::
 
     showinf
         Prints information about a given image file to the console, and
-        displays the image itself in the Bio-Formats image viewer.
+        displays the image itself in the Bio-Formats image viewer (see
+        :doc:`display` for more information).
 
     ijview
         Displays the given image file in ImageJ using the Bio-Formats Importer
-        plugin (requires **ij.jar**).
+        plugin.
 
     bfconvert
         Converts an image file from one format to another. Bio-Formats must
-        support writing to the output file (determined by extension; see the
-        :doc:`/supported-formats`).
+        support writing to the output file (see :doc:`conversion` for more
+        information).
 
     formatlist
         Displays a list of supported file formats in HTML, plaintext or XML.
@@ -46,17 +51,15 @@ Currently available tools include:
 
     tiffcomment
         Dumps the comment from the given TIFF file's first IFD entry; useful
-        for examining the OME-XML block in an OME-TIFF file.
+        for examining the OME-XML block in an OME-TIFF file (also see
+        :doc:`edit`).
 
-All scripts require **bioformats\_package.jar** in the same directory as the
-command line tools.
 
-Tutorials
----------
+Some of these tools also work in combination, for example
+:doc:`xml-validation` uses both ``tiffcomment`` and ``xmlvalid``.
 
-* :doc:`Displaying images and metadata <display>`
-* :doc:`Converting a file <conversion>`
-* :doc:`Validating XML in an OME-TIFF <xml-validation>`
+Running any of these commands without any arguments will print usage
+information to help you.
 
 Using the tools directly from source
 ------------------------------------
