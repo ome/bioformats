@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -383,6 +379,10 @@ public class Location {
             }
           }
         }
+        is.close();
+        if (files.size() == 0) {
+          return null;
+        }
       }
       catch (IOException e) {
         LOGGER.trace("Could not retrieve directory listing", e);
@@ -401,6 +401,7 @@ public class Location {
         }
       }
     }
+
     result = files.toArray(new String[files.size()]);
     if (cacheListings) {
       fileListings.put(key, new ListingsResult(result, System.nanoTime()));
@@ -418,7 +419,7 @@ public class Location {
    * @see java.io.File#canRead()
    */
   public boolean canRead() {
-    return isURL ? (isDirectory() || isFile()) : file.canRead();
+    return isURL ? (isDirectory() || isFile() || exists()) : file.canRead();
   }
 
   /**

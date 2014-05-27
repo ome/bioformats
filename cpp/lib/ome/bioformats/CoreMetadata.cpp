@@ -51,7 +51,7 @@ namespace ome
       thumbSizeX(1),
       thumbSizeY(1),
       pixelType(ome::xml::model::enums::PixelType::UINT8),
-      bitsPerPixel(8),
+      bitsPerPixel(0), // Default to full size of pixelType
       imageCount(1),
       moduloZ("Z"),
       moduloT("T"),
@@ -69,35 +69,6 @@ namespace ome
       resolutionCount(1)
     {
     }
-
-      /* CoreMetadata(IFormatReader r, int coreIndex) { */
-      /*   int currentIndex = r.getCoreIndex(); */
-      /*   r.setCoreIndex(coreIndex); */
-
-      /*   sizeX = r.getSizeX(); */
-      /*   sizeY = r.getSizeY(); */
-      /*   sizeZ = r.getSizeZ(); */
-      /*   sizeC = r.getSizeC(); */
-      /*   sizeT = r.getSizeT(); */
-      /*   thumbSizeX = r.getThumbSizeX(); */
-      /*   thumbSizeY = r.getThumbSizeY(); */
-      /*   pixelType = r.getPixelType(); */
-      /*   bitsPerPixel = r.getBitsPerPixel(); */
-      /*   imageCount = r.getImageCount(); */
-      /*   dimensionOrder = r.getDimensionOrder(); */
-      /*   orderCertain = r.isOrderCertain(); */
-      /*   rgb = r.isRGB(); */
-      /*   littleEndian = r.isLittleEndian(); */
-      /*   interleaved = r.isInterleaved(); */
-      /*   indexed = r.isIndexed(); */
-      /*   falseColor = r.isFalseColor(); */
-      /*   metadataComplete = r.isMetadataComplete(); */
-      /*   seriesMetadata = r.getSeriesMetadata(); */
-      /*   thumbnail = r.isThumbnailSeries(); */
-      /*   resolutionCount = r.getResolutionCount(); */
-
-      /*   r.setCoreIndex(currentIndex); */
-      /* } */
 
     CoreMetadata::CoreMetadata(const CoreMetadata &copy):
       sizeX(copy.sizeX),
@@ -125,38 +96,6 @@ namespace ome
       thumbnail(copy.thumbnail),
       resolutionCount(copy.resolutionCount)
     {
-    }
-
-    template<class charT, class traits>
-    inline std::basic_ostream<charT,traits>&
-    operator<< (std::basic_ostream<charT,traits>& os,
-                const CoreMetadata& core)
-    {
-      os << "sizeX = " << core.sizeX << '\n'
-         << "sizeY = " << core.sizeY << '\n'
-         << "sizeZ = " << core.sizeZ << '\n'
-         << "sizeC = " << core.sizeC << '\n'
-         << "sizeT = " << core.sizeT << '\n'
-         << "thumbSizeX = " << core.thumbSizeX << '\n'
-         << "thumbSizeY = " << core.thumbSizeY << '\n'
-         << "pixelType = " << core.pixelType << '\n'
-         << "bitsPerPixel = " << core.bitsPerPixel << '\n'
-         << "imageCount = " << core.imageCount << '\n'
-         << "moduloZ" << core.moduloZ << '\n'
-         << "moduloT" << core.moduloT << '\n'
-         << "moduloC" << core.moduloC << '\n'
-         << "dimensionOrder = " << core.dimensionOrder << '\n'
-         << "orderCertain = " << core.orderCertain << '\n'
-         << "rgb = " << core.rgb << '\n'
-         << "littleEndian = " << core.littleEndian << '\n'
-         << "interleaved = " << core.interleaved << '\n'
-         << "indexed = " << core.indexed << '\n'
-         << "falseColor = " << core.falseColor << '\n'
-         << "metadataComplete = " << core.metadataComplete << '\n'
-         << "seriesMetadata = " << core.seriesMetadata.size() << " keys" << '\n'
-         << "thumbnail = " << core.thumbnail << '\n'
-         << "resolutionCount = " << core.resolutionCount << '\n';
-      return os;
     }
 
   }

@@ -102,13 +102,13 @@ TEST(PixelProperties, ConstructBit)
 TEST(PixelProperties, ConstructComplex)
 {
   PixelProperties<PT::COMPLEX>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(std::array<float,2>));
+  ASSERT_EQ(sizeof(t), sizeof(std::complex<float>));
 }
 
 TEST(PixelProperties, ConstructDoubleComplex)
 {
   PixelProperties<PT::DOUBLECOMPLEX>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(std::array<double,2>));
+  ASSERT_EQ(sizeof(t), sizeof(std::complex<double>));
 }
 
 TEST(PixelProperties, SizeSignedInt8)
@@ -167,12 +167,12 @@ TEST(PixelProperties, SizeBit)
 
 TEST(PixelProperties, SizeComplex)
 {
-  ASSERT_EQ(bytesPerPixel(PT::COMPLEX), sizeof(std::array<float,2>));
-  ASSERT_EQ(bitsPerPixel(PT::COMPLEX), sizeof(std::array<float,2>) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::COMPLEX), sizeof(std::complex<float>));
+  ASSERT_EQ(bitsPerPixel(PT::COMPLEX), sizeof(std::complex<float>) * 8);
 }
 
 TEST(PixelProperties, SizeDoubleComplex)
 {
-  ASSERT_EQ(bytesPerPixel(PT::DOUBLECOMPLEX), sizeof(std::array<double,2>));
-  ASSERT_EQ(bitsPerPixel(PT::DOUBLECOMPLEX), sizeof(std::array<double,2>) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::DOUBLECOMPLEX), sizeof(std::complex<double>));
+  ASSERT_EQ(bitsPerPixel(PT::DOUBLECOMPLEX), sizeof(std::complex<double>) * 8);
 }

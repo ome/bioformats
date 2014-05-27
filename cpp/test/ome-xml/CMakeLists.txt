@@ -39,11 +39,11 @@ include_directories(${OME_TOPLEVEL_INCLUDES})
 if(BUILD_TESTS)
   add_executable(color color.cpp)
   target_link_libraries(color ome-xml)
-  target_link_libraries(color ${TEST_LIBS})
+  target_link_libraries(color ome-test)
 
   add_executable(enum enum.cpp)
   target_link_libraries(enum ome-xml)
-  target_link_libraries(enum ${TEST_LIBS})
+  target_link_libraries(enum ome-test)
 
   add_executable(constrained-numeric
                  non-negative-float.cpp
@@ -54,11 +54,11 @@ if(BUILD_TESTS)
                  positive-integer.cpp
                  positive-long.cpp)
   target_link_libraries(constrained-numeric ome-xml)
-  target_link_libraries(constrained-numeric ${TEST_LIBS})
+  target_link_libraries(constrained-numeric ome-test)
 
   add_executable(timestamp timestamp.cpp)
   target_link_libraries(timestamp ome-xml)
-  target_link_libraries(timestamp ${TEST_LIBS})
+  target_link_libraries(timestamp ome-test)
 
   add_test(ome-xml/color color)
   add_test(ome-xml/enum enum)

@@ -34,11 +34,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
@@ -70,12 +72,13 @@ public class SVSReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private float[] pixelSize;
+  private double[] pixelSize;
   private String[] comments;
   private int[] ifdmap;
 
-  private double emissionWavelength, excitationWavelength;
-  private double exposureTime, exposureScale;
+  private Double emissionWavelength, excitationWavelength;
+  private Double exposureTime, exposureScale;
+  private Double magnification;
   private String date, time;
 
   // -- Constructor --
@@ -196,6 +199,14 @@ public class SVSReader extends BaseTiffReader {
       pixelSize = null;
       comments = null;
       ifdmap = null;
+
+      emissionWavelength = null;
+      excitationWavelength = null;
+      exposureTime = null;
+      exposureScale = null;
+      magnification = null;
+      date = null;
+      time = null;
     }
   }
 
@@ -235,7 +246,7 @@ public class SVSReader extends BaseTiffReader {
 
     int seriesCount = ifds.size();
 
-    pixelSize = new float[seriesCount];
+    pixelSize = new double[seriesCount];
     comments = new String[seriesCount];
 
     core.clear();
@@ -268,7 +279,7 @@ public class SVSReader extends BaseTiffReader {
               value = t.substring(t.indexOf("=") + 1).trim();
               addSeriesMeta(key, value);
               if (key.equals("MPP")) {
-                pixelSize[i] = Float.parseFloat(value);
+                pixelSize[i] = Double.parseDouble(value);
               }
               else if (key.equals("Date")) {
                 date = value;
@@ -277,16 +288,19 @@ public class SVSReader extends BaseTiffReader {
                 time = value;
               }
               else if (key.equals("Emission Wavelength")) {
-                emissionWavelength = Double.parseDouble(value);
+                emissionWavelength = new Double(value);
               }
               else if (key.equals("Excitation Wavelength")) {
-                excitationWavelength = Double.parseDouble(value);
+                excitationWavelength = new Double(value);
               }
               else if (key.equals("Exposure Time")) {
-                exposureTime = Double.parseDouble(value);
+                exposureTime = new Double(value);
               }
               else if (key.equals("Exposure Scale")) {
-                exposureScale = Double.parseDouble(value);
+                exposureScale = new Double(value);
+              }
+              else if (key.equals("AppMag")) {
+                magnification = new Double(value);
               }
             }
           }
@@ -334,7 +348,16 @@ public class SVSReader extends BaseTiffReader {
 
     MetadataStore store = makeFilterMetadata();
 
+    String instrument = MetadataTools.createLSID("Instrument", 0);
+    String objective = MetadataTools.createLSID("Objective", 0, 0);
+    store.setInstrumentID(instrument, 0);
+    store.setObjectiveID(objective, 0, 0);
+    store.setObjectiveNominalMagnification(magnification, 0, 0);
+
     for (int i=0; i<getSeriesCount(); i++) {
+      store.setImageInstrumentRef(instrument, i);
+      store.setObjectiveSettingsID(objective, i);
+
       store.setImageName("Series " + (i + 1), i);
       store.setImageDescription(comments[i], i);
 
@@ -352,6 +375,10 @@ public class SVSReader extends BaseTiffReader {
         }
       }
 
+      if (i < pixelSize.length && pixelSize[i] - Constants.EPSILON > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize[i]), i);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize[i]), i);
+      }
     }
   }
 
@@ -398,14 +425,14 @@ public class SVSReader extends BaseTiffReader {
   }
 
   protected PositiveFloat getEmission() {
-    if (emissionWavelength > 0) {
+    if (emissionWavelength != null && emissionWavelength > 0) {
       return new PositiveFloat(emissionWavelength);
     }
     return null;
   }
 
   protected PositiveFloat getExcitation() {
-    if (excitationWavelength > 0) {
+    if (excitationWavelength != null && excitationWavelength > 0) {
       return new PositiveFloat(excitationWavelength);
     }
     return null;

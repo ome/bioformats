@@ -21,13 +21,18 @@
 
   <licenses>
     <license>
-      <name>GPL 2 or later</name>
+      <name>GNU General Public License v2+</name>
       <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
 
   <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>formats-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>formats-common</artifactId>
@@ -59,14 +64,55 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>turbojpeg</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>edu.ucar</groupId>
       <artifactId>netcdf</artifactId>
       <version>4.3.19</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.protobuf</groupId>
+          <artifactId>protobuf-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sleepycat</groupId>
+          <artifactId>je</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.jna</groupId>
+          <artifactId>jna</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-httpclient</groupId>
+          <artifactId>commons-httpclient</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>edu.ucar</groupId>
+          <artifactId>quartz</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>edu.ucar</groupId>
+          <artifactId>udunits</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.jcip</groupId>
+          <artifactId>jcip-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.sf.ehcache</groupId>
+          <artifactId>ehcache-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jdom</groupId>
+          <artifactId>jdom2</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.quartz-scheduler</groupId>
+          <artifactId>quartz</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl-over-slf4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -82,6 +128,26 @@
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
       <version>2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.esotericsoftware.kryo</groupId>
+      <artifactId>kryo</artifactId>
+      <version>2.21</version>
+      <classifier>shaded</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>com.esotericsoftware.reflectasm</groupId>
+          <artifactId>reflectasm</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.esotericsoftware.minlog</groupId>
+          <artifactId>minlog</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.objenesis</groupId>
+          <artifactId>objenesis</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->

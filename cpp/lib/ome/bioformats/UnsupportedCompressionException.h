@@ -46,7 +46,7 @@ namespace ome
   {
 
     /**
-     * Exception thrown for unrecognized or unsupported data streams or filenames.
+     * Exception thrown for unsupported compression types.
      */
     class UnsupportedCompressionException : public FormatException
     {

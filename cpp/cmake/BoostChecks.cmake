@@ -35,7 +35,7 @@
 # #L%
 
 include(FindBoost)
-find_package(Boost REQUIRED COMPONENTS date_time filesystem system iostreams program_options regex)
+find_package(Boost REQUIRED COMPONENTS date_time filesystem system iostreams program_options regex thread)
 
 include(CheckIncludeFileCXX)
 include(CheckCXXSourceCompiles)
@@ -121,6 +121,32 @@ int main() {
   boost::filesystem::is_directory(\"/\");
 }"
 BOOST_FILESYSTEM_LINK)
+SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+
+SET(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
+SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY_RELEASE} ${Boost_SYSTEM_LIBRARY_RELEASE})
+# boost::filesystem in -lboost_filesystem
+check_cxx_source_compiles(
+"#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+
+int main() {
+  boost::filesystem::path absolutefile = boost::filesystem::absolute(boost::filesystem::path(\"/tmp/../foobar\"));
+}"
+OME_HAVE_BOOST_FILESYSTEM_ABSOLUTE)
+SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+
+SET(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
+SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY_RELEASE} ${Boost_SYSTEM_LIBRARY_RELEASE})
+# boost::filesystem in -lboost_filesystem
+check_cxx_source_compiles(
+"#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+
+int main() {
+  boost::filesystem::path canonicalfile = boost::filesystem::canonical(boost::filesystem::path(\"/tmp/../foobar\"));
+}"
+OME_HAVE_BOOST_FILESYSTEM_CANONICAL)
 SET(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
 
 # boost::variant/boost::mpl list size limits

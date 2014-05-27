@@ -102,7 +102,8 @@ namespace ome
         /// Reader for which the state will be saved and restored.
         const FormatReader& reader;
         /// Saved state.
-        image_size_type coreIndex;
+        dimension_size_type coreIndex;
+
       public:
         /**
          * Constructor.
@@ -121,7 +122,15 @@ namespace ome
          */
         ~SaveSeries()
         {
-          reader.setCoreIndex(coreIndex);
+          try
+            {
+              if (coreIndex != reader.getCoreIndex())
+                reader.setCoreIndex(coreIndex);
+            }
+          catch (...)
+            {
+              // We can't throw in a destructor.
+            }
         }
       };
 
@@ -175,7 +184,6 @@ namespace ome
       isThisType(const uint8_t *begin,
                  std::size_t    length) = 0;
 
-
       /**
        * Check if the given input stream is a valid stream for this file format.
        *
@@ -194,7 +202,7 @@ namespace ome
        * @returns the number of image planes.
        */
       virtual
-      image_size_type
+      dimension_size_type
       getImageCount() const = 0;
 
       /**
@@ -548,7 +556,8 @@ namespace ome
        */
       virtual
       void
-      openBytes(image_size_type no, PixelBufferRaw& buf) const = 0;
+      openBytes(dimension_size_type no,
+                PixelBufferRaw&     buf) const = 0;
 
       /**
        * Obtain a sub-image of an image plane.
@@ -571,7 +580,7 @@ namespace ome
        */
       virtual
       void
-      openBytes(image_size_type     no,
+      openBytes(dimension_size_type no,
                 PixelBufferRaw&     buf,
                 dimension_size_type x,
                 dimension_size_type y,
@@ -589,8 +598,8 @@ namespace ome
        */
       virtual
       void
-      openThumbBytes(image_size_type no,
-                     PixelBufferRaw& buf) const = 0;
+      openThumbBytes(dimension_size_type no,
+                     PixelBufferRaw&     buf) const = 0;
 
       // Documented in superclass.
       //virtual
@@ -603,7 +612,7 @@ namespace ome
        * @returns the number of image series.
        */
       virtual
-      image_size_type
+      dimension_size_type
       getSeriesCount() const = 0;
 
       /**
@@ -618,7 +627,7 @@ namespace ome
        */
       virtual
       void
-      setSeries(image_size_type no) const = 0;
+      setSeries(dimension_size_type no) const = 0;
 
       /**
        * Get the active series.
@@ -626,7 +635,7 @@ namespace ome
        * @returns the active series.
        */
       virtual
-      image_size_type
+      dimension_size_type
       getSeries() const = 0;
 
       /**
@@ -743,7 +752,7 @@ namespace ome
        */
       virtual
       std::vector<FileInfo>
-      getAdvancedUsedFiles(bool noPixels) const = 0;
+      getAdvancedUsedFiles(bool noPixels = false) const = 0;
 
       /**
        * Get the files used by the active series.
@@ -755,7 +764,7 @@ namespace ome
        */
       virtual
       std::vector<FileInfo>
-      getAdvancedSeriesUsedFiles(bool noPixels) const = 0;
+      getAdvancedSeriesUsedFiles(bool noPixels = false) const = 0;
 
       /**
        * Get the currently open file.
@@ -816,7 +825,7 @@ namespace ome
        * @param field the name associated with the metadata field.
        * @returns the value.
        *
-       * @todo throw exception if missing.
+       * @throws boost::bad_get on failure if the key was not found.
        */
       virtual
       const MetadataMap::value_type&
@@ -831,7 +840,7 @@ namespace ome
        * @param field the name associated with the metadata field.
        * @returns the value.
        *
-       * @todo throw exception if missing.
+       * @throws boost::bad_get on failure if the key was not found.
        */
       virtual
       const MetadataMap::value_type&
@@ -1046,8 +1055,8 @@ namespace ome
        * @returns the first for index for the series.
        */
       virtual
-      image_size_type
-      seriesToCoreIndex(image_size_type series) const = 0;
+      dimension_size_type
+      seriesToCoreIndex(dimension_size_type series) const = 0;
 
       /**
        * Get the series corresponding to the specified core index.
@@ -1056,8 +1065,8 @@ namespace ome
        * @returns the series for the index.
        */
       virtual
-      image_size_type
-      coreIndexToSeries(image_size_type index) const = 0;
+      dimension_size_type
+      coreIndexToSeries(dimension_size_type index) const = 0;
 
       /**
        * Get the CoreMetadata index of the current resolution/series.
@@ -1065,7 +1074,7 @@ namespace ome
        * @returns the index.
        */
       virtual
-      image_size_type
+      dimension_size_type
       getCoreIndex() const = 0;
 
       /**
@@ -1081,7 +1090,7 @@ namespace ome
        */
       virtual
       void
-      setCoreIndex(image_size_type index) const = 0;
+      setCoreIndex(dimension_size_type index) const = 0;
 
       /**
        * Get the number of resolutions for the current series.
@@ -1093,7 +1102,7 @@ namespace ome
        * @returns the number of resolutions.
        */
       virtual
-      image_size_type
+      dimension_size_type
       getResolutionCount() const = 0;
 
       /**
@@ -1108,7 +1117,7 @@ namespace ome
        */
       virtual
       void
-      setResolution(image_size_type resolution) const = 0;
+      setResolution(dimension_size_type resolution) const = 0;
 
       /**
        * Get the active resolution level.
@@ -1118,7 +1127,7 @@ namespace ome
        * @see getResolutionCount()
        */
       virtual
-      image_size_type
+      dimension_size_type
       getResolution() const = 0;
 
       /**

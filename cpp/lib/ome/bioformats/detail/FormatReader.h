@@ -51,6 +51,12 @@ namespace ome
 {
   namespace bioformats
   {
+    /**
+     * Implementation details.
+     *
+     * Default concrete implementations of interfaces in the parent
+     * namespace.
+     */
     namespace detail
     {
 
@@ -108,7 +114,7 @@ namespace ome
          * @todo Remove use of stateful API which requires use of
          * series switching in const methods.
          */
-        mutable image_size_type coreIndex;
+        mutable dimension_size_type coreIndex;
 
         /**
          * The number of the current series (non-flattened).
@@ -116,7 +122,7 @@ namespace ome
          * @todo Remove use of stateful API which requires use of
          * series switching in const methods.
          */
-        mutable image_size_type series;
+        mutable dimension_size_type series;
 
         /// Core metadata values.
         coremetadata_list_type core;
@@ -127,7 +133,7 @@ namespace ome
          * @todo Remove use of stateful API which requires use of
          * series switching in const methods.
          */
-        mutable image_size_type resolution;
+        mutable dimension_size_type resolution;
 
         /// Whether or not resolutions are flattened.
         bool flattenedResolutions;
@@ -282,7 +288,7 @@ namespace ome
          * or @c std::logic_error if the metadata is null.
          */
         const CoreMetadata&
-        getCoreMetadata(image_size_type index) const
+        getCoreMetadata(dimension_size_type index) const
         {
           coremetadata_list_type::value_type cm(core.at(index));
           if (!cm)
@@ -299,7 +305,7 @@ namespace ome
          * or @c std::logic_error if the metadata is null.
          */
         CoreMetadata&
-        getCoreMetadata(image_size_type index)
+        getCoreMetadata(dimension_size_type index)
         {
           coremetadata_list_type::value_type cm(core.at(index));
           if (!cm)
@@ -359,7 +365,7 @@ namespace ome
         isThisType(std::istream& stream);
 
         // Documented in superclass.
-        image_size_type
+        dimension_size_type
         getImageCount() const;
 
         // Documented in superclass.
@@ -487,12 +493,12 @@ namespace ome
 
         // Documented in superclass.
         void
-        openBytes(image_size_type no,
-                  PixelBufferRaw& buf) const;
+        openBytes(dimension_size_type no,
+                  PixelBufferRaw&     buf) const;
 
         // Documented in superclass.
         void
-        openBytes(image_size_type     no,
+        openBytes(dimension_size_type no,
                   PixelBufferRaw&     buf,
                   dimension_size_type x,
                   dimension_size_type y,
@@ -501,23 +507,23 @@ namespace ome
 
         // Documented in superclass.
         void
-        openThumbBytes(image_size_type no,
-                       PixelBufferRaw& buf) const;
+        openThumbBytes(dimension_size_type no,
+                       PixelBufferRaw&     buf) const;
 
         // Documented in superclass.
         void
         close(bool fileOnly = false);
 
         // Documented in superclass.
-        image_size_type
+        dimension_size_type
         getSeriesCount() const;
 
         // Documented in superclass.
         void
-        setSeries(image_size_type no) const;
+        setSeries(dimension_size_type no) const;
 
         // Documented in superclass.
-        image_size_type
+        dimension_size_type
         getSeries() const;
 
         // Documented in superclass.
@@ -562,11 +568,11 @@ namespace ome
 
         // Documented in superclass.
         std::vector<FileInfo>
-        getAdvancedUsedFiles(bool noPixels) const;
+        getAdvancedUsedFiles(bool noPixels = false) const;
 
         // Documented in superclass.
         std::vector<FileInfo>
-        getAdvancedSeriesUsedFiles(bool noPixels) const;
+        getAdvancedSeriesUsedFiles(bool noPixels = false) const;
 
         // Documented in superclass.
         const boost::optional<std::string>&
@@ -643,31 +649,31 @@ namespace ome
         getOptimalTileHeight() const;
 
         // Documented in superclass.
-        image_size_type
-        seriesToCoreIndex(image_size_type series) const;
+        dimension_size_type
+        seriesToCoreIndex(dimension_size_type series) const;
 
         // Documented in superclass.
-        image_size_type
-        coreIndexToSeries(image_size_type index) const;
+        dimension_size_type
+        coreIndexToSeries(dimension_size_type index) const;
 
         // Documented in superclass.
-        image_size_type
+        dimension_size_type
         getCoreIndex() const;
 
         // Documented in superclass.
         void
-        setCoreIndex(image_size_type index) const;
+        setCoreIndex(dimension_size_type index) const;
 
         // Documented in superclass.
-        image_size_type
+        dimension_size_type
         getResolutionCount() const;
 
         // Documented in superclass.
         void
-        setResolution(image_size_type resolution) const;
+        setResolution(dimension_size_type resolution) const;
 
         // Documented in superclass.
-        image_size_type
+        dimension_size_type
         getResolution() const;
 
         // Documented in superclass.

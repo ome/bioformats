@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -9,13 +9,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -45,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.StringTokenizer;
+import java.util.UUID;
 
 import loci.common.DataTools;
 import loci.common.IniList;
@@ -91,6 +88,10 @@ import ome.xml.model.primitives.Color;
 public class FakeReader extends FormatReader {
 
   // -- Constants --
+  private static final long ANN_LONG_VALUE = 365;
+  private static final Double ANN_DOUBLE_VALUE = 0.111;
+  private static final String ANNOTATION_PREFIX = "Annotation:";
+  private static final String ANNOTATION_NAMESPACE = "fake-reader";
 
   public static final int BOX_SIZE = 10;
 
@@ -393,6 +394,23 @@ public class FakeReader extends FormatReader {
     int plateCols = 0;
     int fields = 0;
     int plateAcqs = 0;
+    
+/*
+    int annXml = 0;
+    int annFile = 0;
+    int annList = 0;
+ */
+    int annLong = 0;
+    int annDouble = 0;
+/*
+    int annComment = 0;
+    int annBool = 0;
+    int annTime = 0;
+    int annTag = 0;
+    int annTerm = 0;
+ */
+    int annMap = 0;
+
 
     Integer color = null;
 
@@ -472,6 +490,9 @@ public class FakeReader extends FormatReader {
       else if (key.equals("plateCols")) plateCols = intValue;
       else if (key.equals("fields")) fields = intValue;
       else if (key.equals("plateAcqs")) plateAcqs = intValue;
+      else if (key.equals("annLong")) annLong = intValue;
+      else if (key.equals("annDouble")) annDouble = intValue;
+      else if (key.equals("annMap")) annMap = intValue;
       else if (key.equals("color")) {
         // parse colors as longs so that unsigned values can be specified,
         // e.g. 0xff0000ff for red with opaque alpha
@@ -555,17 +576,65 @@ public class FakeReader extends FormatReader {
 
     // populate OME metadata
     boolean planeInfo = (exposureTime != null);
+    // per file counts
+    int annotationCount = 0;
+    int annotationDoubleCount = 0;
+    int annotationLongCount = 0;
+    int annotationMapCount = 0;
+    // per image count
+    int annotationRefCount = 0;
+
+    String nextAnnotationID;
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
-    for (int s=0; s<seriesCount; s++) {
-      String imageName = s > 0 ? name + " " + (s + 1) : name;
-      store.setImageName(imageName, s);
+    for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
+      String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
+      store.setImageName(imageName, currentImageIndex);
 
       if (color != null) {
         for (int c=0; c<sizeC; c++) {
-          store.setChannelColor(new Color(color), s, c);
+          store.setChannelColor(new Color(color), currentImageIndex, c);
         }
       }
+      // new image so reset annotationRefCount
+      annotationRefCount = 0;
+      for (int currentAnnotation=0; currentAnnotation<annLong; currentAnnotation++) {
+        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
+        store.setLongAnnotationID(nextAnnotationID, annotationLongCount);
+        store.setLongAnnotationNamespace(ANNOTATION_NAMESPACE, annotationLongCount);
+        store.setLongAnnotationValue(ANN_LONG_VALUE+annotationCount, annotationLongCount);
+        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
+        annotationLongCount++;
+        annotationCount++;
+        annotationRefCount++;
+      }
+
+      for (int currentAnnotation=0; currentAnnotation<annDouble; currentAnnotation++) {
+        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
+        store.setDoubleAnnotationID(nextAnnotationID, annotationDoubleCount);
+        store.setDoubleAnnotationNamespace(ANNOTATION_NAMESPACE, annotationDoubleCount);
+        store.setDoubleAnnotationValue(ANN_DOUBLE_VALUE*(annotationCount+1), annotationDoubleCount);
+        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
+        annotationDoubleCount++;
+        annotationCount++;
+        annotationRefCount++;
+      }
+
+      for (int currentAnnotation=0; currentAnnotation<annMap; currentAnnotation++) {
+        nextAnnotationID = ANNOTATION_PREFIX + annotationCount;
+        store.setMapAnnotationID(nextAnnotationID, annotationMapCount);
+        store.setMapAnnotationNamespace(ANNOTATION_NAMESPACE, annotationMapCount);
+        Map<String, String> mapValue = new HashMap<String,String>();
+        for (int keyNum=0; keyNum<10; keyNum++) {
+          mapValue.put("keyS" + currentImageIndex + "N" + keyNum, "val" + (keyNum+1)*(annotationCount+1));
+        }
+        store.setMapAnnotationValue(mapValue, annotationMapCount);
+        store.setImageAnnotationRef(nextAnnotationID, currentImageIndex, annotationRefCount);
+        annotationMapCount++;
+        annotationCount++;
+        annotationRefCount++;
+      }
+
     }
 
     // for indexed color images, create lookup tables

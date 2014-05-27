@@ -1,6 +1,6 @@
 /*
  * #%L
- * Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Bio-Formats Plugins for ImageJ: a collection of ImageJ plugins including the
  * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
  * Data Browser and Stack Slicer.
  * %%
@@ -505,7 +505,7 @@ public class MainDialog extends ImporterDialog
     if (src == stackFormatChoice && isStackBrowser) {
       isGroupFiles = true;
     }
-    else if (options.isOMERO()) {
+    else if (!options.isLocal()) {
       isGroupFiles = false;
       groupFilesEnabled = false;
     }

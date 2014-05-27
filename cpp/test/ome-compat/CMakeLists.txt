@@ -37,54 +37,66 @@
 if(BUILD_TESTS)
   include_directories(${OME_TOPLEVEL_INCLUDES})
 
-  header_test_from_file(ome-compat "" ome/compat)
+  header_test_from_file(ome-compat ome-compat ome/compat)
   add_test(ome-compat/headers ome-compat-headers)
 
   add_executable(array array.cpp)
   target_link_libraries(array ome-compat)
-  target_link_libraries(array ${TEST_LIBS})
+  target_link_libraries(array ome-test)
 
   add_test(ome-compat/array array)
 
   add_executable(cstdint cstdint.cpp)
   target_link_libraries(cstdint ome-compat)
-  target_link_libraries(cstdint ${TEST_LIBS})
+  target_link_libraries(cstdint ome-test)
 
   add_test(ome-compat/cstdint cstdint)
 
+  add_executable(endian endian.cpp)
+  target_link_libraries(endian ome-compat)
+  target_link_libraries(endian ome-test)
+
+  add_test(ome-compat/endian endian)
+
   add_executable(memory memory.cpp)
   target_link_libraries(memory ome-compat)
-  target_link_libraries(memory ${TEST_LIBS})
+  target_link_libraries(memory ome-test)
 
   add_test(ome-compat/memory memory)
 
   add_executable(mstream mstream.cpp)
   target_link_libraries(mstream ome-compat)
-  target_link_libraries(mstream ${TEST_LIBS})
+  target_link_libraries(mstream ome-test)
 
   add_test(ome-compat/mstream mstream)
 
   add_executable(regex regex.cpp)
   target_link_libraries(regex ome-compat)
-  target_link_libraries(regex ${TEST_LIBS})
+  target_link_libraries(regex ome-test)
 
   add_test(ome-compat/regex regex)
 
+  add_executable(thread thread.cpp)
+  target_link_libraries(thread ome-compat)
+  target_link_libraries(thread ome-test)
+
+  add_test(ome-compat/thread thread)
+
   add_executable(string string.cpp)
   target_link_libraries(string ome-compat)
-  target_link_libraries(string ${TEST_LIBS})
+  target_link_libraries(string ome-test)
 
   add_test(ome-compat/string string)
 
   add_executable(tuple tuple.cpp)
   target_link_libraries(tuple ome-compat)
-  target_link_libraries(tuple ${TEST_LIBS})
+  target_link_libraries(tuple ome-test)
 
   add_test(ome-compat/tuple tuple)
 
   add_executable(variant variant.cpp)
   target_link_libraries(variant ome-compat)
-  target_link_libraries(variant ${TEST_LIBS})
+  target_link_libraries(variant ome-test)
 
   add_test(ome-compat/variant variant)
 

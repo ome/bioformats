@@ -1,6 +1,6 @@
 /*
  * #%L
- * OME Bio-Formats package for BSD-licensed readers and writers.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
  * Copyright (C) 2005 - 2013 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
@@ -27,10 +27,6 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
@@ -179,7 +175,9 @@ public class MicromanagerReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    String file = positions.get(getSeries()).getFile(no);
+    String file = positions.get(getSeries()).getFile(
+      getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
+      getImageCount(), no);
 
     if (file != null && new Location(file).exists()) {
       tiffReader.setId(file);
@@ -686,6 +684,7 @@ public class MicromanagerReader extends FormatReader {
 
     String[] blocks = baseTiff.split("_");
     StringBuffer filename = new StringBuffer();
+
     for (int t=0; t<getSizeT(); t++) {
       for (int c=0; c<getSizeC(); c++) {
         for (int z=0; z<getSizeZ(); z++) {
@@ -707,6 +706,8 @@ public class MicromanagerReader extends FormatReader {
           filename.append(t);
           filename.append("_");
 
+          String prechannel = filename.toString();
+
           if (blocks[2].length() > 0) {
             String channel = p.channels[c];
             if (channel.indexOf("-") != -1) {
@@ -723,10 +724,60 @@ public class MicromanagerReader extends FormatReader {
           filename.append(z);
           filename.append(".tif");
 
+          if (!new Location(filename.toString()).exists() &&
+            blocks[2].length() > 0)
+          {
+            // rewind and try using the full channel name
+
+            filename = new StringBuffer(prechannel);
+            String channel = p.channels[c];
+            filename.append(channel);
+            filename.append("_");
+            zeros = blocks[3].length() - String.valueOf(z).length() - 4;
+            for (int q=0; q<zeros; q++) {
+              filename.append("0");
+            }
+            filename.append(z);
+            filename.append(".tif");
+          }
+
           p.tiffs.add(filename.toString());
           filename.delete(0, filename.length());
         }
       }
+    }
+
+    // adjust timepoint count, if needed
+    // acquisitions can be stopped part-way through, but this isn't always
+    // noted in the metadata
+    int firstEmptyTimepoint = -1;
+    int nextFile = 0;
+    for (int t=0; t<getSizeT(); t++) {
+      boolean emptyTimepoint = true;
+      for (int c=0; c<getSizeC(); c++) {
+        for (int z=0; z<getSizeZ(); z++) {
+          String file = p.tiffs.get(nextFile++);
+          if (new Location(file).exists()) {
+            emptyTimepoint = false;
+            break;
+          }
+        }
+        if (!emptyTimepoint) {
+          break;
+        }
+      }
+      if (emptyTimepoint && firstEmptyTimepoint < 0) {
+        firstEmptyTimepoint = t;
+      }
+      else if (!emptyTimepoint && firstEmptyTimepoint >= 0) {
+        firstEmptyTimepoint = -1;
+      }
+    }
+
+    if (firstEmptyTimepoint >= 0) {
+      int imageCount = getImageCount() / getSizeT();
+      core.get(posIndex).sizeT = firstEmptyTimepoint;
+      core.get(posIndex).imageCount = imageCount * getSizeT();
     }
   }
 
@@ -789,7 +840,13 @@ public class MicromanagerReader extends FormatReader {
     public String cameraMode;
 
     public String getFile(int no) {
-      int[] zct = getZCTCoords(no);
+      return getFile(getDimensionOrder(), getSizeZ(), getSizeC(), getSizeT(),
+        getImageCount(), no);
+    }
+
+    public String getFile(String order, int z, int c, int t, int count, int no)
+    {
+      int[] zct = FormatTools.getZCTCoords(order, z, c, t, count, no);
       for (Index key : fileNameMap.keySet()) {
         if (key.z == zct[0] && key.c == zct[1] && key.t == zct[2]) {
           String file = fileNameMap.get(key);

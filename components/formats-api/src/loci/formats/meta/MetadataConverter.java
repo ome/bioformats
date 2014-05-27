@@ -1,13 +1,11 @@
 /*
  * #%L
- * OME Bio-Formats API for reading and writing file formats.
+ * BSD implementations of Bio-Formats readers and writers
  * %%
- * Copyright (C) 2006 - 2014 Open Microscopy Environment:
- *   - Massachusetts Institute of Technology
- *   - National Institutes of Health
- *   - University of Dundee
+ * Copyright (C) 2005 - 2014 Open Microscopy Environment:
  *   - Board of Regents of the University of Wisconsin-Madison
  *   - Glencoe Software, Inc.
+ *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -29,14 +27,12 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
  * #L%
  */
 
 package loci.formats.meta;
+
+import java.util.Map;
 
 import ome.xml.model.*;
 import ome.xml.model.enums.*;
@@ -77,6 +73,7 @@ public final class MetadataConverter {
     convertFileAnnotations(src, dest);
     convertListAnnotations(src, dest);
     convertLongAnnotations(src, dest);
+    convertMapAnnotations(src, dest);
     convertTagAnnotations(src, dest);
     convertTermAnnotations(src, dest);
     convertTimestampAnnotations(src, dest);
@@ -92,6 +89,8 @@ public final class MetadataConverter {
     convertScreens(src, dest);
     convertDatasets(src, dest);
     convertProjects(src, dest);
+
+    convertRootAttributes(src, dest);
   }
 
   // -- Helper methods --
@@ -128,6 +127,12 @@ public final class MetadataConverter {
       try {
         Boolean value = src.getBooleanAnnotationValue(i);
         dest.setBooleanAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String annotator = src.getBooleanAnnotationAnnotator(i);
+        dest.setBooleanAnnotationAnnotator(annotator, i);
       }
       catch (NullPointerException e) { }
 
@@ -178,6 +183,12 @@ public final class MetadataConverter {
       try {
         String value = src.getCommentAnnotationValue(i);
         dest.setCommentAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String annotator = src.getCommentAnnotationAnnotator(i);
+        dest.setCommentAnnotationAnnotator(annotator, i);
       }
       catch (NullPointerException e) { }
 
@@ -294,6 +305,12 @@ public final class MetadataConverter {
       try {
         Double value = src.getDoubleAnnotationValue(i);
         dest.setDoubleAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String annotator = src.getDoubleAnnotationAnnotator(i);
+        dest.setDoubleAnnotationAnnotator(annotator, i);
       }
       catch (NullPointerException e) { }
 
@@ -587,6 +604,12 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
+        String annotator = src.getFileAnnotationAnnotator(i);
+        dest.setFileAnnotationAnnotator(annotator, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
         String fileName = src.getBinaryFileFileName(i);
         dest.setBinaryFileFileName(fileName, i);
       }
@@ -691,6 +714,12 @@ public final class MetadataConverter {
       try {
         PercentFraction humidity = src.getImagingEnvironmentHumidity(i);
         dest.setImagingEnvironmentHumidity(humidity, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Map<String, String> map = src.getImagingEnvironmentMap(i);
+        dest.setImagingEnvironmentMap(map, i);
       }
       catch (NullPointerException e) { }
 
@@ -991,6 +1020,13 @@ public final class MetadataConverter {
             catch (NullPointerException e) { }
 
             try {
+              PositiveInteger integration =
+                src.getDetectorSettingsIntegration(i, c);
+              dest.setDetectorSettingsIntegration(integration, i, c);
+            }
+            catch (NullPointerException e) { }
+
+            try {
               Double offset = src.getDetectorSettingsOffset(i, c);
               dest.setDetectorSettingsOffset(offset, i, c);
             }
@@ -1005,6 +1041,12 @@ public final class MetadataConverter {
             try {
               Double voltage = src.getDetectorSettingsVoltage(i, c);
               dest.setDetectorSettingsVoltage(voltage, i, c);
+            }
+            catch (NullPointerException e) { }
+
+            try {
+              Double zoom = src.getDetectorSettingsZoom(i, c);
+              dest.setDetectorSettingsZoom(zoom, i, c);
             }
             catch (NullPointerException e) { }
           }
@@ -1656,6 +1698,12 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
+      try {
+        String annotator = src.getListAnnotationAnnotator(i);
+        dest.setListAnnotationAnnotator(annotator, i);
+      }
+      catch (NullPointerException e) { }
+
       int annotationRefCount = 0;
       try {
         annotationRefCount = src.getListAnnotationAnnotationCount(i);
@@ -1706,6 +1754,12 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
+      try {
+        String annotator = src.getLongAnnotationAnnotator(i);
+        dest.setLongAnnotationAnnotator(annotator, i);
+      }
+      catch (NullPointerException e) { }
+
       int annotationRefCount = 0;
       try {
         annotationRefCount = src.getLongAnnotationAnnotationCount(i);
@@ -1715,6 +1769,61 @@ public final class MetadataConverter {
         try {
           String id = src.getLongAnnotationAnnotationRef(i, a);
           dest.setLongAnnotationAnnotationRef(id, i, a);
+        }
+        catch (NullPointerException e) { }
+      }
+    }
+  }
+
+  private static void convertMapAnnotations(MetadataRetrieve src, MetadataStore dest)
+  {
+    int mapAnnotationCount = 0;
+    try {
+      mapAnnotationCount = src.getMapAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<mapAnnotationCount; i++) {
+      try {
+        String id = src.getMapAnnotationID(i);
+        dest.setMapAnnotationID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getMapAnnotationDescription(i);
+        dest.setMapAnnotationDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getMapAnnotationNamespace(i);
+        dest.setMapAnnotationNamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Map<String, String> value = src.getMapAnnotationValue(i);
+        dest.setMapAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String annotator = src.getMapAnnotationAnnotator(i);
+        dest.setMapAnnotationAnnotator(annotator, i);
+      }
+      catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getMapAnnotationAnnotationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int a=0; a<annotationRefCount; a++) {
+        try {
+          String id = src.getMapAnnotationAnnotationRef(i, a);
+          dest.setMapAnnotationAnnotationRef(id, i, a);
         }
         catch (NullPointerException e) { }
       }
@@ -3316,6 +3425,12 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
+      try {
+        String annotator = src.getTagAnnotationAnnotator(i);
+        dest.setTagAnnotationAnnotator(annotator, i);
+      }
+      catch (NullPointerException e) { }
+
       int annotationRefCount = 0;
       try {
         annotationRefCount = src.getTagAnnotationAnnotationCount(i);
@@ -3363,6 +3478,12 @@ public final class MetadataConverter {
       try {
         String value = src.getTermAnnotationValue(i);
         dest.setTermAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String annotator = src.getTermAnnotationAnnotator(i);
+        dest.setTermAnnotationAnnotator(annotator, i);
       }
       catch (NullPointerException e) { }
 
@@ -3416,6 +3537,12 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
+      try {
+        String annotator = src.getTimestampAnnotationAnnotator(i);
+        dest.setTimestampAnnotationAnnotator(annotator, i);
+      }
+      catch (NullPointerException e) { }
+
       int annotationRefCount = 0;
       try {
         annotationRefCount = src.getTimestampAnnotationAnnotationCount(i);
@@ -3463,6 +3590,12 @@ public final class MetadataConverter {
       try {
         String value = src.getXMLAnnotationValue(i);
         dest.setXMLAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String annotator = src.getXMLAnnotationAnnotator(i);
+        dest.setXMLAnnotationAnnotator(annotator, i);
       }
       catch (NullPointerException e) { }
 
@@ -3611,6 +3744,63 @@ public final class MetadataConverter {
           if (filamentType != null) {
             dest.setFilamentType(filamentType, instrumentIndex, lightSource);
           }
+        }
+        catch (NullPointerException e) { }
+      }
+      else if (type.equals("GenericExcitationSource")) {
+        try {
+          String id =
+            src.getGenericExcitationSourceID(instrumentIndex, lightSource);
+            dest.setGenericExcitationSourceID(id, instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          Map<String, String> map =
+            src.getGenericExcitationSourceMap(instrumentIndex, lightSource);
+          dest.setGenericExcitationSourceMap(map, instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String lotNumber = src.getGenericExcitationSourceLotNumber(
+            instrumentIndex, lightSource);
+          dest.setGenericExcitationSourceLotNumber(lotNumber,
+            instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer = src.getGenericExcitationSourceManufacturer(
+            instrumentIndex, lightSource);
+          dest.setGenericExcitationSourceManufacturer(manufacturer,
+            instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model =
+            src.getGenericExcitationSourceModel(instrumentIndex, lightSource);
+          dest.setGenericExcitationSourceModel(model,
+            instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double power =
+            src.getGenericExcitationSourcePower(instrumentIndex, lightSource);
+          dest.setGenericExcitationSourcePower(power,
+            instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber = src.getGenericExcitationSourceSerialNumber(
+            instrumentIndex, lightSource);
+          dest.setGenericExcitationSourceSerialNumber(serialNumber,
+            instrumentIndex, lightSource);
         }
         catch (NullPointerException e) { }
       }
@@ -3809,6 +3999,49 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
       }
     }
+  }
+
+  private static void convertRootAttributes(MetadataRetrieve src, MetadataStore dest)
+  {
+    try {
+      String uuid = src.getUUID();
+      if (uuid != null) {
+        dest.setUUID(uuid);
+      }
+    }
+    catch (NullPointerException e) { }
+
+    try {
+      String rightsHeld = src.getRightsRightsHeld();
+      if (rightsHeld != null) {
+        dest.setRightsRightsHeld(rightsHeld);
+      }
+    }
+    catch (NullPointerException e) { }
+
+    try {
+      String rightsHolder = src.getRightsRightsHolder();
+      if (rightsHolder != null) {
+        dest.setRightsRightsHolder(rightsHolder);
+      }
+    }
+    catch (NullPointerException e) { }
+
+    try {
+      String metadataFile = src.getBinaryOnlyMetadataFile();
+      if (metadataFile != null) {
+        dest.setBinaryOnlyMetadataFile(metadataFile);
+      }
+    }
+    catch (NullPointerException e) { }
+
+    try {
+      String uuid = src.getBinaryOnlyUUID();
+      if (uuid != null) {
+        dest.setBinaryOnlyUUID(uuid);
+      }
+    }
+    catch (NullPointerException e) { }
   }
 
 }

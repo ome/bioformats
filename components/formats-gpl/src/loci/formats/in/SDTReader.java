@@ -9,15 +9,15 @@
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
+ * published by the Free Software Foundation, either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
+ *
+ * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-2.0.html>.
  * #L%
@@ -63,25 +63,23 @@ public class SDTReader extends FormatReader {
   protected boolean intensity = false;
 
   /** Whether to pre-load all lifetime bins for faster loading. */
-  protected boolean preLoad = false;
-  
-  
-/*
- * Array to hold re-ordered data for all the timeBins in one channel
- */
-protected byte[] chanStore = null;
+  protected boolean preLoad = true;
 
-/*
- * Currently stored channel
- */
-protected int storedChannel = -1;
+  /*
+   * Array to hold re-ordered data for all the timeBins in one channel
+   */
+  protected byte[] chanStore = null;
 
-/*
- * Currently stored series
- */
-protected int storedSeries = -1;
+  /*
+   * Currently stored channel
+   */
+  protected int storedChannel = -1;
 
-  
+  /*
+   * Currently stored series
+   */
+  protected int storedSeries = -1;
+
   // -- Constructor --
 
   /** Constructs a new SDT reader. */
@@ -100,7 +98,7 @@ protected int storedSeries = -1;
     FormatTools.assertId(currentId, false, 1);
     this.intensity = intensity;
   }
-  
+
   /**
    * Toggles whether the reader should pre-load
    * data for increased performance.
@@ -145,7 +143,7 @@ protected int storedSeries = -1;
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    
+
     int sizeX = getSizeX();
     int sizeY = getSizeY();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -153,84 +151,80 @@ protected int storedSeries = -1;
 
     int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
     int planeSize = paddedWidth * sizeY * timeBins * bpp;
-    
-    
+
     if (preLoad  && !intensity)  {
-      
       int channel =  no / timeBins;
       int timeBin = no % timeBins;
-      
+
       byte[] rowBuf = new byte[bpp * timeBins * paddedWidth];
-              
+
       int binSize = paddedWidth * sizeY  * bpp;
 
-      if (chanStore == null || storedChannel != channel  || storedSeries != getSeries() )  {  
-        
-        // The whole plane (all timebins) is  copied into storage 
+      if (chanStore == null || storedChannel != channel ||
+        storedSeries != getSeries() )
+      {
+        // The whole plane (all timebins) is  copied into storage
         // to allow different sub-plane sizes to be used for different timebins
-        chanStore = new byte[planeSize];    
+        chanStore = new byte[planeSize];
         in.seek(info.allBlockOffsets[getSeries()] + channel * planeSize);
- 
-        for (int row = 0; row < sizeY  ; row++)  {
+
+        for (int row = 0; row < sizeY; row++) {
           in.read(rowBuf);
-            
-          int input = 0;          
-          for (int col = 0; col < paddedWidth; col++) {   
-            
-            //  set output to  first pixel of this row in 2D plane corresponding to zeroth timeBin
+
+          int input = 0;
+          for (int col = 0; col < paddedWidth; col++) {
+            // set output to first pixel of this row in 2D plane
+            // corresponding to zeroth timeBin
             int output = (row * paddedWidth + col) * bpp;
 
             for (int t = 0; t < timeBins; t++)  {
               for (int bb = 0; bb < bpp; bb++) {
                 chanStore[output + bb] = rowBuf[input + bb];
-              } 
-            output += binSize;
-            input += bpp;
+              }
+              output += binSize;
+              input += bpp;
             }
           }
-        }    // end row loop
-        
+        }
+
         storedChannel = channel;
         storedSeries = getSeries();
-                  
       }  // chanStore loaded
-                
+
       // copy 2D plane  from chanStore  into buf
-    
+
       int iLineSize = paddedWidth * bpp;
       int oLineSize = w * bpp;
       // offset to correct timebin yth line and xth pixel
       int input = (binSize * timeBin) + (y * iLineSize) + (x * bpp);
       int output = 0;
-      
+
       for (int row = 0; row < h; row++) {
         System.arraycopy(chanStore, input, buf, output , oLineSize);
         input += iLineSize;
         output += oLineSize;
       }
-    
-      
+
       return buf;
-        
-    } 
+    }
     else {
-      
       int channel = intensity ? no : no / timeBins;
       int timeBin = intensity ? 0 : no % timeBins;
-    
+
       byte[] b = !intensity ? buf : new byte[sizeY * sizeX * timeBins * bpp];
-      
+
       byte[] rowBuf = new byte[bpp * timeBins * w];
 
-      in.seek(info.allBlockOffsets[getSeries()]
-              + channel * planeSize + y * paddedWidth * bpp * timeBins);
+      in.seek(info.allBlockOffsets[getSeries()] +
+        channel * planeSize + y * paddedWidth * bpp * timeBins);
 
       for (int row = 0; row < h; row++) {
         in.skipBytes(x * bpp * timeBins);
         in.read(rowBuf);
         if (intensity) {
           System.arraycopy(rowBuf, 0, b, row * bpp * timeBins * w, b.length);
-        } else {
+        }
+        else {
           for (int col = 0; col < w; col++) {
             int output = (row * w + col) * bpp;
             int input = (col * timeBins + timeBin) * bpp;
@@ -267,13 +261,11 @@ protected int storedSeries = -1;
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      
-      // init preLoading 
-      preLoad = false;
+      // init preLoading
+      preLoad = true;
       chanStore = null;
       storedChannel = -1;
       storedSeries = -1;
-      
       timeBins = channels = 0;
       info = null;
     }
@@ -288,7 +280,7 @@ protected int storedSeries = -1;
     in.order(true);
 
     LOGGER.info("Reading header");
-    
+
     // read file header information
     info = new SDTInfo(in, metadata);
     timeBins = info.timeBins;

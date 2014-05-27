@@ -76,7 +76,7 @@ namespace ome
                           dimension_size_type  zSize,
                           dimension_size_type  cSize,
                           dimension_size_type  tSize,
-                          image_size_type      num,
+                          dimension_size_type  num,
                           dimension_size_type& iz,
                           dimension_size_type& ic,
                           dimension_size_type& it)
@@ -102,9 +102,9 @@ namespace ome
             throw new std::logic_error(fmt.str());
           }
 
-        iz = sz;
-        it = st;
-        ic = sc;
+        iz = sz - 2;
+        it = st - 2;
+        ic = sc - 2;
 
         // check SizeZ
         if (!zSize)
@@ -144,7 +144,7 @@ namespace ome
              dimension_size_type zSize,
              dimension_size_type cSize,
              dimension_size_type tSize,
-             image_size_type     num,
+             dimension_size_type num,
              dimension_size_type z,
              dimension_size_type c,
              dimension_size_type t)
@@ -174,7 +174,7 @@ namespace ome
                  dimension_size_type zSize,
                  dimension_size_type cSize,
                  dimension_size_type tSize,
-                 image_size_type     num,
+                 dimension_size_type num,
                  dimension_size_type index)
     {
       dimension_size_type iz, it, ic;

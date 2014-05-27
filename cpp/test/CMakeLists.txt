@@ -36,14 +36,6 @@
 
 include_directories(${GTEST_INCLUDE_DIR})
 
-if(BUILD_TESTS)
-  set(test_main_sources main.cpp)
-
-  add_library(testmain STATIC ${test_main_sources})
-
-  set(TEST_LIBS testmain ${GTEST_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-endif(BUILD_TESTS)
-
 add_subdirectory(ome-compat)
 add_subdirectory(ome-internal)
 add_subdirectory(ome-xerces)

@@ -1480,19 +1480,6 @@ XML_OUTPUT             = xml
 # which can be used by a validating XML parser to check the
 # syntax of the XML files.
 
-XML_SCHEMA             =
-
-# The XML_DTD tag can be used to specify an XML DTD,
-# which can be used by a validating XML parser to check the
-# syntax of the XML files.
-
-XML_DTD                =
-
-# If the XML_PROGRAMLISTING tag is set to YES Doxygen will
-# dump the program listings (including syntax highlighting
-# and cross-referencing information) to the XML output. Note that
-# enabling this will significantly increase the size of the XML output.
-
 XML_PROGRAMLISTING     = YES
 
 #---------------------------------------------------------------------------

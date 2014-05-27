@@ -68,6 +68,8 @@
 
 #include <ome/xerces/String.h>
 
+#include <ome/xml/model/ModelException.h>
+
 #include <boost/format.hpp>
 
 {% for include in klass.source_dependencies %}\
@@ -172,7 +174,7 @@ namespace ome
         /**
          * Copy constructor.
          *
-         * @param copy the object to copy.
+         * @param copy the ${klass.name} to copy.
          */
         ${klass.name} (const ${klass.name}& copy);
 {% end header%}\
@@ -304,8 +306,8 @@ ${customContent}\
 
         {
           // Element's text data
-{% if klass.langBaseType != 'std::string' %}\
           std::string text(element.getTextContent());
+{% if klass.langBaseType != 'std::string' %}\
           if (!text.empty())
             {
               std::istringstream is(text);
@@ -313,12 +315,12 @@ ${customContent}\
                 {
                   format fmt("Failed to parse ${klass.name} value ‘%1%’");
                   fmt % text;
-                  throw std::runtime_error(fmt.str());
+                  throw ModelException(fmt.str());
                 }
             }
 {% end %}\
 {% if klass.langBaseType == 'std::string' %}\
-          this->value = element.getTextContent();
+          this->value = text;
 {% end %}\
         }
 {% end %}\
@@ -362,8 +364,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.isAttribute and prop.name == "ID" %}\
         if (!element.hasAttribute("ID") && getID().empty())
           {
-            /// @todo Should be its own exception.
-            throw std::runtime_error("${klass.name} missing required ID property");
+            throw ModelException("${klass.name} missing required ID property");
           }
         if (element.hasAttribute("ID"))
            {
@@ -376,7 +377,7 @@ ${customUpdatePropertyContent[prop.name]}
                 {
                   format fmt("Failed to parse ${klass.name} value ‘%1%’");
                   fmt % is.str();
-                  throw std::runtime_error(fmt.str());
+                  throw ModelException(fmt.str());
                 }
              set${prop.methodName}(id);
 {% end %}\
@@ -394,7 +395,8 @@ ${customUpdatePropertyContent[prop.name]}
 {% if prop.isEnumeration %}\
             // Attribute property which is an enumeration ${prop.name}
 {% if prop.minOccurs == 0 %}\
-            ${prop.instanceVariableType} nattr(std::make_shared< ${prop.langTypeNS}>(element.getAttribute("${prop.name}")));
+            std::string text(element.getAttribute("${prop.name}"));
+            ${prop.instanceVariableType} nattr(std::make_shared< ${prop.langTypeNS}>(text));
             set${prop.methodName}(nattr);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
@@ -418,7 +420,7 @@ ${customUpdatePropertyContent[prop.name]}
                 {
                   format fmt("Failed to parse ${klass.name} value ‘%1%’");
                   fmt % is.str();
-                  throw std::runtime_error(fmt.str());
+                  throw ModelException(fmt.str());
                 }
 
               set${prop.methodName}(attr);
@@ -434,19 +436,19 @@ ${customUpdatePropertyContent[prop.name]}
         std::vector<xerces::dom::Element> ${prop.name}_nodeList(getChildrenByTagName(element, "${prop.name}"));
         if (${prop.name}_nodeList.size() > 1)
           {
-            /// @todo Should be its own Exception.
             format fmt("${prop.name} node list size %1% != 1");
             fmt % ${prop.name}_nodeList.size();
-            throw std::runtime_error(fmt.str());
+            throw ModelException(fmt.str());
           }
         else if (${prop.name}_nodeList.size() != 0)
           {
 {% if prop.isComplex() and not klass.isAbstractProprietary %}\
             // Element property ${prop.name} which is complex (has sub-elements)
-{% if prop.minOccurs == 0 or (not lang.hasPrimitiveType(prop.langType) and not prop.isEnumeration) %} \
+{% if prop.minOccurs == 0 or (not lang.hasPrimitiveType(prop.langType) and not prop.isEnumeration) %}\
+            xerces::dom::Element elem(${prop.name}_nodeList.at(0));
             // While std::make_shared<> works, here,
             // boost::make_shared<> does not, so use new directly.
-            ${prop.instanceVariableType} p(new ${prop.langTypeNS}(${prop.name}_nodeList.at(0), model));
+            ${prop.instanceVariableType} p(new ${prop.langTypeNS}(elem, model));
 {% end %}\
 {% if prop.minOccurs > 0 and (lang.hasPrimitiveType(prop.langType) or prop.isEnumeration) %} \
             ${prop.langTypeNS} p(${prop.name}_nodeList.at(0), model);
@@ -456,25 +458,27 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not prop.isComplex() %}\
             // Element property ${prop.name} which is not complex (has no
             // sub-elements)
+            std::string text(${prop.name}_nodeList.at(0).getTextContent());
 {% if prop.minOccurs == 0 %}\
-            ${prop.instanceVariableType} ns(std::make_shared< ${prop.langTypeNS}>(${prop.name}_nodeList.at(0).getTextContent()));
+            ${prop.instanceVariableType} ns(std::make_shared< ${prop.langTypeNS}>(text));
             set${prop.methodName}(ns);
 {% end %}\
 {% if prop.minOccurs > 0 %}\
 {% if prop.langTypeNS != 'std::string' %}\
             ${prop.langTypeNS} attr;
-            std::istringstream is(${prop.name}_nodeList.at(0).getTextContent());
+
+            std::istringstream is(text);
             if (is >> attr)
               set${prop.methodName}(attr);
             else
               {
                 format fmt("Failed to parse ${klass.name} ${prop.name} property value ‘%1%’");
                 fmt % is.str();
-                throw std::runtime_error(fmt.str());
+                throw ModelException(fmt.str());
               }
 {% end %}\
 {% if prop.langTypeNS == 'std::string' %}\
-            set${prop.methodName}(${prop.name}_nodeList.at(0).getTextContent());
+            set${prop.methodName}(text);
 {% end %}\
 {% end %}\
 {% end %}\
@@ -532,7 +536,8 @@ ${customUpdatePropertyContent[prop.name]}
              elem != ${prop.name}_nodeList.end();
              ++elem)
           {
-            std::shared_ptr<${prop.methodName}> object(std::make_shared< ${prop.langTypeNS}>(elem->getTextContent(), model));
+            std::string text(element.getTextContent());
+            std::shared_ptr<${prop.methodName}> object(std::make_shared< ${prop.langTypeNS}>(text, model));
             add${prop.methodName}(object);
           }
 {% end %}\
@@ -581,7 +586,6 @@ ${customUpdatePropertyContent[prop.name]}
 {% end %}\
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
-                /// @todo Use of const since this is nonmodifying.
                 if (contains(${prop.instanceVariableName}, o_casted))
                   {
                     ${prop.instanceVariableName}.push_back(o_casted);
@@ -700,23 +704,20 @@ ${customUpdatePropertyContent[prop.name]}
          * @note The index must be valid.
          *
          * @param index the index number of the ${prop.methodName}.
-         * @param object the object to set.
+         * @param ${prop.argumentName} the ${prop.methodName} to set.
          * @returns a weak pointer to the ${prop.methodName}.
          * @throws std::out_of_range if the index is invalid.
-         *
-         * @todo object isn't a great parameter name; use something
-         * better.
          */
         const std::weak_ptr<${prop.langTypeNS}>&
         setLinked${prop.methodName} (${prop.instanceVariableType}::size_type index,
-                                     const std::shared_ptr<${prop.langTypeNS}>& object);
+                                     const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       const std::weak_ptr<${prop.langTypeNS}>&
       ${klass.name}::setLinked${prop.methodName}(${prop.instanceVariableType}::size_type index,
-                                                 const std::shared_ptr<${prop.langTypeNS}>& object)
+                                                 const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        return ${prop.instanceVariableName}.at(index) = object;
+        return this->${prop.instanceVariableName}.at(index) = ${prop.argumentName};
       }
 {% end source %}\
 
@@ -724,7 +725,7 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Link ${prop.methodName}.
          *
-         * @param object the object to link.
+         * @param ${prop.argumentName} the ${prop.methodName} to link.
          * @returns @c true if the object was added to the internal
          * ${prop.instanceVariableName} list, otherwise @c false.
          *
@@ -732,23 +733,23 @@ ${customUpdatePropertyContent[prop.name]}
          * Is this an artifact of the Java API?
          */
         bool
-        link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object);
+        link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::link${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        object->link${klass.type}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->link${klass.type}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        object->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->link${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% end %}\
-        if (!contains(${prop.instanceVariableName}, object))
+        if (!contains(this->${prop.instanceVariableName}, ${prop.argumentName}))
           {
-            ${prop.instanceVariableName}.push_back(object);
+            this->${prop.instanceVariableName}.push_back(${prop.argumentName});
             return true;
           }
         return false;
@@ -759,10 +760,10 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Unlink ${prop.methodName}.
          *
-         * @param object the object to unlink.
+         * @param ${prop.argumentName} the ${prop.methodName} to unlink.
          *
-         * @returns @c true if the object was unlinked, otherwise
-         * @c false if the object was not linked and could hence not be
+         * @returns @c true if the ${prop.methodName} was unlinked, otherwise
+         * @c false if the ${prop.methodName} was not linked and could hence not be
          * unlinked.
          *
          * @todo Does the return value serve any useful purpose?  Is
@@ -772,29 +773,29 @@ ${customUpdatePropertyContent[prop.name]}
          * aren't preventing duplicates on insertion.
          */
         bool
-        unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object);
+        unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       bool
-      ${klass.name}::unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::unlink${prop.methodName} (const std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 {% if not fu.backReference_overridden(prop.name, klass.name) %}\
-        object->unlink${klass.type}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->unlink${klass.type}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% if fu.backReference_overridden(prop.name, klass.name) %}\
-        object->unlink${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
+        ${prop.argumentName}->unlink${klass.name}${prop.methodName}(std::shared_ptr<${klass.name}>(this));
 {% end %}\
 {% end %}\
         bool found = false;
         ${prop.instanceVariableType}::iterator i =
-          std::find_if(${prop.instanceVariableName}.begin(),
-                       ${prop.instanceVariableName}.end(),
-                       compare_element<${prop.langTypeNS}>(object));
-        if (i != ${prop.instanceVariableName}.end())
+          std::find_if(this->${prop.instanceVariableName}.begin(),
+                       this->${prop.instanceVariableName}.end(),
+                       compare_element<${prop.langTypeNS}>(${prop.argumentName}));
+        if (i != this->${prop.instanceVariableName}.end())
           {
             found = true;
-            ${prop.instanceVariableName}.erase(i);
+            this->${prop.instanceVariableName}.erase(i);
           }
         return found;
       }
@@ -826,16 +827,16 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Link ${prop.methodName}.
          *
-         * @param object the ${prop.methodName} to link.
+         * @param ${prop.argumentName} the ${prop.methodName} to link.
          */
         void
-        link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object);
+        link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::link${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        ${prop.instanceVariableName} = object;
+        this->${prop.instanceVariableName} = ${prop.argumentName};
       }
 {% end source %}\
 
@@ -843,22 +844,22 @@ ${customUpdatePropertyContent[prop.name]}
         /**
          * Unlink ${prop.methodName}.
          *
-         * @param object the object to unlink.
+         * @param ${prop.argumentName} the ${prop.methodName} to unlink.
          *
          * @todo This method is fairly pointless since it's equivalent
          * to linking a null pointer.  It could call @c link(0)
          * internally.
          */
         void
-        unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object);
+        unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName});
 {% end header %}\
 {% if fu.SOURCE_TYPE == "source" %}\
       void
-      ${klass.name}::unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& object)
+      ${klass.name}::unlink${prop.methodName} (std::shared_ptr<${prop.langTypeNS}>& ${prop.argumentName})
       {
-        if (std::shared_ptr<${prop.langTypeNS}>(${prop.instanceVariableName}) == object)
+        if (std::shared_ptr<${prop.langTypeNS}>(this->${prop.instanceVariableName}) == ${prop.argumentName})
           {
-            ${prop.instanceVariableName} = std::shared_ptr<${prop.langTypeNS}>();
+            this->${prop.instanceVariableName} = std::shared_ptr<${prop.langTypeNS}>();
           }
       }
 {% end source %}\
@@ -947,8 +948,6 @@ ${customUpdatePropertyContent[prop.name]}
          * @param index the index number of the ${prop.methodName}.
          * @returns the ${prop.methodName}.
          * @throws std::out_of_range if the index is invalid.
-         *
-         * @todo Is this a value type under all circumstances?
          */
         ${prop.retType[qualifier]}
         get${prop.methodName} (${prop.instanceVariableType}::size_type index)${qualifier};
@@ -969,10 +968,6 @@ ${customUpdatePropertyContent[prop.name]}
          * @param index the index number of the ${prop.methodName}.
          * @param ${prop.argumentName} the ${prop.methodName} to set.
          * @throws std::out_of_range if the index is invalid.
-         *
-         * @todo Is this a value type under all circumstances?
-         * @todo Return type set to void since we can't return
-         * abstract types by value.
          */
         void
         set${prop.methodName} (${prop.instanceVariableType}::size_type index,
