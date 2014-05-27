@@ -963,7 +963,7 @@ public class ZeissCZIReader extends FormatReader {
     while (in.getFilePointer() < in.length()) {
       Segment segment = readSegment(id);
       if (segment == null) {
-        continue;
+        break;
       }
       segments.add(segment);
 
@@ -2395,14 +2395,14 @@ public class ZeissCZIReader extends FormatReader {
     }
     else if (segmentID.equals("DELETED")) {
       segment = new Segment();
+    }
+    else if (segmentID.length() == 0) {
+      segment = new Segment();
       skipData = true;
     }
     else {
-      if (segmentID.trim().length() > 0) {
-        LOGGER.info("Unknown segment type: {}", segmentID);
-      }
+      LOGGER.info("Unknown segment type: {}", segmentID);
       segment = new Segment();
-      skipData = true;
     }
     segment.startingPosition = startingPosition;
     segment.id = segmentID;
