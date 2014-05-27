@@ -23,6 +23,7 @@ Generate code to process OME-XML from an OME-XML schema.
 #
 
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import logging
 import sys
@@ -262,10 +263,11 @@ def enum_value_name(value):
         value = value.replace("7", "seven")
         value = value.replace("8", "eight")
         value = value.replace("9", "nine")
-    value = value.replace(u'μ', "micro")
-    value = value.replace(u'°', "degree")
-    value = value.replace(u'Å', "angstrom")
-    value = value.replace(u' ', "")
+    """ µ is &micro; &#181; &#xB5; 'micro sign Mu' """
+    value = value.replace('µ', "micro")
+    value = value.replace('°', "degree")
+    value = value.replace('Å', "angstrom")
+    value = value.replace(' ', "")
     value = value.replace("-", "")
     return value.upper()
 

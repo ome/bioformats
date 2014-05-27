@@ -444,7 +444,7 @@
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeX" use="optional" type="PositiveFloat">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel.</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel. Units are set by PhysicalSizeXUnit.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeXUnit" use="optional" default="µm" type="UnitsLength">
@@ -454,7 +454,7 @@
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeY" use="optional" type="PositiveFloat">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel.</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel. Units are set by PhysicalSizeYUnit.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeYUnit" use="optional" default="µm" type="UnitsLength">
@@ -464,7 +464,7 @@
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeZ" use="optional" type="PositiveFloat">
 				<xsd:annotation>
-					<xsd:documentation>Physical size of a pixel.</xsd:documentation>
+					<xsd:documentation>Physical size of a pixel. Units are set by PhysicalSizeZUnit.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PhysicalSizeZUnit" use="optional" default="µm" type="UnitsLength">
@@ -633,8 +633,13 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The optional PinholeSize attribute allows specifying adjustable
-						pin hole diameters for confocal microscopes (units microns[µm]).
+						pin hole diameters for confocal microscopes. Units are set by PinholeSizeUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PinholeSizeUnit" use="optional" default="µm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the pin hole diameter for confocal microscopes - default:microns[µm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="AcquisitionMode" use="optional">
@@ -1510,6 +1515,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
+			<!-- 
 			<xsd:enumeration value =  "Ym"><xsd:annotation><xsd:documentation>The length unit is yotta meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "Zm"><xsd:annotation><xsd:documentation>The length unit is zetta meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "Em"><xsd:annotation><xsd:documentation>The length unit is   exa meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1517,12 +1523,14 @@
 			<xsd:enumeration value =  "Tm"><xsd:annotation><xsd:documentation>The length unit is  tera meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "Gm"><xsd:annotation><xsd:documentation>The length unit is  giga meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "Mm"><xsd:annotation><xsd:documentation>The length unit is  mega meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			-->
 			<xsd:enumeration value =  "km"><xsd:annotation><xsd:documentation>The length unit is  kilo meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "hm"><xsd:annotation><xsd:documentation>The length unit is hecto meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value = "dam"><xsd:annotation><xsd:documentation>The length unit is  deca meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =   "m"><xsd:annotation><xsd:documentation>The length unit is       meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "dm"><xsd:annotation><xsd:documentation>The length unit is  deci meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "cm"><xsd:annotation><xsd:documentation>The length unit is centi meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
+
 			<xsd:enumeration value =  "mm"><xsd:annotation><xsd:documentation>The length unit is milli meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "µm"><xsd:annotation><xsd:documentation>The length unit is micro meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "nm"><xsd:annotation><xsd:documentation>The length unit is  nano meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1545,6 +1553,8 @@
 			<xsd:enumeration value =  "ly"><xsd:annotation><xsd:documentation>The length unit is light year.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "pc"><xsd:annotation><xsd:documentation>The length unit is parsec.</xsd:documentation></xsd:annotation></xsd:enumeration>
 
+			<xsd:enumeration value =  "pt"><xsd:annotation><xsd:documentation>The length unit is typography point. This unit should be limited to font sizes.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			<xsd:enumeration value =  "pixel"><xsd:annotation><xsd:documentation>The length unit is pixel. This unit should be limited to the ROI objects. It can then be resolved to real units from the PhysicalSize units of the Image the ROI is attached to.</xsd:documentation></xsd:annotation></xsd:enumeration>
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -1555,6 +1565,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
+			<!-- 
 			<xsd:enumeration value =  "Ys"><xsd:annotation><xsd:documentation>The time unit is yotta seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "Zs"><xsd:annotation><xsd:documentation>The time unit is zetta seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "Es"><xsd:annotation><xsd:documentation>The time unit is   exa seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1562,6 +1573,7 @@
 			<xsd:enumeration value =  "Ts"><xsd:annotation><xsd:documentation>The time unit is  tera seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "Gs"><xsd:annotation><xsd:documentation>The time unit is  giga seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "Ms"><xsd:annotation><xsd:documentation>The time unit is  mega seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			-->
 			<xsd:enumeration value =  "ks"><xsd:annotation><xsd:documentation>The time unit is  kilo seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "hs"><xsd:annotation><xsd:documentation>The time unit is hecto seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value = "das"><xsd:annotation><xsd:documentation>The time unit is  deca seconds.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1590,6 +1602,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
+			<!-- 
 			<xsd:enumeration value =  "YPa"><xsd:annotation><xsd:documentation>The pressure unit is yotta pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "ZPa"><xsd:annotation><xsd:documentation>The pressure unit is zetta pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "EPa"><xsd:annotation><xsd:documentation>The pressure unit is   exa pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1597,6 +1610,7 @@
 			<xsd:enumeration value =  "TPa"><xsd:annotation><xsd:documentation>The pressure unit is  tera pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "GPa"><xsd:annotation><xsd:documentation>The pressure unit is  giga pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "MPa"><xsd:annotation><xsd:documentation>The pressure unit is  mega pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			-->
 			<xsd:enumeration value =  "kPa"><xsd:annotation><xsd:documentation>The pressure unit is  kilo pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "hPa"><xsd:annotation><xsd:documentation>The pressure unit is hecto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value = "daPa"><xsd:annotation><xsd:documentation>The pressure unit is  deca pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1611,12 +1625,13 @@
 			<xsd:enumeration value =  "aPa"><xsd:annotation><xsd:documentation>The pressure unit is  atto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "zPa"><xsd:annotation><xsd:documentation>The pressure unit is zepto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "yPa"><xsd:annotation><xsd:documentation>The pressure unit is yocto pascal.</xsd:documentation></xsd:annotation></xsd:enumeration>
-
+<!--
 			<xsd:enumeration value =  "Mbar"><xsd:annotation><xsd:documentation>The pressure unit is  mega bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
+-->
 			<xsd:enumeration value =  "kbar"><xsd:annotation><xsd:documentation>The pressure unit is  kilo bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "dbar"><xsd:annotation><xsd:documentation>The pressure unit is  deci bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "cbar"><xsd:annotation><xsd:documentation>The pressure unit is centi bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
-			<xsd:enumeration value =  "mbar"><xsd:annotation><xsd:documentation>The pressure unit is milli bar.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			<xsd:enumeration value =  "mbar"><xsd:annotation><xsd:documentation>The pressure unit is milli bar.</xsd:documentation><xsd:appinfo><enumName>MILLIBAR</enumName></xsd:appinfo></xsd:annotation></xsd:enumeration>
 
 			<xsd:enumeration value =  "atm"><xsd:annotation><xsd:documentation>The pressure unit is standard atmosphere.</xsd:documentation></xsd:annotation></xsd:enumeration>
 
@@ -1664,6 +1679,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
+<!-- 
 			<xsd:enumeration value =  "YV"><xsd:annotation><xsd:documentation>The voltage unit is yotta volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "ZV"><xsd:annotation><xsd:documentation>The voltage unit is zetta volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "EV"><xsd:annotation><xsd:documentation>The voltage unit is   exa volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1671,12 +1687,14 @@
 			<xsd:enumeration value =  "TV"><xsd:annotation><xsd:documentation>The voltage unit is  tera volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "GV"><xsd:annotation><xsd:documentation>The voltage unit is  giga volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "MV"><xsd:annotation><xsd:documentation>The voltage unit is  mega volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
+-->
 			<xsd:enumeration value =  "kV"><xsd:annotation><xsd:documentation>The voltage unit is  kilo volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "hV"><xsd:annotation><xsd:documentation>The voltage unit is hecto volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value = "daV"><xsd:annotation><xsd:documentation>The voltage unit is  deca volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =   "V"><xsd:annotation><xsd:documentation>The voltage unit is       volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "dV"><xsd:annotation><xsd:documentation>The voltage unit is  deci volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "cV"><xsd:annotation><xsd:documentation>The voltage unit is centi volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
+ 
 			<xsd:enumeration value =  "mV"><xsd:annotation><xsd:documentation>The voltage unit is milli volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "µV"><xsd:annotation><xsd:documentation>The voltage unit is micro volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "nV"><xsd:annotation><xsd:documentation>The voltage unit is  nano volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1685,6 +1703,7 @@
 			<xsd:enumeration value =  "aV"><xsd:annotation><xsd:documentation>The voltage unit is  atto volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "zV"><xsd:annotation><xsd:documentation>The voltage unit is zepto volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "yV"><xsd:annotation><xsd:documentation>The voltage unit is yocto volts.</xsd:documentation></xsd:annotation></xsd:enumeration>
+
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -1695,6 +1714,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
+<!--
 			<xsd:enumeration value =  "YW"><xsd:annotation><xsd:documentation>The power unit is yotta watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "ZW"><xsd:annotation><xsd:documentation>The power unit is zetta watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "EW"><xsd:annotation><xsd:documentation>The power unit is   exa watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1702,6 +1722,7 @@
 			<xsd:enumeration value =  "TW"><xsd:annotation><xsd:documentation>The power unit is  tera watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "GW"><xsd:annotation><xsd:documentation>The power unit is  giga watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "MW"><xsd:annotation><xsd:documentation>The power unit is  mega watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
+-->
 			<xsd:enumeration value =  "kW"><xsd:annotation><xsd:documentation>The power unit is  kilo watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "hW"><xsd:annotation><xsd:documentation>The power unit is hecto watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value = "daW"><xsd:annotation><xsd:documentation>The power unit is  deca watts.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1726,6 +1747,7 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
+<!--
 			<xsd:enumeration value =  "YHz"><xsd:annotation><xsd:documentation>The frequency unit is yotta hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "ZHz"><xsd:annotation><xsd:documentation>The frequency unit is zetta hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "EHz"><xsd:annotation><xsd:documentation>The frequency unit is   exa hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1733,6 +1755,7 @@
 			<xsd:enumeration value =  "THz"><xsd:annotation><xsd:documentation>The frequency unit is  tera hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "GHz"><xsd:annotation><xsd:documentation>The frequency unit is  giga hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "MHz"><xsd:annotation><xsd:documentation>The frequency unit is  mega hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
+ -->
 			<xsd:enumeration value =  "kHz"><xsd:annotation><xsd:documentation>The frequency unit is  kilo hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "hHz"><xsd:annotation><xsd:documentation>The frequency unit is hecto hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value = "daHz"><xsd:annotation><xsd:documentation>The frequency unit is  deca hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1770,7 +1793,7 @@
 				LensNA: The numerical aperture of the lens (as a float)
 				NominalMagnification: The specified magnification e.g. x10
 				CalibratedMagnification: The measured magnification e.g. x10.3
-				WorkingDistance: WorkingDistance of the lens. The Units are microns[µm].
+				WorkingDistance: WorkingDistance of the lens.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1851,8 +1874,13 @@
 					<xsd:attribute name="WorkingDistance" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The working distance of the lens expressed as a floating point (real) number. Units are microns[µm].
+								The working distance of the lens expressed as a floating point (real) number. Units are set by WorkingDistanceUnit.
 							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="WorkingDistanceUnit" use="optional" default="µm" type="UnitsLength">
+						<xsd:annotation>
+							<xsd:documentation>The units of the working distance - default:microns[µm].</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Iris" use="optional" type="xsd:boolean">

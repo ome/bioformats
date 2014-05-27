@@ -102,7 +102,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
 					<xsd:attribute name="Length" use="required">
 						<xsd:annotation>
 							<xsd:documentation>
-								Character count attribute for the BinData field. This is the length of the base-64 encoded block. It allows easy skipping of the block when parsing the file.
+								Character count attribute for the BinData field. This is the length of the base-64 encoded block. It allows easy skipping of the block when parsing the file. [unit:bytes]
 							</xsd:documentation>
 						</xsd:annotation>
 						<xsd:simpleType>
@@ -128,7 +128,7 @@ If Offset and ReadLength are specified in conjuction with Compression, then they
 			<xsd:attribute name ="Size" use="required" type="OME:NonNegativeLong">
 				<xsd:annotation>
 					<xsd:documentation>
-						Size (in bytes) of the uncompressed file.
+						Size of the uncompressed file. [unit:bytes]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
