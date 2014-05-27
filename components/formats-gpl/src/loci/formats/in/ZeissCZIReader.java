@@ -115,6 +115,8 @@ public class ZeissCZIReader extends FormatReader {
 
   private ArrayList<Segment> segments;
   private ArrayList<SubBlock> planes;
+  private HashMap<Coordinate, ArrayList<Integer>> indexIntoPlanes =
+    new HashMap<Coordinate, ArrayList<Integer>>();
   private int rotations = 1;
   private int positions = 1;
   private int illuminations = 1;
@@ -303,77 +305,82 @@ public class ZeissCZIReader extends FormatReader {
     }
     int previousHeight = 0;
 
-    for (SubBlock plane : planes) {
-      if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
-        (plane.planeIndex == previousChannel && validScanDim))
-      {
-        byte[] rawData = new SubBlock(plane).readPixelData();
+    RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
+    try {
+      for (SubBlock plane : planes) {
+        if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
+          (plane.planeIndex == previousChannel && validScanDim))
+        {
+          byte[] rawData = new SubBlock(plane).readPixelData();
 
-        if ((prestitched != null && prestitched) || validScanDim) {
-          int realX = plane.x;
-          int realY = plane.y;
+          if ((prestitched != null && prestitched) || validScanDim) {
+            int realX = plane.x;
+            int realY = plane.y;
 
-          if (prestitched == null) {
-            currentY = 0;
-          }
-
-          Region tile = new Region(plane.col, plane.row, realX, realY);
-          if (validScanDim) {
-            tile.y += (no / getSizeC());
-            image.height = scanDim;
-          }
-
-          if (tile.intersects(image)) {
-            Region intersection = tile.intersection(image);
-            int intersectionX = 0;
-
-            if (tile.x < image.x) {
-              intersectionX = image.x - tile.x;
+            if (prestitched == null) {
+              currentY = 0;
             }
 
-            if (tile.x == 0 && outputCol > 0) {
-              outputCol = 0;
-              outputRow += previousHeight;
+            Region tile = new Region(plane.col, plane.row, realX, realY);
+            if (validScanDim) {
+              tile.y += (no / getSizeC());
+              image.height = scanDim;
             }
 
-            int rowLen = pixel * (int) Math.min(intersection.width, realX);
-            int outputOffset = outputRow * outputRowLen + outputCol;
-            for (int trow=0; trow<intersection.height; trow++) {
-              int realRow = trow + intersection.y - tile.y;
-              if (validScanDim) {
-                realRow += tile.y;
+            if (tile.intersects(image)) {
+              Region intersection = tile.intersection(image);
+              int intersectionX = 0;
+
+              if (tile.x < image.x) {
+                intersectionX = image.x - tile.x;
               }
-              int inputOffset = pixel * (realRow * realX + intersectionX);
-              System.arraycopy(
-                rawData, inputOffset, buf, outputOffset, rowLen);
-              outputOffset += outputRowLen;
+
+              if (tile.x == 0 && outputCol > 0) {
+                outputCol = 0;
+                outputRow += previousHeight;
+              }
+
+              int rowLen = pixel * (int) Math.min(intersection.width, realX);
+              int outputOffset = outputRow * outputRowLen + outputCol;
+              for (int trow=0; trow<intersection.height; trow++) {
+                int realRow = trow + intersection.y - tile.y;
+                if (validScanDim) {
+                  realRow += tile.y;
+                }
+                int inputOffset = pixel * (realRow * realX + intersectionX);
+                System.arraycopy(
+                  rawData, inputOffset, buf, outputOffset, rowLen);
+                outputOffset += outputRowLen;
+              }
+
+              outputCol += rowLen;
+              if (outputCol >= w * pixel) {
+                outputCol = 0;
+                outputRow += intersection.height;
+              }
+              previousHeight = intersection.height;
             }
 
-            outputCol += rowLen;
-            if (outputCol >= w * pixel) {
-              outputCol = 0;
-              outputRow += intersection.height;
+            currentX += realX;
+            if (currentX >= getSizeX()) {
+              currentX = 0;
+              currentY += realY;
             }
-            previousHeight = intersection.height;
           }
-
-          currentX += realX;
-          if (currentX >= getSizeX()) {
-            currentX = 0;
-            currentY += realY;
+          else {
+            RandomAccessInputStream s = new RandomAccessInputStream(rawData);
+            try {
+              readPlane(s, x, y, w, h, buf);
+            }
+            finally {
+              s.close();
+            }
+            break;
           }
-        }
-        else {
-          RandomAccessInputStream s = new RandomAccessInputStream(rawData);
-          try {
-            readPlane(s, x, y, w, h, buf);
-          }
-          finally {
-            s.close();
-          }
-          break;
         }
       }
+    } finally {
+        stream.close();
     }
 
     if (isRGB()) {
@@ -444,6 +451,7 @@ public class ZeissCZIReader extends FormatReader {
       rotationLabels = null;
       illuminationLabels = null;
       phaseLabels = null;
+      indexIntoPlanes.clear();
     }
   }
 
@@ -713,6 +721,7 @@ public class ZeissCZIReader extends FormatReader {
           }
         }
       }
+      segment.close();
     }
 
     if (rotationLabels != null) {
@@ -729,6 +738,17 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     assignPlaneIndices();
+
+    for (int i=0; i<planes.size(); i++) {
+      SubBlock p = planes.get(i);
+      Coordinate c = new Coordinate(p.seriesIndex, p.planeIndex);
+      ArrayList<Integer> indices = new ArrayList<Integer>();
+      if (indexIntoPlanes.containsKey(c)) {
+        indices = indexIntoPlanes.get(c);
+      }
+      indices.add(i);
+      indexIntoPlanes.put(c, indices);
+    }
 
     if (channels.size() > 0 && channels.get(0).color != null) {
       for (int i=0; i<seriesCount; i++) {
@@ -805,52 +825,56 @@ public class ZeissCZIReader extends FormatReader {
         if (t != null)
           startTime = t.asInstant().getMillis() / 1000d;
       }
+
       for (int plane=0; plane<getImageCount(); plane++) {
-        for (SubBlock p : planes) {
-          if (p.seriesIndex == i && p.planeIndex == plane) {
-            if (startTime == null) {
-              startTime = p.timestamp;
-            }
+        Coordinate coordinate = new Coordinate(i, plane);
+        ArrayList<Integer> index = indexIntoPlanes.get(coordinate);
+        if (index == null) {
+          continue;
+        }
 
-            if (p.stageX != null) {
-              store.setPlanePositionX(p.stageX, i, plane);
-            }
-            else if (positionsX != null && i < positionsX.length) {
-              store.setPlanePositionX(positionsX[i], i, plane);
-            }
+        SubBlock p = planes.get(index.get(0));
+        if (startTime == null) {
+          startTime = p.timestamp;
+        }
 
-            if (p.stageY != null) {
-              store.setPlanePositionY(p.stageY, i, plane);
-            }
-            else if (positionsY != null && i < positionsY.length) {
-              store.setPlanePositionY(positionsY[i], i, plane);
-            }
+        if (p.stageX != null) {
+          store.setPlanePositionX(p.stageX, i, plane);
+        }
+        else if (positionsX != null && i < positionsX.length) {
+          store.setPlanePositionX(positionsX[i], i, plane);
+        }
 
-            if (p.stageZ != null) {
-              store.setPlanePositionZ(p.stageZ, i, plane);
-            }
-            else if (positionsZ != null && i < positionsZ.length) {
-              store.setPlanePositionZ(positionsZ[i], i, plane);
-            }
+        if (p.stageY != null) {
+          store.setPlanePositionY(p.stageY, i, plane);
+        }
+        else if (positionsY != null && i < positionsY.length) {
+          store.setPlanePositionY(positionsY[i], i, plane);
+        }
 
-            if (p.timestamp != null) {
-              store.setPlaneDeltaT(p.timestamp - startTime, i, plane);
-            }
-            else if (plane < timestamps.size()) {
-              store.setPlaneDeltaT(timestamps.get(plane), i, plane);
-            }
-            if (p.exposureTime != null) {
-              store.setPlaneExposureTime(p.exposureTime, i, plane);
-            }
-            else {
-              int channel = getZCTCoords(plane)[1];
-              if (channel < channels.size() &&
-                channels.get(channel).exposure != null)
-              {
-                store.setPlaneExposureTime(
-                  channels.get(channel).exposure, i, plane);
-              }
-            }
+        if (p.stageZ != null) {
+          store.setPlanePositionZ(p.stageZ, i, plane);
+        }
+        else if (positionsZ != null && i < positionsZ.length) {
+          store.setPlanePositionZ(positionsZ[i], i, plane);
+        }
+
+        if (p.timestamp != null) {
+          store.setPlaneDeltaT(p.timestamp - startTime, i, plane);
+        }
+        else if (plane < timestamps.size()) {
+          store.setPlaneDeltaT(timestamps.get(plane), i, plane);
+        }
+        if (p.exposureTime != null) {
+          store.setPlaneExposureTime(p.exposureTime, i, plane);
+        }
+        else {
+          int channel = getZCTCoords(plane)[1];
+          if (channel < channels.size() &&
+            channels.get(channel).exposure != null)
+          {
+            store.setPlaneExposureTime(
+              channels.get(channel).exposure, i, plane);
           }
         }
       }
@@ -939,15 +963,19 @@ public class ZeissCZIReader extends FormatReader {
     if (in != null) {
       in.close();
     }
-    in = new RandomAccessInputStream(id, 1024);
+    in = new RandomAccessInputStream(id, BUFFER_SIZE);
     in.order(isLittleEndian());
     while (in.getFilePointer() < in.length()) {
       Segment segment = readSegment(id);
+      if (segment == null) {
+        break;
+      }
       segments.add(segment);
 
       if (segment instanceof SubBlock) {
         planes.add((SubBlock) segment);
       }
+      segment.close();
     }
   }
 
@@ -2350,6 +2378,7 @@ public class ZeissCZIReader extends FormatReader {
     // instantiate a Segment subclass based upon the segment ID
     String segmentID = in.readString(16).trim();
     Segment segment = null;
+    boolean skipData = false;
 
     if (segmentID.equals("ZISRAWFILE")) {
       segment = new FileHeader();
@@ -2372,13 +2401,18 @@ public class ZeissCZIReader extends FormatReader {
     else if (segmentID.equals("DELETED")) {
       segment = new Segment();
     }
+    else if (segmentID.length() == 0) {
+      segment = new Segment();
+      skipData = true;
+    }
     else {
-      LOGGER.info("Unknown segment type: " + segmentID);
+      LOGGER.info("Unknown segment type: {}", segmentID);
       segment = new Segment();
     }
     segment.startingPosition = startingPosition;
     segment.id = segmentID;
     segment.filename = filename;
+    segment.stream = in;
 
     if (!(segment instanceof Metadata)) {
       segment.fillInData();
@@ -2393,6 +2427,11 @@ public class ZeissCZIReader extends FormatReader {
     }
     else {
       in.seek(in.length());
+    }
+
+    if (skipData) {
+      segment.close();
+      return null;
     }
     return segment;
   }
@@ -2519,6 +2558,7 @@ public class ZeissCZIReader extends FormatReader {
     public String id;
     public long allocatedSize;
     public long usedSize;
+    public RandomAccessInputStream stream;
 
     public Segment() {
       filename = null;
@@ -2526,6 +2566,7 @@ public class ZeissCZIReader extends FormatReader {
       id = null;
       allocatedSize = 0;
       usedSize = 0;
+      stream = null;
     }
 
     public Segment(Segment model) {
@@ -2551,11 +2592,22 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+        }
       }
     }
 
+    public void close() throws IOException {
+      // whatever created the Segment is responsible for closing the stream
+      // we just need to remove the reference
+      stream = null;
+    }
+
     public RandomAccessInputStream getStream() throws IOException {
+      if (stream != null) {
+        return stream;
+      }
       return new RandomAccessInputStream(filename, BUFFER_SIZE);
     }
   }
@@ -2593,7 +2645,9 @@ public class ZeissCZIReader extends FormatReader {
         attachmentDirectoryPosition = s.readLong();
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+        }
       }
     }
   }
@@ -2624,7 +2678,9 @@ public class ZeissCZIReader extends FormatReader {
         s.read(attachment);
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+        }
       }
     }
 
@@ -2697,7 +2753,9 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+        }
       }
     }
 
@@ -2707,54 +2765,57 @@ public class ZeissCZIReader extends FormatReader {
       byte[] data = new byte[(int) dataSize];
       RandomAccessInputStream s = new RandomAccessInputStream(filename);
       try {
-        s.order(isLittleEndian());
-        s.seek(dataOffset);
-        s.read(data);
-
-        CodecOptions options = new CodecOptions();
-        options.interleaved = isInterleaved();
-        options.littleEndian = isLittleEndian();
-        options.maxBytes = getSizeX() * getSizeY() * getRGBChannelCount() *
-          FormatTools.getBytesPerPixel(getPixelType());
-
-        switch (directoryEntry.compression) {
-          case UNCOMPRESSED:
-            break;
-          case JPEG:
-            data = new JPEGCodec().decompress(data, options);
-            break;
-          case LZW:
-            data = new LZWCodec().decompress(data, options);
-            break;
-          case JPEGXR:
-            throw new UnsupportedCompressionException(
-              "JPEG-XR not yet supported");
-          case 104: // camera-specific packed pixels
-            data = decode12BitCamera(data, options.maxBytes);
-            // reverse column ordering
-            for (int row=0; row<getSizeY(); row++) {
-              for (int col=0; col<getSizeX()/2; col++) {
-                int left = row * getSizeX() * 2 + col * 2;
-                int right = row * getSizeX() * 2 + (getSizeX() - col - 1) * 2;
-                byte left1 = data[left];
-                byte left2 = data[left + 1];
-                data[left] = data[right];
-                data[left + 1] = data[right + 1];
-                data[right] = left1;
-                data[right + 1] = left2;
-              }
-            }
-
-            break;
-          case 504: // camera-specific packed pixels
-            data = decode12BitCamera(data, options.maxBytes);
-            break;
-        }
-      }
-      finally {
+        return readPixelData(s);
+      } finally {
         s.close();
       }
+    }
 
+    public byte[] readPixelData(RandomAccessInputStream s) throws FormatException, IOException {
+      byte[] data = new byte[(int) dataSize];
+      s.order(isLittleEndian());
+      s.seek(dataOffset);
+        s.read(data);
+
+      CodecOptions options = new CodecOptions();
+      options.interleaved = isInterleaved();
+      options.littleEndian = isLittleEndian();
+      options.maxBytes = getSizeX() * getSizeY() * getRGBChannelCount() *
+        FormatTools.getBytesPerPixel(getPixelType());
+
+      switch (directoryEntry.compression) {
+        case UNCOMPRESSED:
+          break;
+        case JPEG:
+          data = new JPEGCodec().decompress(data, options);
+          break;
+        case LZW:
+          data = new LZWCodec().decompress(data, options);
+          break;
+        case JPEGXR:
+          throw new UnsupportedCompressionException(
+            "JPEG-XR not yet supported");
+        case 104: // camera-specific packed pixels
+          data = decode12BitCamera(data, options.maxBytes);
+          // reverse column ordering
+          for (int row=0; row<getSizeY(); row++) {
+            for (int col=0; col<getSizeX()/2; col++) {
+              int left = row * getSizeX() * 2 + col * 2;
+              int right = row * getSizeX() * 2 + (getSizeX() - col - 1) * 2;
+              byte left1 = data[left];
+              byte left2 = data[left + 1];
+              data[left] = data[right];
+              data[left + 1] = data[right + 1];
+              data[right] = left1;
+              data[right + 1] = left2;
+            }
+          }
+
+          break;
+        case 504: // camera-specific packed pixels
+          data = decode12BitCamera(data, options.maxBytes);
+          break;
+      }
       return data;
     }
 
@@ -2896,7 +2957,9 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+        }
       }
     }
   }
@@ -2921,7 +2984,9 @@ public class ZeissCZIReader extends FormatReader {
         }
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+        }
       }
     }
   }
@@ -2947,7 +3012,9 @@ public class ZeissCZIReader extends FormatReader {
         s.read(attachmentData);
       }
       finally {
-        s.close();
+        if (stream == null) {
+          s.close();
+        }
       }
     }
   }
@@ -3038,6 +3105,32 @@ public class ZeissCZIReader extends FormatReader {
     public Double gain;
     public String fluor;
     public String filterSetRef;
+  }
+
+  class Coordinate {
+    public int series;
+    public int plane;
+
+    public Coordinate(int series, int plane) {
+      this.series = series;
+      this.plane = plane;
+    }
+
+    public boolean equals(Object o) {
+      if (o == null || !(o instanceof Coordinate)) {
+        return false;
+      }
+      return ((Coordinate) o).series == this.series &&
+        ((Coordinate) o).plane == this.plane;
+    }
+
+    public int hashCode() {
+      return series * getImageCount() + plane;
+    }
+
+    public String toString() {
+      return "[series = " + series + ", plane = " + plane + "]";
+    }
   }
 
 }
