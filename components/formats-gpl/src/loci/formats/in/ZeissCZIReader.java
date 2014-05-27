@@ -305,77 +305,82 @@ public class ZeissCZIReader extends FormatReader {
     }
     int previousHeight = 0;
 
-    for (SubBlock plane : planes) {
-      if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
-        (plane.planeIndex == previousChannel && validScanDim))
-      {
-        byte[] rawData = new SubBlock(plane).readPixelData();
+    RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
+    try {
+      for (SubBlock plane : planes) {
+        if ((plane.seriesIndex == currentSeries && plane.planeIndex == no) ||
+          (plane.planeIndex == previousChannel && validScanDim))
+        {
+          byte[] rawData = new SubBlock(plane).readPixelData();
 
-        if ((prestitched != null && prestitched) || validScanDim) {
-          int realX = plane.x;
-          int realY = plane.y;
+          if ((prestitched != null && prestitched) || validScanDim) {
+            int realX = plane.x;
+            int realY = plane.y;
 
-          if (prestitched == null) {
-            currentY = 0;
-          }
-
-          Region tile = new Region(plane.col, plane.row, realX, realY);
-          if (validScanDim) {
-            tile.y += (no / getSizeC());
-            image.height = scanDim;
-          }
-
-          if (tile.intersects(image)) {
-            Region intersection = tile.intersection(image);
-            int intersectionX = 0;
-
-            if (tile.x < image.x) {
-              intersectionX = image.x - tile.x;
+            if (prestitched == null) {
+              currentY = 0;
             }
 
-            if (tile.x == 0 && outputCol > 0) {
-              outputCol = 0;
-              outputRow += previousHeight;
+            Region tile = new Region(plane.col, plane.row, realX, realY);
+            if (validScanDim) {
+              tile.y += (no / getSizeC());
+              image.height = scanDim;
             }
 
-            int rowLen = pixel * (int) Math.min(intersection.width, realX);
-            int outputOffset = outputRow * outputRowLen + outputCol;
-            for (int trow=0; trow<intersection.height; trow++) {
-              int realRow = trow + intersection.y - tile.y;
-              if (validScanDim) {
-                realRow += tile.y;
+            if (tile.intersects(image)) {
+              Region intersection = tile.intersection(image);
+              int intersectionX = 0;
+
+              if (tile.x < image.x) {
+                intersectionX = image.x - tile.x;
               }
-              int inputOffset = pixel * (realRow * realX + intersectionX);
-              System.arraycopy(
-                rawData, inputOffset, buf, outputOffset, rowLen);
-              outputOffset += outputRowLen;
+
+              if (tile.x == 0 && outputCol > 0) {
+                outputCol = 0;
+                outputRow += previousHeight;
+              }
+
+              int rowLen = pixel * (int) Math.min(intersection.width, realX);
+              int outputOffset = outputRow * outputRowLen + outputCol;
+              for (int trow=0; trow<intersection.height; trow++) {
+                int realRow = trow + intersection.y - tile.y;
+                if (validScanDim) {
+                  realRow += tile.y;
+                }
+                int inputOffset = pixel * (realRow * realX + intersectionX);
+                System.arraycopy(
+                  rawData, inputOffset, buf, outputOffset, rowLen);
+                outputOffset += outputRowLen;
+              }
+
+              outputCol += rowLen;
+              if (outputCol >= w * pixel) {
+                outputCol = 0;
+                outputRow += intersection.height;
+              }
+              previousHeight = intersection.height;
             }
 
-            outputCol += rowLen;
-            if (outputCol >= w * pixel) {
-              outputCol = 0;
-              outputRow += intersection.height;
+            currentX += realX;
+            if (currentX >= getSizeX()) {
+              currentX = 0;
+              currentY += realY;
             }
-            previousHeight = intersection.height;
           }
-
-          currentX += realX;
-          if (currentX >= getSizeX()) {
-            currentX = 0;
-            currentY += realY;
+          else {
+            RandomAccessInputStream s = new RandomAccessInputStream(rawData);
+            try {
+              readPlane(s, x, y, w, h, buf);
+            }
+            finally {
+              s.close();
+            }
+            break;
           }
-        }
-        else {
-          RandomAccessInputStream s = new RandomAccessInputStream(rawData);
-          try {
-            readPlane(s, x, y, w, h, buf);
-          }
-          finally {
-            s.close();
-          }
-          break;
         }
       }
+    } finally {
+        stream.close();
     }
 
     if (isRGB()) {
@@ -2760,54 +2765,57 @@ public class ZeissCZIReader extends FormatReader {
       byte[] data = new byte[(int) dataSize];
       RandomAccessInputStream s = new RandomAccessInputStream(filename);
       try {
-        s.order(isLittleEndian());
-        s.seek(dataOffset);
-        s.read(data);
-
-        CodecOptions options = new CodecOptions();
-        options.interleaved = isInterleaved();
-        options.littleEndian = isLittleEndian();
-        options.maxBytes = getSizeX() * getSizeY() * getRGBChannelCount() *
-          FormatTools.getBytesPerPixel(getPixelType());
-
-        switch (directoryEntry.compression) {
-          case UNCOMPRESSED:
-            break;
-          case JPEG:
-            data = new JPEGCodec().decompress(data, options);
-            break;
-          case LZW:
-            data = new LZWCodec().decompress(data, options);
-            break;
-          case JPEGXR:
-            throw new UnsupportedCompressionException(
-              "JPEG-XR not yet supported");
-          case 104: // camera-specific packed pixels
-            data = decode12BitCamera(data, options.maxBytes);
-            // reverse column ordering
-            for (int row=0; row<getSizeY(); row++) {
-              for (int col=0; col<getSizeX()/2; col++) {
-                int left = row * getSizeX() * 2 + col * 2;
-                int right = row * getSizeX() * 2 + (getSizeX() - col - 1) * 2;
-                byte left1 = data[left];
-                byte left2 = data[left + 1];
-                data[left] = data[right];
-                data[left + 1] = data[right + 1];
-                data[right] = left1;
-                data[right + 1] = left2;
-              }
-            }
-
-            break;
-          case 504: // camera-specific packed pixels
-            data = decode12BitCamera(data, options.maxBytes);
-            break;
-        }
-      }
-      finally {
+        return readPixelData(s);
+      } finally {
         s.close();
       }
+    }
 
+    public byte[] readPixelData(RandomAccessInputStream s) throws FormatException, IOException {
+      byte[] data = new byte[(int) dataSize];
+      s.order(isLittleEndian());
+      s.seek(dataOffset);
+        s.read(data);
+
+      CodecOptions options = new CodecOptions();
+      options.interleaved = isInterleaved();
+      options.littleEndian = isLittleEndian();
+      options.maxBytes = getSizeX() * getSizeY() * getRGBChannelCount() *
+        FormatTools.getBytesPerPixel(getPixelType());
+
+      switch (directoryEntry.compression) {
+        case UNCOMPRESSED:
+          break;
+        case JPEG:
+          data = new JPEGCodec().decompress(data, options);
+          break;
+        case LZW:
+          data = new LZWCodec().decompress(data, options);
+          break;
+        case JPEGXR:
+          throw new UnsupportedCompressionException(
+            "JPEG-XR not yet supported");
+        case 104: // camera-specific packed pixels
+          data = decode12BitCamera(data, options.maxBytes);
+          // reverse column ordering
+          for (int row=0; row<getSizeY(); row++) {
+            for (int col=0; col<getSizeX()/2; col++) {
+              int left = row * getSizeX() * 2 + col * 2;
+              int right = row * getSizeX() * 2 + (getSizeX() - col - 1) * 2;
+              byte left1 = data[left];
+              byte left2 = data[left + 1];
+              data[left] = data[right];
+              data[left + 1] = data[right + 1];
+              data[right] = left1;
+              data[right + 1] = left2;
+            }
+          }
+
+          break;
+        case 504: // camera-specific packed pixels
+          data = decode12BitCamera(data, options.maxBytes);
+          break;
+      }
       return data;
     }
 
