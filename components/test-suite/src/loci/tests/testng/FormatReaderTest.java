@@ -2200,7 +2200,7 @@ public class FormatReaderTest {
         }
       }
       boolean single = used.length == 1;
-      if (single && base) LOGGER.info("OK");
+      if (single && base) LOGGER.debug("OK");
       else LOGGER.info("{} {}", used.length, single ? "file" : "files");
       if (!base) {
         LOGGER.error("Used files list does not include base file");
@@ -2224,8 +2224,15 @@ public class FormatReaderTest {
    * and generates appropriate assertion.
    */
   private static void result(String testName, boolean success, String msg) {
-    LOGGER.info("\t{}: {} ({})", new Object[] {testName,
-      success ? "PASSED" : "FAILED", msg == null ? "" : msg});
+    if (success) {
+      LOGGER.debug("\t{}: PASSED ({})", new Object[] {testName,
+        msg == null ? "" : msg});
+    }
+    else {
+      LOGGER.error("\t{}: FAILED ({})", new Object[] {testName,
+        msg == null ? "" : msg});
+    }
+
     if (msg == null) assert success;
     else assert success : msg;
   }

@@ -64,9 +64,6 @@ public class FormatReaderTestFactory {
   public Object[] createInstances() {
     Vector files = new Vector();
 
-    // create log file
-    TestTools.createLogFile();
-
     // parse explicit filename, if any
     final String nameProp = "testng.filename";
     String filename = System.getProperty(nameProp);
