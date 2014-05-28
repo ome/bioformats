@@ -290,6 +290,12 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable,
     boolean allowArchiveHandles) throws IOException
   {
+    return getHandle(id, writable, allowArchiveHandles, 0);
+  }
+
+  public static IRandomAccess getHandle(String id, boolean writable,
+    boolean allowArchiveHandles, int bufferSize) throws IOException
+  {
     LOGGER.trace("getHandle(id = {}, writable = {})", id, writable);
     IRandomAccess handle = getMappedFile(id);
     if (handle == null) {
@@ -309,7 +315,13 @@ public class Location {
         handle = new BZip2Handle(mapId);
       }
       else {
-        handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
+        if (bufferSize > 0) {
+          handle = new NIOFileHandle(
+            new File(mapId), writable ? "rw" : "r", bufferSize);
+        }
+        else {
+          handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
+        }
       }
     }
     LOGGER.trace("Location.getHandle: {} -> {}", id, handle);
@@ -381,6 +393,10 @@ public class Location {
             }
           }
         }
+        is.close();
+        if (files.size() == 0) {
+          return null;
+        }
       }
       catch (IOException e) {
         LOGGER.trace("Could not retrieve directory listing", e);
@@ -400,6 +416,7 @@ public class Location {
         }
       }
     }
+
     result = files.toArray(new String[files.size()]);
     if (cacheListings) {
       fileListings.put(key, new ListingsResult(result, System.nanoTime()));
@@ -417,7 +434,7 @@ public class Location {
    * @see java.io.File#canRead()
    */
   public boolean canRead() {
-    return isURL ? (isDirectory() || isFile()) : file.canRead();
+    return isURL ? (isDirectory() || isFile() || exists()) : file.canRead();
   }
 
   /**

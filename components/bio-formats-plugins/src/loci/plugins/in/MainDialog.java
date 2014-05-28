@@ -505,7 +505,7 @@ public class MainDialog extends ImporterDialog
     if (src == stackFormatChoice && isStackBrowser) {
       isGroupFiles = true;
     }
-    else if (options.isOMERO()) {
+    else if (!options.isLocal()) {
       isGroupFiles = false;
       groupFilesEnabled = false;
     }

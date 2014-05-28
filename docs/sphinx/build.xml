@@ -1,0 +1,129 @@
+<!--
+build.xml
+
+Ant build file for Bio-Formats Sphinx documentation.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -p" for a list of targets.
+-->
+
+<project name="sphinx" default="html" basedir=".">
+  <description>Build file for sphinx documentation</description>
+  <property name="root.dir" location="../.."/>
+  <import file="${root.dir}/ant/global.xml"/>
+
+  <property name="sphinx.build" value="sphinx-build"/>
+  <property name="sphinx.opts" value=""/>
+  <property name="sphinx.builddir" location="_build"/>
+  <property name="latex.opts" value=""/>
+  <property name="source.branch" value=""/>
+  <property name="source.user" value="openmicroscopy"/>
+  <property name="jenkins.job" value=""/>
+  <property name="jenkins.cpp.job" value=""/>
+  <property name="omerodoc.uri" value=""/>
+
+  <target name="init"/>
+
+  <target name="html">
+    <exec executable="${sphinx.build}" failonerror="true">
+      <env key="SOURCE_BRANCH" value="${source.branch}"/>
+      <env key="SOURCE_USER" value="${source.user}"/>
+      <env key="BF_RELEASE" value="${bf.release}"/>
+      <env key="JENKINS_JOB" value="${jenkins.job}"/>
+      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
+      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
+      <arg value="-b"/>
+      <arg value="html"/>
+      <arg line="${sphinx.opts}"/>
+      <arg value="."/>
+      <arg value="${sphinx.builddir}/html"/>
+    </exec>
+  </target>
+
+  <macrodef name="xelatex" description="Run XeLaTeX">
+    <attribute name="file" default=""/>
+    <sequential>
+      <basename property="file.basename" file="@{file}"/>
+      <dirname property="file.dirname" file="@{file}"/>
+      <exec executable="xelatex" failonerror="true" dir="${file.dirname}">
+        <arg line="${latex.opts}"/>
+        <arg value="${file.basename}"/>
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="makeindex" description="Run makeindex">
+    <attribute name="file" default=""/>
+    <sequential>
+      <basename property="file.basename" file="@{file}"/>
+      <dirname property="file.dirname" file="@{file}"/>
+      <propertyregex property="file.index" input="${file.basename}" regexp="(.*)\.tex" select="\1.idx"/>
+      <echo message="BN: ${file.basename}  IN: ${file.index}"/>
+      <exec executable="makeindex" failonerror="true" dir="${file.dirname}">
+        <arg value="-s"/>
+        <arg value="python.ist"/>
+        <arg value="${file.index}"/>
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="runlatex">
+    <attribute name="file" default=""/>
+    <sequential>
+      <basename property="jar.filename" file="${lib.jarfile}"/>
+      <xelatex file="@{file}"/>
+      <xelatex file="@{file}"/>
+      <makeindex file="@{file}"/>
+      <xelatex file="@{file}"/>
+      <xelatex file="@{file}"/>
+      <xelatex file="@{file}"/>
+    </sequential>
+  </macrodef>
+
+  <target name="latexpdf">
+    <exec executable="${sphinx.build}" failonerror="true">
+      <env key="SOURCE_BRANCH" value="${source.branch}"/>
+      <env key="SOURCE_USER" value="${source.user}"/>
+      <env key="BF_RELEASE" value="${bf.release}"/>
+      <env key="JENKINS_JOB" value="${jenkins.job}"/>
+      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
+      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
+      <arg value="-b"/>
+      <arg value="latex"/>
+      <arg line="${sphinx.opts}"/>
+      <arg value="."/>
+      <arg value="${sphinx.builddir}/latex"/>
+    </exec>
+
+    <for param="file">
+      <path>
+       <fileset dir="${sphinx.builddir}/latex" includes="*.tex"/>
+      </path>
+      <sequential>
+        <runlatex file="@{file}"/>
+      </sequential>
+    </for>
+  </target>
+
+  <target name="pdf" depends="latexpdf"/>
+
+  <target name="linkcheck">
+    <exec executable="${sphinx.build}" failonerror="true">
+      <env key="SOURCE_BRANCH" value="${source.branch}"/>
+      <env key="SOURCE_USER" value="${source.user}"/>
+      <env key="BF_RELEASE" value="${bf.release}"/>
+      <env key="JENKINS_JOB" value="${jenkins.job}"/>
+      <env key="JENKINS_CPP_JOB" value="${jenkins.cpp.job}"/>
+      <env key="OMERODOC_URI" value="${omerodoc.uri}"/>
+      <arg value="-b"/>
+      <arg value="linkcheck"/>
+      <arg line="${sphinx.opts}"/>
+      <arg value="."/>
+      <arg value="${sphinx.builddir}/linkcheck"/>
+    </exec>
+  </target>
+
+  <target name="clean">
+    <delete dir="${sphinx.builddir}"/>
+  </target>
+
+</project>

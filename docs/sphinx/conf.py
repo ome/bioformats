@@ -64,7 +64,7 @@ copyright = u'2000-%d, %s ' % (now.year, author)
 # built documents.
 #
 try:
-    if "BF_RELEASE" in os.environ:
+    if "BF_RELEASE" in os.environ and len(os.environ.get('BF_RELEASE')) > 0:
         release = os.environ.get('BF_RELEASE')
     else:
         p = popen(['git','describe'])
@@ -114,30 +114,27 @@ pygments_style = 'sphinx'
 #modindex_common_prefix = []
 
 # Variables used to define Github extlinks
-if "SOURCE_BRANCH" in os.environ:
+if "SOURCE_BRANCH" in os.environ and len(os.environ.get('SOURCE_BRANCH')) > 0:
     source_branch = os.environ.get('SOURCE_BRANCH')
 else:
     source_branch = 'develop'
 
-if "SOURCE_USER" in os.environ:
+if "SOURCE_USER" in os.environ and len(os.environ.get('SOURCE_USER')) > 0:
     user = os.environ.get('SOURCE_USER')
 else:
     user = 'openmicroscopy'
 
 github_root = 'https://github.com/'
 bf_github_root = github_root + user + '/bioformats/'
-bf_github_branch = bf_github_root + 'blob/' + source_branch + '/'
+bf_github_tree = bf_github_root + 'tree/' + source_branch + '/'
+bf_github_blob = bf_github_root + 'blob/' + source_branch + '/'
+gpl_formats = bf_github_blob + 'components/formats-gpl/src/loci/formats/'
+bsd_formats = bf_github_blob + 'components/formats-bsd/src/loci/formats/'
 
 # Variables used to define Jenkins extlinks
-if "JENKINS_JOB" in os.environ:
-    jenkins_job = os.environ.get('JENKINS_JOB')
-else:
-    jenkins_job = 'BIOFORMATS-5.0-latest'
-
 jenkins_root = 'http://ci.openmicroscopy.org'
 jenkins_job_root = jenkins_root + '/job'
 jenkins_view_root = jenkins_root + '/view'
-bf_job_root = jenkins_job_root + '/' + jenkins_job
 
 # Variables used to define other extlinks
 cvs_root = 'http://cvs.openmicroscopy.org.uk'
@@ -146,7 +143,7 @@ oo_root = 'http://www.openmicroscopy.org'
 oo_site_root = oo_root + '/site'
 lists_root = 'http://lists.openmicroscopy.org.uk'
 downloads_root = 'http://downloads.openmicroscopy.org'
-if "OMERODOC_URI" in os.environ:
+if "OMERODOC_URI" in os.environ and len(os.environ.get('OMERODOC_URI')) > 0:
     omerodoc_uri = os.environ.get('OMERODOC_URI')
 else:
     omerodoc_uri = oo_site_root + '/support/omero5'
@@ -157,17 +154,16 @@ extlinks = {
     'milestone' : (trac_root + '/milestone/%s', ''),
     'report' : (trac_root + '/report/%s', ''),
     # Github links
-    'source' : (bf_github_branch + '%s', ''),
-    'bfreader' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/in/%s', ''),
-    'bsd-reader' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/in/%s', ''),
-    'bfwriter' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/out/' + '%s', ''),
-    'bsd-writer' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/out/' + '%s', ''),
+    'source' : (bf_github_blob + '%s', ''),
+    'sourcedir' : (bf_github_tree + '%s', ''),
+    'bfreader' : (gpl_formats + 'in/%s', ''),
+    'bsd-reader' : (bsd_formats + 'in/%s', ''),
+    'bfwriter' : (gpl_formats + 'out/' + '%s', ''),
+    'bsd-writer' : (bsd_formats + 'out/' + '%s', ''),
     # Jenkins links
     'jenkins' : (jenkins_root + '/%s', ''),
     'jenkinsjob' : (jenkins_job_root + '/%s', ''),
     'jenkinsview' : (jenkins_view_root + '/%s', ''),
-    'bfjob' : (bf_job_root + '/%s', ''),
-    'javadoc' : (bf_job_root + '/javadoc/%s', ''),
     # Mailing list/forum links
     'mailinglist' : (lists_root + '/mailman/listinfo/%s', ''),
     'forum' : (oo_root + '/community/%s', ''),
@@ -185,6 +181,7 @@ extlinks = {
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
     'downloads' : (downloads_root + '/latest/bio-formats5/%s', ''),
+    'javadoc' : (downloads_root + '/latest/bio-formats5/api/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')

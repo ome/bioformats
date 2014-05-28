@@ -14,7 +14,8 @@ Installation
 
 Follow these steps to install the Bio-Formats plugin for MIPAV:
 
-#. Download :downloads:`bioformats_package.jar <>`
+#. Download
+   :downloads:`bioformats_package.jar <artifacts/bioformats_package.jar>`
    and drop it into your MIPAV folder.
 #. Download the :source:`plugin source code <components/formats-bsd/utils/mipav/PlugInBioFormatsImporter.java>`
    into your user ``mipav/plugins`` folder.
@@ -37,6 +38,6 @@ Follow these steps to install the Bio-Formats plugin for MIPAV:
 See the :source:`readme file <components/formats-bsd/utils/mipav/readme.txt>`
 for more information.
 
-To upgrade, just overwrite the old **bioformats\_package.jar** with the 
+To upgrade, just overwrite the old **bioformats\_package.jar** with the
 :downloads:`latest one <>`. You may want to download the latest version of MIPAV first, to take advantage of new
 features and bug-fixes.

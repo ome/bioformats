@@ -177,10 +177,10 @@ Format readers
      - 0
      - 436
    * - :doc:`FV1000Reader <formats/olympus-fluoview-fv1000-metadata>`
-     - 109
+     - 113
      - 0
      - 0
-     - 366
+     - 362
    * - :doc:`FakeReader <formats/olympus-fluoview-fv1000-metadata>`
      - 21
      - 0
@@ -657,10 +657,10 @@ Format readers
      - 0
      - 456
    * - :doc:`SVSReader <formats/aperio-svs-tiff-metadata>`
-     - 22
+     - 29
      - 0
      - 0
-     - 453
+     - 446
    * - :doc:`ScanrReader <formats/olympus-scanr-metadata>`
      - 43
      - 0
@@ -777,10 +777,10 @@ Format readers
      - 0
      - 456
    * - :doc:`VolocityReader <formats/volocity-metadata>`
-     - 37
+     - 38
      - 0
      - 0
-     - 438
+     - 437
    * - :doc:`WATOPReader <formats/wa-top-metadata>`
      - 22
      - 0
@@ -792,10 +792,10 @@ Format readers
      - 0
      - 449
    * - :doc:`ZeissCZIReader <formats/zeiss-czi-metadata>`
-     - 157
+     - 158
      - 0
      - 0
-     - 318
+     - 317
    * - :doc:`ZeissLSMReader <formats/zeiss-lsm-metadata>`
      - 101
      - 0
@@ -929,10 +929,10 @@ Metadata fields
      - 0
      - 142
    * - :schema:`Channel - FilterSetRef <OME-2013-06/ome_xsd.html#FilterSetRef_ID>`
+     - 1
      - 0
      - 0
-     - 0
-     - 159
+     - 158
    * - :schema:`Channel - Fluor <OME-2013-06/ome_xsd.html#Channel_Fluor>`
      - 1
      - 0
@@ -1544,10 +1544,10 @@ Metadata fields
      - 0
      - 0
    * - :schema:`Image - InstrumentRef <OME-2013-06/ome_xsd.html#InstrumentRef_ID>`
-     - 41
+     - 42
      - 0
      - 0
-     - 118
+     - 117
    * - :schema:`Image - MicrobeamManipulationRef <OME-2013-06/ome_xsd.html#MicrobeamManipulationRef_ID>`
      - 0
      - 0
@@ -1584,10 +1584,10 @@ Metadata fields
      - 0
      - 149
    * - :schema:`Instrument - ID <OME-2013-06/ome_xsd.html#Instrument_ID>`
-     - 46
+     - 47
      - 0
      - 0
-     - 113
+     - 112
    * - :schema:`Label - FillColor <OME-2013-06/ROI_xsd.html#Shape_FillColor>`
      - 0
      - 0
@@ -2134,10 +2134,10 @@ Metadata fields
      - 0
      - 134
    * - :schema:`Objective - ID <OME-2013-06/ome_xsd.html#Objective_ID>`
-     - 31
+     - 32
      - 0
      - 0
-     - 128
+     - 127
    * - :schema:`Objective - Immersion <OME-2013-06/ome_xsd.html#Objective_Immersion>`
      - 26
      - 0
@@ -2169,10 +2169,10 @@ Metadata fields
      - 0
      - 147
    * - :schema:`Objective - NominalMagnification <OME-2013-06/ome_xsd.html#Objective_NominalMagnification>`
-     - 23
+     - 24
      - 0
      - 0
-     - 136
+     - 135
    * - :schema:`Objective - SerialNumber <OME-2013-06/ome_xsd.html#ManufacturerSpec_SerialNumber>`
      - 3
      - 0
@@ -2189,10 +2189,10 @@ Metadata fields
      - 0
      - 158
    * - :schema:`ObjectiveSettings - ID <OME-2013-06/ome_xsd.html#ObjectiveSettings_ID>`
-     - 26
+     - 27
      - 0
      - 0
-     - 133
+     - 132
    * - :schema:`ObjectiveSettings - Medium <OME-2013-06/ome_xsd.html#ObjectiveSettings_Medium>`
      - 1
      - 0
@@ -2229,15 +2229,15 @@ Metadata fields
      - 0
      - 0
    * - :schema:`Pixels - PhysicalSizeX <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeX>`
-     - 82
+     - 83
      - 0
      - 0
-     - 77
+     - 76
    * - :schema:`Pixels - PhysicalSizeY <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeY>`
-     - 82
+     - 83
      - 0
      - 0
-     - 77
+     - 76
    * - :schema:`Pixels - PhysicalSizeZ <OME-2013-06/ome_xsd.html#Pixels_PhysicalSizeZ>`
      - 42
      - 0
@@ -2289,10 +2289,10 @@ Metadata fields
      - 0
      - 159
    * - :schema:`Plane - DeltaT <OME-2013-06/ome_xsd.html#Plane_DeltaT>`
-     - 22
+     - 24
      - 0
      - 0
-     - 137
+     - 135
    * - :schema:`Plane - ExposureTime <OME-2013-06/ome_xsd.html#Plane_ExposureTime>`
      - 30
      - 0
@@ -2304,20 +2304,20 @@ Metadata fields
      - 0
      - 159
    * - :schema:`Plane - PositionX <OME-2013-06/ome_xsd.html#Plane_PositionX>`
-     - 26
+     - 27
      - 0
      - 0
-     - 133
+     - 132
    * - :schema:`Plane - PositionY <OME-2013-06/ome_xsd.html#Plane_PositionY>`
-     - 26
+     - 27
      - 0
      - 0
-     - 133
+     - 132
    * - :schema:`Plane - PositionZ <OME-2013-06/ome_xsd.html#Plane_PositionZ>`
-     - 20
+     - 21
      - 0
      - 0
-     - 139
+     - 138
    * - :schema:`Plane - TheC <OME-2013-06/ome_xsd.html#Plane_TheC>`
      - 159
      - 0

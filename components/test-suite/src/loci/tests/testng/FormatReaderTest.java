@@ -1370,7 +1370,10 @@ public class FormatReaderTest {
 
         int maxFiles = (int) Math.min(base.length, 100);
 
-        if (DataTools.indexOf(reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0) {
+        if (DataTools.indexOf(
+	  reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0 ||
+	  file.toLowerCase().endsWith(".czi"))
+	{
           maxFiles = (int) Math.min(maxFiles, 10);
         }
 
@@ -1433,12 +1436,6 @@ public class FormatReaderTest {
           if (reader.getFormat().equals("Hamamatsu VMS") &&
             !base[i].toLowerCase().endsWith(".vms"))
           {
-            continue;
-          }
-
-          // multi-file Zeiss CZI datasets are only detected when the
-          // "master" file is chosen
-          if (reader.getFormat().equals("Zeiss CZI")) {
             continue;
           }
 
@@ -2200,7 +2197,7 @@ public class FormatReaderTest {
         }
       }
       boolean single = used.length == 1;
-      if (single && base) LOGGER.info("OK");
+      if (single && base) LOGGER.debug("OK");
       else LOGGER.info("{} {}", used.length, single ? "file" : "files");
       if (!base) {
         LOGGER.error("Used files list does not include base file");
@@ -2224,8 +2221,15 @@ public class FormatReaderTest {
    * and generates appropriate assertion.
    */
   private static void result(String testName, boolean success, String msg) {
-    LOGGER.info("\t{}: {} ({})", new Object[] {testName,
-      success ? "PASSED" : "FAILED", msg == null ? "" : msg});
+    if (success) {
+      LOGGER.debug("\t{}: PASSED ({})", new Object[] {testName,
+        msg == null ? "" : msg});
+    }
+    else {
+      LOGGER.error("\t{}: FAILED ({})", new Object[] {testName,
+        msg == null ? "" : msg});
+    }
+
     if (msg == null) assert success;
     else assert success : msg;
   }

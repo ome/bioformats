@@ -757,13 +757,13 @@ public class CellSensReader extends FormatReader {
       ms.imageCount *= (maxC[0] + 1);
     }
 
-    if (maxY[0] > 1) {
+    if (maxY[0] >= 1) {
       rows.add(maxY[0] + 1);
     }
     else {
       rows.add(1);
     }
-    if (maxX[0] > 1) {
+    if (maxX[0] >= 1) {
       cols.add(maxX[0] + 1);
     }
     else {
@@ -789,17 +789,17 @@ public class CellSensReader extends FormatReader {
         nDimensions.add(nDimensions.get(nDimensions.size() - 1));
         tileOffsets.add(tileOffsets.get(tileOffsets.size() - 1));
 
-        if (maxX[i] > 1) {
+        if (maxX[i] >= 1) {
           newResolution.sizeX = tileX.get(tileX.size() - 1) * (maxX[i] + 1);
-          cols.add(maxX[i]);
+          cols.add(maxX[i] + 1);
         }
         else {
           newResolution.sizeX = tileX.get(tileX.size() - 1);
           cols.add(1);
         }
-        if (maxY[i] > 1) {
+        if (maxY[i] >= 1) {
           newResolution.sizeY = tileY.get(tileY.size() - 1) * (maxY[i] + 1);
-          rows.add(maxY[i]);
+          rows.add(maxY[i] + 1);
         }
         else {
           newResolution.sizeY = tileY.get(tileY.size() - 1);
