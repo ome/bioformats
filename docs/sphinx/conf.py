@@ -44,6 +44,7 @@ extensions = ['sphinx.ext.extlinks', 'edit_on_github']
 ## Configuration for the edit_on_github extension
 edit_on_github_project = 'openmicroscopy/bioformats'
 edit_on_github_branch = 'dev_5_0'
+edit_on_github_prefix = 'docs/sphinx'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['../sphinx/_templates']
