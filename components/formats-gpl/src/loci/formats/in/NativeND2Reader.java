@@ -1382,7 +1382,10 @@ public class NativeND2Reader extends FormatReader {
 
       core.get(0).dimensionOrder = "";
 
-      String xml = sb.substring(offset, len - offset);
+      if (len - offset < offset) {
+        offset = 0;
+      }
+      String xml = sb.substring(offset, len);
       sb = null;
       handler = new ND2Handler(core, vs.size());
       try {
