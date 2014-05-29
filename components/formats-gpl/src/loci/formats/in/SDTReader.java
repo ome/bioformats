@@ -155,23 +155,23 @@ public class SDTReader extends FormatReader {
    
     int paddedWidth = sizeX + ((4 - (sizeX % 4)) % 4);
     int planeSize = paddedWidth * sizeY * timeBins * bpp;
-
+    
     if (preLoad  && !intensity)  {
       int channel =  no / timeBins;
       int timeBin = no % timeBins;
-
+      
       byte[] rowBuf = new byte[bpp * timeBins * paddedWidth];
 
       int binSize = paddedWidth * sizeY  * bpp;
-
+      
       if (chanStore == null || storedChannel != channel ||
         storedSeries != getSeries() )
       {
         // The whole plane (all timebins) is  copied into storage
         // to allow different sub-plane sizes to be used for different timebins
         chanStore = new byte[planeSize];
-        in.seek(info.allBlockOffsets[getSeries()] + channel * planeSize);
-
+        in.seek(info.allBlockOffsets[getSeries()] + (channel * planeSize));
+        
         for (int row = 0; row < sizeY; row++) {
           in.read(rowBuf);
 
@@ -214,15 +214,21 @@ public class SDTReader extends FormatReader {
       // normally this is 1 so each bit represents a photon
       // where it is >1 then divide the 16 bit data to get an answer in photon units
       if (info.incr > 1) {
-        short incr = info.incr;
+        int incr = info.incr;
        
         ByteBuffer bb = ByteBuffer.wrap(buf); // Wrapper around underlying byte[].
         bb.order(ByteOrder.LITTLE_ENDIAN);
         short s;
         
         for (int i = 0; i < buf.length ; i+=2) {
-          s = bb.getShort(i);
-          bb.putShort(i,(short) (s/incr) );
+          s = (short)bb.getShort(i);
+          if (s > 0) {  //sign bit is not set 
+            bb.putShort(i,(short) (s/incr) );
+          }
+          else  {   // sign bit is set so extend to int to do the division
+            int ii = s & 0xffff;
+            bb.putShort(i,(short) (ii/incr) );
+          }
         }  
       }
 
