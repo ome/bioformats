@@ -477,8 +477,13 @@
 					<xsd:documentation>
 						TimeIncrement is used for time series that have a global
 						timing specification instead of per-timepoint timing info.
-						For example in a video stream.  The unit is seconds[s].
+						For example in a video stream. Units are set by TimeIncrementUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="TimeIncrementUnit" use="optional" default="s" type="UnitsTime">
+				<xsd:annotation>
+					<xsd:documentation>The units of the TimeIncrement - default:seconds[s].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
@@ -536,36 +541,63 @@
 			<xsd:attribute name="DeltaT" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						Units are seconds since the beginning of the experiment [s]
+						Time since the beginning of the experiment.
+						Units are set by DeltaTUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="DeltaTUnit" use="optional" default="s" type="UnitsTime">
+				<xsd:annotation>
+					<xsd:documentation>The units of the DeltaT - default:seconds[s].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="ExposureTime" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						Units are seconds [s]
+						The length of the exposure.
+						Units are set by ExposureTimeUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="ExposureTimeUnit" use="optional" default="s" type="UnitsTime">
+				<xsd:annotation>
+					<xsd:documentation>The units of the ExposureTime - default:seconds[s].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionX" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The X position of the stage. [units are in the microscope reference frame]
+						The X position of the stage. Units are set by PositionXUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PositionXUnit" use="optional" default="referenceFrame" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the X stage position - default:[referenceFrame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionY" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Y position of the stage. [units are in the microscope reference frame]
+						The Y position of the stage. Units are set by PositionYUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PositionYUnit" use="optional" default="referenceFrame" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the Y stage position - default:[referenceFrame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="PositionZ" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Z position of the stage. [units are in the microscope reference frame]
+						The Z position of the stage. Units are set by PositionZUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PositionZUnit" use="optional" default="referenceFrame" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the Z stage position - default:[referenceFrame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
@@ -696,15 +728,25 @@
 			<xsd:attribute name="ExcitationWavelength" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>
-						Excitation wavelength of excitation for a particular channel, in nanometres[nm].
+						Wavelength of excitation for a particular channel. Units are set by ExcitationWavelengthUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="ExcitationWavelengthUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the wavelength of excitation - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="EmissionWavelength" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>
-						Emission wavelength of excitation for a particular channel, in nanometres[nm].
+						Wavelength of emission for a particular channel. Units are set by EmissionWavelengthUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="EmissionWavelengthUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the wavelength of emission - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Fluor" use="optional" type="xsd:string">
@@ -841,22 +883,37 @@
 			<xsd:attribute name="X" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The X position of the stage label. [units are in the microscope reference frame]
+						The X position of the stage label. Units are set by XUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="XUnit" use="optional" default="referenceFrame" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the X stage position - default:[referenceFrame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Y" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Y position of the stage label. [units are in the microscope reference frame]
+						The Y position of the stage label. Units are set by YUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="YUnit" use="optional" default="referenceFrame" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the Y stage position - default:[referenceFrame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Z" use="optional" type="xsd:float">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Z position of the stage label. [units are in the microscope reference frame]
+						The Z position of the stage label. Units are set by ZUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="ZUnit" use="optional" default="referenceFrame" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the Z  stage position - default:[referenceFrame].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
@@ -1540,7 +1597,7 @@
 			<xsd:enumeration value =  "zm"><xsd:annotation><xsd:documentation>The length unit is zepto meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "ym"><xsd:annotation><xsd:documentation>The length unit is yocto meters.</xsd:documentation></xsd:annotation></xsd:enumeration>
 
-			<xsd:enumeration value =   "Å"><xsd:annotation><xsd:documentation>The length unit is    ångströms.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			<xsd:enumeration value = "Å"><xsd:annotation><xsd:documentation>The length unit is    ångströms.</xsd:documentation></xsd:annotation></xsd:enumeration>
 
 			<xsd:enumeration value = "thou"><xsd:annotation><xsd:documentation>The length unit is thou (or mil, 1/1000 of an inch).</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value = "li"><xsd:annotation><xsd:documentation>The length unit is line (1/12 of an inch).</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1549,12 +1606,14 @@
 			<xsd:enumeration value = "yd"><xsd:annotation><xsd:documentation>The length unit is yard.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value = "mi"><xsd:annotation><xsd:documentation>The length unit is terrestrial mile.</xsd:documentation></xsd:annotation></xsd:enumeration>
 
-			<xsd:enumeration value =  "ua"><xsd:annotation><xsd:documentation>The length unit is astronomical unit. The official term is ua as the SI standard assigned AU to absorbance unit.</xsd:documentation></xsd:annotation></xsd:enumeration>
-			<xsd:enumeration value =  "ly"><xsd:annotation><xsd:documentation>The length unit is light year.</xsd:documentation></xsd:annotation></xsd:enumeration>
-			<xsd:enumeration value =  "pc"><xsd:annotation><xsd:documentation>The length unit is parsec.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			<xsd:enumeration value = "ua"><xsd:annotation><xsd:documentation>The length unit is astronomical unit. The official term is ua as the SI standard assigned AU to absorbance unit.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			<xsd:enumeration value = "ly"><xsd:annotation><xsd:documentation>The length unit is light year.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			<xsd:enumeration value = "pc"><xsd:annotation><xsd:documentation>The length unit is parsec.</xsd:documentation></xsd:annotation></xsd:enumeration>
 
-			<xsd:enumeration value =  "pt"><xsd:annotation><xsd:documentation>The length unit is typography point. This unit should be limited to font sizes.</xsd:documentation></xsd:annotation></xsd:enumeration>
-			<xsd:enumeration value =  "pixel"><xsd:annotation><xsd:documentation>The length unit is pixel. This unit should be limited to the ROI objects. It can then be resolved to real units from the PhysicalSize units of the Image the ROI is attached to.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			<xsd:enumeration value = "pt"><xsd:annotation><xsd:documentation>The length unit is typography point. This unit should be limited to font sizes.</xsd:documentation></xsd:annotation></xsd:enumeration>
+			<xsd:enumeration value = "pixel"><xsd:annotation><xsd:documentation>The length unit is pixel. This unit should be limited to the ROI objects. It can then be resolved to real units from the PhysicalSize units of the Image the ROI is attached to.</xsd:documentation></xsd:annotation></xsd:enumeration>
+
+			<xsd:enumeration value = "referenceFrame"><xsd:annotation><xsd:documentation>The length unit is referenceFrame.</xsd:documentation></xsd:annotation></xsd:enumeration>
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -1747,7 +1806,6 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">
-<!--
 			<xsd:enumeration value =  "YHz"><xsd:annotation><xsd:documentation>The frequency unit is yotta hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "ZHz"><xsd:annotation><xsd:documentation>The frequency unit is zetta hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "EHz"><xsd:annotation><xsd:documentation>The frequency unit is   exa hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1755,11 +1813,11 @@
 			<xsd:enumeration value =  "THz"><xsd:annotation><xsd:documentation>The frequency unit is  tera hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "GHz"><xsd:annotation><xsd:documentation>The frequency unit is  giga hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "MHz"><xsd:annotation><xsd:documentation>The frequency unit is  mega hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
- -->
 			<xsd:enumeration value =  "kHz"><xsd:annotation><xsd:documentation>The frequency unit is  kilo hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "hHz"><xsd:annotation><xsd:documentation>The frequency unit is hecto hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value = "daHz"><xsd:annotation><xsd:documentation>The frequency unit is  deca hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =   "Hz"><xsd:annotation><xsd:documentation>The frequency unit is       hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
+<!--
 			<xsd:enumeration value =  "dHz"><xsd:annotation><xsd:documentation>The frequency unit is  deci hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "cHz"><xsd:annotation><xsd:documentation>The frequency unit is centi hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "mHz"><xsd:annotation><xsd:documentation>The frequency unit is milli hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
@@ -1770,6 +1828,7 @@
 			<xsd:enumeration value =  "aHz"><xsd:annotation><xsd:documentation>The frequency unit is  atto hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "zHz"><xsd:annotation><xsd:documentation>The frequency unit is zepto hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =  "yHz"><xsd:annotation><xsd:documentation>The frequency unit is yocto hertz.</xsd:documentation></xsd:annotation></xsd:enumeration>
+ -->
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -1928,8 +1987,14 @@
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Voltage of the detector (e.g. PMT voltage) as a float. volts[V] {used:PMT}
+								The Voltage of the detector (e.g. PMT voltage) as a float. {used:PMT}
+								Units are set by VoltageUnit.
 							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="VoltageUnit" use="optional" default="V" type="UnitsVoltage">
+						<xsd:annotation>
+							<xsd:documentation>The units of the Voltage - default:volts[V].</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
@@ -2080,29 +2145,49 @@
 			<xsd:attribute name="CutIn" use="optional" type="PositiveInt" >
 				<xsd:annotation>
 					<xsd:documentation>
-						CutIn is the wavelength below which there is less than 50% transmittance for a filter. Units: nanometres[nm].
+						CutIn is the wavelength below which there is less than 50% transmittance for a filter. Units are set by CutInUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="CutInUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the CutIn - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="CutOut" use="optional" type="PositiveInt" >
 				<xsd:annotation>
 					<xsd:documentation>
-						CutOut is the wavelength above which there is less than 50% transmittance for a filter. Units: nanometres[nm].
+						CutOut is the wavelength above which there is less than 50% transmittance for a filter. Units are set by CutOutUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="CutOutUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the CutOut - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="CutInTolerance" use="optional" type="NonNegativeInt" >
 				<xsd:annotation>
 					<xsd:documentation>
-						CutInTolerance Units: nanometres[nm],
+						CutInTolerance. Units are set by CutInToleranceUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="CutInToleranceUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the CutInTolerance - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="CutOutTolerance" use="optional" type="NonNegativeInt" >
 				<xsd:annotation>
 					<xsd:documentation>
-						CutOutTolerance Units: nanometres[nm],
+						CutOutTolerance. Units are set by CutOutToleranceUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="CutOutToleranceUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the CutOutTolerance - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="Transmittance" use="optional" type="PercentFraction" >
@@ -2216,8 +2301,13 @@
 					<xsd:attribute name="Power" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The light-source power. units milliwatts[mW]
+								The light-source power. Units are set by PowerUnit.
 							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="PowerUnit" use="optional" default="mW" type="UnitsPower">
+						<xsd:annotation>
+							<xsd:documentation>The units of the Power - default:milliwatts[mW].</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 				</xsd:extension>
@@ -2318,8 +2408,13 @@
 			<xsd:attribute name="Wavelength" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Wavelength of the laser in nanometres[nm]
+						The Wavelength of the laser. Units are set by WavelengthUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="WavelengthUnit" use="optional" default="nm" type="UnitsLength">
+				<xsd:annotation>
+					<xsd:documentation>The units of the Wavelength - default:nanometres[nm].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 			<xsd:attribute name="FrequencyMultiplication" use="optional" type="PositiveInt">
@@ -2365,7 +2460,13 @@
 					<xsd:documentation>
 						The is the rate in Hz at which the laser pulses if
 						the Pulse type is 'Repetitive'. hertz[Hz]
+						Units are set by RepetitionRateUnit.
 					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="RepetitionRateUnit" use="optional" default="Hz" type="UnitsFrequency">
+				<xsd:annotation>
+					<xsd:documentation>The units of the RepetitionRate - default:hertz[Hz].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
 		</xsd:complexType>
@@ -2704,7 +2805,7 @@
 					<xsd:attribute name="Wavelength" use="optional" type="PositiveFloat">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Wavelength of the light source.
+								The Wavelength of the light source. Units are set by WavelengthUnit.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2755,7 +2856,15 @@
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Voltage of the detector. volts[V] {used:PMT}
+								The Voltage of the detector. {used:PMT}
+								Units are set by VoltageUnit.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="VoltageUnit" use="optional" default="V" type="UnitsVoltage">
+						<xsd:annotation>
+							<xsd:documentation>
+								The units of the Voltage of the detector - default:volts[V]
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -2770,9 +2879,15 @@
 						<xsd:annotation>
 							<xsd:documentation>
 								The speed at which the detector can count pixels.  {used:CCD,EMCCD}
-								Units of ReadOutRate is MHz. This is the bytes per second that
-								can be read from the detector (like a baud rate). megahertz[MHz]
+								This is the bytes per second that
+								can be read from the detector (like a baud rate).
+								Units are set by ReadOutRateUnit.
 							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
+					<xsd:attribute name="ReadOutRateUnit" use="optional" default="MHz" type="UnitsFrequency">
+						<xsd:annotation>
+							<xsd:documentation>The units of the ReadOutRate - default:megahertz[Hz].</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Binning" use="optional">
