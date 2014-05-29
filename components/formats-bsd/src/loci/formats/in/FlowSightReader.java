@@ -35,12 +35,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import ome.xml.model.primitives.PositiveInteger;
+
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
@@ -200,9 +203,16 @@ public class FlowSightReader extends FormatReader {
 	     * for all the series.
 	     */
 	    final MetadataStore store = getMetadataStore();
+	    String [] maskDescs = new String [channelCount];
+	    for (int i=0; i<channelCount; i++) {
+	    	maskDescs[i] = channelDescs[i] + "Mask";
+	    }
+	    MetadataTools.populatePixels(store, this);
 	    for (int series=0; series < ifdOffsets.length-1; series++) {
+    		final boolean isMask = (core.get(series).pixelType == FormatTools.UINT8);
+    		String [] descs = isMask?maskDescs:channelDescs;
 	    	for (int channel=0; channel < channelCount; channel++) {
-	    		store.setChannelName(channelDescs[channel], series, channel);
+	    		store.setChannelName(descs[channel], series, channel);
 	    		store.setChannelID(channelNames[channel], series, channel);
 	    	}
 	    }
