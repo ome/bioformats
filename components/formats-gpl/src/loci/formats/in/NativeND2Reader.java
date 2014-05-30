@@ -877,7 +877,7 @@ public class NativeND2Reader extends FormatReader {
         }
       }
 
-      if (extraZDataCount > 1 && getSizeZ() == 1 && getSeriesCount() > 1) {
+      if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1)) && getSeriesCount() > 1) {
         CoreMetadata ms0 = core.get(0);
         ms0.sizeZ = getSeriesCount();
         core = new ArrayList<CoreMetadata>();
@@ -1072,6 +1072,20 @@ public class NativeND2Reader extends FormatReader {
       if (getDimensionOrder().indexOf("C") == -1) core.get(0).dimensionOrder += "C";
       if (getDimensionOrder().indexOf("T") == -1) core.get(0).dimensionOrder += "T";
 
+      if (getSizeZ() == 0) {
+        core.get(0).sizeZ = 1;
+      }
+      if (getSizeT() == 0) {
+        core.get(0).sizeT =  1;
+      }
+      if (getSizeC() == 0) {
+        core.get(0).sizeC = 1;
+      }
+      core.get(0).imageCount = getSizeZ() * getSizeT();
+      if (!isRGB()) {
+        core.get(0).imageCount *= getSizeC();
+      }
+
       offsets = new long[numSeries][getImageCount()];
 
       int[] lengths = new int[4];
@@ -1125,7 +1139,9 @@ public class NativeND2Reader extends FormatReader {
 
       ArrayList<long[]> tmpOffsets = new ArrayList<long[]>();
       for (int i=0; i<offsets.length; i++) {
-        if (offsets[i][0] > 0) tmpOffsets.add(offsets[i]);
+        if (offsets[i].length > 0 && offsets[i][0] > 0) {
+          tmpOffsets.add(offsets[i]);
+        }
       }
 
       offsets = new long[tmpOffsets.size()][];
