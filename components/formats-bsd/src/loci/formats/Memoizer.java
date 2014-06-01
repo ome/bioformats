@@ -667,7 +667,7 @@ public class Memoizer extends ReaderWrapper {
       return copy;
     } catch (KryoException e) {
       memoFile.delete();
-      LOGGER.trace("deleted invalid memo file: {}", memoFile);
+      LOGGER.warn("deleted invalid memo file: {}", memoFile, e);
       return null;
     } finally {
       ser.loadStop();
@@ -704,7 +704,7 @@ public class Memoizer extends ReaderWrapper {
     } catch (Throwable t) {
 
       // Any exception should be ignored, and false returned.
-      LOGGER.debug(String.format("failed to save memo file: %s", memoFile), t);
+      LOGGER.warn(String.format("failed to save memo file: %s", memoFile), t);
       rv = false;
 
     } finally {
