@@ -824,5 +824,39 @@ public class Memoizer extends ReaderWrapper {
     return memo;
   }
 
+  public static void main(String[] args) throws Exception {
+    if (args.length == 0 || args.length > 2) {
+      System.err.println("Usage: memoizer file [tmpdir]");
+      System.exit(2);
+    }
+
+    File tmp = new File(System.getProperty("java.io.tmpdir"));
+    if (args.length == 2) {
+      tmp = new File(args[1]);
+    }
+
+    load(args[0], tmp, true); // initial
+    load(args[0], tmp, false); // reload
+  }
+
+  private static void load(String id, File tmp, boolean delete) throws Exception {
+    Memoizer m = new Memoizer(0L, tmp);
+
+    File memo = m.getMemoFile(id);
+    if (delete && memo != null && memo.exists()) {
+        memo.delete();
+    }
+
+    m.setVersionChecking(false);
+    try {
+      m.setId(id);
+      m.openBytes(0);
+      IFormatReader r = m.getReader();
+      r = ((ImageReader) r).getReader();
+      System.out.println(r);
+    } finally {
+      m.close();
+    }
+  }
 
 }
