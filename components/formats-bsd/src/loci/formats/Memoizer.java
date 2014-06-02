@@ -835,7 +835,9 @@ public class Memoizer extends ReaderWrapper {
       tmp = new File(args[1]);
     }
 
+    System.out.println("First load of " + args[0]);
     load(args[0], tmp, true); // initial
+    System.out.println("Second load of " + args[0]);
     load(args[0], tmp, false); // reload
   }
 
@@ -844,6 +846,7 @@ public class Memoizer extends ReaderWrapper {
 
     File memo = m.getMemoFile(id);
     if (delete && memo != null && memo.exists()) {
+        System.out.println("Deleting " + memo);
         memo.delete();
     }
 
