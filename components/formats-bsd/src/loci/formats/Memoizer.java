@@ -416,6 +416,48 @@ public class Memoizer extends ReaderWrapper {
   }
 
   /**
+   * Returns true if the version of the memo file as returned by
+   * {@link Deser#loadReleaseVersion()} and {@link Deser#loadRevision()}
+   * do not match the current version as specified by {@link FormatTools#VERSION}
+   * and {@link FormatTools#VCS_REVISION}, respectively.
+   */
+  public boolean versionMismatch() throws IOException {
+
+      final String releaseVersion = ser.loadReleaseVersion();
+      final String revision = ser.loadRevision();
+
+      if (!isVersionChecking()) {
+        return false;
+      }
+
+      String minor = releaseVersion;
+      int firstDot = minor.indexOf(".");
+      if (firstDot >= 0) {
+        int secondDot = minor.indexOf(".", firstDot + 1);
+        if (secondDot >= 0) {
+          minor = minor.substring(0, secondDot);
+        }
+      }
+
+      String currentMinor = FormatTools.VERSION.substring(0,
+        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf(".") + 1));
+      if (!currentMinor.equals(minor)) {
+        LOGGER.info("Different release version: {} not {}",
+          releaseVersion, FormatTools.VERSION);
+        return true;
+      }
+
+      // REVISION NUMBER
+      if (!versionChecking && !FormatTools.VCS_REVISION.equals(revision)) {
+        LOGGER.info("Different Git version: {} not {}",
+          revision, FormatTools.VCS_REVISION);
+        return true;
+      }
+
+      return false;
+  }
+
+  /**
    * Set whether version checking is done based upon major/minor version
    * numbers.
    * If 'true' is passed in, then a mismatch between the major/minor version
@@ -614,32 +656,10 @@ public class Memoizer extends ReaderWrapper {
       }
 
       // RELEASE VERSION NUMBER
-      String releaseVersion = ser.loadReleaseVersion();
-
-      String minor = releaseVersion;
-      int firstDot = minor.indexOf(".");
-      if (firstDot >= 0) {
-        int secondDot = minor.indexOf(".", firstDot + 1);
-        if (secondDot >= 0) {
-          minor = minor.substring(0, secondDot);
-        }
-      }
-
-      String currentMinor = FormatTools.VERSION.substring(0,
-        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf(".") + 1));
-      if (!currentMinor.equals(minor)) {
-        LOGGER.info("Different release version: {} not {}",
-          releaseVersion, FormatTools.VERSION);
-        return null;
-      }
-
-      // REVISION NUMBER
-      String revision = ser.loadRevision();
-      if (!versionChecking && !FormatTools.VCS_REVISION.equals(revision)) {
-        LOGGER.info("Different Git version: {} not {}",
-          revision, FormatTools.VCS_REVISION);
-        return null;
-      }
+       if (versionMismatch()) {
+         // Logging done in versionMismatch
+         return null;
+       }
 
       // CLASS & COPY
       try {
