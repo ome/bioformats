@@ -741,7 +741,7 @@ public class ZeissCZIReader extends FormatReader {
 
     for (int i=0; i<planes.size(); i++) {
       SubBlock p = planes.get(i);
-      Coordinate c = new Coordinate(p.seriesIndex, p.planeIndex);
+      Coordinate c = new Coordinate(p.seriesIndex, p.planeIndex, getImageCount());
       ArrayList<Integer> indices = new ArrayList<Integer>();
       if (indexIntoPlanes.containsKey(c)) {
         indices = indexIntoPlanes.get(c);
@@ -827,7 +827,7 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       for (int plane=0; plane<getImageCount(); plane++) {
-        Coordinate coordinate = new Coordinate(i, plane);
+        Coordinate coordinate = new Coordinate(i, plane, getImageCount());
         ArrayList<Integer> index = indexIntoPlanes.get(coordinate);
         if (index == null) {
           continue;
@@ -3057,7 +3057,7 @@ public class ZeissCZIReader extends FormatReader {
     }
   }
 
-  class DimensionEntry {
+  static class DimensionEntry {
     public String dimension;
     public int start;
     public int size;
@@ -3073,7 +3073,7 @@ public class ZeissCZIReader extends FormatReader {
     }
   }
 
-  class AttachmentEntry {
+  static class AttachmentEntry {
     public String schemaType;
     public long filePosition;
     public int filePart;
@@ -3092,7 +3092,7 @@ public class ZeissCZIReader extends FormatReader {
     }
   }
 
-  class Channel {
+  static class Channel {
     public String name;
     public String color;
     public IlluminationType illumination;
@@ -3106,13 +3106,15 @@ public class ZeissCZIReader extends FormatReader {
     public String filterSetRef;
   }
 
-  class Coordinate {
+  static class Coordinate {
     public int series;
     public int plane;
+    private int imageCount;
 
-    public Coordinate(int series, int plane) {
+    public Coordinate(int series, int plane, int imageCount) {
       this.series = series;
       this.plane = plane;
+      this.imageCount = imageCount;
     }
 
     public boolean equals(Object o) {
@@ -3124,7 +3126,7 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     public int hashCode() {
-      return series * getImageCount() + plane;
+      return series * imageCount + plane;
     }
 
     public String toString() {
