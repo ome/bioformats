@@ -314,7 +314,7 @@ public class Memoizer extends ReaderWrapper {
    */
   private final File directory;
 
-  private transient Deser ser;
+  protected transient Deser ser;
 
   private transient OMEXMLService service;
 
