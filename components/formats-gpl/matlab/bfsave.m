@@ -64,7 +64,7 @@ ip.parse(outputPath, varargin{:});
 
 % Create metadata
 if isempty(ip.Results.metadata)
-    metadata = createMinimalMetadata(I, dimensionOrder);
+    metadata = createMinimalMetadata(I, ip.Results.dimensionOrder);
 else
     metadata = ip.Results.metadata;
 end
@@ -104,7 +104,9 @@ switch class(I)
 end
 
 % Save planes to the writer
-nPlanes = sizeZ * sizeC * sizeT;
+nPlanes = metadata.getPixelsSizeZ(0).getValue() *...
+    metadata.getPixelsSizeC(0).getValue() *...
+    metadata.getPixelsSizeT(0).getValue();
 for index = 1 : nPlanes
     [i, j, k] = ind2sub([size(I, 3) size(I, 4) size(I, 5)],index);
     plane = I(:, :, i, j, k)';
