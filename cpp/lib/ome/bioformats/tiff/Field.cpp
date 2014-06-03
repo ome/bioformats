@@ -49,10 +49,6 @@
 
 #include <boost/algorithm/string.hpp>
 
-#ifndef TIFF_HAVE_FIELDINFO
-struct TIFFField;
-#endif // !TIFF_HAVE_FIELDINFO
-
 namespace ome
 {
   namespace bioformats
