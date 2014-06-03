@@ -214,5 +214,15 @@ classdef TestBfsave < TestBfMatlab
             bfsave(self.I, self.path, 'metadata', metadata);
             self.checkMinimalMetadata();
         end
+        
+        function testAdditionalMetadata(self)
+            self.I = zeros(2, 3, 4, 5, 6);
+            metadata = createMinimalMetadata(self.I);
+            metadata.setImageDescription('description',0);
+            bfsave(self.I, self.path, 'metadata', metadata);
+            self.checkMinimalMetadata();
+            d = self.reader.getMetadataStore().getImageDescription(0);
+            assertEqual(char(d), 'description');
+        end
     end
 end
