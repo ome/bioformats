@@ -26,6 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -43,7 +45,6 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -2231,9 +2232,7 @@ public class DeltavisionReader extends FormatReader {
    * This private class structure holds the details for the extended header
    * @author Brian W. Loranger
    */
-  private class DVExtHdrFields {
-
-    private int offsetWithInts;
+  public static class DVExtHdrFields {
 
     /** Photosensor reading. Typically in mV. */
     public float photosensorReading;
@@ -2273,6 +2272,24 @@ public class DeltavisionReader extends FormatReader {
 
     /** Energy conversion factor. Usually 1. */
     public float energyConvFactor;
+
+    public Map<String, Object> asMap() {
+      Map<String, Object> rv = new HashMap<String, Object>();
+      rv.put("photosensorReading: ", photosensorReading);
+      rv.put("timeStampSeconds: ", timeStampSeconds);
+      rv.put("stageXCoord: ", stageXCoord);
+      rv.put("stageYCoord: ", stageYCoord);
+      rv.put("stageZCoord: ", stageZCoord);
+      rv.put("minInten: ", minInten);
+      rv.put("maxInten: ", maxInten);
+      rv.put("expTime: ", expTime);
+      rv.put("ndFilter: ", ndFilter);
+      rv.put("exWavelen: ", exWavelen);
+      rv.put("emWavelen: ", emWavelen);
+      rv.put("intenScaling: ", intenScaling);
+      rv.put("energyConvFactor: ", energyConvFactor);
+      return rv;
+    }
 
     /**
      * Helper function which overrides toString, printing out the values in
