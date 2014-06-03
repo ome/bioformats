@@ -53,7 +53,7 @@ namespace ome
   {
 
     /**
-     * Map a given PixelPropertiesType enum to the corresponding language type.
+     * Map a given PixelPropertiesType enum to the corresponding language types.
      */
     template<int>
     struct PixelProperties;
@@ -226,6 +226,45 @@ namespace ome
       typedef std::complex<boost::endian::little_float64_t> little_type;
       /// Pixel type (native endian).
       typedef std::complex<double> native_type;
+    };
+
+    /// Endianness.
+    enum EndianType
+      {
+        BIG,    ///< Big endian.
+        LITTLE, ///< Little endian.
+        NATIVE  ///< Native endian.
+      };
+
+    /**
+     * Map the given PixelPropertiesType and Endian enums to the
+     * corresponding endian-specific language type.
+     */
+    template<int, int>
+    struct PixelEndianProperties;
+
+    /// Properties of big endian pixels.
+    template<int P>
+    struct PixelEndianProperties<P, BIG>
+    {
+      /// Pixel type (big endian).
+      typedef typename PixelProperties<P>::big_type type;
+    };
+
+    /// Properties of little endian pixels.
+    template<int P>
+    struct PixelEndianProperties<P, LITTLE>
+    {
+      /// Pixel type (little endian).
+      typedef typename PixelProperties<P>::little_type type;
+    };
+
+    /// Properties of native endian pixels.
+    template<int P>
+    struct PixelEndianProperties<P, NATIVE>
+    {
+      /// Pixel type (native endian).
+      typedef typename PixelProperties<P>::native_type type;
     };
 
     // No switch default to avoid -Wunreachable-code errors.

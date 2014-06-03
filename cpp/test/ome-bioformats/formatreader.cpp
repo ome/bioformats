@@ -54,7 +54,7 @@
 
 using ome::bioformats::CoreMetadata;
 using ome::bioformats::FormatReader;
-using ome::bioformats::PixelBufferRaw;
+using ome::bioformats::VariantPixelBuffer;
 using ome::bioformats::detail::ReaderProperties;
 using ome::bioformats::MetadataMap;
 using ome::bioformats::MetadataOptions;
@@ -127,14 +127,14 @@ public:
 
   void
   openBytes(dimension_size_type no,
-            PixelBufferRaw&     buf) const
+            VariantPixelBuffer& buf) const
   {
     ::ome::bioformats::detail::FormatReader::openBytes(no, buf);
   }
 
   void
   openBytes(dimension_size_type /* no */,
-            PixelBufferRaw&     /* buf */,
+            VariantPixelBuffer& /* buf */,
             dimension_size_type /* x */,
             dimension_size_type /* y */,
             dimension_size_type /* w */,
@@ -199,8 +199,8 @@ public:
   }
 
   void
-  readPlane(std::istream& source,
-            PixelBufferRaw& dest,
+  readPlane(std::istream&       source,
+            VariantPixelBuffer& dest,
             dimension_size_type x,
             dimension_size_type y,
             dimension_size_type w,
@@ -210,8 +210,8 @@ public:
   }
 
   void
-  readPlane(std::istream& source,
-            PixelBufferRaw& dest,
+  readPlane(std::istream&       source,
+            VariantPixelBuffer& dest,
             dimension_size_type x,
             dimension_size_type y,
             dimension_size_type w,
@@ -424,18 +424,20 @@ TEST_F(FormatReaderTest, SubresolutionUnflattenedCoreMetadata)
 
 TEST_F(FormatReaderTest, DefaultLUT)
 {
-  PixelBufferRaw buf(256U * 3U);
-  EXPECT_THROW(r.get8BitLookupTable(buf), std::runtime_error);
-  EXPECT_THROW(r.get16BitLookupTable(buf), std::runtime_error);
+  VariantPixelBuffer buf8(boost::extents[256][1][1][1][1][3][1][1][1]);
+  EXPECT_THROW(r.get8BitLookupTable(buf8), std::runtime_error);
+  VariantPixelBuffer buf16(boost::extents[65536][1][1][1][1][3][1][1][1]);
+  EXPECT_THROW(r.get16BitLookupTable(buf16), std::runtime_error);
 }
 
 TEST_F(FormatReaderTest, FlatLUT)
 {
   r.setId("flat");
 
-  PixelBufferRaw buf(256U * 3U);
-  EXPECT_THROW(r.get8BitLookupTable(buf), std::runtime_error);
-  EXPECT_THROW(r.get16BitLookupTable(buf), std::runtime_error);
+  VariantPixelBuffer buf8(boost::extents[256][1][1][1][1][3][1][1][1]);
+  EXPECT_THROW(r.get8BitLookupTable(buf8), std::runtime_error);
+  VariantPixelBuffer buf16(boost::extents[65536][1][1][1][1][3][1][1][1]);
+  EXPECT_THROW(r.get16BitLookupTable(buf16), std::runtime_error);
 }
 
 TEST_F(FormatReaderTest, DefaultSeries)
@@ -789,7 +791,7 @@ TEST_F(FormatReaderTest, Readers)
 TEST_F(FormatReaderTest, DefaultPixels)
 {
   std::istringstream is("");
-  PixelBufferRaw buf(512U * 512U * 8U);
+  VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1], PixelType::FLOAT);
 
   EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512), std::logic_error);
   EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512, 0), std::logic_error);
@@ -806,10 +808,10 @@ TEST_F(FormatReaderTest, FlatPixels)
   /// @todo Add tests for readPlane from stream for all variants.
 
   std::istringstream is("");
-  PixelBufferRaw buf(512U * 512U * 8U);
+  VariantPixelBuffer buf(boost::extents[512][512][1][1][2][1][1][1][1], PixelType::FLOAT);
 
-  EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512), std::logic_error);
-  EXPECT_THROW(r.readPlane(is, buf, 0, 0, 512, 512, 0), std::logic_error);
+  EXPECT_NO_THROW(r.readPlane(is, buf, 0, 0, 512, 512));
+  EXPECT_NO_THROW(r.readPlane(is, buf, 0, 0, 512, 512, 0));
 
   EXPECT_NO_THROW(r.openBytes(0, buf));
   EXPECT_NO_THROW(r.openBytes(0, buf, 0, 0, 512, 512));

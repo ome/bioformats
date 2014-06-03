@@ -199,8 +199,8 @@ namespace ome
       }
 
       void
-      FormatReader::readPlane(std::istream& source,
-                              PixelBufferRaw& dest,
+      FormatReader::readPlane(std::istream&       source,
+                              VariantPixelBuffer& dest,
                               dimension_size_type x,
                               dimension_size_type y,
                               dimension_size_type w,
@@ -210,8 +210,8 @@ namespace ome
       }
 
       void
-      FormatReader::readPlane(std::istream& source,
-                              PixelBufferRaw& dest,
+      FormatReader::readPlane(std::istream&       source,
+                              VariantPixelBuffer& dest,
                               dimension_size_type x,
                               dimension_size_type y,
                               dimension_size_type w,
@@ -219,91 +219,11 @@ namespace ome
                               dimension_size_type scanlinePad)
       {
         /**
-         * @todo There is a safety issue ensuring that each of the
-         * stream reads doesn't overflow the buffer.  Currently this
-         * is not checked.
+         * @todo Switch to VariantPixelBuffer.
          */
         dimension_size_type c = getRGBChannelCount();
         uint32_t bpp = bytesPerPixel(getPixelType());
 
-        if (dest.size() <  h * w * bpp * c)
-          throw std::logic_error("readPlane: Buffer too small");
-        if (dest.size() >  h * w * bpp * c)
-          throw std::logic_error("readPlane: Buffer too large");
-
-        if (x == 0 && y == 0 &&
-            w == getSizeX() &&
-            h == getSizeY() &&
-            scanlinePad == 0)
-          {
-            // Read whole plane into the buffer directly.
-            source >> dest;
-          }
-        else if (x == 0 &&
-                 w == getSizeX() &&
-                 scanlinePad == 0)
-          {
-            if (isInterleaved())
-              {
-                source.seekg(static_cast<std::istream::off_type>(y * w * bpp * c), std::ios::cur);
-                source.read(reinterpret_cast<char *>(dest.buffer()),
-                            static_cast<std::streamsize>(h * w * bpp * c));
-              }
-            else
-              {
-                dimension_size_type rowLen = w * bpp;
-                for (dimension_size_type channel = 0; channel < c; ++channel)
-                  {
-                    source.seekg(static_cast<std::istream::off_type>(y * rowLen), std::ios::cur);
-                    source.read(reinterpret_cast<char *>(dest.buffer())
-                                + (channel * h * rowLen),
-                                static_cast<std::streamsize>(h * rowLen));
-                    // no need to skip bytes after reading final channel
-                    if (channel < c - 1)
-                      source.seekg(static_cast<std::istream::off_type>((getSizeY() - y - h) * rowLen), std::ios::cur);
-                  }
-              }
-          }
-        else
-          {
-            dimension_size_type scanlineWidth = getSizeX() + scanlinePad;
-            if (isInterleaved())
-              {
-                source.seekg(static_cast<std::istream::off_type>(y * scanlineWidth * bpp * c), std::ios::cur);
-                for (dimension_size_type row = 0; row < h; ++row)
-                  {
-                    source.seekg(static_cast<std::istream::off_type>(x * bpp * c), std::ios::cur);
-                    source.read(reinterpret_cast<char *>(dest.buffer())
-                                + (row * w * bpp * c),
-                                static_cast<std::streamsize>(w * bpp * c));
-                      // no need to skip bytes after reading final row
-                    if (row < h - 1)
-                      source.seekg(static_cast<std::istream::off_type>(bpp * c * (scanlineWidth - w - x)), std::ios::cur);
-                  }
-              }
-            else
-              {
-                for (dimension_size_type channel = 0; channel < c; ++channel)
-                  {
-                    source.seekg(static_cast<std::istream::off_type>(y * scanlineWidth * bpp), std::ios::cur);
-                    for (dimension_size_type row = 0; row < h; ++row)
-                      {
-                        source.seekg(static_cast<std::istream::off_type>(x * bpp), std::ios::cur);
-                        source.read(reinterpret_cast<char *>(dest.buffer())
-                                    + (channel * w * h * bpp + row * w * bpp),
-                                    static_cast<std::streamsize>(w * bpp));
-                        // no need to skip bytes after reading final row of final channel
-                        if (row < h - 1 || channel < c - 1)
-                          source.seekg(static_cast<std::istream::off_type>(bpp * (scanlineWidth - w - x)), std::ios::cur);
-                      }
-                    if (channel < c - 1)
-                      // no need to skip bytes after reading final channel
-                      source.seekg(static_cast<std::istream::off_type>(scanlineWidth * bpp * (getSizeY() - y - h)), std::ios::cur);
-                  }
-              }
-          }
-        if (!source)
-          throw std::runtime_error("readPlane: Error reading bytes from stream");
       }
 
       std::shared_ptr< ::ome::xml::meta::MetadataStore>
@@ -503,13 +423,13 @@ namespace ome
       }
 
       void
-      FormatReader::get8BitLookupTable(PixelBufferRaw& /* buf */) const
+      FormatReader::get8BitLookupTable(VariantPixelBuffer& /* buf */) const
       {
         throw std::runtime_error("Reader does not implement 8-bit lookup tables");
       }
 
       void
-      FormatReader::get16BitLookupTable(PixelBufferRaw& /* buf */) const
+      FormatReader::get16BitLookupTable(VariantPixelBuffer& /* buf */) const
       {
         throw std::runtime_error("Reader does not implement 16-bit lookup tables");
       }
@@ -649,14 +569,14 @@ namespace ome
 
       void
       FormatReader::openBytes(dimension_size_type no,
-                              PixelBufferRaw&     buf) const
+                              VariantPixelBuffer& buf) const
       {
         openBytes(no, buf, 0, 0, getSizeX(), getSizeY());
       }
 
       void
       FormatReader::openThumbBytes(dimension_size_type /* no */,
-                                   PixelBufferRaw&     /* buf */) const
+                                   VariantPixelBuffer& /* buf */) const
       {
         assertId(currentId, true);
         /**

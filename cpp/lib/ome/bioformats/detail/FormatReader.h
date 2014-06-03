@@ -236,8 +236,8 @@ namespace ome
          */
         virtual
         void
-        readPlane(std::istream& source,
-                  PixelBufferRaw& dest,
+        readPlane(std::istream&       source,
+                  VariantPixelBuffer& dest,
                   dimension_size_type x,
                   dimension_size_type y,
                   dimension_size_type w,
@@ -259,8 +259,8 @@ namespace ome
          */
         virtual
         void
-        readPlane(std::istream& source,
-                  PixelBufferRaw& dest,
+        readPlane(std::istream&       source,
+                  VariantPixelBuffer& dest,
                   dimension_size_type x,
                   dimension_size_type y,
                   dimension_size_type w,
@@ -418,11 +418,11 @@ namespace ome
 
         // Documented in superclass.
         void
-        get8BitLookupTable(PixelBufferRaw& buf) const;
+        get8BitLookupTable(VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
         void
-        get16BitLookupTable(PixelBufferRaw& buf) const;
+        get16BitLookupTable(VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
         Modulo&
@@ -494,12 +494,12 @@ namespace ome
         // Documented in superclass.
         void
         openBytes(dimension_size_type no,
-                  PixelBufferRaw&     buf) const;
+                  VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
         void
         openBytes(dimension_size_type no,
-                  PixelBufferRaw&     buf,
+                  VariantPixelBuffer& buf,
                   dimension_size_type x,
                   dimension_size_type y,
                   dimension_size_type w,
@@ -508,7 +508,7 @@ namespace ome
         // Documented in superclass.
         void
         openThumbBytes(dimension_size_type no,
-                       PixelBufferRaw&     buf) const;
+                       VariantPixelBuffer& buf) const;
 
         // Documented in superclass.
         void

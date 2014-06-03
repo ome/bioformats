@@ -47,115 +47,139 @@
 #include <ome/bioformats/PixelBuffer.h>
 
 #include <gtest/gtest.h>
+#include <gtest/gtest-death-test.h>
 
-using ome::bioformats::PixelBufferRaw;
+using ome::bioformats::PixelBuffer;
+using ome::bioformats::VariantPixelBuffer;
 
-TEST(PixelBufferRaw, ConstructSize)
+TEST(VariantPixelBuffer, ConstructSize)
 {
-  PixelBufferRaw buf(10U);
+  VariantPixelBuffer buf(boost::extents[5][2][1][1][1][1][1][1][1]);
 
-  ASSERT_EQ(buf.size(), 10U);
-  ASSERT_TRUE(buf.buffer());
+  ASSERT_EQ(buf.num_elements(), 10U);
+  ASSERT_TRUE(buf.data());
 }
 
-TEST(PixelBufferRaw, ConstructEmpty)
+TEST(VariantPixelBuffer, ConstructEmpty)
 {
-  PixelBufferRaw buf(0U);
+  /// @todo Construct with null reference.
+  VariantPixelBuffer buf;
 
-  ASSERT_EQ(buf.size(), 0U);
-  ASSERT_FALSE(buf.buffer());
+  ASSERT_EQ(buf.num_elements(), 1U);
+  ASSERT_TRUE(buf.data());
 }
 
-TEST(PixelBufferRaw, ConstructRange)
+TEST(VariantPixelBuffer, ConstructRange)
 {
-  std::vector<uint8_t> source;
+  std::vector<boost::endian::native_uint8_t> source;
   for (uint8_t i = 0U; i < 10U; ++i)
     source.push_back(i);
 
-  PixelBufferRaw buf(source.begin(), source.end());
+  VariantPixelBuffer buf(boost::extents[5][2][1][1][1][1][1][1][1]);
+  buf.assign(source.begin(), source.end());
 
-  ASSERT_EQ(buf.size(), 10U);
-  ASSERT_TRUE(buf.buffer());
-  for (uint8_t i = 0U; i < 10U; ++i)
+  ASSERT_EQ(buf.num_elements(), 10U);
+  ASSERT_TRUE(buf.data());
+  for (boost::endian::native_uint8_t i = 0U; i < 10U; ++i)
     {
-      ASSERT_EQ(*(buf.buffer()+i), i);
+      ASSERT_EQ(*(buf.data()+i), i);
     }
 }
 
-TEST(PixelBufferRaw, ConstructCopy)
+TEST(VariantPixelBuffer, ConstructCopy)
 {
-  std::vector<uint8_t> source1;
-  for (uint8_t i = 0U; i < 10U; ++i)
+  std::vector<boost::endian::native_uint8_t> source1;
+  for (boost::endian::native_uint8_t i = 0U; i < 10U; ++i)
     source1.push_back(i);
 
-  std::vector<uint8_t> source2;
-  for (uint8_t i = 10U; i < 20U; ++i)
+  std::vector<boost::endian::native_uint8_t> source2;
+  for (boost::endian::native_uint8_t i = 10U; i < 20U; ++i)
     source2.push_back(i);
 
-  PixelBufferRaw buf1(source1.begin(), source1.end());
-  PixelBufferRaw buf2(source2.begin(), source2.end());
+  VariantPixelBuffer buf1(boost::extents[5][2][1][1][1][1][1][1][1]);
+  buf1.assign(source1.begin(), source1.end());
+  VariantPixelBuffer buf2(boost::extents[5][2][1][1][1][1][1][1][1]);
+  buf2.assign(source2.begin(), source2.end());
 
   ASSERT_EQ(buf1, buf1);
   ASSERT_EQ(buf2, buf2);
   ASSERT_NE(buf1, buf2);
 
-  PixelBufferRaw buf3(buf2);
+  VariantPixelBuffer buf3(buf2);
   ASSERT_EQ(buf2, buf3);
   ASSERT_NE(buf1, buf2);
 }
 
-TEST(PixelBufferRaw, GetIndex)
+TEST(VariantPixelBuffer, GetIndex)
 {
-  std::vector<uint8_t> source;
-  for (uint8_t i = 0U; i < 100U; ++i)
+  std::vector<boost::endian::native_uint8_t> source;
+  for (boost::endian::native_uint8_t i = 0U; i < 100U; ++i)
     source.push_back(i);
 
-  PixelBufferRaw buf(source.begin(), source.end());
-  const PixelBufferRaw& cbuf(buf);
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  buf.assign(source.begin(), source.end());
+  const VariantPixelBuffer& cbuf(buf);
 
-  ASSERT_EQ(buf.size(), 100U);
-  ASSERT_TRUE(buf.buffer());
-  for (uint8_t i = 0U; i < 100U; ++i)
-    {
-      ASSERT_EQ(cbuf[i], i);
-      ASSERT_EQ(cbuf.at(i), i);
+  ASSERT_EQ(buf.num_elements(), 100U);
+  ASSERT_TRUE(buf.data());
+  for (boost::endian::native_uint8_t i = 0U; i < 10U; ++i)
+    for (boost::endian::native_uint8_t j = 0U; j < 10U; ++j)
+      {
+        VariantPixelBuffer::indices_type idx;
+        idx[0] = i;
+        idx[1] = j;
+        idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = idx[9] = 0;
+        ASSERT_EQ(buf.at<boost::endian::native_uint8_t>(idx), (i * 10) + j);
+        ASSERT_EQ(cbuf.at<boost::endian::native_uint8_t>(idx), (i * 10) + j);
+      }
+}
+
+TEST(VariantPixelBuffer, SetIndex)
+{
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  const VariantPixelBuffer& cbuf(buf);
+
+  ASSERT_EQ(buf.num_elements(), 100U);
+  ASSERT_TRUE(buf.data());
+  for (boost::endian::native_uint8_t i = 0U; i < 10U; ++i)
+    for (boost::endian::native_uint8_t j = 0U; j < 10U; ++j)
+      {
+        VariantPixelBuffer::indices_type idx;
+        idx[0] = i;
+        idx[1] = j;
+        idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = idx[9] = 0;
+
+        boost::endian::native_uint8_t val = i + j + j;
+
+        buf.at<boost::endian::native_uint8_t>(idx) = val;
+
+        ASSERT_EQ(buf.at<boost::endian::native_uint8_t>(idx), val);
+        ASSERT_EQ(cbuf.at<boost::endian::native_uint8_t>(idx), val);
     }
 }
 
-TEST(PixelBufferRaw, SetIndex)
+TEST(VariantPixelBuffer, SetIndexDeathTest)
 {
-  std::vector<uint8_t> source;
-  for (uint8_t i = 0U; i < 100U; ++i)
-    source.push_back(i);
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
 
-  PixelBufferRaw buf(100U);
-  const PixelBufferRaw& cbuf(buf);
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  const VariantPixelBuffer& cbuf(buf);
 
-  ASSERT_EQ(buf.size(), 100U);
-  ASSERT_TRUE(buf.buffer());
-  for (uint8_t i = 0U; i < 100U; ++i)
-    {
-      buf[i] = i;
+  VariantPixelBuffer::indices_type badidx;
+  badidx[0] = 13;
+  badidx[1] = 2;
+  badidx[2] = badidx[3] = badidx[4] = badidx[5] = badidx[6] = badidx[7] = badidx[8] = badidx[9] = 0;
 
-      ASSERT_EQ(cbuf[i], i);
-      ASSERT_EQ(cbuf.at(i), i);
-
-      buf.at(i) = i;
-
-      ASSERT_EQ(cbuf[i], i);
-      ASSERT_EQ(cbuf.at(i), i);
-    }
-
-  ASSERT_THROW(buf.at(400U) = 4U, std::out_of_range);
-  ASSERT_THROW(cbuf.at(400U), std::out_of_range);
+  ASSERT_DEATH(buf.at<boost::endian::native_uint8_t>(badidx) = 4U, "Assertion.*failed");
+  ASSERT_DEATH(cbuf.at<boost::endian::native_uint8_t>(badidx), "Assertion.*failed");
 }
 
-TEST(PixelBufferRaw, StreamOutput)
+TEST(VariantPixelBuffer, StreamOutput)
 {
-  PixelBufferRaw buf(0);
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1]);
 
   std::ostringstream os;
   os << buf;
 
-  ASSERT_EQ(os.str(), "PixelBufferRaw size = 0");
+  ASSERT_EQ("", os.str());
 }
