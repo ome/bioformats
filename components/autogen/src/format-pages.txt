@@ -2354,7 +2354,7 @@ Commercial applications that support ZVI include `Bitplane Imaris <http://www.bi
 
 [Zeiss CZI]
 extensions = .czi
-developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen-2012/czi.html>`_
+developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/czi>`_
 bsd = no
 export = no
 software = `Zeiss ZEN 2012 <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen-2012.html>`_
