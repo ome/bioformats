@@ -30,6 +30,7 @@ classdef TestBfsave < TestBfMatlab
         path
         I
         dimensionOrder = 'XYZCT'
+        reader
     end
     
     methods
@@ -49,20 +50,28 @@ classdef TestBfsave < TestBfMatlab
         
         function tearDown(self)
             if exist(self.path,'file')==2, delete(self.path); end
+            if ~isempty(self.reader), self.reader.close(); end
             tearDown@TestBfMatlab(self);
         end
         
         function checkMinimalMetadata(self)
             % Check dimensions of saved ome-tiff
-            reader = bfGetReader(self.path);
+            self.reader = bfGetReader(self.path);
             d = size(self.I);
-            assertEqual(reader.getSizeX, d(2));
-            assertEqual(reader.getSizeY, d(1));
-            assertEqual(reader.getSizeZ, d(self.dimensionOrder=='Z'));
-            assertEqual(reader.getSizeC, d(self.dimensionOrder=='C'));
-            assertEqual(reader.getSizeT, d(self.dimensionOrder=='T'));
-            assertEqual(char(reader.getDimensionOrder()), self.dimensionOrder);
-            reader.close();
+            assertEqual(self.reader.getSizeX(), d(2));
+            assertEqual(self.reader.getSizeY(), d(1));
+            assertEqual(self.reader.getSizeZ(), d(self.dimensionOrder=='Z'));
+            assertEqual(self.reader.getSizeC(), d(self.dimensionOrder=='C'));
+            assertEqual(self.reader.getSizeT(), d(self.dimensionOrder=='T'));
+            assertEqual(char(self.reader.getDimensionOrder()), self.dimensionOrder);
+            metadataStore = self.reader.getMetadataStore();
+            assertEqual(char(metadataStore.getImageID(0)), 'Image:0');
+            assertEqual(char(metadataStore.getPixelsID(0)), 'Pixels:0');
+            for i = 1 : d(self.dimensionOrder=='C')
+                assertEqual(char(metadataStore.getChannelID(0, i - 1)),...
+                    sprintf('Channel:0:%g', i - 1));
+            end
+
         end
         
         % Dimension order tests
