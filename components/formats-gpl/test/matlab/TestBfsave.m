@@ -61,6 +61,7 @@ classdef TestBfsave < TestBfMatlab
             assertEqual(reader.getSizeZ, d(self.dimensionOrder=='Z'));
             assertEqual(reader.getSizeC, d(self.dimensionOrder=='C'));
             assertEqual(reader.getSizeT, d(self.dimensionOrder=='T'));
+            assertEqual(char(reader.getDimensionOrder()), self.dimensionOrder);
             reader.close();
         end
         
