@@ -314,7 +314,7 @@ public class Memoizer extends ReaderWrapper {
    */
   private final File directory;
 
-  private transient Deser ser;
+  protected transient Deser ser;
 
   private transient OMEXMLService service;
 
@@ -413,6 +413,48 @@ public class Memoizer extends ReaderWrapper {
    */
   public boolean isVersionChecking() {
     return versionChecking;
+  }
+
+  /**
+   * Returns true if the version of the memo file as returned by
+   * {@link Deser#loadReleaseVersion()} and {@link Deser#loadRevision()}
+   * do not match the current version as specified by {@link FormatTools#VERSION}
+   * and {@link FormatTools#VCS_REVISION}, respectively.
+   */
+  public boolean versionMismatch() throws IOException {
+
+      final String releaseVersion = ser.loadReleaseVersion();
+      final String revision = ser.loadRevision();
+
+      if (!isVersionChecking()) {
+        return false;
+      }
+
+      String minor = releaseVersion;
+      int firstDot = minor.indexOf(".");
+      if (firstDot >= 0) {
+        int secondDot = minor.indexOf(".", firstDot + 1);
+        if (secondDot >= 0) {
+          minor = minor.substring(0, secondDot);
+        }
+      }
+
+      String currentMinor = FormatTools.VERSION.substring(0,
+        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf(".") + 1));
+      if (!currentMinor.equals(minor)) {
+        LOGGER.info("Different release version: {} not {}",
+          releaseVersion, FormatTools.VERSION);
+        return true;
+      }
+
+      // REVISION NUMBER
+      if (!versionChecking && !FormatTools.VCS_REVISION.equals(revision)) {
+        LOGGER.info("Different Git version: {} not {}",
+          revision, FormatTools.VCS_REVISION);
+        return true;
+      }
+
+      return false;
   }
 
   /**
@@ -614,32 +656,10 @@ public class Memoizer extends ReaderWrapper {
       }
 
       // RELEASE VERSION NUMBER
-      String releaseVersion = ser.loadReleaseVersion();
-
-      String minor = releaseVersion;
-      int firstDot = minor.indexOf(".");
-      if (firstDot >= 0) {
-        int secondDot = minor.indexOf(".", firstDot + 1);
-        if (secondDot >= 0) {
-          minor = minor.substring(0, secondDot);
-        }
-      }
-
-      String currentMinor = FormatTools.VERSION.substring(0,
-        FormatTools.VERSION.indexOf(".", FormatTools.VERSION.indexOf(".") + 1));
-      if (!currentMinor.equals(minor)) {
-        LOGGER.info("Different release version: {} not {}",
-          releaseVersion, FormatTools.VERSION);
-        return null;
-      }
-
-      // REVISION NUMBER
-      String revision = ser.loadRevision();
-      if (!versionChecking && !FormatTools.VCS_REVISION.equals(revision)) {
-        LOGGER.info("Different Git version: {} not {}",
-          revision, FormatTools.VCS_REVISION);
-        return null;
-      }
+       if (versionMismatch()) {
+         // Logging done in versionMismatch
+         return null;
+       }
 
       // CLASS & COPY
       try {
@@ -667,7 +687,7 @@ public class Memoizer extends ReaderWrapper {
       return copy;
     } catch (KryoException e) {
       memoFile.delete();
-      LOGGER.trace("deleted invalid memo file: {}", memoFile);
+      LOGGER.warn("deleted invalid memo file: {}", memoFile, e);
       return null;
     } finally {
       ser.loadStop();
@@ -704,7 +724,7 @@ public class Memoizer extends ReaderWrapper {
     } catch (Throwable t) {
 
       // Any exception should be ignored, and false returned.
-      LOGGER.debug(String.format("failed to save memo file: %s", memoFile), t);
+      LOGGER.warn(String.format("failed to save memo file: %s", memoFile), t);
       rv = false;
 
     } finally {
@@ -804,5 +824,42 @@ public class Memoizer extends ReaderWrapper {
     return memo;
   }
 
+  public static void main(String[] args) throws Exception {
+    if (args.length == 0 || args.length > 2) {
+      System.err.println("Usage: memoizer file [tmpdir]");
+      System.exit(2);
+    }
+
+    File tmp = new File(System.getProperty("java.io.tmpdir"));
+    if (args.length == 2) {
+      tmp = new File(args[1]);
+    }
+
+    System.out.println("First load of " + args[0]);
+    load(args[0], tmp, true); // initial
+    System.out.println("Second load of " + args[0]);
+    load(args[0], tmp, false); // reload
+  }
+
+  private static void load(String id, File tmp, boolean delete) throws Exception {
+    Memoizer m = new Memoizer(0L, tmp);
+
+    File memo = m.getMemoFile(id);
+    if (delete && memo != null && memo.exists()) {
+        System.out.println("Deleting " + memo);
+        memo.delete();
+    }
+
+    m.setVersionChecking(false);
+    try {
+      m.setId(id);
+      m.openBytes(0);
+      IFormatReader r = m.getReader();
+      r = ((ImageReader) r).getReader();
+      System.out.println(r);
+    } finally {
+      m.close();
+    }
+  }
 
 }
