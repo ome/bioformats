@@ -30,7 +30,6 @@ classdef TestBfsave < TestBfMatlab
         path
         I
         dimensionOrder = 'XYZCT'
-        reader
     end
     
     methods
@@ -50,7 +49,6 @@ classdef TestBfsave < TestBfMatlab
         
         function tearDown(self)
             if exist(self.path,'file')==2, delete(self.path); end
-            if ~isempty(self.reader), self.reader.close(); end
             tearDown@TestBfMatlab(self);
         end
         
@@ -164,16 +162,16 @@ classdef TestBfsave < TestBfMatlab
         end
         
         function testSinglePlane(self)
-            r = bfGetReader('plane.fake');
-            self.I = bfGetPlane(r, 1);
+            self.reader = bfGetReader('plane.fake');
+            self.I = bfGetPlane(self.reader, 1);
             bfsave(self.I, self.path);
             assertEqual(imread(self.path), self.I);
         end
         
         % Compression type tests
         function checkCompression(self, type, nonlossy)
-            r = bfGetReader('plane.fake');
-            self.I = bfGetPlane(r, 1);
+            self.reader = bfGetReader('plane.fake');
+            self.I = bfGetPlane(self.reader, 1);
             bfsave(self.I, self.path, 'Compression', type);
             if nonlossy
                 assertEqual(imread(self.path), self.I);
