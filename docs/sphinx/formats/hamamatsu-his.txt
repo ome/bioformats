@@ -4,7 +4,7 @@
 Hamamatsu HIS
 ===============================================================================
 
-Extensions: .his 
+Extensions: .his
 
 
 Owner: `Hamamatsu <http://www.hamamatsu.com>`_

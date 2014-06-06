@@ -4,9 +4,9 @@
 Zeiss CZI
 ===============================================================================
 
-Extensions: .czi 
+Extensions: `.czi <http://www.zeiss.com/czi>`_
 
-Developer: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/>`_
+Developer: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/czi>`_
 
 
 **Support**

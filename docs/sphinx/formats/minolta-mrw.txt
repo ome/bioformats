@@ -4,7 +4,7 @@
 Minolta MRW
 ===============================================================================
 
-Extensions: .mrw 
+Extensions: .mrw
 
 Developer: `Minolta <http://www.konicaminolta.com/>`_
 
