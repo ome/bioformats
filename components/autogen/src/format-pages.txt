@@ -1774,8 +1774,8 @@ utilityRating = Good
 reader = OperettaReader.java
 
 [PerkinElmer UltraView]
-extensions = .tif, .2, .3, .4
-unindexedExtensions = etc.
+indexExtensions = .tif, .2, .3, .4
+extensions = .tif, .2, .3, .4, etc.
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
 export = no
@@ -2353,7 +2353,8 @@ Commercial applications that support ZVI include `Bitplane Imaris <http://www.bi
   `Axiovision software overview <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
 
 [Zeiss CZI]
-extensions = .czi
+indexExtensions = .czi
+extensions = `.czi <http://www.zeiss.com/czi>`_
 developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/czi>`_
 bsd = no
 export = no
