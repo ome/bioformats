@@ -1650,7 +1650,8 @@ utilityRating = Good
 reader = SISReader.java
 
 [OME-TIFF]
-extensions = .ome.tiff
+indexExtensions = .ome.tiff
+extensions = `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 export = yes
@@ -1676,7 +1677,8 @@ Commercial applications that support OME-TIFF include: \n
   :model_doc:`OME-TIFF technical overview <ome-tiff/index.html>`
 
 [OME-XML]
-extensions = .ome
+indexExtensions = .ome
+extensions = `.ome <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 export = yes
