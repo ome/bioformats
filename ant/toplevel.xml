@@ -954,16 +954,14 @@ Type "ant -p" for a list of targets.
       </patternset>
     </zip>
     -->
-    <exec executable="zip" dir="${bftools.dir}">
-      <arg value="-r9"/>
-      <arg value="${artifact.dir}/bftools.zip"/>
-      <arg line="${bftools.files}"/>
-    </exec>
-    <exec executable="zip" dir="${artifact.dir}">
-      <arg value="-r9"/>
-      <arg value="${artifact.dir}/bftools.zip"/>
-      <arg value="bioformats_package.jar"/>
-    </exec>
+    <zip destfile="${artifact.dir}/bftools.zip">
+      <zipfileset dir="${bftools.dir}" includes="${bftools.files}"
+        prefix="bftools"/>
+      <zipfileset dir="${bftools.dir}" includes="${bftools.execfiles}"
+        prefix="bftools" filemode="751"/>
+      <zipfileset file="${package.jar}" prefix="bftools"/>
+    </zip>
+
   </target>
 
   <!-- Matlab -->
