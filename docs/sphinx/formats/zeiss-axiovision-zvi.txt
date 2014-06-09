@@ -4,7 +4,7 @@
 Zeiss AxioVision ZVI (Zeiss Vision Image)
 ===============================================================================
 
-Extensions: .zvi 
+Extensions: .zvi
 
 Developer: `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
 

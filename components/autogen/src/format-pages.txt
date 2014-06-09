@@ -1650,7 +1650,8 @@ utilityRating = Good
 reader = SISReader.java
 
 [OME-TIFF]
-extensions = .ome.tiff
+indexExtensions = .ome.tiff
+extensions = `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 export = yes
@@ -1676,7 +1677,8 @@ Commercial applications that support OME-TIFF include: \n
   :model_doc:`OME-TIFF technical overview <ome-tiff/index.html>`
 
 [OME-XML]
-extensions = .ome
+indexExtensions = .ome
+extensions = `.ome <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 export = yes
@@ -1774,8 +1776,8 @@ utilityRating = Good
 reader = OperettaReader.java
 
 [PerkinElmer UltraView]
-extensions = .tif, .2, .3, .4
-unindexedExtensions = etc.
+indexExtensions = .tif, .2, .3, .4
+extensions = .tif, .2, .3, .4, etc.
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
 export = no
@@ -2353,7 +2355,8 @@ Commercial applications that support ZVI include `Bitplane Imaris <http://www.bi
   `Axiovision software overview <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
 
 [Zeiss CZI]
-extensions = .czi
+indexExtensions = .czi
+extensions = `.czi <http://www.zeiss.com/czi>`_
 developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/czi>`_
 bsd = no
 export = no

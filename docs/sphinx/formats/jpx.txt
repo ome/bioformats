@@ -4,7 +4,7 @@
 JPX
 ===============================================================================
 
-Extensions: .jpx 
+Extensions: .jpx
 
 Developer: `JPEG Committee <http://www.jpeg.org/jpeg2000/>`_
 
