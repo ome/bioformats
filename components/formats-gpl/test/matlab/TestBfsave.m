@@ -206,16 +206,16 @@ classdef TestBfsave < TestBfMatlab
         end
         
         % Metadata test
-        function testCreateMinimalMetadata(self)
+        function testCreateMinimalOMEXMLMetadata(self)
             self.I = zeros(2, 3, 4, 5, 6);
-            metadata = createMinimalMetadata(self.I);
+            metadata = createMinimalOMEXMLMetadata(self.I);
             bfsave(self.I, self.path, 'metadata', metadata);
             self.checkMinimalMetadata();
         end
         
-        function testAdditionalMetadata(self)
+        function testAdditionalOMEXMLMetadata(self)
             self.I = zeros(2, 3, 4, 5, 6);
-            metadata = createMinimalMetadata(self.I);
+            metadata = createMinimalOMEXMLMetadata(self.I);
             metadata.setImageDescription('description',0);
             bfsave(self.I, self.path, 'metadata', metadata);
             self.checkMinimalMetadata();

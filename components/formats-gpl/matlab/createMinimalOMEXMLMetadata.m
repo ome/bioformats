@@ -1,18 +1,18 @@
-function metadata = createMinimalMetadata(I, varargin)
-% CREATEMINIMALMETADATA Create an OME-XML metadata object from an input matrix
+function metadata = createMinimalOMEXMLMetadata(I, varargin)
+% CREATEMINIMALOMEXMLMETADATA Create an OME-XML metadata object from an input matrix
 %
-%    createMinimalMetadata(I) creates an OME-XML metadata object from an
-%    input 5-D array. Minimal metadata information is stored such as the
+%    createMinimalOMEXMLMetadata(I) creates an OME-XML metadata object from
+%    an input 5-D array. Minimal metadata information is stored such as the
 %    pixels dimensions, dimension order and type. The output object is a
 %    metadata object of type loci.formats.ome.OMEXMLMetadata.
 %
-%    createMinimalMetadata(I, dimensionOrder) specifies the dimension order
-%    of the input matrix. Default valuse is XYZCT.
+%    createMinimalOMEXMLMetadata(I, dimensionOrder) specifies the dimension
+%    order of the input matrix. Default valuse is XYZCT.
 %
 %    Examples:
 %
-%        metadata = createMinimalMetadata(zeros(100, 100));
-%        metadata = createMinimalMetadata(zeros(10, 10, 2), 'XYTZC');
+%        metadata = createMinimalOMEXMLMetadata(zeros(100, 100));
+%        metadata = createMinimalOMEXMLMetadata(zeros(10, 10, 2), 'XYTZC');
 %
 % See also: BFSAVE
 
