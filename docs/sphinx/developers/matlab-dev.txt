@@ -256,11 +256,11 @@ By default, ``bfsave`` will create a minimal OME-XML metadata object
 containing basic information such as the pixel dimensions, the dimension order
 and the pixel type.
 To customize the OME metadata, it is possible to create a metadata object
-from the input array using :source:`createMinimalMetadata.m <components/formats-gpl/matlab/createMinimalMetadata.m>`, add custom metadata
+from the input array using :source:`createMinimalOMEXMLMetadata.m <components/formats-gpl/matlab/createMinimalOMEXMLMetadata.m>`, add custom metadata
 and pass this object directly to ``bfsave``::
 
     plane = zeros(64, 64, 1, 2, 2, 'uint8');
-    metadata = createMinimalMetadata(plane);
+    metadata = createMinimalOMEXMLMetadata(plane);
     pixelSize = ome.xml.model.primitives.PositiveFloat(java.lang.Double(.05));
     metadata.setPixelsPhysicalSizeX(pixelSize, 0);
     metadata.setPixelsPhysicalSizeY(pixelSize, 0);

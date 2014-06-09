@@ -28,7 +28,7 @@ function bfsave(I, outputPath, varargin)
 %        bfsave(zeros(100, 100), outputPath, 'BigTiff', true)
 %        bfsave(zeros(100, 100), outputPath, 'metadata', metadata)
 %
-% See also: BFGETREADER, CREATEMINIMALMETADATA
+% See also: BFGETREADER, CREATEMINIMALOMEXMLMETADATA
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
@@ -71,7 +71,7 @@ ip.parse(outputPath, varargin{:});
 
 % Create metadata
 if isempty(ip.Results.metadata)
-    metadata = createMinimalMetadata(I, ip.Results.dimensionOrder);
+    metadata = createMinimalOMEXMLMetadata(I, ip.Results.dimensionOrder);
 else
     metadata = ip.Results.metadata;
 end
