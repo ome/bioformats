@@ -1,19 +1,18 @@
 function metadata = createMinimalMetadata(I, varargin)
-% CREATEMINIMALMETADATA Save a 5D matrix into an OME-TIFF using Bio-Formats library
+% CREATEMINIMALMETADATA Create an OME-XML metadata object from an input matrix
 %
-%    createMinimalMetadata(I, outputPath, dimensionOrder) specifies the dimension order of
-%    the input matrix. Default valuse is XYZCT.
+%    createMinimalMetadata(I) creates an OME-XML metadata object from an
+%    input 5-D array. Minimal metadata information is stored such as the
+%    pixels dimensions, dimension order and type. The output object is a
+%    metadata object of type loci.formats.ome.OMEXMLMetadata.
 %
-%    createMinimalMetadata(I, outputPath, dimensionOrder) specifies the dimension order of
-%    the input matrix. Default valuse is XYZCT.
+%    createMinimalMetadata(I, dimensionOrder) specifies the dimension order
+%    of the input matrix. Default valuse is XYZCT.
 %
 %    Examples:
 %
-%        metadata = createMinimalOMEXMLMetadata(zeros(100, 100));
-%        bfsave(zeros(100, 100, 2, 3, 4), outputPath)
-%        bfsave(zeros(100, 100, 20), outputPath, 'dimensionOrder', 'XYTZC')
-%        bfsave(zeros(100, 100), outputPath, 'Compression', 'LZW')
-%        bfsave(zeros(100, 100), outputPath, 'BigTiff', true)
+%        metadata = createMinimalMetadata(zeros(100, 100));
+%        metadata = createMinimalMetadata(zeros(10, 10, 2), 'XYTZC');
 %
 % See also: BFSAVE
 
@@ -87,23 +86,14 @@ for i = 1: sizeC
     metadata.setChannelSamplesPerPixel(toInt(1), 0, i-1);
 end
 
-% Here you can edit the function and pass metadata using the adequate set methods, e.g.
-% metadata.setPixelsPhysicalSizeX(ome.xml.model.primitives.PositiveFloat(java.lang.Double(.106)),0);
-%
-% For more information, see http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Matlab
-%
-% For future versions of this function, we plan to support passing metadata as
-% parameter/key value pairs
-
 end
 
 function dimensionOrders = getDimensionOrders()
-
 % List all values of DimensionOrder
+
 dimensionOrderValues = ome.xml.model.enums.DimensionOrder.values();
 dimensionOrders = cell(numel(dimensionOrderValues), 1);
 for i = 1 :numel(dimensionOrderValues),
     dimensionOrders{i} = char(dimensionOrderValues(i).toString());
 end
 end
-
