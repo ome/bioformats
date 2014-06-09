@@ -13,6 +13,12 @@ function bfsave(I, outputPath, varargin)
 %    bfsave(I, outputPath, 'BigTiff', true) allows to save the file using
 %    64-bit offsets
 %
+%    bfsave(I, outputPath, 'metadata', metadata) allows to use a custom
+%    OME-XML metadata object when saving the file instead of creating a
+%    minimal OME-XML metadata object from the input 5D matrix.
+%
+%    For more information, see https://www.openmicroscopy.org/site/support/bio-formats5/developers/matlab-dev.html
+%
 %    Examples:
 %
 %        bfsave(zeros(100, 100), outputPath)
@@ -20,8 +26,9 @@ function bfsave(I, outputPath, varargin)
 %        bfsave(zeros(100, 100, 20), outputPath, 'dimensionOrder', 'XYTZC')
 %        bfsave(zeros(100, 100), outputPath, 'Compression', 'LZW')
 %        bfsave(zeros(100, 100), outputPath, 'BigTiff', true)
+%        bfsave(zeros(100, 100), outputPath, 'metadata', metadata)
 %
-% See also: BFGETREADER
+% See also: BFGETREADER, CREATEMINIMALMETADATA
 
 % OME Bio-Formats package for reading and converting biological file formats.
 %
@@ -68,14 +75,6 @@ if isempty(ip.Results.metadata)
 else
     metadata = ip.Results.metadata;
 end
-
-% Here you can edit the function and pass metadata using the adequate set methods, e.g.
-% metadata.setPixelsPhysicalSizeX(ome.xml.model.primitives.PositiveFloat(java.lang.Double(.106)),0);
-%
-% For more information, see http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Matlab
-%
-% For future versions of this function, we plan to support passing metadata as
-% parameter/key value pairs
 
 % Create ImageWriter
 writer = loci.formats.ImageWriter();
