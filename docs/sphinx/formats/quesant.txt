@@ -4,7 +4,7 @@
 Quesant
 ===============================================================================
 
-Extensions: .afm 
+Extensions: .afm
 
 Developer: Quesant Instrument Corporation
 

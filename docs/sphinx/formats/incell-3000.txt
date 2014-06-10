@@ -4,7 +4,7 @@
 InCell 3000
 ===============================================================================
 
-Extensions: .frm 
+Extensions: .frm
 
 Developer: `GE <http://gelifesciences.com/>`_
 

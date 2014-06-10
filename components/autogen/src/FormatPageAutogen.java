@@ -94,12 +94,11 @@ public class FormatPageAutogen {
       if (table.containsKey("extensions")) {
         context.put("extensions", table.get("extensions"));
       }
-      if (table.containsKey("unindexedExtensions")) {
-        context.put("unindexedExtensions",
-          ", " + table.get("unindexedExtensions"));
+      if (table.containsKey("indexExtensions")) {
+        context.put("indexExtensions", table.get("indexExtensions"));
       }
-      else {
-        context.put("unindexedExtensions", "");
+      else if (table.containsKey("extensions")){
+        context.put("indexExtensions", table.get("extensions"));
       }
       context.put("owner", table.get("owner"));
       context.put("developer", table.get("developer"));

@@ -4,7 +4,7 @@
 Canon DNG
 ===============================================================================
 
-Extensions: .cr2, .crw 
+Extensions: .cr2, .crw
 
 Developer: `Canon <http://canon.com>`_
 

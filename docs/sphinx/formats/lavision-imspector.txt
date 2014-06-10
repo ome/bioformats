@@ -4,7 +4,7 @@
 LaVision Imspector
 ===============================================================================
 
-Extensions: .msr 
+Extensions: .msr
 
 Developer: `LaVision BioTec <http://www.lavisionbiotec.com/>`_
 

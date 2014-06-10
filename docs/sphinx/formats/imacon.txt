@@ -4,7 +4,7 @@
 Imacon
 ===============================================================================
 
-Extensions: .fff 
+Extensions: .fff
 
 
 Owner: `Hasselblad <http://www.hasselbladusa.com/>`_
