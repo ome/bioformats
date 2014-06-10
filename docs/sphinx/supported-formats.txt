@@ -197,7 +197,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/bruker-mri`
-     - .ims
+     - 
      - |Good|
      - |Very good|
      - |Fair|
@@ -854,7 +854,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/ome-tiff`
-     - .ome.tiff
+     - `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
      - |Outstanding|
      - |Outstanding|
      - |Outstanding|
@@ -863,7 +863,7 @@ Supported Formats
      - |yes|
      - |yes|
    * - :doc:`formats/ome-xml`
-     - .ome
+     - `.ome <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
      - |Outstanding|
      - |Outstanding|
      - |Outstanding|
@@ -917,7 +917,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/perkinelmer-ultraview`
-     - .tif, .2, .3, .4
+     - .tif, .2, .3, .4, etc.
      - |Very good|
      - |Good|
      - |Fair|
@@ -1007,7 +1007,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/sbig`
-     - .sm2, .sm3
+     - 
      - |Very good|
      - |Good|
      - |Very good|
@@ -1043,7 +1043,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/sm-camera`
-     - .tiff
+     - 
      - |Good|
      - |Fair|
      - |Fair|
@@ -1223,7 +1223,7 @@ Supported Formats
      - |no|
      - |no|
    * - :doc:`formats/zeiss-czi`
-     - .czi
+     - `.czi <http://www.zeiss.com/czi>`_
      - |Outstanding|
      - |Outstanding|
      - |Very good|

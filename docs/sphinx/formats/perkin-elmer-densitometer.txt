@@ -4,7 +4,7 @@
 Perkin Elmer Densitometer
 ===============================================================================
 
-Extensions: .pds 
+Extensions: .pds
 
 Developer: `Perkin Elmer <http://www.perkinelmer.com>`_
 

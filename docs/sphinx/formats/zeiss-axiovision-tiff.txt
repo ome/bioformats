@@ -4,7 +4,7 @@
 Zeiss AxioVision TIFF
 ===============================================================================
 
-Extensions: .xml, .tiff 
+Extensions: .xml, .tiff
 
 Developer: `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
 

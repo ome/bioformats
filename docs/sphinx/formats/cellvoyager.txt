@@ -4,7 +4,7 @@
 CellVoyager
 ===============================================================================
 
-Extensions: .xml, .tif 
+Extensions: .xml, .tif
 
 
 Owner: `Yokogawa <http://www.yokogawa.com/>`_

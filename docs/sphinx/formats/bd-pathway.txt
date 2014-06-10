@@ -4,7 +4,7 @@
 BD Pathway
 ===============================================================================
 
-Extensions: .exp, .tif 
+Extensions: .exp, .tif
 
 
 Owner: `BD Biosciences <http://www.bdbiosciences.com>`_
