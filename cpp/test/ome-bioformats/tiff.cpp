@@ -474,7 +474,7 @@ TEST(TIFFTest, FieldName)
   std::string name;
   name = ifd->getField(ome::bioformats::tiff::IMAGEDESCRIPTION).name();
 
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
   ASSERT_EQ(std::string("ImageDescription"), name);
 #else
   ASSERT_EQ(std::string("Unknown"), name);
