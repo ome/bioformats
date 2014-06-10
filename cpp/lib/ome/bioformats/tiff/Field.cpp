@@ -49,6 +49,61 @@
 
 #include <boost/algorithm/string.hpp>
 
+namespace
+{
+
+#ifndef TIFF_HAVE_FIELD
+# ifdef TIFF_HAVE_FIELDINFO
+  typedef TIFFFieldInfo TIFFField;
+
+  inline const TIFFField *
+  TIFFFindField(TIFF *tiff, uint32 tag, TIFFDataType type)
+  {
+    return TIFFFindFieldInfo(tiff, tag, type);
+  }
+
+  inline uint32
+  TIFFFieldTag(const TIFFField *field)
+  {
+    return field->field_tag;
+  }
+
+  inline const char *
+  TIFFFieldName(const TIFFField *field)
+  {
+    return field->field_name;
+  }
+
+  inline TIFFDataType
+  TIFFFieldDataType(const TIFFField *field)
+  {
+    return field->field_type;
+  }
+
+  inline int
+  TIFFFieldPassCount(const TIFFField *field)
+  {
+    return field->field_passcount;
+  }
+
+  inline int
+  TIFFFieldReadCount(const TIFFField *field)
+  {
+    return field->field_readcount;
+  }
+
+  inline int
+  TIFFFieldWriteCount(const TIFFField *field)
+  {
+    return field->field_writecount;
+  }
+# else // !TIFF_HAVE_FIELDINFO
+# error No TIFFField or TIFFFieldInfo available
+# endif // TIFF_HAVE_FIELDINFO
+#endif // !TIFF_HAVE_FIELD
+
+}
+
 namespace ome
 {
   namespace bioformats
@@ -130,7 +185,7 @@ namespace ome
         const ::TIFFField *
         getFieldInfo()
         {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
           if (!fieldinfo)
             {
               Sentry sentry;
@@ -139,7 +194,7 @@ namespace ome
               if (!fieldinfo)
                 std::cerr << "getFieldInfo: tag " << tag << " unknown\n";
             }
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
           return fieldinfo;
         }
@@ -160,7 +215,7 @@ namespace ome
       {
         std::string ret("Unknown");
 
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         Sentry sentry;
 
         const ::TIFFField *field = impl->getFieldInfo();
@@ -174,7 +229,7 @@ namespace ome
             os << impl->tag;
             ret = os.str();
           }
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         return ret;
       }
@@ -184,13 +239,13 @@ namespace ome
       {
         Type ret = TYPE_UNDEFINED;
 
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         Sentry sentry;
 
         const ::TIFFField *field = impl->getFieldInfo();
         if (field)
           ret = static_cast<Type>(TIFFFieldDataType(field));
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         return ret;
       }
@@ -200,13 +255,13 @@ namespace ome
       {
         bool ret = false;
 
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         Sentry sentry;
 
         const ::TIFFField *field = impl->getFieldInfo();
         if (field)
           ret = (TIFFFieldPassCount(field));
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         return ret;
       }
@@ -216,13 +271,13 @@ namespace ome
       {
         int ret = 1;
 
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         Sentry sentry;
 
         const ::TIFFField *field = impl->getFieldInfo();
         if (field)
           ret = TIFFFieldReadCount(field);
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         return ret;
       }
@@ -232,13 +287,13 @@ namespace ome
       {
         int ret = 1;
 
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         Sentry sentry;
 
         const ::TIFFField *field = impl->getFieldInfo();
         if (field)
           ret = TIFFFieldWriteCount(field);
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         return ret;
       }
@@ -355,12 +410,12 @@ namespace ome
                             int readcount,
                             T& value)
         {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
           if (type != TYPE_SHORT &&
               passcount != false &&
               readcount != 1)
             throw Exception("FieldInfo mismatch with Field handler");
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
           uint16_t v;
           generic_get1(ifd, tag, passcount, readcount, v);
@@ -376,12 +431,12 @@ namespace ome
                             int writecount,
                             const T& value)
         {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
           if (type != TYPE_SHORT &&
               passcount != false &&
               writecount != 1)
             throw Exception("FieldInfo mismatch with Field handler");
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
           uint16_t v = static_cast<uint16_t>(value);
           generic_set1(ifd, tag, passcount, writecount, v);
@@ -655,15 +710,15 @@ namespace ome
       void
       Field<StringTag1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_ASCII &&
             passCount() != false)
           throw Exception("FieldInfo mismatch with Field handler");
 
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         int rc = TIFF_VARIABLE;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         if (rc == TIFF_VARIABLE || rc == TIFF_VARIABLE2)
           {
@@ -684,12 +739,12 @@ namespace ome
       void
       Field<StringTag1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_ASCII &&
             passCount() != false &&
             writeCount() != TIFF_VARIABLE)
           throw Exception("FieldInfo mismatch with Field handler");
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         getIFD()->setField(impl->tag, value.c_str());
       }
@@ -699,11 +754,11 @@ namespace ome
       void
       Field<StringTagArray1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_ASCII &&
             passCount() != true)
           throw Exception("FieldInfo mismatch with Field handler");
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         const char *text;
         getIFD()->getField(impl->tag, text);
@@ -716,12 +771,12 @@ namespace ome
       void
       Field<StringTagArray1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_ASCII &&
             passCount() != false &&
             writeCount() != TIFF_VARIABLE)
           throw Exception("FieldInfo mismatch with Field handler");
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         std::string s(boost::algorithm::join(value, "\0"));
         // Split value vector into a null-terminated string.
@@ -733,7 +788,7 @@ namespace ome
       void
       Field<UInt16Tag1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_SHORT &&
             passCount() != false &&
             ((impl->tag != TIFFTAG_BITSPERSAMPLE &&  // broken in libtiff
@@ -747,10 +802,10 @@ namespace ome
 
         bool pc = passCount();
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_get1(getIFD(), impl->tag, pc, rc, value);
       }
@@ -760,7 +815,7 @@ namespace ome
       void
       Field<UInt16Tag1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_SHORT &&
             passCount() != false &&
             ((impl->tag != TIFFTAG_BITSPERSAMPLE) &&
@@ -769,10 +824,10 @@ namespace ome
 
         bool pc = passCount();
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_set1(getIFD(), impl->tag, pc, wc, value);
       }
@@ -782,13 +837,13 @@ namespace ome
       void
       Field<UInt16Orientation1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_get1(getIFD(), impl->tag, type(), pc, rc, value);
       }
@@ -798,13 +853,13 @@ namespace ome
       void
       Field<UInt16Orientation1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_set1(getIFD(), impl->tag, type(), pc, wc, value);
       }
@@ -814,13 +869,13 @@ namespace ome
       void
       Field<UInt16PhotometricInterpretation1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_get1(getIFD(), impl->tag, type(), pc, rc, value);
       }
@@ -830,13 +885,13 @@ namespace ome
       void
       Field<UInt16PhotometricInterpretation1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_set1(getIFD(), impl->tag, type(), pc, wc, value);
       }
@@ -846,13 +901,13 @@ namespace ome
       void
       Field<UInt16Predictor1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_get1(getIFD(), impl->tag, type(), pc, rc, value);
       }
@@ -862,13 +917,13 @@ namespace ome
       void
       Field<UInt16Predictor1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_set1(getIFD(), impl->tag, type(), pc, wc, value);
       }
@@ -878,13 +933,13 @@ namespace ome
       void
       Field<UInt16FillOrder1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_get1(getIFD(), impl->tag, type(), pc, rc, value);
       }
@@ -894,13 +949,13 @@ namespace ome
       void
       Field<UInt16FillOrder1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_set1(getIFD(), impl->tag, type(), pc, wc, value);
       }
@@ -910,13 +965,13 @@ namespace ome
       void
       Field<UInt16SampleFormat1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_get1(getIFD(), impl->tag, type(), pc, rc, value);
       }
@@ -926,13 +981,13 @@ namespace ome
       void
       Field<UInt16SampleFormat1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_set1(getIFD(), impl->tag, type(), pc, wc, value);
       }
@@ -942,13 +997,13 @@ namespace ome
       void
       Field<UInt16Threshholding1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_get1(getIFD(), impl->tag, type(), pc, rc, value);
       }
@@ -958,13 +1013,13 @@ namespace ome
       void
       Field<UInt16Threshholding1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_set1(getIFD(), impl->tag, type(), pc, wc, value);
       }
@@ -974,13 +1029,13 @@ namespace ome
       void
       Field<UInt16YCbCrPosition1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_get1(getIFD(), impl->tag, type(), pc, rc, value);
       }
@@ -990,13 +1045,13 @@ namespace ome
       void
       Field<UInt16YCbCrPosition1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_set1(getIFD(), impl->tag, type(), pc, wc, value);
       }
@@ -1006,7 +1061,7 @@ namespace ome
       void
       Field<UInt16Tag2>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
 
@@ -1015,10 +1070,10 @@ namespace ome
             ((impl->tag != BITSPERSAMPLE && rc != TIFF_VARIABLE) &&
              rc != 2))
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 2;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_get2(getIFD(), impl->tag, pc, rc, value);
       }
@@ -1028,7 +1083,7 @@ namespace ome
       void
       Field<UInt16Tag2>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
 
@@ -1036,10 +1091,10 @@ namespace ome
             pc != false &&
             wc != 2)
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 2;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_set2(getIFD(), impl->tag, pc, wc, value);
       }
@@ -1049,7 +1104,7 @@ namespace ome
       void
       Field<UInt32Tag1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
 
@@ -1057,10 +1112,10 @@ namespace ome
             pc != false &&
             rc != 1)
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_get1(getIFD(), impl->tag, pc, rc, value);
       }
@@ -1070,7 +1125,7 @@ namespace ome
       void
       Field<UInt32Tag1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
 
@@ -1078,10 +1133,10 @@ namespace ome
             pc != false &&
             wc != 1)
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_set1(getIFD(), impl->tag, pc, wc, value);
       }
@@ -1091,7 +1146,7 @@ namespace ome
       void
       Field<FloatTag1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
 
@@ -1099,10 +1154,10 @@ namespace ome
             pc != false &&
             rc != 1)
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_get1(getIFD(), impl->tag, pc, rc, value);
       }
@@ -1112,7 +1167,7 @@ namespace ome
       void
       Field<FloatTag1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
 
@@ -1120,10 +1175,10 @@ namespace ome
             pc != false &&
             wc != 1)
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_set1(getIFD(), impl->tag, pc, wc, value);
       }
@@ -1133,7 +1188,7 @@ namespace ome
       void
       Field<FloatTag2>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
 
@@ -1141,10 +1196,10 @@ namespace ome
             pc != false &&
             rc != 2)
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 2;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_get2(getIFD(), impl->tag, pc, rc, value);
       }
@@ -1154,7 +1209,7 @@ namespace ome
       void
       Field<FloatTag2>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
 
@@ -1162,10 +1217,10 @@ namespace ome
             pc != false &&
             wc != 2)
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 2;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_set2(getIFD(), impl->tag, pc, wc, value);
       }
@@ -1175,7 +1230,7 @@ namespace ome
       void
       Field<FloatTag3>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
 
@@ -1183,10 +1238,10 @@ namespace ome
             pc != false &&
             rc != 3)
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 3;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_get3(getIFD(), impl->tag, pc, rc, value);
       }
@@ -1196,7 +1251,7 @@ namespace ome
       void
       Field<FloatTag3>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
 
@@ -1204,10 +1259,10 @@ namespace ome
             pc != false &&
             wc != 3)
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 3;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_set3(getIFD(), impl->tag, pc, wc, value);
       }
@@ -1217,7 +1272,7 @@ namespace ome
       void
       Field<FloatTag6>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int rc = readCount();
 
@@ -1225,10 +1280,10 @@ namespace ome
             pc != false &&
             rc != 6)
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int rc = 6;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_get6(getIFD(), impl->tag, pc, rc, value);
       }
@@ -1238,7 +1293,7 @@ namespace ome
       void
       Field<FloatTag6>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         bool pc = passCount();
         int wc = writeCount();
 
@@ -1246,10 +1301,10 @@ namespace ome
             pc != false &&
             wc != 6)
           throw Exception("FieldInfo mismatch with Field handler");
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         bool pc = false;
         int wc = 6;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_set6(getIFD(), impl->tag, pc, wc, value);
       }
@@ -1264,9 +1319,9 @@ namespace ome
           throw Exception("FieldInfo mismatch with Field handler");
 
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         int rc = TIFF_VARIABLE; // EXTRASAMPLES
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_array_get1(getIFD(), impl->tag, rc, value);
       }
@@ -1276,14 +1331,14 @@ namespace ome
       void
       Field<UInt16ExtraSamplesArray1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_SHORT)
           throw Exception("FieldInfo mismatch with Field handler");
 
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         int wc = TIFF_VARIABLE; // EXTRASAMPLES
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_enum16_array_set1(getIFD(), impl->tag, wc, value);
       }
@@ -1293,14 +1348,14 @@ namespace ome
       void
       Field<UInt16TagArray3>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_SHORT)
           throw Exception("FieldInfo mismatch with Field handler");
 
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         int rc = TIFF_VARIABLE;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_array_get3(getIFD(), impl->tag, rc, value);
       }
@@ -1310,14 +1365,14 @@ namespace ome
       void
       Field<UInt16TagArray3>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_SHORT)
           throw Exception("FieldInfo mismatch with Field handler");
 
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         int wc = TIFF_VARIABLE;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_array_set3(getIFD(), impl->tag, wc, value);
       }
@@ -1327,15 +1382,15 @@ namespace ome
       void
       Field<UInt32TagArray1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (impl->tag != TIFFTAG_IMAGEJ_META_DATA_BYTE_COUNTS && // private
             type() != TYPE_LONG)
           throw Exception("FieldInfo mismatch with Field handler");
 
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         int rc = TIFF_VARIABLE2; // IMAGEJ_META_DATA_BYTE_COUNTS and RICHTIFFIPTC
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_array_get1(getIFD(), impl->tag, rc, value);
       }
@@ -1345,15 +1400,15 @@ namespace ome
       void
       Field<UInt32TagArray1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (impl->tag != TIFFTAG_IMAGEJ_META_DATA_BYTE_COUNTS && // private
             type() != TYPE_LONG)
           throw Exception("FieldInfo mismatch with Field handler");
 
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         int wc =  TIFF_VARIABLE2; // IMAGEJ_META_DATA_BYTE_COUNTS and RICHTIFFIPTC
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_array_set1(getIFD(), impl->tag, wc, value);
       }
@@ -1363,14 +1418,14 @@ namespace ome
       void
       Field<UInt64TagArray1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_LONG8 && type() != TYPE_IFD8)
           throw Exception("FieldInfo mismatch with Field handler");
 
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         int rc = TIFF_VARIABLE;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_array_get1(getIFD(), impl->tag, rc, value);
       }
@@ -1380,17 +1435,17 @@ namespace ome
       void
       Field<UInt64TagArray1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_LONG8 && type() != TYPE_IFD8)
           throw Exception("FieldInfo mismatch with Field handler");
 
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         int wc = TIFF_VARIABLE;
         if (impl->tag == TIFFTAG_TILEBYTECOUNTS ||
             impl->tag == TIFFTAG_TILEOFFSETS)
           wc = 1; // as in libtiff
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_array_set1(getIFD(), impl->tag, wc, value);
       }
@@ -1400,14 +1455,14 @@ namespace ome
       void
       Field<RawDataTag1>::get(value_type& value) const
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_BYTE && type() != TYPE_UNDEFINED)
           throw Exception("FieldInfo mismatch with Field handler");
 
         int rc = readCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         int rc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_array_get1(getIFD(), impl->tag, rc, value);
       }
@@ -1417,14 +1472,14 @@ namespace ome
       void
       Field<RawDataTag1>::set(const value_type& value)
       {
-#ifdef TIFF_HAVE_FIELDINFO
+#if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
         if (type() != TYPE_BYTE && type() != TYPE_UNDEFINED)
           throw Exception("FieldInfo mismatch with Field handler");
 
         int wc = writeCount();
-#else // !TIFF_HAVE_FIELDINFO
+#else // !TIFF_HAVE_FIELD && !TIFF_HAVE_FIELDINFO
         int wc = 1;
-#endif // TIFF_HAVE_FIELDINFO
+#endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
         generic_array_set1(getIFD(), impl->tag, wc, value);
       }
