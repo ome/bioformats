@@ -15,9 +15,7 @@ Type "ant -p" for a list of targets.
   <!-- overrides 'clean' target in common.xml -->
   <target name="clean" >
     <delete dir="${build.dir}"/>
-    <delete>
-      <fileset dir="." includes="*.log"/>
-    </delete>
+    <delete dir="target"/>
   </target>
 
   <target name="test-file-handles" depends="compile"

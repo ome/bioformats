@@ -121,7 +121,7 @@ public class NativeQTReader extends FormatReader {
   private boolean interlaced;
 
   /** Flag indicating whether the resource and data fork are separated. */
-  private boolean spork;
+  private boolean separatedFork;
 
   private boolean flip;
 
@@ -271,7 +271,7 @@ public class NativeQTReader extends FormatReader {
       canUsePrevious = false;
       scale = 0;
       chunkSizes = null;
-      interlaced = spork = flip = false;
+      interlaced = separatedFork = flip = false;
     }
   }
 
@@ -282,7 +282,7 @@ public class NativeQTReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    spork = true;
+    separatedFork = true;
     offsets = new Vector<Integer>();
     chunkSizes = new Vector<Integer>();
     LOGGER.info("Parsing tags");
@@ -310,7 +310,7 @@ public class NativeQTReader extends FormatReader {
 
     // this handles the case where the data and resource forks have been
     // separated
-    if (spork) {
+    if (separatedFork) {
       // first we want to check if there is a resource fork present
       // the resource fork will generally have the same name as the data fork,
       // but will have either the prefix "._" or the suffix ".qtr"
@@ -323,7 +323,7 @@ public class NativeQTReader extends FormatReader {
       else base = id;
 
       Location f = new Location(base + ".qtr");
-      LOGGER.debug("Searching for research fork:");
+      LOGGER.debug("Searching for resource fork:");
       if (f.exists()) {
         LOGGER.debug("\t Found: {}", f);
         if (in != null) in.close();
@@ -403,6 +403,10 @@ public class NativeQTReader extends FormatReader {
       if (atomSize < 0) {
         LOGGER.warn("QTReader: invalid atom size: {}", atomSize);
       }
+      else if (atomSize > in.length()) {
+        offset += 4;
+        continue;
+      }
 
       LOGGER.debug("Seeking to {}; atomType={}; atomSize={}",
         new Object[] {offset, atomType, atomSize});
@@ -474,7 +478,7 @@ public class NativeQTReader extends FormatReader {
           // we've found the plane offsets
 
           if (offsets.size() > 0) break;
-          spork = false;
+          separatedFork = false;
           in.skipBytes(4);
           int numPlanes = in.readInt();
           if (numPlanes != getImageCount()) {
