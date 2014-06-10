@@ -4,7 +4,7 @@
 Photoshop TIFF
 ===============================================================================
 
-Extensions: .tif, .tiff 
+Extensions: .tif, .tiff
 
 Developer: `Adobe <http://www.adobe.com>`_
 
