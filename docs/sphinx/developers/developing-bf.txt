@@ -6,9 +6,9 @@ you can load it into your favorite IDE, or develop with your favorite
 text editor.
 
 The Bio-Formats code is divided into several projects. Core components
-are located in subfolders of the :source:`components <components/>` folder,
-with some components further classified into :source:`components/forks
-<components/forks/>` or :source:`components/stubs <components/stubs/>`,
+are located in subfolders of the :sourcedir:`components <components/>` folder,
+with some components further classified into :sourcedir:`components/forks
+<components/forks/>` or :sourcedir:`components/stubs <components/stubs/>`,
 depending on the nature of the project.
 
 Each project has a corresponding Maven POM file, which can be used to
