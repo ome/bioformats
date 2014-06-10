@@ -484,13 +484,11 @@ public class DeltavisionReader extends FormatReader {
 
         // -- record original metadata --
 
-        // NB: It adds a little overhead to record the extended headers into the
-        // original metadata table, but not as much as registering every header
-        // field individually. With this approach it is still easy to
-        // programmatically access any given extended header field.
         String prefix =
           "Extended header Z" + coords[0] + " W" + coords[1] + " T" + coords[2];
-        addSeriesMeta(prefix, hdr);
+        for (Map.Entry<String, Object> entry : hdr.asMap().entrySet()) {
+          addSeriesMeta(prefix + ":" + entry.getKey(), entry.getValue());
+        }
 
         addGlobalMetaList("X position for position", hdr.stageXCoord);
         addGlobalMetaList("Y position for position", hdr.stageYCoord);
@@ -2229,10 +2227,12 @@ public class DeltavisionReader extends FormatReader {
   // -- Helper classes --
 
   /**
-   * This private class structure holds the details for the extended header
+   * This private class structure holds the details for the extended header.
+   * Instances of the class should <em>NOT</em> leak out of the containing
+   * instance.
    * @author Brian W. Loranger
    */
-  public static class DVExtHdrFields {
+  private static class DVExtHdrFields {
 
     /** Photosensor reading. Typically in mV. */
     public float photosensorReading;
@@ -2275,19 +2275,19 @@ public class DeltavisionReader extends FormatReader {
 
     public Map<String, Object> asMap() {
       Map<String, Object> rv = new HashMap<String, Object>();
-      rv.put("photosensorReading: ", photosensorReading);
-      rv.put("timeStampSeconds: ", timeStampSeconds);
-      rv.put("stageXCoord: ", stageXCoord);
-      rv.put("stageYCoord: ", stageYCoord);
-      rv.put("stageZCoord: ", stageZCoord);
-      rv.put("minInten: ", minInten);
-      rv.put("maxInten: ", maxInten);
-      rv.put("expTime: ", expTime);
-      rv.put("ndFilter: ", ndFilter);
-      rv.put("exWavelen: ", exWavelen);
-      rv.put("emWavelen: ", emWavelen);
-      rv.put("intenScaling: ", intenScaling);
-      rv.put("energyConvFactor: ", energyConvFactor);
+      rv.put("photosensorReading", photosensorReading);
+      rv.put("timeStampSeconds", timeStampSeconds);
+      rv.put("stageXCoord", stageXCoord);
+      rv.put("stageYCoord", stageYCoord);
+      rv.put("stageZCoord", stageZCoord);
+      rv.put("minInten", minInten);
+      rv.put("maxInten", maxInten);
+      rv.put("expTime", expTime);
+      rv.put("ndFilter", ndFilter);
+      rv.put("exWavelen", exWavelen);
+      rv.put("emWavelen", emWavelen);
+      rv.put("intenScaling", intenScaling);
+      rv.put("energyConvFactor", energyConvFactor);
       return rv;
     }
 
