@@ -59,13 +59,33 @@ check_c_source_compiles("#include <tiffio.h>
 
 int main(void)
 {
+  TIFFField *field;
   TIFF *tiff = TIFFOpen(\"foo\", \"r\");
-  TIFFFieldInfo *info = TIFFFindField(tiff, TIFFTAG_IMAGEDESCRIPTION, TIFF_ANY);
+  TIFFField *info = TIFFFindField(tiff, TIFFTAG_IMAGEDESCRIPTION, TIFF_ANY);
   const char *name = TIFFFieldName(info);
   TIFFDataType type = TIFFFieldDataType(info);
   int pc = TIFFFieldPassCount(info);
   int rc = TIFFFieldReadCount(info);
   int wc = TIFFFieldWriteCount(info);
+
+}
+" TIFF_HAVE_FIELD)
+
+if(NOT TIFF_HAVE_FIELD)
+  message(WARNING "libtiff does not have TIFFField (probably libtiff <= 4.0.2)")
+endif(NOT TIFF_HAVE_FIELD)
+
+check_c_source_compiles("#include <tiffio.h>
+
+int main(void)
+{
+  TIFF *tiff = TIFFOpen(\"foo\", \"r\");
+  TIFFFieldInfo *info = TIFFFindFieldInfo(tiff, TIFFTAG_IMAGEDESCRIPTION, TIFF_ANY);
+  const char *name = info->field_name;
+  TIFFDataType type = info->field_type;
+  int pc = info->field_passcount;
+  int rc = info->field_readcount;
+  int wc = info->field_writecount;
 }
 " TIFF_HAVE_FIELDINFO)
 
@@ -82,4 +102,15 @@ int main(void)
   TIFFMergeFieldInfo(tiff, info, 0);
 }
 " TIFF_HAVE_MERGEFIELDINFO)
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+
+check_c_source_compiles("#include <tiffio.h>
+
+int main(void)
+{
+  TIFFFieldInfo *info;
+  TIFF *tiff;
+  int a = TIFFMergeFieldInfo(tiff, info, 0);
+}
+" TIFF_HAVE_MERGEFIELDINFO_RETURN)
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
