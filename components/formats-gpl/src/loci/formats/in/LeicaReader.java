@@ -1424,8 +1424,13 @@ public class LeicaReader extends FormatReader {
           CoreMetadata ms = core.get(series);
           if (index >= 0 && index < ms.sizeC) {
             if (!filterRefPopulated[series][index]) {
-              store.setLightPathEmissionFilterRef(filterID, series, index, 0);
-              filterRefPopulated[series][index] = true;
+              try {
+                store.setLightPathEmissionFilterRef(filterID, series, index, 0);
+                filterRefPopulated[series][index] = true;
+              }
+              catch (IndexOutOfBoundsException e) {
+                LOGGER.trace("Could not link the EmissionFilter", e);
+              }
             }
 
             if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
