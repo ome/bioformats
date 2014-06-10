@@ -293,9 +293,13 @@ namespace ome
 
         Sentry sentry;
 
+# if TIFF_HAVE_MERGEFIELDINFO_RETURN
         int e = TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, sizeof(ImageJFieldInfo)/sizeof(ImageJFieldInfo[0]));
         if (e)
           sentry.error();
+# else // !TIFF_HAVE_MERGEFIELDINFO_RETURN
+        TIFFMergeFieldInfo(tiffraw, ImageJFieldInfo, sizeof(ImageJFieldInfo)/sizeof(ImageJFieldInfo[0]));
+#endif // TIFF_HAVE_MERGEFIELDINFO_RETURN
 #endif // TIFF_HAVE_MERGEFIELDINFO
       }
 
