@@ -191,8 +191,46 @@ namespace ome
               Sentry sentry;
 
               fieldinfo = TIFFFindField(getTIFF(), tag, TIFF_ANY);
+              // The returned tag is sometimes incorrect (all libtiff versions)
+              if (fieldinfo && tag != TIFFFieldTag(fieldinfo))
+                fieldinfo = 0;
+
               if (!fieldinfo)
-                std::cerr << "getFieldInfo: tag " << tag << " unknown\n";
+                {
+                  std::cerr << "getFieldInfo: tag " << tag << " unknown\n";
+                }
+              else
+                {
+                  // Older libtiff versions allow the same tag to use
+                  // multiple datatypes.  Try to find the largest type.
+                  const ::TIFFField *larger_info;
+
+                  // Unsigned integer tags.
+                  if (TIFFFieldDataType(fieldinfo) == TIFF_SHORT)
+                    larger_info = TIFFFindField(getTIFF(), tag, TIFF_LONG);
+
+                  // Signed integer tags.
+                  if (TIFFFieldDataType(fieldinfo) == TIFF_SSHORT)
+                    larger_info = TIFFFindField(getTIFF(), tag, TIFF_SLONG);
+
+#ifdef TIFF_HAVE_BIGTIFF
+                  if (!larger_info &&
+                      (TIFFFieldDataType(fieldinfo) == TIFF_SHORT || TIFFFieldDataType(fieldinfo) == TIFF_LONG))
+                    larger_info = TIFFFindField(getTIFF(), tag, TIFF_LONG8);
+
+                  if (!larger_info &&
+                      (TIFFFieldDataType(fieldinfo) == TIFF_SSHORT || TIFFFieldDataType(fieldinfo) == TIFF_SLONG))
+                    larger_info = TIFFFindField(getTIFF(), tag, TIFF_SLONG8);
+
+                  // IFD.
+                  if (TIFFFieldDataType(fieldinfo) == TIFF_IFD)
+                    larger_info = TIFFFindField(getTIFF(), tag, TIFF_IFD8);
+#endif // TIFF_HAVE_BIGTIFF
+
+                  // The returned tag is sometimes incorrect (all libtiff versions)
+                  if (larger_info && tag == TIFFFieldTag(larger_info))
+                    fieldinfo = larger_info;
+                }
             }
 #endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
