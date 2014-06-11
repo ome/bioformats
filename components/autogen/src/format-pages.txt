@@ -1380,8 +1380,6 @@ opennessRating = Fair
 presenceRating = Fair
 utilityRating = Fair
 reader = MRWReader.java
-notes = .. seealso:: \n
-  `Description of MRW format <http://www.dalibor.cz/files/MRW%20File%20Format.txt>`_
 
 [MNG (Multiple-image Network Graphics)]
 pagename = mng
