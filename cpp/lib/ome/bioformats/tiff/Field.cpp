@@ -1419,7 +1419,13 @@ namespace ome
       Field<UInt64TagArray1>::get(value_type& value) const
       {
 #if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
-        if (type() != TYPE_LONG8 && type() != TYPE_IFD8)
+        if (
+# if TIFF_HAVE_BIGTIFF
+            type() != TYPE_LONG8 && type() != TYPE_IFD8
+# else // !TIFF_HAVE_BIGTIFF
+            type() != TYPE_LONG && type() != TYPE_IFD
+# endif // TIFF_HAVE_BIGTIFF
+            )
           throw Exception("FieldInfo mismatch with Field handler");
 
         int rc = readCount();
@@ -1427,7 +1433,14 @@ namespace ome
         int rc = TIFF_VARIABLE;
 #endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
+#if TIFF_HAVE_BIGTIFF
         generic_array_get1(getIFD(), impl->tag, rc, value);
+#else // !TIFF_HAVE_BIGTIFF
+        // Fall back to using uint32; no truncation will occur.
+        std::vector<uint32_t> little;
+        generic_array_get1(getIFD(), impl->tag, rc, little);
+        value = value_type(little.begin(), little.end());
+#endif // TIFF_HAVE_BIGTIFF
       }
 
       /// @copydoc Field::set()
@@ -1436,7 +1449,14 @@ namespace ome
       Field<UInt64TagArray1>::set(const value_type& value)
       {
 #if defined(TIFF_HAVE_FIELD) || defined(TIFF_HAVE_FIELDINFO)
-        if (type() != TYPE_LONG8 && type() != TYPE_IFD8)
+        if (
+# if TIFF_HAVE_BIGTIFF
+            type() != TYPE_LONG8 && type() != TYPE_IFD8
+# else // !TIFF_HAVE_BIGTIFF
+            type() != TYPE_LONG && type() != TYPE_IFD
+# endif // TIFF_HAVE_BIGTIFF
+            )
+          throw Exception("FieldInfo mismatch with Field handler");
           throw Exception("FieldInfo mismatch with Field handler");
 
         int wc = writeCount();
@@ -1447,7 +1467,13 @@ namespace ome
           wc = 1; // as in libtiff
 #endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
+#if TIFF_HAVE_BIGTIFF
         generic_array_set1(getIFD(), impl->tag, wc, value);
+#else // !TIFF_HAVE_BIGTIFF
+        // Fall back to using uint32; truncation will occur.
+        std::vector<uint32_t> little(value.begin(), value.end());
+        generic_array_set1(getIFD(), impl->tag, wc, little);
+#endif // TIFF_HAVE_BIGTIFF
       }
 
       /// @copydoc Field::get()
