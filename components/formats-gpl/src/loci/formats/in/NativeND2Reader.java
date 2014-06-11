@@ -805,7 +805,6 @@ public class NativeND2Reader extends FormatReader {
       xmlString = XMLTools.sanitizeXML(xmlString);
 
       core.get(0).dimensionOrder = "";
-
       ND2Handler handler =
         new ND2Handler(core, getSizeX() == 0, imageOffsets.size());
       XMLTools.parseXML(xmlString, handler);
@@ -817,6 +816,7 @@ public class NativeND2Reader extends FormatReader {
       }
       fieldIndex = handler.getFieldIndex();
       core = handler.getCoreMetadataList();
+
       Hashtable<String, Object> globalMetadata = handler.getMetadata();
       nXFields = handler.getXFields();
       if (nXFields > 6) {
@@ -875,6 +875,12 @@ public class NativeND2Reader extends FormatReader {
         for (int i=0; i<getSeriesCount(); i++) {
           core.get(i).sizeC = 1;
         }
+      }
+
+      if (getSizeZ() * getSizeT() == imageOffsets.size() && core.size() > 1) {
+        CoreMetadata ms0 = core.get(0);
+        core = new ArrayList<CoreMetadata>();
+        core.add(ms0);
       }
 
       if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1)) && getSeriesCount() > 1) {

@@ -400,7 +400,8 @@ public class ND2Handler extends BaseHandler {
         }
       }
       else if ("LoopState".equals(prevElement) && value != null) {
-        validLoopState.add(!value.equals("529"));
+        long v = Long.parseLong(value);
+        validLoopState.add(v != 529 && v < 0xfffff);
       }
       else if ("LoopSize".equals(prevElement) && value != null) {
         int v = Integer.parseInt(value);
@@ -410,7 +411,7 @@ public class ND2Handler extends BaseHandler {
         }
         boolean loop = validLoopState.get(loopIndex);
 
-        if (!loop) {
+        if (!loop && validLoopState.contains(true)) {
           v = 1;
         }
 
