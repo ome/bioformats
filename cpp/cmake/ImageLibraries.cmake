@@ -71,10 +71,6 @@ int main(void)
 }
 " TIFF_HAVE_FIELD)
 
-if(NOT TIFF_HAVE_FIELD)
-  message(WARNING "libtiff does not have TIFFField (probably libtiff <= 4.0.2)")
-endif(NOT TIFF_HAVE_FIELD)
-
 check_c_source_compiles("#include <tiffio.h>
 
 int main(void)
@@ -89,9 +85,9 @@ int main(void)
 }
 " TIFF_HAVE_FIELDINFO)
 
-if(NOT TIFF_HAVE_FIELDINFO)
-  message(WARNING "libtiff does not have TIFFFieldInfo (probably libtiff <= 4.0.2)")
-endif(NOT TIFF_HAVE_FIELDINFO)
+if(NOT TIFF_HAVE_FIELD AND NOT TIFF_HAVE_FIELDINFO)
+  message(FATAL "libtiff does not provide TIFFField or TIFFFieldInfo")
+endif(NOT TIFF_HAVE_FIELD AND NOT TIFF_HAVE_FIELDINFO)
 
 check_c_source_compiles("#include <tiffio.h>
 
@@ -102,7 +98,6 @@ int main(void)
   TIFFMergeFieldInfo(tiff, info, 0);
 }
 " TIFF_HAVE_MERGEFIELDINFO)
-set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
 
 check_c_source_compiles("#include <tiffio.h>
 
@@ -113,4 +108,15 @@ int main(void)
   int a = TIFFMergeFieldInfo(tiff, info, 0);
 }
 " TIFF_HAVE_MERGEFIELDINFO_RETURN)
+
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+
+check_c_source_compiles("#include <tiff.h>
+
+int main(void)
+{
+  if (TIFF_IFD8 != 17 && TIFF_SLONG8 != 16 && TIFF_LONG8 != 15) return 1;
+}
+" TIFF_HAVE_BIGTIFF)
+
 set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
