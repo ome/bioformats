@@ -102,10 +102,6 @@ namespace
 
 }
 
-#if !defined(TIFF_HAVE_FIELD) && !defined(TIFF_HAVE_FIELDINFO)
-struct TIFFField;
-#endif
-
 namespace ome
 {
   namespace bioformats
