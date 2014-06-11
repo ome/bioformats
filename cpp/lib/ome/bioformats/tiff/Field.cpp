@@ -97,8 +97,6 @@ namespace
   {
     return field->field_writecount;
   }
-# else // !TIFF_HAVE_FIELDINFO
-# error No TIFFField or TIFFFieldInfo available
 # endif // TIFF_HAVE_FIELDINFO
 #endif // !TIFF_HAVE_FIELD
 
