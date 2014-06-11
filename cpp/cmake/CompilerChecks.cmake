@@ -34,23 +34,67 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+function(cxx_std_check flag var)
+  check_cxx_compiler_flag("${flag}" ${var})
+  set(CMAKE_CXX_FLAGS_SAVE "${CMAKE_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
+
+  check_cxx_source_compiles("#include <cstdarg>
+
+void format(const char *fmt, va_list ap)
+{
+  va_list ap2;
+  va_copy(ap2, ap);
+}
+
+int main() {
+}"
+"${var}_CSTDARG")
+
+  check_cxx_source_compiles("#include <stdarg.h>
+
+void format(const char *fmt, va_list ap)
+{
+  va_list ap2;
+  va_copy(ap2, ap);
+}
+
+int main() {
+}"
+"${var}_STDARG")
+
+  if("${var}_CSTDARG" OR "${var}_STDARG")
+    set(${var} ${${var}} PARENT_SCOPE)
+  else("${var}_CSTDARG" OR "${var}_STDARG")
+    set(${var} FALSE PARENT_SCOPE)
+  endif("${var}_CSTDARG" OR "${var}_STDARG")
+
+
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_SAVE}")
+endfunction(cxx_std_check)
+
+
 # Try to put the compiler into the most recent standard mode.  This
 # will generally have the most features, and will remove the need for
 # Boost fallbacks if native implementations are available.
 option(cxxstd-autodetect "Enable C++11 features if possible, otherwise fall back to C++03 and C++98" ON)
 if (cxxstd-autodetect)
-  check_cxx_compiler_flag(-std=c++11 CXX_FLAG_CXX11)
+  cxx_std_check(-std=c++11 CXX_FLAG_CXX11)
   if (CXX_FLAG_CXX11)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
   else(CXX_FLAG_CXX11)
-    check_cxx_compiler_flag(-std=c++03 CXX_FLAG_CXX03)
+    cxx_std_check(-std=c++03 CXX_FLAG_CXX03)
     if (CXX_FLAG_CXX03)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++03")
     else(CXX_FLAG_CXX03)
-      check_cxx_compiler_flag(-std=c++98 CXX_FLAG_CXX98)
+      cxx_std_check(-std=c++98 CXX_FLAG_CXX98)
       if (CXX_FLAG_CXX98)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
       else(CXX_FLAG_CXX98)
+        cxx_std_check("" CXX_FLAG_NONE)
+        if (NOT CXX_FLAG_NONE)
+          message(ERROR "Failed to detect compiler options for Standard C++")
+        endif (NOT CXX_FLAG_NONE)
       endif(CXX_FLAG_CXX98)
     endif(CXX_FLAG_CXX03)
   endif(CXX_FLAG_CXX11)
@@ -90,7 +134,6 @@ set(test_flags
     -Wformat=2
     -Wimplicit-atomic-properties
     -Wmissing-declarations
-    -Wmissing-prototypes
     -Wnon-virtual-dtor
     -Wold-style-cast
     -Woverlength-strings
@@ -102,12 +145,16 @@ set(test_flags
     -Wwrite-strings
     -fstrict-aliasing)
 
+# These are annoyingly verbose, produce false positives or don't work
+# nicely with all supported compiler versions, so are disabled unless
+# explicitly enabled.
 option(extra-warnings "Enable extra compiler warnings" OFF)
 if (extra-warnings)
 list(APPEND test_flags
     -Wconversion
     -Wdocumentation
     -Wfloat-equal
+    -Wmissing-prototypes
     -Wunreachable-code)
 endif (extra-warnings)
 
