@@ -4,7 +4,7 @@
 LEO
 ===============================================================================
 
-Extensions: .sxm 
+Extensions: .sxm
 
 
 Owner: `Zeiss <http://www.zeiss.de>`_

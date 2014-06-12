@@ -4,7 +4,7 @@
 JPK
 ===============================================================================
 
-Extensions: .jpk 
+Extensions: .jpk
 
 Developer: `JPK Instruments <http://www.jpk.com>`_
 

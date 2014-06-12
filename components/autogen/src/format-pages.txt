@@ -1648,7 +1648,8 @@ utilityRating = Good
 reader = SISReader.java
 
 [OME-TIFF]
-extensions = .ome.tiff
+indexExtensions = .ome.tiff
+extensions = `.ome.tiff <http://www.openmicroscopy.org/site/support/ome-model/ome-tiff/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 export = yes
@@ -1674,7 +1675,8 @@ Commercial applications that support OME-TIFF include: \n
   :model_doc:`OME-TIFF technical overview <ome-tiff/index.html>`
 
 [OME-XML]
-extensions = .ome
+indexExtensions = .ome
+extensions = `.ome <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
 developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 bsd = yes
 export = yes
@@ -1772,8 +1774,8 @@ utilityRating = Good
 reader = OperettaReader.java
 
 [PerkinElmer UltraView]
-extensions = .tif, .2, .3, .4
-unindexedExtensions = etc.
+indexExtensions = .tif, .2, .3, .4
+extensions = .tif, .2, .3, .4, etc.
 owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 bsd = no
 export = no
@@ -2307,11 +2309,11 @@ writer = WlzWriter.java
 
 [Zeiss AxioVision TIFF]
 extensions = .xml, .tiff
-owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
-developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
 bsd = no
 export = no
-software = `Zeiss ZEN Lite <http://microscopy.zeiss.com/microscopy/en_de/downloads/zen.html>`_
+software = `Zeiss ZEN Lite <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen-lite.html>`_
 weHave = * many example datasets
 weWant = * an official specification document
 pixelsRating = Very good
@@ -2324,12 +2326,12 @@ reader = ZeissTIFFReader.java
 [Zeiss AxioVision ZVI (Zeiss Vision Image)]
 pagename = zeiss-axiovision-zvi
 extensions = .zvi
-owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
-developer = `Carl Zeiss MicroImaging GmbH (AxioVision) <http://www.zeiss.com/axiovision>`_
+owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
+developer = `Carl Zeiss Microscopy GmbH (AxioVision) <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
 bsd = no
 export = no
 versions = 1.0, 2.0
-software = `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
+software = `Zeiss Axiovision LE <http://www.zeiss.com/microscopy/en_de/downloads/axiovision.html>`_
 weHave = * a ZVI specification document (v2.0.5, from 2010 August, in PDF) \n
 * an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) \n
 * an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) \n
@@ -2348,14 +2350,15 @@ notes = Bio-Formats uses a modified version of the `Apache Jakarta POI library <
 Commercial applications that support ZVI include `Bitplane Imaris <http://www.bitplane.com/>`_. \n
 \n
 .. seealso:: \n
-  `Axiovision software overview <http://www.zeiss.com/C12567BE0045ACF1/ContentsWWWIntern/668C9FDCBB18C6E2412568C10045A72E>`_
+  `Axiovision software overview <http://www.zeiss.com/microscopy/en_de/products/microscope-software/axiovision-for-biology.html>`_
 
 [Zeiss CZI]
-extensions = .czi
-developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+indexExtensions = .czi
+extensions = `.czi <http://www.zeiss.com/czi>`_
+developer = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/czi>`_
 bsd = no
 export = no
-software = `Zeiss ZEN 2011 <http://www.zeiss.de/C12567BE0045ACF1/Contents-Frame/A57B6AE510CE8FF1C12578FE002A725D>`_
+software = `Zeiss ZEN 2012 <http://www.zeiss.com/microscopy/en_de/products/microscope-software/zen-2012.html>`_
 weHave = * many example datasets \n
 * official specification documents
 pixelsRating = Outstanding
@@ -2369,10 +2372,10 @@ reader = ZeissCZIReader.java
 [Zeiss LSM (Laser Scanning Microscope) 510/710]
 pagename = zeiss-lsm
 extensions = .lsm, .mdb
-owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+owner = `Carl Zeiss Microscopy GmbH <http://www.zeiss.com/microscopy/>`_
 bsd = no
 export = no
-software = `Zeiss LSM Image Browser <http://www.zeiss.com.au/microscopy/en_au/downloads/lsm-5-series.html>`_ \n
+software = `Zeiss LSM Image Browser <http://www.zeiss.com/microscopy/en_de/downloads/lsm-5-series.html>`_ \n
 `LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_ \n
 `LSM Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/lsm-reader.html>`_ \n
 `DIMIN <http://www.dimin.net/>`_

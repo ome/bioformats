@@ -4,7 +4,7 @@
 AIM
 ===============================================================================
 
-Extensions: .aim 
+Extensions: .aim
 
 Developer: `SCANCO Medical AG <http://www.scanco.ch>`_
 
