@@ -452,7 +452,7 @@ public class ND2Handler extends BaseHandler {
           ms0.sizeZ *= Integer.parseInt(value);
 
           if (ms0.sizeT * ms0.sizeZ > nImages &&
-            ms0.sizeT <= nImages && loop &&
+            ms0.sizeT <= nImages &&
             ms0.sizeT != ms0.sizeZ)
           {
             ms0.sizeZ = ms0.sizeT;
