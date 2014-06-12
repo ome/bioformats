@@ -883,7 +883,7 @@ public class NativeND2Reader extends FormatReader {
         core.add(ms0);
       }
 
-      if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1)) && getSeriesCount() > 1) {
+      if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1) || handler.getXPositions().size() == 0) && getSeriesCount() > 1) {
         CoreMetadata ms0 = core.get(0);
         ms0.sizeZ = getSeriesCount();
         core = new ArrayList<CoreMetadata>();
