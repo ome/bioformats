@@ -139,7 +139,7 @@ namespace ome
 
         // Note boost::make_shared makes arguments const, so can't use
         // here.
-        return openOffset(tiff, TIFFCurrentDirOffset(tiffraw));
+        return openOffset(tiff, static_cast<uint64_t>(TIFFCurrentDirOffset(tiffraw)));
       }
 
       std::shared_ptr<IFD>
@@ -159,10 +159,15 @@ namespace ome
 
         Sentry sentry;
 
-        if (TIFFCurrentDirOffset(tiffraw) != impl->offset)
+        if (static_cast<offset_type>(TIFFCurrentDirOffset(tiffraw)) != impl->offset)
           {
+#if TIFF_HAVE_BIGTIFF
             if (!TIFFSetSubDirectory(tiffraw, impl->offset))
               sentry.error();
+#else // !TIFF_HAVE_BIGTIFF
+            if (!TIFFSetSubDirectory(tiffraw, static_cast<uint32_t>(impl->offset)))
+              sentry.error();
+#endif // TIFF_HAVE_BIGTIFF
           }
       }
 
@@ -234,7 +239,7 @@ namespace ome
 
         if (TIFFReadDirectory(tiffraw) == 1)
           {
-            uint64_t offset = TIFFCurrentDirOffset(tiffraw);
+            uint64_t offset = static_cast<uint64_t>(TIFFCurrentDirOffset(tiffraw));
             ret = openOffset(tiff, offset);
           }
 
