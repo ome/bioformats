@@ -51,7 +51,7 @@ namespace ome
       typedef uint16_t directory_index_type;
 
       /// IFD offset.
-      typedef uint32_t offset_type;
+      typedef uint64_t offset_type;
 
       /// Tag number.
       typedef unsigned int tag_type;
