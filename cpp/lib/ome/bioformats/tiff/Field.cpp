@@ -201,7 +201,7 @@ namespace ome
                 {
                   // Older libtiff versions allow the same tag to use
                   // multiple datatypes.  Try to find the largest type.
-                  const ::TIFFField *larger_info;
+                  const ::TIFFField *larger_info = 0;
 
                   // Unsigned integer tags.
                   if (TIFFFieldDataType(fieldinfo) == TIFF_SHORT)
@@ -504,9 +504,9 @@ namespace ome
               ifd->getField(TIFFTAG_ROWSPERSTRIP, &rps);
               uint32_t spi = static_cast<uint32_t>(std::floor((static_cast<float>(ilen + rps - 1)) / static_cast<float>(rps)));
               if (pc == PLANARCONFIG_CONTIG)
-                readcount = spi;
+                readcount = static_cast<int>(spi);
               else if (pc == PLANARCONFIG_SEPARATE)
-                readcount = spp * spi;
+                readcount = static_cast<int>(spp * spi);
             }
           else if (tag == TIFFTAG_TILEOFFSETS ||
                    tag == TIFFTAG_TILEBYTECOUNTS)
@@ -524,9 +524,9 @@ namespace ome
               uint32_t tdown = (ilen + tlen - 1) / tlen;
               uint32_t tpi = tacross * tdown;
               if (pc == PLANARCONFIG_CONTIG)
-                readcount = tpi;
+                readcount = static_cast<int>(tpi);
               else if (pc == PLANARCONFIG_SEPARATE)
-                readcount = spp * tpi;
+                readcount = static_cast<int>(spp * tpi);
             }
 
           typename T::value_type *valueptr;
@@ -764,7 +764,7 @@ namespace ome
           }
         else
           {
-            std::vector<char> text(rc);
+            std::vector<char> text(static_cast<std::vector<char>::size_type>(rc));
             getIFD()->getField(impl->tag, text.data());
             value = std::string(text.begin(), text.end());
           }
@@ -796,7 +796,7 @@ namespace ome
           throw Exception("FieldInfo mismatch with Field handler");
 #endif // TIFF_HAVE_FIELD || TIFF_HAVE_FIELDINFO
 
-        const char *text;
+        const char *text = 0;
         getIFD()->getField(impl->tag, text);
 
         boost::algorithm::split(value, text, boost::is_any_of("\0"), boost::token_compress_on);
@@ -1492,7 +1492,6 @@ namespace ome
             type() != TYPE_LONG && type() != TYPE_IFD
 # endif // TIFF_HAVE_BIGTIFF
             )
-          throw Exception("FieldInfo mismatch with Field handler");
           throw Exception("FieldInfo mismatch with Field handler");
 
         int wc = writeCount();
