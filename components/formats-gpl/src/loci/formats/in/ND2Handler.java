@@ -436,7 +436,10 @@ public class ND2Handler extends BaseHandler {
         if (ms0.sizeZ == 0) {
           ms0.sizeZ = 1;
         }
-        if (core.size() == 1) {
+        // only adjust if we haven't parsed all of the dimensions already
+        if (core.size() == 1 &&
+          (ms0.sizeT <= 1 || ms0.sizeT * ms0.sizeZ != nImages))
+        {
           ms0.sizeZ *= Integer.parseInt(value);
         }
       }
@@ -828,11 +831,13 @@ public class ND2Handler extends BaseHandler {
                 }
                 else if (v[0].equals("Exposure")) {
                   String[] s = v[1].trim().split(" ");
-                  double time =
-                    Double.parseDouble(DataTools.sanitizeDouble(s[0]));
-                  // TODO: check for other units
-                  if (s[1].equals("ms")) time /= 1000;
-                  exposureTime.add(new Double(time));
+                  s[0] = DataTools.sanitizeDouble(s[0]);
+                  if (s[0].trim().length() > 0) {
+                    double time = Double.parseDouble(s[0]);
+                    // TODO: check for other units
+                    if (s[1].equals("ms")) time /= 1000;
+                    exposureTime.add(new Double(time));
+                  }
                 }
                 else if (v[0].equals("{Pinhole Size}")) {
                   pinholeSize = new Double(DataTools.sanitizeDouble(v[1]));
