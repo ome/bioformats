@@ -227,8 +227,13 @@ namespace ome
       {
         Sentry sentry;
 
+#if TIFF_HAVE_BIGTIFF
         if (!TIFFSetSubDirectory(impl->tiff, offset))
           sentry.error();
+#else // !TIFF_HAVE_BIGTIFF
+        if (!TIFFSetSubDirectory(impl->tiff, static_cast<uint32_t>(offset)))
+          sentry.error();
+#endif // TIFF_HAVE_BIGTIFF
 
         std::shared_ptr<TIFF> t(std::const_pointer_cast<TIFF>(shared_from_this()));
         return IFD::openOffset(t, offset);
