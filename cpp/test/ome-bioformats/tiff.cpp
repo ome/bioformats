@@ -313,7 +313,7 @@ TEST(TIFFTest, FieldWrapFloat)
 
   std::shared_ptr<IFD> ifd(t->getDirectoryByIndex(0));
 
-  float value;
+  float value = -1.0f;
 
   ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::XRESOLUTION).get(value));
   ASSERT_FLOAT_EQ(1.0f, value);
@@ -393,11 +393,11 @@ TEST(TIFFTest, FieldWrapUInt32)
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::GROUP4OPTIONS).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::IMAGEDEPTH).get(value), ome::bioformats::tiff::Exception);
   ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::IMAGELENGTH).get(value));
-  ASSERT_EQ(24, value);
+  ASSERT_EQ(24U, value);
   ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::IMAGEWIDTH).get(value));
-  ASSERT_EQ(18, value);
+  ASSERT_EQ(18U, value);
   ASSERT_NO_THROW(ifd->getField(ome::bioformats::tiff::ROWSPERSTRIP).get(value));
-  ASSERT_EQ(1, value);
+  ASSERT_EQ(1U, value);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::SUBFILETYPE).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::TILEDEPTH).get(value), ome::bioformats::tiff::Exception);
   ASSERT_THROW(ifd->getField(ome::bioformats::tiff::TILELENGTH).get(value), ome::bioformats::tiff::Exception);
