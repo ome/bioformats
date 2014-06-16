@@ -4,7 +4,7 @@
 JPEG
 ===============================================================================
 
-Extensions: .jpg 
+Extensions: .jpg
 
 Developer: `Independent JPEG Group <http://www.ijg.org/>`_
 

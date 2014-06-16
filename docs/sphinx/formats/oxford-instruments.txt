@@ -4,7 +4,7 @@
 Oxford Instruments
 ===============================================================================
 
-Extensions: .top 
+Extensions: .top
 
 
 Owner: `Oxford Instruments <http://www.oxinst.com>`_

@@ -4,7 +4,7 @@
 IPLab-Mac
 ===============================================================================
 
-Extensions: .ipm 
+Extensions: .ipm
 
 
 Owner: `BioVision Technologies <http://biovis.com/>`_

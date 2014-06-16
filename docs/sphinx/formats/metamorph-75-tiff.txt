@@ -4,7 +4,7 @@
 MetaMorph 7.5 TIFF
 ===============================================================================
 
-Extensions: .tiff 
+Extensions: .tiff
 
 
 Owner: `Molecular Devices <http://www.moleculardevices.com/>`_

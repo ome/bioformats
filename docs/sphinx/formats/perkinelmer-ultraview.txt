@@ -4,7 +4,7 @@
 PerkinElmer UltraView
 ===============================================================================
 
-Extensions: .tif, .2, .3, .4 , etc.
+Extensions: .tif, .2, .3, .4, etc.
 
 
 Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
