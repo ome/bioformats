@@ -415,7 +415,7 @@ public class ND2Handler extends BaseHandler {
           v = 1;
         }
 
-        if (ms0.sizeT == 0) {
+        if (ms0.sizeT == 0 || (ms0.sizeT * ms0.sizeZ > nImages && v < ms0.sizeT)) {
           ms0.sizeT = v;
         }
         else if (qName.equals("no_name") && v > 0 && core.size() == 1) {
