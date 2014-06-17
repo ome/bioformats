@@ -148,8 +148,6 @@ public class LiFlimReader extends FormatReader {
   /** Series number indicating position in gzip stream. */
   private int gzSeries;
 
-  private int seriesCount, backgroundSeriesCount;
-
   // -- Constructor --
 
   /** Constructs a new LI-FLIM reader. */
@@ -234,8 +232,6 @@ public class LiFlimReader extends FormatReader {
       rois = null;
       stampValues = null;
       exposureTime = null;
-      seriesCount = 0;
-      backgroundSeriesCount = 0;
     }
   }
 
@@ -390,30 +386,32 @@ public class LiFlimReader extends FormatReader {
     ms.moduloT.start = 0;
     ms.moduloT.end = ms.sizeT - 1;
 
-    ms = new CoreMetadata();
-    ms.sizeX = Integer.parseInt(backgroundX);
-    ms.sizeY = Integer.parseInt(backgroundY);
-    ms.sizeZ = Integer.parseInt(backgroundZ) * f;
-    ms.sizeC = Integer.parseInt(backgroundC);
-    ms.sizeT = Integer.parseInt(backgroundT) * p;
-    ms.imageCount = ms.sizeZ * ms.sizeT;
-    ms.rgb = ms.sizeC > 1;
-    ms.indexed = false;
-    ms.dimensionOrder = "XYCZT";
-    ms.pixelType = getPixelTypeFromString(backgroundDatatype);
-    ms.littleEndian = true;
-    ms.interleaved = true;
-    ms.falseColor = false;
+    if (backgroundX != null) {
+      ms = new CoreMetadata();
+      ms.sizeX = Integer.parseInt(backgroundX);
+      ms.sizeY = Integer.parseInt(backgroundY);
+      ms.sizeZ = Integer.parseInt(backgroundZ) * f;
+      ms.sizeC = Integer.parseInt(backgroundC);
+      ms.sizeT = Integer.parseInt(backgroundT) * p;
+      ms.imageCount = ms.sizeZ * ms.sizeT;
+      ms.rgb = ms.sizeC > 1;
+      ms.indexed = false;
+      ms.dimensionOrder = "XYCZT";
+      ms.pixelType = getPixelTypeFromString(backgroundDatatype);
+      ms.littleEndian = true;
+      ms.interleaved = true;
+      ms.falseColor = false;
 
-    ms.moduloZ.type = FormatTools.FREQUENCY;
-    ms.moduloZ.step = ms.sizeZ / f;
-    ms.moduloZ.start = 0;
-    ms.moduloZ.end = ms.sizeZ - 1;
-    ms.moduloT.type = FormatTools.PHASE;
-    ms.moduloT.step = ms.sizeT / p;
-    ms.moduloT.start = 0;
-    ms.moduloT.end = ms.sizeT - 1;
-    core.add(ms);
+      ms.moduloZ.type = FormatTools.FREQUENCY;
+      ms.moduloZ.step = ms.sizeZ / f;
+      ms.moduloZ.start = 0;
+      ms.moduloZ.end = ms.sizeZ - 1;
+      ms.moduloT.type = FormatTools.PHASE;
+      ms.moduloT.step = ms.sizeT / p;
+      ms.moduloT.start = 0;
+      ms.moduloT.end = ms.sizeT - 1;
+      core.add(ms);
+    }
   }
 
   private void initOMEMetadata() {
@@ -423,15 +421,10 @@ public class LiFlimReader extends FormatReader {
     MetadataTools.populatePixels(store, this, times > 0);
 
     String path = new Location(getCurrentFile()).getName();
-    for (int i=0; i<getSeriesCount(); i++) {
-      // image data
-      if (i < seriesCount) {
-        store.setImageName(path + " Primary Image #" + (i + 1), i);
-      }
-      else {
-        store.setImageName(
-          path + " Background Image #" + (i - seriesCount + 1), i);
-      }
+
+    store.setImageName(path + " Primary Image #1", 0);
+    if (getSeriesCount() > 1) {
+      store.setImageName(path + " Background Image #1", 1);
     }
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
