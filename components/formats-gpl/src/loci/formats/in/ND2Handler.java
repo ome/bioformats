@@ -111,7 +111,7 @@ public class ND2Handler extends BaseHandler {
   private boolean populateXY = true;
   private int nImages = 0;
 
-  private boolean validLoopState = false;
+  private ArrayList<Boolean> validLoopState = new ArrayList<Boolean>();
 
   // -- Constructor --
 
@@ -400,14 +400,22 @@ public class ND2Handler extends BaseHandler {
         }
       }
       else if ("LoopState".equals(prevElement) && value != null) {
-        if (!validLoopState) {
-          validLoopState = !value.equals("529");
-        }
+        long v = Long.parseLong(value);
+        validLoopState.add(v != 529 && v < 0xfffff);
       }
       else if ("LoopSize".equals(prevElement) && value != null) {
         int v = Integer.parseInt(value);
+        int loopIndex = 0;
+        while (validLoopState.get(loopIndex) == null) {
+          loopIndex++;
+        }
+        boolean loop = validLoopState.get(loopIndex);
 
-        if (ms0.sizeT == 0) {
+        if (!loop && validLoopState.contains(true)) {
+          v = 1;
+        }
+
+        if (ms0.sizeT == 0 || (ms0.sizeT * ms0.sizeZ > nImages && v < ms0.sizeT)) {
           ms0.sizeT = v;
         }
         else if (qName.equals("no_name") && v > 0 && core.size() == 1) {
@@ -428,16 +436,26 @@ public class ND2Handler extends BaseHandler {
         if (ms0.sizeZ == 0) {
           ms0.sizeZ = 1;
         }
-        if (core.size() == 1) {
+        // only adjust if we haven't parsed all of the dimensions already
+        if (core.size() == 1 &&
+          (ms0.sizeT <= 1 || ms0.sizeT * ms0.sizeZ != nImages))
+        {
           ms0.sizeZ *= Integer.parseInt(value);
         }
       }
       else if (qName.equals("FramesAfter")) {
+        int loopIndex = 0;
+        while (validLoopState.get(loopIndex) == null) {
+          loopIndex++;
+        }
+        boolean loop = validLoopState.get(loopIndex);
+        validLoopState.set(loopIndex, null);
+
         if (core.size() == 1) {
           ms0.sizeZ *= Integer.parseInt(value);
 
           if (ms0.sizeT * ms0.sizeZ > nImages &&
-            ms0.sizeT <= nImages && validLoopState &&
+            ms0.sizeT <= nImages &&
             ms0.sizeT != ms0.sizeZ)
           {
             ms0.sizeZ = ms0.sizeT;
@@ -813,11 +831,13 @@ public class ND2Handler extends BaseHandler {
                 }
                 else if (v[0].equals("Exposure")) {
                   String[] s = v[1].trim().split(" ");
-                  double time =
-                    Double.parseDouble(DataTools.sanitizeDouble(s[0]));
-                  // TODO: check for other units
-                  if (s[1].equals("ms")) time /= 1000;
-                  exposureTime.add(new Double(time));
+                  s[0] = DataTools.sanitizeDouble(s[0]);
+                  if (s[0].trim().length() > 0) {
+                    double time = Double.parseDouble(s[0]);
+                    // TODO: check for other units
+                    if (s[1].equals("ms")) time /= 1000;
+                    exposureTime.add(new Double(time));
+                  }
                 }
                 else if (v[0].equals("{Pinhole Size}")) {
                   pinholeSize = new Double(DataTools.sanitizeDouble(v[1]));
@@ -880,7 +900,7 @@ public class ND2Handler extends BaseHandler {
       }
       else if (key.equals("Z Stack Loop")) {
         int v = Integer.parseInt(value);
-        if (v <= nImages) {
+        if (v <= nImages || nImages <= 0) {
           core.get(0).sizeZ = v;
         }
       }
