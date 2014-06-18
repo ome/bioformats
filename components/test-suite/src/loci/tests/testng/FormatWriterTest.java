@@ -27,9 +27,9 @@ package loci.tests.testng;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.services.ServiceFactory;
@@ -109,7 +109,7 @@ public class FormatWriterTest {
   @DataProvider(name = "getWriterList")
   public Object[][] getWriterList() {
     IFormatWriter[] writers = new ImageWriter().getWriters();
-    Vector tmp = new Vector();
+    List tmp = new ArrayList();
     for (int i=0; i<writers.length; i++) {
       String[] compressionTypes = writers[i].getCompressionTypes();
       if (compressionTypes == null) {
