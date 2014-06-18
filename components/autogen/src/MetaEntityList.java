@@ -24,10 +24,11 @@
  */
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  * An entity list for the OME data model.
@@ -102,7 +103,7 @@ public class MetaEntityList extends EntityList {
   public String chop() { return chop(path()); }
 
   /** List of indices in the path. Derived from path. */
-  public Vector<String> indices() { return indices(path()); }
+  public List<String> indices() { return indices(path()); }
 
   /** List of method arguments for the path indices. Derived from path. */
   public String argsList() { return argsList(defaultPath()); }
@@ -117,9 +118,9 @@ public class MetaEntityList extends EntityList {
    * List of distinct path values for the active version, including sub-paths.
    * Derived from path values of all entities and properties.
    */
-  public Vector<String> unique() {
+  public List<String> unique() {
     HashSet<String> set = new HashSet<String>();
-    Vector<String> unique = new Vector<String>();
+    List<String> unique = new ArrayList<String>();
     for (String entity : entities.keySet()) {
       Entity e = entities.get(entity);
       for (String property : e.props.keySet()) {
@@ -258,8 +259,8 @@ public class MetaEntityList extends EntityList {
   }
 
   /** List of indices in the given path. */
-  public Vector<String> indices(String path) {
-    Vector<String> list = new Vector<String>();
+  public List<String> indices(String path) {
+    List<String> list = new ArrayList<String>();
     StringTokenizer st = new StringTokenizer(path, "/");
     int tokens = st.countTokens();
     for (int i=0; i<tokens; i++) {
@@ -305,8 +306,8 @@ public class MetaEntityList extends EntityList {
     boolean doTypes, boolean doVars)
   {
     StringBuffer sb = new StringBuffer();
-    Vector<String> indices = indices(path);
-    Vector<String> defaultIndices = indices(defaultPath);
+    List<String> indices = indices(path);
+    List<String> defaultIndices = indices(defaultPath);
     while (defaultIndices.size() > indices.size()) {
       defaultIndices.remove(defaultIndices.size() - 1);
     }
