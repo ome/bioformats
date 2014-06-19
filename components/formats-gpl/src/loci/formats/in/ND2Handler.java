@@ -113,6 +113,8 @@ public class ND2Handler extends BaseHandler {
 
   private ArrayList<Boolean> validLoopState = new ArrayList<Boolean>();
 
+  private boolean canAdjustDimensions = true;
+
   // -- Constructor --
 
   public ND2Handler(List<CoreMetadata> core, int nImages) {
@@ -418,7 +420,7 @@ public class ND2Handler extends BaseHandler {
         if (ms0.sizeT == 0 || (ms0.sizeT * ms0.sizeZ > nImages && v < ms0.sizeT)) {
           ms0.sizeT = v;
         }
-        else if (qName.equals("no_name") && v > 0 && core.size() == 1) {
+        else if (qName.equals("no_name") && v > 1 && core.size() == 1) {
           core = new ArrayList<CoreMetadata>();
           for (int q=0; q<v; q++) {
             core.add(ms0);
@@ -426,6 +428,9 @@ public class ND2Handler extends BaseHandler {
         }
         else if (ms0.sizeZ == 0) {
           ms0.sizeZ = v;
+        }
+        else {
+          canAdjustDimensions = false;
         }
         ms0.dimensionOrder = "CZT";
       }
@@ -437,7 +442,7 @@ public class ND2Handler extends BaseHandler {
           ms0.sizeZ = 1;
         }
         // only adjust if we haven't parsed all of the dimensions already
-        if (core.size() == 1 &&
+        if (canAdjustDimensions && core.size() == 1 &&
           (ms0.sizeT <= 1 || ms0.sizeT * ms0.sizeZ != nImages))
         {
           ms0.sizeZ *= Integer.parseInt(value);
@@ -451,7 +456,7 @@ public class ND2Handler extends BaseHandler {
         boolean loop = validLoopState.get(loopIndex);
         validLoopState.set(loopIndex, null);
 
-        if (core.size() == 1) {
+        if (canAdjustDimensions && core.size() == 1) {
           ms0.sizeZ *= Integer.parseInt(value);
 
           if (ms0.sizeT * ms0.sizeZ > nImages &&
@@ -463,13 +468,13 @@ public class ND2Handler extends BaseHandler {
           }
         }
       }
-      else if (qName.equals("TimeBefore")) {
+      else if (qName.equals("TimeBefore") && canAdjustDimensions) {
         if (ms0.sizeT == 0) {
           ms0.sizeT = 1;
         }
         ms0.sizeT *= Integer.parseInt(value);
       }
-      else if (qName.equals("TimeAfter")) {
+      else if (qName.equals("TimeAfter") && canAdjustDimensions) {
         ms0.sizeT *= Integer.parseInt(value);
       }
       else if (qName.equals("uiMaxDst")) {
