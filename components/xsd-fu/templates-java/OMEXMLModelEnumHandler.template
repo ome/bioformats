@@ -95,7 +95,14 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
     throws EnumerationException {
     if (value != null) {
       for (String pattern : patterns.keySet()) {
+{% if not klass.isUnitsEnumeration %}\
+        // case insensitive compare
         if (value.toLowerCase().matches(pattern.toLowerCase())) {
+{% end %}\
+{% if klass.isUnitsEnumeration %}\
+        // case sensitive compare
+        if (value.matches(pattern)) {
+{% end %}\
           String v = patterns.get(pattern);
           return ${klass.langType}.fromString(v);
         }
