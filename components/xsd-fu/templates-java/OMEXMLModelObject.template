@@ -217,7 +217,11 @@ ${customUpdatePropertyContent[prop.name]}
 {% when prop.isAttribute %}\
 		if (element.hasAttribute("${prop.name}"))
 		{
-{% if prop.isEnumeration %}\
+{% if prop.isEnumeration and prop.isUnitsEnumeration %}\
+			// Attribute property which is Units enumeration ${prop.name}
+			// SPECIAL_CASE handeling of units apart of property
+{% end %}\
+{% if prop.isEnumeration and not prop.isUnitsEnumeration%}\
 			// Attribute property which is an enumeration ${prop.name}
 			set${prop.methodName}(${prop.langType}.fromString(
 					element.getAttribute("${prop.name}")));
@@ -437,6 +441,9 @@ ${customUpdatePropertyContent[prop.name]}
 			${prop.instanceVariableName} = null;
 		}
 	}
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+		// *** SPECIAL_CASE *** isUnitsEnumeration ${prop.name}
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
 	// Property

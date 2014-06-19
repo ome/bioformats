@@ -12,7 +12,7 @@
 {% def counter(parent, obj, indexes) %}\
 	public int get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_string(indexes[:-1])})
 	{
-		// Parents: ${repr(parents[obj.name])}
+		// [A] Parents: ${repr(parents[obj.name])}
 {% if obj.isReference %}\
 		// ${obj.name} is a reference
 		return root.${".".join(accessor(obj.name, parent, obj.name)[:-1] + ["sizeOfLinked%sList()" % obj.name.replace('Ref', '')])};
@@ -37,7 +37,8 @@
 {% end %}\
 {% end %}\
 	{
-		// Parents: ${repr(parents[obj.name])}
+		// Public Get Method
+		// [B] Parents: ${repr(parents[obj.name])}
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference and prop.maxOccurs > 1 %}\
 		// ${parent} is abstract proprietary, is reference and occurs more than once
@@ -83,7 +84,8 @@
 {% end %}\
 {% end %}\
 	{
-		// Parents: ${repr(parents[obj.name])}
+		// Public Set Method
+		// [C] Parents: ${repr(parents[obj.name])}
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
 		// ${prop.name} is abstract proprietary and is a reference
@@ -519,7 +521,7 @@ ${counter(k, o, v)}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 	// ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}\
 
@@ -542,6 +544,12 @@ ${getter(k, o, prop, v)}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, units enumeration
+{% end debug %}\
+	// SPECIAL_CASE - skip getter ${prop.name} element, units enumeration
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
@@ -678,7 +686,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 	// ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}\
 
@@ -701,6 +709,12 @@ ${setter(k, o, prop, v)}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
 {% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, units enumeration
+{% end debug %}\
+	// SPECIAL_CASE - skip setter ${prop.name} element, units enumeration
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
