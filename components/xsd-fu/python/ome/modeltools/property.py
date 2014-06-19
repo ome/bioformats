@@ -265,6 +265,13 @@ class OMEModelProperty(OMEModelEntity):
     isEnumeration = property(_get_isEnumeration,
         doc="""Whether or not the property is an enumeration.""")
 
+    def _get_isUnitsEnumeration(self):
+        if self.isEnumeration and self.name.endswith("Unit"):
+            return True
+        return False
+    isUnitsEnumeration = property(_get_isUnitsEnumeration,
+        doc="""Whether or not the property is a units enumeration.""")
+
     def _get_isReference(self):
         o = self.model.getObjectByName(self.type)
         if o is not None:

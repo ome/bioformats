@@ -45,6 +45,8 @@
 
 package ${lang.omexml_model_enums_package};
 
+// Is Units Enum? - ${klass.isUnitsEnumeration}
+
 public enum ${klass.langType} implements Enumeration
 {
   ${", ".join(['%s("%s")' % (enum_value_name(value), value) for value in klass.possibleValues])};
