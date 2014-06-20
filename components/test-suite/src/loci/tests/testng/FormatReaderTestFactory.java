@@ -27,7 +27,8 @@ package loci.tests.testng;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import loci.common.DataTools;
 import loci.formats.FileStitcher;
@@ -62,7 +63,7 @@ public class FormatReaderTestFactory {
 
   @Factory
   public Object[] createInstances() {
-    Vector files = new Vector();
+    List files = new ArrayList();
 
     // parse explicit filename, if any
     final String nameProp = "testng.filename";
