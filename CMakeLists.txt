@@ -36,6 +36,9 @@
 
 cmake_minimum_required(VERSION 2.8)
 
+# Set MacOSX @rpath usage globally.
+cmake_policy(SET CMP0042 NEW)
+
 project(bioformats)
 include(cpp/cmake/Version.cmake)
 
