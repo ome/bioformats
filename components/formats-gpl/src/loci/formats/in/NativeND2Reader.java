@@ -805,7 +805,6 @@ public class NativeND2Reader extends FormatReader {
       xmlString = XMLTools.sanitizeXML(xmlString);
 
       core.get(0).dimensionOrder = "";
-
       ND2Handler handler =
         new ND2Handler(core, getSizeX() == 0, imageOffsets.size());
       XMLTools.parseXML(xmlString, handler);
@@ -817,6 +816,7 @@ public class NativeND2Reader extends FormatReader {
       }
       fieldIndex = handler.getFieldIndex();
       core = handler.getCoreMetadataList();
+
       Hashtable<String, Object> globalMetadata = handler.getMetadata();
       nXFields = handler.getXFields();
       if (nXFields > 6) {
@@ -877,9 +877,17 @@ public class NativeND2Reader extends FormatReader {
         }
       }
 
-      if (extraZDataCount > 1 && getSizeZ() == 1 && getSeriesCount() > 1) {
+      if (getSizeZ() * getSizeT() == imageOffsets.size() && core.size() > 1) {
         CoreMetadata ms0 = core.get(0);
-        ms0.sizeZ = getSeriesCount();
+        core = new ArrayList<CoreMetadata>();
+        core.add(ms0);
+      }
+
+      if ((getSizeZ() == imageOffsets.size() || (extraZDataCount > 1 && getSizeZ() == 1) || (handler.getXPositions().size() == 0 && (xOffset == 0 && getSizeZ() != getSeriesCount()))) && getSeriesCount() > 1) {
+        CoreMetadata ms0 = core.get(0);
+        if (getSeriesCount() > ms0.sizeZ) {
+          ms0.sizeZ = getSeriesCount();
+        }
         core = new ArrayList<CoreMetadata>();
         core.add(ms0);
       }
@@ -938,11 +946,13 @@ public class NativeND2Reader extends FormatReader {
       else if (planeSize > 0 &&
         availableBytes > DataTools.safeMultiply64(planeSize, 3))
       {
-        core.get(0).sizeC = 3;
-        core.get(0).rgb = true;
-        if (getPixelType() == FormatTools.INT8) {
-          core.get(0).pixelType = availableBytes > planeSize * 5 ?
-            FormatTools.UINT16 : FormatTools.UINT8;
+        if (availableBytes < DataTools.safeMultiply64(planeSize, 6)) {
+          core.get(0).sizeC = 3;
+          core.get(0).rgb = true;
+          if (getPixelType() == FormatTools.INT8) {
+            core.get(0).pixelType = availableBytes > planeSize * 5 ?
+              FormatTools.UINT16 : FormatTools.UINT8;
+          }
         }
       }
       else if (((planeSize > 0 &&
@@ -1070,6 +1080,20 @@ public class NativeND2Reader extends FormatReader {
       if (getDimensionOrder().indexOf("C") == -1) core.get(0).dimensionOrder += "C";
       if (getDimensionOrder().indexOf("T") == -1) core.get(0).dimensionOrder += "T";
 
+      if (getSizeZ() == 0) {
+        core.get(0).sizeZ = 1;
+      }
+      if (getSizeT() == 0) {
+        core.get(0).sizeT =  1;
+      }
+      if (getSizeC() == 0) {
+        core.get(0).sizeC = 1;
+      }
+      core.get(0).imageCount = getSizeZ() * getSizeT();
+      if (!isRGB()) {
+        core.get(0).imageCount *= getSizeC();
+      }
+
       offsets = new long[numSeries][getImageCount()];
 
       int[] lengths = new int[4];
@@ -1123,7 +1147,9 @@ public class NativeND2Reader extends FormatReader {
 
       ArrayList<long[]> tmpOffsets = new ArrayList<long[]>();
       for (int i=0; i<offsets.length; i++) {
-        if (offsets[i][0] > 0) tmpOffsets.add(offsets[i]);
+        if (offsets[i].length > 0 && offsets[i][0] > 0) {
+          tmpOffsets.add(offsets[i]);
+        }
       }
 
       offsets = new long[tmpOffsets.size()][];
@@ -1380,7 +1406,10 @@ public class NativeND2Reader extends FormatReader {
 
       core.get(0).dimensionOrder = "";
 
-      String xml = sb.substring(offset, len - offset);
+      if (len - offset < offset) {
+        offset = 0;
+      }
+      String xml = sb.substring(offset, len);
       sb = null;
       handler = new ND2Handler(core, vs.size());
       try {

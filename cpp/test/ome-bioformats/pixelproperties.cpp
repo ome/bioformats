@@ -47,68 +47,134 @@ typedef ome::xml::model::enums::PixelType PT;
 
 TEST(PixelProperties, ConstructSignedInt8)
 {
-  PixelProperties<PT::INT8>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(int8_t));
+  PixelProperties<PT::INT8>::native_type tn;
+  ASSERT_EQ(sizeof(tn), sizeof(int8_t));
+
+  PixelProperties<PT::INT8>::big_type tb;
+  ASSERT_EQ(sizeof(tb), sizeof(int8_t));
+
+  PixelProperties<PT::INT8>::little_type tl;
+  ASSERT_EQ(sizeof(tl), sizeof(int8_t));
 }
 
 TEST(PixelProperties, ConstructSignedInt16)
 {
-  PixelProperties<PT::INT16>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(int16_t));
+  PixelProperties<PT::INT16>::native_type tn;
+  ASSERT_EQ(sizeof(tn), sizeof(int16_t));
+
+  PixelProperties<PT::INT16>::big_type tb;
+  ASSERT_EQ(sizeof(tb), sizeof(int16_t));
+
+  PixelProperties<PT::INT16>::little_type tl;
+  ASSERT_EQ(sizeof(tl), sizeof(int16_t));
 }
 
 TEST(PixelProperties, ConstructSignedInt32)
 {
-  PixelProperties<PT::INT32>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(int32_t));
+  PixelProperties<PT::INT32>::native_type tn;
+  ASSERT_EQ(sizeof(tn), sizeof(int32_t));
+
+  PixelProperties<PT::INT32>::big_type tb;
+  ASSERT_EQ(sizeof(tb), sizeof(int32_t));
+
+  PixelProperties<PT::INT32>::little_type tl;
+  ASSERT_EQ(sizeof(tl), sizeof(int32_t));
 }
 
 TEST(PixelProperties, ConstructUnsignedInt8)
 {
-  PixelProperties<PT::UINT8>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(uint8_t));
+  PixelProperties<PT::UINT8>::native_type tn;
+  ASSERT_EQ(sizeof(tn), sizeof(uint8_t));
+
+  PixelProperties<PT::UINT8>::big_type tb;
+  ASSERT_EQ(sizeof(tb), sizeof(uint8_t));
+
+  PixelProperties<PT::UINT8>::little_type tl;
+  ASSERT_EQ(sizeof(tl), sizeof(uint8_t));
 }
 
 TEST(PixelProperties, ConstructUnsignedInt16)
 {
-  PixelProperties<PT::UINT16>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(uint16_t));
+  PixelProperties<PT::UINT16>::native_type tn;
+  ASSERT_EQ(sizeof(tn), sizeof(uint16_t));
+
+  PixelProperties<PT::UINT16>::big_type tb;
+  ASSERT_EQ(sizeof(tb), sizeof(uint16_t));
+
+  PixelProperties<PT::UINT16>::little_type tl;
+  ASSERT_EQ(sizeof(tl), sizeof(uint16_t));
 }
 
 TEST(PixelProperties, ConstructUnsignedInt32)
 {
-  PixelProperties<PT::UINT32>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(uint32_t));
+  PixelProperties<PT::UINT32>::native_type tn;
+  ASSERT_EQ(sizeof(tn), sizeof(uint32_t));
+
+  PixelProperties<PT::UINT32>::big_type tb;
+  ASSERT_EQ(sizeof(tb), sizeof(uint32_t));
+
+  PixelProperties<PT::UINT32>::little_type tl;
+  ASSERT_EQ(sizeof(tl), sizeof(uint32_t));
 }
 
 TEST(PixelProperties, ConstructFloat)
 {
-  PixelProperties<PT::FLOAT>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(float));
+  PixelProperties<PT::FLOAT>::native_type tn;
+  ASSERT_EQ(sizeof(tn), sizeof(float));
+
+  PixelProperties<PT::FLOAT>::big_type tb;
+  ASSERT_EQ(sizeof(tb), sizeof(float));
+
+  PixelProperties<PT::FLOAT>::little_type tl;
+  ASSERT_EQ(sizeof(tl), sizeof(float));
 }
 
 TEST(PixelProperties, ConstructDouble)
 {
-  PixelProperties<PT::DOUBLE>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(double));
+  PixelProperties<PT::DOUBLE>::native_type tn;
+  ASSERT_EQ(sizeof(tn), sizeof(double));
+
+  PixelProperties<PT::DOUBLE>::big_type tb;
+  ASSERT_EQ(sizeof(tb), sizeof(double));
+
+  PixelProperties<PT::DOUBLE>::little_type tl;
+  ASSERT_EQ(sizeof(tl), sizeof(double));
 }
 
 TEST(PixelProperties, ConstructBit)
 {
-  PixelProperties<PT::BIT>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(bool));
+  PixelProperties<PT::BIT>::native_type tn;
+  ASSERT_EQ(sizeof(tn), sizeof(bool));
+
+  PixelProperties<PT::BIT>::big_type tb;
+  ASSERT_EQ(sizeof(tb), sizeof(bool));
+
+  PixelProperties<PT::BIT>::little_type tl;
+  ASSERT_EQ(sizeof(tl), sizeof(bool));
 }
 
 TEST(PixelProperties, ConstructComplex)
 {
-  PixelProperties<PT::COMPLEX>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(std::array<float,2>));
+  PixelProperties<PT::COMPLEX>::native_type tn;
+  ASSERT_EQ(sizeof(tn), sizeof(std::complex<float>));
+
+  PixelProperties<PT::COMPLEX>::big_type tb;
+  ASSERT_EQ(sizeof(tb), sizeof(std::complex<float>));
+
+  PixelProperties<PT::COMPLEX>::little_type tl;
+  ASSERT_EQ(sizeof(tl), sizeof(std::complex<float>));
 }
 
 TEST(PixelProperties, ConstructDoubleComplex)
 {
-  PixelProperties<PT::DOUBLECOMPLEX>::type t;
-  ASSERT_EQ(sizeof(t), sizeof(std::array<double,2>));
+  PixelProperties<PT::DOUBLECOMPLEX>::native_type tn;
+  ASSERT_EQ(sizeof(tn), sizeof(std::complex<double>));
+
+  PixelProperties<PT::DOUBLECOMPLEX>::big_type tb;
+  ASSERT_EQ(sizeof(tb), sizeof(std::complex<double>));
+
+  PixelProperties<PT::DOUBLECOMPLEX>::little_type tl;
+  ASSERT_EQ(sizeof(tl), sizeof(std::complex<double>));
 }
 
 TEST(PixelProperties, SizeSignedInt8)
@@ -167,12 +233,12 @@ TEST(PixelProperties, SizeBit)
 
 TEST(PixelProperties, SizeComplex)
 {
-  ASSERT_EQ(bytesPerPixel(PT::COMPLEX), sizeof(std::array<float,2>));
-  ASSERT_EQ(bitsPerPixel(PT::COMPLEX), sizeof(std::array<float,2>) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::COMPLEX), sizeof(std::complex<float>));
+  ASSERT_EQ(bitsPerPixel(PT::COMPLEX), sizeof(std::complex<float>) * 8);
 }
 
 TEST(PixelProperties, SizeDoubleComplex)
 {
-  ASSERT_EQ(bytesPerPixel(PT::DOUBLECOMPLEX), sizeof(std::array<double,2>));
-  ASSERT_EQ(bitsPerPixel(PT::DOUBLECOMPLEX), sizeof(std::array<double,2>) * 8);
+  ASSERT_EQ(bytesPerPixel(PT::DOUBLECOMPLEX), sizeof(std::complex<double>));
+  ASSERT_EQ(bitsPerPixel(PT::DOUBLECOMPLEX), sizeof(std::complex<double>) * 8);
 }

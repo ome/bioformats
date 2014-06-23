@@ -26,6 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -43,7 +45,6 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.PositiveFloat;
-import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
 /**
@@ -483,13 +484,11 @@ public class DeltavisionReader extends FormatReader {
 
         // -- record original metadata --
 
-        // NB: It adds a little overhead to record the extended headers into the
-        // original metadata table, but not as much as registering every header
-        // field individually. With this approach it is still easy to
-        // programmatically access any given extended header field.
         String prefix =
           "Extended header Z" + coords[0] + " W" + coords[1] + " T" + coords[2];
-        addSeriesMeta(prefix, hdr);
+        for (Map.Entry<String, Object> entry : hdr.asMap().entrySet()) {
+          addSeriesMeta(prefix + ":" + entry.getKey(), entry.getValue());
+        }
 
         addGlobalMetaList("X position for position", hdr.stageXCoord);
         addGlobalMetaList("Y position for position", hdr.stageYCoord);
@@ -2228,12 +2227,12 @@ public class DeltavisionReader extends FormatReader {
   // -- Helper classes --
 
   /**
-   * This private class structure holds the details for the extended header
+   * This private class structure holds the details for the extended header.
+   * Instances of the class should <em>NOT</em> leak out of the containing
+   * instance.
    * @author Brian W. Loranger
    */
-  private class DVExtHdrFields {
-
-    private int offsetWithInts;
+  private static class DVExtHdrFields {
 
     /** Photosensor reading. Typically in mV. */
     public float photosensorReading;
@@ -2273,6 +2272,24 @@ public class DeltavisionReader extends FormatReader {
 
     /** Energy conversion factor. Usually 1. */
     public float energyConvFactor;
+
+    public Map<String, Object> asMap() {
+      Map<String, Object> rv = new HashMap<String, Object>();
+      rv.put("photosensorReading", photosensorReading);
+      rv.put("timeStampSeconds", timeStampSeconds);
+      rv.put("stageXCoord", stageXCoord);
+      rv.put("stageYCoord", stageYCoord);
+      rv.put("stageZCoord", stageZCoord);
+      rv.put("minInten", minInten);
+      rv.put("maxInten", maxInten);
+      rv.put("expTime", expTime);
+      rv.put("ndFilter", ndFilter);
+      rv.put("exWavelen", exWavelen);
+      rv.put("emWavelen", emWavelen);
+      rv.put("intenScaling", intenScaling);
+      rv.put("energyConvFactor", energyConvFactor);
+      return rv;
+    }
 
     /**
      * Helper function which overrides toString, printing out the values in

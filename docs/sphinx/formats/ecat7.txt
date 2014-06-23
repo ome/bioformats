@@ -4,7 +4,7 @@
 ECAT7
 ===============================================================================
 
-Extensions: .v 
+Extensions: .v
 
 Developer: `Siemens <http://www.siemens.com>`_
 

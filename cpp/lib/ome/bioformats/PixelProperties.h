@@ -38,8 +38,10 @@
 #ifndef OME_BIOFORMATS_PIXELPROPERTIES_H
 #define OME_BIOFORMATS_PIXELPROPERTIES_H
 
-#include <ome/compat/array.h>
+#include <complex>
+
 #include <ome/compat/cstdint.h>
+#include <ome/compat/endian.h>
 
 #include <ome/bioformats/Types.h>
 
@@ -69,7 +71,7 @@ namespace ome
       static pixel_size_type
       pixel_byte_size()
       {
-        return sizeof(typename P::type);
+        return sizeof(typename P::native_type);
       }
 
       /**
@@ -88,8 +90,12 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::INT8> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT8> >
     {
-      /// INT8 native pixel type.
-      typedef int8_t type;
+      /// Pixel type (big endian).
+      typedef boost::endian::big_int8_t big_type;
+      /// Pixel type (little endian).
+      typedef boost::endian::little_int8_t little_type;
+      /// Pixel type (native endian).
+      typedef boost::endian::native_int8_t native_type;
     };
 
     /// Properties of INT16 pixels.
@@ -97,8 +103,12 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::INT16> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT16> >
     {
-      /// INT16 native pixel type.
-      typedef int16_t type;
+      /// Pixel type (big endian).
+      typedef boost::endian::big_int16_t big_type;
+      /// Pixel type (little endian).
+      typedef boost::endian::little_int16_t little_type;
+      /// Pixel type (native endian).
+      typedef boost::endian::native_int16_t native_type;
     };
 
     /// Properties of INT32 pixels.
@@ -106,8 +116,12 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::INT32> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::INT32> >
     {
-      /// INT32 native pixel type.
-      typedef int32_t type;
+      /// Pixel type (big endian).
+      typedef boost::endian::big_int32_t big_type;
+      /// Pixel type (little endian).
+      typedef boost::endian::little_int32_t little_type;
+      /// Pixel type (native endian).
+      typedef boost::endian::native_int32_t native_type;
     };
 
     /// Properties of UINT8 pixels.
@@ -115,8 +129,12 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT8> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::UINT8> >
     {
-      /// UINT8 native pixel type.
-      typedef uint8_t type;
+      /// Pixel type (big endian).
+      typedef boost::endian::big_uint8_t big_type;
+      /// Pixel type (little endian).
+      typedef boost::endian::little_uint8_t little_type;
+      /// Pixel type (native endian).
+      typedef boost::endian::native_uint8_t native_type;
     };
 
     /// Properties of UINT16 pixels.
@@ -124,8 +142,12 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT16> :
       public PixelPropertiesBase<struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT16> >
     {
-      /// UINT16 native pixel type.
-      typedef uint16_t type;
+      /// Pixel type (big endian).
+      typedef boost::endian::big_uint16_t big_type;
+      /// Pixel type (little endian).
+      typedef boost::endian::little_uint16_t little_type;
+      /// Pixel type (native endian).
+      typedef boost::endian::native_uint16_t native_type;
     };
 
     /// Properties of UINT32 pixels.
@@ -133,8 +155,12 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::UINT32> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::UINT32> >
     {
-      /// UINT32 native pixel type.
-      typedef uint32_t type;
+      /// Pixel type (big endian).
+      typedef boost::endian::big_uint32_t big_type;
+      /// Pixel type (little endian).
+      typedef boost::endian::little_uint32_t little_type;
+      /// Pixel type (native endian).
+      typedef boost::endian::native_uint32_t native_type;
     };
 
     /// Properties of FLOAT pixels.
@@ -142,8 +168,12 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT> >
     {
-      /// FLOAT native pixel type.
-      typedef float type;
+      /// Pixel type (big endian).
+      typedef boost::endian::big_float32_t big_type;
+      /// Pixel type (little endian).
+      typedef boost::endian::little_float32_t little_type;
+      /// Pixel type (native endian).
+      typedef float native_type;
     };
 
     /// Properties of DOUBLE pixels.
@@ -151,8 +181,12 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE> >
     {
-      /// DOUBLE native pixel type.
-      typedef double type;
+      /// Pixel type (big endian).
+      typedef boost::endian::big_float64_t big_type;
+      /// Pixel type (little endian).
+      typedef boost::endian::little_float64_t little_type;
+      /// Pixel type (native endian).
+      typedef double native_type;
     };
 
     /// Properties of BIT pixels.
@@ -160,8 +194,12 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::BIT> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::BIT> >
     {
-      /// BIT native pixel type.
-      typedef bool type;
+      /// Pixel type (big endian).
+      typedef bool big_type;
+      /// Pixel type (little endian).
+      typedef bool little_type;
+      /// Pixel type (native endian).
+      typedef bool native_type;
     };
 
     /// Properties of COMPLEX pixels.
@@ -169,8 +207,12 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX> >
     {
-      /// COMPLEX native pixel type.
-      typedef std::array<float,2> type;
+      /// Pixel type (big endian).
+      typedef std::complex<boost::endian::big_float32_t> big_type;
+      /// Pixel type (little endian).
+      typedef std::complex<boost::endian::little_float32_t> little_type;
+      /// Pixel type (native endian).
+      typedef std::complex<float> native_type;
     };
 
     /// Properties of DOUBLECOMPLEX pixels.
@@ -178,8 +220,12 @@ namespace ome
     struct PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> :
       public PixelPropertiesBase<PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX> >
     {
-      /// DOUBLECOMPLEX native pixel type.
-      typedef std::array<double,2> type;
+      /// Pixel type (big endian).
+      typedef std::complex<boost::endian::big_float64_t> big_type;
+      /// Pixel type (little endian).
+      typedef std::complex<boost::endian::little_float64_t> little_type;
+      /// Pixel type (native endian).
+      typedef std::complex<double> native_type;
     };
 
     // No switch default to avoid -Wunreachable-code errors.

@@ -10,8 +10,9 @@ formats it supports.
 Installation
 ------------
 
-Download :downloads:`bioformats_package.jar <>` and drop it into your
-**ImageJ/plugins** folder. Next time you run ImageJ, a new
+Download
+:downloads:`bioformats_package.jar <artifacts/bioformats_package.jar>` and
+drop it into your **ImageJ/plugins** folder. Next time you run ImageJ, a new
 Bio-Formats submenu with several plugins will appear in the Plugins menu,
 including the Bio-Formats Importer and Bio-Formats Exporter.
 
@@ -32,7 +33,7 @@ ways:
 ImageJ v1.37 and later automatically (via ``HandleExtraFileTypes``) calls
 the Bio-Formats logic, if installed, as needed when a file is opened
 within ImageJ, i.e. when using :menuselection:`File --> Open` instead of
-explicitly choosing 
+explicitly choosing
 :menuselection:`Plugins --> Bio-Formats --> Bio-Formats Importer` from the
 menu.
 
@@ -42,7 +43,7 @@ page <http://fiji.sc/Bio-Formats>`_ of the Fiji wiki.
 Upgrading
 ---------
 
-To upgrade, just overwrite the old **bioformats_package.jar** with the 
+To upgrade, just overwrite the old **bioformats_package.jar** with the
 :downloads:`latest one <>`.
 
 You may want to download the latest version of ImageJ first, to take

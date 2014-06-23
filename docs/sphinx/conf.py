@@ -12,6 +12,7 @@
 # serve to show the default.
 
 import sys, os
+sys.path.insert(0, os.path.abspath('../sphinx/_ext'))
 import re
 import subprocess
 from datetime import datetime
@@ -38,10 +39,15 @@ def popen(args, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.)
-extensions = ['sphinx.ext.extlinks']
+extensions = ['sphinx.ext.extlinks', 'edit_on_github']
+
+## Configuration for the edit_on_github extension
+edit_on_github_project = 'openmicroscopy/bioformats'
+edit_on_github_branch = 'develop'
+edit_on_github_prefix = 'docs/sphinx'
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['../sphinx/_templates']
 
 # The suffix of source filenames.
 source_suffix = '.txt'
@@ -126,23 +132,15 @@ else:
 
 github_root = 'https://github.com/'
 bf_github_root = github_root + user + '/bioformats/'
-bf_github_branch = bf_github_root + 'blob/' + source_branch + '/'
+bf_github_tree = bf_github_root + 'tree/' + source_branch + '/'
+bf_github_blob = bf_github_root + 'blob/' + source_branch + '/'
+gpl_formats = bf_github_blob + 'components/formats-gpl/src/loci/formats/'
+bsd_formats = bf_github_blob + 'components/formats-bsd/src/loci/formats/'
 
 # Variables used to define Jenkins extlinks
-if "JENKINS_JOB" in os.environ and len(os.environ.get('JENKINS_JOB')) > 0:
-    jenkins_job = os.environ.get('JENKINS_JOB')
-else:
-    jenkins_job = 'BIOFORMATS-5.1-latest'
-if "JENKINS_CPP_JOB" in os.environ and len(os.environ.get('JENKINS_CPP_JOB')) > 0:
-    jenkins_cpp_job = os.environ.get('JENKINS_CPP_JOB')
-else:
-    jenkins_cpp_job = 'BIOFORMATS-5.1-latest-cpp'
-
 jenkins_root = 'http://ci.openmicroscopy.org'
 jenkins_job_root = jenkins_root + '/job'
 jenkins_view_root = jenkins_root + '/view'
-bf_job_root = jenkins_job_root + '/' + jenkins_job
-bf_cpp_job_root = jenkins_job_root + '/' + jenkins_cpp_job
 
 # Variables used to define other extlinks
 cvs_root = 'http://cvs.openmicroscopy.org.uk'
@@ -162,19 +160,16 @@ extlinks = {
     'milestone' : (trac_root + '/milestone/%s', ''),
     'report' : (trac_root + '/report/%s', ''),
     # Github links
-    'source' : (bf_github_branch + '%s', ''),
-    'bfreader' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/in/%s', ''),
-    'bsd-reader' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/in/%s', ''),
-    'bfwriter' : (bf_github_branch + 'components/formats-gpl/src/loci/formats/out/' + '%s', ''),
-    'bsd-writer' : (bf_github_branch + 'components/formats-bsd/src/loci/formats/out/' + '%s', ''),
+    'source' : (bf_github_blob + '%s', ''),
+    'sourcedir' : (bf_github_tree + '%s', ''),
+    'bfreader' : (gpl_formats + 'in/%s', ''),
+    'bsd-reader' : (bsd_formats + 'in/%s', ''),
+    'bfwriter' : (gpl_formats + 'out/' + '%s', ''),
+    'bsd-writer' : (bsd_formats + 'out/' + '%s', ''),
     # Jenkins links
     'jenkins' : (jenkins_root + '/%s', ''),
     'jenkinsjob' : (jenkins_job_root + '/%s', ''),
     'jenkinsview' : (jenkins_view_root + '/%s', ''),
-    'bfjob' : (bf_job_root + '/%s', ''),
-    'bfcppjob' : (bf_cpp_job_root + '/%s', ''),
-    'bfcppdoxygen' : (bf_cpp_job_root + '/doxygen/%s', ''),
-    'javadoc' : (bf_job_root + '/javadoc/%s', ''),
     # Mailing list/forum links
     'mailinglist' : (lists_root + '/mailman/listinfo/%s', ''),
     'forum' : (oo_root + '/community/%s', ''),
@@ -192,6 +187,8 @@ extlinks = {
     'devs_doc' : (oo_site_root + '/support/contributing/%s', ''),
     # Downloads
     'downloads' : (downloads_root + '/latest/bio-formats5/%s', ''),
+    'javadoc' : (downloads_root + '/latest/bio-formats5/api/%s', ''),
+    'doxygen' : (downloads_root + '/latest/bio-formats5/doxygen/%s', ''),
     # Miscellaneous links
     'doi' : ('http://dx.doi.org/%s', ''),
     'schema' : (oo_root + '/Schemas/Documentation/Generated/%s', '')

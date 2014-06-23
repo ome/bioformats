@@ -68,6 +68,13 @@ namespace ome
 # ifdef OME_HAVE_BOOST_FILESYSTEM_ABSOLUTE
     using boost::filesystem::absolute;
 # else // OME_HAVE_BOOST_FILESYSTEM_ABSOLUTE not defined
+    /**
+     * Get an absolute path.
+     *
+     * @param p the path to make absolute.
+     * @param base the base directory, defaulting to the current path.
+     * @returns the absolute path.
+     */
     inline
     boost::filesystem::path
     absolute(const boost::filesystem::path& p,
@@ -81,6 +88,13 @@ namespace ome
     using boost::filesystem::canonical;
 # else // OME_HAVE_BOOST_FILESYSTEM_CANONICAL not defined
     // Implementation derived from boost 1.55.
+    /**
+     * Get a canonical path.
+     *
+     * @param p the path to make canonical.
+     * @param base the base directory, defaulting to the current path.
+     * @returns the canonical path.
+     */
     inline
     boost::filesystem::path
     canonical(const boost::filesystem::path& p,

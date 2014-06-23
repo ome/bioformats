@@ -4,7 +4,7 @@
 QuickTime Movie
 ===============================================================================
 
-Extensions: .mov 
+Extensions: .mov
 
 
 Owner: `Apple Computer <http://www.apple.com/>`_

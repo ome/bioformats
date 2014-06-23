@@ -52,6 +52,12 @@ if(BUILD_TESTS)
 
   add_test(ome-compat/cstdint cstdint)
 
+  add_executable(endian endian.cpp)
+  target_link_libraries(endian ome-compat)
+  target_link_libraries(endian ome-test)
+
+  add_test(ome-compat/endian endian)
+
   add_executable(memory memory.cpp)
   target_link_libraries(memory ome-compat)
   target_link_libraries(memory ome-test)
