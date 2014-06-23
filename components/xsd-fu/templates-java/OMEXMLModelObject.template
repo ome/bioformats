@@ -575,6 +575,9 @@ ${customAsXMLElementPropertyContent[prop.name]}
 			// *** IGNORING *** Skipped back reference ${prop.name}
 {% end when %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
+{% if debug %}\
+			// MARKER [III]
+{% end debug %}\
 			// Attribute property ${prop.name}
 			${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.toString());
 {% end when %}\

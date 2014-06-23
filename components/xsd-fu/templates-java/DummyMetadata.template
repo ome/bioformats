@@ -38,12 +38,21 @@
 {% def setter(parent, obj, prop, indexes) %}\
 {% choose %}\
 {% when len(indexes) > 0 and prop.maxOccurs > 1 %}\
+{% if debug %}\
+	// MARKER [A-GET]
+{% end debug %}\
 	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)}, ${index_string(prop.name)})
 {% end %}\
 {% when len(indexes) > 0 %}\
+{% if debug %}\
+	// MARKER [B-GET]
+{% end debug %}\
 	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName}, ${indexes_string(indexes)})
 {% end %}\
 {% otherwise %}\
+{% if debug %}\
+	// MARKER [C-GET]
+{% end debug %}\
 	public void set{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}${prop.name}(${prop.metadataStoreArgType} ${prop.argumentName})
 {% end %}\
 {% end %}\
@@ -297,6 +306,9 @@ ${counter(k, o, v)}\
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
 {% if o.name not in fu.METADATA_OBJECT_IGNORE %}\
 {% if parents[o.name] is not None and not o.isAbstract and not o.isAbstractProprietary %}\
+{% if debug %}\
+	// MARKER [EEE]
+{% end debug %}\
 	//
 	// ${o.name} property storage
 	//
@@ -323,11 +335,17 @@ ${counter(k, o, v)}\
 {% choose %}\
 {% when not prop.isPrimitive and prop.isChoice %}\
 {% if debug %}\
+	// MARKER [CCC]
+{% end debug %}\
+{% if debug %}\
 	// Ignoring ${prop.name} of parent abstract type
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
+{% if debug %}\
+	// MARKER [DDD]
+{% end debug %}\
 {% if not prop.isBackReference %}\
 	// ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}\
@@ -354,6 +372,9 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
+{% if debug %}\
+	// MARKER [HHH-AGG]
+{% end debug %}\
 ${getter(k, o, prop, v)}\
 
 {% end %}\
