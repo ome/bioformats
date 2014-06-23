@@ -153,6 +153,9 @@ class OMEModelProperty(OMEModelEntity):
             # handle cases where the type is prefixed by a namespace definition.
             # (ex. OME:NonNegativeInt).
         else:
+            # This sets name only for those types mentioned in the type_map
+            # for the generated language. All other cases set name to None
+            # so the following if block is executed
             name = self.model.opts.lang.type(self.type.replace('OME:', ''))
 
         if name is None:
@@ -266,8 +269,8 @@ class OMEModelProperty(OMEModelEntity):
         doc="""Whether or not the property is an enumeration.""")
 
     def _get_isUnitsEnumeration(self):
-        if self.isEnumeration and self.name.endswith("Unit"):
-            return True
+        if self.langType.startswith("Units"):
+             return True
         return False
     isUnitsEnumeration = property(_get_isUnitsEnumeration,
         doc="""Whether or not the property is a units enumeration.""")

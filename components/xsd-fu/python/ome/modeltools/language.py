@@ -61,6 +61,14 @@ class Language(object):
             'PercentFraction': 'PercentFraction',
             'Color': 'Color',
             'Text': 'Text',
+            'UnitsLength':      'UnitsLength',
+            'UnitsTime':        'UnitsTime',
+            'UnitsPressure':    'UnitsPressure',
+            'UnitsAngle':       'UnitsAngle',
+            'UnitsTemperature': 'UnitsTemperature',
+            'UnitsVoltage':     'UnitsVoltage',
+            'UnitsPower':       'UnitsPower',
+            'UnitsFrequency':   'UnitsFrequency',
             namespace + 'dateTime': 'Timestamp'
             }
 

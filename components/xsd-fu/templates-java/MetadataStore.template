@@ -208,7 +208,10 @@ public interface MetadataStore extends BaseMetadata
 {% if debug %}\
 	// MARKER [DDD]
 {% end debug %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
+{% end debug %}\
 	// ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}
 
@@ -230,6 +233,14 @@ ${setter(k, o, prop, v)}
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [FFF]
+{% end debug %}\
+{% if debug %}\
+	// Ignoring ${prop.name} element, unit enumeration property
 {% end debug %}\
 {% end %}\
 {% otherwise %}\

@@ -346,7 +346,10 @@ ${counter(k, o, v)}\
 {% if debug %}\
 	// MARKER [DDD]
 {% end debug %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [AAA]
+{% end debug %}\
 	// ${prop.name} accessor from parent ${k}
 ${getter(k, o, prop, v)}\
 
@@ -368,6 +371,11 @@ ${getter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [FFF-AGG]
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
@@ -452,7 +460,7 @@ ${getter(k, o, prop, v)}\
 {% end %}\
 {% otherwise %}\
 {% for parent_k, parent_v in indexes[k].items() %}\
-{% if not prop.isBackReference %}\
+{% if not prop.isBackReference and not prop.isUnitsEnumeration %}\
 	// ${prop.name} accessor from parent ${k}
 ${setter(k, o, prop, v)}\
 
@@ -474,6 +482,11 @@ ${setter(k, o, prop, v)}\
 {% when not prop.isReference and not prop.isAttribute and prop.isComplex() %}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, complex property
+{% end debug %}\
+{% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+	// MARKER [GGG-AGG]
 {% end debug %}\
 {% end %}\
 {% otherwise %}\
