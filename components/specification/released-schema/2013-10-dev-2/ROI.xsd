@@ -333,6 +333,7 @@
 				<xsd:choice minOccurs="1" maxOccurs="1">
 					<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
 					<xsd:element ref="HDF:Hdf5Data" minOccurs="1" maxOccurs="1"/>
+					<xsd:element ref="TIFF:TiffData" minOccurs="1" maxOccurs="unbounded"/>
 				</xsd:choice>
 			</xsd:sequence>
 			<xsd:attribute name="X" use="required" type="xsd:float">

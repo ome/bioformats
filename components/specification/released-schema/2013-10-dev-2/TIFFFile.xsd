@@ -1,0 +1,122 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!--
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    # Copyright (C) 2003 - 2014 Open Microscopy Environment
+    #       Massachusetts Institute of Technology,
+    #       National Institutes of Health,
+    #       University of Dundee,
+    #       University of Wisconsin at Madison
+    #
+    # This work is licensed under the
+    #       Creative Commons Attribution 3.0 Unported License.
+    # To view a copy of this license, visit
+    #       http://creativecommons.org/licenses/by/3.0/
+    # or send a letter to
+    #       Creative Commons, 444 Castro Street, Suite 900,
+    #       Mountain View, California, 94041, USA.
+    # For attribution instructions, visit
+    #       http://www.openmicroscopy.org/info/attribution
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<!--
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # Written by:  Josiah Johnston <siah@nih.gov>, Andrew J Patterson
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+<xsd:schema
+	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/TIFFFile/2013-10-dev-2"
+	xmlns:TIFF = "http://www.openmicroscopy.org/Schemas/TIFFFile/2013-10-dev-2"
+	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	version = "1"
+	elementFormDefault = "qualified">
+	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2/ome.xsd"/>
+	<xsd:annotation>
+		<xsd:documentation>
+			The elements in this file are not yet represented by classes in the EA diagrams - ajp
+		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:element name="TiffData"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>TiffDataBlocks</plural></xsdfu></xsd:appinfo>
+			<xsd:documentation>
+				This described the location of the pixel data in a tiff file.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="UUID" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							This must be used when the IFDs are located in another file.
+							Note: It is permissible for this to be self referential.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:simpleContent>
+							<xsd:extension base = "UniversallyUniqueIdentifier">
+								<xsd:attribute name="FileName" use="optional" type="xsd:string">
+									<xsd:annotation>
+										<xsd:documentation>
+											This can be used when the IFDs are located in another file.
+											The / (forward slash) is used as the path separator.
+											A relative path is recommended. However an absolute path can be specified.
+											Default is to use the file the ome-xml data has been pulled from.
+											Note: It is permissible for this to be self referential. The file image1.tiff
+											may contain ome-xml data that has FilePath="image1.tiff" or "./image1.tiff"
+										</xsd:documentation>
+									</xsd:annotation>
+								</xsd:attribute>
+							</xsd:extension>
+						</xsd:simpleContent>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="IFD" type="NonNegativeInt" default="0" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the IFD(s) for which this element is applicable. Indexed from 0.
+						Default is 0 (the first IFD). [units:none]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FirstZ" type="NonNegativeInt" default="0" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the Z position of the image plane at the specified IFD. Indexed from 0.
+						Default is 0 (the first Z position). [units:none]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FirstT" type="NonNegativeInt" default="0" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the T position of the image plane at the specified IFD. Indexed from 0.
+						Default is 0 (the first T position). [units:none]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FirstC" type="NonNegativeInt" default="0" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the C position of the image plane at the specified IFD. Indexed from 0.
+						Default is 0 (the first C position). [units:none]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="PlaneCount" use="optional" type="NonNegativeInt">
+				<xsd:annotation>
+					<xsd:documentation>
+						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
+						Pixels element's DimensionOrder attribute. Default is the number of IFDs in the TIFF
+						file, unless an IFD is specified, in which case the default is 1. [units:none]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
