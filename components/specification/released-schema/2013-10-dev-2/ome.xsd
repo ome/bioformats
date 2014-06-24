@@ -29,6 +29,7 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2"
+	xmlns:HDF="http://www.openmicroscopy.org/Schemas/HDF5File/2013-10-dev-2"
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-2"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2"
 	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2013-10-dev-2"
@@ -37,6 +38,8 @@
 	elementFormDefault="qualified">
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/HDF5File/2013-10-dev-2"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/HDF5File/2013-10-dev-2/HDF5File.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-2"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/SPW/2013-10-dev-2/SPW.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2"
@@ -353,9 +356,10 @@
 					<xsd:annotation>
 						<xsd:appinfo><xsdfu><ordered/></xsdfu></xsd:appinfo>
 					</xsd:annotation>
-                </xsd:element>
+				</xsd:element>
 				<xsd:choice minOccurs="1" maxOccurs="1">
 					<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
+					<xsd:element ref="HDF:Hdf5Data" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="unbounded"/>
 					<xsd:element ref="MetadataOnly" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
@@ -415,10 +419,10 @@
 					<xsd:documentation>
 						This is true if the pixels data was written in BigEndian order.
 
-						If this value is present it should match the value used in BinData
-						or TiffData. If it does not a reader should honour the value used
-						in the BinData or TiffData. This values is useful for MetadataOnly
-						files and is to allow for future storage solutions.
+						If this value is present it should match the value used in BinData,
+						Hdf5Data or TiffData. If it does not a reader should honour the value
+						used in BinData, Hdf5Data or TiffData. This value is useful for
+						MetadataOnly files and is to allow for future storage solutions.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
