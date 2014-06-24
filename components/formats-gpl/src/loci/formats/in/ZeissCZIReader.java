@@ -2187,9 +2187,12 @@ public class ZeissCZIReader extends FormatReader {
               String y = getFirstNode(region, "Y").getTextContent();
               String z = getFirstNode(region, "Z").getTextContent();
 
-              positionsX[i] = x == null ? null : new Double(x);
-              positionsY[i] = y == null ? null : new Double(y);
-              positionsZ[i] = z == null ? null : new Double(z);
+              // safe to assume all 3 arrays have the same length
+              if (i < positionsX.length) {
+                positionsX[i] = x == null ? null : new Double(x);
+                positionsY[i] = y == null ? null : new Double(y);
+                positionsZ[i] = z == null ? null : new Double(z);
+              }
             }
           }
         }
