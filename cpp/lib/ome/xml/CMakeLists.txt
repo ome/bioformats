@@ -43,7 +43,7 @@ xsd_fu(omexml_metadata_all OME_XML_GENERATED_META_HEADERS OME_XML_GENERATED_META
 # and ${OME_XML_GENERATED_ENUMINCLUDE_HEADERS}
 foreach(hdr ${model_headers})
   get_filename_component(hdr_name ${hdr} NAME)
-  get_filename_component(hdr_dir ${hdr} DIRECTORY)
+  get_filename_component(hdr_dir ${hdr} PATH)
   file(RELATIVE_PATH hdr_dir_rel "${GEN_DIR}/ome/xml" ${hdr_dir})
   string(TOUPPER "${hdr_dir_rel}" hdr_dir_rel)
   string(REPLACE "/" "_" hdr_dir_rel "${hdr_dir_rel}")
