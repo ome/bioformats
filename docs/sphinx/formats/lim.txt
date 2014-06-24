@@ -4,7 +4,7 @@
 LIM (Laboratory Imaging/Nikon)
 ===============================================================================
 
-Extensions: .lim 
+Extensions: .lim
 
 
 Owner: `Laboratory Imaging <http://www.lim.cz/>`_

@@ -4,7 +4,7 @@
 Burleigh
 ===============================================================================
 
-Extensions: .img 
+Extensions: .img
 
 
 Owner: Burleigh Instruments

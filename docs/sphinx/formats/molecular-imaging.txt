@@ -4,7 +4,7 @@
 Molecular Imaging
 ===============================================================================
 
-Extensions: .stp 
+Extensions: .stp
 
 
 Owner: Molecular Imaging Corp, San Diego CA (closed)

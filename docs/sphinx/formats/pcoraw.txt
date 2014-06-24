@@ -4,7 +4,7 @@
 PCORAW
 ===============================================================================
 
-Extensions: .pcoraw, .rec 
+Extensions: .pcoraw, .rec
 
 Developer: `PCO <http://www.pco.de/>`_
 

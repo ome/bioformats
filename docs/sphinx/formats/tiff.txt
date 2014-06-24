@@ -4,7 +4,7 @@
 TIFF (Tagged Image File Format)
 ===============================================================================
 
-Extensions: .tif 
+Extensions: .tif
 
 Developer: Aldus and Microsoft
 
