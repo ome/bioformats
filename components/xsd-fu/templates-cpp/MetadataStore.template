@@ -164,7 +164,7 @@ namespace ome
        * both MetadataStore and MetadataRetrieve, which reduces the
        * need to cast between object types.
        *
-       * See ome::xml::meta::OMEXMLMetadata for an
+       * See ${lang.metadata_package}::OMEXMLMetadata for an
        * example implementation.
        *
        * @note It is strongly recommended that applications (e.g.,
@@ -173,15 +173,15 @@ namespace ome
        * entities from "leftmost" index to "rightmost" index is
        * required for certain implementations such as OMERO's
        * OMEROMetadataStore. For example, when filling
-       * ome::xml::model::Image, ome::xml::model::Pixels and
-       * ome::xml::model::Plane information, an outer loop should
+       * ::${lang.omexml_model_package}::Image, ::${lang.omexml_model_package}::Pixels and
+       * ::${lang.omexml_model_package}::Plane information, an outer loop should
        * iterate across @c imageIndex, an inner loop should iterate
        * across @c pixelsIndex, and an innermost loop should handle @c
        * planeIndex. For an illustration of the ideal traversal order,
        * see MetadataConverter.
        *
        * @sa MetadataRetrieve, Metadata,
-       * ome::xml::meta::OMEXMLMetadata.
+       * ${lang.metadata_package}::OMEXMLMetadata.
        */
       class MetadataStore : virtual public BaseMetadata
       {
@@ -274,7 +274,7 @@ namespace ome
          * @param mapAnnotationIndex the MapAnnotation index.
          */
         virtual void
-        setMapAnnotationValue(ome::xml::model::MapPairs::map_type map,
+        setMapAnnotationValue(::${lang.omexml_model_package}::MapPairs::map_type map,
                               index_type mapAnnotationIndex) = 0;
 
 	/**
@@ -285,7 +285,7 @@ namespace ome
          * @param lightSourceIndex the LightSource index.
          */
         virtual void
-        setGenericExcitationSourceMap(ome::xml::model::MapPairs::map_type map,
+        setGenericExcitationSourceMap(::${lang.omexml_model_package}::MapPairs::map_type map,
                                       index_type instrumentIndex,
                                       index_type lightSourceIndex) = 0;
 
@@ -296,7 +296,7 @@ namespace ome
          * @param imageIndex the Image index.
          */
         virtual void
-        setImagingEnvironmentMap(ome::xml::model::MapPairs::map_type map,
+        setImagingEnvironmentMap(::${lang.omexml_model_package}::MapPairs::map_type map,
                                  index_type imageIndex) = 0;
 
 {% if debug %}\
