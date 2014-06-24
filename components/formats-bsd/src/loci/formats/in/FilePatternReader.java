@@ -140,10 +140,16 @@ public class FilePatternReader extends FormatReader {
   }
 
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    if (getCurrentFile() == null) {
+      return null;
+    }
     return helper.get8BitLookupTable();
   }
 
   public short[][] get16BitLookupTable() throws FormatException, IOException {
+    if (getCurrentFile() == null) {
+      return null;
+    }
     return helper.get16BitLookupTable();
   }
 
