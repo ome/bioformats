@@ -29,6 +29,7 @@
 	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2"
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2"
 	xmlns:HDF="http://www.openmicroscopy.org/Schemas/HDF5File/2013-10-dev-2"
+	xmlns:TIFF="http://www.openmicroscopy.org/Schemas/TIFFFile/2013-10-dev-2"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2"
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
@@ -37,6 +38,8 @@
 		schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-10-dev-2/ome.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/BinaryFile/2013-10-dev-2/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/TIFFFile/2013-10-dev-2"
+		schemaLocation="http://www.openmicroscopy.org/Schemas/TIFFFile/2013-10-dev-2/TIFFFile.xsd"/>
 	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2"
 		schemaLocation="http://www.openmicroscopy.org/Schemas/SA/2013-10-dev-2/SA.xsd"/>
 
