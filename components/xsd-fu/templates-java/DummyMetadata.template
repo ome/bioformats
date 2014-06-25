@@ -149,6 +149,16 @@ import ${lang.omexml_model_package}.*;
 import ${lang.omexml_model_enums_package}.*;
 import ${lang.omexml_model_package}.primitives.*;
 
+import org.unitsofmeasurement.quantity.Angle;
+import org.unitsofmeasurement.quantity.ElectricPotential;
+import org.unitsofmeasurement.quantity.Frequency;
+import org.unitsofmeasurement.quantity.Length;
+import org.unitsofmeasurement.quantity.Power;
+import org.unitsofmeasurement.quantity.Pressure;
+import org.unitsofmeasurement.quantity.Temperature;
+import org.unitsofmeasurement.quantity.Time;
+import org.unitsofmeasurement.unit.Unit;
+
 /**
  * A dummy implementation for {@link MetadataStore} and
  * {@link MetadataRetrieve} that is used when no other

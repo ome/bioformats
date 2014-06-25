@@ -183,6 +183,16 @@ import ${lang.omexml_model_package}.primitives.*;
 import omero.model.*;
 import omero.util.IceMapper;
 
+import org.unitsofmeasurement.quantity.Angle;
+import org.unitsofmeasurement.quantity.ElectricPotential;
+import org.unitsofmeasurement.quantity.Frequency;
+import org.unitsofmeasurement.quantity.Length;
+import org.unitsofmeasurement.quantity.Power;
+import org.unitsofmeasurement.quantity.Pressure;
+import org.unitsofmeasurement.quantity.Temperature;
+import org.unitsofmeasurement.quantity.Time;
+import org.unitsofmeasurement.unit.Unit;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.annotation.Transactional;

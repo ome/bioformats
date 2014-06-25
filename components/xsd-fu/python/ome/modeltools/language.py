@@ -84,6 +84,8 @@ class Language(object):
             'UniversallyUniqueIdentifier': self.getDefaultModelBaseClass()
             }
 
+        self.model_unit_map = {}
+
         self.name = None
         self.template_dir = None
         self.source_suffix = None
@@ -205,6 +207,15 @@ class Java(Language):
         self.model_type_map['K'] = None
         self.model_type_map['V'] = None
 
+        self.model_unit_map['UnitsLength'] = 'Length'
+        self.model_unit_map['UnitsTime'] = 'Time'
+        self.model_unit_map['UnitsPressure'] = 'Pressure'
+        self.model_unit_map['UnitsAngle'] = 'Angle'
+        self.model_unit_map['UnitsTemperature'] = 'Temperature'
+        self.model_unit_map['UnitsVoltage'] = 'ElectricPotential'
+        self.model_unit_map['UnitsPower'] = 'Power'
+        self.model_unit_map['UnitsFrequency'] = 'Frequency'
+
         self.type_map = copy.deepcopy(self.primitive_type_map)
         self._initTypeMap()
         self.type_map['MIMEtype'] = 'String'
@@ -222,6 +233,9 @@ class Java(Language):
 
     def getDefaultModelBaseClass(self):
         return "AbstractOMEModelObject"
+
+    def typeToUnitsType(self, valueType):
+        return "Unit<" + self.model_unit_map[valueType] + ">"
 
     def index_signature(self, name, max_occurs, level, dummy=False):
         """Makes a Java method signature dictionary from an index name."""
@@ -293,6 +307,9 @@ class CXX(Language):
 
     def getDefaultModelBaseClass(self):
         return "detail::OMEModelObject"
+
+    def typeToUnitsType(self, valueType):
+        return "Unit<" + valueType + ">"
 
     def index_signature(self, name, max_occurs, level, dummy = False):
         """Makes a C++ method signature dictionary from an index name."""

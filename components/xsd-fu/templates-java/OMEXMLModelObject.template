@@ -56,6 +56,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.unitsofmeasurement.quantity.Angle;
+import org.unitsofmeasurement.quantity.ElectricPotential;
+import org.unitsofmeasurement.quantity.Frequency;
+import org.unitsofmeasurement.quantity.Length;
+import org.unitsofmeasurement.quantity.Power;
+import org.unitsofmeasurement.quantity.Pressure;
+import org.unitsofmeasurement.quantity.Temperature;
+import org.unitsofmeasurement.quantity.Time;
+import org.unitsofmeasurement.unit.Unit;
+
 import ${lang.omexml_model_enums_package}.*;
 import ${lang.omexml_model_package}.primitives.*;
 
@@ -469,17 +479,26 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 	}
 {% end %}\
-{% when prop.isUnitsEnumeration %}\
-		// *** SPECIAL_CASE *** isUnitsEnumeration ${prop.name}
-{% end %}\
-{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
-	// Property
-	public ${prop.langType} get${prop.methodName}()
+{% when prop.hasUnitsCompanion and prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+	// Property ${prop.name} with unit companion ${prop.unitsCompanion.name}
+	public ${prop.instanceVariableType} get${prop.methodName}()
 	{
 		return ${prop.instanceVariableName};
 	}
 
-	public void set${prop.methodName}(${prop.langType} ${prop.argumentName})
+	public void set${prop.methodName}(${prop.instanceVariableType} ${prop.argumentName})
+	{
+		this.${prop.instanceVariableName} = ${prop.argumentName};
+	}
+{% end %}\
+{% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
+	// Property ${prop.name}
+	public ${prop.instanceVariableType} get${prop.methodName}()
+	{
+		return ${prop.instanceVariableName};
+	}
+
+	public void set${prop.methodName}(${prop.instanceVariableType} ${prop.argumentName})
 	{
 		this.${prop.instanceVariableName} = ${prop.argumentName};
 	}
