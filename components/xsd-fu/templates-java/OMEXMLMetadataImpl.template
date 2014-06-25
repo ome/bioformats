@@ -12,7 +12,10 @@
 {% def counter(parent, obj, indexes) %}\
 	public int get{% if is_multi_path[o.name] %}${parent}{% end %}${obj.name}Count(${indexes_string(indexes[:-1])})
 	{
-		// [A] Parents: ${repr(parents[obj.name])}
+{% if debug %}\
+		// MARKER [A-IMP]
+{% end debug %}\
+		// Parents: ${repr(parents[obj.name])}
 {% if obj.isReference %}\
 		// ${obj.name} is a reference
 		return root.${".".join(accessor(obj.name, parent, obj.name)[:-1] + ["sizeOfLinked%sList()" % obj.name.replace('Ref', '')])};
@@ -37,8 +40,10 @@
 {% end %}\
 {% end %}\
 	{
-		// Public Get Method
-		// [B] Parents: ${repr(parents[obj.name])}
+{% if debug %}\
+		// MARKER [B-IMP]
+{% end debug %}\
+		// Parents: ${repr(parents[obj.name])}
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference and prop.maxOccurs > 1 %}\
 		// ${parent} is abstract proprietary, is reference and occurs more than once
@@ -84,8 +89,10 @@
 {% end %}\
 {% end %}\
 	{
-		// Public Set Method
-		// [C] Parents: ${repr(parents[obj.name])}
+{% if debug %}\
+		// MARKER [C-IMP]
+{% end debug %}\
+		// Parents: ${repr(parents[obj.name])}
 {% choose %}\
 {% when is_abstract(parent) and prop.isReference %}\
 		// ${prop.name} is abstract proprietary and is a reference
@@ -549,7 +556,6 @@ ${getter(k, o, prop, v)}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, units enumeration
 {% end debug %}\
-	// SPECIAL_CASE - skip getter ${prop.name} element, units enumeration
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\
@@ -714,7 +720,6 @@ ${setter(k, o, prop, v)}\
 {% if debug %}\
 	// Ignoring ${prop.name} element, units enumeration
 {% end debug %}\
-	// SPECIAL_CASE - skip setter ${prop.name} element, units enumeration
 {% end %}\
 {% otherwise %}\
 {% for k, v in indexes[o.name].items() %}\

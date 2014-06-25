@@ -292,7 +292,7 @@ public class FilterMetadata implements MetadataStore
 	// MARKER [AAA] - isUnitsEnumeration ${prop.isUnitsEnumeration}
 {% end debug %}\
 	// ${prop.name} accessor from parent ${k}
-${setter(k, o, prop, v)}
+${setter(k, o, prop, v)}\
 
 {% end %}\
 {% end %}\
@@ -327,7 +327,7 @@ ${setter(k, o, prop, v)}
 {% if debug %}\
 	// MARKER [BBB]
 {% end debug %}\
-${setter(k, o, prop, v)}
+${setter(k, o, prop, v)}\
 
 {% end %}\
 {% end %}\
