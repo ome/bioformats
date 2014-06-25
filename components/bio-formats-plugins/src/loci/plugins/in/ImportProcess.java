@@ -604,19 +604,7 @@ public class ImportProcess implements StatusReporter {
     if (options.isLocal() || options.isHTTP()) {
       BF.status(options.isQuiet(), "Identifying " + idName);
       imageReader = LociPrefs.makeImageReader();
-      try {
-        baseReader = imageReader.getReader(options.getId());
-      }
-      catch (FormatException exc) {
-        WindowTools.reportException(exc, options.isQuiet(),
-          "Sorry, there was an error reading the file.");
-        throw exc;
-      }
-      catch (IOException exc) {
-        WindowTools.reportException(exc, options.isQuiet(),
-          "Sorry, there was a I/O problem reading the file.");
-        throw exc;
-      }
+      baseReader = imageReader.getReader(options.getId());
     }
     else if (options.isOMERO()) {
       BF.status(options.isQuiet(), "Establishing server connection");
