@@ -223,14 +223,7 @@ public class NativeND2Reader extends FormatReader {
     options.interleaved = isInterleaved();
     options.maxBytes = (int) maxFP;
 
-    int scanlinePad = isJPEG ? 0 : getSizeX() % 2;
-    if (scanlinePad == 1) {
-      if (split && !isLossless && ((nXFields % 2) != 0 ||
-        (nXFields == 0 && (getSizeC() >= 4 || getSizeC() == 2))))
-      {
-        scanlinePad = 0;
-      }
-    }
+    int scanlinePad = getScanlinePad();
 
     if (isJPEG || isLossless) {
       if (codec == null) codec = createCodec(isJPEG);
@@ -469,7 +462,7 @@ public class NativeND2Reader extends FormatReader {
 
         if (blockType.startsWith("ImageDataSeq")) {
           imageOffsets.add(new Long(fp));
-          imageLengths.add(new int[] {lenOne, lenTwo});
+          imageLengths.add(new int[] {lenOne, lenTwo, getSizeX() * getSizeY()});
           char b = (char) in.readByte();
           while (b != '!') {
             name.append(b);
@@ -927,6 +920,19 @@ public class NativeND2Reader extends FormatReader {
       }
       catch (IOException e) {
         isLossless = false;
+      }
+
+      if (!isLossless) {
+        int plane = (getSizeX() + getScanlinePad()) * getSizeY();
+        for (int i=0; i<imageOffsets.size(); i++) {
+          int check = imageLengths.get(i)[2];
+          int length = imageLengths.get(i)[1] - 8;
+          if ((length % plane != 0 && length % (getSizeX() * getSizeY()) != 0) || (check > 0 && plane != check)) {
+            imageOffsets.remove(i);
+            imageLengths.remove(i);
+            i--;
+          }
+        }
       }
 
       in.seek(fp);
@@ -1953,6 +1959,18 @@ public class NativeND2Reader extends FormatReader {
       }
     }
     return new String(c);
+  }
+
+  private int getScanlinePad() {
+    int scanlinePad = isJPEG ? 0 : getSizeX() % 2;
+    if (scanlinePad == 1) {
+      if (split && !isLossless && ((nXFields % 2) != 0 ||
+        (nXFields == 0 && (getSizeC() >= 4 || getSizeC() == 2))))
+      {
+        scanlinePad = 0;
+      }
+    }
+    return scanlinePad;
   }
 
 }
