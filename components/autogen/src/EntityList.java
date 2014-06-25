@@ -24,10 +24,11 @@
  */
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import loci.common.IniList;
 import loci.common.IniParser;
@@ -274,24 +275,24 @@ public class EntityList {
   }
 
   /** Gets list of versions in sorted order. */
-  public Vector<String> versions() {
-    Vector<String> list = new Vector<String>(versions.keySet());
+  public List<String> versions() {
+    List<String> list = new ArrayList<String>(versions.keySet());
     Collections.sort(list);
     return list;
   }
 
   /** Gets the list of entities in sorted order. */
-  public Vector<String> entities() {
-    Vector<String> list = new Vector<String>(entities.keySet());
+  public List<String> entities() {
+    List<String> list = new ArrayList<String>(entities.keySet());
     Collections.sort(list);
     return list;
   }
 
   /** Gets a sorted list of properties for the active entity. */
-  public Vector<String> props() {
+  public List<String> props() {
     if (ent == null) return null;
     Entity e = entities.get(ent);
-    Vector<String> list = new Vector<String>(e.props.keySet());
+    List<String> list = new ArrayList<String>(e.props.keySet());
     Collections.sort(list);
     return list;
   }
