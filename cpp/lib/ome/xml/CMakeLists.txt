@@ -47,7 +47,7 @@ foreach(hdr ${model_headers})
   file(RELATIVE_PATH hdr_dir_rel "${GEN_DIR}/ome/xml" ${hdr_dir})
   string(TOUPPER "${hdr_dir_rel}" hdr_dir_rel)
   string(REPLACE "/" "_" hdr_dir_rel "${hdr_dir_rel}")
-  list(APPEND "OME_XML_GENERATED_${hdr_dir_rel}_SOURCES" "${hdr}")
+  list(APPEND "OME_XML_GENERATED_${hdr_dir_rel}_HEADERS" "${hdr}")
 endforeach(hdr)
 
 set(OME_XML_STATIC_SOURCES
