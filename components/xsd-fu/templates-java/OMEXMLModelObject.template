@@ -90,6 +90,7 @@ public class ${klass.name} extends ${klass.parentName}
 
 	// -- Instance variables --
 {% for prop in klass.instanceVariables %}\
+{% if not prop[4] %}\
 
 {% if prop[3] is not None %}\
 	// ${prop[3]}
@@ -100,6 +101,7 @@ public class ${klass.name} extends ${klass.parentName}
 {% end %}\
 {% if prop[2] is None %}\
 	private ${prop[0]} ${prop[1]};
+{% end %}\
 {% end %}\
 {% end %}\
 {% end %}\
@@ -138,7 +140,9 @@ public class ${klass.name} extends ${klass.parentName}
 {% for prop in klass.instanceVariables %}\
 {% choose %}\
 {% when prop[0] is not None and prop[4] %}\
+{% if debug %}\
 		// Unit property ${prop[1]}, copied with it's value property
+{% end debug %}\
 {% end %}\
 {% when prop[0] is not None %}\
 		${prop[1]} = orig.${prop[1]};
@@ -235,40 +239,57 @@ ${customUpdatePropertyContent[prop.name]}
 		}
 {% end %}\
 {% when prop.isAttribute %}\
-		if (element.hasAttribute("${prop.name}"))
-		{
 {% choose %}\
 {% when prop.isUnitsEnumeration %}\
 {% if debug %}\
 			// MARKER [JJJ]
-{% end debug %}\
 			// Attribute property which is Units enumeration ${prop.name}
-			// SPECIAL_CASE handeling of units apart of property
+{% end debug %}\
 {% end %}\
 {% when prop.isEnumeration and not prop.isUnitsEnumeration%}\
 {% if debug %}\
 			// MARKER [KKK]
 {% end debug %}\
+		if (element.hasAttribute("${prop.name}"))
+		{
 			// Attribute property which is an enumeration ${prop.name}
 			set${prop.methodName}(${prop.langType}.fromString(
 					element.getAttribute("${prop.name}")));
+		}
+{% end %}\
+{% when prop.hasUnitsCompanion %}\
+{% if debug %}\
+			// MARKER [UUU]
+{% end debug %}\
+		if (element.hasAttribute("${prop.name}"))
+		{
+			// Attribute property ${prop.name} with unit companion ${prop.unitsCompanion.name}
+			${prop.unitsCompanion.langType} u = ${prop.unitsCompanion.langType}.fromString(
+					element.getAttribute("${prop.unitsCompanion.name}"));
+			${prop.instanceVariableType} base = u.unit();
+			${prop.langType} value = ${prop.langType}.valueOf(
+					element.getAttribute("${prop.name}"));
+			set${prop.methodName}(base.multiply(value.doubleValue()));
+		}
 {% end %}\
 {% when not prop.isEnumeration %}\
 {% if debug %}\
 			// MARKER [LLL]
 {% end debug %}\
+		if (element.hasAttribute("${prop.name}"))
+		{
 			// Attribute property ${prop.name}
 			set${prop.methodName}(${prop.langType}.valueOf(
 					element.getAttribute("${prop.name}")));
+		}
 {% end %}\
 {% otherwise %}\
 {% if debug %}\
-			// MARKER [MMM]
-			// *** WARNING *** Unhandled or skipped attribute ${prop.name}
+		// MARKER [MMM]
+		// *** WARNING *** Unhandled or skipped attribute ${prop.name}
 {% end debug %}\
 {% end %}\
 {% end %}\
-		}
 {% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or not prop.isAttribute) %}\
 		List<Element> ${prop.name}_nodeList =
@@ -491,6 +512,12 @@ ${customUpdatePropertyContent[prop.name]}
 		this.${prop.instanceVariableName} = ${prop.argumentName};
 	}
 {% end %}\
+{% when prop.isUnitsEnumeration %}\
+{% if debug %}\
+			// MARKER [RRR]
+			// Attribute property which is Units enumeration ${prop.name}
+{% end debug %}\
+{% end %}\
 {% when prop.maxOccurs == 1 and (not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or not prop.isChoice) %}
 	// Property ${prop.name}
 	public ${prop.instanceVariableType} get${prop.methodName}()
@@ -589,6 +616,7 @@ ${customUpdatePropertyContent[prop.name]}
 {% end if isAnnotation %}\
 
 {% for prop in klass.properties.values() %}\
+{% if not prop.isUnitsEnumeration %}\
 {% if not klass.isAbstractProprietary or prop.isAttribute or not prop.isComplex() or (prop.name in fu.ABSTRACT_PROPRIETARY_OVERRIDE) %}\
 		if (${prop.instanceVariableName} != null)
 		{
@@ -619,6 +647,14 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% end when %}\
 {% when prop.isBackReference %}\
 			// *** IGNORING *** Skipped back reference ${prop.name}
+{% end when %}\
+{% when prop.hasUnitsCompanion and prop.maxOccurs == 1 and prop.isAttribute %}\
+{% if debug %}\
+			// MARKER [QQQ]
+{% end debug %}\
+			// Attribute property ${prop.name} with units companion prop.unitsCompanion.name
+			${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.value().toString());
+			${klass.name}_element.setAttribute("${prop.unitsCompanion.name}", ${prop.unitsCompanion.langType}.fromUnit(${prop.instanceVariableName}.unit()).toString());
 {% end when %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
 {% if debug %}\
@@ -666,6 +702,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% end otherwise %}\
 {% end choose %}\
 		}
+{% end if %}\
 {% end if %}\
 {% end for %}\
 
