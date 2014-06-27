@@ -26,20 +26,9 @@
 
 classdef TestBfGetReader < TestBfMatlab
     
-    properties
-        reader
-    end
-    
     methods
         function self = TestBfGetReader(name)
             self = self@TestBfMatlab(name);
-        end
-        
-        function tearDown(self)
-            self.reader.close();
-            self.reader = [];
-            
-            tearDown@TestBfMatlab(self);
         end
         
         % Pixel type tests
