@@ -932,19 +932,29 @@ public class NativeND2Reader extends FormatReader {
         isLossless = false;
       }
 
-      if (!isLossless && imageOffsets.size() > 1) {
+      boolean allEqual = true;
+      for (int i=1; i<imageOffsets.size(); i++) {
+        if (imageLengths.get(i)[1] != imageLengths.get(0)[1]) {
+          allEqual = false;
+          break;
+        }
+      }
+
+      if (!allEqual && !isLossless && imageOffsets.size() > 1) {
         int plane = (getSizeX() + getScanlinePad()) * getSizeY();
         boolean fixByteCounts = false;
-        for (int i=0; i<imageOffsets.size(); i++) {
-          int check = imageLengths.get(i)[2];
-          int length = imageLengths.get(i)[1] - 8;
-          if ((length % plane != 0 && length % (getSizeX() * getSizeY()) != 0) || (check > 0 && plane != check)) {
-            if (i == 0) {
-              fixByteCounts = true;
+        if (plane > 0) {
+          for (int i=0; i<imageOffsets.size(); i++) {
+            int check = imageLengths.get(i)[2];
+            int length = imageLengths.get(i)[1] - 8;
+            if ((length % plane != 0 && length % (getSizeX() * getSizeY()) != 0) || (check > 0 && plane != check)) {
+              if (i == 0) {
+                fixByteCounts = true;
+              }
+              imageOffsets.remove(i);
+              imageLengths.remove(i);
+              i--;
             }
-            imageOffsets.remove(i);
-            imageLengths.remove(i);
-            i--;
           }
         }
 
@@ -1608,6 +1618,9 @@ public class NativeND2Reader extends FormatReader {
             long length = in.readLong();
             if (length + in.getFilePointer() > stop) {
               in.seek(stop);
+              continue;
+            }
+            else if (stop > in.getFilePointer()) {
               continue;
             }
             byte[] data = new byte[(int) length];
