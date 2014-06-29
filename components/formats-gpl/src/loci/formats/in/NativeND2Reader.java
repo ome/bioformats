@@ -932,7 +932,7 @@ public class NativeND2Reader extends FormatReader {
         isLossless = false;
       }
 
-      if (!isLossless) {
+      if (!isLossless && imageOffsets.size() > 1) {
         int plane = (getSizeX() + getScanlinePad()) * getSizeY();
         boolean fixByteCounts = false;
         for (int i=0; i<imageOffsets.size(); i++) {
