@@ -2157,9 +2157,21 @@ public class ZeissCZIReader extends FormatReader {
         String y = position.getAttribute("Y");
         String z = position.getAttribute("Z");
 
-        Double xPos = x == null ? null : new Double(x);
-        Double yPos = y == null ? null : new Double(y);
-        Double zPos = z == null ? null : new Double(z);
+        Double xPos = null;
+        try {
+          xPos = new Double(x);
+        }
+        catch (NumberFormatException e) { }
+        Double yPos = null;
+        try {
+          yPos = new Double(y);
+        }
+        catch (NumberFormatException e) { }
+        Double zPos = null;
+        try {
+          zPos = new Double(z);
+        }
+        catch (NumberFormatException e) { }
 
         for (int tile=0; tile<tilesX * tilesY; tile++) {
           int index = i * tilesX * tilesY + tile;
