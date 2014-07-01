@@ -4,7 +4,7 @@
 AVI (Audio Video Interleave)
 ===============================================================================
 
-Extensions: .avi 
+Extensions: .avi
 
 Developer: `Microsoft <http://www.microsoft.com/>`_
 

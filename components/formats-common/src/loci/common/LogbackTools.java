@@ -105,7 +105,10 @@ public final class LogbackTools {
     Appender<ILoggingEvent> appender) {
     try {
 
-      Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+      Object logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+      if (!(logger instanceof Logger)) return;
+
+      Logger root = (Logger) logger;
 
       if (debug) {
         root.setLevel(Level.DEBUG);

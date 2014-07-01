@@ -8,7 +8,7 @@ if (Value_nodeList.size() > 1)
   }
  else if (Value_nodeList.size() != 0)
    {
-     ome::xml::model::MapPairs::map_type map;
+     ::${lang.omexml_model_package}::MapPairs::map_type map;
      xerces::dom::NodeList children(Value_nodeList.at(0)->getChildNodes());
 
      for (xerces::dom::NodeList::iterator i = children.begin();
@@ -17,9 +17,9 @@ if (Value_nodeList.size() > 1)
        {
          ome::xerces::dom::Element e(*i);
          if (e)
-           map.insert(ome::xml::model::MapPairs::map_type::value_type(e.getAttribute("K"),
+           map.insert(::${lang.omexml_model_package}::MapPairs::map_type::value_type(e.getAttribute("K"),
                                                                       e.getTextContent()));
        }
-     std::shared_ptr<ome::xml::model::MapPairs> mapPairs(std::make_shared<ome::xml::model::MapPairs>(map));
+     std::shared_ptr< ::${lang.omexml_model_package}::MapPairs> mapPairs(std::make_shared< ::${lang.omexml_model_package}::MapPairs>(map));
      setValue(mapPairs);
    }

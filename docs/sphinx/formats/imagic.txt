@@ -4,7 +4,7 @@
 IMAGIC
 ===============================================================================
 
-Extensions: .hed, .img 
+Extensions: .hed, .img
 
 Developer: `Image Science <http://www.imagescience.de>`_
 

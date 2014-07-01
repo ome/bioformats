@@ -175,11 +175,11 @@ import ome.system.ServiceFactory;
 import ome.tools.hibernate.ProxyCleanupFilter;
 import ome.tools.hibernate.QueryBuilder;
 import ome.util.Filterable;
-import ome.xml.meta.MetadataRetrieve;
-import ome.xml.meta.MetadataStore;
-import ome.xml.model.*;
-import ome.xml.model.enums.*;
-import ome.xml.model.primitives.*;
+import ${lang.metadata_package}.MetadataRetrieve;
+import ${lang.metadata_package}.MetadataStore;
+import ${lang.omexml_model_package}.*;
+import ${lang.omexml_model_enums_package}.*;
+import ${lang.omexml_model_package}.primitives.*;
 import omero.model.*;
 import omero.util.IceMapper;
 

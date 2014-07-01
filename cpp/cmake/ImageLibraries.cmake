@@ -34,8 +34,89 @@
 # policies, either expressed or implied, of any organization.
 # #L%
 
+include(CheckCSourceCompiles)
 include(FindTIFF)
 
 if(NOT TIFF_FOUND)
   message(FATAL_ERROR "libtiff is required (tiff >= 4.0.0 from ftp://ftp.remotesensing.org/pub/libtiff/)")
 endif(NOT TIFF_FOUND)
+
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+set(CMAKE_REQUIRED_LIBRARIES ${TIFF_LIBRARIES})
+check_c_source_compiles("#include <tiffio.h>
+
+int main(void)
+{
+  TIFF *tiff = TIFFOpen(\"foo\", \"r\");
+}
+" TIFF_HAVE_OPEN)
+
+if(NOT TIFF_HAVE_OPEN)
+  message(FATAL_ERROR "libtiff does not appear to be functional (failed to include and link TIFFOpen)")
+endif(NOT TIFF_HAVE_OPEN)
+
+check_c_source_compiles("#include <tiffio.h>
+
+int main(void)
+{
+  TIFFField *field;
+  TIFF *tiff = TIFFOpen(\"foo\", \"r\");
+  TIFFField *info = TIFFFindField(tiff, TIFFTAG_IMAGEDESCRIPTION, TIFF_ANY);
+  const char *name = TIFFFieldName(info);
+  TIFFDataType type = TIFFFieldDataType(info);
+  int pc = TIFFFieldPassCount(info);
+  int rc = TIFFFieldReadCount(info);
+  int wc = TIFFFieldWriteCount(info);
+
+}
+" TIFF_HAVE_FIELD)
+
+check_c_source_compiles("#include <tiffio.h>
+
+int main(void)
+{
+  TIFF *tiff = TIFFOpen(\"foo\", \"r\");
+  TIFFFieldInfo *info = TIFFFindFieldInfo(tiff, TIFFTAG_IMAGEDESCRIPTION, TIFF_ANY);
+  const char *name = info->field_name;
+  TIFFDataType type = info->field_type;
+  int pc = info->field_passcount;
+  int rc = info->field_readcount;
+  int wc = info->field_writecount;
+}
+" TIFF_HAVE_FIELDINFO)
+
+if(NOT TIFF_HAVE_FIELD AND NOT TIFF_HAVE_FIELDINFO)
+  message(FATAL "libtiff does not provide TIFFField or TIFFFieldInfo")
+endif(NOT TIFF_HAVE_FIELD AND NOT TIFF_HAVE_FIELDINFO)
+
+check_c_source_compiles("#include <tiffio.h>
+
+int main(void)
+{
+  TIFFFieldInfo *info;
+  TIFF *tiff;
+  TIFFMergeFieldInfo(tiff, info, 0);
+}
+" TIFF_HAVE_MERGEFIELDINFO)
+
+check_c_source_compiles("#include <tiffio.h>
+
+int main(void)
+{
+  TIFFFieldInfo *info;
+  TIFF *tiff;
+  int a = TIFFMergeFieldInfo(tiff, info, 0);
+}
+" TIFF_HAVE_MERGEFIELDINFO_RETURN)
+
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+
+check_c_source_compiles("#include <tiff.h>
+
+int main(void)
+{
+  if (TIFF_IFD8 != 17 && TIFF_SLONG8 != 16 && TIFF_LONG8 != 15) return 1;
+}
+" TIFF_HAVE_BIGTIFF)
+
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})

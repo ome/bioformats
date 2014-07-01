@@ -9,7 +9,7 @@ Requirements
 
 - `Python <http://python.org>`_ 2.6+
 - `Genshi <http://genshi.edgewall.org>`_ 0.5 or later
-- Complete checkout of the `Bio-Formats repository <http://github.com/openmicroscopy/bioformats>`_
+- Complete checkout of the `Bio-Formats repository <https://github.com/openmicroscopy/bioformats>`_
 
 .. note::
 
@@ -128,7 +128,9 @@ Available commands
 * omero_metadata
 * omero_model
 * omexml_metadata
+* omexml_metadata_all
 * omexml_model
+* omexml_model_all
 * omexml_model_enums
 * omexml_model_enum_handlers
 * omexml_model_enum_includeall
