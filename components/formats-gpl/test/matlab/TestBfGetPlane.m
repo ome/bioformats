@@ -27,7 +27,6 @@
 classdef TestBfGetPlane < TestBfMatlab
     
     properties
-        reader
         sizeX
         sizeY
         iPlane = 1
@@ -53,12 +52,6 @@ classdef TestBfGetPlane < TestBfMatlab
             self.y = 1;
             self.width = self.sizeX;
             self.height = self.sizeY;
-        end
-        
-        function tearDown(self)
-            self.reader.close()
-            self.reader = [];
-            tearDown@TestBfMatlab(self)
         end
         
         % Input check tests
