@@ -67,6 +67,7 @@ import org.unitsofmeasurement.quantity.Time;
 import org.unitsofmeasurement.unit.Unit;
 
 import ${lang.omexml_model_enums_package}.*;
+import ${lang.omexml_model_enums_package}.handlers.*;
 import ${lang.omexml_model_package}.primitives.*;
 
 {% choose %}\
@@ -264,12 +265,11 @@ ${customUpdatePropertyContent[prop.name]}
 		if (element.hasAttribute("${prop.name}"))
 		{
 			// Attribute property ${prop.name} with unit companion ${prop.unitsCompanion.name}
-			${prop.unitsCompanion.langType} u = ${prop.unitsCompanion.langType}.fromString(
+			${prop.unitsCompanion.langType} modelUnit = ${prop.unitsCompanion.langType}.fromString(
 					element.getAttribute("${prop.unitsCompanion.name}"));
-			${prop.instanceVariableType} base = u.unit();
-			${prop.langType} value = ${prop.langType}.valueOf(
+			${prop.langType} baseValue = ${prop.langType}.valueOf(
 					element.getAttribute("${prop.name}"));
-			set${prop.methodName}(base.multiply(value.doubleValue()));
+			set${prop.methodName}(${prop.unitsCompanion.langType}EnumHandler.getQuantity(baseValue, modelUnit));
 		}
 {% end %}\
 {% when not prop.isEnumeration %}\
@@ -654,7 +654,7 @@ ${customAsXMLElementPropertyContent[prop.name]}
 {% end debug %}\
 			// Attribute property ${prop.name} with units companion prop.unitsCompanion.name
 			${klass.name}_element.setAttribute("${prop.name}", ${prop.instanceVariableName}.value().toString());
-			${klass.name}_element.setAttribute("${prop.unitsCompanion.name}", ${prop.unitsCompanion.langType}.fromUnit(${prop.instanceVariableName}.unit()).toString());
+//			${klass.name}_element.setAttribute("${prop.unitsCompanion.name}", ${prop.unitsCompanion.langType}.fromUnit(${prop.instanceVariableName}.unit()));
 {% end when %}\
 {% when prop.maxOccurs == 1 and prop.isAttribute %}\
 {% if debug %}\

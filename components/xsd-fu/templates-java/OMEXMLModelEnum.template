@@ -89,20 +89,6 @@ public enum ${klass.langType} implements Enumeration
     return value;
   }
 
-{% if klass.isUnitsEnumeration %}\
-  public static ${klass.langType} fromUnit(${klass.model.opts.lang.typeToUnitsType(klass.langType)} inUnit)
-    throws EnumerationException
-  {
-    String s = String.format("%s not a supported value of %s",
-                             value, ${klass.langType}.class);
-    throw new EnumerationException(s);
-  }
-
-  public ${klass.model.opts.lang.typeToUnitsType(klass.langType)} unit()
-  {
-    return 0; // ${klass.model.opts.lang.typeToUnitsType(klass.langType)}();
-  }
-
 {% end %}\
   private final String value;
 }
