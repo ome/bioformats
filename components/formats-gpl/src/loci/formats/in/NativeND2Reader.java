@@ -1875,6 +1875,9 @@ public class NativeND2Reader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         int index = i * getSizeC() + c;
+        if (channelNames.size() == getEffectiveSizeC()) {
+          index = c;
+        }
         Double pinholeSize = handler.getPinholeSize();
         if (pinholeSize != null) {
           store.setChannelPinholeSize(pinholeSize, i, c);
