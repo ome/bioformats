@@ -350,13 +350,29 @@ public class FakeReader extends FormatReader {
 
     String path = id;
     Location location = new Location(id);
-    String[] tokens;
+    String[] tokens = null;
     if (location.exists()) {
       path = location.getAbsoluteFile().getName();
+
+      if (path.startsWith("Field")) {
+        Location root = location.getAbsoluteFile().getParentFile();
+        if (root != null) {
+          root = root.getParentFile();
+          if (root != null) {
+            root = root.getParentFile();
+            if (root != null) {
+              root = root.getParentFile();
+              if (isSPWStructure(root.getAbsolutePath())) {
+               tokens = extractTokensFromFakeSeries(root.getAbsolutePath());
+              }
+            }
+          }
+        }
+      }
     }
     if (location.isDirectory() && isSPWStructure(location.getAbsolutePath())) {
       tokens = extractTokensFromFakeSeries(location.getAbsolutePath());
-    } else {
+    } else if (tokens == null) {
       String noExt = path.substring(0, path.lastIndexOf("."));
       tokens = noExt.split(TOKEN_SEPARATOR);
     }
