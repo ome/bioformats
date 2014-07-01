@@ -349,7 +349,7 @@ owner = `Bitplane <http://www.bitplane.com/>`_
 bsd = no
 export = no
 versions = 2.7, 3.0, 5.5
-weHave = * an `Imaris (RAW) specification document <http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104>`_ (from no later than 1997 November 11, in HTML) \n
+weHave = * an `Imaris (RAW) specification document <http://flash.bitplane.com/wda/interfaces/public/faqs/faqsview.cfm?inCat=0&inQuestionID=104>`_ (from no later than 1997 November 11, in HTML) \n
 * an Imaris 5.5 (HDF) specification document \n
 * Bitplane's bfFileReaderImaris3N code (from no later than 2005, in C++) \n
 * several older Imaris (RAW) datasets \n
