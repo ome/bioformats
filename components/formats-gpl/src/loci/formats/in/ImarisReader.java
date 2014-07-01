@@ -40,7 +40,7 @@ import ome.xml.model.primitives.PositiveFloat;
 /**
  * ImarisReader is the file format reader for Bitplane Imaris files.
  * Specifications available at
- * http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104
+ * http://flash.bitplane.com/wda/interfaces/public/faqs/faqsview.cfm?inCat=0&inQuestionID=104
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ImarisReader.java">Trac</a>,
