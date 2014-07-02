@@ -364,6 +364,8 @@ public class FakeReader extends FormatReader {
               root = root.getParentFile();
               if (isSPWStructure(root.getAbsolutePath())) {
                tokens = extractTokensFromFakeSeries(root.getAbsolutePath());
+               // makes sure that getSeriesUsedFiles returns correctly
+               currentId = root.getAbsolutePath();
               }
             }
           }
