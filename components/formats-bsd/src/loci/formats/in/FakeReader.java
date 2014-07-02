@@ -406,7 +406,25 @@ public class FakeReader extends FormatReader {
     int fields = 0;
     int plateAcqs = 0;
 
-    Integer color = null;
+/*
+    int annXml = 0;
+    int annFile = 0;
+    int annList = 0;
+ */
+    int annLong = 0;
+    int annDouble = 0;
+/*
+    int annComment = 0;
+    int annBool = 0;
+    int annTime = 0;
+    int annTag = 0;
+    int annTerm = 0;
+ */
+    int annMap = 0;
+
+
+    Integer defaultColor = null;
+    ArrayList<Integer> color = new ArrayList<Integer>();
 
     // add properties file values to list of tokens.
     if (iniFile != null) {
@@ -485,17 +503,18 @@ public class FakeReader extends FormatReader {
       else if (key.equals("fields")) fields = intValue;
       else if (key.equals("plateAcqs")) plateAcqs = intValue;
       else if (key.equals("color")) {
-        // parse colors as longs so that unsigned values can be specified,
-        // e.g. 0xff0000ff for red with opaque alpha
-        int base = 10;
-        if (value.startsWith("0x") || value.startsWith("0X")) {
-          value = value.substring(2);
-          base = 16;
+        defaultColor = parseColor(value);
+      }
+      else if (key.startsWith("color_")) {
+        // 'color' and 'color_x' can be used together, but 'color_x' takes
+        // precedence.  'color' will in that case be used for any missing
+        // or invalid 'color_x' values.
+        int index = Integer.parseInt(key.substring(key.indexOf("_") + 1));
+
+        while (index >= color.size()) {
+          color.add(null);
         }
-        try {
-          color = (int) Long.parseLong(value, base);
-        }
-        catch (NumberFormatException e) { }
+        color.set(index, parseColor(value));
       }
     }
 
@@ -573,10 +592,12 @@ public class FakeReader extends FormatReader {
       String imageName = s > 0 ? name + " " + (s + 1) : name;
       store.setImageName(imageName, s);
 
-      if (color != null) {
-        for (int c=0; c<sizeC; c++) {
-          store.setChannelColor(new Color(color), s, c);
+      for (int c=0; c<sizeC; c++) {
+        Color channel = defaultColor == null ? null: new Color(defaultColor);
+        if (c < color.size() && color.get(c) != null) {
+          channel = new Color(color.get(c));
         }
+        store.setChannelColor(channel, s, c);
       }
     }
 
@@ -743,6 +764,21 @@ public class FakeReader extends FormatReader {
       array[j] = array[i - 1];
       array[i - 1] = tmp;
     }
+  }
+
+  private int parseColor(String value) {
+    // parse colors as longs so that unsigned values can be specified,
+    // e.g. 0xff0000ff for red with opaque alpha
+    int base = 10;
+    if (value.startsWith("0x") || value.startsWith("0X")) {
+      value = value.substring(2);
+      base = 16;
+    }
+    try {
+      return (int) Long.parseLong(value, base);
+    }
+    catch (NumberFormatException e) { }
+    return 0;
   }
 
 }
