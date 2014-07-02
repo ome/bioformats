@@ -449,6 +449,8 @@ public class FilePatternReader extends FormatReader {
       pattern = dir + File.separator + pattern;
     }
 
+    helper.setUsingPatternIds(true);
+    helper.setCanChangePattern(false);
     helper.setId(pattern);
     core = helper.getCoreMetadataList();
   }
