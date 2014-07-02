@@ -428,7 +428,8 @@ public class FakeReader extends FormatReader {
     int annMap = 0;
 
 
-    Integer color = null;
+    Integer defaultColor = null;
+    ArrayList<Integer> color = new ArrayList<Integer>();
 
     // add properties file values to list of tokens.
     if (iniFile != null) {
@@ -510,17 +511,18 @@ public class FakeReader extends FormatReader {
       else if (key.equals("annDouble")) annDouble = intValue;
       else if (key.equals("annMap")) annMap = intValue;
       else if (key.equals("color")) {
-        // parse colors as longs so that unsigned values can be specified,
-        // e.g. 0xff0000ff for red with opaque alpha
-        int base = 10;
-        if (value.startsWith("0x") || value.startsWith("0X")) {
-          value = value.substring(2);
-          base = 16;
+        defaultColor = parseColor(value);
+      }
+      else if (key.startsWith("color_")) {
+        // 'color' and 'color_x' can be used together, but 'color_x' takes
+        // precedence.  'color' will in that case be used for any missing
+        // or invalid 'color_x' values.
+        int index = Integer.parseInt(key.substring(key.indexOf("_") + 1));
+
+        while (index >= color.size()) {
+          color.add(null);
         }
-        try {
-          color = (int) Long.parseLong(value, base);
-        }
-        catch (NumberFormatException e) { }
+        color.set(index, parseColor(value));
       }
     }
 
@@ -607,11 +609,14 @@ public class FakeReader extends FormatReader {
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
 
-      if (color != null) {
-        for (int c=0; c<sizeC; c++) {
-          store.setChannelColor(new Color(color), currentImageIndex, c);
+      for (int c=0; c<sizeC; c++) {
+        Color channel = defaultColor == null ? null: new Color(defaultColor);
+        if (c < color.size() && color.get(c) != null) {
+          channel = new Color(color.get(c));
         }
+        store.setChannelColor(channel, currentImageIndex, c);
       }
+
       // new image so reset annotationRefCount
       annotationRefCount = 0;
       for (int currentAnnotation=0; currentAnnotation<annLong; currentAnnotation++) {
@@ -816,6 +821,21 @@ public class FakeReader extends FormatReader {
       array[j] = array[i - 1];
       array[i - 1] = tmp;
     }
+  }
+
+  private int parseColor(String value) {
+    // parse colors as longs so that unsigned values can be specified,
+    // e.g. 0xff0000ff for red with opaque alpha
+    int base = 10;
+    if (value.startsWith("0x") || value.startsWith("0X")) {
+      value = value.substring(2);
+      base = 16;
+    }
+    try {
+      return (int) Long.parseLong(value, base);
+    }
+    catch (NumberFormatException e) { }
+    return 0;
   }
 
 }
