@@ -288,6 +288,12 @@ public class OMETiffReader extends FormatReader {
     TiffParser p = new TiffParser(s);
     p.getSamples(ifd, buf, x, y, w, h);
     s.close();
+
+    // reasonably safe to close the reader if the entire plane or
+    // lower-right-most tile from a single plane file has been read
+    if (r.getImageCount() == 1 && w + x == getSizeX() && h + y == getSizeY()) {
+      r.close();
+    }
     return buf;
   }
 
