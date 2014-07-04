@@ -588,18 +588,28 @@ public class FakeReader extends FormatReader {
 
     // populate OME metadata
     boolean planeInfo = (exposureTime != null);
+    // per file counts
+    int annotationCount = 0;
+    int annotationDoubleCount = 0;
+    int annotationLongCount = 0;
+    int annotationMapCount = 0;
+    // per image count
+    int annotationRefCount = 0;
+
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
-    for (int s=0; s<seriesCount; s++) {
-      String imageName = s > 0 ? name + " " + (s + 1) : name;
-      store.setImageName(imageName, s);
+    for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
+      String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
+      store.setImageName(imageName, currentImageIndex);
 
-      for (int c=0; c<sizeC; c++) {
+      for (int c=0; c<getEffectiveSizeC(); c++) {
         Color channel = defaultColor == null ? null: new Color(defaultColor);
         if (c < color.size() && color.get(c) != null) {
           channel = new Color(color.get(c));
         }
-        store.setChannelColor(channel, s, c);
+        if (channel != null) {
+          store.setChannelColor(channel, currentImageIndex, c);
+        }
       }
     }
 
