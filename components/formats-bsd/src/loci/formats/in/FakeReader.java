@@ -773,6 +773,7 @@ public class FakeReader extends FormatReader {
     getOmeXmlMetadata().setRoot(new OMEXMLMetadataRoot(ome));
     // copy populated SPW metadata into destination MetadataStore
     getOmeXmlService().convertMetadata(omeXmlMetadata, store);
+    domains = new String[] {FormatTools.HCS_DOMAIN};
     return ome.sizeOfImageList();
   }
 
