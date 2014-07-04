@@ -611,12 +611,14 @@ public class FakeReader extends FormatReader {
       String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
       store.setImageName(imageName, currentImageIndex);
 
-      for (int c=0; c<sizeC; c++) {
+      for (int c=0; c<getEffectiveSizeC(); c++) {
         Color channel = defaultColor == null ? null: new Color(defaultColor);
         if (c < color.size() && color.get(c) != null) {
           channel = new Color(color.get(c));
         }
-        store.setChannelColor(channel, currentImageIndex, c);
+        if (channel != null) {
+          store.setChannelColor(channel, currentImageIndex, c);
+        }
       }
 
       // new image so reset annotationRefCount
