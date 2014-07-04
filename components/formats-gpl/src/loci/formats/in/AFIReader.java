@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -41,6 +42,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
@@ -240,6 +242,8 @@ public class AFIReader extends FormatReader {
       PositiveInteger[] excitation = new PositiveInteger[pixels.size()];
       Double[] exposure = new Double[pixels.size()];
       Timestamp[] datestamp = new Timestamp[pixels.size()];
+      double[] physicalSizes = null;
+      double magnification = Double.NaN;
 
       for (int c=0; c<pixels.size(); c++) {
         SVSReader baseReader = (SVSReader) reader[c].getReader();
@@ -247,11 +251,32 @@ public class AFIReader extends FormatReader {
         excitation[c] = baseReader.getExcitation();
         exposure[c] = baseReader.getExposureTime();
         datestamp[c] = baseReader.getDatestamp();
+        physicalSizes = baseReader.getPhysicalSizes();
+
+        if (c == 0) {
+          magnification = baseReader.getMagnification();
+        }
       }
+
+      String instrument = MetadataTools.createLSID("Instrument", 0);
+      String objective = MetadataTools.createLSID("Objective", 0, 0);
+      store.setInstrumentID(instrument, 0);
+      store.setObjectiveID(objective, 0, 0);
+      store.setObjectiveNominalMagnification(magnification, 0, 0);
 
       for (int i=0; i<getSeriesCount() - EXTRA_IMAGES; i++) {
         if (datestamp[0] != null) {
           store.setImageAcquisitionDate(datestamp[0], i);
+        }
+        store.setImageInstrumentRef(instrument, i);
+        store.setObjectiveSettingsID(objective, i);
+
+        if (i < physicalSizes.length &&
+          physicalSizes[i] - Constants.EPSILON > 0)
+        {
+          PositiveFloat size = new PositiveFloat(physicalSizes[i]);
+          store.setPixelsPhysicalSizeX(size, i);
+          store.setPixelsPhysicalSizeY(size, i);
         }
 
         for (int c=0; c<channelNames.length; c++) {
