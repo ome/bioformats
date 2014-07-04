@@ -209,7 +209,6 @@ class Java(Language):
         self.model_type_map['V'] = None
 
         self.model_unit_map['UnitsLength'] = 'Length'
-        self.model_unit_map['UnitsTime'] = 'Time'
         self.model_unit_map['UnitsPressure'] = 'Pressure'
         self.model_unit_map['UnitsAngle'] = 'Angle'
         self.model_unit_map['UnitsTemperature'] = 'Temperature'
@@ -240,6 +239,29 @@ class Java(Language):
         self.omexml_model_omexml_model_enum_handlers_package = "ome.xml.model.enums.handlers"
         self.metadata_package = "ome.xml.meta"
         self.omexml_metadata_package = "ome.xml.meta"
+        
+        # use uomo implementation
+#         self.units_implementation_is = "uomo"
+#         self.units_package = "org.unitsofmeasurement"
+#         self.units_implementation_imports = "\
+# import org.eclipse.uomo.units.IMeasure;\n\
+# import org.eclipse.uomo.units.SI;\n\
+# import org.eclipse.uomo.units.impl.quantity.AngleAmount;\n\
+# import org.eclipse.uomo.units.impl.quantity.ElectricPotentialAmount;\n\
+# import org.eclipse.uomo.units.impl.quantity.FrequencyAmount;\n\
+# import org.eclipse.uomo.units.impl.quantity.LengthAmount;\n\
+# import org.eclipse.uomo.units.impl.quantity.PowerAmount;\n\
+# import org.eclipse.uomo.units.impl.quantity.PressureAmount;\n\
+# import org.eclipse.uomo.units.impl.quantity.TemperatureAmount;\n\
+# import org.eclipse.uomo.units.impl.quantity.TimeAmount;"
+#        self.model_unit_map['UnitsTime'] = 'Time'
+
+        # use jscience implementation
+        self.units_implementation_is = "jscience"
+        self.units_package = "javax.measure"
+        self.units_implementation_imports = "\
+        import javax.measure.unit.SI;"
+        self.model_unit_map['UnitsTime'] = 'Duration'
 
     def getDefaultModelBaseClass(self):
         return "AbstractOMEModelObject"

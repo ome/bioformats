@@ -55,26 +55,17 @@ import ${lang.omexml_model_enums_package}.Enumeration;
 import ${lang.omexml_model_enums_package}.EnumerationException;
 import ${lang.omexml_model_enums_package}.${klass.langType};
 
-import org.unitsofmeasurement.quantity.Angle;
-import org.unitsofmeasurement.quantity.ElectricPotential;
-import org.unitsofmeasurement.quantity.Frequency;
-import org.unitsofmeasurement.quantity.Length;
-import org.unitsofmeasurement.quantity.Power;
-import org.unitsofmeasurement.quantity.Pressure;
-import org.unitsofmeasurement.quantity.Temperature;
-import org.unitsofmeasurement.quantity.Time;
-import org.unitsofmeasurement.unit.Unit;
+import ${lang.units_package}.quantity.Angle;
+import ${lang.units_package}.quantity.ElectricPotential;
+import ${lang.units_package}.quantity.Frequency;
+import ${lang.units_package}.quantity.Length;
+import ${lang.units_package}.quantity.Power;
+import ${lang.units_package}.quantity.Pressure;
+import ${lang.units_package}.quantity.Temperature;
+import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
+import ${lang.units_package}.unit.Unit;
 
-import org.eclipse.uomo.units.IMeasure;
-import org.eclipse.uomo.units.SI;
-import org.eclipse.uomo.units.impl.quantity.AngleAmount;
-import org.eclipse.uomo.units.impl.quantity.ElectricPotentialAmount;
-import org.eclipse.uomo.units.impl.quantity.FrequencyAmount;
-import org.eclipse.uomo.units.impl.quantity.LengthAmount;
-import org.eclipse.uomo.units.impl.quantity.PowerAmount;
-import org.eclipse.uomo.units.impl.quantity.PressureAmount;
-import org.eclipse.uomo.units.impl.quantity.TemperatureAmount;
-import org.eclipse.uomo.units.impl.quantity.TimeAmount;
+${lang.units_implementation_imports}
 
 /**
  * Enumeration handler for ${klass.langType}.
@@ -139,6 +130,7 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
   }
 
 {% if klass.isUnitsEnumeration %}\
+{% if lang.units_implementation_is == "uomo" %}
   public Enumeration getEnumeration(${klass.model.opts.lang.typeToUnitsType(klass.langType)} inUnit)
     throws EnumerationException {
     return getEnumeration(inUnit.unit().getSymbol());
@@ -161,6 +153,31 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
     }
     return new ${klass.model.opts.lang.typeToUnitsType(klass.langType)}Amount(doubleValue, ${klass.model.opts.lang.typeToDefault(klass.langType)});
   }
+{% end %}\
+{% if lang.units_implementation_is == "jscience" %}
+  public Enumeration getEnumeration(${klass.model.opts.lang.typeToUnitsType(klass.langType)} inUnit)
+    throws EnumerationException {
+    return getEnumeration(inUnit.unit().getSymbol());
+  }
+
+  public static Unit<${klass.model.opts.lang.typeToUnitsType(klass.langType)}> getBaseUnit(${klass.langType} inModelUnit)
+  {
+    return new ${klass.model.opts.lang.typeToUnitsType(klass.langType)}(1, ${klass.model.opts.lang.typeToDefault(klass.langType)}).unit();
+  }
+
+  public static <T> ${klass.model.opts.lang.typeToUnitsType(klass.langType)} getQuantity(T inValue, ${klass.langType} inModelUnit)
+  {
+    Double doubleValue = null;
+    if (inValue instanceof Double) {
+        doubleValue = (Double) inValue;
+    }
+    if (inValue instanceof Integer) {
+        Integer intValue = (Integer) inValue;
+        doubleValue = new Double(intValue);
+    }
+    return new ${klass.model.opts.lang.typeToUnitsType(klass.langType)}(doubleValue, ${klass.model.opts.lang.typeToDefault(klass.langType)});
+  }
+{% end %}\
 
 {% end %}\
   /* @see IEnumerationHandler#getEntity() */
