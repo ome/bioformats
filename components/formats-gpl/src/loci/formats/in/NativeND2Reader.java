@@ -593,6 +593,7 @@ public class NativeND2Reader extends FormatReader {
                 metadata.put(key, value);
               }
             }
+            skip = 0;
           }
         }
         else if (blockType.startsWith("Image") ||
