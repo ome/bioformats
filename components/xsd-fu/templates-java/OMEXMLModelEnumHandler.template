@@ -154,6 +154,30 @@ public class ${klass.langType}EnumHandler implements IEnumerationHandler {
     return new ${klass.model.opts.lang.typeToUnitsType(klass.langType)}Amount(doubleValue, ${klass.model.opts.lang.typeToDefault(klass.langType)});
   }
 {% end %}\
+{% if lang.units_implementation_is == "ome" %}
+  public Enumeration getEnumeration(${klass.model.opts.lang.typeToUnitsType(klass.langType)} inUnit)
+    throws EnumerationException {
+    return getEnumeration(inUnit.unit().getSymbol());
+  }
+
+  public static Unit<${klass.model.opts.lang.typeToUnitsType(klass.langType)}> getBaseUnit(${klass.langType} inModelUnit)
+  {
+    return new ome.xml.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(1.0, ${klass.model.opts.lang.typeToDefault(klass.langType)}).unit();
+  }
+
+  public static <T> ${klass.model.opts.lang.typeToUnitsType(klass.langType)} getQuantity(T inValue, ${klass.langType} inModelUnit)
+  {
+    Double doubleValue = null;
+    if (inValue instanceof Double) {
+        doubleValue = (Double) inValue;
+    }
+    if (inValue instanceof Integer) {
+        Integer intValue = (Integer) inValue;
+        doubleValue = new Double(intValue);
+    }
+    return new ome.xml.units.quantity.${klass.model.opts.lang.typeToUnitsType(klass.langType)}(doubleValue, ${klass.model.opts.lang.typeToDefault(klass.langType)});
+  }
+{% end %}\
 {% if lang.units_implementation_is == "jscience" %}
   public Enumeration getEnumeration(${klass.model.opts.lang.typeToUnitsType(klass.langType)} inUnit)
     throws EnumerationException {

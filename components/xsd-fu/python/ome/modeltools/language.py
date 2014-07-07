@@ -256,12 +256,18 @@ class Java(Language):
 # import org.eclipse.uomo.units.impl.quantity.TimeAmount;"
 #        self.model_unit_map['UnitsTime'] = 'Time'
 
+        # use ome implementation
+        self.units_implementation_is = "ome"
+        self.units_package = "org.unitsofmeasurement"
+        self.units_implementation_imports = "import ome.xml.units.quantity.*;\nimport ome.xml.units.*;"
+        self.model_unit_map['UnitsTime'] = 'Time'
+
         # use jscience implementation
-        self.units_implementation_is = "jscience"
-        self.units_package = "javax.measure"
-        self.units_implementation_imports = "\
-        import javax.measure.unit.SI;"
-        self.model_unit_map['UnitsTime'] = 'Duration'
+#        self.units_implementation_is = "jscience"
+#        self.units_package = "javax.measure"
+#        self.units_implementation_imports = "\
+#        import javax.measure.unit.SI;"
+#        self.model_unit_map['UnitsTime'] = 'Duration'
 
     def getDefaultModelBaseClass(self):
         return "AbstractOMEModelObject"
