@@ -675,6 +675,9 @@ public class Memoizer extends ReaderWrapper {
       } catch (RuntimeException rt) {
         copy.close();
         throw rt;
+      } catch (Error err) {
+        copy.close();
+        throw err;
       }
 
       if (!equal) {
