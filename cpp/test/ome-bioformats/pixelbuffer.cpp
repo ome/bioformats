@@ -128,7 +128,7 @@ TEST(VariantPixelBuffer, GetIndex)
         VariantPixelBuffer::indices_type idx;
         idx[0] = i;
         idx[1] = j;
-        idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = idx[9] = 0;
+        idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
         ASSERT_EQ(buf.at<boost::endian::native_uint8_t>(idx), (i * 10) + j);
         ASSERT_EQ(cbuf.at<boost::endian::native_uint8_t>(idx), (i * 10) + j);
       }
@@ -147,7 +147,7 @@ TEST(VariantPixelBuffer, SetIndex)
         VariantPixelBuffer::indices_type idx;
         idx[0] = i;
         idx[1] = j;
-        idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = idx[9] = 0;
+        idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
 
         boost::endian::native_uint8_t val = i + j + j;
 
@@ -168,7 +168,7 @@ TEST(VariantPixelBuffer, SetIndexDeathTest)
   VariantPixelBuffer::indices_type badidx;
   badidx[0] = 13;
   badidx[1] = 2;
-  badidx[2] = badidx[3] = badidx[4] = badidx[5] = badidx[6] = badidx[7] = badidx[8] = badidx[9] = 0;
+  badidx[2] = badidx[3] = badidx[4] = badidx[5] = badidx[6] = badidx[7] = badidx[8] = 0;
 
   ASSERT_DEATH(buf.at<boost::endian::native_uint8_t>(badidx) = 4U, "Assertion.*failed");
   ASSERT_DEATH(cbuf.at<boost::endian::native_uint8_t>(badidx), "Assertion.*failed");
