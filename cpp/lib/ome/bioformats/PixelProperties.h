@@ -96,6 +96,13 @@ namespace ome
       typedef boost::endian::little_int8_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_int8_t native_type;
+
+      /// This pixel type is signed.
+      static const bool issigned = true;
+      /// This pixel type is not floating point.
+      static const bool isfloating = false;
+      /// This pixel type is not complex.
+      static const bool iscomplex = false;
     };
 
     /// Properties of INT16 pixels.
@@ -109,6 +116,13 @@ namespace ome
       typedef boost::endian::little_int16_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_int16_t native_type;
+
+      /// This pixel type is signed.
+      static const bool issigned = true;
+      /// This pixel type is not floating point.
+      static const bool isfloating = false;
+      /// This pixel type is not complex.
+      static const bool iscomplex = false;
     };
 
     /// Properties of INT32 pixels.
@@ -122,6 +136,13 @@ namespace ome
       typedef boost::endian::little_int32_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_int32_t native_type;
+
+      /// This pixel type is signed.
+      static const bool issigned = true;
+      /// This pixel type is not floating point.
+      static const bool isfloating = false;
+      /// This pixel type is not complex.
+      static const bool iscomplex = false;
     };
 
     /// Properties of UINT8 pixels.
@@ -135,6 +156,13 @@ namespace ome
       typedef boost::endian::little_uint8_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_uint8_t native_type;
+
+      /// This pixel type is not signed.
+      static const bool issigned = false;
+      /// This pixel type is not floating point.
+      static const bool isfloating = false;
+      /// This pixel type is not complex.
+      static const bool iscomplex = false;
     };
 
     /// Properties of UINT16 pixels.
@@ -148,6 +176,13 @@ namespace ome
       typedef boost::endian::little_uint16_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_uint16_t native_type;
+
+      /// This pixel type is not signed.
+      static const bool issigned = false;
+      /// This pixel type is not floating point.
+      static const bool isfloating = false;
+      /// This pixel type is not complex.
+      static const bool iscomplex = false;
     };
 
     /// Properties of UINT32 pixels.
@@ -161,6 +196,13 @@ namespace ome
       typedef boost::endian::little_uint32_t little_type;
       /// Pixel type (native endian).
       typedef boost::endian::native_uint32_t native_type;
+
+      /// This pixel type is not signed.
+      static const bool issigned = false;
+      /// This pixel type is not floating point.
+      static const bool isfloating = false;
+      /// This pixel type is not complex.
+      static const bool iscomplex = false;
     };
 
     /// Properties of FLOAT pixels.
@@ -174,6 +216,13 @@ namespace ome
       typedef boost::endian::little_float32_t little_type;
       /// Pixel type (native endian).
       typedef float native_type;
+
+      /// This pixel type is signed.
+      static const bool issigned = true;
+      /// This pixel type is floating point.
+      static const bool isfloating = true;
+      /// This pixel type is not complex.
+      static const bool iscomplex = false;
     };
 
     /// Properties of DOUBLE pixels.
@@ -187,6 +236,13 @@ namespace ome
       typedef boost::endian::little_float64_t little_type;
       /// Pixel type (native endian).
       typedef double native_type;
+
+      /// This pixel type is signed.
+      static const bool issigned = true;
+      /// This pixel type is floating point.
+      static const bool isfloating = true;
+      /// This pixel type is not complex.
+      static const bool iscomplex = false;
     };
 
     /// Properties of BIT pixels.
@@ -200,6 +256,13 @@ namespace ome
       typedef bool little_type;
       /// Pixel type (native endian).
       typedef bool native_type;
+
+      /// This pixel type is not signed.
+      static const bool issigned = false;
+      /// This pixel type is not floating point.
+      static const bool isfloating = false;
+      /// This pixel type is not complex.
+      static const bool iscomplex = false;
     };
 
     /// Properties of COMPLEX pixels.
@@ -213,6 +276,13 @@ namespace ome
       typedef std::complex<boost::endian::little_float32_t> little_type;
       /// Pixel type (native endian).
       typedef std::complex<float> native_type;
+
+      /// This pixel type is signed.
+      static const bool issigned = true;
+      /// This pixel type is floating point.
+      static const bool isfloating = true;
+      /// This pixel type is complex.
+      static const bool iscomplex = true;
     };
 
     /// Properties of DOUBLECOMPLEX pixels.
@@ -226,6 +296,13 @@ namespace ome
       typedef std::complex<boost::endian::little_float64_t> little_type;
       /// Pixel type (native endian).
       typedef std::complex<double> native_type;
+
+      /// This pixel type is signed.
+      static const bool issigned = true;
+      /// This pixel type is floating point.
+      static const bool isfloating = true;
+      /// This pixel type is complex.
+      static const bool iscomplex = true;
     };
 
     /// Endianness.
