@@ -284,9 +284,10 @@ public class NativeND2Reader extends FormatReader {
       int rowLength = getSizeX() * pixel + scanlinePad * bpp;
       int destLength = w * pixel;
 
-      in.skipBytes(rowLength * y + x * pixel);
+      in.skipBytes(rowLength * y);
       byte[] pix = new byte[destLength * h];
       for (int row=0; row<h; row++) {
+        in.skipBytes(x * pixel);
         in.read(pix, row * destLength, destLength);
         in.skipBytes(pixel * (getSizeX() - w - x) + scanlinePad * bpp);
       }
