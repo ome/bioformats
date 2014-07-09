@@ -56,8 +56,8 @@ assert(status, ['Missing Bio-Formats library. Either add bioformats_package.jar 
 
 % Prompt for a file if not input
 isFile = exist(id, 'file') == 2;
-isFake = ischar(id) && strcmp(id(end-3:end), 'fake');
-if nargin == 0 || (~isFile && ~isFake)
+isFake = @(x) ischar(x) && strcmp(x(end-3:end), 'fake');
+if nargin == 0 || (~isFile && ~isFake(id))
     [file, path] = uigetfile(bfGetFileExtensions, 'Choose a file to open');
     id = [path file];
     if isequal(path, 0) || isequal(file, 0), return; end
