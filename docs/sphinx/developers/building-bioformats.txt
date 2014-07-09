@@ -9,12 +9,14 @@ Source code
 -----------
 
 The source code for this Bio-Formats release is available from the
-:downloads:`download page <>`, and also from the `Git
-<http://git-scm.com/>`_ repository.  The latest Bio-Formats source
-code is also available from the Git repository.  This may be accessed
-using the repository path::
+:downloads:`download page <>`, and also from the Git repository.  The
+latest Bio-Formats source code is also available from the Git
+repository.  This may be accessed using the repository path::
 
     git@github.com:openmicroscopy/bioformats.git
+
+More information about Git and client downloads are available from the
+`Git project website <http://git-scm.com/>`_.
 
 You can also browse the
 `Bio-Formats source on GitHub <https://github.com/openmicroscopy/bioformats>`_
