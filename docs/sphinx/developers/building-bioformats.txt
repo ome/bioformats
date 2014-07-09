@@ -61,10 +61,10 @@ packages are also required:
     Genshi may be installed (in order of decreasing preference) with
     some Linux distributions' package managers, :program:`pip` (``pip
     install genshi``), by downloading a compatible :file:`.egg` for
-    your system on the `Genshi download page, or from source.
-    <http://genshi.edgewall.org/wiki/Download>`_.  If using an
-    :file:`.egg`, make sure it is added to your :envvar:`PYTHONPATH`
-    environment variable.
+    your system from the `Genshi download page
+    <http://genshi.edgewall.org/wiki/Download>`_, or from source.  If
+    using a :file:`.egg`, make sure it is added to your
+    :envvar:`PYTHONPATH` environment variable.
 
 NetBeans
 ^^^^^^^^
