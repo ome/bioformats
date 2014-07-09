@@ -669,8 +669,20 @@ public class Memoizer extends ReaderWrapper {
         return null;
       }
 
-      if (!FormatTools.equalReaders(reader, copy)) {
-          return null;
+      boolean equal = false;
+      try {
+        equal = FormatTools.equalReaders(reader, copy);
+      } catch (RuntimeException rt) {
+        copy.close();
+        throw rt;
+      } catch (Error err) {
+        copy.close();
+        throw err;
+      }
+
+      if (!equal) {
+        copy.close();
+        return null;
       }
 
       copy = handleMetadataStore(copy);
@@ -765,7 +777,8 @@ public class Memoizer extends ReaderWrapper {
 
 
   /**
-:
+   * Return the {@link IFormatReader} instance that is passed in or null if
+   * it has been invalidated, which will include the instance being closed.
    *
    * <ul>
    *  <li><em>Serialization:</em> If an unknown {@link MetadataStore}
