@@ -42,13 +42,11 @@
 #include <stdexcept>
 #include <string>
 
-#include <boost/container/vector.hpp>
 #include <boost/multi_array.hpp>
-#include <boost/type_traits.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <ome/bioformats/PixelProperties.h>
 
+#include <ome/compat/array.h>
 #include <ome/compat/cstdint.h>
 #include <ome/compat/memory.h>
 #include <ome/compat/variant.h>
