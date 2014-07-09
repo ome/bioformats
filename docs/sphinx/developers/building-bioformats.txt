@@ -1,3 +1,5 @@
+.. _source-obtain-and-build:
+
 Obtaining and building Bio-Formats
 ==================================
 
