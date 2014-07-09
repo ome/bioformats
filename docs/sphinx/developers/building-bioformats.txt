@@ -1,9 +1,28 @@
-Developing Bio-Formats
-======================
+Obtaining and building Bio-Formats
+==================================
 
-If you are interested in working on the Bio-Formats source code itself,
-you can load it into your favorite IDE, or develop with your favorite
-text editor.
+.. _source-code:
+
+Source code
+-----------
+
+The source code for this Bio-Formats release is available from the
+:downloads:`download page <>`, and also from the `Git
+<http://git-scm.com/>`_ repository.  The latest Bio-Formats source
+code is also available from the Git repository.  This may be accessed
+using the repository path::
+
+    git@github.com:openmicroscopy/bioformats.git
+
+You can also browse the
+`Bio-Formats source on GitHub <https://github.com/openmicroscopy/bioformats>`_
+
+Lastly, you can browse the :javadoc:`Bio-Formats Javadocs online <>`,
+or generate them yourself using the "docs" Ant target.
+
+
+Source code structure
+---------------------
 
 The Bio-Formats code is divided into several projects. Core components
 are located in subfolders of the :sourcedir:`components <components/>` folder,
@@ -13,11 +32,42 @@ depending on the nature of the project.
 
 Each project has a corresponding Maven POM file, which can be used to
 work with the project in your favorite IDE, or from the command line,
-once you have cloned the source. Instructions for several popular
-options follow.
+once you have cloned the source.
+
+.. _source-building:
+
+Building from source
+--------------------
+
+Instructions for several popular options follow.  In all cases, make
+sure that the prerequisites are installed before you begin.
+
+If you are interested in working on the Bio-Formats source code itself,
+you can load it into your favorite IDE, or develop with your favorite
+text editor.
+
+Prerequisites
+^^^^^^^^^^^^^
+
+In addition to the Bio-Formats source code, the following programs and
+packages are also required:
+
+- `Python 2 <http://python.org>`_, version 2.6 or later (note: not
+  version 3)
+- `Genshi <http://genshi.edgewall.org>`_ 0.5 or later (0.7 recommended)
+
+.. note::
+
+    Genshi may be installed (in order of ) with some Linux
+    distributions' package managers, :program:`pip` (``pip install
+    genshi``), by downloading a compatible :file:`.egg` for your
+    system on the `Genshi download page, or from source.
+    <http://genshi.edgewall.org/wiki/Download>`_.  If using an
+    :file:`.egg`, make sure it is added to your :envvar:`PYTHONPATH`
+    environment variable.
 
 NetBeans
---------
+^^^^^^^^
 
 NetBeans comes with Maven support built in. To import the Bio-Formats
 source, perform the following steps:
@@ -32,7 +82,7 @@ project by selecting :menuselection:`Team --> Git --> Clone Other...` from
 the menu.
 
 Eclipse
--------
+^^^^^^^
 
 Eclipse uses the "Maven Integration for Eclipse" (m2e) plugin to work with
 Maven projects. It is more flexible than Eclipse's built-in project
@@ -50,22 +100,24 @@ You can then import the Bio-Formats source by choosing
 and browsing to the top-level folder of your Bio-Formats working copy.
 
 Command line
-------------
+^^^^^^^^^^^^
 
 If you prefer developing code with a text editor such as vim or emacs,
 you can use the Ant or Maven command line tools to compile Bio-Formats.
 The Bio-Formats source tree provides parallel build systems for both Ant
 and Maven, so you can use either one to build the code.
 
-For a list of Ant targets, run:
+For a list of Ant targets, run::
 
-``ant -p``
+    ant -p
+
+In general, ``ant jars`` or ``ant tools`` is the correct command.
 
 When using Maven, Bio-Formats is configured to run the "install" target
 by default, so all JARs will be copied into your local Maven repository
-in ~/.m2/repository. Simply run:
+in ~/.m2/repository. Simply run::
 
-``mvn``
+    mvn
 
 With either Ant or Maven, you can use similar commands in any subproject
 folder to build just that component.
