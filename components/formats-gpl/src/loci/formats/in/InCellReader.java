@@ -777,7 +777,10 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("Wavelength")) {
         String fusion = attributes.getValue("fusion_wave");
         if (fusion.equals("false")) ms0.sizeC++;
-        doZ = attributes.getValue("imaging_mode").equals("3-D");
+        String mode = attributes.getValue("imaging_mode");
+        if (mode != null) {
+          doZ = mode.equals("3-D");
+        }
       }
       else if (qName.equals("AcqWave")) {
         nChannels++;
