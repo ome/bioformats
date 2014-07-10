@@ -418,16 +418,16 @@ public abstract class FormatReader extends FormatHandler
         int digits = String.valueOf(list.size()).length();
         
         if (list.size() == 1) {
-        		meta.put(key, list.get(0));
+          meta.put(key, list.get(0));
         } else {
-        	for (int i=0; i<list.size(); i++) {
-        		String index = String.valueOf(i + 1);
-        		while (index.length() < digits) {
-        			index = "0" + index;
-        		}
-        		meta.put(key + " #" + index, list.get(i));
+          for (int i=0; i<list.size(); i++) {
+            String index = String.valueOf(i + 1);
+        	while (index.length() < digits) {
+        	  index = "0" + index;
         	}
-        	meta.remove(key); 
+        	meta.put(key + " #" + index, list.get(i));
+          }
+          meta.remove(key); 
         }    
       }
     }
