@@ -56,6 +56,9 @@ import ${lang.units_package}.quantity.Temperature;
 import ${lang.units_package}.quantity.${lang.typeToUnitsType("UnitsTime")};
 import ${lang.units_package}.unit.Unit;
 
+import ${lang.omexml_model_omexml_model_enum_handlers_package}.${klass.langType}EnumHandler;
+import ome.xml.model.primitives.*;
+
 public enum ${klass.langType} implements Enumeration
 {
   ${", ".join(['%s("%s")' % (enum_value_name(value, klass.isUnitsEnumeration), value) for value in klass.possibleValues])};
@@ -88,6 +91,18 @@ public enum ${klass.langType} implements Enumeration
   public String toString()
   {
     return value;
+  }
+
+{% end %}\
+{% if klass.isUnitsEnumeration %}\
+  public static <T extends Number> ${lang.typeToUnitsType(klass.langType)} create(PrimitiveType<T> newValue, ${klass.langType} newUnit)
+  {
+    return ${klass.langType}EnumHandler.getQuantity(newValue, newUnit);
+  }
+
+  public static <T extends Number> ${lang.typeToUnitsType(klass.langType)} create(T newValue, ${klass.langType} newUnit)
+  {
+    return ${klass.langType}EnumHandler.getQuantity(newValue, newUnit);
   }
 
 {% end %}\
