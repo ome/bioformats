@@ -812,7 +812,12 @@ public class FakeReader extends FormatReader {
         }
       }
     } else {
-      fakeSeries.add(parent.getAbsolutePath());
+      String path = parent.getAbsolutePath();
+      // explicitly check suffixes, otherwise any other files that were put
+      // in the directory will be picked up (e.g. .DS_Store)
+      if (checkSuffix(path, "fake") || checkSuffix(path, "fake.ini")) {
+        fakeSeries.add(path);
+      }
     }
     return fakeSeries;
   }
