@@ -72,7 +72,7 @@ if (~isFake && ~isFile)
 end
 
 % set LuraWave license code, if available
-if exist('lurawaveLicense')
+if exist('lurawaveLicense', 'var')
     path = fullfile(fileparts(mfilename('fullpath')), 'lwf_jsdk2.6.jar');
     javaaddpath(path);
     java.lang.System.setProperty('lurawave.license', lurawaveLicense);
