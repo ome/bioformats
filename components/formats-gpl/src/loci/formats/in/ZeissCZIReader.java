@@ -2367,7 +2367,7 @@ public class ZeissCZIReader extends FormatReader {
       String attrName = attr.getNodeName();
       String attrValue = attr.getNodeValue();
 
-      addGlobalMeta(key + attrName, attrValue);
+      addGlobalMetaList(key + attrName, attrValue);
     }
 
     NodeList children = root.getChildNodes();
