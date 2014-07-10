@@ -20,6 +20,18 @@ More information about Git and client downloads are available from the
 `Bio-Formats source on GitHub
 <https://github.com/openmicroscopy/bioformats>`_
 
+.. note::
+
+    Windows users must set git to use ``core.autocrlf=input`` to
+    ensure that Bio-Formats uses LF rather than CRLF line endings,
+    otherwise the build will fail (Genshi can't process code templates
+    with CRLF line endings, leading to broken sources being
+    generated).  This can be set globally in the registry when
+    installing :program:`msysgit` or by editing :file:`etc/gitconfig`
+    in the git installation directory.  Annoyingly, these settings
+    appear to override per-user and per-repository configuration
+    values, requiring these to be set globally.
+
 Lastly, you can browse the :javadoc:`Bio-Formats Javadocs online <>`,
 or generate them yourself using the "docs" Ant target.
 
