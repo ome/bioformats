@@ -2349,7 +2349,7 @@ public class ZeissCZIReader extends FormatReader {
       if (value != null && key.length() > 0) {
     	String s = key.toString();
     	if (s.endsWith("|")){
-    		s = s.substring(0, s.length() - 1);
+    	  s = s.substring(0, s.length() - 1);
     	}
         addGlobalMetaList(s, value);
 
@@ -2372,7 +2372,7 @@ public class ZeissCZIReader extends FormatReader {
       String attrValue = attr.getNodeValue();
 
       if (attrName.endsWith("|")){
-    	  attrName = attrName.substring(0, attrName.length() - 1);
+        attrName = attrName.substring(0, attrName.length() - 1);
       }
 
       addGlobalMetaList(key + attrName, attrValue);
