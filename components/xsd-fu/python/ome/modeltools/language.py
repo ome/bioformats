@@ -216,14 +216,14 @@ class Java(Language):
         self.model_unit_map['UnitsPower'] = 'Power'
         self.model_unit_map['UnitsFrequency'] = 'Frequency'
 
-        self.model_unit_default['UnitsLength'] = 'SI.METRE'
-        self.model_unit_default['UnitsTime'] = 'SI.SECOND'
-        self.model_unit_default['UnitsPressure'] = 'SI.PASCAL'
-        self.model_unit_default['UnitsAngle'] = 'SI.RADIAN'
-        self.model_unit_default['UnitsTemperature'] = 'SI.KELVIN'
-        self.model_unit_default['UnitsVoltage'] = 'SI.VOLT'
-        self.model_unit_default['UnitsPower'] = 'SI.WATT'
-        self.model_unit_default['UnitsFrequency'] = 'SI.HERTZ'
+        self.model_unit_default['UnitsLength'] = 'UNITS.METRE'
+        self.model_unit_default['UnitsTime'] = 'UNITS.SECOND'
+        self.model_unit_default['UnitsPressure'] = 'UNITS.PASCAL'
+        self.model_unit_default['UnitsAngle'] = 'UNITS.RADIAN'
+        self.model_unit_default['UnitsTemperature'] = 'UNITS.KELVIN'
+        self.model_unit_default['UnitsVoltage'] = 'UNITS.VOLT'
+        self.model_unit_default['UnitsPower'] = 'UNITS.WATT'
+        self.model_unit_default['UnitsFrequency'] = 'UNITS.HERTZ'
 
         self.type_map = copy.deepcopy(self.primitive_type_map)
         self._initTypeMap()
