@@ -2379,7 +2379,7 @@ public class ZeissCZIReader extends FormatReader {
     	  keyString = keyString.substring(0, keyString.length() - 1);
       }
 
-      addGlobalMetaList(key + attrName, attrValue);
+      addGlobalMetaList(keyString + attrName, attrValue);
     }
 
     NodeList children = root.getChildNodes();
