@@ -671,6 +671,8 @@ public class InCellReader extends FormatReader {
     private String currentThumbnail;
     private int wellRow, wellCol;
     private int nChannels = 0;
+    private boolean doT = true;
+    private boolean doZ = true;
 
     public void endElement(String uri, String localName, String qName) {
       if (qName.equals("PlateMap")) {
@@ -769,19 +771,23 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("offset_point")) {
         fieldCount++;
       }
-      else if (qName.equals("TimePoint")) {
+      else if (qName.equals("TimePoint") && doT) {
         ms0.sizeT++;
       }
       else if (qName.equals("Wavelength")) {
         String fusion = attributes.getValue("fusion_wave");
         if (fusion.equals("false")) ms0.sizeC++;
+        String mode = attributes.getValue("imaging_mode");
+        if (mode != null) {
+          doZ = mode.equals("3-D");
+        }
       }
       else if (qName.equals("AcqWave")) {
         nChannels++;
       }
       else if (qName.equals("ZDimensionParameters")) {
         String nz = attributes.getValue("number_of_slices");
-        if (nz != null) {
+        if (nz != null && doZ) {
           ms0.sizeZ = Integer.parseInt(nz);
         }
         else ms0.sizeZ = 1;
@@ -802,6 +808,9 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("NamingColumns")) {
         colName = attributes.getValue("begin");
+      }
+      else if (qName.equals("TimeSchedule")) {
+        doT = Boolean.parseBoolean(attributes.getValue("enabled"));
       }
     }
   }
