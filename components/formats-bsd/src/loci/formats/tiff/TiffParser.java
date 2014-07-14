@@ -476,6 +476,10 @@ public class TiffParser {
     }
 
     if (offset != in.getFilePointer()) {
+      if (fakeBigTiff && (offset < 0 || offset > in.getFilePointer())) {
+        offset &= 0xffffffffL;
+        offset += 0x100000000L;
+      }
       in.seek(offset);
     }
 
