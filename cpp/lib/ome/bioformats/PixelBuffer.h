@@ -105,6 +105,9 @@ namespace ome
       /// Size type.
       typedef boost::multi_array_types::size_type size_type;
 
+      /// Index type.
+      typedef boost::multi_array_types::index index;
+
       /// Storage ordering type for controlling pixel memory layout.
       typedef boost::general_storage_order<dimensions> storage_order_type;
 
@@ -588,6 +591,28 @@ namespace ome
       ~VariantPixelBuffer()
       {}
 
+      /**
+       * Get a reference to the variant buffer.
+       *
+       * @returns a reference to the buffer.
+       */
+      variant_buffer_type&
+      vbuffer()
+      {
+        return buffer;
+      }
+
+      /**
+       * Get a reference to the variant buffer.
+       *
+       * @returns a reference to the buffer.
+       */
+      const variant_buffer_type&
+      vbuffer() const
+      {
+        return buffer;
+      }
+
     protected:
       /**
        * Create buffer from extents (helper).
@@ -1063,6 +1088,41 @@ namespace ome
       num_dimensions() const;
 
       /**
+       * Get the shape of the multi-dimensional array.
+       *
+       * The shape is the extent of each array dimension.
+       *
+       * @returns an array of extents (size is the dimension size).
+       */
+      const boost::multi_array_types::size_type *
+      shape() const;
+
+      /**
+       * Get the strides of the multi-dimensional array.
+       *
+       * The strides are the stride associated with each array dimension.
+       *
+       * @returns an array of strides (size is the dimension size).
+       */
+      const boost::multi_array_types::index *
+      strides() const;
+
+      /**
+       * Get the index bases of the multi-dimensional array.
+       *
+       * The index bases are the numeric index of the first element
+       * for each array dimension of the multi-dimensional array.
+       *
+       * @returns an array of index bases (size is the dimension size).
+       */
+      const boost::multi_array_types::index *
+      index_bases() const;
+
+      template <typename T>
+      const T *
+      origin() const;
+
+      /**
        * Get the type of pixels stored in the buffer.
        */
       ::ome::xml::model::enums::PixelType
@@ -1110,7 +1170,9 @@ namespace ome
       operator != (const VariantPixelBuffer& rhs) const;
 
       template <typename InputIterator>
-      void assign(InputIterator begin, InputIterator end);
+      void
+      assign(InputIterator begin,
+             InputIterator end);
 
       /**
        * Get the pixel value at an index.
@@ -1241,6 +1303,37 @@ namespace ome
         }
       };
 
+      /// Obtain the origin of a PixelBuffer.
+      template <typename T>
+      struct PixelBufferOriginVisitor : public boost::static_visitor<T *>
+      {
+        /**
+         * PixelBuffer of correct type.
+         *
+         * @param v the PixelBuffer from which to obtain the origin.
+         * @throws if the PixelBuffer is null or the PixelBuffer's data array is null.
+         */
+        void
+        operator() (std::shared_ptr<PixelBuffer<T> >& v) const
+        {
+          if (!v || !v->array())
+            throw std::runtime_error("Null pixel type");
+          return v->array()->origin();
+        }
+
+        /**
+         * PixelBuffer of incorrect type.
+         *
+         * @throws if used.
+         */
+        template <typename U>
+        void
+        operator() (U& /* v */) const
+        {
+          throw std::runtime_error("Unsupported pixel type conversion for origin");
+        }
+      };
+
     }
 
     /**
@@ -1254,6 +1347,14 @@ namespace ome
     VariantPixelBuffer::data()
     {
       detail::PixelBufferArrayVisitor<T> v;
+      return boost::apply_visitor(v, buffer);
+    }
+
+    template <typename T>
+    const T *
+    VariantPixelBuffer::origin() const
+    {
+      detail::PixelBufferOriginVisitor<T> v;
       return boost::apply_visitor(v, buffer);
     }
 
@@ -1274,6 +1375,7 @@ namespace ome
 
   }
 }
+
 namespace std
 {
 
