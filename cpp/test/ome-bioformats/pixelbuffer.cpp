@@ -129,8 +129,8 @@ TEST(VariantPixelBuffer, GetIndex)
         idx[0] = i;
         idx[1] = j;
         idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
-        ASSERT_EQ(buf.at<boost::endian::native_uint8_t>(idx), (i * 10) + j);
-        ASSERT_EQ(cbuf.at<boost::endian::native_uint8_t>(idx), (i * 10) + j);
+        EXPECT_EQ(buf.at<boost::endian::native_uint8_t>(idx), (j * 10) + i);
+        EXPECT_EQ(cbuf.at<boost::endian::native_uint8_t>(idx), (j * 10) + i);
       }
 }
 

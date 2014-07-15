@@ -51,10 +51,38 @@
 #include <ome/compat/memory.h>
 #include <ome/compat/variant.h>
 
+#include <ome/xml/model/enums/DimensionOrder.h>
+
 namespace ome
 {
   namespace bioformats
   {
+
+    /**
+     * Dimensions.
+     *
+     * The OME data model currently supports five dimensions (XYZTC),
+     * plus an implicit dimension (subchannel) and three modulo
+     * dimensions which subdivide Z, T and C.  This enumeration is
+     * used to refer to specific dimensions, and the value is the
+     * logical dimension order used for the PixelBuffer interface.
+     *
+     * The current interface requires all dimensions to be present
+     * even if unused.  Future model changes may remove this
+     * requirement.
+     */
+     enum Dimensions
+     {
+       DIM_SPATIAL_X  = 0, ///< Spatial x dimension (X).
+       DIM_SPATIAL_Y  = 1, ///< Spatial y dimension (Y).
+       DIM_SPATIAL_Z  = 2, ///< Spatial z dimension (Z).
+       DIM_TEMPORAL_T = 3, ///< Temporal t dimension (T).
+       DIM_CHANNEL    = 4, ///< Logical channel (typically detectors of specific wavelengths) (C).
+       DIM_SUBCHANNEL = 5, ///< Logical sub-channel (typically used for RGB channel sub-components) (S).
+       DIM_MODULO_Z   = 6, ///< Logical subdivision of the spatial z dimension (z).
+       DIM_MODULO_T   = 7, ///< Logical subdivision of the temporal t dimension (t).
+       DIM_MODULO_C   = 8  ///< Logical subdivision of the logical channel dimension (c).
+     };
 
     /**
      * Base class for all PixelBuffer types.
@@ -73,6 +101,9 @@ namespace ome
     public:
       /// Total number of supported dimensions.
       static const uint16_t dimensions = 9;
+
+      /// Size type.
+      typedef boost::multi_array_types::size_type size_type;
 
       /// Storage ordering type for controlling pixel memory layout.
       typedef boost::general_storage_order<dimensions> storage_order_type;
@@ -115,6 +146,13 @@ namespace ome
         return endiantype;
       }
 
+      static storage_order_type
+      storage_order(ome::xml::model::enums::DimensionOrder order,
+                    bool                                   interleaved);
+
+      static storage_order_type
+      default_storage_order();
+
     private:
       /// Pixel type stored in this buffer.
       const ::ome::xml::model::enums::PixelType pixeltype;
@@ -134,19 +172,9 @@ namespace ome
      * internally by default, but may also be provided externally, for
      * example from a memory-mapped file.
      *
-     * Nine dimensions are currently supported.  The logical dimension ordering is:
+     * Nine dimensions are currently supported.
      *
-     * No | Symbol | Description
-     * -: | :----- | :----------------------------------------------------
-     * 0  | X      | spatial x
-     * 1  | Y      | spatial y
-     * 2  | Z      | spatial z
-     * 3  | T      | temporal t
-     * 4  | C      | channel (typically detectors of specific wavelengths)
-     * 5  | S      | subchannel (typically used for RGB)
-     * 6  | z      | logical ModuloZ
-     * 7  | t      | logical ModuloT
-     * 8  | c      | logical ModuloC
+     * @see Dimensions for the logical dimension ordering.
      *
      * The logical dimension ordering is the order used by the
      * interface.  However, the storage ordering in memory may be
@@ -507,7 +535,7 @@ namespace ome
       VariantPixelBuffer(const ExtentList& extents,
                          ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
                          EndianType endiantype = NATIVE,
-                         const storage_order_type& storage = boost::c_storage_order()):
+                         const storage_order_type& storage = PixelBufferBase::default_storage_order()):
         buffer(createBuffer(extents, pixeltype, endiantype, storage))
       {
       }
@@ -527,7 +555,7 @@ namespace ome
       VariantPixelBuffer(const range_type& range,
                          ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
                          EndianType endiantype = NATIVE,
-                         const storage_order_type& storage = boost::c_storage_order()):
+                         const storage_order_type& storage = PixelBufferBase::default_storage_order()):
         buffer(createBuffer(range, pixeltype, endiantype, storage))
       {
       }
@@ -630,7 +658,7 @@ namespace ome
       createBuffer(const ExtentList& extents,
                    ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
                    EndianType endiantype = NATIVE,
-                   const storage_order_type& storage = boost::c_storage_order())
+                   const storage_order_type& storage = PixelBufferBase::default_storage_order())
       {
         variant_buffer_type buf;
 
@@ -811,7 +839,7 @@ namespace ome
       createBuffer(const range_type& range,
                    ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
                    EndianType endiantype = NATIVE,
-                   const storage_order_type& storage = boost::c_storage_order())
+                   const storage_order_type& storage = PixelBufferBase::default_storage_order())
       {
         variant_buffer_type buf;
 
@@ -997,7 +1025,7 @@ namespace ome
       setBuffer(const ExtentList& extents,
                 ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
                 EndianType endiantype = NATIVE,
-                const storage_order_type& storage = boost::c_storage_order())
+                const storage_order_type& storage = PixelBufferBase::default_storage_order())
       {
         buffer = createBuffer(extents, pixeltype, endiantype, storage);
       }
@@ -1017,7 +1045,7 @@ namespace ome
       setBuffer(const range_type& range,
                 ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
                 EndianType endiantype = NATIVE,
-                const storage_order_type& storage = boost::c_storage_order())
+                const storage_order_type& storage = PixelBufferBase::default_storage_order())
       {
         buffer = createBuffer(range, pixeltype, endiantype, storage);
       }

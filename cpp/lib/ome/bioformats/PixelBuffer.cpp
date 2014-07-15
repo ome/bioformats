@@ -200,6 +200,99 @@ namespace ome
   namespace bioformats
   {
 
+    // No switch default to avoid -Wunreachable-code errors.
+    // However, this then makes -Wswitch-default complain.  Disable
+    // temporarily.
+#ifdef __GNUC__
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
+
+    PixelBufferBase::storage_order_type
+    PixelBufferBase::storage_order(ome::xml::model::enums::DimensionOrder order,
+                                   bool                                   interleaved)
+    {
+      size_type ordering[dimensions];
+      bool ascending[dimensions] = {true, true, true, true, true, true, true, true, true};
+
+      if (interleaved)
+        {
+          ordering[0] = DIM_SUBCHANNEL;
+          ordering[1] = DIM_SPATIAL_X;
+          ordering[2] = DIM_SPATIAL_Y;
+        }
+      else
+        {
+          ordering[0] = DIM_SPATIAL_X;
+          ordering[1] = DIM_SPATIAL_Y;
+          ordering[2] = DIM_SUBCHANNEL;
+        }
+
+      switch(order)
+        {
+        case ome::xml::model::enums::DimensionOrder::XYZTC:
+          ordering[3] = DIM_MODULO_Z;
+          ordering[4] = DIM_SPATIAL_Z;
+          ordering[5] = DIM_MODULO_T;
+          ordering[6] = DIM_TEMPORAL_T;
+          ordering[7] = DIM_MODULO_C;
+          ordering[8] = DIM_CHANNEL;
+          break;
+        case ome::xml::model::enums::DimensionOrder::XYZCT:
+          ordering[3] = DIM_MODULO_Z;
+          ordering[4] = DIM_SPATIAL_Z;
+          ordering[5] = DIM_MODULO_C;
+          ordering[6] = DIM_CHANNEL;
+          ordering[7] = DIM_MODULO_T;
+          ordering[8] = DIM_TEMPORAL_T;
+          break;
+        case ome::xml::model::enums::DimensionOrder::XYTZC:
+          ordering[3] = DIM_MODULO_T;
+          ordering[4] = DIM_TEMPORAL_T;
+          ordering[5] = DIM_MODULO_Z;
+          ordering[6] = DIM_SPATIAL_Z;
+          ordering[7] = DIM_MODULO_C;
+          ordering[8] = DIM_CHANNEL;
+          break;
+        case ome::xml::model::enums::DimensionOrder::XYTCZ:
+          ordering[3] = DIM_MODULO_T;
+          ordering[4] = DIM_TEMPORAL_T;
+          ordering[5] = DIM_MODULO_C;
+          ordering[6] = DIM_CHANNEL;
+          ordering[7] = DIM_MODULO_Z;
+          ordering[8] = DIM_SPATIAL_Z;
+          break;
+        case ome::xml::model::enums::DimensionOrder::XYCZT:
+          ordering[3] = DIM_MODULO_C;
+          ordering[4] = DIM_CHANNEL;
+          ordering[5] = DIM_MODULO_Z;
+          ordering[6] = DIM_SPATIAL_Z;
+          ordering[7] = DIM_MODULO_T;
+          ordering[8] = DIM_TEMPORAL_T;
+          break;
+        case ome::xml::model::enums::DimensionOrder::XYCTZ:
+          ordering[3] = DIM_MODULO_C;
+          ordering[4] = DIM_CHANNEL;
+          ordering[5] = DIM_MODULO_T;
+          ordering[6] = DIM_TEMPORAL_T;
+          ordering[7] = DIM_MODULO_Z;
+          ordering[8] = DIM_SPATIAL_Z;
+          break;
+        }
+
+      return storage_order_type(ordering, ascending);
+    }
+
+#ifdef __GNUC__
+#  pragma GCC diagnostic pop
+#endif
+
+    PixelBufferBase::storage_order_type
+    PixelBufferBase::default_storage_order()
+    {
+      return storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, true);
+    }
+
     VariantPixelBuffer::VariantPixelBuffer(const VariantPixelBuffer& buffer):
       buffer()
     {
