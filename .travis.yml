@@ -18,7 +18,7 @@ matrix:
     - env: "BUILD=cppwrap"
 
 before_install:
-  - sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ raring main universe"
+  - sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu/ saucy main universe"
   - sudo apt-get -qq update
   - if [[ $BUILD != 'sphinx' ]]; then sudo apt-get install -qq python-genshi; fi
   - if [[ $BUILD == 'cpp' ]] || [[ $BUILD == 'cppwrap' ]]; then sudo apt-get install -qq build-essential cmake libboost-all-dev; fi
