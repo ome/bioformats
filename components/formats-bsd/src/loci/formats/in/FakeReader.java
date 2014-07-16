@@ -350,13 +350,31 @@ public class FakeReader extends FormatReader {
 
     String path = id;
     Location location = new Location(id);
-    String[] tokens;
+    String[] tokens = null;
     if (location.exists()) {
       path = location.getAbsoluteFile().getName();
+
+      if (path.startsWith("Field")) {
+        Location root = location.getAbsoluteFile().getParentFile();
+        if (root != null) {
+          root = root.getParentFile();
+          if (root != null) {
+            root = root.getParentFile();
+            if (root != null) {
+              root = root.getParentFile();
+              if (isSPWStructure(root.getAbsolutePath())) {
+               tokens = extractTokensFromFakeSeries(root.getAbsolutePath());
+               // makes sure that getSeriesUsedFiles returns correctly
+               currentId = root.getAbsolutePath();
+              }
+            }
+          }
+        }
+      }
     }
     if (location.isDirectory() && isSPWStructure(location.getAbsolutePath())) {
       tokens = extractTokensFromFakeSeries(location.getAbsolutePath());
-    } else {
+    } else if (tokens == null) {
       String noExt = path.substring(0, path.lastIndexOf("."));
       tokens = noExt.split(TOKEN_SEPARATOR);
     }
@@ -390,7 +408,25 @@ public class FakeReader extends FormatReader {
     int fields = 0;
     int plateAcqs = 0;
 
-    Integer color = null;
+/*
+    int annXml = 0;
+    int annFile = 0;
+    int annList = 0;
+ */
+    int annLong = 0;
+    int annDouble = 0;
+/*
+    int annComment = 0;
+    int annBool = 0;
+    int annTime = 0;
+    int annTag = 0;
+    int annTerm = 0;
+ */
+    int annMap = 0;
+
+
+    Integer defaultColor = null;
+    ArrayList<Integer> color = new ArrayList<Integer>();
 
     // add properties file values to list of tokens.
     if (iniFile != null) {
@@ -469,17 +505,18 @@ public class FakeReader extends FormatReader {
       else if (key.equals("fields")) fields = intValue;
       else if (key.equals("plateAcqs")) plateAcqs = intValue;
       else if (key.equals("color")) {
-        // parse colors as longs so that unsigned values can be specified,
-        // e.g. 0xff0000ff for red with opaque alpha
-        int base = 10;
-        if (value.startsWith("0x") || value.startsWith("0X")) {
-          value = value.substring(2);
-          base = 16;
+        defaultColor = parseColor(value);
+      }
+      else if (key.startsWith("color_")) {
+        // 'color' and 'color_x' can be used together, but 'color_x' takes
+        // precedence.  'color' will in that case be used for any missing
+        // or invalid 'color_x' values.
+        int index = Integer.parseInt(key.substring(key.indexOf("_") + 1));
+
+        while (index >= color.size()) {
+          color.add(null);
         }
-        try {
-          color = (int) Long.parseLong(value, base);
-        }
-        catch (NumberFormatException e) { }
+        color.set(index, parseColor(value));
       }
     }
 
@@ -551,15 +588,27 @@ public class FakeReader extends FormatReader {
 
     // populate OME metadata
     boolean planeInfo = (exposureTime != null);
+    // per file counts
+    int annotationCount = 0;
+    int annotationDoubleCount = 0;
+    int annotationLongCount = 0;
+    int annotationMapCount = 0;
+    // per image count
+    int annotationRefCount = 0;
+
     MetadataTools.populatePixels(store, this, planeInfo);
     fillExposureTime(store);
-    for (int s=0; s<seriesCount; s++) {
-      String imageName = s > 0 ? name + " " + (s + 1) : name;
-      store.setImageName(imageName, s);
+    for (int currentImageIndex=0; currentImageIndex<seriesCount; currentImageIndex++) {
+      String imageName = currentImageIndex > 0 ? name + " " + (currentImageIndex + 1) : name;
+      store.setImageName(imageName, currentImageIndex);
 
-      if (color != null) {
-        for (int c=0; c<sizeC; c++) {
-          store.setChannelColor(new Color(color), s, c);
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        Color channel = defaultColor == null ? null: new Color(defaultColor);
+        if (c < color.size() && color.get(c) != null) {
+          channel = new Color(color.get(c));
+        }
+        if (channel != null) {
+          store.setChannelColor(channel, currentImageIndex, c);
         }
       }
     }
@@ -677,6 +726,7 @@ public class FakeReader extends FormatReader {
     getOmeXmlMetadata().setRoot(new OMEXMLMetadataRoot(ome));
     // copy populated SPW metadata into destination MetadataStore
     getOmeXmlService().convertMetadata(omeXmlMetadata, store);
+    domains = new String[] {FormatTools.HCS_DOMAIN};
     return ome.sizeOfImageList();
   }
 
@@ -713,7 +763,12 @@ public class FakeReader extends FormatReader {
         }
       }
     } else {
-      fakeSeries.add(parent.getAbsolutePath());
+      String path = parent.getAbsolutePath();
+      // explicitly check suffixes, otherwise any other files that were put
+      // in the directory will be picked up (e.g. .DS_Store)
+      if (checkSuffix(path, "fake") || checkSuffix(path, "fake.ini")) {
+        fakeSeries.add(path);
+      }
     }
     return fakeSeries;
   }
@@ -727,6 +782,21 @@ public class FakeReader extends FormatReader {
       array[j] = array[i - 1];
       array[i - 1] = tmp;
     }
+  }
+
+  private int parseColor(String value) {
+    // parse colors as longs so that unsigned values can be specified,
+    // e.g. 0xff0000ff for red with opaque alpha
+    int base = 10;
+    if (value.startsWith("0x") || value.startsWith("0X")) {
+      value = value.substring(2);
+      base = 16;
+    }
+    try {
+      return (int) Long.parseLong(value, base);
+    }
+    catch (NumberFormatException e) { }
+    return 0;
   }
 
 }
