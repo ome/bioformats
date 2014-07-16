@@ -29,7 +29,7 @@ before_install:
   - if [[ $BUILD == 'sphinx' ]]; then travis_retry sudo fc-cache -rsfv; fi
 
 install:
-  - if [[ $BUILD == 'maven' ]]; then travis_retry travis_wait mvn install -DskipTests=true; fi
+  - if [[ $BUILD == 'maven' ]]; then echo 'Skip "mvn install"'; fi
 
 script:
   - travis_retry ./tools/test-build $BUILD
