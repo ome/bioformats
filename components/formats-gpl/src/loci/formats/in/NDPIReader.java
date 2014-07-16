@@ -351,18 +351,13 @@ public class NDPIReader extends BaseTiffReader {
 
       if (markerTag != null) {
         if (markerTag.getValueOffset() > in.length()) {
-          long markerOffset = markerTag.getValueOffset() & 0xffffffffL;
-          if (markerOffset < prevMarkerOffset || (use64Bit && i == 0 &&
-            markerOffset < in.length() / 2))
-          {
-            markerOffset += 0x100000000L;
-          }
-          markerTag = new TiffIFDEntry(markerTag.getTag(), markerTag.getType(),
-            markerTag.getValueCount(), markerOffset);
-          prevMarkerOffset = markerOffset;
+          // can't rely upon the MARKER_TAG to be detected correctly
+          ifds.get(i).remove(MARKER_TAG);
         }
-        Object value = tiffParser.getIFDValue(markerTag);
-        ifds.get(i).putIFDValue(MARKER_TAG, value);
+        else {
+          Object value = tiffParser.getIFDValue(markerTag);
+          ifds.get(i).putIFDValue(MARKER_TAG, value);
+        }
       }
 
       tiffParser.fillInIFD(ifds.get(i));
