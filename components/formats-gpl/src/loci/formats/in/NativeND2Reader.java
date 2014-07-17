@@ -328,7 +328,9 @@ public class NativeND2Reader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    in = new RandomAccessInputStream(id);
+    // using a 32KB buffer instead of the default 1MB gives
+    // better performance with the seek/skip pattern used here
+    in = new RandomAccessInputStream(id, 32 * 1024);
 
     channelColors = new Hashtable<String, Integer>();
 
