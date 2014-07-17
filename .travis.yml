@@ -32,7 +32,7 @@ install:
   - if [[ $BUILD == 'maven' ]]; then echo 'Skip "mvn install"'; fi
 
 script:
-  - travis_retry travis_wait ./tools/test-build $BUILD
+  - travis_retry ./tools/test-build $BUILD
 
 matrix:
   exclude:
