@@ -38,6 +38,7 @@ import org.unitsofmeasurement.unit.*;
 import java.math.BigInteger;
 
 import org.eclipse.uomo.units.SI;
+import org.eclipse.uomo.units.AbstractSystemOfUnits;
 import org.eclipse.uomo.units.internal.NonSI;
 import org.eclipse.uomo.units.impl.system.Imperial;
 import org.eclipse.uomo.units.impl.BaseUnit;
@@ -66,8 +67,7 @@ public final class UNITS extends AbstractSystemOfUnits
   public static final org.unitsofmeasurement.unit.Unit<Length> INCH = Imperial.INCH;
   public static final org.unitsofmeasurement.unit.Unit<Power> WATT = SI.WATT;
   public static final org.unitsofmeasurement.unit.Unit<Pressure> PASCAL = SI.PASCAL;
-  public static final org.unitsofmeasurement.unit.Unit<Pressure> BAR = NonSI.BAR;
-  public static final org.unitsofmeasurement.unit.Unit<Pressure> MILLIMETRE_OF_MERCURY = NonSI.MILLIMETRE_OF_MERCURY;
+  public static final org.unitsofmeasurement.unit.Unit<Pressure> BAR = PASCAL.multiply(100000);
   public static final org.unitsofmeasurement.unit.Unit<Temperature> CELSIUS = SI.CELSIUS;
   public static final org.unitsofmeasurement.unit.Unit<Temperature> KELVIN = SI.KELVIN;
   public static final org.unitsofmeasurement.unit.Unit<Time> SECOND = SI.SECOND;
@@ -200,16 +200,16 @@ public final class UNITS extends AbstractSystemOfUnits
   public static final org.unitsofmeasurement.unit.Unit<Pressure> CBAR =    CENTI(BAR);
   public static final org.unitsofmeasurement.unit.Unit<Pressure> MBAR =    MILLI(BAR);
   public static final org.unitsofmeasurement.unit.Unit<Pressure> ATM =     PASCAL.multiply(101325);
-//  public static final org.unitsofmeasurement.unit.Unit<Pressure> PSI =     ;
+  public static final org.unitsofmeasurement.unit.Unit<Pressure> PSI =     PASCAL.multiply(6894.75729316836142); // APPROXIMATE
   public static final org.unitsofmeasurement.unit.Unit<Pressure> TORR =    ATM.divide(760); 
   public static final org.unitsofmeasurement.unit.Unit<Pressure> MTORR =   MILLI(TORR);
-  public static final org.unitsofmeasurement.unit.Unit<Pressure> MMHG =    MILLIMETRE_OF_MERCURY;
+  public static final org.unitsofmeasurement.unit.Unit<Pressure> MMHG =    PASCAL.multiply(133.322387415);;
 
   public static final org.unitsofmeasurement.unit.Unit<Temperature> DEGREEC = KELVIN.add(273.15);
   public static final org.unitsofmeasurement.unit.Unit<Temperature> K =       KELVIN;
   public static final org.unitsofmeasurement.unit.Unit<Temperature> DEGREER = KELVIN.multiply(5).divide(9);
   public static final org.unitsofmeasurement.unit.Unit<Temperature> DEGREEF = DEGREER.add(459.67);
-//  public static final org.unitsofmeasurement.unit.Unit<Temperature> ATU =     ;
+  public static final org.unitsofmeasurement.unit.Unit<Temperature> ATU = new BaseUnit<Temperature>("AccumulatedThermalUnit");
 
   public static final org.unitsofmeasurement.unit.Unit<Time> YOTTAS = YOTTA(SECOND);
   public static final org.unitsofmeasurement.unit.Unit<Time> ZETTAS = ZETTA(SECOND);
