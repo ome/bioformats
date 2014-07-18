@@ -230,10 +230,10 @@ namespace ome
        */
       template<class ExtentList>
       explicit
-      PixelBuffer(const ExtentList& extents,
-                  const storage_order_type& storage,
+      PixelBuffer(const ExtentList&                   extents,
+                  const storage_order_type&           storage,
                   ::ome::xml::model::enums::PixelType pixeltype,
-                  EndianType endiantype):
+                  EndianType                          endiantype):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(new array_type(extents, storage))
       {}
@@ -254,11 +254,11 @@ namespace ome
        */
       template<class ExtentList>
       explicit
-      PixelBuffer(T *pixeldata,
-                  const ExtentList& extents,
-                  const storage_order_type& storage,
-                  ::ome::xml::model::enums::PixelType pixeltype,
-                  EndianType endiantype):
+      PixelBuffer(value_type                          *pixeldata,
+                  const ExtentList&                    extents,
+                  const storage_order_type&            storage,
+                  ::ome::xml::model::enums::PixelType  pixeltype,
+                  EndianType                           endiantype):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(new array_ref_type(pixeldata, extents, storage))
       {}
@@ -275,10 +275,10 @@ namespace ome
        * @param endiantype the required endianness of the pixel type.
        */
       explicit
-      PixelBuffer(const range_type& range,
-                  const storage_order_type& storage,
+      PixelBuffer(const range_type&                   range,
+                  const storage_order_type&           storage,
                   ::ome::xml::model::enums::PixelType pixeltype,
-                  EndianType endiantype):
+                  EndianType                          endiantype):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(new array_type(range, storage))
       {}
@@ -298,11 +298,11 @@ namespace ome
        * @param endiantype the required endianness of the pixel type.
        */
       explicit
-      PixelBuffer(T *pixeldata,
-                  const range_type& range,
-                  const storage_order_type& storage,
-                  ::ome::xml::model::enums::PixelType pixeltype,
-                  EndianType endiantype):
+      PixelBuffer(value_type                          *pixeldata,
+                  const range_type&                    range,
+                  const storage_order_type&            storage,
+                  ::ome::xml::model::enums::PixelType  pixeltype,
+                  EndianType                           endiantype):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(new array_ref_type(pixeldata, range, storage))
       {}
@@ -371,6 +371,70 @@ namespace ome
       {
         std::shared_ptr<array_type> m(std::dynamic_pointer_cast<array_type>(multiarray));
         return !m;
+      }
+
+      /**
+       * Get the number of pixel elements in the multi-dimensional array.
+       */
+      boost::multi_array_types::size_type
+      num_elements() const
+      {
+        return array()->num_elements();
+      }
+
+      /**
+       * Get the number of dimensions in the multi-dimensional array.
+       */
+      boost::multi_array_types::size_type
+      num_dimensions() const
+      {
+        return array()->num_dimensions();
+      }
+
+      /**
+       * Get the shape of the multi-dimensional array.
+       *
+       * The shape is the extent of each array dimension.
+       *
+       * @returns an array of extents (size is the dimension size).
+       */
+      const boost::multi_array_types::size_type *
+      shape() const
+      {
+        return array()->shape();
+      }
+
+      /**
+       * Get the strides of the multi-dimensional array.
+       *
+       * The strides are the stride associated with each array dimension.
+       *
+       * @returns an array of strides (size is the dimension size).
+       */
+      const boost::multi_array_types::index *
+      strides() const
+      {
+        return array()->strides();
+      }
+
+      /**
+       * Get the index bases of the multi-dimensional array.
+       *
+       * The index bases are the numeric index of the first element
+       * for each array dimension of the multi-dimensional array.
+       *
+       * @returns an array of index bases (size is the dimension size).
+       */
+      const boost::multi_array_types::index *
+      index_bases() const
+      {
+        return array()->index_bases();
+      }
+
+      const value_type *
+      origin() const
+      {
+        return array()->origin();
       }
 
       template<class charT, class traits>
@@ -547,10 +611,10 @@ namespace ome
        */
       template<class ExtentList>
       explicit
-      VariantPixelBuffer(const ExtentList& extents,
+      VariantPixelBuffer(const ExtentList&                   extents,
                          ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                         EndianType endiantype = NATIVE,
-                         const storage_order_type& storage = PixelBufferBase::default_storage_order()):
+                         EndianType                          endiantype = NATIVE,
+                         const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
         buffer(createBuffer(extents, pixeltype, endiantype, storage))
       {
       }
@@ -567,10 +631,10 @@ namespace ome
        * @param endiantype the required endianness of the pixel type.
        */
       explicit
-      VariantPixelBuffer(const range_type& range,
+      VariantPixelBuffer(const range_type&                   range,
                          ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                         EndianType endiantype = NATIVE,
-                         const storage_order_type& storage = PixelBufferBase::default_storage_order()):
+                         EndianType                          endiantype = NATIVE,
+                         const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
         buffer(createBuffer(range, pixeltype, endiantype, storage))
       {
       }
@@ -640,10 +704,10 @@ namespace ome
        */
       template<class T, class ExtentList>
       static variant_buffer_type
-      makeBuffer(const ExtentList& extents,
-                 const storage_order_type& storage,
+      makeBuffer(const ExtentList&                   extents,
+                 const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype,
-                 EndianType endiantype)
+                 EndianType                          endiantype)
       {
         return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, storage, pixeltype, endiantype));
       }
@@ -662,10 +726,10 @@ namespace ome
        */
       template<class T>
       static variant_buffer_type
-      makeBuffer(const range_type& range,
-                 const storage_order_type& storage,
+      makeBuffer(const range_type&                   range,
+                 const storage_order_type&           storage,
                  ::ome::xml::model::enums::PixelType pixeltype,
-                 EndianType endiantype)
+                 EndianType                          endiantype)
       {
         return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, storage, pixeltype, endiantype));
       }
@@ -692,10 +756,10 @@ namespace ome
        */
       template<class ExtentList>
       static variant_buffer_type
-      createBuffer(const ExtentList& extents,
+      createBuffer(const ExtentList&                   extents,
                    ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                   EndianType endiantype = NATIVE,
-                   const storage_order_type& storage = PixelBufferBase::default_storage_order())
+                   EndianType                          endiantype = NATIVE,
+                   const storage_order_type&           storage = PixelBufferBase::default_storage_order())
       {
         variant_buffer_type buf;
 
@@ -873,10 +937,10 @@ namespace ome
        * @returns the new buffer contained in a variant.
        */
       static variant_buffer_type
-      createBuffer(const range_type& range,
+      createBuffer(const range_type&                   range,
                    ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                   EndianType endiantype = NATIVE,
-                   const storage_order_type& storage = PixelBufferBase::default_storage_order())
+                   EndianType                          endiantype = NATIVE,
+                   const storage_order_type&           storage = PixelBufferBase::default_storage_order())
       {
         variant_buffer_type buf;
 
@@ -1059,10 +1123,10 @@ namespace ome
        */
       template<class T, class ExtentList>
       void
-      setBuffer(const ExtentList& extents,
+      setBuffer(const ExtentList&                   extents,
                 ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                EndianType endiantype = NATIVE,
-                const storage_order_type& storage = PixelBufferBase::default_storage_order())
+                EndianType                          endiantype = NATIVE,
+                const storage_order_type&           storage = PixelBufferBase::default_storage_order())
       {
         buffer = createBuffer(extents, pixeltype, endiantype, storage);
       }
@@ -1079,10 +1143,10 @@ namespace ome
        * storage ordering.
        */
       void
-      setBuffer(const range_type& range,
+      setBuffer(const range_type&                   range,
                 ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
-                EndianType endiantype = NATIVE,
-                const storage_order_type& storage = PixelBufferBase::default_storage_order())
+                EndianType                          endiantype = NATIVE,
+                const storage_order_type&           storage = PixelBufferBase::default_storage_order())
       {
         buffer = createBuffer(range, pixeltype, endiantype, storage);
       }
@@ -1138,13 +1202,13 @@ namespace ome
        * Get the type of pixels stored in the buffer.
        */
       ::ome::xml::model::enums::PixelType
-      getType() const;
+      pixelType() const;
 
       /**
        * Get the endianness of the pixel type stored in the buffer.
        */
       EndianType
-      getEndian() const;
+      endianType() const;
 
       /**
        * Get raw buffered data.
@@ -1449,7 +1513,8 @@ namespace ome
      */
     template <typename InputIterator>
     inline void
-    VariantPixelBuffer::assign(InputIterator begin, InputIterator end)
+    VariantPixelBuffer::assign(InputIterator begin,
+                               InputIterator end)
     {
       detail::PixelBufferAssignVisitor<InputIterator> v(begin, end);
       boost::apply_visitor(v, buffer);

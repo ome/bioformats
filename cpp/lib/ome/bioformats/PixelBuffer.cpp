@@ -71,7 +71,7 @@ namespace
     {
       if (!v)
         throw std::runtime_error("Null pixel type");
-      return v->array()->num_elements();
+      return v->num_elements();
     }
   };
 
@@ -83,7 +83,7 @@ namespace
     {
       if (!v)
         throw std::runtime_error("Null pixel type");
-      return v->array()->num_dimensions();
+      return v->num_dimensions();
     }
   };
 
@@ -95,7 +95,7 @@ namespace
     {
       if (!v)
         throw std::runtime_error("Null pixel type");
-      return v->array()->shape();
+      return v->shape();
     }
   };
 
@@ -107,7 +107,19 @@ namespace
     {
       if (!v)
         throw std::runtime_error("Null pixel type");
-      return v->array()->strides();
+      return v->strides();
+    }
+  };
+
+  struct PBIndexBasesVisitor : public boost::static_visitor<const boost::multi_array_types::index *>
+  {
+    template <typename T>
+    const boost::multi_array_types::index *
+    operator() (const T& v)
+    {
+      if (!v)
+        throw std::runtime_error("Null pixel type");
+      return v->index_bases();
     }
   };
 
@@ -352,15 +364,22 @@ namespace ome
       return boost::apply_visitor(v, buffer);
     }
 
+    const boost::multi_array_types::index *
+    VariantPixelBuffer::index_bases() const
+    {
+      PBStridesVisitor v;
+      return boost::apply_visitor(v, buffer);
+    }
+
     PixelType
-    VariantPixelBuffer::getType() const
+    VariantPixelBuffer::pixelType() const
     {
       PBPixelTypeVisitor v;
       return boost::apply_visitor(v, buffer);
     }
 
     EndianType
-    VariantPixelBuffer::getEndian() const
+    VariantPixelBuffer::endianType() const
     {
       PBPixelEndianVisitor v;
       return boost::apply_visitor(v, buffer);
