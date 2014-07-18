@@ -174,6 +174,16 @@ TEST(VariantPixelBuffer, SetIndexDeathTest)
   ASSERT_DEATH(cbuf.at<boost::endian::native_uint8_t>(badidx), "Assertion.*failed");
 }
 
+TEST(VariantPixelBuffer, StreamInput)
+{
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+
+  std::istringstream is;
+  is >> buf;
+
+  ASSERT_EQ("", is.str());
+}
+
 TEST(VariantPixelBuffer, StreamOutput)
 {
   VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1]);
