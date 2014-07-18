@@ -1718,7 +1718,6 @@
 			<xsd:enumeration value =   "°F"><xsd:annotation><xsd:documentation>The temperature unit is degree Fahrenheit.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =    "K"><xsd:annotation><xsd:documentation>The temperature unit is        Kelvin.</xsd:documentation></xsd:annotation></xsd:enumeration>
 			<xsd:enumeration value =   "°R"><xsd:annotation><xsd:documentation>The temperature unit is degree Rankine.</xsd:documentation></xsd:annotation></xsd:enumeration>
-			<xsd:enumeration value =  "ATU"><xsd:annotation><xsd:documentation>The temperature unit is accumulated thermal units.</xsd:documentation></xsd:annotation></xsd:enumeration>
 		</xsd:restriction>
 	</xsd:simpleType>
 

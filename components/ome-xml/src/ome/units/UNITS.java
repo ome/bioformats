@@ -209,7 +209,6 @@ public final class UNITS extends AbstractSystemOfUnits
   public static final org.unitsofmeasurement.unit.Unit<Temperature> K =       KELVIN;
   public static final org.unitsofmeasurement.unit.Unit<Temperature> DEGREER = KELVIN.multiply(5).divide(9);
   public static final org.unitsofmeasurement.unit.Unit<Temperature> DEGREEF = DEGREER.add(459.67);
-  public static final org.unitsofmeasurement.unit.Unit<Temperature> ATU = new BaseUnit<Temperature>("AccumulatedThermalUnit");
 
   public static final org.unitsofmeasurement.unit.Unit<Time> YOTTAS = YOTTA(SECOND);
   public static final org.unitsofmeasurement.unit.Unit<Time> ZETTAS = ZETTA(SECOND);
