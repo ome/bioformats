@@ -4,7 +4,7 @@
 MRC (Medical Research Council)
 ===============================================================================
 
-Extensions: .mrc 
+Extensions: .mrc
 
 Developer: `MRC Laboratory of Molecular Biology <http://www2.mrc-lmb.cam.ac.uk/>`_
 

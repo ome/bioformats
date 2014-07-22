@@ -4,7 +4,7 @@
 Seiko
 ===============================================================================
 
-Extensions: .xqd, .xqf 
+Extensions: .xqd, .xqf
 
 
 Owner: `Seiko <http://www.seiko.co.jp/en/index.php>`_

@@ -4,7 +4,7 @@
 Evotec/PerkinElmer Opera Flex
 ===============================================================================
 
-Extensions: .flex, .mea, .res 
+Extensions: .flex, .mea, .res
 
 Developer: `Evotec Technologies, now PerkinElmer <http://www.perkinelmer.com/>`_
 

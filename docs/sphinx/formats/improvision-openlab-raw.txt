@@ -4,7 +4,7 @@
 Improvision Openlab Raw
 ===============================================================================
 
-Extensions: .raw 
+Extensions: .raw
 
 Developer: `Improvision <http://www.improvision.com/>`_
 

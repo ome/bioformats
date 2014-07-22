@@ -26,7 +26,8 @@
 package loci.tests.testng;
 
 import java.io.File;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,10 +52,7 @@ public class FormatWriterTestFactory {
 
   @Factory
   public Object[] createInstances() {
-    Vector files = new Vector();
-
-    // create log file
-    TestTools.createLogFile();
+    List files = new ArrayList();
 
     // parse explicit filename, if any
     final String nameProp = "testng.filename";

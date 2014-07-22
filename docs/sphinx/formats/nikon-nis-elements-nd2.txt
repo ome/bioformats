@@ -4,7 +4,7 @@
 Nikon NIS-Elements ND2
 ===============================================================================
 
-Extensions: .nd2 
+Extensions: .nd2
 
 Developer: `Nikon USA <http://www.nikonusa.com/>`_
 

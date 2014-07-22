@@ -4,7 +4,7 @@
 OME-XML
 ===============================================================================
 
-Extensions: .ome 
+Extensions: `.ome <http://www.openmicroscopy.org/site/support/ome-model/ome-xml/index.html>`_
 
 Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 

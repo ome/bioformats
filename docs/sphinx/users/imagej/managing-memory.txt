@@ -45,7 +45,7 @@ Note that when you use Data Browser, other features like cropping and
 specifying range are not available. You can, however, adjust the size
 of the image cache in the Data Browser after you open the files. You
 can read more about it on LOCI’s
-`Data Browser page <http://www.loci.wisc.edu/software/data-browser>`_.
+`Data Browser page <http://loci.wisc.edu/software/data-browser>`_.
 
 Cropping the view area
 ----------------------

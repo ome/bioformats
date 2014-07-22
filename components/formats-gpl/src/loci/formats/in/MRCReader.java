@@ -168,6 +168,7 @@ public class MRCReader extends FormatReader {
     }
 
     m.sizeC = 1;
+    m.rgb = false;
 
     int mode = in.readInt();
     switch (mode) {
@@ -191,7 +192,8 @@ public class MRCReader extends FormatReader {
         break;
       case 16:
         m.sizeC = 3;
-        m.pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT8;
+	m.rgb = true;
         break;
     }
 
@@ -291,9 +293,8 @@ public class MRCReader extends FormatReader {
     LOGGER.info("Populating metadata");
 
     m.sizeT = 1;
-    m.dimensionOrder = "XYZTC";
-    m.imageCount = getSizeZ();
-    m.rgb = false;
+    m.dimensionOrder = isRGB() ? "XYCZT" : "XYZTC";
+    m.imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC());
     m.interleaved = true;
     m.indexed = false;
     m.falseColor = false;

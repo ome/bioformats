@@ -106,6 +106,9 @@ public class NIOFileHandle extends AbstractNIOHandle {
   /** Provider class for NIO byte buffers, allocated or memory mapped. */
   protected NIOByteBufferProvider byteBufferProvider;
 
+  /** The original length of the file. */
+  private Long defaultLength;
+
   // -- Constructors --
 
   /**
@@ -125,6 +128,11 @@ public class NIOFileHandle extends AbstractNIOHandle {
     channel = raf.getChannel();
     byteBufferProvider = new NIOByteBufferProvider(channel, mapMode);
     buffer(position, 0);
+
+    // if we know the length won't change, cache the original length
+    if (mode.equals("r")) {
+      defaultLength = raf.length();
+    }
   }
 
   /**
@@ -175,6 +183,12 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /** Gets the FileChannel from this FileHandle. */
   public FileChannel getFileChannel() {
+    try {
+      channel.position(position);
+    }
+    catch (IOException e) {
+      LOGGER.warn("FileChannel.position failed", e);
+    }
     return channel;
   }
 
@@ -206,6 +220,9 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /* @see IRandomAccess.length() */
   public long length() throws IOException {
+    if (defaultLength != null) {
+      return defaultLength;
+    }
     return raf.length();
   }
 
@@ -241,8 +258,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   public int read(ByteBuffer buf, int off, int len) throws IOException {
     buf.position(off);
     buf.limit(off + len);
-    channel.position(position);
-    int readLength = channel.read(buf);
+    int readLength = channel.read(buf, position);
     buffer(position + readLength, 0);
     // Return value of NIO channel's is -1 when zero bytes are read at the end
     // of the file.

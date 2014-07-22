@@ -59,6 +59,8 @@ public class Location {
   // -- Constants --
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Location.class);
+  private static final boolean IS_WINDOWS =
+    System.getProperty("os.name").startsWith("Windows");
 
   // -- Static fields --
 
@@ -288,6 +290,12 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable,
     boolean allowArchiveHandles) throws IOException
   {
+    return getHandle(id, writable, allowArchiveHandles, 0);
+  }
+
+  public static IRandomAccess getHandle(String id, boolean writable,
+    boolean allowArchiveHandles, int bufferSize) throws IOException
+  {
     LOGGER.trace("getHandle(id = {}, writable = {})", id, writable);
     IRandomAccess handle = getMappedFile(id);
     if (handle == null) {
@@ -307,7 +315,13 @@ public class Location {
         handle = new BZip2Handle(mapId);
       }
       else {
-        handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
+        if (bufferSize > 0) {
+          handle = new NIOFileHandle(
+            new File(mapId), writable ? "rw" : "r", bufferSize);
+        }
+        else {
+          handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
+        }
       }
     }
     LOGGER.trace("Location.getHandle: {} -> {}", id, handle);
@@ -393,9 +407,10 @@ public class Location {
       if (file == null) return null;
       String[] f = file.list();
       if (f == null) return null;
+      String path = file.getAbsolutePath();
       for (String name : f) {
         if (!noHiddenFiles || !(name.startsWith(".") ||
-          new Location(file.getAbsolutePath(), name).isHidden()))
+          new Location(path, name).isHidden()))
         {
           files.add(name);
         }
@@ -636,7 +651,13 @@ public class Location {
    * @see java.io.File#isHidden()
    */
   public boolean isHidden() {
-    return isURL ? false : file.isHidden();
+    if (isURL) {
+      return false;
+    }
+    if (IS_WINDOWS) {
+      return file.isHidden();
+    }
+    return file.getName().startsWith(".");
   }
 
   /**
