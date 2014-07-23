@@ -220,6 +220,8 @@ namespace ome
      * the storage ordering to iterate over the pixels in the optimal
      * order or require a specific ordering.  Reordering the data may
      * also bear a significant cost.
+     *
+     * @todo Add support for subsetting dimensions.
      */
     template<typename T>
     class PixelBuffer : public PixelBufferBase
@@ -707,6 +709,8 @@ namespace ome
      * algorithm).  This will also allow subsetting of the data if
      * required, again for all pixel types with special casing being
      * possible.
+     *
+     * @todo Add support for subsetting dimensions.
      */
     class VariantPixelBuffer
     {
