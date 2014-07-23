@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.TreeMap;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -347,6 +348,8 @@ public class NativeND2Reader extends FormatReader {
     // better performance with the seek/skip pattern used here
     in = new RandomAccessInputStream(id, BUFFER_SIZE);
 
+    boolean useChunkMap = true; // could be deactivated here ...
+
     channelColors = new HashMap<String, Integer>();
 
     if (in.read() == -38 && in.read() == -50) {
@@ -378,6 +381,75 @@ public class NativeND2Reader extends FormatReader {
       boolean foundAttributes = false;
       boolean useLastText = false;
       int blockCount = 0;
+
+      class ChunkMapEntry {
+        public String name;
+        public long position;
+        public long length;
+
+        public String toString() {
+          return String.format("ChunkMapEntry<%s@%d(%d)>", name, position, length);
+        }
+      }
+
+      TreeMap<Long, ChunkMapEntry> allChunkPositions = new TreeMap<Long, ChunkMapEntry>();
+
+      if(useChunkMap) {
+        /* In modern ND2 files, the chunk map is stored near the end, and contains
+         * a list of blocks and their offsets. By using these offsets instead of
+         * scanning through the whole file, an enormous speed up can be achieved.
+         *
+         * Implementation: Read the chunk map beforehand, process the file as normally,
+         * once the first ImageDataSeq block is reached, add all images and skip past the
+         * image data to process remaining metadata.
+         * I haven't read through all of NativeND2Reader, but I hope to have the least
+         * chance of inadvertedly breaking something by this approach.
+         */
+        String chunkMapSignature = "ND2 CHUNK MAP SIGNATURE 0000001";
+        in.seek(in.length() - 40);
+
+        if(!in.readString(chunkMapSignature.length()).equals(chunkMapSignature)) {
+          useChunkMap = false;
+          LOGGER.info("ND2 Warning: No chunk map found!");
+        } else {
+          in.skipBytes(1);
+
+          long chunkMapPosition = in.readLong();
+          in.seek(chunkMapPosition);
+
+          int tmpLenOne = in.readInt();
+          int tmpLenTwo = in.readInt();
+          long chunkMapLength = in.readLong();
+
+          chunkMapPosition += 16 + tmpLenTwo;
+          long chunkMapEnd = chunkMapPosition + chunkMapLength;
+
+          while(in.getFilePointer() + 1 + 16 < chunkMapEnd) {
+
+            char b = (char) in.readByte();
+            while (b != '!') {
+              name.append(b);
+              b = (char) in.readByte();
+            }
+
+            ChunkMapEntry entry = new ChunkMapEntry();
+            entry.name = name.toString();
+            name.delete(0, name.length());
+
+            if(entry.name.equals(chunkMapSignature))
+              break;
+
+            entry.position = in.readLong();
+            entry.length = in.readLong();
+
+            allChunkPositions.put(entry.position, entry);
+
+            LOGGER.info("ND2 {}", entry.toString());
+          }
+        }
+
+        in.seek(0);
+      }
 
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
@@ -504,6 +576,22 @@ public class NativeND2Reader extends FormatReader {
             extraZDataCount = 0;
             useLastText = true;
           }
+
+          if(useChunkMap) {
+            long lastImagePosition = 0;
+            for(ChunkMapEntry entry : allChunkPositions.values()) {
+              if(entry.name.startsWith("ImageDataSeq")) {
+                lastImagePosition = entry.position;
+                imageOffsets.add(new Long(entry.position + 16));
+                imageLengths.add(new int[] {lenOne, (int)entry.length, getSizeX() * getSizeY()});
+                imageNames.add(entry.name.substring(12));
+                // assumption lenOne is constant throughout the file for image blocks!
+              }
+            }
+            in.seek(allChunkPositions.higherKey(lastImagePosition));
+            continue;
+          }
+
           imageOffsets.add(fp);
           imageLengths.add(new int[] {nameLength, (int) dataLength, getSizeX() * getSizeY()});
           char b = (char) in.readByte();
