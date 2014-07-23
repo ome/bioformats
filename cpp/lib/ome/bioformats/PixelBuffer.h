@@ -111,7 +111,8 @@ namespace ome
       typedef boost::multi_array_types::index index;
 
       /// Type used to index all dimensions in public interfaces.
-      typedef std::array<boost::multi_array_types::index, PixelBufferBase::dimensions> indices_type;
+      typedef std::array<boost::multi_array_types::index,
+                         PixelBufferBase::dimensions> indices_type;
 
       /// Storage ordering type for controlling pixel memory layout.
       typedef boost::general_storage_order<dimensions> storage_order_type;
@@ -154,10 +155,30 @@ namespace ome
         return endiantype;
       }
 
+      /**
+       * Generate storage ordering for a given dimension order.
+       *
+       * This converts the OME data model dimension ordering
+       * specification to the native 9D ordering, including subchannel
+       * and modulo components.
+       *
+       * @param order the OME data model dimension ordering
+       * @param interleaved @c true if subchannels are interleaved
+       * (chunky), @c false otherwise (planar).
+       * @returns the storage ordering.
+       */
       static storage_order_type
       make_storage_order(ome::xml::model::enums::DimensionOrder order,
                          bool                                   interleaved);
 
+      /**
+       * Generate default storage ordering.
+       *
+       * The default is @c XYZTC with subchannel interleaving (i.e. @c
+       * SXYzZtTcC as the 9D order).
+       *
+       * @returns the storage ordering.
+       */
       static storage_order_type
       default_storage_order();
 
@@ -464,18 +485,41 @@ namespace ome
         return array()->index_bases();
       }
 
+      /**
+       * Get the origin of the array.
+       *
+       * This is the address of the element at @c
+       * [0][0][0][0][0][0][0][0][0].  Note that this is not always
+       * the buffer start address, depending upon the dimension
+       * ordering.
+       *
+       * @returns the address of the array origin.
+       */
       const value_type *
       origin() const
       {
         return array()->origin();
       }
 
+      /**
+       * Get the array storage order.
+       *
+       * @returns the storage order.
+       */
       const storage_order_type&
       storage_order() const
       {
         return array()->storage_order();
       }
 
+      /**
+       * Assign pixel values.
+       *
+       * Note that the range to assign must be equal to num_elements().
+       *
+       * @param begin the start of the range to assign.
+       * @param end the end of the range to assign.
+       */
       template <typename InputIterator>
       void
       assign(InputIterator begin,
@@ -523,6 +567,8 @@ namespace ome
        * order.  This will typically be a contiguous read, but this is
        * not guaranteed.  The current implementation iterates over
        * each pixel and so may be slower than strictly necessary.
+       *
+       * @param stream the stream to read from.
        */
       template<class charT, class traits>
       inline void
@@ -569,6 +615,16 @@ namespace ome
                           }
       }
 
+      /**
+       * Write raw pixel data to a stream in physical storage order.
+       *
+       * Note that the pixels will be written in the physical storage
+       * order.  This will typically be a contiguous read, but this is
+       * not guaranteed.  The current implementation iterates over
+       * each pixel and so may be slower than strictly necessary.
+       *
+       * @param stream the stream to write to.
+       */
       template<class charT, class traits>
       inline void
       write(std::basic_ostream<charT,traits>& stream) const
@@ -1364,10 +1420,25 @@ namespace ome
       const boost::multi_array_types::index *
       index_bases() const;
 
+      /**
+       * Get the origin of the array.
+       *
+       * This is the address of the element at @c
+       * [0][0][0][0][0][0][0][0][0].  Note that this is not always
+       * the buffer start address, depending upon the dimension
+       * ordering.
+       *
+       * @returns the address of the array origin.
+       */
       template <typename T>
       const T *
       origin() const;
 
+      /**
+       * Get the array storage order.
+       *
+       * @returns the storage order.
+       */
       const storage_order_type&
       storage_order() const;
 
@@ -1418,6 +1489,14 @@ namespace ome
       bool
       operator != (const VariantPixelBuffer& rhs) const;
 
+      /**
+       * Assign pixel values.
+       *
+       * Note that the range to assign must be equal to num_elements().
+       *
+       * @param begin the start of the range to assign.
+       * @param end the end of the range to assign.
+       */
       template <typename InputIterator>
       void
       assign(InputIterator begin,
@@ -1465,13 +1544,33 @@ namespace ome
         return (*r->array())(indices);
       }
 
-    template<class charT, class traits>
-    inline void
-    read(std::basic_istream<charT,traits>& stream);
+      /**
+       * Read raw pixel data from a stream in physical storage order.
+       *
+       * Note that the pixels will be read in the physical storage
+       * order.  This will typically be a contiguous read, but this is
+       * not guaranteed.  The current implementation iterates over
+       * each pixel and so may be slower than strictly necessary.
+       *
+       * @param stream the stream to read from.
+       */
+      template<class charT, class traits>
+      inline void
+      read(std::basic_istream<charT,traits>& stream);
 
-    template<class charT, class traits>
-    inline void
-    write(std::basic_ostream<charT,traits>& stream) const;
+      /**
+       * Write raw pixel data to a stream in physical storage order.
+       *
+       * Note that the pixels will be written in the physical storage
+       * order.  This will typically be a contiguous read, but this is
+       * not guaranteed.  The current implementation iterates over
+       * each pixel and so may be slower than strictly necessary.
+       *
+       * @param stream the stream to write to.
+       */
+      template<class charT, class traits>
+      inline void
+      write(std::basic_ostream<charT,traits>& stream) const;
 
     protected:
       /// Pixel storage.
