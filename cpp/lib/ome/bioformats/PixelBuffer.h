@@ -327,7 +327,8 @@ namespace ome
       /**
        * Get the pixel data.
        *
-       * @returns the multidimensional pixel data array.
+       * @returns the multidimensional pixel data array; this value
+       * will never be null.
        */
       std::shared_ptr<array_ref_type>
       array()
@@ -338,7 +339,8 @@ namespace ome
       /**
        * Get the pixel data.
        *
-       * @returns the multidimensional pixel data array.
+       * @returns the multidimensional pixel data array; this value
+       * will never be null.
        */
       const std::shared_ptr<array_ref_type>
       array() const

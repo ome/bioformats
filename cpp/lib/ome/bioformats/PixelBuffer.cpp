@@ -180,7 +180,6 @@ namespace
     operator() (T& lhs, T& rhs) const
     {
       return lhs && rhs &&
-        lhs->array() && rhs->array() &&
         *(lhs->array()) == *(rhs->array());
     }
   };
