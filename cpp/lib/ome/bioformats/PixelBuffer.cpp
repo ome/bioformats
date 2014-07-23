@@ -213,7 +213,7 @@ namespace
     {
       if (!lhs)
         throw std::runtime_error("Null pixel type");
-      lhs->array()->assign(begin, end);
+      lhs->assign(begin, end);
     }
   };
 

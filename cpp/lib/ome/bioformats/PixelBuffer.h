@@ -110,6 +110,9 @@ namespace ome
       /// Index type.
       typedef boost::multi_array_types::index index;
 
+      /// Type used to index all dimensions in public interfaces.
+      typedef std::array<boost::multi_array_types::index, PixelBufferBase::dimensions> indices_type;
+
       /// Storage ordering type for controlling pixel memory layout.
       typedef boost::general_storage_order<dimensions> storage_order_type;
 
@@ -443,15 +446,143 @@ namespace ome
         return array()->storage_order();
       }
 
+      template <typename InputIterator>
+      void
+      assign(InputIterator begin,
+             InputIterator end)
+      {
+        array()->assign(begin, end);
+      }
+
+      /**
+       * Get the pixel value at an index.
+       *
+       * @note If the index is out of bounds, an assertion failure
+       * will immediately abort the program, so take care to ensure it
+       * is always valid.
+       *
+       * @param indices the multi-dimensional array index.
+       * @returns a reference to the pixel value.
+       */
+      value_type&
+      at(const indices_type& indices)
+      {
+        return (*array())(indices);
+      }
+
+      /**
+       * Get the pixel value at an index.
+       *
+       * @note If the index is out of bounds, an assertion failure
+       * will immediately abort the program, so take care to ensure it
+       * is always valid.
+       *
+       * @param indices the multi-dimensional array index.
+       * @returns a constant reference to the pixel value.
+       */
+      const value_type&
+      at(const indices_type& indices) const
+      {
+        return (*array())(indices);
+      }
+
+      /**
+       * Read raw pixel data from a stream in physical storage order.
+       *
+       * Note that the pixels will be read in the physical storage
+       * order.  This will typically be a contiguous read, but this is
+       * not guaranteed.  The current implementation iterates over
+       * each pixel and so may be slower than strictly necessary.
+       */
       template<class charT, class traits>
       inline void
       read(std::basic_istream<charT,traits>& stream)
-      {}
+      {
+        const boost::multi_array_types::size_type * extents = shape();
+        const storage_order_type order = storage_order();
+        indices_type idx;
+
+        /**
+         * This initial naïve implementation likely has much room for
+         * optimisation and generalisation to different dimension
+         * numbers for subsetting.
+         */
+        for (idx[0] = order.ascending(0) ? 0 : extents[order.ordering(0)] - 1;
+             order.ascending(0) ? idx[0] < extents[order.ordering(0)] : idx[0] >= 0;
+             order.ascending(0) ? ++idx[0] : --idx[0])
+          for (idx[1] = order.ascending(1) ? 0 : extents[order.ordering(1)] - 1;
+               order.ascending(1) ? idx[1] < extents[order.ordering(1)] : idx[1] >= 0;
+               order.ascending(1) ? ++idx[1] : --idx[1])
+            for (idx[2] = order.ascending(2) ? 0 : extents[order.ordering(2)] - 1;
+                 order.ascending(2) ? idx[2] < extents[order.ordering(2)] : idx[2] >= 0;
+                 order.ascending(2) ? ++idx[2] : --idx[2])
+              for (idx[3] = order.ascending(3) ? 0 : extents[order.ordering(3)] - 1;
+                   order.ascending(3) ? idx[3] < extents[order.ordering(3)] : idx[3] >= 0;
+                   order.ascending(3) ? ++idx[3] : --idx[3])
+                for (idx[4] = order.ascending(4) ? 0 : extents[order.ordering(4)] - 1;
+                     order.ascending(4) ? idx[4] < extents[order.ordering(4)] : idx[4] >= 0;
+                     order.ascending(4) ? ++idx[4] : --idx[4])
+                  for (idx[5] = order.ascending(5) ? 0 : extents[order.ordering(5)] - 1;
+                       order.ascending(5) ? idx[5] < extents[order.ordering(5)] : idx[5] >= 0;
+                       order.ascending(5) ? ++idx[5] : --idx[5])
+                    for (idx[6] = order.ascending(6) ? 0 : extents[order.ordering(6)] - 1;
+                         order.ascending(6) ? idx[6] < extents[order.ordering(6)] : idx[6] >= 0;
+                         order.ascending(6) ? ++idx[6] : --idx[6])
+                      for (idx[7] = order.ascending(7) ? 0 : extents[order.ordering(7)] - 1;
+                           order.ascending(7) ? idx[7] < extents[order.ordering(7)] : idx[7] >= 0;
+                           order.ascending(7) ? ++idx[7] : --idx[7])
+                        for (idx[8] = order.ascending(8) ? 0 : extents[order.ordering(8)] - 1;
+                             order.ascending(8) ? idx[8] < extents[order.ordering(8)] : idx[8] >= 0;
+                             order.ascending(8) ? ++idx[8] : --idx[8])
+                          {
+                            stream.read(reinterpret_cast<char *>(&at(idx)), sizeof(value_type));
+                          }
+      }
 
       template<class charT, class traits>
       inline void
       write(std::basic_ostream<charT,traits>& stream) const
-      {}
+      {
+        const boost::multi_array_types::size_type * extents = shape();
+        const storage_order_type order = storage_order();
+        indices_type idx;
+
+        /**
+         * This initial naïve implementation likely has much room for
+         * optimisation and generalisation to different dimension
+         * numbers for subsetting.
+         */
+        for (idx[0] = order.ascending(0) ? 0 : extents[order.ordering(0)] - 1;
+             order.ascending(0) ? idx[0] < extents[order.ordering(0)] : idx[0] >= 0;
+             order.ascending(0) ? ++idx[0] : --idx[0])
+          for (idx[1] = order.ascending(1) ? 0 : extents[order.ordering(1)] - 1;
+               order.ascending(1) ? idx[1] < extents[order.ordering(1)] : idx[1] >= 0;
+               order.ascending(1) ? ++idx[1] : --idx[1])
+            for (idx[2] = order.ascending(2) ? 0 : extents[order.ordering(2)] - 1;
+                 order.ascending(2) ? idx[2] < extents[order.ordering(2)] : idx[2] >= 0;
+                 order.ascending(2) ? ++idx[2] : --idx[2])
+              for (idx[3] = order.ascending(3) ? 0 : extents[order.ordering(3)] - 1;
+                   order.ascending(3) ? idx[3] < extents[order.ordering(3)] : idx[3] >= 0;
+                   order.ascending(3) ? ++idx[3] : --idx[3])
+                for (idx[4] = order.ascending(4) ? 0 : extents[order.ordering(4)] - 1;
+                     order.ascending(4) ? idx[4] < extents[order.ordering(4)] : idx[4] >= 0;
+                     order.ascending(4) ? ++idx[4] : --idx[4])
+                  for (idx[5] = order.ascending(5) ? 0 : extents[order.ordering(5)] - 1;
+                       order.ascending(5) ? idx[5] < extents[order.ordering(5)] : idx[5] >= 0;
+                       order.ascending(5) ? ++idx[5] : --idx[5])
+                    for (idx[6] = order.ascending(6) ? 0 : extents[order.ordering(6)] - 1;
+                         order.ascending(6) ? idx[6] < extents[order.ordering(6)] : idx[6] >= 0;
+                         order.ascending(6) ? ++idx[6] : --idx[6])
+                      for (idx[7] = order.ascending(7) ? 0 : extents[order.ordering(7)] - 1;
+                           order.ascending(7) ? idx[7] < extents[order.ordering(7)] : idx[7] >= 0;
+                           order.ascending(7) ? ++idx[7] : --idx[7])
+                        for (idx[8] = order.ascending(8) ? 0 : extents[order.ordering(8)] - 1;
+                             order.ascending(8) ? idx[8] < extents[order.ordering(8)] : idx[8] >= 0;
+                             order.ascending(8) ? ++idx[8] : --idx[8])
+                          {
+                            stream.write(reinterpret_cast<const char *>(&at(idx)), sizeof(value_type));
+                          }
+      }
 
     private:
       /**
