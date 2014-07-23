@@ -45,6 +45,7 @@ set(OME_BIOFORMATS_SOURCES
     MetadataOptions.cpp
     Modulo.cpp
     PixelBuffer.cpp
+    PixelProperties.cpp
     UnknownFormatException.cpp
     UnsupportedCompressionException.cpp
     Version.cpp)

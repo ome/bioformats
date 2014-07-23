@@ -359,50 +359,8 @@ namespace ome
      *
      * @returns the size, in bytes
      */
-    inline pixel_size_type
-    bytesPerPixel(::ome::xml::model::enums::PixelType pixeltype)
-    {
-      pixel_size_type size = 0;
-
-      switch(pixeltype)
-        {
-        case ::ome::xml::model::enums::PixelType::INT8:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::INT16:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::INT32:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT8:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT16:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT32:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::FLOAT:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::DOUBLE:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::BIT:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::COMPLEX:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::pixel_byte_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_byte_size();
-          break;
-        }
-
-      return size;
-    }
+    pixel_size_type
+    bytesPerPixel(::ome::xml::model::enums::PixelType pixeltype);
 
     /**
      * Get the size of a PixelType, in bits.
@@ -411,54 +369,48 @@ namespace ome
      *
      * @returns the size, in bits
      */
-    inline pixel_size_type
-    bitsPerPixel(::ome::xml::model::enums::PixelType pixeltype)
-    {
-      pixel_size_type size = 0;
+    pixel_size_type
+    bitsPerPixel(::ome::xml::model::enums::PixelType pixeltype);
 
-      switch(pixeltype)
-        {
-        case ::ome::xml::model::enums::PixelType::INT8:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::INT16:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::INT32:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT8:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT16:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::UINT32:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::FLOAT:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::DOUBLE:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::BIT:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::COMPLEX:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::pixel_bit_size();
-          break;
-        case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          size = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::pixel_bit_size();
-          break;
-        }
+    /**
+     * Determine a likely pixel type from its the storage size in bytes.
+     *
+     * Note that the BIT type will never be returned due to having the
+     * same storage size as other types.
+     *
+     * @param bytes the storage size in bytes.
+     * @param signed @c true if signed, @c false if unsigned.
+     * @param floating @c true if floating point, @c false otherwise.
+     * @param complex :c true if complex, @c false otherwise.
+     * @returns the corresponding pixel type.
+     * @throws if no pixel type was identified or the parameters are
+     * invalid.
+     */
+    ::ome::xml::model::enums::PixelType
+    pixelTypeFromBytes(pixel_size_type bytes,
+                       bool            is_signed = false,
+                       bool            is_floating = false,
+                       bool            is_complex = false);
 
-      return size;
-    }
-
-#ifdef __GNUC__
-#  pragma GCC diagnostic pop
-#endif
+    /**
+     * Determine a likely pixel type from its the storage size in bits.
+     *
+     * Note that the BIT type will never be returned due to having the
+     * same storage size as other types.
+     *
+     * @param bytes the storage size in bits.
+     * @param signed @c true if signed, @c false if unsigned.
+     * @param floating @c true if floating point, @c false otherwise.
+     * @param complex :c true if complex, @c false otherwise.
+     * @returns the corresponding pixel type.
+     * @throws if no pixel type was identified or the parameters are
+     * invalid.
+     */
+    ::ome::xml::model::enums::PixelType
+    pixelTypeFromBits(pixel_size_type bytes,
+                      bool            is_signed = false,
+                      bool            is_floating = false,
+                      bool            is_complex = false);
 
   }
 }
