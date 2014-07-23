@@ -490,7 +490,11 @@ public class ZeissLSMReader extends FormatReader {
     long[] previousStripOffsets = null;
 
     for (int series=0; series<ifdsList.size(); series++) {
-      if (series > 0 && lsmFilenames.length > 1) {
+      // IFD ordering is ZPT, so reset state if we have multiple timepoints
+      // this prevents offsets from being confused when the first offset in
+      // the next series is legitimately smaller than the last offset in
+      // the previous series
+      if (series > 0 && getSizeT() > 1) {
         previousStripOffsets = null;
       }
 

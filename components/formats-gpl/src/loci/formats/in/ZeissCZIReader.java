@@ -2157,9 +2157,21 @@ public class ZeissCZIReader extends FormatReader {
         String y = position.getAttribute("Y");
         String z = position.getAttribute("Z");
 
-        Double xPos = x == null ? null : new Double(x);
-        Double yPos = y == null ? null : new Double(y);
-        Double zPos = z == null ? null : new Double(z);
+        Double xPos = null;
+        try {
+          xPos = new Double(x);
+        }
+        catch (NumberFormatException e) { }
+        Double yPos = null;
+        try {
+          yPos = new Double(y);
+        }
+        catch (NumberFormatException e) { }
+        Double zPos = null;
+        try {
+          zPos = new Double(z);
+        }
+        catch (NumberFormatException e) { }
 
         for (int tile=0; tile<tilesX * tilesY; tile++) {
           int index = i * tilesX * tilesY + tile;
@@ -2335,7 +2347,11 @@ public class ZeissCZIReader extends FormatReader {
     if (root.getChildNodes().getLength() == 1) {
       String value = root.getTextContent();
       if (value != null && key.length() > 0) {
-        addGlobalMetaList(key.toString(), value);
+    	String s = key.toString();
+    	if (s.endsWith("|")){
+    	  s = s.substring(0, s.length() - 1);
+    	}
+        addGlobalMetaList(s, value);
 
         if (key.toString().endsWith("|Rotations|")) {
           rotationLabels = value.split(" ");
@@ -2354,8 +2370,16 @@ public class ZeissCZIReader extends FormatReader {
 
       String attrName = attr.getNodeName();
       String attrValue = attr.getNodeValue();
+      
+      String keyString = key.toString();
+      if (attrName.endsWith("|")){
+        attrName = attrName.substring(0, attrName.length() - 1);
+      }
+      else if(attrName.length() == 0 && keyString.endsWith("|")) {
+    	  keyString = keyString.substring(0, keyString.length() - 1);
+      }
 
-      addGlobalMeta(key + attrName, attrValue);
+      addGlobalMetaList(keyString + attrName, attrValue);
     }
 
     NodeList children = root.getChildNodes();

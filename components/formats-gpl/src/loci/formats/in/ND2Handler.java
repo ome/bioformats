@@ -113,6 +113,8 @@ public class ND2Handler extends BaseHandler {
 
   private ArrayList<Boolean> validLoopState = new ArrayList<Boolean>();
 
+  private boolean canAdjustDimensions = true;
+
   // -- Constructor --
 
   public ND2Handler(List<CoreMetadata> core, int nImages) {
@@ -418,7 +420,7 @@ public class ND2Handler extends BaseHandler {
         if (ms0.sizeT == 0 || (ms0.sizeT * ms0.sizeZ > nImages && v < ms0.sizeT)) {
           ms0.sizeT = v;
         }
-        else if (qName.equals("no_name") && v > 0 && core.size() == 1) {
+        else if (qName.equals("no_name") && v > 1 && core.size() == 1) {
           core = new ArrayList<CoreMetadata>();
           for (int q=0; q<v; q++) {
             core.add(ms0);
@@ -426,6 +428,9 @@ public class ND2Handler extends BaseHandler {
         }
         else if (ms0.sizeZ == 0) {
           ms0.sizeZ = v;
+        }
+        else {
+          canAdjustDimensions = false;
         }
         ms0.dimensionOrder = "CZT";
       }
@@ -437,7 +442,7 @@ public class ND2Handler extends BaseHandler {
           ms0.sizeZ = 1;
         }
         // only adjust if we haven't parsed all of the dimensions already
-        if (core.size() == 1 &&
+        if (canAdjustDimensions && core.size() == 1 &&
           (ms0.sizeT <= 1 || ms0.sizeT * ms0.sizeZ != nImages))
         {
           ms0.sizeZ *= Integer.parseInt(value);
@@ -451,7 +456,7 @@ public class ND2Handler extends BaseHandler {
         boolean loop = validLoopState.get(loopIndex);
         validLoopState.set(loopIndex, null);
 
-        if (core.size() == 1) {
+        if (canAdjustDimensions && core.size() == 1) {
           ms0.sizeZ *= Integer.parseInt(value);
 
           if (ms0.sizeT * ms0.sizeZ > nImages &&
@@ -463,13 +468,13 @@ public class ND2Handler extends BaseHandler {
           }
         }
       }
-      else if (qName.equals("TimeBefore")) {
+      else if (qName.equals("TimeBefore") && canAdjustDimensions) {
         if (ms0.sizeT == 0) {
           ms0.sizeT = 1;
         }
         ms0.sizeT *= Integer.parseInt(value);
       }
-      else if (qName.equals("TimeAfter")) {
+      else if (qName.equals("TimeAfter") && canAdjustDimensions) {
         ms0.sizeT *= Integer.parseInt(value);
       }
       else if (qName.equals("uiMaxDst")) {
@@ -745,146 +750,151 @@ public class ND2Handler extends BaseHandler {
         String[] tokens = value.split("\n");
         for (String t : tokens) {
           t = t.trim();
-          try {
-            if (t.startsWith("Dimensions:")) {
-              t = t.substring(11);
-              String[] dims = t.split(" x ");
 
-              if (ms0.sizeZ == 0) ms0.sizeZ = 1;
-              if (ms0.sizeT == 0) ms0.sizeT = 1;
-              if (ms0.sizeC == 0) ms0.sizeC = 1;
-
-              for (String dim : dims) {
-                dim = dim.trim();
-                int v = Integer.parseInt(dim.replaceAll("\\D", ""));
-                v = (int) Math.max(v, 1);
-                if (dim.startsWith("XY")) {
-                  numSeries = v;
-                  if (numSeries > 1) {
-                    int x = ms0.sizeX;
-                    int y = ms0.sizeY;
-                    int z = ms0.sizeZ;
-                    int tSize = ms0.sizeT;
-                    int c = ms0.sizeC;
-                    String order = ms0.dimensionOrder;
-                    core = new ArrayList<CoreMetadata>();
-                    for (int i=0; i<numSeries; i++) {
-                      CoreMetadata ms = new CoreMetadata();
-                      core.add(ms);
-                      ms.sizeX = x;
-                      ms.sizeY = y;
-                      ms.sizeZ = z == 0 ? 1 : z;
-                      ms.sizeC = c == 0 ? 1 : c;
-                      ms.sizeT = tSize == 0 ? 1 : tSize;
-                      ms.dimensionOrder = order;
-                    }
-                    ms0 = core.get(0);
-                  }
-                }
-                else if (dim.startsWith("T")) {
-                  if (ms0.sizeT <= 1 || v < ms0.sizeT) {
-                    ms0.sizeT = v;
-                  }
-                }
-                else if (dim.startsWith("Z")) {
-                  if (ms0.sizeZ <= 1) {
-                    ms0.sizeZ = v;
-                  }
-                }
-                else if (ms0.sizeC <= 1) {
-                  ms0.sizeC = v;
-                }
-              }
-
-              ms0.imageCount = ms0.sizeZ * ms0.sizeC * ms0.sizeT;
-            }
-            else if (t.startsWith("Number of Picture Planes")) {
-              ms0.sizeC = Integer.parseInt(t.replaceAll("\\D", ""));
-            }
-            else {
-              String[] v = t.split(":");
-              if (v.length == 0) {
-                continue;
-              }
-              if (v.length == 2) {
-                v[1] = v[1].trim();
-                if (v[0].equals("Name")) {
-                  channelNames.add(v[1]);
-                }
-                else if (v[0].equals("Modality")) {
-                  modality.add(v[1]);
-                }
-                else if (v[0].equals("Camera Type")) {
-                  cameraModel = v[1];
-                }
-                else if (v[0].equals("Binning")) {
-                  binning.add(v[1]);
-                }
-                else if (v[0].equals("Readout Speed")) {
-                  int last = v[1].lastIndexOf(" ");
-                  if (last != -1) v[1] = v[1].substring(0, last);
-                  speed.add(new Double(DataTools.sanitizeDouble(v[1])));
-                }
-                else if (v[0].equals("Temperature")) {
-                  String temp = v[1].replaceAll("[\\D&&[^-.]]", "");
-                  temperature.add(new Double(DataTools.sanitizeDouble(temp)));
-                }
-                else if (v[0].equals("Exposure")) {
-                  String[] s = v[1].trim().split(" ");
-                  s[0] = DataTools.sanitizeDouble(s[0]);
-                  if (s[0].trim().length() > 0) {
-                    double time = Double.parseDouble(s[0]);
-                    // TODO: check for other units
-                    if (s[1].equals("ms")) time /= 1000;
-                    exposureTime.add(new Double(time));
-                  }
-                }
-                else if (v[0].equals("{Pinhole Size}")) {
-                  pinholeSize = new Double(DataTools.sanitizeDouble(v[1]));
-                  metadata.put("Pinhole size", v[1]);
-                }
-              }
-              else if (v[0].startsWith("- Step")) {
-                int space = v[0].indexOf(" ", v[0].indexOf("Step") + 1);
-                int last = v[0].indexOf(" ", space + 1);
-                if (last == -1) last = v[0].length();
-                pixelSizeZ = Double.parseDouble(
-                  DataTools.sanitizeDouble(v[0].substring(space, last)));
-              }
-              else if (v[0].equals("Line")) {
-                String[] values = t.split(";");
-                for (int q=0; q<values.length; q++) {
-                  int colon = values[q].indexOf(":");
-                  if (colon < 0) continue;
-                  String nextKey = values[q].substring(0, colon).trim();
-                  String nextValue = values[q].substring(colon + 1).trim();
-                  if (nextKey.equals("Emission wavelength")) {
-                    emWave.add(new Double(nextValue));
-                  }
-                  else if (nextKey.equals("Excitation wavelength")) {
-                    exWave.add(new Double(nextValue));
-                  }
-                  else if (nextKey.equals("Power")) {
-                    nextValue = DataTools.sanitizeDouble(nextValue);
-                    power.add(new Integer((int) Double.parseDouble(nextValue)));
-                  }
-                }
-              }
-              else if (v.length > 1) {
-                v[0] = v[0].replace('{', ' ');
-                v[0] = v[0].replace('}', ' ');
-                metadata.put(v[0].trim(), v[1]);
-              }
-              else if (v.length == 1) {
-                metadata.put(key, v[0]);
-              }
-            }
+          String[] v = t.split(":");
+          if (v.length == 0) {
+            continue;
           }
-          catch (NumberFormatException exc) {
-            LOGGER.warn(
-              "Could not parse TextInfoItem {} value: {}", key, value);
+          else if (v.length == 2) {
+            parseKeyAndValue(v[0].trim(), v[1].trim(), runtype);
+          }
+          else if (v[0].equals("Line")) {
+            parseKeyAndValue(v[0], t.substring(t.indexOf(":") + 1).trim(), runtype);
+          }
+          else if (v.length > 1) {
+            v[0] = v[0].replace('{', ' ');
+            v[0] = v[0].replace('}', ' ');
+            metadata.put(v[0].trim(), v[1]);
+          }
+          else if (v.length == 1) {
+            metadata.put(key, v[0]);
           }
         }
+      }
+      else if (key.startsWith("Dimensions")) {
+        String[] dims = value.split(" x ");
+
+        if (ms0.sizeZ == 0) ms0.sizeZ = 1;
+        if (ms0.sizeT == 0) ms0.sizeT = 1;
+        if (ms0.sizeC == 0) ms0.sizeC = 1;
+
+        for (String dim : dims) {
+          dim = dim.trim();
+          int v = Integer.parseInt(dim.replaceAll("\\D", ""));
+          v = (int) Math.max(v, 1);
+          if (dim.startsWith("XY")) {
+            numSeries = v;
+            if (numSeries > 1) {
+              int x = ms0.sizeX;
+              int y = ms0.sizeY;
+              int z = ms0.sizeZ;
+              int tSize = ms0.sizeT;
+              int c = ms0.sizeC;
+              String order = ms0.dimensionOrder;
+              core = new ArrayList<CoreMetadata>();
+              for (int i=0; i<numSeries; i++) {
+                CoreMetadata ms = new CoreMetadata();
+                core.add(ms);
+                ms.sizeX = x;
+                ms.sizeY = y;
+                ms.sizeZ = z == 0 ? 1 : z;
+                ms.sizeC = c == 0 ? 1 : c;
+                ms.sizeT = tSize == 0 ? 1 : tSize;
+                ms.dimensionOrder = order;
+              }
+              ms0 = core.get(0);
+            }
+          }
+          else if (dim.startsWith("T")) {
+            if (ms0.sizeT <= 1 || v < ms0.sizeT) {
+              ms0.sizeT = v;
+            }
+          }
+          else if (dim.startsWith("Z")) {
+            if (ms0.sizeZ <= 1) {
+              ms0.sizeZ = v;
+            }
+          }
+          else if (ms0.sizeC <= 1) {
+            ms0.sizeC = v;
+          }
+        }
+
+        ms0.imageCount = ms0.sizeZ * ms0.sizeC * ms0.sizeT;
+      }
+      else if (key.startsWith("Number of Picture Planes")) {
+        ms0.sizeC = Integer.parseInt(value.replaceAll("\\D", ""));
+      }
+      else if (key.equals("Name")) {
+        channelNames.add(value);
+      }
+      else if (key.equals("Modality")) {
+        modality.add(value);
+      }
+      else if (key.equals("Camera Type")) {
+        cameraModel = value;
+      }
+      else if (key.equals("Binning")) {
+        binning.add(value);
+      }
+      else if (key.equals("Readout Speed")) {
+        int last = value.lastIndexOf(" ");
+        if (last != -1) value = value.substring(0, last);
+        speed.add(new Double(DataTools.sanitizeDouble(value)));
+      }
+      else if (key.equals("Temperature")) {
+        String temp = value.replaceAll("[\\D&&[^-.]]", "");
+        temperature.add(new Double(DataTools.sanitizeDouble(temp)));
+      }
+      else if (key.equals("Exposure")) {
+        String[] s = value.trim().split(" ");
+        s[0] = DataTools.sanitizeDouble(s[0]);
+        if (s[0].trim().length() > 0) {
+          double time = Double.parseDouble(s[0]);
+          // TODO: check for other units
+          if (s.length > 1) {
+            if (s[1].equals("ms")) time /= 1000;
+          }
+          exposureTime.add(new Double(time));
+        }
+      }
+      else if (key.equals("{Pinhole Size}")) {
+        pinholeSize = new Double(DataTools.sanitizeDouble(value));
+        metadata.put("Pinhole size", value);
+      }
+      else if (key.startsWith("- Step")) {
+        int space = key.indexOf(" ", key.indexOf("Step") + 1);
+        int last = key.indexOf(" ", space + 1);
+        if (last == -1) last = key.length();
+        try {
+          pixelSizeZ = Double.parseDouble(
+            DataTools.sanitizeDouble(key.substring(space, last)));
+        }
+        catch (Exception e) {
+          LOGGER.trace("Could not parse Z step '{}'", key, e);
+        }
+      }
+      else if (key.equals("Line")) {
+        String[] values = value.split(";");
+        for (int q=0; q<values.length; q++) {
+          int colon = values[q].indexOf(":");
+          if (colon < 0) continue;
+          String nextKey = values[q].substring(0, colon).trim();
+          String nextValue = values[q].substring(colon + 1).trim();
+          parseKeyAndValue(nextKey, nextValue, runtype);
+        }
+      }
+      else if (key.equalsIgnoreCase("Emission wavelength")) {
+        String[] v = value.split(" ");
+        emWave.add(new Double(v[0]));
+      }
+      else if (key.equalsIgnoreCase("Excitation wavelength")) {
+        String[] v = value.split(" ");
+        exWave.add(new Double(v[0]));
+      }
+      else if (key.equals("Power")) {
+        value = DataTools.sanitizeDouble(value);
+        power.add(new Integer((int) Double.parseDouble(value)));
       }
       else if (key.equals("CameraUniqueName")) {
         cameraModel = value;
