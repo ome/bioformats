@@ -379,7 +379,7 @@ namespace ome
       /**
        * Get the number of pixel elements in the multi-dimensional array.
        */
-      boost::multi_array_types::size_type
+      size_type
       num_elements() const
       {
         return array()->num_elements();
@@ -388,7 +388,7 @@ namespace ome
       /**
        * Get the number of dimensions in the multi-dimensional array.
        */
-      boost::multi_array_types::size_type
+      size_type
       num_dimensions() const
       {
         return array()->num_dimensions();
@@ -401,7 +401,7 @@ namespace ome
        *
        * @returns an array of extents (size is the dimension size).
        */
-      const boost::multi_array_types::size_type *
+      const size_type *
       shape() const
       {
         return array()->shape();
@@ -498,7 +498,7 @@ namespace ome
       inline void
       read(std::basic_istream<charT,traits>& stream)
       {
-        const boost::multi_array_types::size_type * extents = shape();
+        const size_type * extents = shape();
         const storage_order_type order = storage_order();
         indices_type idx;
 
@@ -507,33 +507,33 @@ namespace ome
          * optimisation and generalisation to different dimension
          * numbers for subsetting.
          */
-        for (idx[0] = order.ascending(0) ? 0 : extents[order.ordering(0)] - 1;
-             order.ascending(0) ? idx[0] < extents[order.ordering(0)] : idx[0] >= 0;
-             order.ascending(0) ? ++idx[0] : --idx[0])
-          for (idx[1] = order.ascending(1) ? 0 : extents[order.ordering(1)] - 1;
-               order.ascending(1) ? idx[1] < extents[order.ordering(1)] : idx[1] >= 0;
-               order.ascending(1) ? ++idx[1] : --idx[1])
-            for (idx[2] = order.ascending(2) ? 0 : extents[order.ordering(2)] - 1;
-                 order.ascending(2) ? idx[2] < extents[order.ordering(2)] : idx[2] >= 0;
-                 order.ascending(2) ? ++idx[2] : --idx[2])
-              for (idx[3] = order.ascending(3) ? 0 : extents[order.ordering(3)] - 1;
-                   order.ascending(3) ? idx[3] < extents[order.ordering(3)] : idx[3] >= 0;
-                   order.ascending(3) ? ++idx[3] : --idx[3])
-                for (idx[4] = order.ascending(4) ? 0 : extents[order.ordering(4)] - 1;
-                     order.ascending(4) ? idx[4] < extents[order.ordering(4)] : idx[4] >= 0;
-                     order.ascending(4) ? ++idx[4] : --idx[4])
-                  for (idx[5] = order.ascending(5) ? 0 : extents[order.ordering(5)] - 1;
-                       order.ascending(5) ? idx[5] < extents[order.ordering(5)] : idx[5] >= 0;
-                       order.ascending(5) ? ++idx[5] : --idx[5])
-                    for (idx[6] = order.ascending(6) ? 0 : extents[order.ordering(6)] - 1;
-                         order.ascending(6) ? idx[6] < extents[order.ordering(6)] : idx[6] >= 0;
-                         order.ascending(6) ? ++idx[6] : --idx[6])
-                      for (idx[7] = order.ascending(7) ? 0 : extents[order.ordering(7)] - 1;
-                           order.ascending(7) ? idx[7] < extents[order.ordering(7)] : idx[7] >= 0;
-                           order.ascending(7) ? ++idx[7] : --idx[7])
-                        for (idx[8] = order.ascending(8) ? 0 : extents[order.ordering(8)] - 1;
-                             order.ascending(8) ? idx[8] < extents[order.ordering(8)] : idx[8] >= 0;
-                             order.ascending(8) ? ++idx[8] : --idx[8])
+        for (idx[order.ordering(8)] = order.ascending(8) ? 0 : extents[order.ordering(8)] - 1;
+             order.ascending(8) ? idx[order.ordering(8)] < extents[order.ordering(8)] : idx[order.ordering(8)] >= 0;
+             order.ascending(8) ? ++idx[order.ordering(8)] : --idx[order.ordering(8)])
+          for (idx[order.ordering(7)] = order.ascending(7) ? 0 : extents[order.ordering(7)] - 1;
+               order.ascending(7) ? idx[order.ordering(7)] < extents[order.ordering(7)] : idx[order.ordering(7)] >= 0;
+               order.ascending(7) ? ++idx[order.ordering(7)] : --idx[order.ordering(7)])
+            for (idx[order.ordering(6)] = order.ascending(6) ? 0 : extents[order.ordering(6)] - 1;
+                 order.ascending(6) ? idx[order.ordering(6)] < extents[order.ordering(6)] : idx[order.ordering(6)] >= 0;
+                 order.ascending(6) ? ++idx[order.ordering(6)] : --idx[order.ordering(6)])
+              for (idx[order.ordering(5)] = order.ascending(5) ? 0 : extents[order.ordering(5)] - 1;
+                   order.ascending(5) ? idx[order.ordering(5)] < extents[order.ordering(5)] : idx[order.ordering(5)] >= 0;
+                   order.ascending(5) ? ++idx[order.ordering(5)] : --idx[order.ordering(5)])
+                for (idx[order.ordering(4)] = order.ascending(4) ? 0 : extents[order.ordering(4)] - 1;
+                     order.ascending(4) ? idx[order.ordering(4)] < extents[order.ordering(4)] : idx[order.ordering(4)] >= 0;
+                     order.ascending(4) ? ++idx[order.ordering(4)] : --idx[order.ordering(4)])
+                  for (idx[order.ordering(3)] = order.ascending(3) ? 0 : extents[order.ordering(3)] - 1;
+                       order.ascending(3) ? idx[order.ordering(3)] < extents[order.ordering(3)] : idx[order.ordering(3)] >= 0;
+                       order.ascending(3) ? ++idx[order.ordering(3)] : --idx[order.ordering(3)])
+                    for (idx[order.ordering(2)] = order.ascending(2) ? 0 : extents[order.ordering(2)] - 1;
+                         order.ascending(2) ? idx[order.ordering(2)] < extents[order.ordering(2)] : idx[order.ordering(2)] >= 0;
+                         order.ascending(2) ? ++idx[order.ordering(2)] : --idx[order.ordering(2)])
+                      for (idx[order.ordering(1)] = order.ascending(1) ? 0 : extents[order.ordering(1)] - 1;
+                           order.ascending(1) ? idx[order.ordering(1)] < extents[order.ordering(1)] : idx[order.ordering(1)] >= 0;
+                           order.ascending(1) ? ++idx[order.ordering(1)] : --idx[order.ordering(1)])
+                        for (idx[order.ordering(0)] = order.ascending(0) ? 0 : extents[order.ordering(0)] - 1;
+                             order.ascending(0) ? idx[order.ordering(0)] < extents[order.ordering(0)] : idx[order.ordering(0)] >= 0;
+                             order.ascending(0) ? ++idx[order.ordering(0)] : --idx[order.ordering(0)])
                           {
                             stream.read(reinterpret_cast<char *>(&at(idx)), sizeof(value_type));
                           }
@@ -543,7 +543,7 @@ namespace ome
       inline void
       write(std::basic_ostream<charT,traits>& stream) const
       {
-        const boost::multi_array_types::size_type * extents = shape();
+        const size_type * extents = shape();
         const storage_order_type order = storage_order();
         indices_type idx;
 
@@ -552,33 +552,33 @@ namespace ome
          * optimisation and generalisation to different dimension
          * numbers for subsetting.
          */
-        for (idx[0] = order.ascending(0) ? 0 : extents[order.ordering(0)] - 1;
-             order.ascending(0) ? idx[0] < extents[order.ordering(0)] : idx[0] >= 0;
-             order.ascending(0) ? ++idx[0] : --idx[0])
-          for (idx[1] = order.ascending(1) ? 0 : extents[order.ordering(1)] - 1;
-               order.ascending(1) ? idx[1] < extents[order.ordering(1)] : idx[1] >= 0;
-               order.ascending(1) ? ++idx[1] : --idx[1])
-            for (idx[2] = order.ascending(2) ? 0 : extents[order.ordering(2)] - 1;
-                 order.ascending(2) ? idx[2] < extents[order.ordering(2)] : idx[2] >= 0;
-                 order.ascending(2) ? ++idx[2] : --idx[2])
-              for (idx[3] = order.ascending(3) ? 0 : extents[order.ordering(3)] - 1;
-                   order.ascending(3) ? idx[3] < extents[order.ordering(3)] : idx[3] >= 0;
-                   order.ascending(3) ? ++idx[3] : --idx[3])
-                for (idx[4] = order.ascending(4) ? 0 : extents[order.ordering(4)] - 1;
-                     order.ascending(4) ? idx[4] < extents[order.ordering(4)] : idx[4] >= 0;
-                     order.ascending(4) ? ++idx[4] : --idx[4])
-                  for (idx[5] = order.ascending(5) ? 0 : extents[order.ordering(5)] - 1;
-                       order.ascending(5) ? idx[5] < extents[order.ordering(5)] : idx[5] >= 0;
-                       order.ascending(5) ? ++idx[5] : --idx[5])
-                    for (idx[6] = order.ascending(6) ? 0 : extents[order.ordering(6)] - 1;
-                         order.ascending(6) ? idx[6] < extents[order.ordering(6)] : idx[6] >= 0;
-                         order.ascending(6) ? ++idx[6] : --idx[6])
-                      for (idx[7] = order.ascending(7) ? 0 : extents[order.ordering(7)] - 1;
-                           order.ascending(7) ? idx[7] < extents[order.ordering(7)] : idx[7] >= 0;
-                           order.ascending(7) ? ++idx[7] : --idx[7])
-                        for (idx[8] = order.ascending(8) ? 0 : extents[order.ordering(8)] - 1;
-                             order.ascending(8) ? idx[8] < extents[order.ordering(8)] : idx[8] >= 0;
-                             order.ascending(8) ? ++idx[8] : --idx[8])
+        for (idx[order.ordering(8)] = order.ascending(8) ? 0 : extents[order.ordering(8)] - 1;
+             order.ascending(8) ? idx[order.ordering(8)] < extents[order.ordering(8)] : idx[order.ordering(8)] >= 0;
+             order.ascending(8) ? ++idx[order.ordering(8)] : --idx[order.ordering(8)])
+          for (idx[order.ordering(7)] = order.ascending(7) ? 0 : extents[order.ordering(7)] - 1;
+               order.ascending(7) ? idx[order.ordering(7)] < extents[order.ordering(7)] : idx[order.ordering(7)] >= 0;
+               order.ascending(7) ? ++idx[order.ordering(7)] : --idx[order.ordering(7)])
+            for (idx[order.ordering(6)] = order.ascending(6) ? 0 : extents[order.ordering(6)] - 1;
+                 order.ascending(6) ? idx[order.ordering(6)] < extents[order.ordering(6)] : idx[order.ordering(6)] >= 0;
+                 order.ascending(6) ? ++idx[order.ordering(6)] : --idx[order.ordering(6)])
+              for (idx[order.ordering(5)] = order.ascending(5) ? 0 : extents[order.ordering(5)] - 1;
+                   order.ascending(5) ? idx[order.ordering(5)] < extents[order.ordering(5)] : idx[order.ordering(5)] >= 0;
+                   order.ascending(5) ? ++idx[order.ordering(5)] : --idx[order.ordering(5)])
+                for (idx[order.ordering(4)] = order.ascending(4) ? 0 : extents[order.ordering(4)] - 1;
+                     order.ascending(4) ? idx[order.ordering(4)] < extents[order.ordering(4)] : idx[order.ordering(4)] >= 0;
+                     order.ascending(4) ? ++idx[order.ordering(4)] : --idx[order.ordering(4)])
+                  for (idx[order.ordering(3)] = order.ascending(3) ? 0 : extents[order.ordering(3)] - 1;
+                       order.ascending(3) ? idx[order.ordering(3)] < extents[order.ordering(3)] : idx[order.ordering(3)] >= 0;
+                       order.ascending(3) ? ++idx[order.ordering(3)] : --idx[order.ordering(3)])
+                    for (idx[order.ordering(2)] = order.ascending(2) ? 0 : extents[order.ordering(2)] - 1;
+                         order.ascending(2) ? idx[order.ordering(2)] < extents[order.ordering(2)] : idx[order.ordering(2)] >= 0;
+                         order.ascending(2) ? ++idx[order.ordering(2)] : --idx[order.ordering(2)])
+                      for (idx[order.ordering(1)] = order.ascending(1) ? 0 : extents[order.ordering(1)] - 1;
+                           order.ascending(1) ? idx[order.ordering(1)] < extents[order.ordering(1)] : idx[order.ordering(1)] >= 0;
+                           order.ascending(1) ? ++idx[order.ordering(1)] : --idx[order.ordering(1)])
+                        for (idx[order.ordering(0)] = order.ascending(0) ? 0 : extents[order.ordering(0)] - 1;
+                             order.ascending(0) ? idx[order.ordering(0)] < extents[order.ordering(0)] : idx[order.ordering(0)] >= 0;
+                             order.ascending(0) ? ++idx[order.ordering(0)] : --idx[order.ordering(0)])
                           {
                             stream.write(reinterpret_cast<const char *>(&at(idx)), sizeof(value_type));
                           }
@@ -711,6 +711,9 @@ namespace ome
 
       /// Raw pixel type used in public interfaces.
       typedef PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::native_type raw_type;
+
+      /// Size type.
+      typedef boost::multi_array_types::size_type size_type;
 
       /// Type used to index all dimensions in public interfaces.
       typedef std::array<boost::multi_array_types::index, PixelBufferBase::dimensions> indices_type;
@@ -1291,13 +1294,13 @@ namespace ome
       /**
        * Get the number of pixel elements in the multi-dimensional array.
        */
-      boost::multi_array_types::size_type
+      size_type
       num_elements() const;
 
       /**
        * Get the number of dimensions in the multi-dimensional array.
        */
-      boost::multi_array_types::size_type
+      size_type
       num_dimensions() const;
 
       /**
@@ -1307,7 +1310,7 @@ namespace ome
        *
        * @returns an array of extents (size is the dimension size).
        */
-      const boost::multi_array_types::size_type *
+      const size_type *
       shape() const;
 
       /**

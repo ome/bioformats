@@ -176,20 +176,61 @@ TEST(VariantPixelBuffer, SetIndexDeathTest)
 
 TEST(VariantPixelBuffer, StreamInput)
 {
-  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  VariantPixelBuffer buf(boost::extents[2][2][3][4][1][1][1][1][1]);
+  VariantPixelBuffer::size_type size = buf.num_elements();
+  std::stringstream ss;
 
-  std::istringstream is;
-  is >> buf;
+  for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
+    {
+      uint8_t val = i;
+      ss.write(reinterpret_cast<const char *>(&val), sizeof(uint8_t));
+    }
 
-  ASSERT_EQ("", is.str());
+  ss.seekg(0, std::ios::beg);
+  ss >> buf;
+  EXPECT_TRUE(ss);
+
+  VariantPixelBuffer::indices_type idx;
+  idx[0] = idx[1] = idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
+  std::vector<int>::size_type i = 0;
+  for (idx[3] = 0; idx[3] < 4; ++idx[3])
+    for (idx[2] = 0; idx[2] < 3; ++idx[2])
+      for (idx[1] = 0; idx[1] < 2; ++idx[1])
+        for (idx[0] = 0; idx[0] < 2; ++idx[0])
+          EXPECT_EQ(i++, buf.at<boost::endian::native_uint8_t>(idx));
 }
 
 TEST(VariantPixelBuffer, StreamOutput)
 {
-  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  VariantPixelBuffer buf(boost::extents[2][2][3][4][1][1][1][1][1]);
+  VariantPixelBuffer::size_type size = buf.num_elements();
+  std::stringstream ss;
 
-  std::ostringstream os;
-  os << buf;
+  std::vector<boost::endian::native_uint8_t> v;
+  for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
+    {
+      uint8_t val = i;
+      v.push_back(i);
+    }
 
-  ASSERT_EQ("", os.str());
+  buf.assign(v.begin(), v.end());
+  ss << buf;
+  EXPECT_TRUE(ss);
+  ss.seekg(0, std::ios::beg);
+
+  VariantPixelBuffer::indices_type idx;
+  idx[0] = idx[1] = idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
+  std::vector<int>::size_type i = 0;
+  for (idx[3] = 0; idx[3] < 4; ++idx[3])
+    for (idx[2] = 0; idx[2] < 3; ++idx[2])
+      for (idx[1] = 0; idx[1] < 2; ++idx[1])
+        for (idx[0] = 0; idx[0] < 2; ++idx[0])
+          {
+            EXPECT_EQ(i, buf.at<boost::endian::native_uint8_t>(idx));
+            boost::endian::native_uint8_t sval;
+            ss.read(reinterpret_cast<char *>(&sval), sizeof(boost::endian::native_uint8_t));
+            EXPECT_TRUE(ss);
+            EXPECT_EQ(i, sval);
+            ++i;
+          }
 }
