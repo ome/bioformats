@@ -349,6 +349,34 @@ namespace ome
       }
 
       /**
+       * Get the raw data.
+       *
+       * This is the buffer referenced by the multidimensional pixel
+       * data array.
+       *
+       * @returns a pointer to the raw data buffer.
+       */
+      value_type *
+      data()
+      {
+        return array()->data();
+      }
+
+      /**
+       * Get the raw data.
+       *
+       * This is the buffer referenced by the multidimensional pixel
+       * data array.
+       *
+       * @returns a pointer to the raw data buffer.
+       */
+      const value_type *
+      data() const
+      {
+        return array()->data();
+      }
+
+      /**
        * Check the buffer validity.
        *
        * This tests if the @c MultiArray is not null, and hence safe
