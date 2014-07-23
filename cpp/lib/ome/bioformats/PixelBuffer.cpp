@@ -123,6 +123,18 @@ namespace
     }
   };
 
+  struct PBStorageOrderVisitor : public boost::static_visitor<const VariantPixelBuffer::storage_order_type&>
+  {
+    template <typename T>
+    const VariantPixelBuffer::storage_order_type&
+    operator() (const T& v)
+    {
+      if (!v)
+        throw std::runtime_error("Null pixel type");
+      return v->storage_order();
+    }
+  };
+
   struct PBRawBufferVisitor : public boost::static_visitor<VariantPixelBuffer::raw_type *>
   {
     template <typename T>
@@ -245,8 +257,8 @@ namespace ome
 #endif
 
     PixelBufferBase::storage_order_type
-    PixelBufferBase::storage_order(ome::xml::model::enums::DimensionOrder order,
-                                   bool                                   interleaved)
+    PixelBufferBase::make_storage_order(ome::xml::model::enums::DimensionOrder order,
+                                        bool                                   interleaved)
     {
       size_type ordering[dimensions];
       bool ascending[dimensions] = {true, true, true, true, true, true, true, true, true};
@@ -326,7 +338,7 @@ namespace ome
     PixelBufferBase::storage_order_type
     PixelBufferBase::default_storage_order()
     {
-      return storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, true);
+      return make_storage_order(ome::xml::model::enums::DimensionOrder::XYZTC, true);
     }
 
     VariantPixelBuffer::VariantPixelBuffer(const VariantPixelBuffer& buffer):
@@ -368,6 +380,13 @@ namespace ome
     VariantPixelBuffer::index_bases() const
     {
       PBStridesVisitor v;
+      return boost::apply_visitor(v, buffer);
+    }
+
+    const VariantPixelBuffer::storage_order_type&
+    VariantPixelBuffer::storage_order() const
+    {
+      PBStorageOrderVisitor v;
       return boost::apply_visitor(v, buffer);
     }
 

@@ -152,8 +152,8 @@ namespace ome
       }
 
       static storage_order_type
-      storage_order(ome::xml::model::enums::DimensionOrder order,
-                    bool                                   interleaved);
+      make_storage_order(ome::xml::model::enums::DimensionOrder order,
+                         bool                                   interleaved);
 
       static storage_order_type
       default_storage_order();
@@ -435,6 +435,12 @@ namespace ome
       origin() const
       {
         return array()->origin();
+      }
+
+      const storage_order_type&
+      storage_order() const
+      {
+        return array()->storage_order();
       }
 
       template<class charT, class traits>
@@ -1197,6 +1203,9 @@ namespace ome
       template <typename T>
       const T *
       origin() const;
+
+      const storage_order_type&
+      storage_order() const;
 
       /**
        * Get the type of pixels stored in the buffer.
