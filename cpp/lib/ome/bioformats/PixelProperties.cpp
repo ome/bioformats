@@ -134,6 +134,141 @@ namespace ome
       return size;
     }
 
+    bool
+    isSigned(::ome::xml::model::enums::PixelType pixeltype)
+    {
+      bool is_signed = false;
+
+      switch(pixeltype)
+        {
+        case ::ome::xml::model::enums::PixelType::INT8:
+          is_signed = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::is_signed;
+          break;
+        case ::ome::xml::model::enums::PixelType::INT16:
+          is_signed = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::is_signed;
+          break;
+        case ::ome::xml::model::enums::PixelType::INT32:
+          is_signed = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::is_signed;
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT8:
+          is_signed = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::is_signed;
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT16:
+          is_signed = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::is_signed;
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT32:
+          is_signed = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::is_signed;
+          break;
+        case ::ome::xml::model::enums::PixelType::FLOAT:
+          is_signed = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::is_signed;
+          break;
+        case ::ome::xml::model::enums::PixelType::DOUBLE:
+          is_signed = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::is_signed;
+          break;
+        case ::ome::xml::model::enums::PixelType::BIT:
+          is_signed = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::is_signed;
+          break;
+        case ::ome::xml::model::enums::PixelType::COMPLEX:
+          is_signed = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::is_signed;
+          break;
+        case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
+          is_signed = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::is_signed;
+          break;
+        }
+
+      return is_signed;
+    }
+
+    bool
+    isFloating(::ome::xml::model::enums::PixelType pixeltype)
+    {
+      bool is_floating = false;
+
+      switch(pixeltype)
+        {
+        case ::ome::xml::model::enums::PixelType::INT8:
+          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::is_floating;
+          break;
+        case ::ome::xml::model::enums::PixelType::INT16:
+          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::is_floating;
+          break;
+        case ::ome::xml::model::enums::PixelType::INT32:
+          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::is_floating;
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT8:
+          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::is_floating;
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT16:
+          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::is_floating;
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT32:
+          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::is_floating;
+          break;
+        case ::ome::xml::model::enums::PixelType::FLOAT:
+          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::is_floating;
+          break;
+        case ::ome::xml::model::enums::PixelType::DOUBLE:
+          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::is_floating;
+          break;
+        case ::ome::xml::model::enums::PixelType::BIT:
+          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::is_floating;
+          break;
+        case ::ome::xml::model::enums::PixelType::COMPLEX:
+          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::is_floating;
+          break;
+        case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
+          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::is_floating;
+          break;
+        }
+
+      return is_floating;
+    }
+
+    bool
+    isComplex(::ome::xml::model::enums::PixelType pixeltype)
+    {
+      bool is_complex = false;
+
+      switch(pixeltype)
+        {
+        case ::ome::xml::model::enums::PixelType::INT8:
+          is_complex = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::is_complex;
+          break;
+        case ::ome::xml::model::enums::PixelType::INT16:
+          is_complex = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::is_complex;
+          break;
+        case ::ome::xml::model::enums::PixelType::INT32:
+          is_complex = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::is_complex;
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT8:
+          is_complex = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::is_complex;
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT16:
+          is_complex = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::is_complex;
+          break;
+        case ::ome::xml::model::enums::PixelType::UINT32:
+          is_complex = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::is_complex;
+          break;
+        case ::ome::xml::model::enums::PixelType::FLOAT:
+          is_complex = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::is_complex;
+          break;
+        case ::ome::xml::model::enums::PixelType::DOUBLE:
+          is_complex = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::is_complex;
+          break;
+        case ::ome::xml::model::enums::PixelType::BIT:
+          is_complex = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::is_complex;
+          break;
+        case ::ome::xml::model::enums::PixelType::COMPLEX:
+          is_complex = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::is_complex;
+          break;
+        case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
+          is_complex = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::is_complex;
+          break;
+        }
+
+      return is_complex;
+    }
+
     ::ome::xml::model::enums::PixelType
     pixelTypeFromBytes(pixel_size_type size,
                        bool            is_signed,

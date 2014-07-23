@@ -373,6 +373,36 @@ namespace ome
     bitsPerPixel(::ome::xml::model::enums::PixelType pixeltype);
 
     /**
+     * Check whether a PixelType is signed.
+     *
+     * @param pixeltype the PixelType to query.
+     *
+     * @returns @c true if signed, @c false otherwise.
+     */
+    bool
+    isSigned(::ome::xml::model::enums::PixelType pixeltype);
+
+    /**
+     * Check whether a PixelType is floating point.
+     *
+     * @param pixeltype the PixelType to query.
+     *
+     * @returns @c true if floating point, @c false otherwise.
+     */
+    bool
+    isFloating(::ome::xml::model::enums::PixelType pixeltype);
+
+    /**
+     * Check whether a PixelType is complex.
+     *
+     * @param pixeltype the PixelType to query.
+     *
+     * @returns @c true if complex, @c false otherwise.
+     */
+    bool
+    isComplex(::ome::xml::model::enums::PixelType pixeltype);
+
+    /**
      * Determine a likely pixel type from its the storage size in bytes.
      *
      * Note that the BIT type will never be returned due to having the
