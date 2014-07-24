@@ -60,6 +60,16 @@ namespace ome
 
     /**
      * Properties common to all pixel types.
+     *
+     * Note that is_signed, is_integer and is_complex are equivalent
+     * to the same members of std::numeric_limits, where present.
+     * They are duplicated here due to lack of std::numeric_limits
+     * support in Boost.Endian for some of its types, including native
+     * types.  They can be removed entirely once std::numeric_limits
+     * support is present.
+     *
+     * @note Java uses isFloatingPoint, which is equivalent to
+     * @c !is_integer.
      */
     template<class P>
     struct PixelPropertiesBase
@@ -99,8 +109,8 @@ namespace ome
 
       /// This pixel type is signed.
       static const bool is_signed = true;
-      /// This pixel type is not floating point.
-      static const bool is_floating = false;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
       /// This pixel type is not complex.
       static const bool is_complex = false;
     };
@@ -119,8 +129,8 @@ namespace ome
 
       /// This pixel type is signed.
       static const bool is_signed = true;
-      /// This pixel type is not floating point.
-      static const bool is_floating = false;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
       /// This pixel type is not complex.
       static const bool is_complex = false;
     };
@@ -139,8 +149,8 @@ namespace ome
 
       /// This pixel type is signed.
       static const bool is_signed = true;
-      /// This pixel type is not floating point.
-      static const bool is_floating = false;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
       /// This pixel type is not complex.
       static const bool is_complex = false;
     };
@@ -159,8 +169,8 @@ namespace ome
 
       /// This pixel type is not signed.
       static const bool is_signed = false;
-      /// This pixel type is not floating point.
-      static const bool is_floating = false;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
       /// This pixel type is not complex.
       static const bool is_complex = false;
     };
@@ -179,8 +189,8 @@ namespace ome
 
       /// This pixel type is not signed.
       static const bool is_signed = false;
-      /// This pixel type is not floating point.
-      static const bool is_floating = false;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
       /// This pixel type is not complex.
       static const bool is_complex = false;
     };
@@ -199,8 +209,8 @@ namespace ome
 
       /// This pixel type is not signed.
       static const bool is_signed = false;
-      /// This pixel type is not floating point.
-      static const bool is_floating = false;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
       /// This pixel type is not complex.
       static const bool is_complex = false;
     };
@@ -219,8 +229,8 @@ namespace ome
 
       /// This pixel type is signed.
       static const bool is_signed = true;
-      /// This pixel type is floating point.
-      static const bool is_floating = true;
+      /// This pixel type is not integer.
+      static const bool is_integer = false;
       /// This pixel type is not complex.
       static const bool is_complex = false;
     };
@@ -239,8 +249,8 @@ namespace ome
 
       /// This pixel type is signed.
       static const bool is_signed = true;
-      /// This pixel type is floating point.
-      static const bool is_floating = true;
+      /// This pixel type is not integer.
+      static const bool is_integer = false;
       /// This pixel type is not complex.
       static const bool is_complex = false;
     };
@@ -259,8 +269,8 @@ namespace ome
 
       /// This pixel type is not signed.
       static const bool is_signed = false;
-      /// This pixel type is not floating point.
-      static const bool is_floating = false;
+      /// This pixel type is integer.
+      static const bool is_integer = true;
       /// This pixel type is not complex.
       static const bool is_complex = false;
     };
@@ -279,8 +289,8 @@ namespace ome
 
       /// This pixel type is signed.
       static const bool is_signed = true;
-      /// This pixel type is floating point.
-      static const bool is_floating = true;
+      /// This pixel type is not integer.
+      static const bool is_integer = false;
       /// This pixel type is complex.
       static const bool is_complex = true;
     };
@@ -299,8 +309,8 @@ namespace ome
 
       /// This pixel type is signed.
       static const bool is_signed = true;
-      /// This pixel type is floating point.
-      static const bool is_floating = true;
+      /// This pixel type is not integer.
+      static const bool is_integer = false;
       /// This pixel type is complex.
       static const bool is_complex = true;
     };
@@ -383,14 +393,26 @@ namespace ome
     isSigned(::ome::xml::model::enums::PixelType pixeltype);
 
     /**
+     * Check whether a PixelType is integer.
+     *
+     * @param pixeltype the PixelType to query.
+     *
+     * @returns @c true if integer, @c false otherwise.
+     */
+    bool
+    isInteger(::ome::xml::model::enums::PixelType pixeltype);
+
+    /**
      * Check whether a PixelType is floating point.
      *
      * @param pixeltype the PixelType to query.
      *
+     * @note Equivalent to @c !isInteger().
+     *
      * @returns @c true if floating point, @c false otherwise.
      */
     bool
-    isFloating(::ome::xml::model::enums::PixelType pixeltype);
+    isFloatingPoint(::ome::xml::model::enums::PixelType pixeltype);
 
     /**
      * Check whether a PixelType is complex.
@@ -410,7 +432,7 @@ namespace ome
      *
      * @param bytes the storage size in bytes.
      * @param is_signed @c true if signed, @c false if unsigned.
-     * @param is_floating @c true if floating point, @c false otherwise.
+     * @param is_integer @c true if integer, @c false otherwise.
      * @param is_complex :c true if complex, @c false otherwise.
      * @returns the corresponding pixel type.
      * @throws if no pixel type was identified or the parameters are
@@ -419,7 +441,7 @@ namespace ome
     ::ome::xml::model::enums::PixelType
     pixelTypeFromBytes(pixel_size_type bytes,
                        bool            is_signed = false,
-                       bool            is_floating = false,
+                       bool            is_integer = true,
                        bool            is_complex = false);
 
     /**
@@ -430,7 +452,7 @@ namespace ome
      *
      * @param bytes the storage size in bits.
      * @param is_signed @c true if signed, @c false if unsigned.
-     * @param is_floating @c true if floating point, @c false otherwise.
+     * @param is_integer @c true if integer, @c false otherwise.
      * @param is_complex :c true if complex, @c false otherwise.
      * @returns the corresponding pixel type.
      * @throws if no pixel type was identified or the parameters are
@@ -439,7 +461,7 @@ namespace ome
     ::ome::xml::model::enums::PixelType
     pixelTypeFromBits(pixel_size_type bytes,
                       bool            is_signed = false,
-                      bool            is_floating = false,
+                      bool            is_integer = true,
                       bool            is_complex = false);
 
   }

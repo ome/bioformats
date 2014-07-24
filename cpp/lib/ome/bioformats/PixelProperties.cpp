@@ -180,48 +180,54 @@ namespace ome
     }
 
     bool
-    isFloating(::ome::xml::model::enums::PixelType pixeltype)
+    isInteger(::ome::xml::model::enums::PixelType pixeltype)
     {
-      bool is_floating = false;
+      bool is_integer = false;
 
       switch(pixeltype)
         {
         case ::ome::xml::model::enums::PixelType::INT8:
-          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::is_floating;
+          is_integer = PixelProperties< ::ome::xml::model::enums::PixelType::INT8>::is_integer;
           break;
         case ::ome::xml::model::enums::PixelType::INT16:
-          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::is_floating;
+          is_integer = PixelProperties< ::ome::xml::model::enums::PixelType::INT16>::is_integer;
           break;
         case ::ome::xml::model::enums::PixelType::INT32:
-          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::is_floating;
+          is_integer = PixelProperties< ::ome::xml::model::enums::PixelType::INT32>::is_integer;
           break;
         case ::ome::xml::model::enums::PixelType::UINT8:
-          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::is_floating;
+          is_integer = PixelProperties< ::ome::xml::model::enums::PixelType::UINT8>::is_integer;
           break;
         case ::ome::xml::model::enums::PixelType::UINT16:
-          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::is_floating;
+          is_integer = PixelProperties< ::ome::xml::model::enums::PixelType::UINT16>::is_integer;
           break;
         case ::ome::xml::model::enums::PixelType::UINT32:
-          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::is_floating;
+          is_integer = PixelProperties< ::ome::xml::model::enums::PixelType::UINT32>::is_integer;
           break;
         case ::ome::xml::model::enums::PixelType::FLOAT:
-          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::is_floating;
+          is_integer = PixelProperties< ::ome::xml::model::enums::PixelType::FLOAT>::is_integer;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLE:
-          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::is_floating;
+          is_integer = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLE>::is_integer;
           break;
         case ::ome::xml::model::enums::PixelType::BIT:
-          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::is_floating;
+          is_integer = PixelProperties< ::ome::xml::model::enums::PixelType::BIT>::is_integer;
           break;
         case ::ome::xml::model::enums::PixelType::COMPLEX:
-          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::is_floating;
+          is_integer = PixelProperties< ::ome::xml::model::enums::PixelType::COMPLEX>::is_integer;
           break;
         case ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX:
-          is_floating = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::is_floating;
+          is_integer = PixelProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX>::is_integer;
           break;
         }
 
-      return is_floating;
+      return is_integer;
+    }
+
+    bool
+    isFloatingPoint(::ome::xml::model::enums::PixelType pixeltype)
+    {
+      return !isInteger(pixeltype);
     }
 
     bool
@@ -272,21 +278,21 @@ namespace ome
     ::ome::xml::model::enums::PixelType
     pixelTypeFromBytes(pixel_size_type size,
                        bool            is_signed,
-                       bool            is_floating,
+                       bool            is_integer,
                        bool            is_complex)
     {
       ::ome::xml::model::enums::PixelType type(::ome::xml::model::enums::PixelType::UINT8);
 
       if (!is_signed) // integer only
         {
-          if (is_floating || is_complex)
+          if (!is_integer || is_complex)
             throw std::logic_error("Unsigned pixel types can't be floating point or complex");
 
           if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::UINT8))
             type = ::ome::xml::model::enums::PixelType::UINT8;
-          if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::UINT16))
+          else if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::UINT16))
             type = ::ome::xml::model::enums::PixelType::UINT16;
-          if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::UINT32))
+          else if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::UINT32))
             type = ::ome::xml::model::enums::PixelType::UINT32;
           else
             throw std::runtime_error("No suitable unsigned integer pixel type found");
@@ -295,21 +301,21 @@ namespace ome
         {
           if (is_complex)
             {
-              if (!is_floating)
+              if (is_integer)
                 throw std::logic_error("Complex pixel types must be floating point");
 
               if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::COMPLEX))
                 type = ::ome::xml::model::enums::PixelType::COMPLEX;
-              if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::DOUBLECOMPLEX))
+              else if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::DOUBLECOMPLEX))
                 type = ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX;
               else
                 throw std::runtime_error("No suitable complex pixel type found");
             }
-          else if (is_floating)
+          else if (!is_integer)
             {
               if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::FLOAT))
                 type = ::ome::xml::model::enums::PixelType::FLOAT;
-              if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::DOUBLE))
+              else if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::DOUBLE))
                 type = ::ome::xml::model::enums::PixelType::DOUBLE;
               else
                 throw std::runtime_error("No suitable floating point pixel type found");
@@ -318,9 +324,9 @@ namespace ome
             {
               if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::INT8))
                 type = ::ome::xml::model::enums::PixelType::INT8;
-              if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::INT16))
+              else if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::INT16))
                 type = ::ome::xml::model::enums::PixelType::INT16;
-              if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::INT32))
+              else if (size == bytesPerPixel(::ome::xml::model::enums::PixelType::INT32))
                 type = ::ome::xml::model::enums::PixelType::INT32;
               else
                 throw std::runtime_error("No suitable signed integer pixel type found");
@@ -337,10 +343,12 @@ namespace ome
     ::ome::xml::model::enums::PixelType
     pixelTypeFromBits(pixel_size_type size,
                       bool            is_signed,
-                      bool            is_floating,
+                      bool            is_integer,
                       bool            is_complex)
     {
-      return pixelTypeFromBytes(size * 8, is_signed, is_floating, is_complex);
+      if (size % 8)
+        throw std::runtime_error("No suitable pixel type found");
+      return pixelTypeFromBytes(size / 8, is_signed, is_integer, is_complex);
     }
 
   }
