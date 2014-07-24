@@ -409,9 +409,9 @@ namespace ome
      * same storage size as other types.
      *
      * @param bytes the storage size in bytes.
-     * @param signed @c true if signed, @c false if unsigned.
-     * @param floating @c true if floating point, @c false otherwise.
-     * @param complex :c true if complex, @c false otherwise.
+     * @param is_signed @c true if signed, @c false if unsigned.
+     * @param is_floating @c true if floating point, @c false otherwise.
+     * @param is_complex :c true if complex, @c false otherwise.
      * @returns the corresponding pixel type.
      * @throws if no pixel type was identified or the parameters are
      * invalid.
@@ -429,9 +429,9 @@ namespace ome
      * same storage size as other types.
      *
      * @param bytes the storage size in bits.
-     * @param signed @c true if signed, @c false if unsigned.
-     * @param floating @c true if floating point, @c false otherwise.
-     * @param complex :c true if complex, @c false otherwise.
+     * @param is_signed @c true if signed, @c false if unsigned.
+     * @param is_floating @c true if floating point, @c false otherwise.
+     * @param is_complex :c true if complex, @c false otherwise.
      * @returns the corresponding pixel type.
      * @throws if no pixel type was identified or the parameters are
      * invalid.
