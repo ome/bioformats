@@ -108,6 +108,8 @@ public class NativeND2Reader extends FormatReader {
   private int nXFields;
 
   private ND2Handler backupHandler;
+  private boolean useChunkMap;
+
 
   private double trueSizeX = 0;
   private double trueSizeY = 0;
@@ -120,9 +122,14 @@ public class NativeND2Reader extends FormatReader {
 
   /** Constructs a new ND2 reader. */
   public NativeND2Reader() {
+	  this(true);
+  }
+
+  public NativeND2Reader(boolean useChunkMap) {
     super("Nikon ND2", new String[] {"nd2", "jp2"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
+    this.useChunkMap = useChunkMap;
   }
 
   // -- IFormatReader API methods --
@@ -346,8 +353,6 @@ public class NativeND2Reader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-
-    boolean useChunkMap = true; // could be deactivated here ...
 
     // using a 32KB buffer instead of the default 1MB gives
     // better performance with the seek/skip pattern used here
