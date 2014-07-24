@@ -26,6 +26,8 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.TreeMap;
@@ -325,6 +327,22 @@ public class NativeND2Reader extends FormatReader {
 
   // -- Internal FormatReader API methods --
 
+  static class ChunkMapEntry {
+    public String name;
+    public long position;
+    public long length;
+
+    public String toString() {
+      String name;
+	  try {
+		name = URLEncoder.encode(this.name, "UTF-8");
+	  } catch (UnsupportedEncodingException e) {
+		name = "<unprintable>";
+	  }
+      return String.format("ChunkMapEntry<%s@%d(%d)>", name, position, length);
+    }
+  }
+
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
@@ -360,15 +378,6 @@ public class NativeND2Reader extends FormatReader {
       boolean textData = false;
       boolean foundMetadata = false;
 
-      class ChunkMapEntry {
-        public String name;
-        public long position;
-        public long length;
-
-        public String toString() {
-          return String.format("ChunkMapEntry<%s@%d(%d)>", name, position, length);
-        }
-      }
 
       TreeMap<Long, ChunkMapEntry> allChunkPositions = new TreeMap<Long, ChunkMapEntry>();
 
@@ -422,7 +431,9 @@ public class NativeND2Reader extends FormatReader {
 
             allChunkPositions.put(entry.position, entry);
 
-            LOGGER.info("ND2 {}", entry.toString());
+            if (LOGGER.isDebugEnabled()) {
+              LOGGER.debug("ND2 {}", entry.toString());
+            }
           }
         }
 
