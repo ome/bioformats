@@ -120,6 +120,7 @@ namespace ome
       /// Extent range type.
       typedef boost::detail::multi_array::extent_gen<dimensions> range_type;
 
+    protected:
       /**
        * Constructor.
        *
@@ -131,6 +132,11 @@ namespace ome
                       EndianType                          endiantype):
         pixeltype(pixeltype),
         endiantype(endiantype)
+      {}
+
+    public:
+      /// Destructor.
+      virtual ~PixelBufferBase()
       {}
 
       /**
@@ -345,6 +351,10 @@ namespace ome
       PixelBuffer(const PixelBuffer& buffer):
         PixelBufferBase(buffer),
         multiarray(buffer.multiarray)
+      {}
+
+      /// Destructor.
+      virtual ~PixelBuffer()
       {}
 
       /**
