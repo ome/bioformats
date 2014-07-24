@@ -431,6 +431,8 @@ public class NativeND2Reader extends FormatReader {
           long chunkMapLength = in.readLong();
 
           chunkMapPosition += 16 + tmpLenTwo;
+          in.seek(chunkMapPosition);
+
           long chunkMapEnd = chunkMapPosition + chunkMapLength;
 
           while(in.getFilePointer() + 1 + 16 < chunkMapEnd) {
