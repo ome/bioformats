@@ -585,6 +585,102 @@ namespace ome
       }
 
       /**
+       * Less than comparison with a pixel buffer.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if not equal, @c false if equal.
+       */
+      bool
+      operator < (const PixelBuffer& rhs) const
+      {
+        return *multiarray < *(rhs.multiarray);
+      }
+
+      /**
+       * Less than comparison with a multiarray.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if not equal, @c false if equal.
+       */
+      bool
+      operator < (const array_ref_type& rhs) const
+      {
+        return *multiarray < rhs;
+      }
+
+      /**
+       * Less than or equal comparison with a pixel buffer.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if not equal, @c false if equal.
+       */
+      bool
+      operator <= (const PixelBuffer& rhs) const
+      {
+        return *multiarray <= *(rhs.multiarray);
+      }
+
+      /**
+       * Less than or equal comparison with a multiarray.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if not equal, @c false if equal.
+       */
+      bool
+      operator <= (const array_ref_type& rhs) const
+      {
+        return *multiarray <= rhs;
+      }
+
+      /**
+       * Greater than comparison with a pixel buffer.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if not equal, @c false if equal.
+       */
+      bool
+      operator > (const PixelBuffer& rhs) const
+      {
+        return *multiarray > *(rhs.multiarray);
+      }
+
+      /**
+       * Greater than comparison with a multiarray.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if not equal, @c false if equal.
+       */
+      bool
+      operator > (const array_ref_type& rhs) const
+      {
+        return *multiarray > rhs;
+      }
+
+      /**
+       * Greater than or equal comparison with a pixel buffer.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if not equal, @c false if equal.
+       */
+      bool
+      operator >= (const PixelBuffer& rhs) const
+      {
+        return *multiarray >= *(rhs.multiarray);
+      }
+
+      /**
+       * Greater than or equal comparison with a multiarray.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if not equal, @c false if equal.
+       */
+      bool
+      operator >= (const array_ref_type& rhs) const
+      {
+        return *multiarray >= rhs;
+      }
+
+      /**
        * Assign pixel values.
        *
        * Note that the range to assign must be equal to num_elements().

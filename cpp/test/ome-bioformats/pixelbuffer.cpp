@@ -251,6 +251,45 @@ TYPED_TEST_P(PixelBufferType, ConstructCopy)
   ASSERT_NE(buf1, buf2);
 }
 
+template<typename T>
+void test_operators(const PixelBuffer<T>& buf1,
+                    const PixelBuffer<T>& buf2)
+{
+  EXPECT_GT(buf2, buf1);
+  EXPECT_GE(buf2, buf1);
+  EXPECT_GE(buf1, buf1);
+  EXPECT_LT(buf1, buf2);
+  EXPECT_LE(buf1, buf2);
+  EXPECT_LE(buf2, buf2);
+}
+
+template<typename T>
+void test_operators(const PixelBuffer<std::complex<T> >& /* buf1 */,
+                    const PixelBuffer<std::complex<T> >& /* buf2 */)
+{
+}
+
+TYPED_TEST_P(PixelBufferType, Operators)
+{
+  std::vector<TypeParam> source1;
+  for (int i = 0; i < 10; ++i)
+    source1.push_back(TypeParam(i));
+
+  std::vector<TypeParam> source2;
+  for (int i = 100U; i < 120U; ++i)
+    source2.push_back(TypeParam(i));
+
+  PixelBuffer<TypeParam> buf1(boost::extents[5][2][1][1][1][1][1][1][1]);
+  buf1.assign(source1.begin(), source1.end());
+  PixelBuffer<TypeParam> buf2(boost::extents[5][2][1][1][1][1][1][1][1]);
+  buf2.assign(source2.begin(), source2.end());
+
+  EXPECT_EQ(buf1, buf1);
+  EXPECT_EQ(buf2, buf2);
+  EXPECT_NE(buf1, buf2);
+  test_operators(buf1, buf2);
+}
+
 TYPED_TEST_P(PixelBufferType, GetIndex)
 {
   std::vector<TypeParam> source;
@@ -381,6 +420,7 @@ REGISTER_TYPED_TEST_CASE_P(PixelBufferType,
                            ConstructSize,
                            ConstructRange,
                            ConstructCopy,
+                           Operators,
                            GetIndex,
                            SetIndex,
                            SetIndexDeathTest,
