@@ -50,11 +50,13 @@
 #include <gtest/gtest-death-test.h>
 
 using ome::bioformats::Dimensions;
+using ome::bioformats::EndianType;
 using ome::bioformats::PixelEndianProperties;
 using ome::bioformats::PixelBufferBase;
 using ome::bioformats::PixelBuffer;
 using ome::bioformats::VariantPixelBuffer;
 typedef ome::xml::model::enums::DimensionOrder DO;
+typedef ome::xml::model::enums::PixelType PT;
 
 class DimensionOrderTestParameters
 {
@@ -123,7 +125,7 @@ namespace
   }
 }
 
-DimensionOrderTestParameters property_params[] =
+DimensionOrderTestParameters dimension_params[] =
   { //                           DimensionOrder interleaved default
     //                           expected-order
     DimensionOrderTestParameters(DO::XYZTC, true, true,
@@ -465,30 +467,60 @@ typedef ::testing::Types<
 INSTANTIATE_TYPED_TEST_CASE_P(PixelBufferTypeTest, PixelBufferType, TestTypes);
 
 
-TEST(VariantPixelBuffer, ConstructSize)
+class VariantPixelBufferTestParameters
 {
-  VariantPixelBuffer buf(boost::extents[5][2][1][1][1][1][1][1][1]);
+public:
+  PT         type;
+  EndianType endian;
 
-  ASSERT_EQ(buf.num_elements(), 10U);
-  ASSERT_TRUE(buf.data());
+  VariantPixelBufferTestParameters(PT         type,
+                                   EndianType endian):
+    type(type),
+    endian(endian)
+  {}
+};
+
+template<class charT, class traits>
+inline std::basic_ostream<charT,traits>&
+operator<< (std::basic_ostream<charT,traits>& os,
+            const VariantPixelBufferTestParameters& params)
+{
+  return os << PT(params.type) << '/'<< params.endian;
 }
 
-TEST(VariantPixelBuffer, ConstructEmpty)
+class VariantPixelBufferTest : public ::testing::TestWithParam<VariantPixelBufferTestParameters>
 {
-  /// @todo Construct with null reference.
+};
+
+TEST_P(VariantPixelBufferTest, DefaultConstruct)
+{
   VariantPixelBuffer buf;
 
   ASSERT_EQ(buf.num_elements(), 1U);
   ASSERT_TRUE(buf.data());
 }
 
-TEST(VariantPixelBuffer, ConstructRange)
+TEST_P(VariantPixelBufferTest, ConstructSize)
 {
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[5][2][1][1][1][1][1][1][1],
+                         params.type, params.endian);
+
+  ASSERT_EQ(buf.num_elements(), 10U);
+  ASSERT_TRUE(buf.data());
+}
+
+TEST_P(VariantPixelBufferTest, ConstructRange)
+{
+  const VariantPixelBufferTestParameters& params = GetParam();
+
   std::vector<boost::endian::native_uint8_t> source;
   for (uint8_t i = 0U; i < 10U; ++i)
     source.push_back(i);
 
-  VariantPixelBuffer buf(boost::extents[5][2][1][1][1][1][1][1][1]);
+  VariantPixelBuffer buf(boost::extents[5][2][1][1][1][1][1][1][1],
+                         params.type, params.endian);
   buf.assign(source.begin(), source.end());
 
   ASSERT_EQ(buf.num_elements(), 10U);
@@ -499,8 +531,10 @@ TEST(VariantPixelBuffer, ConstructRange)
     }
 }
 
-TEST(VariantPixelBuffer, ConstructCopy)
+TEST_P(VariantPixelBufferTest, ConstructCopy)
 {
+  const VariantPixelBufferTestParameters& params = GetParam();
+
   std::vector<boost::endian::native_uint8_t> source1;
   for (boost::endian::native_uint8_t i = 0U; i < 10U; ++i)
     source1.push_back(i);
@@ -509,9 +543,11 @@ TEST(VariantPixelBuffer, ConstructCopy)
   for (boost::endian::native_uint8_t i = 10U; i < 20U; ++i)
     source2.push_back(i);
 
-  VariantPixelBuffer buf1(boost::extents[5][2][1][1][1][1][1][1][1]);
+  VariantPixelBuffer buf1(boost::extents[5][2][1][1][1][1][1][1][1],
+                          params.type, params.endian);
   buf1.assign(source1.begin(), source1.end());
-  VariantPixelBuffer buf2(boost::extents[5][2][1][1][1][1][1][1][1]);
+  VariantPixelBuffer buf2(boost::extents[5][2][1][1][1][1][1][1][1],
+                          params.type, params.endian);
   buf2.assign(source2.begin(), source2.end());
 
   ASSERT_EQ(buf1, buf1);
@@ -523,13 +559,16 @@ TEST(VariantPixelBuffer, ConstructCopy)
   ASSERT_NE(buf1, buf2);
 }
 
-TEST(VariantPixelBuffer, GetIndex)
+TEST_P(VariantPixelBufferTest, GetIndex)
 {
+  const VariantPixelBufferTestParameters& params = GetParam();
+
   std::vector<boost::endian::native_uint8_t> source;
   for (boost::endian::native_uint8_t i = 0U; i < 100U; ++i)
     source.push_back(i);
 
-  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
+                         params.type, params.endian);
   buf.assign(source.begin(), source.end());
   const VariantPixelBuffer& cbuf(buf);
 
@@ -547,9 +586,12 @@ TEST(VariantPixelBuffer, GetIndex)
       }
 }
 
-TEST(VariantPixelBuffer, SetIndex)
+TEST_P(VariantPixelBufferTest, SetIndex)
 {
-  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
+                         params.type, params.endian);
   const VariantPixelBuffer& cbuf(buf);
 
   ASSERT_EQ(buf.num_elements(), 100U);
@@ -571,11 +613,14 @@ TEST(VariantPixelBuffer, SetIndex)
     }
 }
 
-TEST(VariantPixelBuffer, SetIndexDeathTest)
+TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
 {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
 
-  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
+                         params.type, params.endian);
   const VariantPixelBuffer& cbuf(buf);
 
   VariantPixelBuffer::indices_type badidx;
@@ -587,9 +632,12 @@ TEST(VariantPixelBuffer, SetIndexDeathTest)
   ASSERT_DEATH(cbuf.at<boost::endian::native_uint8_t>(badidx), "Assertion.*failed");
 }
 
-TEST(VariantPixelBuffer, StreamInput)
+TEST_P(VariantPixelBufferTest, StreamInput)
 {
-  VariantPixelBuffer buf(boost::extents[2][2][3][4][1][1][1][1][1]);
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[2][2][3][4][1][1][1][1][1],
+                         params.type, params.endian);
   VariantPixelBuffer::size_type size = buf.num_elements();
   std::stringstream ss;
 
@@ -613,9 +661,12 @@ TEST(VariantPixelBuffer, StreamInput)
           EXPECT_EQ(i++, buf.at<boost::endian::native_uint8_t>(idx));
 }
 
-TEST(VariantPixelBuffer, StreamOutput)
+TEST_P(VariantPixelBufferTest, StreamOutput)
 {
-  VariantPixelBuffer buf(boost::extents[2][2][3][4][1][1][1][1][1]);
+  const VariantPixelBufferTestParameters& params = GetParam();
+
+  VariantPixelBuffer buf(boost::extents[2][2][3][4][1][1][1][1][1],
+                         params.type, params.endian);
   VariantPixelBuffer::size_type size = buf.num_elements();
   std::stringstream ss;
 
@@ -648,6 +699,49 @@ TEST(VariantPixelBuffer, StreamOutput)
           }
 }
 
+VariantPixelBufferTestParameters variant_params[] =
+  { //                               PixelType          EndianType
+    VariantPixelBufferTestParameters(PT::INT8,          ome::bioformats::BIG),
+    VariantPixelBufferTestParameters(PT::INT8,          ome::bioformats::LITTLE),
+    VariantPixelBufferTestParameters(PT::INT8,          ome::bioformats::NATIVE),
+
+    VariantPixelBufferTestParameters(PT::INT16,         ome::bioformats::BIG),
+    VariantPixelBufferTestParameters(PT::INT16,         ome::bioformats::LITTLE),
+    VariantPixelBufferTestParameters(PT::INT16,         ome::bioformats::NATIVE),
+
+    VariantPixelBufferTestParameters(PT::INT32,         ome::bioformats::BIG),
+    VariantPixelBufferTestParameters(PT::INT32,         ome::bioformats::LITTLE),
+    VariantPixelBufferTestParameters(PT::INT32,         ome::bioformats::NATIVE),
+
+    VariantPixelBufferTestParameters(PT::UINT8,         ome::bioformats::BIG),
+    VariantPixelBufferTestParameters(PT::UINT8,         ome::bioformats::LITTLE),
+    VariantPixelBufferTestParameters(PT::UINT8,         ome::bioformats::NATIVE),
+
+    VariantPixelBufferTestParameters(PT::UINT16,        ome::bioformats::BIG),
+    VariantPixelBufferTestParameters(PT::UINT16,        ome::bioformats::LITTLE),
+    VariantPixelBufferTestParameters(PT::UINT16,        ome::bioformats::NATIVE),
+
+    VariantPixelBufferTestParameters(PT::UINT32,        ome::bioformats::BIG),
+    VariantPixelBufferTestParameters(PT::UINT32,        ome::bioformats::LITTLE),
+    VariantPixelBufferTestParameters(PT::UINT32,        ome::bioformats::NATIVE),
+
+    VariantPixelBufferTestParameters(PT::FLOAT,         ome::bioformats::BIG),
+    VariantPixelBufferTestParameters(PT::FLOAT,         ome::bioformats::LITTLE),
+    VariantPixelBufferTestParameters(PT::FLOAT,         ome::bioformats::NATIVE),
+
+    VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::BIG),
+    VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::LITTLE),
+    VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::NATIVE),
+
+    VariantPixelBufferTestParameters(PT::COMPLEX,       ome::bioformats::BIG),
+    VariantPixelBufferTestParameters(PT::COMPLEX,       ome::bioformats::LITTLE),
+    VariantPixelBufferTestParameters(PT::COMPLEX,       ome::bioformats::NATIVE),
+
+    VariantPixelBufferTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::BIG),
+    VariantPixelBufferTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::LITTLE),
+    VariantPixelBufferTestParameters(PT::DOUBLECOMPLEX, ome::bioformats::NATIVE)
+  };
+
 // Disable missing-prototypes warning for INSTANTIATE_TEST_CASE_P;
 // this is solely to work around a missing prototype in gtest.
 #ifdef __GNUC__
@@ -656,4 +750,5 @@ TEST(VariantPixelBuffer, StreamOutput)
 #  endif
 #endif
 
-INSTANTIATE_TEST_CASE_P(DimensionOrderVariants, DimensionOrderTest, ::testing::ValuesIn(property_params));
+INSTANTIATE_TEST_CASE_P(DimensionOrderVariants, DimensionOrderTest, ::testing::ValuesIn(dimension_params));
+INSTANTIATE_TEST_CASE_P(VariantPixelBufferVariants, VariantPixelBufferTest, ::testing::ValuesIn(variant_params));
