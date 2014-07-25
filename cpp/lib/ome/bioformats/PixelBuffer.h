@@ -250,22 +250,34 @@ namespace ome
       typedef boost::multi_array<value_type, dimensions> array_type;
 
       /**
+       * Default constructor.
+       *
+       * This constructs a pixel buffer of size 1 in all dimensions.
+       * The desired size should be set after construction.
+       */
+      explicit PixelBuffer():
+        PixelBufferBase(::ome::xml::model::enums::PixelType::UINT8, NATIVE),
+        multiarray(new array_type(boost::extents[1][1][1][1][1][1][1][1][1],
+                                  PixelBufferBase::default_storage_order()))
+      {}
+
+      /**
        * Construct from extents (internal storage).
        *
        * Storage for the buffer will be allocated internally.
        *
        * @param extents the extent of each dimension.
-       * @param storage the storage ordering, defaulting to C array
-       * storage ordering.
        * @param pixeltype the pixel type to store.
        * @param endiantype the required endianness of the pixel type.
+       * @param storage the storage ordering, defaulting to C array
+       * storage ordering.
        */
       template<class ExtentList>
       explicit
       PixelBuffer(const ExtentList&                   extents,
-                  const storage_order_type&           storage,
-                  ::ome::xml::model::enums::PixelType pixeltype,
-                  EndianType                          endiantype):
+                  ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
+                  EndianType                          endiantype = NATIVE,
+                  const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(new array_type(extents, storage))
       {}
@@ -279,18 +291,18 @@ namespace ome
        * @param pixeldata the externally-provided storage for pixel
        * data.
        * @param extents the extent of each dimension.
-       * @param storage the storage ordering, defaulting to C array
-       * storage ordering.
        * @param pixeltype the pixel type to store.
        * @param endiantype the required endianness of the pixel type.
+       * @param storage the storage ordering, defaulting to C array
+       * storage ordering.
        */
       template<class ExtentList>
       explicit
       PixelBuffer(value_type                          *pixeldata,
                   const ExtentList&                    extents,
-                  const storage_order_type&            storage,
-                  ::ome::xml::model::enums::PixelType  pixeltype,
-                  EndianType                           endiantype):
+                  ::ome::xml::model::enums::PixelType  pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
+                  EndianType                           endiantype = NATIVE,
+                  const storage_order_type&            storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(new array_ref_type(pixeldata, extents, storage))
       {}
@@ -301,16 +313,16 @@ namespace ome
        * Storage for the buffer will be allocated internally.
        *
        * @param range the range of each dimension.
-       * @param storage the storage ordering, defaulting to C array
-       * storage ordering.
        * @param pixeltype the pixel type to store.
        * @param endiantype the required endianness of the pixel type.
+       * @param storage the storage ordering, defaulting to C array
+       * storage ordering.
        */
       explicit
       PixelBuffer(const range_type&                   range,
-                  const storage_order_type&           storage,
-                  ::ome::xml::model::enums::PixelType pixeltype,
-                  EndianType                          endiantype):
+                  ::ome::xml::model::enums::PixelType pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
+                  EndianType                          endiantype = NATIVE,
+                  const storage_order_type&           storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(new array_type(range, storage))
       {}
@@ -324,17 +336,17 @@ namespace ome
        * @param pixeldata the externally-provided storage for pixel
        * data.
        * @param range the range of each dimension.
-       * @param storage the storage ordering, defaulting to C array
-       * storage ordering.
        * @param pixeltype the pixel type to store.
        * @param endiantype the required endianness of the pixel type.
+       * @param storage the storage ordering, defaulting to C array
+       * storage ordering.
        */
       explicit
       PixelBuffer(value_type                          *pixeldata,
                   const range_type&                    range,
-                  const storage_order_type&            storage,
-                  ::ome::xml::model::enums::PixelType  pixeltype,
-                  EndianType                           endiantype):
+                  ::ome::xml::model::enums::PixelType  pixeltype = ::ome::xml::model::enums::PixelType::UINT8,
+                  EndianType                           endiantype = NATIVE,
+                  const storage_order_type&            storage = PixelBufferBase::default_storage_order()):
         PixelBufferBase(pixeltype, endiantype),
         multiarray(new array_ref_type(pixeldata, range, storage))
       {}
@@ -522,6 +534,54 @@ namespace ome
       storage_order() const
       {
         return array()->storage_order();
+      }
+
+      /**
+       * Compare a pixel buffer for equality.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if equal, @c false if not equal.
+       */
+      bool
+      operator == (const PixelBuffer& rhs) const
+      {
+        return *multiarray == *(rhs.multiarray);
+      }
+
+      /**
+       * Compare a pixel buffer for equality with a multiarray.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if equal, @c false if not equal.
+       */
+      bool
+      operator == (const array_ref_type& rhs) const
+      {
+        return *multiarray == rhs;
+      }
+
+      /**
+       * Compare a pixel buffer for inequality.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if not equal, @c false if equal.
+       */
+      bool
+      operator != (const PixelBuffer& rhs) const
+      {
+        return *multiarray != *(rhs.multiarray);
+      }
+
+      /**
+       * Compare a pixel buffer for inequality with a multiarray.
+       *
+       * @param rhs the pixel buffer to compare with.
+       * @returns @c true if not equal, @c false if equal.
+       */
+      bool
+      operator != (const array_ref_type& rhs) const
+      {
+        return *multiarray != rhs;
       }
 
       /**
@@ -949,7 +1009,7 @@ namespace ome
                  ::ome::xml::model::enums::PixelType pixeltype,
                  EndianType                          endiantype)
       {
-        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, storage, pixeltype, endiantype));
+        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(extents, pixeltype, endiantype, storage));
       }
 
       /**
@@ -971,7 +1031,7 @@ namespace ome
                  ::ome::xml::model::enums::PixelType pixeltype,
                  EndianType                          endiantype)
       {
-        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, storage, pixeltype, endiantype));
+        return std::shared_ptr<PixelBuffer<T> >(new PixelBuffer<T>(range, pixeltype, endiantype, storage));
       }
 
     // No switch default to avoid -Wunreachable-code errors.
@@ -1828,37 +1888,69 @@ namespace ome
 namespace std
 {
 
-    /**
-     * Set VariantPixelBuffer from input stream.
-     *
-     * @param is the input stream.
-     * @param buf the VariantPixelBuffer to set.
-     * @returns the input stream.
-     */
-    template<class charT, class traits>
-    inline std::basic_istream<charT,traits>&
-    operator>> (std::basic_istream<charT,traits>& is,
-                ::ome::bioformats::VariantPixelBuffer& buf)
-    {
-      buf.read(is);
-      return is;
-    }
+  /**
+   * Set PixelBuffer from input stream.
+   *
+   * @param is the input stream.
+   * @param buf the PixelBuffer to set.
+   * @returns the input stream.
+   */
+  template<typename T, class charT, class traits>
+  inline std::basic_istream<charT,traits>&
+  operator>> (std::basic_istream<charT,traits>& is,
+              ::ome::bioformats::PixelBuffer<T>& buf)
+  {
+    buf.read(is);
+    return is;
+  }
 
-    /**
-     * Output VariantPixelBuffer to output stream.
-     *
-     * @param os the output stream.
-     * @param buf the VariantPixelBuffer to output.
-     * @returns the output stream.
-     */
-    template<class charT, class traits>
-    inline std::basic_ostream<charT,traits>&
-    operator<< (std::basic_ostream<charT,traits>& os,
-                const ::ome::bioformats::VariantPixelBuffer& buf)
-    {
-      buf.write(os);
-      return os;
-    }
+  /**
+   * Output PixelBuffer to output stream.
+   *
+   * @param os the output stream.
+   * @param buf the PixelBuffer to output.
+   * @returns the output stream.
+   */
+  template<typename T, class charT, class traits>
+  inline std::basic_ostream<charT,traits>&
+  operator<< (std::basic_ostream<charT,traits>& os,
+              const ::ome::bioformats::PixelBuffer<T>& buf)
+  {
+    buf.write(os);
+    return os;
+  }
+
+  /**
+   * Set VariantPixelBuffer from input stream.
+   *
+   * @param is the input stream.
+   * @param buf the VariantPixelBuffer to set.
+   * @returns the input stream.
+   */
+  template<class charT, class traits>
+  inline std::basic_istream<charT,traits>&
+  operator>> (std::basic_istream<charT,traits>& is,
+              ::ome::bioformats::VariantPixelBuffer& buf)
+  {
+    buf.read(is);
+    return is;
+  }
+
+  /**
+   * Output VariantPixelBuffer to output stream.
+   *
+   * @param os the output stream.
+   * @param buf the VariantPixelBuffer to output.
+   * @returns the output stream.
+   */
+  template<class charT, class traits>
+  inline std::basic_ostream<charT,traits>&
+  operator<< (std::basic_ostream<charT,traits>& os,
+              const ::ome::bioformats::VariantPixelBuffer& buf)
+  {
+    buf.write(os);
+    return os;
+  }
 
 }
 

@@ -50,6 +50,7 @@
 #include <gtest/gtest-death-test.h>
 
 using ome::bioformats::Dimensions;
+using ome::bioformats::PixelEndianProperties;
 using ome::bioformats::PixelBufferBase;
 using ome::bioformats::PixelBuffer;
 using ome::bioformats::VariantPixelBuffer;
@@ -191,6 +192,237 @@ DimensionOrderTestParameters property_params[] =
                                             ome::bioformats::DIM_MODULO_T, ome::bioformats::DIM_TEMPORAL_T,
                                             ome::bioformats::DIM_MODULO_Z, ome::bioformats::DIM_SPATIAL_Z))
   };
+
+
+template <typename T>
+class PixelBufferType : public ::testing::Test
+{};
+
+TYPED_TEST_CASE_P(PixelBufferType);
+
+TYPED_TEST_P(PixelBufferType, DefaultConstruct)
+{
+  ASSERT_NO_THROW(PixelBuffer<TypeParam> buf);
+}
+
+TYPED_TEST_P(PixelBufferType, ConstructSize)
+{
+  ASSERT_NO_THROW(PixelBuffer<TypeParam> buf(boost::extents[5][2][1][1][1][1][1][1][1]));
+}
+
+TYPED_TEST_P(PixelBufferType, ConstructRange)
+{
+  std::vector<TypeParam> source;
+  for (int i = 0; i < 10; ++i)
+    source.push_back(TypeParam(i));
+
+  PixelBuffer<TypeParam> buf(boost::extents[5][2][1][1][1][1][1][1][1]);
+  buf.assign(source.begin(), source.end());
+
+  ASSERT_EQ(buf.num_elements(), 10U);
+  ASSERT_TRUE(buf.data());
+  for (int i = 0; i < 10; ++i)
+    {
+      ASSERT_EQ(TypeParam(i), *(buf.data()+i));
+    }
+}
+
+TYPED_TEST_P(PixelBufferType, ConstructCopy)
+{
+  std::vector<TypeParam> source1;
+  for (int i = 0; i < 10; ++i)
+    source1.push_back(TypeParam(i));
+
+  std::vector<TypeParam> source2;
+  for (int i = 10U; i < 20U; ++i)
+    source2.push_back(TypeParam(i));
+
+  PixelBuffer<TypeParam> buf1(boost::extents[5][2][1][1][1][1][1][1][1]);
+  buf1.assign(source1.begin(), source1.end());
+  PixelBuffer<TypeParam> buf2(boost::extents[5][2][1][1][1][1][1][1][1]);
+  buf2.assign(source2.begin(), source2.end());
+
+  ASSERT_EQ(buf1, buf1);
+  ASSERT_EQ(buf2, buf2);
+  ASSERT_NE(buf1, buf2);
+
+  PixelBuffer<TypeParam> buf3(buf2);
+  ASSERT_EQ(buf2, buf3);
+  ASSERT_NE(buf1, buf2);
+}
+
+TYPED_TEST_P(PixelBufferType, GetIndex)
+{
+  std::vector<TypeParam> source;
+  for (int i = 0; i < 100; ++i)
+    source.push_back(TypeParam(i));
+
+  PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  buf.assign(source.begin(), source.end());
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  ASSERT_EQ(buf.num_elements(), 100U);
+  ASSERT_TRUE(buf.data());
+  for (int i = 0; i < 10; ++i)
+    for (int j = 0; j < 10; ++j)
+      {
+        VariantPixelBuffer::indices_type idx;
+        idx[0] = i;
+        idx[1] = j;
+        idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
+        EXPECT_EQ(TypeParam((j * 10) + i), buf.at(idx));
+        EXPECT_EQ(TypeParam((j * 10) + i), cbuf.at(idx));
+      }
+}
+
+TYPED_TEST_P(PixelBufferType, SetIndex)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  ASSERT_EQ(buf.num_elements(), 100U);
+  ASSERT_TRUE(buf.data());
+  for (int i = 0; i < 10; ++i)
+    for (int j = 0; j < 10; ++j)
+      {
+        VariantPixelBuffer::indices_type idx;
+        idx[0] = i;
+        idx[1] = j;
+        idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
+
+        TypeParam val(i + j + j);
+
+        buf.at(idx) = val;
+
+        ASSERT_EQ(val, buf.at(idx));
+        ASSERT_EQ(val, cbuf.at(idx));
+    }
+}
+
+TYPED_TEST_P(PixelBufferType, SetIndexDeathTest)
+{
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+
+  PixelBuffer<TypeParam> buf(boost::extents[10][10][1][1][1][1][1][1][1]);
+  const PixelBuffer<TypeParam>& cbuf(buf);
+
+  typename PixelBuffer<TypeParam>::indices_type badidx;
+  badidx[0] = 13;
+  badidx[1] = 2;
+  badidx[2] = badidx[3] = badidx[4] = badidx[5] = badidx[6] = badidx[7] = badidx[8] = 0;
+
+  ASSERT_DEATH(buf.at(badidx) = 4U, "Assertion.*failed");
+  ASSERT_DEATH(cbuf.at(badidx), "Assertion.*failed");
+}
+
+TYPED_TEST_P(PixelBufferType, StreamInput)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[2][2][3][4][1][1][1][1][1]);
+  typename PixelBuffer<TypeParam>::size_type size = buf.num_elements();
+  std::stringstream ss;
+
+  for (typename PixelBuffer<TypeParam>::size_type i = 0; i < size; ++i)
+    {
+      TypeParam val(i);
+      ss.write(reinterpret_cast<const char *>(&val), sizeof(TypeParam));
+    }
+
+  ss.seekg(0, std::ios::beg);
+  ss >> buf;
+  EXPECT_TRUE(ss);
+
+  typename PixelBuffer<TypeParam>::indices_type idx;
+  idx[0] = idx[1] = idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
+  std::vector<int>::size_type i = 0;
+  for (idx[3] = 0; idx[3] < 4; ++idx[3])
+    for (idx[2] = 0; idx[2] < 3; ++idx[2])
+      for (idx[1] = 0; idx[1] < 2; ++idx[1])
+        for (idx[0] = 0; idx[0] < 2; ++idx[0])
+          EXPECT_EQ(TypeParam(i++), buf.at(idx));
+}
+
+TYPED_TEST_P(PixelBufferType, StreamOutput)
+{
+  PixelBuffer<TypeParam> buf(boost::extents[2][2][3][4][1][1][1][1][1]);
+  typename PixelBuffer<TypeParam>::size_type size = buf.num_elements();
+  std::stringstream ss;
+
+  std::vector<TypeParam> v;
+  for (typename PixelBuffer<TypeParam>::size_type i = 0; i < size; ++i)
+    {
+      TypeParam val(i);
+      v.push_back(val);
+    }
+
+  buf.assign(v.begin(), v.end());
+  ss << buf;
+  EXPECT_TRUE(ss);
+  ss.seekg(0, std::ios::beg);
+
+  typename PixelBuffer<TypeParam>::indices_type idx;
+  idx[0] = idx[1] = idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
+  typename std::vector<TypeParam>::size_type i = 0;
+  for (idx[3] = 0; idx[3] < 4; ++idx[3])
+    for (idx[2] = 0; idx[2] < 3; ++idx[2])
+      for (idx[1] = 0; idx[1] < 2; ++idx[1])
+        for (idx[0] = 0; idx[0] < 2; ++idx[0])
+          {
+            EXPECT_EQ(TypeParam(i), buf.at(idx));
+            TypeParam sval;
+            ss.read(reinterpret_cast<char *>(&sval), sizeof(TypeParam));
+            EXPECT_TRUE(ss);
+            EXPECT_EQ(TypeParam(i), sval);
+            ++i;
+          }
+}
+
+REGISTER_TYPED_TEST_CASE_P(PixelBufferType,
+                           DefaultConstruct,
+                           ConstructSize,
+                           ConstructRange,
+                           ConstructCopy,
+                           GetIndex,
+                           SetIndex,
+                           SetIndexDeathTest,
+                           StreamInput,
+                           StreamOutput);
+
+typedef ::testing::Types<
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8,          ome::bioformats::BIG   >::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8,          ome::bioformats::LITTLE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT8,          ome::bioformats::NATIVE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16,         ome::bioformats::BIG   >::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16,         ome::bioformats::LITTLE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT16,         ome::bioformats::NATIVE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32,         ome::bioformats::BIG   >::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32,         ome::bioformats::LITTLE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::INT32,         ome::bioformats::NATIVE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8,         ome::bioformats::BIG   >::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8,         ome::bioformats::LITTLE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT8,         ome::bioformats::NATIVE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16,        ome::bioformats::BIG   >::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16,        ome::bioformats::LITTLE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT16,        ome::bioformats::NATIVE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32,        ome::bioformats::BIG   >::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32,        ome::bioformats::LITTLE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::UINT32,        ome::bioformats::NATIVE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT,         ome::bioformats::BIG   >::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT,         ome::bioformats::LITTLE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::FLOAT,         ome::bioformats::NATIVE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE,        ome::bioformats::BIG   >::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE,        ome::bioformats::LITTLE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLE,        ome::bioformats::NATIVE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT,           ome::bioformats::BIG   >::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT,           ome::bioformats::LITTLE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::BIT,           ome::bioformats::NATIVE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,       ome::bioformats::BIG   >::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,       ome::bioformats::LITTLE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::COMPLEX,       ome::bioformats::NATIVE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, ome::bioformats::BIG   >::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, ome::bioformats::LITTLE>::type,
+  PixelEndianProperties< ::ome::xml::model::enums::PixelType::DOUBLECOMPLEX, ome::bioformats::NATIVE>::type> TestTypes;
+
+INSTANTIATE_TYPED_TEST_CASE_P(PixelBufferTypeTest, PixelBufferType, TestTypes);
 
 
 TEST(VariantPixelBuffer, ConstructSize)
