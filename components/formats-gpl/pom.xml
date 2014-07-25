@@ -385,6 +385,10 @@
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
+      <id>unidata.releases</id>
+      <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
+    </repository>
+    <repository>
       <id>ome.releases</id>
       <url>http://artifacts.openmicroscopy.org/artifactory/ome.releases</url>
     </repository>
