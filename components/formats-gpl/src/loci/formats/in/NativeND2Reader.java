@@ -26,8 +26,11 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.TreeMap;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -324,9 +327,27 @@ public class NativeND2Reader extends FormatReader {
 
   // -- Internal FormatReader API methods --
 
+  static class ChunkMapEntry {
+    public String name;
+    public long position;
+    public long length;
+
+    public String toString() {
+      String name;
+	  try {
+		name = URLEncoder.encode(this.name, "UTF-8");
+	  } catch (UnsupportedEncodingException e) {
+		name = "<unprintable>";
+	  }
+      return String.format("ChunkMapEntry<%s@%d(%d)>", name, position, length);
+    }
+  }
+
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+
+    boolean useChunkMap = true; // could be deactivated here ...
 
     in = new RandomAccessInputStream(id);
 
@@ -353,6 +374,70 @@ public class NativeND2Reader extends FormatReader {
 
       int extraZDataCount = 0;
       boolean textData = false;
+
+
+      TreeMap<Long, ChunkMapEntry> allChunkPositions = new TreeMap<Long, ChunkMapEntry>();
+
+      if(useChunkMap) {
+        /* In modern ND2 files, the chunk map is stored near the end, and contains
+         * a list of blocks and their offsets. By using these offsets instead of
+         * scanning through the whole file, an enormous speed up can be achieved.
+         *
+         * Implementation: Read the chunk map beforehand, process the file as normally,
+         * once the first ImageDataSeq block is reached, add all images and skip past the
+         * image data to process remaining metadata.
+         * I haven't read through all of NativeND2Reader, but I hope to have the least
+         * chance of inadvertedly breaking something by this approach.
+         */
+        String chunkMapSignature = "ND2 CHUNK MAP SIGNATURE 0000001";
+        in.seek(in.length() - 40);
+
+        if(!in.readString(chunkMapSignature.length()).equals(chunkMapSignature)) {
+          useChunkMap = false;
+          LOGGER.info("ND2 Warning: No chunk map found!");
+        } else {
+          in.skipBytes(1);
+
+          long chunkMapPosition = in.readLong();
+          in.seek(chunkMapPosition);
+
+          int tmpLenOne = in.readInt();
+          int tmpLenTwo = in.readInt();
+          long chunkMapLength = in.readLong();
+
+          chunkMapPosition += 16 + tmpLenTwo;
+          in.seek(chunkMapPosition);
+
+          long chunkMapEnd = chunkMapPosition + chunkMapLength;
+
+          while(in.getFilePointer() + 1 + 16 < chunkMapEnd) {
+
+            char b = (char) in.readByte();
+            while (b != '!') {
+              name.append(b);
+              b = (char) in.readByte();
+            }
+
+            ChunkMapEntry entry = new ChunkMapEntry();
+            entry.name = name.toString();
+            name.delete(0, name.length());
+
+            if(entry.name.equals(chunkMapSignature))
+              break;
+
+            entry.position = in.readLong();
+            entry.length = in.readLong();
+
+            allChunkPositions.put(entry.position, entry);
+
+            if (LOGGER.isDebugEnabled()) {
+              LOGGER.debug("ND2 {}", entry.toString());
+            }
+          }
+        }
+
+        in.seek(0);
+      }
 
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
@@ -463,15 +548,30 @@ public class NativeND2Reader extends FormatReader {
         }
 
         if (blockType.startsWith("ImageDataSeq")) {
-          imageOffsets.add(new Long(fp));
-          imageLengths.add(new int[] {lenOne, lenTwo, getSizeX() * getSizeY()});
-          char b = (char) in.readByte();
-          while (b != '!') {
-            name.append(b);
-            b = (char) in.readByte();
+          if(useChunkMap) {
+            long lastImagePosition = 0;
+            for(ChunkMapEntry entry : allChunkPositions.values()) {
+              if(entry.name.startsWith("ImageDataSeq")) {
+                lastImagePosition = entry.position;
+                imageOffsets.add(new Long(entry.position + 16));
+                imageLengths.add(new int[] {lenOne, (int)entry.length, getSizeX() * getSizeY()});
+                imageNames.add(entry.name.substring(12));
+                // assumption lenOne is constant throughout the file for image blocks!
+              }
+            }
+            in.seek(allChunkPositions.higherKey(lastImagePosition));
+            continue;
+          } else {
+            imageOffsets.add(new Long(fp));
+            imageLengths.add(new int[] {lenOne, lenTwo, getSizeX() * getSizeY()});
+            char b = (char) in.readByte();
+            while (b != '!') {
+              name.append(b);
+              b = (char) in.readByte();
+            }
+            imageNames.add(name.toString());
+            name = name.delete(0, name.length());
           }
-          imageNames.add(name.toString());
-          name = name.delete(0, name.length());
         }
         else if (blockType.startsWith("ImageText")) {
           in.skipBytes(6);
