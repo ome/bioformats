@@ -64,7 +64,7 @@ public class DeltavisionReader extends FormatReader {
   public static final int DV_MAGIC_BYTES_1 = 0xa0c0;
   public static final int DV_MAGIC_BYTES_2 = 0xc0a0;
 
-  public static final String DATE_FORMAT = "EEE MMM  d HH:mm:ss yyyy";
+  public static final String DATE_FORMAT = "E MMM d HH:mm:ss yyyy";
 
   private static final short LITTLE_ENDIAN = -16224;
   private static final int HEADER_LENGTH = 1024;
@@ -933,12 +933,8 @@ public class DeltavisionReader extends FormatReader {
 
     for (String line : lines) {
       int colon = line.indexOf(":");
-      if (colon != -1) {
-        if (line.startsWith("Created")) {
-          key = "Created";
-          colon = 6;
-        }
-        else key = line.substring(0, colon).trim();
+      if (colon != -1 && !line.startsWith("Created")) {
+        key = line.substring(0, colon).trim();
 
         value = line.substring(colon + 1).trim();
         if (value.equals("") && !key.equals("")) prefix = key;
