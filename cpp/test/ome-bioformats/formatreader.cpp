@@ -39,7 +39,7 @@
 #include <stdexcept>
 
 #include <ome/bioformats/FormatReader.h>
-#include <ome/bioformats/PixelBuffer.h>
+#include <ome/bioformats/VariantPixelBuffer.h>
 #include <ome/bioformats/PixelProperties.h>
 #include <ome/bioformats/detail/FormatReader.h>
 
