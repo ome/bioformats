@@ -511,7 +511,7 @@ TEST_P(VariantPixelBufferTest, ConstructSize)
   ASSERT_TRUE(buf.data());
 }
 
-/**
+/*
  * Assign buffer and check.
  */
 struct AssignTestVisitor : public boost::static_visitor<>
@@ -570,10 +570,15 @@ TEST_P(VariantPixelBufferTest, ConstructCopy)
 
   VariantPixelBuffer buf1(boost::extents[5][2][1][1][1][1][1][1][1],
                           params.type, params.endian);
-  buf1.assign(source1.begin(), source1.end());
+  ASSERT_EQ(buf1.num_elements(), 10U);
+  AssignTestVisitor v1(buf1);
+  boost::apply_visitor(v1, buf1.vbuffer());
+
   VariantPixelBuffer buf2(boost::extents[5][2][1][1][1][1][1][1][1],
                           params.type, params.endian);
-  buf2.assign(source2.begin(), source2.end());
+  ASSERT_EQ(buf1.num_elements(), 10U);
+  AssignTestVisitor v2(buf1);
+  boost::apply_visitor(v2, buf1.vbuffer());
 
   ASSERT_EQ(buf1, buf1);
   ASSERT_EQ(buf2, buf2);
