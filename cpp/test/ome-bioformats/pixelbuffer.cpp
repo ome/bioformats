@@ -544,6 +544,204 @@ struct AssignTestVisitor : public boost::static_visitor<>
   }
 };
 
+/*
+ * Get index.
+ */
+struct GetIndexTestVisitor : public boost::static_visitor<>
+{
+  VariantPixelBuffer& buf;
+  const VariantPixelBuffer& cbuf;
+
+  GetIndexTestVisitor(VariantPixelBuffer& buf):
+    buf(buf),
+    cbuf(buf)
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& v)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    ASSERT_EQ(buf.num_elements(), 100U);
+    ASSERT_TRUE(buf.data());
+    for (int i = 0U; i < 10U; ++i)
+      for (int j = 0U; j < 10U; ++j)
+        {
+          VariantPixelBuffer::indices_type idx;
+          idx[0] = i;
+          idx[1] = j;
+          idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
+
+          value_type val = value_type((j * 10) + i);
+
+          EXPECT_EQ(val, buf.at<value_type>(idx));
+          EXPECT_EQ(val, cbuf.at<value_type>(idx));
+        }
+  }
+};
+
+/*
+ * Set index.
+ */
+struct SetIndexTestVisitor : public boost::static_visitor<>
+{
+  VariantPixelBuffer& buf;
+  const VariantPixelBuffer& cbuf;
+
+  SetIndexTestVisitor(VariantPixelBuffer& buf):
+    buf(buf),
+    cbuf(buf)
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& v)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    for (int i = 0U; i < 10U; ++i)
+      for (int j = 0U; j < 10U; ++j)
+        {
+          VariantPixelBuffer::indices_type idx;
+          idx[0] = i;
+          idx[1] = j;
+          idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
+
+          value_type val = value_type(i + j + j);
+
+          buf.at<value_type>(idx) = val;
+
+          ASSERT_EQ(val, buf.at<value_type>(idx));
+          ASSERT_EQ(val, cbuf.at<value_type>(idx));
+        }
+  }
+};
+
+/*
+ * Set index death test.
+ */
+struct SetIndexDeathTestVisitor : public boost::static_visitor<>
+{
+  VariantPixelBuffer& buf;
+  const VariantPixelBuffer& cbuf;
+
+  SetIndexDeathTestVisitor(VariantPixelBuffer& buf):
+    buf(buf),
+    cbuf(buf)
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& v)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    VariantPixelBuffer::indices_type badidx;
+    badidx[0] = 13;
+    badidx[1] = 2;
+    badidx[2] = badidx[3] = badidx[4] = badidx[5] = badidx[6] = badidx[7] = badidx[8] = 0;
+
+    ASSERT_DEATH(buf.at<value_type>(badidx) = value_type(4), "Assertion.*failed");
+    ASSERT_DEATH(value_type obs = cbuf.at<value_type>(badidx), "Assertion.*failed");
+  }
+};
+
+/*
+ * Stream input test.
+ */
+struct StreamInputTestVisitor : public boost::static_visitor<>
+{
+  VariantPixelBuffer& buf;
+  const VariantPixelBuffer& cbuf;
+
+  StreamInputTestVisitor(VariantPixelBuffer& buf):
+    buf(buf),
+    cbuf(buf)
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& v)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    VariantPixelBuffer::size_type size = buf.num_elements();
+    std::stringstream ss;
+
+    for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
+      {
+        value_type val = value_type(i);
+        ss.write(reinterpret_cast<const char *>(&val), sizeof(value_type));
+      }
+
+    ss.seekg(0, std::ios::beg);
+    ss >> buf;
+    EXPECT_FALSE(!ss);
+
+    VariantPixelBuffer::indices_type idx;
+    idx[0] = idx[1] = idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
+    std::vector<int>::size_type i = 0;
+    for (idx[3] = 0; idx[3] < 4; ++idx[3])
+      for (idx[2] = 0; idx[2] < 3; ++idx[2])
+        for (idx[1] = 0; idx[1] < 2; ++idx[1])
+          for (idx[0] = 0; idx[0] < 2; ++idx[0])
+            EXPECT_EQ(value_type(i++), buf.at<value_type>(idx));
+  }
+};
+
+/*
+ * Stream output test.
+ */
+struct StreamOutputTestVisitor : public boost::static_visitor<>
+{
+  VariantPixelBuffer& buf;
+  const VariantPixelBuffer& cbuf;
+
+  StreamOutputTestVisitor(VariantPixelBuffer& buf):
+    buf(buf),
+    cbuf(buf)
+  {}
+
+  template<typename T>
+  void
+  operator() (const T& v)
+  {
+    typedef typename T::element_type::value_type value_type;
+
+    VariantPixelBuffer::size_type size = buf.num_elements();
+    std::stringstream ss;
+
+    std::vector<value_type> vec;
+    for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
+      {
+        value_type val = value_type(i);
+        vec.push_back(val);
+      }
+
+    buf.assign(vec.begin(), vec.end());
+    ss << buf;
+    EXPECT_FALSE(!ss);
+    ss.seekg(0, std::ios::beg);
+
+    VariantPixelBuffer::indices_type idx;
+    idx[0] = idx[1] = idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
+    std::vector<int>::size_type i = 0;
+    for (idx[3] = 0; idx[3] < 4; ++idx[3])
+      for (idx[2] = 0; idx[2] < 3; ++idx[2])
+        for (idx[1] = 0; idx[1] < 2; ++idx[1])
+          for (idx[0] = 0; idx[0] < 2; ++idx[0])
+            {
+              EXPECT_EQ(value_type(i), buf.at<value_type>(idx));
+              value_type sval;
+              ss.read(reinterpret_cast<char *>(&sval), sizeof(value_type));
+              EXPECT_FALSE(!ss);
+              EXPECT_EQ(sval, value_type(i));
+              ++i;
+            }
+  }
+};
+
 TEST_P(VariantPixelBufferTest, ConstructRange)
 {
   const VariantPixelBufferTestParameters& params = GetParam();
@@ -593,27 +791,15 @@ TEST_P(VariantPixelBufferTest, GetIndex)
 {
   const VariantPixelBufferTestParameters& params = GetParam();
 
-  std::vector<boost::endian::native_uint8_t> source;
-  for (boost::endian::native_uint8_t i = 0U; i < 100U; ++i)
-    source.push_back(i);
-
   VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
                          params.type, params.endian);
-  buf.assign(source.begin(), source.end());
-  const VariantPixelBuffer& cbuf(buf);
-
   ASSERT_EQ(buf.num_elements(), 100U);
   ASSERT_TRUE(buf.data());
-  for (boost::endian::native_uint8_t i = 0U; i < 10U; ++i)
-    for (boost::endian::native_uint8_t j = 0U; j < 10U; ++j)
-      {
-        VariantPixelBuffer::indices_type idx;
-        idx[0] = i;
-        idx[1] = j;
-        idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
-        EXPECT_EQ(buf.at<boost::endian::native_uint8_t>(idx), (j * 10) + i);
-        EXPECT_EQ(cbuf.at<boost::endian::native_uint8_t>(idx), (j * 10) + i);
-      }
+
+  AssignTestVisitor v1(buf);
+  boost::apply_visitor(v1, buf.vbuffer());
+  GetIndexTestVisitor v2(buf);
+  boost::apply_visitor(v2, buf.vbuffer());
 }
 
 TEST_P(VariantPixelBufferTest, SetIndex)
@@ -622,25 +808,11 @@ TEST_P(VariantPixelBufferTest, SetIndex)
 
   VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
                          params.type, params.endian);
-  const VariantPixelBuffer& cbuf(buf);
-
   ASSERT_EQ(buf.num_elements(), 100U);
   ASSERT_TRUE(buf.data());
-  for (boost::endian::native_uint8_t i = 0U; i < 10U; ++i)
-    for (boost::endian::native_uint8_t j = 0U; j < 10U; ++j)
-      {
-        VariantPixelBuffer::indices_type idx;
-        idx[0] = i;
-        idx[1] = j;
-        idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
 
-        boost::endian::native_uint8_t val = i + j + j;
-
-        buf.at<boost::endian::native_uint8_t>(idx) = val;
-
-        ASSERT_EQ(buf.at<boost::endian::native_uint8_t>(idx), val);
-        ASSERT_EQ(cbuf.at<boost::endian::native_uint8_t>(idx), val);
-    }
+  SetIndexTestVisitor v(buf);
+  boost::apply_visitor(v, buf.vbuffer());
 }
 
 TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
@@ -651,15 +823,9 @@ TEST_P(VariantPixelBufferTest, SetIndexDeathTest)
 
   VariantPixelBuffer buf(boost::extents[10][10][1][1][1][1][1][1][1],
                          params.type, params.endian);
-  const VariantPixelBuffer& cbuf(buf);
 
-  VariantPixelBuffer::indices_type badidx;
-  badidx[0] = 13;
-  badidx[1] = 2;
-  badidx[2] = badidx[3] = badidx[4] = badidx[5] = badidx[6] = badidx[7] = badidx[8] = 0;
-
-  ASSERT_DEATH(buf.at<boost::endian::native_uint8_t>(badidx) = 4U, "Assertion.*failed");
-  ASSERT_DEATH(cbuf.at<boost::endian::native_uint8_t>(badidx), "Assertion.*failed");
+  SetIndexTestVisitor v(buf);
+  boost::apply_visitor(v, buf.vbuffer());
 }
 
 TEST_P(VariantPixelBufferTest, StreamInput)
@@ -668,27 +834,9 @@ TEST_P(VariantPixelBufferTest, StreamInput)
 
   VariantPixelBuffer buf(boost::extents[2][2][3][4][1][1][1][1][1],
                          params.type, params.endian);
-  VariantPixelBuffer::size_type size = buf.num_elements();
-  std::stringstream ss;
 
-  for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
-    {
-      uint8_t val = i;
-      ss.write(reinterpret_cast<const char *>(&val), sizeof(uint8_t));
-    }
-
-  ss.seekg(0, std::ios::beg);
-  ss >> buf;
-  EXPECT_FALSE(!ss);
-
-  VariantPixelBuffer::indices_type idx;
-  idx[0] = idx[1] = idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
-  std::vector<int>::size_type i = 0;
-  for (idx[3] = 0; idx[3] < 4; ++idx[3])
-    for (idx[2] = 0; idx[2] < 3; ++idx[2])
-      for (idx[1] = 0; idx[1] < 2; ++idx[1])
-        for (idx[0] = 0; idx[0] < 2; ++idx[0])
-          EXPECT_EQ(i++, buf.at<boost::endian::native_uint8_t>(idx));
+  StreamInputTestVisitor v(buf);
+  boost::apply_visitor(v, buf.vbuffer());
 }
 
 TEST_P(VariantPixelBufferTest, StreamOutput)
@@ -697,36 +845,9 @@ TEST_P(VariantPixelBufferTest, StreamOutput)
 
   VariantPixelBuffer buf(boost::extents[2][2][3][4][1][1][1][1][1],
                          params.type, params.endian);
-  VariantPixelBuffer::size_type size = buf.num_elements();
-  std::stringstream ss;
 
-  std::vector<boost::endian::native_uint8_t> v;
-  for (VariantPixelBuffer::size_type i = 0; i < size; ++i)
-    {
-      uint8_t val = i;
-      v.push_back(val);
-    }
-
-  buf.assign(v.begin(), v.end());
-  ss << buf;
-  EXPECT_FALSE(!ss);
-  ss.seekg(0, std::ios::beg);
-
-  VariantPixelBuffer::indices_type idx;
-  idx[0] = idx[1] = idx[2] = idx[3] = idx[4] = idx[5] = idx[6] = idx[7] = idx[8] = 0;
-  std::vector<int>::size_type i = 0;
-  for (idx[3] = 0; idx[3] < 4; ++idx[3])
-    for (idx[2] = 0; idx[2] < 3; ++idx[2])
-      for (idx[1] = 0; idx[1] < 2; ++idx[1])
-        for (idx[0] = 0; idx[0] < 2; ++idx[0])
-          {
-            EXPECT_EQ(i, buf.at<boost::endian::native_uint8_t>(idx));
-            boost::endian::native_uint8_t sval;
-            ss.read(reinterpret_cast<char *>(&sval), sizeof(boost::endian::native_uint8_t));
-            EXPECT_FALSE(!ss);
-            EXPECT_EQ(i, sval);
-            ++i;
-          }
+  StreamOutputTestVisitor v(buf);
+  boost::apply_visitor(v, buf.vbuffer());
 }
 
 VariantPixelBufferTestParameters variant_params[] =
@@ -762,6 +883,10 @@ VariantPixelBufferTestParameters variant_params[] =
     VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::BIG),
     VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::LITTLE),
     VariantPixelBufferTestParameters(PT::DOUBLE,        ome::bioformats::NATIVE),
+
+    VariantPixelBufferTestParameters(PT::BIT,           ome::bioformats::BIG),
+    VariantPixelBufferTestParameters(PT::BIT,           ome::bioformats::LITTLE),
+    VariantPixelBufferTestParameters(PT::BIT,           ome::bioformats::NATIVE),
 
     VariantPixelBufferTestParameters(PT::COMPLEX,       ome::bioformats::BIG),
     VariantPixelBufferTestParameters(PT::COMPLEX,       ome::bioformats::LITTLE),
